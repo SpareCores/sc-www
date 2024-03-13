@@ -2,3 +2,16 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+@layer components {
+  .btn-primary {
+    @apply bg-emerald-400 text-white font-semibold shadow-md hover:bg-emerald-500 focus:outline-none focus:ring focus:ring-emerald-400 focus:ring-opacity-75;
+    transition-duration: 0.15s;
+    transition-property: background-color, border-color, box-shadow, color;
+    transition-timing-function: ease-in;
+  }
+  .btn-normal {
+    @apply py-3 px-4 rounded-lg;
+  }
+}
