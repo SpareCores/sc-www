@@ -1,0 +1,18 @@
+
+.navbar_link {
+  color: white;
+  text-decoration: none;
+  display: flex;
+  gap: 0.5rem
+}
+
+.login_button {
+  background-color: #E5E7EB;
+  color: #1F2937;
+  padding: 10px 12px;
+  border-radius: 5px;
+  border: none;
+  font-weight: 600;
+  display: flex;
+  cursor: pointer;
+}
