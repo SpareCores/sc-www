@@ -3,6 +3,7 @@
 @tailwind components;
 @tailwind utilities;
 
+$content-max-width: 1400px;
 
 @layer components {
   .btn-primary {
@@ -14,4 +15,26 @@
   .btn-normal {
     @apply py-3 px-4 rounded-lg;
   }
+
+  .bg-primary {
+    @apply bg-sky-950;
+  }
+
+  .bg-secondary {
+    background-color: rgba(#082f49, 0.2);
+  }
+
+  .shadow_border {
+    border-color: rgba(#34D399, 0.2);
+  }
+
+  .shadown_color {
+    color: rgba(#34D399, 0.2);
+  }
+
+  .content{
+    max-width: $content-max-width;
+    margin: auto;
+  }
+
 }
