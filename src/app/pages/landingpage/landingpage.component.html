@@ -51,7 +51,24 @@
           We meticulously monitor cloud providers and flexible server providers, tracking details such as their data centers, availability zones, server offerings, and in-depth pricing options. This comprehensive data is openly accessible through our public databases.
         </div>
         <div style="font-family: 'Roboto Mono', sans-serif;" class="w-1/2 flex justify-center mx-auto my-auto">Here are some key highlights regarding the information we cover.</div>
+        <div class="flex gap-8">
+          <img src="https://placehold.co/550x380" >
+          <div>
+            <div>
+              <div *ngFor="let item of features, let i = index">
+                <div *ngIf="i != 0" class="w-full h-3 mb-3  border-b border-gray-200 border-solid" ></div>
+                <div class="flex gap-2">
+                  <div class="px-1 py-1 rounded-full bg-emerald-400 h-5 w-5">
+                  <lucide-icon name="check" class="h-3 w-3"></lucide-icon>
+                  </div>
+                <b> {{item.count}} </b>
+                <span> {{item.text}} </span>
+                </div>
+              </div>
+            </div>
+          </div>
 
+        </div>
       </div>
     </div>
   </div>

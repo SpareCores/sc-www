@@ -21,7 +21,10 @@ $content-max-width: 1400px;
   }
 
   .bg-secondary {
-    background-color: rgba(#082f49, 0.2);
+
+    background: linear-gradient(0deg, #082F49, #082F49),
+      linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2));
+
   }
 
   .shadow_border {
