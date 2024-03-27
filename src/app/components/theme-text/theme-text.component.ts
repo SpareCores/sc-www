@@ -10,6 +10,6 @@ import { Component, Input } from '@angular/core';
 export class ThemeTextComponent {
 
   @Input() text: string = '';
-  @Input() classes: string = '';
+  @Input() classes: string = 'text-lg';
 
 }

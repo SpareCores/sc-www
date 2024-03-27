@@ -10,6 +10,9 @@ module.exports = {
       },
       colors: {
         'default': '#fff',
+      },
+      height: {
+        '260': '260px',
       }
     },
   },

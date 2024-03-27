@@ -51,28 +51,78 @@
           We meticulously monitor cloud providers and flexible server providers, tracking details such as their data centers, availability zones, server offerings, and in-depth pricing options. This comprehensive data is openly accessible through our public databases.
         </div>
         <div style="font-family: 'Roboto Mono', sans-serif;" class="w-1/2 flex justify-center mx-auto my-auto">Here are some key highlights regarding the information we cover.</div>
-        <div class="flex gap-8">
-          <img src="https://placehold.co/550x380" >
+        <div class="flex gap-24 justify-center">
           <div>
-            <div>
+            <img src="https://placehold.co/550x380" >
+          </div>
+          <div>
+            <div style="width: 450px;">
               <div *ngFor="let item of features, let i = index">
-                <div *ngIf="i != 0" class="w-full h-3 mb-3  border-b border-gray-200 border-solid" ></div>
-                <div class="flex gap-2">
-                  <div class="px-1 py-1 rounded-full bg-emerald-400 h-5 w-5">
-                  <lucide-icon name="check" class="h-3 w-3"></lucide-icon>
+                <div *ngIf="i != 0" class="w-full h-4 mb-3 border-b border-gray-400 border-solid" ></div>
+                <div class="flex gap-2 text-2xl items-center text-gray-200">
+                  <div class="px-1 py-1 rounded-full bg-emerald-400 h-6 w-6">
+                  <lucide-icon name="check" class="h-4 w-4"></lucide-icon>
                   </div>
-                <b> {{item.count}} </b>
-                <span> {{item.text}} </span>
+                  <b> {{item.count}} </b>
+                  <span> {{item.text}} </span>
                 </div>
               </div>
             </div>
+            <div class="text-md mt-4">Tracked every 5 mins.</div>
           </div>
-
+        </div>
+        <div class="flex justify-center">
+          <button class="bg-emerald-400 text-white py-4 px-4 rounded-lg font-bold">Go to listing page</button>
         </div>
       </div>
     </div>
   </div>
   <div class="content_section">
-    <div class="content"></div>
+    <div class="content">
+      <div class="flex flex-col gap-8 justify-center">
+        <app-theme-text text="facts_&_details" classes="text-3xl justify-center"></app-theme-text>
+        <div class="w-1/3 mx-auto my-auto font-bold text-3xl text-center mb-8">
+          Only 3 Steps to <span class="text-emerald-400">optimize</span> your <span class="text-emerald-400">compute resources</span>
+        </div>
+        <div class="flex gap-8">
+          <div class="w-1/3 flex flex-col gap-6">
+            <div class="w-full h-260 rounded-lg">
+              <img class="rounded-lg h-full w-full object-cover" src="./assets/images/media/landing_steps_1.png">
+            </div>
+            <div class="flex gap-2 align-center">
+              <div class="text-emerald-400 rounded-full bg-white px-2 font-bold">1</div>
+              <div class="text-emerald-400 font-bold">Step</div>
+              <div class="w-full my-auto border-b border-emerald-400 border-solid"></div>
+            </div>
+            <div class="text-emerald-400 font-bold text-xl">Define Your Needs</div>
+            <div class="text-white text-lg">Utilize our platform's 48 filters to precisely outline your workload requirements, specifying details like CPU speed, count, memory, and GPU options.</div>
+          </div>
+          <div class="w-1/3 flex flex-col gap-6">
+            <div class="w-full h-260 rounded-lg">
+              <img class="rounded-lg h-full w-full object-cover" src="./assets/images/media/landing_steps_2.png">
+            </div>
+            <div class="flex gap-2 align-center">
+              <div class="text-emerald-400 rounded-full bg-white px-2 font-bold">2</div>
+              <div class="text-emerald-400 font-bold">Step</div>
+              <div class="w-full my-auto border-b border-emerald-400 border-solid"></div>
+            </div>
+            <div class="text-emerald-400 font-bold text-xl">Find Optimal Resource</div>
+            <div class="text-white text-lg">Let Spare Cores narrow down 2,000 server types and 176,000 pricing options based on your criteria. We prioritize cost efficiency, presenting you with optimal choices.</div>
+          </div>
+          <div class="w-1/3 flex flex-col gap-6">
+            <div class="w-full h-260 rounded-lg">
+              <img class="rounded-lg h-full w-full object-cover" src="./assets/images/media/landing_steps_3.jpg">
+            </div>
+            <div class="flex gap-2 align-center">
+              <div class="text-emerald-400 rounded-full bg-white px-2 font-bold">3</div>
+              <div class="text-emerald-400 font-bold">Step</div>
+              <div class="w-full my-auto border-b border-emerald-400 border-solid"></div>
+            </div>
+            <div class="text-emerald-400 font-bold text-xl">Deploy with Ease</div>
+            <div class="text-white text-lg">Use our CLI tool to launch your selected instance within your cloud environment. Our streamlined process ensures your tasks are up and running without unnecessary complexities.</div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
