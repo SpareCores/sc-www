@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { HeaderComponent } from './layout/header/header.component';
+import { register } from 'swiper/element/bundle';
 
 @Component({
   selector: 'app-root',
@@ -9,4 +8,12 @@ import { HeaderComponent } from './layout/header/header.component';
 })
 export class AppComponent {
   title = 'sc-www';
+
+  constructor() {
+
+  }
+
+  ngOnInit() {
+    register();
+  }
 }
