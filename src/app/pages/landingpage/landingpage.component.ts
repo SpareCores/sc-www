@@ -37,6 +37,33 @@ export class LandingpageComponent {
       count: '36M',
       text: 'historical records'
     },
+  ];
 
-  ]
+  gitHubComponents: any[] = [
+    {
+      component: 'SC Crawler',
+      status: 'pre-alpha',
+      repository: 'sc-crawler',
+      description: 'Crawler for scraping server prices from various vendors'
+    },
+    {
+      component: 'SC Crawler',
+      status: 'pre-alpha',
+      repository: 'sc-crawler',
+      description: 'Crawler for scraping server prices from various vendors'
+    },
+    {
+      component: 'SC Crawler',
+      status: 'pre-alpha',
+      repository: 'sc-crawler',
+      description: 'Crawler for scraping server prices from various vendors'
+    },
+    {
+      component: 'SC Crawler',
+      status: 'pre-alpha',
+      repository: 'sc-crawler',
+      description: 'Crawler for scraping server prices from various vendors'
+    }
+  ];
+
 }

@@ -125,4 +125,66 @@
       </div>
     </div>
   </div>
+  <div class="content_section">
+    <div class="content flex gap-8">
+      <div class="w-3/5">
+        <div class="flex flex-col gap-8 justify-center">
+          <div class="flex text-3xl gap-2 font-bold">
+            <app-theme-text text="spare_cores" classes="text-3xl font-bold"></app-theme-text> is <span class="text-emerald-400">100% open-source!</span>
+          </div>
+          <div style="font-family: 'Roboto Mono', sans-serif;" class="text-xl">All SC build features are supported out of box.</div>
+          <div class="text-2xl">
+            Spare Cores is still in the early development phase, initiated in Q3 of 2023 and gaining momentum in 2024, particularly due to the support from NGI Search funding.
+          </div>
+          <div class="flex gap-8">
+            <button class="bg-emerald-400 text-white py-4 px-4 rounded-lg font-bold">Go to GitHub</button>
+            <button class="bg-transparend text-teal-500 py-4 px-4 font-bold">Learn more ></button>
+          </div>
+        </div>
+      </div>
+      <div class="w-2/5">
+        <img src="https://placehold.co/550x380" >
+      </div>
+    </div>
+  </div>
+  <div class="content_section">
+    <div class="content flex justify-center">
+      <div class="w-3/5 flex flex-col gap-8">
+        <div class="flex gap-4 justify-center">
+          <lucide-icon name="github"></lucide-icon>
+          <div style="font-family: 'Roboto Mono', sans-serif;" class="text-xl">
+            Here, you can find the status and brief descriptions of all the existing and planned components:
+          </div>
+        </div>
+        <table class="repo_table mb-8">
+          <thead>
+            <tr>
+              <th>COMPONENT</th>
+              <th>STATUS</th>
+              <th>REPOSITORY</th>
+              <th>DESCRIPTION</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of gitHubComponents">
+              <td>{{item.component}}</td>
+              <td>{{item.status}}</td>
+              <td>{{item.repository}}</td>
+              <td>{{item.description}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="content_section">
+    <div class="content">
+
+    </div>
+  </div>
+  <div class="content_section">
+    <div class="content">
+
+    </div>
+  </div>
 </div>

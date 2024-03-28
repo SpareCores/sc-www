@@ -15,3 +15,31 @@
   border-top: 1px solid rgba(#34D399, 0.2);
 }
 
+.repo_table {
+  @apply w-full;
+
+  thead {
+    @apply border-b border-emerald-400 border-solid;
+    th {
+      @apply text-left px-3 py-2 font-normal text-sm;
+
+    }
+  }
+
+  tbody {
+    tr:nth-child(2n+1) {
+      @apply bg-primary;
+    }
+    tr:nth-child(2n) {
+      @apply bg-secondary;
+    }
+
+    tr {
+      td {
+        @apply px-3 py-2 text-left;
+      }
+    }
+  }
+
+}
+
