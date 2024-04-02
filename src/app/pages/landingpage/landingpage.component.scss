@@ -21,7 +21,7 @@
   thead {
     @apply border-b border-emerald-400 border-solid;
     th {
-      @apply text-left px-3 py-2 font-normal text-sm;
+      @apply text-left px-5 py-3 font-normal text-xs;
 
     }
   }
@@ -36,7 +36,7 @@
 
     tr {
       td {
-        @apply px-3 py-2 text-left;
+        @apply px-5 py-3 text-left text-sm;
       }
     }
   }
