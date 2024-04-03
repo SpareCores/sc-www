@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
+    "prebuild": "node ./prebuils.js",
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
@@ -22,6 +23,7 @@
     "@angular/router": "^17.2.0",
     "@angular/ssr": "^17.2.3",
     "express": "^4.18.2",
+    "gray-matter": "^4.0.3",
     "lucide-angular": "^0.361.0",
     "rxjs": "~7.8.0",
     "swiper": "^11.0.7",
