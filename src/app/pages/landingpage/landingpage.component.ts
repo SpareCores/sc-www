@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, Inject, PLATFORM_ID } from '@angular/core';
+import { ArticleMeta, ArticlesService } from '../../services/articles.service';
+import { isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-landingpage',
@@ -65,5 +67,18 @@ export class LandingpageComponent {
       description: 'Crawler for scraping server prices from various vendors'
     }
   ];
+
+  featuredArticles: ArticleMeta[] = [];
+
+  constructor(@Inject(PLATFORM_ID) private platformId: object,
+              private articles: ArticlesService) { }
+
+  ngOnInit() {
+    if (isPlatformBrowser(this.platformId)) {
+      this.articles.getArticlesByType('featured').then(articles => {
+        this.featuredArticles = articles;
+      });
+    }
+  }
 
 }
