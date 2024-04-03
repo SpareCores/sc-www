@@ -3,6 +3,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import './assets/fonts/font_roboto_mono_main.css';
+
 $content-max-width: 1400px;
 
 @layer components {
