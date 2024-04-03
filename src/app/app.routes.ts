@@ -3,4 +3,5 @@ import { LandingpageComponent } from './pages/landingpage/landingpage.component'
 
 export const routes: Routes = [
   { path: '', component: LandingpageComponent },
+  { path: '**', redirectTo: '' }
 ];
