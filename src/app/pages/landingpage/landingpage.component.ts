@@ -42,27 +42,33 @@ export class LandingpageComponent {
   gitHubComponents: any[] = [
     {
       component: 'SC Crawler',
-      status: 'pre-alpha',
+      status: 'alpha',
       repository: 'sc-crawler',
-      description: 'Crawler for scraping server prices from various vendors'
+      description: 'Inventory cloud resources into a SQlite database.'
     },
     {
-      component: 'SC Crawler',
-      status: 'pre-alpha',
-      repository: 'sc-crawler',
-      description: 'Crawler for scraping server prices from various vendors'
+      component: 'SC Data',
+      status: 'alpha',
+      repository: 'sc-data',
+      description: 'Wrapper around data collected using the Crawler.'
     },
     {
-      component: 'SC Crawler',
+      component: 'SC Keeper',
       status: 'pre-alpha',
-      repository: 'sc-crawler',
-      description: 'Crawler for scraping server prices from various vendors'
+      repository: 'sc-keeper',
+      description: 'API to search the database.'
     },
     {
-      component: 'SC Crawler',
+      component: 'SC Scanner',
       status: 'pre-alpha',
-      repository: 'sc-crawler',
-      description: 'Crawler for scraping server prices from various vendors'
+      repository: undefined,
+      description: 'Programming language SDKs to use the API for searching.'
+    },
+    {
+      component: 'SC Runner',
+      status: 'pre-alpha',
+      repository: undefined,
+      description: 'Launching actual cloud instances.'
     }
   ];
 
