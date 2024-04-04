@@ -63,3 +63,12 @@ $content-max-width: 1400px;
   }
 }
 
+@keyframes spin-back {
+  from {
+    transform: rotateX(0deg);
+  }
+  to {
+    transform: rotateX(-360deg);
+  }
+}
+

@@ -120,7 +120,7 @@ export class LandingpageComponent {
     }
     let ring1 = document.getElementById('ring1');
     if(ring1) {
-      ring1.style.animation = "spin 4s ease-in-out";
+      ring1.style.animation = "spin-back 4s ease-in-out";
     }
     let ring3 = document.getElementById('ring3');
     if(ring3) {

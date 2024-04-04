@@ -152,13 +152,13 @@
 
   .spinner_holder {
     position: relative;
-    border: 1px solid #34D399;
     height: 400px;
     width: 145px;
-    background: linear-gradient(0deg,#121212 10%,transparent 40%),linear-gradient(0deg,transparent 60%,#121212);
+    background: linear-gradient(0deg,#082F49 10%, #34D399 50%, #082F49 100%);
     overflow: hidden;
+    z-index: 2;
   }
-  .ring {
+  .spin_ring {
     position: absolute;
     top: 132px;
     width: 142px;
@@ -166,6 +166,7 @@
     margin: 0 auto;
     float: left;
     transform-style: preserve-3d;
+    z-index: 1;
 
     .slot {
       position: absolute;
@@ -174,11 +175,14 @@
       box-sizing: border-box;
       opacity: 0.9;
       color: rgba(0,0,0,0.9);
-      background: #fff;
-      border: solid 2px #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: transparent;
       -webkit-backface-visibility: hidden;
          -moz-backface-visibility: hidden;
               backface-visibility: hidden;
+
     }
 
 
