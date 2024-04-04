@@ -54,8 +54,10 @@
               <div style="font-family: 'Roboto Mono', sans-serif;" class="font-light text-sm text-center w-145">CLOUD VENDOR</div>
               <div class="spinner_holder">
                 <div id="ring1" class="spin_ring">
-                  <div class="slot" [style]="getStyle(i)" *ngFor="let item of spinnerContents[0], let i = index" >
-                    {{item}}
+                  <div class="slot flex flex-col align-center" [style]="getStyle(i)" *ngFor="let item of spinnerContents[0], let i = index" >
+                    <div class="slot_inner" [style]="getInnerStyle(i)">
+                      <div class="text-center font-bold text-3xl">AWS {{item}}</div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -64,8 +66,11 @@
               <div style="font-family: 'Roboto Mono', sans-serif;" class="font-light text-sm text-center w-145">SERVER TYPE</div>
               <div class="spinner_holder">
                 <div id="ring2" class="spin_ring">
-                  <div class="slot" [style]="getStyle(i)" *ngFor="let item of spinnerContents[1], let i = index" >
-                    {{item}}
+                  <div class="slot flex flex-col align-center" [style]="getStyle(i)" *ngFor="let item of spinnerContents[1], let i = index" >
+                    <div class="slot_inner" [style]="getInnerStyle(i)">
+                      <div class="text-center font-bold text-xl">AWS {{item}}</div>
+                      <div class="text-center">GRAVITON PROCESSOR</div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -74,8 +79,11 @@
               <div style="font-family: 'Roboto Mono', sans-serif;" class="font-light text-sm text-center w-145">DATACENTER</div>
               <div class="spinner_holder">
                 <div id="ring3" class="spin_ring">
-                  <div class="slot" [style]="getStyle(i)" *ngFor="let item of spinnerContents[1], let i = index" >
-                    {{item}}
+                  <div class="slot flex flex-col align-center" [style]="getStyle(i)" *ngFor="let item of spinnerContents[1], let i = index" >
+                    <div class="slot_inner" [style]="getInnerStyle(i)">
+                      <div class="text-center font-bold text-xl">ASIA PACIFIC{{item}}</div>
+                      <div class="text-center">MUMBAI</div>
+                    </div>
                   </div>
                 </div>
               </div>

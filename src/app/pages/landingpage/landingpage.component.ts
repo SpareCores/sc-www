@@ -84,6 +84,8 @@ export class LandingpageComponent {
   SPINNER_COUNT = 36;
   SPINNER_RADIUS = 780;
 
+  isSpinning = false;
+
   constructor(@Inject(PLATFORM_ID) private platformId: object,
               private articles: ArticlesService) { }
 
@@ -112,35 +114,42 @@ export class LandingpageComponent {
     };
   }
 
+  getInnerStyle(i: number) {
+    if(i > 0) {
+      return '';
+    }
+    if(this.isSpinning) {
+      return ''
+    }
+    return 'background: rgba(255,255,255,1) !important; color: #000 !important;';
+  }
+
   spinClicked() {
-    console.log('spin clicked');
-    let ring = document.getElementById('ring2');
-    if(ring) {
-      ring.style.animation = "spin 4s ease-in-out";
-    }
-    let ring1 = document.getElementById('ring1');
-    if(ring1) {
-      ring1.style.animation = "spin-back 4s ease-in-out";
-    }
-    let ring3 = document.getElementById('ring3');
-    if(ring3) {
-      ring3.style.animation = "spin 4s ease-in-out";
+
+    if(this.isSpinning) {
+      return;
     }
 
+    console.log('spin clicked');
+    const spinners = ['ring1', 'ring2', 'ring3'];
+    spinners.forEach(spinner => {
+      const el = document.getElementById(spinner);
+      if (el) {
+        el.style.animation = `${Math.random() > 0.5 ? 'spin' : 'spin-back'} 4s ease-in-out`;
+      }
+    });
+
+    this.isSpinning = true;
+
     setTimeout(() => {
-      let ring = document.getElementById('ring2');
-      if(ring) {
-        ring.style.animation = "none";
-      }
-      let ring1 = document.getElementById('ring1');
-      if(ring1) {
-        ring1.style.animation = "none";
-      }
-      let ring3 = document.getElementById('ring3');
-      if(ring3) {
-        ring3.style.animation = "none";
-      }
-    }, 5000)
+      spinners.forEach(spinner => {
+        const el = document.getElementById(spinner);
+        if (el) {
+          el.style.animation = 'none';
+        }
+      });
+      this.isSpinning = false;
+    }, 4200)
   }
 
 }

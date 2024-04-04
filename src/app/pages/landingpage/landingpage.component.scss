@@ -174,7 +174,7 @@
       height: 135px;
       box-sizing: border-box;
       opacity: 0.9;
-      color: rgba(0,0,0,0.9);
+      color: rgba(255,255,255,0.7);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -184,6 +184,20 @@
               backface-visibility: hidden;
 
     }
+
+    .slot_inner {
+      height: 100%;
+      width: calc(100% - 1rem);
+      margin: 1.0rem 0.5rem;
+      border-radius: 1rem;
+      background: transparent;
+      color: #ccc;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+
 
 
   }
