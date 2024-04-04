@@ -12,7 +12,11 @@ module.exports = {
         'default': '#fff',
       },
       height: {
-        '260': '260px',
+        '260': '260px'
+      },
+      width: {
+        '150': '150px',
+        '145': '145px'
       }
     },
   },

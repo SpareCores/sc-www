@@ -1,5 +1,3 @@
-
-
 .content_section {
   @apply bg-primary;
   @apply text-white;
@@ -45,4 +43,146 @@
 .articles_holder {
   min-height: 500px;
 }
+
+.animated_slot_machine {
+  position: relative;
+  .outer_border {
+    position: absolute;
+    left: 0;
+    top: 55px;
+    border-radius: 1rem;
+    border: 1px solid #34D399;
+    width: 560px;
+    height: 500px;
+  }
+  .top_wide_border_segment {
+    position: absolute;
+    left: 120px;
+    top: 47px;
+    width: 320px;
+    height: 16px;
+    border-radius: 8px;
+    background-color: #34D399;
+  }
+
+  .top_bottom_border_segment {
+    position: absolute;
+    left: 35px;
+    top: 547px;
+    width: 270px;
+    height: 16px;
+    border-radius: 8px;
+    background-color: #34D399;
+  }
+  .spin_button {
+    position: absolute;
+    left: 350px;
+    top: 526px;
+    width: 150px;
+    height: 60px;
+    border-radius: 8px;
+    background-image: url('../../../assets/images/media/spin_button.png');
+    background-size: cover;
+  }
+  .input_border {
+    border-radius: 1rem;
+    border: 2px solid #34D399;
+  }
+
+  .price_input {
+    position: absolute;
+    left: 205px;
+    top: 22px;
+    width: 150px;
+    height: 64px;
+    border-radius: 8px;
+  }
+  .ram_input {
+    position: absolute;
+    left: 190px;
+    top: 531px;
+    width: 90px;
+    height: 48px;
+    border-radius: 8px;
+  }
+  .cpu_input {
+    position: absolute;
+    left: 70px;
+    top: 531px;
+    width: 90px;
+    height: 48px;
+    border-radius: 8px;
+  }
+  .price_div {
+    position: absolute;
+    left: 220px;
+    top: -10px;
+  }
+  .cpu_div {
+    position: absolute;
+    left: 100px;
+    top: 585px;
+  }
+  .ram_div {
+    position: absolute;
+    left: 200px;
+    top: 585px;
+  }
+  .spinner_box_1 {
+    position: absolute;
+    left: 20px;
+    top: 90px;
+    width: 150px;
+    height: 200px;
+  }
+  .spinner_box_2 {
+    position: absolute;
+    left: 202.5px;
+    top: 90px;
+    width: 200px;
+    height: 200px;
+  }
+  .spinner_box_3 {
+    position: absolute;
+    left: 390px;
+    top: 90px;
+    width: 200px;
+    height: 200px;
+  }
+
+  .spinner_holder {
+    position: relative;
+    border: 1px solid #34D399;
+    height: 400px;
+    width: 145px;
+    background: linear-gradient(0deg,#121212 10%,transparent 40%),linear-gradient(0deg,transparent 60%,#121212);
+    overflow: hidden;
+  }
+  .ring {
+    position: absolute;
+    top: 132px;
+    width: 142px;
+    height: 135px;
+    margin: 0 auto;
+    float: left;
+    transform-style: preserve-3d;
+
+    .slot {
+      position: absolute;
+      width: 142px;
+      height: 135px;
+      box-sizing: border-box;
+      opacity: 0.9;
+      color: rgba(0,0,0,0.9);
+      background: #fff;
+      border: solid 2px #000;
+      -webkit-backface-visibility: hidden;
+         -moz-backface-visibility: hidden;
+              backface-visibility: hidden;
+    }
+
+
+  }
+}
+
 

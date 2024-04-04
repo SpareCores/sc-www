@@ -2,6 +2,7 @@
   <div class="content_section">
     <div class="content">
       <div class="flex gap-8">
+        <!--
         <div class="flex flex-col gap-12 w-1/2 my-auto">
           <div class="text-4xl font-bold">Harnessing the compute resources of the cloud to <span class="text-emerald-400">optimize efficiency</span> and <span class="text-emerald-400">costs</span> of batch and service tasks.</div>
           <div class="grid grid-cols-3 gap-4">
@@ -34,6 +35,51 @@
           <div class="flex gap-8">
             <button class="bg-emerald-400 text-white py-5 px-5 rounded-lg font-bold">Go to listing page</button>
             <button class="bg-transparend text-teal-500 py-5 px-5 font-bold">Learn more ></button>
+          </div>
+        </div>
+        -->
+        <div class="w-1/2">
+          <div class="animated_slot_machine">
+            <div class="outer_border" ></div>
+            <div class="top_wide_border_segment" ></div>
+            <div class="top_bottom_border_segment" ></div>
+            <div style="font-family: 'Roboto Mono', sans-serif;" class="font-light text-lg price_div" >PRICE/HOURS</div>
+            <div style="font-family: 'Roboto Mono', sans-serif;" class="font-light text-sm cpu_div" >CPU</div>
+            <div style="font-family: 'Roboto Mono', sans-serif;" class="font-light text-sm ram_div" >RAM (GB)</div>
+            <button (click)="spinClicked()" class="spin_button text-white text-3xl text-bold" ></button>
+            <input [(ngModel)]="priceValue" class="input_border price_input bg-primary text-center text-5xl font-bold" readonly >
+            <input [(ngModel)]="cpuCount" step="1" class="input_border cpu_input bg-primary text-center text-3xl font-bold"  >
+            <input [(ngModel)]="ramCount" step="1" class="input_border ram_input bg-primary text-center text-3xl font-bold"  >
+            <div class="spinner_box_1">
+              <div style="font-family: 'Roboto Mono', sans-serif;" class="font-light text-sm text-center w-145">CLOUD VENDOR</div>
+              <div class="spinner_holder">
+                <div id="ring1" class="ring">
+                  <div class="slot" [style]="getStyle(i)" *ngFor="let item of spinnerContents[0], let i = index" >
+                    {{item}}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="spinner_box_2">
+              <div style="font-family: 'Roboto Mono', sans-serif;" class="font-light text-sm text-center w-145">SERVER TYPE</div>
+              <div class="spinner_holder">
+                <div id="ring2" class="ring">
+                  <div class="slot" [style]="getStyle(i)" *ngFor="let item of spinnerContents[1], let i = index" >
+                    {{item}}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="spinner_box_3">
+              <div style="font-family: 'Roboto Mono', sans-serif;" class="font-light text-sm text-center w-145">DATACENTER</div>
+              <div class="spinner_holder">
+                <div id="ring3" class="ring">
+                  <div class="slot" [style]="getStyle(i)" *ngFor="let item of spinnerContents[1], let i = index" >
+                    {{item}}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <div class="w-1/2">

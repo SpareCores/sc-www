@@ -12,6 +12,7 @@ import { LandingpageComponent } from './pages/landingpage/landingpage.component'
 import { ThemeTextComponent } from './components/theme-text/theme-text.component';
 import { HttpClient, HttpClientModule, provideHttpClient, withFetch } from '@angular/common/http';
 import { TimeToShortDatePipe } from './pipes/time-to-short-date.pipe';
+import { FormsModule } from '@angular/forms';
 
 
 
@@ -26,6 +27,7 @@ import { TimeToShortDatePipe } from './pipes/time-to-short-date.pipe';
     RouterModule.forRoot(routes),
     LucideAngularModule.pick({ PcCase, Hotel, Home, Search, User, Github, Linkedin, Codesandbox, Database, Twitter, Facebook, Check}),
     CommonModule,
+    FormsModule,
     ServerModule,
     BrowserModule,
     HttpClientModule,
