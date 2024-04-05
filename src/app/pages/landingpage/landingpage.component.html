@@ -152,7 +152,6 @@
       <div class="w-3/5 flex flex-col gap-12">
         <app-theme-text text="project_components" classes="text-4xl justify-center font-light"></app-theme-text>
         <div class="flex gap-4 justify-center">
-          <lucide-icon name="github"></lucide-icon>
           <div style="font-family: 'Roboto Mono', sans-serif;" class="text-2xl text-center">
             Here, you can find the status and brief descriptions of all the existing and planned components:
           </div>
@@ -170,7 +169,25 @@
             <tr *ngFor="let item of gitHubComponents">
               <td>{{item.component}}</td>
               <td>{{item.status}}</td>
-              <td>{{item.repository}}</td>
+              <td class="flex gap-1">
+                  <a href="https://github.com/SpareCores/{{item.github}}"
+                     *ngIf="item.github" target="_blank" rel="noopener">
+                      <lucide-icon name="github"></lucide-icon>
+                  </a>
+                  <a href="https://pypi.org/project/{{item.pypi}}"
+                     *ngIf="item.pypi" target="_blank" rel="noopener">
+                      <img src="assets/images/icons/python.svg"
+                           style="width: 24px; vertical-align:middle;" />
+                  </a>
+                  <a href="https://sparecores.github.io/{{item.docs}}"
+                     *ngIf="item.docs" target="_blank" rel="noopener">
+                      <lucide-icon name="book-text"></lucide-icon>
+                  </a>
+                  <a href="{{item.www}}" *ngIf="item.www" target="_blank" rel="noopener">
+                      <img src="assets/images/icons/www.svg"
+                           style="width: 24px; vertical-align:middle;" />
+                  </a>
+              </td>
               <td>{{item.description}}</td>
             </tr>
           </tbody>
@@ -192,7 +209,7 @@
           <swiper-slide>
             <div class="flex gap-8 items-center px-2 py-12">
               <div><img src="https://placehold.co/150x150" class="rounded-full"></div>
-              <div class="text-2xl">Using spot instances saves on average 78% compared to the on-demand instances in Azure.</div>
+              <div class="text-2xl">Sometimes the spot price of a server is actually higher than the on-demand price.</div>
             </div>
           </swiper-slide>
           <swiper-slide>

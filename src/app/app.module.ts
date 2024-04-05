@@ -2,7 +2,7 @@ import { CUSTOM_ELEMENTS_SCHEMA, NgModule, Pipe } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { HeaderComponent } from './layout/header/header.component';
-import { LucideAngularModule, PcCase, Hotel, Home, Search, User, Github, Linkedin, Codesandbox, Database, Facebook, Twitter, Check } from 'lucide-angular';
+import { LucideAngularModule, PcCase, Hotel, Home, Search, User, Github, Linkedin, Codesandbox, Database, Facebook, Twitter, Check, BookText } from 'lucide-angular';
 import { AppComponent } from './app.component';
 import { routes } from './app.routes';
 import { BrowserModule, provideClientHydration } from '@angular/platform-browser';
@@ -24,7 +24,7 @@ import { TimeToShortDatePipe } from './pipes/time-to-short-date.pipe';
   ],
   imports: [
     RouterModule.forRoot(routes),
-    LucideAngularModule.pick({ PcCase, Hotel, Home, Search, User, Github, Linkedin, Codesandbox, Database, Twitter, Facebook, Check}),
+    LucideAngularModule.pick({ PcCase, Hotel, Home, Search, User, Github, Linkedin, Codesandbox, Database, Twitter, Facebook, Check, BookText}),
     CommonModule,
     ServerModule,
     BrowserModule,
