@@ -76,7 +76,7 @@ export class LandingpageComponent {
 
   featuredArticles: ArticleMeta[] = [];
 
-  priceValue = '$3';
+  priceValue = '$100';
   cpuCount = 2;
   ramCount = 4;
 
@@ -85,6 +85,7 @@ export class LandingpageComponent {
   SPINNER_RADIUS = 780;
 
   isSpinning = false;
+  spinnerClicked = false;
 
   constructor(@Inject(PLATFORM_ID) private platformId: object,
               private articles: ArticlesService) { }
@@ -104,6 +105,27 @@ export class LandingpageComponent {
         spinner3.push(i);
       }
       this.spinnerContents = [spinner1, spinner2, spinner3];
+
+      this.welcomeAnim();
+
+    }
+  }
+
+  welcomeAnim(startingDelay: number = 1000) {
+    if(!this.spinnerClicked) {
+      setTimeout(() => {
+        if(!this.spinnerClicked) {
+          // move spin_button up and down a bit to attact attention
+          const spinButton = document.getElementById('spin_button');
+          if (spinButton) {
+            spinButton.style.animation = 'bounce 1s 3';
+          }
+        }
+      }, startingDelay + 7000);
+
+      setTimeout(() => {
+        this.spinClicked(true);
+      }, startingDelay);
     }
   }
 
@@ -124,22 +146,37 @@ export class LandingpageComponent {
     return 'background: rgba(255,255,255,1) !important; color: #000 !important;';
   }
 
-  spinClicked() {
+  spinClicked(isFake = false) {
 
     if(this.isSpinning) {
       return;
     }
 
-    console.log('spin clicked');
+    if(!isFake) {
+      this.spinnerClicked = true;
+
+      const spinButton = document.getElementById('spin_button');
+      if (spinButton) {
+        spinButton.style.animation = 'none';
+      }
+    }
+
     const spinners = ['ring1', 'ring2', 'ring3'];
-    spinners.forEach(spinner => {
+    spinners.forEach((spinner, i) => {
       const el = document.getElementById(spinner);
       if (el) {
-        el.style.animation = `${Math.random() > 0.5 ? 'spin' : 'spin-back'} 4s ease-in-out`;
+        el.style.animation = `${Math.random() > 0.5 ? 'spin' : 'spin-back'} ${(3.5 + i * 0.25)}s ease-in-out`;
       }
     });
 
     this.isSpinning = true;
+
+    let price = 100;
+
+    let interval = setInterval(() => {
+      price -= 1;
+      this.priceValue = '$' + price;
+    }, 50);
 
     setTimeout(() => {
       spinners.forEach(spinner => {
@@ -148,6 +185,7 @@ export class LandingpageComponent {
           el.style.animation = 'none';
         }
       });
+      clearInterval(interval);
       this.isSpinning = false;
     }, 4200)
   }

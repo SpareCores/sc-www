@@ -1,8 +1,7 @@
 <div class="w-full">
   <div class="content_section">
     <div class="content">
-      <div class="flex gap-8">
-        <!--
+      <div class="flex gap-8" >
         <div class="flex flex-col gap-12 w-1/2 my-auto">
           <div class="text-4xl font-bold">Harnessing the compute resources of the cloud to <span class="text-emerald-400">optimize efficiency</span> and <span class="text-emerald-400">costs</span> of batch and service tasks.</div>
           <div class="grid grid-cols-3 gap-4">
@@ -37,8 +36,7 @@
             <button class="bg-transparend text-teal-500 py-5 px-5 font-bold">Learn more ></button>
           </div>
         </div>
-        -->
-        <div class="w-1/2">
+        <div class="w-1/2" style="min-height: 600px;">
           <div class="animated_slot_machine">
             <div class="outer_border" ></div>
             <div class="top_wide_border_segment" ></div>
@@ -46,7 +44,7 @@
             <div style="font-family: 'Roboto Mono', sans-serif;" class="font-light text-lg price_div" >PRICE/HOURS</div>
             <div style="font-family: 'Roboto Mono', sans-serif;" class="font-light text-sm cpu_div" >CPU</div>
             <div style="font-family: 'Roboto Mono', sans-serif;" class="font-light text-sm ram_div" >RAM (GB)</div>
-            <button (click)="spinClicked()" class="spin_button text-white text-3xl text-bold" ></button>
+            <button (click)="spinClicked()" id="spin_button" class="spin_button text-white text-3xl text-bold" ></button>
             <input [(ngModel)]="priceValue" class="input_border price_input bg-primary text-center text-5xl font-bold" readonly >
             <input [(ngModel)]="cpuCount" step="1" class="input_border cpu_input bg-primary text-center text-3xl font-bold"  >
             <input [(ngModel)]="ramCount" step="1" class="input_border ram_input bg-primary text-center text-3xl font-bold"  >
@@ -90,9 +88,11 @@
             </div>
           </div>
         </div>
+        <!--
         <div class="w-1/2">
           <img style="max-height: 608px; object-fit: contain;" src="./assets/images/temp/slotmachine.png" alt="landingpage" class="w-full">
         </div>
+        -->
 
       </div>
     </div>
