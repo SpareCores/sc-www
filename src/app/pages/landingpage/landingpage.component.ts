@@ -1,6 +1,7 @@
 import { Component, Inject, PLATFORM_ID } from '@angular/core';
 import { ArticleMeta, ArticlesService } from '../../services/articles.service';
 import { isPlatformBrowser } from '@angular/common';
+import { KeeperAPIService } from '../../services/keeper-api.service';
 
 @Component({
   selector: 'app-landingpage',
@@ -79,6 +80,9 @@ export class LandingpageComponent {
   priceValue = '$100';
   cpuCount = 2;
   ramCount = 4;
+  animPriceStart = 100;
+  animPriceEnd = 10;
+  cheapestMachine: any = {};
 
   spinnerContents: any = [[], [], []];
   SPINNER_COUNT = 36;
@@ -88,6 +92,7 @@ export class LandingpageComponent {
   spinnerClicked = false;
 
   constructor(@Inject(PLATFORM_ID) private platformId: object,
+              private keeperAPI: KeeperAPIService,
               private articles: ArticlesService) { }
 
   ngOnInit() {
@@ -108,25 +113,45 @@ export class LandingpageComponent {
 
       this.welcomeAnim();
 
+      // test query remove it later
+      this.keeperAPI.getServer('aws', 'a1.2xlarge').then(server => {
+        console.log('Server:', server);
+      }).catch(err => {
+        console.error(err);
+      });
+
+
     }
   }
 
   welcomeAnim(startingDelay: number = 1000) {
-    if(!this.spinnerClicked) {
-      setTimeout(() => {
-        if(!this.spinnerClicked) {
-          // move spin_button up and down a bit to attact attention
-          const spinButton = document.getElementById('spin_button');
-          if (spinButton) {
-            spinButton.style.animation = 'bounce 1s 3';
-          }
-        }
-      }, startingDelay + 7000);
 
-      setTimeout(() => {
-        this.spinClicked(true);
-      }, startingDelay);
-    }
+    // get the cheapest machine
+    this.keeperAPI.searchServers({vcpus_min: this.cpuCount, memory_min: this.ramCount, limit: 100}).then(servers => {
+      this.animPriceStart = servers[servers.length-1].price;
+      this.animPriceEnd = servers[0].price;
+      this.cheapestMachine = servers[0];
+      console.log('Cheapest machine:', this.animPriceEnd);
+
+      if(!this.spinnerClicked) {
+        setTimeout(() => {
+          if(!this.spinnerClicked) {
+            // move spin_button up and down a bit to attact attention
+            const spinButton = document.getElementById('spin_button');
+            if (spinButton) {
+              spinButton.style.animation = 'bounce 1s 3';
+            }
+          }
+        }, startingDelay + 7000);
+
+        setTimeout(() => {
+          this.spinAnim(true);
+        }, startingDelay);
+      }
+
+    }).catch(err => {
+      console.error(err);
+    });
   }
 
   getStyle(i: number) {
@@ -146,7 +171,20 @@ export class LandingpageComponent {
     return 'background: rgba(255,255,255,1) !important; color: #000 !important;';
   }
 
-  spinClicked(isFake = false) {
+  spinClicked() {
+    this.keeperAPI.searchServers({vcpus_min: this.cpuCount, memory_min: this.ramCount, limit: 100}).then(servers => {
+      this.animPriceStart = servers[servers.length-1].price;
+      this.animPriceEnd = servers[0].price;
+      console.log('Cheapest machine:', this.animPriceEnd);
+      console.log(servers[0]);
+
+      this.spinAnim();
+    }).catch(err => {
+      console.error(err);
+    });
+  }
+
+  spinAnim(isFake = false) {
 
     if(this.isSpinning) {
       return;
@@ -171,12 +209,25 @@ export class LandingpageComponent {
 
     this.isSpinning = true;
 
-    let price = 100;
+    let price = this.animPriceStart;
+    let fraction = (this.animPriceStart - this.animPriceEnd) / 50;
+
+    // convert fraction to 5 decimal precision
+    fraction = Math.floor(fraction * 100000) / 100000;
 
     let interval = setInterval(() => {
-      price -= 1;
-      this.priceValue = '$' + price;
+      price -= fraction;
+      if(price < this.animPriceEnd) {
+        price = this.animPriceEnd;
+      }
+      this.priceValue = '$' + Math.round(price * 10000) / 10000;
     }, 50);
+
+    setTimeout(() => {
+      this.spinnerContents[0][0] = this.cheapestMachine.vendor.vendor_id.toString().toUpperCase();
+      this.spinnerContents[1][0] = this.cheapestMachine.server.name;
+      this.spinnerContents[2][0] = this.cheapestMachine.datacenter.city.toString();
+    }, 200);
 
     setTimeout(() => {
       spinners.forEach(spinner => {
@@ -186,6 +237,7 @@ export class LandingpageComponent {
         }
       });
       clearInterval(interval);
+      this.priceValue = '$' + this.animPriceEnd;
       this.isSpinning = false;
     }, 4200)
   }
