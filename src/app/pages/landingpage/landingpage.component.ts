@@ -2,6 +2,7 @@ import { Component, Inject, PLATFORM_ID } from '@angular/core';
 import { ArticleMeta, ArticlesService } from '../../services/articles.service';
 import { isPlatformBrowser } from '@angular/common';
 import { KeeperAPIService } from '../../services/keeper-api.service';
+import { spinner_initial_data } from './spinner_initial_data';
 
 @Component({
   selector: 'app-landingpage',
@@ -105,11 +106,11 @@ export class LandingpageComponent {
       let spinner2 = [];
       let spinner3 = [];
       for(let i = 0; i < this.SPINNER_COUNT; i++) {
-        spinner1.push(i);
-        spinner2.push(i);
-        spinner3.push(i);
+        spinner1.push({name: 'AWS'});
+        spinner2.push({name: 't4g.nano'});
+        spinner3.push({name: 'US East', city: 'Ashburn'});
       }
-      this.spinnerContents = [spinner1, spinner2, spinner3];
+      this.spinnerContents = spinner_initial_data;
 
       this.welcomeAnim();
 
@@ -132,6 +133,20 @@ export class LandingpageComponent {
       this.animPriceEnd = servers[0].price;
       this.cheapestMachine = servers[0];
       console.log('Cheapest machine:', this.animPriceEnd);
+      console.log(servers[0]);
+
+      if(servers.length >= this.SPINNER_COUNT) {
+        for(let i = 0; i < this.SPINNER_COUNT; i++) {
+          this.spinnerContents[0][i] = { name: servers[i].vendor.vendor_id.toString().toUpperCase() };
+          this.spinnerContents[1][i] = { name: servers[i].server.name};
+          // reaplce datacenter name, remove the part inside ()
+          this.spinnerContents[2][i] = {
+            name: servers[i].datacenter?.name?.toString().replace(/\(.*\)/, ''),
+            city: servers[i].datacenter?.city?.toString() };
+        }
+      }
+
+      console.log('Cheapest machine:', this.spinnerContents);
 
       if(!this.spinnerClicked) {
         setTimeout(() => {
@@ -175,8 +190,7 @@ export class LandingpageComponent {
     this.keeperAPI.searchServers({vcpus_min: this.cpuCount, memory_min: this.ramCount, limit: 100}).then(servers => {
       this.animPriceStart = servers[servers.length-1].price;
       this.animPriceEnd = servers[0].price;
-      console.log('Cheapest machine:', this.animPriceEnd);
-      console.log(servers[0]);
+      this.cheapestMachine = servers[0];
 
       this.spinAnim();
     }).catch(err => {
@@ -224,9 +238,12 @@ export class LandingpageComponent {
     }, 50);
 
     setTimeout(() => {
-      this.spinnerContents[0][0] = this.cheapestMachine.vendor.vendor_id.toString().toUpperCase();
-      this.spinnerContents[1][0] = this.cheapestMachine.server.name;
-      this.spinnerContents[2][0] = this.cheapestMachine.datacenter.city.toString();
+      this.spinnerContents[0][0] = { name: this.cheapestMachine.vendor.vendor_id.toString().toUpperCase()};
+      this.spinnerContents[1][0] = { name: this.cheapestMachine.server.name};
+      this.spinnerContents[2][0] = {
+        name: this.cheapestMachine.datacenter?.name?.toString().replace(/\(.*\)/, ''),
+        city: this.cheapestMachine.datacenter?.city?.toString()
+      };
     }, 200);
 
     setTimeout(() => {
