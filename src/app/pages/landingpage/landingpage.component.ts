@@ -128,7 +128,7 @@ export class LandingpageComponent {
   welcomeAnim(startingDelay: number = 1000) {
 
     // get the cheapest machine
-    this.keeperAPI.searchServers({vcpus_min: this.cpuCount, memory_min: this.ramCount, limit: 100}).then(servers => {
+    this.keeperAPI.searchServers({vcpus_min: this.cpuCount, memory_min: this.ramCount * 1024, limit: 100}).then(servers => {
       this.animPriceStart = servers[servers.length-1].price;
       this.animPriceEnd = servers[0].price;
       this.cheapestMachine = servers[0];
@@ -187,7 +187,7 @@ export class LandingpageComponent {
   }
 
   spinClicked() {
-    this.keeperAPI.searchServers({vcpus_min: this.cpuCount, memory_min: this.ramCount, limit: 100}).then(servers => {
+    this.keeperAPI.searchServers({vcpus_min: this.cpuCount, memory_min: this.ramCount * 1024, limit: 100}).then(servers => {
       this.animPriceStart = servers[servers.length-1].price;
       this.animPriceEnd = servers[0].price;
       this.cheapestMachine = servers[0];
