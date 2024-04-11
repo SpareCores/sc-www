@@ -68,7 +68,7 @@
                   <div class="slot flex flex-col align-center" [style]="getStyle(i)" *ngFor="let item of spinnerContents[1], let i = index" >
                     <div class="slot_inner" [style]="getInnerStyle(i)">
                       <div class="text-center font-bold text-xl">{{item.name}}</div>
-                      <div class="text-center">GRAVITON PROCESSOR</div>
+                      <div class="text-center">{{item.architecture}}</div>
                     </div>
                   </div>
                 </div>

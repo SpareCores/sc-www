@@ -83,7 +83,7 @@ export class LandingpageComponent {
   cpuCount = 2;
   ramCount = 4;
 
-  spinnerContents: any = [[], [], []];
+  spinnerContents: any = spinner_initial_data;
   SPINNER_COUNT = 36;
   SPINNER_RADIUS = 780;
   MAX_CPU_COUNT = 128;
@@ -110,8 +110,6 @@ export class LandingpageComponent {
         spinner2.push({name: 't4g.nano'});
         spinner3.push({name: 'US East', city: 'Ashburn'});
       }
-      this.spinnerContents = spinner_initial_data;
-
       this.welcomeAnim();
 
       // test query remove it later
@@ -230,7 +228,7 @@ export class LandingpageComponent {
       let indices = [0, 1, 35];
       indices.forEach((index, i) => {
         this.spinnerContents[0][index] = { name: servers[i].vendor.vendor_id.toString().toUpperCase()};
-        this.spinnerContents[1][index] = { name: servers[i].server.name};
+        this.spinnerContents[1][index] = { name: servers[i].server.name, architecture: servers[i].server.cpu_architecture};
         this.spinnerContents[2][index] = {
           name: servers[i].datacenter?.name?.toString().replace(/\(.*\)/, ''),
           city: servers[i].datacenter?.city?.toString()

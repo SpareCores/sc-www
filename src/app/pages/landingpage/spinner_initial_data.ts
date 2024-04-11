@@ -111,171 +111,151 @@ export const spinner_initial_data = [
   ],
   [
     {
-      "name": "t4g.nano"
+      "name": "t4g.medium",
+      "architecture": "arm64"
     },
     {
-      "name": "t4g.nano"
+      "name": "t4g.medium",
+      "architecture": "arm64"
     },
     {
-      "name": "t4g.nano"
+      "name": "t4g.medium",
+      "architecture": "arm64"
     },
     {
-      "name": "t4g.nano"
+      "name": "t4g.medium",
+      "architecture": "arm64"
     },
     {
-      "name": "t4g.nano"
+      "name": "t4g.medium",
+      "architecture": "arm64"
     },
     {
-      "name": "t4g.nano"
+      "name": "t4g.medium",
+      "architecture": "arm64"
     },
     {
-      "name": "t3.nano"
+      "name": "t4g.medium",
+      "architecture": "arm64"
     },
     {
-      "name": "t4g.nano"
+      "name": "t4g.medium",
+      "architecture": "arm64"
     },
     {
-      "name": "t4g.nano"
+      "name": "t4g.medium",
+      "architecture": "arm64"
     },
     {
-      "name": "t4g.nano"
+      "name": "t4g.medium",
+      "architecture": "arm64"
     },
     {
-      "name": "t3.nano"
+      "name": "t4g.medium",
+      "architecture": "arm64"
     },
     {
-      "name": "t3.nano"
+      "name": "t4g.medium",
+      "architecture": "arm64"
     },
     {
-      "name": "t3.nano"
+      "name": "t4g.medium",
+      "architecture": "arm64"
     },
     {
-      "name": "t4g.nano"
+      "name": "t4g.medium",
+      "architecture": "arm64"
     },
     {
-      "name": "t4g.nano"
+      "name": "t4g.medium",
+      "architecture": "arm64"
     },
     {
-      "name": "t3a.nano"
+      "name": "t4g.medium",
+      "architecture": "arm64"
     },
     {
-      "name": "t3.nano"
+      "name": "t4g.medium",
+      "architecture": "arm64"
     },
     {
-      "name": "t3.nano"
+      "name": "t4g.medium",
+      "architecture": "arm64"
     },
     {
-      "name": "t4g.nano"
+      "name": "t4g.medium",
+      "architecture": "arm64"
     },
     {
-      "name": "t4g.nano"
+      "name": "t4g.medium",
+      "architecture": "arm64"
     },
     {
-      "name": "t3.micro"
+      "name": "t4g.medium",
+      "architecture": "arm64"
     },
     {
-      "name": "t4g.micro"
+      "name": "t4g.medium",
+      "architecture": "arm64"
     },
     {
-      "name": "t4g.nano"
+      "name": "t4g.medium",
+      "architecture": "arm64"
     },
     {
-      "name": "t4g.nano"
+      "name": "t4g.medium",
+      "architecture": "arm64"
     },
     {
-      "name": "t4g.nano"
+      "name": "t4g.medium",
+      "architecture": "arm64"
     },
     {
-      "name": "t3.micro"
+      "name": "t4g.medium",
+      "architecture": "arm64"
     },
     {
-      "name": "t3.micro"
+      "name": "t4g.medium",
+      "architecture": "arm64"
     },
     {
-      "name": "t3.nano"
+      "name": "t4g.large",
+      "architecture": "arm64"
     },
     {
-      "name": "t4g.micro"
+      "name": "t4g.medium",
+      "architecture": "arm64"
     },
     {
-      "name": "t3a.nano"
+      "name": "t4g.medium",
+      "architecture": "arm64"
     },
     {
-      "name": "t3.nano"
+      "name": "t4g.medium",
+      "architecture": "arm64"
     },
     {
-      "name": "t3.nano"
+      "name": "t4g.medium",
+      "architecture": "arm64"
     },
     {
-      "name": "t4g.micro"
+      "name": "c7i.large",
+      "architecture": "x86_64"
     },
     {
-      "name": "t4g.nano"
+      "name": "c7i.large",
+      "architecture": "x86_64"
     },
     {
-      "name": "t4g.nano"
+      "name": "t4g.medium",
+      "architecture": "arm64"
     },
     {
-      "name": "t3a.nano"
+      "name": "t4g.medium",
+      "architecture": "arm64"
     }
   ],
   [
-    {
-      "name": "Asia Pacific ",
-      "city": "Osaka"
-    },
-    {
-      "name": "Asia Pacific ",
-      "city": "Osaka"
-    },
-    {
-      "name": "Asia Pacific ",
-      "city": "Osaka"
-    },
-    {
-      "name": "Asia Pacific ",
-      "city": "Jakarta"
-    },
-    {
-      "name": "Asia Pacific ",
-      "city": "Jakarta"
-    },
-    {
-      "name": "Asia Pacific ",
-      "city": "Jakarta"
-    },
-    {
-      "name": "US West "
-    },
-    {
-      "name": "Asia Pacific ",
-      "city": "Hyderabad"
-    },
-    {
-      "name": "Middle East "
-    },
-    {
-      "name": "Middle East "
-    },
-    {
-      "name": "US West "
-    },
-    {
-      "name": "US West "
-    },
-    {
-      "name": "US West "
-    },
-    {
-      "name": "Asia Pacific ",
-      "city": "Hyderabad"
-    },
-    {
-      "name": "Middle East "
-    },
-    {
-      "name": "US West "
-    },
     {
       "name": "Asia Pacific ",
       "city": "Jakarta"
@@ -286,22 +266,42 @@ export const spinner_initial_data = [
     },
     {
       "name": "Asia Pacific ",
-      "city": "Mumbai"
-    },
-    {
-      "name": "Asia Pacific ",
-      "city": "Hyderabad"
-    },
-    {
-      "name": "US West "
+      "city": "Jakarta"
     },
     {
       "name": "Asia Pacific ",
       "city": "Jakarta"
     },
     {
-      "name": "Africa ",
-      "city": "Cape Town"
+      "name": "Asia Pacific ",
+      "city": "Hyderabad"
+    },
+    {
+      "name": "Middle East "
+    },
+    {
+      "name": "US East "
+    },
+    {
+      "name": "Middle East "
+    },
+    {
+      "name": "Middle East "
+    },
+    {
+      "name": "Asia Pacific ",
+      "city": "Hyderabad"
+    },
+    {
+      "name": "US East "
+    },
+    {
+      "name": "Asia Pacific ",
+      "city": "Melbourne"
+    },
+    {
+      "name": "Asia Pacific ",
+      "city": "Mumbai"
     },
     {
       "name": "Asia Pacific ",
@@ -312,46 +312,85 @@ export const spinner_initial_data = [
       "city": "Zurich"
     },
     {
-      "name": "US West "
-    },
-    {
-      "name": "US West "
+      "name": "Asia Pacific ",
+      "city": "Mumbai"
     },
     {
       "name": "Asia Pacific ",
-      "city": "Osaka"
+      "city": "Hyderabad"
+    },
+    {
+      "name": "Africa ",
+      "city": "Cape Town"
+    },
+    {
+      "name": "Asia Pacific ",
+      "city": "Hong Kong"
+    },
+    {
+      "name": "Middle East "
+    },
+    {
+      "name": "Europe ",
+      "city": "Zurich"
+    },
+    {
+      "name": "Asia Pacific ",
+      "city": "Hong Kong"
+    },
+    {
+      "name": "Asia Pacific ",
+      "city": "Melbourne"
+    },
+    {
+      "name": "Africa ",
+      "city": "Cape Town"
+    },
+    {
+      "name": "Asia Pacific ",
+      "city": "Melbourne"
+    },
+    {
+      "name": "Middle East "
+    },
+    {
+      "name": "Europe ",
+      "city": "Milan"
     },
     {
       "name": "Asia Pacific ",
       "city": "Jakarta"
     },
     {
-      "name": "Asia Pacific ",
-      "city": "Mumbai"
+      "name": "Europe ",
+      "city": "Zurich"
     },
     {
       "name": "Asia Pacific ",
-      "city": "Singapore"
+      "city": "Hong Kong"
     },
     {
       "name": "Asia Pacific ",
-      "city": "Singapore"
+      "city": "Tokyo"
     },
     {
-      "name": "Asia Pacific ",
-      "city": "Osaka"
+      "name": "US East "
     },
     {
       "name": "Europe ",
-      "city": "Stockholm"
+      "city": "Paris"
     },
     {
       "name": "Europe ",
-      "city": "Stockholm"
+      "city": "Paris"
+    },
+    {
+      "name": "Europe ",
+      "city": "Milan"
     },
     {
       "name": "Asia Pacific ",
-      "city": "Mumbai"
+      "city": "Jakarta"
     }
   ]
 ];
