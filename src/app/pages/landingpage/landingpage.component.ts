@@ -79,15 +79,15 @@ export class LandingpageComponent {
 
   featuredArticles: ArticleMeta[] = [];
 
-  priceValue = '$100';
+  priceValue = '$0.00150';
   cpuCount = 2;
   ramCount = 4;
 
   spinnerContents: any = [[], [], []];
   SPINNER_COUNT = 36;
   SPINNER_RADIUS = 780;
-  MAX_CPU_COUNT = 200;
-  MAX_RAM_COUNT = 999;
+  MAX_CPU_COUNT = 128;
+  MAX_RAM_COUNT = 512;
 
   isSpinning = false;
   spinnerClicked = false;
@@ -120,8 +120,6 @@ export class LandingpageComponent {
       }).catch(err => {
         console.error(err);
       });
-
-
     }
   }
 
@@ -215,7 +213,7 @@ export class LandingpageComponent {
     let animPriceEnd = servers[0].price;
 
     let price = animPriceStart;
-    let fraction = (animPriceStart - animPriceEnd) / 30;
+    let fraction = (animPriceStart - animPriceEnd) / 50;
 
     // convert fraction to 5 decimal precision
     fraction = Math.floor(fraction * 100000) / 100000;

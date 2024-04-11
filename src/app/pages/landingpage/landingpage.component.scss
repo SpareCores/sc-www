@@ -157,6 +157,16 @@
     background: linear-gradient(0deg,#082F49 10%, #34D399 50%, #082F49 100%);
     overflow: hidden;
     z-index: 2;
+
+    .ring_lines {
+      position: absolute;
+      top: 130px;
+      width: 145px;
+      height: 140px;
+      border-top: 1px solid #34D399;
+      border-bottom: 1px solid #34D399;
+    }
+
   }
   .spin_ring {
     position: absolute;
@@ -196,10 +206,6 @@
       flex-direction: column;
       justify-content: center;
     }
-
-
-
-
   }
 }
 
