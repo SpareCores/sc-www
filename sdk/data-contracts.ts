@@ -202,6 +202,12 @@ export interface HTTPValidationError {
   detail?: ValidationError[];
 }
 
+/** OrderDir */
+export enum OrderDir {
+  Asc = "asc",
+  Desc = "desc",
+}
+
 /**
  * PriceTier
  * Price tier definition.
@@ -791,17 +797,17 @@ export interface SearchServerSearchGetParams {
    */
   page?: number | null;
   /**
-   * Orderby
+   * Order By
    * Order by column.
    * @default "price"
    */
-  orderBy?: string | null;
+  order_by?: string;
   /**
-   * Orderdir
+   * Order Dir
    * Order direction.
    * @default "asc"
    */
-  orderDir?: string | null;
+  order_dir?: OrderDir;
 }
 
 /** Response Search Server Search Get */
