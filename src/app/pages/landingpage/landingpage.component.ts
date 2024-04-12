@@ -48,31 +48,37 @@ export class LandingpageComponent {
     {
       component: 'SC Crawler',
       status: 'alpha',
-      repository: 'sc-crawler',
+      github: 'sc-crawler',
+      pypi: 'sparecores-crawler',
+      docs: 'sc-crawler',
       description: 'Inventory cloud resources into a SQlite database.'
+    },
+    {
+      component: 'SC Inspector',
+      status: 'pre-alpha',
+      description: 'Inspect and benchmark cloud resources.'
     },
     {
       component: 'SC Data',
       status: 'alpha',
-      repository: 'sc-data',
+      github: 'sc-data',
+      pypi: 'sparecores-data',
       description: 'Wrapper around data collected using the Crawler.'
     },
     {
       component: 'SC Keeper',
       status: 'pre-alpha',
-      repository: 'sc-keeper',
-      description: 'API to search the database.'
+      description: 'API to search the Data.'
     },
     {
       component: 'SC Scanner',
       status: 'pre-alpha',
-      repository: undefined,
-      description: 'Programming language SDKs to use the API for searching.'
+      description: 'Web frontend and programming language SDKs for Keeper.',
+      www: 'https://github.com/SpareCores/sc-www'
     },
     {
       component: 'SC Runner',
       status: 'pre-alpha',
-      repository: undefined,
       description: 'Launching actual cloud instances.'
     }
   ];
