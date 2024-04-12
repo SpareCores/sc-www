@@ -175,7 +175,6 @@ export class LandingpageComponent {
 
     this.keeperAPI.searchServers({vcpus_min: this.cpuCount, memory_min: this.ramCount * 1024, limit: 100}).then(servers => {
 
-
       this.spinAnim(servers);
     }).catch(err => {
       console.error(err);
@@ -231,7 +230,7 @@ export class LandingpageComponent {
         this.spinnerContents[1][index] = { name: servers[i].server.name, architecture: servers[i].server.cpu_architecture};
         this.spinnerContents[2][index] = {
           name: servers[i].datacenter?.name?.toString().replace(/\(.*\)/, ''),
-          city: servers[i].datacenter?.city?.toString()
+          city: servers[i].datacenter?.city?.toString() || servers[i].datacenter?.state?.toString()
         };
       });
     }, 500);

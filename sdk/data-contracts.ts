@@ -78,8 +78,26 @@ export enum CpuArchitecture {
   X8664Mac = "x86_64_mac",
 }
 
-/** DatacenterBase */
-export interface DatacenterBase {
+/**
+ * Datacenter
+ * Datacenters/regions of Vendors.
+ *
+ * Attributes:
+ *     vendor_id (str): Reference to the Vendor.
+ *     datacenter_id (str): Unique identifier, as called at the Vendor.
+ *     name (str): Human-friendly name.
+ *     aliases (typing.List[str]): List of other commonly used names for the same Datacenter.
+ *     country_id (str): Reference to the Country, where the Datacenter is located.
+ *     state (typing.Optional[str]): Optional state/administrative area of the Datacenter's location within the Country.
+ *     city (typing.Optional[str]): Optional city name of the Datacenter's location.
+ *     address_line (typing.Optional[str]): Optional address line of the Datacenter's location.
+ *     zip_code (typing.Optional[str]): Optional ZIP code of the Datacenter's location.
+ *     founding_year (typing.Optional[int]): 4-digit year when the Datacenter was founded.
+ *     green_energy (typing.Optional[bool]): If the Datacenter is 100% powered by renewable energy.
+ *     status (Status): Status of the resource (active or inactive).
+ *     observed_at (datetime): Timestamp of the last observation.
+ */
+export interface Datacenter {
   /**
    * Vendor Id
    * Reference to the Vendor.
@@ -584,7 +602,25 @@ export interface ServerPriceWithPKs {
    */
   observed_at?: string;
   vendor: VendorBase;
-  datacenter: DatacenterBase;
+  /**
+   * Datacenters/regions of Vendors.
+   *
+   * Attributes:
+   *     vendor_id (str): Reference to the Vendor.
+   *     datacenter_id (str): Unique identifier, as called at the Vendor.
+   *     name (str): Human-friendly name.
+   *     aliases (typing.List[str]): List of other commonly used names for the same Datacenter.
+   *     country_id (str): Reference to the Country, where the Datacenter is located.
+   *     state (typing.Optional[str]): Optional state/administrative area of the Datacenter's location within the Country.
+   *     city (typing.Optional[str]): Optional city name of the Datacenter's location.
+   *     address_line (typing.Optional[str]): Optional address line of the Datacenter's location.
+   *     zip_code (typing.Optional[str]): Optional ZIP code of the Datacenter's location.
+   *     founding_year (typing.Optional[int]): 4-digit year when the Datacenter was founded.
+   *     green_energy (typing.Optional[bool]): If the Datacenter is 100% powered by renewable energy.
+   *     status (Status): Status of the resource (active or inactive).
+   *     observed_at (datetime): Timestamp of the last observation.
+   */
+  datacenter: Datacenter;
   zone: ZoneBase;
   server: ServerBase;
 }
@@ -735,7 +771,7 @@ export interface SearchServerSearchGetParams {
   vcpus_min?: number;
   /**
    * Memory Min
-   * Minimum amount of memory in GBs.
+   * Minimum amount of memory in MBs.
    */
   memory_min?: number | null;
   /**
