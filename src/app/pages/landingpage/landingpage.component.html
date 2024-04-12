@@ -41,15 +41,15 @@
             <div class="outer_border" ></div>
             <div class="top_wide_border_segment" ></div>
             <div class="top_bottom_border_segment" ></div>
-            <div style="font-family: 'Roboto Mono', sans-serif;" class="font-light text-lg price_div" >PRICE/HOURS</div>
-            <div style="font-family: 'Roboto Mono', sans-serif;" class="font-light text-sm cpu_div" >CPU</div>
-            <div style="font-family: 'Roboto Mono', sans-serif;" class="font-light text-sm ram_div" >RAM (GB)</div>
+            <div class="font-mono font-light text-lg price_div" >PRICE/HOURS</div>
+            <div class="font-mono font-light text-sm cpu_div" >CPU</div>
+            <div class="font-mono font-light text-sm ram_div" >RAM (GB)</div>
             <button (click)="spinClicked()" id="spin_button" class="spin_button text-white text-3xl text-bold" ></button>
             <input [(ngModel)]="priceValue" class="input_border price_input bg-primary text-center text-4xl font-bold" readonly >
             <input [(ngModel)]="cpuCount" step="1" class="input_border cpu_input bg-primary text-center text-3xl font-bold"  >
             <input [(ngModel)]="ramCount" step="1" class="input_border ram_input bg-primary text-center text-3xl font-bold"  >
             <div class="spinner_box_1">
-              <div style="font-family: 'Roboto Mono', sans-serif;" class="font-light text-sm text-center w-145">CLOUD VENDOR</div>
+              <div class="font-mono font-light text-sm text-center w-145">CLOUD VENDOR</div>
               <div class="spinner_holder">
                 <div id="ring1" class="spin_ring">
                   <div class="slot flex flex-col align-center" [style]="getStyle(i)" *ngFor="let item of spinnerContents[0], let i = index" >
@@ -62,7 +62,7 @@
               </div>
             </div>
             <div class="spinner_box_2">
-              <div style="font-family: 'Roboto Mono', sans-serif;" class="font-light text-sm text-center w-145">SERVER TYPE</div>
+              <div class="font-mono font-light text-sm text-center w-145">SERVER TYPE</div>
               <div class="spinner_holder">
                 <div id="ring2" class="spin_ring">
                   <div class="slot flex flex-col align-center" [style]="getStyle(i)" *ngFor="let item of spinnerContents[1], let i = index" >
@@ -76,7 +76,7 @@
               </div>
             </div>
             <div class="spinner_box_3">
-              <div style="font-family: 'Roboto Mono', sans-serif;" class="font-light text-sm text-center w-145">DATACENTER</div>
+              <div class="font-mono font-light text-sm text-center w-145">DATACENTER</div>
               <div class="spinner_holder">
                 <div id="ring3" class="spin_ring">
                   <div class="slot flex flex-col align-center" [style]="getStyle(i)" *ngFor="let item of spinnerContents[2], let i = index" >
@@ -107,7 +107,7 @@
         <div class="w-2/3 mx-auto my-auto font-bold text-2xl text-center">
           We meticulously monitor cloud providers and flexible server providers, tracking details such as their data centers, availability zones, server offerings, and in-depth pricing options. This comprehensive data is openly accessible through our public databases.
         </div>
-        <div style="font-family: 'Roboto Mono', sans-serif;" class="full flex justify-center mx-auto my-auto text-2xl">Here are some key highlights regarding the information we cover.</div>
+        <div class="font-mono full flex justify-center mx-auto my-auto text-2xl">Here are some key highlights regarding the information we cover.</div>
         <div class="flex gap-24 justify-center">
           <div>
             <img src="https://placehold.co/550x380" >
@@ -189,7 +189,7 @@
           <div class="flex text-4xl gap-1 font-semibold">
             <span class="text-emerald-400"><</span>spare_cores<span class="text-emerald-400">></span> is <span class="text-emerald-400">100% open-source!</span>
           </div>
-          <div style="font-family: 'Roboto Mono', sans-serif;" class="text-2xl">All SC build features are supported out of box.</div>
+          <div class="font-mono text-2xl">All SC build features are supported out of box.</div>
           <div class="text-2xl mt-8 mb-8">
             Spare Cores is still in the early development phase, initiated in Q3 of 2023 and gaining momentum in 2024, particularly due to the support from NGI Search funding.
           </div>
@@ -210,7 +210,7 @@
         <app-theme-text text="project_components" classes="text-4xl justify-center font-light"></app-theme-text>
         <div class="flex gap-4 justify-center">
           <lucide-icon name="github"></lucide-icon>
-          <div style="font-family: 'Roboto Mono', sans-serif;" class="text-2xl text-center">
+          <div class="font-mono text-2xl text-center">
             Here, you can find the status and brief descriptions of all the existing and planned components:
           </div>
         </div>
