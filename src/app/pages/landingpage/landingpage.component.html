@@ -1,7 +1,7 @@
 <div class="w-full">
   <div class="content_section">
     <div class="content">
-      <div class="flex gap-8">
+      <div class="flex gap-8" >
         <div class="flex flex-col gap-12 w-1/2 my-auto">
           <div class="text-4xl font-bold">Harnessing the compute resources of the cloud to <span class="text-emerald-400">optimize efficiency</span> and <span class="text-emerald-400">costs</span> of batch and service tasks.</div>
           <div class="grid grid-cols-3 gap-4">
@@ -13,22 +13,22 @@
             </div>
             <div class="flex gap-4 items-center">
               <div class="bg-white text-emerald-400 py-3 px-3 rounded-lg">
-                <lucide-icon class="h-5 w-5" name="database"></lucide-icon>
+                <lucide-icon class="h-5 w-5" name="box"></lucide-icon>
               </div>
-              <div class="text-white font-bold text-lg">Open Data</div>
+              <div class="text-white font-bold text-lg">Python</div>
             </div>
             <div></div>
             <div class="flex gap-4 items-center">
               <div class="bg-white text-emerald-400 py-3 px-3 rounded-lg">
-                <lucide-icon class="h-5 w-5" name="database"></lucide-icon>
+                <lucide-icon class="h-5 w-5" name="square-kanban"></lucide-icon>
               </div>
-              <div class="text-white font-bold text-lg">Open Data</div>
+              <div class="text-white font-bold text-lg">Benchmark</div>
             </div>
             <div class="flex gap-4 items-center">
               <div class="bg-white text-emerald-400 py-3 px-3 rounded-lg">
-                <lucide-icon class="h-5 w-5" name="database"></lucide-icon>
+                <lucide-icon class="h-5 w-5" name="server"></lucide-icon>
               </div>
-              <div class="text-white font-bold text-lg">Open Data</div>
+              <div class="text-white font-bold text-lg">Run server</div>
             </div>
           </div>
           <div class="flex gap-8">
@@ -36,9 +36,66 @@
             <button class="bg-transparend text-teal-500 py-5 px-5 font-bold">Learn more ></button>
           </div>
         </div>
+        <div class="w-1/2" style="min-height: 600px;">
+          <div class="animated_slot_machine">
+            <div class="outer_border" ></div>
+            <div class="top_wide_border_segment" ></div>
+            <div class="top_bottom_border_segment" ></div>
+            <div style="font-family: 'Roboto Mono', sans-serif;" class="font-light text-lg price_div" >PRICE/HOURS</div>
+            <div style="font-family: 'Roboto Mono', sans-serif;" class="font-light text-sm cpu_div" >CPU</div>
+            <div style="font-family: 'Roboto Mono', sans-serif;" class="font-light text-sm ram_div" >RAM (GB)</div>
+            <button (click)="spinClicked()" id="spin_button" class="spin_button text-white text-3xl text-bold" ></button>
+            <input [(ngModel)]="priceValue" class="input_border price_input bg-primary text-center text-4xl font-bold" readonly >
+            <input [(ngModel)]="cpuCount" step="1" class="input_border cpu_input bg-primary text-center text-3xl font-bold"  >
+            <input [(ngModel)]="ramCount" step="1" class="input_border ram_input bg-primary text-center text-3xl font-bold"  >
+            <div class="spinner_box_1">
+              <div style="font-family: 'Roboto Mono', sans-serif;" class="font-light text-sm text-center w-145">CLOUD VENDOR</div>
+              <div class="spinner_holder">
+                <div id="ring1" class="spin_ring">
+                  <div class="slot flex flex-col align-center" [style]="getStyle(i)" *ngFor="let item of spinnerContents[0], let i = index" >
+                    <div class="slot_inner" [style]="getInnerStyle(i)">
+                      <div class="text-center font-bold text-3xl">{{item.name}}</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="ring_lines" ></div>
+              </div>
+            </div>
+            <div class="spinner_box_2">
+              <div style="font-family: 'Roboto Mono', sans-serif;" class="font-light text-sm text-center w-145">SERVER TYPE</div>
+              <div class="spinner_holder">
+                <div id="ring2" class="spin_ring">
+                  <div class="slot flex flex-col align-center" [style]="getStyle(i)" *ngFor="let item of spinnerContents[1], let i = index" >
+                    <div class="slot_inner" [style]="getInnerStyle(i)">
+                      <div class="text-center font-bold text-xl">{{item.name}}</div>
+                      <div class="text-center">{{item.architecture}}</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="ring_lines" ></div>
+              </div>
+            </div>
+            <div class="spinner_box_3">
+              <div style="font-family: 'Roboto Mono', sans-serif;" class="font-light text-sm text-center w-145">DATACENTER</div>
+              <div class="spinner_holder">
+                <div id="ring3" class="spin_ring">
+                  <div class="slot flex flex-col align-center" [style]="getStyle(i)" *ngFor="let item of spinnerContents[2], let i = index" >
+                    <div class="slot_inner" [style]="getInnerStyle(i)">
+                      <div class="text-center font-bold text-xl">{{item.name}}</div>
+                      <div class="text-center">{{item.city}}</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="ring_lines" ></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--
         <div class="w-1/2">
           <img style="max-height: 608px; object-fit: contain;" src="./assets/images/temp/slotmachine.png" alt="landingpage" class="w-full">
         </div>
+        -->
 
       </div>
     </div>
