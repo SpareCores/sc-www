@@ -5,8 +5,8 @@ import { FullRequestParams, HttpClient as HttpClientSDK, HttpResponse} from "../
 import { firstValueFrom } from "rxjs";
 
 
-const BACKEND_BASE_URI = 'http://keeper.sparecores.net';
-const BACKEND_BASE_URI_SSR = 'http://keeper.sparecores.net';
+const BACKEND_BASE_URI = 'https://keeper.sparecores.net';
+const BACKEND_BASE_URI_SSR = 'https://keeper.sparecores.net';
 const RETRY_INTERVALS = [200, 500, 1000, 2000, 5000, 10000]; // in milliseconds
 
  // swagger-typescript-api
