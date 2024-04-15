@@ -1,0 +1,26 @@
+<div class="flex gap-2 flex-col" >
+<div class="delimiter"> </div>
+<nav class="ml-3">
+  <div class="flex gap-2 text-sm"
+      itemscope
+      itemtype="https://schema.org/BreadcrumbList">
+    <div *ngFor="let item of segments, let i = index" class="flex gap-2">
+      <div *ngIf="i > 0" class="text-emerald-400" > / </div>
+      <div
+          class="breadcrumb-item"
+          itemprop="itemListElement"
+          itemscope
+          itemtype="https://schema.org/ListItem">
+          <a  itemprop="item"
+              routerLink="{{item.url}}"
+              class="text-white">
+            <span itemprop="name">{{item.name}}</span>
+          </a>
+          <meta itemprop="position" content="{{i+1}}" />
+      </div>
+
+    </div>
+  </div>
+</nav>
+<div class="delimiter"> </div>
+</div>
