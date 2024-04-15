@@ -1,1 +1,136 @@
-<p>server-listing works!</p>
+<div class="w-full bg-primary">
+  <div class="content pt-16 pb-16">
+    <app-breadcrumbs [segments]="breadcrumbs"></app-breadcrumbs>
+
+    <div class="flex flex-col gap-4 my-8">
+      <h1 class="text-white font-bold text-3xl">Cloud Compute Resources listing</h1>
+      <div class="text-white text-xl pr-16">
+        Explore, search and evaluate cloud compute resources and pricing in the table below. This comprehensive comparison includes diverse attributes like CPU count, detailed processor information, memory, GPU, storage, network speed and amount, available operating systems, and pricing models such as spot and on-demand. Use the sidebar for filtering the results, or enter your phrase in the “Search prompt” bar.
+      </div>
+    </div>
+
+    <div class="flex gap-8">
+      <div class="filter_bar bg-primary"
+        [ngClass]="{
+          'collapsed': isCollapsed
+        }">
+        <div class="top overflow-hidden bg-secondary">
+          <button class="w-full bg-emerald-400 text-white py-3 rounded-lg font-bold" > Search Prompt </button>
+        </div>
+        <div class="collapser bg-secondary" (click)="toggleCollapse()" >
+          <lucide-icon name="chevron-left" class="h-6 w-6 text-emerald-400"></lucide-icon>
+        </div>
+        <div class="filters overflow-hidden bg-secondary"
+         >
+          <div class="mx-2 p-3 border-b border-gray-200 flex justify-between" *ngFor="let item of filterCategories" >
+            <div class="text-white flex gap-2 items-center">
+              <lucide-icon name="{{item.icon}}" class="h-4 w-4 text-white"></lucide-icon>
+              <div class="text-sm">{{item.name}}</div>
+            </div>
+            <div>
+              <lucide-icon name="chevron-down" class="h-4 w-4 text-white"></lucide-icon>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="list_holder flex flex-col gap-4">
+        <div class="top_buttons w-full flex justify-end gap-6" >
+          <button
+            id="dropdownDefaultButton"
+            data-dropdown-toggle="dropdown"
+            class="dropdown_button"
+            type="button">
+            <div class="px-4 py-3">
+             Daily price
+            </div>
+            <div class="w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
+              <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
+            </div>
+          </button>
+          <button
+            id="dropdownDefaultButton"
+            data-dropdown-toggle="dropdown"
+            class="dropdown_button"
+            type="button">
+            <div class="px-4 py-3">
+            Ondemand
+            </div>
+            <div class="w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
+              <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
+            </div>
+          </button>
+          <button
+            id="dropdownDefaultButton"
+            data-dropdown-toggle="dropdown"
+            class="dropdown_button"
+            type="button">
+            <div class="px-4 py-3">
+            Columns
+            </div>
+            <div class="w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
+              <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
+            </div>
+          </button>
+        </div>
+        <div>
+          <table class="items_table">
+            <thead>
+              <tr>
+                <th>NAME & PROVIDER</th>
+                <th>PROCESSOR</th>
+                <th>PRODUCT</th>
+                <th>MEMORY</th>
+                <th>STORAGE</th>
+                <th>STOCK</th>
+                <th>PRICE</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of servers">
+                <td>
+                  <div class="text-sm text-white">{{item.server.name}} </div>
+                  <div class="text-xs text-white flex gap-1"> <span>{{item.server_id}}</span> <span class="text-emerald-400" >|</span> <span>Hosted by:{{item.vendor_id}}</span> </div>
+                </td>
+                <td>
+                  <div class="text-sm text-white">{{item.server.cpu_cores}}x {{item.server.cpu_architecture}}</div>
+                  <div class="text-xs text-white flex gap-1"> <span>{{item.server.cpu_cores}} cores at {{item.server.cpu_speed}} Ghz</span> </div>
+                </td>
+                <td>Dedicated</td>
+                <td>{{getMemory(item)}}</td>
+                <td>{{getStorage(item)}}</td>
+                <td>In stock</td>
+                <td>{{item.price}} USD</td>
+                <td>
+                  <button >
+                    <lucide-icon name="chevron-right" class="h-6 w-6 text-emerald-400"></lucide-icon>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+ <!-- Dropdown menu -->
+ <div id="dropdown" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
+  <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
+    <li>
+      <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Dashboard</a>
+    </li>
+    <li>
+      <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Settings</a>
+    </li>
+    <li>
+      <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Earnings</a>
+    </li>
+    <li>
+      <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Sign out</a>
+    </li>
+  </ul>
+</div>
