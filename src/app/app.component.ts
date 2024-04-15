@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { Component, Inject, PLATFORM_ID } from '@angular/core';
+import { initFlowbite } from 'flowbite';
 import { register } from 'swiper/element/bundle';
 
 @Component({
@@ -9,11 +11,14 @@ import { register } from 'swiper/element/bundle';
 export class AppComponent {
   title = 'sc-www';
 
-  constructor() {
+  constructor(@Inject(PLATFORM_ID) private platformId: object,) {
 
   }
 
   ngOnInit() {
     register();
+    if (isPlatformBrowser(this.platformId)) {
+      initFlowbite();
+    }
   }
 }
