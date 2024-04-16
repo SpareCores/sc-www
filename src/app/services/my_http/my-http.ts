@@ -8,6 +8,7 @@ import { firstValueFrom } from "rxjs";
 const BACKEND_BASE_URI = 'http://localhost:8000';
 const BACKEND_BASE_URI_SSR = 'http://localhost:8000';
 const RETRY_INTERVALS = [200, 500, 1000, 2000, 5000, 10000]; // in milliseconds
+const RETRY_INTERVALS_SSR = [100, 200]; // in milliseconds
 
  // swagger-typescript-api
  export class MYHTTPClient<Data> extends HttpClientSDK {
@@ -72,9 +73,9 @@ const RETRY_INTERVALS = [200, 500, 1000, 2000, 5000, 10000]; // in milliseconds
 
           return response;
       } catch (err: any) {
-          if (retry < RETRY_INTERVALS.length) {
+          if (retry < (isPlatformBrowser(this.platformId) ? RETRY_INTERVALS.length : RETRY_INTERVALS_SSR.length)) {
               console.log('Retrying request...');
-              await new Promise(resolve => setTimeout(resolve, RETRY_INTERVALS[retry]));
+              await new Promise(resolve => setTimeout(resolve, isPlatformBrowser(this.platformId) ? RETRY_INTERVALS[retry] : RETRY_INTERVALS_SSR[retry]));
               return this._requestWithRetries(method, url, body, headers, retry + 1);
           } else {
             console.log('API exception');
