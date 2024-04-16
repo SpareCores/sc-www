@@ -20,20 +20,57 @@
         <div class="collapser bg-secondary" (click)="toggleCollapse()" >
           <lucide-icon name="chevron-left" class="h-6 w-6 text-emerald-400"></lucide-icon>
         </div>
-        <div class="filters overflow-hidden bg-secondary"
-         >
-          <div class="mx-2 p-3 border-b border-gray-200 flex justify-between" *ngFor="let item of filterCategories" >
-            <div class="text-white flex gap-2 items-center">
-              <lucide-icon name="{{item.icon}}" class="h-4 w-4 text-white"></lucide-icon>
-              <div class="text-sm">{{item.name}}</div>
+        <div class="filters overflow-hidden bg-secondary">
+          <div class="mx-2 p-3 border-b border-gray-200 " *ngFor="let item of filterCategories" >
+            <div class="flex justify-between cursor-pointer" (click)="toggleCategory(item)">
+              <div class="text-white flex gap-2 items-center">
+                <lucide-icon name="{{item.icon}}" class="h-4 w-4 text-white"></lucide-icon>
+                <div class="text-sm">{{item.name}}</div>
+              </div>
+              <div>
+                <lucide-icon name="chevron-down" class="h-4 w-4 text-white"></lucide-icon>
+              </div>
             </div>
-            <div>
-              <lucide-icon name="chevron-down" class="h-4 w-4 text-white"></lucide-icon>
+            <div *ngIf="!item.collapsed" class="pt-4">
+              <div *ngFor="let parameter of getParametersByCategory(item.category_id)" >
+                <div class="font-bold text-emerald-400 text-sm">{{parameter.schema.title}}</div>
+                <div *ngIf="getParamterType(parameter) === 'range'" class="mb-4 mt-4" >
+                  <div class="text-white text-sm" *ngIf="parameter.modelValue">{{parameter.modelValue}} {{parameter.schema.unit}}</div>
+                  <input type="range" min="{{parameter.schema.minimum}}" max="{{parameter.schema.maximum}}" step="{{getStep(parameter)}}"
+                    [(ngModel)]="parameter.modelValue"
+                    (ngModelChange)="filterServers()"
+                    class="w-full h-2 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm">
+                </div>
+                <div *ngIf="getParamterType(parameter) === 'number'" class="mb-4 mt-4 relative" >
+                  <input type="number" step="{{getStep(parameter)}}"
+                    [(ngModel)]="parameter.modelValue"
+                    (ngModelChange)="filterServers()"
+                    class="w-full h-8 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm pr-8">
+                  <span *ngIf="parameter.schema.unit" class="unit text-gray-600">{{parameter.schema.unit}}</span>
+                </div>
+                <div *ngIf="getParamterType(parameter) === 'text'" class="mb-4 mt-4" >
+                  <input type="text"
+                    [(ngModel)]="parameter.modelValue"
+                    (ngModelChange)="filterServers()"
+                    class="w-full h-8 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm">
+                </div>
+                <div *ngIf="getParamterType(parameter) === 'checkbox'" class="mb-4 mt-4" >
+                  <input type="checkbox"
+                    [(ngModel)]="parameter.modelValue"
+                    (ngModelChange)="filterServers()"
+                    class="accent-emerald-400 text-emerald-400 outline-none" >
+                    <div class="text-white text-sm">{{parameter.schema.description}}</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="list_holder flex flex-col gap-4">
+      <div class=" list_holder flex flex-col gap-4"
+          [ngClass]="{
+            'limited-full': !isCollapsed,
+            'w-full': isCollapsed
+          }">
         <div class="top_buttons w-full flex justify-end gap-6" >
           <button
             id="dropdownDefaultButton"

@@ -42,7 +42,6 @@ $content-max-width: 1400px;
 }
 
 :root {
-
   --swiper-pagination-color: #34D399;
   --swiper-pagination-bullet-size: 8px;
   --swiper-pagination-bullet-width: 8px;
@@ -52,6 +51,37 @@ $content-max-width: 1400px;
   --swiper-pagination-bullet-opacity: 1;
   --swiper-pagination-bullet-horizontal-gap: 4px;
   --swiper-pagination-bullet-vertical-gap: 6px;
+}
+
+input[type=range]::-webkit-slider-thumb {
+  background: #34d399; /* This is the color for emerald-400 in Tailwind CSS */
+}
+
+input[type=range]::-moz-range-thumb {
+  background: #34d399;
+}
+
+input[type=range]::-ms-thumb {
+  background: #34d399;
+}
+
+
+input[type=range]::-moz-range-progress {
+  background: #34d399; /* This is the color for emerald-400 in Tailwind CSS */
+}
+
+input[type=range]::-ms-fill-upper {
+  background: #34d399;
+}
+
+input[type=number] {
+  -webkit-appearance: textfield; /* This removes the default browser styling */
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none; /* This hides the spinners */
+  margin: 0; /* This removes the extra space created by the spinners */
 }
 
 @keyframes spin {

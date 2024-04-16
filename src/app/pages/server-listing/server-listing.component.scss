@@ -38,10 +38,15 @@
 
 .filter_bar.collapsed {
   width: 0rem;
+  min-width: unset;
 }
 
 .top_buttons {
   height: 4rem;
+}
+
+.limited-full {
+  width: calc(100% - 20rem);
 }
 
 .items_table {
@@ -76,4 +81,11 @@
   transition-duration: 0.15s;
   transition-property: background-color, border-color, box-shadow, color;
   transition-timing-function: ease-in;
+}
+
+.unit {
+  position: absolute;
+  right: 0.5rem;
+  top: 2.25rem;
+  transform: translateY(-2rem);
 }
