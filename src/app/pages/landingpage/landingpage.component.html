@@ -44,10 +44,15 @@
             <div class="font-mono font-light text-lg price_div" >PRICE/HOURS</div>
             <div class="font-mono font-light text-sm cpu_div" >CPU</div>
             <div class="font-mono font-light text-sm ram_div" >RAM (GB)</div>
-            <button (click)="spinClicked()" id="spin_button" class="spin_button text-white text-3xl text-bold" ></button>
-            <input [(ngModel)]="priceValue" class="input_border price_input bg-primary text-center text-4xl font-bold" readonly >
-            <input [(ngModel)]="cpuCount" step="1" class="input_border cpu_input bg-primary text-center text-3xl font-bold"  >
-            <input [(ngModel)]="ramCount" step="1" class="input_border ram_input bg-primary text-center text-3xl font-bold"  >
+            <div  class="container">
+              <button class="button font-bold text-3xl" (click)="spinClicked()">SPIN</button>
+              <div class="button__bottom"></div>
+            </div>
+            <input [(ngModel)]="priceValue" class="input_border price_input bg-primary text-center text-4xl font-bold text-gray-200" readonly disabled >
+            <input [(ngModel)]="cpuCount" step="1" class="input_border cpu_input bg-primary text-center text-3xl font-bold"
+              [disabled]="isSpinning" >
+            <input [(ngModel)]="ramCount" step="1" class="input_border ram_input bg-primary text-center text-3xl font-bold"
+              [disabled]="isSpinning"  >
             <div class="spinner_box_1">
               <div class="font-mono font-light text-sm text-center w-145">CLOUD VENDOR</div>
               <div class="spinner_holder">
