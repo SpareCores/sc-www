@@ -60,7 +60,7 @@
                   <div class="slot flex flex-col align-center" [style]="getStyle(i)" *ngFor="let item of spinnerContents[0], let i = index" >
                     <div class="slot_inner" [style]="getInnerStyle(i)">
                       <div *ngIf="!item.logo" class="text-center font-bold text-3xl">{{item.name}}</div>
-                      <img *ngIf="item.logo" src="{{item.logo}}" class="px-2 py-2 rounded-lg">
+                      <img *ngIf="item.logo" src="{{item.logo}}" style="margin: 0.5rem;" class="rounded-lg">
                     </div>
                   </div>
                 </div>
