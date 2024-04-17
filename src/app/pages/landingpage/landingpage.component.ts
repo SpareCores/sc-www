@@ -138,6 +138,16 @@ export class LandingpageComponent {
             // move spin_button up and down a bit to attact attention
             const spinButton = document.getElementById('spin_button');
             if (spinButton) {
+              spinButton.style.animation = 'press 1s';
+            }
+          }
+        }, startingDelay);
+
+        setTimeout(() => {
+          if(!this.spinnerClicked) {
+            // move spin_button up and down a bit to attact attention
+            const spinButton = document.getElementById('spin_button');
+            if (spinButton) {
               spinButton.style.animation = 'bounce 1s 3';
             }
           }

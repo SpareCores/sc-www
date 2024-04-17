@@ -103,10 +103,19 @@ input[type=number]::-webkit-outer-spin-button {
     transform: translateY(0);
   }
   40% {
-    transform: translateY(-15px);
+    transform: translateY(6px);
   }
   60% {
-    transform: translateY(-7px);
+    transform: translateY(3px);
+  }
+}
+
+@keyframes press {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(6px);
   }
 }
 
