@@ -25,7 +25,6 @@ export class KeeperAPIService {
   }
 
   public searchServers(query: SearchServerSearchGetParams): Promise<SearchServerSearchGetData> {
-    console.log('Searching servers with query:', query);
     return this.SearchController.searchServerSearchGet(query) as any  as Promise<SearchServerSearchGetData>;
   }
 

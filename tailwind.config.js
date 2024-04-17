@@ -15,6 +15,7 @@ module.exports = {
       },
       colors: {
         'default': '#fff',
+        'emerald-480': '#1a9f7a',
       },
       height: {
         '260': '260px'

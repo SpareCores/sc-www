@@ -1,117 +1,221 @@
 export const spinner_initial_data = [
   [
     {
-      "name": "AWS"
+      "name": "AWS",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
     },
     {
-      "name": "AWS"
+      "name": "AWS",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
     },
     {
-      "name": "AWS"
+      "name": "AWS",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
     },
     {
-      "name": "AWS"
+      "name": "AWS",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
     },
     {
-      "name": "AWS"
+      "name": "AWS",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
     },
     {
-      "name": "AWS"
+      "name": "AWS",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
     },
     {
-      "name": "AWS"
+      "name": "AWS",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
     },
     {
-      "name": "AWS"
+      "name": "AWS",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
     },
     {
-      "name": "AWS"
+      "name": "AWS",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
     },
     {
-      "name": "AWS"
+      "name": "AWS",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
     },
     {
-      "name": "AWS"
+      "name": "AWS",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
     },
     {
-      "name": "AWS"
+      "name": "AWS",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
     },
     {
-      "name": "AWS"
+      "name": "AWS",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
     },
     {
-      "name": "AWS"
+      "name": "AWS",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
     },
     {
-      "name": "AWS"
+      "name": "AWS",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
     },
     {
-      "name": "AWS"
+      "name": "AWS",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
     },
     {
-      "name": "AWS"
+      "name": "AWS",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
     },
     {
-      "name": "AWS"
+      "name": "AWS",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
     },
     {
-      "name": "AWS"
+      "name": "AWS",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
     },
     {
-      "name": "AWS"
+      "name": "AWS",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
     },
     {
-      "name": "AWS"
+      "name": "AWS",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
     },
     {
-      "name": "AWS"
+      "name": "AWS",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
     },
     {
-      "name": "AWS"
+      "name": "AWS",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
     },
     {
-      "name": "AWS"
+      "name": "AWS",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
     },
     {
-      "name": "AWS"
+      "name": "AWS",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
     },
     {
-      "name": "AWS"
+      "name": "AWS",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
     },
     {
-      "name": "AWS"
+      "name": "AWS",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
     },
     {
-      "name": "AWS"
+      "name": "AWS",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
     },
     {
-      "name": "AWS"
+      "name": "AWS",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
     },
     {
-      "name": "AWS"
+      "name": "AWS",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
     },
     {
-      "name": "AWS"
+      "name": "AWS",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
     },
     {
-      "name": "AWS"
+      "name": "AWS",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
     },
     {
-      "name": "AWS"
+      "name": "AWS",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
     },
     {
-      "name": "AWS"
+      "name": "AWS",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
     },
     {
-      "name": "AWS"
+      "name": "AWS",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
     },
     {
-      "name": "AWS"
+      "name": "AWS",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
     }
   ],
   [
     {
-      "name": "t4g.medium",
+      "name": "t4g.micro",
+      "architecture": "arm64"
+    },
+    {
+      "name": "t4g.small",
+      "architecture": "arm64"
+    },
+    {
+      "name": "t4g.large",
+      "architecture": "arm64"
+    },
+    {
+      "name": "t4g.xlarge",
+      "architecture": "arm64"
+    },
+    {
+      "name": "m7a.medium",
+      "architecture": "arm64"
+    },
+    {
+      "name": "m7a.large",
+      "architecture": "arm64"
+    },
+    {
+      "name": "m7a.2xlarge",
+      "architecture": "arm64"
+    },
+    {
+      "name": "t3a.nano",
+      "architecture": "arm64"
+    },
+    {
+      "name": "t3a.small",
+      "architecture": "arm64"
+    },
+    {
+      "name": "t3a.medium",
+      "architecture": "arm64"
+    },
+    {
+      "name": "t3a.large",
+      "architecture": "arm64"
+    },
+    {
+      "name": "m4.large",
+      "architecture": "arm64"
+    },
+    {
+      "name": "m4.xlarge",
+      "architecture": "arm64"
+    },
+    {
+      "name": "t2.small",
+      "architecture": "arm64"
+    },
+    {
+      "name": "t2.medium",
+      "architecture": "arm64"
+    },
+    {
+      "name": "t2.large",
+      "architecture": "arm64"
+    },
+    {
+      "name": "t2.xlarge",
+      "architecture": "arm64"
+    },
+    {
+      "name": "t2.2xlarge",
       "architecture": "arm64"
     },
     {
@@ -139,83 +243,15 @@ export const spinner_initial_data = [
       "architecture": "arm64"
     },
     {
-      "name": "t4g.medium",
+      "name": "c6a.large",
       "architecture": "arm64"
     },
     {
-      "name": "t4g.medium",
+      "name": "c6a.xlarge",
       "architecture": "arm64"
     },
     {
-      "name": "t4g.medium",
-      "architecture": "arm64"
-    },
-    {
-      "name": "t4g.medium",
-      "architecture": "arm64"
-    },
-    {
-      "name": "t4g.medium",
-      "architecture": "arm64"
-    },
-    {
-      "name": "t4g.medium",
-      "architecture": "arm64"
-    },
-    {
-      "name": "t4g.medium",
-      "architecture": "arm64"
-    },
-    {
-      "name": "t4g.medium",
-      "architecture": "arm64"
-    },
-    {
-      "name": "t4g.medium",
-      "architecture": "arm64"
-    },
-    {
-      "name": "t4g.medium",
-      "architecture": "arm64"
-    },
-    {
-      "name": "t4g.medium",
-      "architecture": "arm64"
-    },
-    {
-      "name": "t4g.medium",
-      "architecture": "arm64"
-    },
-    {
-      "name": "t4g.medium",
-      "architecture": "arm64"
-    },
-    {
-      "name": "t4g.medium",
-      "architecture": "arm64"
-    },
-    {
-      "name": "t4g.medium",
-      "architecture": "arm64"
-    },
-    {
-      "name": "t4g.medium",
-      "architecture": "arm64"
-    },
-    {
-      "name": "t4g.medium",
-      "architecture": "arm64"
-    },
-    {
-      "name": "t4g.medium",
-      "architecture": "arm64"
-    },
-    {
-      "name": "t4g.medium",
-      "architecture": "arm64"
-    },
-    {
-      "name": "t4g.medium",
+      "name": "c6a.2xlarge",
       "architecture": "arm64"
     },
     {
@@ -247,11 +283,11 @@ export const spinner_initial_data = [
       "architecture": "x86_64"
     },
     {
-      "name": "t4g.medium",
+      "name": "c5n.large",
       "architecture": "arm64"
     },
     {
-      "name": "t4g.medium",
+      "name": "c5n.2xlarge",
       "architecture": "arm64"
     }
   ],
