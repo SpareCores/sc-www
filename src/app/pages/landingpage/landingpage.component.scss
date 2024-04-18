@@ -259,10 +259,7 @@
     z-index: 2;
   }
 
-  .container > .button:active,
-  .container > .button:focus-visible {
-    transform: translateY(6px);
-  }
+
 
   input:disabled {
     @apply text-gray-200;

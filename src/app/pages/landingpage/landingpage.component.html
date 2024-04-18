@@ -45,7 +45,11 @@
             <div class="font-mono font-light text-sm cpu_div" >CPU</div>
             <div class="font-mono font-light text-sm ram_div" >RAM (GB)</div>
             <div  class="container">
-              <button id="spin_button" class="button font-bold text-3xl" (click)="spinClicked()">SPIN</button>
+              <button id="spin_button"
+                class="button font-bold text-3xl"
+                [disabled]="isSpinning"
+                (click)="spinClicked()">SPIN
+              </button>
               <div class="button__bottom"></div>
             </div>
             <input [(ngModel)]="priceValue" class="input_border price_input bg-primary text-center text-4xl font-bold text-gray-200" readonly disabled >

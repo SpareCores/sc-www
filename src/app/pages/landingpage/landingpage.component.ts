@@ -133,15 +133,6 @@ export class LandingpageComponent {
     this.keeperAPI.searchServers({vcpus_min: this.cpuCount, memory_min: this.ramCount * 1024, limit: 100}).then(servers => {
 
       if(!this.spinnerClicked) {
-        setTimeout(() => {
-          if(!this.spinnerClicked) {
-            // move spin_button up and down a bit to attact attention
-            const spinButton = document.getElementById('spin_button');
-            if (spinButton) {
-              spinButton.style.animation = 'press 1s';
-            }
-          }
-        }, startingDelay);
 
         setTimeout(() => {
           if(!this.spinnerClicked) {
@@ -212,6 +203,12 @@ export class LandingpageComponent {
       }
     }
 
+    // move spin_button up and down a bit to attact attention
+    const spinButton = document.getElementById('spin_button');
+    if (spinButton) {
+      spinButton.style.animation = 'press 2.5s';
+    }
+
     const spinners = ['ring1', 'ring2', 'ring3'];
     spinners.forEach((spinner, i) => {
       const el = document.getElementById(spinner);
@@ -252,6 +249,11 @@ export class LandingpageComponent {
     }, 500);
 
     setTimeout(() => {
+      const spinButton = document.getElementById('spin_button');
+      if (spinButton) {
+        spinButton.style.animation = 'none';
+      }
+
       spinners.forEach(spinner => {
         const el = document.getElementById(spinner);
         if (el) {
