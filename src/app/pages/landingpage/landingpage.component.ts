@@ -55,7 +55,7 @@ export class LandingpageComponent {
     },
     {
       component: 'SC Inspector',
-      status: 'pre-alpha',
+      status: 'planning',
       description: 'Inspect and benchmark cloud resources.'
     },
     {
@@ -68,7 +68,8 @@ export class LandingpageComponent {
     {
       component: 'SC Keeper',
       status: 'pre-alpha',
-      description: 'API to search the Data.'
+      description: 'API to search the Data.',
+      github: 'sc-keeper',
     },
     {
       component: 'SC Scanner',
@@ -78,7 +79,7 @@ export class LandingpageComponent {
     },
     {
       component: 'SC Runner',
-      status: 'pre-alpha',
+      status: 'planning',
       description: 'Launching actual cloud instances.'
     }
   ];
