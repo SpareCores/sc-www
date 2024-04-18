@@ -146,6 +146,12 @@ export class LandingpageComponent {
         }, startingDelay + 7000);
 
         setTimeout(() => {
+
+          const spinButton = document.getElementById('spin_button');
+          if (spinButton) {
+            spinButton.style.animation = 'press 2.5s';
+          }
+
           this.spinAnim(servers, true);
         }, startingDelay);
       }
@@ -181,6 +187,11 @@ export class LandingpageComponent {
       this.ramCount = this.MAX_RAM_COUNT;
     }
 
+    const spinButton = document.getElementById('spin_button');
+    if (spinButton) {
+      spinButton.style.animation = 'press 2.5s';
+    }
+
     this.keeperAPI.searchServers({vcpus_min: this.cpuCount, memory_min: this.ramCount * 1024, limit: 100}).then(servers => {
       console.log('Servers:', servers);
       this.spinAnim(servers);
@@ -197,17 +208,6 @@ export class LandingpageComponent {
 
     if(!isFake) {
       this.spinnerClicked = true;
-
-      const spinButton = document.getElementById('spin_button');
-      if (spinButton) {
-        spinButton.style.animation = 'none';
-      }
-    }
-
-    // move spin_button up and down a bit to attact attention
-    const spinButton = document.getElementById('spin_button');
-    if (spinButton) {
-      spinButton.style.animation = 'press 2.5s';
     }
 
     const spinners = ['ring1', 'ring2', 'ring3'];
