@@ -2,7 +2,7 @@ import { Component, Inject, PLATFORM_ID } from '@angular/core';
 import { ArticleMeta, ArticlesService } from '../../services/articles.service';
 import { isPlatformBrowser } from '@angular/common';
 import { KeeperAPIService } from '../../services/keeper-api.service';
-import { spinner_initial_data } from './spinner_initial_data';
+import { spinner_initial_data } from '../../tools/spinner_initial_data';
 import { SearchServerSearchGetData } from '../../../../sdk/data-contracts';
 
 @Component({
@@ -104,6 +104,7 @@ export class LandingpageComponent {
               private articles: ArticlesService) { }
 
   ngOnInit() {
+
     if (isPlatformBrowser(this.platformId)) {
       this.articles.getArticlesByType('featured').then(articles => {
         this.featuredArticles = articles;
@@ -266,5 +267,4 @@ export class LandingpageComponent {
       this.isSpinning = false;
     }, 4200)
   }
-
 }

@@ -2,6 +2,9 @@ import { Component, Inject, PLATFORM_ID } from '@angular/core';
 import { BreadcrumbSegment } from '../../components/breadcrumbs/breadcrumbs.component';
 import { KeeperAPIService } from '../../services/keeper-api.service';
 import { ServerPriceWithPKs } from '../../../../sdk/data-contracts';
+import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
+import { decodeQueryParams, encodeQueryParams } from '../../tools/queryParamFunctions';
+import { encode } from 'punycode';
 
 @Component({
   selector: 'app-server-listing',
@@ -29,10 +32,13 @@ export class ServerListingComponent {
   openApiJson: any = require('../../../../sdk/openapi.json');
   searchParameters: any;
 
+  valueChangeDebouncer: Subject<number> = new Subject<number>();
+
   constructor(@Inject(PLATFORM_ID) private platformId: object,
               private keeperAPI: KeeperAPIService) { }
 
   ngOnInit() {
+
     this.keeperAPI.searchServers({limit: 25}).then(servers => {
       this.servers = servers;
       console.log('Servers:', servers);
@@ -42,14 +48,22 @@ export class ServerListingComponent {
 
     console.log('OpenAPI JSON:', this.openApiJson);
 
+    const search = location.search.substring(1);
+    const query = decodeQueryParams(search);
+
     if(this.openApiJson.paths['/search'].get.parameters) {
       this.searchParameters = JSON.parse(JSON.stringify(this.openApiJson.paths['/search'].get.parameters)).map((item: any) => {
         return {...item,
-          modelValue: item.schema.default || null,};
+          modelValue: query[item.name] || item.schema.default || null};
       });
     }
 
     console.log('Search parameters:', this.searchParameters);
+
+    this.valueChangeDebouncer.pipe(debounceTime(300)).subscribe((value) => {
+     this.filterServers();
+    });
+
   }
 
   toggleCollapse() {
@@ -98,5 +112,25 @@ export class ServerListingComponent {
   filterServers() {
     console.log('Filtering servers');
     console.log(this.searchParameters);
+    let query = this.updateQueryParams();
+    if(query?.length) {
+      // update the URL
+      window.history.pushState({}, '', '/servers?' + query);
+    }
   }
+
+  valueChanged() {
+    this.valueChangeDebouncer.next(0);
+  }
+
+  updateQueryParams(): string | null {
+    let paramObject = this.searchParameters?.map((param: any) => {
+      return (param.modelValue && param.schema.category_id && param.schema.default !== param.modelValue) ?
+              {[param.name]: param.modelValue} :
+              {};
+    }).reduce((acc: any, curr: any) => {  return {...acc, ...curr}; }, {});
+
+    return encodeQueryParams(paramObject);
+  }
+
 }

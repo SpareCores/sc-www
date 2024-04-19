@@ -38,20 +38,20 @@
                   <div class="text-white text-sm" *ngIf="parameter.modelValue">{{parameter.modelValue}} {{parameter.schema.unit}}</div>
                   <input type="range" min="{{parameter.schema.minimum}}" max="{{parameter.schema.maximum}}" step="{{getStep(parameter)}}"
                     [(ngModel)]="parameter.modelValue"
-                    (ngModelChange)="filterServers()"
+                    (ngModelChange)="valueChanged()"
                     class="w-full h-2 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm">
                 </div>
                 <div *ngIf="getParamterType(parameter) === 'number'" class="mb-4 mt-4 relative" >
                   <input type="number" step="{{getStep(parameter)}}"
                     [(ngModel)]="parameter.modelValue"
-                    (ngModelChange)="filterServers()"
+                    (ngModelChange)="valueChanged()"
                     class="w-full h-8 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm pr-8">
                   <span *ngIf="parameter.schema.unit" class="unit text-gray-600">{{parameter.schema.unit}}</span>
                 </div>
                 <div *ngIf="getParamterType(parameter) === 'text'" class="mb-4 mt-4" >
                   <input type="text"
                     [(ngModel)]="parameter.modelValue"
-                    (ngModelChange)="filterServers()"
+                    (ngModelChange)="valueChanged()"
                     class="w-full h-8 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm">
                 </div>
                 <div *ngIf="getParamterType(parameter) === 'checkbox'" class="mb-4 mt-4" >
