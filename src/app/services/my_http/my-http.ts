@@ -3,10 +3,10 @@ import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Inject, PLATFORM_ID } from "@angular/core";
 import { FullRequestParams, HttpClient as HttpClientSDK, HttpResponse} from "../../../../sdk/http-client";
 import { firstValueFrom } from "rxjs";
+import { BACKEND_BASE_URI, BACKEND_BASE_URI_SSR,  } from "../../../../.env";
 
 
-const BACKEND_BASE_URI = 'https://keeper.sparecores.net';
-const BACKEND_BASE_URI_SSR = 'https://keeper.sparecores.net';
+
 const RETRY_INTERVALS = [200, 500, 1000, 2000, 5000, 10000]; // in milliseconds
 const RETRY_INTERVALS_SSR = [100, 200]; // in milliseconds
 
