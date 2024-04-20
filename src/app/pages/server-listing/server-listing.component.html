@@ -71,43 +71,46 @@
             'limited-full': !isCollapsed,
             'w-full': isCollapsed
           }">
-        <div class="top_buttons w-full flex justify-end gap-6" >
-          <button
-            id="dropdownDefaultButton"
-            data-dropdown-toggle="dropdown"
-            class="dropdown_button"
-            type="button">
-            <div class="px-4 py-3">
-             Daily price
-            </div>
-            <div class="w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
-              <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
-            </div>
-          </button>
-          <button
-            id="dropdownDefaultButton"
-            data-dropdown-toggle="dropdown"
-            class="dropdown_button"
-            type="button">
-            <div class="px-4 py-3">
-            Ondemand
-            </div>
-            <div class="w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
-              <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
-            </div>
-          </button>
-          <button
-            id="dropdownDefaultButton"
-            data-dropdown-toggle="dropdown"
-            class="dropdown_button"
-            type="button">
-            <div class="px-4 py-3">
-            Columns
-            </div>
-            <div class="w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
-              <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
-            </div>
-          </button>
+        <div class="top_buttons w-full flex justify-end gap-6 items-center" >
+          <div>
+            <button
+              data-dropdown-toggle="price_options"
+              class="dropdown_button"
+              type="button">
+              <div class="px-4 py-3">
+              Daily price
+              </div>
+              <div class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
+                <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
+              </div>
+            </button>
+          </div>
+          <div>
+            <button
+              data-dropdown-toggle="rental_type"
+              class="dropdown_button"
+              type="button">
+              <div class="px-4 py-3">
+              Ondemand
+              </div>
+              <div class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
+                <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
+              </div>
+            </button>
+          </div>
+          <div>
+            <button
+              data-dropdown-toggle="currency_options"
+              class="dropdown_button"
+              type="button">
+              <div class="px-4 py-3">
+              Columns
+              </div>
+              <div class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
+                <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
+              </div>
+            </button>
+          </div>
         </div>
         <div>
           <table class="items_table">
@@ -155,7 +158,41 @@
 </div>
 
  <!-- Dropdown menu -->
- <div id="dropdown" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
+ <div id="price_options" class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid">
+  <ul class="py-2 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
+    <li>
+      <div class="cursor-poniter text-white block px-4 py-2 hover:bg-primary">Dashboard</div>
+    </li>
+    <li>
+      <div class="cursor-poniter text-white block px-4 py-2 hover:bg-primary">Settings</div>
+    </li>
+    <li>
+      <div class="cursor-poniter text-white block px-4 py-2 hover:bg-primary">Earnings</div>
+    </li>
+    <li>
+      <div class="cursor-poniter text-white block px-4 py-2 hover:bg-primary">Sign out</div>
+    </li>
+  </ul>
+</div>
+
+<div id="rental_type" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
+  <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
+    <li>
+      <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Dashboard</a>
+    </li>
+    <li>
+      <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Settings</a>
+    </li>
+    <li>
+      <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Earnings</a>
+    </li>
+    <li>
+      <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Sign out</a>
+    </li>
+  </ul>
+</div>
+
+<div id="currency_options" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
   <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
     <li>
       <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Dashboard</a>
