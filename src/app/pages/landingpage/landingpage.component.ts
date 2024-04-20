@@ -119,13 +119,6 @@ export class LandingpageComponent {
         spinner3.push({name: 'US East', city: 'Ashburn'});
       }
       this.welcomeAnim();
-
-      // test query remove it later
-      this.keeperAPI.getServer('aws', 'a1.2xlarge').then(server => {
-        console.log('Server:', server);
-      }).catch(err => {
-        console.error(err);
-      });
     }
   }
 
