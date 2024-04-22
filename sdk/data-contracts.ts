@@ -773,21 +773,33 @@ export type ReadServerServerVendorIdServerIdGetData = ServerPKs;
 
 export interface SearchServerSearchGetParams {
   /**
-   * Vcpus Min
+   * Processor number
    * Minimum number of virtual CPUs.
+   * @min 1
+   * @max 128
    * @default 1
    */
   vcpus_min?: number;
   /**
-   * Memory Min
+   * Memory amount
    * Minimum amount of memory in MBs.
    */
   memory_min?: number | null;
   /**
-   * Price Max
+   * Maximum price
    * Maximum price (USD/hr).
    */
   price_max?: number | null;
+  /**
+   * Active only
+   * Show only active servers
+   */
+  only_active?: boolean | null;
+  /**
+   * Green energy
+   * Low CO2 emission only.
+   */
+  green_energy?: boolean | null;
   /**
    * Limit
    * Maximum number of results. Set to -1 for unlimited
