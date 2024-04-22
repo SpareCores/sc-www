@@ -2,7 +2,7 @@ import { CUSTOM_ELEMENTS_SCHEMA, NgModule, Pipe } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { HeaderComponent } from './layout/header/header.component';
-import { LucideAngularModule, PcCase, Hotel, Home, Search, User, Github, Linkedin, Codesandbox, Database, Facebook, Twitter, Check, Box, SquareKanban, Server, BookText, ChevronLeft, DollarSign, Cpu, ChevronDown, ChevronRight, MemoryStick } from 'lucide-angular';
+import { LucideAngularModule, PcCase, Hotel, Home, Search, User, Github, Linkedin, Codesandbox, Database, Facebook, Twitter, Check, Box, SquareKanban, Server, BookText, ChevronLeft, DollarSign, Cpu, ChevronDown, ChevronRight, MemoryStick, ArrowDownNarrowWide, ArrowDownWideNarrow } from 'lucide-angular';
 import { AppComponent } from './app.component';
 import { routes } from './app.routes';
 import { BrowserModule, provideClientHydration } from '@angular/platform-browser';
@@ -50,7 +50,9 @@ import { ServerListingComponent } from './pages/server-listing/server-listing.co
       Cpu,
       ChevronDown,
       ChevronRight,
-      MemoryStick
+      MemoryStick,
+      ArrowDownNarrowWide,
+      ArrowDownWideNarrow
     }),
     CommonModule,
     FormsModule,
