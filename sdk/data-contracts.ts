@@ -781,6 +781,11 @@ export interface SearchServerSearchGetParams {
    */
   vcpus_min?: number;
   /**
+   * Processor architecture
+   * Processor architecture.
+   */
+  architecture?: "arm64" | "arm64_mac" | "i386" | "x86_64" | "x86_64_mac";
+  /**
    * Memory amount
    * Minimum amount of memory in MBs.
    */
@@ -793,6 +798,7 @@ export interface SearchServerSearchGetParams {
   /**
    * Active only
    * Show only active servers
+   * @default true
    */
   only_active?: boolean | null;
   /**
@@ -800,6 +806,11 @@ export interface SearchServerSearchGetParams {
    * Low CO2 emission only.
    */
   green_energy?: boolean | null;
+  /**
+   * Allocation
+   * Server allocation method.
+   */
+  allocation?: Allocation | null;
   /**
    * Limit
    * Maximum number of results. Set to -1 for unlimited
