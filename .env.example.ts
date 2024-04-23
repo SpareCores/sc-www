@@ -1,3 +1,3 @@
 
-export const BACKEND_BASE_URI = 'https://keeper.sparecores.net';
-export const BACKEND_BASE_URI_SSR = 'https://keeper.sparecores.net';
+NG_APP_BACKEND_BASE_URI=http://localhost:8000
+NG_APP_BACKEND_BASE_URI_SSR=http://localhost:8000

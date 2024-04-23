@@ -4,7 +4,7 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 ## Set up environment
 
-Rename .env.example.ts to .env.ts and fill in the values for the environment variables.
+Set variables specified in .env.example.ts in .env file or as evnironment variables.
 
 ## Development server
 
