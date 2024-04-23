@@ -136,6 +136,14 @@ export class ServerListingComponent {
         this.selectedCurrency = this.availableCurrencies.find((currency) => currency.slug === query.currency) || this.availableCurrencies[0];
       }
 
+      if(query.allocation) {
+        this.allocation = this.allocationTypes.find((allocation) => allocation.slug === query.allocation) || this.allocationTypes[0];
+      }
+
+      if(query.page) {
+        this.page = parseInt(query.page);
+      }
+
       const tableColumnsStr = this.storageHandler.get('serverListTableColumns');
       if(tableColumnsStr) {
         const tableColumns: string[] = JSON.parse(tableColumnsStr);
@@ -299,6 +307,10 @@ export class ServerListingComponent {
       paramObject.allocation = this.allocation.slug;
     }
 
+    if(this.page > 1) {
+      paramObject.page = this.page;
+    }
+
     return paramObject;
   }
 
@@ -341,6 +353,16 @@ export class ServerListingComponent {
 
   getField(item: ServerPriceWithPKs, field: string) {
     return field.split('.').reduce((obj, key) => (obj && (obj as any)[key]) ? (obj as any)[key] : undefined, item);
+  }
+
+  prevPage() {
+    this.page = Math.max(this.page - 1, 1);
+    this.filterServers();
+  }
+
+  nextPage() {
+    this.page++;
+    this.filterServers();
   }
 
 }
