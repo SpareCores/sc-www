@@ -61,6 +61,15 @@
                     class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
                     <div class="text-white text-sm">{{parameter.schema.description}}</div>
                 </div>
+                <div *ngIf="getParamterType(parameter) === 'enumArray'" class="flex flex-col gap-2 mb-4 mt-4" >
+                  <div *ngFor="let enum of parameter.schema.enum" class="flex items-center gap-1">
+                    <input type="checkbox"
+                      [ngModel]="isEnumSelected(parameter, enum)"
+                      (click)="toggleEnumSelection(parameter, enum)"
+                      class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
+                      <div class="text-white text-sm">{{enum}}</div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

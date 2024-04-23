@@ -65,7 +65,7 @@ export class ServerListingComponent {
     { name: 'STORAGE', show: true, type: 'storage', orderField: 'storage_size' },
     { name: 'STOCK', show: true, type: 'text', key: 'status' },
     { name: 'PRICE', show: true, type: 'price', orderField: 'price' },
-    { name: 'STORAGE2', show: false, type: 'storage' },
+    { name: 'ARCHITECTURE', show: false, type: 'text', key: 'server.cpu_architecture' },
   ];
 
   availableCurrencies = [
@@ -122,10 +122,16 @@ export class ServerListingComponent {
       const query: any = params;
       if(this.openApiJson.paths['/search'].get.parameters) {
         this.searchParameters = JSON.parse(JSON.stringify(this.openApiJson.paths['/search'].get.parameters)).map((item: any) => {
+          let value = query[item.name] || item.schema.default || null;
+          if(query[item.name] && query[item.name].split(',').length > 1) {
+            value = query[item.name].split(',');
+          }
           return {...item,
-            modelValue: query[item.name] || item.schema.default || null};
+            modelValue: value};
         });
       }
+
+      console.log('Search parameters:', this.searchParameters);
 
       if(query.order_by && query.order_dir) {
         this.orderBy = query.order_by;
@@ -224,6 +230,9 @@ export class ServerListingComponent {
     if(type === 'boolean') {
       return 'checkbox';
     }
+    if(type === 'array' && parameter.schema.enum) {
+      return 'enumArray';
+    }
     return 'text';
   }
 
@@ -256,6 +265,25 @@ export class ServerListingComponent {
 
   valueChanged() {
     this.valueChangeDebouncer.next(0);
+  }
+
+  isEnumSelected(param: any, value: string) {
+    return param.modelValue && param.modelValue.indexOf(value) !== -1;
+  }
+
+  toggleEnumSelection(param: any, value: string) {
+    if(!param.modelValue) {
+      param.modelValue = [];
+    }
+
+    const index = param.modelValue.indexOf(value);
+    if(index !== -1) {
+      param.modelValue.splice(index, 1);
+    } else {
+      param.modelValue.push(value);
+    }
+
+    this.valueChanged();
   }
 
   toggleOrdering(column: TableColumn) {
