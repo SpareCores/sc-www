@@ -2,10 +2,11 @@ import { Component, Inject, PLATFORM_ID } from '@angular/core';
 import { BreadcrumbSegment } from '../../components/breadcrumbs/breadcrumbs.component';
 import { KeeperAPIService } from '../../services/keeper-api.service';
 import { OrderDir, SearchServerSearchGetParams, ServerPriceWithPKs } from '../../../../sdk/data-contracts';
-import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
-import { decodeQueryParams, encodeQueryParams } from '../../tools/queryParamFunctions';
-import { encode } from 'punycode';
-import { ActivatedRoute, ParamMap, Params } from '@angular/router';
+import { Subject, debounceTime } from 'rxjs';
+import { encodeQueryParams } from '../../tools/queryParamFunctions';
+import { ActivatedRoute, Params } from '@angular/router';
+import { isPlatformBrowser } from '@angular/common';
+import { Dropdown, DropdownOptions, InstanceOptions } from 'flowbite';
 
 export type TableColumn = {
   name: string;
@@ -13,7 +14,22 @@ export type TableColumn = {
   key?: string;
   show?: boolean;
   orderField?: string;
-}
+};
+
+ // options with default values
+ const options: DropdownOptions = {
+  placement: 'bottom',
+  triggerType: 'click',
+  offsetSkidding: 0,
+  offsetDistance: 10,
+  delay: 300
+};
+
+// instance options object
+const instanceOptions: InstanceOptions = {
+id: 'dropdownMenu',
+override: true
+};
 
 @Component({
   selector: 'app-server-listing',
@@ -64,7 +80,6 @@ export class ServerListingComponent {
     {name: 'Japanese Yen', slug: 'JPY', symbol: '¥'},
     {name: 'Chinese Yuan', slug: 'CNY', symbol: '¥'},
     {name: 'Indian Rupee', slug: 'INR', symbol: '₹'},
-    {name: 'Russian Ruble', slug: 'RUB', symbol: '₽'},
     {name: 'Brazilian Real', slug: 'BRL', symbol: 'R$'},
     {name: 'South African Rand', slug: 'ZAR', symbol: 'R'},
   ];
@@ -91,6 +106,9 @@ export class ServerListingComponent {
   searchParameters: any;
 
   valueChangeDebouncer: Subject<number> = new Subject<number>();
+
+  dropdownCurrency: any;
+  dropdownAllocation: any;
 
   constructor(@Inject(PLATFORM_ID) private platformId: object,
               private keeperAPI: KeeperAPIService,
@@ -124,6 +142,29 @@ export class ServerListingComponent {
     this.valueChangeDebouncer.pipe(debounceTime(300)).subscribe((value) => {
      this.filterServers();
     });
+
+    if(isPlatformBrowser(this.platformId)) {
+      const targetElCurrency: HTMLElement | null = document.getElementById('currency_options');
+      const triggerElCurrency: HTMLElement | null = document.getElementById('currency_button');
+
+      this.dropdownCurrency = new Dropdown(
+          targetElCurrency,
+          triggerElCurrency,
+          options,
+          instanceOptions
+      );
+
+      const targetElAllocation: HTMLElement | null = document.getElementById('allocation_options');
+      const triggerElAllocation: HTMLElement | null = document.getElementById('allocation_button');
+
+      this.dropdownAllocation = new Dropdown(
+        targetElAllocation,
+        triggerElAllocation,
+        options,
+        instanceOptions
+      );
+
+    }
 
   }
 
@@ -272,12 +313,16 @@ export class ServerListingComponent {
     this.selectedCurrency = currency;
 
     this.filterServers();
+
+    this.dropdownCurrency?.hide();
   }
 
   selectAllocation(allocation: any) {
     this.allocation = allocation;
 
     this.filterServers();
+
+    this.dropdownAllocation?.hide();
   }
 
   getField(item: ServerPriceWithPKs, field: string) {

@@ -74,7 +74,8 @@
         <div class="top_buttons w-full flex justify-end gap-6 items-center" >
           <div>
             <button
-              data-dropdown-toggle="price_options"
+              id="allocation_button"
+              data-dropdown-toggle="allocation_options"
               class="dropdown_button"
               type="button">
               <div class="px-4 py-3">
@@ -87,6 +88,7 @@
           </div>
           <div>
             <button
+              id="currency_button"
               data-dropdown-toggle="currency_options"
               class="dropdown_button"
               type="button">
@@ -170,13 +172,11 @@
 </div>
 
  <!-- Dropdown menu -->
- <div id="price_options" class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid">
-  <ul class="py-2 px-3 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
-    <li *ngFor="let item of allocationTypes" class="flex py-1 gap-2 items-center">
-      <input type="checkbox"
-      [ngModel]="item === allocation"
-      (click)="selectAllocation(item)"
-      class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
+ <div id="allocation_options" class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid">
+  <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
+    <li *ngFor="let item of allocationTypes"
+      class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+      (click)="selectAllocation(item)">
       <div class="text-white text-sm">{{item.name}} </div>
     </li>
   </ul>
@@ -188,20 +188,18 @@
       <input type="checkbox"
       [(ngModel)]="item.show"
       (ngModelChange)="refreshColumns()"
-      class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
+      class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer" >
       <div class="text-white text-sm">{{item.name}}</div>
     </li>
   </ul>
 </div>
 
 <div id="currency_options" class="z-10 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid">
-  <ul class="py-2 px-3 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
-    <li *ngFor="let item of availableCurrencies" class="flex py-1 gap-2 items-center">
-      <input type="checkbox"
-      [ngModel]="item === selectedCurrency"
-      (click)="selectCurrency(item)"
-      class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
-      <div class="text-white text-sm">{{item.name}} ({{item.symbol}})</div>
+  <ul class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
+    <li *ngFor="let item of availableCurrencies"
+      class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+      (click)="selectCurrency(item)">
+      <div class="text-white text-sm ">{{item.name}} ({{item.symbol}})</div>
     </li>
   </ul>
 </div>
