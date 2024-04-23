@@ -7,6 +7,7 @@ import { encodeQueryParams } from '../../tools/queryParamFunctions';
 import { ActivatedRoute, Params } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
 import { Dropdown, DropdownOptions, InstanceOptions } from 'flowbite';
+import { StorageHandlerService } from '../../services/storage-handler.service';
 
 export type TableColumn = {
   name: string;
@@ -112,7 +113,8 @@ export class ServerListingComponent {
 
   constructor(@Inject(PLATFORM_ID) private platformId: object,
               private keeperAPI: KeeperAPIService,
-              private route: ActivatedRoute) { }
+              private route: ActivatedRoute,
+              private storageHandler: StorageHandlerService) { }
 
   ngOnInit() {
 
@@ -134,7 +136,15 @@ export class ServerListingComponent {
         this.selectedCurrency = this.availableCurrencies.find((currency) => currency.slug === query.currency) || this.availableCurrencies[0];
       }
 
-      this.refreshColumns();
+      const tableColumnsStr = this.storageHandler.get('serverListTableColumns');
+      if(tableColumnsStr) {
+        const tableColumns: string[] = JSON.parse(tableColumnsStr);
+        this.possibleColumns.forEach((column) => {
+          column.show = tableColumns.findIndex((item) => item === column.name) !== -1;
+        });
+      }
+
+      this.refreshColumns(false);
 
       this.filterServers(false);
     });
@@ -305,8 +315,12 @@ export class ServerListingComponent {
     }
   }
 
-  refreshColumns() {
+  refreshColumns(save = true) {
     this.tableColumns = this.possibleColumns.filter((column) => column.show);
+
+    if(save) {
+      this.storageHandler.set('serverListTableColumns', JSON.stringify(this.tableColumns.map(item => item.name)));
+    }
   }
 
   selectCurrency(currency: any) {
