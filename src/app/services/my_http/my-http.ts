@@ -24,8 +24,6 @@ const RETRY_INTERVALS_SSR = [100, 200]; // in milliseconds
 
         if(query) {
           const queryStr = this.addQueryParams(query);
-          console.log('Query string:', queryStr);
-
           url.search = queryStr;
         }
 
