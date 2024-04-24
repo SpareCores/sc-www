@@ -109,7 +109,7 @@ export class LandingpageComponent {
 
     this.SEOHandler.updateTitleAndMetaTags(
        'SpareCores - Cloud Server Price Comparison',
-       'Explore, search and evaluate cloud compute resources and pricing in the table below. This comprehensive comparison includes diverse attributes like CPU count, detailed processor information, memory, GPU, storage, network speed and amount, available operating systems, and pricing models such as spot and on-demand.',
+       'Harnessing the compute resources of the cloud to optimize efficiency and costs of batch and service tasks.',
        'cloud, server, price, comparison, sparecores');
 
     this.SEOHandler.updateThumbnail('https://sparecores.com/assets/images/media/landing_image.png');
