@@ -8,6 +8,7 @@ import { ActivatedRoute, Params } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
 import { Dropdown, DropdownOptions, InstanceOptions, Modal, ModalOptions } from 'flowbite';
 import { StorageHandlerService } from '../../services/storage-handler.service';
+import { SeoHandlerService } from '../../services/seo-handler.service';
 
 export type TableColumn = {
   name: string;
@@ -114,9 +115,18 @@ export class ServerListingComponent {
   constructor(@Inject(PLATFORM_ID) private platformId: object,
               private keeperAPI: KeeperAPIService,
               private route: ActivatedRoute,
+              private SEOHandler: SeoHandlerService,
               private storageHandler: StorageHandlerService) { }
 
   ngOnInit() {
+
+    this.SEOHandler.updateTitleAndMetaTags(
+      'Server price comparison - SpareCores',
+      'Explore, search and evaluate cloud compute resources and pricing in the table below. This comprehensive comparison includes diverse attributes like CPU count, detailed processor information, memory, GPU, storage, network speed and amount, available operating systems, and pricing models such as spot and on-demand.',
+      'cloud, server, price, comparison, sparecores');
+
+    this.SEOHandler.updateThumbnail('https://sparecores.com/assets/images/media/server_list_image.png');
+
 
     this.route.queryParams.subscribe((params: Params) => {
       const query: any = params;

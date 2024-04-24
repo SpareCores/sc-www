@@ -4,6 +4,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { KeeperAPIService } from '../../services/keeper-api.service';
 import { spinner_initial_data } from '../../tools/spinner_initial_data';
 import { SearchServerSearchGetData } from '../../../../sdk/data-contracts';
+import { SeoHandlerService } from '../../services/seo-handler.service';
 
 @Component({
   selector: 'app-landingpage',
@@ -101,9 +102,17 @@ export class LandingpageComponent {
 
   constructor(@Inject(PLATFORM_ID) private platformId: object,
               private keeperAPI: KeeperAPIService,
+              private SEOHandler: SeoHandlerService,
               private articles: ArticlesService) { }
 
   ngOnInit() {
+
+    this.SEOHandler.updateTitleAndMetaTags(
+       'SpareCores - Cloud Server Price Comparison',
+       'Explore, search and evaluate cloud compute resources and pricing in the table below. This comprehensive comparison includes diverse attributes like CPU count, detailed processor information, memory, GPU, storage, network speed and amount, available operating systems, and pricing models such as spot and on-demand.',
+       'cloud, server, price, comparison, sparecores');
+
+    this.SEOHandler.updateThumbnail('https://sparecores.com/assets/images/media/landing_image.png');
 
     if (isPlatformBrowser(this.platformId)) {
       this.articles.getArticlesByType('featured').then(articles => {
