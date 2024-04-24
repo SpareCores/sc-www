@@ -48,6 +48,13 @@
                     class="w-full h-8 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm pr-8">
                   <span *ngIf="parameter.schema.unit" class="unit text-gray-600">{{parameter.schema.unit}}</span>
                 </div>
+                <div *ngIf="getParamterType(parameter) === 'price'" class="mb-4 mt-4 relative" >
+                  <input type="number" step="{{getStep(parameter)}}"
+                    [(ngModel)]="parameter.modelValue"
+                    (ngModelChange)="valueChanged()"
+                    class="w-full h-8 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm pr-8">
+                  <span *ngIf="selectedCurrency.slug" class="unit text-gray-600">{{selectedCurrency.slug}}</span>
+                </div>
                 <div *ngIf="getParamterType(parameter) === 'text'" class="mb-4 mt-4" >
                   <input type="text"
                     [(ngModel)]="parameter.modelValue"

@@ -224,15 +224,22 @@ export class ServerListingComponent {
     if((type === 'integer' || type === 'number') && parameter.schema.minimum && parameter.schema.maximum) {
       return 'range';
     }
+
     if(type === 'integer' || type === 'number') {
-      return 'number';
+      if(parameter.schema.category_id === 'price')
+        return 'price';
+      else
+        return 'number';
     }
+
     if(type === 'boolean') {
       return 'checkbox';
     }
+
     if(type === 'array' && parameter.schema.enum) {
       return 'enumArray';
     }
+
     return 'text';
   }
 
