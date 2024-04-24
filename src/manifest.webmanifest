@@ -1,0 +1,9 @@
+{
+  "name": "SpareCores",
+  "short_name": "SpareCores",
+  "theme_color": "#34D399",
+  "background_color": "#082F49",
+  "display": "standalone",
+  "scope": "./",
+  "start_url": "./"
+}
