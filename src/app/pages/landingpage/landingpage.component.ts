@@ -108,7 +108,7 @@ export class LandingpageComponent {
   ngOnInit() {
 
     this.SEOHandler.updateTitleAndMetaTags(
-       'SpareCores - Cloud Server Price Comparison',
+       'Spare Cores: Inventory and Tooling for Cloud Compute Resources',
        'Harnessing the compute resources of the cloud to optimize efficiency and costs of batch and service tasks.',
        'cloud, server, price, comparison, sparecores');
 
