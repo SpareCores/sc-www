@@ -1,18 +1,20 @@
-# ScWww
+# SC-www
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.2.3.
 
 ## Set up environment
 
-Set variables specified in .env.example.ts in .env file or as evnironment variables.
+Set environment variables (or `.env` file) as per the `.env.example` template file.
 
 ## Development server
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+Run `ng serve` for a dev server, which listens on `http://localhost:4200/` by default.
+The application will automatically reload if you change any of the source files.
 
 ## Code scaffolding
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+Run `ng generate component component-name` to generate a new component.
+You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
 
 ## Build
 
