@@ -812,6 +812,11 @@ export interface SearchServerSearchGetParams {
    */
   allocation?: Allocation | null;
   /**
+   * Vendor id
+   * Cloud provider vendor.
+   */
+  vendor?: "aws" | "gcp" | "hcloud";
+  /**
    * Limit
    * Maximum number of results. Set to -1 for unlimited
    * @default 50
