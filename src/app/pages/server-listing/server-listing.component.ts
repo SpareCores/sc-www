@@ -6,7 +6,7 @@ import { Subject, debounceTime } from 'rxjs';
 import { encodeQueryParams } from '../../tools/queryParamFunctions';
 import { ActivatedRoute, Params } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
-import { Dropdown, DropdownOptions, InstanceOptions } from 'flowbite';
+import { Dropdown, DropdownOptions, InstanceOptions, Modal, ModalOptions } from 'flowbite';
 import { StorageHandlerService } from '../../services/storage-handler.service';
 
 export type TableColumn = {
@@ -17,7 +17,6 @@ export type TableColumn = {
   orderField?: string;
 };
 
- // options with default values
  const options: DropdownOptions = {
   placement: 'bottom',
   triggerType: 'click',
@@ -26,10 +25,10 @@ export type TableColumn = {
   delay: 300
 };
 
-// instance options object
-const instanceOptions: InstanceOptions = {
-id: 'dropdownMenu',
-override: true
+const optionsModal: ModalOptions = {
+  backdropClasses:
+      'bg-gray-900/50 fixed inset-0 z-40',
+  closable: true,
 };
 
 @Component({
@@ -110,6 +109,7 @@ export class ServerListingComponent {
 
   dropdownCurrency: any;
   dropdownAllocation: any;
+  modalSearch: any;
 
   constructor(@Inject(PLATFORM_ID) private platformId: object,
               private keeperAPI: KeeperAPIService,
@@ -171,11 +171,15 @@ export class ServerListingComponent {
       const targetElCurrency: HTMLElement | null = document.getElementById('currency_options');
       const triggerElCurrency: HTMLElement | null = document.getElementById('currency_button');
 
+
       this.dropdownCurrency = new Dropdown(
           targetElCurrency,
           triggerElCurrency,
           options,
-          instanceOptions
+          {
+            id: 'currency_options',
+            override: true
+          }
       );
 
       const targetElAllocation: HTMLElement | null = document.getElementById('allocation_options');
@@ -185,9 +189,19 @@ export class ServerListingComponent {
         targetElAllocation,
         triggerElAllocation,
         options,
-        instanceOptions
+        {
+          id: 'allocation_options',
+          override: true
+        }
       );
 
+      // set the modal menu element
+      const targetElModal = document.getElementById('large-modal');
+
+      this.modalSearch = new Modal(targetElModal, optionsModal,  {
+        id: 'large-modal',
+        override: true
+      });
     }
 
   }
@@ -398,6 +412,18 @@ export class ServerListingComponent {
   nextPage() {
     this.page++;
     this.filterServers();
+  }
+
+  openSearchPromt() {
+    this.modalSearch?.show();
+  }
+
+  closeModal(confirm: boolean) {
+    if(confirm) {
+      this.filterServers();
+    }
+
+    this.modalSearch?.hide();
   }
 
 }
