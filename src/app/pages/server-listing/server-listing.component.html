@@ -157,7 +157,7 @@
               <tbody>
                 <tr *ngFor="let item of servers">
                   <ng-container *ngFor="let column of tableColumns">
-                    <td *ngIf="column.type === 'name'">
+                    <td *ngIf="column.type === 'name'" class="">
                       <div class="text-sm text-white">{{item.server.name}} </div>
                       <div class="text-xs text-white flex gap-1"> <span>{{item.server_id}}</span> <span class="text-emerald-400" >|</span> <span>Hosted by:{{item.vendor_id}}</span> </div>
                     </td>
@@ -189,8 +189,12 @@
           </div>
           <div>
             <div class="flex justify-end gap-4 mt-4">
-              <button class="bg-emerald-400 text-white py-2 px-4 rounded-lg font-bold" (click)="prevPage()" > Previous </button>
-              <button class="bg-emerald-400 text-white py-2 px-4 rounded-lg font-bold" (click)="nextPage()"> Next </button>
+              <button class="bg-transparent text-white py-2 px-4 rounded-lg font-bold hover:text-emerald-400" (click)="prevPage()" >
+                <lucide-icon name="chevron-left"></lucide-icon>
+              </button>
+              <button class="bg-transparent text-white py-2 px-4 rounded-lg font-bold hover:text-emerald-400" (click)="nextPage()">
+                <lucide-icon name="chevron-right"></lucide-icon>
+              </button>
             </div>
           </div>
         </div>
