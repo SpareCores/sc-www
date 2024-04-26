@@ -2,147 +2,143 @@ export const spinner_initial_data = [
   [
     {
       "name": "AWS",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
+      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/aws.svg"
+    },
+    {
+      "name": "GCP",
+      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/gcp.svg"
     },
     {
       "name": "AWS",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
+      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/aws.svg"
+    },
+    {
+      "name": "GCP",
+      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/gcp.svg"
     },
     {
       "name": "AWS",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
+      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/aws.svg"
+    },
+    {
+      "name": "GCP",
+      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/gcp.svg"
+    },
+    {
+      "name": "Hetzner",
+      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/hcloud.svg"
+    },
+    {
+      "name": "GCP",
+      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/gcp.svg"
+    },
+    {
+      "name": "GCP",
+      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/gcp.svg"
     },
     {
       "name": "AWS",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
+      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/aws.svg"
+    },
+    {
+      "name": "Hetzner",
+      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/hcloud.svg"
     },
     {
       "name": "AWS",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
+      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/aws.svg"
+    },
+    {
+      "name": "GCP",
+      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/gcp.svg"
     },
     {
       "name": "AWS",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
+      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/aws.svg"
     },
     {
       "name": "AWS",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
+      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/aws.svg"
     },
     {
       "name": "AWS",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
+      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/aws.svg"
+    },
+    {
+      "name": "Hetzner",
+      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/hcloud.svg"
     },
     {
       "name": "AWS",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
+      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/aws.svg"
+    },
+    {
+      "name": "GCP",
+      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/gcp.svg"
     },
     {
       "name": "AWS",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
+      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/aws.svg"
     },
     {
       "name": "AWS",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
+      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/aws.svg"
     },
     {
       "name": "AWS",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
+      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/aws.svg"
+    },
+    {
+      "name": "GCP",
+      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/gcp.svg"
+    },
+    {
+      "name": "Hetzner",
+      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/hcloud.svg"
     },
     {
       "name": "AWS",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
+      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/aws.svg"
     },
     {
       "name": "AWS",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
+      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/aws.svg"
+    },
+    {
+      "name": "GCP",
+      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/gcp.svg"
     },
     {
       "name": "AWS",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
+      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/aws.svg"
     },
     {
       "name": "AWS",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
+      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/aws.svg"
+    },
+    {
+      "name": "Hetzner",
+      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/hcloud.svg"
     },
     {
       "name": "AWS",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
+      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/aws.svg"
     },
     {
       "name": "AWS",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
+      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/aws.svg"
     },
     {
       "name": "AWS",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
+      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/aws.svg"
+    },
+    {
+      "name": "GCP",
+      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/gcp.svg"
     },
     {
       "name": "AWS",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
-    },
-    {
-      "name": "AWS",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
-    },
-    {
-      "name": "AWS",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
-    },
-    {
-      "name": "AWS",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
-    },
-    {
-      "name": "AWS",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
-    },
-    {
-      "name": "AWS",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
-    },
-    {
-      "name": "AWS",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
-    },
-    {
-      "name": "AWS",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
-    },
-    {
-      "name": "AWS",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
-    },
-    {
-      "name": "AWS",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
-    },
-    {
-      "name": "AWS",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
-    },
-    {
-      "name": "AWS",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
-    },
-    {
-      "name": "AWS",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
-    },
-    {
-      "name": "AWS",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
-    },
-    {
-      "name": "AWS",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
-    },
-    {
-      "name": "AWS",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
-    },
-    {
-      "name": "AWS",
-      "logo": "https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg"
+      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/aws.svg"
     }
   ],
   [
