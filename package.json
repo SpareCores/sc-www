@@ -26,6 +26,7 @@
     "flowbite": "^2.3.0",
     "gray-matter": "^4.0.3",
     "lucide-angular": "^0.361.0",
+    "ngx-markdown": "^17.2.1",
     "rxjs": "~7.8.0",
     "swiper": "^11.0.7",
     "tslib": "^2.3.0",
