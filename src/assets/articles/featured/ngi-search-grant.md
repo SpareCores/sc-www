@@ -6,6 +6,7 @@ date: 2024-01-18
 teaser: "The Spare Cores project was selected as a winner out of 94 applications: awarded 150k EUR for open-source work."
 # 320x220
 image: https://placehold.co/320x220
+tags: ["ngi-search", "funding", "open-source"]
 ---
 
 Attila and Gergely have been ideating on the idea of a SaaS solution
