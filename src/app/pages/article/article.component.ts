@@ -33,7 +33,6 @@ export class ArticleComponent {
 
   ngOnInit() {
     this.route.params.subscribe(params => {
-      console.log(params);
       this.breadcrumbs = [
         { name: 'Home', url: '/' },
         { name: 'Article', url: `/article/${params['category']}/${params['id']}` }
@@ -42,7 +41,6 @@ export class ArticleComponent {
       this.http.get(`./assets/articles/${params['category']}/${params['id']}.md`, { responseType: 'text' }).subscribe((content: any) => {
         this.articleMeta = this.convertToJSON(content.split('---')[1]);
         this.articleBody = this.domSanitizer.bypassSecurityTrustHtml(this.markdownService.parse(content.split('---')[2]) as string);
-
       });
 
     });

@@ -110,6 +110,7 @@ export class ServerListingComponent {
 
   dropdownCurrency: any;
   dropdownAllocation: any;
+  dropdownColumn: any;
   modalSearch: any;
 
   constructor(@Inject(PLATFORM_ID) private platformId: object,
@@ -201,6 +202,19 @@ export class ServerListingComponent {
         options,
         {
           id: 'allocation_options',
+          override: true
+        }
+      );
+
+      const targetElColumn: HTMLElement | null = document.getElementById('column_options');
+      const triggerElColumn: HTMLElement | null = document.getElementById('column_button');
+
+      this.dropdownColumn = new Dropdown(
+        targetElColumn,
+        triggerElColumn,
+        options,
+        {
+          id: 'column_options',
           override: true
         }
       );

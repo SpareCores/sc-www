@@ -123,6 +123,7 @@
           </div>
           <div>
             <button
+              id="column_button"
               data-dropdown-toggle="column_options"
               class="dropdown_button"
               type="button">
@@ -136,54 +137,56 @@
           </div>
         </div>
         <div>
-          <table class="items_table">
-            <thead>
-              <tr>
-                <th *ngFor="let item of tableColumns"
-                    [ngClass]="{
-                      'cursor-pointer': item.orderField
-                    }"
-                    (click)="toggleOrdering(item)" >
-                    <div class="flex gap-1">
-                      {{item.name}}
-                      <lucide-icon *ngIf="getOrderingIcon(item)" name="{{getOrderingIcon(item)}}" class="h-4 w-4 text-white"></lucide-icon>
-                    </div>
-                </th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let item of servers">
-                <ng-container *ngFor="let column of tableColumns">
-                  <td *ngIf="column.type === 'name'">
-                    <div class="text-sm text-white">{{item.server.name}} </div>
-                    <div class="text-xs text-white flex gap-1"> <span>{{item.server_id}}</span> <span class="text-emerald-400" >|</span> <span>Hosted by:{{item.vendor_id}}</span> </div>
+          <div class="w-full overflow-x-scroll">
+            <table class="items_table">
+              <thead>
+                <tr>
+                  <th *ngFor="let item of tableColumns"
+                      [ngClass]="{
+                        'cursor-pointer': item.orderField
+                      }"
+                      (click)="toggleOrdering(item)" >
+                      <div class="flex gap-1">
+                        {{item.name}}
+                        <lucide-icon *ngIf="getOrderingIcon(item)" name="{{getOrderingIcon(item)}}" class="h-4 w-4 text-white"></lucide-icon>
+                      </div>
+                  </th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of servers">
+                  <ng-container *ngFor="let column of tableColumns">
+                    <td *ngIf="column.type === 'name'">
+                      <div class="text-sm text-white">{{item.server.name}} </div>
+                      <div class="text-xs text-white flex gap-1"> <span>{{item.server_id}}</span> <span class="text-emerald-400" >|</span> <span>Hosted by:{{item.vendor_id}}</span> </div>
+                    </td>
+                    <td *ngIf="column.type === 'processor'">
+                      <div class="text-sm text-white">{{item.server.cpu_cores}}x {{item.server.cpu_architecture}}</div>
+                      <div class="text-xs text-white flex gap-1"> <span>{{item.server.cpu_cores}} cores at {{item.server.cpu_speed}} Ghz</span> </div>
+                    </td>
+                    <td *ngIf="column.type === 'memory'">
+                      {{getMemory(item)}}
+                    </td>
+                    <td *ngIf="column.type === 'storage'">
+                      {{getStorage(item)}}
+                    </td>
+                    <td *ngIf="column.type === 'price'">
+                      {{item.price}} {{selectedCurrency.slug}}
+                    </td>
+                    <td *ngIf="column.type === 'text' && column.key">
+                      {{getField(item, column.key)}}
+                    </td>
+                  </ng-container>
+                  <td>
+                    <button >
+                      <lucide-icon name="chevron-right" class="h-6 w-6 text-emerald-400"></lucide-icon>
+                    </button>
                   </td>
-                  <td *ngIf="column.type === 'processor'">
-                    <div class="text-sm text-white">{{item.server.cpu_cores}}x {{item.server.cpu_architecture}}</div>
-                    <div class="text-xs text-white flex gap-1"> <span>{{item.server.cpu_cores}} cores at {{item.server.cpu_speed}} Ghz</span> </div>
-                  </td>
-                  <td *ngIf="column.type === 'memory'">
-                    {{getMemory(item)}}
-                  </td>
-                  <td *ngIf="column.type === 'storage'">
-                    {{getStorage(item)}}
-                  </td>
-                  <td *ngIf="column.type === 'price'">
-                    {{item.price}} {{selectedCurrency.slug}}
-                  </td>
-                  <td *ngIf="column.type === 'text' && column.key">
-                    {{getField(item, column.key)}}
-                  </td>
-                </ng-container>
-                <td>
-                  <button >
-                    <lucide-icon name="chevron-right" class="h-6 w-6 text-emerald-400"></lucide-icon>
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                </tr>
+              </tbody>
+            </table>
+          </div>
           <div>
             <div class="flex justify-end gap-4 mt-4">
               <button class="bg-emerald-400 text-white py-2 px-4 rounded-lg font-bold" (click)="prevPage()" > Previous </button>
