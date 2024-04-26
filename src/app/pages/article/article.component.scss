@@ -41,6 +41,10 @@
     margin: 10px;
   }
 
+  ul {
+    @apply mb-2;
+  }
+
   table {
     @apply mx-auto;
     @apply mb-2;
@@ -49,7 +53,6 @@
       @apply border-b border-emerald-400 border-solid;
       th {
         @apply px-5 py-3 font-normal text-xs;
-
       }
     }
 
