@@ -5,7 +5,7 @@ date: 2024-01-18
 # ~100 character
 teaser: "The Spare Cores project was selected as a winner out of 94 applications: awarded 150k EUR for open-source work."
 # 320x220
-image: /assets/images/blog/ngi-search-sc-hex-logo-banner.png
+image: /assets/images/blog/ngi-search-oc3-outcome-cropped.png
 tags: ["ngi-search", "funding", "open-source"]
 ---
 
@@ -31,7 +31,7 @@ we are actually going to build.
 We were super excited about this opportunity, and started planning right
 away, with the hope of being selected and getting funded in 2024.
 
-<div class="flex justify-center items-center">
+<div class="flex justify-center items-center mt-8 mb-6">
   <a href="https://www.ngisearch.eu/view/Events/OC3Searchers"
      target="_blank" rel="noopener"
      class="w-72 max-w-[80%]">
@@ -51,7 +51,7 @@ href="https://www.ngisearch.eu/download/Main/NGI_Searchers_booklet/NGI%20Searche
 target="_blank" rel="noopener">NGI Search booklet</a> on all NGI
 Search projects (from overall 5 open calls).
 
-<div class="flex justify-center items-center">
+<div class="flex justify-center items-center mt-8 mb-6">
   <a href="https://www.ngisearch.eu/download/Main/NGI_Searchers_booklet/NGI%20Searchers%20booklet.pdf?rev=1.2"
      target="_blank" rel="noopener"
      class="w-96 max-w-[80%]">
