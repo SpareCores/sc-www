@@ -16,6 +16,4 @@ const data = files.map((file) => {
   }
   }).sort((a, b) => new Date(b.date) - new Date(a.date));
 
-console.log(data);
-
 fs.writeFileSync('./src/assets/articles/featured.json', JSON.stringify(data));

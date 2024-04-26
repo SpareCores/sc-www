@@ -15,6 +15,7 @@ import { TimeToShortDatePipe } from './pipes/time-to-short-date.pipe';
 import { FormsModule } from '@angular/forms';
 import { BreadcrumbsComponent } from './components/breadcrumbs/breadcrumbs.component';
 import { ServerListingComponent } from './pages/server-listing/server-listing.component';
+import { MarkdownModule } from 'ngx-markdown';
 
 
 
@@ -61,7 +62,8 @@ import { ServerListingComponent } from './pages/server-listing/server-listing.co
     HttpClientModule,
     ThemeTextComponent,
     BreadcrumbsComponent,
-    TimeToShortDatePipe
+    TimeToShortDatePipe,
+    MarkdownModule.forRoot()
   ],
   providers: [
     provideClientHydration(),
