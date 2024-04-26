@@ -21,10 +21,18 @@
 
   pre {
     @apply bg-secondary;
-    padding: 10px;
+    padding: 10px 15px;
     margin: 20px 10px;
     border: 1px solid #34D399;
     border-radius: 10px;
+    code {
+      padding: 0px;
+    }
+  }
+
+  code {
+    @apply bg-secondary;
+    padding: 2px 5px;
   }
 
   table {
