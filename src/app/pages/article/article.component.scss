@@ -7,6 +7,9 @@
   a {
     @apply underline decoration-dotted;
   }
+  a:hover {
+    @apply text-gray-500;
+  }
 
   li {
     @apply list-disc ml-4;
