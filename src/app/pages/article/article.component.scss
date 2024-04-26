@@ -35,6 +35,12 @@
     padding: 2px 5px;
   }
 
+  blockquote {
+    border-left: 1px solid #34D399;
+    padding: 0px 10px 0px 10px;
+    margin: 10px;
+  }
+
   table {
     @apply mx-auto;
     @apply mb-2;
