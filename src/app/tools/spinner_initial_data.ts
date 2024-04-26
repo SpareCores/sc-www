@@ -5,12 +5,12 @@ export const spinner_initial_data = [
       "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/aws.svg"
     },
     {
-      "name": "GCP",
-      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/gcp.svg"
-    },
-    {
       "name": "AWS",
       "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/aws.svg"
+    },
+    {
+      "name": "GCP",
+      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/gcp.svg"
     },
     {
       "name": "GCP",
@@ -139,6 +139,10 @@ export const spinner_initial_data = [
     {
       "name": "AWS",
       "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/aws.svg"
+    },
+    {
+      "name": "GCP",
+      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/gcp.svg"
     }
   ],
   [
@@ -283,8 +287,8 @@ export const spinner_initial_data = [
       "architecture": "arm64"
     },
     {
-      "name": "c5n.2xlarge",
-      "architecture": "arm64"
+      "name": "e2-highcpu-32",
+      "architecture": "x86_64"
     }
   ],
   [
@@ -421,8 +425,8 @@ export const spinner_initial_data = [
       "city": "Milan"
     },
     {
-      "name": "Asia Pacific ",
-      "city": "Jakarta"
+      "name": "us-west-4",
+      "city": "Las Vegas"
     }
   ]
 ];
