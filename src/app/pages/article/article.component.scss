@@ -18,4 +18,13 @@
   p {
     @apply mb-2;
   }
+
+  pre {
+    @apply bg-secondary;
+    padding: 10px;
+    margin: 20px 10px;
+    border: 1px solid #34D399;
+    border-radius: 10px;
+  }
+
 }
