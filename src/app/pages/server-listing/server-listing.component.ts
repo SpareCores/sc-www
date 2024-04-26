@@ -121,9 +121,9 @@ export class ServerListingComponent {
   ngOnInit() {
 
     this.SEOHandler.updateTitleAndMetaTags(
-      'Server price comparison - SpareCores',
+      'Listing of Cloud Compute Resources - Spare Cores',
       'Harnessing the compute resources of the cloud to optimize efficiency and costs of batch and service tasks.',
-      'cloud, server, price, comparison, sparecores');
+      'cloud, server, instance, price, comparison, spot, sparecores');
 
     this.SEOHandler.updateThumbnail('https://sparecores.com/assets/images/media/server_list_image.png');
 
