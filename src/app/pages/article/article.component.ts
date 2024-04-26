@@ -24,8 +24,6 @@ export class ArticleComponent {
   articleMeta: any;
   articleBody: any;
 
-  html: any;
-
   constructor(
     private route: ActivatedRoute,
     private http: HttpClient,
@@ -42,14 +40,8 @@ export class ArticleComponent {
       ];
 
       this.http.get(`./assets/articles/${params['category']}/${params['id']}.md`, { responseType: 'text' }).subscribe((content: any) => {
-        console.log(content);
         this.articleMeta = this.convertToJSON(content.split('---')[1]);
-        console.log('meta', this.articleMeta);
-        // article boday is the content after the second '---'
-        this.articleBody = content.split('---')[2];
-        console.log('content', this.articleBody);
-        this.html = this.domSanitizer.bypassSecurityTrustHtml(this.markdownService.parse(this.articleBody) as string);
-        console.log('html', this.html);
+        this.articleBody = this.domSanitizer.bypassSecurityTrustHtml(this.markdownService.parse(content.split('---')[2]) as string);
 
       });
 
