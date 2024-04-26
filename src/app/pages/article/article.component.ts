@@ -40,7 +40,7 @@ export class ArticleComponent {
 
       this.http.get(`./assets/articles/${params['category']}/${params['id']}.md`, { responseType: 'text' }).subscribe((content: any) => {
         this.articleMeta = this.convertToJSON(content.split('---')[1]);
-        this.articleBody = this.domSanitizer.bypassSecurityTrustHtml(this.markdownService.parse(content.split('---')[2]) as string);
+        this.articleBody = this.domSanitizer.bypassSecurityTrustHtml(this.markdownService.parse(content.split('---').slice(2).join("---")) as string);
 
         this.breadcrumbs = [
           { name: 'Home', url: '/' },
