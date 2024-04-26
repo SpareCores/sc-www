@@ -5,6 +5,7 @@ module.exports = {
   ],
   content: [
     "./src/**/*.{html,ts}",
+    "./src/assets/articles/featured/*.md",
     "./node_modules/flowbite/**/*.js"
   ],
   theme: {
