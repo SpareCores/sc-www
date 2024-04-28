@@ -179,9 +179,10 @@ over directly to the database schema documentation:
 <div class="flex justify-center items-center mt-8 mb-6">
   <a href="https://dbdocs.io/spare-cores/sc-crawler"
      target="_blank" rel="noopener"
-     class="w-3/4">
+     class="w-3/4 !no-underline">
     <img
       title="SC Crawler database schemas documented and visualized at dbdocs.io"
       src="/assets/images/blog/dbdocs-screenshot.png"/>
+    <p class="text-center">SC Crawler database schemas documented and visualized at dbdocs.io (last updated on April 28, 2024)</p>
   </a>
 </div>
