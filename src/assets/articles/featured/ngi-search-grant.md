@@ -22,10 +22,12 @@ Search project</a> with the promise of funding open-source projects
 for a full year, with enough budget for part-time/full-time dedicated
 dev work, legal and design tasks, and experimenting with the tech
 stack at various cloud providers. So we decided to submit a proposal
-for the 3rd Open Call in Q3.
+for the 3rd Open Call in Q3, which seemed like a very good fit: NGI
+stands for the Next Generation of Internet that is an EU initiative to
+support research and innovation about Internet-related technologies.
 
 The application process was a breeze – hats off to the NGI Search
-team!  It was also useful for us to review and clearly articulate what
+team! It was also useful for us to review and clearly articulate what
 we are actually going to build.
 
 We were super excited about this opportunity, and started planning right
@@ -64,4 +66,5 @@ Search projects (from overall 5 open calls).
 We finalized the required paperwork, and knowing that the project is
 actually happening, we started to prepare with more detailed designs
 for the Spare Cores ecosystem. Stay tuned to learn more in the coming
-months!
+months, and in the meantime, consider following us on social media
+(see below in the footer of the page)!
