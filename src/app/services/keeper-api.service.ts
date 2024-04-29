@@ -24,8 +24,18 @@ export class KeeperAPIService {
     return this.ServerController.readServerServerVendorIdServerIdGet(vendor, id);
   }
 
-  public searchServers(query: SearchServerSearchGetParams): Promise<SearchServerSearchGetData> {
-    return this.SearchController.searchServerSearchGet(query) as any  as Promise<SearchServerSearchGetData>;
+  public searchServers(query: SearchServerSearchGetParams): Promise<any> {
+    return this.SearchController.searchServerSearchGet(query);
+  }
+
+  public parseFreetextSearch(query: string): Promise<any> {
+    // return mock data
+    return new Promise((resolve, reject) => {
+      resolve({
+
+      });
+    });
+    //return this.SearchController.parseFreetextSearch(query);
   }
 
 }

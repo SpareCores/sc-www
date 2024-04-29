@@ -17,7 +17,6 @@
         <div class="top overflow-hidden bg-secondary">
           <button
             class="w-full bg-emerald-400 text-white py-3 rounded-lg font-bold"
-            disabled
             (click)="openSearchPromt()">
             Search Prompt
           </button>
@@ -198,10 +197,44 @@
           </div>
           <div>
             <div class="flex justify-end gap-4 mt-4">
-              <button class="bg-transparent text-white py-2 px-4 rounded-lg font-bold hover:text-emerald-400" (click)="prevPage()" >
+              <button
+                class="flex justify-center bg-transparent text-white py-2 px-4 w-10 rounded-lg font-bold hover:bg-emerald-400"
+                (click)="prevPage()" >
                 <lucide-icon name="chevron-left"></lucide-icon>
               </button>
-              <button class="bg-transparent text-white py-2 px-4 rounded-lg font-bold hover:text-emerald-400" (click)="nextPage()">
+              <ng-container *ngIf="page > 2">
+                <button
+                  class="text-white py-2 px-4 rounded-lg font-bold hover:bg-emerald-400"
+                  (click)="gotoPage(1)">
+                  1
+                </button>
+                <button *ngIf="page > 3"
+                  class="text-white py-2 px-4 rounded-lg font-bold">
+                  ...
+                </button>
+              </ng-container>
+              <button
+                class="text-white py-2 px-4 rounded-lg font-bold hover:bg-emerald-400"
+                [ngClass]="{
+                  'bg-emerald-400': item === this.page,
+                  'bg-transparent': item !== this.page
+                }"
+                *ngFor="let item of possiblePages()"
+                (click)="gotoPage(item)">
+                {{item}}
+              </button>
+              <ng-container *ngIf="totalPages > (page + 3)">
+                <button
+                  class="text-white py-2 px-4 rounded-lg font-bold">
+                  ...
+                </button>
+                <button
+                  class="text-white py-2 px-4 rounded-lg font-bold hover:bg-emerald-400"
+                  (click)="gotoPage(totalPages)">
+                  {{totalPages}}
+                </button>
+              </ng-container>
+              <button class="flex justify-center bg-transparent text-white py-2 px-4 w-10 rounded-lg font-bold hover:bg-emerald-400" (click)="nextPage()">
                 <lucide-icon name="chevron-right"></lucide-icon>
               </button>
             </div>
@@ -251,10 +284,8 @@
 <div id="large-modal"
     tabindex="-1"
     class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
-  <div class="relative w-full max-w-4xl max-h-full">
-      <!-- Modal content -->
+  <div class="relative w-full max-w-xl max-h-full">
       <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-          <!-- Modal header -->
           <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
               <h3 class="text-xl font-medium text-gray-900 dark:text-white">
                   Custom Search
@@ -268,23 +299,29 @@
                   <span class="sr-only">Close modal</span>
               </button>
           </div>
-          <!-- Modal body -->
-          <div class="p-4 md:p-5 space-y-4">
+          <div class="p-4 md:p-5 space-y-4 flex flex-col">
               <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
                   Please type your server needs in free text and push submit.
               </p>
-              <textarea rows="4" class="w-full accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm focus:ring-emerald-400 focus:border-emerald-400" ></textarea>
+              <textarea
+                rows="4"
+                class="w-full accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm focus:ring-emerald-400 focus:border-emerald-400"
+                [(ngModel)]="freetextSearchInput">
+              </textarea>
               <button
                 class="text-white bg-emerald-400 hover:bg-emerald-500 focus:ring-0 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center "
+                (click)="submitFreetextSearch()"
                 >
                 Submit
               </button>
           </div>
-          <!-- Modal footer -->
-          <div class="flex items-center p-4 md:p-5 space-x-3 rtl:space-x-reverse border-t border-gray-200 rounded-b dark:border-gray-600">
+          <div class="flex flex-col p-4 md:p-5 space-x-3 rtl:space-x-reverse border-t border-gray-200 rounded-b dark:border-gray-600">
               <button
                 type="button"
-                class="text-white bg-emerald-400 hover:bg-emerald-500 focus:ring-0 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center "
+                [disabled]="!modalResponse"
+                class="text-white bg-emerald-400 font-medium rounded-lg text-sm px-5 py-2.5 text-center
+                 hover:bg-emerald-500 focus:ring-0 focus:outline-none
+                 disabled:bg-gray-400 "
                 (click)="closeModal(true)">
                   Confirm
               </button>
