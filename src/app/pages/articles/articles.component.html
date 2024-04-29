@@ -2,8 +2,8 @@
   <div class="content pt-16 pb-16">
     <app-breadcrumbs [segments]="breadcrumbs"></app-breadcrumbs>
 
-    <div class="articles_holder flex gap-12 mt-8 text-white">
-      <div class="w-1/4 flex flex-col gap-4" *ngFor="let item of featuredArticles">
+    <div class="articles_holder flex flex-wrap mt-8 text-white">
+      <div class="w-1/2 lg:w-1/4 flex flex-col gap-4 px-6" *ngFor="let item of featuredArticles">
         <img class="rounded-xl mb-4" [src]="item.image" alt="" >
         <div> {{item.date | timeToShortDate}} </div>
         <a routerLink="/article/featured/{{item.filename}}" class="font-bold text-2xl text-emerald-400 hover:text-emerald-500"> {{item.title}} </a>
@@ -11,5 +11,5 @@
       </div>
     </div>
 
-    </div>
+  </div>
 </div>
