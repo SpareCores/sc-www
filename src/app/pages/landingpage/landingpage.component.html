@@ -315,14 +315,16 @@
       </div>
       <div class="articles_holder flex gap-12 mt-8">
         <div class="w-1/4 flex flex-col gap-4" *ngFor="let item of featuredArticles">
-          <img class="rounded-xl mb-4" [src]="item.image" alt="" >
+          <a routerLink="/article/featured/{{item.filename}}">
+            <img class="rounded-xl mb-4" [src]="item.image" alt="" >
+          </a>
           <div> {{item.date | timeToShortDate}} </div>
           <a routerLink="/article/featured/{{item.filename}}" class="font-bold text-2xl text-emerald-400 hover:text-emerald-500"> {{item.title}} </a>
           <div> {{item.teaser}} </div>
         </div>
       </div>
       <div class="flex justify-center">
-        <button class="btn-primary py-4 px-4">Read more articles</button>
+        <button class="btn-primary py-4 px-4" routerLink="/articles">Read more articles</button>
       </div>
     </div>
   </div>
