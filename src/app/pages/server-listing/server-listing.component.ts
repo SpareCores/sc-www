@@ -4,7 +4,7 @@ import { KeeperAPIService } from '../../services/keeper-api.service';
 import { OrderDir, SearchServerSearchGetParams, ServerPriceWithPKs } from '../../../../sdk/data-contracts';
 import { Subject, debounceTime } from 'rxjs';
 import { encodeQueryParams } from '../../tools/queryParamFunctions';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
 import { Dropdown, DropdownOptions, InstanceOptions, Modal, ModalOptions } from 'flowbite';
 import { StorageHandlerService } from '../../services/storage-handler.service';
@@ -113,9 +113,12 @@ export class ServerListingComponent {
   dropdownColumn: any;
   modalSearch: any;
 
+  isLoading = false;
+
   constructor(@Inject(PLATFORM_ID) private platformId: object,
               private keeperAPI: KeeperAPIService,
               private route: ActivatedRoute,
+              private router: Router,
               private SEOHandler: SeoHandlerService,
               private storageHandler: StorageHandlerService) { }
 
@@ -246,6 +249,10 @@ export class ServerListingComponent {
     return `${(item.server.storage_size / 1000).toFixed(1)} TB`;
   }
 
+  openServerDetails(server: ServerPriceWithPKs) {
+    //this.router.navigateByUrl(`/server/${server.server.server_id}`);
+  }
+
   toggleCategory(category: any) {
     category.collapsed = !category.collapsed;
   }
@@ -300,11 +307,15 @@ export class ServerListingComponent {
       queryObject.order_dir = this.orderDir;
     }
 
+    this.isLoading = true;
+
     this.keeperAPI.searchServers(queryObject).then(servers => {
       this.servers = servers;
       console.log('Servers:', servers);
     }).catch(err => {
       console.error(err);
+    }).finally(() => {
+      this.isLoading = false;
     });
   }
 
@@ -386,7 +397,6 @@ export class ServerListingComponent {
 
     return paramObject;
   }
-
 
   updateQueryParams(object: any) {
     let encodedQuery = encodeQueryParams(object);
