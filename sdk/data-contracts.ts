@@ -19,6 +19,13 @@ export enum Allocation {
   Spot = "spot",
 }
 
+/** ComplianceFrameworks */
+export enum ComplianceFrameworks {
+  Hipaa = "hipaa",
+  Iso27001 = "iso27001",
+  Soc2T2 = "soc2t2",
+}
+
 /** CountryBase */
 export interface CountryBase {
   /**
@@ -731,6 +738,13 @@ export interface VendorBase {
   observed_at?: string;
 }
 
+/** Vendors */
+export enum Vendors {
+  Aws = "aws",
+  Gcp = "gcp",
+  Hcloud = "hcloud",
+}
+
 /** ZoneBase */
 export interface ZoneBase {
   /**
@@ -817,6 +831,11 @@ export interface SearchServerSearchGetParams {
    */
   vendor?: "aws" | "gcp" | "hcloud";
   /**
+   * Compliance Framework id
+   * Compliance framework implemented at the vendor.
+   */
+  compliance_framework?: "hipaa" | "iso27001" | "soc2t2";
+  /**
    * Limit
    * Maximum number of results. Set to -1 for unlimited
    * @default 50
@@ -845,6 +864,12 @@ export interface SearchServerSearchGetParams {
    * @default "USD"
    */
   currency?: string;
+  /**
+   * Add Total Count Header
+   * Add the X-Total-Count header to the response with the overall number of items (without paging). Note that it might reduce response times.
+   * @default false
+   */
+  add_total_count_header?: boolean;
 }
 
 /** Response Search Server Search Get */

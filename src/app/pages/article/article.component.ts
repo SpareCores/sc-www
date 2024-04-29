@@ -7,6 +7,7 @@ import { MarkdownModule, MarkdownService } from 'ngx-markdown';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TimeToShortDatePipe } from '../../pipes/time-to-short-date.pipe';
 import { SeoHandlerService } from '../../services/seo-handler.service';
+import { ArticlesService } from '../../services/articles.service';
 
 @Component({
   selector: 'app-article',
@@ -31,21 +32,26 @@ export class ArticleComponent {
     private http: HttpClient,
     private SEOHandler: SeoHandlerService,
     private markdownService: MarkdownService,
-    private domSanitizer: DomSanitizer
+    private domSanitizer: DomSanitizer,
+    private articleHandler: ArticlesService
   ) { }
 
   ngOnInit() {
     this.route.params.subscribe(params => {
 
+      const category = params['category'];
+      const id = params['id'];
+      let categoryTitle = category ? category.charAt(0).toUpperCase() + category.slice(1) : '';
 
-      this.http.get(`./assets/articles/${params['category']}/${params['id']}.md`, { responseType: 'text' }).subscribe((content: any) => {
+      this.articleHandler.getArticle(category, id).then((content: any) => {
         this.articleMeta = this.convertToJSON(content.split('---')[1]);
         this.articleBody = this.domSanitizer.bypassSecurityTrustHtml(this.markdownService.parse(content.split('---').slice(2).join("---")) as string);
 
         this.breadcrumbs = [
           { name: 'Home', url: '/' },
-          { name: 'Articles', url: `/articles/${params['category']}` },
-          { name: this.articleMeta.title, url: `/article/${params['category']}/${params['id']}` }
+          { name: 'Articles', url: `/articles` },
+          { name: categoryTitle, url: `/articles/${category}` },
+          { name: this.articleMeta.title, url: `/article/${category}/${id}` }
         ];
 
         this.SEOHandler.updateTitleAndMetaTags(this.articleMeta.title, this.articleMeta.teaser, `Article, tutorial`);

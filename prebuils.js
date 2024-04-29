@@ -6,6 +6,8 @@ const matter = require('gray-matter');
 const dirPath = path.join(__dirname, './src/assets/articles/featured');
 const files = fs.readdirSync(dirPath);
 
+let allArticles = [];
+
 // extract metadata from the files and sort by date
 const data = files.map((file) => {
   const content = fs.readFileSync(path.join(dirPath, file), 'utf-8');
@@ -17,3 +19,7 @@ const data = files.map((file) => {
   }).sort((a, b) => new Date(b.date) - new Date(a.date));
 
 fs.writeFileSync('./src/assets/articles/featured.json', JSON.stringify(data));
+
+allArticles = allArticles.concat(data);
+
+fs.writeFileSync('./src/assets/articles/all.json', JSON.stringify(allArticles));

@@ -30,16 +30,17 @@ export class ArticlesComponent {
 
   ngOnInit() {
     this.route.params.subscribe(params => {
-      this.articles.getArticlesByType(params['category']).then(articles => {
+      let category = params['category'];
+      this.articles.getArticlesByType(category).then(articles => {
         this.featuredArticles = articles;
       });
 
       this.breadcrumbs = [
         { name: 'Home', url: '/' },
-        { name: 'Articles', url: `/articles/${params['category']}` }
+        { name: 'Articles', url: `/articles${category ? '/' + category : '' }` }
       ];
 
-      let title = params['category'].charAt(0).toUpperCase() + params['category'].slice(1);
+      let title = category ? category.charAt(0).toUpperCase() + category.slice(1) : '';
       this.SEOHandler.updateTitleAndMetaTags(`${title} Articles - SpareCores`, `View all ${title} articles on SpareCores.`, `Server hosting articles, guides, tutorials.`);
 
     });

@@ -99,6 +99,7 @@ export class LandingpageComponent {
 
   isSpinning = false;
   spinnerClicked = false;
+  hasRealValues = false;
 
   constructor(@Inject(PLATFORM_ID) private platformId: object,
               private keeperAPI: KeeperAPIService,
@@ -155,7 +156,7 @@ export class LandingpageComponent {
             spinButton.style.animation = 'press 2.5s';
           }
 
-          this.spinAnim(servers, true);
+          this.spinAnim(servers.body, true);
         }, startingDelay);
       }
 
@@ -175,9 +176,11 @@ export class LandingpageComponent {
     if(i > 0) {
       return '';
     }
-    if(this.isSpinning) {
+
+    if(this.isSpinning || !this.hasRealValues) {
       return ''
     }
+
     return 'background: rgba(255,255,255,1) !important; color: #000 !important;';
   }
 
@@ -197,7 +200,7 @@ export class LandingpageComponent {
 
     this.keeperAPI.searchServers({vcpus_min: this.cpuCount, memory_min: this.ramCount * 1024, limit: 100}).then(servers => {
       console.log('Servers:', servers);
-      this.spinAnim(servers);
+      this.spinAnim(servers.body);
     }).catch(err => {
       console.error(err);
     });
@@ -217,7 +220,7 @@ export class LandingpageComponent {
     spinners.forEach((spinner, i) => {
       const el = document.getElementById(spinner);
       if (el) {
-        el.style.animation = `${Math.random() > 0.5 ? 'spin' : 'spin-back'} ${(3.5 + i * 0.25)}s ease-in-out`;
+        el.style.animation = `${Math.random() > 0.5 ? 'spin-slot' : 'spin-back-slot'} ${(3.5 + i * 0.25)}s ease-in-out`;
       }
     });
 
@@ -246,8 +249,8 @@ export class LandingpageComponent {
         this.spinnerContents[0][index] = { name: servers[i].vendor.vendor_id.toString().toUpperCase(), logo: servers[i].vendor.logo};
         this.spinnerContents[1][index] = { name: servers[i].server.name, architecture: servers[i].server.cpu_architecture};
         this.spinnerContents[2][index] = {
-          name: servers[i].datacenter?.name?.toString().replace(/\(.*\)/, ''),
-          city: servers[i].datacenter?.city?.toString() || servers[i].datacenter?.state?.toString()
+          name: servers[i].datacenter?.city?.toString() || servers[i].datacenter?.state?.toString(),
+          city: servers[i].zone?.name?.toString().replace(/\(.*\)/, '')
         };
       });
     }, 500);
@@ -267,6 +270,7 @@ export class LandingpageComponent {
       clearInterval(interval);
       this.priceValue = '$' + animPriceEnd;
       this.isSpinning = false;
+      this.hasRealValues = true;
     }, 4200)
   }
 }

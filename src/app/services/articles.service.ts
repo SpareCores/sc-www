@@ -17,9 +17,15 @@ export class ArticlesService {
 
   constructor(private http: HttpClient) { }
 
-  async getArticlesByType(type: string): Promise<ArticleMeta[]> {
-    let files = await firstValueFrom(this.http.get(`./assets/articles/featured.json`));
+  async getArticlesByType(category?: string): Promise<ArticleMeta[]> {
+    let files = await firstValueFrom(this.http.get(`./assets/articles/${category ? category : 'all'}.json`));
     console.log(files);
     return files as ArticleMeta[];
+  }
+
+  async getArticle(category: string, slug: string): Promise<string> {
+    let files = await firstValueFrom(this.http.get(`./assets/articles/${category}/${slug}.md`, { responseType: 'text' } ));
+    console.log(files);
+    return files as string;
   }
 }

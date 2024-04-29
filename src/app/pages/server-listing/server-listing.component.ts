@@ -4,7 +4,7 @@ import { KeeperAPIService } from '../../services/keeper-api.service';
 import { OrderDir, SearchServerSearchGetParams, ServerPriceWithPKs } from '../../../../sdk/data-contracts';
 import { Subject, debounceTime } from 'rxjs';
 import { encodeQueryParams } from '../../tools/queryParamFunctions';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
 import { Dropdown, DropdownOptions, InstanceOptions, Modal, ModalOptions } from 'flowbite';
 import { StorageHandlerService } from '../../services/storage-handler.service';
@@ -35,7 +35,8 @@ const optionsModal: ModalOptions = {
 @Component({
   selector: 'app-server-listing',
   templateUrl: './server-listing.component.html',
-  styleUrl: './server-listing.component.scss'
+  styleUrl: './server-listing.component.scss',
+  host: {ngSkipHydration: 'true'},
 })
 export class ServerListingComponent {
 
@@ -97,6 +98,7 @@ export class ServerListingComponent {
 
   limit = 25;
   page = 1;
+  totalPages = 0;
 
   orderBy: string | undefined = undefined;
   orderDir: OrderDir | undefined = undefined;
@@ -113,9 +115,16 @@ export class ServerListingComponent {
   dropdownColumn: any;
   modalSearch: any;
 
+  isLoading = false;
+
+  freetextSearchInput: string | null = null;
+  modalSubmitted = false;
+  modalResponse: any;
+
   constructor(@Inject(PLATFORM_ID) private platformId: object,
               private keeperAPI: KeeperAPIService,
               private route: ActivatedRoute,
+              private router: Router,
               private SEOHandler: SeoHandlerService,
               private storageHandler: StorageHandlerService) { }
 
@@ -175,7 +184,8 @@ export class ServerListingComponent {
     });
 
     this.valueChangeDebouncer.pipe(debounceTime(300)).subscribe((value) => {
-     this.filterServers();
+      this.page = 1;
+      this.filterServers();
     });
 
     if(isPlatformBrowser(this.platformId)) {
@@ -246,6 +256,10 @@ export class ServerListingComponent {
     return `${(item.server.storage_size / 1000).toFixed(1)} TB`;
   }
 
+  openServerDetails(server: ServerPriceWithPKs) {
+    //this.router.navigateByUrl(`/server/${server.server.server_id}`);
+  }
+
   toggleCategory(category: any) {
     category.collapsed = !category.collapsed;
   }
@@ -285,7 +299,7 @@ export class ServerListingComponent {
     return parameter.schema.step || 1;
   }
 
-  filterServers(updateURL = true) {
+  filterServers(updateURL = true, updateTotalCount = true) {
     let queryObject: SearchServerSearchGetParams = this.getQueryObject() || {};
 
     if(updateURL) {
@@ -300,11 +314,22 @@ export class ServerListingComponent {
       queryObject.order_dir = this.orderDir;
     }
 
+    this.isLoading = true;
+
+    if(updateTotalCount) {
+      queryObject.add_total_count_header = true;
+    }
+
     this.keeperAPI.searchServers(queryObject).then(servers => {
-      this.servers = servers;
+      this.servers = servers?.body;
+      if(updateTotalCount) {
+        this.totalPages = Math.ceil(parseInt(servers?.headers?.get('x-total-count') || '0') / this.limit);
+      }
       console.log('Servers:', servers);
     }).catch(err => {
       console.error(err);
+    }).finally(() => {
+      this.isLoading = false;
     });
   }
 
@@ -387,7 +412,6 @@ export class ServerListingComponent {
     return paramObject;
   }
 
-
   updateQueryParams(object: any) {
     let encodedQuery = encodeQueryParams(object);
 
@@ -418,6 +442,7 @@ export class ServerListingComponent {
 
   selectAllocation(allocation: any) {
     this.allocation = allocation;
+    this.page = 1;
 
     this.filterServers();
 
@@ -430,12 +455,24 @@ export class ServerListingComponent {
 
   prevPage() {
     this.page = Math.max(this.page - 1, 1);
-    this.filterServers();
+    this.gotoPage(this.page);
   }
 
   nextPage() {
-    this.page++;
-    this.filterServers();
+   this.gotoPage(this.page + 1);
+  }
+
+  gotoPage(page: number) {
+    if(this.page === page) return;
+    this.page = page;
+    this.filterServers(true, false);
+  }
+
+  possiblePages() {
+    // get numbers in array from min(page-2, 1) to page+2
+    const min = Math.max(this.page - 1, 1);
+    const max = Math.min(this.page + 1, this.totalPages);
+    return Array.from({length: max - min + 1}, (_, i) => i + min);
   }
 
   openSearchPromt() {
@@ -445,9 +482,27 @@ export class ServerListingComponent {
   closeModal(confirm: boolean) {
     if(confirm) {
       this.filterServers();
+
+      this.freetextSearchInput = '';
+      this.modalResponse = null;
     }
 
     this.modalSearch?.hide();
+  }
+
+  submitFreetextSearch() {
+    this.modalSubmitted = true;
+    this.modalResponse = null;
+
+    if(this.freetextSearchInput) {
+      this.keeperAPI.parseFreetextSearch(this.freetextSearchInput).then(response => {
+        this.modalResponse = {foo: 'bar'};
+      }).catch(err => {
+        console.error(err);
+      }).finally(() => {
+        this.modalSubmitted = false;
+      });
+    }
   }
 
 }
