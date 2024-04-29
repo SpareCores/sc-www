@@ -167,7 +167,7 @@ special cases):
 
 This was highly confusing first, as we were trained using AWS with
 very different prices even between the availability zones of a single
-region, but as GCP has uniform prices within a datacenter, it did
+region, but as GCP has uniform prices within a datacenter, it did not
 raise any issues after all (except for storing redundant data in our
 databases).
 
