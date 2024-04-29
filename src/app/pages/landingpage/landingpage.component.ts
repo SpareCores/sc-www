@@ -99,6 +99,7 @@ export class LandingpageComponent {
 
   isSpinning = false;
   spinnerClicked = false;
+  hasRealValues = false;
 
   constructor(@Inject(PLATFORM_ID) private platformId: object,
               private keeperAPI: KeeperAPIService,
@@ -175,9 +176,11 @@ export class LandingpageComponent {
     if(i > 0) {
       return '';
     }
-    if(this.isSpinning || !this.spinnerClicked) {
+
+    if(this.isSpinning || !this.hasRealValues) {
       return ''
     }
+
     return 'background: rgba(255,255,255,1) !important; color: #000 !important;';
   }
 
@@ -267,6 +270,7 @@ export class LandingpageComponent {
       clearInterval(interval);
       this.priceValue = '$' + animPriceEnd;
       this.isSpinning = false;
+      this.hasRealValues = true;
     }, 4200)
   }
 }
