@@ -28,45 +28,27 @@ const BACKEND_BASE_URI_SSR = import.meta.env['NG_APP_BACKEND_BASE_URI_SSR'];
         }
 
         let headers = new HttpHeaders({
-            'Content-Type': type || 'application/json',
+            'Content-Type': type || 'application/json'
         });
 
         let response: any = await this._requestWithRetries(method, url, body, headers);
 
-        try {
-            // Setting a body is forbidden on GET requests
-            if (method === 'GET') {
-                response = await firstValueFrom(this.httpClient.get(url.toString(), { headers }));
-            } else if (method === 'POST') {
-                response = await firstValueFrom(this.httpClient.post(url.toString(), body, { headers }));
-            } else if (method === 'PATCH') {
-                response = await firstValueFrom(this.httpClient.patch(url.toString(), body, { headers }));
-            } else if (method === 'DELETE') {
-                response = await firstValueFrom(this.httpClient.delete(url.toString(), { headers }));
-            }
-
-            return response;
-        } catch (err: any) {
-            console.log('API exception');
-            console.log(err.message);
-            console.log(err.status);
-            throw err;
-        }
+        return response;
     }
 
     private async _requestWithRetries(method: string | undefined, url: URL, body: any, headers: HttpHeaders, retry: number = 0): Promise<any> {
       let response: any;
-
+      const observe = 'response';
       try {
           // Setting a body is forbidden on GET requests
           if (method === 'GET') {
-              response = await firstValueFrom(this.httpClient.get(url.toString(), { headers }));
+              response = await firstValueFrom(this.httpClient.get(url.toString(), { headers, observe }));
           } else if (method === 'POST') {
-              response = await firstValueFrom(this.httpClient.post(url.toString(), body, { headers }));
+              response = await firstValueFrom(this.httpClient.post(url.toString(), body, { headers, observe }));
           } else if (method === 'PATCH') {
-              response = await firstValueFrom(this.httpClient.patch(url.toString(), body, { headers }));
+              response = await firstValueFrom(this.httpClient.patch(url.toString(), body, { headers, observe }));
           } else if (method === 'DELETE') {
-              response = await firstValueFrom(this.httpClient.delete(url.toString(), { headers }));
+              response = await firstValueFrom(this.httpClient.delete(url.toString(), { headers, observe }));
           }
 
           return response;
