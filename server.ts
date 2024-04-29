@@ -8,7 +8,7 @@ import { AppServerModule } from './src/app/app.server.module';
 // The Express app is exported so that it can be used by serverless Functions.
 export function app(): express.Express {
   const server = express();
-  const serverDistFolder = dirname(fileURLToPath(import.meta.url));
+  const serverDistFolder = resolve(process.cwd(), 'dist', 'sc-www', 'server');
   const browserDistFolder = resolve(serverDistFolder, '../browser');
   const indexHtml = join(serverDistFolder, 'index.server.html');
 
