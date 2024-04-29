@@ -80,7 +80,7 @@ input[type=number]::-webkit-outer-spin-button {
   margin: 0; /* This removes the extra space created by the spinners */
 }
 
-@keyframes spin {
+@keyframes spin-slot {
   from {
     transform: rotateX(0deg);
   }
@@ -89,7 +89,7 @@ input[type=number]::-webkit-outer-spin-button {
   }
 }
 
-@keyframes spin-back {
+@keyframes spin-back-slot {
   from {
     transform: rotateX(0deg);
   }
