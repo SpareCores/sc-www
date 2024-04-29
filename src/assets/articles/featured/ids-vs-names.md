@@ -132,10 +132,13 @@ account! Fortunately, the `zone_id` field is a reliable mapping even
 between different organizations, so when we say that an instance is
 the cheapest in the `use1-az3` zone, you should be able to reference
 that in your AWS account, for example with the following command:
-```shell
-aws ec2 --region us-east-1 describe-availability-zones --output text --query 'AvailabilityZones[?ZoneId==`use1-az1`].ZoneName'
-```
 
+```shell
+aws ec2 \
+  --region us-east-1 describe-availability-zones \
+  --output text \
+  --query 'AvailabilityZones[?ZoneId==`use1-az1`].ZoneName'
+```
 
 ## Google Cloud Platform
 
