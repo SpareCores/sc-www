@@ -2,9 +2,16 @@
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.2.3.
 
-## Set up environment
+## Prerequisites
 
-Set environment variables (or `.env` file) as per the `.env.example` template file.
+To compile the project, you need to set up the below environment variables:
+
+- NG_APP_BACKEND_BASE_URI: [Keeper API](https://github.com/SpareCores/sc-keeper) endpoint to be used on the client-side
+- NG_APP_BACKEND_BASE_URI_SSR: [Keeper API](https://github.com/SpareCores/sc-keeper) endpoint to be used on the server-side
+
+This can also be done via defining an `.env` file based on the provided `.env.example` template file.
+
+You also need to provide your own Terms of Service and Privacy Policy documents as a markdown file at the `src/assets/TOS.md` path.
 
 ## Development server
 
