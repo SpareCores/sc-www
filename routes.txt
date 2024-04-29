@@ -1,0 +1,2 @@
+/articles/featured
+/article/featured/ids-vs-names
