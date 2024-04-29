@@ -4,7 +4,6 @@
   "scripts": {
     "ng": "ng",
     "prebuild": "node ./prebuils.js",
-    "postbuild": "./rename-server-files.sh",
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
