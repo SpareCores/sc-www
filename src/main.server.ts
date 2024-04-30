@@ -6,3 +6,4 @@ import { from } from 'rxjs';
 
 
 export { AppServerModule as default } from './app/app.server.module';
+export { AppServerModule as bootstrap } from './app/app.server.module';
