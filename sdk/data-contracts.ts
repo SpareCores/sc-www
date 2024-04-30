@@ -182,6 +182,86 @@ export interface DatacenterBaseWithPKs {
   country: CountryBase;
 }
 
+/** Datacenters */
+export enum Datacenters {
+  UsCentral1 = "us-central1",
+  EuropeWest1 = "europe-west1",
+  UsWest1 = "us-west1",
+  AsiaEast1 = "asia-east1",
+  UsEast1 = "us-east1",
+  AsiaNortheast1 = "asia-northeast1",
+  AsiaSoutheast1 = "asia-southeast1",
+  UsEast4 = "us-east4",
+  AustraliaSoutheast1 = "australia-southeast1",
+  EuropeWest2 = "europe-west2",
+  EuropeWest3 = "europe-west3",
+  SouthamericaEast1 = "southamerica-east1",
+  AsiaSouth1 = "asia-south1",
+  NorthamericaNortheast1 = "northamerica-northeast1",
+  EuropeWest4 = "europe-west4",
+  EuropeNorth1 = "europe-north1",
+  UsWest2 = "us-west2",
+  AsiaEast2 = "asia-east2",
+  EuropeWest6 = "europe-west6",
+  AsiaNortheast2 = "asia-northeast2",
+  AsiaNortheast3 = "asia-northeast3",
+  UsWest3 = "us-west3",
+  UsWest4 = "us-west4",
+  AsiaSoutheast2 = "asia-southeast2",
+  EuropeCentral2 = "europe-central2",
+  NorthamericaNortheast2 = "northamerica-northeast2",
+  AsiaSouth2 = "asia-south2",
+  AustraliaSoutheast2 = "australia-southeast2",
+  SouthamericaWest1 = "southamerica-west1",
+  EuropeWest8 = "europe-west8",
+  EuropeWest9 = "europe-west9",
+  UsEast5 = "us-east5",
+  EuropeSouthwest1 = "europe-southwest1",
+  UsSouth1 = "us-south1",
+  MeWest1 = "me-west1",
+  EuropeWest12 = "europe-west12",
+  MeCentral1 = "me-central1",
+  EuropeWest10 = "europe-west10",
+  MeCentral2 = "me-central2",
+  AfricaSouth1 = "africa-south1",
+  Nbg1Dc3 = "nbg1-dc3",
+  Hel1Dc2 = "hel1-dc2",
+  Fsn1Dc14 = "fsn1-dc14",
+  AshDc1 = "ash-dc1",
+  HilDc1 = "hil-dc1",
+  AfricaCapeTown = "Africa (Cape Town)",
+  AsiaPacificHongKong = "Asia Pacific (Hong Kong)",
+  AsiaPacificTokyo = "Asia Pacific (Tokyo)",
+  AsiaPacificSeoul = "Asia Pacific (Seoul)",
+  AsiaPacificOsaka = "Asia Pacific (Osaka)",
+  AsiaPacificMumbai = "Asia Pacific (Mumbai)",
+  AsiaPacificHyderabad = "Asia Pacific (Hyderabad)",
+  AsiaPacificSingapore = "Asia Pacific (Singapore)",
+  AsiaPacificSydney = "Asia Pacific (Sydney)",
+  AsiaPacificJakarta = "Asia Pacific (Jakarta)",
+  AsiaPacificMelbourne = "Asia Pacific (Melbourne)",
+  CanadaCentral = "Canada (Central)",
+  CanadaWestCalgary = "Canada West (Calgary)",
+  ChinaBeijing = "China (Beijing)",
+  ChinaNingxia = "China (Ningxia)",
+  EuropeFrankfurt = "Europe (Frankfurt)",
+  EuropeZurich = "Europe (Zurich)",
+  EuropeStockholm = "Europe (Stockholm)",
+  EuropeMilan = "Europe (Milan)",
+  EuropeSpain = "Europe (Spain)",
+  EuropeIreland = "Europe (Ireland)",
+  EuropeLondon = "Europe (London)",
+  EuropeParis = "Europe (Paris)",
+  IsraelTelAviv = "Israel (Tel Aviv)",
+  MiddleEastUAE = "Middle East (UAE)",
+  MiddleEastBahrain = "Middle East (Bahrain)",
+  SouthAmericaSaoPaulo = "South America (Sao Paulo)",
+  USEastNVirginia = "US East (N. Virginia)",
+  USEastOhio = "US East (Ohio)",
+  USWestNCalifornia = "US West (N. California)",
+  USWestOregon = "US West (Oregon)",
+}
+
 /**
  * Disk
  * Disk definition based on size and storage type.
@@ -801,7 +881,7 @@ export interface SearchServerSearchGetParams {
   architecture?: "arm64" | "arm64_mac" | "i386" | "x86_64" | "x86_64_mac";
   /**
    * Memory amount
-   * Minimum amount of memory in MBs.
+   * Minimum amount of memory in GBs.
    */
   memory_min?: number | null;
   /**
@@ -831,10 +911,20 @@ export interface SearchServerSearchGetParams {
    */
   vendor?: "aws" | "gcp" | "hcloud";
   /**
+   * Datacenter id
+   * Datacenter.
+   */
+  datacenter?: "[object Object]";
+  /**
    * Compliance Framework id
    * Compliance framework implemented at the vendor.
    */
   compliance_framework?: "hipaa" | "iso27001" | "soc2t2";
+  /**
+   * Storage Size
+   * Reserver storage size in GBs.
+   */
+  storage_size?: number | null;
   /**
    * Limit
    * Maximum number of results. Set to -1 for unlimited
