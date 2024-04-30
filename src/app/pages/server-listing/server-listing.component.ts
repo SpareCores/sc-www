@@ -67,6 +67,10 @@ export class ServerListingComponent {
     { name: 'STOCK', show: true, type: 'text', key: 'status' },
     { name: 'PRICE', show: true, type: 'price', orderField: 'price' },
     { name: 'ARCHITECTURE', show: false, type: 'text', key: 'server.cpu_architecture' },
+    { name: 'DATACENTER', show: false, type: 'datacenter' },
+    { name: 'STATUS', show: false, type: 'text', key: 'server.status' },
+    { name: 'VENDOR', show: false, type: 'vendor' },
+    { name: 'ZONE', show: false, type: 'text', key: 'zone.name' },
   ];
 
   availableCurrencies = [
