@@ -34,6 +34,10 @@ stored in the `dist/` directory.
 Note that the project heavily relies on SSR, so you will need a
 node.js backend running to serve requests.
 
+## Linting tools
+
+Run `ng lint` to check code formatting on all `ts` and `html` files.
+
 ## Running unit tests
 
 Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
