@@ -48,6 +48,10 @@ Run `ng e2e` to execute the end-to-end tests via a platform of your
 choice. To use this command, you need to first add a package that
 implements end-to-end testing capabilities.
 
+## License
+
+Please see the bundled `LICENSE.md` file.
+
 ## Further help
 
 Please open a [GitHub ticket](https://github.com/SpareCores/sc-www/issues/new)
