@@ -19,13 +19,9 @@ import { MarkdownModule } from 'ngx-markdown';
 
 
 
+/*
 @NgModule({
   declarations: [
-    AppComponent,
-    HeaderComponent,
-    FooterComponent,
-    LandingpageComponent,
-    ServerListingComponent
   ],
   imports: [
     RouterModule.forRoot(routes),
@@ -69,7 +65,7 @@ import { MarkdownModule } from 'ngx-markdown';
     provideClientHydration(),
     provideHttpClient(withFetch()),
   ],
-  bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class AppModule { }
+*/

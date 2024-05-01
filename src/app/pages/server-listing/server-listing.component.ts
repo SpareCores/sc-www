@@ -1,14 +1,16 @@
 import { Component, Inject, PLATFORM_ID } from '@angular/core';
-import { BreadcrumbSegment } from '../../components/breadcrumbs/breadcrumbs.component';
+import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { KeeperAPIService } from '../../services/keeper-api.service';
 import { OrderDir, SearchServerSearchGetParams, ServerPriceWithPKs } from '../../../../sdk/data-contracts';
 import { Subject, debounceTime } from 'rxjs';
 import { encodeQueryParams } from '../../tools/queryParamFunctions';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { isPlatformBrowser } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Dropdown, DropdownOptions, InstanceOptions, Modal, ModalOptions } from 'flowbite';
 import { StorageHandlerService } from '../../services/storage-handler.service';
 import { SeoHandlerService } from '../../services/seo-handler.service';
+import { FormsModule } from '@angular/forms';
+import { LucideAngularModule } from 'lucide-angular';
 
 export type TableColumn = {
   name: string;
@@ -34,6 +36,8 @@ const optionsModal: ModalOptions = {
 
 @Component({
   selector: 'app-server-listing',
+  standalone: true,
+  imports: [CommonModule, FormsModule, BreadcrumbsComponent, LucideAngularModule],
   templateUrl: './server-listing.component.html',
   styleUrl: './server-listing.component.scss',
   host: {ngSkipHydration: 'true'},

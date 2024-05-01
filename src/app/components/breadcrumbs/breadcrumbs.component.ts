@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { RouterModule } from '@angular/router';
+import { RouterLink } from '@angular/router';
 
 export type BreadcrumbSegment = {
   name: string;
@@ -11,7 +10,7 @@ export type BreadcrumbSegment = {
 @Component({
   selector: 'app-breadcrumbs',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './breadcrumbs.component.html',
   styleUrl: './breadcrumbs.component.scss'
 })

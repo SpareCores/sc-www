@@ -1,13 +1,21 @@
-import { Component, Inject, PLATFORM_ID } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, Component, Inject, PLATFORM_ID } from '@angular/core';
 import { ArticleMeta, ArticlesService } from '../../services/articles.service';
-import { isPlatformBrowser } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { KeeperAPIService } from '../../services/keeper-api.service';
 import { spinner_initial_data } from '../../tools/spinner_initial_data';
 import { SearchServerSearchGetData } from '../../../../sdk/data-contracts';
 import { SeoHandlerService } from '../../services/seo-handler.service';
+import { FormsModule } from '@angular/forms';
+import { ThemeTextComponent } from '../../components/theme-text/theme-text.component';
+import { RouterLink } from '@angular/router';
+import { TimeToShortDatePipe } from '../../pipes/time-to-short-date.pipe';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-landingpage',
+  standalone: true,
+  imports: [CommonModule, FormsModule, ThemeTextComponent, RouterLink, TimeToShortDatePipe, LucideAngularModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './landingpage.component.html',
   styleUrl: './landingpage.component.scss'
 })
