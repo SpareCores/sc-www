@@ -76,9 +76,9 @@
                   <div *ngFor="let enum of parameter.schema.enum" class="flex items-center gap-1">
                     <input type="checkbox"
                       [ngModel]="isEnumSelected(parameter, enum)"
-                      (click)="toggleEnumSelection(parameter, enum)"
+                      (click)="selectEnumItem(parameter, enum)"
                       class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
-                      <div class="text-white text-sm">{{enum}}</div>
+                      <div class="text-white text-sm">{{enum?.value ? enum?.value : enum}}</div>
                   </div>
                 </div>
               </div>
