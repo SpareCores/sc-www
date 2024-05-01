@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { MarkdownModule, MarkdownService } from 'ngx-markdown';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TimeToShortDatePipe } from '../../pipes/time-to-short-date.pipe';
@@ -12,7 +11,7 @@ import { ArticlesService } from '../../services/articles.service';
 @Component({
   selector: 'app-article',
   standalone: true,
-  imports: [BreadcrumbsComponent, RouterModule, CommonModule, HttpClientModule, MarkdownModule, TimeToShortDatePipe],
+  imports: [BreadcrumbsComponent, RouterLink, CommonModule, MarkdownModule, TimeToShortDatePipe],
   templateUrl: './article.component.html',
   styleUrl: './article.component.scss'
 })
@@ -29,7 +28,6 @@ export class ArticleComponent {
 
   constructor(
     private route: ActivatedRoute,
-    private http: HttpClient,
     private SEOHandler: SeoHandlerService,
     private markdownService: MarkdownService,
     private domSanitizer: DomSanitizer,
