@@ -342,14 +342,17 @@ export class ServerListingComponent {
     this.valueChangeDebouncer.next(0);
   }
 
-  isEnumSelected(param: any, value: string) {
+  isEnumSelected(param: any, valueOrObj: any) {
+    const value = typeof valueOrObj === 'string' ? valueOrObj : valueOrObj.value;
     return param.modelValue && param.modelValue.indexOf(value) !== -1;
   }
 
-  toggleEnumSelection(param: any, value: string) {
+  selectEnumItem(param: any, valueOrObj: any) {
     if(!param.modelValue) {
       param.modelValue = [];
     }
+
+    const value = typeof valueOrObj === 'string' ? valueOrObj : valueOrObj.value;
 
     const index = param.modelValue.indexOf(value);
     if(index !== -1) {
