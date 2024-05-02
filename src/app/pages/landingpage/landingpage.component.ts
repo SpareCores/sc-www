@@ -23,32 +23,32 @@ export class LandingpageComponent {
 
   features: any[] = [
     {
-      count: '8',
-      text: 'vendors'
+      count: '3',
+      text: '(out of 8 planned) vendors'
     },
     {
-      count: '67',
+      count: '76',
       text: 'datacenters'
     },
     {
-      count: '234',
+      count: '338',
       text: 'availability zones'
     },
     {
-      count: '2494',
+      count: '1354',
       text: 'server types'
     },
     {
-      count: '121.312',
+      count: '133.483',
       text: 'price records'
     },
     {
-      count: '2.5M',
-      text: 'records updated daily'
+      count: '~5k',
+      text: 'records updated hourly'
     },
 
     {
-      count: '36M',
+      count: '~10M',
       text: 'historical records'
     },
   ];
