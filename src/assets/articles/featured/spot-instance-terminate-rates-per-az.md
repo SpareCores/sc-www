@@ -6,7 +6,7 @@ date: 2024-04-16
 teaser: "AWS publicizes the expected termination rate of the spot instances per region, but what about AZs?"
 # 320x220
 image: /assets/images/blog/termination-rates-r7i.2xlarge-cropped.png
-tags: []
+tags: ["aws", "spot", "data"]
 ---
 
 We have been very satisfied users of the Spot Blocks for
