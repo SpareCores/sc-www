@@ -3,7 +3,7 @@
 title: "Project takeoff: NGI Search grant award"
 date: 2024-01-18
 # ~100 character
-teaser: "The Spare Cores project was selected as a winner out of 94 applications: awarded 150k EUR for open-source work."
+teaser: "Spare Cores was selected as a winner project out of 94 applications: awarded 150k EUR for open-source work."
 # 320x220
 image: /assets/images/blog/ngi-search-oc3-outcome-cropped.png
 tags: ["ngi-search", "funding", "open-source"]

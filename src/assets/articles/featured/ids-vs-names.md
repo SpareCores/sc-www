@@ -1,6 +1,6 @@
 ---
 # ~50 chars
-title: When to use resource ids, when prefer the names?
+title: When to use resource ids, or prefer the names?
 date: 2024-02-14
 # ~100 character
 teaser: The use of resource ids and names differs by vendor ... and might be even the same. Integer? String? None?

@@ -1,6 +1,6 @@
 ---
 # ~50 chars
-title: Spot instance termination rates per availability zones
+title: Spot server termination rate per availability zones
 date: 2024-04-16
 # ~100 character
 teaser: "AWS publicizes the expected termination rate of the spot instances per region, but what about AZs?"
