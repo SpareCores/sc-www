@@ -104,9 +104,9 @@ an infinite loop as per below:
   termination notice.
 - Terminate either on the notice or after 1 hour.
 
-We started with the `r7i.2xlarge` instance as previously sawing a very
-high (much higher than >20% as reported by the Spot Instance advisor)
-termination rate in the `us-west-2b` availability zone (or <a
+We started with the `r7i.2xlarge` instance as previously experienced a
+very high (much higher than >20% as reported by the Spot Instance
+advisor) termination rate in the `us-west-2b` availability zone (or <a
 href="/article/featured/ids-vs-names">whatever it is called in your
 AWS account</a>):
 
