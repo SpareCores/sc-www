@@ -7,7 +7,7 @@ teaser: "AWS publicizes the expected termination rate of the spot instances per 
 # 320x220
 image: /assets/images/blog/termination-rates-r7i.2xlarge-cropped.png
 author: Gergely Daroczi
-tags: ["aws", "spot", "data"]
+tags: [aws, spot, data, featured]
 ---
 
 We have been very satisfied users of the Spot Blocks for

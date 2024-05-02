@@ -7,6 +7,6 @@ teaser: "Case Study: reducing monthly cloud expenses by $3k via migrating from A
 # 320x220
 image: /assets/images/blog/xkcd-1205-is_it_worth_the_time-cropped.png
 author: Gergely Daroczi
-tags: case-study, aws, spot
+tags: [case-study, aws, spot, featured]
 ---
 

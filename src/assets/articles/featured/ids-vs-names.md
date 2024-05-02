@@ -7,7 +7,7 @@ teaser: The use of resource ids and names differs by vendor ... and might be eve
 # 320x220
 image: /assets/images/blog/hide-the-pain-harold.jpg
 author: Gergely Daroczi
-tags: ["aws", "gcp", "hcloud", "crawler"]
+tags: [aws, gcp, hcloud, crawler, featured]
 ---
 
 Each vendor has its nomenclature on the compute resources (e.g. "spot

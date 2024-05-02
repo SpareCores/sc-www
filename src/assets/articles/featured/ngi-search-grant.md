@@ -7,7 +7,7 @@ teaser: "Spare Cores was selected as a winner project out of 94 applications: aw
 # 320x220
 image: /assets/images/blog/ngi-search-oc3-outcome-cropped.png
 author: Gergely Daroczi
-tags: ["ngi-search", "funding", "open-source"]
+tags: [ngi-search, funding, open-source, featured]
 ---
 
 Attila and Gergely have been ideating on the idea of a SaaS solution
