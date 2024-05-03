@@ -347,7 +347,7 @@
         time. Find some of our featured articles below:
       </div>
       <div class="articles_holder flex mt-8 flex-wrap">
-        <div class="w-1/2 lg:w-1/4 flex flex-col gap-4 px-6" *ngFor="let item of featuredArticles">
+        <div class="w-full md:w-1/2 lg:w-1/4 flex flex-col gap-4 px-6" *ngFor="let item of featuredArticles">
           <a routerLink="/article/featured/{{item.filename}}">
             <img class="rounded-xl mb-4" [src]="item.image" alt="" >
           </a>
