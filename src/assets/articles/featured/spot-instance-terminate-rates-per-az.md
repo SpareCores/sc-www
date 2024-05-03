@@ -113,7 +113,7 @@ AWS account</a>):
 
 <div class="flex justify-center items-center mt-8 mb-6">
   <div class="w-3/4">
-    <img
+    <img class="zoomin"
       title="r7i.2xlarge spot instances started in us-west-2 (data collected an visualized by Spare Cores)"
       src="/assets/images/blog/termination-rates-r7i.2xlarge.png"/>
     <p class="text-center">The status of r7i.2xlarge spot instances started in us-west-2<br />(data collected an visualized by Spare Cores)</p>
@@ -148,7 +148,7 @@ ORDER BY 1, 2;
 
 <div class="flex justify-center items-center mt-8 mb-6">
   <div class="w-3/4">
-    <img
+    <img class="zoomin"
       title="The spot prices of r7i.2xlarge per AZ in us-west-2 (data collected an visualized by Spare Cores)"
       src="/assets/images/blog/termination-rates-prices.png"/>
     <p class="text-center">The spot prices of r7i.2xlarge per AZ in us-west-2<br />(data collected an visualized by Spare Cores)</p>
@@ -172,7 +172,7 @@ results:
 
 <div class="flex justify-center items-center mt-8 mb-6">
   <div class="w-3/4">
-    <img
+    <img class="zoomin"
       title="m5.large spot instances started in us-west-2 (data collected an visualized by Spare Cores)"
       src="/assets/images/blog/termination-rates-m5.large.png"/>
     <p class="text-center">The status of m5.large spot instances started in us-west-2<br />(data collected an visualized by Spare Cores)</p>
@@ -181,7 +181,7 @@ results:
 
 <div class="flex justify-center items-center mt-8 mb-6">
   <div class="w-3/4">
-    <img
+    <img class="zoomin"
       title="m5.2xlarge spot instances started in us-west-2 (data collected an visualized by Spare Cores)"
       src="/assets/images/blog/termination-rates-m5.2xlarge.png"/>
     <p class="text-center">The status of m5.2xlarge spot instances started in us-west-2<br />(data collected an visualized by Spare Cores)</p>
