@@ -7,6 +7,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { TimeToShortDatePipe } from '../../pipes/time-to-short-date.pipe';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { ArticlesService } from '../../services/articles.service';
+import matter from 'gray-matter';
 
 @Component({
   selector: 'app-article',
@@ -39,16 +40,17 @@ export class ArticleComponent {
 
       const category = params['category'];
       const id = params['id'];
-      let categoryTitle = category ? category.charAt(0).toUpperCase() + category.slice(1) : '';
 
-      this.articleHandler.getArticle(category, id).then((content: any) => {
-        this.articleMeta = this.convertToJSON(content.split('---')[1]);
-        this.articleBody = this.domSanitizer.bypassSecurityTrustHtml(this.markdownService.parse(content.split('---').slice(2).join("---")) as string);
+      this.articleHandler.getArticle(category, id).then((file: any) => {
+
+        const { data, content } = matter(file);
+
+        this.articleMeta = data;
+        this.articleBody = this.domSanitizer.bypassSecurityTrustHtml(this.markdownService.parse(content) as string);
 
         this.breadcrumbs = [
           { name: 'Home', url: '/' },
           { name: 'Articles', url: `/articles` },
-          { name: categoryTitle, url: `/articles/${category}` },
           { name: this.articleMeta.title, url: `/article/${category}/${id}` }
         ];
 

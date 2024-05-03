@@ -347,7 +347,7 @@ export class ServerListingComponent {
   }
 
   isEnumSelected(param: any, valueOrObj: any) {
-    const value = typeof valueOrObj === 'string' ? valueOrObj : valueOrObj.value;
+    const value = typeof valueOrObj === 'string' ? valueOrObj : valueOrObj.key;
     return param.modelValue && param.modelValue.indexOf(value) !== -1;
   }
 
@@ -356,7 +356,7 @@ export class ServerListingComponent {
       param.modelValue = [];
     }
 
-    const value = typeof valueOrObj === 'string' ? valueOrObj : valueOrObj.value;
+    const value = typeof valueOrObj === 'string' ? valueOrObj : valueOrObj.key;
 
     const index = param.modelValue.indexOf(value);
     if(index !== -1) {

@@ -18,7 +18,7 @@ export class ArticlesComponent {
 
   breadcrumbs: BreadcrumbSegment[] = [
     { name: 'Home', url: '/' },
-    { name: 'Articles', url: '/articles/featured' }
+    { name: 'Articles', url: '/articles' }
   ];
 
   featuredArticles: ArticleMeta[] = [];
@@ -29,15 +29,15 @@ export class ArticlesComponent {
     private articles: ArticlesService) { }
 
   ngOnInit() {
-    this.route.params.subscribe(params => {
-      let category = params['category'];
+    this.route.queryParams.subscribe(params => {
+      let category = params['tag'];
       this.articles.getArticlesByType(category).then(articles => {
         this.featuredArticles = articles;
       });
 
       this.breadcrumbs = [
         { name: 'Home', url: '/' },
-        { name: 'Articles', url: `/articles${category ? '/' + category : '' }` }
+        { name: 'Articles', url: `/articles${category ? '?tag=' + category : '' }` }
       ];
 
       let title = category ? category.charAt(0).toUpperCase() + category.slice(1) : '';

@@ -11,11 +11,11 @@
               </div>
               <div>
                   <p>Published on {{articleMeta.date | timeToShortDate}} by {{articleMeta.author}}.</p>
-                  <p>Topics:
-                      <span *ngFor="let tag of articleMeta.tags.split(','); index as i;">
+                  <div class="flex gap-2">Topics:
+                      <a *ngFor="let tag of articleMeta.tags;" routerLink="/articles" [queryParams]="{ tag }">
                           #{{tag.trim()}}
-                      </span>
-                  </p>
+                      </a>
+                  </div>
               </div>
           </div>
       </div>

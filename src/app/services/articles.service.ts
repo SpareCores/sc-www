@@ -8,6 +8,8 @@ export type ArticleMeta = {
   teaser: string,
   image: string,
   filename: string;
+  author: string;
+  tags?: string[];
 }
 
 @Injectable({
@@ -18,7 +20,10 @@ export class ArticlesService {
   constructor(private http: HttpClient) { }
 
   async getArticlesByType(category?: string): Promise<ArticleMeta[]> {
-    let files = await firstValueFrom(this.http.get(`./assets/articles/${category ? category : 'all'}.json`));
+    let files = await firstValueFrom(this.http.get(`./assets/articles/all.json`));
+    files = (files as ArticleMeta[]).filter((article: ArticleMeta) => {
+      return category ? article.tags?.includes(category) : true;
+    });
     return files as ArticleMeta[];
   }
 
