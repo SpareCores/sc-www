@@ -1,0 +1,9 @@
+{
+  "name": "Spare Cores",
+  "short_name": "SC",
+  "theme_color": "#34D399",
+  "background_color": "#082F49",
+  "display": "standalone",
+  "scope": "./",
+  "start_url": "./"
+}

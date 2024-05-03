@@ -4,13 +4,15 @@
   "compilerOptions": {
     "outDir": "./out-tsc/app",
     "types": [
-      "node"
+        "node",
+        "vite/client"
     ]
   },
   "files": [
     "src/main.ts",
     "src/main.server.ts",
-    "server.ts"
+    "server.ts",
+    "src/polyfills.ts"
   ],
   "include": [
     "src/**/*.d.ts"

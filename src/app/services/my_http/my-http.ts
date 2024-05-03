@@ -4,10 +4,11 @@ import { Inject, PLATFORM_ID } from "@angular/core";
 import { FullRequestParams, HttpClient as HttpClientSDK, HttpResponse} from "../../../../sdk/http-client";
 import { firstValueFrom } from "rxjs";
 
-
-const BACKEND_BASE_URI = 'https://keeper.sparecores.net';
-const BACKEND_BASE_URI_SSR = 'https://keeper.sparecores.net';
 const RETRY_INTERVALS = [200, 500, 1000, 2000, 5000, 10000]; // in milliseconds
+const RETRY_INTERVALS_SSR = [100, 200]; // in milliseconds
+
+const BACKEND_BASE_URI = import.meta.env['NG_APP_BACKEND_BASE_URI'];
+const BACKEND_BASE_URI_SSR = import.meta.env['NG_APP_BACKEND_BASE_URI_SSR'];
 
  // swagger-typescript-api
  export class MYHTTPClient<Data> extends HttpClientSDK {
@@ -23,58 +24,38 @@ const RETRY_INTERVALS = [200, 500, 1000, 2000, 5000, 10000]; // in milliseconds
 
         if(query) {
           const queryStr = this.addQueryParams(query);
-          console.log('Query string:', queryStr);
-
           url.search = queryStr;
         }
 
         let headers = new HttpHeaders({
-            'Content-Type': type || 'application/json',
+            'Content-Type': type || 'application/json'
         });
 
         let response: any = await this._requestWithRetries(method, url, body, headers);
 
-        try {
-            // Setting a body is forbidden on GET requests
-            if (method === 'GET') {
-                response = await firstValueFrom(this.httpClient.get(url.toString(), { headers }));
-            } else if (method === 'POST') {
-                response = await firstValueFrom(this.httpClient.post(url.toString(), body, { headers }));
-            } else if (method === 'PATCH') {
-                response = await firstValueFrom(this.httpClient.patch(url.toString(), body, { headers }));
-            } else if (method === 'DELETE') {
-                response = await firstValueFrom(this.httpClient.delete(url.toString(), { headers }));
-            }
-
-            return response;
-        } catch (err: any) {
-            console.log('API exception');
-            console.log(err.message);
-            console.log(err.status);
-            throw err;
-        }
+        return response;
     }
 
     private async _requestWithRetries(method: string | undefined, url: URL, body: any, headers: HttpHeaders, retry: number = 0): Promise<any> {
       let response: any;
-
+      const observe = 'response';
       try {
           // Setting a body is forbidden on GET requests
           if (method === 'GET') {
-              response = await firstValueFrom(this.httpClient.get(url.toString(), { headers }));
+              response = await firstValueFrom(this.httpClient.get(url.toString(), { headers, observe }));
           } else if (method === 'POST') {
-              response = await firstValueFrom(this.httpClient.post(url.toString(), body, { headers }));
+              response = await firstValueFrom(this.httpClient.post(url.toString(), body, { headers, observe }));
           } else if (method === 'PATCH') {
-              response = await firstValueFrom(this.httpClient.patch(url.toString(), body, { headers }));
+              response = await firstValueFrom(this.httpClient.patch(url.toString(), body, { headers, observe }));
           } else if (method === 'DELETE') {
-              response = await firstValueFrom(this.httpClient.delete(url.toString(), { headers }));
+              response = await firstValueFrom(this.httpClient.delete(url.toString(), { headers, observe }));
           }
 
           return response;
       } catch (err: any) {
-          if (retry < RETRY_INTERVALS.length) {
+          if (retry < (isPlatformBrowser(this.platformId) ? RETRY_INTERVALS.length : RETRY_INTERVALS_SSR.length)) {
               console.log('Retrying request...');
-              await new Promise(resolve => setTimeout(resolve, RETRY_INTERVALS[retry]));
+              await new Promise(resolve => setTimeout(resolve, isPlatformBrowser(this.platformId) ? RETRY_INTERVALS[retry] : RETRY_INTERVALS_SSR[retry]));
               return this._requestWithRetries(method, url, body, headers, retry + 1);
           } else {
             console.log('API exception');

@@ -10,7 +10,7 @@ $content-max-width: 1400px;
 
 @layer components {
   .btn-primary {
-    @apply bg-emerald-400 text-white font-semibold shadow-md hover:bg-emerald-500 focus:outline-none focus:ring focus:ring-emerald-400 focus:ring-opacity-75;
+    @apply bg-emerald-400 text-white rounded-lg font-bold hover:bg-emerald-500 focus:outline-none focus:ring focus:ring-emerald-400 focus:ring-opacity-75;
     transition-duration: 0.15s;
     transition-property: background-color, border-color, box-shadow, color;
     transition-timing-function: ease-in;
@@ -31,10 +31,6 @@ $content-max-width: 1400px;
     border-color: rgba(#34D399, 0.2);
   }
 
-  .shadown_color {
-    color: rgba(#34D399, 0.2);
-  }
-
   .content{
     max-width: $content-max-width;
     margin: auto;
@@ -42,7 +38,6 @@ $content-max-width: 1400px;
 }
 
 :root {
-
   --swiper-pagination-color: #34D399;
   --swiper-pagination-bullet-size: 8px;
   --swiper-pagination-bullet-width: 8px;
@@ -54,7 +49,38 @@ $content-max-width: 1400px;
   --swiper-pagination-bullet-vertical-gap: 6px;
 }
 
-@keyframes spin {
+input[type=range]::-webkit-slider-thumb {
+  background: #34d399; /* This is the color for emerald-400 in Tailwind CSS */
+}
+
+input[type=range]::-moz-range-thumb {
+  background: #34d399;
+}
+
+input[type=range]::-ms-thumb {
+  background: #34d399;
+}
+
+
+input[type=range]::-moz-range-progress {
+  background: #34d399; /* This is the color for emerald-400 in Tailwind CSS */
+}
+
+input[type=range]::-ms-fill-upper {
+  background: #34d399;
+}
+
+input[type=number] {
+  -webkit-appearance: textfield; /* This removes the default browser styling */
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none; /* This hides the spinners */
+  margin: 0; /* This removes the extra space created by the spinners */
+}
+
+@keyframes spin-slot {
   from {
     transform: rotateX(0deg);
   }
@@ -63,7 +89,7 @@ $content-max-width: 1400px;
   }
 }
 
-@keyframes spin-back {
+@keyframes spin-back-slot {
   from {
     transform: rotateX(0deg);
   }
@@ -77,10 +103,19 @@ $content-max-width: 1400px;
     transform: translateY(0);
   }
   40% {
-    transform: translateY(-15px);
+    transform: translateY(6px);
   }
   60% {
-    transform: translateY(-7px);
+    transform: translateY(3px);
+  }
+}
+
+@keyframes press {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  20% {
+    transform: translateY(6px);
   }
 }
 

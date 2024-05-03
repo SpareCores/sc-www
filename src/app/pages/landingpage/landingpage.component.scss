@@ -35,6 +35,9 @@
     tr {
       td {
         @apply px-5 py-3 text-left text-sm;
+        a:hover {
+          opacity: 0.5;
+        }
       }
     }
   }
@@ -76,7 +79,7 @@
   }
   .spin_button {
     position: absolute;
-    left: 350px;
+    left: 550px;
     top: 526px;
     width: 150px;
     height: 60px;
@@ -131,21 +134,21 @@
   .spinner_box_1 {
     position: absolute;
     left: 20px;
-    top: 90px;
+    top: 95px;
     width: 150px;
     height: 200px;
   }
   .spinner_box_2 {
     position: absolute;
     left: 202.5px;
-    top: 90px;
+    top: 95px;
     width: 200px;
     height: 200px;
   }
   .spinner_box_3 {
     position: absolute;
     left: 390px;
-    top: 90px;
+    top: 95px;
     width: 200px;
     height: 200px;
   }
@@ -198,7 +201,7 @@
     .slot_inner {
       height: 100%;
       width: calc(100% - 1rem);
-      margin: 1.0rem 0.5rem;
+      margin: 0.5rem 0.5rem;
       border-radius: 1rem;
       background: transparent;
       color: #ccc;
@@ -207,6 +210,61 @@
       justify-content: center;
     }
   }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  .container {
+    position: absolute;
+    left: 350px;
+    top: 526px;
+    width: 150px;
+    height: 60px;
+  }
+
+  .container > .button {
+    width: calc(100% - 0.25rem);
+    height: 50px;
+    border: none;
+    color: #fff;
+    letter-spacing: .2rem;
+    background-color: #ef0040;
+    border: 1px solid #c3002b;
+    border-radius: 15px;
+    transform: translateY(0);
+    -moz-transition: transform 250ms ease-in-out;
+    -webkit-transition: transform 250ms ease-in-out;
+    transition: transform 250ms ease-in-out;
+    z-index: 3;
+    position: absolute;
+    left: 2px;
+  }
+
+  .container .button__bottom {
+    width: 100%;
+    height: 58px;
+    top: 6px;
+    background-color: #660010;
+    border-radius: 10px 10px 15px 15px;
+    transform: translateY(0);
+    -moz-transition: transform 250ms ease-in-out;
+    -webkit-transition: transform 250ms ease-in-out;
+    transition: transform 250ms ease-in-out;
+    position: absolute;
+    z-index: 2;
+  }
+
+
+
+  input:disabled {
+    @apply text-gray-200;
+  }
+
 }
 
 

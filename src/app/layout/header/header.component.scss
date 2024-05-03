@@ -4,7 +4,7 @@
   text-decoration: none;
   display: flex;
   gap: 0.5rem;
-  @apply text-sm items-center;
+  @apply text-sm items-center hover:text-emerald-400;
 }
 
 li {
@@ -24,4 +24,5 @@ li {
   font-weight: 600;
   display: flex;
   cursor: pointer;
+  @apply hover:text-white hover:bg-emerald-400;
 }

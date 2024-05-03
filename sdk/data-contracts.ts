@@ -19,6 +19,38 @@ export enum Allocation {
   Spot = "spot",
 }
 
+/** ComplianceFrameworks */
+export enum ComplianceFrameworks {
+  Hipaa = "hipaa",
+  Iso27001 = "iso27001",
+  Soc2T2 = "soc2t2",
+}
+
+/** CountryBase */
+export interface CountryBase {
+  /**
+   * Country Id
+   * Country code by ISO 3166 alpha-2.
+   */
+  country_id: string;
+  /**
+   * Continent
+   * Continent name.
+   */
+  continent: string;
+  /**
+   * Status of the resource (active or inactive).
+   * @default "active"
+   */
+  status?: Status;
+  /**
+   * Observed At
+   * Timestamp of the last observation.
+   * @format date-time
+   */
+  observed_at?: string;
+}
+
 /**
  * Cpu
  * CPU details.
@@ -78,26 +110,8 @@ export enum CpuArchitecture {
   X8664Mac = "x86_64_mac",
 }
 
-/**
- * Datacenter
- * Datacenters/regions of Vendors.
- *
- * Attributes:
- *     vendor_id (str): Reference to the Vendor.
- *     datacenter_id (str): Unique identifier, as called at the Vendor.
- *     name (str): Human-friendly name.
- *     aliases (typing.List[str]): List of other commonly used names for the same Datacenter.
- *     country_id (str): Reference to the Country, where the Datacenter is located.
- *     state (typing.Optional[str]): Optional state/administrative area of the Datacenter's location within the Country.
- *     city (typing.Optional[str]): Optional city name of the Datacenter's location.
- *     address_line (typing.Optional[str]): Optional address line of the Datacenter's location.
- *     zip_code (typing.Optional[str]): Optional ZIP code of the Datacenter's location.
- *     founding_year (typing.Optional[int]): 4-digit year when the Datacenter was founded.
- *     green_energy (typing.Optional[bool]): If the Datacenter is 100% powered by renewable energy.
- *     status (Status): Status of the resource (active or inactive).
- *     observed_at (datetime): Timestamp of the last observation.
- */
-export interface Datacenter {
+/** DatacenterBaseWithPKs */
+export interface DatacenterBaseWithPKs {
   /**
    * Vendor Id
    * Reference to the Vendor.
@@ -165,6 +179,87 @@ export interface Datacenter {
    * @format date-time
    */
   observed_at?: string;
+  country: CountryBase;
+}
+
+/** Datacenters */
+export enum Datacenters {
+  UsCentral1 = "us-central1",
+  EuropeWest1 = "europe-west1",
+  UsWest1 = "us-west1",
+  AsiaEast1 = "asia-east1",
+  UsEast1 = "us-east1",
+  AsiaNortheast1 = "asia-northeast1",
+  AsiaSoutheast1 = "asia-southeast1",
+  UsEast4 = "us-east4",
+  AustraliaSoutheast1 = "australia-southeast1",
+  EuropeWest2 = "europe-west2",
+  EuropeWest3 = "europe-west3",
+  SouthamericaEast1 = "southamerica-east1",
+  AsiaSouth1 = "asia-south1",
+  NorthamericaNortheast1 = "northamerica-northeast1",
+  EuropeWest4 = "europe-west4",
+  EuropeNorth1 = "europe-north1",
+  UsWest2 = "us-west2",
+  AsiaEast2 = "asia-east2",
+  EuropeWest6 = "europe-west6",
+  AsiaNortheast2 = "asia-northeast2",
+  AsiaNortheast3 = "asia-northeast3",
+  UsWest3 = "us-west3",
+  UsWest4 = "us-west4",
+  AsiaSoutheast2 = "asia-southeast2",
+  EuropeCentral2 = "europe-central2",
+  NorthamericaNortheast2 = "northamerica-northeast2",
+  AsiaSouth2 = "asia-south2",
+  AustraliaSoutheast2 = "australia-southeast2",
+  SouthamericaWest1 = "southamerica-west1",
+  EuropeWest8 = "europe-west8",
+  EuropeWest9 = "europe-west9",
+  UsEast5 = "us-east5",
+  EuropeSouthwest1 = "europe-southwest1",
+  UsSouth1 = "us-south1",
+  MeWest1 = "me-west1",
+  EuropeWest12 = "europe-west12",
+  MeCentral1 = "me-central1",
+  EuropeWest10 = "europe-west10",
+  MeCentral2 = "me-central2",
+  AfricaSouth1 = "africa-south1",
+  Nbg1Dc3 = "nbg1-dc3",
+  Hel1Dc2 = "hel1-dc2",
+  Fsn1Dc14 = "fsn1-dc14",
+  AshDc1 = "ash-dc1",
+  HilDc1 = "hil-dc1",
+  AfricaCapeTown = "Africa (Cape Town)",
+  AsiaPacificHongKong = "Asia Pacific (Hong Kong)",
+  AsiaPacificTokyo = "Asia Pacific (Tokyo)",
+  AsiaPacificSeoul = "Asia Pacific (Seoul)",
+  AsiaPacificOsaka = "Asia Pacific (Osaka)",
+  AsiaPacificMumbai = "Asia Pacific (Mumbai)",
+  AsiaPacificHyderabad = "Asia Pacific (Hyderabad)",
+  AsiaPacificSingapore = "Asia Pacific (Singapore)",
+  AsiaPacificSydney = "Asia Pacific (Sydney)",
+  AsiaPacificJakarta = "Asia Pacific (Jakarta)",
+  AsiaPacificMelbourne = "Asia Pacific (Melbourne)",
+  CanadaCentral = "Canada (Central)",
+  CanadaWestCalgary = "Canada West (Calgary)",
+  ChinaBeijing = "China (Beijing)",
+  ChinaNingxia = "China (Ningxia)",
+  EuropeFrankfurt = "Europe (Frankfurt)",
+  EuropeZurich = "Europe (Zurich)",
+  EuropeStockholm = "Europe (Stockholm)",
+  EuropeMilan = "Europe (Milan)",
+  EuropeSpain = "Europe (Spain)",
+  EuropeIreland = "Europe (Ireland)",
+  EuropeLondon = "Europe (London)",
+  EuropeParis = "Europe (Paris)",
+  IsraelTelAviv = "Israel (Tel Aviv)",
+  MiddleEastUAE = "Middle East (UAE)",
+  MiddleEastBahrain = "Middle East (Bahrain)",
+  SouthAmericaSaoPaulo = "South America (Sao Paulo)",
+  USEastNVirginia = "US East (N. Virginia)",
+  USEastOhio = "US East (Ohio)",
+  USWestNCalifornia = "US West (N. California)",
+  USWestOregon = "US West (Oregon)",
 }
 
 /**
@@ -254,9 +349,14 @@ export interface ServerBase {
   server_id: string;
   /**
    * Name
-   * Human-friendly name or short description.
+   * Human-friendly name.
    */
-  name?: string;
+  name: string;
+  /**
+   * Description
+   * Short description.
+   */
+  description: string | null;
   /**
    * Vcpus
    * Default number of virtual CPUs (vCPU) of the server.
@@ -273,7 +373,7 @@ export interface ServerBase {
    * Cpu Cores
    * Default number of CPU cores of the server. Equals to vCPUs when HyperThreading is disabled.
    */
-  cpu_cores?: number;
+  cpu_cores?: number | null;
   /**
    * Cpu Speed
    * Vendor-reported maximum CPU clock speed (GHz).
@@ -325,7 +425,7 @@ export interface ServerBase {
   gpu_memory_total?: number | null;
   /**
    * Gpu Manufacturer
-   * The manufacturer of the primary GPU accelerator, e.g. Nvidia or AMD
+   * The manufacturer of the primary GPU accelerator, e.g. Nvidia or AMD.
    */
   gpu_manufacturer?: string | null;
   /**
@@ -403,9 +503,14 @@ export interface ServerPKs {
   server_id: string;
   /**
    * Name
-   * Human-friendly name or short description.
+   * Human-friendly name.
    */
-  name?: string;
+  name: string;
+  /**
+   * Description
+   * Short description.
+   */
+  description: string | null;
   /**
    * Vcpus
    * Default number of virtual CPUs (vCPU) of the server.
@@ -422,7 +527,7 @@ export interface ServerPKs {
    * Cpu Cores
    * Default number of CPU cores of the server. Equals to vCPUs when HyperThreading is disabled.
    */
-  cpu_cores?: number;
+  cpu_cores?: number | null;
   /**
    * Cpu Speed
    * Vendor-reported maximum CPU clock speed (GHz).
@@ -474,7 +579,7 @@ export interface ServerPKs {
   gpu_memory_total?: number | null;
   /**
    * Gpu Manufacturer
-   * The manufacturer of the primary GPU accelerator, e.g. Nvidia or AMD
+   * The manufacturer of the primary GPU accelerator, e.g. Nvidia or AMD.
    */
   gpu_manufacturer?: string | null;
   /**
@@ -608,25 +713,7 @@ export interface ServerPriceWithPKs {
    */
   observed_at?: string;
   vendor: VendorBase;
-  /**
-   * Datacenters/regions of Vendors.
-   *
-   * Attributes:
-   *     vendor_id (str): Reference to the Vendor.
-   *     datacenter_id (str): Unique identifier, as called at the Vendor.
-   *     name (str): Human-friendly name.
-   *     aliases (typing.List[str]): List of other commonly used names for the same Datacenter.
-   *     country_id (str): Reference to the Country, where the Datacenter is located.
-   *     state (typing.Optional[str]): Optional state/administrative area of the Datacenter's location within the Country.
-   *     city (typing.Optional[str]): Optional city name of the Datacenter's location.
-   *     address_line (typing.Optional[str]): Optional address line of the Datacenter's location.
-   *     zip_code (typing.Optional[str]): Optional ZIP code of the Datacenter's location.
-   *     founding_year (typing.Optional[int]): 4-digit year when the Datacenter was founded.
-   *     green_energy (typing.Optional[bool]): If the Datacenter is 100% powered by renewable energy.
-   *     status (Status): Status of the resource (active or inactive).
-   *     observed_at (datetime): Timestamp of the last observation.
-   */
-  datacenter: Datacenter;
+  datacenter: DatacenterBaseWithPKs;
   zone: ZoneBase;
   server: ServerBase;
 }
@@ -731,6 +818,13 @@ export interface VendorBase {
   observed_at?: string;
 }
 
+/** Vendors */
+export enum Vendors {
+  Aws = "aws",
+  Gcp = "gcp",
+  Hcloud = "hcloud",
+}
+
 /** ZoneBase */
 export interface ZoneBase {
   /**
@@ -766,25 +860,71 @@ export interface ZoneBase {
   observed_at?: string;
 }
 
+/** Response Healthcheck Healthcheck Get */
+export type HealthcheckHealthcheckGetData = object;
+
 export type ReadServerServerVendorIdServerIdGetData = ServerPKs;
 
 export interface SearchServerSearchGetParams {
   /**
-   * Vcpus Min
+   * Processor number
    * Minimum number of virtual CPUs.
+   * @min 1
+   * @max 128
    * @default 1
    */
   vcpus_min?: number;
   /**
-   * Memory Min
-   * Minimum amount of memory in MBs.
+   * Processor architecture
+   * Processor architecture.
+   */
+  architecture?: "arm64" | "arm64_mac" | "i386" | "x86_64" | "x86_64_mac";
+  /**
+   * Memory amount
+   * Minimum amount of memory in GBs.
    */
   memory_min?: number | null;
   /**
-   * Price Max
+   * Maximum price
    * Maximum price (USD/hr).
    */
   price_max?: number | null;
+  /**
+   * Active only
+   * Show only active servers
+   * @default true
+   */
+  only_active?: boolean | null;
+  /**
+   * Green energy
+   * Low CO2 emission only.
+   */
+  green_energy?: boolean | null;
+  /**
+   * Allocation
+   * Server allocation method.
+   */
+  allocation?: Allocation | null;
+  /**
+   * Vendor id
+   * Cloud provider vendor.
+   */
+  vendor?: "aws" | "gcp" | "hcloud";
+  /**
+   * Datacenter id
+   * Datacenter.
+   */
+  datacenter?: "[object Object]";
+  /**
+   * Compliance Framework id
+   * Compliance framework implemented at the vendor.
+   */
+  compliance_framework?: "hipaa" | "iso27001" | "soc2t2";
+  /**
+   * Storage Size
+   * Reserver storage size in GBs.
+   */
+  storage_size?: number | null;
   /**
    * Limit
    * Maximum number of results. Set to -1 for unlimited
@@ -808,6 +948,18 @@ export interface SearchServerSearchGetParams {
    * @default "asc"
    */
   order_dir?: OrderDir;
+  /**
+   * Currency
+   * Currency used for prices.
+   * @default "USD"
+   */
+  currency?: string;
+  /**
+   * Add Total Count Header
+   * Add the X-Total-Count header to the response with the overall number of items (without paging). Note that it might reduce response times.
+   * @default false
+   */
+  add_total_count_header?: boolean;
 }
 
 /** Response Search Server Search Get */

@@ -1,12 +1,21 @@
-import { Component, Inject, PLATFORM_ID } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, Component, Inject, PLATFORM_ID } from '@angular/core';
 import { ArticleMeta, ArticlesService } from '../../services/articles.service';
-import { isPlatformBrowser } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { KeeperAPIService } from '../../services/keeper-api.service';
-import { spinner_initial_data } from './spinner_initial_data';
+import { spinner_initial_data } from '../../tools/spinner_initial_data';
 import { SearchServerSearchGetData } from '../../../../sdk/data-contracts';
+import { SeoHandlerService } from '../../services/seo-handler.service';
+import { FormsModule } from '@angular/forms';
+import { ThemeTextComponent } from '../../components/theme-text/theme-text.component';
+import { RouterLink } from '@angular/router';
+import { TimeToShortDatePipe } from '../../pipes/time-to-short-date.pipe';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-landingpage',
+  standalone: true,
+  imports: [CommonModule, FormsModule, ThemeTextComponent, RouterLink, TimeToShortDatePipe, LucideAngularModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './landingpage.component.html',
   styleUrl: './landingpage.component.scss'
 })
@@ -14,32 +23,32 @@ export class LandingpageComponent {
 
   features: any[] = [
     {
-      count: '8',
-      text: 'vendors'
+      count: '3',
+      text: '(out of 8 planned) vendors'
     },
     {
-      count: '67',
+      count: '76',
       text: 'datacenters'
     },
     {
-      count: '234',
+      count: '338',
       text: 'availability zones'
     },
     {
-      count: '2494',
+      count: '1354',
       text: 'server types'
     },
     {
-      count: '121.312',
+      count: '133.483',
       text: 'price records'
     },
     {
-      count: '2.5M',
-      text: 'records updated daily'
+      count: '~5k',
+      text: 'records updated hourly'
     },
 
     {
-      count: '36M',
+      count: '~10M',
       text: 'historical records'
     },
   ];
@@ -55,7 +64,7 @@ export class LandingpageComponent {
     },
     {
       component: 'SC Inspector',
-      status: 'pre-alpha',
+      status: 'planning',
       description: 'Inspect and benchmark cloud resources.'
     },
     {
@@ -68,7 +77,8 @@ export class LandingpageComponent {
     {
       component: 'SC Keeper',
       status: 'pre-alpha',
-      description: 'API to search the Data.'
+      description: 'API to search the Data.',
+      github: 'sc-keeper',
     },
     {
       component: 'SC Scanner',
@@ -78,7 +88,7 @@ export class LandingpageComponent {
     },
     {
       component: 'SC Runner',
-      status: 'pre-alpha',
+      status: 'planning',
       description: 'Launching actual cloud instances.'
     }
   ];
@@ -97,12 +107,22 @@ export class LandingpageComponent {
 
   isSpinning = false;
   spinnerClicked = false;
+  hasRealValues = false;
 
   constructor(@Inject(PLATFORM_ID) private platformId: object,
               private keeperAPI: KeeperAPIService,
+              private SEOHandler: SeoHandlerService,
               private articles: ArticlesService) { }
 
   ngOnInit() {
+
+    this.SEOHandler.updateTitleAndMetaTags(
+       'Spare Cores: Inventory and Tooling for Cloud Compute Resources',
+       'Harnessing the compute resources of the cloud to optimize efficiency and costs of batch and service tasks.',
+       'cloud, server, price, comparison, sparecores');
+
+    this.SEOHandler.updateThumbnail('https://sparecores.com/assets/images/media/landing_image.png');
+
     if (isPlatformBrowser(this.platformId)) {
       this.articles.getArticlesByType('featured').then(articles => {
         this.featuredArticles = articles;
@@ -117,13 +137,6 @@ export class LandingpageComponent {
         spinner3.push({name: 'US East', city: 'Ashburn'});
       }
       this.welcomeAnim();
-
-      // test query remove it later
-      this.keeperAPI.getServer('aws', 'a1.2xlarge').then(server => {
-        console.log('Server:', server);
-      }).catch(err => {
-        console.error(err);
-      });
     }
   }
 
@@ -133,6 +146,7 @@ export class LandingpageComponent {
     this.keeperAPI.searchServers({vcpus_min: this.cpuCount, memory_min: this.ramCount * 1024, limit: 100}).then(servers => {
 
       if(!this.spinnerClicked) {
+
         setTimeout(() => {
           if(!this.spinnerClicked) {
             // move spin_button up and down a bit to attact attention
@@ -144,7 +158,13 @@ export class LandingpageComponent {
         }, startingDelay + 7000);
 
         setTimeout(() => {
-          this.spinAnim(servers, true);
+
+          const spinButton = document.getElementById('spin_button');
+          if (spinButton) {
+            spinButton.style.animation = 'press 2.5s';
+          }
+
+          this.spinAnim(servers.body, true);
         }, startingDelay);
       }
 
@@ -164,9 +184,11 @@ export class LandingpageComponent {
     if(i > 0) {
       return '';
     }
-    if(this.isSpinning) {
+
+    if(this.isSpinning || !this.hasRealValues) {
       return ''
     }
+
     return 'background: rgba(255,255,255,1) !important; color: #000 !important;';
   }
 
@@ -179,9 +201,14 @@ export class LandingpageComponent {
       this.ramCount = this.MAX_RAM_COUNT;
     }
 
-    this.keeperAPI.searchServers({vcpus_min: this.cpuCount, memory_min: this.ramCount * 1024, limit: 100}).then(servers => {
+    const spinButton = document.getElementById('spin_button');
+    if (spinButton) {
+      spinButton.style.animation = 'press 2.5s';
+    }
 
-      this.spinAnim(servers);
+    this.keeperAPI.searchServers({vcpus_min: this.cpuCount, memory_min: this.ramCount * 1024, limit: 100}).then(servers => {
+      console.log('Servers:', servers);
+      this.spinAnim(servers.body);
     }).catch(err => {
       console.error(err);
     });
@@ -195,18 +222,13 @@ export class LandingpageComponent {
 
     if(!isFake) {
       this.spinnerClicked = true;
-
-      const spinButton = document.getElementById('spin_button');
-      if (spinButton) {
-        spinButton.style.animation = 'none';
-      }
     }
 
     const spinners = ['ring1', 'ring2', 'ring3'];
     spinners.forEach((spinner, i) => {
       const el = document.getElementById(spinner);
       if (el) {
-        el.style.animation = `${Math.random() > 0.5 ? 'spin' : 'spin-back'} ${(3.5 + i * 0.25)}s ease-in-out`;
+        el.style.animation = `${Math.random() > 0.5 ? 'spin-slot' : 'spin-back-slot'} ${(3.5 + i * 0.25)}s ease-in-out`;
       }
     });
 
@@ -232,16 +254,21 @@ export class LandingpageComponent {
     setTimeout(() => {
       let indices = [0, 1, 35];
       indices.forEach((index, i) => {
-        this.spinnerContents[0][index] = { name: servers[i].vendor.vendor_id.toString().toUpperCase()};
+        this.spinnerContents[0][index] = { name: servers[i].vendor.vendor_id.toString().toUpperCase(), logo: servers[i].vendor.logo};
         this.spinnerContents[1][index] = { name: servers[i].server.name, architecture: servers[i].server.cpu_architecture};
         this.spinnerContents[2][index] = {
-          name: servers[i].datacenter?.name?.toString().replace(/\(.*\)/, ''),
-          city: servers[i].datacenter?.city?.toString() || servers[i].datacenter?.state?.toString()
+          name: servers[i].datacenter?.city?.toString() || servers[i].datacenter?.state?.toString(),
+          city: servers[i].zone?.name?.toString().replace(/\(.*\)/, '')
         };
       });
     }, 500);
 
     setTimeout(() => {
+      const spinButton = document.getElementById('spin_button');
+      if (spinButton) {
+        spinButton.style.animation = 'none';
+      }
+
       spinners.forEach(spinner => {
         const el = document.getElementById(spinner);
         if (el) {
@@ -251,7 +278,7 @@ export class LandingpageComponent {
       clearInterval(interval);
       this.priceValue = '$' + animPriceEnd;
       this.isSpinning = false;
+      this.hasRealValues = true;
     }, 4200)
   }
-
 }
