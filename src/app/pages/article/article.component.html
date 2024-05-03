@@ -7,7 +7,10 @@
       <div class="text-gray-200 text-xs mb-4" >
           <div class="flex justify-left gap-2">
               <div>
-                  <img src="assets/images/team/{{articleMeta.author}}.webp" class="w-8 max-h-8 rounded-full" />
+                  <img
+                    src="assets/images/team/{{articleMeta.author}}.webp"
+                    class="w-8 max-h-8 rounded-full"
+                     />
               </div>
               <div>
                   <p>Published on {{articleMeta.date | timeToShortDate}} by {{articleMeta.author}}.</p>
@@ -19,7 +22,7 @@
               </div>
           </div>
       </div>
-      <div class="text-white html_content" [innerHTML]="articleBody"></div>
+      <div #articleDiv id="article" class="text-white html_content" [innerHTML]="articleBody"></div>
     </div>
 
     </div>

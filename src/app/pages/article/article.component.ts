@@ -1,22 +1,25 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, Inject, PLATFORM_ID, Renderer2, ViewChild } from '@angular/core';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { MarkdownModule, MarkdownService } from 'ngx-markdown';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TimeToShortDatePipe } from '../../pipes/time-to-short-date.pipe';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { ArticlesService } from '../../services/articles.service';
 import matter from 'gray-matter';
+import { Lightbox, LightboxModule } from 'ngx-lightbox';
 
 @Component({
   selector: 'app-article',
   standalone: true,
-  imports: [BreadcrumbsComponent, RouterLink, CommonModule, MarkdownModule, TimeToShortDatePipe],
+  imports: [BreadcrumbsComponent, RouterLink, CommonModule, MarkdownModule, TimeToShortDatePipe, LightboxModule ],
   templateUrl: './article.component.html',
   styleUrl: './article.component.scss'
 })
 export class ArticleComponent {
+
+  @ViewChild('articleDiv') articleDiv!: ElementRef;
 
   breadcrumbs: BreadcrumbSegment[] = [
     { name: 'Home', url: '/' },
@@ -28,11 +31,14 @@ export class ArticleComponent {
   articleBody: any;
 
   constructor(
+    @Inject(PLATFORM_ID) private platformId: object,
     private route: ActivatedRoute,
     private SEOHandler: SeoHandlerService,
     private markdownService: MarkdownService,
     private domSanitizer: DomSanitizer,
-    private articleHandler: ArticlesService
+    private articleHandler: ArticlesService,
+    private lightbox: Lightbox,
+    private renderer: Renderer2
   ) { }
 
   ngOnInit() {
@@ -56,6 +62,20 @@ export class ArticleComponent {
 
         this.SEOHandler.updateTitleAndMetaTags(this.articleMeta.title, this.articleMeta.teaser, `Article, tutorial`);
 
+        if(isPlatformBrowser(this.platformId)) {
+          // Wait for the articleDiv to be rendered
+          let checkExist = setInterval(() => {
+            if (this.articleDiv) {
+              this.renderer.listen(this.articleDiv.nativeElement, 'click', (event) => {
+                if (event.target.tagName === 'IMG') {
+                  this.openLightbox(event.target.src);
+                }
+              });
+              clearInterval(checkExist);
+            }
+          }, 100);
+        }
+
       });
     });
   }
@@ -73,6 +93,15 @@ export class ArticleComponent {
     }
 
     return result;
+  }
+
+  openLightbox(imgSrc: string) {
+    console.log('openlighbox');
+    const album = [{
+      src: imgSrc,
+      thumb: 'image'
+   }];
+    this.lightbox.open(album, 0);
   }
 
 }

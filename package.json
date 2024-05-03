@@ -29,6 +29,7 @@
     "flowbite": "^2.3.0",
     "gray-matter": "^4.0.3",
     "lucide-angular": "^0.361.0",
+    "ngx-lightbox": "^3.0.0",
     "ngx-markdown": "^17.2.1",
     "process": "^0.11.10",
     "rxjs": "~7.8.0",
