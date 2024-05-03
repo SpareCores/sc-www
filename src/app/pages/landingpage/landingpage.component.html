@@ -282,7 +282,7 @@
     <div class="content">
       <div class="flex flex-col w-full lg:w-1/2 justify-center mx-auto gap-8">
         <app-theme-text text="fun_facts" classes="text-4xl justify-center font-light"></app-theme-text>
-        <swiper-container class="w-full" slides-per-view="1" speed="750" loop="true" autoplay="true" pagination="true">
+        <swiper-container class="w-full" slides-per-view="1" speed="1000" loop="true" autoplay="true" pagination="true">
           <swiper-slide>
             <div class="flex gap-8 items-center px-2 py-12">
               <div>
@@ -311,6 +311,17 @@
                 </span>
               </div>
               <div class="text-2xl">While spot prices are relatively stable nowadays, they can still fluctuate by up to 10% within a day.</div>
+            </div>
+          </swiper-slide>
+          <swiper-slide>
+            <div class="flex gap-8 items-center px-2 py-12">
+              <div>
+                <span class="inline-flex justify-center items-center size-[90px] rounded-full border border-emerald-400 text-emerald-400">
+                  <lucide-icon class="flex-shrink-0 size-[50px]" name="scale"></lucide-icon>
+                </span>
+              </div>
+              <!-- u-24tb1.112xlarge VS m1.small as per cloudperf/crc16 -->
+              <div class="text-2xl">There is a 2500x performance difference between the fastest and slowest nodes.</div>
             </div>
           </swiper-slide>
           <swiper-slide>
