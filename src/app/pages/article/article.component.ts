@@ -67,7 +67,7 @@ export class ArticleComponent {
           let checkExist = setInterval(() => {
             if (this.articleDiv) {
               this.renderer.listen(this.articleDiv.nativeElement, 'click', (event) => {
-                if (event.target.tagName === 'IMG') {
+                if (event.target.tagName === 'IMG' && event.target.classList[0] == 'zoomin') {
                   this.openLightbox(event.target.src);
                 }
               });
@@ -96,7 +96,6 @@ export class ArticleComponent {
   }
 
   openLightbox(imgSrc: string) {
-    console.log('openlighbox');
     const album = [{
       src: imgSrc,
       thumb: 'image'

@@ -52,6 +52,10 @@ a:hover {
     @apply mb-2;
   }
 
+  img.zoomin {
+    cursor: zoom-in;
+  }
+
   table {
     @apply mx-auto;
     @apply mb-2;
