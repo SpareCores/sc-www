@@ -31,7 +31,7 @@
               <div class="text-white font-bold text-lg">Start a server</div>
             </div>
           </div>
-          <div class="flex gap-8">
+          <div class="flex gap-8 justify-center lg:justify-start">
             <button class="btn-primary py-5 px-5" routerLink="/servers">Go to listing page</button>
             <button class="bg-transparent text-teal-500 py-5 px-5 font-bold hover:text-teal-600" routerLink="/servers">Learn more ></button>
           </div>
@@ -133,11 +133,11 @@
         </div>
         <div class="font-mono full flex justify-center mx-auto my-auto text-2xl">Here are some key highlights regarding the information we currently cover.</div>
         <div class="flex gap-24 justify-center flex-col lg:flex-row">
-          <div>
+          <div class="flex justify-center">
             <img src="https://placehold.co/550x380" >
           </div>
-          <div>
-            <div style="width: 450px;">
+          <div class="flex flex-col justify-center">
+            <div style="width: 450px; margin: auto;">
               <div *ngFor="let item of features, let i = index">
                 <div *ngIf="i != 0" class="w-full h-4 mb-3 border-b border-gray-400 border-solid" ></div>
                 <div class="flex gap-2 text-2xl items-center text-gray-200">
@@ -148,8 +148,9 @@
                   <span> {{item.text}} </span>
                 </div>
               </div>
+              <div class="text-md mt-4 text-lg">Tracked every 5 mins.</div>
             </div>
-            <div class="text-md mt-4 text-lg">Tracked every 5 mins.</div>
+
           </div>
         </div>
         <div class="flex justify-center">
@@ -225,7 +226,7 @@
           </div>
         </div>
       </div>
-      <div class="w-full lg:w-2/5">
+      <div class="w-full lg:w-2/5 justify-center flex">
         <img src="https://placehold.co/550x380" >
       </div>
     </div>
