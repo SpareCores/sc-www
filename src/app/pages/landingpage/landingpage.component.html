@@ -4,7 +4,7 @@
       <div class="flex gap-8 flex-col lg:flex-row" >
         <div class="flex flex-col gap-12 w-full lg:w-1/2 my-auto">
           <div class="text-4xl font-bold">Harnessing the compute resources of the cloud to <span class="text-emerald-400">optimize efficiency</span> and <span class="text-emerald-400">costs</span> of batch and service tasks.</div>
-          <div class="grid grid-cols-3 gap-4">
+          <div class="grid grid-cols-2 gap-4 mx-auto lg:ml-0">
             <div class="flex gap-4 items-center">
               <div class="bg-white text-emerald-400 py-3 px-3 rounded-lg">
                 <lucide-icon class="h-5 w-5" name="database"></lucide-icon>
@@ -17,7 +17,6 @@
               </div>
               <div class="text-white font-bold text-lg">Python</div>
             </div>
-            <div></div>
             <div class="flex gap-4 items-center">
               <div class="bg-white text-emerald-400 py-3 px-3 rounded-lg">
                 <lucide-icon class="h-5 w-5" name="square-kanban"></lucide-icon>
@@ -31,12 +30,12 @@
               <div class="text-white font-bold text-lg">Start a server</div>
             </div>
           </div>
-          <div class="flex gap-8">
+          <div class="flex gap-8 justify-center lg:justify-start">
             <button class="btn-primary py-5 px-5" routerLink="/servers">Go to listing page</button>
             <button class="bg-transparent text-teal-500 py-5 px-5 font-bold hover:text-teal-600" routerLink="/servers">Learn more ></button>
           </div>
         </div>
-        <div class="w-full lg:w-1/2" style="min-height: 600px;">
+        <div class="w-full lg:w-1/2 justify-center flex" style="min-height: 600px;">
           <div class="animated_slot_machine">
             <div class="outer_border" ></div>
             <div class="top_wide_border_segment" ></div>
@@ -133,11 +132,11 @@
         </div>
         <div class="font-mono full flex justify-center mx-auto my-auto text-2xl">Here are some key highlights regarding the information we currently cover.</div>
         <div class="flex gap-24 justify-center flex-col lg:flex-row">
-          <div>
+          <div class="flex justify-center">
             <img src="https://placehold.co/550x380" >
           </div>
-          <div>
-            <div style="width: 450px;">
+          <div class="flex flex-col justify-center">
+            <div style="width: 450px; margin: auto;">
               <div *ngFor="let item of features, let i = index">
                 <div *ngIf="i != 0" class="w-full h-4 mb-3 border-b border-gray-400 border-solid" ></div>
                 <div class="flex gap-2 text-2xl items-center text-gray-200">
@@ -148,8 +147,9 @@
                   <span> {{item.text}} </span>
                 </div>
               </div>
+              <div class="text-md mt-4 text-lg">Tracked every 5 mins.</div>
             </div>
-            <div class="text-md mt-4 text-lg">Tracked every 5 mins.</div>
+
           </div>
         </div>
         <div class="flex justify-center">
@@ -210,7 +210,7 @@
     <div class="content flex gap-8 flex-col lg:flex-row">
       <div class="w-full lg:w-3/5 my-auto">
         <div class="flex flex-col gap-4 justify-center">
-          <div class="flex text-4xl gap-1 font-semibold">
+          <div class="flex text-4xl gap-2 font-semibold">
             <span class="text-emerald-400"><</span>spare_cores<span class="text-emerald-400">></span> is <span class="text-emerald-400">100% open-source!</span>
           </div>
           <div class="font-mono text-2xl">All SC build features are supported out of box.</div>
@@ -218,14 +218,15 @@
             Spare Cores is still in the early development phase, initiated in Q3 of 2023 and gaining momentum in 2024, particularly due to the support from <a href="https://www.ngisearch.eu" class="underline decoration-dotted hover:text-gray-500" target="_blank" rel="noopener">NGI Search</a> funding.
           </div>
           <div>
-            <a class="flex gap-8" href="https://github.com/SpareCores" target="_blank" rel="noopener">
+            <a class="flex gap-8 justify-center lg:justify-start"
+               href="https://github.com/SpareCores" target="_blank" rel="noopener">
               <button class="btn-primary py-4 px-4">Go to GitHub</button>
               <button class="bg-transparend text-teal-500 py-4 px-4 font-bold hover:text-teal-600">Learn more ></button>
             </a>
           </div>
         </div>
       </div>
-      <div class="w-full lg:w-2/5">
+      <div class="w-full lg:w-2/5 justify-center flex">
         <img src="https://placehold.co/550x380" >
       </div>
     </div>
@@ -347,9 +348,9 @@
         time. Find some of our featured articles below:
       </div>
       <div class="articles_holder flex mt-8 flex-wrap">
-        <div class="w-1/2 lg:w-1/4 flex flex-col gap-4 px-6" *ngFor="let item of featuredArticles">
+        <div class="w-full md:w-1/2 lg:w-1/4 flex flex-col gap-4 px-6" *ngFor="let item of featuredArticles">
           <a routerLink="/article/featured/{{item.filename}}">
-            <img class="rounded-xl mb-4" [src]="item.image" alt="" >
+            <img class="rounded-xl mb-4 w-full" [src]="item.image" alt="" >
           </a>
           <div> {{item.date | timeToShortDate}} </div>
           <a routerLink="/article/featured/{{item.filename}}" class="font-bold text-2xl text-emerald-400 hover:text-emerald-500"> {{item.title}} </a>
