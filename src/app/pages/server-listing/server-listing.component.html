@@ -208,47 +208,64 @@
             </table>
           </div>
           <div>
-            <div class="flex justify-end gap-4 mt-4">
-              <button
-                class="flex justify-center bg-transparent text-white py-2 px-4 w-10 rounded-lg font-bold hover:bg-emerald-400"
-                (click)="prevPage()" >
-                <lucide-icon name="chevron-left"></lucide-icon>
-              </button>
-              <ng-container *ngIf="page > 2">
+            <div class="flex justify-between mt-4">
+              <div>
+                <button
+                  id="pagesize_button"
+                  data-dropdown-toggle="pagesize_options"
+                  class="dropdown_button"
+                  type="button">
+                  <div class="px-4 py-2">
+                  {{limit}}
+                  </div>
+                  <div class="px-2 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
+                    <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
+                  </div>
+                </button>
+                <span class="text-white" > items per page</span>
+              </div>
+              <div class="flex justify-end gap-4">
+                <button
+                  class="flex justify-center bg-transparent text-white py-2 px-4 w-10 rounded-lg font-bold hover:bg-emerald-400"
+                  (click)="prevPage()" >
+                  <lucide-icon name="chevron-left"></lucide-icon>
+                </button>
+                <ng-container *ngIf="page > 2">
+                  <button
+                    class="text-white py-2 px-4 rounded-lg font-bold hover:bg-emerald-400"
+                    (click)="gotoPage(1)">
+                    1
+                  </button>
+                  <button *ngIf="page > 3"
+                    class="text-white py-2 px-4 rounded-lg font-bold">
+                    ...
+                  </button>
+                </ng-container>
                 <button
                   class="text-white py-2 px-4 rounded-lg font-bold hover:bg-emerald-400"
-                  (click)="gotoPage(1)">
-                  1
+                  [ngClass]="{
+                    'bg-emerald-400': item === this.page,
+                    'bg-transparent': item !== this.page
+                  }"
+                  *ngFor="let item of possiblePages()"
+                  (click)="gotoPage(item)">
+                  {{item}}
                 </button>
-                <button *ngIf="page > 3"
-                  class="text-white py-2 px-4 rounded-lg font-bold">
-                  ...
+                <ng-container *ngIf="totalPages > (page + 3)">
+                  <button
+                    class="text-white py-2 px-4 rounded-lg font-bold">
+                    ...
+                  </button>
+                  <button
+                    class="text-white py-2 px-4 rounded-lg font-bold hover:bg-emerald-400"
+                    (click)="gotoPage(totalPages)">
+                    {{totalPages}}
+                  </button>
+                </ng-container>
+                <button class="flex justify-center bg-transparent text-white py-2 px-4 w-10 rounded-lg font-bold hover:bg-emerald-400" (click)="nextPage()">
+                  <lucide-icon name="chevron-right"></lucide-icon>
                 </button>
-              </ng-container>
-              <button
-                class="text-white py-2 px-4 rounded-lg font-bold hover:bg-emerald-400"
-                [ngClass]="{
-                  'bg-emerald-400': item === this.page,
-                  'bg-transparent': item !== this.page
-                }"
-                *ngFor="let item of possiblePages()"
-                (click)="gotoPage(item)">
-                {{item}}
-              </button>
-              <ng-container *ngIf="totalPages > (page + 3)">
-                <button
-                  class="text-white py-2 px-4 rounded-lg font-bold">
-                  ...
-                </button>
-                <button
-                  class="text-white py-2 px-4 rounded-lg font-bold hover:bg-emerald-400"
-                  (click)="gotoPage(totalPages)">
-                  {{totalPages}}
-                </button>
-              </ng-container>
-              <button class="flex justify-center bg-transparent text-white py-2 px-4 w-10 rounded-lg font-bold hover:bg-emerald-400" (click)="nextPage()">
-                <lucide-icon name="chevron-right"></lucide-icon>
-              </button>
+              </div>
             </div>
           </div>
         </div>
@@ -266,6 +283,16 @@
       class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
       (click)="selectAllocation(item)">
       <div class="text-white text-sm">{{item.name}} </div>
+    </li>
+  </ul>
+</div>
+
+<div id="pagesize_options" class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid">
+  <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
+    <li *ngFor="let item of pageLimits"
+      class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+      (click)="selectPageSize(item)">
+      <div class="text-white text-sm">{{item}} </div>
     </li>
   </ul>
 </div>

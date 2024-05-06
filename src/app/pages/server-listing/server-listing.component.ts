@@ -101,6 +101,8 @@ export class ServerListingComponent {
     {name: 'Reserved', slug: 'reserved'},
   ];
 
+  pageLimits = [25, 50, 100, 250];
+
   allocation = this.allocationTypes[0];
 
   selectedCurrency = this.availableCurrencies[0];
@@ -122,6 +124,7 @@ export class ServerListingComponent {
   dropdownCurrency: any;
   dropdownAllocation: any;
   dropdownColumn: any;
+  dropdownPage: any;
   modalSearch: any;
 
   isLoading = false;
@@ -234,6 +237,19 @@ export class ServerListingComponent {
         options,
         {
           id: 'column_options',
+          override: true
+        }
+      );
+
+      const targetElPage: HTMLElement | null = document.getElementById('pagesize_options');
+      const triggerElPage: HTMLElement | null = document.getElementById('pagesize_button');
+
+      this.dropdownPage = new Dropdown(
+        targetElPage,
+        triggerElPage,
+        options,
+        {
+          id: 'pagesize_options',
           override: true
         }
       );
@@ -459,6 +475,16 @@ export class ServerListingComponent {
     this.filterServers();
 
     this.dropdownAllocation?.hide();
+  }
+
+  selectPageSize(limit: number) {
+    this.limit = limit;
+    this.page = 1;
+    this.filterServers();
+
+    this.dropdownPage?.hide();
+    // scroll to top
+    window.scrollTo(0, 0);
   }
 
   getField(item: ServerPriceWithPKs, field: string) {
