@@ -1,10 +1,8 @@
-<div class="w-full" >
-
-  <a routerLink="/article/{{article.filename}}">
+<div class="w-full flex flex-col gap-4" >
+  <a routerLink="/article/featured/{{article.filename}}">
     <img class="rounded-xl mb-4 w-full" [src]="article.image" alt="" >
   </a>
   <div> {{article.date | timeToShortDate}} </div>
   <a routerLink="/article/featured/{{article.filename}}" class="font-bold text-2xl text-emerald-400 hover:text-emerald-500"> {{article.title}} </a>
   <div> {{article.teaser}} </div>
-
 </div>

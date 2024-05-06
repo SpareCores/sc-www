@@ -144,7 +144,7 @@ export class LandingpageComponent {
   welcomeAnim(startingDelay: number = 1000) {
 
     // get the cheapest machine
-    this.keeperAPI.searchServers({vcpus_min: this.cpuCount, memory_min: this.ramCount * 1024, limit: 100}).then(servers => {
+    this.keeperAPI.searchServers({vcpus_min: this.cpuCount, memory_min: this.ramCount, limit: 100}).then(servers => {
 
       if(!this.spinnerClicked) {
 
@@ -207,7 +207,7 @@ export class LandingpageComponent {
       spinButton.style.animation = 'press 2.5s';
     }
 
-    this.keeperAPI.searchServers({vcpus_min: this.cpuCount, memory_min: this.ramCount * 1024, limit: 100}).then(servers => {
+    this.keeperAPI.searchServers({vcpus_min: this.cpuCount, memory_min: this.ramCount, limit: 100}).then(servers => {
       console.log('Servers:', servers);
       this.spinAnim(servers.body);
     }).catch(err => {
