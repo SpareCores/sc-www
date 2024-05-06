@@ -10,11 +10,12 @@ import { ThemeTextComponent } from '../../components/theme-text/theme-text.compo
 import { RouterLink } from '@angular/router';
 import { TimeToShortDatePipe } from '../../pipes/time-to-short-date.pipe';
 import { LucideAngularModule } from 'lucide-angular';
+import { ArticleCardComponent } from '../../components/article-card/article-card.component';
 
 @Component({
   selector: 'app-landingpage',
   standalone: true,
-  imports: [CommonModule, FormsModule, ThemeTextComponent, RouterLink, TimeToShortDatePipe, LucideAngularModule],
+  imports: [CommonModule, FormsModule, ThemeTextComponent, RouterLink, TimeToShortDatePipe, LucideAngularModule, ArticleCardComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './landingpage.component.html',
   styleUrl: './landingpage.component.scss'
