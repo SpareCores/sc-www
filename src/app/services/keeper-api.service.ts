@@ -3,7 +3,8 @@ import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { MYHTTPClient } from './my_http/my-http';
 import { Search } from '../../../sdk/Search';
 import { Server } from '../../../sdk/Server';
-import { SearchServerSearchGetData, SearchServerSearchGetParams } from '../../../sdk/data-contracts';
+import { Metatable } from '../../../sdk/Metatable';
+import { MetaTables, SearchServerSearchGetParams } from '../../../sdk/data-contracts';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +15,7 @@ export class KeeperAPIService {
 
   public SearchController: Search = new Search(this.myHttp);
   public ServerController: Server = new Server(this.myHttp);
+  public MetadataController: Metatable = new Metatable(this.myHttp);
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: object,
@@ -36,6 +38,10 @@ export class KeeperAPIService {
       });
     });
     //return this.SearchController.parseFreetextSearch(query);
+  }
+
+  public getMetaTable(tableName: MetaTables): Promise<any> {
+    return this.MetadataController.metadataMetatableMetaTableGet(tableName);
   }
 
 }
