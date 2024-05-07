@@ -55,7 +55,7 @@
                               class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
                           <div class="text-white text-sm">{{continent.continent}}</div>
                         </div>
-                        <lucide-icon name="chevron-down" class="h-4 w-4 text-white cursor-pointer" (click)="collapseContinent(continent)"></lucide-icon>
+                        <lucide-icon name="chevron-down" class="h-4 w-4 text-white cursor-pointer" (click)="collapseItem(continent)"></lucide-icon>
                       </div>
                       <div *ngIf="!continent.collapsed"  class="flex flex-col gap-3 ml-4">
                         <div class="flex gap-2 align-center" *ngFor="let country of countriesByContinent(continent.continent)">
@@ -67,7 +67,29 @@
                         </div>
                       </div>
                   </div>
-
+                </div>
+                <div *ngIf="getParamterType(parameter) === 'datacenters'" class="mb-4 mt-4 relative flex flex-col gap-2" >
+                  <div *ngFor="let vendor of datacenterVendorMetadata" class="flex flex-col gap-3" >
+                      <div class="flex justify-between">
+                        <div class="flex gap-2 items-center">
+                          <input type="checkbox"
+                              [ngModel]="vendor.selected"
+                              (click)="selectDatacenterVendor(vendor)"
+                              class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
+                          <div class="text-white text-sm">{{vendor.name}}</div>
+                        </div>
+                        <lucide-icon name="chevron-down" class="h-4 w-4 text-white cursor-pointer" (click)="collapseItem(vendor)"></lucide-icon>
+                      </div>
+                      <div *ngIf="!vendor.collapsed"  class="flex flex-col gap-3 ml-4">
+                        <div class="flex gap-2 align-center" *ngFor="let datacenter of datacentersByVendor(vendor.vendor_id)">
+                          <input type="checkbox"
+                              [(ngModel)]="datacenter.selected"
+                              (ngModelChange)="filterServers()"
+                              class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
+                          <div class="text-white text-sm">{{datacenter.name}}</div>
+                        </div>
+                      </div>
+                  </div>
                 </div>
                 <div *ngIf="getParamterType(parameter) === 'number'" class="mb-4 mt-4 relative" >
                   <input type="number" step="{{getStep(parameter)}}"

@@ -33,7 +33,23 @@ export type ContinentMetadata = {
   collapsed?: boolean;
 };
 
- const options: DropdownOptions = {
+export type DatacenterMetadata = {
+  datacenter_id: string;
+  vendor_id: string;
+  name: string;
+  selected? : boolean;
+};
+
+export type DatacenterVenrodMetadata = {
+  vendor_id: string;
+  name: string;
+  selected?: boolean;
+  collapsed?: boolean;
+};
+
+
+
+const options: DropdownOptions = {
   placement: 'bottom',
   triggerType: 'click',
   offsetSkidding: 0,
@@ -151,6 +167,11 @@ export class ServerListingComponent {
   countryMetadata: CountryMetadata[] = [];
   continentMetadata: ContinentMetadata[] = [];
 
+  datacenterMetadata: DatacenterMetadata[] = [];
+  datacenterVendorMetadata: DatacenterVenrodMetadata[] = [];
+
+  vendorMetadata: any[] = [];
+
   constructor(@Inject(PLATFORM_ID) private platformId: object,
               private keeperAPI: KeeperAPIService,
               private route: ActivatedRoute,
@@ -200,6 +221,8 @@ export class ServerListingComponent {
       }
 
       this.loadCountries(query.countries);
+
+      this.loadDatacenters(query.datacenters);
 
       const tableColumnsStr = this.storageHandler.get('serverListTableColumns');
       if(tableColumnsStr) {
@@ -320,6 +343,10 @@ export class ServerListingComponent {
 
     if(name === 'countries') {
       return 'country';
+    }
+
+    if(name === 'datacenters') {
+      return 'datacenters';
     }
 
     if((type === 'integer' || type === 'number') && parameter.schema.minimum && parameter.schema.maximum) {
@@ -466,6 +493,15 @@ export class ServerListingComponent {
       this.countryMetadata.forEach((country) => {
         if(country.selected) {
           paramObject.countries.push(country.country_id);
+        }
+      });
+    }
+
+    if(this.datacenterMetadata.find((datacenter) => datacenter.selected)) {
+      paramObject.datacenters = [];
+      this.datacenterMetadata.forEach((datacenter) => {
+        if(datacenter.selected) {
+          paramObject.datacenters.push(datacenter.datacenter_id);
         }
       });
     }
@@ -619,10 +655,60 @@ export class ServerListingComponent {
     this.valueChanged();
   }
 
-  collapseContinent(continent: ContinentMetadata) {
+  collapseItem(continent: ContinentMetadata | DatacenterVenrodMetadata) {
     continent.collapsed = !continent.collapsed;
   }
 
+  loadDatacenters(selectedDatacenters: string | undefined) {
+    console.log('Loading datacenters', selectedDatacenters);
+    const selectedDatacenterIds = selectedDatacenters ? selectedDatacenters.split(',') : [];
+    Promise.all([
+      this.keeperAPI.getMetaTable(MetaTables.Vendor),
+      this.keeperAPI.getMetaTable(MetaTables.Datacenter)]).then((responses) => {
 
+      if(responses[0]?.body) {
+        this.vendorMetadata = responses[0].body;
+      }
+      if(responses[1]?.body) {
+        this.datacenterMetadata = responses[1].body.map((item: any) => {
+          return {...item, selected: selectedDatacenterIds.indexOf(item.datacenter_id) !== -1};
+        });
+
+        this.datacenterVendorMetadata = [];
+        this.datacenterMetadata.forEach((datacenter) => {
+          const vendor = this.datacenterVendorMetadata.find((item) => item.vendor_id === datacenter.vendor_id);
+          if(!vendor) {
+            this.datacenterVendorMetadata.push(
+              {
+                vendor_id: datacenter.vendor_id,
+                name: this.vendorMetadata.find((vendor) => vendor.vendor_id === datacenter.vendor_id)?.name,
+                selected: false,
+                collapsed: true
+              });
+          }
+        });
+
+        this.datacenterVendorMetadata.forEach((vendor) => {
+          vendor.selected = this.datacenterMetadata.find((datacenter) => datacenter.vendor_id === vendor.vendor_id && !datacenter.selected) === undefined;
+          vendor.collapsed = this.datacenterMetadata.find((datacenter) => datacenter.vendor_id === vendor.vendor_id && datacenter.selected) === undefined;
+        });
+      }
+    });
+  }
+
+  datacentersByVendor(vendor_id: string) {
+    return this.datacenterMetadata.filter((datacenter) => datacenter.vendor_id === vendor_id);
+  }
+
+  selectDatacenterVendor(vendor: DatacenterVenrodMetadata) {
+    vendor.selected = !vendor.selected;
+    this.datacenterMetadata.forEach((datacenter) => {
+      if(datacenter.vendor_id === vendor.vendor_id) {
+        datacenter.selected = vendor.selected;
+      }
+    });
+
+    this.valueChanged();
+  }
 
 }
