@@ -925,7 +925,7 @@ export interface SearchServerSearchGetParams {
    * Datacenter id
    * Datacenter.
    */
-  datacenter?: "[object Object]";
+  datacenters?: "[object Object]";
   /**
    * Compliance Framework id
    * Compliance framework implemented at the vendor.
