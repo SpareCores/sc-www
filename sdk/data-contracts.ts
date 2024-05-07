@@ -942,6 +942,16 @@ export interface SearchServerSearchGetParams {
    */
   countries?: string[] | null;
   /**
+   * GPU count
+   * Number of GPUs.
+   */
+  gpu_min?: number | null;
+  /**
+   * GPU memory
+   * Amount of GPU memory in GBs.
+   */
+  gpu_memory_min?: number | null;
+  /**
    * Limit
    * Maximum number of results. Set to -1 for unlimited
    * @default 50
