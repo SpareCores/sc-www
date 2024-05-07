@@ -1,7 +1,7 @@
 import { Component, Inject, PLATFORM_ID } from '@angular/core';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { KeeperAPIService } from '../../services/keeper-api.service';
-import { OrderDir, SearchServerSearchGetParams, ServerPriceWithPKs } from '../../../../sdk/data-contracts';
+import { MetaTables, OrderDir, SearchServerSearchGetParams, ServerPriceWithPKs } from '../../../../sdk/data-contracts';
 import { Subject, debounceTime } from 'rxjs';
 import { encodeQueryParams } from '../../tools/queryParamFunctions';
 import { ActivatedRoute, Params, Router } from '@angular/router';
@@ -11,6 +11,7 @@ import { StorageHandlerService } from '../../services/storage-handler.service';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
+import { CountryIdtoNamePipe } from '../../pipes/country-idto-name.pipe';
 
 export type TableColumn = {
   name: string;
@@ -18,6 +19,18 @@ export type TableColumn = {
   key?: string;
   show?: boolean;
   orderField?: string;
+};
+
+export type CountryMetadata = {
+  continent: string;
+  country_id: string;
+  selected?: boolean;
+};
+
+export type ContinentMetadata = {
+  continent: string;
+  selected?: boolean;
+  collapsed?: boolean;
 };
 
  const options: DropdownOptions = {
@@ -37,7 +50,7 @@ const optionsModal: ModalOptions = {
 @Component({
   selector: 'app-server-listing',
   standalone: true,
-  imports: [CommonModule, FormsModule, BreadcrumbsComponent, LucideAngularModule],
+  imports: [CommonModule, FormsModule, BreadcrumbsComponent, LucideAngularModule, CountryIdtoNamePipe],
   templateUrl: './server-listing.component.html',
   styleUrl: './server-listing.component.scss',
   host: {ngSkipHydration: 'true'},
@@ -75,6 +88,8 @@ export class ServerListingComponent {
     { name: 'DATACENTER', show: false, type: 'datacenter' },
     { name: 'STATUS', show: false, type: 'text', key: 'server.status' },
     { name: 'VENDOR', show: false, type: 'vendor' },
+    { name: 'COUNTRY', show: false, type: 'country' },
+    { name: 'CONTINENT', show: false, type: 'text', key: 'datacenter.country.continent' },
     { name: 'ZONE', show: false, type: 'text', key: 'zone.name' },
   ];
 
@@ -133,6 +148,9 @@ export class ServerListingComponent {
   modalSubmitted = false;
   modalResponse: any;
 
+  countryMetadata: CountryMetadata[] = [];
+  continentMetadata: ContinentMetadata[] = [];
+
   constructor(@Inject(PLATFORM_ID) private platformId: object,
               private keeperAPI: KeeperAPIService,
               private route: ActivatedRoute,
@@ -148,7 +166,6 @@ export class ServerListingComponent {
       'cloud, server, instance, price, comparison, spot, sparecores');
 
     this.SEOHandler.updateThumbnail('https://sparecores.com/assets/images/media/server_list_image.png');
-
 
     this.route.queryParams.subscribe((params: Params) => {
       const query: any = params;
@@ -181,6 +198,8 @@ export class ServerListingComponent {
       if(query.page) {
         this.page = parseInt(query.page);
       }
+
+      this.loadCountries(query.countries);
 
       const tableColumnsStr = this.storageHandler.get('serverListTableColumns');
       if(tableColumnsStr) {
@@ -297,6 +316,11 @@ export class ServerListingComponent {
 
   getParamterType(parameter: any) {
     const type = parameter.schema.type || parameter.schema.anyOf?.find((item: any)  => item.type !== 'null')?.type || 'text';
+    const name = parameter.name;
+
+    if(name === 'countries') {
+      return 'country';
+    }
 
     if((type === 'integer' || type === 'number') && parameter.schema.minimum && parameter.schema.maximum) {
       return 'range';
@@ -437,6 +461,17 @@ export class ServerListingComponent {
       paramObject.page = this.page;
     }
 
+    if(this.countryMetadata.find((country) => country.selected)) {
+      paramObject.countries = [];
+      this.countryMetadata.forEach((country) => {
+        if(country.selected) {
+          paramObject.countries.push(country.country_id);
+        }
+      });
+    }
+
+    console.log('Query object:', paramObject);
+
     return paramObject;
   }
 
@@ -542,5 +577,52 @@ export class ServerListingComponent {
       });
     }
   }
+
+  loadCountries(selectedCountries: string | undefined) {
+    console.log('Loading countries', selectedCountries);
+    const selectedCountryIds = selectedCountries ? selectedCountries.split(',') : [];
+    this.keeperAPI.getMetaTable(MetaTables.Country).then((response) => {
+      if(response?.body) {
+
+        this.countryMetadata = response.body.map((item: any) => {
+          return {...item, selected: selectedCountryIds.indexOf(item.country_id) !== -1};
+        });
+
+        this.continentMetadata = [];
+        this.countryMetadata.forEach((country) => {
+          const continent = this.continentMetadata.find((item) => item.continent === country.continent);
+          if(!continent) {
+            this.continentMetadata.push({continent: country.continent, selected: false, collapsed: true});
+          }
+        });
+
+        this.continentMetadata.forEach((continent) => {
+          continent.selected = this.countryMetadata.find((country) => country.continent === continent.continent && !country.selected) === undefined;
+          continent.collapsed = this.countryMetadata.find((country) => country.continent === continent.continent && country.selected) === undefined;
+        });
+      }
+    });
+  }
+
+  countriesByContinent(continent: string) {
+    return this.countryMetadata.filter((country) => country.continent === continent);
+  }
+
+  selectContinent(continent: ContinentMetadata) {
+    continent.selected = !continent.selected;
+    this.countryMetadata.forEach((country) => {
+      if(country.continent === continent.continent) {
+        country.selected = continent.selected;
+      }
+    });
+
+    this.valueChanged();
+  }
+
+  collapseContinent(continent: ContinentMetadata) {
+    continent.collapsed = !continent.collapsed;
+  }
+
+
 
 }
