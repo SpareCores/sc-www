@@ -87,6 +87,7 @@
                               (ngModelChange)="filterServers()"
                               class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
                           <div class="text-white text-sm">{{datacenter.name}}</div>
+                          <lucide-icon *ngIf="datacenter.green_energy" name="leaf" class="h-4 w-4 text-emerald-400"></lucide-icon>
                         </div>
                       </div>
                   </div>
@@ -95,6 +96,7 @@
                   <input type="number" step="{{getStep(parameter)}}"
                     [(ngModel)]="parameter.modelValue"
                     (ngModelChange)="valueChanged()"
+                    min="{{parameter.schema.minimum || 0}}"
                     class="w-full h-8 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm pr-8">
                   <span *ngIf="parameter.schema.unit" class="unit text-gray-600">{{parameter.schema.unit}}</span>
                 </div>
@@ -231,6 +233,14 @@
                     </td>
                     <td *ngIf="column.type === 'price'" class="min-w-160">
                       {{item.price}} {{selectedCurrency.slug}}
+                    </td>
+                    <td *ngIf="column.type === 'gpu'">
+                      <div class="text-sm text-white">{{item.server.gpu_count}}</div>
+                      <div
+                        *ngIf="item.server.gpu_model"
+                        class="text-xs text-white flex gap-1">
+                        <span>{{item.server.gpu_model}}</span>
+                      </div>
                     </td>
                     <td *ngIf="column.type === 'text' && column.key">
                       {{getField(item, column.key)}}

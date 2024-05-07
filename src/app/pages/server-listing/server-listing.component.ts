@@ -37,6 +37,7 @@ export type DatacenterMetadata = {
   datacenter_id: string;
   vendor_id: string;
   name: string;
+  green_energy: boolean;
   selected? : boolean;
 };
 
@@ -79,6 +80,7 @@ export class ServerListingComponent {
     {category_id: 'basic', name: 'Basics', icon: 'server', collapsed: true},
     {category_id: 'price', name: 'Pricing', icon: 'dollar-sign', collapsed: true},
     {category_id: 'processor', name: 'Processor', icon: 'cpu', collapsed: false},
+    {category_id: 'gpu', name: 'GPU', icon: 'cpu', collapsed: true},
     {category_id: 'memory', name: 'Memory', icon: 'memory-stick', collapsed: true},
     {category_id: 'storage', name: 'Storage', icon: 'database', collapsed: true},
     {category_id: 'vendor', name: 'Vendor', icon: 'home', collapsed: true},
@@ -107,6 +109,7 @@ export class ServerListingComponent {
     { name: 'COUNTRY', show: false, type: 'country' },
     { name: 'CONTINENT', show: false, type: 'text', key: 'datacenter.country.continent' },
     { name: 'ZONE', show: false, type: 'text', key: 'zone.name' },
+    { name: 'GPUs', show: false, type: 'gpu', orderField: 'gpu_count' },
   ];
 
   availableCurrencies = [
@@ -495,6 +498,8 @@ export class ServerListingComponent {
           paramObject.countries.push(country.country_id);
         }
       });
+    } else {
+      if(paramObject.countries) delete paramObject.countries;
     }
 
     if(this.datacenterMetadata.find((datacenter) => datacenter.selected)) {
@@ -504,10 +509,9 @@ export class ServerListingComponent {
           paramObject.datacenters.push(datacenter.datacenter_id);
         }
       });
+    } else {
+      if(paramObject.datacenters) delete paramObject.datacenters;
     }
-
-    console.log('Query object:', paramObject);
-
     return paramObject;
   }
 
@@ -615,7 +619,6 @@ export class ServerListingComponent {
   }
 
   loadCountries(selectedCountries: string | undefined) {
-    console.log('Loading countries', selectedCountries);
     const selectedCountryIds = selectedCountries ? selectedCountries.split(',') : [];
     this.keeperAPI.getMetaTable(MetaTables.Country).then((response) => {
       if(response?.body) {
@@ -663,7 +666,6 @@ export class ServerListingComponent {
   }
 
   loadDatacenters(selectedDatacenters: string | undefined) {
-    console.log('Loading datacenters', selectedDatacenters);
     const selectedDatacenterIds = selectedDatacenters ? selectedDatacenters.split(',') : [];
     Promise.all([
       this.keeperAPI.getMetaTable(MetaTables.Vendor),
@@ -676,6 +678,8 @@ export class ServerListingComponent {
         this.datacenterMetadata = responses[1].body.map((item: any) => {
           return {...item, selected: selectedDatacenterIds.indexOf(item.datacenter_id) !== -1};
         }).sort((a: any, b: any) => a.name.localeCompare(b.name));
+
+        console.log('Datacenters:', this.datacenterMetadata);
 
         this.datacenterVendorMetadata = [];
         this.datacenterMetadata.forEach((datacenter) => {
