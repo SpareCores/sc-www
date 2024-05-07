@@ -22,6 +22,7 @@ export class Search<SecurityDataType = unknown> {
   /**
    * No description
    *
+   * @tags Query Server(s)
    * @name SearchServerSearchGet
    * @summary Search Server
    * @request GET:/search

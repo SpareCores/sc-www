@@ -9,10 +9,10 @@
  * ---------------------------------------------------------------
  */
 
-import { HTTPValidationError, ReadServerServerVendorIdServerIdGetData } from "./data-contracts";
+import { HealthcheckHealthcheckGetData } from "./data-contracts";
 import { HttpClient, RequestParams } from "./http-client";
 
-export class Server<SecurityDataType = unknown> {
+export class Healthcheck<SecurityDataType = unknown> {
   http: HttpClient<SecurityDataType>;
 
   constructor(http: HttpClient<SecurityDataType>) {
@@ -20,16 +20,16 @@ export class Server<SecurityDataType = unknown> {
   }
 
   /**
-   * No description
+   * @description Return database hash and last udpated timestamp.
    *
-   * @tags Query Server(s)
-   * @name ReadServerServerVendorIdServerIdGet
-   * @summary Read Server
-   * @request GET:/server/{vendor_id}/{server_id}
+   * @tags Administrative endpoints
+   * @name HealthcheckHealthcheckGet
+   * @summary Healthcheck
+   * @request GET:/healthcheck
    */
-  readServerServerVendorIdServerIdGet = (vendorId: string, serverId: string, params: RequestParams = {}) =>
-    this.http.request<ReadServerServerVendorIdServerIdGetData, HTTPValidationError>({
-      path: `/server/${vendorId}/${serverId}`,
+  healthcheckHealthcheckGet = (params: RequestParams = {}) =>
+    this.http.request<HealthcheckHealthcheckGetData, any>({
+      path: `/healthcheck`,
       method: "GET",
       ...params,
     });
