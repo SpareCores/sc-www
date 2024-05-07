@@ -622,6 +622,9 @@ export class ServerListingComponent {
 
         this.countryMetadata = response.body.map((item: any) => {
           return {...item, selected: selectedCountryIds.indexOf(item.country_id) !== -1};
+        }).sort((a: any, b: any) => {
+          const regionNamesInEnglish = new Intl.DisplayNames(['en'], { type: 'region' });
+          return regionNamesInEnglish.of(a.country_id)?.localeCompare(regionNamesInEnglish.of(b.country_id) || '') || 0;
         });
 
         this.continentMetadata = [];
@@ -672,7 +675,7 @@ export class ServerListingComponent {
       if(responses[1]?.body) {
         this.datacenterMetadata = responses[1].body.map((item: any) => {
           return {...item, selected: selectedDatacenterIds.indexOf(item.datacenter_id) !== -1};
-        });
+        }).sort((a: any, b: any) => a.name.localeCompare(b.name));
 
         this.datacenterVendorMetadata = [];
         this.datacenterMetadata.forEach((datacenter) => {
