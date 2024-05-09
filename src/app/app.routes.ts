@@ -5,6 +5,7 @@ import { ServerListingComponent } from './pages/server-listing/server-listing.co
 export const routes: Routes = [
   { path: '', component: LandingpageComponent },
   { path: 'servers', component: ServerListingComponent },
+  { path: 'server/:vendor/:id', loadComponent: () => import('./pages/server-details/server-details.component').then(m => m.ServerDetailsComponent)},
   { path: 'article/:category/:id', loadComponent: () => import('./pages/article/article.component').then(m => m.ArticleComponent)},
   { path: 'articles/:category', loadComponent: () => import('./pages/articles/articles.component').then(m => m.ArticlesComponent)},
   { path: 'articles', loadComponent: () => import('./pages/articles/articles.component').then(m => m.ArticlesComponent)},

@@ -184,82 +184,82 @@ export interface DatacenterBaseWithPKs {
 
 /** Datacenters */
 export enum Datacenters {
-  UsCentral1 = "us-central1",
-  EuropeWest1 = "europe-west1",
-  UsWest1 = "us-west1",
-  AsiaEast1 = "asia-east1",
-  UsEast1 = "us-east1",
-  AsiaNortheast1 = "asia-northeast1",
-  AsiaSoutheast1 = "asia-southeast1",
-  UsEast4 = "us-east4",
-  AustraliaSoutheast1 = "australia-southeast1",
-  EuropeWest2 = "europe-west2",
-  EuropeWest3 = "europe-west3",
-  SouthamericaEast1 = "southamerica-east1",
-  AsiaSouth1 = "asia-south1",
-  NorthamericaNortheast1 = "northamerica-northeast1",
-  EuropeWest4 = "europe-west4",
-  EuropeNorth1 = "europe-north1",
-  UsWest2 = "us-west2",
-  AsiaEast2 = "asia-east2",
-  EuropeWest6 = "europe-west6",
-  AsiaNortheast2 = "asia-northeast2",
-  AsiaNortheast3 = "asia-northeast3",
-  UsWest3 = "us-west3",
-  UsWest4 = "us-west4",
-  AsiaSoutheast2 = "asia-southeast2",
-  EuropeCentral2 = "europe-central2",
-  NorthamericaNortheast2 = "northamerica-northeast2",
-  AsiaSouth2 = "asia-south2",
-  AustraliaSoutheast2 = "australia-southeast2",
-  SouthamericaWest1 = "southamerica-west1",
-  EuropeWest8 = "europe-west8",
-  EuropeWest9 = "europe-west9",
-  UsEast5 = "us-east5",
-  EuropeSouthwest1 = "europe-southwest1",
-  UsSouth1 = "us-south1",
-  MeWest1 = "me-west1",
-  EuropeWest12 = "europe-west12",
-  MeCentral1 = "me-central1",
-  EuropeWest10 = "europe-west10",
-  MeCentral2 = "me-central2",
-  AfricaSouth1 = "africa-south1",
-  Nbg1Dc3 = "nbg1-dc3",
-  Hel1Dc2 = "hel1-dc2",
-  Fsn1Dc14 = "fsn1-dc14",
-  AshDc1 = "ash-dc1",
-  HilDc1 = "hil-dc1",
-  AfricaCapeTown = "Africa (Cape Town)",
-  AsiaPacificHongKong = "Asia Pacific (Hong Kong)",
-  AsiaPacificTokyo = "Asia Pacific (Tokyo)",
-  AsiaPacificSeoul = "Asia Pacific (Seoul)",
-  AsiaPacificOsaka = "Asia Pacific (Osaka)",
-  AsiaPacificMumbai = "Asia Pacific (Mumbai)",
-  AsiaPacificHyderabad = "Asia Pacific (Hyderabad)",
-  AsiaPacificSingapore = "Asia Pacific (Singapore)",
-  AsiaPacificSydney = "Asia Pacific (Sydney)",
-  AsiaPacificJakarta = "Asia Pacific (Jakarta)",
-  AsiaPacificMelbourne = "Asia Pacific (Melbourne)",
-  CanadaCentral = "Canada (Central)",
-  CanadaWestCalgary = "Canada West (Calgary)",
-  ChinaBeijing = "China (Beijing)",
-  ChinaNingxia = "China (Ningxia)",
-  EuropeFrankfurt = "Europe (Frankfurt)",
-  EuropeZurich = "Europe (Zurich)",
-  EuropeStockholm = "Europe (Stockholm)",
-  EuropeMilan = "Europe (Milan)",
-  EuropeSpain = "Europe (Spain)",
-  EuropeIreland = "Europe (Ireland)",
-  EuropeLondon = "Europe (London)",
-  EuropeParis = "Europe (Paris)",
-  IsraelTelAviv = "Israel (Tel Aviv)",
-  MiddleEastUAE = "Middle East (UAE)",
-  MiddleEastBahrain = "Middle East (Bahrain)",
-  SouthAmericaSaoPaulo = "South America (Sao Paulo)",
-  USEastNVirginia = "US East (N. Virginia)",
-  USEastOhio = "US East (Ohio)",
-  USWestNCalifornia = "US West (N. California)",
-  USWestOregon = "US West (Oregon)",
+  Value1000 = "1000",
+  Value1100 = "1100",
+  Value1210 = "1210",
+  Value1220 = "1220",
+  Value1230 = "1230",
+  Value1250 = "1250",
+  Value1260 = "1260",
+  Value1270 = "1270",
+  Value1280 = "1280",
+  Value1290 = "1290",
+  Value1300 = "1300",
+  Value1310 = "1310",
+  Value1320 = "1320",
+  Value1330 = "1330",
+  Value1340 = "1340",
+  Value1350 = "1350",
+  Value1360 = "1360",
+  Value1370 = "1370",
+  Value1380 = "1380",
+  Value1390 = "1390",
+  Value1410 = "1410",
+  Value1420 = "1420",
+  Value1430 = "1430",
+  Value1440 = "1440",
+  Value1450 = "1450",
+  Value1460 = "1460",
+  Value1470 = "1470",
+  Value1480 = "1480",
+  Value1490 = "1490",
+  Value1510 = "1510",
+  Value1520 = "1520",
+  Value1530 = "1530",
+  Value1540 = "1540",
+  Value1550 = "1550",
+  Value1560 = "1560",
+  Value1570 = "1570",
+  Value1580 = "1580",
+  Value1590 = "1590",
+  Value1600 = "1600",
+  Value1610 = "1610",
+  Value2 = "2",
+  Value3 = "3",
+  Value4 = "4",
+  Value5 = "5",
+  Value6 = "6",
+  AfSouth1 = "af-south-1",
+  ApEast1 = "ap-east-1",
+  ApNortheast1 = "ap-northeast-1",
+  ApNortheast2 = "ap-northeast-2",
+  ApNortheast3 = "ap-northeast-3",
+  ApSouth1 = "ap-south-1",
+  ApSouth2 = "ap-south-2",
+  ApSoutheast1 = "ap-southeast-1",
+  ApSoutheast2 = "ap-southeast-2",
+  ApSoutheast3 = "ap-southeast-3",
+  ApSoutheast4 = "ap-southeast-4",
+  CaCentral1 = "ca-central-1",
+  CaWest1 = "ca-west-1",
+  CnNorth1 = "cn-north-1",
+  CnNorthwest1 = "cn-northwest-1",
+  EuCentral1 = "eu-central-1",
+  EuCentral2 = "eu-central-2",
+  EuNorth1 = "eu-north-1",
+  EuSouth1 = "eu-south-1",
+  EuSouth2 = "eu-south-2",
+  EuWest1 = "eu-west-1",
+  EuWest2 = "eu-west-2",
+  EuWest3 = "eu-west-3",
+  IlCentral1 = "il-central-1",
+  MeCentral1 = "me-central-1",
+  MeSouth1 = "me-south-1",
+  SaEast1 = "sa-east-1",
+  UsEast1 = "us-east-1",
+  UsEast2 = "us-east-2",
+  UsWest1 = "us-west-1",
+  UsWest2 = "us-west-2",
 }
 
 /**
@@ -295,6 +295,14 @@ export interface Gpu {
 export interface HTTPValidationError {
   /** Detail */
   detail?: ValidationError[];
+}
+
+/** MetaTables */
+export enum MetaTables {
+  Country = "Country",
+  Vendor = "Vendor",
+  Datacenter = "Datacenter",
+  Zone = "Zone",
 }
 
 /** OrderDir */
@@ -863,6 +871,9 @@ export interface ZoneBase {
 /** Response Healthcheck Healthcheck Get */
 export type HealthcheckHealthcheckGetData = object;
 
+/** Response Metadata Metatable  Meta Table  Get */
+export type MetadataMetatableMetaTableGetData = object[];
+
 export type ReadServerServerVendorIdServerIdGetData = ServerPKs;
 
 export interface SearchServerSearchGetParams {
@@ -914,7 +925,7 @@ export interface SearchServerSearchGetParams {
    * Datacenter id
    * Datacenter.
    */
-  datacenter?: "[object Object]";
+  datacenters?: "[object Object]";
   /**
    * Compliance Framework id
    * Compliance framework implemented at the vendor.
@@ -925,6 +936,26 @@ export interface SearchServerSearchGetParams {
    * Reserver storage size in GBs.
    */
   storage_size?: number | null;
+  /**
+   * Storage Type
+   * Storage type.
+   */
+  storage_type?: "hdd" | "ssd" | "nvme ssd" | "network";
+  /**
+   * Countries
+   * Datacenter countries.
+   */
+  countries?: string[] | null;
+  /**
+   * GPU count
+   * Number of GPUs.
+   */
+  gpu_min?: number | null;
+  /**
+   * GPU memory
+   * Amount of GPU memory in GBs.
+   */
+  gpu_memory_min?: number | null;
   /**
    * Limit
    * Maximum number of results. Set to -1 for unlimited

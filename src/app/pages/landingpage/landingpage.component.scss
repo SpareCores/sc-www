@@ -260,7 +260,11 @@
     z-index: 2;
   }
 
-  input:disabled {
+  .cpu_input:disabled {
+    @apply text-gray-200;
+  }
+
+  .ram_input:disabled {
     @apply text-gray-200;
   }
 

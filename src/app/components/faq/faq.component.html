@@ -1,0 +1,20 @@
+<div class="w-full">
+  <h3 class="font-bold text-3xl">{{ item }} FAQs</h3>
+  <div class="pl-2 mt-2" itemscope="" itemtype="https://schema.org/FAQPage">
+    <div *ngFor="let item of FAQQuestions, let i = index" itemscope="" itemprop="mainEntity" itemtype="https://schema.org/Question">
+      <div class="flex items-center justify-between cursor-pointer mb-2 border-b border-solid border-gray-200 py-3" (click)="toggleFAQ(i)">
+        <h4 itemprop="name">{{item.question}}</h4>
+        <lucide-icon [name]="FAQIcon(i)"></lucide-icon>
+      </div>
+      <p itemscope="" itemprop="acceptedAnswer" itemtype="https://schema.org/Answer"
+        class="pl-2"
+        [ngClass]="{
+          'flex': activeFAQ === i,
+          'hidden': activeFAQ !== i
+
+        }">
+        <span itemprop="text">{{item.answer}} </span>
+      </p>
+    </div>
+  </div>
+</div>

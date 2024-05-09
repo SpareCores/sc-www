@@ -1,0 +1,35 @@
+import { CommonModule } from '@angular/common';
+import { Component, Input } from '@angular/core';
+import { LucideAngularModule } from 'lucide-angular';
+
+export type FAQQuestion = {
+  question: string;
+  answer: string;
+}
+
+@Component({
+  selector: 'app-faq',
+  standalone: true,
+  imports: [CommonModule, LucideAngularModule],
+  templateUrl: './faq.component.html',
+  styleUrl: './faq.component.scss'
+})
+export class FaqComponent {
+
+  @Input() item!: string;
+  @Input() FAQQuestions!: any[];
+
+  activeFAQ: number = -1;
+
+  toggleFAQ(i: number) {
+    if(this.activeFAQ === i) {
+      this.activeFAQ = -1;
+    } else {
+      this.activeFAQ = i;
+    }
+  }
+
+  FAQIcon(i: number) {
+    return this.activeFAQ === i ? 'chevron-up' : 'chevron-down';
+  }
+}

@@ -51,7 +51,14 @@
               </button>
               <div class="button__bottom"></div>
             </div>
-            <input [(ngModel)]="priceValue" class="input_border price_input bg-primary text-center text-4xl font-bold text-gray-200" readonly disabled >
+            <input [(ngModel)]="priceValue"
+              class="input_border price_input bg-primary text-center text-4xl font-bold"
+              [ngClass]="{
+                'text-gray-400': isSpinning,
+                'text-gray-200': !isSpinning,
+              }"
+              readonly
+              disabled >
             <input [(ngModel)]="cpuCount" step="1" class="input_border cpu_input bg-primary text-center text-3xl font-bold"
               [disabled]="isSpinning" >
             <input [(ngModel)]="ramCount" step="1" class="input_border ram_input bg-primary text-center text-3xl font-bold"
@@ -114,11 +121,6 @@
             </div>
           </div>
         </div>
-        <!--
-        <div class="w-1/2">
-          <img style="max-height: 608px; object-fit: contain;" src="./assets/images/temp/slotmachine.png" alt="landingpage" class="w-full">
-        </div>
-        -->
 
       </div>
     </div>
@@ -133,7 +135,8 @@
         <div class="font-mono full flex justify-center mx-auto my-auto text-2xl">Here are some key highlights regarding the information we currently cover.</div>
         <div class="flex gap-24 justify-center flex-col lg:flex-row">
           <div class="flex justify-center">
-            <img src="https://placehold.co/550x380" >
+            <!-- 550x380 -->
+            <img class="h-full object-contain mx-auto" src="/assets/images/media/sqlstats.png" >
           </div>
           <div class="flex flex-col justify-center">
             <div style="width: 450px; margin: auto;">
@@ -168,7 +171,8 @@
         <div class="flex gap-12 flex-col lg:flex-row">
           <div class="w-full lg:w-1/3 flex flex-col gap-6">
             <div class="w-full h-260 rounded-lg">
-              <img class="rounded-lg h-full w-full object-fill" src="https://placehold.co/300x260">
+              <!-- 300x260 -->
+              <img class="rounded-lg h-full object-contain mx-auto" src="/assets/images/media/step1.png">
             </div>
             <div class="flex gap-2 align-center">
               <div class="text-emerald-400 rounded-full bg-white px-2 font-bold">1</div>
@@ -180,7 +184,8 @@
           </div>
           <div class="w-full lg:w-1/3 flex flex-col gap-6">
             <div class="w-full h-260 rounded-lg">
-              <img class="rounded-lg h-full w-full object-fill" src="https://placehold.co/300x260">
+              <!-- 300x260 -->
+              <img class="rounded-lg h-full object-contain mx-auto" src="/assets/images/media/step2.png">
             </div>
             <div class="flex gap-2 align-center">
               <div class="text-emerald-400 rounded-full bg-white px-2 font-bold">2</div>
@@ -192,7 +197,8 @@
           </div>
           <div class="w-full lg:w-1/3 flex flex-col gap-6">
             <div class="w-full h-260 rounded-lg">
-              <img class="rounded-lg h-full w-full object-fill" src="./assets/images/media/landing_steps_3.jpg">
+              <!-- 300x260 -->
+              <img class="rounded-lg h-full object-contain mx-auto" src="/assets/images/media/step3.png">
             </div>
             <div class="flex gap-2 align-center">
               <div class="text-emerald-400 rounded-full bg-white px-2 font-bold">3</div>
@@ -210,12 +216,13 @@
     <div class="content flex gap-8 flex-col lg:flex-row">
       <div class="w-full lg:w-3/5 my-auto">
         <div class="flex flex-col gap-4 justify-center">
-          <div class="flex text-4xl gap-2 font-semibold">
-            <span class="text-emerald-400"><</span>spare_cores<span class="text-emerald-400">></span> is <span class="text-emerald-400">100% open-source!</span>
+          <div class="text-center text-4xl gap-2 font-semibold">
+            <span class="text-emerald-400"><</span>spare_cores<span class="text-emerald-400">></span> is <span class="text-emerald-400">100%</span><br />
+            committed to using and contributing to<br />
+            <span class="text-emerald-400">open-source</span>!
           </div>
-          <div class="font-mono text-2xl">All SC build features are supported out of box.</div>
           <div class="text-2xl mt-8 mb-8">
-            Spare Cores is still in the early development phase, initiated in Q3 of 2023 and gaining momentum in 2024, particularly due to the support from <a href="https://www.ngisearch.eu" class="underline decoration-dotted hover:text-gray-500" target="_blank" rel="noopener">NGI Search</a> funding.
+            Spare Cores is still in the early development phase, initiated in Q3 of 2023 and gaining momentum in 2024, particularly thanks to the support from <a href="https://www.ngisearch.eu" class="underline decoration-dotted hover:text-gray-500" target="_blank" rel="noopener">NGI Search</a> funding.
           </div>
           <div>
             <a class="flex gap-8 justify-center lg:justify-start"
@@ -227,7 +234,10 @@
         </div>
       </div>
       <div class="w-full lg:w-2/5 justify-center flex">
-        <img src="https://placehold.co/550x380" >
+        <a href="https://ngi.eu" target="_blank" rel="noopener">
+          <!-- 550x380 -->
+          <img class="rounded-lg h-full object-contain mx-auto" src="/assets/images/media/ngi-yt.png">
+        </a>
       </div>
     </div>
   </div>
@@ -347,14 +357,9 @@
         Cores components, and other project updates from time to
         time. Find some of our featured articles below:
       </div>
-      <div class="articles_holder flex mt-8 flex-wrap">
-        <div class="w-full md:w-1/2 lg:w-1/4 flex flex-col gap-4 px-6" *ngFor="let item of featuredArticles">
-          <a routerLink="/article/featured/{{item.filename}}">
-            <img class="rounded-xl mb-4 w-full" [src]="item.image" alt="" >
-          </a>
-          <div> {{item.date | timeToShortDate}} </div>
-          <a routerLink="/article/featured/{{item.filename}}" class="font-bold text-2xl text-emerald-400 hover:text-emerald-500"> {{item.title}} </a>
-          <div> {{item.teaser}} </div>
+      <div class="articles_holder flex mt-4 flex-wrap">
+        <div class="w-full md:w-1/2 lg:w-1/4 flex flex-col gap-4 px-6 py-4" *ngFor="let item of featuredArticles">
+          <app-article-card [article]="item"></app-article-card>
         </div>
       </div>
       <div class="flex justify-center">

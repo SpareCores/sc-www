@@ -9,10 +9,10 @@
  * ---------------------------------------------------------------
  */
 
-import { HTTPValidationError, ReadServerServerVendorIdServerIdGetData } from "./data-contracts";
+import { HTTPValidationError, MetaTables, MetadataMetatableMetaTableGetData } from "./data-contracts";
 import { HttpClient, RequestParams } from "./http-client";
 
-export class Server<SecurityDataType = unknown> {
+export class Metatable<SecurityDataType = unknown> {
   http: HttpClient<SecurityDataType>;
 
   constructor(http: HttpClient<SecurityDataType>) {
@@ -20,16 +20,16 @@ export class Server<SecurityDataType = unknown> {
   }
 
   /**
-   * No description
+   * @description Return a table with metadata as-is, e.g. all countries or vendors.
    *
-   * @tags Query Server(s)
-   * @name ReadServerServerVendorIdServerIdGet
-   * @summary Read Server
-   * @request GET:/server/{vendor_id}/{server_id}
+   * @tags Administrative endpoints
+   * @name MetadataMetatableMetaTableGet
+   * @summary Metadata
+   * @request GET:/metatable/{meta_table}
    */
-  readServerServerVendorIdServerIdGet = (vendorId: string, serverId: string, params: RequestParams = {}) =>
-    this.http.request<ReadServerServerVendorIdServerIdGetData, HTTPValidationError>({
-      path: `/server/${vendorId}/${serverId}`,
+  metadataMetatableMetaTableGet = (metaTable: MetaTables, params: RequestParams = {}) =>
+    this.http.request<MetadataMetatableMetaTableGetData, HTTPValidationError>({
+      path: `/metatable/${metaTable}`,
       method: "GET",
       ...params,
     });

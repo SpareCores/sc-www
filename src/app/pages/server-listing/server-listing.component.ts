@@ -1,7 +1,7 @@
 import { Component, Inject, PLATFORM_ID } from '@angular/core';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { KeeperAPIService } from '../../services/keeper-api.service';
-import { OrderDir, SearchServerSearchGetParams, ServerPriceWithPKs } from '../../../../sdk/data-contracts';
+import { MetaTables, OrderDir, SearchServerSearchGetParams, ServerPriceWithPKs } from '../../../../sdk/data-contracts';
 import { Subject, debounceTime } from 'rxjs';
 import { encodeQueryParams } from '../../tools/queryParamFunctions';
 import { ActivatedRoute, Params, Router } from '@angular/router';
@@ -11,6 +11,7 @@ import { StorageHandlerService } from '../../services/storage-handler.service';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
+import { CountryIdtoNamePipe } from '../../pipes/country-idto-name.pipe';
 
 export type TableColumn = {
   name: string;
@@ -20,7 +21,36 @@ export type TableColumn = {
   orderField?: string;
 };
 
- const options: DropdownOptions = {
+export type CountryMetadata = {
+  continent: string;
+  country_id: string;
+  selected?: boolean;
+};
+
+export type ContinentMetadata = {
+  continent: string;
+  selected?: boolean;
+  collapsed?: boolean;
+};
+
+export type DatacenterMetadata = {
+  datacenter_id: string;
+  vendor_id: string;
+  name: string;
+  green_energy: boolean;
+  selected? : boolean;
+};
+
+export type DatacenterVenrodMetadata = {
+  vendor_id: string;
+  name: string;
+  selected?: boolean;
+  collapsed?: boolean;
+};
+
+
+
+const options: DropdownOptions = {
   placement: 'bottom',
   triggerType: 'click',
   offsetSkidding: 0,
@@ -37,7 +67,7 @@ const optionsModal: ModalOptions = {
 @Component({
   selector: 'app-server-listing',
   standalone: true,
-  imports: [CommonModule, FormsModule, BreadcrumbsComponent, LucideAngularModule],
+  imports: [CommonModule, FormsModule, BreadcrumbsComponent, LucideAngularModule, CountryIdtoNamePipe],
   templateUrl: './server-listing.component.html',
   styleUrl: './server-listing.component.scss',
   host: {ngSkipHydration: 'true'},
@@ -50,6 +80,7 @@ export class ServerListingComponent {
     {category_id: 'basic', name: 'Basics', icon: 'server', collapsed: true},
     {category_id: 'price', name: 'Pricing', icon: 'dollar-sign', collapsed: true},
     {category_id: 'processor', name: 'Processor', icon: 'cpu', collapsed: false},
+    {category_id: 'gpu', name: 'GPU', icon: 'cpu', collapsed: true},
     {category_id: 'memory', name: 'Memory', icon: 'memory-stick', collapsed: true},
     {category_id: 'storage', name: 'Storage', icon: 'database', collapsed: true},
     {category_id: 'vendor', name: 'Vendor', icon: 'home', collapsed: true},
@@ -75,7 +106,11 @@ export class ServerListingComponent {
     { name: 'DATACENTER', show: false, type: 'datacenter' },
     { name: 'STATUS', show: false, type: 'text', key: 'server.status' },
     { name: 'VENDOR', show: false, type: 'vendor' },
+    { name: 'COUNTRY', show: false, type: 'country' },
+    { name: 'CONTINENT', show: false, type: 'text', key: 'datacenter.country.continent' },
     { name: 'ZONE', show: false, type: 'text', key: 'zone.name' },
+    { name: 'GPUs', show: false, type: 'gpu', orderField: 'gpu_count' },
+    { name: 'STORAGE TYPE', show: false, type: 'text', key: 'server.storage_type' },
   ];
 
   availableCurrencies = [
@@ -101,6 +136,8 @@ export class ServerListingComponent {
     {name: 'Reserved', slug: 'reserved'},
   ];
 
+  pageLimits = [25, 50, 100, 250];
+
   allocation = this.allocationTypes[0];
 
   selectedCurrency = this.availableCurrencies[0];
@@ -122,6 +159,7 @@ export class ServerListingComponent {
   dropdownCurrency: any;
   dropdownAllocation: any;
   dropdownColumn: any;
+  dropdownPage: any;
   modalSearch: any;
 
   isLoading = false;
@@ -129,6 +167,14 @@ export class ServerListingComponent {
   freetextSearchInput: string | null = null;
   modalSubmitted = false;
   modalResponse: any;
+
+  countryMetadata: CountryMetadata[] = [];
+  continentMetadata: ContinentMetadata[] = [];
+
+  datacenterMetadata: DatacenterMetadata[] = [];
+  datacenterVendorMetadata: DatacenterVenrodMetadata[] = [];
+
+  vendorMetadata: any[] = [];
 
   constructor(@Inject(PLATFORM_ID) private platformId: object,
               private keeperAPI: KeeperAPIService,
@@ -145,7 +191,6 @@ export class ServerListingComponent {
       'cloud, server, instance, price, comparison, spot, sparecores');
 
     this.SEOHandler.updateThumbnail('https://sparecores.com/assets/images/media/server_list_image.png');
-
 
     this.route.queryParams.subscribe((params: Params) => {
       const query: any = params;
@@ -178,6 +223,10 @@ export class ServerListingComponent {
       if(query.page) {
         this.page = parseInt(query.page);
       }
+
+      this.loadCountries(query.countries);
+
+      this.loadDatacenters(query.datacenters);
 
       const tableColumnsStr = this.storageHandler.get('serverListTableColumns');
       if(tableColumnsStr) {
@@ -238,6 +287,19 @@ export class ServerListingComponent {
         }
       );
 
+      const targetElPage: HTMLElement | null = document.getElementById('pagesize_options');
+      const triggerElPage: HTMLElement | null = document.getElementById('pagesize_button');
+
+      this.dropdownPage = new Dropdown(
+        targetElPage,
+        triggerElPage,
+        options,
+        {
+          id: 'pagesize_options',
+          override: true
+        }
+      );
+
       // set the modal menu element
       const targetElModal = document.getElementById('large-modal');
 
@@ -266,7 +328,7 @@ export class ServerListingComponent {
   }
 
   openServerDetails(server: ServerPriceWithPKs) {
-    //this.router.navigateByUrl(`/server/${server.server.server_id}`);
+    this.router.navigateByUrl(`/server/${server.vendor.vendor_id}/${server.server.server_id}`);
   }
 
   toggleCategory(category: any) {
@@ -281,6 +343,15 @@ export class ServerListingComponent {
 
   getParamterType(parameter: any) {
     const type = parameter.schema.type || parameter.schema.anyOf?.find((item: any)  => item.type !== 'null')?.type || 'text';
+    const name = parameter.name;
+
+    if(name === 'countries') {
+      return 'country';
+    }
+
+    if(name === 'datacenters') {
+      return 'datacenters';
+    }
 
     if((type === 'integer' || type === 'number') && parameter.schema.minimum && parameter.schema.maximum) {
       return 'range';
@@ -421,6 +492,27 @@ export class ServerListingComponent {
       paramObject.page = this.page;
     }
 
+    if(this.countryMetadata.find((country) => country.selected)) {
+      paramObject.countries = [];
+      this.countryMetadata.forEach((country) => {
+        if(country.selected) {
+          paramObject.countries.push(country.country_id);
+        }
+      });
+    } else {
+      if(paramObject.countries) delete paramObject.countries;
+    }
+
+    if(this.datacenterMetadata.find((datacenter) => datacenter.selected)) {
+      paramObject.datacenters = [];
+      this.datacenterMetadata.forEach((datacenter) => {
+        if(datacenter.selected) {
+          paramObject.datacenters.push(datacenter.datacenter_id);
+        }
+      });
+    } else {
+      if(paramObject.datacenters) delete paramObject.datacenters;
+    }
     return paramObject;
   }
 
@@ -459,6 +551,16 @@ export class ServerListingComponent {
     this.filterServers();
 
     this.dropdownAllocation?.hide();
+  }
+
+  selectPageSize(limit: number) {
+    this.limit = limit;
+    this.page = 1;
+    this.filterServers();
+
+    this.dropdownPage?.hide();
+    // scroll to top
+    window.scrollTo(0, 0);
   }
 
   getField(item: ServerPriceWithPKs, field: string) {
@@ -515,6 +617,104 @@ export class ServerListingComponent {
         this.modalSubmitted = false;
       });
     }
+  }
+
+  loadCountries(selectedCountries: string | undefined) {
+    const selectedCountryIds = selectedCountries ? selectedCountries.split(',') : [];
+    this.keeperAPI.getMetaTable(MetaTables.Country).then((response) => {
+      if(response?.body) {
+
+        this.countryMetadata = response.body.map((item: any) => {
+          return {...item, selected: selectedCountryIds.indexOf(item.country_id) !== -1};
+        }).sort((a: any, b: any) => {
+          const regionNamesInEnglish = new Intl.DisplayNames(['en'], { type: 'region' });
+          return regionNamesInEnglish.of(a.country_id)?.localeCompare(regionNamesInEnglish.of(b.country_id) || '') || 0;
+        });
+
+        this.continentMetadata = [];
+        this.countryMetadata.forEach((country) => {
+          const continent = this.continentMetadata.find((item) => item.continent === country.continent);
+          if(!continent) {
+            this.continentMetadata.push({continent: country.continent, selected: false, collapsed: true});
+          }
+        });
+
+        this.continentMetadata.forEach((continent) => {
+          continent.selected = this.countryMetadata.find((country) => country.continent === continent.continent && !country.selected) === undefined;
+          continent.collapsed = this.countryMetadata.find((country) => country.continent === continent.continent && country.selected) === undefined;
+        });
+      }
+    });
+  }
+
+  countriesByContinent(continent: string) {
+    return this.countryMetadata.filter((country) => country.continent === continent);
+  }
+
+  selectContinent(continent: ContinentMetadata) {
+    continent.selected = !continent.selected;
+    this.countryMetadata.forEach((country) => {
+      if(country.continent === continent.continent) {
+        country.selected = continent.selected;
+      }
+    });
+
+    this.valueChanged();
+  }
+
+  collapseItem(continent: ContinentMetadata | DatacenterVenrodMetadata) {
+    continent.collapsed = !continent.collapsed;
+  }
+
+  loadDatacenters(selectedDatacenters: string | undefined) {
+    const selectedDatacenterIds = selectedDatacenters ? selectedDatacenters.split(',') : [];
+    Promise.all([
+      this.keeperAPI.getMetaTable(MetaTables.Vendor),
+      this.keeperAPI.getMetaTable(MetaTables.Datacenter)]).then((responses) => {
+
+      if(responses[0]?.body) {
+        this.vendorMetadata = responses[0].body;
+      }
+      if(responses[1]?.body) {
+        this.datacenterMetadata = responses[1].body.map((item: any) => {
+          return {...item, selected: selectedDatacenterIds.indexOf(item.datacenter_id) !== -1};
+        }).sort((a: any, b: any) => a.name.localeCompare(b.name));
+
+        this.datacenterVendorMetadata = [];
+        this.datacenterMetadata.forEach((datacenter) => {
+          const vendor = this.datacenterVendorMetadata.find((item) => item.vendor_id === datacenter.vendor_id);
+          if(!vendor) {
+            this.datacenterVendorMetadata.push(
+              {
+                vendor_id: datacenter.vendor_id,
+                name: this.vendorMetadata.find((vendor) => vendor.vendor_id === datacenter.vendor_id)?.name,
+                selected: false,
+                collapsed: true
+              });
+          }
+        });
+
+        this.datacenterVendorMetadata.forEach((vendor) => {
+          vendor.selected = this.datacenterMetadata.find((datacenter) => datacenter.vendor_id === vendor.vendor_id && !datacenter.selected) === undefined;
+          vendor.collapsed = this.datacenterMetadata.find((datacenter) => datacenter.vendor_id === vendor.vendor_id && datacenter.selected) === undefined;
+        });
+      }
+    });
+  }
+
+  datacentersByVendor(vendor_id: string) {
+    return this.datacenterMetadata.filter((datacenter) => datacenter.vendor_id === vendor_id);
+  }
+
+  selectDatacenterVendor(vendor: DatacenterVenrodMetadata) {
+    vendor.selected = !vendor.selected;
+    this.datacenterMetadata.forEach((datacenter) => {
+      if(datacenter.vendor_id === vendor.vendor_id) {
+        datacenter.selected = vendor.selected;
+      }
+    });
+
+    this.valueChanged();
   }
 
 }

@@ -2,15 +2,14 @@ import { Component } from '@angular/core';
 import { ArticleMeta, ArticlesService } from '../../services/articles.service';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterModule } from '@angular/router';
-import { MarkdownModule } from 'ngx-markdown';
-import { TimeToShortDatePipe } from '../../pipes/time-to-short-date.pipe';
+import { ActivatedRoute } from '@angular/router';
 import { SeoHandlerService } from '../../services/seo-handler.service';
+import { ArticleCardComponent } from '../../components/article-card/article-card.component';
 
 @Component({
   selector: 'app-articles',
   standalone: true,
-  imports: [BreadcrumbsComponent, RouterModule, CommonModule, MarkdownModule, TimeToShortDatePipe],
+  imports: [BreadcrumbsComponent, CommonModule, ArticleCardComponent],
   templateUrl: './articles.component.html',
   styleUrl: './articles.component.scss'
 })
