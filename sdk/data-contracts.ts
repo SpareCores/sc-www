@@ -937,6 +937,11 @@ export interface SearchServerSearchGetParams {
    */
   storage_size?: number | null;
   /**
+   * Storage Type
+   * Storage type.
+   */
+  storage_type?: "hdd" | "ssd" | "nvme ssd" | "network";
+  /**
    * Countries
    * Datacenter countries.
    */

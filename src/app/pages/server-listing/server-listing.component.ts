@@ -110,6 +110,7 @@ export class ServerListingComponent {
     { name: 'CONTINENT', show: false, type: 'text', key: 'datacenter.country.continent' },
     { name: 'ZONE', show: false, type: 'text', key: 'zone.name' },
     { name: 'GPUs', show: false, type: 'gpu', orderField: 'gpu_count' },
+    { name: 'STORAGE TYPE', show: false, type: 'text', key: 'server.storage_type' },
   ];
 
   availableCurrencies = [

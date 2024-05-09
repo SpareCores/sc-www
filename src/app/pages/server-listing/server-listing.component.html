@@ -229,7 +229,12 @@
                       {{getMemory(item)}}
                     </td>
                     <td *ngIf="column.type === 'storage'">
-                      {{getStorage(item)}}
+                      <div class="text-sm text-white">{{getStorage(item)}}</div>
+                      <div
+                        *ngIf="item.server.storage_type"
+                        class="text-xs text-white">
+                        <span>{{item.server.storage_type}}</span>
+                      </div>
                     </td>
                     <td *ngIf="column.type === 'price'" class="min-w-160">
                       {{item.price}} {{selectedCurrency.slug}}
