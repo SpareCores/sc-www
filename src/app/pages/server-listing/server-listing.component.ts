@@ -679,8 +679,6 @@ export class ServerListingComponent {
           return {...item, selected: selectedDatacenterIds.indexOf(item.datacenter_id) !== -1};
         }).sort((a: any, b: any) => a.name.localeCompare(b.name));
 
-        console.log('Datacenters:', this.datacenterMetadata);
-
         this.datacenterVendorMetadata = [];
         this.datacenterMetadata.forEach((datacenter) => {
           const vendor = this.datacenterVendorMetadata.find((item) => item.vendor_id === datacenter.vendor_id);
