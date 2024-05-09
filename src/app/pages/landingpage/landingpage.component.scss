@@ -78,16 +78,6 @@
     border-radius: 8px;
     background-color: #34D399;
   }
-  .spin_button {
-    position: absolute;
-    left: 550px;
-    top: 526px;
-    width: 150px;
-    height: 60px;
-    border-radius: 8px;
-    background-image: url('../../../assets/images/media/spin_button.png');
-    background-size: cover;
-  }
   .input_border {
     border-radius: 1rem;
     border: 2px solid #34D399;
@@ -244,6 +234,17 @@
     z-index: 3;
     position: absolute;
     left: 2px;
+  }
+  .container > .button:hover {
+    background-color: #a70012;
+    text-shadow: 0px 0px 60px white, 0px 0px 40px white, 0 0 20px white;
+    border: 1px solid #800000;
+  }
+  .container > .button:disabled {
+    background-color: #7c0023;
+    border: 1px solid #500000;
+    text-shadow: none;
+    color: #7a373c;
   }
 
   .container .button__bottom {
