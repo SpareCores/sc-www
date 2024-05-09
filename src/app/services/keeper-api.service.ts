@@ -22,7 +22,7 @@ export class KeeperAPIService {
     private httpClient: HttpClient) {
   }
 
-  public getServer(vendor: string, id: string) {
+  public getServer(vendor: string, id: string): Promise<any> {
     return this.ServerController.readServerServerVendorIdServerIdGet(vendor, id);
   }
 

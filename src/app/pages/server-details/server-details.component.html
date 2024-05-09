@@ -1,0 +1,45 @@
+<div class="w-full bg-primary">
+  <div class="content pt-16 pb-16 text-white">
+    <app-breadcrumbs [segments]="breadcrumbs"></app-breadcrumbs>
+
+    <div *ngIf="serverDetails" class="flex justify-between px-6 py-6 bg-secondary border-emerald-400 border boder-solid mt-12"  >
+      <div class="flex gap-6 w-3/5" >
+        <div class="w-20 h-20 px-1 py-1 bg-white rounded-lg my-auto">
+          <img src="{{serverDetails.vendor.logo}}" alt="logo">
+        </div>
+        <div class="flex flex-col gap-3">
+          <h1 class="text-2xl" > <span class="text-emerald-400 font-bold">{{serverDetails.server_id}}</span> by {{serverDetails.vendor.name}} </h1>
+          <div> {{description}} </div>
+          <div class="flex">
+            <button class="btn-primary py-3 px-5 flex gap-2">
+              <lucide-icon name="shopping-cart" class="h-6 w-6"></lucide-icon>
+              <span> Order Now </span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="w-1/4">
+        <div *ngFor="let item of features, let i = index">
+          <div *ngIf="i != 0" class="w-full h-4 mb-3 border-b border-gray-400 border-solid" ></div>
+          <div class="flex gap-2 text-xl items-center text-gray-200">
+            <div class="px-1 py-1 rounded-full bg-emerald-480 h-6 w-6">
+            <lucide-icon name="check" class="h-4 w-4"></lucide-icon>
+            </div>
+            <b> {{item.value}} </b>
+            <span> {{item.name}} </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="my-8">
+      <h2 class="text-3xl font-bold"> Plan Specification </h2>
+    </div>
+
+
+    <div class="my-8">
+      <h2 class="text-3xl font-bold"> FAQs </h2>
+    </div>
+
+  </div>
+</div>

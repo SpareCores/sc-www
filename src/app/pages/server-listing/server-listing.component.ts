@@ -328,7 +328,7 @@ export class ServerListingComponent {
   }
 
   openServerDetails(server: ServerPriceWithPKs) {
-    //this.router.navigateByUrl(`/server/${server.server.server_id}`);
+    this.router.navigateByUrl(`/server/${server.vendor.vendor_id}/${server.server.server_id}`);
   }
 
   toggleCategory(category: any) {

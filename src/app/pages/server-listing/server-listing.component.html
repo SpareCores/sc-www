@@ -267,9 +267,11 @@
                     </td>
                   </ng-container>
                   <td>
-                    <button >
-                      <lucide-icon name="chevron-right" class="h-6 w-6 text-emerald-400"></lucide-icon>
-                    </button>
+                    <div (click)="$event.stopPropagation()">
+                      <a href="server/{{item.vendor.vendor_id}}/{{item.server.server_id}}">
+                        <lucide-icon name="chevron-right" class="h-6 w-6 text-emerald-400"></lucide-icon>
+                      </a>
+                    </div>
                   </td>
                 </tr>
               </tbody>

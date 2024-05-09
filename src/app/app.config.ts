@@ -4,7 +4,7 @@ import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
 import { provideHttpClient, withFetch } from '@angular/common/http';
-import { ArrowDownNarrowWide, ArrowDownWideNarrow, BookText, Box, Check, ChevronDown, ChevronLeft, ChevronRight, Codesandbox, Cpu, Database, DollarSign, Facebook, Github, Home, Hotel, Linkedin, LucideAngularModule, MemoryStick, PcCase, Search, Server, SquareKanban, Twitter, User, Building2, Heater, CandlestickChart, MapPinned, Scale, Ellipsis, Menu, Leaf } from 'lucide-angular';
+import { ArrowDownNarrowWide, ArrowDownWideNarrow, BookText, Box, Check, ChevronDown, ChevronLeft, ChevronRight, Codesandbox, Cpu, Database, DollarSign, Facebook, Github, Home, Hotel, Linkedin, LucideAngularModule, MemoryStick, PcCase, Search, Server, SquareKanban, Twitter, User, Building2, Heater, CandlestickChart, MapPinned, Scale, Ellipsis, Menu, Leaf, ShoppingCart } from 'lucide-angular';
 import { MarkdownModule } from 'ngx-markdown';
 
 export const appConfig: ApplicationConfig = {
@@ -45,7 +45,8 @@ export const appConfig: ApplicationConfig = {
         Scale,
         Ellipsis,
         Menu,
-        Leaf
+        Leaf,
+        ShoppingCart
       }),
     ),
     importProvidersFrom(MarkdownModule.forRoot()),
