@@ -8,7 +8,10 @@ a:hover {
 
 ::ng-deep .html_content {
   h1, h2, h3, h4, h5, h6 {
-    @apply font-bold text-emerald-400 mb-2;
+    @apply font-bold text-emerald-400 my-4;
+  }
+  h2 {
+    @apply text-2xl;
   }
 
   a {
@@ -20,10 +23,14 @@ a:hover {
 
   li {
     @apply list-disc ml-4;
+    @apply text-lg;
+    @apply my-1;
+    @apply ml-8;
   }
 
   p {
-    @apply mb-2;
+    @apply my-2;
+    @apply text-lg;
   }
 
   pre {
