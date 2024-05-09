@@ -6,11 +6,12 @@ import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadc
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
 import { SeoHandlerService } from '../../services/seo-handler.service';
+import { FaqComponent } from '../../components/faq/faq.component';
 
 @Component({
   selector: 'app-server-details',
   standalone: true,
-  imports: [BreadcrumbsComponent, CommonModule, LucideAngularModule],
+  imports: [BreadcrumbsComponent, CommonModule, LucideAngularModule, FaqComponent],
   templateUrl: './server-details.component.html',
   styleUrl: './server-details.component.scss'
 })
@@ -27,6 +28,8 @@ export class ServerDetailsComponent {
 
   description = '';
   title = '';
+
+  faqs: any[] = [];
 
   constructor(private route: ActivatedRoute,
               private keepreAPI: KeeperAPIService,
@@ -64,6 +67,22 @@ export class ServerDetailsComponent {
           let keywords = this.title + ', ' + this.serverDetails.server_id + ', ' + this.serverDetails.vendor.vendor_id;
 
           this.SEOHandler.updateTitleAndMetaTags(this.title, this.description, keywords);
+
+          this.faqs = [
+            {
+              question: `What is ${this.serverDetails.server_id}?`,
+              answer: this.description
+            },
+            {
+              question: `How much does ${this.serverDetails.server_id} cost?`,
+              answer: `${this.serverDetails.server_id} prices starting at $0.00001 per hour as spot instance.`
+            },
+            {
+              question: `What is ${this.serverDetails.server_id} instance specification?`,
+              answer: `${this.serverDetails.server_id} has ${this.serverDetails.cpu_cores || this.serverDetails.vcpus} CPUs, ${this.getMemory()} of memory and ${this.getStorage()} of storage.`
+            }
+          ];
+
         }
       });
 

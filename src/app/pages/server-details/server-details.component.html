@@ -36,9 +36,11 @@
       <h2 class="text-3xl font-bold"> Plan Specification </h2>
     </div>
 
-
-    <div class="my-8">
-      <h2 class="text-3xl font-bold"> FAQs </h2>
+    <div *ngIf="serverDetails" class="my-8 w-1/2 m-auto">
+      <app-faq
+        [FAQQuestions]="faqs"
+        [item]="serverDetails.server_id"
+      ></app-faq>
     </div>
 
   </div>
