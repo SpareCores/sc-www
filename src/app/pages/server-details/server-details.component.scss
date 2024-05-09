@@ -1,0 +1,27 @@
+
+.block {
+  @apply px-6 py-6 bg-secondary border-emerald-400 border border-solid rounded-lg;
+  width: calc(50% - 1.0rem);
+}
+
+.items_table {
+  @apply w-full text-white;
+
+  thead {
+    th {
+      @apply bg-secondary border-b border-gray-200 border-solid;
+    }
+  }
+
+  tbody {
+    tr {
+      @apply bg-secondary border-b border-gray-200 border-solid;
+    }
+
+    tr {
+      td {
+        @apply px-5 py-3 text-left text-sm;
+      }
+    }
+  }
+}
