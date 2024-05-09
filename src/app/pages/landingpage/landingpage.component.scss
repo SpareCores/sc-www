@@ -260,6 +260,9 @@
     position: absolute;
     z-index: 2;
   }
+  .container .button__bottom[disabled=true] {
+    background-color: #440000;
+  }
 
   .cpu_input:disabled {
     @apply text-gray-200;

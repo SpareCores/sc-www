@@ -49,7 +49,7 @@
                 [disabled]="isSpinning"
                 (click)="spinClicked()">SPIN
               </button>
-              <div class="button__bottom"></div>
+              <div class="button__bottom" [attr.disabled]="isSpinning"></div>
             </div>
             <input [(ngModel)]="priceValue"
               class="input_border price_input bg-primary text-center text-4xl font-bold"
