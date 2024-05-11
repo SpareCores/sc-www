@@ -38,14 +38,15 @@ used as an industry standard in automation projects), and decided that
 it is worth our time to come up with a home-brew solution to reduce
 the monthly ~$5k EC2 costs in the long run:
 
-<div class="flex justify-center items-center mt-8 mb-6">
+<div class="text-center m-2.5 mt-8 mb-6">
   <a href="https://xkcd.com/1205/"
      target="_blank" rel="noopener"
-     class="w-3/4 !no-underline">
+     class="!no-underline">
     <img
       title="Is It Worth the Time? (xkcd.com)"
-      src="/assets/images/blog/xkcd-1205-is_it_worth_the_time.png"/>
-    <p class="text-center">Source: Is It Worth the Time? (xkcd)</p>
+      src="/assets/images/blog/xkcd-1205-is_it_worth_the_time.png"
+      class="w-full" />
+    <p>Source: Is It Worth the Time? (xkcd)</p>
   </a>
 </div>
 
@@ -86,13 +87,11 @@ stats every few seconds to identify:
 This data was recorded in S3 files with databases connected for easy
 querying:
 
-<div class="flex justify-center items-center mt-8 mb-6">
-  <div class="w-3/4">
-    <img class="zoomin"
-      title="CPU and memory usage of a batch job monitored every few seconds"
-      src="/assets/images/blog/adtech-usecase-job-metrics.png"/>
-    <p class="text-center">CPU and memory usage of job monitored every few seconds</p>
-  </div>
+<div class="text-center m-2.5 mt-8 mb-6">
+  <img class="zoomin"
+    title="CPU and memory usage of a batch job monitored every few seconds"
+    src="/assets/images/blog/adtech-usecase-job-metrics.png"/>
+  <p>CPU and memory usage of job monitored every few seconds</p>
 </div>
 
 Once the required/optimal vCPUs and memory was defined, we listed the
@@ -104,25 +103,21 @@ this purpose.
 Then the above-mentioned script iterated over the list of optimal
 instance types, trying to start one with enough capacity:
 
-<div class="flex justify-center items-center mt-8 mb-6">
-  <div class="w-3/4">
-    <img class="zoomin"
-      title="Trying to start the cheapest instance with 36 vCPUs"
-      src="/assets/images/blog/adtech-usecase-run.png"/>
-    <p class="text-center">Trying to start the cheapest instance with 36 vCPUs</p>
-  </div>
+<div class="text-center m-2.5 mt-8 mb-6">
+  <img class="zoomin"
+    title="Trying to start the cheapest instance with 36 vCPUs"
+    src="/assets/images/blog/adtech-usecase-run.png"/>
+  <p>Trying to start the cheapest instance with 36 vCPUs</p>
 </div>
 
 Once the job finished, the detailed statistics were written to S3 and
 the summary printed by the wrapper script:
 
-<div class="flex justify-center items-center mt-8 mb-6">
-  <div class="w-3/4">
-    <img class="zoomin"
-      title="Finished job's resource usage summary stats"
-      src="/assets/images/blog/adtech-usecase-stopped.png"/>
-    <p class="text-center">Finished job's resource usage summary stats</p>
-  </div>
+<div class="text-center m-2.5 mt-8 mb-6">
+  <img class="zoomin"
+    title="Finished job's resource usage summary stats"
+    src="/assets/images/blog/adtech-usecase-stopped.png"/>
+  <p>Finished job's resource usage summary stats</p>
 </div>
 
 Then we could use the newly collected data to fine-tune the
@@ -135,13 +130,11 @@ day: some low-resource jobs running on a single shared host, others on
 their dedicated spot instance. The job-level data was stored in S3
 just like the docker stats time-series:
 
-<div class="flex justify-center items-center mt-8 mb-6">
-  <div class="w-3/4">
-    <img class="zoomin"
-      title="Example remote job among the daily ~4k batch jobs"
-      src="/assets/images/blog/adtech-usecase-jobs.png"/>
-    <p class="text-center">Example remote job among the daily ~4k batch jobs</p>
-  </div>
+<div class="text-center m-2.5 mt-8 mb-6">
+  <img class="zoomin"
+    title="Example remote job among the daily ~4k batch jobs"
+    src="/assets/images/blog/adtech-usecase-jobs.png"/>
+  <p>Example remote job among the daily ~4k batch jobs</p>
 </div>
 
 ## Further resources
