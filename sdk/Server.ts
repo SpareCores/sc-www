@@ -9,7 +9,7 @@
  * ---------------------------------------------------------------
  */
 
-import { HTTPValidationError, ReadServerServerVendorIdServerIdGetData } from "./data-contracts";
+import { GetServerServerVendorIdServerIdGetData, HTTPValidationError } from "./data-contracts";
 import { HttpClient, RequestParams } from "./http-client";
 
 export class Server<SecurityDataType = unknown> {
@@ -23,12 +23,12 @@ export class Server<SecurityDataType = unknown> {
    * No description
    *
    * @tags Query Server(s)
-   * @name ReadServerServerVendorIdServerIdGet
-   * @summary Read Server
+   * @name GetServerServerVendorIdServerIdGet
+   * @summary Get Server
    * @request GET:/server/{vendor_id}/{server_id}
    */
-  readServerServerVendorIdServerIdGet = (vendorId: string, serverId: string, params: RequestParams = {}) =>
-    this.http.request<ReadServerServerVendorIdServerIdGetData, HTTPValidationError>({
+  getServerServerVendorIdServerIdGet = (vendorId: string, serverId: string, params: RequestParams = {}) =>
+    this.http.request<GetServerServerVendorIdServerIdGetData, HTTPValidationError>({
       path: `/server/${vendorId}/${serverId}`,
       method: "GET",
       ...params,

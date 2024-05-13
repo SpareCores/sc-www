@@ -128,6 +128,16 @@ export interface DatacenterBaseWithPKs {
    */
   name: string;
   /**
+   * Api Reference
+   * How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depening on the vendor and actual API endpoint.
+   */
+  api_reference: string;
+  /**
+   * Display Name
+   * Human-friendly reference (usually the id or name) of the resource.
+   */
+  display_name: string;
+  /**
    * Aliases
    * List of other commonly used names for the same Datacenter.
    * @default []
@@ -158,6 +168,16 @@ export interface DatacenterBaseWithPKs {
    * Optional ZIP code of the Datacenter's location.
    */
   zip_code?: string | null;
+  /**
+   * Lon
+   * Longitude coordinate of the Datacenter's known or approximate location.
+   */
+  lon?: number | null;
+  /**
+   * Lat
+   * Latitude coordinate of the Datacenter's known or approximate location.
+   */
+  lat?: number | null;
   /**
    * Founding Year
    * 4-digit year when the Datacenter was founded.
@@ -361,10 +381,25 @@ export interface ServerBase {
    */
   name: string;
   /**
+   * Api Reference
+   * How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depening on the vendor and actual API endpoint.
+   */
+  api_reference: string;
+  /**
+   * Display Name
+   * Human-friendly reference (usually the id or name) of the resource.
+   */
+  display_name: string;
+  /**
    * Description
    * Short description.
    */
   description: string | null;
+  /**
+   * Family
+   * Server family, e.g. General-purpose machine (GCP), or M5g (AWS).
+   */
+  family?: string | null;
   /**
    * Vcpus
    * Default number of virtual CPUs (vCPU) of the server.
@@ -497,8 +532,8 @@ export interface ServerBase {
   observed_at?: string;
 }
 
-/** ServerPKs */
-export interface ServerPKs {
+/** ServerPKsWithPrices */
+export interface ServerPKsWithPrices {
   /**
    * Vendor Id
    * Reference to the Vendor.
@@ -515,10 +550,25 @@ export interface ServerPKs {
    */
   name: string;
   /**
+   * Api Reference
+   * How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depening on the vendor and actual API endpoint.
+   */
+  api_reference: string;
+  /**
+   * Display Name
+   * Human-friendly reference (usually the id or name) of the resource.
+   */
+  display_name: string;
+  /**
    * Description
    * Short description.
    */
   description: string | null;
+  /**
+   * Family
+   * Server family, e.g. General-purpose machine (GCP), or M5g (AWS).
+   */
+  family?: string | null;
   /**
    * Vcpus
    * Default number of virtual CPUs (vCPU) of the server.
@@ -650,6 +700,96 @@ export interface ServerPKs {
    */
   observed_at?: string;
   vendor: VendorBase;
+  /** Prices */
+  prices: ServerPrice[];
+}
+
+/**
+ * ServerPrice
+ * Server type prices per Datacenter and Allocation method.
+ *
+ * Attributes:
+ *     vendor_id (str): Reference to the Vendor.
+ *     datacenter_id (str): Reference to the Datacenter.
+ *     zone_id (str): Reference to the Zone.
+ *     server_id (str): Reference to the Server.
+ *     operating_system (str): Operating System.
+ *     allocation (Allocation): Allocation method, e.g. on-demand or spot.
+ *     unit (PriceUnit): Billing unit of the pricing model.
+ *     price (float): Actual price of a billing unit.
+ *     price_upfront (float): Price to be paid when setting up the resource.
+ *     price_tiered (typing.List[sc_crawler.table_fields.PriceTier]): List of pricing tiers with min/max thresholds and actual prices.
+ *     currency (str): Currency of the prices.
+ *     status (Status): Status of the resource (active or inactive).
+ *     observed_at (datetime): Timestamp of the last observation.
+ */
+export interface ServerPrice {
+  /**
+   * Vendor Id
+   * Reference to the Vendor.
+   */
+  vendor_id: string;
+  /**
+   * Datacenter Id
+   * Reference to the Datacenter.
+   */
+  datacenter_id: string;
+  /**
+   * Zone Id
+   * Reference to the Zone.
+   */
+  zone_id: string;
+  /**
+   * Server Id
+   * Reference to the Server.
+   */
+  server_id: string;
+  /**
+   * Operating System
+   * Operating System.
+   */
+  operating_system: string;
+  /**
+   * Allocation method, e.g. on-demand or spot.
+   * @default "ondemand"
+   */
+  allocation?: Allocation;
+  /** Billing unit of the pricing model. */
+  unit: PriceUnit;
+  /**
+   * Price
+   * Actual price of a billing unit.
+   */
+  price: number;
+  /**
+   * Price Upfront
+   * Price to be paid when setting up the resource.
+   * @default 0
+   */
+  price_upfront?: number;
+  /**
+   * Price Tiered
+   * List of pricing tiers with min/max thresholds and actual prices.
+   * @default []
+   */
+  price_tiered?: PriceTier[];
+  /**
+   * Currency
+   * Currency of the prices.
+   * @default "USD"
+   */
+  currency?: string;
+  /**
+   * Status of the resource (active or inactive).
+   * @default "active"
+   */
+  status?: Status;
+  /**
+   * Observed At
+   * Timestamp of the last observation.
+   * @format date-time
+   */
+  observed_at?: string;
 }
 
 /** ServerPriceWithPKs */
@@ -856,6 +996,16 @@ export interface ZoneBase {
    */
   name: string;
   /**
+   * Api Reference
+   * How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depening on the vendor and actual API endpoint.
+   */
+  api_reference: string;
+  /**
+   * Display Name
+   * Human-friendly reference (usually the id or name) of the resource.
+   */
+  display_name: string;
+  /**
    * Status of the resource (active or inactive).
    * @default "active"
    */
@@ -874,7 +1024,7 @@ export type HealthcheckHealthcheckGetData = object;
 /** Response Metadata Metatable  Meta Table  Get */
 export type MetadataMetatableMetaTableGetData = object[];
 
-export type ReadServerServerVendorIdServerIdGetData = ServerPKs;
+export type GetServerServerVendorIdServerIdGetData = ServerPKsWithPrices;
 
 export interface SearchServerSearchGetParams {
   /**
