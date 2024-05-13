@@ -8,7 +8,7 @@
           <img src="{{serverDetails.vendor.logo}}" alt="logo">
         </div>
         <div class="flex flex-col gap-3">
-          <h1 class="text-2xl" > <span class="text-emerald-400 font-bold">{{serverDetails.server_id}}</span> by {{serverDetails.vendor.name}} </h1>
+          <h1 class="text-2xl" > <span class="text-emerald-400 font-bold">{{serverDetails.display_name}}</span> by {{serverDetails.vendor.name}} </h1>
           <div> {{description}} </div>
           <div class="flex">
             <button class="btn-primary py-3 px-5 flex gap-2">
@@ -37,7 +37,7 @@
     </div>
 
     <div *ngIf="serverDetails" class="flex flex-wrap gap-8">
-      <div class="block flex flex-col gap-8">
+      <div class="block" id="details">
         <h3 class="text-2xl" >Instance details</h3>
         <table class="items_table">
           <thead>
@@ -61,12 +61,99 @@
             </tr>
           </tbody>
         </table>
+        <div class="absolute bottom-0 left-0 w-full py-3 flex justify-center" id="details_more"
+            style="background: linear-gradient(360deg, #06263A 23.44%, rgba(6, 38, 58, 0) 100%);" >
+          <button class="btn-primary py-2 px-3" (click)="openBox('details')"> Viev more details </button>
+        </div>
+        <div class="w-full pt-3 flex justify-center hidden" id="details_less">
+          <button class="btn-primary py-2 px-3" (click)="openBox('details')"> Show less </button>
+        </div>
       </div>
-      <div class="px-6 py-6 bg-secondary border-emerald-400 border boder-solid block">
-
+      <div class="block" id="availability">
+        <h3 class="text-2xl">Availability</h3>
+        <table class="items_table">
+          <thead>
+            <tr>
+              <th>DATACENTER</th>
+              <th>SPOT</th>
+              <th>ONDEMAND</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of availabilityZones">
+              <td> <b>{{item.datacenter_id}}</b> </td>
+              <td *ngIf="item['spot']"> ${{item['spot'].price}}/{{item['spot'].unit}}</td>
+              <td *ngIf="!item['spot']"> - </td>
+              <td *ngIf="item['ondemand']"> ${{item['ondemand'].price}}/{{item['ondemand'].unit}}</td>
+              <td *ngIf="!item['ondemand']"> - </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="absolute bottom-0 laft-0 w-full py-3 flex justify-center" id="availability_more"
+            style="background: linear-gradient(360deg, #06263A 23.44%, rgba(6, 38, 58, 0) 100%);" >
+          <button class="btn-primary py-2 px-3" (click)="openBox('availability')"> Show more </button>
+        </div>
+        <div class="w-full pt-3 flex justify-center hidden" id="availability_less">
+          <button class="btn-primary py-2 px-3" (click)="openBox('availability')"> Show less </button>
+        </div>
       </div>
-      <div class="px-6 py-6 bg-secondary border-emerald-400 border boder-solid block"></div>
-      <div class="px-6 py-6 bg-secondary border-emerald-400 border boder-solid block"></div>
+      <div class="block_full">
+        <h3 class="text-2xl" >Price Details</h3>
+        <div *ngIf="isBrowser()">
+          <apx-chart
+          id="chart1" #chart1
+          [series]="chartOptions.series"
+          [chart]="chartOptions.chart"
+          [dataLabels]="chartOptions.dataLabels"
+          [plotOptions]="chartOptions.plotOptions"
+          [yaxis]="chartOptions.yaxis"
+          [legend]="chartOptions.legend"
+          [fill]="chartOptions.fill"
+          [stroke]="chartOptions.stroke"
+          [tooltip]="chartOptions.tooltip"
+          [xaxis]="chartOptions.xaxis"
+          ></apx-chart>
+        </div>
+      </div>
+      <div class="block">
+        <h3 class="text-2xl" >Prices per Datacenter</h3>
+        <div *ngIf="isBrowser()">
+          <apx-chart
+          id="chart2" #chart2
+          [series]="chartOptions2.series"
+          [chart]="chartOptions2.chart"
+          [dataLabels]="chartOptions2.dataLabels"
+          [plotOptions]="chartOptions2.plotOptions"
+          [yaxis]="chartOptions2.yaxis"
+          [legend]="chartOptions2.legend"
+          [fill]="chartOptions2.fill"
+          [stroke]="chartOptions2.stroke"
+          [tooltip]="chartOptions2.tooltip"
+          [xaxis]="chartOptions2.xaxis"
+          ></apx-chart>
+        </div>
+      </div>
+      <div class="block">
+        <h3 class="text-2xl" >Best Prices</h3>
+        <div *ngIf="isBrowser()">
+          <apx-chart
+          id="chart3" #chart3
+          [series]="chartOptions3.series"
+          [chart]="chartOptions3.chart"
+          [dataLabels]="chartOptions3.dataLabels"
+          [plotOptions]="chartOptions3.plotOptions"
+          [yaxis]="chartOptions3.yaxis"
+          [legend]="chartOptions3.legend"
+          [fill]="chartOptions3.fill"
+          [stroke]="chartOptions3.stroke"
+          [tooltip]="chartOptions3.tooltip"
+          [xaxis]="chartOptions3.xaxis"
+          ></apx-chart>
+        </div>
+      </div>
+      <div class="block">
+        <h3 class="text-2xl" >Run with sc-runner CLI </h3>
+      </div>
 
     </div>
 

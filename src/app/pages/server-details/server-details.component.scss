@@ -1,7 +1,21 @@
 
 .block {
-  @apply px-6 py-6 bg-secondary border-emerald-400 border border-solid rounded-lg;
+  @apply px-6 py-6 bg-secondary border-emerald-400 border border-solid rounded-lg flex flex-col gap-8 relative overflow-hidden;
   width: calc(50% - 1.0rem);
+  min-height: 460px;
+  height: 460px;
+}
+
+.block_full {
+  @apply px-6 py-6 bg-secondary border-emerald-400 border border-solid rounded-lg flex flex-col gap-8 relative overflow-hidden;
+  width: calc(100%);
+  min-height: 460px;
+  height: 460px;
+
+}
+
+.block.open {
+  height: unset !important;
 }
 
 .items_table {
@@ -9,7 +23,7 @@
 
   thead {
     th {
-      @apply bg-secondary border-b border-gray-200 border-solid;
+      @apply bg-secondary border-b border-gray-200 border-solid text-left px-5 py-3 font-normal;
     }
   }
 

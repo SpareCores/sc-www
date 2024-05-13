@@ -23,7 +23,7 @@ export class KeeperAPIService {
   }
 
   public getServer(vendor: string, id: string): Promise<any> {
-    return this.ServerController.readServerServerVendorIdServerIdGet(vendor, id);
+    return this.ServerController.getServerServerVendorIdServerIdGet(vendor, id);
   }
 
   public searchServers(query: SearchServerSearchGetParams): Promise<any> {
