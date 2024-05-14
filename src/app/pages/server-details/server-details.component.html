@@ -37,7 +37,7 @@
     </div>
 
     <div *ngIf="serverDetails" class="flex flex-wrap gap-8">
-      <div class="block" id="details">
+      <div class="block_half" id="details">
         <h3 class="text-2xl" >Instance details</h3>
         <table class="items_table">
           <thead>
@@ -69,7 +69,7 @@
           <button class="btn-primary py-2 px-3" (click)="openBox('details')"> Show less </button>
         </div>
       </div>
-      <div class="block" id="availability">
+      <div class="block_half" id="availability">
         <h3 class="text-2xl">Availability</h3>
         <table class="items_table">
           <thead>
@@ -80,7 +80,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let item of availabilityZones">
+            <tr *ngFor="let item of availabilityDatacenters">
               <td> <b>{{item.datacenter_id}}</b> </td>
               <td *ngIf="item['spot']"> ${{item['spot'].price}}/{{item['spot'].unit}}</td>
               <td *ngIf="!item['spot']"> - </td>
@@ -99,6 +99,20 @@
       </div>
       <div class="block_full">
         <h3 class="text-2xl" >Price Details</h3>
+        <div>
+          <button
+            id="allocation_button"
+            data-dropdown-toggle="allocation_options"
+            class="dropdown_button"
+            type="button">
+            <div class="px-3 py-2">
+              Allocation
+            </div>
+            <div class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
+              <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
+            </div>
+          </button>
+        </div>
         <div *ngIf="isBrowser()">
           <apx-chart
           id="chart1" #chart1
@@ -115,8 +129,34 @@
           ></apx-chart>
         </div>
       </div>
-      <div class="block">
+      <div class="block_half">
         <h3 class="text-2xl" >Prices per Datacenter</h3>
+        <div class="flex gap-4">
+          <button
+            id="allocation_button2"
+            data-dropdown-toggle="allocation_options2"
+            class="dropdown_button"
+            type="button">
+            <div class="px-3 py-2">
+              Allocation
+            </div>
+            <div class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
+              <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
+            </div>
+          </button>
+          <button
+            id="datacenter_button"
+            data-dropdown-toggle="datacenter_options"
+            class="dropdown_button"
+            type="button">
+            <div class="px-3 py-2">
+              Datacenters
+            </div>
+            <div class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
+              <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
+            </div>
+          </button>
+        </div>
         <div *ngIf="isBrowser()">
           <apx-chart
           id="chart2" #chart2
@@ -133,7 +173,7 @@
           ></apx-chart>
         </div>
       </div>
-      <div class="block">
+      <div class="block_half">
         <h3 class="text-2xl" >Best Prices</h3>
         <div *ngIf="isBrowser()">
           <apx-chart
@@ -151,7 +191,7 @@
           ></apx-chart>
         </div>
       </div>
-      <div class="block">
+      <div class="block_half">
         <h3 class="text-2xl" >Run with sc-runner CLI </h3>
       </div>
 
@@ -165,4 +205,43 @@
     </div>
 
   </div>
+</div>
+
+
+ <!-- Dropdown menu -->
+ <div id="allocation_options" class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid">
+  <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
+    <li *ngFor="let item of allocationFilters" class="flex py-1 gap-2 items-center">
+        <input type="checkbox"
+        [(ngModel)]="item.selected"
+        (ngModelChange)="refreshGraphs()"
+        class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer" >
+        <div class="text-white text-sm">{{item.name}}</div>
+    </li>
+  </ul>
+</div>
+
+<div id="allocation_options2" class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid">
+  <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
+    <li *ngFor="let item of allocationFilters" class="flex py-1 gap-2 items-center">
+        <input type="checkbox"
+        [(ngModel)]="item.selected"
+        (ngModelChange)="refreshGraphs()"
+        class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer" >
+        <div class="text-white text-sm">{{item.name}}</div>
+    </li>
+  </ul>
+</div>
+
+ <!-- Dropdown menu -->
+ <div id="datacenter_options" class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid">
+  <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
+    <li *ngFor="let item of datacenterFilters" class="flex py-1 gap-2 items-center">
+        <input type="checkbox"
+        [(ngModel)]="item.selected"
+        (ngModelChange)="refreshGraphs()"
+        class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer" >
+        <div class="text-white text-sm">{{item.name}}</div>
+    </li>
+  </ul>
 </div>

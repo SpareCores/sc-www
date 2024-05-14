@@ -8,7 +8,9 @@ import { LucideAngularModule } from 'lucide-angular';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { FaqComponent } from '../../components/faq/faq.component';
 import { ApexAxisChartSeries, ApexChart, ApexDataLabels, ApexFill, ApexLegend, ApexPlotOptions, ApexStroke, ApexTooltip, ApexXAxis, ApexYAxis, ChartComponent, NgApexchartsModule } from "ng-apexcharts";
-import { chartOptions1 } from './chartOptions';
+import { chartOptions1, chartOptions2, chartOptions3 } from './chartOptions';
+import { FormsModule } from '@angular/forms';
+import { Dropdown, DropdownOptions } from 'flowbite';
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -23,10 +25,18 @@ export type ChartOptions = {
   legend: ApexLegend;
 };
 
+const options: DropdownOptions = {
+  placement: 'bottom',
+  triggerType: 'click',
+  offsetSkidding: 0,
+  offsetDistance: 10,
+  delay: 300
+};
+
 @Component({
   selector: 'app-server-details',
   standalone: true,
-  imports: [BreadcrumbsComponent, CommonModule, LucideAngularModule, FaqComponent, NgApexchartsModule],
+  imports: [BreadcrumbsComponent, CommonModule, LucideAngularModule, FaqComponent, NgApexchartsModule, FormsModule],
   templateUrl: './server-details.component.html',
   styleUrl: './server-details.component.scss'
 })
@@ -46,12 +56,24 @@ export class ServerDetailsComponent {
 
   faqs: any[] = [];
 
+  availabilityDatacenters: any[] = [];
   availabilityZones: any[] = [];
   pricesPerZone: any[] = [];
+
+  dropdownAllocation: any;
+  dropdownAllocation2: any;
+  allocationFilters: any[] = [
+    { name: 'Spot', selected: true },
+    { name: 'Ondemand', selected: true }
+  ];
+
+  datacenterDropwdown: any;
+  datacenterFilters: any[] = [];
 
   public chartOptions: ChartOptions | any;
   public chartOptions2: ChartOptions | any;
   public chartOptions3: ChartOptions | any;
+
 
   @ViewChild('chart1') chart!: ChartComponent;
   @ViewChild('chart2') chart2!: ChartComponent;
@@ -62,9 +84,9 @@ export class ServerDetailsComponent {
               private keepreAPI: KeeperAPIService,
               private SEOHandler: SeoHandlerService) {
 
-    this.chartOptions = JSON.parse(JSON.stringify(chartOptions1));
-    this.chartOptions2 = JSON.parse(JSON.stringify(chartOptions1));
-    this.chartOptions3 = JSON.parse(JSON.stringify(chartOptions1));
+    this.chartOptions = chartOptions2;
+    this.chartOptions2 = chartOptions3;
+    this.chartOptions3 = chartOptions1;
   }
 
   ngOnInit() {
@@ -117,9 +139,76 @@ export class ServerDetailsComponent {
             }
           ];
 
+          this.datacenterFilters = [];
+          this.serverDetails.prices.forEach((price: ServerPrice) => {
+              let datacenter = this.datacenterFilters.find((z) => z.datacenter_id === price.datacenter_id);
+              if(!datacenter) {
+                this.datacenterFilters.push({datacenter_id: price.datacenter_id, name: price.datacenter_id, selected: false});
+              }
+            });
 
-          this.updateChart1();
-          this.updateChart3();
+            this.datacenterFilters[0].selected = true;
+
+          this.refreshGraphs();
+
+          if(isPlatformBrowser(this.platformId)) {
+            let interval = setInterval(() => {
+              const targetElAllocation: HTMLElement | null = document.getElementById('allocation_options');
+              const triggerElAllocation: HTMLElement | null = document.getElementById('allocation_button');
+
+              if(targetElAllocation && triggerElAllocation) {
+                this.dropdownAllocation = new Dropdown(
+                  targetElAllocation,
+                  triggerElAllocation,
+                  options,
+                  {
+                    id: 'allocation_options',
+                    override: true
+                  }
+                );
+                clearInterval(interval);
+                console.log('dropdownAllocation', this.dropdownAllocation);
+              }
+            }, 150);
+
+            let interval2 = setInterval(() => {
+              const targetElAllocation: HTMLElement | null = document.getElementById('allocation_options2');
+              const triggerElAllocation: HTMLElement | null = document.getElementById('allocation_button2');
+
+              if(targetElAllocation && triggerElAllocation) {
+                this.dropdownAllocation2 = new Dropdown(
+                  targetElAllocation,
+                  triggerElAllocation,
+                  options,
+                  {
+                    id: 'allocation_options2',
+                    override: true
+                  }
+                );
+                clearInterval(interval2);
+                console.log('dropdownAllocation', this.dropdownAllocation2);
+              }
+            }, 150);
+
+            let interval3 = setInterval(() => {
+              const targetElAllocation: HTMLElement | null = document.getElementById('datacenter_options');
+              const triggerElAllocation: HTMLElement | null = document.getElementById('datacenter_button');
+
+              if(targetElAllocation && triggerElAllocation) {
+                this.datacenterDropwdown = new Dropdown(
+                  targetElAllocation,
+                  triggerElAllocation,
+                  options,
+                  {
+                    id: 'datacenter_options',
+                    override: true
+                  }
+                );
+                clearInterval(interval3);
+              }
+            }, 150);
+
+          }
         }
       });
     });
@@ -157,17 +246,104 @@ export class ServerDetailsComponent {
     }
   }
 
+  refreshGraphs() {
+    this.updateChart1();
+    this.updateChart2();
+    this.updateChart3();
+  }
 
   updateChart1() {
+    this.availabilityDatacenters = [];
+    if(this.serverDetails.prices.length > 0) {
+
+    this.serverDetails.prices.sort((a, b) => a.price - b.price);
+
+    this.serverDetails.prices.forEach((price: ServerPrice) => {
+    let zone = this.availabilityDatacenters.find((z) => z.datacenter_id === price.datacenter_id);
+      if(!zone) {
+        let data: any = {
+          datacenter_id: price.datacenter_id,
+          spot: {
+            price: 0,
+            unit: price.unit,
+            count: 0
+          },
+          ondemand: {
+            price: 0,
+            unit: price.unit,
+            count: 0
+          }
+        };
+        data[price.allocation || 'spot'].price += price.price;
+        data[price.allocation || 'spot'].count++;
+
+        this.availabilityDatacenters.push(data);
+      } else {
+        zone[price.allocation || 'spot'].price += price.price;
+        zone[price.allocation || 'spot'].count++;
+      }
+    });
+
+    this.availabilityDatacenters.forEach((zone: any) => {
+      if(zone.spot.count)
+        zone.spot.price = Math.round(zone.spot.price / zone.spot.count * 1000000) / 1000000;
+      if(zone.ondemand.count)
+        zone.ondemand.price = Math.round(zone.ondemand.price / zone.ondemand.count * 1000000) / 1000000;
+    });
+
+    this.availabilityDatacenters.sort((a, b) => a.datacenter_id - b.datacenter_id);
+
+    let series: any = [];
+
+    if(this.allocationFilters[0].selected) {
+      series.push({  name: "Spot",
+        data: [],
+        color: '#34D399'});
+    }
+
+    if(this.allocationFilters[1].selected) {
+      series.push({  name: "Ondemand",
+        data: [],
+        color: '#E5E7EB'});
+    }
+
+    console.log('series', series);
+
+    let categories: any = [];
+
+    let spotIdx = series.findIndex((s: any) => s.name === 'Spot');
+    let ondemandIdx = series.findIndex((s: any) => s.name === 'Ondemand');
+
+    this.availabilityDatacenters.forEach((zone: any) => {
+      categories.push(zone.datacenter_id);
+      if(spotIdx > -1) {
+        series[spotIdx].data.push(zone.spot?.price || 0);
+      }
+      if(ondemandIdx > -1)
+      {
+        series[ondemandIdx].data.push(zone.ondemand?.price || 0);
+      }
+    });
+
+    this.chartOptions.xaxis.categories = categories;
+    this.chartOptions.series = series;
+
+    this.chart?.updateOptions(this.chartOptions, true, true, true);
+
+    }
+  }
+
+  updateChart2() {
     this.availabilityZones = [];
     if(this.serverDetails.prices.length > 0) {
 
     this.serverDetails.prices.sort((a, b) => a.price - b.price);
 
     this.serverDetails.prices.forEach((price: ServerPrice) => {
-    let zone = this.availabilityZones.find((z) => z.datacenter_id === price.datacenter_id);
+    let zone = this.availabilityZones.find((z) => z.zone_id === price.zone_id);
       if(!zone) {
         let data: any = {
+          zone_id: price.zone_id,
           datacenter_id: price.datacenter_id,
           spot: {
             price: 0,
@@ -197,33 +373,48 @@ export class ServerDetailsComponent {
         zone.ondemand.price = Math.round(zone.ondemand.price / zone.ondemand.count * 1000000) / 1000000;
     });
 
-    console.log('availabilityZones', this.availabilityZones);
-
     this.availabilityZones.sort((a, b) => a.datacenter_id - b.datacenter_id);
 
-    let series: any = [{
-        name: "Spot",
+    let series: any = [];
+
+    if(this.allocationFilters[0].selected) {
+      series.push({  name: "Spot",
         data: [],
-        color: '#34D399'
-      },
-      {
-        name: "Ondemand",
+        color: '#34D399'});
+    }
+
+    if(this.allocationFilters[1].selected) {
+      series.push({  name: "Ondemand",
         data: [],
-        color: '#E5E7EB'
-      }
-    ];
+        color: '#E5E7EB'});
+    }
+
+
+
     let categories: any = [];
 
+    let spotIdx = series.findIndex((s: any) => s.name === 'Spot');
+    let ondemandIdx = series.findIndex((s: any) => s.name === 'Ondemand');
+
     this.availabilityZones.forEach((zone: any) => {
-      categories.push(zone.datacenter_id);
-      series[0].data.push(zone.spot?.price || 0);
-      series[1].data.push(zone.ondemand?.price || 0);
+      if(this.datacenterFilters.find((z) => z.name === zone.datacenter_id)?.selected) {
+        categories.push(zone.zone_id);
+        if(spotIdx > -1) {
+          series[spotIdx].data.push(zone.spot?.price || 0);
+        }
+        if(ondemandIdx > -1)
+        {
+          series[ondemandIdx].data.push(zone.ondemand?.price || 0);
+        }
+      }
     });
 
-    this.chartOptions.xaxis.categories = categories;
-    this.chartOptions.series = series;
+    console.log('series2', series);
 
-    this.chart?.updateOptions(this.chartOptions, true, true, true);
+    this.chartOptions2.xaxis.categories = categories;
+    this.chartOptions2.series = series;
+
+    this.chart2?.updateOptions(this.chartOptions2, true, true, true);
 
     }
   }
@@ -266,8 +457,6 @@ export class ServerDetailsComponent {
       if(zone.ondemand.count)
         zone.ondemand.price = Math.round(zone.ondemand.price / zone.ondemand.count * 1000000) / 1000000;
     });
-
-    console.log('pricesPerZone', pricesPerZone);
 
     let series: any = [{
         name: "Spot",

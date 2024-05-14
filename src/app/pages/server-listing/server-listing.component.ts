@@ -6,7 +6,7 @@ import { Subject, debounceTime } from 'rxjs';
 import { encodeQueryParams } from '../../tools/queryParamFunctions';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Dropdown, DropdownOptions, InstanceOptions, Modal, ModalOptions } from 'flowbite';
+import { Dropdown, DropdownOptions, Modal, ModalOptions } from 'flowbite';
 import { StorageHandlerService } from '../../services/storage-handler.service';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { FormsModule } from '@angular/forms';
