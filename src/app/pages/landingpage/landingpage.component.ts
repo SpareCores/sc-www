@@ -162,7 +162,7 @@ export class LandingpageComponent {
 
           const spinButton = document.getElementById('spin_button');
           if (spinButton) {
-            spinButton.style.animation = 'press 2.5s';
+            spinButton.style.animation = 'press 1.0s';
           }
 
           this.spinAnim(servers.body, true);
@@ -204,7 +204,7 @@ export class LandingpageComponent {
 
     const spinButton = document.getElementById('spin_button');
     if (spinButton) {
-      spinButton.style.animation = 'press 2.5s';
+      spinButton.style.animation = 'press 1.0s';
     }
 
     this.keeperAPI.searchServers({vcpus_min: this.cpuCount, memory_min: this.ramCount, limit: 100}).then(servers => {

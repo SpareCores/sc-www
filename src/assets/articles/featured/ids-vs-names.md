@@ -185,13 +185,14 @@ found a way to standardize into a useful data structure so far.
 If interested in more details, check out the SC Crawler docs, or head
 over directly to the database schema documentation:
 
-<div class="flex justify-center items-center mt-8 mb-6">
+<div class="text-center m-2.5 mt-8 mb-6">
   <a href="https://dbdocs.io/spare-cores/sc-crawler"
      target="_blank" rel="noopener"
-     class="w-3/4 !no-underline">
+     class="!no-underline">
     <img
       title="SC Crawler database schemas documented and visualized at dbdocs.io"
-      src="/assets/images/blog/dbdocs-screenshot.png"/>
-    <p class="text-center">SC Crawler database schemas documented and visualized at dbdocs.io (last updated on April 28, 2024)</p>
+      src="/assets/images/blog/dbdocs-screenshot.png"
+      class="w-full" />
+    <p>SC Crawler database schemas documented and visualized at dbdocs.io (last updated on April 28, 2024)</p>
   </a>
 </div>
