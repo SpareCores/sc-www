@@ -9,10 +9,10 @@
  * ---------------------------------------------------------------
  */
 
-import { HTTPValidationError, SearchServerSearchGetData, SearchServerSearchGetParams } from "./data-contracts";
+import { HTTPValidationError, SearchServersServersGetData, SearchServersServersGetParams } from "./data-contracts";
 import { HttpClient, RequestParams } from "./http-client";
 
-export class Search<SecurityDataType = unknown> {
+export class Servers<SecurityDataType = unknown> {
   http: HttpClient<SecurityDataType>;
 
   constructor(http: HttpClient<SecurityDataType>) {
@@ -22,14 +22,14 @@ export class Search<SecurityDataType = unknown> {
   /**
    * No description
    *
-   * @tags Query Server(s)
-   * @name SearchServerSearchGet
-   * @summary Search Server
-   * @request GET:/search
+   * @tags Query Resources
+   * @name SearchServersServersGet
+   * @summary Search Servers
+   * @request GET:/servers
    */
-  searchServerSearchGet = (query: SearchServerSearchGetParams, params: RequestParams = {}) =>
-    this.http.request<SearchServerSearchGetData, HTTPValidationError>({
-      path: `/search`,
+  searchServersServersGet = (query: SearchServersServersGetParams, params: RequestParams = {}) =>
+    this.http.request<SearchServersServersGetData, HTTPValidationError>({
+      path: `/servers`,
       method: "GET",
       query: query,
       ...params,

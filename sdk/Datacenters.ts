@@ -9,10 +9,14 @@
  * ---------------------------------------------------------------
  */
 
-import { HTTPValidationError, MetaTables, MetadataMetatableMetaTableGetData } from "./data-contracts";
+import {
+  HTTPValidationError,
+  SearchDatacentersDatacentersGetData,
+  SearchDatacentersDatacentersGetParams,
+} from "./data-contracts";
 import { HttpClient, RequestParams } from "./http-client";
 
-export class Metatable<SecurityDataType = unknown> {
+export class Datacenters<SecurityDataType = unknown> {
   http: HttpClient<SecurityDataType>;
 
   constructor(http: HttpClient<SecurityDataType>) {
@@ -20,17 +24,18 @@ export class Metatable<SecurityDataType = unknown> {
   }
 
   /**
-   * @description Return a table with metadata as-is, e.g. all countries or vendors.
+   * No description
    *
-   * @tags Administrative endpoints
-   * @name MetadataMetatableMetaTableGet
-   * @summary Metadata
-   * @request GET:/metatable/{meta_table}
+   * @tags Query Resources
+   * @name SearchDatacentersDatacentersGet
+   * @summary Search Datacenters
+   * @request GET:/datacenters
    */
-  metadataMetatableMetaTableGet = (metaTable: MetaTables, params: RequestParams = {}) =>
-    this.http.request<MetadataMetatableMetaTableGetData, HTTPValidationError>({
-      path: `/metatable/${metaTable}`,
+  searchDatacentersDatacentersGet = (query: SearchDatacentersDatacentersGetParams, params: RequestParams = {}) =>
+    this.http.request<SearchDatacentersDatacentersGetData, HTTPValidationError>({
+      path: `/datacenters`,
       method: "GET",
+      query: query,
       ...params,
     });
 }

@@ -22,7 +22,7 @@ export class Server<SecurityDataType = unknown> {
   /**
    * No description
    *
-   * @tags Query Server(s)
+   * @tags Query Resources
    * @name GetServerServerVendorIdServerIdGet
    * @summary Get Server
    * @request GET:/server/{vendor_id}/{server_id}
