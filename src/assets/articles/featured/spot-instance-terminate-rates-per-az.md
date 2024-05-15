@@ -65,14 +65,15 @@ We could still run a few scenarios and check on the differences
 between regions, also how the instance size might affect the
 termination rate:
 
-<div class="flex justify-center items-center mt-8 mb-6">
+<div class="text-center m-2.5 mt-8 mb-6">
   <a href="https://aws.amazon.com/ec2/spot/instance-advisor/"
      target="_blank" rel="noopener"
-     class="w-4/5 !no-underline">
+     class="!no-underline">
     <img
       title="AWS Spot Instance advisor for the m5a instance family in us-east-1 (accessed on April 28, 2024)"
-      src="/assets/images/blog/aws-spot-instance-advisor-m5a-20240428.png"/>
-    <p class="text-center">AWS Spot Instance advisor for the m5a instance family in us-east-1 (accessed on April 28, 2024)</p>
+      src="/assets/images/blog/aws-spot-instance-advisor-m5a-20240428.png"
+      class="w-full"/>
+    <p>AWS Spot Instance advisor for the m5a instance family in us-east-1<br />(accessed on April 28, 2024)</p>
   </a>
 </div>
 
@@ -111,13 +112,11 @@ advisor) termination rate in the `us-west-2b` availability zone (or <a
 href="/article/featured/ids-vs-names">whatever it is called in your
 AWS account</a>):
 
-<div class="flex justify-center items-center mt-8 mb-6">
-  <div class="w-3/4">
-    <img class="zoomin"
-      title="r7i.2xlarge spot instances started in us-west-2 (data collected an visualized by Spare Cores)"
-      src="/assets/images/blog/termination-rates-r7i.2xlarge.png"/>
-    <p class="text-center">The status of r7i.2xlarge spot instances started in us-west-2<br />(data collected an visualized by Spare Cores)</p>
-  </div>
+<div class="text-center m-2.5 mt-8 mb-6">
+  <img class="zoomin w-full"
+    title="r7i.2xlarge spot instances started in us-west-2 (data collected an visualized by Spare Cores)"
+    src="/assets/images/blog/termination-rates-r7i.2xlarge.png"/>
+  <p>The status of r7i.2xlarge spot instances started in us-west-2<br />(data collected an visualized by Spare Cores)</p>
 </div>
 
 The data collection started midday on April 10, and although we had a
@@ -146,13 +145,11 @@ WHERE
 ORDER BY 1, 2;
 ```
 
-<div class="flex justify-center items-center mt-8 mb-6">
-  <div class="w-3/4">
-    <img class="zoomin"
-      title="The spot prices of r7i.2xlarge per AZ in us-west-2 (data collected an visualized by Spare Cores)"
-      src="/assets/images/blog/termination-rates-prices.png"/>
-    <p class="text-center">The spot prices of r7i.2xlarge per AZ in us-west-2<br />(data collected an visualized by Spare Cores)</p>
-  </div>
+<div class="text-center m-2.5 mt-8 mb-6">
+  <img class="zoomin w-full"
+    title="The spot prices of r7i.2xlarge per AZ in us-west-2 (data collected an visualized by Spare Cores)"
+    src="/assets/images/blog/termination-rates-prices.png"/>
+  <p>The spot prices of r7i.2xlarge per AZ in us-west-2<br />(data collected an visualized by Spare Cores)</p>
 </div>
 
 So although spot `r7i.2xlarge` instances are the cheapest by far in
@@ -170,22 +167,18 @@ as per the Spot Instance advisor, so very similar to the above
 described `r7i` instance, but in practice, we saw very different
 results:
 
-<div class="flex justify-center items-center mt-8 mb-6">
-  <div class="w-3/4">
-    <img class="zoomin"
-      title="m5.large spot instances started in us-west-2 (data collected an visualized by Spare Cores)"
-      src="/assets/images/blog/termination-rates-m5.large.png"/>
-    <p class="text-center">The status of m5.large spot instances started in us-west-2<br />(data collected an visualized by Spare Cores)</p>
-  </div>
+<div class="text-center m-2.5 mt-8 mb-6">
+  <img class="zoomin w-full"
+    title="m5.large spot instances started in us-west-2 (data collected an visualized by Spare Cores)"
+    src="/assets/images/blog/termination-rates-m5.large.png"/>
+  <p>The status of m5.large spot instances started in us-west-2<br />(data collected an visualized by Spare Cores)</p>
 </div>
 
-<div class="flex justify-center items-center mt-8 mb-6">
-  <div class="w-3/4">
-    <img class="zoomin"
-      title="m5.2xlarge spot instances started in us-west-2 (data collected an visualized by Spare Cores)"
-      src="/assets/images/blog/termination-rates-m5.2xlarge.png"/>
-    <p class="text-center">The status of m5.2xlarge spot instances started in us-west-2<br />(data collected an visualized by Spare Cores)</p>
-  </div>
+<div class="text-center m-2.5 mt-8 mb-6">
+  <img class="zoomin w-full"
+    title="m5.2xlarge spot instances started in us-west-2 (data collected an visualized by Spare Cores)"
+    src="/assets/images/blog/termination-rates-m5.2xlarge.png"/>
+  <p>The status of m5.2xlarge spot instances started in us-west-2<br />(data collected an visualized by Spare Cores)</p>
 </div>
 
 The 15-20% rate seems to be indeed correct for these instance types,
