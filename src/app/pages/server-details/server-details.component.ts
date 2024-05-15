@@ -100,6 +100,7 @@ export class ServerDetailsComponent {
       this.keepreAPI.getServer(vendor, id).then((data) => {
         if(data?.body){
           this.serverDetails = data.body as any;
+          console.log(this.serverDetails);
           this.breadcrumbs = [
             { name: 'Home', url: '/' },
             { name: 'Servers', url: '/servers' },
@@ -124,7 +125,7 @@ export class ServerDetailsComponent {
           this.serverDetails.prices.forEach((price: ServerPricePKs) => {
               let datacenter = this.datacenterFilters.find((z) => z.datacenter_id === price.datacenter_id);
               if(!datacenter) {
-                this.datacenterFilters.push({datacenter_id: price.datacenter_id, name: price.datacenter_id, selected: false});
+                this.datacenterFilters.push({name: price.datacenter.display_name, datacenter_id: price.datacenter_id, selected: false});
               }
             });
 
@@ -312,6 +313,7 @@ export class ServerDetailsComponent {
       if(!zone) {
         let data: any = {
           datacenter_id: price.datacenter_id,
+          display_name: price.datacenter.display_name,
           spot: {
             price: 0,
             unit: price.unit,
@@ -362,7 +364,7 @@ export class ServerDetailsComponent {
     let ondemandIdx = series.findIndex((s: any) => s.name === 'Ondemand');
 
     this.availabilityDatacenters.forEach((zone: any) => {
-      categories.push(zone.datacenter_id);
+      categories.push(zone.display_name);
       if(spotIdx > -1) {
         series[spotIdx].data.push(zone.spot?.price || 0);
       }
@@ -389,6 +391,7 @@ export class ServerDetailsComponent {
         let data: any = {
           zone_id: price.zone_id,
           datacenter_id: price.datacenter_id,
+          display_name: price.zone.display_name,
           spot: {
             price: 0,
             unit: price.unit,
@@ -439,8 +442,8 @@ export class ServerDetailsComponent {
     let ondemandIdx = series.findIndex((s: any) => s.name === 'Ondemand');
 
     this.availabilityZones.forEach((zone: any) => {
-      if(this.datacenterFilters.find((z) => z.name === zone.datacenter_id)?.selected) {
-        categories.push(zone.zone_id);
+      if(this.datacenterFilters.find((z) => z.datacenter_id === zone.datacenter_id)?.selected) {
+        categories.push(zone.display_name);
         if(spotIdx > -1) {
           series[spotIdx].data.push(zone.spot?.price || 0);
         }
@@ -469,6 +472,7 @@ export class ServerDetailsComponent {
       if(!zone) {
         let data: any = {
           zone_id: price.zone_id,
+          display_name: price.zone.display_name,
           spot: {
             price: 0,
             unit: price.unit,
@@ -511,7 +515,7 @@ export class ServerDetailsComponent {
     let categories: any = [];
 
     pricesPerZone.forEach((zone: any) => {
-      categories.push(zone.zone_id);
+      categories.push(zone.display_name);
       series[0].data.push(zone.spot?.price || 0);
       series[1].data.push(zone.ondemand?.price || 0);
     });
