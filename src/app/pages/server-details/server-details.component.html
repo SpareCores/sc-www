@@ -2,23 +2,24 @@
   <div class="content pt-16 pb-16 text-white">
     <app-breadcrumbs [segments]="breadcrumbs"></app-breadcrumbs>
 
-    <div *ngIf="serverDetails" class="flex justify-between px-6 py-6 bg-secondary border-emerald-400 border boder-solid mt-12"  >
-      <div class="flex gap-6 w-3/5" >
-        <div class="w-20 h-20 px-1 py-1 bg-white rounded-lg my-auto">
+    <div *ngIf="serverDetails" class="flex flex-wrap justify-between gap-8 px-6 py-6 bg-secondary border-emerald-400 border boder-solid mt-12"  >
+      <div class="flex gap-6 lg:w-3/5 w-full" >
+        <div class="min-w-20 w-20 h-20 px-1 py-1 bg-white rounded-lg my-auto">
           <img src="{{serverDetails.vendor.logo}}" alt="logo">
         </div>
         <div class="flex flex-col gap-3">
           <h1 class="text-2xl" > <span class="text-emerald-400 font-bold">{{serverDetails.display_name}}</span> by {{serverDetails.vendor.name}} </h1>
           <div> {{description}} </div>
           <div class="flex">
-            <button class="btn-primary py-3 px-5 flex gap-2">
-              <lucide-icon name="shopping-cart" class="h-6 w-6"></lucide-icon>
-              <span> Order Now </span>
-            </button>
+            <a class="btn-primary py-3 px-5 flex gap-2"
+               [href]="serverDetails.vendor.homepage" target="_blank" rel="nofollow noopener">
+              <span> Visit Vendor </span>
+              <lucide-icon name="external-link" class="h-6 w-6"></lucide-icon>
+            </a>
           </div>
         </div>
       </div>
-      <div class="w-1/4">
+      <div class="w-full lg:w-1/4">
         <div *ngFor="let item of features, let i = index">
           <div *ngIf="i != 0" class="w-full h-4 mb-3 border-b border-gray-400 border-solid" ></div>
           <div class="flex gap-2 text-xl items-center text-gray-200">
@@ -42,7 +43,7 @@
         <table class="items_table">
           <thead>
             <tr>
-              <th></th>
+              <th>General</th>
               <th></th>
             </tr>
           </thead>
@@ -56,11 +57,54 @@
               <td> {{serverDetails.name}} </td>
             </tr>
             <tr>
-              <td> <b>CPUs</b> </td>
-              <td> {{serverDetails.vcpus}} </td>
+              <td> <b>Family</b> </td>
+              <td> {{serverDetails.family}} </td>
+            </tr>
+            <tr>
+              <td> <b>Vendor</b> </td>
+              <td> {{serverDetails.vendor.name}} </td>
             </tr>
           </tbody>
         </table>
+        <table class="items_table">
+          <thead>
+            <tr>
+              <th>Performance</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngIf="serverDetails.vcpus" >
+              <td> <b>vCPUs</b> </td>
+              <td> {{serverDetails.vcpus}} </td>
+            </tr>
+            <tr *ngIf="serverDetails.cpu_cores">
+              <td> <b>CPU cores</b> </td>
+              <td> {{serverDetails.cpu_cores}} </td>
+            </tr>
+            <tr *ngIf="serverDetails.cpu_cores">
+              <td> <b>CPU architecture</b> </td>
+              <td> {{serverDetails.cpu_architecture}} </td>
+            </tr>
+            <tr *ngIf="serverDetails.memory">
+              <td> <b>Memory</b> </td>
+              <td> {{getMemory()}} </td>
+            </tr>
+            <tr *ngIf="serverDetails.gpu_count">
+              <td> <b>GPUs</b> </td>
+              <td> {{serverDetails.gpu_count}} </td>
+            </tr>
+            <tr *ngIf="serverDetails.storage_size">
+              <td> <b>Storage</b> </td>
+              <td> {{getStorage()}} </td>
+            </tr>
+            <tr *ngIf="serverDetails.storage_type">
+              <td> <b>Storage type</b> </td>
+              <td> {{serverDetails.storage_type}} </td>
+            </tr>
+          </tbody>
+        </table>
+
         <div class="absolute bottom-0 left-0 w-full py-3 flex justify-center" id="details_more"
             style="background: linear-gradient(360deg, #06263A 23.44%, rgba(6, 38, 58, 0) 100%);" >
           <button class="btn-primary py-2 px-3" (click)="openBox('details')"> Viev more details </button>
@@ -192,7 +236,53 @@
         </div>
       </div>
       <div class="block_half">
-        <h3 class="text-2xl" >Run with sc-runner CLI </h3>
+        <h3 class="text-2xl" >Instances in family </h3>
+        <table class="items_table">
+          <thead>
+            <tr>
+              <th>INSTANCE</th>
+              <th>VCPUs</th>
+              <th>MEMORY</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of similarByFamily">
+              <td>
+                <a
+                  class="underline decoration-dotted hover:text-gray-500"
+                  routerLink="/server/{{item.vendor_id}}/{{item.server_id}}">
+                  {{item.display_name}}
+                </a>
+              </td>
+              <td> {{item.vcpus}}</td>
+              <td> {{getMemory(item.memory)}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="block_half">
+        <h3 class="text-2xl" >Similar machines </h3>
+        <table class="items_table">
+          <thead>
+            <tr>
+              <th>INSTANCE</th>
+              <th>VCPUs</th>
+              <th>MEMORY</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of similarByPerformance">
+              <td>
+                <a
+                class="underline decoration-dotted hover:text-gray-500"
+                routerLink="/server/{{item.vendor_id}}/{{item.server_id}}">
+                {{item.display_name}}
+                </a> </td>
+              <td> {{item.vcpus}}</td>
+              <td> {{getMemory(item.memory)}}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
     </div>

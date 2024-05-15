@@ -43,6 +43,21 @@
       td {
         @apply px-5 py-3 text-left text-sm;
       }
+      td:first-child {
+        width: 250px;
+      }
     }
   }
+}
+
+@media screen and (max-width: 800px) {
+  .block_half {
+    width: calc(100% - 1.0rem);
+    margin: auto;
+  }
+  .block_full {
+    width: calc(100% - 1.0rem);
+    margin: auto;
+  }
+
 }

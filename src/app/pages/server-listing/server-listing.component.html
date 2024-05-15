@@ -268,7 +268,7 @@
                   </ng-container>
                   <td>
                     <div (click)="$event.stopPropagation()">
-                      <a href="server/{{item.vendor.vendor_id}}/{{item.server.server_id}}">
+                      <a routerLink="/server/{{item.vendor.vendor_id}}/{{item.server.server_id}}">
                         <lucide-icon name="chevron-right" class="h-6 w-6 text-emerald-400"></lucide-icon>
                       </a>
                     </div>

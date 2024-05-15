@@ -1,10 +1,10 @@
 import { Component, Inject, PLATFORM_ID } from '@angular/core';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { KeeperAPIService } from '../../services/keeper-api.service';
-import { MetaTables, OrderDir, SearchServerSearchGetParams, ServerPriceWithPKs } from '../../../../sdk/data-contracts';
+import { OrderDir, SearchServersServersGetParams, ServerPriceWithPKs } from '../../../../sdk/data-contracts';
 import { Subject, debounceTime } from 'rxjs';
 import { encodeQueryParams } from '../../tools/queryParamFunctions';
-import { ActivatedRoute, Params, Router } from '@angular/router';
+import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Dropdown, DropdownOptions, Modal, ModalOptions } from 'flowbite';
 import { StorageHandlerService } from '../../services/storage-handler.service';
@@ -67,7 +67,7 @@ const optionsModal: ModalOptions = {
 @Component({
   selector: 'app-server-listing',
   standalone: true,
-  imports: [CommonModule, FormsModule, BreadcrumbsComponent, LucideAngularModule, CountryIdtoNamePipe],
+  imports: [CommonModule, FormsModule, BreadcrumbsComponent, LucideAngularModule, CountryIdtoNamePipe, RouterModule],
   templateUrl: './server-listing.component.html',
   styleUrl: './server-listing.component.scss',
   host: {ngSkipHydration: 'true'},
@@ -194,8 +194,8 @@ export class ServerListingComponent {
 
     this.route.queryParams.subscribe((params: Params) => {
       const query: any = params;
-      if(this.openApiJson.paths['/search'].get.parameters) {
-        this.searchParameters = JSON.parse(JSON.stringify(this.openApiJson.paths['/search'].get.parameters)).map((item: any) => {
+      if(this.openApiJson.paths['/servers'].get.parameters) {
+        this.searchParameters = JSON.parse(JSON.stringify(this.openApiJson.paths['/servers'].get.parameters)).map((item: any) => {
           let value = query[item.name] || item.schema.default || null;
           if(query[item.name] && query[item.name].split(',').length > 1) {
             value = query[item.name].split(',');
@@ -380,7 +380,7 @@ export class ServerListingComponent {
   }
 
   filterServers(updateURL = true, updateTotalCount = true) {
-    let queryObject: SearchServerSearchGetParams = this.getQueryObject() || {};
+    let queryObject: SearchServersServersGetParams = this.getQueryObject() || {};
 
     if(updateURL) {
       this.updateQueryParams(queryObject);
@@ -621,7 +621,7 @@ export class ServerListingComponent {
 
   loadCountries(selectedCountries: string | undefined) {
     const selectedCountryIds = selectedCountries ? selectedCountries.split(',') : [];
-    this.keeperAPI.getMetaTable(MetaTables.Country).then((response) => {
+    this.keeperAPI.getCountries().then((response) => {
       if(response?.body) {
 
         this.countryMetadata = response.body.map((item: any) => {
@@ -669,8 +669,8 @@ export class ServerListingComponent {
   loadDatacenters(selectedDatacenters: string | undefined) {
     const selectedDatacenterIds = selectedDatacenters ? selectedDatacenters.split(',') : [];
     Promise.all([
-      this.keeperAPI.getMetaTable(MetaTables.Vendor),
-      this.keeperAPI.getMetaTable(MetaTables.Datacenter)]).then((responses) => {
+      this.keeperAPI.getVendors(),
+      this.keeperAPI.getDatacenters()]).then((responses) => {
 
       if(responses[0]?.body) {
         this.vendorMetadata = responses[0].body;

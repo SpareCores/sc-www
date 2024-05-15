@@ -3,7 +3,6 @@ import { ArticleMeta, ArticlesService } from '../../services/articles.service';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { KeeperAPIService } from '../../services/keeper-api.service';
 import { spinner_initial_data } from '../../tools/spinner_initial_data';
-import { SearchServerSearchGetData } from '../../../../sdk/data-contracts';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { FormsModule } from '@angular/forms';
 import { ThemeTextComponent } from '../../components/theme-text/theme-text.component';
@@ -11,6 +10,7 @@ import { RouterLink } from '@angular/router';
 import { TimeToShortDatePipe } from '../../pipes/time-to-short-date.pipe';
 import { LucideAngularModule } from 'lucide-angular';
 import { ArticleCardComponent } from '../../components/article-card/article-card.component';
+import { SearchServersServersGetData } from '../../../../sdk/data-contracts';
 
 @Component({
   selector: 'app-landingpage',
@@ -215,7 +215,7 @@ export class LandingpageComponent {
     });
   }
 
-  spinAnim(servers: SearchServerSearchGetData, isFake = false) {
+  spinAnim(servers: SearchServersServersGetData, isFake = false) {
 
     if(this.isSpinning) {
       return;

@@ -1,7 +1,7 @@
 import { Component, Inject, PLATFORM_ID, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink, RouterModule } from '@angular/router';
 import { KeeperAPIService } from '../../services/keeper-api.service';
-import { ServerPKsWithPrices, ServerPrice } from '../../../../sdk/data-contracts';
+import { Server, ServerPKsWithPrices, ServerPricePKs, TableServerTableServerGetData } from '../../../../sdk/data-contracts';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
@@ -36,7 +36,7 @@ const options: DropdownOptions = {
 @Component({
   selector: 'app-server-details',
   standalone: true,
-  imports: [BreadcrumbsComponent, CommonModule, LucideAngularModule, FaqComponent, NgApexchartsModule, FormsModule],
+  imports: [BreadcrumbsComponent, CommonModule, LucideAngularModule, FaqComponent, NgApexchartsModule, FormsModule, RouterModule],
   templateUrl: './server-details.component.html',
   styleUrl: './server-details.component.scss'
 })
@@ -70,14 +70,17 @@ export class ServerDetailsComponent {
   datacenterDropwdown: any;
   datacenterFilters: any[] = [];
 
-  public chartOptions: ChartOptions | any;
-  public chartOptions2: ChartOptions | any;
-  public chartOptions3: ChartOptions | any;
-
+  chartOptions: ChartOptions | any;
+  chartOptions2: ChartOptions | any;
+  chartOptions3: ChartOptions | any;
 
   @ViewChild('chart1') chart!: ChartComponent;
   @ViewChild('chart2') chart2!: ChartComponent;
   @ViewChild('chart3') chart3!: ChartComponent;
+
+
+  similarByFamily: Server[] = [];
+  similarByPerformance: Server[] = [];
 
   constructor(@Inject(PLATFORM_ID) private platformId: object,
               private route: ActivatedRoute,
@@ -96,33 +99,51 @@ export class ServerDetailsComponent {
       let id = params['id'];
 
       this.keepreAPI.getServer(vendor, id).then((data) => {
-        console.log('server', data);
         if(data?.body){
           this.serverDetails = data.body as any;
           this.breadcrumbs = [
             { name: 'Home', url: '/' },
             { name: 'Servers', url: '/servers' },
-            { name: this.serverDetails.server_id, url: '/server/' + this.serverDetails.vendor.vendor_id + '/' + this.serverDetails.server_id }
+            { name: this.serverDetails.display_name, url: '/server/' + this.serverDetails.vendor.vendor_id + '/' + this.serverDetails.server_id }
           ];
 
           this.title = `${this.serverDetails.display_name} by ${this.serverDetails.vendor.name} - Spare Cores`;
           this.description =
-            `${this.serverDetails.display_name} is a ${this.serverDetails.description} instance by ${this.serverDetails.vendor.name} with${this.serverDetails.cpu_cores ? ' ' + this.serverDetails.cpu_cores + 'CPUs' : ''}${this.serverDetails.vcpus ? ' ' + this.serverDetails.vcpus + 'vCPUs' : ''}, ${this.getMemory()} of memory and ${this.getStorage()} of storage.`;
+            `${this.serverDetails.display_name} is a ${this.serverDetails.description} instance by ${this.serverDetails.vendor.name} with`;
+          if(this.serverDetails.vcpus) {
+            this.description += ` ${this.serverDetails.vcpus} vCPUs`;
+          } else if(this.serverDetails.cpu_cores) {
+            this.description += ` ${this.serverDetails.cpu_cores} CPUs`;
+          }
+          this.description += `, ${this.getMemory()} of memory and ${this.getStorage()} of storage.`;
 
           this.features = [];
+          if(this.serverDetails.cpu_cores || this.serverDetails.vcpus) {
+            this.features.push({name: 'CPU', value: `${this.serverDetails.vcpus || this.serverDetails.cpu_cores}x`});
+          }
           if(this.serverDetails.memory) {
             this.features.push({name: 'Memory', value: this.getMemory()});
           }
           if(this.serverDetails.storage_size) {
             this.features.push({name: 'Storage', value: this.getStorage()});
           }
-          if(this.serverDetails.cpu_cores || this.serverDetails.vcpus) {
-            this.features.push({name: 'CPU', value: `${this.serverDetails.cpu_cores || this.serverDetails.vcpus}x`});
-          }
+
 
           let keywords = this.title + ', ' + this.serverDetails.server_id + ', ' + this.serverDetails.vendor.vendor_id;
 
           this.SEOHandler.updateTitleAndMetaTags(this.title, this.description, keywords);
+
+          this.datacenterFilters = [];
+          this.serverDetails.prices.forEach((price: ServerPricePKs) => {
+              let datacenter = this.datacenterFilters.find((z) => z.datacenter_id === price.datacenter_id);
+              if(!datacenter) {
+                this.datacenterFilters.push({datacenter_id: price.datacenter_id, name: price.datacenter_id, selected: false});
+              }
+            });
+
+            this.datacenterFilters[0].selected = true;
+
+          this.refreshGraphs();
 
           this.faqs = [
             {
@@ -135,21 +156,50 @@ export class ServerDetailsComponent {
             },
             {
               question: `What is ${this.serverDetails.display_name} instance specification?`,
-              answer: `${this.serverDetails.display_name} has ${this.serverDetails.cpu_cores || this.serverDetails.vcpus} CPUs, ${this.getMemory()} of memory and ${this.getStorage()} of storage.`
+              answer: `${this.serverDetails.display_name} has ${this.serverDetails.vcpus || this.serverDetails.cpu_cores} CPUs, ${this.getMemory()} of memory and ${this.getStorage()} of storage.`
             }
           ];
 
-          this.datacenterFilters = [];
-          this.serverDetails.prices.forEach((price: ServerPrice) => {
-              let datacenter = this.datacenterFilters.find((z) => z.datacenter_id === price.datacenter_id);
-              if(!datacenter) {
-                this.datacenterFilters.push({datacenter_id: price.datacenter_id, name: price.datacenter_id, selected: false});
-              }
-            });
+          this.similarByFamily = [];
+          this.similarByPerformance = [];
+          this.keepreAPI.getServers().then((data) => {
+            if(data?.body) {
+              let allServers = data.body as TableServerTableServerGetData;
+              allServers.forEach((s) => {
+                if(s.family === this.serverDetails.family && s.server_id !== this.serverDetails.server_id) {
+                  if(this.similarByFamily.length < 7 && this.similarByFamily.findIndex((s2) => s2.server_id === s.server_id) === -1) {
+                    this.similarByFamily.push(s);
+                  }
+                } else if(
+                    (
+                      (this.serverDetails.vcpus && s.vcpus === this.serverDetails.vcpus) ||
+                      (this.serverDetails.cpu_cores && s.cpu_cores === this.serverDetails.cpu_cores))
+                    && s.memory === this.serverDetails.memory && s.server_id !== this.serverDetails.server_id) {
+                  if(this.similarByPerformance.length < 7 && this.similarByPerformance.findIndex((s2) => s2.server_id === s.server_id) === -1) {
+                    this.similarByPerformance.push(s);
+                  }
+                }
+              });
+              this.similarByFamily = this.similarByFamily.sort((a, b) => {
+                if(a.memory && b.memory && a.memory !== b.memory) {
+                  return a.memory - b.memory
+                } else if(a.vcpus && b.vcpus && a.vcpus !== b.vcpus) {
+                  return a.vcpus - b.vcpus
+                } else if(a.cpu_cores && b.cpu_cores && a.cpu_cores !== b.cpu_cores) {
+                  return a.cpu_cores - b.cpu_cores
+                } else {
+                  return 0;
+                }
+              });
+              this.similarByPerformance = this.similarByPerformance.sort((a, b) => a.name.localeCompare(b.name));
 
-            this.datacenterFilters[0].selected = true;
-
-          this.refreshGraphs();
+              this.faqs.push(
+              {
+                question: `Are ${this.serverDetails.display_name} instance alternatives?`,
+                answer: `Yes, Instances in the ${this.serverDetails.family} family are ${this.similarByFamily.map((s) => s.name).join(', ')}. Furthermore instances with similar performance are ${this.similarByPerformance.map((s) => s.name).join(', ')}.`
+              });
+            }
+          });
 
           if(isPlatformBrowser(this.platformId)) {
             let interval = setInterval(() => {
@@ -167,7 +217,6 @@ export class ServerDetailsComponent {
                   }
                 );
                 clearInterval(interval);
-                console.log('dropdownAllocation', this.dropdownAllocation);
               }
             }, 150);
 
@@ -186,7 +235,6 @@ export class ServerDetailsComponent {
                   }
                 );
                 clearInterval(interval2);
-                console.log('dropdownAllocation', this.dropdownAllocation2);
               }
             }, 150);
 
@@ -218,13 +266,12 @@ export class ServerDetailsComponent {
     return isPlatformBrowser(this.platformId);
   }
 
-
-  getMemory() {
-    return ((this.serverDetails.memory || 0) / 1024).toFixed(1) + 'GB';
+  getMemory(memory: number | undefined = undefined) {
+    return ((memory || this.serverDetails.memory || 0) / 1024).toFixed(1) + 'GB';
   }
 
   getStorage() {
-    if(!this.serverDetails.storage_size) return '-';
+    if(!this.serverDetails.storage_size) return '0GB';
 
     if(this.serverDetails.storage_size < 1000) return `${this.serverDetails.storage_size}GB`;
 
@@ -258,7 +305,7 @@ export class ServerDetailsComponent {
 
     this.serverDetails.prices.sort((a, b) => a.price - b.price);
 
-    this.serverDetails.prices.forEach((price: ServerPrice) => {
+    this.serverDetails.prices.forEach((price: ServerPricePKs) => {
     let zone = this.availabilityDatacenters.find((z) => z.datacenter_id === price.datacenter_id);
       if(!zone) {
         let data: any = {
@@ -307,8 +354,6 @@ export class ServerDetailsComponent {
         color: '#E5E7EB'});
     }
 
-    console.log('series', series);
-
     let categories: any = [];
 
     let spotIdx = series.findIndex((s: any) => s.name === 'Spot');
@@ -329,7 +374,6 @@ export class ServerDetailsComponent {
     this.chartOptions.series = series;
 
     this.chart?.updateOptions(this.chartOptions, true, true, true);
-
     }
   }
 
@@ -339,7 +383,7 @@ export class ServerDetailsComponent {
 
     this.serverDetails.prices.sort((a, b) => a.price - b.price);
 
-    this.serverDetails.prices.forEach((price: ServerPrice) => {
+    this.serverDetails.prices.forEach((price: ServerPricePKs) => {
     let zone = this.availabilityZones.find((z) => z.zone_id === price.zone_id);
       if(!zone) {
         let data: any = {
@@ -389,8 +433,6 @@ export class ServerDetailsComponent {
         color: '#E5E7EB'});
     }
 
-
-
     let categories: any = [];
 
     let spotIdx = series.findIndex((s: any) => s.name === 'Spot');
@@ -409,13 +451,10 @@ export class ServerDetailsComponent {
       }
     });
 
-    console.log('series2', series);
-
     this.chartOptions2.xaxis.categories = categories;
     this.chartOptions2.series = series;
 
     this.chart2?.updateOptions(this.chartOptions2, true, true, true);
-
     }
   }
 
