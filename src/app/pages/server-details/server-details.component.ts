@@ -1,4 +1,4 @@
-import { Component, Inject, PLATFORM_ID, ViewChild } from '@angular/core';
+import { Component, Directive, ElementRef, HostListener, Inject, Input, PLATFORM_ID, ViewChild } from '@angular/core';
 import { ActivatedRoute, RouterLink, RouterModule } from '@angular/router';
 import { KeeperAPIService } from '../../services/keeper-api.service';
 import { Server, ServerPKsWithPrices, ServerPricePKs, TableServerTableServerGetData } from '../../../../sdk/data-contracts';
@@ -10,7 +10,7 @@ import { FaqComponent } from '../../components/faq/faq.component';
 import { ApexAxisChartSeries, ApexChart, ApexDataLabels, ApexFill, ApexLegend, ApexPlotOptions, ApexStroke, ApexTooltip, ApexXAxis, ApexYAxis, ChartComponent, NgApexchartsModule } from "ng-apexcharts";
 import { chartOptions1, chartOptions2, chartOptions3 } from './chartOptions';
 import { FormsModule } from '@angular/forms';
-import { Dropdown, DropdownOptions } from 'flowbite';
+import { Dropdown, DropdownOptions, initFlowbite } from 'flowbite';
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -82,6 +82,15 @@ export class ServerDetailsComponent {
   similarByFamily: Server[] = [];
   similarByPerformance: Server[] = [];
 
+
+  openApiJson: any = require('../../../../sdk/openapi.json');
+  instanceProperties: any;
+  instanceKeys!: string[];
+
+  toolipContent = '';
+
+  @ViewChild('tooltipDefault') tooltip!: ElementRef;
+
   constructor(@Inject(PLATFORM_ID) private platformId: object,
               private route: ActivatedRoute,
               private keepreAPI: KeeperAPIService,
@@ -90,6 +99,10 @@ export class ServerDetailsComponent {
     this.chartOptions = chartOptions2;
     this.chartOptions2 = chartOptions3;
     this.chartOptions3 = chartOptions1;
+
+    if(this.openApiJson.components.schemas.ServerPKsWithPrices.properties) {
+      this.instanceProperties = this.openApiJson.components.schemas.ServerPKsWithPrices.properties;
+    }
   }
 
   ngOnInit() {
@@ -100,14 +113,11 @@ export class ServerDetailsComponent {
       this.keepreAPI.getServer(vendor, id).then((data) => {
         if(data?.body){
           this.serverDetails = data.body as any;
-          console.log(this.serverDetails);
           this.breadcrumbs = [
             { name: 'Home', url: '/' },
             { name: 'Servers', url: '/servers' },
             { name: this.serverDetails.display_name, url: '/server/' + this.serverDetails.vendor.vendor_id + '/' + this.serverDetails.server_id }
           ];
-
-
 
           this.features = [];
           if(this.serverDetails.cpu_cores || this.serverDetails.vcpus) {
@@ -132,6 +142,10 @@ export class ServerDetailsComponent {
           this.datacenterFilters[0].selected = true;
 
           this.refreshGraphs();
+
+          if(this.serverDetails) {
+            this.instanceKeys = this.instanceKeys.filter((k: string): k is keyof ServerPKsWithPrices => k in this.serverDetails);
+          }
 
           this.title = `${this.serverDetails.display_name} by ${this.serverDetails.vendor.name} - Spare Cores`;
           this.description =
@@ -207,6 +221,10 @@ export class ServerDetailsComponent {
           });
 
           if(isPlatformBrowser(this.platformId)) {
+            setTimeout(() => {
+              initFlowbite();
+            }, 2000);
+
             let interval = setInterval(() => {
               const targetElAllocation: HTMLElement | null = document.getElementById('allocation_options');
               const triggerElAllocation: HTMLElement | null = document.getElementById('allocation_button');
@@ -525,6 +543,25 @@ export class ServerDetailsComponent {
 
     this.chart3?.updateOptions(this.chartOptions3, true, true, true);
   }
+  }
+
+  showTooltip(el: any, content: string) {
+    if(this.instanceProperties[content].description) {
+      const tooltip = this.tooltip.nativeElement;
+      const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+      tooltip.style.left = `${el.target.getBoundingClientRect().left - 25}px`;
+      tooltip.style.top = `${el.target.getBoundingClientRect().top - 45 + scrollPosition}px`;
+      tooltip.style.display = 'block';
+      tooltip.style.opacity = '1';
+
+      this.toolipContent = this.instanceProperties[content].description;
+    }
+  }
+
+  hideTooltip() {
+    const tooltip = this.tooltip.nativeElement;
+    tooltip.style.display = 'none';
+    tooltip.style.opacity = '0';
   }
 
 }
