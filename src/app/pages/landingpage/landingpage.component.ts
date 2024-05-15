@@ -208,7 +208,6 @@ export class LandingpageComponent {
     }
 
     this.keeperAPI.searchServers({vcpus_min: this.cpuCount, memory_min: this.ramCount, limit: 100}).then(servers => {
-      console.log('Servers:', servers);
       this.spinAnim(servers.body);
     }).catch(err => {
       console.error(err);

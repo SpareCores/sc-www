@@ -94,7 +94,6 @@ export class ServerDetailsComponent {
 
   ngOnInit() {
     this.route.params.subscribe(params => {
-      console.log(params);
       let vendor = params['vendor'];
       let id = params['id'];
 

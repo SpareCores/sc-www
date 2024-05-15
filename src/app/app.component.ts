@@ -47,7 +47,6 @@ export class AppComponent {
   ngOnInit() {
     register();
     if (isPlatformBrowser(this.platformId)) {
-      console.log('initFlowbite');
       initFlowbite();
     }
   }

@@ -205,8 +205,6 @@ export class ServerListingComponent {
         });
       }
 
-      console.log('Search parameters:', this.searchParameters);
-
       if(query.order_by && query.order_dir) {
         this.orderBy = query.order_by;
         this.orderDir = query.order_dir;
@@ -405,7 +403,6 @@ export class ServerListingComponent {
       if(updateTotalCount) {
         this.totalPages = Math.ceil(parseInt(servers?.headers?.get('x-total-count') || '0') / this.limit);
       }
-      console.log('Servers:', servers);
     }).catch(err => {
       console.error(err);
     }).finally(() => {
