@@ -107,15 +107,7 @@ export class ServerDetailsComponent {
             { name: this.serverDetails.display_name, url: '/server/' + this.serverDetails.vendor.vendor_id + '/' + this.serverDetails.server_id }
           ];
 
-          this.title = `${this.serverDetails.display_name} by ${this.serverDetails.vendor.name} - Spare Cores`;
-          this.description =
-            `${this.serverDetails.display_name} is a ${this.serverDetails.description} instance by ${this.serverDetails.vendor.name} with`;
-          if(this.serverDetails.vcpus) {
-            this.description += ` ${this.serverDetails.vcpus} vCPUs`;
-          } else if(this.serverDetails.cpu_cores) {
-            this.description += ` ${this.serverDetails.cpu_cores} CPUs`;
-          }
-          this.description += `, ${this.getMemory()} of memory and ${this.getStorage()} of storage.`;
+
 
           this.features = [];
           if(this.serverDetails.cpu_cores || this.serverDetails.vcpus) {
@@ -128,12 +120,8 @@ export class ServerDetailsComponent {
             this.features.push({name: 'Storage', value: this.getStorage()});
           }
 
-
-          let keywords = this.title + ', ' + this.serverDetails.server_id + ', ' + this.serverDetails.vendor.vendor_id;
-
-          this.SEOHandler.updateTitleAndMetaTags(this.title, this.description, keywords);
-
           this.datacenterFilters = [];
+          this.serverDetails.prices.sort((a, b) => a.price - b.price);
           this.serverDetails.prices.forEach((price: ServerPricePKs) => {
               let datacenter = this.datacenterFilters.find((z) => z.datacenter_id === price.datacenter_id);
               if(!datacenter) {
@@ -141,9 +129,22 @@ export class ServerDetailsComponent {
               }
             });
 
-            this.datacenterFilters[0].selected = true;
+          this.datacenterFilters[0].selected = true;
 
           this.refreshGraphs();
+
+          this.title = `${this.serverDetails.display_name} by ${this.serverDetails.vendor.name} - Spare Cores`;
+          this.description =
+            `${this.serverDetails.display_name} is a ${this.serverDetails.description} instance by ${this.serverDetails.vendor.name} with`;
+          if(this.serverDetails.vcpus) {
+            this.description += ` ${this.serverDetails.vcpus} vCPUs`;
+          } else if(this.serverDetails.cpu_cores) {
+            this.description += ` ${this.serverDetails.cpu_cores} CPUs`;
+          }
+          this.description += `, ${this.getMemory()} of memory and ${this.getStorage()} of storage.`;
+          if(this.serverDetails.prices[0]) {
+            this.description += ` Prices starting at $${this.serverDetails.prices[0].price} per hour as spot instance.`;
+          }
 
           this.faqs = [
             {
@@ -159,6 +160,10 @@ export class ServerDetailsComponent {
               answer: `${this.serverDetails.display_name} has ${this.serverDetails.vcpus || this.serverDetails.cpu_cores} CPUs, ${this.getMemory()} of memory and ${this.getStorage()} of storage.`
             }
           ];
+
+          let keywords = this.title + ', ' + this.serverDetails.server_id + ', ' + this.serverDetails.vendor.vendor_id;
+
+          this.SEOHandler.updateTitleAndMetaTags(this.title, this.description, keywords);
 
           this.similarByFamily = [];
           this.similarByPerformance = [];
@@ -303,8 +308,6 @@ export class ServerDetailsComponent {
     this.availabilityDatacenters = [];
     if(this.serverDetails.prices.length > 0) {
 
-    this.serverDetails.prices.sort((a, b) => a.price - b.price);
-
     this.serverDetails.prices.forEach((price: ServerPricePKs) => {
     let zone = this.availabilityDatacenters.find((z) => z.datacenter_id === price.datacenter_id);
       if(!zone) {
@@ -380,8 +383,6 @@ export class ServerDetailsComponent {
   updateChart2() {
     this.availabilityZones = [];
     if(this.serverDetails.prices.length > 0) {
-
-    this.serverDetails.prices.sort((a, b) => a.price - b.price);
 
     this.serverDetails.prices.forEach((price: ServerPricePKs) => {
     let zone = this.availabilityZones.find((z) => z.zone_id === price.zone_id);
