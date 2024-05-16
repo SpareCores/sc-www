@@ -118,6 +118,9 @@ export class ServerDetailsComponent {
           if(this.serverDetails.storage_size) {
             this.features.push({name: 'Storage', value: this.getStorage()});
           }
+          if(this.serverDetails.gpu_count) {
+            this.features.push({name: 'GPU', value: this.serverDetails.gpu_count});
+          }
 
           this.datacenterFilters = [];
           this.serverDetails.prices.sort((a, b) => a.price - b.price);
