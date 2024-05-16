@@ -13,6 +13,7 @@ import {
   TableComplianceFrameworksTableComplianceFrameworkGetData,
   TableCountryTableCountryGetData,
   TableDatacenterTableDatacenterGetData,
+  TableMetadataServerTableServerMetaGetData,
   TableServerTableServerGetData,
   TableStorageTableStorageGetData,
   TableVendorTableVendorGetData,
@@ -108,6 +109,20 @@ export class Table<SecurityDataType = unknown> {
   tableServerTableServerGet = (params: RequestParams = {}) =>
     this.http.request<TableServerTableServerGetData, any>({
       path: `/table/server`,
+      method: "GET",
+      ...params,
+    });
+  /**
+   * @description Server table and column names and comments.
+   *
+   * @tags Table metadata
+   * @name TableMetadataServerTableServerMetaGet
+   * @summary Table Metadata Server
+   * @request GET:/table/server/meta
+   */
+  tableMetadataServerTableServerMetaGet = (params: RequestParams = {}) =>
+    this.http.request<TableMetadataServerTableServerMetaGetData, any>({
+      path: `/table/server/meta`,
       method: "GET",
       ...params,
     });
