@@ -106,7 +106,6 @@ export class ServerDetailsComponent {
       let id = params['id'];
 
       this.keepreAPI.getServerMeta().then((data) => {
-        console.log('server meta', data);
         this.instanceProperties = data?.body?.fields || [];
       });
 

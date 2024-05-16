@@ -201,8 +201,6 @@ export class ServerListingComponent {
         return {...item, modelValue: value};
       });
 
-      console.log('search parameters', this.searchParameters);
-
       if(query.order_by && query.order_dir) {
         this.orderBy = query.order_by;
         this.orderDir = query.order_dir;
@@ -617,9 +615,6 @@ export class ServerListingComponent {
 
     if(this.freetextSearchInput) {
       this.keeperAPI.parsePrompt({text:this.freetextSearchInput}).then(response => {
-        if(response?.body) {
-          console.log('ai reposne', response.body);
-        }
         this.modalResponse = response.body;
         this.modalResponseStr = [];
         Object.keys(response.body).forEach((key) => {
