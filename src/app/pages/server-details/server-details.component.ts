@@ -1,5 +1,5 @@
-import { Component, Directive, ElementRef, HostListener, Inject, Input, PLATFORM_ID, ViewChild } from '@angular/core';
-import { ActivatedRoute, RouterLink, RouterModule } from '@angular/router';
+import { Component, ElementRef, Inject, PLATFORM_ID, ViewChild } from '@angular/core';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { KeeperAPIService } from '../../services/keeper-api.service';
 import { Server, ServerPKsWithPrices, ServerPricePKs, TableServerTableServerGetData } from '../../../../sdk/data-contracts';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
@@ -67,7 +67,7 @@ export class ServerDetailsComponent {
     { name: 'Ondemand', selected: true }
   ];
 
-  datacenterDropwdown: any;
+  datacenterDropdown: any;
   datacenterFilters: any[] = [];
 
   chartOptions: ChartOptions | any;
@@ -86,7 +86,7 @@ export class ServerDetailsComponent {
   openApiJson: any = require('../../../../sdk/openapi.json');
   instanceProperties: any[] = [];
 
-  toolipContent = '';
+  tooltipContent = '';
 
   @ViewChild('tooltipDefault') tooltip!: ElementRef;
 
@@ -261,7 +261,7 @@ export class ServerDetailsComponent {
               const triggerElAllocation: HTMLElement | null = document.getElementById('datacenter_button');
 
               if(targetElAllocation && triggerElAllocation) {
-                this.datacenterDropwdown = new Dropdown(
+                this.datacenterDropdown = new Dropdown(
                   targetElAllocation,
                   triggerElAllocation,
                   options,
@@ -550,7 +550,7 @@ export class ServerDetailsComponent {
       tooltip.style.display = 'block';
       tooltip.style.opacity = '1';
 
-      this.toolipContent = description;
+      this.tooltipContent = description;
     }
   }
 
