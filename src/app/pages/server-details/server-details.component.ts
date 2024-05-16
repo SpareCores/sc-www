@@ -147,7 +147,7 @@ export class ServerDetailsComponent {
 
           this.title = `${this.serverDetails.display_name} by ${this.serverDetails.vendor.name} - Spare Cores`;
           this.description =
-            `${this.serverDetails.display_name} is a ${this.serverDetails.description} instance by ${this.serverDetails.vendor.name} with`;
+            `${this.serverDetails.display_name} is a ${this.serverDetails.description} server offered by ${this.serverDetails.vendor.name} with`;
           if(this.serverDetails.vcpus) {
             this.description += ` ${this.serverDetails.vcpus} vCPUs`;
           } else if(this.serverDetails.cpu_cores) {
@@ -168,8 +168,8 @@ export class ServerDetailsComponent {
               answer: `The pricing for ${this.serverDetails.display_name} servers starts at $${this.serverDetails.prices[0].price} per hour, but the actual price depends on the selected datacenter, zone and server allocation method (e.g. on-demand versus spot pricing options). Currently, the maximum price stands at $${this.serverDetails.prices.slice(-1)[0].price}.`
             },
             {
-              question: `What is ${this.serverDetails.display_name} instance specification?`,
-              answer: `${this.serverDetails.display_name} has ${this.serverDetails.vcpus || this.serverDetails.cpu_cores} CPUs, ${this.getMemory()} of memory and ${this.getStorage()} of storage.`
+              question: `What are the specs of the ${this.serverDetails.display_name} server?`,
+              answer: `The ${this.serverDetails.display_name} server is equipped with ${this.serverDetails.vcpus || this.serverDetails.cpu_cores} vCPU(s), ${this.getMemory()} of memory, ${this.getStorage()} of storage, and ${this.serverDetails.gpu_count} GPU(s). Additional block storage can be attached as needed.`
             }
           ];
 
@@ -211,6 +211,21 @@ export class ServerDetailsComponent {
                 return Math.abs(Number(this.serverDetails.memory) - Number(a.memory)) - Math.abs(Number(this.serverDetails.memory) - Number(b.memory));
               });
               this.similarByPerformance = this.similarByPerformance.slice(0, 7);
+
+              if (this.similarByFamily) {
+                this.faqs.push(
+                  {
+                    question: `Are there any other sized servers in the ${this.serverDetails.family} server family?`,
+                    answer: `Yes! In addition to the ${this.serverDetails.display_name} server, the ${this.serverDetails.family} server family includes ${this.similarByFamily.length} other sizes: ${this.similarByFamily.map((s) => s.name).join(', ')}.`
+                  });
+              };
+
+              this.faqs.push(
+                {
+                  question: `What other servers offer similar performance to ${this.serverDetails.display_name}?`,
+                  answer: `Looking at the number of vCPUs and GPUs, also the amount of memory, the following servers come with similar specs: ${this.similarByPerformance.map((s) => s.name).join(', ')}.`
+                });
+
             }
           });
 
