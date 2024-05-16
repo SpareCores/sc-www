@@ -394,10 +394,10 @@
     tabindex="-1"
     class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
   <div class="relative w-full max-w-xl max-h-full">
-      <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
-          <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-              <h3 class="text-xl font-medium text-gray-900 dark:text-white">
-                  Custom Search
+      <div class="relative bg-secondary rounded-lg shadow border border-solid border-emerald-400 " >
+          <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
+              <h3 class="text-xl font-medium text-white dark:text-white">
+                  Search Prompt
               </h3>
               <button type="button"
                   class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
@@ -409,7 +409,7 @@
               </button>
           </div>
           <div class="p-4 md:p-5 space-y-4 flex flex-col">
-              <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+              <p class="text-base leading-relaxed text-gray-200">
                   Please type your server needs in free text and push submit.
               </p>
               <textarea
@@ -425,9 +425,11 @@
                 Submit
               </button>
               <div *ngIf="modalResponse">
-                <div class="text-white"> AI generated response </div>
-                <div class="text-emerald-400 font-medium text-sm">
-                  {{modalResponse}}
+                <div class="text-white"> Suggested filter parameters </div>
+                <div class="text-white font-medium text-sm flex flex-col pl-2">
+                  <div *ngFor="let item of modalResponseStr" >
+                    {{item}}
+                  </div>
                 </div>
               </div>
           </div>

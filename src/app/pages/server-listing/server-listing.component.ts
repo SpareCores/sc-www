@@ -167,6 +167,7 @@ export class ServerListingComponent {
   freetextSearchInput: string | null = null;
   modalSubmitted = false;
   modalResponse: any;
+  modalResponseStr: string[] = [];
 
   countryMetadata: CountryMetadata[] = [];
   continentMetadata: ContinentMetadata[] = [];
@@ -199,14 +200,8 @@ export class ServerListingComponent {
         const value = query[item.name]?.split(',') || item.schema.default || null;
         return {...item, modelValue: value};
       });
-          let value = query[item.name] || item.schema.default || null;
-          if(query[item.name] && query[item.name].split(',').length > 1) {
-            value = query[item.name].split(',');
-          }
-          return {...item,
-            modelValue: value};
-        });
-      }
+
+      console.log('search parameters', this.searchParameters);
 
       if(query.order_by && query.order_dir) {
         this.orderBy = query.order_by;
@@ -595,6 +590,18 @@ export class ServerListingComponent {
 
   closeModal(confirm: boolean) {
     if(confirm) {
+
+      this.searchParameters.forEach((param: any) => {
+        param.modelValue = param.schema.default;
+      });
+
+      Object.keys(this.modalResponse).forEach((key) => {
+        const param = this.searchParameters.find((param: any) => param.name === key);
+        if(param) {
+          param.modelValue = this.modalResponse[key];
+        }
+      });
+
       this.filterServers();
 
       this.freetextSearchInput = '';
@@ -614,6 +621,10 @@ export class ServerListingComponent {
           console.log('ai reposne', response.body);
         }
         this.modalResponse = response.body;
+        this.modalResponseStr = [];
+        Object.keys(response.body).forEach((key) => {
+          this.modalResponseStr.push(key + ': ' + response.body[key]);
+        });
       }).catch(err => {
         console.error(err);
       }).finally(() => {
