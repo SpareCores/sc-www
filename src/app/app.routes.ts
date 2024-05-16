@@ -10,5 +10,7 @@ export const routes: Routes = [
   { path: 'articles/:category', loadComponent: () => import('./pages/articles/articles.component').then(m => m.ArticlesComponent)},
   { path: 'articles', loadComponent: () => import('./pages/articles/articles.component').then(m => m.ArticlesComponent)},
   { path: 'legal/tos', loadComponent: () => import('./pages/tos/tos.component').then(m => m.TOSComponent)},
+  { path: 'datacenters', loadComponent: () => import('./pages/datacenters/datacenters.component').then(m => m.DatacentersComponent)},
+  { path: 'vendors', loadComponent: () => import('./pages/vendors/vendors.component').then(m => m.VendorsComponent)},
   { path: '**', redirectTo: '' }
 ];

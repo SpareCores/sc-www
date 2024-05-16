@@ -1,0 +1,49 @@
+<div class="w-full bg-primary">
+  <div class="content pt-16 pb-16 text-white flex flex-col gap-8">
+    <app-breadcrumbs [segments]="breadcrumbs"></app-breadcrumbs>
+    <h1 class="text-4xl font-bold">Datacenters</h1>
+
+    <table class="items_table">
+      <thead>
+        <tr>
+          <th class="cursor-pointer" (click)="toggleOrdering('datacenter')" >
+            <div class="flex gap-1">
+              DATACENTER
+              <lucide-icon *ngIf="getOrderingIcon('datacenter')" name="{{getOrderingIcon('datacenter')}}" class="h-4 w-4 text-white"></lucide-icon>
+            </div>
+          </th>
+          <th class="cursor-pointer" (click)="toggleOrdering('vendor')">
+            <div class="flex gap-1">
+              VENDOR
+              <lucide-icon *ngIf="getOrderingIcon('vendor')" name="{{getOrderingIcon('vendor')}}" class="h-4 w-4 text-white"></lucide-icon>
+            </div>
+          </th>
+          <th class="cursor-pointer" (click)="toggleOrdering('country')">
+            <div class="flex gap-1">
+              COUNTRY
+              <lucide-icon *ngIf="getOrderingIcon('country')" name="{{getOrderingIcon('country')}}" class="h-4 w-4 text-white"></lucide-icon>
+            </div>
+          </th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of datacenters">
+          <td>
+              {{item.display_name}}
+          </td>
+          <td> {{getVendorName(item.vendor_id)}}</td>
+          <td> {{item.country_id | countryIdtoName}}</td>
+          <td>
+            <div (click)="$event.stopPropagation()">
+              <a routerLink="/servers" [queryParams]="{datacenters: item.datacenter_id}">
+                <lucide-icon name="chevron-right" class="h-6 w-6 text-emerald-400"></lucide-icon>
+              </a>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+</div>
