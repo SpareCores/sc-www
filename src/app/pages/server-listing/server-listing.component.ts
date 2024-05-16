@@ -606,8 +606,11 @@ export class ServerListingComponent {
     this.modalResponse = null;
 
     if(this.freetextSearchInput) {
-      this.keeperAPI.parseFreetextSearch(this.freetextSearchInput).then(response => {
-        this.modalResponse = {foo: 'bar'};
+      this.keeperAPI.parsePrompt({text:this.freetextSearchInput}).then(response => {
+        if(response?.body) {
+          console.log('ai reposne', response.body);
+        }
+        this.modalResponse = response.body;
       }).catch(err => {
         console.error(err);
       }).finally(() => {
