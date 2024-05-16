@@ -187,13 +187,11 @@ export class ServerDetailsComponent {
                   if(this.similarByFamily.length < 7 && this.similarByFamily.findIndex((s2) => s2.server_id === s.server_id) === -1) {
                     this.similarByFamily.push(s);
                   }
-                } else if(
-                    (
-                      (this.serverDetails.vcpus && s.vcpus === this.serverDetails.vcpus) ||
-                      (this.serverDetails.cpu_cores && s.cpu_cores === this.serverDetails.cpu_cores))
-                    && s.memory === this.serverDetails.memory && s.server_id !== this.serverDetails.server_id) {
-                  if(this.similarByPerformance.length < 7 && this.similarByPerformance.findIndex((s2) => s2.server_id === s.server_id) === -1) {
-                    this.similarByPerformance.push(s);
+                } else {
+                  if(
+                    (this.serverDetails.vcpus && s.vcpus === this.serverDetails.vcpus)
+                      && s.server_id !== this.serverDetails.server_id) {
+                      this.similarByPerformance.push(s);
                   }
                 }
               });
@@ -208,13 +206,11 @@ export class ServerDetailsComponent {
                   return 0;
                 }
               });
-              this.similarByPerformance = this.similarByPerformance.sort((a, b) => a.name.localeCompare(b.name));
-
-              this.faqs.push(
-              {
-                question: `Are ${this.serverDetails.display_name} instance alternatives?`,
-                answer: `Yes, Instances in the ${this.serverDetails.family} family are ${this.similarByFamily.map((s) => s.name).join(', ')}. Furthermore instances with similar performance are ${this.similarByPerformance.map((s) => s.name).join(', ')}.`
+              // search for servers with the closest amount of memory
+              this.similarByPerformance = this.similarByPerformance.sort((a, b) => {
+                return Math.abs(Number(this.serverDetails.memory) - Number(a.memory)) - Math.abs(Number(this.serverDetails.memory) - Number(b.memory));
               });
+              this.similarByPerformance = this.similarByPerformance.slice(0, 7);
             }
           });
 
