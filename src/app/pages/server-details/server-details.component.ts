@@ -145,7 +145,7 @@ export class ServerDetailsComponent {
           }
           this.description += `, ${this.getMemory()} of memory and ${this.getStorage()} of storage.`;
           if(this.serverDetails.prices[0]) {
-            this.description += ` Prices starting at $${this.serverDetails.prices[0].price} per hour as spot instance.`;
+            this.description += ` The pricing starts at $${this.serverDetails.prices[0].price} per hour.`;
           }
 
           this.faqs = [
@@ -154,8 +154,8 @@ export class ServerDetailsComponent {
               answer: this.description
             },
             {
-              question: `How much does ${this.serverDetails.display_name} cost?`,
-              answer: `${this.serverDetails.display_name} prices starting at $0.00001 per hour as spot instance.`
+              question: `How much does the ${this.serverDetails.display_name} server cost?`,
+              answer: `The pricing for ${this.serverDetails.display_name} servers starts at $${this.serverDetails.prices[0].price} per hour, but the actual price depends on the selected datacenter, zone and server allocation method (e.g. on-demand versus spot pricing options). Currently, the maximum price stands at $${this.serverDetails.prices.slice(-1)[0].price}.`
             },
             {
               question: `What is ${this.serverDetails.display_name} instance specification?`,
