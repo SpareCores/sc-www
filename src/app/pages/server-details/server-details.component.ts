@@ -84,8 +84,7 @@ export class ServerDetailsComponent {
 
 
   openApiJson: any = require('../../../../sdk/openapi.json');
-  instanceProperties: any;
-  instanceKeys!: string[];
+  instanceProperties: any[] = [];
 
   toolipContent = '';
 
@@ -99,16 +98,17 @@ export class ServerDetailsComponent {
     this.chartOptions = chartOptions2;
     this.chartOptions2 = chartOptions3;
     this.chartOptions3 = chartOptions1;
-
-    if(this.openApiJson.components.schemas.ServerPKsWithPrices.properties) {
-      this.instanceProperties = this.openApiJson.components.schemas.ServerPKsWithPrices.properties;
-    }
   }
 
   ngOnInit() {
     this.route.params.subscribe(params => {
       let vendor = params['vendor'];
       let id = params['id'];
+
+      this.keepreAPI.getServerMeta().then((data) => {
+        console.log('server meta', data);
+        this.instanceProperties = data?.body?.fields || [];
+      });
 
       this.keepreAPI.getServer(vendor, id).then((data) => {
         if(data?.body){
@@ -142,10 +142,6 @@ export class ServerDetailsComponent {
           this.datacenterFilters[0].selected = true;
 
           this.refreshGraphs();
-
-          if(this.serverDetails) {
-            this.instanceKeys = this.instanceKeys.filter((k: string): k is keyof ServerPKsWithPrices => k in this.serverDetails);
-          }
 
           this.title = `${this.serverDetails.display_name} by ${this.serverDetails.vendor.name} - Spare Cores`;
           this.description =
@@ -546,7 +542,8 @@ export class ServerDetailsComponent {
   }
 
   showTooltip(el: any, content: string) {
-    if(this.instanceProperties[content].description) {
+    let description = this.instanceProperties?.find(x => x.name === content)?.description;
+    if(description) {
       const tooltip = this.tooltip.nativeElement;
       const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
       tooltip.style.left = `${el.target.getBoundingClientRect().left - 25}px`;
@@ -554,7 +551,7 @@ export class ServerDetailsComponent {
       tooltip.style.display = 'block';
       tooltip.style.opacity = '1';
 
-      this.toolipContent = this.instanceProperties[content].description;
+      this.toolipContent = description;
     }
   }
 
