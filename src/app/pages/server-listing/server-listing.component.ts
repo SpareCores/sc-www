@@ -194,8 +194,11 @@ export class ServerListingComponent {
 
     this.route.queryParams.subscribe((params: Params) => {
       const query: any = params;
-      if(this.openApiJson.paths['/servers'].get.parameters) {
-        this.searchParameters = JSON.parse(JSON.stringify(this.openApiJson.paths['/servers'].get.parameters)).map((item: any) => {
+      const parameters = this.openApiJson.paths['/servers'].get.parameters || [];
+      this.searchParameters = parameters.map((item: any) => {
+        const value = query[item.name]?.split(',') || item.schema.default || null;
+        return {...item, modelValue: value};
+      });
           let value = query[item.name] || item.schema.default || null;
           if(query[item.name] && query[item.name].split(',').length > 1) {
             value = query[item.name].split(',');
