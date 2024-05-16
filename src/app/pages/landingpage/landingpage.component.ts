@@ -255,10 +255,10 @@ export class LandingpageComponent {
       let indices = [0, 1, 35];
       indices.forEach((index, i) => {
         this.spinnerContents[0][index] = { name: servers[i].vendor.vendor_id.toString().toUpperCase(), logo: servers[i].vendor.logo};
-        this.spinnerContents[1][index] = { name: servers[i].server.name, architecture: servers[i].server.cpu_architecture};
+        this.spinnerContents[1][index] = { name: servers[i].server.display_name, architecture: servers[i].server.cpu_architecture};
         this.spinnerContents[2][index] = {
-          name: servers[i].datacenter?.city?.toString() || servers[i].datacenter?.state?.toString(),
-          city: servers[i].zone?.name?.toString().replace(/\(.*\)/, '')
+          name: servers[i].datacenter?.display_name,
+          city: servers[i].zone?.display_name
         };
       });
     }, 500);

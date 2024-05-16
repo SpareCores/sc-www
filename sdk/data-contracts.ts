@@ -692,6 +692,14 @@ export interface HTTPValidationError {
   detail?: ValidationError[];
 }
 
+/** NameAndDescription */
+export interface NameAndDescription {
+  /** Name */
+  name: string;
+  /** Description */
+  description: string;
+}
+
 /** OrderDir */
 export enum OrderDir {
   Asc = "asc",
@@ -1517,6 +1525,13 @@ export enum StorageType {
   Network = "network",
 }
 
+/** TableMetaData */
+export interface TableMetaData {
+  table: NameAndDescription;
+  /** Fields */
+  fields: NameAndDescription[];
+}
+
 /** ValidationError */
 export interface ValidationError {
   /** Location */
@@ -1827,6 +1842,8 @@ export type TableZoneTableZoneGetData = Zone[];
 /** Response Table Server Table Server Get */
 export type TableServerTableServerGetData = Server[];
 
+export type TableMetadataServerTableServerMetaGetData = TableMetaData;
+
 /** Response Table Storage Table Storage Get */
 export type TableStorageTableStorageGetData = Storage[];
 
@@ -1882,7 +1899,7 @@ export interface SearchServersServersGetParams {
    * Allocation
    * Server allocation method.
    */
-  allocation?: Allocation | null;
+  allocation?: "ondemand" | "reserved" | "spot";
   /**
    * Vendor id
    * Cloud provider vendor.
@@ -1975,7 +1992,38 @@ export interface SearchServersServersGetParams {
    * Countries
    * Datacenter countries.
    */
-  countries?: string[] | null;
+  countries?:
+    | "AE"
+    | "AU"
+    | "BE"
+    | "BH"
+    | "BR"
+    | "CA"
+    | "CH"
+    | "CL"
+    | "CN"
+    | "DE"
+    | "ES"
+    | "FI"
+    | "FR"
+    | "GB"
+    | "HK"
+    | "ID"
+    | "IE"
+    | "IL"
+    | "IN"
+    | "IT"
+    | "JP"
+    | "KR"
+    | "NL"
+    | "PL"
+    | "QA"
+    | "SA"
+    | "SE"
+    | "SG"
+    | "TW"
+    | "US"
+    | "ZA";
   /**
    * GPU count
    * Number of GPUs.
@@ -2025,3 +2073,11 @@ export interface SearchServersServersGetParams {
 
 /** Response Search Servers Servers Get */
 export type SearchServersServersGetData = ServerPriceWithPKs[];
+
+export interface AssistFiltersAiAssistFiltersGetParams {
+  /** Text */
+  text: string;
+}
+
+/** Response Assist Filters Ai Assist Filters Get */
+export type AssistFiltersAiAssistFiltersGetData = object;

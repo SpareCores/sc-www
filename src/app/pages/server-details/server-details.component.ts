@@ -1,5 +1,5 @@
-import { Component, Inject, PLATFORM_ID, ViewChild } from '@angular/core';
-import { ActivatedRoute, RouterLink, RouterModule } from '@angular/router';
+import { Component, ElementRef, Inject, PLATFORM_ID, ViewChild } from '@angular/core';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { KeeperAPIService } from '../../services/keeper-api.service';
 import { Server, ServerPKsWithPrices, ServerPricePKs, TableServerTableServerGetData } from '../../../../sdk/data-contracts';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
@@ -10,7 +10,7 @@ import { FaqComponent } from '../../components/faq/faq.component';
 import { ApexAxisChartSeries, ApexChart, ApexDataLabels, ApexFill, ApexLegend, ApexPlotOptions, ApexStroke, ApexTooltip, ApexXAxis, ApexYAxis, ChartComponent, NgApexchartsModule } from "ng-apexcharts";
 import { chartOptions1, chartOptions2, chartOptions3 } from './chartOptions';
 import { FormsModule } from '@angular/forms';
-import { Dropdown, DropdownOptions } from 'flowbite';
+import { Dropdown, DropdownOptions, initFlowbite } from 'flowbite';
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -67,7 +67,7 @@ export class ServerDetailsComponent {
     { name: 'Ondemand', selected: true }
   ];
 
-  datacenterDropwdown: any;
+  datacenterDropdown: any;
   datacenterFilters: any[] = [];
 
   chartOptions: ChartOptions | any;
@@ -81,6 +81,14 @@ export class ServerDetailsComponent {
 
   similarByFamily: Server[] = [];
   similarByPerformance: Server[] = [];
+
+
+  openApiJson: any = require('../../../../sdk/openapi.json');
+  instanceProperties: any[] = [];
+
+  tooltipContent = '';
+
+  @ViewChild('tooltipDefault') tooltip!: ElementRef;
 
   constructor(@Inject(PLATFORM_ID) private platformId: object,
               private route: ActivatedRoute,
@@ -97,6 +105,10 @@ export class ServerDetailsComponent {
       let vendor = params['vendor'];
       let id = params['id'];
 
+      this.keepreAPI.getServerMeta().then((data) => {
+        this.instanceProperties = data?.body?.fields || [];
+      });
+
       this.keepreAPI.getServer(vendor, id).then((data) => {
         if(data?.body){
           this.serverDetails = data.body as any;
@@ -105,8 +117,6 @@ export class ServerDetailsComponent {
             { name: 'Servers', url: '/servers' },
             { name: this.serverDetails.display_name, url: '/server/' + this.serverDetails.vendor.vendor_id + '/' + this.serverDetails.server_id }
           ];
-
-
 
           this.features = [];
           if(this.serverDetails.cpu_cores || this.serverDetails.vcpus) {
@@ -127,7 +137,7 @@ export class ServerDetailsComponent {
           this.serverDetails.prices.forEach((price: ServerPricePKs) => {
               let datacenter = this.datacenterFilters.find((z) => z.datacenter_id === price.datacenter_id);
               if(!datacenter) {
-                this.datacenterFilters.push({datacenter_id: price.datacenter_id, name: price.datacenter_id, selected: false});
+                this.datacenterFilters.push({name: price.datacenter.display_name, datacenter_id: price.datacenter_id, selected: false});
               }
             });
 
@@ -209,6 +219,10 @@ export class ServerDetailsComponent {
           });
 
           if(isPlatformBrowser(this.platformId)) {
+            setTimeout(() => {
+              initFlowbite();
+            }, 2000);
+
             let interval = setInterval(() => {
               const targetElAllocation: HTMLElement | null = document.getElementById('allocation_options');
               const triggerElAllocation: HTMLElement | null = document.getElementById('allocation_button');
@@ -250,7 +264,7 @@ export class ServerDetailsComponent {
               const triggerElAllocation: HTMLElement | null = document.getElementById('datacenter_button');
 
               if(targetElAllocation && triggerElAllocation) {
-                this.datacenterDropwdown = new Dropdown(
+                this.datacenterDropdown = new Dropdown(
                   targetElAllocation,
                   triggerElAllocation,
                   options,
@@ -315,6 +329,7 @@ export class ServerDetailsComponent {
       if(!zone) {
         let data: any = {
           datacenter_id: price.datacenter_id,
+          display_name: price.datacenter.display_name,
           spot: {
             price: 0,
             unit: price.unit,
@@ -365,7 +380,7 @@ export class ServerDetailsComponent {
     let ondemandIdx = series.findIndex((s: any) => s.name === 'Ondemand');
 
     this.availabilityDatacenters.forEach((zone: any) => {
-      categories.push(zone.datacenter_id);
+      categories.push(zone.display_name);
       if(spotIdx > -1) {
         series[spotIdx].data.push(zone.spot?.price || 0);
       }
@@ -392,6 +407,7 @@ export class ServerDetailsComponent {
         let data: any = {
           zone_id: price.zone_id,
           datacenter_id: price.datacenter_id,
+          display_name: price.zone.display_name,
           spot: {
             price: 0,
             unit: price.unit,
@@ -442,8 +458,8 @@ export class ServerDetailsComponent {
     let ondemandIdx = series.findIndex((s: any) => s.name === 'Ondemand');
 
     this.availabilityZones.forEach((zone: any) => {
-      if(this.datacenterFilters.find((z) => z.name === zone.datacenter_id)?.selected) {
-        categories.push(zone.zone_id);
+      if(this.datacenterFilters.find((z) => z.datacenter_id === zone.datacenter_id)?.selected) {
+        categories.push(zone.display_name);
         if(spotIdx > -1) {
           series[spotIdx].data.push(zone.spot?.price || 0);
         }
@@ -472,6 +488,7 @@ export class ServerDetailsComponent {
       if(!zone) {
         let data: any = {
           zone_id: price.zone_id,
+          display_name: price.zone.display_name,
           spot: {
             price: 0,
             unit: price.unit,
@@ -514,7 +531,7 @@ export class ServerDetailsComponent {
     let categories: any = [];
 
     pricesPerZone.forEach((zone: any) => {
-      categories.push(zone.zone_id);
+      categories.push(zone.display_name);
       series[0].data.push(zone.spot?.price || 0);
       series[1].data.push(zone.ondemand?.price || 0);
     });
@@ -524,6 +541,26 @@ export class ServerDetailsComponent {
 
     this.chart3?.updateOptions(this.chartOptions3, true, true, true);
   }
+  }
+
+  showTooltip(el: any, content: string) {
+    let description = this.instanceProperties?.find(x => x.name === content)?.description;
+    if(description) {
+      const tooltip = this.tooltip.nativeElement;
+      const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+      tooltip.style.left = `${el.target.getBoundingClientRect().left - 25}px`;
+      tooltip.style.top = `${el.target.getBoundingClientRect().top - 45 + scrollPosition}px`;
+      tooltip.style.display = 'block';
+      tooltip.style.opacity = '1';
+
+      this.tooltipContent = description;
+    }
+  }
+
+  hideTooltip() {
+    const tooltip = this.tooltip.nativeElement;
+    tooltip.style.display = 'none';
+    tooltip.style.opacity = '0';
   }
 
 }

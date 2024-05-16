@@ -167,6 +167,7 @@ export class ServerListingComponent {
   freetextSearchInput: string | null = null;
   modalSubmitted = false;
   modalResponse: any;
+  modalResponseStr: string[] = [];
 
   countryMetadata: CountryMetadata[] = [];
   continentMetadata: ContinentMetadata[] = [];
@@ -194,16 +195,11 @@ export class ServerListingComponent {
 
     this.route.queryParams.subscribe((params: Params) => {
       const query: any = params;
-      if(this.openApiJson.paths['/servers'].get.parameters) {
-        this.searchParameters = JSON.parse(JSON.stringify(this.openApiJson.paths['/servers'].get.parameters)).map((item: any) => {
-          let value = query[item.name] || item.schema.default || null;
-          if(query[item.name] && query[item.name].split(',').length > 1) {
-            value = query[item.name].split(',');
-          }
-          return {...item,
-            modelValue: value};
-        });
-      }
+      const parameters = this.openApiJson.paths['/servers'].get.parameters || [];
+      this.searchParameters = parameters.map((item: any) => {
+        const value = query[item.name]?.split(',') || item.schema.default || null;
+        return {...item, modelValue: value};
+      });
 
       if(query.order_by && query.order_dir) {
         this.orderBy = query.order_by;
@@ -592,6 +588,18 @@ export class ServerListingComponent {
 
   closeModal(confirm: boolean) {
     if(confirm) {
+
+      this.searchParameters.forEach((param: any) => {
+        param.modelValue = param.schema.default;
+      });
+
+      Object.keys(this.modalResponse).forEach((key) => {
+        const param = this.searchParameters.find((param: any) => param.name === key);
+        if(param) {
+          param.modelValue = this.modalResponse[key];
+        }
+      });
+
       this.filterServers();
 
       this.freetextSearchInput = '';
@@ -606,8 +614,12 @@ export class ServerListingComponent {
     this.modalResponse = null;
 
     if(this.freetextSearchInput) {
-      this.keeperAPI.parseFreetextSearch(this.freetextSearchInput).then(response => {
-        this.modalResponse = {foo: 'bar'};
+      this.keeperAPI.parsePrompt({text:this.freetextSearchInput}).then(response => {
+        this.modalResponse = response.body;
+        this.modalResponseStr = [];
+        Object.keys(response.body).forEach((key) => {
+          this.modalResponseStr.push(key + ': ' + response.body[key]);
+        });
       }).catch(err => {
         console.error(err);
       }).finally(() => {
