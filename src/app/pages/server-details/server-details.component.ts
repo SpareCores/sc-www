@@ -110,7 +110,7 @@ export class ServerDetailsComponent {
 
           this.features = [];
           if(this.serverDetails.cpu_cores || this.serverDetails.vcpus) {
-            this.features.push({name: 'CPU', value: `${this.serverDetails.vcpus || this.serverDetails.cpu_cores}x`});
+            this.features.push({name: 'vCPU', value: `${this.serverDetails.vcpus || this.serverDetails.cpu_cores}`});
           }
           if(this.serverDetails.memory) {
             this.features.push({name: 'Memory', value: this.getMemory()});
