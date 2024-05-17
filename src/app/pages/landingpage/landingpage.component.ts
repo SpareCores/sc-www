@@ -60,37 +60,43 @@ export class LandingpageComponent {
       status: 'alpha',
       github: 'sc-crawler',
       pypi: 'sparecores-crawler',
-      docs: 'sc-crawler',
-      description: 'Inventory cloud resources into a SQlite database.'
+      docs: 'https://sparecores.github.io/sc-crawler',
+      description: 'Inventory cloud resources into a SQlite database.',
     },
     {
       component: 'SC Inspector',
-      status: 'planning',
-      description: 'Inspect and benchmark cloud resources.'
+      status: 'pre-alpha',
+      description: 'Inspect and benchmark cloud resources.',
+      github: 'sc-inspector',
+      data: 'https://github.com/SpareCores/sc-inspector-data',
     },
     {
       component: 'SC Data',
       status: 'alpha',
       github: 'sc-data',
       pypi: 'sparecores-data',
-      description: 'Wrapper around data collected using the Crawler.'
+      description: 'Wrapper around data collected using the Crawler.',
+      data: 'https://sc-data-public-40e9d310.s3.amazonaws.com/sc-data-all.db.bz2',
     },
     {
       component: 'SC Keeper',
       status: 'pre-alpha',
       description: 'API to search the Data.',
       github: 'sc-keeper',
+      docs: 'https://keeper.sparecores.net/docs',
+      www: 'https://keeper.sparecores.net',
     },
     {
       component: 'SC Scanner',
       status: 'pre-alpha',
       description: 'Web frontend and programming language SDKs for Keeper.',
-      www: 'https://github.com/SpareCores/sc-www'
+      www: 'https://github.com/SpareCores/sc-www',
     },
     {
       component: 'SC Runner',
-      status: 'planning',
-      description: 'Launching actual cloud instances.'
+      status: 'pre-alpha',
+      description: 'Launching actual cloud instances.',
+      github: 'sc-runner',
     }
   ];
 
