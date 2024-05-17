@@ -36,10 +36,18 @@ export class ArticlesComponent {
 
       this.breadcrumbs = [
         { name: 'Home', url: '/' },
-        { name: 'Articles', url: `/articles${category ? '?tag=' + category : '' }` }
+        { name: 'Articles', url: '/articles' },
+
       ];
 
       let title = category ? category.charAt(0).toUpperCase() + category.slice(1) : '';
+
+      if(category) {
+        this.breadcrumbs.push(
+          { name: `${title} Articles`, url: `/articles${category ? '?tag=' + category : '' }` }
+        );
+      }
+
       this.SEOHandler.updateTitleAndMetaTags(`${title} Articles - SpareCores`, `View all ${title} articles on SpareCores.`, `Server hosting articles, guides, tutorials.`);
 
     });

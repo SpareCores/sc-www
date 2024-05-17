@@ -109,7 +109,7 @@ an infinite loop as per below:
 We started with the `r7i.2xlarge` instance as previously experienced a
 very high (much higher than >20% as reported by the Spot Instance
 advisor) termination rate in the `us-west-2b` availability zone (or <a
-href="/article/featured/ids-vs-names">whatever it is called in your
+href="/article/ids-vs-names">whatever it is called in your
 AWS account</a>):
 
 <div class="text-center m-2.5 mt-8 mb-6">
