@@ -13,7 +13,10 @@ export const chartOptions1 = {
   ],
   chart: {
     type: "bar",
-    height: 350
+    height: 350,
+    toolbar: {
+      show: false
+    }
   },
   plotOptions: {
     bar: {
@@ -83,7 +86,10 @@ export const chartOptions2 = {
   ],
   chart: {
     type: "bar",
-    height: 350
+    height: 350,
+    toolbar: {
+      show: false
+    }
   },
   plotOptions: {
     bar: {
@@ -153,7 +159,10 @@ export const chartOptions3 = {
   ],
   chart: {
     type: "bar",
-    height: 350
+    height: 350,
+    toolbar: {
+      show: false
+    }
   },
   plotOptions: {
     bar: {
