@@ -46,13 +46,11 @@ export class DatacentersComponent {
     this.SEOHandler.updateTitleAndMetaTags('Datacenters - Spare Cores', 'List of all datacenters', 'AWS datacenters, Google Cloud datacenters');
 
     this.API.getDatacenters().then(datacenters => {
-      console.log(datacenters);
       this.datacenters = datacenters.body;
     });
 
     this.API.getVendors().then(vendors => {
       this.vendors = vendors.body;
-      console.log(this.vendors);
     });
   }
 

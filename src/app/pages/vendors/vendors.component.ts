@@ -44,13 +44,11 @@ export class VendorsComponent {
     this.SEOHandler.updateTitleAndMetaTags('Vendors - Spare Cores', 'List of all vendors', 'AWS, Google Cloud, Hetzner');
 
     this.API.getDatacenters().then(datacenters => {
-      console.log(datacenters);
       this.datacenters = datacenters.body;
     });
 
     this.API.getVendors().then(vendors => {
       this.vendors = vendors.body;
-      console.log(this.vendors);
     });
   }
 
