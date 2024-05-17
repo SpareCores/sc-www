@@ -13,7 +13,8 @@
           'hidden': activeFAQ !== i
 
         }">
-        <span itemprop="text">{{item.answer}} </span>
+        <span *ngIf="!item.html" itemprop="text">{{item.answer}} </span>
+        <span *ngIf="item.html" itemprop="text" [innerHTML]="item.html"></span>
       </p>
     </div>
   </div>
