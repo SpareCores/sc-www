@@ -100,7 +100,7 @@ export class ServerListingComponent {
     { name: 'MEMORY', show: true, type: 'memory', orderField: 'memory' },
     { name: 'STORAGE', show: true, type: 'storage', orderField: 'storage_size' },
     { name: 'STORAGE TYPE', show: false, type: 'text', key: 'server.storage_type' },
-    { name: 'GPUs', show: true, type: 'gpu', orderField: 'gpu_count' },
+    { name: 'GPUs', show: true, type: 'gpu', orderField: 'server.gpu_count' },
     { name: 'GPU MIN MEMORY', show: false, type: 'memory', key: 'server.gpu_memory_min' },
     { name: 'PRICE', show: true, type: 'price', orderField: 'price' },
     { name: 'ARCHITECTURE', show: false, type: 'text', key: 'server.cpu_architecture' },
