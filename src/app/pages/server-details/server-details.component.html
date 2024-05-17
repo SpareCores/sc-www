@@ -281,6 +281,7 @@
           <button class="btn-primary py-2 px-3" (click)="openBox('details')"> Show less </button>
         </div>
       </div>
+
       <div class="block_half" id="availability">
         <h3 class="text-2xl">Availability</h3>
         <table class="items_table">
@@ -309,9 +310,14 @@
           <button class="btn-primary py-2 px-3" (click)="openBox('availability')"> Show less </button>
         </div>
       </div>
+
+      <div class="my-2 w-full">
+        <h2 class="text-3xl font-bold"> Economics </h2>
+      </div>
+
       <div class="block_full">
         <div class="flex justify-between items-center">
-          <h3 class="text-2xl" >Economics</h3>
+          <h3 class="text-2xl" >Average Price per Datacenter</h3>
           <div>
             <button
               id="allocation_button"
@@ -408,8 +414,13 @@
           ></apx-chart>
         </div>
       </div>
+
+      <div class="my-2 w-full">
+        <h2 class="text-3xl font-bold"> Alternatives </h2>
+      </div>
+
       <div class="block_half">
-        <h3 class="text-2xl" >Alernatives</h3>
+        <h3 class="text-2xl">Servers of the Same Family</h3>
         <table class="items_table">
           <thead>
             <tr>
