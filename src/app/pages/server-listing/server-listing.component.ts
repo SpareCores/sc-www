@@ -97,10 +97,9 @@ export class ServerListingComponent {
   possibleColumns: TableColumn[] = [
     { name: 'NAME & PROVIDER', show: true, type: 'name'},
     { name: 'PROCESSOR', show: true, type: 'processor', orderField: 'vcpus' },
-    { name: 'PRODUCT', show: true, type: 'text', key: 'server.server_id' },
     { name: 'MEMORY', show: true, type: 'memory', orderField: 'memory' },
     { name: 'STORAGE', show: true, type: 'storage', orderField: 'storage_size' },
-    { name: 'STOCK', show: true, type: 'text', key: 'status' },
+    { name: 'GPUs', show: true, type: 'gpu', orderField: 'gpu_count' },
     { name: 'PRICE', show: true, type: 'price', orderField: 'price' },
     { name: 'ARCHITECTURE', show: false, type: 'text', key: 'server.cpu_architecture' },
     { name: 'DATACENTER', show: false, type: 'datacenter' },
@@ -109,7 +108,8 @@ export class ServerListingComponent {
     { name: 'COUNTRY', show: false, type: 'country' },
     { name: 'CONTINENT', show: false, type: 'text', key: 'datacenter.country.continent' },
     { name: 'ZONE', show: false, type: 'text', key: 'zone.name' },
-    { name: 'GPUs', show: false, type: 'gpu', orderField: 'gpu_count' },
+    { name: 'DATACENTER', show: false, type: 'text', key: 'datacenter.display_name' },
+    { name: 'GPU MIN MEMORY', show: false, type: 'memory', key: 'server.gpu_memory_min' },
     { name: 'STORAGE TYPE', show: false, type: 'text', key: 'server.storage_type' },
   ];
 
@@ -133,7 +133,6 @@ export class ServerListingComponent {
   allocationTypes = [
     {name: 'Spot', slug: 'spot'},
     {name: 'On Demand', slug: 'ondemand'},
-    {name: 'Reserved', slug: 'reserved'},
   ];
 
   pageLimits = [25, 50, 100, 250];
@@ -149,7 +148,7 @@ export class ServerListingComponent {
   orderBy: string | undefined = undefined;
   orderDir: OrderDir | undefined = undefined;
 
-  servers: ServerPriceWithPKs[] = [];
+  servers: ServerPriceWithPKs[] | any[] = [];
 
   openApiJson: any = require('../../../../sdk/openapi.json');
   searchParameters: any;

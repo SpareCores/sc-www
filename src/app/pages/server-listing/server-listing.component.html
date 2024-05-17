@@ -214,8 +214,18 @@
                 <tr *ngFor="let item of servers" (click)="openServerDetails(item)">
                   <ng-container *ngFor="let column of tableColumns">
                     <td *ngIf="column.type === 'name'" class="min-w-225">
-                      <div class="text-sm text-white">{{item.server.name}} </div>
-                      <div class="text-xs text-white flex gap-1"> <span>{{item.server_id}}</span> <span class="text-emerald-400" >|</span> <span>Hosted by:{{item.vendor_id}}</span> </div>
+                      <div class="text-sm text-white flex gap-1">
+                        <span>{{item.server.display_name}} </span>
+                        <span *ngIf="item.server.display_name !== item.server.api_reference" class="text-emerald-400" >|</span>
+                        <span *ngIf="item.server.display_name !== item.server.api_reference">{{item.server.api_reference}} </span>
+                      </div>
+                      <div class="text-xs text-white flex gap-1">
+                        <span>{{item.vendor_id}}</span>
+                        <span class="text-emerald-400" >|</span>
+                        <span>Datacenter:{{item.datacenter.display_name}}</span>
+                        <span class="text-emerald-400" >|</span>
+                        <span>Zone:{{item.zone.display_name}}</span>
+                      </div>
                     </td>
                     <td *ngIf="column.type === 'processor'">
                       <div class="text-sm text-white">{{item.server.cpu_cores || item.server.vcpus}}x {{item.server.cpu_architecture}}</div>

@@ -83,7 +83,7 @@ export const chartOptions2 = {
   ],
   chart: {
     type: "bar",
-    height: 300
+    height: 350
   },
   plotOptions: {
     bar: {
@@ -153,7 +153,7 @@ export const chartOptions3 = {
   ],
   chart: {
     type: "bar",
-    height: 300
+    height: 350
   },
   plotOptions: {
     bar: {

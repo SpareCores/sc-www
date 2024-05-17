@@ -3,7 +3,7 @@
     <app-breadcrumbs [segments]="breadcrumbs"></app-breadcrumbs>
 
     <div *ngIf="serverDetails" class="flex flex-wrap justify-between gap-8 px-6 py-6 bg-secondary border-emerald-400 border boder-solid mt-12"  >
-      <div class="flex gap-6 lg:w-3/5 w-full" >
+      <div class="flex gap-8 lg:w-3/5 w-full" >
         <div class="min-w-20 w-20 h-20 px-1 py-1 bg-white rounded-lg my-auto">
           <img src="{{serverDetails.vendor.logo}}" alt="logo">
         </div>
@@ -34,7 +34,7 @@
     </div>
 
     <div class="my-8">
-      <h2 class="text-3xl font-bold"> Plan Specification </h2>
+      <h2 class="text-3xl font-bold"> Specifications </h2>
     </div>
 
     <div *ngIf="serverDetails" class="flex flex-wrap gap-8">
@@ -310,21 +310,24 @@
         </div>
       </div>
       <div class="block_full">
-        <h3 class="text-2xl" >Price Details</h3>
-        <div>
-          <button
-            id="allocation_button"
-            data-dropdown-toggle="allocation_options"
-            class="dropdown_button"
-            type="button">
-            <div class="px-3 py-2">
-              Allocation
-            </div>
-            <div class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
-              <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
-            </div>
-          </button>
+        <div class="flex justify-between items-center">
+          <h3 class="text-2xl" >Economics</h3>
+          <div>
+            <button
+              id="allocation_button"
+              data-dropdown-toggle="allocation_options"
+              class="dropdown_button"
+              type="button">
+              <div class="px-3 py-2">
+                Allocation
+              </div>
+              <div class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
+                <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
+              </div>
+            </button>
+          </div>
         </div>
+
         <div *ngIf="isBrowser()">
           <apx-chart
           id="chart1" #chart1
@@ -342,32 +345,34 @@
         </div>
       </div>
       <div class="block_half">
-        <h3 class="text-2xl" >Prices per Zone</h3>
-        <div class="flex gap-4">
-          <button
-            id="allocation_button2"
-            data-dropdown-toggle="allocation_options2"
-            class="dropdown_button"
-            type="button">
-            <div class="px-3 py-2">
-              Allocation
-            </div>
-            <div class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
-              <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
-            </div>
-          </button>
-          <button
-            id="datacenter_button"
-            data-dropdown-toggle="datacenter_options"
-            class="dropdown_button"
-            type="button">
-            <div class="px-3 py-2">
-              Datacenters
-            </div>
-            <div class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
-              <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
-            </div>
-          </button>
+        <div class="flex justify-between items-center">
+          <h3 class="text-2xl" >Prices per Zone</h3>
+          <div class="flex gap-4">
+            <button
+              id="allocation_button2"
+              data-dropdown-toggle="allocation_options2"
+              class="dropdown_button"
+              type="button">
+              <div class="px-3 py-2">
+                Allocation
+              </div>
+              <div class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
+                <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
+              </div>
+            </button>
+            <button
+              id="datacenter_button"
+              data-dropdown-toggle="datacenter_options"
+              class="dropdown_button"
+              type="button">
+              <div class="px-3 py-2">
+                Datacenters
+              </div>
+              <div class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
+                <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
+              </div>
+            </button>
+          </div>
         </div>
         <div *ngIf="isBrowser()">
           <apx-chart
@@ -404,7 +409,7 @@
         </div>
       </div>
       <div class="block_half">
-        <h3 class="text-2xl" >Servers of the Same Family </h3>
+        <h3 class="text-2xl" >Alernatives</h3>
         <table class="items_table">
           <thead>
             <tr>
