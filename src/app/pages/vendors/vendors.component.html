@@ -27,6 +27,11 @@
               HOMEPAGE
             </div>
           </th>
+          <th>
+            <div class="flex gap-1">
+              DATACENTERS
+            </div>
+          </th>
           <th></th>
         </tr>
       </thead>
@@ -47,6 +52,7 @@
               {{item.homepage}}
             </a>
           </td>
+          <td> {{item.datacenters}} </td>
           <td>
             <div class="flex justify-end" (click)="$event.stopPropagation()">
               <a routerLink="/servers" [queryParams]="{vendor: item.vendor_id}">

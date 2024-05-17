@@ -43,13 +43,21 @@ export class VendorsComponent {
   ngOnInit() {
     this.SEOHandler.updateTitleAndMetaTags('Vendors - Spare Cores', 'List of all vendors', 'AWS, Google Cloud, Hetzner');
 
-    this.API.getDatacenters().then(datacenters => {
-      this.datacenters = datacenters.body;
-    });
-
     this.API.getVendors().then(vendors => {
       this.vendors = vendors.body;
+      for (let i = 0; i < this.vendors.length; i++) {
+        this.vendors[i].datacenters = 0;
+      }
+      this.API.getDatacenters().then(datacenters => {
+        this.datacenters = datacenters.body;
+        // count datacenters per vendor
+        for (let i = 0; i < this.datacenters.length; i++) {
+          const vendor = this.vendors.find((v: any) => v.vendor_id === this.datacenters[i].vendor_id);
+          vendor.datacenters++;
+        }
+      });
     });
+
   }
 
   getVendorName(vendorId: string): string {
