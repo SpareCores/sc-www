@@ -1,24 +1,38 @@
 <div class="w-full bg-primary min-h-screen">
   <div class="content pt-16 pb-16 text-white flex flex-col gap-8">
     <app-breadcrumbs [segments]="breadcrumbs"></app-breadcrumbs>
-    <h1 class="text-4xl font-bold">Vendors</h1>
+    <h1 class="text-4xl font-bold">Supported Vendors</h1>
+    <div class="text-white text-xl pr-16">
+      Currently we are tracking {{ this.vendors.length }} cloud provider vendors as part of the <a href="/#project_components" class="underline decoration-dotted hover:text-gray-500">SC Crawler project</a>:
+    </div>
 
     <table class="items_table">
       <thead>
         <tr>
+          <th></th>
           <th>
             <div class="flex gap-1">
-              VENDOR
+              NAME
             </div>
           </th>
           <th>
             <div class="flex gap-1">
-              COUNTRY
+              HEADQUARTER
             </div>
           </th>
           <th>
             <div class="flex gap-1">
-              CITY
+              FOUNDED
+            </div>
+          </th>
+          <th>
+            <div class="flex gap-1">
+              HOMEPAGE
+            </div>
+          </th>
+          <th>
+            <div class="flex gap-1">
+              DATACENTERS
             </div>
           </th>
           <th></th>
@@ -27,10 +41,21 @@
       <tbody>
         <tr *ngFor="let item of vendors" (click)="openLink(item)">
           <td>
-              {{item.vendor_id}}
+              <img class="bg-white rounded" src="{{item.logo}}" />
           </td>
-          <td> {{item.country_id | countryIdtoName}}</td>
-          <td> {{item.city}}</td>
+          <td>
+              {{item.name}}
+          </td>
+          <td> {{item.city}}, {{item.country_id | countryIdtoName}}</td>
+          <td> {{item.founding_year}} </td>
+          <td>
+            <a href="{{item.homepage}}"
+               class="underline decoration-dotted hover:text-gray-500"
+               target="_blank" rel="noopener">
+              {{item.homepage}}
+            </a>
+          </td>
+          <td> {{item.datacenters}} </td>
           <td>
             <div class="flex justify-end" (click)="$event.stopPropagation()">
               <a routerLink="/servers" [queryParams]="{vendor: item.vendor_id}">
