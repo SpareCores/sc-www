@@ -10,10 +10,15 @@
         <div class="flex flex-col gap-3">
           <h1 class="text-2xl" > <span class="text-emerald-400 font-bold">{{serverDetails.display_name}}</span> by {{serverDetails.vendor.name}} </h1>
           <div> {{description}} </div>
-          <div class="flex">
+          <div class="flex gap-4">
             <a class="btn-primary py-3 px-5 flex gap-2"
                [href]="serverDetails.vendor.homepage" target="_blank" rel="nofollow noopener">
               <span> Visit Vendor </span>
+              <lucide-icon name="external-link" class="h-6 w-6"></lucide-icon>
+            </a>
+            <a class="btn-primary py-3 px-5 flex gap-2"
+               [href]="serverDetails.vendor.status_page" target="_blank" rel="nofollow noopener">
+              <span> Status Page </span>
               <lucide-icon name="external-link" class="h-6 w-6"></lucide-icon>
             </a>
           </div>
