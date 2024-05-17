@@ -238,6 +238,9 @@
                     <td *ngIf="column.type === 'memory'">
                       {{getMemory(item)}}
                     </td>
+                    <td *ngIf="column.type === 'gpu_memory'">
+                      {{getGPUMemory(item)}}
+                    </td>
                     <td *ngIf="column.type === 'storage'">
                       <div class="text-sm text-white">{{getStorage(item)}}</div>
                       <div
@@ -264,7 +267,7 @@
                       {{item.datacenter.country_id | countryIdtoName}}
                     </td>
                     <td *ngIf="column.type === 'datacenter'" class="min-w-225">
-                      <div class="text-sm text-white">{{item.datacenter.name}}</div>
+                      <div class="text-sm text-white">{{item.datacenter.display_name}}</div>
                       <div class="text-xs text-white flex gap-1"> <span>{{item.datacenter.datacenter_id}} </span> </div>
                     </td>
                     <td *ngIf="column.type === 'vendor'" >

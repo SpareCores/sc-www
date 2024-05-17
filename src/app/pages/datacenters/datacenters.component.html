@@ -24,16 +24,25 @@
               <lucide-icon *ngIf="getOrderingIcon('country')" name="{{getOrderingIcon('country')}}" class="h-4 w-4 text-white"></lucide-icon>
             </div>
           </th>
+          <th >
+            <div class="flex gap-1">
+            FOUNDING YEAR
+            </div>
+          </th>
           <th></th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let item of datacenters" (click)="openLink(item)">
           <td>
+            <div class="flex gap-1">
               {{item.display_name}}
+              <lucide-icon *ngIf="item.green_energy" name="leaf" class="h-4 w-4 text-emerald-400"></lucide-icon>
+            </div>
           </td>
           <td> {{getVendorName(item.vendor_id)}}</td>
           <td> {{item.country_id | countryIdtoName}}</td>
+          <td> {{item.founding_year || '-'}}</td>
           <td>
             <div class="flex justify-end" (click)="$event.stopPropagation()">
               <a routerLink="/servers" [queryParams]="{datacenters: item.datacenter_id}">

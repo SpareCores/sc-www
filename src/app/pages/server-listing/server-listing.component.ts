@@ -101,7 +101,7 @@ export class ServerListingComponent {
     { name: 'STORAGE', show: true, type: 'storage', orderField: 'storage_size' },
     { name: 'STORAGE TYPE', show: false, type: 'text', key: 'server.storage_type' },
     { name: 'GPUs', show: true, type: 'gpu', orderField: 'server.gpu_count' },
-    { name: 'GPU MIN MEMORY', show: false, type: 'memory', key: 'server.gpu_memory_min' },
+    { name: 'GPU MIN MEMORY', show: false, type: 'gpu_memory', key: 'server.gpu_memory_min' },
     { name: 'PRICE', show: true, type: 'price', orderField: 'price' },
     { name: 'ARCHITECTURE', show: false, type: 'text', key: 'server.cpu_architecture' },
     { name: 'DATACENTER', show: false, type: 'datacenter' },
@@ -110,7 +110,6 @@ export class ServerListingComponent {
     { name: 'COUNTRY', show: false, type: 'country' },
     { name: 'CONTINENT', show: false, type: 'text', key: 'datacenter.country.continent' },
     { name: 'ZONE', show: false, type: 'text', key: 'zone.name' },
-    { name: 'DATACENTER', show: false, type: 'text', key: 'datacenter.display_name' },
   ];
 
   availableCurrencies = [
@@ -133,6 +132,7 @@ export class ServerListingComponent {
   allocationTypes = [
     {name: 'Spot', slug: 'spot'},
     {name: 'On Demand', slug: 'ondemand'},
+    {name: 'Both', slug: null}
   ];
 
   pageLimits = [25, 50, 100, 250];
@@ -312,6 +312,10 @@ export class ServerListingComponent {
     return ((item.server.memory || 0) / 1024).toFixed(1) + ' GB';
   }
 
+  getGPUMemory(item: ServerPriceWithPKs) {
+    return ((item.server.gpu_memory_min || 0) / 1024).toFixed(1) + ' GB';
+  }
+
   getStorage(item: ServerPriceWithPKs) {
     if(!item.server.storage_size) return '-';
 
@@ -476,7 +480,7 @@ export class ServerListingComponent {
       paramObject.currency = this.selectedCurrency.slug;
     }
 
-    if(this.allocation.slug !== 'ondemand') {
+    if(this.allocation.slug) {
       paramObject.allocation = this.allocation.slug;
     }
 
