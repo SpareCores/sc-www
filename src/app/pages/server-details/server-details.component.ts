@@ -120,13 +120,16 @@ export class ServerDetailsComponent {
 
           this.features = [];
           if(this.serverDetails.cpu_cores || this.serverDetails.vcpus) {
-            this.features.push({name: 'CPU', value: `${this.serverDetails.vcpus || this.serverDetails.cpu_cores}x`});
+            this.features.push({name: 'vCPU', value: `${this.serverDetails.vcpus || this.serverDetails.cpu_cores}`});
           }
           if(this.serverDetails.memory) {
             this.features.push({name: 'Memory', value: this.getMemory()});
           }
           if(this.serverDetails.storage_size) {
             this.features.push({name: 'Storage', value: this.getStorage()});
+          }
+          if(this.serverDetails.gpu_count) {
+            this.features.push({name: 'GPU', value: this.serverDetails.gpu_count});
           }
 
           this.datacenterFilters = [];
@@ -144,7 +147,7 @@ export class ServerDetailsComponent {
 
           this.title = `${this.serverDetails.display_name} by ${this.serverDetails.vendor.name} - Spare Cores`;
           this.description =
-            `${this.serverDetails.display_name} is a ${this.serverDetails.description} instance by ${this.serverDetails.vendor.name} with`;
+            `${this.serverDetails.display_name} is a ${this.serverDetails.description} server offered by ${this.serverDetails.vendor.name} with`;
           if(this.serverDetails.vcpus) {
             this.description += ` ${this.serverDetails.vcpus} vCPUs`;
           } else if(this.serverDetails.cpu_cores) {
@@ -152,7 +155,7 @@ export class ServerDetailsComponent {
           }
           this.description += `, ${this.getMemory()} of memory and ${this.getStorage()} of storage.`;
           if(this.serverDetails.prices[0]) {
-            this.description += ` Prices starting at $${this.serverDetails.prices[0].price} per hour as spot instance.`;
+            this.description += ` The pricing starts at $${this.serverDetails.prices[0].price} per hour.`;
           }
 
           this.faqs = [
@@ -161,12 +164,12 @@ export class ServerDetailsComponent {
               answer: this.description
             },
             {
-              question: `How much does ${this.serverDetails.display_name} cost?`,
-              answer: `${this.serverDetails.display_name} prices starting at $0.00001 per hour as spot instance.`
+              question: `How much does the ${this.serverDetails.display_name} server cost?`,
+              answer: `The pricing for ${this.serverDetails.display_name} servers starts at $${this.serverDetails.prices[0].price} per hour, but the actual price depends on the selected datacenter, zone and server allocation method (e.g. on-demand versus spot pricing options). Currently, the maximum price stands at $${this.serverDetails.prices.slice(-1)[0].price}.`
             },
             {
-              question: `What is ${this.serverDetails.display_name} instance specification?`,
-              answer: `${this.serverDetails.display_name} has ${this.serverDetails.vcpus || this.serverDetails.cpu_cores} CPUs, ${this.getMemory()} of memory and ${this.getStorage()} of storage.`
+              question: `What are the specs of the ${this.serverDetails.display_name} server?`,
+              answer: `The ${this.serverDetails.display_name} server is equipped with ${this.serverDetails.vcpus || this.serverDetails.cpu_cores} vCPU(s), ${this.getMemory()} of memory, ${this.getStorage()} of storage, and ${this.serverDetails.gpu_count} GPU(s). Additional block storage can be attached as needed.`
             }
           ];
 
@@ -184,13 +187,11 @@ export class ServerDetailsComponent {
                   if(this.similarByFamily.length < 7 && this.similarByFamily.findIndex((s2) => s2.server_id === s.server_id) === -1) {
                     this.similarByFamily.push(s);
                   }
-                } else if(
-                    (
-                      (this.serverDetails.vcpus && s.vcpus === this.serverDetails.vcpus) ||
-                      (this.serverDetails.cpu_cores && s.cpu_cores === this.serverDetails.cpu_cores))
-                    && s.memory === this.serverDetails.memory && s.server_id !== this.serverDetails.server_id) {
-                  if(this.similarByPerformance.length < 7 && this.similarByPerformance.findIndex((s2) => s2.server_id === s.server_id) === -1) {
-                    this.similarByPerformance.push(s);
+                } else {
+                  if(
+                    (this.serverDetails.vcpus && s.vcpus === this.serverDetails.vcpus)
+                      && s.server_id !== this.serverDetails.server_id) {
+                      this.similarByPerformance.push(s);
                   }
                 }
               });
@@ -205,13 +206,26 @@ export class ServerDetailsComponent {
                   return 0;
                 }
               });
-              this.similarByPerformance = this.similarByPerformance.sort((a, b) => a.name.localeCompare(b.name));
+              // search for servers with the closest amount of memory
+              this.similarByPerformance = this.similarByPerformance.sort((a, b) => {
+                return Math.abs(Number(this.serverDetails.memory) - Number(a.memory)) - Math.abs(Number(this.serverDetails.memory) - Number(b.memory));
+              });
+              this.similarByPerformance = this.similarByPerformance.slice(0, 7);
+
+              if (this.similarByFamily) {
+                this.faqs.push(
+                  {
+                    question: `Are there any other sized servers in the ${this.serverDetails.family} server family?`,
+                    answer: `Yes! In addition to the ${this.serverDetails.display_name} server, the ${this.serverDetails.family} server family includes ${this.similarByFamily.length} other sizes: ${this.similarByFamily.map((s) => s.name).join(', ')}.`
+                  });
+              };
 
               this.faqs.push(
-              {
-                question: `Are ${this.serverDetails.display_name} instance alternatives?`,
-                answer: `Yes, Instances in the ${this.serverDetails.family} family are ${this.similarByFamily.map((s) => s.name).join(', ')}. Furthermore instances with similar performance are ${this.similarByPerformance.map((s) => s.name).join(', ')}.`
-              });
+                {
+                  question: `What other servers offer similar performance to ${this.serverDetails.display_name}?`,
+                  answer: `Looking at the number of vCPUs and GPUs, also the amount of memory, the following servers come with similar specs: ${this.similarByPerformance.map((s) => s.name).join(', ')}.`
+                });
+
             }
           });
 
