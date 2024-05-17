@@ -44,7 +44,7 @@ export class ArticlesComponent {
 
       if(category) {
         this.breadcrumbs.push(
-          { name: `${title} Articles`, url: `/articles${category ? '?tag=' + category : '' }` }
+          { name: `#${category}`, url: `/articles${category ? '?tag=' + category : '' }` }
         );
       }
 
