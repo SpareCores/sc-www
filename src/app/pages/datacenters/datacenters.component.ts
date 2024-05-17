@@ -2,12 +2,12 @@ import { Component } from '@angular/core';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { KeeperAPIService } from '../../services/keeper-api.service';
-import { OrderDir, TableDatacenterTableDatacenterGetData } from '../../../../sdk/data-contracts';
+import { OrderDir, Server, TableDatacenterTableDatacenterGetData } from '../../../../sdk/data-contracts';
 import { CountryIdtoNamePipe } from '../../pipes/country-idto-name.pipe';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-datacenters',
@@ -38,7 +38,8 @@ export class DatacentersComponent {
 
   constructor(
     private SEOHandler: SeoHandlerService,
-    private API: KeeperAPIService
+    private API: KeeperAPIService,
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -97,6 +98,10 @@ export class DatacentersComponent {
       return this.orderDir === OrderDir.Desc ? 'arrow-down-wide-narrow' : 'arrow-down-narrow-wide';
     }
     return null;
+  }
+
+  openLink(item: any) {
+    this.router.navigateByUrl(`/servers?datacenters=${item.datacenter_id}`);
   }
 
 }

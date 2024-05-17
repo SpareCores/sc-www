@@ -2,5 +2,44 @@
   <div class="content pt-16 pb-16 text-white flex flex-col gap-8">
     <app-breadcrumbs [segments]="breadcrumbs"></app-breadcrumbs>
     <h1 class="text-4xl font-bold">Vendors</h1>
+
+    <table class="items_table">
+      <thead>
+        <tr>
+          <th>
+            <div class="flex gap-1">
+              VENDOR
+            </div>
+          </th>
+          <th>
+            <div class="flex gap-1">
+              COUNTRY
+            </div>
+          </th>
+          <th>
+            <div class="flex gap-1">
+              CITY
+            </div>
+          </th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of vendors" (click)="openLink(item)">
+          <td>
+              {{item.vendor_id}}
+          </td>
+          <td> {{item.country_id | countryIdtoName}}</td>
+          <td> {{item.city}}</td>
+          <td>
+            <div class="flex justify-end" (click)="$event.stopPropagation()">
+              <a routerLink="/servers" [queryParams]="{vendor: item.vendor_id}">
+                <lucide-icon name="chevron-right" class="h-6 w-6 text-emerald-400"></lucide-icon>
+              </a>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </div>

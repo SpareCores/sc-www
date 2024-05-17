@@ -28,14 +28,14 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let item of datacenters">
+        <tr *ngFor="let item of datacenters" (click)="openLink(item)">
           <td>
               {{item.display_name}}
           </td>
           <td> {{getVendorName(item.vendor_id)}}</td>
           <td> {{item.country_id | countryIdtoName}}</td>
           <td>
-            <div (click)="$event.stopPropagation()">
+            <div class="flex justify-end" (click)="$event.stopPropagation()">
               <a routerLink="/servers" [queryParams]="{datacenters: item.datacenter_id}">
                 <lucide-icon name="chevron-right" class="h-6 w-6 text-emerald-400"></lucide-icon>
               </a>

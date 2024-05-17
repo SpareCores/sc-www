@@ -411,6 +411,7 @@
               <th>INSTANCE</th>
               <th>VCPUs</th>
               <th>MEMORY</th>
+              <th>GPUs</th>
             </tr>
           </thead>
           <tbody>
@@ -424,6 +425,7 @@
               </td>
               <td> {{item.vcpus}}</td>
               <td> {{getMemory(item.memory)}}</td>
+              <td> {{item.gpu_count}}</td>
             </tr>
           </tbody>
         </table>
@@ -434,8 +436,10 @@
           <thead>
             <tr>
               <th>INSTANCE</th>
+              <th>VENDOR</th>
               <th>VCPUs</th>
               <th>MEMORY</th>
+              <th>GPUs</th>
             </tr>
           </thead>
           <tbody>
@@ -446,6 +450,7 @@
                 routerLink="/server/{{item.vendor_id}}/{{item.server_id}}">
                 {{item.display_name}}
                 </a> </td>
+              <td> {{item.vendor_id}}</td>
               <td> {{item.vcpus}}</td>
               <td> {{getMemory(item.memory)}}</td>
             </tr>
