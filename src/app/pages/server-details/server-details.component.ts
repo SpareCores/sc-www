@@ -216,14 +216,14 @@ export class ServerDetailsComponent {
                 this.faqs.push(
                   {
                     question: `Are there any other sized servers in the ${this.serverDetails.family} server family?`,
-                    answer: `Yes! In addition to the ${this.serverDetails.display_name} server, the ${this.serverDetails.family} server family includes ${this.similarByFamily.length} other sizes: ${this.similarByFamily.map((s) => s.name).join(', ')}.`
+                    html: `Yes! In addition to the ${this.serverDetails.display_name} server, the ${this.serverDetails.family} server family includes ${this.similarByFamily.length} other sizes: ${this.similarByFamily.map((s) => this.serverUrl(s)).join(', ')}.`
                   });
               };
 
               this.faqs.push(
                 {
                   question: `What other servers offer similar performance to ${this.serverDetails.display_name}?`,
-                  answer: `Looking at the number of vCPUs and GPUs, also the amount of memory, the following servers come with similar specs: ${this.similarByPerformance.map((s) => s.name).join(', ')}.`
+                  html: `Looking at the number of vCPUs and GPUs, also the amount of memory, the following servers come with similar specs: ${this.similarByPerformance.map((s) => this.serverUrl(s)).join(', ')}.`
                 });
 
             }
@@ -308,6 +308,12 @@ export class ServerDetailsComponent {
     if(this.serverDetails.storage_size < 1000) return `${this.serverDetails.storage_size}GB`;
 
     return `${(this.serverDetails.storage_size / 1000).toFixed(1)}TB`;
+  }
+
+  serverUrl(server: Server): string {
+    return(`<a class="underline decoration-dotted hover:text-gray-500"
+      href="/server/${server.vendor_id}/${server.server_id}">
+      ${server.display_name}</a>`)
   }
 
   openBox(boxId: string) {
