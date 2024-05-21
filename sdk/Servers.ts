@@ -9,10 +9,10 @@
  * ---------------------------------------------------------------
  */
 
-import { HTTPValidationError, MetaTables, MetadataMetatableMetaTableGetData } from "./data-contracts";
+import { HTTPValidationError, SearchServersServersGetData, SearchServersServersGetParams } from "./data-contracts";
 import { HttpClient, RequestParams } from "./http-client";
 
-export class Metatable<SecurityDataType = unknown> {
+export class Servers<SecurityDataType = unknown> {
   http: HttpClient<SecurityDataType>;
 
   constructor(http: HttpClient<SecurityDataType>) {
@@ -20,17 +20,18 @@ export class Metatable<SecurityDataType = unknown> {
   }
 
   /**
-   * @description Return a table with metadata as-is, e.g. all countries or vendors.
+   * No description
    *
-   * @tags Administrative endpoints
-   * @name MetadataMetatableMetaTableGet
-   * @summary Metadata
-   * @request GET:/metatable/{meta_table}
+   * @tags Query Resources
+   * @name SearchServersServersGet
+   * @summary Search Servers
+   * @request GET:/servers
    */
-  metadataMetatableMetaTableGet = (metaTable: MetaTables, params: RequestParams = {}) =>
-    this.http.request<MetadataMetatableMetaTableGetData, HTTPValidationError>({
-      path: `/metatable/${metaTable}`,
+  searchServersServersGet = (query: SearchServersServersGetParams, params: RequestParams = {}) =>
+    this.http.request<SearchServersServersGetData, HTTPValidationError>({
+      path: `/servers`,
       method: "GET",
+      query: query,
       ...params,
     });
 }

@@ -1,12 +1,12 @@
 import { Component, Inject, PLATFORM_ID } from '@angular/core';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { KeeperAPIService } from '../../services/keeper-api.service';
-import { MetaTables, OrderDir, SearchServerSearchGetParams, ServerPriceWithPKs } from '../../../../sdk/data-contracts';
+import { OrderDir, SearchServersServersGetParams, ServerPriceWithPKs } from '../../../../sdk/data-contracts';
 import { Subject, debounceTime } from 'rxjs';
 import { encodeQueryParams } from '../../tools/queryParamFunctions';
-import { ActivatedRoute, Params, Router } from '@angular/router';
+import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Dropdown, DropdownOptions, InstanceOptions, Modal, ModalOptions } from 'flowbite';
+import { Dropdown, DropdownOptions, Modal, ModalOptions } from 'flowbite';
 import { StorageHandlerService } from '../../services/storage-handler.service';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { FormsModule } from '@angular/forms';
@@ -67,7 +67,7 @@ const optionsModal: ModalOptions = {
 @Component({
   selector: 'app-server-listing',
   standalone: true,
-  imports: [CommonModule, FormsModule, BreadcrumbsComponent, LucideAngularModule, CountryIdtoNamePipe],
+  imports: [CommonModule, FormsModule, BreadcrumbsComponent, LucideAngularModule, CountryIdtoNamePipe, RouterModule],
   templateUrl: './server-listing.component.html',
   styleUrl: './server-listing.component.scss',
   host: {ngSkipHydration: 'true'},
@@ -97,10 +97,11 @@ export class ServerListingComponent {
   possibleColumns: TableColumn[] = [
     { name: 'NAME & PROVIDER', show: true, type: 'name'},
     { name: 'PROCESSOR', show: true, type: 'processor', orderField: 'vcpus' },
-    { name: 'PRODUCT', show: true, type: 'text', key: 'server.server_id' },
     { name: 'MEMORY', show: true, type: 'memory', orderField: 'memory' },
     { name: 'STORAGE', show: true, type: 'storage', orderField: 'storage_size' },
-    { name: 'STOCK', show: true, type: 'text', key: 'status' },
+    { name: 'STORAGE TYPE', show: false, type: 'text', key: 'server.storage_type' },
+    { name: 'GPUs', show: true, type: 'gpu', orderField: 'server.gpu_count' },
+    { name: 'GPU MIN MEMORY', show: false, type: 'gpu_memory', key: 'server.gpu_memory_min' },
     { name: 'PRICE', show: true, type: 'price', orderField: 'price' },
     { name: 'ARCHITECTURE', show: false, type: 'text', key: 'server.cpu_architecture' },
     { name: 'DATACENTER', show: false, type: 'datacenter' },
@@ -109,8 +110,6 @@ export class ServerListingComponent {
     { name: 'COUNTRY', show: false, type: 'country' },
     { name: 'CONTINENT', show: false, type: 'text', key: 'datacenter.country.continent' },
     { name: 'ZONE', show: false, type: 'text', key: 'zone.name' },
-    { name: 'GPUs', show: false, type: 'gpu', orderField: 'gpu_count' },
-    { name: 'STORAGE TYPE', show: false, type: 'text', key: 'server.storage_type' },
   ];
 
   availableCurrencies = [
@@ -133,7 +132,7 @@ export class ServerListingComponent {
   allocationTypes = [
     {name: 'Spot', slug: 'spot'},
     {name: 'On Demand', slug: 'ondemand'},
-    {name: 'Reserved', slug: 'reserved'},
+    {name: 'Both', slug: null}
   ];
 
   pageLimits = [25, 50, 100, 250];
@@ -149,7 +148,7 @@ export class ServerListingComponent {
   orderBy: string | undefined = undefined;
   orderDir: OrderDir | undefined = undefined;
 
-  servers: ServerPriceWithPKs[] = [];
+  servers: ServerPriceWithPKs[] | any[] = [];
 
   openApiJson: any = require('../../../../sdk/openapi.json');
   searchParameters: any;
@@ -167,6 +166,7 @@ export class ServerListingComponent {
   freetextSearchInput: string | null = null;
   modalSubmitted = false;
   modalResponse: any;
+  modalResponseStr: string[] = [];
 
   countryMetadata: CountryMetadata[] = [];
   continentMetadata: ContinentMetadata[] = [];
@@ -194,18 +194,11 @@ export class ServerListingComponent {
 
     this.route.queryParams.subscribe((params: Params) => {
       const query: any = params;
-      if(this.openApiJson.paths['/search'].get.parameters) {
-        this.searchParameters = JSON.parse(JSON.stringify(this.openApiJson.paths['/search'].get.parameters)).map((item: any) => {
-          let value = query[item.name] || item.schema.default || null;
-          if(query[item.name] && query[item.name].split(',').length > 1) {
-            value = query[item.name].split(',');
-          }
-          return {...item,
-            modelValue: value};
-        });
-      }
-
-      console.log('Search parameters:', this.searchParameters);
+      const parameters = this.openApiJson.paths['/servers'].get.parameters || [];
+      this.searchParameters = parameters.map((item: any) => {
+        const value = query[item.name]?.split(',') || item.schema.default || null;
+        return {...item, modelValue: value};
+      });
 
       if(query.order_by && query.order_dir) {
         this.orderBy = query.order_by;
@@ -319,6 +312,10 @@ export class ServerListingComponent {
     return ((item.server.memory || 0) / 1024).toFixed(1) + ' GB';
   }
 
+  getGPUMemory(item: ServerPriceWithPKs) {
+    return ((item.server.gpu_memory_min || 0) / 1024).toFixed(1) + ' GB';
+  }
+
   getStorage(item: ServerPriceWithPKs) {
     if(!item.server.storage_size) return '-';
 
@@ -380,7 +377,7 @@ export class ServerListingComponent {
   }
 
   filterServers(updateURL = true, updateTotalCount = true) {
-    let queryObject: SearchServerSearchGetParams = this.getQueryObject() || {};
+    let queryObject: SearchServersServersGetParams = this.getQueryObject() || {};
 
     if(updateURL) {
       this.updateQueryParams(queryObject);
@@ -405,7 +402,6 @@ export class ServerListingComponent {
       if(updateTotalCount) {
         this.totalPages = Math.ceil(parseInt(servers?.headers?.get('x-total-count') || '0') / this.limit);
       }
-      console.log('Servers:', servers);
     }).catch(err => {
       console.error(err);
     }).finally(() => {
@@ -484,7 +480,7 @@ export class ServerListingComponent {
       paramObject.currency = this.selectedCurrency.slug;
     }
 
-    if(this.allocation.slug !== 'ondemand') {
+    if(this.allocation.slug) {
       paramObject.allocation = this.allocation.slug;
     }
 
@@ -595,6 +591,18 @@ export class ServerListingComponent {
 
   closeModal(confirm: boolean) {
     if(confirm) {
+
+      this.searchParameters.forEach((param: any) => {
+        param.modelValue = param.schema.default;
+      });
+
+      Object.keys(this.modalResponse).forEach((key) => {
+        const param = this.searchParameters.find((param: any) => param.name === key);
+        if(param) {
+          param.modelValue = this.modalResponse[key];
+        }
+      });
+
       this.filterServers();
 
       this.freetextSearchInput = '';
@@ -609,8 +617,12 @@ export class ServerListingComponent {
     this.modalResponse = null;
 
     if(this.freetextSearchInput) {
-      this.keeperAPI.parseFreetextSearch(this.freetextSearchInput).then(response => {
-        this.modalResponse = {foo: 'bar'};
+      this.keeperAPI.parsePrompt({text:this.freetextSearchInput}).then(response => {
+        this.modalResponse = response.body;
+        this.modalResponseStr = [];
+        Object.keys(response.body).forEach((key) => {
+          this.modalResponseStr.push(key + ': ' + response.body[key]);
+        });
       }).catch(err => {
         console.error(err);
       }).finally(() => {
@@ -621,7 +633,7 @@ export class ServerListingComponent {
 
   loadCountries(selectedCountries: string | undefined) {
     const selectedCountryIds = selectedCountries ? selectedCountries.split(',') : [];
-    this.keeperAPI.getMetaTable(MetaTables.Country).then((response) => {
+    this.keeperAPI.getCountries().then((response) => {
       if(response?.body) {
 
         this.countryMetadata = response.body.map((item: any) => {
@@ -669,8 +681,8 @@ export class ServerListingComponent {
   loadDatacenters(selectedDatacenters: string | undefined) {
     const selectedDatacenterIds = selectedDatacenters ? selectedDatacenters.split(',') : [];
     Promise.all([
-      this.keeperAPI.getMetaTable(MetaTables.Vendor),
-      this.keeperAPI.getMetaTable(MetaTables.Datacenter)]).then((responses) => {
+      this.keeperAPI.getVendors(),
+      this.keeperAPI.getDatacenters()]).then((responses) => {
 
       if(responses[0]?.body) {
         this.vendorMetadata = responses[0].body;

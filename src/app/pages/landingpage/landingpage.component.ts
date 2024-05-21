@@ -3,7 +3,6 @@ import { ArticleMeta, ArticlesService } from '../../services/articles.service';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { KeeperAPIService } from '../../services/keeper-api.service';
 import { spinner_initial_data } from '../../tools/spinner_initial_data';
-import { SearchServerSearchGetData } from '../../../../sdk/data-contracts';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { FormsModule } from '@angular/forms';
 import { ThemeTextComponent } from '../../components/theme-text/theme-text.component';
@@ -11,6 +10,7 @@ import { RouterLink } from '@angular/router';
 import { TimeToShortDatePipe } from '../../pipes/time-to-short-date.pipe';
 import { LucideAngularModule } from 'lucide-angular';
 import { ArticleCardComponent } from '../../components/article-card/article-card.component';
+import { SearchServersServersGetData } from '../../../../sdk/data-contracts';
 
 @Component({
   selector: 'app-landingpage',
@@ -60,37 +60,43 @@ export class LandingpageComponent {
       status: 'alpha',
       github: 'sc-crawler',
       pypi: 'sparecores-crawler',
-      docs: 'sc-crawler',
-      description: 'Inventory cloud resources into a SQlite database.'
+      docs: 'https://sparecores.github.io/sc-crawler',
+      description: 'Inventory cloud resources into a SQlite database.',
     },
     {
       component: 'SC Inspector',
-      status: 'planning',
-      description: 'Inspect and benchmark cloud resources.'
+      status: 'pre-alpha',
+      description: 'Inspect and benchmark cloud resources.',
+      github: 'sc-inspector',
+      data: 'https://github.com/SpareCores/sc-inspector-data',
     },
     {
       component: 'SC Data',
       status: 'alpha',
       github: 'sc-data',
       pypi: 'sparecores-data',
-      description: 'Wrapper around data collected using the Crawler.'
+      description: 'Wrapper around data collected using the Crawler.',
+      data: 'https://sc-data-public-40e9d310.s3.amazonaws.com/sc-data-all.db.bz2',
     },
     {
       component: 'SC Keeper',
       status: 'pre-alpha',
       description: 'API to search the Data.',
       github: 'sc-keeper',
+      docs: 'https://keeper.sparecores.net/docs',
+      www: 'https://keeper.sparecores.net',
     },
     {
       component: 'SC Scanner',
       status: 'pre-alpha',
       description: 'Web frontend and programming language SDKs for Keeper.',
-      www: 'https://github.com/SpareCores/sc-www'
+      www: 'https://github.com/SpareCores/sc-www',
     },
     {
       component: 'SC Runner',
-      status: 'planning',
-      description: 'Launching actual cloud instances.'
+      status: 'pre-alpha',
+      description: 'Launching actual cloud instances.',
+      github: 'sc-runner',
     }
   ];
 
@@ -208,14 +214,13 @@ export class LandingpageComponent {
     }
 
     this.keeperAPI.searchServers({vcpus_min: this.cpuCount, memory_min: this.ramCount, limit: 100}).then(servers => {
-      console.log('Servers:', servers);
       this.spinAnim(servers.body);
     }).catch(err => {
       console.error(err);
     });
   }
 
-  spinAnim(servers: SearchServerSearchGetData, isFake = false) {
+  spinAnim(servers: SearchServersServersGetData, isFake = false) {
 
     if(this.isSpinning) {
       return;
@@ -256,10 +261,10 @@ export class LandingpageComponent {
       let indices = [0, 1, 35];
       indices.forEach((index, i) => {
         this.spinnerContents[0][index] = { name: servers[i].vendor.vendor_id.toString().toUpperCase(), logo: servers[i].vendor.logo};
-        this.spinnerContents[1][index] = { name: servers[i].server.name, architecture: servers[i].server.cpu_architecture};
+        this.spinnerContents[1][index] = { name: servers[i].server.display_name, architecture: servers[i].server.cpu_architecture};
         this.spinnerContents[2][index] = {
-          name: servers[i].datacenter?.city?.toString() || servers[i].datacenter?.state?.toString(),
-          city: servers[i].zone?.name?.toString().replace(/\(.*\)/, '')
+          name: servers[i].datacenter?.display_name,
+          city: servers[i].zone?.display_name
         };
       });
     }, 500);

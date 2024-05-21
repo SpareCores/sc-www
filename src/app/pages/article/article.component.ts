@@ -22,9 +22,7 @@ export class ArticleComponent {
   @ViewChild('articleDiv') articleDiv!: ElementRef;
 
   breadcrumbs: BreadcrumbSegment[] = [
-    { name: 'Home', url: '/' },
-    { name: 'Articles', url: `/articles/featured` },
-    { name: 'Article', url: '/article/1' }
+
   ];
 
   articleMeta: any;
@@ -44,7 +42,7 @@ export class ArticleComponent {
   ngOnInit() {
     this.route.params.subscribe(params => {
 
-      const category = params['category'];
+      const category = 'featured';
       const id = params['id'];
 
       this.articleHandler.getArticle(category, id).then((file: any) => {

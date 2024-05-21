@@ -9,10 +9,14 @@
  * ---------------------------------------------------------------
  */
 
-import { GetServerServerVendorIdServerIdGetData, HTTPValidationError } from "./data-contracts";
+import {
+  HTTPValidationError,
+  SearchDatacentersDatacentersGetData,
+  SearchDatacentersDatacentersGetParams,
+} from "./data-contracts";
 import { HttpClient, RequestParams } from "./http-client";
 
-export class Server<SecurityDataType = unknown> {
+export class Datacenters<SecurityDataType = unknown> {
   http: HttpClient<SecurityDataType>;
 
   constructor(http: HttpClient<SecurityDataType>) {
@@ -23,14 +27,15 @@ export class Server<SecurityDataType = unknown> {
    * No description
    *
    * @tags Query Resources
-   * @name GetServerServerVendorIdServerIdGet
-   * @summary Get Server
-   * @request GET:/server/{vendor_id}/{server_id}
+   * @name SearchDatacentersDatacentersGet
+   * @summary Search Datacenters
+   * @request GET:/datacenters
    */
-  getServerServerVendorIdServerIdGet = (vendorId: string, serverId: string, params: RequestParams = {}) =>
-    this.http.request<GetServerServerVendorIdServerIdGetData, HTTPValidationError>({
-      path: `/server/${vendorId}/${serverId}`,
+  searchDatacentersDatacentersGet = (query: SearchDatacentersDatacentersGetParams, params: RequestParams = {}) =>
+    this.http.request<SearchDatacentersDatacentersGetData, HTTPValidationError>({
+      path: `/datacenters`,
       method: "GET",
+      query: query,
       ...params,
     });
 }

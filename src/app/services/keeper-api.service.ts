@@ -1,10 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { MYHTTPClient } from './my_http/my-http';
-import { Search } from '../../../sdk/Search';
 import { Server } from '../../../sdk/Server';
-import { Metatable } from '../../../sdk/Metatable';
-import { MetaTables, SearchServerSearchGetParams } from '../../../sdk/data-contracts';
+import { Servers } from '../../../sdk/Servers';
+import { AssistFiltersAiAssistFiltersGetParams, SearchServersServersGetParams } from '../../../sdk/data-contracts';
+import { Table } from '../../../sdk/Table';
+import { Ai } from '../../../sdk/Ai';
 
 @Injectable({
   providedIn: 'root'
@@ -13,9 +14,11 @@ export class KeeperAPIService {
 
   public myHttp = new MYHTTPClient(this.httpClient, this.platformId);
 
-  public SearchController: Search = new Search(this.myHttp);
+  public SearchController: Servers = new Servers(this.myHttp);
   public ServerController: Server = new Server(this.myHttp);
-  public MetadataController: Metatable = new Metatable(this.myHttp);
+  public TableController: Table = new Table(this.myHttp);
+  public AIController: Ai = new Ai(this.myHttp);
+
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: object,
@@ -23,25 +26,35 @@ export class KeeperAPIService {
   }
 
   public getServer(vendor: string, id: string): Promise<any> {
-    return this.ServerController.readServerServerVendorIdServerIdGet(vendor, id);
+    return this.ServerController.getServerServerVendorIdServerIdGet(vendor, id);
   }
 
-  public searchServers(query: SearchServerSearchGetParams): Promise<any> {
-    return this.SearchController.searchServerSearchGet(query);
+  public searchServers(query: SearchServersServersGetParams): Promise<any> {
+    return this.SearchController.searchServersServersGet(query);
   }
 
-  public parseFreetextSearch(query: string): Promise<any> {
-    // return mock data
-    return new Promise((resolve, reject) => {
-      resolve({
-
-      });
-    });
-    //return this.SearchController.parseFreetextSearch(query);
+  public parsePrompt(query: AssistFiltersAiAssistFiltersGetParams): Promise<any> {
+    return this.AIController.assistFiltersAiAssistFiltersGet(query);
   }
 
-  public getMetaTable(tableName: MetaTables): Promise<any> {
-    return this.MetadataController.metadataMetatableMetaTableGet(tableName);
+  public getCountries(): Promise<any> {
+    return this.TableController.tableCountryTableCountryGet();
+  }
+
+  public getVendors(): Promise<any> {
+    return this.TableController.tableVendorTableVendorGet();
+  }
+
+  public getDatacenters(): Promise<any> {
+    return this.TableController.tableDatacenterTableDatacenterGet();
+  }
+
+  public getServers(): Promise<any> {
+    return this.TableController.tableServerTableServerGet();
+  }
+
+  public getServerMeta(): Promise<any> {
+    return this.TableController.tableMetadataServerTableServerMetaGet();
   }
 
 }

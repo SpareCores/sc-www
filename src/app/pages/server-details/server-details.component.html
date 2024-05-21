@@ -2,27 +2,33 @@
   <div class="content pt-16 pb-16 text-white">
     <app-breadcrumbs [segments]="breadcrumbs"></app-breadcrumbs>
 
-    <div *ngIf="serverDetails" class="flex justify-between px-6 py-6 bg-secondary border-emerald-400 border boder-solid mt-12"  >
-      <div class="flex gap-6 w-3/5" >
-        <div class="w-20 h-20 px-1 py-1 bg-white rounded-lg my-auto">
+    <div *ngIf="serverDetails" class="flex flex-wrap justify-between gap-8 px-6 py-6 bg-secondary border-emerald-400 border boder-solid mt-12"  >
+      <div class="flex gap-12 lg:w-3/5 w-full" >
+        <div class="min-w-20 w-20 h-20 px-1 py-1 bg-white rounded-lg my-auto">
           <img src="{{serverDetails.vendor.logo}}" alt="logo">
         </div>
         <div class="flex flex-col gap-3">
-          <h1 class="text-2xl" > <span class="text-emerald-400 font-bold">{{serverDetails.server_id}}</span> by {{serverDetails.vendor.name}} </h1>
+          <h1 class="text-2xl" > <span class="text-emerald-400 font-bold">{{serverDetails.display_name}}</span> by {{serverDetails.vendor.name}} </h1>
           <div> {{description}} </div>
-          <div class="flex">
-            <button class="btn-primary py-3 px-5 flex gap-2">
-              <lucide-icon name="shopping-cart" class="h-6 w-6"></lucide-icon>
-              <span> Order Now </span>
-            </button>
+          <div class="flex gap-4">
+            <a class="btn-primary py-3 px-5 flex gap-2"
+               [href]="serverDetails.vendor.homepage" target="_blank" rel="nofollow noopener">
+              <span> Visit Vendor </span>
+              <lucide-icon name="external-link" class="h-6 w-6"></lucide-icon>
+            </a>
+            <a class="btn-primary py-3 px-5 flex gap-2"
+               [href]="serverDetails.vendor.status_page" target="_blank" rel="nofollow noopener">
+              <span> Status Page </span>
+              <lucide-icon name="external-link" class="h-6 w-6"></lucide-icon>
+            </a>
           </div>
         </div>
       </div>
-      <div class="w-1/4">
+      <div class="w-full lg:w-1/4">
         <div *ngFor="let item of features, let i = index">
           <div *ngIf="i != 0" class="w-full h-4 mb-3 border-b border-gray-400 border-solid" ></div>
           <div class="flex gap-2 text-xl items-center text-gray-200">
-            <div class="px-1 py-1 rounded-full bg-emerald-480 h-6 w-6">
+            <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6">
             <lucide-icon name="check" class="h-4 w-4"></lucide-icon>
             </div>
             <b> {{item.value}} </b>
@@ -33,15 +39,501 @@
     </div>
 
     <div class="my-8">
-      <h2 class="text-3xl font-bold"> Plan Specification </h2>
+      <h2 class="text-3xl font-bold"> Specifications </h2>
+    </div>
+
+    <div *ngIf="serverDetails" class="flex flex-wrap gap-8">
+      <div class="block_half" id="details">
+        <h3 class="text-2xl" >Server Details</h3>
+        <table class="items_table">
+          <thead>
+            <tr>
+              <th>General</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td> <b>Server Id</b> </td>
+              <td> {{serverDetails.server_id}} </td>
+            </tr>
+            <tr>
+              <td> <b>Server Name</b> </td>
+              <td> {{serverDetails.name}} </td>
+            </tr>
+            <tr>
+              <td> <b>Family</b> </td>
+              <td> {{serverDetails.family}} </td>
+            </tr>
+            <tr>
+              <td> <b>Vendor</b> </td>
+              <td> {{serverDetails.vendor.name}} </td>
+            </tr>
+          </tbody>
+        </table>
+        <table class="items_table">
+          <thead>
+            <tr>
+              <th>Performance</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngIf="serverDetails.vcpus" >
+              <td>
+                <div class="flex gap-2 items-center">
+                  <b>vCPUs</b>
+                  <lucide-icon
+                    name="info"
+                    class="h-4 w-4 text-gray-200"
+                    (mouseenter)="showTooltip($event, 'vcpus')"
+                    (mouseleave)="hideTooltip()">
+                  </lucide-icon>
+                </div>
+              </td>
+              <td> {{serverDetails.vcpus}} </td>
+            </tr>
+            <tr *ngIf="serverDetails.cpu_cores">
+              <td>
+                <div class="flex gap-2 items-center">
+                  <b>CPU Cores</b>
+                  <lucide-icon
+                    name="info"
+                    class="h-4 w-4 text-gray-400"
+                    (mouseenter)="showTooltip($event, 'cpu_cores')"
+                    (mouseleave)="hideTooltip()">
+                  </lucide-icon>
+                </div>
+              </td>
+              <td> {{serverDetails.cpu_cores}} </td>
+            </tr>
+            <tr *ngIf="serverDetails.cpu_speed">
+              <td>
+                <div class="flex gap-2 items-center">
+                  <b>CPU Speed</b>
+                  <lucide-icon
+                    name="info"
+                    class="h-4 w-4 text-gray-400"
+                    (mouseenter)="showTooltip($event, 'cpu_speed')"
+                    (mouseleave)="hideTooltip()">
+                  </lucide-icon>
+                </div>
+              </td>
+              <td> {{serverDetails.cpu_speed}}Ghz </td>
+            </tr>
+            <tr *ngIf="serverDetails.cpu_architecture">
+              <td>
+                <div class="flex gap-2 items-center">
+                  <b>CPU Architecture</b>
+                  <lucide-icon
+                    name="info"
+                    class="h-4 w-4 text-gray-400"
+                    (mouseenter)="showTooltip($event, 'cpu_architecture')"
+                    (mouseleave)="hideTooltip()">
+                  </lucide-icon>
+                </div>
+              </td>
+              <td> {{serverDetails.cpu_architecture}} </td>
+            </tr>
+            <tr *ngIf="serverDetails.cpu_manufacturer">
+              <td>
+                <div class="flex gap-2 items-center">
+                  <b>CPU Manufacturer</b>
+                  <lucide-icon
+                    name="info"
+                    class="h-4 w-4 text-gray-400"
+                    (mouseenter)="showTooltip($event, 'cpu_manufacturer')"
+                    (mouseleave)="hideTooltip()">
+                  </lucide-icon>
+                </div>
+              </td>
+              <td> {{serverDetails.cpu_manufacturer}} </td>
+            </tr>
+            <tr *ngIf="serverDetails.cpu_model">
+              <td>
+                <div class="flex gap-2 items-center">
+                  <b>CPU Model</b>
+                  <lucide-icon
+                    name="info"
+                    class="h-4 w-4 text-gray-400"
+                    (mouseenter)="showTooltip($event, 'cpu_model')"
+                    (mouseleave)="hideTooltip()">
+                  </lucide-icon>
+                </div>
+              </td>
+              <td> {{serverDetails.cpu_model}} </td>
+            </tr>
+            <tr *ngIf="serverDetails.memory">
+              <td>
+                <div class="flex gap-2 items-center">
+                  <b>Memory</b>
+                  <lucide-icon
+                    name="info"
+                    class="h-4 w-4 text-gray-400"
+                    (mouseenter)="showTooltip($event, 'memory')"
+                    (mouseleave)="hideTooltip()">
+                  </lucide-icon>
+                </div>
+              </td>
+              <td> {{getMemory()}} </td>
+            </tr>
+            <tr *ngIf="serverDetails.gpu_count">
+              <td>
+                <div class="flex gap-2 items-center">
+                  <b>GPUs</b>
+                  <lucide-icon
+                    name="info"
+                    class="h-4 w-4 text-gray-400"
+                    (mouseenter)="showTooltip($event, 'gpu_count')"
+                    (mouseleave)="hideTooltip()">
+                  </lucide-icon>
+                </div>
+              </td>
+              <td> {{serverDetails.gpu_count}} </td>
+            </tr>
+            <tr *ngIf="serverDetails.gpu_manufacturer">
+              <td>
+                <div class="flex gap-2 items-center">
+                  <b>GPU Manufacturer</b>
+                  <lucide-icon
+                    name="info"
+                    class="h-4 w-4 text-gray-400"
+                    (mouseenter)="showTooltip($event, 'gpu_manufacturer')"
+                    (mouseleave)="hideTooltip()">
+                  </lucide-icon>
+                </div>
+              </td>
+              <td> {{serverDetails.gpu_manufacturer}} </td>
+            </tr>
+            <tr *ngIf="serverDetails.gpu_memory_total">
+              <td>
+                <div class="flex gap-2 items-center">
+                  <b>GPU Memory Total</b>
+                  <lucide-icon
+                    name="info"
+                    class="h-4 w-4 text-gray-400"
+                    (mouseenter)="showTooltip($event, 'gpu_memory_total')"
+                    (mouseleave)="hideTooltip()">
+                  </lucide-icon>
+                </div>
+              </td>
+              <td> {{serverDetails.gpu_memory_total}} </td>
+            </tr>
+            <tr *ngIf="serverDetails.storage_size">
+              <td>
+                <div class="flex gap-2 items-center">
+                  <b>GPUs</b>
+                  <lucide-icon
+                    name="info"
+                    class="h-4 w-4 text-gray-400"
+                    (mouseenter)="showTooltip($event, 'storage')"
+                    (mouseleave)="hideTooltip()">
+                  </lucide-icon>
+                </div>
+              </td>
+              <td> {{getStorage()}} </td>
+            </tr>
+            <tr *ngIf="serverDetails.storage_type">
+              <td>
+                <div class="flex gap-2 items-center">
+                  <b>Storage type</b>
+                  <lucide-icon
+                    name="info"
+                    class="h-4 w-4 text-gray-400"
+                    (mouseenter)="showTooltip($event, 'storage_type')"
+                    (mouseleave)="hideTooltip()">
+                  </lucide-icon>
+                </div>
+              </td>
+              <td> {{serverDetails.storage_type}} </td>
+            </tr>
+            <tr *ngIf="serverDetails.hypervisor">
+              <td>
+                <div class="flex gap-2 items-center">
+                  <b>Hypervisor</b>
+                  <lucide-icon
+                    name="info"
+                    class="h-4 w-4 text-gray-400"
+                    (mouseenter)="showTooltip($event, 'hypervisor')"
+                    (mouseleave)="hideTooltip()">
+                  </lucide-icon>
+                </div>
+              </td>
+              <td> {{serverDetails.hypervisor}} </td>
+            </tr>
+            <tr *ngIf="serverDetails.network_speed">
+              <td>
+                <div class="flex gap-2 items-center">
+                  <b>Network Speed</b>
+                  <lucide-icon
+                    name="info"
+                    class="h-4 w-4 text-gray-400"
+                    (mouseenter)="showTooltip($event, 'network_speed')"
+                    (mouseleave)="hideTooltip()">
+                  </lucide-icon>
+                </div>
+              </td>
+              <td> {{serverDetails.network_speed}}Gbps </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="absolute bottom-0 left-0 w-full py-3 flex justify-center" id="details_more"
+            style="background: linear-gradient(360deg, #06263A 23.44%, rgba(6, 38, 58, 0) 100%);" >
+          <button class="btn-primary py-2 px-3" (click)="openBox('details')"> View more details </button>
+        </div>
+        <div class="w-full pt-3 flex justify-center hidden" id="details_less">
+          <button class="btn-primary py-2 px-3" (click)="openBox('details')"> Show less </button>
+        </div>
+      </div>
+
+      <div class="block_half" id="availability">
+        <h3 class="text-2xl">Availability</h3>
+        <table class="items_table">
+          <thead>
+            <tr>
+              <th>DATACENTER</th>
+              <th>SPOT</th>
+              <th>ONDEMAND</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of availabilityDatacenters">
+              <td> <b>{{item.display_name}}</b> </td>
+              <td *ngIf="item['spot']"> ${{item['spot'].price}}/{{item['spot'].unit}}</td>
+              <td *ngIf="!item['spot']"> - </td>
+              <td *ngIf="item['ondemand']"> ${{item['ondemand'].price}}/{{item['ondemand'].unit}}</td>
+              <td *ngIf="!item['ondemand']"> - </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="absolute bottom-0 laft-0 w-full py-3 flex justify-center" id="availability_more"
+            style="background: linear-gradient(360deg, #06263A 23.44%, rgba(6, 38, 58, 0) 100%);" >
+          <button class="btn-primary py-2 px-3" (click)="openBox('availability')"> Show more </button>
+        </div>
+        <div class="w-full pt-3 flex justify-center hidden" id="availability_less">
+          <button class="btn-primary py-2 px-3" (click)="openBox('availability')"> Show less </button>
+        </div>
+      </div>
+
+      <div class="my-2 w-full">
+        <h2 class="text-3xl font-bold"> Economics </h2>
+      </div>
+
+      <div class="block_full">
+        <div class="flex justify-between items-center">
+          <h3 class="text-2xl" >Average Price per Datacenter</h3>
+          <div>
+            <button
+              id="allocation_button"
+              data-dropdown-toggle="allocation_options"
+              class="dropdown_button"
+              type="button">
+              <div class="px-3 py-2">
+                Allocation
+              </div>
+              <div class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
+                <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <div *ngIf="isBrowser()">
+          <apx-chart
+          id="chart1" #chart1
+          [series]="chartOptions.series"
+          [chart]="chartOptions.chart"
+          [dataLabels]="chartOptions.dataLabels"
+          [plotOptions]="chartOptions.plotOptions"
+          [yaxis]="chartOptions.yaxis"
+          [legend]="chartOptions.legend"
+          [fill]="chartOptions.fill"
+          [stroke]="chartOptions.stroke"
+          [tooltip]="chartOptions.tooltip"
+          [xaxis]="chartOptions.xaxis"
+          ></apx-chart>
+        </div>
+      </div>
+      <div class="block_half">
+        <div class="flex justify-between items-center">
+          <h3 class="text-2xl" >Prices per Zone</h3>
+          <div class="flex gap-4">
+            <button
+              id="allocation_button2"
+              data-dropdown-toggle="allocation_options2"
+              class="dropdown_button"
+              type="button">
+              <div class="px-3 py-2">
+                Allocation
+              </div>
+              <div class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
+                <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
+              </div>
+            </button>
+            <button
+              id="datacenter_button"
+              data-dropdown-toggle="datacenter_options"
+              class="dropdown_button"
+              type="button">
+              <div class="px-3 py-2">
+                Datacenters
+              </div>
+              <div class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
+                <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
+              </div>
+            </button>
+          </div>
+        </div>
+        <div *ngIf="isBrowser()">
+          <apx-chart
+          id="chart2" #chart2
+          [series]="chartOptions2.series"
+          [chart]="chartOptions2.chart"
+          [dataLabels]="chartOptions2.dataLabels"
+          [plotOptions]="chartOptions2.plotOptions"
+          [yaxis]="chartOptions2.yaxis"
+          [legend]="chartOptions2.legend"
+          [fill]="chartOptions2.fill"
+          [stroke]="chartOptions2.stroke"
+          [tooltip]="chartOptions2.tooltip"
+          [xaxis]="chartOptions2.xaxis"
+          ></apx-chart>
+        </div>
+      </div>
+      <div class="block_half">
+        <h3 class="text-2xl" >Lowest Prices</h3>
+        <div *ngIf="isBrowser()">
+          <apx-chart
+          id="chart3" #chart3
+          [series]="chartOptions3.series"
+          [chart]="chartOptions3.chart"
+          [dataLabels]="chartOptions3.dataLabels"
+          [plotOptions]="chartOptions3.plotOptions"
+          [yaxis]="chartOptions3.yaxis"
+          [legend]="chartOptions3.legend"
+          [fill]="chartOptions3.fill"
+          [stroke]="chartOptions3.stroke"
+          [tooltip]="chartOptions3.tooltip"
+          [xaxis]="chartOptions3.xaxis"
+          ></apx-chart>
+        </div>
+      </div>
+
+      <div class="my-2 w-full">
+        <h2 class="text-3xl font-bold"> Alternatives </h2>
+      </div>
+
+      <div class="block_half">
+        <h3 class="text-2xl">Servers of the Same Family</h3>
+        <table class="items_table">
+          <thead>
+            <tr>
+              <th>INSTANCE</th>
+              <th>VCPUs</th>
+              <th>MEMORY</th>
+              <th>GPUs</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of similarByFamily">
+              <td>
+                <a
+                  class="underline decoration-dotted hover:text-gray-500"
+                  routerLink="/server/{{item.vendor_id}}/{{item.server_id}}">
+                  {{item.display_name}}
+                </a>
+              </td>
+              <td> {{item.vcpus}}</td>
+              <td> {{getMemory(item.memory)}}</td>
+              <td> {{item.gpu_count}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="block_half">
+        <h3 class="text-2xl" >Similar Servers </h3>
+        <table class="items_table">
+          <thead>
+            <tr>
+              <th>INSTANCE</th>
+              <th>VENDOR</th>
+              <th>VCPUs</th>
+              <th>MEMORY</th>
+              <th>GPUs</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of similarByPerformance">
+              <td>
+                <a
+                class="underline decoration-dotted hover:text-gray-500"
+                routerLink="/server/{{item.vendor_id}}/{{item.server_id}}">
+                {{item.display_name}}
+                </a> </td>
+              <td> {{item.vendor_id}}</td>
+              <td> {{item.vcpus}}</td>
+              <td> {{getMemory(item.memory)}}</td>
+              <td> {{item.gpu_count}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
     </div>
 
     <div *ngIf="serverDetails" class="my-8 w-1/2 m-auto">
       <app-faq
         [FAQQuestions]="faqs"
-        [item]="serverDetails.server_id"
+        [item]="serverDetails.display_name"
       ></app-faq>
     </div>
 
   </div>
+</div>
+
+
+ <!-- Dropdown menu -->
+ <div id="allocation_options" class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid">
+  <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
+    <li *ngFor="let item of allocationFilters" class="flex py-1 gap-2 items-center">
+        <input type="checkbox"
+        [(ngModel)]="item.selected"
+        (ngModelChange)="refreshGraphs()"
+        class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer" >
+        <div class="text-white text-sm">{{item.name}}</div>
+    </li>
+  </ul>
+</div>
+
+<div id="allocation_options2" class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid">
+  <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
+    <li *ngFor="let item of allocationFilters" class="flex py-1 gap-2 items-center">
+        <input type="checkbox"
+        [(ngModel)]="item.selected"
+        (ngModelChange)="refreshGraphs()"
+        class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer" >
+        <div class="text-white text-sm">{{item.name}}</div>
+    </li>
+  </ul>
+</div>
+
+ <!-- Dropdown menu -->
+ <div id="datacenter_options" class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid">
+  <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
+    <li *ngFor="let item of datacenterFilters" class="flex py-1 gap-2 items-center">
+        <input type="checkbox"
+        [(ngModel)]="item.selected"
+        (ngModelChange)="refreshGraphs()"
+        class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer" >
+        <div class="text-white text-sm">{{item.name}}</div>
+    </li>
+  </ul>
+</div>
+
+<div id="tooltipDefault"
+  #tooltipDefault
+  style="opacity: 0;"
+  class="absolute z-10 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-secondary border border-solid border-emerald-400 rounded-lg">
+  {{tooltipContent}}
 </div>

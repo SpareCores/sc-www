@@ -9,10 +9,14 @@
  * ---------------------------------------------------------------
  */
 
-import { HTTPValidationError, SearchServerSearchGetData, SearchServerSearchGetParams } from "./data-contracts";
+import {
+  AssistFiltersAiAssistFiltersGetData,
+  AssistFiltersAiAssistFiltersGetParams,
+  HTTPValidationError,
+} from "./data-contracts";
 import { HttpClient, RequestParams } from "./http-client";
 
-export class Search<SecurityDataType = unknown> {
+export class Ai<SecurityDataType = unknown> {
   http: HttpClient<SecurityDataType>;
 
   constructor(http: HttpClient<SecurityDataType>) {
@@ -20,16 +24,16 @@ export class Search<SecurityDataType = unknown> {
   }
 
   /**
-   * No description
+   * @description Extract JSON filters from freetext.
    *
-   * @tags Query Server(s)
-   * @name SearchServerSearchGet
-   * @summary Search Server
-   * @request GET:/search
+   * @tags AI
+   * @name AssistFiltersAiAssistFiltersGet
+   * @summary Assist Filters
+   * @request GET:/ai/assist_filters
    */
-  searchServerSearchGet = (query: SearchServerSearchGetParams, params: RequestParams = {}) =>
-    this.http.request<SearchServerSearchGetData, HTTPValidationError>({
-      path: `/search`,
+  assistFiltersAiAssistFiltersGet = (query: AssistFiltersAiAssistFiltersGetParams, params: RequestParams = {}) =>
+    this.http.request<AssistFiltersAiAssistFiltersGetData, HTTPValidationError>({
+      path: `/ai/assist_filters`,
       method: "GET",
       query: query,
       ...params,

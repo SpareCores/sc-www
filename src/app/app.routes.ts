@@ -6,9 +6,10 @@ export const routes: Routes = [
   { path: '', component: LandingpageComponent },
   { path: 'servers', component: ServerListingComponent },
   { path: 'server/:vendor/:id', loadComponent: () => import('./pages/server-details/server-details.component').then(m => m.ServerDetailsComponent)},
-  { path: 'article/:category/:id', loadComponent: () => import('./pages/article/article.component').then(m => m.ArticleComponent)},
-  { path: 'articles/:category', loadComponent: () => import('./pages/articles/articles.component').then(m => m.ArticlesComponent)},
+  { path: 'article/:id', loadComponent: () => import('./pages/article/article.component').then(m => m.ArticleComponent)},
   { path: 'articles', loadComponent: () => import('./pages/articles/articles.component').then(m => m.ArticlesComponent)},
   { path: 'legal/tos', loadComponent: () => import('./pages/tos/tos.component').then(m => m.TOSComponent)},
+  { path: 'datacenters', loadComponent: () => import('./pages/datacenters/datacenters.component').then(m => m.DatacentersComponent)},
+  { path: 'vendors', loadComponent: () => import('./pages/vendors/vendors.component').then(m => m.VendorsComponent)},
   { path: '**', redirectTo: '' }
 ];
