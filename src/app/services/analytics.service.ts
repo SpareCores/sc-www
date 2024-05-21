@@ -26,7 +26,7 @@ export class AnalyticsService {
 
   public initializeTracking() {
 
-    if (!this.trackingInitialized) {
+    if (!this.trackingInitialized && MIXPANEL_TOKEN && MIXPANEL_HOST) {
       mixpanel.init(this.mixpanelProject, this.mixpanelConfig);
       this.trackingInitialized = true;
     }
