@@ -6,6 +6,7 @@ import { initFlowbite } from 'flowbite';
 import { register } from 'swiper/element/bundle';
 import { HeaderComponent } from './layout/header/header.component';
 import { FooterComponent } from './layout/footer/footer.component';
+import { AnalyticsService } from './services/analytics.service';
 
 @Component({
   selector: 'app-root',
@@ -20,6 +21,7 @@ export class AppComponent {
   constructor(@Inject(PLATFORM_ID) private platformId: object,
     @Inject(DOCUMENT) private document: Document,
     private router: Router,
+    private analytics: AnalyticsService,
     private metaTagService: Meta) {
 
       router.events.subscribe( (event: Event) => {
@@ -33,6 +35,7 @@ export class AppComponent {
           if(event?.urlAfterRedirects?.length > 1) {
             url += event?.urlAfterRedirects.split('?')[0];
           }
+          this.analytics.pageTrack(event.urlAfterRedirects);
           this.updateCanonical(url.toLowerCase());
         }
 
@@ -48,6 +51,12 @@ export class AppComponent {
     register();
     if (isPlatformBrowser(this.platformId)) {
       initFlowbite();
+    }
+  }
+
+  ngAfterViewInit() {
+    if (isPlatformBrowser(this.platformId)) {
+      this.analytics.initializeTracking();
     }
   }
 
