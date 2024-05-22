@@ -2,7 +2,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import posthog from 'posthog-js'
 
-const POSTHOG_TOKEN = import.meta.env['NG_APP_POSTHOG_TOKEN'];
+const POSTHOG_KEY = import.meta.env['NG_APP_POSTHOG_KEY'];
 const POSTHOG_HOST = import.meta.env['NG_APP_POSTHOG_HOST'];
 
 @Injectable({
@@ -21,8 +21,8 @@ export class AnalyticsService {
       return;
     }
 
-    if (!this.trackingInitialized && POSTHOG_TOKEN && POSTHOG_HOST && typeof window !== 'undefined' && typeof document !== 'undefined') {
-      posthog.init(POSTHOG_TOKEN, {
+    if (!this.trackingInitialized && POSTHOG_KEY && POSTHOG_HOST && typeof window !== 'undefined' && typeof document !== 'undefined') {
+      posthog.init(POSTHOG_KEY, {
       api_host: POSTHOG_HOST,
       persistence: 'memory'});
       this.trackingInitialized = true;
