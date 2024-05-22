@@ -12,7 +12,7 @@ export class AnalyticsService {
   private mixpanelConfig = {
     ignore_dnt: false,
     disable_persistence: true,
-    track_pageview: true,
+    track_pageview: false,
     api_host: MIXPANEL_HOST,
     //debug: true
   };
@@ -25,10 +25,17 @@ export class AnalyticsService {
   }
 
   public initializeTracking() {
-
     if (!this.trackingInitialized && MIXPANEL_TOKEN && MIXPANEL_HOST) {
       mixpanel.init(this.mixpanelProject, this.mixpanelConfig);
       this.trackingInitialized = true;
     }
   }
+
+  public pageTrack(url: string) {
+
+    if (this.trackingInitialized) {
+      mixpanel.track('pageView', {url: url, analytics: true});
+    }
+  }
+
 }
