@@ -22,8 +22,7 @@ export class AnalyticsService {
 
   trackingInitialized = false;
 
-  constructor(@Inject(PLATFORM_ID) private platformId: object,
-              @Inject(DOCUMENT) private document: Document) {
+  constructor(@Inject(PLATFORM_ID) private platformId: object) {
 
               }
 
@@ -32,13 +31,9 @@ export class AnalyticsService {
       return;
     }
 
-    mixpanel.opt_out_tracking();
-
     if (!this.trackingInitialized && MIXPANEL_TOKEN && MIXPANEL_HOST && window) {
-      setTimeout(() => {
-        mixpanel.init(this.mixpanelProject, this.mixpanelConfig);
-        this.trackingInitialized = true;
-      }, 3000);
+      mixpanel.init(this.mixpanelProject, this.mixpanelConfig);
+      this.trackingInitialized = true;
     }
   }
 

@@ -51,6 +51,12 @@ export class AppComponent {
     register();
     if (isPlatformBrowser(this.platformId)) {
       initFlowbite();
+    }
+  }
+
+  ngAfterViewInit() {
+    console.log('ngAfterViewInit');
+    if (isPlatformBrowser(this.platformId)) {
       this.analytics.initializeTracking();
     }
   }
