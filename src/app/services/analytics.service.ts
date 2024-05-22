@@ -32,6 +32,8 @@ export class AnalyticsService {
       return;
     }
 
+    mixpanel.opt_out_tracking();
+
     if (!this.trackingInitialized && MIXPANEL_TOKEN && MIXPANEL_HOST && window) {
       setTimeout(() => {
         mixpanel.init(this.mixpanelProject, this.mixpanelConfig);
