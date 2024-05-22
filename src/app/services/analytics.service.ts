@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import * as mixpanel from 'mixpanel-browser';
+//import * as mixpanel from 'mixpanel-browser';
 
 const MIXPANEL_TOKEN = import.meta.env['NG_APP_MIXPANEL_TOKEN'];
 const MIXPANEL_HOST = import.meta.env['NG_APP_MIXPANEL_HOST'];
@@ -26,7 +26,7 @@ export class AnalyticsService {
 
   public initializeTracking() {
     if (!this.trackingInitialized && MIXPANEL_TOKEN && MIXPANEL_HOST) {
-      mixpanel.init(this.mixpanelProject, this.mixpanelConfig);
+      //mixpanel.init(this.mixpanelProject, this.mixpanelConfig);
       this.trackingInitialized = true;
     }
   }
@@ -34,7 +34,7 @@ export class AnalyticsService {
   public pageTrack(url: string) {
 
     if (this.trackingInitialized) {
-      mixpanel.track('pageView', {url: url, analytics: true});
+      //mixpanel.track('pageView', {url: url, analytics: true});
     }
   }
 
