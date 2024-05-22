@@ -1,4 +1,4 @@
-import { isPlatformBrowser } from '@angular/common';
+import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import * as mixpanel from 'mixpanel-browser';
 
@@ -22,9 +22,10 @@ export class AnalyticsService {
 
   trackingInitialized = false;
 
-  constructor(@Inject(PLATFORM_ID) private platformId: object) {
+  constructor(@Inject(PLATFORM_ID) private platformId: object,
+              @Inject(DOCUMENT) private document: Document) {
 
-  }
+              }
 
   public initializeTracking() {
     if(!isPlatformBrowser(this.platformId)) {
