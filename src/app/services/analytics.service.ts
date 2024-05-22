@@ -38,10 +38,8 @@ export class AnalyticsService {
   }
 
   public pageTrack(url: string) {
-
     if (this.trackingInitialized) {
       mixpanel.track('pageView', {url: url, analytics: true});
     }
   }
-
 }

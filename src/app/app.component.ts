@@ -55,7 +55,6 @@ export class AppComponent {
   }
 
   ngAfterViewInit() {
-    console.log('ngAfterViewInit');
     if (isPlatformBrowser(this.platformId)) {
       this.analytics.initializeTracking();
     }
