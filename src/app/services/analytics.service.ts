@@ -31,7 +31,7 @@ export class AnalyticsService {
       return;
     }
 
-    if (!this.trackingInitialized && MIXPANEL_TOKEN && MIXPANEL_HOST && window) {
+    if (!this.trackingInitialized && MIXPANEL_TOKEN && MIXPANEL_HOST && typeof window !== 'undefined' && typeof document !== 'undefined') {
       mixpanel.init(this.mixpanelProject, this.mixpanelConfig);
       this.trackingInitialized = true;
     }
