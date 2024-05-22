@@ -32,9 +32,11 @@ export class AnalyticsService {
       return;
     }
 
-    if (!this.trackingInitialized && MIXPANEL_TOKEN && MIXPANEL_HOST) {
-      mixpanel.init(this.mixpanelProject, this.mixpanelConfig);
-      this.trackingInitialized = true;
+    if (!this.trackingInitialized && MIXPANEL_TOKEN && MIXPANEL_HOST && window) {
+      setTimeout(() => {
+        mixpanel.init(this.mixpanelProject, this.mixpanelConfig);
+        this.trackingInitialized = true;
+      }, 3000);
     }
   }
 
