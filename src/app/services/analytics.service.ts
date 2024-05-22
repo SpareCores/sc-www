@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import * as mixpanel from 'mixpanel-browser';
 
 const MIXPANEL_TOKEN = import.meta.env['NG_APP_MIXPANEL_TOKEN'];
@@ -21,12 +22,17 @@ export class AnalyticsService {
 
   trackingInitialized = false;
 
-  constructor() {
+  constructor(@Inject(PLATFORM_ID) private platformId: object) {
+
   }
 
   public initializeTracking() {
+    if(!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
     if (!this.trackingInitialized && MIXPANEL_TOKEN && MIXPANEL_HOST) {
-      //mixpanel.init(this.mixpanelProject, this.mixpanelConfig);
+      mixpanel.init(this.mixpanelProject, this.mixpanelConfig);
       this.trackingInitialized = true;
     }
   }
@@ -34,7 +40,7 @@ export class AnalyticsService {
   public pageTrack(url: string) {
 
     if (this.trackingInitialized) {
-      //mixpanel.track('pageView', {url: url, analytics: true});
+      mixpanel.track('pageView', {url: url, analytics: true});
     }
   }
 
