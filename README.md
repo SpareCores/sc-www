@@ -18,6 +18,13 @@ provided `.env.example` template file.
 You also need to provide your own Terms of Service and Privacy Policy
 documents as a markdown file at the `src/assets/TOS.md` path.
 
+Optionally, you can also link a Mixpanel project to anonymously track
+page visits, clicks etc via the following environment variables:
+
+- NG_APP_MIXPANEL_TOKEN: The Mixpanel project token
+- NG_APP_MIXPANEL_HOST: The Mixpanel tracking API endpoint,
+  e.g. https://api-js.mixpanel.com
+
 ## Development server
 
 Run `ng serve` for a dev server, which listens on `http://localhost:4200/` by default.
