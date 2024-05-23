@@ -12,9 +12,7 @@ export class AnalyticsService {
 
   trackingInitialized = false;
 
-  constructor(@Inject(PLATFORM_ID) private platformId: object) {
-
-  }
+  constructor(@Inject(PLATFORM_ID) private platformId: object) { }
 
   public initializeTracking() {
     if(!isPlatformBrowser(this.platformId)) {
@@ -24,7 +22,7 @@ export class AnalyticsService {
     if (!this.trackingInitialized && POSTHOG_KEY && POSTHOG_HOST && typeof window !== 'undefined' && typeof document !== 'undefined') {
       posthog.init(POSTHOG_KEY, {
       api_host: POSTHOG_HOST,
-      persistence: 'memory'});
+      persistence: 'sessionStorage'});
       this.trackingInitialized = true;
     }
   }

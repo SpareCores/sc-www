@@ -59,9 +59,9 @@
               }"
               readonly
               disabled >
-            <input [(ngModel)]="cpuCount" step="1" class="input_border cpu_input bg-primary text-center text-3xl font-bold"
+            <input id="cpuCount" [(ngModel)]="cpuCount" step="1" class="input_border cpu_input bg-primary text-center text-3xl font-bold"
               [disabled]="isSpinning" >
-            <input [(ngModel)]="ramCount" step="1" class="input_border ram_input bg-primary text-center text-3xl font-bold"
+            <input id="ramCount" [(ngModel)]="ramCount" step="1" class="input_border ram_input bg-primary text-center text-3xl font-bold"
               [disabled]="isSpinning"  >
             <div class="spinner_box_1">
               <div class="font-mono font-light text-sm text-center w-145">CLOUD VENDOR</div>
