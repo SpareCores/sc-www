@@ -49,7 +49,7 @@
           <td> {{item.city}}, {{item.country_id | countryIdtoName}}</td>
           <td> {{item.founding_year}} </td>
           <td>
-            <a href="{{item.homepage}}"
+            <a href="{{item.homepage}}" (click)="$event.stopPropagation()"
                class="underline decoration-dotted hover:text-gray-500"
                target="_blank" rel="noopener">
               {{item.homepage}}
