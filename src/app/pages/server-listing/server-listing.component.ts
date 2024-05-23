@@ -200,8 +200,6 @@ export class ServerListingComponent {
         return {...item, modelValue: value};
       });
 
-      console.log(this.searchParameters);
-
       if(query.order_by && query.order_dir) {
         this.orderBy = query.order_by;
         this.orderDir = query.order_dir;
