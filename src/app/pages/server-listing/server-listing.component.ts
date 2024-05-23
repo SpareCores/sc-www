@@ -136,7 +136,7 @@ export class ServerListingComponent {
     {name: 'Both', slug: null}
   ];
 
-  pageLimits = [25, 50, 100, 250];
+  pageLimits = [10, 25, 50, 100, 250];
 
   allocation = this.allocationTypes[0];
 
