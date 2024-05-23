@@ -37,6 +37,7 @@ export type DatacenterMetadata = {
   datacenter_id: string;
   vendor_id: string;
   name: string;
+  api_reference: string;
   green_energy: boolean;
   selected? : boolean;
 };

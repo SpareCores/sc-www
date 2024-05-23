@@ -40,20 +40,27 @@
                 <div class="font-bold text-emerald-400 text-sm">{{parameter.schema.title}}</div>
                 <div *ngIf="getParamterType(parameter) === 'range'" class="mb-4 mt-4" >
                   <div class="text-white text-sm" *ngIf="parameter.modelValue">{{parameter.modelValue}} {{parameter.schema.unit}}</div>
-                  <input id="filter_range_{{parameter.name}}" type="range" min="{{parameter.schema.minimum}}" max="{{parameter.schema.maximum}}" step="{{getStep(parameter)}}"
-                    [(ngModel)]="parameter.modelValue"
-                    (ngModelChange)="valueChanged()"
-                    class="w-full h-2 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm">
+                  <input id="filter_range_{{parameter.name}}" type="range"
+                         min="{{parameter.schema.minimum}}" max="{{parameter.schema.maximum}}" step="{{getStep(parameter)}}"
+                         data-ph-capture-attribute-server-listing-filter-type="range"
+                         [attr.data-ph-capture-attribute-server-listing-filter-id]="parameter.name"
+                         [attr.data-ph-capture-attribute-server-listing-filter-category]="item.category_id"
+                         [(ngModel)]="parameter.modelValue"
+                         (ngModelChange)="valueChanged()"
+                         class="w-full h-2 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm">
                 </div>
                 <div *ngIf="getParamterType(parameter) === 'country'" class="mb-4 mt-4 relative flex flex-col gap-2" >
                   <div *ngFor="let continent of continentMetadata" class="flex flex-col gap-3" >
                       <div class="flex justify-between">
                         <div class="flex gap-2 items-center">
                           <input type="checkbox"
-                              id="filter_continent_{{parameter.name}}"
-                              [ngModel]="continent.selected"
-                              (click)="selectContinent(continent)"
-                              class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
+                                 id="filter_continent_{{continent.continent}}"
+                                 data-ph-capture-attribute-server-listing-filter-type="checkbox"
+                                 [attr.data-ph-capture-attribute-server-listing-filter-id]="continent.continent"
+                                 data-ph-capture-attribute-server-listing-filter-category="continent"
+                                 [ngModel]="continent.selected"
+                                 (click)="selectContinent(continent)"
+                                 class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
                           <div class="text-white text-sm">{{continent.continent}}</div>
                         </div>
                         <lucide-icon name="chevron-down" class="h-4 w-4 text-white cursor-pointer" (click)="collapseItem(continent)"></lucide-icon>
@@ -61,10 +68,13 @@
                       <div *ngIf="!continent.collapsed"  class="flex flex-col gap-3 ml-4">
                         <div class="flex gap-2 align-center" *ngFor="let country of countriesByContinent(continent.continent)">
                           <input type="checkbox"
-                              id="filter_country_{{parameter.name}}"
-                              [(ngModel)]="country.selected"
-                              (ngModelChange)="filterServers()"
-                              class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
+                                 id="filter_country_{{parameter.name}}"
+                                 data-ph-capture-attribute-server-listing-filter-type="checkbox"
+                                 [attr.data-ph-capture-attribute-server-listing-filter-id]="country.country_id"
+                                 data-ph-capture-attribute-server-listing-filter-category="country"
+                                 [(ngModel)]="country.selected"
+                                 (ngModelChange)="filterServers()"
+                                 class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
                           <div class="text-white text-sm">{{country.country_id | countryIdtoName}}</div>
                         </div>
                       </div>
@@ -75,10 +85,13 @@
                       <div class="flex justify-between">
                         <div class="flex gap-2 items-center">
                           <input type="checkbox"
-                              id="filter_vendor_{{parameter.name}}"
-                              [ngModel]="vendor.selected"
-                              (click)="selectDatacenterVendor(vendor)"
-                              class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
+                                 id="filter_vendor_{{parameter.name}}"
+                                 data-ph-capture-attribute-server-listing-filter-type="checkbox"
+                                 [attr.data-ph-capture-attribute-server-listing-filter-id]="vendor.vendor_id"
+                                 data-ph-capture-attribute-server-listing-filter-category="vendor"
+                                 [ngModel]="vendor.selected"
+                                 (click)="selectDatacenterVendor(vendor)"
+                                 class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
                           <div class="text-white text-sm">{{vendor.name}}</div>
                         </div>
                         <lucide-icon name="chevron-down" class="h-4 w-4 text-white cursor-pointer" (click)="collapseItem(vendor)"></lucide-icon>
@@ -86,10 +99,13 @@
                       <div *ngIf="!vendor.collapsed"  class="flex flex-col gap-3 ml-4">
                         <div class="flex gap-2 align-center" *ngFor="let datacenter of datacentersByVendor(vendor.vendor_id)">
                           <input type="checkbox"
-                              id="filter_datacenter_{{parameter.name}}"
-                              [(ngModel)]="datacenter.selected"
-                              (ngModelChange)="filterServers()"
-                              class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
+                                 id="filter_datacenter_{{parameter.name}}"
+                                 data-ph-capture-attribute-server-listing-filter-type="checkbox"
+                                 [attr.data-ph-capture-attribute-server-listing-filter-id]="datacenter.api_reference"
+                                 data-ph-capture-attribute-server-listing-filter-category="datacenter"
+                                 [(ngModel)]="datacenter.selected"
+                                 (ngModelChange)="filterServers()"
+                                 class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
                           <div class="text-white text-sm">{{datacenter.name}}</div>
                           <lucide-icon *ngIf="datacenter.green_energy" name="leaf" class="h-4 w-4 text-emerald-400"></lucide-icon>
                         </div>
@@ -98,44 +114,59 @@
                 </div>
                 <div *ngIf="getParamterType(parameter) === 'number'" class="mb-4 mt-4 relative" >
                   <input type="number" step="{{getStep(parameter)}}"
-                    id="filter_number_{{parameter.name}}"
-                    [(ngModel)]="parameter.modelValue"
-                    (ngModelChange)="valueChanged()"
-                    min="{{parameter.schema.minimum || 0}}"
-                    class="w-full h-8 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm pr-8">
+                         id="filter_number_{{parameter.name}}"
+                         data-ph-capture-attribute-server-listing-filter-type="number"
+                         [attr.data-ph-capture-attribute-server-listing-filter-id]="parameter.name"
+                         [attr.data-ph-capture-attribute-server-listing-filter-category]="item.category_id"
+                         [(ngModel)]="parameter.modelValue"
+                         (ngModelChange)="valueChanged()"
+                         min="{{parameter.schema.minimum || 0}}"
+                         class="w-full h-8 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm pr-8">
                   <span *ngIf="parameter.schema.unit" class="unit text-gray-600">{{parameter.schema.unit}}</span>
                 </div>
                 <div *ngIf="getParamterType(parameter) === 'price'" class="mb-4 mt-4 relative" >
                   <input type="number" step="{{getStep(parameter)}}"
-                    id="filter_price_{{parameter.name}}"
-                    [(ngModel)]="parameter.modelValue"
-                    (ngModelChange)="valueChanged()"
-                    class="w-full h-8 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm pr-8">
+                         id="filter_price_{{parameter.name}}"
+                         data-ph-capture-attribute-server-listing-filter-type="number"
+                         [attr.data-ph-capture-attribute-server-listing-filter-id]="parameter.name"
+                         [attr.data-ph-capture-attribute-server-listing-filter-category]="item.category_id"
+                         [(ngModel)]="parameter.modelValue"
+                         (ngModelChange)="valueChanged()"
+                         class="w-full h-8 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm pr-8">
                   <span *ngIf="selectedCurrency.slug" class="unit text-gray-600">{{selectedCurrency.slug}}</span>
                 </div>
                 <div *ngIf="getParamterType(parameter) === 'text'" class="mb-4 mt-4" >
                   <input type="text"
-                    id="filter_text_{{parameter.name}}"
-                    [(ngModel)]="parameter.modelValue"
-                    (ngModelChange)="valueChanged()"
-                    class="w-full h-8 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm">
+                         id="filter_text_{{parameter.name}}"
+                         data-ph-capture-attribute-server-listing-filter-type="text"
+                         [attr.data-ph-capture-attribute-server-listing-filter-id]="parameter.name"
+                         [attr.data-ph-capture-attribute-server-listing-filter-category]="item.category_id"
+                         [(ngModel)]="parameter.modelValue"
+                         (ngModelChange)="valueChanged()"
+                         class="w-full h-8 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm">
                 </div>
                 <div *ngIf="getParamterType(parameter) === 'checkbox'" class="flex gap-2 mb-4 mt-4" >
                   <input type="checkbox"
-                    id="filter_checkbox_{{parameter.name}}"
-                    [(ngModel)]="parameter.modelValue"
-                    (ngModelChange)="filterServers()"
-                    class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
-                    <div class="text-white text-sm">{{parameter.schema.description}}</div>
+                         id="filter_checkbox_{{parameter.name}}"
+                         data-ph-capture-attribute-server-listing-filter-type="checkbox"
+                         [attr.data-ph-capture-attribute-server-listing-filter-id]="parameter.name"
+                         [attr.data-ph-capture-attribute-server-listing-filter-category]="item.category_id"
+                         [(ngModel)]="parameter.modelValue"
+                         (ngModelChange)="filterServers()"
+                         class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
+                  <div class="text-white text-sm">{{parameter.schema.description}}</div>
                 </div>
                 <div *ngIf="getParamterType(parameter) === 'enumArray'" class="flex flex-col gap-2 mb-4 mt-4" >
                   <div *ngFor="let enum of parameter.schema.enum" class="flex items-center gap-1">
                     <input type="checkbox"
-                      id="filter_enum_{{parameter.name}}"
-                      [ngModel]="isEnumSelected(parameter, enum)"
-                      (click)="selectEnumItem(parameter, enum)"
-                      class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
-                      <div class="text-white text-sm">{{enum?.value ? enum?.value : enum}}</div>
+                           id="filter_enum_{{parameter.name}}"
+                           data-ph-capture-attribute-server-listing-filter-type="checkbox"
+                           [attr.data-ph-capture-attribute-server-listing-filter-id]="parameter.name"
+                           [attr.data-ph-capture-attribute-server-listing-filter-category]="item.category_id"
+                           [ngModel]="isEnumSelected(parameter, enum)"
+                           (click)="selectEnumItem(parameter, enum)"
+                           class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
+                    <div class="text-white text-sm">{{enum?.value ? enum?.value : enum}}</div>
                   </div>
                 </div>
               </div>
