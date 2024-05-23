@@ -27,5 +27,11 @@ export class AnalyticsService {
     }
   }
 
+  public trackEvent(eventName: string, properties: { [key: string]: any }): void {
+    if (this.trackingInitialized) {
+      posthog.capture(eventName, properties)
+    }
+  }
+
 }
 
