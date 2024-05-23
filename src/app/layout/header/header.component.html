@@ -46,14 +46,22 @@
                   name="menu" >
                 </lucide-icon>
               </li>
-              <!--
               <li>
-                <button class="login_button text-sm items-center">
+                <button *ngIf="!isLoggedIn()"
+                  class="login_button text-sm items-center"
+                  (click)="login()">
                   <lucide-icon name="user" class="h-4 w-4 mr-1"></lucide-icon>
                   Log in
                 </button>
               </li>
-              -->
+              <li>
+                <button *ngIf="isLoggedIn()"
+                  class="login_button text-sm items-center"
+                  (click)="logout()">
+                  <lucide-icon name="user" class="h-4 w-4 mr-1"></lucide-icon>
+                  Log out
+                </button>
+              </li>
           </ul>
       </div>
   </div>

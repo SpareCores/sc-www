@@ -24,6 +24,7 @@
     "@angular/router": "^17.2.0",
     "@angular/ssr": "^17.2.3",
     "@netlify/functions": "^2.6.0",
+    "angular-oauth2-oidc": "^17.0.2",
     "apexcharts": "^3.49.0",
     "buffer": "^6.0.3",
     "express": "^4.19.2",

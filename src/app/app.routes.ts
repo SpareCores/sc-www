@@ -11,5 +11,8 @@ export const routes: Routes = [
   { path: 'legal/tos', loadComponent: () => import('./pages/tos/tos.component').then(m => m.TOSComponent)},
   { path: 'datacenters', loadComponent: () => import('./pages/datacenters/datacenters.component').then(m => m.DatacentersComponent)},
   { path: 'vendors', loadComponent: () => import('./pages/vendors/vendors.component').then(m => m.VendorsComponent)},
+
+  { path: 'auth/callback', loadComponent: () => import('./auth/callback/callback.component').then(m => m.CallbackComponent)},
+
   { path: '**', redirectTo: '' }
 ];
