@@ -35,7 +35,7 @@ export class AppComponent {
           if(event?.urlAfterRedirects?.length > 1) {
             url += event?.urlAfterRedirects.split('?')[0];
           }
-          this.analytics.pageTrack(event.urlAfterRedirects);
+          this.analytics.trackEvent('pageView', {});
           this.updateCanonical(url.toLowerCase());
         }
 

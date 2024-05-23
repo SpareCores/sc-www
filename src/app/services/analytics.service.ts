@@ -27,12 +27,6 @@ export class AnalyticsService {
     }
   }
 
-  public pageTrack(url: string) {
-    if (this.trackingInitialized) {
-      posthog.capture('pageView', { property: url })
-    }
-  }
-
   public trackEvent(eventName: string, properties: { [key: string]: any }): void {
     if (this.trackingInitialized) {
       posthog.capture(eventName, properties)
