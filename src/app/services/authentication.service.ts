@@ -32,7 +32,8 @@ export class AuthenticationService {
 
 
     if (!this.oauthService.hasValidIdToken()) {
-      const newState = undefined; //setState ? await this.statehandler.createState().toPromise() : undefined;
+      const newState = window.location.pathname;
+      sessionStorage.setItem('prelogin_url', newState);
       this.oauthService.initCodeFlow(newState);
     }
 
@@ -40,8 +41,7 @@ export class AuthenticationService {
   }
 
   public async loginCodeFlow(): Promise<void> {
-    const newState = undefined; //await this.statehandler.createState().toPromise();
-    return this.oauthService.tryLoginCodeFlow(newState);
+    return this.oauthService.tryLoginCodeFlow();
   }
 
   public async getToken(): Promise<string> {

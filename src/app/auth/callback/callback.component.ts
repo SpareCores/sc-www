@@ -25,7 +25,9 @@ export class CallbackComponent {
 
         let token = this.authService.getToken();
         console.log('token', token);
-        this.router.navigateByUrl('/');
+        let url = sessionStorage.getItem('prelogin_url') || '/';
+        sessionStorage.removeItem('prelogin_url');
+        this.router.navigateByUrl(url);
         /*
         this.authService.getOIDCUser().subscribe(user => {
           console.log('user', user);

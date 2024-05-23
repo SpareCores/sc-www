@@ -9,7 +9,8 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [LucideAngularModule, RouterLink, CommonModule],
   templateUrl: './header.component.html',
-  styleUrl: './header.component.scss'
+  styleUrl: './header.component.scss',
+  host: {ngSkipHydration: 'true'},
 })
 export class HeaderComponent {
 
@@ -26,7 +27,6 @@ export class HeaderComponent {
   }
 
   logout() {
-
     this.authService.signout();
   }
 
