@@ -498,6 +498,7 @@
   <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
     <li *ngFor="let item of allocationFilters" class="flex py-1 gap-2 items-center">
         <input type="checkbox"
+        id="filter_allocation"
         [(ngModel)]="item.selected"
         (ngModelChange)="refreshGraphs()"
         class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer" >
@@ -510,6 +511,7 @@
   <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
     <li *ngFor="let item of allocationFilters" class="flex py-1 gap-2 items-center">
         <input type="checkbox"
+        id="filter_allocation_2"
         [(ngModel)]="item.selected"
         (ngModelChange)="refreshGraphs()"
         class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer" >
@@ -523,6 +525,7 @@
   <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
     <li *ngFor="let item of datacenterFilters" class="flex py-1 gap-2 items-center">
         <input type="checkbox"
+        id="filter_datacenter"
         [(ngModel)]="item.selected"
         (ngModelChange)="refreshGraphs()"
         class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer" >

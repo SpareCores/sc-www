@@ -45,9 +45,12 @@
             <div class="font-mono font-light text-sm ram_div" >RAM (GB)</div>
             <div class="container">
               <button id="spin_button"
-                class="button font-bold text-3xl"
-                [disabled]="isSpinning"
-                (click)="spinClicked()">SPIN
+                      data-ph-capture-attribute-sc-event="landing slot machine start"
+                      data-ph-capture-attribute-slot-machine-action="start"
+                      class="button font-bold text-3xl"
+                      [disabled]="isSpinning"
+                      (click)="spinClicked()"
+                      autofocus>SPIN
               </button>
               <div class="button__bottom" [attr.disabled]="isSpinning"></div>
             </div>
@@ -59,10 +62,18 @@
               }"
               readonly
               disabled >
-            <input [(ngModel)]="cpuCount" step="1" class="input_border cpu_input bg-primary text-center text-3xl font-bold"
-              [disabled]="isSpinning" >
-            <input [(ngModel)]="ramCount" step="1" class="input_border ram_input bg-primary text-center text-3xl font-bold"
-              [disabled]="isSpinning"  >
+            <input id="cpuCount" [(ngModel)]="cpuCount" step="1"
+                   class="input_border cpu_input bg-primary text-center text-3xl font-bold"
+                   [disabled]="isSpinning"
+                   data-ph-capture-attribute-sc-event="landing slot machine filter"
+                   data-ph-capture-attribute-slot-machine-action="filter"
+                   data-ph-capture-attribute-slot-machine-filter="cpu">
+            <input id="ramCount" [(ngModel)]="ramCount" step="1"
+                   class="input_border ram_input bg-primary text-center text-3xl font-bold"
+                   [disabled]="isSpinning"
+                   data-ph-capture-attribute-sc-event="landing slot machine filter"
+                   data-ph-capture-attribute-slot-machine-action="filter"
+                   data-ph-capture-attribute-slot-machine-filter="memory">
             <div class="spinner_box_1">
               <div class="font-mono font-light text-sm text-center w-145">CLOUD VENDOR</div>
               <div class="spinner_holder">
