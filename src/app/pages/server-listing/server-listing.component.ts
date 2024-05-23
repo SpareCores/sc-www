@@ -586,7 +586,7 @@ export class ServerListingComponent {
     return Array.from({length: max - min + 1}, (_, i) => i + min);
   }
 
-  openSearchPromt() {
+  openSearchPrompt() {
     this.modalSearch?.show();
   }
 
