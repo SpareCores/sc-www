@@ -11,6 +11,7 @@ import { TimeToShortDatePipe } from '../../pipes/time-to-short-date.pipe';
 import { LucideAngularModule } from 'lucide-angular';
 import { ArticleCardComponent } from '../../components/article-card/article-card.component';
 import { SearchServersServersGetData } from '../../../../sdk/data-contracts';
+import { AnalyticsService } from '../../services/analytics.service';
 
 @Component({
   selector: 'app-landingpage',
@@ -119,7 +120,8 @@ export class LandingpageComponent {
   constructor(@Inject(PLATFORM_ID) private platformId: object,
               private keeperAPI: KeeperAPIService,
               private SEOHandler: SeoHandlerService,
-              private articles: ArticlesService) { }
+              private articles: ArticlesService,
+              private analyticsService: AnalyticsService) { }
 
   ngOnInit() {
 
@@ -222,6 +224,7 @@ export class LandingpageComponent {
 
   spinAnim(servers: SearchServersServersGetData, isFake = false) {
 
+    this.analyticsService.trackEvent('slot machine started', {'autostarted': isFake});
     if(this.isSpinning) {
       return;
     }
@@ -285,6 +288,7 @@ export class LandingpageComponent {
       this.priceValue = '$' + animPriceEnd;
       this.isSpinning = false;
       this.hasRealValues = true;
+      this.analyticsService.trackEvent('slot machine finished', {'autostarted': isFake});
     }, 4200)
   }
 }

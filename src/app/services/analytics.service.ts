@@ -21,16 +21,19 @@ export class AnalyticsService {
 
     if (!this.trackingInitialized && POSTHOG_KEY && POSTHOG_HOST && typeof window !== 'undefined' && typeof document !== 'undefined') {
       posthog.init(POSTHOG_KEY, {
-      api_host: POSTHOG_HOST,
-      persistence: 'sessionStorage'});
+        api_host: POSTHOG_HOST,
+        persistence: 'sessionStorage',
+        // tracked manually
+        capture_pageview: false,
+      });
       this.trackingInitialized = true;
     }
   }
 
-  public pageTrack(url: string) {
+  public trackEvent(eventName: string, properties: { [key: string]: any }): void {
     if (this.trackingInitialized) {
-      posthog.capture('pageView', { property: url })
+      posthog.capture(eventName, properties)
     }
   }
-}
 
+}

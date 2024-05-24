@@ -37,11 +37,12 @@ export type DatacenterMetadata = {
   datacenter_id: string;
   vendor_id: string;
   name: string;
+  api_reference: string;
   green_energy: boolean;
   selected? : boolean;
 };
 
-export type DatacenterVenrodMetadata = {
+export type DatacenterVendorMetadata = {
   vendor_id: string;
   name: string;
   selected?: boolean;
@@ -135,7 +136,7 @@ export class ServerListingComponent {
     {name: 'Both', slug: null}
   ];
 
-  pageLimits = [25, 50, 100, 250];
+  pageLimits = [10, 25, 50, 100, 250];
 
   allocation = this.allocationTypes[0];
 
@@ -172,7 +173,7 @@ export class ServerListingComponent {
   continentMetadata: ContinentMetadata[] = [];
 
   datacenterMetadata: DatacenterMetadata[] = [];
-  datacenterVendorMetadata: DatacenterVenrodMetadata[] = [];
+  datacenterVendorMetadata: DatacenterVendorMetadata[] = [];
 
   vendorMetadata: any[] = [];
 
@@ -585,7 +586,7 @@ export class ServerListingComponent {
     return Array.from({length: max - min + 1}, (_, i) => i + min);
   }
 
-  openSearchPromt() {
+  openSearchPrompt() {
     this.modalSearch?.show();
   }
 
@@ -674,7 +675,7 @@ export class ServerListingComponent {
     this.valueChanged();
   }
 
-  collapseItem(continent: ContinentMetadata | DatacenterVenrodMetadata) {
+  collapseItem(continent: ContinentMetadata | DatacenterVendorMetadata) {
     continent.collapsed = !continent.collapsed;
   }
 
@@ -718,7 +719,7 @@ export class ServerListingComponent {
     return this.datacenterMetadata.filter((datacenter) => datacenter.vendor_id === vendor_id);
   }
 
-  selectDatacenterVendor(vendor: DatacenterVenrodMetadata) {
+  selectDatacenterVendor(vendor: DatacenterVendorMetadata) {
     vendor.selected = !vendor.selected;
     this.datacenterMetadata.forEach((datacenter) => {
       if(datacenter.vendor_id === vendor.vendor_id) {

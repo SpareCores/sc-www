@@ -17,11 +17,14 @@
         <div class="top overflow-hidden bg-secondary">
           <button
             class="w-full bg-emerald-400 text-white py-3 rounded-lg font-bold"
-            (click)="openSearchPromt()">
+            data-ph-capture-attribute-sc-event="server listing search prompt open"
+            data-ph-capture-attribute-server-listing-search-prompt-action="open"
+            (click)="openSearchPrompt()">
             Search Prompt
           </button>
         </div>
-        <div class="collapser bg-secondary" (click)="toggleCollapse()" >
+        <div class="collapser bg-secondary" (click)="toggleCollapse()"
+             data-ph-capture-attribute-sc-event="server listing toggle sidebar">
           <lucide-icon name="chevron-left" class="h-6 w-6 text-emerald-400"></lucide-icon>
         </div>
         <div class="filters overflow-hidden bg-secondary">
@@ -40,20 +43,29 @@
                 <div class="font-bold text-emerald-400 text-sm">{{parameter.schema.title}}</div>
                 <div *ngIf="getParamterType(parameter) === 'range'" class="mb-4 mt-4" >
                   <div class="text-white text-sm" *ngIf="parameter.modelValue">{{parameter.modelValue}} {{parameter.schema.unit}}</div>
-                  <input id="filter_range_{{parameter.name}}" type="range" min="{{parameter.schema.minimum}}" max="{{parameter.schema.maximum}}" step="{{getStep(parameter)}}"
-                    [(ngModel)]="parameter.modelValue"
-                    (ngModelChange)="valueChanged()"
-                    class="w-full h-2 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm">
+                  <input id="filter_range_{{parameter.name}}" type="range"
+                         min="{{parameter.schema.minimum}}" max="{{parameter.schema.maximum}}" step="{{getStep(parameter)}}"
+                         data-ph-capture-attribute-sc-event="server listing filter"
+                         data-ph-capture-attribute-server-listing-filter-type="range"
+                         [attr.data-ph-capture-attribute-server-listing-filter-id]="parameter.name"
+                         [attr.data-ph-capture-attribute-server-listing-filter-category]="item.category_id"
+                         [(ngModel)]="parameter.modelValue"
+                         (ngModelChange)="valueChanged()"
+                         class="w-full h-2 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm">
                 </div>
                 <div *ngIf="getParamterType(parameter) === 'country'" class="mb-4 mt-4 relative flex flex-col gap-2" >
                   <div *ngFor="let continent of continentMetadata" class="flex flex-col gap-3" >
                       <div class="flex justify-between">
                         <div class="flex gap-2 items-center">
                           <input type="checkbox"
-                              id="filter_continent_{{parameter.name}}"
-                              [ngModel]="continent.selected"
-                              (click)="selectContinent(continent)"
-                              class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
+                                 id="filter_continent_{{continent.continent}}"
+                                 data-ph-capture-attribute-sc-event="server listing filter"
+                                 data-ph-capture-attribute-server-listing-filter-type="checkbox"
+                                 [attr.data-ph-capture-attribute-server-listing-filter-id]="continent.continent"
+                                 data-ph-capture-attribute-server-listing-filter-category="continent"
+                                 [ngModel]="continent.selected"
+                                 (click)="selectContinent(continent)"
+                                 class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
                           <div class="text-white text-sm">{{continent.continent}}</div>
                         </div>
                         <lucide-icon name="chevron-down" class="h-4 w-4 text-white cursor-pointer" (click)="collapseItem(continent)"></lucide-icon>
@@ -61,10 +73,14 @@
                       <div *ngIf="!continent.collapsed"  class="flex flex-col gap-3 ml-4">
                         <div class="flex gap-2 align-center" *ngFor="let country of countriesByContinent(continent.continent)">
                           <input type="checkbox"
-                              id="filter_country_{{parameter.name}}"
-                              [(ngModel)]="country.selected"
-                              (ngModelChange)="filterServers()"
-                              class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
+                                 id="filter_country_{{parameter.name}}"
+                                 data-ph-capture-attribute-sc-event="server listing filter"
+                                 data-ph-capture-attribute-server-listing-filter-type="checkbox"
+                                 [attr.data-ph-capture-attribute-server-listing-filter-id]="country.country_id"
+                                 data-ph-capture-attribute-server-listing-filter-category="country"
+                                 [(ngModel)]="country.selected"
+                                 (ngModelChange)="filterServers()"
+                                 class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
                           <div class="text-white text-sm">{{country.country_id | countryIdtoName}}</div>
                         </div>
                       </div>
@@ -75,10 +91,14 @@
                       <div class="flex justify-between">
                         <div class="flex gap-2 items-center">
                           <input type="checkbox"
-                              id="filter_vendor_{{parameter.name}}"
-                              [ngModel]="vendor.selected"
-                              (click)="selectDatacenterVendor(vendor)"
-                              class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
+                                 id="filter_vendor_{{parameter.name}}"
+                                 data-ph-capture-attribute-sc-event="server listing filter"
+                                 data-ph-capture-attribute-server-listing-filter-type="checkbox"
+                                 [attr.data-ph-capture-attribute-server-listing-filter-id]="vendor.vendor_id"
+                                 data-ph-capture-attribute-server-listing-filter-category="vendor"
+                                 [ngModel]="vendor.selected"
+                                 (click)="selectDatacenterVendor(vendor)"
+                                 class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
                           <div class="text-white text-sm">{{vendor.name}}</div>
                         </div>
                         <lucide-icon name="chevron-down" class="h-4 w-4 text-white cursor-pointer" (click)="collapseItem(vendor)"></lucide-icon>
@@ -86,10 +106,14 @@
                       <div *ngIf="!vendor.collapsed"  class="flex flex-col gap-3 ml-4">
                         <div class="flex gap-2 align-center" *ngFor="let datacenter of datacentersByVendor(vendor.vendor_id)">
                           <input type="checkbox"
-                              id="filter_datacenter_{{parameter.name}}"
-                              [(ngModel)]="datacenter.selected"
-                              (ngModelChange)="filterServers()"
-                              class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
+                                 id="filter_datacenter_{{parameter.name}}"
+                                 data-ph-capture-attribute-sc-event="server listing filter"
+                                 data-ph-capture-attribute-server-listing-filter-type="checkbox"
+                                 [attr.data-ph-capture-attribute-server-listing-filter-id]="datacenter.api_reference"
+                                 data-ph-capture-attribute-server-listing-filter-category="datacenter"
+                                 [(ngModel)]="datacenter.selected"
+                                 (ngModelChange)="filterServers()"
+                                 class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
                           <div class="text-white text-sm">{{datacenter.name}}</div>
                           <lucide-icon *ngIf="datacenter.green_energy" name="leaf" class="h-4 w-4 text-emerald-400"></lucide-icon>
                         </div>
@@ -98,44 +122,64 @@
                 </div>
                 <div *ngIf="getParamterType(parameter) === 'number'" class="mb-4 mt-4 relative" >
                   <input type="number" step="{{getStep(parameter)}}"
-                    id="filter_number_{{parameter.name}}"
-                    [(ngModel)]="parameter.modelValue"
-                    (ngModelChange)="valueChanged()"
-                    min="{{parameter.schema.minimum || 0}}"
-                    class="w-full h-8 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm pr-8">
+                         id="filter_number_{{parameter.name}}"
+                         data-ph-capture-attribute-sc-event="server listing filter"
+                         data-ph-capture-attribute-server-listing-filter-type="number"
+                         [attr.data-ph-capture-attribute-server-listing-filter-id]="parameter.name"
+                         [attr.data-ph-capture-attribute-server-listing-filter-category]="item.category_id"
+                         [(ngModel)]="parameter.modelValue"
+                         (ngModelChange)="valueChanged()"
+                         min="{{parameter.schema.minimum || 0}}"
+                         class="w-full h-8 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm pr-8">
                   <span *ngIf="parameter.schema.unit" class="unit text-gray-600">{{parameter.schema.unit}}</span>
                 </div>
                 <div *ngIf="getParamterType(parameter) === 'price'" class="mb-4 mt-4 relative" >
                   <input type="number" step="{{getStep(parameter)}}"
-                    id="filter_price_{{parameter.name}}"
-                    [(ngModel)]="parameter.modelValue"
-                    (ngModelChange)="valueChanged()"
-                    class="w-full h-8 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm pr-8">
+                         id="filter_price_{{parameter.name}}"
+                         data-ph-capture-attribute-sc-event="server listing filter"
+                         data-ph-capture-attribute-server-listing-filter-type="number"
+                         [attr.data-ph-capture-attribute-server-listing-filter-id]="parameter.name"
+                         [attr.data-ph-capture-attribute-server-listing-filter-category]="item.category_id"
+                         [(ngModel)]="parameter.modelValue"
+                         (ngModelChange)="valueChanged()"
+                         class="w-full h-8 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm pr-8">
                   <span *ngIf="selectedCurrency.slug" class="unit text-gray-600">{{selectedCurrency.slug}}</span>
                 </div>
                 <div *ngIf="getParamterType(parameter) === 'text'" class="mb-4 mt-4" >
                   <input type="text"
-                    id="filter_text_{{parameter.name}}"
-                    [(ngModel)]="parameter.modelValue"
-                    (ngModelChange)="valueChanged()"
-                    class="w-full h-8 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm">
+                         id="filter_text_{{parameter.name}}"
+                         data-ph-capture-attribute-sc-event="server listing filter"
+                         data-ph-capture-attribute-server-listing-filter-type="text"
+                         [attr.data-ph-capture-attribute-server-listing-filter-id]="parameter.name"
+                         [attr.data-ph-capture-attribute-server-listing-filter-category]="item.category_id"
+                         [(ngModel)]="parameter.modelValue"
+                         (ngModelChange)="valueChanged()"
+                         class="w-full h-8 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm">
                 </div>
                 <div *ngIf="getParamterType(parameter) === 'checkbox'" class="flex gap-2 mb-4 mt-4" >
                   <input type="checkbox"
-                    id="filter_checkbox_{{parameter.name}}"
-                    [(ngModel)]="parameter.modelValue"
-                    (ngModelChange)="filterServers()"
-                    class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
-                    <div class="text-white text-sm">{{parameter.schema.description}}</div>
+                         id="filter_checkbox_{{parameter.name}}"
+                         data-ph-capture-attribute-sc-event="server listing filter"
+                         data-ph-capture-attribute-server-listing-filter-type="checkbox"
+                         [attr.data-ph-capture-attribute-server-listing-filter-id]="parameter.name"
+                         [attr.data-ph-capture-attribute-server-listing-filter-category]="item.category_id"
+                         [(ngModel)]="parameter.modelValue"
+                         (ngModelChange)="filterServers()"
+                         class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
+                  <div class="text-white text-sm">{{parameter.schema.description}}</div>
                 </div>
                 <div *ngIf="getParamterType(parameter) === 'enumArray'" class="flex flex-col gap-2 mb-4 mt-4" >
                   <div *ngFor="let enum of parameter.schema.enum" class="flex items-center gap-1">
                     <input type="checkbox"
-                      id="filter_enum_{{parameter.name}}"
-                      [ngModel]="isEnumSelected(parameter, enum)"
-                      (click)="selectEnumItem(parameter, enum)"
-                      class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
-                      <div class="text-white text-sm">{{enum?.value ? enum?.value : enum}}</div>
+                           id="filter_enum_{{parameter.name}}"
+                           data-ph-capture-attribute-sc-event="server listing filter"
+                           data-ph-capture-attribute-server-listing-filter-type="checkbox"
+                           [attr.data-ph-capture-attribute-server-listing-filter-id]="parameter.name"
+                           [attr.data-ph-capture-attribute-server-listing-filter-category]="item.category_id"
+                           [ngModel]="isEnumSelected(parameter, enum)"
+                           (click)="selectEnumItem(parameter, enum)"
+                           class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
+                    <div class="text-white text-sm">{{enum?.value ? enum?.value : enum}}</div>
                   </div>
                 </div>
               </div>
@@ -152,6 +196,7 @@
           <div>
             <button
               id="allocation_button"
+              data-ph-capture-attribute-sc-event="server listing price allocation select"
               data-dropdown-toggle="allocation_options"
               class="dropdown_button"
               type="button">
@@ -166,6 +211,7 @@
           <div>
             <button
               id="currency_button"
+              data-ph-capture-attribute-sc-event="server listing currency select"
               data-dropdown-toggle="currency_options"
               class="dropdown_button"
               type="button">
@@ -180,6 +226,7 @@
           <div>
             <button
               id="column_button"
+              data-ph-capture-attribute-sc-event="server listing columns select"
               data-dropdown-toggle="column_options"
               class="dropdown_button"
               type="button">
@@ -220,7 +267,14 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let item of servers" (click)="openServerDetails(item)">
+                <tr *ngFor="let item of servers; let i = index" (click)="openServerDetails(item)"
+                    data-ph-capture-attribute-sc-event="server listing route to server details"
+                    [attr.data-ph-capture-attribute-server-listing-row-vendor]="item.vendor_id"
+                    [attr.data-ph-capture-attribute-server-listing-row-datacenter]="item.datacenter.api_reference"
+                    [attr.data-ph-capture-attribute-server-listing-row-zone]="item.zone.api_reference"
+                    [attr.data-ph-capture-attribute-server-listing-row-server]="item.server.api_reference"
+                    [attr.data-ph-capture-attribute-server-listing-row-index]="i+1"
+                    [attr.data-ph-capture-attribute-server-listing-row-page-size]="limit">
                   <ng-container *ngFor="let column of tableColumns">
                     <td *ngIf="column.type === 'name'" class="min-w-225">
                       <div class="text-sm text-white flex gap-1">
@@ -290,7 +344,14 @@
                   </ng-container>
                   <td>
                     <div (click)="$event.stopPropagation()">
-                      <a routerLink="/server/{{item.vendor.vendor_id}}/{{item.server.server_id}}">
+                      <a routerLink="/server/{{item.vendor.vendor_id}}/{{item.server.server_id}}"
+                         data-ph-capture-attribute-sc-event="server listing route to server details"
+                         [attr.data-ph-capture-attribute-server-listing-row-vendor]="item.vendor_id"
+                         [attr.data-ph-capture-attribute-server-listing-row-datacenter]="item.datacenter.api_reference"
+                         [attr.data-ph-capture-attribute-server-listing-row-zone]="item.zone.api_reference"
+                         [attr.data-ph-capture-attribute-server-listing-row-server]="item.server.api_reference"
+                         [attr.data-ph-capture-attribute-server-listing-row-index]="i+1"
+                         [attr.data-ph-capture-attribute-server-listing-row-page-size]="limit">
                         <lucide-icon name="chevron-right" class="h-6 w-6 text-emerald-400"></lucide-icon>
                       </a>
                     </div>
@@ -304,6 +365,7 @@
               <div>
                 <button
                   id="pagesize_button"
+                  data-ph-capture-attribute-sc-event="server listing page size select"
                   data-dropdown-toggle="pagesize_options"
                   class="dropdown_button"
                   type="button">
@@ -319,12 +381,16 @@
               <div class="flex justify-end gap-4">
                 <button
                   class="flex justify-center bg-transparent text-white py-2 px-4 w-10 rounded-lg font-bold hover:bg-emerald-400"
+                  data-ph-capture-attribute-sc-event="server listing paginate"
+                  data-ph-capture-attribute-pagination-target="prev"
                   (click)="prevPage()" >
                   <lucide-icon name="chevron-left"></lucide-icon>
                 </button>
                 <ng-container *ngIf="page > 2">
                   <button
                     class="text-white py-2 px-4 rounded-lg font-bold hover:bg-emerald-400"
+                    data-ph-capture-attribute-sc-event="server listing paginate"
+                    data-ph-capture-attribute-pagination-target="first"
                     (click)="gotoPage(1)">
                     1
                   </button>
@@ -339,7 +405,9 @@
                     'bg-emerald-400': item === this.page,
                     'bg-transparent': item !== this.page
                   }"
-                  *ngFor="let item of possiblePages()"
+                  *ngFor="let item of possiblePages(); let i = index"
+                  data-ph-capture-attribute-sc-event="server listing paginate"
+                  [attr.data-ph-capture-attribute-pagination-target]="i"
                   (click)="gotoPage(item)">
                   {{item}}
                 </button>
@@ -350,11 +418,17 @@
                   </button>
                   <button
                     class="text-white py-2 px-4 rounded-lg font-bold hover:bg-emerald-400"
+                    data-ph-capture-attribute-sc-event="server listing paginate"
+                    data-ph-capture-attribute-pagination-target="last"
                     (click)="gotoPage(totalPages)">
                     {{totalPages}}
                   </button>
                 </ng-container>
-                <button class="flex justify-center bg-transparent text-white py-2 px-4 w-10 rounded-lg font-bold hover:bg-emerald-400" (click)="nextPage()">
+                <button
+                  class="flex justify-center bg-transparent text-white py-2 px-4 w-10 rounded-lg font-bold hover:bg-emerald-400"
+                  data-ph-capture-attribute-sc-event="server listing paginate"
+                  data-ph-capture-attribute-pagination-target="next"
+                  (click)="nextPage()">
                   <lucide-icon name="chevron-right"></lucide-icon>
                 </button>
               </div>
@@ -422,12 +496,14 @@
                   Search Prompt
               </h3>
               <button type="button"
-                  class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
-                  (click)="closeModal(false)">
-                  <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-                  </svg>
-                  <span class="sr-only">Close modal</span>
+                      data-ph-capture-attribute-sc-event="server listing search prompt close"
+                      data-ph-capture-attribute-server-listing-search-prompt-action="close"
+                      class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
+                      (click)="closeModal(false)">
+                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                </svg>
+                <span class="sr-only">Close modal</span>
               </button>
           </div>
           <div class="p-4 md:p-5 space-y-4 flex flex-col">
@@ -440,6 +516,8 @@
                 [(ngModel)]="freetextSearchInput">
               </textarea>
               <button
+                data-ph-capture-attribute-sc-event="server listing search prompt process"
+                data-ph-capture-attribute-server-listing-search-prompt-action="process"
                 class="text-white bg-emerald-400 hover:bg-emerald-500 focus:ring-0 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center "
                 (click)="submitFreetextSearch()"
                 [disabled]="modalSubmitted"
@@ -458,6 +536,8 @@
           <div class="flex flex-col p-4 md:p-5 space-x-3 rtl:space-x-reverse border-t border-gray-200 rounded-b dark:border-gray-600">
               <button
                 type="button"
+                data-ph-capture-attribute-sc-event="server listing search prompt confirm"
+                data-ph-capture-attribute-server-listing-search-prompt-action="confirm"
                 [disabled]="!modalResponse"
                 class="text-white bg-emerald-400 font-medium rounded-lg text-sm px-5 py-2.5 text-center
                  hover:bg-emerald-500 focus:ring-0 focus:outline-none
