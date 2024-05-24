@@ -23,8 +23,6 @@ export class AnalyticsService {
       posthog.init(POSTHOG_KEY, {
         api_host: POSTHOG_HOST,
         persistence: 'sessionStorage',
-        // tracked manually
-        capture_pageview: false,
       });
       this.trackingInitialized = true;
     }
