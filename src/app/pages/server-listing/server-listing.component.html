@@ -335,7 +335,7 @@
                     </td>
                     <td *ngIf="column.type === 'vendor'" >
                       <div *ngIf="item.vendor.logo" class="w-9 h-9 px-1 py-1 bg-white rounded-lg">
-                        <img [src]="item.vendor.logo" >
+                        <img [src]="item.vendor.logo" alt="{{item.vendor.name}} logo" >
                       </div>
                       <div *ngIf="!item.vendor.logo" class="text-white text-sm">
                           {{item.vendor.name}}
