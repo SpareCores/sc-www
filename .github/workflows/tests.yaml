@@ -7,6 +7,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install modules
-        run: npm install
+        run: npm install --include=dev
       - name: Run ESLint
         run: ng.js lint
