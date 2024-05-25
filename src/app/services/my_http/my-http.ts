@@ -11,7 +11,7 @@ const BACKEND_BASE_URI = import.meta.env['NG_APP_BACKEND_BASE_URI'];
 const BACKEND_BASE_URI_SSR = import.meta.env['NG_APP_BACKEND_BASE_URI_SSR'];
 
  // swagger-typescript-api
- export class MYHTTPClient<Data> extends HttpClientSDK {
+ export class MYHTTPClient extends HttpClientSDK {
 
     constructor(
         private httpClient: HttpClient,
@@ -19,7 +19,7 @@ const BACKEND_BASE_URI_SSR = import.meta.env['NG_APP_BACKEND_BASE_URI_SSR'];
         super();
     }
 
-    public override request = async <T = any, E = any>({ method, body, secure, path, type, query, format, baseUrl, cancelToken, ...params }: FullRequestParams): Promise<HttpResponse<T, E>> => {
+    public override request = async <T = any, E = any>({ method, body, path, type, query }: FullRequestParams): Promise<HttpResponse<T, E>> => {
         const url = new URL((isPlatformBrowser(this.platformId) ? BACKEND_BASE_URI : BACKEND_BASE_URI_SSR) + path);
 
         if(query) {
