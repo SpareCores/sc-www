@@ -7,14 +7,68 @@
 
   <url>
     <loc>https://sparecores.com/</loc>
-    <changefreq>daily</changefreq>
+    <changefreq>monthly</changefreq>
     <priority>1.00</priority>
   </url>
 
   <url>
     <loc>https://sparecores.com/servers</loc>
     <changefreq>hourly</changefreq>
-    <priority>1.00</priority>
+    <priority>0.75</priority>
+  </url>
+
+  <url>
+    <loc>https://sparecores.com/datacenters</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.50</priority>
+  </url>
+
+  <url>
+    <loc>https://sparecores.com/vendors</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.50</priority>
+  </url>
+
+  <url>
+    <loc>https://sparecores.com/vendors</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.50</priority>
+  </url>
+
+  <url>
+    <loc>https://sparecores.com/legal/tos</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.10</priority>
+  </url>
+
+  <url>
+    <loc>https://sparecores.com/articles</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
+  </url>
+
+  <url>
+    <loc>https://sparecores.com/article/spot-instance-terminate-rates-per-az</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.60</priority>
+  </url>
+
+  <url>
+    <loc>https://sparecores.com/article/67pct-cost-saving-at-adtech-company</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.60</priority>
+  </url>
+
+  <url>
+    <loc>https://sparecores.com/article/article/ids-vs-names</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.60</priority>
+  </url>
+
+  <url>
+    <loc>https://sparecores.com/article/ngi-search-grant</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.60</priority>
   </url>
 
 </urlset>
