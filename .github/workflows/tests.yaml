@@ -9,4 +9,4 @@ jobs:
       - name: Install modules
         run: npm install --include=dev
       - name: Run ESLint
-        run: ng.js lint
+        run: ng lint
