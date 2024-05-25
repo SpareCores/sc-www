@@ -30,7 +30,7 @@ export class TOSComponent {
   ) { }
 
   ngOnInit() {
-    this.route.params.subscribe(params => {
+    this.route.params.subscribe(() => {
       this.breadcrumbs = [
         { name: 'Home', url: '/' },
         { name: 'Term of Service', url: `/legal/tos` }

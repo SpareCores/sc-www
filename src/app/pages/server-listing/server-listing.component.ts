@@ -235,7 +235,7 @@ export class ServerListingComponent {
       this.filterServers(false);
     });
 
-    this.valueChangeDebouncer.pipe(debounceTime(300)).subscribe((value) => {
+    this.valueChangeDebouncer.pipe(debounceTime(300)).subscribe(() => {
       this.page = 1;
       this.filterServers();
     });
