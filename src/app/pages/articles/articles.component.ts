@@ -29,7 +29,7 @@ export class ArticlesComponent {
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
-      let category = params['tag'];
+      const category = params['tag'];
       this.articles.getArticlesByType(category).then(articles => {
         this.featuredArticles = articles;
       });
@@ -40,7 +40,7 @@ export class ArticlesComponent {
 
       ];
 
-      let title = category ? category.charAt(0).toUpperCase() + category.slice(1) : '';
+      const title = category ? category.charAt(0).toUpperCase() + category.slice(1) : '';
 
       if(category) {
         this.breadcrumbs.push(

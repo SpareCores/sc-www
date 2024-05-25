@@ -63,7 +63,7 @@ export class AppComponent {
   updateCanonical(url: string) {
     const canonicalUrl = url;
     const head = this.document.getElementsByTagName('head')[0];
-    var element: HTMLLinkElement | null = this.document.querySelector(`link[rel='canonical']`) || null;
+    let element: HTMLLinkElement | null = this.document.querySelector(`link[rel='canonical']`) || null;
     if (element == null) {
       element = this.document.createElement('link') as HTMLLinkElement;
       head.appendChild(element);

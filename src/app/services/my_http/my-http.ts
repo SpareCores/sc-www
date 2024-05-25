@@ -27,11 +27,11 @@ const BACKEND_BASE_URI_SSR = import.meta.env['NG_APP_BACKEND_BASE_URI_SSR'];
           url.search = queryStr;
         }
 
-        let headers = new HttpHeaders({
+        const headers = new HttpHeaders({
             'Content-Type': type || 'application/json'
         });
 
-        let response: any = await this._requestWithRetries(method, url, body, headers);
+        const response: any = await this._requestWithRetries(method, url, body, headers);
 
         return response;
     }

@@ -378,7 +378,7 @@ export class ServerListingComponent {
   }
 
   filterServers(updateURL = true, updateTotalCount = true) {
-    let queryObject: SearchServersServersGetParams = this.getQueryObject() || {};
+    const queryObject: SearchServersServersGetParams = this.getQueryObject() || {};
 
     if(updateURL) {
       this.updateQueryParams(queryObject);
@@ -466,7 +466,7 @@ export class ServerListingComponent {
   }
 
   getQueryObject() {
-    let paramObject = this.searchParameters?.map((param: any) => {
+    const paramObject = this.searchParameters?.map((param: any) => {
       return (param.modelValue && param.schema.category_id && param.schema.default !== param.modelValue) ?
               {[param.name]: param.modelValue} :
               {};
@@ -514,7 +514,7 @@ export class ServerListingComponent {
   }
 
   updateQueryParams(object: any) {
-    let encodedQuery = encodeQueryParams(object);
+    const encodedQuery = encodeQueryParams(object);
 
     if(encodedQuery?.length) {
       // update the URL

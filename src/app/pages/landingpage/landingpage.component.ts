@@ -137,9 +137,9 @@ export class LandingpageComponent {
         this.featuredArticles = articles;
       });
 
-      let spinner1 = [];
-      let spinner2 = [];
-      let spinner3 = [];
+      const spinner1 = [];
+      const spinner2 = [];
+      const spinner3 = [];
       for(let i = 0; i < this.SPINNER_COUNT; i++) {
         spinner1.push({name: 'AWS'});
         spinner2.push({name: 't4g.nano'});
@@ -183,7 +183,7 @@ export class LandingpageComponent {
   }
 
   getStyle(i: number) {
-    let transform = 'rotateX(' + (360 / this.SPINNER_COUNT * i) + 'deg) translateZ(' + this.SPINNER_RADIUS + 'px)';
+    const transform = 'rotateX(' + (360 / this.SPINNER_COUNT * i) + 'deg) translateZ(' + this.SPINNER_RADIUS + 'px)';
     return {
       transform: transform
     };
@@ -243,8 +243,8 @@ export class LandingpageComponent {
 
     this.isSpinning = true;
 
-    let animPriceStart = servers[servers.length-1].price;
-    let animPriceEnd = servers[0].price;
+    const animPriceStart = servers[servers.length-1].price;
+    const animPriceEnd = servers[0].price;
 
     let price = animPriceStart;
     let fraction = (animPriceStart - animPriceEnd) / 50;
@@ -252,7 +252,7 @@ export class LandingpageComponent {
     // convert fraction to 5 decimal precision
     fraction = Math.floor(fraction * 100000) / 100000;
 
-    let interval = setInterval(() => {
+    const interval = setInterval(() => {
       price -= fraction;
       if(price < animPriceEnd) {
         price = animPriceEnd;
@@ -261,7 +261,7 @@ export class LandingpageComponent {
     }, 50);
 
     setTimeout(() => {
-      let indices = [0, 1, 35];
+      const indices = [0, 1, 35];
       indices.forEach((index, i) => {
         this.spinnerContents[0][index] = { name: servers[i].vendor.vendor_id.toString().toUpperCase(), logo: servers[i].vendor.logo};
         this.spinnerContents[1][index] = { name: servers[i].server.display_name, architecture: servers[i].server.cpu_architecture};

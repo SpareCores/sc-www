@@ -62,7 +62,7 @@ export class ArticleComponent {
 
         if(isPlatformBrowser(this.platformId)) {
           // Wait for the articleDiv to be rendered
-          let checkExist = setInterval(() => {
+          const checkExist = setInterval(() => {
             if (this.articleDiv) {
               this.renderer.listen(this.articleDiv.nativeElement, 'click', (event) => {
                 if (event.target.tagName === 'IMG' && event.target.classList[0] == 'zoomin') {
@@ -82,7 +82,7 @@ export class ArticleComponent {
     const lines = str.split('\n');
     const result: any = {};
 
-    for (let line of lines) {
+    for (const line of lines) {
       const [key, ...valueParts] = line.split(':');
       const value = valueParts.join(':').trim();
       if(key?.length > 0 && value?.length > 0) {
