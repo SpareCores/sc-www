@@ -1,4 +1,4 @@
-import { Component, HostBinding, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, HostBinding, Inject, PLATFORM_ID, OnInit } from '@angular/core';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { KeeperAPIService } from '../../services/keeper-api.service';
 import { OrderDir, SearchServersServersGetParams, ServerPriceWithPKs } from '../../../../sdk/data-contracts';
@@ -72,7 +72,7 @@ const optionsModal: ModalOptions = {
   templateUrl: './server-listing.component.html',
   styleUrl: './server-listing.component.scss',
 })
-export class ServerListingComponent {
+export class ServerListingComponent implements OnInit {
   @HostBinding('attr.ngSkipHydration') ngSkipHydration = 'true';
 
   isCollapsed = false;

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ArticleMeta, ArticlesService } from '../../services/articles.service';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { CommonModule } from '@angular/common';
@@ -13,7 +13,7 @@ import { ArticleCardComponent } from '../../components/article-card/article-card
   templateUrl: './articles.component.html',
   styleUrl: './articles.component.scss'
 })
-export class ArticlesComponent {
+export class ArticlesComponent implements OnInit {
 
   breadcrumbs: BreadcrumbSegment[] = [
     { name: 'Home', url: '/' },

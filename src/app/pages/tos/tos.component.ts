@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, OnInit } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
@@ -13,7 +13,7 @@ import { DomSanitizer } from '@angular/platform-browser';
   templateUrl: './tos.component.html',
   styleUrl: './tos.component.scss'
 })
-export class TOSComponent {
+export class TOSComponent implements OnInit {
 
   articleBody: any;
 

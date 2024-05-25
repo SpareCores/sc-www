@@ -1,4 +1,4 @@
-import { Component, ElementRef, Inject, PLATFORM_ID, Renderer2, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, PLATFORM_ID, Renderer2, OnInit, ViewChild } from '@angular/core';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
@@ -17,7 +17,7 @@ import { Lightbox, LightboxModule } from 'ngx-lightbox';
   templateUrl: './article.component.html',
   styleUrl: './article.component.scss'
 })
-export class ArticleComponent {
+export class ArticleComponent implements OnInit {
 
   @ViewChild('articleDiv') articleDiv!: ElementRef;
 

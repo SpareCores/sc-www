@@ -1,4 +1,4 @@
-import { Component, ElementRef, Inject, PLATFORM_ID, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, PLATFORM_ID, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { KeeperAPIService } from '../../services/keeper-api.service';
 import { Server, ServerPKsWithPrices, ServerPricePKs, TableServerTableServerGetData } from '../../../../sdk/data-contracts';
@@ -40,7 +40,7 @@ const options: DropdownOptions = {
   templateUrl: './server-details.component.html',
   styleUrl: './server-details.component.scss'
 })
-export class ServerDetailsComponent {
+export class ServerDetailsComponent implements OnInit {
 
   serverDetails!: ServerPKsWithPrices;
 

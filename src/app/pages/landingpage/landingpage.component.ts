@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA, Component, Inject, PLATFORM_ID } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, Component, Inject, PLATFORM_ID, OnInit } from '@angular/core';
 import { ArticleMeta, ArticlesService } from '../../services/articles.service';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { KeeperAPIService } from '../../services/keeper-api.service';
@@ -21,7 +21,7 @@ import { AnalyticsService } from '../../services/analytics.service';
   templateUrl: './landingpage.component.html',
   styleUrl: './landingpage.component.scss'
 })
-export class LandingpageComponent {
+export class LandingpageComponent implements OnInit {
 
   features: any[] = [
     {
