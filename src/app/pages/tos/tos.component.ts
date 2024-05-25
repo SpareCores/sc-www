@@ -1,4 +1,5 @@
-import { CommonModule, OnInit } from '@angular/common';
+import { CommonModule } from '@angular/common';
+import { OnInit } from '@angular/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
