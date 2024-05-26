@@ -54,7 +54,7 @@
               </button>
               <div class="button__bottom" [attr.disabled]="isSpinning"></div>
             </div>
-            <input [(ngModel)]="priceValue"
+            <input [(ngModel)]="priceValue" aria-label="Price of highlighted instance"
               class="input_border price_input bg-primary text-center text-4xl font-bold"
               [ngClass]="{
                 'text-gray-400': isSpinning,
@@ -62,13 +62,13 @@
               }"
               readonly
               disabled >
-            <input id="cpuCount" [(ngModel)]="cpuCount" step="1"
+            <input id="cpuCount" [(ngModel)]="cpuCount" step="1" aria-label="Minimum vCPU filter"
                    class="input_border cpu_input bg-primary text-center text-3xl font-bold"
                    [disabled]="isSpinning"
                    data-ph-capture-attribute-sc-event="landing slot machine filter"
                    data-ph-capture-attribute-slot-machine-action="filter"
                    data-ph-capture-attribute-slot-machine-filter="cpu">
-            <input id="ramCount" [(ngModel)]="ramCount" step="1"
+            <input id="ramCount" [(ngModel)]="ramCount" step="1" aria-label="Minimum memory filter"
                    class="input_border ram_input bg-primary text-center text-3xl font-bold"
                    [disabled]="isSpinning"
                    data-ph-capture-attribute-sc-event="landing slot machine filter"
@@ -276,23 +276,28 @@
               <td>{{item.status}}</td>
               <td class="flex gap-1">
                   <a href="https://github.com/SpareCores/{{item.github}}"
-                     *ngIf="item.github" target="_blank" rel="noopener">
+                     *ngIf="item.github" target="_blank" rel="noopener"
+                     [attr.aria-label]="'GitHub repository of ' + item.github">
                       <lucide-icon name="github"></lucide-icon>
                   </a>
                   <a href="https://pypi.org/project/{{item.pypi}}"
-                     *ngIf="item.pypi" target="_blank" rel="noopener">
+                     *ngIf="item.pypi" target="_blank" rel="noopener"
+                     [attr.aria-label]="item.pypi + ' on PyPI'">
                       <img src="assets/images/icons/python.svg" alt="Python logo"
                            style="width: 24px; vertical-align:middle;" />
                   </a>
                   <a href="{{item.docs}}"
-                     *ngIf="item.docs" target="_blank" rel="noopener">
+                     *ngIf="item.docs" target="_blank" rel="noopener"
+                     [attr.aria-label]="'Documentation site of ' + item.component">
                       <lucide-icon name="book-text"></lucide-icon>
                   </a>
-                  <a href="{{item.www}}" *ngIf="item.www" target="_blank" rel="noopener">
+                  <a href="{{item.www}}" *ngIf="item.www" target="_blank" rel="noopener"
+                     [attr.aria-label]="'Homepage of ' + item.component">
                       <img src="assets/images/icons/www.svg" alt="WWW logo"
                            style="width: 24px; vertical-align:middle;" />
                   </a>
-                  <a href="{{item.data}}" *ngIf="item.data" target="_blank" rel="noopener">
+                  <a href="{{item.data}}" *ngIf="item.data" target="_blank" rel="noopener"
+                     [attr.aria-label]="'Database of ' + item.component">
                       <lucide-icon name="database"></lucide-icon>
                   </a>
               </td>
