@@ -7,6 +7,7 @@ export type ArticleMeta = {
   date: Date;
   teaser: string,
   image: string,
+  image_alt: string,
   filename: string;
   author: string;
   tags?: string[];
