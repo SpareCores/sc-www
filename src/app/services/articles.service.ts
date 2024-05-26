@@ -28,7 +28,7 @@ export class ArticlesService {
   }
 
   async getArticle(category: string, slug: string): Promise<string> {
-    let files = await firstValueFrom(this.http.get(`./assets/articles/${category}/${slug}.md`, { responseType: 'text' } ));
+    const files = await firstValueFrom(this.http.get(`./assets/articles/${category}/${slug}.md`, { responseType: 'text' } ));
     return files as string;
   }
 }

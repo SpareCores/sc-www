@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { KeeperAPIService } from '../../services/keeper-api.service';
@@ -15,7 +15,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './vendors.component.html',
   styleUrl: './vendors.component.scss'
 })
-export class VendorsComponent {
+export class VendorsComponent implements OnInit {
   breadcrumbs: BreadcrumbSegment[] = [
     {
       name: 'Home',

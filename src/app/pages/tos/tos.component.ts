@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { OnInit } from '@angular/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
@@ -13,7 +14,7 @@ import { DomSanitizer } from '@angular/platform-browser';
   templateUrl: './tos.component.html',
   styleUrl: './tos.component.scss'
 })
-export class TOSComponent {
+export class TOSComponent implements OnInit {
 
   articleBody: any;
 
@@ -30,7 +31,7 @@ export class TOSComponent {
   ) { }
 
   ngOnInit() {
-    this.route.params.subscribe(params => {
+    this.route.params.subscribe(() => {
       this.breadcrumbs = [
         { name: 'Home', url: '/' },
         { name: 'Term of Service', url: `/legal/tos` }

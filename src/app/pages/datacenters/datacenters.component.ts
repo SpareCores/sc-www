@@ -1,8 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { KeeperAPIService } from '../../services/keeper-api.service';
-import { OrderDir, Server, TableDatacenterTableDatacenterGetData } from '../../../../sdk/data-contracts';
+import { OrderDir, TableDatacenterTableDatacenterGetData } from '../../../../sdk/data-contracts';
 import { CountryIdtoNamePipe } from '../../pipes/country-idto-name.pipe';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -16,7 +16,7 @@ import { Router, RouterModule } from '@angular/router';
   templateUrl: './datacenters.component.html',
   styleUrl: './datacenters.component.scss'
 })
-export class DatacentersComponent {
+export class DatacentersComponent implements OnInit {
 
   breadcrumbs: BreadcrumbSegment[] = [
     {

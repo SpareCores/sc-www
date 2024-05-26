@@ -41,10 +41,10 @@
       <tbody>
         <tr *ngFor="let item of vendors" (click)="openLink(item)">
           <td>
-              <img class="bg-white rounded" src="{{item.logo}}" />
+            <img class="bg-white rounded" src="{{item.logo}}" alt="{{item.name}} logo" />
           </td>
           <td>
-              {{item.name}}
+            {{item.name}}
           </td>
           <td> {{item.city}}, {{item.country_id | countryIdtoName}}</td>
           <td> {{item.founding_year}} </td>
@@ -57,6 +57,7 @@
           </td>
           <td> {{item.datacenters}} </td>
           <td>
+            <!-- eslint-disable-next-line @angular-eslint/template/interactive-supports-focus -->
             <div class="flex justify-end" (click)="$event.stopPropagation()">
               <a routerLink="/servers" [queryParams]="{vendor: item.vendor_id}">
                 <lucide-icon name="chevron-right" class="h-6 w-6 text-emerald-400"></lucide-icon>
