@@ -5,7 +5,7 @@ date: 2024-01-18
 # ~100 character
 teaser: "Spare Cores was selected as a winner project out of 94 applications: awarded 150k EUR for open-source work."
 # 320x220
-image: /assets/images/blog/ngi-search-oc3-outcome-cropped.png
+image: /assets/images/blog/ngi-search-oc3-outcome-cropped.webp
 author: Gergely Daroczi
 tags: [ngi-search, funding, open-source, featured]
 ---

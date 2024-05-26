@@ -5,7 +5,7 @@ date: 2024-02-14
 # ~100 character
 teaser: The use of resource ids and names differs by vendor ... and might be even the same. Integer? String? None?
 # 320x220
-image: /assets/images/blog/hide-the-pain-harold.jpg
+image: /assets/images/blog/hide-the-pain-harold.webp
 author: Gergely Daroczi
 tags: [aws, gcp, hcloud, crawler, featured]
 ---
