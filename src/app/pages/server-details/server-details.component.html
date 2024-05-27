@@ -355,8 +355,8 @@
         <div *ngIf="isBrowser()">
           <div chartType="bar">
             <canvas
-              #chart1
-              id="chart1"
+              #chartPricePerDatacenter
+              id="chartPricePerDatacenter"
               style="height: 350px; width:100%"
               baseChart
               [data]="barChartData"
@@ -403,8 +403,8 @@
         <div *ngIf="isBrowser()">
           <div chartType="bar">
             <canvas
-              #chart2
-              id="chart2"
+              #chartPricePerZone
+              id="chartPricePerZone"
               style="height: 350px; width:100%"
               baseChart
               [data]="barChartData2"
@@ -420,8 +420,8 @@
         <div *ngIf="isBrowser()">
           <div chartType="bar">
             <canvas
-              #chart3
-              id="chart3"
+              #chartPriceLowest
+              id="chartPriceLowest"
               style="height: 350px; width:100%"
               baseChart
               [data]="barChartData3"

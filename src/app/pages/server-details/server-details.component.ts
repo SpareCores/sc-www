@@ -58,20 +58,16 @@ export class ServerDetailsComponent implements OnInit {
   datacenterDropdown: any;
   datacenterFilters: any[] = [];
 
-  @ViewChild('chart1') chart!: BaseChartDirective<'bar'> | undefined;
-  @ViewChild('chart2') chart2!: BaseChartDirective<'bar'> | undefined;
-  @ViewChild('chart3') chart3!: BaseChartDirective<'bar'> | undefined;
+  @ViewChild('chartPricePerDatacenter') chartPricePerDataCenter!: BaseChartDirective<'bar'> | undefined;
+  @ViewChild('chartPricePerZone') chartPricePerZone!: BaseChartDirective<'bar'> | undefined;
+  @ViewChild('chartPriceLowest') chartPriceLowest!: BaseChartDirective<'bar'> | undefined;
 
   public barChartOptions: ChartConfiguration<'bar'>['options'] = {
-    // We use these empty structures as placeholders for dynamic theming.
     scales: {
       x: {
         ticks: {
           color: '#FFF',
-        },
-        grid: {
-          color: '#4B5563',
-        },
+            }
       },
       y: {
         ticks: {
@@ -79,7 +75,7 @@ export class ServerDetailsComponent implements OnInit {
         },
         grid: {
           color: '#4B5563',
-        },
+        }
       },
     },
     plugins: {
@@ -87,7 +83,7 @@ export class ServerDetailsComponent implements OnInit {
         display: true,
         labels: {
           color: '#FFF',
-        }
+        },
       }
     },
   };
