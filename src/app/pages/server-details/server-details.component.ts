@@ -7,25 +7,10 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { FaqComponent } from '../../components/faq/faq.component';
-import { ApexAxisChartSeries, ApexChart, ApexDataLabels, ApexFill, ApexLegend, ApexPlotOptions, ApexStroke, ApexTooltip, ApexXAxis, ApexYAxis, ChartComponent, NgApexchartsModule } from "ng-apexcharts";
-import { chartOptions1, chartOptions2, chartOptions3 } from './chartOptions';
 import { FormsModule } from '@angular/forms';
 import { Dropdown, DropdownOptions, initFlowbite } from 'flowbite';
 import { BaseChartDirective } from 'ng2-charts';
-import { ChartConfiguration, ChartData, ChartEvent } from 'chart.js';
-
-export type ChartOptions = {
-  series: ApexAxisChartSeries;
-  chart: ApexChart;
-  dataLabels: ApexDataLabels;
-  plotOptions: ApexPlotOptions;
-  yaxis: ApexYAxis;
-  xaxis: ApexXAxis;
-  fill: ApexFill;
-  tooltip: ApexTooltip;
-  stroke: ApexStroke;
-  legend: ApexLegend;
-};
+import { ChartConfiguration, ChartData } from 'chart.js';
 
 const options: DropdownOptions = {
   placement: 'bottom',
@@ -73,16 +58,9 @@ export class ServerDetailsComponent implements OnInit {
   datacenterDropdown: any;
   datacenterFilters: any[] = [];
 
-  chartOptions: ChartOptions | any;
-  chartOptions2: ChartOptions | any;
-  chartOptions3: ChartOptions | any;
-
   @ViewChild('chart1') chart!: BaseChartDirective<'bar'> | undefined;
   @ViewChild('chart2') chart2!: BaseChartDirective<'bar'> | undefined;
   @ViewChild('chart3') chart3!: BaseChartDirective<'bar'> | undefined;
-
-
-  //@ViewChild(BaseChartDirective) chart: BaseChartDirective<'bar'> | undefined;
 
   public barChartOptions: ChartConfiguration<'bar'>['options'] = {
     // We use these empty structures as placeholders for dynamic theming.
@@ -154,9 +132,6 @@ export class ServerDetailsComponent implements OnInit {
               private keepreAPI: KeeperAPIService,
               private SEOHandler: SeoHandlerService) {
 
-    this.chartOptions = chartOptions2;
-    this.chartOptions2 = chartOptions3;
-    this.chartOptions3 = chartOptions1;
   }
 
   ngOnInit() {
