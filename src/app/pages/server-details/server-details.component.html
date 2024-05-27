@@ -328,7 +328,7 @@
         </div>
       </div>
 
-      <!--
+
       <div class="my-2 w-full">
         <h2 class="text-3xl font-bold"> Economics </h2>
       </div>
@@ -352,22 +352,22 @@
             </button>
           </div>
         </div>
-      <div *ngIf="isBrowser()">
-        <apx-chart
-        id="chart1" #chart1
-        [series]="chartOptions.series"
-        [chart]="chartOptions.chart"
-        [dataLabels]="chartOptions.dataLabels"
-        [plotOptions]="chartOptions.plotOptions"
-        [yaxis]="chartOptions.yaxis"
-        [legend]="chartOptions.legend"
-        [fill]="chartOptions.fill"
-        [stroke]="chartOptions.stroke"
-        [tooltip]="chartOptions.tooltip"
-        [xaxis]="chartOptions.xaxis"
-        ></apx-chart>
+        <div *ngIf="isBrowser()">
+          <div chartType="bar">
+            <canvas
+              #chart1
+              id="chart1"
+              style="height: 350px; width:100%"
+              baseChart
+              [data]="barChartData"
+              [options]="barChartOptions"
+              [type]="barChartType"
+            >
+            </canvas>
+          </div>
+        </div>
       </div>
-      </div>
+
       <div class="block_half">
         <div class="flex justify-between items-center">
           <h3 class="text-2xl" >Prices per Zone</h3>
@@ -401,40 +401,38 @@
           </div>
         </div>
         <div *ngIf="isBrowser()">
-          <apx-chart
-          id="chart2" #chart2
-          [series]="chartOptions2.series"
-          [chart]="chartOptions2.chart"
-          [dataLabels]="chartOptions2.dataLabels"
-          [plotOptions]="chartOptions2.plotOptions"
-          [yaxis]="chartOptions2.yaxis"
-          [legend]="chartOptions2.legend"
-          [fill]="chartOptions2.fill"
-          [stroke]="chartOptions2.stroke"
-          [tooltip]="chartOptions2.tooltip"
-          [xaxis]="chartOptions2.xaxis"
-          ></apx-chart>
+          <div chartType="bar">
+            <canvas
+              #chart2
+              id="chart2"
+              style="height: 350px; width:100%"
+              baseChart
+              [data]="barChartData2"
+              [options]="barChartOptions"
+              [type]="barChartType"
+            >
+            </canvas>
+          </div>
         </div>
       </div>
       <div class="block_half">
         <h3 class="text-2xl" >Lowest Prices</h3>
         <div *ngIf="isBrowser()">
-          <apx-chart
-          id="chart3" #chart3
-          [series]="chartOptions3.series"
-          [chart]="chartOptions3.chart"
-          [dataLabels]="chartOptions3.dataLabels"
-          [plotOptions]="chartOptions3.plotOptions"
-          [yaxis]="chartOptions3.yaxis"
-          [legend]="chartOptions3.legend"
-          [fill]="chartOptions3.fill"
-          [stroke]="chartOptions3.stroke"
-          [tooltip]="chartOptions3.tooltip"
-          [xaxis]="chartOptions3.xaxis"
-          ></apx-chart>
+          <div chartType="bar">
+            <canvas
+              #chart3
+              id="chart3"
+              style="height: 350px; width:100%"
+              baseChart
+              [data]="barChartData3"
+              [options]="barChartOptions"
+              [type]="barChartType"
+            >
+            </canvas>
+          </div>
         </div>
       </div>
-      -->
+
 
       <div class="my-2 w-full">
         <h2 class="text-3xl font-bold"> Alternatives </h2>
