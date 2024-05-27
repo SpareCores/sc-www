@@ -36,7 +36,7 @@ const options: DropdownOptions = {
 @Component({
   selector: 'app-server-details',
   standalone: true,
-  imports: [BreadcrumbsComponent, CommonModule, LucideAngularModule, FaqComponent, NgApexchartsModule, FormsModule, RouterModule],
+  imports: [BreadcrumbsComponent, CommonModule, LucideAngularModule, FaqComponent, FormsModule, RouterModule],
   templateUrl: './server-details.component.html',
   styleUrl: './server-details.component.scss'
 })
@@ -46,7 +46,8 @@ export class ServerDetailsComponent implements OnInit {
 
   breadcrumbs: BreadcrumbSegment[] = [
     { name: 'Home', url: '/' },
-    { name: 'Servers', url: '/servers' }
+    { name: 'Servers', url: '/servers' },
+    { name: '', url: ''}
   ];
 
   features: any[] = [];
@@ -82,7 +83,6 @@ export class ServerDetailsComponent implements OnInit {
   similarByFamily: Server[] = [];
   similarByPerformance: Server[] = [];
 
-
   openApiJson: any = require('../../../../sdk/openapi.json');
   instanceProperties: any[] = [];
 
@@ -112,11 +112,8 @@ export class ServerDetailsComponent implements OnInit {
       this.keepreAPI.getServer(vendor, id).then((data) => {
         if(data?.body){
           this.serverDetails = data.body as any;
-          this.breadcrumbs = [
-            { name: 'Home', url: '/' },
-            { name: 'Servers', url: '/servers' },
-            { name: this.serverDetails.display_name, url: '/server/' + this.serverDetails.vendor.vendor_id + '/' + this.serverDetails.server_id }
-          ];
+          this.breadcrumbs[2] =
+            { name: this.serverDetails.display_name, url: '/server/' + this.serverDetails.vendor.vendor_id + '/' + this.serverDetails.server_id };
 
           this.features = [];
           if(this.serverDetails.cpu_cores || this.serverDetails.vcpus) {
@@ -333,8 +330,8 @@ export class ServerDetailsComponent implements OnInit {
 
   refreshGraphs() {
     this.updateChart1();
-    this.updateChart2();
-    this.updateChart3();
+    //this.updateChart2();
+    //this.updateChart3();
   }
 
   updateChart1() {

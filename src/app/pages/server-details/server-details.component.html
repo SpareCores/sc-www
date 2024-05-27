@@ -328,6 +328,7 @@
         </div>
       </div>
 
+      <!--
       <div class="my-2 w-full">
         <h2 class="text-3xl font-bold"> Economics </h2>
       </div>
@@ -351,22 +352,21 @@
             </button>
           </div>
         </div>
-
-        <div *ngIf="isBrowser()">
-          <apx-chart
-          id="chart1" #chart1
-          [series]="chartOptions.series"
-          [chart]="chartOptions.chart"
-          [dataLabels]="chartOptions.dataLabels"
-          [plotOptions]="chartOptions.plotOptions"
-          [yaxis]="chartOptions.yaxis"
-          [legend]="chartOptions.legend"
-          [fill]="chartOptions.fill"
-          [stroke]="chartOptions.stroke"
-          [tooltip]="chartOptions.tooltip"
-          [xaxis]="chartOptions.xaxis"
-          ></apx-chart>
-        </div>
+      <div *ngIf="isBrowser()">
+        <apx-chart
+        id="chart1" #chart1
+        [series]="chartOptions.series"
+        [chart]="chartOptions.chart"
+        [dataLabels]="chartOptions.dataLabels"
+        [plotOptions]="chartOptions.plotOptions"
+        [yaxis]="chartOptions.yaxis"
+        [legend]="chartOptions.legend"
+        [fill]="chartOptions.fill"
+        [stroke]="chartOptions.stroke"
+        [tooltip]="chartOptions.tooltip"
+        [xaxis]="chartOptions.xaxis"
+        ></apx-chart>
+      </div>
       </div>
       <div class="block_half">
         <div class="flex justify-between items-center">
@@ -434,6 +434,7 @@
           ></apx-chart>
         </div>
       </div>
+      -->
 
       <div class="my-2 w-full">
         <h2 class="text-3xl font-bold"> Alternatives </h2>
