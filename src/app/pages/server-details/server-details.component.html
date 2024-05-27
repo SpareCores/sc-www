@@ -2,7 +2,7 @@
   <div class="content pt-16 pb-16 text-white">
     <app-breadcrumbs [segments]="breadcrumbs"></app-breadcrumbs>
 
-    <div *ngIf="serverDetails" class="flex flex-wrap justify-between gap-8 px-6 py-6 bg-secondary border-emerald-400 border boder-solid mt-12"  >
+    <div *ngIf="serverDetails" class="mx-2 lg:mx-0 flex flex-wrap justify-between rounded-lg gap-8 px-6 py-6 bg-secondary border-emerald-400 border boder-solid mt-12"  >
       <div class="flex gap-12 lg:w-3/5 w-full" >
         <div class="min-w-20 w-20 h-20 px-1 py-1 bg-white rounded-lg my-auto">
           <img src="{{serverDetails.vendor.logo}}" alt="logo">

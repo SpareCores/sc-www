@@ -51,6 +51,9 @@
 }
 
 @media screen and (max-width: 800px) {
+  h2 {
+    padding-left: 0.5rem;
+  }
   .block_half {
     width: calc(100% - 1.0rem);
     margin: auto;
