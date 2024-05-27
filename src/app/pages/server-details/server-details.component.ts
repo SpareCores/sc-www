@@ -7,23 +7,10 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { FaqComponent } from '../../components/faq/faq.component';
-import { ApexAxisChartSeries, ApexChart, ApexDataLabels, ApexFill, ApexLegend, ApexPlotOptions, ApexStroke, ApexTooltip, ApexXAxis, ApexYAxis, ChartComponent, NgApexchartsModule } from "ng-apexcharts";
-import { chartOptions1, chartOptions2, chartOptions3 } from './chartOptions';
 import { FormsModule } from '@angular/forms';
 import { Dropdown, DropdownOptions, initFlowbite } from 'flowbite';
-
-export type ChartOptions = {
-  series: ApexAxisChartSeries;
-  chart: ApexChart;
-  dataLabels: ApexDataLabels;
-  plotOptions: ApexPlotOptions;
-  yaxis: ApexYAxis;
-  xaxis: ApexXAxis;
-  fill: ApexFill;
-  tooltip: ApexTooltip;
-  stroke: ApexStroke;
-  legend: ApexLegend;
-};
+import { BaseChartDirective } from 'ng2-charts';
+import { ChartConfiguration, ChartData } from 'chart.js';
 
 const options: DropdownOptions = {
   placement: 'bottom',
@@ -36,7 +23,7 @@ const options: DropdownOptions = {
 @Component({
   selector: 'app-server-details',
   standalone: true,
-  imports: [BreadcrumbsComponent, CommonModule, LucideAngularModule, FaqComponent, NgApexchartsModule, FormsModule, RouterModule],
+  imports: [BreadcrumbsComponent, CommonModule, LucideAngularModule, FaqComponent, FormsModule, RouterModule, BaseChartDirective],
   templateUrl: './server-details.component.html',
   styleUrl: './server-details.component.scss'
 })
@@ -46,7 +33,8 @@ export class ServerDetailsComponent implements OnInit {
 
   breadcrumbs: BreadcrumbSegment[] = [
     { name: 'Home', url: '/' },
-    { name: 'Servers', url: '/servers' }
+    { name: 'Servers', url: '/servers' },
+    { name: '', url: ''}
   ];
 
   features: any[] = [];
@@ -70,18 +58,67 @@ export class ServerDetailsComponent implements OnInit {
   datacenterDropdown: any;
   datacenterFilters: any[] = [];
 
-  chartOptions: ChartOptions | any;
-  chartOptions2: ChartOptions | any;
-  chartOptions3: ChartOptions | any;
+  @ViewChild('chart1') chart!: BaseChartDirective<'bar'> | undefined;
+  @ViewChild('chart2') chart2!: BaseChartDirective<'bar'> | undefined;
+  @ViewChild('chart3') chart3!: BaseChartDirective<'bar'> | undefined;
 
-  @ViewChild('chart1') chart!: ChartComponent;
-  @ViewChild('chart2') chart2!: ChartComponent;
-  @ViewChild('chart3') chart3!: ChartComponent;
+  public barChartOptions: ChartConfiguration<'bar'>['options'] = {
+    // We use these empty structures as placeholders for dynamic theming.
+    scales: {
+      x: {
+        ticks: {
+          color: '#FFF',
+        },
+        grid: {
+          color: '#4B5563',
+        },
+      },
+      y: {
+        ticks: {
+          color: '#FFF',
+        },
+        grid: {
+          color: '#4B5563',
+        },
+      },
+    },
+    plugins: {
+      legend: {
+        display: true,
+        labels: {
+          color: '#FFF',
+        }
+      }
+    },
+  };
+  public barChartType = 'bar' as const;
 
+  public barChartData: ChartData<'bar'> = {
+    labels: [],
+    datasets: [
+      { data: [], label: 'Spot', backgroundColor: '#34D399'},
+      { data: [], label: 'Ondemand', backgroundColor: '#E5E7EB'},
+    ],
+  };
+
+  public barChartData2: ChartData<'bar'> = {
+    labels: [],
+    datasets: [
+      { data: [], label: 'Spot', backgroundColor: '#34D399'},
+      { data: [], label: 'Ondemand', backgroundColor: '#E5E7EB'},
+    ],
+  };
+
+  public barChartData3: ChartData<'bar'> = {
+    labels: [],
+    datasets: [
+      { data: [], label: 'Spot', backgroundColor: '#34D399'},
+      { data: [], label: 'Ondemand', backgroundColor: '#E5E7EB'},
+    ],
+  };
 
   similarByFamily: Server[] = [];
   similarByPerformance: Server[] = [];
-
 
   openApiJson: any = require('../../../../sdk/openapi.json');
   instanceProperties: any[] = [];
@@ -95,9 +132,6 @@ export class ServerDetailsComponent implements OnInit {
               private keepreAPI: KeeperAPIService,
               private SEOHandler: SeoHandlerService) {
 
-    this.chartOptions = chartOptions2;
-    this.chartOptions2 = chartOptions3;
-    this.chartOptions3 = chartOptions1;
   }
 
   ngOnInit() {
@@ -112,11 +146,8 @@ export class ServerDetailsComponent implements OnInit {
       this.keepreAPI.getServer(vendor, id).then((data) => {
         if(data?.body){
           this.serverDetails = data.body as any;
-          this.breadcrumbs = [
-            { name: 'Home', url: '/' },
-            { name: 'Servers', url: '/servers' },
-            { name: this.serverDetails.display_name, url: '/server/' + this.serverDetails.vendor.vendor_id + '/' + this.serverDetails.server_id }
-          ];
+          this.breadcrumbs[2] =
+            { name: this.serverDetails.display_name, url: '/server/' + this.serverDetails.vendor.vendor_id + '/' + this.serverDetails.server_id };
 
           this.features = [];
           if(this.serverDetails.cpu_cores || this.serverDetails.vcpus) {
@@ -377,40 +408,35 @@ export class ServerDetailsComponent implements OnInit {
 
     this.availabilityDatacenters.sort((a, b) => a.datacenter_id - b.datacenter_id);
 
-    const series: any = [];
+    const series: ChartData<'bar'> = {
+      labels: [],
+      datasets: [
+      ],
+    };
 
     if(this.allocationFilters[0].selected) {
-      series.push({  name: "Spot",
-        data: [],
-        color: '#34D399'});
+      series.datasets.push( { data: [], label: 'Spot', backgroundColor: '#34D399'});
     }
 
     if(this.allocationFilters[1].selected) {
-      series.push({  name: "Ondemand",
-        data: [],
-        color: '#E5E7EB'});
+      series.datasets.push( { data: [], label: 'Ondemand', backgroundColor: '#E5E7EB'});
     }
 
-    const categories: any = [];
-
-    const spotIdx = series.findIndex((s: any) => s.name === 'Spot');
-    const ondemandIdx = series.findIndex((s: any) => s.name === 'Ondemand');
+    const spotIdx = series.datasets.findIndex((s: any) => s.label === 'Spot');
+    const ondemandIdx = series.datasets.findIndex((s: any) => s.label === 'Ondemand');
 
     this.availabilityDatacenters.forEach((zone: any) => {
-      categories.push(zone.display_name);
+      series.labels!.push(zone.display_name);
       if(spotIdx > -1) {
-        series[spotIdx].data.push(zone.spot?.price || 0);
+        series.datasets[spotIdx].data.push(zone.spot?.price || 0);
       }
       if(ondemandIdx > -1)
       {
-        series[ondemandIdx].data.push(zone.ondemand?.price || 0);
+        series.datasets[ondemandIdx].data.push(zone.ondemand?.price || 0);
       }
     });
 
-    this.chartOptions.xaxis.categories = categories;
-    this.chartOptions.series = series;
-
-    this.chart?.updateOptions(this.chartOptions, true, true, true);
+    this.barChartData = series;
     }
   }
 
@@ -455,42 +481,37 @@ export class ServerDetailsComponent implements OnInit {
 
     this.availabilityZones.sort((a, b) => a.datacenter_id - b.datacenter_id);
 
-    const series: any = [];
+    const series: ChartData<'bar'> = {
+      labels: [],
+      datasets: [
+      ],
+    };
 
     if(this.allocationFilters[0].selected) {
-      series.push({  name: "Spot",
-        data: [],
-        color: '#34D399'});
+      series.datasets.push( { data: [], label: 'Spot', backgroundColor: '#34D399'});
     }
 
     if(this.allocationFilters[1].selected) {
-      series.push({  name: "Ondemand",
-        data: [],
-        color: '#E5E7EB'});
+      series.datasets.push( { data: [], label: 'Ondemand', backgroundColor: '#E5E7EB'});
     }
 
-    const categories: any = [];
-
-    const spotIdx = series.findIndex((s: any) => s.name === 'Spot');
-    const ondemandIdx = series.findIndex((s: any) => s.name === 'Ondemand');
+    const spotIdx = series.datasets.findIndex((s: any) => s.label === 'Spot');
+    const ondemandIdx = series.datasets.findIndex((s: any) => s.label === 'Ondemand');
 
     this.availabilityZones.forEach((zone: any) => {
       if(this.datacenterFilters.find((z) => z.datacenter_id === zone.datacenter_id)?.selected) {
-        categories.push(zone.display_name);
+        series.labels!.push(zone.display_name);
         if(spotIdx > -1) {
-          series[spotIdx].data.push(zone.spot?.price || 0);
+          series.datasets[spotIdx].data.push(zone.spot?.price || 0);
         }
         if(ondemandIdx > -1)
         {
-          series[ondemandIdx].data.push(zone.ondemand?.price || 0);
+          series.datasets[ondemandIdx].data.push(zone.ondemand?.price || 0);
         }
       }
     });
 
-    this.chartOptions2.xaxis.categories = categories;
-    this.chartOptions2.series = series;
-
-    this.chart2?.updateOptions(this.chartOptions2, true, true, true);
+    this.barChartData2 = series;
     }
   }
 
@@ -534,29 +555,23 @@ export class ServerDetailsComponent implements OnInit {
         zone.ondemand.price = Math.round(zone.ondemand.price / zone.ondemand.count * 1000000) / 1000000;
     });
 
-    const series: any = [{
-        name: "Spot",
-        data: [],
-        color: '#34D399'
-      },
-      {
-        name: "Ondemand",
-        data: [],
-        color: '#E5E7EB'
-      }
-    ];
-    const categories: any = [];
+    const series: ChartData<'bar'> = {
+      labels: [],
+      datasets: [
+      ],
+    };
+
+    series.datasets.push( { data: [], label: 'Spot', backgroundColor: '#34D399'});
+
+    series.datasets.push( { data: [], label: 'Ondemand', backgroundColor: '#E5E7EB'});
 
     pricesPerZone.forEach((zone: any) => {
-      categories.push(zone.display_name);
-      series[0].data.push(zone.spot?.price || 0);
-      series[1].data.push(zone.ondemand?.price || 0);
+      series.labels!.push(zone.display_name);
+      series.datasets[0].data.push(zone.spot?.price || 0);
+      series.datasets[1].data.push(zone.ondemand?.price || 0);
     });
 
-    this.chartOptions3.xaxis.categories = categories;
-    this.chartOptions3.series = series;
-
-    this.chart3?.updateOptions(this.chartOptions3, true, true, true);
+    this.barChartData3 = series;
   }
   }
 
@@ -579,5 +594,4 @@ export class ServerDetailsComponent implements OnInit {
     tooltip.style.display = 'none';
     tooltip.style.opacity = '0';
   }
-
 }
