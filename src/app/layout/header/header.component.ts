@@ -10,6 +10,7 @@ import { CommonModule } from '@angular/common';
   imports: [LucideAngularModule, RouterLink, CommonModule],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
+  // eslint-disable-next-line @angular-eslint/no-host-metadata-property
   host: {ngSkipHydration: 'true'},
 })
 export class HeaderComponent {
