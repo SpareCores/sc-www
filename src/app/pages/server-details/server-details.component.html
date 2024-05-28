@@ -2,7 +2,7 @@
   <div class="content pt-16 pb-16 text-white">
     <app-breadcrumbs [segments]="breadcrumbs"></app-breadcrumbs>
 
-    <div *ngIf="serverDetails" class="mx-2 lg:mx-0 flex flex-wrap justify-between rounded-lg gap-8 px-6 py-6 bg-secondary border-emerald-400 border boder-solid mt-12"  >
+    <div *ngIf="serverDetails" class="mx-2 xl:mx-0 flex flex-wrap justify-between rounded-lg gap-8 px-6 py-6 bg-secondary border-emerald-400 border boder-solid mt-12"  >
       <div class="flex gap-12 lg:w-3/5 w-full" >
         <div class="min-w-20 w-20 h-20 px-1 py-1 bg-white rounded-lg my-auto">
           <img src="{{serverDetails.vendor.logo}}" alt="logo">
@@ -38,11 +38,10 @@
       </div>
     </div>
 
-    <div class="my-8">
-      <h2 class="text-3xl font-bold"> Specifications </h2>
-    </div>
-
-    <div *ngIf="serverDetails" class="flex flex-wrap gap-8">
+    <div *ngIf="serverDetails" class="mx-2 xl:mx-0 flex flex-wrap gap-8">
+      <div class="my-8 w-full">
+        <h2 class="text-3xl font-bold"> Specifications </h2>
+      </div>
       <div class="block_half" id="details">
         <h3 class="text-2xl" >Server Details</h3>
         <table class="items_table">
@@ -439,31 +438,31 @@
       </div>
 
       <div class="block_half">
-        <h3 class="text-2xl">Servers of the Same Family</h3>
-        <table class="items_table">
-          <thead>
-            <tr>
-              <th>INSTANCE</th>
-              <th>VCPUs</th>
-              <th>MEMORY</th>
-              <th>GPUs</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let item of similarByFamily">
-              <td>
-                <a
-                  class="underline decoration-dotted hover:text-gray-500"
-                  routerLink="/server/{{item.vendor_id}}/{{item.server_id}}">
-                  {{item.display_name}}
-                </a>
-              </td>
-              <td> {{item.vcpus}}</td>
-              <td> {{getMemory(item.memory)}}</td>
-              <td> {{item.gpu_count}}</td>
-            </tr>
-          </tbody>
-        </table>
+          <h3 class="text-2xl">Servers of the Same Family</h3>
+          <table class="items_table">
+            <thead>
+              <tr>
+                <th>INSTANCE</th>
+                <th>VCPUs</th>
+                <th>MEMORY</th>
+                <th>GPUs</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of similarByFamily">
+                <td>
+                  <a
+                    class="underline decoration-dotted hover:text-gray-500"
+                    routerLink="/server/{{item.vendor_id}}/{{item.server_id}}">
+                    {{item.display_name}}
+                  </a>
+                </td>
+                <td> {{item.vcpus}}</td>
+                <td> {{getMemory(item.memory)}}</td>
+                <td> {{item.gpu_count}}</td>
+              </tr>
+            </tbody>
+          </table>
       </div>
       <div class="block_half">
         <h3 class="text-2xl" >Similar Servers </h3>
