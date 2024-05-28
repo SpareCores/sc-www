@@ -1,4 +1,4 @@
-import { Component, ElementRef, Inject, PLATFORM_ID, Renderer2, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, PLATFORM_ID, Renderer2, OnInit, ViewChild } from '@angular/core';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
@@ -17,7 +17,7 @@ import { Lightbox, LightboxModule } from 'ngx-lightbox';
   templateUrl: './article.component.html',
   styleUrl: './article.component.scss'
 })
-export class ArticleComponent {
+export class ArticleComponent implements OnInit {
 
   @ViewChild('articleDiv') articleDiv!: ElementRef;
 
@@ -62,7 +62,7 @@ export class ArticleComponent {
 
         if(isPlatformBrowser(this.platformId)) {
           // Wait for the articleDiv to be rendered
-          let checkExist = setInterval(() => {
+          const checkExist = setInterval(() => {
             if (this.articleDiv) {
               this.renderer.listen(this.articleDiv.nativeElement, 'click', (event) => {
                 if (event.target.tagName === 'IMG' && event.target.classList[0] == 'zoomin') {
@@ -82,7 +82,7 @@ export class ArticleComponent {
     const lines = str.split('\n');
     const result: any = {};
 
-    for (let line of lines) {
+    for (const line of lines) {
       const [key, ...valueParts] = line.split(':');
       const value = valueParts.join(':').trim();
       if(key?.length > 0 && value?.length > 0) {

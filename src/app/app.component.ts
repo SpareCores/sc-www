@@ -1,5 +1,5 @@
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
-import { Component, Inject, PLATFORM_ID } from '@angular/core';
+import { AfterViewInit, Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { Meta } from '@angular/platform-browser';
 import { NavigationEnd, NavigationError, NavigationStart, Router, Event, RouterModule } from '@angular/router';
 import { initFlowbite } from 'flowbite';
@@ -15,7 +15,7 @@ import { AnalyticsService } from './services/analytics.service';
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-export class AppComponent {
+export class AppComponent implements OnInit, AfterViewInit {
   title = 'sc-www';
 
   constructor(@Inject(PLATFORM_ID) private platformId: object,
@@ -47,14 +47,14 @@ export class AppComponent {
     });
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     register();
     if (isPlatformBrowser(this.platformId)) {
       initFlowbite();
     }
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     if (isPlatformBrowser(this.platformId)) {
       this.analytics.initializeTracking();
     }
@@ -63,7 +63,7 @@ export class AppComponent {
   updateCanonical(url: string) {
     const canonicalUrl = url;
     const head = this.document.getElementsByTagName('head')[0];
-    var element: HTMLLinkElement | null = this.document.querySelector(`link[rel='canonical']`) || null;
+    let element: HTMLLinkElement | null = this.document.querySelector(`link[rel='canonical']`) || null;
     if (element == null) {
       element = this.document.createElement('link') as HTMLLinkElement;
       head.appendChild(element);

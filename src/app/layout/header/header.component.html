@@ -1,7 +1,7 @@
 <nav class="bg-custom px-4 lg:px-6 py-2.5 w-full">
   <div class="content flex justify-between items-center w-full">
-      <a routerLink="/" class="flex items-center">
-        <img class="max-h-[50px] lg:max-h-[66px]"
+      <a routerLink="/" class="h-12" style="max-width: 284px; width: 284px">
+        <img class="h-12" style="max-width: 284px; width: 284px"
              src="./assets/images/logos/logo_header.png"
              alt="Spare Cores Logo" />
       </a>
@@ -25,28 +25,14 @@
                   Vendors
                 </a>
               </li>
-              <!--
-              <li class="hidden lg:flex">
-                <a class="navbar_link" href="#" >
-                  Docs
-                </a>
-              </li>
-              <li>
-                <lucide-icon
-                  class="navbar_link cursor-pointer h-4 w-4"
-                  name="search"
-                  routerLink="/servers">
-                </lucide-icon>
-              </li>
-              -->
               <li class="lg:hidden">
                 <lucide-icon
-                  class="navbar_link cursor-pointer h-4 w-4"
+                  class="navbar_link cursor-pointer h-8 w-8"
                   data-dropdown-toggle="menu_options"
                   name="menu" >
                 </lucide-icon>
               </li>
-              <li *ngIf="!isLoggedIn()">
+              <li *ngIf="!isLoggedIn() || true">
                 <button
                   class="login_button text-sm items-center"
                   (click)="login()">
@@ -54,7 +40,7 @@
                   Log in
                 </button>
               </li>
-              <li *ngIf="isLoggedIn()">
+              <li *ngIf="isLoggedIn() || true">
                 <button
                   class="login_button text-sm items-center"
                   (click)="logout()">
@@ -86,12 +72,6 @@
       <a class="navbar_link" routerLink="/vendors" >
         <lucide-icon class="h-4 w-4" name="home"></lucide-icon>
         Vendors
-      </a>
-    </li>
-    <li class="py-2">
-      <a class="navbar_link">
-        <lucide-icon class="h-4 w-4" name="book-text"></lucide-icon>
-        Docs
       </a>
     </li>
   </ul>

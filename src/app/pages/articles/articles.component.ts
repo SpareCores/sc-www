@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ArticleMeta, ArticlesService } from '../../services/articles.service';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { CommonModule } from '@angular/common';
@@ -13,7 +13,7 @@ import { ArticleCardComponent } from '../../components/article-card/article-card
   templateUrl: './articles.component.html',
   styleUrl: './articles.component.scss'
 })
-export class ArticlesComponent {
+export class ArticlesComponent implements OnInit {
 
   breadcrumbs: BreadcrumbSegment[] = [
     { name: 'Home', url: '/' },
@@ -29,7 +29,7 @@ export class ArticlesComponent {
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
-      let category = params['tag'];
+      const category = params['tag'];
       this.articles.getArticlesByType(category).then(articles => {
         this.featuredArticles = articles;
       });
@@ -40,7 +40,7 @@ export class ArticlesComponent {
 
       ];
 
-      let title = category ? category.charAt(0).toUpperCase() + category.slice(1) : '';
+      const title = category ? category.charAt(0).toUpperCase() + category.slice(1) : '';
 
       if(category) {
         this.breadcrumbs.push(

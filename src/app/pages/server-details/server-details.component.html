@@ -2,7 +2,7 @@
   <div class="content pt-16 pb-16 text-white">
     <app-breadcrumbs [segments]="breadcrumbs"></app-breadcrumbs>
 
-    <div *ngIf="serverDetails" class="flex flex-wrap justify-between gap-8 px-6 py-6 bg-secondary border-emerald-400 border boder-solid mt-12"  >
+    <div *ngIf="serverDetails" class="mx-2 xl:mx-0 flex flex-wrap justify-between rounded-lg gap-8 px-6 py-6 bg-secondary border-emerald-400 border boder-solid mt-12"  >
       <div class="flex gap-12 lg:w-3/5 w-full" >
         <div class="min-w-20 w-20 h-20 px-1 py-1 bg-white rounded-lg my-auto">
           <img src="{{serverDetails.vendor.logo}}" alt="logo">
@@ -26,7 +26,7 @@
       </div>
       <div class="w-full lg:w-1/4">
         <div *ngFor="let item of features, let i = index">
-          <div *ngIf="i != 0" class="w-full h-4 mb-3 border-b border-gray-400 border-solid" ></div>
+          <div *ngIf="i !== 0" class="w-full h-4 mb-3 border-b border-gray-400 border-solid" ></div>
           <div class="flex gap-2 text-xl items-center text-gray-200">
             <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6">
             <lucide-icon name="check" class="h-4 w-4"></lucide-icon>
@@ -38,11 +38,10 @@
       </div>
     </div>
 
-    <div class="my-8">
-      <h2 class="text-3xl font-bold"> Specifications </h2>
-    </div>
-
-    <div *ngIf="serverDetails" class="flex flex-wrap gap-8">
+    <div *ngIf="serverDetails" class="mx-2 xl:mx-0 flex flex-wrap gap-8">
+      <div class="my-8 w-full">
+        <h2 class="text-3xl font-bold"> Specifications </h2>
+      </div>
       <div class="block_half" id="details">
         <h3 class="text-2xl" >Server Details</h3>
         <table class="items_table">
@@ -280,10 +279,16 @@
 
         <div class="absolute bottom-0 left-0 w-full py-3 flex justify-center" id="details_more"
             style="background: linear-gradient(360deg, #06263A 23.44%, rgba(6, 38, 58, 0) 100%);" >
-          <button class="btn-primary py-2 px-3" (click)="openBox('details')"> View more details </button>
+          <button class="btn-primary py-2 px-3" (click)="openBox('details')"
+                  data-ph-capture-attribute-sc-event="server details show more server details">
+            View more details
+          </button>
         </div>
         <div class="w-full pt-3 flex justify-center hidden" id="details_less">
-          <button class="btn-primary py-2 px-3" (click)="openBox('details')"> Show less </button>
+          <button class="btn-primary py-2 px-3" (click)="openBox('details')"
+                  data-ph-capture-attribute-sc-event="server details show less server details">
+            Show less
+          </button>
         </div>
       </div>
 
@@ -309,12 +314,19 @@
         </table>
         <div class="absolute bottom-0 laft-0 w-full py-3 flex justify-center" id="availability_more"
             style="background: linear-gradient(360deg, #06263A 23.44%, rgba(6, 38, 58, 0) 100%);" >
-          <button class="btn-primary py-2 px-3" (click)="openBox('availability')"> Show more </button>
+          <button class="btn-primary py-2 px-3" (click)="openBox('availability')"
+                  data-ph-capture-attribute-sc-event="server details show more availability">
+            Show more
+          </button>
         </div>
         <div class="w-full pt-3 flex justify-center hidden" id="availability_less">
-          <button class="btn-primary py-2 px-3" (click)="openBox('availability')"> Show less </button>
+          <button class="btn-primary py-2 px-3" (click)="openBox('availability')"
+                  data-ph-capture-attribute-sc-event="server details show less availability">
+            Show less
+          </button>
         </div>
       </div>
+
 
       <div class="my-2 w-full">
         <h2 class="text-3xl font-bold"> Economics </h2>
@@ -326,6 +338,7 @@
           <div>
             <button
               id="allocation_button"
+              data-ph-capture-attribute-sc-event="server details price allocation select"
               data-dropdown-toggle="allocation_options"
               class="dropdown_button"
               type="button">
@@ -338,29 +351,29 @@
             </button>
           </div>
         </div>
-
         <div *ngIf="isBrowser()">
-          <apx-chart
-          id="chart1" #chart1
-          [series]="chartOptions.series"
-          [chart]="chartOptions.chart"
-          [dataLabels]="chartOptions.dataLabels"
-          [plotOptions]="chartOptions.plotOptions"
-          [yaxis]="chartOptions.yaxis"
-          [legend]="chartOptions.legend"
-          [fill]="chartOptions.fill"
-          [stroke]="chartOptions.stroke"
-          [tooltip]="chartOptions.tooltip"
-          [xaxis]="chartOptions.xaxis"
-          ></apx-chart>
+          <div chartType="bar">
+            <canvas
+              #chartPricePerDatacenter
+              id="chartPricePerDatacenter"
+              style="height: 350px; width:100%"
+              baseChart
+              [data]="barChartData"
+              [options]="barChartOptions"
+              [type]="barChartType"
+            >
+            </canvas>
+          </div>
         </div>
       </div>
+
       <div class="block_half">
         <div class="flex justify-between items-center">
           <h3 class="text-2xl" >Prices per Zone</h3>
           <div class="flex gap-4">
             <button
               id="allocation_button2"
+              data-ph-capture-attribute-sc-event="server details price allocation select"
               data-dropdown-toggle="allocation_options2"
               class="dropdown_button"
               type="button">
@@ -373,6 +386,7 @@
             </button>
             <button
               id="datacenter_button"
+              data-ph-capture-attribute-sc-event="server details datacenters select"
               data-dropdown-toggle="datacenter_options"
               class="dropdown_button"
               type="button">
@@ -386,70 +400,69 @@
           </div>
         </div>
         <div *ngIf="isBrowser()">
-          <apx-chart
-          id="chart2" #chart2
-          [series]="chartOptions2.series"
-          [chart]="chartOptions2.chart"
-          [dataLabels]="chartOptions2.dataLabels"
-          [plotOptions]="chartOptions2.plotOptions"
-          [yaxis]="chartOptions2.yaxis"
-          [legend]="chartOptions2.legend"
-          [fill]="chartOptions2.fill"
-          [stroke]="chartOptions2.stroke"
-          [tooltip]="chartOptions2.tooltip"
-          [xaxis]="chartOptions2.xaxis"
-          ></apx-chart>
+          <div chartType="bar">
+            <canvas
+              #chartPricePerZone
+              id="chartPricePerZone"
+              style="height: 350px; width:100%"
+              baseChart
+              [data]="barChartData2"
+              [options]="barChartOptions"
+              [type]="barChartType"
+            >
+            </canvas>
+          </div>
         </div>
       </div>
       <div class="block_half">
         <h3 class="text-2xl" >Lowest Prices</h3>
         <div *ngIf="isBrowser()">
-          <apx-chart
-          id="chart3" #chart3
-          [series]="chartOptions3.series"
-          [chart]="chartOptions3.chart"
-          [dataLabels]="chartOptions3.dataLabels"
-          [plotOptions]="chartOptions3.plotOptions"
-          [yaxis]="chartOptions3.yaxis"
-          [legend]="chartOptions3.legend"
-          [fill]="chartOptions3.fill"
-          [stroke]="chartOptions3.stroke"
-          [tooltip]="chartOptions3.tooltip"
-          [xaxis]="chartOptions3.xaxis"
-          ></apx-chart>
+          <div chartType="bar">
+            <canvas
+              #chartPriceLowest
+              id="chartPriceLowest"
+              style="height: 350px; width:100%"
+              baseChart
+              [data]="barChartData3"
+              [options]="barChartOptions"
+              [type]="barChartType"
+            >
+            </canvas>
+          </div>
         </div>
       </div>
+
 
       <div class="my-2 w-full">
         <h2 class="text-3xl font-bold"> Alternatives </h2>
       </div>
 
       <div class="block_half">
-        <h3 class="text-2xl">Servers of the Same Family</h3>
-        <table class="items_table">
-          <thead>
-            <tr>
-              <th>INSTANCE</th>
-              <th>VCPUs</th>
-              <th>MEMORY</th>
-              <th>GPUs</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let item of similarByFamily">
-              <td>
-                <a
-                  class="underline decoration-dotted hover:text-gray-500"
-                  routerLink="/server/{{item.vendor_id}}/{{item.server_id}}">
-                  {{item.display_name}}
-                </a>
-              </td>
-              <td> {{item.vcpus}}</td>
-              <td> {{getMemory(item.memory)}}</td>
-              <td> {{item.gpu_count}}</td>
-            </tr>
-          </tbody>
-        </table>
+          <h3 class="text-2xl">Servers of the Same Family</h3>
+          <table class="items_table">
+            <thead>
+              <tr>
+                <th>INSTANCE</th>
+                <th>VCPUs</th>
+                <th>MEMORY</th>
+                <th>GPUs</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of similarByFamily">
+                <td>
+                  <a
+                    class="underline decoration-dotted hover:text-gray-500"
+                    routerLink="/server/{{item.vendor_id}}/{{item.server_id}}">
+                    {{item.display_name}}
+                  </a>
+                </td>
+                <td> {{item.vcpus}}</td>
+                <td> {{getMemory(item.memory)}}</td>
+                <td> {{item.gpu_count}}</td>
+              </tr>
+            </tbody>
+          </table>
       </div>
       <div class="block_half">
         <h3 class="text-2xl" >Similar Servers </h3>

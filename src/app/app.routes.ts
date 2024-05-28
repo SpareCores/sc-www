@@ -14,5 +14,7 @@ export const routes: Routes = [
 
   { path: 'auth/callback', loadComponent: () => import('./auth/callback/callback.component').then(m => m.CallbackComponent)},
 
+  { path: 'dashboard', loadComponent: () => import('./pages/my-spare-cores/my-spare-cores.component').then(m => m.MySpareCoresComponent)},
+
   { path: '**', redirectTo: '' }
 ];

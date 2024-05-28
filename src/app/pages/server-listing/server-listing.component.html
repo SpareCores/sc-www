@@ -23,13 +23,13 @@
             Search Prompt
           </button>
         </div>
-        <div class="collapser bg-secondary" (click)="toggleCollapse()"
+        <div class="collapser bg-secondary" (click)="toggleCollapse()" tabindex="0"
              data-ph-capture-attribute-sc-event="server listing toggle sidebar">
           <lucide-icon name="chevron-left" class="h-6 w-6 text-emerald-400"></lucide-icon>
         </div>
         <div class="filters overflow-hidden bg-secondary">
           <div class="mx-2 p-3 border-b border-gray-200 " *ngFor="let item of filterCategories" >
-            <div class="flex justify-between cursor-pointer" (click)="toggleCategory(item)">
+            <div class="flex justify-between cursor-pointer" (click)="toggleCategory(item)" tabindex="0">
               <div class="text-white flex gap-2 items-center">
                 <lucide-icon name="{{item.icon}}" class="h-4 w-4 text-white"></lucide-icon>
                 <div class="text-sm">{{item.name}}</div>
@@ -335,7 +335,7 @@
                     </td>
                     <td *ngIf="column.type === 'vendor'" >
                       <div *ngIf="item.vendor.logo" class="w-9 h-9 px-1 py-1 bg-white rounded-lg">
-                        <img [src]="item.vendor.logo" >
+                        <img [src]="item.vendor.logo" alt="{{item.vendor.name}} logo" >
                       </div>
                       <div *ngIf="!item.vendor.logo" class="text-white text-sm">
                           {{item.vendor.name}}
@@ -343,6 +343,7 @@
                     </td>
                   </ng-container>
                   <td>
+                    <!-- eslint-disable-next-line @angular-eslint/template/interactive-supports-focus -->
                     <div (click)="$event.stopPropagation()">
                       <a routerLink="/server/{{item.vendor.vendor_id}}/{{item.server.server_id}}"
                          data-ph-capture-attribute-sc-event="server listing route to server details"
@@ -447,7 +448,7 @@
   <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
     <li *ngFor="let item of allocationTypes"
       class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-      (click)="selectAllocation(item)">
+      (click)="selectAllocation(item)" tabindex="0">
       <div class="text-white text-sm">{{item.name}} </div>
     </li>
   </ul>
@@ -457,7 +458,7 @@
   <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
     <li *ngFor="let item of pageLimits"
       class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-      (click)="selectPageSize(item)">
+      (click)="selectPageSize(item)" tabindex="0">
       <div class="text-white text-sm">{{item}} </div>
     </li>
   </ul>
@@ -479,7 +480,7 @@
   <ul class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
     <li *ngFor="let item of availableCurrencies"
       class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-      (click)="selectCurrency(item)">
+      (click)="selectCurrency(item)" tabindex="0">
       <div class="text-white text-sm ">{{item.name}} ({{item.symbol}})</div>
     </li>
   </ul>

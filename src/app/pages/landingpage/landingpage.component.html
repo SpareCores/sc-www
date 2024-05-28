@@ -50,11 +50,11 @@
                       class="button font-bold text-3xl"
                       [disabled]="isSpinning"
                       (click)="spinClicked()"
-                      autofocus>SPIN
+                     >SPIN
               </button>
               <div class="button__bottom" [attr.disabled]="isSpinning"></div>
             </div>
-            <input [(ngModel)]="priceValue"
+            <input [(ngModel)]="priceValue" aria-label="Price of highlighted instance"
               class="input_border price_input bg-primary text-center text-4xl font-bold"
               [ngClass]="{
                 'text-gray-400': isSpinning,
@@ -62,13 +62,13 @@
               }"
               readonly
               disabled >
-            <input id="cpuCount" [(ngModel)]="cpuCount" step="1"
+            <input id="cpuCount" [(ngModel)]="cpuCount" step="1" aria-label="Minimum vCPU filter"
                    class="input_border cpu_input bg-primary text-center text-3xl font-bold"
                    [disabled]="isSpinning"
                    data-ph-capture-attribute-sc-event="landing slot machine filter"
                    data-ph-capture-attribute-slot-machine-action="filter"
                    data-ph-capture-attribute-slot-machine-filter="cpu">
-            <input id="ramCount" [(ngModel)]="ramCount" step="1"
+            <input id="ramCount" [(ngModel)]="ramCount" step="1" aria-label="Minimum memory filter"
                    class="input_border ram_input bg-primary text-center text-3xl font-bold"
                    [disabled]="isSpinning"
                    data-ph-capture-attribute-sc-event="landing slot machine filter"
@@ -81,7 +81,7 @@
                   <div class="slot flex flex-col align-center" [style]="getStyle(i)" *ngFor="let item of spinnerContents[0], let i = index" >
                     <div class="slot_inner" [style]="getInnerStyle(i)">
                       <div *ngIf="!item.logo" class="text-center font-bold text-3xl">{{item.name}}</div>
-                      <img *ngIf="item.logo" src="{{item.logo}}" style="margin: 0.5rem;" class="rounded-lg">
+                      <img *ngIf="item.logo" src="{{item.logo}}" style="margin: 0.5rem;" class="rounded-lg" alt="{{item.name}} logo">
                     </div>
                   </div>
                 </div>
@@ -147,12 +147,12 @@
         <div class="flex gap-24 justify-center flex-col lg:flex-row">
           <div class="flex justify-center">
             <!-- 550x380 -->
-            <img class="h-full object-contain mx-auto" src="/assets/images/media/sqlstats.webp" >
+            <img class="h-full object-contain mx-auto" src="/assets/images/media/sqlstats.webp" alt="SQL query to show statistics on the Spare Cores inventory and update frequency" >
           </div>
           <div class="flex flex-col justify-center">
             <div style="width: 450px; margin: auto;">
               <div *ngFor="let item of features, let i = index">
-                <div *ngIf="i != 0" class="w-full h-4 mb-3 border-b border-gray-400 border-solid" ></div>
+                <div *ngIf="i !== 0" class="w-full h-4 mb-3 border-b border-gray-400 border-solid" ></div>
                 <div class="flex gap-2 text-2xl items-center text-gray-200">
                   <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6">
                   <lucide-icon name="check" class="h-4 w-4"></lucide-icon>
@@ -183,7 +183,7 @@
           <div class="w-full lg:w-1/3 flex flex-col gap-6">
             <div class="w-full h-260 rounded-lg">
               <!-- 300x260 -->
-              <img class="rounded-lg h-full object-contain mx-auto" src="/assets/images/media/step1.webp">
+              <img class="rounded-lg h-full object-contain mx-auto" src="/assets/images/media/step1.webp" alt="Screenshot of the server listing page, focusing on the filter elements in the sidebar">
             </div>
             <div class="flex gap-2 align-center">
               <div class="text-emerald-400 rounded-full bg-white px-2 font-bold">1</div>
@@ -196,7 +196,7 @@
           <div class="w-full lg:w-1/3 flex flex-col gap-6">
             <div class="w-full h-260 rounded-lg">
               <!-- 300x260 -->
-              <img class="rounded-lg h-full object-contain mx-auto" src="/assets/images/media/step2.webp">
+              <img class="rounded-lg h-full object-contain mx-auto" src="/assets/images/media/step2.webp" alt="Screenshot of the server listing page, focusing on the search results, showing 3 instance records in a table">
             </div>
             <div class="flex gap-2 align-center">
               <div class="text-emerald-400 rounded-full bg-white px-2 font-bold">2</div>
@@ -209,7 +209,7 @@
           <div class="w-full lg:w-1/3 flex flex-col gap-6">
             <div class="w-full h-260 rounded-lg">
               <!-- 300x260 -->
-              <img class="rounded-lg h-full object-contain mx-auto" src="/assets/images/media/step3.webp">
+              <img class="rounded-lg h-full object-contain mx-auto" src="/assets/images/media/step3.webp" alt="Running the SC runner CLI tool to start a t4g.nano instance">
             </div>
             <div class="flex gap-2 align-center">
               <div class="text-emerald-400 rounded-full bg-white px-2 font-bold">3</div>
@@ -247,7 +247,7 @@
       <div class="w-full lg:w-2/5 justify-center flex">
         <a href="https://ngi.eu" target="_blank" rel="noopener">
           <!-- 550x380 -->
-          <img class="rounded-lg h-full object-contain mx-auto" src="/assets/images/media/ngi-eu-open-source.webp">
+          <img class="rounded-lg h-full object-contain mx-auto" src="/assets/images/media/ngi-eu-open-source.webp" alt="Banner image showing NGI (Next Generation Internet) funding for the SC (Spare Cores) project">
         </a>
       </div>
     </div>
@@ -276,23 +276,28 @@
               <td>{{item.status}}</td>
               <td class="flex gap-1">
                   <a href="https://github.com/SpareCores/{{item.github}}"
-                     *ngIf="item.github" target="_blank" rel="noopener">
+                     *ngIf="item.github" target="_blank" rel="noopener"
+                     [attr.aria-label]="'GitHub repository of ' + item.github">
                       <lucide-icon name="github"></lucide-icon>
                   </a>
                   <a href="https://pypi.org/project/{{item.pypi}}"
-                     *ngIf="item.pypi" target="_blank" rel="noopener">
-                      <img src="assets/images/icons/python.svg"
+                     *ngIf="item.pypi" target="_blank" rel="noopener"
+                     [attr.aria-label]="item.pypi + ' on PyPI'">
+                      <img src="assets/images/icons/python.svg" alt="Python logo"
                            style="width: 24px; vertical-align:middle;" />
                   </a>
                   <a href="{{item.docs}}"
-                     *ngIf="item.docs" target="_blank" rel="noopener">
+                     *ngIf="item.docs" target="_blank" rel="noopener"
+                     [attr.aria-label]="'Documentation site of ' + item.component">
                       <lucide-icon name="book-text"></lucide-icon>
                   </a>
-                  <a href="{{item.www}}" *ngIf="item.www" target="_blank" rel="noopener">
-                      <img src="assets/images/icons/www.svg"
+                  <a href="{{item.www}}" *ngIf="item.www" target="_blank" rel="noopener"
+                     [attr.aria-label]="'Homepage of ' + item.component">
+                      <img src="assets/images/icons/www.svg" alt="WWW logo"
                            style="width: 24px; vertical-align:middle;" />
                   </a>
-                  <a href="{{item.data}}" *ngIf="item.data" target="_blank" rel="noopener">
+                  <a href="{{item.data}}" *ngIf="item.data" target="_blank" rel="noopener"
+                     [attr.aria-label]="'Database of ' + item.component">
                       <lucide-icon name="database"></lucide-icon>
                   </a>
               </td>

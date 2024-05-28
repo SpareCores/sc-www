@@ -1,4 +1,4 @@
-import { Component, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, HostBinding, Inject, PLATFORM_ID, OnInit } from '@angular/core';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { KeeperAPIService } from '../../services/keeper-api.service';
 import { OrderDir, SearchServersServersGetParams, ServerPriceWithPKs } from '../../../../sdk/data-contracts';
@@ -71,9 +71,9 @@ const optionsModal: ModalOptions = {
   imports: [CommonModule, FormsModule, BreadcrumbsComponent, LucideAngularModule, CountryIdtoNamePipe, RouterModule],
   templateUrl: './server-listing.component.html',
   styleUrl: './server-listing.component.scss',
-  host: {ngSkipHydration: 'true'},
 })
-export class ServerListingComponent {
+export class ServerListingComponent implements OnInit {
+  @HostBinding('attr.ngSkipHydration') ngSkipHydration = 'true';
 
   isCollapsed = false;
 
@@ -235,7 +235,7 @@ export class ServerListingComponent {
       this.filterServers(false);
     });
 
-    this.valueChangeDebouncer.pipe(debounceTime(300)).subscribe((value) => {
+    this.valueChangeDebouncer.pipe(debounceTime(300)).subscribe(() => {
       this.page = 1;
       this.filterServers();
     });
@@ -378,7 +378,7 @@ export class ServerListingComponent {
   }
 
   filterServers(updateURL = true, updateTotalCount = true) {
-    let queryObject: SearchServersServersGetParams = this.getQueryObject() || {};
+    const queryObject: SearchServersServersGetParams = this.getQueryObject() || {};
 
     if(updateURL) {
       this.updateQueryParams(queryObject);
@@ -466,7 +466,7 @@ export class ServerListingComponent {
   }
 
   getQueryObject() {
-    let paramObject = this.searchParameters?.map((param: any) => {
+    const paramObject = this.searchParameters?.map((param: any) => {
       return (param.modelValue && param.schema.category_id && param.schema.default !== param.modelValue) ?
               {[param.name]: param.modelValue} :
               {};
@@ -514,7 +514,7 @@ export class ServerListingComponent {
   }
 
   updateQueryParams(object: any) {
-    let encodedQuery = encodeQueryParams(object);
+    const encodedQuery = encodeQueryParams(object);
 
     if(encodedQuery?.length) {
       // update the URL
