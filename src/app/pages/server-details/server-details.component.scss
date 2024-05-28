@@ -4,6 +4,7 @@
   width: calc(50% - 1.0rem);
   min-height: 460px;
   height: 460px;
+  margin: auto;
 }
 
 .block_full {
@@ -51,12 +52,9 @@
 }
 
 @media screen and (max-width: 800px) {
+
   .block_half {
-    width: calc(100% - 1.0rem);
-    margin: auto;
-  }
-  .block_full {
-    width: calc(100% - 1.0rem);
+    width: calc(100%);
     margin: auto;
   }
 
