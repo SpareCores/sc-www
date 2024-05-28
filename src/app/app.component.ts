@@ -7,6 +7,7 @@ import { register } from 'swiper/element/bundle';
 import { HeaderComponent } from './layout/header/header.component';
 import { FooterComponent } from './layout/footer/footer.component';
 import { AnalyticsService } from './services/analytics.service';
+import { AuthenticationService } from './services/authentication.service';
 
 @Component({
   selector: 'app-root',
@@ -20,6 +21,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   constructor(@Inject(PLATFORM_ID) private platformId: object,
     @Inject(DOCUMENT) private document: Document,
+    private auth: AuthenticationService,
     private router: Router,
     private analytics: AnalyticsService,
     private metaTagService: Meta) {

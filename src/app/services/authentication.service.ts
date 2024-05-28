@@ -19,12 +19,26 @@ export class AuthenticationService {
         case 'logout':
           this.authedState.next(false);
         break;
+        case 'token_received':
+        case 'token_refreshed':
+          this.authedState.next(true);
+        break;
       }
     });
+
   }
 
   public getOIDCUser(): Observable<any> {
     return from(this.oauthService.loadUserProfile());
+  }
+
+  public async tryAutoLogin(): Promise<void> {
+    await this.oauthService.loadDiscoveryDocumentAndTryLogin();
+    if (this.oauthService.hasValidIdToken()) {
+      this.authedState.next(true);
+    } else {
+      this.authedState.next(false);
+    }
   }
 
   public async authenticate(): Promise<void> {
@@ -34,18 +48,18 @@ export class AuthenticationService {
     this.oauthService.strictDiscoveryDocumentValidation = false;
     await this.oauthService.loadDiscoveryDocumentAndTryLogin();
 
-
     if (!this.oauthService.hasValidIdToken()) {
       const newState = window.location.pathname;
       sessionStorage.setItem('prelogin_url', newState);
       this.oauthService.initImplicitFlow();
+    } else {
+      this.authedState.next(true);
     }
-
     return;
   }
 
   public async loginCodeFlow(): Promise<void> {
-    return this.oauthService.initCodeFlow();
+    return this.oauthService.tryLoginCodeFlow();
   }
 
   public async getToken(): Promise<string> {
@@ -57,7 +71,6 @@ export class AuthenticationService {
   }
 
   public isLoggedIn(): boolean {
-    console.log('hasValidAccessToken', this.oauthService.hasValidAccessToken());
     return this.oauthService.hasValidAccessToken();
   }
 

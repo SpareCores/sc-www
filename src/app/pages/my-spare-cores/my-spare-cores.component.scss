@@ -1,0 +1,94 @@
+.filter_bar {
+  position: relative;
+  width: 20rem;
+  transition: width 0.2s ease-in-out;
+
+  .top {
+    height: 4rem;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    padding: 0.5rem;
+    border-top: 1px solid #34D399;
+  }
+  .collapser {
+    position: absolute;
+    right: -52px;
+    top: 0;
+    height: 4rem;
+    width: 52px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    z-index: 1;
+    border-top-right-radius: 0.25rem;
+    border-bottom-right-radius: 0.25rem;
+    border-bottom: 1px solid;
+    border-right: 1px solid;
+    border-top: 1px solid;
+    border-color: #34D399;
+    cursor: pointer;
+  }
+
+  .filters {
+    border-top: 1px solid #34D399;
+    border-right: 1px solid #34D399;
+    padding-bottom: 1rem;
+    height: calc(100% - 4rem);
+  }
+}
+
+.filter_bar.collapsed {
+  width: 0rem;
+  min-width: unset;
+}
+
+.top_buttons {
+  height: 4rem;
+}
+
+.limited-full {
+  width: calc(100% - 20rem);
+}
+
+.items_table {
+  @apply w-full text-white;
+
+  thead {
+    @apply border-b border-gray-200 border-solid bg-secondary;
+    th {
+      @apply text-left px-5 py-3 font-normal text-xs;
+
+    }
+  }
+
+  tbody {
+    tr:nth-child(2n+1) {
+      @apply bg-primary;
+    }
+    tr:nth-child(2n) {
+      @apply bg-secondary;
+    }
+
+    tr {
+      @apply hover:border hover:border-emerald-400 hover:border-solid cursor-pointer;
+      td {
+        @apply px-5 py-3 text-left text-sm;
+      }
+    }
+  }
+}
+
+.dropdown_button {
+  @apply text-white bg-emerald-400 hover:bg-emerald-500 focus:outline-none font-medium rounded-lg text-sm text-center inline-flex items-center border-emerald-400 border-solid border;
+  transition-duration: 0.15s;
+  transition-property: background-color, border-color, box-shadow, color;
+  transition-timing-function: ease-in;
+}
+
+.unit {
+  position: absolute;
+  right: 0.5rem;
+  top: 2.25rem;
+  transform: translateY(-2rem);
+}

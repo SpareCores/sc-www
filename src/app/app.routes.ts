@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { LandingpageComponent } from './pages/landingpage/landingpage.component';
 import { ServerListingComponent } from './pages/server-listing/server-listing.component';
+import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   { path: '', component: LandingpageComponent },
@@ -14,7 +15,10 @@ export const routes: Routes = [
 
   { path: 'auth/callback', loadComponent: () => import('./auth/callback/callback.component').then(m => m.CallbackComponent)},
 
-  { path: 'dashboard', loadComponent: () => import('./pages/my-spare-cores/my-spare-cores.component').then(m => m.MySpareCoresComponent)},
+  { path: 'dashboard',
+    loadComponent: () => import('./pages/my-spare-cores/my-spare-cores.component').then(m => m.MySpareCoresComponent),
+    canActivate: [authGuard]
+  },
 
   { path: '**', redirectTo: '' }
 ];
