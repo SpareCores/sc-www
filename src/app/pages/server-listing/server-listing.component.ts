@@ -12,6 +12,7 @@ import { SeoHandlerService } from '../../services/seo-handler.service';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
 import { CountryIdtoNamePipe } from '../../pipes/country-idto-name.pipe';
+import { UsersAPIService } from '../../services/users-api.service';
 
 export type TableColumn = {
   name: string;
@@ -182,7 +183,8 @@ export class ServerListingComponent implements OnInit {
               private route: ActivatedRoute,
               private router: Router,
               private SEOHandler: SeoHandlerService,
-              private storageHandler: StorageHandlerService) { }
+              private storageHandler: StorageHandlerService,
+              private userAPI: UsersAPIService) { }
 
   ngOnInit() {
 
@@ -193,13 +195,35 @@ export class ServerListingComponent implements OnInit {
 
     this.SEOHandler.updateThumbnail('https://sparecores.com/assets/images/media/server_list_image.png');
 
-    this.route.queryParams.subscribe((params: Params) => {
+    this.route.queryParams.subscribe(async (params: Params) => {
       const query: any = params;
       const parameters = this.openApiJson.paths['/servers'].get.parameters || [];
       this.searchParameters = parameters.map((item: any) => {
         const value = query[item.name]?.split(',') || item.schema.default || null;
         return {...item, modelValue: value};
       });
+
+      const userData = await this.userAPI.getCurrentUserData();
+      if(userData) {
+        if(userData.currency) {
+          this.selectedCurrency = this.availableCurrencies.find((currency) => currency.slug === userData.currency) || this.availableCurrencies[0];
+        }
+
+        if(userData.limit) {
+          this.limit = userData.limit;
+        }
+
+        if(userData.allocation) {
+          this.allocation = this.allocationTypes.find((allocation) => allocation.slug === userData.allocation) || this.allocationTypes[0];
+        }
+
+        if(userData.tableColumns) {
+          const tableColumns: string[] = JSON.parse(userData.tableColumns);
+          this.possibleColumns.forEach((column) => {
+            column.show = tableColumns.findIndex((item) => item === column.name) !== -1;
+          });
+        }
+      }
 
       if(query.order_by && query.order_dir) {
         this.orderBy = query.order_by;
@@ -516,6 +540,8 @@ export class ServerListingComponent implements OnInit {
   updateQueryParams(object: any) {
     const encodedQuery = encodeQueryParams(object);
 
+    this.userAPI.saveSearchHistory(object);
+
     if(encodedQuery?.length) {
       // update the URL
       window.history.pushState({}, '', '/servers?' + encodedQuery);
@@ -529,12 +555,15 @@ export class ServerListingComponent implements OnInit {
     this.tableColumns = this.possibleColumns.filter((column) => column.show);
 
     if(save) {
-      this.storageHandler.set('serverListTableColumns', JSON.stringify(this.tableColumns.map(item => item.name)));
+      const tableColumnsStr = JSON.stringify(this.tableColumns.map((column) => column.name));
+      this.userAPI.insertOrUpdateUserData({tableColumns: tableColumnsStr});
     }
   }
 
   selectCurrency(currency: any) {
     this.selectedCurrency = currency;
+
+    this.userAPI.insertOrUpdateUserData({currency: currency.slug});
 
     this.filterServers();
 
@@ -545,6 +574,8 @@ export class ServerListingComponent implements OnInit {
     this.allocation = allocation;
     this.page = 1;
 
+    this.userAPI.insertOrUpdateUserData({allocation: allocation.slug});
+
     this.filterServers();
 
     this.dropdownAllocation?.hide();
@@ -553,6 +584,9 @@ export class ServerListingComponent implements OnInit {
   selectPageSize(limit: number) {
     this.limit = limit;
     this.page = 1;
+
+    this.userAPI.insertOrUpdateUserData({limit: limit});
+
     this.filterServers();
 
     this.dropdownPage?.hide();
