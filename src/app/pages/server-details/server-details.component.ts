@@ -11,6 +11,8 @@ import { FormsModule } from '@angular/forms';
 import { Dropdown, DropdownOptions, initFlowbite } from 'flowbite';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData } from 'chart.js';
+import { AuthenticationService } from '../../services/authentication.service';
+import { UsersAPIService } from '../../services/users-api.service';
 
 const options: DropdownOptions = {
   placement: 'bottom',
@@ -121,11 +123,15 @@ export class ServerDetailsComponent implements OnInit {
 
   tooltipContent = '';
 
+  watchlist = [];
+
   @ViewChild('tooltipDefault') tooltip!: ElementRef;
 
   constructor(@Inject(PLATFORM_ID) private platformId: object,
               private route: ActivatedRoute,
               private keepreAPI: KeeperAPIService,
+              private userAPI: UsersAPIService,
+              private auth: AuthenticationService,
               private SEOHandler: SeoHandlerService) {
 
   }
@@ -257,6 +263,11 @@ export class ServerDetailsComponent implements OnInit {
           });
 
           if(isPlatformBrowser(this.platformId)) {
+
+            this.userAPI.getWatchlist().then((watchlist) => {
+              this.watchlist = watchlist;
+            });
+
             setTimeout(() => {
               initFlowbite();
             }, 2000);
@@ -325,6 +336,10 @@ export class ServerDetailsComponent implements OnInit {
     return isPlatformBrowser(this.platformId);
   }
 
+  isLoggedin() {
+    return this.auth.isLoggedIn();
+  }
+
   getMemory(memory: number | undefined = undefined) {
     return ((memory || this.serverDetails.memory || 0) / 1024).toFixed(1) + 'GB';
   }
@@ -356,6 +371,20 @@ export class ServerDetailsComponent implements OnInit {
     if(el3) {
       el3.classList.toggle('hidden');
     }
+  }
+
+  toggleWatchList() {
+    if(this.isLoggedin()) {
+      this.userAPI.toggleWatchlist(this.serverDetails.vendor_id, this.serverDetails.server_id).then(() => {
+        this.userAPI.getWatchlist().then((watchlist) => {
+          this.watchlist = watchlist;
+        });
+      });
+    }
+  }
+
+  isWatched() {
+    return this.watchlist.find((item: any) => item.vendor_id === this.serverDetails.vendor_id && item.server_id === this.serverDetails.server_id);
   }
 
   refreshGraphs() {

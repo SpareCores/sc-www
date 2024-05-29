@@ -21,6 +21,17 @@
               <span> Status Page </span>
               <lucide-icon name="external-link" class="h-6 w-6"></lucide-icon>
             </a>
+            <button *ngIf="isLoggedin() && !isWatched()" class="btn-primary py-3 px-5 flex gap-2"
+              (click)="toggleWatchList()">
+              <span> Add to Watchlist</span>
+              <lucide-icon name="star" class="h-6 w-6"></lucide-icon>
+            </button>
+            <button *ngIf="isLoggedin() && isWatched()"
+              class="flex gap-2 border-solid border border-emerald-400 rounded-lg bg-transparend text-emerald-400 py-3 px-5 font-bold hover:text-emerald-500"
+              (click)="toggleWatchList()">
+              <span> Remove from Watchlist</span>
+              <lucide-icon name="star" class="h-6 w-6"></lucide-icon>
+            </button>
           </div>
         </div>
       </div>
