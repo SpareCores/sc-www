@@ -6,13 +6,14 @@ import { Servers } from '../../../sdk/Servers';
 import { AssistFiltersAiAssistFiltersGetParams, SearchServersServersGetParams } from '../../../sdk/data-contracts';
 import { Table } from '../../../sdk/Table';
 import { Ai } from '../../../sdk/Ai';
+import { AuthenticationService } from './authentication.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class KeeperAPIService {
 
-  public myHttp = new MYHTTPClient(this.httpClient, this.platformId);
+  public myHttp = new MYHTTPClient(this.httpClient, this.auth, this.platformId);
 
   public SearchController: Servers = new Servers(this.myHttp);
   public ServerController: Server = new Server(this.myHttp);
@@ -22,6 +23,7 @@ export class KeeperAPIService {
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: object,
+    private auth: AuthenticationService,
     private httpClient: HttpClient) {
   }
 

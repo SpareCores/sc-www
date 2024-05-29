@@ -34,7 +34,7 @@
     border-top: 1px solid #34D399;
     border-right: 1px solid #34D399;
     padding-bottom: 1rem;
-    height: calc(100% - 4rem);
+    height: calc(100%);
   }
 }
 
@@ -58,7 +58,9 @@
     @apply border-b border-gray-200 border-solid bg-secondary;
     th {
       @apply text-left px-5 py-3 font-normal text-xs;
-
+      &.actions {
+        @apply text-right w-100;
+      }
     }
   }
 
@@ -71,9 +73,11 @@
     }
 
     tr {
-      @apply hover:border hover:border-emerald-400 hover:border-solid cursor-pointer;
       td {
         @apply px-5 py-3 text-left text-sm;
+        &.actions {
+          @apply text-right w-100;
+        }
       }
     }
   }

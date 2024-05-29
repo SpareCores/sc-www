@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AuthConfig, OAuthEvent, OAuthService } from 'angular-oauth2-oidc';
-import { BehaviorSubject, from, Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -14,7 +14,6 @@ export class AuthenticationService {
     private authConfig: AuthConfig,
   ) {
     this.oauthService.events.subscribe((event: OAuthEvent) => {
-      console.log('oauth event', event);
       switch (event.type) {
         case 'logout':
           this.authedState.next(false);
@@ -25,11 +24,10 @@ export class AuthenticationService {
         break;
       }
     });
-
   }
 
-  public getOIDCUser(): Observable<any> {
-    return from(this.oauthService.loadUserProfile());
+  public getOIDCUser(): Promise<any> {
+    return this.oauthService.loadUserProfile();
   }
 
   public async tryAutoLogin(): Promise<void> {
@@ -62,12 +60,19 @@ export class AuthenticationService {
     return this.oauthService.tryLoginCodeFlow();
   }
 
-  public async getToken(): Promise<string> {
+  public getToken(): string {
     return this.oauthService.getIdToken();
   }
 
-  public async getAccessToken(): Promise<string> {
-    return this.oauthService.getAccessToken();
+  public hasToken(): boolean {
+    return this.oauthService.hasValidIdToken();
+  }
+
+  public getUserID(): string | undefined {
+    if(!this.oauthService.getIdentityClaims()) {
+      return undefined;
+    }
+    return this.oauthService.getIdentityClaims()['sub'];
   }
 
   public isLoggedIn(): boolean {

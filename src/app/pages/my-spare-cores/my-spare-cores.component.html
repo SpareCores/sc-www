@@ -1,26 +1,133 @@
-<div class="w-full bg-primary">
+<div class="w-full bg-primary min-h-screen">
   <div class="content pt-16 pb-16">
     <app-breadcrumbs [segments]="breadcrumbs"></app-breadcrumbs>
 
     <div class="flex flex-col gap-4 my-8">
-      <h1 class="text-white font-bold text-3xl">Cloud Compute Resources listing</h1>
+      <h1 class="text-white font-bold text-3xl">MY Spare Cores</h1>
       <div class="text-white text-xl pr-16">
-        Explore, search and evaluate cloud compute resources and pricing in the table below. This comprehensive comparison includes diverse attributes like CPU count, detailed processor information, memory, GPU, storage, network speed and amount, available operating systems, and pricing models such as spot and on-demand. Use the sidebar for filtering the results, or enter your phrase in the “Search prompt” bar.
+
       </div>
     </div>
 
     <div class="flex gap-8">
       <div class="filter_bar bg-primary">
         <div class="filters overflow-hidden bg-secondary">
+          <div class="mx-2 p-3 border-b border-gray-200 " *ngFor="let item of featureCategories" >
+            <div class="flex justify-between cursor-pointer" (click)="toggleCategory(item.category_id)" tabindex="0">
+              <div class="text-white flex gap-2 items-center">
+                <lucide-icon name="{{item.icon}}" class="h-4 w-4 text-white"></lucide-icon>
+                <div class="text-sm">{{item.name}}</div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <div class=" list_holder flex flex-col gap-4 limited-full">
-        <div class="top_buttons w-full flex justify-end gap-6 items-center" >
-
-        </div>
+      <div class="list_holder flex flex-col gap-4 limited-full">
         <div>
-          <div class="w-full overflow-x-auto relative" style="padding-left: 1px;">
+          <div class="w-full overflow-x-auto relative">
+            <div class="text-white" *ngIf="selectedFeatureCategory === 'settings'">
+              <h2 class="text-2xl mb-4 font-bold mb-4"> Personal Settings </h2>
+              <div class="flex gap-2 items-center mb-2">
+              <h3 class="text-xl font-bold"> Search Settings </h3>
+              <lucide-icon
+                name="info"
+                class="h-4 w-4 text-gray-400"
+                (mouseenter)="showTooltip($event, 'Saved default search settings. These settings are saved automatically when you change them on the Servers page.')"
+                (mouseleave)="hideTooltip()">
+              </lucide-icon>
+              </div>
+              <table class="items_table">
+                <thead>
+                <tr>
+                  <th> SETTING </th>
+                  <th> VALUE </th>
+                  <th class="actions"> ACTIONS </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let setting of searchSettings">
+                  <td> {{ setting.name }} </td>
+                  <td> {{ getSettingValue(setting.key) }} </td>
+                  <td class="actions">
+                    <!-- eslint-disable-next-line @angular-eslint/template/interactive-supports-focus -->
+                    <div class="flex gap-2 justify-end" (click)="$event.stopPropagation()">
+                      <button
+                        (click)="resetSetting(setting.key)">
+                        <lucide-icon name="trash-2" class="h-6 w-6 text-emerald-400"></lucide-icon>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
 
+            <div class="text-white" *ngIf="selectedFeatureCategory === 'watchlist'">
+              <h2 class="text-2xl mb-4 font-bold mb-4"> Watchlist </h2>
+              <table class="items_table">
+                <thead>
+                <tr>
+                  <th> INSTANCE </th>
+                  <th> VENDOR </th>
+                  <th> ACTIONS </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let item of watchlistItems">
+                  <td> {{ item.name }} </td>
+                  <td> {{ item.vendor_id }} </td>
+                  <td>
+                    <!-- eslint-disable-next-line @angular-eslint/template/interactive-supports-focus -->
+                    <div class="flex gap-4" (click)="$event.stopPropagation()">
+                      <button
+                        (click)="clearWatchlist(item)">
+                        <lucide-icon name="trash-2" class="h-6 w-6 text-emerald-400"></lucide-icon>
+                      </button>
+                      <a routerLink="/server/{{item.vendor_id}}/{{item.server_id}}"
+                          data-ph-capture-attribute-sc-event="watchlist route to server details"
+                          [attr.data-ph-capture-attribute-server-listing-row-vendor]="item.vendor_id"
+                          [attr.data-ph-capture-attribute-server-listing-row-server]="item.api_reference">
+                        <lucide-icon name="chevron-right" class="h-6 w-6 text-emerald-400"></lucide-icon>
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="text-white" *ngIf="selectedFeatureCategory === 'search_history'">
+              <div class="flex gap-2 items-center mb-4">
+                <h2 class="text-2xl font-bold "> Previous searches </h2>
+                <button
+                (mouseenter)="showTooltip($event, 'Clear search history')"
+                (mouseleave)="hideTooltip()"
+                (click)="clearHistory()">
+                <lucide-icon name="trash-2" class="h-6 w-6 text-gray-400"></lucide-icon>
+              </button>
+              </div>
+              <table class="items_table">
+                <thead>
+                <tr>
+                  <th> SEARCH OPTIONS </th>
+                  <th class="actions"> ACTIONS </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let item of searchHistory">
+                  <td> {{ getSearchHistoryItemDescription(item) }} </td>
+                  <td class="actions">
+                    <!-- eslint-disable-next-line @angular-eslint/template/interactive-supports-focus -->
+                    <div class="flex gap-4 justify-end" (click)="$event.stopPropagation()">
+                      <button (click)="openSearchHistoryItem(item)">
+                        <lucide-icon name="chevron-right" class="h-6 w-6 text-emerald-400"></lucide-icon>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
 
           </div>
 
@@ -30,4 +137,15 @@
     </div>
 
   </div>
+</div>
+
+<div id="tooltipDefault"
+  #tooltipDefault
+  style="opacity: 0;"
+  class="absolute z-10 inline-block
+        px-3 py-2 max-w-225
+        text-sm font-medium
+        text-white transition-opacity duration-300 bg-secondary
+        border border-solid border-emerald-400 rounded-lg">
+  {{tooltipContent}}
 </div>

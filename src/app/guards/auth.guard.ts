@@ -8,7 +8,7 @@ export const authGuard: CanActivateFn = () => {
   const authService = inject(AuthenticationService);
 
   return authService.authedState.pipe(
-    take(1), // Otherwise the Observable doesn't complete!
+    take(1),
     map((isAuthenticated) => {
       if (isAuthenticated) {
         return true
