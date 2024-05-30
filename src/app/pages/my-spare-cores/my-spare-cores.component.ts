@@ -135,6 +135,7 @@ export class MySpareCoresComponent implements OnInit {
   }
 
   openSearchHistoryItem(item: any) {
+    // eslint-disable-next-line prefer-const
     let query = JSON.parse(JSON.stringify(item));
     // convert all arrays to strings
     Object.keys(query).forEach((key) => {
