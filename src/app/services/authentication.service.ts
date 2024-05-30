@@ -39,7 +39,7 @@ export class AuthenticationService {
     }
   }
 
-  public async authenticate(): Promise<void> {
+  public async authenticate(path?: string): Promise<void> {
     try {
       this.oauthService.configure(this.authConfig);
       this.oauthService.setupAutomaticSilentRefresh();
@@ -48,7 +48,7 @@ export class AuthenticationService {
       await this.oauthService.loadDiscoveryDocumentAndTryLogin();
 
       if (!this.oauthService.hasValidIdToken()) {
-        const newState = window.location.pathname;
+        const newState = path || window.location.pathname;
         sessionStorage.setItem('prelogin_url', newState);
         this.oauthService.initImplicitFlow();
       } else {

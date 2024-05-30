@@ -3,7 +3,7 @@ import { AuthenticationService } from '../services/authentication.service';
 import { inject } from '@angular/core';
 import { map, take } from 'rxjs';
 
-export const authGuard: CanActivateFn = () => {
+export const authGuard: CanActivateFn = (route) => {
 
   const authService = inject(AuthenticationService);
 
@@ -13,7 +13,7 @@ export const authGuard: CanActivateFn = () => {
       if (isAuthenticated) {
         return true
       } else {
-        authService.authenticate();
+        authService.authenticate('/' +  route.url.join('/'));
         return authService.isLoggedIn();
       }
     })
