@@ -196,6 +196,36 @@
         <div class="top_buttons w-full flex justify-end gap-6 items-center" >
           <div>
             <button
+              id="allocation_button"
+              data-ph-capture-attribute-sc-event="server listing price allocation select"
+              data-dropdown-toggle="allocation_options"
+              class="dropdown_button"
+              type="button">
+              <div class="px-4 py-3">
+                {{allocation.name}}
+              </div>
+              <div class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
+                <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
+              </div>
+            </button>
+          </div>
+          <div>
+            <button
+              id="currency_button"
+              data-ph-capture-attribute-sc-event="server listing currency select"
+              data-dropdown-toggle="currency_options"
+              class="dropdown_button"
+              type="button">
+              <div class="px-4 py-3">
+              {{selectedCurrency.slug}}
+              </div>
+              <div class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
+                <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
+              </div>
+            </button>
+          </div>
+          <div>
+            <button
               id="column_button"
               data-ph-capture-attribute-sc-event="server listing columns select"
               data-dropdown-toggle="column_options"
@@ -224,7 +254,6 @@
             <table class="items_table">
               <thead>
                 <tr>
-                  <th></th>
                   <th *ngFor="let item of tableColumns"
                       [ngClass]="{
                         'cursor-pointer': item.orderField
@@ -247,14 +276,6 @@
                     [attr.data-ph-capture-attribute-server-listing-row-server]="item.server.api_reference"
                     [attr.data-ph-capture-attribute-server-listing-row-index]="i+1"
                     [attr.data-ph-capture-attribute-server-listing-row-page-size]="limit">
-                  <td>
-                    <div class="flex gap-2 items-center" (click)="$event.stopPropagation()">
-                      <input type="checkbox"
-                        id="server_compare_checkbox_{{item.server.server_id}}"
-                        [(ngModel)]="item.selected"
-                        class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
-                    </div>
-                  </td>
                   <ng-container *ngFor="let column of tableColumns">
                     <td *ngIf="column.type === 'name'" class="min-w-225">
                       <div class="text-sm text-white flex gap-1">
@@ -264,6 +285,10 @@
                       </div>
                       <div class="text-xs text-white flex gap-1">
                         <span>{{item.vendor_id}}</span>
+                        <span class="text-emerald-400" >|</span>
+                        <span>{{item.datacenter.display_name}}</span>
+                        <span class="text-emerald-400" >|</span>
+                        <span>{{item.zone.display_name}}</span>
                       </div>
                     </td>
                     <td *ngIf="column.type === 'processor'">
@@ -419,17 +444,16 @@
   </div>
 </div>
 
-<div *ngIf="compareCount() >= 2" class="fixed bottom-8 left-1/2 z-10">
-  <button
-    class="flex justify-center bg-emerald-400 text-white py-2 px-4 rounded-lg font-bold hover:bg-emerald-500"
-    data-ph-capture-attribute-sc-event="server listing compare"
-    data-ph-capture-attribute-server-listing-compare-action="open"
-    (click)="openCompare()">
-    Compare ({{compareCount()}})
-  </button>
+ <!-- Dropdown menu -->
+ <div id="allocation_options" class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid">
+  <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
+    <li *ngFor="let item of allocationTypes"
+      class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+      (click)="selectAllocation(item)" tabindex="0">
+      <div class="text-white text-sm">{{item.name}} </div>
+    </li>
+  </ul>
 </div>
-
-
 
 <div id="pagesize_options" class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid">
   <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
@@ -449,6 +473,16 @@
       (ngModelChange)="refreshColumns()"
       class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer" >
       <div class="text-white text-sm">{{item.name}}</div>
+    </li>
+  </ul>
+</div>
+
+<div id="currency_options" class="z-10 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid">
+  <ul class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
+    <li *ngFor="let item of availableCurrencies"
+      class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+      (click)="selectCurrency(item)" tabindex="0">
+      <div class="text-white text-sm ">{{item.name}} ({{item.symbol}})</div>
     </li>
   </ul>
 </div>

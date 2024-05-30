@@ -65,25 +65,28 @@ const optionsModal: ModalOptions = {
   closable: true,
 };
 
+
 @Component({
-  selector: 'app-server-listing',
+  selector: 'app-server-prices',
   standalone: true,
   imports: [CommonModule, FormsModule, BreadcrumbsComponent, LucideAngularModule, CountryIdtoNamePipe, RouterModule],
-  templateUrl: './server-listing.component.html',
-  styleUrl: './server-listing.component.scss',
+  templateUrl: './server-prices.component.html',
+  styleUrl: './server-prices.component.scss'
 })
-export class ServerListingComponent implements OnInit {
+export class ServerPricesComponent implements OnInit {
   @HostBinding('attr.ngSkipHydration') ngSkipHydration = 'true';
 
   isCollapsed = false;
 
   filterCategories = [
     {category_id: 'basic', name: 'Basics', icon: 'server', collapsed: true},
+    {category_id: 'price', name: 'Pricing', icon: 'dollar-sign', collapsed: true},
     {category_id: 'processor', name: 'Processor', icon: 'cpu', collapsed: false},
     {category_id: 'gpu', name: 'GPU', icon: 'cpu', collapsed: true},
     {category_id: 'memory', name: 'Memory', icon: 'memory-stick', collapsed: true},
     {category_id: 'storage', name: 'Storage', icon: 'database', collapsed: true},
     {category_id: 'vendor', name: 'Vendor', icon: 'home', collapsed: true},
+    {category_id: 'datacenter', name: 'Datacenter', icon: 'hotel', collapsed: true},
   ];
 
   breadcrumbs: BreadcrumbSegment[] = [
@@ -101,9 +104,14 @@ export class ServerListingComponent implements OnInit {
     { name: 'STORAGE TYPE', show: false, type: 'text', key: 'server.storage_type' },
     { name: 'GPUs', show: true, type: 'gpu', orderField: 'server.gpu_count' },
     { name: 'GPU MIN MEMORY', show: false, type: 'gpu_memory', key: 'server.gpu_memory_min' },
+    { name: 'PRICE', show: true, type: 'price', orderField: 'price' },
     { name: 'ARCHITECTURE', show: false, type: 'text', key: 'server.cpu_architecture' },
+    { name: 'DATACENTER', show: false, type: 'datacenter' },
     { name: 'STATUS', show: false, type: 'text', key: 'server.status' },
-    { name: 'VENDOR', show: true, type: 'vendor' },
+    { name: 'VENDOR', show: false, type: 'vendor' },
+    { name: 'COUNTRY', show: false, type: 'country' },
+    { name: 'CONTINENT', show: false, type: 'text', key: 'datacenter.country.continent' },
+    { name: 'ZONE', show: false, type: 'text', key: 'zone.name' },
   ];
 
   availableCurrencies = [
@@ -213,7 +221,7 @@ export class ServerListingComponent implements OnInit {
 
       this.loadCountries(query.countries);
 
-      this.loadVendors();
+      this.loadDatacenters(query.datacenters);
 
       const tableColumnsStr = this.storageHandler.get('serverListTableColumns');
       if(tableColumnsStr) {
@@ -392,7 +400,9 @@ export class ServerListingComponent implements OnInit {
     }
 
     this.keeperAPI.searchServers(queryObject).then(servers => {
-      this.servers = servers?.body;
+      this.servers = servers?.body.map((item: any) => {
+        return {...item, selected: false};
+      });
 
       if(updateTotalCount) {
         this.totalPages = Math.ceil(parseInt(servers?.headers?.get('x-total-count') || '0') / this.limit);
@@ -673,11 +683,38 @@ export class ServerListingComponent implements OnInit {
     continent.collapsed = !continent.collapsed;
   }
 
-  loadVendors() {
+  loadDatacenters(selectedDatacenters: string | undefined) {
+    const selectedDatacenterIds = selectedDatacenters ? selectedDatacenters.split(',') : [];
     Promise.all([
-      this.keeperAPI.getVendors()]).then((responses) => {
+      this.keeperAPI.getVendors(),
+      this.keeperAPI.getDatacenters()]).then((responses) => {
+
       if(responses[0]?.body) {
         this.vendorMetadata = responses[0].body;
+      }
+      if(responses[1]?.body) {
+        this.datacenterMetadata = responses[1].body.map((item: any) => {
+          return {...item, selected: selectedDatacenterIds.indexOf(item.datacenter_id) !== -1};
+        }).sort((a: any, b: any) => a.name.localeCompare(b.name));
+
+        this.datacenterVendorMetadata = [];
+        this.datacenterMetadata.forEach((datacenter) => {
+          const vendor = this.datacenterVendorMetadata.find((item) => item.vendor_id === datacenter.vendor_id);
+          if(!vendor) {
+            this.datacenterVendorMetadata.push(
+              {
+                vendor_id: datacenter.vendor_id,
+                name: this.vendorMetadata.find((vendor) => vendor.vendor_id === datacenter.vendor_id)?.name,
+                selected: false,
+                collapsed: true
+              });
+          }
+        });
+
+        this.datacenterVendorMetadata.forEach((vendor) => {
+          vendor.selected = this.datacenterMetadata.find((datacenter) => datacenter.vendor_id === vendor.vendor_id && !datacenter.selected) === undefined;
+          vendor.collapsed = this.datacenterMetadata.find((datacenter) => datacenter.vendor_id === vendor.vendor_id && datacenter.selected) === undefined;
+        });
       }
     });
   }
@@ -696,29 +733,5 @@ export class ServerListingComponent implements OnInit {
 
     this.valueChanged();
   }
-
-  compareCount() {
-    return this.servers?.filter((server) => server.selected).length;
-  }
-
-  openCompare() {
-    const selectedServers = this.servers.filter((server) => server.selected);
-
-    if(selectedServers.length < 2) {
-      alert('Please select at least two servers to compare');
-      return;
-    }
-
-    const serverIds = selectedServers.map((server) => {
-      return {vendor: server.vendor_id, server: server.server_id}
-    });
-
-    // encode atob to avoid issues with special characters
-    const encoded = btoa(JSON.stringify(serverIds));
-
-    console.log(encoded);
-
-    this.router.navigateByUrl('/compare?instances=' + encoded);
-  }
-
 }
+
