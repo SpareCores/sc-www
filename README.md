@@ -19,11 +19,20 @@ You also need to provide your own Terms of Service and Privacy Policy
 documents as a markdown file at the `src/assets/TOS.md` path.
 
 Optionally, you can also link a Posthog project to anonymously track
-page visits, clicks etc via the following environment variables:
+page visits, clicks etc. via the following environment variables:
 
 - NG_APP_POSTHOG_KEY: The Posthog project token
 - NG_APP_POSTHOG_HOST: The Posthog tracking API endpoint,
   e.g. https://us.i.posthog.com
+
+You can use your OIDC provider of choice to authenticate users.
+By default, the project uses the ZITADEL OIDC provider
+Set the following environment variables to configure the OIDC provider:
+
+- NG_APP_ZITADEL_CLIENT_ID: The client ID of the OIDC provider e.g. 123456789123456@sc-www
+- NG_APP_ZITADEL_DOMAIN: The domain of the OIDC provider e.g. https://YOUR-PROJECT.zitadel.cloud
+- NG_APP_ZITADEL_USERINFO_ENDPOINT: The OIDC provider userinfo endpoint e.g. https://YOUR-PROJECT.zitadel.cloud/oidc/v1/userinfo
+- NG_APP_DOMAIN_BASE_URL: The base URL of your Domain with a closing '/' e.g. http://localhost:4200/
 
 ## Development server
 

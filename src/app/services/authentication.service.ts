@@ -40,20 +40,25 @@ export class AuthenticationService {
   }
 
   public async authenticate(): Promise<void> {
-    this.oauthService.configure(this.authConfig);
-    this.oauthService.setupAutomaticSilentRefresh();
+    try {
+      this.oauthService.configure(this.authConfig);
+      this.oauthService.setupAutomaticSilentRefresh();
 
-    this.oauthService.strictDiscoveryDocumentValidation = false;
-    await this.oauthService.loadDiscoveryDocumentAndTryLogin();
+      this.oauthService.strictDiscoveryDocumentValidation = false;
+      await this.oauthService.loadDiscoveryDocumentAndTryLogin();
 
-    if (!this.oauthService.hasValidIdToken()) {
-      const newState = window.location.pathname;
-      sessionStorage.setItem('prelogin_url', newState);
-      this.oauthService.initImplicitFlow();
-    } else {
-      this.authedState.next(true);
+      if (!this.oauthService.hasValidIdToken()) {
+        const newState = window.location.pathname;
+        sessionStorage.setItem('prelogin_url', newState);
+        this.oauthService.initImplicitFlow();
+      } else {
+        this.authedState.next(true);
+      }
+      return;
+    } catch (error) {
+      console.error(error);
+      this.authedState.next(false);
     }
-    return;
   }
 
   public async loginCodeFlow(): Promise<void> {
