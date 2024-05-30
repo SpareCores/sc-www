@@ -4,6 +4,7 @@ import { ServerListingComponent } from './pages/server-listing/server-listing.co
 
 export const routes: Routes = [
   { path: '', component: LandingpageComponent },
+  { path: 'compare', loadComponent: () => import('./pages/server-compare/server-compare.component').then(m => m.ServerCompareComponent)},
   { path: 'servers', component: ServerListingComponent },
   { path: 'server/:vendor/:id', loadComponent: () => import('./pages/server-details/server-details.component').then(m => m.ServerDetailsComponent)},
   { path: 'article/:id', loadComponent: () => import('./pages/article/article.component').then(m => m.ArticleComponent)},

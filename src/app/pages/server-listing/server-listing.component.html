@@ -1,3 +1,4 @@
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
 <div class="w-full bg-primary">
   <div class="content pt-16 pb-16">
     <app-breadcrumbs [segments]="breadcrumbs"></app-breadcrumbs>
@@ -253,6 +254,7 @@
             <table class="items_table">
               <thead>
                 <tr>
+                  <th></th>
                   <th *ngFor="let item of tableColumns"
                       [ngClass]="{
                         'cursor-pointer': item.orderField
@@ -275,6 +277,14 @@
                     [attr.data-ph-capture-attribute-server-listing-row-server]="item.server.api_reference"
                     [attr.data-ph-capture-attribute-server-listing-row-index]="i+1"
                     [attr.data-ph-capture-attribute-server-listing-row-page-size]="limit">
+                  <td>
+                    <div class="flex gap-2 items-center" (click)="$event.stopPropagation()">
+                      <input type="checkbox"
+                        id="server_compare_checkbox_{{item.server.server_id}}"
+                        [(ngModel)]="item.selected"
+                        class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
+                    </div>
+                  </td>
                   <ng-container *ngFor="let column of tableColumns">
                     <td *ngIf="column.type === 'name'" class="min-w-225">
                       <div class="text-sm text-white flex gap-1">
@@ -441,6 +451,16 @@
     </div>
 
   </div>
+</div>
+
+<div *ngIf="compareCount() >= 2" class="fixed bottom-8 left-1/2 z-10">
+  <button
+    class="flex justify-center bg-emerald-400 text-white py-2 px-4 rounded-lg font-bold hover:bg-emerald-500"
+    data-ph-capture-attribute-sc-event="server listing compare"
+    data-ph-capture-attribute-server-listing-compare-action="open"
+    (click)="openCompare()">
+    Compare ({{compareCount()}})
+  </button>
 </div>
 
  <!-- Dropdown menu -->

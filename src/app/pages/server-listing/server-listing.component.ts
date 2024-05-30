@@ -399,7 +399,10 @@ export class ServerListingComponent implements OnInit {
     }
 
     this.keeperAPI.searchServers(queryObject).then(servers => {
-      this.servers = servers?.body;
+      this.servers = servers?.body.map((item: any) => {
+        return {...item, selected: false};
+      });
+
       if(updateTotalCount) {
         this.totalPages = Math.ceil(parseInt(servers?.headers?.get('x-total-count') || '0') / this.limit);
       }
@@ -728,6 +731,30 @@ export class ServerListingComponent implements OnInit {
     });
 
     this.valueChanged();
+  }
+
+  compareCount() {
+    return this.servers?.filter((server) => server.selected).length;
+  }
+
+  openCompare() {
+    const selectedServers = this.servers.filter((server) => server.selected);
+
+    if(selectedServers.length < 2) {
+      alert('Please select at least two servers to compare');
+      return;
+    }
+
+    const serverIds = selectedServers.map((server) => {
+      return {vendor: server.vendor_id, server: server.server_id}
+    });
+
+    // encode atob to avoid issues with special characters
+    const encoded = btoa(JSON.stringify(serverIds));
+
+    console.log(encoded);
+
+    this.router.navigateByUrl('/compare?instances=' + encoded);
   }
 
 }
