@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Inject, PLATFORM_ID } from "@angular/core";
 import { FullRequestParams, HttpClient as HttpClientSDK, HttpResponse} from "../../../../sdk/http-client";
 import { firstValueFrom } from "rxjs";
+import { AuthenticationService } from "../authentication.service";
 
 const RETRY_INTERVALS = [200, 500, 1000, 2000, 5000, 10000]; // in milliseconds
 const RETRY_INTERVALS_SSR = [100, 200]; // in milliseconds
@@ -15,6 +16,7 @@ const BACKEND_BASE_URI_SSR = import.meta.env['NG_APP_BACKEND_BASE_URI_SSR'];
 
     constructor(
         private httpClient: HttpClient,
+        private auth: AuthenticationService,
         @Inject(PLATFORM_ID) private platformId: object) {
         super();
     }
@@ -30,6 +32,10 @@ const BACKEND_BASE_URI_SSR = import.meta.env['NG_APP_BACKEND_BASE_URI_SSR'];
         const headers = new HttpHeaders({
             'Content-Type': type || 'application/json'
         });
+
+        if(this.auth.hasToken()) {
+            headers.append('Authorization', `Bearer ${this.auth.getToken()}`);
+        }
 
         const response: any = await this._requestWithRetries(method, url, body, headers);
 

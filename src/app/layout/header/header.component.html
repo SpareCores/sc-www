@@ -19,10 +19,16 @@
                   Datacenters
                 </a>
               </li>
-              <li class="hidden lg:flex">
+              <li *ngIf="!isLoggedIn()" class="hidden lg:flex">
                 <a class="navbar_link" routerLink="/vendors" >
                   <lucide-icon class="h-4 w-4" name="home"></lucide-icon>
                   Vendors
+                </a>
+              </li>
+              <li *ngIf="isLoggedIn()" class="hidden lg:flex">
+                <a class="navbar_link" routerLink="/dashboard" >
+                  <lucide-icon class="h-4 w-4" name="home"></lucide-icon>
+                  My Spare Cores
                 </a>
               </li>
               <li class="lg:hidden">
@@ -32,14 +38,22 @@
                   name="menu" >
                 </lucide-icon>
               </li>
-              <!--
-              <li>
-                <button class="login_button text-sm items-center">
+              <li *ngIf="!isLoggedIn()">
+                <button
+                  class="login_button text-sm items-center"
+                  (click)="login()">
                   <lucide-icon name="user" class="h-4 w-4 mr-1"></lucide-icon>
                   Log in
                 </button>
               </li>
-              -->
+              <li *ngIf="isLoggedIn()">
+                <button
+                  class="login_button text-sm items-center"
+                  (click)="logout()">
+                  <lucide-icon name="user" class="h-4 w-4 mr-1"></lucide-icon>
+                  Log out
+                </button>
+              </li>
           </ul>
       </div>
   </div>
