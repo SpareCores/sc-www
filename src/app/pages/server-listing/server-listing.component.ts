@@ -1,7 +1,7 @@
 import { Component, HostBinding, Inject, PLATFORM_ID, OnInit } from '@angular/core';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { KeeperAPIService } from '../../services/keeper-api.service';
-import { OrderDir, SearchServersServersGetParams, ServerPriceWithPKs } from '../../../../sdk/data-contracts';
+import { OrderDir, SearchServersServersGetParams, ServerPKs, ServerPriceWithPKs } from '../../../../sdk/data-contracts';
 import { Subject, debounceTime } from 'rxjs';
 import { encodeQueryParams } from '../../tools/queryParamFunctions';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
@@ -106,34 +106,7 @@ export class ServerListingComponent implements OnInit {
     { name: 'VENDOR', show: true, type: 'vendor' },
   ];
 
-  availableCurrencies = [
-    {name: 'US dollar', slug: 'USD', symbol: '$'},
-    {name: 'Euro', slug: 'EUR', symbol: '€'},
-    {name: 'British Pound', slug: 'GBP', symbol: '£'},
-    {name: 'Swedish Krona', slug: 'SEK', symbol: 'kr'},
-    {name: 'Danish Krone', slug: 'DKK', symbol: 'kr'},
-    {name: 'Norwegian Krone', slug: 'NOK', symbol: 'kr'},
-    {name: 'Swiss Franc', slug: 'CHF', symbol: 'CHF'},
-    {name: 'Australian Dollar', slug: 'AUD', symbol: '$'},
-    {name: 'Canadian Dollar', slug: 'CAD', symbol: '$'},
-    {name: 'Japanese Yen', slug: 'JPY', symbol: '¥'},
-    {name: 'Chinese Yuan', slug: 'CNY', symbol: '¥'},
-    {name: 'Indian Rupee', slug: 'INR', symbol: '₹'},
-    {name: 'Brazilian Real', slug: 'BRL', symbol: 'R$'},
-    {name: 'South African Rand', slug: 'ZAR', symbol: 'R'},
-  ];
-
-  allocationTypes = [
-    {name: 'Spot', slug: 'spot'},
-    {name: 'On Demand', slug: 'ondemand'},
-    {name: 'Both', slug: null}
-  ];
-
   pageLimits = [10, 25, 50, 100, 250];
-
-  allocation = this.allocationTypes[0];
-
-  selectedCurrency = this.availableCurrencies[0];
 
   limit = 25;
   page = 1;
@@ -149,8 +122,6 @@ export class ServerListingComponent implements OnInit {
 
   valueChangeDebouncer: Subject<number> = new Subject<number>();
 
-  dropdownCurrency: any;
-  dropdownAllocation: any;
   dropdownColumn: any;
   dropdownPage: any;
   modalSearch: any;
@@ -164,9 +135,6 @@ export class ServerListingComponent implements OnInit {
 
   countryMetadata: CountryMetadata[] = [];
   continentMetadata: ContinentMetadata[] = [];
-
-  datacenterMetadata: DatacenterMetadata[] = [];
-  datacenterVendorMetadata: DatacenterVendorMetadata[] = [];
 
   vendorMetadata: any[] = [];
 
@@ -199,14 +167,6 @@ export class ServerListingComponent implements OnInit {
         this.orderDir = query.order_dir;
       }
 
-      if(query.currency) {
-        this.selectedCurrency = this.availableCurrencies.find((currency) => currency.slug === query.currency) || this.availableCurrencies[0];
-      }
-
-      if(query.allocation) {
-        this.allocation = this.allocationTypes.find((allocation) => allocation.slug === query.allocation) || this.allocationTypes[0];
-      }
-
       if(query.page) {
         this.page = parseInt(query.page);
       }
@@ -234,32 +194,6 @@ export class ServerListingComponent implements OnInit {
     });
 
     if(isPlatformBrowser(this.platformId)) {
-      const targetElCurrency: HTMLElement | null = document.getElementById('currency_options');
-      const triggerElCurrency: HTMLElement | null = document.getElementById('currency_button');
-
-
-      this.dropdownCurrency = new Dropdown(
-          targetElCurrency,
-          triggerElCurrency,
-          options,
-          {
-            id: 'currency_options',
-            override: true
-          }
-      );
-
-      const targetElAllocation: HTMLElement | null = document.getElementById('allocation_options');
-      const triggerElAllocation: HTMLElement | null = document.getElementById('allocation_button');
-
-      this.dropdownAllocation = new Dropdown(
-        targetElAllocation,
-        triggerElAllocation,
-        options,
-        {
-          id: 'allocation_options',
-          override: true
-        }
-      );
 
       const targetElColumn: HTMLElement | null = document.getElementById('column_options');
       const triggerElColumn: HTMLElement | null = document.getElementById('column_button');
@@ -302,24 +236,24 @@ export class ServerListingComponent implements OnInit {
     this.isCollapsed = !this.isCollapsed;
   }
 
-  getMemory(item: ServerPriceWithPKs) {
-    return ((item.server.memory || 0) / 1024).toFixed(1) + ' GB';
+  getMemory(item: ServerPKs) {
+    return ((item.memory || 0) / 1024).toFixed(1) + ' GB';
   }
 
-  getGPUMemory(item: ServerPriceWithPKs) {
-    return ((item.server.gpu_memory_min || 0) / 1024).toFixed(1) + ' GB';
+  getGPUMemory(item: ServerPKs) {
+    return ((item.gpu_memory_min || 0) / 1024).toFixed(1) + ' GB';
   }
 
-  getStorage(item: ServerPriceWithPKs) {
-    if(!item.server.storage_size) return '-';
+  getStorage(item: ServerPKs) {
+    if(!item.storage_size) return '-';
 
-    if(item.server.storage_size < 1000) return `${item.server.storage_size} GB`;
+    if(item.storage_size < 1000) return `${item.storage_size} GB`;
 
-    return `${(item.server.storage_size / 1000).toFixed(1)} TB`;
+    return `${(item.storage_size / 1000).toFixed(1)} TB`;
   }
 
-  openServerDetails(server: ServerPriceWithPKs) {
-    this.router.navigateByUrl(`/server/${server.vendor.vendor_id}/${server.server.server_id}`);
+  openServerDetails(server: ServerPKs) {
+    this.router.navigateByUrl(`/server/${server.vendor.vendor_id}/${server.server_id}`);
   }
 
   toggleCategory(category: any) {
@@ -393,6 +327,7 @@ export class ServerListingComponent implements OnInit {
 
     this.keeperAPI.searchServers(queryObject).then(servers => {
       this.servers = servers?.body;
+      console.log('servers', this.servers);
 
       if(updateTotalCount) {
         this.totalPages = Math.ceil(parseInt(servers?.headers?.get('x-total-count') || '0') / this.limit);
@@ -471,14 +406,6 @@ export class ServerListingComponent implements OnInit {
       paramObject.order_dir = this.orderDir;
     }
 
-    if(this.selectedCurrency.slug !== 'USD') {
-      paramObject.currency = this.selectedCurrency.slug;
-    }
-
-    if(this.allocation.slug) {
-      paramObject.allocation = this.allocation.slug;
-    }
-
     if(this.page > 1) {
       paramObject.page = this.page;
     }
@@ -494,16 +421,7 @@ export class ServerListingComponent implements OnInit {
       if(paramObject.countries) delete paramObject.countries;
     }
 
-    if(this.datacenterMetadata.find((datacenter) => datacenter.selected)) {
-      paramObject.datacenters = [];
-      this.datacenterMetadata.forEach((datacenter) => {
-        if(datacenter.selected) {
-          paramObject.datacenters.push(datacenter.datacenter_id);
-        }
-      });
-    } else {
-      if(paramObject.datacenters) delete paramObject.datacenters;
-    }
+
     return paramObject;
   }
 
@@ -525,23 +443,6 @@ export class ServerListingComponent implements OnInit {
     if(save) {
       this.storageHandler.set('serverListTableColumns', JSON.stringify(this.tableColumns.map(item => item.name)));
     }
-  }
-
-  selectCurrency(currency: any) {
-    this.selectedCurrency = currency;
-
-    this.filterServers();
-
-    this.dropdownCurrency?.hide();
-  }
-
-  selectAllocation(allocation: any) {
-    this.allocation = allocation;
-    this.page = 1;
-
-    this.filterServers();
-
-    this.dropdownAllocation?.hide();
   }
 
   selectPageSize(limit: number) {
@@ -612,7 +513,7 @@ export class ServerListingComponent implements OnInit {
     this.modalResponse = null;
 
     if(this.freetextSearchInput) {
-      this.keeperAPI.parsePrompt({text:this.freetextSearchInput}).then(response => {
+      this.keeperAPI.parsePromptforServers({text:this.freetextSearchInput}).then(response => {
         this.modalResponse = response.body;
         this.modalResponseStr = [];
         Object.keys(response.body).forEach((key) => {
@@ -680,21 +581,6 @@ export class ServerListingComponent implements OnInit {
         this.vendorMetadata = responses[0].body;
       }
     });
-  }
-
-  datacentersByVendor(vendor_id: string) {
-    return this.datacenterMetadata.filter((datacenter) => datacenter.vendor_id === vendor_id);
-  }
-
-  selectDatacenterVendor(vendor: DatacenterVendorMetadata) {
-    vendor.selected = !vendor.selected;
-    this.datacenterMetadata.forEach((datacenter) => {
-      if(datacenter.vendor_id === vendor.vendor_id) {
-        datacenter.selected = vendor.selected;
-      }
-    });
-
-    this.valueChanged();
   }
 
   compareCount() {

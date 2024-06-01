@@ -91,7 +91,7 @@ export class ServerPricesComponent implements OnInit {
 
   breadcrumbs: BreadcrumbSegment[] = [
     { name: 'Home', url: '/' },
-    { name: 'Server listing', url: '/servers' }
+    { name: 'Server listing', url: '/prices' }
   ];
 
   tableColumns: TableColumn[] = [];
@@ -196,7 +196,7 @@ export class ServerPricesComponent implements OnInit {
 
     this.route.queryParams.subscribe((params: Params) => {
       const query: any = params;
-      const parameters = this.openApiJson.paths['/servers'].get.parameters || [];
+      const parameters = this.openApiJson.paths['/server_prices'].get.parameters || [];
       this.searchParameters = parameters.map((item: any) => {
         const value = query[item.name]?.split(',') || item.schema.default || null;
         return {...item, modelValue: value};
@@ -399,7 +399,7 @@ export class ServerPricesComponent implements OnInit {
       queryObject.add_total_count_header = true;
     }
 
-    this.keeperAPI.searchServers(queryObject).then(servers => {
+    this.keeperAPI.searchServerPrices(queryObject).then(servers => {
       this.servers = servers?.body.map((item: any) => {
         return {...item, selected: false};
       });
@@ -522,10 +522,10 @@ export class ServerPricesComponent implements OnInit {
 
     if(encodedQuery?.length) {
       // update the URL
-      window.history.pushState({}, '', '/servers?' + encodedQuery);
+      window.history.pushState({}, '', '/prices?' + encodedQuery);
     } else {
       // remove the query params
-      window.history.pushState({}, '', '/servers');
+      window.history.pushState({}, '', '/prices');
     }
   }
 
@@ -622,7 +622,7 @@ export class ServerPricesComponent implements OnInit {
     this.modalResponse = null;
 
     if(this.freetextSearchInput) {
-      this.keeperAPI.parsePrompt({text:this.freetextSearchInput}).then(response => {
+      this.keeperAPI.parsePromptforServerPrices({text:this.freetextSearchInput}).then(response => {
         this.modalResponse = response.body;
         this.modalResponseStr = [];
         Object.keys(response.body).forEach((key) => {
