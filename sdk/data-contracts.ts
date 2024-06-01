@@ -597,36 +597,36 @@ export enum Datacenters {
   Value1210 = "1210",
   Value1220 = "1220",
   Value1230 = "1230",
-  ApNortheast1 = "ap-northeast-1",
+  Value1250 = "1250",
   Value1260 = "1260",
   Value1270 = "1270",
-  ApSoutheast2 = "ap-southeast-2",
-  EuWest2 = "eu-west-2",
-  EuCentral1 = "eu-central-1",
+  Value1280 = "1280",
+  Value1290 = "1290",
+  Value1300 = "1300",
   Value1310 = "1310",
-  ApSouth1 = "ap-south-1",
+  Value1320 = "1320",
   Value1330 = "1330",
   Value1340 = "1340",
   Value1350 = "1350",
   Value1360 = "1360",
   Value1370 = "1370",
-  EuCentral2 = "eu-central-2",
-  ApNortheast3 = "ap-northeast-3",
-  ApNortheast2 = "ap-northeast-2",
+  Value1380 = "1380",
+  Value1390 = "1390",
+  Value1410 = "1410",
   Value1420 = "1420",
   Value1430 = "1430",
-  ApSoutheast3 = "ap-southeast-3",
+  Value1440 = "1440",
   Value1450 = "1450",
   Value1460 = "1460",
   Value1470 = "1470",
-  ApSoutheast4 = "ap-southeast-4",
+  Value1480 = "1480",
   Value1490 = "1490",
-  EuSouth1 = "eu-south-1",
-  EuWest3 = "eu-west-3",
+  Value1510 = "1510",
+  Value1520 = "1520",
   Value1530 = "1530",
   Value1540 = "1540",
   Value1550 = "1550",
-  IlCentral1 = "il-central-1",
+  Value1560 = "1560",
   Value1570 = "1570",
   Value1580 = "1580",
   Value1590 = "1590",
@@ -639,15 +639,28 @@ export enum Datacenters {
   Value6 = "6",
   AfSouth1 = "af-south-1",
   ApEast1 = "ap-east-1",
+  ApNortheast1 = "ap-northeast-1",
+  ApNortheast2 = "ap-northeast-2",
+  ApNortheast3 = "ap-northeast-3",
+  ApSouth1 = "ap-south-1",
   ApSouth2 = "ap-south-2",
   ApSoutheast1 = "ap-southeast-1",
+  ApSoutheast2 = "ap-southeast-2",
+  ApSoutheast3 = "ap-southeast-3",
+  ApSoutheast4 = "ap-southeast-4",
   CaCentral1 = "ca-central-1",
   CaWest1 = "ca-west-1",
   CnNorth1 = "cn-north-1",
   CnNorthwest1 = "cn-northwest-1",
+  EuCentral1 = "eu-central-1",
+  EuCentral2 = "eu-central-2",
   EuNorth1 = "eu-north-1",
+  EuSouth1 = "eu-south-1",
   EuSouth2 = "eu-south-2",
   EuWest1 = "eu-west-1",
+  EuWest2 = "eu-west-2",
+  EuWest3 = "eu-west-3",
+  IlCentral1 = "il-central-1",
   MeCentral1 = "me-central-1",
   MeSouth1 = "me-south-1",
   SaEast1 = "sa-east-1",
@@ -1112,6 +1125,176 @@ export interface ServerBase {
    * @format date-time
    */
   observed_at?: string;
+}
+
+/** ServerPKs */
+export interface ServerPKs {
+  /**
+   * Vendor Id
+   * Reference to the Vendor.
+   */
+  vendor_id: string;
+  /**
+   * Server Id
+   * Unique identifier, as called at the Vendor.
+   */
+  server_id: string;
+  /**
+   * Name
+   * Human-friendly name.
+   */
+  name: string;
+  /**
+   * Api Reference
+   * How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depening on the vendor and actual API endpoint.
+   */
+  api_reference: string;
+  /**
+   * Display Name
+   * Human-friendly reference (usually the id or name) of the resource.
+   */
+  display_name: string;
+  /**
+   * Description
+   * Short description.
+   */
+  description: string | null;
+  /**
+   * Family
+   * Server family, e.g. General-purpose machine (GCP), or M5g (AWS).
+   */
+  family?: string | null;
+  /**
+   * Vcpus
+   * Default number of virtual CPUs (vCPU) of the server.
+   */
+  vcpus?: number;
+  /**
+   * Hypervisor
+   * Hypervisor of the virtual server, e.g. Xen, KVM, Nitro or Dedicated.
+   */
+  hypervisor?: string | null;
+  /** Allocation of CPU(s) to the server, e.g. shared, burstable or dedicated. */
+  cpu_allocation?: CpuAllocation;
+  /**
+   * Cpu Cores
+   * Default number of CPU cores of the server. Equals to vCPUs when HyperThreading is disabled.
+   */
+  cpu_cores?: number | null;
+  /**
+   * Cpu Speed
+   * Vendor-reported maximum CPU clock speed (GHz).
+   */
+  cpu_speed?: number | null;
+  /** CPU architecture (arm64, arm64_mac, i386, or x86_64). */
+  cpu_architecture?: CpuArchitecture;
+  /**
+   * Cpu Manufacturer
+   * The manufacturer of the primary processor, e.g. Intel or AMD.
+   */
+  cpu_manufacturer?: string | null;
+  /**
+   * Cpu Family
+   * The product line/family of the primary processor, e.g. Xeon, Core i7, Ryzen 9.
+   */
+  cpu_family?: string | null;
+  /**
+   * Cpu Model
+   * The model number of the primary processor, e.g. 9750H.
+   */
+  cpu_model?: string | null;
+  /**
+   * Cpus
+   * JSON array of known CPU details, e.g. the manufacturer, family, model; L1/L2/L3 cache size; microcode version; feature flags; bugs etc.
+   * @default []
+   */
+  cpus?: Cpu[];
+  /**
+   * Memory
+   * RAM amount (MiB).
+   */
+  memory?: number;
+  /**
+   * Gpu Count
+   * Number of GPU accelerator(s).
+   * @default 0
+   */
+  gpu_count?: number;
+  /**
+   * Gpu Memory Min
+   * Memory (MiB) allocated to the lowest-end GPU accelerator.
+   */
+  gpu_memory_min?: number | null;
+  /**
+   * Gpu Memory Total
+   * Overall memory (MiB) allocated to all the GPU accelerator(s).
+   */
+  gpu_memory_total?: number | null;
+  /**
+   * Gpu Manufacturer
+   * The manufacturer of the primary GPU accelerator, e.g. Nvidia or AMD.
+   */
+  gpu_manufacturer?: string | null;
+  /**
+   * Gpu Model
+   * The model number of the primary GPU accelerator.
+   */
+  gpu_model?: string | null;
+  /**
+   * Gpus
+   * JSON array of GPU accelerator details, including the manufacturer, name, and memory (MiB) of each GPU.
+   * @default []
+   */
+  gpus?: Gpu[];
+  /**
+   * Storage Size
+   * Overall size (GB) of the disk(s).
+   * @default 0
+   */
+  storage_size?: number;
+  /** Primary disk type, e.g. HDD, SSD, NVMe SSD, or network). */
+  storage_type?: StorageType | null;
+  /**
+   * Storages
+   * JSON array of disks attached to the server, including the size (MiB) and type of each disk.
+   * @default []
+   */
+  storages?: Disk[];
+  /**
+   * Network Speed
+   * The baseline network performance (Gbps) of the network card.
+   */
+  network_speed?: number | null;
+  /**
+   * Inbound Traffic
+   * Amount of complimentary inbound traffic (GB) per month.
+   * @default 0
+   */
+  inbound_traffic?: number;
+  /**
+   * Outbound Traffic
+   * Amount of complimentary outbound traffic (GB) per month.
+   * @default 0
+   */
+  outbound_traffic?: number;
+  /**
+   * Ipv4
+   * Number of complimentary IPv4 address(es).
+   * @default 0
+   */
+  ipv4?: number;
+  /**
+   * Status of the resource (active or inactive).
+   * @default "active"
+   */
+  status?: Status;
+  /**
+   * Observed At
+   * Timestamp of the last observation.
+   * @format date-time
+   */
+  observed_at?: string;
+  vendor: VendorBase;
 }
 
 /** ServerPKsWithPrices */
@@ -1880,6 +2063,95 @@ export interface SearchServersServersGetParams {
    */
   memory_min?: number | null;
   /**
+   * Active only
+   * Show only active servers
+   * @default true
+   */
+  only_active?: boolean | null;
+  /**
+   * Vendor id
+   * Cloud provider vendor.
+   */
+  vendor?: "aws" | "gcp" | "hcloud";
+  /**
+   * Compliance Framework id
+   * Compliance framework implemented at the vendor.
+   */
+  compliance_framework?: "hipaa" | "iso27001" | "soc2t2";
+  /**
+   * Storage Size
+   * Reserver storage size in GBs.
+   */
+  storage_size?: number | null;
+  /**
+   * Storage Type
+   * Storage type.
+   */
+  storage_type?: "hdd" | "ssd" | "nvme ssd" | "network";
+  /**
+   * GPU count
+   * Number of GPUs.
+   */
+  gpu_min?: number | null;
+  /**
+   * GPU memory
+   * Amount of GPU memory in GBs.
+   */
+  gpu_memory_min?: number | null;
+  /**
+   * Limit
+   * Maximum number of results. Set to -1 for unlimited
+   * @default 50
+   */
+  limit?: number;
+  /**
+   * Page
+   * Page number.
+   */
+  page?: number | null;
+  /**
+   * Order By
+   * Order by column.
+   * @default "vcpus"
+   */
+  order_by?: string;
+  /**
+   * Order Dir
+   * Order direction.
+   * @default "asc"
+   */
+  order_dir?: OrderDir;
+  /**
+   * Add Total Count Header
+   * Add the X-Total-Count header to the response with the overall number of items (without paging). Note that it might reduce response times.
+   * @default false
+   */
+  add_total_count_header?: boolean;
+}
+
+/** Response Search Servers Servers Get */
+export type SearchServersServersGetData = ServerPKs[];
+
+export interface SearchServerPricesServerPricesGetParams {
+  /**
+   * Processor number
+   * Minimum number of virtual CPUs.
+   * @min 1
+   * @max 128
+   * @default 1
+   */
+  vcpus_min?: number;
+  /**
+   * Processor architecture
+   * Processor architecture.
+   */
+  architecture?: "arm64" | "arm64_mac" | "i386" | "x86_64" | "x86_64_mac";
+  /**
+   * Memory amount
+   * Minimum amount of memory in GBs.
+   */
+  memory_min?: number | null;
+  /**
    * Maximum price
    * Maximum price (USD/hr).
    */
@@ -1915,36 +2187,36 @@ export interface SearchServersServersGetParams {
     | "1210"
     | "1220"
     | "1230"
-    | "ap-northeast-1"
+    | "1250"
     | "1260"
     | "1270"
-    | "ap-southeast-2"
-    | "eu-west-2"
-    | "eu-central-1"
+    | "1280"
+    | "1290"
+    | "1300"
     | "1310"
-    | "ap-south-1"
+    | "1320"
     | "1330"
     | "1340"
     | "1350"
     | "1360"
     | "1370"
-    | "eu-central-2"
-    | "ap-northeast-3"
-    | "ap-northeast-2"
+    | "1380"
+    | "1390"
+    | "1410"
     | "1420"
     | "1430"
-    | "ap-southeast-3"
+    | "1440"
     | "1450"
     | "1460"
     | "1470"
-    | "ap-southeast-4"
+    | "1480"
     | "1490"
-    | "eu-south-1"
-    | "eu-west-3"
+    | "1510"
+    | "1520"
     | "1530"
     | "1540"
     | "1550"
-    | "il-central-1"
+    | "1560"
     | "1570"
     | "1580"
     | "1590"
@@ -1957,15 +2229,28 @@ export interface SearchServersServersGetParams {
     | "6"
     | "af-south-1"
     | "ap-east-1"
+    | "ap-northeast-1"
+    | "ap-northeast-2"
+    | "ap-northeast-3"
+    | "ap-south-1"
     | "ap-south-2"
     | "ap-southeast-1"
+    | "ap-southeast-2"
+    | "ap-southeast-3"
+    | "ap-southeast-4"
     | "ca-central-1"
     | "ca-west-1"
     | "cn-north-1"
     | "cn-northwest-1"
+    | "eu-central-1"
+    | "eu-central-2"
     | "eu-north-1"
+    | "eu-south-1"
     | "eu-south-2"
     | "eu-west-1"
+    | "eu-west-2"
+    | "eu-west-3"
+    | "il-central-1"
     | "me-central-1"
     | "me-south-1"
     | "sa-east-1"
@@ -2071,13 +2356,21 @@ export interface SearchServersServersGetParams {
   add_total_count_header?: boolean;
 }
 
-/** Response Search Servers Servers Get */
-export type SearchServersServersGetData = ServerPriceWithPKs[];
+/** Response Search Server Prices Server Prices Get */
+export type SearchServerPricesServerPricesGetData = ServerPriceWithPKs[];
 
-export interface AssistFiltersAiAssistFiltersGetParams {
+export interface AssistServerFiltersAiAssistServerFiltersGetParams {
   /** Text */
   text: string;
 }
 
-/** Response Assist Filters Ai Assist Filters Get */
-export type AssistFiltersAiAssistFiltersGetData = object;
+/** Response Assist Server Filters Ai Assist Server Filters Get */
+export type AssistServerFiltersAiAssistServerFiltersGetData = object;
+
+export interface AssistServerPriceFiltersAiAssistServerPriceFiltersGetParams {
+  /** Text */
+  text: string;
+}
+
+/** Response Assist Server Price Filters Ai Assist Server Price Filters Get */
+export type AssistServerPriceFiltersAiAssistServerPriceFiltersGetData = object;
