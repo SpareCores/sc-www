@@ -42,6 +42,14 @@
              {{column.name}}
             </td>
             <ng-container *ngFor="let item of servers">
+              <td *ngIf="column.key === 'vendor'" >
+                <div *ngIf="item.vendor.logo" class="w-9 h-9 px-1 py-1 bg-white rounded-lg">
+                  <img [src]="item.vendor.logo" alt="{{item.vendor.name}} logo" >
+                </div>
+                <div *ngIf="!item.vendor.logo" class="text-white text-sm">
+                    {{item.vendor.name}}
+                </div>
+              </td>
               <td *ngIf="column.key === 'processor'">
                 <div class="text-sm text-white">{{item.cpu_cores || item.vcpus}}x {{item.cpu_architecture}}</div>
                 <div
