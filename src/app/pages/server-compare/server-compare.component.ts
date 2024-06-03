@@ -29,12 +29,14 @@ export class ServerCompareComponent implements OnInit {
   servers: ServerPKsWithPrices[] = [];
 
   fields: any[] = [
-    { name: 'CPU', key: 'cpu' },
-    { name: 'RAM', key: 'ram' },
+    { name: 'Processor', key: 'processor' },
+    { name: 'Memory', key: 'memory' },
     { name: 'Storage', key: 'storage' },
-    { name: 'Network', key: 'network' },
-    { name: 'Price', key: 'price' }
+    { name: 'GPU', key: 'gpu' },
+    { name: 'GPU Memory', key: 'gpu_memory' }
   ];
+
+  clipboardIcon = 'clipboard';
 
   constructor(
     private keeperAPI: KeeperAPIService,
@@ -67,6 +69,42 @@ export class ServerCompareComponent implements OnInit {
           });
       }
     });
+  }
+
+  toUpper(text: string) {
+    return text.toUpperCase();
+  }
+
+  clipboardURL() {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url);
+
+    this.clipboardIcon = 'check';
+
+    setTimeout(() => {
+      this.clipboardIcon = 'clipboard';
+    }, 3000);
+
+  }
+
+  getMemory(item: ServerPKsWithPrices) {
+    return ((item.memory || 0) / 1024).toFixed(1) + ' GB';
+  }
+
+  getGPUMemory(item: ServerPKsWithPrices) {
+    return ((item.gpu_memory_min || 0) / 1024).toFixed(1) + ' GB';
+  }
+
+  getStorage(item: ServerPKsWithPrices) {
+    if(!item.storage_size) return '-';
+
+    if(item.storage_size < 1000) return `${item.storage_size} GB`;
+
+    return `${(item.storage_size / 1000).toFixed(1)} TB`;
+  }
+
+  viewServer(server: ServerPKsWithPrices) {
+    window.open(`/server/${server.vendor_id}/${server.server_id}`, '_blank');
   }
 
 }

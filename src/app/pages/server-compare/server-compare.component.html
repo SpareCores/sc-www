@@ -4,7 +4,13 @@
     <app-breadcrumbs [segments]="breadcrumbs"></app-breadcrumbs>
 
     <div class="flex flex-col gap-4 my-8">
-      <h1 class="text-white font-bold text-3xl">Instance Compare</h1>
+      <div class="flex gap-4 items-center">
+        <h1 class="text-white font-bold text-3xl">Instance Compare</h1>
+        <button class="btn-primary py-2 px-3 flex gap-1 items-center" (click)="clipboardURL()">
+          Share
+          <lucide-icon name="{{clipboardIcon}}" size="16" class="ml-2"></lucide-icon>
+        </button>
+      </div>
       <div class="text-white text-xl pr-16">
         Compare the configuration of your instances to identify differences.
       </div>
@@ -23,24 +29,58 @@
       <table class="items_table">
         <thead>
           <tr>
-            <th></th>
+            <th>
+            </th>
             <th *ngFor="let item of servers">
-              {{item.display_name}}
+              {{toUpper(item.display_name)}}
             </th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let item of fields; let i = index" >
+          <tr *ngFor="let column of fields; let i = index" >
             <td>
-             {{item.name}}
+             {{column.name}}
             </td>
-            <ng-container *ngFor="let column of servers">
-              <td>
-                {{column.server_id}}
+            <ng-container *ngFor="let item of servers">
+              <td *ngIf="column.key === 'processor'">
+                <div class="text-sm text-white">{{item.cpu_cores || item.vcpus}}x {{item.cpu_architecture}}</div>
+                <div
+                  *ngIf="item.cpu_cores && item.cpu_speed"
+                  class="text-xs text-white flex gap-1">
+                  <span>{{item.cpu_cores}} cores at {{item.cpu_speed}} Ghz</span>
+                </div>
               </td>
-
+              <td *ngIf="column.key === 'memory'">
+                {{getMemory(item)}}
+              </td>
+              <td *ngIf="column.key === 'storage'">
+                <div class="text-sm text-white">{{getStorage(item)}}</div>
+                <div
+                  *ngIf="item.storage_type"
+                  class="text-xs text-white">
+                  <span>{{item.storage_type}}</span>
+                </div>
+              </td>
+              <td *ngIf="column.key === 'gpu'">
+                <div class="text-sm text-white">{{item.gpu_count}}</div>
+                <div
+                  *ngIf="item.gpu_model"
+                  class="text-xs text-white flex gap-1">
+                  <span>{{item.gpu_model}}</span>
+                </div>
+              </td>
+              <td *ngIf="column.key === 'gpu_memory'">
+                {{getGPUMemory(item)}}
+              </td>
             </ng-container>
-
+          </tr>
+          <tr>
+            <td>View Server</td>
+            <td *ngFor="let item of servers">
+              <button class="btn-primary py-2 px-3" (click)="viewServer(item)">
+                Details
+              </button>
+            </td>
           </tr>
         </tbody>
       </table>
