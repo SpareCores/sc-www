@@ -4,9 +4,9 @@
     <app-breadcrumbs [segments]="breadcrumbs"></app-breadcrumbs>
 
     <div class="flex flex-col gap-4 my-8">
-      <div class="flex gap-4 items-center">
+      <div class="flex gap-4 items-center w-full justify-between">
         <h1 class="text-white font-bold text-3xl">Instance Compare</h1>
-        <button class="btn-primary py-2 px-3 flex gap-1 items-center" (click)="clipboardURL()">
+        <button class="btn-primary py-2 px-3 flex gap-1 items-center" (click)="clipboardURL($event)">
           Share
           <lucide-icon name="{{clipboardIcon}}" size="16" class="ml-2"></lucide-icon>
         </button>
@@ -87,4 +87,11 @@
     </div>
 
   </div>
+</div>
+
+<div id="tooltipDefault"
+  #tooltipDefault
+  style="opacity: 0;"
+  class="absolute z-10 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-secondary border border-solid border-emerald-400 rounded-lg">
+  Copied to clipboard!
 </div>

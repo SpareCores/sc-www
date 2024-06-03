@@ -1,5 +1,5 @@
 /* eslint-disable prefer-const */
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { KeeperAPIService } from '../../services/keeper-api.service';
 import { ActivatedRoute } from '@angular/router';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
@@ -38,6 +38,8 @@ export class ServerCompareComponent implements OnInit {
 
   clipboardIcon = 'clipboard';
 
+  @ViewChild('tooltipDefault') tooltip!: ElementRef;
+
   constructor(
     private keeperAPI: KeeperAPIService,
     private seoHandler: SeoHandlerService,
@@ -75,11 +77,13 @@ export class ServerCompareComponent implements OnInit {
     return text.toUpperCase();
   }
 
-  clipboardURL() {
+  clipboardURL(event: any) {
     const url = window.location.href;
     navigator.clipboard.writeText(url);
 
     this.clipboardIcon = 'check';
+
+    this.showTooltip(event);
 
     setTimeout(() => {
       this.clipboardIcon = 'clipboard';
@@ -105,6 +109,25 @@ export class ServerCompareComponent implements OnInit {
 
   viewServer(server: ServerPKsWithPrices) {
     window.open(`/server/${server.vendor_id}/${server.server_id}`, '_blank');
+  }
+
+  showTooltip(el: any) {
+      const tooltip = this.tooltip.nativeElement;
+      const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+      tooltip.style.left = `${el.target.getBoundingClientRect().left - 25}px`;
+      tooltip.style.top = `${el.target.getBoundingClientRect().top - 45 + scrollPosition}px`;
+      tooltip.style.display = 'block';
+      tooltip.style.opacity = '1';
+
+      setTimeout(() => {
+        this.hideTooltip();
+      }, 3000);
+  }
+
+  hideTooltip() {
+    const tooltip = this.tooltip.nativeElement;
+    tooltip.style.display = 'none';
+    tooltip.style.opacity = '0';
   }
 
 }
