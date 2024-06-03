@@ -10,8 +10,10 @@
  */
 
 import {
-  AssistFiltersAiAssistFiltersGetData,
-  AssistFiltersAiAssistFiltersGetParams,
+  AssistServerFiltersAiAssistServerFiltersGetData,
+  AssistServerFiltersAiAssistServerFiltersGetParams,
+  AssistServerPriceFiltersAiAssistServerPriceFiltersGetData,
+  AssistServerPriceFiltersAiAssistServerPriceFiltersGetParams,
   HTTPValidationError,
 } from "./data-contracts";
 import { HttpClient, RequestParams } from "./http-client";
@@ -24,16 +26,37 @@ export class Ai<SecurityDataType = unknown> {
   }
 
   /**
-   * @description Extract JSON filters from freetext.
+   * @description Extract Server JSON filters from freetext.
    *
    * @tags AI
-   * @name AssistFiltersAiAssistFiltersGet
-   * @summary Assist Filters
-   * @request GET:/ai/assist_filters
+   * @name AssistServerFiltersAiAssistServerFiltersGet
+   * @summary Assist Server Filters
+   * @request GET:/ai/assist_server_filters
    */
-  assistFiltersAiAssistFiltersGet = (query: AssistFiltersAiAssistFiltersGetParams, params: RequestParams = {}) =>
-    this.http.request<AssistFiltersAiAssistFiltersGetData, HTTPValidationError>({
-      path: `/ai/assist_filters`,
+  assistServerFiltersAiAssistServerFiltersGet = (
+    query: AssistServerFiltersAiAssistServerFiltersGetParams,
+    params: RequestParams = {},
+  ) =>
+    this.http.request<AssistServerFiltersAiAssistServerFiltersGetData, HTTPValidationError>({
+      path: `/ai/assist_server_filters`,
+      method: "GET",
+      query: query,
+      ...params,
+    });
+  /**
+   * @description Extract ServerPrice JSON filters from freetext.
+   *
+   * @tags AI
+   * @name AssistServerPriceFiltersAiAssistServerPriceFiltersGet
+   * @summary Assist Server Price Filters
+   * @request GET:/ai/assist_server_price_filters
+   */
+  assistServerPriceFiltersAiAssistServerPriceFiltersGet = (
+    query: AssistServerPriceFiltersAiAssistServerPriceFiltersGetParams,
+    params: RequestParams = {},
+  ) =>
+    this.http.request<AssistServerPriceFiltersAiAssistServerPriceFiltersGetData, HTTPValidationError>({
+      path: `/ai/assist_server_price_filters`,
       method: "GET",
       query: query,
       ...params,

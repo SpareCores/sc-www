@@ -3,9 +3,10 @@ import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { MYHTTPClient } from './my_http/my-http';
 import { Server } from '../../../sdk/Server';
 import { Servers } from '../../../sdk/Servers';
-import { AssistFiltersAiAssistFiltersGetParams, SearchServersServersGetParams } from '../../../sdk/data-contracts';
+import { AssistServerFiltersAiAssistServerFiltersGetParams, AssistServerPriceFiltersAiAssistServerPriceFiltersGetParams, SearchServerPricesServerPricesGetParams, SearchServersServersGetParams } from '../../../sdk/data-contracts';
 import { Table } from '../../../sdk/Table';
 import { Ai } from '../../../sdk/Ai';
+import { ServerPrices } from '../../../sdk/ServerPrices';
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +17,7 @@ export class KeeperAPIService {
 
   public SearchController: Servers = new Servers(this.myHttp);
   public ServerController: Server = new Server(this.myHttp);
+  public ServerPciresController: ServerPrices = new ServerPrices(this.myHttp);
   public TableController: Table = new Table(this.myHttp);
   public AIController: Ai = new Ai(this.myHttp);
 
@@ -33,8 +35,16 @@ export class KeeperAPIService {
     return this.SearchController.searchServersServersGet(query);
   }
 
-  public parsePrompt(query: AssistFiltersAiAssistFiltersGetParams): Promise<any> {
-    return this.AIController.assistFiltersAiAssistFiltersGet(query);
+  public searchServerPrices(query: SearchServerPricesServerPricesGetParams): Promise<any> {
+    return this.ServerPciresController.searchServerPricesServerPricesGet(query);
+  }
+
+  public parsePromptforServers(query: AssistServerFiltersAiAssistServerFiltersGetParams): Promise<any> {
+    return this.AIController.assistServerFiltersAiAssistServerFiltersGet(query);
+  }
+
+  public parsePromptforServerPrices(query: AssistServerPriceFiltersAiAssistServerPriceFiltersGetParams): Promise<any> {
+    return this.AIController.assistServerPriceFiltersAiAssistServerPriceFiltersGet(query);
   }
 
   public getCountries(): Promise<any> {

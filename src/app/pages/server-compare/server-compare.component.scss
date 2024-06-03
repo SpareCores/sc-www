@@ -1,0 +1,47 @@
+.items_table {
+  @apply w-full text-white;
+
+  thead {
+    @apply border-b border-gray-200 border-solid bg-secondary;
+    th {
+      @apply text-left px-5 py-3 font-normal text-xs;
+
+    }
+
+    th:nth-of-type(1) {
+      position: sticky;
+      left: -1px;
+      z-index: 21;
+    }
+  }
+
+  tbody {
+    tr:nth-child(2n+1) {
+      @apply bg-primary;
+
+      td:nth-of-type(1) {
+        @apply bg-primary;
+      }
+
+    }
+    tr:nth-child(2n) {
+      @apply bg-secondary;
+
+      td:nth-of-type(1) {
+        @apply bg-secondary;
+      }
+    }
+
+    tr {
+      td {
+        @apply px-5 py-3 text-left text-sm;
+      }
+
+      td:nth-of-type(1) {
+        position: sticky;
+        left: -1px;
+        z-index: 20;
+      }
+    }
+  }
+}

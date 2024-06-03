@@ -54,6 +54,73 @@
                          (ngModelChange)="valueChanged()"
                          class="w-full h-2 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm">
                 </div>
+                <div *ngIf="getParamterType(parameter) === 'country'" class="mb-4 mt-4 relative flex flex-col gap-2" >
+                  <div *ngFor="let continent of continentMetadata" class="flex flex-col gap-3" >
+                      <div class="flex justify-between">
+                        <div class="flex gap-2 items-center">
+                          <input type="checkbox"
+                                 id="filter_continent_{{continent.continent}}"
+                                 data-ph-capture-attribute-sc-event="server listing filter"
+                                 data-ph-capture-attribute-server-listing-filter-type="checkbox"
+                                 [attr.data-ph-capture-attribute-server-listing-filter-id]="continent.continent"
+                                 data-ph-capture-attribute-server-listing-filter-category="continent"
+                                 [ngModel]="continent.selected"
+                                 (click)="selectContinent(continent)"
+                                 class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
+                          <div class="text-white text-sm">{{continent.continent}}</div>
+                        </div>
+                        <lucide-icon name="chevron-down" class="h-4 w-4 text-white cursor-pointer" (click)="collapseItem(continent)"></lucide-icon>
+                      </div>
+                      <div *ngIf="!continent.collapsed"  class="flex flex-col gap-3 ml-4">
+                        <div class="flex gap-2 align-center" *ngFor="let country of countriesByContinent(continent.continent)">
+                          <input type="checkbox"
+                                 id="filter_country_{{parameter.name}}"
+                                 data-ph-capture-attribute-sc-event="server listing filter"
+                                 data-ph-capture-attribute-server-listing-filter-type="checkbox"
+                                 [attr.data-ph-capture-attribute-server-listing-filter-id]="country.country_id"
+                                 data-ph-capture-attribute-server-listing-filter-category="country"
+                                 [(ngModel)]="country.selected"
+                                 (ngModelChange)="filterServers()"
+                                 class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
+                          <div class="text-white text-sm">{{country.country_id | countryIdtoName}}</div>
+                        </div>
+                      </div>
+                  </div>
+                </div>
+                <div *ngIf="getParamterType(parameter) === 'datacenters'" class="mb-4 mt-4 relative flex flex-col gap-2" >
+                  <div *ngFor="let vendor of datacenterVendorMetadata" class="flex flex-col gap-3" >
+                      <div class="flex justify-between">
+                        <div class="flex gap-2 items-center">
+                          <input type="checkbox"
+                                 id="filter_vendor_{{parameter.name}}"
+                                 data-ph-capture-attribute-sc-event="server listing filter"
+                                 data-ph-capture-attribute-server-listing-filter-type="checkbox"
+                                 [attr.data-ph-capture-attribute-server-listing-filter-id]="vendor.vendor_id"
+                                 data-ph-capture-attribute-server-listing-filter-category="vendor"
+                                 [ngModel]="vendor.selected"
+                                 (click)="selectDatacenterVendor(vendor)"
+                                 class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
+                          <div class="text-white text-sm">{{vendor.name}}</div>
+                        </div>
+                        <lucide-icon name="chevron-down" class="h-4 w-4 text-white cursor-pointer" (click)="collapseItem(vendor)"></lucide-icon>
+                      </div>
+                      <div *ngIf="!vendor.collapsed"  class="flex flex-col gap-3 ml-4">
+                        <div class="flex gap-2 align-center" *ngFor="let datacenter of datacentersByVendor(vendor.vendor_id)">
+                          <input type="checkbox"
+                                 id="filter_datacenter_{{parameter.name}}"
+                                 data-ph-capture-attribute-sc-event="server listing filter"
+                                 data-ph-capture-attribute-server-listing-filter-type="checkbox"
+                                 [attr.data-ph-capture-attribute-server-listing-filter-id]="datacenter.api_reference"
+                                 data-ph-capture-attribute-server-listing-filter-category="datacenter"
+                                 [(ngModel)]="datacenter.selected"
+                                 (ngModelChange)="filterServers()"
+                                 class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
+                          <div class="text-white text-sm">{{datacenter.name}}</div>
+                          <lucide-icon *ngIf="datacenter.green_energy" name="leaf" class="h-4 w-4 text-emerald-400"></lucide-icon>
+                        </div>
+                      </div>
+                  </div>
+                </div>
                 <div *ngIf="getParamterType(parameter) === 'number'" class="mb-4 mt-4 relative" >
                   <input type="number" step="{{getStep(parameter)}}"
                          id="filter_number_{{parameter.name}}"
@@ -66,6 +133,18 @@
                          min="{{parameter.schema.minimum || 0}}"
                          class="w-full h-8 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm pr-8">
                   <span *ngIf="parameter.schema.unit" class="unit text-gray-600">{{parameter.schema.unit}}</span>
+                </div>
+                <div *ngIf="getParamterType(parameter) === 'price'" class="mb-4 mt-4 relative" >
+                  <input type="number" step="{{getStep(parameter)}}"
+                         id="filter_price_{{parameter.name}}"
+                         data-ph-capture-attribute-sc-event="server listing filter"
+                         data-ph-capture-attribute-server-listing-filter-type="number"
+                         [attr.data-ph-capture-attribute-server-listing-filter-id]="parameter.name"
+                         [attr.data-ph-capture-attribute-server-listing-filter-category]="item.category_id"
+                         [(ngModel)]="parameter.modelValue"
+                         (ngModelChange)="valueChanged()"
+                         class="w-full h-8 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm pr-8">
+                  <span *ngIf="selectedCurrency.slug" class="unit text-gray-600">{{selectedCurrency.slug}}</span>
                 </div>
                 <div *ngIf="getParamterType(parameter) === 'text'" class="mb-4 mt-4" >
                   <input type="text"
@@ -117,6 +196,36 @@
         <div class="top_buttons w-full flex justify-end gap-6 items-center" >
           <div>
             <button
+              id="allocation_button"
+              data-ph-capture-attribute-sc-event="server listing price allocation select"
+              data-dropdown-toggle="allocation_options"
+              class="dropdown_button"
+              type="button">
+              <div class="px-4 py-3">
+                {{allocation.name}}
+              </div>
+              <div class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
+                <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
+              </div>
+            </button>
+          </div>
+          <div>
+            <button
+              id="currency_button"
+              data-ph-capture-attribute-sc-event="server listing currency select"
+              data-dropdown-toggle="currency_options"
+              class="dropdown_button"
+              type="button">
+              <div class="px-4 py-3">
+              {{selectedCurrency.slug}}
+              </div>
+              <div class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
+                <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
+              </div>
+            </button>
+          </div>
+          <div>
+            <button
               id="column_button"
               data-ph-capture-attribute-sc-event="server listing columns select"
               data-dropdown-toggle="column_options"
@@ -145,7 +254,6 @@
             <table class="items_table">
               <thead>
                 <tr>
-                  <th></th>
                   <th *ngFor="let item of tableColumns"
                       [ngClass]="{
                         'cursor-pointer': item.orderField
@@ -163,34 +271,32 @@
                 <tr *ngFor="let item of servers; let i = index" (click)="openServerDetails(item)"
                     data-ph-capture-attribute-sc-event="server listing route to server details"
                     [attr.data-ph-capture-attribute-server-listing-row-vendor]="item.vendor_id"
+                    [attr.data-ph-capture-attribute-server-listing-row-datacenter]="item.datacenter.api_reference"
+                    [attr.data-ph-capture-attribute-server-listing-row-zone]="item.zone.api_reference"
+                    [attr.data-ph-capture-attribute-server-listing-row-server]="item.server.api_reference"
                     [attr.data-ph-capture-attribute-server-listing-row-index]="i+1"
                     [attr.data-ph-capture-attribute-server-listing-row-page-size]="limit">
-                  <td (click)="$event.stopPropagation()">
-                    <div class="flex gap-2 items-center" >
-                      <input type="checkbox"
-                        id="server_compare_checkbox_{{item.server_id}}"
-                        [(ngModel)]="item.selected"
-                        (ngModelChange)="toggleCompare($event, item)"
-                        class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer" >
-                    </div>
-                  </td>
                   <ng-container *ngFor="let column of tableColumns">
                     <td *ngIf="column.type === 'name'" class="min-w-225">
                       <div class="text-sm text-white flex gap-1">
-                        <span>{{item.display_name}} </span>
-                        <span *ngIf="item.display_name !== item.api_reference" class="text-emerald-400" >|</span>
-                        <span *ngIf="item.display_name !== item.api_reference">{{item.api_reference}} </span>
+                        <span>{{item.server.display_name}} </span>
+                        <span *ngIf="item.server.display_name !== item.server.api_reference" class="text-emerald-400" >|</span>
+                        <span *ngIf="item.server.display_name !== item.server.api_reference">{{item.server.api_reference}} </span>
                       </div>
                       <div class="text-xs text-white flex gap-1">
                         <span>{{item.vendor_id}}</span>
+                        <span class="text-emerald-400" >|</span>
+                        <span>{{item.datacenter.display_name}}</span>
+                        <span class="text-emerald-400" >|</span>
+                        <span>{{item.zone.display_name}}</span>
                       </div>
                     </td>
                     <td *ngIf="column.type === 'processor'">
-                      <div class="text-sm text-white">{{item.cpu_cores || item.vcpus}}x {{item.cpu_architecture}}</div>
+                      <div class="text-sm text-white">{{item.server.cpu_cores || item.server.vcpus}}x {{item.server.cpu_architecture}}</div>
                       <div
-                        *ngIf="item.cpu_cores && item.cpu_speed"
+                        *ngIf="item.server.cpu_cores && item.server.cpu_speed"
                         class="text-xs text-white flex gap-1">
-                        <span>{{item.cpu_cores}} cores at {{item.cpu_speed}} Ghz</span>
+                        <span>{{item.server.cpu_cores}} cores at {{item.server.cpu_speed}} Ghz</span>
                       </div>
                     </td>
                     <td *ngIf="column.type === 'memory'">
@@ -202,21 +308,31 @@
                     <td *ngIf="column.type === 'storage'">
                       <div class="text-sm text-white">{{getStorage(item)}}</div>
                       <div
-                        *ngIf="item.storage_type"
+                        *ngIf="item.server.storage_type"
                         class="text-xs text-white">
-                        <span>{{item.storage_type}}</span>
+                        <span>{{item.server.storage_type}}</span>
                       </div>
                     </td>
+                    <td *ngIf="column.type === 'price'" class="min-w-160">
+                      {{item.price}} {{selectedCurrency.slug}}
+                    </td>
                     <td *ngIf="column.type === 'gpu'">
-                      <div class="text-sm text-white">{{item.gpu_count}}</div>
+                      <div class="text-sm text-white">{{item.server.gpu_count}}</div>
                       <div
-                        *ngIf="item.gpu_model"
+                        *ngIf="item.server.gpu_model"
                         class="text-xs text-white flex gap-1">
-                        <span>{{item.gpu_model}}</span>
+                        <span>{{item.server.gpu_model}}</span>
                       </div>
                     </td>
                     <td *ngIf="column.type === 'text' && column.key">
                       {{getField(item, column.key)}}
+                    </td>
+                    <td *ngIf="column.type === 'country'">
+                      {{item.datacenter.country_id | countryIdtoName}}
+                    </td>
+                    <td *ngIf="column.type === 'datacenter'" class="min-w-225">
+                      <div class="text-sm text-white">{{item.datacenter.display_name}}</div>
+                      <div class="text-xs text-white flex gap-1"> <span>{{item.datacenter.datacenter_id}} </span> </div>
                     </td>
                     <td *ngIf="column.type === 'vendor'" >
                       <div *ngIf="item.vendor.logo" class="w-9 h-9 px-1 py-1 bg-white rounded-lg">
@@ -230,9 +346,12 @@
                   <td>
                     <!-- eslint-disable-next-line @angular-eslint/template/interactive-supports-focus -->
                     <div (click)="$event.stopPropagation()">
-                      <a routerLink="/server/{{item.vendor.vendor_id}}/{{item.server_id}}"
+                      <a routerLink="/server/{{item.vendor.vendor_id}}/{{item.server.server_id}}"
                          data-ph-capture-attribute-sc-event="server listing route to server details"
                          [attr.data-ph-capture-attribute-server-listing-row-vendor]="item.vendor_id"
+                         [attr.data-ph-capture-attribute-server-listing-row-datacenter]="item.datacenter.api_reference"
+                         [attr.data-ph-capture-attribute-server-listing-row-zone]="item.zone.api_reference"
+                         [attr.data-ph-capture-attribute-server-listing-row-server]="item.server.api_reference"
                          [attr.data-ph-capture-attribute-server-listing-row-index]="i+1"
                          [attr.data-ph-capture-attribute-server-listing-row-page-size]="limit">
                         <lucide-icon name="chevron-right" class="h-6 w-6 text-emerald-400"></lucide-icon>
@@ -325,17 +444,16 @@
   </div>
 </div>
 
-<div *ngIf="compareCount() >= 2" class="fixed bottom-8 left-1/2 z-10">
-  <button
-    class="flex justify-center bg-emerald-400 text-white py-2 px-4 rounded-lg font-bold hover:bg-emerald-500"
-    data-ph-capture-attribute-sc-event="server listing compare"
-    data-ph-capture-attribute-server-listing-compare-action="open"
-    (click)="openCompare()">
-    Compare ({{compareCount()}})
-  </button>
+ <!-- Dropdown menu -->
+ <div id="allocation_options" class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid">
+  <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
+    <li *ngFor="let item of allocationTypes"
+      class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+      (click)="selectAllocation(item)" tabindex="0">
+      <div class="text-white text-sm">{{item.name}} </div>
+    </li>
+  </ul>
 </div>
-
-
 
 <div id="pagesize_options" class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid">
   <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
@@ -355,6 +473,16 @@
       (ngModelChange)="refreshColumns()"
       class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer" >
       <div class="text-white text-sm">{{item.name}}</div>
+    </li>
+  </ul>
+</div>
+
+<div id="currency_options" class="z-10 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid">
+  <ul class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
+    <li *ngFor="let item of availableCurrencies"
+      class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+      (click)="selectCurrency(item)" tabindex="0">
+      <div class="text-white text-sm ">{{item.name}} ({{item.symbol}})</div>
     </li>
   </ul>
 </div>

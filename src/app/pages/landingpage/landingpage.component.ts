@@ -10,7 +10,7 @@ import { RouterLink } from '@angular/router';
 import { TimeToShortDatePipe } from '../../pipes/time-to-short-date.pipe';
 import { LucideAngularModule } from 'lucide-angular';
 import { ArticleCardComponent } from '../../components/article-card/article-card.component';
-import { SearchServersServersGetData } from '../../../../sdk/data-contracts';
+import { SearchServerPricesServerPricesGetData } from '../../../../sdk/data-contracts';
 import { AnalyticsService } from '../../services/analytics.service';
 
 @Component({
@@ -152,7 +152,7 @@ export class LandingpageComponent implements OnInit {
   welcomeAnim(startingDelay: number = 1000) {
 
     // get the cheapest machine
-    this.keeperAPI.searchServers({vcpus_min: this.cpuCount, memory_min: this.ramCount, limit: 100}).then(servers => {
+    this.keeperAPI.searchServerPrices({vcpus_min: this.cpuCount, memory_min: this.ramCount, limit: 100}).then(servers => {
 
       if(!this.spinnerClicked) {
 
@@ -215,14 +215,14 @@ export class LandingpageComponent implements OnInit {
       spinButton.style.animation = 'press 1.0s';
     }
 
-    this.keeperAPI.searchServers({vcpus_min: this.cpuCount, memory_min: this.ramCount, limit: 100}).then(servers => {
+    this.keeperAPI.searchServerPrices({vcpus_min: this.cpuCount, memory_min: this.ramCount, limit: 100}).then(servers => {
       this.spinAnim(servers.body);
     }).catch(err => {
       console.error(err);
     });
   }
 
-  spinAnim(servers: SearchServersServersGetData, isFake = false) {
+  spinAnim(servers: SearchServerPricesServerPricesGetData, isFake = false) {
 
     this.analyticsService.trackEvent('slot machine started', {'autostarted': isFake});
     if(this.isSpinning) {
