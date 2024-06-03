@@ -21,7 +21,7 @@ export class ServerCompareComponent implements OnInit {
 
   breadcrumbs: BreadcrumbSegment[] = [
     { name: 'Home', url: '/' },
-    { name: 'Compare Instances', url: '/compare' }
+    { name: 'Compare Servers', url: '/compare' }
   ];
 
   isLoading = true;
@@ -48,7 +48,7 @@ export class ServerCompareComponent implements OnInit {
   ngOnInit() {
 
     const title = 'Compare Servers';
-    const description = 'Compare servers to find the best one for your needs';
+    const description = 'Compare cloud server characteristics and benchmark scores.';
     const keywords = 'compare, servers, server, hosting, cloud, vps, dedicated, comparison';
 
     this.seoHandler.updateTitleAndMetaTags(title, description, keywords);
