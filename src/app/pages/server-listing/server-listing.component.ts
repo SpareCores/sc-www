@@ -103,7 +103,7 @@ export class ServerListingComponent implements OnInit {
     { name: 'GPU MIN MEMORY', show: false, type: 'gpu_memory', key: 'server.gpu_memory_min' },
     { name: 'ARCHITECTURE', show: false, type: 'text', key: 'server.cpu_architecture' },
     { name: 'STATUS', show: false, type: 'text', key: 'server.status' },
-    { name: 'VENDOR', show: true, type: 'vendor' },
+    { name: 'VENDOR', show: false, type: 'vendor' },
   ];
 
   pageLimits = [10, 25, 50, 100, 250];
@@ -133,10 +133,9 @@ export class ServerListingComponent implements OnInit {
   modalResponse: any;
   modalResponseStr: string[] = [];
 
-  countryMetadata: CountryMetadata[] = [];
-  continentMetadata: ContinentMetadata[] = [];
-
   vendorMetadata: any[] = [];
+
+  selectedForCompare: ServerPKs[] = [];
 
   constructor(@Inject(PLATFORM_ID) private platformId: object,
               private keeperAPI: KeeperAPIService,
@@ -170,8 +169,6 @@ export class ServerListingComponent implements OnInit {
       if(query.page) {
         this.page = parseInt(query.page);
       }
-
-      this.loadCountries(query.countries);
 
       this.loadVendors();
 
@@ -328,6 +325,11 @@ export class ServerListingComponent implements OnInit {
     this.keeperAPI.searchServers(queryObject).then(servers => {
       this.servers = servers?.body;
 
+      this.servers?.forEach((server: any) => {
+        server.selected = this.selectedForCompare
+          .findIndex((item) => item.vendor_id === server.vendor_id && item.server_id === server.server_id) !== -1;
+      });
+
       if(updateTotalCount) {
         this.totalPages = Math.ceil(parseInt(servers?.headers?.get('x-total-count') || '0') / this.limit);
       }
@@ -408,18 +410,6 @@ export class ServerListingComponent implements OnInit {
     if(this.page > 1) {
       paramObject.page = this.page;
     }
-
-    if(this.countryMetadata.find((country) => country.selected)) {
-      paramObject.countries = [];
-      this.countryMetadata.forEach((country) => {
-        if(country.selected) {
-          paramObject.countries.push(country.country_id);
-        }
-      });
-    } else {
-      if(paramObject.countries) delete paramObject.countries;
-    }
-
 
     return paramObject;
   }
@@ -526,49 +516,6 @@ export class ServerListingComponent implements OnInit {
     }
   }
 
-  loadCountries(selectedCountries: string | undefined) {
-    const selectedCountryIds = selectedCountries ? selectedCountries.split(',') : [];
-    this.keeperAPI.getCountries().then((response) => {
-      if(response?.body) {
-
-        this.countryMetadata = response.body.map((item: any) => {
-          return {...item, selected: selectedCountryIds.indexOf(item.country_id) !== -1};
-        }).sort((a: any, b: any) => {
-          const regionNamesInEnglish = new Intl.DisplayNames(['en'], { type: 'region' });
-          return regionNamesInEnglish.of(a.country_id)?.localeCompare(regionNamesInEnglish.of(b.country_id) || '') || 0;
-        });
-
-        this.continentMetadata = [];
-        this.countryMetadata.forEach((country) => {
-          const continent = this.continentMetadata.find((item) => item.continent === country.continent);
-          if(!continent) {
-            this.continentMetadata.push({continent: country.continent, selected: false, collapsed: true});
-          }
-        });
-
-        this.continentMetadata.forEach((continent) => {
-          continent.selected = this.countryMetadata.find((country) => country.continent === continent.continent && !country.selected) === undefined;
-          continent.collapsed = this.countryMetadata.find((country) => country.continent === continent.continent && country.selected) === undefined;
-        });
-      }
-    });
-  }
-
-  countriesByContinent(continent: string) {
-    return this.countryMetadata.filter((country) => country.continent === continent);
-  }
-
-  selectContinent(continent: ContinentMetadata) {
-    continent.selected = !continent.selected;
-    this.countryMetadata.forEach((country) => {
-      if(country.continent === continent.continent) {
-        country.selected = continent.selected;
-      }
-    });
-
-    this.valueChanged();
-  }
-
   collapseItem(continent: ContinentMetadata | DatacenterVendorMetadata) {
     continent.collapsed = !continent.collapsed;
   }
@@ -580,6 +527,17 @@ export class ServerListingComponent implements OnInit {
         this.vendorMetadata = responses[0].body;
       }
     });
+  }
+
+  toggleCompare(event: boolean, server: ServerPKs| any) {
+
+    if(event) {
+      if(this.selectedForCompare.findIndex((item) => item.vendor_id === server.vendor_id && item.server_id === server.server_id) === -1) {
+        this.selectedForCompare.push(server);
+      }
+    } else {
+      this.selectedForCompare = this.selectedForCompare.filter((item) => item !== server);
+    }
   }
 
   compareCount() {

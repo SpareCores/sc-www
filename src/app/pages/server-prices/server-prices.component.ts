@@ -91,7 +91,7 @@ export class ServerPricesComponent implements OnInit {
 
   breadcrumbs: BreadcrumbSegment[] = [
     { name: 'Home', url: '/' },
-    { name: 'Server listing', url: '/prices' }
+    { name: 'Server listing', url: '/server_prices' }
   ];
 
   tableColumns: TableColumn[] = [];
@@ -132,9 +132,9 @@ export class ServerPricesComponent implements OnInit {
   ];
 
   allocationTypes = [
+    {name: 'Both', slug: null},
     {name: 'Spot', slug: 'spot'},
-    {name: 'On Demand', slug: 'ondemand'},
-    {name: 'Both', slug: null}
+    {name: 'On Demand', slug: 'ondemand'}
   ];
 
   pageLimits = [10, 25, 50, 100, 250];
@@ -522,10 +522,10 @@ export class ServerPricesComponent implements OnInit {
 
     if(encodedQuery?.length) {
       // update the URL
-      window.history.pushState({}, '', '/prices?' + encodedQuery);
+      window.history.pushState({}, '', '/server_prices?' + encodedQuery);
     } else {
       // remove the query params
-      window.history.pushState({}, '', '/prices');
+      window.history.pushState({}, '', '/server_prices');
     }
   }
 

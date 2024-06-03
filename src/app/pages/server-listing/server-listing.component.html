@@ -54,39 +54,6 @@
                          (ngModelChange)="valueChanged()"
                          class="w-full h-2 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm">
                 </div>
-                <div *ngIf="getParamterType(parameter) === 'country'" class="mb-4 mt-4 relative flex flex-col gap-2" >
-                  <div *ngFor="let continent of continentMetadata" class="flex flex-col gap-3" >
-                      <div class="flex justify-between">
-                        <div class="flex gap-2 items-center">
-                          <input type="checkbox"
-                                 id="filter_continent_{{continent.continent}}"
-                                 data-ph-capture-attribute-sc-event="server listing filter"
-                                 data-ph-capture-attribute-server-listing-filter-type="checkbox"
-                                 [attr.data-ph-capture-attribute-server-listing-filter-id]="continent.continent"
-                                 data-ph-capture-attribute-server-listing-filter-category="continent"
-                                 [ngModel]="continent.selected"
-                                 (click)="selectContinent(continent)"
-                                 class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
-                          <div class="text-white text-sm">{{continent.continent}}</div>
-                        </div>
-                        <lucide-icon name="chevron-down" class="h-4 w-4 text-white cursor-pointer" (click)="collapseItem(continent)"></lucide-icon>
-                      </div>
-                      <div *ngIf="!continent.collapsed"  class="flex flex-col gap-3 ml-4">
-                        <div class="flex gap-2 align-center" *ngFor="let country of countriesByContinent(continent.continent)">
-                          <input type="checkbox"
-                                 id="filter_country_{{parameter.name}}"
-                                 data-ph-capture-attribute-sc-event="server listing filter"
-                                 data-ph-capture-attribute-server-listing-filter-type="checkbox"
-                                 [attr.data-ph-capture-attribute-server-listing-filter-id]="country.country_id"
-                                 data-ph-capture-attribute-server-listing-filter-category="country"
-                                 [(ngModel)]="country.selected"
-                                 (ngModelChange)="filterServers()"
-                                 class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
-                          <div class="text-white text-sm">{{country.country_id | countryIdtoName}}</div>
-                        </div>
-                      </div>
-                  </div>
-                </div>
                 <div *ngIf="getParamterType(parameter) === 'number'" class="mb-4 mt-4 relative" >
                   <input type="number" step="{{getStep(parameter)}}"
                          id="filter_number_{{parameter.name}}"
@@ -198,12 +165,13 @@
                     [attr.data-ph-capture-attribute-server-listing-row-vendor]="item.vendor_id"
                     [attr.data-ph-capture-attribute-server-listing-row-index]="i+1"
                     [attr.data-ph-capture-attribute-server-listing-row-page-size]="limit">
-                  <td>
-                    <div class="flex gap-2 items-center" (click)="$event.stopPropagation()">
+                  <td (click)="$event.stopPropagation()">
+                    <div class="flex gap-2 items-center" >
                       <input type="checkbox"
                         id="server_compare_checkbox_{{item.server_id}}"
                         [(ngModel)]="item.selected"
-                        class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
+                        (ngModelChange)="toggleCompare($event, item)"
+                        class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer" >
                     </div>
                   </td>
                   <ng-container *ngFor="let column of tableColumns">
