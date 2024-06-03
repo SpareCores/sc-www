@@ -327,7 +327,6 @@ export class ServerListingComponent implements OnInit {
 
     this.keeperAPI.searchServers(queryObject).then(servers => {
       this.servers = servers?.body;
-      console.log('servers', this.servers);
 
       if(updateTotalCount) {
         this.totalPages = Math.ceil(parseInt(servers?.headers?.get('x-total-count') || '0') / this.limit);
@@ -601,8 +600,6 @@ export class ServerListingComponent implements OnInit {
 
     // encode atob to avoid issues with special characters
     const encoded = btoa(JSON.stringify(serverIds));
-
-    console.log(encoded);
 
     this.router.navigateByUrl('/compare?instances=' + encoded);
   }
