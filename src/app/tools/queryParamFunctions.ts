@@ -13,7 +13,10 @@ export function encodeQueryParams(params: any): string | null {
     return null;
   }
 
-  const query = Object.keys(params).map(key => key + '=' + params[key]).join('&');
+  // filter out empty arrays
+  const query = Object.keys(params)
+    .filter(item => !Array.isArray(params[item]) || params[item].length > 0)
+    .map(key => key + '=' + params[key]).join('&');
 
   return query;
 }
