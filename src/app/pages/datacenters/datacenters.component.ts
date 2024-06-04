@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { KeeperAPIService } from '../../services/keeper-api.service';
-import { OrderDir, TableDatacenterTableDatacenterGetData } from '../../../../sdk/data-contracts';
+import { OrderDir, TableRegionTableRegionGetData } from '../../../../sdk/data-contracts';
 import { CountryIdtoNamePipe } from '../../pipes/country-idto-name.pipe';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -24,12 +24,12 @@ export class DatacentersComponent implements OnInit {
       url: '/'
     },
     {
-      name: 'Datacenters',
-      url: '/datacenters'
+      name: 'Regions',
+      url: '/regions'
     }
   ];
 
-  datacenters: TableDatacenterTableDatacenterGetData = [];
+  regions: TableRegionTableRegionGetData = [];
 
   vendors: any[] = [];
 
@@ -43,10 +43,10 @@ export class DatacentersComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.SEOHandler.updateTitleAndMetaTags('Datacenters - Spare Cores', 'List of all datacenters', 'AWS datacenters, Google Cloud datacenters');
+    this.SEOHandler.updateTitleAndMetaTags('Regions - Spare Cores', 'List of all regions', 'AWS regions, Google Cloud regions');
 
-    this.API.getDatacenters().then(datacenters => {
-      this.datacenters = datacenters.body;
+    this.API.getRegions().then(regions => {
+      this.regions = regions.body;
     });
 
     this.API.getVendors().then(vendors => {
@@ -74,17 +74,17 @@ export class DatacentersComponent implements OnInit {
       this.orderDir = OrderDir.Desc;
     }
 
-    if(this.orderBy === 'datacenter') {
-      this.datacenters.sort((a, b) => {
+    if(this.orderBy === 'region') {
+      this.regions.sort((a, b) => {
         return this.orderDir === OrderDir.Desc ? a.display_name.localeCompare(b.display_name) : b.display_name.localeCompare(a.display_name);
       });
     }
     else if(this.orderBy === 'vendor') {
-      this.datacenters.sort((a, b) => {
+      this.regions.sort((a, b) => {
         return this.orderDir === OrderDir.Desc ? this.getVendorName(a.vendor_id).localeCompare(this.getVendorName(b.vendor_id)) : this.getVendorName(b.vendor_id).localeCompare(this.getVendorName(a.vendor_id));
       });
     } else if(this.orderBy === 'country') {
-      this.datacenters.sort((a, b) => {
+      this.regions.sort((a, b) => {
         return this.orderDir === OrderDir.Desc ? a.country_id.localeCompare(b.country_id) : b.country_id.localeCompare(a.country_id);
       });
     }
@@ -99,7 +99,7 @@ export class DatacentersComponent implements OnInit {
   }
 
   openLink(item: any) {
-    this.router.navigateByUrl(`/servers?datacenters=${item.datacenter_id}`);
+    this.router.navigateByUrl(`/servers?regions=${item.region_id}`);
   }
 
 }

@@ -33,8 +33,8 @@ export type ContinentMetadata = {
   collapsed?: boolean;
 };
 
-export type DatacenterMetadata = {
-  datacenter_id: string;
+export type RegionMetadata = {
+  region_id: string;
   vendor_id: string;
   name: string;
   api_reference: string;
@@ -42,7 +42,7 @@ export type DatacenterMetadata = {
   selected? : boolean;
 };
 
-export type DatacenterVendorMetadata = {
+export type RegionVendorMetadata = {
   vendor_id: string;
   name: string;
   selected?: boolean;
@@ -86,7 +86,7 @@ export class ServerPricesComponent implements OnInit {
     {category_id: 'memory', name: 'Memory', icon: 'memory-stick', collapsed: true},
     {category_id: 'storage', name: 'Storage', icon: 'database', collapsed: true},
     {category_id: 'vendor', name: 'Vendor', icon: 'home', collapsed: true},
-    {category_id: 'datacenter', name: 'Datacenter', icon: 'hotel', collapsed: true},
+    {category_id: 'region', name: 'Region', icon: 'hotel', collapsed: true},
   ];
 
   breadcrumbs: BreadcrumbSegment[] = [
@@ -106,11 +106,11 @@ export class ServerPricesComponent implements OnInit {
     { name: 'GPU MIN MEMORY', show: false, type: 'gpu_memory', key: 'server.gpu_memory_min' },
     { name: 'PRICE', show: true, type: 'price', orderField: 'price' },
     { name: 'ARCHITECTURE', show: false, type: 'text', key: 'server.cpu_architecture' },
-    { name: 'DATACENTER', show: false, type: 'datacenter' },
+    { name: 'REGION', show: false, type: 'region' },
     { name: 'STATUS', show: false, type: 'text', key: 'server.status' },
     { name: 'VENDOR', show: false, type: 'vendor' },
     { name: 'COUNTRY', show: false, type: 'country' },
-    { name: 'CONTINENT', show: false, type: 'text', key: 'datacenter.country.continent' },
+    { name: 'CONTINENT', show: false, type: 'text', key: 'region.country.continent' },
     { name: 'ZONE', show: false, type: 'text', key: 'zone.name' },
   ];
 
@@ -173,8 +173,8 @@ export class ServerPricesComponent implements OnInit {
   countryMetadata: CountryMetadata[] = [];
   continentMetadata: ContinentMetadata[] = [];
 
-  datacenterMetadata: DatacenterMetadata[] = [];
-  datacenterVendorMetadata: DatacenterVendorMetadata[] = [];
+  regionMetadata: RegionMetadata[] = [];
+  regionVendorMetadata: RegionVendorMetadata[] = [];
 
   vendorMetadata: any[] = [];
 
@@ -221,7 +221,7 @@ export class ServerPricesComponent implements OnInit {
 
       this.loadCountries(query.countries);
 
-      this.loadDatacenters(query.datacenters);
+      this.loadRegions(query.regions);
 
       const tableColumnsStr = this.storageHandler.get('serverListTableColumns');
       if(tableColumnsStr) {
@@ -311,7 +311,7 @@ export class ServerPricesComponent implements OnInit {
   }
 
   getMemory(item: ServerPriceWithPKs) {
-    return ((item.server.memory || 0) / 1024).toFixed(1) + ' GB';
+    return ((item.server.memory_amount || 0) / 1024).toFixed(1) + ' GB';
   }
 
   getGPUMemory(item: ServerPriceWithPKs) {
@@ -348,8 +348,8 @@ export class ServerPricesComponent implements OnInit {
       return 'country';
     }
 
-    if(name === 'datacenters') {
-      return 'datacenters';
+    if(name === 'regions') {
+      return 'regions';
     }
 
     if((type === 'integer' || type === 'number') && parameter.schema.minimum && parameter.schema.maximum) {
@@ -504,15 +504,15 @@ export class ServerPricesComponent implements OnInit {
       if(paramObject.countries) delete paramObject.countries;
     }
 
-    if(this.datacenterMetadata.find((datacenter) => datacenter.selected)) {
-      paramObject.datacenters = [];
-      this.datacenterMetadata.forEach((datacenter) => {
-        if(datacenter.selected) {
-          paramObject.datacenters.push(datacenter.datacenter_id);
+    if(this.regionMetadata.find((region) => region.selected)) {
+      paramObject.regions = [];
+      this.regionMetadata.forEach((region) => {
+        if(region.selected) {
+          paramObject.regions.push(region.region_id);
         }
       });
     } else {
-      if(paramObject.datacenters) delete paramObject.datacenters;
+      if(paramObject.datacregionsenters) delete paramObject.regions;
     }
     return paramObject;
   }
@@ -679,55 +679,55 @@ export class ServerPricesComponent implements OnInit {
     this.valueChanged();
   }
 
-  collapseItem(continent: ContinentMetadata | DatacenterVendorMetadata) {
+  collapseItem(continent: ContinentMetadata | RegionVendorMetadata) {
     continent.collapsed = !continent.collapsed;
   }
 
-  loadDatacenters(selectedDatacenters: string | undefined) {
-    const selectedDatacenterIds = selectedDatacenters ? selectedDatacenters.split(',') : [];
+  loadRegions(selectedRegions: string | undefined) {
+    const selectedRegionIds = selectedRegions ? selectedRegions.split(',') : [];
     Promise.all([
       this.keeperAPI.getVendors(),
-      this.keeperAPI.getDatacenters()]).then((responses) => {
+      this.keeperAPI.getRegions()]).then((responses) => {
 
       if(responses[0]?.body) {
         this.vendorMetadata = responses[0].body;
       }
       if(responses[1]?.body) {
-        this.datacenterMetadata = responses[1].body.map((item: any) => {
-          return {...item, selected: selectedDatacenterIds.indexOf(item.datacenter_id) !== -1};
+        this.regionMetadata = responses[1].body.map((item: any) => {
+          return {...item, selected: selectedRegionIds.indexOf(item.region_id) !== -1};
         }).sort((a: any, b: any) => a.name.localeCompare(b.name));
 
-        this.datacenterVendorMetadata = [];
-        this.datacenterMetadata.forEach((datacenter) => {
-          const vendor = this.datacenterVendorMetadata.find((item) => item.vendor_id === datacenter.vendor_id);
+        this.regionVendorMetadata = [];
+        this.regionMetadata.forEach((region) => {
+          const vendor = this.regionVendorMetadata.find((item) => item.vendor_id === region.vendor_id);
           if(!vendor) {
-            this.datacenterVendorMetadata.push(
+            this.regionVendorMetadata.push(
               {
-                vendor_id: datacenter.vendor_id,
-                name: this.vendorMetadata.find((vendor) => vendor.vendor_id === datacenter.vendor_id)?.name,
+                vendor_id: region.vendor_id,
+                name: this.vendorMetadata.find((vendor) => vendor.vendor_id === region.vendor_id)?.name,
                 selected: false,
                 collapsed: true
               });
           }
         });
 
-        this.datacenterVendorMetadata.forEach((vendor) => {
-          vendor.selected = this.datacenterMetadata.find((datacenter) => datacenter.vendor_id === vendor.vendor_id && !datacenter.selected) === undefined;
-          vendor.collapsed = this.datacenterMetadata.find((datacenter) => datacenter.vendor_id === vendor.vendor_id && datacenter.selected) === undefined;
+        this.regionVendorMetadata.forEach((vendor) => {
+          vendor.selected = this.regionMetadata.find((region) => region.vendor_id === vendor.vendor_id && !region.selected) === undefined;
+          vendor.collapsed = this.regionMetadata.find((region) => region.vendor_id === vendor.vendor_id && region.selected) === undefined;
         });
       }
     });
   }
 
-  datacentersByVendor(vendor_id: string) {
-    return this.datacenterMetadata.filter((datacenter) => datacenter.vendor_id === vendor_id);
+  regionsByVendor(vendor_id: string) {
+    return this.regionMetadata.filter((region) => region.vendor_id === vendor_id);
   }
 
-  selectDatacenterVendor(vendor: DatacenterVendorMetadata) {
+  selectRegionrVendor(vendor: RegionVendorMetadata) {
     vendor.selected = !vendor.selected;
-    this.datacenterMetadata.forEach((datacenter) => {
-      if(datacenter.vendor_id === vendor.vendor_id) {
-        datacenter.selected = vendor.selected;
+    this.regionMetadata.forEach((region) => {
+      if(region.vendor_id === vendor.vendor_id) {
+        region.selected = vendor.selected;
       }
     });
 

@@ -44,7 +44,7 @@ export class ServerDetailsComponent implements OnInit {
 
   faqs: any[] = [];
 
-  availabilityDatacenters: any[] = [];
+  availabilityRegions: any[] = [];
   availabilityZones: any[] = [];
   pricesPerZone: any[] = [];
 
@@ -55,10 +55,10 @@ export class ServerDetailsComponent implements OnInit {
     { name: 'Ondemand', selected: true }
   ];
 
-  datacenterDropdown: any;
-  datacenterFilters: any[] = [];
+  regionDropdown: any;
+  regionFilters: any[] = [];
 
-  @ViewChild('chartPricePerDatacenter') chartPricePerDataCenter!: BaseChartDirective<'bar'> | undefined;
+  @ViewChild('chartPricePerRegion') chartPricePerRegion!: BaseChartDirective<'bar'> | undefined;
   @ViewChild('chartPricePerZone') chartPricePerZone!: BaseChartDirective<'bar'> | undefined;
   @ViewChild('chartPriceLowest') chartPriceLowest!: BaseChartDirective<'bar'> | undefined;
 
@@ -140,6 +140,7 @@ export class ServerDetailsComponent implements OnInit {
       });
 
       this.keepreAPI.getServer(vendor, id).then((data) => {
+        console.log(data.body);
         if(data?.body){
           this.serverDetails = data.body as any;
           this.breadcrumbs[2] =
@@ -149,7 +150,7 @@ export class ServerDetailsComponent implements OnInit {
           if(this.serverDetails.cpu_cores || this.serverDetails.vcpus) {
             this.features.push({name: 'vCPU', value: `${this.serverDetails.vcpus || this.serverDetails.cpu_cores}`});
           }
-          if(this.serverDetails.memory) {
+          if(this.serverDetails.memory_amount) {
             this.features.push({name: 'Memory', value: this.getMemory()});
           }
           if(this.serverDetails.storage_size) {
@@ -159,16 +160,16 @@ export class ServerDetailsComponent implements OnInit {
             this.features.push({name: 'GPU', value: this.serverDetails.gpu_count});
           }
 
-          this.datacenterFilters = [];
+          this.regionFilters = [];
           this.serverDetails.prices.sort((a, b) => a.price - b.price);
           this.serverDetails.prices.forEach((price: ServerPricePKs) => {
-              const datacenter = this.datacenterFilters.find((z) => z.datacenter_id === price.datacenter_id);
-              if(!datacenter) {
-                this.datacenterFilters.push({name: price.datacenter.display_name, datacenter_id: price.datacenter_id, selected: false});
+              const region = this.regionFilters.find((z) => z.region_id === price.region_id);
+              if(!region) {
+                this.regionFilters.push({name: price.region.display_name, region_id: price.region_id, selected: false});
               }
             });
 
-          this.datacenterFilters[0].selected = true;
+          this.regionFilters[0].selected = true;
 
           this.refreshGraphs();
 
@@ -192,7 +193,7 @@ export class ServerDetailsComponent implements OnInit {
             },
             {
               question: `How much does the ${this.serverDetails.display_name} server cost?`,
-              answer: `The pricing for ${this.serverDetails.display_name} servers starts at $${this.serverDetails.prices[0].price} per hour, but the actual price depends on the selected datacenter, zone and server allocation method (e.g. on-demand versus spot pricing options). Currently, the maximum price stands at $${this.serverDetails.prices.slice(-1)[0].price}.`
+              answer: `The pricing for ${this.serverDetails.display_name} servers starts at $${this.serverDetails.prices[0].price} per hour, but the actual price depends on the selected region, zone and server allocation method (e.g. on-demand versus spot pricing options). Currently, the maximum price stands at $${this.serverDetails.prices.slice(-1)[0].price}.`
             },
             {
               question: `What are the specs of the ${this.serverDetails.display_name} server?`,
@@ -223,8 +224,8 @@ export class ServerDetailsComponent implements OnInit {
                 }
               });
               this.similarByFamily = this.similarByFamily.sort((a, b) => {
-                if(a.memory && b.memory && a.memory !== b.memory) {
-                  return a.memory - b.memory
+                if(a.memory_amount && b.memory_amount && a.memory_amount !== b.memory_amount) {
+                  return a.memory_amount - b.memory_amount
                 } else if(a.vcpus && b.vcpus && a.vcpus !== b.vcpus) {
                   return a.vcpus - b.vcpus
                 } else if(a.cpu_cores && b.cpu_cores && a.cpu_cores !== b.cpu_cores) {
@@ -235,7 +236,7 @@ export class ServerDetailsComponent implements OnInit {
               });
               // search for servers with the closest amount of memory
               this.similarByPerformance = this.similarByPerformance.sort((a, b) => {
-                return Math.abs(Number(this.serverDetails.memory) - Number(a.memory)) - Math.abs(Number(this.serverDetails.memory) - Number(b.memory));
+                return Math.abs(Number(this.serverDetails.memory_amount) - Number(a.memory_amount)) - Math.abs(Number(this.serverDetails.memory_amount) - Number(b.memory_amount));
               });
               this.similarByPerformance = this.similarByPerformance.slice(0, 7);
 
@@ -298,16 +299,16 @@ export class ServerDetailsComponent implements OnInit {
             }, 150);
 
             const interval3 = setInterval(() => {
-              const targetElAllocation: HTMLElement | null = document.getElementById('datacenter_options');
-              const triggerElAllocation: HTMLElement | null = document.getElementById('datacenter_button');
+              const targetElAllocation: HTMLElement | null = document.getElementById('region_options');
+              const triggerElAllocation: HTMLElement | null = document.getElementById('region_button');
 
               if(targetElAllocation && triggerElAllocation) {
-                this.datacenterDropdown = new Dropdown(
+                this.regionDropdown = new Dropdown(
                   targetElAllocation,
                   triggerElAllocation,
                   options,
                   {
-                    id: 'datacenter_options',
+                    id: 'region_options',
                     override: true
                   }
                 );
@@ -326,7 +327,7 @@ export class ServerDetailsComponent implements OnInit {
   }
 
   getMemory(memory: number | undefined = undefined) {
-    return ((memory || this.serverDetails.memory || 0) / 1024).toFixed(1) + 'GB';
+    return ((memory || this.serverDetails.memory_amount || 0) / 1024).toFixed(1) + 'GB';
   }
 
   getStorage() {
@@ -365,15 +366,15 @@ export class ServerDetailsComponent implements OnInit {
   }
 
   updateChart1() {
-    this.availabilityDatacenters = [];
+    this.availabilityRegions = [];
     if(this.serverDetails.prices.length > 0) {
 
     this.serverDetails.prices.forEach((price: ServerPricePKs) => {
-    const zone = this.availabilityDatacenters.find((z) => z.datacenter_id === price.datacenter_id);
+    const zone = this.availabilityRegions.find((z) => z.region_id === price.region_id);
       if(!zone) {
         const data: any = {
-          datacenter_id: price.datacenter_id,
-          display_name: price.datacenter.display_name,
+          region_id: price.region_id,
+          display_name: price.region.display_name,
           spot: {
             price: 0,
             unit: price.unit,
@@ -388,21 +389,21 @@ export class ServerDetailsComponent implements OnInit {
         data[price.allocation || 'spot'].price += price.price;
         data[price.allocation || 'spot'].count++;
 
-        this.availabilityDatacenters.push(data);
+        this.availabilityRegions.push(data);
       } else {
         zone[price.allocation || 'spot'].price += price.price;
         zone[price.allocation || 'spot'].count++;
       }
     });
 
-    this.availabilityDatacenters.forEach((zone: any) => {
+    this.availabilityRegions.forEach((zone: any) => {
       if(zone.spot.count)
         zone.spot.price = Math.round(zone.spot.price / zone.spot.count * 1000000) / 1000000;
       if(zone.ondemand.count)
         zone.ondemand.price = Math.round(zone.ondemand.price / zone.ondemand.count * 1000000) / 1000000;
     });
 
-    this.availabilityDatacenters.sort((a, b) => a.datacenter_id - b.datacenter_id);
+    this.availabilityRegions.sort((a, b) => a.region_id - b.region_id);
 
     const series: ChartData<'bar'> = {
       labels: [],
@@ -421,7 +422,7 @@ export class ServerDetailsComponent implements OnInit {
     const spotIdx = series.datasets.findIndex((s: any) => s.label === 'Spot');
     const ondemandIdx = series.datasets.findIndex((s: any) => s.label === 'Ondemand');
 
-    this.availabilityDatacenters.forEach((zone: any) => {
+    this.availabilityRegions.forEach((zone: any) => {
       series.labels!.push(zone.display_name);
       if(spotIdx > -1) {
         series.datasets[spotIdx].data.push(zone.spot?.price || 0);
@@ -445,7 +446,7 @@ export class ServerDetailsComponent implements OnInit {
       if(!zone) {
         const data: any = {
           zone_id: price.zone_id,
-          datacenter_id: price.datacenter_id,
+          region_id: price.region_id,
           display_name: price.zone.display_name,
           spot: {
             price: 0,
@@ -475,7 +476,7 @@ export class ServerDetailsComponent implements OnInit {
         zone.ondemand.price = Math.round(zone.ondemand.price / zone.ondemand.count * 1000000) / 1000000;
     });
 
-    this.availabilityZones.sort((a, b) => a.datacenter_id - b.datacenter_id);
+    this.availabilityZones.sort((a, b) => a.region_id - b.region_id);
 
     const series: ChartData<'bar'> = {
       labels: [],
@@ -495,7 +496,7 @@ export class ServerDetailsComponent implements OnInit {
     const ondemandIdx = series.datasets.findIndex((s: any) => s.label === 'Ondemand');
 
     this.availabilityZones.forEach((zone: any) => {
-      if(this.datacenterFilters.find((z) => z.datacenter_id === zone.datacenter_id)?.selected) {
+      if(this.regionFilters.find((z) => z.region_id === zone.region_id)?.selected) {
         series.labels!.push(zone.display_name);
         if(spotIdx > -1) {
           series.datasets[spotIdx].data.push(zone.spot?.price || 0);

@@ -87,8 +87,8 @@
                       </div>
                   </div>
                 </div>
-                <div *ngIf="getParamterType(parameter) === 'datacenters'" class="mb-4 mt-4 relative flex flex-col gap-2" >
-                  <div *ngFor="let vendor of datacenterVendorMetadata" class="flex flex-col gap-3" >
+                <div *ngIf="getParamterType(parameter) === 'regions'" class="mb-4 mt-4 relative flex flex-col gap-2" >
+                  <div *ngFor="let vendor of regionVendorMetadata" class="flex flex-col gap-3" >
                       <div class="flex justify-between">
                         <div class="flex gap-2 items-center">
                           <input type="checkbox"
@@ -98,25 +98,25 @@
                                  [attr.data-ph-capture-attribute-server-listing-filter-id]="vendor.vendor_id"
                                  data-ph-capture-attribute-server-listing-filter-category="vendor"
                                  [ngModel]="vendor.selected"
-                                 (click)="selectDatacenterVendor(vendor)"
+                                 (click)="selectRegionrVendor(vendor)"
                                  class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
                           <div class="text-white text-sm">{{vendor.name}}</div>
                         </div>
                         <lucide-icon name="chevron-down" class="h-4 w-4 text-white cursor-pointer" (click)="collapseItem(vendor)"></lucide-icon>
                       </div>
                       <div *ngIf="!vendor.collapsed"  class="flex flex-col gap-3 ml-4">
-                        <div class="flex gap-2 align-center" *ngFor="let datacenter of datacentersByVendor(vendor.vendor_id)">
+                        <div class="flex gap-2 align-center" *ngFor="let region of regionsByVendor(vendor.vendor_id)">
                           <input type="checkbox"
-                                 id="filter_datacenter_{{parameter.name}}"
+                                 id="filter_region_{{parameter.name}}"
                                  data-ph-capture-attribute-sc-event="server listing filter"
                                  data-ph-capture-attribute-server-listing-filter-type="checkbox"
-                                 [attr.data-ph-capture-attribute-server-listing-filter-id]="datacenter.api_reference"
-                                 data-ph-capture-attribute-server-listing-filter-category="datacenter"
-                                 [(ngModel)]="datacenter.selected"
+                                 [attr.data-ph-capture-attribute-server-listing-filter-id]="region.api_reference"
+                                 data-ph-capture-attribute-server-listing-filter-category="region"
+                                 [(ngModel)]="region.selected"
                                  (ngModelChange)="filterServers()"
                                  class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
-                          <div class="text-white text-sm">{{datacenter.name}}</div>
-                          <lucide-icon *ngIf="datacenter.green_energy" name="leaf" class="h-4 w-4 text-emerald-400"></lucide-icon>
+                          <div class="text-white text-sm">{{region.name}}</div>
+                          <lucide-icon *ngIf="region.green_energy" name="leaf" class="h-4 w-4 text-emerald-400"></lucide-icon>
                         </div>
                       </div>
                   </div>
@@ -271,7 +271,7 @@
                 <tr *ngFor="let item of servers; let i = index" (click)="openServerDetails(item)"
                     data-ph-capture-attribute-sc-event="server listing route to server details"
                     [attr.data-ph-capture-attribute-server-listing-row-vendor]="item.vendor_id"
-                    [attr.data-ph-capture-attribute-server-listing-row-datacenter]="item.datacenter.api_reference"
+                    [attr.data-ph-capture-attribute-server-listing-row-region]="item.region.api_reference"
                     [attr.data-ph-capture-attribute-server-listing-row-zone]="item.zone.api_reference"
                     [attr.data-ph-capture-attribute-server-listing-row-server]="item.server.api_reference"
                     [attr.data-ph-capture-attribute-server-listing-row-index]="i+1"
@@ -286,7 +286,7 @@
                       <div class="text-xs text-white flex gap-1">
                         <span>{{item.vendor_id}}</span>
                         <span class="text-emerald-400" >|</span>
-                        <span>{{item.datacenter.display_name}}</span>
+                        <span>{{item.region.display_name}}</span>
                         <span class="text-emerald-400" >|</span>
                         <span>{{item.zone.display_name}}</span>
                       </div>
@@ -328,11 +328,11 @@
                       {{getField(item, column.key)}}
                     </td>
                     <td *ngIf="column.type === 'country'">
-                      {{item.datacenter.country_id | countryIdtoName}}
+                      {{item.region.country_id | countryIdtoName}}
                     </td>
-                    <td *ngIf="column.type === 'datacenter'" class="min-w-225">
-                      <div class="text-sm text-white">{{item.datacenter.display_name}}</div>
-                      <div class="text-xs text-white flex gap-1"> <span>{{item.datacenter.datacenter_id}} </span> </div>
+                    <td *ngIf="column.type === 'region'" class="min-w-225">
+                      <div class="text-sm text-white">{{item.region.display_name}}</div>
+                      <div class="text-xs text-white flex gap-1"> <span>{{item.region.region_id}} </span> </div>
                     </td>
                     <td *ngIf="column.type === 'vendor'" >
                       <div *ngIf="item.vendor.logo" class="w-9 h-9 px-1 py-1 bg-white rounded-lg">
@@ -349,7 +349,7 @@
                       <a routerLink="/server/{{item.vendor.vendor_id}}/{{item.server.server_id}}"
                          data-ph-capture-attribute-sc-event="server listing route to server details"
                          [attr.data-ph-capture-attribute-server-listing-row-vendor]="item.vendor_id"
-                         [attr.data-ph-capture-attribute-server-listing-row-datacenter]="item.datacenter.api_reference"
+                         [attr.data-ph-capture-attribute-server-listing-row-region]="item.region.api_reference"
                          [attr.data-ph-capture-attribute-server-listing-row-zone]="item.zone.api_reference"
                          [attr.data-ph-capture-attribute-server-listing-row-server]="item.server.api_reference"
                          [attr.data-ph-capture-attribute-server-listing-row-index]="i+1"

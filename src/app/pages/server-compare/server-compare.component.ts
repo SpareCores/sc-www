@@ -92,7 +92,7 @@ export class ServerCompareComponent implements OnInit {
   }
 
   getMemory(item: ServerPKsWithPrices) {
-    return ((item.memory || 0) / 1024).toFixed(1) + ' GB';
+    return ((item.memory_amount || 0) / 1024).toFixed(1) + ' GB';
   }
 
   getGPUMemory(item: ServerPKsWithPrices) {
