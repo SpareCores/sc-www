@@ -20,139 +20,140 @@ import {
   TableVendorTableVendorGetData,
   TableZoneTableZoneGetData,
 } from "./data-contracts";
-import { HttpClient, RequestParams } from "./http-client";
 
-export class Table<SecurityDataType = unknown> {
-  http: HttpClient<SecurityDataType>;
-
-  constructor(http: HttpClient<SecurityDataType>) {
-    this.http = http;
-  }
-
+export namespace Table {
   /**
    * @description Return the Benchmark table as-is, without filtering options or relationships resolved.
-   *
    * @tags Table dumps
    * @name TableBenchmarkTableBenchmarkGet
    * @summary Table Benchmark
    * @request GET:/table/benchmark
    */
-  tableBenchmarkTableBenchmarkGet = (params: RequestParams = {}) =>
-    this.http.request<TableBenchmarkTableBenchmarkGetData, any>({
-      path: `/table/benchmark`,
-      method: "GET",
-      ...params,
-    });
+  export namespace TableBenchmarkTableBenchmarkGet {
+    export type RequestParams = {};
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = TableBenchmarkTableBenchmarkGetData;
+  }
+
   /**
    * @description Return the Country table as-is, without filtering options or relationships resolved.
-   *
    * @tags Table dumps
    * @name TableCountryTableCountryGet
    * @summary Table Country
    * @request GET:/table/country
    */
-  tableCountryTableCountryGet = (params: RequestParams = {}) =>
-    this.http.request<TableCountryTableCountryGetData, any>({
-      path: `/table/country`,
-      method: "GET",
-      ...params,
-    });
+  export namespace TableCountryTableCountryGet {
+    export type RequestParams = {};
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = TableCountryTableCountryGetData;
+  }
+
   /**
    * @description Return the ComplianceFramework table as-is, without filtering options or relationships resolved.
-   *
    * @tags Table dumps
    * @name TableComplianceFrameworksTableComplianceFrameworkGet
    * @summary Table Compliance Frameworks
    * @request GET:/table/compliance_framework
    */
-  tableComplianceFrameworksTableComplianceFrameworkGet = (params: RequestParams = {}) =>
-    this.http.request<TableComplianceFrameworksTableComplianceFrameworkGetData, any>({
-      path: `/table/compliance_framework`,
-      method: "GET",
-      ...params,
-    });
+  export namespace TableComplianceFrameworksTableComplianceFrameworkGet {
+    export type RequestParams = {};
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = TableComplianceFrameworksTableComplianceFrameworkGetData;
+  }
+
   /**
    * @description Return the Vendor table as-is, without filtering options or relationships resolved.
-   *
    * @tags Table dumps
    * @name TableVendorTableVendorGet
    * @summary Table Vendor
    * @request GET:/table/vendor
    */
-  tableVendorTableVendorGet = (params: RequestParams = {}) =>
-    this.http.request<TableVendorTableVendorGetData, any>({
-      path: `/table/vendor`,
-      method: "GET",
-      ...params,
-    });
+  export namespace TableVendorTableVendorGet {
+    export type RequestParams = {};
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = TableVendorTableVendorGetData;
+  }
+
   /**
    * @description Return the Region table as-is, without filtering options or relationships resolved.
-   *
    * @tags Table dumps
    * @name TableRegionTableRegionGet
    * @summary Table Region
    * @request GET:/table/region
    */
-  tableRegionTableRegionGet = (params: RequestParams = {}) =>
-    this.http.request<TableRegionTableRegionGetData, any>({
-      path: `/table/region`,
-      method: "GET",
-      ...params,
-    });
+  export namespace TableRegionTableRegionGet {
+    export type RequestParams = {};
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = TableRegionTableRegionGetData;
+  }
+
   /**
    * @description Return the Zone table as-is, without filtering options or relationships resolved.
-   *
    * @tags Table dumps
    * @name TableZoneTableZoneGet
    * @summary Table Zone
    * @request GET:/table/zone
    */
-  tableZoneTableZoneGet = (params: RequestParams = {}) =>
-    this.http.request<TableZoneTableZoneGetData, any>({
-      path: `/table/zone`,
-      method: "GET",
-      ...params,
-    });
+  export namespace TableZoneTableZoneGet {
+    export type RequestParams = {};
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = TableZoneTableZoneGetData;
+  }
+
   /**
    * @description Return the Server table as-is, without filtering options or relationships resolved.
-   *
    * @tags Table dumps
    * @name TableServerTableServerGet
    * @summary Table Server
    * @request GET:/table/server
    */
-  tableServerTableServerGet = (params: RequestParams = {}) =>
-    this.http.request<TableServerTableServerGetData, any>({
-      path: `/table/server`,
-      method: "GET",
-      ...params,
-    });
+  export namespace TableServerTableServerGet {
+    export type RequestParams = {};
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = TableServerTableServerGetData;
+  }
+
   /**
    * @description Return the Storage table as-is, without filtering options or relationships resolved.
-   *
    * @tags Table dumps
    * @name TableStorageTableStorageGet
    * @summary Table Storage
    * @request GET:/table/storage
    */
-  tableStorageTableStorageGet = (params: RequestParams = {}) =>
-    this.http.request<TableStorageTableStorageGetData, any>({
-      path: `/table/storage`,
-      method: "GET",
-      ...params,
-    });
+  export namespace TableStorageTableStorageGet {
+    export type RequestParams = {};
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = TableStorageTableStorageGetData;
+  }
+
   /**
    * @description Server table and column names and comments.
-   *
    * @tags Table metadata
    * @name TableMetadataServerTableServerMetaGet
    * @summary Table Metadata Server
    * @request GET:/table/server/meta
    */
-  tableMetadataServerTableServerMetaGet = (params: RequestParams = {}) =>
-    this.http.request<TableMetadataServerTableServerMetaGetData, any>({
-      path: `/table/server/meta`,
-      method: "GET",
-      ...params,
-    });
+  export namespace TableMetadataServerTableServerMetaGet {
+    export type RequestParams = {};
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = TableMetadataServerTableServerMetaGetData;
+  }
 }

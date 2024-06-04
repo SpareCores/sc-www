@@ -20,6 +20,124 @@ export enum Allocation {
 }
 
 /**
+ * Benchmark
+ * Benchmark scenario definitions.
+ *
+ * Attributes:
+ *     benchmark_id (str): Unique identifier of a specific Benchmark.
+ *     name (str): Human-friendly name.
+ *     description (typing.Optional[str]): Short description.
+ *     framework (str): The name of the benchmark framework/software/tool used.
+ *     config_fields (dict): A dictionary of descriptions on the framework-specific config options, e.g. {"bandwidth": "Memory amount to use for compression in MB."}.
+ *     measurement (typing.Optional[str]): The name of measurement recoreded in the benchmark.
+ *     unit (typing.Optional[str]): Optional unit of measurement for the benchmark score.
+ *     higher_is_better (bool): If higher benchmark score means better performance, or vica versa.
+ *     status (Status): Status of the resource (active or inactive).
+ *     observed_at (datetime): Timestamp of the last observation.
+ */
+export interface Benchmark {
+  /**
+   * Benchmark Id
+   * Unique identifier of a specific Benchmark.
+   */
+  benchmark_id: string;
+  /**
+   * Name
+   * Human-friendly name.
+   */
+  name: string;
+  /**
+   * Description
+   * Short description.
+   */
+  description: string | null;
+  /**
+   * Framework
+   * The name of the benchmark framework/software/tool used.
+   */
+  framework: string;
+  /**
+   * Config Fields
+   * A dictionary of descriptions on the framework-specific config options, e.g. {"bandwidth": "Memory amount to use for compression in MB."}.
+   * @default {}
+   */
+  config_fields?: object;
+  /**
+   * Measurement
+   * The name of measurement recoreded in the benchmark.
+   */
+  measurement?: string | null;
+  /**
+   * Unit
+   * Optional unit of measurement for the benchmark score.
+   */
+  unit?: string | null;
+  /**
+   * Higher Is Better
+   * If higher benchmark score means better performance, or vica versa.
+   * @default true
+   */
+  higher_is_better?: boolean;
+  /**
+   * Status of the resource (active or inactive).
+   * @default "active"
+   */
+  status?: Status;
+  /**
+   * Observed At
+   * Timestamp of the last observation.
+   * @format date-time
+   */
+  observed_at?: string;
+}
+
+/** BenchmarkScoreBase */
+export interface BenchmarkScoreBase {
+  /**
+   * Vendor Id
+   * Reference to the Vendor.
+   */
+  vendor_id: string;
+  /**
+   * Server Id
+   * Reference to the Server.
+   */
+  server_id: string;
+  /**
+   * Benchmark Id
+   * Reference to the Benchmark.
+   */
+  benchmark_id: string;
+  /**
+   * Config
+   * Dictionary of config parameters of the specific benchmark, e.g. {"bandwidth": 4096}
+   * @default {}
+   */
+  config?: object;
+  /**
+   * Score
+   * The resulting score of the benchmark.
+   */
+  score: number;
+  /**
+   * Note
+   * Optional note, comment or context on the benchmark score.
+   */
+  note?: string | null;
+  /**
+   * Status of the resource (active or inactive).
+   * @default "active"
+   */
+  status?: Status;
+  /**
+   * Observed At
+   * Timestamp of the last observation.
+   * @format date-time
+   */
+  observed_at?: string;
+}
+
+/**
  * ComplianceFramework
  * List of Compliance Frameworks, such as HIPAA or SOC 2 Type 1.
  *
@@ -80,8 +198,8 @@ export interface ComplianceFramework {
 /** ComplianceFrameworks */
 export enum ComplianceFrameworks {
   Hipaa = "hipaa",
-  Iso27001 = "iso27001",
   Soc2T2 = "soc2t2",
+  Iso27001 = "iso27001",
 }
 
 /**
@@ -203,471 +321,13 @@ export enum CpuArchitecture {
 }
 
 /**
- * Datacenter
- * Datacenters/regions of Vendors.
- *
- * Attributes:
- *     vendor_id (str): Reference to the Vendor.
- *     datacenter_id (str): Unique identifier, as called at the Vendor.
- *     name (str): Human-friendly name.
- *     api_reference (str): How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depening on the vendor and actual API endpoint.
- *     display_name (str): Human-friendly reference (usually the id or name) of the resource.
- *     aliases (typing.List[str]): List of other commonly used names for the same Datacenter.
- *     country_id (str): Reference to the Country, where the Datacenter is located.
- *     state (typing.Optional[str]): Optional state/administrative area of the Datacenter's location within the Country.
- *     city (typing.Optional[str]): Optional city name of the Datacenter's location.
- *     address_line (typing.Optional[str]): Optional address line of the Datacenter's location.
- *     zip_code (typing.Optional[str]): Optional ZIP code of the Datacenter's location.
- *     lon (typing.Optional[float]): Longitude coordinate of the Datacenter's known or approximate location.
- *     lat (typing.Optional[float]): Latitude coordinate of the Datacenter's known or approximate location.
- *     founding_year (typing.Optional[int]): 4-digit year when the Datacenter was founded.
- *     green_energy (typing.Optional[bool]): If the Datacenter is 100% powered by renewable energy.
- *     status (Status): Status of the resource (active or inactive).
- *     observed_at (datetime): Timestamp of the last observation.
+ * DdrGeneration
+ * Generation of the DDR SDRAM.
  */
-export interface Datacenter {
-  /**
-   * Vendor Id
-   * Reference to the Vendor.
-   */
-  vendor_id: string;
-  /**
-   * Datacenter Id
-   * Unique identifier, as called at the Vendor.
-   */
-  datacenter_id: string;
-  /**
-   * Name
-   * Human-friendly name.
-   */
-  name: string;
-  /**
-   * Api Reference
-   * How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depening on the vendor and actual API endpoint.
-   */
-  api_reference: string;
-  /**
-   * Display Name
-   * Human-friendly reference (usually the id or name) of the resource.
-   */
-  display_name: string;
-  /**
-   * Aliases
-   * List of other commonly used names for the same Datacenter.
-   * @default []
-   */
-  aliases?: string[];
-  /**
-   * Country Id
-   * Reference to the Country, where the Datacenter is located.
-   */
-  country_id: string;
-  /**
-   * State
-   * Optional state/administrative area of the Datacenter's location within the Country.
-   */
-  state?: string | null;
-  /**
-   * City
-   * Optional city name of the Datacenter's location.
-   */
-  city?: string | null;
-  /**
-   * Address Line
-   * Optional address line of the Datacenter's location.
-   */
-  address_line?: string | null;
-  /**
-   * Zip Code
-   * Optional ZIP code of the Datacenter's location.
-   */
-  zip_code?: string | null;
-  /**
-   * Lon
-   * Longitude coordinate of the Datacenter's known or approximate location.
-   */
-  lon?: number | null;
-  /**
-   * Lat
-   * Latitude coordinate of the Datacenter's known or approximate location.
-   */
-  lat?: number | null;
-  /**
-   * Founding Year
-   * 4-digit year when the Datacenter was founded.
-   */
-  founding_year?: number | null;
-  /**
-   * Green Energy
-   * If the Datacenter is 100% powered by renewable energy.
-   */
-  green_energy?: boolean | null;
-  /**
-   * Status of the resource (active or inactive).
-   * @default "active"
-   */
-  status?: Status;
-  /**
-   * Observed At
-   * Timestamp of the last observation.
-   * @format date-time
-   */
-  observed_at?: string;
-}
-
-/** DatacenterBase */
-export interface DatacenterBase {
-  /**
-   * Vendor Id
-   * Reference to the Vendor.
-   */
-  vendor_id: string;
-  /**
-   * Datacenter Id
-   * Unique identifier, as called at the Vendor.
-   */
-  datacenter_id: string;
-  /**
-   * Name
-   * Human-friendly name.
-   */
-  name: string;
-  /**
-   * Api Reference
-   * How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depening on the vendor and actual API endpoint.
-   */
-  api_reference: string;
-  /**
-   * Display Name
-   * Human-friendly reference (usually the id or name) of the resource.
-   */
-  display_name: string;
-  /**
-   * Aliases
-   * List of other commonly used names for the same Datacenter.
-   * @default []
-   */
-  aliases?: string[];
-  /**
-   * Country Id
-   * Reference to the Country, where the Datacenter is located.
-   */
-  country_id: string;
-  /**
-   * State
-   * Optional state/administrative area of the Datacenter's location within the Country.
-   */
-  state?: string | null;
-  /**
-   * City
-   * Optional city name of the Datacenter's location.
-   */
-  city?: string | null;
-  /**
-   * Address Line
-   * Optional address line of the Datacenter's location.
-   */
-  address_line?: string | null;
-  /**
-   * Zip Code
-   * Optional ZIP code of the Datacenter's location.
-   */
-  zip_code?: string | null;
-  /**
-   * Lon
-   * Longitude coordinate of the Datacenter's known or approximate location.
-   */
-  lon?: number | null;
-  /**
-   * Lat
-   * Latitude coordinate of the Datacenter's known or approximate location.
-   */
-  lat?: number | null;
-  /**
-   * Founding Year
-   * 4-digit year when the Datacenter was founded.
-   */
-  founding_year?: number | null;
-  /**
-   * Green Energy
-   * If the Datacenter is 100% powered by renewable energy.
-   */
-  green_energy?: boolean | null;
-  /**
-   * Status of the resource (active or inactive).
-   * @default "active"
-   */
-  status?: Status;
-  /**
-   * Observed At
-   * Timestamp of the last observation.
-   * @format date-time
-   */
-  observed_at?: string;
-}
-
-/** DatacenterBaseWithPKs */
-export interface DatacenterBaseWithPKs {
-  /**
-   * Vendor Id
-   * Reference to the Vendor.
-   */
-  vendor_id: string;
-  /**
-   * Datacenter Id
-   * Unique identifier, as called at the Vendor.
-   */
-  datacenter_id: string;
-  /**
-   * Name
-   * Human-friendly name.
-   */
-  name: string;
-  /**
-   * Api Reference
-   * How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depening on the vendor and actual API endpoint.
-   */
-  api_reference: string;
-  /**
-   * Display Name
-   * Human-friendly reference (usually the id or name) of the resource.
-   */
-  display_name: string;
-  /**
-   * Aliases
-   * List of other commonly used names for the same Datacenter.
-   * @default []
-   */
-  aliases?: string[];
-  /**
-   * Country Id
-   * Reference to the Country, where the Datacenter is located.
-   */
-  country_id: string;
-  /**
-   * State
-   * Optional state/administrative area of the Datacenter's location within the Country.
-   */
-  state?: string | null;
-  /**
-   * City
-   * Optional city name of the Datacenter's location.
-   */
-  city?: string | null;
-  /**
-   * Address Line
-   * Optional address line of the Datacenter's location.
-   */
-  address_line?: string | null;
-  /**
-   * Zip Code
-   * Optional ZIP code of the Datacenter's location.
-   */
-  zip_code?: string | null;
-  /**
-   * Lon
-   * Longitude coordinate of the Datacenter's known or approximate location.
-   */
-  lon?: number | null;
-  /**
-   * Lat
-   * Latitude coordinate of the Datacenter's known or approximate location.
-   */
-  lat?: number | null;
-  /**
-   * Founding Year
-   * 4-digit year when the Datacenter was founded.
-   */
-  founding_year?: number | null;
-  /**
-   * Green Energy
-   * If the Datacenter is 100% powered by renewable energy.
-   */
-  green_energy?: boolean | null;
-  /**
-   * Status of the resource (active or inactive).
-   * @default "active"
-   */
-  status?: Status;
-  /**
-   * Observed At
-   * Timestamp of the last observation.
-   * @format date-time
-   */
-  observed_at?: string;
-  country: CountryBase;
-}
-
-/** DatacenterPKs */
-export interface DatacenterPKs {
-  /**
-   * Vendor Id
-   * Reference to the Vendor.
-   */
-  vendor_id: string;
-  /**
-   * Datacenter Id
-   * Unique identifier, as called at the Vendor.
-   */
-  datacenter_id: string;
-  /**
-   * Name
-   * Human-friendly name.
-   */
-  name: string;
-  /**
-   * Api Reference
-   * How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depening on the vendor and actual API endpoint.
-   */
-  api_reference: string;
-  /**
-   * Display Name
-   * Human-friendly reference (usually the id or name) of the resource.
-   */
-  display_name: string;
-  /**
-   * Aliases
-   * List of other commonly used names for the same Datacenter.
-   * @default []
-   */
-  aliases?: string[];
-  /**
-   * Country Id
-   * Reference to the Country, where the Datacenter is located.
-   */
-  country_id: string;
-  /**
-   * State
-   * Optional state/administrative area of the Datacenter's location within the Country.
-   */
-  state?: string | null;
-  /**
-   * City
-   * Optional city name of the Datacenter's location.
-   */
-  city?: string | null;
-  /**
-   * Address Line
-   * Optional address line of the Datacenter's location.
-   */
-  address_line?: string | null;
-  /**
-   * Zip Code
-   * Optional ZIP code of the Datacenter's location.
-   */
-  zip_code?: string | null;
-  /**
-   * Lon
-   * Longitude coordinate of the Datacenter's known or approximate location.
-   */
-  lon?: number | null;
-  /**
-   * Lat
-   * Latitude coordinate of the Datacenter's known or approximate location.
-   */
-  lat?: number | null;
-  /**
-   * Founding Year
-   * 4-digit year when the Datacenter was founded.
-   */
-  founding_year?: number | null;
-  /**
-   * Green Energy
-   * If the Datacenter is 100% powered by renewable energy.
-   */
-  green_energy?: boolean | null;
-  /**
-   * Status of the resource (active or inactive).
-   * @default "active"
-   */
-  status?: Status;
-  /**
-   * Observed At
-   * Timestamp of the last observation.
-   * @format date-time
-   */
-  observed_at?: string;
-  vendor: VendorBase;
-}
-
-/** Datacenters */
-export enum Datacenters {
-  Value1000 = "1000",
-  Value1100 = "1100",
-  Value1210 = "1210",
-  Value1220 = "1220",
-  Value1230 = "1230",
-  Value1250 = "1250",
-  Value1260 = "1260",
-  Value1270 = "1270",
-  Value1280 = "1280",
-  Value1290 = "1290",
-  Value1300 = "1300",
-  Value1310 = "1310",
-  Value1320 = "1320",
-  Value1330 = "1330",
-  Value1340 = "1340",
-  Value1350 = "1350",
-  Value1360 = "1360",
-  Value1370 = "1370",
-  Value1380 = "1380",
-  Value1390 = "1390",
-  Value1410 = "1410",
-  Value1420 = "1420",
-  Value1430 = "1430",
-  Value1440 = "1440",
-  Value1450 = "1450",
-  Value1460 = "1460",
-  Value1470 = "1470",
-  Value1480 = "1480",
-  Value1490 = "1490",
-  Value1510 = "1510",
-  Value1520 = "1520",
-  Value1530 = "1530",
-  Value1540 = "1540",
-  Value1550 = "1550",
-  Value1560 = "1560",
-  Value1570 = "1570",
-  Value1580 = "1580",
-  Value1590 = "1590",
-  Value1600 = "1600",
-  Value1610 = "1610",
-  Value2 = "2",
-  Value3 = "3",
-  Value4 = "4",
-  Value5 = "5",
-  Value6 = "6",
-  AfSouth1 = "af-south-1",
-  ApEast1 = "ap-east-1",
-  ApNortheast1 = "ap-northeast-1",
-  ApNortheast2 = "ap-northeast-2",
-  ApNortheast3 = "ap-northeast-3",
-  ApSouth1 = "ap-south-1",
-  ApSouth2 = "ap-south-2",
-  ApSoutheast1 = "ap-southeast-1",
-  ApSoutheast2 = "ap-southeast-2",
-  ApSoutheast3 = "ap-southeast-3",
-  ApSoutheast4 = "ap-southeast-4",
-  CaCentral1 = "ca-central-1",
-  CaWest1 = "ca-west-1",
-  CnNorth1 = "cn-north-1",
-  CnNorthwest1 = "cn-northwest-1",
-  EuCentral1 = "eu-central-1",
-  EuCentral2 = "eu-central-2",
-  EuNorth1 = "eu-north-1",
-  EuSouth1 = "eu-south-1",
-  EuSouth2 = "eu-south-2",
-  EuWest1 = "eu-west-1",
-  EuWest2 = "eu-west-2",
-  EuWest3 = "eu-west-3",
-  IlCentral1 = "il-central-1",
-  MeCentral1 = "me-central-1",
-  MeSouth1 = "me-south-1",
-  SaEast1 = "sa-east-1",
-  UsEast1 = "us-east-1",
-  UsEast2 = "us-east-2",
-  UsWest1 = "us-west-1",
-  UsWest2 = "us-west-2",
+export enum DdrGeneration {
+  DDR3 = "DDR3",
+  DDR4 = "DDR4",
+  DDR5 = "DDR5",
 }
 
 /**
@@ -691,18 +351,42 @@ export interface Disk {
 export interface Gpu {
   /** Manufacturer */
   manufacturer: string;
+  /** Family */
+  family?: string | null;
   /** Model */
-  model: string;
+  model?: string | null;
   /** Memory */
   memory: number;
-  /** Firmware */
-  firmware?: string | null;
+  /** Firmware Version */
+  firmware_version?: string | null;
+  /** Bios Version */
+  bios_version?: string | null;
+  /** Graphics Clock */
+  graphics_clock?: number | null;
+  /** Sm Clock */
+  sm_clock?: number | null;
+  /** Mem Clock */
+  mem_clock?: number | null;
+  /** Video Clock */
+  video_clock?: number | null;
 }
 
 /** HTTPValidationError */
 export interface HTTPValidationError {
   /** Detail */
   detail?: ValidationError[];
+}
+
+/** IdNameAndDescriptionAndCategory */
+export interface IdNameAndDescriptionAndCategory {
+  /** Name */
+  name: string;
+  /** Description */
+  description: string;
+  /** Id */
+  id: string;
+  /** Category */
+  category: string;
 }
 
 /** NameAndDescription */
@@ -752,6 +436,474 @@ export enum PriceUnit {
 }
 
 /**
+ * Region
+ * Regions of Vendors.
+ *
+ * Attributes:
+ *     vendor_id (str): Reference to the Vendor.
+ *     region_id (str): Unique identifier, as called at the Vendor.
+ *     name (str): Human-friendly name.
+ *     api_reference (str): How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depening on the vendor and actual API endpoint.
+ *     display_name (str): Human-friendly reference (usually the id or name) of the resource.
+ *     aliases (typing.List[str]): List of other commonly used names for the same Region.
+ *     country_id (str): Reference to the Country, where the Region is located.
+ *     state (typing.Optional[str]): Optional state/administrative area of the Region's location within the Country.
+ *     city (typing.Optional[str]): Optional city name of the Region's location.
+ *     address_line (typing.Optional[str]): Optional address line of the Region's location.
+ *     zip_code (typing.Optional[str]): Optional ZIP code of the Region's location.
+ *     lon (typing.Optional[float]): Longitude coordinate of the Region's known or approximate location.
+ *     lat (typing.Optional[float]): Latitude coordinate of the Region's known or approximate location.
+ *     founding_year (typing.Optional[int]): 4-digit year when the Region was founded.
+ *     green_energy (typing.Optional[bool]): If the Region is 100% powered by renewable energy.
+ *     status (Status): Status of the resource (active or inactive).
+ *     observed_at (datetime): Timestamp of the last observation.
+ */
+export interface Region {
+  /**
+   * Vendor Id
+   * Reference to the Vendor.
+   */
+  vendor_id: string;
+  /**
+   * Region Id
+   * Unique identifier, as called at the Vendor.
+   */
+  region_id: string;
+  /**
+   * Name
+   * Human-friendly name.
+   */
+  name: string;
+  /**
+   * Api Reference
+   * How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depening on the vendor and actual API endpoint.
+   */
+  api_reference: string;
+  /**
+   * Display Name
+   * Human-friendly reference (usually the id or name) of the resource.
+   */
+  display_name: string;
+  /**
+   * Aliases
+   * List of other commonly used names for the same Region.
+   * @default []
+   */
+  aliases?: string[];
+  /**
+   * Country Id
+   * Reference to the Country, where the Region is located.
+   */
+  country_id: string;
+  /**
+   * State
+   * Optional state/administrative area of the Region's location within the Country.
+   */
+  state?: string | null;
+  /**
+   * City
+   * Optional city name of the Region's location.
+   */
+  city?: string | null;
+  /**
+   * Address Line
+   * Optional address line of the Region's location.
+   */
+  address_line?: string | null;
+  /**
+   * Zip Code
+   * Optional ZIP code of the Region's location.
+   */
+  zip_code?: string | null;
+  /**
+   * Lon
+   * Longitude coordinate of the Region's known or approximate location.
+   */
+  lon?: number | null;
+  /**
+   * Lat
+   * Latitude coordinate of the Region's known or approximate location.
+   */
+  lat?: number | null;
+  /**
+   * Founding Year
+   * 4-digit year when the Region was founded.
+   */
+  founding_year?: number | null;
+  /**
+   * Green Energy
+   * If the Region is 100% powered by renewable energy.
+   */
+  green_energy?: boolean | null;
+  /**
+   * Status of the resource (active or inactive).
+   * @default "active"
+   */
+  status?: Status;
+  /**
+   * Observed At
+   * Timestamp of the last observation.
+   * @format date-time
+   */
+  observed_at?: string;
+}
+
+/** RegionBase */
+export interface RegionBase {
+  /**
+   * Vendor Id
+   * Reference to the Vendor.
+   */
+  vendor_id: string;
+  /**
+   * Region Id
+   * Unique identifier, as called at the Vendor.
+   */
+  region_id: string;
+  /**
+   * Name
+   * Human-friendly name.
+   */
+  name: string;
+  /**
+   * Api Reference
+   * How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depening on the vendor and actual API endpoint.
+   */
+  api_reference: string;
+  /**
+   * Display Name
+   * Human-friendly reference (usually the id or name) of the resource.
+   */
+  display_name: string;
+  /**
+   * Aliases
+   * List of other commonly used names for the same Region.
+   * @default []
+   */
+  aliases?: string[];
+  /**
+   * Country Id
+   * Reference to the Country, where the Region is located.
+   */
+  country_id: string;
+  /**
+   * State
+   * Optional state/administrative area of the Region's location within the Country.
+   */
+  state?: string | null;
+  /**
+   * City
+   * Optional city name of the Region's location.
+   */
+  city?: string | null;
+  /**
+   * Address Line
+   * Optional address line of the Region's location.
+   */
+  address_line?: string | null;
+  /**
+   * Zip Code
+   * Optional ZIP code of the Region's location.
+   */
+  zip_code?: string | null;
+  /**
+   * Lon
+   * Longitude coordinate of the Region's known or approximate location.
+   */
+  lon?: number | null;
+  /**
+   * Lat
+   * Latitude coordinate of the Region's known or approximate location.
+   */
+  lat?: number | null;
+  /**
+   * Founding Year
+   * 4-digit year when the Region was founded.
+   */
+  founding_year?: number | null;
+  /**
+   * Green Energy
+   * If the Region is 100% powered by renewable energy.
+   */
+  green_energy?: boolean | null;
+  /**
+   * Status of the resource (active or inactive).
+   * @default "active"
+   */
+  status?: Status;
+  /**
+   * Observed At
+   * Timestamp of the last observation.
+   * @format date-time
+   */
+  observed_at?: string;
+}
+
+/** RegionBaseWithPKs */
+export interface RegionBaseWithPKs {
+  /**
+   * Vendor Id
+   * Reference to the Vendor.
+   */
+  vendor_id: string;
+  /**
+   * Region Id
+   * Unique identifier, as called at the Vendor.
+   */
+  region_id: string;
+  /**
+   * Name
+   * Human-friendly name.
+   */
+  name: string;
+  /**
+   * Api Reference
+   * How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depening on the vendor and actual API endpoint.
+   */
+  api_reference: string;
+  /**
+   * Display Name
+   * Human-friendly reference (usually the id or name) of the resource.
+   */
+  display_name: string;
+  /**
+   * Aliases
+   * List of other commonly used names for the same Region.
+   * @default []
+   */
+  aliases?: string[];
+  /**
+   * Country Id
+   * Reference to the Country, where the Region is located.
+   */
+  country_id: string;
+  /**
+   * State
+   * Optional state/administrative area of the Region's location within the Country.
+   */
+  state?: string | null;
+  /**
+   * City
+   * Optional city name of the Region's location.
+   */
+  city?: string | null;
+  /**
+   * Address Line
+   * Optional address line of the Region's location.
+   */
+  address_line?: string | null;
+  /**
+   * Zip Code
+   * Optional ZIP code of the Region's location.
+   */
+  zip_code?: string | null;
+  /**
+   * Lon
+   * Longitude coordinate of the Region's known or approximate location.
+   */
+  lon?: number | null;
+  /**
+   * Lat
+   * Latitude coordinate of the Region's known or approximate location.
+   */
+  lat?: number | null;
+  /**
+   * Founding Year
+   * 4-digit year when the Region was founded.
+   */
+  founding_year?: number | null;
+  /**
+   * Green Energy
+   * If the Region is 100% powered by renewable energy.
+   */
+  green_energy?: boolean | null;
+  /**
+   * Status of the resource (active or inactive).
+   * @default "active"
+   */
+  status?: Status;
+  /**
+   * Observed At
+   * Timestamp of the last observation.
+   * @format date-time
+   */
+  observed_at?: string;
+  country: CountryBase;
+}
+
+/** RegionPKs */
+export interface RegionPKs {
+  /**
+   * Vendor Id
+   * Reference to the Vendor.
+   */
+  vendor_id: string;
+  /**
+   * Region Id
+   * Unique identifier, as called at the Vendor.
+   */
+  region_id: string;
+  /**
+   * Name
+   * Human-friendly name.
+   */
+  name: string;
+  /**
+   * Api Reference
+   * How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depening on the vendor and actual API endpoint.
+   */
+  api_reference: string;
+  /**
+   * Display Name
+   * Human-friendly reference (usually the id or name) of the resource.
+   */
+  display_name: string;
+  /**
+   * Aliases
+   * List of other commonly used names for the same Region.
+   * @default []
+   */
+  aliases?: string[];
+  /**
+   * Country Id
+   * Reference to the Country, where the Region is located.
+   */
+  country_id: string;
+  /**
+   * State
+   * Optional state/administrative area of the Region's location within the Country.
+   */
+  state?: string | null;
+  /**
+   * City
+   * Optional city name of the Region's location.
+   */
+  city?: string | null;
+  /**
+   * Address Line
+   * Optional address line of the Region's location.
+   */
+  address_line?: string | null;
+  /**
+   * Zip Code
+   * Optional ZIP code of the Region's location.
+   */
+  zip_code?: string | null;
+  /**
+   * Lon
+   * Longitude coordinate of the Region's known or approximate location.
+   */
+  lon?: number | null;
+  /**
+   * Lat
+   * Latitude coordinate of the Region's known or approximate location.
+   */
+  lat?: number | null;
+  /**
+   * Founding Year
+   * 4-digit year when the Region was founded.
+   */
+  founding_year?: number | null;
+  /**
+   * Green Energy
+   * If the Region is 100% powered by renewable energy.
+   */
+  green_energy?: boolean | null;
+  /**
+   * Status of the resource (active or inactive).
+   * @default "active"
+   */
+  status?: Status;
+  /**
+   * Observed At
+   * Timestamp of the last observation.
+   * @format date-time
+   */
+  observed_at?: string;
+  vendor: VendorBase;
+}
+
+/** Regions */
+export enum Regions {
+  AfSouth1 = "af-south-1",
+  ApEast1 = "ap-east-1",
+  ApNortheast1 = "ap-northeast-1",
+  ApNortheast2 = "ap-northeast-2",
+  ApNortheast3 = "ap-northeast-3",
+  ApSouth1 = "ap-south-1",
+  ApSouth2 = "ap-south-2",
+  ApSoutheast1 = "ap-southeast-1",
+  ApSoutheast2 = "ap-southeast-2",
+  ApSoutheast3 = "ap-southeast-3",
+  ApSoutheast4 = "ap-southeast-4",
+  CaCentral1 = "ca-central-1",
+  CaWest1 = "ca-west-1",
+  CnNorth1 = "cn-north-1",
+  CnNorthwest1 = "cn-northwest-1",
+  EuCentral1 = "eu-central-1",
+  EuCentral2 = "eu-central-2",
+  EuNorth1 = "eu-north-1",
+  EuSouth1 = "eu-south-1",
+  EuSouth2 = "eu-south-2",
+  EuWest1 = "eu-west-1",
+  EuWest2 = "eu-west-2",
+  EuWest3 = "eu-west-3",
+  IlCentral1 = "il-central-1",
+  MeCentral1 = "me-central-1",
+  MeSouth1 = "me-south-1",
+  SaEast1 = "sa-east-1",
+  UsEast1 = "us-east-1",
+  UsEast2 = "us-east-2",
+  UsWest1 = "us-west-1",
+  UsWest2 = "us-west-2",
+  Value1610 = "1610",
+  Value1220 = "1220",
+  Value1370 = "1370",
+  Value1250 = "1250",
+  Value1390 = "1390",
+  Value1410 = "1410",
+  Value1320 = "1320",
+  Value1470 = "1470",
+  Value1260 = "1260",
+  Value1440 = "1440",
+  Value1280 = "1280",
+  Value1480 = "1480",
+  Value1450 = "1450",
+  Value1350 = "1350",
+  Value1540 = "1540",
+  Value1100 = "1100",
+  Value1590 = "1590",
+  Value1570 = "1570",
+  Value1290 = "1290",
+  Value1300 = "1300",
+  Value1340 = "1340",
+  Value1380 = "1380",
+  Value1510 = "1510",
+  Value1520 = "1520",
+  Value1580 = "1580",
+  Value1600 = "1600",
+  Value1560 = "1560",
+  Value1330 = "1330",
+  Value1460 = "1460",
+  Value1310 = "1310",
+  Value1490 = "1490",
+  Value1000 = "1000",
+  Value1230 = "1230",
+  Value1270 = "1270",
+  Value1530 = "1530",
+  Value1550 = "1550",
+  Value1210 = "1210",
+  Value1360 = "1360",
+  Value1420 = "1420",
+  Value1430 = "1430",
+  Value2 = "2",
+  Value3 = "3",
+  Value4 = "4",
+  Value5 = "5",
+  Value6 = "6",
+}
+
+/**
  * Server
  * Server types.
  *
@@ -772,13 +924,21 @@ export enum PriceUnit {
  *     cpu_manufacturer (typing.Optional[str]): The manufacturer of the primary processor, e.g. Intel or AMD.
  *     cpu_family (typing.Optional[str]): The product line/family of the primary processor, e.g. Xeon, Core i7, Ryzen 9.
  *     cpu_model (typing.Optional[str]): The model number of the primary processor, e.g. 9750H.
+ *     cpu_l1_cache (typing.Optional[int]): L1 cache size (MiB).
+ *     cpu_l2_cache (typing.Optional[int]): L2 cache size (MiB).
+ *     cpu_l3_cache (typing.Optional[int]): L3 cache size (MiB).
+ *     cpu_flags (typing.List[str]): CPU features/flags.
  *     cpus (typing.List[sc_crawler.table_fields.Cpu]): JSON array of known CPU details, e.g. the manufacturer, family, model; L1/L2/L3 cache size; microcode version; feature flags; bugs etc.
- *     memory (int): RAM amount (MiB).
+ *     memory_amount (int): RAM amount (MiB).
+ *     memory_generation (typing.Optional[sc_crawler.table_fields.DdrGeneration]): Generation of the DDR SDRAM, e.g. DDR4 or DDR5.
+ *     memory_speed (typing.Optional[int]): DDR SDRAM clock rate (Mhz).
+ *     memory_ecc (typing.Optional[bool]): If the DDR SDRAM uses error correction code to detect and correct n-bit data corruption.
  *     gpu_count (int): Number of GPU accelerator(s).
  *     gpu_memory_min (typing.Optional[int]): Memory (MiB) allocated to the lowest-end GPU accelerator.
  *     gpu_memory_total (typing.Optional[int]): Overall memory (MiB) allocated to all the GPU accelerator(s).
  *     gpu_manufacturer (typing.Optional[str]): The manufacturer of the primary GPU accelerator, e.g. Nvidia or AMD.
- *     gpu_model (typing.Optional[str]): The model number of the primary GPU accelerator.
+ *     gpu_family (typing.Optional[str]): The product family of the primary GPU accelerator, e.g. Turing.
+ *     gpu_model (typing.Optional[str]): The model number of the primary GPU accelerator, e.g. Tesla T4.
  *     gpus (typing.List[sc_crawler.table_fields.Gpu]): JSON array of GPU accelerator details, including the manufacturer, name, and memory (MiB) of each GPU.
  *     storage_size (int): Overall size (GB) of the disk(s).
  *     storage_type (typing.Optional[sc_crawler.table_fields.StorageType]): Primary disk type, e.g. HDD, SSD, NVMe SSD, or network).
@@ -866,16 +1026,49 @@ export interface Server {
    */
   cpu_model?: string | null;
   /**
+   * Cpu L1 Cache
+   * L1 cache size (MiB).
+   */
+  cpu_l1_cache?: number | null;
+  /**
+   * Cpu L2 Cache
+   * L2 cache size (MiB).
+   */
+  cpu_l2_cache?: number | null;
+  /**
+   * Cpu L3 Cache
+   * L3 cache size (MiB).
+   */
+  cpu_l3_cache?: number | null;
+  /**
+   * Cpu Flags
+   * CPU features/flags.
+   * @default []
+   */
+  cpu_flags?: string[];
+  /**
    * Cpus
    * JSON array of known CPU details, e.g. the manufacturer, family, model; L1/L2/L3 cache size; microcode version; feature flags; bugs etc.
    * @default []
    */
   cpus?: Cpu[];
   /**
-   * Memory
+   * Memory Amount
    * RAM amount (MiB).
    */
-  memory?: number;
+  memory_amount?: number;
+  /** Generation of the DDR SDRAM, e.g. DDR4 or DDR5. */
+  memory_generation?: DdrGeneration | null;
+  /**
+   * Memory Speed
+   * DDR SDRAM clock rate (Mhz).
+   */
+  memory_speed?: number | null;
+  /**
+   * Memory Ecc
+   * If the DDR SDRAM uses error correction code to detect and correct n-bit data corruption.
+   */
+  memory_ecc?: boolean | null;
   /**
    * Gpu Count
    * Number of GPU accelerator(s).
@@ -898,8 +1091,13 @@ export interface Server {
    */
   gpu_manufacturer?: string | null;
   /**
+   * Gpu Family
+   * The product family of the primary GPU accelerator, e.g. Turing.
+   */
+  gpu_family?: string | null;
+  /**
    * Gpu Model
-   * The model number of the primary GPU accelerator.
+   * The model number of the primary GPU accelerator, e.g. Tesla T4.
    */
   gpu_model?: string | null;
   /**
@@ -1035,16 +1233,49 @@ export interface ServerBase {
    */
   cpu_model?: string | null;
   /**
+   * Cpu L1 Cache
+   * L1 cache size (MiB).
+   */
+  cpu_l1_cache?: number | null;
+  /**
+   * Cpu L2 Cache
+   * L2 cache size (MiB).
+   */
+  cpu_l2_cache?: number | null;
+  /**
+   * Cpu L3 Cache
+   * L3 cache size (MiB).
+   */
+  cpu_l3_cache?: number | null;
+  /**
+   * Cpu Flags
+   * CPU features/flags.
+   * @default []
+   */
+  cpu_flags?: string[];
+  /**
    * Cpus
    * JSON array of known CPU details, e.g. the manufacturer, family, model; L1/L2/L3 cache size; microcode version; feature flags; bugs etc.
    * @default []
    */
   cpus?: Cpu[];
   /**
-   * Memory
+   * Memory Amount
    * RAM amount (MiB).
    */
-  memory?: number;
+  memory_amount?: number;
+  /** Generation of the DDR SDRAM, e.g. DDR4 or DDR5. */
+  memory_generation?: DdrGeneration | null;
+  /**
+   * Memory Speed
+   * DDR SDRAM clock rate (Mhz).
+   */
+  memory_speed?: number | null;
+  /**
+   * Memory Ecc
+   * If the DDR SDRAM uses error correction code to detect and correct n-bit data corruption.
+   */
+  memory_ecc?: boolean | null;
   /**
    * Gpu Count
    * Number of GPU accelerator(s).
@@ -1067,8 +1298,13 @@ export interface ServerBase {
    */
   gpu_manufacturer?: string | null;
   /**
+   * Gpu Family
+   * The product family of the primary GPU accelerator, e.g. Turing.
+   */
+  gpu_family?: string | null;
+  /**
    * Gpu Model
-   * The model number of the primary GPU accelerator.
+   * The model number of the primary GPU accelerator, e.g. Tesla T4.
    */
   gpu_model?: string | null;
   /**
@@ -1204,16 +1440,49 @@ export interface ServerPKs {
    */
   cpu_model?: string | null;
   /**
+   * Cpu L1 Cache
+   * L1 cache size (MiB).
+   */
+  cpu_l1_cache?: number | null;
+  /**
+   * Cpu L2 Cache
+   * L2 cache size (MiB).
+   */
+  cpu_l2_cache?: number | null;
+  /**
+   * Cpu L3 Cache
+   * L3 cache size (MiB).
+   */
+  cpu_l3_cache?: number | null;
+  /**
+   * Cpu Flags
+   * CPU features/flags.
+   * @default []
+   */
+  cpu_flags?: string[];
+  /**
    * Cpus
    * JSON array of known CPU details, e.g. the manufacturer, family, model; L1/L2/L3 cache size; microcode version; feature flags; bugs etc.
    * @default []
    */
   cpus?: Cpu[];
   /**
-   * Memory
+   * Memory Amount
    * RAM amount (MiB).
    */
-  memory?: number;
+  memory_amount?: number;
+  /** Generation of the DDR SDRAM, e.g. DDR4 or DDR5. */
+  memory_generation?: DdrGeneration | null;
+  /**
+   * Memory Speed
+   * DDR SDRAM clock rate (Mhz).
+   */
+  memory_speed?: number | null;
+  /**
+   * Memory Ecc
+   * If the DDR SDRAM uses error correction code to detect and correct n-bit data corruption.
+   */
+  memory_ecc?: boolean | null;
   /**
    * Gpu Count
    * Number of GPU accelerator(s).
@@ -1236,8 +1505,13 @@ export interface ServerPKs {
    */
   gpu_manufacturer?: string | null;
   /**
+   * Gpu Family
+   * The product family of the primary GPU accelerator, e.g. Turing.
+   */
+  gpu_family?: string | null;
+  /**
    * Gpu Model
-   * The model number of the primary GPU accelerator.
+   * The model number of the primary GPU accelerator, e.g. Tesla T4.
    */
   gpu_model?: string | null;
   /**
@@ -1374,16 +1648,49 @@ export interface ServerPKsWithPrices {
    */
   cpu_model?: string | null;
   /**
+   * Cpu L1 Cache
+   * L1 cache size (MiB).
+   */
+  cpu_l1_cache?: number | null;
+  /**
+   * Cpu L2 Cache
+   * L2 cache size (MiB).
+   */
+  cpu_l2_cache?: number | null;
+  /**
+   * Cpu L3 Cache
+   * L3 cache size (MiB).
+   */
+  cpu_l3_cache?: number | null;
+  /**
+   * Cpu Flags
+   * CPU features/flags.
+   * @default []
+   */
+  cpu_flags?: string[];
+  /**
    * Cpus
    * JSON array of known CPU details, e.g. the manufacturer, family, model; L1/L2/L3 cache size; microcode version; feature flags; bugs etc.
    * @default []
    */
   cpus?: Cpu[];
   /**
-   * Memory
+   * Memory Amount
    * RAM amount (MiB).
    */
-  memory?: number;
+  memory_amount?: number;
+  /** Generation of the DDR SDRAM, e.g. DDR4 or DDR5. */
+  memory_generation?: DdrGeneration | null;
+  /**
+   * Memory Speed
+   * DDR SDRAM clock rate (Mhz).
+   */
+  memory_speed?: number | null;
+  /**
+   * Memory Ecc
+   * If the DDR SDRAM uses error correction code to detect and correct n-bit data corruption.
+   */
+  memory_ecc?: boolean | null;
   /**
    * Gpu Count
    * Number of GPU accelerator(s).
@@ -1406,8 +1713,13 @@ export interface ServerPKsWithPrices {
    */
   gpu_manufacturer?: string | null;
   /**
+   * Gpu Family
+   * The product family of the primary GPU accelerator, e.g. Turing.
+   */
+  gpu_family?: string | null;
+  /**
    * Gpu Model
-   * The model number of the primary GPU accelerator.
+   * The model number of the primary GPU accelerator, e.g. Tesla T4.
    */
   gpu_model?: string | null;
   /**
@@ -1467,6 +1779,8 @@ export interface ServerPKsWithPrices {
   vendor: VendorBase;
   /** Prices */
   prices: ServerPricePKs[];
+  /** Benchmark Scores */
+  benchmark_scores: BenchmarkScoreBase[];
 }
 
 /** ServerPricePKs */
@@ -1477,10 +1791,10 @@ export interface ServerPricePKs {
    */
   vendor_id: string;
   /**
-   * Datacenter Id
-   * Reference to the Datacenter.
+   * Region Id
+   * Reference to the Region.
    */
-  datacenter_id: string;
+  region_id: string;
   /**
    * Zone Id
    * Reference to the Zone.
@@ -1537,7 +1851,7 @@ export interface ServerPricePKs {
    * @format date-time
    */
   observed_at?: string;
-  datacenter: DatacenterBase;
+  region: RegionBase;
   zone: ZoneBase;
 }
 
@@ -1549,10 +1863,10 @@ export interface ServerPriceWithPKs {
    */
   vendor_id: string;
   /**
-   * Datacenter Id
-   * Reference to the Datacenter.
+   * Region Id
+   * Reference to the Region.
    */
-  datacenter_id: string;
+  region_id: string;
   /**
    * Zone Id
    * Reference to the Zone.
@@ -1610,9 +1924,16 @@ export interface ServerPriceWithPKs {
    */
   observed_at?: string;
   vendor: VendorBase;
-  datacenter: DatacenterBaseWithPKs;
+  region: RegionBaseWithPKs;
   zone: ZoneBase;
   server: ServerBase;
+}
+
+/** ServerTableMetaData */
+export interface ServerTableMetaData {
+  table: NameAndDescription;
+  /** Fields */
+  fields: IdNameAndDescriptionAndCategory[];
 }
 
 /**
@@ -1706,13 +2027,6 @@ export enum StorageType {
   Ssd = "ssd",
   NvmeSsd = "nvme ssd",
   Network = "network",
-}
-
-/** TableMetaData */
-export interface TableMetaData {
-  table: NameAndDescription;
-  /** Fields */
-  fields: NameAndDescription[];
 }
 
 /** ValidationError */
@@ -1896,18 +2210,18 @@ export interface VendorBase {
 
 /** Vendors */
 export enum Vendors {
+  Hcloud = "hcloud",
   Aws = "aws",
   Gcp = "gcp",
-  Hcloud = "hcloud",
 }
 
 /**
  * Zone
- * Availability zones of Datacenters.
+ * Availability zones of Regions.
  *
  * Attributes:
  *     vendor_id (str): Reference to the Vendor.
- *     datacenter_id (str): Reference to the Datacenter.
+ *     region_id (str): Reference to the Region.
  *     zone_id (str): Unique identifier, as called at the Vendor.
  *     name (str): Human-friendly name.
  *     api_reference (str): How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depening on the vendor and actual API endpoint.
@@ -1922,10 +2236,10 @@ export interface Zone {
    */
   vendor_id: string;
   /**
-   * Datacenter Id
-   * Reference to the Datacenter.
+   * Region Id
+   * Reference to the Region.
    */
-  datacenter_id: string;
+  region_id: string;
   /**
    * Zone Id
    * Unique identifier, as called at the Vendor.
@@ -1967,10 +2281,10 @@ export interface ZoneBase {
    */
   vendor_id: string;
   /**
-   * Datacenter Id
-   * Reference to the Datacenter.
+   * Region Id
+   * Reference to the Region.
    */
-  datacenter_id: string;
+  region_id: string;
   /**
    * Zone Id
    * Unique identifier, as called at the Vendor.
@@ -2007,6 +2321,9 @@ export interface ZoneBase {
 /** Response Healthcheck Healthcheck Get */
 export type HealthcheckHealthcheckGetData = object;
 
+/** Response Table Benchmark Table Benchmark Get */
+export type TableBenchmarkTableBenchmarkGetData = Benchmark[];
+
 /** Response Table Country Table Country Get */
 export type TableCountryTableCountryGetData = Country[];
 
@@ -2016,8 +2333,8 @@ export type TableComplianceFrameworksTableComplianceFrameworkGetData = Complianc
 /** Response Table Vendor Table Vendor Get */
 export type TableVendorTableVendorGetData = Vendor[];
 
-/** Response Table Datacenter Table Datacenter Get */
-export type TableDatacenterTableDatacenterGetData = Datacenter[];
+/** Response Table Region Table Region Get */
+export type TableRegionTableRegionGetData = Region[];
 
 /** Response Table Zone Table Zone Get */
 export type TableZoneTableZoneGetData = Zone[];
@@ -2025,23 +2342,23 @@ export type TableZoneTableZoneGetData = Zone[];
 /** Response Table Server Table Server Get */
 export type TableServerTableServerGetData = Server[];
 
-export type TableMetadataServerTableServerMetaGetData = TableMetaData;
-
 /** Response Table Storage Table Storage Get */
 export type TableStorageTableStorageGetData = Storage[];
 
-export interface SearchDatacentersDatacentersGetParams {
+export type TableMetadataServerTableServerMetaGetData = ServerTableMetaData;
+
+export interface SearchRegionsRegionsGetParams {
   /**
    * Vendor id
-   * Cloud provider vendor.
+   * Identifier of the cloud provider vendor.
    */
-  vendor?: "aws" | "gcp" | "hcloud";
+  vendor?: "hcloud" | "aws" | "gcp";
 }
 
-/** Response Search Datacenters Datacenters Get */
-export type SearchDatacentersDatacentersGetData = DatacenterPKs[];
+/** Response Search Regions Regions Get */
+export type SearchRegionsRegionsGetData = RegionPKs[];
 
-export type GetServerServerVendorIdServerIdGetData = ServerPKsWithPrices;
+export type GetServerServerVendorServerGetData = ServerPKsWithPrices;
 
 export interface SearchServersServersGetParams {
   /**
@@ -2064,38 +2381,38 @@ export interface SearchServersServersGetParams {
   memory_min?: number | null;
   /**
    * Active only
-   * Show only active servers
+   * Filter for active servers only.
    * @default true
    */
   only_active?: boolean | null;
   /**
    * Vendor id
-   * Cloud provider vendor.
+   * Identifier of the cloud provider vendor.
    */
-  vendor?: "aws" | "gcp" | "hcloud";
+  vendor?: "hcloud" | "aws" | "gcp";
   /**
    * Compliance Framework id
    * Compliance framework implemented at the vendor.
    */
-  compliance_framework?: "hipaa" | "iso27001" | "soc2t2";
+  compliance_framework?: "hipaa" | "soc2t2" | "iso27001";
   /**
    * Storage Size
-   * Reserver storage size in GBs.
+   * Minimum amount of storage (GBs) attached to the server.
    */
   storage_size?: number | null;
   /**
    * Storage Type
-   * Storage type.
+   * Type of the storage attached to the server.
    */
   storage_type?: "hdd" | "ssd" | "nvme ssd" | "network";
   /**
    * GPU count
-   * Number of GPUs.
+   * Minimum number of GPUs.
    */
   gpu_min?: number | null;
   /**
    * GPU memory
-   * Amount of GPU memory in GBs.
+   * Minimum amount of GPU memory in GBs.
    */
   gpu_memory_min?: number | null;
   /**
@@ -2158,13 +2475,13 @@ export interface SearchServerPricesServerPricesGetParams {
   price_max?: number | null;
   /**
    * Active only
-   * Show only active servers
+   * Filter for active servers only.
    * @default true
    */
   only_active?: boolean | null;
   /**
    * Green energy
-   * Low CO2 emission only.
+   * Filter for regions with kow CO2 emission only.
    */
   green_energy?: boolean | null;
   /**
@@ -2174,59 +2491,14 @@ export interface SearchServerPricesServerPricesGetParams {
   allocation?: "ondemand" | "reserved" | "spot";
   /**
    * Vendor id
-   * Cloud provider vendor.
+   * Identifier of the cloud provider vendor.
    */
-  vendor?: "aws" | "gcp" | "hcloud";
+  vendor?: "hcloud" | "aws" | "gcp";
   /**
-   * Datacenter id
-   * Datacenter.
+   * region id
+   * Identifier of the region.
    */
-  datacenters?:
-    | "1000"
-    | "1100"
-    | "1210"
-    | "1220"
-    | "1230"
-    | "1250"
-    | "1260"
-    | "1270"
-    | "1280"
-    | "1290"
-    | "1300"
-    | "1310"
-    | "1320"
-    | "1330"
-    | "1340"
-    | "1350"
-    | "1360"
-    | "1370"
-    | "1380"
-    | "1390"
-    | "1410"
-    | "1420"
-    | "1430"
-    | "1440"
-    | "1450"
-    | "1460"
-    | "1470"
-    | "1480"
-    | "1490"
-    | "1510"
-    | "1520"
-    | "1530"
-    | "1540"
-    | "1550"
-    | "1560"
-    | "1570"
-    | "1580"
-    | "1590"
-    | "1600"
-    | "1610"
-    | "2"
-    | "3"
-    | "4"
-    | "5"
-    | "6"
+  regions?:
     | "af-south-1"
     | "ap-east-1"
     | "ap-northeast-1"
@@ -2257,25 +2529,70 @@ export interface SearchServerPricesServerPricesGetParams {
     | "us-east-1"
     | "us-east-2"
     | "us-west-1"
-    | "us-west-2";
+    | "us-west-2"
+    | "1610"
+    | "1220"
+    | "1370"
+    | "1250"
+    | "1390"
+    | "1410"
+    | "1320"
+    | "1470"
+    | "1260"
+    | "1440"
+    | "1280"
+    | "1480"
+    | "1450"
+    | "1350"
+    | "1540"
+    | "1100"
+    | "1590"
+    | "1570"
+    | "1290"
+    | "1300"
+    | "1340"
+    | "1380"
+    | "1510"
+    | "1520"
+    | "1580"
+    | "1600"
+    | "1560"
+    | "1330"
+    | "1460"
+    | "1310"
+    | "1490"
+    | "1000"
+    | "1230"
+    | "1270"
+    | "1530"
+    | "1550"
+    | "1210"
+    | "1360"
+    | "1420"
+    | "1430"
+    | "2"
+    | "3"
+    | "4"
+    | "5"
+    | "6";
   /**
    * Compliance Framework id
    * Compliance framework implemented at the vendor.
    */
-  compliance_framework?: "hipaa" | "iso27001" | "soc2t2";
+  compliance_framework?: "hipaa" | "soc2t2" | "iso27001";
   /**
    * Storage Size
-   * Reserver storage size in GBs.
+   * Minimum amount of storage (GBs) attached to the server.
    */
   storage_size?: number | null;
   /**
    * Storage Type
-   * Storage type.
+   * Type of the storage attached to the server.
    */
   storage_type?: "hdd" | "ssd" | "nvme ssd" | "network";
   /**
    * Countries
-   * Datacenter countries.
+   * Filter for regions in the provided list of countries.
    */
   countries?:
     | "AE"
@@ -2296,8 +2613,8 @@ export interface SearchServerPricesServerPricesGetParams {
     | "ID"
     | "IE"
     | "IL"
-    | "IN"
     | "IT"
+    | "IN"
     | "JP"
     | "KR"
     | "NL"
@@ -2311,12 +2628,12 @@ export interface SearchServerPricesServerPricesGetParams {
     | "ZA";
   /**
    * GPU count
-   * Number of GPUs.
+   * Minimum number of GPUs.
    */
   gpu_min?: number | null;
   /**
    * GPU memory
-   * Amount of GPU memory in GBs.
+   * Minimum amount of GPU memory in GBs.
    */
   gpu_memory_min?: number | null;
   /**

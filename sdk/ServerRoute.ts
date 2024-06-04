@@ -9,28 +9,32 @@
  * ---------------------------------------------------------------
  */
 
-import { GetServerServerVendorServerGetData, HTTPValidationError } from "./data-contracts";
-import { HttpClient, RequestParams } from "./http-client";
+import { GetServerServerVendorServerGetData } from "./data-contracts";
 
-export class Server<SecurityDataType = unknown> {
-  http: HttpClient<SecurityDataType>;
-
-  constructor(http: HttpClient<SecurityDataType>) {
-    this.http = http;
-  }
-
+export namespace Server {
   /**
    * @description Query a single server by its vendor id and either the server or, or its API reference. Return dictionary includes all server fields, along with the current prices per zone, and the available benchmark scores.
-   *
    * @tags Query Resources
    * @name GetServerServerVendorServerGet
    * @summary Get Server
    * @request GET:/server/{vendor}/{server}
    */
-  getServerServerVendorServerGet = (vendor: string, server: string, params: RequestParams = {}) =>
-    this.http.request<GetServerServerVendorServerGetData, HTTPValidationError>({
-      path: `/server/${vendor}/${server}`,
-      method: "GET",
-      ...params,
-    });
+  export namespace GetServerServerVendorServerGet {
+    export type RequestParams = {
+      /**
+       * Vendor
+       * Vendor ID.
+       */
+      vendor: string;
+      /**
+       * Server
+       * Server ID or API reference.
+       */
+      server: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = GetServerServerVendorServerGetData;
+  }
 }
