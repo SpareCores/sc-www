@@ -44,238 +44,32 @@
       </div>
       <div class="block_half" id="details">
         <h3 class="text-2xl" >Server Details</h3>
-        <table class="items_table">
-          <thead>
+        <table class="items_table" *ngFor="let item of instancePropertyCategories">
+          <thead *ngIf="item.properties.length">
             <tr>
-              <th>General</th>
+              <th>{{item.name}}</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td> <b>Server Id</b> </td>
-              <td> {{serverDetails.server_id}} </td>
-            </tr>
-            <tr>
-              <td> <b>Server Name</b> </td>
-              <td> {{serverDetails.name}} </td>
-            </tr>
-            <tr>
-              <td> <b>Family</b> </td>
-              <td> {{serverDetails.family}} </td>
-            </tr>
-            <tr>
-              <td> <b>Vendor</b> </td>
-              <td> {{serverDetails.vendor.name}} </td>
-            </tr>
-          </tbody>
-        </table>
-        <table class="items_table">
-          <thead>
-            <tr>
-              <th>Performance</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngIf="serverDetails.vcpus" >
+            <tr *ngFor="let property of item.properties">
               <td>
                 <div class="flex gap-2 items-center">
-                  <b>vCPUs</b>
+                  <b>{{property.name}}</b>
                   <lucide-icon
+                    *ngIf="property.description"
                     name="info"
                     class="h-4 w-4 text-gray-200"
-                    (mouseenter)="showTooltip($event, 'vcpus')"
+                    (mouseenter)="showTooltip($event, property.description)"
                     (mouseleave)="hideTooltip()">
                   </lucide-icon>
                 </div>
               </td>
-              <td> {{serverDetails.vcpus}} </td>
-            </tr>
-            <tr *ngIf="serverDetails.cpu_cores">
-              <td>
-                <div class="flex gap-2 items-center">
-                  <b>CPU Cores</b>
-                  <lucide-icon
-                    name="info"
-                    class="h-4 w-4 text-gray-400"
-                    (mouseenter)="showTooltip($event, 'cpu_cores')"
-                    (mouseleave)="hideTooltip()">
-                  </lucide-icon>
-                </div>
-              </td>
-              <td> {{serverDetails.cpu_cores}} </td>
-            </tr>
-            <tr *ngIf="serverDetails.cpu_speed">
-              <td>
-                <div class="flex gap-2 items-center">
-                  <b>CPU Speed</b>
-                  <lucide-icon
-                    name="info"
-                    class="h-4 w-4 text-gray-400"
-                    (mouseenter)="showTooltip($event, 'cpu_speed')"
-                    (mouseleave)="hideTooltip()">
-                  </lucide-icon>
-                </div>
-              </td>
-              <td> {{serverDetails.cpu_speed}}Ghz </td>
-            </tr>
-            <tr *ngIf="serverDetails.cpu_architecture">
-              <td>
-                <div class="flex gap-2 items-center">
-                  <b>CPU Architecture</b>
-                  <lucide-icon
-                    name="info"
-                    class="h-4 w-4 text-gray-400"
-                    (mouseenter)="showTooltip($event, 'cpu_architecture')"
-                    (mouseleave)="hideTooltip()">
-                  </lucide-icon>
-                </div>
-              </td>
-              <td> {{serverDetails.cpu_architecture}} </td>
-            </tr>
-            <tr *ngIf="serverDetails.cpu_manufacturer">
-              <td>
-                <div class="flex gap-2 items-center">
-                  <b>CPU Manufacturer</b>
-                  <lucide-icon
-                    name="info"
-                    class="h-4 w-4 text-gray-400"
-                    (mouseenter)="showTooltip($event, 'cpu_manufacturer')"
-                    (mouseleave)="hideTooltip()">
-                  </lucide-icon>
-                </div>
-              </td>
-              <td> {{serverDetails.cpu_manufacturer}} </td>
-            </tr>
-            <tr *ngIf="serverDetails.cpu_model">
-              <td>
-                <div class="flex gap-2 items-center">
-                  <b>CPU Model</b>
-                  <lucide-icon
-                    name="info"
-                    class="h-4 w-4 text-gray-400"
-                    (mouseenter)="showTooltip($event, 'cpu_model')"
-                    (mouseleave)="hideTooltip()">
-                  </lucide-icon>
-                </div>
-              </td>
-              <td> {{serverDetails.cpu_model}} </td>
-            </tr>
-            <tr *ngIf="serverDetails.memory_amount">
-              <td>
-                <div class="flex gap-2 items-center">
-                  <b>Memory</b>
-                  <lucide-icon
-                    name="info"
-                    class="h-4 w-4 text-gray-400"
-                    (mouseenter)="showTooltip($event, 'memory')"
-                    (mouseleave)="hideTooltip()">
-                  </lucide-icon>
-                </div>
-              </td>
-              <td> {{getMemory()}} </td>
-            </tr>
-            <tr *ngIf="serverDetails.gpu_count">
-              <td>
-                <div class="flex gap-2 items-center">
-                  <b>GPUs</b>
-                  <lucide-icon
-                    name="info"
-                    class="h-4 w-4 text-gray-400"
-                    (mouseenter)="showTooltip($event, 'gpu_count')"
-                    (mouseleave)="hideTooltip()">
-                  </lucide-icon>
-                </div>
-              </td>
-              <td> {{serverDetails.gpu_count}} </td>
-            </tr>
-            <tr *ngIf="serverDetails.gpu_manufacturer">
-              <td>
-                <div class="flex gap-2 items-center">
-                  <b>GPU Manufacturer</b>
-                  <lucide-icon
-                    name="info"
-                    class="h-4 w-4 text-gray-400"
-                    (mouseenter)="showTooltip($event, 'gpu_manufacturer')"
-                    (mouseleave)="hideTooltip()">
-                  </lucide-icon>
-                </div>
-              </td>
-              <td> {{serverDetails.gpu_manufacturer}} </td>
-            </tr>
-            <tr *ngIf="serverDetails.gpu_memory_total">
-              <td>
-                <div class="flex gap-2 items-center">
-                  <b>GPU Memory Total</b>
-                  <lucide-icon
-                    name="info"
-                    class="h-4 w-4 text-gray-400"
-                    (mouseenter)="showTooltip($event, 'gpu_memory_total')"
-                    (mouseleave)="hideTooltip()">
-                  </lucide-icon>
-                </div>
-              </td>
-              <td> {{serverDetails.gpu_memory_total}} </td>
-            </tr>
-            <tr *ngIf="serverDetails.storage_size">
-              <td>
-                <div class="flex gap-2 items-center">
-                  <b>GPUs</b>
-                  <lucide-icon
-                    name="info"
-                    class="h-4 w-4 text-gray-400"
-                    (mouseenter)="showTooltip($event, 'storage')"
-                    (mouseleave)="hideTooltip()">
-                  </lucide-icon>
-                </div>
-              </td>
-              <td> {{getStorage()}} </td>
-            </tr>
-            <tr *ngIf="serverDetails.storage_type">
-              <td>
-                <div class="flex gap-2 items-center">
-                  <b>Storage type</b>
-                  <lucide-icon
-                    name="info"
-                    class="h-4 w-4 text-gray-400"
-                    (mouseenter)="showTooltip($event, 'storage_type')"
-                    (mouseleave)="hideTooltip()">
-                  </lucide-icon>
-                </div>
-              </td>
-              <td> {{serverDetails.storage_type}} </td>
-            </tr>
-            <tr *ngIf="serverDetails.hypervisor">
-              <td>
-                <div class="flex gap-2 items-center">
-                  <b>Hypervisor</b>
-                  <lucide-icon
-                    name="info"
-                    class="h-4 w-4 text-gray-400"
-                    (mouseenter)="showTooltip($event, 'hypervisor')"
-                    (mouseleave)="hideTooltip()">
-                  </lucide-icon>
-                </div>
-              </td>
-              <td> {{serverDetails.hypervisor}} </td>
-            </tr>
-            <tr *ngIf="serverDetails.network_speed">
-              <td>
-                <div class="flex gap-2 items-center">
-                  <b>Network Speed</b>
-                  <lucide-icon
-                    name="info"
-                    class="h-4 w-4 text-gray-400"
-                    (mouseenter)="showTooltip($event, 'network_speed')"
-                    (mouseleave)="hideTooltip()">
-                  </lucide-icon>
-                </div>
-              </td>
-              <td> {{serverDetails.network_speed}}Gbps </td>
+              <td> {{getProperty(property.id)}} </td>
             </tr>
           </tbody>
         </table>
+
 
         <div class="absolute bottom-0 left-0 w-full py-3 flex justify-center" id="details_more"
             style="background: linear-gradient(360deg, #06263A 23.44%, rgba(6, 38, 58, 0) 100%);" >
@@ -426,6 +220,41 @@
               [data]="barChartData3"
               [options]="barChartOptions"
               [type]="barChartType"
+            >
+            </canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="block_half_taller">
+        <h3 class="text-2xl" >Radar Chart</h3>
+        <div *ngIf="isBrowser()">
+          <div chartType="bar">
+            <canvas
+              #chartPriceLowest
+              id="chartPriceLowest"
+              style="max-height: 550px; max-width:100%"
+              baseChart
+              [data]="radarChartData1"
+              [options]="radarChartOptions"
+              [type]="radarChartType"
+            >
+            </canvas>
+          </div>
+        </div>
+      </div>
+      <div class="block_half_taller">
+        <h3 class="text-2xl" >Radar Chart</h3>
+        <div *ngIf="isBrowser()">
+          <div chartType="bar">
+            <canvas
+              #chartPriceLowest
+              id="chartPriceLowest"
+              style="max-height: 550px; max-width:100%"
+              baseChart
+              [data]="radarChartData1"
+              [options]="radarChartOptions"
+              [type]="radarChartType"
             >
             </canvas>
           </div>

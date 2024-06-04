@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 import { Component, ElementRef, Inject, PLATFORM_ID, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { KeeperAPIService } from '../../services/keeper-api.service';
@@ -11,6 +12,7 @@ import { FormsModule } from '@angular/forms';
 import { Dropdown, DropdownOptions, initFlowbite } from 'flowbite';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData } from 'chart.js';
+import { barChartDataEmpty, barChartOptions, radarChartDataEmpty, radarChartOptions } from './chartOptions';
 
 const options: DropdownOptions = {
   placement: 'bottom',
@@ -62,62 +64,32 @@ export class ServerDetailsComponent implements OnInit {
   @ViewChild('chartPricePerZone') chartPricePerZone!: BaseChartDirective<'bar'> | undefined;
   @ViewChild('chartPriceLowest') chartPriceLowest!: BaseChartDirective<'bar'> | undefined;
 
-  public barChartOptions: ChartConfiguration<'bar'>['options'] = {
-    scales: {
-      x: {
-        ticks: {
-          color: '#FFF',
-            }
-      },
-      y: {
-        ticks: {
-          color: '#FFF',
-        },
-        grid: {
-          color: '#4B5563',
-        }
-      },
-    },
-    plugins: {
-      legend: {
-        display: true,
-        labels: {
-          color: '#FFF',
-        },
-      }
-    },
-  };
-  public barChartType = 'bar' as const;
+  barChartOptions: ChartConfiguration<'bar'>['options'] = barChartOptions;
+  barChartType = 'bar' as const;
+  barChartData: ChartData<'bar'> = JSON.parse(JSON.stringify(barChartDataEmpty));
+  barChartData2: ChartData<'bar'> = JSON.parse(JSON.stringify(barChartDataEmpty));
+  barChartData3: ChartData<'bar'> = JSON.parse(JSON.stringify(barChartDataEmpty));
 
-  public barChartData: ChartData<'bar'> = {
-    labels: [],
-    datasets: [
-      { data: [], label: 'Spot', backgroundColor: '#34D399'},
-      { data: [], label: 'Ondemand', backgroundColor: '#E5E7EB'},
-    ],
-  };
-
-  public barChartData2: ChartData<'bar'> = {
-    labels: [],
-    datasets: [
-      { data: [], label: 'Spot', backgroundColor: '#34D399'},
-      { data: [], label: 'Ondemand', backgroundColor: '#E5E7EB'},
-    ],
-  };
-
-  public barChartData3: ChartData<'bar'> = {
-    labels: [],
-    datasets: [
-      { data: [], label: 'Spot', backgroundColor: '#34D399'},
-      { data: [], label: 'Ondemand', backgroundColor: '#E5E7EB'},
-    ],
-  };
+  radarChartType = 'radar' as const;
+  radarChartOptions: ChartConfiguration<'radar'>['options'] = radarChartOptions;
+  radarChartData1: ChartData<'radar'> = JSON.parse(JSON.stringify(radarChartDataEmpty));
 
   similarByFamily: Server[] = [];
   similarByPerformance: Server[] = [];
 
-  openApiJson: any = require('../../../../sdk/openapi.json');
+  instancePropertyCategories: any[] = [
+    { name: 'General', category: 'meta', properties: [] },
+    { name: 'CPU', category: 'cpu', properties: [] },
+    { name: 'Memory', category: 'memory', properties: [] },
+    { name: 'GPU', category: 'gpu', properties: [] },
+    { name: 'Storage', category: 'storage', properties: [] },
+    { name: 'Network', category: 'network', properties: [] },
+  ];
+
+  benchmarksByCategory: any[] = [];
+
   instanceProperties: any[] = [];
+  benchmarkMeta: any;
 
   tooltipContent = '';
 
@@ -135,14 +107,19 @@ export class ServerDetailsComponent implements OnInit {
       const vendor = params['vendor'];
       const id = params['id'];
 
-      this.keepreAPI.getServerMeta().then((data) => {
-        this.instanceProperties = data?.body?.fields || [];
-      });
+      Promise.all([
+        this.keepreAPI.getServerMeta(),
+        this.keepreAPI.getServerBenchmarkMeta(),
+        this.keepreAPI.getServer(vendor, id)])
+      .then((dataAll) => {
+        this.instanceProperties = dataAll[0].body?.fields || [];
 
-      this.keepreAPI.getServer(vendor, id).then((data) => {
-        console.log(data.body);
-        if(data?.body){
-          this.serverDetails = data.body as any;
+        this.benchmarkMeta = dataAll[1].body || {};
+
+        console.log(dataAll);
+
+        if(dataAll[2].body){
+          this.serverDetails = dataAll[2].body as any;
           this.breadcrumbs[2] =
             { name: this.serverDetails.display_name, url: '/server/' + this.serverDetails.vendor.vendor_id + '/' + this.serverDetails.server_id };
 
@@ -159,6 +136,31 @@ export class ServerDetailsComponent implements OnInit {
           if(this.serverDetails.gpu_count) {
             this.features.push({name: 'GPU', value: this.serverDetails.gpu_count});
           }
+
+          this.instancePropertyCategories.forEach((c) => {
+            c.properties = [];
+          });
+
+          this.instanceProperties.forEach((p: any) => {
+            const group = this.instancePropertyCategories.find((g) => g.category === p.category);
+            const value = this.getProperty(p.id);
+            if(group && value) {
+              group.properties.push(p);
+            }
+          });
+
+          this.benchmarksByCategory = [];
+          this.serverDetails.benchmark_scores?.forEach((b: any) => {
+            const group = this.benchmarksByCategory.find((g) => g.benchmark_id === b.benchmark_id);
+            if(!group) {
+              this.benchmarksByCategory.push({benchmark_id: b.benchmark_id, benchmarks: [b]});
+            } else {
+              group.benchmarks.push(b);
+            }
+          });
+
+          console.log(this.benchmarksByCategory);
+
 
           this.regionFilters = [];
           this.serverDetails.prices.sort((a, b) => a.price - b.price);
@@ -573,8 +575,7 @@ export class ServerDetailsComponent implements OnInit {
   }
 
   showTooltip(el: any, content: string) {
-    const description = this.instanceProperties?.find(x => x.name === content)?.description;
-    if(description) {
+    if(content) {
       const tooltip = this.tooltip.nativeElement;
       const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
       tooltip.style.left = `${el.target.getBoundingClientRect().left - 25}px`;
@@ -582,7 +583,7 @@ export class ServerDetailsComponent implements OnInit {
       tooltip.style.display = 'block';
       tooltip.style.opacity = '1';
 
-      this.tooltipContent = description;
+      this.tooltipContent = content;
     }
   }
 
@@ -590,5 +591,22 @@ export class ServerDetailsComponent implements OnInit {
     const tooltip = this.tooltip.nativeElement;
     tooltip.style.display = 'none';
     tooltip.style.opacity = '0';
+  }
+
+  getProperty(name: string) {
+    const prop = (this.serverDetails as any)[name];
+
+    if(prop === undefined || prop === null) {
+      return undefined;
+    }
+
+    if( typeof prop === 'number' || typeof prop === 'string') {
+      return prop;
+    }
+    if(Array.isArray(prop)) {
+      return prop.join(', ');
+    }
+
+    return '-';
   }
 }
