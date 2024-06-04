@@ -29,6 +29,7 @@ export class ServerCompareComponent implements OnInit {
   servers: ServerPKsWithPrices[] = [];
 
   fields: any[] = [
+    { name: 'Vendor', key: 'vendor' },
     { name: 'Processor', key: 'processor' },
     { name: 'Memory', key: 'memory' },
     { name: 'Storage', key: 'storage' },
@@ -66,6 +67,7 @@ export class ServerCompareComponent implements OnInit {
           Promise.all(promises).then((data) => {
             data?.forEach((server: any) => {
               this.servers.push(server.body);
+              console.log(server.body);
             });
             this.isLoading = false;
           });

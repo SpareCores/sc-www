@@ -325,6 +325,7 @@ export class ServerListingComponent implements OnInit {
     this.keeperAPI.searchServers(queryObject).then(servers => {
       this.servers = servers?.body;
 
+      // set stored selected state
       this.servers?.forEach((server: any) => {
         server.selected = this.selectedForCompare
           .findIndex((item) => item.vendor_id === server.vendor_id && item.server_id === server.server_id) !== -1;
