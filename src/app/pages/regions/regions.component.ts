@@ -10,13 +10,13 @@ import { LucideAngularModule } from 'lucide-angular';
 import { Router, RouterModule } from '@angular/router';
 
 @Component({
-  selector: 'app-datacenters',
+  selector: 'app-regions',
   standalone: true,
   imports: [BreadcrumbsComponent, CountryIdtoNamePipe, FormsModule, CommonModule, RouterModule, LucideAngularModule],
-  templateUrl: './datacenters.component.html',
-  styleUrl: './datacenters.component.scss'
+  templateUrl: './regions.component.html',
+  styleUrl: './regions.component.scss'
 })
-export class DatacentersComponent implements OnInit {
+export class RegionsComponent implements OnInit {
 
   breadcrumbs: BreadcrumbSegment[] = [
     {
