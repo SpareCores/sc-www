@@ -33,8 +33,8 @@ export type ContinentMetadata = {
   collapsed?: boolean;
 };
 
-export type DatacenterMetadata = {
-  datacenter_id: string;
+export type RegionMetadata = {
+  region_id: string;
   vendor_id: string;
   name: string;
   api_reference: string;
@@ -42,7 +42,7 @@ export type DatacenterMetadata = {
   selected? : boolean;
 };
 
-export type DatacenterVendorMetadata = {
+export type RegionVendorMetadata = {
   vendor_id: string;
   name: string;
   selected?: boolean;
@@ -234,7 +234,7 @@ export class ServerListingComponent implements OnInit {
   }
 
   getMemory(item: ServerPKs) {
-    return ((item.memory || 0) / 1024).toFixed(1) + ' GB';
+    return ((item.memory_amount || 0) / 1024).toFixed(1) + ' GB';
   }
 
   getGPUMemory(item: ServerPKs) {
@@ -271,8 +271,8 @@ export class ServerListingComponent implements OnInit {
       return 'country';
     }
 
-    if(name === 'datacenters') {
-      return 'datacenters';
+    if(name === 'regions') {
+      return 'regions';
     }
 
     if((type === 'integer' || type === 'number') && parameter.schema.minimum && parameter.schema.maximum) {
@@ -517,7 +517,7 @@ export class ServerListingComponent implements OnInit {
     }
   }
 
-  collapseItem(continent: ContinentMetadata | DatacenterVendorMetadata) {
+  collapseItem(continent: ContinentMetadata | RegionVendorMetadata) {
     continent.collapsed = !continent.collapsed;
   }
 

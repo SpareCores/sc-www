@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { KeeperAPIService } from '../../services/keeper-api.service';
-import { OrderDir, TableDatacenterTableDatacenterGetData } from '../../../../sdk/data-contracts';
+import { OrderDir, TableRegionTableRegionGetData } from '../../../../sdk/data-contracts';
 import { LucideAngularModule } from 'lucide-angular';
 import { CountryIdtoNamePipe } from '../../pipes/country-idto-name.pipe';
 import { Router, RouterModule } from '@angular/router';
@@ -28,7 +28,7 @@ export class VendorsComponent implements OnInit {
   ];
 
 
-  datacenters: TableDatacenterTableDatacenterGetData = [];
+  regions: TableRegionTableRegionGetData = [];
   vendors: any[] = [];
 
   orderBy: string | null = null;
@@ -46,14 +46,14 @@ export class VendorsComponent implements OnInit {
     this.API.getVendors().then(vendors => {
       this.vendors = vendors.body;
       for (let i = 0; i < this.vendors.length; i++) {
-        this.vendors[i].datacenters = 0;
+        this.vendors[i].regions = 0;
       }
-      this.API.getDatacenters().then(datacenters => {
-        this.datacenters = datacenters.body;
-        // count datacenters per vendor
-        for (let i = 0; i < this.datacenters.length; i++) {
-          const vendor = this.vendors.find((v: any) => v.vendor_id === this.datacenters[i].vendor_id);
-          vendor.datacenters++;
+      this.API.getRegions().then(regions => {
+        this.regions = regions.body;
+        // count regions per vendor
+        for (let i = 0; i < this.regions.length; i++) {
+          const vendor = this.vendors.find((v: any) => v.vendor_id === this.regions[i].vendor_id);
+          vendor.regions++;
         }
       });
     });
@@ -80,17 +80,17 @@ export class VendorsComponent implements OnInit {
       this.orderDir = OrderDir.Desc;
     }
 
-    if(this.orderBy === 'datacenter') {
-      this.datacenters.sort((a, b) => {
+    if(this.orderBy === 'region') {
+      this.regions.sort((a, b) => {
         return this.orderDir === OrderDir.Desc ? a.display_name.localeCompare(b.display_name) : b.display_name.localeCompare(a.display_name);
       });
     }
     else if(this.orderBy === 'vendor') {
-      this.datacenters.sort((a, b) => {
+      this.regions.sort((a, b) => {
         return this.orderDir === OrderDir.Desc ? this.getVendorName(a.vendor_id).localeCompare(this.getVendorName(b.vendor_id)) : this.getVendorName(b.vendor_id).localeCompare(this.getVendorName(a.vendor_id));
       });
     } else if(this.orderBy === 'country') {
-      this.datacenters.sort((a, b) => {
+      this.regions.sort((a, b) => {
         return this.orderDir === OrderDir.Desc ? a.country_id.localeCompare(b.country_id) : b.country_id.localeCompare(a.country_id);
       });
     }

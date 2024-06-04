@@ -28,7 +28,7 @@ export class KeeperAPIService {
   }
 
   public getServer(vendor: string, id: string): Promise<any> {
-    return this.ServerController.getServerServerVendorIdServerIdGet(vendor, id);
+    return this.ServerController.getServerServerVendorServerGet(vendor, id);
   }
 
   public searchServers(query: SearchServersServersGetParams): Promise<any> {
@@ -55,8 +55,8 @@ export class KeeperAPIService {
     return this.TableController.tableVendorTableVendorGet();
   }
 
-  public getDatacenters(): Promise<any> {
-    return this.TableController.tableDatacenterTableDatacenterGet();
+  public getRegions(): Promise<any> {
+    return this.TableController.tableRegionTableRegionGet();
   }
 
   public getServers(): Promise<any> {

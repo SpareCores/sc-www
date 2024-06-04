@@ -30,7 +30,7 @@ export class LandingpageComponent implements OnInit {
     },
     {
       count: '76',
-      text: 'datacenters'
+      text: 'regions'
     },
     {
       count: '338',
@@ -266,7 +266,7 @@ export class LandingpageComponent implements OnInit {
         this.spinnerContents[0][index] = { name: servers[i].vendor.vendor_id.toString().toUpperCase(), logo: servers[i].vendor.logo};
         this.spinnerContents[1][index] = { name: servers[i].server.display_name, architecture: servers[i].server.cpu_architecture};
         this.spinnerContents[2][index] = {
-          name: servers[i].datacenter?.display_name,
+          name: servers[i].region?.display_name,
           city: servers[i].zone?.display_name
         };
       });

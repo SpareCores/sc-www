@@ -9,14 +9,10 @@
  * ---------------------------------------------------------------
  */
 
-import {
-  HTTPValidationError,
-  SearchDatacentersDatacentersGetData,
-  SearchDatacentersDatacentersGetParams,
-} from "./data-contracts";
+import { HTTPValidationError, SearchRegionsRegionsGetData, SearchRegionsRegionsGetParams } from "./data-contracts";
 import { HttpClient, RequestParams } from "./http-client";
 
-export class Datacenters<SecurityDataType = unknown> {
+export class Regions<SecurityDataType = unknown> {
   http: HttpClient<SecurityDataType>;
 
   constructor(http: HttpClient<SecurityDataType>) {
@@ -27,13 +23,13 @@ export class Datacenters<SecurityDataType = unknown> {
    * No description
    *
    * @tags Query Resources
-   * @name SearchDatacentersDatacentersGet
-   * @summary Search Datacenters
-   * @request GET:/datacenters
+   * @name SearchRegionsRegionsGet
+   * @summary Search Regions
+   * @request GET:/regions
    */
-  searchDatacentersDatacentersGet = (query: SearchDatacentersDatacentersGetParams, params: RequestParams = {}) =>
-    this.http.request<SearchDatacentersDatacentersGetData, HTTPValidationError>({
-      path: `/datacenters`,
+  searchRegionsRegionsGet = (query: SearchRegionsRegionsGetParams, params: RequestParams = {}) =>
+    this.http.request<SearchRegionsRegionsGetData, HTTPValidationError>({
+      path: `/regions`,
       method: "GET",
       query: query,
       ...params,
