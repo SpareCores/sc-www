@@ -12,7 +12,7 @@ import { FormsModule } from '@angular/forms';
 import { Dropdown, DropdownOptions, initFlowbite } from 'flowbite';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData } from 'chart.js';
-import { barChartDataEmpty, barChartOptions, radarChartDataEmpty, radarChartOptions } from './chartOptions';
+import { barChartDataEmpty, barChartOptions, lineChartOptions, radarChartOptions, radarChartOptions2, radatDatasetColors } from './chartOptions';
 
 const options: DropdownOptions = {
   placement: 'bottom',
@@ -60,10 +60,6 @@ export class ServerDetailsComponent implements OnInit {
   regionDropdown: any;
   regionFilters: any[] = [];
 
-  @ViewChild('chartPricePerRegion') chartPricePerRegion!: BaseChartDirective<'bar'> | undefined;
-  @ViewChild('chartPricePerZone') chartPricePerZone!: BaseChartDirective<'bar'> | undefined;
-  @ViewChild('chartPriceLowest') chartPriceLowest!: BaseChartDirective<'bar'> | undefined;
-
   barChartOptions: ChartConfiguration<'bar'>['options'] = barChartOptions;
   barChartType = 'bar' as const;
   barChartData: ChartData<'bar'> = JSON.parse(JSON.stringify(barChartDataEmpty));
@@ -72,7 +68,14 @@ export class ServerDetailsComponent implements OnInit {
 
   radarChartType = 'radar' as const;
   radarChartOptions: ChartConfiguration<'radar'>['options'] = radarChartOptions;
-  radarChartData1: ChartData<'radar'> = JSON.parse(JSON.stringify(radarChartDataEmpty));
+  radarChartOptions2: ChartConfiguration<'radar'>['options'] = radarChartOptions2;
+  radarChartDataBWMem: ChartData<'radar'> | undefined = undefined;
+  radarChartDataGeekMulti: ChartData<'radar'> | undefined = undefined;
+  radarChartDataGeekSingle: ChartData<'radar'> | undefined = undefined;
+
+  lineChartType = 'line' as const;
+  lineChartOptions: ChartConfiguration<'line'>['options'] = lineChartOptions;
+  lineChartData: ChartData<'line'> | undefined = undefined;
 
   similarByFamily: Server[] = [];
   similarByPerformance: Server[] = [];
@@ -116,8 +119,6 @@ export class ServerDetailsComponent implements OnInit {
 
         this.benchmarkMeta = dataAll[1].body || {};
 
-        console.log(dataAll);
-
         if(dataAll[2].body){
           this.serverDetails = dataAll[2].body as any;
           this.breadcrumbs[2] =
@@ -159,6 +160,7 @@ export class ServerDetailsComponent implements OnInit {
             }
           });
 
+          this.generateBenchmarkCharts();
           console.log(this.benchmarksByCategory);
 
 
@@ -608,5 +610,120 @@ export class ServerDetailsComponent implements OnInit {
     }
 
     return '-';
+  }
+
+  generateBenchmarkCharts() {
+    const BWMemData = this.generateBWMemoryChart('bw_mem', 'operation', 'size');
+    const compress = this.generateBWMemoryChart('compression_text:compress', 'algo', 'compression_level');
+    const ratio = this.generateBWMemoryChart('compression_text:ratio', 'algo', 'compression_level');
+    console.log(ratio);
+
+    this.generateGeekbenchChart();
+  }
+
+  generateBWMemoryChart(benchmark_id: string, labelsField: string, scaleField: string) {
+    const dataSet = this.benchmarksByCategory?.find(x => x.benchmark_id === benchmark_id);
+    if(dataSet && dataSet.benchmarks?.length) {
+      let labels: string[] = [];
+      let scales: number[] = [];
+      dataSet.benchmarks.forEach((item: any) => {
+        if(item.config[labelsField] && labels.indexOf(item.config[labelsField]) === -1) {
+          labels.push(item.config[labelsField]);
+        }
+        if((item.config[scaleField] || item.config[scaleField] === 0) && scales.indexOf(item.config[scaleField]) === -1) {
+          scales.push(item.config[scaleField]);
+        }
+      });
+      console.log(labels);
+
+
+      scales.sort((a, b) => a - b);
+      console.log(scales);
+
+      let charData: any = {
+        labels: scales.map((s) => s.toString()),
+        datasets: labels.map((label: string, index: number) => {
+          return {
+            data: [],
+            label: label,
+            borderColor: radatDatasetColors[index].borderColor,
+            backgroundColor: radatDatasetColors[index].backgroundColor};
+          })
+      };
+
+      this.lineChartData = { labels: [], datasets: [] };
+      this.radarChartDataBWMem = { labels: [], datasets: [] };
+
+      labels.forEach((label: string, i: number) => {
+        scales.forEach((size: number) => {
+          const item = dataSet.benchmarks.find((b: any) => b.config[labelsField] === label && b.config[scaleField] === size);
+          if(item) {
+            charData.datasets[i].data.push(item.score);
+          } else {
+            charData.datasets[i].data.push(0);
+          }
+        });
+      });
+
+      this.radarChartDataBWMem = { labels: charData.labels, datasets: charData.datasets };
+      this.lineChartData = { labels: charData.labels, datasets: charData.datasets };
+
+
+      console.log(charData);
+
+      return charData;
+
+    } else {
+      this.radarChartDataBWMem = undefined;
+      this.lineChartData = undefined;
+
+      return undefined;
+    }
+  }
+
+  generateGeekbenchChart() {
+    const dataSet = this.benchmarksByCategory?.filter(x => (x.benchmark_id as string).includes('geekbench'));
+
+    if(dataSet && dataSet.length) {
+      let labels: string[] = [];
+      let scales: string[] = [];
+
+      labels = dataSet.map(x => x.benchmark_id as string);
+
+      scales = dataSet[0].benchmarks.map((b: any) => b.config.cores);
+
+      let charData: any = {
+        labels: labels.map((s) => s.replace('geekbench:', '')),
+        datasets: scales.map((label: string, index: number) => {
+          return {
+            data: [],
+            label: label,
+            borderColor: radatDatasetColors[index].borderColor,
+            backgroundColor: radatDatasetColors[index].backgroundColor};
+          })
+      };
+
+      scales.forEach((size: string, i: number) => {
+        labels.forEach((label: string) => {
+          const item = dataSet.find((b: any) => b.benchmark_id === label)?.benchmarks.find((b: any) => b.config.cores === size);
+          if(item) {
+            charData.datasets[i].data.push(item.score);
+          } else {
+            charData.datasets[i].data.push(0);
+          }
+        });
+      });
+
+      this.radarChartDataGeekMulti = { labels: charData.labels, datasets: [charData.datasets[0]] };
+      this.radarChartDataGeekSingle = { labels: charData.labels, datasets: [charData.datasets[1]] };
+
+      return charData;
+    } else {
+      this.radarChartDataGeekMulti = undefined;
+      this.radarChartDataGeekSingle = undefined;
+
+      return undefined;
+    }
+
   }
 }
