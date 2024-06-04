@@ -140,7 +140,7 @@ LEFT JOIN zone ON price.zone_id = zone.zone_id
 WHERE
     price.server_id = 'r7i.2xlarge'
     AND allocation = 'SPOT'
-    AND price.datacenter_id = 'us-west-2'
+    AND price.region_id = 'us-west-2'
     AND price.observed_at >= '2024-04-01'
     AND price.observed_at < '2024-04-15'
 ORDER BY 1, 2;

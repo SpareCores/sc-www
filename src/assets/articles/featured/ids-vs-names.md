@@ -78,23 +78,23 @@ name in some cases, e.g. for the servers.
 Unfortunately, it's not that straightforward when it comes to other
 resource types.
 
-The `datacenter_id` is an all lowercase text starting with a 2-letter
+The `region_id` is an all lowercase text starting with a 2-letter
 continent reference, then location reference and a number; while the
 name is a title-case string with the a city or state name in
-parenthesis after the continent. Unfortunately, the datacenter names
+parenthesis after the continent. Unfortunately, the region names
 are not always used consistently throughout all the AWS API endpoints,
 e.g. "Europe" often get abbreviated as "EU", so we recorded these as
-aliases for the datacenter names that we can look up:
+aliases for the region names that we can look up:
 
 ```sql
-SELECT datacenter_id, name, aliases
-FROM datacenter
+SELECT region_id, name, aliases
+FROM region
 WHERE vendor_id = 'aws'
 ORDER BY RANDOM()
 LIMIT 10;
 ```
 
-| datacenter_id  |           name           |      aliases       |
+| region_id      |           name           |      aliases       |
 |:---------------|:-------------------------|:-------------------|
 | cn-northwest-1 | China (Ningxia)          | []                 |
 | eu-west-2      | Europe (London)          | ["EU (London)"]    |
@@ -147,7 +147,7 @@ aws ec2 \
 
 To keep it short, GCP is a mix of the above-described words:
 
-- Using integers for the ids (e.g. `datacenter_id`s are between 1000 and 2000,
+- Using integers for the ids (e.g. `region_id`s are between 1000 and 2000,
   `zone_id`s are between 2000 and 3000 etc),
 - Human-friendly zone names are not interchangeable between GCP accounts.
 
@@ -173,7 +173,7 @@ special cases):
 
 This was highly confusing first, as we were trained using AWS with
 very different prices even between the availability zones of a single
-region, but as GCP has uniform prices within a datacenter, it did not
+region, but as GCP has uniform prices within a region, it did not
 raise any issues after all (except for storing redundant data in our
 databases).
 
