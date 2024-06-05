@@ -1,4 +1,5 @@
-import { ChartConfiguration, ChartData } from "chart.js";
+/* eslint-disable no-var */
+import { ChartConfiguration, ChartData, TooltipItem, TooltipModel } from "chart.js";
 
 export const  barChartOptions: ChartConfiguration<'bar'>['options'] = {
   scales: {
@@ -87,7 +88,17 @@ export const radarChartOptions: ChartConfiguration<'radar'>['options'] = {
       min: 0,
     },
   },
+  parsing: {
+    key: 'value',
+  },
   plugins: {
+    tooltip:{
+      callbacks: {
+        label: function(this: TooltipModel<"radar">, tooltipItem: TooltipItem<"radar">) {
+          return (tooltipItem.dataset.data[tooltipItem.dataIndex] as any).tooltip;
+        }
+      }
+    },
     legend: {
       display: false,
       labels: {

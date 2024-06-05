@@ -796,12 +796,14 @@ export class ServerDetailsComponent implements OnInit {
         labels.forEach((label: string) => {
           const item = dataSet.find((b: any) => b.benchmark_id === label)?.benchmarks.find((b: any) => b.config.cores === size);
           if(item) {
-            charData.datasets[i].data.push(item.score);
+            charData.datasets[i].data.push({value: item.score, tooltip: item.note});
           } else {
-            charData.datasets[i].data.push(0);
+            charData.datasets[i].data.push({value: 0});
           }
         });
       });
+
+      console.log('chartdata', charData);
 
       this.radarChartDataGeekMulti = {
         labels: charData.labels,
