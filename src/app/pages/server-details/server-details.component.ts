@@ -12,7 +12,7 @@ import { FormsModule } from '@angular/forms';
 import { Dropdown, DropdownOptions, initFlowbite } from 'flowbite';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData } from 'chart.js';
-import { barChartDataEmpty, barChartOptions, lineChartOptions, radarChartOptions, radarChartOptions2, radatDatasetColors } from './chartOptions';
+import { barChartDataEmpty, barChartOptions, barChartOptionsSSL, lineChartOptionsBWM, lineChartOptionsComp, lineChartOptionsCompRatio, radarChartOptions, radatDatasetColors } from './chartOptions';
 
 const options: DropdownOptions = {
   placement: 'bottom',
@@ -60,22 +60,7 @@ export class ServerDetailsComponent implements OnInit {
   regionDropdown: any;
   regionFilters: any[] = [];
 
-  barChartOptions: ChartConfiguration<'bar'>['options'] = barChartOptions;
-  barChartType = 'bar' as const;
-  barChartData: ChartData<'bar'> = JSON.parse(JSON.stringify(barChartDataEmpty));
-  barChartData2: ChartData<'bar'> = JSON.parse(JSON.stringify(barChartDataEmpty));
-  barChartData3: ChartData<'bar'> = JSON.parse(JSON.stringify(barChartDataEmpty));
 
-  radarChartType = 'radar' as const;
-  radarChartOptions: ChartConfiguration<'radar'>['options'] = radarChartOptions;
-  radarChartOptions2: ChartConfiguration<'radar'>['options'] = radarChartOptions2;
-  radarChartDataBWMem: ChartData<'radar'> | undefined = undefined;
-  radarChartDataGeekMulti: ChartData<'radar'> | undefined = undefined;
-  radarChartDataGeekSingle: ChartData<'radar'> | undefined = undefined;
-
-  lineChartType = 'line' as const;
-  lineChartOptions: ChartConfiguration<'line'>['options'] = lineChartOptions;
-  lineChartData: ChartData<'line'> | undefined = undefined;
 
   similarByFamily: Server[] = [];
   similarByPerformance: Server[] = [];
@@ -95,6 +80,41 @@ export class ServerDetailsComponent implements OnInit {
   benchmarkMeta: any;
 
   tooltipContent = '';
+
+  // benchmark charts
+  compressDropdown: any;
+  compressMethods: any[] = [
+    { name: 'Compress', key: 'compress' },
+    { name: 'Decompress', key: 'decompress' },
+    { name: 'Ratio', key: 'ratio' }
+  ];
+  selectedCompressMethod = 'compress';
+
+  geekScoreSingle: number = 0;
+  geekScoreMulti: number = 0;
+
+  barChartOptions: ChartConfiguration<'bar'>['options'] = barChartOptions;
+  barChartType = 'bar' as const;
+  barChartData: ChartData<'bar'> = JSON.parse(JSON.stringify(barChartDataEmpty));
+  barChartData2: ChartData<'bar'> = JSON.parse(JSON.stringify(barChartDataEmpty));
+  barChartData3: ChartData<'bar'> = JSON.parse(JSON.stringify(barChartDataEmpty));
+
+  radarChartType = 'radar' as const;
+  radarChartOptions: ChartConfiguration<'radar'>['options'] = radarChartOptions;
+  radarChartOptions2: ChartConfiguration<'radar'>['options'] = radarChartOptions;
+  radarChartDataBWMem: ChartData<'radar'> | undefined = undefined;
+  radarChartDataGeekMulti: ChartData<'radar'> | undefined = undefined;
+  radarChartDataGeekSingle: ChartData<'radar'> | undefined = undefined;
+
+  lineChartType = 'line' as const;
+  lineChartOptionsBWMem: ChartConfiguration<'line'>['options'] = lineChartOptionsBWM;
+  lineChartDataBWmem: ChartData<'line'> | undefined = undefined;
+
+  lineChartOptionsCompress: ChartConfiguration<'line'>['options'] = lineChartOptionsComp;
+  lineChartDataCompress: ChartData<'line'> | undefined = undefined;
+
+  barChartOptionsSSL: ChartConfiguration<'bar'>['options'] = barChartOptionsSSL;
+  barChartDataSSL: ChartData<'bar'> = JSON.parse(JSON.stringify(barChartDataEmpty));
 
   @ViewChild('tooltipDefault') tooltip!: ElementRef;
 
@@ -118,6 +138,8 @@ export class ServerDetailsComponent implements OnInit {
         this.instanceProperties = dataAll[0].body?.fields || [];
 
         this.benchmarkMeta = dataAll[1].body || {};
+
+        console.log(dataAll);
 
         if(dataAll[2].body){
           this.serverDetails = dataAll[2].body as any;
@@ -160,20 +182,22 @@ export class ServerDetailsComponent implements OnInit {
             }
           });
 
-          this.generateBenchmarkCharts();
+
           console.log(this.benchmarksByCategory);
 
 
           this.regionFilters = [];
-          this.serverDetails.prices.sort((a, b) => a.price - b.price);
-          this.serverDetails.prices.forEach((price: ServerPricePKs) => {
+          this.serverDetails.prices?.sort((a, b) => a.price - b.price);
+          this.serverDetails.prices?.forEach((price: ServerPricePKs) => {
               const region = this.regionFilters.find((z) => z.region_id === price.region_id);
               if(!region) {
                 this.regionFilters.push({name: price.region.display_name, region_id: price.region_id, selected: false});
               }
             });
 
-          this.regionFilters[0].selected = true;
+          if(this.regionFilters[0]) {
+            this.regionFilters[0].selected = true;
+          }
 
           this.refreshGraphs();
 
@@ -262,6 +286,9 @@ export class ServerDetailsComponent implements OnInit {
           });
 
           if(isPlatformBrowser(this.platformId)) {
+
+            this.generateBenchmarkCharts();
+
             setTimeout(() => {
               initFlowbite();
             }, 2000);
@@ -317,6 +344,24 @@ export class ServerDetailsComponent implements OnInit {
                   }
                 );
                 clearInterval(interval3);
+              }
+            }, 150);
+
+            const interval4 = setInterval(() => {
+              const targetElCompress: HTMLElement | null = document.getElementById('compress_method_options');
+              const triggerElCompress: HTMLElement | null = document.getElementById('compress_method_button');
+
+              if(targetElCompress && triggerElCompress) {
+                this.compressDropdown = new Dropdown(
+                  targetElCompress,
+                  triggerElCompress,
+                  options,
+                  {
+                    id: 'compress_method_options',
+                    override: true
+                  }
+                );
+                clearInterval(interval4);
               }
             }, 150);
 
@@ -612,19 +657,58 @@ export class ServerDetailsComponent implements OnInit {
     return '-';
   }
 
-  generateBenchmarkCharts() {
-    const BWMemData = this.generateBWMemoryChart('bw_mem', 'operation', 'size');
-    const compress = this.generateBWMemoryChart('compression_text:compress', 'algo', 'compression_level');
-    const ratio = this.generateBWMemoryChart('compression_text:ratio', 'algo', 'compression_level');
-    console.log(ratio);
+  refreshCompressChart(chart: string) {
+    this.selectedCompressMethod = chart;
+    this.generateCompressChart();
+  }
 
+  generateBenchmarkCharts() {
+
+    const BWMemData = this.generateLineChart('bw_mem', 'operation', 'size');
+
+    if(BWMemData) {
+      this.lineChartDataBWmem = { labels: BWMemData.labels, datasets: BWMemData.datasets };
+    } else {
+      this.lineChartDataBWmem = undefined;
+    }
+
+    let data = this.generateLineChart('openssl', 'block_size', 'algo', false);
+
+    console.log('openSSL', data);
+    this.barChartDataSSL = { labels: data.labels, datasets: data.datasets };
+
+    this.generateCompressChart();
     this.generateGeekbenchChart();
   }
 
-  generateBWMemoryChart(benchmark_id: string, labelsField: string, scaleField: string) {
+  generateCompressChart() {
+    let data: any;
+    switch(this.selectedCompressMethod) {
+      case 'compress':
+        data = this.generateLineChart('compression_text:compress', 'algo', 'compression_level');
+        this.lineChartOptionsCompress = lineChartOptionsComp;
+        break;
+      case 'decompress':
+        data = this.generateLineChart('compression_text:decompress', 'algo', 'compression_level');
+        this.lineChartOptionsCompress = lineChartOptionsComp;
+        break;
+      case 'ratio':
+        data = this.generateLineChart('compression_text:ratio', 'algo', 'compression_level');
+        this.lineChartOptionsCompress = lineChartOptionsCompRatio;
+        break;
+    }
+    if(data) {
+      this.lineChartDataCompress = { labels: data.labels, datasets: data.datasets };
+    } else {
+      this.lineChartDataCompress = undefined;
+    }
+
+  }
+
+  generateLineChart(benchmark_id: string, labelsField: string, scaleField: string, isLineChart: boolean = true) {
     const dataSet = this.benchmarksByCategory?.find(x => x.benchmark_id === benchmark_id);
     if(dataSet && dataSet.benchmarks?.length) {
-      let labels: string[] = [];
+      let labels: any[] = [];
       let scales: number[] = [];
       dataSet.benchmarks.forEach((item: any) => {
         if(item.config[labelsField] && labels.indexOf(item.config[labelsField]) === -1) {
@@ -634,11 +718,13 @@ export class ServerDetailsComponent implements OnInit {
           scales.push(item.config[scaleField]);
         }
       });
-      console.log(labels);
 
+
+      if(labels && !isNaN(labels[0])) {
+        labels.sort((a, b) => a - b);
+      }
 
       scales.sort((a, b) => a - b);
-      console.log(scales);
 
       let charData: any = {
         labels: scales.map((s) => s.toString()),
@@ -646,13 +732,11 @@ export class ServerDetailsComponent implements OnInit {
           return {
             data: [],
             label: label,
+            spanGaps: isLineChart,
             borderColor: radatDatasetColors[index].borderColor,
-            backgroundColor: radatDatasetColors[index].backgroundColor};
+            backgroundColor: isLineChart ? radatDatasetColors[index].backgroundColor : radatDatasetColors[index].borderColor };
           })
       };
-
-      this.lineChartData = { labels: [], datasets: [] };
-      this.radarChartDataBWMem = { labels: [], datasets: [] };
 
       labels.forEach((label: string, i: number) => {
         scales.forEach((size: number) => {
@@ -660,22 +744,17 @@ export class ServerDetailsComponent implements OnInit {
           if(item) {
             charData.datasets[i].data.push(item.score);
           } else {
-            charData.datasets[i].data.push(0);
+            charData.datasets[i].data.push(null);
           }
         });
       });
-
-      this.radarChartDataBWMem = { labels: charData.labels, datasets: charData.datasets };
-      this.lineChartData = { labels: charData.labels, datasets: charData.datasets };
-
 
       console.log(charData);
 
       return charData;
 
     } else {
-      this.radarChartDataBWMem = undefined;
-      this.lineChartData = undefined;
+      this.lineChartDataCompress = undefined;
 
       return undefined;
     }
@@ -688,12 +767,22 @@ export class ServerDetailsComponent implements OnInit {
       let labels: string[] = [];
       let scales: string[] = [];
 
-      labels = dataSet.map(x => x.benchmark_id as string);
+      const geekBenchScore = dataSet.find(x => (x.benchmark_id as string).includes('geekbench:score'));
 
-      scales = dataSet[0].benchmarks.map((b: any) => b.config.cores);
+      if(geekBenchScore && geekBenchScore.benchmarks.length) {
+        this.geekScoreSingle = geekBenchScore.benchmarks.find((x: any) => x.config.cores === 'Single-Core Performance')?.score || 0;
+        this.geekScoreMulti = geekBenchScore.benchmarks.find((x: any) => x.config.cores === 'Multi-Core Performance')?.score || 0;
+      }
+
+      labels = dataSet.filter(x => x.benchmark_id !== 'geekbench:score').map(x => x.benchmark_id);
+      scales = dataSet[0].benchmarks.sort((a: any, b:any) => (a.config.cores as string).localeCompare(b.config.cores)).map((b: any) => b.config.cores);
 
       let charData: any = {
-        labels: labels.map((s) => s.replace('geekbench:', '')),
+        labels: labels
+          .map((s) =>
+            (this.benchmarkMeta.find((b: any) => b.benchmark_id === s)?.name || s)
+              .replace('geekbench:', '')
+              .replace('Geekbench: ', '')),
         datasets: scales.map((label: string, index: number) => {
           return {
             data: [],
@@ -714,8 +803,14 @@ export class ServerDetailsComponent implements OnInit {
         });
       });
 
-      this.radarChartDataGeekMulti = { labels: charData.labels, datasets: [charData.datasets[0]] };
-      this.radarChartDataGeekSingle = { labels: charData.labels, datasets: [charData.datasets[1]] };
+      this.radarChartDataGeekMulti = {
+        labels: charData.labels,
+        datasets: [charData.datasets[0]]
+      };
+      this.radarChartDataGeekSingle = {
+        labels: charData.labels,
+        datasets: [charData.datasets[1]]
+      };
 
       return charData;
     } else {

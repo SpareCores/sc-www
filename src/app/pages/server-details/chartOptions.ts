@@ -24,6 +24,39 @@ export const  barChartOptions: ChartConfiguration<'bar'>['options'] = {
       },
     }
   },
+
+};
+
+export const  barChartOptionsSSL: ChartConfiguration<'bar'>['options'] = {
+  scales: {
+    x: {
+      ticks: {
+        color: '#FFF',
+          }
+    },
+    y: {
+      ticks: {
+        color: '#FFF',
+      },
+      grid: {
+        color: '#4B5563',
+      },
+    },
+  },
+  plugins: {
+    legend: {
+      display: true,
+      labels: {
+        color: '#FFF',
+      },
+    },
+    title: {
+      display: true,
+      text: 'Block size (byte)',
+      color: '#FFF',
+    }
+  },
+
 };
 
 export const barChartDataEmpty: ChartData<'bar'> = {
@@ -34,59 +67,37 @@ export const barChartDataEmpty: ChartData<'bar'> = {
   ],
 };
 
-export const radarChartOptions: ChartConfiguration<'radar'>['options'] = {
-    scales: {
-      r: {
-        ticks: {
-          color: '#4B5563',
-          backdropColor: '#06263a',
-        },
-        grid: {
-          color: '#4B5563',
-        },
-        pointLabels: {
-          color: '#E5E7EB',
-        },
-      },
-    },
-    plugins: {
-      legend: {
-        display: true,
-        labels: {
-          color: '#E5E7EB',
-        },
-      }
-    },
-  };
 
-  export const radarChartOptions2: ChartConfiguration<'radar'>['options'] = {
-    scales: {
-      r: {
-        ticks: {
-          color: '#4B5563',
-          backdropColor: '#06263a',
-        },
-        grid: {
-          color: '#4B5563',
-        },
-        pointLabels: {
-          color: '#E5E7EB',
-        },
-        angleLines: {
-          color: '#4B5563',
-          display: true,
-        }
+
+export const radarChartOptions: ChartConfiguration<'radar'>['options'] = {
+  scales: {
+    r: {
+      ticks: {
+        color: '#4B5563',
+        backdropColor: '#06263a',
       },
+      grid: {
+        color: '#4B5563',
+      },
+      pointLabels: {
+        color: '#E5E7EB',
+      },
+      angleLines: {
+        color: '#4B5563',
+        display: true,
+      },
+      min: 0,
     },
-    plugins: {
-      legend: {
-        display: false,
-        labels: {
-          color: '#FFF',
-        },
-      }
-    },
-  };
+  },
+  plugins: {
+    legend: {
+      display: false,
+      labels: {
+        color: '#FFF',
+      },
+    }
+  },
+};
 
 export const radarChartDataEmpty: ChartData<'radar'> = {
   labels: [],
@@ -109,12 +120,17 @@ export const radatDatasetColors = [
   { borderColor: '#94A3B8', backgroundColor: '#94A3B833'}
 ];
 
-export const lineChartOptions: ChartConfiguration<'line'>['options'] = {
+export const lineChartOptionsBWM: ChartConfiguration<'line'>['options'] = {
   scales: {
     x: {
       ticks: {
         color: '#FFF',
-          }
+      },
+      title: {
+        display: true,
+        color: '#FFF',
+        text: 'MB',
+      },
     },
     y: {
       ticks: {
@@ -124,6 +140,11 @@ export const lineChartOptions: ChartConfiguration<'line'>['options'] = {
         color: '#4B5563',
       },
       type: 'logarithmic',
+      title: {
+        display: true,
+        color: '#FFF',
+        text: 'MB/sec',
+      }
     },
   },
   plugins: {
@@ -135,4 +156,80 @@ export const lineChartOptions: ChartConfiguration<'line'>['options'] = {
     }
   },
 };
+
+export const lineChartOptionsComp: ChartConfiguration<'line'>['options'] = {
+  scales: {
+    x: {
+      ticks: {
+        color: '#FFF',
+      },
+      title: {
+        display: true,
+        color: '#FFF',
+        text: 'Compression Level',
+      },
+    },
+    y: {
+      ticks: {
+        color: '#FFF',
+      },
+      grid: {
+        color: '#4B5563',
+      },
+      type: 'logarithmic',
+      title: {
+        display: true,
+        color: '#FFF',
+        text: 'byte/s',
+      }
+    },
+  },
+  plugins: {
+    legend: {
+      display: true,
+      labels: {
+        color: '#FFF',
+      },
+    }
+  },
+};
+
+export const lineChartOptionsCompRatio: ChartConfiguration<'line'>['options'] = {
+  scales: {
+    x: {
+      ticks: {
+        color: '#FFF',
+      },
+      title: {
+        display: true,
+        color: '#FFF',
+        text: 'Compression Level',
+      },
+    },
+    y: {
+      ticks: {
+        color: '#FFF',
+      },
+      grid: {
+        color: '#4B5563',
+      },
+      type: 'linear',
+      title: {
+        display: true,
+        color: '#FFF',
+        text: 'Compression Ratio',
+      },
+      min: 0
+    },
+  },
+  plugins: {
+    legend: {
+      display: true,
+      labels: {
+        color: '#FFF',
+      },
+    }
+  },
+};
+
 

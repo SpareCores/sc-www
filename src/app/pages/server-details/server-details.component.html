@@ -1,3 +1,4 @@
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
 <div class="w-full bg-primary">
   <div class="content pt-16 pb-16 text-white">
     <app-breadcrumbs [segments]="breadcrumbs"></app-breadcrumbs>
@@ -220,53 +221,64 @@
         </div>
       </div>
 
-      <div class="block_half_taller">
-        <h3 class="text-2xl" >Radar Chart</h3>
+      <div class="my-2 w-full">
+        <h2 class="text-3xl font-bold"> Performance </h2>
+      </div>
+
+      <div class="block_half">
+        <h3 class="text-2xl" >Memory bandwidth</h3>
         <div *ngIf="isBrowser()">
           <div chartType="bar">
             <canvas
               style="max-height: 550px; max-width:100%"
               baseChart
-              [data]="lineChartData"
-              [options]="lineChartOptions"
+              [data]="lineChartDataBWmem"
+              [options]="lineChartOptionsBWMem"
               [type]="lineChartType"
             >
             </canvas>
           </div>
         </div>
       </div>
-      <div class="block_half_taller" *ngIf="radarChartDataBWMem">
-        <h3 class="text-2xl" >Radar Chart</h3>
-        <div *ngIf="isBrowser()">
-          <div chartType="bar">
-            <canvas
-              style="max-height: 550px; max-width:100%"
-              baseChart
-              [data]="radarChartDataBWMem"
-              [options]="radarChartOptions"
-              [type]="radarChartType"
-            >
-            </canvas>
+      <div class="block_half" *ngIf="lineChartDataCompress">
+        <div class="flex justify-between items-center">
+          <h3 class="text-2xl" >Compression</h3>
+          <div class="flex gap-4">
+            <button
+              id="compress_method_button"
+              data-ph-capture-attribute-sc-event="server details price allocation select"
+              data-dropdown-toggle="compress_method_options"
+              class="dropdown_button"
+              type="button">
+              <div class="px-3 py-2">
+                Method
+              </div>
+              <div class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
+                <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
+              </div>
+            </button>
           </div>
         </div>
-      </div>
-      <div class="block_half_taller" *ngIf="radarChartDataGeekMulti">
-        <h3 class="text-2xl" >Geekbench Multi-Core</h3>
         <div *ngIf="isBrowser()">
           <div chartType="bar">
             <canvas
               style="max-height: 550px; max-width:100%"
               baseChart
-              [data]="radarChartDataGeekMulti"
-              [options]="radarChartOptions2"
-              [type]="radarChartType"
+              [data]="lineChartDataCompress"
+              [options]="lineChartOptionsCompress"
+              [type]="lineChartType"
             >
             </canvas>
           </div>
         </div>
       </div>
       <div class="block_half_taller" *ngIf="radarChartDataGeekSingle">
-        <h3 class="text-2xl" >Geekbench Single-Core</h3>
+        <div class="flex justify-between items-center">
+          <h3 class="text-2xl" >Geekbench Single-Core </h3>
+          <div class="py-2 px-2 border-emerald-400 border-solid rounded-lg border">
+            Score: {{geekScoreSingle}}
+          </div>
+        </div>
         <div *ngIf="isBrowser()">
           <div chartType="bar">
             <canvas
@@ -275,7 +287,27 @@
               style="max-height: 550px; max-width:100%"
               baseChart
               [data]="radarChartDataGeekSingle"
-              [options]="radarChartOptions2"
+              [options]="radarChartOptions"
+              [type]="radarChartType"
+            >
+            </canvas>
+          </div>
+        </div>
+      </div>
+      <div class="block_half_taller" *ngIf="radarChartDataGeekMulti">
+        <div class="flex justify-between items-center">
+          <h3 class="text-2xl" >Geekbench Multi-Core </h3>
+          <div class="py-2 px-2 border-emerald-400 border-solid rounded-lg border">
+            Score: {{geekScoreMulti}}
+          </div>
+        </div>
+        <div *ngIf="isBrowser()">
+          <div chartType="bar">
+            <canvas
+              style="max-height: 550px; max-width:100%"
+              baseChart
+              [data]="radarChartDataGeekMulti"
+              [options]="radarChartOptions"
               [type]="radarChartType"
             >
             </canvas>
@@ -283,6 +315,23 @@
         </div>
       </div>
 
+      <div class="block_full">
+        <div class="flex justify-between items-center">
+          <h3 class="text-2xl" >OpenSSL Performance</h3>
+        </div>
+        <div *ngIf="isBrowser()">
+          <div chartType="bar">
+            <canvas
+              style="height: 350px; width:100%"
+              baseChart
+              [data]="barChartDataSSL"
+              [options]="barChartOptionsSSL"
+              [type]="barChartType"
+            >
+            </canvas>
+          </div>
+        </div>
+      </div>
 
       <div class="my-2 w-full">
         <h2 class="text-3xl font-bold"> Alternatives </h2>
@@ -394,6 +443,18 @@
         (ngModelChange)="refreshGraphs()"
         class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer" >
         <div class="text-white text-sm">{{item.name}}</div>
+    </li>
+  </ul>
+</div>
+
+<div id="compress_method_options" class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid">
+  <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
+    <li *ngFor="let item of compressMethods" class="flex py-1 gap-2 items-center">
+        <div
+          class="text-emerald-400 hover:text-emerald-500 cursor-pointer font-bold ml-2"
+          (click)="refreshCompressChart(item.key)">
+          {{item.name}}
+        </div>
     </li>
   </ul>
 </div>
