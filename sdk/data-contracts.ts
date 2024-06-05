@@ -198,8 +198,8 @@ export interface ComplianceFramework {
 /** ComplianceFrameworks */
 export enum ComplianceFrameworks {
   Hipaa = "hipaa",
-  Soc2T2 = "soc2t2",
   Iso27001 = "iso27001",
+  Soc2T2 = "soc2t2",
 }
 
 /**
@@ -825,6 +825,51 @@ export interface RegionPKs {
 
 /** Regions */
 export enum Regions {
+  Value1000 = "1000",
+  Value1100 = "1100",
+  Value1210 = "1210",
+  Value1220 = "1220",
+  Value1230 = "1230",
+  Value1250 = "1250",
+  Value1260 = "1260",
+  Value1270 = "1270",
+  Value1280 = "1280",
+  Value1290 = "1290",
+  Value1300 = "1300",
+  Value1310 = "1310",
+  Value1320 = "1320",
+  Value1330 = "1330",
+  Value1340 = "1340",
+  Value1350 = "1350",
+  Value1360 = "1360",
+  Value1370 = "1370",
+  Value1380 = "1380",
+  Value1390 = "1390",
+  Value1410 = "1410",
+  Value1420 = "1420",
+  Value1430 = "1430",
+  Value1440 = "1440",
+  Value1450 = "1450",
+  Value1460 = "1460",
+  Value1470 = "1470",
+  Value1480 = "1480",
+  Value1490 = "1490",
+  Value1510 = "1510",
+  Value1520 = "1520",
+  Value1530 = "1530",
+  Value1540 = "1540",
+  Value1550 = "1550",
+  Value1560 = "1560",
+  Value1570 = "1570",
+  Value1580 = "1580",
+  Value1590 = "1590",
+  Value1600 = "1600",
+  Value1610 = "1610",
+  Value2 = "2",
+  Value3 = "3",
+  Value4 = "4",
+  Value5 = "5",
+  Value6 = "6",
   AfSouth1 = "af-south-1",
   ApEast1 = "ap-east-1",
   ApNortheast1 = "ap-northeast-1",
@@ -856,51 +901,6 @@ export enum Regions {
   UsEast2 = "us-east-2",
   UsWest1 = "us-west-1",
   UsWest2 = "us-west-2",
-  Value1610 = "1610",
-  Value1220 = "1220",
-  Value1370 = "1370",
-  Value1250 = "1250",
-  Value1390 = "1390",
-  Value1410 = "1410",
-  Value1320 = "1320",
-  Value1470 = "1470",
-  Value1260 = "1260",
-  Value1440 = "1440",
-  Value1280 = "1280",
-  Value1480 = "1480",
-  Value1450 = "1450",
-  Value1350 = "1350",
-  Value1540 = "1540",
-  Value1100 = "1100",
-  Value1590 = "1590",
-  Value1570 = "1570",
-  Value1290 = "1290",
-  Value1300 = "1300",
-  Value1340 = "1340",
-  Value1380 = "1380",
-  Value1510 = "1510",
-  Value1520 = "1520",
-  Value1580 = "1580",
-  Value1600 = "1600",
-  Value1560 = "1560",
-  Value1330 = "1330",
-  Value1460 = "1460",
-  Value1310 = "1310",
-  Value1490 = "1490",
-  Value1000 = "1000",
-  Value1230 = "1230",
-  Value1270 = "1270",
-  Value1530 = "1530",
-  Value1550 = "1550",
-  Value1210 = "1210",
-  Value1360 = "1360",
-  Value1420 = "1420",
-  Value1430 = "1430",
-  Value2 = "2",
-  Value3 = "3",
-  Value4 = "4",
-  Value5 = "5",
-  Value6 = "6",
 }
 
 /**
@@ -2210,9 +2210,9 @@ export interface VendorBase {
 
 /** Vendors */
 export enum Vendors {
-  Hcloud = "hcloud",
   Aws = "aws",
   Gcp = "gcp",
+  Hcloud = "hcloud",
 }
 
 /**
@@ -2352,7 +2352,7 @@ export interface SearchRegionsRegionsGetParams {
    * Vendor id
    * Identifier of the cloud provider vendor.
    */
-  vendor?: "hcloud" | "aws" | "gcp";
+  vendor?: "aws" | "gcp" | "hcloud";
 }
 
 /** Response Search Regions Regions Get */
@@ -2361,6 +2361,11 @@ export type SearchRegionsRegionsGetData = RegionPKs[];
 export type GetServerServerVendorServerGetData = ServerPKsWithPrices;
 
 export interface SearchServersServersGetParams {
+  /**
+   * Partial name or id
+   * Freetext, case-insensitive search on the server_id, name, api_reference or display_name.
+   */
+  partial_name_or_id?: string | null;
   /**
    * Processor number
    * Minimum number of virtual CPUs.
@@ -2389,12 +2394,12 @@ export interface SearchServersServersGetParams {
    * Vendor id
    * Identifier of the cloud provider vendor.
    */
-  vendor?: "hcloud" | "aws" | "gcp";
+  vendor?: "aws" | "gcp" | "hcloud";
   /**
    * Compliance Framework id
    * Compliance framework implemented at the vendor.
    */
-  compliance_framework?: "hipaa" | "soc2t2" | "iso27001";
+  compliance_framework?: "hipaa" | "iso27001" | "soc2t2";
   /**
    * Storage Size
    * Minimum amount of storage (GBs) attached to the server.
@@ -2451,6 +2456,11 @@ export type SearchServersServersGetData = ServerPKs[];
 
 export interface SearchServerPricesServerPricesGetParams {
   /**
+   * Partial name or id
+   * Freetext, case-insensitive search on the server_id, name, api_reference or display_name.
+   */
+  partial_name_or_id?: string | null;
+  /**
    * Processor number
    * Minimum number of virtual CPUs.
    * @min 1
@@ -2493,12 +2503,57 @@ export interface SearchServerPricesServerPricesGetParams {
    * Vendor id
    * Identifier of the cloud provider vendor.
    */
-  vendor?: "hcloud" | "aws" | "gcp";
+  vendor?: "aws" | "gcp" | "hcloud";
   /**
    * region id
    * Identifier of the region.
    */
   regions?:
+    | "1000"
+    | "1100"
+    | "1210"
+    | "1220"
+    | "1230"
+    | "1250"
+    | "1260"
+    | "1270"
+    | "1280"
+    | "1290"
+    | "1300"
+    | "1310"
+    | "1320"
+    | "1330"
+    | "1340"
+    | "1350"
+    | "1360"
+    | "1370"
+    | "1380"
+    | "1390"
+    | "1410"
+    | "1420"
+    | "1430"
+    | "1440"
+    | "1450"
+    | "1460"
+    | "1470"
+    | "1480"
+    | "1490"
+    | "1510"
+    | "1520"
+    | "1530"
+    | "1540"
+    | "1550"
+    | "1560"
+    | "1570"
+    | "1580"
+    | "1590"
+    | "1600"
+    | "1610"
+    | "2"
+    | "3"
+    | "4"
+    | "5"
+    | "6"
     | "af-south-1"
     | "ap-east-1"
     | "ap-northeast-1"
@@ -2529,57 +2584,12 @@ export interface SearchServerPricesServerPricesGetParams {
     | "us-east-1"
     | "us-east-2"
     | "us-west-1"
-    | "us-west-2"
-    | "1610"
-    | "1220"
-    | "1370"
-    | "1250"
-    | "1390"
-    | "1410"
-    | "1320"
-    | "1470"
-    | "1260"
-    | "1440"
-    | "1280"
-    | "1480"
-    | "1450"
-    | "1350"
-    | "1540"
-    | "1100"
-    | "1590"
-    | "1570"
-    | "1290"
-    | "1300"
-    | "1340"
-    | "1380"
-    | "1510"
-    | "1520"
-    | "1580"
-    | "1600"
-    | "1560"
-    | "1330"
-    | "1460"
-    | "1310"
-    | "1490"
-    | "1000"
-    | "1230"
-    | "1270"
-    | "1530"
-    | "1550"
-    | "1210"
-    | "1360"
-    | "1420"
-    | "1430"
-    | "2"
-    | "3"
-    | "4"
-    | "5"
-    | "6";
+    | "us-west-2";
   /**
    * Compliance Framework id
    * Compliance framework implemented at the vendor.
    */
-  compliance_framework?: "hipaa" | "soc2t2" | "iso27001";
+  compliance_framework?: "hipaa" | "iso27001" | "soc2t2";
   /**
    * Storage Size
    * Minimum amount of storage (GBs) attached to the server.
@@ -2613,8 +2623,8 @@ export interface SearchServerPricesServerPricesGetParams {
     | "ID"
     | "IE"
     | "IL"
-    | "IT"
     | "IN"
+    | "IT"
     | "JP"
     | "KR"
     | "NL"

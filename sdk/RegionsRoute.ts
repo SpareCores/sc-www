@@ -26,7 +26,7 @@ export namespace Regions {
        * Vendor id
        * Identifier of the cloud provider vendor.
        */
-      vendor?: "hcloud" | "aws" | "gcp";
+      vendor?: "aws" | "gcp" | "hcloud";
     };
     export type RequestBody = never;
     export type RequestHeaders = {};
