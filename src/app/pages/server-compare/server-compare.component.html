@@ -29,59 +29,83 @@
       <table class="items_table">
         <thead>
           <tr>
-            <th>
+            <th style="max-width: 250px; width: 250px">
             </th>
-            <th *ngFor="let item of servers">
+            <th *ngFor="let item of servers" [style]="getStyle()">
               {{toUpper(item.display_name)}}
             </th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let column of fields; let i = index" >
+          <tr>
+          <td>
+            Vendor
+          </td>
+          <ng-container *ngFor="let item of servers">
             <td>
-             {{column.name}}
+              <div *ngIf="item.vendor.logo" class="w-9 h-9 px-1 py-1 bg-white rounded-lg">
+                <img [src]="item.vendor.logo" alt="{{item.vendor.name}} logo" >
+              </div>
+              <div *ngIf="!item.vendor.logo" class="text-white text-sm">
+                  {{item.vendor.name}}
+              </div>
             </td>
-            <ng-container *ngFor="let item of servers">
-              <td *ngIf="column.key === 'vendor'" >
-                <div *ngIf="item.vendor.logo" class="w-9 h-9 px-1 py-1 bg-white rounded-lg">
-                  <img [src]="item.vendor.logo" alt="{{item.vendor.name}} logo" >
-                </div>
-                <div *ngIf="!item.vendor.logo" class="text-white text-sm">
-                    {{item.vendor.name}}
-                </div>
-              </td>
-              <td *ngIf="column.key === 'processor'">
-                <div class="text-sm text-white">{{item.cpu_cores || item.vcpus}}x {{item.cpu_architecture}}</div>
-                <div
-                  *ngIf="item.cpu_cores && item.cpu_speed"
-                  class="text-xs text-white flex gap-1">
-                  <span>{{item.cpu_cores}} cores at {{item.cpu_speed}} Ghz</span>
-                </div>
-              </td>
-              <td *ngIf="column.key === 'memory'">
-                {{getMemory(item)}}
-              </td>
-              <td *ngIf="column.key === 'storage'">
-                <div class="text-sm text-white">{{getStorage(item)}}</div>
-                <div
-                  *ngIf="item.storage_type"
-                  class="text-xs text-white">
-                  <span>{{item.storage_type}}</span>
-                </div>
-              </td>
-              <td *ngIf="column.key === 'gpu'">
-                <div class="text-sm text-white">{{item.gpu_count}}</div>
-                <div
-                  *ngIf="item.gpu_model"
-                  class="text-xs text-white flex gap-1">
-                  <span>{{item.gpu_model}}</span>
-                </div>
-              </td>
-              <td *ngIf="column.key === 'gpu_memory'">
-                {{getGPUMemory(item)}}
-              </td>
-            </ng-container>
+          </ng-container>
           </tr>
+          <ng-container *ngFor="let category of instancePropertyCategories">
+            <tr *ngFor="let column of category.properties; let i = index" >
+              <td>
+                {{column.name}}
+              </td>
+              <ng-container *ngFor="let server of servers">
+                <td>
+                  {{getProperty(column.id, server)}}
+                </td>
+              </ng-container>
+              <!--
+              <ng-container *ngFor="let item of servers">
+                <td *ngIf="column.key === 'vendor'" >
+                  <div *ngIf="item.vendor.logo" class="w-9 h-9 px-1 py-1 bg-white rounded-lg">
+                    <img [src]="item.vendor.logo" alt="{{item.vendor.name}} logo" >
+                  </div>
+                  <div *ngIf="!item.vendor.logo" class="text-white text-sm">
+                      {{item.vendor.name}}
+                  </div>
+                </td>
+                <td *ngIf="column.key === 'processor'">
+                  <div class="text-sm text-white">{{item.cpu_cores || item.vcpus}}x {{item.cpu_architecture}}</div>
+                  <div
+                    *ngIf="item.cpu_cores && item.cpu_speed"
+                    class="text-xs text-white flex gap-1">
+                    <span>{{item.cpu_cores}} cores at {{item.cpu_speed}} Ghz</span>
+                  </div>
+                </td>
+                <td *ngIf="column.key === 'memory'">
+                  {{getMemory(item)}}
+                </td>
+                <td *ngIf="column.key === 'storage'">
+                  <div class="text-sm text-white">{{getStorage(item)}}</div>
+                  <div
+                    *ngIf="item.storage_type"
+                    class="text-xs text-white">
+                    <span>{{item.storage_type}}</span>
+                  </div>
+                </td>
+                <td *ngIf="column.key === 'gpu'">
+                  <div class="text-sm text-white">{{item.gpu_count}}</div>
+                  <div
+                    *ngIf="item.gpu_model"
+                    class="text-xs text-white flex gap-1">
+                    <span>{{item.gpu_model}}</span>
+                  </div>
+                </td>
+                <td *ngIf="column.key === 'gpu_memory'">
+                  {{getGPUMemory(item)}}
+                </td>
+              </ng-container>
+              -->
+            </tr>
+          </ng-container>
           <tr>
             <td>View Server</td>
             <td *ngFor="let item of servers">

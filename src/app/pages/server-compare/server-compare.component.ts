@@ -39,6 +39,16 @@ export class ServerCompareComponent implements OnInit {
 
   clipboardIcon = 'clipboard';
 
+  instanceProperties: any[] = [];
+
+  instancePropertyCategories: any[] = [
+    { name: 'CPU', category: 'cpu', properties: [] },
+    { name: 'Memory', category: 'memory', properties: [] },
+    { name: 'GPU', category: 'gpu', properties: [] },
+    { name: 'Storage', category: 'storage', properties: [] },
+    { name: 'Network', category: 'network', properties: [] },
+  ];
+
   @ViewChild('tooltipDefault') tooltip!: ElementRef;
 
   constructor(
@@ -58,17 +68,41 @@ export class ServerCompareComponent implements OnInit {
       const param = params['instances'];
       if(param){
           const decodedParams = JSON.parse(atob(param));
-          let promises: Promise<any>[] = [];
+          let promises: Promise<any>[] = [
+            this.keeperAPI.getServerMeta()
+          ];
           decodedParams?.forEach((instance: any) => {
             promises.push(
               this.keeperAPI.getServer(instance.vendor, instance.server)
             );
           });
           Promise.all(promises).then((data) => {
-            data?.forEach((server: any) => {
-              this.servers.push(server.body);
-              console.log(server.body);
+            this.instanceProperties = data[0].body.fields;
+
+            console.log(this.instanceProperties);
+
+            this.instancePropertyCategories.forEach((c) => {
+              c.properties = [];
             });
+
+            for(let i = 1; i < data.length; i++){
+              this.servers.push(data[i].body);
+              console.log(data[i].body);
+            }
+
+            this.instanceProperties.forEach((p: any) => {
+              const group = this.instancePropertyCategories.find((g) => g.category === p.category);
+              const hasValue =
+                this.servers.some((s: any) =>
+                  s[p.id] !== undefined &&
+                  s[p.id] !== null &&
+                  s[p.id] !== '' &&
+                  (!Array.isArray(s[p.id]) || s[p.id].length > 0));
+              if(group && hasValue) {
+                group.properties.push(p);
+              }
+            });
+
             this.isLoading = false;
           });
       }
@@ -109,6 +143,40 @@ export class ServerCompareComponent implements OnInit {
     return `${(item.storage_size / 1000).toFixed(1)} TB`;
   }
 
+  getProperty(name: string, server: ServerPKsWithPrices) {
+    const prop = (server as any)[name];
+
+    if(prop === undefined || prop === null) {
+      return undefined;
+    }
+
+    if(name === 'memory_amount') {
+      return this.getMemory(server);
+    }
+
+    if(name === 'gpu_memory_min' || name === 'gpu_memory_total') {
+      return this.getGPUMemory(server);
+    }
+
+    if(name === 'storage_size') {
+      return this.getStorage(server);
+    }
+
+    if( typeof prop === 'number' || typeof prop === 'string') {
+      return prop;
+    }
+    if(Array.isArray(prop)) {
+      // if the items are Objects, use JSON stringify
+      if(prop.length > 0 && typeof prop[0] === 'object') {
+        return prop.map((p: any) => JSON.stringify(p)).join(', ');
+      } else {
+        return prop.join(', ');
+      }
+    }
+
+    return '-';
+  }
+
   viewServer(server: ServerPKsWithPrices) {
     window.open(`/server/${server.vendor_id}/${server.server_id}`, '_blank');
   }
@@ -130,6 +198,10 @@ export class ServerCompareComponent implements OnInit {
     const tooltip = this.tooltip.nativeElement;
     tooltip.style.display = 'none';
     tooltip.style.opacity = '0';
+  }
+
+  getStyle() {
+    return `width: ${100 / (this.servers.length + 1)}%; max-width: ${100 / (this.servers.length + 1)}%;`
   }
 
 }

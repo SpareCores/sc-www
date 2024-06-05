@@ -60,8 +60,6 @@ export class ServerDetailsComponent implements OnInit {
   regionDropdown: any;
   regionFilters: any[] = [];
 
-
-
   similarByFamily: Server[] = [];
   similarByPerformance: Server[] = [];
 
@@ -90,8 +88,8 @@ export class ServerDetailsComponent implements OnInit {
   ];
   selectedCompressMethod = this.compressMethods[0];
 
-  geekScoreSingle: number = 0;
-  geekScoreMulti: number = 0;
+  geekScoreSingle: string = '0';
+  geekScoreMulti: string = '0';
 
   barChartOptions: ChartConfiguration<'bar'>['options'] = barChartOptions;
   barChartType = 'bar' as const;
@@ -114,7 +112,7 @@ export class ServerDetailsComponent implements OnInit {
   lineChartDataCompress: ChartData<'line'> | undefined = undefined;
 
   barChartOptionsSSL: ChartConfiguration<'bar'>['options'] = barChartOptionsSSL;
-  barChartDataSSL: ChartData<'bar'> = JSON.parse(JSON.stringify(barChartDataEmpty));
+  barChartDataSSL: ChartData<'bar'> | undefined = undefined;
 
   @ViewChild('tooltipDefault') tooltip!: ElementRef;
 
@@ -689,7 +687,11 @@ export class ServerDetailsComponent implements OnInit {
     let data = this.generateLineChart('openssl', 'block_size', 'algo', false);
 
     console.log('openSSL', data);
-    this.barChartDataSSL = { labels: data.labels, datasets: data.datasets };
+    if(data) {
+      this.barChartDataSSL = { labels: data.labels, datasets: data.datasets };
+    } else {
+      this.barChartDataSSL = undefined;
+    }
 
     this.generateCompressChart();
     this.generateGeekbenchChart();
@@ -784,8 +786,8 @@ export class ServerDetailsComponent implements OnInit {
       const geekBenchScore = dataSet.find(x => (x.benchmark_id as string).includes('geekbench:score'));
 
       if(geekBenchScore && geekBenchScore.benchmarks.length) {
-        this.geekScoreSingle = geekBenchScore.benchmarks.find((x: any) => x.config.cores === 'Single-Core Performance')?.score || 0;
-        this.geekScoreMulti = geekBenchScore.benchmarks.find((x: any) => x.config.cores === 'Multi-Core Performance')?.score || 0;
+        this.geekScoreSingle = this.numberWithCommas(geekBenchScore.benchmarks.find((x: any) => x.config.cores === 'Single-Core Performance')?.score || 0);
+        this.geekScoreMulti = this.numberWithCommas(geekBenchScore.benchmarks.find((x: any) => x.config.cores === 'Multi-Core Performance')?.score || 0);
       }
 
       labels = dataSet.filter(x => x.benchmark_id !== 'geekbench:score').map(x => x.benchmark_id);
@@ -836,5 +838,9 @@ export class ServerDetailsComponent implements OnInit {
       return undefined;
     }
 
+  }
+
+  public numberWithCommas(x: number) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
 }
