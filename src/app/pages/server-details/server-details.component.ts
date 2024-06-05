@@ -84,11 +84,11 @@ export class ServerDetailsComponent implements OnInit {
   // benchmark charts
   compressDropdown: any;
   compressMethods: any[] = [
-    { name: 'Compress', key: 'compress' },
-    { name: 'Decompress', key: 'decompress' },
-    { name: 'Ratio', key: 'ratio' }
+    { name: 'Compress', key: 'compression_text:compress' },
+    { name: 'Decompress', key: 'compression_text:decompress' },
+    { name: 'Ratio', key: 'compression_text:ratio' }
   ];
-  selectedCompressMethod = 'compress';
+  selectedCompressMethod = this.compressMethods[0];
 
   geekScoreSingle: number = 0;
   geekScoreMulti: number = 0;
@@ -625,7 +625,21 @@ export class ServerDetailsComponent implements OnInit {
     if(content) {
       const tooltip = this.tooltip.nativeElement;
       const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
-      tooltip.style.left = `${el.target.getBoundingClientRect().left - 25}px`;
+      tooltip.style.left = `${el.target.getBoundingClientRect().right + 5}px`;
+      tooltip.style.top = `${el.target.getBoundingClientRect().top - 45 + scrollPosition}px`;
+      tooltip.style.display = 'block';
+      tooltip.style.opacity = '1';
+
+      this.tooltipContent = content;
+    }
+  }
+
+  showTooltipChart(el: any, type: string) {
+    let content = this.benchmarkMeta.find((b: any) => b.benchmark_id === type)?.description;
+    if(content) {
+      const tooltip = this.tooltip.nativeElement;
+      const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+      tooltip.style.left = `${el.target.getBoundingClientRect().right + 5}px`;
       tooltip.style.top = `${el.target.getBoundingClientRect().top - 45 + scrollPosition}px`;
       tooltip.style.display = 'block';
       tooltip.style.opacity = '1';
@@ -657,7 +671,7 @@ export class ServerDetailsComponent implements OnInit {
     return '-';
   }
 
-  refreshCompressChart(chart: string) {
+  refreshCompressChart(chart: any) {
     this.selectedCompressMethod = chart;
     this.generateCompressChart();
   }
@@ -683,16 +697,16 @@ export class ServerDetailsComponent implements OnInit {
 
   generateCompressChart() {
     let data: any;
-    switch(this.selectedCompressMethod) {
-      case 'compress':
+    switch(this.selectedCompressMethod.key) {
+      case 'compression_text:compress':
         data = this.generateLineChart('compression_text:compress', 'algo', 'compression_level');
         this.lineChartOptionsCompress = lineChartOptionsComp;
         break;
-      case 'decompress':
+      case 'compression_text:decompress':
         data = this.generateLineChart('compression_text:decompress', 'algo', 'compression_level');
         this.lineChartOptionsCompress = lineChartOptionsComp;
         break;
-      case 'ratio':
+      case 'compression_text:ratio':
         data = this.generateLineChart('compression_text:ratio', 'algo', 'compression_level');
         this.lineChartOptionsCompress = lineChartOptionsCompRatio;
         break;

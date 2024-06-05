@@ -226,7 +226,14 @@
       </div>
 
       <div class="block_half">
-        <h3 class="text-2xl" >Memory bandwidth</h3>
+        <h3 class="text-2xl flex items-center gap-2" >Memory bandwidth
+          <lucide-icon
+            name="info"
+            class="h-4 w-4 text-gray-200"
+            (mouseenter)="showTooltipChart($event, 'bw_mem')"
+            (mouseleave)="hideTooltip()">
+          </lucide-icon>
+        </h3>
         <div *ngIf="isBrowser()">
           <div chartType="bar">
             <canvas
@@ -242,7 +249,15 @@
       </div>
       <div class="block_half" *ngIf="lineChartDataCompress">
         <div class="flex justify-between items-center">
-          <h3 class="text-2xl" >Compression</h3>
+          <h3 class="text-2xl flex items-center gap-2" >
+            Compression
+            <lucide-icon
+              name="info"
+              class="h-4 w-4 text-gray-200"
+              (mouseenter)="showTooltipChart($event, selectedCompressMethod.key)"
+              (mouseleave)="hideTooltip()">
+            </lucide-icon>
+          </h3>
           <div class="flex gap-4">
             <button
               id="compress_method_button"
@@ -251,7 +266,7 @@
               class="dropdown_button"
               type="button">
               <div class="px-3 py-2">
-                Method
+                {{selectedCompressMethod.name}}
               </div>
               <div class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
                 <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
@@ -274,7 +289,15 @@
       </div>
       <div class="block_half_taller" *ngIf="radarChartDataGeekSingle">
         <div class="flex justify-between items-center">
-          <h3 class="text-2xl" >Geekbench Single-Core </h3>
+          <h3 class="text-2xl flex items-center gap-2" >
+            Geekbench Single-Core
+            <lucide-icon
+              name="info"
+              class="h-4 w-4 text-gray-200"
+              (mouseenter)="showTooltipChart($event, 'geekbench:score')"
+              (mouseleave)="hideTooltip()">
+            </lucide-icon>
+          </h3>
           <div class="py-2 px-2 border-emerald-400 border-solid rounded-lg border">
             Score: {{geekScoreSingle}}
           </div>
@@ -296,7 +319,15 @@
       </div>
       <div class="block_half_taller" *ngIf="radarChartDataGeekMulti">
         <div class="flex justify-between items-center">
-          <h3 class="text-2xl" >Geekbench Multi-Core </h3>
+          <h3 class="text-2xl flex items-center gap-2" >
+            Geekbench Multi-Core
+            <lucide-icon
+              name="info"
+              class="h-4 w-4 text-gray-200"
+              (mouseenter)="showTooltipChart($event, 'geekbench:score')"
+              (mouseleave)="hideTooltip()">
+            </lucide-icon>
+          </h3>
           <div class="py-2 px-2 border-emerald-400 border-solid rounded-lg border">
             Score: {{geekScoreMulti}}
           </div>
@@ -317,7 +348,15 @@
 
       <div class="block_full">
         <div class="flex justify-between items-center">
-          <h3 class="text-2xl" >OpenSSL Performance</h3>
+          <h3 class="text-2xl flex items-center gap-2" >
+            OpenSSL
+            <lucide-icon
+              name="info"
+              class="h-4 w-4 text-gray-200"
+              (mouseenter)="showTooltipChart($event, 'openssl')"
+              (mouseleave)="hideTooltip()">
+            </lucide-icon>
+          </h3>
         </div>
         <div *ngIf="isBrowser()">
           <div chartType="bar">
@@ -452,7 +491,7 @@
     <li *ngFor="let item of compressMethods" class="flex py-1 gap-2 items-center">
         <div
           class="text-emerald-400 hover:text-emerald-500 cursor-pointer font-bold ml-2"
-          (click)="refreshCompressChart(item.key)">
+          (click)="refreshCompressChart(item)">
           {{item.name}}
         </div>
     </li>
@@ -462,6 +501,6 @@
 <div id="tooltipDefault"
   #tooltipDefault
   style="opacity: 0;"
-  class="absolute z-10 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-secondary border border-solid border-emerald-400 rounded-lg">
+  class="max-w-225 absolute z-10 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-secondary border border-solid border-emerald-400 rounded-lg">
   {{tooltipContent}}
 </div>
