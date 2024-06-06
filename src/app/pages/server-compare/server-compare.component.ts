@@ -104,6 +104,9 @@ export class ServerCompareComponent implements OnInit {
             });
 
             this.isLoading = false;
+          }).catch((err) => {
+            console.error(err);
+            this.isLoading = false;
           });
       }
     });

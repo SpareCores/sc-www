@@ -12,7 +12,7 @@ import { FormsModule } from '@angular/forms';
 import { Dropdown, DropdownOptions, initFlowbite } from 'flowbite';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData } from 'chart.js';
-import { barChartDataEmpty, barChartOptions, barChartOptionsSSL, lineChartOptionsBWM, lineChartOptionsComp, lineChartOptionsCompRatio, radarChartOptions, radatDatasetColors } from './chartOptions';
+import { barChartDataEmpty, barChartOptions, barChartOptionsSSL, lineChartOptionsBWM, lineChartOptionsComp, lineChartOptionsCompRatio, radarChartOptions, radarDatasetColors } from './chartOptions';
 
 const options: DropdownOptions = {
   placement: 'bottom',
@@ -749,8 +749,8 @@ export class ServerDetailsComponent implements OnInit {
             data: [],
             label: label,
             spanGaps: isLineChart,
-            borderColor: radatDatasetColors[index].borderColor,
-            backgroundColor: isLineChart ? radatDatasetColors[index].backgroundColor : radatDatasetColors[index].borderColor };
+            borderColor: radarDatasetColors[index].borderColor,
+            backgroundColor: isLineChart ? radarDatasetColors[index].backgroundColor : radarDatasetColors[index].borderColor };
           })
       };
 
@@ -803,8 +803,8 @@ export class ServerDetailsComponent implements OnInit {
           return {
             data: [],
             label: label,
-            borderColor: radatDatasetColors[index].borderColor,
-            backgroundColor: radatDatasetColors[index].backgroundColor};
+            borderColor: radarDatasetColors[index].borderColor,
+            backgroundColor: radarDatasetColors[index].backgroundColor};
           })
       };
 

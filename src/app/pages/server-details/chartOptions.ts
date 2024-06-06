@@ -89,7 +89,7 @@ export const radarChartOptions: ChartConfiguration<'radar'>['options'] = {
   },
 };
 
-export const radatDatasetColors = [
+export const radarDatasetColors = [
   { borderColor: '#34D399', backgroundColor: '#34D39933'},
   { borderColor: '#E5E7EB', backgroundColor: '#E5E7EB33'},
   { borderColor: '#38BDF8', backgroundColor: '#38BDF833'},
