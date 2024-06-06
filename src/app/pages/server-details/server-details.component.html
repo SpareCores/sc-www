@@ -3,10 +3,14 @@
   <div class="content pt-16 pb-16 text-white">
     <app-breadcrumbs [segments]="breadcrumbs"></app-breadcrumbs>
 
-    <div *ngIf="serverDetails" class="mx-2 xl:mx-0 flex flex-wrap justify-between rounded-lg gap-8 px-6 py-6 bg-secondary border-emerald-400 border boder-solid mt-12"  >
-      <div class="flex gap-12 lg:w-3/5 w-full" >
-        <div class="min-w-20 w-20 h-20 px-1 py-1 bg-white rounded-lg my-auto">
-          <img src="{{serverDetails.vendor.logo}}" alt="logo">
+    <div *ngIf="serverDetails"
+      class="mx-2 xl:mx-0 flex flex-wrap justify-between rounded-lg gap-8 px-6 py-6 bg-secondary border-emerald-400 border boder-solid mt-12"  >
+      <div class="flex gap-8 flex-grow lg:w-1/2 w-full" >
+        <div class="flex gap-4 flex-col min-w-32">
+          <div class="min-w-20 w-20 h-20 bg-white rounded-lg mx-auto">
+            <img src="{{serverDetails.vendor.logo}}" alt="logo">
+          </div>
+
         </div>
         <div class="flex flex-col gap-3">
           <h1 class="text-2xl" > <span class="text-emerald-400 font-bold">{{serverDetails.display_name}}</span> by {{serverDetails.vendor.name}} </h1>
@@ -25,17 +29,36 @@
           </div>
         </div>
       </div>
-      <div class="w-full lg:w-1/4">
-        <div *ngFor="let item of features, let i = index">
-          <div *ngIf="i !== 0" class="w-full h-4 mb-3 border-b border-gray-400 border-solid" ></div>
-          <div class="flex gap-2 text-xl items-center text-gray-200">
-            <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6">
-            <lucide-icon name="check" class="h-4 w-4"></lucide-icon>
+      <div class="w-full lg:w-2/5 flex ">
+        <div class="w-1/2 mr-8">
+          <div *ngFor="let item of features, let i = index">
+            <div *ngIf="i !== 0" class="w-full h-4 mb-3 border-b border-gray-400 border-solid" ></div>
+            <div class="flex gap-2 text-xl items-center text-gray-200">
+              <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6">
+              <lucide-icon name="check" class="h-4 w-4"></lucide-icon>
+              </div>
+              <b> {{item.value}} </b>
+              <span> {{item.name}} </span>
             </div>
-            <b> {{item.value}} </b>
-            <span> {{item.name}} </span>
           </div>
         </div>
+
+        <div class="border-r border-solid border-emerald-400 h-full w-1" > </div>
+
+        <div class="w-1/2 flex flex-col gap-4 text-center ml-8">
+          <div class="text-white text-3xl font-semibold" >Spare <span class="text-emerald-400 "> SC</span>ore </div>
+          <div class="flex flex-col">
+            <div class=" text-gray-200">
+              <span class="text-3xl text-emerald-400 font-semibold">{{getBenchmark(true)}}</span><br>
+              (All-cores)
+            </div>
+            <div class="text-gray-200" >
+              <span class="text-xl">{{getBenchmark(false)}}</span><br>
+              (Single-core)
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -66,7 +89,7 @@
                   </lucide-icon>
                 </div>
               </td>
-              <td> {{getProperty(property.id)}} </td>
+              <td> {{getProperty(property)}} </td>
             </tr>
           </tbody>
         </table>
@@ -221,7 +244,7 @@
         </div>
       </div>
 
-      <div class="my-2 w-full">
+      <div class="my-2 w-full" *ngIf="serverDetails.benchmark_scores?.length">
         <h2 class="text-3xl font-bold"> Performance </h2>
       </div>
 
@@ -294,8 +317,8 @@
             <lucide-icon
               name="info"
               class="h-4 w-4 text-gray-200"
-              (mouseenter)="showTooltipChart($event, 'geekbench:score')"
-              (mouseleave)="hideTooltip()">
+              (mouseenter)="showTooltipGB($event)"
+              (mouseleave)="hideTooltipGB()">
             </lucide-icon>
           </h3>
           <div class="py-2 px-2 border-emerald-400 border-solid rounded-lg border">
@@ -324,8 +347,8 @@
             <lucide-icon
               name="info"
               class="h-4 w-4 text-gray-200"
-              (mouseenter)="showTooltipChart($event, 'geekbench:score')"
-              (mouseleave)="hideTooltip()">
+              (mouseenter)="showTooltipGB($event)"
+              (mouseleave)="hideTooltipGB()">
             </lucide-icon>
           </h3>
           <div class="py-2 px-2 border-emerald-400 border-solid rounded-lg border">
@@ -503,4 +526,11 @@
   style="opacity: 0;"
   class="max-w-225 absolute z-10 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-secondary border border-solid border-emerald-400 rounded-lg">
   {{tooltipContent}}
+</div>
+
+<div id="tooltipGeekbench"
+  #tooltipGeekbench
+  style="opacity: 0;"
+  class="absolute z-10 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-secondary border border-solid border-emerald-400 rounded-lg">
+  <div [innerHTML]="geekbenchHTML" ></div>
 </div>

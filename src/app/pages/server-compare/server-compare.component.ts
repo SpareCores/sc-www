@@ -79,15 +79,12 @@ export class ServerCompareComponent implements OnInit {
           Promise.all(promises).then((data) => {
             this.instanceProperties = data[0].body.fields;
 
-            console.log(this.instanceProperties);
-
             this.instancePropertyCategories.forEach((c) => {
               c.properties = [];
             });
 
             for(let i = 1; i < data.length; i++){
               this.servers.push(data[i].body);
-              console.log(data[i].body);
             }
 
             this.instanceProperties.forEach((p: any) => {
@@ -97,7 +94,8 @@ export class ServerCompareComponent implements OnInit {
                   s[p.id] !== undefined &&
                   s[p.id] !== null &&
                   s[p.id] !== '' &&
-                  (!Array.isArray(s[p.id]) || s[p.id].length > 0));
+                  !Array.isArray(s[p.id]));
+
               if(group && hasValue) {
                 group.properties.push(p);
               }
@@ -127,7 +125,6 @@ export class ServerCompareComponent implements OnInit {
     setTimeout(() => {
       this.clipboardIcon = 'clipboard';
     }, 3000);
-
   }
 
   getMemory(item: ServerPKsWithPrices) {
@@ -146,7 +143,8 @@ export class ServerCompareComponent implements OnInit {
     return `${(item.storage_size / 1000).toFixed(1)} TB`;
   }
 
-  getProperty(name: string, server: ServerPKsWithPrices) {
+  getProperty(column: any, server: ServerPKsWithPrices) {
+    const name = column.id
     const prop = (server as any)[name];
 
     if(prop === undefined || prop === null) {
@@ -165,19 +163,43 @@ export class ServerCompareComponent implements OnInit {
       return this.getStorage(server);
     }
 
-    if( typeof prop === 'number' || typeof prop === 'string') {
+    if( typeof prop === 'number') {
+      return `${prop} ${column.unit || ''}`;
+    }
+
+    if( typeof prop === 'string') {
       return prop;
     }
     if(Array.isArray(prop)) {
-      // if the items are Objects, use JSON stringify
+      // if the items are Objects, return undefined for now
       if(prop.length > 0 && typeof prop[0] === 'object') {
-        return prop.map((p: any) => JSON.stringify(p)).join(', ');
+        return undefined;
       } else {
         return prop.join(', ');
       }
     }
 
     return '-';
+  }
+
+  getBestCellStyle(name: string, server: ServerPKsWithPrices) {
+    const prop = (server as any)[name];
+
+    if(prop === undefined || prop === null) {
+      return '';
+    }
+
+    if( typeof prop === 'number') {
+      let isBest = true;
+      this.servers?.forEach((s: any) => {
+        if(s[name] > prop) {
+          isBest = false;
+        }
+      });
+      return isBest ? 'font-weight: 600; color: #34D399' : '';
+    }
+
+    return '';
   }
 
   viewServer(server: ServerPKsWithPrices) {
@@ -205,6 +227,14 @@ export class ServerCompareComponent implements OnInit {
 
   getStyle() {
     return `width: ${100 / (this.servers.length + 1)}%; max-width: ${100 / (this.servers.length + 1)}%;`
+  }
+
+  getBenchmark(server: ServerPKsWithPrices, isMulti: boolean) {
+    if(!isMulti) {
+      return server.benchmark_scores?.find((b) => b.benchmark_id === 'stress_ng:cpu_all' && (b.config as any)?.cores === 1)?.score?.toFixed(0) || '-';
+    } else {
+      return server.benchmark_scores?.find((b) => b.benchmark_id === 'stress_ng:cpu_all' && (b.config as any)?.cores !== 1)?.score?.toFixed(0) || '-';
+    }
   }
 
 }

@@ -13,6 +13,12 @@ import { Dropdown, DropdownOptions, initFlowbite } from 'flowbite';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData } from 'chart.js';
 import { barChartDataEmpty, barChartOptions, barChartOptionsSSL, lineChartOptionsBWM, lineChartOptionsComp, lineChartOptionsCompRatio, radarChartOptions, radarDatasetColors } from './chartOptions';
+import { Chart } from 'chart.js';
+import annotationPlugin from 'chartjs-plugin-annotation';
+import { DomSanitizer } from '@angular/platform-browser';
+
+Chart.register(annotationPlugin);
+
 
 const options: DropdownOptions = {
   placement: 'bottom',
@@ -114,12 +120,16 @@ export class ServerDetailsComponent implements OnInit {
   barChartOptionsSSL: ChartConfiguration<'bar'>['options'] = barChartOptionsSSL;
   barChartDataSSL: ChartData<'bar'> | undefined = undefined;
 
+  geekbenchHTML: any;
+
   @ViewChild('tooltipDefault') tooltip!: ElementRef;
+  @ViewChild('tooltipGeekbench') tooltipGB!: ElementRef;
 
   constructor(@Inject(PLATFORM_ID) private platformId: object,
               private route: ActivatedRoute,
               private keepreAPI: KeeperAPIService,
-              private SEOHandler: SeoHandlerService) {
+              private SEOHandler: SeoHandlerService,
+              private senitizer: DomSanitizer) {
 
   }
 
@@ -133,14 +143,9 @@ export class ServerDetailsComponent implements OnInit {
         this.keepreAPI.getServerBenchmarkMeta(),
         this.keepreAPI.getServer(vendor, id)
       ]).then((dataAll) => {
-      }).catch((error) => {
-        console.error('Failed to load server data:', error);
-      });
         this.instanceProperties = dataAll[0].body?.fields || [];
 
         this.benchmarkMeta = dataAll[1].body || {};
-
-        console.log(dataAll);
 
         if(dataAll[2].body){
           this.serverDetails = dataAll[2].body as any;
@@ -167,7 +172,7 @@ export class ServerDetailsComponent implements OnInit {
 
           this.instanceProperties.forEach((p: any) => {
             const group = this.instancePropertyCategories.find((g) => g.category === p.category);
-            const value = this.getProperty(p.id);
+            const value = this.getProperty(p);
             if(group && value) {
               group.properties.push(p);
             }
@@ -182,10 +187,6 @@ export class ServerDetailsComponent implements OnInit {
               group.benchmarks.push(b);
             }
           });
-
-
-          console.log(this.benchmarksByCategory);
-
 
           this.regionFilters = [];
           this.serverDetails.prices?.sort((a, b) => a.price - b.price);
@@ -284,6 +285,8 @@ export class ServerDetailsComponent implements OnInit {
                 });
 
             }
+          }).catch((error) => {
+            console.error('Failed to load server data:', error);
           });
 
           if(isPlatformBrowser(this.platformId)) {
@@ -377,7 +380,8 @@ export class ServerDetailsComponent implements OnInit {
   }
 
   getMemory(memory: number | undefined = undefined) {
-    return ((memory || this.serverDetails.memory_amount || 0) / 1024).toFixed(1) + 'GB';
+    const memoryAmount = memory || this.serverDetails.memory_amount || 0;
+    return ((memoryAmount) / 1024).toFixed((memoryAmount ? 0 : 1)) + 'GB';
   }
 
   getStorage() {
@@ -453,7 +457,7 @@ export class ServerDetailsComponent implements OnInit {
         zone.ondemand.price = Math.round(zone.ondemand.price / zone.ondemand.count * 1000000) / 1000000;
     });
 
-    this.availabilityRegions.sort((a, b) => a.region_id - b.region_id);
+    this.availabilityRegions.sort((a, b) => a['ondemand'].price - b['ondemand'].price);
 
     const series: ChartData<'bar'> = {
       labels: [],
@@ -526,7 +530,7 @@ export class ServerDetailsComponent implements OnInit {
         zone.ondemand.price = Math.round(zone.ondemand.price / zone.ondemand.count * 1000000) / 1000000;
     });
 
-    this.availabilityZones.sort((a, b) => a.region_id - b.region_id);
+    this.availabilityZones.sort((a, b) => a['ondemand'].price - b['ondemand'].price);
 
     const series: ChartData<'bar'> = {
       labels: [],
@@ -649,20 +653,39 @@ export class ServerDetailsComponent implements OnInit {
     }
   }
 
+  showTooltipGB(el: any) {
+      const tooltip = this.tooltipGB.nativeElement;
+      const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+      tooltip.style.left = `${20}px`;
+      tooltip.style.top = `${el.target.getBoundingClientRect().bottom + 5 + scrollPosition}px`;
+      tooltip.style.display = 'block';
+      tooltip.style.opacity = '1';
+  }
+
   hideTooltip() {
     const tooltip = this.tooltip.nativeElement;
     tooltip.style.display = 'none';
     tooltip.style.opacity = '0';
   }
 
-  getProperty(name: string) {
+  hideTooltipGB() {
+    const tooltip = this.tooltipGB.nativeElement;
+    tooltip.style.display = 'none';
+    tooltip.style.opacity = '0';
+  }
+
+  getProperty(column: any) {
+    const name = column.id
     const prop = (this.serverDetails as any)[name];
 
     if(prop === undefined || prop === null) {
       return undefined;
     }
 
-    if( typeof prop === 'number' || typeof prop === 'string') {
+    if( typeof prop === 'number' ) {
+      return `${prop} ${column.unit || ''}`;
+    }
+    if( typeof prop === 'string') {
       return prop;
     }
     if(Array.isArray(prop)) {
@@ -683,13 +706,89 @@ export class ServerDetailsComponent implements OnInit {
 
     if(BWMemData) {
       this.lineChartDataBWmem = { labels: BWMemData.labels, datasets: BWMemData.datasets };
+
+      if(this.lineChartOptionsBWMem?.plugins?.annotation) {
+        if(this.serverDetails.cpu_l1_cache || this.serverDetails.cpu_l2_cache || this.serverDetails.cpu_l3_cache) {
+          let annotations: any = { };
+          if(this.serverDetails.cpu_l1_cache) {
+            annotations.line1 = {
+                  type: 'line',
+                  scaleID: 'x',
+                  borderWidth: 3,
+                  borderColor: '#EF4444',
+                  value: this.serverDetails.cpu_l1_cache / (1024 * 1024),
+                  label: {
+                    rotation: 'auto',
+                    position: 'end',
+                    content: 'L1 Cache',
+                    backgroundColor: '#EF4444',
+                    display: true
+                  }
+                }
+          }
+          if(this.serverDetails.cpu_l2_cache) {
+            annotations.line2 = {
+                  type: 'line',
+                  scaleID: 'x',
+                  borderWidth: 3,
+                  borderColor: '#EF4444',
+                  value: this.serverDetails.cpu_l2_cache / (1024 * 1024),
+                  label: {
+                    rotation: 'auto',
+                    position: 'start',
+                    content: 'L2 Cache',
+                    backgroundColor: '#EF4444',
+                    display: true
+                  }
+                }
+          }
+          if(this.serverDetails.cpu_l3_cache) {
+            annotations.line3 = {
+                  type: 'line',
+                  scaleID: 'x',
+                  borderWidth: 3,
+                  borderColor: '#EF4444',
+                  value: this.serverDetails.cpu_l3_cache / (1024 * 1024),
+                  label: {
+                    rotation: 'auto',
+                    position: 'start',
+                    content: 'L3 Cache',
+                    backgroundColor: '#EF4444',
+                    display: true
+                  }
+                }
+          }
+          this.lineChartOptionsBWMem.plugins.annotation = {
+            annotations: annotations
+          };
+        }
+        /*
+        this.lineChartOptionsBWMem.plugins.annotation = {
+            annotations: {
+              line1: {
+                type: 'line',
+                scaleID: 'x',
+                borderWidth: 3,
+                borderColor: 'black',
+                value: 50,
+                label: {
+                  rotation: 'auto',
+                  position: 'start',
+                  backgroundColor: 'black',
+                  content: 'Line at x=90',
+                  display: true
+                }
+              }
+            }
+        }*/
+      }
+
     } else {
       this.lineChartDataBWmem = undefined;
     }
 
     let data = this.generateLineChart('openssl', 'block_size', 'algo', false);
 
-    console.log('openSSL', data);
     if(data) {
       this.barChartDataSSL = { labels: data.labels, datasets: data.datasets };
     } else {
@@ -746,7 +845,7 @@ export class ServerDetailsComponent implements OnInit {
       scales.sort((a, b) => a - b);
 
       let charData: any = {
-        labels: scales.map((s) => s.toString()),
+        labels: scales, //scales.map((s) => s.toString()),
         datasets: labels.map((label: string, index: number) => {
           return {
             data: [],
@@ -768,8 +867,6 @@ export class ServerDetailsComponent implements OnInit {
         });
       });
 
-      console.log(charData);
-
       return charData;
 
     } else {
@@ -781,6 +878,19 @@ export class ServerDetailsComponent implements OnInit {
 
   generateGeekbenchChart() {
     const dataSet = this.benchmarksByCategory?.filter(x => (x.benchmark_id as string).includes('geekbench'));
+
+    this.geekbenchHTML =
+      `<div> The following benchmark scenarios were run using Geekbench 6: </div> <ul> `;
+
+    this.benchmarkMeta.filter((x: any) => x.benchmark_id.includes('geekbench'))?.forEach((data: any) => {
+      const name: string = data.name.replace('Geekbench:', '');
+      const desc = data.description.replace('The score is calibrated against a baseline score of 2,500 (Dell Precision 3460 with a Core i7-12700 processor) as per the Geekbench 6 Benchmark Internals.', '') || '';
+      this.geekbenchHTML += `<li> - ${name}: ${desc} </li>`;
+    });
+
+    this.geekbenchHTML += `</ul>`;
+
+    this.geekbenchHTML = this.senitizer.bypassSecurityTrustHtml(this.geekbenchHTML);
 
     if(dataSet && dataSet.length) {
       let labels: string[] = [];
@@ -822,8 +932,6 @@ export class ServerDetailsComponent implements OnInit {
         });
       });
 
-      console.log('chartdata', charData);
-
       this.radarChartDataGeekMulti = {
         labels: charData.labels,
         datasets: [charData.datasets[0]]
@@ -845,5 +953,13 @@ export class ServerDetailsComponent implements OnInit {
 
   public numberWithCommas(x: number) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+
+  getBenchmark(isMulti: boolean) {
+    if(!isMulti) {
+      return this.serverDetails.benchmark_scores?.find((b) => b.benchmark_id === 'stress_ng:cpu_all' && (b.config as any)?.cores === 1)?.score?.toFixed(0) || '-';
+    } else {
+      return this.serverDetails.benchmark_scores?.find((b) => b.benchmark_id === 'stress_ng:cpu_all' && (b.config as any)?.cores !== 1)?.score?.toFixed(0) || '-';
+    }
   }
 }

@@ -6,7 +6,7 @@ export const  barChartOptions: ChartConfiguration<'bar'>['options'] = {
     x: {
       ticks: {
         color: '#FFF',
-          }
+      }
     },
     y: {
       ticks: {
@@ -29,7 +29,22 @@ export const  barChartOptions: ChartConfiguration<'bar'>['options'] = {
 };
 
 export const  barChartOptionsSSL: ChartConfiguration<'bar'>['options'] = {
-  ...barChartOptions,
+  scales: {
+    ...barChartOptions.scales,
+    y: {
+      ticks: {
+        color: '#FFF',
+      },
+      grid: {
+        color: '#4B5563',
+      },
+      title: {
+        display: true,
+        color: '#FFF',
+        text: 'byte/s',
+      },
+    },
+  },
   plugins: {
     ...barChartOptions.plugins,
     title: {
@@ -76,7 +91,7 @@ export const radarChartOptions: ChartConfiguration<'radar'>['options'] = {
     tooltip:{
       callbacks: {
         label: function(this: TooltipModel<"radar">, tooltipItem: TooltipItem<"radar">) {
-          return (tooltipItem.dataset.data[tooltipItem.dataIndex] as any).tooltip;
+          return (tooltipItem.dataset.data[tooltipItem.dataIndex] as any).value + '; ' + (tooltipItem.dataset.data[tooltipItem.dataIndex] as any).tooltip;
         }
       }
     },
@@ -105,12 +120,51 @@ export const lineChartOptionsBWM: ChartConfiguration<'line'>['options'] = {
     x: {
       ticks: {
         color: '#FFF',
+        autoSkip: false,
+        major: {
+          enabled: true
+        }
       },
       title: {
         display: true,
         color: '#FFF',
         text: 'MB',
       },
+      grid: {
+        color: '#4B5563',
+      },
+      type: 'logarithmic',
+      min: 0,
+      afterBuildTicks: function(scale: any) {
+        scale.ticks = [
+          0.016384,
+          0.262144,
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          256,
+          512
+        ].map(v => ({ value: v, label: v, major: true}));
+      },
+      afterTickToLabelConversion: function(scale: any) {
+        scale.ticks = [
+          0.016384,
+          0.262144,
+          1,
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          256,
+          512
+        ].map(v => ({ value: v, label: v, major: true}));
+      }
     },
     y: {
       ticks: {
@@ -128,6 +182,7 @@ export const lineChartOptionsBWM: ChartConfiguration<'line'>['options'] = {
     },
   },
   plugins: {
+    annotation: {},
     legend: {
       display: true,
       labels: {
