@@ -885,7 +885,11 @@ export class ServerDetailsComponent implements OnInit {
       this.geekbenchHTML += `<li> - ${name}: ${desc} </li>`;
     }
 
-    this.benchmarkMeta.filter((x: any) => x.benchmark_id.includes('geekbench') && x.benchmark_id !== 'geekbench:score')?.forEach((data: any) => {
+    this.benchmarkMeta
+      .filter((x: any) => x.benchmark_id.includes('geekbench') && x.benchmark_id !== 'geekbench:score')
+      .sort((a: any, b: any) => a.name.localeCompare(b.name))
+      ?.forEach((data: any) =>
+      {
       const name: string = data.name.replace('Geekbench:', '');
       const desc = data.description.replace('The score is calibrated against a baseline score of 2,500 (Dell Precision 3460 with a Core i7-12700 processor) as per the Geekbench 6 Benchmark Internals.', '') || '';
       this.geekbenchHTML += `<li> - ${name}: ${desc} </li>`;
