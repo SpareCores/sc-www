@@ -879,10 +879,19 @@ export class ServerDetailsComponent implements OnInit {
   generateGeekbenchChart() {
     const dataSet = this.benchmarksByCategory?.filter(x => (x.benchmark_id as string).includes('geekbench'));
 
-    this.geekbenchHTML =
-      `<div> The following benchmark scenarios were run using Geekbench 6: </div> <ul> `;
 
-    this.benchmarkMeta.filter((x: any) => x.benchmark_id.includes('geekbench'))?.forEach((data: any) => {
+
+    this.geekbenchHTML =
+    `<div> The following benchmark scenarios were run using Geekbench 6: </div> <ul> `;
+
+    let GBScoreText = this.benchmarkMeta.find((x: any) => x.benchmark_id === 'geekbench:score');
+    if(GBScoreText) {
+      const name: string = GBScoreText.name.replace('Geekbench:', '');
+      const desc = GBScoreText.description.replace('The score is calibrated against a baseline score of 2,500 (Dell Precision 3460 with a Core i7-12700 processor) as per the Geekbench 6 Benchmark Internals.', '') || '';
+      this.geekbenchHTML += `<li> - ${name}: ${desc} </li>`;
+    }
+
+    this.benchmarkMeta.filter((x: any) => x.benchmark_id.includes('geekbench') && x.benchmark_id !== 'geekbench:score')?.forEach((data: any) => {
       const name: string = data.name.replace('Geekbench:', '');
       const desc = data.description.replace('The score is calibrated against a baseline score of 2,500 (Dell Precision 3460 with a Core i7-12700 processor) as per the Geekbench 6 Benchmark Internals.', '') || '';
       this.geekbenchHTML += `<li> - ${name}: ${desc} </li>`;
@@ -896,7 +905,7 @@ export class ServerDetailsComponent implements OnInit {
       let labels: string[] = [];
       let scales: string[] = [];
 
-      const geekBenchScore = dataSet.find(x => (x.benchmark_id as string).includes('geekbench:score'));
+      const geekBenchScore = dataSet?.find(x => (x.benchmark_id as string).includes('geekbench:score'));
 
       if(geekBenchScore && geekBenchScore.benchmarks.length) {
         this.geekScoreSingle = this.numberWithCommas(geekBenchScore.benchmarks.find((x: any) => x.config.cores === 'Single-Core Performance')?.score || 0);
