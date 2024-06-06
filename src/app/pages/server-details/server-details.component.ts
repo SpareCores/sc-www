@@ -131,8 +131,11 @@ export class ServerDetailsComponent implements OnInit {
       Promise.all([
         this.keepreAPI.getServerMeta(),
         this.keepreAPI.getServerBenchmarkMeta(),
-        this.keepreAPI.getServer(vendor, id)])
-      .then((dataAll) => {
+        this.keepreAPI.getServer(vendor, id)
+      ]).then((dataAll) => {
+      }).catch((error) => {
+        console.error('Failed to load server data:', error);
+      });
         this.instanceProperties = dataAll[0].body?.fields || [];
 
         this.benchmarkMeta = dataAll[1].body || {};
