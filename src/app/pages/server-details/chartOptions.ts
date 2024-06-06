@@ -29,28 +29,9 @@ export const  barChartOptions: ChartConfiguration<'bar'>['options'] = {
 };
 
 export const  barChartOptionsSSL: ChartConfiguration<'bar'>['options'] = {
-  scales: {
-    x: {
-      ticks: {
-        color: '#FFF',
-          }
-    },
-    y: {
-      ticks: {
-        color: '#FFF',
-      },
-      grid: {
-        color: '#4B5563',
-      },
-    },
-  },
+  ...barChartOptions,
   plugins: {
-    legend: {
-      display: true,
-      labels: {
-        color: '#FFF',
-      },
-    },
+    ...barChartOptions.plugins,
     title: {
       display: true,
       text: 'Block size (byte)',
