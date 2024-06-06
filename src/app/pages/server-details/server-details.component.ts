@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable prefer-const */
 import { Component, ElementRef, Inject, PLATFORM_ID, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
@@ -292,6 +293,18 @@ export class ServerDetailsComponent implements OnInit {
           if(isPlatformBrowser(this.platformId)) {
 
             this.generateBenchmarkCharts();
+
+            // https://github.com/chartjs/Chart.js/issues/5387
+            // TODO: check and remove later
+            document.addEventListener('visibilitychange', event => {
+              if (document.visibilityState === 'visible') {
+                  // keep a instance for the chart
+                 const allCharts = Object.values(Chart.instances);
+                 allCharts?.forEach((chart: any) => {
+                    chart.update();
+                });
+              }
+          })
 
             setTimeout(() => {
               initFlowbite();
@@ -762,25 +775,6 @@ export class ServerDetailsComponent implements OnInit {
             annotations: annotations
           };
         }
-        /*
-        this.lineChartOptionsBWMem.plugins.annotation = {
-            annotations: {
-              line1: {
-                type: 'line',
-                scaleID: 'x',
-                borderWidth: 3,
-                borderColor: 'black',
-                value: 50,
-                label: {
-                  rotation: 'auto',
-                  position: 'start',
-                  backgroundColor: 'black',
-                  content: 'Line at x=90',
-                  display: true
-                }
-              }
-            }
-        }*/
       }
 
     } else {
