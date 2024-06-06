@@ -23,6 +23,11 @@ export namespace Servers {
     export type RequestParams = {};
     export type RequestQuery = {
       /**
+       * Partial name or id
+       * Freetext, case-insensitive search on the server_id, name, api_reference or display_name.
+       */
+      partial_name_or_id?: string | null;
+      /**
        * Processor number
        * Minimum number of virtual CPUs.
        * @min 1
@@ -50,12 +55,12 @@ export namespace Servers {
        * Vendor id
        * Identifier of the cloud provider vendor.
        */
-      vendor?: "hcloud" | "aws" | "gcp";
+      vendor?: "aws" | "gcp" | "hcloud";
       /**
        * Compliance Framework id
        * Compliance framework implemented at the vendor.
        */
-      compliance_framework?: "hipaa" | "soc2t2" | "iso27001";
+      compliance_framework?: "hipaa" | "iso27001" | "soc2t2";
       /**
        * Storage Size
        * Minimum amount of storage (GBs) attached to the server.

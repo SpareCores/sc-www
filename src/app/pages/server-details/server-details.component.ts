@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable prefer-const */
 import { Component, ElementRef, Inject, PLATFORM_ID, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { KeeperAPIService } from '../../services/keeper-api.service';
@@ -11,6 +13,13 @@ import { FormsModule } from '@angular/forms';
 import { Dropdown, DropdownOptions, initFlowbite } from 'flowbite';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData } from 'chart.js';
+import { barChartDataEmpty, barChartOptions, barChartOptionsSSL, lineChartOptionsBWM, lineChartOptionsComp, lineChartOptionsCompRatio, radarChartOptions, radarDatasetColors } from './chartOptions';
+import { Chart } from 'chart.js';
+import annotationPlugin from 'chartjs-plugin-annotation';
+import { DomSanitizer } from '@angular/platform-browser';
+
+Chart.register(annotationPlugin);
+
 
 const options: DropdownOptions = {
   placement: 'bottom',
@@ -58,75 +67,70 @@ export class ServerDetailsComponent implements OnInit {
   regionDropdown: any;
   regionFilters: any[] = [];
 
-  @ViewChild('chartPricePerRegion') chartPricePerRegion!: BaseChartDirective<'bar'> | undefined;
-  @ViewChild('chartPricePerZone') chartPricePerZone!: BaseChartDirective<'bar'> | undefined;
-  @ViewChild('chartPriceLowest') chartPriceLowest!: BaseChartDirective<'bar'> | undefined;
-
-  public barChartOptions: ChartConfiguration<'bar'>['options'] = {
-    scales: {
-      x: {
-        ticks: {
-          color: '#FFF',
-            }
-      },
-      y: {
-        ticks: {
-          color: '#FFF',
-        },
-        grid: {
-          color: '#4B5563',
-        }
-      },
-    },
-    plugins: {
-      legend: {
-        display: true,
-        labels: {
-          color: '#FFF',
-        },
-      }
-    },
-  };
-  public barChartType = 'bar' as const;
-
-  public barChartData: ChartData<'bar'> = {
-    labels: [],
-    datasets: [
-      { data: [], label: 'Spot', backgroundColor: '#34D399'},
-      { data: [], label: 'Ondemand', backgroundColor: '#E5E7EB'},
-    ],
-  };
-
-  public barChartData2: ChartData<'bar'> = {
-    labels: [],
-    datasets: [
-      { data: [], label: 'Spot', backgroundColor: '#34D399'},
-      { data: [], label: 'Ondemand', backgroundColor: '#E5E7EB'},
-    ],
-  };
-
-  public barChartData3: ChartData<'bar'> = {
-    labels: [],
-    datasets: [
-      { data: [], label: 'Spot', backgroundColor: '#34D399'},
-      { data: [], label: 'Ondemand', backgroundColor: '#E5E7EB'},
-    ],
-  };
-
   similarByFamily: Server[] = [];
   similarByPerformance: Server[] = [];
 
-  openApiJson: any = require('../../../../sdk/openapi.json');
+  instancePropertyCategories: any[] = [
+    { name: 'General', category: 'meta', properties: [] },
+    { name: 'CPU', category: 'cpu', properties: [] },
+    { name: 'Memory', category: 'memory', properties: [] },
+    { name: 'GPU', category: 'gpu', properties: [] },
+    { name: 'Storage', category: 'storage', properties: [] },
+    { name: 'Network', category: 'network', properties: [] },
+  ];
+
+  benchmarksByCategory: any[] = [];
+
   instanceProperties: any[] = [];
+  benchmarkMeta: any;
 
   tooltipContent = '';
 
+  // benchmark charts
+  compressDropdown: any;
+  compressMethods: any[] = [
+    { name: 'Compress', key: 'compression_text:compress' },
+    { name: 'Decompress', key: 'compression_text:decompress' },
+    { name: 'Ratio', key: 'compression_text:ratio' }
+  ];
+  selectedCompressMethod = this.compressMethods[0];
+
+  geekScoreSingle: string = '0';
+  geekScoreMulti: string = '0';
+
+  barChartOptions: ChartConfiguration<'bar'>['options'] = barChartOptions;
+  barChartType = 'bar' as const;
+  barChartData: ChartData<'bar'> = JSON.parse(JSON.stringify(barChartDataEmpty));
+  barChartData2: ChartData<'bar'> = JSON.parse(JSON.stringify(barChartDataEmpty));
+  barChartData3: ChartData<'bar'> = JSON.parse(JSON.stringify(barChartDataEmpty));
+
+  radarChartType = 'radar' as const;
+  radarChartOptions: ChartConfiguration<'radar'>['options'] = radarChartOptions;
+  radarChartOptions2: ChartConfiguration<'radar'>['options'] = radarChartOptions;
+  radarChartDataBWMem: ChartData<'radar'> | undefined = undefined;
+  radarChartDataGeekMulti: ChartData<'radar'> | undefined = undefined;
+  radarChartDataGeekSingle: ChartData<'radar'> | undefined = undefined;
+
+  lineChartType = 'line' as const;
+  lineChartOptionsBWMem: ChartConfiguration<'line'>['options'] = lineChartOptionsBWM;
+  lineChartDataBWmem: ChartData<'line'> | undefined = undefined;
+
+  lineChartOptionsCompress: ChartConfiguration<'line'>['options'] = lineChartOptionsComp;
+  lineChartDataCompress: ChartData<'line'> | undefined = undefined;
+
+  barChartOptionsSSL: ChartConfiguration<'bar'>['options'] = barChartOptionsSSL;
+  barChartDataSSL: ChartData<'bar'> | undefined = undefined;
+
+  geekbenchHTML: any;
+
   @ViewChild('tooltipDefault') tooltip!: ElementRef;
+  @ViewChild('tooltipGeekbench') tooltipGB!: ElementRef;
 
   constructor(@Inject(PLATFORM_ID) private platformId: object,
               private route: ActivatedRoute,
               private keepreAPI: KeeperAPIService,
-              private SEOHandler: SeoHandlerService) {
+              private SEOHandler: SeoHandlerService,
+              private senitizer: DomSanitizer) {
 
   }
 
@@ -135,14 +139,17 @@ export class ServerDetailsComponent implements OnInit {
       const vendor = params['vendor'];
       const id = params['id'];
 
-      this.keepreAPI.getServerMeta().then((data) => {
-        this.instanceProperties = data?.body?.fields || [];
-      });
+      Promise.all([
+        this.keepreAPI.getServerMeta(),
+        this.keepreAPI.getServerBenchmarkMeta(),
+        this.keepreAPI.getServer(vendor, id)
+      ]).then((dataAll) => {
+        this.instanceProperties = dataAll[0].body?.fields || [];
 
-      this.keepreAPI.getServer(vendor, id).then((data) => {
-        console.log(data.body);
-        if(data?.body){
-          this.serverDetails = data.body as any;
+        this.benchmarkMeta = dataAll[1].body || {};
+
+        if(dataAll[2].body){
+          this.serverDetails = dataAll[2].body as any;
           this.breadcrumbs[2] =
             { name: this.serverDetails.display_name, url: '/server/' + this.serverDetails.vendor.vendor_id + '/' + this.serverDetails.server_id };
 
@@ -160,16 +167,40 @@ export class ServerDetailsComponent implements OnInit {
             this.features.push({name: 'GPU', value: this.serverDetails.gpu_count});
           }
 
+          this.instancePropertyCategories.forEach((c) => {
+            c.properties = [];
+          });
+
+          this.instanceProperties.forEach((p: any) => {
+            const group = this.instancePropertyCategories.find((g) => g.category === p.category);
+            const value = this.getProperty(p);
+            if(group && value) {
+              group.properties.push(p);
+            }
+          });
+
+          this.benchmarksByCategory = [];
+          this.serverDetails.benchmark_scores?.forEach((b: any) => {
+            const group = this.benchmarksByCategory.find((g) => g.benchmark_id === b.benchmark_id);
+            if(!group) {
+              this.benchmarksByCategory.push({benchmark_id: b.benchmark_id, benchmarks: [b]});
+            } else {
+              group.benchmarks.push(b);
+            }
+          });
+
           this.regionFilters = [];
-          this.serverDetails.prices.sort((a, b) => a.price - b.price);
-          this.serverDetails.prices.forEach((price: ServerPricePKs) => {
+          this.serverDetails.prices?.sort((a, b) => a.price - b.price);
+          this.serverDetails.prices?.forEach((price: ServerPricePKs) => {
               const region = this.regionFilters.find((z) => z.region_id === price.region_id);
               if(!region) {
                 this.regionFilters.push({name: price.region.display_name, region_id: price.region_id, selected: false});
               }
             });
 
-          this.regionFilters[0].selected = true;
+          if(this.regionFilters[0]) {
+            this.regionFilters[0].selected = true;
+          }
 
           this.refreshGraphs();
 
@@ -255,9 +286,26 @@ export class ServerDetailsComponent implements OnInit {
                 });
 
             }
+          }).catch((error) => {
+            console.error('Failed to load server data:', error);
           });
 
           if(isPlatformBrowser(this.platformId)) {
+
+            this.generateBenchmarkCharts();
+
+            // https://github.com/chartjs/Chart.js/issues/5387
+            // TODO: check and remove later
+            document.addEventListener('visibilitychange', event => {
+              if (document.visibilityState === 'visible') {
+                  // keep a instance for the chart
+                 const allCharts = Object.values(Chart.instances);
+                 allCharts?.forEach((chart: any) => {
+                    chart.update();
+                });
+              }
+          })
+
             setTimeout(() => {
               initFlowbite();
             }, 2000);
@@ -316,6 +364,24 @@ export class ServerDetailsComponent implements OnInit {
               }
             }, 150);
 
+            const interval4 = setInterval(() => {
+              const targetElCompress: HTMLElement | null = document.getElementById('compress_method_options');
+              const triggerElCompress: HTMLElement | null = document.getElementById('compress_method_button');
+
+              if(targetElCompress && triggerElCompress) {
+                this.compressDropdown = new Dropdown(
+                  targetElCompress,
+                  triggerElCompress,
+                  options,
+                  {
+                    id: 'compress_method_options',
+                    override: true
+                  }
+                );
+                clearInterval(interval4);
+              }
+            }, 150);
+
           }
         }
       });
@@ -327,7 +393,8 @@ export class ServerDetailsComponent implements OnInit {
   }
 
   getMemory(memory: number | undefined = undefined) {
-    return ((memory || this.serverDetails.memory_amount || 0) / 1024).toFixed(1) + 'GB';
+    const memoryAmount = memory || this.serverDetails.memory_amount || 0;
+    return ((memoryAmount) / 1024).toFixed((memoryAmount ? 0 : 1)) + 'GB';
   }
 
   getStorage() {
@@ -403,7 +470,7 @@ export class ServerDetailsComponent implements OnInit {
         zone.ondemand.price = Math.round(zone.ondemand.price / zone.ondemand.count * 1000000) / 1000000;
     });
 
-    this.availabilityRegions.sort((a, b) => a.region_id - b.region_id);
+    this.availabilityRegions.sort((a, b) => a['ondemand'].price - b['ondemand'].price);
 
     const series: ChartData<'bar'> = {
       labels: [],
@@ -476,7 +543,7 @@ export class ServerDetailsComponent implements OnInit {
         zone.ondemand.price = Math.round(zone.ondemand.price / zone.ondemand.count * 1000000) / 1000000;
     });
 
-    this.availabilityZones.sort((a, b) => a.region_id - b.region_id);
+    this.availabilityZones.sort((a, b) => a['ondemand'].price - b['ondemand'].price);
 
     const series: ChartData<'bar'> = {
       labels: [],
@@ -573,22 +640,333 @@ export class ServerDetailsComponent implements OnInit {
   }
 
   showTooltip(el: any, content: string) {
-    const description = this.instanceProperties?.find(x => x.name === content)?.description;
-    if(description) {
+    if(content) {
       const tooltip = this.tooltip.nativeElement;
       const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
-      tooltip.style.left = `${el.target.getBoundingClientRect().left - 25}px`;
+      tooltip.style.left = `${el.target.getBoundingClientRect().right + 5}px`;
       tooltip.style.top = `${el.target.getBoundingClientRect().top - 45 + scrollPosition}px`;
       tooltip.style.display = 'block';
       tooltip.style.opacity = '1';
 
-      this.tooltipContent = description;
+      this.tooltipContent = content;
     }
+  }
+
+  showTooltipChart(el: any, type: string) {
+    let content = this.benchmarkMeta.find((b: any) => b.benchmark_id === type)?.description;
+    if(content) {
+      const tooltip = this.tooltip.nativeElement;
+      const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+      tooltip.style.left = `${el.target.getBoundingClientRect().right + 5}px`;
+      tooltip.style.top = `${el.target.getBoundingClientRect().top - 45 + scrollPosition}px`;
+      tooltip.style.display = 'block';
+      tooltip.style.opacity = '1';
+
+      this.tooltipContent = content;
+    }
+  }
+
+  showTooltipGB(el: any) {
+      const tooltip = this.tooltipGB.nativeElement;
+      const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+      tooltip.style.left = `${20}px`;
+      tooltip.style.top = `${el.target.getBoundingClientRect().bottom + 5 + scrollPosition}px`;
+      tooltip.style.display = 'block';
+      tooltip.style.opacity = '1';
   }
 
   hideTooltip() {
     const tooltip = this.tooltip.nativeElement;
     tooltip.style.display = 'none';
     tooltip.style.opacity = '0';
+  }
+
+  hideTooltipGB() {
+    const tooltip = this.tooltipGB.nativeElement;
+    tooltip.style.display = 'none';
+    tooltip.style.opacity = '0';
+  }
+
+  getProperty(column: any) {
+    const name = column.id
+    const prop = (this.serverDetails as any)[name];
+
+    if(prop === undefined || prop === null) {
+      return undefined;
+    }
+
+    if( typeof prop === 'number' ) {
+      return `${prop} ${column.unit || ''}`;
+    }
+    if( typeof prop === 'string') {
+      return prop;
+    }
+    if(Array.isArray(prop)) {
+      return prop.join(', ');
+    }
+
+    return '-';
+  }
+
+  refreshCompressChart(chart: any) {
+    this.selectedCompressMethod = chart;
+    this.generateCompressChart();
+  }
+
+  generateBenchmarkCharts() {
+
+    const BWMemData = this.generateLineChart('bw_mem', 'operation', 'size');
+
+    if(BWMemData) {
+      this.lineChartDataBWmem = { labels: BWMemData.labels, datasets: BWMemData.datasets };
+
+      if(this.lineChartOptionsBWMem?.plugins?.annotation) {
+        if(this.serverDetails.cpu_l1_cache || this.serverDetails.cpu_l2_cache || this.serverDetails.cpu_l3_cache) {
+          let annotations: any = { };
+          if(this.serverDetails.cpu_l1_cache) {
+            annotations.line1 = {
+                  type: 'line',
+                  scaleID: 'x',
+                  borderWidth: 3,
+                  borderColor: '#EF4444',
+                  value: this.serverDetails.cpu_l1_cache / (1024 * 1024),
+                  label: {
+                    rotation: 'auto',
+                    position: 'end',
+                    content: 'L1 Cache',
+                    backgroundColor: '#EF4444',
+                    display: true
+                  }
+                }
+          }
+          if(this.serverDetails.cpu_l2_cache) {
+            annotations.line2 = {
+                  type: 'line',
+                  scaleID: 'x',
+                  borderWidth: 3,
+                  borderColor: '#EF4444',
+                  value: this.serverDetails.cpu_l2_cache / (1024 * 1024),
+                  label: {
+                    rotation: 'auto',
+                    position: 'start',
+                    content: 'L2 Cache',
+                    backgroundColor: '#EF4444',
+                    display: true
+                  }
+                }
+          }
+          if(this.serverDetails.cpu_l3_cache) {
+            annotations.line3 = {
+                  type: 'line',
+                  scaleID: 'x',
+                  borderWidth: 3,
+                  borderColor: '#EF4444',
+                  value: this.serverDetails.cpu_l3_cache / (1024 * 1024),
+                  label: {
+                    rotation: 'auto',
+                    position: 'start',
+                    content: 'L3 Cache',
+                    backgroundColor: '#EF4444',
+                    display: true
+                  }
+                }
+          }
+          this.lineChartOptionsBWMem.plugins.annotation = {
+            annotations: annotations
+          };
+        }
+      }
+
+    } else {
+      this.lineChartDataBWmem = undefined;
+    }
+
+    let data = this.generateLineChart('openssl', 'block_size', 'algo', false);
+
+    if(data) {
+      this.barChartDataSSL = { labels: data.labels, datasets: data.datasets };
+    } else {
+      this.barChartDataSSL = undefined;
+    }
+
+    this.generateCompressChart();
+    this.generateGeekbenchChart();
+  }
+
+  generateCompressChart() {
+    let data: any;
+    switch(this.selectedCompressMethod.key) {
+      case 'compression_text:compress':
+        data = this.generateLineChart('compression_text:compress', 'algo', 'compression_level');
+        this.lineChartOptionsCompress = lineChartOptionsComp;
+        break;
+      case 'compression_text:decompress':
+        data = this.generateLineChart('compression_text:decompress', 'algo', 'compression_level');
+        this.lineChartOptionsCompress = lineChartOptionsComp;
+        break;
+      case 'compression_text:ratio':
+        data = this.generateLineChart('compression_text:ratio', 'algo', 'compression_level');
+        this.lineChartOptionsCompress = lineChartOptionsCompRatio;
+        break;
+    }
+    if(data) {
+      this.lineChartDataCompress = { labels: data.labels, datasets: data.datasets };
+    } else {
+      this.lineChartDataCompress = undefined;
+    }
+
+  }
+
+  generateLineChart(benchmark_id: string, labelsField: string, scaleField: string, isLineChart: boolean = true) {
+    const dataSet = this.benchmarksByCategory?.find(x => x.benchmark_id === benchmark_id);
+    if(dataSet && dataSet.benchmarks?.length) {
+      let labels: any[] = [];
+      let scales: number[] = [];
+      dataSet.benchmarks.forEach((item: any) => {
+        if(item.config[labelsField] && labels.indexOf(item.config[labelsField]) === -1) {
+          labels.push(item.config[labelsField]);
+        }
+        if((item.config[scaleField] || item.config[scaleField] === 0) && scales.indexOf(item.config[scaleField]) === -1) {
+          scales.push(item.config[scaleField]);
+        }
+      });
+
+
+      if(labels && !isNaN(labels[0])) {
+        labels.sort((a, b) => a - b);
+      }
+
+      scales.sort((a, b) => a - b);
+
+      let charData: any = {
+        labels: scales, //scales.map((s) => s.toString()),
+        datasets: labels.map((label: string, index: number) => {
+          return {
+            data: [],
+            label: label,
+            spanGaps: isLineChart,
+            borderColor: radarDatasetColors[index].borderColor,
+            backgroundColor: isLineChart ? radarDatasetColors[index].backgroundColor : radarDatasetColors[index].borderColor };
+          })
+      };
+
+      labels.forEach((label: string, i: number) => {
+        scales.forEach((size: number) => {
+          const item = dataSet.benchmarks.find((b: any) => b.config[labelsField] === label && b.config[scaleField] === size);
+          if(item) {
+            charData.datasets[i].data.push(item.score);
+          } else {
+            charData.datasets[i].data.push(null);
+          }
+        });
+      });
+
+      return charData;
+
+    } else {
+      this.lineChartDataCompress = undefined;
+
+      return undefined;
+    }
+  }
+
+  generateGeekbenchChart() {
+    const dataSet = this.benchmarksByCategory?.filter(x => (x.benchmark_id as string).includes('geekbench'));
+
+
+
+    this.geekbenchHTML =
+    `<div> The following benchmark scenarios were run using Geekbench 6: </div> <ul> `;
+
+    let GBScoreText = this.benchmarkMeta.find((x: any) => x.benchmark_id === 'geekbench:score');
+    if(GBScoreText) {
+      const name: string = GBScoreText.name.replace('Geekbench:', '');
+      const desc = GBScoreText.description.replace('The score is calibrated against a baseline score of 2,500 (Dell Precision 3460 with a Core i7-12700 processor) as per the Geekbench 6 Benchmark Internals.', '') || '';
+      this.geekbenchHTML += `<li> - ${name}: ${desc} </li>`;
+    }
+
+    this.benchmarkMeta
+      .filter((x: any) => x.benchmark_id.includes('geekbench') && x.benchmark_id !== 'geekbench:score')
+      .sort((a: any, b: any) => a.name.localeCompare(b.name))
+      ?.forEach((data: any) =>
+      {
+      const name: string = data.name.replace('Geekbench:', '');
+      const desc = data.description.replace('The score is calibrated against a baseline score of 2,500 (Dell Precision 3460 with a Core i7-12700 processor) as per the Geekbench 6 Benchmark Internals.', '') || '';
+      this.geekbenchHTML += `<li> - ${name}: ${desc} </li>`;
+    });
+
+    this.geekbenchHTML += `</ul>`;
+
+    this.geekbenchHTML = this.senitizer.bypassSecurityTrustHtml(this.geekbenchHTML);
+
+    if(dataSet && dataSet.length) {
+      let labels: string[] = [];
+      let scales: string[] = [];
+
+      const geekBenchScore = dataSet?.find(x => (x.benchmark_id as string).includes('geekbench:score'));
+
+      if(geekBenchScore && geekBenchScore.benchmarks.length) {
+        this.geekScoreSingle = this.numberWithCommas(geekBenchScore.benchmarks.find((x: any) => x.config.cores === 'Single-Core Performance')?.score || 0);
+        this.geekScoreMulti = this.numberWithCommas(geekBenchScore.benchmarks.find((x: any) => x.config.cores === 'Multi-Core Performance')?.score || 0);
+      }
+
+      labels = dataSet.filter(x => x.benchmark_id !== 'geekbench:score').map(x => x.benchmark_id);
+      scales = dataSet[0].benchmarks.sort((a: any, b:any) => (a.config.cores as string).localeCompare(b.config.cores)).map((b: any) => b.config.cores);
+
+      let charData: any = {
+        labels: labels
+          .map((s) =>
+            (this.benchmarkMeta.find((b: any) => b.benchmark_id === s)?.name || s)
+              .replace('geekbench:', '')
+              .replace('Geekbench: ', '')),
+        datasets: scales.map((label: string, index: number) => {
+          return {
+            data: [],
+            label: label,
+            borderColor: radarDatasetColors[index].borderColor,
+            backgroundColor: radarDatasetColors[index].backgroundColor};
+          })
+      };
+
+      scales.forEach((size: string, i: number) => {
+        labels.forEach((label: string) => {
+          const item = dataSet.find((b: any) => b.benchmark_id === label)?.benchmarks.find((b: any) => b.config.cores === size);
+          if(item) {
+            charData.datasets[i].data.push({value: item.score, tooltip: item.note});
+          } else {
+            charData.datasets[i].data.push({value: 0});
+          }
+        });
+      });
+
+      this.radarChartDataGeekMulti = {
+        labels: charData.labels,
+        datasets: [charData.datasets[0]]
+      };
+      this.radarChartDataGeekSingle = {
+        labels: charData.labels,
+        datasets: [charData.datasets[1]]
+      };
+
+      return charData;
+    } else {
+      this.radarChartDataGeekMulti = undefined;
+      this.radarChartDataGeekSingle = undefined;
+
+      return undefined;
+    }
+
+  }
+
+  public numberWithCommas(x: number) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+
+  getBenchmark(isMulti: boolean) {
+    if(!isMulti) {
+      return this.serverDetails.benchmark_scores?.find((b) => b.benchmark_id === 'stress_ng:cpu_all' && (b.config as any)?.cores === 1)?.score?.toFixed(0) || '-';
+    } else {
+      return this.serverDetails.benchmark_scores?.find((b) => b.benchmark_id === 'stress_ng:cpu_all' && (b.config as any)?.cores !== 1)?.score?.toFixed(0) || '-';
+    }
   }
 }

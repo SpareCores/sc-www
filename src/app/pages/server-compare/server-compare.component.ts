@@ -39,6 +39,16 @@ export class ServerCompareComponent implements OnInit {
 
   clipboardIcon = 'clipboard';
 
+  instanceProperties: any[] = [];
+
+  instancePropertyCategories: any[] = [
+    { name: 'CPU', category: 'cpu', properties: [] },
+    { name: 'Memory', category: 'memory', properties: [] },
+    { name: 'GPU', category: 'gpu', properties: [] },
+    { name: 'Storage', category: 'storage', properties: [] },
+    { name: 'Network', category: 'network', properties: [] },
+  ];
+
   @ViewChild('tooltipDefault') tooltip!: ElementRef;
 
   constructor(
@@ -58,17 +68,42 @@ export class ServerCompareComponent implements OnInit {
       const param = params['instances'];
       if(param){
           const decodedParams = JSON.parse(atob(param));
-          let promises: Promise<any>[] = [];
+          let promises: Promise<any>[] = [
+            this.keeperAPI.getServerMeta()
+          ];
           decodedParams?.forEach((instance: any) => {
             promises.push(
               this.keeperAPI.getServer(instance.vendor, instance.server)
             );
           });
           Promise.all(promises).then((data) => {
-            data?.forEach((server: any) => {
-              this.servers.push(server.body);
-              console.log(server.body);
+            this.instanceProperties = data[0].body.fields;
+
+            this.instancePropertyCategories.forEach((c) => {
+              c.properties = [];
             });
+
+            for(let i = 1; i < data.length; i++){
+              this.servers.push(data[i].body);
+            }
+
+            this.instanceProperties.forEach((p: any) => {
+              const group = this.instancePropertyCategories.find((g) => g.category === p.category);
+              const hasValue =
+                this.servers.some((s: any) =>
+                  s[p.id] !== undefined &&
+                  s[p.id] !== null &&
+                  s[p.id] !== '' &&
+                  !Array.isArray(s[p.id]));
+
+              if(group && hasValue) {
+                group.properties.push(p);
+              }
+            });
+
+            this.isLoading = false;
+          }).catch((err) => {
+            console.error(err);
             this.isLoading = false;
           });
       }
@@ -90,7 +125,6 @@ export class ServerCompareComponent implements OnInit {
     setTimeout(() => {
       this.clipboardIcon = 'clipboard';
     }, 3000);
-
   }
 
   getMemory(item: ServerPKsWithPrices) {
@@ -107,6 +141,65 @@ export class ServerCompareComponent implements OnInit {
     if(item.storage_size < 1000) return `${item.storage_size} GB`;
 
     return `${(item.storage_size / 1000).toFixed(1)} TB`;
+  }
+
+  getProperty(column: any, server: ServerPKsWithPrices) {
+    const name = column.id
+    const prop = (server as any)[name];
+
+    if(prop === undefined || prop === null) {
+      return undefined;
+    }
+
+    if(name === 'memory_amount') {
+      return this.getMemory(server);
+    }
+
+    if(name === 'gpu_memory_min' || name === 'gpu_memory_total') {
+      return this.getGPUMemory(server);
+    }
+
+    if(name === 'storage_size') {
+      return this.getStorage(server);
+    }
+
+    if( typeof prop === 'number') {
+      return `${prop} ${column.unit || ''}`;
+    }
+
+    if( typeof prop === 'string') {
+      return prop;
+    }
+    if(Array.isArray(prop)) {
+      // if the items are Objects, return undefined for now
+      if(prop.length > 0 && typeof prop[0] === 'object') {
+        return undefined;
+      } else {
+        return prop.join(', ');
+      }
+    }
+
+    return '-';
+  }
+
+  getBestCellStyle(name: string, server: ServerPKsWithPrices) {
+    const prop = (server as any)[name];
+
+    if(prop === undefined || prop === null) {
+      return '';
+    }
+
+    if( typeof prop === 'number') {
+      let isBest = true;
+      this.servers?.forEach((s: any) => {
+        if(s[name] > prop) {
+          isBest = false;
+        }
+      });
+      return isBest ? 'font-weight: 600; color: #34D399' : '';
+    }
+
+    return '';
   }
 
   viewServer(server: ServerPKsWithPrices) {
@@ -130,6 +223,18 @@ export class ServerCompareComponent implements OnInit {
     const tooltip = this.tooltip.nativeElement;
     tooltip.style.display = 'none';
     tooltip.style.opacity = '0';
+  }
+
+  getStyle() {
+    return `width: ${100 / (this.servers.length + 1)}%; max-width: ${100 / (this.servers.length + 1)}%;`
+  }
+
+  getBenchmark(server: ServerPKsWithPrices, isMulti: boolean) {
+    if(!isMulti) {
+      return server.benchmark_scores?.find((b) => b.benchmark_id === 'stress_ng:cpu_all' && (b.config as any)?.cores === 1)?.score?.toFixed(0) || '-';
+    } else {
+      return server.benchmark_scores?.find((b) => b.benchmark_id === 'stress_ng:cpu_all' && (b.config as any)?.cores !== 1)?.score?.toFixed(0) || '-';
+    }
   }
 
 }

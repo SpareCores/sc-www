@@ -1,4 +1,4 @@
-import { Component, HostBinding, Inject, PLATFORM_ID, OnInit } from '@angular/core';
+import { Component, HostBinding, Inject, PLATFORM_ID, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { KeeperAPIService } from '../../services/keeper-api.service';
 import { OrderDir, SearchServersServersGetParams, ServerPKs, ServerPriceWithPKs } from '../../../../sdk/data-contracts';
@@ -136,6 +136,9 @@ export class ServerListingComponent implements OnInit {
   vendorMetadata: any[] = [];
 
   selectedForCompare: ServerPKs[] = [];
+
+  @ViewChild('tooltipDefault') tooltip!: ElementRef;
+  clipboardIcon = 'clipboard';
 
   constructor(@Inject(PLATFORM_ID) private platformId: object,
               private keeperAPI: KeeperAPIService,
@@ -561,6 +564,38 @@ export class ServerListingComponent implements OnInit {
     const encoded = btoa(JSON.stringify(serverIds));
 
     this.router.navigateByUrl('/compare?instances=' + encoded);
+  }
+
+  clipboardURL(event: any) {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url);
+
+    this.clipboardIcon = 'check';
+
+    this.showTooltip(event);
+
+    setTimeout(() => {
+      this.clipboardIcon = 'clipboard';
+    }, 3000);
+  }
+
+   showTooltip(el: any) {
+      const tooltip = this.tooltip.nativeElement;
+      const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+      tooltip.style.left = `${el.target.getBoundingClientRect().left - 25}px`;
+      tooltip.style.top = `${el.target.getBoundingClientRect().top - 45 + scrollPosition}px`;
+      tooltip.style.display = 'block';
+      tooltip.style.opacity = '1';
+
+      setTimeout(() => {
+        this.hideTooltip();
+      }, 3000);
+  }
+
+  hideTooltip() {
+    const tooltip = this.tooltip.nativeElement;
+    tooltip.style.display = 'none';
+    tooltip.style.opacity = '0';
   }
 
 }

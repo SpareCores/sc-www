@@ -4,7 +4,13 @@
     <app-breadcrumbs [segments]="breadcrumbs"></app-breadcrumbs>
 
     <div class="flex flex-col gap-4 my-8">
-      <h1 class="text-white font-bold text-3xl">Cloud Compute Resources listing</h1>
+      <div class="flex gap-4 items-center w-full justify-between">
+        <h1 class="text-white font-bold text-3xl">Cloud Compute Resources listing</h1>
+        <button class="btn-primary py-2 px-3 flex gap-1 items-center" (click)="clipboardURL($event)">
+          Share
+          <lucide-icon name="{{clipboardIcon}}" size="16" class="ml-2"></lucide-icon>
+        </button>
+      </div>
       <div class="text-white text-xl pr-16">
         Explore, search and evaluate cloud compute resources and pricing in the table below. This comprehensive comparison includes diverse attributes like CPU count, detailed processor information, memory, GPU, storage, network speed and amount, available operating systems, and pricing models such as spot and on-demand. Use the sidebar for filtering the results, or enter your phrase in the “Search prompt” bar.
       </div>
@@ -422,4 +428,11 @@
           </div>
       </div>
   </div>
+</div>
+
+<div id="tooltipDefault"
+  #tooltipDefault
+  style="opacity: 0;"
+  class="absolute z-10 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-secondary border border-solid border-emerald-400 rounded-lg">
+  Copied to clipboard!
 </div>
