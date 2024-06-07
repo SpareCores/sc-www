@@ -130,7 +130,7 @@
             </tr>
           </tbody>
         </table>
-        <div class="absolute bottom-0 laft-0 w-full py-3 flex justify-center" id="availability_more"
+        <div *ngIf="availabilityRegions.length > 7" class="absolute bottom-0 laft-0 w-full py-3 flex justify-center" id="availability_more"
             style="background: linear-gradient(360deg, #06263A 23.44%, rgba(6, 38, 58, 0) 100%);" >
           <button class="btn-primary py-2 px-3" (click)="openBox('availability')"
                   data-ph-capture-attribute-sc-event="server details show more availability">
@@ -415,7 +415,7 @@
                 <td>
                   <a
                     class="underline decoration-dotted hover:text-gray-500"
-                    routerLink="/server/{{item.vendor_id}}/{{item.server_id}}">
+                    routerLink="/server/{{item.vendor_id}}/{{item.api_reference}}">
                     {{item.display_name}}
                   </a>
                 </td>
@@ -443,7 +443,7 @@
               <td>
                 <a
                 class="underline decoration-dotted hover:text-gray-500"
-                routerLink="/server/{{item.vendor_id}}/{{item.server_id}}">
+                routerLink="/server/{{item.vendor_id}}/{{item.api_reference}}">
                 {{item.display_name}}
                 </a> </td>
               <td> {{item.vendor_id}}</td>
@@ -530,7 +530,7 @@
 
 <div id="tooltipGeekbench"
   #tooltipGeekbench
-  style="opacity: 0;"
+  style="opacity: 0; display: none;"
   class="absolute z-10 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-secondary border border-solid border-emerald-400 rounded-lg">
   <div [innerHTML]="geekbenchHTML" ></div>
 </div>

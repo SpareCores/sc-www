@@ -253,7 +253,7 @@ export class ServerListingComponent implements OnInit {
   }
 
   openServerDetails(server: ServerPKs) {
-    this.router.navigateByUrl(`/server/${server.vendor.vendor_id}/${server.server_id}`);
+    this.router.navigateByUrl(`/server/${server.vendor.vendor_id}/${server.api_reference}`);
   }
 
   toggleCategory(category: any) {
@@ -557,7 +557,7 @@ export class ServerListingComponent implements OnInit {
     }
 
     const serverIds = selectedServers.map((server) => {
-      return {vendor: server.vendor_id, server: server.server_id}
+      return {vendor: server.vendor_id, server: server.api_reference}
     });
 
     // encode atob to avoid issues with special characters

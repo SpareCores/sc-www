@@ -6,7 +6,7 @@ import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadc
 import { LucideAngularModule } from 'lucide-angular';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ServerPKsWithPrices } from '../../../../sdk/data-contracts';
+import { Allocation, ServerPKsWithPrices } from '../../../../sdk/data-contracts';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 
 @Component({
@@ -49,7 +49,10 @@ export class ServerCompareComponent implements OnInit {
     { name: 'Network', category: 'network', properties: [] },
   ];
 
+  bestCellStyle = 'font-weight: 600; color: #34D399';
+
   @ViewChild('tooltipDefault') tooltip!: ElementRef;
+  tooltipContent = '';
 
   constructor(
     private keeperAPI: KeeperAPIService,
@@ -120,7 +123,7 @@ export class ServerCompareComponent implements OnInit {
 
     this.clipboardIcon = 'check';
 
-    this.showTooltip(event);
+    this.showTooltip(event, 'Copied to clipboard!', true);
 
     setTimeout(() => {
       this.clipboardIcon = 'clipboard';
@@ -128,7 +131,7 @@ export class ServerCompareComponent implements OnInit {
   }
 
   getMemory(item: ServerPKsWithPrices) {
-    return ((item.memory_amount || 0) / 1024).toFixed(1) + ' GB';
+    return ((item.memory_amount || 0) / 1024).toFixed((item.memory_amount || 0) > 1024 ? 0 : 1) + ' GB';
   }
 
   getGPUMemory(item: ServerPKsWithPrices) {
@@ -141,6 +144,13 @@ export class ServerCompareComponent implements OnInit {
     if(item.storage_size < 1000) return `${item.storage_size} GB`;
 
     return `${(item.storage_size / 1000).toFixed(1)} TB`;
+  }
+
+  bytesToSize(bytes: number) {
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    if (bytes === 0) return '0 Byte';
+    const i = Math.floor(Math.log(bytes) / Math.log(1024));
+    return (bytes / Math.pow(1024, i)).toFixed(0) + ' ' + sizes[i];
   }
 
   getProperty(column: any, server: ServerPKsWithPrices) {
@@ -164,6 +174,9 @@ export class ServerCompareComponent implements OnInit {
     }
 
     if( typeof prop === 'number') {
+      if(column.unit === 'byte') {
+        return this.bytesToSize(prop);
+      }
       return `${prop} ${column.unit || ''}`;
     }
 
@@ -185,7 +198,7 @@ export class ServerCompareComponent implements OnInit {
   getBestCellStyle(name: string, server: ServerPKsWithPrices) {
     const prop = (server as any)[name];
 
-    if(prop === undefined || prop === null) {
+    if(prop === undefined || prop === null || prop === 0) {
       return '';
     }
 
@@ -196,17 +209,56 @@ export class ServerCompareComponent implements OnInit {
           isBest = false;
         }
       });
-      return isBest ? 'font-weight: 600; color: #34D399' : '';
+      return isBest ? this.bestCellStyle : '';
     }
 
     return '';
   }
 
-  viewServer(server: ServerPKsWithPrices) {
-    window.open(`/server/${server.vendor_id}/${server.server_id}`, '_blank');
+  getBestPriceStyle(server: ServerPKsWithPrices) {
+    const prop = server.prices.filter(x => x.allocation === Allocation.Ondemand).sort((a,b) => a.price - b.price)[0]?.price;
+
+    if(prop === undefined || prop === null || prop === 0) {
+      return '';
+    }
+
+    let isBest = true;
+    this.servers?.forEach((s: ServerPKsWithPrices) => {
+      const temp = s.prices.filter(x => x.allocation === Allocation.Ondemand).sort((a, b) => a.price - b.price)[0]?.price;
+      if(temp < prop) {
+        isBest = false;
+      }
+    });
+    return isBest ? this.bestCellStyle : '';
   }
 
-  showTooltip(el: any) {
+  getBecnchmarkStyle(server: ServerPKsWithPrices, isMulti: boolean) {
+    const prop = server.benchmark_scores
+    ?.find((b) =>
+        b.benchmark_id === 'stress_ng:cpu_all'
+        && (isMulti ? ((b.config as any)?.cores !== 1) :(b.config as any)?.cores === 1))?.score;
+
+    if(prop === undefined || prop === null || prop === 0) {
+      return '';
+    }
+
+    let isBest = true;
+    this.servers?.forEach((s: ServerPKsWithPrices) => {
+      const temp = s.benchmark_scores?.find((b) =>
+        b.benchmark_id === 'stress_ng:cpu_all' &&
+        (isMulti ? ((b.config as any)?.cores !== 1) :(b.config as any)?.cores === 1))?.score || 0;
+      if(temp > prop) {
+        isBest = false;
+      }
+    });
+    return isBest ? this.bestCellStyle : '';
+  }
+
+  viewServer(server: ServerPKsWithPrices) {
+    window.open(`/server/${server.vendor_id}/${server.api_reference}`, '_blank');
+  }
+
+  showTooltip(el: any, content?: string, autoHide = false) {
       const tooltip = this.tooltip.nativeElement;
       const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
       tooltip.style.left = `${el.target.getBoundingClientRect().left - 25}px`;
@@ -214,9 +266,13 @@ export class ServerCompareComponent implements OnInit {
       tooltip.style.display = 'block';
       tooltip.style.opacity = '1';
 
-      setTimeout(() => {
-        this.hideTooltip();
-      }, 3000);
+      this.tooltipContent = content || '';
+
+      if(autoHide) {
+        setTimeout(() => {
+          this.hideTooltip();
+        }, 3000);
+      }
   }
 
   hideTooltip() {
@@ -234,6 +290,14 @@ export class ServerCompareComponent implements OnInit {
       return server.benchmark_scores?.find((b) => b.benchmark_id === 'stress_ng:cpu_all' && (b.config as any)?.cores === 1)?.score?.toFixed(0) || '-';
     } else {
       return server.benchmark_scores?.find((b) => b.benchmark_id === 'stress_ng:cpu_all' && (b.config as any)?.cores !== 1)?.score?.toFixed(0) || '-';
+    }
+  }
+
+  getBestPrice(server: ServerPKsWithPrices, allocation: Allocation = Allocation.Ondemand) {
+    if(server.prices && server.prices.find((p) => p.allocation === allocation)){
+      return `${server.prices.filter(x => x.allocation === allocation).sort((a,b) => a.price - b.price)[0].price}$`;
+    } else {
+      return '-';
     }
   }
 

@@ -151,7 +151,7 @@ export class ServerDetailsComponent implements OnInit {
         if(dataAll[2].body){
           this.serverDetails = dataAll[2].body as any;
           this.breadcrumbs[2] =
-            { name: this.serverDetails.display_name, url: '/server/' + this.serverDetails.vendor.vendor_id + '/' + this.serverDetails.server_id };
+            { name: this.serverDetails.display_name, url: '/server/' + this.serverDetails.vendor.vendor_id + '/' + this.serverDetails.api_reference };
 
           this.features = [];
           if(this.serverDetails.cpu_cores || this.serverDetails.vcpus) {
@@ -242,7 +242,7 @@ export class ServerDetailsComponent implements OnInit {
             if(data?.body) {
               const allServers = data.body as TableServerTableServerGetData;
               allServers.forEach((s) => {
-                if(s.family === this.serverDetails.family && s.server_id !== this.serverDetails.server_id) {
+                if(s.family === this.serverDetails.family && s.server_id !== this.serverDetails.api_reference) {
                   if(this.similarByFamily.length < 7 && this.similarByFamily.findIndex((s2) => s2.server_id === s.server_id) === -1) {
                     this.similarByFamily.push(s);
                   }
@@ -407,7 +407,7 @@ export class ServerDetailsComponent implements OnInit {
 
   serverUrl(server: Server): string {
     return(`<a class="underline decoration-dotted hover:text-gray-500"
-      href="/server/${server.vendor_id}/${server.server_id}">
+      href="/server/${server.vendor_id}/${server.api_reference}">
       ${server.display_name}</a>`)
   }
 

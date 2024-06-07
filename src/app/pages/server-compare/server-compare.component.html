@@ -58,7 +58,7 @@
             </td>
             <ng-container *ngFor="let item of servers">
               <td>
-                <div >
+                <div [style]="getBecnchmarkStyle(item, true)">
                     {{getBenchmark(item, true)}}
                 </div>
               </td>
@@ -70,8 +70,20 @@
             </td>
             <ng-container *ngFor="let item of servers">
               <td>
-                <div>
+                <div [style]="getBecnchmarkStyle(item, false)">
                   {{getBenchmark(item, false)}}
+                </div>
+              </td>
+            </ng-container>
+          </tr>
+          <tr>
+            <td>
+              Best ondemand price
+            </td>
+            <ng-container *ngFor="let item of servers">
+              <td>
+                <div [style]="getBestPriceStyle(item)">
+                  {{getBestPrice(item)}}
                 </div>
               </td>
             </ng-container>
@@ -79,7 +91,16 @@
           <ng-container *ngFor="let category of instancePropertyCategories">
             <tr *ngFor="let column of category.properties; let i = index" >
               <td>
-                {{column.name}}
+                <div class="flex gap-2 items-center">
+                  {{column.name}}
+                  <lucide-icon
+                    *ngIf="column.description"
+                    name="info"
+                    class="h-4 w-4 text-gray-200"
+                    (mouseenter)="showTooltip($event, column.description)"
+                    (mouseleave)="hideTooltip()">
+                  </lucide-icon>
+                </div>
               </td>
               <ng-container *ngFor="let server of servers">
                 <td>
@@ -107,7 +128,7 @@
 
 <div id="tooltipDefault"
   #tooltipDefault
-  style="opacity: 0;"
-  class="absolute z-10 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-secondary border border-solid border-emerald-400 rounded-lg">
-  Copied to clipboard!
+  style="opacity: 0; z-index: 22"
+  class="absolute inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-secondary border border-solid border-emerald-400 rounded-lg">
+  {{tooltipContent}}
 </div>

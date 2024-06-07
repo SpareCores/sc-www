@@ -330,7 +330,7 @@ export class ServerPricesComponent implements OnInit {
   }
 
   openServerDetails(server: ServerPriceWithPKs) {
-    this.router.navigateByUrl(`/server/${server.vendor.vendor_id}/${server.server.server_id}`);
+    this.router.navigateByUrl(`/server/${server.vendor.vendor_id}/${server.server.api_reference}`);
   }
 
   toggleCategory(category: any) {

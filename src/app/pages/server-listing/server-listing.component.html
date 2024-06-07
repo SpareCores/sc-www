@@ -236,7 +236,7 @@
                   <td>
                     <!-- eslint-disable-next-line @angular-eslint/template/interactive-supports-focus -->
                     <div (click)="$event.stopPropagation()">
-                      <a routerLink="/server/{{item.vendor.vendor_id}}/{{item.server_id}}"
+                      <a routerLink="/server/{{item.vendor.vendor_id}}/{{item.api_reference}}"
                          data-ph-capture-attribute-sc-event="server listing route to server details"
                          [attr.data-ph-capture-attribute-server-listing-row-vendor]="item.vendor_id"
                          [attr.data-ph-capture-attribute-server-listing-row-index]="i+1"
