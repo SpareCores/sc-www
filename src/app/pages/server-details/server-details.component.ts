@@ -800,15 +800,11 @@ export class ServerDetailsComponent implements OnInit {
   }
 
   generateCompressChart() {
-    let data: any = {
-      labels: [],
-      datasets: []
-    };
-
     let dataSet1 = this.benchmarksByCategory?.find(x => x.benchmark_id === 'compression_text:ratio')?.benchmarks || [];
 
     if(!dataSet1 || !dataSet1.length) {
       this.lineChartDataCompress = undefined;
+      return;
     }
 
     let dataSet2 = this.benchmarksByCategory?.find(x => x.benchmark_id === 'compression_text:compress')?.benchmarks || [];
@@ -825,6 +821,11 @@ export class ServerDetailsComponent implements OnInit {
     dataSet3 = dataSet3?.filter((item: any) => {
       return !item.config.threads  || item.config.threads === 1;
     });
+
+    let data: any = {
+      labels: [],
+      datasets: []
+    };
 
     dataSet1.forEach((item: any) => {
       let found = data.datasets.find((d: any) => { return d.config.algo === item.config.algo});
