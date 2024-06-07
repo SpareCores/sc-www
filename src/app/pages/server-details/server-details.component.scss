@@ -51,7 +51,7 @@
       td {
         @apply px-5 py-3 text-left text-sm;
       }
-      td:first-child {
+      td.fixed_width {
         width: 250px;
       }
     }

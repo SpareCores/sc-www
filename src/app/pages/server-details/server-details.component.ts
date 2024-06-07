@@ -17,6 +17,7 @@ import { barChartDataEmpty, barChartOptions, barChartOptionsSSL, lineChartOption
 import { Chart } from 'chart.js';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import { DomSanitizer } from '@angular/platform-browser';
+import { ReduceUnitNamePipe } from '../../pipes/reduce-unit-name.pipe';
 
 Chart.register(annotationPlugin);
 
@@ -32,7 +33,7 @@ const options: DropdownOptions = {
 @Component({
   selector: 'app-server-details',
   standalone: true,
-  imports: [BreadcrumbsComponent, CommonModule, LucideAngularModule, FaqComponent, FormsModule, RouterModule, BaseChartDirective],
+  imports: [BreadcrumbsComponent, CommonModule, LucideAngularModule, FaqComponent, FormsModule, RouterModule, BaseChartDirective, ReduceUnitNamePipe],
   templateUrl: './server-details.component.html',
   styleUrl: './server-details.component.scss'
 })
@@ -188,6 +189,8 @@ export class ServerDetailsComponent implements OnInit {
               group.benchmarks.push(b);
             }
           });
+
+          console.log(this.benchmarksByCategory);
 
           this.regionFilters = [];
           this.serverDetails.prices?.sort((a, b) => a.price - b.price);
@@ -442,6 +445,7 @@ export class ServerDetailsComponent implements OnInit {
         const data: any = {
           region_id: price.region_id,
           display_name: price.region.display_name,
+          api_reference: price.region.api_reference,
           spot: {
             price: 0,
             unit: price.unit,
