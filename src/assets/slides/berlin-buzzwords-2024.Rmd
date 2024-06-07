@@ -58,8 +58,8 @@ document.getElementById("coverslide").remove();
 </h3>
 
 <h3 class="author" style="color:#eee;padding-top:25px;font-size:1.1em;text-align: center !important; padding-top: 10px;font-weight: normal; ">
-  Slides: <a href="https://daroczig.github.io/talks/" target="_blank"
-             style="text-decoration: underline; color: white;">daroczig.github.io</a>
+  Slides: <a href="https://sparecores/assets/slides/berlin-buzzwords-2024.html#/coverslide" target="_blank"
+             style="text-decoration: underline; color: white;">sparecores.com/talks</a>
 </h3>
 
 <div class="notes">

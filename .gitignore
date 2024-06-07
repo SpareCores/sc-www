@@ -65,3 +65,6 @@ aio/content/examples/.DS_Store
 # Ignore prebuild JSON files
 src/assets/articles/featured.json
 src/assets/articles/all.json
+
+# custom patterns
+src/assets/slides/render.sh
