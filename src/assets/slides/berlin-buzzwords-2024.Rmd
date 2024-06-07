@@ -1,0 +1,152 @@
+---
+title: "Harnessing Spare Cores to Breeze Through Cloud Compute"
+author: Gergely Daróczi
+date: "2024-06-12"
+conference: "Berlin Buzzwords 2024"
+conference_url: "https://2024.berlinbuzzwords.de/"
+conference_talk_url: "https://program.berlinbuzzwords.de/bbuzz24/talk/ZDLK3M/"
+location: "Berlin, Germany"
+output:
+  revealjs::revealjs_presentation:
+    theme: white
+    highlight: tango
+    transition: default
+    includes:
+      in_header: header.html
+    template: template.html
+    reveal_options:
+      slideNumber: true
+      previewLinks: false
+      width: 1244
+    self_contained: false
+    lib_dir: libs
+    reveal_plugins: ["notes", "zoom"]
+---
+
+## dummy slide
+
+<!--add custom CSS for the speaker view-->
+<script>
+  if (window.self !== window.top) {
+    document.body.className += " speakerview";
+  }
+</script>
+
+<!--javascript to remove dummy slide-->
+<script>
+document.getElementById("dummy-slide").remove();
+document.getElementById("coverslide").remove();
+</script>
+
+<!--end dummy slide-->
+</section>
+
+<section id="coverslide">
+
+<img src="images/berlin-buzzords-logo-white.png" class="toplogo" />
+
+<h1 class="subtitle" style="color:#eee;font-size:1.75em;text-align: center; margin-top:325px; color:#34d399;">
+  Harnessing Spare Cores to<br />Breeze Through Cloud Compute
+</h1>
+
+<h2 class="author" style="color:#eee;padding-top:25px;font-size:1.25em;text-align: center !important;margin-bottom: 0px;">
+  Gergely Daróczi
+</h2>
+
+<h3 class="author" style="color:#eee;font-size:1.1em;text-align: center !important; font-weight: normal;">
+  Spare Cores Team
+</h3>
+
+<h3 class="author" style="color:#eee;padding-top:25px;font-size:1.1em;text-align: center !important; padding-top: 10px;font-weight: normal; ">
+  Slides: <a href="https://daroczig.github.io/talks/" target="_blank"
+             style="text-decoration: underline; color: white;">daroczig.github.io</a>
+</h3>
+
+<div class="notes">
+TODO
+</div>
+
+</section>
+
+<section>
+<section class="titleslide slide level1">
+  <h2>&#62; from sparecores import intro</h2>
+
+- bullet
+- points
+- to be added
+
+<aside class="notes">
+* TODO
+* TODO
+</aside>
+
+
+## > from sparecores import team {data-transition="slide-in none-out"}
+
+::: {.colcontainer}
+:::: {.col}
+<img src="https://avatars.githubusercontent.com/u/820331?v=4" class="rounded w-70" />
+<p class="bold">@bra-fsn</p>
+::::
+:::: {.col}
+<img src="https://avatars.githubusercontent.com/u/5794264?v=4" class="rounded w-70" />
+<p class="bold">@palabola</p>
+::::
+:::: {.col}
+<img src="https://avatars.githubusercontent.com/u/495736?v=4" class="rounded w-70" />
+<p class="bold">@daroczig</p>
+::::
+:::
+
+
+## > from sparecores import team  {data-transition="none-in fade-out"}
+
+::: {.colcontainer}
+:::: {.col}
+<img src="https://avatars.githubusercontent.com/u/820331?v=4" class="rounded w-70" />
+<p class="bold">@bra-fsn</p>
+<p>Infrastructure and Python veteran.</p>
+::::
+:::: {.col}
+<img src="https://avatars.githubusercontent.com/u/5794264?v=4" class="rounded w-70" />
+<p class="bold">@palabola</p>
+<p>Guardian of the front-end and Node.js tools.</p>
+::::
+:::: {.col}
+<img src="https://avatars.githubusercontent.com/u/495736?v=4" class="rounded w-70" />
+<p class="bold">@daroczig</p>
+<p>Hack of all trades, master of <code>NaN</code>.</p>
+::::
+:::
+
+## > from sparecores import code
+
+```py
+from sc_crawler.tables import Server
+from sqlmodel import create_engine, Session, select
+
+engine = create_engine("sqlite:///sc-data-all.db")
+session = Session(engine)
+server = session.exec(select(Server).where(Server.server_id == 'trn1.32xlarge')).one()
+
+from rich import print as pp
+pp(server)
+pp(server.vendor)
+```
+
+</section></section>
+
+<section>
+<section class="titleslide slide level1">
+  <h2>&#62; later</h2>
+
+<img src="images/aws-quota-request-quota.png" />
+</section></section>
+
+<section>
+<section class="titleslide slide level1">
+    <!-- https://carbon.now.sh/?bg=rgba%288%2C47%2C73%2C1%29&t=nord&wt=none&l=r&width=680&ds=false&dsyoff=20px&dsblur=68px&wc=true&wa=true&pv=56px&ph=56px&ln=false&fl=1&fm=Hack&fs=18px&lh=161%25&si=false&es=2x&wm=false&code=%253E%2520q%28save%2520%253D%2520%27ask%27%29%250AProcess%2520finished%2520at%2520June%252012%252009%253A50%253A00%25202024%2520%250A%250A%253E%2520visit%28%27https%253A%252F%252Fsparecores.com%27%29%250A%253E%2520email%28%27daroczig%2540sparecores.com%27%29%250A%253E%2520follow%28%27%2540SpareCores%27%29 -->
+   <img src="images/bye.png" width="80%" style="background: none;"/>
+</section>
+</section>
