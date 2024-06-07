@@ -225,8 +225,12 @@ export const lineChartOptionsComp: ChartConfiguration<'line'>['options'] = {
       labels: {
         color: '#FFF',
       },
-    }
+    },
   },
+  parsing: {
+    xAxisKey: 'compression_level',
+    yAxisKey: 'compress'
+  }
 };
 
 export const lineChartOptionsCompRatio: ChartConfiguration<'line'>['options'] = {

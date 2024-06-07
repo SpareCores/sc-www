@@ -13,9 +13,9 @@ export class ReduceUnitNamePipe implements PipeTransform {
       case 'year': return 'y';
       case 'month': return 'm';
       case 'byte': return 'B';
-      case 'kilobyte': return 'KB';
-      case 'megabyte': return 'MB';
-      case 'gigabyte': return 'GB';
+      case 'kilobyte': return 'KiB';
+      case 'megabyte': return 'MiB';
+      case 'gigabyte': return 'GiB';
       case 'terabyte': return 'TB';
       default: return value;
     }

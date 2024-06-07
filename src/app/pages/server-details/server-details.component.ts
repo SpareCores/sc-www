@@ -90,9 +90,11 @@ export class ServerDetailsComponent implements OnInit {
   // benchmark charts
   compressDropdown: any;
   compressMethods: any[] = [
-    { name: 'Compress', key: 'compression_text:compress' },
-    { name: 'Decompress', key: 'compression_text:decompress' },
-    { name: 'Ratio', key: 'compression_text:ratio' }
+    { name: 'Compress level', key: 'compress' },
+    { name: 'Decompress level', key: 'decompress' },
+    { name: 'Ratio level', key: 'ratio' },
+    { name: 'Ratio/Compress', key: 'ratio_compress' },
+    { name: 'Ratio/Decompress', key: 'ratio_decompress' },
   ];
   selectedCompressMethod = this.compressMethods[0];
 
@@ -798,20 +800,129 @@ export class ServerDetailsComponent implements OnInit {
   }
 
   generateCompressChart() {
-    let data: any;
+    let data: any = {
+      labels: [],
+      datasets: []
+    };
+
+    let dataSet1 = this.benchmarksByCategory?.find(x => x.benchmark_id === 'compression_text:ratio')?.benchmarks || [];
+
+    if(!dataSet1 || !dataSet1.length) {
+      this.lineChartDataCompress = undefined;
+    }
+
+    let dataSet2 = this.benchmarksByCategory?.find(x => x.benchmark_id === 'compression_text:compress')?.benchmarks || [];
+    let dataSet3 = this.benchmarksByCategory?.find(x => x.benchmark_id === 'compression_text:decompress')?.benchmarks || [];
+
+    dataSet1 = dataSet1?.filter((item: any) => {
+      return !item.config.threads  || item.config.threads === 1;
+    });
+
+    dataSet2 = dataSet2?.filter((item: any) => {
+      return !item.config.threads  || item.config.threads === 1;
+    });
+
+    dataSet3 = dataSet3?.filter((item: any) => {
+      return !item.config.threads  || item.config.threads === 1;
+    });
+
+    dataSet1.forEach((item: any) => {
+      let found = data.datasets.find((d: any) => { return d.config.algo === item.config.algo});
+      if(!found) {
+        data.datasets.push({
+          data: [{
+            config: item.config,
+            ratio: Math.floor(item.score * 100) / 100,
+            algo: item.config.algo,
+            compression_level:
+            item.config.compression_level
+          }],
+          label: item.config.algo,
+          spanGaps: true,
+          config: item.config,
+          borderColor: radarDatasetColors[data.datasets.length].borderColor,
+          backgroundColor: radarDatasetColors[data.datasets.length].backgroundColor
+        });
+      } else {
+        found.data.push({
+          config: item.config,
+          ratio: Math.floor(item.score * 100) / 100,
+          algo: item.config.algo,
+          compression_level:
+          item.config.compression_level });
+      }
+    });
+
+    data.datasets.forEach((dataset: any) => {
+      dataset.data.forEach((item: any) => {
+        const item2 = dataSet2.find((dataItem: any) => {
+          return Object.entries(item.config).every(([key, value]) => {
+            return dataItem.config[key] === value;
+          });
+        });
+        let item3 = dataSet3.find((dataItem: any) => {
+          return Object.entries(item.config).every(([key, value]) => {
+            return dataItem.config[key] === value;
+          });
+        });
+        if(item2 && item3) {
+          item.compress = item2.score;
+          item.decompress = item3.score;
+        }
+      });
+    });
+
     switch(this.selectedCompressMethod.key) {
-      case 'compression_text:compress':
-        data = this.generateLineChart('compression_text:compress', 'algo', 'compression_level');
-        this.lineChartOptionsCompress = lineChartOptionsComp;
+      case 'compress':
+      case 'decompress':
+      case 'ratio': {
+        let labels: any[] = [];
+        dataSet1.forEach((item: any) => {
+          if((item.config['compression_level'] || item.config['compression_level'] == 0) && labels.indexOf(item.config['compression_level']) === -1) {
+            labels.push(item.config['compression_level']);
+          }
+        });
+
+        data.datasets.forEach((dataset: any) => {
+          dataset.data = dataset.data.sort((a: any, b: any) => a.compression_level - b.compression_level);
+        });
+
+        data.labels = labels.sort((a, b) => a - b);
+
+        if((this.lineChartOptionsCompress as any).parsing.yAxisKey) {
+          (this.lineChartOptionsCompress as any).parsing = {
+            yAxisKey: this.selectedCompressMethod.key,
+            xAxisKey: 'compression_level',
+          }
+        }
+
         break;
-      case 'compression_text:decompress':
-        data = this.generateLineChart('compression_text:decompress', 'algo', 'compression_level');
-        this.lineChartOptionsCompress = lineChartOptionsComp;
-        break;
-      case 'compression_text:ratio':
-        data = this.generateLineChart('compression_text:ratio', 'algo', 'compression_level');
-        this.lineChartOptionsCompress = lineChartOptionsCompRatio;
-        break;
+      }
+      case 'ratio_compress':
+      case 'ratio_decompress': {
+        let labels: any[] = [];
+
+        data.datasets.forEach((dataset: any) => {
+          dataset.data.forEach((item: any) => {
+            if(item.ratio && labels.indexOf(item.ratio) === -1) {
+              labels.push(item.ratio);
+            }
+          });
+        });
+
+        data.labels = labels.sort((a, b) => a - b);
+
+        data.datasets.forEach((dataset: any) => {
+          dataset.data = dataset.data.sort((a: any, b: any) => a.ratio - b.ratio);
+        });
+
+        if((this.lineChartOptionsCompress as any).parsing.yAxisKey) {
+          (this.lineChartOptionsCompress as any).parsing = {
+            yAxisKey:  this.selectedCompressMethod.key === 'ratio_compress' ? 'compress' : 'decompress',
+            xAxisKey: 'ratio',
+          }
+        }
+      }
     }
     if(data) {
       this.lineChartDataCompress = { labels: data.labels, datasets: data.datasets };
