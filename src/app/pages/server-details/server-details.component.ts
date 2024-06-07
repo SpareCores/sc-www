@@ -192,8 +192,6 @@ export class ServerDetailsComponent implements OnInit {
             }
           });
 
-          console.log(this.benchmarksByCategory);
-
           this.regionFilters = [];
           this.serverDetails.prices?.sort((a, b) => a.price - b.price);
           this.serverDetails.prices?.forEach((price: ServerPricePKs) => {
