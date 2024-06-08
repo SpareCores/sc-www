@@ -34,6 +34,9 @@ body.speakerview {
   width: 250px;
   height: 250px;
 }
+.reveal div.centered p {
+  text-align: center;
+}
 
 .noborder {
     border: 0px !important;
@@ -44,8 +47,17 @@ img.rounded {
   border-radius: 50%;
 }
 
+.w-25 {
+  width: 25%;
+}
+.w-50 {
+  width: 50%;
+}
 .w-70 {
   width: 70%;
+}
+.w-75 {
+  width: 75%;
 }
 p.bold {
   font-weight: bold;
@@ -188,6 +200,12 @@ p {
 .reveal ul {
     width: 100%;
 }
+.reveal .slides p {
+  text-align: left;
+}
+.reveal .slides p {
+  margin-top: 60px;
+}
 
 .cbox {
   display: flex;
@@ -220,4 +238,56 @@ p {
         -0.05em 0.05em black,
         0.05em -0.05em black,
         0.05em 0.05em black !important;
+}
+
+.reveal ul li {
+  margin-top: 30px;
+}
+.mb-30 {
+  margin-bottom: 30px !important;
+}
+.mt-30 {
+  margin-top: 30px !important;
+}
+.mt-60 {
+  margin-top: 60px !important;
+}
+.mt--20 {
+  margin-top: -20px !important;
+}
+.mt--30 {
+  margin-top: -30px !important;
+}
+.mt--60 {
+  margin-top: -60px !important;
+}
+.mt--90 {
+  margin-top: -90px !important;
+}
+
+.v-center-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
+  width: 100%;
+}
+.v-center-image {
+  ax-height: 80vh;
+  max-width: 100vw;
+  width: auto;
+  height: auto;
+}
+
+.gray {
+  color: #999;
+}
+
+p.centered {
+  text-align: center !important;
+}
+
+.reveal a {
+  text-decoration: underline;
+  color: white;
 }
