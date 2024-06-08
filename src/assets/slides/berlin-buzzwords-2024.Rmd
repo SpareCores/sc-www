@@ -188,14 +188,44 @@ and AWS bin packing smaller jobs to already running larger nodes (started for he
 <section class="titleslide slide level1">
   <h2>&#62; from sparecores import intro</h2>
 
-- bullet
-- points
-- to be added
+. . .
+
+<img class="mt--30" src="images/homepage-lander-noheader.png" />
 
 <aside class="notes">
-* TODO
-* TODO
+First of all, we have a pretty cool slot machine ...
 </aside>
+
+## > from sparecores import intro
+
+. . .
+
+* Open-source tools, database schemas and documentation to inspect and inventory cloud vendors and their compute resource offerings.
+
+. . .
+
+* Managed infrastructure, databases, APIs, SDKs, and web applications to make these data sources accessible.
+
+. . .
+
+* Helpers to start and manage instances in your own environment.
+
+. . .
+
+* SaaS to reduce your pain points with vendor managament.
+
+<aside class="notes">
+We help DevOps, DS, ML, AI, ETL, AV, and other engineering teams to find optimal instances for their batch jobs (e.g. “8 CPU cores, 64 GB of RAM, and a TPU needed in an EU datacenter to train ML models for 6 hours”) by providing:
+
+* Open-source tools, database schemas and documentation to monitor cloud and flexible VPS/dedicated server vendors and their compute resource offerings in an innovative and truly comparative way, including vendor details (e.g. location, certificates, green power), compute capabilities (e.g. CPU, memory, GPU/TPU), pricing (especially of spot instances), and performance (by running task-specific benchmarks).
+* Managed infrastructure, databases, APIs, SDKs, and web applications to make these continuously and transparently tracked data sources publicly available and comparable in a validated, unbiased, structured, and searchable manner.
+* Helpers to easily start and manage instances at all the supported vendors with a standardized API.
+</aside>
+
+## > from sparecores import intro {data-transition="slide-in fade-out"}
+
+<img style="margin-top:5%" src="images/homepage-stats.png" />
+
 
 
 ## > from sparecores import team {data-transition="slide-in none-out"}
