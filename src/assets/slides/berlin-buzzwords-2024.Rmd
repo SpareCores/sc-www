@@ -527,7 +527,9 @@ TODO
 
 ## >>> from sparecores import support
 
-TODO NGI Search
+::: {.centered}
+<img style="margin-top:-30px;width:70%;" src="images/ngi-eu-open-source.png" />
+:::
 
 <aside class="notes">
 TODO
