@@ -190,15 +190,15 @@ and AWS bin packing smaller jobs to already running larger nodes (started for he
 
 . . .
 
-<img class="mt--30" src="images/homepage-lander-noheader.png" />
+<img class="mt--60" src="images/homepage-lander-noheader.png" />
+
+<p class="centered mt--30">Source: <a href="https://sparecores.com">sparecores.com</a></p>
 
 <aside class="notes">
 First of all, we have a pretty cool slot machine ...
 </aside>
 
 ## > from sparecores import intro
-
-. . .
 
 * Open-source tools, database schemas and documentation to inspect and inventory cloud vendors and their compute resource offerings.
 
@@ -224,45 +224,54 @@ We help DevOps, DS, ML, AI, ETL, AV, and other engineering teams to find optimal
 
 ## > from sparecores import intro {data-transition="slide-in fade-out"}
 
-<img style="margin-top:5%" src="images/homepage-stats.png" />
+<img style="margin-top:-10px" src="images/homepage-stats.png" />
 
+<p class="centered" style="margin-top: -10px;">Source: <a href="https://sparecores.com">sparecores.com</a></p>
+
+## > from sparecores import intro {data-transition="fade"}
+
+TODO
+
+## > from sparecores import intro  {data-transition="fade-in slide-out"}
+
+TODO
 
 
 ## > from sparecores import team {data-transition="slide-in none-out"}
 
-::: {.colcontainer}
+::: {.colcontainer .mt-60 .centered}
 :::: {.col}
 <img src="https://avatars.githubusercontent.com/u/820331?v=4" class="rounded w-70" />
-<p class="bold">@bra-fsn</p>
+<p class="bold mt-0">@bra-fsn</p>
 ::::
 :::: {.col}
 <img src="https://avatars.githubusercontent.com/u/5794264?v=4" class="rounded w-70" />
-<p class="bold">@palabola</p>
+<p class="bold mt-0">@palabola</p>
 ::::
 :::: {.col}
 <img src="https://avatars.githubusercontent.com/u/495736?v=4" class="rounded w-70" />
-<p class="bold">@daroczig</p>
+<p class="bold mt-0">@daroczig</p>
 ::::
 :::
 
-
 ## > from sparecores import team  {data-transition="none-in fade-out"}
 
-::: {.colcontainer}
+::: {.colcontainer .mt-60 .centered}
 :::: {.col}
 <img src="https://avatars.githubusercontent.com/u/820331?v=4" class="rounded w-70" />
-<p class="bold">@bra-fsn</p>
-<p>Infrastructure and Python veteran.</p>
+<p class="bold mt-0">@bra-fsn</p>
+<p class="mt-0">Infrastructure and Python veteran.</p>
 ::::
 :::: {.col}
 <img src="https://avatars.githubusercontent.com/u/5794264?v=4" class="rounded w-70" />
-<p class="bold">@palabola</p>
-<p>Guardian of the front-end and Node.js tools.</p>
+<p class="bold mt-0">@palabola</p>
+<p class="mt-0">Guardian of the front-end and Node.js tools.</p>
 ::::
 :::: {.col}
 <img src="https://avatars.githubusercontent.com/u/495736?v=4" class="rounded w-70" />
-<p class="bold">@daroczig</p>
-<p>Hack of all trades, master of <code>NaN</code>.</p>
+<p class="bold mt-0">@daroczig</p>
+<p class="mt-0">Hack of all trades, master of <code>NaN</code>.</p>
+
 ::::
 :::
 
