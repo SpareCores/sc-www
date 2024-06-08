@@ -237,44 +237,6 @@ TODO
 TODO
 
 
-## > from sparecores import team {data-transition="slide-in none-out"}
-
-::: {.colcontainer .mt-60 .centered}
-:::: {.col}
-<img src="https://avatars.githubusercontent.com/u/820331?v=4" class="rounded w-70" />
-<p class="bold mt-0">@bra-fsn</p>
-::::
-:::: {.col}
-<img src="https://avatars.githubusercontent.com/u/5794264?v=4" class="rounded w-70" />
-<p class="bold mt-0">@palabola</p>
-::::
-:::: {.col}
-<img src="https://avatars.githubusercontent.com/u/495736?v=4" class="rounded w-70" />
-<p class="bold mt-0">@daroczig</p>
-::::
-:::
-
-## > from sparecores import team  {data-transition="none-in fade-out"}
-
-::: {.colcontainer .mt-60 .centered}
-:::: {.col}
-<img src="https://avatars.githubusercontent.com/u/820331?v=4" class="rounded w-70" />
-<p class="bold mt-0">@bra-fsn</p>
-<p class="mt-0">Infrastructure and Python veteran.</p>
-::::
-:::: {.col}
-<img src="https://avatars.githubusercontent.com/u/5794264?v=4" class="rounded w-70" />
-<p class="bold mt-0">@palabola</p>
-<p class="mt-0">Guardian of the front-end and Node.js tools.</p>
-::::
-:::: {.col}
-<img src="https://avatars.githubusercontent.com/u/495736?v=4" class="rounded w-70" />
-<p class="bold mt-0">@daroczig</p>
-<p class="mt-0">Hack of all trades, master of <code>NaN</code>.</p>
-
-::::
-:::
-
 ## > from sparecores import code
 
 ```py
@@ -294,9 +256,60 @@ pp(server.vendor)
 
 <section>
 <section class="titleslide slide level1">
-  <h2>&#62; later</h2>
+  <h2>&#62; import sc_crawler</h2>
+
+
+</section></section>
+
+<section class="titleslide slide level1">
+  <h2>&#62; import \_\_future\_\_</h2>
 
 <img src="images/aws-quota-request-quota.png" />
+</section></section>
+
+<section>
+<section class="titleslide slide level1" data-transition="slide-in none-out">
+  <h2>&#62; from sparecores import team</h2>
+
+::: {.colcontainer .mt-60 .centered}
+:::: {.col}
+<img src="https://avatars.githubusercontent.com/u/820331?v=4" class="rounded w-70" />
+<p class="bold mt-0">@bra-fsn</p>
+::::
+:::: {.col}
+<img src="https://avatars.githubusercontent.com/u/5794264?v=4" class="rounded w-70" />
+<p class="bold mt-0">@palabola</p>
+::::
+:::: {.col}
+<img src="https://avatars.githubusercontent.com/u/495736?v=4" class="rounded w-70" />
+<p class="bold mt-0">@daroczig</p>
+::::
+:::
+
+## > from sparecores import team  {data-transition="none-in slide-out"}
+
+::: {.colcontainer .mt-60 .centered}
+:::: {.col}
+<img src="https://avatars.githubusercontent.com/u/820331?v=4" class="rounded w-70" />
+<p class="bold mt-0">@bra-fsn</p>
+<p class="mt-0">Infrastructure and Python veteran.</p>
+::::
+:::: {.col}
+<img src="https://avatars.githubusercontent.com/u/5794264?v=4" class="rounded w-70" />
+<p class="bold mt-0">@palabola</p>
+<p class="mt-0">Guardian of the front-end and Node.js tools.</p>
+::::
+:::: {.col}
+<img src="https://avatars.githubusercontent.com/u/495736?v=4" class="rounded w-70" />
+<p class="bold mt-0">@daroczig</p>
+<p class="mt-0">Hack of all trades, master of <code>NaN</code>.</p>
+::::
+:::
+
+## > from sparecores import support
+
+TODO NGI Search
+
 </section></section>
 
 <section>
