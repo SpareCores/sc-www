@@ -260,7 +260,7 @@ We help DevOps, DS, ML, AI, ETL, AV, and other engineering teams to find optimal
 BUT let's focus on the open-source and open-data components ..
 </aside>
 
-## > from sparecores import intro {data-transition="slide-in fade-out"}
+## > from sparecores import intro
 
 <img style="margin-top:-10px" src="images/homepage-stats.png" />
 
@@ -271,17 +271,152 @@ BUT let's focus on the open-source and open-data components ..
 TODO
 </aside>
 
-## > from sparecores import intro {data-transition="fade"}
+## > from sparecores import intro
 
-TODO
+<img style="margin-top:-55px" src="images/sc-www-listing.png" />
 
 <aside class="notes">
 TODO
 </aside>
 
-## > from sparecores import intro  {data-transition="fade-in slide-out"}
+## > from sparecores import intro
 
+::: {.centered}
+<img style="margin-top:-55px; width: 90%;" src="images/sc-www-server-details-top.png" />
+:::
+
+<aside class="notes">
 TODO
+</aside>
+
+## > from sparecores import intro
+
+::: {.centered}
+<img style="margin-top:-55px; width: 77.5%;" src="images/sc-www-server-details-prices.png" />
+:::
+
+<aside class="notes">
+TODO
+</aside>
+
+## > from sparecores import intro
+
+::: {.centered}
+<img style="margin-top:-55px; width: 77%;" src="images/sc-www-server-details-benchmarks-1.png" />
+:::
+
+<aside class="notes">
+TODO
+</aside>
+
+## > from sparecores import intro
+
+<img style="margin-top: 0px;" src="images/sc-www-server-details-benchmarks-2.png" />
+
+<aside class="notes">
+TODO
+</aside>
+
+## > from sparecores import intro
+
+<img style="margin-top: -15px;" src="images/sc-keeper-preview.png" />
+
+<aside class="notes">
+TODO
+</aside>
+
+## > from sparecores import intro
+
+```py
+>>> from rich import print as pp
+>>> from sc_crawler.tables import Server
+>>> from sqlmodel import create_engine, Session, select
+>>> engine = create_engine("sqlite:///sc-data-all.db")
+>>> session = Session(engine)
+>>> server = session.exec(select(Server).where(Server.server_id == 'g4dn.xlarge')).one()
+>>> pp(server)
+Server(
+    server_id='g4dn.xlarge',
+    vendor_id='aws',
+    display_name='g4dn.xlarge',
+    api_reference='g4dn.xlarge',
+    name='g4dn.xlarge',
+    family='g4dn',
+    description='Graphics intensive [Instance store volumes] [Network and EBS optimized] Gen4 xlarge',
+
+    status=<Status.ACTIVE: 'active'>,
+    observed_at=datetime.datetime(2024, 6, 6, 10, 18, 4, 127254),
+
+    hypervisor='nitro',
+    vcpus=4,
+    cpu_cores=2,
+    cpu_allocation=<CpuAllocation.DEDICATED: 'Dedicated'>,
+    cpu_manufacturer='Intel',
+    cpu_family='Xeon',
+    cpu_model='8259CL',
+    cpu_architecture=<CpuArchitecture.X86_64: 'x86_64'>,
+    cpu_speed=3.5,
+    cpu_l1_cache=None,
+    cpu_l2_cache=None,
+    cpu_l3_cache=None,
+    cpu_flags=[],
+
+    memory_amount=16384,
+    memory_generation=<DdrGeneration.DDR4: 'DDR4'>,
+    memory_speed=3200,
+    memory_ecc=None,
+
+    gpu_count=1,
+    gpu_memory_min=16384,
+    gpu_memory_total=16384,
+    gpu_manufacturer='Nvidia',
+    gpu_family='Turing',
+    gpu_model='Tesla T4',
+    gpus=[
+        {
+            'manufacturer': 'Nvidia',
+            'family': 'Turing',
+            'model': 'Tesla T4',
+            'memory': 15360,
+            'firmware_version': '535.171.04',
+            'bios_version': '90.04.96.00.A0',
+            'graphics_clock': 1590,
+            'sm_clock': 1590,
+            'mem_clock': 5001,
+            'video_clock': 1470
+        }
+    ],
+
+    storage_size=125,
+    storage_type=<StorageType.NVME_SSD: 'nvme ssd'>,
+    storages=[{'size': 125, 'storage_type': 'nvme ssd'}],
+
+    network_speed=5.0,
+    inbound_traffic=0.0,
+    outbound_traffic=0.0,
+    ipv4=0,
+)
+```
+
+<aside class="notes">
+TODO
+</aside>
+
+</section></section>
+
+<section>
+<section class="titleslide slide level1">
+  <h2>import { AppModule } from 'sc-www';</h2>
+
+<aside class="notes">
+TODO
+</aside>
+
+</section></section>
+
+<section>
+<section class="titleslide slide level1">
+  <h2>&#62; import sc_crawler</h2>
 
 <aside class="notes">
 TODO
@@ -301,16 +436,6 @@ from rich import print as pp
 pp(server)
 pp(server.vendor)
 ```
-<aside class="notes">
-TODO
-</aside>
-
-</section></section>
-
-<section>
-<section class="titleslide slide level1">
-  <h2>&#62; import sc_crawler</h2>
-
 <aside class="notes">
 TODO
 </aside>
