@@ -84,6 +84,10 @@ TODO
   </ul>
 </ul>
 
+<div class="notes">
+TODO
+</div>
+
 ## > from sparecores import why {data-transition="fade-in slide-out"}
 
 <p class="gray">Data Science / Machine Learning batch jobs:</p>
@@ -139,6 +143,10 @@ To give you an example: here's a job that we monitored every few seconds and saw
 ::::
 :::
 
+<div class="notes">
+TODO
+</div>
+
 ## > from sparecores import why
 
 ::: {.centered}
@@ -166,11 +174,19 @@ and AWS bin packing smaller jobs to already running larger nodes (started for he
 
 <img class="mt--30" src="images/adtech-usecase-job-run.png" />
 
+<div class="notes">
+TODO
+</div>
+
 ## > from sparecores import why {data-transition="slide-in none-out"}
 
 ::: {.centered}
 <img class="mt--30 w-70" src="images/adtech-usecase-job-stopped-0.png" />
 :::
+
+<div class="notes">
+TODO
+</div>
 
 ## > from sparecores import why {data-transition="none-in slide-out"}
 
@@ -181,6 +197,25 @@ and AWS bin packing smaller jobs to already running larger nodes (started for he
 ::: {.centered}
 <img class="mt--30 w-70" src="images/adtech-usecase-job-stopped-1.png" />
 :::
+
+<div class="notes">
+TODO
+</div>
+
+## > from sparecores import why
+
+<p class="bold">Other use-cases:</p>
+
+- stats/ML/AI model training,
+- ETL pipelines,
+- traditional CI/CD workflows for compiling and testing software,
+- building Docker images,
+- rendering images and videos,
+- etc.
+
+<div class="notes">
+TODO
+</div>
 
 </section></section>
 
@@ -195,7 +230,7 @@ and AWS bin packing smaller jobs to already running larger nodes (started for he
 <p class="centered mt--30">Source: <a href="https://sparecores.com">sparecores.com</a></p>
 
 <aside class="notes">
-First of all, we have a pretty cool slot machine ...
+First of all, we have a pretty cool slot machine ... TODO
 </aside>
 
 ## > from sparecores import intro
@@ -204,7 +239,7 @@ First of all, we have a pretty cool slot machine ...
 
 . . .
 
-* Managed infrastructure, databases, APIs, SDKs, and web applications to make these data sources accessible.
+* Managed infrastructure, databases, APIs, SDKs, and web applications to make these data sources publicly accessible.
 
 . . .
 
@@ -212,7 +247,7 @@ First of all, we have a pretty cool slot machine ...
 
 . . .
 
-* SaaS to reduce your pain points with vendor managament.
+* SaaS to run containers in a managed environment without direct vendor engagement.
 
 <aside class="notes">
 We help DevOps, DS, ML, AI, ETL, AV, and other engineering teams to find optimal instances for their batch jobs (e.g. “8 CPU cores, 64 GB of RAM, and a TPU needed in an EU datacenter to train ML models for 6 hours”) by providing:
@@ -220,6 +255,9 @@ We help DevOps, DS, ML, AI, ETL, AV, and other engineering teams to find optimal
 * Open-source tools, database schemas and documentation to monitor cloud and flexible VPS/dedicated server vendors and their compute resource offerings in an innovative and truly comparative way, including vendor details (e.g. location, certificates, green power), compute capabilities (e.g. CPU, memory, GPU/TPU), pricing (especially of spot instances), and performance (by running task-specific benchmarks).
 * Managed infrastructure, databases, APIs, SDKs, and web applications to make these continuously and transparently tracked data sources publicly available and comparable in a validated, unbiased, structured, and searchable manner.
 * Helpers to easily start and manage instances at all the supported vendors with a standardized API.
+* SaaS
+
+BUT let's focus on the open-source and open-data components ..
 </aside>
 
 ## > from sparecores import intro {data-transition="slide-in fade-out"}
@@ -228,14 +266,26 @@ We help DevOps, DS, ML, AI, ETL, AV, and other engineering teams to find optimal
 
 <p class="centered" style="margin-top: -10px;">Source: <a href="https://sparecores.com">sparecores.com</a></p>
 
+<aside class="notes">
+<!-- TODO update img with no of benchmarks instead of AZs -->
+TODO
+</aside>
+
 ## > from sparecores import intro {data-transition="fade"}
 
 TODO
+
+<aside class="notes">
+TODO
+</aside>
 
 ## > from sparecores import intro  {data-transition="fade-in slide-out"}
 
 TODO
 
+<aside class="notes">
+TODO
+</aside>
 
 ## > from sparecores import code
 
@@ -251,6 +301,9 @@ from rich import print as pp
 pp(server)
 pp(server.vendor)
 ```
+<aside class="notes">
+TODO
+</aside>
 
 </section></section>
 
@@ -258,6 +311,9 @@ pp(server.vendor)
 <section class="titleslide slide level1">
   <h2>&#62; import sc_crawler</h2>
 
+<aside class="notes">
+TODO
+</aside>
 
 </section></section>
 
@@ -265,6 +321,11 @@ pp(server.vendor)
   <h2>&#62; import \_\_future\_\_</h2>
 
 <img src="images/aws-quota-request-quota.png" />
+
+<aside class="notes">
+TODO
+</aside>
+
 </section></section>
 
 <section>
@@ -286,6 +347,10 @@ pp(server.vendor)
 ::::
 :::
 
+<aside class="notes">
+TODO
+</aside>
+
 ## > from sparecores import team  {data-transition="none-in slide-out"}
 
 ::: {.colcontainer .mt-60 .centered}
@@ -306,9 +371,18 @@ pp(server.vendor)
 ::::
 :::
 
+<aside class="notes">
+TODO
+</aside>
+
 ## > from sparecores import support
 
 TODO NGI Search
+
+<aside class="notes">
+TODO
+</aside>
+
 
 </section></section>
 
@@ -321,6 +395,10 @@ TODO NGI Search
 <img src="images/bye-1.png" style="background: none;" class="mt--60 w-75" />
 :::
 
+<aside class="notes">
+TODO
+</aside>
+
 </section>
 <section data-transition="none">
 
@@ -328,11 +406,19 @@ TODO NGI Search
 <img src="images/bye-2.png" style="background: none;" class="mt--60 w-75" />
 :::
 
+<aside class="notes">
+TODO
+</aside>
+
 </section>
 <section data-transition="none">
 
 ::: {.centered}
 <img src="images/bye-3.png" style="background: none;" class="mt--60 w-75" />
 :::
+
+<aside class="notes">
+TODO
+</aside>
 
 </section>
