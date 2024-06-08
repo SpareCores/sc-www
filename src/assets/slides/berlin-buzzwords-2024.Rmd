@@ -70,6 +70,121 @@ TODO
 </section>
 
 <section>
+<section class="titleslide slide level1" data-transition="slide-in fade-out">
+  <h2>&#62; from sparecores import why</h2>
+
+<p class="fragment">Data Science / Machine Learning batch jobs:</p>
+
+<ul>
+  <li class="fragment">run SQL</li>
+  <li class="fragment">run R or Python script</li>
+  <ul>
+    <li class="fragment">train a simple model, reporting, API integrations etc.</li>
+    <li class="fragment">train hierarchical models/GBMs/neural nets etc.</li>
+  </ul>
+</ul>
+
+## > from sparecores import why {data-transition="fade-in slide-out"}
+
+<p class="gray">Data Science / Machine Learning batch jobs:</p>
+
+<ul class="gray">
+  <li>run SQL</li>
+  <li>run R or Python script</li>
+  <ul>
+    <li>train a simple model, reporting, API integrations etc.</li>
+    <li>train hierarchical models/GBMs/neural nets etc.</li>
+  </ul>
+</ul>
+
+<p class="bold">Scaling DS infrastructure.</p>
+
+<div class="notes">
+- e.g. submit new bid amounts on ads on a social network
+</div>
+
+## > from sparecores import why
+
+<img class="mt--30" src="images/adtech-usecase-job-metrics.png" />
+
+<div class="notes">
+To give you an example: here's a job that we monitored every few seconds and saw that it doesn't really scale to multiple CPUs, but taking up to ~200 gigs of memory -- probably training a hierarchical model that cannot be paralellized.
+</div>
+
+## > from sparecores import why
+
+<img class="mt--30" src="images/adtech-usecase-jobs.png" />
+
+<div class="notes">
+4k jobs/day with varying needs
+
+- Training hierarchical models on a large dataset using R required several hundreds GBs of RAM,
+- NLP models in Python required GPUs,
+- Parallelized time-series forecasting models required many CPUs,
+- Many small jobs mostly waiting for SQL results running on a shared host.
+</div>
+
+## > from sparecores import why
+
+::: {.colcontainer .mt-60}
+:::: {.col}
+<img class="fragment w-25" data-fragment-index="1" src="images/aws_ecs.png" />
+<p class="fragment mt--20 centered" data-fragment-index="1">AWS ECS</p>
+<img class="fragment w-25" data-fragment-index="2" src="images/aws_batch.png" />
+<p class="fragment mt--20 centered" data-fragment-index="2">AWS Batch</p>
+::::
+:::: {.col}
+<img class="fragment w-50" data-fragment-index="3" src="images/kubernetes.svg" style="margin-top:60px;" />
+<p class="fragment mt--20 centered" data-fragment-index="3" >Kubernetes</p>
+::::
+:::
+
+## > from sparecores import why
+
+::: {.centered}
+<img class="mt--30" src="images/xkcd_square_packing.png" style="width:45%;" />
+:::
+
+<p class="centered mt--20">Source: <a href="https://xkcd.com/2740/">xkcd</a></p>
+
+<div class="notes">
+- first of all: it's not easy
+- second: it will fail
+
+AWS Batch seemed like a good fit and relatively convenient solution,
+but after a few months trial, we experienced unexpected costs
+due to developers misconfiguring resource requirements
+
+- overprovisioning to avoid errors
+- forgot to update etc
+
+and AWS bin packing smaller jobs to already running larger nodes (started for heavy jobs), which resulted in keeping the expensive nodes running for a longer time.
+
+</div>
+
+## > from sparecores import why
+
+<img class="mt--30" src="images/adtech-usecase-job-run.png" />
+
+## > from sparecores import why {data-transition="slide-in none-out"}
+
+::: {.centered}
+<img class="mt--30 w-70" src="images/adtech-usecase-job-stopped-0.png" />
+:::
+
+## > from sparecores import why {data-transition="none-in slide-out"}
+
+::: {.centered}
+<img class="mt--30 w-70" src="images/adtech-usecase-job-stopped-0.png" />
+:::
+
+::: {.centered}
+<img class="mt--30 w-70" src="images/adtech-usecase-job-stopped-1.png" />
+:::
+
+</section></section>
+
+<section>
 <section class="titleslide slide level1">
   <h2>&#62; from sparecores import intro</h2>
 
