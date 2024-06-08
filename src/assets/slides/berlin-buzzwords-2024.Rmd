@@ -319,6 +319,16 @@ TODO
 
 ## > from sparecores import intro
 
+<img style="margin-top:-55px; width: 83%;" src="images/sc-www-server-compare.png" />
+
+<!-- https://deploy-preview-27--creative-choux-a3c817.netlify.app/compare?instances=W3sidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzVhZC4xMnhsYXJnZSJ9LHsidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzVkLjJ4bGFyZ2UifSx7InZlbmRvciI6ImF3cyIsInNlcnZlciI6ImM2Zy4xNnhsYXJnZSJ9LHsidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY2N4MzMifV0%3D -->
+<aside class="notes">
+TODO
+</aside>
+
+
+## > from sparecores import intro
+
 <img style="margin-top: -15px;" src="images/sc-keeper-preview.png" />
 
 <aside class="notes">
@@ -407,6 +417,9 @@ TODO
 <section>
 <section class="titleslide slide level1">
   <h2>import { AppModule } from 'sc-www';</h2>
+
+TODO add components overview sections
+TODO move slot machine here?
 
 <aside class="notes">
 TODO
