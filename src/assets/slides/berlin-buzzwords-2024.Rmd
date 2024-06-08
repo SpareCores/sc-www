@@ -223,18 +223,6 @@ TODO
 <section class="titleslide slide level1">
   <h2>&#62;&#62;&#62; from sparecores import intro</h2>
 
-. . .
-
-<img class="mt--60" src="images/homepage-lander-noheader.png" />
-
-<p class="centered mt--30">Source: <a href="https://sparecores.com">sparecores.com</a></p>
-
-<aside class="notes">
-First of all, we have a pretty cool slot machine ... TODO
-</aside>
-
-## >>> from sparecores import intro
-
 * Open-source tools, database schemas and documentation to inspect and inventory cloud vendors and their compute resource offerings.
 
 . . .
@@ -428,19 +416,6 @@ TODO
 
 <section>
 <section class="titleslide slide level1">
-  <h2>import { AppModule } from 'sc-www';</h2>
-
-TODO add components overview sections
-TODO move slot machine here?
-
-<aside class="notes">
-TODO
-</aside>
-
-</section></section>
-
-<section>
-<section class="titleslide slide level1">
   <h2>&#62;&#62;&#62; import sc_crawler</h2>
 
 <aside class="notes">
@@ -461,6 +436,31 @@ from rich import print as pp
 pp(server)
 pp(server.vendor)
 ```
+<aside class="notes">
+TODO
+</aside>
+
+</section></section>
+
+<section>
+<section class="titleslide slide level1">
+  <h2>import { AppModule } from 'sc-www';</h2>
+
+
+. . .
+
+<img class="mt--60" src="images/homepage-lander-noheader.png" />
+
+<p class="centered mt--30">Source: <a href="https://sparecores.com">sparecores.com</a></p>
+
+<aside class="notes">
+First of all, we have a pretty cool slot machine ... TODO
+</aside>
+
+## import { AppModule } from 'sc-www';
+
+TODO
+
 <aside class="notes">
 TODO
 </aside>
