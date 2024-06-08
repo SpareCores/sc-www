@@ -416,6 +416,18 @@ TODO
 
 <section>
 <section class="titleslide slide level1">
+  <h2>&#62; sparecores.\_\_dir\_\_()</h2>
+
+<img style="margin-top:30px; width: 100%;" src="images/sc-components.png" />
+
+<aside class="notes">
+TODO
+</aside>
+
+</section></section>
+
+<section>
+<section class="titleslide slide level1">
   <h2>import { AppModule } from 'sc-www';</h2>
 
 TODO add components overview sections
