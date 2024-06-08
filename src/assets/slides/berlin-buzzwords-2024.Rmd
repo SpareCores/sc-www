@@ -71,7 +71,7 @@ TODO
 
 <section>
 <section class="titleslide slide level1" data-transition="slide-in fade-out">
-  <h2>&#62; from sparecores import why</h2>
+  <h2>&#62;&#62;&#62; from sparecores import why</h2>
 
 <p class="fragment">Data Science / Machine Learning batch jobs:</p>
 
@@ -88,7 +88,7 @@ TODO
 TODO
 </div>
 
-## > from sparecores import why {data-transition="fade-in slide-out"}
+## >>> from sparecores import why {data-transition="fade-in slide-out"}
 
 <p class="gray">Data Science / Machine Learning batch jobs:</p>
 
@@ -107,7 +107,7 @@ TODO
 - e.g. submit new bid amounts on ads on a social network
 </div>
 
-## > from sparecores import why
+## >>> from sparecores import why
 
 <img class="mt--30" src="images/adtech-usecase-job-metrics.png" />
 
@@ -115,7 +115,7 @@ TODO
 To give you an example: here's a job that we monitored every few seconds and saw that it doesn't really scale to multiple CPUs, but taking up to ~200 gigs of memory -- probably training a hierarchical model that cannot be paralellized.
 </div>
 
-## > from sparecores import why
+## >>> from sparecores import why
 
 <img class="mt--30" src="images/adtech-usecase-jobs.png" />
 
@@ -128,7 +128,7 @@ To give you an example: here's a job that we monitored every few seconds and saw
 - Many small jobs mostly waiting for SQL results running on a shared host.
 </div>
 
-## > from sparecores import why
+## >>> from sparecores import why
 
 ::: {.colcontainer .mt-60}
 :::: {.col}
@@ -147,7 +147,7 @@ To give you an example: here's a job that we monitored every few seconds and saw
 TODO
 </div>
 
-## > from sparecores import why
+## >>> from sparecores import why
 
 ::: {.centered}
 <img class="mt--30" src="images/xkcd_square_packing.png" style="width:45%;" />
@@ -170,7 +170,7 @@ and AWS bin packing smaller jobs to already running larger nodes (started for he
 
 </div>
 
-## > from sparecores import why
+## >>> from sparecores import why
 
 <img class="mt--30" src="images/adtech-usecase-job-run.png" />
 
@@ -178,7 +178,7 @@ and AWS bin packing smaller jobs to already running larger nodes (started for he
 TODO
 </div>
 
-## > from sparecores import why {data-transition="slide-in none-out"}
+## >>> from sparecores import why {data-transition="slide-in none-out"}
 
 ::: {.centered}
 <img class="mt--30 w-70" src="images/adtech-usecase-job-stopped-0.png" />
@@ -188,7 +188,7 @@ TODO
 TODO
 </div>
 
-## > from sparecores import why {data-transition="none-in slide-out"}
+## >>> from sparecores import why {data-transition="none-in slide-out"}
 
 ::: {.centered}
 <img class="mt--30 w-70" src="images/adtech-usecase-job-stopped-0.png" />
@@ -202,7 +202,7 @@ TODO
 TODO
 </div>
 
-## > from sparecores import why
+## >>> from sparecores import why
 
 <p class="bold">Other use-cases:</p>
 
@@ -221,7 +221,7 @@ TODO
 
 <section>
 <section class="titleslide slide level1">
-  <h2>&#62; from sparecores import intro</h2>
+  <h2>&#62;&#62;&#62; from sparecores import intro</h2>
 
 . . .
 
@@ -233,7 +233,7 @@ TODO
 First of all, we have a pretty cool slot machine ... TODO
 </aside>
 
-## > from sparecores import intro
+## >>> from sparecores import intro
 
 * Open-source tools, database schemas and documentation to inspect and inventory cloud vendors and their compute resource offerings.
 
@@ -260,7 +260,7 @@ We help DevOps, DS, ML, AI, ETL, AV, and other engineering teams to find optimal
 BUT let's focus on the open-source and open-data components ..
 </aside>
 
-## > from sparecores import intro
+## >>> from sparecores import intro
 
 <img style="margin-top:-10px" src="images/homepage-stats.png" />
 
@@ -271,7 +271,7 @@ BUT let's focus on the open-source and open-data components ..
 TODO
 </aside>
 
-## > from sparecores import intro
+## >>> from sparecores import intro
 
 <img style="margin-top:-55px" src="images/sc-www-listing.png" />
 
@@ -279,7 +279,7 @@ TODO
 TODO
 </aside>
 
-## > from sparecores import intro
+## >>> from sparecores import intro
 
 ::: {.centered}
 <img style="margin-top:-55px; width: 90%;" src="images/sc-www-server-details-top.png" />
@@ -289,7 +289,7 @@ TODO
 TODO
 </aside>
 
-## > from sparecores import intro
+## >>> from sparecores import intro
 
 ::: {.centered}
 <img style="margin-top:-55px; width: 77.5%;" src="images/sc-www-server-details-prices.png" />
@@ -299,7 +299,7 @@ TODO
 TODO
 </aside>
 
-## > from sparecores import intro
+## >>> from sparecores import intro
 
 ::: {.centered}
 <img style="margin-top:-55px; width: 77%;" src="images/sc-www-server-details-benchmarks-1.png" />
@@ -309,7 +309,7 @@ TODO
 TODO
 </aside>
 
-## > from sparecores import intro
+## >>> from sparecores import intro
 
 <img style="margin-top: 0px;" src="images/sc-www-server-details-benchmarks-2.png" />
 
@@ -317,7 +317,7 @@ TODO
 TODO
 </aside>
 
-## > from sparecores import intro
+## >>> from sparecores import intro
 
 <img style="margin-top:-55px; width: 83%;" src="images/sc-www-server-compare.png" />
 
@@ -327,7 +327,7 @@ TODO
 </aside>
 
 
-## > from sparecores import intro
+## >>> from sparecores import intro
 
 <img style="margin-top: -15px;" src="images/sc-keeper-preview.png" />
 
@@ -335,7 +335,7 @@ TODO
 TODO
 </aside>
 
-## > from sparecores import intro
+## >>> from sparecores import intro
 
 ```py
 >>> from rich import print as pp
@@ -416,7 +416,7 @@ TODO
 
 <section>
 <section class="titleslide slide level1">
-  <h2>&#62; sparecores.\_\_dir\_\_()</h2>
+  <h2>&#62;&#62;&#62; sparecores.\_\_dir\_\_()</h2>
 
 <img style="margin-top:30px; width: 100%;" src="images/sc-components.png" />
 
@@ -441,13 +441,13 @@ TODO
 
 <section>
 <section class="titleslide slide level1">
-  <h2>&#62; import sc_crawler</h2>
+  <h2>&#62;&#62;&#62; import sc_crawler</h2>
 
 <aside class="notes">
 TODO
 </aside>
 
-## > from sparecores import code
+## >>> from sparecores import code
 
 ```py
 from sc_crawler.tables import Server
@@ -468,7 +468,7 @@ TODO
 </section></section>
 
 <section class="titleslide slide level1">
-  <h2>&#62; import \_\_future\_\_</h2>
+  <h2>&#62;&#62;&#62; import \_\_future\_\_</h2>
 
 <img src="images/aws-quota-request-quota.png" />
 
@@ -480,7 +480,7 @@ TODO
 
 <section>
 <section class="titleslide slide level1" data-transition="slide-in none-out">
-  <h2>&#62; from sparecores import team</h2>
+  <h2>&#62;&#62;&#62; from sparecores import team</h2>
 
 ::: {.colcontainer .mt-60 .centered}
 :::: {.col}
@@ -501,7 +501,7 @@ TODO
 TODO
 </aside>
 
-## > from sparecores import team  {data-transition="none-in slide-out"}
+## >>> from sparecores import team  {data-transition="none-in slide-out"}
 
 ::: {.colcontainer .mt-60 .centered}
 :::: {.col}
@@ -525,7 +525,7 @@ TODO
 TODO
 </aside>
 
-## > from sparecores import support
+## >>> from sparecores import support
 
 TODO NGI Search
 
