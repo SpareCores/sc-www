@@ -539,11 +539,13 @@ document.getElementById("coverslide").remove();
 <!--end dummy slide-->
 </section>
 <section id="coverslide">
+<div class="centered">
 <p><img src="images/berlin-buzzords-logo-white.png" class="toplogo" /></p>
+</div>
 <h1 class="subtitle" style="color:#eee;font-size:1.75em;text-align: center; margin-top:325px; color:#34d399;">
 Harnessing Spare Cores to<br />Breeze Through Cloud Compute
 </h1>
-<h2 class="author" style="color:#eee;padding-top:25px;font-size:1.25em;text-align: center !important;margin-bottom: 0px;">
+<h2 class="author" style="color:#eee;padding-top:15px;font-size:1.25em;text-align: center !important;margin-bottom: 0px;">
 Gergely Daróczi
 </h2>
 <h3 class="author" style="color:#eee;font-size:1.1em;text-align: center !important; font-weight: normal;">
@@ -551,128 +553,626 @@ Spare Cores Team
 </h3>
 <h3 class="author" style="color:#eee;padding-top:25px;font-size:1.1em;text-align: center !important; padding-top: 10px;font-weight: normal; ">
 Slides:
-<a href="https://sparecores/assets/slides/berlin-buzzwords-2024.html#/coverslide" target="_blank"
-             style="text-decoration: underline; color: white;">sparecores.com/talks</a>
+<a href="https://sparecores/assets/slides/berlin-buzzwords-2024.html#/coverslide" target="_blank">sparecores.com/talks</a>
 </h3>
 <aside class="notes">
 <p>TODO</p>
 </aside>
 </section>
 <section>
-<section class="titleslide slide level1">
+<section class="titleslide slide level1" data-transition="slide-in fade-out">
 <h2>
-&gt; from sparecores import intro
+&gt;&gt;&gt; from sparecores import why
 </h2>
+<p class="fragment">
+Data Science / Machine Learning batch jobs:
+</p>
 <ul>
-<li>bullet</li>
-<li>points</li>
-<li>to be added</li>
+<li class="fragment">
+run SQL
+</li>
+<li class="fragment">
+run R or Python script
+</li>
+<ul>
+<li class="fragment">
+train a simple model, reporting, API integrations etc.
+</li>
+<li class="fragment">
+train hierarchical models/GBMs/neural nets etc.
+</li>
+</ul>
 </ul>
 <aside class="notes">
+<p>TODO</p>
+</aside>
+</section>
+<section id="from-sparecores-import-why" class="slide level2"
+data-transition="fade-in slide-out">
+<h2 data-transition="fade-in slide-out">&gt;&gt;&gt; from sparecores
+import why</h2>
+<p class="gray">
+Data Science / Machine Learning batch jobs:
+</p>
+<ul class="gray">
+<li>
+run SQL
+</li>
+<li>
+run R or Python script
+</li>
 <ul>
-<li>TODO</li>
-<li>TODO</li>
+<li>
+train a simple model, reporting, API integrations etc.
+</li>
+<li>
+train hierarchical models/GBMs/neural nets etc.
+</li>
+</ul>
+</ul>
+<p class="bold">
+Scaling DS infrastructure.
+</p>
+<aside class="notes">
+<ul>
+<li>e.g. submit new bid amounts on ads on a social network</li>
 </ul>
 </aside>
 </section>
-<section id="from-sparecores-import-team" class="slide level2"
+<section id="from-sparecores-import-why-1" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import why</h2>
+<p><img class="mt--30" src="images/adtech-usecase-job-metrics.png" /></p>
+<aside class="notes">
+<p>To give you an example: here’s a job that we monitored every few
+seconds and saw that it doesn’t really scale to multiple CPUs, but
+taking up to ~200 gigs of memory – probably training a hierarchical
+model that cannot be paralellized.</p>
+</aside>
+</section>
+<section id="from-sparecores-import-why-2" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import why</h2>
+<p><img class="mt--30" src="images/adtech-usecase-jobs.png" /></p>
+<aside class="notes">
+<p>4k jobs/day with varying needs</p>
+<ul>
+<li>Training hierarchical models on a large dataset using R required
+several hundreds GBs of RAM,</li>
+<li>NLP models in Python required GPUs,</li>
+<li>Parallelized time-series forecasting models required many CPUs,</li>
+<li>Many small jobs mostly waiting for SQL results running on a shared
+host.</li>
+</ul>
+</aside>
+</section>
+<section id="from-sparecores-import-why-3" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import why</h2>
+<div class="colcontainer mt-60">
+<div class="col">
+<img class="fragment w-25" data-fragment-index="1" src="images/aws_ecs.png" />
+<p class="fragment mt--20 centered" data-fragment-index="1">
+AWS ECS
+</p>
+<img class="fragment w-25" data-fragment-index="2" src="images/aws_batch.png" />
+<p class="fragment mt--20 centered" data-fragment-index="2">
+AWS Batch
+</p>
+</div>
+<div class="col">
+<img class="fragment w-50" data-fragment-index="3" src="images/kubernetes.svg" style="margin-top:60px;" />
+<p class="fragment mt--20 centered" data-fragment-index="3">
+Kubernetes
+</p>
+</div>
+</div>
+<aside class="notes">
+<p>TODO</p>
+</aside>
+</section>
+<section id="from-sparecores-import-why-4" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import why</h2>
+<div class="centered">
+<p><img class="mt--30" src="images/xkcd_square_packing.png" style="width:45%;" /></p>
+</div>
+<p class="centered mt--20">
+Source: <a href="https://xkcd.com/2740/">xkcd</a>
+</p>
+<aside class="notes">
+<ul>
+<li>first of all: it’s not easy</li>
+<li>second: it will fail</li>
+</ul>
+<p>AWS Batch seemed like a good fit and relatively convenient solution,
+but after a few months trial, we experienced unexpected costs due to
+developers misconfiguring resource requirements</p>
+<ul>
+<li>overprovisioning to avoid errors</li>
+<li>forgot to update etc</li>
+</ul>
+<p>and AWS bin packing smaller jobs to already running larger nodes
+(started for heavy jobs), which resulted in keeping the expensive nodes
+running for a longer time.</p>
+</aside>
+</section>
+<section id="from-sparecores-import-why-5" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import why</h2>
+<p><img class="mt--30" src="images/adtech-usecase-job-run.png" /></p>
+<aside class="notes">
+<p>TODO</p>
+</aside>
+</section>
+<section id="from-sparecores-import-why-6" class="slide level2"
 data-transition="slide-in none-out">
-<h2 data-transition="slide-in none-out">&gt; from sparecores import
-team</h2>
-<div class="colcontainer">
-<div class="col">
-<img src="https://avatars.githubusercontent.com/u/820331?v=4" class="rounded w-70" />
-<p class="bold">
-<span class="citation" data-cites="bra-fsn">@bra-fsn</span>
-</p>
+<h2 data-transition="slide-in none-out">&gt;&gt;&gt; from sparecores
+import why</h2>
+<div class="centered">
+<p><img class="mt--30 w-70" src="images/adtech-usecase-job-stopped-0.png" /></p>
 </div>
-<div class="col">
-<img src="https://avatars.githubusercontent.com/u/5794264?v=4" class="rounded w-70" />
-<p class="bold">
-<span class="citation" data-cites="palabola">@palabola</span>
-</p>
-</div>
-<div class="col">
-<img src="https://avatars.githubusercontent.com/u/495736?v=4" class="rounded w-70" />
-<p class="bold">
-<span class="citation" data-cites="daroczig">@daroczig</span>
-</p>
-</div>
-</div>
+<aside class="notes">
+<p>TODO</p>
+</aside>
 </section>
-<section id="from-sparecores-import-team-1" class="slide level2"
-data-transition="none-in fade-out">
-<h2 data-transition="none-in fade-out">&gt; from sparecores import
-team</h2>
-<div class="colcontainer">
-<div class="col">
-<img src="https://avatars.githubusercontent.com/u/820331?v=4" class="rounded w-70" />
-<p class="bold">
-<span class="citation" data-cites="bra-fsn">@bra-fsn</span>
-</p>
-<p>
-Infrastructure and Python veteran.
-</p>
+<section id="from-sparecores-import-why-7" class="slide level2"
+data-transition="none-in slide-out">
+<h2 data-transition="none-in slide-out">&gt;&gt;&gt; from sparecores
+import why</h2>
+<div class="centered">
+<p><img class="mt--30 w-70" src="images/adtech-usecase-job-stopped-0.png" /></p>
 </div>
-<div class="col">
-<img src="https://avatars.githubusercontent.com/u/5794264?v=4" class="rounded w-70" />
-<p class="bold">
-<span class="citation" data-cites="palabola">@palabola</span>
-</p>
-<p>
-Guardian of the front-end and Node.js tools.
-</p>
+<div class="centered">
+<p><img class="mt--30 w-70" src="images/adtech-usecase-job-stopped-1.png" /></p>
 </div>
-<div class="col">
-<img src="https://avatars.githubusercontent.com/u/495736?v=4" class="rounded w-70" />
-<p class="bold">
-<span class="citation" data-cites="daroczig">@daroczig</span>
-</p>
-<p>
-Hack of all trades, master of <code>NaN</code>.
-</p>
-</div>
-</div>
+<aside class="notes">
+<p>TODO</p>
+</aside>
 </section>
-<section id="from-sparecores-import-code" class="slide level2">
-<h2>&gt; from sparecores import code</h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode py"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sc_crawler.tables <span class="im">import</span> Server</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sqlmodel <span class="im">import</span> create_engine, Session, select</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>engine <span class="op">=</span> create_engine(<span class="st">&quot;sqlite:///sc-data-all.db&quot;</span>)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>session <span class="op">=</span> Session(engine)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>server <span class="op">=</span> session.<span class="bu">exec</span>(select(Server).where(Server.server_id <span class="op">==</span> <span class="st">&#39;trn1.32xlarge&#39;</span>)).one()</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> rich <span class="im">import</span> <span class="bu">print</span> <span class="im">as</span> pp</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>pp(server)</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>pp(server.vendor)</span></code></pre></div>
+<section id="from-sparecores-import-why-8" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import why</h2>
+<p class="bold">
+Other use-cases:
+</p>
+<ul>
+<li>stats/ML/AI model training,</li>
+<li>ETL pipelines,</li>
+<li>traditional CI/CD workflows for compiling and testing software,</li>
+<li>building Docker images,</li>
+<li>rendering images and videos,</li>
+<li>etc.</li>
+</ul>
+<aside class="notes">
+<p>TODO like AWS Fargate or GCP … (TODO) but much much cheaper,
+especially while AWS supported spot instances with blocked duration
+(until a couple of months ago)</p>
+<p>as it seemed useful for many use-cases, we decided and were supported
+to open-source most of the infra tooling …</p>
+</aside>
+</section>
+<section id="from-sparecores-import-why-9" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import why</h2>
+<div class="centered">
+<p><img class="mt--45 w-70" src="images/mikata.png" /></p>
+</div>
+<div class="centered">
+<p><img class="mt--70 w-70" src="images/mikata-repos.png" /></p>
+</div>
 </section>
 </section>
 <section>
 <section class="titleslide slide level1">
 <h2>
-&gt; later
+&gt;&gt;&gt; from sparecores import intro
 </h2>
-<img src="images/aws-quota-request-quota.png" />
+<ul>
+<li>Open-source tools, database schemas and documentation to inspect and
+inventory cloud vendors and their compute resource offerings.</li>
+</ul>
+<div class="fragment">
+<ul>
+<li>Managed infrastructure, databases, APIs, SDKs, and web applications
+to make these data sources publicly accessible.</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>Helpers to start and manage instances in your own environment.</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>SaaS to run containers in a managed environment without direct
+vendor engagement.</li>
+</ul>
+<aside class="notes">
+<p>We help DevOps, DS, ML, AI, ETL, AV, and other engineering teams to
+find optimal instances for their batch jobs (e.g. “8 CPU cores, 64 GB of
+RAM, and a TPU needed in an EU datacenter to train ML models for 6
+hours”) by providing:</p>
+<ul>
+<li>Open-source tools, database schemas and documentation to monitor
+cloud and flexible VPS/dedicated server vendors and their compute
+resource offerings in an innovative and truly comparative way, including
+vendor details (e.g. location, certificates, green power), compute
+capabilities (e.g. CPU, memory, GPU/TPU), pricing (especially of spot
+instances), and performance (by running task-specific benchmarks).</li>
+<li>Managed infrastructure, databases, APIs, SDKs, and web applications
+to make these continuously and transparently tracked data sources
+publicly available and comparable in a validated, unbiased, structured,
+and searchable manner.</li>
+<li>Helpers to easily start and manage instances at all the supported
+vendors with a standardized API.</li>
+<li>SaaS</li>
+</ul>
+BUT let’s focus on the open-source and open-data components ..
+</aside>
+</div>
+</section>
+<section id="from-sparecores-import-intro" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import intro</h2>
+<p><img style="margin-top:-10px" src="images/homepage-stats.png" /></p>
+<p class="centered" style="margin-top: -10px;">
+Source: <a href="https://sparecores.com">sparecores.com</a>
+</p>
+<aside class="notes">
+<!-- TODO update img with no of benchmarks instead of AZs -->
+TODO
+</aside>
+</section>
+<section id="from-sparecores-import-intro-1" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import intro</h2>
+<p><img style="margin-top:-55px" src="images/sc-www-listing.png" /></p>
+<aside class="notes">
+TODO
+</aside>
+</section>
+<section id="from-sparecores-import-intro-2" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import intro</h2>
+<div class="centered">
+<p><img style="margin-top:-55px; width: 90%;" src="images/sc-www-server-details-top.png" /></p>
+</div>
+<aside class="notes">
+TODO
+</aside>
+</section>
+<section id="from-sparecores-import-intro-3" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import intro</h2>
+<div class="centered">
+<p><img style="margin-top:-55px; width: 77.5%;" src="images/sc-www-server-details-prices.png" /></p>
+</div>
+<aside class="notes">
+TODO
+</aside>
+</section>
+<section id="from-sparecores-import-intro-4" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import intro</h2>
+<div class="centered">
+<p><img style="margin-top:-55px; width: 77%;" src="images/sc-www-server-details-benchmarks-1.png" /></p>
+</div>
+<aside class="notes">
+TODO
+</aside>
+</section>
+<section id="from-sparecores-import-intro-5" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import intro</h2>
+<p><img style="margin-top: 0px;" src="images/sc-www-server-details-benchmarks-2.png" /></p>
+<aside class="notes">
+TODO
+</aside>
+</section>
+<section id="from-sparecores-import-intro-6" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import intro</h2>
+<p><img style="margin-top:-55px; width: 83%;" src="images/sc-www-server-compare.png" /></p>
+<!-- https://deploy-preview-27--creative-choux-a3c817.netlify.app/compare?instances=W3sidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzVhZC4xMnhsYXJnZSJ9LHsidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzVkLjJ4bGFyZ2UifSx7InZlbmRvciI6ImF3cyIsInNlcnZlciI6ImM2Zy4xNnhsYXJnZSJ9LHsidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY2N4MzMifV0%3D -->
+<aside class="notes">
+TODO
+</aside>
+</section>
+<section id="from-sparecores-import-intro-7" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import intro</h2>
+<p><img style="margin-top: -15px;" src="images/sc-keeper-preview.png" /></p>
+<aside class="notes">
+TODO
+</aside>
+</section>
+<section id="from-sparecores-import-intro-8" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import intro</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode py"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> <span class="im">from</span> rich <span class="im">import</span> <span class="bu">print</span> <span class="im">as</span> pp</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> <span class="im">from</span> sc_crawler.tables <span class="im">import</span> Server</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> <span class="im">from</span> sqlmodel <span class="im">import</span> create_engine, Session, select</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> engine <span class="op">=</span> create_engine(<span class="st">&quot;sqlite:///sc-data-all.db&quot;</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> session <span class="op">=</span> Session(engine)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> server <span class="op">=</span> session.<span class="bu">exec</span>(select(Server).where(Server.server_id <span class="op">==</span> <span class="st">&#39;g4dn.xlarge&#39;</span>)).one()</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> pp(server)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>Server(</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    server_id<span class="op">=</span><span class="st">&#39;g4dn.xlarge&#39;</span>,</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    vendor_id<span class="op">=</span><span class="st">&#39;aws&#39;</span>,</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    display_name<span class="op">=</span><span class="st">&#39;g4dn.xlarge&#39;</span>,</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    api_reference<span class="op">=</span><span class="st">&#39;g4dn.xlarge&#39;</span>,</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">&#39;g4dn.xlarge&#39;</span>,</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    family<span class="op">=</span><span class="st">&#39;g4dn&#39;</span>,</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    description<span class="op">=</span><span class="st">&#39;Graphics intensive [Instance store volumes] [Network and EBS optimized] Gen4 xlarge&#39;</span>,</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    status<span class="op">=&lt;</span>Status.ACTIVE: <span class="st">&#39;active&#39;</span><span class="op">&gt;</span>,</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    observed_at<span class="op">=</span>datetime.datetime(<span class="dv">2024</span>, <span class="dv">6</span>, <span class="dv">6</span>, <span class="dv">10</span>, <span class="dv">18</span>, <span class="dv">4</span>, <span class="dv">127254</span>),</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    hypervisor<span class="op">=</span><span class="st">&#39;nitro&#39;</span>,</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    vcpus<span class="op">=</span><span class="dv">4</span>,</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    cpu_cores<span class="op">=</span><span class="dv">2</span>,</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    cpu_allocation<span class="op">=&lt;</span>CpuAllocation.DEDICATED: <span class="st">&#39;Dedicated&#39;</span><span class="op">&gt;</span>,</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    cpu_manufacturer<span class="op">=</span><span class="st">&#39;Intel&#39;</span>,</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    cpu_family<span class="op">=</span><span class="st">&#39;Xeon&#39;</span>,</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    cpu_model<span class="op">=</span><span class="st">&#39;8259CL&#39;</span>,</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    cpu_architecture<span class="op">=&lt;</span>CpuArchitecture.X86_64: <span class="st">&#39;x86_64&#39;</span><span class="op">&gt;</span>,</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    cpu_speed<span class="op">=</span><span class="fl">3.5</span>,</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>    cpu_l1_cache<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>    cpu_l2_cache<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>    cpu_l3_cache<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>    cpu_flags<span class="op">=</span>[],</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>    memory_amount<span class="op">=</span><span class="dv">16384</span>,</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>    memory_generation<span class="op">=&lt;</span>DdrGeneration.DDR4: <span class="st">&#39;DDR4&#39;</span><span class="op">&gt;</span>,</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>    memory_speed<span class="op">=</span><span class="dv">3200</span>,</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>    memory_ecc<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>    gpu_count<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>    gpu_memory_min<span class="op">=</span><span class="dv">16384</span>,</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>    gpu_memory_total<span class="op">=</span><span class="dv">16384</span>,</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>    gpu_manufacturer<span class="op">=</span><span class="st">&#39;Nvidia&#39;</span>,</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>    gpu_family<span class="op">=</span><span class="st">&#39;Turing&#39;</span>,</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>    gpu_model<span class="op">=</span><span class="st">&#39;Tesla T4&#39;</span>,</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>    gpus<span class="op">=</span>[</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>        {</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;manufacturer&#39;</span>: <span class="st">&#39;Nvidia&#39;</span>,</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;family&#39;</span>: <span class="st">&#39;Turing&#39;</span>,</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;model&#39;</span>: <span class="st">&#39;Tesla T4&#39;</span>,</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;memory&#39;</span>: <span class="dv">15360</span>,</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;firmware_version&#39;</span>: <span class="st">&#39;535.171.04&#39;</span>,</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;bios_version&#39;</span>: <span class="st">&#39;90.04.96.00.A0&#39;</span>,</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;graphics_clock&#39;</span>: <span class="dv">1590</span>,</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;sm_clock&#39;</span>: <span class="dv">1590</span>,</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;mem_clock&#39;</span>: <span class="dv">5001</span>,</span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;video_clock&#39;</span>: <span class="dv">1470</span></span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>    ],</span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>    storage_size<span class="op">=</span><span class="dv">125</span>,</span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>    storage_type<span class="op">=&lt;</span>StorageType.NVME_SSD: <span class="st">&#39;nvme ssd&#39;</span><span class="op">&gt;</span>,</span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>    storages<span class="op">=</span>[{<span class="st">&#39;size&#39;</span>: <span class="dv">125</span>, <span class="st">&#39;storage_type&#39;</span>: <span class="st">&#39;nvme ssd&#39;</span>}],</span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a>    network_speed<span class="op">=</span><span class="fl">5.0</span>,</span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a>    inbound_traffic<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a>    outbound_traffic<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>    ipv4<span class="op">=</span><span class="dv">0</span>,</span>
+<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<aside class="notes">
+TODO
+</aside>
+</section>
+</section>
+<section>
+<section class="titleslide slide level1">
+<h2>
+&gt;&gt;&gt; sparecores.__dir__()
+</h2>
+<p><img style="margin-top:30px; width: 100%;" src="images/sc-components.png" /></p>
+<aside class="notes">
+TODO
+</aside>
+</section>
+</section>
+<section>
+<section class="titleslide slide level1">
+<h2>
+&gt;&gt;&gt; import sc_crawler
+</h2>
+<ul>
+<li>Manual list of vendors and metadata</li>
+<li>…</li>
+</ul>
+<aside class="notes">
+TODO
+</aside>
+</section>
+<section id="import-sc_crawler" class="slide level2">
+<h2>&gt;&gt;&gt; import sc_crawler</h2>
+<p>TODO db/schema stories</p>
+<ul>
+<li>supporting multiple database engines (esp. with migrations + offline
+migrations)</li>
+<li>overlapping compound foreign keys</li>
+</ul>
+<aside class="notes">
+TODO
+</aside>
+</section>
+</section>
+<section>
+<section class="titleslide slide level1">
+<h2>
+&gt;&gt;&gt; import sc_data
+</h2>
+<aside class="notes">
+TODO
+</aside>
+</section>
+</section>
+<section>
+<section class="titleslide slide level1">
+<h2>
+&gt;&gt;&gt; import sc_inspector
+</h2>
+<aside class="notes">
+TODO
+</aside>
+</section>
+</section>
+<section>
+<section class="titleslide slide level1">
+<h2>
+&gt;&gt;&gt; import sc_runner
+</h2>
+<aside class="notes">
+TODO
+</aside>
+</section>
+<section id="import-sc_runner" class="slide level2">
+<h2>&gt;&gt;&gt; import sc_runner</h2>
+<p><img src="images/aws-quota-request-quota.png" /></p>
+</section>
+</section>
+<section>
+<section class="titleslide slide level1">
+<h2>
+&gt;&gt;&gt; import sc_keeper
+</h2>
+<aside class="notes">
+TODO
+</aside>
+</section>
+</section>
+<section>
+<section class="titleslide slide level1">
+<h2>
+import { AppModule } from ‘sc-www’;
+</h2>
+<div class="fragment">
+<p><img class="mt--60" src="images/homepage-lander-noheader.png" /></p>
+<p class="centered mt--30">
+Source: <a href="https://sparecores.com">sparecores.com</a>
+</p>
+<aside class="notes">
+First of all, we have a pretty cool slot machine … TODO
+</aside>
+</div>
+</section>
+<section id="import-appmodule-from-sc-www" class="slide level2">
+<h2>import { AppModule } from ‘sc-www’;</h2>
+<p>TODO</p>
+<aside class="notes">
+TODO
+</aside>
+</section>
+</section>
+<section class="titleslide slide level1">
+<h2>
+&gt;&gt;&gt; import __future__
+</h2>
+<p><span style="color:red;">TODO</span></p>
+<ul>
+<li><p>Add support for more vendors</p>
+<ul>
+<li>crawler (base inventory, prices)</li>
+<li>runner/inspector (HW + benchmarks)</li>
+</ul></li>
+<li><p>More SDKs (node, python, r)</p></li>
+<li><p>SaaS</p></li>
+</ul>
+<aside class="notes">
+TODO
+</aside>
+</section>
+</section>
+<section>
+<section class="titleslide slide level1" data-transition="slide-in none-out">
+<h2>
+&gt;&gt;&gt; from sparecores import team
+</h2>
+<div class="colcontainer mt-60 centered">
+<div class="col">
+<img src="https://avatars.githubusercontent.com/u/820331?v=4" class="rounded w-70" />
+<p class="bold mt-0">
+<span class="citation" data-cites="bra-fsn">@bra-fsn</span>
+</p>
+</div>
+<div class="col">
+<img src="https://avatars.githubusercontent.com/u/5794264?v=4" class="rounded w-70" />
+<p class="bold mt-0">
+<span class="citation" data-cites="palabola">@palabola</span>
+</p>
+</div>
+<div class="col">
+<img src="https://avatars.githubusercontent.com/u/495736?v=4" class="rounded w-70" />
+<p class="bold mt-0">
+<span class="citation" data-cites="daroczig">@daroczig</span>
+</p>
+</div>
+</div>
+<aside class="notes">
+TODO
+</aside>
+</section>
+<section id="from-sparecores-import-team" class="slide level2"
+data-transition="none-in slide-out">
+<h2 data-transition="none-in slide-out">&gt;&gt;&gt; from sparecores
+import team</h2>
+<div class="colcontainer mt-60 centered">
+<div class="col">
+<img src="https://avatars.githubusercontent.com/u/820331?v=4" class="rounded w-70" />
+<p class="bold mt-0">
+<span class="citation" data-cites="bra-fsn">@bra-fsn</span>
+</p>
+<p class="mt-0">
+Infrastructure and Python veteran.
+</p>
+</div>
+<div class="col">
+<img src="https://avatars.githubusercontent.com/u/5794264?v=4" class="rounded w-70" />
+<p class="bold mt-0">
+<span class="citation" data-cites="palabola">@palabola</span>
+</p>
+<p class="mt-0">
+Guardian of the front-end and Node.js tools.
+</p>
+</div>
+<div class="col">
+<img src="https://avatars.githubusercontent.com/u/495736?v=4" class="rounded w-70" />
+<p class="bold mt-0">
+<span class="citation" data-cites="daroczig">@daroczig</span>
+</p>
+<p class="mt-0">
+Hack of all trades, master of <code>NaN</code>.
+</p>
+</div>
+</div>
+<aside class="notes">
+TODO
+</aside>
+</section>
+<section id="from-sparecores-import-support" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import support</h2>
+<div class="centered">
+<p><img style="margin-top:-30px;width:70%;" src="images/ngi-eu-open-source.png" /></p>
+</div>
+<aside class="notes">
+TODO
+</aside>
 </section>
 </section>
 <section>
 <section class="titleslide slide level1" data-transition="slide-in none-out">
 <!-- https://carbon.now.sh/?bg=rgba%288%2C47%2C73%2C1%29&t=nord&wt=none&l=r&width=680&ds=false&dsyoff=20px&dsblur=68px&wc=true&wa=true&pv=56px&ph=56px&ln=false&fl=1&fm=Hack&fs=18px&lh=161%25&si=false&es=2x&wm=false&code=%253E%2520q%28save%2520%253D%2520%27ask%27%29%250AProcess%2520finished%2520at%2520June%252012%252009%253A50%253A00%25202024%2520%250A%250A%253E%2520visit%28%27https%253A%252F%252Fsparecores.com%27%29%250A%253E%2520email%28%27daroczig%2540sparecores.com%27%29%250A%253E%2520follow%28%27%2540SpareCores%27%29 -->
 <!-- https://carbon.now.sh/?bg=rgba%288%2C47%2C73%2C1%29&t=nord&wt=none&l=python&width=680&ds=false&dsyoff=20px&dsblur=68px&wc=true&wa=true&pv=5px&ph=5px&ln=false&fl=1&fm=Hack&fs=18px&lh=161%25&si=false&es=2x&wm=false&code=%253E%253E%253E%2520import%2520os%250A%253E%253E%253E%2520import%2520signal%250A%253E%253E%253E%2520os.kill%28os.getpid%28%29%252C%2520signal.SIGKILL%29%2520%2520%250A%250A%253E%253E%253E%2520visit%28%27https%253A%252F%252Fsparecores.com%27%29%250A%253E%253E%253E%2520email%28%27daroczig%2540sparecores.com%27%29%250A%253E%253E%253E%2520follow%28%27%2540SpareCores%27%29%250A%250A%253E%253E%253E%2520os._exit%28status%253D0%29%250AProcess%2520finished%2520at%2520June%252012%252009%253A50%253A00%25202024%2520 -->
+<!-- https://carbon.now.sh/?bg=rgba%288%2C47%2C73%2C1%29&t=theme%3A0bcewbfyk9yl&wt=none&l=python&width=680&ds=false&dsyoff=20px&dsblur=68px&wc=true&wa=true&pv=5px&ph=5px&ln=false&fl=1&fm=Hack&fs=18px&lh=161%25&si=false&es=2x&wm=false&code=%253E%253E%253E%2520import%2520os%250A%253E%253E%253E%2520import%2520signal%250A%253E%253E%253E%2520os.kill%28os.getpid%28%29%252C%2520signal.SIGKILL%29%2520%2520%250A%250A%253E%253E%253E%2520visit%28%27https%253A%252F%252Fsparecores.com%27%29%250A%253E%253E%253E%2520email%28%27daroczig%2540sparecores.com%27%29%250A%253E%253E%253E%2520follow%28%27%2540SpareCores%27%29%250A%250A%253E%253E%253E%2520os._exit%28status%253D0%29%250AProcess%2520finished%2520at%2520June%252012%252009%253A50%253A00%25202024%2520 -->
 <div class="centered">
 <p><img src="images/bye-1.png" style="background: none;" class="mt--60 w-75" /></p>
 </div>
+<aside class="notes">
+TODO
+</aside>
 </section>
 <section data-transition="none">
 <div class="centered">
 <p><img src="images/bye-2.png" style="background: none;" class="mt--60 w-75" /></p>
 </div>
+<aside class="notes">
+TODO
+</aside>
 </section>
 <section data-transition="none">
 <div class="centered">
 <p><img src="images/bye-3.png" style="background: none;" class="mt--60 w-75" /></p>
 </div>
+<aside class="notes">
+TODO
+</aside>
 </section>
 </section>
     </div>
