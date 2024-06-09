@@ -431,16 +431,434 @@ TODO
 <section class="titleslide slide level1">
   <h2>&#62;&#62;&#62; import sc_crawler</h2>
 
+- ETL framework with database schema and inventory method definitions
+
+. . .
+
+- Database migration tool supporting multiple database engines
+
+. . .
+
 - Manual list of vendors and metadata
-- ...
+
+. . .
+
+- Vendor API integrations to list regions, zones, servers, storages, prices, included free traffic and IPv4 addresses etc.
+
+. . .
+
+- Spare Cores Inspector integration for hardware discovery and benchmark scores
+
+. . .
+
+- Dependency for other Spare Cores components (schemas)
+
+<aside class="notes">
+TODO
+
+sounds relatively straightforward .. but we had a few interesting experiences :)
+</aside>
+
+## >>> from sc_crawler import fks
+
+::: {.centered}
+<img style="margin-top:-50px; width: 66%;"  src="images/dbdocs-relations.png" />
+:::
+
+<p class="centered mt--30">Source: <a href="https://dbdocs.io/spare-cores/sc-crawler">dbdocs.io/spare-cores</a></p>
+
+<aside class="notes">
+overlapping compound foreign keys
+</aside>
+
+## >>> from sc_crawler import scd
+
+Need to optionally track price etc. changes.
+
+. . .
+
+<div style="margin-top: 75px;"></div>
+
+```py
+class Scd(ScModel):
+    """Override the `observed_at` column to be primary key in SCD tables."""
+
+    observed_at: datetime = Field(
+        primary_key=True,
+        default_factory=datetime.utcnow,
+        sa_column_kwargs={"onupdate": datetime.utcnow},
+        description="Timestamp of the last observation.",
+    )
+```
+
+<aside class="notes">
+this became even more complex when created the SCD versions of the tables
+</aside>
+
+## >>> from sc_crawler import alembic
+
+Let's update the `hypervisor` column to be optional, as some vendors as shy sharing that over their APIs. We will  backfill with the Spare Cores Inspector!
+
+. . .
+
+```py
+"""v0.1.1 cores optional
+
+Revision ID: 4691089690c2
+Revises: 98894dffd37c
+Create Date: 2024-04-10 00:59:03.509522
+
+"""
+
+from typing import Sequence, Union
+
+import sqlalchemy as sa
+import sqlmodel
+from alembic import op
+
+# revision identifiers, used by Alembic.
+revision: str = "4691089690c2"
+down_revision: Union[str, None] = "98894dffd37c"
+branch_labels: Union[str, Sequence[str], None] = None
+depends_on: Union[str, Sequence[str], None] = None
+
+## need to provide the table schema for offline mode support
+meta = sa.MetaData()
+server_table = sa.Table(
+    "server_scd" if op.get_context().config.attributes.get("scd") else "server",
+    meta,
+    sa.Column(
+        "vendor_id",
+        sqlmodel.sql.sqltypes.AutoString(),
+        nullable=False,
+    ),
+    sa.Column(
+        "server_id",
+        sqlmodel.sql.sqltypes.AutoString(),
+        nullable=False,
+    ),
+    sa.Column(
+        "name",
+        sqlmodel.sql.sqltypes.AutoString(),
+        nullable=False,
+    ),
+    sa.Column(
+        "vcpus",
+        sa.Integer(),
+        nullable=False,
+    ),
+    sa.Column(
+        "hypervisor",
+        sqlmodel.sql.sqltypes.AutoString(),
+        nullable=True,
+    ),
+    sa.Column(
+        "cpu_allocation",
+        sa.Enum("SHARED", "BURSTABLE", "DEDICATED", name="cpuallocation"),
+        nullable=False,
+    ),
+    sa.Column(
+        "cpu_cores",
+        sa.Integer(),
+        nullable=False,
+    ),
+    sa.Column(
+        "cpu_speed",
+        sa.Float(),
+        nullable=True,
+    ),
+    sa.Column(
+        "cpu_architecture",
+        sa.Enum(
+            "ARM64",
+            "ARM64_MAC",
+            "I386",
+            "X86_64",
+            "X86_64_MAC",
+            name="cpuarchitecture",
+        ),
+        nullable=False,
+    ),
+    sa.Column(
+        "cpu_manufacturer",
+        sqlmodel.sql.sqltypes.AutoString(),
+        nullable=True,
+    ),
+    sa.Column(
+        "cpu_family",
+        sqlmodel.sql.sqltypes.AutoString(),
+        nullable=True,
+    ),
+    sa.Column(
+        "cpu_model",
+        sqlmodel.sql.sqltypes.AutoString(),
+        nullable=True,
+    ),
+    sa.Column(
+        "cpus",
+        sa.JSON(),
+        nullable=False,
+    ),
+    sa.Column("memory", sa.Integer(), nullable=False),
+    sa.Column(
+        "gpu_count",
+        sa.Integer(),
+        nullable=False,
+    ),
+    sa.Column(
+        "gpu_memory_min",
+        sa.Integer(),
+        nullable=True,
+    ),
+    sa.Column(
+        "gpu_memory_total",
+        sa.Integer(),
+        nullable=True,
+    ),
+    sa.Column(
+        "gpu_manufacturer",
+        sqlmodel.sql.sqltypes.AutoString(),
+        nullable=True,
+    ),
+    sa.Column(
+        "gpu_model",
+        sqlmodel.sql.sqltypes.AutoString(),
+        nullable=True,
+    ),
+    sa.Column(
+        "gpus",
+        sa.JSON(),
+        nullable=False,
+    ),
+    sa.Column(
+        "storage_size",
+        sa.Integer(),
+        nullable=False,
+    ),
+    sa.Column(
+        "storage_type",
+        sa.Enum("HDD", "SSD", "NVME_SSD", "NETWORK", name="storagetype"),
+        nullable=True,
+    ),
+    sa.Column(
+        "storages",
+        sa.JSON(),
+        nullable=False,
+    ),
+    sa.Column(
+        "network_speed",
+        sa.Float(),
+        nullable=True,
+    ),
+    sa.Column(
+        "inbound_traffic",
+        sa.Float(),
+        nullable=False,
+    ),
+    sa.Column(
+        "outbound_traffic",
+        sa.Float(),
+        nullable=False,
+    ),
+    sa.Column(
+        "ipv4",
+        sa.Integer(),
+        nullable=False,
+    ),
+    sa.Column(
+        "status",
+        sa.Enum("ACTIVE", "INACTIVE", name="status"),
+        nullable=False,
+    ),
+    sa.Column(
+        "observed_at",
+        sa.DateTime(),
+        nullable=False,
+    ),
+    sa.ForeignKeyConstraint(
+        ["vendor_id"],
+        ["vendor.vendor_id"],
+    ),
+    sa.PrimaryKeyConstraint("vendor_id", "server_id", "observed_at")
+    if op.get_context().config.attributes.get("scd")
+    else sa.PrimaryKeyConstraint("vendor_id", "server_id"),
+)
+
+def upgrade() -> None:
+    if op.get_context().config.attributes.get("scd"):
+        with op.batch_alter_table(
+            "server_scd", schema=None, copy_from=server_table
+        ) as batch_op:
+            batch_op.alter_column(
+                "cpu_cores", existing_type=sa.INTEGER(), nullable=True
+            )
+    else:
+        with op.batch_alter_table(
+            "server", schema=None, copy_from=server_table
+        ) as batch_op:
+            batch_op.alter_column(
+                "cpu_cores", existing_type=sa.INTEGER(), nullable=True
+            )
+
+
+def downgrade() -> None:
+    if op.get_context().config.attributes.get("scd"):
+        with op.batch_alter_table(
+            "server_scd", schema=None, copy_from=server_table
+        ) as batch_op:
+            batch_op.alter_column(
+                "cpu_cores", existing_type=sa.INTEGER(), nullable=False
+            )
+    else:
+        with op.batch_alter_table(
+            "server", schema=None, copy_from=server_table
+        ) as batch_op:
+            batch_op.alter_column(
+                "cpu_cores", existing_type=sa.INTEGER(), nullable=False
+            )
+```
 
 <aside class="notes">
 TODO
 </aside>
 
+## >>> from sc_crawler import alembic
+
+```sh
+$ sc-crawler schemas upgrade --sql
+```
+
+. . .
+
+```SQL
+CREATE TABLE _alembic_tmp_server (
+    vendor_id VARCHAR NOT NULL,
+    server_id VARCHAR NOT NULL,
+    name VARCHAR NOT NULL,
+    vcpus INTEGER NOT NULL,
+    hypervisor VARCHAR,
+    cpu_allocation VARCHAR(9) NOT NULL,
+    cpu_cores INTEGER,
+    cpu_speed FLOAT,
+    cpu_architecture VARCHAR(10) NOT NULL,
+    cpu_manufacturer VARCHAR,
+    cpu_family VARCHAR,
+    cpu_model VARCHAR,
+    cpus JSON NOT NULL,
+    memory INTEGER NOT NULL,
+    gpu_count INTEGER NOT NULL,
+    gpu_memory_min INTEGER,
+    gpu_memory_total INTEGER,
+    gpu_manufacturer VARCHAR,
+    gpu_model VARCHAR,
+    gpus JSON NOT NULL,
+    storage_size INTEGER NOT NULL,
+    storage_type VARCHAR(8),
+    storages JSON NOT NULL,
+    network_speed FLOAT,
+    inbound_traffic FLOAT NOT NULL,
+    outbound_traffic FLOAT NOT NULL,
+    ipv4 INTEGER NOT NULL,
+    status VARCHAR(8) NOT NULL,
+    observed_at DATETIME NOT NULL,
+    description VARCHAR,
+    PRIMARY KEY (vendor_id, server_id),
+    FOREIGN KEY(vendor_id) REFERENCES vendor (vendor_id)
+);
+
+INSERT INTO _alembic_tmp_server (vendor_id, server_id, name, vcpus, hypervisor, cpu_allocation, cpu_cores, cpu_speed, cpu_architecture, cpu_manufacturer, cpu_family, cpu_model, cpus, memory, gpu_count, gpu_memory_min, gpu_memory_total, gpu
+_manufacturer, gpu_model, gpus, storage_size, storage_type, storages, network_speed, inbound_traffic, outbound_traffic, ipv4, status, observed_at) SELECT server.vendor_id, server.server_id, server.name, server.vcpus, server.hypervisor, ser
+ver.cpu_allocation, server.cpu_cores, server.cpu_speed, server.cpu_architecture, server.cpu_manufacturer, server.cpu_family, server.cpu_model, server.cpus, server.memory, server.gpu_count, server.gpu_memory_min, server.gpu_memory_total, se
+rver.gpu_manufacturer, server.gpu_model, server.gpus, server.storage_size, server.storage_type, server.storages, server.network_speed, server.inbound_traffic, server.outbound_traffic, server.ipv4, server.status, server.observed_at
+FROM server;
+
+DROP TABLE server;
+
+ALTER TABLE _alembic_tmp_server RENAME TO server;
+
+UPDATE alembic_version SET version_num='4691089690c2' WHERE alembic_version.version_num = '98894dffd37c';
+```
+
+<aside class="notes">
+TODO
+</aside>
+
+
+
+## >>> from sc_crawler import hwinfo
+
+<ul>
+  <li class="fragment">Varying quality and availability of data at different vendors</li>
+  <ul>
+    <li class="fragment">No SSD info via the API. Parse from server description! 🙀</li>
+    <li class="fragment">No CPU info via the API. Parsing from homepage! 😿</li>
+    <li class="fragment">No hypervisor info via the API. Manual mappings! 🙀😿</li>
+  </ul>
+  <li class="fragment">Region, right?</li>
+</ul>
+
+<div class="colcontainer mt-0">
+ <div class="col">
+   <ul><ul>
+     <li class="fragment">Name</li>
+     <li class="fragment">Alias</li>
+     <li class="fragment">ID</li>
+   </ul></ul>
+ </div>
+ <div class="col">
+   <ul><ul>
+     <li class="fragment">API reference</li>
+     <li class="fragment">Display name</li>
+   </ul></ul>
+ </div>
+</div>
+
+<aside class="notes">
+TODO
+</aside>
+
+## >>> from sc_crawler import pricing
+
+- No way to find SKUs by filtering in the API call. Get all, search locally.
+
+. . .
+
+- `f1-micro` is one out of 2 instances with simple pricing.
+
+    - For other instances, lookup SKUs for CPU + RAM and do the math.
+
+. . .
+
+- Match instance family with SKU via search in description, e.g. `C2D`.
+
+. . .
+
+- Except for `c2`, which is  called “Compute optimized”.
+
+. . .
+
+- And `m2` is actually priced at a premium on the top of `m1`.
+
+. . .
+
+- The `n1` resource group is not CPU/RAM, but `N1Standard`, extract if it’s CPU or RAM price from description.
+
+<aside class="notes">
+Anyone from Google here today?
+Okay, I'll not tell at which vendor we encountered the following issue ...
+
+TODO
+
+m2 pricing: look up m1 cpu/ram pricing + add the premium skus and do the math (2 times 2 numbers added and multiplied – involving 5 api lookups)
+
+Don’t bother with zones reported that are not existing (us-west8 on May 22 .. edge network?)
+
+okay, enough horror stories. beleive me ... it's good to have a standardize database schema and data
+</aside>
+
 ## >>> import sc_crawler
 
-TODO db/schema stories
+TODO overall
 
 - supporting multiple database engines (esp. with migrations + offline migrations)
 - overlapping compound foreign keys

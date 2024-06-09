@@ -964,16 +964,468 @@ TODO
 &gt;&gt;&gt; import sc_crawler
 </h2>
 <ul>
-<li>Manual list of vendors and metadata</li>
-<li>…</li>
+<li>ETL framework with database schema and inventory method
+definitions</li>
 </ul>
+<div class="fragment">
+<ul>
+<li>Database migration tool supporting multiple database engines</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>Manual list of vendors and metadata</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>Vendor API integrations to list regions, zones, servers, storages,
+prices, included free traffic and IPv4 addresses etc.</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>Spare Cores Inspector integration for hardware discovery and
+benchmark scores</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>Dependency for other Spare Cores components (schemas)</li>
+</ul>
+<aside class="notes">
+<p>TODO</p>
+sounds relatively straightforward .. but we had a few interesting
+experiences :)
+</aside>
+</div>
+</section>
+<section id="from-sc_crawler-import-fks" class="slide level2">
+<h2>&gt;&gt;&gt; from sc_crawler import fks</h2>
+<div class="centered">
+<p><img style="margin-top:-50px; width: 66%;"  src="images/dbdocs-relations.png" /></p>
+</div>
+<p class="centered mt--30">
+Source:
+<a href="https://dbdocs.io/spare-cores/sc-crawler">dbdocs.io/spare-cores</a>
+</p>
+<aside class="notes">
+overlapping compound foreign keys
+</aside>
+</section>
+<section id="from-sc_crawler-import-scd" class="slide level2">
+<h2>&gt;&gt;&gt; from sc_crawler import scd</h2>
+<p>Need to optionally track price etc. changes.</p>
+<div class="fragment">
+<div style="margin-top: 75px;">
+
+</div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode py"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Scd(ScModel):</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;Override the `observed_at` column to be primary key in SCD tables.&quot;&quot;&quot;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    observed_at: datetime <span class="op">=</span> Field(</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>        primary_key<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        default_factory<span class="op">=</span>datetime.utcnow,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        sa_column_kwargs<span class="op">=</span>{<span class="st">&quot;onupdate&quot;</span>: datetime.utcnow},</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>        description<span class="op">=</span><span class="st">&quot;Timestamp of the last observation.&quot;</span>,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    )</span></code></pre></div>
+<aside class="notes">
+this became even more complex when created the SCD versions of the
+tables
+</aside>
+</div>
+</section>
+<section id="from-sc_crawler-import-alembic" class="slide level2">
+<h2>&gt;&gt;&gt; from sc_crawler import alembic</h2>
+<p>Let’s update the <code>hypervisor</code> column to be optional, as
+some vendors as shy sharing that over their APIs. We will backfill with
+the Spare Cores Inspector!</p>
+<div class="fragment">
+<div class="sourceCode" id="cb3"><pre class="sourceCode py"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">&quot;&quot;&quot;v0.1.1 cores optional</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">Revision ID: 4691089690c2</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">Revises: 98894dffd37c</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">Create Date: 2024-04-10 00:59:03.509522</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">&quot;&quot;&quot;</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Sequence, Union</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sqlalchemy <span class="im">as</span> sa</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sqlmodel</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> alembic <span class="im">import</span> op</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co"># revision identifiers, used by Alembic.</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>revision: <span class="bu">str</span> <span class="op">=</span> <span class="st">&quot;4691089690c2&quot;</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>down_revision: Union[<span class="bu">str</span>, <span class="va">None</span>] <span class="op">=</span> <span class="st">&quot;98894dffd37c&quot;</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>branch_labels: Union[<span class="bu">str</span>, Sequence[<span class="bu">str</span>], <span class="va">None</span>] <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>depends_on: Union[<span class="bu">str</span>, Sequence[<span class="bu">str</span>], <span class="va">None</span>] <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="co">## need to provide the table schema for offline mode support</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>meta <span class="op">=</span> sa.MetaData()</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>server_table <span class="op">=</span> sa.Table(</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;server_scd&quot;</span> <span class="cf">if</span> op.get_context().config.attributes.get(<span class="st">&quot;scd&quot;</span>) <span class="cf">else</span> <span class="st">&quot;server&quot;</span>,</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    meta,</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;vendor_id&quot;</span>,</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>        sqlmodel.sql.sqltypes.AutoString(),</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;server_id&quot;</span>,</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>        sqlmodel.sql.sqltypes.AutoString(),</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;name&quot;</span>,</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>        sqlmodel.sql.sqltypes.AutoString(),</span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;vcpus&quot;</span>,</span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>        sa.Integer(),</span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;hypervisor&quot;</span>,</span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>        sqlmodel.sql.sqltypes.AutoString(),</span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;cpu_allocation&quot;</span>,</span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>        sa.Enum(<span class="st">&quot;SHARED&quot;</span>, <span class="st">&quot;BURSTABLE&quot;</span>, <span class="st">&quot;DEDICATED&quot;</span>, name<span class="op">=</span><span class="st">&quot;cpuallocation&quot;</span>),</span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;cpu_cores&quot;</span>,</span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>        sa.Integer(),</span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;cpu_speed&quot;</span>,</span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a>        sa.Float(),</span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;cpu_architecture&quot;</span>,</span>
+<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a>        sa.Enum(</span>
+<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;ARM64&quot;</span>,</span>
+<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;ARM64_MAC&quot;</span>,</span>
+<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;I386&quot;</span>,</span>
+<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;X86_64&quot;</span>,</span>
+<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;X86_64_MAC&quot;</span>,</span>
+<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a>            name<span class="op">=</span><span class="st">&quot;cpuarchitecture&quot;</span>,</span>
+<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a>        ),</span>
+<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;cpu_manufacturer&quot;</span>,</span>
+<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a>        sqlmodel.sql.sqltypes.AutoString(),</span>
+<span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-83"><a href="#cb3-83" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-84"><a href="#cb3-84" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;cpu_family&quot;</span>,</span>
+<span id="cb3-85"><a href="#cb3-85" aria-hidden="true" tabindex="-1"></a>        sqlmodel.sql.sqltypes.AutoString(),</span>
+<span id="cb3-86"><a href="#cb3-86" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb3-87"><a href="#cb3-87" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-88"><a href="#cb3-88" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-89"><a href="#cb3-89" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;cpu_model&quot;</span>,</span>
+<span id="cb3-90"><a href="#cb3-90" aria-hidden="true" tabindex="-1"></a>        sqlmodel.sql.sqltypes.AutoString(),</span>
+<span id="cb3-91"><a href="#cb3-91" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb3-92"><a href="#cb3-92" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-93"><a href="#cb3-93" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-94"><a href="#cb3-94" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;cpus&quot;</span>,</span>
+<span id="cb3-95"><a href="#cb3-95" aria-hidden="true" tabindex="-1"></a>        sa.JSON(),</span>
+<span id="cb3-96"><a href="#cb3-96" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb3-97"><a href="#cb3-97" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-98"><a href="#cb3-98" aria-hidden="true" tabindex="-1"></a>    sa.Column(<span class="st">&quot;memory&quot;</span>, sa.Integer(), nullable<span class="op">=</span><span class="va">False</span>),</span>
+<span id="cb3-99"><a href="#cb3-99" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-100"><a href="#cb3-100" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;gpu_count&quot;</span>,</span>
+<span id="cb3-101"><a href="#cb3-101" aria-hidden="true" tabindex="-1"></a>        sa.Integer(),</span>
+<span id="cb3-102"><a href="#cb3-102" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb3-103"><a href="#cb3-103" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-104"><a href="#cb3-104" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-105"><a href="#cb3-105" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;gpu_memory_min&quot;</span>,</span>
+<span id="cb3-106"><a href="#cb3-106" aria-hidden="true" tabindex="-1"></a>        sa.Integer(),</span>
+<span id="cb3-107"><a href="#cb3-107" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb3-108"><a href="#cb3-108" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-109"><a href="#cb3-109" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-110"><a href="#cb3-110" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;gpu_memory_total&quot;</span>,</span>
+<span id="cb3-111"><a href="#cb3-111" aria-hidden="true" tabindex="-1"></a>        sa.Integer(),</span>
+<span id="cb3-112"><a href="#cb3-112" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb3-113"><a href="#cb3-113" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-114"><a href="#cb3-114" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-115"><a href="#cb3-115" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;gpu_manufacturer&quot;</span>,</span>
+<span id="cb3-116"><a href="#cb3-116" aria-hidden="true" tabindex="-1"></a>        sqlmodel.sql.sqltypes.AutoString(),</span>
+<span id="cb3-117"><a href="#cb3-117" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb3-118"><a href="#cb3-118" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-119"><a href="#cb3-119" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-120"><a href="#cb3-120" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;gpu_model&quot;</span>,</span>
+<span id="cb3-121"><a href="#cb3-121" aria-hidden="true" tabindex="-1"></a>        sqlmodel.sql.sqltypes.AutoString(),</span>
+<span id="cb3-122"><a href="#cb3-122" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb3-123"><a href="#cb3-123" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-124"><a href="#cb3-124" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-125"><a href="#cb3-125" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;gpus&quot;</span>,</span>
+<span id="cb3-126"><a href="#cb3-126" aria-hidden="true" tabindex="-1"></a>        sa.JSON(),</span>
+<span id="cb3-127"><a href="#cb3-127" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb3-128"><a href="#cb3-128" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-129"><a href="#cb3-129" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-130"><a href="#cb3-130" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;storage_size&quot;</span>,</span>
+<span id="cb3-131"><a href="#cb3-131" aria-hidden="true" tabindex="-1"></a>        sa.Integer(),</span>
+<span id="cb3-132"><a href="#cb3-132" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb3-133"><a href="#cb3-133" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-134"><a href="#cb3-134" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-135"><a href="#cb3-135" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;storage_type&quot;</span>,</span>
+<span id="cb3-136"><a href="#cb3-136" aria-hidden="true" tabindex="-1"></a>        sa.Enum(<span class="st">&quot;HDD&quot;</span>, <span class="st">&quot;SSD&quot;</span>, <span class="st">&quot;NVME_SSD&quot;</span>, <span class="st">&quot;NETWORK&quot;</span>, name<span class="op">=</span><span class="st">&quot;storagetype&quot;</span>),</span>
+<span id="cb3-137"><a href="#cb3-137" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb3-138"><a href="#cb3-138" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-139"><a href="#cb3-139" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-140"><a href="#cb3-140" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;storages&quot;</span>,</span>
+<span id="cb3-141"><a href="#cb3-141" aria-hidden="true" tabindex="-1"></a>        sa.JSON(),</span>
+<span id="cb3-142"><a href="#cb3-142" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb3-143"><a href="#cb3-143" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-144"><a href="#cb3-144" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-145"><a href="#cb3-145" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;network_speed&quot;</span>,</span>
+<span id="cb3-146"><a href="#cb3-146" aria-hidden="true" tabindex="-1"></a>        sa.Float(),</span>
+<span id="cb3-147"><a href="#cb3-147" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb3-148"><a href="#cb3-148" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-149"><a href="#cb3-149" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-150"><a href="#cb3-150" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;inbound_traffic&quot;</span>,</span>
+<span id="cb3-151"><a href="#cb3-151" aria-hidden="true" tabindex="-1"></a>        sa.Float(),</span>
+<span id="cb3-152"><a href="#cb3-152" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb3-153"><a href="#cb3-153" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-154"><a href="#cb3-154" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-155"><a href="#cb3-155" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;outbound_traffic&quot;</span>,</span>
+<span id="cb3-156"><a href="#cb3-156" aria-hidden="true" tabindex="-1"></a>        sa.Float(),</span>
+<span id="cb3-157"><a href="#cb3-157" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb3-158"><a href="#cb3-158" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-159"><a href="#cb3-159" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-160"><a href="#cb3-160" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;ipv4&quot;</span>,</span>
+<span id="cb3-161"><a href="#cb3-161" aria-hidden="true" tabindex="-1"></a>        sa.Integer(),</span>
+<span id="cb3-162"><a href="#cb3-162" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb3-163"><a href="#cb3-163" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-164"><a href="#cb3-164" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-165"><a href="#cb3-165" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;status&quot;</span>,</span>
+<span id="cb3-166"><a href="#cb3-166" aria-hidden="true" tabindex="-1"></a>        sa.Enum(<span class="st">&quot;ACTIVE&quot;</span>, <span class="st">&quot;INACTIVE&quot;</span>, name<span class="op">=</span><span class="st">&quot;status&quot;</span>),</span>
+<span id="cb3-167"><a href="#cb3-167" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb3-168"><a href="#cb3-168" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-169"><a href="#cb3-169" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-170"><a href="#cb3-170" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;observed_at&quot;</span>,</span>
+<span id="cb3-171"><a href="#cb3-171" aria-hidden="true" tabindex="-1"></a>        sa.DateTime(),</span>
+<span id="cb3-172"><a href="#cb3-172" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb3-173"><a href="#cb3-173" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-174"><a href="#cb3-174" aria-hidden="true" tabindex="-1"></a>    sa.ForeignKeyConstraint(</span>
+<span id="cb3-175"><a href="#cb3-175" aria-hidden="true" tabindex="-1"></a>        [<span class="st">&quot;vendor_id&quot;</span>],</span>
+<span id="cb3-176"><a href="#cb3-176" aria-hidden="true" tabindex="-1"></a>        [<span class="st">&quot;vendor.vendor_id&quot;</span>],</span>
+<span id="cb3-177"><a href="#cb3-177" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-178"><a href="#cb3-178" aria-hidden="true" tabindex="-1"></a>    sa.PrimaryKeyConstraint(<span class="st">&quot;vendor_id&quot;</span>, <span class="st">&quot;server_id&quot;</span>, <span class="st">&quot;observed_at&quot;</span>)</span>
+<span id="cb3-179"><a href="#cb3-179" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> op.get_context().config.attributes.get(<span class="st">&quot;scd&quot;</span>)</span>
+<span id="cb3-180"><a href="#cb3-180" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> sa.PrimaryKeyConstraint(<span class="st">&quot;vendor_id&quot;</span>, <span class="st">&quot;server_id&quot;</span>),</span>
+<span id="cb3-181"><a href="#cb3-181" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-182"><a href="#cb3-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-183"><a href="#cb3-183" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> upgrade() <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb3-184"><a href="#cb3-184" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> op.get_context().config.attributes.get(<span class="st">&quot;scd&quot;</span>):</span>
+<span id="cb3-185"><a href="#cb3-185" aria-hidden="true" tabindex="-1"></a>        <span class="cf">with</span> op.batch_alter_table(</span>
+<span id="cb3-186"><a href="#cb3-186" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;server_scd&quot;</span>, schema<span class="op">=</span><span class="va">None</span>, copy_from<span class="op">=</span>server_table</span>
+<span id="cb3-187"><a href="#cb3-187" aria-hidden="true" tabindex="-1"></a>        ) <span class="im">as</span> batch_op:</span>
+<span id="cb3-188"><a href="#cb3-188" aria-hidden="true" tabindex="-1"></a>            batch_op.alter_column(</span>
+<span id="cb3-189"><a href="#cb3-189" aria-hidden="true" tabindex="-1"></a>                <span class="st">&quot;cpu_cores&quot;</span>, existing_type<span class="op">=</span>sa.INTEGER(), nullable<span class="op">=</span><span class="va">True</span></span>
+<span id="cb3-190"><a href="#cb3-190" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb3-191"><a href="#cb3-191" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb3-192"><a href="#cb3-192" aria-hidden="true" tabindex="-1"></a>        <span class="cf">with</span> op.batch_alter_table(</span>
+<span id="cb3-193"><a href="#cb3-193" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;server&quot;</span>, schema<span class="op">=</span><span class="va">None</span>, copy_from<span class="op">=</span>server_table</span>
+<span id="cb3-194"><a href="#cb3-194" aria-hidden="true" tabindex="-1"></a>        ) <span class="im">as</span> batch_op:</span>
+<span id="cb3-195"><a href="#cb3-195" aria-hidden="true" tabindex="-1"></a>            batch_op.alter_column(</span>
+<span id="cb3-196"><a href="#cb3-196" aria-hidden="true" tabindex="-1"></a>                <span class="st">&quot;cpu_cores&quot;</span>, existing_type<span class="op">=</span>sa.INTEGER(), nullable<span class="op">=</span><span class="va">True</span></span>
+<span id="cb3-197"><a href="#cb3-197" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb3-198"><a href="#cb3-198" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-199"><a href="#cb3-199" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-200"><a href="#cb3-200" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> downgrade() <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb3-201"><a href="#cb3-201" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> op.get_context().config.attributes.get(<span class="st">&quot;scd&quot;</span>):</span>
+<span id="cb3-202"><a href="#cb3-202" aria-hidden="true" tabindex="-1"></a>        <span class="cf">with</span> op.batch_alter_table(</span>
+<span id="cb3-203"><a href="#cb3-203" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;server_scd&quot;</span>, schema<span class="op">=</span><span class="va">None</span>, copy_from<span class="op">=</span>server_table</span>
+<span id="cb3-204"><a href="#cb3-204" aria-hidden="true" tabindex="-1"></a>        ) <span class="im">as</span> batch_op:</span>
+<span id="cb3-205"><a href="#cb3-205" aria-hidden="true" tabindex="-1"></a>            batch_op.alter_column(</span>
+<span id="cb3-206"><a href="#cb3-206" aria-hidden="true" tabindex="-1"></a>                <span class="st">&quot;cpu_cores&quot;</span>, existing_type<span class="op">=</span>sa.INTEGER(), nullable<span class="op">=</span><span class="va">False</span></span>
+<span id="cb3-207"><a href="#cb3-207" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb3-208"><a href="#cb3-208" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb3-209"><a href="#cb3-209" aria-hidden="true" tabindex="-1"></a>        <span class="cf">with</span> op.batch_alter_table(</span>
+<span id="cb3-210"><a href="#cb3-210" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;server&quot;</span>, schema<span class="op">=</span><span class="va">None</span>, copy_from<span class="op">=</span>server_table</span>
+<span id="cb3-211"><a href="#cb3-211" aria-hidden="true" tabindex="-1"></a>        ) <span class="im">as</span> batch_op:</span>
+<span id="cb3-212"><a href="#cb3-212" aria-hidden="true" tabindex="-1"></a>            batch_op.alter_column(</span>
+<span id="cb3-213"><a href="#cb3-213" aria-hidden="true" tabindex="-1"></a>                <span class="st">&quot;cpu_cores&quot;</span>, existing_type<span class="op">=</span>sa.INTEGER(), nullable<span class="op">=</span><span class="va">False</span></span>
+<span id="cb3-214"><a href="#cb3-214" aria-hidden="true" tabindex="-1"></a>            )</span></code></pre></div>
+<aside class="notes">
+TODO
+</aside>
+</div>
+</section>
+<section id="from-sc_crawler-import-alembic-1" class="slide level2">
+<h2>&gt;&gt;&gt; from sc_crawler import alembic</h2>
+<div class="sourceCode" id="cb4"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sc-crawler schemas upgrade <span class="at">--sql</span></span></code></pre></div>
+<div class="fragment">
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> _alembic_tmp_server (</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    vendor_id <span class="dt">VARCHAR</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    server_id <span class="dt">VARCHAR</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    name <span class="dt">VARCHAR</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    vcpus <span class="dt">INTEGER</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    hypervisor <span class="dt">VARCHAR</span>,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    cpu_allocation <span class="dt">VARCHAR</span>(<span class="dv">9</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    cpu_cores <span class="dt">INTEGER</span>,</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    cpu_speed <span class="dt">FLOAT</span>,</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    cpu_architecture <span class="dt">VARCHAR</span>(<span class="dv">10</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    cpu_manufacturer <span class="dt">VARCHAR</span>,</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    cpu_family <span class="dt">VARCHAR</span>,</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    cpu_model <span class="dt">VARCHAR</span>,</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    cpus JSON <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    memory <span class="dt">INTEGER</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    gpu_count <span class="dt">INTEGER</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    gpu_memory_min <span class="dt">INTEGER</span>,</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    gpu_memory_total <span class="dt">INTEGER</span>,</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    gpu_manufacturer <span class="dt">VARCHAR</span>,</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    gpu_model <span class="dt">VARCHAR</span>,</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>    gpus JSON <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>    storage_size <span class="dt">INTEGER</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>    storage_type <span class="dt">VARCHAR</span>(<span class="dv">8</span>),</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>    storages JSON <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>    network_speed <span class="dt">FLOAT</span>,</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>    inbound_traffic <span class="dt">FLOAT</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>    outbound_traffic <span class="dt">FLOAT</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>    ipv4 <span class="dt">INTEGER</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>    status <span class="dt">VARCHAR</span>(<span class="dv">8</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>    observed_at DATETIME <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>    description <span class="dt">VARCHAR</span>,</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>    <span class="kw">PRIMARY</span> <span class="kw">KEY</span> (vendor_id, server_id),</span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FOREIGN</span> <span class="kw">KEY</span>(vendor_id) <span class="kw">REFERENCES</span> vendor (vendor_id)</span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>);</span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> _alembic_tmp_server (vendor_id, server_id, name, vcpus, hypervisor, cpu_allocation, cpu_cores, cpu_speed, cpu_architecture, cpu_manufacturer, cpu_family, cpu_model, cpus, memory, gpu_count, gpu_memory_min, gpu_memory_total, gpu</span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>_manufacturer, gpu_model, gpus, storage_size, storage_type, storages, network_speed, inbound_traffic, outbound_traffic, ipv4, status, observed_at) <span class="kw">SELECT</span> server.vendor_id, server.server_id, server.name, server.vcpus, server.hypervisor, ser</span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>ver.cpu_allocation, server.cpu_cores, server.cpu_speed, server.cpu_architecture, server.cpu_manufacturer, server.cpu_family, server.cpu_model, server.cpus, server.memory, server.gpu_count, server.gpu_memory_min, server.gpu_memory_total, se</span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>rver.gpu_manufacturer, server.gpu_model, server.gpus, server.storage_size, server.storage_type, server.storages, server.network_speed, server.inbound_traffic, server.outbound_traffic, server.ipv4, server.status, server.observed_at</span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> server;</span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a><span class="kw">DROP</span> <span class="kw">TABLE</span> server;</span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> _alembic_tmp_server <span class="kw">RENAME</span> <span class="kw">TO</span> server;</span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a><span class="kw">UPDATE</span> alembic_version <span class="kw">SET</span> version_num<span class="op">=</span><span class="st">&#39;4691089690c2&#39;</span> <span class="kw">WHERE</span> alembic_version.version_num <span class="op">=</span> <span class="st">&#39;98894dffd37c&#39;</span>;</span></code></pre></div>
+<aside class="notes">
+TODO
+</aside>
+</div>
+</section>
+<section id="from-sc_crawler-import-hwinfo" class="slide level2">
+<h2>&gt;&gt;&gt; from sc_crawler import hwinfo</h2>
+<ul>
+<li class="fragment">
+Varying quality and availability of data at different vendors
+</li>
+<ul>
+<li class="fragment">
+No SSD info via the API. Parse from server description! 🙀
+</li>
+<li class="fragment">
+No CPU info via the API. Parsing from homepage! 😿
+</li>
+<li class="fragment">
+No hypervisor info via the API. Manual mappings! 🙀😿
+</li>
+</ul>
+<li class="fragment">
+Region, right?
+</li>
+</ul>
+<div class="colcontainer mt-0">
+<div class="col">
+<ul>
+<ul>
+<li class="fragment">
+Name
+</li>
+<li class="fragment">
+Alias
+</li>
+<li class="fragment">
+ID
+</li>
+</ul>
+</ul>
+</div>
+<div class="col">
+<ul>
+<ul>
+<li class="fragment">
+API reference
+</li>
+<li class="fragment">
+Display name
+</li>
+</ul>
+</ul>
+</div>
+</div>
 <aside class="notes">
 TODO
 </aside>
 </section>
+<section id="from-sc_crawler-import-pricing" class="slide level2">
+<h2>&gt;&gt;&gt; from sc_crawler import pricing</h2>
+<ul>
+<li>No way to find SKUs by filtering in the API call. Get all, search
+locally.</li>
+</ul>
+<div class="fragment">
+<ul>
+<li><p><code>f1-micro</code> is one out of 2 instances with simple
+pricing.</p>
+<ul>
+<li>For other instances, lookup SKUs for CPU + RAM and do the math.</li>
+</ul></li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>Match instance family with SKU via search in description,
+e.g. <code>C2D</code>.</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>Except for <code>c2</code>, which is called “Compute
+optimized”.</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>And <code>m2</code> is actually priced at a premium on the top of
+<code>m1</code>.</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>The <code>n1</code> resource group is not CPU/RAM, but
+<code>N1Standard</code>, extract if it’s CPU or RAM price from
+description.</li>
+</ul>
+<aside class="notes">
+<p>Anyone from Google here today? Okay, I’ll not tell at which vendor we
+encountered the following issue …</p>
+<p>TODO</p>
+<p>m2 pricing: look up m1 cpu/ram pricing + add the premium skus and do
+the math (2 times 2 numbers added and multiplied – involving 5 api
+lookups)</p>
+<p>Don’t bother with zones reported that are not existing (us-west8 on
+May 22 .. edge network?)</p>
+okay, enough horror stories. beleive me … it’s good to have a
+standardize database schema and data
+</aside>
+</div>
+</section>
 <section id="import-sc_crawler" class="slide level2">
 <h2>&gt;&gt;&gt; import sc_crawler</h2>
-<p>TODO db/schema stories</p>
+<p>TODO overall</p>
 <ul>
 <li>supporting multiple database engines (esp. with migrations + offline
 migrations)</li>
