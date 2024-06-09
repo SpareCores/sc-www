@@ -265,8 +265,14 @@ p {
 .mt--30 {
   margin-top: -30px !important;
 }
+.mt--45 {
+  margin-top: -45px !important;
+}
 .mt--60 {
   margin-top: -60px !important;
+}
+.mt--70 {
+  margin-top: -70px !important;
 }
 .mt--90 {
   margin-top: -90px !important;
