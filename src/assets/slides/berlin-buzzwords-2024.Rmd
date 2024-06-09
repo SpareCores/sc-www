@@ -507,7 +507,7 @@ this became even more complex when created the SCD versions of the tables
 
 ## >>> from sc_crawler import alembic
 
-Let's update the `hypervisor` column to be optional, as some vendors as shy sharing that over their APIs. We will  backfill with the Spare Cores Inspector!
+Let's update the `cpu_cores` column to be optional, as some vendors as shy sharing that over their APIs. We will  backfill with the Spare Cores Inspector!
 
 . . .
 
@@ -797,7 +797,7 @@ TODO
 
 ## >>> from sc_crawler import hwinfo
 
-<ul style="margin-top: 10px;">
+<ul style="margin-top: -20px;">
   <li class="fragment">Varying quality and availability of data at different vendors</li>
   <ul>
     <li class="fragment">No SSD info via the API. Parse from server description! 🙀</li>
@@ -819,6 +819,7 @@ TODO
    <ul><ul>
      <li class="fragment">API reference, eg `eu-west-1`</li>
      <li class="fragment">Display name, eg `Dublin (IE)`</li>
+     <li class="fragment">Exact location?</li>
    </ul></ul>
  </div>
 </div>
@@ -863,18 +864,21 @@ m2 pricing: look up m1 cpu/ram pricing + add the premium skus and do the math (2
 
 Don’t bother with zones reported that are not existing (us-west8 on May 22 .. edge network?)
 
+it's a mess ...
+
 okay, enough horror stories. beleive me ... it's good to have a standardize database schema and data
 </aside>
 
 ## >>> import sc_crawler
 
-TODO overall
+::: {.centered}
+<img style="margin-top:-50px; width: 100%;"  src="images/dbhub.png" />
+:::
 
-- supporting multiple database engines (esp. with migrations + offline migrations)
-- overlapping compound foreign keys
+<p class="centered mt--30">Source: <a href="https://dbhub.io/sparecores/sc-data-priceless.db">dbhub.io/sparecores</a></p>
 
 <aside class="notes">
-TODO
+this is showing the collected data, so actually another component of the SC ecocystem, as we license all our software by MPL, but the data by creative commons attribution/share-alike
 </aside>
 
 </section></section>
@@ -883,8 +887,35 @@ TODO
 <section class="titleslide slide level1">
   <h2>&#62;&#62;&#62; import sc_data</h2>
 
+<ul style="margin-top: -20px;">
+  <li class="fragment">GitHub Action set up to run the Crawler every 5 minutes.</li>
+  <div class="colcontainer mt-0">
+  <div class="col">
+  <ul>
+  <li class="fragment">~9000 GHA runs</li>
+  </ul>
+  </div>
+  <div class="col2">
+  <ul>
+  <li class="fragment">~100 releases (with non-price changes)</li>
+  </ul>
+  </div>
+ </div>
+ <li class="fragment">Make the data available in a public (CC BY-SA) SQLite database:</li>
+  <ul>
+    <li class="fragment">60MiB SQLite</li>
+    <li class="fragment">1,120 active servers and their ~135k prices tracked</li>
+    <li class="fragment">~130k measured scores across 24 benchmarks</li>
+  </ul>
+  <li class="fragment">Thin Python package to keep the data updated from S3.</li>
+  <ul>
+    <li class="fragment">Package version is tied to Crawler version.</li>
+  </ul>
+</ul>
+
 <aside class="notes">
 TODO
+~500 storage, traffic, IPv4 prices
 </aside>
 
 </section></section>
@@ -892,6 +923,70 @@ TODO
 <section>
 <section class="titleslide slide level1">
   <h2>&#62;&#62;&#62; import sc_inspector</h2>
+
+Information collected from vendor APIs is very limited, so we run:
+
+```{=html}
+<div class="colcontainer mt-0">
+  <div class="col">
+    <ul style="margin-top: -20px;">
+      <li class="fragment">Hardware inspection tools:</li>
+      <ul>
+        <li class="fragment"><code>dmidecode</code></li>
+        <li class="fragment"><code>lscpu</code></li>
+        <li class="fragment"><code>lshw</code></li>
+      </ul>
+    </ul>
+  </div>
+  <div class="col">
+    <ul style="margin-top: -20px;">
+      <li class="fragment">Benchmarking workloads:</li>
+      <ul>
+        <li class="fragment"><code>bw_mem</code></li>
+        <li class="fragment">Text compression algos</li>
+        <li class="fragment">OpenSSL hash functions and block ciphers</li>
+        <li class="fragment">Geekbench 6</li>
+        <li class="fragment"><code>stress-ng</code></li>
+      </ul>
+    </ul>
+  </div>
+</ul>
+```
+
+<aside class="notes">
+TODO
+</aside>
+
+## >>> import sc_inspector
+
+<p class="mt-0">Data is collected in public: `sc-inspector-data` repo on GitHub.</p>
+
+<img src="images/sc-inspector-data-gha.png" class="mt--30" />
+
+<aside class="notes">
+TODO
+</aside>
+
+## >>> import sc_inspector
+
+<img src="images/sc-inspector-data-files.png" style="margin-top:-40px !important;" />
+
+<aside class="notes">
+TODO
+</aside>
+
+## >>> import sc_inspector
+
+```sh
+docker run --rm -ti -v /var/run/docker.sock:/var/run/docker.sock \
+    -e GITHUB_TOKEN=${GITHUB_TOKEN} \
+    -e BENCHMARK_SECRETS_PASSPHRASE=${BENCHMARK_SECRETS_PASSPHRASE} \
+    ghcr.io/sparecores/sc-inspector:main \
+    inspect --vendor ${VENDOR} --instance ${INSTANCE} --gpu-count ${GPU_COUNT}
+```
+::: {.centered}
+<img class="fragment" src="images/sc-images.png" style="margin-top:-40px !important;width:67%;" />
+:::
 
 <aside class="notes">
 TODO
@@ -904,13 +999,61 @@ TODO
 <section class="titleslide slide level1">
   <h2>&#62;&#62;&#62; import sc_runner</h2>
 
+```sh
+$ docker run --rm -ti \
+  ghcr.io/sparecores/sc-runner:main \
+    create aws --instance t4g.nano
+
+Updating (aws.us-west-2.None.t4g.nano):
+
+    pulumi:pulumi:Stack runner-aws.us-west-2.None.t4g.nano running
+ +  pulumi:providers:aws us-west-2 creating (0s)
+@ updating....
+ +  pulumi:providers:aws us-west-2 created (0.29s)
+ +  aws:ec2:SecurityGroup t4g.nano creating (0s)
+@ updating.....
+ +  aws:ec2:SecurityGroup t4g.nano created (2s)
+@ updating....
+ +  aws:vpc:SecurityGroupIngressRule t4g.nano-0 creating (0s)
+ +  aws:vpc:SecurityGroupIngressRule t4g.nano-1 creating (0s)
+ +  aws:ec2:Instance t4g.nano creating (0s)
+ +  aws:vpc:SecurityGroupEgressRule t4g.nano-1 creating (0s)
+ +  aws:vpc:SecurityGroupEgressRule t4g.nano-0 creating (0s)
+@ updating....
+ +  aws:vpc:SecurityGroupIngressRule t4g.nano-0 created (1s)
+ +  aws:vpc:SecurityGroupIngressRule t4g.nano-1 created (1s)
+ +  aws:vpc:SecurityGroupEgressRule t4g.nano-1 created (1s)
+@ updating....
+ +  aws:vpc:SecurityGroupEgressRule t4g.nano-0 created (1s)
+@ updating..............
+ +  aws:ec2:Instance t4g.nano created (13s)
+@ updating....
+    pulumi:pulumi:Stack runner-aws.us-west-2.None.t4g.nano
+Resources:
+    + 7 created
+    1 unchanged
+```
+
 <aside class="notes">
 TODO
 </aside>
 
-## >>> import sc_runner
+## >>> import sc_runner {data-transition="slide-in none-out"}
 
-<img src="images/aws-quota-request-quota.png" />
+::: {.centered}
+<img src="images/aws-quota-request-quota.png" style="width:57%;margin-top:-30px;"/>
+:::
+
+## >>> import sc_runner {data-transition="none-in slide-out"}
+
+::: {.centered}
+<img src="images/aws-quota-request-quota-achievement-unlocked.png" style="width:57%;margin-top:-30px;"/>
+:::
+
+<aside class="notes">
+Hitting the "quote update request quota" achievement unlocked.
+</aside>
+
 
 </section></section>
 
@@ -918,9 +1061,242 @@ TODO
 <section class="titleslide slide level1">
   <h2>&#62;&#62;&#62; import sc_keeper</h2>
 
+```sh
+$ curl https://keeper.sparecores.net/server/aws/g4dn.xlarge | jq
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100  111k  100  111k    0     0  79795      0  0:00:01  0:00:01 --:--:-- 79799
+```
+
+```json
+{
+  "vendor_id": "aws",
+  "server_id": "g4dn.xlarge",
+  "name": "g4dn.xlarge",
+  "api_reference": "g4dn.xlarge",
+  "display_name": "g4dn.xlarge",
+  "description": "Graphics intensive [Instance store volumes] [Network and EBS optimized] Gen4 xlarge",
+  "family": "g4dn",
+  "vcpus": 4,
+  "hypervisor": "nitro",
+  "cpu_allocation": "Dedicated",
+  "cpu_cores": 2,
+  "cpu_speed": 3.5,
+  "cpu_architecture": "x86_64",
+  "cpu_manufacturer": "Intel",
+  "cpu_family": "Xeon",
+  "cpu_model": "8259CL",
+  "cpu_l1_cache": 131072,
+  "cpu_l2_cache": 2097152,
+  "cpu_l3_cache": 37486592,
+  "cpu_flags": [
+    "fpu",
+    "vme",
+    "de",
+    "pse",
+    "tsc",
+    "msr",
+    "pae",
+    ...
+  ],
+  "cpus": [],
+  "memory_amount": 16384,
+  "memory_generation": "DDR4",
+  "memory_speed": 2933,
+  "memory_ecc": null,
+  "gpu_count": 1,
+  "gpu_memory_min": 16384,
+  "gpu_memory_total": 16384,
+  "gpu_manufacturer": "Nvidia",
+  "gpu_family": "Turing",
+  "gpu_model": "Tesla T4",
+  "gpus": [
+    {
+      "manufacturer": "Nvidia",
+      "family": "Turing",
+      "model": "Tesla T4",
+      "memory": 15360,
+      "firmware_version": "535.171.04",
+      "bios_version": "90.04.96.00.A0",
+      "graphics_clock": 1590,
+      "sm_clock": 1590,
+      "mem_clock": 5001,
+      "video_clock": 1470
+    }
+  ],
+  "storage_size": 125,
+  "storage_type": "nvme ssd",
+  "storages": [
+    {
+      "size": 125,
+      "storage_type": "nvme ssd"
+    }
+  ],
+  "network_speed": 5.0,
+  "inbound_traffic": 0.0,
+  "outbound_traffic": 0.0,
+  "ipv4": 0,
+  "status": "active",
+  "observed_at": "2024-06-09T21:20:22.005194",
+  "vendor": {
+    "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/aws.svg",
+    "address_line": "410 Terry Ave N",
+    "name": "Amazon Web Services",
+    "zip_code": "98109",
+    "founding_year": 2002,
+    "state": "Washington",
+    "status_page": "https://health.aws.amazon.com/health/status",
+    "vendor_id": "aws",
+    "homepage": "https://aws.amazon.com",
+    "country_id": "US",
+    "status": "active",
+    "observed_at": "2024-06-09T21:50:32.658281",
+    "city": "Seattle"
+  },
+  "prices": [
+    {
+      "vendor_id": "aws",
+      "region_id": "af-south-1",
+      "zone_id": "afs1-az1",
+      "server_id": "g4dn.xlarge",
+      "operating_system": "Linux",
+      "allocation": "ondemand",
+      "unit": "hour",
+      "price": 0.698,
+      "price_upfront": 0.0,
+      "price_tiered": [],
+      "currency": "USD",
+      "status": "active",
+      "observed_at": "2024-06-09T21:21:10.015921",
+      "region": {
+        "country_id": "ZA",
+        "state": null,
+        "founding_year": 2020,
+        "green_energy": false,
+        "name": "Africa (Cape Town)",
+        "city": "Cape Town",
+        "status": "active",
+        "address_line": null,
+        "observed_at": "2024-06-09T21:19:37.529944",
+        "zip_code": null,
+        "lon": 18.3758801,
+        "region_id": "af-south-1",
+        "display_name": "Cape Town (ZA)",
+        "lat": -33.914651,
+        "vendor_id": "aws",
+        "api_reference": "af-south-1",
+        "aliases": []
+      },
+      "zone": {
+        "region_id": "af-south-1",
+        "zone_id": "afs1-az1",
+        "api_reference": "af-south-1a",
+        "status": "active",
+        "vendor_id": "aws",
+        "name": "af-south-1a",
+        "display_name": "af-south-1a",
+        "observed_at": "2024-06-09T21:19:40.425499"
+      }
+    },
+    {
+      "vendor_id": "aws",
+      "region_id": "af-south-1",
+      "zone_id": "afs1-az2",
+      "server_id": "g4dn.xlarge",
+      "operating_system": "Linux",
+      "allocation": "spot",
+      "unit": "hour",
+      "price": 0.2251,
+      "price_upfront": 0.0,
+      "price_tiered": [],
+      "currency": "USD",
+      "status": "active",
+      "observed_at": "2024-06-09T18:16:26",
+      "region": {
+        "country_id": "ZA",
+        "state": null,
+        "founding_year": 2020,
+        "green_energy": false,
+        "name": "Africa (Cape Town)",
+        "city": "Cape Town",
+        "status": "active",
+        "address_line": null,
+        "observed_at": "2024-06-09T21:19:37.529944",
+        "zip_code": null,
+        "lon": 18.3758801,
+        "region_id": "af-south-1",
+        "display_name": "Cape Town (ZA)",
+        "lat": -33.914651,
+        "vendor_id": "aws",
+        "api_reference": "af-south-1",
+        "aliases": []
+      },
+      "zone": {
+        "region_id": "af-south-1",
+        "zone_id": "afs1-az2",
+        "api_reference": "af-south-1b",
+        "status": "active",
+        "vendor_id": "aws",
+        "name": "af-south-1b",
+        "display_name": "af-south-1b",
+        "observed_at": "2024-06-09T21:19:40.425554"
+      }
+    },
+    ...
+  ],
+  "benchmark_scores": [
+    {
+      "server_id": "g4dn.xlarge",
+      "config": {},
+      "status": "active",
+      "vendor_id": "aws",
+      "benchmark_id": "bogomips",
+      "score": 5000.0,
+      "note": null,
+      "observed_at": "2024-06-07T04:26:48.643640"
+    },
+    {
+      "server_id": "g4dn.xlarge",
+      "config": {
+        "cores": 1,
+        "framework_version": "0.17.08"
+      },
+      "status": "active",
+      "vendor_id": "aws",
+      "benchmark_id": "stress_ng:cpu_all",
+      "score": 1385.583093,
+      "note": null,
+      "observed_at": "2024-06-07T04:27:14.552982"
+    },
+    {
+      "server_id": "g4dn.xlarge",
+      "config": {
+        "cores": 4,
+        "framework_version": "0.17.08"
+      },
+      "status": "active",
+      "vendor_id": "aws",
+      "benchmark_id": "stress_ng:cpu_all",
+      "score": 4013.022928,
+      "note": null,
+      "observed_at": "2024-06-07T04:27:02.508145"
+    }
+  ]
+}
+```
+
 <aside class="notes">
+python sdk to search the database and also to make that available as a public restful api?
 TODO
 </aside>
+
+## >>> import sc_keeper
+
+<img style="margin-top:-30px;" src="images/sc-keeper-redoc.png" />
+
+## >>> import sc_keeper
+
+<img style="margin-top:-30px;" src="images/sc-keeper-ai.png" />
 
 </section></section>
 
@@ -928,8 +1304,15 @@ TODO
 <section class="titleslide slide level1">
   <h2>import { AppModule } from 'sc-www';</h2>
 
+::: {.centered}
+<img style="margin-top:-30px;width:90%;" src="images/sc-www-collage.png" />
+:::
 
-. . .
+<aside class="notes">
+TODO
+</aside>
+
+## import { AppModule } from 'sc-www';
 
 <img class="mt--60" src="images/homepage-lander-noheader.png" />
 
@@ -938,10 +1321,6 @@ TODO
 <aside class="notes">
 First of all, we have a pretty cool slot machine ... TODO
 </aside>
-
-## import { AppModule } from 'sc-www';
-
-TODO
 
 <aside class="notes">
 TODO
@@ -952,14 +1331,13 @@ TODO
 <section class="titleslide slide level1">
   <h2>&#62;&#62;&#62; import \_\_future\_\_</h2>
 
-<span style="color:red;">TODO</span>
-
 - Add support for more vendors
 
-    - crawler (base inventory, prices)
-    - runner/inspector (HW + benchmarks)
+    - Crawler (vendor API integration)
+    - Runner (pulumi)
 
-- More SDKs (node, python, r)
+- More SDKs (PyPI, npm, CRAN, etc.)
+- Data analysis, blog posts
 - SaaS
 
 <aside class="notes">

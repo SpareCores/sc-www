@@ -1046,7 +1046,7 @@ tables
 </section>
 <section id="from-sc_crawler-import-alembic" class="slide level2">
 <h2>&gt;&gt;&gt; from sc_crawler import alembic</h2>
-<p>Let’s update the <code>hypervisor</code> column to be optional, as
+<p>Let’s update the <code>cpu_cores</code> column to be optional, as
 some vendors as shy sharing that over their APIs. We will backfill with
 the Spare Cores Inspector!</p>
 <div class="fragment">
@@ -1327,7 +1327,7 @@ TODO
 </section>
 <section id="from-sc_crawler-import-hwinfo" class="slide level2">
 <h2>&gt;&gt;&gt; from sc_crawler import hwinfo</h2>
-<ul style="margin-top: 10px;">
+<ul style="margin-top: -20px;">
 <li class="fragment">
 Varying quality and availability of data at different vendors
 </li>
@@ -1370,6 +1370,9 @@ API reference, eg <code>eu-west-1</code>
 </li>
 <li class="fragment">
 Display name, eg <code>Dublin (IE)</code>
+</li>
+<li class="fragment">
+Exact location?
 </li>
 </ul>
 </ul>
@@ -1427,6 +1430,7 @@ the math (2 times 2 numbers added and multiplied – involving 5 api
 lookups)</p>
 <p>Don’t bother with zones reported that are not existing (us-west8 on
 May 22 .. edge network?)</p>
+<p>it’s a mess …</p>
 okay, enough horror stories. beleive me … it’s good to have a
 standardize database schema and data
 </aside>
@@ -1434,14 +1438,17 @@ standardize database schema and data
 </section>
 <section id="import-sc_crawler-1" class="slide level2">
 <h2>&gt;&gt;&gt; import sc_crawler</h2>
-<p>TODO overall</p>
-<ul>
-<li>supporting multiple database engines (esp. with migrations + offline
-migrations)</li>
-<li>overlapping compound foreign keys</li>
-</ul>
+<div class="centered">
+<p><img style="margin-top:-50px; width: 100%;"  src="images/dbhub.png" /></p>
+</div>
+<p class="centered mt--30">
+Source:
+<a href="https://dbhub.io/sparecores/sc-data-priceless.db">dbhub.io/sparecores</a>
+</p>
 <aside class="notes">
-TODO
+this is showing the collected data, so actually another component of the
+SC ecocystem, as we license all our software by MPL, but the data by
+creative commons attribution/share-alike
 </aside>
 </section>
 </section>
@@ -1450,8 +1457,51 @@ TODO
 <h2>
 &gt;&gt;&gt; import sc_data
 </h2>
+<ul style="margin-top: -20px;">
+<li class="fragment">
+GitHub Action set up to run the Crawler every 5 minutes.
+</li>
+<div class="colcontainer mt-0">
+<div class="col">
+<ul>
+<li class="fragment">
+~9000 GHA runs
+</li>
+</ul>
+</div>
+<div class="col2">
+<ul>
+<li class="fragment">
+~100 releases (with non-price changes)
+</li>
+</ul>
+</div>
+</div>
+<li class="fragment">
+Make the data available in a public (CC BY-SA) SQLite database:
+</li>
+<ul>
+<li class="fragment">
+60MiB SQLite
+</li>
+<li class="fragment">
+1,120 active servers and their ~135k prices tracked
+</li>
+<li class="fragment">
+~130k measured scores across 24 benchmarks
+</li>
+</ul>
+<li class="fragment">
+Thin Python package to keep the data updated from S3.
+</li>
+<ul>
+<li class="fragment">
+Package version is tied to Crawler version.
+</li>
+</ul>
+</ul>
 <aside class="notes">
-TODO
+TODO ~500 storage, traffic, IPv4 prices
 </aside>
 </section>
 </section>
@@ -1460,6 +1510,64 @@ TODO
 <h2>
 &gt;&gt;&gt; import sc_inspector
 </h2>
+<p>Information collected from vendor APIs is very limited, so we
+run:</p>
+<div class="colcontainer mt-0">
+  <div class="col">
+    <ul style="margin-top: -20px;">
+      <li class="fragment">Hardware inspection tools:</li>
+      <ul>
+        <li class="fragment"><code>dmidecode</code></li>
+        <li class="fragment"><code>lscpu</code></li>
+        <li class="fragment"><code>lshw</code></li>
+      </ul>
+    </ul>
+  </div>
+  <div class="col">
+    <ul style="margin-top: -20px;">
+      <li class="fragment">Benchmarking workloads:</li>
+      <ul>
+        <li class="fragment"><code>bw_mem</code></li>
+        <li class="fragment">Text compression algos</li>
+        <li class="fragment">OpenSSL hash functions and block ciphers</li>
+        <li class="fragment">Geekbench 6</li>
+        <li class="fragment"><code>stress-ng</code></li>
+      </ul>
+    </ul>
+  </div>
+</ul>
+<aside class="notes">
+TODO
+</aside>
+</section>
+<section id="import-sc_inspector" class="slide level2">
+<h2>&gt;&gt;&gt; import sc_inspector</h2>
+<p class="mt-0">
+Data is collected in public: <code>sc-inspector-data</code> repo on
+GitHub.
+</p>
+<p><img src="images/sc-inspector-data-gha.png" class="mt--30" /></p>
+<aside class="notes">
+TODO
+</aside>
+</section>
+<section id="import-sc_inspector-1" class="slide level2">
+<h2>&gt;&gt;&gt; import sc_inspector</h2>
+<p><img src="images/sc-inspector-data-files.png" style="margin-top:-40px !important;" /></p>
+<aside class="notes">
+TODO
+</aside>
+</section>
+<section id="import-sc_inspector-2" class="slide level2">
+<h2>&gt;&gt;&gt; import sc_inspector</h2>
+<div class="sourceCode" id="cb6"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">--rm</span> <span class="at">-ti</span> <span class="at">-v</span> /var/run/docker.sock:/var/run/docker.sock <span class="dt">\</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">-e</span> GITHUB_TOKEN=<span class="va">${GITHUB_TOKEN}</span> <span class="dt">\</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">-e</span> BENCHMARK_SECRETS_PASSPHRASE=<span class="va">${BENCHMARK_SECRETS_PASSPHRASE}</span> <span class="dt">\</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    ghcr.io/sparecores/sc-inspector:main <span class="dt">\</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    inspect <span class="at">--vendor</span> <span class="va">${VENDOR}</span> <span class="at">--instance</span> <span class="va">${INSTANCE}</span> <span class="at">--gpu-count</span> <span class="va">${GPU_COUNT}</span></span></code></pre></div>
+<div class="centered">
+<p><img class="fragment" src="images/sc-images.png" style="margin-top:-40px !important;width:67%;" /></p>
+</div>
 <aside class="notes">
 TODO
 </aside>
@@ -1470,13 +1578,60 @@ TODO
 <h2>
 &gt;&gt;&gt; import sc_runner
 </h2>
+<div class="sourceCode" id="cb7"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> docker run <span class="at">--rm</span> <span class="at">-ti</span> <span class="dt">\</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  ghcr.io/sparecores/sc-runner:main <span class="dt">\</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    create aws <span class="at">--instance</span> t4g.nano</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="ex">Updating</span> <span class="er">(</span><span class="ex">aws.us-west-2.None.t4g.nano</span><span class="kw">)</span><span class="bu">:</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="ex">pulumi:pulumi:Stack</span> runner-aws.us-west-2.None.t4g.nano running</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a> <span class="ex">+</span>  pulumi:providers:aws us-west-2 creating <span class="er">(</span><span class="ex">0s</span><span class="kw">)</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="ex">@</span> updating....</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a> <span class="ex">+</span>  pulumi:providers:aws us-west-2 created <span class="er">(</span><span class="ex">0.29s</span><span class="kw">)</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a> <span class="ex">+</span>  aws:ec2:SecurityGroup t4g.nano creating <span class="er">(</span><span class="ex">0s</span><span class="kw">)</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="ex">@</span> updating.....</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a> <span class="ex">+</span>  aws:ec2:SecurityGroup t4g.nano created <span class="er">(</span><span class="ex">2s</span><span class="kw">)</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="ex">@</span> updating....</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a> <span class="ex">+</span>  aws:vpc:SecurityGroupIngressRule t4g.nano-0 creating <span class="er">(</span><span class="ex">0s</span><span class="kw">)</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a> <span class="ex">+</span>  aws:vpc:SecurityGroupIngressRule t4g.nano-1 creating <span class="er">(</span><span class="ex">0s</span><span class="kw">)</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a> <span class="ex">+</span>  aws:ec2:Instance t4g.nano creating <span class="er">(</span><span class="ex">0s</span><span class="kw">)</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a> <span class="ex">+</span>  aws:vpc:SecurityGroupEgressRule t4g.nano-1 creating <span class="er">(</span><span class="ex">0s</span><span class="kw">)</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a> <span class="ex">+</span>  aws:vpc:SecurityGroupEgressRule t4g.nano-0 creating <span class="er">(</span><span class="ex">0s</span><span class="kw">)</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="ex">@</span> updating....</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a> <span class="ex">+</span>  aws:vpc:SecurityGroupIngressRule t4g.nano-0 created <span class="er">(</span><span class="ex">1s</span><span class="kw">)</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a> <span class="ex">+</span>  aws:vpc:SecurityGroupIngressRule t4g.nano-1 created <span class="er">(</span><span class="ex">1s</span><span class="kw">)</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a> <span class="ex">+</span>  aws:vpc:SecurityGroupEgressRule t4g.nano-1 created <span class="er">(</span><span class="ex">1s</span><span class="kw">)</span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a><span class="ex">@</span> updating....</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a> <span class="ex">+</span>  aws:vpc:SecurityGroupEgressRule t4g.nano-0 created <span class="er">(</span><span class="ex">1s</span><span class="kw">)</span></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a><span class="ex">@</span> updating..............</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a> <span class="ex">+</span>  aws:ec2:Instance t4g.nano created <span class="er">(</span><span class="ex">13s</span><span class="kw">)</span></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a><span class="ex">@</span> updating....</span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>    <span class="ex">pulumi:pulumi:Stack</span> runner-aws.us-west-2.None.t4g.nano</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a><span class="ex">Resources:</span></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>    <span class="ex">+</span> 7 created</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>    <span class="ex">1</span> unchanged</span></code></pre></div>
 <aside class="notes">
 TODO
 </aside>
 </section>
-<section id="import-sc_runner" class="slide level2">
-<h2>&gt;&gt;&gt; import sc_runner</h2>
-<p><img src="images/aws-quota-request-quota.png" /></p>
+<section id="import-sc_runner" class="slide level2"
+data-transition="slide-in none-out">
+<h2 data-transition="slide-in none-out">&gt;&gt;&gt; import
+sc_runner</h2>
+<div class="centered">
+<p><img src="images/aws-quota-request-quota.png" style="width:57%;margin-top:-30px;"/></p>
+</div>
+</section>
+<section id="import-sc_runner-1" class="slide level2"
+data-transition="none-in slide-out">
+<h2 data-transition="none-in slide-out">&gt;&gt;&gt; import
+sc_runner</h2>
+<div class="centered">
+<p><img src="images/aws-quota-request-quota-achievement-unlocked.png" style="width:57%;margin-top:-30px;"/></p>
+</div>
+<aside class="notes">
+Hitting the “quote update request quota” achievement unlocked.
+</aside>
 </section>
 </section>
 <section>
@@ -1484,9 +1639,237 @@ TODO
 <h2>
 &gt;&gt;&gt; import sc_keeper
 </h2>
+<div class="sourceCode" id="cb8"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> curl https://keeper.sparecores.net/server/aws/g4dn.xlarge <span class="kw">|</span> <span class="ex">jq</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="ex">%</span> Total    % Received % Xferd  Average Speed   Time    Time     Time  Current</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>                                 <span class="ex">Dload</span>  Upload   Total   Spent    Left  Speed</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="ex">100</span>  111k  100  111k    0     0  79795      0  0:00:01  0:00:01 <span class="at">--:--:--</span> 79799</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;vendor_id&quot;</span><span class="fu">:</span> <span class="st">&quot;aws&quot;</span><span class="fu">,</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;server_id&quot;</span><span class="fu">:</span> <span class="st">&quot;g4dn.xlarge&quot;</span><span class="fu">,</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;g4dn.xlarge&quot;</span><span class="fu">,</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;api_reference&quot;</span><span class="fu">:</span> <span class="st">&quot;g4dn.xlarge&quot;</span><span class="fu">,</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;display_name&quot;</span><span class="fu">:</span> <span class="st">&quot;g4dn.xlarge&quot;</span><span class="fu">,</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;Graphics intensive [Instance store volumes] [Network and EBS optimized] Gen4 xlarge&quot;</span><span class="fu">,</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;family&quot;</span><span class="fu">:</span> <span class="st">&quot;g4dn&quot;</span><span class="fu">,</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;vcpus&quot;</span><span class="fu">:</span> <span class="dv">4</span><span class="fu">,</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;hypervisor&quot;</span><span class="fu">:</span> <span class="st">&quot;nitro&quot;</span><span class="fu">,</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;cpu_allocation&quot;</span><span class="fu">:</span> <span class="st">&quot;Dedicated&quot;</span><span class="fu">,</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;cpu_cores&quot;</span><span class="fu">:</span> <span class="dv">2</span><span class="fu">,</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;cpu_speed&quot;</span><span class="fu">:</span> <span class="fl">3.5</span><span class="fu">,</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;cpu_architecture&quot;</span><span class="fu">:</span> <span class="st">&quot;x86_64&quot;</span><span class="fu">,</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;cpu_manufacturer&quot;</span><span class="fu">:</span> <span class="st">&quot;Intel&quot;</span><span class="fu">,</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;cpu_family&quot;</span><span class="fu">:</span> <span class="st">&quot;Xeon&quot;</span><span class="fu">,</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;cpu_model&quot;</span><span class="fu">:</span> <span class="st">&quot;8259CL&quot;</span><span class="fu">,</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;cpu_l1_cache&quot;</span><span class="fu">:</span> <span class="dv">131072</span><span class="fu">,</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;cpu_l2_cache&quot;</span><span class="fu">:</span> <span class="dv">2097152</span><span class="fu">,</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;cpu_l3_cache&quot;</span><span class="fu">:</span> <span class="dv">37486592</span><span class="fu">,</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;cpu_flags&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;fpu&quot;</span><span class="ot">,</span></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;vme&quot;</span><span class="ot">,</span></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;de&quot;</span><span class="ot">,</span></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;pse&quot;</span><span class="ot">,</span></span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;tsc&quot;</span><span class="ot">,</span></span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;msr&quot;</span><span class="ot">,</span></span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;pae&quot;</span><span class="ot">,</span></span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>    <span class="er">...</span></span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;cpus&quot;</span><span class="fu">:</span> <span class="ot">[]</span><span class="fu">,</span></span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;memory_amount&quot;</span><span class="fu">:</span> <span class="dv">16384</span><span class="fu">,</span></span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;memory_generation&quot;</span><span class="fu">:</span> <span class="st">&quot;DDR4&quot;</span><span class="fu">,</span></span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;memory_speed&quot;</span><span class="fu">:</span> <span class="dv">2933</span><span class="fu">,</span></span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;memory_ecc&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;gpu_count&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;gpu_memory_min&quot;</span><span class="fu">:</span> <span class="dv">16384</span><span class="fu">,</span></span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;gpu_memory_total&quot;</span><span class="fu">:</span> <span class="dv">16384</span><span class="fu">,</span></span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;gpu_manufacturer&quot;</span><span class="fu">:</span> <span class="st">&quot;Nvidia&quot;</span><span class="fu">,</span></span>
+<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;gpu_family&quot;</span><span class="fu">:</span> <span class="st">&quot;Turing&quot;</span><span class="fu">,</span></span>
+<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;gpu_model&quot;</span><span class="fu">:</span> <span class="st">&quot;Tesla T4&quot;</span><span class="fu">,</span></span>
+<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;gpus&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;manufacturer&quot;</span><span class="fu">:</span> <span class="st">&quot;Nvidia&quot;</span><span class="fu">,</span></span>
+<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;family&quot;</span><span class="fu">:</span> <span class="st">&quot;Turing&quot;</span><span class="fu">,</span></span>
+<span id="cb9-46"><a href="#cb9-46" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;model&quot;</span><span class="fu">:</span> <span class="st">&quot;Tesla T4&quot;</span><span class="fu">,</span></span>
+<span id="cb9-47"><a href="#cb9-47" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;memory&quot;</span><span class="fu">:</span> <span class="dv">15360</span><span class="fu">,</span></span>
+<span id="cb9-48"><a href="#cb9-48" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;firmware_version&quot;</span><span class="fu">:</span> <span class="st">&quot;535.171.04&quot;</span><span class="fu">,</span></span>
+<span id="cb9-49"><a href="#cb9-49" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;bios_version&quot;</span><span class="fu">:</span> <span class="st">&quot;90.04.96.00.A0&quot;</span><span class="fu">,</span></span>
+<span id="cb9-50"><a href="#cb9-50" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;graphics_clock&quot;</span><span class="fu">:</span> <span class="dv">1590</span><span class="fu">,</span></span>
+<span id="cb9-51"><a href="#cb9-51" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;sm_clock&quot;</span><span class="fu">:</span> <span class="dv">1590</span><span class="fu">,</span></span>
+<span id="cb9-52"><a href="#cb9-52" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;mem_clock&quot;</span><span class="fu">:</span> <span class="dv">5001</span><span class="fu">,</span></span>
+<span id="cb9-53"><a href="#cb9-53" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;video_clock&quot;</span><span class="fu">:</span> <span class="dv">1470</span></span>
+<span id="cb9-54"><a href="#cb9-54" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb9-55"><a href="#cb9-55" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb9-56"><a href="#cb9-56" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;storage_size&quot;</span><span class="fu">:</span> <span class="dv">125</span><span class="fu">,</span></span>
+<span id="cb9-57"><a href="#cb9-57" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;storage_type&quot;</span><span class="fu">:</span> <span class="st">&quot;nvme ssd&quot;</span><span class="fu">,</span></span>
+<span id="cb9-58"><a href="#cb9-58" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;storages&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb9-59"><a href="#cb9-59" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb9-60"><a href="#cb9-60" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;size&quot;</span><span class="fu">:</span> <span class="dv">125</span><span class="fu">,</span></span>
+<span id="cb9-61"><a href="#cb9-61" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;storage_type&quot;</span><span class="fu">:</span> <span class="st">&quot;nvme ssd&quot;</span></span>
+<span id="cb9-62"><a href="#cb9-62" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb9-63"><a href="#cb9-63" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb9-64"><a href="#cb9-64" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;network_speed&quot;</span><span class="fu">:</span> <span class="fl">5.0</span><span class="fu">,</span></span>
+<span id="cb9-65"><a href="#cb9-65" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;inbound_traffic&quot;</span><span class="fu">:</span> <span class="dv">0</span><span class="er">.</span><span class="dv">0</span><span class="fu">,</span></span>
+<span id="cb9-66"><a href="#cb9-66" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;outbound_traffic&quot;</span><span class="fu">:</span> <span class="dv">0</span><span class="er">.</span><span class="dv">0</span><span class="fu">,</span></span>
+<span id="cb9-67"><a href="#cb9-67" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;ipv4&quot;</span><span class="fu">:</span> <span class="dv">0</span><span class="fu">,</span></span>
+<span id="cb9-68"><a href="#cb9-68" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;status&quot;</span><span class="fu">:</span> <span class="st">&quot;active&quot;</span><span class="fu">,</span></span>
+<span id="cb9-69"><a href="#cb9-69" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;observed_at&quot;</span><span class="fu">:</span> <span class="st">&quot;2024-06-09T21:20:22.005194&quot;</span><span class="fu">,</span></span>
+<span id="cb9-70"><a href="#cb9-70" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;vendor&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb9-71"><a href="#cb9-71" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;logo&quot;</span><span class="fu">:</span> <span class="st">&quot;https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/aws.svg&quot;</span><span class="fu">,</span></span>
+<span id="cb9-72"><a href="#cb9-72" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;address_line&quot;</span><span class="fu">:</span> <span class="st">&quot;410 Terry Ave N&quot;</span><span class="fu">,</span></span>
+<span id="cb9-73"><a href="#cb9-73" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Amazon Web Services&quot;</span><span class="fu">,</span></span>
+<span id="cb9-74"><a href="#cb9-74" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;zip_code&quot;</span><span class="fu">:</span> <span class="st">&quot;98109&quot;</span><span class="fu">,</span></span>
+<span id="cb9-75"><a href="#cb9-75" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;founding_year&quot;</span><span class="fu">:</span> <span class="dv">2002</span><span class="fu">,</span></span>
+<span id="cb9-76"><a href="#cb9-76" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;state&quot;</span><span class="fu">:</span> <span class="st">&quot;Washington&quot;</span><span class="fu">,</span></span>
+<span id="cb9-77"><a href="#cb9-77" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;status_page&quot;</span><span class="fu">:</span> <span class="st">&quot;https://health.aws.amazon.com/health/status&quot;</span><span class="fu">,</span></span>
+<span id="cb9-78"><a href="#cb9-78" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;vendor_id&quot;</span><span class="fu">:</span> <span class="st">&quot;aws&quot;</span><span class="fu">,</span></span>
+<span id="cb9-79"><a href="#cb9-79" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;homepage&quot;</span><span class="fu">:</span> <span class="st">&quot;https://aws.amazon.com&quot;</span><span class="fu">,</span></span>
+<span id="cb9-80"><a href="#cb9-80" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;country_id&quot;</span><span class="fu">:</span> <span class="st">&quot;US&quot;</span><span class="fu">,</span></span>
+<span id="cb9-81"><a href="#cb9-81" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;status&quot;</span><span class="fu">:</span> <span class="st">&quot;active&quot;</span><span class="fu">,</span></span>
+<span id="cb9-82"><a href="#cb9-82" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;observed_at&quot;</span><span class="fu">:</span> <span class="st">&quot;2024-06-09T21:50:32.658281&quot;</span><span class="fu">,</span></span>
+<span id="cb9-83"><a href="#cb9-83" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;city&quot;</span><span class="fu">:</span> <span class="st">&quot;Seattle&quot;</span></span>
+<span id="cb9-84"><a href="#cb9-84" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb9-85"><a href="#cb9-85" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;prices&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb9-86"><a href="#cb9-86" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb9-87"><a href="#cb9-87" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;vendor_id&quot;</span><span class="fu">:</span> <span class="st">&quot;aws&quot;</span><span class="fu">,</span></span>
+<span id="cb9-88"><a href="#cb9-88" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;region_id&quot;</span><span class="fu">:</span> <span class="st">&quot;af-south-1&quot;</span><span class="fu">,</span></span>
+<span id="cb9-89"><a href="#cb9-89" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;zone_id&quot;</span><span class="fu">:</span> <span class="st">&quot;afs1-az1&quot;</span><span class="fu">,</span></span>
+<span id="cb9-90"><a href="#cb9-90" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;server_id&quot;</span><span class="fu">:</span> <span class="st">&quot;g4dn.xlarge&quot;</span><span class="fu">,</span></span>
+<span id="cb9-91"><a href="#cb9-91" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;operating_system&quot;</span><span class="fu">:</span> <span class="st">&quot;Linux&quot;</span><span class="fu">,</span></span>
+<span id="cb9-92"><a href="#cb9-92" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;allocation&quot;</span><span class="fu">:</span> <span class="st">&quot;ondemand&quot;</span><span class="fu">,</span></span>
+<span id="cb9-93"><a href="#cb9-93" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;unit&quot;</span><span class="fu">:</span> <span class="st">&quot;hour&quot;</span><span class="fu">,</span></span>
+<span id="cb9-94"><a href="#cb9-94" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;price&quot;</span><span class="fu">:</span> <span class="dv">0</span><span class="er">.</span><span class="dv">698</span><span class="fu">,</span></span>
+<span id="cb9-95"><a href="#cb9-95" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;price_upfront&quot;</span><span class="fu">:</span> <span class="dv">0</span><span class="er">.</span><span class="dv">0</span><span class="fu">,</span></span>
+<span id="cb9-96"><a href="#cb9-96" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;price_tiered&quot;</span><span class="fu">:</span> <span class="ot">[]</span><span class="fu">,</span></span>
+<span id="cb9-97"><a href="#cb9-97" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;currency&quot;</span><span class="fu">:</span> <span class="st">&quot;USD&quot;</span><span class="fu">,</span></span>
+<span id="cb9-98"><a href="#cb9-98" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;status&quot;</span><span class="fu">:</span> <span class="st">&quot;active&quot;</span><span class="fu">,</span></span>
+<span id="cb9-99"><a href="#cb9-99" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;observed_at&quot;</span><span class="fu">:</span> <span class="st">&quot;2024-06-09T21:21:10.015921&quot;</span><span class="fu">,</span></span>
+<span id="cb9-100"><a href="#cb9-100" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;region&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb9-101"><a href="#cb9-101" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;country_id&quot;</span><span class="fu">:</span> <span class="st">&quot;ZA&quot;</span><span class="fu">,</span></span>
+<span id="cb9-102"><a href="#cb9-102" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;state&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
+<span id="cb9-103"><a href="#cb9-103" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;founding_year&quot;</span><span class="fu">:</span> <span class="dv">2020</span><span class="fu">,</span></span>
+<span id="cb9-104"><a href="#cb9-104" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;green_energy&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span></span>
+<span id="cb9-105"><a href="#cb9-105" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Africa (Cape Town)&quot;</span><span class="fu">,</span></span>
+<span id="cb9-106"><a href="#cb9-106" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;city&quot;</span><span class="fu">:</span> <span class="st">&quot;Cape Town&quot;</span><span class="fu">,</span></span>
+<span id="cb9-107"><a href="#cb9-107" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;status&quot;</span><span class="fu">:</span> <span class="st">&quot;active&quot;</span><span class="fu">,</span></span>
+<span id="cb9-108"><a href="#cb9-108" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;address_line&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
+<span id="cb9-109"><a href="#cb9-109" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;observed_at&quot;</span><span class="fu">:</span> <span class="st">&quot;2024-06-09T21:19:37.529944&quot;</span><span class="fu">,</span></span>
+<span id="cb9-110"><a href="#cb9-110" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;zip_code&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
+<span id="cb9-111"><a href="#cb9-111" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;lon&quot;</span><span class="fu">:</span> <span class="fl">18.3758801</span><span class="fu">,</span></span>
+<span id="cb9-112"><a href="#cb9-112" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;region_id&quot;</span><span class="fu">:</span> <span class="st">&quot;af-south-1&quot;</span><span class="fu">,</span></span>
+<span id="cb9-113"><a href="#cb9-113" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;display_name&quot;</span><span class="fu">:</span> <span class="st">&quot;Cape Town (ZA)&quot;</span><span class="fu">,</span></span>
+<span id="cb9-114"><a href="#cb9-114" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;lat&quot;</span><span class="fu">:</span> <span class="fl">-33.914651</span><span class="fu">,</span></span>
+<span id="cb9-115"><a href="#cb9-115" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;vendor_id&quot;</span><span class="fu">:</span> <span class="st">&quot;aws&quot;</span><span class="fu">,</span></span>
+<span id="cb9-116"><a href="#cb9-116" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;api_reference&quot;</span><span class="fu">:</span> <span class="st">&quot;af-south-1&quot;</span><span class="fu">,</span></span>
+<span id="cb9-117"><a href="#cb9-117" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;aliases&quot;</span><span class="fu">:</span> <span class="ot">[]</span></span>
+<span id="cb9-118"><a href="#cb9-118" aria-hidden="true" tabindex="-1"></a>      <span class="fu">},</span></span>
+<span id="cb9-119"><a href="#cb9-119" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;zone&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb9-120"><a href="#cb9-120" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;region_id&quot;</span><span class="fu">:</span> <span class="st">&quot;af-south-1&quot;</span><span class="fu">,</span></span>
+<span id="cb9-121"><a href="#cb9-121" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;zone_id&quot;</span><span class="fu">:</span> <span class="st">&quot;afs1-az1&quot;</span><span class="fu">,</span></span>
+<span id="cb9-122"><a href="#cb9-122" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;api_reference&quot;</span><span class="fu">:</span> <span class="st">&quot;af-south-1a&quot;</span><span class="fu">,</span></span>
+<span id="cb9-123"><a href="#cb9-123" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;status&quot;</span><span class="fu">:</span> <span class="st">&quot;active&quot;</span><span class="fu">,</span></span>
+<span id="cb9-124"><a href="#cb9-124" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;vendor_id&quot;</span><span class="fu">:</span> <span class="st">&quot;aws&quot;</span><span class="fu">,</span></span>
+<span id="cb9-125"><a href="#cb9-125" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;af-south-1a&quot;</span><span class="fu">,</span></span>
+<span id="cb9-126"><a href="#cb9-126" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;display_name&quot;</span><span class="fu">:</span> <span class="st">&quot;af-south-1a&quot;</span><span class="fu">,</span></span>
+<span id="cb9-127"><a href="#cb9-127" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;observed_at&quot;</span><span class="fu">:</span> <span class="st">&quot;2024-06-09T21:19:40.425499&quot;</span></span>
+<span id="cb9-128"><a href="#cb9-128" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb9-129"><a href="#cb9-129" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb9-130"><a href="#cb9-130" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb9-131"><a href="#cb9-131" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;vendor_id&quot;</span><span class="fu">:</span> <span class="st">&quot;aws&quot;</span><span class="fu">,</span></span>
+<span id="cb9-132"><a href="#cb9-132" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;region_id&quot;</span><span class="fu">:</span> <span class="st">&quot;af-south-1&quot;</span><span class="fu">,</span></span>
+<span id="cb9-133"><a href="#cb9-133" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;zone_id&quot;</span><span class="fu">:</span> <span class="st">&quot;afs1-az2&quot;</span><span class="fu">,</span></span>
+<span id="cb9-134"><a href="#cb9-134" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;server_id&quot;</span><span class="fu">:</span> <span class="st">&quot;g4dn.xlarge&quot;</span><span class="fu">,</span></span>
+<span id="cb9-135"><a href="#cb9-135" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;operating_system&quot;</span><span class="fu">:</span> <span class="st">&quot;Linux&quot;</span><span class="fu">,</span></span>
+<span id="cb9-136"><a href="#cb9-136" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;allocation&quot;</span><span class="fu">:</span> <span class="st">&quot;spot&quot;</span><span class="fu">,</span></span>
+<span id="cb9-137"><a href="#cb9-137" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;unit&quot;</span><span class="fu">:</span> <span class="st">&quot;hour&quot;</span><span class="fu">,</span></span>
+<span id="cb9-138"><a href="#cb9-138" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;price&quot;</span><span class="fu">:</span> <span class="dv">0</span><span class="er">.</span><span class="dv">2251</span><span class="fu">,</span></span>
+<span id="cb9-139"><a href="#cb9-139" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;price_upfront&quot;</span><span class="fu">:</span> <span class="dv">0</span><span class="er">.</span><span class="dv">0</span><span class="fu">,</span></span>
+<span id="cb9-140"><a href="#cb9-140" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;price_tiered&quot;</span><span class="fu">:</span> <span class="ot">[]</span><span class="fu">,</span></span>
+<span id="cb9-141"><a href="#cb9-141" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;currency&quot;</span><span class="fu">:</span> <span class="st">&quot;USD&quot;</span><span class="fu">,</span></span>
+<span id="cb9-142"><a href="#cb9-142" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;status&quot;</span><span class="fu">:</span> <span class="st">&quot;active&quot;</span><span class="fu">,</span></span>
+<span id="cb9-143"><a href="#cb9-143" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;observed_at&quot;</span><span class="fu">:</span> <span class="st">&quot;2024-06-09T18:16:26&quot;</span><span class="fu">,</span></span>
+<span id="cb9-144"><a href="#cb9-144" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;region&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb9-145"><a href="#cb9-145" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;country_id&quot;</span><span class="fu">:</span> <span class="st">&quot;ZA&quot;</span><span class="fu">,</span></span>
+<span id="cb9-146"><a href="#cb9-146" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;state&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
+<span id="cb9-147"><a href="#cb9-147" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;founding_year&quot;</span><span class="fu">:</span> <span class="dv">2020</span><span class="fu">,</span></span>
+<span id="cb9-148"><a href="#cb9-148" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;green_energy&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span></span>
+<span id="cb9-149"><a href="#cb9-149" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Africa (Cape Town)&quot;</span><span class="fu">,</span></span>
+<span id="cb9-150"><a href="#cb9-150" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;city&quot;</span><span class="fu">:</span> <span class="st">&quot;Cape Town&quot;</span><span class="fu">,</span></span>
+<span id="cb9-151"><a href="#cb9-151" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;status&quot;</span><span class="fu">:</span> <span class="st">&quot;active&quot;</span><span class="fu">,</span></span>
+<span id="cb9-152"><a href="#cb9-152" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;address_line&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
+<span id="cb9-153"><a href="#cb9-153" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;observed_at&quot;</span><span class="fu">:</span> <span class="st">&quot;2024-06-09T21:19:37.529944&quot;</span><span class="fu">,</span></span>
+<span id="cb9-154"><a href="#cb9-154" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;zip_code&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
+<span id="cb9-155"><a href="#cb9-155" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;lon&quot;</span><span class="fu">:</span> <span class="fl">18.3758801</span><span class="fu">,</span></span>
+<span id="cb9-156"><a href="#cb9-156" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;region_id&quot;</span><span class="fu">:</span> <span class="st">&quot;af-south-1&quot;</span><span class="fu">,</span></span>
+<span id="cb9-157"><a href="#cb9-157" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;display_name&quot;</span><span class="fu">:</span> <span class="st">&quot;Cape Town (ZA)&quot;</span><span class="fu">,</span></span>
+<span id="cb9-158"><a href="#cb9-158" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;lat&quot;</span><span class="fu">:</span> <span class="fl">-33.914651</span><span class="fu">,</span></span>
+<span id="cb9-159"><a href="#cb9-159" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;vendor_id&quot;</span><span class="fu">:</span> <span class="st">&quot;aws&quot;</span><span class="fu">,</span></span>
+<span id="cb9-160"><a href="#cb9-160" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;api_reference&quot;</span><span class="fu">:</span> <span class="st">&quot;af-south-1&quot;</span><span class="fu">,</span></span>
+<span id="cb9-161"><a href="#cb9-161" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;aliases&quot;</span><span class="fu">:</span> <span class="ot">[]</span></span>
+<span id="cb9-162"><a href="#cb9-162" aria-hidden="true" tabindex="-1"></a>      <span class="fu">},</span></span>
+<span id="cb9-163"><a href="#cb9-163" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;zone&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb9-164"><a href="#cb9-164" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;region_id&quot;</span><span class="fu">:</span> <span class="st">&quot;af-south-1&quot;</span><span class="fu">,</span></span>
+<span id="cb9-165"><a href="#cb9-165" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;zone_id&quot;</span><span class="fu">:</span> <span class="st">&quot;afs1-az2&quot;</span><span class="fu">,</span></span>
+<span id="cb9-166"><a href="#cb9-166" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;api_reference&quot;</span><span class="fu">:</span> <span class="st">&quot;af-south-1b&quot;</span><span class="fu">,</span></span>
+<span id="cb9-167"><a href="#cb9-167" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;status&quot;</span><span class="fu">:</span> <span class="st">&quot;active&quot;</span><span class="fu">,</span></span>
+<span id="cb9-168"><a href="#cb9-168" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;vendor_id&quot;</span><span class="fu">:</span> <span class="st">&quot;aws&quot;</span><span class="fu">,</span></span>
+<span id="cb9-169"><a href="#cb9-169" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;af-south-1b&quot;</span><span class="fu">,</span></span>
+<span id="cb9-170"><a href="#cb9-170" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;display_name&quot;</span><span class="fu">:</span> <span class="st">&quot;af-south-1b&quot;</span><span class="fu">,</span></span>
+<span id="cb9-171"><a href="#cb9-171" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;observed_at&quot;</span><span class="fu">:</span> <span class="st">&quot;2024-06-09T21:19:40.425554&quot;</span></span>
+<span id="cb9-172"><a href="#cb9-172" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb9-173"><a href="#cb9-173" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb9-174"><a href="#cb9-174" aria-hidden="true" tabindex="-1"></a>    <span class="er">...</span></span>
+<span id="cb9-175"><a href="#cb9-175" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb9-176"><a href="#cb9-176" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;benchmark_scores&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb9-177"><a href="#cb9-177" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb9-178"><a href="#cb9-178" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;server_id&quot;</span><span class="fu">:</span> <span class="st">&quot;g4dn.xlarge&quot;</span><span class="fu">,</span></span>
+<span id="cb9-179"><a href="#cb9-179" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;config&quot;</span><span class="fu">:</span> <span class="fu">{},</span></span>
+<span id="cb9-180"><a href="#cb9-180" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;status&quot;</span><span class="fu">:</span> <span class="st">&quot;active&quot;</span><span class="fu">,</span></span>
+<span id="cb9-181"><a href="#cb9-181" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;vendor_id&quot;</span><span class="fu">:</span> <span class="st">&quot;aws&quot;</span><span class="fu">,</span></span>
+<span id="cb9-182"><a href="#cb9-182" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;benchmark_id&quot;</span><span class="fu">:</span> <span class="st">&quot;bogomips&quot;</span><span class="fu">,</span></span>
+<span id="cb9-183"><a href="#cb9-183" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;score&quot;</span><span class="fu">:</span> <span class="fl">5000.0</span><span class="fu">,</span></span>
+<span id="cb9-184"><a href="#cb9-184" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;note&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
+<span id="cb9-185"><a href="#cb9-185" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;observed_at&quot;</span><span class="fu">:</span> <span class="st">&quot;2024-06-07T04:26:48.643640&quot;</span></span>
+<span id="cb9-186"><a href="#cb9-186" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb9-187"><a href="#cb9-187" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb9-188"><a href="#cb9-188" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;server_id&quot;</span><span class="fu">:</span> <span class="st">&quot;g4dn.xlarge&quot;</span><span class="fu">,</span></span>
+<span id="cb9-189"><a href="#cb9-189" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;config&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb9-190"><a href="#cb9-190" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;cores&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb9-191"><a href="#cb9-191" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;framework_version&quot;</span><span class="fu">:</span> <span class="st">&quot;0.17.08&quot;</span></span>
+<span id="cb9-192"><a href="#cb9-192" aria-hidden="true" tabindex="-1"></a>      <span class="fu">},</span></span>
+<span id="cb9-193"><a href="#cb9-193" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;status&quot;</span><span class="fu">:</span> <span class="st">&quot;active&quot;</span><span class="fu">,</span></span>
+<span id="cb9-194"><a href="#cb9-194" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;vendor_id&quot;</span><span class="fu">:</span> <span class="st">&quot;aws&quot;</span><span class="fu">,</span></span>
+<span id="cb9-195"><a href="#cb9-195" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;benchmark_id&quot;</span><span class="fu">:</span> <span class="st">&quot;stress_ng:cpu_all&quot;</span><span class="fu">,</span></span>
+<span id="cb9-196"><a href="#cb9-196" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;score&quot;</span><span class="fu">:</span> <span class="fl">1385.583093</span><span class="fu">,</span></span>
+<span id="cb9-197"><a href="#cb9-197" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;note&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
+<span id="cb9-198"><a href="#cb9-198" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;observed_at&quot;</span><span class="fu">:</span> <span class="st">&quot;2024-06-07T04:27:14.552982&quot;</span></span>
+<span id="cb9-199"><a href="#cb9-199" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb9-200"><a href="#cb9-200" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb9-201"><a href="#cb9-201" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;server_id&quot;</span><span class="fu">:</span> <span class="st">&quot;g4dn.xlarge&quot;</span><span class="fu">,</span></span>
+<span id="cb9-202"><a href="#cb9-202" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;config&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb9-203"><a href="#cb9-203" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;cores&quot;</span><span class="fu">:</span> <span class="dv">4</span><span class="fu">,</span></span>
+<span id="cb9-204"><a href="#cb9-204" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;framework_version&quot;</span><span class="fu">:</span> <span class="st">&quot;0.17.08&quot;</span></span>
+<span id="cb9-205"><a href="#cb9-205" aria-hidden="true" tabindex="-1"></a>      <span class="fu">},</span></span>
+<span id="cb9-206"><a href="#cb9-206" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;status&quot;</span><span class="fu">:</span> <span class="st">&quot;active&quot;</span><span class="fu">,</span></span>
+<span id="cb9-207"><a href="#cb9-207" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;vendor_id&quot;</span><span class="fu">:</span> <span class="st">&quot;aws&quot;</span><span class="fu">,</span></span>
+<span id="cb9-208"><a href="#cb9-208" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;benchmark_id&quot;</span><span class="fu">:</span> <span class="st">&quot;stress_ng:cpu_all&quot;</span><span class="fu">,</span></span>
+<span id="cb9-209"><a href="#cb9-209" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;score&quot;</span><span class="fu">:</span> <span class="fl">4013.022928</span><span class="fu">,</span></span>
+<span id="cb9-210"><a href="#cb9-210" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;note&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
+<span id="cb9-211"><a href="#cb9-211" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;observed_at&quot;</span><span class="fu">:</span> <span class="st">&quot;2024-06-07T04:27:02.508145&quot;</span></span>
+<span id="cb9-212"><a href="#cb9-212" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb9-213"><a href="#cb9-213" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
+<span id="cb9-214"><a href="#cb9-214" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
 <aside class="notes">
-TODO
+python sdk to search the database and also to make that available as a
+public restful api? TODO
 </aside>
+</section>
+<section id="import-sc_keeper" class="slide level2">
+<h2>&gt;&gt;&gt; import sc_keeper</h2>
+<p><img style="margin-top:-30px;" src="images/sc-keeper-redoc.png" /></p>
+</section>
+<section id="import-sc_keeper-1" class="slide level2">
+<h2>&gt;&gt;&gt; import sc_keeper</h2>
+<p><img style="margin-top:-30px;" src="images/sc-keeper-ai.png" /></p>
 </section>
 </section>
 <section>
@@ -1494,7 +1877,15 @@ TODO
 <h2>
 import { AppModule } from ‘sc-www’;
 </h2>
-<div class="fragment">
+<div class="centered">
+<p><img style="margin-top:-30px;width:90%;" src="images/sc-www-collage.png" /></p>
+</div>
+<aside class="notes">
+TODO
+</aside>
+</section>
+<section id="import-appmodule-from-sc-www" class="slide level2">
+<h2>import { AppModule } from ‘sc-www’;</h2>
 <p><img class="mt--60" src="images/homepage-lander-noheader.png" /></p>
 <p class="centered mt--30">
 Source: <a href="https://sparecores.com">sparecores.com</a>
@@ -1502,11 +1893,6 @@ Source: <a href="https://sparecores.com">sparecores.com</a>
 <aside class="notes">
 First of all, we have a pretty cool slot machine … TODO
 </aside>
-</div>
-</section>
-<section id="import-appmodule-from-sc-www" class="slide level2">
-<h2>import { AppModule } from ‘sc-www’;</h2>
-<p>TODO</p>
 <aside class="notes">
 TODO
 </aside>
@@ -1516,14 +1902,14 @@ TODO
 <h2>
 &gt;&gt;&gt; import __future__
 </h2>
-<p><span style="color:red;">TODO</span></p>
 <ul>
 <li><p>Add support for more vendors</p>
 <ul>
-<li>crawler (base inventory, prices)</li>
-<li>runner/inspector (HW + benchmarks)</li>
+<li>Crawler (vendor API integration)</li>
+<li>Runner (pulumi)</li>
 </ul></li>
-<li><p>More SDKs (node, python, r)</p></li>
+<li><p>More SDKs (PyPI, npm, CRAN, etc.)</p></li>
+<li><p>Data analysis, blog posts</p></li>
 <li><p>SaaS</p></li>
 </ul>
 <aside class="notes">

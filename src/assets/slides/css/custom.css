@@ -152,12 +152,21 @@ p {
     max-height: 600px;
 }
 
+code span.va {
+  color: #eab308;
+}
+code span.dv, code span.fl {
+  color: #ef4444
+}
 
 .cols {
     display: flex;
 }
 .col {
     flex: 1;
+}
+.col2 {
+    flex: 2;
 }
 
 .reveal blockquote {
