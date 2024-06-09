@@ -648,17 +648,17 @@ host.</li>
 <h2>&gt;&gt;&gt; from sparecores import why</h2>
 <div class="colcontainer mt-60">
 <div class="col">
-<img class="fragment w-25" data-fragment-index="1" src="images/aws_ecs.png" />
+<img class="fragment w-25" data-fragment-index="1" src="images/aws_ecs.png" style="background: none;" />
 <p class="fragment mt--20 centered" data-fragment-index="1">
 AWS ECS
 </p>
-<img class="fragment w-25" data-fragment-index="2" src="images/aws_batch.png" />
+<img class="fragment w-25" data-fragment-index="2" src="images/aws_batch.png" style="background: none;" />
 <p class="fragment mt--20 centered" data-fragment-index="2">
 AWS Batch
 </p>
 </div>
 <div class="col">
-<img class="fragment w-50" data-fragment-index="3" src="images/kubernetes.svg" style="margin-top:60px;" />
+<img class="fragment w-50" data-fragment-index="3" src="images/kubernetes.svg" style="margin-top:60px;background: none;" />
 <p class="fragment mt--20 centered" data-fragment-index="3">
 Kubernetes
 </p>
@@ -1000,6 +1000,15 @@ experiences :)
 </aside>
 </div>
 </section>
+<section id="import-sc_crawler" class="slide level2">
+<h2>&gt;&gt;&gt; import sc_crawler</h2>
+<div class="centered">
+<p><img style="margin-top:-50px; width: 50%; background: none;"  src="images/not-easy.png" /></p>
+</div>
+<aside class="notes">
+TODO
+</aside>
+</section>
 <section id="from-sc_crawler-import-fks" class="slide level2">
 <h2>&gt;&gt;&gt; from sc_crawler import fks</h2>
 <div class="centered">
@@ -1318,7 +1327,7 @@ TODO
 </section>
 <section id="from-sc_crawler-import-hwinfo" class="slide level2">
 <h2>&gt;&gt;&gt; from sc_crawler import hwinfo</h2>
-<ul>
+<ul style="margin-top: 10px;">
 <li class="fragment">
 Varying quality and availability of data at different vendors
 </li>
@@ -1342,13 +1351,13 @@ Region, right?
 <ul>
 <ul>
 <li class="fragment">
-Name
+ID, eg <code>eu-west-1</code>
 </li>
 <li class="fragment">
-Alias
+Name, eg <code>Europe (Ireland)</code>
 </li>
 <li class="fragment">
-ID
+Alias, eg <code>EU (Ireland)</code>
 </li>
 </ul>
 </ul>
@@ -1357,10 +1366,10 @@ ID
 <ul>
 <ul>
 <li class="fragment">
-API reference
+API reference, eg <code>eu-west-1</code>
 </li>
 <li class="fragment">
-Display name
+Display name, eg <code>Dublin (IE)</code>
 </li>
 </ul>
 </ul>
@@ -1423,7 +1432,7 @@ standardize database schema and data
 </aside>
 </div>
 </section>
-<section id="import-sc_crawler" class="slide level2">
+<section id="import-sc_crawler-1" class="slide level2">
 <h2>&gt;&gt;&gt; import sc_crawler</h2>
 <p>TODO overall</p>
 <ul>

@@ -132,13 +132,13 @@ To give you an example: here's a job that we monitored every few seconds and saw
 
 ::: {.colcontainer .mt-60}
 :::: {.col}
-<img class="fragment w-25" data-fragment-index="1" src="images/aws_ecs.png" />
+<img class="fragment w-25" data-fragment-index="1" src="images/aws_ecs.png" style="background: none;" />
 <p class="fragment mt--20 centered" data-fragment-index="1">AWS ECS</p>
-<img class="fragment w-25" data-fragment-index="2" src="images/aws_batch.png" />
+<img class="fragment w-25" data-fragment-index="2" src="images/aws_batch.png" style="background: none;" />
 <p class="fragment mt--20 centered" data-fragment-index="2">AWS Batch</p>
 ::::
 :::: {.col}
-<img class="fragment w-50" data-fragment-index="3" src="images/kubernetes.svg" style="margin-top:60px;" />
+<img class="fragment w-50" data-fragment-index="3" src="images/kubernetes.svg" style="margin-top:60px;background: none;" />
 <p class="fragment mt--20 centered" data-fragment-index="3" >Kubernetes</p>
 ::::
 :::
@@ -457,6 +457,16 @@ TODO
 TODO
 
 sounds relatively straightforward .. but we had a few interesting experiences :)
+</aside>
+
+## >>> import sc_crawler
+
+::: {.centered}
+<img style="margin-top:-50px; width: 50%; background: none;"  src="images/not-easy.png" />
+:::
+
+<aside class="notes">
+TODO
 </aside>
 
 ## >>> from sc_crawler import fks
@@ -787,7 +797,7 @@ TODO
 
 ## >>> from sc_crawler import hwinfo
 
-<ul>
+<ul style="margin-top: 10px;">
   <li class="fragment">Varying quality and availability of data at different vendors</li>
   <ul>
     <li class="fragment">No SSD info via the API. Parse from server description! 🙀</li>
@@ -800,15 +810,15 @@ TODO
 <div class="colcontainer mt-0">
  <div class="col">
    <ul><ul>
-     <li class="fragment">Name</li>
-     <li class="fragment">Alias</li>
-     <li class="fragment">ID</li>
+     <li class="fragment">ID, eg `eu-west-1`</li>
+     <li class="fragment">Name, eg `Europe (Ireland)`</li>
+     <li class="fragment">Alias, eg `EU (Ireland)`</li>
    </ul></ul>
  </div>
  <div class="col">
    <ul><ul>
-     <li class="fragment">API reference</li>
-     <li class="fragment">Display name</li>
+     <li class="fragment">API reference, eg `eu-west-1`</li>
+     <li class="fragment">Display name, eg `Dublin (IE)`</li>
    </ul></ul>
  </div>
 </div>
