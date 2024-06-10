@@ -29,20 +29,20 @@ export class LandingpageComponent implements OnInit {
       text: '(out of 8 planned) vendors'
     },
     {
-      count: '76',
-      text: 'regions'
-    },
-    {
-      count: '338',
+      count: '217',
       text: 'availability zones'
     },
     {
-      count: '1354',
+      count: '1120',
       text: 'server types'
     },
     {
-      count: '133.483',
-      text: 'price records'
+      count: '127,938',
+      text: 'benchmark scores'
+    },
+    {
+      count: '134,503',
+      text: 'live price records'
     },
     {
       count: '~5k',
