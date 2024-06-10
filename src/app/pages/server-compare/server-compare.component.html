@@ -111,6 +111,43 @@
               </ng-container>
             </tr>
           </ng-container>
+          <ng-container *ngFor="let item of benchmarkMeta">
+            <tr>
+              <td [colSpan]="servers.length + 1" >
+                <div class="w-full flex justify-between">
+                  <div class="flex gap-2 items-center">
+                    {{item.name}}
+                    <lucide-icon
+                      *ngIf="item.description"
+                      name="info"
+                      class="h-4 w-4 text-gray-200"
+                      (mouseenter)="showTooltip($event, item.description)"
+                      (mouseleave)="hideTooltip()">
+                    </lucide-icon>
+                  </div>
+                  <lucide-icon
+                    *ngIf="item.description"
+                    name="chevron-down"
+                    class="h-6 w-6 text-emerald-400 cursor-pointer"
+                    (click)="toggleBenchmark(item)"
+                    >
+                  </lucide-icon>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="!item.collapsed" >
+              <td></td>
+              <ng-container *ngFor="let scoreList of item.scores">
+                <td>
+                  <div class="flex flex-col">
+                    <div *ngFor="let scoreItem of scoreList">
+                      {{scoreItem.score}} {{serializeConfig(scoreItem.config)}}
+                    </div>
+                  </div>
+                </td>
+              </ng-container>
+            </tr>
+          </ng-container>
           <tr>
             <td>View Server</td>
             <td *ngFor="let item of servers">

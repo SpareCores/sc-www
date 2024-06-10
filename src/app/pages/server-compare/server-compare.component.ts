@@ -41,6 +41,8 @@ export class ServerCompareComponent implements OnInit {
 
   instanceProperties: any[] = [];
 
+  benchmarkMeta: any;
+
   instancePropertyCategories: any[] = [
     { name: 'CPU', category: 'cpu', properties: [] },
     { name: 'Memory', category: 'memory', properties: [] },
@@ -87,7 +89,7 @@ export class ServerCompareComponent implements OnInit {
               c.properties = [];
             });
 
-            for(let i = 1; i < data.length; i++){
+            for(let i = 2; i < data.length; i++){
               this.servers.push(data[i].body);
             }
 
@@ -105,6 +107,35 @@ export class ServerCompareComponent implements OnInit {
               }
             });
 
+
+            /*
+            this.benchmarkMeta = data[1].body
+              ?.filter((benchmark: any) => {
+                let found = false;
+                this.servers.forEach((s: any) => {
+                  if(s.benchmark_scores?.find((score: any) => score.benchmark_id === benchmark.benchmark_id)){
+                    found = true;
+                  }
+                });
+                return found;
+              })
+              .map((b: any) => {
+              return {
+                ...b,
+                collapsed: true,
+                scores: this.servers.map((s: any) => {
+                  return s.benchmark_scores?.filter((score: any) => score.benchmark_id === b.benchmark_id).sort((a: any, b: any) => {
+                    if(a.config && b.config) {
+                      return JSON.stringify(a).localeCompare(JSON.stringify(b));
+                    }
+                    return 0;
+                  });
+                })
+              }
+            });
+            */
+
+
             this.isLoading = false;
           }).catch((err) => {
             console.error(err);
@@ -115,7 +146,7 @@ export class ServerCompareComponent implements OnInit {
   }
 
   toUpper(text: string) {
-    return text.toUpperCase();
+    return text?.toUpperCase();
   }
 
   clipboardURL(event: any) {
@@ -263,7 +294,7 @@ export class ServerCompareComponent implements OnInit {
       const tooltip = this.tooltip.nativeElement;
       const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
       tooltip.style.left = `${el.target.getBoundingClientRect().left - 25}px`;
-      tooltip.style.top = `${el.target.getBoundingClientRect().top - 45 + scrollPosition}px`;
+      tooltip.style.top = `${el.target.getBoundingClientRect().bottom + 5 + scrollPosition}px`;
       tooltip.style.display = 'block';
       tooltip.style.opacity = '1';
 
@@ -300,6 +331,26 @@ export class ServerCompareComponent implements OnInit {
     } else {
       return '-';
     }
+  }
+
+  toggleBenchmark(benchmark: any) {
+    benchmark.collapsed = !benchmark.collapsed;
+  }
+
+  serializeConfig(config: any) {
+    let result = '';
+    Object.keys(config).forEach((key) => {
+      if(result.length > 0) {
+        result += ', ';
+      } else {
+        result += ' (';
+      }
+      result += `${key.replace('_', ' ')}: ${config[key]} `;
+    });
+    if(result.length > 0) {
+      result += ')';
+    }
+    return result;
   }
 
 }
