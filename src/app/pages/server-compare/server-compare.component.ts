@@ -72,7 +72,8 @@ export class ServerCompareComponent implements OnInit {
       if(param){
           const decodedParams = JSON.parse(atob(param));
           let promises: Promise<any>[] = [
-            this.keeperAPI.getServerMeta()
+            this.keeperAPI.getServerMeta(),
+            this.keeperAPI.getServerBenchmarkMeta()
           ];
           decodedParams?.forEach((instance: any) => {
             promises.push(

@@ -700,7 +700,7 @@ export class ServerDetailsComponent implements OnInit {
     }
 
     if( typeof prop === 'number' ) {
-      return `${prop} ${column.unit || ''}`;
+      return this.roundBytes(prop, column.unit);
     }
     if( typeof prop === 'string') {
       return prop;
@@ -710,6 +710,19 @@ export class ServerDetailsComponent implements OnInit {
     }
 
     return '-';
+  }
+
+  roundBytes(bytes: number, unit: string) {
+    const sizes = ['byte', 'KiB', 'MiB', 'GiB', 'TB'];
+
+    let idx = sizes.indexOf(unit);
+
+    if(idx < 0 || bytes === 0) {
+      return `${bytes} ${unit || ''}`;
+    }
+
+    const i = Math.floor(Math.log(bytes) / Math.log(1024));
+    return (bytes / Math.pow(1024, i)).toFixed(0) + ' ' + sizes[i+idx];
   }
 
   refreshCompressChart(chart: any) {
