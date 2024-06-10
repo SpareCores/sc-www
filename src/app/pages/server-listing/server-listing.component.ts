@@ -237,11 +237,11 @@ export class ServerListingComponent implements OnInit {
   }
 
   getMemory(item: ServerPKs) {
-    return ((item.memory_amount || 0) / 1024).toFixed(1) + ' GB';
+    return ((item.memory_amount || 0) / 1024).toFixed(1) + ' GiB';
   }
 
   getGPUMemory(item: ServerPKs) {
-    return ((item.gpu_memory_min || 0) / 1024).toFixed(1) + ' GB';
+    return ((item.gpu_memory_min || 0) / 1024).toFixed(1) + ' GiB';
   }
 
   getStorage(item: ServerPKs) {

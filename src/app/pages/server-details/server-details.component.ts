@@ -397,7 +397,7 @@ export class ServerDetailsComponent implements OnInit {
 
   getMemory(memory: number | undefined = undefined) {
     const memoryAmount = memory || this.serverDetails.memory_amount || 0;
-    return ((memoryAmount) / 1024).toFixed((memoryAmount ? 0 : 1)) + 'GB';
+    return ((memoryAmount) / 1024).toFixed((memoryAmount ? 0 : 1)) + 'GiB';
   }
 
   getStorage() {
