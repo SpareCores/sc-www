@@ -41,7 +41,7 @@ export class TalksComponent implements OnInit {
         );
       }
 
-      this.SEOHandler.updateTitleAndMetaTags(`Conference Talks - SpareCores`, `View all conference talks by SpareCores.`, `Server hosting talks, hosting conference talks, tutorials.`);
+      this.SEOHandler.updateTitleAndMetaTags(`Conference Talks - Spare Cores`, `View all conference talks by the Spare Cores Team.`, `Cloud computing talks, finops talks, tutorials.`);
 
     });
 
