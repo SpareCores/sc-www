@@ -819,7 +819,7 @@ TODO
    <ul><ul>
      <li class="fragment">API reference, eg `eu-west-1`</li>
      <li class="fragment">Display name, eg `Dublin (IE)`</li>
-     <li class="fragment">Exact location?</li>
+     <li class="fragment">Exact location? Energy source?</li>
    </ul></ul>
  </div>
 </div>
