@@ -64,7 +64,7 @@ document.getElementById("coverslide").remove();
 </h3>
 
 <div class="notes">
-TODO
+focus: how to utilize cloud compute resources in the most cost-efficient way
 </div>
 
 </section>
@@ -85,7 +85,13 @@ TODO
 </ul>
 
 <div class="notes">
-TODO
+I've been working as a DS/Dir of Analytics/Sr Dir of Data Ops in the past decade,
+responsible for the DS infrastructure to run various algorithm, e.g.
+
+- SQL: lightweight on the client side
+- scripts: can be lightweight as well (e.g. API integrations or simple models),
+
+BUT might require a lot of compute resource depending on the type of the model
 </div>
 
 ## >>> from sparecores import why {data-transition="fade-in slide-out"}
@@ -101,10 +107,12 @@ TODO
   </ul>
 </ul>
 
-<p class="bold">Scaling DS infrastructure.</p>
+<p class="bold">Scaling (DS) infrastructure.</p>
 
 <div class="notes">
-- e.g. submit new bid amounts on ads on a social network
+in short, different tasks (DS in this example) have different compute requirements
+
+NEXT after mentioning varying needs
 </div>
 
 ## >>> from sparecores import why
@@ -115,6 +123,8 @@ TODO
 
 <div class="notes">
 To give you an example: here's a job that we monitored every few seconds and saw that it doesn't really scale to multiple CPUs, but taking up to ~200 gigs of memory -- probably training a hierarchical model that cannot be paralellized.
+
+so we had around 4k/day ...
 </div>
 
 ## >>> from sparecores import why
@@ -124,12 +134,13 @@ To give you an example: here's a job that we monitored every few seconds and saw
 :::
 
 <div class="notes">
-4k jobs/day with varying needs
+so we had around 4k jobs/day with varying needs
 
 - Training hierarchical models on a large dataset using R required several hundreds GBs of RAM,
 - NLP models in Python required GPUs,
 - Parallelized time-series forecasting models required many CPUs,
 - Many small jobs mostly waiting for SQL results running on a shared host.
+- or submitting new bid amounts on ads on a social network
 </div>
 
 ## >>> from sparecores import why
@@ -148,7 +159,19 @@ To give you an example: here's a job that we monitored every few seconds and saw
 :::
 
 <div class="notes">
-TODO
+to solve for that, at some point we used Amazon ECS ...
+super excited when AWS Batch was announces with the promise of managing the clusters for us
+
+... similarly how other teams got excited about Kubernetes
+
+AWS Batch seemed like a good fit and relatively convenient solution,
+but after a few months trial, we experienced unexpected costs
+due to developers misconfiguring resource requirements
+
+- overprovisioning to avoid errors
+- forgot to update etc
+
+and bin packing ...
 </div>
 
 ## >>> from sparecores import why
@@ -160,18 +183,9 @@ TODO
 <p class="centered mt--20">Source: <a href="https://xkcd.com/2740/">xkcd</a></p>
 
 <div class="notes">
-- first of all: it's not easy
-- second: it will fail
+AWS bin packing smaller jobs to already running larger nodes (started for heavy jobs), which resulted in keeping the expensive nodes running for a longer time.
 
-AWS Batch seemed like a good fit and relatively convenient solution,
-but after a few months trial, we experienced unexpected costs
-due to developers misconfiguring resource requirements
-
-- overprovisioning to avoid errors
-- forgot to update etc
-
-and AWS bin packing smaller jobs to already running larger nodes (started for heavy jobs), which resulted in keeping the expensive nodes running for a longer time.
-
+so instead, we decided to roll our own solution after all .. building on the fact that the price of the cloud resources is not discounted by its size .. so running two containers on a larger now VS running on separate nodes make no difference
 </div>
 
 ## >>> from sparecores import why
@@ -181,7 +195,7 @@ and AWS bin packing smaller jobs to already running larger nodes (started for he
 :::
 
 <div class="notes">
-TODO
+here's an example of a job for which our monitoring system recorded that it can scale to many (100) CPUs, and needs high memory ... so filtered for the matching servers and ordered by price, and tried starting those based on availability
 </div>
 
 ## >>> from sparecores import why {data-transition="slide-in none-out"}
@@ -191,7 +205,8 @@ TODO
 :::
 
 <div class="notes">
-TODO
+once the job finished, it updated the compute resource requirements, job status etc
+and retries if more compute is needed
 </div>
 
 ## >>> from sparecores import why {data-transition="none-in slide-out"}
@@ -203,10 +218,6 @@ TODO
 ::: {.centered}
 <img class="mt--30 w-70" src="images/adtech-usecase-job-stopped-1.png" />
 :::
-
-<div class="notes">
-TODO
-</div>
 
 ## >>> from sparecores import why
 
@@ -220,8 +231,7 @@ TODO
 - etc.
 
 <div class="notes">
-TODO
-like AWS Fargate or GCP ... (TODO) but much much cheaper, especially while AWS supported spot instances with blocked duration (until a couple of months ago)
+so it's like AWS Fargate or Google Cloud Run ... but with auto-scaling and much much cheaper, especially while AWS supported spot instances with blocked duration (until a couple of months ago)
 
 as it seemed useful for many use-cases, we decided and were supported to open-source most of the infra tooling ...
 </div>
@@ -235,6 +245,12 @@ as it seemed useful for many use-cases, we decided and were supported to open-so
 ::: {.centered}
 <img class="mt--70 w-70" src="images/mikata-repos.png" />
 :::
+
+<div class="notes">
+was released as "cloudperf" a couple years ago, and the team has been maintaining it since then
+
+BUT, it was limited to a single vendor, we also had some new ideas, so it was time to build the next generation ... called Spare Cores, which started thanks to the generous support of the NGI Search project.
+</div>
 
 </section></section>
 
@@ -257,6 +273,11 @@ as it seemed useful for many use-cases, we decided and were supported to open-so
 * SaaS to run containers in a managed environment without direct vendor engagement.
 
 <aside class="notes">
+- so Spare Cores is an open-source ecosystem, including software, database schemas, guides,
+- and actual databases if you don't want to run the ETL tooling yourself .. also providing APIs, SDKs etc to make it easier to query data
+- unified CLI to start machines
+- and working on an an optional SaaS offering built on the top of the open-source tooling for folks who would rather avoid registering with all cloud providers etc: give us a Docker image, a command to run, and you credit card .. all set, we will run it wherever it's cheapest.
+
 We help DevOps, DS, ML, AI, ETL, AV, and other engineering teams to find optimal instances for their batch jobs (e.g. “8 CPU cores, 64 GB of RAM, and a TPU needed in an EU datacenter to train ML models for 6 hours”) by providing:
 
 * Open-source tools, database schemas and documentation to monitor cloud and flexible VPS/dedicated server vendors and their compute resource offerings in an innovative and truly comparative way, including vendor details (e.g. location, certificates, green power), compute capabilities (e.g. CPU, memory, GPU/TPU), pricing (especially of spot instances), and performance (by running task-specific benchmarks).
@@ -275,7 +296,9 @@ BUT let's focus on the open-source and open-data components ..
 
 <aside class="notes">
 <!-- TODO update img with no of benchmarks instead of AZs -->
-TODO
+To show you some stats on the data being tracked:
+- we are limited to 3 vendors now, but in a month or two we should have a coverage of all major players,
+- already tracking X servers ...
 </aside>
 
 ## >>> from sparecores import intro
@@ -285,7 +308,7 @@ TODO
 :::
 
 <aside class="notes">
-TODO
+The easiest way to query this data is through our web component, as you can see on the screen ...
 </aside>
 
 ## >>> from sparecores import intro
@@ -295,7 +318,7 @@ TODO
 :::
 
 <aside class="notes">
-TODO
+Clicking on a server shows you the technical details of the instance -- much more than what's provided publicly by the vendor, even more than what ChatGPT knows ... as we actually start each machine and inspect the hardware. More on that later.
 </aside>
 
 ## >>> from sparecores import intro
@@ -305,17 +328,23 @@ TODO
 :::
 
 <aside class="notes">
-TODO
+Live and historical pricing
 </aside>
 
 ## >>> from sparecores import intro
+
+<!-- https://sparecores.com/server/aws/c5d.2xlarge -->
 
 ::: {.centered}
 <img style="margin-top:-55px; width: 77%;" src="images/sc-www-server-details-benchmarks-1.png" />
 :::
 
 <aside class="notes">
-TODO
+and we also run benchmark scenarios on the servers, e.g.:
+
+- memory bandwidth of read, write and mixed operations using various block sizes and also including the related L1/L2/L3 cache amounts
+- or benchmarking compression algos - having the compression ratio on the x axis, and the bandwidth on the y axis, it's clear that `zpaq` is a beast when it comes to compressing text, but might be slow on this machine
+- OpenSSL hash functions and block ciphers
 </aside>
 
 ## >>> from sparecores import intro
@@ -323,7 +352,7 @@ TODO
 <img style="margin-top: 0px;" src="images/sc-www-server-details-benchmarks-2.png" />
 
 <aside class="notes">
-TODO
+also running Geekbench 6, which has been a standard tool for some time including workloads for text and image processing, compiling software etc
 </aside>
 
 ## >>> from sparecores import intro
@@ -334,7 +363,7 @@ TODO
 
 <!-- https://deploy-preview-27--creative-choux-a3c817.netlify.app/compare?instances=W3sidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzVhZC4xMnhsYXJnZSJ9LHsidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzVkLjJ4bGFyZ2UifSx7InZlbmRvciI6ImF3cyIsInNlcnZlciI6ImM2Zy4xNnhsYXJnZSJ9LHsidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY2N4MzMifV0%3D -->
 <aside class="notes">
-TODO
+and making all these data available in comparison tables as well for human inspection
 </aside>
 
 
@@ -345,7 +374,7 @@ TODO
 :::
 
 <aside class="notes">
-TODO
+for computers, we provide APIs ...
 </aside>
 
 ## >>> from sparecores import intro
@@ -422,7 +451,7 @@ Server(
 ```
 
 <aside class="notes">
-TODO
+and SDKs as well, e.g. querying the details of this instance type: SCROLL through!
 </aside>
 
 </section></section>
@@ -434,7 +463,7 @@ TODO
 <img style="margin-top:30px; width: 100%;" src="images/sc-components.png" />
 
 <aside class="notes">
-TODO
+As mentioned previously, this is made available via multiple components that I'd like to walk through in the next slides.
 </aside>
 
 </section></section>
@@ -466,9 +495,17 @@ TODO
 - Dependency for other Spare Cores components (schemas)
 
 <aside class="notes">
-TODO
+Let me start with the Crawler, our data ingest framework, which defines database schemas, and knows how to interact with the cloud provider APIs.
 
-sounds relatively straightforward .. but we had a few interesting experiences :)
+,,,
+
+vendor metadata: foundation year, or compliance frameworks implemented
+
+how to get prices info at a vendor, e.g. for IPv4 addresses which became more and more important in the recent months
+
+,,,,
+
+sounds relatively straightforward .. but we had a few interesting experiences :) that I wanted to share
 </aside>
 
 ## >>> import sc_crawler
@@ -476,10 +513,6 @@ sounds relatively straightforward .. but we had a few interesting experiences :)
 ::: {.centered}
 <img style="margin-top:-50px; width: 50%; background: none;"  src="images/not-easy.png" />
 :::
-
-<aside class="notes">
-TODO
-</aside>
 
 ## >>> from sc_crawler import fks
 
@@ -490,7 +523,7 @@ TODO
 <p class="centered mt--30">Source: <a href="https://dbdocs.io/spare-cores/sc-crawler">dbdocs.io/spare-cores</a></p>
 
 <aside class="notes">
-overlapping compound foreign keys
+for example, looking at the server price table definition, you can see that there are 5 primary keys our of which 4 are foreign keys as well: pointing to vendor, region, zone, and server. well, all these foreign keys have a vendor as well, so to set up the relationships between the tables properly, you have to use overlapping compound foreign keys ... which is not the most intuitive thing when it comes to ORMs
 </aside>
 
 ## >>> from sc_crawler import scd
@@ -514,7 +547,7 @@ class Scd(ScModel):
 ```
 
 <aside class="notes">
-this became even more complex when created the SCD versions of the tables
+this became even more complex when created the SCD versions of the tables to track prices
 </aside>
 
 ## >>> from sc_crawler import alembic
@@ -741,7 +774,12 @@ def downgrade() -> None:
 ```
 
 <aside class="notes">
-TODO
+Another complexity was due supporting multiple database engines, e.g. publishing most recent data in SQLite and collecting SCD data in Postges and CockrochDB, and maintaining the database migration tool with support for all of these. In this example we just changed a single column from `NOT NULL` to nullable, as it turned out that even the number of cores of a server might be unknown at some vendors.
+
+offline mode support -> table def for both the SCD and non-SCD tables, same for PKs
+supporting upgrade and downgrade path
+
+but once that's done ..
 </aside>
 
 ## >>> from sc_crawler import alembic
@@ -802,15 +840,42 @@ UPDATE alembic_version SET version_num='4691089690c2' WHERE alembic_version.vers
 ```
 
 <aside class="notes">
-TODO
+but once that's done .. the user-facing command is straighforward, and can support most database engines both online and offline as well, as you can see in the generated SQL for offline mode
 </aside>
 
-
-
-## >>> from sc_crawler import hwinfo
+## >>> from sc_crawler import hwinfo {data-transition="slide-in none-out"}
 
 <ul style="margin-top: -20px;">
-  <li class="fragment">Varying quality and availability of data at different vendors</li>
+  <li>Varying quality and availability of data at different vendors.</li>
+</ul>
+
+<img class="fragment" style="width:100%;" src="images/chatgpt-datasource.png" />
+
+<aside class="notes">
+as mentioned previously, data quality and availability on the server details is pretty random .. and I'm not even talking about structured data, but in most cases the data doesn't exist in any form. and before anyone asks .. not, not even ChatGPT knows:
+
+,,,
+
+
+I mean ... after searching for 6 or 7 sources online .. this guy failed heavily
+</aside>
+
+## >>> from sc_crawler import hwinfo {data-transition="none"}
+
+<ul style="margin-top: -20px;">
+  <li>Varying quality and availability of data at different vendors.</li>
+</ul>
+
+<img style="width:100%;" src="images/chatgpt-datasource-highlighted.png" />
+
+<aside class="notes">
+multiplying 12 by 2 ... so we really hoped there's a better way.
+</aside>
+
+## >>> from sc_crawler import hwinfo {data-transition="none-in slide-out"}
+
+<ul style="margin-top: -20px;">
+  <li>Varying quality and availability of data at different vendors.</li>
   <ul>
     <li class="fragment">No SSD info via the API. Parse from server description! 🙀</li>
     <li class="fragment">No CPU info via the API. Extracting from homepage! 😿</li>
@@ -837,7 +902,14 @@ TODO
 </div>
 
 <aside class="notes">
-TODO
+So that storage data is sometimes missing from the API response .. at least in a structured way.
+And we need to parse the availability of an attached local SSD from the server description.
+
+Sometimes it's not even there .. need to extract CPU info from the vendor homepage.
+
+And sometimes data is not even there ... we had to look that up and provide manual mappings, later automated scripts to collect that data right from the nodes.
+
+But looking at simpler things, e.g. region definitions. Straightforward, right?
 </aside>
 
 ## >>> from sc_crawler import pricing
@@ -868,9 +940,13 @@ TODO
 
 <aside class="notes">
 Anyone from Google here today?
-Okay, I'll not tell at which vendor we encountered the following issue ...
 
-TODO
+- Great, because I have some examples to share.
+- Okay, I'll politely avoid naming which vendor might have one of the most interestingly implemented pricing schema ...
+
+2 x 2 numbers .. don't ask ChatGPT to do that for you!!!
+
+,,,
 
 m2 pricing: look up m1 cpu/ram pricing + add the premium skus and do the math (2 times 2 numbers added and multiplied – involving 5 api lookups)
 
@@ -890,7 +966,7 @@ okay, enough horror stories. beleive me ... it's good to have a standardize data
 <p class="centered mt--30">Source: <a href="https://dbhub.io/sparecores/sc-data-priceless.db">dbhub.io/sparecores</a></p>
 
 <aside class="notes">
-this is showing the collected data, so actually another component of the SC ecocystem, as we license all our software by MPL, but the data by creative commons attribution/share-alike
+so I'm super happy to introduce this cleaned up dataset to you all, which is actually another component of the SC ecocystem, as we license all our software by MPL, but the data by creative commons attribution/share-alike
 </aside>
 
 </section></section>
@@ -926,8 +1002,11 @@ this is showing the collected data, so actually another component of the SC ecoc
 </ul>
 
 <aside class="notes">
-TODO
-~500 storage, traffic, IPv4 prices
+so we have a separate GitHub repo set up for the data, including GH Actions to run the Crawler every 5 minutes
+
+and publishing the most recent data as an SQLite database and Python package
+
+This data includes data collected outside of the vendor APIs ...
 </aside>
 
 </section></section>
@@ -966,7 +1045,11 @@ Information collected from vendor APIs is very limited, so we run:
 ```
 
 <aside class="notes">
-TODO
+This data includes data collected outside of the vendor APIs ... in the means of our Inspector tool.
+
+which runs ...
+
+And we indeed start all cloud servers (more than a 1000), and run all these things on them, so that you don't have to :)
 </aside>
 
 ## >>> import sc_inspector
@@ -978,7 +1061,7 @@ TODO
 :::
 
 <aside class="notes">
-TODO
+This data is also collected in public, running GH Actions to start the machines, run the benchmarks, parse results, clean up the resources etc.
 </aside>
 
 ## >>> import sc_inspector
@@ -988,7 +1071,12 @@ TODO
 :::
 
 <aside class="notes">
-TODO
+And besides integrating in the Data package, everything is stored in the GitHub repo, like:
+
+- stout
+- stderr
+- parsed results
+- metadata
 </aside>
 
 ## >>> import sc_inspector
@@ -1005,7 +1093,7 @@ docker run --rm -ti -v /var/run/docker.sock:/var/run/docker.sock \
 :::
 
 <aside class="notes">
-TODO
+If you want, you can run the inspector on any machine .. by using our related Docker images.
 </aside>
 
 </section></section>
@@ -1051,7 +1139,11 @@ Resources:
 ```
 
 <aside class="notes">
-TODO
+To start the machines, we are heavily relying on the open-source version of Pulumi,
+and we have created Pulumi stack templates to spin up machines, as you can see here.
+
+The command is super simple: provide vendor and instance type, make sure you have the credentials,
+and we take care of the rest using this unified CLI.
 </aside>
 
 ## >>> import sc_runner {data-transition="slide-in none-out"}
@@ -1060,6 +1152,10 @@ TODO
 <img src="images/aws-quota-request-quota.png" style="width:57%;margin-top:-30px;"/>
 :::
 
+<aside class="notes">
+We faced only a few problems while starting almost 1K sever types at AWS for benchmarking ... namely not being allowed to spin up that many instances due to quotas.
+</aside>
+
 ## >>> import sc_runner {data-transition="none-in slide-out"}
 
 ::: {.centered}
@@ -1067,9 +1163,10 @@ TODO
 :::
 
 <aside class="notes">
-Hitting the "quote update request quota" achievement unlocked.
-</aside>
+Never imagined we would be hitting the "quote update request quota" 🤐
 
+Quite an achievement!
+</aside>
 
 </section></section>
 
