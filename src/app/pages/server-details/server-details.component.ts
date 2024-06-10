@@ -828,7 +828,15 @@ export class ServerDetailsComponent implements OnInit {
     dataSet1.forEach((item: any) => {
       let found = data.datasets.find((d: any) => { return d.config.algo === item.config.algo });
 
-      let tooltip = `${item.config.threads ? 'Threads: ' + item.config.threads + ', ' : ''} ${item.config.compression_level ? 'Compression Level: ' + item.config.compression_level + ', ' : ''}`;
+      let tooltip = ``;
+      Object.keys(item.config).forEach((key: string) => {
+        if(key !== 'algo') {
+          if(tooltip.length > 0){
+            tooltip += ', ';
+          }
+          tooltip += `${key.replace('_', ' ')}: ${item.config[key]}`;
+        }
+      });
 
       if(!found) {
         data.datasets.push({
@@ -992,8 +1000,6 @@ export class ServerDetailsComponent implements OnInit {
 
   generateGeekbenchChart() {
     const dataSet = this.benchmarksByCategory?.filter(x => (x.benchmark_id as string).includes('geekbench'));
-
-
 
     this.geekbenchHTML =
     `<div> The following benchmark scenarios were run using Geekbench 6: </div> <ul> `;
