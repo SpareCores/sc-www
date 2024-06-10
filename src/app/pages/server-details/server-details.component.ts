@@ -17,6 +17,7 @@ import { barChartDataEmpty, barChartOptions, barChartOptionsSSL, lineChartOption
 import { Chart } from 'chart.js';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import { DomSanitizer } from '@angular/platform-browser';
+import { ReduceUnitNamePipe } from '../../pipes/reduce-unit-name.pipe';
 
 Chart.register(annotationPlugin);
 
@@ -32,7 +33,7 @@ const options: DropdownOptions = {
 @Component({
   selector: 'app-server-details',
   standalone: true,
-  imports: [BreadcrumbsComponent, CommonModule, LucideAngularModule, FaqComponent, FormsModule, RouterModule, BaseChartDirective],
+  imports: [BreadcrumbsComponent, CommonModule, LucideAngularModule, FaqComponent, FormsModule, RouterModule, BaseChartDirective, ReduceUnitNamePipe],
   templateUrl: './server-details.component.html',
   styleUrl: './server-details.component.scss'
 })
@@ -89,9 +90,11 @@ export class ServerDetailsComponent implements OnInit {
   // benchmark charts
   compressDropdown: any;
   compressMethods: any[] = [
-    { name: 'Compress', key: 'compression_text:compress' },
-    { name: 'Decompress', key: 'compression_text:decompress' },
-    { name: 'Ratio', key: 'compression_text:ratio' }
+    { name: 'Compress level', key: 'compress' },
+    { name: 'Decompress level', key: 'decompress' },
+    { name: 'Ratio level', key: 'ratio' },
+    { name: 'Ratio/Compress', key: 'ratio_compress' },
+    { name: 'Ratio/Decompress', key: 'ratio_decompress' },
   ];
   selectedCompressMethod = this.compressMethods[0];
 
@@ -151,7 +154,7 @@ export class ServerDetailsComponent implements OnInit {
         if(dataAll[2].body){
           this.serverDetails = dataAll[2].body as any;
           this.breadcrumbs[2] =
-            { name: this.serverDetails.display_name, url: '/server/' + this.serverDetails.vendor.vendor_id + '/' + this.serverDetails.server_id };
+            { name: this.serverDetails.display_name, url: '/server/' + this.serverDetails.vendor.vendor_id + '/' + this.serverDetails.api_reference };
 
           this.features = [];
           if(this.serverDetails.cpu_cores || this.serverDetails.vcpus) {
@@ -242,14 +245,14 @@ export class ServerDetailsComponent implements OnInit {
             if(data?.body) {
               const allServers = data.body as TableServerTableServerGetData;
               allServers.forEach((s) => {
-                if(s.family === this.serverDetails.family && s.server_id !== this.serverDetails.server_id) {
+                if(s.family === this.serverDetails.family && s.api_reference !== this.serverDetails.api_reference) {
                   if(this.similarByFamily.length < 7 && this.similarByFamily.findIndex((s2) => s2.server_id === s.server_id) === -1) {
                     this.similarByFamily.push(s);
                   }
                 } else {
                   if(
                     (this.serverDetails.vcpus && s.vcpus === this.serverDetails.vcpus)
-                      && s.server_id !== this.serverDetails.server_id) {
+                      && s.api_reference !== this.serverDetails.api_reference) {
                       this.similarByPerformance.push(s);
                   }
                 }
@@ -394,7 +397,7 @@ export class ServerDetailsComponent implements OnInit {
 
   getMemory(memory: number | undefined = undefined) {
     const memoryAmount = memory || this.serverDetails.memory_amount || 0;
-    return ((memoryAmount) / 1024).toFixed((memoryAmount ? 0 : 1)) + 'GB';
+    return ((memoryAmount) / 1024).toFixed((memoryAmount ? 0 : 1)) + 'GiB';
   }
 
   getStorage() {
@@ -407,7 +410,7 @@ export class ServerDetailsComponent implements OnInit {
 
   serverUrl(server: Server): string {
     return(`<a class="underline decoration-dotted hover:text-gray-500"
-      href="/server/${server.vendor_id}/${server.server_id}">
+      href="/server/${server.vendor_id}/${server.api_reference}">
       ${server.display_name}</a>`)
   }
 
@@ -442,6 +445,7 @@ export class ServerDetailsComponent implements OnInit {
         const data: any = {
           region_id: price.region_id,
           display_name: price.region.display_name,
+          api_reference: price.region.api_reference,
           spot: {
             price: 0,
             unit: price.unit,
@@ -696,7 +700,7 @@ export class ServerDetailsComponent implements OnInit {
     }
 
     if( typeof prop === 'number' ) {
-      return `${prop} ${column.unit || ''}`;
+      return this.roundBytes(prop, column.unit);
     }
     if( typeof prop === 'string') {
       return prop;
@@ -706,6 +710,19 @@ export class ServerDetailsComponent implements OnInit {
     }
 
     return '-';
+  }
+
+  roundBytes(bytes: number, unit: string) {
+    const sizes = ['byte', 'KiB', 'MiB', 'GiB', 'TB'];
+
+    let idx = sizes.indexOf(unit);
+
+    if(idx < 0 || bytes === 0) {
+      return `${bytes} ${unit || ''}`;
+    }
+
+    const i = Math.floor(Math.log(bytes) / Math.log(1024));
+    return (bytes / Math.pow(1024, i)).toFixed(0) + ' ' + sizes[i+idx];
   }
 
   refreshCompressChart(chart: any) {
@@ -794,20 +811,144 @@ export class ServerDetailsComponent implements OnInit {
   }
 
   generateCompressChart() {
-    let data: any;
+    let dataSet1 = this.benchmarksByCategory?.find(x => x.benchmark_id === 'compression_text:ratio')?.benchmarks || [];
+
+    if(!dataSet1 || !dataSet1.length) {
+      this.lineChartDataCompress = undefined;
+      return;
+    }
+
+    let dataSet2 = this.benchmarksByCategory?.find(x => x.benchmark_id === 'compression_text:compress')?.benchmarks || [];
+    let dataSet3 = this.benchmarksByCategory?.find(x => x.benchmark_id === 'compression_text:decompress')?.benchmarks || [];
+
+    dataSet1 = dataSet1?.filter((item: any) => {
+      return !item.config.threads  || item.config.threads === 1;
+    });
+
+    dataSet2 = dataSet2?.filter((item: any) => {
+      return !item.config.threads  || item.config.threads === 1;
+    });
+
+    dataSet3 = dataSet3?.filter((item: any) => {
+      return !item.config.threads  || item.config.threads === 1;
+    });
+
+    let data: any = {
+      labels: [],
+      datasets: []
+    };
+
+    dataSet1.forEach((item: any) => {
+      let found = data.datasets.find((d: any) => { return d.config.algo === item.config.algo });
+
+      let tooltip = ``;
+      Object.keys(item.config).forEach((key: string) => {
+        if(key !== 'algo') {
+          if(tooltip.length > 0){
+            tooltip += ', ';
+          }
+          tooltip += `${key.replace('_', ' ')}: ${item.config[key]}`;
+        }
+      });
+
+      if(!found) {
+        data.datasets.push({
+          data: [{
+            config: item.config,
+            ratio: Math.floor(item.score * 100) / 100,
+            algo: item.config.algo,
+            compression_level: item.config.compression_level,
+            tooltip: tooltip
+          }],
+          label: item.config.algo,
+          spanGaps: true,
+          config: item.config,
+          borderColor: radarDatasetColors[data.datasets.length].borderColor,
+          backgroundColor: radarDatasetColors[data.datasets.length].backgroundColor
+        });
+      } else {
+        found.data.push({
+          config: item.config,
+          ratio: Math.floor(item.score * 100) / 100,
+          algo: item.config.algo,
+          compression_level: item.config.compression_level,
+          tooltip: tooltip
+        });
+      }
+    });
+
+    data.datasets.forEach((dataset: any) => {
+      dataset.data.forEach((item: any) => {
+        const item2 = dataSet2.find((dataItem: any) => {
+          return Object.entries(item.config).every(([key, value]) => {
+            return dataItem.config[key] === value;
+          });
+        });
+        let item3 = dataSet3.find((dataItem: any) => {
+          return Object.entries(item.config).every(([key, value]) => {
+            return dataItem.config[key] === value;
+          });
+        });
+        if(item2 && item3) {
+          item.compress = item2.score;
+          item.decompress = item3.score;
+        }
+      });
+    });
+
     switch(this.selectedCompressMethod.key) {
-      case 'compression_text:compress':
-        data = this.generateLineChart('compression_text:compress', 'algo', 'compression_level');
-        this.lineChartOptionsCompress = lineChartOptionsComp;
+      case 'compress':
+      case 'decompress':
+      case 'ratio': {
+        let labels: any[] = [];
+        dataSet1.forEach((item: any) => {
+          if((item.config['compression_level'] || item.config['compression_level'] == 0) && labels.indexOf(item.config['compression_level']) === -1) {
+            labels.push(item.config['compression_level']);
+          }
+        });
+
+        data.datasets.forEach((dataset: any) => {
+          dataset.data = dataset.data.sort((a: any, b: any) => a.compression_level - b.compression_level);
+        });
+
+        data.labels = labels.sort((a, b) => a - b);
+
+        if((this.lineChartOptionsCompress as any).parsing.yAxisKey) {
+          (this.lineChartOptionsCompress as any).parsing = {
+            yAxisKey: this.selectedCompressMethod.key,
+            xAxisKey: 'compression_level',
+          };
+          (this.lineChartOptionsCompress as any).scales.x.title.text = 'Compression Level';
+        }
+
         break;
-      case 'compression_text:decompress':
-        data = this.generateLineChart('compression_text:decompress', 'algo', 'compression_level');
-        this.lineChartOptionsCompress = lineChartOptionsComp;
-        break;
-      case 'compression_text:ratio':
-        data = this.generateLineChart('compression_text:ratio', 'algo', 'compression_level');
-        this.lineChartOptionsCompress = lineChartOptionsCompRatio;
-        break;
+      }
+      case 'ratio_compress':
+      case 'ratio_decompress': {
+        let labels: any[] = [];
+
+        data.datasets.forEach((dataset: any) => {
+          dataset.data.forEach((item: any) => {
+            if(item.ratio && labels.indexOf(item.ratio) === -1) {
+              labels.push(item.ratio);
+            }
+          });
+        });
+
+        data.labels = labels.sort((a, b) => a - b);
+
+        data.datasets.forEach((dataset: any) => {
+          dataset.data = dataset.data.sort((a: any, b: any) => a.ratio - b.ratio);
+        });
+
+        if((this.lineChartOptionsCompress as any).parsing.yAxisKey) {
+          (this.lineChartOptionsCompress as any).parsing = {
+            yAxisKey:  this.selectedCompressMethod.key === 'ratio_compress' ? 'compress' : 'decompress',
+            xAxisKey: 'ratio',
+          };
+          (this.lineChartOptionsCompress as any).scales.x.title.text = 'Compression Ratio';
+        }
+      }
     }
     if(data) {
       this.lineChartDataCompress = { labels: data.labels, datasets: data.datasets };
@@ -872,8 +1013,6 @@ export class ServerDetailsComponent implements OnInit {
 
   generateGeekbenchChart() {
     const dataSet = this.benchmarksByCategory?.filter(x => (x.benchmark_id as string).includes('geekbench'));
-
-
 
     this.geekbenchHTML =
     `<div> The following benchmark scenarios were run using Geekbench 6: </div> <ul> `;

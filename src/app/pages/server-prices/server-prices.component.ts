@@ -314,11 +314,11 @@ export class ServerPricesComponent implements OnInit {
   }
 
   getMemory(item: ServerPriceWithPKs) {
-    return ((item.server.memory_amount || 0) / 1024).toFixed(1) + ' GB';
+    return ((item.server.memory_amount || 0) / 1024).toFixed(1) + ' GiB';
   }
 
   getGPUMemory(item: ServerPriceWithPKs) {
-    return ((item.server.gpu_memory_min || 0) / 1024).toFixed(1) + ' GB';
+    return ((item.server.gpu_memory_min || 0) / 1024).toFixed(1) + ' GiB';
   }
 
   getStorage(item: ServerPriceWithPKs) {
@@ -330,7 +330,7 @@ export class ServerPricesComponent implements OnInit {
   }
 
   openServerDetails(server: ServerPriceWithPKs) {
-    this.router.navigateByUrl(`/server/${server.vendor.vendor_id}/${server.server.server_id}`);
+    this.router.navigateByUrl(`/server/${server.vendor.vendor_id}/${server.server.api_reference}`);
   }
 
   toggleCategory(category: any) {
