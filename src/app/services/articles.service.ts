@@ -13,6 +13,19 @@ export type ArticleMeta = {
   tags?: string[];
 }
 
+export type SlidesMeta = {
+  title: string;
+  author: string;
+  date: Date;
+  conference: string,
+  conference_url: string,
+  conference_talk_url: string,
+  conference_talk_video?: string,
+  location: string;
+
+  filename: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -31,5 +44,10 @@ export class ArticlesService {
   async getArticle(category: string, slug: string): Promise<string> {
     const files = await firstValueFrom(this.http.get(`./assets/articles/${category}/${slug}.md`, { responseType: 'text' } ));
     return files as string;
+  }
+
+  async getSlides(): Promise<SlidesMeta[]> {
+    const slides = await firstValueFrom(this.http.get(`./assets/slides/slides.json`));
+    return slides as SlidesMeta[];
   }
 }

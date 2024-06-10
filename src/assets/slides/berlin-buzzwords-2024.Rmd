@@ -1,6 +1,6 @@
 ---
 title: "Harnessing Spare Cores to Breeze Through Cloud Compute"
-author: Gergely Daróczi
+author: Gergely Daroczi
 date: "2024-06-12"
 conference: "Berlin Buzzwords 2024"
 conference_url: "https://2024.berlinbuzzwords.de/"
