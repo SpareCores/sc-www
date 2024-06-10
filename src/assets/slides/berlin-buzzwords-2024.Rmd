@@ -263,7 +263,7 @@ BUT let's focus on the open-source and open-data components ..
 
 ## >>> from sparecores import intro
 
-<img style="margin-top:-10px" src="images/homepage-stats.png" />
+<img style="margin-top:-10px; width:100%;" src="images/homepage-stats.png" />
 
 <p class="centered" style="margin-top: -10px;">Source: <a href="https://sparecores.com">sparecores.com</a></p>
 
