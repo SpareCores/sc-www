@@ -801,7 +801,7 @@ TODO
   <li class="fragment">Varying quality and availability of data at different vendors</li>
   <ul>
     <li class="fragment">No SSD info via the API. Parse from server description! 🙀</li>
-    <li class="fragment">No CPU info via the API. Parsing from homepage! 😿</li>
+    <li class="fragment">No CPU info via the API. Extracting from homepage! 😿</li>
     <li class="fragment">No hypervisor info via the API. Manual mappings! 🙀😿</li>
   </ul>
   <li class="fragment">Region, right?</li>
@@ -943,7 +943,7 @@ Information collected from vendor APIs is very limited, so we run:
       <li class="fragment">Benchmarking workloads:</li>
       <ul>
         <li class="fragment"><code>bw_mem</code></li>
-        <li class="fragment">Text compression algos</li>
+        <li class="fragment">Compression algos</li>
         <li class="fragment">OpenSSL hash functions and block ciphers</li>
         <li class="fragment">Geekbench 6</li>
         <li class="fragment"><code>stress-ng</code></li>
@@ -1338,7 +1338,8 @@ TODO
 
 - More SDKs (PyPI, npm, CRAN, etc.)
 - Data analysis, blog posts
-- SaaS
+- My Spare Cores (dashboard)
+- SaaS 👀
 
 <aside class="notes">
 TODO
