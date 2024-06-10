@@ -245,14 +245,14 @@ export class ServerDetailsComponent implements OnInit {
             if(data?.body) {
               const allServers = data.body as TableServerTableServerGetData;
               allServers.forEach((s) => {
-                if(s.family === this.serverDetails.family && s.server_id !== this.serverDetails.api_reference) {
+                if(s.family === this.serverDetails.family && s.api_reference !== this.serverDetails.api_reference) {
                   if(this.similarByFamily.length < 7 && this.similarByFamily.findIndex((s2) => s2.server_id === s.server_id) === -1) {
                     this.similarByFamily.push(s);
                   }
                 } else {
                   if(
                     (this.serverDetails.vcpus && s.vcpus === this.serverDetails.vcpus)
-                      && s.server_id !== this.serverDetails.server_id) {
+                      && s.api_reference !== this.serverDetails.api_reference) {
                       this.similarByPerformance.push(s);
                   }
                 }
