@@ -10,7 +10,7 @@
             <tr>
               <th>DATE</th>
               <th>CONFERENCE</th>
-              <th>AUTHOR</th>
+              <th>SPEAKER</th>
               <th>TITLE</th>
               <th>LINK</th>
             </tr>
@@ -39,9 +39,8 @@
               <td> <a [href]="item.conference_talk_url" target="_blank" rel="noindex nofollow">{{ item.title }}</a></td>
               <td>
                 <div class="flex gap-2">
-                  <a class="text-emerald-400" routerLink="/assets/slides/{{item.filename}}.html" target="_blank" rel="noindex nofollow">
+                  <a class="text-emerald-400" routerLink="/assets/slides/{{item.filename}}.html" target="_blank">
                     <lucide-icon name="scroll-text">
-
                     </lucide-icon>
                   </a>
                   <a *ngIf="item.conference_talk_video" class="text-emerald-400" [href]="item.conference_talk_video" target="_blank" rel="noindex nofollow">
