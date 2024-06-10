@@ -77,7 +77,7 @@
           </thead>
           <tbody>
             <tr *ngFor="let property of item.properties">
-              <td>
+              <td class="fixed_width">
                 <div class="flex gap-2 items-center">
                   <b>{{property.name}}</b>
                   <lucide-icon
@@ -115,22 +115,24 @@
         <table class="items_table">
           <thead>
             <tr>
-              <th>REGION</th>
+              <th>REGION / ID</th>
               <th>SPOT</th>
               <th>ONDEMAND</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let item of availabilityRegions">
-              <td> <b>{{item.display_name}}</b> </td>
-              <td *ngIf="item['spot']"> ${{item['spot'].price}}/{{item['spot'].unit}}</td>
+              <td>
+                  <div><b>{{item.display_name}}</b> / {{item.api_reference}} </div>
+              </td>
+              <td *ngIf="item['spot']"> ${{item['spot'].price}}/{{item['spot'].unit | reduceUnitName}}</td>
               <td *ngIf="!item['spot']"> - </td>
-              <td *ngIf="item['ondemand']"> ${{item['ondemand'].price}}/{{item['ondemand'].unit}}</td>
+              <td *ngIf="item['ondemand']"> ${{item['ondemand'].price}}/{{item['ondemand'].unit | reduceUnitName}}</td>
               <td *ngIf="!item['ondemand']"> - </td>
             </tr>
           </tbody>
         </table>
-        <div class="absolute bottom-0 laft-0 w-full py-3 flex justify-center" id="availability_more"
+        <div *ngIf="availabilityRegions.length > 7" class="absolute bottom-0 laft-0 w-full py-3 flex justify-center" id="availability_more"
             style="background: linear-gradient(360deg, #06263A 23.44%, rgba(6, 38, 58, 0) 100%);" >
           <button class="btn-primary py-2 px-3" (click)="openBox('availability')"
                   data-ph-capture-attribute-sc-event="server details show more availability">
@@ -415,7 +417,7 @@
                 <td>
                   <a
                     class="underline decoration-dotted hover:text-gray-500"
-                    routerLink="/server/{{item.vendor_id}}/{{item.server_id}}">
+                    routerLink="/server/{{item.vendor_id}}/{{item.api_reference}}">
                     {{item.display_name}}
                   </a>
                 </td>
@@ -443,7 +445,7 @@
               <td>
                 <a
                 class="underline decoration-dotted hover:text-gray-500"
-                routerLink="/server/{{item.vendor_id}}/{{item.server_id}}">
+                routerLink="/server/{{item.vendor_id}}/{{item.api_reference}}">
                 {{item.display_name}}
                 </a> </td>
               <td> {{item.vendor_id}}</td>
@@ -530,7 +532,7 @@
 
 <div id="tooltipGeekbench"
   #tooltipGeekbench
-  style="opacity: 0;"
+  style="opacity: 0; display: none;"
   class="absolute z-10 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-secondary border border-solid border-emerald-400 rounded-lg">
   <div [innerHTML]="geekbenchHTML" ></div>
 </div>

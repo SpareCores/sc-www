@@ -1,3 +1,4 @@
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
 <nav class="bg-custom px-4 lg:px-6 py-2.5 w-full">
   <div class="content flex justify-between items-center w-full">
       <a routerLink="/" class="h-12" style="max-width: 284px; width: 284px">
@@ -33,19 +34,11 @@
               </li>
               <li class="lg:hidden">
                 <lucide-icon
+                  id="menu_button"
                   class="navbar_link cursor-pointer h-8 w-8"
-                  data-dropdown-toggle="menu_options"
                   name="menu" >
                 </lucide-icon>
               </li>
-              <!--
-              <li>
-                <button class="login_button text-sm items-center">
-                  <lucide-icon name="user" class="h-4 w-4 mr-1"></lucide-icon>
-                  Log in
-                </button>
-              </li>
-              -->
           </ul>
       </div>
   </div>
@@ -53,7 +46,10 @@
 
 
 <div id="menu_options" class="z-10 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid">
-  <ul class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
+  <ul
+    class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
+    aria-labelledby="dropdownDefaultButton"
+    (click)="closeMenu()">
     <li class="py-2">
       <a class="navbar_link" routerLink="/servers" >
         <lucide-icon class="h-4 w-4" name="pc-case"></lucide-icon>
