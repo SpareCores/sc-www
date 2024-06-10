@@ -1,0 +1,315 @@
+body {
+    background-image: url("../images/sc-square-dark-300x300.jpg");
+    background-size: auto 125px;
+    background-repeat: no-repeat;
+    background-position: left 15px bottom 10px;
+    background-color: #082f49;
+}
+
+body.speakerview {
+    background-size: auto 20px;
+}
+
+.reveal .controls button.navigate-right.enabled {
+  border-left-color: #34d399;
+}
+.reveal .controls button.navigate-left.enabled {
+  border-right-color: #34d399;
+}
+.reveal .controls button.navigate-down.enabled {
+  border-top-color: #34d399;
+}
+.reveal .controls button.navigate-up.enabled {
+  border-bottom-color: #34d399;
+}
+.reveal div.slide-number {
+  background-color: #06263a;
+}
+
+.reveal img.toplogo {
+  position: fixed;
+  top: 10px;
+  margin-left: -125px;
+  margin-right: 125px;
+  width: 250px;
+  height: 250px;
+}
+.reveal div.centered p {
+  text-align: center;
+}
+
+.noborder {
+    border: 0px !important;
+    box-shadow: none !important;
+}
+
+img.rounded {
+  border-radius: 50%;
+}
+
+.w-25 {
+  width: 25%;
+}
+.w-50 {
+  width: 50%;
+}
+.w-70 {
+  width: 70%;
+}
+.w-75 {
+  width: 75%;
+}
+p.bold {
+  font-weight: bold;
+}
+
+.reveal pre {
+    width: 100% !important;
+    margin: 0px !important;
+}
+div.sourceCode {
+    /* margin-left: 5% !important; */
+    /* margin-right: 5% !important; */
+    margin-top: -5px !important;
+}
+code.sourceCode {
+    border: 2px solid !important;
+}
+
+.reveal code {
+    font-family: monospace;
+    background-color: #06263a;
+    padding: 2px 10px;
+}
+
+/* two columns */
+
+.flexcontainer{
+    display: flex;
+}
+.flexcol{
+    flex: 1;
+}
+
+.reveal,
+.reveal h1,
+.reveal h2,
+.reveal h3,
+.reveal h4,
+.reveal h5,
+.reveal h6 {
+    font-family: Inter !important;
+    text-transform: none;
+    color: #ffffff;
+}
+
+.reveal h1,
+.reveal h2,
+.reveal h3,
+.reveal h4,
+.reveal h5,
+.reveal h6 {
+    font-family: Inter !important;
+    text-transform: none;
+    color: #34d399;
+}
+
+.reveal h2, .reveal pre, .reveal pre code {
+    font-family: "Roboto Mono" !important;
+    font-weight: 400 !important;
+    text-transform: none;
+    text-align: left;
+}
+
+.reveal pre code {
+  padding: 15px;
+}
+.reveal pre code span {
+  line-height: 1.5;
+}
+
+h2.author {
+    text-align: center !important;
+    font-family: Inter !important;
+}
+
+.reveal section img {
+    border: none;
+    box-shadow: none;
+}
+
+.reveal a:hover img {
+    border: none;
+    box-shadow: none;
+}
+
+p {
+   /* text-align: left; */
+}
+
+
+.reveal pre code {
+    max-height: 600px;
+}
+
+code span.va {
+  color: #eab308;
+}
+code span.dv, code span.fl {
+  color: #ef4444
+}
+
+.cols {
+    display: flex;
+}
+.col {
+    flex: 1;
+}
+.col2 {
+    flex: 2;
+}
+
+.reveal blockquote {
+    width: 90%;
+}
+
+.reveal blockquote{
+  font-size: 2rem;
+  width:90%;
+  margin:10px auto;
+  color: #555555;
+  padding:0px 30px 0px 75px;
+  border-left:8px solid #1c3d52;
+  line-height:1.6;
+  position: relative;
+  background:#EDEDED;
+}
+
+.reveal blockquote::before{
+  font-family:Arial;
+  content: "\201C";
+  color:#1c3d52;
+  font-size:4em;
+  position: absolute;
+  left: 10px;
+  top:-30px;
+}
+
+.reveal clearblockquote::after{
+  content: '';
+}
+
+.reveal blockquote span{
+  display:block;
+  color:#333333;
+  font-style: normal;
+  font-weight: bold;
+  margin-top: 5px;
+}
+
+.reveal ul {
+    width: 100%;
+}
+.reveal .slides p {
+  text-align: left;
+}
+.reveal .slides p {
+  margin-top: 60px;
+}
+
+.cbox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cimg {
+  flex: 1;
+}
+
+
+.colcontainer {
+  display: flex;
+}
+.col {
+  flex: 1;
+}
+
+.reveal pre .smallchunk {
+  width: 50%;
+}
+
+.shaded {
+  text-shadow:
+        0.05em 0 black,
+        0 0.05em black,
+        -0.05em 0 black,
+        0 -0.05em black,
+        -0.05em -0.05em black,
+        -0.05em 0.05em black,
+        0.05em -0.05em black,
+        0.05em 0.05em black !important;
+}
+
+.reveal ul li {
+  margin-top: 30px;
+}
+.mb-30 {
+  margin-bottom: 30px !important;
+}
+.mt-30 {
+  margin-top: 30px !important;
+}
+.mt-60 {
+  margin-top: 60px !important;
+}
+.mt-0 {
+  margin-top: 0px !important;
+}
+.mt--10 {
+  margin-top: -10px !important;
+}
+.mt--20 {
+  margin-top: -20px !important;
+}
+.mt--30 {
+  margin-top: -30px !important;
+}
+.mt--45 {
+  margin-top: -45px !important;
+}
+.mt--60 {
+  margin-top: -60px !important;
+}
+.mt--70 {
+  margin-top: -70px !important;
+}
+.mt--90 {
+  margin-top: -90px !important;
+}
+
+.v-center-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
+  width: 100%;
+}
+.v-center-image {
+  ax-height: 80vh;
+  max-width: 100vw;
+  width: auto;
+  height: auto;
+}
+
+.gray {
+  color: #999;
+}
+
+p.centered {
+  text-align: center !important;
+}
+
+.reveal a {
+  text-decoration: underline;
+  color: white;
+}
