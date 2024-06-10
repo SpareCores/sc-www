@@ -220,6 +220,13 @@ export const lineChartOptionsComp: ChartConfiguration<'line'>['options'] = {
     },
   },
   plugins: {
+    tooltip:{
+      callbacks: {
+        label: function(this: TooltipModel<"line">, tooltipItem: TooltipItem<"line">) {
+          return (tooltipItem.parsed as any).y.toFixed(0) + ' (' + (tooltipItem.dataset.data[tooltipItem.dataIndex] as any).tooltip + ')';
+        }
+      }
+    },
     legend: {
       display: true,
       labels: {

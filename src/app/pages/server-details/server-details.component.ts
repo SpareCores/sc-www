@@ -826,15 +826,18 @@ export class ServerDetailsComponent implements OnInit {
     };
 
     dataSet1.forEach((item: any) => {
-      let found = data.datasets.find((d: any) => { return d.config.algo === item.config.algo});
+      let found = data.datasets.find((d: any) => { return d.config.algo === item.config.algo });
+
+      let tooltip = `${item.config.threads ? 'Threads: ' + item.config.threads + ', ' : ''} ${item.config.compression_level ? 'Compression Level: ' + item.config.compression_level + ', ' : ''}`;
+
       if(!found) {
         data.datasets.push({
           data: [{
             config: item.config,
             ratio: Math.floor(item.score * 100) / 100,
             algo: item.config.algo,
-            compression_level:
-            item.config.compression_level
+            compression_level: item.config.compression_level,
+            tooltip: tooltip
           }],
           label: item.config.algo,
           spanGaps: true,
@@ -847,8 +850,9 @@ export class ServerDetailsComponent implements OnInit {
           config: item.config,
           ratio: Math.floor(item.score * 100) / 100,
           algo: item.config.algo,
-          compression_level:
-          item.config.compression_level });
+          compression_level: item.config.compression_level,
+          tooltip: tooltip
+        });
       }
     });
 
@@ -892,7 +896,8 @@ export class ServerDetailsComponent implements OnInit {
           (this.lineChartOptionsCompress as any).parsing = {
             yAxisKey: this.selectedCompressMethod.key,
             xAxisKey: 'compression_level',
-          }
+          };
+          (this.lineChartOptionsCompress as any).scales.x.title.text = 'Compression Level';
         }
 
         break;
@@ -919,7 +924,8 @@ export class ServerDetailsComponent implements OnInit {
           (this.lineChartOptionsCompress as any).parsing = {
             yAxisKey:  this.selectedCompressMethod.key === 'ratio_compress' ? 'compress' : 'decompress',
             xAxisKey: 'ratio',
-          }
+          };
+          (this.lineChartOptionsCompress as any).scales.x.title.text = 'Compression Ratio';
         }
       }
     }
