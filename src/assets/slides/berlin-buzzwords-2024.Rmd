@@ -109,7 +109,9 @@ TODO
 
 ## >>> from sparecores import why
 
-<img class="mt--30" src="images/adtech-usecase-job-metrics.png" />
+::: {.centered}
+<img style="margin-top:-30px;width:95%;"  src="images/adtech-usecase-job-metrics.png" />
+:::
 
 <div class="notes">
 To give you an example: here's a job that we monitored every few seconds and saw that it doesn't really scale to multiple CPUs, but taking up to ~200 gigs of memory -- probably training a hierarchical model that cannot be paralellized.
@@ -117,7 +119,9 @@ To give you an example: here's a job that we monitored every few seconds and saw
 
 ## >>> from sparecores import why
 
-<img class="mt--30" src="images/adtech-usecase-jobs.png" />
+::: {.centered}
+<img style="margin-top:-30px;width:95%;" src="images/adtech-usecase-jobs.png" />
+:::
 
 <div class="notes">
 4k jobs/day with varying needs
@@ -172,7 +176,9 @@ and AWS bin packing smaller jobs to already running larger nodes (started for he
 
 ## >>> from sparecores import why
 
-<img class="mt--30" src="images/adtech-usecase-job-run.png" />
+::: {.centered}
+<img style="margin-top:-30px;width:95%;" src="images/adtech-usecase-job-run.png" />
+:::
 
 <div class="notes">
 TODO
@@ -274,7 +280,9 @@ TODO
 
 ## >>> from sparecores import intro
 
-<img style="margin-top:-55px" src="images/sc-www-listing.png" />
+::: {.centered}
+<img style="margin-top:-55px;width:95%;" src="images/sc-www-listing.png" />
+:::
 
 <aside class="notes">
 TODO
@@ -320,7 +328,9 @@ TODO
 
 ## >>> from sparecores import intro
 
+::: {.centered}
 <img style="margin-top:-55px; width: 83%;" src="images/sc-www-server-compare.png" />
+:::
 
 <!-- https://deploy-preview-27--creative-choux-a3c817.netlify.app/compare?instances=W3sidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzVhZC4xMnhsYXJnZSJ9LHsidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzVkLjJ4bGFyZ2UifSx7InZlbmRvciI6ImF3cyIsInNlcnZlciI6ImM2Zy4xNnhsYXJnZSJ9LHsidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY2N4MzMifV0%3D -->
 <aside class="notes">
@@ -330,7 +340,9 @@ TODO
 
 ## >>> from sparecores import intro
 
-<img style="margin-top: -15px;" src="images/sc-keeper-preview.png" />
+::: {.centered}
+<img style="margin-top:-15px;width:95%;" src="images/sc-keeper-preview.png" />
+:::
 
 <aside class="notes">
 TODO
@@ -961,7 +973,9 @@ TODO
 
 <p class="mt-0">Data is collected in public: `sc-inspector-data` repo on GitHub.</p>
 
-<img src="images/sc-inspector-data-gha.png" class="mt--30" />
+::: {.centered}
+<img style="margin-top:-30px;width:95%;" src="images/sc-inspector-data-gha.png" />
+:::
 
 <aside class="notes">
 TODO
@@ -969,7 +983,9 @@ TODO
 
 ## >>> import sc_inspector
 
-<img src="images/sc-inspector-data-files.png" style="margin-top:-40px !important;" />
+::: {.centered}
+<img style="margin-top:-40px;width:95%;" src="images/sc-inspector-data-files.png" />
+:::
 
 <aside class="notes">
 TODO
@@ -1292,11 +1308,15 @@ TODO
 
 ## >>> import sc_keeper
 
-<img style="margin-top:-30px;" src="images/sc-keeper-redoc.png" />
+::: {.centered}
+<img style="margin-top:-30px;width:95%;"  src="images/sc-keeper-redoc.png" />
+:::
 
 ## >>> import sc_keeper
 
-<img style="margin-top:-30px;" src="images/sc-keeper-ai.png" />
+::: {.centered}
+<img style="margin-top:-30px;width:95%;"  src="images/sc-keeper-ai.png" />
+:::
 
 </section></section>
 
@@ -1331,15 +1351,17 @@ TODO
 <section class="titleslide slide level1">
   <h2>&#62;&#62;&#62; import \_\_future\_\_</h2>
 
-- Add support for more vendors
 
-    - Crawler (vendor API integration)
-    - Runner (pulumi)
-
-- More SDKs (PyPI, npm, CRAN, etc.)
-- Data analysis, blog posts
-- My Spare Cores (dashboard)
-- SaaS 👀
+<ul style="margin-top: -20px;">
+  <li class="fragment">Add support for more vendors</li>
+  <ul>
+    <li class="fragment">Crawler (vendor API integration)</li>
+    <li class="fragment">Runner (pulumi)</li>
+  </ul>
+  <li class="fragment">More SDKs (PyPI, npm, CRAN, etc.)</li>
+  <li class="fragment">Data analysis, blog posts</li>
+  <li class="fragment">My Spare Cores (dashboard)</li>
+  <li class="fragment">SaaS 👀</li>
 
 <aside class="notes">
 TODO

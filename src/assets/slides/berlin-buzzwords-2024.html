@@ -621,7 +621,9 @@ Scaling DS infrastructure.
 </section>
 <section id="from-sparecores-import-why-1" class="slide level2">
 <h2>&gt;&gt;&gt; from sparecores import why</h2>
-<p><img class="mt--30" src="images/adtech-usecase-job-metrics.png" /></p>
+<div class="centered">
+<p><img style="margin-top:-30px;width:95%;"  src="images/adtech-usecase-job-metrics.png" /></p>
+</div>
 <aside class="notes">
 <p>To give you an example: here’s a job that we monitored every few
 seconds and saw that it doesn’t really scale to multiple CPUs, but
@@ -631,7 +633,9 @@ model that cannot be paralellized.</p>
 </section>
 <section id="from-sparecores-import-why-2" class="slide level2">
 <h2>&gt;&gt;&gt; from sparecores import why</h2>
-<p><img class="mt--30" src="images/adtech-usecase-jobs.png" /></p>
+<div class="centered">
+<p><img style="margin-top:-30px;width:95%;" src="images/adtech-usecase-jobs.png" /></p>
+</div>
 <aside class="notes">
 <p>4k jobs/day with varying needs</p>
 <ul>
@@ -695,7 +699,9 @@ running for a longer time.</p>
 </section>
 <section id="from-sparecores-import-why-5" class="slide level2">
 <h2>&gt;&gt;&gt; from sparecores import why</h2>
-<p><img class="mt--30" src="images/adtech-usecase-job-run.png" /></p>
+<div class="centered">
+<p><img style="margin-top:-30px;width:95%;" src="images/adtech-usecase-job-run.png" /></p>
+</div>
 <aside class="notes">
 <p>TODO</p>
 </aside>
@@ -818,7 +824,9 @@ TODO
 </section>
 <section id="from-sparecores-import-intro-1" class="slide level2">
 <h2>&gt;&gt;&gt; from sparecores import intro</h2>
-<p><img style="margin-top:-55px" src="images/sc-www-listing.png" /></p>
+<div class="centered">
+<p><img style="margin-top:-55px;width:95%;" src="images/sc-www-listing.png" /></p>
+</div>
 <aside class="notes">
 TODO
 </aside>
@@ -859,7 +867,9 @@ TODO
 </section>
 <section id="from-sparecores-import-intro-6" class="slide level2">
 <h2>&gt;&gt;&gt; from sparecores import intro</h2>
+<div class="centered">
 <p><img style="margin-top:-55px; width: 83%;" src="images/sc-www-server-compare.png" /></p>
+</div>
 <!-- https://deploy-preview-27--creative-choux-a3c817.netlify.app/compare?instances=W3sidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzVhZC4xMnhsYXJnZSJ9LHsidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzVkLjJ4bGFyZ2UifSx7InZlbmRvciI6ImF3cyIsInNlcnZlciI6ImM2Zy4xNnhsYXJnZSJ9LHsidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY2N4MzMifV0%3D -->
 <aside class="notes">
 TODO
@@ -867,7 +877,9 @@ TODO
 </section>
 <section id="from-sparecores-import-intro-7" class="slide level2">
 <h2>&gt;&gt;&gt; from sparecores import intro</h2>
-<p><img style="margin-top: -15px;" src="images/sc-keeper-preview.png" /></p>
+<div class="centered">
+<p><img style="margin-top:-15px;width:95%;" src="images/sc-keeper-preview.png" /></p>
+</div>
 <aside class="notes">
 TODO
 </aside>
@@ -1546,14 +1558,18 @@ TODO
 Data is collected in public: <code>sc-inspector-data</code> repo on
 GitHub.
 </p>
-<p><img src="images/sc-inspector-data-gha.png" class="mt--30" /></p>
+<div class="centered">
+<p><img style="margin-top:-30px;width:95%;" src="images/sc-inspector-data-gha.png" /></p>
+</div>
 <aside class="notes">
 TODO
 </aside>
 </section>
 <section id="import-sc_inspector-1" class="slide level2">
 <h2>&gt;&gt;&gt; import sc_inspector</h2>
-<p><img src="images/sc-inspector-data-files.png" style="margin-top:-40px !important;" /></p>
+<div class="centered">
+<p><img style="margin-top:-40px;width:95%;" src="images/sc-inspector-data-files.png" /></p>
+</div>
 <aside class="notes">
 TODO
 </aside>
@@ -1865,11 +1881,15 @@ public restful api? TODO
 </section>
 <section id="import-sc_keeper" class="slide level2">
 <h2>&gt;&gt;&gt; import sc_keeper</h2>
-<p><img style="margin-top:-30px;" src="images/sc-keeper-redoc.png" /></p>
+<div class="centered">
+<p><img style="margin-top:-30px;width:95%;"  src="images/sc-keeper-redoc.png" /></p>
+</div>
 </section>
 <section id="import-sc_keeper-1" class="slide level2">
 <h2>&gt;&gt;&gt; import sc_keeper</h2>
-<p><img style="margin-top:-30px;" src="images/sc-keeper-ai.png" /></p>
+<div class="centered">
+<p><img style="margin-top:-30px;width:95%;"  src="images/sc-keeper-ai.png" /></p>
+</div>
 </section>
 </section>
 <section>
@@ -1902,17 +1922,30 @@ TODO
 <h2>
 &gt;&gt;&gt; import __future__
 </h2>
+<ul style="margin-top: -20px;">
+<li class="fragment">
+Add support for more vendors
+</li>
 <ul>
-<li><p>Add support for more vendors</p>
-<ul>
-<li>Crawler (vendor API integration)</li>
-<li>Runner (pulumi)</li>
-</ul></li>
-<li><p>More SDKs (PyPI, npm, CRAN, etc.)</p></li>
-<li><p>Data analysis, blog posts</p></li>
-<li><p>My Spare Cores (dashboard)</p></li>
-<li><p>SaaS 👀</p></li>
+<li class="fragment">
+Crawler (vendor API integration)
+</li>
+<li class="fragment">
+Runner (pulumi)
+</li>
 </ul>
+<li class="fragment">
+More SDKs (PyPI, npm, CRAN, etc.)
+</li>
+<li class="fragment">
+Data analysis, blog posts
+</li>
+<li class="fragment">
+My Spare Cores (dashboard)
+</li>
+<li class="fragment">
+SaaS 👀
+</li>
 <aside class="notes">
 TODO
 </aside>
