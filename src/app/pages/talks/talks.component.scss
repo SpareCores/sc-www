@@ -33,3 +33,7 @@
     }
   }
 }
+
+a:hover {
+  @apply hover:text-gray-500;
+}
