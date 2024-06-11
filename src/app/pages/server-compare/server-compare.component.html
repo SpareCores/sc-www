@@ -139,7 +139,7 @@
               <tr *ngFor="let config of item.configs">
                 <td >
                   <div class="ml-2" [innerHTML]="serializeConfig(config.config)" ></div></td>
-                <td *ngFor="let value of config.values" [style]="isBestStyle(value, config.values, item)">
+                <td *ngFor="let value of config.values" class="number_line" [style]="isBestStyle(value, config.values, item)">
                       {{numberWithCommas(value)}}
                 </td>
               </tr>
