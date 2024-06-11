@@ -107,8 +107,6 @@ export class ServerCompareComponent implements OnInit {
               }
             });
 
-
-            /*
             this.benchmarkMeta = data[1].body
               ?.filter((benchmark: any) => {
                 let found = false;
@@ -123,18 +121,40 @@ export class ServerCompareComponent implements OnInit {
               return {
                 ...b,
                 collapsed: true,
-                scores: this.servers.map((s: any) => {
-                  return s.benchmark_scores?.filter((score: any) => score.benchmark_id === b.benchmark_id).sort((a: any, b: any) => {
-                    if(a.config && b.config) {
-                      return JSON.stringify(a).localeCompare(JSON.stringify(b));
-                    }
-                    return 0;
-                  });
-                })
+                configs: []
               }
             });
-            */
 
+            this.benchmarkMeta.forEach((benchmark: any) => {
+              this.servers.forEach((server: any) => {
+                const scores = server.benchmark_scores?.filter((s: any) => s.benchmark_id === benchmark.benchmark_id);
+                if(scores) {
+                  scores.forEach((score: any) => {
+                    const config = benchmark.configs.find((c: any) => {
+                      return JSON.stringify(c.config) === JSON.stringify(score.config);
+                    });
+                    if(!config) {
+                      benchmark.configs.push({
+                        config: score.config,
+                        values: []
+                      });
+                    }
+                  });
+                }
+              });
+            });
+
+            this.benchmarkMeta.forEach((benchmark: any) => {
+              benchmark.configs.forEach((config: any) => {
+                this.servers.forEach((server: any) => {
+                  const score = server.benchmark_scores
+                    ?.find((s: any) => s.benchmark_id === benchmark.benchmark_id && JSON.stringify(s.config) === JSON.stringify(config.config));
+                    config.values.push(
+                      score ? score.score : '-'
+                    );
+                });
+              });
+            });
 
             this.isLoading = false;
           }).catch((err) => {
@@ -327,7 +347,8 @@ export class ServerCompareComponent implements OnInit {
 
   getBestPrice(server: ServerPKsWithPrices, allocation: Allocation = Allocation.Ondemand) {
     if(server.prices?.find((p) => p.allocation === allocation)){
-      return `${server.prices.filter(x => x.allocation === allocation).sort((a,b) => a.price - b.price)[0].price}$`;
+      let best = server.prices.filter(x => x.allocation === allocation).sort((a,b) => a.price - b.price)[0];
+      return `${best.price} ${best.currency}`;
     } else {
       return '-';
     }
@@ -338,18 +359,13 @@ export class ServerCompareComponent implements OnInit {
   }
 
   serializeConfig(config: any) {
-    let result = '';
+    let result = '<ul>';
     Object.keys(config).forEach((key) => {
-      if(result.length > 0) {
-        result += ', ';
-      } else {
-        result += ' (';
-      }
-      result += `${key.replace('_', ' ')}: ${config[key]} `;
+      result += `<li>${key.replace('_', ' ')}: ${config[key]} </li>`;
     });
-    if(result.length > 0) {
-      result += ')';
-    }
+
+    result += '</ul>';
+
     return result;
   }
 

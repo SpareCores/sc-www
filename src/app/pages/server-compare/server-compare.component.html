@@ -135,18 +135,15 @@
                 </div>
               </td>
             </tr>
-            <tr *ngIf="!item.collapsed" >
-              <td></td>
-              <ng-container *ngFor="let scoreList of item.scores">
+            <ng-container *ngIf="!item.collapsed" >
+              <tr *ngFor="let config of item.configs">
                 <td>
-                  <div class="flex flex-col">
-                    <div *ngFor="let scoreItem of scoreList">
-                      {{scoreItem.score}} {{serializeConfig(scoreItem.config)}}
-                    </div>
-                  </div>
+                  <div [innerHTML]="serializeConfig(config.config)" ></div></td>
+                <td *ngFor="let value of config.values">
+                      {{value}}
                 </td>
-              </ng-container>
-            </tr>
+              </tr>
+            </ng-container>
           </ng-container>
           <tr>
             <td>View Server</td>
