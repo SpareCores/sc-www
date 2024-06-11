@@ -185,7 +185,7 @@ and bin packing ...
 <div class="notes">
 AWS bin packing smaller jobs to already running larger nodes (started for heavy jobs), which resulted in keeping the expensive nodes running for a longer time.
 
-so instead, we decided to roll our own solution after all .. building on the fact that the price of the cloud resources is not discounted by its size .. so running two containers on a larger now VS running on separate nodes make no difference
+so instead, we decided to roll our own solution after all .. building on the fact that the price of the cloud resources is not discounted by its size .. so running two containers on a larger node VS running on separate nodes make no difference from a pricing perspective
 </div>
 
 ## >>> from sparecores import why
@@ -1399,8 +1399,15 @@ $ curl https://keeper.sparecores.net/server/aws/g4dn.xlarge | jq
 ```
 
 <aside class="notes">
-python sdk to search the database and also to make that available as a public restful api?
-TODO
+python sdk to search the database and also to make that available as a public HTTP API
+
+- note size
+- relationships loaded
+- even pricing and benchmarks
+
+,,,
+
+SCROLL DOWN FOR ChatGPT integration!
 </aside>
 
 ## >>> import sc_keeper
