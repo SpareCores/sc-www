@@ -44,11 +44,12 @@ document.getElementById("coverslide").remove();
 <section id="coverslide">
 
 ::: {.centered}
-<img src="images/berlin-buzzords-logo-white.png" class="toplogo" />
+<img src="images/budapest-data-ml-forum-logo-transparent.png"
+     class="toplogo" style="width: 464px; margin-left: -232px; margin-right: 232px;background-color:transparent;" />
 :::
 
 <h1 class="subtitle" style="color:#eee;font-size:1.75em;text-align: center; margin-top:325px; color:#34d399;">
-  Harnessing Spare Cores to<br />Breeze Through Cloud Compute
+  Harnessing Spare Cores to Breeze<br />Through Cloud-Based Batch Jobs
 </h1>
 
 <h2 class="author" style="color:#eee;padding-top:15px;font-size:1.25em;text-align: center !important;margin-bottom: 0px;">
@@ -1562,7 +1563,7 @@ TODO
 <section data-transition="none">
 
 ::: {.centered}
-<img src="images/bye-3.png" style="background: none;" class="mt--60 w-75" />
+<img src="images/bye-3-budapest-ml-2024.png" style="background: none;" class="mt--60 w-75" />
 :::
 
 <aside class="notes">
