@@ -5,6 +5,7 @@ date: "2024-06-13"
 conference: "Budapest Data+ML Forum 2024"
 conference_url: "https://budapestdata.hu/2024/en/"
 conference_talk_url: "https://dataml24.sessionize.com/session/633278"
+conference_talk_slides: "/assets/slides/budapest-data-2024.html#/coverslide"
 location: "Budapest, Hungary"
 output:
   revealjs::revealjs_presentation:

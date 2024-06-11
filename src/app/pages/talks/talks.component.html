@@ -39,7 +39,7 @@
               <td> <a [href]="item.conference_talk_url" target="_blank" rel="noindex nofollow">{{ item.title }}</a></td>
               <td>
                 <div class="flex gap-2">
-                  <a class="text-emerald-400" routerLink="/assets/slides/{{item.filename}}.html" target="_blank">
+                  <a *ngIf="item.conference_talk_slides" class="text-emerald-400" [href]="item.conference_talk_slides" target="_blank">
                     <lucide-icon name="scroll-text">
                     </lucide-icon>
                   </a>
