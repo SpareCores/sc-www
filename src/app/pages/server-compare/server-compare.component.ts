@@ -144,13 +144,15 @@ export class ServerCompareComponent implements OnInit {
               });
             });
 
+            console.log(this.benchmarkMeta);
+
             this.benchmarkMeta.forEach((benchmark: any) => {
               benchmark.configs.forEach((config: any) => {
                 this.servers.forEach((server: any) => {
                   const score = server.benchmark_scores
                     ?.find((s: any) => s.benchmark_id === benchmark.benchmark_id && JSON.stringify(s.config) === JSON.stringify(config.config));
                     config.values.push(
-                      score ? score.score : '-'
+                      score ? (Math.floor(score.score * 100) / 100) : '-'
                     );
                 });
               });
@@ -306,6 +308,22 @@ export class ServerCompareComponent implements OnInit {
     return isBest ? this.bestCellStyle : '';
   }
 
+  isBestStyle(value: any, values: any[], benchmark: any) {
+    if(value === '-' || value === 0) return '';
+    let isBest = true;
+    values.forEach((v) => {
+      if(!isNaN(v)) {
+        if(benchmark.higher_is_better === false && v < value) {
+          isBest = false;
+        } else if(v > value) {
+          isBest = false;
+        }
+      }
+    });
+
+    return isBest ? this.bestCellStyle : '';
+  }
+
   viewServer(server: ServerPKsWithPrices) {
     window.open(`/server/${server.vendor_id}/${server.api_reference}`, '_blank');
   }
@@ -367,6 +385,10 @@ export class ServerCompareComponent implements OnInit {
     result += '</ul>';
 
     return result;
+  }
+
+  public numberWithCommas(x: number) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
 
 }
