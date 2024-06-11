@@ -5,6 +5,7 @@ date: "2024-06-12"
 conference: "Berlin Buzzwords 2024"
 conference_url: "https://2024.berlinbuzzwords.de/"
 conference_talk_url: "https://program.berlinbuzzwords.de/bbuzz24/talk/ZDLK3M/"
+conference_talk_video: "https://www.youtube.com/watch?v=dasElRVS3FI"
 location: "Berlin, Germany"
 output:
   revealjs::revealjs_presentation:
