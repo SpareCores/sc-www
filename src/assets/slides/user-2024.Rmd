@@ -1,0 +1,24 @@
+---
+title: "Spare Cores: Harnessing Unutilized Cloud Compute Resources"
+author: Gergely Daroczi
+date: "2024-07-09"
+conference: "useR! 2024"
+conference_url: "https://events.linuxfoundation.org/user/"
+conference_talk_url: "https://sched.co/1c8yx"
+location: "Salzburg, Austria"
+output:
+  revealjs::revealjs_presentation:
+    theme: white
+    highlight: tango
+    transition: default
+    includes:
+      in_header: header.html
+    template: template.html
+    reveal_options:
+      slideNumber: true
+      previewLinks: false
+      width: 1244
+    self_contained: false
+    lib_dir: libs
+    reveal_plugins: ["notes", "zoom"]
+---

@@ -1,13 +1,12 @@
 ---
-title: "Harnessing Spare Cores to Breeze Through Cloud Compute"
+title: "Harnessing Spare Cores to Breeze Through Cloud-Based Batch Jobs"
 author: Gergely Daroczi
-date: "2024-06-12"
-conference: "Berlin Buzzwords 2024"
-conference_url: "https://2024.berlinbuzzwords.de/"
-conference_talk_url: "https://program.berlinbuzzwords.de/bbuzz24/talk/ZDLK3M/"
-conference_talk_video: "https://www.youtube.com/watch?v=dasElRVS3FI"
-conference_talk_slides: "/assets/slides/berlin-buzzwords-2024.html#/coverslide"
-location: "Berlin, Germany"
+date: "2024-06-13"
+conference: "Budapest Data+ML Forum 2024"
+conference_url: "https://budapestdata.hu/2024/en/"
+conference_talk_url: "https://dataml24.sessionize.com/session/633278"
+conference_talk_slides: "/assets/slides/budapest-data-2024.html#/coverslide"
+location: "Budapest, Hungary"
 output:
   revealjs::revealjs_presentation:
     theme: white
@@ -37,7 +36,6 @@ output:
 <!--javascript to remove dummy slide-->
 <script>
 document.getElementById("dummy-slide").remove();
-document.getElementById("coverslide").remove();
 </script>
 
 <!--end dummy slide-->
@@ -46,11 +44,12 @@ document.getElementById("coverslide").remove();
 <section id="coverslide">
 
 ::: {.centered}
-<img src="images/berlin-buzzords-logo-white.png" class="toplogo" />
+<img src="images/budapest-data-ml-forum-logo-transparent.png"
+     class="toplogo" style="width: 464px; margin-left: -232px; margin-right: 232px;background-color:transparent;" />
 :::
 
 <h1 class="subtitle" style="color:#eee;font-size:1.75em;text-align: center; margin-top:325px; color:#34d399;">
-  Harnessing Spare Cores to<br />Breeze Through Cloud Compute
+  Harnessing Spare Cores to Breeze<br />Through Cloud-Based Batch Jobs
 </h1>
 
 <h2 class="author" style="color:#eee;padding-top:15px;font-size:1.25em;text-align: center !important;margin-bottom: 0px;">
@@ -858,6 +857,9 @@ but once that's done .. the user-facing command is straighforward, and can suppo
 <img class="fragment" style="width:100%;" src="images/chatgpt-datasource.png" />
 
 <aside class="notes">
+referring to the previous talk, unfortunately you shouldn't have great expectations about the data quality, or even availibility when it comes to vendor data sources ...
+
+
 as mentioned previously, data quality and availability on the server details is pretty random .. and I'm not even talking about structured data, but in most cases the data doesn't exist in any form. and before anyone asks .. not, not even ChatGPT knows:
 
 ,,,
@@ -1568,7 +1570,7 @@ TODO
 <section data-transition="none">
 
 ::: {.centered}
-<img src="images/bye-3.png" style="background: none;" class="mt--60 w-75" />
+<img src="images/bye-3-budapest-ml-2024.png" style="background: none;" class="mt--60 w-75" />
 :::
 
 <p class="author offlineMode" style="color:#eee;font-size:0.75em;text-align: center !important; margin-top:-40px; padding-top:0px;">
