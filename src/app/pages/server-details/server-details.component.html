@@ -125,10 +125,10 @@
               <td>
                   <div><b>{{item.display_name}}</b> / {{item.api_reference}} </div>
               </td>
-              <td *ngIf="item['spot']"> ${{item['spot'].price}}/{{item['spot'].unit | reduceUnitName}}</td>
-              <td *ngIf="!item['spot']"> - </td>
-              <td *ngIf="item['ondemand']"> ${{item['ondemand'].price}}/{{item['ondemand'].unit | reduceUnitName}}</td>
-              <td *ngIf="!item['ondemand']"> - </td>
+              <td *ngIf="item['spot'].price"> {{item['spot'].price}}{{item['spot'].currency}}/{{item['spot'].unit | reduceUnitName}}</td>
+              <td *ngIf="!item['spot'].price"> - </td>
+              <td *ngIf="item['ondemand'].price"> {{item['ondemand'].price}}{{item['ondemand'].currency}}/{{item['ondemand'].unit | reduceUnitName}}</td>
+              <td *ngIf="!item['ondemand'].price"> - </td>
             </tr>
           </tbody>
         </table>

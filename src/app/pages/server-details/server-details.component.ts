@@ -193,6 +193,7 @@ export class ServerDetailsComponent implements OnInit {
           });
 
           this.regionFilters = [];
+
           this.serverDetails.prices?.sort((a, b) => a.price - b.price);
           this.serverDetails.prices?.forEach((price: ServerPricePKs) => {
               const region = this.regionFilters.find((z) => z.region_id === price.region_id);
@@ -203,6 +204,10 @@ export class ServerDetailsComponent implements OnInit {
 
           if(this.regionFilters[0]) {
             this.regionFilters[0].selected = true;
+          }
+
+          if(this.serverDetails.prices?.length > 0 && (this.barChartOptions?.scales as any)?.y?.title?.text) {
+            (this.barChartOptions!.scales as any).y.title.text = `${this.serverDetails.prices[0].currency}/h`;
           }
 
           this.refreshGraphs();
@@ -441,6 +446,7 @@ export class ServerDetailsComponent implements OnInit {
 
     this.serverDetails.prices.forEach((price: ServerPricePKs) => {
     const zone = this.availabilityRegions.find((z) => z.region_id === price.region_id);
+      const allocation = price.allocation || 'spot';
       if(!zone) {
         const data: any = {
           region_id: price.region_id,
@@ -449,21 +455,23 @@ export class ServerDetailsComponent implements OnInit {
           spot: {
             price: 0,
             unit: price.unit,
-            count: 0
+            count: 0,
+            currency: price.currency
           },
           ondemand: {
             price: 0,
             unit: price.unit,
-            count: 0
+            count: 0,
+            currency: price.currency
           }
         };
-        data[price.allocation || 'spot'].price += price.price;
-        data[price.allocation || 'spot'].count++;
+        data[allocation].price += price.price;
+        data[allocation].count++;
 
         this.availabilityRegions.push(data);
       } else {
-        zone[price.allocation || 'spot'].price += price.price;
-        zone[price.allocation || 'spot'].count++;
+        zone[allocation].price += price.price;
+        zone[allocation].count++;
       }
     });
 

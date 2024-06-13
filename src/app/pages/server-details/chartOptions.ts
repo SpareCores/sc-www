@@ -15,6 +15,11 @@ export const  barChartOptions: ChartConfiguration<'bar'>['options'] = {
       grid: {
         color: '#4B5563',
       },
+      title: {
+        display: true,
+        color: '#FFF',
+        text: 'USD/h',
+      },
     },
   },
   plugins: {
