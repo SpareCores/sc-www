@@ -131,7 +131,7 @@ export class ServerDetailsComponent implements OnInit {
 
   constructor(@Inject(PLATFORM_ID) private platformId: object,
               private route: ActivatedRoute,
-              private keepreAPI: KeeperAPIService,
+              private keeperAPI: KeeperAPIService,
               private SEOHandler: SeoHandlerService,
               private senitizer: DomSanitizer) {
 
@@ -143,9 +143,9 @@ export class ServerDetailsComponent implements OnInit {
       const id = params['id'];
 
       Promise.all([
-        this.keepreAPI.getServerMeta(),
-        this.keepreAPI.getServerBenchmarkMeta(),
-        this.keepreAPI.getServer(vendor, id)
+        this.keeperAPI.getServerMeta(),
+        this.keeperAPI.getServerBenchmarkMeta(),
+        this.keeperAPI.getServer(vendor, id)
       ]).then((dataAll) => {
         this.instanceProperties = dataAll[0].body?.fields || [];
 
@@ -246,7 +246,7 @@ export class ServerDetailsComponent implements OnInit {
 
           this.similarByFamily = [];
           this.similarByPerformance = [];
-          this.keepreAPI.getServers().then((data) => {
+          this.keeperAPI.getServers().then((data) => {
             if(data?.body) {
               const allServers = data.body as TableServerTableServerGetData;
               allServers.forEach((s) => {
