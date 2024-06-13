@@ -90,11 +90,11 @@ export class ServerDetailsComponent implements OnInit {
   // benchmark charts
   compressDropdown: any;
   compressMethods: any[] = [
-    { name: 'Compress level', key: 'compress' },
-    { name: 'Decompress level', key: 'decompress' },
-    { name: 'Ratio level', key: 'ratio' },
-    { name: 'Ratio/Compress', key: 'ratio_compress' },
-    { name: 'Ratio/Decompress', key: 'ratio_decompress' },
+    { name: 'Compression speed', key: 'compress' },
+    { name: 'Decompression speed', key: 'decompress' },
+    { name: 'Compression ratio', key: 'ratio' },
+    { name: 'Compression speed/ratio', key: 'ratio_compress' },
+    { name: 'Decompression speed/ratio', key: 'ratio_decompress' },
   ];
   selectedCompressMethod = this.compressMethods[0];
 
@@ -927,6 +927,11 @@ export class ServerDetailsComponent implements OnInit {
             xAxisKey: 'compression_level',
           };
           (this.lineChartOptionsCompress as any).scales.x.title.text = 'Compression Level';
+          if(this.selectedCompressMethod.key === 'ratio') {
+            (this.lineChartOptionsCompress as any).scales.y.title.text = 'Percentage';
+          } else {
+            (this.lineChartOptionsCompress as any).scales.y.title.text = 'byte/s';
+          }
         }
 
         break;
@@ -955,6 +960,7 @@ export class ServerDetailsComponent implements OnInit {
             xAxisKey: 'ratio',
           };
           (this.lineChartOptionsCompress as any).scales.x.title.text = 'Compression Ratio';
+          (this.lineChartOptionsCompress as any).scales.y.title.text = 'byte/s';
         }
       }
     }
