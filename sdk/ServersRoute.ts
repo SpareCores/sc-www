@@ -28,7 +28,7 @@ export namespace Servers {
        */
       partial_name_or_id?: string | null;
       /**
-       * Processor number
+       * Minimum vCPUs
        * Minimum number of virtual CPUs.
        * @min 1
        * @max 128
@@ -55,12 +55,12 @@ export namespace Servers {
        * Vendor id
        * Identifier of the cloud provider vendor.
        */
-      vendor?: "aws" | "gcp" | "hcloud";
+      vendor?: "hcloud" | "aws" | "gcp";
       /**
        * Compliance Framework id
        * Compliance framework implemented at the vendor.
        */
-      compliance_framework?: "hipaa" | "iso27001" | "soc2t2";
+      compliance_framework?: "hipaa" | "soc2t2" | "iso27001";
       /**
        * Storage Size
        * Minimum amount of storage (GBs) attached to the server.
