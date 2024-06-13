@@ -161,6 +161,13 @@ export class ServerListingComponent implements OnInit {
       const parameters = this.openApiJson.paths['/servers'].get.parameters || [];
       this.searchParameters = parameters.map((item: any) => {
         const value = query[item.name]?.split(',') || item.schema.default || null;
+
+        if(query[item.name]) {
+          if(this.filterCategories.find((column) => column.category_id === item.schema.category_id)) {
+            this.filterCategories.find((column) => column.category_id === item.schema.category_id)!.collapsed = false;
+          }
+        }
+
         return {...item, modelValue: value};
       });
 
