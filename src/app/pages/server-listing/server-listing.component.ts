@@ -540,8 +540,13 @@ export class ServerListingComponent implements OnInit {
     });
   }
 
-  toggleCompare(event: boolean, server: ServerPKs| any) {
+  toggleCompare2(event: any, server: ServerPKs| any) {
+    event.stopPropagation();
+    server.selected = !server.selected;
+    this.toggleCompare(server.selected, server);
+  }
 
+  toggleCompare(event: boolean, server: ServerPKs| any) {
     if(event) {
       if(this.selectedForCompare.findIndex((item) => item.vendor_id === server.vendor_id && item.server_id === server.server_id) === -1) {
         this.selectedForCompare.push(server);

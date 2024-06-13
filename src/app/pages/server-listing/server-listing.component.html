@@ -171,32 +171,41 @@
                     [attr.data-ph-capture-attribute-server-listing-row-vendor]="item.vendor_id"
                     [attr.data-ph-capture-attribute-server-listing-row-index]="i+1"
                     [attr.data-ph-capture-attribute-server-listing-row-page-size]="limit">
-                  <td (click)="$event.stopPropagation()">
-                    <div class="flex gap-2 items-center" >
+                  <td (click)="toggleCompare2($event, item)">
+                    <div class="flex gap-2 items-center">
                       <input type="checkbox"
                         id="server_compare_checkbox_{{item.server_id}}"
                         [(ngModel)]="item.selected"
                         (ngModelChange)="toggleCompare($event, item)"
+                        (click)="$event.stopPropagation()"
                         class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer" >
                     </div>
                   </td>
                   <ng-container *ngFor="let column of tableColumns">
                     <td *ngIf="column.type === 'name'" class="min-w-225">
-                      <div class="text-sm text-white flex gap-1">
-                        <span>{{item.display_name}} </span>
-                        <span *ngIf="item.display_name !== item.api_reference" class="text-emerald-400" >|</span>
-                        <span *ngIf="item.display_name !== item.api_reference">{{item.api_reference}} </span>
-                      </div>
-                      <div class="text-xs text-white flex gap-1">
-                        <span>{{item.vendor_id}}</span>
+                      <div (click)="$event.stopPropagation()">
+                        <a routerLink="/server/{{item.vendor.vendor_id}}/{{item.api_reference}}"
+                           data-ph-capture-attribute-sc-event="server listing route to server details"
+                           [attr.data-ph-capture-attribute-server-listing-row-vendor]="item.vendor_id"
+                           [attr.data-ph-capture-attribute-server-listing-row-index]="i+1"
+                           [attr.data-ph-capture-attribute-server-listing-row-page-size]="limit">
+                          <div class="text-sm text-white flex gap-1">
+                            <span>{{item.display_name}} </span>
+                            <span *ngIf="item.display_name !== item.api_reference" class="text-emerald-400" >|</span>
+                            <span *ngIf="item.display_name !== item.api_reference">{{item.api_reference}} </span>
+                          </div>
+                          <div class="text-xs text-white flex gap-1">
+                            <span>{{item.vendor_id}}</span>
+                          </div>
+                        </a>
                       </div>
                     </td>
                     <td *ngIf="column.type === 'processor'">
                       <div class="text-sm text-white">{{item.cpu_cores || item.vcpus}}x {{item.cpu_architecture}}</div>
                       <div
-                        *ngIf="item.cpu_cores && item.cpu_speed"
+                        *ngIf="item.vcpus && item.cpu_speed"
                         class="text-xs text-white flex gap-1">
-                        <span>{{item.cpu_cores}} cores at {{item.cpu_speed}} Ghz</span>
+                        <span>{{item.vcpus}} VCPUs &#64;{{item.cpu_speed}}GHz</span>
                       </div>
                     </td>
                     <td *ngIf="column.type === 'memory'">
