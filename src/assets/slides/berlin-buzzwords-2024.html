@@ -551,10 +551,13 @@ Gergely Daróczi
 <h3 class="author" style="color:#eee;font-size:1.1em;text-align: center !important; font-weight: normal;">
 Spare Cores Team
 </h3>
-<h3 class="author" style="color:#eee;padding-top:25px;font-size:1.1em;text-align: center !important; padding-top: 10px;font-weight: normal; ">
+<h3 class="author onlineMode" style="color:#eee;padding-top:25px;font-size:1.1em;text-align: center !important; padding-top: 10px;font-weight: normal; ">
 Slides:
-<a href="https://sparecores/assets/slides/berlin-buzzwords-2024.html#/coverslide" target="_blank">sparecores.com/talks</a>
+<a href="https://sparecores.com/talks" target="_blank">sparecores.com/talks</a>
 </h3>
+<p class="author offlineMode" style="color:#eee;font-size:0.75em;text-align: right !important; padding-top: 10px;font-weight: normal;margin-top:30px; ">
+Press Space or click the green arrow icons to navigate the slides -&gt;
+</p>
 <aside class="notes">
 <p>focus: how to utilize cloud compute resources in the most
 cost-efficient way</p>
@@ -2216,10 +2219,31 @@ TODO
 <div class="centered">
 <p><img src="images/bye-3.png" style="background: none;" class="mt--60 w-75" /></p>
 </div>
+<p class="author offlineMode" style="color:#eee;font-size:0.75em;text-align: center !important; margin-top:-40px; padding-top:0px;">
+Slides:
+<a href="https://sparecores.com/talks" target="_blank">sparecores.com/talks</a>
+</p>
 <aside class="notes">
 TODO
 </aside>
 </section>
+<!--toggle visibility of items in live mode-->
+<script>
+var url = document.location.href;
+if (url.match("/?live")) {
+  const elements = document.getElementsByClassName('offlineMode');
+  for (let i = 0; i < elements.length; i++) {
+    element = elements.item(i);
+    element.style.display = 'none';
+  }
+} else {
+  const elements = document.getElementsByClassName('onlineMode');
+  for (let i = 0; i < elements.length; i++) {
+    element = elements.item(i);
+    element.style.display = 'none';
+  }
+}
+</script>
 </section>
     </div>
   </div>
