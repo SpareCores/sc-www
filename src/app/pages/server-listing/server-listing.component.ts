@@ -139,6 +139,7 @@ export class ServerListingComponent implements OnInit {
 
   @ViewChild('tooltipDefault') tooltip!: ElementRef;
   clipboardIcon = 'clipboard';
+  tooltipContent = '';
 
   constructor(@Inject(PLATFORM_ID) private platformId: object,
               private keeperAPI: KeeperAPIService,
@@ -334,6 +335,8 @@ export class ServerListingComponent implements OnInit {
 
     this.keeperAPI.searchServers(queryObject).then(servers => {
       this.servers = servers?.body;
+
+      console.log(servers);
 
       // set stored selected state
       this.servers?.forEach((server: any) => {
@@ -584,24 +587,27 @@ export class ServerListingComponent implements OnInit {
 
     this.clipboardIcon = 'check';
 
-    this.showTooltip(event);
+    this.showTooltip(event, 'Copied to clipboard!', true);
 
     setTimeout(() => {
       this.clipboardIcon = 'clipboard';
     }, 3000);
   }
 
-   showTooltip(el: any) {
-      const tooltip = this.tooltip.nativeElement;
-      const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
-      tooltip.style.left = `${el.target.getBoundingClientRect().left - 25}px`;
-      tooltip.style.top = `${el.target.getBoundingClientRect().top - 45 + scrollPosition}px`;
-      tooltip.style.display = 'block';
-      tooltip.style.opacity = '1';
+   showTooltip(el: any, content: string, autoHide = false) {
+    this.tooltipContent = content;
+    const tooltip = this.tooltip.nativeElement;
+    const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+    tooltip.style.left = `${el.target.getBoundingClientRect().left - 25}px`;
+    tooltip.style.top = `${el.target.getBoundingClientRect().top - 45 + scrollPosition}px`;
+    tooltip.style.display = 'block';
+    tooltip.style.opacity = '1';
 
+    if(autoHide) {
       setTimeout(() => {
         this.hideTooltip();
       }, 3000);
+    }
   }
 
   hideTooltip() {
