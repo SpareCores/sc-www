@@ -327,7 +327,8 @@ export class ServerCompareComponent implements OnInit {
 
   getBestPrice(server: ServerPKsWithPrices, allocation: Allocation = Allocation.Ondemand) {
     if(server.prices?.find((p) => p.allocation === allocation)){
-      return `${server.prices.filter(x => x.allocation === allocation).sort((a,b) => a.price - b.price)[0].price}$`;
+      const best = server.prices.filter(x => x.allocation === allocation).sort((a,b) => a.price - b.price)[0];
+      return `${best.price}${best.currency}`;
     } else {
       return '-';
     }

@@ -212,6 +212,18 @@ export class ServerDetailsComponent implements OnInit {
 
           this.refreshGraphs();
 
+          this.faqs = [
+            {
+              question: `What is ${this.serverDetails.display_name}?`,
+              answer: this.description
+            },
+
+            {
+              question: `What are the specs of the ${this.serverDetails.display_name} server?`,
+              answer: `The ${this.serverDetails.display_name} server is equipped with ${this.serverDetails.vcpus || this.serverDetails.cpu_cores} vCPU(s), ${this.getMemory()} of memory, ${this.getStorage()} of storage, and ${this.serverDetails.gpu_count} GPU(s). Additional block storage can be attached as needed.`
+            }
+          ];
+
           this.title = `${this.serverDetails.display_name} by ${this.serverDetails.vendor.name} - Spare Cores`;
           this.description =
             `${this.serverDetails.display_name} is a ${this.serverDetails.description} server offered by ${this.serverDetails.vendor.name} with`;
@@ -221,24 +233,18 @@ export class ServerDetailsComponent implements OnInit {
             this.description += ` ${this.serverDetails.cpu_cores} CPUs`;
           }
           this.description += `, ${this.getMemory()} of memory and ${this.getStorage()} of storage.`;
+
           if(this.serverDetails.prices[0]) {
-            this.description += ` The pricing starts at $${this.serverDetails.prices[0].price} per hour.`;
+            this.description += ` The pricing starts at ${this.serverDetails.prices[0].price}${this.serverDetails.prices[0].currency} per hour.`;
+            this.faqs.push(
+              {
+                question: `How much does the ${this.serverDetails.display_name} server cost?`,
+                answer: `The pricing for ${this.serverDetails.display_name} servers starts at ${this.serverDetails.prices[0].price}${this.serverDetails.prices[0].currency} per hour, but the actual price depends on the selected region, zone and server allocation method (e.g. on-demand versus spot pricing options). Currently, the maximum price stands at ${this.serverDetails.prices.slice(-1)[0].price}${this.serverDetails.prices.slice(-1)[0].currency}.`
+              }
+            );
           }
 
-          this.faqs = [
-            {
-              question: `What is ${this.serverDetails.display_name}?`,
-              answer: this.description
-            },
-            {
-              question: `How much does the ${this.serverDetails.display_name} server cost?`,
-              answer: `The pricing for ${this.serverDetails.display_name} servers starts at $${this.serverDetails.prices[0].price} per hour, but the actual price depends on the selected region, zone and server allocation method (e.g. on-demand versus spot pricing options). Currently, the maximum price stands at $${this.serverDetails.prices.slice(-1)[0].price}.`
-            },
-            {
-              question: `What are the specs of the ${this.serverDetails.display_name} server?`,
-              answer: `The ${this.serverDetails.display_name} server is equipped with ${this.serverDetails.vcpus || this.serverDetails.cpu_cores} vCPU(s), ${this.getMemory()} of memory, ${this.getStorage()} of storage, and ${this.serverDetails.gpu_count} GPU(s). Additional block storage can be attached as needed.`
-            }
-          ];
+
 
           const keywords = this.title + ', ' + this.serverDetails.server_id + ', ' + this.serverDetails.vendor.vendor_id;
 
