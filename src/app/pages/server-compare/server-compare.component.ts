@@ -376,6 +376,10 @@ export class ServerCompareComponent implements OnInit {
     benchmark.collapsed = !benchmark.collapsed;
   }
 
+  benchamrkIcon(benchmark: any) {
+    return benchmark.collapsed ? 'chevron-down' : 'chevron-up';
+  }
+
   serializeConfig(config: any) {
     let result = '<ul>';
     Object.keys(config).forEach((key) => {
