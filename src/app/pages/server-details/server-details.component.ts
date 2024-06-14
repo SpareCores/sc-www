@@ -212,18 +212,6 @@ export class ServerDetailsComponent implements OnInit {
 
           this.refreshGraphs();
 
-          this.faqs = [
-            {
-              question: `What is ${this.serverDetails.display_name}?`,
-              answer: this.description
-            },
-
-            {
-              question: `What are the specs of the ${this.serverDetails.display_name} server?`,
-              answer: `The ${this.serverDetails.display_name} server is equipped with ${this.serverDetails.vcpus || this.serverDetails.cpu_cores} vCPU(s), ${this.getMemory()} of memory, ${this.getStorage()} of storage, and ${this.serverDetails.gpu_count} GPU(s). Additional block storage can be attached as needed.`
-            }
-          ];
-
           this.title = `${this.serverDetails.display_name} by ${this.serverDetails.vendor.name} - Spare Cores`;
           this.description =
             `${this.serverDetails.display_name} is a ${this.serverDetails.description} server offered by ${this.serverDetails.vendor.name} with`;
@@ -236,6 +224,21 @@ export class ServerDetailsComponent implements OnInit {
 
           if(this.serverDetails.prices[0]) {
             this.description += ` The pricing starts at ${this.serverDetails.prices[0].price}${this.serverDetails.prices[0].currency} per hour.`;
+          }
+
+          this.faqs = [
+            {
+              question: `What is ${this.serverDetails.display_name}?`,
+              answer: this.description
+            },
+
+            {
+              question: `What are the specs of the ${this.serverDetails.display_name} server?`,
+              answer: `The ${this.serverDetails.display_name} server is equipped with ${this.serverDetails.vcpus || this.serverDetails.cpu_cores} vCPU(s), ${this.getMemory()} of memory, ${this.getStorage()} of storage, and ${this.serverDetails.gpu_count} GPU(s). Additional block storage can be attached as needed.`
+            }
+          ];
+
+          if(this.serverDetails.prices[0]) {
             this.faqs.push(
               {
                 question: `How much does the ${this.serverDetails.display_name} server cost?`,
@@ -243,8 +246,6 @@ export class ServerDetailsComponent implements OnInit {
               }
             );
           }
-
-
 
           const keywords = this.title + ', ' + this.serverDetails.server_id + ', ' + this.serverDetails.vendor.vendor_id;
 
