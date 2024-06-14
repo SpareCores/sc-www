@@ -210,11 +210,11 @@
                       </div>
                     </td>
                     <td *ngIf="column.type === 'processor'">
-                      <div class="text-sm text-white">{{item.cpu_cores || item.vcpus}}x {{item.cpu_architecture}}</div>
+                      <div class="text-sm text-white">{{item.vcpus}} vCPUs ({{item.cpu_architecture}})</div>
                       <div
-                        *ngIf="item.vcpus && item.cpu_speed"
+                        *ngIf="item.cpu_cores && item.cpu_speed"
                         class="text-xs text-white flex gap-1">
-                        <span>{{item.vcpus}} VCPUs &#64;{{item.cpu_speed}}GHz</span>
+                        <span>{{item.cpu_cores}} cores &#64; {{item.cpu_speed}} GHz</span>
                       </div>
                     </td>
                     <td *ngIf="column.type === 'memory'">

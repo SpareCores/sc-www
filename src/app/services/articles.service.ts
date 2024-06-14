@@ -21,6 +21,7 @@ export type SlidesMeta = {
   conference_url: string,
   conference_talk_url: string,
   conference_talk_video?: string,
+  conference_talk_slides?: string,
   location: string;
 
   filename: string;

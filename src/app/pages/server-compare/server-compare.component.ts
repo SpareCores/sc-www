@@ -107,8 +107,6 @@ export class ServerCompareComponent implements OnInit {
               }
             });
 
-
-            /*
             this.benchmarkMeta = data[1].body
               ?.filter((benchmark: any) => {
                 let found = false;
@@ -123,18 +121,42 @@ export class ServerCompareComponent implements OnInit {
               return {
                 ...b,
                 collapsed: true,
-                scores: this.servers.map((s: any) => {
-                  return s.benchmark_scores?.filter((score: any) => score.benchmark_id === b.benchmark_id).sort((a: any, b: any) => {
-                    if(a.config && b.config) {
-                      return JSON.stringify(a).localeCompare(JSON.stringify(b));
-                    }
-                    return 0;
-                  });
-                })
+                configs: []
               }
             });
-            */
 
+            this.benchmarkMeta.forEach((benchmark: any) => {
+              this.servers.forEach((server: any) => {
+                const scores = server.benchmark_scores?.filter((s: any) => s.benchmark_id === benchmark.benchmark_id);
+                if(scores) {
+                  scores.forEach((score: any) => {
+                    const config = benchmark.configs.find((c: any) => {
+                      return JSON.stringify(c.config) === JSON.stringify(score.config);
+                    });
+                    if(!config) {
+                      benchmark.configs.push({
+                        config: score.config,
+                        values: []
+                      });
+                    }
+                  });
+                }
+              });
+            });
+
+            console.log(this.benchmarkMeta);
+
+            this.benchmarkMeta.forEach((benchmark: any) => {
+              benchmark.configs.forEach((config: any) => {
+                this.servers.forEach((server: any) => {
+                  const score = server.benchmark_scores
+                    ?.find((s: any) => s.benchmark_id === benchmark.benchmark_id && JSON.stringify(s.config) === JSON.stringify(config.config));
+                    config.values.push(
+                      score ? (Math.floor(score.score * 100) / 100) : '-'
+                    );
+                });
+              });
+            });
 
             this.isLoading = false;
           }).catch((err) => {
@@ -286,6 +308,22 @@ export class ServerCompareComponent implements OnInit {
     return isBest ? this.bestCellStyle : '';
   }
 
+  isBestStyle(value: any, values: any[], benchmark: any) {
+    if(value === '-' || value === 0) return '';
+    let isBest = true;
+    values.forEach((v) => {
+      if(!isNaN(v)) {
+        if(benchmark.higher_is_better === false && v < value) {
+          isBest = false;
+        } else if(v > value) {
+          isBest = false;
+        }
+      }
+    });
+
+    return isBest ? this.bestCellStyle : '';
+  }
+
   viewServer(server: ServerPKsWithPrices) {
     window.open(`/server/${server.vendor_id}/${server.api_reference}`, '_blank');
   }
@@ -339,19 +377,18 @@ export class ServerCompareComponent implements OnInit {
   }
 
   serializeConfig(config: any) {
-    let result = '';
+    let result = '<ul>';
     Object.keys(config).forEach((key) => {
-      if(result.length > 0) {
-        result += ', ';
-      } else {
-        result += ' (';
-      }
-      result += `${key.replace('_', ' ')}: ${config[key]} `;
+      result += `<li>${key.replace('_', ' ')}: ${config[key]} </li>`;
     });
-    if(result.length > 0) {
-      result += ')';
-    }
+
+    result += '</ul>';
+
     return result;
+  }
+
+  public numberWithCommas(x: number) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
 
 }

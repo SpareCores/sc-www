@@ -231,7 +231,6 @@ export class ServerDetailsComponent implements OnInit {
               question: `What is ${this.serverDetails.display_name}?`,
               answer: this.description
             },
-
             {
               question: `What are the specs of the ${this.serverDetails.display_name} server?`,
               answer: `The ${this.serverDetails.display_name} server is equipped with ${this.serverDetails.vcpus || this.serverDetails.cpu_cores} vCPU(s), ${this.getMemory()} of memory, ${this.getStorage()} of storage, and ${this.serverDetails.gpu_count} GPU(s). Additional block storage can be attached as needed.`

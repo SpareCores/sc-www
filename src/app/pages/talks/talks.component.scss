@@ -24,7 +24,6 @@
     }
 
     tr {
-      @apply hover:border hover:border-emerald-400 hover:border-solid cursor-pointer;
       td {
         @apply px-5 py-3 text-left text-sm;
         a {
@@ -33,4 +32,8 @@
       }
     }
   }
+}
+
+a:hover {
+  @apply hover:text-gray-500;
 }
