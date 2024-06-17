@@ -475,7 +475,7 @@ export class ServerPricesComponent implements OnInit {
 
   getQueryObject() {
     const paramObject = this.searchParameters?.map((param: any) => {
-      return (param.modelValue && param.schema.category_id && param.schema.default !== param.modelValue) ?
+      return ((param.modelValue || param.modelValue === false) && param.schema.category_id && param.schema.default !== param.modelValue) ?
               {[param.name]: param.modelValue} :
               {};
     }).reduce((acc: any, curr: any) => {  return {...acc, ...curr}; }, {});

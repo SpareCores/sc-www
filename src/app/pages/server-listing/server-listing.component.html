@@ -47,7 +47,7 @@
             </div>
             <div *ngIf="!item.collapsed" class="pt-4">
               <div *ngFor="let parameter of getParametersByCategory(item.category_id)" >
-                <div class="flex gap-2 items-center">
+                <div *ngIf="getParamterType(parameter) !== 'checkbox'" class="flex gap-2 items-center">
                   <div class="font-bold text-emerald-400 text-sm">{{parameter.schema.title}}</div>
                   <lucide-icon
                     *ngIf="parameter.schema.description"
@@ -103,7 +103,18 @@
                          [(ngModel)]="parameter.modelValue"
                          (ngModelChange)="filterServers()"
                          class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
-                  <div class="text-white text-sm">{{parameter.schema.description}}</div>
+                         <div class="flex gap-2 items-center">
+                            <div class="text-white text-sm">
+                              {{parameter.schema.title}}
+                            </div>
+                            <lucide-icon
+                              *ngIf="parameter.schema.description"
+                              name="info"
+                              class="h-3 w-3 text-gray-200"
+                              (mouseenter)="showTooltip($event, parameter.schema.description)"
+                              (mouseleave)="hideTooltip()">
+                            </lucide-icon>
+                          </div>
                 </div>
                 <div *ngIf="getParamterType(parameter) === 'enumArray'" class="flex flex-col gap-2 mb-4 mt-4" >
                   <div *ngFor="let enum of parameter.schema.enum" class="flex items-center gap-1">
@@ -349,14 +360,23 @@
   </div>
 </div>
 
-<div *ngIf="compareCount() >= 2" class="fixed bottom-8 left-1/2 z-10">
-  <button
-    class="flex justify-center bg-emerald-400 text-white py-2 px-4 rounded-lg font-bold hover:bg-emerald-500"
-    data-ph-capture-attribute-sc-event="server listing compare"
-    data-ph-capture-attribute-server-listing-compare-action="open"
-    (click)="openCompare()">
-    Compare ({{compareCount()}})
-  </button>
+<div *ngIf="compareCount() >= 2" class="fixed_buttons">
+  <div class="flex gap-4" >
+    <button
+      class="flex justify-center bg-emerald-400 text-white py-2 px-4 rounded-lg font-bold hover:bg-emerald-500"
+      data-ph-capture-attribute-sc-event="server listing compare"
+      data-ph-capture-attribute-server-listing-compare-action="open"
+      (click)="openCompare()">
+      Compare ({{compareCount()}})
+    </button>
+    <button
+      class="flex justify-center bg-red-400 text-white py-2 px-4 rounded-lg font-bold hover:bg-red-500"
+      data-ph-capture-attribute-sc-event="server listing compare"
+      data-ph-capture-attribute-server-listing-compare-action="open"
+      (click)="clearCompare()">
+      Clear
+    </button>
+  </div>
 </div>
 
 

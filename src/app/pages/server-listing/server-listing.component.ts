@@ -102,7 +102,7 @@ export class ServerListingComponent implements OnInit {
     { name: 'GPUs', show: true, type: 'gpu', orderField: 'server.gpu_count' },
     { name: 'GPU MIN MEMORY', show: false, type: 'gpu_memory', key: 'server.gpu_memory_min' },
     { name: 'ARCHITECTURE', show: false, type: 'text', key: 'server.cpu_architecture' },
-    { name: 'STATUS', show: false, type: 'text', key: 'server.status' },
+    { name: 'STATUS', show: false, type: 'text', key: 'status' },
     { name: 'VENDOR', show: false, type: 'vendor' },
   ];
 
@@ -336,8 +336,6 @@ export class ServerListingComponent implements OnInit {
     this.keeperAPI.searchServers(queryObject).then(servers => {
       this.servers = servers?.body;
 
-      console.log(servers);
-
       // set stored selected state
       this.servers?.forEach((server: any) => {
         server.selected = this.selectedForCompare
@@ -411,7 +409,7 @@ export class ServerListingComponent implements OnInit {
 
   getQueryObject() {
     const paramObject = this.searchParameters?.map((param: any) => {
-      return (param.modelValue && param.schema.category_id && param.schema.default !== param.modelValue) ?
+      return ((param.modelValue || param.modelValue === false) && param.schema.category_id && param.schema.default !== param.modelValue) ?
               {[param.name]: param.modelValue} :
               {};
     }).reduce((acc: any, curr: any) => {  return {...acc, ...curr}; }, {});
@@ -560,11 +558,18 @@ export class ServerListingComponent implements OnInit {
   }
 
   compareCount() {
-    return this.servers?.filter((server) => server.selected).length;
+    return this.selectedForCompare?.length;
+  }
+
+  clearCompare() {
+    this.selectedForCompare = [];
+    this.servers?.forEach((server: any) => {
+      server.selected = false;
+    });
   }
 
   openCompare() {
-    const selectedServers = this.servers.filter((server) => server.selected);
+    const selectedServers = this.selectedForCompare;
 
     if(selectedServers.length < 2) {
       alert('Please select at least two servers to compare');

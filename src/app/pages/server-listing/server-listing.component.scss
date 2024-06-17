@@ -91,3 +91,13 @@
   top: 2.25rem;
   transform: translateY(-2rem);
 }
+
+.fixed_buttons {
+  position: fixed;
+  bottom: 2rem;
+  left: calc(50% - 10rem);
+  z-index: 100;
+  button {
+    width: 9rem;
+  }
+}
