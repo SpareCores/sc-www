@@ -362,7 +362,7 @@ export class ServerPricesComponent implements OnInit {
     return this.searchParameters?.filter((param: any) => param.schema?.category_id === category);
   }
 
-  getParamterType(parameter: any) {
+  getParameterType(parameter: any) {
     const type = parameter.schema.type || parameter.schema.anyOf?.find((item: any)  => item.type !== 'null')?.type || 'text';
     const name = parameter.name;
 

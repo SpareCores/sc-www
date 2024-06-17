@@ -47,7 +47,7 @@
             </div>
             <div *ngIf="!item.collapsed" class="pt-4">
               <div *ngFor="let parameter of getParametersByCategory(item.category_id)" >
-                <div *ngIf="getParamterType(parameter) !== 'checkbox'" class="flex gap-2 items-center">
+                <div *ngIf="getParameterType(parameter) !== 'checkbox'" class="flex gap-2 items-center">
                   <div class="font-bold text-emerald-400 text-sm">{{parameter.schema.title}}</div>
                   <lucide-icon
                     *ngIf="parameter.schema.description"
@@ -57,7 +57,7 @@
                     (mouseleave)="hideTooltip()">
                   </lucide-icon>
                 </div>
-                <div *ngIf="getParamterType(parameter) === 'range'" class="mb-4 mt-4" >
+                <div *ngIf="getParameterType(parameter) === 'range'" class="mb-4 mt-4" >
                   <div class="text-white text-sm" *ngIf="parameter.modelValue">{{parameter.modelValue}} {{parameter.schema.unit}}</div>
                   <input id="filter_range_{{parameter.name}}" type="range"
                          min="{{parameter.schema.minimum}}" max="{{parameter.schema.maximum}}" step="{{getStep(parameter)}}"
@@ -69,7 +69,7 @@
                          (ngModelChange)="valueChanged()"
                          class="w-full h-2 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm">
                 </div>
-                <div *ngIf="getParamterType(parameter) === 'number'" class="mb-4 mt-4 relative" >
+                <div *ngIf="getParameterType(parameter) === 'number'" class="mb-4 mt-4 relative" >
                   <input type="number" step="{{getStep(parameter)}}"
                          id="filter_number_{{parameter.name}}"
                          data-ph-capture-attribute-sc-event="server listing filter"
@@ -82,7 +82,7 @@
                          class="w-full h-8 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm pr-8">
                   <span *ngIf="parameter.schema.unit" class="unit text-gray-600">{{parameter.schema.unit}}</span>
                 </div>
-                <div *ngIf="getParamterType(parameter) === 'text'" class="mb-4 mt-4" >
+                <div *ngIf="getParameterType(parameter) === 'text'" class="mb-4 mt-4" >
                   <input type="text"
                          id="filter_text_{{parameter.name}}"
                          data-ph-capture-attribute-sc-event="server listing filter"
@@ -93,7 +93,7 @@
                          (ngModelChange)="valueChanged()"
                          class="w-full h-8 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm">
                 </div>
-                <div *ngIf="getParamterType(parameter) === 'checkbox'" class="flex gap-2 mb-4 mt-4" >
+                <div *ngIf="getParameterType(parameter) === 'checkbox'" class="flex gap-2 mb-4 mt-4" >
                   <input type="checkbox"
                          id="filter_checkbox_{{parameter.name}}"
                          data-ph-capture-attribute-sc-event="server listing filter"
@@ -116,7 +116,7 @@
                     </lucide-icon>
                   </div>
                 </div>
-                <div *ngIf="getParamterType(parameter) === 'enumArray'" class="flex flex-col gap-2 mb-4 mt-4" >
+                <div *ngIf="getParameterType(parameter) === 'enumArray'" class="flex flex-col gap-2 mb-4 mt-4" >
                   <div *ngFor="let enum of parameter.schema.enum" class="flex items-center gap-1">
                     <input type="checkbox"
                            id="filter_enum_{{parameter.name}}"
@@ -130,7 +130,7 @@
                     <div class="text-white text-sm">{{enum?.value ? enum?.value : enum}}</div>
                   </div>
                 </div>
-                <div *ngIf="getParamterType(parameter) === 'compliance_framework'" class="flex flex-col gap-2 mb-4 mt-4" >
+                <div *ngIf="getParameterType(parameter) === 'compliance_framework'" class="flex flex-col gap-2 mb-4 mt-4" >
                   <div *ngFor="let enum of parameter.schema.enum" class="flex items-center gap-1">
                     <input type="checkbox"
                            id="filter_enum_{{parameter.name}}"
