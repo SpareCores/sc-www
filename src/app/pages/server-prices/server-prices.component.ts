@@ -601,7 +601,7 @@ export class ServerPricesComponent implements OnInit {
   }
 
   getQueryObjectForPage(pageTarget: number) {
-    let page = Math.max(pageTarget, 1);
+    const page = Math.max(pageTarget, 1);
     const paramObject = this.getQueryObject();
     paramObject.page = page;
     return paramObject;
