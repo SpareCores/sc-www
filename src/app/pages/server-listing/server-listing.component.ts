@@ -186,6 +186,10 @@ export class ServerListingComponent implements OnInit {
         this.page = parseInt(query.page);
       }
 
+      if(query.limit) {
+        this.limit = parseInt(query.limit);
+      }
+
       this.loadVendors();
 
       const tableColumnsStr = this.storageHandler.get('serverListTableColumns');
@@ -433,6 +437,10 @@ export class ServerListingComponent implements OnInit {
 
     if(this.page > 1) {
       paramObject.page = this.page;
+    }
+
+    if(this.limit !== 25) {
+      paramObject.limit = this.limit;
     }
 
     return paramObject || {};

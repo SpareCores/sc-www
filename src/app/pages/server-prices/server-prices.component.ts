@@ -229,6 +229,10 @@ export class ServerPricesComponent implements OnInit {
         this.page = parseInt(query.page);
       }
 
+      if(query.limit) {
+        this.limit = parseInt(query.limit);
+      }
+
       this.loadCountries(query.countries);
 
       this.loadRegions(query.regions);
@@ -501,6 +505,10 @@ export class ServerPricesComponent implements OnInit {
 
     if(this.page > 1) {
       paramObject.page = this.page;
+    }
+
+    if(this.limit !== 25) {
+      paramObject.limit = this.limit;
     }
 
     if(this.countryMetadata.find((country) => country.selected)) {
