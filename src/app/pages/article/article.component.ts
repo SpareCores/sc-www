@@ -55,7 +55,7 @@ export class ArticleComponent implements OnInit {
         this.breadcrumbs = [
           { name: 'Home', url: '/' },
           { name: 'Articles', url: `/articles` },
-          { name: this.articleMeta.title, url: `/article/${category}/${id}` }
+          { name: this.articleMeta.title, url: `/article/${id}` }
         ];
 
         this.SEOHandler.updateTitleAndMetaTags(this.articleMeta.title, this.articleMeta.teaser, `Article, tutorial`);

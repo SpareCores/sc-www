@@ -374,7 +374,7 @@ export class ServerCompareComponent implements OnInit {
     benchmark.collapsed = !benchmark.collapsed;
   }
 
-  benchamrkIcon(benchmark: any) {
+  benchmarkIcon(benchmark: any) {
     return benchmark.collapsed ? 'chevron-down' : 'chevron-up';
   }
 

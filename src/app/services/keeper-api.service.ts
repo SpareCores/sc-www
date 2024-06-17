@@ -67,6 +67,10 @@ export class KeeperAPIService {
     return this.TableController.tableMetadataServerTableServerMetaGet();
   }
 
+  public getComplianceFrameworks(): Promise<any> {
+    return this.TableController.tableComplianceFrameworksTableComplianceFrameworkGet();
+  }
+
   public getServerBenchmarkMeta(): Promise<any> {
     return this.TableController.tableBenchmarkTableBenchmarkGet();
   }
