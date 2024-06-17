@@ -102,7 +102,7 @@ export class ServerListingComponent implements OnInit {
     { name: 'GPUs', show: true, type: 'gpu', orderField: 'server.gpu_count' },
     { name: 'GPU MIN MEMORY', show: false, type: 'gpu_memory', key: 'server.gpu_memory_min' },
     { name: 'ARCHITECTURE', show: false, type: 'text', key: 'server.cpu_architecture' },
-    { name: 'STATUS', show: false, type: 'text', key: 'server.status' },
+    { name: 'STATUS', show: false, type: 'text', key: 'status' },
     { name: 'VENDOR', show: false, type: 'vendor' },
   ];
 
@@ -139,6 +139,7 @@ export class ServerListingComponent implements OnInit {
 
   @ViewChild('tooltipDefault') tooltip!: ElementRef;
   clipboardIcon = 'clipboard';
+  tooltipContent = '';
 
   constructor(@Inject(PLATFORM_ID) private platformId: object,
               private keeperAPI: KeeperAPIService,
@@ -161,6 +162,13 @@ export class ServerListingComponent implements OnInit {
       const parameters = this.openApiJson.paths['/servers'].get.parameters || [];
       this.searchParameters = parameters.map((item: any) => {
         const value = query[item.name]?.split(',') || item.schema.default || null;
+
+        if(query[item.name]) {
+          if(this.filterCategories.find((column) => column.category_id === item.schema.category_id)) {
+            this.filterCategories.find((column) => column.category_id === item.schema.category_id)!.collapsed = false;
+          }
+        }
+
         return {...item, modelValue: value};
       });
 
@@ -401,7 +409,7 @@ export class ServerListingComponent implements OnInit {
 
   getQueryObject() {
     const paramObject = this.searchParameters?.map((param: any) => {
-      return (param.modelValue && param.schema.category_id && param.schema.default !== param.modelValue) ?
+      return ((param.modelValue || param.modelValue === false) && param.schema.category_id && param.schema.default !== param.modelValue) ?
               {[param.name]: param.modelValue} :
               {};
     }).reduce((acc: any, curr: any) => {  return {...acc, ...curr}; }, {});
@@ -533,8 +541,13 @@ export class ServerListingComponent implements OnInit {
     });
   }
 
-  toggleCompare(event: boolean, server: ServerPKs| any) {
+  toggleCompare2(event: any, server: ServerPKs| any) {
+    event.stopPropagation();
+    server.selected = !server.selected;
+    this.toggleCompare(server.selected, server);
+  }
 
+  toggleCompare(event: boolean, server: ServerPKs| any) {
     if(event) {
       if(this.selectedForCompare.findIndex((item) => item.vendor_id === server.vendor_id && item.server_id === server.server_id) === -1) {
         this.selectedForCompare.push(server);
@@ -545,11 +558,18 @@ export class ServerListingComponent implements OnInit {
   }
 
   compareCount() {
-    return this.servers?.filter((server) => server.selected).length;
+    return this.selectedForCompare?.length;
+  }
+
+  clearCompare() {
+    this.selectedForCompare = [];
+    this.servers?.forEach((server: any) => {
+      server.selected = false;
+    });
   }
 
   openCompare() {
-    const selectedServers = this.servers.filter((server) => server.selected);
+    const selectedServers = this.selectedForCompare;
 
     if(selectedServers.length < 2) {
       alert('Please select at least two servers to compare');
@@ -572,24 +592,27 @@ export class ServerListingComponent implements OnInit {
 
     this.clipboardIcon = 'check';
 
-    this.showTooltip(event);
+    this.showTooltip(event, 'Copied to clipboard!', true);
 
     setTimeout(() => {
       this.clipboardIcon = 'clipboard';
     }, 3000);
   }
 
-   showTooltip(el: any) {
-      const tooltip = this.tooltip.nativeElement;
-      const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
-      tooltip.style.left = `${el.target.getBoundingClientRect().left - 25}px`;
-      tooltip.style.top = `${el.target.getBoundingClientRect().top - 45 + scrollPosition}px`;
-      tooltip.style.display = 'block';
-      tooltip.style.opacity = '1';
+   showTooltip(el: any, content: string, autoHide = false) {
+    this.tooltipContent = content;
+    const tooltip = this.tooltip.nativeElement;
+    const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+    tooltip.style.left = `${el.target.getBoundingClientRect().left - 25}px`;
+    tooltip.style.top = `${el.target.getBoundingClientRect().top - 45 + scrollPosition}px`;
+    tooltip.style.display = 'block';
+    tooltip.style.opacity = '1';
 
+    if(autoHide) {
       setTimeout(() => {
         this.hideTooltip();
       }, 3000);
+    }
   }
 
   hideTooltip() {

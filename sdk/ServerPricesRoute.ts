@@ -28,7 +28,7 @@ export namespace ServerPrices {
        */
       partial_name_or_id?: string | null;
       /**
-       * Processor number
+       * Minimum vCPUs
        * Minimum number of virtual CPUs.
        * @min 1
        * @max 128
@@ -70,57 +70,12 @@ export namespace ServerPrices {
        * Vendor id
        * Identifier of the cloud provider vendor.
        */
-      vendor?: "aws" | "gcp" | "hcloud";
+      vendor?: "hcloud" | "aws" | "gcp";
       /**
        * region id
        * Identifier of the region.
        */
       regions?:
-        | "1000"
-        | "1100"
-        | "1210"
-        | "1220"
-        | "1230"
-        | "1250"
-        | "1260"
-        | "1270"
-        | "1280"
-        | "1290"
-        | "1300"
-        | "1310"
-        | "1320"
-        | "1330"
-        | "1340"
-        | "1350"
-        | "1360"
-        | "1370"
-        | "1380"
-        | "1390"
-        | "1410"
-        | "1420"
-        | "1430"
-        | "1440"
-        | "1450"
-        | "1460"
-        | "1470"
-        | "1480"
-        | "1490"
-        | "1510"
-        | "1520"
-        | "1530"
-        | "1540"
-        | "1550"
-        | "1560"
-        | "1570"
-        | "1580"
-        | "1590"
-        | "1600"
-        | "1610"
-        | "2"
-        | "3"
-        | "4"
-        | "5"
-        | "6"
         | "af-south-1"
         | "ap-east-1"
         | "ap-northeast-1"
@@ -151,12 +106,57 @@ export namespace ServerPrices {
         | "us-east-1"
         | "us-east-2"
         | "us-west-1"
-        | "us-west-2";
+        | "us-west-2"
+        | "1610"
+        | "1220"
+        | "1370"
+        | "1250"
+        | "1390"
+        | "1410"
+        | "1320"
+        | "1470"
+        | "1260"
+        | "1440"
+        | "1280"
+        | "1480"
+        | "1450"
+        | "1350"
+        | "1540"
+        | "1100"
+        | "1590"
+        | "1570"
+        | "1290"
+        | "1300"
+        | "1340"
+        | "1380"
+        | "1510"
+        | "1520"
+        | "1580"
+        | "1600"
+        | "1560"
+        | "1330"
+        | "1460"
+        | "1310"
+        | "1490"
+        | "1000"
+        | "1230"
+        | "1270"
+        | "1530"
+        | "1550"
+        | "1210"
+        | "1360"
+        | "1420"
+        | "1430"
+        | "2"
+        | "3"
+        | "4"
+        | "5"
+        | "6";
       /**
        * Compliance Framework id
        * Compliance framework implemented at the vendor.
        */
-      compliance_framework?: "hipaa" | "iso27001" | "soc2t2";
+      compliance_framework?: "hipaa" | "soc2t2" | "iso27001";
       /**
        * Storage Size
        * Minimum amount of storage (GBs) attached to the server.
@@ -190,8 +190,8 @@ export namespace ServerPrices {
         | "ID"
         | "IE"
         | "IL"
-        | "IN"
         | "IT"
+        | "IN"
         | "JP"
         | "KR"
         | "NL"

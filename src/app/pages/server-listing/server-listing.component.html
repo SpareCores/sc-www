@@ -47,7 +47,16 @@
             </div>
             <div *ngIf="!item.collapsed" class="pt-4">
               <div *ngFor="let parameter of getParametersByCategory(item.category_id)" >
-                <div class="font-bold text-emerald-400 text-sm">{{parameter.schema.title}}</div>
+                <div *ngIf="getParamterType(parameter) !== 'checkbox'" class="flex gap-2 items-center">
+                  <div class="font-bold text-emerald-400 text-sm">{{parameter.schema.title}}</div>
+                  <lucide-icon
+                    *ngIf="parameter.schema.description"
+                    name="info"
+                    class="h-4 w-4 text-gray-200"
+                    (mouseenter)="showTooltip($event, parameter.schema.description)"
+                    (mouseleave)="hideTooltip()">
+                  </lucide-icon>
+                </div>
                 <div *ngIf="getParamterType(parameter) === 'range'" class="mb-4 mt-4" >
                   <div class="text-white text-sm" *ngIf="parameter.modelValue">{{parameter.modelValue}} {{parameter.schema.unit}}</div>
                   <input id="filter_range_{{parameter.name}}" type="range"
@@ -94,7 +103,18 @@
                          [(ngModel)]="parameter.modelValue"
                          (ngModelChange)="filterServers()"
                          class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
-                  <div class="text-white text-sm">{{parameter.schema.description}}</div>
+                  <div class="flex gap-2 items-center">
+                    <div class="text-white text-sm">
+                      {{parameter.schema.title}}
+                    </div>
+                    <lucide-icon
+                      *ngIf="parameter.schema.description"
+                      name="info"
+                      class="h-3 w-3 text-gray-200"
+                      (mouseenter)="showTooltip($event, parameter.schema.description)"
+                      (mouseleave)="hideTooltip()">
+                    </lucide-icon>
+                  </div>
                 </div>
                 <div *ngIf="getParamterType(parameter) === 'enumArray'" class="flex flex-col gap-2 mb-4 mt-4" >
                   <div *ngFor="let enum of parameter.schema.enum" class="flex items-center gap-1">
@@ -171,32 +191,41 @@
                     [attr.data-ph-capture-attribute-server-listing-row-vendor]="item.vendor_id"
                     [attr.data-ph-capture-attribute-server-listing-row-index]="i+1"
                     [attr.data-ph-capture-attribute-server-listing-row-page-size]="limit">
-                  <td (click)="$event.stopPropagation()">
-                    <div class="flex gap-2 items-center" >
+                  <td (click)="toggleCompare2($event, item)">
+                    <div class="flex gap-2 items-center">
                       <input type="checkbox"
                         id="server_compare_checkbox_{{item.server_id}}"
                         [(ngModel)]="item.selected"
                         (ngModelChange)="toggleCompare($event, item)"
+                        (click)="$event.stopPropagation()"
                         class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer" >
                     </div>
                   </td>
                   <ng-container *ngFor="let column of tableColumns">
                     <td *ngIf="column.type === 'name'" class="min-w-225">
-                      <div class="text-sm text-white flex gap-1">
-                        <span>{{item.display_name}} </span>
-                        <span *ngIf="item.display_name !== item.api_reference" class="text-emerald-400" >|</span>
-                        <span *ngIf="item.display_name !== item.api_reference">{{item.api_reference}} </span>
-                      </div>
-                      <div class="text-xs text-white flex gap-1">
-                        <span>{{item.vendor_id}}</span>
+                      <div (click)="$event.stopPropagation()">
+                        <a routerLink="/server/{{item.vendor.vendor_id}}/{{item.api_reference}}"
+                           data-ph-capture-attribute-sc-event="server listing route to server details"
+                           [attr.data-ph-capture-attribute-server-listing-row-vendor]="item.vendor_id"
+                           [attr.data-ph-capture-attribute-server-listing-row-index]="i+1"
+                           [attr.data-ph-capture-attribute-server-listing-row-page-size]="limit">
+                          <div class="text-sm text-white flex gap-1">
+                            <span>{{item.display_name}} </span>
+                            <span *ngIf="item.display_name !== item.api_reference" class="text-emerald-400" >|</span>
+                            <span *ngIf="item.display_name !== item.api_reference">{{item.api_reference}} </span>
+                          </div>
+                          <div class="text-xs text-white flex gap-1">
+                            <span>{{item.vendor_id}}</span>
+                          </div>
+                        </a>
                       </div>
                     </td>
                     <td *ngIf="column.type === 'processor'">
-                      <div class="text-sm text-white">{{item.cpu_cores || item.vcpus}}x {{item.cpu_architecture}}</div>
+                      <div class="text-sm text-white">{{item.vcpus}} vCPUs ({{item.cpu_architecture}})</div>
                       <div
                         *ngIf="item.cpu_cores && item.cpu_speed"
                         class="text-xs text-white flex gap-1">
-                        <span>{{item.cpu_cores}} cores at {{item.cpu_speed}} Ghz</span>
+                        <span>{{item.cpu_cores}} cores &#64; {{item.cpu_speed}} GHz</span>
                       </div>
                     </td>
                     <td *ngIf="column.type === 'memory'">
@@ -331,14 +360,23 @@
   </div>
 </div>
 
-<div *ngIf="compareCount() >= 2" class="fixed bottom-8 left-1/2 z-10">
-  <button
-    class="flex justify-center bg-emerald-400 text-white py-2 px-4 rounded-lg font-bold hover:bg-emerald-500"
-    data-ph-capture-attribute-sc-event="server listing compare"
-    data-ph-capture-attribute-server-listing-compare-action="open"
-    (click)="openCompare()">
-    Compare ({{compareCount()}})
-  </button>
+<div *ngIf="compareCount() >= 2" class="fixed_buttons">
+  <div class="flex gap-4" >
+    <button
+      class="flex justify-center bg-emerald-400 text-white py-2 px-4 rounded-lg font-bold hover:bg-emerald-500"
+      data-ph-capture-attribute-sc-event="server listing compare"
+      data-ph-capture-attribute-server-listing-compare-action="open"
+      (click)="openCompare()">
+      Compare ({{compareCount()}})
+    </button>
+    <button
+      class="flex justify-center bg-red-400 text-white py-2 px-4 rounded-lg font-bold hover:bg-red-500"
+      data-ph-capture-attribute-sc-event="server listing compare"
+      data-ph-capture-attribute-server-listing-compare-action="open"
+      (click)="clearCompare()">
+      Clear
+    </button>
+  </div>
 </div>
 
 
@@ -434,5 +472,5 @@
   #tooltipDefault
   style="opacity: 0;"
   class="absolute z-10 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-secondary border border-solid border-emerald-400 rounded-lg">
-  Copied to clipboard!
+  {{tooltipContent}}
 </div>

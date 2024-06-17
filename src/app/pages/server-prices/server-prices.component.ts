@@ -180,6 +180,7 @@ export class ServerPricesComponent implements OnInit {
 
   @ViewChild('tooltipDefault') tooltip!: ElementRef;
   clipboardIcon = 'clipboard';
+  tooltipContent = '';
 
   constructor(@Inject(PLATFORM_ID) private platformId: object,
               private keeperAPI: KeeperAPIService,
@@ -474,7 +475,7 @@ export class ServerPricesComponent implements OnInit {
 
   getQueryObject() {
     const paramObject = this.searchParameters?.map((param: any) => {
-      return (param.modelValue && param.schema.category_id && param.schema.default !== param.modelValue) ?
+      return ((param.modelValue || param.modelValue === false) && param.schema.category_id && param.schema.default !== param.modelValue) ?
               {[param.name]: param.modelValue} :
               {};
     }).reduce((acc: any, curr: any) => {  return {...acc, ...curr}; }, {});
@@ -743,24 +744,27 @@ export class ServerPricesComponent implements OnInit {
 
     this.clipboardIcon = 'check';
 
-    this.showTooltip(event);
+    this.showTooltip(event, 'Copied to clipboard!', true);
 
     setTimeout(() => {
       this.clipboardIcon = 'clipboard';
     }, 3000);
   }
 
-   showTooltip(el: any) {
-      const tooltip = this.tooltip.nativeElement;
-      const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
-      tooltip.style.left = `${el.target.getBoundingClientRect().left - 25}px`;
-      tooltip.style.top = `${el.target.getBoundingClientRect().top - 45 + scrollPosition}px`;
-      tooltip.style.display = 'block';
-      tooltip.style.opacity = '1';
+   showTooltip(el: any, content: string, autoHide = false) {
+    this.tooltipContent = content;
+    const tooltip = this.tooltip.nativeElement;
+    const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+    tooltip.style.left = `${el.target.getBoundingClientRect().left - 25}px`;
+    tooltip.style.top = `${el.target.getBoundingClientRect().top - 45 + scrollPosition}px`;
+    tooltip.style.display = 'block';
+    tooltip.style.opacity = '1';
 
+    if(autoHide) {
       setTimeout(() => {
         this.hideTooltip();
       }, 3000);
+    }
   }
 
   hideTooltip() {

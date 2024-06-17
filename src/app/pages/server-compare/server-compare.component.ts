@@ -144,8 +144,6 @@ export class ServerCompareComponent implements OnInit {
               });
             });
 
-            console.log(this.benchmarkMeta);
-
             this.benchmarkMeta.forEach((benchmark: any) => {
               benchmark.configs.forEach((config: any) => {
                 this.servers.forEach((server: any) => {
@@ -365,7 +363,7 @@ export class ServerCompareComponent implements OnInit {
 
   getBestPrice(server: ServerPKsWithPrices, allocation: Allocation = Allocation.Ondemand) {
     if(server.prices?.find((p) => p.allocation === allocation)){
-      let best = server.prices.filter(x => x.allocation === allocation).sort((a,b) => a.price - b.price)[0];
+      const best = server.prices.filter(x => x.allocation === allocation).sort((a,b) => a.price - b.price)[0];
       return `${best.price} ${best.currency}`;
     } else {
       return '-';
@@ -374,6 +372,10 @@ export class ServerCompareComponent implements OnInit {
 
   toggleBenchmark(benchmark: any) {
     benchmark.collapsed = !benchmark.collapsed;
+  }
+
+  benchamrkIcon(benchmark: any) {
+    return benchmark.collapsed ? 'chevron-down' : 'chevron-up';
   }
 
   serializeConfig(config: any) {

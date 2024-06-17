@@ -90,11 +90,11 @@ export class ServerDetailsComponent implements OnInit {
   // benchmark charts
   compressDropdown: any;
   compressMethods: any[] = [
-    { name: 'Compress level', key: 'compress' },
-    { name: 'Decompress level', key: 'decompress' },
-    { name: 'Ratio level', key: 'ratio' },
-    { name: 'Ratio/Compress', key: 'ratio_compress' },
-    { name: 'Ratio/Decompress', key: 'ratio_decompress' },
+    { name: 'Compression speed', key: 'compress' },
+    { name: 'Decompression speed', key: 'decompress' },
+    { name: 'Compression ratio', key: 'ratio' },
+    { name: 'Compression speed/ratio', key: 'ratio_compress' },
+    { name: 'Decompression speed/ratio', key: 'ratio_decompress' },
   ];
   selectedCompressMethod = this.compressMethods[0];
 
@@ -131,7 +131,7 @@ export class ServerDetailsComponent implements OnInit {
 
   constructor(@Inject(PLATFORM_ID) private platformId: object,
               private route: ActivatedRoute,
-              private keepreAPI: KeeperAPIService,
+              private keeperAPI: KeeperAPIService,
               private SEOHandler: SeoHandlerService,
               private senitizer: DomSanitizer) {
 
@@ -143,9 +143,9 @@ export class ServerDetailsComponent implements OnInit {
       const id = params['id'];
 
       Promise.all([
-        this.keepreAPI.getServerMeta(),
-        this.keepreAPI.getServerBenchmarkMeta(),
-        this.keepreAPI.getServer(vendor, id)
+        this.keeperAPI.getServerMeta(),
+        this.keeperAPI.getServerBenchmarkMeta(),
+        this.keeperAPI.getServer(vendor, id)
       ]).then((dataAll) => {
         this.instanceProperties = dataAll[0].body?.fields || [];
 
@@ -193,6 +193,7 @@ export class ServerDetailsComponent implements OnInit {
           });
 
           this.regionFilters = [];
+
           this.serverDetails.prices?.sort((a, b) => a.price - b.price);
           this.serverDetails.prices?.forEach((price: ServerPricePKs) => {
               const region = this.regionFilters.find((z) => z.region_id === price.region_id);
@@ -203,6 +204,10 @@ export class ServerDetailsComponent implements OnInit {
 
           if(this.regionFilters[0]) {
             this.regionFilters[0].selected = true;
+          }
+
+          if(this.serverDetails.prices?.length > 0 && (this.barChartOptions?.scales as any)?.y?.title?.text) {
+            (this.barChartOptions!.scales as any).y.title.text = `${this.serverDetails.prices[0].currency}/h`;
           }
 
           this.refreshGraphs();
@@ -216,8 +221,9 @@ export class ServerDetailsComponent implements OnInit {
             this.description += ` ${this.serverDetails.cpu_cores} CPUs`;
           }
           this.description += `, ${this.getMemory()} of memory and ${this.getStorage()} of storage.`;
+
           if(this.serverDetails.prices[0]) {
-            this.description += ` The pricing starts at $${this.serverDetails.prices[0].price} per hour.`;
+            this.description += ` The pricing starts at ${this.serverDetails.prices[0].price} ${this.serverDetails.prices[0].currency} per hour.`;
           }
 
           this.faqs = [
@@ -235,8 +241,9 @@ export class ServerDetailsComponent implements OnInit {
             this.faqs.push(
               {
                 question: `How much does the ${this.serverDetails.display_name} server cost?`,
-                answer: `The pricing for ${this.serverDetails.display_name} servers starts at $${this.serverDetails.prices[0].price} per hour, but the actual price depends on the selected region, zone and server allocation method (e.g. on-demand versus spot pricing options). Currently, the maximum price stands at $${this.serverDetails.prices.slice(-1)[0].price}.`
-              });
+                answer: `The pricing for ${this.serverDetails.display_name} servers starts at ${this.serverDetails.prices[0].price} ${this.serverDetails.prices[0].currency} per hour, but the actual price depends on the selected region, zone and server allocation method (e.g. on-demand versus spot pricing options). Currently, the maximum price stands at ${this.serverDetails.prices.slice(-1)[0].price}${this.serverDetails.prices.slice(-1)[0].currency}.`
+              }
+            );
           }
 
           const keywords = this.title + ', ' + this.serverDetails.server_id + ', ' + this.serverDetails.vendor.vendor_id;
@@ -245,7 +252,7 @@ export class ServerDetailsComponent implements OnInit {
 
           this.similarByFamily = [];
           this.similarByPerformance = [];
-          this.keepreAPI.getServers().then((data) => {
+          this.keeperAPI.getServers().then((data) => {
             if(data?.body) {
               const allServers = data.body as TableServerTableServerGetData;
               allServers.forEach((s) => {
@@ -445,6 +452,7 @@ export class ServerDetailsComponent implements OnInit {
 
     this.serverDetails.prices.forEach((price: ServerPricePKs) => {
     const zone = this.availabilityRegions.find((z) => z.region_id === price.region_id);
+      const allocation = price.allocation || 'spot';
       if(!zone) {
         const data: any = {
           region_id: price.region_id,
@@ -453,21 +461,23 @@ export class ServerDetailsComponent implements OnInit {
           spot: {
             price: 0,
             unit: price.unit,
-            count: 0
+            count: 0,
+            currency: price.currency
           },
           ondemand: {
             price: 0,
             unit: price.unit,
-            count: 0
+            count: 0,
+            currency: price.currency
           }
         };
-        data[price.allocation || 'spot'].price += price.price;
-        data[price.allocation || 'spot'].count++;
+        data[allocation].price += price.price;
+        data[allocation].count++;
 
         this.availabilityRegions.push(data);
       } else {
-        zone[price.allocation || 'spot'].price += price.price;
-        zone[price.allocation || 'spot'].count++;
+        zone[allocation].price += price.price;
+        zone[allocation].count++;
       }
     });
 
@@ -923,6 +933,11 @@ export class ServerDetailsComponent implements OnInit {
             xAxisKey: 'compression_level',
           };
           (this.lineChartOptionsCompress as any).scales.x.title.text = 'Compression Level';
+          if(this.selectedCompressMethod.key === 'ratio') {
+            (this.lineChartOptionsCompress as any).scales.y.title.text = 'Percentage';
+          } else {
+            (this.lineChartOptionsCompress as any).scales.y.title.text = 'byte/s';
+          }
         }
 
         break;
@@ -951,6 +966,7 @@ export class ServerDetailsComponent implements OnInit {
             xAxisKey: 'ratio',
           };
           (this.lineChartOptionsCompress as any).scales.x.title.text = 'Compression Ratio';
+          (this.lineChartOptionsCompress as any).scales.y.title.text = 'byte/s';
         }
       }
     }
