@@ -409,13 +409,13 @@
                 <span class="text-white" > items per page</span>
               </div>
               <div class="flex justify-end gap-4">
-                <button
+                <a
+                  routerLink="/server_prices" [queryParams]="getQueryObjectForPage(this.page - 1)"
                   class="flex justify-center bg-transparent text-white py-2 px-4 w-10 rounded-lg font-bold hover:bg-emerald-400"
                   data-ph-capture-attribute-sc-event="server listing paginate"
-                  data-ph-capture-attribute-pagination-target="prev"
-                  (click)="prevPage()" >
+                  data-ph-capture-attribute-pagination-target="prev">
                   <lucide-icon name="chevron-left"></lucide-icon>
-                </button>
+                </a>
                 <ng-container *ngIf="page > 2">
                   <button
                     class="text-white py-2 px-4 rounded-lg font-bold hover:bg-emerald-400"
@@ -429,7 +429,7 @@
                     ...
                   </button>
                 </ng-container>
-                <button
+                <a
                   class="text-white py-2 px-4 rounded-lg font-bold hover:bg-emerald-400"
                   [ngClass]="{
                     'bg-emerald-400': item === this.page,
@@ -438,9 +438,9 @@
                   *ngFor="let item of possiblePages(); let i = index"
                   data-ph-capture-attribute-sc-event="server listing paginate"
                   [attr.data-ph-capture-attribute-pagination-target]="i"
-                  (click)="gotoPage(item)">
+                  routerLink="/server_prices" [queryParams]="getQueryObjectForPage(item)">
                   {{item}}
-                </button>
+                </a>
                 <ng-container *ngIf="totalPages > (page + 3)">
                   <button
                     class="text-white py-2 px-4 rounded-lg font-bold">
@@ -454,13 +454,13 @@
                     {{totalPages}}
                   </button>
                 </ng-container>
-                <button
+                <a
+                  routerLink="/server_prices" [queryParams]="getQueryObjectForPage(this.page + 1)"
                   class="flex justify-center bg-transparent text-white py-2 px-4 w-10 rounded-lg font-bold hover:bg-emerald-400"
                   data-ph-capture-attribute-sc-event="server listing paginate"
-                  data-ph-capture-attribute-pagination-target="next"
-                  (click)="nextPage()">
+                  data-ph-capture-attribute-pagination-target="next">
                   <lucide-icon name="chevron-right"></lucide-icon>
-                </button>
+                </a>
               </div>
             </div>
           </div>

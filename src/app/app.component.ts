@@ -33,9 +33,11 @@ export class AppComponent implements OnInit, AfterViewInit {
         if (event instanceof NavigationEnd) {
           let url = 'https://sparecores.com';
           if(event?.urlAfterRedirects?.length > 1) {
-            url += event?.urlAfterRedirects.split('?')[0];
+            url += event?.urlAfterRedirects;
           }
           this.analytics.trackEvent('pageView', {});
+          // update canonical url with query params as well
+
           this.updateCanonical(url.toLowerCase());
         }
 

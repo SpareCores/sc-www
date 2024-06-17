@@ -161,7 +161,12 @@ export class ServerListingComponent implements OnInit {
       const query: any = params;
       const parameters = this.openApiJson.paths['/servers'].get.parameters || [];
       this.searchParameters = parameters.map((item: any) => {
-        const value = query[item.name]?.split(',') || item.schema.default || null;
+        let value = item.schema.default || null;
+
+        // if type is a string try split by ,
+        if(typeof query[item.name] === 'string' ) {
+          value = query[item.name].split(',');
+        }
 
         if(query[item.name]) {
           if(this.filterCategories.find((column) => column.category_id === item.schema.category_id)) {
@@ -179,6 +184,10 @@ export class ServerListingComponent implements OnInit {
 
       if(query.page) {
         this.page = parseInt(query.page);
+      }
+
+      if(query.limit) {
+        this.limit = parseInt(query.limit);
       }
 
       this.loadVendors();
@@ -407,6 +416,13 @@ export class ServerListingComponent implements OnInit {
     return null;
   }
 
+  getQueryObjectForPage(pageTarget: number) {
+    const page = Math.max(pageTarget, 1);
+    const paramObject = this.getQueryObject();
+    paramObject.page = page;
+    return paramObject;
+  }
+
   getQueryObject() {
     const paramObject = this.searchParameters?.map((param: any) => {
       return ((param.modelValue || param.modelValue === false) && param.schema.category_id && param.schema.default !== param.modelValue) ?
@@ -423,7 +439,11 @@ export class ServerListingComponent implements OnInit {
       paramObject.page = this.page;
     }
 
-    return paramObject;
+    if(this.limit !== 25) {
+      paramObject.limit = this.limit;
+    }
+
+    return paramObject || {};
   }
 
   updateQueryParams(object: any) {
