@@ -103,18 +103,18 @@
                          [(ngModel)]="parameter.modelValue"
                          (ngModelChange)="filterServers()"
                          class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
-                         <div class="flex gap-2 items-center">
-                            <div class="text-white text-sm">
-                              {{parameter.schema.title}}
-                            </div>
-                            <lucide-icon
-                              *ngIf="parameter.schema.description"
-                              name="info"
-                              class="h-3 w-3 text-gray-200"
-                              (mouseenter)="showTooltip($event, parameter.schema.description)"
-                              (mouseleave)="hideTooltip()">
-                            </lucide-icon>
-                          </div>
+                  <div class="flex gap-2 items-center">
+                    <div class="text-white text-sm">
+                      {{parameter.schema.title}}
+                    </div>
+                    <lucide-icon
+                      *ngIf="parameter.schema.description"
+                      name="info"
+                      class="h-3 w-3 text-gray-200"
+                      (mouseenter)="showTooltip($event, parameter.schema.description)"
+                      (mouseleave)="hideTooltip()">
+                    </lucide-icon>
+                  </div>
                 </div>
                 <div *ngIf="getParamterType(parameter) === 'enumArray'" class="flex flex-col gap-2 mb-4 mt-4" >
                   <div *ngFor="let enum of parameter.schema.enum" class="flex items-center gap-1">
