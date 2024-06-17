@@ -19,6 +19,7 @@ export type TableColumn = {
   key?: string;
   show?: boolean;
   orderField?: string;
+  info?: string;
 };
 
 export type CountryMetadata = {
@@ -99,11 +100,18 @@ export class ServerPricesComponent implements OnInit {
   possibleColumns: TableColumn[] = [
     { name: 'NAME & PROVIDER', show: true, type: 'name'},
     { name: 'PROCESSOR', show: true, type: 'processor', orderField: 'vcpus' },
+    { name: 'SCORE',
+      show: true,
+      type: 'score',
+      orderField: 'score',
+      info: "Performance benchmark score using stress-ng's div16 method (doing 16 bit unsigned integer divisions for 20 seconds): simulating CPU heavy workload that scales well on any number of (v)CPUs. The score/price value shows the number of operations per USD/hour."
+    },
     { name: 'MEMORY', show: true, type: 'memory', orderField: 'memory' },
     { name: 'STORAGE', show: true, type: 'storage', orderField: 'storage_size' },
     { name: 'STORAGE TYPE', show: false, type: 'text', key: 'server.storage_type' },
     { name: 'GPUs', show: true, type: 'gpu', orderField: 'server.gpu_count' },
     { name: 'GPU MIN MEMORY', show: false, type: 'gpu_memory', key: 'server.gpu_memory_min' },
+    { name: 'GPU TOTAL MEMORY', show: false, type: 'gpu_memory', key: 'server.gpu_memory_total' },
     { name: 'PRICE', show: true, type: 'price', orderField: 'price' },
     { name: 'ARCHITECTURE', show: false, type: 'text', key: 'server.cpu_architecture' },
     { name: 'REGION', show: false, type: 'region' },
@@ -182,6 +190,8 @@ export class ServerPricesComponent implements OnInit {
   clipboardIcon = 'clipboard';
   tooltipContent = '';
 
+  complianceFrameworks: any[] = [];
+
   constructor(@Inject(PLATFORM_ID) private platformId: object,
               private keeperAPI: KeeperAPIService,
               private route: ActivatedRoute,
@@ -238,6 +248,10 @@ export class ServerPricesComponent implements OnInit {
       this.refreshColumns(false);
 
       this.filterServers(false);
+    });
+
+    this.keeperAPI.getComplianceFrameworks().then((response) => {
+      this.complianceFrameworks = response.body;
     });
 
     this.valueChangeDebouncer.pipe(debounceTime(300)).subscribe(() => {
@@ -330,6 +344,10 @@ export class ServerPricesComponent implements OnInit {
     return `${(item.server.storage_size / 1000).toFixed(1)} TB`;
   }
 
+  getScore(value: number | null): string {
+    return value ? value.toFixed(0) : '-';
+  }
+
   openServerDetails(server: ServerPriceWithPKs) {
     this.router.navigateByUrl(`/server/${server.vendor.vendor_id}/${server.server.api_reference}`);
   }
@@ -354,6 +372,10 @@ export class ServerPricesComponent implements OnInit {
 
     if(name === 'regions') {
       return 'regions';
+    }
+
+    if(name === 'compliance_framework') {
+      return 'compliance_framework';
     }
 
     if((type === 'integer' || type === 'number') && parameter.schema.minimum && parameter.schema.maximum) {
@@ -572,6 +594,10 @@ export class ServerPricesComponent implements OnInit {
     return field.split('.').reduce((obj, key) => (obj && (obj as any)[key]) ? (obj as any)[key] : undefined, item);
   }
 
+  getComplianceFrameworkName(id: string) {
+    return this.complianceFrameworks.find((item) => item.compliance_framework_id === id)?.abbreviation || id;
+  }
+
   prevPage() {
     this.page = Math.max(this.page - 1, 1);
     this.gotoPage(this.page);
@@ -755,8 +781,8 @@ export class ServerPricesComponent implements OnInit {
     this.tooltipContent = content;
     const tooltip = this.tooltip.nativeElement;
     const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
-    tooltip.style.left = `${el.target.getBoundingClientRect().left - 25}px`;
-    tooltip.style.top = `${el.target.getBoundingClientRect().top - 45 + scrollPosition}px`;
+    tooltip.style.left = `${el.target.getBoundingClientRect().right + 5}px`;
+    tooltip.style.top = `${el.target.getBoundingClientRect().top - 5 + scrollPosition}px`;
     tooltip.style.display = 'block';
     tooltip.style.opacity = '1';
 
