@@ -739,8 +739,13 @@ export class ServerPricesComponent implements OnInit {
     continent.collapsed = !continent.collapsed;
   }
 
-  loadRegions(selectedRegions: string | undefined) {
-    const selectedRegionIds = selectedRegions ? selectedRegions.split(',') : [];
+  loadRegions(selectedRegions: string | string[] | undefined) {
+    let selectedRegionIds = selectedRegions ? selectedRegions : [];
+
+    if(typeof selectedRegions === 'string') {
+      selectedRegionIds = selectedRegions.split(',');
+    }
+
     Promise.all([
       this.keeperAPI.getVendors(),
       this.keeperAPI.getRegions()]).then((responses) => {
