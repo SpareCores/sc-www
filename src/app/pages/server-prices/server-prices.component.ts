@@ -687,8 +687,13 @@ export class ServerPricesComponent implements OnInit {
     }
   }
 
-  loadCountries(selectedCountries: string | undefined) {
-    const selectedCountryIds = selectedCountries ? selectedCountries.split(',') : [];
+  loadCountries(selectedCountries: string | string[] | undefined) {
+    let selectedCountryIds = selectedCountries ? selectedCountries : [];
+
+    if(typeof selectedCountries === 'string') {
+      selectedCountryIds = selectedCountries.split(',');
+    }
+
     this.keeperAPI.getCountries().then((response) => {
       if(response?.body) {
 
