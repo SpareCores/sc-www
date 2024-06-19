@@ -5,7 +5,6 @@ import { Modal, ModalOptions } from 'flowbite';
 import { LucideAngularModule } from 'lucide-angular';
 import { KeeperAPIService } from '../../services/keeper-api.service';
 import { Subject, debounceTime } from 'rxjs';
-import { SearchServerPricesServerPricesGetData, SearchServerPricesServerPricesGetParams, SearchServersServersGetParams } from '../../../../sdk/data-contracts';
 import { CountryMetadata, ContinentMetadata, RegionMetadata, RegionVendorMetadata } from '../../pages/server-listing/server-listing.component';
 import { CountryIdtoNamePipe } from '../../pipes/country-idto-name.pipe';
 
