@@ -21,6 +21,11 @@
         [ngClass]="{
           'collapsed': isCollapsed
         }">
+        <div class="collapser bg-secondary" (click)="toggleCollapse()" tabindex="0"
+             data-ph-capture-attribute-sc-event="server listing toggle sidebar">
+          <lucide-icon name="chevron-left" class="h-6 w-6 text-emerald-400"></lucide-icon>
+        </div>
+
         <div class="top overflow-hidden bg-secondary">
           <button
             class="w-full bg-emerald-400 text-white py-3 rounded-lg font-bold"
@@ -30,10 +35,7 @@
             Search Prompt
           </button>
         </div>
-        <div class="collapser bg-secondary" (click)="toggleCollapse()" tabindex="0"
-             data-ph-capture-attribute-sc-event="server listing toggle sidebar">
-          <lucide-icon name="chevron-left" class="h-6 w-6 text-emerald-400"></lucide-icon>
-        </div>
+
         <div class="filters overflow-hidden bg-secondary">
           <div class="mx-2 p-3 border-b border-gray-200 " *ngFor="let item of filterCategories" >
             <div class="flex justify-between cursor-pointer" (click)="toggleCategory(item)" tabindex="0">
