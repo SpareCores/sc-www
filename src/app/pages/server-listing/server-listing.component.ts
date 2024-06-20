@@ -377,9 +377,7 @@ export class ServerListingComponent implements OnInit {
       paramObject.order_dir = this.orderDir;
     }
 
-    if(page > 1) {
-      paramObject.page = page;
-    }
+    paramObject.page = page;
 
     if(this.limit !== 25) {
       paramObject.limit = this.limit;

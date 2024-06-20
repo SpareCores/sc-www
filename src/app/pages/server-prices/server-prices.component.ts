@@ -548,9 +548,7 @@ export class ServerPricesComponent implements OnInit {
       paramObject.allocation = this.allocation.slug;
     }
 
-    if(page > 1) {
-      paramObject.page = page;
-    }
+    paramObject.page = page;
 
     if(this.limit !== 25) {
       paramObject.limit = this.limit;

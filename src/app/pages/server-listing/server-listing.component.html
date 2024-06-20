@@ -217,6 +217,7 @@
               </div>
               <div class="flex justify-end gap-4">
                 <a
+                  *ngIf="page > 1"
                   routerLink="/servers" [queryParams]="getQueryObjectForPage(this.page - 1)"
                   class="flex justify-center bg-transparent text-white py-2 px-4 w-10 rounded-lg font-bold hover:bg-emerald-400"
                   data-ph-capture-attribute-sc-event="server listing paginate"
