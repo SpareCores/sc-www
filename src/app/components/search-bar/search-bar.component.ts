@@ -84,7 +84,7 @@ export class SearchBarComponent implements OnInit, OnChanges{
         this.selectedCountries = this.query.countries ? this.query.countries : [];
         this.selectedRegions = this.query.regions ? this.query.regions : [];
         this.loadCountries(this.selectedCountries);
-        this.loadRegions(this.selectedCountries);
+        this.loadRegions(this.selectedRegions);
         if(this.selectedCountries?.length || this.selectedRegions?.length) {
           if(this.filterCategories.find((column) => column.category_id === 'region')) {
             this.filterCategories.find((column) => column.category_id === 'region')!.collapsed = false;
