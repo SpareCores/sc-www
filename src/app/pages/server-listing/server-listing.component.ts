@@ -5,7 +5,7 @@ import { OrderDir, ServerPKs, ServerPriceWithPKs } from '../../../../sdk/data-co
 import { encodeQueryParams } from '../../tools/queryParamFunctions';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Dropdown, DropdownOptions, ModalOptions } from 'flowbite';
+import { Dropdown, DropdownOptions } from 'flowbite';
 import { StorageHandlerService } from '../../services/storage-handler.service';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { FormsModule } from '@angular/forms';
