@@ -1,7 +1,7 @@
 ---
 # ~50 chars
 title: Meet the Spare Cores team live at conferences
-date: 2024-05-23
+date: 2024-04-24
 # ~100 character
 teaser: "We are excited to publicly announce the Spare Cores project to the dev community at three events in June/July."
 # 320x220
