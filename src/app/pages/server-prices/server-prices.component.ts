@@ -82,7 +82,7 @@ export class ServerPricesComponent implements OnInit {
 
   breadcrumbs: BreadcrumbSegment[] = [
     { name: 'Home', url: '/' },
-    { name: 'Server listing', url: '/server_prices' }
+    { name: 'Server prices', url: '/server_prices' }
   ];
 
   tableColumns: TableColumn[] = [];
@@ -194,7 +194,7 @@ export class ServerPricesComponent implements OnInit {
   ngOnInit() {
 
     this.SEOHandler.updateTitleAndMetaTags(
-      'Listing of Cloud Compute Resources - Spare Cores',
+      'Price Listing of Cloud Compute Resources - Spare Cores',
       'Harnessing the compute resources of the cloud to optimize efficiency and costs of batch and service tasks.',
       'cloud, server, instance, price, comparison, spot, sparecores');
 
