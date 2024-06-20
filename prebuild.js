@@ -6,7 +6,6 @@ let dirPath = path.join(__dirname, './src/assets/articles');
 let files = fs.readdirSync(dirPath);
 files = files.filter(file => file.endsWith('.md'));
 
-// extract metadata from the files and sort by date
 let allArticles = files.map((file) => {
   const content = fs.readFileSync(path.join(dirPath, file), 'utf-8');
   const { data } = matter(content);
@@ -16,10 +15,6 @@ let allArticles = files.map((file) => {
   }
 });
 allArticles = allArticles.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-let featuredArticles = allArticles.filter((item) => item.tags?.includes('featured'));
-
-fs.writeFileSync('./src/assets/articles/featured.json', JSON.stringify(featuredArticles));
 fs.writeFileSync('./src/assets/articles/all.json', JSON.stringify(allArticles));
 
 /////////////////////////////////
