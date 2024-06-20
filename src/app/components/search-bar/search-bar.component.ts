@@ -28,6 +28,7 @@ export class SearchBarComponent implements OnInit, OnChanges{
   @Input() searchParameters: any[] = [];
   @Input() filterCategories: any[] = [];
   @Input() selectedCurrency: any | null = null;
+  @Input() isPriceSearch = false;
 
   @Output() searchChanged = new EventEmitter<any>();
 
@@ -372,22 +373,26 @@ export class SearchBarComponent implements OnInit, OnChanges{
     this.modalSearch?.hide();
   }
 
-  submitFreetextSearch() {
+  async submitFreetextSearch() {
     this.modalSubmitted = true;
     this.modalResponse = null;
 
     if(this.freetextSearchInput) {
-      this.keeperAPI.parsePromptforServers({text:this.freetextSearchInput}).then(response => {
+      try {
+        let response = this.isPriceSearch ?
+          await this.keeperAPI.parsePromptforServerPrices({text:this.freetextSearchInput}) :
+          await this.keeperAPI.parsePromptforServers({text:this.freetextSearchInput});
+
         this.modalResponse = response.body;
         this.modalResponseStr = [];
         Object.keys(response.body).forEach((key) => {
           this.modalResponseStr.push(key + ': ' + response.body[key]);
         });
-      }).catch(err => {
+      } catch(err) {
         console.error(err);
-      }).finally(() => {
+      } finally {
         this.modalSubmitted = false;
-      });
+      }
     }
   }
 
