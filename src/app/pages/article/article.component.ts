@@ -42,10 +42,8 @@ export class ArticleComponent implements OnInit {
   ngOnInit() {
     this.route.params.subscribe(params => {
 
-      const category = 'featured';
       const id = params['id'];
-
-      this.articleHandler.getArticle(category, id).then((file: any) => {
+      this.articleHandler.getArticle(id).then((file: any) => {
 
         const { data, content } = matter(file);
 
