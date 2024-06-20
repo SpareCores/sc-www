@@ -2,9 +2,9 @@ const fs = require('fs');
 const path = require('path');
 const matter = require('gray-matter');
 
-// list all items in the directory and generate a json file to be used in the app
-let dirPath = path.join(__dirname, './src/assets/articles/featured');
+let dirPath = path.join(__dirname, './src/assets/articles');
 let files = fs.readdirSync(dirPath);
+files = files.filter(file => file.endsWith('.md'));
 
 // extract metadata from the files and sort by date
 let allArticles = files.map((file) => {
