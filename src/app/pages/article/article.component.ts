@@ -57,7 +57,7 @@ export class ArticleComponent implements OnInit {
           { name: this.articleMeta.title, url: `/article/${id}` }
         ];
 
-        this.SEOHandler.updateTitleAndMetaTags(this.articleMeta.title, this.articleMeta.teaser, `Article, tutorial`);
+        this.SEOHandler.updateTitleAndMetaTags(this.articleMeta.title, this.articleMeta.teaser, this.articleMeta.tags.join(","));
 
         if(isPlatformBrowser(this.platformId)) {
           // Wait for the articleDiv to be rendered

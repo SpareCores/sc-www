@@ -48,7 +48,10 @@ export class ArticlesComponent implements OnInit {
         );
       }
 
-      this.SEOHandler.updateTitleAndMetaTags(`${title} Articles - SpareCores`, `View all ${title} articles on SpareCores.`, `Server hosting articles, guides, tutorials.`);
+      this.SEOHandler.updateTitleAndMetaTags(
+        `${title} Articles - SpareCores`, `View all ${title} articles on SpareCores.`,
+        (category.length ? category + ' ' : '') + `blog posts, articles, guides, tutorials`
+      );
 
     });
 
