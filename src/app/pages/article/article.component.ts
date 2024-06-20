@@ -48,7 +48,8 @@ export class ArticleComponent implements OnInit {
         const { data, content } = matter(file);
 
         this.articleMeta = data;
-        this.articleBody = this.domSanitizer.bypassSecurityTrustHtml(this.markdownService.parse(content) as string);
+        this.articleBody = this.domSanitizer.bypassSecurityTrustHtml(
+          this.markdownService.parse(content, {disableSanitizer: true}) as string);
 
         this.breadcrumbs = [
           { name: 'Home', url: '/' },
