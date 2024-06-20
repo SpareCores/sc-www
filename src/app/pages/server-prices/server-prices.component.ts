@@ -347,6 +347,9 @@ export class ServerPricesComponent implements OnInit {
     if(this.orderBy && this.orderDir) {
       queryParams.order_by = this.orderBy;
       queryParams.order_dir = this.orderDir;
+    } else {
+      delete queryParams.order_by;
+      delete queryParams.order_dir;
     }
 
     if(this.selectedCurrency.slug !== 'USD') {
