@@ -1,12 +1,11 @@
 import { Component, HostBinding, Inject, PLATFORM_ID, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { KeeperAPIService } from '../../services/keeper-api.service';
-import { OrderDir, SearchServersServersGetParams, ServerPKs, ServerPriceWithPKs } from '../../../../sdk/data-contracts';
-import { Subject, debounceTime } from 'rxjs';
+import { OrderDir, ServerPKs, ServerPriceWithPKs } from '../../../../sdk/data-contracts';
 import { encodeQueryParams } from '../../tools/queryParamFunctions';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Dropdown, DropdownOptions, Modal, ModalOptions } from 'flowbite';
+import { Dropdown, DropdownOptions, ModalOptions } from 'flowbite';
 import { StorageHandlerService } from '../../services/storage-handler.service';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { FormsModule } from '@angular/forms';
@@ -61,11 +60,6 @@ const options: DropdownOptions = {
   delay: 300
 };
 
-const optionsModal: ModalOptions = {
-  backdropClasses:
-      'bg-gray-900/50 fixed inset-0 z-40',
-  closable: true,
-};
 
 @Component({
   selector: 'app-server-listing',
