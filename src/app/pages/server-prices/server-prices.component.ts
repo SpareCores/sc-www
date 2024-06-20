@@ -335,6 +335,11 @@ export class ServerPricesComponent implements OnInit {
   }
 
   searchBarChanged(event: any) {
+    this.page = 1;
+    this.searchOptionsChanged(event);
+  }
+
+  searchOptionsChanged(event: any) {
     const queryObject: any = event;
 
     let queryParams: any = queryObject;
@@ -418,7 +423,7 @@ export class ServerPricesComponent implements OnInit {
       this.orderDir = OrderDir.Desc;
     }
 
-    this.searchBarChanged(this.query);
+    this.searchOptionsChanged(this.query);
   }
 
   getOrderingIcon(column: TableColumn) {
@@ -493,14 +498,14 @@ export class ServerPricesComponent implements OnInit {
   selectCurrency(currency: any) {
     this.selectedCurrency = currency;
 
-    this.searchBarChanged(this.query);
+    this.searchOptionsChanged(this.query);
   }
 
   selectAllocation(allocation: any) {
     this.allocation = allocation;
     this.page = 1;
 
-    this.searchBarChanged(this.query);
+    this.searchOptionsChanged(this.query);
   }
 
   selectPageSize(limit: number) {
@@ -509,7 +514,7 @@ export class ServerPricesComponent implements OnInit {
 
     window.scrollTo(0, 0);
 
-    this.searchBarChanged(this.query);
+    this.searchOptionsChanged(this.query);
   }
 
   getField(item: ServerPriceWithPKs, field: string) {
