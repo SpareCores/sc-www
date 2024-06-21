@@ -11,6 +11,7 @@ import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
 import { CountryIdtoNamePipe } from '../../pipes/country-idto-name.pipe';
 import { SearchBarComponent } from '../../components/search-bar/search-bar.component';
+import { PaginationComponent } from '../../components/pagination/pagination.component';
 
 export type TableColumn = {
   name: string;
@@ -60,7 +61,7 @@ const options: DropdownOptions = {
 @Component({
   selector: 'app-server-prices',
   standalone: true,
-  imports: [CommonModule, FormsModule, BreadcrumbsComponent, LucideAngularModule, CountryIdtoNamePipe, RouterModule, SearchBarComponent],
+  imports: [CommonModule, FormsModule, BreadcrumbsComponent, LucideAngularModule, CountryIdtoNamePipe, RouterModule, SearchBarComponent, PaginationComponent],
   templateUrl: './server-prices.component.html',
   styleUrl: './server-prices.component.scss'
 })
@@ -524,15 +525,7 @@ export class ServerPricesComponent implements OnInit {
     return field.split('.').reduce((obj, key) => (obj && (obj as any)[key]) ? (obj as any)[key] : undefined, item);
   }
 
-  possiblePages() {
-    // get numbers in array from min(page-2, 1) to page+2
-    const min = Math.max(this.page - 1, 1);
-    const max = Math.min(this.page + 1, this.totalPages);
-    return Array.from({length: max - min + 1}, (_, i) => i + min);
-  }
-
-  getQueryObjectForPage(pageTarget: number) {
-    const page = Math.max(pageTarget, 1);
+  getQueryObjectBase() {
     const paramObject = JSON.parse(JSON.stringify(this.query));
 
     if(this.orderBy && this.orderDir) {
@@ -547,8 +540,6 @@ export class ServerPricesComponent implements OnInit {
     if(this.allocation.slug) {
       paramObject.allocation = this.allocation.slug;
     }
-
-    paramObject.page = page;
 
     if(this.limit !== 25) {
       paramObject.limit = this.limit;

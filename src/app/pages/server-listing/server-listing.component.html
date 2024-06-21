@@ -215,61 +215,14 @@
                 </button>
                 <span class="text-white" > items per page</span>
               </div>
-              <div class="flex justify-end gap-4">
-                <a
-                  *ngIf="page > 1"
-                  routerLink="/servers" [queryParams]="getQueryObjectForPage(this.page - 1)"
-                  class="flex justify-center bg-transparent text-white py-2 px-4 w-10 rounded-lg font-bold hover:bg-emerald-400"
-                  data-ph-capture-attribute-sc-event="server listing paginate"
-                  data-ph-capture-attribute-pagination-target="prev">
-                  <lucide-icon name="chevron-left"></lucide-icon>
-                </a>
-                <ng-container *ngIf="page > 2">
-                  <a
-                    routerLink="/servers" [queryParams]="getQueryObjectForPage(1)"
-                    class="text-white py-2 px-4 rounded-lg font-bold hover:bg-emerald-400"
-                    data-ph-capture-attribute-sc-event="server listing paginate"
-                    data-ph-capture-attribute-pagination-target="first">
-                    1
-                  </a>
-                  <button *ngIf="page > 3"
-                    class="text-white py-2 px-4 rounded-lg font-bold">
-                    ...
-                  </button>
-                </ng-container>
-                <a
-                  class="text-white py-2 px-4 rounded-lg font-bold hover:bg-emerald-400"
-                  [ngClass]="{
-                    'bg-emerald-400': item === this.page,
-                    'bg-transparent': item !== this.page
-                  }"
-                  *ngFor="let item of possiblePages(); let i = index"
-                  data-ph-capture-attribute-sc-event="server listing paginate"
-                  [attr.data-ph-capture-attribute-pagination-target]="i"
-                  routerLink="/servers" [queryParams]="getQueryObjectForPage(item)">
-                  {{item}}
-                </a>
-                <ng-container *ngIf="totalPages > (page + 3)">
-                  <button
-                    class="text-white py-2 px-4 rounded-lg font-bold">
-                    ...
-                  </button>
-                  <a
-                    routerLink="/servers" [queryParams]="getQueryObjectForPage(totalPages)"
-                    class="text-white py-2 px-4 rounded-lg font-bold hover:bg-emerald-400"
-                    data-ph-capture-attribute-sc-event="server listing paginate"
-                    data-ph-capture-attribute-pagination-target="last">
-                    {{totalPages}}
-                  </a>
-                </ng-container>
-                <a
-                *ngIf="page < totalPages"
-                  routerLink="/servers" [queryParams]="getQueryObjectForPage(this.page + 1)"
-                  class="flex justify-center bg-transparent text-white py-2 px-4 w-10 rounded-lg font-bold hover:bg-emerald-400"
-                  data-ph-capture-attribute-sc-event="server listing paginate"
-                  data-ph-capture-attribute-pagination-target="next">
-                  <lucide-icon name="chevron-right"></lucide-icon>
-                </a>
+              <div>
+                <app-pagination
+                  baseURL="/servers"
+                  [currentPage]="page"
+                  [totalPages]="totalPages"
+                  [baseQueryParams]="getQueryObjectBase()"
+                  >
+                </app-pagination>
               </div>
             </div>
           </div>
