@@ -402,8 +402,6 @@ export class SearchBarComponent implements OnInit, OnChanges{
     tooltip.style.left = `${el.target.getBoundingClientRect().right + 5}px`;
     tooltip.style.top = `${el.target.getBoundingClientRect().top - 5}px`;
 
-    console.log(el.target.getBoundingClientRect().right, el.target.getBoundingClientRect().top);
-
     tooltip.style.display = 'block';
     tooltip.style.opacity = '1';
 
