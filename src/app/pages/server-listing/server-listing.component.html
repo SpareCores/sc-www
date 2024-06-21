@@ -5,14 +5,14 @@
 
     <div class="flex flex-col gap-4 my-8">
       <div class="flex gap-4 items-center w-full justify-between">
-        <h1 class="text-white font-bold text-3xl">Cloud Compute Resources listing</h1>
+        <h1 class="text-white font-bold text-3xl">Cloud Compute Resources</h1>
         <button class="btn-primary py-2 px-3 flex gap-1 items-center" (click)="clipboardURL($event)">
           Share
           <lucide-icon name="{{clipboardIcon}}" size="16" class="ml-2"></lucide-icon>
         </button>
       </div>
       <div class="text-white text-xl pr-16">
-        Explore, search and evaluate cloud compute resources and pricing in the table below. This comprehensive comparison includes diverse attributes like CPU count, detailed processor information, memory, GPU, storage, network speed and amount, available operating systems, and pricing models such as spot and on-demand. Use the sidebar for filtering the results, or enter your phrase in the “Search prompt” bar.
+        Explore, search, and evaluate the supported cloud compute resources in the table below. This comprehensive comparison includes diverse attributes such as CPU count, detailed processor information, memory, GPU, storage, network speed and capacity, available operating systems. Use the sidebar to filter the results, or enter your freetext query in the “Search prompt” bar. You can also compare servers by selecting at least two rows using the checkboxes.
       </div>
     </div>
 
@@ -21,133 +21,17 @@
         [ngClass]="{
           'collapsed': isCollapsed
         }">
-        <div class="top overflow-hidden bg-secondary">
-          <button
-            class="w-full bg-emerald-400 text-white py-3 rounded-lg font-bold"
-            data-ph-capture-attribute-sc-event="server listing search prompt open"
-            data-ph-capture-attribute-server-listing-search-prompt-action="open"
-            (click)="openSearchPrompt()">
-            Search Prompt
-          </button>
-        </div>
         <div class="collapser bg-secondary" (click)="toggleCollapse()" tabindex="0"
              data-ph-capture-attribute-sc-event="server listing toggle sidebar">
           <lucide-icon name="chevron-left" class="h-6 w-6 text-emerald-400"></lucide-icon>
         </div>
-        <div class="filters overflow-hidden bg-secondary">
-          <div class="mx-2 p-3 border-b border-gray-200 " *ngFor="let item of filterCategories" >
-            <div class="flex justify-between cursor-pointer" (click)="toggleCategory(item)" tabindex="0">
-              <div class="text-white flex gap-2 items-center">
-                <lucide-icon name="{{item.icon}}" class="h-4 w-4 text-white"></lucide-icon>
-                <div class="text-sm">{{item.name}}</div>
-              </div>
-              <div>
-                <lucide-icon name="chevron-down" class="h-4 w-4 text-white"></lucide-icon>
-              </div>
-            </div>
-            <div *ngIf="!item.collapsed" class="pt-4">
-              <div *ngFor="let parameter of getParametersByCategory(item.category_id)" >
-                <div *ngIf="getParameterType(parameter) !== 'checkbox'" class="flex gap-2 items-center">
-                  <div class="font-bold text-emerald-400 text-sm">{{parameter.schema.title}}</div>
-                  <lucide-icon
-                    *ngIf="parameter.schema.description"
-                    name="info"
-                    class="h-4 w-4 text-gray-200"
-                    (mouseenter)="showTooltip($event, parameter.schema.description)"
-                    (mouseleave)="hideTooltip()">
-                  </lucide-icon>
-                </div>
-                <div *ngIf="getParameterType(parameter) === 'range'" class="mb-4 mt-4" >
-                  <div class="text-white text-sm" *ngIf="parameter.modelValue">{{parameter.modelValue}} {{parameter.schema.unit}}</div>
-                  <input id="filter_range_{{parameter.name}}" type="range"
-                         min="{{parameter.schema.minimum}}" max="{{parameter.schema.maximum}}" step="{{getStep(parameter)}}"
-                         data-ph-capture-attribute-sc-event="server listing filter"
-                         data-ph-capture-attribute-server-listing-filter-type="range"
-                         [attr.data-ph-capture-attribute-server-listing-filter-id]="parameter.name"
-                         [attr.data-ph-capture-attribute-server-listing-filter-category]="item.category_id"
-                         [(ngModel)]="parameter.modelValue"
-                         (ngModelChange)="valueChanged()"
-                         class="w-full h-2 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm">
-                </div>
-                <div *ngIf="getParameterType(parameter) === 'number'" class="mb-4 mt-4 relative" >
-                  <input type="number" step="{{getStep(parameter)}}"
-                         id="filter_number_{{parameter.name}}"
-                         data-ph-capture-attribute-sc-event="server listing filter"
-                         data-ph-capture-attribute-server-listing-filter-type="number"
-                         [attr.data-ph-capture-attribute-server-listing-filter-id]="parameter.name"
-                         [attr.data-ph-capture-attribute-server-listing-filter-category]="item.category_id"
-                         [(ngModel)]="parameter.modelValue"
-                         (ngModelChange)="valueChanged()"
-                         min="{{parameter.schema.minimum || 0}}"
-                         class="w-full h-8 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm pr-8">
-                  <span *ngIf="parameter.schema.unit" class="unit text-gray-600">{{parameter.schema.unit}}</span>
-                </div>
-                <div *ngIf="getParameterType(parameter) === 'text'" class="mb-4 mt-4" >
-                  <input type="text"
-                         id="filter_text_{{parameter.name}}"
-                         data-ph-capture-attribute-sc-event="server listing filter"
-                         data-ph-capture-attribute-server-listing-filter-type="text"
-                         [attr.data-ph-capture-attribute-server-listing-filter-id]="parameter.name"
-                         [attr.data-ph-capture-attribute-server-listing-filter-category]="item.category_id"
-                         [(ngModel)]="parameter.modelValue"
-                         (ngModelChange)="valueChanged()"
-                         class="w-full h-8 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm">
-                </div>
-                <div *ngIf="getParameterType(parameter) === 'checkbox'" class="flex gap-2 mb-4 mt-4" >
-                  <input type="checkbox"
-                         id="filter_checkbox_{{parameter.name}}"
-                         data-ph-capture-attribute-sc-event="server listing filter"
-                         data-ph-capture-attribute-server-listing-filter-type="checkbox"
-                         [attr.data-ph-capture-attribute-server-listing-filter-id]="parameter.name"
-                         [attr.data-ph-capture-attribute-server-listing-filter-category]="item.category_id"
-                         [(ngModel)]="parameter.modelValue"
-                         (ngModelChange)="filterServers()"
-                         class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
-                  <div class="flex gap-2 items-center">
-                    <div class="text-white text-sm">
-                      {{parameter.schema.title}}
-                    </div>
-                    <lucide-icon
-                      *ngIf="parameter.schema.description"
-                      name="info"
-                      class="h-3 w-3 text-gray-200"
-                      (mouseenter)="showTooltip($event, parameter.schema.description)"
-                      (mouseleave)="hideTooltip()">
-                    </lucide-icon>
-                  </div>
-                </div>
-                <div *ngIf="getParameterType(parameter) === 'enumArray'" class="flex flex-col gap-2 mb-4 mt-4" >
-                  <div *ngFor="let enum of parameter.schema.enum" class="flex items-center gap-1">
-                    <input type="checkbox"
-                           id="filter_enum_{{parameter.name}}"
-                           data-ph-capture-attribute-sc-event="server listing filter"
-                           data-ph-capture-attribute-server-listing-filter-type="checkbox"
-                           [attr.data-ph-capture-attribute-server-listing-filter-id]="parameter.name"
-                           [attr.data-ph-capture-attribute-server-listing-filter-category]="item.category_id"
-                           [ngModel]="isEnumSelected(parameter, enum)"
-                           (click)="selectEnumItem(parameter, enum)"
-                           class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
-                    <div class="text-white text-sm">{{enum?.value ? enum?.value : enum}}</div>
-                  </div>
-                </div>
-                <div *ngIf="getParameterType(parameter) === 'compliance_framework'" class="flex flex-col gap-2 mb-4 mt-4" >
-                  <div *ngFor="let enum of parameter.schema.enum" class="flex items-center gap-1">
-                    <input type="checkbox"
-                           id="filter_enum_{{parameter.name}}"
-                           data-ph-capture-attribute-sc-event="server listing filter"
-                           data-ph-capture-attribute-server-listing-filter-type="checkbox"
-                           [attr.data-ph-capture-attribute-server-listing-filter-id]="parameter.name"
-                           [attr.data-ph-capture-attribute-server-listing-filter-category]="item.category_id"
-                           [ngModel]="isEnumSelected(parameter, enum)"
-                           (click)="selectEnumItem(parameter, enum)"
-                           class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
-                    <div class="text-white text-sm">{{getComplianceFrameworkName(enum)}}</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+
+        <app-search-bar
+        [query]="query"
+        [filterCategories]="filterCategories"
+        [searchParameters]="searchParameters"
+        (searchChanged)="searchBarChanged($event)"
+        > </app-search-bar>
       </div>
       <div class=" list_holder flex flex-col gap-4"
           [ngClass]="{
@@ -333,6 +217,7 @@
               </div>
               <div class="flex justify-end gap-4">
                 <a
+                  *ngIf="page > 1"
                   routerLink="/servers" [queryParams]="getQueryObjectForPage(this.page - 1)"
                   class="flex justify-center bg-transparent text-white py-2 px-4 w-10 rounded-lg font-bold hover:bg-emerald-400"
                   data-ph-capture-attribute-sc-event="server listing paginate"
@@ -340,13 +225,13 @@
                   <lucide-icon name="chevron-left"></lucide-icon>
                 </a>
                 <ng-container *ngIf="page > 2">
-                  <button
+                  <a
+                    routerLink="/servers" [queryParams]="getQueryObjectForPage(1)"
                     class="text-white py-2 px-4 rounded-lg font-bold hover:bg-emerald-400"
                     data-ph-capture-attribute-sc-event="server listing paginate"
-                    data-ph-capture-attribute-pagination-target="first"
-                    (click)="gotoPage(1)">
+                    data-ph-capture-attribute-pagination-target="first">
                     1
-                  </button>
+                  </a>
                   <button *ngIf="page > 3"
                     class="text-white py-2 px-4 rounded-lg font-bold">
                     ...
@@ -369,15 +254,16 @@
                     class="text-white py-2 px-4 rounded-lg font-bold">
                     ...
                   </button>
-                  <button
+                  <a
+                    routerLink="/servers" [queryParams]="getQueryObjectForPage(totalPages)"
                     class="text-white py-2 px-4 rounded-lg font-bold hover:bg-emerald-400"
                     data-ph-capture-attribute-sc-event="server listing paginate"
-                    data-ph-capture-attribute-pagination-target="last"
-                    (click)="gotoPage(totalPages)">
+                    data-ph-capture-attribute-pagination-target="last">
                     {{totalPages}}
-                  </button>
+                  </a>
                 </ng-container>
                 <a
+                *ngIf="page < totalPages"
                   routerLink="/servers" [queryParams]="getQueryObjectForPage(this.page + 1)"
                   class="flex justify-center bg-transparent text-white py-2 px-4 w-10 rounded-lg font-bold hover:bg-emerald-400"
                   data-ph-capture-attribute-sc-event="server listing paginate"
@@ -436,71 +322,6 @@
       <div class="text-white text-sm">{{item.name}}</div>
     </li>
   </ul>
-</div>
-
-<!-- Large Modal -->
-<div id="large-modal"
-    tabindex="-1"
-    class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
-  <div class="relative w-full max-w-xl max-h-full">
-      <div class="relative bg-secondary rounded-lg shadow border border-solid border-emerald-400 " >
-          <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
-              <h3 class="text-xl font-medium text-white dark:text-white">
-                  Search Prompt
-              </h3>
-              <button type="button"
-                      data-ph-capture-attribute-sc-event="server listing search prompt close"
-                      data-ph-capture-attribute-server-listing-search-prompt-action="close"
-                      class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
-                      (click)="closeModal(false)">
-                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-                </svg>
-                <span class="sr-only">Close modal</span>
-              </button>
-          </div>
-          <div class="p-4 md:p-5 space-y-4 flex flex-col">
-              <p class="text-base leading-relaxed text-gray-200">
-                  Please type your server needs in free text and push submit.
-              </p>
-              <textarea
-                rows="4"
-                class="w-full accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm focus:ring-emerald-400 focus:border-emerald-400"
-                [(ngModel)]="freetextSearchInput">
-              </textarea>
-              <button
-                data-ph-capture-attribute-sc-event="server listing search prompt process"
-                data-ph-capture-attribute-server-listing-search-prompt-action="process"
-                class="text-white bg-emerald-400 hover:bg-emerald-500 focus:ring-0 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center "
-                (click)="submitFreetextSearch()"
-                [disabled]="modalSubmitted"
-                >
-                Submit
-              </button>
-              <div *ngIf="modalResponse">
-                <div class="text-white"> Suggested filter parameters </div>
-                <div class="text-white font-medium text-sm flex flex-col pl-2">
-                  <div *ngFor="let item of modalResponseStr" >
-                    {{item}}
-                  </div>
-                </div>
-              </div>
-          </div>
-          <div class="flex flex-col p-4 md:p-5 space-x-3 rtl:space-x-reverse border-t border-gray-200 rounded-b dark:border-gray-600">
-              <button
-                type="button"
-                data-ph-capture-attribute-sc-event="server listing search prompt confirm"
-                data-ph-capture-attribute-server-listing-search-prompt-action="confirm"
-                [disabled]="!modalResponse"
-                class="text-white bg-emerald-400 font-medium rounded-lg text-sm px-5 py-2.5 text-center
-                 hover:bg-emerald-500 focus:ring-0 focus:outline-none
-                 disabled:bg-gray-400 "
-                (click)="closeModal(true)">
-                  Confirm
-              </button>
-          </div>
-      </div>
-  </div>
 </div>
 
 <div id="tooltipDefault"

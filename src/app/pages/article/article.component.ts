@@ -22,7 +22,8 @@ export class ArticleComponent implements OnInit {
   @ViewChild('articleDiv') articleDiv!: ElementRef;
 
   breadcrumbs: BreadcrumbSegment[] = [
-
+    { name: 'Home', url: '/' },
+    { name: 'Articles', url: `/articles` }
   ];
 
   articleMeta: any;

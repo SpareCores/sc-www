@@ -1,0 +1,26 @@
+
+.search_bar_content {
+  width: 100%;
+
+  .top {
+    height: 4rem;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    padding: 0.5rem;
+    border-top: 1px solid #34D399;
+  }
+
+  .filters {
+    border-right: 1px solid #34D399;
+    padding-bottom: 1rem;
+    height: calc(100% - 4rem);
+  }
+
+  .unit {
+    position: absolute;
+    right: 0.5rem;
+    top: 2.25rem;
+    transform: translateY(-2rem);
+  }
+}

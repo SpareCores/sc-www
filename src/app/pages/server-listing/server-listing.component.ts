@@ -1,17 +1,17 @@
 import { Component, HostBinding, Inject, PLATFORM_ID, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { KeeperAPIService } from '../../services/keeper-api.service';
-import { OrderDir, SearchServersServersGetParams, ServerPKs, ServerPriceWithPKs } from '../../../../sdk/data-contracts';
-import { Subject, debounceTime } from 'rxjs';
+import { OrderDir, ServerPKs, ServerPriceWithPKs } from '../../../../sdk/data-contracts';
 import { encodeQueryParams } from '../../tools/queryParamFunctions';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Dropdown, DropdownOptions, Modal, ModalOptions } from 'flowbite';
+import { Dropdown, DropdownOptions } from 'flowbite';
 import { StorageHandlerService } from '../../services/storage-handler.service';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
 import { CountryIdtoNamePipe } from '../../pipes/country-idto-name.pipe';
+import { SearchBarComponent } from '../../components/search-bar/search-bar.component';
 
 export type TableColumn = {
   name: string;
@@ -60,16 +60,11 @@ const options: DropdownOptions = {
   delay: 300
 };
 
-const optionsModal: ModalOptions = {
-  backdropClasses:
-      'bg-gray-900/50 fixed inset-0 z-40',
-  closable: true,
-};
 
 @Component({
   selector: 'app-server-listing',
   standalone: true,
-  imports: [CommonModule, FormsModule, BreadcrumbsComponent, LucideAngularModule, CountryIdtoNamePipe, RouterModule],
+  imports: [CommonModule, FormsModule, BreadcrumbsComponent, LucideAngularModule, CountryIdtoNamePipe, RouterModule, SearchBarComponent],
   templateUrl: './server-listing.component.html',
   styleUrl: './server-listing.component.scss',
 })
@@ -103,7 +98,7 @@ export class ServerListingComponent implements OnInit {
       orderField: 'score',
       info: "Performance benchmark score using stress-ng's div16 method (doing 16 bit unsigned integer divisions for 20 seconds): simulating CPU heavy workload that scales well on any number of (v)CPUs. The score/price value shows the div16 performance measured for 1 USD/hour."
     },
-    { name: 'MEMORY', show: true, type: 'memory', orderField: 'memory' },
+    { name: 'MEMORY', show: true, type: 'memory', orderField: 'memory_amount' },
     { name: 'STORAGE', show: true, type: 'storage', orderField: 'storage_size' },
     { name: 'STORAGE TYPE', show: false, type: 'text', key: 'server.storage_type' },
     { name: 'GPUs', show: true, type: 'gpu', orderField: 'server.gpu_count' },
@@ -127,8 +122,7 @@ export class ServerListingComponent implements OnInit {
 
   openApiJson: any = require('../../../../sdk/openapi.json');
   searchParameters: any;
-
-  valueChangeDebouncer: Subject<number> = new Subject<number>();
+  query: any= {};
 
   dropdownColumn: any;
   dropdownPage: any;
@@ -167,25 +161,13 @@ export class ServerListingComponent implements OnInit {
 
     this.SEOHandler.updateThumbnail('https://sparecores.com/assets/images/media/server_list_image.png');
 
+    const parameters = this.openApiJson.paths['/servers'].get.parameters || [];
+    this.searchParameters = parameters;
+
     this.route.queryParams.subscribe((params: Params) => {
-      const query: any = params;
-      const parameters = this.openApiJson.paths['/servers'].get.parameters || [];
-      this.searchParameters = parameters.map((item: any) => {
-        let value = item.schema.default || null;
+      const query: any = JSON.parse(JSON.stringify(params || '{}'));
 
-        // if type is a string try split by ,
-        if(typeof query[item.name] === 'string' ) {
-          value = query[item.name].split(',');
-        }
-
-        if(query[item.name]) {
-          if(this.filterCategories.find((column) => column.category_id === item.schema.category_id)) {
-            this.filterCategories.find((column) => column.category_id === item.schema.category_id)!.collapsed = false;
-          }
-        }
-
-        return {...item, modelValue: value};
-      });
+      this.query = query;
 
       if(query.order_by && query.order_dir) {
         this.orderBy = query.order_by;
@@ -200,8 +182,6 @@ export class ServerListingComponent implements OnInit {
         this.limit = parseInt(query.limit);
       }
 
-      this.loadVendors();
-
       const tableColumnsStr = this.storageHandler.get('serverListTableColumns');
       if(tableColumnsStr) {
         const tableColumns: string[] = JSON.parse(tableColumnsStr);
@@ -212,12 +192,7 @@ export class ServerListingComponent implements OnInit {
 
       this.refreshColumns(false);
 
-      this.filterServers(false);
-    });
-
-    this.valueChangeDebouncer.pipe(debounceTime(300)).subscribe(() => {
-      this.page = 1;
-      this.filterServers();
+      this._searchServers(true);
     });
 
     this.keeperAPI.getComplianceFrameworks().then((response: any) => {
@@ -251,14 +226,6 @@ export class ServerListingComponent implements OnInit {
           override: true
         }
       );
-
-      // set the modal menu element
-      const targetElModal = document.getElementById('large-modal');
-
-      this.modalSearch = new Modal(targetElModal, optionsModal,  {
-        id: 'large-modal',
-        override: true
-      });
     }
 
   }
@@ -301,70 +268,59 @@ export class ServerListingComponent implements OnInit {
     return this.searchParameters?.filter((param: any) => param.schema?.category_id === category);
   }
 
-  getParameterType(parameter: any) {
-    const type = parameter.schema.type || parameter.schema.anyOf?.find((item: any)  => item.type !== 'null')?.type || 'text';
-    const name = parameter.name;
-
-    if(name === 'countries') {
-      return 'country';
-    }
-
-    if(name === 'regions') {
-      return 'regions';
-    }
-
-    if(name === 'compliance_framework') {
-      return 'compliance_framework';
-    }
-
-    if((type === 'integer' || type === 'number') && parameter.schema.minimum && parameter.schema.maximum) {
-      return 'range';
-    }
-
-    if(type === 'integer' || type === 'number') {
-      if(parameter.schema.category_id === 'price')
-        return 'price';
-      else
-        return 'number';
-    }
-
-    if(type === 'boolean') {
-      return 'checkbox';
-    }
-
-    if(type === 'array' && parameter.schema.enum) {
-      return 'enumArray';
-    }
-
-    return 'text';
+  searchBarChanged(event: any) {
+    this.page = 1;
+    this.searchOptionsChanged(event);
   }
 
-  getStep(parameter: any) {
-    return parameter.schema.step || 1;
-  }
+  searchOptionsChanged(event: any) {
+    const queryObject: any = event;
 
-  filterServers(updateURL = true, updateTotalCount = true) {
-    const queryObject: SearchServersServersGetParams = this.getQueryObject() || {};
-
-    if(updateURL) {
-      this.updateQueryParams(queryObject);
-    }
-
-    queryObject.limit = this.limit;
-    queryObject.page = this.page;
+    let queryParams: any = queryObject;
 
     if(this.orderBy && this.orderDir) {
-      queryObject.order_by = this.orderBy;
-      queryObject.order_dir = this.orderDir;
+      queryParams.order_by = this.orderBy;
+      queryParams.order_dir = this.orderDir;
+    } else {
+      delete queryParams.order_by;
+      delete queryParams.order_dir;
     }
 
+    if(this.page > 1) {
+      queryParams.page = this.page;
+    }
+
+    if(this.limit !== 25) {
+      queryParams.limit = this.limit;
+    }
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: queryParams
+    });
+  }
+
+  private _searchServers(updateTotalCount = true) {
     this.isLoading = true;
 
+    let query = JSON.parse(JSON.stringify(this.query));
+
     if(updateTotalCount) {
-      queryObject.add_total_count_header = true;
+      query.add_total_count_header = true;
     }
 
-    this.keeperAPI.searchServers(queryObject).then(servers => {
+    if(this.page > 1) {
+      query.page = this.page;
+    }
+
+    query.limit = this.limit;
+
+    if(this.orderBy && this.orderDir) {
+      query.order_by = this.orderBy;
+      query.order_dir = this.orderDir;
+    }
+
+    this.keeperAPI.searchServers(query).then(servers => {
       this.servers = servers?.body;
 
       // set stored selected state
@@ -381,32 +337,6 @@ export class ServerListingComponent implements OnInit {
     }).finally(() => {
       this.isLoading = false;
     });
-  }
-
-  valueChanged() {
-    this.valueChangeDebouncer.next(0);
-  }
-
-  isEnumSelected(param: any, valueOrObj: any) {
-    const value = typeof valueOrObj === 'string' ? valueOrObj : valueOrObj.key;
-    return param.modelValue && param.modelValue.indexOf(value) !== -1;
-  }
-
-  selectEnumItem(param: any, valueOrObj: any) {
-    if(!param.modelValue) {
-      param.modelValue = [];
-    }
-
-    const value = typeof valueOrObj === 'string' ? valueOrObj : valueOrObj.key;
-
-    const index = param.modelValue.indexOf(value);
-    if(index !== -1) {
-      param.modelValue.splice(index, 1);
-    } else {
-      param.modelValue.push(value);
-    }
-
-    this.valueChanged();
   }
 
   toggleOrdering(column: TableColumn) {
@@ -426,7 +356,7 @@ export class ServerListingComponent implements OnInit {
       this.orderDir = OrderDir.Desc;
     }
 
-    this.filterServers();
+    this.searchOptionsChanged(this.query);
   }
 
   getOrderingIcon(column: TableColumn) {
@@ -440,8 +370,19 @@ export class ServerListingComponent implements OnInit {
 
   getQueryObjectForPage(pageTarget: number) {
     const page = Math.max(pageTarget, 1);
-    const paramObject = this.getQueryObject();
+    const paramObject = JSON.parse(JSON.stringify(this.query));
+
+    if(this.orderBy && this.orderDir) {
+      paramObject.order_by = this.orderBy;
+      paramObject.order_dir = this.orderDir;
+    }
+
     paramObject.page = page;
+
+    if(this.limit !== 25) {
+      paramObject.limit = this.limit;
+    }
+
     return paramObject;
   }
 
@@ -491,7 +432,7 @@ export class ServerListingComponent implements OnInit {
   selectPageSize(limit: number) {
     this.limit = limit;
     this.page = 1;
-    this.filterServers();
+    this.searchOptionsChanged(this.query);
 
     this.dropdownPage?.hide();
     // scroll to top
@@ -506,21 +447,6 @@ export class ServerListingComponent implements OnInit {
     return this.complianceFrameworks.find((item) => item.compliance_framework_id === id)?.abbreviation || id;
   }
 
-  prevPage() {
-    this.page = Math.max(this.page - 1, 1);
-    this.gotoPage(this.page);
-  }
-
-  nextPage() {
-   this.gotoPage(this.page + 1);
-  }
-
-  gotoPage(page: number) {
-    if(this.page === page) return;
-    this.page = page;
-    this.filterServers(true, false);
-  }
-
   possiblePages() {
     // get numbers in array from min(page-2, 1) to page+2
     const min = Math.max(this.page - 1, 1);
@@ -528,64 +454,6 @@ export class ServerListingComponent implements OnInit {
     return Array.from({length: max - min + 1}, (_, i) => i + min);
   }
 
-  openSearchPrompt() {
-    this.modalSearch?.show();
-  }
-
-  closeModal(confirm: boolean) {
-    if(confirm) {
-
-      this.searchParameters.forEach((param: any) => {
-        param.modelValue = param.schema.default;
-      });
-
-      Object.keys(this.modalResponse).forEach((key) => {
-        const param = this.searchParameters.find((param: any) => param.name === key);
-        if(param) {
-          param.modelValue = this.modalResponse[key];
-        }
-      });
-
-      this.filterServers();
-
-      this.freetextSearchInput = '';
-      this.modalResponse = null;
-    }
-
-    this.modalSearch?.hide();
-  }
-
-  submitFreetextSearch() {
-    this.modalSubmitted = true;
-    this.modalResponse = null;
-
-    if(this.freetextSearchInput) {
-      this.keeperAPI.parsePromptforServers({text:this.freetextSearchInput}).then(response => {
-        this.modalResponse = response.body;
-        this.modalResponseStr = [];
-        Object.keys(response.body).forEach((key) => {
-          this.modalResponseStr.push(key + ': ' + response.body[key]);
-        });
-      }).catch(err => {
-        console.error(err);
-      }).finally(() => {
-        this.modalSubmitted = false;
-      });
-    }
-  }
-
-  collapseItem(continent: ContinentMetadata | RegionVendorMetadata) {
-    continent.collapsed = !continent.collapsed;
-  }
-
-  loadVendors() {
-    Promise.all([
-      this.keeperAPI.getVendors()]).then((responses) => {
-      if(responses[0]?.body) {
-        this.vendorMetadata = responses[0].body;
-      }
-    });
-  }
 
   toggleCompare2(event: any, server: ServerPKs| any) {
     event.stopPropagation();
