@@ -48,6 +48,18 @@
   </url>
 
   <url>
+    <loc>https://sparecores.com/article/upcoming-conferences-2024-Q3</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.60</priority>
+  </url>
+
+  <url>
+    <loc>https://sparecores.com/article/berlin-buzzwords-2024</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.60</priority>
+  </url>
+
+  <url>
     <loc>https://sparecores.com/article/spot-instance-terminate-rates-per-az</loc>
     <changefreq>yearly</changefreq>
     <priority>0.60</priority>

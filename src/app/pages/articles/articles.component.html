@@ -3,7 +3,7 @@
     <app-breadcrumbs [segments]="breadcrumbs"></app-breadcrumbs>
 
     <div class="articles_holder flex flex-wrap mt-4 text-white">
-      <div class="w-full md:w-1/2 lg:w-1/4 flex flex-col gap-4 px-6 py-4" *ngFor="let item of featuredArticles">
+      <div class="w-full md:w-1/2 lg:w-1/4 flex flex-col gap-4 px-6 py-4" *ngFor="let item of articles">
         <app-article-card [article]="item"></app-article-card>
       </div>
     </div>

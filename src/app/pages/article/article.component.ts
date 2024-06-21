@@ -43,15 +43,14 @@ export class ArticleComponent implements OnInit {
   ngOnInit() {
     this.route.params.subscribe(params => {
 
-      const category = 'featured';
       const id = params['id'];
-
-      this.articleHandler.getArticle(category, id).then((file: any) => {
+      this.articleHandler.getArticle(id).then((file: any) => {
 
         const { data, content } = matter(file);
 
         this.articleMeta = data;
-        this.articleBody = this.domSanitizer.bypassSecurityTrustHtml(this.markdownService.parse(content) as string);
+        this.articleBody = this.domSanitizer.bypassSecurityTrustHtml(
+          this.markdownService.parse(content, {disableSanitizer: true}) as string);
 
         this.breadcrumbs = [
           { name: 'Home', url: '/' },
@@ -59,7 +58,7 @@ export class ArticleComponent implements OnInit {
           { name: this.articleMeta.title, url: `/article/${id}` }
         ];
 
-        this.SEOHandler.updateTitleAndMetaTags(this.articleMeta.title, this.articleMeta.teaser, `Article, tutorial`);
+        this.SEOHandler.updateTitleAndMetaTags(this.articleMeta.title, this.articleMeta.teaser, this.articleMeta.tags.join(","));
 
         if(isPlatformBrowser(this.platformId)) {
           // Wait for the articleDiv to be rendered
