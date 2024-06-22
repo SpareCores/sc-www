@@ -289,14 +289,14 @@ export class ServerDetailsComponent implements OnInit {
                 this.faqs.push(
                   {
                     question: `Are there any other sized servers in the ${this.serverDetails.family} server family?`,
-                    html: `Yes! In addition to the ${this.serverDetails.display_name} server, the ${this.serverDetails.family} server family includes ${this.similarByFamily.length} other sizes: ${this.similarByFamily.map((s) => this.serverUrl(s)).join(', ')}.`
+                    html: `Yes! In addition to the ${this.serverDetails.display_name} server, the ${this.serverDetails.family} server family includes ${this.similarByFamily.length} other sizes: ${this.similarByFamily.map((s) => this.serverUrl(s, true)).join(', ')}.`
                   });
               }
 
               this.faqs.push(
                 {
                   question: `What other servers offer similar performance to ${this.serverDetails.display_name}?`,
-                  html: `Looking at the number of vCPUs and GPUs, also the amount of memory, the following servers come with similar specs: ${this.similarByPerformance.map((s) => this.serverUrl(s)).join(', ')}.`
+                  html: `Looking at the number of vCPUs and GPUs, also the amount of memory, the following servers come with similar specs: ${this.similarByPerformance.map((s) => this.serverUrl(s, true)).join(', ')}.`
                 });
 
             }
@@ -419,10 +419,10 @@ export class ServerDetailsComponent implements OnInit {
     return `${(this.serverDetails.storage_size / 1000).toFixed(1)} TB`;
   }
 
-  serverUrl(server: Server): string {
+  serverUrl(server: Server, appendVendor: boolean = false): string {
     return(`<a class="underline decoration-dotted hover:text-gray-500"
       href="/server/${server.vendor_id}/${server.api_reference}">
-      ${server.display_name}</a>`)
+      ${server.display_name}${appendVendor ? " (" + server.vendor_id + ")" : ""}</a>`)
   }
 
   openBox(boxId: string) {
