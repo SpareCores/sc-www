@@ -241,7 +241,7 @@ export class ServerDetailsComponent implements OnInit {
             this.faqs.push(
               {
                 question: `How much does the ${this.serverDetails.display_name} server cost?`,
-                answer: `The pricing for ${this.serverDetails.display_name} servers starts at ${this.serverDetails.prices[0].price} ${this.serverDetails.prices[0].currency} per hour, but the actual price depends on the selected region, zone and server allocation method (e.g. on-demand versus spot pricing options). Currently, the maximum price stands at ${this.serverDetails.prices.slice(-1)[0].price}${this.serverDetails.prices.slice(-1)[0].currency}.`
+                answer: `The pricing for ${this.serverDetails.display_name} servers starts at ${this.serverDetails.prices[0].price} ${this.serverDetails.prices[0].currency} per hour, but the actual price depends on the selected region, zone and server allocation method (e.g. on-demand versus spot pricing options). Currently, the maximum price stands at ${this.serverDetails.prices.slice(-1)[0].price} ${this.serverDetails.prices.slice(-1)[0].currency}.`
               }
             );
           }
