@@ -41,6 +41,7 @@ const options: DropdownOptions = {
 export class ServerDetailsComponent implements OnInit {
 
   serverDetails!: ServerPKsWithPrices;
+  serverRegions: string[] = [];
 
   breadcrumbs: BreadcrumbSegment[] = [
     { name: 'Home', url: '/' },
@@ -155,6 +156,14 @@ export class ServerDetailsComponent implements OnInit {
 
         if(dataAll[2].body){
           this.serverDetails = dataAll[2].body as any;
+
+          // list all regions where the server is available
+          this.serverDetails.prices?.forEach((price: ServerPricePKs) => {
+              if(!this.serverRegions.includes(price.region.display_name)) {
+                this.serverRegions.push(price.region.display_name);
+              }
+            })
+
           this.breadcrumbs[2] =
             { name: this.serverDetails.display_name, url: '/server/' + this.serverDetails.vendor.vendor_id + '/' + this.serverDetails.api_reference };
 
@@ -257,6 +266,15 @@ export class ServerDetailsComponent implements OnInit {
               }
             );
 
+          if (this.serverRegions) {
+            this.faqs.push(
+              {
+                question: `Where is the ${this.serverDetails.display_name} server available?`,
+                html: `The ${this.serverDetails.display_name} server is available in ${this.serverRegions.length} regions: ${this.serverRegions.join(', ')}.`
+              }
+            );
+
+          }
           const keywords = this.title + ', ' + this.serverDetails.server_id + ', ' + this.serverDetails.vendor.vendor_id;
 
           this.SEOHandler.updateTitleAndMetaTags(this.title, this.description, keywords);
