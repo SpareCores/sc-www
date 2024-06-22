@@ -18,6 +18,7 @@ import { Chart } from 'chart.js';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ReduceUnitNamePipe } from '../../pipes/reduce-unit-name.pipe';
+import { CountryIdtoNamePipe } from '../../pipes/country-idto-name.pipe';
 
 Chart.register(annotationPlugin);
 
@@ -33,7 +34,7 @@ const options: DropdownOptions = {
 @Component({
   selector: 'app-server-details',
   standalone: true,
-  imports: [BreadcrumbsComponent, CommonModule, LucideAngularModule, FaqComponent, FormsModule, RouterModule, BaseChartDirective, ReduceUnitNamePipe],
+  imports: [BreadcrumbsComponent, CommonModule, LucideAngularModule, FaqComponent, FormsModule, RouterModule, BaseChartDirective, ReduceUnitNamePipe, CountryIdtoNamePipe],
   templateUrl: './server-details.component.html',
   styleUrl: './server-details.component.scss'
 })
@@ -138,6 +139,7 @@ export class ServerDetailsComponent implements OnInit {
   }
 
   ngOnInit() {
+    const countryIdtoNamePipe = new CountryIdtoNamePipe();
     this.route.params.subscribe(params => {
       const vendor = params['vendor'];
       const id = params['id'];
@@ -245,6 +247,15 @@ export class ServerDetailsComponent implements OnInit {
               }
             );
           }
+
+
+          this.faqs.push(
+              {
+                question: `Who is the provider of the ${this.serverDetails.display_name} server?`,
+                html: `The ${this.serverDetails.display_name} server is offered by ${this.serverDetails.vendor.name}, founded in ${this.serverDetails.vendor.founding_year}, headquartered in ${this.serverDetails.vendor.state}, ${countryIdtoNamePipe.transform(this.serverDetails.vendor.country_id)}. For more information, visit the <a href="${this.serverDetails.vendor.homepage}" target="_blank" rel="noopener" class="underline decoration-dotted hover:text-gray-500">${this.serverDetails.vendor.name} homepage</a>.`
+                // TODO add compliance frameworks implemented
+              }
+            );
 
           const keywords = this.title + ', ' + this.serverDetails.server_id + ', ' + this.serverDetails.vendor.vendor_id;
 
