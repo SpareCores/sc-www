@@ -408,15 +408,15 @@ export class ServerDetailsComponent implements OnInit {
 
   getMemory(memory: number | undefined = undefined) {
     const memoryAmount = memory || this.serverDetails.memory_amount || 0;
-    return ((memoryAmount) / 1024).toFixed((memoryAmount ? 0 : 1)) + 'GiB';
+    return ((memoryAmount) / 1024).toFixed((memoryAmount ? 0 : 1)) + ' GiB';
   }
 
   getStorage() {
-    if(!this.serverDetails.storage_size) return '0GB';
+    if(!this.serverDetails.storage_size) return '0 GB';
 
-    if(this.serverDetails.storage_size < 1000) return `${this.serverDetails.storage_size}GB`;
+    if(this.serverDetails.storage_size < 1000) return `${this.serverDetails.storage_size} GB`;
 
-    return `${(this.serverDetails.storage_size / 1000).toFixed(1)}TB`;
+    return `${(this.serverDetails.storage_size / 1000).toFixed(1)} TB`;
   }
 
   serverUrl(server: Server): string {
