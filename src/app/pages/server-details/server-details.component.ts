@@ -41,6 +41,7 @@ const options: DropdownOptions = {
 export class ServerDetailsComponent implements OnInit {
 
   serverDetails!: ServerPKsWithPrices;
+  serverZones: string[] = [];
   serverRegions: string[] = [];
 
   breadcrumbs: BreadcrumbSegment[] = [
@@ -159,10 +160,11 @@ export class ServerDetailsComponent implements OnInit {
 
           // list all regions where the server is available
           this.serverDetails.prices?.forEach((price: ServerPricePKs) => {
-              if(!this.serverRegions.includes(price.region.display_name)) {
-                this.serverRegions.push(price.region.display_name);
-              }
-            })
+            this.serverZones.push(price.zone.display_name);
+            if(!this.serverRegions.includes(price.region.display_name)) {
+              this.serverRegions.push(price.region.display_name);
+            }
+          })
 
           this.breadcrumbs[2] =
             { name: this.serverDetails.display_name, url: '/server/' + this.serverDetails.vendor.vendor_id + '/' + this.serverDetails.api_reference };
@@ -270,7 +272,7 @@ export class ServerDetailsComponent implements OnInit {
             this.faqs.push(
               {
                 question: `Where is the ${this.serverDetails.display_name} server available?`,
-                html: `The ${this.serverDetails.display_name} server is available in ${this.serverRegions.length} regions: ${this.serverRegions.join(', ')}.`
+                html: `The ${this.serverDetails.display_name} server is available in ${this.serverZones.length} availability zones of the following ${this.serverRegions.length} regions: ${this.serverRegions.join(', ')}.`
               }
             );
 
