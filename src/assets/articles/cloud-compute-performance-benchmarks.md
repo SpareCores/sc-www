@@ -1,6 +1,6 @@
 ---
 # ~50 chars
-title: Benchmarking Cloud Compute Resources
+title: Unlocking Cloud Compute Performance
 date: 2024-05-28
 # ~100 character
 teaser: All benchmarks are wrong, but some are useful... especially when numerous scenarios and methods are provided.
@@ -14,9 +14,9 @@ tags: [benchmark, performance, score, compute power]
 First of all, we admin that picking the right method, tool, and
 setting up a reproducible, authentic environment to evaluate the
 performance of a cloud server (sometimes with variable/shared
-resources) is hard, if not impossible, but acknowledging the known
-limitations, benchmark scores can still often be very helpful to make
-decisions, e.g. on selecting the instance type for a specific
+resources) is hard, if not impossible. However, acknowledging the known
+limitations, benchmark scores can still often be very helpful in making
+decisions, such as selecting the instance type for a specific
 task. Now let's suppose a
 <a href="https://en.wikipedia.org/wiki/Spherical_cow" target="_blank" rel="noopener">
 spherical server in vacuum</a> 😊
@@ -44,14 +44,14 @@ many different use-cases, e.g.
 
 ## Geekbench 6
 
-So first we looked at the existing solutions and frameworks,
-and despite it's being proprietary, we decided to go with
+So first, we looked at existing solutions and frameworks.
+Despite being proprietary, we decided to go with
 <a href="https://www.geekbench.com/" target="_blank" rel="noopener">GeekBench</a>
-due to the ease of deployment, variety of benchmark workloads, and
-support for ARM machines as well. Later we learned the hard way
-that the latter is experimental, and cannot use with the paid license
-for automated runs, so had to write a HTML parser to store the results ...
-but overall it was indeed relatively easy to deploy and run, and measures
+due to its ease of deployment, variety of benchmark workloads, and
+support for ARM machines as well. Later, we learned the hard way
+that the latter is experimental, and cannot be used with the paid license
+for automated runs, so we had to write an HTML parser to store the results.
+Nevertheless, it was indeed relatively easy to deploy and run, and measures
 the performance of many use cases:
 
 - File Compression: Compresses and decompresses the Ruby 3.1.2 source
@@ -105,14 +105,14 @@ the performance of many use cases:
   same scene.
 
 All these workloads are run in a single-core and multi-core settings
-as well, and besides providing the actual value (e.g. number of photos
-processed per minute), the main scores are relative compared to the
+as well, and besides providing the actual value (e.g. the number of photos
+processed per minute). The main scores are relative compared to the
 performance of a Dell laptop (2500 score in all workloads).
 
 There's also a global Single-core and Multi-core value, that are
 composite scores using the weighted arithmetic mean of the single-core
-or multi-core subsection scores, which are computed using the
-geometric mean of the underlying standardized workload scores.
+or multi-core subsection scores, computed using the geometric mean of
+the underlying standardized workload scores.
 
 Here's a quick preview of the 16+1 single-core scores presented in our
 server details pages, which is also available in our public datasets:
@@ -124,15 +124,15 @@ server details pages, which is also available in our public datasets:
   <p>GeekBench 6 scores of a <code>t4g.large</code> server at AWS<br />(data collected an visualized by Spare Cores)</p>
 </div>
 
-## Compression algorithms
+## Compression Algorithms
 
 Although Geekbench already provides a File Compression workload, it's
-limited to two algos, and does not provide detailed information about
-those, only a combined score. So we decided to benchmark six
-compression algorithms using different configurations (e.g.
-compression level, number of threads, and block size) on the Silesia
-corpus (10 MB uncompressed) for the speed of compression and
-decompression, and also recording the compression ratio.
+limited to two algorithms and does not provide detailed information,
+only a combined score. So, we decided to benchmark six compression
+algorithms using different configurations (e.g.  compression level,
+number of threads, and block size) on the Silesia corpus (10 MB
+uncompressed) to measure the speed of compression and decompression,
+and also recording the compression ratio.
 
 This resulted in 75 metrics for each server, which can be useful to
 decide which algo and actual configuration might be optimal on
@@ -148,7 +148,7 @@ All these values visualized on a joint line chart on our homepage:
   <p>The compressions speed as a function of the compression ratio using multiple compression algos on a <code>t4g.large</code> server at AWS<br />(data collected an visualized by Spare Cores)</p>
 </div>
 
-## Memory bandwidth
+## Memory Bandwidth
 
 We are also interested in measuring the performance of the read, write
 and mixed memory operations using different block sizes, so we
@@ -168,9 +168,9 @@ accross cores, so on a server with 32 MB L3 cache and 8 cores, in most
 cases only 4 MB of L3 cache is available to a single core application,
 like `bw_mem`.
 
-## OpenSSL speed
+## OpenSSL Speed
 
-To check on the cryptography performance of the servers, we selected
+To check the cryptography performance of the servers, we selected
 some of OpenSSL's hash functions and block ciphers and run those with
 different block sizes of data:
 
@@ -181,9 +181,9 @@ different block sizes of data:
   <p>The speed of hash functions and block ciphers on <code>t4g.large</code><br />(data collected an visualized by Spare Cores)</p>
 </div>
 
-## One SCore to rule them all
+## One SCore to Rule Them All
 
-So overall, we measure more than 200 performance scores for each server:
+Overall, we measure more than 200 performance scores for each server:
 
 - 34 records from Geekbench 6 (16-16 single-core and multi-core scores + 1-1 composite scores),
 - 75 records on the compression algos (6 compression algos with different compression levels, threads and block sizes),
@@ -230,7 +230,7 @@ If you are interested in the details of starting the cloud instances
 and running the benchmarks, please check out the `Runner` and
 `Inspector` components of the [Spare Cores ecosystem](/#project_components).
 
-Both the development and the actual runs are happening in the public:
+Both the development and the actual runs happen in public:
 you can find the repositories on GitHub, and all the steps of
 starting, evaluating, cleaning up the servers are managed through
 GitHub Actions.
