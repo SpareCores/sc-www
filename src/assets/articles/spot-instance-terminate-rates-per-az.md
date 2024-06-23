@@ -179,7 +179,7 @@ results:
   <img class="zoomin w-full"
     title="m5.2xlarge spot instances started in us-west-2 (data collected an visualized by Spare Cores)"
     src="/assets/images/blog/termination-rates-m5.2xlarge.png"/>
-  <p>The status of m5.2xlarge spot instances started in us-west-2<br />(data collected an visualized by Spare Cores)</p>
+  <p>The status of <code>m5.2xlarge</code> spot instances started in <code>us-west-2</code><br />(data collected an visualized by Spare Cores)</p>
 </div>
 
 The 15-20% rate seems to be indeed correct for these instance types,
