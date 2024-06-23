@@ -182,7 +182,7 @@ results:
   <p>The status of <code>m5.2xlarge</code> spot instances started in <code>us-west-2</code><br />(data collected an visualized by Spare Cores)</p>
 </div>
 
-The 15-20% rate seems to be indeed correct for these instance types,
+The 15-20% rate appears to be indeed correct for these instance types,
 but it's possible to decrease that with the right AZ selection.
 
 ## Takeaway
