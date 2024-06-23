@@ -35,7 +35,7 @@ export class ArticlesService {
   constructor(private http: HttpClient) { }
 
   async getArticlesByType(category?: string): Promise<ArticleMeta[]> {
-    let files = await firstValueFrom(this.http.get(`./assets/articles/all.json`));
+    let files = await firstValueFrom(this.http.get(`/assets/articles/all.json`));
     files = (files as ArticleMeta[]).filter((article: ArticleMeta) => {
       return category ? article.tags?.includes(category) : true;
     });
@@ -43,12 +43,12 @@ export class ArticlesService {
   }
 
   async getArticle(slug: string): Promise<string> {
-    const files = await firstValueFrom(this.http.get(`./assets/articles/${slug}.md`, { responseType: 'text' } ));
+    const files = await firstValueFrom(this.http.get(`/assets/articles/${slug}.md`, { responseType: 'text' } ));
     return files as string;
   }
 
   async getSlides(): Promise<SlidesMeta[]> {
-    const slides = await firstValueFrom(this.http.get(`./assets/slides/slides.json`));
+    const slides = await firstValueFrom(this.http.get(`/assets/slides/slides.json`));
     return slides as SlidesMeta[];
   }
 }
