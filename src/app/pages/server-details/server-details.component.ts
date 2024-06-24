@@ -18,6 +18,7 @@ import { Chart } from 'chart.js';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ReduceUnitNamePipe } from '../../pipes/reduce-unit-name.pipe';
+import { CountryIdtoNamePipe } from '../../pipes/country-idto-name.pipe';
 
 Chart.register(annotationPlugin);
 
@@ -33,13 +34,15 @@ const options: DropdownOptions = {
 @Component({
   selector: 'app-server-details',
   standalone: true,
-  imports: [BreadcrumbsComponent, CommonModule, LucideAngularModule, FaqComponent, FormsModule, RouterModule, BaseChartDirective, ReduceUnitNamePipe],
+  imports: [BreadcrumbsComponent, CommonModule, LucideAngularModule, FaqComponent, FormsModule, RouterModule, BaseChartDirective, ReduceUnitNamePipe, CountryIdtoNamePipe],
   templateUrl: './server-details.component.html',
   styleUrl: './server-details.component.scss'
 })
 export class ServerDetailsComponent implements OnInit {
 
   serverDetails!: ServerPKsWithPrices;
+  serverZones: string[] = [];
+  serverRegions: string[] = [];
 
   breadcrumbs: BreadcrumbSegment[] = [
     { name: 'Home', url: '/' },
@@ -138,6 +141,7 @@ export class ServerDetailsComponent implements OnInit {
   }
 
   ngOnInit() {
+    const countryIdtoNamePipe = new CountryIdtoNamePipe();
     this.route.params.subscribe(params => {
       const vendor = params['vendor'];
       const id = params['id'];
@@ -153,6 +157,15 @@ export class ServerDetailsComponent implements OnInit {
 
         if(dataAll[2].body){
           this.serverDetails = dataAll[2].body as any;
+
+          // list all regions where the server is available
+          this.serverDetails.prices?.forEach((price: ServerPricePKs) => {
+            this.serverZones.push(price.zone.display_name);
+            if(!this.serverRegions.includes(price.region.display_name)) {
+              this.serverRegions.push(price.region.display_name);
+            }
+          })
+
           this.breadcrumbs[2] =
             { name: this.serverDetails.display_name, url: '/server/' + this.serverDetails.vendor.vendor_id + '/' + this.serverDetails.api_reference };
 
@@ -233,7 +246,7 @@ export class ServerDetailsComponent implements OnInit {
             },
             {
               question: `What are the specs of the ${this.serverDetails.display_name} server?`,
-              answer: `The ${this.serverDetails.display_name} server is equipped with ${this.serverDetails.vcpus || this.serverDetails.cpu_cores} vCPU(s), ${this.getMemory()} of memory, ${this.getStorage()} of storage, and ${this.serverDetails.gpu_count} GPU(s). Additional block storage can be attached as needed.`
+              answer: `The ${this.serverDetails.display_name} server is equipped with ${this.serverDetails.vcpus} logical CPU core${this.serverDetails.vcpus! > 1 ? "s" : ""} on ${this.serverDetails.cpu_cores || "unknown number of"} ${this.serverDetails.cpu_manufacturer || ""} ${this.serverDetails.cpu_family || ""} ${this.serverDetails.cpu_model || ""} physical CPU core${this.serverDetails.cpu_cores ? this.serverDetails.cpu_cores! > 1 ? "s" : "" : "(s)"}${this.serverDetails.memory_speed ? " running at max. " + this.serverDetails.cpu_speed + " Ghz" : ""}, ${this.getMemory()} of ${this.serverDetails.memory_generation || ""} memory${this.serverDetails.memory_speed ? " with " + this.serverDetails.memory_speed + " Mhz clock rate" : ""}, ${this.getStorage()} of ${this.serverDetails.storage_type || ""} storage, and ${this.serverDetails.gpu_count! > 0 ? this.serverDetails.gpu_count : "no"} ${this.serverDetails.gpu_manufacturer || ""} ${this.serverDetails.gpu_family || ""} ${this.serverDetails.gpu_model || ""} GPU${this.serverDetails.gpu_count! > 1 ? "s" : ""}. Additional block storage can be attached as needed.`
             }
           ];
 
@@ -241,11 +254,29 @@ export class ServerDetailsComponent implements OnInit {
             this.faqs.push(
               {
                 question: `How much does the ${this.serverDetails.display_name} server cost?`,
-                answer: `The pricing for ${this.serverDetails.display_name} servers starts at ${this.serverDetails.prices[0].price} ${this.serverDetails.prices[0].currency} per hour, but the actual price depends on the selected region, zone and server allocation method (e.g. on-demand versus spot pricing options). Currently, the maximum price stands at ${this.serverDetails.prices.slice(-1)[0].price}${this.serverDetails.prices.slice(-1)[0].currency}.`
+                answer: `The pricing for ${this.serverDetails.display_name} servers starts at ${this.serverDetails.prices[0].price} ${this.serverDetails.prices[0].currency} per hour, but the actual price depends on the selected region, zone and server allocation method (e.g. on-demand versus spot pricing options): currently, we track the prices in ${this.serverDetails.prices.length} regions and zones every 5 minutes, and the maximum price stands at ${this.serverDetails.prices.slice(-1)[0].price} ${this.serverDetails.prices.slice(-1)[0].currency}.`
               }
             );
           }
 
+
+          this.faqs.push(
+              {
+                question: `Who is the provider of the ${this.serverDetails.display_name} server?`,
+                html: `The ${this.serverDetails.display_name} server is offered by ${this.serverDetails.vendor.name}, founded in ${this.serverDetails.vendor.founding_year}, headquartered in ${this.serverDetails.vendor.state}, ${countryIdtoNamePipe.transform(this.serverDetails.vendor.country_id)}. For more information, visit the <a href="${this.serverDetails.vendor.homepage}" target="_blank" rel="noopener" class="underline decoration-dotted hover:text-gray-500">${this.serverDetails.vendor.name} homepage</a>.`
+                // TODO add compliance frameworks implemented
+              }
+            );
+
+          if (this.serverRegions) {
+            this.faqs.push(
+              {
+                question: `Where is the ${this.serverDetails.display_name} server available?`,
+                html: `The ${this.serverDetails.display_name} server is available in ${this.serverZones.length} availability zones of the following ${this.serverRegions.length} regions: ${this.serverRegions.join(', ')}.`
+              }
+            );
+
+          }
           const keywords = this.title + ', ' + this.serverDetails.server_id + ', ' + this.serverDetails.vendor.vendor_id;
 
           this.SEOHandler.updateTitleAndMetaTags(this.title, this.description, keywords);
@@ -289,14 +320,14 @@ export class ServerDetailsComponent implements OnInit {
                 this.faqs.push(
                   {
                     question: `Are there any other sized servers in the ${this.serverDetails.family} server family?`,
-                    html: `Yes! In addition to the ${this.serverDetails.display_name} server, the ${this.serverDetails.family} server family includes ${this.similarByFamily.length} other sizes: ${this.similarByFamily.map((s) => this.serverUrl(s)).join(', ')}.`
+                    html: `Yes! In addition to the ${this.serverDetails.display_name} server, the ${this.serverDetails.family} server family includes ${this.similarByFamily.length} other sizes: ${this.similarByFamily.map((s) => this.serverUrl(s, true)).join(', ')}.`
                   });
               }
 
               this.faqs.push(
                 {
                   question: `What other servers offer similar performance to ${this.serverDetails.display_name}?`,
-                  html: `Looking at the number of vCPUs and GPUs, also the amount of memory, the following servers come with similar specs: ${this.similarByPerformance.map((s) => this.serverUrl(s)).join(', ')}.`
+                  html: `Looking at the number of vCPUs and GPUs, also the amount of memory, the following servers come with similar specs: ${this.similarByPerformance.map((s) => this.serverUrl(s, true)).join(', ')}.`
                 });
 
             }
@@ -408,21 +439,21 @@ export class ServerDetailsComponent implements OnInit {
 
   getMemory(memory: number | undefined = undefined) {
     const memoryAmount = memory || this.serverDetails.memory_amount || 0;
-    return ((memoryAmount) / 1024).toFixed((memoryAmount ? 0 : 1)) + 'GiB';
+    return ((memoryAmount) / 1024).toFixed((memoryAmount ? 0 : 1)) + ' GiB';
   }
 
   getStorage() {
-    if(!this.serverDetails.storage_size) return '0GB';
+    if(!this.serverDetails.storage_size) return '0 GB';
 
-    if(this.serverDetails.storage_size < 1000) return `${this.serverDetails.storage_size}GB`;
+    if(this.serverDetails.storage_size < 1000) return `${this.serverDetails.storage_size} GB`;
 
-    return `${(this.serverDetails.storage_size / 1000).toFixed(1)}TB`;
+    return `${(this.serverDetails.storage_size / 1000).toFixed(1)} TB`;
   }
 
-  serverUrl(server: Server): string {
+  serverUrl(server: Server, appendVendor: boolean = false): string {
     return(`<a class="underline decoration-dotted hover:text-gray-500"
       href="/server/${server.vendor_id}/${server.api_reference}">
-      ${server.display_name}</a>`)
+      ${server.display_name}${appendVendor ? " (" + server.vendor_id + ")" : ""}</a>`)
   }
 
   openBox(boxId: string) {
