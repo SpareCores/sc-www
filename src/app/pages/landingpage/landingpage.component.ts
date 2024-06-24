@@ -146,6 +146,19 @@ export class LandingpageComponent implements OnInit {
         spinner3.push({name: 'US East', city: 'Ashburn'});
       }
       this.welcomeAnim();
+
+      document.getElementById('ramCount')?.addEventListener('keypress', function(e) {
+        if (!/[0-9]/.test(String.fromCharCode(e.which))) {
+          e.preventDefault();
+        }
+      });
+
+      document.getElementById('cpuCount')?.addEventListener('keypress', function(e) {
+        if (!/[0-9]/.test(String.fromCharCode(e.which))) {
+          e.preventDefault();
+        }
+      });
+
     }
   }
 
@@ -202,6 +215,14 @@ export class LandingpageComponent implements OnInit {
   }
 
   spinClicked() {
+
+    if(isNaN(this.cpuCount) || !this.cpuCount || this.cpuCount < 1) {
+      this.cpuCount = 2;
+    }
+
+    if(isNaN(this.ramCount) || !this.ramCount || this.ramCount < 0.1) {
+      this.ramCount = 4;
+    }
 
     if(this.cpuCount > this.MAX_CPU_COUNT) {
       this.cpuCount = this.MAX_CPU_COUNT;
