@@ -94,6 +94,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.SEOHandler.cleanupStructuredData(this.document);
+    this.SEOHandler.restoreThumbnail();
   }
 
   convertToJSON(str: string) {
