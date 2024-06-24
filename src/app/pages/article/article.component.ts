@@ -7,10 +7,8 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { TimeToShortDatePipe } from '../../pipes/time-to-short-date.pipe';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { ArticlesService } from '../../services/articles.service';
-import matter from 'gray-matter';
 import { Lightbox, LightboxModule } from 'ngx-lightbox';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { firstValueFrom } from 'rxjs';
 import { REQUEST } from '../../../express.tokens';
 import { Request } from 'express';
 
@@ -64,7 +62,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
       console.log('baseUrl of article', baseUrl);
       this.http.get(`${baseUrl}/assets/articles/${this.id}.md`, { responseType: 'text' } )
       //this.articleHandler.getArticle(id)
-      .subscribe((file: any) => {
+      .subscribe(() => {
       //.then((file: any) => {
 
         //const { data, content } = matter(file);
