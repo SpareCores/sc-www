@@ -57,6 +57,7 @@ export class ArticlesService {
     } else {
       baseUrl = `${window.location.protocol}//${window.location.host}`;
     }
+    console.log('baseUrl of article', baseUrl);
     const files = await firstValueFrom(this.http.get(`${baseUrl}/assets/articles/${slug}.md`, { responseType: 'text' } ));
     return files as string;
   }
