@@ -107,7 +107,7 @@
                     </div>
                   </td>
                   <ng-container *ngFor="let column of tableColumns">
-                    <td *ngIf="column.type === 'name'" class="min-w-225">
+                    <td *ngIf="column.type === 'name'">
                       <div (click)="$event.stopPropagation()">
                         <a routerLink="/server/{{item.vendor.vendor_id}}/{{item.api_reference}}"
                            data-ph-capture-attribute-sc-event="server listing route to server details"

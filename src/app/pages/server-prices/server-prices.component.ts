@@ -230,10 +230,6 @@ export class ServerPricesComponent implements OnInit {
         this.limit = parseInt(query.limit);
       }
 
-      //this.loadCountries(query.countries);
-
-      //this.loadRegions(query.regions);
-
       const tableColumnsStr = this.storageHandler.get('serverListTableColumns');
       if(tableColumnsStr) {
         const tableColumns: string[] = JSON.parse(tableColumnsStr);
@@ -331,6 +327,10 @@ export class ServerPricesComponent implements OnInit {
     return value ? value.toFixed(0) : '-';
   }
 
+  getAllocationName(allocation: string | null) {
+    return this.allocationTypes.find((item) => item.slug === allocation)?.name || '-';
+  }
+
   openServerDetails(server: ServerPriceWithPKs) {
     this.router.navigateByUrl(`/server/${server.vendor.vendor_id}/${server.server.api_reference}`);
   }
@@ -355,10 +355,14 @@ export class ServerPricesComponent implements OnInit {
 
     if(this.selectedCurrency.slug !== 'USD') {
       queryParams.currency = this.selectedCurrency.slug;
+    } else {
+      delete queryParams.currency;
     }
 
     if(this.allocation.slug) {
       queryParams.allocation = this.allocation.slug;
+    } else {
+      delete queryParams.allocation;
     }
 
     if(this.page > 1) {
@@ -503,6 +507,8 @@ export class ServerPricesComponent implements OnInit {
     this.selectedCurrency = currency;
 
     this.searchOptionsChanged(this.query);
+
+    this.dropdownCurrency?.hide();
   }
 
   selectAllocation(allocation: any) {
@@ -510,6 +516,8 @@ export class ServerPricesComponent implements OnInit {
     this.page = 1;
 
     this.searchOptionsChanged(this.query);
+
+    this.dropdownAllocation?.hide();
   }
 
   selectPageSize(limit: number) {

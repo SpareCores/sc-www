@@ -175,7 +175,11 @@
                       </div>
                     </td>
                     <td *ngIf="column.type === 'price'" class="min-w-160">
-                      {{item.price}} {{selectedCurrency.slug}}
+                      <div class="text-sm text-white">{{item.price}} {{selectedCurrency.slug}}</div>
+                      <div
+                        class="text-xs text-white">
+                        {{getAllocationName(item.allocation)}}
+                      </div>
                     </td>
                     <td *ngIf="column.type === 'gpu'">
                       <div class="text-sm text-white">{{item.server.gpu_count}}</div>
