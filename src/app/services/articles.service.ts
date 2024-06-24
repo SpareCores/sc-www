@@ -37,10 +37,8 @@ export type SlidesMeta = {
 export class ArticlesService {
 
   constructor(private http: HttpClient,
-    private router: Router,
     @Inject(PLATFORM_ID) private platformId: object,
-    @Optional()@Inject(REQUEST) private request: Request,
-    private location: Location) { }
+    @Optional()@Inject(REQUEST) private request: Request) { }
 
   async getArticlesByType(category?: string): Promise<ArticleMeta[]> {
     let files = await firstValueFrom(this.http.get(`/assets/articles/all.json`));
