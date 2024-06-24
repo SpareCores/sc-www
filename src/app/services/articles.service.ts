@@ -1,6 +1,10 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Inject, Injectable, Optional, PLATFORM_ID } from '@angular/core';
+import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
+import { Location, isPlatformServer } from '@angular/common';
+import { REQUEST } from '../../express.tokens';
+import { Request } from 'express';
 
 export type ArticleMeta = {
   title: string;
@@ -32,7 +36,11 @@ export type SlidesMeta = {
 })
 export class ArticlesService {
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient,
+    private router: Router,
+    @Inject(PLATFORM_ID) private platformId: object,
+    @Optional()@Inject(REQUEST) private request: Request,
+    private location: Location) { }
 
   async getArticlesByType(category?: string): Promise<ArticleMeta[]> {
     let files = await firstValueFrom(this.http.get(`/assets/articles/all.json`));
@@ -43,7 +51,15 @@ export class ArticlesService {
   }
 
   async getArticle(slug: string): Promise<string> {
-    const files = await firstValueFrom(this.http.get(`/assets/articles/${slug}.md`, { responseType: 'text' } ));
+    let baseUrl: string = '.';
+    if (isPlatformServer(this.platformId)) {
+      if(this.request) {
+        baseUrl = `${this.request?.protocol}://${this.request?.get('host')}`;
+      }
+    } else {
+      baseUrl = `${window.location.protocol}//${window.location.host}`;
+    }
+    const files = await firstValueFrom(this.http.get(`${baseUrl}/assets/articles/${slug}.md`, { responseType: 'text' } ));
     return files as string;
   }
 
