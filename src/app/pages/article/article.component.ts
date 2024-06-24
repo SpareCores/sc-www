@@ -9,7 +9,6 @@ import { SeoHandlerService } from '../../services/seo-handler.service';
 import { ArticlesService } from '../../services/articles.service';
 import { Lightbox, LightboxModule } from 'ngx-lightbox';
 import * as yaml from 'js-yaml';
-import { REQUEST } from '../../../express.tokens';
 import { Request } from 'express';
 
 @Component({
@@ -35,7 +34,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
   constructor(
     @Inject(PLATFORM_ID) private platformId: object,
     @Inject(DOCUMENT) private document: Document,
-    @Optional() @Inject(REQUEST) private request: Request,
+    @Inject('netlify.request') @Optional() request?: Request,
     private route: ActivatedRoute,
     private SEOHandler: SeoHandlerService,
     private markdownService: MarkdownService,
