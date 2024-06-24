@@ -11,6 +11,7 @@ import { Lightbox, LightboxModule } from 'ngx-lightbox';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { REQUEST } from '../../../express.tokens';
 import { Request } from 'express';
+import * as yaml from 'js-yaml';
 
 @Component({
   selector: 'app-article',
@@ -51,42 +52,27 @@ export class ArticleComponent implements OnInit, OnDestroy {
 
       const id = params['id'];
       this.id = id;
-      let baseUrl: string = 'https://sparecores.com';
-      if (isPlatformServer(this.platformId)) {
-        if(this.request) {
-          baseUrl = `${this.request?.protocol}://${this.request?.get('host')}`;
+      //this.http.get(`${baseUrl}/assets/articles/${this.id}.md`, { responseType: 'text' } )
+      this.articleHandler.getArticle(id)
+      //.subscribe(() => {
+      .then((file: any) => {
+
+        // Assuming `file` is a string containing your Markdown content...
+        const match = /---\r?\n([\s\S]+?)\r?\n---/.exec(file);
+        if(match === null) {
+          return;
         }
-      } else {
-        baseUrl = `${window.location.protocol}//${window.location.host}`;
-      }
-      console.log('baseUrl of article', baseUrl);
-      this.http.get(`${baseUrl}/assets/articles/${this.id}.md`, { responseType: 'text' } )
-      //this.articleHandler.getArticle(id)
-      .subscribe(() => {
-      //.then((file: any) => {
+        const data = yaml.load(match[1]);
+        const content = file.replace(/---\r?\n[\s\S]+?\r?\n---/, '');
+
+        console.log(data, content);
 
         //const { data, content } = matter(file);
 
-        this.articleMeta = {
-          "title": "Spot server termination rate per availability zones",
-          "date": "2024-04-16T00:00:00.000Z",
-          "teaser": "AWS publicizes the expected termination rate of the spot instances per region, but what about AZs?",
-          "image": "/assets/images/blog/termination-rates-r7i.2xlarge-cropped.webp",
-          "image_alt": "Plot showing when we failed or managed to start a r7i.2xlarge instance in various AWS availability zones.",
-          "author": "Gergely Daroczi",
-          "tags": [
-            "aws",
-            "spot",
-            "data",
-            "featured"
-          ]
-        };
-
-        console.log('articleMeta', this.articleMeta);
+        this.articleMeta = data;
 
         this.articleBody = this.domSanitizer.bypassSecurityTrustHtml(
-          'Hello world!'
-          //this.markdownService.parse(content, {disableSanitizer: true}) as string
+          this.markdownService.parse(content, {disableSanitizer: true}) as string
           );
 
         this.breadcrumbs = [
