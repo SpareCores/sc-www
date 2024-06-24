@@ -1,8 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable, Optional, PLATFORM_ID } from '@angular/core';
-import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
-import { Location, isPlatformServer } from '@angular/common';
+import { isPlatformServer } from '@angular/common';
 import { REQUEST } from '../../express.tokens';
 import { Request } from 'express';
 
