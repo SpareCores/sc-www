@@ -5,10 +5,10 @@ date: 2024-05-28
 # ~100 character
 teaser: All benchmarks are wrong, but some are useful... especially when numerous scenarios and methods are provided.
 # 320x220
-image: /assets/images/blog/benchmarks-bw_mem-cover.webp
+image: /assets/images/blog/thumbnails/benchmarks-bw_mem-cover.jpg
 image_alt: Memory bandwidth benchmarks for the c7a.4xlarge instance type at AWS.
 author: Gergely Daroczi
-tags: [benchmark, performance, score, compute power]
+tags: [benchmark, performance, score, compute power, featured]
 ---
 
 First of all, we admit that picking the right method, tool, and

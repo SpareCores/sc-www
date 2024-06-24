@@ -5,10 +5,10 @@ date: 2024-06-11
 # ~100 character
 teaser: Debuted Spare Cores at a major in-person conference for the first time! Slides and video recording available.
 # 320x220
-image: /assets/images/blog/berlin-buzzwords-2024-cover.webp
+image: /assets/images/blog/thumbnails/berlin-buzzwords-2024-cover.jpg
 image_alt: Screenshot of a slide presented on Spare Cores at the Berlin Buzzwords 2024 conference.
 author: Gergely Daroczi
-tags: [conference, talk, slides]
+tags: [conference, talk, slides, featured]
 ---
 
 We have debuted the Spare Cores project at a major in-person

@@ -5,7 +5,7 @@ date: 2024-03-19
 # ~100 character
 teaser: "Case Study: reducing monthly cloud expenses by $3k via migrating from AWS Batch to self-managed instances."
 # 320x220
-image: /assets/images/blog/xkcd-1205-is_it_worth_the_time-cropped.webp
+image: /assets/images/blog/thumbnails/xkcd-1205-is_it_worth_the_time-cropped.jpg
 image_alt: Is it worth the time? XKCD comic.
 author: Gergely Daroczi
 tags: [case-study, aws, spot, featured]

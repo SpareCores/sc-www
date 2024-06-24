@@ -5,10 +5,10 @@ date: 2024-04-16
 # ~100 character
 teaser: "AWS publicizes the expected termination rate of the spot instances per region, but what about AZs?"
 # 320x220
-image: /assets/images/blog/termination-rates-r7i.2xlarge-cropped.webp
+image: /assets/images/blog/thumbnails/termination-rates-r7i.2xlarge-cropped.jpg
 image_alt: Plot showing when we failed or managed to start a r7i.2xlarge instance in various AWS availability zones.
 author: Gergely Daroczi
-tags: [aws, spot, data, featured]
+tags: [aws, spot, data]
 ---
 
 We have been very satisfied users of the Spot Blocks for
