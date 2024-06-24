@@ -9,7 +9,7 @@ import { SeoHandlerService } from '../../services/seo-handler.service';
 import { ArticlesService } from '../../services/articles.service';
 import matter from 'gray-matter';
 import { Lightbox, LightboxModule } from 'ngx-lightbox';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { REQUEST } from '../../../express.tokens';
 import { Request } from 'express';
@@ -17,7 +17,7 @@ import { Request } from 'express';
 @Component({
   selector: 'app-article',
   standalone: true,
-  imports: [BreadcrumbsComponent, RouterLink, CommonModule, MarkdownModule, TimeToShortDatePipe, LightboxModule ],
+  imports: [BreadcrumbsComponent, RouterLink, CommonModule, MarkdownModule, TimeToShortDatePipe, LightboxModule, HttpClientModule ],
   templateUrl: './article.component.html',
   styleUrl: './article.component.scss'
 })
