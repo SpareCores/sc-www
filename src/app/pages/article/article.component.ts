@@ -1,4 +1,4 @@
-import { Component, ElementRef, Inject, PLATFORM_ID, Renderer2, OnInit, ViewChild, OnDestroy } from '@angular/core';
+import { Component, ElementRef, Inject, PLATFORM_ID, Renderer2, OnInit, ViewChild, OnDestroy, Optional } from '@angular/core';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
@@ -9,6 +9,8 @@ import { SeoHandlerService } from '../../services/seo-handler.service';
 import { ArticlesService } from '../../services/articles.service';
 import { Lightbox, LightboxModule } from 'ngx-lightbox';
 import * as yaml from 'js-yaml';
+import { REQUEST } from '../../../express.tokens';
+import { Request } from 'express';
 
 @Component({
   selector: 'app-article',
@@ -33,6 +35,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
   constructor(
     @Inject(PLATFORM_ID) private platformId: object,
     @Inject(DOCUMENT) private document: Document,
+    @Optional() @Inject(REQUEST) private request: Request,
     private route: ActivatedRoute,
     private SEOHandler: SeoHandlerService,
     private markdownService: MarkdownService,
@@ -67,8 +70,17 @@ export class ArticleComponent implements OnInit, OnDestroy {
           { name: this.articleMeta.title, url: `/article/${id}` }
         ];
 
+        let baseUrl = 'https://sparecores.com/';
+        if(isPlatformBrowser(this.platformId)) {
+          baseUrl = window.location.origin + '/';
+        } else {
+          if(this.request) {
+            baseUrl = `${this.request.protocol}://${this.request.get('host')}`;
+          }
+        }
+
         this.SEOHandler.updateTitleAndMetaTags(this.articleMeta.title, this.articleMeta.teaser, this.articleMeta.tags.join(","));
-        this.SEOHandler.updateThumbnail(this.articleMeta.image);
+        this.SEOHandler.updateThumbnail( baseUrl + this.articleMeta.image);
         this.generateSchemaJSON();
 
         if(isPlatformBrowser(this.platformId)) {
