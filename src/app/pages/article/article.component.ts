@@ -7,8 +7,8 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { TimeToShortDatePipe } from '../../pipes/time-to-short-date.pipe';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { ArticlesService } from '../../services/articles.service';
-import matter from 'gray-matter';
 import { Lightbox, LightboxModule } from 'ngx-lightbox';
+import * as yaml from 'js-yaml';
 
 @Component({
   selector: 'app-article',
@@ -49,7 +49,13 @@ export class ArticleComponent implements OnInit, OnDestroy {
       this.id = id;
       this.articleHandler.getArticle(id).then((file: any) => {
 
-        const { data, content } = matter(file);
+        // Assuming `file` is a string containing your Markdown content...
+        const match = /---\r?\n([\s\S]+?)\r?\n---/.exec(file);
+        if(match === null) {
+          return;
+        }
+        const data = yaml.load(match[1]);
+        const content = file.replace(/---\r?\n[\s\S]+?\r?\n---/, '');
 
         this.articleMeta = data;
         this.articleBody = this.domSanitizer.bypassSecurityTrustHtml(
