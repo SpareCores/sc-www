@@ -64,7 +64,7 @@ export class SearchBarComponent implements OnInit, OnChanges{
       this.complianceFrameworks = response.body;
     });
 
-    this.valueChangeDebouncer.pipe(debounceTime(300)).subscribe(() => {
+    this.valueChangeDebouncer.pipe(debounceTime(500)).subscribe(() => {
       this.filterServers();
     });
 
