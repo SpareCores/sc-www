@@ -42,11 +42,7 @@ export class ArticlesService {
 
   constructor(private http: HttpClient,
     private router: Router,
-<<<<<<< HEAD
     @Inject(PLATFORM_ID) private platformId: object,
-=======
-    @Inject(PLATFORM_ID) private platformId: Object,
->>>>>>> 522d5dafc118c0afca8fea7cf97ae0ca2d68a5d9
     @Optional()@Inject(REQUEST) private request: Request,
     private location: Location) { }
 
