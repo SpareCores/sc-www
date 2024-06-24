@@ -68,6 +68,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
         ];
 
         this.SEOHandler.updateTitleAndMetaTags(this.articleMeta.title, this.articleMeta.teaser, this.articleMeta.tags.join(","));
+        this.SEOHandler.updateThumbnail(this.articleMeta.image);
         this.generateSchemaJSON();
 
         if(isPlatformBrowser(this.platformId)) {
@@ -90,6 +91,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.SEOHandler.cleanupStructuredData(this.document);
+    this.SEOHandler.restoreThumbnail();
   }
 
   convertToJSON(str: string) {
