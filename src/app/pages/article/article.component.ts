@@ -72,7 +72,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
 
         let baseUrl = 'https://sparecores.com/';
         if(isPlatformBrowser(this.platformId)) {
-          baseUrl = window.location.origin + '/';
+          baseUrl = window.location.origin;
         } else {
           if(this.request) {
             baseUrl = `${this.request.protocol}://${this.request.get('host')}`;
