@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable, Optional, PLATFORM_ID } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { isPlatformServer } from '@angular/common';
 import { REQUEST } from '../../express.tokens';
 import { Request } from 'express';
 
@@ -48,16 +47,7 @@ export class ArticlesService {
   }
 
   async getArticle(slug: string): Promise<string> {
-    let baseUrl: string = 'https://sparecores.com';
-    if (isPlatformServer(this.platformId)) {
-      if(this.request) {
-        baseUrl = `${this.request?.protocol}://${this.request?.get('host')}`;
-      }
-    } else {
-      baseUrl = `${window.location.protocol}//${window.location.host}`;
-    }
-    console.log('baseUrl of article', baseUrl);
-    const files = await firstValueFrom(this.http.get(`${baseUrl}/assets/articles/${slug}.md`, { responseType: 'text' } ));
+    const files = await firstValueFrom(this.http.get(`./assets/articles/${slug}.md`, { responseType: 'text' } ));
     return files as string;
   }
 

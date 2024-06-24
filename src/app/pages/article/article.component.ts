@@ -52,9 +52,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
 
       const id = params['id'];
       this.id = id;
-      //this.http.get(`${baseUrl}/assets/articles/${this.id}.md`, { responseType: 'text' } )
       this.articleHandler.getArticle(id)
-      //.subscribe(() => {
       .then((file: any) => {
 
         // Assuming `file` is a string containing your Markdown content...
@@ -64,10 +62,6 @@ export class ArticleComponent implements OnInit, OnDestroy {
         }
         const data = yaml.load(match[1]);
         const content = file.replace(/---\r?\n[\s\S]+?\r?\n---/, '');
-
-        console.log(data, content);
-
-        //const { data, content } = matter(file);
 
         this.articleMeta = data;
 
