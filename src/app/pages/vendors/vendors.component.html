@@ -59,7 +59,7 @@
           <td>
             <!-- eslint-disable-next-line @angular-eslint/template/interactive-supports-focus -->
             <div class="flex justify-end" (click)="$event.stopPropagation()">
-              <a routerLink="/servers" [queryParams]="{vendor: item.vendor_id}">
+              <a routerLink="/servers" [queryParams]="{vendor: item.vendor_id, limit: 100}">
                 <lucide-icon name="chevron-right" class="h-6 w-6 text-emerald-400"></lucide-icon>
               </a>
             </div>

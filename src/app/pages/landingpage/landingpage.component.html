@@ -62,18 +62,28 @@
               }"
               readonly
               disabled >
-            <input id="cpuCount" [(ngModel)]="cpuCount" step="1" aria-label="Minimum vCPU filter"
-                   class="input_border cpu_input bg-primary text-center text-3xl font-bold"
-                   [disabled]="isSpinning"
-                   data-ph-capture-attribute-sc-event="landing slot machine filter"
-                   data-ph-capture-attribute-slot-machine-action="filter"
-                   data-ph-capture-attribute-slot-machine-filter="cpu">
-            <input id="ramCount" [(ngModel)]="ramCount" step="1" aria-label="Minimum memory filter"
-                   class="input_border ram_input bg-primary text-center text-3xl font-bold"
-                   [disabled]="isSpinning"
-                   data-ph-capture-attribute-sc-event="landing slot machine filter"
-                   data-ph-capture-attribute-slot-machine-action="filter"
-                   data-ph-capture-attribute-slot-machine-filter="memory">
+            <input id="cpuCount"
+              [(ngModel)]="cpuCount"
+              step="1"
+              aria-label="Minimum vCPU filter"
+              type="number"
+              min="1"
+              class="input_border cpu_input bg-primary text-center text-3xl font-bold"
+              [disabled]="isSpinning"
+              data-ph-capture-attribute-sc-event="landing slot machine filter"
+              data-ph-capture-attribute-slot-machine-action="filter"
+              data-ph-capture-attribute-slot-machine-filter="cpu">
+            <input id="ramCount"
+              [(ngModel)]="ramCount"
+              step="1"
+              aria-label="Minimum memory filter"
+              type="number"
+              min="0.1"
+              class="input_border ram_input bg-primary text-center text-3xl font-bold"
+              [disabled]="isSpinning"
+              data-ph-capture-attribute-sc-event="landing slot machine filter"
+              data-ph-capture-attribute-slot-machine-action="filter"
+              data-ph-capture-attribute-slot-machine-filter="memory">
             <div class="spinner_box_1">
               <div class="font-mono font-light text-sm text-center w-145">CLOUD VENDOR</div>
               <div class="spinner_holder">
