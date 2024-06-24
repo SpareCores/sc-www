@@ -75,10 +75,12 @@ export class ArticleComponent implements OnInit, OnDestroy {
         if(isPlatformBrowser(this.platformId)) {
           baseUrl = window.location.origin;
         } else {
-          const request = this.request_netlify || this.request_express;
-          console.log(request);
-          if (request) {
-            baseUrl = `${request?.protocol}://${request?.get('host')}`;
+          if (this.request_netlify) {
+            const url = new URL(this.request_netlify.url);
+            baseUrl = `${url.protocol}//${url.host}`;
+          }
+          if (this.request_express) {
+            baseUrl = `${this.request_express?.protocol}://${this.request_express?.get('host')}`;
           }
         }
 
