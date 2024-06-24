@@ -48,7 +48,7 @@ export class ArticlesService {
   }
 
   async getArticle(slug: string): Promise<string> {
-    let baseUrl: string = '.';
+    let baseUrl: string = 'https://sparecores.com';
     if (isPlatformServer(this.platformId)) {
       if(this.request) {
         baseUrl = `${this.request?.protocol}://${this.request?.get('host')}`;
