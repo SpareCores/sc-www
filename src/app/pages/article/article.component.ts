@@ -70,7 +70,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
           { name: this.articleMeta.title, url: `/article/${id}` }
         ];
 
-        let baseUrl = 'https://sparecores.com/';
+        let baseUrl = 'https://sparecores.com';
         if(isPlatformBrowser(this.platformId)) {
           baseUrl = window.location.origin;
         } else {
