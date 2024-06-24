@@ -1,7 +1,7 @@
-import { Component, ElementRef, Inject, PLATFORM_ID, Renderer2, OnInit, ViewChild, OnDestroy } from '@angular/core';
+import { Component, ElementRef, Inject, PLATFORM_ID, Renderer2, OnInit, ViewChild, OnDestroy, Optional } from '@angular/core';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
+import { CommonModule, DOCUMENT, isPlatformBrowser, isPlatformServer } from '@angular/common';
 import { MarkdownModule, MarkdownService } from 'ngx-markdown';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TimeToShortDatePipe } from '../../pipes/time-to-short-date.pipe';
@@ -9,6 +9,10 @@ import { SeoHandlerService } from '../../services/seo-handler.service';
 import { ArticlesService } from '../../services/articles.service';
 import matter from 'gray-matter';
 import { Lightbox, LightboxModule } from 'ngx-lightbox';
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
+import { REQUEST } from '../../../express.tokens';
+import { Request } from 'express';
 
 @Component({
   selector: 'app-article',
@@ -33,6 +37,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
   constructor(
     @Inject(PLATFORM_ID) private platformId: object,
     @Inject(DOCUMENT) private document: Document,
+    @Optional()@Inject(REQUEST) private request: Request,
     private route: ActivatedRoute,
     private SEOHandler: SeoHandlerService,
     private markdownService: MarkdownService,
@@ -40,6 +45,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
     private articleHandler: ArticlesService,
     private lightbox: Lightbox,
     private renderer: Renderer2,
+    private http: HttpClient,
   ) { }
 
   ngOnInit() {
@@ -47,7 +53,18 @@ export class ArticleComponent implements OnInit, OnDestroy {
 
       const id = params['id'];
       this.id = id;
-      this.articleHandler.getArticle(id).then((file: any) => {
+      let baseUrl: string = 'https://sparecores.com';
+      if (isPlatformServer(this.platformId)) {
+        if(this.request) {
+          baseUrl = `${this.request?.protocol}://${this.request?.get('host')}`;
+        }
+      } else {
+        baseUrl = `${window.location.protocol}//${window.location.host}`;
+      }
+      console.log('baseUrl of article', baseUrl);
+      firstValueFrom(this.http.get(`${baseUrl}/assets/articles/${this.id}.md`, { responseType: 'text' } ))
+      //this.articleHandler.getArticle(id)
+      .then((file: any) => {
 
         const { data, content } = matter(file);
 
