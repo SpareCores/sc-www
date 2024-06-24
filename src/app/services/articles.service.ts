@@ -42,8 +42,8 @@ export class ArticlesService {
     return files as ArticleMeta[];
   }
 
-  async getArticle(category: string, slug: string): Promise<string> {
-    const files = await firstValueFrom(this.http.get(`./assets/articles/${category}/${slug}.md`, { responseType: 'text' } ));
+  async getArticle(slug: string): Promise<string> {
+    const files = await firstValueFrom(this.http.get(`./assets/articles/${slug}.md`, { responseType: 'text' } ));
     return files as string;
   }
 

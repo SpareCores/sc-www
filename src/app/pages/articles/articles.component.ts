@@ -20,18 +20,18 @@ export class ArticlesComponent implements OnInit {
     { name: 'Articles', url: '/articles' }
   ];
 
-  featuredArticles: ArticleMeta[] = [];
+  articles: ArticleMeta[] = [];
 
   constructor(
     private SEOHandler: SeoHandlerService,
     private route: ActivatedRoute,
-    private articles: ArticlesService) { }
+    private articleHandler: ArticlesService) { }
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
       const category = params['tag'];
-      this.articles.getArticlesByType(category).then(articles => {
-        this.featuredArticles = articles;
+      this.articleHandler.getArticlesByType(category).then(articles => {
+        this.articles = articles;
       });
 
       this.breadcrumbs = [
@@ -48,7 +48,10 @@ export class ArticlesComponent implements OnInit {
         );
       }
 
-      this.SEOHandler.updateTitleAndMetaTags(`${title} Articles - SpareCores`, `View all ${title} articles on SpareCores.`, `Server hosting articles, guides, tutorials.`);
+      this.SEOHandler.updateTitleAndMetaTags(
+        `${title} Articles - SpareCores`, `View all ${title} articles on SpareCores.`,
+        (category.length ? category + ' ' : '') + `blog posts, articles, guides, tutorials`
+      );
 
     });
 
