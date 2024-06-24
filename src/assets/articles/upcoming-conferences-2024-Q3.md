@@ -8,7 +8,7 @@ teaser: "We are excited to publicly announce the Spare Cores project to the dev 
 image: /assets/images/blog/devops-conf-cover.webp
 image_alt: AI-generated cover image on a DevOps conference with many attendees.
 author: Gergely Daroczi
-tags: [conference]
+tags: [conference, talk, slides]
 ---
 
 It's fantastic to get back to in-person events after the pandemic, and
