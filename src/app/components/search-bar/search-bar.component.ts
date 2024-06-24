@@ -64,7 +64,7 @@ export class SearchBarComponent implements OnInit, OnChanges{
       this.complianceFrameworks = response.body;
     });
 
-    this.valueChangeDebouncer.pipe(debounceTime(300)).subscribe(() => {
+    this.valueChangeDebouncer.pipe(debounceTime(500)).subscribe(() => {
       this.filterServers();
     });
 
@@ -94,7 +94,7 @@ export class SearchBarComponent implements OnInit, OnChanges{
       }
     }
 
-    this.searchParameters = this.searchParameters.map((item: any) => {
+    this.searchParameters?.forEach((item: any) => {
       let value = this.query[item.name] || item.schema.default || null;
 
       // if type is a string try split by ,
@@ -113,8 +113,9 @@ export class SearchBarComponent implements OnInit, OnChanges{
         }
       }
 
-      return {...item, modelValue: value};
+      item.modelValue = value;
     });
+
   }
 
   filterServers() {

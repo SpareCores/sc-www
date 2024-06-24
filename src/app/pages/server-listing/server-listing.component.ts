@@ -12,6 +12,7 @@ import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
 import { CountryIdtoNamePipe } from '../../pipes/country-idto-name.pipe';
 import { SearchBarComponent } from '../../components/search-bar/search-bar.component';
+import { PaginationComponent } from '../../components/pagination/pagination.component';
 
 export type TableColumn = {
   name: string;
@@ -64,7 +65,7 @@ const options: DropdownOptions = {
 @Component({
   selector: 'app-server-listing',
   standalone: true,
-  imports: [CommonModule, FormsModule, BreadcrumbsComponent, LucideAngularModule, CountryIdtoNamePipe, RouterModule, SearchBarComponent],
+  imports: [CommonModule, FormsModule, BreadcrumbsComponent, LucideAngularModule, CountryIdtoNamePipe, RouterModule, SearchBarComponent, PaginationComponent],
   templateUrl: './server-listing.component.html',
   styleUrl: './server-listing.component.scss',
 })
@@ -368,16 +369,13 @@ export class ServerListingComponent implements OnInit {
     return null;
   }
 
-  getQueryObjectForPage(pageTarget: number) {
-    const page = Math.max(pageTarget, 1);
+  getQueryObjectBase() {
     const paramObject = JSON.parse(JSON.stringify(this.query));
 
     if(this.orderBy && this.orderDir) {
       paramObject.order_by = this.orderBy;
       paramObject.order_dir = this.orderDir;
     }
-
-    paramObject.page = page;
 
     if(this.limit !== 25) {
       paramObject.limit = this.limit;
@@ -446,14 +444,6 @@ export class ServerListingComponent implements OnInit {
   getComplianceFrameworkName(id: string) {
     return this.complianceFrameworks.find((item) => item.compliance_framework_id === id)?.abbreviation || id;
   }
-
-  possiblePages() {
-    // get numbers in array from min(page-2, 1) to page+2
-    const min = Math.max(this.page - 1, 1);
-    const max = Math.min(this.page + 1, this.totalPages);
-    return Array.from({length: max - min + 1}, (_, i) => i + min);
-  }
-
 
   toggleCompare2(event: any, server: ServerPKs| any) {
     event.stopPropagation();

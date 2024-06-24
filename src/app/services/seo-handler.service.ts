@@ -36,4 +36,32 @@ export class SeoHandlerService {
       this.metaTagService.updateTag({ property: 'og:image', content }, "property='og:image'");
     }
   }
+
+  public setupStructuredData(document: any, value: string[]) {
+    this.cleanupStructuredData(document);
+    value?.forEach((item) => {
+        this.addStructuredDataToHead(document, item);
+    });
+  }
+
+  public cleanupStructuredData(document: Document) {
+    // Remove any existing structured data scripts
+    const existingScripts = document.head.querySelectorAll('script[type="application/ld+json"]');
+    for (let i = 0; i < existingScripts.length; i++) {
+      const script = existingScripts[i];
+      script.parentNode?.removeChild(script);
+    }
+  }
+
+  public addStructuredDataToHead(document: Document, scriptContent: string) {
+    // Remove any existing structured data scripts
+    this.cleanupStructuredData(document);
+
+    // Create a new script element and add the structured data to it
+    const script = document.createElement('script');
+    script.type = 'application/ld+json';
+    script.textContent = scriptContent;
+
+    document.getElementsByTagName('head')[0].appendChild(script);
+  }
 }

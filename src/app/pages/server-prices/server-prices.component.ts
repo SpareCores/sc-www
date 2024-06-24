@@ -11,6 +11,7 @@ import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
 import { CountryIdtoNamePipe } from '../../pipes/country-idto-name.pipe';
 import { SearchBarComponent } from '../../components/search-bar/search-bar.component';
+import { PaginationComponent } from '../../components/pagination/pagination.component';
 
 export type TableColumn = {
   name: string;
@@ -60,7 +61,7 @@ const options: DropdownOptions = {
 @Component({
   selector: 'app-server-prices',
   standalone: true,
-  imports: [CommonModule, FormsModule, BreadcrumbsComponent, LucideAngularModule, CountryIdtoNamePipe, RouterModule, SearchBarComponent],
+  imports: [CommonModule, FormsModule, BreadcrumbsComponent, LucideAngularModule, CountryIdtoNamePipe, RouterModule, SearchBarComponent, PaginationComponent],
   templateUrl: './server-prices.component.html',
   styleUrl: './server-prices.component.scss'
 })
@@ -229,10 +230,6 @@ export class ServerPricesComponent implements OnInit {
         this.limit = parseInt(query.limit);
       }
 
-      //this.loadCountries(query.countries);
-
-      //this.loadRegions(query.regions);
-
       const tableColumnsStr = this.storageHandler.get('serverListTableColumns');
       if(tableColumnsStr) {
         const tableColumns: string[] = JSON.parse(tableColumnsStr);
@@ -330,6 +327,10 @@ export class ServerPricesComponent implements OnInit {
     return value ? value.toFixed(0) : '-';
   }
 
+  getAllocationName(allocation: string | null) {
+    return this.allocationTypes.find((item) => item.slug === allocation)?.name || '-';
+  }
+
   openServerDetails(server: ServerPriceWithPKs) {
     this.router.navigateByUrl(`/server/${server.vendor.vendor_id}/${server.server.api_reference}`);
   }
@@ -354,10 +355,14 @@ export class ServerPricesComponent implements OnInit {
 
     if(this.selectedCurrency.slug !== 'USD') {
       queryParams.currency = this.selectedCurrency.slug;
+    } else {
+      delete queryParams.currency;
     }
 
     if(this.allocation.slug) {
       queryParams.allocation = this.allocation.slug;
+    } else {
+      delete queryParams.allocation;
     }
 
     if(this.page > 1) {
@@ -502,6 +507,8 @@ export class ServerPricesComponent implements OnInit {
     this.selectedCurrency = currency;
 
     this.searchOptionsChanged(this.query);
+
+    this.dropdownCurrency?.hide();
   }
 
   selectAllocation(allocation: any) {
@@ -509,6 +516,8 @@ export class ServerPricesComponent implements OnInit {
     this.page = 1;
 
     this.searchOptionsChanged(this.query);
+
+    this.dropdownAllocation?.hide();
   }
 
   selectPageSize(limit: number) {
@@ -524,15 +533,7 @@ export class ServerPricesComponent implements OnInit {
     return field.split('.').reduce((obj, key) => (obj && (obj as any)[key]) ? (obj as any)[key] : undefined, item);
   }
 
-  possiblePages() {
-    // get numbers in array from min(page-2, 1) to page+2
-    const min = Math.max(this.page - 1, 1);
-    const max = Math.min(this.page + 1, this.totalPages);
-    return Array.from({length: max - min + 1}, (_, i) => i + min);
-  }
-
-  getQueryObjectForPage(pageTarget: number) {
-    const page = Math.max(pageTarget, 1);
+  getQueryObjectBase() {
     const paramObject = JSON.parse(JSON.stringify(this.query));
 
     if(this.orderBy && this.orderDir) {
@@ -547,8 +548,6 @@ export class ServerPricesComponent implements OnInit {
     if(this.allocation.slug) {
       paramObject.allocation = this.allocation.slug;
     }
-
-    paramObject.page = page;
 
     if(this.limit !== 25) {
       paramObject.limit = this.limit;
