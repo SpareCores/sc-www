@@ -62,15 +62,34 @@ export class ArticleComponent implements OnInit, OnDestroy {
         baseUrl = `${window.location.protocol}//${window.location.host}`;
       }
       console.log('baseUrl of article', baseUrl);
-      firstValueFrom(this.http.get(`${baseUrl}/assets/articles/${this.id}.md`, { responseType: 'text' } ))
+      this.http.get(`${baseUrl}/assets/articles/${this.id}.md`, { responseType: 'text' } )
       //this.articleHandler.getArticle(id)
-      .then((file: any) => {
+      .subscribe((file: any) => {
+      //.then((file: any) => {
 
-        const { data, content } = matter(file);
+        //const { data, content } = matter(file);
 
-        this.articleMeta = data;
+        this.articleMeta = {
+          "title": "Spot server termination rate per availability zones",
+          "date": "2024-04-16T00:00:00.000Z",
+          "teaser": "AWS publicizes the expected termination rate of the spot instances per region, but what about AZs?",
+          "image": "/assets/images/blog/termination-rates-r7i.2xlarge-cropped.webp",
+          "image_alt": "Plot showing when we failed or managed to start a r7i.2xlarge instance in various AWS availability zones.",
+          "author": "Gergely Daroczi",
+          "tags": [
+            "aws",
+            "spot",
+            "data",
+            "featured"
+          ]
+        };
+
+        console.log('articleMeta', this.articleMeta);
+
         this.articleBody = this.domSanitizer.bypassSecurityTrustHtml(
-          this.markdownService.parse(content, {disableSanitizer: true}) as string);
+          'Hello world!'
+          //this.markdownService.parse(content, {disableSanitizer: true}) as string
+          );
 
         this.breadcrumbs = [
           { name: 'Home', url: '/' },
