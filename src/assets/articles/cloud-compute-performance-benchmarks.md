@@ -11,7 +11,7 @@ author: Gergely Daroczi
 tags: [benchmark, performance, score, compute power]
 ---
 
-First of all, we admin that picking the right method, tool, and
+First of all, we admit that picking the right method, tool, and
 setting up a reproducible, authentic environment to evaluate the
 performance of a cloud server (sometimes with variable/shared
 resources) is hard, if not impossible. However, acknowledging the known
@@ -95,7 +95,7 @@ the performance of many use cases:
 - HDR: Blends six 16MP SDR photos to create a single HDR photo, using
   a recovery process and radiance map construction (Debevec and Malik
   1997), and a tone mapping algorithm (Reinhard and Devlin 2005).
-- Photo Filter: Applies colour and blur filters, level adjustments,
+- Photo Filter: Applies color and blur filters, level adjustments,
   cropping, scaling, and image compositing filters to 10 photos range
   in size from 3 MP to 15 MP.
 - Ray Tracer: Renders the Blender BMW scene using a custom ray tracer
@@ -119,7 +119,8 @@ server details pages, which is also available in our public datasets:
 
 <div class="text-center m-2.5 mt-8 mb-6">
   <img class="zoomin w-full"
-    title="A radar chart showing the GeekBench 6 scores of a t4g.large server at AWS."
+    title="GeekBench 6 scores of a t4g.large server at AWS"
+    alt="A radar chart showing the GeekBench 6 scores of a t4g.large server at AWS."
     src="/assets/images/blog/benchmarks-geekbench.webp"/>
   <p>GeekBench 6 scores of a <code>t4g.large</code> server at AWS<br />(data collected an visualized by Spare Cores)</p>
 </div>
@@ -143,7 +144,8 @@ All these values visualized on a joint line chart on our homepage:
 
 <div class="text-center m-2.5 mt-8 mb-6">
   <img class="zoomin w-full"
-    title="Line chart showing the compressions speed as a function of the compression ratio using multiple compression algos on a t4g.large server at AWS."
+    title="The compressions speed as a function of the compression ratio using multiple compression algos on a t4g.large"
+    alt="Line chart showing the compressions speed as a function of the compression ratio using multiple compression algos on a t4g.large server at AWS."
     src="/assets/images/blog/benchmarks-compression.webp"/>
   <p>The compressions speed as a function of the compression ratio using multiple compression algos on a <code>t4g.large</code> server at AWS<br />(data collected an visualized by Spare Cores)</p>
 </div>
@@ -156,17 +158,18 @@ iteratively run `bw_mem` from the LMBench suite:
 
 <div class="text-center m-2.5 mt-8 mb-6">
   <img class="zoomin w-full"
-    title="Line chart showing the compressions speed as a function of the compression ratio using multiple compression algos on a t4g.large server at AWS."
+    title=" compressions speed as a function of the compression ratio using multiple compression algos on a t4g.large"
+    alt="Line chart showing the compressions speed as a function of the compression ratio using multiple compression algos on a t4g.large server at AWS."
     src="/assets/images/blog/benchmarks-bw_mem.webp"/>
   <p>The compressions speed as a function of the compression ratio using multiple compression algos on a <code>t4g.large</code> server at AWS<br />(data collected an visualized by Spare Cores)</p>
 </div>
 
 As you can see, we also added the L1/L2/L3 cache amounts to the chart,
-as being highly relevant to the performance. Note that depending on
-the actual CPU implementation, the cache amounts might be shared
-accross cores, so on a server with 32 MB L3 cache and 8 cores, in most
-cases only 4 MB of L3 cache is available to a single core application,
-like `bw_mem`.
+as being highly relevant to the memory workload performance. Note that
+depending on the actual CPU implementation, the cache amounts might be
+shared across cores, so on a server with 32 MB L3 cache and 8 cores,
+in most cases only 4 MB of L3 cache is available to a single core
+application.
 
 ## OpenSSL Speed
 
@@ -176,7 +179,8 @@ different block sizes of data:
 
 <div class="text-center m-2.5 mt-8 mb-6">
   <img class="zoomin w-full"
-    title="Grouped bar chart showing the the speed of OpenSSL hash functions and block ciphers on a t4g.large server at AWS."
+    title="The speed of hash functions and block ciphers on t4g.large"
+    alt="Grouped bar chart showing the the speed of OpenSSL hash functions and block ciphers on a t4g.large server at AWS."
     src="/assets/images/blog/benchmarks-openssl.webp"/>
   <p>The speed of hash functions and block ciphers on <code>t4g.large</code><br />(data collected an visualized by Spare Cores)</p>
 </div>
@@ -200,10 +204,10 @@ system, and although it's explicitly stated not to be a benchmarking
 tool, it does results in meaningful and useful metrics with the right
 selection of the CPU stress method.
 
-After evaluating all the ~50 CPU stress methods, we have found that
-many returns diluted scores when running on HT cores, so looked for
-methods that measure the actual raw multi-core performance of the CPU,
-and found the below two finalists:
+After evaluating approximately 50 CPU stress methods, we have found
+that many returns diluted scores when running on hyper-threaded (HT)
+cores, so we looked for methods that measure the actual raw multi-core
+performance of the CPU, and identified the two finalists below.:
 
 - `jmp`: Simple unoptimised compare >, <, == and jmp branching.
 - `div16`: 50,000 16 bit unsigned integer divisions.
@@ -218,7 +222,7 @@ The latter is pretty straightforward to grasp even for someone like me
 with a degree from the Arts Faculty 😅 . . . so we decided to go with `div16`.
 
 Actually, it scales so well with the number of physical CPU cores,
-that we decided to make it the main metric to show fo all nodes. You
+that we decided to make it the main metric to show for all nodes. You
 can find it under the "SCore" name, which is a shorthand for "Spare
 Cores Score" (that we found problematic to pronounce, especially when
 you want to distinguish between the "Single-core Spare Cores Score"
@@ -242,7 +246,7 @@ As always, we appreciate any feedback or any kind of contributions 🙇
 Although you can already find the above performance metrics in our
 public database dumps and our homepage (see
 e.g. [`t4g.large`](/server/aws/t4g.large)) for most servers, there are
-a few servers that we were not able to start yet due to capacity
+a few servers that we were unable to start yet due to capacity
 quotas at some vendors. We also plan to add support for more vendors.
 
 We are also thinking about new benchmark workloads, e.g. currently
