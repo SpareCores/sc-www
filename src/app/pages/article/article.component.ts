@@ -1,4 +1,4 @@
-import { Component, ElementRef, Inject, PLATFORM_ID, Renderer2, OnInit, ViewChild, OnDestroy } from '@angular/core';
+import { Component, ElementRef, Inject, PLATFORM_ID, Renderer2, OnInit, ViewChild, OnDestroy, Optional } from '@angular/core';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
@@ -9,6 +9,8 @@ import { SeoHandlerService } from '../../services/seo-handler.service';
 import { ArticlesService } from '../../services/articles.service';
 import { Lightbox, LightboxModule } from 'ngx-lightbox';
 import * as yaml from 'js-yaml';
+import { REQUEST } from '../../../express.tokens';
+import { Request } from 'express';
 
 @Component({
   selector: 'app-article',
@@ -40,6 +42,8 @@ export class ArticleComponent implements OnInit, OnDestroy {
     private articleHandler: ArticlesService,
     private lightbox: Lightbox,
     private renderer: Renderer2,
+    @Inject('netlify.request') @Optional() private request_netlify?: Request,
+    @Inject(REQUEST) @Optional() private request_express?: Request,
   ) { }
 
   ngOnInit() {
@@ -67,7 +71,21 @@ export class ArticleComponent implements OnInit, OnDestroy {
           { name: this.articleMeta.title, url: `/article/${id}` }
         ];
 
-        this.SEOHandler.updateTitleAndMetaTags(this.articleMeta.title, this.articleMeta.teaser, this.articleMeta.tags.join(","));
+        let baseUrl = 'https://sparecores.com';
+        if(isPlatformBrowser(this.platformId)) {
+          baseUrl = window.location.origin;
+        } else if (this.request_netlify) {
+          const url = new URL(this.request_netlify.url);
+          baseUrl = `${url.protocol}//${url.host}`;
+        } else if (this.request_express) {
+          baseUrl = `${this.request_express?.protocol}://${this.request_express?.get('host')}`;
+        }
+
+        this.SEOHandler.updateTitleAndMetaTags(
+          this.articleMeta.title,
+          this.articleMeta.teaser,
+          this.articleMeta.tags.join(","));
+        this.SEOHandler.updateThumbnail( baseUrl + this.articleMeta.image);
         this.generateSchemaJSON();
 
         if(isPlatformBrowser(this.platformId)) {
@@ -90,6 +108,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.SEOHandler.cleanupStructuredData(this.document);
+    this.SEOHandler.restoreThumbnail();
   }
 
   convertToJSON(str: string) {

@@ -37,6 +37,13 @@ export class SeoHandlerService {
     }
   }
 
+  public restoreThumbnail() {
+    const thumbnail = 'https://sparecores.com/assets/images/media/landing_image.png';
+    this.metaTagService.updateTag({ name: 'twitter:image:src', thumbnail }, "name='twitter:image:src'");
+    this.metaTagService.updateTag({ itemprop: 'image', thumbnail }, 'itemprop="image"');
+    this.metaTagService.updateTag({ property: 'og:image', thumbnail }, "property='og:image'");
+  }
+
   public setupStructuredData(document: any, value: string[]) {
     this.cleanupStructuredData(document);
     value?.forEach((item) => {

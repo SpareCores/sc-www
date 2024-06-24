@@ -5,10 +5,10 @@ date: 2024-04-16
 # ~100 character
 teaser: "AWS publicizes the expected termination rate of the spot instances per region, but what about AZs?"
 # 320x220
-image: /assets/images/blog/termination-rates-r7i.2xlarge-cropped.webp
+image: /assets/images/blog/thumbnails/termination-rates-r7i.2xlarge-cropped.jpg
 image_alt: Plot showing when we failed or managed to start a r7i.2xlarge instance in various AWS availability zones.
 author: Gergely Daroczi
-tags: [aws, spot, data, featured]
+tags: [aws, spot, data]
 ---
 
 We have been very satisfied users of the Spot Blocks for
@@ -179,10 +179,10 @@ results:
   <img class="zoomin w-full"
     title="m5.2xlarge spot instances started in us-west-2 (data collected an visualized by Spare Cores)"
     src="/assets/images/blog/termination-rates-m5.2xlarge.png"/>
-  <p>The status of m5.2xlarge spot instances started in us-west-2<br />(data collected an visualized by Spare Cores)</p>
+  <p>The status of <code>m5.2xlarge</code> spot instances started in <code>us-west-2</code><br />(data collected an visualized by Spare Cores)</p>
 </div>
 
-The 15-20% rate seems to be indeed correct for these instance types,
+The 15-20% rate appears to be indeed correct for these instance types,
 but it's possible to decrease that with the right AZ selection.
 
 ## Takeaway

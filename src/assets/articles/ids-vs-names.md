@@ -5,10 +5,10 @@ date: 2024-02-14
 # ~100 character
 teaser: The use of resource ids and names differs by vendor ... and might be even the same. Integer? String? None?
 # 320x220
-image: /assets/images/blog/hide-the-pain-harold.webp
+image: /assets/images/blog/thumbnails/hide-the-pain-harold.jpg
 image_alt: The "Hide the pain Harold" meme.
 author: Gergely Daroczi
-tags: [aws, gcp, hcloud, crawler, featured]
+tags: [aws, gcp, hcloud, crawler]
 ---
 
 Each vendor has its nomenclature on the compute resources (e.g. "spot
