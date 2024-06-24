@@ -1,7 +1,7 @@
 import { Component, ElementRef, Inject, PLATFORM_ID, Renderer2, OnInit, ViewChild, OnDestroy, Optional } from '@angular/core';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { CommonModule, DOCUMENT, isPlatformBrowser, isPlatformServer } from '@angular/common';
+import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { MarkdownModule, MarkdownService } from 'ngx-markdown';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TimeToShortDatePipe } from '../../pipes/time-to-short-date.pipe';
