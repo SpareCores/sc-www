@@ -5,7 +5,7 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { KeeperAPIService } from '../../services/keeper-api.service';
 import { Server, ServerPKsWithPrices, ServerPricePKs, TableServerTableServerGetData } from '../../../../sdk/data-contracts';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { FaqComponent } from '../../components/faq/faq.component';
@@ -133,6 +133,7 @@ export class ServerDetailsComponent implements OnInit {
   @ViewChild('tooltipGeekbench') tooltipGB!: ElementRef;
 
   constructor(@Inject(PLATFORM_ID) private platformId: object,
+              @Inject(DOCUMENT) private document: Document,
               private route: ActivatedRoute,
               private keeperAPI: KeeperAPIService,
               private SEOHandler: SeoHandlerService,
@@ -330,6 +331,9 @@ export class ServerDetailsComponent implements OnInit {
                   html: `Looking at the number of vCPUs and GPUs, also the amount of memory, the following servers come with similar specs: ${this.similarByPerformance.map((s) => this.serverUrl(s, true)).join(', ')}.`
                 });
 
+              // wee need similar machines to be filled
+              this.generateSchemaJSON(this.title, this.description, keywords);
+
             }
           }).catch((error) => {
             console.error('Failed to load server data:', error);
@@ -431,6 +435,10 @@ export class ServerDetailsComponent implements OnInit {
         }
       });
     });
+  }
+
+  ngOnDestroy() {
+    this.SEOHandler.cleanupStructuredData(this.document);
   }
 
   isBrowser() {
@@ -1158,5 +1166,42 @@ export class ServerDetailsComponent implements OnInit {
     } else {
       return this.serverDetails.benchmark_scores?.find((b) => b.benchmark_id === 'stress_ng:cpu_all' && (b.config as any)?.cores !== 1)?.score?.toFixed(0) || '-';
     }
+  }
+
+  generateSchemaJSON(title: string, description: string, keywords: string) {
+    if(!this.serverDetails) {
+      return;
+    }
+
+    console.log('Generating JSON-LD schema for server details page', this.serverDetails);
+
+    const json: any =
+    // generate schema.org Product JSON-LD
+    //const server = this.serverDetails;
+    {
+      "@context": "https://schema.org/",
+      "@type": "Product",
+      "name": this.serverDetails.display_name,
+      "description": description,
+      "brand": {
+        "@type": "Organization",
+        "name": this.serverDetails.vendor.name,
+        "logo": this.serverDetails.vendor.logo,
+        "url": this.serverDetails.vendor.homepage
+      }
+    }
+
+    if(this.similarByFamily.length) {
+      json['isSimilarTo'] = this.similarByPerformance.map((s) => {
+        return {
+          "@type": "Product",
+          "name": s.display_name,
+          "url": `https://www.sparecores.com/server/${s.vendor_id}/${s.api_reference}`
+        }
+      });
+    }
+
+    this.SEOHandler.setupStructuredData(this.document, [JSON.stringify(json)]);
+
   }
 }
