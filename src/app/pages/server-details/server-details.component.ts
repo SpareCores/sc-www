@@ -1186,7 +1186,6 @@ export class ServerDetailsComponent implements OnInit {
         "logo": this.serverDetails.vendor.logo,
         "url": this.serverDetails.vendor.homepage
       },
-      "image": this.serverDetails.vendor.logo,
       "offers": {
           "@type": "AggregateOffer",
           "offerCount": this.serverDetails.prices.length,
