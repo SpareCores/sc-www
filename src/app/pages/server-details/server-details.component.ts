@@ -1169,7 +1169,8 @@ export class ServerDetailsComponent implements OnInit {
   }
 
   generateSchemaJSON(title: string, description: string, keywords: string) {
-    if(!this.serverDetails) {
+    // we need 'offers' to be filled to avoid Google critical error
+    if(!this.serverDetails || !this.serverDetails.prices || !this.serverDetails.prices.length) {
       return;
     }
 
@@ -1188,10 +1189,18 @@ export class ServerDetailsComponent implements OnInit {
         "name": this.serverDetails.vendor.name,
         "logo": this.serverDetails.vendor.logo,
         "url": this.serverDetails.vendor.homepage
+      },
+      "image": this.serverDetails.vendor.logo,
+      "offers": {
+          "@type": "AggregateOffer",
+          "offerCount": this.serverDetails.prices.length,
+          "lowPrice": this.serverDetails.prices[0].price,
+          "highPrice": this.serverDetails.prices[this.serverDetails.prices.length - 1].price,
+          "priceCurrency": this.serverDetails.prices[0].currency
       }
     }
 
-    if(this.similarByFamily.length) {
+    if(this.similarByPerformance.length) {
       json['isSimilarTo'] = this.similarByPerformance.map((s) => {
         return {
           "@type": "Product",
