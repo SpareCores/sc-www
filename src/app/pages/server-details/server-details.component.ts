@@ -5,7 +5,7 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { KeeperAPIService } from '../../services/keeper-api.service';
 import { Server, ServerPKsWithPrices, ServerPricePKs, TableServerTableServerGetData } from '../../../../sdk/data-contracts';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { FaqComponent } from '../../components/faq/faq.component';
@@ -133,6 +133,7 @@ export class ServerDetailsComponent implements OnInit {
   @ViewChild('tooltipGeekbench') tooltipGB!: ElementRef;
 
   constructor(@Inject(PLATFORM_ID) private platformId: object,
+              @Inject(DOCUMENT) private document: Document,
               private route: ActivatedRoute,
               private keeperAPI: KeeperAPIService,
               private SEOHandler: SeoHandlerService,
@@ -330,6 +331,9 @@ export class ServerDetailsComponent implements OnInit {
                   html: `Looking at the number of vCPUs and GPUs, also the amount of memory, the following servers come with similar specs: ${this.similarByPerformance.map((s) => this.serverUrl(s, true)).join(', ')}.`
                 });
 
+              // wee need similar machines to be filled
+              this.generateSchemaJSON(this.title, this.description, keywords);
+
             }
           }).catch((error) => {
             console.error('Failed to load server data:', error);
@@ -431,6 +435,10 @@ export class ServerDetailsComponent implements OnInit {
         }
       });
     });
+  }
+
+  ngOnDestroy() {
+    this.SEOHandler.cleanupStructuredData(this.document);
   }
 
   isBrowser() {
@@ -1158,5 +1166,53 @@ export class ServerDetailsComponent implements OnInit {
     } else {
       return this.serverDetails.benchmark_scores?.find((b) => b.benchmark_id === 'stress_ng:cpu_all' && (b.config as any)?.cores !== 1)?.score?.toFixed(0) || '-';
     }
+  }
+
+  generateSchemaJSON(title: string, description: string, keywords: string) {
+    // we need 'offers' to be filled to avoid Google critical error
+    if(!this.serverDetails || !this.serverDetails.prices || !this.serverDetails.prices.length) {
+      return;
+    }
+
+    const json: any =
+    {
+      "@context": "https://schema.org/",
+      "@type": "Product",
+      "name": this.serverDetails.display_name,
+      "description": description,
+      "category": `Servers > Cloud servers > ${this.serverDetails.vendor.name}`,
+      "brand": {
+        "@type": "Organization",
+        "name": this.serverDetails.vendor.name,
+        "logo": this.serverDetails.vendor.logo,
+        "url": this.serverDetails.vendor.homepage
+      },
+      "offers": {
+          "@type": "AggregateOffer",
+          "offerCount": this.serverDetails.prices.length,
+          "lowPrice": this.serverDetails.prices[0].price,
+          "highPrice": this.serverDetails.prices[this.serverDetails.prices.length - 1].price,
+          "priceCurrency": this.serverDetails.prices[0].currency
+      },
+      "hasMeasurement": [
+          {"@type": "QuantitativeValue", "name": "Logical cores", "unitText": "VCPU(s)", "value": this.serverDetails.vcpus},
+          {"@type": "QuantitativeValue", "name": "Memory", "unitText": "GiB", "value": this.serverDetails.memory_amount},
+          {"@type": "QuantitativeValue", "name": "Storage", "unitText": "GB", "value": this.serverDetails.storage_size},
+          {"@type": "QuantitativeValue", "name": "Graphics processing units", "unitText": "GPU(s)", "value": this.serverDetails.gpu_count},
+      ],
+    }
+
+    if(this.similarByPerformance.length) {
+      json['isSimilarTo'] = this.similarByPerformance.map((s) => {
+        return {
+          "@type": "Product",
+          "name": `${s.display_name} (${s.vendor_id})`,
+          "url": `https://www.sparecores.com/server/${s.vendor_id}/${s.api_reference}`
+        }
+      });
+    }
+
+    this.SEOHandler.setupStructuredData(this.document, [JSON.stringify(json)]);
+
   }
 }

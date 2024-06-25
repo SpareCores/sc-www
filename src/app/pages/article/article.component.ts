@@ -138,7 +138,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
     if(!this.articleMeta) {
       return;
     }
-    const json = [
+    const json =
         {
             '@context': 'https://schema.org/',
             '@type': 'TechArticle',
@@ -172,8 +172,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
                 },
             },
             mainEntityOfPage: `https://sparecores.com/article/${this.id}`,
-        },
-    ];
+        };
 
     this.SEOHandler.setupStructuredData(this.document, [JSON.stringify(json)]);
   }
