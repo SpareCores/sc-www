@@ -1193,7 +1193,13 @@ export class ServerDetailsComponent implements OnInit {
           "lowPrice": this.serverDetails.prices[0].price,
           "highPrice": this.serverDetails.prices[this.serverDetails.prices.length - 1].price,
           "priceCurrency": this.serverDetails.prices[0].currency
-      }
+      },
+      "hasMeasurement": [
+          {"@type": "QuantitativeValue", "name": "Logical cores", "unitText": "VCPU(s)", "value": this.serverDetails.vcpus},
+          {"@type": "QuantitativeValue", "name": "Memory", "unitText": "GiB", "value": this.serverDetails.memory_amount},
+          {"@type": "QuantitativeValue", "name": "Storage", "unitText": "GB", "value": this.serverDetails.storage_size},
+          {"@type": "QuantitativeValue", "name": "Graphics processing units", "unitText": "GPU(s)", "value": this.serverDetails.gpu_count},
+      ],
     }
 
     if(this.similarByPerformance.length) {
