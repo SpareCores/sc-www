@@ -1,18 +1,24 @@
 /* eslint-disable prefer-const */
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, OnInit, PLATFORM_ID, ViewChild } from '@angular/core';
 import { KeeperAPIService } from '../../services/keeper-api.service';
 import { ActivatedRoute } from '@angular/router';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { LucideAngularModule } from 'lucide-angular';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Allocation, ServerPKsWithPrices } from '../../../../sdk/data-contracts';
 import { SeoHandlerService } from '../../services/seo-handler.service';
+import { Chart, ChartConfiguration, ChartData } from 'chart.js';
+import { radarChartOptions, radarDatasetColors } from '../server-details/chartOptions';
+import annotationPlugin from 'chartjs-plugin-annotation';
+import { BaseChartDirective } from 'ng2-charts';
+
+Chart.register(annotationPlugin);
 
 @Component({
   selector: 'app-server-compare',
   standalone: true,
-  imports: [BreadcrumbsComponent, LucideAngularModule, CommonModule, FormsModule],
+  imports: [BreadcrumbsComponent, LucideAngularModule, CommonModule, FormsModule, BaseChartDirective],
   templateUrl: './server-compare.component.html',
   styleUrl: './server-compare.component.scss'
 })
@@ -56,7 +62,13 @@ export class ServerCompareComponent implements OnInit {
   @ViewChild('tooltipDefault') tooltip!: ElementRef;
   tooltipContent = '';
 
+  radarChartType = 'radar' as const;
+  radarChartOptions: ChartConfiguration<'radar'>['options'] = JSON.parse(JSON.stringify(radarChartOptions));
+  radarChartDataGeekMulti: ChartData<'radar'> | undefined = undefined;
+  radarChartDataGeekSingle: ChartData<'radar'> | undefined = undefined;
+
   constructor(
+    @Inject(PLATFORM_ID) private platformId: object,
     private keeperAPI: KeeperAPIService,
     private seoHandler: SeoHandlerService,
     private route: ActivatedRoute) { }
@@ -68,6 +80,8 @@ export class ServerCompareComponent implements OnInit {
     const keywords = 'compare, servers, server, hosting, cloud, vps, dedicated, comparison';
 
     this.seoHandler.updateTitleAndMetaTags(title, description, keywords);
+
+    (this.radarChartOptions as any).plugins.legend.display = true;
 
     this.route.queryParams.subscribe(params => {
       const param = params['instances'];
@@ -155,6 +169,8 @@ export class ServerCompareComponent implements OnInit {
                 });
               });
             });
+
+            this.generateChartsData();
 
             this.isLoading = false;
           }).catch((err) => {
@@ -392,5 +408,81 @@ export class ServerCompareComponent implements OnInit {
   public numberWithCommas(x: number) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
+
+  public generateChartsData() {
+    console.log(this.benchmarkMeta);
+
+    const geekbenchScores = this.benchmarkMeta
+    .filter((x: any) => x.benchmark_id.includes('geekbench') && x.benchmark_id !== 'geekbench:score')
+    .sort((a: any, b: any) => a.name.localeCompare(b.name));
+
+    console.log(geekbenchScores);
+
+    const labels = geekbenchScores.map((x: any) => x.benchmark_id);
+    //scales = dataSet[0].benchmarks.sort((a: any, b:any) => (a.config.cores as string).localeCompare(b.config.cores)).map((b: any) => b.config.cores);
+
+    let chartData: any = {
+      labels: labels
+        .map((s: string) =>
+          (this.benchmarkMeta.find((b: any) => b.benchmark_id === s)?.name || s)
+            .replace('geekbench:', '')
+            .replace('Geekbench: ', '')),
+      datasets: [
+        this.servers.map((server: any, index: number) => {
+        return {
+          data: [],
+          label: server.display_name,
+          borderColor: radarDatasetColors[index % 8].borderColor,
+          backgroundColor: radarDatasetColors[index % 8].backgroundColor};
+        }),
+        this.servers.map((server: any, index: number) => {
+          return {
+            data: [],
+            label: server.display_name,
+            borderColor: radarDatasetColors[index % 8].borderColor,
+            backgroundColor: radarDatasetColors[index % 8].backgroundColor};
+          })
+      ]
+    };
+
+    console.log(this.servers);
+
+    console.log(chartData);
+
+    labels.forEach((label: string) => {
+      this.servers.forEach((server, index) => {
+        const scores = server.benchmark_scores?.filter((x: any) => label === x.benchmark_id).sort((a: any, b:any) => (a.config.cores as string).localeCompare(b.config.cores));
+        if(scores?.length === 2) {
+          scores.forEach((score: any, j) => {
+            chartData.datasets[j][index].data.push({value: score.score, tooltip: score.note});
+          });
+        } else {
+          chartData.datasets[0][index].data.push({value: 0, tooltip: ''});
+          chartData.datasets[1][index].data.push({value: 0, tooltip: ''});
+        }
+      });
+    });
+
+    console.log(chartData);
+
+      this.radarChartDataGeekMulti = {
+        labels: chartData.labels,
+        datasets: chartData.datasets[0]
+      };
+      this.radarChartDataGeekSingle = {
+        labels: chartData.labels,
+        datasets: chartData.datasets[1]
+      };
+
+
+  }
+
+  isBrowser() {
+    return isPlatformBrowser(this.platformId);
+  }
+
+  showTooltipGB(event: any) {}
+
+  hideTooltipGB() {}
 
 }

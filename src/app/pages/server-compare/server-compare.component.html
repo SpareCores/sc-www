@@ -157,6 +157,68 @@
       </table>
     </div>
 
+    <div class="w-full text-white">
+      <div class="block_full" *ngIf="radarChartDataGeekSingle">
+        <div class="flex justify-between items-center">
+          <h3 class="text-2xl flex items-center gap-2" >
+            Geekbench Single-Core
+            <lucide-icon
+              name="info"
+              class="h-4 w-4 text-gray-200"
+              (mouseenter)="showTooltipGB($event)"
+              (mouseleave)="hideTooltipGB()">
+            </lucide-icon>
+          </h3>
+          <div class="py-2 px-2 border-emerald-400 border-solid rounded-lg border">
+            Score:
+          </div>
+        </div>
+        <div *ngIf="isBrowser()">
+          <div chartType="bar">
+            <canvas
+              #chartPriceLowest
+              id="chartPriceLowest"
+              style="max-height: 530px; max-width:100%"
+              baseChart
+              [data]="radarChartDataGeekSingle"
+              [options]="radarChartOptions"
+              [type]="radarChartType"
+            >
+            </canvas>
+          </div>
+        </div>
+      </div>
+      <div class="block_full" *ngIf="radarChartDataGeekMulti">
+        <div class="flex justify-between items-center">
+          <h3 class="text-2xl flex items-center gap-2" >
+            Geekbench Multi-Core
+            <lucide-icon
+              name="info"
+              class="h-4 w-4 text-gray-200"
+              (mouseenter)="showTooltipGB($event)"
+              (mouseleave)="hideTooltipGB()">
+            </lucide-icon>
+          </h3>
+          <div class="py-2 px-2 border-emerald-400 border-solid rounded-lg border">
+            Score:
+          </div>
+        </div>
+        <div *ngIf="isBrowser()">
+          <div chartType="bar">
+            <canvas
+              style="max-height: 530px; max-width:100%"
+              baseChart
+              [data]="radarChartDataGeekMulti"
+              [options]="radarChartOptions"
+              [type]="radarChartType"
+            >
+            </canvas>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
   </div>
 </div>
 

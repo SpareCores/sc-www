@@ -96,7 +96,7 @@ export const radarChartOptions: ChartConfiguration<'radar'>['options'] = {
     tooltip:{
       callbacks: {
         label: function(this: TooltipModel<"radar">, tooltipItem: TooltipItem<"radar">) {
-          return (tooltipItem.dataset.data[tooltipItem.dataIndex] as any).value + '; ' + (tooltipItem.dataset.data[tooltipItem.dataIndex] as any).tooltip;
+          console.log(tooltipItem);return (tooltipItem.dataset.data[tooltipItem.dataIndex] as any).value + '; ' + (tooltipItem.dataset.data[tooltipItem.dataIndex] as any).tooltip;
         }
       }
     },
