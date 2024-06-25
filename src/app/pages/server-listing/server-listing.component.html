@@ -252,18 +252,18 @@
 <div *ngIf="compareCount() >= 2" class="fixed_buttons">
   <div class="flex gap-4" >
     <button
-      class="flex justify-center bg-emerald-400 text-white py-2 px-4 rounded-lg font-bold hover:bg-emerald-500"
-      data-ph-capture-attribute-sc-event="server listing compare"
-      data-ph-capture-attribute-server-listing-compare-action="open"
-      (click)="openCompare()">
-      Compare ({{compareCount()}})
-    </button>
-    <button
       class="flex justify-center bg-red-400 text-white py-2 px-4 rounded-lg font-bold hover:bg-red-500"
       data-ph-capture-attribute-sc-event="server listing compare"
       data-ph-capture-attribute-server-listing-compare-action="open"
       (click)="clearCompare()">
       Clear
+    </button>
+    <button
+      class="flex justify-center bg-emerald-400 text-white py-2 px-4 rounded-lg font-bold hover:bg-emerald-500"
+      data-ph-capture-attribute-sc-event="server listing compare"
+      data-ph-capture-attribute-server-listing-compare-action="open"
+      (click)="openCompare()">
+      Compare ({{compareCount()}})
     </button>
   </div>
 </div>
