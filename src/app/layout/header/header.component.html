@@ -91,7 +91,7 @@
 </div>
 
 
-<div id="compare_options" class="z-10 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid">
+<div id="compare_options" class="z-10 hidden bg-secondary rounded-lg shadow w-250 border border-emerald-400 border-solid">
   <ul
     class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
     aria-labelledby="dropdownDefaultButton"
@@ -99,12 +99,12 @@
     <li class="py-2 flex justify-between" *ngFor="let item of getServersForCompare()">
       <a class="navbar_link" routerLink="/server/{{item.vendor_id}}/{{item.api_reference}}" >
         <lucide-icon class="h-4 w-4" name="pc-case"></lucide-icon>
-        {{item.display_name}}
+        {{item.vendor_id}}: {{item.display_name}}
       </a>
       <div (click)="$event.stopPropagation()">
         <button
           class="text-red-500 px-2 py-2"
-          (click)="removeFromCompare(item)">
+          (click)="removeFromCompare($event, item)">
           <lucide-icon class="h-4 w-4" name="trash"></lucide-icon>
         </button>
       </div>

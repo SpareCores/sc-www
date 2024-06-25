@@ -139,8 +139,6 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
   vendorMetadata: any[] = [];
 
-  selectedForCompare: ServerPKs[] = [];
-
   @ViewChild('tooltipDefault') tooltip!: ElementRef;
   clipboardIcon = 'clipboard';
   tooltipContent = '';
@@ -339,7 +337,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
       // set stored selected state
       this.servers?.forEach((server: any) => {
-        server.selected = this.selectedForCompare
+        server.selected = this.serverCompare.selectedForCompare
           .findIndex((item) => item.vendor_id === server.vendor_id && item.server_id === server.server_id) !== -1;
       });
 

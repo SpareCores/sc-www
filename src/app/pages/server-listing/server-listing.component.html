@@ -69,7 +69,11 @@
             <table class="items_table">
               <thead>
                 <tr>
-                  <th></th>
+                  <th style="width: 3.25rem;">
+                    <div class="text-white">
+                      <lucide-icon class="h-4 w-4" name="scale" ></lucide-icon>
+                    </div>
+                  </th>
                   <th *ngFor="let item of tableColumns"
                       [ngClass]="{
                         'cursor-pointer': item.orderField
@@ -96,8 +100,9 @@
                     [attr.data-ph-capture-attribute-server-listing-row-vendor]="item.vendor_id"
                     [attr.data-ph-capture-attribute-server-listing-row-index]="i+1"
                     [attr.data-ph-capture-attribute-server-listing-row-page-size]="limit">
+
                   <td (click)="toggleCompare2($event, item)">
-                    <div class="flex gap-2 items-center">
+                    <div class="flex items-center">
                       <input type="checkbox"
                         id="server_compare_checkbox_{{item.server_id}}"
                         [(ngModel)]="item.selected"
@@ -106,6 +111,16 @@
                         class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer" >
                     </div>
                   </td>
+                  <!--
+                  <td (click)="toggleCompare2($event, item)">
+                    <div *ngIf="!item.selected" class="p-2 text-white">
+                      <lucide-icon class="h-6 w-6" name="scale" ></lucide-icon>
+                    </div>
+                    <div *ngIf="item.selected" class="p-2  text-emerald-400">
+                      <lucide-icon class="h-6 w-6" name="scale" ></lucide-icon>
+                    </div>
+                  </td>
+                  -->
                   <ng-container *ngFor="let column of tableColumns">
                     <td *ngIf="column.type === 'name'">
                       <div (click)="$event.stopPropagation()">

@@ -94,7 +94,8 @@ export class HeaderComponent implements OnInit {
     return this.serverCompare.selectedForCompare;
   }
 
-  removeFromCompare(server: any) {
+  removeFromCompare(event: any, server: any) {
+    event.stopPropagation();
     this.serverCompare.toggleCompare(false, server);
   }
 
