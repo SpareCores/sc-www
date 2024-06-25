@@ -19,6 +19,7 @@ import annotationPlugin from 'chartjs-plugin-annotation';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ReduceUnitNamePipe } from '../../pipes/reduce-unit-name.pipe';
 import { CountryIdtoNamePipe } from '../../pipes/country-idto-name.pipe';
+import { ServerCompareService } from '../../services/server-compare.service';
 
 Chart.register(annotationPlugin);
 
@@ -137,6 +138,7 @@ export class ServerDetailsComponent implements OnInit {
               private route: ActivatedRoute,
               private keeperAPI: KeeperAPIService,
               private SEOHandler: SeoHandlerService,
+              private serverCompare: ServerCompareService,
               private senitizer: DomSanitizer) {
 
   }
@@ -1166,6 +1168,10 @@ export class ServerDetailsComponent implements OnInit {
     } else {
       return this.serverDetails.benchmark_scores?.find((b) => b.benchmark_id === 'stress_ng:cpu_all' && (b.config as any)?.cores !== 1)?.score?.toFixed(0) || '-';
     }
+  }
+
+  addToCompare() {
+    this.serverCompare.toggleCompare(true, this.serverDetails);
   }
 
   generateSchemaJSON(title: string, description: string, keywords: string) {

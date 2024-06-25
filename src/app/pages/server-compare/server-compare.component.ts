@@ -1,13 +1,22 @@
 /* eslint-disable prefer-const */
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, OnInit, PLATFORM_ID, ViewChild } from '@angular/core';
 import { KeeperAPIService } from '../../services/keeper-api.service';
 import { ActivatedRoute } from '@angular/router';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { LucideAngularModule } from 'lucide-angular';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Allocation, ServerPKsWithPrices } from '../../../../sdk/data-contracts';
 import { SeoHandlerService } from '../../services/seo-handler.service';
+import { Dropdown, DropdownOptions } from 'flowbite';
+
+const options: DropdownOptions = {
+  placement: 'bottom',
+  triggerType: 'click',
+  offsetSkidding: 0,
+  offsetDistance: 10,
+  delay: 300
+};
 
 @Component({
   selector: 'app-server-compare',
@@ -56,7 +65,28 @@ export class ServerCompareComponent implements OnInit {
   @ViewChild('tooltipDefault') tooltip!: ElementRef;
   tooltipContent = '';
 
+  dropdownCurrency: any;
+  availableCurrencies = [
+    {name: 'US dollar', slug: 'USD', symbol: '$'},
+    {name: 'Euro', slug: 'EUR', symbol: '€'},
+    {name: 'British Pound', slug: 'GBP', symbol: '£'},
+    {name: 'Swedish Krona', slug: 'SEK', symbol: 'kr'},
+    {name: 'Danish Krone', slug: 'DKK', symbol: 'kr'},
+    {name: 'Norwegian Krone', slug: 'NOK', symbol: 'kr'},
+    {name: 'Swiss Franc', slug: 'CHF', symbol: 'CHF'},
+    {name: 'Australian Dollar', slug: 'AUD', symbol: '$'},
+    {name: 'Canadian Dollar', slug: 'CAD', symbol: '$'},
+    {name: 'Japanese Yen', slug: 'JPY', symbol: '¥'},
+    {name: 'Chinese Yuan', slug: 'CNY', symbol: '¥'},
+    {name: 'Indian Rupee', slug: 'INR', symbol: '₹'},
+    {name: 'Brazilian Real', slug: 'BRL', symbol: 'R$'},
+    {name: 'South African Rand', slug: 'ZAR', symbol: 'R'},
+  ];
+
+  selectedCurrency = this.availableCurrencies[0];
+
   constructor(
+    @Inject(PLATFORM_ID) private platformId: object,
     private keeperAPI: KeeperAPIService,
     private seoHandler: SeoHandlerService,
     private route: ActivatedRoute) { }
@@ -79,7 +109,7 @@ export class ServerCompareComponent implements OnInit {
           ];
           decodedParams?.forEach((instance: any) => {
             promises.push(
-              this.keeperAPI.getServer(instance.vendor, instance.server)
+              this.keeperAPI.getServer(instance.vendor, instance.server, this.selectedCurrency.slug)
             );
           });
           Promise.all(promises).then((data) => {
@@ -156,6 +186,23 @@ export class ServerCompareComponent implements OnInit {
               });
             });
 
+            if(isPlatformBrowser(this.platformId)) {
+              const targetElCurrency: HTMLElement | null = document.getElementById('currency_options');
+              const triggerElCurrency: HTMLElement | null = document.getElementById('currency_button');
+
+
+              this.dropdownCurrency = new Dropdown(
+                  targetElCurrency,
+                  triggerElCurrency,
+                  options,
+                  {
+                    id: 'currency_options',
+                    override: true
+                  }
+              );
+              this.dropdownCurrency.init();
+            }
+
             this.isLoading = false;
           }).catch((err) => {
             console.error(err);
@@ -175,7 +222,7 @@ export class ServerCompareComponent implements OnInit {
 
     this.clipboardIcon = 'check';
 
-    this.showTooltip(event, 'Copied to clipboard!', true);
+    this.showTooltip(event, 'Link copied to clipboard!', true);
 
     setTimeout(() => {
       this.clipboardIcon = 'clipboard';
@@ -391,6 +438,28 @@ export class ServerCompareComponent implements OnInit {
 
   public numberWithCommas(x: number) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+
+
+  selectCurrency(currency: any) {
+    this.selectedCurrency = currency;
+
+    let promises: Promise<any>[] = [
+    ];
+    this.servers?.forEach((instance: any) => {
+      promises.push(
+        this.keeperAPI.getServer(instance.vendor_id, instance.server_id, this.selectedCurrency.slug)
+      );
+    });
+
+    Promise.all(promises).then((data) => {
+      this.servers = [];
+      for(let i = 0; i < data.length; i++){
+        this.servers.push(data[i].body);
+      }
+    });
+
+    this.dropdownCurrency?.hide();
   }
 
 }

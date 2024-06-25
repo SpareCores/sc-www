@@ -27,8 +27,8 @@ export class KeeperAPIService {
     private httpClient: HttpClient) {
   }
 
-  public getServer(vendor: string, id: string): Promise<any> {
-    return this.ServerController.getServerServerVendorServerGet(vendor, id);
+  public getServer(vendor: string, id: string, currency?: string): Promise<any> {
+    return this.ServerController.getServerServerVendorServerGet({vendor, server:id, currency });
   }
 
   public searchServers(query: SearchServersServersGetParams): Promise<any> {
