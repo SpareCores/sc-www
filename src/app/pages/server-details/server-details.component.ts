@@ -1200,7 +1200,7 @@ export class ServerDetailsComponent implements OnInit {
       json['isSimilarTo'] = this.similarByPerformance.map((s) => {
         return {
           "@type": "Product",
-          "name": s.display_name,
+          "name": `${s.display_name} (${s.vendor_id})`,
           "url": `https://www.sparecores.com/server/${s.vendor_id}/${s.api_reference}`
         }
       });
