@@ -198,8 +198,8 @@ export interface ComplianceFramework {
 /** ComplianceFrameworks */
 export enum ComplianceFrameworks {
   Hipaa = "hipaa",
-  Soc2T2 = "soc2t2",
   Iso27001 = "iso27001",
+  Soc2T2 = "soc2t2",
 }
 
 /**
@@ -827,6 +827,51 @@ export interface RegionPKs {
 
 /** Regions */
 export enum Regions {
+  Value1000 = "1000",
+  Value1100 = "1100",
+  Value1210 = "1210",
+  Value1220 = "1220",
+  Value1230 = "1230",
+  Value1250 = "1250",
+  Value1260 = "1260",
+  Value1270 = "1270",
+  Value1280 = "1280",
+  Value1290 = "1290",
+  Value1300 = "1300",
+  Value1310 = "1310",
+  Value1320 = "1320",
+  Value1330 = "1330",
+  Value1340 = "1340",
+  Value1350 = "1350",
+  Value1360 = "1360",
+  Value1370 = "1370",
+  Value1380 = "1380",
+  Value1390 = "1390",
+  Value1410 = "1410",
+  Value1420 = "1420",
+  Value1430 = "1430",
+  Value1440 = "1440",
+  Value1450 = "1450",
+  Value1460 = "1460",
+  Value1470 = "1470",
+  Value1480 = "1480",
+  Value1490 = "1490",
+  Value1510 = "1510",
+  Value1520 = "1520",
+  Value1530 = "1530",
+  Value1540 = "1540",
+  Value1550 = "1550",
+  Value1560 = "1560",
+  Value1570 = "1570",
+  Value1580 = "1580",
+  Value1590 = "1590",
+  Value1600 = "1600",
+  Value1610 = "1610",
+  Value2 = "2",
+  Value3 = "3",
+  Value4 = "4",
+  Value5 = "5",
+  Value6 = "6",
   AfSouth1 = "af-south-1",
   ApEast1 = "ap-east-1",
   ApNortheast1 = "ap-northeast-1",
@@ -858,51 +903,6 @@ export enum Regions {
   UsEast2 = "us-east-2",
   UsWest1 = "us-west-1",
   UsWest2 = "us-west-2",
-  Value1610 = "1610",
-  Value1220 = "1220",
-  Value1370 = "1370",
-  Value1250 = "1250",
-  Value1390 = "1390",
-  Value1410 = "1410",
-  Value1320 = "1320",
-  Value1470 = "1470",
-  Value1260 = "1260",
-  Value1440 = "1440",
-  Value1280 = "1280",
-  Value1480 = "1480",
-  Value1450 = "1450",
-  Value1350 = "1350",
-  Value1540 = "1540",
-  Value1100 = "1100",
-  Value1590 = "1590",
-  Value1570 = "1570",
-  Value1290 = "1290",
-  Value1300 = "1300",
-  Value1340 = "1340",
-  Value1380 = "1380",
-  Value1510 = "1510",
-  Value1520 = "1520",
-  Value1580 = "1580",
-  Value1600 = "1600",
-  Value1560 = "1560",
-  Value1330 = "1330",
-  Value1460 = "1460",
-  Value1310 = "1310",
-  Value1490 = "1490",
-  Value1000 = "1000",
-  Value1230 = "1230",
-  Value1270 = "1270",
-  Value1530 = "1530",
-  Value1550 = "1550",
-  Value1210 = "1210",
-  Value1360 = "1360",
-  Value1420 = "1420",
-  Value1430 = "1430",
-  Value2 = "2",
-  Value3 = "3",
-  Value4 = "4",
-  Value5 = "5",
-  Value6 = "6",
 }
 
 /**
@@ -953,213 +953,6 @@ export enum Regions {
  *     observed_at (datetime): Timestamp of the last observation.
  */
 export interface Server {
-  /**
-   * Vendor Id
-   * Reference to the Vendor.
-   */
-  vendor_id: string;
-  /**
-   * Server Id
-   * Unique identifier, as called at the Vendor.
-   */
-  server_id: string;
-  /**
-   * Name
-   * Human-friendly name.
-   */
-  name: string;
-  /**
-   * Api Reference
-   * How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depening on the vendor and actual API endpoint.
-   */
-  api_reference: string;
-  /**
-   * Display Name
-   * Human-friendly reference (usually the id or name) of the resource.
-   */
-  display_name: string;
-  /**
-   * Description
-   * Short description.
-   */
-  description: string | null;
-  /**
-   * Family
-   * Server family, e.g. General-purpose machine (GCP), or M5g (AWS).
-   */
-  family?: string | null;
-  /**
-   * Vcpus
-   * Default number of virtual CPUs (vCPU) of the server.
-   */
-  vcpus?: number;
-  /**
-   * Hypervisor
-   * Hypervisor of the virtual server, e.g. Xen, KVM, Nitro or Dedicated.
-   */
-  hypervisor?: string | null;
-  /** Allocation of CPU(s) to the server, e.g. shared, burstable or dedicated. */
-  cpu_allocation?: CpuAllocation;
-  /**
-   * Cpu Cores
-   * Default number of CPU cores of the server. Equals to vCPUs when HyperThreading is disabled.
-   */
-  cpu_cores?: number | null;
-  /**
-   * Cpu Speed
-   * Vendor-reported maximum CPU clock speed (GHz).
-   */
-  cpu_speed?: number | null;
-  /** CPU architecture (arm64, arm64_mac, i386, or x86_64). */
-  cpu_architecture?: CpuArchitecture;
-  /**
-   * Cpu Manufacturer
-   * The manufacturer of the primary processor, e.g. Intel or AMD.
-   */
-  cpu_manufacturer?: string | null;
-  /**
-   * Cpu Family
-   * The product line/family of the primary processor, e.g. Xeon, Core i7, Ryzen 9.
-   */
-  cpu_family?: string | null;
-  /**
-   * Cpu Model
-   * The model number of the primary processor, e.g. 9750H.
-   */
-  cpu_model?: string | null;
-  /**
-   * Cpu L1 Cache
-   * L1 cache size (MiB).
-   */
-  cpu_l1_cache?: number | null;
-  /**
-   * Cpu L2 Cache
-   * L2 cache size (MiB).
-   */
-  cpu_l2_cache?: number | null;
-  /**
-   * Cpu L3 Cache
-   * L3 cache size (MiB).
-   */
-  cpu_l3_cache?: number | null;
-  /**
-   * Cpu Flags
-   * CPU features/flags.
-   * @default []
-   */
-  cpu_flags?: string[];
-  /**
-   * Cpus
-   * JSON array of known CPU details, e.g. the manufacturer, family, model; L1/L2/L3 cache size; microcode version; feature flags; bugs etc.
-   * @default []
-   */
-  cpus?: Cpu[];
-  /**
-   * Memory Amount
-   * RAM amount (MiB).
-   */
-  memory_amount?: number;
-  /** Generation of the DDR SDRAM, e.g. DDR4 or DDR5. */
-  memory_generation?: DdrGeneration | null;
-  /**
-   * Memory Speed
-   * DDR SDRAM clock rate (Mhz).
-   */
-  memory_speed?: number | null;
-  /**
-   * Memory Ecc
-   * If the DDR SDRAM uses error correction code to detect and correct n-bit data corruption.
-   */
-  memory_ecc?: boolean | null;
-  /**
-   * Gpu Count
-   * Number of GPU accelerator(s).
-   * @default 0
-   */
-  gpu_count?: number;
-  /**
-   * Gpu Memory Min
-   * Memory (MiB) allocated to the lowest-end GPU accelerator.
-   */
-  gpu_memory_min?: number | null;
-  /**
-   * Gpu Memory Total
-   * Overall memory (MiB) allocated to all the GPU accelerator(s).
-   */
-  gpu_memory_total?: number | null;
-  /**
-   * Gpu Manufacturer
-   * The manufacturer of the primary GPU accelerator, e.g. Nvidia or AMD.
-   */
-  gpu_manufacturer?: string | null;
-  /**
-   * Gpu Family
-   * The product family of the primary GPU accelerator, e.g. Turing.
-   */
-  gpu_family?: string | null;
-  /**
-   * Gpu Model
-   * The model number of the primary GPU accelerator, e.g. Tesla T4.
-   */
-  gpu_model?: string | null;
-  /**
-   * Gpus
-   * JSON array of GPU accelerator details, including the manufacturer, name, and memory (MiB) of each GPU.
-   * @default []
-   */
-  gpus?: Gpu[];
-  /**
-   * Storage Size
-   * Overall size (GB) of the disk(s).
-   * @default 0
-   */
-  storage_size?: number;
-  /** Primary disk type, e.g. HDD, SSD, NVMe SSD, or network). */
-  storage_type?: StorageType | null;
-  /**
-   * Storages
-   * JSON array of disks attached to the server, including the size (MiB) and type of each disk.
-   * @default []
-   */
-  storages?: Disk[];
-  /**
-   * Network Speed
-   * The baseline network performance (Gbps) of the network card.
-   */
-  network_speed?: number | null;
-  /**
-   * Inbound Traffic
-   * Amount of complimentary inbound traffic (GB) per month.
-   * @default 0
-   */
-  inbound_traffic?: number;
-  /**
-   * Outbound Traffic
-   * Amount of complimentary outbound traffic (GB) per month.
-   * @default 0
-   */
-  outbound_traffic?: number;
-  /**
-   * Ipv4
-   * Number of complimentary IPv4 address(es).
-   * @default 0
-   */
-  ipv4?: number;
-  /**
-   * Status of the resource (active or inactive).
-   * @default "active"
-   */
-  status?: Status;
-  /**
-   * Observed At
-   * Timestamp of the last observation.
-   * @format date-time
-   */
-  observed_at?: string;
-}
-
-/** ServerBase */
-export interface ServerBase {
   /**
    * Vendor Id
    * Reference to the Vendor.
@@ -1570,6 +1363,10 @@ export interface ServerPKs {
    * @format date-time
    */
   observed_at?: string;
+  /** Score */
+  score?: number | null;
+  /** Score Per Price */
+  score_per_price?: number | null;
   vendor: VendorBase;
 }
 
@@ -1778,6 +1575,10 @@ export interface ServerPKsWithPrices {
    * @format date-time
    */
   observed_at?: string;
+  /** Score */
+  score?: number | null;
+  /** Score Per Price */
+  score_per_price?: number | null;
   vendor: VendorBase;
   /** Prices */
   prices: ServerPricePKs[];
@@ -1928,7 +1729,7 @@ export interface ServerPriceWithPKs {
   vendor: VendorBase;
   region: RegionBaseWithPKs;
   zone: ZoneBase;
-  server: ServerBase;
+  server: ServerWithScore;
 }
 
 /** ServerTableMetaData */
@@ -1936,6 +1737,217 @@ export interface ServerTableMetaData {
   table: NameAndDescription;
   /** Fields */
   fields: IdNameAndDescriptionAndCategory[];
+}
+
+/** ServerWithScore */
+export interface ServerWithScore {
+  /**
+   * Vendor Id
+   * Reference to the Vendor.
+   */
+  vendor_id: string;
+  /**
+   * Server Id
+   * Unique identifier, as called at the Vendor.
+   */
+  server_id: string;
+  /**
+   * Name
+   * Human-friendly name.
+   */
+  name: string;
+  /**
+   * Api Reference
+   * How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depening on the vendor and actual API endpoint.
+   */
+  api_reference: string;
+  /**
+   * Display Name
+   * Human-friendly reference (usually the id or name) of the resource.
+   */
+  display_name: string;
+  /**
+   * Description
+   * Short description.
+   */
+  description: string | null;
+  /**
+   * Family
+   * Server family, e.g. General-purpose machine (GCP), or M5g (AWS).
+   */
+  family?: string | null;
+  /**
+   * Vcpus
+   * Default number of virtual CPUs (vCPU) of the server.
+   */
+  vcpus?: number;
+  /**
+   * Hypervisor
+   * Hypervisor of the virtual server, e.g. Xen, KVM, Nitro or Dedicated.
+   */
+  hypervisor?: string | null;
+  /** Allocation of CPU(s) to the server, e.g. shared, burstable or dedicated. */
+  cpu_allocation?: CpuAllocation;
+  /**
+   * Cpu Cores
+   * Default number of CPU cores of the server. Equals to vCPUs when HyperThreading is disabled.
+   */
+  cpu_cores?: number | null;
+  /**
+   * Cpu Speed
+   * Vendor-reported maximum CPU clock speed (GHz).
+   */
+  cpu_speed?: number | null;
+  /** CPU architecture (arm64, arm64_mac, i386, or x86_64). */
+  cpu_architecture?: CpuArchitecture;
+  /**
+   * Cpu Manufacturer
+   * The manufacturer of the primary processor, e.g. Intel or AMD.
+   */
+  cpu_manufacturer?: string | null;
+  /**
+   * Cpu Family
+   * The product line/family of the primary processor, e.g. Xeon, Core i7, Ryzen 9.
+   */
+  cpu_family?: string | null;
+  /**
+   * Cpu Model
+   * The model number of the primary processor, e.g. 9750H.
+   */
+  cpu_model?: string | null;
+  /**
+   * Cpu L1 Cache
+   * L1 cache size (MiB).
+   */
+  cpu_l1_cache?: number | null;
+  /**
+   * Cpu L2 Cache
+   * L2 cache size (MiB).
+   */
+  cpu_l2_cache?: number | null;
+  /**
+   * Cpu L3 Cache
+   * L3 cache size (MiB).
+   */
+  cpu_l3_cache?: number | null;
+  /**
+   * Cpu Flags
+   * CPU features/flags.
+   * @default []
+   */
+  cpu_flags?: string[];
+  /**
+   * Cpus
+   * JSON array of known CPU details, e.g. the manufacturer, family, model; L1/L2/L3 cache size; microcode version; feature flags; bugs etc.
+   * @default []
+   */
+  cpus?: Cpu[];
+  /**
+   * Memory Amount
+   * RAM amount (MiB).
+   */
+  memory_amount?: number;
+  /** Generation of the DDR SDRAM, e.g. DDR4 or DDR5. */
+  memory_generation?: DdrGeneration | null;
+  /**
+   * Memory Speed
+   * DDR SDRAM clock rate (Mhz).
+   */
+  memory_speed?: number | null;
+  /**
+   * Memory Ecc
+   * If the DDR SDRAM uses error correction code to detect and correct n-bit data corruption.
+   */
+  memory_ecc?: boolean | null;
+  /**
+   * Gpu Count
+   * Number of GPU accelerator(s).
+   * @default 0
+   */
+  gpu_count?: number;
+  /**
+   * Gpu Memory Min
+   * Memory (MiB) allocated to the lowest-end GPU accelerator.
+   */
+  gpu_memory_min?: number | null;
+  /**
+   * Gpu Memory Total
+   * Overall memory (MiB) allocated to all the GPU accelerator(s).
+   */
+  gpu_memory_total?: number | null;
+  /**
+   * Gpu Manufacturer
+   * The manufacturer of the primary GPU accelerator, e.g. Nvidia or AMD.
+   */
+  gpu_manufacturer?: string | null;
+  /**
+   * Gpu Family
+   * The product family of the primary GPU accelerator, e.g. Turing.
+   */
+  gpu_family?: string | null;
+  /**
+   * Gpu Model
+   * The model number of the primary GPU accelerator, e.g. Tesla T4.
+   */
+  gpu_model?: string | null;
+  /**
+   * Gpus
+   * JSON array of GPU accelerator details, including the manufacturer, name, and memory (MiB) of each GPU.
+   * @default []
+   */
+  gpus?: Gpu[];
+  /**
+   * Storage Size
+   * Overall size (GB) of the disk(s).
+   * @default 0
+   */
+  storage_size?: number;
+  /** Primary disk type, e.g. HDD, SSD, NVMe SSD, or network). */
+  storage_type?: StorageType | null;
+  /**
+   * Storages
+   * JSON array of disks attached to the server, including the size (MiB) and type of each disk.
+   * @default []
+   */
+  storages?: Disk[];
+  /**
+   * Network Speed
+   * The baseline network performance (Gbps) of the network card.
+   */
+  network_speed?: number | null;
+  /**
+   * Inbound Traffic
+   * Amount of complimentary inbound traffic (GB) per month.
+   * @default 0
+   */
+  inbound_traffic?: number;
+  /**
+   * Outbound Traffic
+   * Amount of complimentary outbound traffic (GB) per month.
+   * @default 0
+   */
+  outbound_traffic?: number;
+  /**
+   * Ipv4
+   * Number of complimentary IPv4 address(es).
+   * @default 0
+   */
+  ipv4?: number;
+  /**
+   * Status of the resource (active or inactive).
+   * @default "active"
+   */
+  status?: Status;
+  /**
+   * Observed At
+   * Timestamp of the last observation.
+   * @format date-time
+   */
+  observed_at?: string;
+  /** Score */
+  score?: number | null;
+  /** Score Per Price */
+  score_per_price?: number | null;
 }
 
 /**
@@ -2212,9 +2224,9 @@ export interface VendorBase {
 
 /** Vendors */
 export enum Vendors {
-  Hcloud = "hcloud",
   Aws = "aws",
   Gcp = "gcp",
+  Hcloud = "hcloud",
 }
 
 /**
@@ -2354,11 +2366,29 @@ export interface SearchRegionsRegionsGetParams {
    * Vendor id
    * Identifier of the cloud provider vendor.
    */
-  vendor?: "hcloud" | "aws" | "gcp";
+  vendor?: "aws" | "gcp" | "hcloud";
 }
 
 /** Response Search Regions Regions Get */
 export type SearchRegionsRegionsGetData = RegionPKs[];
+
+export interface GetServerServerVendorServerGetParams {
+  /**
+   * Currency
+   * Currency used for prices.
+   */
+  currency?: string | null;
+  /**
+   * Vendor
+   * Vendor ID.
+   */
+  vendor: string;
+  /**
+   * Server
+   * Server ID or API reference.
+   */
+  server: string;
+}
 
 export type GetServerServerVendorServerGetData = ServerPKsWithPrices;
 
@@ -2382,7 +2412,12 @@ export interface SearchServersServersGetParams {
    */
   architecture?: "arm64" | "arm64_mac" | "i386" | "x86_64" | "x86_64_mac";
   /**
-   * Memory amount
+   * SCore
+   * Minimum stress-ng CPU workload score.
+   */
+  benchmark_score_stressng_cpu_min?: number | null;
+  /**
+   * Minimum memory
    * Minimum amount of memory in GBs.
    */
   memory_min?: number | null;
@@ -2396,12 +2431,12 @@ export interface SearchServersServersGetParams {
    * Vendor id
    * Identifier of the cloud provider vendor.
    */
-  vendor?: "hcloud" | "aws" | "gcp";
+  vendor?: "aws" | "gcp" | "hcloud";
   /**
    * Compliance Framework id
    * Compliance framework implemented at the vendor.
    */
-  compliance_framework?: "hipaa" | "soc2t2" | "iso27001";
+  compliance_framework?: "hipaa" | "iso27001" | "soc2t2";
   /**
    * Storage Size
    * Minimum amount of storage (GBs) attached to the server.
@@ -2418,10 +2453,15 @@ export interface SearchServersServersGetParams {
    */
   gpu_min?: number | null;
   /**
-   * GPU memory
-   * Minimum amount of GPU memory in GBs.
+   * Minimum GPU memory
+   * Minimum amount of GPU memory (GB) in each GPU.
    */
   gpu_memory_min?: number | null;
+  /**
+   * Total GPU memory
+   * Minimum amount of total GPU memory (GBs) in all GPUs.
+   */
+  gpu_memory_total?: number | null;
   /**
    * Limit
    * Maximum number of results. Set to -1 for unlimited
@@ -2476,7 +2516,12 @@ export interface SearchServerPricesServerPricesGetParams {
    */
   architecture?: "arm64" | "arm64_mac" | "i386" | "x86_64" | "x86_64_mac";
   /**
-   * Memory amount
+   * SCore
+   * Minimum stress-ng CPU workload score.
+   */
+  benchmark_score_stressng_cpu_min?: number | null;
+  /**
+   * Minimum memory
    * Minimum amount of memory in GBs.
    */
   memory_min?: number | null;
@@ -2505,12 +2550,57 @@ export interface SearchServerPricesServerPricesGetParams {
    * Vendor id
    * Identifier of the cloud provider vendor.
    */
-  vendor?: "hcloud" | "aws" | "gcp";
+  vendor?: "aws" | "gcp" | "hcloud";
   /**
    * region id
    * Identifier of the region.
    */
   regions?:
+    | "1000"
+    | "1100"
+    | "1210"
+    | "1220"
+    | "1230"
+    | "1250"
+    | "1260"
+    | "1270"
+    | "1280"
+    | "1290"
+    | "1300"
+    | "1310"
+    | "1320"
+    | "1330"
+    | "1340"
+    | "1350"
+    | "1360"
+    | "1370"
+    | "1380"
+    | "1390"
+    | "1410"
+    | "1420"
+    | "1430"
+    | "1440"
+    | "1450"
+    | "1460"
+    | "1470"
+    | "1480"
+    | "1490"
+    | "1510"
+    | "1520"
+    | "1530"
+    | "1540"
+    | "1550"
+    | "1560"
+    | "1570"
+    | "1580"
+    | "1590"
+    | "1600"
+    | "1610"
+    | "2"
+    | "3"
+    | "4"
+    | "5"
+    | "6"
     | "af-south-1"
     | "ap-east-1"
     | "ap-northeast-1"
@@ -2541,57 +2631,12 @@ export interface SearchServerPricesServerPricesGetParams {
     | "us-east-1"
     | "us-east-2"
     | "us-west-1"
-    | "us-west-2"
-    | "1610"
-    | "1220"
-    | "1370"
-    | "1250"
-    | "1390"
-    | "1410"
-    | "1320"
-    | "1470"
-    | "1260"
-    | "1440"
-    | "1280"
-    | "1480"
-    | "1450"
-    | "1350"
-    | "1540"
-    | "1100"
-    | "1590"
-    | "1570"
-    | "1290"
-    | "1300"
-    | "1340"
-    | "1380"
-    | "1510"
-    | "1520"
-    | "1580"
-    | "1600"
-    | "1560"
-    | "1330"
-    | "1460"
-    | "1310"
-    | "1490"
-    | "1000"
-    | "1230"
-    | "1270"
-    | "1530"
-    | "1550"
-    | "1210"
-    | "1360"
-    | "1420"
-    | "1430"
-    | "2"
-    | "3"
-    | "4"
-    | "5"
-    | "6";
+    | "us-west-2";
   /**
    * Compliance Framework id
    * Compliance framework implemented at the vendor.
    */
-  compliance_framework?: "hipaa" | "soc2t2" | "iso27001";
+  compliance_framework?: "hipaa" | "iso27001" | "soc2t2";
   /**
    * Storage Size
    * Minimum amount of storage (GBs) attached to the server.
@@ -2625,8 +2670,8 @@ export interface SearchServerPricesServerPricesGetParams {
     | "ID"
     | "IE"
     | "IL"
-    | "IT"
     | "IN"
+    | "IT"
     | "JP"
     | "KR"
     | "NL"
@@ -2644,10 +2689,15 @@ export interface SearchServerPricesServerPricesGetParams {
    */
   gpu_min?: number | null;
   /**
-   * GPU memory
-   * Minimum amount of GPU memory in GBs.
+   * Minimum GPU memory
+   * Minimum amount of GPU memory (GB) in each GPU.
    */
   gpu_memory_min?: number | null;
+  /**
+   * Total GPU memory
+   * Minimum amount of total GPU memory (GBs) in all GPUs.
+   */
+  gpu_memory_total?: number | null;
   /**
    * Limit
    * Maximum number of results. Set to -1 for unlimited
@@ -2676,7 +2726,7 @@ export interface SearchServerPricesServerPricesGetParams {
    * Currency used for prices.
    * @default "USD"
    */
-  currency?: string;
+  currency?: string | null;
   /**
    * Add Total Count Header
    * Add the X-Total-Count header to the response with the overall number of items (without paging). Note that it might reduce response times.

@@ -9,7 +9,11 @@
  * ---------------------------------------------------------------
  */
 
-import { GetServerServerVendorServerGetData, HTTPValidationError } from "./data-contracts";
+import {
+  GetServerServerVendorServerGetData,
+  GetServerServerVendorServerGetParams,
+  HTTPValidationError,
+} from "./data-contracts";
 import { HttpClient, RequestParams } from "./http-client";
 
 export class Server<SecurityDataType = unknown> {
@@ -27,10 +31,14 @@ export class Server<SecurityDataType = unknown> {
    * @summary Get Server
    * @request GET:/server/{vendor}/{server}
    */
-  getServerServerVendorServerGet = (vendor: string, server: string, params: RequestParams = {}) =>
+  getServerServerVendorServerGet = (
+    { vendor, server, ...query }: GetServerServerVendorServerGetParams,
+    params: RequestParams = {},
+  ) =>
     this.http.request<GetServerServerVendorServerGetData, HTTPValidationError>({
       path: `/server/${vendor}/${server}`,
       method: "GET",
+      query: query,
       ...params,
     });
 }

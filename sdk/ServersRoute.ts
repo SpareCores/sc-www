@@ -41,7 +41,12 @@ export namespace Servers {
        */
       architecture?: "arm64" | "arm64_mac" | "i386" | "x86_64" | "x86_64_mac";
       /**
-       * Memory amount
+       * SCore
+       * Minimum stress-ng CPU workload score.
+       */
+      benchmark_score_stressng_cpu_min?: number | null;
+      /**
+       * Minimum memory
        * Minimum amount of memory in GBs.
        */
       memory_min?: number | null;
@@ -55,12 +60,12 @@ export namespace Servers {
        * Vendor id
        * Identifier of the cloud provider vendor.
        */
-      vendor?: "hcloud" | "aws" | "gcp";
+      vendor?: "aws" | "gcp" | "hcloud";
       /**
        * Compliance Framework id
        * Compliance framework implemented at the vendor.
        */
-      compliance_framework?: "hipaa" | "soc2t2" | "iso27001";
+      compliance_framework?: "hipaa" | "iso27001" | "soc2t2";
       /**
        * Storage Size
        * Minimum amount of storage (GBs) attached to the server.
@@ -77,10 +82,15 @@ export namespace Servers {
        */
       gpu_min?: number | null;
       /**
-       * GPU memory
-       * Minimum amount of GPU memory in GBs.
+       * Minimum GPU memory
+       * Minimum amount of GPU memory (GB) in each GPU.
        */
       gpu_memory_min?: number | null;
+      /**
+       * Total GPU memory
+       * Minimum amount of total GPU memory (GBs) in all GPUs.
+       */
+      gpu_memory_total?: number | null;
       /**
        * Limit
        * Maximum number of results. Set to -1 for unlimited
