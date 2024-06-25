@@ -222,7 +222,7 @@ export class ServerCompareComponent implements OnInit {
 
     this.clipboardIcon = 'check';
 
-    this.showTooltip(event, 'Copied to clipboard!', true);
+    this.showTooltip(event, 'Link copied to clipboard!', true);
 
     setTimeout(() => {
       this.clipboardIcon = 'clipboard';
