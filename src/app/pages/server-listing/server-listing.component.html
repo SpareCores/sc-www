@@ -111,16 +111,6 @@
                         class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer" >
                     </div>
                   </td>
-                  <!--
-                  <td (click)="toggleCompare2($event, item)">
-                    <div *ngIf="!item.selected" class="p-2 text-white">
-                      <lucide-icon class="h-6 w-6" name="scale" ></lucide-icon>
-                    </div>
-                    <div *ngIf="item.selected" class="p-2  text-emerald-400">
-                      <lucide-icon class="h-6 w-6" name="scale" ></lucide-icon>
-                    </div>
-                  </td>
-                  -->
                   <ng-container *ngFor="let column of tableColumns">
                     <td *ngIf="column.type === 'name'">
                       <div (click)="$event.stopPropagation()">
