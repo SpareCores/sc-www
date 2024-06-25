@@ -1180,6 +1180,7 @@ export class ServerDetailsComponent implements OnInit {
       "@type": "Product",
       "name": this.serverDetails.display_name,
       "description": description,
+      "category": `Servers > Cloud servers > ${this.serverDetails.vendor.name}`,
       "brand": {
         "@type": "Organization",
         "name": this.serverDetails.vendor.name,
