@@ -60,7 +60,7 @@ export const appConfig: ApplicationConfig = {
         ClipboardCheck,
         ScrollText,
         Youtube,
-        Trash
+        Trash,
       }),
     ),
     importProvidersFrom(MarkdownModule.forRoot()),
