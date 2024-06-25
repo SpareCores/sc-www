@@ -1,4 +1,4 @@
-import { Component, HostBinding, Inject, PLATFORM_ID, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, HostBinding, Inject, PLATFORM_ID, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { KeeperAPIService } from '../../services/keeper-api.service';
 import { OrderDir, ServerPKs, ServerPriceWithPKs } from '../../../../sdk/data-contracts';
@@ -70,7 +70,7 @@ const options: DropdownOptions = {
   templateUrl: './server-listing.component.html',
   styleUrl: './server-listing.component.scss',
 })
-export class ServerListingComponent implements OnInit {
+export class ServerListingComponent implements OnInit, OnDestroy {
   @HostBinding('attr.ngSkipHydration') ngSkipHydration = 'true';
 
   isCollapsed = false;
@@ -147,6 +147,8 @@ export class ServerListingComponent implements OnInit {
 
   complianceFrameworks: any[] = [];
 
+  sub: any;
+
   constructor(@Inject(PLATFORM_ID) private platformId: object,
               private keeperAPI: KeeperAPIService,
               private route: ActivatedRoute,
@@ -204,6 +206,12 @@ export class ServerListingComponent implements OnInit {
 
     if(isPlatformBrowser(this.platformId)) {
 
+      this.sub = this.serverCompare.selectionChanged.subscribe((selectedServers: ServerPKs[]) => {
+        this.servers?.forEach((server: any) => {
+          server.selected = selectedServers.findIndex((item: ServerPKs) => item.vendor_id === server.vendor_id && item.server_id === server.server_id) !== -1;
+        });
+      });
+
       const targetElColumn: HTMLElement | null = document.getElementById('column_options');
       const triggerElColumn: HTMLElement | null = document.getElementById('column_button');
 
@@ -230,7 +238,10 @@ export class ServerListingComponent implements OnInit {
         }
       );
     }
+  }
 
+  ngOnDestroy () {
+    this.sub?.unsubscribe();
   }
 
   toggleCollapse() {

@@ -21,11 +21,10 @@
               <span> Visit Vendor </span>
               <lucide-icon name="external-link" class="h-6 w-6"></lucide-icon>
             </a>
-            <a class="btn-primary py-3 px-5 flex gap-2"
-               [href]="serverDetails.vendor.status_page" target="_blank" rel="nofollow noopener">
-              <span> Status Page </span>
-              <lucide-icon name="external-link" class="h-6 w-6"></lucide-icon>
-            </a>
+            <button class="btn-primary py-3 px-5 flex gap-2" (click)="addToCompare()">
+              <span> Compare </span>
+              <lucide-icon name="shopping-cart" class="h-6 w-6"></lucide-icon>
+            </button>
           </div>
         </div>
       </div>

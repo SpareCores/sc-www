@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ServerPKs } from '../../../sdk/data-contracts';
 import { Router } from '@angular/router';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -8,6 +9,7 @@ import { Router } from '@angular/router';
 export class ServerCompareService {
 
   selectedForCompare: ServerPKs[] = [];
+  public selectionChanged: Subject<ServerPKs[]> = new Subject();
 
   constructor(private router: Router) { }
 
@@ -19,6 +21,7 @@ export class ServerCompareService {
     } else {
       this.selectedForCompare = this.selectedForCompare.filter((item) => item !== server);
     }
+    this.selectionChanged.next(this.selectedForCompare);
   }
 
   compareCount(): number {
@@ -27,6 +30,7 @@ export class ServerCompareService {
 
   clearCompare() {
     this.selectedForCompare = [];
+    this.selectionChanged.next(this.selectedForCompare);
   }
 
   openCompare() {
