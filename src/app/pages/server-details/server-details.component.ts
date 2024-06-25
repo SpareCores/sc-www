@@ -1174,11 +1174,7 @@ export class ServerDetailsComponent implements OnInit {
       return;
     }
 
-    console.log('Generating JSON-LD schema for server details page', this.serverDetails);
-
     const json: any =
-    // generate schema.org Product JSON-LD
-    //const server = this.serverDetails;
     {
       "@context": "https://schema.org/",
       "@type": "Product",
