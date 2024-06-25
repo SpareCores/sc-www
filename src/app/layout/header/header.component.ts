@@ -1,19 +1,21 @@
-import { isPlatformBrowser } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Dropdown, DropdownOptions, initFlowbite } from 'flowbite';
 import { LucideAngularModule } from 'lucide-angular';
+import { ServerCompareService } from '../../services/server-compare.service';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [LucideAngularModule, RouterLink],
+  imports: [LucideAngularModule, RouterLink, CommonModule],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
 export class HeaderComponent implements OnInit {
 
   dropdownMenu: any;
+  dropdownCompare: any;
 
   options: DropdownOptions = {
     placement: 'bottom',
@@ -25,6 +27,7 @@ export class HeaderComponent implements OnInit {
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: object,
+    private serverCompare: ServerCompareService
   ) { }
 
   ngOnInit() {
@@ -50,6 +53,22 @@ export class HeaderComponent implements OnInit {
           this.dropdownMenu.init();
           clearInterval(interval);
         }
+
+        const targetElAllocationCompare: HTMLElement | null = document.getElementById('compare_options');
+        const triggerElAllocationCompare: HTMLElement | null = document.getElementById('compare_button');
+
+        if(targetElAllocationCompare && triggerElAllocationCompare) {
+          this.dropdownCompare = new Dropdown(
+            targetElAllocationCompare,
+            triggerElAllocationCompare,
+            this.options,
+            {
+              id: 'compare_options',
+              override: true
+            }
+          );
+          this.dropdownCompare.init();
+        }
       }, 150);
     }
 
@@ -57,6 +76,26 @@ export class HeaderComponent implements OnInit {
 
   closeMenu() {
     this.dropdownMenu?.hide();
+  }
+
+  closeCompare() {
+    this.dropdownCompare?.hide();
+  }
+
+  compareCount(): number {
+    return this.serverCompare.compareCount();
+  }
+
+  compareServers() {
+    this.serverCompare.openCompare();
+  }
+
+  getServersForCompare() {
+    return this.serverCompare.selectedForCompare;
+  }
+
+  removeFromCompare(server: any) {
+    this.serverCompare.toggleCompare(false, server);
   }
 
 }

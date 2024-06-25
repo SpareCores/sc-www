@@ -13,6 +13,7 @@ import { LucideAngularModule } from 'lucide-angular';
 import { CountryIdtoNamePipe } from '../../pipes/country-idto-name.pipe';
 import { SearchBarComponent } from '../../components/search-bar/search-bar.component';
 import { PaginationComponent } from '../../components/pagination/pagination.component';
+import { ServerCompareService } from '../../services/server-compare.service';
 
 export type TableColumn = {
   name: string;
@@ -151,7 +152,8 @@ export class ServerListingComponent implements OnInit {
               private route: ActivatedRoute,
               private router: Router,
               private SEOHandler: SeoHandlerService,
-              private storageHandler: StorageHandlerService) { }
+              private storageHandler: StorageHandlerService,
+              private serverCompare: ServerCompareService) { }
 
   ngOnInit() {
 
@@ -452,42 +454,22 @@ export class ServerListingComponent implements OnInit {
   }
 
   toggleCompare(event: boolean, server: ServerPKs| any) {
-    if(event) {
-      if(this.selectedForCompare.findIndex((item) => item.vendor_id === server.vendor_id && item.server_id === server.server_id) === -1) {
-        this.selectedForCompare.push(server);
-      }
-    } else {
-      this.selectedForCompare = this.selectedForCompare.filter((item) => item !== server);
-    }
+    this.serverCompare.toggleCompare(event, server);
   }
 
   compareCount() {
-    return this.selectedForCompare?.length;
+    return this.serverCompare.compareCount();
   }
 
   clearCompare() {
-    this.selectedForCompare = [];
+    this.serverCompare.clearCompare();
     this.servers?.forEach((server: any) => {
       server.selected = false;
     });
   }
 
   openCompare() {
-    const selectedServers = this.selectedForCompare;
-
-    if(selectedServers.length < 2) {
-      alert('Please select at least two servers to compare');
-      return;
-    }
-
-    const serverIds = selectedServers.map((server) => {
-      return {vendor: server.vendor_id, server: server.api_reference}
-    });
-
-    // encode atob to avoid issues with special characters
-    const encoded = btoa(JSON.stringify(serverIds));
-
-    this.router.navigateByUrl('/compare?instances=' + encoded);
+    this.serverCompare.openCompare();
   }
 
   clipboardURL(event: any) {

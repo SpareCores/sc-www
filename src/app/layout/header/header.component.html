@@ -32,6 +32,19 @@
                   Vendors
                 </a>
               </li>
+              <li [ngClass]="
+                    {'hidden' : compareCount() === 0}"
+                >
+                <button
+                  id="compare_button"
+                  class="text-white bg-emerald-400 rounded-lg px-3 py-3 relative" >
+                  <span
+                    class="h-4 w-4 absolute text-white bg-red-500 z-10 top-2 right-2 rounded-full"
+                    style="top: 2px; font-size: 0.625rem; right: 2px" >{{compareCount()}}
+                  </span>
+                  <lucide-icon class="h-4 w-4" name="shopping-cart"></lucide-icon>
+                </button>
+              </li>
               <li class="lg:hidden">
                 <lucide-icon
                   id="menu_button"
@@ -73,6 +86,34 @@
         <lucide-icon class="h-4 w-4" name="home"></lucide-icon>
         Vendors
       </a>
+    </li>
+  </ul>
+</div>
+
+
+<div id="compare_options" class="z-10 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid">
+  <ul
+    class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
+    aria-labelledby="dropdownDefaultButton"
+    (click)="closeCompare()">
+    <li class="py-2 flex justify-between" *ngFor="let item of getServersForCompare()">
+      <a class="navbar_link" routerLink="/server/{{item.vendor_id}}/{{item.api_reference}}" >
+        <lucide-icon class="h-4 w-4" name="pc-case"></lucide-icon>
+        {{item.display_name}}
+      </a>
+      <div (click)="$event.stopPropagation()">
+        <button
+          class="text-red-500 px-2 py-2"
+          (click)="removeFromCompare(item)">
+          <lucide-icon class="h-4 w-4" name="trash"></lucide-icon>
+        </button>
+      </div>
+    </li>
+    <li class="py-2">
+      <button class="w-full font-bold text-white bg-emerald-400 hover:bg-emerald-500 rounded-sm py-2"
+        (click)="compareServers()">
+        Compare
+      </button>
     </li>
   </ul>
 </div>
