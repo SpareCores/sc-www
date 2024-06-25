@@ -23,6 +23,13 @@ $content-max-width: 1400px;
     transition-timing-function: ease-in;
   }
 
+  .dropdown_button {
+    @apply text-white bg-emerald-400 hover:bg-emerald-500 focus:outline-none font-medium rounded-lg text-sm text-center inline-flex items-center border-emerald-400 border-solid border;
+    transition-duration: 0.15s;
+    transition-property: background-color, border-color, box-shadow, color;
+    transition-timing-function: ease-in;
+  }
+
   .btn-normal {
     @apply py-3 px-4 rounded-lg;
   }
