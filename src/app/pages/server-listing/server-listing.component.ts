@@ -1,4 +1,4 @@
-import { Component, HostBinding, Inject, PLATFORM_ID, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, HostBinding, Inject, PLATFORM_ID, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { KeeperAPIService } from '../../services/keeper-api.service';
 import { OrderDir, ServerPKs, ServerPriceWithPKs } from '../../../../sdk/data-contracts';
@@ -13,6 +13,7 @@ import { LucideAngularModule } from 'lucide-angular';
 import { CountryIdtoNamePipe } from '../../pipes/country-idto-name.pipe';
 import { SearchBarComponent } from '../../components/search-bar/search-bar.component';
 import { PaginationComponent } from '../../components/pagination/pagination.component';
+import { ServerCompareService } from '../../services/server-compare.service';
 
 export type TableColumn = {
   name: string;
@@ -69,7 +70,7 @@ const options: DropdownOptions = {
   templateUrl: './server-listing.component.html',
   styleUrl: './server-listing.component.scss',
 })
-export class ServerListingComponent implements OnInit {
+export class ServerListingComponent implements OnInit, OnDestroy {
   @HostBinding('attr.ngSkipHydration') ngSkipHydration = 'true';
 
   isCollapsed = false;
@@ -138,20 +139,21 @@ export class ServerListingComponent implements OnInit {
 
   vendorMetadata: any[] = [];
 
-  selectedForCompare: ServerPKs[] = [];
-
   @ViewChild('tooltipDefault') tooltip!: ElementRef;
   clipboardIcon = 'clipboard';
   tooltipContent = '';
 
   complianceFrameworks: any[] = [];
 
+  sub: any;
+
   constructor(@Inject(PLATFORM_ID) private platformId: object,
               private keeperAPI: KeeperAPIService,
               private route: ActivatedRoute,
               private router: Router,
               private SEOHandler: SeoHandlerService,
-              private storageHandler: StorageHandlerService) { }
+              private storageHandler: StorageHandlerService,
+              private serverCompare: ServerCompareService) { }
 
   ngOnInit() {
 
@@ -202,6 +204,12 @@ export class ServerListingComponent implements OnInit {
 
     if(isPlatformBrowser(this.platformId)) {
 
+      this.sub = this.serverCompare.selectionChanged.subscribe((selectedServers: ServerPKs[]) => {
+        this.servers?.forEach((server: any) => {
+          server.selected = selectedServers.findIndex((item: ServerPKs) => item.vendor_id === server.vendor_id && item.server_id === server.server_id) !== -1;
+        });
+      });
+
       const targetElColumn: HTMLElement | null = document.getElementById('column_options');
       const triggerElColumn: HTMLElement | null = document.getElementById('column_button');
 
@@ -228,7 +236,10 @@ export class ServerListingComponent implements OnInit {
         }
       );
     }
+  }
 
+  ngOnDestroy () {
+    this.sub?.unsubscribe();
   }
 
   toggleCollapse() {
@@ -326,7 +337,7 @@ export class ServerListingComponent implements OnInit {
 
       // set stored selected state
       this.servers?.forEach((server: any) => {
-        server.selected = this.selectedForCompare
+        server.selected = this.serverCompare.selectedForCompare
           .findIndex((item) => item.vendor_id === server.vendor_id && item.server_id === server.server_id) !== -1;
       });
 
@@ -452,42 +463,22 @@ export class ServerListingComponent implements OnInit {
   }
 
   toggleCompare(event: boolean, server: ServerPKs| any) {
-    if(event) {
-      if(this.selectedForCompare.findIndex((item) => item.vendor_id === server.vendor_id && item.server_id === server.server_id) === -1) {
-        this.selectedForCompare.push(server);
-      }
-    } else {
-      this.selectedForCompare = this.selectedForCompare.filter((item) => item !== server);
-    }
+    this.serverCompare.toggleCompare(event, server);
   }
 
   compareCount() {
-    return this.selectedForCompare?.length;
+    return this.serverCompare.compareCount();
   }
 
   clearCompare() {
-    this.selectedForCompare = [];
+    this.serverCompare.clearCompare();
     this.servers?.forEach((server: any) => {
       server.selected = false;
     });
   }
 
   openCompare() {
-    const selectedServers = this.selectedForCompare;
-
-    if(selectedServers.length < 2) {
-      alert('Please select at least two servers to compare');
-      return;
-    }
-
-    const serverIds = selectedServers.map((server) => {
-      return {vendor: server.vendor_id, server: server.api_reference}
-    });
-
-    // encode atob to avoid issues with special characters
-    const encoded = btoa(JSON.stringify(serverIds));
-
-    this.router.navigateByUrl('/compare?instances=' + encoded);
+    this.serverCompare.openCompare();
   }
 
   clipboardURL(event: any) {
@@ -496,7 +487,7 @@ export class ServerListingComponent implements OnInit {
 
     this.clipboardIcon = 'check';
 
-    this.showTooltip(event, 'Copied to clipboard!', true);
+    this.showTooltip(event, 'Link copied to clipboard!', true);
 
     setTimeout(() => {
       this.clipboardIcon = 'clipboard';

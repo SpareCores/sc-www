@@ -17,6 +17,19 @@
     </div>
 
     <div class="w-full overflow-x-auto relative" style="padding-left: 1px;">
+      <div class="w-full flex justify-end mb-4">
+        <button
+          id="currency_button"
+          class="dropdown_button"
+          type="button">
+          <div class="px-4 py-3">
+          {{selectedCurrency.slug}}
+          </div>
+          <div class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
+            <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
+          </div>
+        </button>
+      </div>
       <div *ngIf="isLoading" class="absolute top-0 left-0 w-full h-full" style="background-color: rgba(0,0,0,0.2);" >
         <div class="flex justify-center mt-16 opacity-100" role="status">
           <svg aria-hidden="true" class="inline w-12 h-12 text-gray-200 animate-spin fill-emerald-400" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -32,7 +45,9 @@
             <th style="max-width: 250px; width: 250px">
             </th>
             <th *ngFor="let item of servers" [style]="getStyle()">
-              {{toUpper(item.display_name)}}
+              <a class="underline decoration-dotted" href="/server/{{item.vendor_id}}/{{item.api_reference}}" target="_blank">
+                {{toUpper(item.display_name)}}
+              </a>
             </th>
           </tr>
         </thead>
@@ -157,7 +172,8 @@
       </table>
     </div>
 
-    <div class="w-full text-white">
+    <div class="w-full text-white flex flex-col gap-8 mt-12">
+      <h2 class="text-3xl"> Preformance Charts </h2>
       <div class="block_full" *ngIf="radarChartDataGeekSingle">
         <div class="flex justify-between items-center">
           <h3 class="text-2xl flex items-center gap-2" >
@@ -169,9 +185,7 @@
               (mouseleave)="hideTooltipGB()">
             </lucide-icon>
           </h3>
-          <div class="py-2 px-2 border-emerald-400 border-solid rounded-lg border">
-            Score:
-          </div>
+
         </div>
         <div *ngIf="isBrowser()">
           <div chartType="bar">
@@ -199,9 +213,7 @@
               (mouseleave)="hideTooltipGB()">
             </lucide-icon>
           </h3>
-          <div class="py-2 px-2 border-emerald-400 border-solid rounded-lg border">
-            Score:
-          </div>
+
         </div>
         <div *ngIf="isBrowser()">
           <div chartType="bar">
@@ -227,4 +239,14 @@
   style="opacity: 0; z-index: 22"
   class="absolute inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-secondary border border-solid border-emerald-400 rounded-lg">
   {{tooltipContent}}
+</div>
+
+<div id="currency_options" class="z-10 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid">
+  <ul class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
+    <li *ngFor="let item of availableCurrencies"
+      class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+      (click)="selectCurrency(item)" tabindex="0">
+      <div class="text-white text-sm ">{{item.name}} ({{item.symbol}})</div>
+    </li>
+  </ul>
 </div>

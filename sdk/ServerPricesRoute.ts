@@ -41,7 +41,12 @@ export namespace ServerPrices {
        */
       architecture?: "arm64" | "arm64_mac" | "i386" | "x86_64" | "x86_64_mac";
       /**
-       * Memory amount
+       * SCore
+       * Minimum stress-ng CPU workload score.
+       */
+      benchmark_score_stressng_cpu_min?: number | null;
+      /**
+       * Minimum memory
        * Minimum amount of memory in GBs.
        */
       memory_min?: number | null;
@@ -70,12 +75,57 @@ export namespace ServerPrices {
        * Vendor id
        * Identifier of the cloud provider vendor.
        */
-      vendor?: "hcloud" | "aws" | "gcp";
+      vendor?: "aws" | "gcp" | "hcloud";
       /**
        * region id
        * Identifier of the region.
        */
       regions?:
+        | "1000"
+        | "1100"
+        | "1210"
+        | "1220"
+        | "1230"
+        | "1250"
+        | "1260"
+        | "1270"
+        | "1280"
+        | "1290"
+        | "1300"
+        | "1310"
+        | "1320"
+        | "1330"
+        | "1340"
+        | "1350"
+        | "1360"
+        | "1370"
+        | "1380"
+        | "1390"
+        | "1410"
+        | "1420"
+        | "1430"
+        | "1440"
+        | "1450"
+        | "1460"
+        | "1470"
+        | "1480"
+        | "1490"
+        | "1510"
+        | "1520"
+        | "1530"
+        | "1540"
+        | "1550"
+        | "1560"
+        | "1570"
+        | "1580"
+        | "1590"
+        | "1600"
+        | "1610"
+        | "2"
+        | "3"
+        | "4"
+        | "5"
+        | "6"
         | "af-south-1"
         | "ap-east-1"
         | "ap-northeast-1"
@@ -106,57 +156,12 @@ export namespace ServerPrices {
         | "us-east-1"
         | "us-east-2"
         | "us-west-1"
-        | "us-west-2"
-        | "1610"
-        | "1220"
-        | "1370"
-        | "1250"
-        | "1390"
-        | "1410"
-        | "1320"
-        | "1470"
-        | "1260"
-        | "1440"
-        | "1280"
-        | "1480"
-        | "1450"
-        | "1350"
-        | "1540"
-        | "1100"
-        | "1590"
-        | "1570"
-        | "1290"
-        | "1300"
-        | "1340"
-        | "1380"
-        | "1510"
-        | "1520"
-        | "1580"
-        | "1600"
-        | "1560"
-        | "1330"
-        | "1460"
-        | "1310"
-        | "1490"
-        | "1000"
-        | "1230"
-        | "1270"
-        | "1530"
-        | "1550"
-        | "1210"
-        | "1360"
-        | "1420"
-        | "1430"
-        | "2"
-        | "3"
-        | "4"
-        | "5"
-        | "6";
+        | "us-west-2";
       /**
        * Compliance Framework id
        * Compliance framework implemented at the vendor.
        */
-      compliance_framework?: "hipaa" | "soc2t2" | "iso27001";
+      compliance_framework?: "hipaa" | "iso27001" | "soc2t2";
       /**
        * Storage Size
        * Minimum amount of storage (GBs) attached to the server.
@@ -190,8 +195,8 @@ export namespace ServerPrices {
         | "ID"
         | "IE"
         | "IL"
-        | "IT"
         | "IN"
+        | "IT"
         | "JP"
         | "KR"
         | "NL"
@@ -209,10 +214,15 @@ export namespace ServerPrices {
        */
       gpu_min?: number | null;
       /**
-       * GPU memory
-       * Minimum amount of GPU memory in GBs.
+       * Minimum GPU memory
+       * Minimum amount of GPU memory (GB) in each GPU.
        */
       gpu_memory_min?: number | null;
+      /**
+       * Total GPU memory
+       * Minimum amount of total GPU memory (GBs) in all GPUs.
+       */
+      gpu_memory_total?: number | null;
       /**
        * Limit
        * Maximum number of results. Set to -1 for unlimited
@@ -241,7 +251,7 @@ export namespace ServerPrices {
        * Currency used for prices.
        * @default "USD"
        */
-      currency?: string;
+      currency?: string | null;
       /**
        * Add Total Count Header
        * Add the X-Total-Count header to the response with the overall number of items (without paging). Note that it might reduce response times.

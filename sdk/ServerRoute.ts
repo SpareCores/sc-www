@@ -32,7 +32,13 @@ export namespace Server {
        */
       server: string;
     };
-    export type RequestQuery = {};
+    export type RequestQuery = {
+      /**
+       * Currency
+       * Currency used for prices.
+       */
+      currency?: string | null;
+    };
     export type RequestBody = never;
     export type RequestHeaders = {};
     export type ResponseBody = GetServerServerVendorServerGetData;

@@ -12,8 +12,18 @@ import { Chart, ChartConfiguration, ChartData } from 'chart.js';
 import { radarChartOptions, radarDatasetColors } from '../server-details/chartOptions';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import { BaseChartDirective } from 'ng2-charts';
+import { Dropdown, DropdownOptions } from 'flowbite';
 
 Chart.register(annotationPlugin);
+
+
+const options: DropdownOptions = {
+  placement: 'bottom',
+  triggerType: 'click',
+  offsetSkidding: 0,
+  offsetDistance: 10,
+  delay: 300
+};
 
 @Component({
   selector: 'app-server-compare',
@@ -67,6 +77,26 @@ export class ServerCompareComponent implements OnInit {
   radarChartDataGeekMulti: ChartData<'radar'> | undefined = undefined;
   radarChartDataGeekSingle: ChartData<'radar'> | undefined = undefined;
 
+  dropdownCurrency: any;
+  availableCurrencies = [
+    {name: 'US dollar', slug: 'USD', symbol: '$'},
+    {name: 'Euro', slug: 'EUR', symbol: '€'},
+    {name: 'British Pound', slug: 'GBP', symbol: '£'},
+    {name: 'Swedish Krona', slug: 'SEK', symbol: 'kr'},
+    {name: 'Danish Krone', slug: 'DKK', symbol: 'kr'},
+    {name: 'Norwegian Krone', slug: 'NOK', symbol: 'kr'},
+    {name: 'Swiss Franc', slug: 'CHF', symbol: 'CHF'},
+    {name: 'Australian Dollar', slug: 'AUD', symbol: '$'},
+    {name: 'Canadian Dollar', slug: 'CAD', symbol: '$'},
+    {name: 'Japanese Yen', slug: 'JPY', symbol: '¥'},
+    {name: 'Chinese Yuan', slug: 'CNY', symbol: '¥'},
+    {name: 'Indian Rupee', slug: 'INR', symbol: '₹'},
+    {name: 'Brazilian Real', slug: 'BRL', symbol: 'R$'},
+    {name: 'South African Rand', slug: 'ZAR', symbol: 'R'},
+  ];
+
+  selectedCurrency = this.availableCurrencies[0];
+
   constructor(
     @Inject(PLATFORM_ID) private platformId: object,
     private keeperAPI: KeeperAPIService,
@@ -93,7 +123,7 @@ export class ServerCompareComponent implements OnInit {
           ];
           decodedParams?.forEach((instance: any) => {
             promises.push(
-              this.keeperAPI.getServer(instance.vendor, instance.server)
+              this.keeperAPI.getServer(instance.vendor, instance.server, this.selectedCurrency.slug)
             );
           });
           Promise.all(promises).then((data) => {
@@ -171,6 +201,22 @@ export class ServerCompareComponent implements OnInit {
             });
 
             this.generateChartsData();
+            if(isPlatformBrowser(this.platformId)) {
+              const targetElCurrency: HTMLElement | null = document.getElementById('currency_options');
+              const triggerElCurrency: HTMLElement | null = document.getElementById('currency_button');
+
+
+              this.dropdownCurrency = new Dropdown(
+                  targetElCurrency,
+                  triggerElCurrency,
+                  options,
+                  {
+                    id: 'currency_options',
+                    override: true
+                  }
+              );
+              this.dropdownCurrency.init();
+            }
 
             this.isLoading = false;
           }).catch((err) => {
@@ -191,7 +237,7 @@ export class ServerCompareComponent implements OnInit {
 
     this.clipboardIcon = 'check';
 
-    this.showTooltip(event, 'Copied to clipboard!', true);
+    this.showTooltip(event, 'Link copied to clipboard!', true);
 
     setTimeout(() => {
       this.clipboardIcon = 'clipboard';
@@ -412,9 +458,15 @@ export class ServerCompareComponent implements OnInit {
   public generateChartsData() {
     console.log(this.benchmarkMeta);
 
-    const geekbenchScores = this.benchmarkMeta
+    let geekbenchScores = this.benchmarkMeta
     .filter((x: any) => x.benchmark_id.includes('geekbench') && x.benchmark_id !== 'geekbench:score')
     .sort((a: any, b: any) => a.name.localeCompare(b.name));
+
+    const GBScore = this.benchmarkMeta.find((x: any) => x.benchmark_id === 'geekbench:score');
+
+    if(GBScore) {
+      geekbenchScores.unshift(GBScore);
+    }
 
     console.log(geekbenchScores);
 
@@ -484,5 +536,27 @@ export class ServerCompareComponent implements OnInit {
   showTooltipGB(event: any) {}
 
   hideTooltipGB() {}
+
+
+  selectCurrency(currency: any) {
+    this.selectedCurrency = currency;
+
+    let promises: Promise<any>[] = [
+    ];
+    this.servers?.forEach((instance: any) => {
+      promises.push(
+        this.keeperAPI.getServer(instance.vendor_id, instance.server_id, this.selectedCurrency.slug)
+      );
+    });
+
+    Promise.all(promises).then((data) => {
+      this.servers = [];
+      for(let i = 0; i < data.length; i++){
+        this.servers.push(data[i].body);
+      }
+    });
+
+    this.dropdownCurrency?.hide();
+  }
 
 }
