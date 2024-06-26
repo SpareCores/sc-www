@@ -6,13 +6,14 @@ import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadc
 import { LucideAngularModule } from 'lucide-angular';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Allocation, ServerPKsWithPrices } from '../../../../sdk/data-contracts';
+import { Allocation, ServerPKs, ServerPKsWithPrices } from '../../../../sdk/data-contracts';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { Chart, ChartConfiguration, ChartData } from 'chart.js';
-import { radarChartOptions, radarDatasetColors } from '../server-details/chartOptions';
+import { lineChartOptionsBWM, radarChartOptions, radarDatasetColors } from '../server-details/chartOptions';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import { BaseChartDirective } from 'ng2-charts';
 import { Dropdown, DropdownOptions } from 'flowbite';
+import { DomSanitizer } from '@angular/platform-browser';
 
 Chart.register(annotationPlugin);
 
@@ -70,12 +71,18 @@ export class ServerCompareComponent implements OnInit {
   bestCellStyle = 'font-weight: 600; color: #34D399';
 
   @ViewChild('tooltipDefault') tooltip!: ElementRef;
+  @ViewChild('tooltipGeekbench') tooltipGB!: ElementRef;
   tooltipContent = '';
+  geekbenchHTML: any;
 
   radarChartType = 'radar' as const;
   radarChartOptions: ChartConfiguration<'radar'>['options'] = JSON.parse(JSON.stringify(radarChartOptions));
   radarChartDataGeekMulti: ChartData<'radar'> | undefined = undefined;
   radarChartDataGeekSingle: ChartData<'radar'> | undefined = undefined;
+
+  lineChartType = 'line' as const;
+  lineChartOptionsBWMem: ChartConfiguration<'line'>['options'] = lineChartOptionsBWM;
+  lineChartDataBWmem: ChartData<'line'> | undefined = undefined;
 
   dropdownCurrency: any;
   availableCurrencies = [
@@ -95,12 +102,22 @@ export class ServerCompareComponent implements OnInit {
     {name: 'South African Rand', slug: 'ZAR', symbol: 'R'},
   ];
 
+  dropdownBWmem: any;
+  availableBWmem = [
+    {name: 'Read', value: 'rd'},
+    {name: 'Write', value: 'wr'},
+    {name: 'Read/Write', value: 'rdwr'},
+  ];
+
+  selectedBWMemOperation = this.availableBWmem[2];
+
   selectedCurrency = this.availableCurrencies[0];
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: object,
     private keeperAPI: KeeperAPIService,
     private seoHandler: SeoHandlerService,
+    private sanitizer: DomSanitizer,
     private route: ActivatedRoute) { }
 
   ngOnInit() {
@@ -201,10 +218,11 @@ export class ServerCompareComponent implements OnInit {
             });
 
             this.generateChartsData();
+            this.generateBWMemChart();
+
             if(isPlatformBrowser(this.platformId)) {
               const targetElCurrency: HTMLElement | null = document.getElementById('currency_options');
               const triggerElCurrency: HTMLElement | null = document.getElementById('currency_button');
-
 
               this.dropdownCurrency = new Dropdown(
                   targetElCurrency,
@@ -216,6 +234,20 @@ export class ServerCompareComponent implements OnInit {
                   }
               );
               this.dropdownCurrency.init();
+
+              const targetElBWmem: HTMLElement | null = document.getElementById('bw_mem_options');
+              const triggerElBWmem: HTMLElement | null = document.getElementById('bw_mem_button');
+
+              this.dropdownBWmem = new Dropdown(
+                  targetElBWmem,
+                  triggerElBWmem,
+                  options,
+                  {
+                    id: 'bw_mem_options',
+                    override: true
+                  }
+              );
+              this.dropdownBWmem.init();
             }
 
             this.isLoading = false;
@@ -405,6 +437,20 @@ export class ServerCompareComponent implements OnInit {
       }
   }
 
+  showTooltipChart(el: any, type: string) {
+    let content = this.benchmarkMeta.find((b: any) => b.benchmark_id === type)?.description;
+    if(content) {
+      const tooltip = this.tooltip.nativeElement;
+      const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+      tooltip.style.left = `${el.target.getBoundingClientRect().right + 5}px`;
+      tooltip.style.top = `${el.target.getBoundingClientRect().top - 45 + scrollPosition}px`;
+      tooltip.style.display = 'block';
+      tooltip.style.opacity = '1';
+
+      this.tooltipContent = content;
+    }
+  }
+
   hideTooltip() {
     const tooltip = this.tooltip.nativeElement;
     tooltip.style.display = 'none';
@@ -456,7 +502,6 @@ export class ServerCompareComponent implements OnInit {
   }
 
   public generateChartsData() {
-    console.log(this.benchmarkMeta);
 
     let geekbenchScores = this.benchmarkMeta
     .filter((x: any) => x.benchmark_id.includes('geekbench') && x.benchmark_id !== 'geekbench:score')
@@ -468,7 +513,18 @@ export class ServerCompareComponent implements OnInit {
       geekbenchScores.unshift(GBScore);
     }
 
-    console.log(geekbenchScores);
+    this.geekbenchHTML =
+    `<div> The following benchmark scenarios were run using Geekbench 6: </div> <ul> `;
+
+    geekbenchScores.forEach((benchmark: any) => {
+      const name: string = benchmark.name.replace('Geekbench:', '');
+      const desc = benchmark.description.replace('The score is calibrated against a baseline score of 2,500 (Dell Precision 3460 with a Core i7-12700 processor) as per the Geekbench 6 Benchmark Internals.', '') || '';
+      this.geekbenchHTML += `<li> - ${name}: ${desc} </li>`;
+    });
+
+    this.geekbenchHTML += `</ul>`;
+
+    this.geekbenchHTML = this.sanitizer.bypassSecurityTrustHtml(this.geekbenchHTML);
 
     const labels = geekbenchScores.map((x: any) => x.benchmark_id);
     //scales = dataSet[0].benchmarks.sort((a: any, b:any) => (a.config.cores as string).localeCompare(b.config.cores)).map((b: any) => b.config.cores);
@@ -497,10 +553,6 @@ export class ServerCompareComponent implements OnInit {
       ]
     };
 
-    console.log(this.servers);
-
-    console.log(chartData);
-
     labels.forEach((label: string) => {
       this.servers.forEach((server, index) => {
         const scores = server.benchmark_scores?.filter((x: any) => label === x.benchmark_id).sort((a: any, b:any) => (a.config.cores as string).localeCompare(b.config.cores));
@@ -515,27 +567,80 @@ export class ServerCompareComponent implements OnInit {
       });
     });
 
-    console.log(chartData);
+    this.radarChartDataGeekMulti = {
+      labels: chartData.labels,
+      datasets: chartData.datasets[0]
+    };
+    this.radarChartDataGeekSingle = {
+      labels: chartData.labels,
+      datasets: chartData.datasets[1]
+    };
+  }
 
-      this.radarChartDataGeekMulti = {
-        labels: chartData.labels,
-        datasets: chartData.datasets[0]
+  generateBWMemChart() {
+    const scaleField = 'size';
+    const benchmark_id = 'bw_mem';
+
+    const selectedOperation = this.selectedBWMemOperation.value;
+
+    const dataSet = this.benchmarkMeta?.find((x: any) => x.benchmark_id === benchmark_id);
+
+    if(dataSet) {
+      let scales: number[] = [];
+      dataSet.configs.filter((x: any) => x.config.operation === selectedOperation).forEach((item: any) => {
+        if((item.config[scaleField] || item.config[scaleField] === 0) && scales.indexOf(item.config[scaleField]) === -1) {
+          scales.push(item.config[scaleField]);
+        }
+      });
+
+
+      scales.sort((a, b) => a - b);
+
+      let chartData: any = {
+        labels: scales, //scales.map((s) => s.toString()),
+        datasets: this.servers.map((server: ServerPKs, index: number) => {
+          return {
+            data: [],
+            label: server.display_name,
+            spanGaps: true,
+            borderColor: radarDatasetColors[index % 8].borderColor,
+            backgroundColor: radarDatasetColors[index % 8].backgroundColor };
+          })
       };
-      this.radarChartDataGeekSingle = {
-        labels: chartData.labels,
-        datasets: chartData.datasets[1]
-      };
 
+      this.servers.forEach((server: any, i: number) => {
+        scales.forEach((size: number) => {
+          const item = server.benchmark_scores.find((b: any) => b.config.operation === selectedOperation && b.config[scaleField] === size);
+          if(item) {
+            chartData.datasets[i].data.push(item.score);
+          } else {
+            chartData.datasets[i].data.push(null);
+          }
+        });
+      });
 
+      this.lineChartDataBWmem = { labels: chartData.labels, datasets: chartData.datasets };
+    }
   }
 
   isBrowser() {
     return isPlatformBrowser(this.platformId);
   }
 
-  showTooltipGB(event: any) {}
+  showTooltipGB(el: any) {
+    const tooltip = this.tooltipGB.nativeElement;
+    const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+    tooltip.style.left = `${20}px`;
+    tooltip.style.top = `${el.target.getBoundingClientRect().bottom + 5 + scrollPosition}px`;
+    tooltip.style.display = 'block';
+    tooltip.style.opacity = '1';
+  }
 
-  hideTooltipGB() {}
+  hideTooltipGB() {
+    const tooltip = this.tooltipGB.nativeElement;
+    tooltip.style.display = 'none';
+    tooltip.style.opacity = '0';
+  }
 
 
   selectCurrency(currency: any) {
@@ -557,6 +662,10 @@ export class ServerCompareComponent implements OnInit {
     });
 
     this.dropdownCurrency?.hide();
+  }
+  selectBWMemOperation(operation: any) {
+    this.selectedBWMemOperation = operation;
+    this.generateBWMemChart();
   }
 
 }

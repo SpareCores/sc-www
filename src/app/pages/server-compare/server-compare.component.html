@@ -228,6 +228,41 @@
           </div>
         </div>
       </div>
+      <div class="block_full" *ngIf="lineChartDataBWmem">
+        <div class="flex justify-between items-center">
+          <h3 class="text-2xl flex items-center gap-2" >Memory bandwidth
+            <lucide-icon
+              name="info"
+              class="h-4 w-4 text-gray-200"
+              (mouseenter)="showTooltipChart($event, 'bw_mem')"
+              (mouseleave)="hideTooltip()">
+            </lucide-icon>
+          </h3>
+          <button
+            id="bw_mem_button"
+            class="dropdown_button"
+            type="button">
+              <div class="px-4 py-3">
+                {{selectedBWMemOperation.name}}
+              </div>
+              <div class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
+                <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
+              </div>
+          </button>
+        </div>
+        <div *ngIf="isBrowser()">
+          <div chartType="bar">
+            <canvas
+              style="height: 550px; max-height: 550px; max-width:100%"
+              baseChart
+              [data]="lineChartDataBWmem"
+              [options]="lineChartOptionsBWMem"
+              [type]="lineChartType"
+            >
+            </canvas>
+          </div>
+        </div>
+      </div>
 
     </div>
 
@@ -241,12 +276,29 @@
   {{tooltipContent}}
 </div>
 
+<div id="tooltipGeekbench"
+  #tooltipGeekbench
+  style="opacity: 0; display: none;"
+  class="absolute z-10 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-secondary border border-solid border-emerald-400 rounded-lg">
+  <div [innerHTML]="geekbenchHTML" ></div>
+</div>
+
 <div id="currency_options" class="z-10 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid">
   <ul class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
     <li *ngFor="let item of availableCurrencies"
       class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
       (click)="selectCurrency(item)" tabindex="0">
       <div class="text-white text-sm ">{{item.name}} ({{item.symbol}})</div>
+    </li>
+  </ul>
+</div>
+
+<div id="bw_mem_options" class="z-10 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid">
+  <ul class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
+    <li *ngFor="let item of availableBWmem"
+      class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+      (click)="selectBWMemOperation(item)" tabindex="0">
+      <div class="text-white text-sm ">{{item.name}}</div>
     </li>
   </ul>
 </div>

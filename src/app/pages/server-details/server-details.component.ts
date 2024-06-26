@@ -334,7 +334,7 @@ export class ServerDetailsComponent implements OnInit {
                 });
 
               // wee need similar machines to be filled
-              this.generateSchemaJSON(this.title, this.description, keywords);
+              this.generateSchemaJSON();
 
             }
           }).catch((error) => {
@@ -1175,10 +1175,10 @@ export class ServerDetailsComponent implements OnInit {
   }
 
   compareText() {
-    return this.serverCompare.isSelected(this.serverDetails) ? 'Remove Compare' : 'Add to Compare';
+    return this.serverCompare.isSelected(this.serverDetails) ? "Don't Compare" : "Compare";
   }
 
-  generateSchemaJSON(title: string, description: string, keywords: string) {
+  generateSchemaJSON() {
     // we need 'offers' to be filled to avoid Google critical error
     if(!this.serverDetails || !this.serverDetails.prices || !this.serverDetails.prices.length) {
       return;
@@ -1189,7 +1189,7 @@ export class ServerDetailsComponent implements OnInit {
       "@context": "https://schema.org/",
       "@type": "Product",
       "name": this.serverDetails.display_name,
-      "description": description,
+      "description": this.description,
       "category": `Servers > Cloud servers > ${this.serverDetails.vendor.name}`,
       "brand": {
         "@type": "Organization",
