@@ -153,6 +153,7 @@ export class ServerCompareComponent implements OnInit {
               c.properties = [];
             });
 
+            this.servers = [];
             this.serverCompare.clearCompare();
 
             for(let i = 2; i < data.length; i++){
@@ -552,8 +553,8 @@ export class ServerCompareComponent implements OnInit {
             chartData.datasets[j][index].data.push({value: score.score, tooltip: score.note});
           });
         } else {
-          chartData.datasets[0][index].data.push({value: 0, tooltip: ''});
-          chartData.datasets[1][index].data.push({value: 0, tooltip: ''});
+          chartData.datasets[0][index].data.push({value: null, tooltip: ''});
+          chartData.datasets[1][index].data.push({value: null, tooltip: ''});
         }
       });
     });
