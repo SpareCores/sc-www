@@ -14,6 +14,7 @@ import annotationPlugin from 'chartjs-plugin-annotation';
 import { BaseChartDirective } from 'ng2-charts';
 import { Dropdown, DropdownOptions } from 'flowbite';
 import { DomSanitizer } from '@angular/platform-browser';
+import { ServerCompareService } from '../../services/server-compare.service';
 
 Chart.register(annotationPlugin);
 
@@ -118,6 +119,7 @@ export class ServerCompareComponent implements OnInit {
     private keeperAPI: KeeperAPIService,
     private seoHandler: SeoHandlerService,
     private sanitizer: DomSanitizer,
+    private serverCompare: ServerCompareService,
     private route: ActivatedRoute) { }
 
   ngOnInit() {
@@ -134,6 +136,7 @@ export class ServerCompareComponent implements OnInit {
       const param = params['instances'];
       if(param){
           const decodedParams = JSON.parse(atob(param));
+
           let promises: Promise<any>[] = [
             this.keeperAPI.getServerMeta(),
             this.keeperAPI.getServerBenchmarkMeta()
@@ -150,8 +153,11 @@ export class ServerCompareComponent implements OnInit {
               c.properties = [];
             });
 
+            this.serverCompare.clearCompare();
+
             for(let i = 2; i < data.length; i++){
               this.servers.push(data[i].body);
+              this.serverCompare.toggleCompare(true, data[i].body);
             }
 
             this.instanceProperties.forEach((p: any) => {
@@ -217,10 +223,9 @@ export class ServerCompareComponent implements OnInit {
               });
             });
 
-            this.generateChartsData();
-            this.generateBWMemChart();
-
             if(isPlatformBrowser(this.platformId)) {
+              this.generateChartsData();
+              this.generateBWMemChart();
               const targetElCurrency: HTMLElement | null = document.getElementById('currency_options');
               const triggerElCurrency: HTMLElement | null = document.getElementById('currency_button');
 
@@ -234,20 +239,6 @@ export class ServerCompareComponent implements OnInit {
                   }
               );
               this.dropdownCurrency.init();
-
-              const targetElBWmem: HTMLElement | null = document.getElementById('bw_mem_options');
-              const triggerElBWmem: HTMLElement | null = document.getElementById('bw_mem_button');
-
-              this.dropdownBWmem = new Dropdown(
-                  targetElBWmem,
-                  triggerElBWmem,
-                  options,
-                  {
-                    id: 'bw_mem_options',
-                    override: true
-                  }
-              );
-              this.dropdownBWmem.init();
             }
 
             this.isLoading = false;
@@ -620,6 +611,22 @@ export class ServerCompareComponent implements OnInit {
       });
 
       this.lineChartDataBWmem = { labels: chartData.labels, datasets: chartData.datasets };
+
+      setTimeout(() => {
+        const targetElBWmem: HTMLElement | null = document.getElementById('bw_mem_options');
+        const triggerElBWmem: HTMLElement | null = document.getElementById('bw_mem_button');
+
+        this.dropdownBWmem = new Dropdown(
+            targetElBWmem,
+            triggerElBWmem,
+            options,
+            {
+              id: 'bw_mem_options',
+              override: true
+            }
+        );
+        this.dropdownBWmem.init();
+      }, 500);
     }
   }
 
