@@ -9,7 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { Allocation, ServerPKs, ServerPKsWithPrices } from '../../../../sdk/data-contracts';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { Chart, ChartConfiguration, ChartData } from 'chart.js';
-import { lineChartOptionsBWM, radarChartOptions, radarDatasetColors } from '../server-details/chartOptions';
+import { barChartOptionsSSL, barChartOptionsSSLCompare, lineChartOptionsBWM, radarChartOptions, radarDatasetColors } from '../server-details/chartOptions';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import { BaseChartDirective } from 'ng2-charts';
 import { Dropdown, DropdownOptions } from 'flowbite';
@@ -85,6 +85,10 @@ export class ServerCompareComponent implements OnInit {
   lineChartOptionsBWMem: ChartConfiguration<'line'>['options'] = lineChartOptionsBWM;
   lineChartDataBWmem: ChartData<'line'> | undefined = undefined;
 
+  barChartType = 'bar' as const;
+  barChartOptionsSSL: ChartConfiguration<'bar'>['options'] = barChartOptionsSSLCompare;
+  barChartDataSSL: ChartData<'bar'> | undefined = undefined;
+
   dropdownCurrency: any;
   availableCurrencies = [
     {name: 'US dollar', slug: 'USD', symbol: '$'},
@@ -111,6 +115,23 @@ export class ServerCompareComponent implements OnInit {
   ];
 
   selectedBWMemOperation = this.availableBWmem[2];
+
+  dropdownSSL: any;
+  availableSSLAlgos = [
+    { name: 'AES-256-CBC', value: 'AES-256-CBC' },
+    { name: 'ARIA-256-CBC', value: 'ARIA-256-CBC' },
+    { name: 'CAMELLIA-256-CBC', value: 'CAMELLIA-256-CBC' },
+    { name: 'SM4-CBC', value: 'SM4-CBC'},
+    { name: 'blake2b512', value: 'blake2b512' },
+    { name: 'sha256', value: 'sha256' },
+    { name: 'sha3-256', value: 'sha3-256' },
+    { name: 'sha3-512', value: 'sha3-512'},
+    { name: 'sha512', value: 'sha512'},
+    { name: 'shake128', value: 'shake128' },
+    { name: 'shake256', value: 'shake256'}
+  ];
+
+  selectedSSLAlgo = this.availableSSLAlgos[5];
 
   selectedCurrency = this.availableCurrencies[0];
 
@@ -225,8 +246,11 @@ export class ServerCompareComponent implements OnInit {
             });
 
             if(isPlatformBrowser(this.platformId)) {
+
               this.generateChartsData();
               this.generateBWMemChart();
+              this.generateSSLChart();
+
               const targetElCurrency: HTMLElement | null = document.getElementById('currency_options');
               const triggerElCurrency: HTMLElement | null = document.getElementById('currency_button');
 
@@ -631,6 +655,72 @@ export class ServerCompareComponent implements OnInit {
     }
   }
 
+  generateSSLChart() {
+    const scaleField = 'block_size';
+    const benchmark_id = 'openssl';
+
+    const selectedAlgo = this.selectedSSLAlgo.value;
+
+    const dataSet = this.benchmarkMeta?.find((x: any) => x.benchmark_id === benchmark_id);
+
+    console.log(dataSet);
+
+    if(dataSet) {
+      let scales: number[] = [];
+      dataSet.configs.filter((x: any) => x.config.algo === selectedAlgo).forEach((item: any) => {
+        if((item.config[scaleField] || item.config[scaleField] === 0) && scales.indexOf(item.config[scaleField]) === -1) {
+          scales.push(item.config[scaleField]);
+        }
+      });
+      scales.sort((a, b) => a - b);
+
+      let chartData: any = {
+        labels: scales, //scales.map((s) => s.toString()),
+        datasets: this.servers.map((server: ServerPKs, index: number) => {
+          return {
+            data: [],
+            label: server.display_name,
+            spanGaps: true,
+            borderColor: radarDatasetColors[index % 8].borderColor,
+            backgroundColor: radarDatasetColors[index % 8].borderColor };
+          })
+      };
+
+      this.servers.forEach((server: any, i: number) => {
+        scales.forEach((size: number) => {
+          const item = server.benchmark_scores.find((b: any) => b.config.algo === selectedAlgo && b.config[scaleField] === size);
+          if(item) {
+            chartData.datasets[i].data.push(item.score);
+          } else {
+            chartData.datasets[i].data.push(null);
+          }
+        });
+      });
+
+
+      this.barChartDataSSL = { labels: chartData.labels, datasets: chartData.datasets };
+
+      setTimeout(() => {
+        const targetElSSL: HTMLElement | null = document.getElementById('ssl_options');
+        const triggerElSSL: HTMLElement | null = document.getElementById('ssl_button');
+
+        this.dropdownSSL = new Dropdown(
+            targetElSSL,
+            triggerElSSL,
+            options,
+            {
+              id: 'ssl_options',
+              override: true
+            }
+        );
+        this.dropdownBWmem.init();
+      }, 500);
+    }
+
+
+
+  }
+
   isBrowser() {
     return isPlatformBrowser(this.platformId);
   }
@@ -671,9 +761,15 @@ export class ServerCompareComponent implements OnInit {
 
     this.dropdownCurrency?.hide();
   }
+
   selectBWMemOperation(operation: any) {
     this.selectedBWMemOperation = operation;
     this.generateBWMemChart();
+  }
+
+  selecSSLAlgorithm(algo: any) {
+    this.selectedSSLAlgo = algo;
+    this.generateSSLChart();
   }
 
 }

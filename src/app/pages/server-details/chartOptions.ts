@@ -58,7 +58,46 @@ export const  barChartOptionsSSL: ChartConfiguration<'bar'>['options'] = {
       color: '#FFF',
     }
   },
+};
 
+export const  barChartOptionsSSLCompare: ChartConfiguration<'bar'>['options'] = {
+  scales: {
+    ...barChartOptions.scales,
+    y: {
+      ticks: {
+        color: '#FFF',
+      },
+      grid: {
+        color: '#4B5563',
+      },
+      title: {
+        display: true,
+        color: '#FFF',
+        text: 'byte/s',
+      },
+    },
+    x: {
+      ticks: {
+        color: '#FFF',
+      },
+      grid: {
+        color: '#4B5563',
+      },
+      title: {
+        display: true,
+        color: '#FFF',
+        text: 'Block Size (byte)',
+      },
+    }
+  },
+  plugins: {
+    ...barChartOptions.plugins,
+    title: {
+      display: true,
+      text: 'Block size (byte)',
+      color: '#FFF',
+    }
+  },
 };
 
 export const barChartDataEmpty: ChartData<'bar'> = {
