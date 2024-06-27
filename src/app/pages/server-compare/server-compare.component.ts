@@ -751,7 +751,9 @@ export class ServerCompareComponent implements OnInit {
       }
 
     });
-    this.availableCompressMethods = options.map((item: any) => {
+    this.availableCompressMethods = options.sort((a: any, b: any) => {
+      return a.algo.localeCompare(b.algo);
+    }).map((item: any) => {
       return {
         options: item,
         name: Object.keys(item).map((key: string) => { return `${key.replace('_', ' ')}: ${item[key]}` }).join(', ')
