@@ -9,7 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { Allocation, ServerPKs, ServerPKsWithPrices } from '../../../../sdk/data-contracts';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { Chart, ChartConfiguration, ChartData } from 'chart.js';
-import { barChartOptionsSSL, barChartOptionsSSLCompare, lineChartOptionsBWM, radarChartOptions, radarDatasetColors } from '../server-details/chartOptions';
+import { barChartOptionsSSL, barChartOptionsSSLCompare, lineChartOptionsBWM, lineChartOptionsComp, lineChartOptionsCompareCompress, lineChartOptionsCompareDecompress, radarChartOptions, radarDatasetColors } from '../server-details/chartOptions';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import { BaseChartDirective } from 'ng2-charts';
 import { Dropdown, DropdownOptions } from 'flowbite';
@@ -89,6 +89,12 @@ export class ServerCompareComponent implements OnInit {
   barChartOptionsSSL: ChartConfiguration<'bar'>['options'] = barChartOptionsSSLCompare;
   barChartDataSSL: ChartData<'bar'> | undefined = undefined;
 
+
+  lineChartOptionsCompress: ChartConfiguration<'line'>['options'] = lineChartOptionsCompareCompress;
+  lineChartOptionsDecompress: ChartConfiguration<'line'>['options'] = lineChartOptionsCompareDecompress;
+  lineChartDataCompress: ChartData<'line'> | undefined = undefined;
+  lineChartDataDecompress: ChartData<'line'> | undefined = undefined;
+
   dropdownCurrency: any;
   availableCurrencies = [
     {name: 'US dollar', slug: 'USD', symbol: '$'},
@@ -132,6 +138,10 @@ export class ServerCompareComponent implements OnInit {
   ];
 
   selectedSSLAlgo = this.availableSSLAlgos[5];
+
+  availableCompressMethods: any[] = [];
+
+  selectedCompressMethod: any;
 
   selectedCurrency = this.availableCurrencies[0];
 
@@ -247,9 +257,12 @@ export class ServerCompareComponent implements OnInit {
 
             if(isPlatformBrowser(this.platformId)) {
 
+              this.getCompressChartOptions();
+
               this.generateChartsData();
               this.generateBWMemChart();
               this.generateSSLChart();
+              this.generateCompressChart();
 
               const targetElCurrency: HTMLElement | null = document.getElementById('currency_options');
               const triggerElCurrency: HTMLElement | null = document.getElementById('currency_button');
@@ -663,8 +676,6 @@ export class ServerCompareComponent implements OnInit {
 
     const dataSet = this.benchmarkMeta?.find((x: any) => x.benchmark_id === benchmark_id);
 
-    console.log(dataSet);
-
     if(dataSet) {
       let scales: number[] = [];
       dataSet.configs.filter((x: any) => x.config.algo === selectedAlgo).forEach((item: any) => {
@@ -716,9 +727,124 @@ export class ServerCompareComponent implements OnInit {
         this.dropdownBWmem.init();
       }, 500);
     }
+  }
 
+  getCompressChartOptions() {
+    let dataSet = this.benchmarkMeta?.find((x: any) => x.benchmark_id === 'compression_text:ratio');
+    let options: any = [];
+    dataSet?.configs.forEach((config: any) => {
+      let temp = { ...config.config };
+      delete temp.compression_level;
 
+      const found = options.find((b: any) => {
+        return Object.entries(temp).every(([key, value]) => {
+          return b[key] === value;
+        });
+      });
 
+      if(!found) {
+        options.push(temp);
+      }
+
+    });
+    this.availableCompressMethods = options.map((item: any) => {
+      return {
+        options: item,
+        name: Object.keys(item).map((key: string) => { return `${key.replace('_', ' ')}: ${item[key]}` }).join(', ')
+      };
+    });
+    this.selectedCompressMethod = this.availableCompressMethods[0];
+  }
+
+  generateCompressChart() {
+    let selectedConfig = this.selectedCompressMethod?.options;
+
+    if(!selectedConfig) {
+      return;
+    }
+
+    let chartData: any = {
+      labels: [],
+      datasets: this.servers.map((server: ServerPKs, index: number) => {
+        return {
+          data: [],
+          label: server.display_name,
+          spanGaps: true,
+          borderColor: radarDatasetColors[index % 8].borderColor,
+          backgroundColor: radarDatasetColors[index % 8].borderColor };
+        })
+    };
+
+    let labels: any[] = [];
+
+    this.servers.forEach((server: any, i: number) => {
+        const items = server.benchmark_scores.filter((b: any) =>
+          b.benchmark_id === 'compression_text:ratio' &&
+          b.config.algo === selectedConfig.algo &&
+          b.config.threads === selectedConfig.threads
+        );
+
+        items.forEach((item: any) => {
+          if(item?.score && labels.indexOf(item.score) === -1) {
+            labels.push(item.score);
+          }
+        });
+    });
+
+    chartData.labels = labels.sort((a, b) => a - b);
+
+    this.servers.forEach((server: any, i: number) => {
+      labels.forEach((size: number) => {
+        const item = server.benchmark_scores.find((b: any) =>
+          b.benchmark_id === 'compression_text:ratio' &&
+          b.config.algo === selectedConfig.algo &&
+          b.config.threads === selectedConfig.threads &&
+          b.score === size
+        );
+        if(item) {
+          const item2 = server.benchmark_scores.find((b: any) => {
+            return b.benchmark_id === 'compression_text:compress' && Object.entries(item.config).every(([key, value]) => {
+              return b.config[key] === value;
+            });
+          });
+
+          const item3 = server.benchmark_scores.find((b: any) => {
+            return b.benchmark_id === 'compression_text:decompress' && Object.entries(item.config).every(([key, value]) => {
+              return b.config[key] === value;
+            });
+          });
+
+          let tooltip = ``;
+          Object.keys(item.config).forEach((key: string) => {
+            if(key === 'compression_level') {
+              tooltip += `${key.replace('_', ' ')}: ${item.config[key]}`;
+            }
+          });
+
+          chartData.datasets[i].data.push({
+              config: item.config,
+              ratio: Math.floor(item.score * 100) / 100,
+              compression_level: item.config.compression_level,
+              tooltip: tooltip,
+              compress: item2?.score,
+              decompress: item3?.score
+            });
+        } else {
+          chartData.datasets[i].data.push(null);
+        }
+      });
+    });
+
+    console.log(chartData.labels.map((label: any) => {
+      return Math.floor(label * 100) / 100;
+    }))
+
+    chartData.labels = chartData.labels.map((label: any) => {
+      return Math.floor(label * 100) / 100;
+    })
+
+    this.lineChartDataCompress = { labels: chartData.labels, datasets: chartData.datasets };
+    this.lineChartDataDecompress = { labels: chartData.labels, datasets: chartData.datasets };
   }
 
   isBrowser() {
@@ -770,6 +896,11 @@ export class ServerCompareComponent implements OnInit {
   selecSSLAlgorithm(algo: any) {
     this.selectedSSLAlgo = algo;
     this.generateSSLChart();
+  }
+
+  selectCompressMethod(method: any) {
+    this.selectedCompressMethod = method;
+    this.generateCompressChart();
   }
 
 }

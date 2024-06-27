@@ -92,11 +92,6 @@ export const  barChartOptionsSSLCompare: ChartConfiguration<'bar'>['options'] = 
   },
   plugins: {
     ...barChartOptions.plugins,
-    title: {
-      display: true,
-      text: 'Block size (byte)',
-      color: '#FFF',
-    }
   },
 };
 
@@ -135,7 +130,7 @@ export const radarChartOptions: ChartConfiguration<'radar'>['options'] = {
     tooltip:{
       callbacks: {
         label: function(this: TooltipModel<"radar">, tooltipItem: TooltipItem<"radar">) {
-          console.log(tooltipItem);return (tooltipItem.dataset.data[tooltipItem.dataIndex] as any).value + '; ' + (tooltipItem.dataset.data[tooltipItem.dataIndex] as any).tooltip;
+          return (tooltipItem.dataset.data[tooltipItem.dataIndex] as any).value + '; ' + (tooltipItem.dataset.data[tooltipItem.dataIndex] as any).tooltip;
         }
       }
     },
@@ -320,6 +315,118 @@ export const lineChartOptionsCompRatio: ChartConfiguration<'line'>['options'] = 
       },
     }
   },
+};
+
+export const lineChartOptionsCompareCompress: ChartConfiguration<'line'>['options'] = {
+  scales: {
+    x: {
+      ticks: {
+        color: '#FFF',
+      },
+      grid: {
+        color: '#4B5563',
+      },
+      title: {
+        display: true,
+        color: '#FFF',
+        text: 'Compression Ratio',
+      },
+    },
+    y: {
+      ticks: {
+        color: '#FFF',
+      },
+      grid: {
+        color: '#4B5563',
+      },
+      type: 'logarithmic',
+      title: {
+        display: true,
+        color: '#FFF',
+        text: 'byte/s',
+      }
+    },
+  },
+  plugins: {
+    tooltip:{
+      callbacks: {
+        label: function(this: TooltipModel<"line">, tooltipItem: TooltipItem<"line">) {
+          return (tooltipItem.parsed as any).y.toFixed(0) + ' (' + (tooltipItem.dataset.data[tooltipItem.dataIndex] as any).tooltip + ')';
+        }
+      }
+    },
+    legend: {
+      display: true,
+      labels: {
+        color: '#FFF',
+      },
+    },
+    title: {
+      display: true,
+      text: 'Compression Speed / Ratio',
+      color: '#FFF',
+    }
+  },
+  parsing: {
+    xAxisKey: 'ratio',
+    yAxisKey: 'compress'
+  }
+};
+
+export const lineChartOptionsCompareDecompress: ChartConfiguration<'line'>['options'] = {
+  scales: {
+    x: {
+      ticks: {
+        color: '#FFF',
+      },
+      grid: {
+        color: '#4B5563',
+      },
+      title: {
+        display: true,
+        color: '#FFF',
+        text: 'Compression Ratio',
+      },
+    },
+    y: {
+      ticks: {
+        color: '#FFF',
+      },
+      grid: {
+        color: '#4B5563',
+      },
+      type: 'logarithmic',
+      title: {
+        display: true,
+        color: '#FFF',
+        text: 'byte/s',
+      }
+    },
+  },
+  plugins: {
+    tooltip:{
+      callbacks: {
+        label: function(this: TooltipModel<"line">, tooltipItem: TooltipItem<"line">) {
+          return (tooltipItem.parsed as any).y.toFixed(0) + ' (' + (tooltipItem.dataset.data[tooltipItem.dataIndex] as any).tooltip + ')';
+        }
+      }
+    },
+    legend: {
+      display: true,
+      labels: {
+        color: '#FFF',
+      },
+    },
+    title: {
+      display: true,
+      text: 'Decompression Speed / Ratio',
+      color: '#FFF',
+    }
+  },
+  parsing: {
+    xAxisKey: 'ratio',
+    yAxisKey: 'decompress'
+  }
 };
 
 

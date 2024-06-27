@@ -302,6 +302,57 @@
           </div>
         </div>
       </div>
+      <div class="block_full_short" *ngIf="availableCompressMethods?.length">
+        <div class="flex justify-between items-center">
+          <h3 class="text-2xl flex items-center gap-2" >
+            Compression
+            <lucide-icon
+              name="info"
+              class="h-4 w-4 text-gray-200"
+              (mouseenter)="showTooltip($event, 'Measuring the compression ratio and speed while compressing and decompressing the dickens.txt of the Silesia corpus (10 MB uncompressed) using various algorithms, compressions levels and other extra arguments.')"
+              (mouseleave)="hideTooltip()">
+            </lucide-icon>
+          </h3>
+          <div class="flex gap-4">
+            <button
+              id="compress_method_button"
+              data-ph-capture-attribute-sc-event="server details price allocation select"
+              data-dropdown-toggle="compress_method_options"
+              class="dropdown_button"
+              type="button">
+              <div class="px-3 py-2">
+                {{selectedCompressMethod.name}}
+              </div>
+              <div class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
+                <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
+              </div>
+            </button>
+          </div>
+        </div>
+        <div *ngIf="isBrowser()" class="flex gap-4 lg:flex-row flex-col">
+          <div chartType="bar" style="height: 350px; max-width:50%">
+            <canvas
+              style="height: 350px; max-width:100%"
+              baseChart
+              [data]="lineChartDataCompress"
+              [options]="lineChartOptionsCompress"
+              [type]="lineChartType"
+            >
+            </canvas>
+          </div>
+          <div chartType="bar" style="height: 350px; max-width:50%">
+            <canvas
+              style="height: 350px; max-width:100%"
+              baseChart
+              [data]="lineChartDataDecompress"
+              [options]="lineChartOptionsDecompress"
+              [type]="lineChartType"
+            >
+            </canvas>
+          </div>
+        </div>
+      </div>
+
 
     </div>
 
@@ -347,6 +398,16 @@
     <li *ngFor="let item of availableSSLAlgos"
       class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
       (click)="selecSSLAlgorithm(item)" >
+      <div class="text-white text-sm ">{{item.name}}</div>
+    </li>
+  </ul>
+</div>
+
+<div id="compress_method_options" class="z-10 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid">
+  <ul class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
+    <li *ngFor="let item of availableCompressMethods"
+      class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+      (click)="selectCompressMethod(item)" >
       <div class="text-white text-sm ">{{item.name}}</div>
     </li>
   </ul>
