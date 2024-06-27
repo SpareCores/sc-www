@@ -17,8 +17,8 @@
           <div> {{description}} </div>
           <div class="flex gap-4">
             <button class="btn-primary py-3 px-5 flex gap-2" (click)="addToCompare()">
+              <span> {{compareText()}} </span>
               <lucide-icon name="scale" class="h-6 w-6"></lucide-icon>
-              <span> Compare </span>
             </button>
             <a class="btn-primary-outline py-3 px-5 flex gap-2"
                [href]="serverDetails.vendor.homepage" target="_blank" rel="nofollow noopener">

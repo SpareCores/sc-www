@@ -19,7 +19,7 @@ export class ServerCompareService {
         this.selectedForCompare.push(server);
       }
     } else {
-      this.selectedForCompare = this.selectedForCompare.filter((item) => item !== server);
+      this.selectedForCompare = this.selectedForCompare.filter((item) => item.vendor_id !== server.vendor_id || item.server_id !== server.server_id);
     }
     this.selectionChanged.next(this.selectedForCompare);
   }
@@ -31,6 +31,10 @@ export class ServerCompareService {
   clearCompare() {
     this.selectedForCompare = [];
     this.selectionChanged.next(this.selectedForCompare);
+  }
+
+  isSelected(server: ServerPKs) {
+    return this.selectedForCompare.findIndex((item) => item.vendor_id === server.vendor_id && item.server_id === server.server_id) !== -1;
   }
 
   openCompare() {

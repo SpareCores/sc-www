@@ -49,3 +49,17 @@
 .number_line {
   text-align: right !important;
 }
+
+.block_full {
+  @apply px-6 py-6 bg-secondary border-emerald-400 border border-solid rounded-lg flex flex-col gap-4 relative overflow-hidden;
+  width: calc(100%);
+  min-height: 660px;
+  height: 660px;
+}
+
+.block_full_short {
+  @apply px-6 py-6 bg-secondary border-emerald-400 border border-solid rounded-lg flex flex-col gap-4 relative overflow-hidden;
+  width: calc(100%);
+  min-height: 460px;
+  height: 460px;
+}

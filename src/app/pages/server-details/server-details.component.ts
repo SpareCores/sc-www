@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable prefer-const */
-import { Component, ElementRef, Inject, PLATFORM_ID, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, PLATFORM_ID, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { KeeperAPIService } from '../../services/keeper-api.service';
 import { Server, ServerPKsWithPrices, ServerPricePKs, TableServerTableServerGetData } from '../../../../sdk/data-contracts';
@@ -39,7 +39,7 @@ const options: DropdownOptions = {
   templateUrl: './server-details.component.html',
   styleUrl: './server-details.component.scss'
 })
-export class ServerDetailsComponent implements OnInit {
+export class ServerDetailsComponent implements OnInit, OnDestroy {
 
   serverDetails!: ServerPKsWithPrices;
   serverZones: string[] = [];
@@ -334,7 +334,7 @@ export class ServerDetailsComponent implements OnInit {
                 });
 
               // wee need similar machines to be filled
-              this.generateSchemaJSON(this.title, this.description, keywords);
+              this.generateSchemaJSON();
 
             }
           }).catch((error) => {
@@ -1171,10 +1171,14 @@ export class ServerDetailsComponent implements OnInit {
   }
 
   addToCompare() {
-    this.serverCompare.toggleCompare(true, this.serverDetails);
+    this.serverCompare.toggleCompare(!this.serverCompare.isSelected(this.serverDetails), this.serverDetails);
   }
 
-  generateSchemaJSON(title: string, description: string, keywords: string) {
+  compareText() {
+    return this.serverCompare.isSelected(this.serverDetails) ? "Don't Compare" : "Compare";
+  }
+
+  generateSchemaJSON() {
     // we need 'offers' to be filled to avoid Google critical error
     if(!this.serverDetails || !this.serverDetails.prices || !this.serverDetails.prices.length) {
       return;
@@ -1185,7 +1189,7 @@ export class ServerDetailsComponent implements OnInit {
       "@context": "https://schema.org/",
       "@type": "Product",
       "name": this.serverDetails.display_name,
-      "description": description,
+      "description": this.description,
       "category": `Servers > Cloud servers > ${this.serverDetails.vendor.name}`,
       "brand": {
         "@type": "Organization",
