@@ -9,7 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { Allocation, ServerPKs, ServerPKsWithPrices } from '../../../../sdk/data-contracts';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { Chart, ChartConfiguration, ChartData } from 'chart.js';
-import { barChartOptionsSSL, barChartOptionsSSLCompare, lineChartOptionsBWM, lineChartOptionsComp, lineChartOptionsCompareCompress, lineChartOptionsCompareDecompress, radarChartOptions, radarDatasetColors } from '../server-details/chartOptions';
+import { barChartOptionsSSLCompare, lineChartOptionsBWM, lineChartOptionsCompareCompress, lineChartOptionsCompareDecompress, radarChartOptions, radarDatasetColors } from '../server-details/chartOptions';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import { BaseChartDirective } from 'ng2-charts';
 import { Dropdown, DropdownOptions } from 'flowbite';
@@ -777,7 +777,7 @@ export class ServerCompareComponent implements OnInit {
 
     let labels: any[] = [];
 
-    this.servers.forEach((server: any, i: number) => {
+    this.servers.forEach((server: any) => {
         const items = server.benchmark_scores.filter((b: any) =>
           b.benchmark_id === 'compression_text:ratio' &&
           b.config.algo === selectedConfig.algo &&
@@ -834,10 +834,6 @@ export class ServerCompareComponent implements OnInit {
         }
       });
     });
-
-    console.log(chartData.labels.map((label: any) => {
-      return Math.floor(label * 100) / 100;
-    }))
 
     chartData.labels = chartData.labels.map((label: any) => {
       return Math.floor(label * 100) / 100;
