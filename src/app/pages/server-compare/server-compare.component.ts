@@ -542,6 +542,10 @@ export class ServerCompareComponent implements OnInit {
       geekbenchScores.unshift(GBScore);
     }
 
+    if(!geekbenchScores || geekbenchScores.length === 0) {
+      return;
+    }
+
     this.geekbenchHTML =
     `<div> The following benchmark scenarios were run using Geekbench 6: </div> <ul> `;
 
