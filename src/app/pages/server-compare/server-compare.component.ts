@@ -139,8 +139,8 @@ export class ServerCompareComponent implements OnInit {
 
   selectedSSLAlgo = this.availableSSLAlgos[5];
 
+  compressDropdown: any;
   availableCompressMethods: any[] = [];
-
   selectedCompressMethod: any;
 
   selectedCurrency = this.availableCurrencies[0];
@@ -841,6 +841,24 @@ export class ServerCompareComponent implements OnInit {
 
     this.lineChartDataCompress = { labels: chartData.labels, datasets: chartData.datasets };
     this.lineChartDataDecompress = { labels: chartData.labels, datasets: chartData.datasets };
+
+    const interval4 = setInterval(() => {
+      const targetElCompress: HTMLElement | null = document.getElementById('compress_method_options');
+      const triggerElCompress: HTMLElement | null = document.getElementById('compress_method_button');
+
+      if(targetElCompress && triggerElCompress) {
+        this.compressDropdown = new Dropdown(
+          targetElCompress,
+          triggerElCompress,
+          options,
+          {
+            id: 'compress_method_options',
+            override: true
+          }
+        );
+        clearInterval(interval4);
+      }
+    }, 150);
   }
 
   isBrowser() {
