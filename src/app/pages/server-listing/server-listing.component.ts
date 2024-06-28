@@ -143,8 +143,6 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   clipboardIcon = 'clipboard';
   tooltipContent = '';
 
-  complianceFrameworks: any[] = [];
-
   sub: any;
 
   constructor(@Inject(PLATFORM_ID) private platformId: object,
@@ -196,10 +194,6 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       this.refreshColumns(false);
 
       this._searchServers(true);
-    });
-
-    this.keeperAPI.getComplianceFrameworks().then((response: any) => {
-      this.complianceFrameworks = response.body;
     });
 
     if(isPlatformBrowser(this.platformId)) {
@@ -450,10 +444,6 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
   getField(item: ServerPriceWithPKs, field: string) {
     return field.split('.').reduce((obj, key) => (obj && (obj as any)[key]) ? (obj as any)[key] : undefined, item);
-  }
-
-  getComplianceFrameworkName(id: string) {
-    return this.complianceFrameworks.find((item) => item.compliance_framework_id === id)?.abbreviation || id;
   }
 
   toggleCompare2(event: any, server: ServerPKs| any) {

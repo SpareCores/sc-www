@@ -180,8 +180,6 @@ export class ServerPricesComponent implements OnInit {
   clipboardIcon = 'clipboard';
   tooltipContent = '';
 
-  complianceFrameworks: any[] = [];
-
   selectedCountries: string[] = [];
   selectedRegions: string[] = [];
 
@@ -241,10 +239,6 @@ export class ServerPricesComponent implements OnInit {
       this.refreshColumns(false);
 
       this._searchServers(true);
-    });
-
-    this.keeperAPI.getComplianceFrameworks().then((response) => {
-      this.complianceFrameworks = response.body;
     });
 
     if(isPlatformBrowser(this.platformId)) {
