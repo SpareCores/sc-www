@@ -131,6 +131,20 @@
               <div class="text-white text-sm">{{getComplianceFrameworkName(enum)}}</div>
             </div>
           </div>
+          <div *ngIf="getParameterType(parameter) === 'vendor'" class="flex flex-col gap-2 mb-4 mt-4" >
+            <div *ngFor="let enum of parameter.schema.enum" class="flex items-center gap-1">
+              <input type="checkbox"
+                     id="filter_enum_{{parameter.name}}"
+                     data-ph-capture-attribute-sc-event="server listing filter"
+                     data-ph-capture-attribute-server-listing-filter-type="checkbox"
+                     [attr.data-ph-capture-attribute-server-listing-filter-id]="parameter.name"
+                     [attr.data-ph-capture-attribute-server-listing-filter-category]="item.category_id"
+                     [ngModel]="isEnumSelected(parameter, enum)"
+                     (click)="selectEnumItem(parameter, enum)"
+                     class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
+              <div class="text-white text-sm">{{getVendorName(enum)}}</div>
+            </div>
+          </div>
           <div *ngIf="getParameterType(parameter) === 'country'" class="mb-4 mt-4 relative flex flex-col gap-2" >
             <div *ngFor="let continent of continentMetadata" class="flex flex-col gap-3" >
                 <div class="flex justify-between">

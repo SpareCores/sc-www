@@ -329,8 +329,8 @@
             </button>
           </div>
         </div>
-        <div *ngIf="isBrowser()" class="flex gap-4 lg:flex-row flex-col">
-          <div chartType="bar" style="height: 350px; max-width:50%">
+        <div *ngIf="isBrowser()" class="charts_div">
+          <div chartType="bar" class="chart_div">
             <canvas
               style="height: 350px; max-width:100%"
               baseChart
@@ -340,7 +340,7 @@
             >
             </canvas>
           </div>
-          <div chartType="bar" style="height: 350px; max-width:50%">
+          <div chartType="bar" class="chart_div">
             <canvas
               style="height: 350px; max-width:100%"
               baseChart
