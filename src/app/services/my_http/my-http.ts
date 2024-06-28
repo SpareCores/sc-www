@@ -53,10 +53,13 @@ const BACKEND_BASE_URI_SSR = import.meta.env['NG_APP_BACKEND_BASE_URI_SSR'];
 
           return response;
       } catch (err: any) {
-          if(err.status === 404) {
-            console.log('404 error');
+          if(err.status && err.status !== 500 && err.status !== 501 && err.status !== 502 && err.status !== 503 && err.status !== 504) {
+            console.log('API exception');
+            console.log(err.message);
+            console.log(err.status);
             throw err;
           }
+
           if (retry < (isPlatformBrowser(this.platformId) ? RETRY_INTERVALS.length : RETRY_INTERVALS_SSR.length)) {
               console.log('Retrying request...');
               await new Promise(resolve => setTimeout(resolve, isPlatformBrowser(this.platformId) ? RETRY_INTERVALS[retry] : RETRY_INTERVALS_SSR[retry]));
