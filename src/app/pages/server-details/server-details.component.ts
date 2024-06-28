@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable prefer-const */
 import { Component, ElementRef, Inject, PLATFORM_ID, OnInit, ViewChild, OnDestroy } from '@angular/core';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { KeeperAPIService } from '../../services/keeper-api.service';
 import { Server, ServerPKsWithPrices, ServerPricePKs, TableServerTableServerGetData } from '../../../../sdk/data-contracts';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
@@ -139,6 +139,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
               private keeperAPI: KeeperAPIService,
               private SEOHandler: SeoHandlerService,
               private serverCompare: ServerCompareService,
+              private router: Router,
               private senitizer: DomSanitizer) {
 
   }
@@ -435,6 +436,9 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
           }
         }
+      }).catch((error) => {
+        console.error('Failed to load server data:', error);
+        this.router.navigateByUrl('/');
       });
     });
   }
