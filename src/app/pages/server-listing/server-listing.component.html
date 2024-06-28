@@ -69,7 +69,7 @@
             <table class="items_table">
               <thead>
                 <tr>
-                  <th style="width: 3.25rem;">
+                  <th class="checkbox_column">
                     <div class="text-white">
                       <lucide-icon class="h-4 w-4" name="scale" ></lucide-icon>
                     </div>
@@ -101,7 +101,7 @@
                     [attr.data-ph-capture-attribute-server-listing-row-index]="i+1"
                     [attr.data-ph-capture-attribute-server-listing-row-page-size]="limit">
 
-                  <td (click)="toggleCompare2($event, item)">
+                  <td (click)="toggleCompare2($event, item)" class="checkbox_column">
                     <div class="flex items-center">
                       <input type="checkbox"
                         id="server_compare_checkbox_{{item.server_id}}"
