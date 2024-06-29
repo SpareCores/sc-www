@@ -56,7 +56,7 @@
   thead {
     @apply border-b border-gray-200 border-solid bg-secondary;
     th {
-      @apply text-left px-5 py-3 font-normal text-xs;
+      @apply text-left pl-3 pr-2 py-3 font-normal text-xs;
 
     }
   }
@@ -72,7 +72,7 @@
     tr {
       @apply hover:border hover:border-emerald-400 hover:border-solid cursor-pointer;
       td {
-        @apply px-5 py-3 text-left text-sm;
+        @apply pl-3 pr-2 py-3 text-left text-sm;
       }
     }
   }
