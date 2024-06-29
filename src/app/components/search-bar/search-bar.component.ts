@@ -37,6 +37,7 @@ export class SearchBarComponent implements OnInit, OnChanges{
   tooltipContent = '';
 
   complianceFrameworks: any[] = [];
+  vendors: any[] = [];
 
   countryMetadata: CountryMetadata[] = [];
   continentMetadata: ContinentMetadata[] = [];
@@ -63,6 +64,11 @@ export class SearchBarComponent implements OnInit, OnChanges{
     this.keeperAPI.getComplianceFrameworks().then((response: any) => {
       this.complianceFrameworks = response.body;
     });
+
+    this.keeperAPI.getVendors().then((response: any) => {
+      this.vendors = response.body;
+    });
+
 
     this.valueChangeDebouncer.pipe(debounceTime(500)).subscribe(() => {
       this.filterServers();
@@ -103,7 +109,9 @@ export class SearchBarComponent implements OnInit, OnChanges{
       }
 
       // if only one value is selected as qurry parameter, it is parsed as string, so we need to convert it to array
-      if(this.query[item.name] && this.getParameterType(item) === 'enumArray' && !Array.isArray(this.query[item.name])) {
+      if(this.query[item.name] &&
+        (this.getParameterType(item) === 'enumArray' || this.getParameterType(item) === 'compliance_framework' || this.getParameterType(item) === 'vendor' ) &&
+        !Array.isArray(this.query[item.name])) {
         value = [this.query[item.name]];
       }
 
@@ -160,6 +168,10 @@ export class SearchBarComponent implements OnInit, OnChanges{
     return this.complianceFrameworks.find((item) => item.compliance_framework_id === id)?.abbreviation || id;
   }
 
+  getVendorName(id: string) {
+    return this.vendors.find((item) => item.vendor_id === id)?.name || id;
+  }
+
   getStep(parameter: any) {
     return parameter.schema.step || 1;
   }
@@ -188,6 +200,10 @@ export class SearchBarComponent implements OnInit, OnChanges{
 
     if(name === 'compliance_framework') {
       return 'compliance_framework';
+    }
+
+    if(name === 'vendor') {
+      return 'vendor';
     }
 
     if((type === 'integer' || type === 'number') && parameter.schema.minimum && parameter.schema.maximum) {
