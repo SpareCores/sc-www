@@ -166,6 +166,8 @@ export class ServerCompareComponent implements OnInit {
     this.route.queryParams.subscribe(params => {
       const param = params['instances'];
       if(param){
+          this.isLoading = true;
+
           const decodedParams = JSON.parse(atob(param));
 
           let promises: Promise<any>[] = [
@@ -278,10 +280,9 @@ export class ServerCompareComponent implements OnInit {
               );
               this.dropdownCurrency.init();
             }
-
-            this.isLoading = false;
           }).catch((err) => {
             console.error(err);
+          }).finally(() => {
             this.isLoading = false;
           });
       }
