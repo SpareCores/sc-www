@@ -60,6 +60,8 @@ export class SeoHandlerService {
     this.metaTagService.updateTag({ name: 'twitter:description', content: description }, "name='twitter:description'");
     this.metaTagService.updateTag({ property: 'og:title', content: title }, "property='og:title'");
     this.metaTagService.updateTag({ property: 'og:description', content: description }, "property='og:description'");
+
+    this.setFollow();
   }
 
   public updateThumbnail(content: string) {
@@ -103,5 +105,13 @@ export class SeoHandlerService {
     script.textContent = scriptContent;
 
     document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  public setNoFollow() {
+    this.metaTagService.updateTag({ name: 'robots', content: 'noindex, nofollow' });
+  }
+
+  public setFollow() {
+    this.metaTagService.updateTag({ name: 'robots', content: 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' });
   }
 }
