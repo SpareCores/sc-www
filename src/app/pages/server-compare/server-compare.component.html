@@ -193,7 +193,7 @@
                       <div *ngIf="isBrowser()">
                         <div chartType="bar">
                           <canvas
-                            style="height: 550px; max-height: 550px; max-width:100%"
+                            style="height: 350px; max-height: 350px; max-width:100%"
                             baseChart
                             [data]="lineChartDataBWmem"
                             [options]="lineChartOptionsBWMem"
@@ -222,7 +222,7 @@
                       <div *ngIf="isBrowser()">
                         <div chartType="bar">
                           <canvas
-                            style="height: 550px; max-height: 550px; width: 100%"
+                            style="height: 350px; max-height: 350px; width: 100%"
                             baseChart
                             [data]="barChartDataSSL"
                             [options]="barChartOptionsSSL"
@@ -306,7 +306,10 @@
                       </div>
                     </div>
                   </div>
-                  <div class="mt-4 flex justify-center">
+                  <div class="mt-4 mb-8 flex justify-center"
+                    [ngClass]="{
+                      'mb-8': !category.show_more
+                    }">
                     <button class="btn-primary py-2 px-3" (click)="toggleBenchmarkCategory(category)">
                       {{category.show_more ? 'Hide' : 'Show'}} Details
                     </button>
@@ -352,43 +355,45 @@
            </ng-container>
           </ng-container>
 
-          <tr>
-            <td [colSpan]="servers.length + 1" >
-              <h3 class="pl-3 text-xl font-semibold">Other</h3>
-            </td>
-          </tr>
-          <ng-container *ngFor="let item of getBenchmarksForCategory(null)">
-            <tr>
+          <ng-container *ngIf="getBenchmarksForCategory(null)?.length">
+            <tr class="section_header">
               <td [colSpan]="servers.length + 1" >
-                <div class="pl-4 w-full flex justify-between">
-                  <div class="flex gap-2 items-center">
-                    {{item.name}}
-                    <lucide-icon
-                      *ngIf="item.description"
-                      name="info"
-                      class="h-4 w-4 text-gray-200"
-                      (mouseenter)="showTooltip($event, item.description)"
-                      (mouseleave)="hideTooltip()">
-                    </lucide-icon>
-                  </div>
-                  <lucide-icon
-                    *ngIf="item.description"
-                    [name]="benchmarkIcon(item)"
-                    class="h-6 w-6 text-emerald-400 cursor-pointer"
-                    (click)="toggleBenchmark(item)"
-                    >
-                  </lucide-icon>
-                </div>
+                <h3 class="pl-3 text-xl font-semibold">Other</h3>
               </td>
             </tr>
-            <ng-container *ngIf="!item.collapsed" >
-              <tr *ngFor="let config of item.configs">
-                <td >
-                  <div class="ml-6" [innerHTML]="serializeConfig(config.config)" ></div></td>
-                <td *ngFor="let value of config.values" [style]="isBestStyle(value, config.values, item)">
-                      {{numberWithCommas(value)}}
+            <ng-container *ngFor="let item of getBenchmarksForCategory(null)">
+              <tr>
+                <td [colSpan]="servers.length + 1" >
+                  <div class="pl-4 w-full flex justify-between">
+                    <div class="flex gap-2 items-center">
+                      {{item.name}}
+                      <lucide-icon
+                        *ngIf="item.description"
+                        name="info"
+                        class="h-4 w-4 text-gray-200"
+                        (mouseenter)="showTooltip($event, item.description)"
+                        (mouseleave)="hideTooltip()">
+                      </lucide-icon>
+                    </div>
+                    <lucide-icon
+                      *ngIf="item.description"
+                      [name]="benchmarkIcon(item)"
+                      class="h-6 w-6 text-emerald-400 cursor-pointer"
+                      (click)="toggleBenchmark(item)"
+                      >
+                    </lucide-icon>
+                  </div>
                 </td>
               </tr>
+              <ng-container *ngIf="!item.collapsed" >
+                <tr *ngFor="let config of item.configs">
+                  <td >
+                    <div class="ml-6" [innerHTML]="serializeConfig(config.config)" ></div></td>
+                  <td *ngFor="let value of config.values" [style]="isBestStyle(value, config.values, item)">
+                        {{numberWithCommas(value)}}
+                  </td>
+                </tr>
+              </ng-container>
             </ng-container>
           </ng-container>
           <tr>
