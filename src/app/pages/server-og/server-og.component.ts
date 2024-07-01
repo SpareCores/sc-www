@@ -1,15 +1,10 @@
-import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
-import { Component, Inject, PLATFORM_ID } from '@angular/core';
-import { ServerPKsWithPrices, ServerPricePKs, TableServerTableServerGetData } from '../../../../sdk/data-contracts';
-import { LucideAngularModule, Router } from 'lucide-angular';
-import { DomSanitizer } from '@angular/platform-browser';
+import { CommonModule, } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { ServerPKsWithPrices } from '../../../../sdk/data-contracts';
+import { LucideAngularModule } from 'lucide-angular';
 import { ActivatedRoute } from '@angular/router';
-import { Chart } from 'chart.js';
-import { initFlowbite, Dropdown } from 'flowbite';
-import { CountryIdtoNamePipe } from '../../pipes/country-idto-name.pipe';
 import { KeeperAPIService } from '../../services/keeper-api.service';
 import { SeoHandlerService } from '../../services/seo-handler.service';
-import { ServerCompareService } from '../../services/server-compare.service';
 
 @Component({
   selector: 'app-server-og',
@@ -18,7 +13,7 @@ import { ServerCompareService } from '../../services/server-compare.service';
   templateUrl: './server-og.component.html',
   styleUrl: './server-og.component.scss'
 })
-export class ServerOGComponent {
+export class ServerOGComponent implements OnInit {
 
   serverDetails!: ServerPKsWithPrices;
 
@@ -30,16 +25,13 @@ export class ServerOGComponent {
   instanceProperties: any[] = [];
   benchmarkMeta: any;
 
-   constructor(@Inject(PLATFORM_ID) private platformId: object,
-              @Inject(DOCUMENT) private document: Document,
+   constructor(
               private route: ActivatedRoute,
               private keeperAPI: KeeperAPIService,
               private SEOHandler: SeoHandlerService) {
-
   }
 
   ngOnInit() {
-    const countryIdtoNamePipe = new CountryIdtoNamePipe();
     this.route.params.subscribe(params => {
       const vendor = params['vendor'];
       const id = params['id'];
@@ -55,7 +47,6 @@ export class ServerOGComponent {
 
         if(dataAll[2].body){
           this.serverDetails = dataAll[2].body as any;
-
 
           this.features = [];
           if(this.serverDetails.cpu_cores || this.serverDetails.vcpus) {
@@ -114,7 +105,4 @@ export class ServerOGComponent {
       return this.serverDetails.benchmark_scores?.find((b) => b.benchmark_id === 'stress_ng:cpu_all' && (b.config as any)?.cores === this.serverDetails.vcpus)?.score?.toFixed(0) || '-';
     }
   }
-
-
-
 }
