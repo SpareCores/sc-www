@@ -10,6 +10,7 @@ export const routes: Routes = [
   { path: 'servers', component: ServerListingComponent },
   { path: 'server_prices', component: ServerPricesComponent },
   { path: 'server/:vendor/:id', loadComponent: () => import('./pages/server-details/server-details.component').then(m => m.ServerDetailsComponent)},
+  { path: 'og/:vendor/:id', loadComponent: () => import('./pages/server-og/server-og.component').then(m => m.ServerOGComponent)},
 
   { path: 'article/:id', loadComponent: () => import('./pages/article/article.component').then(m => m.ArticleComponent)},
   { path: 'articles', loadComponent: () => import('./pages/articles/articles.component').then(m => m.ArticlesComponent)},
