@@ -16,20 +16,21 @@
   }
 
   tbody {
-    tr:nth-child(2n+1) {
+
+    tr.section_header {
+      @apply bg-secondary text-white;
+      td:nth-of-type(1) {
+        @apply bg-secondary;
+      }
+    }
+
+    tr {
       @apply bg-primary;
 
       td:nth-of-type(1) {
         @apply bg-primary;
       }
 
-    }
-    tr:nth-child(2n) {
-      @apply bg-secondary;
-
-      td:nth-of-type(1) {
-        @apply bg-secondary;
-      }
     }
 
     tr {
