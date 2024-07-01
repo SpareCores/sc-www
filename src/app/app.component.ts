@@ -37,19 +37,20 @@ export class AppComponent implements OnInit, AfterViewInit {
           let url = 'https://sparecores.com';
           if(event?.urlAfterRedirects?.length > 1) {
             url += event?.urlAfterRedirects;
+            if(event?.urlAfterRedirects?.startsWith('/og/')) {
+              this.showHeader = false;
+              this.showFooter = false;
+            } else {
+              this.showHeader = true;
+              this.showFooter = true;
+            }
           }
           this.analytics.trackEvent('pageView', {});
           // update canonical url with query params as well
 
           this.updateCanonical(url.toLowerCase());
-          console.log('url', url);
-          if(url.includes('og/')) {
-            this.showHeader = false;
-            this.showFooter = false;
-          } else {
-            this.showHeader = true;
-            this.showFooter = true;
-          }
+          console.log('url', event?.urlAfterRedirects);
+
         }
 
         if (event instanceof NavigationError) {
