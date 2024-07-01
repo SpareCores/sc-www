@@ -53,6 +53,11 @@
         </thead>
         <tbody>
           <tr>
+            <td [colSpan]="servers.length + 1" >
+              <h2 class="text-xl font-semibold">General</h2>
+            </td>
+          </tr>
+          <tr>
             <td>
               Vendor
             </td>
@@ -63,6 +68,18 @@
                 </div>
                 <div *ngIf="!item.vendor.logo" class="text-white text-sm">
                     {{item.vendor.name}}
+                </div>
+              </td>
+            </ng-container>
+          </tr>
+          <tr>
+            <td>
+              $Core
+            </td>
+            <ng-container *ngFor="let item of servers">
+              <td>
+                <div [style]="getSScoreStyle(item)">
+                    {{getSScore(item)}}
                 </div>
               </td>
             </ng-container>
@@ -104,6 +121,11 @@
             </ng-container>
           </tr>
           <ng-container *ngFor="let category of instancePropertyCategories">
+            <tr>
+              <td [colSpan]="servers.length + 1" >
+                <h2 class="text-xl font-semibold">{{category.name}}</h2>
+              </td>
+            </tr>
             <tr *ngFor="let column of category.properties; let i = index" >
               <td>
                 <div class="flex gap-2 items-center">
@@ -126,6 +148,11 @@
               </ng-container>
             </tr>
           </ng-container>
+          <tr>
+            <td [colSpan]="servers.length + 1" >
+              <h2 class="text-xl font-semibold">Benchmarks</h2>
+            </td>
+          </tr>
           <ng-container *ngFor="let item of benchmarkMeta">
             <tr>
               <td [colSpan]="servers.length + 1" >

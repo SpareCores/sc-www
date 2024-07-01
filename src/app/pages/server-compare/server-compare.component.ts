@@ -194,6 +194,8 @@ export class ServerCompareComponent implements OnInit {
               this.serverCompare.toggleCompare(true, data[i].body);
             }
 
+            console.log(this.servers);
+
             this.instanceProperties.forEach((p: any) => {
               const group = this.instancePropertyCategories.find((g) => g.category === p.category);
               const hasValue =
@@ -408,6 +410,23 @@ export class ServerCompareComponent implements OnInit {
     return isBest ? this.bestCellStyle : '';
   }
 
+  getSScoreStyle(server: ServerPKsWithPrices) {
+    const prop = server.score_per_price;
+
+    if(!prop) {
+      return '';
+    }
+
+    let isBest = true;
+    this.servers?.forEach((s: ServerPKsWithPrices) => {
+      const temp = s.score_per_price || -1;
+      if(temp > prop) {
+        isBest = false;
+      }
+    });
+    return isBest ? this.bestCellStyle : '';
+  }
+
   getBecnchmarkStyle(server: ServerPKsWithPrices, isMulti: boolean) {
     const prop = server.benchmark_scores
     ?.find((b) =>
@@ -497,6 +516,10 @@ export class ServerCompareComponent implements OnInit {
     } else {
       return server.benchmark_scores?.find((b) => b.benchmark_id === 'stress_ng:cpu_all' && (b.config as any)?.cores === server.vcpus)?.score?.toFixed(0) || '-';
     }
+  }
+
+  getSScore(server: ServerPKsWithPrices) {
+    return server.score_per_price || '-';
   }
 
   getBestPrice(server: ServerPKsWithPrices, allocation: Allocation = Allocation.Ondemand) {
