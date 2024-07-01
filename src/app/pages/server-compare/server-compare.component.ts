@@ -586,7 +586,10 @@ export class ServerCompareComponent implements OnInit {
   }
 
   getSScore(server: ServerPKsWithPrices) {
-    return (server.score_per_price?.toFixed(0) + '/' + this.selectedCurrency.slug) || '-';
+    if(!server.score_per_price) {
+      return '-';
+    }
+    return this.numberWithCommas(Math.round(server.score_per_price)) + '/USD';
   }
 
   getBestPrice(server: ServerPKsWithPrices, allocation: Allocation = Allocation.Ondemand) {

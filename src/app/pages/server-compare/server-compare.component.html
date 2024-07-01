@@ -320,7 +320,7 @@
                 <ng-container *ngFor="let item of category.data">
                   <tr>
                     <td [colSpan]="servers.length + 1" >
-                      <div class="ml-4 w-full flex justify-between">
+                      <div class="ml-4 flex justify-between">
                         <div class="flex gap-2 items-center">
                           {{item.name}}
                           <lucide-icon
@@ -400,7 +400,7 @@
             <td>View Server</td>
             <td *ngFor="let item of servers">
               <button class="btn-primary py-2 px-3" (click)="viewServer(item)">
-                Details
+                {{item.display_name}}
               </button>
             </td>
           </tr>
