@@ -318,7 +318,7 @@
               </tr>
               <ng-container *ngIf="category.show_more">
                 <ng-container *ngFor="let item of category.data">
-                  <tr>
+                  <tr *ngIf="category.data.length > 1">
                     <td [colSpan]="servers.length + 1" >
                       <div class="ml-4 flex justify-between">
                         <div class="flex gap-2 items-center">

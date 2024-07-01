@@ -255,8 +255,6 @@ export class ServerCompareComponent implements OnInit {
               this.serverCompare.toggleCompare(true, data[i].body);
             }
 
-            console.log(this.servers);
-
             this.instanceProperties.forEach((p: any) => {
               const group = this.instancePropertyCategories.find((g) => g.category === p.category);
               const hasValue =
@@ -323,8 +321,6 @@ export class ServerCompareComponent implements OnInit {
             this.benchmarkCategories.forEach((category) => {
               category.data = this.benchmarkMeta.filter((b: any) => category.benchmarks.includes(b.benchmark_id));
             });
-
-            console.log(this.benchmarkMeta.map((a:any) => a.benchmark_id));
 
             if(isPlatformBrowser(this.platformId)) {
 
@@ -1035,6 +1031,12 @@ export class ServerCompareComponent implements OnInit {
 
   toggleBenchmarkCategory(category: any) {
     category.show_more = !category.show_more;
+
+    // single item lists are auto toggled
+    if(category.data?.length === 1) {
+      category.data[0].collapsed = !category.show_more;
+    }
+
   }
 
 }
