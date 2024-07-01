@@ -221,6 +221,13 @@ export const lineChartOptionsBWM: ChartConfiguration<'line'>['options'] = {
     },
   },
   plugins: {
+    tooltip:{
+      callbacks: {
+        title: function(this: TooltipModel<"line">, tooltipItems: TooltipItem<"line">[]) {
+          return tooltipItems[0].label + ' MB block size';
+        }
+      }
+    },
     annotation: {},
     legend: {
       display: true,
