@@ -144,7 +144,7 @@
             </tr>
           </ng-container>
 
-          <ng-container *ngFor="let category of behcnmarkCategories">
+          <ng-container *ngFor="let category of benchmarkCategories">
             <ng-container *ngIf="category.data.length">
               <tr class="section_header">
                 <td [colSpan]="servers.length + 1" >
@@ -358,7 +358,7 @@
           <ng-container *ngIf="getBenchmarksForCategory(null)?.length">
             <tr class="section_header">
               <td [colSpan]="servers.length + 1" >
-                <h3 class="pl-3 text-xl font-semibold">Other</h3>
+                <h3 class="pl-3 text-xl font-semibold">Further Benchmarks</h3>
               </td>
             </tr>
             <ng-container *ngFor="let item of getBenchmarksForCategory(null)">

@@ -146,7 +146,7 @@ export class ServerCompareComponent implements OnInit {
 
   selectedCurrency = this.availableCurrencies[0];
 
-  behcnmarkCategories: any[] = [
+  benchmarkCategories: any[] = [
     { name: 'Geekbench',
       id: 'geekbench',
       benchmarks: [
@@ -320,7 +320,7 @@ export class ServerCompareComponent implements OnInit {
               });
             });
 
-            this.behcnmarkCategories.forEach((category) => {
+            this.benchmarkCategories.forEach((category) => {
               category.data = this.benchmarkMeta.filter((b: any) => category.benchmarks.includes(b.benchmark_id));
             });
 
@@ -1030,7 +1030,7 @@ export class ServerCompareComponent implements OnInit {
   }
 
   isUncagorizedBenchmark(benchmark: any) {
-    return !this.behcnmarkCategories.some((c: any) => c.benchmarks.includes(benchmark.benchmark_id));
+    return !this.benchmarkCategories.some((c: any) => c.benchmarks.includes(benchmark.benchmark_id));
   }
 
   toggleBenchmarkCategory(category: any) {
