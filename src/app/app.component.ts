@@ -49,8 +49,6 @@ export class AppComponent implements OnInit, AfterViewInit {
           // update canonical url with query params as well
 
           this.updateCanonical(url.toLowerCase());
-          console.log('url', event?.urlAfterRedirects);
-
         }
 
         if (event instanceof NavigationError) {
