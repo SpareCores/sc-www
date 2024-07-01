@@ -92,6 +92,16 @@ export const  barChartOptionsSSLCompare: ChartConfiguration<'bar'>['options'] = 
   },
   plugins: {
     ...barChartOptions.plugins,
+    tooltip:{
+      callbacks: {
+        label: function(this: TooltipModel<"bar">, tooltipItem: TooltipItem<"bar">) {
+          return tooltipItem.formattedValue + ' byte/s';
+        },
+        title: function(this: TooltipModel<"bar">, tooltipItems: TooltipItem<"bar">[]) {
+          return tooltipItems[0].label + '-byte block size';
+        },
+      }
+    },
   },
 };
 
@@ -225,6 +235,9 @@ export const lineChartOptionsBWM: ChartConfiguration<'line'>['options'] = {
       callbacks: {
         title: function(this: TooltipModel<"line">, tooltipItems: TooltipItem<"line">[]) {
           return tooltipItems[0].label + ' MB block size';
+        },
+        label: function(this: TooltipModel<"line">, tooltipItem: TooltipItem<"line">) {
+          return tooltipItem.formattedValue + ' MB/sec';
         }
       }
     },
@@ -358,7 +371,10 @@ export const lineChartOptionsCompareCompress: ChartConfiguration<'line'>['option
     tooltip:{
       callbacks: {
         label: function(this: TooltipModel<"line">, tooltipItem: TooltipItem<"line">) {
-          return (tooltipItem.parsed as any).y.toFixed(0) + ' (' + (tooltipItem.dataset.data[tooltipItem.dataIndex] as any).tooltip + ')';
+          return tooltipItem.formattedValue + ' btye/s (' + (tooltipItem.dataset.data[tooltipItem.dataIndex] as any).tooltip + ')';
+        },
+        title: function(this: TooltipModel<"line">, tooltipItems: TooltipItem<"line">[]) {
+          return tooltipItems[0].label + '% compression ratio';
         }
       }
     },
@@ -414,7 +430,10 @@ export const lineChartOptionsCompareDecompress: ChartConfiguration<'line'>['opti
     tooltip:{
       callbacks: {
         label: function(this: TooltipModel<"line">, tooltipItem: TooltipItem<"line">) {
-          return (tooltipItem.parsed as any).y.toFixed(0) + ' (' + (tooltipItem.dataset.data[tooltipItem.dataIndex] as any).tooltip + ')';
+          return tooltipItem.formattedValue + ' btye/s (' + (tooltipItem.dataset.data[tooltipItem.dataIndex] as any).tooltip + ')';
+        },
+        title: function(this: TooltipModel<"line">, tooltipItems: TooltipItem<"line">[]) {
+          return tooltipItems[0].label + '% compression ratio';
         }
       }
     },
