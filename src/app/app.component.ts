@@ -42,7 +42,6 @@ export class AppComponent implements OnInit, AfterViewInit {
           // update canonical url with query params as well
 
           this.updateCanonical(url.toLowerCase());
-          console.log('url', url);
           if(url.includes('og/')) {
             this.showHeader = false;
             this.showFooter = false;
