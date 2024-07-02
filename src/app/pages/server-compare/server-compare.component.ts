@@ -8,7 +8,7 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Allocation, ServerPKs, ServerPKsWithPrices } from '../../../../sdk/data-contracts';
 import { SeoHandlerService } from '../../services/seo-handler.service';
-import { Chart, ChartConfiguration, ChartData } from 'chart.js';
+import { Chart, ChartConfiguration, ChartData, TooltipItem, TooltipModel } from 'chart.js';
 import { barChartOptionsSSLCompare, lineChartOptionsBWM, lineChartOptionsCompareCompress, lineChartOptionsCompareDecompress, radarChartOptions, radarDatasetColors } from '../server-details/chartOptions';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import { BaseChartDirective } from 'ng2-charts';
@@ -77,7 +77,8 @@ export class ServerCompareComponent implements OnInit {
   geekbenchHTML: any;
 
   radarChartType = 'radar' as const;
-  radarChartOptions: ChartConfiguration<'radar'>['options'] = JSON.parse(JSON.stringify(radarChartOptions));
+  radarChartOptionsMulti: ChartConfiguration<'radar'>['options'] = JSON.parse(JSON.stringify(radarChartOptions));
+  radarChartOptionsSingle: ChartConfiguration<'radar'>['options'] = JSON.parse(JSON.stringify(radarChartOptions));
   radarChartDataGeekMulti: ChartData<'radar'> | undefined = undefined;
   radarChartDataGeekSingle: ChartData<'radar'> | undefined = undefined;
 
@@ -145,6 +146,54 @@ export class ServerCompareComponent implements OnInit {
 
   selectedCurrency = this.availableCurrencies[0];
 
+  benchmarkCategories: any[] = [
+    { name: 'Geekbench',
+      id: 'geekbench',
+      benchmarks: [
+      "geekbench:text_processing",
+      "geekbench:structure_from_motion",
+      "geekbench:score",
+      "geekbench:ray_tracer",
+      "geekbench:photo_library",
+      "geekbench:photo_filter",
+      "geekbench:pdf_renderer",
+      "geekbench:object_remover",
+      "geekbench:object_detection",
+      "geekbench:navigation",
+      "geekbench:html5_browser",
+      "geekbench:horizon_detection",
+      "geekbench:hdr",
+      "geekbench:file_compression",
+      "geekbench:clang",
+      "geekbench:background_blur",
+      "geekbench:asset_compression"
+      ],
+      data: [],
+      show_more: false
+    },
+    {
+      name: 'Memory bandwidth',
+      id: 'bw_mem',
+      benchmarks: ['bw_mem'],
+      data: [],
+      show_more: false
+    },
+    {
+      name: 'OpenSSL speed',
+      id: 'openssl',
+      benchmarks: [ 'openssl' ],
+      data: [],
+      show_more: false
+    },
+    {
+      name: 'Compression',
+      id: 'compress',
+      benchmarks: [ 'compression_text:ratio', 'compression_text:decompress', 'compression_text:compress' ],
+      data: [],
+      show_more: false
+    },
+  ]
+
   constructor(
     @Inject(PLATFORM_ID) private platformId: object,
     private keeperAPI: KeeperAPIService,
@@ -161,11 +210,25 @@ export class ServerCompareComponent implements OnInit {
 
     this.seoHandler.updateTitleAndMetaTags(title, description, keywords);
 
-    (this.radarChartOptions as any).plugins.legend.display = true;
+    (this.radarChartOptionsSingle as any).plugins.legend.display = true;
+    (this.radarChartOptionsMulti as any).plugins.legend.display = true;
+
+    (this.radarChartOptionsSingle as any).plugins.title = {
+      display: true,
+      text: 'Single-core performance',
+      color: '#FFF',
+    };
+    (this.radarChartOptionsMulti as any).plugins.title = {
+      display: true,
+      text: 'Multi-core performance',
+      color: '#FFF',
+    };
 
     this.route.queryParams.subscribe(params => {
       const param = params['instances'];
       if(param){
+          this.isLoading = true;
+
           const decodedParams = JSON.parse(atob(param));
 
           let promises: Promise<any>[] = [
@@ -255,6 +318,10 @@ export class ServerCompareComponent implements OnInit {
               });
             });
 
+            this.benchmarkCategories.forEach((category) => {
+              category.data = this.benchmarkMeta.filter((b: any) => category.benchmarks.includes(b.benchmark_id));
+            });
+
             if(isPlatformBrowser(this.platformId)) {
 
               this.getCompressChartOptions();
@@ -278,10 +345,9 @@ export class ServerCompareComponent implements OnInit {
               );
               this.dropdownCurrency.init();
             }
-
-            this.isLoading = false;
           }).catch((err) => {
             console.error(err);
+          }).finally(() => {
             this.isLoading = false;
           });
       }
@@ -407,6 +473,23 @@ export class ServerCompareComponent implements OnInit {
     return isBest ? this.bestCellStyle : '';
   }
 
+  getSScoreStyle(server: ServerPKsWithPrices) {
+    const prop = server.score_per_price;
+
+    if(!prop) {
+      return '';
+    }
+
+    let isBest = true;
+    this.servers?.forEach((s: ServerPKsWithPrices) => {
+      const temp = s.score_per_price || -1;
+      if(temp > prop) {
+        isBest = false;
+      }
+    });
+    return isBest ? this.bestCellStyle : '';
+  }
+
   getBecnchmarkStyle(server: ServerPKsWithPrices, isMulti: boolean) {
     const prop = server.benchmark_scores
     ?.find((b) =>
@@ -496,6 +579,13 @@ export class ServerCompareComponent implements OnInit {
     } else {
       return server.benchmark_scores?.find((b) => b.benchmark_id === 'stress_ng:cpu_all' && (b.config as any)?.cores === server.vcpus)?.score?.toFixed(0) || '-';
     }
+  }
+
+  getSScore(server: ServerPKsWithPrices) {
+    if(!server.score_per_price) {
+      return '-';
+    }
+    return this.numberWithCommas(Math.round(server.score_per_price)) + '/USD';
   }
 
   getBestPrice(server: ServerPKsWithPrices, allocation: Allocation = Allocation.Ondemand) {
@@ -615,6 +705,7 @@ export class ServerCompareComponent implements OnInit {
     const benchmark_id = 'bw_mem';
 
     const selectedOperation = this.selectedBWMemOperation.value;
+    const selectedName = this.selectedBWMemOperation.name;
 
     const dataSet = this.benchmarkMeta?.find((x: any) => x.benchmark_id === benchmark_id);
 
@@ -654,6 +745,10 @@ export class ServerCompareComponent implements OnInit {
 
       this.lineChartDataBWmem = { labels: chartData.labels, datasets: chartData.datasets };
 
+      (this.lineChartOptionsBWMem as any).plugins.tooltip.callbacks.title = function(this: TooltipModel<"line">, tooltipItems: TooltipItem<"line">[]) {
+        return selectedName + ' ops with ' + tooltipItems[0].label + ' MB block size';
+      };
+
       setTimeout(() => {
         const targetElBWmem: HTMLElement | null = document.getElementById('bw_mem_options');
         const triggerElBWmem: HTMLElement | null = document.getElementById('bw_mem_button');
@@ -677,6 +772,7 @@ export class ServerCompareComponent implements OnInit {
     const benchmark_id = 'openssl';
 
     const selectedAlgo = this.selectedSSLAlgo.value;
+    const selectedName = this.selectedSSLAlgo.name;
 
     const dataSet = this.benchmarkMeta?.find((x: any) => x.benchmark_id === benchmark_id);
 
@@ -715,6 +811,10 @@ export class ServerCompareComponent implements OnInit {
 
       this.barChartDataSSL = { labels: chartData.labels, datasets: chartData.datasets };
 
+      (this.barChartOptionsSSL as any).plugins.tooltip.callbacks.title = function(this: TooltipModel<"line">, tooltipItems: TooltipItem<"line">[]) {
+        return selectedName + ' with ' + tooltipItems[0].label + '-byte block size';
+      };
+
       setTimeout(() => {
         const targetElSSL: HTMLElement | null = document.getElementById('ssl_options');
         const triggerElSSL: HTMLElement | null = document.getElementById('ssl_button');
@@ -728,7 +828,7 @@ export class ServerCompareComponent implements OnInit {
               override: true
             }
         );
-        this.dropdownBWmem.init();
+        this.dropdownSSL.init();
       }, 500);
     }
   }
@@ -763,7 +863,8 @@ export class ServerCompareComponent implements OnInit {
   }
 
   generateCompressChart() {
-    let selectedConfig = this.selectedCompressMethod?.options;
+    const selectedConfig = this.selectedCompressMethod?.options;
+    const selectedName = this.selectedCompressMethod?.name;
 
     if(!selectedConfig) {
       return;
@@ -848,6 +949,13 @@ export class ServerCompareComponent implements OnInit {
     this.lineChartDataCompress = { labels: chartData.labels, datasets: chartData.datasets };
     this.lineChartDataDecompress = { labels: chartData.labels, datasets: chartData.datasets };
 
+    (this.lineChartOptionsCompress as any).plugins.tooltip.callbacks.title =  function(this: TooltipModel<"line">, tooltipItems: TooltipItem<"line">[]) {
+      return tooltipItems[0].label + '% compression ratio (' + selectedName + ')';
+    };
+    (this.lineChartOptionsDecompress as any).plugins.tooltip.callbacks.title =  function(this: TooltipModel<"line">, tooltipItems: TooltipItem<"line">[]) {
+      return tooltipItems[0].label + '% compression ratio (' + selectedName + ')';
+    };
+
     const interval4 = setInterval(() => {
       const targetElCompress: HTMLElement | null = document.getElementById('compress_method_options');
       const triggerElCompress: HTMLElement | null = document.getElementById('compress_method_button');
@@ -921,6 +1029,31 @@ export class ServerCompareComponent implements OnInit {
   selectCompressMethod(method: any) {
     this.selectedCompressMethod = method;
     this.generateCompressChart();
+  }
+
+  getBenchmarksForCategory(category: any) {
+    if(!category) {
+      return this.benchmarkMeta?.filter((b: any) => this.isUncagorizedBenchmark(b));
+    }
+    return this.benchmarkMeta?.filter((b: any) => this.isInBenchmarkCategory(category, b));
+  }
+
+  isInBenchmarkCategory(benchmark_category:any, benchmark: any) {
+    return benchmark_category.benchmarks.includes(benchmark.benchmark_id);
+  }
+
+  isUncagorizedBenchmark(benchmark: any) {
+    return !this.benchmarkCategories.some((c: any) => c.benchmarks.includes(benchmark.benchmark_id));
+  }
+
+  toggleBenchmarkCategory(category: any) {
+    category.show_more = !category.show_more;
+
+    // single item lists are auto toggled
+    if(category.data?.length === 1) {
+      category.data[0].collapsed = !category.show_more;
+    }
+
   }
 
 }
