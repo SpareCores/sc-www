@@ -133,8 +133,11 @@
             </tr>
             <ng-container *ngFor="let category of instancePropertyCategories">
               <tr class="section_header">
-                <td [colSpan]="servers.length + 1" >
+                <td>
                   <h2 class="text-xl font-semibold">{{category.name}}</h2>
+                </td>
+                <td [colSpan]="servers.length">
+
                 </td>
               </tr>
               <tr *ngFor="let column of category.properties; let i = index" >
@@ -163,7 +166,7 @@
             <ng-container *ngFor="let category of benchmarkCategories">
               <ng-container *ngIf="category.data.length">
                 <tr class="section_header">
-                  <td [colSpan]="servers.length + 1" >
+                  <td [colSpan]="2" >
                     <h3 class="text-xl font-semibold flex gap-2 items-center">{{category.name}}
                       <lucide-icon
                         *ngIf="category.id === 'geekbench'"
@@ -187,7 +190,10 @@
                         (mouseleave)="hideTooltip()">
                       </lucide-icon>
                     </h3>
-                </td>
+                  </td>
+                  <td [colSpan]="servers.length -1">
+
+                  </td>
                 </tr>
                 <tr>
                   <td [colSpan]="servers.length + 1" >
@@ -373,9 +379,10 @@
 
             <ng-container *ngIf="getBenchmarksForCategory(null)?.length">
               <tr class="section_header">
-                <td [colSpan]="servers.length + 1" >
+                <td [colSpan]="2" >
                   <h3 class="pl-3 text-xl font-semibold">Further Benchmarks</h3>
                 </td>
+                <td [colSpan]="servers.length - 1">
               </tr>
               <ng-container *ngFor="let item of getBenchmarksForCategory(null)">
                 <tr>
