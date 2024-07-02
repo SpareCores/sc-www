@@ -210,6 +210,8 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
 
+    console.log("test netlify");
+    console.log(this.route);
     const title = 'Compare Servers';
     const description = 'Compare cloud server characteristics and benchmark scores.';
     const keywords = 'compare, servers, server, hosting, cloud, vps, dedicated, comparison';
