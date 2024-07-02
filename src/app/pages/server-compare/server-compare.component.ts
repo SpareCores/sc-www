@@ -1,10 +1,10 @@
 /* eslint-disable prefer-const */
-import { Component, ElementRef, Inject, OnInit, PLATFORM_ID, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostBinding, Inject, OnInit, PLATFORM_ID, ViewChild } from '@angular/core';
 import { KeeperAPIService } from '../../services/keeper-api.service';
 import { ActivatedRoute } from '@angular/router';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { LucideAngularModule } from 'lucide-angular';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Allocation, ServerPKs, ServerPKsWithPrices } from '../../../../sdk/data-contracts';
 import { SeoHandlerService } from '../../services/seo-handler.service';
@@ -13,7 +13,7 @@ import { barChartOptionsSSLCompare, lineChartOptionsBWM, lineChartOptionsCompare
 import annotationPlugin from 'chartjs-plugin-annotation';
 import { BaseChartDirective } from 'ng2-charts';
 import { Dropdown, DropdownOptions } from 'flowbite';
-import { DomSanitizer } from '@angular/platform-browser';
+import { DomSanitizer, platformBrowser } from '@angular/platform-browser';
 import { ServerCompareService } from '../../services/server-compare.service';
 
 Chart.register(annotationPlugin);
@@ -32,10 +32,11 @@ const options: DropdownOptions = {
   standalone: true,
   imports: [BreadcrumbsComponent, LucideAngularModule, CommonModule, FormsModule, BaseChartDirective],
   templateUrl: './server-compare.component.html',
-  styleUrl: './server-compare.component.scss'
+  styleUrl: './server-compare.component.scss',
 })
 export class ServerCompareComponent implements OnInit {
 
+  @HostBinding('attr.ngSkipHydration') ngSkipHydration = 'true';
 
   breadcrumbs: BreadcrumbSegment[] = [
     { name: 'Home', url: '/' },
@@ -196,6 +197,7 @@ export class ServerCompareComponent implements OnInit {
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: object,
+    @Inject(DOCUMENT) private document: Document,
     private keeperAPI: KeeperAPIService,
     private seoHandler: SeoHandlerService,
     private sanitizer: DomSanitizer,
@@ -1039,4 +1041,44 @@ export class ServerCompareComponent implements OnInit {
 
   }
 
+  @ViewChild('mainTable') mainTable!: ElementRef;
+  isTableOutsideViewport = false;
+
+  ngAfterViewInit() {
+    if(isPlatformBrowser(this.platformId)) {
+      window.addEventListener('scroll', () => {
+        const rect = this.mainTable?.nativeElement.getBoundingClientRect();
+        console.log(rect);
+        if (rect?.top < 70) {
+          console.log('The top of the table is outside of the viewport');
+          this.isTableOutsideViewport = true;
+        } else {
+          console.log('The top of the table is inside of the viewport');
+          this.isTableOutsideViewport = false;
+        }
+      });
+    }
+  }
+
+  getMainTableWidth() {
+    // get <table> with id main-table
+    const table = document?.getElementById('main-table');
+    // get <thead>
+    const thead = table?.getElementsByTagName('thead')[0];
+    // get the width of the <thead>
+    return `width: ${thead?.clientWidth}px`;
+  }
+
+  getFixedDivStyle() {
+    const rect = this.mainTable?.nativeElement.getBoundingClientRect();
+    console.log(rect?.x);
+    // get <table> with id main-table
+    const table = document?.getElementById('main-table');
+    // get <thead>
+    const thead = table?.getElementsByTagName('thead')[0];
+
+    const posLeft = rect?.x || 0;
+
+    return `width: ${thead?.clientWidth}px; left: ${posLeft}px`;
+  }
 }

@@ -58,25 +58,10 @@
   }
 }
 
-.table_scroller {
-  position: relative;
-  height: calc(95vh - 68px) ;
-  overflow-y: scroll;
-
-}
-
-.table_scroller::-webkit-scrollbar {
-  width: 5px; /* width of the entire scrollbar */
-}
-
-.table_scroller::-webkit-scrollbar-track {
-  @apply bg-secondary;
-}
-
-.table_scroller::-webkit-scrollbar-thumb {
-  @apply bg-secondary;
-  border-radius: 20px; /* roundness of the scroll thumb */
-  border: 3px solid #9CA3AF; /* creates padding around scroll thumb */
+.fixed_thead {
+  position: fixed;
+  top: 68px;
+  z-index: 100
 }
 
 

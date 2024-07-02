@@ -39,8 +39,23 @@
           <span class="sr-only">Loading...</span>
         </div>
       </div>
-      <div class="table_scroller">
-        <table class="items_table">
+      <div *ngIf="isBrowser() && isTableOutsideViewport" class="fixed_thead" [style]="getFixedDivStyle()">
+        <table class="items_table" [style]="getMainTableWidth()">
+          <thead>
+            <tr>
+              <th style="max-width: 250px; width: 250px">
+              </th>
+              <th *ngFor="let item of servers let i = index" [style]="getStyle()">
+                <a class="underline decoration-dotted" href="/server/{{item.vendor_id}}/{{item.api_reference}}" target="_blank">
+                  {{toUpper(item.display_name)}}
+                </a>
+              </th>
+            </tr>
+          </thead>
+        </table>
+      </div>
+      <div>
+        <table id="main-table" #mainTable class="items_table">
           <thead>
             <tr>
               <th style="max-width: 250px; width: 250px">
@@ -409,190 +424,6 @@
         </table>
       </div>
     </div>
-
-    <!--
-    <div class="w-full text-white flex flex-col gap-8 mt-12">
-      <h2 class="text-3xl"> Performance Charts </h2>
-      <div class="block_full" *ngIf="radarChartDataGeekSingle">
-        <div class="flex justify-between items-center">
-          <h3 class="text-2xl flex items-center gap-2" >
-            Geekbench Single-Core
-            <lucide-icon
-              name="info"
-              class="h-4 w-4 text-gray-200"
-              (mouseenter)="showTooltipGB($event)"
-              (mouseleave)="hideTooltipGB()">
-            </lucide-icon>
-          </h3>
-
-        </div>
-        <div *ngIf="isBrowser()">
-          <div chartType="bar">
-            <canvas
-              #chartPriceLowest
-              id="chartPriceLowest"
-              style="max-height: 530px; max-width:100%"
-              baseChart
-              [data]="radarChartDataGeekSingle"
-              [options]="radarChartOptionsSingle"
-              [type]="radarChartType"
-            >
-            </canvas>
-          </div>
-        </div>
-      </div>
-      <div class="block_full" *ngIf="radarChartDataGeekMulti">
-        <div class="flex justify-between items-center">
-          <h3 class="text-2xl flex items-center gap-2" >
-            Geekbench Multi-Core
-            <lucide-icon
-              name="info"
-              class="h-4 w-4 text-gray-200"
-              (mouseenter)="showTooltipGB($event)"
-              (mouseleave)="hideTooltipGB()">
-            </lucide-icon>
-          </h3>
-
-        </div>
-        <div *ngIf="isBrowser()">
-          <div chartType="bar">
-            <canvas
-              style="max-height: 530px; max-width:100%"
-              baseChart
-              [data]="radarChartDataGeekMulti"
-              [options]="radarChartOptionsMulti"
-              [type]="radarChartType"
-            >
-            </canvas>
-          </div>
-        </div>
-      </div>
-      <div class="block_full" *ngIf="lineChartDataBWmem">
-        <div class="flex justify-between items-center">
-          <h3 class="text-2xl flex items-center gap-2" >Memory bandwidth
-            <lucide-icon
-              name="info"
-              class="h-4 w-4 text-gray-200"
-              (mouseenter)="showTooltipChart($event, 'bw_mem')"
-              (mouseleave)="hideTooltip()">
-            </lucide-icon>
-          </h3>
-          <button
-            id="bw_mem_button"
-            class="dropdown_button"
-            type="button">
-              <div class="px-4 py-3">
-                {{selectedBWMemOperation.name}}
-              </div>
-              <div class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
-                <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
-              </div>
-          </button>
-        </div>
-        <div *ngIf="isBrowser()">
-          <div chartType="bar">
-            <canvas
-              style="height: 550px; max-height: 550px; max-width:100%"
-              baseChart
-              [data]="lineChartDataBWmem"
-              [options]="lineChartOptionsBWMem"
-              [type]="lineChartType"
-            >
-            </canvas>
-          </div>
-        </div>
-      </div>
-      <div class="block_full" *ngIf="barChartDataSSL">
-        <div class="flex justify-between items-center">
-          <h3 class="text-2xl flex items-center gap-2" >
-            OpenSSL
-            <lucide-icon
-              name="info"
-              class="h-4 w-4 text-gray-200"
-              (mouseenter)="showTooltipChart($event, 'openssl')"
-              (mouseleave)="hideTooltip()">
-            </lucide-icon>
-          </h3>
-          <button
-            id="ssl_button"
-            class="dropdown_button"
-            type="button">
-              <div class="px-4 py-3">
-                {{selectedSSLAlgo.name}}
-              </div>
-              <div class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
-                <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
-              </div>
-          </button>
-        </div>
-        <div *ngIf="isBrowser()">
-          <div chartType="bar">
-            <canvas
-              style="height: 550px; max-height: 550px; width: 100%"
-              baseChart
-              [data]="barChartDataSSL"
-              [options]="barChartOptionsSSL"
-              [type]="barChartType"
-            >
-            </canvas>
-          </div>
-        </div>
-      </div>
-      <div class="block_full_short" *ngIf="availableCompressMethods?.length">
-        <div class="flex justify-between items-center">
-          <h3 class="text-2xl flex items-center gap-2" >
-            Compression
-            <lucide-icon
-              name="info"
-              class="h-4 w-4 text-gray-200"
-              (mouseenter)="showTooltip($event, 'Measuring the compression ratio and speed while compressing and decompressing the dickens.txt of the Silesia corpus (10 MB uncompressed) using various algorithms, compressions levels and other extra arguments.')"
-              (mouseleave)="hideTooltip()">
-            </lucide-icon>
-          </h3>
-          <div class="flex gap-4">
-            <button
-              id="compress_method_button"
-              data-ph-capture-attribute-sc-event="server details price allocation select"
-              data-dropdown-toggle="compress_method_options"
-              class="dropdown_button"
-              type="button">
-              <div class="px-3 py-2">
-                {{selectedCompressMethod.name}}
-              </div>
-              <div class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
-                <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
-              </div>
-            </button>
-          </div>
-        </div>
-        <div *ngIf="isBrowser()" class="charts_div">
-          <div chartType="bar" class="chart_div">
-            <canvas
-              style="height: 350px; max-width:100%"
-              baseChart
-              [data]="lineChartDataCompress"
-              [options]="lineChartOptionsCompress"
-              [type]="lineChartType"
-            >
-            </canvas>
-          </div>
-          <div chartType="bar" class="chart_div">
-            <canvas
-              style="height: 350px; max-width:100%"
-              baseChart
-              [data]="lineChartDataDecompress"
-              [options]="lineChartOptionsDecompress"
-              [type]="lineChartType"
-            >
-            </canvas>
-          </div>
-        </div>
-      </div>
-
-
-    </div>
-    -->
-
   </div>
 </div>
 
