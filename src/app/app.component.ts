@@ -1,4 +1,4 @@
-import { DOCUMENT, isPlatformBrowser } from '@angular/common';
+import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { AfterViewInit, Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { Meta } from '@angular/platform-browser';
 import { NavigationEnd, NavigationError, NavigationStart, Router, Event, RouterModule } from '@angular/router';
@@ -11,12 +11,15 @@ import { AnalyticsService } from './services/analytics.service';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [HeaderComponent, FooterComponent, RouterModule],
+  imports: [HeaderComponent, FooterComponent, RouterModule, CommonModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit, AfterViewInit {
   title = 'sc-www';
+
+  showHeader = true;
+  showFooter = true;
 
   constructor(@Inject(PLATFORM_ID) private platformId: object,
     @Inject(DOCUMENT) private document: Document,
@@ -34,6 +37,13 @@ export class AppComponent implements OnInit, AfterViewInit {
           let url = 'https://sparecores.com';
           if(event?.urlAfterRedirects?.length > 1) {
             url += event?.urlAfterRedirects;
+            if(event?.urlAfterRedirects?.startsWith('/og/')) {
+              this.showHeader = false;
+              this.showFooter = false;
+            } else {
+              this.showHeader = true;
+              this.showFooter = true;
+            }
           }
           this.analytics.trackEvent('pageView', {});
           // update canonical url with query params as well

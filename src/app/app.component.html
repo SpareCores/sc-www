@@ -1,11 +1,11 @@
-<header class="sticky">
+<header class="sticky" *ngIf="showHeader">
   <app-header></app-header>
 </header>
 <div>
   <main>
     <router-outlet></router-outlet>
   </main>
-  <footer>
+  <footer  *ngIf="showFooter">
     <app-footer></app-footer>
   </footer>
 </div>

@@ -173,6 +173,9 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
           this.breadcrumbs[2] =
             { name: this.serverDetails.display_name, url: '/server/' + this.serverDetails.vendor.vendor_id + '/' + this.serverDetails.api_reference };
 
+          const url = this.SEOHandler.getBaseURL() + '/server/' + this.serverDetails.vendor.vendor_id + '/' + this.serverDetails.api_reference;
+          this.SEOHandler.updateCanonical(this.document, url);
+
           this.features = [];
           if(this.serverDetails.cpu_cores || this.serverDetails.vcpus) {
             this.features.push({name: 'vCPU', value: `${this.serverDetails.vcpus || this.serverDetails.cpu_cores}`});
