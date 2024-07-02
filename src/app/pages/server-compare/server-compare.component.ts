@@ -746,7 +746,7 @@ export class ServerCompareComponent implements OnInit {
       this.lineChartDataBWmem = { labels: chartData.labels, datasets: chartData.datasets };
 
       (this.lineChartOptionsBWMem as any).plugins.tooltip.callbacks.title = function(this: TooltipModel<"line">, tooltipItems: TooltipItem<"line">[]) {
-        return selectedName + ' ' + tooltipItems[0].label + ' MB block size';
+        return selectedName + ' ops with ' + tooltipItems[0].label + ' MB block size';
       };
 
       setTimeout(() => {
