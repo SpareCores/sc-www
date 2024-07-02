@@ -1,10 +1,10 @@
 /* eslint-disable prefer-const */
-import { Component, ElementRef, Inject, OnInit, PLATFORM_ID, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostBinding, Inject, OnInit, PLATFORM_ID, ViewChild } from '@angular/core';
 import { KeeperAPIService } from '../../services/keeper-api.service';
 import { ActivatedRoute } from '@angular/router';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { LucideAngularModule } from 'lucide-angular';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Allocation, ServerPKs, ServerPKsWithPrices } from '../../../../sdk/data-contracts';
 import { SeoHandlerService } from '../../services/seo-handler.service';
@@ -32,10 +32,11 @@ const options: DropdownOptions = {
   standalone: true,
   imports: [BreadcrumbsComponent, LucideAngularModule, CommonModule, FormsModule, BaseChartDirective],
   templateUrl: './server-compare.component.html',
-  styleUrl: './server-compare.component.scss'
+  styleUrl: './server-compare.component.scss',
 })
-export class ServerCompareComponent implements OnInit {
+export class ServerCompareComponent implements OnInit, AfterViewInit {
 
+  @HostBinding('attr.ngSkipHydration') ngSkipHydration = 'true';
 
   breadcrumbs: BreadcrumbSegment[] = [
     { name: 'Home', url: '/' },
@@ -192,10 +193,15 @@ export class ServerCompareComponent implements OnInit {
       data: [],
       show_more: false
     },
-  ]
+  ];
+
+  @ViewChild('mainTable') mainTable!: ElementRef;
+  @ViewChild('tableHolder') tableHolder!: ElementRef;
+  isTableOutsideViewport = false;
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: object,
+    @Inject(DOCUMENT) private document: Document,
     private keeperAPI: KeeperAPIService,
     private seoHandler: SeoHandlerService,
     private sanitizer: DomSanitizer,
@@ -352,6 +358,19 @@ export class ServerCompareComponent implements OnInit {
           });
       }
     });
+  }
+
+  ngAfterViewInit() {
+    if(isPlatformBrowser(this.platformId)) {
+      window.addEventListener('scroll', () => {
+        const rect = this.mainTable?.nativeElement.getBoundingClientRect();
+        if (rect?.top < 70) {
+          this.isTableOutsideViewport = true;
+        } else {
+          this.isTableOutsideViewport = false;
+        }
+      });
+    }
   }
 
   toUpper(text: string) {
@@ -1056,4 +1075,16 @@ export class ServerCompareComponent implements OnInit {
 
   }
 
+  getMainTableWidth() {
+    const thead = document?.querySelector('#main-table thead');
+    const rect = this.mainTable?.nativeElement.getBoundingClientRect();
+    const rect2 = this.tableHolder?.nativeElement.getBoundingClientRect();
+    const posLeft = rect && rect2 ? rect.x - rect2.x : 0;
+    return `width: ${thead?.clientWidth}px; left: ${posLeft}px`;
+  }
+
+  getFixedDivStyle() {
+    const div = document?.getElementById('table_holder');
+    return `width: ${div?.clientWidth}px; overflow: hidden;`;
+  }
 }
