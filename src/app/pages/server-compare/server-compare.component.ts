@@ -1,5 +1,5 @@
 /* eslint-disable prefer-const */
-import { Component, ElementRef, HostBinding, Inject, OnInit, PLATFORM_ID, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostBinding, Inject, OnInit, PLATFORM_ID, ViewChild } from '@angular/core';
 import { KeeperAPIService } from '../../services/keeper-api.service';
 import { ActivatedRoute } from '@angular/router';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
@@ -13,7 +13,7 @@ import { barChartOptionsSSLCompare, lineChartOptionsBWM, lineChartOptionsCompare
 import annotationPlugin from 'chartjs-plugin-annotation';
 import { BaseChartDirective } from 'ng2-charts';
 import { Dropdown, DropdownOptions } from 'flowbite';
-import { DomSanitizer, platformBrowser } from '@angular/platform-browser';
+import { DomSanitizer } from '@angular/platform-browser';
 import { ServerCompareService } from '../../services/server-compare.service';
 
 Chart.register(annotationPlugin);
@@ -34,7 +34,7 @@ const options: DropdownOptions = {
   templateUrl: './server-compare.component.html',
   styleUrl: './server-compare.component.scss',
 })
-export class ServerCompareComponent implements OnInit {
+export class ServerCompareComponent implements OnInit, AfterViewInit {
 
   @HostBinding('attr.ngSkipHydration') ngSkipHydration = 'true';
 
