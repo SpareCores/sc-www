@@ -193,7 +193,11 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
       data: [],
       show_more: false
     },
-  ]
+  ];
+
+  @ViewChild('mainTable') mainTable!: ElementRef;
+  @ViewChild('tableHolder') tableHolder!: ElementRef;
+  isTableOutsideViewport = false;
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: object,
@@ -354,6 +358,19 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
           });
       }
     });
+  }
+
+  ngAfterViewInit() {
+    if(isPlatformBrowser(this.platformId)) {
+      window.addEventListener('scroll', () => {
+        const rect = this.mainTable?.nativeElement.getBoundingClientRect();
+        if (rect?.top < 70) {
+          this.isTableOutsideViewport = true;
+        } else {
+          this.isTableOutsideViewport = false;
+        }
+      });
+    }
   }
 
   toUpper(text: string) {
@@ -1041,44 +1058,28 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
 
   }
 
-  @ViewChild('mainTable') mainTable!: ElementRef;
-  isTableOutsideViewport = false;
-
-  ngAfterViewInit() {
-    if(isPlatformBrowser(this.platformId)) {
-      window.addEventListener('scroll', () => {
-        const rect = this.mainTable?.nativeElement.getBoundingClientRect();
-        console.log(rect);
-        if (rect?.top < 70) {
-          console.log('The top of the table is outside of the viewport');
-          this.isTableOutsideViewport = true;
-        } else {
-          console.log('The top of the table is inside of the viewport');
-          this.isTableOutsideViewport = false;
-        }
-      });
-    }
-  }
-
   getMainTableWidth() {
     // get <table> with id main-table
     const table = document?.getElementById('main-table');
     // get <thead>
     const thead = table?.getElementsByTagName('thead')[0];
     // get the width of the <thead>
-    return `width: ${thead?.clientWidth}px`;
+
+    const rect = this.mainTable?.nativeElement.getBoundingClientRect();
+    const rect2 = this.tableHolder?.nativeElement.getBoundingClientRect();
+    // get position X of the div
+
+    let posLeft = 0;
+
+    if(rect && rect2) {
+      posLeft = rect.x - rect2.x;
+    }
+
+    return `width: ${thead?.clientWidth}px; left: ${posLeft}px`;
   }
 
   getFixedDivStyle() {
-    const rect = this.mainTable?.nativeElement.getBoundingClientRect();
-    console.log(rect?.x);
-    // get <table> with id main-table
-    const table = document?.getElementById('main-table');
-    // get <thead>
-    const thead = table?.getElementsByTagName('thead')[0];
-
-    const posLeft = rect?.x || 0;
-
-    return `width: ${thead?.clientWidth}px; left: ${posLeft}px`;
+    const div = document?.getElementById('table_holder');
+    return `width: ${div?.clientWidth}px; overflow: hidden;`;
   }
 }
