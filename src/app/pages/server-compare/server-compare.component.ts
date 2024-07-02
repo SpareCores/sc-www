@@ -828,7 +828,6 @@ export class ServerCompareComponent implements OnInit {
               override: true
             }
         );
-        console.log(this.dropdownSSL);
         this.dropdownSSL.init();
       }, 500);
     }
