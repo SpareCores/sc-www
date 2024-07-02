@@ -13,16 +13,13 @@
       @apply text-left px-5 py-3 font-normal text-xs;
     }
 
-    th:nth-of-type(1) {
-      position: sticky;
-      left: -1px;
-      z-index: 21;
-    }
-    th {
-      @apply border-b border-gray-200 border-solid bg-secondary;
-      position: sticky;
-      top: 0px;
-      z-index: 22;
+    tr {
+      th:nth-of-type(1) {
+        position: sticky;
+        left: -1px;
+        z-index: 21;
+        @apply bg-secondary;
+      }
     }
   }
 
@@ -64,6 +61,20 @@
   z-index: 100
 }
 
+::-webkit-scrollbar {
+  width: 5px; /* width of the entire scrollbar */
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-secondary;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #9CA3AF;
+  border-radius: 20px; /* roundness of the scroll thumb */
+  border: 3px solid #9CA3AF; /* creates padding around scroll thumb */
+}
 
 .number_line {
   text-align: right !important;
