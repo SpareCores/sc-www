@@ -1,17 +1,28 @@
 .items_table {
   @apply w-full text-white;
 
+  position: sticky;
+  top: 0px;
+
+  position: relative;
+  border-collapse: collapse;
+
   thead {
     @apply border-b border-gray-200 border-solid bg-secondary;
     th {
       @apply text-left px-5 py-3 font-normal text-xs;
-
     }
 
     th:nth-of-type(1) {
       position: sticky;
       left: -1px;
       z-index: 21;
+    }
+    th {
+      @apply border-b border-gray-200 border-solid bg-secondary;
+      position: sticky;
+      top: 0px;
+      z-index: 22;
     }
   }
 
@@ -46,6 +57,28 @@
     }
   }
 }
+
+.table_scroller {
+  position: relative;
+  height: calc(95vh - 68px) ;
+  overflow-y: scroll;
+
+}
+
+.table_scroller::-webkit-scrollbar {
+  width: 5px; /* width of the entire scrollbar */
+}
+
+.table_scroller::-webkit-scrollbar-track {
+  @apply bg-secondary;
+}
+
+.table_scroller::-webkit-scrollbar-thumb {
+  @apply bg-secondary;
+  border-radius: 20px; /* roundness of the scroll thumb */
+  border: 3px solid #9CA3AF; /* creates padding around scroll thumb */
+}
+
 
 .number_line {
   text-align: right !important;
