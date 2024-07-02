@@ -1076,22 +1076,10 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
   }
 
   getMainTableWidth() {
-    // get <table> with id main-table
-    const table = document?.getElementById('main-table');
-    // get <thead>
-    const thead = table?.getElementsByTagName('thead')[0];
-    // get the width of the <thead>
-
+    const thead = document?.querySelector('#main-table thead');
     const rect = this.mainTable?.nativeElement.getBoundingClientRect();
     const rect2 = this.tableHolder?.nativeElement.getBoundingClientRect();
-    // get position X of the div
-
-    let posLeft = 0;
-
-    if(rect && rect2) {
-      posLeft = rect.x - rect2.x;
-    }
-
+    const posLeft = rect && rect2 ? rect.x - rect2.x : 0;
     return `width: ${thead?.clientWidth}px; left: ${posLeft}px`;
   }
 
