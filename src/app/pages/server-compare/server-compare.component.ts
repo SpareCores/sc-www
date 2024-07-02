@@ -8,7 +8,7 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Allocation, ServerPKs, ServerPKsWithPrices } from '../../../../sdk/data-contracts';
 import { SeoHandlerService } from '../../services/seo-handler.service';
-import { Chart, ChartConfiguration, ChartData } from 'chart.js';
+import { Chart, ChartConfiguration, ChartData, TooltipItem, TooltipModel } from 'chart.js';
 import { barChartOptionsSSLCompare, lineChartOptionsBWM, lineChartOptionsCompareCompress, lineChartOptionsCompareDecompress, radarChartOptions, radarDatasetColors } from '../server-details/chartOptions';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import { BaseChartDirective } from 'ng2-charts';
@@ -705,6 +705,7 @@ export class ServerCompareComponent implements OnInit {
     const benchmark_id = 'bw_mem';
 
     const selectedOperation = this.selectedBWMemOperation.value;
+    const selectedName = this.selectedBWMemOperation.name;
 
     const dataSet = this.benchmarkMeta?.find((x: any) => x.benchmark_id === benchmark_id);
 
@@ -744,6 +745,10 @@ export class ServerCompareComponent implements OnInit {
 
       this.lineChartDataBWmem = { labels: chartData.labels, datasets: chartData.datasets };
 
+      (this.lineChartOptionsBWMem as any).plugins.tooltip.callbacks.title = function(this: TooltipModel<"line">, tooltipItems: TooltipItem<"line">[]) {
+        return selectedName + ' ' + tooltipItems[0].label + ' MB block size';
+      };
+
       setTimeout(() => {
         const targetElBWmem: HTMLElement | null = document.getElementById('bw_mem_options');
         const triggerElBWmem: HTMLElement | null = document.getElementById('bw_mem_button');
@@ -767,6 +772,7 @@ export class ServerCompareComponent implements OnInit {
     const benchmark_id = 'openssl';
 
     const selectedAlgo = this.selectedSSLAlgo.value;
+    const selectedName = this.selectedSSLAlgo.name;
 
     const dataSet = this.benchmarkMeta?.find((x: any) => x.benchmark_id === benchmark_id);
 
@@ -804,6 +810,10 @@ export class ServerCompareComponent implements OnInit {
 
 
       this.barChartDataSSL = { labels: chartData.labels, datasets: chartData.datasets };
+
+      (this.barChartOptionsSSL as any).plugins.tooltip.callbacks.title = function(this: TooltipModel<"line">, tooltipItems: TooltipItem<"line">[]) {
+        return selectedName + ' with ' + tooltipItems[0].label + '-byte block size';
+      };
 
       setTimeout(() => {
         const targetElSSL: HTMLElement | null = document.getElementById('ssl_options');
@@ -854,7 +864,8 @@ export class ServerCompareComponent implements OnInit {
   }
 
   generateCompressChart() {
-    let selectedConfig = this.selectedCompressMethod?.options;
+    const selectedConfig = this.selectedCompressMethod?.options;
+    const selectedName = this.selectedCompressMethod?.name;
 
     if(!selectedConfig) {
       return;
@@ -938,6 +949,13 @@ export class ServerCompareComponent implements OnInit {
 
     this.lineChartDataCompress = { labels: chartData.labels, datasets: chartData.datasets };
     this.lineChartDataDecompress = { labels: chartData.labels, datasets: chartData.datasets };
+
+    (this.lineChartOptionsCompress as any).plugins.tooltip.callbacks.title =  function(this: TooltipModel<"line">, tooltipItems: TooltipItem<"line">[]) {
+      return tooltipItems[0].label + '% compression ratio (' + selectedName + ')';
+    };
+    (this.lineChartOptionsDecompress as any).plugins.tooltip.callbacks.title =  function(this: TooltipModel<"line">, tooltipItems: TooltipItem<"line">[]) {
+      return tooltipItems[0].label + '% compression ratio (' + selectedName + ')';
+    };
 
     const interval4 = setInterval(() => {
       const targetElCompress: HTMLElement | null = document.getElementById('compress_method_options');
