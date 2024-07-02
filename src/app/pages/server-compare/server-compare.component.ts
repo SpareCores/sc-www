@@ -216,20 +216,21 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
 
     this.seoHandler.updateTitleAndMetaTags(title, description, keywords);
 
-    // (this.radarChartOptionsSingle as any).plugins.legend.display = true;
-    // (this.radarChartOptionsMulti as any).plugins.legend.display = true;
+    (this.radarChartOptionsSingle as any).plugins.legend.display = true;
+    (this.radarChartOptionsMulti as any).plugins.legend.display = true;
 
-    // (this.radarChartOptionsSingle as any).plugins.title = {
-    //   display: true,
-    //   text: 'Single-core performance',
-    //   color: '#FFF',
-    // };
-    // (this.radarChartOptionsMulti as any).plugins.title = {
-    //   display: true,
-    //   text: 'Multi-core performance',
-    //   color: '#FFF',
-    // };
+    (this.radarChartOptionsSingle as any).plugins.title = {
+      display: true,
+      text: 'Single-core performance',
+      color: '#FFF',
+    };
+    (this.radarChartOptionsMulti as any).plugins.title = {
+      display: true,
+      text: 'Multi-core performance',
+      color: '#FFF',
+    };
 
+    console.log(this.route);
     this.route.queryParams.subscribe(params => {
       console.log(params);
       const param = params['instances'];
