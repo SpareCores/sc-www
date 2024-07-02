@@ -237,7 +237,7 @@ export const lineChartOptionsBWM: ChartConfiguration<'line'>['options'] = {
           return tooltipItems[0].label + ' MB block size';
         },
         label: function(this: TooltipModel<"line">, tooltipItem: TooltipItem<"line">) {
-          return tooltipItem.formattedValue + ' MB/sec';
+          return tooltipItem.formattedValue + ' MB/s';
         }
       }
     },
@@ -371,7 +371,7 @@ export const lineChartOptionsCompareCompress: ChartConfiguration<'line'>['option
     tooltip:{
       callbacks: {
         label: function(this: TooltipModel<"line">, tooltipItem: TooltipItem<"line">) {
-          return tooltipItem.formattedValue + ' btye/s (' + (tooltipItem.dataset.data[tooltipItem.dataIndex] as any).tooltip + ')';
+          return tooltipItem.formattedValue + ' byte/s (' + (tooltipItem.dataset.data[tooltipItem.dataIndex] as any).tooltip + ')';
         },
         title: function(this: TooltipModel<"line">, tooltipItems: TooltipItem<"line">[]) {
           return tooltipItems[0].label + '% compression ratio';
@@ -430,7 +430,7 @@ export const lineChartOptionsCompareDecompress: ChartConfiguration<'line'>['opti
     tooltip:{
       callbacks: {
         label: function(this: TooltipModel<"line">, tooltipItem: TooltipItem<"line">) {
-          return tooltipItem.formattedValue + ' btye/s (' + (tooltipItem.dataset.data[tooltipItem.dataIndex] as any).tooltip + ')';
+          return tooltipItem.formattedValue + ' byte/s (' + (tooltipItem.dataset.data[tooltipItem.dataIndex] as any).tooltip + ')';
         },
         title: function(this: TooltipModel<"line">, tooltipItems: TooltipItem<"line">[]) {
           return tooltipItems[0].label + '% compression ratio';

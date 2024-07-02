@@ -1,5 +1,8 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable, Optional, PLATFORM_ID } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
+import { REQUEST } from '../../express.tokens';
+import { isPlatformBrowser } from '@angular/common';
+import { Request } from 'express';
 
 @Injectable({
   providedIn: 'root'
@@ -7,9 +10,39 @@ import { Meta, Title } from '@angular/platform-browser';
 export class SeoHandlerService {
 
   constructor(
+    @Inject(PLATFORM_ID) private platformId: object,
     private titleService: Title,
     private metaTagService: Meta,
+    @Inject('netlify.request') @Optional() private request_netlify?: Request,
+    @Inject(REQUEST) @Optional() private request_express?: Request,
   ) { }
+
+  public getBaseURL(): string {
+    let baseUrl = 'https://sparecores.com';
+    if(isPlatformBrowser(this.platformId)) {
+      baseUrl = window.location.origin;
+    } else if (this.request_netlify) {
+      const url = new URL(this.request_netlify.url);
+      baseUrl = `${url.protocol}//${url.host}`;
+    } else if (this.request_express) {
+      baseUrl = `${this.request_express?.protocol}://${this.request_express?.get('host')}`;
+    }
+    return baseUrl;
+  }
+
+  public updateCanonical(document: Document, url: string) {
+    const canonicalUrl = url;
+    const head = document.getElementsByTagName('head')[0];
+    let element: HTMLLinkElement | null = document.querySelector(`link[rel='canonical']`) || null;
+    if (element == null) {
+      element = document.createElement('link') as HTMLLinkElement;
+      head.appendChild(element);
+    }
+    element.setAttribute('rel', 'canonical');
+    element.setAttribute('href', canonicalUrl);
+
+    this.metaTagService.updateTag({ property: 'og:url', content: canonicalUrl }, "property='og:url'");
+  }
 
   public updateTitleAndMetaTags(title: string, description: string, keywords: string): void {
     this.titleService.setTitle(title);
@@ -27,6 +60,8 @@ export class SeoHandlerService {
     this.metaTagService.updateTag({ name: 'twitter:description', content: description }, "name='twitter:description'");
     this.metaTagService.updateTag({ property: 'og:title', content: title }, "property='og:title'");
     this.metaTagService.updateTag({ property: 'og:description', content: description }, "property='og:description'");
+
+    this.setFollow();
   }
 
   public updateThumbnail(content: string) {
@@ -70,5 +105,13 @@ export class SeoHandlerService {
     script.textContent = scriptContent;
 
     document.getElementsByTagName('head')[0].appendChild(script);
+  }
+
+  public setNoFollow() {
+    this.metaTagService.updateTag({ name: 'robots', content: 'noindex, nofollow' });
+  }
+
+  public setFollow() {
+    this.metaTagService.updateTag({ name: 'robots', content: 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' });
   }
 }
