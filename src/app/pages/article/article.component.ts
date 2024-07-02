@@ -71,15 +71,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
           { name: this.articleMeta.title, url: `/article/${id}` }
         ];
 
-        let baseUrl = 'https://sparecores.com';
-        if(isPlatformBrowser(this.platformId)) {
-          baseUrl = window.location.origin;
-        } else if (this.request_netlify) {
-          const url = new URL(this.request_netlify.url);
-          baseUrl = `${url.protocol}//${url.host}`;
-        } else if (this.request_express) {
-          baseUrl = `${this.request_express?.protocol}://${this.request_express?.get('host')}`;
-        }
+        let baseUrl = this.SEOHandler.getBaseURL();
 
         this.SEOHandler.updateTitleAndMetaTags(
           this.articleMeta.title,
