@@ -62,6 +62,22 @@
               ],
               "outputHashing": "all"
             },
+            "prpreview": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "5mb",
+                  "maximumError": "100mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "20kb",
+                  "maximumError": "400kb"
+                }
+              ],
+              "outputHashing": "all",
+              "sourceMap": true
+            },
             "development": {
               "optimization": false,
               "extractLicenses": false,
