@@ -231,6 +231,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     };
 
     this.route.queryParams.subscribe(params => {
+      console.log(params);
       const param = params['instances'];
       if(param){
           this.isLoading = true;
