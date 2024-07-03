@@ -5,3 +5,6 @@
 /article/67pct-cost-saving-at-adtech-company
 /article/ids-vs-names
 /article/ngi-search-grant
+/talks
+/vendors
+/regions
