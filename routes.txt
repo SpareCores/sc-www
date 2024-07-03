@@ -1,5 +1,0 @@
-/articles
-/article/spot-instance-terminate-rates-per-az
-/article/67pct-cost-saving-at-adtech-company
-/articles/ids-vs-names
-/article/ngi-search-grant

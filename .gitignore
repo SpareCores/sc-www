@@ -68,3 +68,4 @@ src/assets/articles/all.json
 
 # custom patterns
 src/assets/slides/render.sh
+prerender_routes.txt
