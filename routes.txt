@@ -1,5 +1,7 @@
-/articles
+/article/berlin-buzzwords-2024
+/article/cloud-compute-performance-benchmarks
+/article/upcoming-conferences-2024-Q3
 /article/spot-instance-terminate-rates-per-az
 /article/67pct-cost-saving-at-adtech-company
-/articles/ids-vs-names
+/article/ids-vs-names
 /article/ngi-search-grant
