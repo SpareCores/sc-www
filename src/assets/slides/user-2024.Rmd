@@ -5,6 +5,7 @@ date: "2024-07-09"
 conference: "useR! 2024"
 conference_url: "https://events.linuxfoundation.org/user/"
 conference_talk_url: "https://sched.co/1c8yx"
+conference_talk_slides: "/assets/slides/user-2024.html#/coverslide"
 location: "Salzburg, Austria"
 output:
   revealjs::revealjs_presentation:
@@ -22,3 +23,54 @@ output:
     lib_dir: libs
     reveal_plugins: ["notes", "zoom"]
 ---
+
+
+## dummy slide
+
+<!--add custom CSS for the speaker view-->
+<script>
+  if (window.self !== window.top) {
+    document.body.className += " speakerview";
+  }
+</script>
+
+<!--javascript to remove dummy slide-->
+<script>
+document.getElementById("dummy-slide").remove();
+</script>
+
+<!--end dummy slide-->
+</section>
+
+<section id="coverslide">
+
+::: {.centered}
+<img src="images/user2024.svg"
+     class="toplogo" style="width: 464px; margin-left: -232px; margin-right: 232px;background-color:transparent;" />
+:::
+
+<h1 class="subtitle" style="color:#eee;font-size:1.75em;text-align: center; margin-top:325px; color:#34d399;">
+  Spare Cores: Harnessing<br />Unutilized Cloud Compute Resources
+</h1>
+
+<h2 class="author" style="color:#eee;padding-top:15px;font-size:1.25em;text-align: center !important;margin-bottom: 0px;">
+  Gergely Daróczi
+</h2>
+
+<h3 class="author" style="color:#eee;font-size:1.1em;text-align: center !important; font-weight: normal;">
+  Spare Cores Team
+</h3>
+
+<h3 class="author onlineMode" style="color:#eee;padding-top:25px;font-size:1.1em;text-align: center !important; padding-top: 10px;font-weight: normal; ">
+  Slides: <a href="https://sparecores.com/talks" target="_blank">sparecores.com/talks</a>
+</h3>
+
+<p class="author offlineMode" style="color:#eee;font-size:0.75em;text-align: right !important; padding-top: 10px;font-weight: normal;margin-top:30px; ">
+  Press Space or click the green arrow icons to navigate the slides ->
+</p>
+
+<div class="notes">
+focus: how to utilize cloud compute resources in the most cost-efficient way
+</div>
+
+</section>
