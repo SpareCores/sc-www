@@ -62,10 +62,10 @@ aio/content/examples/.DS_Store
 # Ignore cache created with the Angular CLI.
 .angular/
 
-# Ignore prebuild JSON files
-src/assets/articles/featured.json
+# Ignore prebuild files
 src/assets/articles/all.json
+src/assets/slides/slides.json
+prerender_routes.txt
 
 # custom patterns
 src/assets/slides/render.sh
-prerender_routes.txt
