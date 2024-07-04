@@ -790,6 +790,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   refreshCompressChart(chart: any) {
     this.selectedCompressMethod = chart;
     this.generateCompressChart();
+    this.compressDropdown?.hide();
   }
 
   generateBenchmarkCharts() {
