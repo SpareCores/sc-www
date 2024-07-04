@@ -1038,16 +1038,19 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
   selectBWMemOperation(operation: any) {
     this.selectedBWMemOperation = operation;
     this.generateBWMemChart();
+    this.dropdownBWmem?.hide();
   }
 
   selecSSLAlgorithm(algo: any) {
     this.selectedSSLAlgo = algo;
     this.generateSSLChart();
+    this.dropdownSSL?.hide();
   }
 
   selectCompressMethod(method: any) {
     this.selectedCompressMethod = method;
     this.generateCompressChart();
+    this.compressDropdown?.hide();
   }
 
   getBenchmarksForCategory(category: any) {
