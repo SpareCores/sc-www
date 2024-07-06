@@ -287,6 +287,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
           const keywords = this.title + ', ' + this.serverDetails.server_id + ', ' + this.serverDetails.vendor.vendor_id;
 
           this.SEOHandler.updateTitleAndMetaTags(this.title, this.description, keywords);
+          this.SEOHandler.updateThumbnail(`https://sparecores.github.io/sc-www-og/images/${this.serverDetails.vendor_id}/${this.serverDetails.api_reference}.png`);
 
           this.similarByFamily = [];
           this.similarByPerformance = [];
