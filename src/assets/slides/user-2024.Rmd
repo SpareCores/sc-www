@@ -83,7 +83,7 @@ TODO
 
 <section>
 <section class="titleslide slide level1" data-transition="slide-in fade-out">
-  <h2>&#62;&#62;&#62; from sparecores import why</h2>
+  <h2>&#62; vignette("why", "sparecores")</h2>
 
 <p class="fragment">Data Science / Machine Learning batch jobs:</p>
 
@@ -106,7 +106,7 @@ responsible for the DS infrastructure to run various algorithm, e.g.
 BUT might require a lot of compute resource depending on the type of the model
 </div>
 
-## >>> from sparecores import why {data-transition="fade-in slide-out"}
+## > vignette("why", "sparecores") {data-transition="fade-in slide-out"}
 
 <p class="gray">Data Science / Machine Learning batch jobs:</p>
 
@@ -127,7 +127,7 @@ in short, different tasks (DS in this example) have different compute requiremen
 NEXT after mentioning varying needs
 </div>
 
-## >>> from sparecores import why
+## > vignette("why", "sparecores")
 
 ::: {.centered}
 <img style="margin-top:-30px;width:95%;"  src="images/adtech-usecase-job-metrics.png" />
@@ -139,7 +139,7 @@ To give you an example: here's a job that we monitored every few seconds and saw
 so we had around 4k/day ...
 </div>
 
-## >>> from sparecores import why
+## > vignette("why", "sparecores")
 
 ::: {.centered}
 <img style="margin-top:-30px;width:95%;" src="images/adtech-usecase-jobs.png" />
@@ -155,7 +155,7 @@ so we had around 4k jobs/day with varying needs
 - or submitting new bid amounts on ads on a social network
 </div>
 
-## >>> from sparecores import why
+## > vignette("why", "sparecores")
 
 ::: {.colcontainer .mt-60}
 :::: {.col}
@@ -186,7 +186,7 @@ due to developers misconfiguring resource requirements
 and bin packing ...
 </div>
 
-## >>> from sparecores import why
+## > vignette("why", "sparecores")
 
 ::: {.centered}
 <img class="mt--30" src="images/xkcd_square_packing.png" style="width:45%;" />
@@ -200,7 +200,7 @@ AWS bin packing smaller jobs to already running larger nodes (started for heavy 
 so instead, we decided to roll our own solution after all .. building on the fact that the price of the cloud resources is not discounted by its size .. so running two containers on a larger node VS running on separate nodes make no difference from a pricing perspective
 </div>
 
-## >>> from sparecores import why
+## > vignette("why", "sparecores")
 
 ::: {.centered}
 <img style="margin-top:-30px;width:95%;" src="images/adtech-usecase-job-run.png" />
@@ -210,7 +210,7 @@ so instead, we decided to roll our own solution after all .. building on the fac
 here's an example of a job for which our monitoring system recorded that it can scale to many (100) CPUs, and needs high memory ... so filtered for the matching servers and ordered by price, and tried starting those based on availability
 </div>
 
-## >>> from sparecores import why {data-transition="slide-in none-out"}
+## > vignette("why", "sparecores") {data-transition="slide-in none-out"}
 
 ::: {.centered}
 <img class="mt--30 w-70" src="images/adtech-usecase-job-stopped-0.png" />
@@ -221,7 +221,7 @@ once the job finished, it updated the compute resource requirements, job status 
 and retries if more compute is needed
 </div>
 
-## >>> from sparecores import why {data-transition="none-in slide-out"}
+## > vignette("why", "sparecores") {data-transition="none-in slide-out"}
 
 ::: {.centered}
 <img class="mt--30 w-70" src="images/adtech-usecase-job-stopped-0.png" />
@@ -231,7 +231,7 @@ and retries if more compute is needed
 <img class="mt--30 w-70" src="images/adtech-usecase-job-stopped-1.png" />
 :::
 
-## >>> from sparecores import why
+## > vignette("why", "sparecores")
 
 <p class="bold">Other use-cases:</p>
 
@@ -248,7 +248,7 @@ so it's like AWS Fargate or Google Cloud Run ... but with auto-scaling and much 
 as it seemed useful for many use-cases, we decided and were supported to open-source most of the infra tooling ...
 </div>
 
-## >>> from sparecores import why
+## > vignette("why", "sparecores")
 
 ::: {.centered}
 <img class="mt--45 w-70" src="images/mikata.png" />
@@ -268,7 +268,7 @@ BUT, it was limited to a single vendor, we also had some new ideas, so it was ti
 
 <section>
 <section class="titleslide slide level1">
-  <h2>&#62;&#62;&#62; from sparecores import intro</h2>
+  <h2>&#62; demo(package="sparecores")</h2>
 
 * Open-source tools, database schemas and documentation to inspect and inventory cloud vendors and their compute resource offerings.
 
@@ -300,7 +300,7 @@ We help DevOps, DS, ML, AI, ETL, AV, and other engineering teams to find optimal
 BUT let's focus on the open-source and open-data components ..
 </aside>
 
-## >>> from sparecores import intro
+## > demo(package="sparecores")
 
 <img style="margin-top:-10px; width:100%;" src="images/homepage-stats.png" />
 
@@ -313,7 +313,7 @@ To show you some stats on the data being tracked:
 - already tracking X servers ...
 </aside>
 
-## >>> from sparecores import intro
+## > demo(package="sparecores")
 
 ::: {.centered}
 <img style="margin-top:-55px;width:95%;" src="images/sc-www-listing.png" />
@@ -323,7 +323,7 @@ To show you some stats on the data being tracked:
 The easiest way to query this data is through our web component, as you can see on the screen ...
 </aside>
 
-## >>> from sparecores import intro
+## > demo(package="sparecores")
 
 ::: {.centered}
 <img style="margin-top:-55px; width: 90%;" src="images/sc-www-server-details-top.png" />
@@ -333,7 +333,7 @@ The easiest way to query this data is through our web component, as you can see 
 Clicking on a server shows you the technical details of the instance -- much more than what's provided publicly by the vendor, even more than what ChatGPT knows ... as we actually start each machine and inspect the hardware. More on that later.
 </aside>
 
-## >>> from sparecores import intro
+## > demo(package="sparecores")
 
 ::: {.centered}
 <img style="margin-top:-55px; width: 77.5%;" src="images/sc-www-server-details-prices.png" />
@@ -343,7 +343,7 @@ Clicking on a server shows you the technical details of the instance -- much mor
 Live and historical pricing
 </aside>
 
-## >>> from sparecores import intro
+## > demo(package="sparecores")
 
 <!-- https://sparecores.com/server/aws/c5d.2xlarge -->
 
@@ -359,7 +359,7 @@ and we also run benchmark scenarios on the servers, e.g.:
 - OpenSSL hash functions and block ciphers
 </aside>
 
-## >>> from sparecores import intro
+## > demo(package="sparecores")
 
 <img style="margin-top: 0px;" src="images/sc-www-server-details-benchmarks-2.png" />
 
@@ -367,7 +367,7 @@ and we also run benchmark scenarios on the servers, e.g.:
 also running Geekbench 6, which has been a standard tool for some time including workloads for text and image processing, compiling software etc
 </aside>
 
-## >>> from sparecores import intro
+## > demo(package="sparecores")
 
 ::: {.centered}
 <img style="margin-top:-55px; width: 83%;" src="images/sc-www-server-compare.png" />
@@ -379,7 +379,7 @@ and making all these data available in comparison tables as well for human inspe
 </aside>
 
 
-## >>> from sparecores import intro
+## > demo(package="sparecores")
 
 ::: {.centered}
 <img style="margin-top:-15px;width:95%;" src="images/sc-keeper-preview.png" />
@@ -389,77 +389,78 @@ and making all these data available in comparison tables as well for human inspe
 for computers, we provide APIs ...
 </aside>
 
-## >>> from sparecores import intro
+## > demo(package="sparecores")
 
-```py
->>> from rich import print as pp
->>> from sc_crawler.tables import Server
->>> from sqlmodel import create_engine, Session, select
->>> engine = create_engine("sqlite:///sc-data-all.db")
->>> session = Session(engine)
->>> server = session.exec(select(Server).where(Server.server_id == 'g4dn.xlarge')).one()
->>> pp(server)
-Server(
-    server_id='g4dn.xlarge',
-    vendor_id='aws',
-    display_name='g4dn.xlarge',
-    api_reference='g4dn.xlarge',
-    name='g4dn.xlarge',
-    family='g4dn',
-    description='Graphics intensive [Instance store volumes] [Network and EBS optimized] Gen4 xlarge',
+```r
+> library(reticulate)
+> pms <- sapply(c('sc_crawler', 'sc_data', 'sc_keeper', 'sqlmodel'), import)
 
-    status=<Status.ACTIVE: 'active'>,
-    observed_at=datetime.datetime(2024, 6, 6, 10, 18, 4, 127254),
+> db <- pms$sc_keeper$database$session
+> Server <- pms$sc_crawler$tables$Server
+> server_select <- pms$sqlmodel$select(Server)
+> sc_query_one <- function(query) db$sessionmaker$exec(query)$one()$model_dump()
 
-    hypervisor='nitro',
-    vcpus=4,
-    cpu_cores=2,
-    cpu_allocation=<CpuAllocation.DEDICATED: 'Dedicated'>,
-    cpu_manufacturer='Intel',
-    cpu_family='Xeon',
-    cpu_model='8259CL',
-    cpu_architecture=<CpuArchitecture.X86_64: 'x86_64'>,
-    cpu_speed=3.5,
-    cpu_l1_cache=None,
-    cpu_l2_cache=None,
-    cpu_l3_cache=None,
-    cpu_flags=[],
+> sc_query_one(server_select$where(Server$vendor_id == "aws")$where(Server$server_id == "g4dn.xlarge"))
+List of 41
+ $ server_id        : chr "g4dn.xlarge"
+ $ vendor_id        : chr "aws"
+ $ display_name     : chr "g4dn.xlarge"
+ $ api_reference    : chr "g4dn.xlarge"
+ $ name             : chr "g4dn.xlarge"
+ $ family           : chr "g4dn"
+ $ description      : chr "Graphics intensive [Instance store volumes] [Network and EBS optimized] Gen4 xlarge"
 
-    memory_amount=16384,
-    memory_generation=<DdrGeneration.DDR4: 'DDR4'>,
-    memory_speed=3200,
-    memory_ecc=None,
+ $ status           : chr "active"
+ $ observed_at      : POSIXct[1:1], format: "2024-07-05 19:17:01"
 
-    gpu_count=1,
-    gpu_memory_min=16384,
-    gpu_memory_total=16384,
-    gpu_manufacturer='Nvidia',
-    gpu_family='Turing',
-    gpu_model='Tesla T4',
-    gpus=[
-        {
-            'manufacturer': 'Nvidia',
-            'family': 'Turing',
-            'model': 'Tesla T4',
-            'memory': 15360,
-            'firmware_version': '535.171.04',
-            'bios_version': '90.04.96.00.A0',
-            'graphics_clock': 1590,
-            'sm_clock': 1590,
-            'mem_clock': 5001,
-            'video_clock': 1470
-        }
-    ],
+ $ hypervisor       : chr "nitro"
+ $ vcpus            : int 4
+ $ cpu_cores        : int 2
+ $ cpu_allocation   : chr "Dedicated"
+ $ cpu_manufacturer : chr "Intel"
+ $ cpu_family       : chr "Xeon"
+ $ cpu_model        : chr "8259CL"
+ $ cpu_architecture : chr "x86_64"
+ $ cpu_speed        : num 3.5
+ $ cpu_l1_cache     : int 131072
+ $ cpu_l2_cache     : int 2097152
+ $ cpu_l3_cache     : int 37486592
+ $ cpu_flags        : chr [1:87] "fpu" "vme" "de" "pse" ...
 
-    storage_size=125,
-    storage_type=<StorageType.NVME_SSD: 'nvme ssd'>,
-    storages=[{'size': 125, 'storage_type': 'nvme ssd'}],
+ $ memory_amount    : int 16384
+ $ memory_generation: chr "DDR4"
+ $ memory_speed     : int 2933
 
-    network_speed=5.0,
-    inbound_traffic=0.0,
-    outbound_traffic=0.0,
-    ipv4=0,
-)
+ $ gpu_count        : int 1
+ $ gpu_memory_min   : int 16384
+ $ gpu_memory_total : int 16384
+ $ gpu_manufacturer : chr "Nvidia"
+ $ gpu_family       : chr "Turing"
+ $ gpu_model        : chr "Tesla T4"
+ $ gpus             :List of 1
+  ..$ :List of 10
+  .. ..$ manufacturer    : chr "Nvidia"
+  .. ..$ family          : chr "Turing"
+  .. ..$ model           : chr "Tesla T4"
+  .. ..$ memory          : int 15360
+  .. ..$ firmware_version: chr "535.171.04"
+  .. ..$ bios_version    : chr "90.04.96.00.A0"
+  .. ..$ graphics_clock  : int 1590
+  .. ..$ sm_clock        : int 1590
+  .. ..$ mem_clock       : int 5001
+  .. ..$ video_clock     : int 1470
+
+ $ storage_size     : int 125
+ $ storage_type     : chr "nvme ssd"
+ $ storages         :List of 1
+  ..$ :List of 2
+  .. ..$ size        : int 125
+  .. ..$ storage_type: chr "nvme ssd"
+
+ $ network_speed    : num 5
+ $ inbound_traffic  : num 0
+ $ outbound_traffic : num 0
+ $ ipv4             : int 0
 ```
 
 <aside class="notes">
@@ -470,7 +471,7 @@ and SDKs as well, e.g. querying the details of this instance type: SCROLL throug
 
 <section>
 <section class="titleslide slide level1">
-  <h2>&#62;&#62;&#62; sparecores.\_\_dir\_\_()</h2>
+  <h2>&#62; ls(envir = sparecores)</h2>
 
 <img style="margin-top:30px; width: 100%;" src="images/sc-components.png" />
 
@@ -482,7 +483,7 @@ As mentioned previously, this is made available via multiple components that I'd
 
 <section>
 <section class="titleslide slide level1">
-  <h2>&#62;&#62;&#62; import sc_crawler</h2>
+  <h2>&#62; import(module = "sc_crawler")</h2>
 
 - ETL framework with database schema and inventory method definitions
 
@@ -520,13 +521,13 @@ how to get prices info at a vendor, e.g. for IPv4 addresses which became more an
 sounds relatively straightforward .. but we had a few interesting experiences :) that I wanted to share
 </aside>
 
-## >>> import sc_crawler
+## > import(module = "sc_crawler")
 
 ::: {.centered}
 <img style="margin-top:-50px; width: 50%; background: none;"  src="images/not-easy.png" />
 :::
 
-## >>> from sc_crawler import fks
+## > sc_crawler\$tables\$foreign_keys
 
 ::: {.centered}
 <img style="margin-top:-50px; width: 66%;"  src="images/dbdocs-relations.png" />
@@ -538,7 +539,7 @@ sounds relatively straightforward .. but we had a few interesting experiences :)
 for example, looking at the server price table definition, you can see that there are 5 primary keys our of which 4 are foreign keys as well: pointing to vendor, region, zone, and server. well, all these foreign keys have a vendor as well, so to set up the relationships between the tables properly, you have to use overlapping compound foreign keys ... which is not the most intuitive thing when it comes to ORMs
 </aside>
 
-## >>> from sc_crawler import scd
+## > sc_crawler\$tables\$scd
 
 Need to optionally track price etc. changes.
 
@@ -562,7 +563,7 @@ class Scd(ScModel):
 this became even more complex when created the SCD versions of the tables to track prices
 </aside>
 
-## >>> from sc_crawler import alembic
+## > sc_crawler\$tables\$migrations
 
 Let's update the `cpu_cores` column to be optional, as some vendors as shy sharing that over their APIs. We will  backfill with the Spare Cores Inspector!
 
@@ -794,7 +795,7 @@ supporting upgrade and downgrade path
 but once that's done ..
 </aside>
 
-## >>> from sc_crawler import alembic
+## > sc_crawler\$tables\$migrations
 
 ```sh
 $ sc-crawler schemas upgrade --sql
@@ -855,7 +856,7 @@ UPDATE alembic_version SET version_num='4691089690c2' WHERE alembic_version.vers
 but once that's done .. the user-facing command is straighforward, and can support most database engines both online and offline as well, as you can see in the generated SQL for offline mode
 </aside>
 
-## >>> from sc_crawler import hwinfo {data-transition="slide-in none-out"}
+## > sc_crawler\$tables\$server {data-transition="slide-in none-out"}
 
 <ul style="margin-top: -20px;">
   <li>Varying quality and availability of data at different vendors.</li>
@@ -875,7 +876,7 @@ as mentioned previously, data quality and availability on the server details is 
 I mean ... after searching for 6 or 7 sources online .. this guy failed heavily
 </aside>
 
-## >>> from sc_crawler import hwinfo {data-transition="none"}
+## > sc_crawler\$tables\$server {data-transition="none"}
 
 <ul style="margin-top: -20px;">
   <li>Varying quality and availability of data at different vendors.</li>
@@ -887,7 +888,7 @@ I mean ... after searching for 6 or 7 sources online .. this guy failed heavily
 multiplying 12 by 2 ... so we really hoped there's a better way.
 </aside>
 
-## >>> from sc_crawler import hwinfo {data-transition="none-in slide-out"}
+## > sc_crawler\$tables\$server {data-transition="none-in slide-out"}
 
 <ul style="margin-top: -20px;">
   <li>Varying quality and availability of data at different vendors.</li>
@@ -927,7 +928,7 @@ And sometimes data is not even there ... we had to look that up and provide manu
 But looking at simpler things, e.g. region definitions. Straightforward, right?
 </aside>
 
-## >>> from sc_crawler import pricing
+## > sc_crawler\$tables\$server_price
 
 - No way to find SKUs by filtering in the API call. Get all, search locally.
 
@@ -972,7 +973,7 @@ it's a mess ...
 okay, enough horror stories. beleive me ... it's good to have a standardize database schema and data
 </aside>
 
-## >>> import sc_crawler
+## > saveRDS(sc_crawler, file = ...)
 
 ::: {.centered}
 <img style="margin-top:-50px; width: 100%;"  src="images/dbhub.png" />
@@ -988,7 +989,7 @@ so I'm super happy to introduce this cleaned up dataset to you all, which is act
 
 <section>
 <section class="titleslide slide level1">
-  <h2>&#62;&#62;&#62; import sc_data</h2>
+  <h2>&#62; import(module = "sc_data")</h2>
 
 <ul style="margin-top: -20px;">
   <li class="fragment">GitHub Action set up to run the Crawler every 5 minutes.</li>
@@ -1028,7 +1029,7 @@ This data includes data collected outside of the vendor APIs ...
 
 <section>
 <section class="titleslide slide level1">
-  <h2>&#62;&#62;&#62; import sc_inspector</h2>
+  <h2>&#62; import(module = "sc_inspector")</h2>
 
 Information collected from vendor APIs is very limited, so we run:
 
@@ -1067,7 +1068,7 @@ which runs ...
 And we indeed start all cloud servers (more than a 1000), and run all these things on them, so that you don't have to :)
 </aside>
 
-## >>> import sc_inspector
+## > import(module = "sc_inspector")
 
 <p class="mt-0">Data is collected in public: `sc-inspector-data` repo on GitHub.</p>
 
@@ -1079,7 +1080,7 @@ And we indeed start all cloud servers (more than a 1000), and run all these thin
 This data is also collected in public, running GH Actions to start the machines, run the benchmarks, parse results, clean up the resources etc.
 </aside>
 
-## >>> import sc_inspector
+## > import(module = "sc_inspector")
 
 ::: {.centered}
 <img style="margin-top:-40px;width:95%;" src="images/sc-inspector-data-files.png" />
@@ -1094,7 +1095,7 @@ And besides integrating in the Data package, everything is stored in the GitHub 
 - metadata
 </aside>
 
-## >>> import sc_inspector
+## > import(module = "sc_inspector")
 
 ```sh
 docker run --rm -ti -v /var/run/docker.sock:/var/run/docker.sock \
@@ -1116,7 +1117,7 @@ If you want, you can run the inspector on any machine .. by using our related Do
 
 <section>
 <section class="titleslide slide level1">
-  <h2>&#62;&#62;&#62; import sc_runner</h2>
+  <h2>&#62; import(module = "sc_runner")</h2>
 
 ```sh
 $ docker run --rm -ti \
@@ -1161,7 +1162,7 @@ The command is super simple: provide vendor and instance type, make sure you hav
 and we take care of the rest using this unified CLI.
 </aside>
 
-## >>> import sc_runner {data-transition="slide-in none-out"}
+## > import(module = "sc_runner") {data-transition="slide-in none-out"}
 
 ::: {.centered}
 <img src="images/aws-quota-request-quota.png" style="width:57%;margin-top:-30px;"/>
@@ -1171,7 +1172,7 @@ and we take care of the rest using this unified CLI.
 We faced only a few problems while starting almost 1K sever types at AWS for benchmarking ... namely not being allowed to spin up that many instances due to quotas.
 </aside>
 
-## >>> import sc_runner {data-transition="none-in slide-out"}
+## > import(module = "sc_runner") {data-transition="none-in slide-out"}
 
 ::: {.centered}
 <img src="images/aws-quota-request-quota-achievement-unlocked.png" style="width:57%;margin-top:-30px;"/>
@@ -1187,7 +1188,7 @@ Quite an achievement!
 
 <section>
 <section class="titleslide slide level1">
-  <h2>&#62;&#62;&#62; import sc_keeper</h2>
+  <h2>&#62; import(module = "sc_keeper")</h2>
 
 ```sh
 $ curl https://keeper.sparecores.net/server/aws/g4dn.xlarge | jq
@@ -1425,13 +1426,13 @@ python sdk to search the database and also to make that available as a public HT
 SCROLL DOWN FOR ChatGPT integration!
 </aside>
 
-## >>> import sc_keeper
+## > import(module = "sc_keeper")
 
 ::: {.centered}
 <img style="margin-top:-30px;width:95%;"  src="images/sc-keeper-redoc.png" />
 :::
 
-## >>> import sc_keeper
+## > import(module = "sc_keeper")
 
 ::: {.centered}
 <img style="margin-top:-30px;width:95%;"  src="images/sc-keeper-ai.png" />
@@ -1468,7 +1469,7 @@ TODO
 </section></section>
 
 <section class="titleslide slide level1">
-  <h2>&#62;&#62;&#62; import \_\_future\_\_</h2>
+  <h2>&#62; news(package = "sparecores")</h2>
 
 
 <ul style="margin-top: -20px;">
@@ -1490,7 +1491,7 @@ TODO
 
 <section>
 <section class="titleslide slide level1" data-transition="slide-in none-out">
-  <h2>&#62;&#62;&#62; from sparecores import team</h2>
+  <h2>&#62; maintainer("sparecores")</h2>
 
 ::: {.colcontainer .mt-60 .centered}
 :::: {.col}
@@ -1511,7 +1512,7 @@ TODO
 TODO
 </aside>
 
-## >>> from sparecores import team  {data-transition="none-in slide-out"}
+## > maintainer("sparecores")  {data-transition="none-in slide-out"}
 
 ::: {.colcontainer .mt-60 .centered}
 :::: {.col}
@@ -1535,7 +1536,7 @@ TODO
 TODO
 </aside>
 
-## >>> from sparecores import support
+## > sponsor("sparecores")
 
 ::: {.centered}
 <img style="margin-top:-30px;width:70%;" src="images/ngi-eu-open-source.png" />
@@ -1552,10 +1553,11 @@ TODO
 <section class="titleslide slide level1" data-transition="slide-in none-out">
     <!-- https://carbon.now.sh/?bg=rgba%288%2C47%2C73%2C1%29&t=nord&wt=none&l=r&width=680&ds=false&dsyoff=20px&dsblur=68px&wc=true&wa=true&pv=56px&ph=56px&ln=false&fl=1&fm=Hack&fs=18px&lh=161%25&si=false&es=2x&wm=false&code=%253E%2520q%28save%2520%253D%2520%27ask%27%29%250AProcess%2520finished%2520at%2520June%252012%252009%253A50%253A00%25202024%2520%250A%250A%253E%2520visit%28%27https%253A%252F%252Fsparecores.com%27%29%250A%253E%2520email%28%27daroczig%2540sparecores.com%27%29%250A%253E%2520follow%28%27%2540SpareCores%27%29 -->
     <!-- https://carbon.now.sh/?bg=rgba%288%2C47%2C73%2C1%29&t=nord&wt=none&l=python&width=680&ds=false&dsyoff=20px&dsblur=68px&wc=true&wa=true&pv=5px&ph=5px&ln=false&fl=1&fm=Hack&fs=18px&lh=161%25&si=false&es=2x&wm=false&code=%253E%253E%253E%2520import%2520os%250A%253E%253E%253E%2520import%2520signal%250A%253E%253E%253E%2520os.kill%28os.getpid%28%29%252C%2520signal.SIGKILL%29%2520%2520%250A%250A%253E%253E%253E%2520visit%28%27https%253A%252F%252Fsparecores.com%27%29%250A%253E%253E%253E%2520email%28%27daroczig%2540sparecores.com%27%29%250A%253E%253E%253E%2520follow%28%27%2540SpareCores%27%29%250A%250A%253E%253E%253E%2520os._exit%28status%253D0%29%250AProcess%2520finished%2520at%2520June%252012%252009%253A50%253A00%25202024%2520 -->
-    <!-- https://carbon.now.sh/?bg=rgba%288%2C47%2C73%2C1%29&t=theme%3A0bcewbfyk9yl&wt=none&l=python&width=680&ds=false&dsyoff=20px&dsblur=68px&wc=true&wa=true&pv=5px&ph=5px&ln=false&fl=1&fm=Hack&fs=18px&lh=161%25&si=false&es=2x&wm=false&code=%253E%253E%253E%2520import%2520os%250A%253E%253E%253E%2520import%2520signal%250A%253E%253E%253E%2520os.kill%28os.getpid%28%29%252C%2520signal.SIGKILL%29%2520%2520%250A%250A%253E%253E%253E%2520visit%28%27https%253A%252F%252Fsparecores.com%27%29%250A%253E%253E%253E%2520email%28%27daroczig%2540sparecores.com%27%29%250A%253E%253E%253E%2520follow%28%27%2540SpareCores%27%29%250A%250A%253E%253E%253E%2520os._exit%28status%253D0%29%250AProcess%2520finished%2520at%2520June%252012%252009%253A50%253A00%25202024%2520 -->
+    <!-- Python: https://carbon.now.sh/?bg=rgba%288%2C47%2C73%2C1%29&t=theme%3A0bcewbfyk9yl&wt=none&l=python&width=680&ds=false&dsyoff=20px&dsblur=68px&wc=true&wa=true&pv=5px&ph=5px&ln=false&fl=1&fm=Hack&fs=18px&lh=161%25&si=false&es=2x&wm=false&code=%253E%253E%253E%2520import%2520os%250A%253E%253E%253E%2520import%2520signal%250A%253E%253E%253E%2520os.kill%28os.getpid%28%29%252C%2520signal.SIGKILL%29%2520%2520%250A%250A%253E%253E%253E%2520visit%28%27https%253A%252F%252Fsparecores.com%27%29%250A%253E%253E%253E%2520email%28%27daroczig%2540sparecores.com%27%29%250A%253E%253E%253E%2520follow%28%27%2540SpareCores%27%29%250A%250A%253E%253E%253E%2520os._exit%28status%253D0%29%250AProcess%2520finished%2520at%2520June%252012%252009%253A50%253A00%25202024%2520 -->
+    <!-- R: https://carbon.now.sh/?bg=rgba%288%2C47%2C73%2C1%29&t=theme%3A0bcewbfyk9yl&wt=none&l=r&width=680&ds=false&dsyoff=20px&dsblur=68px&wc=true&wa=true&pv=5px&ph=5px&ln=false&fl=1&fm=Hack&fs=18px&lh=161%25&si=false&es=2x&wm=false&code=%253E%2520library%28tools%29%250A%253E%2520pskill%28Sys.getpid%28%29%252C%2520signal%2520%253D%2520SIGKILL%29%2520%2520%250A%250A%253E%2520visit%28%27https%253A%252F%252Fsparecores.com%27%29%250A%253E%2520email%28%27daroczig%2540sparecores.com%27%29%250A%253E%2520follow%28%27%2540SpareCores%27%29%250A%250A%253E%2520q%28save%2520%253D%2520%2522ask%2522%29%250AProcess%2520finished%2520at%2520July%252009%252014%253A15%253A00%25202024%2520 -->
 
 ::: {.centered}
-<img src="images/bye-1.png" style="background: none;" class="mt--60 w-75" />
+<img src="images/bye-r-1.png" style="background: none;" class="mt--30 w-75" />
 :::
 
 <aside class="notes">
@@ -1566,7 +1568,7 @@ TODO
 <section data-transition="none">
 
 ::: {.centered}
-<img src="images/bye-2.png" style="background: none;" class="mt--60 w-75" />
+<img src="images/bye-r-2.png" style="background: none;" class="mt--30 w-75" />
 :::
 
 <aside class="notes">
@@ -1577,7 +1579,7 @@ TODO
 <section data-transition="none">
 
 ::: {.centered}
-<img src="images/bye-3-budapest-ml-2024.png" style="background: none;" class="mt--60 w-75" />
+<img src="images/bye-r-3-user2024.png" style="background: none;" class="mt--30 w-75" />
 :::
 
 <p class="author offlineMode" style="color:#eee;font-size:0.75em;text-align: center !important; margin-top:-40px; padding-top:0px;">
