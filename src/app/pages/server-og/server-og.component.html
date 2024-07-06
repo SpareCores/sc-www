@@ -1,54 +1,69 @@
 <!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
-<div class="w-full bg-primary">
-  <div class="content pt-16 pb-16 text-white">
+<div class="w-full bg-primary overflow-x-hidden" style="height: 630px;">
+  <div class="content pt-6 pb-6 text-white">
 
-    <div *ngIf="serverDetails"
-      class="mx-2 xl:mx-0 flex flex-wrap justify-between rounded-lg gap-8 px-6 py-6 bg-secondary border-emerald-400 border boder-solid mt-12"  >
-      <div class="flex gap-8 flex-grow lg:w-1/2 w-full" >
-        <div class="flex gap-4 flex-col min-w-32">
-          <div class="min-w-20 w-20 h-20 bg-white rounded-lg mx-auto">
-            <img src="{{serverDetails.vendor.logo}}" alt="logo">
-          </div>
-
-        </div>
-        <div class="flex flex-col gap-3">
-          <h1 class="text-2xl" > <span class="text-emerald-400 font-bold">{{serverDetails.display_name}}</span> by {{serverDetails.vendor.name}} </h1>
-          <div> {{description}} </div>
-
-        </div>
+    <div class="mx-6 flex flex-wrap justify-between align-middle gap-8 px-6 py-6">
+      <div>
+        <img class="h-12" style="max-width: 284px; width: 284px"
+             src="./assets/images/logos/logo_header.png"
+             alt="Spare Cores Logo" />
       </div>
-      <div class="w-full lg:w-2/5 flex ">
-        <div class="w-1/2 mr-8">
-          <div *ngFor="let item of features, let i = index">
-            <div *ngIf="i !== 0" class="w-full h-4 mb-3 border-b border-gray-400 border-solid" ></div>
-            <div class="flex gap-2 text-xl items-center text-gray-200">
-              <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6">
-              <lucide-icon name="check" class="h-4 w-4"></lucide-icon>
-              </div>
-              <b> {{item.value}} </b>
-              <span> {{item.name}} </span>
-            </div>
-          </div>
-        </div>
-
-        <div class="border-r border-solid border-emerald-400 h-full w-1" > </div>
-
-        <div class="w-1/2 flex flex-col gap-4 text-center ml-8">
-          <div class="text-white text-3xl font-semibold" >Spare <span class="text-emerald-400 "> SC</span>ore </div>
-          <div class="flex flex-col gap-4">
-            <div class=" text-gray-200">
-              <span class="text-3xl text-emerald-400 font-semibold">{{getBenchmark(true)}}</span><br>
-              (All-cores)
-            </div>
-            <div class="text-gray-200" >
-              <span class="text-xl">{{getBenchmark(false)}}</span><br>
-              (Single-core)
-            </div>
-          </div>
-        </div>
-
+      <div class="text-4xl align-middle">
+        Cloud Server Details
       </div>
     </div>
+
+    <div class="mx-12 rounded-lg gap-8 px-6 py-6 bg-secondary border-emerald-400 border boder-solid" >
+
+      <div class="mx-6 grid justify-items-center pb-6" *ngIf="serverDetails">
+        <div class="text-8xl text-emerald-400 font-bold" >{{serverDetails.display_name}}</div>
+      </div>
+
+      <div class="mx-2 flex items-center justify-center justify-between gap-8 pb-2" *ngIf="serverDetails">
+
+        <div class="w-1/2 flex flex-col gap-6 text-center">
+          <div class="text-white text-5xl font-semibold">Spare <span class="text-emerald-400 "> SC</span>ore </div>
+          <div class="flex flex-col gap-6">
+            <div class="text-gray-200" *ngIf="serverDetails.vcpus! > 1">
+              <span class="text-5xl text-white">{{getBenchmark(false)}}</span><br>
+              <span class="text-2xl">Single-core</span>
+            </div>
+            <div class=" text-gray-200">
+              <span class="text-5xl text-emerald-400 font-semibold">{{getBenchmark(true)}}</span><br>
+              <span class="text-2xl">All cores</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="border-r border-solid border-emerald-400 h-72 w-1" > </div>
+
+        <div class="flex flex-wrap gap-4">
+          <div class="w-full h-48 pt-2 text-3xl line-clamp-5"> {{description}} </div>
+          <div class="flex items-center justify-center gap-8 mt-2">
+            <div class="w-20 h-20 bg-white rounded-lg mx-auto">
+              <img src="{{serverDetails.vendor.logo}}" alt="logo">
+            </div>
+            <div class="text-gray-200 font-bold text-4xl">{{serverDetails.vendor.name}}</div>
+          </div>
+        </div>
+
+        <div class="border-r border-solid border-emerald-400 h-72 w-1" > </div>
+
+        <div>
+          <div *ngFor="let item of features, let i = index">
+            <div *ngIf="i !== 0" class="w-full h-4 mb-3 border-b border-gray-400 border-solid" ></div>
+            <div class="flex gap-2 text-3xl items-center text-gray-200">
+              <div class="inline text-3xl items-center text-gray-200">
+                <b> <span class="text-teal-500">{{item.value}}</span> </b> {{item.name}}
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
 
   </div>
 </div>
