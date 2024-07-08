@@ -58,7 +58,7 @@ export class LandingpageComponent implements OnInit {
   gitHubComponents: any[] = [
     {
       component: 'SC Crawler',
-      status: 'alpha',
+      status: 'Beta',
       github: 'sc-crawler',
       pypi: 'sparecores-crawler',
       docs: 'https://sparecores.github.io/sc-crawler',
@@ -66,14 +66,14 @@ export class LandingpageComponent implements OnInit {
     },
     {
       component: 'SC Inspector',
-      status: 'pre-alpha',
+      status: 'Beta',
       description: 'Inspect and benchmark cloud resources.',
       github: 'sc-inspector',
       data: 'https://github.com/SpareCores/sc-inspector-data',
     },
     {
       component: 'SC Data',
-      status: 'alpha',
+      status: 'Beta',
       github: 'sc-data',
       pypi: 'sparecores-data',
       description: 'Wrapper around data collected using the Crawler.',
@@ -81,21 +81,21 @@ export class LandingpageComponent implements OnInit {
     },
     {
       component: 'SC Keeper',
-      status: 'pre-alpha',
+      status: 'Alpha',
       description: 'API to search the Data.',
       github: 'sc-keeper',
       docs: 'https://keeper.sparecores.net/docs',
-      www: 'https://keeper.sparecores.net',
+      api: 'https://keeper.sparecores.net',
     },
     {
       component: 'SC Scanner',
-      status: 'pre-alpha',
+      status: 'Stable',
       description: 'Web frontend and programming language SDKs for Keeper.',
       www: 'https://github.com/SpareCores/sc-www',
     },
     {
       component: 'SC Runner',
-      status: 'pre-alpha',
+      status: 'Beta',
       description: 'Launching actual cloud instances.',
       github: 'sc-runner',
     }

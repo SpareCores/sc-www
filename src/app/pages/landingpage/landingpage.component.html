@@ -287,26 +287,37 @@
               <td class="flex gap-1">
                   <a href="https://github.com/SpareCores/{{item.github}}"
                      *ngIf="item.github" target="_blank" rel="noopener"
+                     [title]="'GitHub repository of ' + item.github"
                      [attr.aria-label]="'GitHub repository of ' + item.github">
                       <lucide-icon name="github"></lucide-icon>
                   </a>
                   <a href="https://pypi.org/project/{{item.pypi}}"
                      *ngIf="item.pypi" target="_blank" rel="noopener"
+                     [title]="item.pypi + ' on PyPI'"
                      [attr.aria-label]="item.pypi + ' on PyPI'">
                       <img src="assets/images/icons/python.svg" alt="Python logo"
                            style="width: 24px; vertical-align:middle;" />
                   </a>
                   <a href="{{item.docs}}"
                      *ngIf="item.docs" target="_blank" rel="noopener"
+                     [title]="'Documentation site of ' + item.component"
                      [attr.aria-label]="'Documentation site of ' + item.component">
                       <lucide-icon name="book-text"></lucide-icon>
                   </a>
                   <a href="{{item.www}}" *ngIf="item.www" target="_blank" rel="noopener"
+                     [title]="'Homepage of ' + item.component"
                      [attr.aria-label]="'Homepage of ' + item.component">
                       <img src="assets/images/icons/www.svg" alt="WWW logo"
                            style="width: 24px; vertical-align:middle;" />
                   </a>
+                  <a href="{{item.api}}" *ngIf="item.api" target="_blank" rel="noopener"
+                     [title]="'API endpoint of ' + item.component"
+                     [attr.aria-label]="'API endpoint of ' + item.component">
+                      <img src="assets/images/icons/api.svg" alt="API logo"
+                           style="width: 24px; vertical-align:middle;" />
+                  </a>
                   <a href="{{item.data}}" *ngIf="item.data" target="_blank" rel="noopener"
+                     [title]="'Database of ' + item.component"
                      [attr.aria-label]="'Database of ' + item.component">
                       <lucide-icon name="database"></lucide-icon>
                   </a>
