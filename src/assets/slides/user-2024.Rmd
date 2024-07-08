@@ -74,13 +74,6 @@ focus: how to utilize cloud compute resources in the most cost-efficient way
 
 </section>
 
-<!--
-TODO
-- SCanner R pkg
-- mention Szilard's benchmarks
-- SaaS
--->
-
 <section>
 <section class="titleslide slide level1" data-transition="slide-in fade-out">
   <h2>&#62; vignette("why", "sparecores")</h2>
@@ -1479,6 +1472,7 @@ TODO
     <li class="fragment">Runner (pulumi)</li>
   </ul>
   <li class="fragment">More SDKs (PyPI, npm, CRAN, etc.)</li>
+  <li class="fragment">More benchmarks (e.g. Szilard Pafka's `GBM-perf`)</li>
   <li class="fragment">Data analysis, blog posts</li>
   <li class="fragment">My Spare Cores (dashboard)</li>
   <li class="fragment">SaaS 👀</li>
