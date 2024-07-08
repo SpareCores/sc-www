@@ -37,11 +37,11 @@ export class LandingpageComponent implements OnInit {
       text: 'server types'
     },
     {
-      count: '127,938',
+      count: '216,714',
       text: 'benchmark scores'
     },
     {
-      count: '134,503',
+      count: '135,988',
       text: 'live price records'
     },
     {

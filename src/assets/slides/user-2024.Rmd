@@ -295,7 +295,7 @@ BUT let's focus on the open-source and open-data components ..
 
 ## > demo(package="sparecores")
 
-<img style="margin-top:-10px; width:100%;" src="images/homepage-stats.png" />
+<img style="margin-top:-10px; width:100%;" src="images/homepage-stats-2024-july.png" />
 
 <p class="centered" style="margin-top: -10px;">Source: <a href="https://sparecores.com">sparecores.com</a></p>
 
@@ -466,7 +466,7 @@ and SDKs as well, e.g. querying the details of this instance type: SCROLL throug
 <section class="titleslide slide level1">
   <h2>&#62; ls(envir = sparecores)</h2>
 
-<img style="margin-top:30px; width: 100%;" src="images/sc-components.png" />
+<img style="margin-top:30px; width: 100%;" src="images/sc-components-2024-july.png" />
 
 <aside class="notes">
 As mentioned previously, this is made available via multiple components that I'd like to walk through in the next slides.
