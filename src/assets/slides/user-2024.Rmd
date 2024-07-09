@@ -69,7 +69,7 @@ document.getElementById("dummy-slide").remove();
 </p>
 
 <div class="notes">
-focus: how to utilize cloud compute resources in the most cost-efficient way
+focus: how to utilize cloud compute resources in the most cost-efficient way, e.g. to run scalable R scripts
 </div>
 
 </section>
@@ -127,7 +127,7 @@ NEXT after mentioning varying needs
 :::
 
 <div class="notes">
-To give you an example: here's a job that we monitored every few seconds and saw that it doesn't really scale to multiple CPUs, but taking up to ~200 gigs of memory -- probably training a hierarchical model that cannot be paralellized.
+To give you an example: here's an R script that we monitored every few seconds and saw that it doesn't really scale to multiple CPUs, but taking up to ~200 gigs of memory -- probably training a hierarchical model that cannot be paralellized.
 
 so we had around 4k/day ...
 </div>
@@ -366,9 +366,19 @@ also running Geekbench 6, which has been a standard tool for some time including
 <img style="margin-top:-55px; width: 83%;" src="images/sc-www-server-compare.png" />
 :::
 
-<!-- https://deploy-preview-27--creative-choux-a3c817.netlify.app/compare?instances=W3sidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzVhZC4xMnhsYXJnZSJ9LHsidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzVkLjJ4bGFyZ2UifSx7InZlbmRvciI6ImF3cyIsInNlcnZlciI6ImM2Zy4xNnhsYXJnZSJ9LHsidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY2N4MzMifV0%3D -->
+<!-- https://sparecores.com/compare?instances=W3sidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzVhZC4xMnhsYXJnZSJ9LHsidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzVkLjJ4bGFyZ2UifSx7InZlbmRvciI6ImF3cyIsInNlcnZlciI6ImM2Zy4xNnhsYXJnZSJ9LHsidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY2N4MzMifV0%3D -->
 <aside class="notes">
 and making all these data available in comparison tables as well for human inspection
+</aside>
+
+## > demo(package="sparecores")
+
+::: {.centered}
+<img style="margin-top:-55px; width: 75%;" src="images/sc-www-server-compare-charts.png" />
+:::
+
+<aside class="notes">
+and some data visualizations to compare the servers
 </aside>
 
 
@@ -858,9 +868,6 @@ but once that's done .. the user-facing command is straighforward, and can suppo
 <img class="fragment" style="width:100%;" src="images/chatgpt-datasource.png" />
 
 <aside class="notes">
-referring to the previous talk, unfortunately you shouldn't have great expectations about the data quality, or even availibility when it comes to vendor data sources ...
-
-
 as mentioned previously, data quality and availability on the server details is pretty random .. and I'm not even talking about structured data, but in most cases the data doesn't exist in any form. and before anyone asks .. not, not even ChatGPT knows:
 
 ,,,
@@ -1002,7 +1009,7 @@ so I'm super happy to introduce this cleaned up dataset to you all, which is act
   <ul>
     <li class="fragment">60MiB SQLite</li>
     <li class="fragment">1,120 active servers and their ~135k prices tracked</li>
-    <li class="fragment">~130k measured scores across 24 benchmarks</li>
+    <li class="fragment">~250k measured scores across 24 benchmarks</li>
   </ul>
   <li class="fragment">Thin Python package to keep the data updated from S3.</li>
   <ul>
