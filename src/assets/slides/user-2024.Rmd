@@ -964,7 +964,7 @@ Anyone from Google here today?
 
 ,,,
 
-m2 pricing: look up m1 cpu/ram pricing + add the premium skus and do the math (2 times 2 numbers added and multiplied – involving 5 api lookups)
+m2 pricing: look up m1 cpu/ram pricing + add the premium skus and do the math (two to the power of three numbers multiplied and  added – involving 5 api lookups)
 
 Don’t bother with zones reported that are not existing (us-west8 on May 22 .. edge network?)
 
