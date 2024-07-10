@@ -28,7 +28,7 @@ Screenshots from that page are also included below.
 ## Pricing
 
 The price change between the lowest-end CX servers brings good news:
-the CX22 costs only €0.0052, while the CX21 used to €cost 0.0079 per hour
+the CX22 costs only €0.0052, while the CX21 used to cost €0.0079 per hour
 (excluding VAT and the optional IPv4 pricing):
 
 <div class="text-center m-2.5 mt-8 mb-6">
@@ -161,8 +161,8 @@ performance boost in the new CX products at a lower price 🙌
 ## Further reading
 
 You can read more about the above-mentioned benchmarking methods in our
-<a href="/article/cloud-compute-performance-benchmarks" target="_blank">"
-Unlocking Cloud Compute Performance" blog post</a>.
+<a href="/article/cloud-compute-performance-benchmarks" target="_blank">
+"Unlocking Cloud Compute Performance" blog post</a>.
 
 We are currently working on another blog post to analyze the
 variability of the above-presented performance scores by running
@@ -173,4 +173,4 @@ Once available, this post will be updated.
 Pairwise comparison of the larger CX servers:
 
 - <a href="/compare?instances=W3sidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY3gzMiJ9LHsidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY3g0MSJ9XQ%3D%3D" target="_blank">4 VCPUs</a>
-- <a href="/compare?instances=W3sidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY3g1MiJ9LHsidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY3g1MSJ9LHsidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY3g0MiJ9XQ%3D%3D" target="_blank">8+ VCPUs</a>
+- <a href="/compare?instances=W3sidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY3g0MiJ9LHsidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY3g1MSJ9LHsidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY3g1MiJ9XQ%3D%3D" target="_blank">8+ VCPUs</a>
