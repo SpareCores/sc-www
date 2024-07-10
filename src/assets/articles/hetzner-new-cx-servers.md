@@ -85,8 +85,8 @@ the available memory amount, we assume the below comparisons to be still useful.
 
 Note that the memory module details are rather incomplete in the above table,
 e.g. memory speed or the memory modules' generation (such as `DDR4` VS `DDR5`)
-are not listed because although we run hardware inspector tools on the machines,
-but the hypervisor (QEMU in this case) hides that information from us.
+are not listed, because although we run hardware inspector tools on the machines,
+the hypervisor (QEMU in this case) hides that information from us.
 
 ## Benchmarks
 
