@@ -11,27 +11,25 @@ author: Gergely Daroczi
 tags: [benchmark, performance, score, compute power, hcloud]
 ---
 
-Hetzner Cloud <a href="https://www.hetzner.com/news/new-cx-plans/" target="_blank" rel="noopener">announced</a>
-new cloud plans in the CX line last month, and they also scheduled the deprecation
-of the previous generation of the CX servers by the end of the summer,
-so we were eager to look at the price and expected performance details of
-the old and the new servers at the same time, while we can.
+Hetzner Cloud recently <a href="https://www.hetzner.com/news/new-cx-plans/" target="_blank" rel="noopener">announced</a>
+new cloud plans in the CX line and also scheduled the deprecation
+of the previous generation of the CX servers by the end of the summer.
+We were eager to compare the pricing and expected performance details of
+both the old and the new servers at the same time, while we still could.
 
 Spare Cores makes it easy to compare the pricing, hardware features and
-benchmark scores of any number of servers by selecting those
+benchmark scores of any number of servers. Simply select the servers
 on our <a href="/servers" target="_blank">server listing pages</a>
-(optionally after filtering for e.g. the Hetzner Cloud servers,
-and enabling to also show inactive servers), then clicking the "Compare" button.
-To get you there faster, we have clicked around
-and hereby sharing the direct link to the <a href="/compare?instances=W3sidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY3gyMSJ9LHsidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY3gyMiJ9LHsidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY3B4MTEifSx7InZlbmRvciI6ImhjbG91ZCIsInNlcnZlciI6ImNheDExIn0seyJ2ZW5kb3IiOiJoY2xvdWQiLCJzZXJ2ZXIiOiJjY3gxMyJ9XQ%3D%3D" target="_blank">comparison page of all `hcloud` servers with 2 vCPUs and 2-4 GiB of memory</a>
-(you can find some screenshots included from that page below).
+(e.g. you can filter for the Hetzner Cloud servers,
+and also include  inactive ones), then click the "Compare" button.
+To save you time, we've provided a direct link to the <a href="/compare?instances=W3sidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY3gyMSJ9LHsidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY3gyMiJ9LHsidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY3B4MTEifSx7InZlbmRvciI6ImhjbG91ZCIsInNlcnZlciI6ImNheDExIn0seyJ2ZW5kb3IiOiJoY2xvdWQiLCJzZXJ2ZXIiOiJjY3gxMyJ9XQ%3D%3D" target="_blank">comparison page of all `hcloud` servers with 2 vCPUs and 2-4 GiB of memory</a>.
+Screenshots from that page are also included below.
 
 ## Pricing
 
-Looking at the price change between the lowest end CX servers, it is
-trivial to see the good news: CX22 costs only 0.0052 EUR, while
-CX21 used to cost 0.0079 EUR per hour (not including VAT and the
-optional IPv4 pricing):
+The price change between the lowest-end CX servers brings good news:
+the CX22 costs only €0.0052, while the CX21 used to €cost 0.0079 per hour
+(excluding VAT and the optional IPv4 pricing):
 
 <div class="text-center m-2.5 mt-8 mb-6">
   <img class="zoomin w-full"
@@ -46,29 +44,29 @@ That's a massive 35% cost reduction!
 ## General CPU performance
 
 Still focusing on the first few lines of the above comparison table,
-you can also see that the new CX22 server offers ~10% better
-performance compared to CX21 based on both the single-core and
-multi-core Spare Cores Scores (`SCore`), so when looking at the price
-per performance (`$Core`), the upgrade is even more visible: there's a
+you can also see that the new CX22 server offers approximately 10% better
+performance compared to the CX21 based on both the single-core and
+multi-core Spare Cores Scores (`SCore`). When looking at the price
+per performance (`$Core`), the upgrade is even more evident: there's a
 boost from around 250k/USD to 400k/USD.
 
 Although these derived metrics depend on many uncontrollable factors,
 such as the USD/EUR exchange rate (as "performance per price" is always
-standardized to USD at Spare Cores), or the load of other virtual
-servers running on the same hosts -- repeating the benchmarks on different
-times of the day resulted in very similar scores, and overall results
-proved to be relatively reliable. We also plan to blog about running benchmarks
-on parallel virtual machines and for longer time periods to try to control for the
-neighboring nodes, but more on that later.
+standardized to USD at Spare Cores), and the load of other virtual
+servers running on the same hosts -- repeated benchmarks at different
+times of the day yielded similar scores, and overall results
+proved to be relatively reliable. We plan to blog about running benchmarks
+on parallel virtual machines and for longer time periods to try to account for the
+neighboring node impact, but more on that later.
 
 ## Hardware features
 
-Looking at the CPU features of CX21 and CX22, there are no visible
-differences: both are using shared logical CPU cores of the Intel®
-Xeon® Gold family. We have included a few extra Hetzner Cloud nodes
+There are no visible differences in CPU features between CX21 and CX22;
+both use shared logical CPU cores from the Intel® Xeon® Gold family.
+We included a few extra Hetzner Cloud nodes
 with 2 AMD vCPUs and 2-4 GiB of memory to be able to compare the
-similar instance types from the other product lines as well. Note that
-the CCX13 comes with a dedicated CPU core, unlike any other above-listed
+similar instance types from other product lines as well. Note that
+the CCX13 has a dedicated CPU core, unlike any other above-listed
 servers.
 
 <div class="text-center m-2.5 mt-8 mb-6">
@@ -87,7 +85,7 @@ the available memory amount, we assume the below comparisons to be still useful.
 
 Note that the memory module details are rather incomplete in the above table,
 e.g. memory speed or the memory modules' generation (such as `DDR4` VS `DDR5`)
-are not listed, because although we run hardware inspector tools on the machines,
+are not listed because although we run hardware inspector tools on the machines,
 but the hypervisor (QEMU in this case) hides that information from us.
 
 ## Benchmarks
@@ -95,8 +93,7 @@ but the hypervisor (QEMU in this case) hides that information from us.
 Now the more interesting part!
 
 Let's start by looking at the Geekbench overall scores and the various
-benchmarking workloads both when running on a single core, or all (two)
-available cores:
+benchmarking workloads, both on a single core and all (two) available cores:
 
 <div class="text-center m-2.5 mt-8 mb-6">
   <img class="zoomin w-full"
@@ -106,16 +103,16 @@ available cores:
 </div>
 
 The massive advantage of the dedicated physical CPU core of CCX13 is
-clearly visible on the single-core results, but when running the benchmarks
-on multiple threads, using hyper-threading on that single CPU core lowers
-the difference from the other server types. However, the server with a
+clearly visible in the single-core results. However, when running the benchmarks
+on multiple threads, hyper-threading on that single CPU core lowers
+the difference from the other server types. Nevertheless, the server with a
 dedicated CPU is the clear winner of this round, with the CAX11 being the second.
 
 When focusing on the difference between CX21 and CX22, we can confirm
 the pattern previously seen with the `SCore` results: the new server offering
 has a bit of performance advantage in almost all benchmarking workloads.
 
-CX22 also consistently beats CX21 in our memory bandwidth benchmarks,
+CX22 also consistently outperforms CX21 in our memory bandwidth benchmarks,
 especially with larger block sizes:
 
 <div class="text-center m-2.5 mt-8 mb-6">
@@ -125,7 +122,7 @@ especially with larger block sizes:
     src="/assets/images/blog/hcloud-cx-memory-bandwidth.webp"/>
 </div>
 
-And CX22 is the winner again when looking at the speed of various
+And CX22 is the winner again when it comes to the speed of various
 OpenSSL hash functions and block ciphers:
 
 <div class="text-center m-2.5 mt-8 mb-6">
@@ -135,8 +132,8 @@ OpenSSL hash functions and block ciphers:
     src="/assets/images/blog/hcloud-cx-openssl.webp"/>
 </div>
 
-If you are interested in seeing the actual numbers, click on the "Show details"
-button to expand the benchmark scores in a table:
+You can see the actual numbers by clicking on the "Show details" button
+to expand the benchmark scores in a table:
 
 <div class="text-center m-2.5 mt-8 mb-6">
   <img class="zoomin w-full"
@@ -145,8 +142,8 @@ button to expand the benchmark scores in a table:
     src="/assets/images/blog/hcloud-cx-openssl-table.webp"/>
 </div>
 
-Last but not least, we can see clearly visible differences in speed of
-compression algos between the listed servers:
+Finally, we observed clear differences in the speed of
+compression algorithms between the listed servers:
 
 <div class="text-center m-2.5 mt-8 mb-6">
   <img class="zoomin w-full"
@@ -157,9 +154,9 @@ compression algos between the listed servers:
 
 ## Summary
 
-Overall, even after acknowledging the precision and reliability of the
-actual benchmark scores, we saw a clear trend and very plausible
-performance boost in the new CX products at a cheaper price 🙌
+Overall, despite acknowledging the precision and reliability of the
+benchmark scores, we observed a clear trend and very plausible
+performance boost in the new CX products at a lower price 🙌
 
 ## Further reading
 
@@ -167,10 +164,11 @@ You can read more about the above-mentioned benchmarking methods in our
 <a href="/article/cloud-compute-performance-benchmarks" target="_blank">"
 Unlocking Cloud Compute Performance" blog post</a>.
 
-Another blog post is currently being worked on to analyze the
-variability of the above-presented performance scores by running the
-benchmarks on multiple independent virtual servers at the same time,
-also for a longer period (at least a day) -- once available, this post will be updated.
+We are currently working on another blog post to analyze the
+variability of the above-presented performance scores by running
+benchmarks on multiple independent virtual servers simultaneously
+and for longer periods (at least a day).
+Once available, this post will be updated.
 
 Pairwise comparison of the larger CX servers:
 
