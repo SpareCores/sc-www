@@ -47,6 +47,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
+    let baseUrl = this.SEOHandler.getBaseURL();
     this.route.params.subscribe(params => {
 
       const id = params['id'];
@@ -71,8 +72,6 @@ export class ArticleComponent implements OnInit, OnDestroy {
           { name: this.articleMeta.title, url: `/article/${id}` }
         ];
 
-        let baseUrl = this.SEOHandler.getBaseURL();
-
         this.SEOHandler.updateTitleAndMetaTags(
           this.articleMeta.title,
           this.articleMeta.teaser,
@@ -96,6 +95,25 @@ export class ArticleComponent implements OnInit, OnDestroy {
 
       });
     });
+
+    const script = this.renderer.createElement('script');
+    script.src = 'https://giscus.app/client.js';
+    script.setAttribute('data-repo', 'SpareCores/sc-www');
+    script.setAttribute('data-repo-id', 'R_kgDOLesFQA');
+    script.setAttribute('data-category', 'Blog posts');
+    script.setAttribute('data-category-id', 'DIC_kwDOLesFQM4CgusO');
+    script.setAttribute('data-mapping', 'og:title');
+    script.setAttribute('data-strict', '1');
+    script.setAttribute('data-reactions-enabled', '1');
+    script.setAttribute('data-emit-metadata', '0');
+    script.setAttribute('data-input-position', 'bottom');
+    script.setAttribute('data-theme', baseUrl + '/assets/giscus.css');
+    script.setAttribute('data-lang', 'en');
+    script.crossOrigin = 'anonymous';
+    script.async = true;
+
+    this.renderer.appendChild(document.getElementById('article'), script);
+
   }
 
   ngOnDestroy() {
