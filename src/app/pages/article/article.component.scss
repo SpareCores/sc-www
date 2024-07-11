@@ -1,9 +1,12 @@
-
 a {
   @apply underline decoration-dotted;
 }
 a:hover {
   @apply text-gray-500;
+}
+
+div.giscus {
+  margin-top: 35px;
 }
 
 ::ng-deep .html_content {
