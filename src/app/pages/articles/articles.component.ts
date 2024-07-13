@@ -50,7 +50,7 @@ export class ArticlesComponent implements OnInit {
 
       this.SEOHandler.updateTitleAndMetaTags(
         `${title} Articles - SpareCores`, `View all ${title} articles on SpareCores.`,
-        (category.length ? category + ' ' : '') + `blog posts, articles, guides, tutorials`
+        (category?.length ? category + ' ' : '') + `blog posts, articles, guides, tutorials`
       );
 
     });
