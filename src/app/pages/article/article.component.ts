@@ -121,21 +121,6 @@ export class ArticleComponent implements OnInit, OnDestroy {
     this.SEOHandler.restoreThumbnail();
   }
 
-  convertToJSON(str: string) {
-    const lines = str.split('\n');
-    const result: any = {};
-
-    for (const line of lines) {
-      const [key, ...valueParts] = line.split(':');
-      const value = valueParts.join(':').trim();
-      if(key?.length > 0 && value?.length > 0) {
-        result[key.trim()] = value;
-      }
-    }
-
-    return result;
-  }
-
   openLightbox(imgSrc: string) {
     const album = [{
       src: imgSrc,
