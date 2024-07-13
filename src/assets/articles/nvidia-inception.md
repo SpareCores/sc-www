@@ -6,7 +6,7 @@ date: 2024-07-15
 teaser: "The program benefits boost and extend our performance benchmarking efforts, especially for AI/ML tools with GPUs."
 # 320x220
 image: /assets/images/blog/thumbnails/nvidia-inception-banner.png
-image_alt: Image showing the logos of the NVIDIA Inception program and Spare Cores, next to a laptop with charts on it.
+image_alt: Image showing the logos of the NVIDIA Inception Program and Spare Cores, next to a laptop with charts on it.
 author: Gergely Daroczi
 tags: [nvidia-inception, funding, featured]
 ---
@@ -16,13 +16,13 @@ following <a href="/article/ngi-search-grant" target="_blank">NGI Search funding
 several <a href="/talks" target="_blank">conference talks</a>,
 Spare Cores has achieved another significant milestone:
 we have been accepted into the
-<a href="https://nvda.ws/2BvtUc9" target="_blank" rel="noopener">NVIDIA Inception program</a>,
+<a href="https://nvda.ws/2BvtUc9" target="_blank" rel="noopener">NVIDIA Inception Program</a>,
 which nurtures startups revolutionizing industries with technological advancements 🎉
 
 <div class="text-center m-2.5 mt-8 mb-6">
   <a href="https://nvda.ws/2BvtUc9" target="_blank" rel="noopener">
     <img style="margin:auto;"
-      title="The NVIDIA Inception program"
+      title="The NVIDIA Inception Program"
       alt="NVIDIA Inception program badge"
       src="/assets/images/blog/nvidia-inception-badge.png"/>
   </a>
@@ -40,7 +40,7 @@ machine learning (ML) and artificial intelligence (AI) tools, such as:
 - Ray tracing (e.g. Blender),
 - Measuring the inference speed of open-source LLM models (e.g. LLaMA 3) when generating and processing tokens.
 
-The NVIDIA Inception program will also offer us the opportunity to collaborate with
+The NVIDIA Inception Program will also offer us the opportunity to collaborate with
 industry-leading experts and other AI-driven organizations.
 
 NVIDIA Inception helps startups during critical stages of product development,
