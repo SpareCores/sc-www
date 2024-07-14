@@ -47,7 +47,6 @@ export class ArticleComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    let baseUrl = this.SEOHandler.getBaseURL();
     this.route.params.subscribe(params => {
 
       const id = params['id'];
@@ -76,6 +75,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
           this.articleMeta.title,
           this.articleMeta.teaser,
           this.articleMeta.tags.join(","));
+        let baseUrl = this.SEOHandler.getBaseURL();
         this.SEOHandler.updateThumbnail( baseUrl + this.articleMeta.image);
         this.generateSchemaJSON();
 
@@ -83,11 +83,30 @@ export class ArticleComponent implements OnInit, OnDestroy {
           // Wait for the articleDiv to be rendered
           const checkExist = setInterval(() => {
             if (this.articleDiv) {
+              // attach zoom images on click
               this.renderer.listen(this.articleDiv.nativeElement, 'click', (event) => {
                 if (event.target.tagName === 'IMG' && event.target.classList[0] == 'zoomin') {
                   this.openLightbox(event.target.src);
                 }
               });
+              // initialize giscus comments
+              const script = this.renderer.createElement('script');
+              script.src = 'https://giscus.app/client.js';
+              script.setAttribute('data-repo', 'SpareCores/sc-www');
+              script.setAttribute('data-repo-id', 'R_kgDOLesFQA');
+              script.setAttribute('data-category', 'Blog posts');
+              script.setAttribute('data-category-id', 'DIC_kwDOLesFQM4CgusO');
+              script.setAttribute('data-mapping', 'og:title');
+              script.setAttribute('data-strict', '1');
+              script.setAttribute('data-reactions-enabled', '1');
+              script.setAttribute('data-emit-metadata', '0');
+              script.setAttribute('data-input-position', 'bottom');
+              script.setAttribute('data-theme', baseUrl + '/assets/giscus.css');
+              script.setAttribute('data-lang', 'en');
+              script.crossOrigin = 'anonymous';
+              script.async = true;
+              this.renderer.appendChild(this.articleDiv.nativeElement, script);
+              // stop
               clearInterval(checkExist);
             }
           }, 100);
@@ -95,45 +114,11 @@ export class ArticleComponent implements OnInit, OnDestroy {
 
       });
     });
-
-    const script = this.renderer.createElement('script');
-    script.src = 'https://giscus.app/client.js';
-    script.setAttribute('data-repo', 'SpareCores/sc-www');
-    script.setAttribute('data-repo-id', 'R_kgDOLesFQA');
-    script.setAttribute('data-category', 'Blog posts');
-    script.setAttribute('data-category-id', 'DIC_kwDOLesFQM4CgusO');
-    script.setAttribute('data-mapping', 'og:title');
-    script.setAttribute('data-strict', '1');
-    script.setAttribute('data-reactions-enabled', '1');
-    script.setAttribute('data-emit-metadata', '0');
-    script.setAttribute('data-input-position', 'bottom');
-    script.setAttribute('data-theme', baseUrl + '/assets/giscus.css');
-    script.setAttribute('data-lang', 'en');
-    script.crossOrigin = 'anonymous';
-    script.async = true;
-
-    this.renderer.appendChild(document.getElementById('article'), script);
-
   }
 
   ngOnDestroy() {
     this.SEOHandler.cleanupStructuredData(this.document);
     this.SEOHandler.restoreThumbnail();
-  }
-
-  convertToJSON(str: string) {
-    const lines = str.split('\n');
-    const result: any = {};
-
-    for (const line of lines) {
-      const [key, ...valueParts] = line.split(':');
-      const value = valueParts.join(':').trim();
-      if(key?.length > 0 && value?.length > 0) {
-        result[key.trim()] = value;
-      }
-    }
-
-    return result;
   }
 
   openLightbox(imgSrc: string) {
