@@ -762,6 +762,24 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
       return undefined;
     }
 
+    if(name === 'storages') {
+      let html = '<ul>';
+      (prop as any[]).forEach((s: any, index: number) => {
+        html += `<li>${s.size}GB ${s.storage_type ? s.storage_type : ''}</li>`;
+      });
+      html += '</ul>';
+      return html;
+    }
+
+    if(name === 'gpus') {
+      let html = '<ul>';
+      (prop as any[]).forEach((s: any, index: number) => {
+        html += `<li>${s.model}${s.manufacturer ? (' (' + s.manufacturer + ')') : ''}${s.family ? ' family: ' + s.family + ',' : ''}${s.memory ? ' memory: ' + s.memory + 'MB' : ''}</li>`;
+      });
+      html += '</ul>';
+      return html;
+    }
+
     if( typeof prop === 'number' ) {
       return this.roundBytes(prop, column.unit);
     }
