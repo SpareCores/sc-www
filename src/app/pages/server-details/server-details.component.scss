@@ -58,6 +58,22 @@
   }
 }
 
+#toast-danger {
+  position: fixed;
+  top: 3rem;
+  right: 1rem;
+  z-index: 200;
+  transform: translateX(100%);
+  transition: transform 0.5s ease-out;
+  display: none;
+  /* other styles... */
+}
+
+#toast-danger.show {
+  transform: translateX(0);
+  display: flex;
+}
+
 @media screen and (max-width: 800px) {
 
   .block_half {
@@ -69,5 +85,4 @@
     width: calc(100%);
     margin: auto;
   }
-
 }

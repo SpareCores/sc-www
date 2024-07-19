@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable prefer-const */
-import { Component, ElementRef, Inject, PLATFORM_ID, OnInit, ViewChild, OnDestroy } from '@angular/core';
+import { Component, ElementRef, Inject, PLATFORM_ID, OnInit, ViewChild, OnDestroy, Renderer2 } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { KeeperAPIService } from '../../services/keeper-api.service';
 import { Server, ServerPKsWithPrices, ServerPricePKs, TableServerTableServerGetData } from '../../../../sdk/data-contracts';
@@ -130,8 +130,11 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
   geekbenchHTML: any;
 
+  toastErrorMsg: string = 'Failed to load server data. Please try again later.';
+
   @ViewChild('tooltipDefault') tooltip!: ElementRef;
   @ViewChild('tooltipGeekbench') tooltipGB!: ElementRef;
+  @ViewChild('toastDanger') toastDanger!: ElementRef;
 
   constructor(@Inject(PLATFORM_ID) private platformId: object,
               @Inject(DOCUMENT) private document: Document,
@@ -140,11 +143,13 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
               private SEOHandler: SeoHandlerService,
               private serverCompare: ServerCompareService,
               private router: Router,
+              private renderer: Renderer2,
               private senitizer: DomSanitizer) {
 
   }
 
   ngOnInit() {
+
     const countryIdtoNamePipe = new CountryIdtoNamePipe();
     this.route.params.subscribe(params => {
       const vendor = params['vendor'];
@@ -442,7 +447,13 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
         }
       }).catch((error) => {
         console.error('Failed to load server data:', error);
-        this.router.navigateByUrl('/');
+        if(error?.status === 404) {
+          this.toastErrorMsg = 'Server not found. Please try again later.';
+        }
+        if(error?.status === 500) {
+          this.toastErrorMsg = 'Internal server error. Please try again later.';
+        }
+        this.showToast();
       });
     });
   }
@@ -1250,6 +1261,9 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     }
 
     this.SEOHandler.setupStructuredData(this.document, [JSON.stringify(json)]);
+  }
 
+  showToast() {
+    this.renderer.addClass(this.toastDanger.nativeElement, 'show');
   }
 }
