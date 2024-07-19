@@ -40,10 +40,39 @@ export class MissingBenchmarksComponent {
 
     Promise.all([
       this.keeperAPI.getVendors(),
-      this.keeperAPI.getServers()
+      this.keeperAPI.searchServers({ limit: 10000 })
     ]).then(([vendors, servers]) => {
-      this.vendors = vendors;
-      this.servers = servers;
+      this.vendors = vendors.body.map((vendor: any) => { return {
+          name: vendor.name,
+          id: vendor.vendor_id,
+          servers: 0,
+          missing: 0,
+          evaluated: 0,
+          percentage: 0,
+          missing_servers: []
+        }
+      });
+      this.servers = servers.body;
+
+      this.servers.forEach((server: any) => {
+        let vendor = this.vendors.find((vendor: any) => vendor.id === server.vendor.vendor_id);
+        if(server.score) {
+          vendor.evaluated++;
+        } else {
+          vendor.missing++;
+          vendor.missing_servers.push(server);
+        }
+        vendor.servers++;
+      });
+
+      this.vendors.forEach((vendor: any) => {
+        if(vendor.servers > 0) {
+          vendor.percentage = Math.round((vendor.missing / vendor.servers) * 100);
+        }
+      });
+
+      //console.log(this.servers);
+      //console.log(this.vendors);
     });
   }
 
