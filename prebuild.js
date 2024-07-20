@@ -98,7 +98,8 @@ https.get('https://keeper.sparecores.net/table/server', (res) => {
       });
       streamToPromise(Readable.from(links).pipe(sitemapStream)).then((data) =>
       {
-        data.toString()
+        data.toString();
+        /*
         fs.writeFileSync('./src/sitemap.xml',
           data.toString()
             .replaceAll('<url>', '\n\n  <url>')
@@ -106,6 +107,10 @@ https.get('https://keeper.sparecores.net/table/server', (res) => {
             .replaceAll('<loc>', '\n    <loc>')
             .replaceAll('<changefreq>', '\n    <changefreq>')
             .replaceAll('<priority>', '\n    <priority>'));
+        */
+
+        const xmlFormatter = require('xml-formatter');
+        fs.writeFileSync('./src/sitemap.xml', xmlFormatter(data.toString(), { indentation: '  ', collapseContent: true }));
       }
       )
       //.then(xml2js.parseStringPromise)
