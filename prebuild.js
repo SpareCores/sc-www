@@ -72,6 +72,7 @@ const links = [
   { url: 'regions',  changefreq: 'monthly', priority: 0.8  },
   { url: 'legal/tos',  changefreq: 'monthly', priority: 0.3  },
   { url: 'articles',  changefreq: 'weekly', priority: 0.8  },
+  { url: 'talks',  changefreq: 'monthly', priority: 0.5  },
 ];
 
 allArticles.forEach((article) => {
