@@ -23,5 +23,7 @@ export const routes: Routes = [
   { path: 'vendors', loadComponent: () => import('./pages/vendors/vendors.component').then(m => m.VendorsComponent)},
   { path: 'datacenters', redirectTo: 'regions' },
 
+  { path: 'survey/:id', loadComponent: () => import('./pages/survey-fill/survey-fill.component').then(m => m.SurveyFillComponent)},
+
   { path: '**', redirectTo: '' }
 ];
