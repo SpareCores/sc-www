@@ -20,6 +20,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { ReduceUnitNamePipe } from '../../pipes/reduce-unit-name.pipe';
 import { CountryIdtoNamePipe } from '../../pipes/country-idto-name.pipe';
 import { ServerCompareService } from '../../services/server-compare.service';
+import { Location } from '@angular/common';
 
 Chart.register(annotationPlugin);
 
@@ -144,6 +145,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
               private serverCompare: ServerCompareService,
               private router: Router,
               private renderer: Renderer2,
+              private location: Location,
               private senitizer: DomSanitizer) {
 
   }
@@ -355,6 +357,13 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
             this.generateBenchmarkCharts();
 
+            setTimeout(() => {
+              const showDetails = this.route.snapshot.queryParams['showDetails'];
+              if(showDetails) {
+                this.openBox('details', false);
+              }
+            }, 100);
+
             // https://github.com/chartjs/Chart.js/issues/5387
             // TODO: check and remove later
             document.addEventListener('visibilitychange', event => {
@@ -485,7 +494,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
       ${server.display_name}${appendVendor ? " (" + server.vendor_id + ")" : ""}</a>`)
   }
 
-  openBox(boxId: string) {
+  openBox(boxId: string, updateURL: boolean = true) {
     const el = document.getElementById(boxId);
     if(el) {
       el.classList.toggle('open');
@@ -497,6 +506,14 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     const el3 = document.getElementById(boxId+'_less');
     if(el3) {
       el3.classList.toggle('hidden');
+    }
+
+    if(updateURL){
+      if(el?.classList.contains('open')) {
+        this.location.go(`server/${this.serverDetails.vendor_id}/${this.serverDetails.api_reference}`, 'showDetails=true');
+      } else {
+        this.location.go(`server/${this.serverDetails.vendor_id}/${this.serverDetails.api_reference}`);
+      }
     }
   }
 
@@ -785,7 +802,9 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     if(name === 'gpus') {
       let html = '<ul>';
       (prop as any[]).forEach((s: any, index: number) => {
-        html += `<li>${s.model}${s.manufacturer ? (' (' + s.manufacturer + ')') : ''}${s.family ? ' family: ' + s.family + ',' : ''}${s.memory ? ' memory: ' + s.memory + 'MB' : ''}</li>`;
+        html += `<li>${s.manufacturer || ""} ${s.family || ""} ${s.model || ""} `;
+        html += `(${s.memory ? 'Memory amount: ' + s.memory + ' MB' : ''}, ${s.firmware_version ? 'Firmware version: ' + s.firmware_version + ' ' : ''}, ${s.bios_version ? 'BIOS version: ' + s.bios_version + ' ' : ''}, ${s.graphics_clock ? 'Clock rate: ' + s.graphics_clock + ' Mhz' : ''})`;
+        html += '</li>'
       });
       html += '</ul>';
       return html;

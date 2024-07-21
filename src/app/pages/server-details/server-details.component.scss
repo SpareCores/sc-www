@@ -74,6 +74,12 @@
   display: flex;
 }
 
+::ng-deep .property_value {
+  ul {
+    list-style-type: disc;
+  }
+}
+
 @media screen and (max-width: 800px) {
 
   .block_half {
