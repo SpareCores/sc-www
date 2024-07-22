@@ -77,6 +77,10 @@
 ::ng-deep .property_value {
   ul {
     list-style-type: disc;
+    list-style-position: inside;
+    li {
+      margin-bottom: 0.25rem;
+    }
   }
 }
 

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { LucideAngularModule } from 'lucide-angular';
 
 export type FAQQuestion = {
@@ -18,8 +18,10 @@ export class FaqComponent {
 
   @Input() item!: string;
   @Input() FAQQuestions!: any[];
+  @Input() activeFAQ: number = -1;
 
-  activeFAQ: number = -1;
+  @Output() activeFAQChanged: EventEmitter<number> = new EventEmitter<number>();
+
 
   toggleFAQ(i: number) {
     if(this.activeFAQ === i) {
@@ -27,6 +29,7 @@ export class FaqComponent {
     } else {
       this.activeFAQ = i;
     }
+    this.activeFAQChanged.emit(this.activeFAQ);
   }
 
   FAQIcon(i: number) {

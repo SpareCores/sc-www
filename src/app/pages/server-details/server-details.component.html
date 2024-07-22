@@ -72,7 +72,7 @@
         <h2 class="text-3xl font-bold"> Specifications </h2>
       </div>
       <div class="block_half" id="details">
-        <h3 class="text-2xl" >Server Details</h3>
+        <h3 class="text-2xl">Server Details</h3>
         <table class="items_table" *ngFor="let item of instancePropertyCategories">
           <thead *ngIf="item.properties.length">
             <tr>
@@ -468,8 +468,10 @@
 
     <div *ngIf="serverDetails" class="my-8 w-1/2 m-auto">
       <app-faq
+        [activeFAQ]="activeFAQ"
         [FAQQuestions]="faqs"
         [item]="serverDetails.display_name"
+        (activeFAQChanged)="activeFAQChanged($event)"
       ></app-faq>
     </div>
 

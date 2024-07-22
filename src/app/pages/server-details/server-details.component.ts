@@ -133,6 +133,8 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
   toastErrorMsg: string = 'Failed to load server data. Please try again later.';
 
+  activeFAQ: number = -1;
+
   @ViewChild('tooltipDefault') tooltip!: ElementRef;
   @ViewChild('tooltipGeekbench') tooltipGB!: ElementRef;
   @ViewChild('toastDanger') toastDanger!: ElementRef;
@@ -143,10 +145,9 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
               private keeperAPI: KeeperAPIService,
               private SEOHandler: SeoHandlerService,
               private serverCompare: ServerCompareService,
-              private router: Router,
               private renderer: Renderer2,
               private location: Location,
-              private senitizer: DomSanitizer) {
+              private sanitizer: DomSanitizer) {
 
   }
 
@@ -359,6 +360,12 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
             setTimeout(() => {
               const showDetails = this.route.snapshot.queryParams['showDetails'];
+              const activeFAQ = this.route.snapshot.queryParams['openFAQ'];
+
+              if(activeFAQ) {
+                this.activeFAQ = parseInt(activeFAQ);
+              }
+
               if(showDetails) {
                 this.openBox('details', false);
               }
@@ -461,6 +468,8 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
         }
         if(error?.status === 500) {
           this.toastErrorMsg = 'Internal server error. Please try again later.';
+        } else {
+          this.toastErrorMsg = 'Failed to load server data. Please try again later.';
         }
         this.showToast();
       });
@@ -803,7 +812,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
       let html = '<ul>';
       (prop as any[]).forEach((s: any, index: number) => {
         html += `<li>${s.manufacturer || ""} ${s.family || ""} ${s.model || ""} `;
-        html += `(${s.memory ? 'Memory amount: ' + s.memory + ' MB' : ''}, ${s.firmware_version ? 'Firmware version: ' + s.firmware_version + ' ' : ''}, ${s.bios_version ? 'BIOS version: ' + s.bios_version + ' ' : ''}, ${s.graphics_clock ? 'Clock rate: ' + s.graphics_clock + ' Mhz' : ''})`;
+        html += `(${s.memory ? 'Memory amount: ' + s.memory + ' MB, ' : ''}${s.firmware_version ? 'Firmware version: ' + s.firmware_version + ', ' : ''}${s.bios_version ? 'BIOS version: ' + s.bios_version + ', ' : ''}${s.graphics_clock ? 'Clock rate: ' + s.graphics_clock + ' Mhz' : ''})`;
         html += '</li>'
       });
       html += '</ul>';
@@ -1154,7 +1163,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
     this.geekbenchHTML += `</ul>`;
 
-    this.geekbenchHTML = this.senitizer.bypassSecurityTrustHtml(this.geekbenchHTML);
+    this.geekbenchHTML = this.sanitizer.bypassSecurityTrustHtml(this.geekbenchHTML);
 
     if(dataSet && dataSet.length) {
       let labels: string[] = [];
@@ -1284,5 +1293,18 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
   showToast() {
     this.renderer.addClass(this.toastDanger.nativeElement, 'show');
+    setTimeout(() => {
+      this.renderer.removeClass(this.toastDanger.nativeElement, 'show');
+    }, 10000);
   }
+
+  activeFAQChanged(event: any) {
+    this.activeFAQ = event;
+    if(this.activeFAQ > -1) {
+      this.location.go(`server/${this.serverDetails.vendor_id}/${this.serverDetails.api_reference}`, `openFAQ=${event}`);
+    } else {
+      this.location.go(`server/${this.serverDetails.vendor_id}/${this.serverDetails.api_reference}`);
+    }
+  }
+
 }
