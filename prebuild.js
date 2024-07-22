@@ -65,18 +65,18 @@ fs.writeFileSync('./src/assets/slides/slides.json', JSON.stringify(data));
 const sitemapStream = new SitemapStream({ hostname: 'https://sparecores.com/' });
 
 const links = [
-  { url: '',  changefreq: 'monthly', priority: 0.7  },
-  { url: 'servers',  changefreq: 'daily', priority: 1.0  },
-  { url: 'server_prices',  changefreq: 'daily', priority: 1.0  },
-  { url: 'vendors',  changefreq: 'monthly', priority: 0.8  },
-  { url: 'regions',  changefreq: 'monthly', priority: 0.8  },
-  { url: 'legal/tos',  changefreq: 'monthly', priority: 0.3  },
-  { url: 'articles',  changefreq: 'weekly', priority: 0.8  },
-  { url: 'talks',  changefreq: 'monthly', priority: 0.5  },
+  { url: '',  changefreq: 'monthly', priority: 1.0  },
+  { url: 'servers',  changefreq: 'hourly', priority: 0.75  },
+  { url: 'server_prices',  changefreq: 'hourly', priority: 0.75  },
+  { url: 'vendors',  changefreq: 'monthly', priority: 0.5  },
+  { url: 'regions',  changefreq: 'weekly', priority: 0.5  },
+  { url: 'legal/tos',  changefreq: 'monthly', priority: 0.10  },
+  { url: 'articles',  changefreq: 'weekly', priority: 0.75  },
+  { url: 'talks',  changefreq: 'monthly', priority: 0.75  },
 ];
 
 allArticles.forEach((article) => {
-  links.push({ url: `article/${article.filename}`, changefreq: 'monthly', priority: 0.5 });
+  links.push({ url: `article/${article.filename}`, changefreq: 'yearly', priority: 0.6 });
 });
 
 // get https://keeper.sparecores.net/table/server using http
@@ -100,16 +100,6 @@ https.get('https://keeper.sparecores.net/table/server', (res) => {
       streamToPromise(Readable.from(links).pipe(sitemapStream)).then((data) =>
       {
         data.toString();
-        /*
-        fs.writeFileSync('./src/sitemap.xml',
-          data.toString()
-            .replaceAll('<url>', '\n\n  <url>')
-            .replaceAll('</url>', '\n  </url>')
-            .replaceAll('<loc>', '\n    <loc>')
-            .replaceAll('<changefreq>', '\n    <changefreq>')
-            .replaceAll('<priority>', '\n    <priority>'));
-        */
-
         const xmlFormatter = require('xml-formatter');
         fs.writeFileSync('./src/sitemap.xml', xmlFormatter(data.toString(), { indentation: '  ', collapseContent: true }));
       }
