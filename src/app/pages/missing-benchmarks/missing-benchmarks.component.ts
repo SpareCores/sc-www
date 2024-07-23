@@ -1,12 +1,10 @@
-import { Component, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { CommonModule, DOCUMENT } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
-import { ActivatedRoute, RouterModule } from '@angular/router';
-import { DomSanitizer } from '@angular/platform-browser';
+import { RouterModule } from '@angular/router';
 import { KeeperAPIService } from '../../services/keeper-api.service';
 import { SeoHandlerService } from '../../services/seo-handler.service';
-import { ServerCompareService } from '../../services/server-compare.service';
 
 @Component({
   selector: 'app-missing-benchmarks',
@@ -15,7 +13,7 @@ import { ServerCompareService } from '../../services/server-compare.service';
   templateUrl: './missing-benchmarks.component.html',
   styleUrl: './missing-benchmarks.component.scss'
 })
-export class MissingBenchmarksComponent {
+export class MissingBenchmarksComponent implements OnInit {
 
   breadcrumbs: BreadcrumbSegment[] = [
     { name: 'Home', url: '/' },
