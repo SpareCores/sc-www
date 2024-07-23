@@ -186,6 +186,14 @@ export class LandingpageComponent implements OnInit {
             spinButton.style.animation = 'press 1.0s';
           }
 
+          const spinners = ['ring1', 'ring2', 'ring3'];
+          spinners.forEach((spinner, i) => {
+            const el = document.getElementById(spinner);
+            if (el) {
+              el.style.animation = `${Math.random() > 0.5 ? 'spin-slot' : 'spin-back-slot'} ${(3.5 + i * 0.25)}s ease-in-out`;
+            }
+          });
+
           this.spinAnim(servers.body, true);
         }, startingDelay);
       }
@@ -236,6 +244,14 @@ export class LandingpageComponent implements OnInit {
       spinButton.style.animation = 'press 1.0s';
     }
 
+    const spinners = ['ring1', 'ring2', 'ring3'];
+    spinners.forEach((spinner, i) => {
+      const el = document.getElementById(spinner);
+      if (el) {
+        el.style.animation = `${Math.random() > 0.5 ? 'spin-slot' : 'spin-back-slot'} ${(3.5 + i * 0.25)}s ease-in-out`;
+      }
+    });
+
     this.keeperAPI.searchServerPrices({vcpus_min: this.cpuCount, memory_min: this.ramCount, limit: 100}).then(servers => {
       this.spinAnim(servers.body);
     }).catch(err => {
@@ -253,14 +269,6 @@ export class LandingpageComponent implements OnInit {
     if(!isFake) {
       this.spinnerClicked = true;
     }
-
-    const spinners = ['ring1', 'ring2', 'ring3'];
-    spinners.forEach((spinner, i) => {
-      const el = document.getElementById(spinner);
-      if (el) {
-        el.style.animation = `${Math.random() > 0.5 ? 'spin-slot' : 'spin-back-slot'} ${(3.5 + i * 0.25)}s ease-in-out`;
-      }
-    });
 
     this.isSpinning = true;
 
@@ -309,6 +317,7 @@ export class LandingpageComponent implements OnInit {
         spinButton.style.animation = 'none';
       }
 
+      const spinners = ['ring1', 'ring2', 'ring3'];
       spinners.forEach(spinner => {
         const el = document.getElementById(spinner);
         if (el) {
