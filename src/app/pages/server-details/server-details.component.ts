@@ -824,7 +824,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
             }
             extraData += `${field_names[i]}: ${s[fields[i]]}`;
           }
-        };
+        }
         if(extraData.length > 0) {
           html += extraData + ')';
         }
