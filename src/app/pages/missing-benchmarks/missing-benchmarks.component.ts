@@ -55,10 +55,14 @@ export class MissingBenchmarksComponent {
       this.servers = servers.body;
 
       this.servers.forEach((server: any) => {
+
         let vendor = this.vendors.find((vendor: any) => vendor.id === server.vendor.vendor_id);
         if(server.score) {
           vendor.evaluated++;
         } else {
+          server.reason = server.price ?
+            'We have run into a quota limit while running this server, or faced other technical issues.' :
+            'This server is very likely not be GA (General Availability), as we have not found public pricing information.';
           vendor.missing++;
           vendor.missing_servers.push(server);
         }
