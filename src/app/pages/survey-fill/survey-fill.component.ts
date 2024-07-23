@@ -46,11 +46,9 @@ export class SurveyFillComponent {
     this.http.get('assets/surveys/' + id + '.json').subscribe((data: any) => {
       this.surveyModel = new Model(data);
 
-
       this.surveyModel.applyTheme(surveyTheme);
 
       this.surveyModel.onComplete.add(this.submit.bind(this));
-
     });
 
   }
