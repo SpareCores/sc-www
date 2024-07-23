@@ -812,7 +812,23 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
       let html = '<ul>';
       (prop as any[]).forEach((s: any, index: number) => {
         html += `<li>${s.manufacturer || ""} ${s.family || ""} ${s.model || ""} `;
-        html += `(${s.memory ? 'Memory amount: ' + s.memory + ' MB, ' : ''}${s.firmware_version ? 'Firmware version: ' + s.firmware_version + ', ' : ''}${s.bios_version ? 'BIOS version: ' + s.bios_version + ', ' : ''}${s.graphics_clock ? 'Clock rate: ' + s.graphics_clock + ' Mhz' : ''})`;
+        const fields = ['memory', 'firmware_version', 'bios_version', 'graphics_clock'];
+        const field_names = ['Memory amount', 'Firmware version', 'BIOS version', 'Clock rate'];
+        let extraData = '';
+        for(let i = 0; i < fields.length; i++) {
+          if(s[fields[i]]) {
+            if(extraData.length > 0) {
+              extraData += ', ';
+            } else {
+              extraData += '(';
+            }
+            extraData += `${field_names[i]}: ${s[fields[i]]}`;
+          }
+        };
+        if(extraData.length > 0) {
+          html += extraData + ')';
+        }
+
         html += '</li>'
       });
       html += '</ul>';
