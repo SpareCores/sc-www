@@ -132,10 +132,17 @@
                     </td>
                     <td *ngIf="column.type === 'processor'">
                       <div class="text-sm text-white">{{item.vcpus}} vCPUs ({{item.cpu_architecture}})</div>
-                      <div
-                        *ngIf="item.cpu_cores && item.cpu_speed"
-                        class="text-xs text-white flex gap-1">
-                        <span>{{item.cpu_cores}} cores &#64; {{item.cpu_speed}} GHz</span>
+                      <div class="flex gap-1">
+                        <div
+                          *ngIf="item.cpu_cores && item.cpu_speed"
+                          class="text-xs text-white flex gap-1">
+                          <span>{{item.cpu_cores}} cores &#64; {{item.cpu_speed}} GHz</span>
+                        </div>
+                        <div
+                          *ngIf="item.cpu_allocation && item.cpu_allocation !== 'Dedicated'"
+                          class="text-xs text-white flex gap-1">
+                          <span>{{item.cpu_allocation}}</span>
+                        </div>
                       </div>
                     </td>
                     <td *ngIf="column.type === 'score'">
