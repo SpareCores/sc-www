@@ -1,12 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, Inject, PLATFORM_ID } from '@angular/core';
 import { SurveyModule } from 'survey-angular-ui';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { Model } from "survey-core";
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import "survey-core/defaultV2.css";
 import { surveyTheme } from './survey_theme';
+import { AnalyticsService } from '../../services/analytics.service';
+import { SeoHandlerService } from '../../services/seo-handler.service';
 
 @Component({
   selector: 'app-survey-fill',
@@ -21,10 +23,17 @@ export class SurveyFillComponent {
         { name: 'Survey', url: '/survey' },
     ];
 
-
   surveyModel!: Model;
 
-  constructor(private http: HttpClient,
+  tracker: any;
+  trackPing: number = 0;
+  startedAt: number = 0;
+  prevData: any;
+
+  constructor(@Inject(PLATFORM_ID) private platformId: object,
+      private http: HttpClient,
+      private SEOhandler: SeoHandlerService,
+      private analytics: AnalyticsService,
       private route: ActivatedRoute) {
 
   }
@@ -34,8 +43,7 @@ export class SurveyFillComponent {
     let id = this.route.snapshot.paramMap.get('id');
 
     if(id) {
-      this.setup(id);
-
+        this.setup(id);
     } else {
       console.log('no id');
       window.open('/', '_self');
@@ -44,17 +52,49 @@ export class SurveyFillComponent {
 
   setup(id: string) {
     this.http.get('assets/surveys/' + id + '.json').subscribe((data: any) => {
-      this.surveyModel = new Model(data);
 
-      this.surveyModel.applyTheme(surveyTheme);
+      this.SEOhandler.updateTitleAndMetaTags(data.title  + ' - SpareCores', data.description, '');
 
-      this.surveyModel.onComplete.add(this.submit.bind(this));
+      if (isPlatformBrowser(this.platformId)) {
+        this.surveyModel = new Model(data);
+
+        this.surveyModel.applyTheme(surveyTheme);
+
+        this.surveyModel.onComplete.add(this.submit.bind(this));
+
+        this.tracker = setInterval(this.trackProgress.bind(this), 10000);
+        this.startedAt = Date.now();
+      }
     });
-
   }
 
   submit (sender: any) {
-    console.log('submit', sender.data);
+    this.analytics.trackEvent('survey', {
+      startedAt: this.startedAt,
+      finishedAt: Date.now(),
+      isComplete: true,
+      counter: this.trackPing,
+      payload: sender.data
+    });
+    clearInterval(this.tracker);
+  }
+
+  isBrowser() {
+    return isPlatformBrowser(this.platformId);
+  }
+
+  trackProgress() {
+    const actualData = JSON.stringify(this.surveyModel?.data);
+    if (this.prevData === actualData) {
+      return;
+    }
+    this.prevData = actualData;
+
+    this.analytics.trackEvent('survey', {
+      startedAt: this.startedAt,
+      counter: this.trackPing,
+      payload: this.surveyModel.data
+    });
   }
 
 }

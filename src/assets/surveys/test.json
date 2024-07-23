@@ -1,4 +1,7 @@
 {
+	 "title": "Spare Cores Use Cases Questionnaire",
+	  "description": "We kindly ask for your support in sharing feedback about containerized batch jobs and microservices in the cloud.",
+	  "completedHtml": "<h3>Thank you for your feedback</h3>",
 	"elements": [{
 	"name": "FirstName",
 	"title": "Enter your first name:",
