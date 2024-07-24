@@ -471,7 +471,9 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
         } else {
           this.toastErrorMsg = 'Failed to load server data. Please try again later.';
         }
-        this.showToast();
+        if(isPlatformBrowser(this.platformId)) {
+          this.showToast();
+        }
       });
     });
   }
@@ -1309,9 +1311,6 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
   showToast() {
     this.renderer.addClass(this.toastDanger.nativeElement, 'show');
-    setTimeout(() => {
-      this.renderer.removeClass(this.toastDanger.nativeElement, 'show');
-    }, 10000);
   }
 
   activeFAQChanged(event: any) {
