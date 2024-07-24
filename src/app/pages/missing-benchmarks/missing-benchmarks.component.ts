@@ -71,6 +71,13 @@ export class MissingBenchmarksComponent implements OnInit {
         if(vendor.servers > 0) {
           vendor.percentage = Math.round((vendor.missing / vendor.servers) * 100);
         }
+        if(vendor.missing_servers.length > 0) {
+          vendor.missing_servers.sort((a: any, b: any) => {
+            if(a.name < b.name) return -1;
+            if(a.name > b.name) return 1;
+            return 0;
+          });
+        }
       });
 
       //console.log(this.servers);

@@ -67,41 +67,41 @@
       </tbody>
     </table>
 
-    <table class="items_table">
-      <thead>
-        <tr>
-          <th>
-            <div class="flex gap-1">
-              SERVER
-            </div>
-          </th>
-          <th>
-            <div class="flex gap-1">
-              MISSING REASON
-            </div>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <ng-container *ngFor="let item of vendors">
-          <tr>
-            <td class="full-caps text-2xl" colspan="2"> {{item.name}} </td>
-          </tr>
-          <tr *ngFor="let server of item.missing_servers">
-            <td>
-              <div class="pl-2 flex gap-1">
-                {{server.name}}
-              </div>
-            </td>
-            <td>
-              <div class="flex gap-1">
-                {{server.reason}}
-              </div>
-            </td>
-          </tr>
-        </ng-container>
-      </tbody>
-    </table>
+    <div *ngFor="let item of vendors">
+      <div class="flex flex-col gap-2 mb-8" *ngIf="item.missing_servers?.length">
+        <h2 class="text-3xl mb-2" > {{item.name}} </h2>
+        <table class="items_table">
+          <thead>
+            <tr>
+              <th>
+                <div class="flex gap-1">
+                  SERVER
+                </div>
+              </th>
+              <th>
+                <div class="flex gap-1">
+                  MISSING REASON
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let server of item.missing_servers">
+              <td>
+                <div class="pl-2 flex gap-1">
+                  {{server.name}}
+                </div>
+              </td>
+              <td>
+                <div class="flex gap-1">
+                  {{server.reason}}
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
 
   </div>
 </div>
