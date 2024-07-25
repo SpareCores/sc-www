@@ -90,7 +90,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
                   this.openLightbox(event.target.src);
                 }
               });
-              initGiscus(this.renderer, this.articleDiv, baseUrl);
+              initGiscus(this.renderer, this.articleDiv, baseUrl, 'Blog posts', 'DIC_kwDOLesFQM4CgusO', 'og:title');
 
               clearInterval(checkExist);
             }
