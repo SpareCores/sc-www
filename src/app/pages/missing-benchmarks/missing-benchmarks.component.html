@@ -1,0 +1,107 @@
+<div class="w-full bg-primary">
+  <div class="content pt-16 pb-16 text-white flex flex-col gap-8">
+    <app-breadcrumbs [segments]="breadcrumbs"></app-breadcrumbs>
+    <h1 class="text-4xl font-bold">Benchmark Completion Report</h1>
+    <div class="text-white text-xl pr-16">
+      Although we try hard, we were not able to start some instances for hardware inspections and to run our benchmark workloads. You can find a breakdown of these servers, including the likely root cause for the missing data.
+    </div>
+
+    <table class="items_table">
+      <thead>
+        <tr>
+          <th >
+            <div class="flex gap-1">
+              VENDOR
+            </div>
+          </th>
+          <th>
+            <div class="flex gap-1">
+              SERVERS
+            </div>
+          </th>
+          <th>
+            <div class="flex gap-1">
+              EVALUATED
+            </div>
+          </th>
+          <th>
+            <div class="flex gap-1">
+            MISSING DATA
+            </div>
+          </th>
+          <th>
+            <div class="flex gap-1">
+              MISSING%
+            </div>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of vendors">
+          <td>
+            <div class="flex gap-1">
+              {{item.name}}
+            </div>
+          </td>
+          <td>
+            <div class="flex gap-1">
+              {{item.servers}}
+            </div>
+          </td>
+          <td>
+            <div class="flex gap-1">
+              {{item.evaluated}}
+            </div>
+          </td>
+          <td>
+            <div class="flex gap-1">
+              {{item.missing}}
+            </div>
+          </td>
+          <td>
+            <div class="flex gap-1">
+              {{item.percentage}}
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngFor="let item of vendors">
+      <div class="flex flex-col gap-2 mb-8" *ngIf="item.missing_servers?.length">
+        <h2 class="text-3xl mb-2" > {{item.name}} </h2>
+        <table class="items_table">
+          <thead>
+            <tr>
+              <th>
+                <div class="flex gap-1">
+                  SERVER
+                </div>
+              </th>
+              <th>
+                <div class="flex gap-1">
+                  MISSING REASON
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let server of item.missing_servers">
+              <td>
+                <div class="pl-2 flex gap-1">
+                  {{server.name}}
+                </div>
+              </td>
+              <td>
+                <div class="flex gap-1">
+                  {{server.reason}}
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
