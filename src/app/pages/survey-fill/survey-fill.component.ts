@@ -1,4 +1,4 @@
-import { Component, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { SurveyModule } from 'survey-angular-ui';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
@@ -17,7 +17,7 @@ import { SeoHandlerService } from '../../services/seo-handler.service';
   templateUrl: './survey-fill.component.html',
   styleUrl: './survey-fill.component.scss'
 })
-export class SurveyFillComponent {
+export class SurveyFillComponent implements OnInit {
     breadcrumbs: BreadcrumbSegment[] = [
         { name: 'Home', url: '/' },
         { name: 'Survey', url: '/survey' },
@@ -79,7 +79,7 @@ export class SurveyFillComponent {
 
     const randomUUID = () => {
       return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
         return v.toString(16);
       });
     }
