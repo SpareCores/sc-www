@@ -73,7 +73,16 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   regionFilters: any[] = [];
 
   similarByFamily: Server[] = [];
+
   similarByPerformance: Server[] = [];
+  similarByScoreSingle: Server[] = [];
+  similarByScoreMulti: Server[] = [];
+  similarByPerformancePerPrice: Server[] = [];
+
+  similarOptions: any[] = [
+    {name: 'By performance', key: 'performance'}
+  ];
+  selectedSimilarOption: any = this.similarOptions[0];
 
   instancePropertyCategories: any[] = [
     { name: 'General', category: 'meta', properties: [] },
@@ -291,6 +300,10 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
           this.similarByFamily = [];
           this.similarByPerformance = [];
+          this.similarByScoreSingle = [];
+          this.similarByScoreMulti = [];
+          this.similarByPerformancePerPrice = [];
+
           this.keeperAPI.getServers().then((data) => {
             if(data?.body) {
               const allServers = data.body as TableServerTableServerGetData;
@@ -300,10 +313,11 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
                     this.similarByFamily.push(s);
                   }
                 } else {
-                  if(
-                    (this.serverDetails.vcpus && s.vcpus === this.serverDetails.vcpus)
-                      && s.api_reference !== this.serverDetails.api_reference) {
+                  if(s.api_reference !== this.serverDetails.api_reference) {
+                    if(this.serverDetails.vcpus && s.vcpus === this.serverDetails.vcpus) {
                       this.similarByPerformance.push(s);
+                      console.log('similarByPerformance', s);
+                    }
                   }
                 }
               });
@@ -1234,4 +1248,9 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     this.SEOHandler.setupStructuredData(this.document, [JSON.stringify(json)]);
 
   }
+
+  selectSimilarServerOption(event: any) {
+    this.selectedSimilarOption = event;
+  }
+
 }
