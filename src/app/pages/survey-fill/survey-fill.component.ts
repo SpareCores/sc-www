@@ -76,6 +76,29 @@ export class SurveyFillComponent {
       counter: this.trackPing,
       payload: sender.data
     });
+
+    const randomUUID = () => {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      });
+    }
+    const filename = `id_${this.analytics.getId() || randomUUID()}_timestamp_${this.startedAt}`;
+    const payload = JSON.stringify({
+      startedAt: this.startedAt,
+      finishedAt: Date.now(),
+      isComplete: true,
+      counter: this.trackPing,
+      payload: sender.data
+    });
+
+    try {
+      this.http.put('https://eibaishapeexooyahs2chei9gohd4che.s3.amazonaws.com/' + filename, payload).subscribe(() => {
+      });
+    } catch (e) {
+      console.error('Failed to save survey data', e);
+    }
+
     clearInterval(this.tracker);
   }
 
