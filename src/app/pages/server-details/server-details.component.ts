@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable prefer-const */
-import { Component, ElementRef, Inject, PLATFORM_ID, OnInit, ViewChild, OnDestroy } from '@angular/core';
+import { Component, ElementRef, Inject, PLATFORM_ID, OnInit, ViewChild, OnDestroy, Renderer2 } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { KeeperAPIService } from '../../services/keeper-api.service';
 import { Server, ServerPKsWithPrices, ServerPricePKs, TableServerTableServerGetData } from '../../../../sdk/data-contracts';
@@ -20,6 +20,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { ReduceUnitNamePipe } from '../../pipes/reduce-unit-name.pipe';
 import { CountryIdtoNamePipe } from '../../pipes/country-idto-name.pipe';
 import { ServerCompareService } from '../../services/server-compare.service';
+import { initGiscus } from '../../tools/initGiscus';
 
 Chart.register(annotationPlugin);
 
@@ -132,6 +133,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
   @ViewChild('tooltipDefault') tooltip!: ElementRef;
   @ViewChild('tooltipGeekbench') tooltipGB!: ElementRef;
+  @ViewChild('giscusParent') giscusParent!: ElementRef;
 
   constructor(@Inject(PLATFORM_ID) private platformId: object,
               @Inject(DOCUMENT) private document: Document,
@@ -140,6 +142,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
               private SEOHandler: SeoHandlerService,
               private serverCompare: ServerCompareService,
               private router: Router,
+              private renderer: Renderer2,
               private senitizer: DomSanitizer) {
 
   }
@@ -360,10 +363,14 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
                     chart.update();
                 });
               }
-          })
+            })
 
             setTimeout(() => {
               initFlowbite();
+
+              let baseUrl = this.SEOHandler.getBaseURL();
+              initGiscus(this.renderer, this.giscusParent, baseUrl);
+
             }, 2000);
 
             const interval = setInterval(() => {

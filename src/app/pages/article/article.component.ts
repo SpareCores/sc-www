@@ -11,6 +11,7 @@ import { Lightbox, LightboxModule } from 'ngx-lightbox';
 import * as yaml from 'js-yaml';
 import { REQUEST } from '../../../express.tokens';
 import { Request } from 'express';
+import { initGiscus } from '../../tools/initGiscus';
 
 @Component({
   selector: 'app-article',
@@ -89,24 +90,8 @@ export class ArticleComponent implements OnInit, OnDestroy {
                   this.openLightbox(event.target.src);
                 }
               });
-              // initialize giscus comments
-              const script = this.renderer.createElement('script');
-              script.src = 'https://giscus.app/client.js';
-              script.setAttribute('data-repo', 'SpareCores/sc-www');
-              script.setAttribute('data-repo-id', 'R_kgDOLesFQA');
-              script.setAttribute('data-category', 'Blog posts');
-              script.setAttribute('data-category-id', 'DIC_kwDOLesFQM4CgusO');
-              script.setAttribute('data-mapping', 'og:title');
-              script.setAttribute('data-strict', '1');
-              script.setAttribute('data-reactions-enabled', '1');
-              script.setAttribute('data-emit-metadata', '0');
-              script.setAttribute('data-input-position', 'bottom');
-              script.setAttribute('data-theme', baseUrl + '/assets/giscus.css');
-              script.setAttribute('data-lang', 'en');
-              script.crossOrigin = 'anonymous';
-              script.async = true;
-              this.renderer.appendChild(this.articleDiv.nativeElement, script);
-              // stop
+              initGiscus(this.renderer, this.articleDiv, baseUrl);
+
               clearInterval(checkExist);
             }
           }, 100);
