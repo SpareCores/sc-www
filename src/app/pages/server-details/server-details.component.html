@@ -466,13 +466,16 @@
 
     </div>
 
-    <div *ngIf="serverDetails" class="my-8 w-1/2 m-auto">
+    <div *ngIf="serverDetails" #giscusParent class="my-8 w-1/2 m-auto">
       <app-faq
         [activeFAQ]="activeFAQ"
         [FAQQuestions]="faqs"
         [item]="serverDetails.display_name"
         (activeFAQChanged)="activeFAQChanged($event)"
       ></app-faq>
+
+      <div class="giscus"></div>
+
     </div>
 
   </div>

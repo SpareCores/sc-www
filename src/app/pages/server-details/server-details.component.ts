@@ -20,6 +20,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { ReduceUnitNamePipe } from '../../pipes/reduce-unit-name.pipe';
 import { CountryIdtoNamePipe } from '../../pipes/country-idto-name.pipe';
 import { ServerCompareService } from '../../services/server-compare.service';
+import { initGiscus } from '../../tools/initGiscus';
 import { Location } from '@angular/common';
 
 Chart.register(annotationPlugin);
@@ -137,6 +138,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
   @ViewChild('tooltipDefault') tooltip!: ElementRef;
   @ViewChild('tooltipGeekbench') tooltipGB!: ElementRef;
+  @ViewChild('giscusParent') giscusParent!: ElementRef;
   @ViewChild('toastDanger') toastDanger!: ElementRef;
 
   constructor(@Inject(PLATFORM_ID) private platformId: object,
@@ -145,10 +147,10 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
               private keeperAPI: KeeperAPIService,
               private SEOHandler: SeoHandlerService,
               private serverCompare: ServerCompareService,
+              private router: Router,
               private renderer: Renderer2,
               private location: Location,
               private sanitizer: DomSanitizer) {
-
   }
 
   ngOnInit() {
@@ -381,10 +383,14 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
                     chart.update();
                 });
               }
-          })
+            })
 
             setTimeout(() => {
               initFlowbite();
+
+              let baseUrl = this.SEOHandler.getBaseURL();
+              initGiscus(this.renderer, this.giscusParent, baseUrl, 'Servers', 'DIC_kwDOLesFQM4CgznN', 'pathname');
+
             }, 2000);
 
             const interval = setInterval(() => {
