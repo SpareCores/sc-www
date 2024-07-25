@@ -72,7 +72,7 @@
         <h2 class="text-3xl font-bold"> Specifications </h2>
       </div>
       <div class="block_half" id="details">
-        <h3 class="text-2xl" >Server Details</h3>
+        <h3 class="text-2xl">Server Details</h3>
         <table class="items_table" *ngFor="let item of instancePropertyCategories">
           <thead *ngIf="item.properties.length">
             <tr>
@@ -94,7 +94,9 @@
                   </lucide-icon>
                 </div>
               </td>
-              <td> {{getProperty(property)}} </td>
+              <td>
+                <div class="property_value" [innerHTML]="getProperty(property)" ></div>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -464,11 +466,16 @@
 
     </div>
 
-    <div *ngIf="serverDetails" class="my-8 w-1/2 m-auto">
+    <div *ngIf="serverDetails" #giscusParent class="my-8 w-1/2 m-auto">
       <app-faq
+        [activeFAQ]="activeFAQ"
         [FAQQuestions]="faqs"
         [item]="serverDetails.display_name"
+        (activeFAQChanged)="activeFAQChanged($event)"
       ></app-faq>
+
+      <div class="giscus"></div>
+
     </div>
 
   </div>
@@ -540,4 +547,14 @@
   style="opacity: 0; display: none;"
   class="absolute z-10 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-secondary border border-solid border-emerald-400 rounded-lg">
   <div [innerHTML]="geekbenchHTML" ></div>
+</div>
+
+<div
+  id="toast-danger" #toastDanger
+  class="flex items-center w-full max-w-xs p-4 mb-4 text-white bg-yellow-400 rounded-lg border boder-solid border-red-400" role="alert">
+  <div class="ms-3 text-sm font-normal">{{toastErrorMsg}}</div>
+  <button type="button" class="ms-auto -mx-1.5 -my-1.5 bg-yellow-400 text-white hover:text-gray-200 rounded-lg p-1.5 inline-flex items-center justify-center h-8 w-8 " data-dismiss-target="#toast-danger" aria-label="Close">
+      <span class="sr-only">Close</span>
+      <lucide-icon name="x"></lucide-icon>
+  </button>
 </div>

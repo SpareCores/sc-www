@@ -116,6 +116,7 @@ export class LandingpageComponent implements OnInit {
   isSpinning = false;
   spinnerClicked = false;
   hasRealValues = false;
+  spinStart: number = 0;
 
   constructor(@Inject(PLATFORM_ID) private platformId: object,
               private keeperAPI: KeeperAPIService,
@@ -186,6 +187,16 @@ export class LandingpageComponent implements OnInit {
             spinButton.style.animation = 'press 1.0s';
           }
 
+          const spinners = ['ring1', 'ring2', 'ring3'];
+          spinners.forEach((spinner, i) => {
+            const el = document.getElementById(spinner);
+            if (el) {
+              el.style.animation = `${Math.random() > 0.5 ? 'spin-slot' : 'spin-back-slot'} ${(3.5 + i * 0.25)}s ease-in-out`;
+            }
+          });
+
+          this.spinStart = Date.now();
+
           this.spinAnim(servers.body, true);
         }, startingDelay);
       }
@@ -236,6 +247,16 @@ export class LandingpageComponent implements OnInit {
       spinButton.style.animation = 'press 1.0s';
     }
 
+    const spinners = ['ring1', 'ring2', 'ring3'];
+    spinners.forEach((spinner, i) => {
+      const el = document.getElementById(spinner);
+      if (el) {
+        el.style.animation = `${Math.random() > 0.5 ? 'spin-slot' : 'spin-back-slot'} ${(3.5 + i * 0.25)}s ease-in-out`;
+      }
+    });
+
+    this.spinStart = Date.now();
+
     this.keeperAPI.searchServerPrices({vcpus_min: this.cpuCount, memory_min: this.ramCount, limit: 100}).then(servers => {
       this.spinAnim(servers.body);
     }).catch(err => {
@@ -254,15 +275,11 @@ export class LandingpageComponent implements OnInit {
       this.spinnerClicked = true;
     }
 
-    const spinners = ['ring1', 'ring2', 'ring3'];
-    spinners.forEach((spinner, i) => {
-      const el = document.getElementById(spinner);
-      if (el) {
-        el.style.animation = `${Math.random() > 0.5 ? 'spin-slot' : 'spin-back-slot'} ${(3.5 + i * 0.25)}s ease-in-out`;
-      }
-    });
-
     this.isSpinning = true;
+
+    const spinAnimDiff = Date.now() - this.spinStart;
+    const spinAnimEnd = Math.max(0, 4200 - spinAnimDiff);
+    const spinAnimFraction = Math.max(0, 50 - (spinAnimDiff / 50));
 
     const animPriceStart = servers[servers.length-1].price;
     const animPriceEnd = servers[0].price;
@@ -279,7 +296,7 @@ export class LandingpageComponent implements OnInit {
         price = animPriceEnd;
       }
       this.priceValue = '$' + Math.round(price * 10000) / 10000;
-    }, 50);
+    }, spinAnimFraction);
 
     setTimeout(() => {
       const indices = [0, 1, 35];
@@ -301,7 +318,7 @@ export class LandingpageComponent implements OnInit {
           city: top3server[i].zone?.display_name
         };
       });
-    }, 500);
+    }, 200);
 
     setTimeout(() => {
       const spinButton = document.getElementById('spin_button');
@@ -309,6 +326,7 @@ export class LandingpageComponent implements OnInit {
         spinButton.style.animation = 'none';
       }
 
+      const spinners = ['ring1', 'ring2', 'ring3'];
       spinners.forEach(spinner => {
         const el = document.getElementById(spinner);
         if (el) {
@@ -320,6 +338,6 @@ export class LandingpageComponent implements OnInit {
       this.isSpinning = false;
       this.hasRealValues = true;
       this.analyticsService.trackEvent('slot machine finished', {'autostarted': isFake});
-    }, 4200)
+    }, spinAnimEnd)
   }
 }
