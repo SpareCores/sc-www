@@ -1,11 +1,7 @@
-::ng-deep .html_content {
-  hr {
-    margin: 1rem;
-  }
-}
 
-hr {
-  margin: 1rem;
+
+:host ::ng-deep hr {
+  margin: 1rem !important;
 }
 
 .content_outer {
