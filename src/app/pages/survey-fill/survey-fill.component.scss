@@ -1,9 +1,7 @@
-
-
 :host ::ng-deep hr {
   margin: 1rem !important;
 }
 
 .content_outer {
-  min-height: 100vh;
+  min-height: calc(100vh - 250px);
 }
