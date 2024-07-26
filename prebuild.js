@@ -89,6 +89,7 @@ const links = [
   { url: 'server_prices',  changefreq: 'hourly', priority: 0.75  },
   { url: 'vendors',  changefreq: 'monthly', priority: 0.5  },
   { url: 'regions',  changefreq: 'weekly', priority: 0.5  },
+  { url: 'legal',  changefreq: 'monthly', priority: 0.10  },
   { url: 'legal/privacy-policy',  changefreq: 'monthly', priority: 0.10  },
   { url: 'legal/terms-of-service',  changefreq: 'monthly', priority: 0.10  },
   { url: 'articles',  changefreq: 'weekly', priority: 0.75  },
