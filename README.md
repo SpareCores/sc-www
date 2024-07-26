@@ -18,6 +18,10 @@ provided `.env.example` template file.
 You also need to provide your own Terms of Service and Privacy Policy
 documents as a markdown file at the `src/assets/TOS.md` path.
 
+Survey.js JSON files can be placed under `src/assets/surveys` for
+serving under the `/survey/{filename}` path. Note that you might need
+to adjust how the results are being stored.
+
 Optionally, you can also link a Posthog project to anonymously track
 page visits, clicks etc via the following environment variables:
 
