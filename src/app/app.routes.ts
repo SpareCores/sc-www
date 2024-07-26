@@ -18,7 +18,7 @@ export const routes: Routes = [
 
   { path: 'talks', loadComponent: () => import('./pages/talks/talks.component').then(m => m.TalksComponent)},
 
-  { path: 'legal/tos', loadComponent: () => import('./pages/tos/tos.component').then(m => m.TOSComponent)},
+  { path: 'legal/:id', loadComponent: () => import('./pages/tos/tos.component').then(m => m.TOSComponent)},
 
   { path: 'regions', loadComponent: () => import('./pages/regions/regions.component').then(m => m.RegionsComponent)},
   { path: 'vendors', loadComponent: () => import('./pages/vendors/vendors.component').then(m => m.VendorsComponent)},
