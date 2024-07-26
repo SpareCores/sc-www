@@ -1,0 +1,33 @@
+<div class="w-full bg-primary">
+  <div class="content pt-16 pb-16">
+    <app-breadcrumbs [segments]="breadcrumbs"></app-breadcrumbs>
+
+    <div class="flex flex-col mt-8 text-white">
+      <h1 class="font-semibold text-3xl mb-4"> Spare Cores Legal Documnents </h1>
+      <div class="text-white text-xl pr-16 mb-4">
+        Find below the list of Legal Documents published by Spare Cores:
+      </div>
+      <div class="w-full flex flex-col gap-4 px-6 py-4">
+        <table class="items_table">
+          <thead>
+            <tr>
+              <th>TITLE</th>
+              <th>PUBLISH DATE</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of docs">
+              <td>
+                <a routerLink="/legal/{{item.filename}}" target="_blank" rel="noopener">
+                  {{ item.title }}
+                </a>
+              </td>
+              <td>{{ item.date | timeToShortDate }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>

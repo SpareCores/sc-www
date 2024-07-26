@@ -20,7 +20,8 @@ export class TOSComponent implements OnInit {
   articleBody: any;
 
   breadcrumbs: BreadcrumbSegment[] = [
-    { name: 'Home', url: '/' }
+    { name: 'Home', url: '/' },
+    { name: 'Legal', url: '/legal' }
   ];
 
   constructor(
@@ -49,6 +50,7 @@ export class TOSComponent implements OnInit {
 
         this.breadcrumbs = [
           { name: 'Home', url: '/' },
+          { name: 'Legal', url: '/legal' },
           { name: data.title, url: `/legal/${id}` }
         ];
       });

@@ -27,6 +27,12 @@ export type SlidesMeta = {
   filename: string;
 }
 
+export type LegalMeta = {
+  title: string;
+  date: Date;
+  filename: string;
+};
+
 @Injectable({
   providedIn: 'root'
 })
@@ -50,5 +56,10 @@ export class ArticlesService {
   async getSlides(): Promise<SlidesMeta[]> {
     const slides = await firstValueFrom(this.http.get(`./assets/slides/slides.json`));
     return slides as SlidesMeta[];
+  }
+
+  async getLegalDocuments(): Promise<LegalMeta[]> {
+    const slides = await firstValueFrom(this.http.get(`./assets/legal/legal-documents.json`));
+    return slides as LegalMeta[];
   }
 }
