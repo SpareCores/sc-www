@@ -93,7 +93,7 @@ export class SurveyFillComponent implements OnInit {
     });
 
     try {
-      this.http.put('https://eibaishapeexooyahs2chei9gohd4che.s3.amazonaws.com/' + filename, payload).subscribe(() => {
+      this.http.put('https://eibaishapeexooyahs2chei9gohd4che.s3.eu-central-1.amazonaws.com/' + filename, payload).subscribe(() => {
       });
     } catch (e) {
       console.error('Failed to save survey data', e);
