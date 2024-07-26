@@ -64,7 +64,6 @@ fs.writeFileSync('./src/assets/slides/slides.json', JSON.stringify(data));
 dirPath = path.join(__dirname, './src/assets/legal');
 files = fs.readdirSync(dirPath);
 
-// extract metadata from the '*.Rmd' files and sort by date
 data = files
   .filter((file) => file.endsWith('.md'))
   .map((file) => {
@@ -75,12 +74,8 @@ data = files
     filename: path.parse(file).name
   }
   });
-
-
-data = data.sort((a, b) => new Date(b.date) - new Date(a.date));
-
+data = data.sort((a, b) => new Date(a.priority) - new Date(b.priority));
 fs.writeFileSync('./src/assets/legal/legal-documents.json', JSON.stringify(data));
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // generate sitemap
