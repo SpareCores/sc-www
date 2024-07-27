@@ -41,7 +41,7 @@ The content provided in this repository are licensed under
 CC-BY-SA-4.0, especially the below files:
 
 - the markdown files under the root folder,
-- the images files under `src/assets/iamges`,
+- the images files under `src/assets/images`,
 - the markdown blog posts under `src/assets/articles`,
 
 A copy of the "Creative Commons Attribution-ShareAlike 4.0"
