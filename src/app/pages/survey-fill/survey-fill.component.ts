@@ -69,9 +69,10 @@ export class SurveyFillComponent implements OnInit {
   }
 
   submit (sender: any) {
-    this.analytics.trackEvent('survey', {
+    this.analytics.trackEvent('survey submit', {
       startedAt: this.startedAt,
       finishedAt: Date.now(),
+      duration: Date.now() - this.startedAt,
       isComplete: true,
       counter: this.trackPing,
       payload: sender.data
@@ -87,8 +88,10 @@ export class SurveyFillComponent implements OnInit {
     const payload = JSON.stringify({
       startedAt: this.startedAt,
       finishedAt: Date.now(),
+      duration: Date.now() - this.startedAt,
       isComplete: true,
       counter: this.trackPing,
+      referrer: document.referrer,
       payload: sender.data
     });
 
@@ -113,7 +116,7 @@ export class SurveyFillComponent implements OnInit {
     }
     this.prevData = actualData;
 
-    this.analytics.trackEvent('survey', {
+    this.analytics.trackEvent('survey autosave', {
       startedAt: this.startedAt,
       counter: this.trackPing,
       payload: this.surveyModel.data
