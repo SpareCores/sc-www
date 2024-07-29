@@ -1,13 +1,32 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { KeeperAPIService } from '../../services/keeper-api.service';
 import { OrderDir, TableRegionTableRegionGetData } from '../../../../sdk/data-contracts';
 import { CountryIdtoNamePipe } from '../../pipes/country-idto-name.pipe';
 import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
 import { Router, RouterModule } from '@angular/router';
+import * as d3 from 'd3';
+
+declare var Datamap: any;
+
+const colors = [
+  '#3B82F6',
+  '#F87171',
+  '#FBBF24',
+  '#F472B6',
+  '#34D399',
+  '#E5E7EB',
+  '#38BDF8',
+  '#FACC15',
+  '#F87171',
+  '#A3E635',
+  '#818CF8',
+  '#94A3B8'
+];
+
 
 @Component({
   selector: 'app-regions',
@@ -37,6 +56,7 @@ export class RegionsComponent implements OnInit {
   orderDir: OrderDir | null = null;
 
   constructor(
+    @Inject(PLATFORM_ID) private platformId: object,
     private SEOHandler: SeoHandlerService,
     private API: KeeperAPIService,
     private router: Router
@@ -52,6 +72,51 @@ export class RegionsComponent implements OnInit {
     this.API.getVendors().then(vendors => {
       this.vendors = vendors.body;
     });
+
+    if (isPlatformBrowser(this.platformId)) {
+
+      Promise.all([
+        this.API.getRegions(),
+        this.API.getVendors()
+      ]).then(([regions, vendors]) => {
+        this.regions = regions.body;
+        this.vendors = vendors.body;
+
+        let element = document.getElementById("datamapdiv");
+
+        let fills: any = {
+          defaultFill: '#ABDDA4'
+        };
+
+        this.vendors.forEach((vendor, index) => {
+          fills[vendor.vendor_id] = colors[index % colors.length];
+        });
+
+        var bubble_map = new Datamap({
+          element: element,
+          geographyConfig: {
+            popupOnHover: false,
+            highlightOnHover: false
+          },
+          fills: fills
+        });
+
+        bubble_map.bubbles(
+          this.regions.map(region => {
+            return {
+              name: `${region.display_name} (${this.getVendorName(region.vendor_id)}) `,
+              radius: 5,
+              country: region.country_id,
+              significance: region.display_name,
+              date: '2021-01-01',
+              fillKey: region.vendor_id,
+              latitude: region.lat,
+              longitude: region.lon
+          }})
+        );
+      });
+    }
+
   }
 
   getVendorName(vendorId: string): string {
