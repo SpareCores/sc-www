@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA, Component, Inject, PLATFORM_ID, OnInit } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, Component, Inject, PLATFORM_ID, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ArticleMeta, ArticlesService } from '../../services/articles.service';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { KeeperAPIService } from '../../services/keeper-api.service';
@@ -23,11 +23,18 @@ import { AnalyticsService } from '../../services/analytics.service';
 })
 export class LandingpageComponent implements OnInit {
 
+  vendors: any[] = [
+    'Google Cloud Platform (Done)',
+    'Amazon Web Services (Done)',
+    'Hetnzer Cloud (Done)',
+    'Digital Ocean (Planned)',
+    'Vultr (Planned)',
+    'Linode (Planned)',
+    'UpCloud (Planned)',
+    'IBM Cloud (Planned)',
+  ];
+
   features: any[] = [
-    {
-      count: '3',
-      text: '(out of 8 planned) vendors'
-    },
     {
       count: '217',
       text: 'availability zones'
@@ -117,6 +124,8 @@ export class LandingpageComponent implements OnInit {
   spinnerClicked = false;
   hasRealValues = false;
   spinStart: number = 0;
+
+  @ViewChild('tooltipVendors') tooltip!: ElementRef;
 
   constructor(@Inject(PLATFORM_ID) private platformId: object,
               private keeperAPI: KeeperAPIService,
@@ -339,5 +348,23 @@ export class LandingpageComponent implements OnInit {
       this.hasRealValues = true;
       this.analyticsService.trackEvent('slot machine finished', {'autostarted': isFake});
     }, spinAnimEnd)
+  }
+
+  showTooltip(el: any) {
+    const tooltip = this.tooltip.nativeElement;
+    const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+    tooltip.style.left = `${el.target.getBoundingClientRect().left - 25}px`;
+    tooltip.style.top = `${el.target.getBoundingClientRect().bottom + 5 + scrollPosition}px`;
+
+    tooltip.style.display = 'block';
+    tooltip.style.opacity = '1';
+    console.log('show tooltip');
+  }
+
+  hideTooltip() {
+    const tooltip = this.tooltip.nativeElement;
+    tooltip.style.display = 'none';
+    tooltip.style.opacity = '0';
+    console.log('hide tooltip');
   }
 }
