@@ -16,7 +16,7 @@ with some even achieving production/stable status (as typically defined in
 <a href="https://martin-thoma.com/software-development-stages/" target="_blank" rel="noopener">software development</a>),
 they are now deemed "feature complete". We have started
 usability testing of our homepage and
-are eagerly seeking feedback on our other component as well.
+are eagerly seeking feedback on our other components as well.
 This is why we have begun attending and [presenting at conferences](/article/upcoming-conferences-2024-Q3)
 over the past few weeks.
 
