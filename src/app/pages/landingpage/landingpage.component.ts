@@ -24,14 +24,15 @@ import { AnalyticsService } from '../../services/analytics.service';
 export class LandingpageComponent implements OnInit {
 
   vendors: any[] = [
-    'Google Cloud Platform (Done)',
     'Amazon Web Services (Done)',
-    'Hetnzer Cloud (Done)',
-    'Digital Ocean (Planned)',
+    'Google Cloud Platform (Done)',
+    'Hetzner Cloud (Done)',
+    'Microsoft Azure (Planned)',
+    'Oracle Cloud Infrastructure (Planned)',
+    'Scaleway (Planned)',
+    'Alibaba Cloud (Planned)',
+    'OVH Cloud (Planned)',
     'Vultr (Planned)',
-    'Linode (Planned)',
-    'UpCloud (Planned)',
-    'IBM Cloud (Planned)',
   ];
 
   features: any[] = [
