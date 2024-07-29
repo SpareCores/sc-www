@@ -169,6 +169,12 @@
                   <td [colSpan]="2" >
                     <h3 class="text-xl font-semibold flex gap-2 items-center">{{category.name}}
                       <lucide-icon
+                        name="circle-arrow-up"
+                        class="h-4 w-4 text-gray-200"
+                        (mouseenter)="showTooltip($event, 'Higher is better')"
+                        (mouseleave)="hideTooltip()">
+                      </lucide-icon>
+                      <lucide-icon
                         *ngIf="category.id === 'geekbench'"
                         name="info"
                         class="h-4 w-4 text-gray-200"
