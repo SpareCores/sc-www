@@ -1,23 +1,95 @@
 
+
 ::ng-deep .html_content {
   h1, h2, h3, h4, h5, h6 {
-    @apply font-bold text-emerald-400 mb-2;
+    @apply font-bold text-emerald-400 my-4;
+  }
+  h1 {
+    @apply text-4xl;
+  }
+  h2 {
+    @apply text-2xl;
+    @apply my-10;
   }
 
   a {
     @apply underline decoration-dotted;
   }
+  a:hover {
+    @apply text-gray-500;
+  }
 
   li {
     @apply list-disc ml-4;
+    @apply text-lg;
+    @apply my-1;
+    @apply ml-8;
   }
 
   p {
-    @apply mb-2;
+    @apply my-10;
+    @apply text-lg;
+  }
+
+  pre {
+    @apply bg-secondary;
+    padding: 10px 15px;
+    margin: 20px 10px;
+    border: 1px solid #34D399;
+    border-radius: 10px;
+    code {
+      padding: 0px;
+    }
+  }
+
+  code {
+    @apply bg-secondary;
+    padding: 2px 5px;
+  }
+
+  blockquote {
+    border-left: 1px solid #34D399;
+    padding: 0px 10px 0px 10px;
+    margin: 10px;
   }
 
   ul {
     @apply mb-2;
   }
+
+  img.zoomin {
+    cursor: zoom-in;
+  }
+
+  table {
+    @apply mx-auto;
+    @apply mb-2;
+
+    thead {
+      @apply border-b border-emerald-400 border-solid;
+      th {
+        @apply px-5 py-3 font-normal text-xs;
+      }
+    }
+
+    tbody {
+      tr:nth-child(2n+1) {
+        @apply bg-primary;
+      }
+      tr:nth-child(2n) {
+        @apply bg-secondary;
+      }
+
+      tr {
+        td {
+          @apply px-5 py-3 text-sm;
+          a:hover {
+            opacity: 0.5;
+          }
+        }
+      }
+    }
+  }
+
 
 }
