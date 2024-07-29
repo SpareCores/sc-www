@@ -8,9 +8,8 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
 import { Router, RouterModule } from '@angular/router';
-import * as d3 from 'd3';
 
-declare var Datamap: any;
+declare let Datamap: any;
 
 const colors = [
   '#3B82F6',
@@ -26,7 +25,6 @@ const colors = [
   '#818CF8',
   '#94A3B8'
 ];
-
 
 @Component({
   selector: 'app-regions',
@@ -92,7 +90,7 @@ export class RegionsComponent implements OnInit {
           fills[vendor.vendor_id] = colors[index % colors.length];
         });
 
-        var bubble_map = new Datamap({
+        let bubble_map = new Datamap({
           element: element,
           geographyConfig: {
             popupOnHover: false,
