@@ -1,0 +1,12 @@
+:host ::ng-deep {
+  hr {
+    margin: 1rem !important;
+  }
+  label.sd-rating__item-star svg {
+    stroke: #34d399;
+  }
+}
+
+.content_outer {
+  min-height: calc(100vh - 250px);
+}

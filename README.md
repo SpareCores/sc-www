@@ -23,6 +23,10 @@ Blog posts are written as markdown files with YAML front matter
 (title, date, teaser, image, image_alt, author, tags) under the
 `src/assets/articles` path.
 
+Survey.js JSON files can be placed under `src/assets/surveys` for
+serving under the `/survey/{filename}` path. Note that you might need
+to adjust how the results are being stored.
+
 Optionally, you can also link a Posthog project to anonymously track
 page visits, clicks etc via the following environment variables:
 
