@@ -34,6 +34,7 @@
     "js-yaml": "^4.1.0",
     "lucide-angular": "^0.361.0",
     "ng2-charts": "^6.0.1",
+    "ngx-google-analytics": "^14.0.1",
     "ngx-lightbox": "^3.0.0",
     "ngx-markdown": "^17.2.1",
     "posthog-js": "^1.132.2",
