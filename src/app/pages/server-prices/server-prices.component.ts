@@ -239,7 +239,7 @@ export class ServerPricesComponent implements OnInit {
 
       this.refreshColumns(false);
 
-      this._searchServers(true);
+      this._searchServers(false);
     });
 
     if(isPlatformBrowser(this.platformId)) {
@@ -400,7 +400,9 @@ export class ServerPricesComponent implements OnInit {
       });
 
       if(updateTotalCount) {
-        this.totalPages = Math.ceil(parseInt(servers?.headers?.get('x-total-count') || '0') / this.limit);
+        this.totalPages = Math.max(this.page, Math.ceil(parseInt(servers?.headers?.get('x-total-count') || '0') / this.limit));
+      } else {
+        this.totalPages = this.page + Math.floor(this.servers.length / this.limit) * 2;
       }
     }).catch(err => {
       console.error(err);
