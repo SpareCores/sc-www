@@ -36,7 +36,8 @@
             ],
             "styles": [
               "src/styles.scss",
-              "./node_modules/ngx-lightbox/lightbox.css"
+              "./node_modules/ngx-lightbox/lightbox.css",
+              "node_modules/survey-core/defaultV2.min.css"
             ],
             "scripts": [
               "node_modules/flowbite/dist/flowbite.min.js",

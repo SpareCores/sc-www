@@ -3,8 +3,9 @@
     <app-breadcrumbs [segments]="breadcrumbs"></app-breadcrumbs>
 
     <div class="py-12 px-12 mx-auto" style="max-width: 750px;" *ngIf="articleBody">
-      <h1 class="text-emerald-400 text-3xl font-bold mb-2"> Term of Service </h1>
+      <h1 class="text-emerald-400 text-3xl font-bold mb-2"> {{articleMeta.title}} </h1>
       <div class="text-white html_content" [innerHTML]="articleBody"></div>
+      <div class="w-full text-right mt-4 text-white" > Last updated: {{articleMeta.date | timeToShortDate}} </div>
     </div>
 
     </div>
