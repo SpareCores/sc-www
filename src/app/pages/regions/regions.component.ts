@@ -96,6 +96,12 @@ export class RegionsComponent implements OnInit {
             popupOnHover: false,
             highlightOnHover: false
           },
+          bubblesConfig: {
+            fillOpacity: 1,
+            borderOpacity: 0,
+            highlightFillColor: '#34d399',
+            highlightBorderOpacity: 0,
+          },
           fills: fills
         });
 
