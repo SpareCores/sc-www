@@ -83,7 +83,7 @@ export class RegionsComponent implements OnInit {
         let element = document.getElementById("datamapdiv");
 
         let fills: any = {
-          defaultFill: '#ABDDA4'
+          defaultFill: '#06263a'
         };
 
         this.vendors.forEach((vendor, index) => {
@@ -99,10 +99,17 @@ export class RegionsComponent implements OnInit {
           fills: fills
         });
 
+        console.log(this.regions);
+
         bubble_map.bubbles(
           this.regions.map(region => {
             return {
-              name: `${region.display_name} (${this.getVendorName(region.vendor_id)}) `,
+              name: `${region.display_name}`,
+              region: region.region_id,
+              vendor: region.vendor_id,
+              founding_year: region.founding_year,
+              green_energy: region.green_energy,
+              location: `${region.lat},${region.lon}`,
               radius: 5,
               country: region.country_id,
               significance: region.display_name,
@@ -110,11 +117,29 @@ export class RegionsComponent implements OnInit {
               fillKey: region.vendor_id,
               latitude: region.lat,
               longitude: region.lon
-          }})
+          }}),
+          {
+            popupTemplate: this.popupTemplate.bind(this)
+          }
         );
       });
     }
+  }
 
+  popupTemplate(geo: any, data: any) {
+    let countryName = new CountryIdtoNamePipe().transform(data.country);
+    let html = `<div class="hoverinfo"> <ul>`;
+    html += `<li>Region ID: ${data.country}</li>`;
+    html += `<li>Region name: ${data.name}</li>`;
+    html += `<li>Country: ${countryName}</li>`;
+    html += `<li>Vendor: ${this.getVendorName(data.vendor)}</li>`;
+    if(data.founding_year) {
+      html += `<li>Founding year: ${data.founding_year}</li>`;
+    }
+    html += `<li>Green energy: ${data.green_energy ? '✅' : '🔴'}</li>`;
+    html += `</ul> </div>`;
+    console.log(html);
+    return html;
   }
 
   getVendorName(vendorId: string): string {
