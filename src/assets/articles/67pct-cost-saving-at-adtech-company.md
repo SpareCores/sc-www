@@ -8,7 +8,7 @@ teaser: "Case Study: reducing monthly cloud expenses by $3k via migrating from A
 image: /assets/images/blog/thumbnails/xkcd-1205-is_it_worth_the_time-cropped.jpg
 image_alt: Is it worth the time? XKCD comic.
 author: Gergely Daroczi
-tags: [case-study, aws, spot, featured]
+tags: [case-study, aws, spot]
 ---
 
 Some of our team members previously worked together at an adtech

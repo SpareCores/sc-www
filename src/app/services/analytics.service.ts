@@ -41,8 +41,11 @@ export class AnalyticsService {
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
-
     this.googleAnalytics.pageView(url);
+  }
+  
+  public getId() {
+    return posthog.get_distinct_id();
   }
 
 }
