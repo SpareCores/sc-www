@@ -65,9 +65,25 @@
                 <a class="underline decoration-dotted" href="/server/{{item.vendor_id}}/{{item.api_reference}}" target="_blank">
                   {{toUpper(item.display_name)}}
                 </a>
-                <div class="text-emerald-400 text-xs" *ngIf="isBestPrice(item)" > BEST PRICE</div>
-                <div class="text-emerald-400 text-xs" *ngIf="isBestSSCore(item)" > BEST VALUE</div>
-                <div class="text-emerald-400 text-xs" *ngIf="getBecnchmarkStyle(item, true) !== ''" > BEST PERFORMANCE</div>
+                <div class="flex gap-2" >
+                  <div
+                    class="text-emerald-400 text-xl"
+                    (mouseenter)="showTooltip($event, 'Lowest price')"
+                    (mouseleave)="hideTooltip()"
+                    *ngIf="isBestPrice(item)" >💰
+                  </div>
+                  <div class="text-emerald-400 text-xl"
+                    (mouseenter)="showTooltip($event, 'Best value for price')"
+                    (mouseleave)="hideTooltip()"
+                    *ngIf="isBestSSCore(item)" >🥇
+                  </div>
+                  <div class="text-emerald-400 text-xl"
+                    (mouseenter)="showTooltip($event, 'Top performance')"
+                    (mouseleave)="hideTooltip()"
+                    *ngIf="getBecnchmarkStyle(item, true) !== ''" >
+                    💪
+                  </div>
+                </div>
               </div>
               </th>
             </tr>
