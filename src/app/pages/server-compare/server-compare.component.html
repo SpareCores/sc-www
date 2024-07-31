@@ -60,10 +60,15 @@
             <tr>
               <th style="max-width: 250px; width: 250px">
               </th>
-              <th *ngFor="let item of servers" [style]="getStyle()">
+              <th *ngFor="let item of servers" [style]="getStyle()" class="align-baseline">
+                <div class="flex flex-col gap-1" >
                 <a class="underline decoration-dotted" href="/server/{{item.vendor_id}}/{{item.api_reference}}" target="_blank">
                   {{toUpper(item.display_name)}}
                 </a>
+                <div class="text-emerald-400 text-xs" *ngIf="isBestPrice(item)" > BEST PRICE</div>
+                <div class="text-emerald-400 text-xs" *ngIf="isBestSSCore(item)" > BEST VALUE</div>
+                <div class="text-emerald-400 text-xs" *ngIf="getBecnchmarkStyle(item, true) !== ''" > BEST PERFORMANCE</div>
+              </div>
               </th>
             </tr>
           </thead>
@@ -85,7 +90,15 @@
             </tr>
             <tr>
               <td>
-                $Core
+                <div class="flex gap-1 items-center" >
+                  $Core
+                  <lucide-icon
+                    name="info"
+                    class="h-4 w-4 text-gray-200"
+                    (mouseenter)="showTooltip($event, SSCoreTooltip)"
+                    (mouseleave)="hideTooltip()">
+                  </lucide-icon>
+                </div>
               </td>
               <ng-container *ngFor="let item of servers">
                 <td>

@@ -195,6 +195,8 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     },
   ];
 
+  SSCoreTooltip = "Performance benchmark score using stress-ng's div16 method (doing 16 bit unsigned integer divisions for 20 seconds): simulating CPU heavy workload that scales well on any number of (v)CPUs. The score/price value shows the div16 performance measured for 1 USD/hour.";
+
   @ViewChild('mainTable') mainTable!: ElementRef;
   @ViewChild('tableHolder') tableHolder!: ElementRef;
   isTableOutsideViewport = false;
@@ -475,11 +477,11 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     return '';
   }
 
-  getBestPriceStyle(server: ServerPKsWithPrices) {
+  isBestPrice(server: ServerPKsWithPrices): boolean {
     const prop = server.prices.filter(x => x.allocation === Allocation.Ondemand).sort((a,b) => a.price - b.price)[0]?.price;
 
     if(prop === undefined || prop === null || prop === 0) {
-      return '';
+      return false;
     }
 
     let isBest = true;
@@ -489,14 +491,18 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
         isBest = false;
       }
     });
-    return isBest ? this.bestCellStyle : '';
+    return isBest;
   }
 
-  getSScoreStyle(server: ServerPKsWithPrices) {
+  getBestPriceStyle(server: ServerPKsWithPrices) {
+    return this.isBestPrice(server) ? this.bestCellStyle : '';
+  }
+
+  isBestSSCore(server: ServerPKsWithPrices): boolean {
     const prop = server.score_per_price;
 
-    if(!prop) {
-      return '';
+    if(prop === undefined || prop === null || prop === 0) {
+      return false;
     }
 
     let isBest = true;
@@ -506,7 +512,11 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
         isBest = false;
       }
     });
-    return isBest ? this.bestCellStyle : '';
+    return isBest;
+  }
+
+  getSScoreStyle(server: ServerPKsWithPrices) {
+    return this.isBestSSCore(server) ? this.bestCellStyle : '';
   }
 
   getBecnchmarkStyle(server: ServerPKsWithPrices, isMulti: boolean) {
