@@ -1,5 +1,6 @@
 import { isPlatformBrowser } from '@angular/common';
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { GoogleAnalyticsService } from 'ngx-google-analytics';
 import posthog from 'posthog-js'
 
 const POSTHOG_KEY = import.meta.env['NG_APP_POSTHOG_KEY'];
@@ -12,7 +13,9 @@ export class AnalyticsService {
 
   trackingInitialized = false;
 
-  constructor(@Inject(PLATFORM_ID) private platformId: object) { }
+  constructor(
+    @Inject(PLATFORM_ID) private platformId: object,
+    private googleAnalytics: GoogleAnalyticsService) { }
 
   public initializeTracking() {
     if(!isPlatformBrowser(this.platformId)) {
@@ -34,6 +37,13 @@ export class AnalyticsService {
     }
   }
 
+  public pageTrack(url: string) {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+    this.googleAnalytics.pageView(url);
+  }
+  
   public getId() {
     return posthog.get_distinct_id();
   }

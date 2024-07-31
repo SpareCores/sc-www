@@ -65,7 +65,7 @@ export const appConfig: ApplicationConfig = {
         X
       }),
     ),
-    importProvidersFrom(MarkdownModule.forRoot()),
+    importProvidersFrom(MarkdownModule.forRoot())
   ],
 
 };

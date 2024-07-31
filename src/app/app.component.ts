@@ -46,9 +46,11 @@ export class AppComponent implements OnInit, AfterViewInit {
             }
           }
           this.analytics.trackEvent('pageView', {});
+          this.analytics.pageTrack(event.urlAfterRedirects);
           // update canonical url with query params as well
 
           this.updateCanonical(url.toLowerCase());
+
         }
 
         if (event instanceof NavigationError) {
