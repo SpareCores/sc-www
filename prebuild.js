@@ -57,6 +57,25 @@ data = data.sort((a, b) => new Date(b.date) - new Date(a.date));
 
 fs.writeFileSync('./src/assets/slides/slides.json', JSON.stringify(data));
 
+////////////////////////////////////////////////////////////////////////////////
+// compile list of legal documents
+////////////////////////////////////////////////////////////////////////////////
+
+dirPath = path.join(__dirname, './src/assets/legal');
+files = fs.readdirSync(dirPath);
+
+data = files
+  .filter((file) => file.endsWith('.md'))
+  .map((file) => {
+  const content = fs.readFileSync(path.join(dirPath, file), 'utf-8');
+  const { data } = matter(content);
+  return {
+    ...data,
+    filename: path.parse(file).name
+  }
+  });
+data = data.sort((a, b) => new Date(a.priority) - new Date(b.priority));
+fs.writeFileSync('./src/assets/legal/legal-documents.json', JSON.stringify(data));
 
 ////////////////////////////////////////////////////////////////////////////////
 // generate sitemap
@@ -70,7 +89,9 @@ const links = [
   { url: 'server_prices',  changefreq: 'hourly', priority: 0.75  },
   { url: 'vendors',  changefreq: 'monthly', priority: 0.5  },
   { url: 'regions',  changefreq: 'weekly', priority: 0.5  },
-  { url: 'legal/tos',  changefreq: 'monthly', priority: 0.10  },
+  { url: 'legal',  changefreq: 'monthly', priority: 0.10  },
+  { url: 'legal/privacy-policy',  changefreq: 'monthly', priority: 0.10  },
+  { url: 'legal/terms-of-service',  changefreq: 'monthly', priority: 0.10  },
   { url: 'articles',  changefreq: 'weekly', priority: 0.75  },
   { url: 'talks',  changefreq: 'monthly', priority: 0.75  },
 ];

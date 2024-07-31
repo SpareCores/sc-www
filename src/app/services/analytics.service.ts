@@ -34,4 +34,8 @@ export class AnalyticsService {
     }
   }
 
+  public getId() {
+    return posthog.get_distinct_id();
+  }
+
 }
