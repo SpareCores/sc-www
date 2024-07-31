@@ -104,7 +104,8 @@ export class RegionsComponent implements OnInit {
         bubble_map.bubbles(
           this.regions.map(region => {
             return {
-              name: `${region.display_name}`,
+              name: region.name,
+              display_name: `${region.display_name}`,
               region: region.region_id,
               vendor: region.vendor_id,
               founding_year: region.founding_year,
@@ -112,8 +113,6 @@ export class RegionsComponent implements OnInit {
               location: `${region.lat},${region.lon}`,
               radius: 5,
               country: region.country_id,
-              significance: region.display_name,
-              date: '2021-01-01',
               fillKey: region.vendor_id,
               latitude: region.lat,
               longitude: region.lon
@@ -129,14 +128,15 @@ export class RegionsComponent implements OnInit {
   popupTemplate(geo: any, data: any) {
     let countryName = new CountryIdtoNamePipe().transform(data.country);
     let html = `<div class="hoverinfo"> <ul>`;
-    html += `<li>Region ID: ${data.country}</li>`;
+    html += `<li>Vendor: ${this.getVendorName(data.vendor)}</li>`;
+    html += `<li>Region ID: ${data.region}</li>`;
     html += `<li>Region name: ${data.name}</li>`;
     html += `<li>Country: ${countryName}</li>`;
-    html += `<li>Vendor: ${this.getVendorName(data.vendor)}</li>`;
+    html += `<li>Location: ${data.display_name}</li>`;
     if(data.founding_year) {
       html += `<li>Founding year: ${data.founding_year}</li>`;
     }
-    html += `<li>Green energy: ${data.green_energy ? '✅' : '🔴'}</li>`;
+    html += `<li>100% green energy: ${data.green_energy ? '✅' : '🔴'}</li>`;
     html += `</ul> </div>`;
     console.log(html);
     return html;
