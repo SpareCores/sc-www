@@ -128,15 +128,15 @@ export class RegionsComponent implements OnInit {
   popupTemplate(geo: any, data: any) {
     let countryName = new CountryIdtoNamePipe().transform(data.country);
     let html = `<div class="hoverinfo"> <ul>`;
-    html += `<li>Vendor: ${this.getVendorName(data.vendor)}</li>`;
-    html += `<li>Region ID: ${data.region}</li>`;
-    html += `<li>Region name: ${data.name}</li>`;
-    html += `<li>Country: ${countryName}</li>`;
-    html += `<li>Location: ${data.display_name}</li>`;
+    html += `<li><b>Vendor</b>: ${this.getVendorName(data.vendor)}</li>`;
+    html += `<li><b>Region ID</b>: ${data.region}</li>`;
+    html += `<li><b>Region name</b>: ${data.name}</li>`;
+    html += `<li><b>Country</b>: ${countryName}</li>`;
+    html += `<li><b>Location</b>: ${data.display_name}</li>`;
     if(data.founding_year) {
-      html += `<li>Founding year: ${data.founding_year}</li>`;
+      html += `<li><b>Founding year</b>: ${data.founding_year}</li>`;
     }
-    html += `<li>100% green energy: ${data.green_energy ? '✅' : '🔴'}</li>`;
+    html += `<li><b>100% green energy</b>: ${data.green_energy ? '✅' : '🔴'}</li>`;
     html += `</ul> </div>`;
     console.log(html);
     return html;
