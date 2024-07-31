@@ -96,11 +96,11 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   // benchmark charts
   compressDropdown: any;
   compressMethods: any[] = [
-    { name: 'Compression speed', key: 'compress', order: 'Higher is better', icon: 'circle-arrow-up' },
-    { name: 'Decompression speed', key: 'decompress', order: 'Higher is better', icon: 'circle-arrow-up' },
-    { name: 'Compression ratio', key: 'ratio', order: 'Lower is better', icon: 'circle-arrow-down' },
-    { name: 'Compression speed/ratio', key: 'ratio_compress', order: 'Higher is better', icon: 'circle-arrow-up' },
-    { name: 'Decompression speed/ratio', key: 'ratio_decompress', order: 'Higher is better', icon: 'circle-arrow-up' },
+    { name: 'Compression speed', key: 'compress', order: 'Higher is better.', icon: 'circle-arrow-up' },
+    { name: 'Decompression speed', key: 'decompress', order: 'Higher is better.', icon: 'circle-arrow-up' },
+    { name: 'Compression ratio', key: 'ratio', order: 'Lower is better.', icon: 'circle-arrow-down' },
+    { name: 'Compression speed/ratio', key: 'ratio_compress', order: 'Higher is better.', icon: 'circle-arrow-up' },
+    { name: 'Decompression speed/ratio', key: 'ratio_decompress', order: 'Higher is better.', icon: 'circle-arrow-up' },
   ];
   selectedCompressMethod = this.compressMethods[0];
 
