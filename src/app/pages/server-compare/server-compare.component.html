@@ -60,10 +60,31 @@
             <tr>
               <th style="max-width: 250px; width: 250px">
               </th>
-              <th *ngFor="let item of servers" [style]="getStyle()">
+              <th *ngFor="let item of servers" [style]="getStyle()" class="align-baseline">
+                <div class="flex flex-col gap-1 justify-center" style="width: fit-content;" >
                 <a class="underline decoration-dotted" href="/server/{{item.vendor_id}}/{{item.api_reference}}" target="_blank">
                   {{toUpper(item.display_name)}}
                 </a>
+                <div class="flex gap-2 justify-center" >
+                  <div
+                    class="text-emerald-400 text-xl"
+                    (mouseenter)="showTooltip($event, 'Lowest price')"
+                    (mouseleave)="hideTooltip()"
+                    *ngIf="isBestPrice(item)" >💰
+                  </div>
+                  <div class="text-emerald-400 text-xl"
+                    (mouseenter)="showTooltip($event, 'Best value for price')"
+                    (mouseleave)="hideTooltip()"
+                    *ngIf="isBestSSCore(item)" >🥇
+                  </div>
+                  <div class="text-emerald-400 text-xl"
+                    (mouseenter)="showTooltip($event, 'Top performance')"
+                    (mouseleave)="hideTooltip()"
+                    *ngIf="getBecnchmarkStyle(item, true) !== ''" >
+                    💪
+                  </div>
+                </div>
+              </div>
               </th>
             </tr>
           </thead>
@@ -85,7 +106,15 @@
             </tr>
             <tr>
               <td>
-                $Core
+                <div class="flex gap-1 items-center" >
+                  $Core
+                  <lucide-icon
+                    name="info"
+                    class="h-4 w-4 text-gray-200"
+                    (mouseenter)="showTooltip($event, SSCoreTooltip)"
+                    (mouseleave)="hideTooltip()">
+                  </lucide-icon>
+                </div>
               </td>
               <ng-container *ngFor="let item of servers">
                 <td>
