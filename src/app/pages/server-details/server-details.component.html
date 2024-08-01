@@ -260,6 +260,12 @@
       <div class="block_half" *ngIf="lineChartDataBWmem">
         <h3 class="text-2xl flex items-center gap-2" >Memory bandwidth
           <lucide-icon
+            name="circle-arrow-up"
+            class="h-4 w-4 text-gray-200"
+            (mouseenter)="showTooltip($event, 'Higher is better.')"
+            (mouseleave)="hideTooltip()">
+          </lucide-icon>
+          <lucide-icon
             name="info"
             class="h-4 w-4 text-gray-200"
             (mouseenter)="showTooltipChart($event, 'bw_mem')"
@@ -283,6 +289,12 @@
         <div class="flex justify-between items-center">
           <h3 class="text-2xl flex items-center gap-2" >
             Compression
+            <lucide-icon
+              name="{{selectedCompressMethod.icon}}"
+              class="h-4 w-4 text-gray-200"
+              (mouseenter)="showTooltip($event, selectedCompressMethod.order)"
+              (mouseleave)="hideTooltip()">
+            </lucide-icon>
             <lucide-icon
               name="info"
               class="h-4 w-4 text-gray-200"
@@ -324,6 +336,12 @@
           <h3 class="text-2xl flex items-center gap-2" >
             Geekbench Single-Core
             <lucide-icon
+              name="circle-arrow-up"
+              class="h-4 w-4 text-gray-200"
+              (mouseenter)="showTooltip($event, 'Higher is better.')"
+              (mouseleave)="hideTooltip()">
+            </lucide-icon>
+            <lucide-icon
               name="info"
               class="h-4 w-4 text-gray-200"
               (mouseenter)="showTooltipGB($event)"
@@ -354,6 +372,12 @@
           <h3 class="text-2xl flex items-center gap-2" >
             Geekbench Multi-Core
             <lucide-icon
+              name="circle-arrow-up"
+              class="h-4 w-4 text-gray-200"
+              (mouseenter)="showTooltip($event, 'Higher is better.')"
+              (mouseleave)="hideTooltip()">
+            </lucide-icon>
+            <lucide-icon
               name="info"
               class="h-4 w-4 text-gray-200"
               (mouseenter)="showTooltipGB($event)"
@@ -382,6 +406,12 @@
         <div class="flex justify-between items-center">
           <h3 class="text-2xl flex items-center gap-2" >
             OpenSSL
+            <lucide-icon
+              name="circle-arrow-up"
+              class="h-4 w-4 text-gray-200"
+              (mouseenter)="showTooltip($event, 'Higher is better.')"
+              (mouseleave)="hideTooltip()">
+            </lucide-icon>
             <lucide-icon
               name="info"
               class="h-4 w-4 text-gray-200"
