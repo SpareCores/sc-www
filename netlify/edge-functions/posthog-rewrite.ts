@@ -16,6 +16,7 @@ import type { Config, Context } from "@netlify/edge-functions";
 
 export default async (request: Request, context: Context) => {
   const url = new URL(request.url);
+  console.log(url);
   if (url.pathname.startsWith('/pgp/')) {
     const pgOrigin = url.pathname.startsWith('/pgp/static/') ? 'https://eu-assets.i.posthog.com' : 'https://eu.i.posthog.com';
     const pgUrl = pgOrigin + url.pathname.replace('/pgp/', '/')
