@@ -19,7 +19,7 @@ export default async (request: Request, context: Context) => {
   if (url.pathname.startsWith('/pgp/')) {
     const pgOrigin = url.pathname.startsWith('/pgp/static/') ? 'https://eu-assets.i.posthog.com' : 'https://eu.i.posthog.com';
     const pgUrl = pgOrigin + url.pathname.replace('/pgp/', '/')
-    return new URL("/subscriber-sale", request.url);
+    return new URL(pgUrl, request.url);
   }
   return fetch(request);
 };
