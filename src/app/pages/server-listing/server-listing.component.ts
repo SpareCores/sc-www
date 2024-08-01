@@ -105,8 +105,8 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     { name: 'STORAGE TYPE', show: false, type: 'text', key: 'storage_type' },
     { name: 'GPUs', show: true, type: 'gpu', orderField: 'gpu_count' },
     { name: 'BEST PRICE', show: true, type: 'price' },
-    { name: 'GPU MIN MEMORY', show: false, type: 'gpu_memory', key: 'server.gpu_memory_min' },
-    { name: 'GPU TOTAL MEMORY', show: false, type: 'gpu_memory', key: 'server.gpu_memory_total' },
+    { name: 'GPU MIN MEMORY', show: false, type: 'gpu_memory_min', orderField: 'gpu_memory_min' },
+    { name: 'GPU TOTAL MEMORY', show: false, type: 'gpu_memory_total', orderField: 'gpu_memory_total' },
     { name: 'ARCHITECTURE', show: false, type: 'text', key: 'cpu_architecture' },
     { name: 'CPU ALLOCATION', show: false, type: 'text', key: 'cpu_allocation' },
     { name: 'STATUS', show: false, type: 'text', key: 'status' },
@@ -246,8 +246,9 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     return ((item.memory_amount || 0) / 1024).toFixed(1) + ' GiB';
   }
 
-  getGPUMemory(item: ServerPKs) {
-    return ((item.gpu_memory_min || 0) / 1024).toFixed(1) + ' GiB';
+  getGPUMemory(item: ServerPKs, stat: 'min' | 'total' = 'min'): string {
+    const memory = stat === 'min' ? item.gpu_memory_min : item.gpu_memory_total;
+    return ((memory || 0) / 1024).toFixed(1) + ' GiB';
   }
 
   getStorage(item: ServerPKs) {

@@ -165,8 +165,11 @@
                         <span *ngIf="item.memory_generation">{{item.memory_speed}} MHz ({{item.memory_generation}})</span>
                       </div>
                     </td>
-                    <td *ngIf="column.type === 'gpu_memory'">
-                      {{getGPUMemory(item)}}
+                    <td *ngIf="column.type === 'gpu_memory_min'">
+                      {{getGPUMemory(item, 'min')}}
+                    </td>
+                    <td *ngIf="column.type === 'gpu_memory_total'">
+                      {{getGPUMemory(item, 'total')}}
                     </td>
                     <td *ngIf="column.type === 'storage'">
                       <div class="text-sm text-white">{{getStorage(item)}}</div>
