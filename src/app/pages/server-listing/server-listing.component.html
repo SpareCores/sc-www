@@ -145,6 +145,9 @@
                         </div>
                       </div>
                     </td>
+                    <td *ngIf="column.type === 'price'">
+                      <div class="text-sm text-white">{{item.price}} USD</div>
+                    </td>
                     <td *ngIf="column.type === 'score'">
                       <div class="text-sm text-white">{{getScore(item.score)}}</div>
                       <div
