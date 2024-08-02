@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable prefer-const */
-import { Component, ElementRef, Inject, PLATFORM_ID, OnInit, ViewChild, OnDestroy } from '@angular/core';
+import { Component, ElementRef, Inject, PLATFORM_ID, OnInit, ViewChild, OnDestroy, Renderer2 } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { KeeperAPIService } from '../../services/keeper-api.service';
 import { Server, ServerPKsWithPrices, ServerPricePKs, TableServerTableServerGetData } from '../../../../sdk/data-contracts';
@@ -20,6 +20,8 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { ReduceUnitNamePipe } from '../../pipes/reduce-unit-name.pipe';
 import { CountryIdtoNamePipe } from '../../pipes/country-idto-name.pipe';
 import { ServerCompareService } from '../../services/server-compare.service';
+import { initGiscus } from '../../tools/initGiscus';
+import { Location } from '@angular/common';
 
 Chart.register(annotationPlugin);
 
@@ -103,11 +105,11 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   // benchmark charts
   compressDropdown: any;
   compressMethods: any[] = [
-    { name: 'Compression speed', key: 'compress' },
-    { name: 'Decompression speed', key: 'decompress' },
-    { name: 'Compression ratio', key: 'ratio' },
-    { name: 'Compression speed/ratio', key: 'ratio_compress' },
-    { name: 'Decompression speed/ratio', key: 'ratio_decompress' },
+    { name: 'Compression speed', key: 'compress', order: 'Higher is better.', icon: 'circle-arrow-up' },
+    { name: 'Decompression speed', key: 'decompress', order: 'Higher is better.', icon: 'circle-arrow-up' },
+    { name: 'Compression ratio', key: 'ratio', order: 'Lower is better.', icon: 'circle-arrow-down' },
+    { name: 'Compression speed/ratio', key: 'ratio_compress', order: 'Higher is better.', icon: 'circle-arrow-up' },
+    { name: 'Decompression speed/ratio', key: 'ratio_decompress', order: 'Higher is better.', icon: 'circle-arrow-up' },
   ];
   selectedCompressMethod = this.compressMethods[0];
 
@@ -139,8 +141,14 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
   geekbenchHTML: any;
 
+  toastErrorMsg: string = 'Failed to load server data. Please try again later.';
+
+  activeFAQ: number = -1;
+
   @ViewChild('tooltipDefault') tooltip!: ElementRef;
   @ViewChild('tooltipGeekbench') tooltipGB!: ElementRef;
+  @ViewChild('giscusParent') giscusParent!: ElementRef;
+  @ViewChild('toastDanger') toastDanger!: ElementRef;
 
   constructor(@Inject(PLATFORM_ID) private platformId: object,
               @Inject(DOCUMENT) private document: Document,
@@ -149,11 +157,13 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
               private SEOHandler: SeoHandlerService,
               private serverCompare: ServerCompareService,
               private router: Router,
-              private senitizer: DomSanitizer) {
-
+              private renderer: Renderer2,
+              private location: Location,
+              private sanitizer: DomSanitizer) {
   }
 
   ngOnInit() {
+
     const countryIdtoNamePipe = new CountryIdtoNamePipe();
     this.route.params.subscribe(params => {
       const vendor = params['vendor'];
@@ -364,6 +374,19 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
             this.generateBenchmarkCharts();
 
+            setTimeout(() => {
+              const showDetails = this.route.snapshot.queryParams['showDetails'];
+              const activeFAQ = this.route.snapshot.queryParams['openFAQ'];
+
+              if(activeFAQ) {
+                this.activeFAQ = parseInt(activeFAQ);
+              }
+
+              if(showDetails) {
+                this.openBox('details', false);
+              }
+            }, 100);
+
             // https://github.com/chartjs/Chart.js/issues/5387
             // TODO: check and remove later
             document.addEventListener('visibilitychange', event => {
@@ -374,10 +397,14 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
                     chart.update();
                 });
               }
-          })
+            })
 
             setTimeout(() => {
               initFlowbite();
+
+              let baseUrl = this.SEOHandler.getBaseURL();
+              initGiscus(this.renderer, this.giscusParent, baseUrl, 'Servers', 'DIC_kwDOLesFQM4CgznN', 'pathname');
+
             }, 2000);
 
             const interval = setInterval(() => {
@@ -456,7 +483,17 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
         }
       }).catch((error) => {
         console.error('Failed to load server data:', error);
-        this.router.navigateByUrl('/');
+        if(error?.status === 404) {
+          this.toastErrorMsg = 'Server not found. Please try again later.';
+        }
+        if(error?.status === 500) {
+          this.toastErrorMsg = 'Internal server error. Please try again later.';
+        } else {
+          this.toastErrorMsg = 'Failed to load server data. Please try again later.';
+        }
+        if(isPlatformBrowser(this.platformId)) {
+          this.showToast();
+        }
       });
     });
   }
@@ -488,7 +525,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
       ${server.display_name}${appendVendor ? " (" + server.vendor_id + ")" : ""}</a>`)
   }
 
-  openBox(boxId: string) {
+  openBox(boxId: string, updateURL: boolean = true) {
     const el = document.getElementById(boxId);
     if(el) {
       el.classList.toggle('open');
@@ -500,6 +537,14 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     const el3 = document.getElementById(boxId+'_less');
     if(el3) {
       el3.classList.toggle('hidden');
+    }
+
+    if(updateURL){
+      if(el?.classList.contains('open')) {
+        this.location.go(`server/${this.serverDetails.vendor_id}/${this.serverDetails.api_reference}`, 'showDetails=true');
+      } else {
+        this.location.go(`server/${this.serverDetails.vendor_id}/${this.serverDetails.api_reference}`);
+      }
     }
   }
 
@@ -774,6 +819,42 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
     if(prop === undefined || prop === null) {
       return undefined;
+    }
+
+    if(name === 'storages') {
+      let html = '<ul>';
+      (prop as any[]).forEach((s: any, index: number) => {
+        html += `<li>${s.size} GB ${s.storage_type ? s.storage_type : ''}</li>`;
+      });
+      html += '</ul>';
+      return html;
+    }
+
+    if(name === 'gpus') {
+      let html = '<ul>';
+      (prop as any[]).forEach((s: any, index: number) => {
+        html += `<li>${s.manufacturer || ""} ${s.family || ""} ${s.model || ""} `;
+        const fields = ['memory', 'firmware_version', 'bios_version', 'graphics_clock'];
+        const field_names = ['Memory amount', 'Firmware version', 'BIOS version', 'Clock rate'];
+        let extraData = '';
+        for(let i = 0; i < fields.length; i++) {
+          if(s[fields[i]]) {
+            if(extraData.length > 0) {
+              extraData += ', ';
+            } else {
+              extraData += '(';
+            }
+            extraData += `${field_names[i]}: ${s[fields[i]]}`;
+          }
+        }
+        if(extraData.length > 0) {
+          html += extraData + ')';
+        }
+
+        html += '</li>'
+      });
+      html += '</ul>';
+      return html;
     }
 
     if( typeof prop === 'number' ) {
@@ -1120,7 +1201,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
     this.geekbenchHTML += `</ul>`;
 
-    this.geekbenchHTML = this.senitizer.bypassSecurityTrustHtml(this.geekbenchHTML);
+    this.geekbenchHTML = this.sanitizer.bypassSecurityTrustHtml(this.geekbenchHTML);
 
     if(dataSet && dataSet.length) {
       let labels: string[] = [];
@@ -1246,11 +1327,23 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     }
 
     this.SEOHandler.setupStructuredData(this.document, [JSON.stringify(json)]);
+  }
 
+  showToast() {
+    this.renderer.addClass(this.toastDanger.nativeElement, 'show');
   }
 
   selectSimilarServerOption(event: any) {
     this.selectedSimilarOption = event;
+  }
+
+  activeFAQChanged(event: any) {
+    this.activeFAQ = event;
+    if(this.activeFAQ > -1) {
+      this.location.go(`server/${this.serverDetails.vendor_id}/${this.serverDetails.api_reference}`, `openFAQ=${event}`);
+    } else {
+      this.location.go(`server/${this.serverDetails.vendor_id}/${this.serverDetails.api_reference}`);
+    }
   }
 
 }

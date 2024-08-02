@@ -105,6 +105,7 @@ export class ServerPricesComponent implements OnInit {
     { name: 'GPU TOTAL MEMORY', show: false, type: 'gpu_memory', key: 'server.gpu_memory_total' },
     { name: 'PRICE', show: true, type: 'price', orderField: 'price' },
     { name: 'ARCHITECTURE', show: false, type: 'text', key: 'server.cpu_architecture' },
+    { name: 'CPU ALLOCATION', show: false, type: 'text', key: 'server.cpu_allocation' },
     { name: 'REGION', show: false, type: 'region' },
     { name: 'STATUS', show: false, type: 'text', key: 'server.status' },
     { name: 'VENDOR', show: false, type: 'vendor' },

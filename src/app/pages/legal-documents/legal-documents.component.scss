@@ -1,3 +1,9 @@
+
+.content {
+  min-height: 100vh;
+}
+
+
 .items_table {
   @apply w-full text-white;
 
@@ -18,17 +24,16 @@
     }
 
     tr {
-      @apply hover:border hover:border-emerald-400 hover:border-solid cursor-pointer;
       td {
         @apply px-5 py-3 text-left text-sm;
+        a {
+          @apply underline decoration-dotted;
+        }
       }
     }
   }
 }
 
-.datamaps_div {
-  position: relative;
-  width: 100%;
-  height: min(60vw, 600px);
-  margin: auto;
+a:hover {
+  @apply hover:text-gray-500;
 }
