@@ -35,7 +35,7 @@ export class KeeperAPIService {
         this.serverChache = servers.body;
         this.serverChacheSubject.next(this.serverChache);
       });
-    };
+    }
   }
 
   public getServer(vendor: string, id: string, currency?: string): Promise<any> {
