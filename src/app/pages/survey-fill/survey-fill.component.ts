@@ -111,7 +111,7 @@ export class SurveyFillComponent implements OnInit {
 
   trackProgress() {
     const actualData = JSON.stringify(this.surveyModel?.data);
-    if (this.prevData === actualData) {
+    if (this.prevData === actualData || actualData === '{}') {
       return;
     }
     this.prevData = actualData;
