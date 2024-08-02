@@ -1,4 +1,4 @@
-import type { Config, Context } from "@netlify/edge-functions";
+import type { Config, Context } from "@netlify/functions";
 
 // [[redirects]]
 //   from = "/ingest/static/*"
