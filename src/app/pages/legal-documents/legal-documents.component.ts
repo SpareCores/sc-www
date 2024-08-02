@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ArticlesService, LegalMeta } from '../../services/articles.service';
 import { RouterModule } from '@angular/router';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
@@ -13,7 +13,7 @@ import { TimeToShortDatePipe } from '../../pipes/time-to-short-date.pipe';
   templateUrl: './legal-documents.component.html',
   styleUrl: './legal-documents.component.scss'
 })
-export class LegalDocumentsComponent {
+export class LegalDocumentsComponent implements OnInit {
   breadcrumbs: BreadcrumbSegment[] = [
     { name: 'Home', url: '/' },
     { name: 'Legal', url: '/legal' }
