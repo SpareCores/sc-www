@@ -23,8 +23,8 @@ export class KeeperAPIService {
   public TableController: Table = new Table(this.myHttp);
   public AIController: Ai = new Ai(this.myHttp);
 
-  serverChache: ServerPKs[] = [];
-  serverChacheSubject: BehaviorSubject<any[]> = new BehaviorSubject<ServerPKs[]>([]);
+  serverCache: ServerPKs[] = [];
+  serverCacheSubject: BehaviorSubject<any[]> = new BehaviorSubject<ServerPKs[]>([]);
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: object,
@@ -32,8 +32,8 @@ export class KeeperAPIService {
 
     if(isPlatformBrowser(this.platformId)) {
       this.searchServers({ limit: 10000 }).then((servers) => {
-        this.serverChache = servers.body;
-        this.serverChacheSubject.next(this.serverChache);
+        this.serverCache = servers.body;
+        this.serverCacheSubject.next(this.serverCache);
       });
     }
   }

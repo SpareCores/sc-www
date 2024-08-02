@@ -404,7 +404,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
             }, 2000);
 
-            this.keeperAPI.serverChacheSubject.subscribe((data) => {
+            this.keeperAPI.serverCacheSubject.subscribe((data) => {
               if(data) {
                 // filter self out
                 this.serverOptions = data.filter((s) => s.api_reference !== this.serverDetails.api_reference);
