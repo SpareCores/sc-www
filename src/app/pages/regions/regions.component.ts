@@ -142,7 +142,6 @@ export class RegionsComponent implements OnInit {
     }
     html += `<li><b>100% green energy</b>: ${data.green_energy ? '✅' : '🔴'}</li>`;
     html += `</ul> </div>`;
-    console.log(html);
     return html;
   }
 

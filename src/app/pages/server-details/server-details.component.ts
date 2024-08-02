@@ -3,7 +3,7 @@
 import { Component, ElementRef, Inject, PLATFORM_ID, OnInit, ViewChild, OnDestroy, Renderer2 } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { KeeperAPIService } from '../../services/keeper-api.service';
-import { Server, ServerPKsWithPrices, ServerPricePKs, TableServerTableServerGetData } from '../../../../sdk/data-contracts';
+import { Server, ServerPKs, ServerPKsWithPrices, ServerPricePKs, TableServerTableServerGetData } from '../../../../sdk/data-contracts';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
@@ -76,13 +76,14 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
   similarByFamily: Server[] = [];
 
-  similarByPerformance: Server[] = [];
-  similarByScoreSingle: Server[] = [];
-  similarByScoreMulti: Server[] = [];
-  similarByPerformancePerPrice: Server[] = [];
+  similarByPerformance: ServerPKs[] = [];
 
+  dropdownSimilar: any;
+  serverOptions: any[] = [];
   similarOptions: any[] = [
-    {name: 'By performance', key: 'performance'}
+    {name: 'By performance score', key: 'byScore'},
+    {name: 'By specs', key: 'bySpecs'},
+    {name: 'By performance per price', key: 'byPerformancePerPrice'}
   ];
   selectedSimilarOption: any = this.similarOptions[0];
 
@@ -309,10 +310,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
           this.SEOHandler.updateThumbnail(`https://og.sparecores.com/images/${this.serverDetails.vendor_id}/${this.serverDetails.api_reference}.png`);
 
           this.similarByFamily = [];
-          this.similarByPerformance = [];
-          this.similarByScoreSingle = [];
-          this.similarByScoreMulti = [];
-          this.similarByPerformancePerPrice = [];
+          let similarByPerformance: any[] = [];
 
           this.keeperAPI.getServers().then((data) => {
             if(data?.body) {
@@ -325,8 +323,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
                 } else {
                   if(s.api_reference !== this.serverDetails.api_reference) {
                     if(this.serverDetails.vcpus && s.vcpus === this.serverDetails.vcpus) {
-                      this.similarByPerformance.push(s);
-                      console.log('similarByPerformance', s);
+                      similarByPerformance.push(s);
                     }
                   }
                 }
@@ -343,10 +340,10 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
                 }
               });
               // search for servers with the closest amount of memory
-              this.similarByPerformance = this.similarByPerformance.sort((a, b) => {
+              similarByPerformance = similarByPerformance.sort((a, b) => {
                 return Math.abs(Number(this.serverDetails.memory_amount) - Number(a.memory_amount)) - Math.abs(Number(this.serverDetails.memory_amount) - Number(b.memory_amount));
               });
-              this.similarByPerformance = this.similarByPerformance.slice(0, 7);
+              similarByPerformance = similarByPerformance.slice(0, 7);
 
               if (this.similarByFamily) {
                 this.faqs.push(
@@ -359,7 +356,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
               this.faqs.push(
                 {
                   question: `What other servers offer similar performance to ${this.serverDetails.display_name}?`,
-                  html: `Looking at the number of vCPUs and GPUs, also the amount of memory, the following servers come with similar specs: ${this.similarByPerformance.map((s) => this.serverUrl(s, true)).join(', ')}.`
+                  html: `Looking at the number of vCPUs and GPUs, also the amount of memory, the following servers come with similar specs: ${similarByPerformance.map((s) => this.serverUrl(s, true)).join(', ')}.`
                 });
 
               // wee need similar machines to be filled
@@ -397,7 +394,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
                     chart.update();
                 });
               }
-            })
+            });
 
             setTimeout(() => {
               initFlowbite();
@@ -406,6 +403,14 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
               initGiscus(this.renderer, this.giscusParent, baseUrl, 'Servers', 'DIC_kwDOLesFQM4CgznN', 'pathname');
 
             }, 2000);
+
+            this.keeperAPI.serverChacheSubject.subscribe((data) => {
+              if(data) {
+                // filter self out
+                this.serverOptions = data.filter((s) => s.api_reference !== this.serverDetails.api_reference);
+                this.selectSimilarServerOption(this.selectedSimilarOption);
+              }
+            });
 
             const interval = setInterval(() => {
               const targetElAllocation: HTMLElement | null = document.getElementById('allocation_options');
@@ -478,6 +483,24 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
                 clearInterval(interval4);
               }
             }, 150);
+
+            const interval5 = setInterval(() => {
+              const targetElAllocation: HTMLElement | null = document.getElementById('similar_server_options');
+              const triggerElAllocation: HTMLElement | null = document.getElementById('similar_type_button');
+
+              if(targetElAllocation && triggerElAllocation) {
+                this.dropdownSimilar = new Dropdown(
+                  targetElAllocation,
+                  triggerElAllocation,
+                  options,
+                  {
+                    id: 'similar_server_options',
+                    override: true
+                  }
+                );
+                clearInterval(interval5);
+              }
+            });
 
           }
         }
@@ -1335,6 +1358,24 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
   selectSimilarServerOption(event: any) {
     this.selectedSimilarOption = event;
+    switch(this.selectedSimilarOption.key) {
+      case 'byScore':
+        this.similarByPerformance = this.serverOptions.sort((a, b) => {
+          return Math.abs(Number(this.serverDetails.score) - Number(a.score)) - Math.abs(Number(this.serverDetails.score) - Number(b.score));
+        }).slice(0, 7);
+        break;
+      case 'byPerformancePerPrice':
+        this.similarByPerformance = this.serverOptions.sort((a, b) => {
+          return Math.abs(Number(this.serverDetails.score_per_price) - Number(a.score_per_price)) - Math.abs(Number(this.serverDetails.score_per_price) - Number(b.score_per_price));
+        }).slice(0, 7);
+        break;
+      case 'bySpecs':
+        this.similarByPerformance = this.serverOptions.filter(s => s.vcpus === this.serverDetails.vcpus && s.gpu_count === this.serverDetails.gpu_count).sort((a, b) => {
+          return Math.abs(Number(this.serverDetails.memory_amount) - Number(a.memory_amount)) - Math.abs(Number(this.serverDetails.memory_amount) - Number(b.memory_amount));
+        }).slice(0, 7);
+        break;
+    }
+    this.dropdownSimilar?.hide();
   }
 
   activeFAQChanged(event: any) {

@@ -3,10 +3,12 @@ import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { MYHTTPClient } from './my_http/my-http';
 import { Server } from '../../../sdk/Server';
 import { Servers } from '../../../sdk/Servers';
-import { AssistServerFiltersAiAssistServerFiltersGetParams, AssistServerPriceFiltersAiAssistServerPriceFiltersGetParams, SearchServerPricesServerPricesGetParams, SearchServersServersGetParams } from '../../../sdk/data-contracts';
+import { AssistServerFiltersAiAssistServerFiltersGetParams, AssistServerPriceFiltersAiAssistServerPriceFiltersGetParams, SearchServerPricesServerPricesGetParams, SearchServersServersGetParams, ServerPKs } from '../../../sdk/data-contracts';
 import { Table } from '../../../sdk/Table';
 import { Ai } from '../../../sdk/Ai';
 import { ServerPrices } from '../../../sdk/ServerPrices';
+import { BehaviorSubject } from 'rxjs';
+import { isPlatformBrowser } from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
@@ -21,10 +23,19 @@ export class KeeperAPIService {
   public TableController: Table = new Table(this.myHttp);
   public AIController: Ai = new Ai(this.myHttp);
 
+  serverChache: ServerPKs[] = [];
+  serverChacheSubject: BehaviorSubject<any[]> = new BehaviorSubject<ServerPKs[]>([]);
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: object,
     private httpClient: HttpClient) {
+
+    if(isPlatformBrowser(this.platformId)) {
+      this.searchServers({ limit: 10000 }).then((servers) => {
+        this.serverChache = servers.body;
+        this.serverChacheSubject.next(this.serverChache);
+      });
+    };
   }
 
   public getServer(vendor: string, id: string, currency?: string): Promise<any> {
