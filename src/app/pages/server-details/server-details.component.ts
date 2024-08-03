@@ -374,6 +374,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
             setTimeout(() => {
               const showDetails = this.route.snapshot.queryParams['showDetails'];
               const activeFAQ = this.route.snapshot.queryParams['openFAQ'];
+              const similarCategory = this.route.snapshot.queryParams['similarCategory'];
 
               if(activeFAQ) {
                 this.activeFAQ = parseInt(activeFAQ);
@@ -381,6 +382,10 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
               if(showDetails) {
                 this.openBox('details', false);
+              }
+
+              if(similarCategory) {
+                this.selectedSimilarOption = this.similarOptions.find((o) => o.key === similarCategory);
               }
             }, 100);
 
@@ -1381,6 +1386,13 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
         }
         break;
     }
+
+    if(this.selectedSimilarOption.key !== this.similarOptions[1].key) {
+      this.location.go(`server/${this.serverDetails.vendor_id}/${this.serverDetails.api_reference}`, `similarCategory=${this.selectedSimilarOption.key}`);
+    } else {
+      this.location.go(`server/${this.serverDetails.vendor_id}/${this.serverDetails.api_reference}`);
+    }
+
     this.dropdownSimilar?.hide();
   }
 
