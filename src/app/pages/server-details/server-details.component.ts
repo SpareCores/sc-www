@@ -1344,8 +1344,8 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
       ],
     }
 
-    if(this.similarByPerformance.length) {
-      json['isSimilarTo'] = this.similarByPerformance.map((s) => {
+    if(this.similarByFamily.length) {
+      json['isSimilarTo'] = this.similarByFamily.map((s) => {
         return {
           "@type": "Product",
           "name": `${s.display_name} (${s.vendor_id})`,
