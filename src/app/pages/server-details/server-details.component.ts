@@ -81,9 +81,9 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   dropdownSimilar: any;
   serverOptions: any[] = [];
   similarOptions: any[] = [
-    {name: 'By specs', key: 'bySpecs'},
-    {name: 'By performance score', key: 'byScore'},
-    {name: 'By performance per price', key: 'byPerformancePerPrice'}
+    {name: 'By GPU, CPU and memory specs', key: 'bySpecs'},
+    {name: 'By CPU performance', key: 'byScore'},
+    {name: 'By CPU performance per price', key: 'byPerformancePerPrice'}
   ];
   selectedSimilarOption: any = this.similarOptions[1];
 
