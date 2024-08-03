@@ -76,7 +76,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
   similarByFamily: Server[] = [];
 
-  similarByPerformance: ServerPKs[] = [];
+  similarServers: ServerPKs[] = [];
 
   dropdownSimilar: any;
   serverOptions: any[] = [];
@@ -1365,24 +1365,24 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     this.selectedSimilarOption = event;
     switch(this.selectedSimilarOption.key) {
       case 'byScore':
-        this.similarByPerformance = this.serverOptions.sort((a, b) => {
+        this.similarServers = this.serverOptions.sort((a, b) => {
           return Math.abs(Number(this.serverDetails.score) - Number(a.score)) - Math.abs(Number(this.serverDetails.score) - Number(b.score));
         }).slice(0, 7);
         break;
       case 'byPerformancePerPrice':
-        this.similarByPerformance = this.serverOptions.sort((a, b) => {
+        this.similarServers = this.serverOptions.sort((a, b) => {
           return Math.abs(Number(this.serverDetails.score_per_price) - Number(a.score_per_price)) - Math.abs(Number(this.serverDetails.score_per_price) - Number(b.score_per_price));
         }).slice(0, 7);
         break;
       case 'bySpecs':
-        this.similarByPerformance = this.serverOptions.filter(s => s.vcpus === this.serverDetails.vcpus && s.gpu_count === this.serverDetails.gpu_count).sort((a, b) => {
+        this.similarServers = this.serverOptions.filter(s => s.vcpus === this.serverDetails.vcpus && s.gpu_count === this.serverDetails.gpu_count).sort((a, b) => {
           return Math.abs(Number(this.serverDetails.memory_amount) - Number(a.memory_amount)) - Math.abs(Number(this.serverDetails.memory_amount) - Number(b.memory_amount));
         }).slice(0, 7);
 
-        if(this.similarByPerformance.length < 7) {
-          this.similarByPerformance = this.similarByPerformance.concat(this.serverOptions.filter(s => s.vcpus === this.serverDetails.vcpus).sort((a, b) => {
+        if(this.similarServers.length < 7) {
+          this.similarServers = this.similarServers.concat(this.serverOptions.filter(s => s.vcpus === this.serverDetails.vcpus).sort((a, b) => {
             return Math.abs(Number(this.serverDetails.memory_amount) - Number(a.memory_amount)) - Math.abs(Number(this.serverDetails.memory_amount) - Number(b.memory_amount));
-          }).slice(0, 7 - this.similarByPerformance.length));
+          }).slice(0, 7 - this.similarServers.length));
         }
         break;
     }
