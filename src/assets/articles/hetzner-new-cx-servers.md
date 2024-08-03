@@ -172,5 +172,5 @@ Once available, this post will be updated.
 
 Pairwise comparison of the larger CX servers:
 
-- <a href="/compare?instances=W3sidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY3gzMiJ9LHsidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY3g0MSJ9XQ%3D%3D" target="_blank">4 VCPUs</a>
-- <a href="/compare?instances=W3sidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY3g0MiJ9LHsidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY3g1MSJ9LHsidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY3g1MiJ9XQ%3D%3D" target="_blank">8+ VCPUs</a>
+- <a href="/compare?instances=W3sidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY3gzMiJ9LHsidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY3g0MSJ9XQ%3D%3D" target="_blank">4 vCPUs</a>
+- <a href="/compare?instances=W3sidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY3g0MiJ9LHsidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY3g1MSJ9LHsidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY3g1MiJ9XQ%3D%3D" target="_blank">8+ vCPUs</a>
