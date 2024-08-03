@@ -81,11 +81,11 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   dropdownSimilar: any;
   serverOptions: any[] = [];
   similarOptions: any[] = [
-    {name: 'By performance score', key: 'byScore'},
     {name: 'By specs', key: 'bySpecs'},
+    {name: 'By performance score', key: 'byScore'},
     {name: 'By performance per price', key: 'byPerformancePerPrice'}
   ];
-  selectedSimilarOption: any = this.similarOptions[0];
+  selectedSimilarOption: any = this.similarOptions[1];
 
   instancePropertyCategories: any[] = [
     { name: 'General', category: 'meta', properties: [] },
@@ -1373,6 +1373,12 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
         this.similarByPerformance = this.serverOptions.filter(s => s.vcpus === this.serverDetails.vcpus && s.gpu_count === this.serverDetails.gpu_count).sort((a, b) => {
           return Math.abs(Number(this.serverDetails.memory_amount) - Number(a.memory_amount)) - Math.abs(Number(this.serverDetails.memory_amount) - Number(b.memory_amount));
         }).slice(0, 7);
+
+        if(this.similarByPerformance.length < 7) {
+          this.similarByPerformance = this.similarByPerformance.concat(this.serverOptions.filter(s => s.vcpus === this.serverDetails.vcpus).sort((a, b) => {
+            return Math.abs(Number(this.serverDetails.memory_amount) - Number(a.memory_amount)) - Math.abs(Number(this.serverDetails.memory_amount) - Number(b.memory_amount));
+          }).slice(0, 7 - this.similarByPerformance.length));
+        }
         break;
     }
     this.dropdownSimilar?.hide();
