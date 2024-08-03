@@ -316,7 +316,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
             if(data?.body) {
               const allServers = data.body as TableServerTableServerGetData;
               allServers.forEach((s) => {
-                if(s.family === this.serverDetails.family && s.api_reference !== this.serverDetails.api_reference) {
+                if(s.vendor_id === this.serverDetails.vendor_id && s.family === this.serverDetails.family && s.api_reference !== this.serverDetails.api_reference) {
                   if(this.similarByFamily.length < 7 && this.similarByFamily.findIndex((s2) => s2.server_id === s.server_id) === -1) {
                     this.similarByFamily.push(s);
                   }
