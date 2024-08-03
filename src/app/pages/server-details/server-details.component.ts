@@ -1364,6 +1364,12 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   diffBy(s: ServerPKs, field: keyof ServerPKs) {
     return Math.abs(Number(this.serverDetails[field]) - Number(s[field]));
   }
+  diffSpec(s: ServerPKs) {
+    return Math.abs(Number(this.serverDetails.gpu_count) - Number(s.gpu_count)) * 10e6 +
+           Math.abs(Number(this.serverDetails.vcpus) - Number(s.vcpus)) * 10e3 +
+           Math.abs(Number(this.serverDetails.memory_amount) - Number(s.memory_amount)) / 1e03;
+  }
+
   selectSimilarServerOption(event: any) {
     this.selectedSimilarOption = event;
     switch(this.selectedSimilarOption.key) {
@@ -1378,15 +1384,9 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
         }).slice(0, 7);
         break;
       case 'bySpecs':
-        this.similarServers = this.serverOptions.filter(s => s.vcpus === this.serverDetails.vcpus && s.gpu_count === this.serverDetails.gpu_count).sort((a, b) => {
-          return Math.abs(Number(this.serverDetails.memory_amount) - Number(a.memory_amount)) - Math.abs(Number(this.serverDetails.memory_amount) - Number(b.memory_amount));
+        this.similarServers = this.serverOptions.sort((a, b) => {
+          return this.diffSpec(a) - this.diffSpec(b);
         }).slice(0, 7);
-
-        if(this.similarServers.length < 7) {
-          this.similarServers = this.similarServers.concat(this.serverOptions.filter(s => s.vcpus === this.serverDetails.vcpus).sort((a, b) => {
-            return Math.abs(Number(this.serverDetails.memory_amount) - Number(a.memory_amount)) - Math.abs(Number(this.serverDetails.memory_amount) - Number(b.memory_amount));
-          }).slice(0, 7 - this.similarServers.length));
-        }
         break;
     }
 
