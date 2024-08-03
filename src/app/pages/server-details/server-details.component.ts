@@ -1361,17 +1361,20 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     this.renderer.addClass(this.toastDanger.nativeElement, 'show');
   }
 
+  diffBy(s: ServerPKs, field: keyof ServerPKs) {
+    return Math.abs(Number(this.serverDetails[field]) - Number(s[field]));
+  }
   selectSimilarServerOption(event: any) {
     this.selectedSimilarOption = event;
     switch(this.selectedSimilarOption.key) {
       case 'byScore':
         this.similarServers = this.serverOptions.sort((a, b) => {
-          return Math.abs(Number(this.serverDetails.score) - Number(a.score)) - Math.abs(Number(this.serverDetails.score) - Number(b.score));
+          return this.diffBy(a, "score") - this.diffBy(b, "score");
         }).slice(0, 7);
         break;
       case 'byPerformancePerPrice':
         this.similarServers = this.serverOptions.sort((a, b) => {
-          return Math.abs(Number(this.serverDetails.score_per_price) - Number(a.score_per_price)) - Math.abs(Number(this.serverDetails.score_per_price) - Number(b.score_per_price));
+          return this.diffBy(a, "score_per_price") - this.diffBy(b, "score_per_price");
         }).slice(0, 7);
         break;
       case 'bySpecs':
