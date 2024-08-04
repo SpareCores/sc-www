@@ -22,6 +22,7 @@ import { CountryIdtoNamePipe } from '../../pipes/country-idto-name.pipe';
 import { ServerCompareService } from '../../services/server-compare.service';
 import { initGiscus } from '../../tools/initGiscus';
 import { Location } from '@angular/common';
+import * as Sentry from "@sentry/angular";
 
 Chart.register(annotationPlugin);
 
@@ -353,6 +354,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
             }
           }).catch((error) => {
+            Sentry.captureException(error, {tags: { location: this.constructor.name, function: 'getServers' }});
             console.error('Failed to load server data:', error);
           });
 
@@ -1327,5 +1329,4 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
       this.location.go(`server/${this.serverDetails.vendor_id}/${this.serverDetails.api_reference}`);
     }
   }
-
 }
