@@ -310,7 +310,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
           this.SEOHandler.updateThumbnail(`https://og.sparecores.com/images/${this.serverDetails.vendor_id}/${this.serverDetails.api_reference}.png`);
 
           this.similarByFamily = [];
-          let similarByPerformance: any[] = [];
+          let similarBySpecs: any[] = [];
 
           this.keeperAPI.getServers().then((data) => {
             if(data?.body) {
@@ -322,9 +322,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
                   }
                 } else {
                   if(s.api_reference !== this.serverDetails.api_reference) {
-                    if(this.serverDetails.vcpus && s.vcpus === this.serverDetails.vcpus) {
-                      similarByPerformance.push(s);
-                    }
+                    similarBySpecs.push(s);
                   }
                 }
               });
@@ -340,10 +338,9 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
                 }
               });
               // search for servers with the closest amount of memory
-              similarByPerformance = similarByPerformance.sort((a, b) => {
-                return Math.abs(Number(this.serverDetails.memory_amount) - Number(a.memory_amount)) - Math.abs(Number(this.serverDetails.memory_amount) - Number(b.memory_amount));
-              });
-              similarByPerformance = similarByPerformance.slice(0, 7);
+              similarBySpecs = similarBySpecs.sort((a, b) => {
+                return this.diffSpec(a) - this.diffSpec(b);
+              }).slice(0, 10);
 
               if (this.similarByFamily) {
                 this.faqs.push(
@@ -356,7 +353,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
               this.faqs.push(
                 {
                   question: `What other servers offer similar performance to ${this.serverDetails.display_name}?`,
-                  html: `Looking at the number of vCPUs and GPUs, also the amount of memory, the following servers come with similar specs: ${similarByPerformance.map((s) => this.serverUrl(s, true)).join(', ')}.`
+                  html: `Looking at the number of GPU, vCPUs, and memory amount, the following top 10 servers come with similar specs: ${similarBySpecs.map((s) => this.serverUrl(s, true)).join(', ')}.`
                 });
 
               // wee need similar machines to be filled
