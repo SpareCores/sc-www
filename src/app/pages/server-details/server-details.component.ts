@@ -277,6 +277,25 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
             }
           ];
 
+          if(this.serverDetails.benchmark_scores.length > 0) {
+            const benchmarkFrameworks = new Set<string>();
+            for (const item of this.serverDetails.benchmark_scores) {
+              benchmarkFrameworks.add(item['benchmark_id']);
+            }
+            let answer = `We have run ${benchmarkFrameworks.size} frameworks on the ${this.serverDetails.display_name} server, and collected ${this.serverDetails.benchmark_scores.length} performance metrics. Depending on your use case, you might want to look at our Memory bandwidth, Compression algo, or OpenSSL speed benchmarks, among others.`;
+            for (const item of this.serverDetails.benchmark_scores) {
+              if (item.benchmark_id === "geekbench:score" && (item.config as any)?.cores === "Multi-Core Performance") {
+                answer += ` As a baseline example, the multi-core Geekbench6 compound score suggests that the ${this.serverDetails.display_name} server is ${item.score/2500}x ${item.score > 2500 ? "faster" : "slower"} than the baseline Dell Precision 3460 with a Core i7-12700 processor.`;
+              }
+            }
+            this.faqs.push(
+              {
+                question: `How fast is the ${this.serverDetails.display_name} server?`,
+                answer: answer
+              }
+            );
+          }
+
           if(this.serverDetails.prices[0]) {
             this.faqs.push(
               {
@@ -285,7 +304,6 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
               }
             );
           }
-
 
           this.faqs.push(
               {
