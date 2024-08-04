@@ -105,8 +105,6 @@ export class RegionsComponent implements OnInit {
           fills: fills
         });
 
-        console.log(this.regions);
-
         bubble_map.bubbles(
           this.regions.map(region => {
             return {
@@ -144,7 +142,6 @@ export class RegionsComponent implements OnInit {
     }
     html += `<li><b>100% green energy</b>: ${data.green_energy ? '✅' : '🔴'}</li>`;
     html += `</ul> </div>`;
-    console.log(html);
     return html;
   }
 
