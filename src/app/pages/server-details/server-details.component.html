@@ -1,6 +1,7 @@
 <!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
 <div class="w-full bg-primary">
   <div class="content pt-16 pb-16 text-white">
+    <button (click)="throwTestError()">Test Sentry Error</button>
     <app-breadcrumbs [segments]="breadcrumbs"></app-breadcrumbs>
 
     <div *ngIf="serverDetails"
