@@ -1329,9 +1329,4 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
       this.location.go(`server/${this.serverDetails.vendor_id}/${this.serverDetails.api_reference}`);
     }
   }
-
-  public throwTestError(): void {
-    throw new Error("Sentry Test Error");
-  }
-
 }
