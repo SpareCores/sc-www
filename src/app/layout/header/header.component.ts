@@ -32,10 +32,6 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit() {
     if(isPlatformBrowser(this.platformId)) {
-      setTimeout(() => {
-        initFlowbite();
-      }, 1000);
-
       const interval = setInterval(() => {
         const targetElAllocation: HTMLElement | null = document.getElementById('menu_options');
         const triggerElAllocation: HTMLElement | null = document.getElementById('menu_button');

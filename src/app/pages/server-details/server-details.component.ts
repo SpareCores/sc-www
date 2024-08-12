@@ -389,7 +389,6 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
             })
 
             setTimeout(() => {
-              initFlowbite();
 
               let baseUrl = this.SEOHandler.getBaseURL();
               initGiscus(this.renderer, this.giscusParent, baseUrl, 'Servers', 'DIC_kwDOLesFQM4CgznN', 'pathname');
