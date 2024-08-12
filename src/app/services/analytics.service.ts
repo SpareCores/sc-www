@@ -1,9 +1,11 @@
 import { isPlatformBrowser } from '@angular/common';
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import posthog from 'posthog-js'
+import * as Sentry from "@sentry/angular";
 
 const POSTHOG_KEY = import.meta.env['NG_APP_POSTHOG_KEY'];
 const POSTHOG_HOST = import.meta.env['NG_APP_POSTHOG_HOST'];
+const SENTRY_DSN = import.meta.env['NG_APP_SENTRY_DSN'];
 
 @Injectable({
   providedIn: 'root'
@@ -36,6 +38,12 @@ export class AnalyticsService {
 
   public getId() {
     return posthog.get_distinct_id();
+  }
+
+  public SentryException(exception: any, hint?: any) {
+    if (SENTRY_DSN) {
+      Sentry.captureException(exception, hint);
+    }
   }
 
 }

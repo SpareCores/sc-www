@@ -359,13 +359,11 @@ export class LandingpageComponent implements OnInit {
 
     tooltip.style.display = 'block';
     tooltip.style.opacity = '1';
-    console.log('show tooltip');
   }
 
   hideTooltip() {
     const tooltip = this.tooltip.nativeElement;
     tooltip.style.display = 'none';
     tooltip.style.opacity = '0';
-    console.log('hide tooltip');
   }
 }

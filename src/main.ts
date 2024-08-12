@@ -5,16 +5,18 @@ import { config } from './app/app.config.browser';
 
 const SENTRY_DSN = import.meta.env['NG_APP_SENTRY_DSN'];
 
-Sentry.init({
-  dsn: SENTRY_DSN,
+if(SENTRY_DSN) {
+  Sentry.init({
+    dsn: SENTRY_DSN,
 
-  integrations: [],
+    integrations: [],
 
-  // Set tracesSampleRate to 1.0 to capture 100%
-  // of transactions for performance monitoring.
-  // We recommend adjusting this value in production
-  tracesSampleRate: 0,
-});
+    // Set tracesSampleRate to 1.0 to capture 100%
+    // of transactions for performance monitoring.
+    // We recommend adjusting this value in production
+    tracesSampleRate: 0,
+  });
+}
 
 bootstrapApplication(AppComponent, config)
   .catch((err) => console.error(err));
