@@ -1,7 +1,7 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { Dropdown, DropdownOptions, initFlowbite } from 'flowbite';
+import { Dropdown, DropdownOptions } from 'flowbite';
 import { LucideAngularModule } from 'lucide-angular';
 import { ServerCompareService } from '../../services/server-compare.service';
 
