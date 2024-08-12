@@ -444,7 +444,7 @@
             <thead>
               <tr>
                 <th>INSTANCE</th>
-                <th>VCPUs</th>
+                <th>vCPUs</th>
                 <th>MEMORY</th>
                 <th>GPUs</th>
               </tr>
@@ -466,19 +466,38 @@
           </table>
       </div>
       <div class="block_half">
-        <h3 class="text-2xl" >Similar Servers </h3>
+        <div class="flex justify-between">
+          <h3 class="text-2xl" >Similar Servers </h3>
+          <div class="flex gap-4">
+            <button
+              id="similar_type_button"
+              data-ph-capture-attribute-sc-event="server details price allocation select"
+              data-dropdown-toggle="similar_server_options"
+              class="dropdown_button"
+              type="button">
+              <div class="px-3 py-2">
+                {{selectedSimilarOption.name}}
+              </div>
+              <div class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
+                <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
+              </div>
+            </button>
+          </div>
+        </div>
         <table class="items_table">
           <thead>
             <tr>
               <th>INSTANCE</th>
               <th>VENDOR</th>
-              <th>VCPUs</th>
+              <th>vCPUs</th>
               <th>MEMORY</th>
-              <th>GPUs</th>
+              <th *ngIf="selectedSimilarOption.key === 'bySpecs'">GPUs</th>
+              <th *ngIf="selectedSimilarOption.key === 'byScore'">SCORE</th>
+              <th *ngIf="selectedSimilarOption.key === 'byPerformancePerPrice'">$CORE</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let item of similarByPerformance">
+            <tr *ngFor="let item of similarServers">
               <td>
                 <a
                 class="underline decoration-dotted hover:text-gray-500"
@@ -488,7 +507,9 @@
               <td> {{item.vendor_id}}</td>
               <td> {{item.vcpus}}</td>
               <td> {{getMemory(item.memory_amount)}}</td>
-              <td> {{item.gpu_count}}</td>
+              <td *ngIf="selectedSimilarOption.key === 'bySpecs'">{{item.gpu_count}}</td>
+              <td *ngIf="selectedSimilarOption.key === 'byScore'">{{item.score?.toFixed(0) || '0'}}</td>
+              <td *ngIf="selectedSimilarOption.key === 'byPerformancePerPrice'">{{item.score_per_price?.toFixed(0) || '0'}}</td>
             </tr>
           </tbody>
         </table>
@@ -559,6 +580,18 @@
         <div
           class="text-emerald-400 hover:text-emerald-500 cursor-pointer font-bold ml-2"
           (click)="refreshCompressChart(item)">
+          {{item.name}}
+        </div>
+    </li>
+  </ul>
+</div>
+
+<div id="similar_server_options" class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid">
+  <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
+    <li *ngFor="let item of similarOptions" class="flex py-1 gap-2 items-center">
+        <div
+          class="text-emerald-400 hover:text-emerald-500 cursor-pointer font-bold ml-2"
+          (click)="selectSimilarServerOption(item)">
           {{item.name}}
         </div>
     </li>

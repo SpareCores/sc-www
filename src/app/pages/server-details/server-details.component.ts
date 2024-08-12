@@ -3,7 +3,7 @@
 import { Component, ElementRef, Inject, PLATFORM_ID, OnInit, ViewChild, OnDestroy, Renderer2 } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { KeeperAPIService } from '../../services/keeper-api.service';
-import { Server, ServerPKsWithPrices, ServerPricePKs, TableServerTableServerGetData } from '../../../../sdk/data-contracts';
+import { Server, ServerPKs, ServerPKsWithPrices, ServerPricePKs, TableServerTableServerGetData } from '../../../../sdk/data-contracts';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
@@ -76,7 +76,17 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   regionFilters: any[] = [];
 
   similarByFamily: Server[] = [];
-  similarByPerformance: Server[] = [];
+
+  similarServers: ServerPKs[] = [];
+
+  dropdownSimilar: any;
+  serverOptions: any[] = [];
+  similarOptions: any[] = [
+    {name: 'By GPU, CPU and memory specs', key: 'bySpecs'},
+    {name: 'By CPU performance', key: 'byScore'},
+    {name: 'By CPU performance per price', key: 'byPerformancePerPrice'}
+  ];
+  selectedSimilarOption: any = this.similarOptions[1];
 
   instancePropertyCategories: any[] = [
     { name: 'General', category: 'meta', properties: [] },
@@ -269,6 +279,25 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
             }
           ];
 
+          if(this.serverDetails.benchmark_scores.length > 0) {
+            const benchmarkFrameworks = new Set<string>();
+            for (const item of this.serverDetails.benchmark_scores) {
+              benchmarkFrameworks.add(item['benchmark_id']);
+            }
+            let answer = `We have run ${benchmarkFrameworks.size} frameworks on the ${this.serverDetails.display_name} server, and collected ${this.serverDetails.benchmark_scores.length} performance metrics. Depending on your use case, you might want to look at our Memory bandwidth, Compression algo, or OpenSSL speed benchmarks, among others.`;
+            for (const item of this.serverDetails.benchmark_scores) {
+              if (item.benchmark_id === "geekbench:score" && (item.config as any)?.cores === "Multi-Core Performance") {
+                answer += ` As a baseline example, the multi-core Geekbench6 compound score suggests that the ${this.serverDetails.display_name} server is ${item.score/2500}x ${item.score > 2500 ? "faster" : "slower"} than the baseline Dell Precision 3460 with a Core i7-12700 processor.`;
+              }
+            }
+            this.faqs.push(
+              {
+                question: `How fast is the ${this.serverDetails.display_name} server?`,
+                answer: answer
+              }
+            );
+          }
+
           if(this.serverDetails.prices[0]) {
             this.faqs.push(
               {
@@ -277,7 +306,6 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
               }
             );
           }
-
 
           this.faqs.push(
               {
@@ -302,20 +330,19 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
           this.SEOHandler.updateThumbnail(`https://og.sparecores.com/images/${this.serverDetails.vendor_id}/${this.serverDetails.api_reference}.png`);
 
           this.similarByFamily = [];
-          this.similarByPerformance = [];
+          let similarBySpecs: any[] = [];
+
           this.keeperAPI.getServers().then((data) => {
             if(data?.body) {
               const allServers = data.body as TableServerTableServerGetData;
               allServers.forEach((s) => {
-                if(s.family === this.serverDetails.family && s.api_reference !== this.serverDetails.api_reference) {
+                if(s.vendor_id === this.serverDetails.vendor_id && s.family === this.serverDetails.family && s.api_reference !== this.serverDetails.api_reference) {
                   if(this.similarByFamily.length < 7 && this.similarByFamily.findIndex((s2) => s2.server_id === s.server_id) === -1) {
                     this.similarByFamily.push(s);
                   }
                 } else {
-                  if(
-                    (this.serverDetails.vcpus && s.vcpus === this.serverDetails.vcpus)
-                      && s.api_reference !== this.serverDetails.api_reference) {
-                      this.similarByPerformance.push(s);
+                  if(s.api_reference !== this.serverDetails.api_reference) {
+                    similarBySpecs.push(s);
                   }
                 }
               });
@@ -331,10 +358,9 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
                 }
               });
               // search for servers with the closest amount of memory
-              this.similarByPerformance = this.similarByPerformance.sort((a, b) => {
-                return Math.abs(Number(this.serverDetails.memory_amount) - Number(a.memory_amount)) - Math.abs(Number(this.serverDetails.memory_amount) - Number(b.memory_amount));
-              });
-              this.similarByPerformance = this.similarByPerformance.slice(0, 7);
+              similarBySpecs = similarBySpecs.sort((a, b) => {
+                return this.diffSpec(a) - this.diffSpec(b);
+              }).slice(0, 10);
 
               if (this.similarByFamily) {
                 this.faqs.push(
@@ -347,7 +373,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
               this.faqs.push(
                 {
                   question: `What other servers offer similar performance to ${this.serverDetails.display_name}?`,
-                  html: `Looking at the number of vCPUs and GPUs, also the amount of memory, the following servers come with similar specs: ${this.similarByPerformance.map((s) => this.serverUrl(s, true)).join(', ')}.`
+                  html: `Looking at the number of GPU, vCPUs, and memory amount, the following top 10 servers come with similar specs: ${similarBySpecs.map((s) => this.serverUrl(s, true)).join(', ')}.`
                 });
 
               // wee need similar machines to be filled
@@ -366,6 +392,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
             setTimeout(() => {
               const showDetails = this.route.snapshot.queryParams['showDetails'];
               const activeFAQ = this.route.snapshot.queryParams['openFAQ'];
+              const similarCategory = this.route.snapshot.queryParams['similarCategory'];
 
               if(activeFAQ) {
                 this.activeFAQ = parseInt(activeFAQ);
@@ -373,6 +400,10 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
               if(showDetails) {
                 this.openBox('details', false);
+              }
+
+              if(similarCategory) {
+                this.selectedSimilarOption = this.similarOptions.find((o) => o.key === similarCategory);
               }
             }, 100);
 
@@ -386,7 +417,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
                     chart.update();
                 });
               }
-            })
+            });
 
             setTimeout(() => {
 
@@ -394,6 +425,14 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
               initGiscus(this.renderer, this.giscusParent, baseUrl, 'Servers', 'DIC_kwDOLesFQM4CgznN', 'pathname');
 
             }, 2000);
+
+            this.keeperAPI.serverCacheSubject.subscribe((data) => {
+              if(data) {
+                // filter self out
+                this.serverOptions = data.filter((s) => s.api_reference !== this.serverDetails.api_reference);
+                this.selectSimilarServerOption(this.selectedSimilarOption);
+              }
+            });
 
             const interval = setInterval(() => {
               const targetElAllocation: HTMLElement | null = document.getElementById('allocation_options');
@@ -466,6 +505,24 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
                 clearInterval(interval4);
               }
             }, 150);
+
+            const interval5 = setInterval(() => {
+              const targetElAllocation: HTMLElement | null = document.getElementById('similar_server_options');
+              const triggerElAllocation: HTMLElement | null = document.getElementById('similar_type_button');
+
+              if(targetElAllocation && triggerElAllocation) {
+                this.dropdownSimilar = new Dropdown(
+                  targetElAllocation,
+                  triggerElAllocation,
+                  options,
+                  {
+                    id: 'similar_server_options',
+                    override: true
+                  }
+                );
+                clearInterval(interval5);
+              }
+            });
 
           }
         }
@@ -1304,8 +1361,8 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
       ],
     }
 
-    if(this.similarByPerformance.length) {
-      json['isSimilarTo'] = this.similarByPerformance.map((s) => {
+    if(this.similarByFamily.length) {
+      json['isSimilarTo'] = this.similarByFamily.map((s) => {
         return {
           "@type": "Product",
           "name": `${s.display_name} (${s.vendor_id})`,
@@ -1319,6 +1376,44 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
   showToast() {
     this.renderer.addClass(this.toastDanger.nativeElement, 'show');
+  }
+
+  diffBy(s: ServerPKs, field: keyof ServerPKs) {
+    return Math.abs(Number(this.serverDetails[field]) - Number(s[field]));
+  }
+  diffSpec(s: ServerPKs) {
+    return Math.abs(Number(this.serverDetails.gpu_count) - Number(s.gpu_count)) * 10e6 +
+           Math.abs(Number(this.serverDetails.vcpus) - Number(s.vcpus)) * 10e3 +
+           Math.abs(Number(this.serverDetails.memory_amount) - Number(s.memory_amount)) / 1e03;
+  }
+
+  selectSimilarServerOption(event: any) {
+    this.selectedSimilarOption = event;
+    switch(this.selectedSimilarOption.key) {
+      case 'byScore':
+        this.similarServers = this.serverOptions.sort((a, b) => {
+          return this.diffBy(a, "score") - this.diffBy(b, "score");
+        }).slice(0, 7);
+        break;
+      case 'byPerformancePerPrice':
+        this.similarServers = this.serverOptions.sort((a, b) => {
+          return this.diffBy(a, "score_per_price") - this.diffBy(b, "score_per_price");
+        }).slice(0, 7);
+        break;
+      case 'bySpecs':
+        this.similarServers = this.serverOptions.sort((a, b) => {
+          return this.diffSpec(a) - this.diffSpec(b);
+        }).slice(0, 7);
+        break;
+    }
+
+    if(this.selectedSimilarOption.key !== this.similarOptions[1].key) {
+      this.location.go(`server/${this.serverDetails.vendor_id}/${this.serverDetails.api_reference}`, `similarCategory=${this.selectedSimilarOption.key}`);
+    } else {
+      this.location.go(`server/${this.serverDetails.vendor_id}/${this.serverDetails.api_reference}`);
+    }
+
+    this.dropdownSimilar?.hide();
   }
 
   activeFAQChanged(event: any) {
