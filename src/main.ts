@@ -5,7 +5,7 @@ import { config } from './app/app.config.browser';
 
 const SENTRY_DSN = import.meta.env['NG_APP_SENTRY_DSN'];
 
-if(SENTRY_DSN) {
+if(SENTRY_DSN && SENTRY_DSN !== 'disabled') {
   Sentry.init({
     dsn: SENTRY_DSN,
 

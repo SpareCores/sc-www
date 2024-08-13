@@ -10,7 +10,7 @@ function customErrorHandler(error: any) {
 
 let providers = [];
 
-if(SENTRY_DSN) {
+if(SENTRY_DSN && SENTRY_DSN !== 'disabled') {
   providers.push({
     provide: ErrorHandler,
     useValue: Sentry.createErrorHandler({
