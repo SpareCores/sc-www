@@ -5,7 +5,9 @@ import * as Sentry from "@sentry/angular";
 
 const POSTHOG_KEY = import.meta.env['NG_APP_POSTHOG_KEY'];
 const POSTHOG_HOST = import.meta.env['NG_APP_POSTHOG_HOST'];
-const SENTRY_DSN = import.meta.env['NG_APP_SENTRY_DSN'];
+
+// @ts-ignore
+const SENTRY_DSN = import.meta?.env?.NG_APP_SENTRY_DSN;
 
 @Injectable({
   providedIn: 'root'
@@ -41,7 +43,7 @@ export class AnalyticsService {
   }
 
   public SentryException(exception: any, hint?: any) {
-    if (SENTRY_DSN && SENTRY_DSN !== 'disabled') {
+    if (SENTRY_DSN) {
       Sentry.captureException(exception, hint);
     }
   }

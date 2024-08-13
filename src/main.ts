@@ -3,9 +3,11 @@ import { AppComponent } from './app/app.component';
 import * as Sentry from "@sentry/angular";
 import { config } from './app/app.config.browser';
 
-const SENTRY_DSN = import.meta.env['NG_APP_SENTRY_DSN'];
+// @ts-ignore
+const SENTRY_DSN = import.meta?.env?.NG_APP_SENTRY_DSN;
 
-if(SENTRY_DSN && SENTRY_DSN !== 'disabled') {
+console.log('SENTRY_DSN', SENTRY_DSN);
+if(SENTRY_DSN) {
   Sentry.init({
     dsn: SENTRY_DSN,
 

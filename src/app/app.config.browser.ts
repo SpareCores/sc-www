@@ -2,7 +2,8 @@ import { mergeApplicationConfig, ApplicationConfig, ErrorHandler } from '@angula
 import { appConfig } from './app.config';
 import * as Sentry from "@sentry/angular";
 
-const SENTRY_DSN = import.meta.env['NG_APP_SENTRY_DSN'];
+// @ts-ignore
+const SENTRY_DSN = import.meta?.env?.NG_APP_SENTRY_DSN;
 
 function customErrorHandler(error: any) {
   return error;
@@ -10,7 +11,7 @@ function customErrorHandler(error: any) {
 
 let providers = [];
 
-if(SENTRY_DSN && SENTRY_DSN !== 'disabled') {
+if(SENTRY_DSN) {
   providers.push({
     provide: ErrorHandler,
     useValue: Sentry.createErrorHandler({
