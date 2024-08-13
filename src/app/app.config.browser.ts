@@ -2,8 +2,7 @@ import { mergeApplicationConfig, ApplicationConfig, ErrorHandler } from '@angula
 import { appConfig } from './app.config';
 import * as Sentry from "@sentry/angular";
 
-// @ts-expect-error
-// i want this to compile, but it doesn't
+// @ts-expect-error i want this to compile, but it doesn't
 const SENTRY_DSN = import.meta?.env?.NG_APP_SENTRY_DSN;
 
 function customErrorHandler(error: any) {
