@@ -12,6 +12,8 @@ import * as yaml from 'js-yaml';
 import { REQUEST } from '../../../express.tokens';
 import { Request } from 'express';
 import { initGiscus } from '../../tools/initGiscus';
+import hljs from 'highlight.js';
+
 
 @Component({
   selector: 'app-article',
@@ -91,6 +93,8 @@ export class ArticleComponent implements OnInit, OnDestroy {
                 }
               });
               initGiscus(this.renderer, this.articleDiv, baseUrl, 'Blog posts', 'DIC_kwDOLesFQM4CgusO', 'og:title');
+
+              hljs.highlightAll();
 
               clearInterval(checkExist);
             }
