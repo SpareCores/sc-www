@@ -43,7 +43,7 @@ export class AnalyticsService {
   }
 
   public SentryException(exception: any, hint?: any) {
-    if (SENTRY_DSN) {
+    if (SENTRY_DSN && SENTRY_DSN !== '') {
       Sentry.captureException(exception, hint);
     }
   }
