@@ -6,7 +6,8 @@ import * as Sentry from "@sentry/angular";
 const POSTHOG_KEY = import.meta.env['NG_APP_POSTHOG_KEY'];
 const POSTHOG_HOST = import.meta.env['NG_APP_POSTHOG_HOST'];
 
-// @ts-ignore
+// @ts-expect-error
+// i want this to compile, but it doesn't
 const SENTRY_DSN = import.meta?.env?.NG_APP_SENTRY_DSN;
 
 @Injectable({

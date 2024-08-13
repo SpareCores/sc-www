@@ -3,7 +3,8 @@ import { AppComponent } from './app/app.component';
 import * as Sentry from "@sentry/angular";
 import { config } from './app/app.config.browser';
 
-// @ts-ignore
+// @ts-expect-error
+// i want this to compile, but it doesn't
 const SENTRY_DSN = import.meta?.env?.NG_APP_SENTRY_DSN;
 
 if(SENTRY_DSN && SENTRY_DSN !== '') {
