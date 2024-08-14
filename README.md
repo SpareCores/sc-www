@@ -34,6 +34,10 @@ page visits, clicks etc via the following environment variables:
 - NG_APP_POSTHOG_HOST: The Posthog tracking API endpoint,
   e.g. https://us.i.posthog.com
 
+Optionally, you can also use Sentry by setting the following environment variable:
+
+- NG_APP_SENTRY_DSN
+
 ## Development server
 
 Run `ng serve` for a dev server, which listens on `http://localhost:4200/` by default.
