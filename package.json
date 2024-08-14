@@ -5,12 +5,12 @@
     "ng": "ng",
     "prebuild": "node ./prebuild.js",
     "start": "ng serve",
-    "build": "ng build && npm run sentry:sourcemaps",
+    "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:sc-www": "node dist/sc-www/server/server.mjs",
     "lint": "ng lint",
-    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org sentry --project sc-www ./dist/sc-www/ && sentry-cli --url https://sentry.sparecores.net/ sourcemaps upload --org sentry --project sc-www ./dist/sc-www/"
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org sentry --project sc-www ./dist/sc-www && sentry-cli --url https://sentry.sparecores.net sourcemaps upload --org sentry --project sc-www ./dist/sc-www"
   },
   "private": true,
   "dependencies": {
