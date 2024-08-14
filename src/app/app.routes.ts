@@ -24,6 +24,7 @@ export const routes: Routes = [
 
   { path: 'regions', loadComponent: () => import('./pages/regions/regions.component').then(m => m.RegionsComponent)},
   { path: 'vendors', loadComponent: () => import('./pages/vendors/vendors.component').then(m => m.VendorsComponent)},
+  { path: 'storages', loadComponent: () => import('./pages/storages/storages.component').then(m => m.StoragesComponent)},
   { path: 'datacenters', redirectTo: 'regions' },
 
   { path: 'survey/:id', loadComponent: () => import('./pages/survey-fill/survey-fill.component').then(m => m.SurveyFillComponent)},

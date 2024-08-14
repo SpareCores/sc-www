@@ -872,6 +872,7 @@ export enum Regions {
   Value4 = "4",
   Value5 = "5",
   Value6 = "6",
+  Value7 = "7",
   AfSouth1 = "af-south-1",
   ApEast1 = "ap-east-1",
   ApNortheast1 = "ap-northeast-1",
@@ -1365,6 +1366,8 @@ export interface ServerPKs {
   observed_at?: string;
   /** Score */
   score?: number | null;
+  /** Price */
+  price?: number | null;
   /** Score Per Price */
   score_per_price?: number | null;
   vendor: VendorBase;
@@ -1577,6 +1580,8 @@ export interface ServerPKsWithPrices {
   observed_at?: string;
   /** Score */
   score?: number | null;
+  /** Price */
+  price?: number | null;
   /** Score Per Price */
   score_per_price?: number | null;
   vendor: VendorBase;
@@ -1946,6 +1951,8 @@ export interface ServerWithScore {
   observed_at?: string;
   /** Score */
   score?: number | null;
+  /** Price */
+  price?: number | null;
   /** Score Per Price */
   score_per_price?: number | null;
 }
@@ -2032,6 +2039,121 @@ export interface Storage {
   observed_at?: string;
 }
 
+/** StorageBase */
+export interface StorageBase {
+  /**
+   * Vendor Id
+   * Reference to the Vendor.
+   */
+  vendor_id: string;
+  /**
+   * Storage Id
+   * Unique identifier, as called at the Vendor.
+   */
+  storage_id: string;
+  /**
+   * Name
+   * Human-friendly name.
+   */
+  name: string;
+  /**
+   * Description
+   * Short description.
+   */
+  description: string | null;
+  /** High-level category of the storage, e.g. HDD or SDD. */
+  storage_type: StorageType;
+  /**
+   * Max Iops
+   * Maximum Input/Output Operations Per Second.
+   */
+  max_iops?: number | null;
+  /**
+   * Max Throughput
+   * Maximum Throughput (MiB/s).
+   */
+  max_throughput?: number | null;
+  /**
+   * Min Size
+   * Minimum required size (GiB).
+   */
+  min_size?: number | null;
+  /**
+   * Max Size
+   * Maximum possible size (GiB).
+   */
+  max_size?: number | null;
+  /**
+   * Status of the resource (active or inactive).
+   * @default "active"
+   */
+  status?: Status;
+  /**
+   * Observed At
+   * Timestamp of the last observation.
+   * @format date-time
+   */
+  observed_at?: string;
+}
+
+/** StoragePriceWithPKs */
+export interface StoragePriceWithPKs {
+  /**
+   * Vendor Id
+   * Reference to the Vendor.
+   */
+  vendor_id: string;
+  /**
+   * Region Id
+   * Reference to the Region.
+   */
+  region_id: string;
+  /**
+   * Storage Id
+   * Reference to the Storage.
+   */
+  storage_id: string;
+  /** Billing unit of the pricing model. */
+  unit: PriceUnit;
+  /**
+   * Price
+   * Actual price of a billing unit.
+   */
+  price: number;
+  /**
+   * Price Upfront
+   * Price to be paid when setting up the resource.
+   * @default 0
+   */
+  price_upfront?: number;
+  /**
+   * Price Tiered
+   * List of pricing tiers with min/max thresholds and actual prices.
+   * @default []
+   */
+  price_tiered?: PriceTier[];
+  /**
+   * Currency
+   * Currency of the prices.
+   * @default "USD"
+   */
+  currency?: string;
+  /**
+   * Status of the resource (active or inactive).
+   * @default "active"
+   */
+  status?: Status;
+  /**
+   * Observed At
+   * Timestamp of the last observation.
+   * @format date-time
+   */
+  observed_at?: string;
+  region: RegionBaseWithPKs;
+  vendor: VendorBase;
+  storage: StorageBase;
+}
+
 /**
  * StorageType
  * Type of a storage, e.g. HDD or SSD.
@@ -2041,6 +2163,19 @@ export enum StorageType {
   Ssd = "ssd",
   NvmeSsd = "nvme ssd",
   Network = "network",
+}
+
+/** Storages */
+export enum Storages {
+  Value30001 = "30001",
+  Value30002 = "30002",
+  Value30007 = "30007",
+  Block = "block",
+  Gp2 = "gp2",
+  Gp3 = "gp3",
+  Sc1 = "sc1",
+  St1 = "st1",
+  Standard = "standard",
 }
 
 /** ValidationError */
@@ -2359,6 +2494,22 @@ export type TableServerTableServerGetData = Server[];
 /** Response Table Storage Table Storage Get */
 export type TableStorageTableStorageGetData = Storage[];
 
+export interface TableStoragePricesStoragePricesGetParams {
+  /**
+   * Vendor id
+   * Identifier of the cloud provider vendor.
+   */
+  vendor: "aws" | "gcp" | "hcloud";
+  /**
+   * Storage id
+   * Identifier of the storage type.
+   */
+  storage_type: "30001" | "30002" | "30007" | "block" | "gp2" | "gp3" | "sc1" | "st1" | "standard";
+}
+
+/** Response Table Storage Prices Storage Prices Get */
+export type TableStoragePricesStoragePricesGetData = StoragePriceWithPKs[];
+
 export type TableMetadataServerTableServerMetaGetData = ServerTableMetaData;
 
 export interface SearchRegionsRegionsGetParams {
@@ -2601,6 +2752,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "4"
     | "5"
     | "6"
+    | "7"
     | "af-south-1"
     | "ap-east-1"
     | "ap-northeast-1"

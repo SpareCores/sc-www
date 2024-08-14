@@ -36,6 +36,7 @@ export class ServerPrices<SecurityDataType = unknown> {
       path: `/server_prices`,
       method: "GET",
       query: query,
+      format: "json",
       ...params,
     });
 }

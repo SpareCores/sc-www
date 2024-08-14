@@ -126,6 +126,7 @@ export namespace ServerPrices {
         | "4"
         | "5"
         | "6"
+        | "7"
         | "af-south-1"
         | "ap-east-1"
         | "ap-northeast-1"

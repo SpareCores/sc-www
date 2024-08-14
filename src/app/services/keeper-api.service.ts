@@ -3,12 +3,13 @@ import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { MYHTTPClient } from './my_http/my-http';
 import { Server } from '../../../sdk/Server';
 import { Servers } from '../../../sdk/Servers';
-import { AssistServerFiltersAiAssistServerFiltersGetParams, AssistServerPriceFiltersAiAssistServerPriceFiltersGetParams, SearchServerPricesServerPricesGetParams, SearchServersServersGetParams, ServerPKs } from '../../../sdk/data-contracts';
+import { AssistServerFiltersAiAssistServerFiltersGetParams, AssistServerPriceFiltersAiAssistServerPriceFiltersGetParams, SearchServerPricesServerPricesGetParams, SearchServersServersGetParams, ServerPKs, TableStoragePricesStoragePricesGetParams } from '../../../sdk/data-contracts';
 import { Table } from '../../../sdk/Table';
 import { Ai } from '../../../sdk/Ai';
 import { ServerPrices } from '../../../sdk/ServerPrices';
 import { BehaviorSubject } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
+import { StoragePrices } from '../../../sdk/StoragePrices';
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +23,7 @@ export class KeeperAPIService {
   public ServerPciresController: ServerPrices = new ServerPrices(this.myHttp);
   public TableController: Table = new Table(this.myHttp);
   public AIController: Ai = new Ai(this.myHttp);
+  public StorageController: StoragePrices = new StoragePrices(this.myHttp);
 
   serverCache: ServerPKs[] = [];
   serverCacheSubject: BehaviorSubject<any[]> = new BehaviorSubject<ServerPKs[]>([]);
@@ -84,6 +86,14 @@ export class KeeperAPIService {
 
   public getServerBenchmarkMeta(): Promise<any> {
     return this.TableController.tableBenchmarkTableBenchmarkGet();
+  }
+
+  public getStorages(): Promise<any> {
+    return this.TableController.tableStorageTableStorageGet();
+  }
+
+  public getStoragePrices(query: TableStoragePricesStoragePricesGetParams): Promise<any> {
+    return this.StorageController.tableStoragePricesStoragePricesGet(query);
   }
 
 }
