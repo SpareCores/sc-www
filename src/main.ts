@@ -9,13 +9,8 @@ const SENTRY_DSN = import.meta?.env?.NG_APP_SENTRY_DSN;
 if(SENTRY_DSN && SENTRY_DSN !== '') {
   Sentry.init({
     dsn: SENTRY_DSN,
-
-    integrations: [],
-
-    // Set tracesSampleRate to 1.0 to capture 100%
-    // of transactions for performance monitoring.
-    // We recommend adjusting this value in production
-    tracesSampleRate: 0,
+    integrations: [Sentry.browserTracingIntegration()],
+    tracesSampleRate: 1.0,
   });
 }
 
