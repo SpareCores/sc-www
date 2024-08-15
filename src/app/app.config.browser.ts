@@ -15,6 +15,8 @@ const SENTRY_PROFILE_SAMPLE_RATE = import.meta?.env?.NG_APP_SENTRY_PROFILE_SAMPL
 // @ts-expect-error i want this to compile, but it doesn't
 const SENTRY_ENVIRONMENT = import.meta?.env?.NG_APP_SENTRY_ENVIRONMENT || 'development';
 
+const BACKEND_BASE_URI = import.meta.env['NG_APP_BACKEND_BASE_URI'];
+
 let sentry_client: any = null;
 
 if(SENTRY_DSN && SENTRY_DSN !== '') {
@@ -23,6 +25,8 @@ if(SENTRY_DSN && SENTRY_DSN !== '') {
     environment: SENTRY_ENVIRONMENT,
 
     integrations: [Sentry.browserTracingIntegration()],
+
+    tracePropagationTargets: ['localhost', /^\//, BACKEND_BASE_URI],
 
     // Set tracesSampleRate to 1.0 to capture 100%
     // of transactions for performance monitoring.
