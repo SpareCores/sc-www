@@ -7,6 +7,7 @@ import { register } from 'swiper/element/bundle';
 import { HeaderComponent } from './layout/header/header.component';
 import { FooterComponent } from './layout/footer/footer.component';
 import { AnalyticsService } from './services/analytics.service';
+import * as Sentry from '@sentry/angular';
 
 @Component({
   selector: 'app-root',
@@ -49,6 +50,12 @@ export class AppComponent implements OnInit, AfterViewInit {
           // update canonical url with query params as well
 
           this.updateCanonical(url.toLowerCase());
+
+          Sentry.addBreadcrumb({
+            category: 'navigation',
+            message: event.urlAfterRedirects,
+            level: "info"
+          });
         }
 
         if (event instanceof NavigationError) {
