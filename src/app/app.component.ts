@@ -1,5 +1,5 @@
 import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
-import { AfterViewInit, Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { AfterViewInit, Component, Inject, OnInit, Optional, PLATFORM_ID } from '@angular/core';
 import { Meta } from '@angular/platform-browser';
 import { NavigationEnd, NavigationError, NavigationStart, Router, Event, RouterModule } from '@angular/router';
 import { initFlowbite } from 'flowbite';
@@ -23,6 +23,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   showFooter = true;
 
   constructor(@Inject(PLATFORM_ID) private platformId: object,
+    @Optional() @Inject('sentryClient') private sentryClient: any,
     @Inject(DOCUMENT) private document: Document,
     private router: Router,
     private analytics: AnalyticsService,
@@ -32,6 +33,16 @@ export class AppComponent implements OnInit, AfterViewInit {
 
         if (event instanceof NavigationStart) {
             // Show loading indicator
+            // Start a new Sentry transaction for this navigation
+            if(this.sentryClient) {
+              Sentry.startBrowserTracingNavigationSpan(this.sentryClient, {
+                op: "navigation",
+                name: event.url, // or what the name of the span should be
+                attributes: {
+                  [Sentry.SEMANTIC_ATTRIBUTE_SENTRY_SOURCE]: "route",
+                },
+              });
+            }
         }
 
         if (event instanceof NavigationEnd) {
