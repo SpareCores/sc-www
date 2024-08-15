@@ -18,17 +18,12 @@ if(SENTRY_DSN && SENTRY_DSN !== '') {
   Sentry.init({
     dsn: SENTRY_DSN,
     environment: SENTRY_ENVIRONMENT,
-
     integrations: [Sentry.browserTracingIntegration()],
-
     tracePropagationTargets: ['localhost', /^\//, BACKEND_BASE_URI],
-
-    // Set tracesSampleRate to 1.0 to capture 100%
-    // of transactions for performance monitoring.
-    // We recommend adjusting this value in production
     tracesSampleRate: Number(SENTRY_TRACE_SAMPLE_RATE),
     profilesSampleRate: Number(SENTRY_PROFILE_SAMPLE_RATE),
   });
+  Sentry.setTag("isPlatformBrowser", "false");
 }
 
 const bootstrap = () => bootstrapApplication(AppComponent, config);
