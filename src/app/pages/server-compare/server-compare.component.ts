@@ -533,7 +533,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     this.servers?.forEach((s: ServerPKsWithPrices) => {
       const temp = s.benchmark_scores?.find((b) =>
         b.benchmark_id === 'stress_ng:cpu_all' &&
-        ((isMulti && server.vcpus && server.vcpus > 1) ? ((b.config as any)?.cores > 1) :(b.config as any)?.cores === 1))?.score || 0;
+        ((isMulti && s.vcpus && s.vcpus > 1) ? ((b.config as any)?.cores > 1) :(b.config as any)?.cores === 1))?.score || 0;
       if(temp > prop) {
         isBest = false;
       }
