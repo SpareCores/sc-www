@@ -12,12 +12,15 @@ const SENTRY_DSN = import.meta?.env?.NG_APP_SENTRY_DSN;
 const SENTRY_TRACE_SAMPLE_RATE = import.meta?.env?.NG_APP_SENTRY_TRACE_SAMPLE_RATE || '0';
 // @ts-expect-error i want this to compile, but it doesn't
 const SENTRY_PROFILE_SAMPLE_RATE = import.meta?.env?.NG_APP_SENTRY_PROFILE_SAMPLE_RATE || '0';
+// @ts-expect-error i want this to compile, but it doesn't
+const SENTRY_ENVIRONMENT = import.meta?.env?.NG_APP_SENTRY_ENVIRONMENT || 'development';
 
 let sentry_client: any = null;
 
 if(SENTRY_DSN && SENTRY_DSN !== '') {
   sentry_client = Sentry.init({
     dsn: SENTRY_DSN,
+    environment: SENTRY_ENVIRONMENT,
 
     integrations: [Sentry.browserTracingIntegration()],
 
