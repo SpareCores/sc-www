@@ -34,9 +34,13 @@ page visits, clicks etc via the following environment variables:
 - NG_APP_POSTHOG_HOST: The Posthog tracking API endpoint,
   e.g. https://us.i.posthog.com
 
-Optionally, you can also use Sentry by setting the following environment variable:
+Optionally, you can also use and configure Sentry by setting the
+following environment variable(s):
 
 - NG_APP_SENTRY_DSN
+- NG_APP_SENTRY_TRACE_SAMPLE_RATE (default to 0)
+- NG_APP_SENTRY_PROFILE_SAMPLE_RATE (default to 0)
+- NG_APP_SENTRY_ENVIRONMENT (default to "development")
 
 ## Development server
 
