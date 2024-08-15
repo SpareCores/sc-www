@@ -23,7 +23,6 @@ if(SENTRY_DSN && SENTRY_DSN !== '') {
     tracesSampleRate: Number(SENTRY_TRACE_SAMPLE_RATE),
     profilesSampleRate: Number(SENTRY_PROFILE_SAMPLE_RATE),
   });
-  Sentry.setTag("isPlatformBrowser", "false");
 }
 
 const bootstrap = () => bootstrapApplication(AppComponent, config);
