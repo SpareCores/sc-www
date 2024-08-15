@@ -9,7 +9,8 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:sc-www": "node dist/sc-www/server/server.mjs",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org sentry --project sc-www ./dist/sc-www && sentry-cli --url https://sentry.sparecores.net sourcemaps upload --org sentry --project sc-www ./dist/sc-www"
   },
   "private": true,
   "dependencies": {
@@ -26,6 +27,7 @@
     "@angular/ssr": "^17.2.3",
     "@netlify/functions": "^2.6.0",
     "@sentry/angular": "^8.22.0",
+    "@sentry/cli": "^2.33.1",
     "buffer": "^6.0.3",
     "chart.js": "^4.3.0",
     "chartjs-plugin-annotation": "^3.0.1",
