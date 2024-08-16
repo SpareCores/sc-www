@@ -7,7 +7,6 @@ import { register } from 'swiper/element/bundle';
 import { HeaderComponent } from './layout/header/header.component';
 import { FooterComponent } from './layout/footer/footer.component';
 import { AnalyticsService } from './services/analytics.service';
-import * as Sentry from '@sentry/angular';
 
 @Component({
   selector: 'app-root',
