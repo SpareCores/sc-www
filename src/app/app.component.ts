@@ -33,16 +33,6 @@ export class AppComponent implements OnInit, AfterViewInit {
 
         if (event instanceof NavigationStart) {
             // Show loading indicator
-            // Start a new Sentry transaction for this navigation
-            if(this.sentryClient) {
-              Sentry.startBrowserTracingNavigationSpan(this.sentryClient, {
-                op: "navigation",
-                name: event.url, // or what the name of the span should be
-                attributes: {
-                  [Sentry.SEMANTIC_ATTRIBUTE_SENTRY_SOURCE]: "route",
-                },
-              });
-            }
         }
 
         if (event instanceof NavigationEnd) {
@@ -61,12 +51,6 @@ export class AppComponent implements OnInit, AfterViewInit {
           // update canonical url with query params as well
 
           this.updateCanonical(url.toLowerCase());
-
-          Sentry.addBreadcrumb({
-            category: 'navigation',
-            message: event.urlAfterRedirects,
-            level: "info"
-          });
         }
 
         if (event instanceof NavigationError) {

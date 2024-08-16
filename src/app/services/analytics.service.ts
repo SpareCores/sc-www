@@ -45,6 +45,11 @@ export class AnalyticsService {
   public SentryException(exception: any, hint?: any) {
     if (SENTRY_DSN && SENTRY_DSN !== '') {
       Sentry.captureException(exception, hint);
+
+      // Force Sentry to send the event immediately
+      Sentry.flush(2000).then(() => {
+        //console.log('Sentry flush complete');
+      });
     }
   }
 
