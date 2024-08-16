@@ -1,4 +1,4 @@
-import { mergeApplicationConfig, ApplicationConfig, ErrorHandler } from '@angular/core';
+import { mergeApplicationConfig, ApplicationConfig } from '@angular/core';
 import { appConfig } from './app.config';
 import * as Sentry from "@sentry/angular";
 
