@@ -27,12 +27,7 @@ if(SENTRY_DSN && SENTRY_DSN !== '') {
     release: SENTRY_RELEASE,
 
     integrations: [Sentry.browserTracingIntegration()],
-
     tracePropagationTargets: ['localhost', /^\//, BACKEND_BASE_URI],
-
-    // Set tracesSampleRate to 1.0 to capture 100%
-    // of transactions for performance monitoring.
-    // We recommend adjusting this value in production
     tracesSampleRate: Number(SENTRY_TRACE_SAMPLE_RATE),
     profilesSampleRate: Number(SENTRY_PROFILE_SAMPLE_RATE),
   });
