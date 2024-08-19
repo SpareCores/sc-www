@@ -83,7 +83,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   similarOptions: any[] = [
     {name: 'By GPU, CPU and memory specs', key: 'bySpecs'},
     {name: 'By CPU performance', key: 'byScore'},
-    {name: 'By CPU performance per price', key: 'byPerformancePerPrice'}
+    //{name: 'By CPU performance per price', key: 'byPerformancePerPrice'}
   ];
   selectedSimilarOption: any = this.similarOptions[1];
 
@@ -424,13 +424,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
             }, 2000);
 
-            this.keeperAPI.serverCacheSubject.subscribe((data) => {
-              if(data) {
-                // filter self out
-                this.serverOptions = data.filter((s) => s.api_reference !== this.serverDetails.api_reference);
-                this.selectSimilarServerOption(this.selectedSimilarOption);
-              }
-            });
+            this.selectSimilarServerOption(this.selectedSimilarOption);
 
             const interval = setInterval(() => {
               const targetElAllocation: HTMLElement | null = document.getElementById('allocation_options');
@@ -1379,6 +1373,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   diffBy(s: ServerPKs, field: keyof ServerPKs) {
     return Math.abs(Number(this.serverDetails[field]) - Number(s[field]));
   }
+
   diffSpec(s: ServerPKs) {
     return Math.abs(Number(this.serverDetails.gpu_count) - Number(s.gpu_count)) * 10e6 +
            Math.abs(Number(this.serverDetails.vcpus) - Number(s.vcpus)) * 10e3 +
@@ -1389,9 +1384,14 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     this.selectedSimilarOption = event;
     switch(this.selectedSimilarOption.key) {
       case 'byScore':
-        this.similarServers = this.serverOptions.sort((a, b) => {
-          return this.diffBy(a, "score") - this.diffBy(b, "score");
-        }).slice(0, 7);
+        this.keeperAPI.searchServers({
+            benchmark_score_stressng_cpu_min: (this.serverDetails.score || 0) * 0.98 })
+          .then((servers: any) => {
+          this.serverOptions = servers?.body?.filter((s: ServerPKs) => s.api_reference !== this.serverDetails.api_reference);
+          this.similarServers = this.serverOptions.sort((a, b) => {
+            return this.diffBy(a, "score") - this.diffBy(b, "score");
+          }).slice(0, 7);
+        });
         break;
       case 'byPerformancePerPrice':
         this.similarServers = this.serverOptions.sort((a, b) => {
@@ -1399,9 +1399,16 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
         }).slice(0, 7);
         break;
       case 'bySpecs':
-        this.similarServers = this.serverOptions.sort((a, b) => {
-          return this.diffSpec(a) - this.diffSpec(b);
-        }).slice(0, 7);
+        this.keeperAPI.searchServers({
+          gpu_min: this.serverDetails.gpu_count,
+          vcpus_min: Math.round((this.serverDetails.vcpus || 1) * 0.95),
+          memory_min: Math.round((this.serverDetails.memory_amount || 1) * 0.95),})
+          .then((servers: any) => {
+            this.serverOptions = servers?.body?.filter((s: ServerPKs) => s.api_reference !== this.serverDetails.api_reference);
+            this.similarServers = this.serverOptions.sort((a, b) => {
+              return this.diffSpec(a) - this.diffSpec(b);
+            }).slice(0, 7);
+          });
         break;
     }
 
