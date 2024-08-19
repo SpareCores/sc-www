@@ -15,6 +15,7 @@ import { BaseChartDirective } from 'ng2-charts';
 import { Dropdown, DropdownOptions } from 'flowbite';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ServerCompareService } from '../../services/server-compare.service';
+import { DropdownManagerService } from '../../services/dropwdown-manager.service';
 
 Chart.register(annotationPlugin);
 
@@ -208,6 +209,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     private seoHandler: SeoHandlerService,
     private sanitizer: DomSanitizer,
     private serverCompare: ServerCompareService,
+    private dropdownManager: DropdownManagerService,
     private route: ActivatedRoute) { }
 
   ngOnInit() {
@@ -339,19 +341,9 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
               this.generateSSLChart();
               this.generateCompressChart();
 
-              const targetElCurrency: HTMLElement | null = document.getElementById('currency_options');
-              const triggerElCurrency: HTMLElement | null = document.getElementById('currency_button');
-
-              this.dropdownCurrency = new Dropdown(
-                  targetElCurrency,
-                  triggerElCurrency,
-                  options,
-                  {
-                    id: 'currency_options',
-                    override: true
-                  }
-              );
-              this.dropdownCurrency.init();
+              this.dropdownManager.initDropdown('currency_button', 'currency_options').then((dropdown) => {
+                this.dropdownCurrency = dropdown;
+              });
             }
           }).catch((err) => {
             console.error(err);
@@ -778,21 +770,11 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
         return selectedName + ' ops with ' + tooltipItems[0].label + ' MB block size';
       };
 
-      setTimeout(() => {
-        const targetElBWmem: HTMLElement | null = document.getElementById('bw_mem_options');
-        const triggerElBWmem: HTMLElement | null = document.getElementById('bw_mem_button');
-
-        this.dropdownBWmem = new Dropdown(
-            targetElBWmem,
-            triggerElBWmem,
-            options,
-            {
-              id: 'bw_mem_options',
-              override: true
-            }
-        );
-        this.dropdownBWmem.init();
-      }, 500);
+      if(!this.dropdownBWmem) {
+        this.dropdownManager.initDropdown('bw_mem_button', 'bw_mem_options').then((dropdown) => {
+          this.dropdownBWmem = dropdown;
+        });
+      }
     }
   }
 
@@ -844,21 +826,11 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
         return selectedName + ' with ' + tooltipItems[0].label + '-byte block size';
       };
 
-      setTimeout(() => {
-        const targetElSSL: HTMLElement | null = document.getElementById('ssl_options');
-        const triggerElSSL: HTMLElement | null = document.getElementById('ssl_button');
-
-        this.dropdownSSL = new Dropdown(
-            targetElSSL,
-            triggerElSSL,
-            options,
-            {
-              id: 'ssl_options',
-              override: true
-            }
-        );
-        this.dropdownSSL.init();
-      }, 500);
+      if(!this.dropdownSSL) {
+        this.dropdownManager.initDropdown('ssl_button', 'ssl_options').then((dropdown) => {
+          this.dropdownSSL = dropdown;
+        });
+      }
     }
   }
 
@@ -985,23 +957,11 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
       return tooltipItems[0].label + '% compression ratio (' + selectedName + ')';
     };
 
-    const interval4 = setInterval(() => {
-      const targetElCompress: HTMLElement | null = document.getElementById('compress_method_options');
-      const triggerElCompress: HTMLElement | null = document.getElementById('compress_method_button');
-
-      if(targetElCompress && triggerElCompress) {
-        this.compressDropdown = new Dropdown(
-          targetElCompress,
-          triggerElCompress,
-          options,
-          {
-            id: 'compress_method_options',
-            override: true
-          }
-        );
-        clearInterval(interval4);
-      }
-    }, 150);
+    if(!this.compressDropdown) {
+      this.dropdownManager.initDropdown('compress_method_button', 'compress_method_options').then((dropdown) => {
+        this.compressDropdown = dropdown;
+      });
+    }
   }
 
   isBrowser() {
@@ -1047,8 +1007,8 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
 
   selectBWMemOperation(operation: any) {
     this.selectedBWMemOperation = operation;
-    this.generateBWMemChart();
     this.dropdownBWmem?.hide();
+    this.generateBWMemChart();
   }
 
   selecSSLAlgorithm(algo: any) {

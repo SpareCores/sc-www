@@ -12,6 +12,7 @@ import { LucideAngularModule } from 'lucide-angular';
 import { CountryIdtoNamePipe } from '../../pipes/country-idto-name.pipe';
 import { SearchBarComponent } from '../../components/search-bar/search-bar.component';
 import { PaginationComponent } from '../../components/pagination/pagination.component';
+import { DropdownManagerService } from '../../services/dropwdown-manager.service';
 
 export type TableColumn = {
   name: string;
@@ -189,6 +190,7 @@ export class ServerPricesComponent implements OnInit {
               private route: ActivatedRoute,
               private router: Router,
               private SEOHandler: SeoHandlerService,
+              private dropdownManager: DropdownManagerService,
               private storageHandler: StorageHandlerService) { }
 
   ngOnInit() {
@@ -243,58 +245,22 @@ export class ServerPricesComponent implements OnInit {
     });
 
     if(isPlatformBrowser(this.platformId)) {
-      const targetElCurrency: HTMLElement | null = document.getElementById('currency_options');
-      const triggerElCurrency: HTMLElement | null = document.getElementById('currency_button');
 
+      this.dropdownManager.initDropdown('currency_button', 'currency_options').then((dropdown: any) => {
+        this.dropdownCurrency = dropdown
+      });
 
-      this.dropdownCurrency = new Dropdown(
-          targetElCurrency,
-          triggerElCurrency,
-          options,
-          {
-            id: 'currency_options',
-            override: true
-          }
-      );
+      this.dropdownManager.initDropdown('allocation_button', 'allocation_options').then((dropdown: any) => {
+        this.dropdownAllocation = dropdown;
+      });
 
-      const targetElAllocation: HTMLElement | null = document.getElementById('allocation_options');
-      const triggerElAllocation: HTMLElement | null = document.getElementById('allocation_button');
+      this.dropdownManager.initDropdown('column_button', 'column_options').then((dropdown: any) => {
+        this.dropdownColumn = dropdown;
+      });
 
-      this.dropdownAllocation = new Dropdown(
-        targetElAllocation,
-        triggerElAllocation,
-        options,
-        {
-          id: 'allocation_options',
-          override: true
-        }
-      );
-
-      const targetElColumn: HTMLElement | null = document.getElementById('column_options');
-      const triggerElColumn: HTMLElement | null = document.getElementById('column_button');
-
-      this.dropdownColumn = new Dropdown(
-        targetElColumn,
-        triggerElColumn,
-        options,
-        {
-          id: 'column_options',
-          override: true
-        }
-      );
-
-      const targetElPage: HTMLElement | null = document.getElementById('pagesize_options');
-      const triggerElPage: HTMLElement | null = document.getElementById('pagesize_button');
-
-      this.dropdownPage = new Dropdown(
-        targetElPage,
-        triggerElPage,
-        options,
-        {
-          id: 'pagesize_options',
-          override: true
-        }
-      );
+      this.dropdownManager.initDropdown('pagesize_button', 'pagesize_options').then((dropdown: any) => {
+        this.dropdownPage = dropdown;
+      });
     }
   }
 
@@ -519,9 +485,10 @@ export class ServerPricesComponent implements OnInit {
     this.limit = limit;
     this.page = 1;
 
-    window.scrollTo(0, 0);
-
     this.searchOptionsChanged(this.query);
+    this.dropdownPage?.hide();
+
+    window.scrollTo(0, 0);
   }
 
   getField(item: ServerPriceWithPKs, field: string) {

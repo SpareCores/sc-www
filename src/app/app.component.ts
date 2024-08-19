@@ -62,7 +62,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     register();
     if (isPlatformBrowser(this.platformId)) {
-      initFlowbite();
+      //initFlowbite();
     }
   }
 

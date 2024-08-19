@@ -22,6 +22,7 @@ import { CountryIdtoNamePipe } from '../../pipes/country-idto-name.pipe';
 import { ServerCompareService } from '../../services/server-compare.service';
 import { initGiscus } from '../../tools/initGiscus';
 import { Location } from '@angular/common';
+import { DropdownManagerService } from '../../services/dropwdown-manager.service';
 
 Chart.register(annotationPlugin);
 
@@ -71,7 +72,6 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     { name: 'Ondemand', selected: true }
   ];
 
-  regionDropdown: any;
   regionFilters: any[] = [];
 
   similarByFamily: Server[] = [];
@@ -160,6 +160,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
               private router: Router,
               private renderer: Renderer2,
               private location: Location,
+              private dropdownManager: DropdownManagerService,
               private sanitizer: DomSanitizer) {
   }
 
@@ -432,96 +433,21 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
               }
             });
 
-            const interval = setInterval(() => {
-              const targetElAllocation: HTMLElement | null = document.getElementById('allocation_options');
-              const triggerElAllocation: HTMLElement | null = document.getElementById('allocation_button');
+            this.dropdownManager.initDropdown('allocation_button', 'allocation_options');
 
-              if(targetElAllocation && triggerElAllocation) {
-                this.dropdownAllocation = new Dropdown(
-                  targetElAllocation,
-                  triggerElAllocation,
-                  options,
-                  {
-                    id: 'allocation_options',
-                    override: true
-                  }
-                );
-                clearInterval(interval);
-              }
-            }, 150);
+            this.dropdownManager.initDropdown('allocation_button2', 'allocation_options2');
 
-            const interval2 = setInterval(() => {
-              const targetElAllocation: HTMLElement | null = document.getElementById('allocation_options2');
-              const triggerElAllocation: HTMLElement | null = document.getElementById('allocation_button2');
-
-              if(targetElAllocation && triggerElAllocation) {
-                this.dropdownAllocation2 = new Dropdown(
-                  targetElAllocation,
-                  triggerElAllocation,
-                  options,
-                  {
-                    id: 'allocation_options2',
-                    override: true
-                  }
-                );
-                clearInterval(interval2);
-              }
-            }, 150);
-
-            const interval3 = setInterval(() => {
-              const targetElAllocation: HTMLElement | null = document.getElementById('region_options');
-              const triggerElAllocation: HTMLElement | null = document.getElementById('region_button');
-
-              if(targetElAllocation && triggerElAllocation) {
-                this.regionDropdown = new Dropdown(
-                  targetElAllocation,
-                  triggerElAllocation,
-                  options,
-                  {
-                    id: 'region_options',
-                    override: true
-                  }
-                );
-                clearInterval(interval3);
-              }
-            }, 150);
-
-            const interval4 = setInterval(() => {
-              const targetElCompress: HTMLElement | null = document.getElementById('compress_method_options');
-              const triggerElCompress: HTMLElement | null = document.getElementById('compress_method_button');
-
-              if(targetElCompress && triggerElCompress) {
-                this.compressDropdown = new Dropdown(
-                  targetElCompress,
-                  triggerElCompress,
-                  options,
-                  {
-                    id: 'compress_method_options',
-                    override: true
-                  }
-                );
-                clearInterval(interval4);
-              }
-            }, 150);
-
-            const interval5 = setInterval(() => {
-              const targetElAllocation: HTMLElement | null = document.getElementById('similar_server_options');
-              const triggerElAllocation: HTMLElement | null = document.getElementById('similar_type_button');
-
-              if(targetElAllocation && triggerElAllocation) {
-                this.dropdownSimilar = new Dropdown(
-                  targetElAllocation,
-                  triggerElAllocation,
-                  options,
-                  {
-                    id: 'similar_server_options',
-                    override: true
-                  }
-                );
-                clearInterval(interval5);
-              }
+            this.dropdownManager.initDropdown('region_button', 'region_options').then((dropdown) => {
+              this.compressDropdown = dropdown;
             });
 
+            this.dropdownManager.initDropdown('compress_method_button', 'compress_method_options').then((dropdown) => {
+              this.compressDropdown = dropdown;
+            });
+
+            this.dropdownManager.initDropdown('similar_type_button', 'similar_server_options').then((dropdown) => {
+              this.dropdownSimilar = dropdown;
+            });
           }
         }
       }).catch((error) => {
