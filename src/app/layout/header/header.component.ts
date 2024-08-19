@@ -1,7 +1,6 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { Dropdown, DropdownOptions, initFlowbite } from 'flowbite';
 import { LucideAngularModule } from 'lucide-angular';
 import { ServerCompareService } from '../../services/server-compare.service';
 import { DropdownManagerService } from '../../services/dropwdown-manager.service';
@@ -17,14 +16,6 @@ export class HeaderComponent implements OnInit {
 
   dropdownMenu: any;
   dropdownCompare: any;
-
-  options: DropdownOptions = {
-    placement: 'bottom',
-    triggerType: 'click',
-    offsetSkidding: 0,
-    offsetDistance: 10,
-    delay: 300
-  };
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: object,

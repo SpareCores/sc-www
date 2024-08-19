@@ -12,21 +12,11 @@ import { Chart, ChartConfiguration, ChartData, TooltipItem, TooltipModel } from 
 import { barChartOptionsSSLCompare, lineChartOptionsBWM, lineChartOptionsCompareCompress, lineChartOptionsCompareDecompress, radarChartOptions, radarDatasetColors } from '../server-details/chartOptions';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import { BaseChartDirective } from 'ng2-charts';
-import { Dropdown, DropdownOptions } from 'flowbite';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ServerCompareService } from '../../services/server-compare.service';
 import { DropdownManagerService } from '../../services/dropwdown-manager.service';
 
 Chart.register(annotationPlugin);
-
-
-const options: DropdownOptions = {
-  placement: 'bottom',
-  triggerType: 'click',
-  offsetSkidding: 0,
-  offsetDistance: 10,
-  delay: 300
-};
 
 @Component({
   selector: 'app-server-compare',

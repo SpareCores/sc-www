@@ -4,7 +4,6 @@ import { KeeperAPIService } from '../../services/keeper-api.service';
 import { OrderDir, ServerPriceWithPKs } from '../../../../sdk/data-contracts';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Dropdown, DropdownOptions } from 'flowbite';
 import { StorageHandlerService } from '../../services/storage-handler.service';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { FormsModule } from '@angular/forms';
@@ -49,14 +48,6 @@ export type RegionVendorMetadata = {
   name: string;
   selected?: boolean;
   collapsed?: boolean;
-};
-
-const options: DropdownOptions = {
-  placement: 'bottom',
-  triggerType: 'click',
-  offsetSkidding: 0,
-  offsetDistance: 10,
-  delay: 300
 };
 
 @Component({
