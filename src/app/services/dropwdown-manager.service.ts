@@ -44,17 +44,15 @@ export class DropdownManagerService {
 
   private waitForElements(triggerID: string, targetID: string): Promise<any> {
     return new Promise((resolve) => {
-      const checkElement = () => {
+      const observer = new MutationObserver(() => {
         const targetEl: HTMLElement | null = document.getElementById(targetID);
         const triggerEl: HTMLElement | null = document.getElementById(triggerID);
         if (this.inited && targetEl && triggerEl) {
+          observer.disconnect();
           resolve({triggerEl, targetEl});
-        } else {
-          setTimeout(checkElement, 100); // Check again after 100ms
         }
-      };
-
-      checkElement();
+      });
+      observer.observe(document.body, { childList: true, subtree: true });
     });
   }
 
