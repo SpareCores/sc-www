@@ -85,7 +85,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     {name: 'By CPU performance', key: 'byScore'},
     //{name: 'By CPU performance per price', key: 'byPerformancePerPrice'}
   ];
-  selectedSimilarOption: any = this.similarOptions[1];
+  selectedSimilarOption: any = this.similarOptions[0];
 
   instancePropertyCategories: any[] = [
     { name: 'General', category: 'meta', properties: [] },
