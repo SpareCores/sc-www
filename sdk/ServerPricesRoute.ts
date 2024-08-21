@@ -31,8 +31,7 @@ export namespace ServerPrices {
        * Minimum vCPUs
        * Minimum number of virtual CPUs.
        * @min 1
-       * @max 128
-       * @default 1
+       * @max 256
        */
       vcpus_min?: number;
       /**
@@ -75,7 +74,7 @@ export namespace ServerPrices {
        * Vendor id
        * Identifier of the cloud provider vendor.
        */
-      vendor?: "aws" | "gcp" | "hcloud";
+      vendor?: "aws" | "azure" | "gcp" | "hcloud";
       /**
        * region id
        * Identifier of the region.
@@ -126,6 +125,7 @@ export namespace ServerPrices {
         | "4"
         | "5"
         | "6"
+        | "7"
         | "af-south-1"
         | "ap-east-1"
         | "ap-northeast-1"
@@ -137,10 +137,27 @@ export namespace ServerPrices {
         | "ap-southeast-2"
         | "ap-southeast-3"
         | "ap-southeast-4"
+        | "australiacentral"
+        | "australiacentral2"
+        | "australiaeast"
+        | "australiasoutheast"
+        | "brazilsouth"
+        | "brazilsoutheast"
+        | "brazilus"
         | "ca-central-1"
+        | "canadacentral"
+        | "canadaeast"
         | "ca-west-1"
+        | "centralindia"
+        | "centralus"
+        | "centraluseuap"
         | "cn-north-1"
         | "cn-northwest-1"
+        | "eastasia"
+        | "eastus"
+        | "eastus2"
+        | "eastus2euap"
+        | "eastusstg"
         | "eu-central-1"
         | "eu-central-2"
         | "eu-north-1"
@@ -149,14 +166,52 @@ export namespace ServerPrices {
         | "eu-west-1"
         | "eu-west-2"
         | "eu-west-3"
+        | "francecentral"
+        | "francesouth"
+        | "germanynorth"
+        | "germanywestcentral"
         | "il-central-1"
+        | "israelcentral"
+        | "italynorth"
+        | "japaneast"
+        | "japanwest"
+        | "jioindiacentral"
+        | "jioindiawest"
+        | "koreacentral"
+        | "koreasouth"
         | "me-central-1"
         | "me-south-1"
+        | "mexicocentral"
+        | "northcentralus"
+        | "northeurope"
+        | "norwayeast"
+        | "norwaywest"
+        | "polandcentral"
+        | "qatarcentral"
         | "sa-east-1"
+        | "southafricanorth"
+        | "southafricawest"
+        | "southcentralus"
+        | "southeastasia"
+        | "southindia"
+        | "spaincentral"
+        | "swedencentral"
+        | "switzerlandnorth"
+        | "switzerlandwest"
+        | "uaecentral"
+        | "uaenorth"
+        | "uksouth"
+        | "ukwest"
         | "us-east-1"
         | "us-east-2"
         | "us-west-1"
-        | "us-west-2";
+        | "us-west-2"
+        | "westcentralus"
+        | "westeurope"
+        | "westindia"
+        | "westus"
+        | "westus2"
+        | "westus3";
       /**
        * Compliance Framework id
        * Compliance framework implemented at the vendor.
@@ -200,6 +255,7 @@ export namespace ServerPrices {
         | "JP"
         | "KR"
         | "NL"
+        | "NO"
         | "PL"
         | "QA"
         | "SA"
@@ -225,7 +281,8 @@ export namespace ServerPrices {
       gpu_memory_total?: number | null;
       /**
        * Limit
-       * Maximum number of results. Set to -1 for unlimited
+       * Maximum number of results.
+       * @max 250
        * @default 50
        */
       limit?: number;

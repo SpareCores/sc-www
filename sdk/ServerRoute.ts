@@ -9,7 +9,10 @@
  * ---------------------------------------------------------------
  */
 
-import { GetServerServerVendorServerGetData } from "./data-contracts";
+import {
+  GetServerServerVendorServerGetData,
+  GetSimilarServersServerVendorServerSimilarServersByNGetData,
+} from "./data-contracts";
 
 export namespace Server {
   /**
@@ -42,5 +45,42 @@ export namespace Server {
     export type RequestBody = never;
     export type RequestHeaders = {};
     export type ResponseBody = GetServerServerVendorServerGetData;
+  }
+
+  /**
+   * @description Search similar servers to the provided one. The "family" method returns all servers from the same family of the same vendor. The "specs" approach will prioritize the number of GPUs, then CPUs, lastly the amount of memory. The "score" method will find the servers with the closest performance using the multi-core SCore.
+   * @tags Query Resources
+   * @name GetSimilarServersServerVendorServerSimilarServersByNGet
+   * @summary Get Similar Servers
+   * @request GET:/server/{vendor}/{server}/similar_servers/{by}/{n}
+   */
+  export namespace GetSimilarServersServerVendorServerSimilarServersByNGet {
+    export type RequestParams = {
+      /**
+       * Vendor
+       * Vendor ID.
+       */
+      vendor: string;
+      /**
+       * Server
+       * Server ID or API reference.
+       */
+      server: string;
+      /**
+       * By
+       * Algorithm to look for similar servers.
+       */
+      by: "family" | "specs" | "score";
+      /**
+       * N
+       * Number of servers to get.
+       * @max 100
+       */
+      n: number;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = GetSimilarServersServerVendorServerSimilarServersByNGetData;
   }
 }

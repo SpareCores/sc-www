@@ -3,7 +3,7 @@
 import { Component, ElementRef, Inject, PLATFORM_ID, OnInit, ViewChild, OnDestroy, Renderer2 } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { KeeperAPIService } from '../../services/keeper-api.service';
-import { Server, ServerPKs, ServerPKsWithPrices, ServerPricePKs, TableServerTableServerGetData } from '../../../../sdk/data-contracts';
+import { GetSimilarServersServerVendorServerSimilarServersByNGetData, Server, ServerPKs, ServerPKsWithPrices, ServerPricePKs, TableServerTableServerGetData } from '../../../../sdk/data-contracts';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
@@ -74,18 +74,18 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   regionDropdown: any;
   regionFilters: any[] = [];
 
-  similarByFamily: Server[] = [];
+  similarByFamily: GetSimilarServersServerVendorServerSimilarServersByNGetData = [];
+  similarBySpecs: GetSimilarServersServerVendorServerSimilarServersByNGetData = [];
 
-  similarServers: ServerPKs[] = [];
+  similarServers: GetSimilarServersServerVendorServerSimilarServersByNGetData = [];
 
   dropdownSimilar: any;
-  serverOptions: any[] = [];
   similarOptions: any[] = [
     {name: 'By GPU, CPU and memory specs', key: 'bySpecs'},
     {name: 'By CPU performance', key: 'byScore'},
-    {name: 'By CPU performance per price', key: 'byPerformancePerPrice'}
+    //{name: 'By CPU performance per price', key: 'byPerformancePerPrice'}
   ];
-  selectedSimilarOption: any = this.similarOptions[1];
+  selectedSimilarOption: any = this.similarOptions[0];
 
   instancePropertyCategories: any[] = [
     { name: 'General', category: 'meta', properties: [] },
@@ -173,11 +173,16 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
       Promise.all([
         this.keeperAPI.getServerMeta(),
         this.keeperAPI.getServerBenchmarkMeta(),
-        this.keeperAPI.getServer(vendor, id)
+        this.keeperAPI.getServer(vendor, id),
+        this.keeperAPI.getServerSimilarServers(vendor, id, 'family', 7),
+        this.keeperAPI.getServerSimilarServers(vendor, id, 'specs', 7)
       ]).then((dataAll) => {
         this.instanceProperties = dataAll[0].body?.fields || [];
 
         this.benchmarkMeta = dataAll[1].body || {};
+
+        this.similarByFamily = dataAll[3].body;
+        this.similarBySpecs = dataAll[4].body;
 
         if(dataAll[2].body){
           this.serverDetails = dataAll[2].body as any;
@@ -327,60 +332,24 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
           this.SEOHandler.updateTitleAndMetaTags(this.title, this.description, keywords);
           this.SEOHandler.updateThumbnail(`https://og.sparecores.com/images/${this.serverDetails.vendor_id}/${this.serverDetails.api_reference}.png`);
 
-          this.similarByFamily = [];
-          let similarBySpecs: any[] = [];
-
-          this.keeperAPI.getServers().then((data) => {
-            if(data?.body) {
-              const allServers = data.body as TableServerTableServerGetData;
-              allServers.forEach((s) => {
-                if(s.vendor_id === this.serverDetails.vendor_id && s.family === this.serverDetails.family && s.api_reference !== this.serverDetails.api_reference) {
-                  if(this.similarByFamily.length < 7 && this.similarByFamily.findIndex((s2) => s2.server_id === s.server_id) === -1) {
-                    this.similarByFamily.push(s);
-                  }
-                } else {
-                  if(s.api_reference !== this.serverDetails.api_reference) {
-                    similarBySpecs.push(s);
-                  }
-                }
+          if (this.similarByFamily?.length > 0) {
+            this.faqs.push(
+              {
+                question: `Are there any other sized servers in the ${this.serverDetails.family} server family?`,
+                html: `Yes! In addition to the ${this.serverDetails.display_name} server, the ${this.serverDetails.family} server family includes ${this.similarByFamily.length} other sizes: ${this.similarByFamily.map((s) => this.serverUrl(s, true)).join(', ')}.`
               });
-              this.similarByFamily = this.similarByFamily.sort((a, b) => {
-                if(a.memory_amount && b.memory_amount && a.memory_amount !== b.memory_amount) {
-                  return a.memory_amount - b.memory_amount
-                } else if(a.vcpus && b.vcpus && a.vcpus !== b.vcpus) {
-                  return a.vcpus - b.vcpus
-                } else if(a.cpu_cores && b.cpu_cores && a.cpu_cores !== b.cpu_cores) {
-                  return a.cpu_cores - b.cpu_cores
-                } else {
-                  return 0;
-                }
+
+          }
+
+          if(this.similarBySpecs?.length > 0) {
+            this.faqs.push(
+              {
+                question: `What other servers offer similar performance to ${this.serverDetails.display_name}?`,
+                html: `Looking at the number of GPU, vCPUs, and memory amount, the following top 10 servers come with similar specs: ${this.similarBySpecs.map((s) => this.serverUrl(s, true)).join(', ')}.`
               });
-              // search for servers with the closest amount of memory
-              similarBySpecs = similarBySpecs.sort((a, b) => {
-                return this.diffSpec(a) - this.diffSpec(b);
-              }).slice(0, 10);
+          }
 
-              if (this.similarByFamily) {
-                this.faqs.push(
-                  {
-                    question: `Are there any other sized servers in the ${this.serverDetails.family} server family?`,
-                    html: `Yes! In addition to the ${this.serverDetails.display_name} server, the ${this.serverDetails.family} server family includes ${this.similarByFamily.length} other sizes: ${this.similarByFamily.map((s) => this.serverUrl(s, true)).join(', ')}.`
-                  });
-              }
-
-              this.faqs.push(
-                {
-                  question: `What other servers offer similar performance to ${this.serverDetails.display_name}?`,
-                  html: `Looking at the number of GPU, vCPUs, and memory amount, the following top 10 servers come with similar specs: ${similarBySpecs.map((s) => this.serverUrl(s, true)).join(', ')}.`
-                });
-
-              // wee need similar machines to be filled
-              this.generateSchemaJSON();
-
-            }
-          }).catch((error) => {
-            console.error('Failed to load server data:', error);
-          });
+          this.generateSchemaJSON();
 
           if(isPlatformBrowser(this.platformId)) {
 
@@ -424,13 +393,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
             }, 2000);
 
-            this.keeperAPI.serverCacheSubject.subscribe((data) => {
-              if(data) {
-                // filter self out
-                this.serverOptions = data.filter((s) => s.api_reference !== this.serverDetails.api_reference);
-                this.selectSimilarServerOption(this.selectedSimilarOption);
-              }
-            });
+            this.selectSimilarServerOption(this.selectedSimilarOption);
 
             const interval = setInterval(() => {
               const targetElAllocation: HTMLElement | null = document.getElementById('allocation_options');
@@ -1379,6 +1342,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   diffBy(s: ServerPKs, field: keyof ServerPKs) {
     return Math.abs(Number(this.serverDetails[field]) - Number(s[field]));
   }
+
   diffSpec(s: ServerPKs) {
     return Math.abs(Number(this.serverDetails.gpu_count) - Number(s.gpu_count)) * 10e6 +
            Math.abs(Number(this.serverDetails.vcpus) - Number(s.vcpus)) * 10e3 +
@@ -1389,19 +1353,22 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     this.selectedSimilarOption = event;
     switch(this.selectedSimilarOption.key) {
       case 'byScore':
-        this.similarServers = this.serverOptions.sort((a, b) => {
-          return this.diffBy(a, "score") - this.diffBy(b, "score");
-        }).slice(0, 7);
+        this.keeperAPI.getServerSimilarServers(this.serverDetails.vendor_id, this.serverDetails.api_reference, 'score', 7)
+          .then((servers: any) => {
+          this.similarServers = servers?.body;
+
+        });
         break;
+      /*
       case 'byPerformancePerPrice':
-        this.similarServers = this.serverOptions.sort((a, b) => {
-          return this.diffBy(a, "score_per_price") - this.diffBy(b, "score_per_price");
-        }).slice(0, 7);
-        break;
+
+      break;
+      */
       case 'bySpecs':
-        this.similarServers = this.serverOptions.sort((a, b) => {
-          return this.diffSpec(a) - this.diffSpec(b);
-        }).slice(0, 7);
+        this.keeperAPI.getServerSimilarServers(this.serverDetails.vendor_id, this.serverDetails.api_reference, 'specs', 7)
+        .then((servers: any) => {
+          this.similarServers = servers?.body;
+        });
         break;
     }
 
