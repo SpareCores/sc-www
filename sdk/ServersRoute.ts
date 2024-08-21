@@ -31,7 +31,7 @@ export namespace Servers {
        * Minimum vCPUs
        * Minimum number of virtual CPUs.
        * @min 1
-       * @max 128
+       * @max 256
        * @default 1
        */
       vcpus_min?: number;
@@ -60,7 +60,7 @@ export namespace Servers {
        * Vendor id
        * Identifier of the cloud provider vendor.
        */
-      vendor?: "aws" | "gcp" | "hcloud";
+      vendor?: "aws" | "azure" | "gcp" | "hcloud";
       /**
        * Compliance Framework id
        * Compliance framework implemented at the vendor.
@@ -93,7 +93,7 @@ export namespace Servers {
       gpu_memory_total?: number | null;
       /**
        * Limit
-       * Maximum number of results. Set to -1 for unlimited
+       * Maximum number of results. Set to -1 for unlimited.
        * @default 50
        */
       limit?: number;

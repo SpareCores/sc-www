@@ -872,6 +872,7 @@ export enum Regions {
   Value4 = "4",
   Value5 = "5",
   Value6 = "6",
+  Value7 = "7",
   AfSouth1 = "af-south-1",
   ApEast1 = "ap-east-1",
   ApNortheast1 = "ap-northeast-1",
@@ -883,10 +884,27 @@ export enum Regions {
   ApSoutheast2 = "ap-southeast-2",
   ApSoutheast3 = "ap-southeast-3",
   ApSoutheast4 = "ap-southeast-4",
+  Australiacentral = "australiacentral",
+  Australiacentral2 = "australiacentral2",
+  Australiaeast = "australiaeast",
+  Australiasoutheast = "australiasoutheast",
+  Brazilsouth = "brazilsouth",
+  Brazilsoutheast = "brazilsoutheast",
+  Brazilus = "brazilus",
   CaCentral1 = "ca-central-1",
+  Canadacentral = "canadacentral",
+  Canadaeast = "canadaeast",
   CaWest1 = "ca-west-1",
+  Centralindia = "centralindia",
+  Centralus = "centralus",
+  Centraluseuap = "centraluseuap",
   CnNorth1 = "cn-north-1",
   CnNorthwest1 = "cn-northwest-1",
+  Eastasia = "eastasia",
+  Eastus = "eastus",
+  Eastus2 = "eastus2",
+  Eastus2Euap = "eastus2euap",
+  Eastusstg = "eastusstg",
   EuCentral1 = "eu-central-1",
   EuCentral2 = "eu-central-2",
   EuNorth1 = "eu-north-1",
@@ -895,14 +913,52 @@ export enum Regions {
   EuWest1 = "eu-west-1",
   EuWest2 = "eu-west-2",
   EuWest3 = "eu-west-3",
+  Francecentral = "francecentral",
+  Francesouth = "francesouth",
+  Germanynorth = "germanynorth",
+  Germanywestcentral = "germanywestcentral",
   IlCentral1 = "il-central-1",
+  Israelcentral = "israelcentral",
+  Italynorth = "italynorth",
+  Japaneast = "japaneast",
+  Japanwest = "japanwest",
+  Jioindiacentral = "jioindiacentral",
+  Jioindiawest = "jioindiawest",
+  Koreacentral = "koreacentral",
+  Koreasouth = "koreasouth",
   MeCentral1 = "me-central-1",
   MeSouth1 = "me-south-1",
+  Mexicocentral = "mexicocentral",
+  Northcentralus = "northcentralus",
+  Northeurope = "northeurope",
+  Norwayeast = "norwayeast",
+  Norwaywest = "norwaywest",
+  Polandcentral = "polandcentral",
+  Qatarcentral = "qatarcentral",
   SaEast1 = "sa-east-1",
+  Southafricanorth = "southafricanorth",
+  Southafricawest = "southafricawest",
+  Southcentralus = "southcentralus",
+  Southeastasia = "southeastasia",
+  Southindia = "southindia",
+  Spaincentral = "spaincentral",
+  Swedencentral = "swedencentral",
+  Switzerlandnorth = "switzerlandnorth",
+  Switzerlandwest = "switzerlandwest",
+  Uaecentral = "uaecentral",
+  Uaenorth = "uaenorth",
+  Uksouth = "uksouth",
+  Ukwest = "ukwest",
   UsEast1 = "us-east-1",
   UsEast2 = "us-east-2",
   UsWest1 = "us-west-1",
   UsWest2 = "us-west-2",
+  Westcentralus = "westcentralus",
+  Westeurope = "westeurope",
+  Westindia = "westindia",
+  Westus = "westus",
+  Westus2 = "westus2",
+  Westus3 = "westus3",
 }
 
 /**
@@ -926,9 +982,9 @@ export enum Regions {
  *     cpu_manufacturer (typing.Optional[str]): The manufacturer of the primary processor, e.g. Intel or AMD.
  *     cpu_family (typing.Optional[str]): The product line/family of the primary processor, e.g. Xeon, Core i7, Ryzen 9.
  *     cpu_model (typing.Optional[str]): The model number of the primary processor, e.g. 9750H.
- *     cpu_l1_cache (typing.Optional[int]): L1 cache size (MiB).
- *     cpu_l2_cache (typing.Optional[int]): L2 cache size (MiB).
- *     cpu_l3_cache (typing.Optional[int]): L3 cache size (MiB).
+ *     cpu_l1_cache (typing.Optional[int]): L1 cache size (byte).
+ *     cpu_l2_cache (typing.Optional[int]): L2 cache size (byte).
+ *     cpu_l3_cache (typing.Optional[int]): L3 cache size (byte).
  *     cpu_flags (typing.List[str]): CPU features/flags.
  *     cpus (typing.List[sc_crawler.table_fields.Cpu]): JSON array of known CPU details, e.g. the manufacturer, family, model; L1/L2/L3 cache size; microcode version; feature flags; bugs etc.
  *     memory_amount (int): RAM amount (MiB).
@@ -1029,17 +1085,17 @@ export interface Server {
   cpu_model?: string | null;
   /**
    * Cpu L1 Cache
-   * L1 cache size (MiB).
+   * L1 cache size (byte).
    */
   cpu_l1_cache?: number | null;
   /**
    * Cpu L2 Cache
-   * L2 cache size (MiB).
+   * L2 cache size (byte).
    */
   cpu_l2_cache?: number | null;
   /**
    * Cpu L3 Cache
-   * L3 cache size (MiB).
+   * L3 cache size (byte).
    */
   cpu_l3_cache?: number | null;
   /**
@@ -1236,17 +1292,17 @@ export interface ServerPKs {
   cpu_model?: string | null;
   /**
    * Cpu L1 Cache
-   * L1 cache size (MiB).
+   * L1 cache size (byte).
    */
   cpu_l1_cache?: number | null;
   /**
    * Cpu L2 Cache
-   * L2 cache size (MiB).
+   * L2 cache size (byte).
    */
   cpu_l2_cache?: number | null;
   /**
    * Cpu L3 Cache
-   * L3 cache size (MiB).
+   * L3 cache size (byte).
    */
   cpu_l3_cache?: number | null;
   /**
@@ -1365,6 +1421,8 @@ export interface ServerPKs {
   observed_at?: string;
   /** Score */
   score?: number | null;
+  /** Price */
+  price?: number | null;
   /** Score Per Price */
   score_per_price?: number | null;
   vendor: VendorBase;
@@ -1448,17 +1506,17 @@ export interface ServerPKsWithPrices {
   cpu_model?: string | null;
   /**
    * Cpu L1 Cache
-   * L1 cache size (MiB).
+   * L1 cache size (byte).
    */
   cpu_l1_cache?: number | null;
   /**
    * Cpu L2 Cache
-   * L2 cache size (MiB).
+   * L2 cache size (byte).
    */
   cpu_l2_cache?: number | null;
   /**
    * Cpu L3 Cache
-   * L3 cache size (MiB).
+   * L3 cache size (byte).
    */
   cpu_l3_cache?: number | null;
   /**
@@ -1577,6 +1635,8 @@ export interface ServerPKsWithPrices {
   observed_at?: string;
   /** Score */
   score?: number | null;
+  /** Price */
+  price?: number | null;
   /** Score Per Price */
   score_per_price?: number | null;
   vendor: VendorBase;
@@ -1817,17 +1877,17 @@ export interface ServerWithScore {
   cpu_model?: string | null;
   /**
    * Cpu L1 Cache
-   * L1 cache size (MiB).
+   * L1 cache size (byte).
    */
   cpu_l1_cache?: number | null;
   /**
    * Cpu L2 Cache
-   * L2 cache size (MiB).
+   * L2 cache size (byte).
    */
   cpu_l2_cache?: number | null;
   /**
    * Cpu L3 Cache
-   * L3 cache size (MiB).
+   * L3 cache size (byte).
    */
   cpu_l3_cache?: number | null;
   /**
@@ -1946,6 +2006,8 @@ export interface ServerWithScore {
   observed_at?: string;
   /** Score */
   score?: number | null;
+  /** Price */
+  price?: number | null;
   /** Score Per Price */
   score_per_price?: number | null;
 }
@@ -2225,6 +2287,7 @@ export interface VendorBase {
 /** Vendors */
 export enum Vendors {
   Aws = "aws",
+  Azure = "azure",
   Gcp = "gcp",
   Hcloud = "hcloud",
 }
@@ -2366,7 +2429,7 @@ export interface SearchRegionsRegionsGetParams {
    * Vendor id
    * Identifier of the cloud provider vendor.
    */
-  vendor?: "aws" | "gcp" | "hcloud";
+  vendor?: "aws" | "azure" | "gcp" | "hcloud";
 }
 
 /** Response Search Regions Regions Get */
@@ -2392,6 +2455,9 @@ export interface GetServerServerVendorServerGetParams {
 
 export type GetServerServerVendorServerGetData = ServerPKsWithPrices;
 
+/** Response Get Similar Servers Server  Vendor   Server  Similar Servers  By   N  Get */
+export type GetSimilarServersServerVendorServerSimilarServersByNGetData = ServerPKs[];
+
 export interface SearchServersServersGetParams {
   /**
    * Partial name or id
@@ -2402,7 +2468,7 @@ export interface SearchServersServersGetParams {
    * Minimum vCPUs
    * Minimum number of virtual CPUs.
    * @min 1
-   * @max 128
+   * @max 256
    * @default 1
    */
   vcpus_min?: number;
@@ -2431,7 +2497,7 @@ export interface SearchServersServersGetParams {
    * Vendor id
    * Identifier of the cloud provider vendor.
    */
-  vendor?: "aws" | "gcp" | "hcloud";
+  vendor?: "aws" | "azure" | "gcp" | "hcloud";
   /**
    * Compliance Framework id
    * Compliance framework implemented at the vendor.
@@ -2464,7 +2530,7 @@ export interface SearchServersServersGetParams {
   gpu_memory_total?: number | null;
   /**
    * Limit
-   * Maximum number of results. Set to -1 for unlimited
+   * Maximum number of results. Set to -1 for unlimited.
    * @default 50
    */
   limit?: number;
@@ -2506,8 +2572,7 @@ export interface SearchServerPricesServerPricesGetParams {
    * Minimum vCPUs
    * Minimum number of virtual CPUs.
    * @min 1
-   * @max 128
-   * @default 1
+   * @max 256
    */
   vcpus_min?: number;
   /**
@@ -2550,7 +2615,7 @@ export interface SearchServerPricesServerPricesGetParams {
    * Vendor id
    * Identifier of the cloud provider vendor.
    */
-  vendor?: "aws" | "gcp" | "hcloud";
+  vendor?: "aws" | "azure" | "gcp" | "hcloud";
   /**
    * region id
    * Identifier of the region.
@@ -2601,6 +2666,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "4"
     | "5"
     | "6"
+    | "7"
     | "af-south-1"
     | "ap-east-1"
     | "ap-northeast-1"
@@ -2612,10 +2678,27 @@ export interface SearchServerPricesServerPricesGetParams {
     | "ap-southeast-2"
     | "ap-southeast-3"
     | "ap-southeast-4"
+    | "australiacentral"
+    | "australiacentral2"
+    | "australiaeast"
+    | "australiasoutheast"
+    | "brazilsouth"
+    | "brazilsoutheast"
+    | "brazilus"
     | "ca-central-1"
+    | "canadacentral"
+    | "canadaeast"
     | "ca-west-1"
+    | "centralindia"
+    | "centralus"
+    | "centraluseuap"
     | "cn-north-1"
     | "cn-northwest-1"
+    | "eastasia"
+    | "eastus"
+    | "eastus2"
+    | "eastus2euap"
+    | "eastusstg"
     | "eu-central-1"
     | "eu-central-2"
     | "eu-north-1"
@@ -2624,14 +2707,52 @@ export interface SearchServerPricesServerPricesGetParams {
     | "eu-west-1"
     | "eu-west-2"
     | "eu-west-3"
+    | "francecentral"
+    | "francesouth"
+    | "germanynorth"
+    | "germanywestcentral"
     | "il-central-1"
+    | "israelcentral"
+    | "italynorth"
+    | "japaneast"
+    | "japanwest"
+    | "jioindiacentral"
+    | "jioindiawest"
+    | "koreacentral"
+    | "koreasouth"
     | "me-central-1"
     | "me-south-1"
+    | "mexicocentral"
+    | "northcentralus"
+    | "northeurope"
+    | "norwayeast"
+    | "norwaywest"
+    | "polandcentral"
+    | "qatarcentral"
     | "sa-east-1"
+    | "southafricanorth"
+    | "southafricawest"
+    | "southcentralus"
+    | "southeastasia"
+    | "southindia"
+    | "spaincentral"
+    | "swedencentral"
+    | "switzerlandnorth"
+    | "switzerlandwest"
+    | "uaecentral"
+    | "uaenorth"
+    | "uksouth"
+    | "ukwest"
     | "us-east-1"
     | "us-east-2"
     | "us-west-1"
-    | "us-west-2";
+    | "us-west-2"
+    | "westcentralus"
+    | "westeurope"
+    | "westindia"
+    | "westus"
+    | "westus2"
+    | "westus3";
   /**
    * Compliance Framework id
    * Compliance framework implemented at the vendor.
@@ -2675,6 +2796,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "JP"
     | "KR"
     | "NL"
+    | "NO"
     | "PL"
     | "QA"
     | "SA"
@@ -2700,7 +2822,8 @@ export interface SearchServerPricesServerPricesGetParams {
   gpu_memory_total?: number | null;
   /**
    * Limit
-   * Maximum number of results. Set to -1 for unlimited
+   * Maximum number of results.
+   * @max 250
    * @default 50
    */
   limit?: number;
