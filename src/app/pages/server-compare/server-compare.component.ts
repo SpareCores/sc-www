@@ -14,7 +14,7 @@ import annotationPlugin from 'chartjs-plugin-annotation';
 import { BaseChartDirective } from 'ng2-charts';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ServerCompareService } from '../../services/server-compare.service';
-import { DropdownManagerService } from '../../services/dropwdown-manager.service';
+import { DropdownManagerService } from '../../services/dropdown-manager.service';
 
 Chart.register(annotationPlugin);
 

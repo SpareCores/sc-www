@@ -13,7 +13,7 @@ import { CountryIdtoNamePipe } from '../../pipes/country-idto-name.pipe';
 import { SearchBarComponent } from '../../components/search-bar/search-bar.component';
 import { PaginationComponent } from '../../components/pagination/pagination.component';
 import { ServerCompareService } from '../../services/server-compare.service';
-import { DropdownManagerService } from '../../services/dropwdown-manager.service';
+import { DropdownManagerService } from '../../services/dropdown-manager.service';
 
 export type TableColumn = {
   name: string;

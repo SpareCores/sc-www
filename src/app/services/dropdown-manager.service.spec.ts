@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { DropdownManagerService } from './dropwdown-manager.service';
+import { DropdownManagerService } from './dropdown-manager.service';
 
 describe('DropdownManagerService', () => {
   let service: DropdownManagerService;

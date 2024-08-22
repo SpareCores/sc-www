@@ -22,7 +22,7 @@ import { CountryIdtoNamePipe } from '../../pipes/country-idto-name.pipe';
 import { ServerCompareService } from '../../services/server-compare.service';
 import { initGiscus } from '../../tools/initGiscus';
 import { Location } from '@angular/common';
-import { DropdownManagerService } from '../../services/dropwdown-manager.service';
+import { DropdownManagerService } from '../../services/dropdown-manager.service';
 
 Chart.register(annotationPlugin);
 

@@ -3,7 +3,7 @@ import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 import { ServerCompareService } from '../../services/server-compare.service';
-import { DropdownManagerService } from '../../services/dropwdown-manager.service';
+import { DropdownManagerService } from '../../services/dropdown-manager.service';
 
 @Component({
   selector: 'app-header',
