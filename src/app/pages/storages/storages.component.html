@@ -4,10 +4,10 @@
 
     <div class="flex flex-col gap-4 my-8">
       <div class="flex gap-4 items-center w-full justify-between">
-        <h1 class="text-white font-bold text-3xl">Cloud Compute Resources</h1>
+        <h1 class="text-white font-bold text-3xl">TODO</h1>
       </div>
       <div class="text-white text-xl pr-16">
-        Explore, search, and evaluate the supported cloud compute resources in the table below. This comprehensive comparison includes diverse attributes such as CPU count, detailed processor information, memory, GPU, storage, network speed and capacity, available operating systems. Use the sidebar to filter the results, or enter your freetext query in the “Search prompt” bar. You can also compare servers by selecting at least two rows using the checkboxes.
+        TODO
       </div>
     </div>
 
@@ -79,7 +79,6 @@
                         <lucide-icon *ngIf="getOrderingIcon(item)" name="{{getOrderingIcon(item)}}" class="h-4 w-4 text-white"></lucide-icon>
                       </div>
                   </th>
-                  <th></th>
                 </tr>
               </thead>
               <tbody>
@@ -91,21 +90,9 @@
 
                     <ng-container *ngFor="let column of tableColumns">
                       <td *ngIf="column.type === 'name'">
-                        <div (click)="$event.stopPropagation()">
-                          <a routerLink="/server/{{item.vendor.vendor_id}}/{{item.api_reference}}"
-                             data-ph-capture-attribute-sc-event="server listing route to server details"
-                             [attr.data-ph-capture-attribute-server-listing-row-vendor]="item.vendor_id"
-                             [attr.data-ph-capture-attribute-server-listing-row-index]="i+1"
-                             [attr.data-ph-capture-attribute-server-listing-row-page-size]="limit">
-                            <div class="text-sm text-white flex gap-1">
-                              <span>{{item.display_name}} </span>
-                              <span *ngIf="item.display_name !== item.api_reference" class="text-emerald-400" >|</span>
-                              <span *ngIf="item.display_name !== item.api_reference">{{item.api_reference}} </span>
-                            </div>
-                            <div class="text-xs text-white flex gap-1">
-                              <span>{{item.vendor_id}}</span>
-                            </div>
-                          </a>
+                        <div class="text-sm text-white">{{item.storage.name}}</div>
+                        <div class="text-xs text-white flex gap-1">
+                          {{item.storage.description}}
                         </div>
                       </td>
                       <td *ngIf="column.type === 'price'">
@@ -133,18 +120,6 @@
                         <div class="text-xs text-white flex gap-1"> <span>{{item.region.region_id}} </span> </div>
                       </td>
                     </ng-container>
-                  <td>
-                    <!-- eslint-disable-next-line @angular-eslint/template/interactive-supports-focus -->
-                    <div (click)="$event.stopPropagation()">
-                      <a routerLink="/server/{{item.vendor.vendor_id}}/{{item.api_reference}}"
-                         data-ph-capture-attribute-sc-event="server listing route to server details"
-                         [attr.data-ph-capture-attribute-server-listing-row-vendor]="item.vendor_id"
-                         [attr.data-ph-capture-attribute-server-listing-row-index]="i+1"
-                         [attr.data-ph-capture-attribute-server-listing-row-page-size]="limit">
-                        <lucide-icon name="chevron-right" class="h-6 w-6 text-emerald-400"></lucide-icon>
-                      </a>
-                    </div>
-                  </td>
                 </tr>
               </tbody>
             </table>
@@ -169,7 +144,7 @@
               </div>
               <div>
                 <app-pagination
-                  baseURL="/servers"
+                  baseURL="/storages"
                   [currentPage]="page"
                   [totalPages]="totalPages"
                   [baseQueryParams]="getQueryObjectBase()"

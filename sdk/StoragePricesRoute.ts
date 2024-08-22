@@ -27,28 +27,27 @@ export namespace StoragePrices {
        */
       vendor?: "aws" | "azure" | "gcp" | "hcloud";
       /**
-       * Storage id
-       * Identifier of the storage type.
+       * Green energy
+       * Filter for regions with kow CO2 emission only.
        */
-      storage_id?:
-        | "30001"
-        | "30002"
-        | "30007"
-        | "block"
-        | "gp2"
-        | "gp3"
-        | "Premium_LRS"
-        | "PremiumV2_LRS"
-        | "Premium_ZRS"
-        | "sc1"
-        | "st1"
-        | "standard"
-        | "Standard_LRS"
-        | "StandardSSD_LRS"
-        | "StandardSSD_ZRS"
-        | "UltraSSD_LRS";
+      green_energy?: boolean | null;
       /**
-       * region id
+       * Minimum size
+       * Minimum Storage size in GBs.
+       */
+      storage_min?: number | null;
+      /**
+       * Storage Type
+       * Type of the storage attached to the server.
+       */
+      storage_type?: "hdd" | "ssd" | "nvme ssd" | "network";
+      /**
+       * Compliance Framework id
+       * Compliance framework implemented at the vendor.
+       */
+      compliance_framework?: "hipaa" | "iso27001" | "soc2t2";
+      /**
+       * Region id
        * Identifier of the region.
        */
       regions?:

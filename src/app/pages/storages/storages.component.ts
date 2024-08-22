@@ -36,7 +36,7 @@ export class StoragesComponent {
 
   limit = 50;
   page = 1;
-  totalPages = 0;
+  totalPages = 1;
   pageLimits = [10, 25, 50, 100, 250];
   dropdownPage: any;
   dropdownColumn: any;
@@ -55,6 +55,7 @@ export class StoragesComponent {
   filterCategories = [
     {category_id: 'storage', name: 'Storage', icon: 'database', collapsed: false},
     {category_id: 'vendor', name: 'Vendor', icon: 'home', collapsed: true},
+    {category_id: 'region', name: 'Region', icon: 'hotel', collapsed: true},
   ];
 
   openApiJson: any = require('../../../../sdk/openapi.json');
@@ -69,13 +70,12 @@ export class StoragesComponent {
 
   possibleColumns: TableColumn[] = [
     { name: 'VENDOR', show: true, type: 'vendor'},
-    { name: 'NAME', show: true, type: 'text', key: 'storage.name'},
-    { name: 'PRICE', show: true, type: 'price' },
+    { name: 'NAME', show: true, type: 'name', key: 'storage.name'},
     { name: 'REGION', show: true, type: 'region' },
     { name: 'MIN', show: true, type: 'storage', key: 'storage.min_size' },
     { name: 'MAX', show: true, type: 'storage', key: 'storage.max_size' },
-    { name: 'TYPE', show: true, type: 'text', key: 'storage.storage_type',
-    },
+    { name: 'TYPE', show: true, type: 'text', key: 'storage.storage_type',},
+    { name: 'PRICE', show: true, type: 'price' },
     { name: 'PRICE UPFRONT', show: false, type: 'price2', key: 'price_upfront' },
     { name: 'PRICE TIERED', show: false, type: 'price2', key: 'price_tiered' },
   ];
@@ -91,15 +91,14 @@ export class StoragesComponent {
   ngOnInit() {
 
     this.SEOHandler.updateTitleAndMetaTags(
-      'Listing of Cloud Compute Resources - Spare Cores',
-      'Harnessing the compute resources of the cloud to optimize efficiency and costs of batch and service tasks.',
+      'TODO - Spare Cores',
+      'TODO DESCRIPTION',
       'cloud, server, instance, price, comparison, spot, sparecores');
 
     this.SEOHandler.updateThumbnail('https://sparecores.com/assets/images/media/server_list_image.png');
 
     const parameters = this.openApiJson.paths['/storage_prices'].get.parameters || [];
     this.searchParameters = parameters;
-    console.log(this.searchParameters);
 
     this.refreshColumns();
 
@@ -183,8 +182,10 @@ export class StoragesComponent {
       queryParams.page = this.page;
     }
 
-    if(this.limit !== 25) {
+    if(this.limit !== 50) {
       queryParams.limit = this.limit;
+    } else {
+      delete queryParams.limit;
     }
 
     this.router.navigate([], {
@@ -201,7 +202,7 @@ export class StoragesComponent {
       paramObject.order_dir = this.orderDir;
     }
 
-    if(this.limit !== 25) {
+    if(this.limit !== 50) {
       paramObject.limit = this.limit;
     }
 
@@ -213,10 +214,9 @@ export class StoragesComponent {
 
     this.keeperAPI.getStoragePrices(this.query).then((results: any) => {
       this.storages = results.body;
-      this.isLoading = false
-      console.log(this.storages);
+      this.isLoading = false;
+      this.totalPages = this.storages?.length === this.limit ? this.page + 1 : this.page;
     });
-
   }
 
   toggleOrdering(column: TableColumn) {

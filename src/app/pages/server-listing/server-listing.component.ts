@@ -301,6 +301,8 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
     if(this.limit !== 25) {
       queryParams.limit = this.limit;
+    } else {
+      delete queryParams.limit;
     }
 
     this.router.navigate([], {
@@ -387,6 +389,8 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
     if(this.limit !== 25) {
       paramObject.limit = this.limit;
+    } else {
+      delete paramObject.limit;
     }
 
     return paramObject;
@@ -410,6 +414,8 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
     if(this.limit !== 25) {
       paramObject.limit = this.limit;
+    } else {
+      delete paramObject.limit;
     }
 
     return paramObject || {};

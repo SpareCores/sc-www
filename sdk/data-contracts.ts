@@ -2220,26 +2220,6 @@ export enum StorageType {
   Network = "network",
 }
 
-/** Storages */
-export enum Storages {
-  Value30001 = "30001",
-  Value30002 = "30002",
-  Value30007 = "30007",
-  Block = "block",
-  Gp2 = "gp2",
-  Gp3 = "gp3",
-  PremiumLRS = "Premium_LRS",
-  PremiumV2LRS = "PremiumV2_LRS",
-  PremiumZRS = "Premium_ZRS",
-  Sc1 = "sc1",
-  St1 = "st1",
-  Standard = "standard",
-  StandardLRS = "Standard_LRS",
-  StandardSSDLRS = "StandardSSD_LRS",
-  StandardSSDZRS = "StandardSSD_ZRS",
-  UltraSSDLRS = "UltraSSD_LRS",
-}
-
 /** ValidationError */
 export interface ValidationError {
   /** Location */
@@ -2564,28 +2544,27 @@ export interface TableStoragePricesStoragePricesGetParams {
    */
   vendor?: "aws" | "azure" | "gcp" | "hcloud";
   /**
-   * Storage id
-   * Identifier of the storage type.
+   * Green energy
+   * Filter for regions with kow CO2 emission only.
    */
-  storage_id?:
-    | "30001"
-    | "30002"
-    | "30007"
-    | "block"
-    | "gp2"
-    | "gp3"
-    | "Premium_LRS"
-    | "PremiumV2_LRS"
-    | "Premium_ZRS"
-    | "sc1"
-    | "st1"
-    | "standard"
-    | "Standard_LRS"
-    | "StandardSSD_LRS"
-    | "StandardSSD_ZRS"
-    | "UltraSSD_LRS";
+  green_energy?: boolean | null;
   /**
-   * region id
+   * Minimum size
+   * Minimum Storage size in GBs.
+   */
+  storage_min?: number | null;
+  /**
+   * Storage Type
+   * Type of the storage attached to the server.
+   */
+  storage_type?: "hdd" | "ssd" | "nvme ssd" | "network";
+  /**
+   * Compliance Framework id
+   * Compliance framework implemented at the vendor.
+   */
+  compliance_framework?: "hipaa" | "iso27001" | "soc2t2";
+  /**
+   * Region id
    * Identifier of the region.
    */
   regions?:
@@ -2979,7 +2958,7 @@ export interface SearchServerPricesServerPricesGetParams {
    */
   vendor?: "aws" | "azure" | "gcp" | "hcloud";
   /**
-   * region id
+   * Region id
    * Identifier of the region.
    */
   regions?:
@@ -3237,3 +3216,6 @@ export interface AssistServerPriceFiltersAiAssistServerPriceFiltersGetParams {
 
 /** Response Assist Server Price Filters Ai Assist Server Price Filters Get */
 export type AssistServerPriceFiltersAiAssistServerPriceFiltersGetData = object;
+
+
+export type GetSimilarServersServerVendorServerSimilarServersByNGetData = ServerPKs[];

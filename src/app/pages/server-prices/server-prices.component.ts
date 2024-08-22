@@ -366,6 +366,8 @@ export class ServerPricesComponent implements OnInit {
 
     if(this.limit !== 25) {
       queryParams.limit = this.limit;
+    } else {
+      delete queryParams.limit;
     }
 
     this.router.navigate([], {
@@ -464,6 +466,8 @@ export class ServerPricesComponent implements OnInit {
 
     if(this.limit !== 25) {
       paramObject.limit = this.limit;
+    } else {
+      delete paramObject.limit;
     }
 
     if(this.countryMetadata.find((country) => country.selected)) {
@@ -546,6 +550,8 @@ export class ServerPricesComponent implements OnInit {
 
     if(this.limit !== 25) {
       paramObject.limit = this.limit;
+    } else {
+      delete paramObject.limit;
     }
 
     return paramObject;

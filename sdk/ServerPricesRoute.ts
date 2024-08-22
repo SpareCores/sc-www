@@ -77,7 +77,7 @@ export namespace ServerPrices {
        */
       vendor?: "aws" | "azure" | "gcp" | "hcloud";
       /**
-       * region id
+       * Region id
        * Identifier of the region.
        */
       regions?:
