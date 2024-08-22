@@ -155,7 +155,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   constructor(@Inject(PLATFORM_ID) private platformId: object,
               @Inject(DOCUMENT) private document: Document,
               private route: ActivatedRoute,
-              private analitycs: AnalyticsService,
+              private analytics: AnalyticsService,
               private keeperAPI: KeeperAPIService,
               private SEOHandler: SeoHandlerService,
               private serverCompare: ServerCompareService,
@@ -489,7 +489,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
           }
         }
       }).catch((error) => {
-        this.analitycs.SentryException(error, {tags: { location: this.constructor.name, function: 'getServers' }});
+        this.analytics.SentryException(error, {tags: { location: this.constructor.name, function: 'getServers' }});
         if(error?.status === 404) {
           this.toastErrorMsg = 'Server not found. Please try again later.';
         }
