@@ -3,12 +3,10 @@ import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { MYHTTPClient } from './my_http/my-http';
 import { Server } from '../../../sdk/Server';
 import { Servers } from '../../../sdk/Servers';
-import { AssistServerFiltersAiAssistServerFiltersGetParams, AssistServerPriceFiltersAiAssistServerPriceFiltersGetParams, SearchServerPricesServerPricesGetParams, SearchServersServersGetParams, ServerPKs } from '../../../sdk/data-contracts';
+import { AssistServerFiltersAiAssistServerFiltersGetParams, AssistServerPriceFiltersAiAssistServerPriceFiltersGetParams, SearchServerPricesServerPricesGetParams, SearchServersServersGetParams } from '../../../sdk/data-contracts';
 import { Table } from '../../../sdk/Table';
 import { Ai } from '../../../sdk/Ai';
 import { ServerPrices } from '../../../sdk/ServerPrices';
-import { BehaviorSubject } from 'rxjs';
-import { isPlatformBrowser } from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
@@ -23,23 +21,17 @@ export class KeeperAPIService {
   public TableController: Table = new Table(this.myHttp);
   public AIController: Ai = new Ai(this.myHttp);
 
-  serverCache: ServerPKs[] = [];
-  serverCacheSubject: BehaviorSubject<any[]> = new BehaviorSubject<ServerPKs[]>([]);
-
   constructor(
     @Inject(PLATFORM_ID) private platformId: object,
     private httpClient: HttpClient) {
-
-    if(isPlatformBrowser(this.platformId)) {
-      this.searchServers({ limit: 10000 }).then((servers) => {
-        this.serverCache = servers.body;
-        this.serverCacheSubject.next(this.serverCache);
-      });
-    }
   }
 
   public getServer(vendor: string, id: string, currency?: string): Promise<any> {
     return this.ServerController.getServerServerVendorServerGet({vendor, server:id, currency });
+  }
+
+  public getServerSimilarServers(vendor: string, id: string, category: "family" | "specs" | "score", limit: number): Promise<any> {
+    return this.ServerController.getSimilarServersServerVendorServerSimilarServersByNGet(vendor, id, category, limit);
   }
 
   public searchServers(query: SearchServersServersGetParams): Promise<any> {

@@ -32,6 +32,7 @@ export class Regions<SecurityDataType = unknown> {
       path: `/regions`,
       method: "GET",
       query: query,
+      format: "json",
       ...params,
     });
 }

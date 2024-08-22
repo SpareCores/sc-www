@@ -9,27 +9,31 @@
  * ---------------------------------------------------------------
  */
 
-import { SearchRegionsRegionsGetData } from "./data-contracts";
+import { TableStoragePricesStoragePricesGetData } from "./data-contracts";
 
-export namespace Regions {
+export namespace StoragePrices {
   /**
    * No description
-   * @tags Query Resources
-   * @name SearchRegionsRegionsGet
-   * @summary Search Regions
-   * @request GET:/regions
+   * @name TableStoragePricesStoragePricesGet
+   * @summary Table Storage Prices
+   * @request GET:/storage_prices
    */
-  export namespace SearchRegionsRegionsGet {
+  export namespace TableStoragePricesStoragePricesGet {
     export type RequestParams = {};
     export type RequestQuery = {
       /**
        * Vendor id
        * Identifier of the cloud provider vendor.
        */
-      vendor?: "aws" | "azure" | "gcp" | "hcloud";
+      vendor: "aws" | "gcp" | "hcloud";
+      /**
+       * Storage id
+       * Identifier of the storage type.
+       */
+      storage_type: "30001" | "30002" | "30007" | "block" | "gp2" | "gp3" | "sc1" | "st1" | "standard";
     };
     export type RequestBody = never;
     export type RequestHeaders = {};
-    export type ResponseBody = SearchRegionsRegionsGetData;
+    export type ResponseBody = TableStoragePricesStoragePricesGetData;
   }
 }

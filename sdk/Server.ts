@@ -12,6 +12,7 @@
 import {
   GetServerServerVendorServerGetData,
   GetServerServerVendorServerGetParams,
+  GetSimilarServersServerVendorServerSimilarServersByNGetData,
   HTTPValidationError,
 } from "./data-contracts";
 import { HttpClient, RequestParams } from "./http-client";
@@ -39,6 +40,28 @@ export class Server<SecurityDataType = unknown> {
       path: `/server/${vendor}/${server}`,
       method: "GET",
       query: query,
+      format: "json",
+      ...params,
+    });
+  /**
+   * @description Search similar servers to the provided one. The "family" method returns all servers from the same family of the same vendor. The "specs" approach will prioritize the number of GPUs, then CPUs, lastly the amount of memory. The "score" method will find the servers with the closest performance using the multi-core SCore.
+   *
+   * @tags Query Resources
+   * @name GetSimilarServersServerVendorServerSimilarServersByNGet
+   * @summary Get Similar Servers
+   * @request GET:/server/{vendor}/{server}/similar_servers/{by}/{n}
+   */
+  getSimilarServersServerVendorServerSimilarServersByNGet = (
+    vendor: string,
+    server: string,
+    by: "family" | "specs" | "score",
+    n: number,
+    params: RequestParams = {},
+  ) =>
+    this.http.request<GetSimilarServersServerVendorServerSimilarServersByNGetData, HTTPValidationError>({
+      path: `/server/${vendor}/${server}/similar_servers/${by}/${n}`,
+      method: "GET",
+      format: "json",
       ...params,
     });
 }
