@@ -884,10 +884,27 @@ export enum Regions {
   ApSoutheast2 = "ap-southeast-2",
   ApSoutheast3 = "ap-southeast-3",
   ApSoutheast4 = "ap-southeast-4",
+  Australiacentral = "australiacentral",
+  Australiacentral2 = "australiacentral2",
+  Australiaeast = "australiaeast",
+  Australiasoutheast = "australiasoutheast",
+  Brazilsouth = "brazilsouth",
+  Brazilsoutheast = "brazilsoutheast",
+  Brazilus = "brazilus",
   CaCentral1 = "ca-central-1",
+  Canadacentral = "canadacentral",
+  Canadaeast = "canadaeast",
   CaWest1 = "ca-west-1",
+  Centralindia = "centralindia",
+  Centralus = "centralus",
+  Centraluseuap = "centraluseuap",
   CnNorth1 = "cn-north-1",
   CnNorthwest1 = "cn-northwest-1",
+  Eastasia = "eastasia",
+  Eastus = "eastus",
+  Eastus2 = "eastus2",
+  Eastus2Euap = "eastus2euap",
+  Eastusstg = "eastusstg",
   EuCentral1 = "eu-central-1",
   EuCentral2 = "eu-central-2",
   EuNorth1 = "eu-north-1",
@@ -896,14 +913,52 @@ export enum Regions {
   EuWest1 = "eu-west-1",
   EuWest2 = "eu-west-2",
   EuWest3 = "eu-west-3",
+  Francecentral = "francecentral",
+  Francesouth = "francesouth",
+  Germanynorth = "germanynorth",
+  Germanywestcentral = "germanywestcentral",
   IlCentral1 = "il-central-1",
+  Israelcentral = "israelcentral",
+  Italynorth = "italynorth",
+  Japaneast = "japaneast",
+  Japanwest = "japanwest",
+  Jioindiacentral = "jioindiacentral",
+  Jioindiawest = "jioindiawest",
+  Koreacentral = "koreacentral",
+  Koreasouth = "koreasouth",
   MeCentral1 = "me-central-1",
   MeSouth1 = "me-south-1",
+  Mexicocentral = "mexicocentral",
+  Northcentralus = "northcentralus",
+  Northeurope = "northeurope",
+  Norwayeast = "norwayeast",
+  Norwaywest = "norwaywest",
+  Polandcentral = "polandcentral",
+  Qatarcentral = "qatarcentral",
   SaEast1 = "sa-east-1",
+  Southafricanorth = "southafricanorth",
+  Southafricawest = "southafricawest",
+  Southcentralus = "southcentralus",
+  Southeastasia = "southeastasia",
+  Southindia = "southindia",
+  Spaincentral = "spaincentral",
+  Swedencentral = "swedencentral",
+  Switzerlandnorth = "switzerlandnorth",
+  Switzerlandwest = "switzerlandwest",
+  Uaecentral = "uaecentral",
+  Uaenorth = "uaenorth",
+  Uksouth = "uksouth",
+  Ukwest = "ukwest",
   UsEast1 = "us-east-1",
   UsEast2 = "us-east-2",
   UsWest1 = "us-west-1",
   UsWest2 = "us-west-2",
+  Westcentralus = "westcentralus",
+  Westeurope = "westeurope",
+  Westindia = "westindia",
+  Westus = "westus",
+  Westus2 = "westus2",
+  Westus3 = "westus3",
 }
 
 /**
@@ -927,9 +982,9 @@ export enum Regions {
  *     cpu_manufacturer (typing.Optional[str]): The manufacturer of the primary processor, e.g. Intel or AMD.
  *     cpu_family (typing.Optional[str]): The product line/family of the primary processor, e.g. Xeon, Core i7, Ryzen 9.
  *     cpu_model (typing.Optional[str]): The model number of the primary processor, e.g. 9750H.
- *     cpu_l1_cache (typing.Optional[int]): L1 cache size (MiB).
- *     cpu_l2_cache (typing.Optional[int]): L2 cache size (MiB).
- *     cpu_l3_cache (typing.Optional[int]): L3 cache size (MiB).
+ *     cpu_l1_cache (typing.Optional[int]): L1 cache size (byte).
+ *     cpu_l2_cache (typing.Optional[int]): L2 cache size (byte).
+ *     cpu_l3_cache (typing.Optional[int]): L3 cache size (byte).
  *     cpu_flags (typing.List[str]): CPU features/flags.
  *     cpus (typing.List[sc_crawler.table_fields.Cpu]): JSON array of known CPU details, e.g. the manufacturer, family, model; L1/L2/L3 cache size; microcode version; feature flags; bugs etc.
  *     memory_amount (int): RAM amount (MiB).
@@ -1030,17 +1085,17 @@ export interface Server {
   cpu_model?: string | null;
   /**
    * Cpu L1 Cache
-   * L1 cache size (MiB).
+   * L1 cache size (byte).
    */
   cpu_l1_cache?: number | null;
   /**
    * Cpu L2 Cache
-   * L2 cache size (MiB).
+   * L2 cache size (byte).
    */
   cpu_l2_cache?: number | null;
   /**
    * Cpu L3 Cache
-   * L3 cache size (MiB).
+   * L3 cache size (byte).
    */
   cpu_l3_cache?: number | null;
   /**
@@ -1237,17 +1292,17 @@ export interface ServerPKs {
   cpu_model?: string | null;
   /**
    * Cpu L1 Cache
-   * L1 cache size (MiB).
+   * L1 cache size (byte).
    */
   cpu_l1_cache?: number | null;
   /**
    * Cpu L2 Cache
-   * L2 cache size (MiB).
+   * L2 cache size (byte).
    */
   cpu_l2_cache?: number | null;
   /**
    * Cpu L3 Cache
-   * L3 cache size (MiB).
+   * L3 cache size (byte).
    */
   cpu_l3_cache?: number | null;
   /**
@@ -1451,17 +1506,17 @@ export interface ServerPKsWithPrices {
   cpu_model?: string | null;
   /**
    * Cpu L1 Cache
-   * L1 cache size (MiB).
+   * L1 cache size (byte).
    */
   cpu_l1_cache?: number | null;
   /**
    * Cpu L2 Cache
-   * L2 cache size (MiB).
+   * L2 cache size (byte).
    */
   cpu_l2_cache?: number | null;
   /**
    * Cpu L3 Cache
-   * L3 cache size (MiB).
+   * L3 cache size (byte).
    */
   cpu_l3_cache?: number | null;
   /**
@@ -1822,17 +1877,17 @@ export interface ServerWithScore {
   cpu_model?: string | null;
   /**
    * Cpu L1 Cache
-   * L1 cache size (MiB).
+   * L1 cache size (byte).
    */
   cpu_l1_cache?: number | null;
   /**
    * Cpu L2 Cache
-   * L2 cache size (MiB).
+   * L2 cache size (byte).
    */
   cpu_l2_cache?: number | null;
   /**
    * Cpu L3 Cache
-   * L3 cache size (MiB).
+   * L3 cache size (byte).
    */
   cpu_l3_cache?: number | null;
   /**
@@ -2173,9 +2228,16 @@ export enum Storages {
   Block = "block",
   Gp2 = "gp2",
   Gp3 = "gp3",
+  PremiumLRS = "Premium_LRS",
+  PremiumV2LRS = "PremiumV2_LRS",
+  PremiumZRS = "Premium_ZRS",
   Sc1 = "sc1",
   St1 = "st1",
   Standard = "standard",
+  StandardLRS = "Standard_LRS",
+  StandardSSDLRS = "StandardSSD_LRS",
+  StandardSSDZRS = "StandardSSD_ZRS",
+  UltraSSDLRS = "UltraSSD_LRS",
 }
 
 /** ValidationError */
@@ -2360,6 +2422,7 @@ export interface VendorBase {
 /** Vendors */
 export enum Vendors {
   Aws = "aws",
+  Azure = "azure",
   Gcp = "gcp",
   Hcloud = "hcloud",
 }
@@ -2499,12 +2562,51 @@ export interface TableStoragePricesStoragePricesGetParams {
    * Vendor id
    * Identifier of the cloud provider vendor.
    */
-  vendor: "aws" | "gcp" | "hcloud";
+  vendor?: "aws" | "azure" | "gcp" | "hcloud";
   /**
    * Storage id
    * Identifier of the storage type.
    */
-  storage_type: "30001" | "30002" | "30007" | "block" | "gp2" | "gp3" | "sc1" | "st1" | "standard";
+  storage_id?:
+    | "30001"
+    | "30002"
+    | "30007"
+    | "block"
+    | "gp2"
+    | "gp3"
+    | "Premium_LRS"
+    | "PremiumV2_LRS"
+    | "Premium_ZRS"
+    | "sc1"
+    | "st1"
+    | "standard"
+    | "Standard_LRS"
+    | "StandardSSD_LRS"
+    | "StandardSSD_ZRS"
+    | "UltraSSD_LRS";
+  /**
+   * Limit
+   * Maximum number of results. Set to -1 for unlimited
+   * @default 50
+   */
+  limit?: number;
+  /**
+   * Page
+   * Page number.
+   */
+  page?: number | null;
+  /**
+   * Order By
+   * Order by column.
+   * @default "price"
+   */
+  order_by?: string;
+  /**
+   * Order Dir
+   * Order direction.
+   * @default "asc"
+   */
+  order_dir?: OrderDir;
 }
 
 /** Response Table Storage Prices Storage Prices Get */
@@ -2517,7 +2619,7 @@ export interface SearchRegionsRegionsGetParams {
    * Vendor id
    * Identifier of the cloud provider vendor.
    */
-  vendor?: "aws" | "gcp" | "hcloud";
+  vendor?: "aws" | "azure" | "gcp" | "hcloud";
 }
 
 /** Response Search Regions Regions Get */
@@ -2582,7 +2684,7 @@ export interface SearchServersServersGetParams {
    * Vendor id
    * Identifier of the cloud provider vendor.
    */
-  vendor?: "aws" | "gcp" | "hcloud";
+  vendor?: "aws" | "azure" | "gcp" | "hcloud";
   /**
    * Compliance Framework id
    * Compliance framework implemented at the vendor.
@@ -2701,7 +2803,7 @@ export interface SearchServerPricesServerPricesGetParams {
    * Vendor id
    * Identifier of the cloud provider vendor.
    */
-  vendor?: "aws" | "gcp" | "hcloud";
+  vendor?: "aws" | "azure" | "gcp" | "hcloud";
   /**
    * region id
    * Identifier of the region.
@@ -2764,10 +2866,27 @@ export interface SearchServerPricesServerPricesGetParams {
     | "ap-southeast-2"
     | "ap-southeast-3"
     | "ap-southeast-4"
+    | "australiacentral"
+    | "australiacentral2"
+    | "australiaeast"
+    | "australiasoutheast"
+    | "brazilsouth"
+    | "brazilsoutheast"
+    | "brazilus"
     | "ca-central-1"
+    | "canadacentral"
+    | "canadaeast"
     | "ca-west-1"
+    | "centralindia"
+    | "centralus"
+    | "centraluseuap"
     | "cn-north-1"
     | "cn-northwest-1"
+    | "eastasia"
+    | "eastus"
+    | "eastus2"
+    | "eastus2euap"
+    | "eastusstg"
     | "eu-central-1"
     | "eu-central-2"
     | "eu-north-1"
@@ -2776,14 +2895,52 @@ export interface SearchServerPricesServerPricesGetParams {
     | "eu-west-1"
     | "eu-west-2"
     | "eu-west-3"
+    | "francecentral"
+    | "francesouth"
+    | "germanynorth"
+    | "germanywestcentral"
     | "il-central-1"
+    | "israelcentral"
+    | "italynorth"
+    | "japaneast"
+    | "japanwest"
+    | "jioindiacentral"
+    | "jioindiawest"
+    | "koreacentral"
+    | "koreasouth"
     | "me-central-1"
     | "me-south-1"
+    | "mexicocentral"
+    | "northcentralus"
+    | "northeurope"
+    | "norwayeast"
+    | "norwaywest"
+    | "polandcentral"
+    | "qatarcentral"
     | "sa-east-1"
+    | "southafricanorth"
+    | "southafricawest"
+    | "southcentralus"
+    | "southeastasia"
+    | "southindia"
+    | "spaincentral"
+    | "swedencentral"
+    | "switzerlandnorth"
+    | "switzerlandwest"
+    | "uaecentral"
+    | "uaenorth"
+    | "uksouth"
+    | "ukwest"
     | "us-east-1"
     | "us-east-2"
     | "us-west-1"
-    | "us-west-2";
+    | "us-west-2"
+    | "westcentralus"
+    | "westeurope"
+    | "westindia"
+    | "westus"
+    | "westus2"
+    | "westus3";
   /**
    * Compliance Framework id
    * Compliance framework implemented at the vendor.
@@ -2827,6 +2984,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "JP"
     | "KR"
     | "NL"
+    | "NO"
     | "PL"
     | "QA"
     | "SA"
