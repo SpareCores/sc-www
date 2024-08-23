@@ -10,10 +10,10 @@ import { LucideAngularModule } from 'lucide-angular';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { FaqComponent } from '../../components/faq/faq.component';
 import { FormsModule } from '@angular/forms';
-import { Dropdown, DropdownOptions, initFlowbite } from 'flowbite';
+import { DropdownOptions, initFlowbite } from 'flowbite';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData } from 'chart.js';
-import { barChartDataEmpty, barChartOptions, barChartOptionsSSL, lineChartOptionsBWM, lineChartOptionsComp, lineChartOptionsCompRatio, radarChartOptions, radarDatasetColors } from './chartOptions';
+import { barChartDataEmpty, barChartOptions, barChartOptionsSSL, barChartOptionsStaticWeb, lineChartOptionsBWM, lineChartOptionsComp, lineChartOptionsCompRatio, radarChartOptions, radarDatasetColors } from './chartOptions';
 import { Chart } from 'chart.js';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -25,15 +25,6 @@ import { Location } from '@angular/common';
 import { DropdownManagerService } from '../../services/dropdown-manager.service';
 
 Chart.register(annotationPlugin);
-
-
-const options: DropdownOptions = {
-  placement: 'bottom',
-  triggerType: 'click',
-  offsetSkidding: 0,
-  offsetDistance: 10,
-  delay: 300
-};
 
 @Component({
   selector: 'app-server-details',
@@ -140,6 +131,9 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   barChartOptionsSSL: ChartConfiguration<'bar'>['options'] = barChartOptionsSSL;
   barChartDataSSL: ChartData<'bar'> | undefined = undefined;
 
+  barChartOptionsStaticWeb: ChartConfiguration<'bar'>['options'] = barChartOptionsStaticWeb;
+  barChartDataStaticWeb: ChartData<'bar'> | undefined = undefined;
+
   geekbenchHTML: any;
 
   toastErrorMsg: string = 'Failed to load server data. Please try again later.';
@@ -237,6 +231,10 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
               group.benchmarks.push(b);
             }
           });
+
+          console.log(this.benchmarksByCategory);
+
+          console.log(this.benchmarkMeta);
 
           this.regionFilters = [];
 
@@ -897,6 +895,14 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
       this.barChartDataSSL = undefined;
     }
 
+    let data2 = this.generateLineChart('app:static_web', 'size', 'threads_per_cpu', false);
+
+    if(data2) {
+      this.barChartDataStaticWeb = { labels: data2.labels, datasets: data2.datasets };
+    } else {
+      this.barChartDataStaticWeb = undefined;
+    }
+
     this.generateCompressChart();
     this.generateGeekbenchChart();
   }
@@ -1070,8 +1076,19 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
       });
 
 
-      if(labels && !isNaN(labels[0])) {
-        labels.sort((a, b) => a - b);
+      if(labels) {
+        labels.sort((a, b) => {
+          if(!isNaN(a) && !isNaN(b)) {
+            return a - b;
+          }
+          const valueA = parseInt(a.replace(/\D/g,''), 10);
+          const valueB = parseInt(b.replace(/\D/g,''), 10);
+          if(valueA && valueB) {
+            return valueA - valueB;
+          }
+
+          return a.localeCompare(b);
+        });
       }
 
       scales.sort((a, b) => a - b);

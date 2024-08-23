@@ -60,6 +60,46 @@ export const  barChartOptionsSSL: ChartConfiguration<'bar'>['options'] = {
   },
 };
 
+export const  barChartOptionsStaticWeb: ChartConfiguration<'bar'>['options'] = {
+  scales: {
+    ...barChartOptions.scales,
+    y: {
+      ticks: {
+        color: '#FFF',
+      },
+      grid: {
+        color: '#4B5563',
+      },
+      title: {
+        display: true,
+        color: '#FFF',
+        text: 'Request per second',
+      },
+    },
+    x: {
+      ticks: {
+        color: '#FFF',
+      },
+      grid: {
+        color: '#4B5563',
+      },
+      title: {
+        display: true,
+        color: '#FFF',
+        text: 'Threads per CPU',
+      },
+    }
+  },
+  plugins: {
+    ...barChartOptions.plugins,
+    title: {
+      display: true,
+      text: 'File size (KBs)',
+      color: '#FFF',
+    }
+  },
+};
+
 export const  barChartOptionsSSLCompare: ChartConfiguration<'bar'>['options'] = {
   scales: {
     ...barChartOptions.scales,
@@ -99,6 +139,51 @@ export const  barChartOptionsSSLCompare: ChartConfiguration<'bar'>['options'] = 
         },
         title: function(this: TooltipModel<"bar">, tooltipItems: TooltipItem<"bar">[]) {
           return tooltipItems[0].label + '-byte block size';
+        },
+      }
+    },
+  },
+};
+
+export const  barChartOptionsStaticWebCompare: ChartConfiguration<'bar'>['options'] = {
+  scales: {
+    ...barChartOptions.scales,
+    y: {
+      ticks: {
+        color: '#FFF',
+      },
+      grid: {
+        color: '#4B5563',
+      },
+      title: {
+        display: true,
+        color: '#FFF',
+        text: 'Request per Second',
+      },
+    },
+    x: {
+      ticks: {
+        color: '#FFF',
+      },
+      grid: {
+        color: '#4B5563',
+      },
+      title: {
+        display: true,
+        color: '#FFF',
+        text: 'Block Size',
+      },
+    }
+  },
+  plugins: {
+    ...barChartOptions.plugins,
+    tooltip:{
+      callbacks: {
+        label: function(this: TooltipModel<"bar">, tooltipItem: TooltipItem<"bar">) {
+          return tooltipItem.formattedValue + 'Requests per second';
+        },
+        title: function(this: TooltipModel<"bar">, tooltipItems: TooltipItem<"bar">[]) {
+          return tooltipItems[0].label;
         },
       }
     },
