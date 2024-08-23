@@ -898,8 +898,8 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
 
       this.barChartDataStaticWeb = { labels: chartData.labels, datasets: chartData.datasets };
 
-      (this.barChartOptionsSSL as any).plugins.tooltip.callbacks.title = function(this: TooltipModel<"line">, tooltipItems: TooltipItem<"line">[]) {
-        return selectedName + ' with ' + tooltipItems[0].label + '-byte block size';
+      (this.barChartOptionsStaticWeb as any).plugins.tooltip.callbacks.title = function(this: TooltipModel<"line">, tooltipItems: TooltipItem<"line">[]) {
+        return selectedName + ' with ' + tooltipItems[0].label + 'KB file size';
       };
 
       if(!this.dropdownThreadCount) {
@@ -1093,7 +1093,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     this.dropdownSSL?.hide();
   }
 
-  selecStaticWebOption(item: any) {
+  selectStaticWebOption(item: any) {
     this.selectedThreadCount = item;
     this.generateStatiWebChart();
     this.dropdownThreadCount?.hide();

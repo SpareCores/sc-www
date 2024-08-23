@@ -180,7 +180,7 @@ export const  barChartOptionsStaticWebCompare: ChartConfiguration<'bar'>['option
     tooltip:{
       callbacks: {
         label: function(this: TooltipModel<"bar">, tooltipItem: TooltipItem<"bar">) {
-          return tooltipItem.formattedValue + 'Requests per second';
+          return tooltipItem.formattedValue + ' Requests per second';
         },
         title: function(this: TooltipModel<"bar">, tooltipItems: TooltipItem<"bar">[]) {
           return tooltipItems[0].label;
