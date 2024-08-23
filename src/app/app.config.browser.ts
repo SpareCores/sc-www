@@ -3,15 +3,10 @@ import { appConfig } from './app.config';
 import * as Sentry from "@sentry/angular";
 
 
-// @ts-expect-error i want this to compile, but it doesn't
 const SENTRY_DSN = import.meta?.env?.NG_APP_SENTRY_DSN;
-// @ts-expect-error i want this to compile, but it doesn't
 const SENTRY_TRACE_SAMPLE_RATE = import.meta?.env?.NG_APP_SENTRY_TRACE_SAMPLE_RATE || '0';
-// @ts-expect-error i want this to compile, but it doesn't
 const SENTRY_PROFILE_SAMPLE_RATE = import.meta?.env?.NG_APP_SENTRY_PROFILE_SAMPLE_RATE || '0';
-// @ts-expect-error i want this to compile, but it doesn't
 const SENTRY_ENVIRONMENT = import.meta?.env?.NG_APP_SENTRY_ENVIRONMENT || 'development';
-// @ts-expect-error i want this to compile, but it doesn't
 const SENTRY_RELEASE = import.meta?.env?.NG_APP_SENTRY_RELEASE || undefined;
 
 const BACKEND_BASE_URI = import.meta.env['NG_APP_BACKEND_BASE_URI'];
