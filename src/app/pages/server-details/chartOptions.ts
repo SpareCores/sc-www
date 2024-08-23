@@ -158,7 +158,7 @@ export const  barChartOptionsStaticWebCompare: ChartConfiguration<'bar'>['option
       title: {
         display: true,
         color: '#FFF',
-        text: 'Request per Second',
+        text: 'Request per second',
       },
     },
     x: {
@@ -171,7 +171,7 @@ export const  barChartOptionsStaticWebCompare: ChartConfiguration<'bar'>['option
       title: {
         display: true,
         color: '#FFF',
-        text: 'Block Size',
+        text: 'File Size',
       },
     }
   },
