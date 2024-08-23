@@ -232,10 +232,6 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
             }
           });
 
-          console.log(this.benchmarksByCategory);
-
-          console.log(this.benchmarkMeta);
-
           this.regionFilters = [];
 
           this.serverDetails.prices?.sort((a, b) => a.price - b.price);
