@@ -1,9 +1,9 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { Dropdown, DropdownOptions } from 'flowbite';
 import { LucideAngularModule } from 'lucide-angular';
 import { ServerCompareService } from '../../services/server-compare.service';
+import { DropdownManagerService } from '../../services/dropdown-manager.service';
 
 @Component({
   selector: 'app-header',
@@ -17,55 +17,21 @@ export class HeaderComponent implements OnInit {
   dropdownMenu: any;
   dropdownCompare: any;
 
-  options: DropdownOptions = {
-    placement: 'bottom',
-    triggerType: 'click',
-    offsetSkidding: 0,
-    offsetDistance: 10,
-    delay: 300
-  };
-
   constructor(
     @Inject(PLATFORM_ID) private platformId: object,
-    private serverCompare: ServerCompareService
+    private serverCompare: ServerCompareService,
+    private dropdownManager: DropdownManagerService
   ) { }
 
   ngOnInit() {
     if(isPlatformBrowser(this.platformId)) {
-      const interval = setInterval(() => {
-        const targetElAllocation: HTMLElement | null = document.getElementById('menu_options');
-        const triggerElAllocation: HTMLElement | null = document.getElementById('menu_button');
+      this.dropdownManager.initDropdown('menu_button', 'menu_options').then((dropdown) => {
+        this.dropdownMenu = dropdown;
+      });
 
-        if(targetElAllocation && triggerElAllocation) {
-          this.dropdownMenu = new Dropdown(
-            targetElAllocation,
-            triggerElAllocation,
-            this.options,
-            {
-              id: 'menu_options',
-              override: true
-            }
-          );
-          this.dropdownMenu.init();
-          clearInterval(interval);
-        }
-
-        const targetElAllocationCompare: HTMLElement | null = document.getElementById('compare_options');
-        const triggerElAllocationCompare: HTMLElement | null = document.getElementById('compare_button');
-
-        if(targetElAllocationCompare && triggerElAllocationCompare) {
-          this.dropdownCompare = new Dropdown(
-            targetElAllocationCompare,
-            triggerElAllocationCompare,
-            this.options,
-            {
-              id: 'compare_options',
-              override: true
-            }
-          );
-          this.dropdownCompare.init();
-        }
-      }, 150);
+      this.dropdownManager.initDropdown('compare_button', 'compare_options').then((dropdown) => {
+        this.dropdownCompare = dropdown;
+      });
     }
 
   }

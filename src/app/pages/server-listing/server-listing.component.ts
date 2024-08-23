@@ -5,7 +5,6 @@ import { OrderDir, ServerPKs, ServerPriceWithPKs } from '../../../../sdk/data-co
 import { encodeQueryParams } from '../../tools/queryParamFunctions';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Dropdown, DropdownOptions } from 'flowbite';
 import { StorageHandlerService } from '../../services/storage-handler.service';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { FormsModule } from '@angular/forms';
@@ -14,6 +13,7 @@ import { CountryIdtoNamePipe } from '../../pipes/country-idto-name.pipe';
 import { SearchBarComponent } from '../../components/search-bar/search-bar.component';
 import { PaginationComponent } from '../../components/pagination/pagination.component';
 import { ServerCompareService } from '../../services/server-compare.service';
+import { DropdownManagerService } from '../../services/dropdown-manager.service';
 
 export type TableColumn = {
   name: string;
@@ -50,16 +50,6 @@ export type RegionVendorMetadata = {
   name: string;
   selected?: boolean;
   collapsed?: boolean;
-};
-
-
-
-const options: DropdownOptions = {
-  placement: 'bottom',
-  triggerType: 'click',
-  offsetSkidding: 0,
-  offsetDistance: 10,
-  delay: 300
 };
 
 
@@ -153,6 +143,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
               private router: Router,
               private SEOHandler: SeoHandlerService,
               private storageHandler: StorageHandlerService,
+              private dropdownManager: DropdownManagerService,
               private serverCompare: ServerCompareService) { }
 
   ngOnInit() {
@@ -206,31 +197,14 @@ export class ServerListingComponent implements OnInit, OnDestroy {
         });
       });
 
-      const targetElColumn: HTMLElement | null = document.getElementById('column_options');
-      const triggerElColumn: HTMLElement | null = document.getElementById('column_button');
 
-      this.dropdownColumn = new Dropdown(
-        targetElColumn,
-        triggerElColumn,
-        options,
-        {
-          id: 'column_options',
-          override: true
-        }
-      );
+      this.dropdownManager.initDropdown('column_button', 'column_options').then((dropdown) => {
+        this.dropdownColumn = dropdown;
+      });
 
-      const targetElPage: HTMLElement | null = document.getElementById('pagesize_options');
-      const triggerElPage: HTMLElement | null = document.getElementById('pagesize_button');
-
-      this.dropdownPage = new Dropdown(
-        targetElPage,
-        triggerElPage,
-        options,
-        {
-          id: 'pagesize_options',
-          override: true
-        }
-      );
+      this.dropdownManager.initDropdown('pagesize_button', 'pagesize_options').then((dropdown) => {
+        this.dropdownPage = dropdown;
+      });
     }
   }
 

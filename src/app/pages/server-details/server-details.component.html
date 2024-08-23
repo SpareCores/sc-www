@@ -306,7 +306,6 @@
             <button
               id="compress_method_button"
               data-ph-capture-attribute-sc-event="server details price allocation select"
-              data-dropdown-toggle="compress_method_options"
               class="dropdown_button"
               type="button">
               <div class="px-3 py-2">
@@ -434,13 +433,47 @@
         </div>
       </div>
 
+      <div class="block_full" *ngIf="barChartDataStaticWeb">
+        <div class="flex justify-between items-center">
+          <h3 class="text-2xl flex items-center gap-2" >
+            Static web server
+            <lucide-icon
+              name="circle-arrow-up"
+              class="h-4 w-4 text-gray-200"
+              (mouseenter)="showTooltip($event, 'Higher is better.')"
+              (mouseleave)="hideTooltip()">
+            </lucide-icon>
+            <lucide-icon
+              name="info"
+              class="h-4 w-4 text-gray-200"
+              (mouseenter)="showTooltipChart($event, 'app:static_web')"
+              (mouseleave)="hideTooltip()">
+            </lucide-icon>
+          </h3>
+        </div>
+        <div *ngIf="isBrowser()">
+          <div chartType="bar">
+            <canvas
+              style="height: 350px; width:100%"
+              baseChart
+              [data]="barChartDataStaticWeb"
+              [options]="barChartOptionsStaticWeb"
+              [type]="barChartType"
+            >
+            </canvas>
+          </div>
+        </div>
+      </div>
+
       <div class="my-2 w-full">
         <h2 class="text-3xl font-bold"> Alternatives </h2>
       </div>
 
       <div class="block_half">
-          <h3 class="text-2xl">Servers of the Same Family</h3>
-          <table class="items_table">
+          <div class="flex items-center" style="min-height: 42px;">
+            <h3 class="text-2xl">Servers of the Same Family</h3>
+          </div>
+          <table class="items_table_similar">
             <thead>
               <tr>
                 <th>INSTANCE</th>
@@ -466,13 +499,12 @@
           </table>
       </div>
       <div class="block_half">
-        <div class="flex justify-between">
+        <div class="flex justify-between items-center">
           <h3 class="text-2xl" >Similar Servers </h3>
           <div class="flex gap-4">
             <button
               id="similar_type_button"
               data-ph-capture-attribute-sc-event="server details price allocation select"
-              data-dropdown-toggle="similar_server_options"
               class="dropdown_button"
               type="button">
               <div class="px-3 py-2">
@@ -484,7 +516,7 @@
             </button>
           </div>
         </div>
-        <table class="items_table">
+        <table class="items_table_similar">
           <thead>
             <tr>
               <th>INSTANCE</th>

@@ -10,10 +10,9 @@ import { LucideAngularModule } from 'lucide-angular';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { FaqComponent } from '../../components/faq/faq.component';
 import { FormsModule } from '@angular/forms';
-import { Dropdown, DropdownOptions, initFlowbite } from 'flowbite';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData } from 'chart.js';
-import { barChartDataEmpty, barChartOptions, barChartOptionsSSL, lineChartOptionsBWM, lineChartOptionsComp, lineChartOptionsCompRatio, radarChartOptions, radarDatasetColors } from './chartOptions';
+import { barChartDataEmpty, barChartOptions, barChartOptionsSSL, barChartOptionsStaticWeb, lineChartOptionsBWM, lineChartOptionsComp, lineChartOptionsCompRatio, radarChartOptions, radarDatasetColors } from './chartOptions';
 import { Chart } from 'chart.js';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -23,17 +22,9 @@ import { ServerCompareService } from '../../services/server-compare.service';
 import { initGiscus } from '../../tools/initGiscus';
 import { Location } from '@angular/common';
 import { AnalyticsService } from '../../services/analytics.service';
+import { DropdownManagerService } from '../../services/dropdown-manager.service';
 
 Chart.register(annotationPlugin);
-
-
-const options: DropdownOptions = {
-  placement: 'bottom',
-  triggerType: 'click',
-  offsetSkidding: 0,
-  offsetDistance: 10,
-  delay: 300
-};
 
 @Component({
   selector: 'app-server-details',
@@ -72,7 +63,6 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     { name: 'Ondemand', selected: true }
   ];
 
-  regionDropdown: any;
   regionFilters: any[] = [];
 
   similarByFamily: GetSimilarServersServerVendorServerSimilarServersByNGetData = [];
@@ -141,6 +131,9 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   barChartOptionsSSL: ChartConfiguration<'bar'>['options'] = barChartOptionsSSL;
   barChartDataSSL: ChartData<'bar'> | undefined = undefined;
 
+  barChartOptionsStaticWeb: ChartConfiguration<'bar'>['options'] = barChartOptionsStaticWeb;
+  barChartDataStaticWeb: ChartData<'bar'> | undefined = undefined;
+
   geekbenchHTML: any;
 
   toastErrorMsg: string = 'Failed to load server data. Please try again later.';
@@ -162,6 +155,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
               private router: Router,
               private renderer: Renderer2,
               private location: Location,
+              private dropdownManager: DropdownManagerService,
               private sanitizer: DomSanitizer) {
   }
 
@@ -396,96 +390,21 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
             this.selectSimilarServerOption(this.selectedSimilarOption);
 
-            const interval = setInterval(() => {
-              const targetElAllocation: HTMLElement | null = document.getElementById('allocation_options');
-              const triggerElAllocation: HTMLElement | null = document.getElementById('allocation_button');
+            this.dropdownManager.initDropdown('allocation_button', 'allocation_options');
 
-              if(targetElAllocation && triggerElAllocation) {
-                this.dropdownAllocation = new Dropdown(
-                  targetElAllocation,
-                  triggerElAllocation,
-                  options,
-                  {
-                    id: 'allocation_options',
-                    override: true
-                  }
-                );
-                clearInterval(interval);
-              }
-            }, 150);
+            this.dropdownManager.initDropdown('allocation_button2', 'allocation_options2');
 
-            const interval2 = setInterval(() => {
-              const targetElAllocation: HTMLElement | null = document.getElementById('allocation_options2');
-              const triggerElAllocation: HTMLElement | null = document.getElementById('allocation_button2');
-
-              if(targetElAllocation && triggerElAllocation) {
-                this.dropdownAllocation2 = new Dropdown(
-                  targetElAllocation,
-                  triggerElAllocation,
-                  options,
-                  {
-                    id: 'allocation_options2',
-                    override: true
-                  }
-                );
-                clearInterval(interval2);
-              }
-            }, 150);
-
-            const interval3 = setInterval(() => {
-              const targetElAllocation: HTMLElement | null = document.getElementById('region_options');
-              const triggerElAllocation: HTMLElement | null = document.getElementById('region_button');
-
-              if(targetElAllocation && triggerElAllocation) {
-                this.regionDropdown = new Dropdown(
-                  targetElAllocation,
-                  triggerElAllocation,
-                  options,
-                  {
-                    id: 'region_options',
-                    override: true
-                  }
-                );
-                clearInterval(interval3);
-              }
-            }, 150);
-
-            const interval4 = setInterval(() => {
-              const targetElCompress: HTMLElement | null = document.getElementById('compress_method_options');
-              const triggerElCompress: HTMLElement | null = document.getElementById('compress_method_button');
-
-              if(targetElCompress && triggerElCompress) {
-                this.compressDropdown = new Dropdown(
-                  targetElCompress,
-                  triggerElCompress,
-                  options,
-                  {
-                    id: 'compress_method_options',
-                    override: true
-                  }
-                );
-                clearInterval(interval4);
-              }
-            }, 150);
-
-            const interval5 = setInterval(() => {
-              const targetElAllocation: HTMLElement | null = document.getElementById('similar_server_options');
-              const triggerElAllocation: HTMLElement | null = document.getElementById('similar_type_button');
-
-              if(targetElAllocation && triggerElAllocation) {
-                this.dropdownSimilar = new Dropdown(
-                  targetElAllocation,
-                  triggerElAllocation,
-                  options,
-                  {
-                    id: 'similar_server_options',
-                    override: true
-                  }
-                );
-                clearInterval(interval5);
-              }
+            this.dropdownManager.initDropdown('region_button', 'region_options').then((dropdown) => {
+              this.compressDropdown = dropdown;
             });
 
+            this.dropdownManager.initDropdown('compress_method_button', 'compress_method_options').then((dropdown) => {
+              this.compressDropdown = dropdown;
+            });
+
+            this.dropdownManager.initDropdown('similar_type_button', 'similar_server_options').then((dropdown) => {
+              this.dropdownSimilar = dropdown;
+            });
           }
         }
       }).catch((error) => {
@@ -972,6 +891,14 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
       this.barChartDataSSL = undefined;
     }
 
+    let data2 = this.generateLineChart('app:static_web', 'size', 'threads_per_cpu', false);
+
+    if(data2) {
+      this.barChartDataStaticWeb = { labels: data2.labels, datasets: data2.datasets };
+    } else {
+      this.barChartDataStaticWeb = undefined;
+    }
+
     this.generateCompressChart();
     this.generateGeekbenchChart();
   }
@@ -1145,8 +1072,19 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
       });
 
 
-      if(labels && !isNaN(labels[0])) {
-        labels.sort((a, b) => a - b);
+      if(labels) {
+        labels.sort((a, b) => {
+          if(!isNaN(a) && !isNaN(b)) {
+            return a - b;
+          }
+          const valueA = parseInt(a.replace(/\D/g,''), 10);
+          const valueB = parseInt(b.replace(/\D/g,''), 10);
+          if(valueA && valueB) {
+            return valueA - valueB;
+          }
+
+          return a.localeCompare(b);
+        });
       }
 
       scales.sort((a, b) => a - b);
