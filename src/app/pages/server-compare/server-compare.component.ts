@@ -899,7 +899,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
       this.barChartDataStaticWeb = { labels: chartData.labels, datasets: chartData.datasets };
 
       (this.barChartOptionsStaticWeb as any).plugins.tooltip.callbacks.title = function(this: TooltipModel<"line">, tooltipItems: TooltipItem<"line">[]) {
-        return selectedName + ' with ' + tooltipItems[0].label + 'KB file size';
+        return selectedName + ' with ' + tooltipItems[0].label + ' file size';
       };
 
       if(!this.dropdownThreadCount) {
