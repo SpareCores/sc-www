@@ -211,7 +211,7 @@
                         (mouseleave)="hideTooltipGB()">
                       </lucide-icon>
                       <lucide-icon
-                        *ngIf="category.id === 'bw_mem' || category.id === 'openssl'"
+                        *ngIf="category.id === 'bw_mem' || category.id === 'openssl' || category.id === 'app:static_web'"
                         name="info"
                         class="h-4 w-4 text-gray-200"
                         (mouseenter)="showTooltipChart($event, category.id)"
@@ -283,6 +283,35 @@
                               baseChart
                               [data]="barChartDataSSL"
                               [options]="barChartOptionsSSL"
+                              [type]="barChartType"
+                            >
+                            </canvas>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div *ngIf="category.id === 'app:static_web'" >
+                      <div class="block_full_inline" *ngIf="barChartDataStaticWeb">
+                        <div class="flex justify-end items-center">
+                          <button
+                            id="static_web_button"
+                            class="dropdown_button"
+                            type="button">
+                              <div class="px-4 py-3">
+                                {{selectedThreadCount.name}}
+                              </div>
+                              <div class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
+                                <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
+                              </div>
+                          </button>
+                        </div>
+                        <div *ngIf="isBrowser()">
+                          <div chartType="bar">
+                            <canvas
+                              style="height: 350px; max-height: 350px; width: 100%"
+                              baseChart
+                              [data]="barChartDataStaticWeb"
+                              [options]="barChartOptionsStaticWeb"
                               [type]="barChartType"
                             >
                             </canvas>
@@ -508,6 +537,16 @@
     <li *ngFor="let item of availableSSLAlgos"
       class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
       (click)="selecSSLAlgorithm(item)" >
+      <div class="text-white text-sm ">{{item.name}}</div>
+    </li>
+  </ul>
+</div>
+
+<div id="static_web_options" class="z-100 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid">
+  <ul class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
+    <li *ngFor="let item of availableThreadCount"
+      class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+      (click)="selectStaticWebOption(item)" >
       <div class="text-white text-sm ">{{item.name}}</div>
     </li>
   </ul>

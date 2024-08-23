@@ -9,7 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { Allocation, ServerPKs, ServerPKsWithPrices } from '../../../../sdk/data-contracts';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { Chart, ChartConfiguration, ChartData, TooltipItem, TooltipModel } from 'chart.js';
-import { barChartOptionsSSLCompare, lineChartOptionsBWM, lineChartOptionsCompareCompress, lineChartOptionsCompareDecompress, radarChartOptions, radarDatasetColors } from '../server-details/chartOptions';
+import { barChartOptionsSSLCompare, barChartOptionsStaticWebCompare, lineChartOptionsBWM, lineChartOptionsCompareCompress, lineChartOptionsCompareDecompress, radarChartOptions, radarDatasetColors } from '../server-details/chartOptions';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import { BaseChartDirective } from 'ng2-charts';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -82,6 +82,8 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
   barChartOptionsSSL: ChartConfiguration<'bar'>['options'] = barChartOptionsSSLCompare;
   barChartDataSSL: ChartData<'bar'> | undefined = undefined;
 
+  barChartOptionsStaticWeb: ChartConfiguration<'bar'>['options'] = barChartOptionsStaticWebCompare;
+  barChartDataStaticWeb: ChartData<'bar'> | undefined = undefined;
 
   lineChartOptionsCompress: ChartConfiguration<'line'>['options'] = lineChartOptionsCompareCompress;
   lineChartOptionsDecompress: ChartConfiguration<'line'>['options'] = lineChartOptionsCompareDecompress;
@@ -132,6 +134,15 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
 
   selectedSSLAlgo = this.availableSSLAlgos[5];
 
+  dropdownThreadCount: any;
+  availableThreadCount = [
+    { name: 'Threads per CPU: 1', value: 1 },
+    { name: 'Threads per CPU: 2', value: 2 },
+    { name: 'Threads per CPU: 4', value: 4 },
+  ];
+
+  selectedThreadCount = this.availableThreadCount[0];
+
   compressDropdown: any;
   availableCompressMethods: any[] = [];
   selectedCompressMethod: any;
@@ -181,6 +192,13 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
       name: 'Compression',
       id: 'compress',
       benchmarks: [ 'compression_text:ratio', 'compression_text:decompress', 'compression_text:compress' ],
+      data: [],
+      show_more: false
+    },
+    {
+      name: 'Static web server',
+      id: 'app:static_web',
+      benchmarks: [ 'app:static_web' ],
       data: [],
       show_more: false
     },
@@ -330,6 +348,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
               this.generateBWMemChart();
               this.generateSSLChart();
               this.generateCompressChart();
+              this.generateStatiWebChart();
 
               this.dropdownManager.initDropdown('currency_button', 'currency_options').then((dropdown) => {
                 this.dropdownCurrency = dropdown;
@@ -824,6 +843,73 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     }
   }
 
+  generateStatiWebChart() {
+    const scaleField = 'size';
+    const benchmark_id = 'app:static_web';
+
+    const selectedThreads = this.selectedThreadCount.value;
+    const selectedName = this.selectedThreadCount.name;
+
+    const dataSet = this.benchmarkMeta?.find((x: any) => x.benchmark_id === benchmark_id);
+
+    if(dataSet) {
+      let scales: any[] = [];
+      dataSet.configs.filter((x: any) => x.config.threads_per_cpu === selectedThreads).forEach((item: any) => {
+        if((item.config[scaleField] || item.config[scaleField] === 0) && scales.indexOf(item.config[scaleField]) === -1) {
+          scales.push(item.config[scaleField]);
+        }
+      });
+      scales.sort((a, b) => {
+        if(!isNaN(a) && !isNaN(b)) {
+          return a - b;
+        }
+        const valueA = parseInt(a.replace(/\D/g,''), 10);
+        const valueB = parseInt(b.replace(/\D/g,''), 10);
+        if(valueA && valueB) {
+          return valueA - valueB;
+        }
+
+        return a.localeCompare(b);
+      });
+
+      let chartData: any = {
+        labels: scales, //scales.map((s) => s.toString()),
+        datasets: this.servers.map((server: ServerPKs, index: number) => {
+          return {
+            data: [],
+            label: server.display_name,
+            spanGaps: true,
+            borderColor: radarDatasetColors[index % 8].borderColor,
+            backgroundColor: radarDatasetColors[index % 8].borderColor };
+          })
+      };
+
+      this.servers.forEach((server: any, i: number) => {
+        scales.forEach((size: number) => {
+          const item = server.benchmark_scores.find((b: any) => b.config.threads_per_cpu === selectedThreads && b.config[scaleField] === size);
+          if(item) {
+            chartData.datasets[i].data.push(item.score);
+          } else {
+            chartData.datasets[i].data.push(null);
+          }
+        });
+      });
+
+
+      this.barChartDataStaticWeb = { labels: chartData.labels, datasets: chartData.datasets };
+
+      (this.barChartOptionsStaticWeb as any).plugins.tooltip.callbacks.title = function(this: TooltipModel<"line">, tooltipItems: TooltipItem<"line">[]) {
+        return selectedName + ' with ' + tooltipItems[0].label + ' file size';
+      };
+
+      if(!this.dropdownThreadCount) {
+        this.dropdownManager.initDropdown('static_web_button', 'static_web_options').then((dropdown) => {
+          this.dropdownThreadCount = dropdown;
+        });
+      }
+    }
+  }
+
   getCompressChartOptions() {
     let dataSet = this.benchmarkMeta?.find((x: any) => x.benchmark_id === 'compression_text:ratio');
     let options: any = [];
@@ -1005,6 +1091,12 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     this.selectedSSLAlgo = algo;
     this.generateSSLChart();
     this.dropdownSSL?.hide();
+  }
+
+  selectStaticWebOption(item: any) {
+    this.selectedThreadCount = item;
+    this.generateStatiWebChart();
+    this.dropdownThreadCount?.hide();
   }
 
   selectCompressMethod(method: any) {
