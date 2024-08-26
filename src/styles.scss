@@ -52,6 +52,10 @@ $content-max-width: 1400px;
   }
 }
 
+body {
+  @apply bg-sky-950;
+}
+
 :root {
   --swiper-pagination-color: #34D399;
   --swiper-pagination-bullet-size: 8px;
