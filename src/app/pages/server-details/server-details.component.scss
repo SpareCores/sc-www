@@ -1,4 +1,8 @@
 
+.content {
+  min-height: 75vh;
+}
+
 .block_half {
   @apply px-6 py-6 bg-secondary border-emerald-400 border border-solid rounded-lg flex flex-col gap-4 relative overflow-hidden;
   width: calc(50% - 1.0rem);
