@@ -408,13 +408,13 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
           }
         }
       }).catch((error) => {
-        this.analytics.SentryException(error, {tags: { location: this.constructor.name, function: 'getServers' }});
+
         if(error?.status === 404) {
           this.toastErrorMsg = 'Server not found. Please try again later.';
-        }
-        if(error?.status === 500) {
+        } else if(error?.status === 500) {
           this.toastErrorMsg = 'Internal server error. Please try again later.';
         } else {
+          this.analytics.SentryException(error, {tags: { location: this.constructor.name, function: 'getServers' }});
           this.toastErrorMsg = 'Failed to load server data. Please try again later.';
         }
         if(isPlatformBrowser(this.platformId)) {
