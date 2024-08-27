@@ -249,7 +249,6 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
 
           const decodedParams = JSON.parse(atob(param));
 
-          let baseServerIdx = 4;
           let serverCount = decodedParams?.length || 0;
 
           let promises: Promise<any>[] = [
