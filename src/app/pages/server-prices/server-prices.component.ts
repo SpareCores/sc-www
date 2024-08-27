@@ -12,6 +12,7 @@ import { CountryIdtoNamePipe } from '../../pipes/country-idto-name.pipe';
 import { SearchBarComponent } from '../../components/search-bar/search-bar.component';
 import { PaginationComponent } from '../../components/pagination/pagination.component';
 import { DropdownManagerService } from '../../services/dropdown-manager.service';
+import { AnalyticsService } from '../../services/analytics.service';
 
 export type TableColumn = {
   name: string;
@@ -181,6 +182,7 @@ export class ServerPricesComponent implements OnInit {
               private route: ActivatedRoute,
               private router: Router,
               private SEOHandler: SeoHandlerService,
+              private analytics: AnalyticsService,
               private dropdownManager: DropdownManagerService,
               private storageHandler: StorageHandlerService) { }
 
@@ -360,6 +362,7 @@ export class ServerPricesComponent implements OnInit {
         this.totalPages = Math.ceil(parseInt(servers?.headers?.get('x-total-count') || '0') / this.limit);
       }
     }).catch(err => {
+      this.analytics.SentryException(err, {tags: { location: this.constructor.name, function: '_searchServers' }});
       console.error(err);
     }).finally(() => {
       this.isLoading = false;

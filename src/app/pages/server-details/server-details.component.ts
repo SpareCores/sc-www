@@ -10,7 +10,6 @@ import { LucideAngularModule } from 'lucide-angular';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { FaqComponent } from '../../components/faq/faq.component';
 import { FormsModule } from '@angular/forms';
-import { DropdownOptions, initFlowbite } from 'flowbite';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData } from 'chart.js';
 import { barChartDataEmpty, barChartOptions, barChartOptionsSSL, barChartOptionsStaticWeb, lineChartOptionsBWM, lineChartOptionsComp, lineChartOptionsCompRatio, radarChartOptions, radarDatasetColors } from './chartOptions';
@@ -22,6 +21,7 @@ import { CountryIdtoNamePipe } from '../../pipes/country-idto-name.pipe';
 import { ServerCompareService } from '../../services/server-compare.service';
 import { initGiscus } from '../../tools/initGiscus';
 import { Location } from '@angular/common';
+import { AnalyticsService } from '../../services/analytics.service';
 import { DropdownManagerService } from '../../services/dropdown-manager.service';
 
 Chart.register(annotationPlugin);
@@ -148,6 +148,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   constructor(@Inject(PLATFORM_ID) private platformId: object,
               @Inject(DOCUMENT) private document: Document,
               private route: ActivatedRoute,
+              private analytics: AnalyticsService,
               private keeperAPI: KeeperAPIService,
               private SEOHandler: SeoHandlerService,
               private serverCompare: ServerCompareService,
@@ -381,7 +382,6 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
             });
 
             setTimeout(() => {
-              initFlowbite();
 
               let baseUrl = this.SEOHandler.getBaseURL();
               initGiscus(this.renderer, this.giscusParent, baseUrl, 'Servers', 'DIC_kwDOLesFQM4CgznN', 'pathname');
@@ -408,13 +408,14 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
           }
         }
       }).catch((error) => {
-        console.error('Failed to load server data:', error);
+
         if(error?.status === 404) {
           this.toastErrorMsg = 'Server not found. Please try again later.';
-        }
-        if(error?.status === 500) {
+        } else if(error?.status === 500) {
+          this.analytics.SentryException(error, {tags: { location: this.constructor.name, function: 'getServers' }});
           this.toastErrorMsg = 'Internal server error. Please try again later.';
         } else {
+          this.analytics.SentryException(error, {tags: { location: this.constructor.name, function: 'getServers' }});
           this.toastErrorMsg = 'Failed to load server data. Please try again later.';
         }
         if(isPlatformBrowser(this.platformId)) {
@@ -1328,5 +1329,4 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
       this.location.go(`server/${this.serverDetails.vendor_id}/${this.serverDetails.api_reference}`);
     }
   }
-
 }
