@@ -2840,6 +2840,24 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNGetParams {
 /** Response Get Similar Servers Server  Vendor   Server  Similar Servers  By   N  Get */
 export type GetSimilarServersServerVendorServerSimilarServersByNGetData = ServerPKs[];
 
+export interface GetServerPricesServerVendorServerPricesGetParams {
+  /**
+   * Currency
+   * Currency used for prices.
+   */
+  currency?: string | null;
+  /**
+   * Vendor
+   * A Vendor's ID.
+   */
+  vendor: string;
+  /**
+   * Server
+   * A Server's ID or API reference.
+   */
+  server: string;
+}
+
 /** Response Get Server Prices Server  Vendor   Server  Prices Get */
 export type GetServerPricesServerVendorServerPricesGetData = ServerPrice[];
 

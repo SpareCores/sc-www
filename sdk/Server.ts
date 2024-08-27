@@ -12,6 +12,7 @@
 import {
   GetServerBenchmarksServerVendorServerBenchmarksGetData,
   GetServerPricesServerVendorServerPricesGetData,
+  GetServerPricesServerVendorServerPricesGetParams,
   GetServerServerVendorServerGetData,
   GetServerServerVendorServerGetParams,
   GetSimilarServersServerVendorServerSimilarServersByNGetData,
@@ -74,10 +75,14 @@ export class Server<SecurityDataType = unknown> {
    * @summary Get Server Prices
    * @request GET:/server/{vendor}/{server}/prices
    */
-  getServerPricesServerVendorServerPricesGet = (vendor: string, server: string, params: RequestParams = {}) =>
+  getServerPricesServerVendorServerPricesGet = (
+    { vendor, server, ...query }: GetServerPricesServerVendorServerPricesGetParams,
+    params: RequestParams = {},
+  ) =>
     this.http.request<GetServerPricesServerVendorServerPricesGetData, HTTPValidationError>({
       path: `/server/${vendor}/${server}/prices`,
       method: "GET",
+      query: query,
       format: "json",
       ...params,
     });
