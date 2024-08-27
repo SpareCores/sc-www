@@ -10,8 +10,8 @@
     "test": "ng test",
     "serve:ssr:sc-www": "node dist/sc-www/server/server.mjs --inspect",
     "lint": "ng lint",
-    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org sentry --project sc-www ./dist/sc-www && sentry-cli --url https://sentry.sparecores.net sourcemaps upload --org sentry --project sc-www ./dist/sc-www",
-    "sentry:release": "SENTRY_RELEASE=`sentry-cli --url https://sentry.sparecores.net releases --org sentry --project sc-www propose-version` && sentry-cli --url https://sentry.sparecores.net releases --org sentry --project sc-www new $SENTRY_RELEASE && sentry-cli --url https://sentry.sparecores.net releases --org sentry --project sc-www set-commits $SENTRY_RELEASE --auto && sentry-cli --url https://sentry.sparecores.net releases --org sentry --project sc-www finalize $SENTRY_RELEASE"
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject ./dist/sc-www && sentry-cli sourcemaps upload ./dist/sc-www",
+    "sentry:release": "SENTRY_RELEASE=`sentry-cli releases propose-version` && sentry-cli releases new $SENTRY_RELEASE && sentry-cli releases set-commits $SENTRY_RELEASE --auto && sentry-cli releases finalize $SENTRY_RELEASE"
   },
   "private": true,
   "dependencies": {
