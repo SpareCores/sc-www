@@ -28,7 +28,6 @@
     "@netlify/functions": "^2.6.0",
     "@sentry/angular": "^8.22.0",
     "@sentry/cli": "^2.33.1",
-    "@sentry/node": "^8.22.0",
     "buffer": "^6.0.3",
     "chart.js": "^4.3.0",
     "chartjs-plugin-annotation": "^3.0.1",
