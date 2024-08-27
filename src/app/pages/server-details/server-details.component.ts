@@ -10,7 +10,7 @@ import { LucideAngularModule } from 'lucide-angular';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { FaqComponent } from '../../components/faq/faq.component';
 import { FormsModule } from '@angular/forms';
-import { DropdownOptions, initFlowbite } from 'flowbite';
+import { initFlowbite } from 'flowbite';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData } from 'chart.js';
 import { barChartDataEmpty, barChartOptions, barChartOptionsSSL, barChartOptionsStaticWeb, lineChartOptionsBWM, lineChartOptionsComp, lineChartOptionsCompRatio, radarChartOptions, radarDatasetColors } from './chartOptions';
@@ -177,21 +177,23 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
         this.keeperAPI.getRegions(),
         this.keeperAPI.getZones()
       ]).then((dataAll) => {
-        this.instanceProperties = dataAll[0].body?.fields || [];
+        const promisAllResponses = dataAll.map((d) => d.body);
 
-        this.benchmarkMeta = dataAll[1].body || {};
+        this.instanceProperties = promisAllResponses[0]?.fields || [];
 
-        this.similarByFamily = dataAll[2].body;
-        this.similarBySpecs = dataAll[3].body;
+        this.benchmarkMeta = promisAllResponses[1] || {};
 
-        if(dataAll[6].body){
-          this.serverDetails = dataAll[6].body as any;
-          this.serverDetails.benchmark_scores = dataAll[5].body;
-          this.serverDetails.prices = dataAll[4].body;
+        this.similarByFamily = promisAllResponses[2];
+        this.similarBySpecs = promisAllResponses[3];
 
-          const vendors = dataAll[7].body;
-          const regions = dataAll[8].body;
-          const zones = dataAll[9].body;
+        if(promisAllResponses[6]){
+          this.serverDetails = promisAllResponses[6] as any;
+          this.serverDetails.benchmark_scores = promisAllResponses[5];
+          this.serverDetails.prices = promisAllResponses[4];
+
+          const vendors = promisAllResponses[7];
+          const regions = promisAllResponses[8];
+          const zones = promisAllResponses[9];
 
           this.serverDetails.vendor = vendors.find((v: any) => v.vendor_id === this.serverDetails.vendor_id);
 
