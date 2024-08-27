@@ -178,22 +178,19 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
         this.keeperAPI.getZones()
       ]).then((dataAll) => {
         const promisAllResponses = dataAll.map((d) => d.body);
+        const [serverMeta, benchmarkMeta, similarByFamily, similarBySpecs, prices, benchmarks, serverDetails, vendors, regions, zones] = promisAllResponses;
 
-        this.instanceProperties = promisAllResponses[0]?.fields || [];
+        this.instanceProperties = serverMeta?.fields || [];
 
-        this.benchmarkMeta = promisAllResponses[1] || {};
+        this.benchmarkMeta = benchmarkMeta || {};
 
-        this.similarByFamily = promisAllResponses[2];
-        this.similarBySpecs = promisAllResponses[3];
+        this.similarByFamily = similarByFamily;
+        this.similarBySpecs = similarBySpecs;
 
-        if(promisAllResponses[6]){
-          this.serverDetails = promisAllResponses[6] as any;
-          this.serverDetails.benchmark_scores = promisAllResponses[5];
-          this.serverDetails.prices = promisAllResponses[4];
-
-          const vendors = promisAllResponses[7];
-          const regions = promisAllResponses[8];
-          const zones = promisAllResponses[9];
+        if(serverDetails){
+          this.serverDetails = serverDetails as any;
+          this.serverDetails.benchmark_scores = benchmarks;
+          this.serverDetails.prices = prices;
 
           this.serverDetails.vendor = vendors.find((v: any) => v.vendor_id === this.serverDetails.vendor_id);
 
