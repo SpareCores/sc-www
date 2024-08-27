@@ -36,7 +36,7 @@ export class KeeperAPIService {
     return this.V2Controller.getServerWithoutRelationsV2ServerVendorServerGet(vendor, id);
   }
 
-  public getServerPrices(vendor: string, id: string, currency?: string): Promise<any> {
+  public getServerPrices(vendor: string, id: string): Promise<any> {
     return this.ServerController.getServerPricesServerVendorServerPricesGet(vendor, id);
   }
 
