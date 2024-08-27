@@ -14,6 +14,7 @@ import { SearchBarComponent } from '../../components/search-bar/search-bar.compo
 import { PaginationComponent } from '../../components/pagination/pagination.component';
 import { ServerCompareService } from '../../services/server-compare.service';
 import { DropdownManagerService } from '../../services/dropdown-manager.service';
+import { AnalyticsService } from '../../services/analytics.service';
 
 export type TableColumn = {
   name: string;
@@ -144,6 +145,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
               private SEOHandler: SeoHandlerService,
               private storageHandler: StorageHandlerService,
               private dropdownManager: DropdownManagerService,
+              private analytics: AnalyticsService,
               private serverCompare: ServerCompareService) { }
 
   ngOnInit() {
@@ -316,6 +318,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
         this.totalPages = Math.ceil(parseInt(servers?.headers?.get('x-total-count') || '0') / this.limit);
       }
     }).catch(err => {
+      this.analytics.SentryException(err, {tags: { location: this.constructor.name, function: '_searchServers' }});
       console.error(err);
     }).finally(() => {
       this.isLoading = false;

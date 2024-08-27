@@ -15,6 +15,7 @@ import { BaseChartDirective } from 'ng2-charts';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ServerCompareService } from '../../services/server-compare.service';
 import { DropdownManagerService } from '../../services/dropdown-manager.service';
+import { AnalyticsService } from '../../services/analytics.service';
 
 Chart.register(annotationPlugin);
 
@@ -218,6 +219,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     private sanitizer: DomSanitizer,
     private serverCompare: ServerCompareService,
     private dropdownManager: DropdownManagerService,
+    private analytics: AnalyticsService,
     private route: ActivatedRoute) { }
 
   ngOnInit() {
@@ -355,6 +357,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
               });
             }
           }).catch((err) => {
+            this.analytics.SentryException(err, {tags: { location: this.constructor.name, function: 'compareInit' }});
             console.error(err);
           }).finally(() => {
             this.isLoading = false;
