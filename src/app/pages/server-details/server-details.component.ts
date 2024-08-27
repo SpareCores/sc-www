@@ -168,19 +168,39 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
       Promise.all([
         this.keeperAPI.getServerMeta(),
         this.keeperAPI.getServerBenchmarkMeta(),
-        this.keeperAPI.getServer(vendor, id),
         this.keeperAPI.getServerSimilarServers(vendor, id, 'family', 7),
-        this.keeperAPI.getServerSimilarServers(vendor, id, 'specs', 7)
+        this.keeperAPI.getServerSimilarServers(vendor, id, 'specs', 7),
+        this.keeperAPI.getServerPrices(vendor, id),
+        this.keeperAPI.getServerBenchmark(vendor, id),
+        this.keeperAPI.getServerV2(vendor, id),
+        this.keeperAPI.getVendors(),
+        this.keeperAPI.getRegions(),
+        this.keeperAPI.getZones()
       ]).then((dataAll) => {
         this.instanceProperties = dataAll[0].body?.fields || [];
 
         this.benchmarkMeta = dataAll[1].body || {};
 
-        this.similarByFamily = dataAll[3].body;
-        this.similarBySpecs = dataAll[4].body;
+        this.similarByFamily = dataAll[2].body;
+        this.similarBySpecs = dataAll[3].body;
 
-        if(dataAll[2].body){
-          this.serverDetails = dataAll[2].body as any;
+        if(dataAll[6].body){
+          this.serverDetails = dataAll[6].body as any;
+          this.serverDetails.benchmark_scores = dataAll[5].body;
+          this.serverDetails.prices = dataAll[4].body;
+
+          const vendors = dataAll[7].body;
+          const regions = dataAll[8].body;
+          const zones = dataAll[9].body;
+
+          this.serverDetails.vendor = vendors.find((v: any) => v.vendor_id === this.serverDetails.vendor_id);
+
+          if(this.serverDetails.prices) {
+            this.serverDetails.prices.forEach((price: any) => {
+              price.region = regions.find((r: any) => r.region_id === price.region_id);
+              price.zone = zones.find((z: any) => z.zone_id === price.zone_id);
+            });
+          }
 
           // list all regions where the server is available
           this.serverDetails.prices?.forEach((price: ServerPricePKs) => {

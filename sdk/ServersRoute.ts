@@ -68,7 +68,7 @@ export namespace Servers {
       compliance_framework?: "hipaa" | "iso27001" | "soc2t2";
       /**
        * Storage Size
-       * Minimum amount of storage (GBs) attached to the server.
+       * Minimum amount of storage (GBs).
        */
       storage_size?: number | null;
       /**
