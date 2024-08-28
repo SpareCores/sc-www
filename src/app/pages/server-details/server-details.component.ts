@@ -189,10 +189,10 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
         this.similarBySpecs = similarBySpecs;
 
         if(serverDetails){
-          this.serverDetails = serverDetails as any;
+          this.serverDetails = JSON.parse(JSON.stringify(serverDetails)) as any;
 
           this.serverDetails.benchmark_scores = benchmarks;
-          this.serverDetails.prices = prices?.sort((a: any, b: any) => a.price - b.price);
+          this.serverDetails.prices = JSON.parse(JSON.stringify(prices))?.sort((a: any, b: any) => a.price - b.price);
           this.serverDetails.vendor = vendors.find((v: any) => v.vendor_id === this.serverDetails.vendor_id);
           this.serverDetails.score = this.serverDetails.benchmark_scores?.find((b) => b.benchmark_id === 'stress_ng:cpu_all' && (b.config as any)?.cores === this.serverDetails.vcpus)?.score;
           this.serverDetails.price = this.serverDetails.prices ? this.serverDetails.prices[0].price : 0;
