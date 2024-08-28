@@ -176,7 +176,7 @@ export class LandingpageComponent implements OnInit {
   welcomeAnim(startingDelay: number = 1000) {
 
     // get the cheapest machine
-    this.keeperAPI.searchServerPrices({vcpus_min: this.cpuCount, memory_min: this.ramCount, limit: 100}).then(servers => {
+    this.keeperAPI.searchServerPrices({ vendor: ['gcp', 'hcloud', 'aws'] as any, vcpus_min: this.cpuCount, memory_min: this.ramCount, limit: 100}).then(servers => {
 
       if(!this.spinnerClicked) {
 
@@ -268,7 +268,7 @@ export class LandingpageComponent implements OnInit {
 
     this.spinStart = Date.now();
 
-    this.keeperAPI.searchServerPrices({vcpus_min: this.cpuCount, memory_min: this.ramCount, limit: 100}).then(servers => {
+    this.keeperAPI.searchServerPrices({vendor: ['gcp', 'hcloud', 'aws'] as any, vcpus_min: this.cpuCount, memory_min: this.ramCount, limit: 100}).then(servers => {
       this.spinAnim(servers.body);
     }).catch(err => {
       this.analyticsService.SentryException(err, {tags: { location: this.constructor.name, function: 'spinClicked' }});
