@@ -189,10 +189,15 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
         if(serverDetails){
           this.serverDetails = serverDetails as any;
-          this.serverDetails.benchmark_scores = benchmarks;
-          this.serverDetails.prices = prices;
 
+          this.serverDetails.benchmark_scores = benchmarks;
+          this.serverDetails.prices = prices?.sort((a: any, b: any) => a.price - b.price);
           this.serverDetails.vendor = vendors.find((v: any) => v.vendor_id === this.serverDetails.vendor_id);
+          this.serverDetails.score = this.serverDetails.benchmark_scores?.find((b) => b.benchmark_id === 'stress_ng:cpu_all' && (b.config as any)?.cores === this.serverDetails.vcpus)?.score;
+          this.serverDetails.price = this.serverDetails.prices ? this.serverDetails.prices[0].price : 0;
+          this.serverDetails.score_per_price = this.serverDetails.price && this.serverDetails.score ? this.serverDetails.score / this.serverDetails.price : (this.serverDetails.score || 0);
+
+          console.log(this.serverDetails.prices.map((p:any) => p.price));
 
           if(this.serverDetails.prices) {
             this.serverDetails.prices.forEach((price: any) => {

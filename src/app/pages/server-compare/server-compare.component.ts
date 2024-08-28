@@ -285,7 +285,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
               let server = servers[i * 3];
 
               server.benchmark_scores = servers[i * 3 + 2];
-              server.prices = servers[i * 3 + 1];
+              server.prices = servers[i * 3 + 1]?.sort((a: any, b: any) => a.price - b.price);
 
               server.vendor = vendors.find((v: any) => v.vendor_id === server.vendor_id);
 
@@ -295,6 +295,10 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
                   price.zone = zones.find((z: any) => z.zone_id === price.zone_id);
                 });
               }
+
+              server.score = server.benchmark_scores?.find((b: any) => b.benchmark_id === 'stress_ng:cpu_all' && (b.config as any)?.cores === server.vcpus)?.score;
+              server.price = server.prices ? server.prices[0].price : 0;
+              server.score_per_price = server.price && server.score ? server.score / server.price : (server.score || 0);
 
               this.servers.push(server);
               this.serverCompare.toggleCompare(true, server);
