@@ -847,6 +847,10 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
   }
 
   generateStatiWebChart() {
+
+    // diasbled for now
+    return;
+
     const scaleField = 'size';
     const benchmark_id = 'app:static_web';
 
