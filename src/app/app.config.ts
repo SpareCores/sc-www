@@ -1,5 +1,5 @@
-import { ApplicationConfig, importProvidersFrom } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { APP_INITIALIZER, ApplicationConfig, ErrorHandler, importProvidersFrom } from '@angular/core';
+import { Router, provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
 import { provideClientHydration, withHttpTransferCacheOptions } from '@angular/platform-browser';
@@ -7,12 +7,18 @@ import { HttpRequest, provideHttpClient, withFetch } from '@angular/common/http'
 import { ArrowDownNarrowWide, ArrowDownWideNarrow, BookText, Clipboard, Box, Check, ChevronDown, ChevronLeft, ChevronRight, Codesandbox, Cpu, Database, DollarSign, Facebook, Github, Home, Hotel, Linkedin, LucideAngularModule, MemoryStick, PcCase, Search, Server, SquareKanban, Twitter, User, Building2, Heater, CandlestickChart, MapPinned, Scale, Ellipsis, Menu, Leaf, ShoppingCart, ChevronUp, ExternalLink, Info, ClipboardCheck, ScrollText, Youtube, Trash, CircleX, X, CircleArrowDown, CircleArrowUp } from 'lucide-angular';
 import { MarkdownModule } from 'ngx-markdown';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
+import * as Sentry from "@sentry/angular";
 
 function httpFilter(req: HttpRequest<any>): boolean {
   if(req.url.includes('table/server')) {
     return false;
   }
   return req.method === 'GET';
+}
+
+function customErrorHandler(error: any) {
+  console.log('Custom error handler', error);
+  return error;
 }
 
 export const appConfig: ApplicationConfig = {
@@ -76,6 +82,22 @@ export const appConfig: ApplicationConfig = {
       }),
     ),
     importProvidersFrom(MarkdownModule.forRoot()),
+    {
+      provide: Sentry.TraceService,
+      deps: [Router],
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: () => () => {},
+      deps: [Sentry.TraceService],
+      multi: true,
+    },
+    {
+      provide: ErrorHandler,
+      useValue: Sentry.createErrorHandler({
+        extractor: customErrorHandler
+      }),
+    }
   ],
 
 };

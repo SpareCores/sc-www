@@ -5,6 +5,7 @@ import { LucideAngularModule } from 'lucide-angular';
 import { ActivatedRoute } from '@angular/router';
 import { KeeperAPIService } from '../../services/keeper-api.service';
 import { SeoHandlerService } from '../../services/seo-handler.service';
+import { AnalyticsService } from '../../services/analytics.service';
 
 @Component({
   selector: 'app-server-og',
@@ -28,6 +29,7 @@ export class ServerOGComponent implements OnInit {
    constructor(
               private route: ActivatedRoute,
               private keeperAPI: KeeperAPIService,
+              private analytics: AnalyticsService,
               private SEOHandler: SeoHandlerService) {
   }
 
@@ -71,6 +73,7 @@ export class ServerOGComponent implements OnInit {
 
         }
       }).catch((error) => {
+        this.analytics.SentryException(error, {tags: { location: this.constructor.name, function: 'ogInit' }});
         console.error('Failed to load server data:', error);
       });
     });

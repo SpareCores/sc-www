@@ -1,5 +1,5 @@
 import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
-import { AfterViewInit, Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { AfterViewInit, Component, Inject, OnInit, Optional, PLATFORM_ID } from '@angular/core';
 import { Meta } from '@angular/platform-browser';
 import { NavigationEnd, NavigationError, NavigationStart, Router, Event, RouterModule } from '@angular/router';
 import { register } from 'swiper/element/bundle';
@@ -21,6 +21,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   showFooter = true;
 
   constructor(@Inject(PLATFORM_ID) private platformId: object,
+    @Optional() @Inject('sentryClient') private sentryClient: any,
     @Inject(DOCUMENT) private document: Document,
     private router: Router,
     private analytics: AnalyticsService,

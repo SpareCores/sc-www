@@ -15,6 +15,7 @@ import { BaseChartDirective } from 'ng2-charts';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ServerCompareService } from '../../services/server-compare.service';
 import { DropdownManagerService } from '../../services/dropdown-manager.service';
+import { AnalyticsService } from '../../services/analytics.service';
 
 Chart.register(annotationPlugin);
 
@@ -218,6 +219,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     private sanitizer: DomSanitizer,
     private serverCompare: ServerCompareService,
     private dropdownManager: DropdownManagerService,
+    private analytics: AnalyticsService,
     private route: ActivatedRoute) { }
 
   ngOnInit() {
@@ -386,6 +388,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
               });
             }
           }).catch((err) => {
+            this.analytics.SentryException(err, {tags: { location: this.constructor.name, function: 'compareInit' }});
             console.error(err);
           }).finally(() => {
             this.isLoading = false;
@@ -555,7 +558,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     const prop = server.benchmark_scores
     ?.find((b) =>
         b.benchmark_id === 'stress_ng:cpu_all'
-        && (isMulti ? ((b.config as any)?.cores === server.vcpus) : (b.config as any)?.cores === 1))?.score;
+        && ((isMulti && server.vcpus && server.vcpus > 1) ? ((b.config as any)?.cores > 1) : (b.config as any)?.cores === 1))?.score;
 
     if(prop === undefined || prop === null || prop === 0) {
       return '';
@@ -565,7 +568,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     this.servers?.forEach((s: ServerPKsWithPrices) => {
       const temp = s.benchmark_scores?.find((b) =>
         b.benchmark_id === 'stress_ng:cpu_all' &&
-        (isMulti ? ((b.config as any)?.cores === server.vcpus) :(b.config as any)?.cores === 1))?.score || 0;
+        ((isMulti && s.vcpus && s.vcpus > 1) ? ((b.config as any)?.cores > 1) :(b.config as any)?.cores === 1))?.score || 0;
       if(temp > prop) {
         isBest = false;
       }
