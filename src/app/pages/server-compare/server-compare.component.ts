@@ -150,6 +150,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
 
   selectedConnections = this.connectionsOptions[0];
 
+  // ath the moment only SET operation is used
   dropdownOperation: any;
   operationsOptions = [
     { name: 'SET', value: "SET" },
@@ -985,11 +986,13 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
             this.dropdownRedis = dropdown;
           });
         }
+        /*
         if(!this.dropdownOperation) {
           this.dropdownManager.initDropdown('redis_op_button', 'redis_op_options').then((dropdown) => {
             this.dropdownOperation = dropdown;
           });
         }
+        */
       }
     }
   }
