@@ -248,7 +248,7 @@ export const  barChartOptionsStaticWebCompare: ChartConfiguration<'bar'>['option
     tooltip:{
       callbacks: {
         label: function(this: TooltipModel<"bar">, tooltipItem: TooltipItem<"bar">) {
-          return tooltipItem.formattedValue + ' Requests per second';
+          return `${tooltipItem.formattedValue} ${(tooltipItem as any).raw.unit}; Note: ${(tooltipItem as any).raw.note}`;
         },
         title: function(this: TooltipModel<"bar">, tooltipItems: TooltipItem<"bar">[]) {
           return tooltipItems[0].label;
@@ -256,6 +256,10 @@ export const  barChartOptionsStaticWebCompare: ChartConfiguration<'bar'>['option
       }
     },
   },
+  parsing: {
+    xAxisKey: 'label',
+    yAxisKey: 'data'
+  }
 };
 
 export const barChartDataEmpty: ChartData<'bar'> = {

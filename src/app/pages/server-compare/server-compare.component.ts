@@ -230,8 +230,8 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     },
     {
       name: 'Static web server',
-      id: 'app:static_web',
-      benchmarks: [ 'app:static_web' ],
+      id: 'static_web:rps',
+      benchmarks: [ 'static_web:rps', 'static_web:rps-extrapolated', 'static_web:latency' ],
       data: [],
       show_more: false
     },
@@ -383,6 +383,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
               this.generateSSLChart();
               this.generateCompressChart();
               this.generateStatiWebChart(this.selectedStaticWebOption, this.selectedConnections);
+              //this.generateStatiWebChart(this.selectedRedisOption, this.selectedPipelines);
 
               this.dropdownManager.initDropdown('currency_button', 'currency_options').then((dropdown) => {
                 this.dropdownCurrency = dropdown;
@@ -880,22 +881,29 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
 
   generateStatiWebChart(chartConf: any, chartConf2: any) {
 
-    const benchmark_id = chartConf.benchmark;
-    const labelsField = chartConf.labelsField;
-    const scaleField = chartConf.scaleField;
+    console.log(chartConf, chartConf2);
 
-    const selectedThreads = chartConf2.value;
+    const benchmark_id = chartConf.benchmark;
+    const labelsField = chartConf.scaleField;
+    const scaleField = chartConf.labelsField;
+
+    const labelValue = chartConf2.value;
     const selectedName = chartConf2.name;
 
     const dataSet = this.benchmarkMeta?.find((x: any) => x.benchmark_id === benchmark_id);
 
+    console.log(dataSet);
+
     if(dataSet) {
       let scales: any[] = [];
-      dataSet.configs.filter((x: any) => x.config[labelsField] === selectedThreads).forEach((item: any) => {
+      dataSet.configs.filter((x: any) => x.config[labelsField] === labelValue).forEach((item: any) => {
         if((item.config[scaleField] || item.config[scaleField] === 0) && scales.indexOf(item.config[scaleField]) === -1) {
           scales.push(item.config[scaleField]);
         }
       });
+
+      console.log('scales', scales);
+
       scales.sort((a, b) => {
         if(!isNaN(a) && !isNaN(b)) {
           return a - b;
@@ -923,26 +931,40 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
 
       this.servers.forEach((server: any, i: number) => {
         scales.forEach((size: number) => {
-          const item = server.benchmark_scores.find((b: any) => b.config[labelsField] === selectedThreads && b.config[scaleField] === size);
+          const item = server.benchmark_scores.find((b: any) => b.benchmark_id === benchmark_id && b.config[labelsField] === labelValue && b.config[scaleField] === size);
           if(item) {
-            chartData.datasets[i].data.push(item.score);
+            chartData.datasets[i].data.push({
+              data:item.score,
+              label: size,
+              unit: chartConf.YLabel,
+              note: item.note
+            });
           } else {
             chartData.datasets[i].data.push(null);
           }
         });
       });
 
+      console.log('chart data', chartData);
 
-      this.barChartDataStaticWeb = { labels: chartData.labels, datasets: chartData.datasets };
+      if(benchmark_id.includes('static_web')) {
+        this.barChartDataStaticWeb = { labels: chartData.labels, datasets: chartData.datasets };
 
-      (this.barChartOptionsStaticWeb as any).plugins.tooltip.callbacks.title = function(this: TooltipModel<"line">, tooltipItems: TooltipItem<"line">[]) {
-        return selectedName + ' with ' + tooltipItems[0].label + ' file size';
-      };
+        (this.barChartOptionsStaticWeb as any).scales.y.title.text = chartConf.YLabel;
+        (this.barChartOptionsStaticWeb as any).plugins.tooltip.callbacks.title = function(this: TooltipModel<"line">, tooltipItems: TooltipItem<"line">[]) {
+          return selectedName + ' with ' + tooltipItems[0].label + ' file size';
+        };
 
-      if(!this.dropdownStaticWeb) {
-        this.dropdownManager.initDropdown('static_web_button', 'static_web_options').then((dropdown) => {
-          this.dropdownStaticWeb = dropdown;
-        });
+        if(!this.dropdownStaticWeb) {
+          this.dropdownManager.initDropdown('static_web_button', 'static_web_options').then((dropdown) => {
+            this.dropdownStaticWeb = dropdown;
+          });
+        }
+        if(!this.dropdownConnections) {
+          this.dropdownManager.initDropdown('static_web_conn_button', 'static_web_conn_options').then((dropdown) => {
+            this.dropdownConnections = dropdown;
+          });
+        }
       }
     }
   }
@@ -1131,9 +1153,15 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
   }
 
   selectStaticWebOption(item: any) {
-    this.selectedConnections = item;
+    this.selectedStaticWebOption = item;
     this.generateStatiWebChart(this.selectedStaticWebOption, this.selectedConnections);
     this.dropdownStaticWeb?.hide();
+  }
+
+  selectStaticWebConnOption(item: any) {
+    this.selectedConnections = item;
+    this.generateStatiWebChart(this.selectedStaticWebOption, this.selectedConnections);
+    this.dropdownConnections?.hide();
   }
 
   selectCompressMethod(method: any) {

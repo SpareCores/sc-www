@@ -211,7 +211,7 @@
                         (mouseleave)="hideTooltipGB()">
                       </lucide-icon>
                       <lucide-icon
-                        *ngIf="category.id === 'bw_mem' || category.id === 'openssl' || category.id === 'app:static_web'"
+                        *ngIf="category.id === 'bw_mem' || category.id === 'openssl' || category.id === 'static_web:rps'"
                         name="info"
                         class="h-4 w-4 text-gray-200"
                         (mouseenter)="showTooltipChart($event, category.id)"
@@ -290,15 +290,26 @@
                         </div>
                       </div>
                     </div>
-                    <div *ngIf="category.id === 'app:static_web'" >
+                    <div *ngIf="category.id === 'static_web:rps'" >
                       <div class="block_full_inline" *ngIf="barChartDataStaticWeb">
-                        <div class="flex justify-end items-center">
+                        <div class="flex justify-end items-center gap-4">
                           <button
                             id="static_web_button"
                             class="dropdown_button"
                             type="button">
                               <div class="px-4 py-3">
                                 {{selectedStaticWebOption.name}}
+                              </div>
+                              <div class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
+                                <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
+                              </div>
+                          </button>
+                          <button
+                            id="static_web_conn_button"
+                            class="dropdown_button"
+                            type="button">
+                              <div class="px-4 py-3">
+                                {{selectedConnections.name}}
                               </div>
                               <div class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
                                 <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
@@ -542,9 +553,19 @@
   </ul>
 </div>
 
-<div id="static_web_options" class="z-100 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid">
+<div id="static_web_conn_options" class="z-100 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid">
   <ul class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
     <li *ngFor="let item of connectionsOptions"
+      class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+      (click)="selectStaticWebConnOption(item)" >
+      <div class="text-white text-sm ">{{item.name}}</div>
+    </li>
+  </ul>
+</div>
+
+<div id="static_web_options" class="z-100 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid">
+  <ul class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
+    <li *ngFor="let item of staticWebOptions"
       class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
       (click)="selectStaticWebOption(item)" >
       <div class="text-white text-sm ">{{item.name}}</div>
