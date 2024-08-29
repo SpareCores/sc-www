@@ -86,7 +86,7 @@ export const  barChartOptionsStaticWeb: ChartConfiguration<'bar'>['options'] = {
       title: {
         display: true,
         color: '#FFF',
-        text: 'Threads per CPU',
+        text: 'Connections',
       },
     }
   },
@@ -96,8 +96,76 @@ export const  barChartOptionsStaticWeb: ChartConfiguration<'bar'>['options'] = {
       display: true,
       text: 'File size (KBs)',
       color: '#FFF',
+    },
+    tooltip:{
+      callbacks: {
+        label: function(this: TooltipModel<"bar">, tooltipItem: TooltipItem<"bar">) {
+          return `${tooltipItem.formattedValue} ${(tooltipItem as any).raw.unit}; Note: ${(tooltipItem as any).raw.note}`;
+        },
+        title: function(this: TooltipModel<"bar">, tooltipItems: TooltipItem<"bar">[]) {
+          return tooltipItems[0].label + 'Kb file size';
+        },
+      }
+    },
+  },
+  parsing: {
+    xAxisKey: 'label',
+    yAxisKey: 'data'
+  }
+};
+
+export const  barChartOptionsRedis: ChartConfiguration<'bar'>['options'] = {
+  scales: {
+    ...barChartOptions.scales,
+    y: {
+      ticks: {
+        color: '#FFF',
+      },
+      grid: {
+        color: '#4B5563',
+      },
+      title: {
+        display: true,
+        color: '#FFF',
+        text: 'Request per second',
+      },
+    },
+    x: {
+      ticks: {
+        color: '#FFF',
+      },
+      grid: {
+        color: '#4B5563',
+      },
+      title: {
+        display: true,
+        color: '#FFF',
+        text: 'Pipelines',
+      },
     }
   },
+  plugins: {
+    ...barChartOptions.plugins,
+    title: {
+      display: true,
+      text: 'Operation',
+      color: '#FFF',
+    },
+    tooltip:{
+      callbacks: {
+        label: function(this: TooltipModel<"bar">, tooltipItem: TooltipItem<"bar">) {
+          return `${tooltipItem.formattedValue} ${(tooltipItem as any).raw.unit}; Note: ${(tooltipItem as any).raw.note}`;
+        },
+        title: function(this: TooltipModel<"bar">, tooltipItems: TooltipItem<"bar">[]) {
+          return tooltipItems[0].label + ' Pipelines';
+        },
+      }
+    },
+  },
+  parsing: {
+    xAxisKey: 'label',
+    yAxisKey: 'data'
+  }
 };
 
 export const  barChartOptionsSSLCompare: ChartConfiguration<'bar'>['options'] = {
