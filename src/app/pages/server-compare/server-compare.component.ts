@@ -135,14 +135,46 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
 
   selectedSSLAlgo = this.availableSSLAlgos[5];
 
-  dropdownThreadCount: any;
-  availableThreadCount = [
-    { name: 'Threads per CPU: 1', value: 1 },
-    { name: 'Threads per CPU: 2', value: 2 },
-    { name: 'Threads per CPU: 4', value: 4 },
+  dropdownConnections: any;
+  connectionsOptions = [
+    { name: 'Connections: 2', value: 2 },
+    { name: 'Connections: 4', value: 4 },
+    { name: 'Connections: 8', value: 8 },
+    { name: 'Connections: 16', value: 16 },
+    { name: 'Connections: 32', value: 32 },
+    { name: 'Connections: 64', value: 64 },
   ];
 
-  selectedThreadCount = this.availableThreadCount[0];
+  selectedConnections = this.connectionsOptions[0];
+
+  dropdownPipelines: any;
+  pipelinesOptions = [
+    { name: 'Pipelines: 1', value: 1 },
+    { name: 'Pipelines: 4', value: 4 },
+    { name: 'Pipelines: 16', value: 16 },
+    { name: 'Pipelines: 64', value: 64 },
+    { name: 'Pipelines: 256', value: 256 },
+    { name: 'Pipelines: 512', value: 512 },
+  ];
+
+  selectedPipelines = this.pipelinesOptions[0];
+
+  dropdownStaticWeb: any;
+  staticWebOptions: any[] = [
+    {name: 'RPS', benchmark: 'static_web:rps', YLabel : 'Requests per second', scaleField: 'connections', labelsField: 'size'},
+    {name: 'RPS Extrapolated', benchmark: 'static_web:rps-extrapolated', YLabel : 'Requests per second', scaleField: 'connections', labelsField: 'size'},
+    {name: 'Latency', benchmark: 'static_web:latency', YLabel : 'Seconds', scaleField: 'connections', labelsField: 'size'},
+  ];
+
+  selectedStaticWebOption: any = this.staticWebOptions[0];
+
+  dropdownRedis: any;
+  redisOptions: any[] = [
+    {name: 'RPS', benchmark: 'redis:rps', YLabel : 'Requests per second', scaleField: 'pipeline', labelsField: 'operation'},
+    {name: 'Latency', benchmark: 'redis:latency', YLabel : 'Seconds', scaleField: 'pipeline', labelsField: 'operation'},
+  ];
+
+  selectedRedisOption: any = this.redisOptions[0];
 
   compressDropdown: any;
   availableCompressMethods: any[] = [];
@@ -350,7 +382,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
               this.generateBWMemChart();
               this.generateSSLChart();
               this.generateCompressChart();
-              this.generateStatiWebChart();
+              this.generateStatiWebChart(this.selectedStaticWebOption, this.selectedConnections);
 
               this.dropdownManager.initDropdown('currency_button', 'currency_options').then((dropdown) => {
                 this.dropdownCurrency = dropdown;
@@ -846,22 +878,20 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     }
   }
 
-  generateStatiWebChart() {
+  generateStatiWebChart(chartConf: any, chartConf2: any) {
 
-    // diasbled for now
-    return;
+    const benchmark_id = chartConf.benchmark;
+    const labelsField = chartConf.labelsField;
+    const scaleField = chartConf.scaleField;
 
-    const scaleField = 'size';
-    const benchmark_id = 'app:static_web';
-
-    const selectedThreads = this.selectedThreadCount.value;
-    const selectedName = this.selectedThreadCount.name;
+    const selectedThreads = chartConf2.value;
+    const selectedName = chartConf2.name;
 
     const dataSet = this.benchmarkMeta?.find((x: any) => x.benchmark_id === benchmark_id);
 
     if(dataSet) {
       let scales: any[] = [];
-      dataSet.configs.filter((x: any) => x.config.threads_per_cpu === selectedThreads).forEach((item: any) => {
+      dataSet.configs.filter((x: any) => x.config[labelsField] === selectedThreads).forEach((item: any) => {
         if((item.config[scaleField] || item.config[scaleField] === 0) && scales.indexOf(item.config[scaleField]) === -1) {
           scales.push(item.config[scaleField]);
         }
@@ -893,7 +923,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
 
       this.servers.forEach((server: any, i: number) => {
         scales.forEach((size: number) => {
-          const item = server.benchmark_scores.find((b: any) => b.config.threads_per_cpu === selectedThreads && b.config[scaleField] === size);
+          const item = server.benchmark_scores.find((b: any) => b.config[labelsField] === selectedThreads && b.config[scaleField] === size);
           if(item) {
             chartData.datasets[i].data.push(item.score);
           } else {
@@ -909,9 +939,9 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
         return selectedName + ' with ' + tooltipItems[0].label + ' file size';
       };
 
-      if(!this.dropdownThreadCount) {
+      if(!this.dropdownStaticWeb) {
         this.dropdownManager.initDropdown('static_web_button', 'static_web_options').then((dropdown) => {
-          this.dropdownThreadCount = dropdown;
+          this.dropdownStaticWeb = dropdown;
         });
       }
     }
@@ -1101,9 +1131,9 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
   }
 
   selectStaticWebOption(item: any) {
-    this.selectedThreadCount = item;
-    this.generateStatiWebChart();
-    this.dropdownThreadCount?.hide();
+    this.selectedConnections = item;
+    this.generateStatiWebChart(this.selectedStaticWebOption, this.selectedConnections);
+    this.dropdownStaticWeb?.hide();
   }
 
   selectCompressMethod(method: any) {
