@@ -197,10 +197,22 @@
                 <tr class="section_header">
                   <td [colSpan]="2" >
                     <h3 class="text-xl font-semibold flex gap-2 items-center">{{category.name}}
-                      <lucide-icon
+                      <lucide-icon *ngIf="category.id !== 'static_web:rps' && category.id !== 'redis:rps'"
                         name="circle-arrow-up"
                         class="h-4 w-4 text-gray-200"
                         (mouseenter)="showTooltip($event, 'Higher is better.')"
+                        (mouseleave)="hideTooltip()">
+                      </lucide-icon>
+                      <lucide-icon *ngIf="category.id === 'redis:rps'"
+                        name="{{selectedRedisOption.icon}}"
+                        class="h-4 w-4 text-gray-200"
+                        (mouseenter)="showTooltip($event, selectedRedisOption.tooltip)"
+                        (mouseleave)="hideTooltip()">
+                      </lucide-icon>
+                      <lucide-icon *ngIf="category.id === 'static_web:rps'"
+                        name="{{selectedStaticWebOption.icon}}"
+                        class="h-4 w-4 text-gray-200"
+                        (mouseenter)="showTooltip($event, selectedStaticWebOption.tooltip)"
                         (mouseleave)="hideTooltip()">
                       </lucide-icon>
                       <lucide-icon
@@ -211,10 +223,24 @@
                         (mouseleave)="hideTooltipGB()">
                       </lucide-icon>
                       <lucide-icon
-                        *ngIf="category.id === 'bw_mem' || category.id === 'openssl' || category.id === 'static_web:rps'"
+                        *ngIf="category.id === 'bw_mem' || category.id === 'openssl'"
                         name="info"
                         class="h-4 w-4 text-gray-200"
                         (mouseenter)="showTooltipChart($event, category.id)"
+                        (mouseleave)="hideTooltip()">
+                      </lucide-icon>
+                      <lucide-icon
+                        *ngIf="category.id === 'static_web:rps'"
+                        name="info"
+                        class="h-4 w-4 text-gray-200"
+                        (mouseenter)="showTooltipChart($event, selectedStaticWebOption.benchmark)"
+                        (mouseleave)="hideTooltip()">
+                      </lucide-icon>
+                      <lucide-icon
+                        *ngIf="category.id === 'redis:rps'"
+                        name="info"
+                        class="h-4 w-4 text-gray-200"
+                        (mouseenter)="showTooltipChart($event, selectedRedisOption.benchmark)"
                         (mouseleave)="hideTooltip()">
                       </lucide-icon>
                       <lucide-icon
@@ -323,6 +349,46 @@
                               baseChart
                               [data]="barChartDataStaticWeb"
                               [options]="barChartOptionsStaticWeb"
+                              [type]="barChartType"
+                            >
+                            </canvas>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div *ngIf="category.id === 'redis:rps'" >
+                      <div class="block_full_inline" *ngIf="barChartDataRedis">
+                        <div class="flex justify-end items-center gap-4">
+                          <button
+                            id="redis_button"
+                            class="dropdown_button"
+                            type="button">
+                              <div class="px-4 py-3">
+                                {{selectedRedisOption.name}}
+                              </div>
+                              <div class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
+                                <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
+                              </div>
+                          </button>
+                          <button
+                            id="redis_op_button"
+                            class="dropdown_button"
+                            type="button">
+                              <div class="px-4 py-3">
+                                {{selectedOperation.name}}
+                              </div>
+                              <div class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
+                                <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
+                              </div>
+                          </button>
+                        </div>
+                        <div *ngIf="isBrowser()">
+                          <div chartType="bar">
+                            <canvas
+                              style="height: 350px; max-height: 350px; width: 100%"
+                              baseChart
+                              [data]="barChartDataRedis"
+                              [options]="barChartOptionsRedis"
                               [type]="barChartType"
                             >
                             </canvas>
@@ -568,6 +634,26 @@
     <li *ngFor="let item of staticWebOptions"
       class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
       (click)="selectStaticWebOption(item)" >
+      <div class="text-white text-sm ">{{item.name}}</div>
+    </li>
+  </ul>
+</div>
+
+<div id="redis_op_options" class="z-100 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid">
+  <ul class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
+    <li *ngFor="let item of operationsOptions"
+      class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+      (click)="selectRedisOpOption(item)" >
+      <div class="text-white text-sm ">{{item.name}}</div>
+    </li>
+  </ul>
+</div>
+
+<div id="redis_options" class="z-100 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid">
+  <ul class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
+    <li *ngFor="let item of redisOptions"
+      class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+      (click)="selectRedisOption(item)" >
       <div class="text-white text-sm ">{{item.name}}</div>
     </li>
   </ul>

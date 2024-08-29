@@ -9,7 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { Allocation, ServerPKs, ServerPKsWithPrices } from '../../../../sdk/data-contracts';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { Chart, ChartConfiguration, ChartData, TooltipItem, TooltipModel } from 'chart.js';
-import { barChartOptionsSSLCompare, barChartOptionsStaticWebCompare, lineChartOptionsBWM, lineChartOptionsCompareCompress, lineChartOptionsCompareDecompress, radarChartOptions, radarDatasetColors } from '../server-details/chartOptions';
+import { barChartOptionsRedisCompare, barChartOptionsSSLCompare, barChartOptionsStaticWebCompare, lineChartOptionsBWM, lineChartOptionsCompareCompress, lineChartOptionsCompareDecompress, radarChartOptions, radarDatasetColors } from '../server-details/chartOptions';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import { BaseChartDirective } from 'ng2-charts';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -86,6 +86,9 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
   barChartOptionsStaticWeb: ChartConfiguration<'bar'>['options'] = barChartOptionsStaticWebCompare;
   barChartDataStaticWeb: ChartData<'bar'> | undefined = undefined;
 
+  barChartOptionsRedis: ChartConfiguration<'bar'>['options'] = barChartOptionsRedisCompare;
+  barChartDataRedis: ChartData<'bar'> | undefined = undefined;
+
   lineChartOptionsCompress: ChartConfiguration<'line'>['options'] = lineChartOptionsCompareCompress;
   lineChartOptionsDecompress: ChartConfiguration<'line'>['options'] = lineChartOptionsCompareDecompress;
   lineChartDataCompress: ChartData<'line'> | undefined = undefined;
@@ -147,31 +150,28 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
 
   selectedConnections = this.connectionsOptions[0];
 
-  dropdownPipelines: any;
-  pipelinesOptions = [
-    { name: 'Pipelines: 1', value: 1 },
-    { name: 'Pipelines: 4', value: 4 },
-    { name: 'Pipelines: 16', value: 16 },
-    { name: 'Pipelines: 64', value: 64 },
-    { name: 'Pipelines: 256', value: 256 },
-    { name: 'Pipelines: 512', value: 512 },
+  dropdownOperation: any;
+  operationsOptions = [
+    { name: 'SET', value: "SET" },
+    { name: 'GET', value: "GET" },
   ];
 
-  selectedPipelines = this.pipelinesOptions[0];
+  selectedOperation = this.operationsOptions[0];
 
   dropdownStaticWeb: any;
   staticWebOptions: any[] = [
-    {name: 'RPS', benchmark: 'static_web:rps', YLabel : 'Requests per second', scaleField: 'connections', labelsField: 'size'},
-    {name: 'RPS Extrapolated', benchmark: 'static_web:rps-extrapolated', YLabel : 'Requests per second', scaleField: 'connections', labelsField: 'size'},
-    {name: 'Latency', benchmark: 'static_web:latency', YLabel : 'Seconds', scaleField: 'connections', labelsField: 'size'},
+    {name: 'RPS', benchmark: 'static_web:rps', YLabel : 'Requests per second', scaleField: 'connections', labelsField: 'size', tooltip: "Higher is better.", icon: 'circle-arrow-up'},
+    {name: 'RPS Extrapolated', benchmark: 'static_web:rps-extrapolated', YLabel : 'Requests per second', scaleField: 'connections', labelsField: 'size', tooltip: "Higher is better.", icon: 'circle-arrow-up'},
+    {name: 'Latency', benchmark: 'static_web:latency', YLabel : 'Seconds', scaleField: 'connections', labelsField: 'size', tooltip: "Lower is better.", icon: 'circle-arrow-down'},
   ];
 
   selectedStaticWebOption: any = this.staticWebOptions[0];
 
   dropdownRedis: any;
   redisOptions: any[] = [
-    {name: 'RPS', benchmark: 'redis:rps', YLabel : 'Requests per second', scaleField: 'pipeline', labelsField: 'operation'},
-    {name: 'Latency', benchmark: 'redis:latency', YLabel : 'Seconds', scaleField: 'pipeline', labelsField: 'operation'},
+    {name: 'RPS', benchmark: 'redis:rps', YLabel : 'Requests per second', scaleField: 'operation', labelsField: 'pipeline', tooltip: "Higher is better.", icon: 'circle-arrow-up'},
+    {name: 'RPS Extrapolated', benchmark: 'redis:rps-extrapolated', YLabel : 'Requests per second', scaleField: 'operation', labelsField: 'pipeline', tooltip: "Higher is better.", icon: 'circle-arrow-up'},
+    {name: 'Latency', benchmark: 'redis:latency', YLabel : 'Seconds', scaleField: 'operation', labelsField: 'pipeline', tooltip: "Lower is better.", icon: 'circle-arrow-down'},
   ];
 
   selectedRedisOption: any = this.redisOptions[0];
@@ -232,6 +232,13 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
       name: 'Static web server',
       id: 'static_web:rps',
       benchmarks: [ 'static_web:rps', 'static_web:rps-extrapolated', 'static_web:latency' ],
+      data: [],
+      show_more: false
+    },
+    {
+      name: 'Redis',
+      id: 'redis:rps',
+      benchmarks: [ 'redis:rps', 'redis:rps-extrapolated', 'redis:latency' ],
       data: [],
       show_more: false
     },
@@ -383,7 +390,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
               this.generateSSLChart();
               this.generateCompressChart();
               this.generateStatiWebChart(this.selectedStaticWebOption, this.selectedConnections);
-              //this.generateStatiWebChart(this.selectedRedisOption, this.selectedPipelines);
+              this.generateStatiWebChart(this.selectedRedisOption, this.selectedOperation);
 
               this.dropdownManager.initDropdown('currency_button', 'currency_options').then((dropdown) => {
                 this.dropdownCurrency = dropdown;
@@ -965,6 +972,24 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
             this.dropdownConnections = dropdown;
           });
         }
+      } else {
+        this.barChartDataRedis = { labels: chartData.labels, datasets: chartData.datasets };
+
+        (this.barChartOptionsRedis as any).scales.y.title.text = chartConf.YLabel;
+        (this.barChartOptionsRedis as any).plugins.tooltip.callbacks.title = function(this: TooltipModel<"line">, tooltipItems: TooltipItem<"line">[]) {
+          return selectedName + ' with ' + tooltipItems[0].label + ' pipeline count';
+        };
+
+        if(!this.dropdownRedis) {
+          this.dropdownManager.initDropdown('redis_button', 'redis_options').then((dropdown) => {
+            this.dropdownRedis = dropdown;
+          });
+        }
+        if(!this.dropdownOperation) {
+          this.dropdownManager.initDropdown('redis_op_button', 'redis_op_options').then((dropdown) => {
+            this.dropdownOperation = dropdown;
+          });
+        }
       }
     }
   }
@@ -1162,6 +1187,18 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     this.selectedConnections = item;
     this.generateStatiWebChart(this.selectedStaticWebOption, this.selectedConnections);
     this.dropdownConnections?.hide();
+  }
+
+  selectRedisOption(item: any) {
+    this.selectedRedisOption = item;
+    this.generateStatiWebChart(this.selectedRedisOption, this.selectedOperation);
+    this.dropdownRedis?.hide();
+  }
+
+  selectRedisOpOption(item: any) {
+    this.selectedOperation = item;
+    this.generateStatiWebChart(this.selectedRedisOption, this.selectedOperation);
+    this.dropdownOperation?.hide();
   }
 
   selectCompressMethod(method: any) {

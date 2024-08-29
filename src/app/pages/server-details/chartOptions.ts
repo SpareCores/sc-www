@@ -262,6 +262,55 @@ export const  barChartOptionsStaticWebCompare: ChartConfiguration<'bar'>['option
   }
 };
 
+export const  barChartOptionsRedisCompare: ChartConfiguration<'bar'>['options'] = {
+  scales: {
+    ...barChartOptions.scales,
+    y: {
+      ticks: {
+        color: '#FFF',
+      },
+      grid: {
+        color: '#4B5563',
+      },
+      title: {
+        display: true,
+        color: '#FFF',
+        text: 'Request per second',
+      },
+    },
+    x: {
+      ticks: {
+        color: '#FFF',
+      },
+      grid: {
+        color: '#4B5563',
+      },
+      title: {
+        display: true,
+        color: '#FFF',
+        text: 'Pipelines',
+      },
+    }
+  },
+  plugins: {
+    ...barChartOptions.plugins,
+    tooltip:{
+      callbacks: {
+        label: function(this: TooltipModel<"bar">, tooltipItem: TooltipItem<"bar">) {
+          return `${tooltipItem.formattedValue} ${(tooltipItem as any).raw.unit}; Note: ${(tooltipItem as any).raw.note}`;
+        },
+        title: function(this: TooltipModel<"bar">, tooltipItems: TooltipItem<"bar">[]) {
+          return tooltipItems[0].label;
+        },
+      }
+    },
+  },
+  parsing: {
+    xAxisKey: 'label',
+    yAxisKey: 'data'
+  }
+};
+
 export const barChartDataEmpty: ChartData<'bar'> = {
   labels: [],
   datasets: [
