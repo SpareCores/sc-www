@@ -82,6 +82,8 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   staticWebOptions: any[] = [
     {name: 'RPS', benchmark: 'static_web:rps', YLabel : 'Requests per second', scaleField: 'connections_per_vcpus', labelsField: 'size', tooltip: "Higher is better.", icon: 'circle-arrow-up'},
     {name: 'RPS Extrapolated', benchmark: 'static_web:rps-extrapolated', YLabel : 'Requests per second', scaleField: 'connections_per_vcpus', labelsField: 'size', tooltip: "Higher is better.", icon: 'circle-arrow-up'},
+    {name: 'Throughput', benchmark: 'static_web:throughput', YLabel : 'Bytes per second', scaleField: 'connections_per_vcpus', labelsField: 'size', tooltip: "Higher is better.", icon: 'circle-arrow-up'},
+    {name: 'Throughput Extrapolated', benchmark: 'static_web:throughput-extrapolated', YLabel : 'Bytes per second', scaleField: 'connections_per_vcpus', labelsField: 'size', tooltip: "Higher is better.", icon: 'circle-arrow-up'},
     {name: 'Latency', benchmark: 'static_web:latency', YLabel : 'Seconds', scaleField: 'connections_per_vcpus', labelsField: 'size', tooltip: "Lower is better.", icon: 'circle-arrow-down'},
   ];
 
