@@ -914,6 +914,8 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
       this.barChartDataSSL = undefined;
     }
 
+    // disabled for now
+    /*
     let data2 = this.generateLineChart('app:static_web', 'size', 'threads_per_cpu', false);
 
     if(data2) {
@@ -921,6 +923,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     } else {
       this.barChartDataStaticWeb = undefined;
     }
+    */
 
     this.generateCompressChart();
     this.generateGeekbenchChart();
