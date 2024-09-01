@@ -86,7 +86,7 @@ export const  barChartOptionsStaticWeb: ChartConfiguration<'bar'>['options'] = {
       title: {
         display: true,
         color: '#FFF',
-        text: 'Connections',
+        text: 'Connections per vCPU(s)',
       },
     }
   },

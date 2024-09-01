@@ -80,9 +80,11 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
   dropdownStaticWeb: any;
   staticWebOptions: any[] = [
-    {name: 'RPS', benchmark: 'static_web:rps', YLabel : 'Requests per second', scaleField: 'connections', labelsField: 'size', tooltip: "Higher is better.", icon: 'circle-arrow-up'},
-    {name: 'RPS Extrapolated', benchmark: 'static_web:rps-extrapolated', YLabel : 'Requests per second', scaleField: 'connections', labelsField: 'size', tooltip: "Higher is better.", icon: 'circle-arrow-up'},
-    {name: 'Latency', benchmark: 'static_web:latency', YLabel : 'Seconds', scaleField: 'connections', labelsField: 'size', tooltip: "Lower is better.", icon: 'circle-arrow-down'},
+    {name: 'RPS', benchmark: 'static_web:rps', YLabel : 'Requests per second', scaleField: 'connections_per_vcpus', labelsField: 'size', tooltip: "Higher is better.", icon: 'circle-arrow-up'},
+    {name: 'RPS Extrapolated', benchmark: 'static_web:rps-extrapolated', YLabel : 'Requests per second', scaleField: 'connections_per_vcpus', labelsField: 'size', tooltip: "Higher is better.", icon: 'circle-arrow-up'},
+    {name: 'Throughput', benchmark: 'static_web:throughput', YLabel : 'Bytes per second', scaleField: 'connections_per_vcpus', labelsField: 'size', tooltip: "Higher is better.", icon: 'circle-arrow-up'},
+    {name: 'Throughput Extrapolated', benchmark: 'static_web:throughput-extrapolated', YLabel : 'Bytes per second', scaleField: 'connections_per_vcpus', labelsField: 'size', tooltip: "Higher is better.", icon: 'circle-arrow-up'},
+    {name: 'Latency', benchmark: 'static_web:latency', YLabel : 'Seconds', scaleField: 'connections_per_vcpus', labelsField: 'size', tooltip: "Lower is better.", icon: 'circle-arrow-down'},
   ];
 
   selectedStaticWebOption: any = this.staticWebOptions[0];
@@ -91,7 +93,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   redisOptions: any[] = [
     {name: 'RPS', benchmark: 'redis:rps', YLabel : 'Requests per second', scaleField: 'pipeline', labelsField: 'operation', tooltip: "Higher is better.", icon: 'circle-arrow-up'},
     {name: 'RPS Extrapolated', benchmark: 'redis:rps-extrapolated', YLabel : 'Requests per second', scaleField: 'pipeline', labelsField: 'operation', tooltip: "Higher is better.", icon: 'circle-arrow-up'},
-    {name: 'Latency', benchmark: 'redis:latency', YLabel : 'Seconds', scaleField: 'pipeline', labelsField: 'operation', tooltip: "Lower is better.", icon: 'circle-arrow-down'},
+    {name: 'Latency', benchmark: 'redis:latency', YLabel : 'Milliseconds', scaleField: 'pipeline', labelsField: 'operation', tooltip: "Lower is better.", icon: 'circle-arrow-down'},
   ];
 
   selectedRedisOption: any = this.redisOptions[0];
