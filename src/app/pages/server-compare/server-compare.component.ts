@@ -174,7 +174,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
   redisOptions: any[] = [
     {name: 'RPS', benchmark: 'redis:rps', YLabel : 'Requests per second', scaleField: 'operation', labelsField: 'pipeline', tooltip: "Higher is better.", icon: 'circle-arrow-up'},
     {name: 'RPS Extrapolated', benchmark: 'redis:rps-extrapolated', YLabel : 'Requests per second', scaleField: 'operation', labelsField: 'pipeline', tooltip: "Higher is better.", icon: 'circle-arrow-up'},
-    {name: 'Latency', benchmark: 'redis:latency', YLabel : 'Seconds', scaleField: 'operation', labelsField: 'pipeline', tooltip: "Lower is better.", icon: 'circle-arrow-down'},
+    {name: 'Latency', benchmark: 'redis:latency', YLabel : 'Milliseconds', scaleField: 'operation', labelsField: 'pipeline', tooltip: "Lower is better.", icon: 'circle-arrow-down'},
   ];
 
   selectedRedisOption: any = this.redisOptions[0];
