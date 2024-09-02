@@ -807,6 +807,11 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
         });
       });
 
+      // reset the annotations
+      if(this.lineChartOptionsBWMem?.plugins?.annotation) {
+        this.lineChartOptionsBWMem.plugins.annotation = {};
+      }
+
       this.lineChartDataBWmem = { labels: chartData.labels, datasets: chartData.datasets };
 
       (this.lineChartOptionsBWMem as any).plugins.tooltip.callbacks.title = function(this: TooltipModel<"line">, tooltipItems: TooltipItem<"line">[]) {

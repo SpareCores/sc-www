@@ -899,6 +899,8 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
           this.lineChartOptionsBWMem.plugins.annotation = {
             annotations: annotations
           };
+        } else {
+          this.lineChartOptionsBWMem.plugins.annotation = {};
         }
       }
 
