@@ -27,29 +27,29 @@ export class LandingpageComponent implements OnInit {
     '✅ Amazon Web Services (Done)',
     '✅ Google Cloud Platform (Done)',
     '✅ Hetzner Cloud (Done)',
-    '⚙️ Microsoft Azure (In Progress)',
+    '✅ Microsoft Azure (In Progress)',
+    '⚙️ Vultr (Planned)',
     '🗓️ Oracle Cloud Infrastructure (Planned)',
     '🗓️ Scaleway (Planned)',
     '🗓️ Alibaba Cloud (Planned)',
     '🗓️ OVH Cloud (Planned)',
-    '🗓️ Vultr (Planned)',
   ];
 
   features: any[] = [
     {
-      count: '217',
+      count: '334',
       text: 'availability zones'
     },
     {
-      count: '1120',
+      count: '2014',
       text: 'server types'
     },
     {
-      count: '216,714',
+      count: '366,488',
       text: 'benchmark scores'
     },
     {
-      count: '135,988',
+      count: '270,228',
       text: 'live price records'
     },
     {
@@ -58,7 +58,7 @@ export class LandingpageComponent implements OnInit {
     },
 
     {
-      count: '~10M',
+      count: '~20M',
       text: 'historical records'
     },
   ];
