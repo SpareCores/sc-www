@@ -215,17 +215,20 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
           this.serverDetails = JSON.parse(JSON.stringify(serverDetails)) as any;
 
           this.serverDetails.benchmark_scores = benchmarks;
-          this.serverDetails.prices = JSON.parse(JSON.stringify(prices))?.sort((a: any, b: any) => a.price - b.price);
           this.serverDetails.vendor = vendors.find((v: any) => v.vendor_id === this.serverDetails.vendor_id);
           this.serverDetails.score = this.serverDetails.benchmark_scores?.find((b) => b.benchmark_id === 'stress_ng:cpu_all' && (b.config as any)?.cores === this.serverDetails.vcpus)?.score;
-          this.serverDetails.price = this.serverDetails.prices ? this.serverDetails.prices[0].price : 0;
           this.serverDetails.score_per_price = this.serverDetails.price && this.serverDetails.score ? this.serverDetails.score / this.serverDetails.price : (this.serverDetails.score || 0);
 
-          if(this.serverDetails.prices) {
-            this.serverDetails.prices.forEach((price: any) => {
-              price.region = regions.find((r: any) => r.region_id === price.region_id);
-              price.zone = zones.find((z: any) => z.zone_id === price.zone_id);
-            });
+          if(prices) {
+            this.serverDetails.prices = JSON.parse(JSON.stringify(prices))?.sort((a: any, b: any) => a.price - b.price);
+
+            if(this.serverDetails.prices?.length > 0) {
+              this.serverDetails.price = this.serverDetails.prices ? this.serverDetails.prices[0].price : 0;
+              this.serverDetails.prices.forEach((price: any) => {
+                price.region = regions.find((r: any) => r.region_id === price.region_id);
+                price.zone = zones.find((z: any) => z.zone_id === price.zone_id);
+              });
+            }
           }
 
           // list all regions where the server is available
@@ -461,7 +464,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
           }
         }
       }).catch((error) => {
-
+        console.error(error);
         if(error?.status === 404) {
           this.toastErrorMsg = 'Server not found. Please try again later.';
         } else if(error?.status === 500) {
