@@ -190,7 +190,7 @@ export class RegionsComponent implements OnInit {
   }
 
   openLink(item: any) {
-    this.router.navigateByUrl(`/servers?regions=${item.region_id}`);
+    this.router.navigateByUrl(`/server_prices?regions=${item.region_id}`);
   }
 
 }

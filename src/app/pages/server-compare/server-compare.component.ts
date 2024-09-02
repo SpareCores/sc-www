@@ -9,23 +9,15 @@ import { FormsModule } from '@angular/forms';
 import { Allocation, ServerPKs, ServerPKsWithPrices } from '../../../../sdk/data-contracts';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { Chart, ChartConfiguration, ChartData, TooltipItem, TooltipModel } from 'chart.js';
-import { barChartOptionsSSLCompare, lineChartOptionsBWM, lineChartOptionsCompareCompress, lineChartOptionsCompareDecompress, radarChartOptions, radarDatasetColors } from '../server-details/chartOptions';
+import { barChartOptionsSSLCompare, barChartOptionsStaticWebCompare, lineChartOptionsBWM, lineChartOptionsCompareCompress, lineChartOptionsCompareDecompress, radarChartOptions, radarDatasetColors } from '../server-details/chartOptions';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import { BaseChartDirective } from 'ng2-charts';
-import { Dropdown, DropdownOptions } from 'flowbite';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ServerCompareService } from '../../services/server-compare.service';
+import { DropdownManagerService } from '../../services/dropdown-manager.service';
+import { AnalyticsService } from '../../services/analytics.service';
 
 Chart.register(annotationPlugin);
-
-
-const options: DropdownOptions = {
-  placement: 'bottom',
-  triggerType: 'click',
-  offsetSkidding: 0,
-  offsetDistance: 10,
-  delay: 300
-};
 
 @Component({
   selector: 'app-server-compare',
@@ -91,6 +83,8 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
   barChartOptionsSSL: ChartConfiguration<'bar'>['options'] = barChartOptionsSSLCompare;
   barChartDataSSL: ChartData<'bar'> | undefined = undefined;
 
+  barChartOptionsStaticWeb: ChartConfiguration<'bar'>['options'] = barChartOptionsStaticWebCompare;
+  barChartDataStaticWeb: ChartData<'bar'> | undefined = undefined;
 
   lineChartOptionsCompress: ChartConfiguration<'line'>['options'] = lineChartOptionsCompareCompress;
   lineChartOptionsDecompress: ChartConfiguration<'line'>['options'] = lineChartOptionsCompareDecompress;
@@ -140,6 +134,15 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
   ];
 
   selectedSSLAlgo = this.availableSSLAlgos[5];
+
+  dropdownThreadCount: any;
+  availableThreadCount = [
+    { name: 'Threads per CPU: 1', value: 1 },
+    { name: 'Threads per CPU: 2', value: 2 },
+    { name: 'Threads per CPU: 4', value: 4 },
+  ];
+
+  selectedThreadCount = this.availableThreadCount[0];
 
   compressDropdown: any;
   availableCompressMethods: any[] = [];
@@ -193,6 +196,13 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
       data: [],
       show_more: false
     },
+    {
+      name: 'Static web server',
+      id: 'app:static_web',
+      benchmarks: [ 'app:static_web' ],
+      data: [],
+      show_more: false
+    },
   ];
 
   SSCoreTooltip = "Performance benchmark score using stress-ng's div16 method (doing 16 bit unsigned integer divisions for 20 seconds): simulating CPU heavy workload that scales well on any number of (v)CPUs. The score/price value shows the div16 performance measured for 1 USD/hour.";
@@ -208,6 +218,8 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     private seoHandler: SeoHandlerService,
     private sanitizer: DomSanitizer,
     private serverCompare: ServerCompareService,
+    private dropdownManager: DropdownManagerService,
+    private analytics: AnalyticsService,
     private route: ActivatedRoute) { }
 
   ngOnInit() {
@@ -338,22 +350,14 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
               this.generateBWMemChart();
               this.generateSSLChart();
               this.generateCompressChart();
+              this.generateStatiWebChart();
 
-              const targetElCurrency: HTMLElement | null = document.getElementById('currency_options');
-              const triggerElCurrency: HTMLElement | null = document.getElementById('currency_button');
-
-              this.dropdownCurrency = new Dropdown(
-                  targetElCurrency,
-                  triggerElCurrency,
-                  options,
-                  {
-                    id: 'currency_options',
-                    override: true
-                  }
-              );
-              this.dropdownCurrency.init();
+              this.dropdownManager.initDropdown('currency_button', 'currency_options').then((dropdown) => {
+                this.dropdownCurrency = dropdown;
+              });
             }
           }).catch((err) => {
+            this.analytics.SentryException(err, {tags: { location: this.constructor.name, function: 'compareInit' }});
             console.error(err);
           }).finally(() => {
             this.isLoading = false;
@@ -523,7 +527,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     const prop = server.benchmark_scores
     ?.find((b) =>
         b.benchmark_id === 'stress_ng:cpu_all'
-        && (isMulti ? ((b.config as any)?.cores === server.vcpus) : (b.config as any)?.cores === 1))?.score;
+        && ((isMulti && server.vcpus && server.vcpus > 1) ? ((b.config as any)?.cores > 1) : (b.config as any)?.cores === 1))?.score;
 
     if(prop === undefined || prop === null || prop === 0) {
       return '';
@@ -533,7 +537,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     this.servers?.forEach((s: ServerPKsWithPrices) => {
       const temp = s.benchmark_scores?.find((b) =>
         b.benchmark_id === 'stress_ng:cpu_all' &&
-        (isMulti ? ((b.config as any)?.cores === server.vcpus) :(b.config as any)?.cores === 1))?.score || 0;
+        ((isMulti && s.vcpus && s.vcpus > 1) ? ((b.config as any)?.cores > 1) :(b.config as any)?.cores === 1))?.score || 0;
       if(temp > prop) {
         isBest = false;
       }
@@ -772,27 +776,22 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
         });
       });
 
+      // reset the annotations
+      if(this.lineChartOptionsBWMem?.plugins?.annotation) {
+        this.lineChartOptionsBWMem.plugins.annotation = {};
+      }
+
       this.lineChartDataBWmem = { labels: chartData.labels, datasets: chartData.datasets };
 
       (this.lineChartOptionsBWMem as any).plugins.tooltip.callbacks.title = function(this: TooltipModel<"line">, tooltipItems: TooltipItem<"line">[]) {
         return selectedName + ' ops with ' + tooltipItems[0].label + ' MB block size';
       };
 
-      setTimeout(() => {
-        const targetElBWmem: HTMLElement | null = document.getElementById('bw_mem_options');
-        const triggerElBWmem: HTMLElement | null = document.getElementById('bw_mem_button');
-
-        this.dropdownBWmem = new Dropdown(
-            targetElBWmem,
-            triggerElBWmem,
-            options,
-            {
-              id: 'bw_mem_options',
-              override: true
-            }
-        );
-        this.dropdownBWmem.init();
-      }, 500);
+      if(!this.dropdownBWmem) {
+        this.dropdownManager.initDropdown('bw_mem_button', 'bw_mem_options').then((dropdown) => {
+          this.dropdownBWmem = dropdown;
+        });
+      }
     }
   }
 
@@ -844,21 +843,82 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
         return selectedName + ' with ' + tooltipItems[0].label + '-byte block size';
       };
 
-      setTimeout(() => {
-        const targetElSSL: HTMLElement | null = document.getElementById('ssl_options');
-        const triggerElSSL: HTMLElement | null = document.getElementById('ssl_button');
+      if(!this.dropdownSSL) {
+        this.dropdownManager.initDropdown('ssl_button', 'ssl_options').then((dropdown) => {
+          this.dropdownSSL = dropdown;
+        });
+      }
+    }
+  }
 
-        this.dropdownSSL = new Dropdown(
-            targetElSSL,
-            triggerElSSL,
-            options,
-            {
-              id: 'ssl_options',
-              override: true
-            }
-        );
-        this.dropdownSSL.init();
-      }, 500);
+  generateStatiWebChart() {
+
+    // diasbled for now
+    return;
+
+    const scaleField = 'size';
+    const benchmark_id = 'app:static_web';
+
+    const selectedThreads = this.selectedThreadCount.value;
+    const selectedName = this.selectedThreadCount.name;
+
+    const dataSet = this.benchmarkMeta?.find((x: any) => x.benchmark_id === benchmark_id);
+
+    if(dataSet) {
+      let scales: any[] = [];
+      dataSet.configs.filter((x: any) => x.config.threads_per_cpu === selectedThreads).forEach((item: any) => {
+        if((item.config[scaleField] || item.config[scaleField] === 0) && scales.indexOf(item.config[scaleField]) === -1) {
+          scales.push(item.config[scaleField]);
+        }
+      });
+      scales.sort((a, b) => {
+        if(!isNaN(a) && !isNaN(b)) {
+          return a - b;
+        }
+        const valueA = parseInt(a.replace(/\D/g,''), 10);
+        const valueB = parseInt(b.replace(/\D/g,''), 10);
+        if(valueA && valueB) {
+          return valueA - valueB;
+        }
+
+        return a.localeCompare(b);
+      });
+
+      let chartData: any = {
+        labels: scales, //scales.map((s) => s.toString()),
+        datasets: this.servers.map((server: ServerPKs, index: number) => {
+          return {
+            data: [],
+            label: server.display_name,
+            spanGaps: true,
+            borderColor: radarDatasetColors[index % 8].borderColor,
+            backgroundColor: radarDatasetColors[index % 8].borderColor };
+          })
+      };
+
+      this.servers.forEach((server: any, i: number) => {
+        scales.forEach((size: number) => {
+          const item = server.benchmark_scores.find((b: any) => b.config.threads_per_cpu === selectedThreads && b.config[scaleField] === size);
+          if(item) {
+            chartData.datasets[i].data.push(item.score);
+          } else {
+            chartData.datasets[i].data.push(null);
+          }
+        });
+      });
+
+
+      this.barChartDataStaticWeb = { labels: chartData.labels, datasets: chartData.datasets };
+
+      (this.barChartOptionsStaticWeb as any).plugins.tooltip.callbacks.title = function(this: TooltipModel<"line">, tooltipItems: TooltipItem<"line">[]) {
+        return selectedName + ' with ' + tooltipItems[0].label + ' file size';
+      };
+
+      if(!this.dropdownThreadCount) {
+        this.dropdownManager.initDropdown('static_web_button', 'static_web_options').then((dropdown) => {
+          this.dropdownThreadCount = dropdown;
+        });
+      }
     }
   }
 
@@ -985,23 +1045,11 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
       return tooltipItems[0].label + '% compression ratio (' + selectedName + ')';
     };
 
-    const interval4 = setInterval(() => {
-      const targetElCompress: HTMLElement | null = document.getElementById('compress_method_options');
-      const triggerElCompress: HTMLElement | null = document.getElementById('compress_method_button');
-
-      if(targetElCompress && triggerElCompress) {
-        this.compressDropdown = new Dropdown(
-          targetElCompress,
-          triggerElCompress,
-          options,
-          {
-            id: 'compress_method_options',
-            override: true
-          }
-        );
-        clearInterval(interval4);
-      }
-    }, 150);
+    if(!this.compressDropdown) {
+      this.dropdownManager.initDropdown('compress_method_button', 'compress_method_options').then((dropdown) => {
+        this.compressDropdown = dropdown;
+      });
+    }
   }
 
   isBrowser() {
@@ -1047,14 +1095,20 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
 
   selectBWMemOperation(operation: any) {
     this.selectedBWMemOperation = operation;
-    this.generateBWMemChart();
     this.dropdownBWmem?.hide();
+    this.generateBWMemChart();
   }
 
   selecSSLAlgorithm(algo: any) {
     this.selectedSSLAlgo = algo;
     this.generateSSLChart();
     this.dropdownSSL?.hide();
+  }
+
+  selectStaticWebOption(item: any) {
+    this.selectedThreadCount = item;
+    this.generateStatiWebChart();
+    this.dropdownThreadCount?.hide();
   }
 
   selectCompressMethod(method: any) {

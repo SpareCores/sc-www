@@ -8,8 +8,11 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:sc-www": "node dist/sc-www/server/server.mjs",
-    "lint": "ng lint"
+    "serve:ssr:sc-www": "node dist/sc-www/server/server.mjs --inspect",
+    "lint": "ng lint",
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject ./dist/sc-www && sentry-cli sourcemaps upload ./dist/sc-www",
+    "sentry:release": "SENTRY_RELEASE=`sentry-cli releases propose-version` && sentry-cli releases new $SENTRY_RELEASE",
+    "sentry:release-with-commits": "SENTRY_RELEASE=`sentry-cli releases propose-version` && sentry-cli releases new $SENTRY_RELEASE && sentry-cli releases set-commits $SENTRY_RELEASE --auto && sentry-cli releases finalize $SENTRY_RELEASE"
   },
   "private": true,
   "dependencies": {
@@ -25,6 +28,8 @@
     "@angular/router": "^17.2.0",
     "@angular/ssr": "^17.2.3",
     "@netlify/functions": "^2.6.0",
+    "@sentry/angular": "^8.22.0",
+    "@sentry/cli": "^2.33.1",
     "buffer": "^6.0.3",
     "chart.js": "^4.3.0",
     "chartjs-plugin-annotation": "^3.0.1",

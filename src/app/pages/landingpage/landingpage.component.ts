@@ -212,6 +212,7 @@ export class LandingpageComponent implements OnInit {
       }
 
     }).catch(err => {
+      this.analyticsService.SentryException(err, {tags: { location: this.constructor.name, function: 'welcomeAnim' }});
       console.error(err);
     });
   }
@@ -270,6 +271,7 @@ export class LandingpageComponent implements OnInit {
     this.keeperAPI.searchServerPrices({vcpus_min: this.cpuCount, memory_min: this.ramCount, limit: 100}).then(servers => {
       this.spinAnim(servers.body);
     }).catch(err => {
+      this.analyticsService.SentryException(err, {tags: { location: this.constructor.name, function: 'spinClicked' }});
       console.error(err);
     });
   }
