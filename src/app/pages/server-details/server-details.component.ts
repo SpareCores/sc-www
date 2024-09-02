@@ -1132,7 +1132,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
       scales.sort((a, b) => a - b);
 
-      let charData: any = {
+      let chartData: any = {
         labels: scales, //scales.map((s) => s.toString()),
         datasets: labels.map((label: string, index: number) => {
           return {
@@ -1148,14 +1148,14 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
         scales.forEach((size: number) => {
           const item = dataSet.benchmarks.find((b: any) => b.config[labelsField] === label && b.config[scaleField] === size);
           if(item) {
-            charData.datasets[i].data.push(item.score);
+            chartData.datasets[i].data.push(item.score);
           } else {
-            charData.datasets[i].data.push(null);
+            chartData.datasets[i].data.push(null);
           }
         });
       });
 
-      return charData;
+      return chartData;
 
     } else {
       return undefined;
@@ -1203,7 +1203,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
       labels = dataSet.filter(x => x.benchmark_id !== 'geekbench:score').map(x => x.benchmark_id);
       scales = dataSet[0].benchmarks.sort((a: any, b:any) => (a.config.cores as string).localeCompare(b.config.cores)).map((b: any) => b.config.cores);
 
-      let charData: any = {
+      let chartData: any = {
         labels: labels
           .map((s) =>
             (this.benchmarkMeta.find((b: any) => b.benchmark_id === s)?.name || s)
@@ -1222,23 +1222,23 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
         labels.forEach((label: string) => {
           const item = dataSet.find((b: any) => b.benchmark_id === label)?.benchmarks.find((b: any) => b.config.cores === size);
           if(item) {
-            charData.datasets[i].data.push({value: item.score, tooltip: item.note});
+            chartData.datasets[i].data.push({value: item.score, tooltip: item.note});
           } else {
-            charData.datasets[i].data.push({value: 0});
+            chartData.datasets[i].data.push({value: 0});
           }
         });
       });
 
       this.radarChartDataGeekMulti = {
-        labels: charData.labels,
-        datasets: [charData.datasets[0]]
+        labels: chartData.labels,
+        datasets: [chartData.datasets[0]]
       };
       this.radarChartDataGeekSingle = {
-        labels: charData.labels,
-        datasets: [charData.datasets[1]]
+        labels: chartData.labels,
+        datasets: [chartData.datasets[1]]
       };
 
-      return charData;
+      return chartData;
     } else {
       this.radarChartDataGeekMulti = undefined;
       this.radarChartDataGeekSingle = undefined;
@@ -1253,9 +1253,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     const scaleField = chartConf.scaleField;
     const dataSet = this.benchmarksByCategory?.find(x => x.benchmark_id === chartConf.benchmark);
 
-    console.log(dataSet);
-
-    let charData: any;
+    let chartData: any;
 
     if(dataSet && dataSet.benchmarks?.length) {
       let labels: any[] = [];
@@ -1287,7 +1285,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
       scales.sort((a, b) => a - b);
 
-      charData = {
+      chartData = {
         labels: scales, //scales.map((s) => s.toString()),
         datasets: labels.map((label: string, index: number) => {
           return {
@@ -1303,26 +1301,26 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
         scales.forEach((size: number) => {
           const item = dataSet.benchmarks.find((b: any) => b.config[labelsField] === label && b.config[scaleField] === size);
           if(item) {
-            charData.datasets[i].data.push(
+            chartData.datasets[i].data.push(
               { data:item.score,
                 label: size,
                 unit: chartConf.YLabel,
                 note: item.note
               });
           } else {
-            charData.datasets[i].data.push(null);
+            chartData.datasets[i].data.push(null);
           }
         });
       });
     }
 
-    if(charData) {
+    if(chartData) {
       if(chartConf.benchmark.includes('static_web')) {
         (this.barChartOptionsStaticWeb as any).scales.y.title.text = chartConf.YLabel;
-        this.barChartDataStaticWeb = { labels: charData.labels, datasets: charData.datasets };
+        this.barChartDataStaticWeb = { labels: chartData.labels, datasets: chartData.datasets };
       } else {
         (this.barChartOptionsRedis as any).scales.y.title.text = chartConf.YLabel;
-        this.barChartDataRedis = { labels: charData.labels, datasets: charData.datasets };
+        this.barChartDataRedis = { labels: chartData.labels, datasets: chartData.datasets };
       }
     } else {
       if(chartConf.benchmark.includes('static_web')) {

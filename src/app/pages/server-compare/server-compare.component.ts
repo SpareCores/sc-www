@@ -902,8 +902,6 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
 
     const dataSet = this.benchmarkMeta?.find((x: any) => x.benchmark_id === benchmark_id);
 
-    console.log(dataSet);
-
     if(dataSet) {
       let scales: any[] = [];
       dataSet.configs.filter((x: any) => x.config[labelsField] === labelValue).forEach((item: any) => {
