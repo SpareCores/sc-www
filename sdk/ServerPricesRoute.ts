@@ -32,7 +32,6 @@ export namespace ServerPrices {
        * Minimum number of virtual CPUs.
        * @min 1
        * @max 256
-       * @default 1
        */
       vcpus_min?: number;
       /**
@@ -77,7 +76,7 @@ export namespace ServerPrices {
        */
       vendor?: "aws" | "azure" | "gcp" | "hcloud";
       /**
-       * Region id
+       * region id
        * Identifier of the region.
        */
       regions?:
@@ -193,7 +192,6 @@ export namespace ServerPrices {
         | "southafricanorth"
         | "southafricawest"
         | "southcentralus"
-        | "southcentralusstg"
         | "southeastasia"
         | "southindia"
         | "spaincentral"
@@ -221,7 +219,7 @@ export namespace ServerPrices {
       compliance_framework?: "hipaa" | "iso27001" | "soc2t2";
       /**
        * Storage Size
-       * Minimum amount of storage (GBs).
+       * Minimum amount of storage (GBs) attached to the server.
        */
       storage_size?: number | null;
       /**

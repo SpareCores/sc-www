@@ -20,7 +20,7 @@ export class Healthcheck<SecurityDataType = unknown> {
   }
 
   /**
-   * @description Return database hash and last updated timestamp.
+   * @description Return database hash and last udpated timestamp.
    *
    * @tags Administrative endpoints
    * @name HealthcheckHealthcheckGet

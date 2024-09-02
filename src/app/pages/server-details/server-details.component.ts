@@ -192,41 +192,19 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
       Promise.all([
         this.keeperAPI.getServerMeta(),
         this.keeperAPI.getServerBenchmarkMeta(),
+        this.keeperAPI.getServer(vendor, id),
         this.keeperAPI.getServerSimilarServers(vendor, id, 'family', 7),
-        this.keeperAPI.getServerSimilarServers(vendor, id, 'specs', 7),
-        this.keeperAPI.getServerPrices(vendor, id),
-        this.keeperAPI.getServerBenchmark(vendor, id),
-        this.keeperAPI.getServerV2(vendor, id),
-        this.keeperAPI.getVendors(),
-        this.keeperAPI.getRegions(),
-        this.keeperAPI.getZones()
+        this.keeperAPI.getServerSimilarServers(vendor, id, 'specs', 7)
       ]).then((dataAll) => {
-        const promisAllResponses = dataAll.map((d) => d.body);
-        const [serverMeta, benchmarkMeta, similarByFamily, similarBySpecs, prices, benchmarks, serverDetails, vendors, regions, zones] = promisAllResponses;
+        this.instanceProperties = dataAll[0].body?.fields || [];
 
-        this.instanceProperties = serverMeta?.fields || [];
+        this.benchmarkMeta = dataAll[1].body || {};
 
-        this.benchmarkMeta = benchmarkMeta || {};
+        this.similarByFamily = dataAll[3].body;
+        this.similarBySpecs = dataAll[4].body;
 
-        this.similarByFamily = similarByFamily;
-        this.similarBySpecs = similarBySpecs;
-
-        if(serverDetails){
-          this.serverDetails = JSON.parse(JSON.stringify(serverDetails)) as any;
-
-          this.serverDetails.benchmark_scores = benchmarks;
-          this.serverDetails.prices = JSON.parse(JSON.stringify(prices))?.sort((a: any, b: any) => a.price - b.price);
-          this.serverDetails.vendor = vendors.find((v: any) => v.vendor_id === this.serverDetails.vendor_id);
-          this.serverDetails.score = this.serverDetails.benchmark_scores?.find((b) => b.benchmark_id === 'stress_ng:cpu_all' && (b.config as any)?.cores === this.serverDetails.vcpus)?.score;
-          this.serverDetails.price = this.serverDetails.prices ? this.serverDetails.prices[0].price : 0;
-          this.serverDetails.score_per_price = this.serverDetails.price && this.serverDetails.score ? this.serverDetails.score / this.serverDetails.price : (this.serverDetails.score || 0);
-
-          if(this.serverDetails.prices) {
-            this.serverDetails.prices.forEach((price: any) => {
-              price.region = regions.find((r: any) => r.region_id === price.region_id);
-              price.zone = zones.find((z: any) => z.zone_id === price.zone_id);
-            });
-          }
+        if(dataAll[2].body){
+          this.serverDetails = dataAll[2].body as any;
 
           // list all regions where the server is available
           this.serverDetails.prices?.forEach((price: ServerPricePKs) => {
