@@ -45,7 +45,6 @@ export class SurveyFillComponent implements OnInit {
     if(id) {
         this.setup(id);
     } else {
-      console.log('no id');
       window.open('/', '_self');
     }
   }
