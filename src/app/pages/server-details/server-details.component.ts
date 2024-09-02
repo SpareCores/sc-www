@@ -206,9 +206,6 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
         if(dataAll[2].body){
           this.serverDetails = dataAll[2].body as any;
 
-          console.log(this.serverDetails);
-          console.log(this.benchmarkMeta);
-
           // list all regions where the server is available
           this.serverDetails.prices?.forEach((price: ServerPricePKs) => {
             this.serverZones.push(price.zone.display_name);
@@ -852,13 +849,13 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
   selectStaticWebOption(option: any) {
     this.selectedStaticWebOption = option;
-    this.generateStaticWebChart(this.selectedStaticWebOption);
+    this.generateMultiBarChart(this.selectedStaticWebOption);
     this.dropdownStaticWeb?.hide();
   }
 
   selectRedisOption(option: any) {
     this.selectedRedisOption = option;
-    this.generateStaticWebChart(this.selectedRedisOption);
+    this.generateMultiBarChart(this.selectedRedisOption);
     this.dropdownRedis?.hide();
   }
 
@@ -941,8 +938,8 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
     this.generateCompressChart();
     this.generateGeekbenchChart();
-    this.generateStaticWebChart(this.selectedStaticWebOption);
-    this.generateStaticWebChart(this.selectedRedisOption);
+    this.generateMultiBarChart(this.selectedStaticWebOption);
+    this.generateMultiBarChart(this.selectedRedisOption);
   }
 
   generateCompressChart() {
@@ -1247,7 +1244,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     }
   }
 
-  public generateStaticWebChart(chartConf: any) {
+  public generateMultiBarChart(chartConf: any) {
 
     const labelsField = chartConf.labelsField;
     const scaleField = chartConf.scaleField;
@@ -1318,14 +1315,14 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
       if(chartConf.benchmark.includes('static_web')) {
         (this.barChartOptionsStaticWeb as any).scales.y.title.text = chartConf.YLabel;
         this.barChartDataStaticWeb = { labels: chartData.labels, datasets: chartData.datasets };
-      } else {
+      } else if(chartConf.benchmark.includes('redis')) {
         (this.barChartOptionsRedis as any).scales.y.title.text = chartConf.YLabel;
         this.barChartDataRedis = { labels: chartData.labels, datasets: chartData.datasets };
       }
     } else {
       if(chartConf.benchmark.includes('static_web')) {
         this.barChartDataStaticWeb = undefined;
-      } else {
+      } else if(chartConf.benchmark.includes('redis')) {
         this.barChartDataRedis = undefined;
       }
     }

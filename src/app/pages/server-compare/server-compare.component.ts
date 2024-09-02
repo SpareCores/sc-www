@@ -234,7 +234,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     {
       name: 'Static web server',
       id: 'static_web:rps',
-      benchmarks: [ 'static_web:rps', 'static_web:rps-extrapolated', 'static_web:latency' ],
+      benchmarks: [ 'static_web:rps', 'static_web:rps-extrapolated', 'static_web:latency', 'static_web:throughput', 'static_web:throughput-extrapolated' ],
       data: [],
       show_more: false
     },
@@ -891,8 +891,6 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
 
   generateStatiWebChart(chartConf: any, chartConf2: any) {
 
-    console.log(chartConf, chartConf2);
-
     const benchmark_id = chartConf.benchmark;
     const labelsField = chartConf.scaleField;
     const scaleField = chartConf.labelsField;
@@ -909,8 +907,6 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
           scales.push(item.config[scaleField]);
         }
       });
-
-      console.log('scales', scales);
 
       scales.sort((a, b) => {
         if(!isNaN(a) && !isNaN(b)) {
@@ -953,8 +949,6 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
         });
       });
 
-      console.log('chart data', chartData);
-
       if(benchmark_id.includes('static_web')) {
         this.barChartDataStaticWeb = { labels: chartData.labels, datasets: chartData.datasets };
 
@@ -973,7 +967,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
             this.dropdownConnections = dropdown;
           });
         }
-      } else {
+      } else if(benchmark_id.includes('redis')) {
         this.barChartDataRedis = { labels: chartData.labels, datasets: chartData.datasets };
 
         (this.barChartOptionsRedis as any).scales.y.title.text = chartConf.YLabel;
@@ -986,13 +980,6 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
             this.dropdownRedis = dropdown;
           });
         }
-        /*
-        if(!this.dropdownOperation) {
-          this.dropdownManager.initDropdown('redis_op_button', 'redis_op_options').then((dropdown) => {
-            this.dropdownOperation = dropdown;
-          });
-        }
-        */
       }
     }
   }
