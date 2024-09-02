@@ -10,9 +10,6 @@ import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import * as Sentry from "@sentry/angular";
 
 function httpFilter(req: HttpRequest<any>): boolean {
-  if(req.url.includes('table/server')) {
-    return false;
-  }
   return req.method === 'GET';
 }
 

@@ -7,6 +7,7 @@ import { AssistServerFiltersAiAssistServerFiltersGetParams, AssistServerPriceFil
 import { Table } from '../../../sdk/Table';
 import { Ai } from '../../../sdk/Ai';
 import { ServerPrices } from '../../../sdk/ServerPrices';
+import { V2 } from '../../../sdk/V2';
 
 @Injectable({
   providedIn: 'root'
@@ -17,9 +18,10 @@ export class KeeperAPIService {
 
   public SearchController: Servers = new Servers(this.myHttp);
   public ServerController: Server = new Server(this.myHttp);
-  public ServerPciresController: ServerPrices = new ServerPrices(this.myHttp);
+  public ServerPricesController: ServerPrices = new ServerPrices(this.myHttp);
   public TableController: Table = new Table(this.myHttp);
   public AIController: Ai = new Ai(this.myHttp);
+  public V2Controller: V2 = new V2(this.myHttp);
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: object,
@@ -30,8 +32,21 @@ export class KeeperAPIService {
     return this.ServerController.getServerServerVendorServerGet({vendor, server:id, currency });
   }
 
+  public getServerV2(vendor: string, id: string): Promise<any> {
+    return this.V2Controller.getServerWithoutRelationsV2ServerVendorServerGet(vendor, id);
+  }
+
+  public getServerPrices(vendor: string, id: string, currency?: string): Promise<any> {
+    return this.ServerController.getServerPricesServerVendorServerPricesGet({vendor, server: id, currency});
+  }
+
+  public getServerBenchmark(vendor: string, id: string): Promise<any> {
+    return this.ServerController.getServerBenchmarksServerVendorServerBenchmarksGet(vendor, id);
+  }
+
+
   public getServerSimilarServers(vendor: string, id: string, category: "family" | "specs" | "score", limit: number): Promise<any> {
-    return this.ServerController.getSimilarServersServerVendorServerSimilarServersByNGet(vendor, id, category, limit);
+    return this.ServerController.getSimilarServersServerVendorServerSimilarServersByNGet({vendor, server:id, by:category, n:limit});
   }
 
   public searchServers(query: SearchServersServersGetParams): Promise<any> {
@@ -39,7 +54,7 @@ export class KeeperAPIService {
   }
 
   public searchServerPrices(query: SearchServerPricesServerPricesGetParams): Promise<any> {
-    return this.ServerPciresController.searchServerPricesServerPricesGet(query);
+    return this.ServerPricesController.searchServerPricesServerPricesGet(query);
   }
 
   public parsePromptforServers(query: AssistServerFiltersAiAssistServerFiltersGetParams): Promise<any> {
@@ -60,6 +75,10 @@ export class KeeperAPIService {
 
   public getRegions(): Promise<any> {
     return this.TableController.tableRegionTableRegionGet();
+  }
+
+  public getZones(): Promise<any> {
+    return this.TableController.tableZoneTableZoneGet();
   }
 
   public getServers(): Promise<any> {

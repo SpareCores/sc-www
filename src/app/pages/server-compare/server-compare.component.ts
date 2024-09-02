@@ -251,17 +251,30 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
 
           const decodedParams = JSON.parse(atob(param));
 
+          let serverCount = decodedParams?.length || 0;
+
           let promises: Promise<any>[] = [
             this.keeperAPI.getServerMeta(),
-            this.keeperAPI.getServerBenchmarkMeta()
+            this.keeperAPI.getServerBenchmarkMeta(),
+            this.keeperAPI.getVendors(),
+            this.keeperAPI.getRegions(),
+            this.keeperAPI.getZones()
           ];
           decodedParams?.forEach((instance: any) => {
             promises.push(
-              this.keeperAPI.getServer(instance.vendor, instance.server, this.selectedCurrency.slug)
+              this.keeperAPI.getServerV2(instance.vendor, instance.server,)
+            );
+            promises.push(
+              this.keeperAPI.getServerPrices(instance.vendor, instance.server, this.selectedCurrency.slug)
+            );
+            promises.push(
+              this.keeperAPI.getServerBenchmark(instance.vendor, instance.server)
             );
           });
           Promise.all(promises).then((data) => {
-            this.instanceProperties = data[0].body.fields;
+            const promiseAllData = data.map((x: any) => x.body);
+            const[meta, benchmarkMeta, vendors, regions, zones, ...servers] = promiseAllData;
+            this.instanceProperties = meta.fields;
 
             this.instancePropertyCategories.forEach((c) => {
               c.properties = [];
@@ -270,9 +283,27 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
             this.servers = [];
             this.serverCompare.clearCompare();
 
-            for(let i = 2; i < data.length; i++){
-              this.servers.push(data[i].body);
-              this.serverCompare.toggleCompare(true, data[i].body);
+            for(let i = 0; i < serverCount; i++){
+              let server = servers[i * 3];
+
+              server.benchmark_scores = servers[i * 3 + 2];
+              server.prices = servers[i * 3 + 1]?.sort((a: any, b: any) => a.price - b.price);
+
+              server.vendor = vendors.find((v: any) => v.vendor_id === server.vendor_id);
+
+              if(server.prices) {
+                server.prices.forEach((price: any) => {
+                  price.region = regions.find((r: any) => r.region_id === price.region_id);
+                  price.zone = zones.find((z: any) => z.zone_id === price.zone_id);
+                });
+              }
+
+              server.score = server.benchmark_scores?.find((b: any) => b.benchmark_id === 'stress_ng:cpu_all' && (b.config as any)?.cores === server.vcpus)?.score;
+              server.price = server.prices ? server.prices[0].price : 0;
+              server.score_per_price = server.price && server.score ? server.score / server.price : (server.score || 0);
+
+              this.servers.push(server);
+              this.serverCompare.toggleCompare(true, server);
             }
 
             this.instanceProperties.forEach((p: any) => {
@@ -289,7 +320,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
               }
             });
 
-            this.benchmarkMeta = data[1].body
+            this.benchmarkMeta = benchmarkMeta
               ?.filter((benchmark: any) => {
                 let found = false;
                 this.servers.forEach((s: any) => {

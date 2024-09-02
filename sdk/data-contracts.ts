@@ -91,6 +91,65 @@ export interface Benchmark {
   observed_at?: string;
 }
 
+/**
+ * BenchmarkScore
+ * Results of running Benchmark scenarios on Servers.
+ *
+ * Attributes:
+ *     vendor_id (str): Reference to the Vendor.
+ *     server_id (str): Reference to the Server.
+ *     benchmark_id (str): Reference to the Benchmark.
+ *     config (sc_crawler.table_fields.HashableDict | dict): Dictionary of config parameters of the specific benchmark, e.g. {"bandwidth": 4096}
+ *     score (float): The resulting score of the benchmark.
+ *     note (typing.Optional[str]): Optional note, comment or context on the benchmark score.
+ *     status (Status): Status of the resource (active or inactive).
+ *     observed_at (datetime): Timestamp of the last observation.
+ */
+export interface BenchmarkScore {
+  /**
+   * Vendor Id
+   * Reference to the Vendor.
+   */
+  vendor_id: string;
+  /**
+   * Server Id
+   * Reference to the Server.
+   */
+  server_id: string;
+  /**
+   * Benchmark Id
+   * Reference to the Benchmark.
+   */
+  benchmark_id: string;
+  /**
+   * Config
+   * Dictionary of config parameters of the specific benchmark, e.g. {"bandwidth": 4096}
+   * @default {}
+   */
+  config?: object;
+  /**
+   * Score
+   * The resulting score of the benchmark.
+   */
+  score: number;
+  /**
+   * Note
+   * Optional note, comment or context on the benchmark score.
+   */
+  note?: string | null;
+  /**
+   * Status of the resource (active or inactive).
+   * @default "active"
+   */
+  status?: Status;
+  /**
+   * Observed At
+   * Timestamp of the last observation.
+   * @format date-time
+   */
+  observed_at?: string;
+}
+
 /** BenchmarkScoreBase */
 export interface BenchmarkScoreBase {
   /**
@@ -939,6 +998,7 @@ export enum Regions {
   Southafricanorth = "southafricanorth",
   Southafricawest = "southafricawest",
   Southcentralus = "southcentralus",
+  Southcentralusstg = "southcentralusstg",
   Southeastasia = "southeastasia",
   Southindia = "southindia",
   Spaincentral = "spaincentral",
@@ -1009,6 +1069,213 @@ export enum Regions {
  *     observed_at (datetime): Timestamp of the last observation.
  */
 export interface Server {
+  /**
+   * Vendor Id
+   * Reference to the Vendor.
+   */
+  vendor_id: string;
+  /**
+   * Server Id
+   * Unique identifier, as called at the Vendor.
+   */
+  server_id: string;
+  /**
+   * Name
+   * Human-friendly name.
+   */
+  name: string;
+  /**
+   * Api Reference
+   * How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depening on the vendor and actual API endpoint.
+   */
+  api_reference: string;
+  /**
+   * Display Name
+   * Human-friendly reference (usually the id or name) of the resource.
+   */
+  display_name: string;
+  /**
+   * Description
+   * Short description.
+   */
+  description: string | null;
+  /**
+   * Family
+   * Server family, e.g. General-purpose machine (GCP), or M5g (AWS).
+   */
+  family?: string | null;
+  /**
+   * Vcpus
+   * Default number of virtual CPUs (vCPU) of the server.
+   */
+  vcpus?: number;
+  /**
+   * Hypervisor
+   * Hypervisor of the virtual server, e.g. Xen, KVM, Nitro or Dedicated.
+   */
+  hypervisor?: string | null;
+  /** Allocation of CPU(s) to the server, e.g. shared, burstable or dedicated. */
+  cpu_allocation?: CpuAllocation;
+  /**
+   * Cpu Cores
+   * Default number of CPU cores of the server. Equals to vCPUs when HyperThreading is disabled.
+   */
+  cpu_cores?: number | null;
+  /**
+   * Cpu Speed
+   * Vendor-reported maximum CPU clock speed (GHz).
+   */
+  cpu_speed?: number | null;
+  /** CPU architecture (arm64, arm64_mac, i386, or x86_64). */
+  cpu_architecture?: CpuArchitecture;
+  /**
+   * Cpu Manufacturer
+   * The manufacturer of the primary processor, e.g. Intel or AMD.
+   */
+  cpu_manufacturer?: string | null;
+  /**
+   * Cpu Family
+   * The product line/family of the primary processor, e.g. Xeon, Core i7, Ryzen 9.
+   */
+  cpu_family?: string | null;
+  /**
+   * Cpu Model
+   * The model number of the primary processor, e.g. 9750H.
+   */
+  cpu_model?: string | null;
+  /**
+   * Cpu L1 Cache
+   * L1 cache size (byte).
+   */
+  cpu_l1_cache?: number | null;
+  /**
+   * Cpu L2 Cache
+   * L2 cache size (byte).
+   */
+  cpu_l2_cache?: number | null;
+  /**
+   * Cpu L3 Cache
+   * L3 cache size (byte).
+   */
+  cpu_l3_cache?: number | null;
+  /**
+   * Cpu Flags
+   * CPU features/flags.
+   * @default []
+   */
+  cpu_flags?: string[];
+  /**
+   * Cpus
+   * JSON array of known CPU details, e.g. the manufacturer, family, model; L1/L2/L3 cache size; microcode version; feature flags; bugs etc.
+   * @default []
+   */
+  cpus?: Cpu[];
+  /**
+   * Memory Amount
+   * RAM amount (MiB).
+   */
+  memory_amount?: number;
+  /** Generation of the DDR SDRAM, e.g. DDR4 or DDR5. */
+  memory_generation?: DdrGeneration | null;
+  /**
+   * Memory Speed
+   * DDR SDRAM clock rate (Mhz).
+   */
+  memory_speed?: number | null;
+  /**
+   * Memory Ecc
+   * If the DDR SDRAM uses error correction code to detect and correct n-bit data corruption.
+   */
+  memory_ecc?: boolean | null;
+  /**
+   * Gpu Count
+   * Number of GPU accelerator(s).
+   * @default 0
+   */
+  gpu_count?: number;
+  /**
+   * Gpu Memory Min
+   * Memory (MiB) allocated to the lowest-end GPU accelerator.
+   */
+  gpu_memory_min?: number | null;
+  /**
+   * Gpu Memory Total
+   * Overall memory (MiB) allocated to all the GPU accelerator(s).
+   */
+  gpu_memory_total?: number | null;
+  /**
+   * Gpu Manufacturer
+   * The manufacturer of the primary GPU accelerator, e.g. Nvidia or AMD.
+   */
+  gpu_manufacturer?: string | null;
+  /**
+   * Gpu Family
+   * The product family of the primary GPU accelerator, e.g. Turing.
+   */
+  gpu_family?: string | null;
+  /**
+   * Gpu Model
+   * The model number of the primary GPU accelerator, e.g. Tesla T4.
+   */
+  gpu_model?: string | null;
+  /**
+   * Gpus
+   * JSON array of GPU accelerator details, including the manufacturer, name, and memory (MiB) of each GPU.
+   * @default []
+   */
+  gpus?: Gpu[];
+  /**
+   * Storage Size
+   * Overall size (GB) of the disk(s).
+   * @default 0
+   */
+  storage_size?: number;
+  /** Primary disk type, e.g. HDD, SSD, NVMe SSD, or network). */
+  storage_type?: StorageType | null;
+  /**
+   * Storages
+   * JSON array of disks attached to the server, including the size (MiB) and type of each disk.
+   * @default []
+   */
+  storages?: Disk[];
+  /**
+   * Network Speed
+   * The baseline network performance (Gbps) of the network card.
+   */
+  network_speed?: number | null;
+  /**
+   * Inbound Traffic
+   * Amount of complimentary inbound traffic (GB) per month.
+   * @default 0
+   */
+  inbound_traffic?: number;
+  /**
+   * Outbound Traffic
+   * Amount of complimentary outbound traffic (GB) per month.
+   * @default 0
+   */
+  outbound_traffic?: number;
+  /**
+   * Ipv4
+   * Number of complimentary IPv4 address(es).
+   * @default 0
+   */
+  ipv4?: number;
+  /**
+   * Status of the resource (active or inactive).
+   * @default "active"
+   */
+  status?: Status;
+  /**
+   * Observed At
+   * Timestamp of the last observation.
+   * @format date-time
+   */
+  observed_at?: string;
+}
+
+/** ServerBase */
+export interface ServerBase {
   /**
    * Vendor Id
    * Reference to the Vendor.
@@ -1644,6 +1911,94 @@ export interface ServerPKsWithPrices {
   prices: ServerPricePKs[];
   /** Benchmark Scores */
   benchmark_scores: BenchmarkScoreBase[];
+}
+
+/**
+ * ServerPrice
+ * Server type prices per Region and Allocation method.
+ *
+ * Attributes:
+ *     vendor_id (str): Reference to the Vendor.
+ *     region_id (str): Reference to the Region.
+ *     zone_id (str): Reference to the Zone.
+ *     server_id (str): Reference to the Server.
+ *     operating_system (str): Operating System.
+ *     allocation (Allocation): Allocation method, e.g. on-demand or spot.
+ *     unit (PriceUnit): Billing unit of the pricing model.
+ *     price (float): Actual price of a billing unit.
+ *     price_upfront (float): Price to be paid when setting up the resource.
+ *     price_tiered (typing.List[sc_crawler.table_fields.PriceTier]): List of pricing tiers with min/max thresholds and actual prices.
+ *     currency (str): Currency of the prices.
+ *     status (Status): Status of the resource (active or inactive).
+ *     observed_at (datetime): Timestamp of the last observation.
+ */
+export interface ServerPrice {
+  /**
+   * Vendor Id
+   * Reference to the Vendor.
+   */
+  vendor_id: string;
+  /**
+   * Region Id
+   * Reference to the Region.
+   */
+  region_id: string;
+  /**
+   * Zone Id
+   * Reference to the Zone.
+   */
+  zone_id: string;
+  /**
+   * Server Id
+   * Reference to the Server.
+   */
+  server_id: string;
+  /**
+   * Operating System
+   * Operating System.
+   */
+  operating_system: string;
+  /**
+   * Allocation method, e.g. on-demand or spot.
+   * @default "ondemand"
+   */
+  allocation?: Allocation;
+  /** Billing unit of the pricing model. */
+  unit: PriceUnit;
+  /**
+   * Price
+   * Actual price of a billing unit.
+   */
+  price: number;
+  /**
+   * Price Upfront
+   * Price to be paid when setting up the resource.
+   * @default 0
+   */
+  price_upfront?: number;
+  /**
+   * Price Tiered
+   * List of pricing tiers with min/max thresholds and actual prices.
+   * @default []
+   */
+  price_tiered?: PriceTier[];
+  /**
+   * Currency
+   * Currency of the prices.
+   * @default "USD"
+   */
+  currency?: string;
+  /**
+   * Status of the resource (active or inactive).
+   * @default "active"
+   */
+  status?: Status;
+  /**
+   * Observed At
+   * Timestamp of the last observation.
+   * @format date-time
+   */
+  observed_at?: string;
 }
 
 /** ServerPricePKs */
@@ -2424,17 +2779,6 @@ export type TableStorageTableStorageGetData = Storage[];
 
 export type TableMetadataServerTableServerMetaGetData = ServerTableMetaData;
 
-export interface SearchRegionsRegionsGetParams {
-  /**
-   * Vendor id
-   * Identifier of the cloud provider vendor.
-   */
-  vendor?: "aws" | "azure" | "gcp" | "hcloud";
-}
-
-/** Response Search Regions Regions Get */
-export type SearchRegionsRegionsGetData = RegionPKs[];
-
 export interface GetServerServerVendorServerGetParams {
   /**
    * Currency
@@ -2455,8 +2799,81 @@ export interface GetServerServerVendorServerGetParams {
 
 export type GetServerServerVendorServerGetData = ServerPKsWithPrices;
 
+export type GetServerWithoutRelationsV2ServerVendorServerGetData = ServerBase;
+
+export interface GetSimilarServersServerVendorServerSimilarServersByNGetParams {
+  /**
+   * Benchmark Id
+   * Benchmark id to use as the main score for the server.
+   * @default "stress_ng:cpu_all"
+   */
+  benchmark_id?: string;
+  /**
+   * Benchmark Config
+   * Benchmark id to use as the main score for the server.
+   * @default ""
+   */
+  benchmark_config?: string;
+  /**
+   * Vendor
+   * Vendor ID.
+   */
+  vendor: string;
+  /**
+   * Server
+   * Server ID or API reference.
+   */
+  server: string;
+  /**
+   * By
+   * Algorithm to look for similar servers.
+   */
+  by: "family" | "specs" | "score";
+  /**
+   * N
+   * Number of servers to get.
+   * @max 100
+   */
+  n: number;
+}
+
 /** Response Get Similar Servers Server  Vendor   Server  Similar Servers  By   N  Get */
 export type GetSimilarServersServerVendorServerSimilarServersByNGetData = ServerPKs[];
+
+export interface GetServerPricesServerVendorServerPricesGetParams {
+  /**
+   * Currency
+   * Currency used for prices.
+   */
+  currency?: string | null;
+  /**
+   * Vendor
+   * A Vendor's ID.
+   */
+  vendor: string;
+  /**
+   * Server
+   * A Server's ID or API reference.
+   */
+  server: string;
+}
+
+/** Response Get Server Prices Server  Vendor   Server  Prices Get */
+export type GetServerPricesServerVendorServerPricesGetData = ServerPrice[];
+
+/** Response Get Server Benchmarks Server  Vendor   Server  Benchmarks Get */
+export type GetServerBenchmarksServerVendorServerBenchmarksGetData = BenchmarkScore[];
+
+export interface SearchRegionsRegionsGetParams {
+  /**
+   * Vendor id
+   * Identifier of the cloud provider vendor.
+   */
+  vendor?: "aws" | "azure" | "gcp" | "hcloud";
+}
+
+/** Response Search Regions Regions Get */
+export type SearchRegionsRegionsGetData = RegionPKs[];
 
 export interface SearchServersServersGetParams {
   /**
@@ -2505,7 +2922,7 @@ export interface SearchServersServersGetParams {
   compliance_framework?: "hipaa" | "iso27001" | "soc2t2";
   /**
    * Storage Size
-   * Minimum amount of storage (GBs) attached to the server.
+   * Minimum amount of storage (GBs).
    */
   storage_size?: number | null;
   /**
@@ -2573,6 +2990,7 @@ export interface SearchServerPricesServerPricesGetParams {
    * Minimum number of virtual CPUs.
    * @min 1
    * @max 256
+   * @default 1
    */
   vcpus_min?: number;
   /**
@@ -2617,7 +3035,7 @@ export interface SearchServerPricesServerPricesGetParams {
    */
   vendor?: "aws" | "azure" | "gcp" | "hcloud";
   /**
-   * region id
+   * Region id
    * Identifier of the region.
    */
   regions?:
@@ -2733,6 +3151,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "southafricanorth"
     | "southafricawest"
     | "southcentralus"
+    | "southcentralusstg"
     | "southeastasia"
     | "southindia"
     | "spaincentral"
@@ -2760,7 +3179,7 @@ export interface SearchServerPricesServerPricesGetParams {
   compliance_framework?: "hipaa" | "iso27001" | "soc2t2";
   /**
    * Storage Size
-   * Minimum amount of storage (GBs) attached to the server.
+   * Minimum amount of storage (GBs).
    */
   storage_size?: number | null;
   /**
