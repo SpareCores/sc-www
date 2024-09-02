@@ -12,7 +12,7 @@ import { FaqComponent } from '../../components/faq/faq.component';
 import { FormsModule } from '@angular/forms';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData } from 'chart.js';
-import { barChartDataEmpty, barChartOptions, barChartOptionsSSL, barChartOptionsStaticWeb, lineChartOptionsBWM, lineChartOptionsComp, lineChartOptionsCompRatio, radarChartOptions, radarDatasetColors } from './chartOptions';
+import { barChartDataEmpty, barChartOptions, barChartOptionsRedis, barChartOptionsSSL, barChartOptionsStaticWeb, lineChartOptionsBWM, lineChartOptionsComp, lineChartOptionsCompRatio, radarChartOptions, radarDatasetColors } from './chartOptions';
 import { Chart } from 'chart.js';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -78,6 +78,26 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   ];
   selectedSimilarOption: any = this.similarOptions[0];
 
+  dropdownStaticWeb: any;
+  staticWebOptions: any[] = [
+    {name: 'RPS', benchmark: 'static_web:rps', YLabel : 'Requests per second', scaleField: 'connections_per_vcpus', labelsField: 'size', tooltip: "Higher is better.", icon: 'circle-arrow-up'},
+    {name: 'RPS Extrapolated', benchmark: 'static_web:rps-extrapolated', YLabel : 'Requests per second', scaleField: 'connections_per_vcpus', labelsField: 'size', tooltip: "Higher is better.", icon: 'circle-arrow-up'},
+    {name: 'Throughput', benchmark: 'static_web:throughput', YLabel : 'Bytes per second', scaleField: 'connections_per_vcpus', labelsField: 'size', tooltip: "Higher is better.", icon: 'circle-arrow-up'},
+    {name: 'Throughput Extrapolated', benchmark: 'static_web:throughput-extrapolated', YLabel : 'Bytes per second', scaleField: 'connections_per_vcpus', labelsField: 'size', tooltip: "Higher is better.", icon: 'circle-arrow-up'},
+    {name: 'Latency', benchmark: 'static_web:latency', YLabel : 'Seconds', scaleField: 'connections_per_vcpus', labelsField: 'size', tooltip: "Lower is better.", icon: 'circle-arrow-down'},
+  ];
+
+  selectedStaticWebOption: any = this.staticWebOptions[0];
+
+  dropdownRedis: any;
+  redisOptions: any[] = [
+    {name: 'RPS', benchmark: 'redis:rps', YLabel : 'Requests per second', scaleField: 'pipeline', labelsField: 'operation', tooltip: "Higher is better.", icon: 'circle-arrow-up'},
+    {name: 'RPS Extrapolated', benchmark: 'redis:rps-extrapolated', YLabel : 'Requests per second', scaleField: 'pipeline', labelsField: 'operation', tooltip: "Higher is better.", icon: 'circle-arrow-up'},
+    {name: 'Latency', benchmark: 'redis:latency', YLabel : 'Milliseconds', scaleField: 'pipeline', labelsField: 'operation', tooltip: "Lower is better.", icon: 'circle-arrow-down'},
+  ];
+
+  selectedRedisOption: any = this.redisOptions[0];
+
   instancePropertyCategories: any[] = [
     { name: 'General', category: 'meta', properties: [] },
     { name: 'CPU', category: 'cpu', properties: [] },
@@ -133,6 +153,9 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
   barChartOptionsStaticWeb: ChartConfiguration<'bar'>['options'] = barChartOptionsStaticWeb;
   barChartDataStaticWeb: ChartData<'bar'> | undefined = undefined;
+
+  barChartOptionsRedis: ChartConfiguration<'bar'>['options'] = barChartOptionsRedis;
+  barChartDataRedis: ChartData<'bar'> | undefined = undefined;
 
   geekbenchHTML: any;
 
@@ -426,6 +449,14 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
             this.dropdownManager.initDropdown('similar_type_button', 'similar_server_options').then((dropdown) => {
               this.dropdownSimilar = dropdown;
+            });
+
+            this.dropdownManager.initDropdown('static_web_button', 'static_web_options').then((dropdown) => {
+              this.dropdownStaticWeb = dropdown;
+            });
+
+            this.dropdownManager.initDropdown('redis_button', 'redis_options').then((dropdown) => {
+              this.dropdownRedis = dropdown;
             });
           }
         }
@@ -838,6 +869,18 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     this.compressDropdown?.hide();
   }
 
+  selectStaticWebOption(option: any) {
+    this.selectedStaticWebOption = option;
+    this.generateMultiBarChart(this.selectedStaticWebOption);
+    this.dropdownStaticWeb?.hide();
+  }
+
+  selectRedisOption(option: any) {
+    this.selectedRedisOption = option;
+    this.generateMultiBarChart(this.selectedRedisOption);
+    this.dropdownRedis?.hide();
+  }
+
   generateBenchmarkCharts() {
 
     const BWMemData = this.generateLineChart('bw_mem', 'operation', 'size');
@@ -916,19 +959,11 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
       this.barChartDataSSL = undefined;
     }
 
-    // disabled for now
-    /*
-    let data2 = this.generateLineChart('app:static_web', 'size', 'threads_per_cpu', false);
-
-    if(data2) {
-      this.barChartDataStaticWeb = { labels: data2.labels, datasets: data2.datasets };
-    } else {
-      this.barChartDataStaticWeb = undefined;
-    }
-    */
 
     this.generateCompressChart();
     this.generateGeekbenchChart();
+    this.generateMultiBarChart(this.selectedStaticWebOption);
+    this.generateMultiBarChart(this.selectedRedisOption);
   }
 
   generateCompressChart() {
@@ -1087,6 +1122,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
   generateLineChart(benchmark_id: string, labelsField: string, scaleField: string, isLineChart: boolean = true) {
     const dataSet = this.benchmarksByCategory?.find(x => x.benchmark_id === benchmark_id);
+
     if(dataSet && dataSet.benchmarks?.length) {
       let labels: any[] = [];
       let scales: number[] = [];
@@ -1117,7 +1153,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
       scales.sort((a, b) => a - b);
 
-      let charData: any = {
+      let chartData: any = {
         labels: scales, //scales.map((s) => s.toString()),
         datasets: labels.map((label: string, index: number) => {
           return {
@@ -1133,18 +1169,16 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
         scales.forEach((size: number) => {
           const item = dataSet.benchmarks.find((b: any) => b.config[labelsField] === label && b.config[scaleField] === size);
           if(item) {
-            charData.datasets[i].data.push(item.score);
+            chartData.datasets[i].data.push(item.score);
           } else {
-            charData.datasets[i].data.push(null);
+            chartData.datasets[i].data.push(null);
           }
         });
       });
 
-      return charData;
+      return chartData;
 
     } else {
-      this.lineChartDataCompress = undefined;
-
       return undefined;
     }
   }
@@ -1190,7 +1224,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
       labels = dataSet.filter(x => x.benchmark_id !== 'geekbench:score').map(x => x.benchmark_id);
       scales = dataSet[0].benchmarks.sort((a: any, b:any) => (a.config.cores as string).localeCompare(b.config.cores)).map((b: any) => b.config.cores);
 
-      let charData: any = {
+      let chartData: any = {
         labels: labels
           .map((s) =>
             (this.benchmarkMeta.find((b: any) => b.benchmark_id === s)?.name || s)
@@ -1209,30 +1243,113 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
         labels.forEach((label: string) => {
           const item = dataSet.find((b: any) => b.benchmark_id === label)?.benchmarks.find((b: any) => b.config.cores === size);
           if(item) {
-            charData.datasets[i].data.push({value: item.score, tooltip: item.note});
+            chartData.datasets[i].data.push({value: item.score, tooltip: item.note});
           } else {
-            charData.datasets[i].data.push({value: 0});
+            chartData.datasets[i].data.push({value: 0});
           }
         });
       });
 
       this.radarChartDataGeekMulti = {
-        labels: charData.labels,
-        datasets: [charData.datasets[0]]
+        labels: chartData.labels,
+        datasets: [chartData.datasets[0]]
       };
       this.radarChartDataGeekSingle = {
-        labels: charData.labels,
-        datasets: [charData.datasets[1]]
+        labels: chartData.labels,
+        datasets: [chartData.datasets[1]]
       };
 
-      return charData;
+      return chartData;
     } else {
       this.radarChartDataGeekMulti = undefined;
       this.radarChartDataGeekSingle = undefined;
 
       return undefined;
     }
+  }
 
+  public generateMultiBarChart(chartConf: any) {
+
+    const labelsField = chartConf.labelsField;
+    const scaleField = chartConf.scaleField;
+    const dataSet = this.benchmarksByCategory?.find(x => x.benchmark_id === chartConf.benchmark);
+
+    let chartData: any;
+
+    if(dataSet && dataSet.benchmarks?.length) {
+      let labels: any[] = [];
+      let scales: number[] = [];
+      dataSet.benchmarks.forEach((item: any) => {
+        if(item.config[labelsField] && labels.indexOf(item.config[labelsField]) === -1) {
+          labels.push(item.config[labelsField]);
+        }
+        if((item.config[scaleField] || item.config[scaleField] === 0) && scales.indexOf(item.config[scaleField]) === -1) {
+          scales.push(item.config[scaleField]);
+        }
+      });
+
+
+      if(labels) {
+        labels.sort((a, b) => {
+          if(!isNaN(a) && !isNaN(b)) {
+            return a - b;
+          }
+          const valueA = parseInt(a.replace(/\D/g,''), 10);
+          const valueB = parseInt(b.replace(/\D/g,''), 10);
+          if(valueA && valueB) {
+            return valueA - valueB;
+          }
+
+          return a.localeCompare(b);
+        });
+      }
+
+      scales.sort((a, b) => a - b);
+
+      chartData = {
+        labels: scales, //scales.map((s) => s.toString()),
+        datasets: labels.map((label: string, index: number) => {
+          return {
+            data: [],
+            label: label,
+            borderColor: radarDatasetColors[index].borderColor,
+            backgroundColor: radarDatasetColors[index].borderColor
+          };
+          })
+      };
+
+      labels.forEach((label: string, i: number) => {
+        scales.forEach((size: number) => {
+          const item = dataSet.benchmarks.find((b: any) => b.config[labelsField] === label && b.config[scaleField] === size);
+          if(item) {
+            chartData.datasets[i].data.push(
+              { data:item.score,
+                label: size,
+                unit: chartConf.YLabel,
+                note: item.note
+              });
+          } else {
+            chartData.datasets[i].data.push(null);
+          }
+        });
+      });
+    }
+
+    if(chartData) {
+      if(chartConf.benchmark.includes('static_web')) {
+        (this.barChartOptionsStaticWeb as any).scales.y.title.text = chartConf.YLabel;
+        this.barChartDataStaticWeb = { labels: chartData.labels, datasets: chartData.datasets };
+      } else if(chartConf.benchmark.includes('redis')) {
+        (this.barChartOptionsRedis as any).scales.y.title.text = chartConf.YLabel;
+        this.barChartDataRedis = { labels: chartData.labels, datasets: chartData.datasets };
+      }
+    } else {
+      if(chartConf.benchmark.includes('static_web')) {
+        this.barChartDataStaticWeb = undefined;
+      } else if(chartConf.benchmark.includes('redis')) {
+        this.barChartDataRedis = undefined;
+      }
+    }
   }
 
   public numberWithCommas(x: number) {
