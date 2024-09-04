@@ -140,7 +140,7 @@ export const  barChartOptionsRedis: ChartConfiguration<'bar'>['options'] = {
       title: {
         display: true,
         color: '#FFF',
-        text: 'Pipelines',
+        text: 'Number of concurrent pipelined requests',
       },
     }
   },
@@ -157,7 +157,7 @@ export const  barChartOptionsRedis: ChartConfiguration<'bar'>['options'] = {
           return `${tooltipItem.formattedValue} ${(tooltipItem as any).raw.unit}; Note: ${(tooltipItem as any).raw.note}`;
         },
         title: function(this: TooltipModel<"bar">, tooltipItems: TooltipItem<"bar">[]) {
-          return tooltipItems[0].label + ' Pipelines';
+          return tooltipItems[0].label + ' concurrent pipelined requests';
         },
       }
     },
@@ -288,7 +288,7 @@ export const  barChartOptionsRedisCompare: ChartConfiguration<'bar'>['options'] 
       title: {
         display: true,
         color: '#FFF',
-        text: 'Pipelines',
+        text: 'Number of concurrent pipelined requests',
       },
     }
   },

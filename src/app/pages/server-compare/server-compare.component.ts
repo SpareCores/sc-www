@@ -333,7 +333,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
 
               server.vendor = vendors.find((v: any) => v.vendor_id === server.vendor_id);
 
-              if(server.prices) {
+              if(server.prices?.length > 0) {
                 server.prices.forEach((price: any) => {
                   price.region = regions.find((r: any) => r.region_id === price.region_id);
                   price.zone = zones.find((z: any) => z.zone_id === price.zone_id);
@@ -341,7 +341,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
               }
 
               server.score = server.benchmark_scores?.find((b: any) => b.benchmark_id === 'stress_ng:cpu_all' && (b.config as any)?.cores === server.vcpus)?.score;
-              server.price = server.prices ? server.prices[0].price : 0;
+              server.price = server.prices?.length ? server.prices[0].price : 0;
               server.score_per_price = server.price && server.score ? server.score / server.price : (server.score || 0);
 
               this.servers.push(server);

@@ -125,9 +125,6 @@ https.get('https://keeper.sparecores.net/table/server', (res) => {
         fs.writeFileSync('./src/sitemap.xml', xmlFormatter(data.toString(), { indentation: '  ', collapseContent: true }));
       }
       )
-      //.then(xml2js.parseStringPromise)
-      //.then(obj => xmlbuilder.create(obj).end({ pretty: true }))
-      //.then(prettyXml => console.log(prettyXml))
       .catch(err => console.error(err));
     }
   });
