@@ -60,7 +60,7 @@
             <tr>
               <th style="max-width: 250px; width: 250px">
               </th>
-              <th *ngFor="let item of servers" [style]="getStyle()" class="align-baseline">
+              <th *ngFor="let item of servers" [style]="getStyle()" class="align-baseline" id="main-table-th">
                 <div class="flex flex-col gap-1 justify-center" style="width: fit-content;" >
                 <a class="underline decoration-dotted" href="/server/{{item.vendor_id}}/{{item.api_reference}}" target="_blank">
                   {{toUpper(item.display_name)}}
@@ -194,7 +194,7 @@
 
             <ng-container *ngFor="let category of benchmarkCategories">
               <ng-container *ngIf="category.data.length">
-                <tr class="section_header">
+                <tr class="section_header" id="benchmark_line">
                   <td [colSpan]="2" >
                     <h3 class="text-xl font-semibold flex gap-2 items-center">{{category.name}}
                       <lucide-icon *ngIf="category.id !== 'static_web:rps' && category.id !== 'redis:rps'"
