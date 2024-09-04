@@ -21,6 +21,6 @@ jobs:
           start: npm start
           wait-on: 'http://localhost:4200'
         env:
-          BASE_URL: http://localhost:4200
+          CYPRESS_BASE_URL: http://localhost:4200
           NG_APP_BACKEND_BASE_URI: https://keeper.sparecores.net
           NG_APP_BACKEND_BASE_URI_SSR: https://keeper.sparecores.net
