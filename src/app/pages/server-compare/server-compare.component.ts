@@ -622,10 +622,14 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
   isBestStyle(value: any, values: any[], benchmark: any) {
     if(value === '-' || value === 0) return '';
     let isBest = true;
+
+
     values.forEach((v) => {
       if(!isNaN(v)) {
-        if(benchmark.higher_is_better === false && v < value) {
-          isBest = false;
+        if(benchmark.higher_is_better === false) {
+          if(v < value) {
+            isBest = false;
+          }
         } else if(v > value) {
           isBest = false;
         }
