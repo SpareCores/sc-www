@@ -25,6 +25,7 @@ jobs:
           NG_APP_BACKEND_BASE_URI: https://keeper.sparecores.net
           NG_APP_BACKEND_BASE_URI_SSR: https://keeper.sparecores.net
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: cypress-screenshots
           path: cypress/screenshots
