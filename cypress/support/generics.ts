@@ -34,8 +34,6 @@ export abstract class E2EEvent {
   }
 
   // property checks and queryies
-
-
   public static isVisible(selector: string) {
     cy.get(selector).should('be.visible');
   }
@@ -103,7 +101,6 @@ export abstract class E2EEvent {
   }
 
   // user input
-
   public static inputText(ID: string, input: string, clear: boolean = true, idx: number = 0) {
     if(clear) {
       if(idx < 0) {
@@ -156,7 +153,6 @@ export abstract class E2EEvent {
       cy.get(`[id="${ID}"]`).eq(idx).click({force: forced});
     }
   }
-
 
   // other
   public static wait(wait:number) {
