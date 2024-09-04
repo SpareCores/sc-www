@@ -11,7 +11,7 @@ Cypress.Commands.overwrite("log", function(log, ...args) {
   }
 });
 
-const baseUrl = Cypress.env('BASE_URL');
+const baseUrl = "http://localhost:4200";
 
 export abstract class E2EEvent {
 
