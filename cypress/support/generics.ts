@@ -11,11 +11,13 @@ Cypress.Commands.overwrite("log", function(log, ...args) {
   }
 });
 
+const baseUrl = Cypress.env('BASE_URL');
+
 export abstract class E2EEvent {
 
   // special events
   public static visitURL(url: string, wait: number = 2000) {
-    cy.visit(url);
+    cy.visit(baseUrl + url);
     cy.wait(wait);
   }
 
@@ -27,7 +29,21 @@ export abstract class E2EEvent {
     }
   }
 
+  public static checkBreadcrumbs() {
+    this.isVisible(`[id="breadcrumbNav"]`);
+  }
+
   // property checks and queryies
+
+
+  public static isVisible(selector: string) {
+    cy.get(selector).should('be.visible');
+  }
+
+  public static isNotVisible(selector: string) {
+    cy.get(selector).should('not.be.visible');
+  }
+
   public static isDisabled(ID: string, idx: number | null = null) {
     if(idx === null) {
       cy.get(`[id="${ID}"]`).should('be.disabled');
@@ -36,14 +52,6 @@ export abstract class E2EEvent {
     } else if(idx > 0) {
       cy.get(`[id="${ID}"]`).eq(idx).should('be.disabled');
     }
-  }
-
-  public static isVisible(selector: string) {
-    cy.get(selector).should('be.visible');
-  }
-
-  public static isNotVisible(selector: string) {
-    cy.get(selector).should('not.be.visible');
   }
 
   public static isNotDisabled(ID: string) {

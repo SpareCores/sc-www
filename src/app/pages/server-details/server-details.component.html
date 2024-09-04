@@ -4,6 +4,7 @@
     <app-breadcrumbs [segments]="breadcrumbs"></app-breadcrumbs>
 
     <div *ngIf="serverDetails"
+      id="server_base_info_box"
       class="mx-2 xl:mx-0 flex flex-wrap justify-between rounded-lg gap-8 px-6 py-6 bg-secondary border-emerald-400 border boder-solid mt-12"  >
       <div class="flex gap-8 flex-grow lg:w-1/2 w-full" >
         <div class="flex gap-4 flex-col min-w-32">
@@ -105,12 +106,14 @@
         <div class="absolute bottom-0 left-0 w-full py-3 flex justify-center" id="details_more"
             style="background: linear-gradient(360deg, #06263A 23.44%, rgba(6, 38, 58, 0) 100%);" >
           <button class="btn-primary py-2 px-3" (click)="openBox('details')"
+                  id="details_more_button"
                   data-ph-capture-attribute-sc-event="server details show more server details">
             View more details
           </button>
         </div>
         <div class="w-full pt-3 flex justify-center hidden" id="details_less">
           <button class="btn-primary py-2 px-3" (click)="openBox('details')"
+                  id="details_less_button"
                   data-ph-capture-attribute-sc-event="server details show less server details">
             Show less
           </button>
@@ -128,7 +131,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let item of availabilityRegions">
+            <tr *ngFor="let item of availabilityRegions" id="availability_line">
               <td>
                   <div><b>{{item.display_name}}</b> / {{item.api_reference}} </div>
               </td>
@@ -142,6 +145,7 @@
         <div *ngIf="availabilityRegions.length > 7" class="absolute bottom-0 laft-0 w-full py-3 flex justify-center" id="availability_more"
             style="background: linear-gradient(360deg, #06263A 23.44%, rgba(6, 38, 58, 0) 100%);" >
           <button class="btn-primary py-2 px-3" (click)="openBox('availability')"
+                  id="availability_more_button"
                   data-ph-capture-attribute-sc-event="server details show more availability">
             Show more
           </button>
@@ -179,7 +183,7 @@
           </div>
         </div>
         <div *ngIf="isBrowser()">
-          <div chartType="bar">
+          <div chartType="bar" id="price_chart">
             <canvas
               style="height: 350px; width:100%"
               baseChart
@@ -257,7 +261,7 @@
         <h2 class="text-3xl font-bold"> Performance </h2>
       </div>
 
-      <div class="block_half" *ngIf="lineChartDataBWmem">
+      <div class="block_half" *ngIf="lineChartDataBWmem" id="bw_mem_chart">
         <h3 class="text-2xl flex items-center gap-2" >Memory bandwidth
           <lucide-icon
             name="circle-arrow-up"
@@ -285,7 +289,7 @@
           </div>
         </div>
       </div>
-      <div class="block_half" *ngIf="lineChartDataCompress">
+      <div class="block_half" *ngIf="lineChartDataCompress" id="compress_chart">
         <div class="flex justify-between items-center">
           <h3 class="text-2xl flex items-center gap-2" >
             Compression
@@ -330,7 +334,7 @@
           </div>
         </div>
       </div>
-      <div class="block_half_taller" *ngIf="radarChartDataGeekSingle">
+      <div class="block_half_taller" *ngIf="radarChartDataGeekSingle" id="geekbench_chart">
         <div class="flex justify-between items-center">
           <h3 class="text-2xl flex items-center gap-2" >
             Geekbench Single-Core
@@ -401,7 +405,7 @@
         </div>
       </div>
 
-      <div class="block_full" *ngIf="barChartDataSSL">
+      <div class="block_full" *ngIf="barChartDataSSL" id="ssl_chart">
         <div class="flex justify-between items-center">
           <h3 class="text-2xl flex items-center gap-2" >
             OpenSSL
@@ -433,7 +437,7 @@
         </div>
       </div>
 
-      <div class="block_half" *ngIf="barChartDataStaticWeb">
+      <div class="block_half" *ngIf="barChartDataStaticWeb" id="static_web_chart">
         <div class="flex justify-between items-center">
           <h3 class="text-2xl flex items-center gap-2" >
             Static web server
@@ -476,7 +480,7 @@
         </div>
       </div>
 
-      <div class="block_half" *ngIf="barChartDataRedis">
+      <div class="block_half" *ngIf="barChartDataRedis" id="redis_chart">
         <div class="flex justify-between items-center">
           <h3 class="text-2xl flex items-center gap-2" >
             Redis
@@ -527,7 +531,7 @@
           <div class="flex items-center" style="min-height: 42px;">
             <h3 class="text-2xl">Servers of the Same Family</h3>
           </div>
-          <table class="items_table_similar">
+          <table class="items_table_similar" id="similar_family_table">
             <thead>
               <tr>
                 <th>INSTANCE</th>
@@ -537,7 +541,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let item of similarByFamily">
+              <tr *ngFor="let item of similarByFamily" id="similar_family_line">
                 <td>
                   <a
                     class="underline decoration-dotted hover:text-gray-500"
@@ -570,7 +574,7 @@
             </button>
           </div>
         </div>
-        <table class="items_table_similar">
+        <table class="items_table_similar" id="similar_table">
           <thead>
             <tr>
               <th>INSTANCE</th>
@@ -583,7 +587,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let item of similarServers">
+            <tr *ngFor="let item of similarServers" id="similar_line">
               <td>
                 <a
                 class="underline decoration-dotted hover:text-gray-500"
