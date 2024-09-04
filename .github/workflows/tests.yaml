@@ -18,7 +18,7 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
-          start: npm start
+          start: npm run prebuild, npm start
           wait-on: 'http://localhost:4200'
         env:
           CYPRESS_BASE_URL: http://localhost:4200
