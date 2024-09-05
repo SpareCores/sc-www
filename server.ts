@@ -17,6 +17,7 @@ export function app(): express.Express {
       method: req.method,
       path: originalUrl,
       userAgent: headers['user-agent'],
+      headers: headers,
       ip: headers['X-Forwarded-For'] || ip,
       timestamp: new Date().toISOString()
     };
