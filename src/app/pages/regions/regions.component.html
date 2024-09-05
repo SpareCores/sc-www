@@ -6,6 +6,18 @@
       Currently we are tracking {{ this.regions.length }} regions at {{ this.vendors.length }} cloud provider vendors as part of the <a href="/#project_components" class="underline decoration-dotted hover:text-gray-500">SC Crawler project</a>:
     </div>
 
+    <div class="vendor_labels mt-4 mb-4 flex gap-6" *ngIf="vendors?.length" >
+      <div class="vendor_label cursor-pointer"
+            *ngFor="let item of vendors"
+            (click)="toggleVendorSelected(item.vendor_id)"
+            [ngClass]="{
+              'line-through': !isVendorSelected(item.vendor_id),
+            }" >
+        <div class="color_circle" [style]="getColorStyle(item)" > </div>
+        {{item.name}}
+      </div>
+    </div>
+
     <div class="text-black datamaps_div" id="datamapdiv" #datamapdiv>
 
     </div>
