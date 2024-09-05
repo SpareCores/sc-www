@@ -6,7 +6,7 @@
     "path": "/*.*",
     "target": {
       "kind": "Static",
-      "cacheControl": "public, max-age=1, immutable"
+      "cacheControl": "public, max-age=3600, immutable"
     },
     "fallback": {
       "kind": "Compute",
