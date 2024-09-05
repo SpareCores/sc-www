@@ -8,6 +8,7 @@
 
     <div class="vendor_labels mt-4 mb-4 flex gap-6" *ngIf="vendors?.length" >
       <div class="vendor_label cursor-pointer"
+            tabindex="0"
             *ngFor="let item of vendors"
             (click)="toggleVendorSelected(item.vendor_id)"
             [ngClass]="{
