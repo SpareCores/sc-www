@@ -1,31 +1,34 @@
 {
   "version": 1,
-  "framework": { "name": "express", "version": "4.18.2" },
+  "framework": {
+    "name": "express",
+    "version": "4.18.2"
+  },
   "routes": [
     {
-    "path": "/*.*",
-    "target": {
-      "kind": "Static",
-      "cacheControl": "public, max-age=3600, immutable"
+      "path": "/*.*",
+      "target": {
+        "kind": "Static",
+        "cacheControl": "public, max-age=3600, immutable"
+      },
+      "fallback": {
+        "kind": "Compute",
+        "src": "default"
+      }
     },
-    "fallback": {
-      "kind": "Compute",
-      "src": "default"
-    }
-  },
     {
-    "path": "/*",
-    "target": {
-      "kind": "Compute",
-      "src": "default"
+      "path": "/*",
+      "target": {
+        "kind": "Compute",
+        "src": "default"
+      }
     }
-  }
   ],
   "computeResources": [
     {
-    "name": "default",
-    "runtime": "nodejs20.x",
-    "entrypoint": "server.mjs"
-  }
+      "name": "default",
+      "runtime": "nodejs20.x",
+      "entrypoint": "server.mjs"
+    }
   ]
 }
