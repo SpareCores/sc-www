@@ -4,6 +4,7 @@
     <app-breadcrumbs [segments]="breadcrumbs"></app-breadcrumbs>
 
     <div *ngIf="serverDetails"
+      id="server_base_info_box"
       class="mx-2 xl:mx-0 flex flex-wrap justify-between rounded-lg gap-8 px-6 py-6 bg-secondary border-emerald-400 border boder-solid mt-12"  >
       <div class="flex gap-8 flex-grow lg:w-1/2 w-full" >
         <div class="flex gap-4 flex-col min-w-32">
@@ -105,12 +106,14 @@
         <div class="absolute bottom-0 left-0 w-full py-3 flex justify-center" id="details_more"
             style="background: linear-gradient(360deg, #06263A 23.44%, rgba(6, 38, 58, 0) 100%);" >
           <button class="btn-primary py-2 px-3" (click)="openBox('details')"
+                  id="details_more_button"
                   data-ph-capture-attribute-sc-event="server details show more server details">
             View more details
           </button>
         </div>
         <div class="w-full pt-3 flex justify-center hidden" id="details_less">
           <button class="btn-primary py-2 px-3" (click)="openBox('details')"
+                  id="details_less_button"
                   data-ph-capture-attribute-sc-event="server details show less server details">
             Show less
           </button>
@@ -128,7 +131,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let item of availabilityRegions">
+            <tr *ngFor="let item of availabilityRegions" id="availability_line">
               <td>
                   <div><b>{{item.display_name}}</b> / {{item.api_reference}} </div>
               </td>
@@ -142,6 +145,7 @@
         <div *ngIf="availabilityRegions.length > 7" class="absolute bottom-0 laft-0 w-full py-3 flex justify-center" id="availability_more"
             style="background: linear-gradient(360deg, #06263A 23.44%, rgba(6, 38, 58, 0) 100%);" >
           <button class="btn-primary py-2 px-3" (click)="openBox('availability')"
+                  id="availability_more_button"
                   data-ph-capture-attribute-sc-event="server details show more availability">
             Show more
           </button>
@@ -179,7 +183,7 @@
           </div>
         </div>
         <div *ngIf="isBrowser()">
-          <div chartType="bar">
+          <div chartType="bar" id="price_chart">
             <canvas
               style="height: 350px; width:100%"
               baseChart
@@ -257,7 +261,7 @@
         <h2 class="text-3xl font-bold"> Performance </h2>
       </div>
 
-      <div class="block_half" *ngIf="lineChartDataBWmem">
+      <div class="block_half" *ngIf="lineChartDataBWmem" id="bw_mem_chart">
         <h3 class="text-2xl flex items-center gap-2" >Memory bandwidth
           <lucide-icon
             name="circle-arrow-up"
@@ -285,7 +289,7 @@
           </div>
         </div>
       </div>
-      <div class="block_half" *ngIf="lineChartDataCompress">
+      <div class="block_half" *ngIf="lineChartDataCompress" id="compress_chart">
         <div class="flex justify-between items-center">
           <h3 class="text-2xl flex items-center gap-2" >
             Compression
@@ -330,7 +334,7 @@
           </div>
         </div>
       </div>
-      <div class="block_half_taller" *ngIf="radarChartDataGeekSingle">
+      <div class="block_half_taller" *ngIf="radarChartDataGeekSingle" id="geekbench_chart">
         <div class="flex justify-between items-center">
           <h3 class="text-2xl flex items-center gap-2" >
             Geekbench Single-Core
@@ -401,7 +405,7 @@
         </div>
       </div>
 
-      <div class="block_full" *ngIf="barChartDataSSL">
+      <div class="block_full" *ngIf="barChartDataSSL" id="ssl_chart">
         <div class="flex justify-between items-center">
           <h3 class="text-2xl flex items-center gap-2" >
             OpenSSL
@@ -433,23 +437,34 @@
         </div>
       </div>
 
-      <div class="block_full" *ngIf="barChartDataStaticWeb">
+      <div class="block_half" *ngIf="barChartDataStaticWeb" id="static_web_chart">
         <div class="flex justify-between items-center">
           <h3 class="text-2xl flex items-center gap-2" >
             Static web server
             <lucide-icon
-              name="circle-arrow-up"
+              name="{{selectedStaticWebOption.icon}}"
               class="h-4 w-4 text-gray-200"
-              (mouseenter)="showTooltip($event, 'Higher is better.')"
+              (mouseenter)="showTooltip($event, selectedStaticWebOption.tooltip)"
               (mouseleave)="hideTooltip()">
             </lucide-icon>
             <lucide-icon
               name="info"
               class="h-4 w-4 text-gray-200"
-              (mouseenter)="showTooltipChart($event, 'app:static_web')"
+              (mouseenter)="showTooltipChart($event, selectedStaticWebOption.benchmark)"
               (mouseleave)="hideTooltip()">
             </lucide-icon>
           </h3>
+          <button
+            id="static_web_button"
+            class="dropdown_button"
+            type="button">
+            <div class="px-3 py-2">
+              {{selectedStaticWebOption.name}}
+            </div>
+            <div class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
+              <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
+            </div>
+          </button>
         </div>
         <div *ngIf="isBrowser()">
           <div chartType="bar">
@@ -465,6 +480,49 @@
         </div>
       </div>
 
+      <div class="block_half" *ngIf="barChartDataRedis" id="redis_chart">
+        <div class="flex justify-between items-center">
+          <h3 class="text-2xl flex items-center gap-2" >
+            Redis
+            <lucide-icon
+              name="{{selectedRedisOption.icon}}"
+              class="h-4 w-4 text-gray-200"
+              (mouseenter)="showTooltip($event, selectedRedisOption.tooltip)"
+              (mouseleave)="hideTooltip()">
+            </lucide-icon>
+            <lucide-icon
+              name="info"
+              class="h-4 w-4 text-gray-200"
+              (mouseenter)="showTooltipChart($event, selectedRedisOption.benchmark)"
+              (mouseleave)="hideTooltip()">
+            </lucide-icon>
+          </h3>
+          <button
+            id="redis_button"
+            class="dropdown_button"
+            type="button">
+            <div class="px-3 py-2">
+              {{selectedRedisOption.name}}
+            </div>
+            <div class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
+              <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
+            </div>
+          </button>
+        </div>
+        <div *ngIf="isBrowser()">
+          <div chartType="bar">
+            <canvas
+              style="height: 350px; width:100%"
+              baseChart
+              [data]="barChartDataRedis"
+              [options]="barChartOptionsRedis"
+              [type]="barChartType"
+            >
+            </canvas>
+          </div>
+        </div>
+      </div>
+
       <div class="my-2 w-full">
         <h2 class="text-3xl font-bold"> Alternatives </h2>
       </div>
@@ -473,7 +531,7 @@
           <div class="flex items-center" style="min-height: 42px;">
             <h3 class="text-2xl">Servers of the Same Family</h3>
           </div>
-          <table class="items_table_similar">
+          <table class="items_table_similar" id="similar_family_table">
             <thead>
               <tr>
                 <th>INSTANCE</th>
@@ -483,7 +541,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let item of similarByFamily">
+              <tr *ngFor="let item of similarByFamily" id="similar_family_line">
                 <td>
                   <a
                     class="underline decoration-dotted hover:text-gray-500"
@@ -516,7 +574,7 @@
             </button>
           </div>
         </div>
-        <table class="items_table_similar">
+        <table class="items_table_similar" id="similar_table">
           <thead>
             <tr>
               <th>INSTANCE</th>
@@ -529,7 +587,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let item of similarServers">
+            <tr *ngFor="let item of similarServers" id="similar_line">
               <td>
                 <a
                 class="underline decoration-dotted hover:text-gray-500"
@@ -624,6 +682,30 @@
         <div
           class="text-emerald-400 hover:text-emerald-500 cursor-pointer font-bold ml-2"
           (click)="selectSimilarServerOption(item)">
+          {{item.name}}
+        </div>
+    </li>
+  </ul>
+</div>
+
+<div id="static_web_options" class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid">
+  <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
+    <li *ngFor="let item of staticWebOptions" class="flex py-1 gap-2 items-center">
+        <div
+          class="text-emerald-400 hover:text-emerald-500 cursor-pointer font-bold ml-2"
+          (click)="selectStaticWebOption(item)">
+          {{item.name}}
+        </div>
+    </li>
+  </ul>
+</div>
+
+<div id="redis_options" class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid">
+  <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
+    <li *ngFor="let item of redisOptions" class="flex py-1 gap-2 items-center">
+        <div
+          class="text-emerald-400 hover:text-emerald-500 cursor-pointer font-bold ml-2"
+          (click)="selectRedisOption(item)">
           {{item.name}}
         </div>
     </li>

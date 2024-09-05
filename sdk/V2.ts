@@ -9,10 +9,10 @@
  * ---------------------------------------------------------------
  */
 
-import { HealthcheckHealthcheckGetData } from "./data-contracts";
+import { GetServerWithoutRelationsV2ServerVendorServerGetData, HTTPValidationError } from "./data-contracts";
 import { HttpClient, RequestParams } from "./http-client";
 
-export class Healthcheck<SecurityDataType = unknown> {
+export class V2<SecurityDataType = unknown> {
   http: HttpClient<SecurityDataType>;
 
   constructor(http: HttpClient<SecurityDataType>) {
@@ -20,16 +20,16 @@ export class Healthcheck<SecurityDataType = unknown> {
   }
 
   /**
-   * @description Return database hash and last updated timestamp.
+   * @description Query a single server by its vendor id and either the server id or its API reference.
    *
-   * @tags Administrative endpoints
-   * @name HealthcheckHealthcheckGet
-   * @summary Healthcheck
-   * @request GET:/healthcheck
+   * @tags Server Details
+   * @name GetServerWithoutRelationsV2ServerVendorServerGet
+   * @summary Get Server Without Relations
+   * @request GET:/v2/server/{vendor}/{server}
    */
-  healthcheckHealthcheckGet = (params: RequestParams = {}) =>
-    this.http.request<HealthcheckHealthcheckGetData, any>({
-      path: `/healthcheck`,
+  getServerWithoutRelationsV2ServerVendorServerGet = (vendor: string, server: string, params: RequestParams = {}) =>
+    this.http.request<GetServerWithoutRelationsV2ServerVendorServerGetData, HTTPValidationError>({
+      path: `/v2/server/${vendor}/${server}`,
       method: "GET",
       format: "json",
       ...params,

@@ -66,7 +66,7 @@
                 <span class="sr-only">Loading...</span>
               </div>
             </div>
-            <table class="items_table">
+            <table class="items_table" id="servers_table">
               <thead>
                 <tr>
                   <th class="checkbox_column">
@@ -99,7 +99,8 @@
                     data-ph-capture-attribute-sc-event="server listing route to server details"
                     [attr.data-ph-capture-attribute-server-listing-row-vendor]="item.vendor_id"
                     [attr.data-ph-capture-attribute-server-listing-row-index]="i+1"
-                    [attr.data-ph-capture-attribute-server-listing-row-page-size]="limit">
+                    [attr.data-ph-capture-attribute-server-listing-row-page-size]="limit"
+                    id="server_table_data_line">
 
                   <td (click)="toggleCompare2($event, item)" class="checkbox_column">
                     <div class="flex items-center">

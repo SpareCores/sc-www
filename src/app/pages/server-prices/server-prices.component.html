@@ -97,7 +97,7 @@
                 <span class="sr-only">Loading...</span>
               </div>
             </div>
-            <table class="items_table">
+            <table class="items_table" id="server_prices_table">
               <thead>
                 <tr>
                   <th *ngFor="let item of tableColumns"
@@ -128,7 +128,8 @@
                     [attr.data-ph-capture-attribute-server-listing-row-zone]="item.zone.api_reference"
                     [attr.data-ph-capture-attribute-server-listing-row-server]="item.server.api_reference"
                     [attr.data-ph-capture-attribute-server-listing-row-index]="i+1"
-                    [attr.data-ph-capture-attribute-server-listing-row-page-size]="limit">
+                    [attr.data-ph-capture-attribute-server-listing-row-page-size]="limit"
+                    id="server_table_data_line">
                   <ng-container *ngFor="let column of tableColumns">
                     <td *ngIf="column.type === 'name'" class="min-w-225">
                       <div class="text-sm text-white flex gap-1">

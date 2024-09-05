@@ -9,7 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { Allocation, ServerPKs, ServerPKsWithPrices } from '../../../../sdk/data-contracts';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { Chart, ChartConfiguration, ChartData, TooltipItem, TooltipModel } from 'chart.js';
-import { barChartOptionsSSLCompare, barChartOptionsStaticWebCompare, lineChartOptionsBWM, lineChartOptionsCompareCompress, lineChartOptionsCompareDecompress, radarChartOptions, radarDatasetColors } from '../server-details/chartOptions';
+import { barChartOptionsRedisCompare, barChartOptionsSSLCompare, barChartOptionsStaticWebCompare, lineChartOptionsBWM, lineChartOptionsCompareCompress, lineChartOptionsCompareDecompress, radarChartOptions, radarDatasetColors } from '../server-details/chartOptions';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import { BaseChartDirective } from 'ng2-charts';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -86,6 +86,9 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
   barChartOptionsStaticWeb: ChartConfiguration<'bar'>['options'] = barChartOptionsStaticWebCompare;
   barChartDataStaticWeb: ChartData<'bar'> | undefined = undefined;
 
+  barChartOptionsRedis: ChartConfiguration<'bar'>['options'] = barChartOptionsRedisCompare;
+  barChartDataRedis: ChartData<'bar'> | undefined = undefined;
+
   lineChartOptionsCompress: ChartConfiguration<'line'>['options'] = lineChartOptionsCompareCompress;
   lineChartOptionsDecompress: ChartConfiguration<'line'>['options'] = lineChartOptionsCompareDecompress;
   lineChartDataCompress: ChartData<'line'> | undefined = undefined;
@@ -135,14 +138,46 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
 
   selectedSSLAlgo = this.availableSSLAlgos[5];
 
-  dropdownThreadCount: any;
-  availableThreadCount = [
-    { name: 'Threads per CPU: 1', value: 1 },
-    { name: 'Threads per CPU: 2', value: 2 },
-    { name: 'Threads per CPU: 4', value: 4 },
+  dropdownConnections: any;
+  connectionsOptions = [
+    { name: 'Connection per vCPU(s): 1', value: 1 },
+    { name: 'Connections per vCPU(s): 2', value: 2 },
+    { name: 'Connections per vCPU(s): 4', value: 4 },
+    { name: 'Connections per vCPU(s): 8', value: 8 },
+    { name: 'Connections per vCPU(s): 16', value: 16 },
+    { name: 'Connections per vCPU(s): 32', value: 32 },
   ];
 
-  selectedThreadCount = this.availableThreadCount[0];
+  selectedConnections = this.connectionsOptions[0];
+
+  // ath the moment only SET operation is used
+  dropdownOperation: any;
+  operationsOptions = [
+    { name: 'SET', value: "SET" },
+    { name: 'GET', value: "GET" },
+  ];
+
+  selectedOperation = this.operationsOptions[0];
+
+  dropdownStaticWeb: any;
+  staticWebOptions: any[] = [
+    {name: 'RPS', benchmark: 'static_web:rps', YLabel : 'Requests per second', scaleField: 'connections_per_vcpus', labelsField: 'size', tooltip: "Higher is better.", icon: 'circle-arrow-up'},
+    {name: 'RPS Extrapolated', benchmark: 'static_web:rps-extrapolated', YLabel : 'Requests per second', scaleField: 'connections_per_vcpus', labelsField: 'size', tooltip: "Higher is better.", icon: 'circle-arrow-up'},
+    {name: 'Throughput', benchmark: 'static_web:throughput', YLabel : 'Bytes per second', scaleField: 'connections_per_vcpus', labelsField: 'size', tooltip: "Higher is better.", icon: 'circle-arrow-up'},
+    {name: 'Throughput Extrapolated', benchmark: 'static_web:throughput-extrapolated', YLabel : 'Bytes per second', scaleField: 'connections_per_vcpus', labelsField: 'size', tooltip: "Higher is better.", icon: 'circle-arrow-up'},
+    {name: 'Latency', benchmark: 'static_web:latency', YLabel : 'Seconds', scaleField: 'connections_per_vcpus', labelsField: 'size', tooltip: "Lower is better.", icon: 'circle-arrow-down'},
+  ];
+
+  selectedStaticWebOption: any = this.staticWebOptions[0];
+
+  dropdownRedis: any;
+  redisOptions: any[] = [
+    {name: 'RPS', benchmark: 'redis:rps', YLabel : 'Requests per second', scaleField: 'operation', labelsField: 'pipeline', tooltip: "Higher is better.", icon: 'circle-arrow-up'},
+    {name: 'RPS Extrapolated', benchmark: 'redis:rps-extrapolated', YLabel : 'Requests per second', scaleField: 'operation', labelsField: 'pipeline', tooltip: "Higher is better.", icon: 'circle-arrow-up'},
+    {name: 'Latency', benchmark: 'redis:latency', YLabel : 'Milliseconds', scaleField: 'operation', labelsField: 'pipeline', tooltip: "Lower is better.", icon: 'circle-arrow-down'},
+  ];
+
+  selectedRedisOption: any = this.redisOptions[0];
 
   compressDropdown: any;
   availableCompressMethods: any[] = [];
@@ -198,8 +233,15 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     },
     {
       name: 'Static web server',
-      id: 'app:static_web',
-      benchmarks: [ 'app:static_web' ],
+      id: 'static_web:rps',
+      benchmarks: [ 'static_web:rps', 'static_web:rps-extrapolated', 'static_web:latency', 'static_web:throughput', 'static_web:throughput-extrapolated' ],
+      data: [],
+      show_more: false
+    },
+    {
+      name: 'Redis',
+      id: 'redis:rps',
+      benchmarks: [ 'redis:rps', 'redis:rps-extrapolated', 'redis:latency' ],
       data: [],
       show_more: false
     },
@@ -251,17 +293,30 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
 
           const decodedParams = JSON.parse(atob(param));
 
+          let serverCount = decodedParams?.length || 0;
+
           let promises: Promise<any>[] = [
             this.keeperAPI.getServerMeta(),
-            this.keeperAPI.getServerBenchmarkMeta()
+            this.keeperAPI.getServerBenchmarkMeta(),
+            this.keeperAPI.getVendors(),
+            this.keeperAPI.getRegions(),
+            this.keeperAPI.getZones()
           ];
           decodedParams?.forEach((instance: any) => {
             promises.push(
-              this.keeperAPI.getServer(instance.vendor, instance.server, this.selectedCurrency.slug)
+              this.keeperAPI.getServerV2(instance.vendor, instance.server,)
+            );
+            promises.push(
+              this.keeperAPI.getServerPrices(instance.vendor, instance.server, this.selectedCurrency.slug)
+            );
+            promises.push(
+              this.keeperAPI.getServerBenchmark(instance.vendor, instance.server)
             );
           });
           Promise.all(promises).then((data) => {
-            this.instanceProperties = data[0].body.fields;
+            const promiseAllData = data.map((x: any) => x.body);
+            const[meta, benchmarkMeta, vendors, regions, zones, ...servers] = promiseAllData;
+            this.instanceProperties = meta.fields;
 
             this.instancePropertyCategories.forEach((c) => {
               c.properties = [];
@@ -270,9 +325,27 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
             this.servers = [];
             this.serverCompare.clearCompare();
 
-            for(let i = 2; i < data.length; i++){
-              this.servers.push(data[i].body);
-              this.serverCompare.toggleCompare(true, data[i].body);
+            for(let i = 0; i < serverCount; i++){
+              let server = servers[i * 3];
+
+              server.benchmark_scores = servers[i * 3 + 2];
+              server.prices = servers[i * 3 + 1]?.sort((a: any, b: any) => a.price - b.price);
+
+              server.vendor = vendors.find((v: any) => v.vendor_id === server.vendor_id);
+
+              if(server.prices?.length > 0) {
+                server.prices.forEach((price: any) => {
+                  price.region = regions.find((r: any) => r.region_id === price.region_id);
+                  price.zone = zones.find((z: any) => z.zone_id === price.zone_id);
+                });
+              }
+
+              server.score = server.benchmark_scores?.find((b: any) => b.benchmark_id === 'stress_ng:cpu_all' && (b.config as any)?.cores === server.vcpus)?.score;
+              server.price = server.prices?.length ? server.prices[0].price : 0;
+              server.score_per_price = server.price && server.score ? server.score / server.price : (server.score || 0);
+
+              this.servers.push(server);
+              this.serverCompare.toggleCompare(true, server);
             }
 
             this.instanceProperties.forEach((p: any) => {
@@ -289,7 +362,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
               }
             });
 
-            this.benchmarkMeta = data[1].body
+            this.benchmarkMeta = benchmarkMeta
               ?.filter((benchmark: any) => {
                 let found = false;
                 this.servers.forEach((s: any) => {
@@ -350,7 +423,8 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
               this.generateBWMemChart();
               this.generateSSLChart();
               this.generateCompressChart();
-              this.generateStatiWebChart();
+              this.generateStatiWebChart(this.selectedStaticWebOption, this.selectedConnections);
+              this.generateStatiWebChart(this.selectedRedisOption, this.selectedOperation);
 
               this.dropdownManager.initDropdown('currency_button', 'currency_options').then((dropdown) => {
                 this.dropdownCurrency = dropdown;
@@ -548,10 +622,14 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
   isBestStyle(value: any, values: any[], benchmark: any) {
     if(value === '-' || value === 0) return '';
     let isBest = true;
+
+
     values.forEach((v) => {
       if(!isNaN(v)) {
-        if(benchmark.higher_is_better === false && v < value) {
-          isBest = false;
+        if(benchmark.higher_is_better === false) {
+          if(v < value) {
+            isBest = false;
+          }
         } else if(v > value) {
           isBest = false;
         }
@@ -851,26 +929,25 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     }
   }
 
-  generateStatiWebChart() {
+  generateStatiWebChart(chartConf: any, chartConf2: any) {
 
-    // diasbled for now
-    return;
+    const benchmark_id = chartConf.benchmark;
+    const labelsField = chartConf.scaleField;
+    const scaleField = chartConf.labelsField;
 
-    const scaleField = 'size';
-    const benchmark_id = 'app:static_web';
-
-    const selectedThreads = this.selectedThreadCount.value;
-    const selectedName = this.selectedThreadCount.name;
+    const labelValue = chartConf2.value;
+    const selectedName = chartConf2.name;
 
     const dataSet = this.benchmarkMeta?.find((x: any) => x.benchmark_id === benchmark_id);
 
     if(dataSet) {
       let scales: any[] = [];
-      dataSet.configs.filter((x: any) => x.config.threads_per_cpu === selectedThreads).forEach((item: any) => {
+      dataSet.configs.filter((x: any) => x.config[labelsField] === labelValue).forEach((item: any) => {
         if((item.config[scaleField] || item.config[scaleField] === 0) && scales.indexOf(item.config[scaleField]) === -1) {
           scales.push(item.config[scaleField]);
         }
       });
+
       scales.sort((a, b) => {
         if(!isNaN(a) && !isNaN(b)) {
           return a - b;
@@ -898,26 +975,51 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
 
       this.servers.forEach((server: any, i: number) => {
         scales.forEach((size: number) => {
-          const item = server.benchmark_scores.find((b: any) => b.config.threads_per_cpu === selectedThreads && b.config[scaleField] === size);
+          const item = server.benchmark_scores.find((b: any) => b.benchmark_id === benchmark_id && b.config[labelsField] === labelValue && b.config[scaleField] === size);
           if(item) {
-            chartData.datasets[i].data.push(item.score);
+            chartData.datasets[i].data.push({
+              data:item.score,
+              label: size,
+              unit: chartConf.YLabel,
+              note: item.note
+            });
           } else {
             chartData.datasets[i].data.push(null);
           }
         });
       });
 
+      if(benchmark_id.includes('static_web')) {
+        this.barChartDataStaticWeb = { labels: chartData.labels, datasets: chartData.datasets };
 
-      this.barChartDataStaticWeb = { labels: chartData.labels, datasets: chartData.datasets };
+        (this.barChartOptionsStaticWeb as any).scales.y.title.text = chartConf.YLabel;
+        (this.barChartOptionsStaticWeb as any).plugins.tooltip.callbacks.title = function(this: TooltipModel<"line">, tooltipItems: TooltipItem<"line">[]) {
+          return selectedName + ' with ' + tooltipItems[0].label + ' file size';
+        };
 
-      (this.barChartOptionsStaticWeb as any).plugins.tooltip.callbacks.title = function(this: TooltipModel<"line">, tooltipItems: TooltipItem<"line">[]) {
-        return selectedName + ' with ' + tooltipItems[0].label + ' file size';
-      };
+        if(!this.dropdownStaticWeb) {
+          this.dropdownManager.initDropdown('static_web_button', 'static_web_options').then((dropdown) => {
+            this.dropdownStaticWeb = dropdown;
+          });
+        }
+        if(!this.dropdownConnections) {
+          this.dropdownManager.initDropdown('static_web_conn_button', 'static_web_conn_options').then((dropdown) => {
+            this.dropdownConnections = dropdown;
+          });
+        }
+      } else if(benchmark_id.includes('redis')) {
+        this.barChartDataRedis = { labels: chartData.labels, datasets: chartData.datasets };
 
-      if(!this.dropdownThreadCount) {
-        this.dropdownManager.initDropdown('static_web_button', 'static_web_options').then((dropdown) => {
-          this.dropdownThreadCount = dropdown;
-        });
+        (this.barChartOptionsRedis as any).scales.y.title.text = chartConf.YLabel;
+        (this.barChartOptionsRedis as any).plugins.tooltip.callbacks.title = function(this: TooltipModel<"line">, tooltipItems: TooltipItem<"line">[]) {
+          return selectedName + ' with ' + tooltipItems[0].label + ' pipeline count';
+        };
+
+        if(!this.dropdownRedis) {
+          this.dropdownManager.initDropdown('redis_button', 'redis_options').then((dropdown) => {
+            this.dropdownRedis = dropdown;
+          });
+        }
       }
     }
   }
@@ -1106,9 +1208,27 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
   }
 
   selectStaticWebOption(item: any) {
-    this.selectedThreadCount = item;
-    this.generateStatiWebChart();
-    this.dropdownThreadCount?.hide();
+    this.selectedStaticWebOption = item;
+    this.generateStatiWebChart(this.selectedStaticWebOption, this.selectedConnections);
+    this.dropdownStaticWeb?.hide();
+  }
+
+  selectStaticWebConnOption(item: any) {
+    this.selectedConnections = item;
+    this.generateStatiWebChart(this.selectedStaticWebOption, this.selectedConnections);
+    this.dropdownConnections?.hide();
+  }
+
+  selectRedisOption(item: any) {
+    this.selectedRedisOption = item;
+    this.generateStatiWebChart(this.selectedRedisOption, this.selectedOperation);
+    this.dropdownRedis?.hide();
+  }
+
+  selectRedisOpOption(item: any) {
+    this.selectedOperation = item;
+    this.generateStatiWebChart(this.selectedRedisOption, this.selectedOperation);
+    this.dropdownOperation?.hide();
   }
 
   selectCompressMethod(method: any) {

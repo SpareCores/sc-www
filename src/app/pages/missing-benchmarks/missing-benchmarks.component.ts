@@ -80,8 +80,6 @@ export class MissingBenchmarksComponent implements OnInit {
         }
       });
 
-      //console.log(this.servers);
-      //console.log(this.vendors);
     });
   }
 

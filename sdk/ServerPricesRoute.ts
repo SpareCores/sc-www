@@ -31,7 +31,7 @@ export namespace ServerPrices {
        * Minimum vCPUs
        * Minimum number of virtual CPUs.
        * @min 1
-       * @max 128
+       * @max 256
        * @default 1
        */
       vcpus_min?: number;
@@ -193,6 +193,7 @@ export namespace ServerPrices {
         | "southafricanorth"
         | "southafricawest"
         | "southcentralus"
+        | "southcentralusstg"
         | "southeastasia"
         | "southindia"
         | "spaincentral"
@@ -220,7 +221,7 @@ export namespace ServerPrices {
       compliance_framework?: "hipaa" | "iso27001" | "soc2t2";
       /**
        * Storage Size
-       * Minimum amount of storage (GBs) attached to the server.
+       * Minimum amount of storage (GBs).
        */
       storage_size?: number | null;
       /**
@@ -282,7 +283,8 @@ export namespace ServerPrices {
       gpu_memory_total?: number | null;
       /**
        * Limit
-       * Maximum number of results. Set to -1 for unlimited
+       * Maximum number of results.
+       * @max 250
        * @default 50
        */
       limit?: number;

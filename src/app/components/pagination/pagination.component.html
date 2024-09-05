@@ -2,6 +2,7 @@
   <a
     *ngIf="currentPage > 1"
     [routerLink]="baseURL" [queryParams]="getQueryObjectForPage(this.currentPage - 1)"
+    id="pagination_prev_arrow"
     class="flex justify-center bg-transparent text-white py-2 px-4 w-10 rounded-lg font-bold hover:bg-emerald-400"
     data-ph-capture-attribute-sc-event="server listing paginate"
     data-ph-capture-attribute-pagination-target="prev">
@@ -46,8 +47,9 @@
     </a>
   </ng-container>
   <a
-  *ngIf="currentPage < totalPages"
+    *ngIf="currentPage < totalPages"
     [routerLink]="baseURL" [queryParams]="getQueryObjectForPage(this.currentPage + 1)"
+    id="pagination_next_arrow"
     class="flex justify-center bg-transparent text-white py-2 px-4 w-10 rounded-lg font-bold hover:bg-emerald-400"
     data-ph-capture-attribute-sc-event="server listing paginate"
     data-ph-capture-attribute-pagination-target="next">

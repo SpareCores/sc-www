@@ -31,7 +31,7 @@ export namespace Servers {
        * Minimum vCPUs
        * Minimum number of virtual CPUs.
        * @min 1
-       * @max 128
+       * @max 256
        * @default 1
        */
       vcpus_min?: number;
@@ -68,7 +68,7 @@ export namespace Servers {
       compliance_framework?: "hipaa" | "iso27001" | "soc2t2";
       /**
        * Storage Size
-       * Minimum amount of storage (GBs) attached to the server.
+       * Minimum amount of storage (GBs).
        */
       storage_size?: number | null;
       /**
@@ -93,7 +93,7 @@ export namespace Servers {
       gpu_memory_total?: number | null;
       /**
        * Limit
-       * Maximum number of results. Set to -1 for unlimited
+       * Maximum number of results. Set to -1 for unlimited.
        * @default 50
        */
       limit?: number;
