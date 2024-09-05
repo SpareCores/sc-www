@@ -16,8 +16,8 @@ export function app(): express.Express {
     const log = {
       method: req.method,
       path: originalUrl,
-      userAgent: headers['user-agentx'],
-      ip: ip,
+      userAgent: headers['user-agent'],
+      ip: headers['X-Forwarded-For'] || ip,
       timestamp: new Date().toISOString()
     };
     console.log(JSON.stringify(log));
