@@ -3,7 +3,7 @@ import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { MYHTTPClient } from './my_http/my-http';
 import { Server } from '../../../sdk/Server';
 import { Servers } from '../../../sdk/Servers';
-import { AssistServerFiltersAiAssistServerFiltersGetParams, AssistServerPriceFiltersAiAssistServerPriceFiltersGetParams, SearchServerPricesServerPricesGetParams, SearchServersServersGetParams, TableStoragePricesStoragePricesGetParams } from '../../../sdk/data-contracts';
+import { AssistServerFiltersAiAssistServerFiltersGetParams, AssistServerPriceFiltersAiAssistServerPriceFiltersGetParams, SearchServerPricesServerPricesGetParams, SearchServersServersGetParams, SearchStoragePricesStoragePricesGetParams } from '../../../sdk/data-contracts';
 import { Table } from '../../../sdk/Table';
 import { Ai } from '../../../sdk/Ai';
 import { ServerPrices } from '../../../sdk/ServerPrices';
@@ -103,8 +103,8 @@ export class KeeperAPIService {
     return this.TableController.tableStorageTableStorageGet();
   }
 
-  public getStoragePrices(query: TableStoragePricesStoragePricesGetParams): Promise<any> {
-    return this.StorageController.tableStoragePricesStoragePricesGet(query);
+  public getStoragePrices(query: SearchStoragePricesStoragePricesGetParams): Promise<any> {
+    return this.StorageController.searchStoragePricesStoragePricesGet(query);
   }
 
 }

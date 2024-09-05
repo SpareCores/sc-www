@@ -13,7 +13,7 @@ import { HealthcheckHealthcheckGetData } from "./data-contracts";
 
 export namespace Healthcheck {
   /**
-   * @description Return database hash and last updated timestamp.
+   * @description Quickly return package and database version information.
    * @tags Administrative endpoints
    * @name HealthcheckHealthcheckGet
    * @summary Healthcheck

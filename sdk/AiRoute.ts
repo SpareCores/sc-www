@@ -12,6 +12,7 @@
 import {
   AssistServerFiltersAiAssistServerFiltersGetData,
   AssistServerPriceFiltersAiAssistServerPriceFiltersGetData,
+  AssistStoragePriceFiltersAiAssistStoragePriceFiltersGetData,
 } from "./data-contracts";
 
 export namespace Ai {
@@ -49,5 +50,23 @@ export namespace Ai {
     export type RequestBody = never;
     export type RequestHeaders = {};
     export type ResponseBody = AssistServerPriceFiltersAiAssistServerPriceFiltersGetData;
+  }
+
+  /**
+   * @description Extract StoragePrice JSON filters from freetext.
+   * @tags AI
+   * @name AssistStoragePriceFiltersAiAssistStoragePriceFiltersGet
+   * @summary Assist Storage Price Filters
+   * @request GET:/ai/assist_storage_price_filters
+   */
+  export namespace AssistStoragePriceFiltersAiAssistStoragePriceFiltersGet {
+    export type RequestParams = {};
+    export type RequestQuery = {
+      /** Text */
+      text: string;
+    };
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = AssistStoragePriceFiltersAiAssistStoragePriceFiltersGetData;
   }
 }
