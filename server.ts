@@ -9,6 +9,21 @@ import { REQUEST, RESPONSE } from './src/express.tokens';
 // The Express app is exported so that it can be used by serverless Functions.
 export function app(): express.Express {
   const server = express();
+
+  // access log
+  server.use((req, res, next) => {
+    const { protocol, originalUrl, ip, headers } = req;
+    const log = {
+      method: req.method,
+      path: originalUrl,
+      userAgent: headers['user-agentx'],
+      ip: ip,
+      timestamp: new Date().toISOString()
+    };
+    console.log(JSON.stringify(log));
+    next();
+  });
+
   const serverDistFolder = dirname(fileURLToPath(import.meta.url));
   //const browserDistFolder = resolve(serverDistFolder, '../browser');
   const browserDistFolder = resolve(serverDistFolder, '../../static');
