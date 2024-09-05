@@ -86,8 +86,6 @@ export class RegionsComponent implements OnInit {
           return {selected: true, color: colors[index % colors.length],  ...region}
         });
 
-        console.log(this.vendors);
-
         let element = document.getElementById("datamapdiv");
 
         let fills: any = {
