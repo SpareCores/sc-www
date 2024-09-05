@@ -17,7 +17,7 @@ export function app(): express.Express {
       method: req.method,
       path: originalUrl,
       userAgent: headers['user-agent'],
-      ip: headers['cloudfront-viewer-address'] ? headers['cloudfront-viewer-address'].split(':')[0] : ip,
+      ip: headers['x-forwarded-for'] ? headers['x-forwarded-for'].split(',')[0] : ip,
       country: headers['cloudfront-viewer-country'],
       timestamp: new Date().toISOString()
     };
