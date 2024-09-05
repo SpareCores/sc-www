@@ -18,7 +18,8 @@ export function app(): express.Express {
       path: originalUrl,
       userAgent: headers['user-agent'],
       headers: headers,
-      ip: headers['X-Forwarded-For'] || ip,
+      ip: headers['cloudfront-viewer-address'] ? headers['cloudfront-viewer-address'].split(':')[0] : ip,
+      country: headers['cloudfront-viewer-country'],
       timestamp: new Date().toISOString()
     };
     console.log(JSON.stringify(log));
