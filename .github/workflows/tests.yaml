@@ -10,3 +10,24 @@ jobs:
         run: npm install --include=dev
       - name: Run ESLint
         run: npm run lint
+
+  cypress-run:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
+        with:
+          build: npm run prebuild
+          start: npm start
+          wait-on: 'http://localhost:4200'
+        env:
+          CYPRESS_BASE_URL: http://localhost:4200
+          NG_APP_BACKEND_BASE_URI: https://keeper.sparecores.net
+          NG_APP_BACKEND_BASE_URI_SSR: https://keeper.sparecores.net
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots
+          if-no-files-found: ignore
