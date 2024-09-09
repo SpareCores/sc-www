@@ -34,21 +34,30 @@
             'w-full': isCollapsed
           }">
         <div class="top_buttons w-full flex justify-end gap-6 items-center" >
-          <div>
-            <button
-              id="column_button"
-              data-ph-capture-attribute-sc-event="server listing columns select"
-              data-dropdown-toggle="column_options"
-              class="dropdown_button"
-              type="button">
-              <div class="px-4 py-3">
-              Columns
-              </div>
-              <div class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
-                <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
-              </div>
-            </button>
-          </div>
+          <button
+            id="currency_button"
+            class="dropdown_button"
+            type="button">
+            <div class="px-4 py-3">
+            {{selectedCurrency.slug}}
+            </div>
+            <div class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
+              <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
+            </div>
+          </button>
+          <button
+            id="column_button"
+            data-ph-capture-attribute-sc-event="server listing columns select"
+            data-dropdown-toggle="column_options"
+            class="dropdown_button"
+            type="button">
+            <div class="px-4 py-3">
+            Columns
+            </div>
+            <div class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
+              <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
+            </div>
+          </button>
         </div>
         <div>
           <div class="w-full overflow-x-auto relative" style="padding-left: 1px;">
@@ -180,6 +189,16 @@
       (ngModelChange)="refreshColumns()"
       class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer" >
       <div class="text-white text-sm">{{item.name}}</div>
+    </li>
+  </ul>
+</div>
+
+<div id="currency_options" class="z-100 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid">
+  <ul class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
+    <li *ngFor="let item of availableCurrencies"
+      class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+      (click)="selectCurrency(item)" >
+      <div class="text-white text-sm ">{{item.name}} ({{item.symbol}})</div>
     </li>
   </ul>
 </div>

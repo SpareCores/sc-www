@@ -14,6 +14,8 @@ import { ServerCompareService } from '../../services/server-compare.service';
 import { StorageHandlerService } from '../../services/storage-handler.service';
 import { TableColumn } from '../server-listing/server-listing.component';
 import { Dropdown, DropdownOptions } from 'flowbite';
+import { CurrencyOption, availableCurrencies } from '../../tools/shared_data';
+import { DropdownManagerService } from '../../services/dropdown-manager.service';
 
 const options: DropdownOptions = {
   placement: 'bottom',
@@ -80,13 +82,19 @@ export class StoragesComponent {
     { name: 'PRICE TIERED', show: false, type: 'price2', key: 'price_tiered' },
   ];
 
+  availableCurrencies: CurrencyOption[] = availableCurrencies;
+
+  selectedCurrency: CurrencyOption = availableCurrencies[0];
+
+  dropdownCurrency: any;
+
   constructor(@Inject(PLATFORM_ID) private platformId: object,
             private keeperAPI: KeeperAPIService,
             private route: ActivatedRoute,
             private router: Router,
             private SEOHandler: SeoHandlerService,
-            private storageHandler: StorageHandlerService,
-            private serverCompare: ServerCompareService) { }
+            private dropdownManager: DropdownManagerService,
+            ) { }
 
   ngOnInit() {
 
@@ -124,31 +132,17 @@ export class StoragesComponent {
 
       if(isPlatformBrowser(this.platformId)) {
 
-        const targetElColumn: HTMLElement | null = document.getElementById('column_options');
-        const triggerElColumn: HTMLElement | null = document.getElementById('column_button');
+        this.dropdownManager.initDropdown('currency_button', 'currency_options').then((dropdown: any) => {
+          this.dropdownCurrency = dropdown
+        });
 
-        this.dropdownColumn = new Dropdown(
-          targetElColumn,
-          triggerElColumn,
-          options,
-          {
-            id: 'column_options',
-            override: true
-          }
-        );
+        this.dropdownManager.initDropdown('column_button', 'column_options').then((dropdown: any) => {
+          this.dropdownColumn = dropdown
+        });
 
-        const targetElPage: HTMLElement | null = document.getElementById('pagesize_options');
-        const triggerElPage: HTMLElement | null = document.getElementById('pagesize_button');
-
-        this.dropdownPage = new Dropdown(
-          targetElPage,
-          triggerElPage,
-          options,
-          {
-            id: 'pagesize_options',
-            override: true
-          }
-        );
+        this.dropdownManager.initDropdown('pagesize_button', 'pagesize_options').then((dropdown: any) => {
+          this.dropdownPage = dropdown
+        });
       }
 
     });
@@ -186,6 +180,12 @@ export class StoragesComponent {
       queryParams.limit = this.limit;
     } else {
       delete queryParams.limit;
+    }
+
+    if(this.selectedCurrency.slug !== 'USD') {
+      queryParams.currency = this.selectedCurrency.slug;
+    } else {
+      delete queryParams.currency;
     }
 
     this.router.navigate([], {
@@ -237,6 +237,14 @@ export class StoragesComponent {
     }
 
     this.searchOptionsChanged(this.query);
+  }
+
+  selectCurrency(currency: any) {
+    this.selectedCurrency = currency;
+
+   this.searchOptionsChanged(this.query);
+
+    this.dropdownCurrency?.hide();
   }
 
   getOrderingIcon(column: TableColumn) {
