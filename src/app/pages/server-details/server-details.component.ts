@@ -429,12 +429,15 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
               }
             });
 
-            setTimeout(() => {
+            let giscusInterval = setInterval(() => {
 
-              let baseUrl = this.SEOHandler.getBaseURL();
-              initGiscus(this.renderer, this.giscusParent, baseUrl, 'Servers', 'DIC_kwDOLesFQM4CgznN', 'pathname');
+              if(this.giscusParent?.nativeElement) {
+                let baseUrl = this.SEOHandler.getBaseURL();
+                initGiscus(this.renderer, this.giscusParent, baseUrl, 'Servers', 'DIC_kwDOLesFQM4CgznN', 'pathname');
+                clearInterval(giscusInterval);
+              }
 
-            }, 2000);
+            }, 250);
 
             this.selectSimilarServerOption(this.selectedSimilarOption);
 
