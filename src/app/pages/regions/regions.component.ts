@@ -53,6 +53,8 @@ export class RegionsComponent implements OnInit {
   orderBy: string | null = null;
   orderDir: OrderDir | null = null;
 
+  bubble_map: any;
+
   constructor(
     @Inject(PLATFORM_ID) private platformId: object,
     private SEOHandler: SeoHandlerService,
@@ -80,6 +82,10 @@ export class RegionsComponent implements OnInit {
         this.regions = regions.body;
         this.vendors = vendors.body;
 
+        this.vendors = this.vendors.map((region, index) => {
+          return {selected: true, color: colors[index % colors.length],  ...region}
+        });
+
         let element = document.getElementById("datamapdiv");
 
         let fills: any = {
@@ -90,7 +96,7 @@ export class RegionsComponent implements OnInit {
           fills[vendor.vendor_id] = colors[index % colors.length];
         });
 
-        let bubble_map = new Datamap({
+        this.bubble_map = new Datamap({
           element: element,
           geographyConfig: {
             popupOnHover: false,
@@ -105,28 +111,35 @@ export class RegionsComponent implements OnInit {
           fills: fills
         });
 
-        bubble_map.bubbles(
-          this.regions.map(region => {
-            return {
-              name: region.name,
-              display_name: `${region.display_name}`,
-              region: region.region_id,
-              vendor: region.vendor_id,
-              founding_year: region.founding_year,
-              green_energy: region.green_energy,
-              location: `${region.lat},${region.lon}`,
-              radius: 5,
-              country: region.country_id,
-              fillKey: region.vendor_id,
-              latitude: region.lat,
-              longitude: region.lon
-          }}),
-          {
-            popupTemplate: this.popupTemplate.bind(this)
-          }
-        );
+        this.generateBubbles();
+
       });
     }
+  }
+
+  generateBubbles() {
+    this.bubble_map.bubbles(
+      this.regions
+        .filter(region => this.isVendorSelected(region.vendor_id))
+        .map(region => {
+        return {
+          name: region.name,
+          display_name: `${region.display_name}`,
+          region: region.region_id,
+          vendor: region.vendor_id,
+          founding_year: region.founding_year,
+          green_energy: region.green_energy,
+          location: `${region.lat},${region.lon}`,
+          radius: 5,
+          country: region.country_id,
+          fillKey: region.vendor_id,
+          latitude: region.lat,
+          longitude: region.lon
+      }}),
+      {
+        popupTemplate: this.popupTemplate.bind(this)
+      }
+    );
   }
 
   popupTemplate(geo: any, data: any) {
@@ -191,6 +204,19 @@ export class RegionsComponent implements OnInit {
 
   openLink(item: any) {
     this.router.navigateByUrl(`/server_prices?regions=${item.region_id}`);
+  }
+
+  toggleVendorSelected(vendorId: string) {
+    this.vendors.find(vendor => vendor.vendor_id === vendorId).selected = !this.vendors.find(vendor => vendor.vendor_id === vendorId).selected;
+    this.generateBubbles();
+  }
+
+  isVendorSelected(vendorId: string) {
+    return this.vendors?.find(vendor => vendor.vendor_id === vendorId)?.selected;
+  }
+
+  getColorStyle(vendor: any) {
+    return `background-color: ${vendor.color || '#06263a'}`;
   }
 
 }
