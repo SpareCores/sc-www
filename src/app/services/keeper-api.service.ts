@@ -3,12 +3,13 @@ import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { MYHTTPClient } from './my_http/my-http';
 import { Server } from '../../../sdk/Server';
 import { Servers } from '../../../sdk/Servers';
-import { AssistServerFiltersAiAssistServerFiltersGetParams, AssistServerPriceFiltersAiAssistServerPriceFiltersGetParams, SearchServerPricesServerPricesGetParams, SearchServersServersGetParams, SearchStoragePricesStoragePricesGetParams } from '../../../sdk/data-contracts';
+import { AssistServerFiltersAiAssistServerFiltersGetParams, AssistServerPriceFiltersAiAssistServerPriceFiltersGetParams, SearchServerPricesServerPricesGetParams, SearchServersServersGetParams, SearchStoragePricesStoragePricesGetParams, SearchStoragePricesTrafficPricesGetParams } from '../../../sdk/data-contracts';
 import { Table } from '../../../sdk/Table';
 import { Ai } from '../../../sdk/Ai';
 import { ServerPrices } from '../../../sdk/ServerPrices';
 import { StoragePrices } from '../../../sdk/StoragePrices';
 import { V2 } from '../../../sdk/V2';
+import { TrafficPrices } from '../../../sdk/TrafficPrices';
 
 @Injectable({
   providedIn: 'root'
@@ -23,6 +24,7 @@ export class KeeperAPIService {
   public TableController: Table = new Table(this.myHttp);
   public AIController: Ai = new Ai(this.myHttp);
   public StorageController: StoragePrices = new StoragePrices(this.myHttp);
+  public TrafficController: TrafficPrices = new TrafficPrices(this.myHttp);
   public V2Controller: V2 = new V2(this.myHttp);
 
   constructor(
@@ -105,6 +107,10 @@ export class KeeperAPIService {
 
   public getStoragePrices(query: SearchStoragePricesStoragePricesGetParams): Promise<any> {
     return this.StorageController.searchStoragePricesStoragePricesGet(query);
+  }
+
+  public getTrafficPrices(query: SearchStoragePricesTrafficPricesGetParams): Promise<any> {
+    return this.TrafficController.searchStoragePricesTrafficPricesGet(query);
   }
 
 }

@@ -245,6 +245,12 @@ export namespace StoragePrices {
        * @default "asc"
        */
       order_dir?: OrderDir;
+      /**
+       * Currency
+       * Currency used for prices.
+       * @default "USD"
+       */
+      currency?: string | null;
     };
     export type RequestBody = never;
     export type RequestHeaders = {};

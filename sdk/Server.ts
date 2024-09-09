@@ -61,7 +61,7 @@ export class Server<SecurityDataType = unknown> {
     params: RequestParams = {},
   ) =>
     this.http.request<GetSimilarServersServerVendorServerSimilarServersByNGetData, HTTPValidationError>({
-      path: `/server/${vendor}/${server}/similar_servers/${by}/${n}`,
+      path: `/server/${vendor}/${server}/similar_servers/${by}/{n}`,
       method: "GET",
       query: query,
       format: "json",
