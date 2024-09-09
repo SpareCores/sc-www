@@ -9,7 +9,7 @@
     "postbuild": "./amplify-manifester.sh",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:sc-www": "node dist/sc-www/server/server.mjs --inspect",
+    "serve:ssr:sc-www": "node dist/sc-www/server/server.mjs",
     "lint": "ng lint",
     "sentry:sourcemaps": "sentry-cli sourcemaps inject ./dist/sc-www && sentry-cli sourcemaps upload ./dist/sc-www",
     "sentry:release": "SENTRY_RELEASE=`sentry-cli releases propose-version` && sentry-cli releases new $SENTRY_RELEASE",
