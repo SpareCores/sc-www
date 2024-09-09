@@ -2990,7 +2990,7 @@ export type GetServerServerVendorServerGetData = ServerPKsWithPrices;
 
 export type GetServerWithoutRelationsV2ServerVendorServerGetData = ServerBase;
 
-export interface GetSimilarServersServerVendorServerSimilarServersByNGetParams {
+export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams {
   /**
    * Benchmark Id
    * Benchmark id to use as the main score for the server.
@@ -3019,15 +3019,15 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNGetParams {
    */
   by: "family" | "specs" | "score";
   /**
-   * N
+   * Num
    * Number of servers to get.
    * @max 100
    */
-  n: number;
+  num: number;
 }
 
-/** Response Get Similar Servers Server  Vendor   Server  Similar Servers  By   N  Get */
-export type GetSimilarServersServerVendorServerSimilarServersByNGetData = ServerPKs[];
+/** Response Get Similar Servers Server  Vendor   Server  Similar Servers  By   Num  Get */
+export type GetSimilarServersServerVendorServerSimilarServersByNumGetData = ServerPKs[];
 
 export interface GetServerPricesServerVendorServerPricesGetParams {
   /**

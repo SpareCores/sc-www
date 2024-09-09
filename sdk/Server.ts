@@ -15,8 +15,8 @@ import {
   GetServerPricesServerVendorServerPricesGetParams,
   GetServerServerVendorServerGetData,
   GetServerServerVendorServerGetParams,
-  GetSimilarServersServerVendorServerSimilarServersByNGetData,
-  GetSimilarServersServerVendorServerSimilarServersByNGetParams,
+  GetSimilarServersServerVendorServerSimilarServersByNumGetData,
+  GetSimilarServersServerVendorServerSimilarServersByNumGetParams,
   HTTPValidationError,
 } from "./data-contracts";
 import { HttpClient, RequestParams } from "./http-client";
@@ -52,16 +52,16 @@ export class Server<SecurityDataType = unknown> {
    * @description Search similar servers to the provided one. The "family" method returns all servers from the same family of the same vendor. The "specs" approach will prioritize the number of GPUs, then CPUs, lastly the amount of memory. The "score" method will find the servers with the closest performance using the multi-core SCore.
    *
    * @tags Server Details
-   * @name GetSimilarServersServerVendorServerSimilarServersByNGet
+   * @name GetSimilarServersServerVendorServerSimilarServersByNumGet
    * @summary Get Similar Servers
-   * @request GET:/server/{vendor}/{server}/similar_servers/{by}/{n}
+   * @request GET:/server/{vendor}/{server}/similar_servers/{by}/{num}
    */
-  getSimilarServersServerVendorServerSimilarServersByNGet = (
-    { vendor, server, by, n, ...query }: GetSimilarServersServerVendorServerSimilarServersByNGetParams,
+  getSimilarServersServerVendorServerSimilarServersByNumGet = (
+    { vendor, server, by, num, ...query }: GetSimilarServersServerVendorServerSimilarServersByNumGetParams,
     params: RequestParams = {},
   ) =>
-    this.http.request<GetSimilarServersServerVendorServerSimilarServersByNGetData, HTTPValidationError>({
-      path: `/server/${vendor}/${server}/similar_servers/${by}/{n}`,
+    this.http.request<GetSimilarServersServerVendorServerSimilarServersByNumGetData, HTTPValidationError>({
+      path: `/server/${vendor}/${server}/similar_servers/${by}/${num}`,
       method: "GET",
       query: query,
       format: "json",
