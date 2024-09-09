@@ -1,5 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Component, HostBinding, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, HostBinding, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
@@ -10,20 +10,9 @@ import { CountryIdtoNamePipe } from '../../pipes/country-idto-name.pipe';
 import { OrderDir } from '../../../../sdk/data-contracts';
 import { KeeperAPIService } from '../../services/keeper-api.service';
 import { SeoHandlerService } from '../../services/seo-handler.service';
-import { ServerCompareService } from '../../services/server-compare.service';
-import { StorageHandlerService } from '../../services/storage-handler.service';
 import { TableColumn } from '../server-listing/server-listing.component';
-import { Dropdown, DropdownOptions } from 'flowbite';
 import { CurrencyOption, availableCurrencies } from '../../tools/shared_data';
 import { DropdownManagerService } from '../../services/dropdown-manager.service';
-
-const options: DropdownOptions = {
-  placement: 'bottom',
-  triggerType: 'click',
-  offsetSkidding: 0,
-  offsetDistance: 10,
-  delay: 300
-};
 
 @Component({
   selector: 'app-storages',
@@ -32,7 +21,7 @@ const options: DropdownOptions = {
   templateUrl: './storages.component.html',
   styleUrl: './storages.component.scss'
 })
-export class StoragesComponent {
+export class StoragesComponent implements OnInit {
 
   @HostBinding('attr.ngSkipHydration') ngSkipHydration = 'true';
 
