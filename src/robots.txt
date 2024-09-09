@@ -1,3 +1,7 @@
+# spamming our site with messed up (e.g. recursive paths in static assets) queries at 5 requests/sec
+User-agent: GPTBot
+Disallow: /
+
 User-agent: *
 Allow: /
 

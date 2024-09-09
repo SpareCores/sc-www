@@ -32,3 +32,16 @@
   height: min(60vw, 600px);
   margin: auto;
 }
+
+.vendor_labels {
+  max-width: 80%;
+  margin: auto;
+}
+
+.color_circle {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 5px;
+}

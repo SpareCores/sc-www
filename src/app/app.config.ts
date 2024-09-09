@@ -14,7 +14,6 @@ function httpFilter(req: HttpRequest<any>): boolean {
 }
 
 function customErrorHandler(error: any) {
-  console.log('Custom error handler', error);
   return error;
 }
 
