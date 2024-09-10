@@ -59,6 +59,8 @@ export class TrafficPricesComponent {
 
   ];
 
+  title = 'Instance Traffic prices';
+
   possibleColumns: TableColumn[] = [
     { name: 'VENDOR', show: true, type: 'vendor' },
     { name: 'REGION', show: true, type: 'region' },
@@ -83,11 +85,6 @@ export class TrafficPricesComponent {
             ) { }
 
   ngOnInit() {
-
-    this.SEOHandler.updateTitleAndMetaTags(
-      'TODO - Spare Cores',
-      'TODO DESCRIPTION',
-      'cloud, server, instance, price, comparison, spot, sparecores');
 
     this.SEOHandler.updateThumbnail('https://sparecores.com/assets/images/media/server_list_image.png');
 
@@ -117,6 +114,11 @@ export class TrafficPricesComponent {
       if(query.currency) {
         this.selectedCurrency = this.availableCurrencies.find((currency) => currency.slug === query.currency) || this.availableCurrencies[0];
       }
+
+      this.SEOHandler.updateTitleAndMetaTags(
+        this.title,
+        'TODO DESCRIPTION',
+        'cloud, server, instance, price, comparison, spot, sparecores');
 
 
       this._searchTrafficPrices();
@@ -204,7 +206,6 @@ export class TrafficPricesComponent {
     this.isLoading = true;
 
     this.keeperAPI.getTrafficPrices(this.query).then((results: any) => {
-      console.log(results.body);
       this.traffic_prices = results.body;
       this.isLoading = false;
       this.totalPages = this.traffic_prices?.length === this.limit ? this.page + 1 : this.page;
@@ -282,6 +283,36 @@ export class TrafficPricesComponent {
     let to = price_tier.upper && !isNaN(price_tier.upper) && price_tier.upper !== "Infinity" ? (price_tier.upper / 1000).toFixed() : '∞';
 
     return `${price_tier.price} ${this.selectedCurrency.slug}`;
+  }
+
+  craftTitle(query: any) {
+    // TDB if this is useful
+    let prefix = 'Instance';
+    let suffix = '';
+    let base = 'Traffic prices';
+
+    let vendor = typeof query.vendor === 'string' ? query.vendor : (query.vendor?.length === 1 ? query.vendor[0] : undefined);
+    const direction = typeof query.direction === 'string' ? query.direction : (query.direction?.length === 1 ? query.direction[0] : undefined);
+
+    if(vendor) {
+      vendor = vendor?.length <= 3 ? vendor.toUpperCase() : (vendor.charAt(0).toUpperCase() + vendor.slice(1));
+    }
+
+    if(vendor) {
+      if(direction) {
+        prefix = `${vendor} ${direction.charAt(0).toUpperCase() + direction.slice(1)}`;
+      } else {
+        prefix = `${vendor}`;
+      }
+    } else if(direction) {
+      prefix = `${direction.charAt(0).toUpperCase() + direction.slice(1)}`;
+    }
+
+    if(query.monthly_traffic) {
+      suffix += ` for ${query.monthly_traffic}GB monthly traffic`;
+    }
+
+    this.title = `${prefix} ${base} ${suffix}`;
   }
 
 
