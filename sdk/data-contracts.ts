@@ -3728,7 +3728,7 @@ export interface SearchStoragePricesStoragePricesGetParams {
 /** Response Search Storage Prices Storage Prices Get */
 export type SearchStoragePricesStoragePricesGetData = StoragePriceWithPKs[];
 
-export interface SearchStoragePricesTrafficPricesGetParams {
+export interface SearchTrafficPricesTrafficPricesGetParams {
   /**
    * Vendor id
    * Identifier of the cloud provider vendor.
@@ -3920,6 +3920,11 @@ export interface SearchStoragePricesTrafficPricesGetParams {
    */
   direction?: "inbound" | "outbound";
   /**
+   * Monthly Overall Traffic
+   * Overall amount of monthly traffic (GBs).
+   */
+  monthly_traffic?: number | null;
+  /**
    * Limit
    * Maximum number of results. Set to -1 for unlimited.
    * @default 50
@@ -3950,5 +3955,5 @@ export interface SearchStoragePricesTrafficPricesGetParams {
   currency?: string | null;
 }
 
-/** Response Search Storage Prices Traffic Prices Get */
-export type SearchStoragePricesTrafficPricesGetData = TrafficPriceWithPKs[];
+/** Response Search Traffic Prices Traffic Prices Get */
+export type SearchTrafficPricesTrafficPricesGetData = TrafficPriceWithPKs[];

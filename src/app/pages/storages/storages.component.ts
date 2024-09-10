@@ -117,6 +117,11 @@ export class StoragesComponent implements OnInit {
         this.limit = parseInt(query.limit);
       }
 
+      if(query.currency) {
+        this.selectedCurrency = this.availableCurrencies.find((currency) => currency.slug === query.currency) || this.availableCurrencies[0];
+      }
+
+
       this._searchStorages();
 
       if(isPlatformBrowser(this.platformId)) {

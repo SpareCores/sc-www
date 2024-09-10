@@ -3,7 +3,7 @@
 import { Component, ElementRef, Inject, PLATFORM_ID, OnInit, ViewChild, OnDestroy, Renderer2 } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { KeeperAPIService } from '../../services/keeper-api.service';
-import { GetSimilarServersServerVendorServerSimilarServersByNGetData, Server, ServerPKs, ServerPKsWithPrices, ServerPricePKs, TableServerTableServerGetData } from '../../../../sdk/data-contracts';
+import { GetSimilarServersServerVendorServerSimilarServersByNumGetData, Server, ServerPKs, ServerPKsWithPrices, ServerPricePKs, TableServerTableServerGetData } from '../../../../sdk/data-contracts';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
@@ -65,10 +65,10 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
   regionFilters: any[] = [];
 
-  similarByFamily: GetSimilarServersServerVendorServerSimilarServersByNGetData = [];
-  similarBySpecs: GetSimilarServersServerVendorServerSimilarServersByNGetData = [];
+  similarByFamily: GetSimilarServersServerVendorServerSimilarServersByNumGetData = [];
+  similarBySpecs: GetSimilarServersServerVendorServerSimilarServersByNumGetData = [];
 
-  similarServers: GetSimilarServersServerVendorServerSimilarServersByNGetData = [];
+  similarServers: GetSimilarServersServerVendorServerSimilarServersByNumGetData = [];
 
   dropdownSimilar: any;
   similarOptions: any[] = [

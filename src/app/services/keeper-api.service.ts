@@ -3,7 +3,7 @@ import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { MYHTTPClient } from './my_http/my-http';
 import { Server } from '../../../sdk/Server';
 import { Servers } from '../../../sdk/Servers';
-import { AssistServerFiltersAiAssistServerFiltersGetParams, AssistServerPriceFiltersAiAssistServerPriceFiltersGetParams, SearchServerPricesServerPricesGetParams, SearchServersServersGetParams, SearchStoragePricesStoragePricesGetParams, SearchStoragePricesTrafficPricesGetParams } from '../../../sdk/data-contracts';
+import { AssistServerFiltersAiAssistServerFiltersGetParams, AssistServerPriceFiltersAiAssistServerPriceFiltersGetParams, SearchServerPricesServerPricesGetParams, SearchServersServersGetParams, SearchStoragePricesStoragePricesGetParams, SearchTrafficPricesTrafficPricesGetParams } from '../../../sdk/data-contracts';
 import { Table } from '../../../sdk/Table';
 import { Ai } from '../../../sdk/Ai';
 import { ServerPrices } from '../../../sdk/ServerPrices';
@@ -50,7 +50,7 @@ export class KeeperAPIService {
 
 
   public getServerSimilarServers(vendor: string, id: string, category: "family" | "specs" | "score", limit: number): Promise<any> {
-    return this.ServerController.getSimilarServersServerVendorServerSimilarServersByNGet({vendor, server:id, by:category, n:limit});
+    return this.ServerController.getSimilarServersServerVendorServerSimilarServersByNumGet({vendor, server: id, by: category, num: limit});
   }
 
   public searchServers(query: SearchServersServersGetParams): Promise<any> {
@@ -109,8 +109,8 @@ export class KeeperAPIService {
     return this.StorageController.searchStoragePricesStoragePricesGet(query);
   }
 
-  public getTrafficPrices(query: SearchStoragePricesTrafficPricesGetParams): Promise<any> {
-    return this.TrafficController.searchStoragePricesTrafficPricesGet(query);
+  public getTrafficPrices(query: SearchTrafficPricesTrafficPricesGetParams): Promise<any> {
+    return this.TrafficController.searchTrafficPricesTrafficPricesGet(query);
   }
 
 }

@@ -60,10 +60,12 @@ export class TrafficPricesComponent {
   ];
 
   possibleColumns: TableColumn[] = [
-    { name: 'VENDOR', show: true, type: 'vendor'},
+    { name: 'VENDOR', show: true, type: 'vendor' },
     { name: 'REGION', show: true, type: 'region' },
     { name: 'DIRECTION', show: true, type: 'text', key: 'direction',},
-    { name: 'PRICE', show: true, type: 'price' },
+    { name: 'PRICE', show: true, type: 'price', orderField: 'price' },
+    { name: 'PRICE TOTAL', show: true, type: 'priceMonthly' },
+    { name: 'PRICE TIERS', show: false, type: 'price_tiers' },
   ];
 
   availableCurrencies: CurrencyOption[] = availableCurrencies;
@@ -111,6 +113,11 @@ export class TrafficPricesComponent {
       if(query.limit) {
         this.limit = parseInt(query.limit);
       }
+
+      if(query.currency) {
+        this.selectedCurrency = this.availableCurrencies.find((currency) => currency.slug === query.currency) || this.availableCurrencies[0];
+      }
+
 
       this._searchTrafficPrices();
 
@@ -257,6 +264,24 @@ export class TrafficPricesComponent {
 
   refreshColumns() {
     this.tableColumns = this.possibleColumns.filter((column) => column.show);
+  }
+
+  getTieredPriceText(price_tier: any) {
+    let from = price_tier.lower && !isNaN(price_tier.lower) ? (price_tier.lower / 1000).toFixed() : '0';
+    let to = price_tier.upper && !isNaN(price_tier.upper) && price_tier.upper !== "Infinity" ? (price_tier.upper / 1000).toFixed() : '∞';
+
+    // padd from and to to at least 3 charaters long
+    from = from.padStart(3, ' ');
+    to = to.padStart(3, ' ');
+
+    return `${from} - ${to} TB:`;
+  }
+
+  getTieredPriceValue(price_tier: any) {
+    let from = price_tier.lower && !isNaN(price_tier.lower) ? (price_tier.lower / 1000).toFixed() : 0;
+    let to = price_tier.upper && !isNaN(price_tier.upper) && price_tier.upper !== "Infinity" ? (price_tier.upper / 1000).toFixed() : '∞';
+
+    return `${price_tier.price} ${this.selectedCurrency.slug}`;
   }
 
 

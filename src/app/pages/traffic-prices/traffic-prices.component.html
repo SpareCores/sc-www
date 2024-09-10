@@ -113,8 +113,21 @@
                       <td *ngIf="column.type === 'price'">
                         <div class="text-sm text-white">{{item.price}} {{item.currency}}/{{item.unit}}</div>
                       </td>
-                      <td *ngIf="column.type === 'price2' && column.key">
-                        <div class="text-sm text-white">{{getField(item, column.key) || '0'}} {{item.currency}}</div>
+                      <td *ngIf="column.type === 'priceMonthly'">
+                        <div class="text-sm text-white">{{item.price_monthly_traffic}} {{item.currency}}/month</div>
+                      </td>
+                      <td *ngIf="column.type === 'price_tiers'">
+                        <div class="flex flex-col" >
+
+                          <div *ngFor="let tiered_price of item.price_tiered" class="text-xs text-white flex justify-between">
+                            <div>
+                              {{getTieredPriceText(tiered_price)}}
+                            </div>
+                            <div>
+                              {{getTieredPriceValue(tiered_price)}}
+                            </div>
+                          </div>
+                        </div>
                       </td>
                       <td *ngIf="column.type === 'text' && column.key">
                         {{getField(item, column.key)}}
@@ -145,7 +158,7 @@
               </div>
               <div>
                 <app-pagination
-                  baseURL="/storages"
+                  baseURL="/traffic-prices"
                   [currentPage]="page"
                   [totalPages]="totalPages"
                   [baseQueryParams]="getQueryObjectBase()"
