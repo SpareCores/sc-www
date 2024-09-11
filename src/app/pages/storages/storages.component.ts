@@ -210,7 +210,6 @@ export class StoragesComponent implements OnInit {
 
     this.keeperAPI.getStoragePrices(this.query).then((results: any) => {
       this.storages = results.body;
-      console.log(this.storages);
       this.isLoading = false;
       this.totalPages = this.storages?.length === this.limit ? this.page + 1 : this.page;
     });
