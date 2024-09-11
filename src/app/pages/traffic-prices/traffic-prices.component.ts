@@ -1,5 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Component, HostBinding, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, HostBinding, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, ActivatedRoute, Params, Router } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
@@ -21,7 +21,7 @@ import { TableColumn } from '../server-listing/server-listing.component';
   templateUrl: './traffic-prices.component.html',
   styleUrl: './traffic-prices.component.scss'
 })
-export class TrafficPricesComponent {
+export class TrafficPricesComponent implements OnInit {
 
   @HostBinding('attr.ngSkipHydration') ngSkipHydration = 'true';
 
@@ -279,9 +279,6 @@ export class TrafficPricesComponent {
   }
 
   getTieredPriceValue(price_tier: any) {
-    let from = price_tier.lower && !isNaN(price_tier.lower) ? (price_tier.lower / 1000).toFixed() : 0;
-    let to = price_tier.upper && !isNaN(price_tier.upper) && price_tier.upper !== "Infinity" ? (price_tier.upper / 1000).toFixed() : '∞';
-
     return `${price_tier.price} ${this.selectedCurrency.slug}`;
   }
 
