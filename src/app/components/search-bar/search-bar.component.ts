@@ -29,6 +29,7 @@ export class SearchBarComponent implements OnInit, OnChanges{
   @Input() filterCategories: any[] = [];
   @Input() selectedCurrency: any | null = null;
   @Input() isPriceSearch = false;
+  @Input() showSearchPrompt = true;
 
   @Output() searchChanged = new EventEmitter<any>();
 
