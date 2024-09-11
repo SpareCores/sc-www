@@ -25,7 +25,7 @@ export class StoragesComponent implements OnInit {
 
   @HostBinding('attr.ngSkipHydration') ngSkipHydration = 'true';
 
-  limit = 50;
+  limit = 10;
   page = 1;
   totalPages = 1;
   pageLimits = [10, 25, 50, 100, 250];
@@ -67,10 +67,8 @@ export class StoragesComponent implements OnInit {
     { name: 'MAX', show: true, type: 'storage', key: 'storage.max_size' },
     { name: 'TYPE', show: true, type: 'text', key: 'storage.storage_type',},
     { name: 'PRICE', show: true, type: 'price', orderField: 'price' },
-    { name: 'PRICE UPFRONT', show: false, type: 'price2', key: 'price_upfront' },
-    { name: 'PRICE TIERED', show: false, type: 'price2', key: 'price_tiered' },
-    { name: 'MAX IOPS', show: false, type: 'text', key: 'storage.max_iops', orderField: 'max_iops' },
-    { name: 'MAX THROUGHPUT', show: false, type: 'text', key: 'storage.max_throughput', orderField: 'max_throughput' },
+    { name: 'MAX IOPS', show: true, type: 'text', key: 'storage.max_iops', orderField: 'max_iops' },
+    { name: 'MAX THROUGHPUT', show: true, type: 'text', key: 'storage.max_throughput', orderField: 'max_throughput' },
   ];
 
   availableCurrencies: CurrencyOption[] = availableCurrencies;
@@ -90,8 +88,8 @@ export class StoragesComponent implements OnInit {
   ngOnInit() {
 
     this.SEOHandler.updateTitleAndMetaTags(
-      'TODO - Spare Cores',
-      'TODO DESCRIPTION',
+      'Cloud Block Storage Prices - Spare Cores',
+      'Explore, search, and evaluate block storage options and their pricing at various cloud providers in the table below. Note that the quoted pricing only includes capacity, and some options require extra payment for provisioned IOPS etc.',
       'cloud, server, instance, price, comparison, spot, sparecores');
 
     this.SEOHandler.updateThumbnail('https://sparecores.com/assets/images/media/server_list_image.png');

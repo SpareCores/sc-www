@@ -25,7 +25,7 @@ export class TrafficPricesComponent implements OnInit {
 
   @HostBinding('attr.ngSkipHydration') ngSkipHydration = 'true';
 
-  limit = 50;
+  limit = 10;
   page = 1;
   totalPages = 1;
   pageLimits = [10, 25, 50, 100, 250];
@@ -59,7 +59,7 @@ export class TrafficPricesComponent implements OnInit {
 
   ];
 
-  title = 'Instance Traffic prices';
+  title = 'Cloud Data Transfer Pricing';
 
   possibleColumns: TableColumn[] = [
     { name: 'VENDOR', show: true, type: 'vendor' },
@@ -67,7 +67,7 @@ export class TrafficPricesComponent implements OnInit {
     { name: 'DIRECTION', show: true, type: 'text', key: 'direction',},
     { name: 'PRICE', show: true, type: 'price', orderField: 'price' },
     { name: 'PRICE TOTAL', show: true, type: 'priceMonthly' },
-    { name: 'PRICE TIERS', show: false, type: 'price_tiers' },
+    { name: 'PRICE TIERS', show: true, type: 'price_tiers' },
   ];
 
   availableCurrencies: CurrencyOption[] = availableCurrencies;
@@ -117,7 +117,7 @@ export class TrafficPricesComponent implements OnInit {
 
       this.SEOHandler.updateTitleAndMetaTags(
         this.title,
-        'TODO DESCRIPTION',
+        'Explore, search, and evaluate ingress (inbound) and egress (outbound) traffic pricing options and tiers of various cloud providers in the table below. Note that the pricing tiers usually apply at the account level. Enter the estimated monthly traffic (instead of the default 1 GB) to calculate pricing based on the known tiers.',
         'cloud, server, instance, price, comparison, spot, sparecores');
 
 
@@ -268,12 +268,13 @@ export class TrafficPricesComponent implements OnInit {
   }
 
   getTieredPriceText(price_tier: any) {
-    let from = price_tier.lower && !isNaN(price_tier.lower) ? (price_tier.lower / 1000).toFixed() : '0';
-    let to = price_tier.upper && !isNaN(price_tier.upper) && price_tier.upper !== "Infinity" ? (price_tier.upper / 1000).toFixed() : '∞';
+    let from = price_tier.lower && !isNaN(price_tier.lower) ?
+              (price_tier.lower / 1000).toFixed(price_tier.lower < 1000 ? 2 : 0) :
+              '0';
+    let to = price_tier.upper && !isNaN(price_tier.upper) && price_tier.upper !== "Infinity" ?
+              (price_tier.upper / 1000).toFixed(price_tier.upper < 1000 ? 2 : 0) :
+              '∞';
 
-    // padd from and to to at least 3 charaters long
-    from = from.padStart(3, ' ');
-    to = to.padStart(3, ' ');
 
     return `${from} - ${to} TB:`;
   }
