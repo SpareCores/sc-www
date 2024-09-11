@@ -66,9 +66,11 @@ export class StoragesComponent implements OnInit {
     { name: 'MIN', show: true, type: 'storage', key: 'storage.min_size' },
     { name: 'MAX', show: true, type: 'storage', key: 'storage.max_size' },
     { name: 'TYPE', show: true, type: 'text', key: 'storage.storage_type',},
-    { name: 'PRICE', show: true, type: 'price' },
+    { name: 'PRICE', show: true, type: 'price', orderField: 'price' },
     { name: 'PRICE UPFRONT', show: false, type: 'price2', key: 'price_upfront' },
     { name: 'PRICE TIERED', show: false, type: 'price2', key: 'price_tiered' },
+    { name: 'MAX IOPS', show: false, type: 'text', key: 'storage.max_iops', orderField: 'max_iops' },
+    { name: 'MAX THROUGHPUT', show: false, type: 'text', key: 'storage.max_throughput', orderField: 'max_throughput' },
   ];
 
   availableCurrencies: CurrencyOption[] = availableCurrencies;
@@ -208,6 +210,7 @@ export class StoragesComponent implements OnInit {
 
     this.keeperAPI.getStoragePrices(this.query).then((results: any) => {
       this.storages = results.body;
+      console.log(this.storages);
       this.isLoading = false;
       this.totalPages = this.storages?.length === this.limit ? this.page + 1 : this.page;
     });
