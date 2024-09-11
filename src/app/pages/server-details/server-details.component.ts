@@ -3,7 +3,7 @@
 import { Component, ElementRef, Inject, PLATFORM_ID, OnInit, ViewChild, OnDestroy, Renderer2 } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { KeeperAPIService } from '../../services/keeper-api.service';
-import { GetSimilarServersServerVendorServerSimilarServersByNGetData, Server, ServerPKs, ServerPKsWithPrices, ServerPricePKs, TableServerTableServerGetData } from '../../../../sdk/data-contracts';
+import { Benchmark, GetSimilarServersServerVendorServerSimilarServersByNGetData, Server, ServerPKs, ServerPKsWithPrices, ServerPricePKs, TableServerTableServerGetData } from '../../../../sdk/data-contracts';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
@@ -12,7 +12,7 @@ import { FaqComponent } from '../../components/faq/faq.component';
 import { FormsModule } from '@angular/forms';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData } from 'chart.js';
-import { barChartDataEmpty, barChartOptions, barChartOptionsRedis, barChartOptionsSSL, barChartOptionsStaticWeb, lineChartOptionsBWM, lineChartOptionsComp, lineChartOptionsCompRatio, radarChartOptions, radarDatasetColors } from './chartOptions';
+import { barChartDataEmpty, barChartOptions,  barChartOptionsSSL, lineChartOptionsBWM, lineChartOptionsComp, radarChartOptions, radarDatasetColors } from './chartOptions';
 import { Chart } from 'chart.js';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -23,6 +23,7 @@ import { initGiscus } from '../../tools/initGiscus';
 import { Location } from '@angular/common';
 import { AnalyticsService } from '../../services/analytics.service';
 import { DropdownManagerService } from '../../services/dropdown-manager.service';
+import { ChartFromBenchmarkTemplate, ChartFromBenchmarkTemplateOptions, redisChartTemplate, redisChartTemplateCallbacks, staticWebChartTemplate, staticWebChartTemplateCallbacks } from './chartFromBenchmarks';
 
 Chart.register(annotationPlugin);
 
@@ -79,6 +80,9 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   selectedSimilarOption: any = this.similarOptions[0];
 
   dropdownStaticWeb: any;
+
+  staticWebChartTemplate: ChartFromBenchmarkTemplate = JSON.parse(JSON.stringify(staticWebChartTemplate));
+  /*
   staticWebOptions: any[] = [
     {name: 'RPS', benchmark: 'static_web:rps', YLabel : 'Requests per second', scaleField: 'connections_per_vcpus', labelsField: 'size', tooltip: "Higher is better.", icon: 'circle-arrow-up'},
     {name: 'RPS Extrapolated', benchmark: 'static_web:rps-extrapolated', YLabel : 'Requests per second', scaleField: 'connections_per_vcpus', labelsField: 'size', tooltip: "Higher is better.", icon: 'circle-arrow-up'},
@@ -88,15 +92,21 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   ];
 
   selectedStaticWebOption: any = this.staticWebOptions[0];
+  */
+
+
+  redisChartTemplate: ChartFromBenchmarkTemplate = JSON.parse(JSON.stringify(redisChartTemplate));
 
   dropdownRedis: any;
+  /*
   redisOptions: any[] = [
     {name: 'RPS', benchmark: 'redis:rps', YLabel : 'Requests per second', scaleField: 'pipeline', labelsField: 'operation', tooltip: "Higher is better.", icon: 'circle-arrow-up'},
     {name: 'RPS Extrapolated', benchmark: 'redis:rps-extrapolated', YLabel : 'Requests per second', scaleField: 'pipeline', labelsField: 'operation', tooltip: "Higher is better.", icon: 'circle-arrow-up'},
     {name: 'Latency', benchmark: 'redis:latency', YLabel : 'Milliseconds', scaleField: 'pipeline', labelsField: 'operation', tooltip: "Lower is better.", icon: 'circle-arrow-down'},
   ];
+  */
 
-  selectedRedisOption: any = this.redisOptions[0];
+  //selectedRedisOption: any = this.redisChartTemplate.options[0];
 
   instancePropertyCategories: any[] = [
     { name: 'General', category: 'meta', properties: [] },
@@ -110,7 +120,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   benchmarksByCategory: any[] = [];
 
   instanceProperties: any[] = [];
-  benchmarkMeta: any;
+  benchmarkMeta!: Benchmark[];
 
   tooltipContent = '';
 
@@ -151,11 +161,11 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   barChartOptionsSSL: ChartConfiguration<'bar'>['options'] = barChartOptionsSSL;
   barChartDataSSL: ChartData<'bar'> | undefined = undefined;
 
-  barChartOptionsStaticWeb: ChartConfiguration<'bar'>['options'] = barChartOptionsStaticWeb;
-  barChartDataStaticWeb: ChartData<'bar'> | undefined = undefined;
+  //barChartOptionsStaticWeb: ChartConfiguration<'bar'>['options'] = barChartOptionsStaticWeb;
+  //barChartDataStaticWeb: ChartData<'bar'> | undefined = undefined;
 
-  barChartOptionsRedis: ChartConfiguration<'bar'>['options'] = barChartOptionsRedis;
-  barChartDataRedis: ChartData<'bar'> | undefined = undefined;
+  //barChartOptionsRedis: ChartConfiguration<'bar'>['options'] = JSON.parse(JSON.stringify(barChartOptionsTemplate));
+  //barChartDataRedis: ChartData<'bar'> | undefined = undefined;
 
   geekbenchHTML: any;
 
@@ -207,6 +217,8 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
         this.instanceProperties = serverMeta?.fields || [];
 
         this.benchmarkMeta = benchmarkMeta || {};
+
+        console.log(this.benchmarkMeta);
 
         this.similarByFamily = similarByFamily;
         this.similarBySpecs = similarBySpecs;
@@ -299,7 +311,8 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
             (this.barChartOptions!.scales as any).y.title.text = `${this.serverDetails.prices[0].currency}/h`;
           }
 
-          this.refreshGraphs();
+          // This also initializes important underlying data has to be called here
+          this.refreshPricesGraphs();
 
           this.title = `${this.serverDetails.display_name} by ${this.serverDetails.vendor.name} - Spare Cores`;
           this.description =
@@ -396,6 +409,8 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
           this.generateSchemaJSON();
 
           if(isPlatformBrowser(this.platformId)) {
+
+            this.initializeBenchmarkCharts();
 
             this.generateBenchmarkCharts();
 
@@ -531,7 +546,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     }
   }
 
-  refreshGraphs() {
+  refreshPricesGraphs() {
     this.updateChart1();
     this.updateChart2();
     this.updateChart3();
@@ -872,16 +887,35 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     this.compressDropdown?.hide();
   }
 
-  selectStaticWebOption(option: any) {
-    this.selectedStaticWebOption = option;
-    this.generateMultiBarChart(this.selectedStaticWebOption);
-    this.dropdownStaticWeb?.hide();
+  selectChartTemplateOption(template: ChartFromBenchmarkTemplate, option: number) {
+    template.selectedOption = option;
+    this.generateMultiBarChart(template);
+    this.dropdownRedis?.hide();
   }
 
-  selectRedisOption(option: any) {
-    this.selectedRedisOption = option;
-    this.generateMultiBarChart(this.selectedRedisOption);
-    this.dropdownRedis?.hide();
+  initializeBenchmarkCharts() {
+    this.redisChartTemplate.chartOptions.plugins.tooltip.callbacks = redisChartTemplateCallbacks;
+
+    this.staticWebChartTemplate.chartOptions.plugins.tooltip.callbacks = staticWebChartTemplateCallbacks;
+
+    this.initializeMultiBarChart(this.redisChartTemplate);
+    this.initializeMultiBarChart(this.staticWebChartTemplate);
+  }
+
+  initializeMultiBarChart(chartTemplate: ChartFromBenchmarkTemplate) {
+    chartTemplate.options.forEach((option: ChartFromBenchmarkTemplateOptions) => {
+      const benchmark = this.benchmarkMeta.find((b: any) => b.benchmark_id === option.benchmark_id);
+      if(benchmark) {
+        option.name = benchmark.name;
+        option.unit = benchmark.unit;
+        option.higher_is_better = benchmark.higher_is_better;
+        option.title = benchmark.config_fields ? ((benchmark.config_fields as any)[option.labelsField] as string) : '';
+        option.XLabel = benchmark.config_fields ? ((benchmark.config_fields as any)[option.scaleField] as string) : '';
+        option.YLabel = benchmark.unit;
+      }
+    });
+    console.log(chartTemplate);
+
   }
 
   generateBenchmarkCharts() {
@@ -962,11 +996,12 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
       this.barChartDataSSL = undefined;
     }
 
+    this.generateGeekbenchChart();
 
     this.generateCompressChart();
-    this.generateGeekbenchChart();
-    this.generateMultiBarChart(this.selectedStaticWebOption);
-    this.generateMultiBarChart(this.selectedRedisOption);
+
+    this.generateMultiBarChart(this.staticWebChartTemplate);
+    this.generateMultiBarChart(this.redisChartTemplate);
   }
 
   generateCompressChart() {
@@ -1195,7 +1230,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     let GBScoreText = this.benchmarkMeta.find((x: any) => x.benchmark_id === 'geekbench:score');
     if(GBScoreText) {
       const name: string = GBScoreText.name.replace('Geekbench:', '');
-      const desc = GBScoreText.description.replace('The score is calibrated against a baseline score of 2,500 (Dell Precision 3460 with a Core i7-12700 processor) as per the Geekbench 6 Benchmark Internals.', '') || '';
+      const desc = GBScoreText.description?.replace('The score is calibrated against a baseline score of 2,500 (Dell Precision 3460 with a Core i7-12700 processor) as per the Geekbench 6 Benchmark Internals.', '') || '';
       this.geekbenchHTML += `<li> - ${name}: ${desc} </li>`;
     }
 
@@ -1271,11 +1306,12 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     }
   }
 
-  public generateMultiBarChart(chartConf: any) {
+  public generateMultiBarChart(chartTemplate: ChartFromBenchmarkTemplate) {
 
+    const chartConf = chartTemplate.options[chartTemplate.selectedOption];
     const labelsField = chartConf.labelsField;
     const scaleField = chartConf.scaleField;
-    const dataSet = this.benchmarksByCategory?.find(x => x.benchmark_id === chartConf.benchmark);
+    const dataSet = this.benchmarksByCategory?.find(x => x.benchmark_id === chartConf.benchmark_id);
 
     let chartData: any;
 
@@ -1339,19 +1375,14 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     }
 
     if(chartData) {
-      if(chartConf.benchmark.includes('static_web')) {
-        (this.barChartOptionsStaticWeb as any).scales.y.title.text = chartConf.YLabel;
-        this.barChartDataStaticWeb = { labels: chartData.labels, datasets: chartData.datasets };
-      } else if(chartConf.benchmark.includes('redis')) {
-        (this.barChartOptionsRedis as any).scales.y.title.text = chartConf.YLabel;
-        this.barChartDataRedis = { labels: chartData.labels, datasets: chartData.datasets };
-      }
+      chartTemplate.chartOptions.scales.y.title.text = chartConf.YLabel;
+      chartTemplate.chartOptions.scales.x.title.text = chartConf.XLabel;
+      chartTemplate.chartOptions.plugins.title.text = chartConf.title;
+
+      chartTemplate.chartData = { labels: chartData.labels, datasets: chartData.datasets };
+
     } else {
-      if(chartConf.benchmark.includes('static_web')) {
-        this.barChartDataStaticWeb = undefined;
-      } else if(chartConf.benchmark.includes('redis')) {
-        this.barChartDataRedis = undefined;
-      }
+      chartTemplate.chartData = undefined;
     }
   }
 

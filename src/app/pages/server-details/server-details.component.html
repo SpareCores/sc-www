@@ -437,20 +437,22 @@
         </div>
       </div>
 
-      <div class="block_half" *ngIf="barChartDataStaticWeb" id="static_web_chart">
+      <div class="block_half" *ngIf="staticWebChartTemplate.chartData" id="static_web_chart">
         <div class="flex justify-between items-center">
           <h3 class="text-2xl flex items-center gap-2" >
             Static web server
+            <!--
             <lucide-icon
               name="{{selectedStaticWebOption.icon}}"
               class="h-4 w-4 text-gray-200"
               (mouseenter)="showTooltip($event, selectedStaticWebOption.tooltip)"
               (mouseleave)="hideTooltip()">
             </lucide-icon>
+            -->
             <lucide-icon
               name="info"
               class="h-4 w-4 text-gray-200"
-              (mouseenter)="showTooltipChart($event, selectedStaticWebOption.benchmark)"
+              (mouseenter)="showTooltipChart($event, staticWebChartTemplate.options[staticWebChartTemplate.selectedOption].benchmark_id)"
               (mouseleave)="hideTooltip()">
             </lucide-icon>
           </h3>
@@ -459,7 +461,7 @@
             class="dropdown_button"
             type="button">
             <div class="px-3 py-2">
-              {{selectedStaticWebOption.name}}
+              {{staticWebChartTemplate.options[staticWebChartTemplate.selectedOption].name}}
             </div>
             <div class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
               <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
@@ -471,29 +473,31 @@
             <canvas
               style="height: 350px; width:100%"
               baseChart
-              [data]="barChartDataStaticWeb"
-              [options]="barChartOptionsStaticWeb"
-              [type]="barChartType"
+              [data]="staticWebChartTemplate.chartData"
+              [options]="staticWebChartTemplate.chartOptions"
+              [type]="staticWebChartTemplate.chartType"
             >
             </canvas>
           </div>
         </div>
       </div>
 
-      <div class="block_half" *ngIf="barChartDataRedis" id="redis_chart">
+      <div class="block_half" *ngIf="redisChartTemplate.chartData" id="redis_chart">
         <div class="flex justify-between items-center">
           <h3 class="text-2xl flex items-center gap-2" >
             Redis
+            <!--
             <lucide-icon
               name="{{selectedRedisOption.icon}}"
               class="h-4 w-4 text-gray-200"
               (mouseenter)="showTooltip($event, selectedRedisOption.tooltip)"
               (mouseleave)="hideTooltip()">
             </lucide-icon>
+            -->
             <lucide-icon
               name="info"
               class="h-4 w-4 text-gray-200"
-              (mouseenter)="showTooltipChart($event, selectedRedisOption.benchmark)"
+              (mouseenter)="showTooltipChart($event, redisChartTemplate.options[redisChartTemplate.selectedOption].benchmark_id)"
               (mouseleave)="hideTooltip()">
             </lucide-icon>
           </h3>
@@ -502,7 +506,7 @@
             class="dropdown_button"
             type="button">
             <div class="px-3 py-2">
-              {{selectedRedisOption.name}}
+              {{redisChartTemplate.options[redisChartTemplate.selectedOption].name}}
             </div>
             <div class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
               <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
@@ -514,9 +518,9 @@
             <canvas
               style="height: 350px; width:100%"
               baseChart
-              [data]="barChartDataRedis"
-              [options]="barChartOptionsRedis"
-              [type]="barChartType"
+              [data]="redisChartTemplate.chartData"
+              [options]="redisChartTemplate.chartOptions"
+              [type]="redisChartTemplate.chartType"
             >
             </canvas>
           </div>
@@ -630,7 +634,7 @@
         <input type="checkbox"
         id="filter_allocation"
         [(ngModel)]="item.selected"
-        (ngModelChange)="refreshGraphs()"
+        (ngModelChange)="refreshPricesGraphs()"
         class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer" >
         <div class="text-white text-sm">{{item.name}}</div>
     </li>
@@ -643,7 +647,7 @@
         <input type="checkbox"
         id="filter_allocation_2"
         [(ngModel)]="item.selected"
-        (ngModelChange)="refreshGraphs()"
+        (ngModelChange)="refreshPricesGraphs()"
         class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer" >
         <div class="text-white text-sm">{{item.name}}</div>
     </li>
@@ -657,7 +661,7 @@
         <input type="checkbox"
         id="filter_region"
         [(ngModel)]="item.selected"
-        (ngModelChange)="refreshGraphs()"
+        (ngModelChange)="refreshPricesGraphs()"
         class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer" >
         <div class="text-white text-sm">{{item.name}}</div>
     </li>
@@ -690,10 +694,10 @@
 
 <div id="static_web_options" class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid">
   <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
-    <li *ngFor="let item of staticWebOptions" class="flex py-1 gap-2 items-center">
+    <li *ngFor="let item of staticWebChartTemplate.options, let i = index" class="flex py-1 gap-2 items-center">
         <div
           class="text-emerald-400 hover:text-emerald-500 cursor-pointer font-bold ml-2"
-          (click)="selectStaticWebOption(item)">
+          (click)="selectChartTemplateOption(staticWebChartTemplate, i)">
           {{item.name}}
         </div>
     </li>
@@ -702,10 +706,10 @@
 
 <div id="redis_options" class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid">
   <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
-    <li *ngFor="let item of redisOptions" class="flex py-1 gap-2 items-center">
+    <li *ngFor="let item of redisChartTemplate.options, let i = index" class="flex py-1 gap-2 items-center">
         <div
           class="text-emerald-400 hover:text-emerald-500 cursor-pointer font-bold ml-2"
-          (click)="selectRedisOption(item)">
+          (click)="selectChartTemplateOption(redisChartTemplate, i)">
           {{item.name}}
         </div>
     </li>

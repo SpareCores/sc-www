@@ -114,6 +114,61 @@ export const  barChartOptionsStaticWeb: ChartConfiguration<'bar'>['options'] = {
   }
 };
 
+export const  barChartOptionsTemplate: ChartConfiguration<'bar'>['options'] = {
+  scales: {
+    ...barChartOptions.scales,
+    y: {
+      ticks: {
+        color: '#FFF',
+      },
+      grid: {
+        color: '#4B5563',
+      },
+      title: {
+        display: true,
+        color: '#FFF',
+        text: 'Benchmark Score',
+      },
+    },
+    x: {
+      ticks: {
+        color: '#FFF',
+      },
+      grid: {
+        color: '#4B5563',
+      },
+      title: {
+        display: true,
+        color: '#FFF',
+        text: 'scaleField values',
+      },
+    }
+  },
+  plugins: {
+    ...barChartOptions.plugins,
+    title: {
+      display: true,
+      text: 'labelsField description',
+      color: '#FFF',
+    },
+    // NOTE: Add customized tooltip callbacks
+    tooltip:{
+      callbacks: {
+        label: function(this: TooltipModel<"bar">, tooltipItem: TooltipItem<"bar">) {
+          return `${tooltipItem.formattedValue} ${(tooltipItem as any).raw.unit}; Note: ${(tooltipItem as any).raw.note}`;
+        },
+        title: function(this: TooltipModel<"bar">, tooltipItems: TooltipItem<"bar">[]) {
+          return tooltipItems[0].label + ' concurrent pipelined requests';
+        },
+      }
+    },
+  },
+  parsing: {
+    xAxisKey: 'label',
+    yAxisKey: 'data'
+  }
+};
+
 export const  barChartOptionsRedis: ChartConfiguration<'bar'>['options'] = {
   scales: {
     ...barChartOptions.scales,
