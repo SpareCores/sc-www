@@ -49,6 +49,15 @@ We will follow-up on the redis use-case, as we have several
 database-related benchmarks to be covered in our roadmap, but wanted
 to quickly react on the HTTP proxy workload.
 
+**TL;DR**: We've benchmarked the above-mentioned (and 1000+ more)
+instances for static web server performance using `binserve` and
+`wrk`. Results show `c7g.large` offering up to a 100% performance
+boost over `c6g.large`, with variations depending on file size and
+number of connections. If you're not interested in the detailed
+methodology and textual analysis, feel free to skip ahead and explore
+the raw data directly at the related
+[server comparison page](/compare?instances=W3sidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzZnLmxhcmdlIn0seyJ2ZW5kb3IiOiJhd3MiLCJzZXJ2ZXIiOiJjN2cubGFyZ2UifSx7InZlbmRvciI6ImF3cyIsInNlcnZlciI6ImM1LmxhcmdlIn0seyJ2ZW5kb3IiOiJhd3MiLCJzZXJ2ZXIiOiJjN2kubGFyZ2UifV0%3D).
+
 ## Static Web Serving
 
 Probably the most popular webserver and reverse proxy nowadays is
