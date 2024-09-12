@@ -175,3 +175,9 @@ requests per second, we have made both the raw and extrapolated values
 in our server details and server comparison pages. We have also
 recorded the average latency as reported by `wrk`, which might be
 useful depending on your use case.
+
+As always, you all the data we've collected is available in our
+<a href="https://github.com/SpareCores/sc-data" target="_blank" rel="noopener">SQLite dumps and through `sparecores-data` Python package</a>.
+You can also browse the results directly on our homepage, e.g. by following
+[this direct link](/compare?instances=W3sidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzZnLmxhcmdlIn0seyJ2ZW5kb3IiOiJhd3MiLCJzZXJ2ZXIiOiJjN2cubGFyZ2UifSx7InZlbmRvciI6ImF3cyIsInNlcnZlciI6ImM1LmxhcmdlIn0seyJ2ZW5kb3IiOiJhd3MiLCJzZXJ2ZXIiOiJjN2kubGFyZ2UifV0%3D)
+to compare `c6g.large`, `c7g.large`, `c5.large`, and `c7i.large` at AWS.
