@@ -261,6 +261,42 @@ export enum ComplianceFrameworks {
   Soc2T2 = "soc2t2",
 }
 
+/** Countries */
+export enum Countries {
+  AE = "AE",
+  AU = "AU",
+  BE = "BE",
+  BH = "BH",
+  BR = "BR",
+  CA = "CA",
+  CH = "CH",
+  CL = "CL",
+  CN = "CN",
+  DE = "DE",
+  ES = "ES",
+  FI = "FI",
+  FR = "FR",
+  GB = "GB",
+  HK = "HK",
+  ID = "ID",
+  IE = "IE",
+  IL = "IL",
+  IN = "IN",
+  IT = "IT",
+  JP = "JP",
+  KR = "KR",
+  NL = "NL",
+  NO = "NO",
+  PL = "PL",
+  QA = "QA",
+  SA = "SA",
+  SE = "SE",
+  SG = "SG",
+  TW = "TW",
+  US = "US",
+  ZA = "ZA",
+}
+
 /**
  * Country
  * Country and continent mapping.
@@ -2596,8 +2632,8 @@ export enum TrafficDirection {
   Outbound = "outbound",
 }
 
-/** TrafficPriceWithPKs */
-export interface TrafficPriceWithPKs {
+/** TrafficPriceWithPKsWithMonthlyTraffic */
+export interface TrafficPriceWithPKsWithMonthlyTraffic {
   /**
    * Vendor Id
    * Reference to the Vendor.
@@ -2648,6 +2684,8 @@ export interface TrafficPriceWithPKs {
   observed_at?: string;
   region: RegionBaseWithPKs;
   vendor: VendorBase;
+  /** Price Monthly Traffic */
+  price_monthly_traffic?: number | null;
 }
 
 /** ValidationError */
@@ -3076,6 +3114,14 @@ export interface AssistStoragePriceFiltersAiAssistStoragePriceFiltersGetParams {
 
 /** Response Assist Storage Price Filters Ai Assist Storage Price Filters Get */
 export type AssistStoragePriceFiltersAiAssistStoragePriceFiltersGetData = object;
+
+export interface AssistTrafficPriceFiltersAiAssistTrafficPriceFiltersGetParams {
+  /** Text */
+  text: string;
+}
+
+/** Response Assist Traffic Price Filters Ai Assist Traffic Price Filters Get */
+export type AssistTrafficPriceFiltersAiAssistTrafficPriceFiltersGetData = object;
 
 export interface SearchRegionsRegionsGetParams {
   /**
@@ -3697,7 +3743,7 @@ export interface SearchStoragePricesStoragePricesGetParams {
   /**
    * Limit
    * Maximum number of results. Set to -1 for unlimited.
-   * @default 50
+   * @default 10
    */
   limit?: number;
   /**
@@ -3917,17 +3963,19 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
   /**
    * Direction
    * Direction of the Internet traffic.
+   * @default ["outbound"]
    */
   direction?: "inbound" | "outbound";
   /**
    * Monthly Overall Traffic
    * Overall amount of monthly traffic (GBs).
+   * @default 1
    */
   monthly_traffic?: number | null;
   /**
    * Limit
    * Maximum number of results. Set to -1 for unlimited.
-   * @default 50
+   * @default 10
    */
   limit?: number;
   /**
@@ -3956,4 +4004,4 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
 }
 
 /** Response Search Traffic Prices Traffic Prices Get */
-export type SearchTrafficPricesTrafficPricesGetData = TrafficPriceWithPKs[];
+export type SearchTrafficPricesTrafficPricesGetData = TrafficPriceWithPKsWithMonthlyTraffic[];

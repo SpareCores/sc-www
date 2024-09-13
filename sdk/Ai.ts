@@ -16,6 +16,8 @@ import {
   AssistServerPriceFiltersAiAssistServerPriceFiltersGetParams,
   AssistStoragePriceFiltersAiAssistStoragePriceFiltersGetData,
   AssistStoragePriceFiltersAiAssistStoragePriceFiltersGetParams,
+  AssistTrafficPriceFiltersAiAssistTrafficPriceFiltersGetData,
+  AssistTrafficPriceFiltersAiAssistTrafficPriceFiltersGetParams,
   HTTPValidationError,
 } from "./data-contracts";
 import { HttpClient, RequestParams } from "./http-client";
@@ -79,6 +81,25 @@ export class Ai<SecurityDataType = unknown> {
   ) =>
     this.http.request<AssistStoragePriceFiltersAiAssistStoragePriceFiltersGetData, HTTPValidationError>({
       path: `/ai/assist_storage_price_filters`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+  /**
+   * @description Extract TrafficPrice JSON filters from freetext.
+   *
+   * @tags AI
+   * @name AssistTrafficPriceFiltersAiAssistTrafficPriceFiltersGet
+   * @summary Assist Traffic Price Filters
+   * @request GET:/ai/assist_traffic_price_filters
+   */
+  assistTrafficPriceFiltersAiAssistTrafficPriceFiltersGet = (
+    query: AssistTrafficPriceFiltersAiAssistTrafficPriceFiltersGetParams,
+    params: RequestParams = {},
+  ) =>
+    this.http.request<AssistTrafficPriceFiltersAiAssistTrafficPriceFiltersGetData, HTTPValidationError>({
+      path: `/ai/assist_traffic_price_filters`,
       method: "GET",
       query: query,
       format: "json",

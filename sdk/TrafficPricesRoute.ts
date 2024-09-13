@@ -210,17 +210,19 @@ export namespace TrafficPrices {
       /**
        * Direction
        * Direction of the Internet traffic.
+       * @default ["outbound"]
        */
       direction?: "inbound" | "outbound";
       /**
        * Monthly Overall Traffic
        * Overall amount of monthly traffic (GBs).
+       * @default 1
        */
       monthly_traffic?: number | null;
       /**
        * Limit
        * Maximum number of results. Set to -1 for unlimited.
-       * @default 50
+       * @default 10
        */
       limit?: number;
       /**
