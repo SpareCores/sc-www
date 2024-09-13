@@ -65,10 +65,10 @@ export class StoragesComponent implements OnInit {
     { name: 'REGION', show: true, type: 'region' },
     { name: 'MIN', show: true, type: 'storage', key: 'storage.min_size' },
     { name: 'MAX', show: true, type: 'storage', key: 'storage.max_size' },
-    { name: 'TYPE', show: true, type: 'text', key: 'storage.storage_type',},
-    { name: 'PRICE', show: true, type: 'price', orderField: 'price' },
+    { name: 'TYPE', show: true, type: 'text', key: 'storage.storage_type'},
     { name: 'MAX IOPS', show: true, type: 'text', key: 'storage.max_iops', orderField: 'max_iops' },
     { name: 'MAX THROUGHPUT', show: true, type: 'text', key: 'storage.max_throughput', orderField: 'max_throughput' },
+    { name: 'PRICE', show: true, type: 'price', orderField: 'price' }
   ];
 
   availableCurrencies: CurrencyOption[] = availableCurrencies;
@@ -100,6 +100,11 @@ export class StoragesComponent implements OnInit {
     let limit = this.searchParameters.find((param: any) => param.name === 'limit');
     if(limit && limit.schema && limit.schema.default) {
       this.limit = limit.schema.default;
+    }
+
+    let order = this.searchParameters.find((param: any) => param.name === 'order_by');
+    if(order && order.schema && order.schema.default) {
+      this.orderBy = order.schema.default;
     }
 
     this.refreshColumns();

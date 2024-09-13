@@ -96,6 +96,11 @@ export class TrafficPricesComponent implements OnInit {
       this.limit = limit.schema.default;
     }
 
+    let order = this.searchParameters.find((param: any) => param.name === 'order_by');
+    if(order && order.schema && order.schema.default) {
+      this.orderBy = order.schema.default;
+    }
+
     this.refreshColumns();
 
     this.route.queryParams.subscribe((params: Params) => {
