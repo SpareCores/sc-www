@@ -3,7 +3,7 @@ import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { MYHTTPClient } from './my_http/my-http';
 import { Server } from '../../../sdk/Server';
 import { Servers } from '../../../sdk/Servers';
-import { AssistServerFiltersAiAssistServerFiltersGetParams, AssistServerPriceFiltersAiAssistServerPriceFiltersGetParams, SearchServerPricesServerPricesGetParams, SearchServersServersGetParams, SearchStoragePricesStoragePricesGetParams, SearchTrafficPricesTrafficPricesGetParams } from '../../../sdk/data-contracts';
+import { AssistServerFiltersAiAssistServerFiltersGetParams, SearchServerPricesServerPricesGetParams, SearchServersServersGetParams, SearchStoragePricesStoragePricesGetParams, SearchTrafficPricesTrafficPricesGetParams } from '../../../sdk/data-contracts';
 import { Table } from '../../../sdk/Table';
 import { Ai } from '../../../sdk/Ai';
 import { ServerPrices } from '../../../sdk/ServerPrices';
