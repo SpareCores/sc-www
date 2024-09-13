@@ -61,12 +61,18 @@ export class KeeperAPIService {
     return this.ServerPricesController.searchServerPricesServerPricesGet(query);
   }
 
-  public parsePromptforServers(query: AssistServerFiltersAiAssistServerFiltersGetParams): Promise<any> {
-    return this.AIController.assistServerFiltersAiAssistServerFiltersGet(query);
-  }
-
-  public parsePromptforServerPrices(query: AssistServerPriceFiltersAiAssistServerPriceFiltersGetParams): Promise<any> {
-    return this.AIController.assistServerPriceFiltersAiAssistServerPriceFiltersGet(query);
+  public parsePromptFor(type: string, query: AssistServerFiltersAiAssistServerFiltersGetParams): Promise<any> {
+    switch (type) {
+      case 'traffic_prices':
+        return this.AIController.assistTrafficPriceFiltersAiAssistTrafficPriceFiltersGet(query);
+      case 'storages':
+        return this.AIController.assistStoragePriceFiltersAiAssistStoragePriceFiltersGet(query);
+      case 'server_prices':
+        return this.AIController.assistServerPriceFiltersAiAssistServerPriceFiltersGet(query);
+      case 'servers':
+      default:
+        return this.AIController.assistServerFiltersAiAssistServerFiltersGet(query);
+    }
   }
 
   public getCountries(): Promise<any> {

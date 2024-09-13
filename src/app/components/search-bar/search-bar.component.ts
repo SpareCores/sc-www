@@ -28,8 +28,7 @@ export class SearchBarComponent implements OnInit, OnChanges{
   @Input() searchParameters: any[] = [];
   @Input() filterCategories: any[] = [];
   @Input() selectedCurrency: any | null = null;
-  @Input() isPriceSearch = false;
-  @Input() showSearchPrompt = true;
+  @Input() AIAssistantType = 'servers';
 
   @Output() searchChanged = new EventEmitter<any>();
 
@@ -413,9 +412,7 @@ export class SearchBarComponent implements OnInit, OnChanges{
 
     if(this.freetextSearchInput) {
       try {
-        let response = this.isPriceSearch ?
-          await this.keeperAPI.parsePromptforServerPrices({text:this.freetextSearchInput}) :
-          await this.keeperAPI.parsePromptforServers({text:this.freetextSearchInput});
+        let response = await this.keeperAPI.parsePromptFor(this.AIAssistantType, {text:this.freetextSearchInput});
 
         this.modalResponse = response.body;
         this.modalResponseStr = [];

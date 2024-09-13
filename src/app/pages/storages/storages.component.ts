@@ -97,6 +97,11 @@ export class StoragesComponent implements OnInit {
     const parameters = this.openApiJson.paths['/storage_prices'].get.parameters || [];
     this.searchParameters = parameters;
 
+    let limit = this.searchParameters.find((param: any) => param.name === 'limit');
+    if(limit && limit.schema && limit.schema.default) {
+      this.limit = limit.schema.default;
+    }
+
     this.refreshColumns();
 
     this.route.queryParams.subscribe((params: Params) => {
