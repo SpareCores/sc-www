@@ -28,7 +28,7 @@ export class SearchBarComponent implements OnInit, OnChanges{
   @Input() searchParameters: any[] = [];
   @Input() filterCategories: any[] = [];
   @Input() selectedCurrency: any | null = null;
-  @Input() isPriceSearch = false;
+  @Input() AIAssistantType = 'servers';
 
   @Output() searchChanged = new EventEmitter<any>();
 
@@ -38,6 +38,7 @@ export class SearchBarComponent implements OnInit, OnChanges{
 
   complianceFrameworks: any[] = [];
   vendors: any[] = [];
+  storageIds: any[] = [];
 
   countryMetadata: CountryMetadata[] = [];
   continentMetadata: ContinentMetadata[] = [];
@@ -69,6 +70,9 @@ export class SearchBarComponent implements OnInit, OnChanges{
       this.vendors = response.body;
     });
 
+    this.keeperAPI.getStorages().then((response: any) => {
+      this.storageIds = response.body;
+    });
 
     this.valueChangeDebouncer.pipe(debounceTime(500)).subscribe(() => {
       this.filterServers();
@@ -172,6 +176,10 @@ export class SearchBarComponent implements OnInit, OnChanges{
     return this.vendors.find((item) => item.vendor_id === id)?.name || id;
   }
 
+  getStorageName(id: string) {
+    return this.storageIds.find((item) => item.storage_id === id)?.name || id;
+  }
+
   getStep(parameter: any) {
     return parameter.schema.step || 1;
   }
@@ -204,6 +212,14 @@ export class SearchBarComponent implements OnInit, OnChanges{
 
     if(name === 'vendor') {
       return 'vendor';
+    }
+
+    if(name === 'vendor') {
+      return 'vendor';
+    }
+
+    if(name === 'storage_id') {
+      return 'storage_id';
     }
 
     if((type === 'integer' || type === 'number') && parameter.schema.minimum && parameter.schema.maximum) {
@@ -396,9 +412,7 @@ export class SearchBarComponent implements OnInit, OnChanges{
 
     if(this.freetextSearchInput) {
       try {
-        let response = this.isPriceSearch ?
-          await this.keeperAPI.parsePromptforServerPrices({text:this.freetextSearchInput}) :
-          await this.keeperAPI.parsePromptforServers({text:this.freetextSearchInput});
+        let response = await this.keeperAPI.parsePromptFor(this.AIAssistantType, {text:this.freetextSearchInput});
 
         this.modalResponse = response.body;
         this.modalResponseStr = [];

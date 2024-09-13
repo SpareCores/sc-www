@@ -3,7 +3,7 @@
 import { Component, ElementRef, Inject, PLATFORM_ID, OnInit, ViewChild, OnDestroy, Renderer2 } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { KeeperAPIService } from '../../services/keeper-api.service';
-import { GetSimilarServersServerVendorServerSimilarServersByNGetData, Server, ServerPKs, ServerPKsWithPrices, ServerPricePKs, TableServerTableServerGetData } from '../../../../sdk/data-contracts';
+import { GetSimilarServersServerVendorServerSimilarServersByNumGetData, Server, ServerPKs, ServerPKsWithPrices, ServerPricePKs, TableServerTableServerGetData } from '../../../../sdk/data-contracts';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
@@ -65,10 +65,10 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
   regionFilters: any[] = [];
 
-  similarByFamily: GetSimilarServersServerVendorServerSimilarServersByNGetData = [];
-  similarBySpecs: GetSimilarServersServerVendorServerSimilarServersByNGetData = [];
+  similarByFamily: GetSimilarServersServerVendorServerSimilarServersByNumGetData = [];
+  similarBySpecs: GetSimilarServersServerVendorServerSimilarServersByNumGetData = [];
 
-  similarServers: GetSimilarServersServerVendorServerSimilarServersByNGetData = [];
+  similarServers: GetSimilarServersServerVendorServerSimilarServersByNumGetData = [];
 
   dropdownSimilar: any;
   similarOptions: any[] = [
@@ -380,7 +380,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
             this.faqs.push(
               {
                 question: `Are there any other sized servers in the ${this.serverDetails.family} server family?`,
-                html: `Yes! In addition to the ${this.serverDetails.display_name} server, the ${this.serverDetails.family} server family includes ${this.similarByFamily.length} other sizes: ${this.similarByFamily.map((s) => this.serverUrl(s, true)).join(', ')}.`
+                html: `Yes! In addition to the ${this.serverDetails.display_name} server, the ${this.serverDetails.family} server family includes ${this.similarByFamily.length} other sizes: ${this.similarByFamily.map((s: any) => this.serverUrl(s, true)).join(', ')}.`
               });
 
           }
@@ -389,7 +389,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
             this.faqs.push(
               {
                 question: `What other servers offer similar performance to ${this.serverDetails.display_name}?`,
-                html: `Looking at the number of GPU, vCPUs, and memory amount, the following top 10 servers come with similar specs: ${this.similarBySpecs.map((s) => this.serverUrl(s, true)).join(', ')}.`
+                html: `Looking at the number of GPU, vCPUs, and memory amount, the following top 10 servers come with similar specs: ${this.similarBySpecs.map((s: any) => this.serverUrl(s, true)).join(', ')}.`
               });
           }
 
@@ -1413,7 +1413,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     }
 
     if(this.similarByFamily.length) {
-      json['isSimilarTo'] = this.similarByFamily.map((s) => {
+      json['isSimilarTo'] = this.similarByFamily.map((s: any) => {
         return {
           "@type": "Product",
           "name": `${s.display_name} (${s.vendor_id})`,

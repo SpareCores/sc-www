@@ -9,17 +9,17 @@
  * ---------------------------------------------------------------
  */
 
-import { OrderDir, SearchStoragePricesStoragePricesGetData } from "./data-contracts";
+import { OrderDir, SearchTrafficPricesTrafficPricesGetData } from "./data-contracts";
 
-export namespace StoragePrices {
+export namespace TrafficPrices {
   /**
    * No description
    * @tags Query Resources
-   * @name SearchStoragePricesStoragePricesGet
-   * @summary Search Storage Prices
-   * @request GET:/storage_prices
+   * @name SearchTrafficPricesTrafficPricesGet
+   * @summary Search Traffic Prices
+   * @request GET:/traffic_prices
    */
-  export namespace SearchStoragePricesStoragePricesGet {
+  export namespace SearchTrafficPricesTrafficPricesGet {
     export type RequestParams = {};
     export type RequestQuery = {
       /**
@@ -32,21 +32,6 @@ export namespace StoragePrices {
        * Filter for regions with kow CO2 emission only.
        */
       green_energy?: boolean | null;
-      /**
-       * Storage Size
-       * Minimum amount of storage (GBs).
-       */
-      storage_min?: number | null;
-      /**
-       * Storage Type
-       * Type of the storage attached to the server.
-       */
-      storage_type?: "hdd" | "ssd" | "nvme ssd" | "network";
-      /**
-       * Compliance Framework id
-       * Compliance framework implemented at the vendor.
-       */
-      compliance_framework?: "hipaa" | "iso27001" | "soc2t2";
       /**
        * Region id
        * Identifier of the region.
@@ -223,6 +208,18 @@ export namespace StoragePrices {
         | "US"
         | "ZA";
       /**
+       * Direction
+       * Direction of the Internet traffic.
+       * @default ["outbound"]
+       */
+      direction?: "inbound" | "outbound";
+      /**
+       * Monthly Overall Traffic
+       * Overall amount of monthly traffic (GBs).
+       * @default 1
+       */
+      monthly_traffic?: number | null;
+      /**
        * Limit
        * Maximum number of results. Set to -1 for unlimited.
        * @default 10
@@ -254,6 +251,6 @@ export namespace StoragePrices {
     };
     export type RequestBody = never;
     export type RequestHeaders = {};
-    export type ResponseBody = SearchStoragePricesStoragePricesGetData;
+    export type ResponseBody = SearchTrafficPricesTrafficPricesGetData;
   }
 }
