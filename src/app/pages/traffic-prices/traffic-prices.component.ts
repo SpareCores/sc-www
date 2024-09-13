@@ -66,8 +66,8 @@ export class TrafficPricesComponent implements OnInit {
     { name: 'REGION', show: true, type: 'region' },
     { name: 'DIRECTION', show: true, type: 'text', key: 'direction',},
     { name: 'PRICE', show: true, type: 'price', orderField: 'price' },
-    { name: 'PRICE TOTAL', show: true, type: 'priceMonthly' },
     { name: 'PRICE TIERS', show: true, type: 'price_tiers' },
+    { name: 'PRICE TOTAL', show: true, type: 'priceMonthly' },
   ];
 
   availableCurrencies: CurrencyOption[] = availableCurrencies;
@@ -130,6 +130,7 @@ export class TrafficPricesComponent implements OnInit {
         'Explore, search, and evaluate ingress (inbound) and egress (outbound) traffic pricing options and tiers of various cloud providers in the table below. Note that the pricing tiers usually apply at the account level. Enter the estimated monthly traffic (instead of the default 1 GB) to calculate pricing based on the known tiers.',
         'cloud, server, instance, price, comparison, spot, sparecores');
 
+      this.query.add_total_count_header = true;
 
       this._searchTrafficPrices();
 
@@ -218,7 +219,7 @@ export class TrafficPricesComponent implements OnInit {
     this.keeperAPI.getTrafficPrices(this.query).then((results: any) => {
       this.traffic_prices = results.body;
       this.isLoading = false;
-      this.totalPages = this.traffic_prices?.length === this.limit ? this.page + 1 : this.page;
+      this.totalPages = Math.ceil(parseInt(results?.headers?.get('x-total-count') || '0') / this.limit);
     });
   }
 
@@ -245,7 +246,7 @@ export class TrafficPricesComponent implements OnInit {
   selectCurrency(currency: any) {
     this.selectedCurrency = currency;
 
-   this.searchOptionsChanged(this.query);
+    this.searchOptionsChanged(this.query);
 
     this.dropdownCurrency?.hide();
   }

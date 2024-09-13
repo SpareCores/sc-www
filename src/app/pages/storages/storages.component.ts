@@ -131,6 +131,7 @@ export class StoragesComponent implements OnInit {
         this.selectedCurrency = this.availableCurrencies.find((currency) => currency.slug === query.currency) || this.availableCurrencies[0];
       }
 
+      this.query.add_total_count_header = true;
 
       this._searchStorages();
 
@@ -219,7 +220,7 @@ export class StoragesComponent implements OnInit {
     this.keeperAPI.getStoragePrices(this.query).then((results: any) => {
       this.storages = results.body;
       this.isLoading = false;
-      this.totalPages = this.storages?.length === this.limit ? this.page + 1 : this.page;
+      this.totalPages = Math.ceil(parseInt(results?.headers?.get('x-total-count') || '0') / this.limit);
     });
   }
 
