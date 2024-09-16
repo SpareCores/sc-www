@@ -184,6 +184,16 @@ export class ServerPricesComponent implements OnInit {
     const parameters = this.openApiJson.paths['/server_prices'].get.parameters || [];
     this.searchParameters = parameters;
 
+    let limit = this.searchParameters.find((param: any) => param.name === 'limit');
+    if(limit && limit.schema && limit.schema.default) {
+      this.limit = limit.schema.default;
+    }
+
+    let order = this.searchParameters.find((param: any) => param.name === 'order_by');
+    if(order && order.schema && order.schema.default) {
+      this.orderBy = order.schema.default;
+    }
+
     this.route.queryParams.subscribe((params: Params) => {
       const query: any = JSON.parse(JSON.stringify(params || '{}'));
 
