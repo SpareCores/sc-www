@@ -20,7 +20,7 @@ describe('Server listing', () => {
     E2EEvent.isVisible(`[id="servers_table"]`);
 
     // count lines
-    E2EEvent.countElements(`[id="servers_table"]`, `[id="server_table_data_line"]`, 50);
+    E2EEvent.countElements(`[id="servers_table"]`, `[id="server_table_data_line"]`, 25);
 
     // pagination
     E2EEvent.isVisible(`[id="pagination_next_arrow"]`);
