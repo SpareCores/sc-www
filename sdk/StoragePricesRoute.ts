@@ -240,7 +240,6 @@ export namespace StoragePrices {
        */
       order_by?: string;
       /**
-       * Order Dir
        * Order direction.
        * @default "asc"
        */
@@ -251,6 +250,12 @@ export namespace StoragePrices {
        * @default "USD"
        */
       currency?: string | null;
+      /**
+       * Add Total Count Header
+       * Add the X-Total-Count header to the response with the overall number of items (without paging). Note that it might reduce response times.
+       * @default false
+       */
+      add_total_count_header?: boolean;
     };
     export type RequestBody = never;
     export type RequestHeaders = {};

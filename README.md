@@ -42,6 +42,8 @@ following environment variable(s):
 - NG_APP_SENTRY_PROFILE_SAMPLE_RATE (default to 0)
 - NG_APP_SENTRY_ENVIRONMENT (default to "development")
 
+If you need to update the Keeper SDK, use the `generate-api(-prod)` script.
+
 ## Development server
 
 Run `ng serve` for a dev server, which listens on `http://localhost:4200/` by default.
@@ -68,9 +70,7 @@ Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.
 
 ## Running end-to-end tests
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your
-choice. To use this command, you need to first add a package that
-implements end-to-end testing capabilities.
+End-to-end tests are implemented using Cypress.
 
 ## License
 
