@@ -3207,7 +3207,7 @@ export interface SearchServersServersGetParams {
   /**
    * Limit
    * Maximum number of results. Set to -1 for unlimited.
-   * @default 50
+   * @default 25
    */
   limit?: number;
   /**
@@ -3222,7 +3222,6 @@ export interface SearchServersServersGetParams {
    */
   order_by?: string;
   /**
-   * Order Dir
    * Order direction.
    * @default "asc"
    */
@@ -3502,7 +3501,7 @@ export interface SearchServerPricesServerPricesGetParams {
    * Limit
    * Maximum number of results.
    * @max 250
-   * @default 50
+   * @default 25
    */
   limit?: number;
   /**
@@ -3517,7 +3516,6 @@ export interface SearchServerPricesServerPricesGetParams {
    */
   order_by?: string;
   /**
-   * Order Dir
    * Order direction.
    * @default "asc"
    */
@@ -3758,7 +3756,6 @@ export interface SearchStoragePricesStoragePricesGetParams {
    */
   order_by?: string;
   /**
-   * Order Dir
    * Order direction.
    * @default "asc"
    */
@@ -3769,6 +3766,12 @@ export interface SearchStoragePricesStoragePricesGetParams {
    * @default "USD"
    */
   currency?: string | null;
+  /**
+   * Add Total Count Header
+   * Add the X-Total-Count header to the response with the overall number of items (without paging). Note that it might reduce response times.
+   * @default false
+   */
+  add_total_count_header?: boolean;
 }
 
 /** Response Search Storage Prices Storage Prices Get */
@@ -3785,6 +3788,11 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
    * Filter for regions with kow CO2 emission only.
    */
   green_energy?: boolean | null;
+  /**
+   * Compliance Framework id
+   * Compliance framework implemented at the vendor.
+   */
+  compliance_framework?: "hipaa" | "iso27001" | "soc2t2";
   /**
    * Region id
    * Identifier of the region.
@@ -3990,7 +3998,6 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
    */
   order_by?: string;
   /**
-   * Order Dir
    * Order direction.
    * @default "asc"
    */
@@ -4001,6 +4008,12 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
    * @default "USD"
    */
   currency?: string | null;
+  /**
+   * Add Total Count Header
+   * Add the X-Total-Count header to the response with the overall number of items (without paging). Note that it might reduce response times.
+   * @default false
+   */
+  add_total_count_header?: boolean;
 }
 
 /** Response Search Traffic Prices Traffic Prices Get */

@@ -94,7 +94,7 @@ export namespace Servers {
       /**
        * Limit
        * Maximum number of results. Set to -1 for unlimited.
-       * @default 50
+       * @default 25
        */
       limit?: number;
       /**
@@ -109,7 +109,6 @@ export namespace Servers {
        */
       order_by?: string;
       /**
-       * Order Dir
        * Order direction.
        * @default "asc"
        */

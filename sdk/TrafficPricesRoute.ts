@@ -33,6 +33,11 @@ export namespace TrafficPrices {
        */
       green_energy?: boolean | null;
       /**
+       * Compliance Framework id
+       * Compliance framework implemented at the vendor.
+       */
+      compliance_framework?: "hipaa" | "iso27001" | "soc2t2";
+      /**
        * Region id
        * Identifier of the region.
        */
@@ -237,7 +242,6 @@ export namespace TrafficPrices {
        */
       order_by?: string;
       /**
-       * Order Dir
        * Order direction.
        * @default "asc"
        */
@@ -248,6 +252,12 @@ export namespace TrafficPrices {
        * @default "USD"
        */
       currency?: string | null;
+      /**
+       * Add Total Count Header
+       * Add the X-Total-Count header to the response with the overall number of items (without paging). Note that it might reduce response times.
+       * @default false
+       */
+      add_total_count_header?: boolean;
     };
     export type RequestBody = never;
     export type RequestHeaders = {};

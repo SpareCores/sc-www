@@ -285,7 +285,7 @@ export namespace ServerPrices {
        * Limit
        * Maximum number of results.
        * @max 250
-       * @default 50
+       * @default 25
        */
       limit?: number;
       /**
@@ -300,7 +300,6 @@ export namespace ServerPrices {
        */
       order_by?: string;
       /**
-       * Order Dir
        * Order direction.
        * @default "asc"
        */
