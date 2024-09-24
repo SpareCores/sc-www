@@ -415,6 +415,23 @@ export enum CpuArchitecture {
   X8664Mac = "x86_64_mac",
 }
 
+/** CpuFamilies */
+export enum CpuFamilies {
+  ARMv8 = "ARMv8",
+  AmpereAltra = "Ampere Altra",
+  EPYC = "EPYC",
+  Xeon = "Xeon",
+}
+
+/** CpuManufacturers */
+export enum CpuManufacturers {
+  AMD = "AMD",
+  AWS = "AWS",
+  Ampere = "Ampere",
+  Apple = "Apple",
+  Intel = "Intel",
+}
+
 /**
  * DdrGeneration
  * Generation of the DDR SDRAM.
@@ -464,6 +481,43 @@ export interface Gpu {
   mem_clock?: number | null;
   /** Video Clock */
   video_clock?: number | null;
+}
+
+/** GpuFamilies */
+export enum GpuFamilies {
+  AdaLovelace = "Ada Lovelace",
+  Ampere = "Ampere",
+  Gaudi = "Gaudi",
+  Hopper = "Hopper",
+  Kepler = "Kepler",
+  Maxwell = "Maxwell",
+  RadeonProNavi = "Radeon Pro Navi",
+  Turing = "Turing",
+  Volta = "Volta",
+}
+
+/** GpuManufacturers */
+export enum GpuManufacturers {
+  AMD = "AMD",
+  Habana = "Habana",
+  NVIDIA = "NVIDIA",
+}
+
+/** GpuModels */
+export enum GpuModels {
+  A100 = "A100",
+  A10G = "A10G",
+  H100 = "H100",
+  H200 = "H200",
+  HL205 = "HL-205",
+  K80 = "K80",
+  L4 = "L4",
+  L40S = "L40S",
+  M60 = "M60",
+  T4 = "T4",
+  T4G = "T4G",
+  V100 = "V100",
+  V520 = "V520",
 }
 
 /** HTTPValidationError */
@@ -3149,10 +3203,19 @@ export interface SearchServersServersGetParams {
    */
   vcpus_min?: number;
   /**
+   * Maximum vCPUs
+   * Maximum number of virtual CPUs.
+   */
+  vcpus_max?: number | null;
+  /**
    * Processor architecture
    * Processor architecture.
    */
   architecture?: "arm64" | "arm64_mac" | "i386" | "x86_64" | "x86_64_mac";
+  /** Processor manufacturer */
+  cpu_manufacturer?: "AMD" | "AWS" | "Ampere" | "Apple" | "Intel";
+  /** Processor family */
+  cpu_family?: "ARMv8" | "Ampere Altra" | "EPYC" | "Xeon";
   /**
    * SCore
    * Minimum stress-ng CPU workload score.
@@ -3204,6 +3267,34 @@ export interface SearchServersServersGetParams {
    * Minimum amount of total GPU memory (GBs) in all GPUs.
    */
   gpu_memory_total?: number | null;
+  /** GPU manufacturer */
+  gpu_manufacturer?: "AMD" | "Habana" | "NVIDIA";
+  /** GPU family */
+  gpu_family?:
+    | "Ada Lovelace"
+    | "Ampere"
+    | "Gaudi"
+    | "Hopper"
+    | "Kepler"
+    | "Maxwell"
+    | "Radeon Pro Navi"
+    | "Turing"
+    | "Volta";
+  /** GPU model */
+  gpu_model?:
+    | "A100"
+    | "A10G"
+    | "H100"
+    | "H200"
+    | "HL-205"
+    | "K80"
+    | "L4"
+    | "L40S"
+    | "M60"
+    | "T4"
+    | "T4G"
+    | "V100"
+    | "V520";
   /**
    * Limit
    * Maximum number of results. Set to -1 for unlimited.
@@ -3252,10 +3343,19 @@ export interface SearchServerPricesServerPricesGetParams {
    */
   vcpus_min?: number;
   /**
+   * Maximum vCPUs
+   * Maximum number of virtual CPUs.
+   */
+  vcpus_max?: number | null;
+  /**
    * Processor architecture
    * Processor architecture.
    */
   architecture?: "arm64" | "arm64_mac" | "i386" | "x86_64" | "x86_64_mac";
+  /** Processor manufacturer */
+  cpu_manufacturer?: "AMD" | "AWS" | "Ampere" | "Apple" | "Intel";
+  /** Processor family */
+  cpu_family?: "ARMv8" | "Ampere Altra" | "EPYC" | "Xeon";
   /**
    * SCore
    * Minimum stress-ng CPU workload score.
@@ -3497,6 +3597,34 @@ export interface SearchServerPricesServerPricesGetParams {
    * Minimum amount of total GPU memory (GBs) in all GPUs.
    */
   gpu_memory_total?: number | null;
+  /** GPU manufacturer */
+  gpu_manufacturer?: "AMD" | "Habana" | "NVIDIA";
+  /** GPU family */
+  gpu_family?:
+    | "Ada Lovelace"
+    | "Ampere"
+    | "Gaudi"
+    | "Hopper"
+    | "Kepler"
+    | "Maxwell"
+    | "Radeon Pro Navi"
+    | "Turing"
+    | "Volta";
+  /** GPU model */
+  gpu_model?:
+    | "A100"
+    | "A10G"
+    | "H100"
+    | "H200"
+    | "HL-205"
+    | "K80"
+    | "L4"
+    | "L40S"
+    | "M60"
+    | "T4"
+    | "T4G"
+    | "V100"
+    | "V520";
   /**
    * Limit
    * Maximum number of results.

@@ -107,6 +107,18 @@ export class SearchBarComponent implements OnInit, OnChanges{
     this.searchParameters?.forEach((item: any) => {
       let value = this.query[item.name] || item.schema.default || null;
 
+      //optional integer array
+      let integerAnyOf = item.schema.anyOf?.find((item: any)  => item.type === 'integer');
+      if(integerAnyOf) {
+        if(integerAnyOf.minimum && integerAnyOf.maximum) {
+          item.schema.minimum = 0; // can be null
+          item.schema.maximum = integerAnyOf.maximum;
+          if(value === null) {
+            value = 0;
+          }
+        }
+      }
+
       // if type is a string try split by ,
       if(typeof this.query[item.name] === 'string') {
         value = this.query[item.name].indexOf(',') !== -1 ? this.query[item.name].split(',') : this.query[item.name];
@@ -198,6 +210,9 @@ export class SearchBarComponent implements OnInit, OnChanges{
     const type = parameter.schema.type || parameter.schema.anyOf?.find((item: any)  => item.type !== 'null')?.type || 'text';
     const name = parameter.name;
 
+    //if(name === 'vcpus_max')
+    //  console.log('type', type, name, parameter);
+
     if(name === 'countries') {
       return 'country';
     }
@@ -222,7 +237,7 @@ export class SearchBarComponent implements OnInit, OnChanges{
       return 'storage_id';
     }
 
-    if((type === 'integer' || type === 'number') && parameter.schema.minimum && parameter.schema.maximum) {
+    if((type === 'integer' || type === 'number') && (parameter.schema.minimum || parameter.schema.minimum === 0) && parameter.schema.maximum) {
       return 'range';
     }
 
@@ -244,7 +259,19 @@ export class SearchBarComponent implements OnInit, OnChanges{
     return 'text';
   }
 
-  valueChanged() {
+  valueChanged(item?: any) {
+    if(item && item.name === 'vcpus_min') {
+      let vcpu_max = this.searchParameters.find((param: any) => param.name === 'vcpus_max');
+      if(vcpu_max.modelValue && vcpu_max.modelValue < item.modelValue) {
+        vcpu_max.modelValue = item.modelValue;
+      }
+    }
+    if(item && item.name === 'vcpus_max') {
+      let vcpu_min = this.searchParameters.find((param: any) => param.name === 'vcpus_min');
+      if(vcpu_min.modelValue && vcpu_min.modelValue > item.modelValue) {
+        vcpu_min.modelValue = item.modelValue;
+      }
+    }
     this.valueChangeDebouncer.next(0);
   }
 

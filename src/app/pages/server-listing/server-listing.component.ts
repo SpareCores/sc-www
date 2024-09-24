@@ -98,8 +98,10 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     { name: 'BEST PRICE', show: true, type: 'price' },
     { name: 'GPU MIN MEMORY', show: false, type: 'gpu_memory_min', orderField: 'gpu_memory_min' },
     { name: 'GPU TOTAL MEMORY', show: false, type: 'gpu_memory_total', orderField: 'gpu_memory_total' },
+    { name: 'GPU MODEL', show: false, type: 'gpu_model' },
     { name: 'ARCHITECTURE', show: false, type: 'text', key: 'cpu_architecture' },
     { name: 'CPU ALLOCATION', show: false, type: 'text', key: 'cpu_allocation' },
+    { name: 'CPU MODEL', show: false, type: 'cpu_model' },
     { name: 'STATUS', show: false, type: 'text', key: 'status' },
     { name: 'VENDOR', show: false, type: 'vendor' },
   ];
