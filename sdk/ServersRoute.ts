@@ -38,8 +38,11 @@ export namespace Servers {
       /**
        * Maximum vCPUs
        * Maximum number of virtual CPUs.
+       * @min 1
+       * @max 256
+       * @default 256
        */
-      vcpus_max?: number | null;
+      vcpus_max?: number;
       /**
        * Processor architecture
        * Processor architecture.
@@ -146,6 +149,7 @@ export namespace Servers {
        */
       order_by?: string;
       /**
+       * Order Dir
        * Order direction.
        * @default "asc"
        */
