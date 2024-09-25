@@ -107,18 +107,6 @@ export class SearchBarComponent implements OnInit, OnChanges{
     this.searchParameters?.forEach((item: any) => {
       let value = this.query[item.name] || item.schema.default || null;
 
-      //optional integer array
-      let integerAnyOf = item.schema.anyOf?.find((item: any)  => item.type === 'integer');
-      if(integerAnyOf) {
-        if(integerAnyOf.minimum && integerAnyOf.maximum) {
-          item.schema.minimum = 0; // can be null
-          item.schema.maximum = integerAnyOf.maximum;
-          if(value === null) {
-            value = 0;
-          }
-        }
-      }
-
       // if type is a string try split by ,
       if(typeof this.query[item.name] === 'string') {
         value = this.query[item.name].indexOf(',') !== -1 ? this.query[item.name].split(',') : this.query[item.name];
