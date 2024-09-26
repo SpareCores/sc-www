@@ -14,8 +14,8 @@ jobs:
           fetch-depth: 0
       - name: Inject legal docs
         env:
-          LEGAL_TOKEN=${{ secrets.LEGAL_TOKEN }}
-          LEGAL_URL=${{ secrets.LEGAL_URL }}
+          LEGAL_TOKEN: ${{ secrets.LEGAL_TOKEN }}
+          LEGAL_URL: ${{ secrets.LEGAL_URL }}
         run: 'curl -s -L -H "Authorization: token ${LEGAL_TOKEN}" ${LEGAL_URL} | tar xz --strip-components=1'
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
