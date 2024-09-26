@@ -36,10 +36,19 @@ export namespace Servers {
        */
       vcpus_min?: number;
       /**
+       * Maximum vCPUs
+       * Maximum number of virtual CPUs.
+       */
+      vcpus_max?: number | null;
+      /**
        * Processor architecture
        * Processor architecture.
        */
       architecture?: "arm64" | "arm64_mac" | "i386" | "x86_64" | "x86_64_mac";
+      /** Processor manufacturer */
+      cpu_manufacturer?: "AMD" | "AWS" | "Ampere" | "Apple" | "Intel";
+      /** Processor family */
+      cpu_family?: "ARMv8" | "Ampere Altra" | "EPYC" | "Xeon";
       /**
        * SCore
        * Minimum stress-ng CPU workload score.
@@ -91,6 +100,34 @@ export namespace Servers {
        * Minimum amount of total GPU memory (GBs) in all GPUs.
        */
       gpu_memory_total?: number | null;
+      /** GPU manufacturer */
+      gpu_manufacturer?: "AMD" | "Habana" | "NVIDIA";
+      /** GPU family */
+      gpu_family?:
+        | "Ada Lovelace"
+        | "Ampere"
+        | "Gaudi"
+        | "Hopper"
+        | "Kepler"
+        | "Maxwell"
+        | "Radeon Pro Navi"
+        | "Turing"
+        | "Volta";
+      /** GPU model */
+      gpu_model?:
+        | "A100"
+        | "A10G"
+        | "H100"
+        | "H200"
+        | "HL-205"
+        | "K80"
+        | "L4"
+        | "L40S"
+        | "M60"
+        | "T4"
+        | "T4G"
+        | "V100"
+        | "V520";
       /**
        * Limit
        * Maximum number of results. Set to -1 for unlimited.
@@ -109,6 +146,7 @@ export namespace Servers {
        */
       order_by?: string;
       /**
+       * Order Dir
        * Order direction.
        * @default "asc"
        */
