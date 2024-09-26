@@ -125,6 +125,10 @@ export class SearchBarComponent implements OnInit, OnChanges{
         }
       }
 
+      if(!value && item.schema.null_value) {
+        value = item.schema.null_value;
+      }
+
       item.modelValue = value;
     });
 
@@ -160,7 +164,10 @@ export class SearchBarComponent implements OnInit, OnChanges{
 
   getQueryObject() {
     const paramObject = this.searchParameters?.map((param: any) => {
-      return ((param.modelValue || param.modelValue === false) && param.schema.category_id && param.schema.default !== param.modelValue) ?
+      return ((param.modelValue || param.modelValue === false) &&
+              param.schema.category_id &&
+              param.schema.default !== param.modelValue &&
+              param.schema.null_value !== param.modelValue) ?
               {[param.name]: param.modelValue} :
               {};
     }).reduce((acc: any, curr: any) => {  return {...acc, ...curr}; }, {});
@@ -225,7 +232,7 @@ export class SearchBarComponent implements OnInit, OnChanges{
       return 'storage_id';
     }
 
-    if((type === 'integer' || type === 'number') && (parameter.schema.minimum || parameter.schema.minimum === 0) && parameter.schema.maximum) {
+    if((type === 'integer' || type === 'number') && (parameter.schema.range_min || parameter.schema.range_min === 0) && parameter.schema.range_max) {
       return 'range';
     }
 

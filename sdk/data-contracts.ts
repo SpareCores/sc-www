@@ -3205,11 +3205,8 @@ export interface SearchServersServersGetParams {
   /**
    * Maximum vCPUs
    * Maximum number of virtual CPUs.
-   * @min 1
-   * @max 256
-   * @default 256
    */
-  vcpus_max?: number;
+  vcpus_max?: number | null;
   /**
    * Processor architecture
    * Processor architecture.
@@ -3349,10 +3346,8 @@ export interface SearchServerPricesServerPricesGetParams {
   /**
    * Maximum vCPUs
    * Maximum number of virtual CPUs.
-   * @min 1
-   * @max 256
    */
-  vcpus_max?: number;
+  vcpus_max?: number | null;
   /**
    * Processor architecture
    * Processor architecture.

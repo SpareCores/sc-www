@@ -38,10 +38,8 @@ export namespace ServerPrices {
       /**
        * Maximum vCPUs
        * Maximum number of virtual CPUs.
-       * @min 1
-       * @max 256
        */
-      vcpus_max?: number;
+      vcpus_max?: number | null;
       /**
        * Processor architecture
        * Processor architecture.
