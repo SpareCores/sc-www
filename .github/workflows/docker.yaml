@@ -52,4 +52,5 @@ jobs:
           SENTRY_URL: ${{ secrets.SENTRY_URL }}
         with:
           environment: production
+          ignore_missing: true
 
