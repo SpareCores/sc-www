@@ -125,6 +125,10 @@ export class SearchBarComponent implements OnInit, OnChanges{
         }
       }
 
+      if(!value && item.schema.null_value) {
+        value = item.schema.null_value;
+      }
+
       item.modelValue = value;
     });
 
@@ -160,7 +164,10 @@ export class SearchBarComponent implements OnInit, OnChanges{
 
   getQueryObject() {
     const paramObject = this.searchParameters?.map((param: any) => {
-      return ((param.modelValue || param.modelValue === false) && param.schema.category_id && param.schema.default !== param.modelValue) ?
+      return ((param.modelValue || param.modelValue === false) &&
+              param.schema.category_id &&
+              param.schema.default !== param.modelValue &&
+              param.schema.null_value !== param.modelValue) ?
               {[param.name]: param.modelValue} :
               {};
     }).reduce((acc: any, curr: any) => {  return {...acc, ...curr}; }, {});
@@ -222,7 +229,7 @@ export class SearchBarComponent implements OnInit, OnChanges{
       return 'storage_id';
     }
 
-    if((type === 'integer' || type === 'number') && parameter.schema.minimum && parameter.schema.maximum) {
+    if((type === 'integer' || type === 'number') && (parameter.schema.range_min || parameter.schema.range_min === 0) && parameter.schema.range_max) {
       return 'range';
     }
 
@@ -244,7 +251,19 @@ export class SearchBarComponent implements OnInit, OnChanges{
     return 'text';
   }
 
-  valueChanged() {
+  valueChanged(item?: any) {
+    if(item && item.name === 'vcpus_min') {
+      let vcpu_max = this.searchParameters.find((param: any) => param.name === 'vcpus_max');
+      if(vcpu_max.modelValue && vcpu_max.modelValue < item.modelValue) {
+        vcpu_max.modelValue = item.modelValue;
+      }
+    }
+    if(item && item.name === 'vcpus_max') {
+      let vcpu_min = this.searchParameters.find((param: any) => param.name === 'vcpus_min');
+      if(vcpu_min.modelValue && vcpu_min.modelValue > item.modelValue) {
+        vcpu_min.modelValue = item.modelValue;
+      }
+    }
     this.valueChangeDebouncer.next(0);
   }
 

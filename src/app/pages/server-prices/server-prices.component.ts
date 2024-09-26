@@ -84,7 +84,15 @@ export class ServerPricesComponent implements OnInit {
 
   possibleColumns: TableColumn[] = [
     { name: 'NAME & PROVIDER', show: true, type: 'name'},
+    { name: 'VENDOR', show: false, type: 'vendor' },
+    { name: 'REGION', show: false, type: 'region' },
+    { name: 'ZONE', show: false, type: 'text', key: 'zone.name' },
+    { name: 'CONTINENT', show: false, type: 'text', key: 'region.country.continent' },
+    { name: 'COUNTRY', show: false, type: 'country' },
+    { name: 'ARCHITECTURE', show: false, type: 'text', key: 'server.cpu_architecture' },
     { name: 'PROCESSOR', show: true, type: 'processor', orderField: 'vcpus' },
+    { name: 'CPU MODEL', show: false, type: 'cpu_model' },
+    { name: 'CPU ALLOCATION', show: false, type: 'text', key: 'server.cpu_allocation' },
     { name: 'SCORE',
       show: true,
       type: 'score',
@@ -97,15 +105,9 @@ export class ServerPricesComponent implements OnInit {
     { name: 'GPUs', show: true, type: 'gpu', orderField: 'server.gpu_count' },
     { name: 'GPU MIN MEMORY', show: false, type: 'gpu_memory', key: 'server.gpu_memory_min' },
     { name: 'GPU TOTAL MEMORY', show: false, type: 'gpu_memory', key: 'server.gpu_memory_total' },
+    { name: 'GPU MODEL', show: false, type: 'gpu_model' },
     { name: 'PRICE', show: true, type: 'price', orderField: 'price' },
-    { name: 'ARCHITECTURE', show: false, type: 'text', key: 'server.cpu_architecture' },
-    { name: 'CPU ALLOCATION', show: false, type: 'text', key: 'server.cpu_allocation' },
-    { name: 'REGION', show: false, type: 'region' },
     { name: 'STATUS', show: false, type: 'text', key: 'server.status' },
-    { name: 'VENDOR', show: false, type: 'vendor' },
-    { name: 'COUNTRY', show: false, type: 'country' },
-    { name: 'CONTINENT', show: false, type: 'text', key: 'region.country.continent' },
-    { name: 'ZONE', show: false, type: 'text', key: 'zone.name' },
   ];
 
   availableCurrencies: CurrencyOption[] = availableCurrencies;
