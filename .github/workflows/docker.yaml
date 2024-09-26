@@ -42,3 +42,9 @@ jobs:
             SENTRY_PROJECT=${{ secrets.SENTRY_PROJECT }}
             SENTRY_URL=${{ secrets.SENTRY_URL }}
             SENTRY_RELEASE=${{ env.GITHUB_SHA }}
+
+      - name: Sentry release
+        env:
+          DOCKER_IMAGE: ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPO_NAME }}:latest
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+        run: docker run -ti --rm ${DOCKER_IMAGE} npm run sentry:release
