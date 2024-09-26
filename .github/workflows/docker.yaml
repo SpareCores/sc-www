@@ -47,5 +47,5 @@ jobs:
         env:
           DOCKER_IMAGE: ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPO_NAME }}:latest
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-        run: docker run --rm ${DOCKER_IMAGE} npm run sentry:release
+        run: docker run --rm -v "$GITHUB_WORKSPACE":/repo -w /repo ${DOCKER_IMAGE} npm run sentry:release
 
