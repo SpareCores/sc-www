@@ -205,9 +205,6 @@ export class SearchBarComponent implements OnInit, OnChanges{
     const type = parameter.schema.type || parameter.schema.anyOf?.find((item: any)  => item.type !== 'null')?.type || 'text';
     const name = parameter.name;
 
-    //if(name === 'vcpus_max')
-    //  console.log('type', type, name, parameter);
-
     if(name === 'countries') {
       return 'country';
     }
