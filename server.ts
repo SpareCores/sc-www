@@ -35,19 +35,26 @@ export function app(): express.Express {
   server.set('view engine', 'html');
   server.set('views', browserDistFolder);
 
-  // Serve static files
-  server.get('*.*', express.static(browserDistFolder, {
-    setHeaders: (res, path) => {
-      const generatedJsPattern = /-[A-Z0-9]+\.(js|css|woff2)$/;
-      if (generatedJsPattern.test(path)) {
-        // generated files with hashed filenames can be cached forever
-        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
-      } else {
-        // default to cache for 1 hour
-        res.setHeader('Cache-Control', 'public, max-age=3600');
-      }
+  // cache headers for the static files
+  server.use((req, res, next) => {
+    const generatedJsPattern = /-[A-Z0-9]+\.(js|css|woff2)$/;
+    if (req.path === '/assets/giscus.css') {
+      // CORS for hosted file referencing external resources
+      res.setHeader('Access-Control-Allow-Origin', 'https://giscus.app');
+      res.setHeader('Access-Control-Allow-Methods', 'OPTIONS,GET');
+      res.setHeader('Cache-Control', 'public, max-age=86400');
+    } else if (generatedJsPattern.test(req.path)) {
+      // Generated files with hashed filenames can be cached forever
+      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+    } else {
+      // Default cache for 1 hour
+      res.setHeader('Cache-Control', 'public, max-age=3600');
     }
-  }));
+    next();
+  });
+
+  // Serve static files
+  server.get('*.*', express.static(browserDistFolder));
 
   // Cache dynamic content for 10 mins
   server.use((req, res, next) => {
