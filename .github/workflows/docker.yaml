@@ -54,3 +54,10 @@ jobs:
           environment: production
           ignore_missing: true
 
+      - name: Redeploy ECS service
+        env:
+          CLUSTER: ${{ secrets.ECS_CLUSTER }}
+          SERVICE: ${{ secrets.ECS_SERVICE }}
+          REGION: eu-central-1
+        run: |
+          aws ecs update-service --cluster $CLUSTER --service $SERVICE --force-new-deployment --region $REGION
