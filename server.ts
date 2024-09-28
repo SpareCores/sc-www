@@ -1,3 +1,4 @@
+import os from 'os';
 import { APP_BASE_HREF } from '@angular/common';
 import { CommonEngine } from '@angular/ssr';
 import express from 'express';
@@ -34,6 +35,24 @@ export function app(): express.Express {
 
   server.set('view engine', 'html');
   server.set('views', browserDistFolder);
+
+  // return early with stats
+  server.get('/healthcheck', (req, res) => {
+    const resourceUsage = process.resourceUsage();
+    const stats = {
+      status: 'healthy',
+      host: os.hostname(),
+      memory: {
+        maxRss: resourceUsage.maxRSS,
+      },
+      cpu: {
+        user: resourceUsage.userCPUTime,
+        system: resourceUsage.systemCPUTime,
+      },
+      uptime: process.uptime().toFixed(2)
+    };
+    res.status(200).json(stats);
+  });
 
   // cache headers for the static files
   server.use((req, res, next) => {
