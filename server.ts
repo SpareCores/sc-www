@@ -105,10 +105,10 @@ export function app(): express.Express {
       const log = {
         event: "response",
         path: req.originalUrl,
-        real: elapsedTime,
-        user: userTime,
-        sys: sysTime,
-        wait: elapsedTime - userTime - sysTime,
+        real: elapsedTime.toFixed(2),
+        user: userTime.toFixed(2),
+        sys: sysTime.toFixed(2),
+        wait: (elapsedTime - userTime - sysTime).toFixed(2),
       }
       console.log(JSON.stringify(log));
     })
