@@ -57,6 +57,16 @@ export function app(): express.Express {
     res.status(200).json(stats);
   });
 
+  // redirect from www
+  server.use((req, res, next) => {
+    const host = req.hostname;
+    if (host.startsWith('www.')) {
+      const newHost = host.substring(4);
+      return res.redirect(301, `http://${newHost}${req.originalUrl}`);
+    }
+    next();
+  });
+
   // cache headers for the static files
   server.use((req, res, next) => {
     const generatedJsPattern = /-[A-Z0-9]+\.(js|css|woff2)$/;
