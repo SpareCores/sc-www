@@ -10,11 +10,15 @@ import { REQUEST, RESPONSE } from './src/express.tokens';
 // The Express app is exported so that it can be used by serverless Functions.
 export function app(): express.Express {
   const server = express();
+  const loggerData: Record<string, any> = {};
 
   // access log
   server.use((req, res, next) => {
+    loggerData.startTime = new Date();
+    loggerData.resourceUsage = process.resourceUsage();
     const { protocol, originalUrl, ip, headers } = req;
     const log = {
+      event: "request",
       method: req.method,
       path: originalUrl,
       userAgent: headers['user-agent'],
@@ -38,16 +42,15 @@ export function app(): express.Express {
 
   // return early with stats
   server.get('/healthcheck', (req, res) => {
-    const resourceUsage = process.resourceUsage();
     const stats = {
       status: 'healthy',
       host: os.hostname(),
       memory: {
-        maxRss: resourceUsage.maxRSS,
+        maxRss: loggerData.resourceUsage.maxRSS,
       },
       cpu: {
-        user: resourceUsage.userCPUTime,
-        system: resourceUsage.systemCPUTime,
+        user: loggerData.resourceUsage.userCPUTime,
+        sys: loggerData.resourceUsage.systemCPUTime,
       },
       uptime: process.uptime().toFixed(2)
     };
@@ -81,10 +84,27 @@ export function app(): express.Express {
     next();
   });
 
+  // log time to generate dynamic content
+  server.use((req, res, next) => {
+    res.on("close", () => {
+      const currentResourceUsage = process.resourceUsage();
+      const currentTime = new Date();
+      const elapsedTime = currentTime.getTime() - loggerData.startTime.getTime();
+      const log = {
+        event: "response",
+        path: req.originalUrl,
+        real: elapsedTime / 1e3,
+        user: (currentResourceUsage.userCPUTime - loggerData.resourceUsage.userCPUTime) / 1e6,
+        sys: (currentResourceUsage.systemCPUTime - loggerData.resourceUsage.systemCPUTime) / 1e6,
+      }
+      console.log(JSON.stringify(log));
+    })
+    next()
+  })
+
   // All regular routes use the Angular engine
   server.get('*', (req, res, next) => {
     const { protocol, originalUrl, baseUrl, headers } = req;
-
     commonEngine
       .render({
         bootstrap,
