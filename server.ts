@@ -62,7 +62,7 @@ export function app(): express.Express {
     const host = req.hostname;
     if (host.startsWith('www.')) {
       const newHost = host.substring(4);
-      return res.redirect(301, `http://${newHost}${req.originalUrl}`);
+      return res.redirect(301, `${req.protocol}://${newHost}${req.originalUrl}`);
     }
     next();
   });
