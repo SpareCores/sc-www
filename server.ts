@@ -89,7 +89,7 @@ export function app(): express.Express {
     res.on("close", () => {
       const currentResourceUsage = process.resourceUsage();
       const currentTime = new Date();
-      const elapsedTime = currentTime.getTime() - loggerData.startTime.getTime() / 1e3;
+      const elapsedTime = (currentTime.getTime() - loggerData.startTime.getTime()) / 1e3;
       const userTime = (currentResourceUsage.userCPUTime - loggerData.resourceUsage.userCPUTime) / 1e6;
       const sysTime = (currentResourceUsage.systemCPUTime - loggerData.resourceUsage.systemCPUTime) / 1e6;
       const log = {
