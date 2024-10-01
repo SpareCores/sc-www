@@ -13,7 +13,7 @@ describe('Server Compare', () => {
 
     E2EEvent.countElements(`[id="main-table"]`, `[id="main-table-th"]`, 2);
 
-    E2EEvent.countElements(`[id="main-table"]`, `[id="benchmark_line"]`, BENCHMARKS_COUNT);
+    E2EEvent.countElements(`[id="main-table"]`, `[id^="benchmark_line"]`, BENCHMARKS_COUNT);
 
   });
 
