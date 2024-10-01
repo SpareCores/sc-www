@@ -84,7 +84,11 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
   possibleColumns: TableColumn[] = [
     { name: 'NAME & PROVIDER', show: true, type: 'name'},
+    { name: 'VENDOR', show: false, type: 'vendor' },
+    { name: 'ARCHITECTURE', show: false, type: 'text', key: 'cpu_architecture' },
     { name: 'PROCESSOR', show: true, type: 'processor', orderField: 'vcpus' },
+    { name: 'CPU MODEL', show: false, type: 'cpu_model' },
+    { name: 'CPU ALLOCATION', show: false, type: 'text', key: 'cpu_allocation' },
     { name: 'SCORE',
       show: true,
       type: 'score',
@@ -95,13 +99,11 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     { name: 'STORAGE', show: true, type: 'storage', orderField: 'storage_size' },
     { name: 'STORAGE TYPE', show: false, type: 'text', key: 'storage_type' },
     { name: 'GPUs', show: true, type: 'gpu', orderField: 'gpu_count' },
-    { name: 'BEST PRICE', show: true, type: 'price' },
     { name: 'GPU MIN MEMORY', show: false, type: 'gpu_memory_min', orderField: 'gpu_memory_min' },
     { name: 'GPU TOTAL MEMORY', show: false, type: 'gpu_memory_total', orderField: 'gpu_memory_total' },
-    { name: 'ARCHITECTURE', show: false, type: 'text', key: 'cpu_architecture' },
-    { name: 'CPU ALLOCATION', show: false, type: 'text', key: 'cpu_allocation' },
+    { name: 'GPU MODEL', show: false, type: 'gpu_model' },
+    { name: 'BEST PRICE', show: true, type: 'price' },
     { name: 'STATUS', show: false, type: 'text', key: 'status' },
-    { name: 'VENDOR', show: false, type: 'vendor' },
   ];
 
   pageLimits = [10, 25, 50, 100, 250];
