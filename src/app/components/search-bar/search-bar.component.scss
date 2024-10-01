@@ -24,4 +24,20 @@
     top: 2.25rem;
     transform: translateY(-2rem);
   }
+
+  ::-webkit-scrollbar {
+    width: 5px; /* width of the entire scrollbar */
+    height: 5px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-secondary;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #9CA3AF;
+    border-radius: 20px; /* roundness of the scroll thumb */
+    border: 3px solid #9CA3AF; /* creates padding around scroll thumb */
+  }
+
 }
