@@ -35,7 +35,9 @@ export function app(): express.Express {
   const browserDistFolder = resolve(serverDistFolder, './static');
   const indexHtml = join(serverDistFolder, 'index.server.html');
 
-  const commonEngine = new CommonEngine();
+  const commonEngine = new CommonEngine({
+    enablePerformanceProfiler: process.env['ENABLE_PERFORMANCE_PROFILER'] === "true",
+  });
 
   server.set('view engine', 'html');
   server.set('views', browserDistFolder);

@@ -41,6 +41,7 @@ following environment variable(s):
 - NG_APP_SENTRY_TRACE_SAMPLE_RATE (default to 0)
 - NG_APP_SENTRY_PROFILE_SAMPLE_RATE (default to 0)
 - NG_APP_SENTRY_ENVIRONMENT (default to "development")
+- NG_APP_SENTRY_RELEASE
 
 If you need to update the Keeper SDK, use the `generate-api(-prod)` script.
 
@@ -58,7 +59,9 @@ Run `ng build` to build the project. The build artifacts will be
 stored in the `dist/` directory.
 
 Note that the project heavily relies on SSR, so you will need a
-node.js backend running to serve requests.
+node.js backend running to serve requests. You can set the
+`ENABLE_PERFORMANCE_PROFILER` env var to `true` to get performance
+metrics on the SSR steps.
 
 ## Linting tools
 
