@@ -11,12 +11,12 @@
 
 import {
   HTTPValidationError,
-  SearchStoragePricesStoragePricesGetData,
-  SearchStoragePricesStoragePricesGetParams,
+  SearchTrafficPricesTrafficPricesGetData,
+  SearchTrafficPricesTrafficPricesGetParams,
 } from "./data-contracts";
 import { HttpClient, RequestParams } from "./http-client";
 
-export class StoragePrices<SecurityDataType = unknown> {
+export class TrafficPrices<SecurityDataType = unknown> {
   http: HttpClient<SecurityDataType>;
 
   constructor(http: HttpClient<SecurityDataType>) {
@@ -27,16 +27,16 @@ export class StoragePrices<SecurityDataType = unknown> {
    * No description
    *
    * @tags Query Resources
-   * @name SearchStoragePricesStoragePricesGet
-   * @summary Search Storage Prices
-   * @request GET:/storage_prices
+   * @name SearchTrafficPricesTrafficPricesGet
+   * @summary Search Traffic Prices
+   * @request GET:/traffic_prices
    */
-  searchStoragePricesStoragePricesGet = (
-    query: SearchStoragePricesStoragePricesGetParams,
+  searchTrafficPricesTrafficPricesGet = (
+    query: SearchTrafficPricesTrafficPricesGetParams,
     params: RequestParams = {},
   ) =>
-    this.http.request<SearchStoragePricesStoragePricesGetData, HTTPValidationError>({
-      path: `/storage_prices`,
+    this.http.request<SearchTrafficPricesTrafficPricesGetData, HTTPValidationError>({
+      path: `/traffic_prices`,
       method: "GET",
       query: query,
       format: "json",

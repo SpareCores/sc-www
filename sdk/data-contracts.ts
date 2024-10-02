@@ -261,6 +261,42 @@ export enum ComplianceFrameworks {
   Soc2T2 = "soc2t2",
 }
 
+/** Countries */
+export enum Countries {
+  AE = "AE",
+  AU = "AU",
+  BE = "BE",
+  BH = "BH",
+  BR = "BR",
+  CA = "CA",
+  CH = "CH",
+  CL = "CL",
+  CN = "CN",
+  DE = "DE",
+  ES = "ES",
+  FI = "FI",
+  FR = "FR",
+  GB = "GB",
+  HK = "HK",
+  ID = "ID",
+  IE = "IE",
+  IL = "IL",
+  IN = "IN",
+  IT = "IT",
+  JP = "JP",
+  KR = "KR",
+  NL = "NL",
+  NO = "NO",
+  PL = "PL",
+  QA = "QA",
+  SA = "SA",
+  SE = "SE",
+  SG = "SG",
+  TW = "TW",
+  US = "US",
+  ZA = "ZA",
+}
+
 /**
  * Country
  * Country and continent mapping.
@@ -379,6 +415,23 @@ export enum CpuArchitecture {
   X8664Mac = "x86_64_mac",
 }
 
+/** CpuFamilies */
+export enum CpuFamilies {
+  ARMv8 = "ARMv8",
+  AmpereAltra = "Ampere Altra",
+  EPYC = "EPYC",
+  Xeon = "Xeon",
+}
+
+/** CpuManufacturers */
+export enum CpuManufacturers {
+  AMD = "AMD",
+  AWS = "AWS",
+  Ampere = "Ampere",
+  Apple = "Apple",
+  Intel = "Intel",
+}
+
 /**
  * DdrGeneration
  * Generation of the DDR SDRAM.
@@ -430,10 +483,59 @@ export interface Gpu {
   video_clock?: number | null;
 }
 
+/** GpuFamilies */
+export enum GpuFamilies {
+  AdaLovelace = "Ada Lovelace",
+  Ampere = "Ampere",
+  Gaudi = "Gaudi",
+  Hopper = "Hopper",
+  Kepler = "Kepler",
+  Maxwell = "Maxwell",
+  RadeonProNavi = "Radeon Pro Navi",
+  Turing = "Turing",
+  Volta = "Volta",
+}
+
+/** GpuManufacturers */
+export enum GpuManufacturers {
+  AMD = "AMD",
+  Habana = "Habana",
+  NVIDIA = "NVIDIA",
+}
+
+/** GpuModels */
+export enum GpuModels {
+  A100 = "A100",
+  A10G = "A10G",
+  H100 = "H100",
+  H200 = "H200",
+  HL205 = "HL-205",
+  K80 = "K80",
+  L4 = "L4",
+  L40S = "L40S",
+  M60 = "M60",
+  T4 = "T4",
+  T4G = "T4G",
+  V100 = "V100",
+  V520 = "V520",
+}
+
 /** HTTPValidationError */
 export interface HTTPValidationError {
   /** Detail */
   detail?: ValidationError[];
+}
+
+/** HealthcheckResponse */
+export interface HealthcheckResponse {
+  /** Packages */
+  packages: object;
+  /** Database Last Updated */
+  database_last_updated: number;
+  /** Database Hash */
+  database_hash: string;
+  /** Database Alembic Version */
+  database_alembic_version: string;
 }
 
 /** IdNameAndDescriptionAndCategory */
@@ -2449,6 +2551,121 @@ export interface Storage {
   observed_at?: string;
 }
 
+/** StorageBase */
+export interface StorageBase {
+  /**
+   * Vendor Id
+   * Reference to the Vendor.
+   */
+  vendor_id: string;
+  /**
+   * Storage Id
+   * Unique identifier, as called at the Vendor.
+   */
+  storage_id: string;
+  /**
+   * Name
+   * Human-friendly name.
+   */
+  name: string;
+  /**
+   * Description
+   * Short description.
+   */
+  description: string | null;
+  /** High-level category of the storage, e.g. HDD or SDD. */
+  storage_type: StorageType;
+  /**
+   * Max Iops
+   * Maximum Input/Output Operations Per Second.
+   */
+  max_iops?: number | null;
+  /**
+   * Max Throughput
+   * Maximum Throughput (MiB/s).
+   */
+  max_throughput?: number | null;
+  /**
+   * Min Size
+   * Minimum required size (GiB).
+   */
+  min_size?: number | null;
+  /**
+   * Max Size
+   * Maximum possible size (GiB).
+   */
+  max_size?: number | null;
+  /**
+   * Status of the resource (active or inactive).
+   * @default "active"
+   */
+  status?: Status;
+  /**
+   * Observed At
+   * Timestamp of the last observation.
+   * @format date-time
+   */
+  observed_at?: string;
+}
+
+/** StoragePriceWithPKs */
+export interface StoragePriceWithPKs {
+  /**
+   * Vendor Id
+   * Reference to the Vendor.
+   */
+  vendor_id: string;
+  /**
+   * Region Id
+   * Reference to the Region.
+   */
+  region_id: string;
+  /**
+   * Storage Id
+   * Reference to the Storage.
+   */
+  storage_id: string;
+  /** Billing unit of the pricing model. */
+  unit: PriceUnit;
+  /**
+   * Price
+   * Actual price of a billing unit.
+   */
+  price: number;
+  /**
+   * Price Upfront
+   * Price to be paid when setting up the resource.
+   * @default 0
+   */
+  price_upfront?: number;
+  /**
+   * Price Tiered
+   * List of pricing tiers with min/max thresholds and actual prices.
+   * @default []
+   */
+  price_tiered?: PriceTier[];
+  /**
+   * Currency
+   * Currency of the prices.
+   * @default "USD"
+   */
+  currency?: string;
+  /**
+   * Status of the resource (active or inactive).
+   * @default "active"
+   */
+  status?: Status;
+  /**
+   * Observed At
+   * Timestamp of the last observation.
+   * @format date-time
+   */
+  observed_at?: string;
+  region: RegionBaseWithPKs;
+  vendor: VendorBase;
+  storage: StorageBase;
+}
+
 /**
  * StorageType
  * Type of a storage, e.g. HDD or SSD.
@@ -2458,6 +2675,71 @@ export enum StorageType {
   Ssd = "ssd",
   NvmeSsd = "nvme ssd",
   Network = "network",
+}
+
+/**
+ * TrafficDirection
+ * Direction of the network traffic.
+ */
+export enum TrafficDirection {
+  Inbound = "inbound",
+  Outbound = "outbound",
+}
+
+/** TrafficPriceWithPKsWithMonthlyTraffic */
+export interface TrafficPriceWithPKsWithMonthlyTraffic {
+  /**
+   * Vendor Id
+   * Reference to the Vendor.
+   */
+  vendor_id: string;
+  /**
+   * Region Id
+   * Reference to the Region.
+   */
+  region_id: string;
+  /** Direction of the traffic: inbound or outbound. */
+  direction: TrafficDirection;
+  /** Billing unit of the pricing model. */
+  unit: PriceUnit;
+  /**
+   * Price
+   * Actual price of a billing unit.
+   */
+  price: number;
+  /**
+   * Price Upfront
+   * Price to be paid when setting up the resource.
+   * @default 0
+   */
+  price_upfront?: number;
+  /**
+   * Price Tiered
+   * List of pricing tiers with min/max thresholds and actual prices.
+   * @default []
+   */
+  price_tiered?: PriceTier[];
+  /**
+   * Currency
+   * Currency of the prices.
+   * @default "USD"
+   */
+  currency?: string;
+  /**
+   * Status of the resource (active or inactive).
+   * @default "active"
+   */
+  status?: Status;
+  /**
+   * Observed At
+   * Timestamp of the last observation.
+   * @format date-time
+   */
+  observed_at?: string;
+  region: RegionBaseWithPKs;
+  vendor: VendorBase;
+  /** Price Monthly Traffic */
+  price_monthly_traffic?: number | null;
 }
 
 /** ValidationError */
@@ -2750,8 +3032,7 @@ export interface ZoneBase {
   observed_at?: string;
 }
 
-/** Response Healthcheck Healthcheck Get */
-export type HealthcheckHealthcheckGetData = object;
+export type HealthcheckHealthcheckGetData = HealthcheckResponse;
 
 /** Response Table Benchmark Table Benchmark Get */
 export type TableBenchmarkTableBenchmarkGetData = Benchmark[];
@@ -2801,7 +3082,7 @@ export type GetServerServerVendorServerGetData = ServerPKsWithPrices;
 
 export type GetServerWithoutRelationsV2ServerVendorServerGetData = ServerBase;
 
-export interface GetSimilarServersServerVendorServerSimilarServersByNGetParams {
+export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams {
   /**
    * Benchmark Id
    * Benchmark id to use as the main score for the server.
@@ -2830,15 +3111,15 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNGetParams {
    */
   by: "family" | "specs" | "score";
   /**
-   * N
+   * Num
    * Number of servers to get.
    * @max 100
    */
-  n: number;
+  num: number;
 }
 
-/** Response Get Similar Servers Server  Vendor   Server  Similar Servers  By   N  Get */
-export type GetSimilarServersServerVendorServerSimilarServersByNGetData = ServerPKs[];
+/** Response Get Similar Servers Server  Vendor   Server  Similar Servers  By   Num  Get */
+export type GetSimilarServersServerVendorServerSimilarServersByNumGetData = ServerPKs[];
 
 export interface GetServerPricesServerVendorServerPricesGetParams {
   /**
@@ -2863,6 +3144,38 @@ export type GetServerPricesServerVendorServerPricesGetData = ServerPrice[];
 
 /** Response Get Server Benchmarks Server  Vendor   Server  Benchmarks Get */
 export type GetServerBenchmarksServerVendorServerBenchmarksGetData = BenchmarkScore[];
+
+export interface AssistServerFiltersAiAssistServerFiltersGetParams {
+  /** Text */
+  text: string;
+}
+
+/** Response Assist Server Filters Ai Assist Server Filters Get */
+export type AssistServerFiltersAiAssistServerFiltersGetData = object;
+
+export interface AssistServerPriceFiltersAiAssistServerPriceFiltersGetParams {
+  /** Text */
+  text: string;
+}
+
+/** Response Assist Server Price Filters Ai Assist Server Price Filters Get */
+export type AssistServerPriceFiltersAiAssistServerPriceFiltersGetData = object;
+
+export interface AssistStoragePriceFiltersAiAssistStoragePriceFiltersGetParams {
+  /** Text */
+  text: string;
+}
+
+/** Response Assist Storage Price Filters Ai Assist Storage Price Filters Get */
+export type AssistStoragePriceFiltersAiAssistStoragePriceFiltersGetData = object;
+
+export interface AssistTrafficPriceFiltersAiAssistTrafficPriceFiltersGetParams {
+  /** Text */
+  text: string;
+}
+
+/** Response Assist Traffic Price Filters Ai Assist Traffic Price Filters Get */
+export type AssistTrafficPriceFiltersAiAssistTrafficPriceFiltersGetData = object;
 
 export interface SearchRegionsRegionsGetParams {
   /**
@@ -2890,10 +3203,19 @@ export interface SearchServersServersGetParams {
    */
   vcpus_min?: number;
   /**
+   * Maximum vCPUs
+   * Maximum number of virtual CPUs.
+   */
+  vcpus_max?: number | null;
+  /**
    * Processor architecture
    * Processor architecture.
    */
   architecture?: "arm64" | "arm64_mac" | "i386" | "x86_64" | "x86_64_mac";
+  /** Processor manufacturer */
+  cpu_manufacturer?: "AMD" | "AWS" | "Ampere" | "Apple" | "Intel";
+  /** Processor family */
+  cpu_family?: "ARMv8" | "Ampere Altra" | "EPYC" | "Xeon";
   /**
    * SCore
    * Minimum stress-ng CPU workload score.
@@ -2945,10 +3267,38 @@ export interface SearchServersServersGetParams {
    * Minimum amount of total GPU memory (GBs) in all GPUs.
    */
   gpu_memory_total?: number | null;
+  /** GPU manufacturer */
+  gpu_manufacturer?: "AMD" | "Habana" | "NVIDIA";
+  /** GPU family */
+  gpu_family?:
+    | "Ada Lovelace"
+    | "Ampere"
+    | "Gaudi"
+    | "Hopper"
+    | "Kepler"
+    | "Maxwell"
+    | "Radeon Pro Navi"
+    | "Turing"
+    | "Volta";
+  /** GPU model */
+  gpu_model?:
+    | "A100"
+    | "A10G"
+    | "H100"
+    | "H200"
+    | "HL-205"
+    | "K80"
+    | "L4"
+    | "L40S"
+    | "M60"
+    | "T4"
+    | "T4G"
+    | "V100"
+    | "V520";
   /**
    * Limit
    * Maximum number of results. Set to -1 for unlimited.
-   * @default 50
+   * @default 25
    */
   limit?: number;
   /**
@@ -2994,10 +3344,19 @@ export interface SearchServerPricesServerPricesGetParams {
    */
   vcpus_min?: number;
   /**
+   * Maximum vCPUs
+   * Maximum number of virtual CPUs.
+   */
+  vcpus_max?: number | null;
+  /**
    * Processor architecture
    * Processor architecture.
    */
   architecture?: "arm64" | "arm64_mac" | "i386" | "x86_64" | "x86_64_mac";
+  /** Processor manufacturer */
+  cpu_manufacturer?: "AMD" | "AWS" | "Ampere" | "Apple" | "Intel";
+  /** Processor family */
+  cpu_family?: "ARMv8" | "Ampere Altra" | "EPYC" | "Xeon";
   /**
    * SCore
    * Minimum stress-ng CPU workload score.
@@ -3239,11 +3598,39 @@ export interface SearchServerPricesServerPricesGetParams {
    * Minimum amount of total GPU memory (GBs) in all GPUs.
    */
   gpu_memory_total?: number | null;
+  /** GPU manufacturer */
+  gpu_manufacturer?: "AMD" | "Habana" | "NVIDIA";
+  /** GPU family */
+  gpu_family?:
+    | "Ada Lovelace"
+    | "Ampere"
+    | "Gaudi"
+    | "Hopper"
+    | "Kepler"
+    | "Maxwell"
+    | "Radeon Pro Navi"
+    | "Turing"
+    | "Volta";
+  /** GPU model */
+  gpu_model?:
+    | "A100"
+    | "A10G"
+    | "H100"
+    | "H200"
+    | "HL-205"
+    | "K80"
+    | "L4"
+    | "L40S"
+    | "M60"
+    | "T4"
+    | "T4G"
+    | "V100"
+    | "V520";
   /**
    * Limit
    * Maximum number of results.
    * @max 250
-   * @default 50
+   * @default 25
    */
   limit?: number;
   /**
@@ -3280,18 +3667,486 @@ export interface SearchServerPricesServerPricesGetParams {
 /** Response Search Server Prices Server Prices Get */
 export type SearchServerPricesServerPricesGetData = ServerPriceWithPKs[];
 
-export interface AssistServerFiltersAiAssistServerFiltersGetParams {
-  /** Text */
-  text: string;
+export interface SearchStoragePricesStoragePricesGetParams {
+  /**
+   * Vendor id
+   * Identifier of the cloud provider vendor.
+   */
+  vendor?: "aws" | "azure" | "gcp" | "hcloud";
+  /**
+   * Green energy
+   * Filter for regions with kow CO2 emission only.
+   */
+  green_energy?: boolean | null;
+  /**
+   * Storage Size
+   * Minimum amount of storage (GBs).
+   */
+  storage_min?: number | null;
+  /**
+   * Storage Type
+   * Type of the storage attached to the server.
+   */
+  storage_type?: "hdd" | "ssd" | "nvme ssd" | "network";
+  /**
+   * Compliance Framework id
+   * Compliance framework implemented at the vendor.
+   */
+  compliance_framework?: "hipaa" | "iso27001" | "soc2t2";
+  /**
+   * Region id
+   * Identifier of the region.
+   */
+  regions?:
+    | "1000"
+    | "1100"
+    | "1210"
+    | "1220"
+    | "1230"
+    | "1250"
+    | "1260"
+    | "1270"
+    | "1280"
+    | "1290"
+    | "1300"
+    | "1310"
+    | "1320"
+    | "1330"
+    | "1340"
+    | "1350"
+    | "1360"
+    | "1370"
+    | "1380"
+    | "1390"
+    | "1410"
+    | "1420"
+    | "1430"
+    | "1440"
+    | "1450"
+    | "1460"
+    | "1470"
+    | "1480"
+    | "1490"
+    | "1510"
+    | "1520"
+    | "1530"
+    | "1540"
+    | "1550"
+    | "1560"
+    | "1570"
+    | "1580"
+    | "1590"
+    | "1600"
+    | "1610"
+    | "2"
+    | "3"
+    | "4"
+    | "5"
+    | "6"
+    | "7"
+    | "af-south-1"
+    | "ap-east-1"
+    | "ap-northeast-1"
+    | "ap-northeast-2"
+    | "ap-northeast-3"
+    | "ap-south-1"
+    | "ap-south-2"
+    | "ap-southeast-1"
+    | "ap-southeast-2"
+    | "ap-southeast-3"
+    | "ap-southeast-4"
+    | "australiacentral"
+    | "australiacentral2"
+    | "australiaeast"
+    | "australiasoutheast"
+    | "brazilsouth"
+    | "brazilsoutheast"
+    | "brazilus"
+    | "ca-central-1"
+    | "canadacentral"
+    | "canadaeast"
+    | "ca-west-1"
+    | "centralindia"
+    | "centralus"
+    | "centraluseuap"
+    | "cn-north-1"
+    | "cn-northwest-1"
+    | "eastasia"
+    | "eastus"
+    | "eastus2"
+    | "eastus2euap"
+    | "eastusstg"
+    | "eu-central-1"
+    | "eu-central-2"
+    | "eu-north-1"
+    | "eu-south-1"
+    | "eu-south-2"
+    | "eu-west-1"
+    | "eu-west-2"
+    | "eu-west-3"
+    | "francecentral"
+    | "francesouth"
+    | "germanynorth"
+    | "germanywestcentral"
+    | "il-central-1"
+    | "israelcentral"
+    | "italynorth"
+    | "japaneast"
+    | "japanwest"
+    | "jioindiacentral"
+    | "jioindiawest"
+    | "koreacentral"
+    | "koreasouth"
+    | "me-central-1"
+    | "me-south-1"
+    | "mexicocentral"
+    | "northcentralus"
+    | "northeurope"
+    | "norwayeast"
+    | "norwaywest"
+    | "polandcentral"
+    | "qatarcentral"
+    | "sa-east-1"
+    | "southafricanorth"
+    | "southafricawest"
+    | "southcentralus"
+    | "southcentralusstg"
+    | "southeastasia"
+    | "southindia"
+    | "spaincentral"
+    | "swedencentral"
+    | "switzerlandnorth"
+    | "switzerlandwest"
+    | "uaecentral"
+    | "uaenorth"
+    | "uksouth"
+    | "ukwest"
+    | "us-east-1"
+    | "us-east-2"
+    | "us-west-1"
+    | "us-west-2"
+    | "westcentralus"
+    | "westeurope"
+    | "westindia"
+    | "westus"
+    | "westus2"
+    | "westus3";
+  /**
+   * Countries
+   * Filter for regions in the provided list of countries.
+   */
+  countries?:
+    | "AE"
+    | "AU"
+    | "BE"
+    | "BH"
+    | "BR"
+    | "CA"
+    | "CH"
+    | "CL"
+    | "CN"
+    | "DE"
+    | "ES"
+    | "FI"
+    | "FR"
+    | "GB"
+    | "HK"
+    | "ID"
+    | "IE"
+    | "IL"
+    | "IN"
+    | "IT"
+    | "JP"
+    | "KR"
+    | "NL"
+    | "NO"
+    | "PL"
+    | "QA"
+    | "SA"
+    | "SE"
+    | "SG"
+    | "TW"
+    | "US"
+    | "ZA";
+  /**
+   * Limit
+   * Maximum number of results. Set to -1 for unlimited.
+   * @default 10
+   */
+  limit?: number;
+  /**
+   * Page
+   * Page number.
+   */
+  page?: number | null;
+  /**
+   * Order By
+   * Order by column.
+   * @default "price"
+   */
+  order_by?: string;
+  /**
+   * Order Dir
+   * Order direction.
+   * @default "asc"
+   */
+  order_dir?: OrderDir;
+  /**
+   * Currency
+   * Currency used for prices.
+   * @default "USD"
+   */
+  currency?: string | null;
+  /**
+   * Add Total Count Header
+   * Add the X-Total-Count header to the response with the overall number of items (without paging). Note that it might reduce response times.
+   * @default false
+   */
+  add_total_count_header?: boolean;
 }
 
-/** Response Assist Server Filters Ai Assist Server Filters Get */
-export type AssistServerFiltersAiAssistServerFiltersGetData = object;
+/** Response Search Storage Prices Storage Prices Get */
+export type SearchStoragePricesStoragePricesGetData = StoragePriceWithPKs[];
 
-export interface AssistServerPriceFiltersAiAssistServerPriceFiltersGetParams {
-  /** Text */
-  text: string;
+export interface SearchTrafficPricesTrafficPricesGetParams {
+  /**
+   * Vendor id
+   * Identifier of the cloud provider vendor.
+   */
+  vendor?: "aws" | "azure" | "gcp" | "hcloud";
+  /**
+   * Green energy
+   * Filter for regions with kow CO2 emission only.
+   */
+  green_energy?: boolean | null;
+  /**
+   * Compliance Framework id
+   * Compliance framework implemented at the vendor.
+   */
+  compliance_framework?: "hipaa" | "iso27001" | "soc2t2";
+  /**
+   * Region id
+   * Identifier of the region.
+   */
+  regions?:
+    | "1000"
+    | "1100"
+    | "1210"
+    | "1220"
+    | "1230"
+    | "1250"
+    | "1260"
+    | "1270"
+    | "1280"
+    | "1290"
+    | "1300"
+    | "1310"
+    | "1320"
+    | "1330"
+    | "1340"
+    | "1350"
+    | "1360"
+    | "1370"
+    | "1380"
+    | "1390"
+    | "1410"
+    | "1420"
+    | "1430"
+    | "1440"
+    | "1450"
+    | "1460"
+    | "1470"
+    | "1480"
+    | "1490"
+    | "1510"
+    | "1520"
+    | "1530"
+    | "1540"
+    | "1550"
+    | "1560"
+    | "1570"
+    | "1580"
+    | "1590"
+    | "1600"
+    | "1610"
+    | "2"
+    | "3"
+    | "4"
+    | "5"
+    | "6"
+    | "7"
+    | "af-south-1"
+    | "ap-east-1"
+    | "ap-northeast-1"
+    | "ap-northeast-2"
+    | "ap-northeast-3"
+    | "ap-south-1"
+    | "ap-south-2"
+    | "ap-southeast-1"
+    | "ap-southeast-2"
+    | "ap-southeast-3"
+    | "ap-southeast-4"
+    | "australiacentral"
+    | "australiacentral2"
+    | "australiaeast"
+    | "australiasoutheast"
+    | "brazilsouth"
+    | "brazilsoutheast"
+    | "brazilus"
+    | "ca-central-1"
+    | "canadacentral"
+    | "canadaeast"
+    | "ca-west-1"
+    | "centralindia"
+    | "centralus"
+    | "centraluseuap"
+    | "cn-north-1"
+    | "cn-northwest-1"
+    | "eastasia"
+    | "eastus"
+    | "eastus2"
+    | "eastus2euap"
+    | "eastusstg"
+    | "eu-central-1"
+    | "eu-central-2"
+    | "eu-north-1"
+    | "eu-south-1"
+    | "eu-south-2"
+    | "eu-west-1"
+    | "eu-west-2"
+    | "eu-west-3"
+    | "francecentral"
+    | "francesouth"
+    | "germanynorth"
+    | "germanywestcentral"
+    | "il-central-1"
+    | "israelcentral"
+    | "italynorth"
+    | "japaneast"
+    | "japanwest"
+    | "jioindiacentral"
+    | "jioindiawest"
+    | "koreacentral"
+    | "koreasouth"
+    | "me-central-1"
+    | "me-south-1"
+    | "mexicocentral"
+    | "northcentralus"
+    | "northeurope"
+    | "norwayeast"
+    | "norwaywest"
+    | "polandcentral"
+    | "qatarcentral"
+    | "sa-east-1"
+    | "southafricanorth"
+    | "southafricawest"
+    | "southcentralus"
+    | "southcentralusstg"
+    | "southeastasia"
+    | "southindia"
+    | "spaincentral"
+    | "swedencentral"
+    | "switzerlandnorth"
+    | "switzerlandwest"
+    | "uaecentral"
+    | "uaenorth"
+    | "uksouth"
+    | "ukwest"
+    | "us-east-1"
+    | "us-east-2"
+    | "us-west-1"
+    | "us-west-2"
+    | "westcentralus"
+    | "westeurope"
+    | "westindia"
+    | "westus"
+    | "westus2"
+    | "westus3";
+  /**
+   * Countries
+   * Filter for regions in the provided list of countries.
+   */
+  countries?:
+    | "AE"
+    | "AU"
+    | "BE"
+    | "BH"
+    | "BR"
+    | "CA"
+    | "CH"
+    | "CL"
+    | "CN"
+    | "DE"
+    | "ES"
+    | "FI"
+    | "FR"
+    | "GB"
+    | "HK"
+    | "ID"
+    | "IE"
+    | "IL"
+    | "IN"
+    | "IT"
+    | "JP"
+    | "KR"
+    | "NL"
+    | "NO"
+    | "PL"
+    | "QA"
+    | "SA"
+    | "SE"
+    | "SG"
+    | "TW"
+    | "US"
+    | "ZA";
+  /**
+   * Direction
+   * Direction of the Internet traffic.
+   * @default ["outbound"]
+   */
+  direction?: "inbound" | "outbound";
+  /**
+   * Monthly Overall Traffic
+   * Overall amount of monthly traffic (GBs).
+   * @default 1
+   */
+  monthly_traffic?: number | null;
+  /**
+   * Limit
+   * Maximum number of results. Set to -1 for unlimited.
+   * @default 10
+   */
+  limit?: number;
+  /**
+   * Page
+   * Page number.
+   */
+  page?: number | null;
+  /**
+   * Order By
+   * Order by column.
+   * @default "price"
+   */
+  order_by?: string;
+  /**
+   * Order Dir
+   * Order direction.
+   * @default "asc"
+   */
+  order_dir?: OrderDir;
+  /**
+   * Currency
+   * Currency used for prices.
+   * @default "USD"
+   */
+  currency?: string | null;
+  /**
+   * Add Total Count Header
+   * Add the X-Total-Count header to the response with the overall number of items (without paging). Note that it might reduce response times.
+   * @default false
+   */
+  add_total_count_header?: boolean;
 }
 
-/** Response Assist Server Price Filters Ai Assist Server Price Filters Get */
-export type AssistServerPriceFiltersAiAssistServerPriceFiltersGetData = object;
+/** Response Search Traffic Prices Traffic Prices Get */
+export type SearchTrafficPricesTrafficPricesGetData = TrafficPriceWithPKsWithMonthlyTraffic[];

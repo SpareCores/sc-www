@@ -188,6 +188,28 @@
                         <span>{{item.gpu_model}}</span>
                       </div>
                     </td>
+                    <td *ngIf="column.type === 'cpu_model'">
+                      <div
+                        *ngIf="item.cpu_model"
+                        class="text-sm text-white flex gap-1">
+                        <span>{{item.cpu_model}}</span>
+                      </div>
+                      <div class="text-xs text-white">
+                        <span *ngIf="item.cpu_manufacturer">{{item.cpu_manufacturer}} </span>
+                        <span *ngIf="item.cpu_family">{{item.cpu_family}} </span>
+                      </div>
+                    </td>
+                    <td *ngIf="column.type === 'gpu_model'">
+                      <div
+                        *ngIf="item.gpu_model"
+                        class="text-sm text-white flex gap-1">
+                        <span>{{item.gpu_model}}</span>
+                      </div>
+                      <div class="text-xs text-white">
+                        <span *ngIf="item.gpu_manufacturer">{{item.gpu_manufacturer}} </span>
+                        <span *ngIf="item.gpu_family">{{item.gpu_family}} </span>
+                      </div>
+                    </td>
                     <td *ngIf="column.type === 'text' && column.key">
                       {{getField(item, column.key)}}
                     </td>

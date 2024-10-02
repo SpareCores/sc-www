@@ -28,7 +28,7 @@ export class SearchBarComponent implements OnInit, OnChanges{
   @Input() searchParameters: any[] = [];
   @Input() filterCategories: any[] = [];
   @Input() selectedCurrency: any | null = null;
-  @Input() isPriceSearch = false;
+  @Input() AIAssistantType = 'servers';
 
   @Output() searchChanged = new EventEmitter<any>();
 
@@ -38,6 +38,7 @@ export class SearchBarComponent implements OnInit, OnChanges{
 
   complianceFrameworks: any[] = [];
   vendors: any[] = [];
+  storageIds: any[] = [];
 
   countryMetadata: CountryMetadata[] = [];
   continentMetadata: ContinentMetadata[] = [];
@@ -69,6 +70,9 @@ export class SearchBarComponent implements OnInit, OnChanges{
       this.vendors = response.body;
     });
 
+    this.keeperAPI.getStorages().then((response: any) => {
+      this.storageIds = response.body;
+    });
 
     this.valueChangeDebouncer.pipe(debounceTime(500)).subscribe(() => {
       this.filterServers();
@@ -121,6 +125,10 @@ export class SearchBarComponent implements OnInit, OnChanges{
         }
       }
 
+      if(!value && item.schema.null_value) {
+        value = item.schema.null_value;
+      }
+
       item.modelValue = value;
     });
 
@@ -156,7 +164,10 @@ export class SearchBarComponent implements OnInit, OnChanges{
 
   getQueryObject() {
     const paramObject = this.searchParameters?.map((param: any) => {
-      return ((param.modelValue || param.modelValue === false) && param.schema.category_id && param.schema.default !== param.modelValue) ?
+      return ((param.modelValue || param.modelValue === false) &&
+              param.schema.category_id &&
+              param.schema.default !== param.modelValue &&
+              param.schema.null_value !== param.modelValue) ?
               {[param.name]: param.modelValue} :
               {};
     }).reduce((acc: any, curr: any) => {  return {...acc, ...curr}; }, {});
@@ -170,6 +181,10 @@ export class SearchBarComponent implements OnInit, OnChanges{
 
   getVendorName(id: string) {
     return this.vendors.find((item) => item.vendor_id === id)?.name || id;
+  }
+
+  getStorageName(id: string) {
+    return this.storageIds.find((item) => item.storage_id === id)?.name || id;
   }
 
   getStep(parameter: any) {
@@ -206,7 +221,15 @@ export class SearchBarComponent implements OnInit, OnChanges{
       return 'vendor';
     }
 
-    if((type === 'integer' || type === 'number') && parameter.schema.minimum && parameter.schema.maximum) {
+    if(name === 'vendor') {
+      return 'vendor';
+    }
+
+    if(name === 'storage_id') {
+      return 'storage_id';
+    }
+
+    if((type === 'integer' || type === 'number') && (parameter.schema.range_min || parameter.schema.range_min === 0) && parameter.schema.range_max) {
       return 'range';
     }
 
@@ -228,7 +251,19 @@ export class SearchBarComponent implements OnInit, OnChanges{
     return 'text';
   }
 
-  valueChanged() {
+  valueChanged(item?: any) {
+    if(item && item.name === 'vcpus_min') {
+      let vcpu_max = this.searchParameters.find((param: any) => param.name === 'vcpus_max');
+      if(vcpu_max.modelValue && vcpu_max.modelValue < item.modelValue) {
+        vcpu_max.modelValue = item.modelValue;
+      }
+    }
+    if(item && item.name === 'vcpus_max') {
+      let vcpu_min = this.searchParameters.find((param: any) => param.name === 'vcpus_min');
+      if(vcpu_min.modelValue && vcpu_min.modelValue > item.modelValue) {
+        vcpu_min.modelValue = item.modelValue;
+      }
+    }
     this.valueChangeDebouncer.next(0);
   }
 
@@ -396,9 +431,7 @@ export class SearchBarComponent implements OnInit, OnChanges{
 
     if(this.freetextSearchInput) {
       try {
-        let response = this.isPriceSearch ?
-          await this.keeperAPI.parsePromptforServerPrices({text:this.freetextSearchInput}) :
-          await this.keeperAPI.parsePromptforServers({text:this.freetextSearchInput});
+        let response = await this.keeperAPI.parsePromptFor(this.AIAssistantType, {text:this.freetextSearchInput});
 
         this.modalResponse = response.body;
         this.modalResponseStr = [];

@@ -39,7 +39,7 @@ describe('Server Details', () => {
   });
 
   it('Server without price and charts', () => {
-    E2EEvent.visitURL('/server/gcp/c4-standard-192', 4000);
+    E2EEvent.visitURL('/server/gcp/x4-megamem-1440-metal', 4000);
 
     E2EEvent.checkBreadcrumbs();
 

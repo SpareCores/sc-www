@@ -13,6 +13,7 @@ import { SearchBarComponent } from '../../components/search-bar/search-bar.compo
 import { PaginationComponent } from '../../components/pagination/pagination.component';
 import { DropdownManagerService } from '../../services/dropdown-manager.service';
 import { AnalyticsService } from '../../services/analytics.service';
+import { CurrencyOption, availableCurrencies } from '../../tools/shared_data';
 
 export type TableColumn = {
   name: string;
@@ -83,7 +84,15 @@ export class ServerPricesComponent implements OnInit {
 
   possibleColumns: TableColumn[] = [
     { name: 'NAME & PROVIDER', show: true, type: 'name'},
+    { name: 'VENDOR', show: false, type: 'vendor' },
+    { name: 'REGION', show: false, type: 'region' },
+    { name: 'ZONE', show: false, type: 'text', key: 'zone.name' },
+    { name: 'CONTINENT', show: false, type: 'text', key: 'region.country.continent' },
+    { name: 'COUNTRY', show: false, type: 'country' },
+    { name: 'ARCHITECTURE', show: false, type: 'text', key: 'server.cpu_architecture' },
     { name: 'PROCESSOR', show: true, type: 'processor', orderField: 'vcpus' },
+    { name: 'CPU MODEL', show: false, type: 'cpu_model' },
+    { name: 'CPU ALLOCATION', show: false, type: 'text', key: 'server.cpu_allocation' },
     { name: 'SCORE',
       show: true,
       type: 'score',
@@ -96,33 +105,12 @@ export class ServerPricesComponent implements OnInit {
     { name: 'GPUs', show: true, type: 'gpu', orderField: 'server.gpu_count' },
     { name: 'GPU MIN MEMORY', show: false, type: 'gpu_memory', key: 'server.gpu_memory_min' },
     { name: 'GPU TOTAL MEMORY', show: false, type: 'gpu_memory', key: 'server.gpu_memory_total' },
+    { name: 'GPU MODEL', show: false, type: 'gpu_model' },
     { name: 'PRICE', show: true, type: 'price', orderField: 'price' },
-    { name: 'ARCHITECTURE', show: false, type: 'text', key: 'server.cpu_architecture' },
-    { name: 'CPU ALLOCATION', show: false, type: 'text', key: 'server.cpu_allocation' },
-    { name: 'REGION', show: false, type: 'region' },
     { name: 'STATUS', show: false, type: 'text', key: 'server.status' },
-    { name: 'VENDOR', show: false, type: 'vendor' },
-    { name: 'COUNTRY', show: false, type: 'country' },
-    { name: 'CONTINENT', show: false, type: 'text', key: 'region.country.continent' },
-    { name: 'ZONE', show: false, type: 'text', key: 'zone.name' },
   ];
 
-  availableCurrencies = [
-    {name: 'US dollar', slug: 'USD', symbol: '$'},
-    {name: 'Euro', slug: 'EUR', symbol: '€'},
-    {name: 'British Pound', slug: 'GBP', symbol: '£'},
-    {name: 'Swedish Krona', slug: 'SEK', symbol: 'kr'},
-    {name: 'Danish Krone', slug: 'DKK', symbol: 'kr'},
-    {name: 'Norwegian Krone', slug: 'NOK', symbol: 'kr'},
-    {name: 'Swiss Franc', slug: 'CHF', symbol: 'CHF'},
-    {name: 'Australian Dollar', slug: 'AUD', symbol: '$'},
-    {name: 'Canadian Dollar', slug: 'CAD', symbol: '$'},
-    {name: 'Japanese Yen', slug: 'JPY', symbol: '¥'},
-    {name: 'Chinese Yuan', slug: 'CNY', symbol: '¥'},
-    {name: 'Indian Rupee', slug: 'INR', symbol: '₹'},
-    {name: 'Brazilian Real', slug: 'BRL', symbol: 'R$'},
-    {name: 'South African Rand', slug: 'ZAR', symbol: 'R'},
-  ];
+  availableCurrencies: CurrencyOption[] = availableCurrencies;
 
   allocationTypes = [
     {name: 'Both', slug: null},
@@ -197,6 +185,16 @@ export class ServerPricesComponent implements OnInit {
 
     const parameters = this.openApiJson.paths['/server_prices'].get.parameters || [];
     this.searchParameters = parameters;
+
+    let limit = this.searchParameters.find((param: any) => param.name === 'limit');
+    if(limit && limit.schema && limit.schema.default) {
+      this.limit = limit.schema.default;
+    }
+
+    let order = this.searchParameters.find((param: any) => param.name === 'order_by');
+    if(order && order.schema && order.schema.default) {
+      this.orderBy = order.schema.default;
+    }
 
     this.route.queryParams.subscribe((params: Params) => {
       const query: any = JSON.parse(JSON.stringify(params || '{}'));
@@ -325,6 +323,8 @@ export class ServerPricesComponent implements OnInit {
 
     if(this.limit !== 25) {
       queryParams.limit = this.limit;
+    } else {
+      delete queryParams.limit;
     }
 
     this.router.navigate([], {
@@ -424,6 +424,8 @@ export class ServerPricesComponent implements OnInit {
 
     if(this.limit !== 25) {
       paramObject.limit = this.limit;
+    } else {
+      delete paramObject.limit;
     }
 
     if(this.countryMetadata.find((country) => country.selected)) {
@@ -507,6 +509,8 @@ export class ServerPricesComponent implements OnInit {
 
     if(this.limit !== 25) {
       paramObject.limit = this.limit;
+    } else {
+      delete paramObject.limit;
     }
 
     return paramObject;

@@ -41,6 +41,9 @@ following environment variable(s):
 - NG_APP_SENTRY_TRACE_SAMPLE_RATE (default to 0)
 - NG_APP_SENTRY_PROFILE_SAMPLE_RATE (default to 0)
 - NG_APP_SENTRY_ENVIRONMENT (default to "development")
+- NG_APP_SENTRY_RELEASE
+
+If you need to update the Keeper SDK, use the `generate-api(-prod)` script.
 
 ## Development server
 
@@ -56,7 +59,9 @@ Run `ng build` to build the project. The build artifacts will be
 stored in the `dist/` directory.
 
 Note that the project heavily relies on SSR, so you will need a
-node.js backend running to serve requests.
+node.js backend running to serve requests. You can set the
+`ENABLE_PERFORMANCE_PROFILER` env var to `true` to get performance
+metrics on the SSR steps.
 
 ## Linting tools
 
@@ -68,9 +73,7 @@ Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.
 
 ## Running end-to-end tests
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your
-choice. To use this command, you need to first add a package that
-implements end-to-end testing capabilities.
+End-to-end tests are implemented using Cypress.
 
 ## License
 

@@ -14,7 +14,7 @@ describe('Server prices', () => {
 
     E2EEvent.isVisible(`[id="server_prices_table"]`);
 
-    E2EEvent.countElements(`[id="server_prices_table"]`, `[id="server_table_data_line"]`,25);
+    E2EEvent.countElements(`[id="server_prices_table"]`, `[id="server_table_data_line"]`, 25);
 
     E2EEvent.isVisible(`[id="pagination_next_arrow"]`);
 

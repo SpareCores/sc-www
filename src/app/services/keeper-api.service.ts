@@ -3,11 +3,13 @@ import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { MYHTTPClient } from './my_http/my-http';
 import { Server } from '../../../sdk/Server';
 import { Servers } from '../../../sdk/Servers';
-import { AssistServerFiltersAiAssistServerFiltersGetParams, AssistServerPriceFiltersAiAssistServerPriceFiltersGetParams, SearchServerPricesServerPricesGetParams, SearchServersServersGetParams } from '../../../sdk/data-contracts';
+import { AssistServerFiltersAiAssistServerFiltersGetParams, SearchServerPricesServerPricesGetParams, SearchServersServersGetParams, SearchStoragePricesStoragePricesGetParams, SearchTrafficPricesTrafficPricesGetParams } from '../../../sdk/data-contracts';
 import { Table } from '../../../sdk/Table';
 import { Ai } from '../../../sdk/Ai';
 import { ServerPrices } from '../../../sdk/ServerPrices';
+import { StoragePrices } from '../../../sdk/StoragePrices';
 import { V2 } from '../../../sdk/V2';
+import { TrafficPrices } from '../../../sdk/TrafficPrices';
 
 @Injectable({
   providedIn: 'root'
@@ -21,6 +23,8 @@ export class KeeperAPIService {
   public ServerPricesController: ServerPrices = new ServerPrices(this.myHttp);
   public TableController: Table = new Table(this.myHttp);
   public AIController: Ai = new Ai(this.myHttp);
+  public StorageController: StoragePrices = new StoragePrices(this.myHttp);
+  public TrafficController: TrafficPrices = new TrafficPrices(this.myHttp);
   public V2Controller: V2 = new V2(this.myHttp);
 
   constructor(
@@ -46,7 +50,7 @@ export class KeeperAPIService {
 
 
   public getServerSimilarServers(vendor: string, id: string, category: "family" | "specs" | "score", limit: number): Promise<any> {
-    return this.ServerController.getSimilarServersServerVendorServerSimilarServersByNGet({vendor, server:id, by:category, n:limit});
+    return this.ServerController.getSimilarServersServerVendorServerSimilarServersByNumGet({vendor, server: id, by: category, num: limit});
   }
 
   public searchServers(query: SearchServersServersGetParams): Promise<any> {
@@ -57,12 +61,18 @@ export class KeeperAPIService {
     return this.ServerPricesController.searchServerPricesServerPricesGet(query);
   }
 
-  public parsePromptforServers(query: AssistServerFiltersAiAssistServerFiltersGetParams): Promise<any> {
-    return this.AIController.assistServerFiltersAiAssistServerFiltersGet(query);
-  }
-
-  public parsePromptforServerPrices(query: AssistServerPriceFiltersAiAssistServerPriceFiltersGetParams): Promise<any> {
-    return this.AIController.assistServerPriceFiltersAiAssistServerPriceFiltersGet(query);
+  public parsePromptFor(type: string, query: AssistServerFiltersAiAssistServerFiltersGetParams): Promise<any> {
+    switch (type) {
+      case 'traffic_prices':
+        return this.AIController.assistTrafficPriceFiltersAiAssistTrafficPriceFiltersGet(query);
+      case 'storages':
+        return this.AIController.assistStoragePriceFiltersAiAssistStoragePriceFiltersGet(query);
+      case 'server_prices':
+        return this.AIController.assistServerPriceFiltersAiAssistServerPriceFiltersGet(query);
+      case 'servers':
+      default:
+        return this.AIController.assistServerFiltersAiAssistServerFiltersGet(query);
+    }
   }
 
   public getCountries(): Promise<any> {
@@ -95,6 +105,18 @@ export class KeeperAPIService {
 
   public getServerBenchmarkMeta(): Promise<any> {
     return this.TableController.tableBenchmarkTableBenchmarkGet();
+  }
+
+  public getStorages(): Promise<any> {
+    return this.TableController.tableStorageTableStorageGet();
+  }
+
+  public getStoragePrices(query: SearchStoragePricesStoragePricesGetParams): Promise<any> {
+    return this.StorageController.searchStoragePricesStoragePricesGet(query);
+  }
+
+  public getTrafficPrices(query: SearchTrafficPricesTrafficPricesGetParams): Promise<any> {
+    return this.TrafficController.searchTrafficPricesTrafficPricesGet(query);
   }
 
 }
