@@ -15,7 +15,7 @@
   .filters {
     border-right: 1px solid #34D399;
     padding-bottom: 1rem;
-    height: calc(100% - 4rem);
+    min-height: calc(100% - 4rem);
   }
 
   .unit {
@@ -24,20 +24,4 @@
     top: 2.25rem;
     transform: translateY(-2rem);
   }
-
-  ::-webkit-scrollbar {
-    width: 5px; /* width of the entire scrollbar */
-    height: 5px;
-  }
-
-  ::-webkit-scrollbar-track {
-    @apply bg-secondary;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background-color: #9CA3AF;
-    border-radius: 20px; /* roundness of the scroll thumb */
-    border: 3px solid #9CA3AF; /* creates padding around scroll thumb */
-  }
-
 }
