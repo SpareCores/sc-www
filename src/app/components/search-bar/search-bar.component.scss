@@ -15,7 +15,7 @@
   .filters {
     border-right: 1px solid #34D399;
     padding-bottom: 1rem;
-    height: calc(100% - 4rem);
+    min-height: calc(100% - 4rem);
   }
 
   .unit {
