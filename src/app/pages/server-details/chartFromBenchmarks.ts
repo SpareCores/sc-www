@@ -9,6 +9,8 @@ export type ChartFromBenchmarkTemplateOptions = {
   // filled when the benchmark is fetched
   name?: string;
   higher_is_better?: boolean;
+  icon?: string;
+  tooltip?: string;
   unit?: string | null | undefined;
   XLabel?: string | null | undefined;
   YLabel?: string | null | undefined;
@@ -16,6 +18,8 @@ export type ChartFromBenchmarkTemplateOptions = {
 }
 
 export type ChartFromBenchmarkTemplate = {
+  id: string;
+  name: string;
   options: ChartFromBenchmarkTemplateOptions[];
   selectedOption: number;
 
@@ -34,6 +38,8 @@ export const redisChartTemplateOptions: ChartFromBenchmarkTemplateOptions[] = [
 ];
 
 export const redisChartTemplate: ChartFromBenchmarkTemplate = {
+  id: 'redis',
+  name: 'Redis',
   options: redisChartTemplateOptions,
   selectedOption: 0,
   chartOptions: barChartOptionsTemplate,
@@ -59,6 +65,8 @@ export const staticWebChartTemplateOptions: ChartFromBenchmarkTemplateOptions[] 
 ];
 
 export const staticWebChartTemplate: ChartFromBenchmarkTemplate = {
+  id: 'static_web',
+  name: 'Static Web',
   options: staticWebChartTemplateOptions,
   selectedOption: 0,
   chartOptions: barChartOptionsTemplate,

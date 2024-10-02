@@ -437,95 +437,51 @@
         </div>
       </div>
 
-      <div class="block_half" *ngIf="staticWebChartTemplate.chartData" id="static_web_chart">
-        <div class="flex justify-between items-center">
-          <h3 class="text-2xl flex items-center gap-2" >
-            Static web server
-            <!--
-            <lucide-icon
-              name="{{selectedStaticWebOption.icon}}"
-              class="h-4 w-4 text-gray-200"
-              (mouseenter)="showTooltip($event, selectedStaticWebOption.tooltip)"
-              (mouseleave)="hideTooltip()">
-            </lucide-icon>
-            -->
-            <lucide-icon
-              name="info"
-              class="h-4 w-4 text-gray-200"
-              (mouseenter)="showTooltipChart($event, staticWebChartTemplate.options[staticWebChartTemplate.selectedOption].benchmark_id)"
-              (mouseleave)="hideTooltip()">
-            </lucide-icon>
-          </h3>
-          <button
-            id="static_web_button"
-            class="dropdown_button"
-            type="button">
-            <div class="px-3 py-2">
-              {{staticWebChartTemplate.options[staticWebChartTemplate.selectedOption].name}}
+      <ng-container *ngFor="let charItem of multiBarCharts">
+        <div class="block_half" *ngIf="charItem.chart.chartData" id="redis_chart">
+          <div class="flex justify-between items-center">
+            <h3 class="text-2xl flex items-center gap-2" >
+              {{charItem.chart.name}}
+              <lucide-icon
+                name="info"
+                class="h-4 w-4 text-gray-200"
+                (mouseenter)="showTooltipChart($event, charItem.chart.options[charItem.chart.selectedOption].benchmark_id)"
+                (mouseleave)="hideTooltip()">
+              </lucide-icon>
+              <lucide-icon
+                *ngIf="charItem.chart.options[charItem.chart.selectedOption].icon"
+                name="{{charItem.chart.options[charItem.chart.selectedOption].icon}}"
+                class="h-4 w-4 text-gray-200"
+                (mouseenter)="showTooltip($event, charItem.chart.options[charItem.chart.selectedOption].tooltip)"
+                (mouseleave)="hideTooltip()">
+              </lucide-icon>
+            </h3>
+            <button
+              id="{{charItem.chart.id}}_button"
+              class="dropdown_button"
+              type="button">
+              <div class="px-3 py-2">
+                {{charItem.chart.options[charItem.chart.selectedOption].name}}
+              </div>
+              <div class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
+                <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
+              </div>
+            </button>
+          </div>
+          <div *ngIf="isBrowser()">
+            <div chartType="bar">
+              <canvas
+                style="height: 350px; width:100%"
+                baseChart
+                [data]="charItem.chart.chartData"
+                [options]="charItem.chart.chartOptions"
+                [type]="charItem.chart.chartType"
+              >
+              </canvas>
             </div>
-            <div class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
-              <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
-            </div>
-          </button>
-        </div>
-        <div *ngIf="isBrowser()">
-          <div chartType="bar">
-            <canvas
-              style="height: 350px; width:100%"
-              baseChart
-              [data]="staticWebChartTemplate.chartData"
-              [options]="staticWebChartTemplate.chartOptions"
-              [type]="staticWebChartTemplate.chartType"
-            >
-            </canvas>
           </div>
         </div>
-      </div>
-
-      <div class="block_half" *ngIf="redisChartTemplate.chartData" id="redis_chart">
-        <div class="flex justify-between items-center">
-          <h3 class="text-2xl flex items-center gap-2" >
-            Redis
-            <!--
-            <lucide-icon
-              name="{{selectedRedisOption.icon}}"
-              class="h-4 w-4 text-gray-200"
-              (mouseenter)="showTooltip($event, selectedRedisOption.tooltip)"
-              (mouseleave)="hideTooltip()">
-            </lucide-icon>
-            -->
-            <lucide-icon
-              name="info"
-              class="h-4 w-4 text-gray-200"
-              (mouseenter)="showTooltipChart($event, redisChartTemplate.options[redisChartTemplate.selectedOption].benchmark_id)"
-              (mouseleave)="hideTooltip()">
-            </lucide-icon>
-          </h3>
-          <button
-            id="redis_button"
-            class="dropdown_button"
-            type="button">
-            <div class="px-3 py-2">
-              {{redisChartTemplate.options[redisChartTemplate.selectedOption].name}}
-            </div>
-            <div class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
-              <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
-            </div>
-          </button>
-        </div>
-        <div *ngIf="isBrowser()">
-          <div chartType="bar">
-            <canvas
-              style="height: 350px; width:100%"
-              baseChart
-              [data]="redisChartTemplate.chartData"
-              [options]="redisChartTemplate.chartOptions"
-              [type]="redisChartTemplate.chartType"
-            >
-            </canvas>
-          </div>
-        </div>
-      </div>
+      </ng-container>
 
       <div class="my-2 w-full">
         <h2 class="text-3xl font-bold"> Alternatives </h2>
@@ -692,29 +648,19 @@
   </ul>
 </div>
 
-<div id="static_web_options" class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid">
-  <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
-    <li *ngFor="let item of staticWebChartTemplate.options, let i = index" class="flex py-1 gap-2 items-center">
-        <div
-          class="text-emerald-400 hover:text-emerald-500 cursor-pointer font-bold ml-2"
-          (click)="selectChartTemplateOption(staticWebChartTemplate, i)">
-          {{item.name}}
-        </div>
-    </li>
-  </ul>
-</div>
-
-<div id="redis_options" class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid">
-  <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
-    <li *ngFor="let item of redisChartTemplate.options, let i = index" class="flex py-1 gap-2 items-center">
-        <div
-          class="text-emerald-400 hover:text-emerald-500 cursor-pointer font-bold ml-2"
-          (click)="selectChartTemplateOption(redisChartTemplate, i)">
-          {{item.name}}
-        </div>
-    </li>
-  </ul>
-</div>
+<ng-container *ngFor="let charItem of multiBarCharts">
+  <div id="{{charItem.chart.id}}_options" class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid">
+    <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
+      <li *ngFor="let item of charItem.chart.options, let i = index" class="flex py-1 gap-2 items-center">
+          <div
+            class="text-emerald-400 hover:text-emerald-500 cursor-pointer font-bold ml-2"
+            (click)="selectChartTemplateOption(charItem, i)">
+            {{item.name}}
+          </div>
+      </li>
+    </ul>
+  </div>
+</ng-container>
 
 <div id="tooltipDefault"
   #tooltipDefault

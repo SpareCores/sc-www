@@ -79,34 +79,17 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   ];
   selectedSimilarOption: any = this.similarOptions[0];
 
-  dropdownStaticWeb: any;
-
-  staticWebChartTemplate: ChartFromBenchmarkTemplate = JSON.parse(JSON.stringify(staticWebChartTemplate));
-  /*
-  staticWebOptions: any[] = [
-    {name: 'RPS', benchmark: 'static_web:rps', YLabel : 'Requests per second', scaleField: 'connections_per_vcpus', labelsField: 'size', tooltip: "Higher is better.", icon: 'circle-arrow-up'},
-    {name: 'RPS Extrapolated', benchmark: 'static_web:rps-extrapolated', YLabel : 'Requests per second', scaleField: 'connections_per_vcpus', labelsField: 'size', tooltip: "Higher is better.", icon: 'circle-arrow-up'},
-    {name: 'Throughput', benchmark: 'static_web:throughput', YLabel : 'Bytes per second', scaleField: 'connections_per_vcpus', labelsField: 'size', tooltip: "Higher is better.", icon: 'circle-arrow-up'},
-    {name: 'Throughput Extrapolated', benchmark: 'static_web:throughput-extrapolated', YLabel : 'Bytes per second', scaleField: 'connections_per_vcpus', labelsField: 'size', tooltip: "Higher is better.", icon: 'circle-arrow-up'},
-    {name: 'Latency', benchmark: 'static_web:latency', YLabel : 'Seconds', scaleField: 'connections_per_vcpus', labelsField: 'size', tooltip: "Lower is better.", icon: 'circle-arrow-down'},
+  multiBarCharts: any[] = [
+    {
+      chart: JSON.parse(JSON.stringify(staticWebChartTemplate)),
+      callbacks: staticWebChartTemplateCallbacks,
+      dropdown: undefined,
+    }, {
+      chart: JSON.parse(JSON.stringify(redisChartTemplate)),
+      callbacks: redisChartTemplateCallbacks,
+      dropdown: undefined,
+    }
   ];
-
-  selectedStaticWebOption: any = this.staticWebOptions[0];
-  */
-
-
-  redisChartTemplate: ChartFromBenchmarkTemplate = JSON.parse(JSON.stringify(redisChartTemplate));
-
-  dropdownRedis: any;
-  /*
-  redisOptions: any[] = [
-    {name: 'RPS', benchmark: 'redis:rps', YLabel : 'Requests per second', scaleField: 'pipeline', labelsField: 'operation', tooltip: "Higher is better.", icon: 'circle-arrow-up'},
-    {name: 'RPS Extrapolated', benchmark: 'redis:rps-extrapolated', YLabel : 'Requests per second', scaleField: 'pipeline', labelsField: 'operation', tooltip: "Higher is better.", icon: 'circle-arrow-up'},
-    {name: 'Latency', benchmark: 'redis:latency', YLabel : 'Milliseconds', scaleField: 'pipeline', labelsField: 'operation', tooltip: "Lower is better.", icon: 'circle-arrow-down'},
-  ];
-  */
-
-  //selectedRedisOption: any = this.redisChartTemplate.options[0];
 
   instancePropertyCategories: any[] = [
     { name: 'General', category: 'meta', properties: [] },
@@ -161,12 +144,6 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   barChartOptionsSSL: ChartConfiguration<'bar'>['options'] = barChartOptionsSSL;
   barChartDataSSL: ChartData<'bar'> | undefined = undefined;
 
-  //barChartOptionsStaticWeb: ChartConfiguration<'bar'>['options'] = barChartOptionsStaticWeb;
-  //barChartDataStaticWeb: ChartData<'bar'> | undefined = undefined;
-
-  //barChartOptionsRedis: ChartConfiguration<'bar'>['options'] = JSON.parse(JSON.stringify(barChartOptionsTemplate));
-  //barChartDataRedis: ChartData<'bar'> | undefined = undefined;
-
   geekbenchHTML: any;
 
   toastErrorMsg: string = 'Failed to load server data. Please try again later.';
@@ -217,8 +194,6 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
         this.instanceProperties = serverMeta?.fields || [];
 
         this.benchmarkMeta = benchmarkMeta || {};
-
-        console.log(this.benchmarkMeta);
 
         this.similarByFamily = similarByFamily;
         this.similarBySpecs = similarBySpecs;
@@ -469,6 +444,12 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
               this.dropdownSimilar = dropdown;
             });
 
+            this.multiBarCharts.forEach((chart) => {
+              this.dropdownManager.initDropdown(chart.chart.id + '_button', chart.chart.id + '_options').then((dropdown) => {
+                chart.dropdown = dropdown;
+              });
+            });
+            /*
             this.dropdownManager.initDropdown('static_web_button', 'static_web_options').then((dropdown) => {
               this.dropdownStaticWeb = dropdown;
             });
@@ -476,6 +457,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
             this.dropdownManager.initDropdown('redis_button', 'redis_options').then((dropdown) => {
               this.dropdownRedis = dropdown;
             });
+            */
           }
         }
       }).catch((error) => {
@@ -763,7 +745,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   }
   }
 
-  showTooltip(el: any, content: string) {
+  showTooltip(el: any, content: string | undefined) {
     if(content) {
       const tooltip = this.tooltip.nativeElement;
       const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
@@ -887,19 +869,18 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     this.compressDropdown?.hide();
   }
 
-  selectChartTemplateOption(template: ChartFromBenchmarkTemplate, option: number) {
-    template.selectedOption = option;
-    this.generateMultiBarChart(template);
-    this.dropdownRedis?.hide();
+  selectChartTemplateOption(template: any, option: number) {
+    template.chart.selectedOption = option;
+    this.generateMultiBarChart(template.chart);
+    template.dropdown?.hide();
   }
 
   initializeBenchmarkCharts() {
-    this.redisChartTemplate.chartOptions.plugins.tooltip.callbacks = redisChartTemplateCallbacks;
 
-    this.staticWebChartTemplate.chartOptions.plugins.tooltip.callbacks = staticWebChartTemplateCallbacks;
-
-    this.initializeMultiBarChart(this.redisChartTemplate);
-    this.initializeMultiBarChart(this.staticWebChartTemplate);
+    this.multiBarCharts.forEach((chartItem: any) => {
+      chartItem.chart.chartOptions.plugins.tooltip.callbacks = chartItem.callbacks;
+      this.initializeMultiBarChart(chartItem.chart);
+    });
   }
 
   initializeMultiBarChart(chartTemplate: ChartFromBenchmarkTemplate) {
@@ -909,13 +890,13 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
         option.name = benchmark.name;
         option.unit = benchmark.unit;
         option.higher_is_better = benchmark.higher_is_better;
+        option.icon = benchmark.higher_is_better ? 'circle-arrow-up' : 'circle-arrow-down';
+        option.tooltip = benchmark.higher_is_better ? 'Higher is better' : 'Lower is better';
         option.title = benchmark.config_fields ? ((benchmark.config_fields as any)[option.labelsField] as string) : '';
         option.XLabel = benchmark.config_fields ? ((benchmark.config_fields as any)[option.scaleField] as string) : '';
         option.YLabel = benchmark.unit;
       }
     });
-    console.log(chartTemplate);
-
   }
 
   generateBenchmarkCharts() {
@@ -1000,8 +981,9 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
     this.generateCompressChart();
 
-    this.generateMultiBarChart(this.staticWebChartTemplate);
-    this.generateMultiBarChart(this.redisChartTemplate);
+    this.multiBarCharts.forEach((chartItem: any) => {
+      this.generateMultiBarChart(chartItem.chart);
+    });
   }
 
   generateCompressChart() {
