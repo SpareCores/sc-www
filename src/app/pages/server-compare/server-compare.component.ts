@@ -17,6 +17,7 @@ import { ServerCompareService } from '../../services/server-compare.service';
 import { DropdownManagerService } from '../../services/dropdown-manager.service';
 import { AnalyticsService } from '../../services/analytics.service';
 import { CurrencyOption, availableCurrencies } from '../../tools/shared_data';
+import { ChartFromBenchmarkTemplate, ChartFromBenchmarkTemplateOptions, redisChartTemplate, redisChartTemplateCallbacks, staticWebChartCompareTemplate, staticWebChartTemplate, staticWebChartTemplateCallbacks } from '../server-details/chartFromBenchmarks';
 
 Chart.register(annotationPlugin);
 
@@ -164,6 +165,23 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
   ];
 
   selectedRedisOption: any = this.redisOptions[0];
+
+  multiBarCharts: any[] = [
+    {
+      chart: JSON.parse(JSON.stringify(redisChartTemplate)),
+      callbacks: redisChartTemplateCallbacks,
+      dropdown: undefined,
+      data: [],
+      show_more: false,
+    },
+    {
+      chart: JSON.parse(JSON.stringify(staticWebChartCompareTemplate)),
+      callbacks: staticWebChartTemplateCallbacks,
+      dropdown: undefined,
+      data: [],
+      show_more: false,
+    }
+  ];
 
   compressDropdown: any;
   availableCompressMethods: any[] = [];
@@ -401,7 +419,14 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
               category.data = this.benchmarkMeta.filter((b: any) => category.benchmarks.includes(b.benchmark_id));
             });
 
+            this.multiBarCharts.forEach((chartTemplate) => {
+              const benchmarks = chartTemplate.chart.options.map((o: any) => o.benchmark_id);
+              chartTemplate.data = this.benchmarkMeta.filter((b: any) => benchmarks.includes(b.benchmark_id));
+            });
+
             if(isPlatformBrowser(this.platformId)) {
+
+              this.initializeBenchmarkCharts();
 
               this.getCompressChartOptions();
 
@@ -409,12 +434,23 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
               this.generateBWMemChart();
               this.generateSSLChart();
               this.generateCompressChart();
-              this.generateStatiWebChart(this.selectedStaticWebOption, this.selectedConnections);
-              this.generateStatiWebChart(this.selectedRedisOption, this.selectedOperation);
+              //this.generateMultiBarChart(this.selectedStaticWebOption, this.selectedConnections);
+              //this.generateMultiBarChart(this.selectedRedisOption, this.selectedOperation);
+
+              this.multiBarCharts.forEach((chart) => {
+                this.generateMultiBarChart(chart.chart);
+              });
 
               this.dropdownManager.initDropdown('currency_button', 'currency_options').then((dropdown) => {
                 this.dropdownCurrency = dropdown;
               });
+
+              this.multiBarCharts.forEach((chart) => {
+                this.dropdownManager.initDropdown(chart.chart.id + '_button', chart.chart.id + '_options').then((dropdown) => {
+                  chart.dropdown = dropdown;
+                });
+              });
+
             }
           }).catch((err) => {
             this.analytics.SentryException(err, {tags: { location: this.constructor.name, function: 'compareInit' }});
@@ -915,14 +951,23 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     }
   }
 
-  generateStatiWebChart(chartConf: any, chartConf2: any) {
+  generateMultiBarChart(chartTemplate: ChartFromBenchmarkTemplate) {
 
-    const benchmark_id = chartConf.benchmark;
-    const labelsField = chartConf.scaleField;
-    const scaleField = chartConf.labelsField;
+    const option: ChartFromBenchmarkTemplateOptions = chartTemplate.options[chartTemplate.selectedOption];
+    const benchmark_id = option.benchmark_id;
+    const labelsField = option.labelsField;
+    const scaleField = option.scaleField;
 
-    const labelValue = chartConf2.value;
-    const selectedName = chartConf2.name;
+    if(!chartTemplate.secondaryOptions || chartTemplate.selectedSecondaryOption === undefined) {
+      return;
+    }
+
+    const optionsSecondary = chartTemplate.secondaryOptions[chartTemplate.selectedSecondaryOption];
+
+    console.log(optionsSecondary, labelsField);
+
+    const labelValue = optionsSecondary.value;
+    const selectedName = optionsSecondary.name;
 
     const dataSet = this.benchmarkMeta?.find((x: any) => x.benchmark_id === benchmark_id);
 
@@ -966,7 +1011,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
             chartData.datasets[i].data.push({
               data:item.score,
               label: size,
-              unit: chartConf.YLabel,
+              unit: option.YLabel,
               note: item.note
             });
           } else {
@@ -975,6 +1020,19 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
         });
       });
 
+      console.log(chartData);
+
+      if(chartData) {
+        chartTemplate.chartData = { labels: chartData.labels, datasets: chartData.datasets };
+        chartTemplate.chartOptions.scales.y.title.text = option.YLabel;
+        chartTemplate.chartOptions.scales.x.title.text = option.XLabel;
+        chartTemplate.chartOptions.plugins.title.text = option.title;
+      } else {
+        chartTemplate.chartData = undefined;
+      }
+
+
+      /*
       if(benchmark_id.includes('static_web')) {
         this.barChartDataStaticWeb = { labels: chartData.labels, datasets: chartData.datasets };
 
@@ -1007,6 +1065,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
           });
         }
       }
+      */
     }
   }
 
@@ -1140,6 +1199,30 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     }
   }
 
+  initializeBenchmarkCharts() {
+
+    this.multiBarCharts.forEach((chartItem: any) => {
+      chartItem.chart.chartOptions.plugins.tooltip.callbacks = chartItem.callbacks;
+      this.initializeMultiBarChart(chartItem.chart);
+    });
+  }
+
+  initializeMultiBarChart(chartTemplate: ChartFromBenchmarkTemplate) {
+    chartTemplate.options.forEach((option: ChartFromBenchmarkTemplateOptions) => {
+      const benchmark = this.benchmarkMeta.find((b: any) => b.benchmark_id === option.benchmark_id);
+      if(benchmark) {
+        option.name = benchmark.name;
+        option.unit = benchmark.unit;
+        option.higher_is_better = benchmark.higher_is_better;
+        option.icon = benchmark.higher_is_better ? 'circle-arrow-up' : 'circle-arrow-down';
+        option.tooltip = benchmark.higher_is_better ? 'Higher is better' : 'Lower is better';
+        option.title = ' '
+        option.XLabel = benchmark.config_fields ? ((benchmark.config_fields as any)[option.scaleField] as string) : '';
+        option.YLabel = benchmark.unit;
+      }
+    });
+  }
+
   isBrowser() {
     return isPlatformBrowser(this.platformId);
   }
@@ -1195,25 +1278,25 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
 
   selectStaticWebOption(item: any) {
     this.selectedStaticWebOption = item;
-    this.generateStatiWebChart(this.selectedStaticWebOption, this.selectedConnections);
+    //this.generateMultiBarChart(this.selectedStaticWebOption, this.selectedConnections);
     this.dropdownStaticWeb?.hide();
   }
 
   selectStaticWebConnOption(item: any) {
     this.selectedConnections = item;
-    this.generateStatiWebChart(this.selectedStaticWebOption, this.selectedConnections);
+    //this.generateMultiBarChart(this.selectedStaticWebOption, this.selectedConnections);
     this.dropdownConnections?.hide();
   }
 
   selectRedisOption(item: any) {
     this.selectedRedisOption = item;
-    this.generateStatiWebChart(this.selectedRedisOption, this.selectedOperation);
+    //this.generateMultiBarChart(this.selectedRedisOption, this.selectedOperation);
     this.dropdownRedis?.hide();
   }
 
   selectRedisOpOption(item: any) {
     this.selectedOperation = item;
-    this.generateStatiWebChart(this.selectedRedisOption, this.selectedOperation);
+    //this.generateMultiBarChart(this.selectedRedisOption, this.selectedOperation);
     this.dropdownOperation?.hide();
   }
 

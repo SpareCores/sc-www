@@ -191,7 +191,7 @@
                 </ng-container>
               </tr>
             </ng-container>
-
+            <!--
             <ng-container *ngFor="let category of benchmarkCategories">
               <ng-container *ngIf="category.data.length">
                 <tr class="section_header" id="benchmark_line">
@@ -471,6 +471,110 @@
                 <ng-container *ngIf="category.show_more">
                   <ng-container *ngFor="let item of category.data">
                     <tr *ngIf="category.data.length > 1">
+                      <td [colSpan]="servers.length + 1" >
+                        <div class="ml-4 flex justify-between">
+                          <div class="flex gap-2 items-center">
+                            {{item.name}}
+                            <lucide-icon
+                              *ngIf="item.description"
+                              name="info"
+                              class="h-4 w-4 text-gray-200"
+                              (mouseenter)="showTooltip($event, item.description)"
+                              (mouseleave)="hideTooltip()">
+                            </lucide-icon>
+                          </div>
+                          <lucide-icon
+                            *ngIf="item.description"
+                            [name]="benchmarkIcon(item)"
+                            class="h-6 w-6 text-emerald-400 cursor-pointer"
+                            (click)="toggleBenchmark(item)"
+                            >
+                          </lucide-icon>
+                        </div>
+                      </td>
+                    </tr>
+                    <ng-container *ngIf="!item.collapsed" >
+                      <tr *ngFor="let config of item.configs">
+                        <td>
+                          <div class="ml-6" [innerHTML]="serializeConfig(config.config)" ></div></td>
+                        <td *ngFor="let value of config.values" [style]="isBestStyle(value, config.values, item)">
+                              {{numberWithCommas(value)}}
+                        </td>
+                      </tr>
+                    </ng-container>
+                  </ng-container>
+                </ng-container>
+            </ng-container>
+            </ng-container>
+            -->
+            <ng-container *ngFor="let chartItem of multiBarCharts">
+              <ng-container *ngIf="chartItem.chart.chartData">
+                <tr class="section_header" id="benchmark_line">
+                  <td [colSpan]="2" >
+                    <h3 class="text-xl font-semibold flex gap-2 items-center">FOOBAR {{chartItem.chart.name}}
+                      <lucide-icon
+                        *ngIf="chartItem.chart.options[chartItem.chart.selectedOption].icon"
+                        name="{{chartItem.chart.options[chartItem.chart.selectedOption].icon}}"
+                        class="h-4 w-4 text-gray-200"
+                        (mouseenter)="showTooltip($event, chartItem.chart.options[chartItem.chart.selectedOption].tooltip)"
+                        (mouseleave)="hideTooltip()">
+                      </lucide-icon>
+                      <lucide-icon
+                        name="info"
+                        class="h-4 w-4 text-gray-200"
+                        (mouseenter)="showTooltipChart($event, chartItem.chart.options[chartItem.chart.selectedOption].benchmark_id)"
+                        (mouseleave)="hideTooltip()">
+                      </lucide-icon>
+                    </h3>
+                  </td>
+                  <td [colSpan]="servers.length -1">
+
+                  </td>
+                </tr>
+                <tr>
+                  <td [colSpan]="servers.length + 1" >
+                    <div>
+                      <div class="block_full_inline" *ngIf="chartItem.chart.chartData">
+                        <div class="flex justify-end items-center">
+                          <button
+                            id="bw_mem_button"
+                            class="dropdown_button"
+                            type="button">
+                              <div class="px-4 py-3">
+                                {{selectedBWMemOperation.name}}
+                              </div>
+                              <div class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
+                                <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
+                              </div>
+                          </button>
+                        </div>
+                        <div *ngIf="isBrowser()">
+                          <div chartType="bar">
+                            <canvas
+                              style="height: 350px; max-height: 350px; max-width:100%"
+                              baseChart
+                              [data]="chartItem.chart.chartData"
+                              [options]="chartItem.chart.chartOptions"
+                              [type]="chartItem.chart.chartType"
+                            >
+                            </canvas>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="mt-4 mb-8 flex justify-center"
+                      [ngClass]="{
+                        'mb-8': !chartItem.show_more
+                      }">
+                      <button class="btn-primary py-2 px-3" (click)="toggleBenchmarkCategory(chartItem)">
+                        {{chartItem.show_more ? 'Hide' : 'Show'}} Details
+                      </button>
+                    </div>
+                </td>
+                </tr>
+                <ng-container *ngIf="chartItem.show_more">
+                  <ng-container *ngFor="let item of chartItem.data">
+                    <tr *ngIf="chartItem.data.length > 1">
                       <td [colSpan]="servers.length + 1" >
                         <div class="ml-4 flex justify-between">
                           <div class="flex gap-2 items-center">

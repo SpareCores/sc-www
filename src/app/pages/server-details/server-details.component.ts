@@ -452,15 +452,6 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
                 chart.dropdown = dropdown;
               });
             });
-            /*
-            this.dropdownManager.initDropdown('static_web_button', 'static_web_options').then((dropdown) => {
-              this.dropdownStaticWeb = dropdown;
-            });
-
-            this.dropdownManager.initDropdown('redis_button', 'redis_options').then((dropdown) => {
-              this.dropdownRedis = dropdown;
-            });
-            */
           }
         }
       }).catch((error) => {
