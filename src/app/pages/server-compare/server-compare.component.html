@@ -193,7 +193,7 @@
             </ng-container>
             <ng-container *ngFor="let category of benchmarkCategories">
               <ng-container *ngIf="category.data.length">
-                <tr class="section_header" id="benchmark_line">
+                <tr class="section_header" id="benchmark_line_{{category.id}}">
                   <td [colSpan]="2" >
                     <h3 class="text-xl font-semibold flex gap-2 items-center">{{category.name}}
                       <lucide-icon
