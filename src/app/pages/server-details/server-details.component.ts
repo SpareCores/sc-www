@@ -870,7 +870,6 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   }
 
   initializeBenchmarkCharts() {
-
     this.multiBarCharts.forEach((chartItem: any) => {
       chartItem.chart.chartOptions.plugins.tooltip.callbacks = chartItem.callbacks;
       this.initializeMultiBarChart(chartItem.chart);
