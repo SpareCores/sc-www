@@ -438,7 +438,7 @@
       </div>
 
       <ng-container *ngFor="let chartItem of multiBarCharts">
-        <div class="block_half" *ngIf="chartItem.chart.chartData" id="redis_chart">
+        <div class="block_half" *ngIf="chartItem.chart.chartData" id="{{chartItem.chart.id}}_chart">
           <div class="flex justify-between items-center">
             <h3 class="text-2xl flex items-center gap-2" >
               {{chartItem.chart.name}}
