@@ -17,7 +17,7 @@ import { ServerCompareService } from '../../services/server-compare.service';
 import { DropdownManagerService } from '../../services/dropdown-manager.service';
 import { AnalyticsService } from '../../services/analytics.service';
 import { CurrencyOption, availableCurrencies } from '../../tools/shared_data';
-import { ChartFromBenchmarkTemplate, ChartFromBenchmarkTemplateOptions, redisChartTemplate, redisChartTemplateCallbacks, staticWebChartCompareTemplate, staticWebChartTemplate, staticWebChartTemplateCallbacks } from '../server-details/chartFromBenchmarks';
+import { ChartFromBenchmarkTemplate, ChartFromBenchmarkTemplateOptions, redisChartTemplate, redisChartTemplateCallbacks, staticWebChartCompareTemplate, staticWebChartTemplateCallbacks } from '../server-details/chartFromBenchmarks';
 
 Chart.register(annotationPlugin);
 
@@ -916,7 +916,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     const optionsSecondary = chartTemplate.secondaryOptions[chartTemplate.selectedSecondaryOption];
 
     const labelValue = optionsSecondary.value;
-    const selectedName = optionsSecondary.name;
+    //const selectedName = optionsSecondary.name;
 
     const dataSet = this.benchmarkMeta?.find((x: any) => x.benchmark_id === benchmark_id);
 
