@@ -191,28 +191,15 @@
                 </ng-container>
               </tr>
             </ng-container>
-            <!--
             <ng-container *ngFor="let category of benchmarkCategories">
               <ng-container *ngIf="category.data.length">
                 <tr class="section_header" id="benchmark_line">
                   <td [colSpan]="2" >
                     <h3 class="text-xl font-semibold flex gap-2 items-center">{{category.name}}
-                      <lucide-icon *ngIf="category.id !== 'static_web:rps' && category.id !== 'redis:rps'"
+                      <lucide-icon
                         name="circle-arrow-up"
                         class="h-4 w-4 text-gray-200"
                         (mouseenter)="showTooltip($event, 'Higher is better.')"
-                        (mouseleave)="hideTooltip()">
-                      </lucide-icon>
-                      <lucide-icon *ngIf="category.id === 'redis:rps'"
-                        name="{{selectedRedisOption.icon}}"
-                        class="h-4 w-4 text-gray-200"
-                        (mouseenter)="showTooltip($event, selectedRedisOption.tooltip)"
-                        (mouseleave)="hideTooltip()">
-                      </lucide-icon>
-                      <lucide-icon *ngIf="category.id === 'static_web:rps'"
-                        name="{{selectedStaticWebOption.icon}}"
-                        class="h-4 w-4 text-gray-200"
-                        (mouseenter)="showTooltip($event, selectedStaticWebOption.tooltip)"
                         (mouseleave)="hideTooltip()">
                       </lucide-icon>
                       <lucide-icon
@@ -227,20 +214,6 @@
                         name="info"
                         class="h-4 w-4 text-gray-200"
                         (mouseenter)="showTooltipChart($event, category.id)"
-                        (mouseleave)="hideTooltip()">
-                      </lucide-icon>
-                      <lucide-icon
-                        *ngIf="category.id === 'static_web:rps'"
-                        name="info"
-                        class="h-4 w-4 text-gray-200"
-                        (mouseenter)="showTooltipChart($event, selectedStaticWebOption.benchmark)"
-                        (mouseleave)="hideTooltip()">
-                      </lucide-icon>
-                      <lucide-icon
-                        *ngIf="category.id === 'redis:rps'"
-                        name="info"
-                        class="h-4 w-4 text-gray-200"
-                        (mouseenter)="showTooltipChart($event, selectedRedisOption.benchmark)"
                         (mouseleave)="hideTooltip()">
                       </lucide-icon>
                       <lucide-icon
@@ -309,75 +282,6 @@
                               baseChart
                               [data]="barChartDataSSL"
                               [options]="barChartOptionsSSL"
-                              [type]="barChartType"
-                            >
-                            </canvas>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div *ngIf="category.id === 'static_web:rps'" >
-                      <div class="block_full_inline" *ngIf="barChartDataStaticWeb">
-                        <div class="flex justify-end items-center gap-4">
-                          <button
-                            id="static_web_button"
-                            class="dropdown_button"
-                            type="button">
-                              <div class="px-4 py-3">
-                                {{selectedStaticWebOption.name}}
-                              </div>
-                              <div class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
-                                <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
-                              </div>
-                          </button>
-                          <button
-                            id="static_web_conn_button"
-                            class="dropdown_button"
-                            type="button">
-                              <div class="px-4 py-3">
-                                {{selectedConnections.name}}
-                              </div>
-                              <div class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
-                                <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
-                              </div>
-                          </button>
-                        </div>
-                        <div *ngIf="isBrowser()">
-                          <div chartType="bar">
-                            <canvas
-                              style="height: 350px; max-height: 350px; width: 100%"
-                              baseChart
-                              [data]="barChartDataStaticWeb"
-                              [options]="barChartOptionsStaticWeb"
-                              [type]="barChartType"
-                            >
-                            </canvas>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div *ngIf="category.id === 'redis:rps'" >
-                      <div class="block_full_inline" *ngIf="barChartDataRedis">
-                        <div class="flex justify-end items-center gap-4">
-                          <button
-                            id="redis_button"
-                            class="dropdown_button"
-                            type="button">
-                              <div class="px-4 py-3">
-                                {{selectedRedisOption.name}}
-                              </div>
-                              <div class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
-                                <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
-                              </div>
-                          </button>
-                        </div>
-                        <div *ngIf="isBrowser()">
-                          <div chartType="bar">
-                            <canvas
-                              style="height: 350px; max-height: 350px; width: 100%"
-                              baseChart
-                              [data]="barChartDataRedis"
-                              [options]="barChartOptionsRedis"
                               [type]="barChartType"
                             >
                             </canvas>
@@ -506,12 +410,11 @@
                 </ng-container>
             </ng-container>
             </ng-container>
-            -->
             <ng-container *ngFor="let chartItem of multiBarCharts">
               <ng-container *ngIf="chartItem.chart.chartData">
                 <tr class="section_header" id="benchmark_line">
                   <td [colSpan]="2" >
-                    <h3 class="text-xl font-semibold flex gap-2 items-center">FOOBAR {{chartItem.chart.name}}
+                    <h3 class="text-xl font-semibold flex gap-2 items-center">{{chartItem.chart.name}}
                       <lucide-icon
                         *ngIf="chartItem.chart.options[chartItem.chart.selectedOption].icon"
                         name="{{chartItem.chart.options[chartItem.chart.selectedOption].icon}}"
@@ -535,17 +438,29 @@
                   <td [colSpan]="servers.length + 1" >
                     <div>
                       <div class="block_full_inline" *ngIf="chartItem.chart.chartData">
-                        <div class="flex justify-end items-center">
+                        <div class="flex justify-end items-center gap-4">
                           <button
-                            id="bw_mem_button"
+                            *ngIf="chartItem.chart.secondaryOptions?.length > 1"
+                            id="{{chartItem.chart.id}}_button2"
                             class="dropdown_button"
                             type="button">
-                              <div class="px-4 py-3">
-                                {{selectedBWMemOperation.name}}
-                              </div>
-                              <div class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
-                                <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
-                              </div>
+                            <div class="px-3 py-2">
+                              {{chartItem.chart.secondaryOptions[chartItem.chart.selectedSecondaryOption].name}}
+                            </div>
+                            <div class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
+                              <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
+                            </div>
+                          </button>
+                          <button
+                            id="{{chartItem.chart.id}}_button"
+                            class="dropdown_button"
+                            type="button">
+                            <div class="px-3 py-2">
+                              {{chartItem.chart.options[chartItem.chart.selectedOption].name}}
+                            </div>
+                            <div class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
+                              <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
+                            </div>
                           </button>
                         </div>
                         <div *ngIf="isBrowser()">
@@ -611,14 +526,14 @@
             </ng-container>
             </ng-container>
 
-            <ng-container *ngIf="getBenchmarksForCategory(null)?.length">
+            <ng-container *ngIf="getUncategorizedBenchmarksCategories()?.length">
               <tr class="section_header">
                 <td [colSpan]="2" >
                   <h3 class="pl-3 text-xl font-semibold">Further Benchmarks</h3>
                 </td>
                 <td [colSpan]="servers.length - 1">
               </tr>
-              <ng-container *ngFor="let item of getBenchmarksForCategory(null)">
+              <ng-container *ngFor="let item of getUncategorizedBenchmarksCategories()">
                 <tr>
                   <td [colSpan]="servers.length + 1" >
                     <div class="pl-4 w-full flex justify-between">
@@ -712,6 +627,7 @@
   </ul>
 </div>
 
+<!--
 <div id="static_web_conn_options" class="z-100 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid">
   <ul class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
     <li *ngFor="let item of connectionsOptions"
@@ -721,7 +637,39 @@
     </li>
   </ul>
 </div>
+-->
 
+<ng-container *ngFor="let charItem of multiBarCharts">
+  <div id="{{charItem.chart.id}}_options" class="z-100 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid">
+    <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
+      <li *ngFor="let item of charItem.chart.options, let i = index" class="flex py-1 gap-2 items-center">
+          <div
+            class="text-emerald-400 hover:text-emerald-500 cursor-pointer font-bold ml-2"
+            (click)="selectChartTemplateOption(charItem, i)">
+            {{item.name}}
+          </div>
+      </li>
+    </ul>
+  </div>
+
+  <div
+    *ngIf="charItem.chart.secondaryOptions?.length > 1"
+    id="{{charItem.chart.id}}_options2"
+    class="z-100 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid">
+    <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
+      <li *ngFor="let item of charItem.chart.secondaryOptions, let i = index" class="flex py-1 gap-2 items-center">
+          <div
+            class="text-emerald-400 hover:text-emerald-500 cursor-pointer font-bold ml-2"
+            (click)="selectChartTemplateOption2(charItem, i)">
+            {{item.name}}
+          </div>
+      </li>
+    </ul>
+  </div>
+
+</ng-container>
+
+<!--
 <div id="static_web_options" class="z-100 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid">
   <ul class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
     <li *ngFor="let item of staticWebOptions"
@@ -751,6 +699,7 @@
     </li>
   </ul>
 </div>
+-->
 
 <div id="compress_method_options" class="z-100 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid">
   <ul class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
