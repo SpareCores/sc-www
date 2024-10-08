@@ -627,18 +627,6 @@
   </ul>
 </div>
 
-<!--
-<div id="static_web_conn_options" class="z-100 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid">
-  <ul class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
-    <li *ngFor="let item of connectionsOptions"
-      class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-      (click)="selectStaticWebConnOption(item)" >
-      <div class="text-white text-sm ">{{item.name}}</div>
-    </li>
-  </ul>
-</div>
--->
-
 <ng-container *ngFor="let charItem of multiBarCharts">
   <div id="{{charItem.chart.id}}_options" class="z-100 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid">
     <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
@@ -668,38 +656,6 @@
   </div>
 
 </ng-container>
-
-<!--
-<div id="static_web_options" class="z-100 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid">
-  <ul class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
-    <li *ngFor="let item of staticWebOptions"
-      class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-      (click)="selectStaticWebOption(item)" >
-      <div class="text-white text-sm ">{{item.name}}</div>
-    </li>
-  </ul>
-</div>
-
-<div id="redis_op_options" class="z-100 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid">
-  <ul class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
-    <li *ngFor="let item of operationsOptions"
-      class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-      (click)="selectRedisOpOption(item)" >
-      <div class="text-white text-sm ">{{item.name}}</div>
-    </li>
-  </ul>
-</div>
-
-<div id="redis_options" class="z-100 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid">
-  <ul class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
-    <li *ngFor="let item of redisOptions"
-      class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-      (click)="selectRedisOption(item)" >
-      <div class="text-white text-sm ">{{item.name}}</div>
-    </li>
-  </ul>
-</div>
--->
 
 <div id="compress_method_options" class="z-100 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid">
   <ul class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
