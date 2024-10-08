@@ -17,6 +17,7 @@ import { ServerCompareService } from '../../services/server-compare.service';
 import { DropdownManagerService } from '../../services/dropdown-manager.service';
 import { AnalyticsService } from '../../services/analytics.service';
 import { CurrencyOption, availableCurrencies } from '../../tools/shared_data';
+import { specialCompares } from './special-compares';
 
 Chart.register(annotationPlugin);
 
@@ -239,6 +240,10 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
   @ViewChild('tableHolder') tableHolder!: ElementRef;
   isTableOutsideViewport = false;
 
+  title = 'Server Comparison';
+  description = 'Compare cloud servers characteristics, such as CPU, GPU, memory and storage details, and the performance of the instances by various benchmarking workloads to find the optimal compute resource for your needs.';
+  keywords = 'compare, servers, server, hosting, cloud, vps, dedicated, comparison';
+
   constructor(
     @Inject(PLATFORM_ID) private platformId: object,
     @Inject(DOCUMENT) private document: Document,
@@ -251,12 +256,18 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     private route: ActivatedRoute) { }
 
   ngOnInit() {
+    const id = this.route.snapshot.queryParamMap.get('id');
 
-    const title = 'Compare Servers';
-    const description = 'Compare cloud server characteristics and benchmark scores.';
-    const keywords = 'compare, servers, server, hosting, cloud, vps, dedicated, comparison';
+    if(id) {
+      const specialCompare = specialCompares.find((x) => x.id === id);
+      if(specialCompare) {
+        this.title = specialCompare.title;
+        this.description = specialCompare.description;
+        this.breadcrumbs.push({ name: specialCompare.title, url: `/compare/${specialCompare.id}` });
+      }
+    }
 
-    this.seoHandler.updateTitleAndMetaTags(title, description, keywords);
+    this.seoHandler.updateTitleAndMetaTags(this.title, this.description, this.keywords);
 
     (this.radarChartOptionsSingle as any).plugins.legend.display = true;
     (this.radarChartOptionsMulti as any).plugins.legend.display = true;
@@ -273,7 +284,18 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     };
 
     this.route.queryParams.subscribe(params => {
-      const param = params['instances'];
+      let param = params['instances'];
+
+      const id = params['id'];
+
+      if(id) {
+        const specialCompare = specialCompares.find((x) => x.id === id);
+        if(specialCompare) {
+          param = specialCompare.instances;
+        }
+      }
+
+
       if(param){
           this.isLoading = true;
 
