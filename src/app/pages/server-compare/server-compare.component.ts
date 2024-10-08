@@ -381,8 +381,6 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
               this.generateBWMemChart();
               this.generateSSLChart();
               this.generateCompressChart();
-              //this.generateMultiBarChart(this.selectedStaticWebOption, this.selectedConnections);
-              //this.generateMultiBarChart(this.selectedRedisOption, this.selectedOperation);
 
               this.multiBarCharts.forEach((chart) => {
                 this.generateMultiBarChart(chart.chart);
@@ -918,7 +916,6 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     const optionsSecondary = chartTemplate.secondaryOptions[chartTemplate.selectedSecondaryOption];
 
     const labelValue = optionsSecondary.value;
-    //const selectedName = optionsSecondary.name;
 
     const dataSet = this.benchmarkMeta?.find((x: any) => x.benchmark_id === benchmark_id);
 
