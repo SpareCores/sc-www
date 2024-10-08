@@ -130,6 +130,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
       chart: JSON.parse(JSON.stringify(staticWebChartCompareTemplate)),
       callbacks: staticWebChartTemplateCallbacks,
       dropdown: undefined,
+      dropdown2: undefined,
       data: [],
       show_more: false,
     },
@@ -137,6 +138,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
       chart: JSON.parse(JSON.stringify(redisChartTemplate)),
       callbacks: redisChartTemplateCallbacks,
       dropdown: undefined,
+      dropdown2: undefined,
       data: [],
       show_more: false,
     }
@@ -396,7 +398,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
                 });
                 if(chart.chart.secondaryOptions?.length > 1) {
                   this.dropdownManager.initDropdown(chart.chart.id + '_button2', chart.chart.id + '_options2').then((dropdown) => {
-                    chart.dropdown = dropdown;
+                    chart.dropdown2 = dropdown;
                   });
                 }
 
@@ -1196,7 +1198,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
   selectChartTemplateOption2(template: any, option: number) {
     template.chart.selectedSecondaryOption = option;
     this.generateMultiBarChart(template.chart);
-    template.dropdown?.hide();
+    template.dropdown2?.hide();
   }
 
   selectCompressMethod(method: any) {
