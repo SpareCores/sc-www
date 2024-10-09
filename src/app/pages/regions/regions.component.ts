@@ -80,70 +80,61 @@ export class RegionsComponent implements OnInit {
     });
 
     if (isPlatformBrowser(this.platformId)) {
-        const scriptElement = this.loadJsScript(this.renderer, SCRIPT_PATH);
+      this.loadJsScript(SCRIPT_PATH)
+        .then(() => this.loadJsScript(SCRIPT_PATH2))
+        .then(() => this.loadJsScript(SCRIPT_PATH3))
+        .then(() => {
+          Promise.all([
+            this.API.getRegions(),
+            this.API.getVendors()
+          ]).then(([regions, vendors]) => {
+            this.regions = regions.body;
+            this.vendors = vendors.body;
 
-        scriptElement.onload = () => {
-          const scriptElement2 = this.loadJsScript(this.renderer, SCRIPT_PATH2);
-          scriptElement2.onload = () => {
-            const scriptElement3 = this.loadJsScript(this.renderer, SCRIPT_PATH3);
-            scriptElement3.onload = () => {
-              Promise.all([
-                this.API.getRegions(),
-                this.API.getVendors()
-              ]).then(([regions, vendors]) => {
-                this.regions = regions.body;
-                this.vendors = vendors.body;
+            this.vendors = this.vendors.map((region, index) => {
+              return {selected: true, color: colors[index % colors.length],  ...region}
+            });
 
-                this.vendors = this.vendors.map((region, index) => {
-                  return {selected: true, color: colors[index % colors.length],  ...region}
-                });
+            let element = document.getElementById("datamapdiv");
 
-                let element = document.getElementById("datamapdiv");
-
-                let fills: any = {
-                  defaultFill: '#06263a'
-                };
-
-                this.vendors.forEach((vendor, index) => {
-                  fills[vendor.vendor_id] = colors[index % colors.length];
-                });
-
-                this.bubble_map = new Datamap({
-                  element: element,
-                  geographyConfig: {
-                    popupOnHover: false,
-                    highlightOnHover: false
-                  },
-                  bubblesConfig: {
-                    fillOpacity: 1,
-                    borderOpacity: 0,
-                    highlightFillColor: '#34d399',
-                    highlightBorderOpacity: 0,
-                  },
-                  fills: fills
-                });
-
-                this.generateBubbles();
-
-              });
-
+            let fills: any = {
+              defaultFill: '#06263a'
             };
-          };
-        };
+
+            this.vendors.forEach((vendor, index) => {
+              fills[vendor.vendor_id] = colors[index % colors.length];
+            });
+
+            this.bubble_map = new Datamap({
+              element: element,
+              geographyConfig: {
+                popupOnHover: false,
+                highlightOnHover: false
+              },
+              bubblesConfig: {
+                fillOpacity: 1,
+                borderOpacity: 0,
+                highlightFillColor: '#34d399',
+                highlightBorderOpacity: 0,
+              },
+              fills: fills
+            });
+
+            this.generateBubbles();
+
+          });
+        })
     }
   }
 
-   /**
-  * Append the JS tag to the Document Body.
-  * @param renderer The Angular Renderer
-  * @param src The path to the script
-  * @returns the script element
-  */
-   public loadJsScript(renderer: Renderer2, src: string): HTMLScriptElement {
-    const script = renderer.createElement('script');
-    script.src = src;
-    renderer.appendChild(this.document.head, script);
-    return script;
+  public loadJsScript(src: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const script = this.renderer.createElement('script');
+      script.src = src;
+      script.onload = () => resolve();
+      script.onerror = () => reject(new Error(`Failed to load script: ${src}`));
+      this.renderer.appendChild(this.document.head, script);
+    });
   }
 
   generateBubbles() {
