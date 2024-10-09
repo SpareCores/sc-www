@@ -97,7 +97,7 @@ export const staticWebSecondaryOptions = [
 
 export const staticWebChartTemplate: ChartFromBenchmarkTemplate = {
   id: 'static_web',
-  name: 'Static Web',
+  name: 'Static web server',
   options: staticWebChartTemplateOptions,
   secondaryOptions: staticWebSecondaryOptions,
   selectedOption: 0,
@@ -108,7 +108,7 @@ export const staticWebChartTemplate: ChartFromBenchmarkTemplate = {
 
 export const staticWebChartCompareTemplate: ChartFromBenchmarkTemplate = {
   id: 'static_web',
-  name: 'Static Web',
+  name: 'Static web server',
   options: staticWebChartTemplateOptions2,
   secondaryOptions: staticWebSecondaryOptions,
   selectedOption: 0,
