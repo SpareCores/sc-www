@@ -13,6 +13,7 @@ declare let Datamap: any;
 
 const SCRIPT_PATH = 'assets/datamaps/d3.min.js';
 const SCRIPT_PATH2 = 'assets/datamaps/topojson.js';
+const SCRIPT_PATH3 = 'assets/datamaps/datamaps.world.min.js';
 
 const colors = [
   '#3B82F6',
@@ -82,17 +83,10 @@ export class RegionsComponent implements OnInit {
         const scriptElement = this.loadJsScript(this.renderer, SCRIPT_PATH);
 
         scriptElement.onload = () => {
-          console.log('Script loaded');
           const scriptElement2 = this.loadJsScript(this.renderer, SCRIPT_PATH2);
           scriptElement2.onload = () => {
-            const scriptElement3 = this.loadJsScript(this.renderer, "assets/datamaps/datamaps.world.min.js");
+            const scriptElement3 = this.loadJsScript(this.renderer, SCRIPT_PATH3);
             scriptElement3.onload = () => {
-              console.log('Script3 loaded');
-
-              let element = document.getElementById("datamapdiv");
-              let fills: any = {
-                defaultFill: '#06263a'
-              };
               Promise.all([
                 this.API.getRegions(),
                 this.API.getVendors()
