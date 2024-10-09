@@ -41,8 +41,7 @@
               "node_modules/highlight.js/styles/atom-one-dark.css"
             ],
             "scripts": [
-              "node_modules/flowbite/dist/flowbite.min.js",
-              "node_modules/datamaps/dist/datamaps.world.min.js"
+              "node_modules/flowbite/dist/flowbite.min.js"
             ],
             "server": "src/main.server.ts",
             "prerender": {

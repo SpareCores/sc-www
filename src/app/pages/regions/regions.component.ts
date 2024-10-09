@@ -1,15 +1,18 @@
-import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { Component, Inject, OnInit, PLATFORM_ID, Renderer2 } from '@angular/core';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { KeeperAPIService } from '../../services/keeper-api.service';
 import { OrderDir, TableRegionTableRegionGetData } from '../../../../sdk/data-contracts';
 import { CountryIdtoNamePipe } from '../../pipes/country-idto-name.pipe';
 import { FormsModule } from '@angular/forms';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
 import { Router, RouterModule } from '@angular/router';
 
 declare let Datamap: any;
+
+const SCRIPT_PATH = 'assets/datamaps/d3.min.js';
+const SCRIPT_PATH2 = 'assets/datamaps/topojson.js';
 
 const colors = [
   '#3B82F6',
@@ -57,7 +60,9 @@ export class RegionsComponent implements OnInit {
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: object,
+    @Inject(DOCUMENT) private document: Document,
     private SEOHandler: SeoHandlerService,
+    private renderer: Renderer2,
     private API: KeeperAPIService,
     private router: Router
   ) { }
@@ -74,47 +79,77 @@ export class RegionsComponent implements OnInit {
     });
 
     if (isPlatformBrowser(this.platformId)) {
+        const scriptElement = this.loadJsScript(this.renderer, SCRIPT_PATH);
 
-      Promise.all([
-        this.API.getRegions(),
-        this.API.getVendors()
-      ]).then(([regions, vendors]) => {
-        this.regions = regions.body;
-        this.vendors = vendors.body;
+        scriptElement.onload = () => {
+          console.log('Script loaded');
+          const scriptElement2 = this.loadJsScript(this.renderer, SCRIPT_PATH2);
+          scriptElement2.onload = () => {
+            const scriptElement3 = this.loadJsScript(this.renderer, "assets/datamaps/datamaps.world.min.js");
+            scriptElement3.onload = () => {
+              console.log('Script3 loaded');
 
-        this.vendors = this.vendors.map((region, index) => {
-          return {selected: true, color: colors[index % colors.length],  ...region}
-        });
+              let element = document.getElementById("datamapdiv");
+              let fills: any = {
+                defaultFill: '#06263a'
+              };
+              Promise.all([
+                this.API.getRegions(),
+                this.API.getVendors()
+              ]).then(([regions, vendors]) => {
+                this.regions = regions.body;
+                this.vendors = vendors.body;
 
-        let element = document.getElementById("datamapdiv");
+                this.vendors = this.vendors.map((region, index) => {
+                  return {selected: true, color: colors[index % colors.length],  ...region}
+                });
 
-        let fills: any = {
-          defaultFill: '#06263a'
+                let element = document.getElementById("datamapdiv");
+
+                let fills: any = {
+                  defaultFill: '#06263a'
+                };
+
+                this.vendors.forEach((vendor, index) => {
+                  fills[vendor.vendor_id] = colors[index % colors.length];
+                });
+
+                this.bubble_map = new Datamap({
+                  element: element,
+                  geographyConfig: {
+                    popupOnHover: false,
+                    highlightOnHover: false
+                  },
+                  bubblesConfig: {
+                    fillOpacity: 1,
+                    borderOpacity: 0,
+                    highlightFillColor: '#34d399',
+                    highlightBorderOpacity: 0,
+                  },
+                  fills: fills
+                });
+
+                this.generateBubbles();
+
+              });
+
+            };
+          };
         };
-
-        this.vendors.forEach((vendor, index) => {
-          fills[vendor.vendor_id] = colors[index % colors.length];
-        });
-
-        this.bubble_map = new Datamap({
-          element: element,
-          geographyConfig: {
-            popupOnHover: false,
-            highlightOnHover: false
-          },
-          bubblesConfig: {
-            fillOpacity: 1,
-            borderOpacity: 0,
-            highlightFillColor: '#34d399',
-            highlightBorderOpacity: 0,
-          },
-          fills: fills
-        });
-
-        this.generateBubbles();
-
-      });
     }
+  }
+
+   /**
+  * Append the JS tag to the Document Body.
+  * @param renderer The Angular Renderer
+  * @param src The path to the script
+  * @returns the script element
+  */
+   public loadJsScript(renderer: Renderer2, src: string): HTMLScriptElement {
+    const script = renderer.createElement('script');
+    script.src = src;
+    renderer.appendChild(this.document.head, script);
+    return script;
   }
 
   generateBubbles() {
