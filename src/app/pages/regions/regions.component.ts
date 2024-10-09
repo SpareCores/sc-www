@@ -91,11 +91,11 @@ export class RegionsComponent implements OnInit {
             this.regions = regions.body;
             this.vendors = vendors.body;
 
-            this.vendors = this.vendors.map((region, index) => {
-              return {selected: true, color: colors[index % colors.length],  ...region}
+            this.vendors = this.vendors.map((vendor, index) => {
+              return {selected: true, color: colors[index % colors.length],  ...vendor}
             });
 
-            let element = document.getElementById("datamapdiv");
+            let element = this.document.getElementById("datamapdiv");
 
             let fills: any = {
               defaultFill: '#06263a'
