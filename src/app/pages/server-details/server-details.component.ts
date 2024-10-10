@@ -429,7 +429,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
             }, 250);
 
-            this.selectSimilarServerOption(this.selectedSimilarOption);
+            this.selectSimilarServerOption(this.selectedSimilarOption, false);
 
             this.dropdownManager.initDropdown('allocation_button', 'allocation_options');
 
@@ -1442,7 +1442,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
            Math.abs(Number(this.serverDetails.memory_amount) - Number(s.memory_amount)) / 1e03;
   }
 
-  selectSimilarServerOption(event: any) {
+  selectSimilarServerOption(event: any, updateURL: boolean = true) {
     this.selectedSimilarOption = event;
     switch(this.selectedSimilarOption.key) {
       case 'byScore':
@@ -1465,10 +1465,12 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
         break;
     }
 
-    if(this.selectedSimilarOption.key !== this.similarOptions[1].key) {
-      this.location.go(`server/${this.serverDetails.vendor_id}/${this.serverDetails.api_reference}`, `similarCategory=${this.selectedSimilarOption.key}`);
-    } else {
-      this.location.go(`server/${this.serverDetails.vendor_id}/${this.serverDetails.api_reference}`);
+    if(updateURL) {
+      if(this.selectedSimilarOption.key !== this.similarOptions[0].key) {
+        this.location.go(`server/${this.serverDetails.vendor_id}/${this.serverDetails.api_reference}`, `similarCategory=${this.selectedSimilarOption.key}`);
+      } else {
+        this.location.go(`server/${this.serverDetails.vendor_id}/${this.serverDetails.api_reference}`);
+      }
     }
 
     this.dropdownSimilar?.hide();
