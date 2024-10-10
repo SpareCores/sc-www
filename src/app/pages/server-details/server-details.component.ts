@@ -1465,7 +1465,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
         break;
     }
 
-    if(this.selectedSimilarOption.key !== this.similarOptions[1].key) {
+    if(this.selectedSimilarOption.key !== this.similarOptions[0].key) {
       this.location.go(`server/${this.serverDetails.vendor_id}/${this.serverDetails.api_reference}`, `similarCategory=${this.selectedSimilarOption.key}`);
     } else {
       this.location.go(`server/${this.serverDetails.vendor_id}/${this.serverDetails.api_reference}`);
