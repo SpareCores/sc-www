@@ -93,7 +93,13 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       show: true,
       type: 'score',
       orderField: 'score',
-      info: "Performance benchmark score using stress-ng's div16 method (doing 16 bit unsigned integer divisions for 20 seconds): simulating CPU heavy workload that scales well on any number of (v)CPUs. The score/price value shows the div16 performance measured for 1 USD/hour."
+      info: "Performance benchmark score using stress-ng's div16 method (doing 16 bit unsigned integer divisions for 20 seconds): simulating CPU heavy workload that scales well on any number of (v)CPUs. The SCore/price value in the second line shows the div16 performance measured for 1 USD/hour. To order by the latter, enable the $Core column."
+    },
+    { name: '$CORE',
+      show: false,
+      type: 'score_per_price',
+      orderField: 'score_per_price',
+      info: "SCore/price showing stress-ng's div16 performance measured for 1 USD/hour."
     },
     { name: 'MEMORY', show: true, type: 'memory', orderField: 'memory_amount' },
     { name: 'STORAGE', show: true, type: 'storage', orderField: 'storage_size' },

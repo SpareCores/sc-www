@@ -171,6 +171,10 @@
                         <span>{{getScore(item.server.score_per_price)}} / USD</span>
                       </div>
                     </td>
+                    <td *ngIf="column.type === 'score_per_price'">
+                      <span *ngIf="item.server.score_per_price">{{getScore(item.server.score_per_price)}} / USD</span>
+                      <span *ngIf="!item.server.score_per_price">-</span>
+                    </td>
                     <td *ngIf="column.type === 'gpu_memory'">
                       {{getGPUMemory(item)}}
                     </td>
