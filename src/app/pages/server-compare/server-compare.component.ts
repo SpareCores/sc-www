@@ -17,6 +17,7 @@ import { ServerCompareService } from '../../services/server-compare.service';
 import { DropdownManagerService } from '../../services/dropdown-manager.service';
 import { AnalyticsService } from '../../services/analytics.service';
 import { CurrencyOption, availableCurrencies } from '../../tools/shared_data';
+import { ChartFromBenchmarkTemplate, ChartFromBenchmarkTemplateOptions, redisChartTemplate, redisChartTemplateCallbacks, staticWebChartCompareTemplate, staticWebChartTemplateCallbacks } from '../server-details/chartFromBenchmarks';
 
 Chart.register(annotationPlugin);
 
@@ -124,46 +125,24 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
 
   selectedSSLAlgo = this.availableSSLAlgos[5];
 
-  dropdownConnections: any;
-  connectionsOptions = [
-    { name: 'Connection per vCPU(s): 1', value: 1 },
-    { name: 'Connections per vCPU(s): 2', value: 2 },
-    { name: 'Connections per vCPU(s): 4', value: 4 },
-    { name: 'Connections per vCPU(s): 8', value: 8 },
-    { name: 'Connections per vCPU(s): 16', value: 16 },
-    { name: 'Connections per vCPU(s): 32', value: 32 },
+  multiBarCharts: any[] = [
+    {
+      chart: JSON.parse(JSON.stringify(staticWebChartCompareTemplate)),
+      callbacks: staticWebChartTemplateCallbacks,
+      dropdown: undefined,
+      dropdown2: undefined,
+      data: [],
+      show_more: false,
+    },
+    {
+      chart: JSON.parse(JSON.stringify(redisChartTemplate)),
+      callbacks: redisChartTemplateCallbacks,
+      dropdown: undefined,
+      dropdown2: undefined,
+      data: [],
+      show_more: false,
+    }
   ];
-
-  selectedConnections = this.connectionsOptions[0];
-
-  // ath the moment only SET operation is used
-  dropdownOperation: any;
-  operationsOptions = [
-    { name: 'SET', value: "SET" },
-    { name: 'GET', value: "GET" },
-  ];
-
-  selectedOperation = this.operationsOptions[0];
-
-  dropdownStaticWeb: any;
-  staticWebOptions: any[] = [
-    {name: 'RPS', benchmark: 'static_web:rps', YLabel : 'Requests per second', scaleField: 'connections_per_vcpus', labelsField: 'size', tooltip: "Higher is better.", icon: 'circle-arrow-up'},
-    {name: 'RPS Extrapolated', benchmark: 'static_web:rps-extrapolated', YLabel : 'Requests per second', scaleField: 'connections_per_vcpus', labelsField: 'size', tooltip: "Higher is better.", icon: 'circle-arrow-up'},
-    {name: 'Throughput', benchmark: 'static_web:throughput', YLabel : 'Bytes per second', scaleField: 'connections_per_vcpus', labelsField: 'size', tooltip: "Higher is better.", icon: 'circle-arrow-up'},
-    {name: 'Throughput Extrapolated', benchmark: 'static_web:throughput-extrapolated', YLabel : 'Bytes per second', scaleField: 'connections_per_vcpus', labelsField: 'size', tooltip: "Higher is better.", icon: 'circle-arrow-up'},
-    {name: 'Latency', benchmark: 'static_web:latency', YLabel : 'Seconds', scaleField: 'connections_per_vcpus', labelsField: 'size', tooltip: "Lower is better.", icon: 'circle-arrow-down'},
-  ];
-
-  selectedStaticWebOption: any = this.staticWebOptions[0];
-
-  dropdownRedis: any;
-  redisOptions: any[] = [
-    {name: 'RPS', benchmark: 'redis:rps', YLabel : 'Requests per second', scaleField: 'operation', labelsField: 'pipeline', tooltip: "Higher is better.", icon: 'circle-arrow-up'},
-    {name: 'RPS Extrapolated', benchmark: 'redis:rps-extrapolated', YLabel : 'Requests per second', scaleField: 'operation', labelsField: 'pipeline', tooltip: "Higher is better.", icon: 'circle-arrow-up'},
-    {name: 'Latency', benchmark: 'redis:latency', YLabel : 'Milliseconds', scaleField: 'operation', labelsField: 'pipeline', tooltip: "Lower is better.", icon: 'circle-arrow-down'},
-  ];
-
-  selectedRedisOption: any = this.redisOptions[0];
 
   compressDropdown: any;
   availableCompressMethods: any[] = [];
@@ -216,21 +195,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
       benchmarks: [ 'compression_text:ratio', 'compression_text:decompress', 'compression_text:compress' ],
       data: [],
       show_more: false
-    },
-    {
-      name: 'Static web server',
-      id: 'static_web:rps',
-      benchmarks: [ 'static_web:rps', 'static_web:rps-extrapolated', 'static_web:latency', 'static_web:throughput', 'static_web:throughput-extrapolated' ],
-      data: [],
-      show_more: false
-    },
-    {
-      name: 'Redis',
-      id: 'redis:rps',
-      benchmarks: [ 'redis:rps', 'redis:rps-extrapolated', 'redis:latency' ],
-      data: [],
-      show_more: false
-    },
+    }
   ];
 
   SSCoreTooltip = "Performance benchmark score using stress-ng's div16 method (doing 16 bit unsigned integer divisions for 20 seconds): simulating CPU heavy workload that scales well on any number of (v)CPUs. The score/price value shows the div16 performance measured for 1 USD/hour.";
@@ -428,7 +393,14 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
               category.data = this.benchmarkMeta.filter((b: any) => category.benchmarks.includes(b.benchmark_id));
             });
 
+            this.multiBarCharts.forEach((chartTemplate) => {
+              const benchmarks = chartTemplate.chart.options.map((o: any) => o.benchmark_id);
+              chartTemplate.data = this.benchmarkMeta.filter((b: any) => benchmarks.includes(b.benchmark_id));
+            });
+
             if(isPlatformBrowser(this.platformId)) {
+
+              this.initializeBenchmarkCharts();
 
               this.getCompressChartOptions();
 
@@ -436,12 +408,27 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
               this.generateBWMemChart();
               this.generateSSLChart();
               this.generateCompressChart();
-              this.generateStatiWebChart(this.selectedStaticWebOption, this.selectedConnections);
-              this.generateStatiWebChart(this.selectedRedisOption, this.selectedOperation);
+
+              this.multiBarCharts.forEach((chart) => {
+                this.generateMultiBarChart(chart.chart);
+              });
 
               this.dropdownManager.initDropdown('currency_button', 'currency_options').then((dropdown) => {
                 this.dropdownCurrency = dropdown;
               });
+
+              this.multiBarCharts.forEach((chart) => {
+                this.dropdownManager.initDropdown(chart.chart.id + '_button', chart.chart.id + '_options').then((dropdown) => {
+                  chart.dropdown = dropdown;
+                });
+                if(chart.chart.secondaryOptions?.length > 1) {
+                  this.dropdownManager.initDropdown(chart.chart.id + '_button2', chart.chart.id + '_options2').then((dropdown) => {
+                    chart.dropdown2 = dropdown;
+                  });
+                }
+
+              });
+
             }
           }).catch((err) => {
             this.analytics.SentryException(err, {tags: { location: this.constructor.name, function: 'compareInit' }});
@@ -942,14 +929,20 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     }
   }
 
-  generateStatiWebChart(chartConf: any, chartConf2: any) {
+  generateMultiBarChart(chartTemplate: ChartFromBenchmarkTemplate) {
 
-    const benchmark_id = chartConf.benchmark;
-    const labelsField = chartConf.scaleField;
-    const scaleField = chartConf.labelsField;
+    const option: ChartFromBenchmarkTemplateOptions = chartTemplate.options[chartTemplate.selectedOption];
+    const benchmark_id = option.benchmark_id;
+    const labelsField = option.labelsField;
+    const scaleField = option.scaleField;
 
-    const labelValue = chartConf2.value;
-    const selectedName = chartConf2.name;
+    if(!chartTemplate.secondaryOptions || chartTemplate.selectedSecondaryOption === undefined) {
+      return;
+    }
+
+    const optionsSecondary = chartTemplate.secondaryOptions[chartTemplate.selectedSecondaryOption];
+
+    const labelValue = optionsSecondary.value;
 
     const dataSet = this.benchmarkMeta?.find((x: any) => x.benchmark_id === benchmark_id);
 
@@ -993,7 +986,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
             chartData.datasets[i].data.push({
               data:item.score,
               label: size,
-              unit: chartConf.YLabel,
+              unit: option.YLabel,
               note: item.note
             });
           } else {
@@ -1002,37 +995,13 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
         });
       });
 
-      if(benchmark_id.includes('static_web')) {
-        this.barChartDataStaticWeb = { labels: chartData.labels, datasets: chartData.datasets };
-
-        (this.barChartOptionsStaticWeb as any).scales.y.title.text = chartConf.YLabel;
-        (this.barChartOptionsStaticWeb as any).plugins.tooltip.callbacks.title = function(this: TooltipModel<"line">, tooltipItems: TooltipItem<"line">[]) {
-          return selectedName + ' with ' + tooltipItems[0].label + ' file size';
-        };
-
-        if(!this.dropdownStaticWeb) {
-          this.dropdownManager.initDropdown('static_web_button', 'static_web_options').then((dropdown) => {
-            this.dropdownStaticWeb = dropdown;
-          });
-        }
-        if(!this.dropdownConnections) {
-          this.dropdownManager.initDropdown('static_web_conn_button', 'static_web_conn_options').then((dropdown) => {
-            this.dropdownConnections = dropdown;
-          });
-        }
-      } else if(benchmark_id.includes('redis')) {
-        this.barChartDataRedis = { labels: chartData.labels, datasets: chartData.datasets };
-
-        (this.barChartOptionsRedis as any).scales.y.title.text = chartConf.YLabel;
-        (this.barChartOptionsRedis as any).plugins.tooltip.callbacks.title = function(this: TooltipModel<"line">, tooltipItems: TooltipItem<"line">[]) {
-          return selectedName + ' with ' + tooltipItems[0].label + ' pipeline count';
-        };
-
-        if(!this.dropdownRedis) {
-          this.dropdownManager.initDropdown('redis_button', 'redis_options').then((dropdown) => {
-            this.dropdownRedis = dropdown;
-          });
-        }
+      if(chartData) {
+        chartTemplate.chartData = { labels: chartData.labels, datasets: chartData.datasets };
+        chartTemplate.chartOptions.scales.y.title.text = option.YLabel;
+        chartTemplate.chartOptions.scales.x.title.text = option.XLabel;
+        chartTemplate.chartOptions.plugins.title.text = option.title;
+      } else {
+        chartTemplate.chartData = undefined;
       }
     }
   }
@@ -1167,6 +1136,30 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     }
   }
 
+  initializeBenchmarkCharts() {
+
+    this.multiBarCharts.forEach((chartItem: any) => {
+      chartItem.chart.chartOptions.plugins.tooltip.callbacks = chartItem.callbacks;
+      this.initializeMultiBarChart(chartItem.chart);
+    });
+  }
+
+  initializeMultiBarChart(chartTemplate: ChartFromBenchmarkTemplate) {
+    chartTemplate.options.forEach((option: ChartFromBenchmarkTemplateOptions) => {
+      const benchmark = this.benchmarkMeta.find((b: any) => b.benchmark_id === option.benchmark_id);
+      if(benchmark) {
+        option.name = benchmark.name;
+        option.unit = benchmark.unit;
+        option.higher_is_better = benchmark.higher_is_better;
+        option.icon = benchmark.higher_is_better ? 'circle-arrow-up' : 'circle-arrow-down';
+        option.tooltip = benchmark.higher_is_better ? 'Higher is better' : 'Lower is better';
+        option.title = ' '
+        option.XLabel = benchmark.config_fields ? ((benchmark.config_fields as any)[option.scaleField] as string) : '';
+        option.YLabel = benchmark.unit;
+      }
+    });
+  }
+
   isBrowser() {
     return isPlatformBrowser(this.platformId);
   }
@@ -1220,28 +1213,16 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     this.dropdownSSL?.hide();
   }
 
-  selectStaticWebOption(item: any) {
-    this.selectedStaticWebOption = item;
-    this.generateStatiWebChart(this.selectedStaticWebOption, this.selectedConnections);
-    this.dropdownStaticWeb?.hide();
+  selectChartTemplateOption(template: any, option: number) {
+    template.chart.selectedOption = option;
+    this.generateMultiBarChart(template.chart);
+    template.dropdown?.hide();
   }
 
-  selectStaticWebConnOption(item: any) {
-    this.selectedConnections = item;
-    this.generateStatiWebChart(this.selectedStaticWebOption, this.selectedConnections);
-    this.dropdownConnections?.hide();
-  }
-
-  selectRedisOption(item: any) {
-    this.selectedRedisOption = item;
-    this.generateStatiWebChart(this.selectedRedisOption, this.selectedOperation);
-    this.dropdownRedis?.hide();
-  }
-
-  selectRedisOpOption(item: any) {
-    this.selectedOperation = item;
-    this.generateStatiWebChart(this.selectedRedisOption, this.selectedOperation);
-    this.dropdownOperation?.hide();
+  selectChartTemplateOption2(template: any, option: number) {
+    template.chart.selectedSecondaryOption = option;
+    this.generateMultiBarChart(template.chart);
+    template.dropdown2?.hide();
   }
 
   selectCompressMethod(method: any) {
@@ -1250,19 +1231,17 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     this.compressDropdown?.hide();
   }
 
-  getBenchmarksForCategory(category: any) {
-    if(!category) {
-      return this.benchmarkMeta?.filter((b: any) => this.isUncagorizedBenchmark(b));
-    }
-    return this.benchmarkMeta?.filter((b: any) => this.isInBenchmarkCategory(category, b));
-  }
-
-  isInBenchmarkCategory(benchmark_category:any, benchmark: any) {
-    return benchmark_category.benchmarks.includes(benchmark.benchmark_id);
+  getUncategorizedBenchmarksCategories() {
+    return this.benchmarkMeta?.filter((b: any) => this.isUncagorizedBenchmark(b));
   }
 
   isUncagorizedBenchmark(benchmark: any) {
-    return !this.benchmarkCategories.some((c: any) => c.benchmarks.includes(benchmark.benchmark_id));
+    let found = false;
+    this.multiBarCharts.forEach((chartTemplate) => {
+      const benchmarks = chartTemplate.chart.options.map((o: any) => o.benchmark_id);
+      found = found || benchmarks.includes(benchmark.benchmark_id);
+    });
+    return !found && !this.benchmarkCategories.some((c: any) => c.benchmarks.includes(benchmark.benchmark_id));
   }
 
   toggleBenchmarkCategory(category: any) {
