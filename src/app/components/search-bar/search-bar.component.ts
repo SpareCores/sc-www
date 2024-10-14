@@ -125,6 +125,10 @@ export class SearchBarComponent implements OnInit, OnChanges{
         }
       }
 
+      if(value === 'true' || value === 'false') {
+        value = value === 'true';
+      }
+
       if(!value && item.schema.null_value) {
         value = item.schema.null_value;
       }
