@@ -289,18 +289,22 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
 
       const id = params['id'];
 
+      let decodedParams = [];
+
       if(id) {
         const specialCompare = specialCompares.find((x: any) => x.id === id);
         if(specialCompare) {
-          param = specialCompare.instances;
+          decodedParams = specialCompare.instances;
+          console.log(decodedParams);
         }
       }
 
-
       if(param){
-          this.isLoading = true;
+        decodedParams = JSON.parse(atob(param));
+      }
 
-          const decodedParams = JSON.parse(atob(param));
+      if(decodedParams?.length > 0) {
+          this.isLoading = true;
 
           let serverCount = decodedParams?.length || 0;
 
