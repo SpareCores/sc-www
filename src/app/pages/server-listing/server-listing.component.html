@@ -146,17 +146,9 @@
                         </div>
                       </div>
                     </td>
-                    <td *ngIf="column.type === 'best_price'">
-                      <div *ngIf="item.min_price" class="text-sm text-white">{{item.min_price}} USD</div>
-                      <div *ngIf="!item.min_price" class="text-sm text-white">-</div>
-                    </td>
-                    <td *ngIf="column.type === 'best_price_ondemand'">
-                      <div *ngIf="item.min_price_ondemand" class="text-sm text-white">{{item.min_price_ondemand}} USD</div>
-                      <div *ngIf="!item.min_price_ondemand" class="text-sm text-white">-</div>
-                    </td>
-                    <td *ngIf="column.type === 'best_price_spot'">
-                      <div *ngIf="item.min_price_spot" class="text-sm text-white">{{item.min_price_spot}} USD</div>
-                      <div *ngIf="!item.min_price_spot" class="text-sm text-white">-</div>
+                    <td *ngIf="column.type === 'price'">
+                      <div *ngIf="item[column.key || 'price']" class="text-sm text-white">{{item[column.key || 'price']}} USD</div>
+                      <div *ngIf="!item[column.key || 'price']" class="text-sm text-white">-</div>
                     </td>
                     <td *ngIf="column.type === 'score'">
                       <div class="text-sm text-white">{{getScore(item.score)}}</div>
