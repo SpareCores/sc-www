@@ -256,6 +256,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     const id = this.route.snapshot.queryParamMap.get('id');
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const specialCompares: any[] = require('./special-compares');
 
     if(id) {
