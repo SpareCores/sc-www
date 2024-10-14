@@ -17,7 +17,6 @@ import { ServerCompareService } from '../../services/server-compare.service';
 import { DropdownManagerService } from '../../services/dropdown-manager.service';
 import { AnalyticsService } from '../../services/analytics.service';
 import { CurrencyOption, availableCurrencies } from '../../tools/shared_data';
-import { specialCompares } from './special-compares';
 
 Chart.register(annotationPlugin);
 
@@ -257,13 +256,14 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     const id = this.route.snapshot.queryParamMap.get('id');
+    const specialCompares: any[] = require('./special-compares');
 
     if(id) {
-      const specialCompare = specialCompares.find((x) => x.id === id);
+      const specialCompare = specialCompares.find((x: any) => x.id === id);
       if(specialCompare) {
         this.title = specialCompare.title;
         this.description = specialCompare.description;
-        this.breadcrumbs.push({ name: specialCompare.title, url: `/compare/${specialCompare.id}` });
+        this.breadcrumbs.push({ name: specialCompare.title, url: `/compare`, queryParams: { id: specialCompare.id } });
       }
     }
 
@@ -289,7 +289,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
       const id = params['id'];
 
       if(id) {
-        const specialCompare = specialCompares.find((x) => x.id === id);
+        const specialCompare = specialCompares.find((x: any) => x.id === id);
         if(specialCompare) {
           param = specialCompare.instances;
         }

@@ -1,4 +1,5 @@
 
+/*
 export interface SpecialCompare {
     id: string;
     name: string;
@@ -6,8 +7,9 @@ export interface SpecialCompare {
     description: string;
     instances: any;
 }
+*/
 
-export const specialCompares: SpecialCompare[] = [
+const specialCompares = [
   {
     id: 'test',
     name: 'Test',
@@ -16,3 +18,5 @@ export const specialCompares: SpecialCompare[] = [
     instances: 'W3sidmVuZG9yIjoiZ2NwIiwic2VydmVyIjoiZzEtc21hbGwifSx7InZlbmRvciI6ImdjcCIsInNlcnZlciI6Im4xLXN0YW5kYXJkLTEifV0'
   }
 ]
+
+module.exports = specialCompares;

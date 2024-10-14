@@ -37,14 +37,13 @@ export class ArticlesComponent implements OnInit {
       this.breadcrumbs = [
         { name: 'Home', url: '/' },
         { name: 'Articles', url: '/articles' },
-
       ];
 
       const title = category ? category.charAt(0).toUpperCase() + category.slice(1) : '';
 
       if(category) {
         this.breadcrumbs.push(
-          { name: `#${category}`, url: `/articles${category ? '?tag=' + category : '' }` }
+          { name: `#${category}`, url: `/articles`, queryParams: { tag: category } }
         );
       }
 
