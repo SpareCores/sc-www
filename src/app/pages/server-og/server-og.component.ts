@@ -43,6 +43,7 @@ export class ServerOGComponent implements OnInit {
         this.keeperAPI.getServerV2(vendor, id),
         this.keeperAPI.getServerPrices(vendor, id),
         this.keeperAPI.getServerBenchmark(vendor, id),
+        this.keeperAPI.getVendors()
       ]).then((dataAll) => {
         this.instanceProperties = dataAll[0].body?.fields || [];
 
@@ -50,15 +51,17 @@ export class ServerOGComponent implements OnInit {
 
         const benchmarks = dataAll[4].body as any;
         const prices = dataAll[3].body as any;
-
-        this.serverDetails.benchmark_scores = benchmarks;
-
-        if(prices) {
-          this.serverDetails.prices = JSON.parse(JSON.stringify(prices))?.sort((a: any, b: any) => a.price - b.price);
-        }
+        const vendors = dataAll[5].body as any;
 
         if(dataAll[2].body){
           this.serverDetails = dataAll[2].body as any;
+
+          this.serverDetails.benchmark_scores = benchmarks;
+          this.serverDetails.vendor = vendors.find((v: any) => v.vendor_id === this.serverDetails.vendor_id);
+
+          if(prices) {
+            this.serverDetails.prices = JSON.parse(JSON.stringify(prices))?.sort((a: any, b: any) => a.price - b.price);
+          }
 
           this.features = [];
           if(this.serverDetails.cpu_cores || this.serverDetails.vcpus) {
