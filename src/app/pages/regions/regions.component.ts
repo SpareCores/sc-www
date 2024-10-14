@@ -1,15 +1,19 @@
-import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { Component, Inject, OnInit, PLATFORM_ID, Renderer2 } from '@angular/core';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { KeeperAPIService } from '../../services/keeper-api.service';
 import { OrderDir, TableRegionTableRegionGetData } from '../../../../sdk/data-contracts';
 import { CountryIdtoNamePipe } from '../../pipes/country-idto-name.pipe';
 import { FormsModule } from '@angular/forms';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
 import { Router, RouterModule } from '@angular/router';
 
 declare let Datamap: any;
+
+const SCRIPT_PATH = 'assets/datamaps/d3.min.js';
+const SCRIPT_PATH2 = 'assets/datamaps/topojson.js';
+const SCRIPT_PATH3 = 'assets/datamaps/datamaps.world.min.js';
 
 const colors = [
   '#3B82F6',
@@ -57,7 +61,9 @@ export class RegionsComponent implements OnInit {
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: object,
+    @Inject(DOCUMENT) private document: Document,
     private SEOHandler: SeoHandlerService,
+    private renderer: Renderer2,
     private API: KeeperAPIService,
     private router: Router
   ) { }
@@ -74,47 +80,61 @@ export class RegionsComponent implements OnInit {
     });
 
     if (isPlatformBrowser(this.platformId)) {
+      this.loadJsScript(SCRIPT_PATH)
+        .then(() => this.loadJsScript(SCRIPT_PATH2))
+        .then(() => this.loadJsScript(SCRIPT_PATH3))
+        .then(() => {
+          Promise.all([
+            this.API.getRegions(),
+            this.API.getVendors()
+          ]).then(([regions, vendors]) => {
+            this.regions = regions.body;
+            this.vendors = vendors.body;
 
-      Promise.all([
-        this.API.getRegions(),
-        this.API.getVendors()
-      ]).then(([regions, vendors]) => {
-        this.regions = regions.body;
-        this.vendors = vendors.body;
+            this.vendors = this.vendors.map((vendor, index) => {
+              return {selected: true, color: colors[index % colors.length],  ...vendor}
+            });
 
-        this.vendors = this.vendors.map((region, index) => {
-          return {selected: true, color: colors[index % colors.length],  ...region}
-        });
+            let element = this.document.getElementById("datamapdiv");
 
-        let element = document.getElementById("datamapdiv");
+            let fills: any = {
+              defaultFill: '#06263a'
+            };
 
-        let fills: any = {
-          defaultFill: '#06263a'
-        };
+            this.vendors.forEach((vendor, index) => {
+              fills[vendor.vendor_id] = colors[index % colors.length];
+            });
 
-        this.vendors.forEach((vendor, index) => {
-          fills[vendor.vendor_id] = colors[index % colors.length];
-        });
+            this.bubble_map = new Datamap({
+              element: element,
+              geographyConfig: {
+                popupOnHover: false,
+                highlightOnHover: false
+              },
+              bubblesConfig: {
+                fillOpacity: 1,
+                borderOpacity: 0,
+                highlightFillColor: '#34d399',
+                highlightBorderOpacity: 0,
+              },
+              fills: fills
+            });
 
-        this.bubble_map = new Datamap({
-          element: element,
-          geographyConfig: {
-            popupOnHover: false,
-            highlightOnHover: false
-          },
-          bubblesConfig: {
-            fillOpacity: 1,
-            borderOpacity: 0,
-            highlightFillColor: '#34d399',
-            highlightBorderOpacity: 0,
-          },
-          fills: fills
-        });
+            this.generateBubbles();
 
-        this.generateBubbles();
-
-      });
+          });
+        })
     }
+  }
+
+  public loadJsScript(src: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const script = this.renderer.createElement('script');
+      script.src = src;
+      script.onload = () => resolve();
+      script.onerror = () => reject(new Error(`Failed to load script: ${src}`));
+      this.renderer.appendChild(this.document.head, script);
+    });
   }
 
   generateBubbles() {

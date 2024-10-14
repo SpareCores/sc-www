@@ -147,7 +147,8 @@
                       </div>
                     </td>
                     <td *ngIf="column.type === 'price'">
-                      <div class="text-sm text-white">{{item.price}} USD</div>
+                      <div *ngIf="item[column.key || 'price']" class="text-sm text-white">{{item[column.key || 'price']}} USD</div>
+                      <div *ngIf="!item[column.key || 'price']" class="text-sm text-white">-</div>
                     </td>
                     <td *ngIf="column.type === 'score'">
                       <div class="text-sm text-white">{{getScore(item.score)}}</div>
@@ -156,6 +157,10 @@
                         class="text-xs text-white flex gap-1">
                         <span>{{getScore(item.score_per_price)}} / USD</span>
                       </div>
+                    </td>
+                    <td *ngIf="column.type === 'score_per_price'">
+                      <span *ngIf="item.score_per_price">{{getScore(item.score_per_price)}} / USD</span>
+                      <span *ngIf="!item.score_per_price">-</span>
                     </td>
                     <td *ngIf="column.type === 'memory'">
                       <div class="text-sm text-white">{{getMemory(item)}}</div>
