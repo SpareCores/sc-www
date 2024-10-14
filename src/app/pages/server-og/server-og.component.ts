@@ -1,6 +1,5 @@
 import { CommonModule, } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { ServerPKsWithPrices } from '../../../../sdk/data-contracts';
 import { LucideAngularModule } from 'lucide-angular';
 import { ActivatedRoute } from '@angular/router';
 import { KeeperAPIService } from '../../services/keeper-api.service';
@@ -16,7 +15,7 @@ import { AnalyticsService } from '../../services/analytics.service';
 })
 export class ServerOGComponent implements OnInit {
 
-  serverDetails!: ServerPKsWithPrices;
+  serverDetails!: any;
 
   features: any[] = [];
 
@@ -41,11 +40,22 @@ export class ServerOGComponent implements OnInit {
       Promise.all([
         this.keeperAPI.getServerMeta(),
         this.keeperAPI.getServerBenchmarkMeta(),
-        this.keeperAPI.getServer(vendor, id)
+        this.keeperAPI.getServerV2(vendor, id),
+        this.keeperAPI.getServerPrices(vendor, id),
+        this.keeperAPI.getServerBenchmark(vendor, id),
       ]).then((dataAll) => {
         this.instanceProperties = dataAll[0].body?.fields || [];
 
         this.benchmarkMeta = dataAll[1].body || {};
+
+        const benchmarks = dataAll[4].body as any;
+        const prices = dataAll[3].body as any;
+
+        this.serverDetails.benchmark_scores = benchmarks;
+
+        if(prices) {
+          this.serverDetails.prices = JSON.parse(JSON.stringify(prices))?.sort((a: any, b: any) => a.price - b.price);
+        }
 
         if(dataAll[2].body){
           this.serverDetails = dataAll[2].body as any;
@@ -94,9 +104,9 @@ export class ServerOGComponent implements OnInit {
 
   getBenchmark(isMulti: boolean) {
     if(!isMulti) {
-      return this.serverDetails.benchmark_scores?.find((b) => b.benchmark_id === 'stress_ng:cpu_all' && (b.config as any)?.cores === 1)?.score?.toFixed(0) || '-';
+      return this.serverDetails.benchmark_scores?.find((b: any) => b.benchmark_id === 'stress_ng:cpu_all' && (b.config as any)?.cores === 1)?.score?.toFixed(0) || '-';
     } else {
-      return this.serverDetails.benchmark_scores?.find((b) => b.benchmark_id === 'stress_ng:cpu_all' && (b.config as any)?.cores === this.serverDetails.vcpus)?.score?.toFixed(0) || '-';
+      return this.serverDetails.benchmark_scores?.find((b: any) => b.benchmark_id === 'stress_ng:cpu_all' && (b.config as any)?.cores === this.serverDetails.vcpus)?.score?.toFixed(0) || '-';
     }
   }
 }

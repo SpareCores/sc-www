@@ -3,7 +3,7 @@
 import { Component, ElementRef, Inject, PLATFORM_ID, OnInit, ViewChild, OnDestroy, Renderer2 } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { KeeperAPIService } from '../../services/keeper-api.service';
-import { Benchmark, GetSimilarServersServerVendorServerSimilarServersByNumGetData, Server, ServerPKs, ServerPKsWithPrices, ServerPricePKs, TableServerTableServerGetData } from '../../../../sdk/data-contracts';
+import { Benchmark, BenchmarkScore, GetSimilarServersServerVendorServerSimilarServersByNumGetData, Server, ServerBase, ServerPKs, ServerPrice} from '../../../../sdk/data-contracts';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
@@ -27,6 +27,16 @@ import { ChartFromBenchmarkTemplate, ChartFromBenchmarkTemplateOptions, redisCha
 
 Chart.register(annotationPlugin);
 
+export interface ExtendedServerPrice extends ServerPrice {
+  region: any;
+  zone: any;
+}
+
+export interface ExtendedServerDetails extends ServerPKs {
+  benchmark_scores: BenchmarkScore[],
+  prices: ExtendedServerPrice[],
+}
+
 @Component({
   selector: 'app-server-details',
   standalone: true,
@@ -36,7 +46,7 @@ Chart.register(annotationPlugin);
 })
 export class ServerDetailsComponent implements OnInit, OnDestroy {
 
-  serverDetails!: ServerPKsWithPrices;
+  serverDetails!: ExtendedServerDetails;
   serverZones: string[] = [];
   serverRegions: string[] = [];
 
@@ -204,13 +214,12 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
           this.serverDetails.benchmark_scores = benchmarks;
           this.serverDetails.vendor = vendors.find((v: any) => v.vendor_id === this.serverDetails.vendor_id);
           this.serverDetails.score = this.serverDetails.benchmark_scores?.find((b) => b.benchmark_id === 'stress_ng:cpu_all' && (b.config as any)?.cores === this.serverDetails.vcpus)?.score;
-          this.serverDetails.score_per_price = this.serverDetails.price && this.serverDetails.score ? this.serverDetails.score / this.serverDetails.price : (this.serverDetails.score || 0);
 
           if(prices) {
             this.serverDetails.prices = JSON.parse(JSON.stringify(prices))?.sort((a: any, b: any) => a.price - b.price);
 
             if(this.serverDetails.prices?.length > 0) {
-              this.serverDetails.price = this.serverDetails.prices ? this.serverDetails.prices[0].price : 0;
+              this.serverDetails.min_price = this.serverDetails.prices ? this.serverDetails.prices[0].price : 0;
               this.serverDetails.prices.forEach((price: any) => {
                 price.region = regions.find((r: any) => r.region_id === price.region_id);
                 price.zone = zones.find((z: any) => z.zone_id === price.zone_id);
@@ -218,8 +227,10 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
             }
           }
 
+          this.serverDetails.score_per_price = this.serverDetails.min_price && this.serverDetails.score ? this.serverDetails.score / this.serverDetails.min_price : (this.serverDetails.score || 0);
+
           // list all regions where the server is available
-          this.serverDetails.prices?.forEach((price: ServerPricePKs) => {
+          this.serverDetails.prices?.forEach((price: ExtendedServerPrice) => {
             this.serverZones.push(price.zone.display_name);
             if(!this.serverRegions.includes(price.region.display_name)) {
               this.serverRegions.push(price.region.display_name);
@@ -271,7 +282,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
           this.regionFilters = [];
 
           this.serverDetails.prices?.sort((a, b) => a.price - b.price);
-          this.serverDetails.prices?.forEach((price: ServerPricePKs) => {
+          this.serverDetails.prices?.forEach((price: ExtendedServerPrice) => {
               const region = this.regionFilters.find((z) => z.region_id === price.region_id);
               if(!region) {
                 this.regionFilters.push({name: price.region.display_name, region_id: price.region_id, selected: false});
@@ -532,7 +543,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     this.availabilityRegions = [];
     if(this.serverDetails.prices.length > 0) {
 
-    this.serverDetails.prices.forEach((price: ServerPricePKs) => {
+    this.serverDetails.prices.forEach((price: ExtendedServerPrice) => {
     const zone = this.availabilityRegions.find((z) => z.region_id === price.region_id);
       const allocation = price.allocation || 'spot';
       if(!zone) {
@@ -608,7 +619,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     this.availabilityZones = [];
     if(this.serverDetails.prices.length > 0) {
 
-    this.serverDetails.prices.forEach((price: ServerPricePKs) => {
+    this.serverDetails.prices.forEach((price: ExtendedServerPrice) => {
     const zone = this.availabilityZones.find((z) => z.zone_id === price.zone_id);
       if(!zone) {
         const data: any = {
@@ -1367,9 +1378,9 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
   getBenchmark(isMulti: boolean) {
     if(!isMulti) {
-      return this.serverDetails.benchmark_scores?.find((b) => b.benchmark_id === 'stress_ng:cpu_all' && (b.config as any)?.cores === 1)?.score?.toFixed(0) || '-';
+      return this.serverDetails.benchmark_scores?.find((b: any) => b.benchmark_id === 'stress_ng:cpu_all' && (b.config as any)?.cores === 1)?.score?.toFixed(0) || '-';
     } else {
-      return this.serverDetails.benchmark_scores?.find((b) => b.benchmark_id === 'stress_ng:cpu_all' && (b.config as any)?.cores === this.serverDetails.vcpus)?.score?.toFixed(0) || '-';
+      return this.serverDetails.benchmark_scores?.find((b: any) => b.benchmark_id === 'stress_ng:cpu_all' && (b.config as any)?.cores === this.serverDetails.vcpus)?.score?.toFixed(0) || '-';
     }
   }
 
