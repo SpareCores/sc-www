@@ -242,7 +242,6 @@ export namespace TrafficPrices {
        */
       order_by?: string;
       /**
-       * Order Dir
        * Order direction.
        * @default "asc"
        */
