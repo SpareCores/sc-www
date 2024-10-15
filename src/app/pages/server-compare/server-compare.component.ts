@@ -1,7 +1,7 @@
 /* eslint-disable prefer-const */
 import { AfterViewInit, Component, ElementRef, HostBinding, Inject, OnInit, PLATFORM_ID, ViewChild } from '@angular/core';
 import { KeeperAPIService } from '../../services/keeper-api.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { LucideAngularModule } from 'lucide-angular';
 import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
@@ -24,7 +24,7 @@ Chart.register(annotationPlugin);
 @Component({
   selector: 'app-server-compare',
   standalone: true,
-  imports: [BreadcrumbsComponent, LucideAngularModule, CommonModule, FormsModule, BaseChartDirective],
+  imports: [BreadcrumbsComponent, LucideAngularModule, CommonModule, FormsModule, BaseChartDirective, RouterModule],
   templateUrl: './server-compare.component.html',
   styleUrl: './server-compare.component.scss',
 })
@@ -208,6 +208,11 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
   description = 'Compare cloud servers characteristics, such as CPU, GPU, memory and storage details, and the performance of the instances by various benchmarking workloads to find the optimal compute resource for your needs.';
   keywords = 'compare, servers, server, hosting, cloud, vps, dedicated, comparison';
 
+  instances: any[] = [];
+
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  specialCompares: any[] = require('./special-compares');
+
   constructor(
     @Inject(PLATFORM_ID) private platformId: object,
     @Inject(DOCUMENT) private document: Document,
@@ -221,11 +226,9 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     const id = this.route.snapshot.queryParamMap.get('id');
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const specialCompares: any[] = require('./special-compares');
 
     if(id) {
-      const specialCompare = specialCompares.find((x: any) => x.id === id);
+      const specialCompare = this.specialCompares.find((x: any) => x.id === id);
       if(specialCompare) {
         this.title = specialCompare.title;
         this.description = specialCompare.description;
@@ -254,24 +257,32 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
 
       const id = params['id'];
 
-      let decodedParams = [];
+      this.instances = [];
 
       if(id) {
-        const specialCompare = specialCompares.find((x: any) => x.id === id);
+        const specialCompare = this.specialCompares.find((x: any) => x.id === id);
         if(specialCompare) {
-          decodedParams = specialCompare.instances;
-          console.log(decodedParams);
+          this.instances = specialCompare.instances;
+          if(this.breadcrumbs.length < 3) {
+            this.breadcrumbs.push({ name: specialCompare.title, url: `/compare`, queryParams: { id: specialCompare.id } });
+          } else {
+            this.breadcrumbs[2] = { name: specialCompare.title, url: `/compare`, queryParams: { id: specialCompare.id } };
+          }
+        }
+      } else {
+        if(this.breadcrumbs.length > 2) {
+          this.breadcrumbs.pop();
         }
       }
 
       if(param){
-        decodedParams = JSON.parse(atob(param));
+        this.instances = JSON.parse(atob(param));
       }
 
-      if(decodedParams?.length > 0) {
+      if(this.instances?.length > 0) {
           this.isLoading = true;
 
-          let serverCount = decodedParams?.length || 0;
+          let serverCount = this.instances?.length || 0;
 
           let promises: Promise<any>[] = [
             this.keeperAPI.getServerMeta(),
@@ -280,7 +291,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
             this.keeperAPI.getRegions(),
             this.keeperAPI.getZones()
           ];
-          decodedParams?.forEach((instance: any) => {
+          this.instances?.forEach((instance: any) => {
             promises.push(
               this.keeperAPI.getServerV2(instance.vendor, instance.server,)
             );
