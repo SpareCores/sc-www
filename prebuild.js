@@ -97,6 +97,7 @@ const links = [
   { url: 'legal/terms-of-service',  changefreq: 'monthly', priority: 0.10  },
   { url: 'articles',  changefreq: 'weekly', priority: 0.75  },
   { url: 'talks',  changefreq: 'monthly', priority: 0.75  },
+  { url: 'compare',  changefreq: 'weekly', priority: 0.75  },
 ];
 
 allArticles.forEach((article) => {
