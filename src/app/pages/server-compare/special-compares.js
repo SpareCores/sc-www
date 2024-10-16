@@ -5,6 +5,32 @@ const specialCompares = [
     title: 'Best single-core performance servers with 2 vCPUs',
     description: `This is a manually curated list of 2 vCPU servers with the best single-core performance as per stress-ng's <code>div16</code> CPU burning method.
     Note that servers using the same CPU model at the same vendor were deduped, and only the most general options was kept (e.g. AWS's <code>r6a.large</code>, <code>m6a.large</code>, and <code>c6a.large</code> showing only <code>m6a.large</code> with 8 GiB of memory; similarly GCP's <code>c2d-highmem-2</code>, <code>c2d-standard-2</code>, and <code>c2d-highcpu-2</code> showing only <code>c2d-standard-2</code> with 8 GiB of memory as well).`,
+    query: `WITH minprice AS (
+  SELECT vendor_id, server_id, MIN(price) AS price
+  FROM server_price
+  WHERE allocation = 'ONDEMAND'
+  GROUP BY 1, 2
+),
+benchmarks AS (
+  SELECT vendor_id, server_id, MAX(score) AS score
+  FROM benchmark_score
+  WHERE benchmark_id = 'stress_ng:best1' AND status = 'ACTIVE'
+  GROUP BY 1, 2
+)
+SELECT 
+  s.vendor_id, s.family, s.api_reference, 
+  s.cpu_architecture, s.cpu_manufacturer, s.cpu_family, s.cpu_model, s.cpu_speed, 
+  s.memory_amount / 1024,
+  b.score,
+  p.price
+FROM server AS s
+LEFT JOIN benchmarks AS b 
+  ON s.vendor_id = b.vendor_id and s.server_id = b.server_id
+LEFT JOIN minprice AS p
+  ON s.vendor_id = p.vendor_id and s.server_id = p.server_id
+WHERE s.status = 'ACTIVE' AND s.vcpus = 2
+ORDER BY b.score DESC
+LIMIT 25;`,
     instances: [
       {
         vendor: 'aws',
