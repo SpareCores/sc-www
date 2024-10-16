@@ -37,53 +37,17 @@
         To get started, select at least two servers using the checkboxes in the left column of our <a class="text-emerald-400" routerLink="/servers" >servers listing</a>, and optionally add/remove servers on their dedicated server details pages, or find below a curated list of server comparison sets:
       </div>
 
-      <table class="items_table">
-        <thead>
-          <tr>
-            <th>
-              <div class="flex gap-1">
-                NAME
-              </div>
-            </th>
-            <th>
-              <div class="flex gap-1">
-                DESCRIPTION
-              </div>
-            </th>
-            <th>
-              <div class="flex gap-1">
-                INSTANCES
-              </div>
-            </th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let item of specialCompares">
-            <td class="whitespace-nowrap">
-              {{item.title}}
-            </td>
-            <td> {{item.description}}</td>
-            <td>
-             <div class="flex flex-col gap-1 text-xs">
-                <div *ngFor="let instance of item.instances" >
-                  <a class="underline decoration-dotted whitespace-nowrap" routerLink="/server/{{instance.vendor}}/{{instance.server}}" >
-                    {{instance.server}} ({{instance.vendor}})
-                  </a>
-                </div>
-             </div>
-            </td>
-            <td>
-              <!-- eslint-disable-next-line @angular-eslint/template/interactive-supports-focus -->
-              <div class="flex justify-end" (click)="$event.stopPropagation()">
-                <a routerLink="/compare" [queryParams]="{id: item.id}">
-                  <lucide-icon name="chevron-right" class="h-6 w-6 text-emerald-400"></lucide-icon>
-                </a>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="flex flex-col gap-4 mt-4">
+        <div class="bg-secondary rounded-lg flex flex-col py-6 px-6 gap-2 text-white" *ngFor="let item of specialCompares">
+          <a routerLink="/compare/{{item.id}}" class="text-emerald-400 text-2xl font-semibold"> {{item.title}} </a>
+          <p> {{item.description}} </p>
+          <div class="text-sm flex gap-2"> Instances:
+            <a *ngFor="let instance of item.instances" class="underline decoration-dotted whitespace-nowrap" routerLink="/server/{{instance.vendor}}/{{instance.server}}" >
+              {{instance.server}} ({{instance.vendor}})
+            </a>
+          </div>
+        </div>
+      </div>
 
     </div>
 
