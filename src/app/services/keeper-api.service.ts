@@ -32,10 +32,6 @@ export class KeeperAPIService {
     private httpClient: HttpClient) {
   }
 
-  public getServer(vendor: string, id: string, currency?: string): Promise<any> {
-    return this.ServerController.getServerServerVendorServerGet({vendor, server:id, currency });
-  }
-
   public getServerV2(vendor: string, id: string): Promise<any> {
     return this.V2Controller.getServerWithoutRelationsV2ServerVendorServerGet(vendor, id);
   }

@@ -12,46 +12,12 @@
 import {
   GetServerBenchmarksServerVendorServerBenchmarksGetData,
   GetServerPricesServerVendorServerPricesGetData,
-  GetServerServerVendorServerGetData,
   GetSimilarServersServerVendorServerSimilarServersByNumGetData,
 } from "./data-contracts";
 
 export namespace Server {
   /**
-   * @description Query a single server by its vendor id and either the server or, or its API reference. Return dictionary includes all server fields, along with the current prices per zone, and the available benchmark scores.
-   * @tags Server Details
-   * @name GetServerServerVendorServerGet
-   * @summary Get Server
-   * @request GET:/server/{vendor}/{server}
-   * @deprecated
-   */
-  export namespace GetServerServerVendorServerGet {
-    export type RequestParams = {
-      /**
-       * Vendor
-       * Vendor ID.
-       */
-      vendor: string;
-      /**
-       * Server
-       * Server ID or API reference.
-       */
-      server: string;
-    };
-    export type RequestQuery = {
-      /**
-       * Currency
-       * Currency used for prices.
-       */
-      currency?: string | null;
-    };
-    export type RequestBody = never;
-    export type RequestHeaders = {};
-    export type ResponseBody = GetServerServerVendorServerGetData;
-  }
-
-  /**
-   * @description Search similar servers to the provided one. The "family" method returns all servers from the same family of the same vendor. The "specs" approach will prioritize the number of GPUs, then CPUs, lastly the amount of memory. The "score" method will find the servers with the closest performance using the multi-core SCore.
+   * @description Search similar servers to the provided one. The "family" method returns all servers from the same family of the same vendor. The "specs" approach will prioritize the number of GPUs, then CPUs, lastly the amount of memory. The "score" method will find the servers with the closest performance using the multi-core SCore. The "score_per_price" method is similar to "score", but instead of using the multi-core SCore, it uses the SCore per price.
    * @tags Server Details
    * @name GetSimilarServersServerVendorServerSimilarServersByNumGet
    * @summary Get Similar Servers
@@ -73,7 +39,7 @@ export namespace Server {
        * By
        * Algorithm to look for similar servers.
        */
-      by: "family" | "specs" | "score";
+      by: "family" | "specs" | "score" | "score_per_price";
       /**
        * Num
        * Number of servers to get.

@@ -150,52 +150,6 @@ export interface BenchmarkScore {
   observed_at?: string;
 }
 
-/** BenchmarkScoreBase */
-export interface BenchmarkScoreBase {
-  /**
-   * Vendor Id
-   * Reference to the Vendor.
-   */
-  vendor_id: string;
-  /**
-   * Server Id
-   * Reference to the Server.
-   */
-  server_id: string;
-  /**
-   * Benchmark Id
-   * Reference to the Benchmark.
-   */
-  benchmark_id: string;
-  /**
-   * Config
-   * Dictionary of config parameters of the specific benchmark, e.g. {"bandwidth": 4096}
-   * @default {}
-   */
-  config?: object;
-  /**
-   * Score
-   * The resulting score of the benchmark.
-   */
-  score: number;
-  /**
-   * Note
-   * Optional note, comment or context on the benchmark score.
-   */
-  note?: string | null;
-  /**
-   * Status of the resource (active or inactive).
-   * @default "active"
-   */
-  status?: Status;
-  /**
-   * Observed At
-   * Timestamp of the last observation.
-   * @format date-time
-   */
-  observed_at?: string;
-}
-
 /**
  * ComplianceFramework
  * List of Compliance Frameworks, such as HIPAA or SOC 2 Type 1.
@@ -622,97 +576,6 @@ export enum PriceUnit {
  *     observed_at (datetime): Timestamp of the last observation.
  */
 export interface Region {
-  /**
-   * Vendor Id
-   * Reference to the Vendor.
-   */
-  vendor_id: string;
-  /**
-   * Region Id
-   * Unique identifier, as called at the Vendor.
-   */
-  region_id: string;
-  /**
-   * Name
-   * Human-friendly name.
-   */
-  name: string;
-  /**
-   * Api Reference
-   * How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depening on the vendor and actual API endpoint.
-   */
-  api_reference: string;
-  /**
-   * Display Name
-   * Human-friendly reference (usually the id or name) of the resource.
-   */
-  display_name: string;
-  /**
-   * Aliases
-   * List of other commonly used names for the same Region.
-   * @default []
-   */
-  aliases?: string[];
-  /**
-   * Country Id
-   * Reference to the Country, where the Region is located.
-   */
-  country_id: string;
-  /**
-   * State
-   * Optional state/administrative area of the Region's location within the Country.
-   */
-  state?: string | null;
-  /**
-   * City
-   * Optional city name of the Region's location.
-   */
-  city?: string | null;
-  /**
-   * Address Line
-   * Optional address line of the Region's location.
-   */
-  address_line?: string | null;
-  /**
-   * Zip Code
-   * Optional ZIP code of the Region's location.
-   */
-  zip_code?: string | null;
-  /**
-   * Lon
-   * Longitude coordinate of the Region's known or approximate location.
-   */
-  lon?: number | null;
-  /**
-   * Lat
-   * Latitude coordinate of the Region's known or approximate location.
-   */
-  lat?: number | null;
-  /**
-   * Founding Year
-   * 4-digit year when the Region was founded.
-   */
-  founding_year?: number | null;
-  /**
-   * Green Energy
-   * If the Region is 100% powered by renewable energy.
-   */
-  green_energy?: boolean | null;
-  /**
-   * Status of the resource (active or inactive).
-   * @default "active"
-   */
-  status?: Status;
-  /**
-   * Observed At
-   * Timestamp of the last observation.
-   * @format date-time
-   */
-  observed_at?: string;
-}
-
-/** RegionBase */
-export interface RegionBase {
   /**
    * Vendor Id
    * Reference to the Vendor.
@@ -1792,227 +1655,15 @@ export interface ServerPKs {
   score?: number | null;
   /** Price */
   price?: number | null;
+  /** Min Price */
+  min_price?: number | null;
+  /** Min Price Spot */
+  min_price_spot?: number | null;
+  /** Min Price Ondemand */
+  min_price_ondemand?: number | null;
   /** Score Per Price */
   score_per_price?: number | null;
   vendor: VendorBase;
-}
-
-/** ServerPKsWithPrices */
-export interface ServerPKsWithPrices {
-  /**
-   * Vendor Id
-   * Reference to the Vendor.
-   */
-  vendor_id: string;
-  /**
-   * Server Id
-   * Unique identifier, as called at the Vendor.
-   */
-  server_id: string;
-  /**
-   * Name
-   * Human-friendly name.
-   */
-  name: string;
-  /**
-   * Api Reference
-   * How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depening on the vendor and actual API endpoint.
-   */
-  api_reference: string;
-  /**
-   * Display Name
-   * Human-friendly reference (usually the id or name) of the resource.
-   */
-  display_name: string;
-  /**
-   * Description
-   * Short description.
-   */
-  description: string | null;
-  /**
-   * Family
-   * Server family, e.g. General-purpose machine (GCP), or M5g (AWS).
-   */
-  family?: string | null;
-  /**
-   * Vcpus
-   * Default number of virtual CPUs (vCPU) of the server.
-   */
-  vcpus?: number;
-  /**
-   * Hypervisor
-   * Hypervisor of the virtual server, e.g. Xen, KVM, Nitro or Dedicated.
-   */
-  hypervisor?: string | null;
-  /** Allocation of CPU(s) to the server, e.g. shared, burstable or dedicated. */
-  cpu_allocation?: CpuAllocation;
-  /**
-   * Cpu Cores
-   * Default number of CPU cores of the server. Equals to vCPUs when HyperThreading is disabled.
-   */
-  cpu_cores?: number | null;
-  /**
-   * Cpu Speed
-   * Vendor-reported maximum CPU clock speed (GHz).
-   */
-  cpu_speed?: number | null;
-  /** CPU architecture (arm64, arm64_mac, i386, or x86_64). */
-  cpu_architecture?: CpuArchitecture;
-  /**
-   * Cpu Manufacturer
-   * The manufacturer of the primary processor, e.g. Intel or AMD.
-   */
-  cpu_manufacturer?: string | null;
-  /**
-   * Cpu Family
-   * The product line/family of the primary processor, e.g. Xeon, Core i7, Ryzen 9.
-   */
-  cpu_family?: string | null;
-  /**
-   * Cpu Model
-   * The model number of the primary processor, e.g. 9750H.
-   */
-  cpu_model?: string | null;
-  /**
-   * Cpu L1 Cache
-   * L1 cache size (byte).
-   */
-  cpu_l1_cache?: number | null;
-  /**
-   * Cpu L2 Cache
-   * L2 cache size (byte).
-   */
-  cpu_l2_cache?: number | null;
-  /**
-   * Cpu L3 Cache
-   * L3 cache size (byte).
-   */
-  cpu_l3_cache?: number | null;
-  /**
-   * Cpu Flags
-   * CPU features/flags.
-   * @default []
-   */
-  cpu_flags?: string[];
-  /**
-   * Cpus
-   * JSON array of known CPU details, e.g. the manufacturer, family, model; L1/L2/L3 cache size; microcode version; feature flags; bugs etc.
-   * @default []
-   */
-  cpus?: Cpu[];
-  /**
-   * Memory Amount
-   * RAM amount (MiB).
-   */
-  memory_amount?: number;
-  /** Generation of the DDR SDRAM, e.g. DDR4 or DDR5. */
-  memory_generation?: DdrGeneration | null;
-  /**
-   * Memory Speed
-   * DDR SDRAM clock rate (Mhz).
-   */
-  memory_speed?: number | null;
-  /**
-   * Memory Ecc
-   * If the DDR SDRAM uses error correction code to detect and correct n-bit data corruption.
-   */
-  memory_ecc?: boolean | null;
-  /**
-   * Gpu Count
-   * Number of GPU accelerator(s).
-   * @default 0
-   */
-  gpu_count?: number;
-  /**
-   * Gpu Memory Min
-   * Memory (MiB) allocated to the lowest-end GPU accelerator.
-   */
-  gpu_memory_min?: number | null;
-  /**
-   * Gpu Memory Total
-   * Overall memory (MiB) allocated to all the GPU accelerator(s).
-   */
-  gpu_memory_total?: number | null;
-  /**
-   * Gpu Manufacturer
-   * The manufacturer of the primary GPU accelerator, e.g. Nvidia or AMD.
-   */
-  gpu_manufacturer?: string | null;
-  /**
-   * Gpu Family
-   * The product family of the primary GPU accelerator, e.g. Turing.
-   */
-  gpu_family?: string | null;
-  /**
-   * Gpu Model
-   * The model number of the primary GPU accelerator, e.g. Tesla T4.
-   */
-  gpu_model?: string | null;
-  /**
-   * Gpus
-   * JSON array of GPU accelerator details, including the manufacturer, name, and memory (MiB) of each GPU.
-   * @default []
-   */
-  gpus?: Gpu[];
-  /**
-   * Storage Size
-   * Overall size (GB) of the disk(s).
-   * @default 0
-   */
-  storage_size?: number;
-  /** Primary disk type, e.g. HDD, SSD, NVMe SSD, or network). */
-  storage_type?: StorageType | null;
-  /**
-   * Storages
-   * JSON array of disks attached to the server, including the size (MiB) and type of each disk.
-   * @default []
-   */
-  storages?: Disk[];
-  /**
-   * Network Speed
-   * The baseline network performance (Gbps) of the network card.
-   */
-  network_speed?: number | null;
-  /**
-   * Inbound Traffic
-   * Amount of complimentary inbound traffic (GB) per month.
-   * @default 0
-   */
-  inbound_traffic?: number;
-  /**
-   * Outbound Traffic
-   * Amount of complimentary outbound traffic (GB) per month.
-   * @default 0
-   */
-  outbound_traffic?: number;
-  /**
-   * Ipv4
-   * Number of complimentary IPv4 address(es).
-   * @default 0
-   */
-  ipv4?: number;
-  /**
-   * Status of the resource (active or inactive).
-   * @default "active"
-   */
-  status?: Status;
-  /**
-   * Observed At
-   * Timestamp of the last observation.
-   * @format date-time
-   */
-  observed_at?: string;
-  /** Score */
-  score?: number | null;
-  /** Price */
-  price?: number | null;
-  /** Score Per Price */
-  score_per_price?: number | null;
-  vendor: VendorBase;
-  /** Prices */
-  prices: ServerPricePKs[];
-  /** Benchmark Scores */
-  benchmark_scores: BenchmarkScoreBase[];
 }
 
 /**
@@ -2101,78 +1752,6 @@ export interface ServerPrice {
    * @format date-time
    */
   observed_at?: string;
-}
-
-/** ServerPricePKs */
-export interface ServerPricePKs {
-  /**
-   * Vendor Id
-   * Reference to the Vendor.
-   */
-  vendor_id: string;
-  /**
-   * Region Id
-   * Reference to the Region.
-   */
-  region_id: string;
-  /**
-   * Zone Id
-   * Reference to the Zone.
-   */
-  zone_id: string;
-  /**
-   * Server Id
-   * Reference to the Server.
-   */
-  server_id: string;
-  /**
-   * Operating System
-   * Operating System.
-   */
-  operating_system: string;
-  /**
-   * Allocation method, e.g. on-demand or spot.
-   * @default "ondemand"
-   */
-  allocation?: Allocation;
-  /** Billing unit of the pricing model. */
-  unit: PriceUnit;
-  /**
-   * Price
-   * Actual price of a billing unit.
-   */
-  price: number;
-  /**
-   * Price Upfront
-   * Price to be paid when setting up the resource.
-   * @default 0
-   */
-  price_upfront?: number;
-  /**
-   * Price Tiered
-   * List of pricing tiers with min/max thresholds and actual prices.
-   * @default []
-   */
-  price_tiered?: PriceTier[];
-  /**
-   * Currency
-   * Currency of the prices.
-   * @default "USD"
-   */
-  currency?: string;
-  /**
-   * Status of the resource (active or inactive).
-   * @default "active"
-   */
-  status?: Status;
-  /**
-   * Observed At
-   * Timestamp of the last observation.
-   * @format date-time
-   */
-  observed_at?: string;
-  region: RegionBase;
-  zone: ZoneBase;
 }
 
 /** ServerPriceWithPKs */
@@ -2465,6 +2044,12 @@ export interface ServerWithScore {
   score?: number | null;
   /** Price */
   price?: number | null;
+  /** Min Price */
+  min_price?: number | null;
+  /** Min Price Spot */
+  min_price_spot?: number | null;
+  /** Min Price Ondemand */
+  min_price_ondemand?: number | null;
   /** Score Per Price */
   score_per_price?: number | null;
 }
@@ -3060,26 +2645,6 @@ export type TableStorageTableStorageGetData = Storage[];
 
 export type TableMetadataServerTableServerMetaGetData = ServerTableMetaData;
 
-export interface GetServerServerVendorServerGetParams {
-  /**
-   * Currency
-   * Currency used for prices.
-   */
-  currency?: string | null;
-  /**
-   * Vendor
-   * Vendor ID.
-   */
-  vendor: string;
-  /**
-   * Server
-   * Server ID or API reference.
-   */
-  server: string;
-}
-
-export type GetServerServerVendorServerGetData = ServerPKsWithPrices;
-
 export type GetServerWithoutRelationsV2ServerVendorServerGetData = ServerBase;
 
 export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams {
@@ -3109,7 +2674,7 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
    * By
    * Algorithm to look for similar servers.
    */
-  by: "family" | "specs" | "score";
+  by: "family" | "specs" | "score" | "score_per_price";
   /**
    * Num
    * Number of servers to get.
@@ -3218,9 +2783,14 @@ export interface SearchServersServersGetParams {
   cpu_family?: "ARMv8" | "Ampere Altra" | "EPYC" | "Xeon";
   /**
    * SCore
-   * Minimum stress-ng CPU workload score.
+   * Minimum stress-ng div16 CPU workload score.
    */
   benchmark_score_stressng_cpu_min?: number | null;
+  /**
+   * $Core
+   * Minimum stress-ng div16 CPU workload score per USD/hr.
+   */
+  benchmark_score_per_price_stressng_cpu_min?: number | null;
   /**
    * Minimum memory
    * Minimum amount of memory in GBs.
@@ -3313,7 +2883,6 @@ export interface SearchServersServersGetParams {
    */
   order_by?: string;
   /**
-   * Order Dir
    * Order direction.
    * @default "asc"
    */
@@ -3359,9 +2928,14 @@ export interface SearchServerPricesServerPricesGetParams {
   cpu_family?: "ARMv8" | "Ampere Altra" | "EPYC" | "Xeon";
   /**
    * SCore
-   * Minimum stress-ng CPU workload score.
+   * Minimum stress-ng div16 CPU workload score.
    */
   benchmark_score_stressng_cpu_min?: number | null;
+  /**
+   * $Core
+   * Minimum stress-ng div16 CPU workload score per USD/hr.
+   */
+  benchmark_score_per_price_stressng_cpu_min?: number | null;
   /**
    * Minimum memory
    * Minimum amount of memory in GBs.
@@ -3645,7 +3219,6 @@ export interface SearchServerPricesServerPricesGetParams {
    */
   order_by?: string;
   /**
-   * Order Dir
    * Order direction.
    * @default "asc"
    */
@@ -3886,7 +3459,6 @@ export interface SearchStoragePricesStoragePricesGetParams {
    */
   order_by?: string;
   /**
-   * Order Dir
    * Order direction.
    * @default "asc"
    */
@@ -4129,7 +3701,6 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
    */
   order_by?: string;
   /**
-   * Order Dir
    * Order direction.
    * @default "asc"
    */

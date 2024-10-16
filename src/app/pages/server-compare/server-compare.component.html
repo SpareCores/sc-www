@@ -208,6 +208,18 @@
             </tr>
             <tr>
               <td>
+                Best spot price
+              </td>
+              <ng-container *ngFor="let item of servers">
+                <td>
+                  <div [style]="getBestPriceStyle(item, 'spot')">
+                    {{getBestPrice(item, "spot")}}
+                  </div>
+                </td>
+              </ng-container>
+            </tr>
+            <tr>
+              <td>
                 Best ondemand price
               </td>
               <ng-container *ngFor="let item of servers">
