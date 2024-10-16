@@ -53,7 +53,7 @@ const specialCompares = [
           server: 'ccx23'
         }
     ]
-  },  
+  },
   {
     id: 'hcloud-8vcpus',
     title: '8 vCPU servers at Hetzner Cloud',
