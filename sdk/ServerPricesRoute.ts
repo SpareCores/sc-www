@@ -51,9 +51,14 @@ export namespace ServerPrices {
       cpu_family?: "ARMv8" | "Ampere Altra" | "EPYC" | "Xeon";
       /**
        * SCore
-       * Minimum stress-ng CPU workload score.
+       * Minimum stress-ng div16 CPU workload score.
        */
       benchmark_score_stressng_cpu_min?: number | null;
+      /**
+       * $Core
+       * Minimum stress-ng div16 CPU workload score per USD/hr.
+       */
+      benchmark_score_per_price_stressng_cpu_min?: number | null;
       /**
        * Minimum memory
        * Minimum amount of memory in GBs.
@@ -337,7 +342,6 @@ export namespace ServerPrices {
        */
       order_by?: string;
       /**
-       * Order Dir
        * Order direction.
        * @default "asc"
        */

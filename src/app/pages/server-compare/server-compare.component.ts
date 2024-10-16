@@ -6,7 +6,7 @@ import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadc
 import { LucideAngularModule } from 'lucide-angular';
 import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Allocation, ServerPKs, ServerPKsWithPrices } from '../../../../sdk/data-contracts';
+import { Allocation, ServerPKs } from '../../../../sdk/data-contracts';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { Chart, ChartConfiguration, ChartData, TooltipItem, TooltipModel } from 'chart.js';
 import { barChartOptionsRedisCompare, barChartOptionsSSLCompare, barChartOptionsStaticWebCompare, lineChartOptionsBWM, lineChartOptionsCompareCompress, lineChartOptionsCompareDecompress, radarChartOptions, radarDatasetColors } from '../server-details/chartOptions';
@@ -18,6 +18,7 @@ import { DropdownManagerService } from '../../services/dropdown-manager.service'
 import { AnalyticsService } from '../../services/analytics.service';
 import { CurrencyOption, availableCurrencies } from '../../tools/shared_data';
 import { ChartFromBenchmarkTemplate, ChartFromBenchmarkTemplateOptions, redisChartTemplate, redisChartTemplateCallbacks, staticWebChartCompareTemplate, staticWebChartTemplateCallbacks } from '../server-details/chartFromBenchmarks';
+import { ExtendedServerDetails } from '../server-details/server-details.component';
 
 Chart.register(annotationPlugin);
 
@@ -39,7 +40,10 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
 
   isLoading = true;
 
-  servers: ServerPKsWithPrices[] = [];
+  servers: ExtendedServerDetails[] = [];
+
+  zones: any[] = [];
+  regions: any[] = [];
 
   fields: any[] = [
     { name: 'Vendor', key: 'vendor' },
@@ -225,14 +229,14 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     private route: ActivatedRoute) { }
 
   ngOnInit() {
-    const id = this.route.snapshot.queryParamMap.get('id');
+    const id = this.route.snapshot.paramMap.get('id');
 
     if(id) {
       const specialCompare = this.specialCompares.find((x: any) => x.id === id);
       if(specialCompare) {
         this.title = specialCompare.title;
         this.description = specialCompare.description;
-        this.breadcrumbs.push({ name: specialCompare.title, url: `/compare`, queryParams: { id: specialCompare.id } });
+        this.breadcrumbs.push({ name: specialCompare.title, url: `/compare/${specialCompare.id}`});
       }
     }
 
@@ -252,203 +256,221 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
       color: '#FFF',
     };
 
-    this.route.queryParams.subscribe(params => {
-      let param = params['instances'];
-
-      const id = params['id'];
-
-      this.instances = [];
-
-      if(id) {
-        const specialCompare = this.specialCompares.find((x: any) => x.id === id);
-        if(specialCompare) {
-          this.instances = specialCompare.instances;
-          if(this.breadcrumbs.length < 3) {
-            this.breadcrumbs.push({ name: specialCompare.title, url: `/compare`, queryParams: { id: specialCompare.id } });
-          } else {
-            this.breadcrumbs[2] = { name: specialCompare.title, url: `/compare`, queryParams: { id: specialCompare.id } };
-          }
-        }
-      } else {
-        if(this.breadcrumbs.length > 2) {
-          this.breadcrumbs.pop();
-        }
-      }
-
-      if(param){
-        this.instances = JSON.parse(atob(param));
-      }
-
-      if(this.instances?.length > 0) {
-          this.isLoading = true;
-
-          let serverCount = this.instances?.length || 0;
-
-          let promises: Promise<any>[] = [
-            this.keeperAPI.getServerMeta(),
-            this.keeperAPI.getServerBenchmarkMeta(),
-            this.keeperAPI.getVendors(),
-            this.keeperAPI.getRegions(),
-            this.keeperAPI.getZones()
-          ];
-          this.instances?.forEach((instance: any) => {
-            promises.push(
-              this.keeperAPI.getServerV2(instance.vendor, instance.server,)
-            );
-            promises.push(
-              this.keeperAPI.getServerPrices(instance.vendor, instance.server, this.selectedCurrency.slug)
-            );
-            promises.push(
-              this.keeperAPI.getServerBenchmark(instance.vendor, instance.server)
-            );
-          });
-          Promise.all(promises).then((data) => {
-            const promiseAllData = data.map((x: any) => x.body);
-            const[meta, benchmarkMeta, vendors, regions, zones, ...servers] = promiseAllData;
-            this.instanceProperties = meta.fields;
-
-            this.instancePropertyCategories.forEach((c) => {
-              c.properties = [];
-            });
-
-            this.servers = [];
-            this.serverCompare.clearCompare();
-
-            for(let i = 0; i < serverCount; i++){
-              let server = servers[i * 3];
-
-              server.benchmark_scores = servers[i * 3 + 2];
-              server.prices = servers[i * 3 + 1]?.sort((a: any, b: any) => a.price - b.price);
-
-              server.vendor = vendors.find((v: any) => v.vendor_id === server.vendor_id);
-
-              if(server.prices?.length > 0) {
-                server.prices.forEach((price: any) => {
-                  price.region = regions.find((r: any) => r.region_id === price.region_id);
-                  price.zone = zones.find((z: any) => z.zone_id === price.zone_id);
-                });
-              }
-
-              server.score = server.benchmark_scores?.find((b: any) => b.benchmark_id === 'stress_ng:cpu_all' && (b.config as any)?.cores === server.vcpus)?.score;
-              server.price = server.prices?.length ? server.prices[0].price : 0;
-              server.score_per_price = server.price && server.score ? server.score / server.price : (server.score || 0);
-
-              this.servers.push(server);
-              this.serverCompare.toggleCompare(true, server);
-            }
-
-            this.instanceProperties.forEach((p: any) => {
-              const group = this.instancePropertyCategories.find((g) => g.category === p.category);
-              const hasValue =
-                this.servers.some((s: any) =>
-                  s[p.id] !== undefined &&
-                  s[p.id] !== null &&
-                  s[p.id] !== '' &&
-                  !Array.isArray(s[p.id]));
-
-              if(group && hasValue) {
-                group.properties.push(p);
-              }
-            });
-
-            this.benchmarkMeta = benchmarkMeta
-              ?.filter((benchmark: any) => {
-                let found = false;
-                this.servers.forEach((s: any) => {
-                  if(s.benchmark_scores?.find((score: any) => score.benchmark_id === benchmark.benchmark_id)){
-                    found = true;
-                  }
-                });
-                return found;
-              })
-              .map((b: any) => {
-              return {
-                ...b,
-                collapsed: true,
-                configs: []
-              }
-            });
-
-            this.benchmarkMeta.forEach((benchmark: any) => {
-              this.servers.forEach((server: any) => {
-                const scores = server.benchmark_scores?.filter((s: any) => s.benchmark_id === benchmark.benchmark_id);
-                if(scores) {
-                  scores.forEach((score: any) => {
-                    const config = benchmark.configs.find((c: any) => {
-                      return JSON.stringify(c.config) === JSON.stringify(score.config);
-                    });
-                    if(!config) {
-                      benchmark.configs.push({
-                        config: score.config,
-                        values: []
-                      });
-                    }
-                  });
-                }
-              });
-            });
-
-            this.benchmarkMeta.forEach((benchmark: any) => {
-              benchmark.configs.forEach((config: any) => {
-                this.servers.forEach((server: any) => {
-                  const score = server.benchmark_scores
-                    ?.find((s: any) => s.benchmark_id === benchmark.benchmark_id && JSON.stringify(s.config) === JSON.stringify(config.config));
-                    config.values.push(
-                      score ? (Math.floor(score.score * 100) / 100) : '-'
-                    );
-                });
-              });
-            });
-
-            this.benchmarkCategories.forEach((category) => {
-              category.data = this.benchmarkMeta.filter((b: any) => category.benchmarks.includes(b.benchmark_id));
-            });
-
-            this.multiBarCharts.forEach((chartTemplate) => {
-              const benchmarks = chartTemplate.chart.options.map((o: any) => o.benchmark_id);
-              chartTemplate.data = this.benchmarkMeta.filter((b: any) => benchmarks.includes(b.benchmark_id));
-            });
-
-            if(isPlatformBrowser(this.platformId)) {
-
-              this.initializeBenchmarkCharts();
-
-              this.getCompressChartOptions();
-
-              this.generateChartsData();
-              this.generateBWMemChart();
-              this.generateSSLChart();
-              this.generateCompressChart();
-
-              this.multiBarCharts.forEach((chart) => {
-                this.generateMultiBarChart(chart.chart);
-              });
-
-              this.dropdownManager.initDropdown('currency_button', 'currency_options').then((dropdown) => {
-                this.dropdownCurrency = dropdown;
-              });
-
-              this.multiBarCharts.forEach((chart) => {
-                this.dropdownManager.initDropdown(chart.chart.id + '_button', chart.chart.id + '_options').then((dropdown) => {
-                  chart.dropdown = dropdown;
-                });
-                if(chart.chart.secondaryOptions?.length > 1) {
-                  this.dropdownManager.initDropdown(chart.chart.id + '_button2', chart.chart.id + '_options2').then((dropdown) => {
-                    chart.dropdown2 = dropdown;
-                  });
-                }
-
-              });
-
-            }
-          }).catch((err) => {
-            this.analytics.SentryException(err, {tags: { location: this.constructor.name, function: 'compareInit' }});
-            console.error(err);
-          }).finally(() => {
-            this.isLoading = false;
-          });
-      }
+    this.route.queryParams.subscribe(() => {
+      this.setup();
     });
+
+    this.route.params.subscribe(() => {
+      this.setup();
+    });
+  }
+
+  setup() {
+    const id = this.route.snapshot.paramMap.get('id');
+    const param = this.route.snapshot.queryParams['instances'];
+
+    this.instances = [];
+
+    if(id) {
+      const specialCompare = this.specialCompares.find((x: any) => x.id === id);
+      if(specialCompare) {
+        this.instances = specialCompare.instances;
+        let breadcrumb = { name: specialCompare.title, url: `/compare/${specialCompare.id}`};
+        if(this.breadcrumbs.length < 3) {
+          this.breadcrumbs.push(breadcrumb);
+        } else {
+          this.breadcrumbs[2] = breadcrumb;
+        }
+      }
+    } else if(param) {
+      this.instances = JSON.parse(atob(param));
+      if(this.instances?.length) {
+        let breadcrumb = { name: `Compare (${this.instances?.length})`, url: `/compare`, queryParams: { instances: param }};
+        if(this.breadcrumbs.length < 3) {
+          this.breadcrumbs.push(breadcrumb);
+        } else {
+          this.breadcrumbs[2] = breadcrumb;
+        }
+      }
+    } else {
+      if(this.breadcrumbs.length > 2) {
+        this.breadcrumbs.pop();
+      }
+    }
+
+    if(this.instances?.length > 0) {
+      this.isLoading = true;
+
+      let serverCount = this.instances?.length || 0;
+
+      let promises: Promise<any>[] = [
+        this.keeperAPI.getServerMeta(),
+        this.keeperAPI.getServerBenchmarkMeta(),
+        this.keeperAPI.getVendors(),
+        this.keeperAPI.getRegions(),
+        this.keeperAPI.getZones()
+      ];
+      this.instances?.forEach((instance: any) => {
+        promises.push(
+          this.keeperAPI.getServerV2(instance.vendor, instance.server,)
+        );
+        promises.push(
+          this.keeperAPI.getServerPrices(instance.vendor, instance.server, this.selectedCurrency.slug)
+        );
+        promises.push(
+          this.keeperAPI.getServerBenchmark(instance.vendor, instance.server)
+        );
+      });
+      Promise.all(promises).then((data) => {
+        const promiseAllData = data.map((x: any) => x.body);
+        const[meta, benchmarkMeta, vendors, regions, zones, ...servers] = promiseAllData;
+
+        this.zones = zones;
+        this.regions = regions;
+
+        this.instanceProperties = meta.fields;
+
+        this.instancePropertyCategories.forEach((c) => {
+          c.properties = [];
+        });
+
+        this.servers = [];
+        this.serverCompare.clearCompare();
+
+        for(let i = 0; i < serverCount; i++){
+          let server = servers[i * 3];
+
+          server.benchmark_scores = servers[i * 3 + 2];
+          server.prices = servers[i * 3 + 1]?.sort((a: any, b: any) => a.price - b.price);
+
+          server.vendor = vendors.find((v: any) => v.vendor_id === server.vendor_id);
+
+          if(server.prices?.length > 0) {
+            server.prices.forEach((price: any) => {
+              price.region = regions.find((r: any) => r.region_id === price.region_id);
+              price.zone = zones.find((z: any) => z.zone_id === price.zone_id);
+            });
+          }
+
+          server.score = server.benchmark_scores?.find((b: any) => b.benchmark_id === 'stress_ng:cpu_all' && (b.config as any)?.cores === server.vcpus)?.score;
+          server.price = server.prices?.length ? server.prices[0].price : 0;
+          server.score_per_price = server.price && server.score ? server.score / server.price : (server.score || 0);
+
+          this.servers.push(server);
+          this.serverCompare.toggleCompare(true, server);
+        }
+
+        this.instanceProperties.forEach((p: any) => {
+          const group = this.instancePropertyCategories.find((g) => g.category === p.category);
+          const hasValue =
+            this.servers.some((s: any) =>
+              s[p.id] !== undefined &&
+              s[p.id] !== null &&
+              s[p.id] !== '' &&
+              !Array.isArray(s[p.id]));
+
+          if(group && hasValue) {
+            group.properties.push(p);
+          }
+        });
+
+        this.benchmarkMeta = benchmarkMeta
+          ?.filter((benchmark: any) => {
+            let found = false;
+            this.servers.forEach((s: any) => {
+              if(s.benchmark_scores?.find((score: any) => score.benchmark_id === benchmark.benchmark_id)){
+                found = true;
+              }
+            });
+            return found;
+          })
+          .map((b: any) => {
+          return {
+            ...b,
+            collapsed: true,
+            configs: []
+          }
+        });
+
+        this.benchmarkMeta.forEach((benchmark: any) => {
+          this.servers.forEach((server: any) => {
+            const scores = server.benchmark_scores?.filter((s: any) => s.benchmark_id === benchmark.benchmark_id);
+            if(scores) {
+              scores.forEach((score: any) => {
+                const config = benchmark.configs.find((c: any) => {
+                  return JSON.stringify(c.config) === JSON.stringify(score.config);
+                });
+                if(!config) {
+                  benchmark.configs.push({
+                    config: score.config,
+                    values: []
+                  });
+                }
+              });
+            }
+          });
+        });
+
+        this.benchmarkMeta.forEach((benchmark: any) => {
+          benchmark.configs.forEach((config: any) => {
+            this.servers.forEach((server: any) => {
+              const score = server.benchmark_scores
+                ?.find((s: any) => s.benchmark_id === benchmark.benchmark_id && JSON.stringify(s.config) === JSON.stringify(config.config));
+                config.values.push(
+                  score ? (Math.floor(score.score * 100) / 100) : '-'
+                );
+            });
+          });
+        });
+
+        this.benchmarkCategories.forEach((category) => {
+          category.data = this.benchmarkMeta.filter((b: any) => category.benchmarks.includes(b.benchmark_id));
+        });
+
+        this.multiBarCharts.forEach((chartTemplate) => {
+          const benchmarks = chartTemplate.chart.options.map((o: any) => o.benchmark_id);
+          chartTemplate.data = this.benchmarkMeta.filter((b: any) => benchmarks.includes(b.benchmark_id));
+        });
+
+        if(isPlatformBrowser(this.platformId)) {
+
+          this.initializeBenchmarkCharts();
+
+          this.getCompressChartOptions();
+
+          this.generateChartsData();
+          this.generateBWMemChart();
+          this.generateSSLChart();
+          this.generateCompressChart();
+
+          this.multiBarCharts.forEach((chart) => {
+            this.generateMultiBarChart(chart.chart);
+          });
+
+          this.dropdownManager.initDropdown('currency_button', 'currency_options').then((dropdown) => {
+            this.dropdownCurrency = dropdown;
+          });
+
+          this.multiBarCharts.forEach((chart) => {
+            this.dropdownManager.initDropdown(chart.chart.id + '_button', chart.chart.id + '_options').then((dropdown) => {
+              chart.dropdown = dropdown;
+            });
+            if(chart.chart.secondaryOptions?.length > 1) {
+              this.dropdownManager.initDropdown(chart.chart.id + '_button2', chart.chart.id + '_options2').then((dropdown) => {
+                chart.dropdown2 = dropdown;
+              });
+            }
+
+          });
+
+        }
+      }).catch((err) => {
+        this.analytics.SentryException(err, {tags: { location: this.constructor.name, function: 'compareInit' }});
+        console.error(err);
+      }).finally(() => {
+        this.isLoading = false;
+      });
+    }
   }
 
   ngAfterViewInit() {
@@ -481,15 +503,15 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     }, 3000);
   }
 
-  getMemory(item: ServerPKsWithPrices) {
+  getMemory(item: ExtendedServerDetails) {
     return ((item.memory_amount || 0) / 1024).toFixed((item.memory_amount || 0) > 1024 ? 0 : 1) + ' GiB';
   }
 
-  getGPUMemory(item: ServerPKsWithPrices) {
+  getGPUMemory(item: ExtendedServerDetails) {
     return ((item.gpu_memory_min || 0) / 1024).toFixed(1) + ' GB';
   }
 
-  getStorage(item: ServerPKsWithPrices) {
+  getStorage(item: ExtendedServerDetails) {
     if(!item.storage_size) return '-';
 
     if(item.storage_size < 1000) return `${item.storage_size} GB`;
@@ -504,7 +526,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     return (bytes / Math.pow(1024, i)).toFixed(0) + ' ' + sizes[i];
   }
 
-  getProperty(column: any, server: ServerPKsWithPrices) {
+  getProperty(column: any, server: ExtendedServerDetails) {
     const name = column.id
     const prop = (server as any)[name];
 
@@ -546,7 +568,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     return '-';
   }
 
-  getBestCellStyle(name: string, server: ServerPKsWithPrices) {
+  getBestCellStyle(name: string, server: ExtendedServerDetails) {
     const prop = (server as any)[name];
 
     if(prop === undefined || prop === null || prop === 0) {
@@ -566,16 +588,22 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     return '';
   }
 
-  isBestPrice(server: ServerPKsWithPrices): boolean {
-    const prop = server.prices.filter(x => x.allocation === Allocation.Ondemand).sort((a,b) => a.price - b.price)[0]?.price;
+  isBestPrice(server: ExtendedServerDetails, allocation: Allocation | string = Allocation.Ondemand): boolean {
+    const prices = server.prices.filter(x => x.allocation === allocation).sort((a,b) => a.price - b.price);
+
+    if(!prices || prices.length === 0) {
+      return false;
+    }
+
+    const prop = server.prices.filter(x => x.allocation === allocation).sort((a,b) => a.price - b.price)[0]?.price;
 
     if(prop === undefined || prop === null || prop === 0) {
       return false;
     }
 
     let isBest = true;
-    this.servers?.forEach((s: ServerPKsWithPrices) => {
-      const temp = s.prices.filter(x => x.allocation === Allocation.Ondemand).sort((a, b) => a.price - b.price)[0]?.price;
+    this.servers?.forEach((s: ExtendedServerDetails) => {
+      const temp = s.prices.filter(x => x.allocation === allocation).sort((a, b) => a.price - b.price)[0]?.price;
       if(temp < prop) {
         isBest = false;
       }
@@ -583,11 +611,11 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     return isBest;
   }
 
-  getBestPriceStyle(server: ServerPKsWithPrices) {
-    return this.isBestPrice(server) ? this.bestCellStyle : '';
+  getBestPriceStyle(server: ExtendedServerDetails, allocation: Allocation | string = Allocation.Ondemand) {
+    return this.isBestPrice(server, allocation) ? this.bestCellStyle : '';
   }
 
-  isBestSSCore(server: ServerPKsWithPrices): boolean {
+  isBestSSCore(server: ExtendedServerDetails): boolean {
     const prop = server.score_per_price;
 
     if(prop === undefined || prop === null || prop === 0) {
@@ -595,7 +623,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     }
 
     let isBest = true;
-    this.servers?.forEach((s: ServerPKsWithPrices) => {
+    this.servers?.forEach((s: ExtendedServerDetails) => {
       const temp = s.score_per_price || -1;
       if(temp > prop) {
         isBest = false;
@@ -604,11 +632,11 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     return isBest;
   }
 
-  getSScoreStyle(server: ServerPKsWithPrices) {
+  getSScoreStyle(server: ExtendedServerDetails) {
     return this.isBestSSCore(server) ? this.bestCellStyle : '';
   }
 
-  getBecnchmarkStyle(server: ServerPKsWithPrices, isMulti: boolean) {
+  getBecnchmarkStyle(server: ExtendedServerDetails, isMulti: boolean) {
     const prop = server.benchmark_scores
     ?.find((b) =>
         b.benchmark_id === 'stress_ng:cpu_all'
@@ -619,7 +647,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     }
 
     let isBest = true;
-    this.servers?.forEach((s: ServerPKsWithPrices) => {
+    this.servers?.forEach((s: ExtendedServerDetails) => {
       const temp = s.benchmark_scores?.find((b) =>
         b.benchmark_id === 'stress_ng:cpu_all' &&
         ((isMulti && s.vcpus && s.vcpus > 1) ? ((b.config as any)?.cores > 1) :(b.config as any)?.cores === 1))?.score || 0;
@@ -650,7 +678,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     return isBest ? this.bestCellStyle : '';
   }
 
-  viewServer(server: ServerPKsWithPrices) {
+  viewServer(server: ExtendedServerDetails) {
     window.open(`/server/${server.vendor_id}/${server.api_reference}`, '_blank');
   }
 
@@ -695,7 +723,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     return `width: ${100 / (this.servers.length + 1)}%; max-width: ${100 / (this.servers.length + 1)}%;`
   }
 
-  getBenchmark(server: ServerPKsWithPrices, isMulti: boolean) {
+  getBenchmark(server: ExtendedServerDetails, isMulti: boolean) {
     if(!isMulti) {
       return server.benchmark_scores?.find((b) => b.benchmark_id === 'stress_ng:cpu_all' && (b.config as any)?.cores === 1)?.score?.toFixed(0) || '-';
     } else {
@@ -703,14 +731,14 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     }
   }
 
-  getSScore(server: ServerPKsWithPrices) {
+  getSScore(server: ExtendedServerDetails) {
     if(!server.score_per_price) {
       return '-';
     }
     return this.numberWithCommas(Math.round(server.score_per_price)) + '/USD';
   }
 
-  getBestPrice(server: ServerPKsWithPrices, allocation: Allocation = Allocation.Ondemand) {
+  getBestPrice(server: ExtendedServerDetails, allocation: Allocation | string = Allocation.Ondemand) {
     if(server.prices?.find((p) => p.allocation === allocation)){
       const best = server.prices.filter(x => x.allocation === allocation).sort((a,b) => a.price - b.price)[0];
       return `${best.price} ${best.currency}`;
@@ -1198,14 +1226,23 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     ];
     this.servers?.forEach((instance: any) => {
       promises.push(
-        this.keeperAPI.getServer(instance.vendor_id, instance.server_id, this.selectedCurrency.slug)
+        this.keeperAPI.getServerPrices(instance.vendor_id, instance.server_id, this.selectedCurrency.slug)
       );
     });
 
     Promise.all(promises).then((data) => {
-      this.servers = [];
       for(let i = 0; i < data.length; i++){
-        this.servers.push(data[i].body);
+        let server = this.servers[i];
+        server.prices = data[i].body;
+        if(server.prices?.length > 0) {
+          server.prices.forEach((price: any) => {
+            price.region = this.regions.find((r: any) => r.region_id === price.region_id);
+            price.zone = this.zones.find((z: any) => z.zone_id === price.zone_id);
+          });
+        }
+
+        server.price = server.prices?.length ? server.prices[0].price : 0;
+        server.score_per_price = server.price && server.score ? server.score / server.price : (server.score || 0);
       }
     });
 

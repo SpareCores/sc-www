@@ -240,7 +240,6 @@ export namespace StoragePrices {
        */
       order_by?: string;
       /**
-       * Order Dir
        * Order direction.
        * @default "asc"
        */
