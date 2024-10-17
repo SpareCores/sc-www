@@ -29,7 +29,7 @@
       </div>
     </div>
 
-    <div *ngIf="!instances.length" class="flex flex-col gap-4">
+    <div *ngIf="!instances.length" class="flex flex-col gap-4" id="comparesDiv" #comparesDiv>
       <div class="text-white text-xl pr-16">
         Compare cloud servers and their characteristics, such as CPU, GPU, memory, and storage details, and the performance of the instances by various benchmarking workloads to find the optimal compute resource for your needs.
       </div>
@@ -40,12 +40,16 @@
       <div class="flex flex-col gap-4 mt-4">
         <div class="bg-secondary rounded-lg flex flex-col py-6 px-6 gap-2 text-white" *ngFor="let item of specialCompares">
           <a routerLink="/compare/{{item.id}}" class="text-emerald-400 text-2xl font-semibold"> {{item.title}} </a>
-          <p> {{item.description}} </p>
+          <div class="description_inner_html" [innerHTML]="item.description"> </div>
           <div class="text-sm flex gap-2"> Instances:
             <a *ngFor="let instance of item.instances" class="underline decoration-dotted whitespace-nowrap" routerLink="/server/{{instance.vendor}}/{{instance.server}}" >
               {{instance.server}} ({{instance.vendor}})
             </a>
           </div>
+          <details *ngIf="item.query" class="flex flex-col gap-2">
+            <summary class="text-sm">Query: </summary>
+            <pre class="sourceCode sql"><code class="sourceCode sql">{{item.query}}</code></pre>
+          </details>
         </div>
       </div>
 

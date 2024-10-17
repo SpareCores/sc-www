@@ -19,6 +19,7 @@ import { AnalyticsService } from '../../services/analytics.service';
 import { CurrencyOption, availableCurrencies } from '../../tools/shared_data';
 import { ChartFromBenchmarkTemplate, ChartFromBenchmarkTemplateOptions, redisChartTemplate, redisChartTemplateCallbacks, staticWebChartCompareTemplate, staticWebChartTemplateCallbacks } from '../server-details/chartFromBenchmarks';
 import { ExtendedServerDetails } from '../server-details/server-details.component';
+import hljs from 'highlight.js';
 
 Chart.register(annotationPlugin);
 
@@ -32,6 +33,7 @@ Chart.register(annotationPlugin);
 export class ServerCompareComponent implements OnInit, AfterViewInit {
 
   @HostBinding('attr.ngSkipHydration') ngSkipHydration = 'true';
+  @ViewChild('comparesDiv') comparesDiv!: ElementRef;
 
   breadcrumbs: BreadcrumbSegment[] = [
     { name: 'Home', url: '/' },
@@ -470,6 +472,17 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
       }).finally(() => {
         this.isLoading = false;
       });
+    }
+
+    if(isPlatformBrowser(this.platformId)) {
+      // Wait for the articleDiv to be rendered
+      const checkExist = setInterval(() => {
+        if (this.comparesDiv) {
+          hljs.highlightAll();
+
+          clearInterval(checkExist);
+        }
+      }, 100);
     }
   }
 
