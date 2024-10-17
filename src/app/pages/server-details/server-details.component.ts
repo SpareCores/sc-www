@@ -213,7 +213,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
           this.serverDetails.benchmark_scores = benchmarks;
           this.serverDetails.vendor = vendors.find((v: any) => v.vendor_id === this.serverDetails.vendor_id);
-          this.serverDetails.score = this.serverDetails.benchmark_scores?.find((b) => b.benchmark_id === 'stress_ng:cpu_all' && (b.config as any)?.cores === this.serverDetails.vcpus)?.score;
+          this.serverDetails.score = this.serverDetails.benchmark_scores?.find((b) => b.benchmark_id === 'stress_ng:bestn')?.score;
 
           if(prices) {
             this.serverDetails.prices = JSON.parse(JSON.stringify(prices))?.sort((a: any, b: any) => a.price - b.price);
@@ -1377,11 +1377,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   }
 
   getBenchmark(isMulti: boolean) {
-    if(!isMulti) {
-      return this.serverDetails.benchmark_scores?.find((b: any) => b.benchmark_id === 'stress_ng:cpu_all' && (b.config as any)?.cores === 1)?.score?.toFixed(0) || '-';
-    } else {
-      return this.serverDetails.benchmark_scores?.find((b: any) => b.benchmark_id === 'stress_ng:cpu_all' && (b.config as any)?.cores === this.serverDetails.vcpus)?.score?.toFixed(0) || '-';
-    }
+    return this.serverDetails.benchmark_scores?.find((b: any) => b.benchmark_id === (isMulti ? 'stress_ng:bestn' : 'stress_ng:best1'))?.score?.toFixed(0) || '-';
   }
 
   addToCompare() {

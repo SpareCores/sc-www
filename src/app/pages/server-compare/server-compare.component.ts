@@ -299,7 +299,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
                 });
               }
 
-              server.score = server.benchmark_scores?.find((b: any) => b.benchmark_id === 'stress_ng:cpu_all' && (b.config as any)?.cores === server.vcpus)?.score;
+              server.score = server.benchmark_scores?.find((b: any) => b.benchmark_id === 'stress_ng:bestn')?.score;
               server.price = server.prices?.length ? server.prices[0].price : 0;
               server.score_per_price = server.price && server.score ? server.score / server.price : (server.score || 0);
 
@@ -586,9 +586,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
 
   getBecnchmarkStyle(server: ExtendedServerDetails, isMulti: boolean) {
     const prop = server.benchmark_scores
-    ?.find((b) =>
-        b.benchmark_id === 'stress_ng:cpu_all'
-        && ((isMulti && server.vcpus && server.vcpus > 1) ? ((b.config as any)?.cores > 1) : (b.config as any)?.cores === 1))?.score;
+    ?.find((b) => b.benchmark_id === (isMulti ? 'stress_ng:bestn' : 'stress_ng:best1'))?.score;
 
     if(prop === undefined || prop === null || prop === 0) {
       return '';
@@ -596,9 +594,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
 
     let isBest = true;
     this.servers?.forEach((s: ExtendedServerDetails) => {
-      const temp = s.benchmark_scores?.find((b) =>
-        b.benchmark_id === 'stress_ng:cpu_all' &&
-        ((isMulti && s.vcpus && s.vcpus > 1) ? ((b.config as any)?.cores > 1) :(b.config as any)?.cores === 1))?.score || 0;
+      const temp = s.benchmark_scores?.find((b) => b.benchmark_id === (isMulti ? 'stress_ng:bestn' : 'stress_ng:best1'))?.score || 0;
       if(temp > prop) {
         isBest = false;
       }
@@ -672,11 +668,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
   }
 
   getBenchmark(server: ExtendedServerDetails, isMulti: boolean) {
-    if(!isMulti) {
-      return server.benchmark_scores?.find((b) => b.benchmark_id === 'stress_ng:cpu_all' && (b.config as any)?.cores === 1)?.score?.toFixed(0) || '-';
-    } else {
-      return server.benchmark_scores?.find((b) => b.benchmark_id === 'stress_ng:cpu_all' && (b.config as any)?.cores === server.vcpus)?.score?.toFixed(0) || '-';
-    }
+    return server.benchmark_scores?.find((b) => b.benchmark_id === (isMulti ? 'stress_ng:bestn' : 'stress_ng:best1'))?.score?.toFixed(0) || '-';
   }
 
   getSScore(server: ExtendedServerDetails) {
