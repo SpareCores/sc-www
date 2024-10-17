@@ -3,6 +3,8 @@ const path = require('path');
 const matter = require('gray-matter');
 const { SitemapStream, streamToPromise } = require( 'sitemap' )
 const { Readable } = require( 'stream' )
+const specialCompares = require('./src/app/pages/server-compare/special-compares');
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // init the static list of pages to prerender
@@ -77,6 +79,7 @@ data = files
 data = data.sort((a, b) => new Date(a.priority) - new Date(b.priority));
 fs.writeFileSync('./src/assets/legal/legal-documents.json', JSON.stringify(data));
 
+
 ////////////////////////////////////////////////////////////////////////////////
 // generate sitemap
 ////////////////////////////////////////////////////////////////////////////////
@@ -94,11 +97,18 @@ const links = [
   { url: 'legal/terms-of-service',  changefreq: 'monthly', priority: 0.10  },
   { url: 'articles',  changefreq: 'weekly', priority: 0.75  },
   { url: 'talks',  changefreq: 'monthly', priority: 0.75  },
+  { url: 'compare',  changefreq: 'weekly', priority: 0.75  },
 ];
 
 allArticles.forEach((article) => {
   links.push({ url: `article/${article.filename}`, changefreq: 'yearly', priority: 0.6 });
 });
+
+if(specialCompares?.length) {
+  specialCompares.forEach((specialCompare) => {
+    links.push({ url: `compare/${specialCompare.id}`, changefreq: 'daily', priority: 0.9 });
+  });
+}
 
 // get https://keeper.sparecores.net/table/server using http
 const https = require('https');

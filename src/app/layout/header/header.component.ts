@@ -16,6 +16,7 @@ export class HeaderComponent implements OnInit {
 
   dropdownMenu: any;
   dropdownCompare: any;
+  dropdownPrices: any;
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: object,
@@ -32,6 +33,10 @@ export class HeaderComponent implements OnInit {
       this.dropdownManager.initDropdown('compare_button', 'compare_options').then((dropdown) => {
         this.dropdownCompare = dropdown;
       });
+
+      this.dropdownManager.initDropdown('prices_button', 'prices_options').then((dropdown) => {
+        this.dropdownPrices = dropdown;
+      });
     }
 
   }
@@ -42,6 +47,10 @@ export class HeaderComponent implements OnInit {
 
   closeCompare() {
     this.dropdownCompare?.hide();
+  }
+
+  closePrices() {
+    this.dropdownPrices?.hide();
   }
 
   compareCount(): number {

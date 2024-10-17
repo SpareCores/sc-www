@@ -7,6 +7,7 @@ export const routes: Routes = [
   { path: '', component: LandingpageComponent },
 
   { path: 'compare', loadComponent: () => import('./pages/server-compare/server-compare.component').then(m => m.ServerCompareComponent)},
+  { path: 'compare/:id', loadComponent: () => import('./pages/server-compare/server-compare.component').then(m => m.ServerCompareComponent)},
   { path: 'servers', component: ServerListingComponent },
   { path: 'server_prices', component: ServerPricesComponent },
   { path: 'server/:vendor/:id', loadComponent: () => import('./pages/server-details/server-details.component').then(m => m.ServerDetailsComponent)},
