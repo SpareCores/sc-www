@@ -371,6 +371,7 @@ export enum CpuArchitecture {
 
 /** CpuFamilies */
 export enum CpuFamilies {
+  ARM = "ARM",
   ARMv8 = "ARMv8",
   AmpereAltra = "Ampere Altra",
   EPYC = "EPYC",
@@ -384,6 +385,7 @@ export enum CpuManufacturers {
   Ampere = "Ampere",
   Apple = "Apple",
   Intel = "Intel",
+  MICROSOFTCORPORATION = "MICROSOFT CORPORATION",
 }
 
 /**
@@ -2778,9 +2780,14 @@ export interface SearchServersServersGetParams {
    */
   architecture?: "arm64" | "arm64_mac" | "i386" | "x86_64" | "x86_64_mac";
   /** Processor manufacturer */
-  cpu_manufacturer?: "AMD" | "AWS" | "Ampere" | "Apple" | "Intel";
+  cpu_manufacturer?: "AMD" | "AWS" | "Ampere" | "Apple" | "Intel" | "MICROSOFT CORPORATION";
   /** Processor family */
-  cpu_family?: "ARMv8" | "Ampere Altra" | "EPYC" | "Xeon";
+  cpu_family?: "ARM" | "ARMv8" | "Ampere Altra" | "EPYC" | "Xeon";
+  /**
+   * CPU allocation
+   * Processor architecture.
+   */
+  cpu_allocation?: "arm64" | "arm64_mac" | "i386" | "x86_64" | "x86_64_mac";
   /**
    * SCore
    * Minimum stress-ng div16 CPU workload score.
@@ -2923,9 +2930,14 @@ export interface SearchServerPricesServerPricesGetParams {
    */
   architecture?: "arm64" | "arm64_mac" | "i386" | "x86_64" | "x86_64_mac";
   /** Processor manufacturer */
-  cpu_manufacturer?: "AMD" | "AWS" | "Ampere" | "Apple" | "Intel";
+  cpu_manufacturer?: "AMD" | "AWS" | "Ampere" | "Apple" | "Intel" | "MICROSOFT CORPORATION";
   /** Processor family */
-  cpu_family?: "ARMv8" | "Ampere Altra" | "EPYC" | "Xeon";
+  cpu_family?: "ARM" | "ARMv8" | "Ampere Altra" | "EPYC" | "Xeon";
+  /**
+   * CPU allocation
+   * Processor architecture.
+   */
+  cpu_allocation?: "arm64" | "arm64_mac" | "i386" | "x86_64" | "x86_64_mac";
   /**
    * SCore
    * Minimum stress-ng div16 CPU workload score.
