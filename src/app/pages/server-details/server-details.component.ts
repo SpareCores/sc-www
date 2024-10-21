@@ -85,7 +85,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   similarOptions: any[] = [
     {name: 'By GPU, CPU and memory specs', key: 'bySpecs'},
     {name: 'By CPU performance', key: 'byScore'},
-    //{name: 'By CPU performance per price', key: 'byPerformancePerPrice'}
+    {name: 'By CPU performance per price', key: 'byPerformancePerPrice'}
   ];
   selectedSimilarOption: any = this.similarOptions[0];
 
@@ -1463,11 +1463,12 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
         });
         break;
-      /*
       case 'byPerformancePerPrice':
-
+        this.keeperAPI.getServerSimilarServers(this.serverDetails.vendor_id, this.serverDetails.api_reference, 'score_per_price', 7)
+        .then((servers: any) => {
+          this.similarServers = servers?.body;
+        });
       break;
-      */
       case 'bySpecs':
         this.keeperAPI.getServerSimilarServers(this.serverDetails.vendor_id, this.serverDetails.api_reference, 'specs', 7)
         .then((servers: any) => {
