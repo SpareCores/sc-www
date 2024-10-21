@@ -93,6 +93,10 @@
     opacity: 1 !important;
   }
 
+  .price_input:disabled {
+    opacity: 1 !important;
+  }
+
   .ram_input {
     position: absolute;
     left: 190px;
