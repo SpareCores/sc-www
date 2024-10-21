@@ -51,9 +51,9 @@ export namespace ServerPrices {
       cpu_family?: "ARM" | "ARMv8" | "Ampere Altra" | "EPYC" | "Xeon";
       /**
        * CPU allocation
-       * Processor architecture.
+       * Allocation of the CPU(s) to the server, e.g. shared, burstable or dedicated.
        */
-      cpu_allocation?: "arm64" | "arm64_mac" | "i386" | "x86_64" | "x86_64_mac";
+      cpu_allocation?: "Shared" | "Burstable" | "Dedicated";
       /**
        * SCore
        * Minimum stress-ng div16 CPU workload score.
