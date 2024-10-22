@@ -45,7 +45,7 @@ export class KeeperAPIService {
   }
 
 
-  public getServerSimilarServers(vendor: string, id: string, category: "family" | "specs" | "score", limit: number): Promise<any> {
+  public getServerSimilarServers(vendor: string, id: string, category: "family" | "specs" | "score" | "score_per_price", limit: number): Promise<any> {
     return this.ServerController.getSimilarServersServerVendorServerSimilarServersByNumGet({vendor, server: id, by: category, num: limit});
   }
 
