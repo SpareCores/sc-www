@@ -9,7 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { Allocation, ServerPKs } from '../../../../sdk/data-contracts';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { Chart, ChartConfiguration, ChartData, TooltipItem, TooltipModel } from 'chart.js';
-import { barChartOptionsRedisCompare, barChartOptionsSSLCompare, barChartOptionsStaticWebCompare, lineChartOptionsBWM, lineChartOptionsCompareCompress, lineChartOptionsCompareDecompress, radarChartOptions, radarDatasetColors } from '../server-details/chartOptions';
+import { barChartOptionsRedisCompare, barChartOptionsSSLCompare, barChartOptionsStaticWebCompare, lineChartOptionsBWM, lineChartOptionsCompareCompress, lineChartOptionsCompareDecompress, lineChartOptionsStressNG, lineChartOptionsStressNGPercent, radarChartOptions, radarDatasetColors } from '../server-details/chartOptions';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import { BaseChartDirective } from 'ng2-charts';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -84,6 +84,10 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
   lineChartType = 'line' as const;
   lineChartOptionsBWMem: ChartConfiguration<'line'>['options'] = lineChartOptionsBWM;
   lineChartDataBWmem: ChartData<'line'> | undefined = undefined;
+
+  lineChartOptionsStressNG: ChartConfiguration<'line'>['options'] = JSON.parse(JSON.stringify(lineChartOptionsStressNG));
+  lineChartOptionsStressNGPercent: ChartConfiguration<'line'>['options'] = JSON.parse(JSON.stringify(lineChartOptionsStressNGPercent));
+  lineChartDataStressNG: ChartData<'line'> | undefined = undefined;
 
   barChartType = 'bar' as const;
   barChartOptionsSSL: ChartConfiguration<'bar'>['options'] = barChartOptionsSSLCompare;
@@ -197,6 +201,20 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
       name: 'Compression',
       id: 'compress',
       benchmarks: [ 'compression_text:ratio', 'compression_text:decompress', 'compression_text:compress' ],
+      data: [],
+      show_more: false
+    },
+    {
+      name: 'Strees NG',
+      id: 'stress_ng',
+      benchmarks: [ 'stress_ng:div16' ],
+      data: [],
+      show_more: false
+    },
+    {
+      name: 'Strees NG Percent',
+      id: 'stress_ng_pct',
+      benchmarks: [ 'stress_ng:div16' ],
       data: [],
       show_more: false
     }
@@ -389,6 +407,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
               this.generateBWMemChart();
               this.generateSSLChart();
               this.generateCompressChart();
+              this.generateStressNGChart();
 
               this.multiBarCharts.forEach((chart) => {
                 this.generateMultiBarChart(chart.chart);
@@ -807,7 +826,6 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
         }
       });
 
-
       scales.sort((a, b) => a - b);
 
       let chartData: any = {
@@ -849,6 +867,78 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
           this.dropdownBWmem = dropdown;
         });
       }
+
+    }
+  }
+
+  generateStressNGChart() {
+    const scaleField = 'cores';
+    const benchmark_id = 'stress_ng:div16';
+
+    const dataSet = this.benchmarkMeta?.find((x: any) => x.benchmark_id === benchmark_id);
+
+    if(dataSet) {
+      let scales: number[] = [];
+      dataSet.configs.forEach((item: any) => {
+        if((item.config[scaleField]) && scales.indexOf(item.config[scaleField]) === -1) {
+          scales.push(item.config[scaleField]);
+        }
+      });
+
+      scales.sort((a, b) => a - b);
+
+      let chartData: any = {
+        labels: scales, //scales.map((s) => s.toString()),
+        datasets: this.servers.map((server: ServerPKs, index: number) => {
+          return {
+            data: [],
+            label: server.display_name,
+            spanGaps: true,
+            borderColor: radarDatasetColors[index % 8].borderColor,
+            backgroundColor: radarDatasetColors[index % 8].backgroundColor };
+          })
+      };
+
+      this.servers.forEach((server: any, i: number) => {
+
+        let max = server.benchmark_scores.find((b: any) => b.benchmark_id === benchmark_id)?.score || 1;
+
+        server.benchmark_scores.filter((b: any) => b.benchmark_id === benchmark_id).forEach((item: any) => {
+          if(item.score > max) {
+            max = item.score;
+          }
+        });
+
+        scales.forEach((size: number) => {
+          const item = server.benchmark_scores.find((b: any) => b.benchmark_id === benchmark_id && b.config[scaleField] === size);
+          if(item) {
+            chartData.datasets[i].data.push({cores: size, score: item.score, percent: item.score / max * 100 });
+          } else {
+            chartData.datasets[i].data.push(null);
+          }
+        });
+      });
+
+      console.log(chartData);
+
+      //reset the annotations
+      //if(this.lineChartOptionsBWMem?.plugins?.annotation) {
+      //  this.lineChartOptionsBWMem.plugins.annotation = {};
+      //}
+
+      this.lineChartDataStressNG = { labels: chartData.labels, datasets: chartData.datasets };
+
+      //(this.lineChartOptionsBWMem as any).plugins.tooltip.callbacks.title = function(this: TooltipModel<"line">, tooltipItems: TooltipItem<"line">[]) {
+      //  return selectedName + ' ops with ' + tooltipItems[0].label + ' MB block size';
+      //};
+
+      /*
+      if(!this.dropdownBWmem) {
+        this.dropdownManager.initDropdown('bw_mem_button', 'bw_mem_options').then((dropdown) => {
+          this.dropdownBWmem = dropdown;
+        });
+      }
+      */
     }
   }
 

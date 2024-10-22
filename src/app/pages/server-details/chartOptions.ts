@@ -716,4 +716,94 @@ export const lineChartOptionsCompareDecompress: ChartConfiguration<'line'>['opti
   }
 };
 
+export const lineChartOptionsStressNG: ChartConfiguration<'line'>['options'] = {
+  scales: {
+    x: {
+      ticks: {
+        color: '#FFF',
+      },
+      title: {
+        display: true,
+        color: '#FFF',
+        text: 'Number of threads',
+      },
+    },
+    y: {
+      ticks: {
+        color: '#FFF',
+      },
+      grid: {
+        color: '#4B5563',
+      },
+      title: {
+        display: true,
+        color: '#FFF',
+        text: 'Score',
+      }
+    },
+  },
+  plugins: {
+    legend: {
+      display: true,
+      labels: {
+        color: '#FFF',
+      },
+    },
+    title: {
+      display: true,
+      text: 'Stress NG scores per core',
+      color: '#FFF',
+    }
+  },
+  parsing: {
+    xAxisKey: 'cores',
+    yAxisKey: 'score'
+  }
+};
+
+export const lineChartOptionsStressNGPercent: ChartConfiguration<'line'>['options'] = {
+  scales: {
+    x: {
+      ticks: {
+        color: '#FFF',
+      },
+      title: {
+        display: true,
+        color: '#FFF',
+        text: 'Number of threads',
+      },
+    },
+    y: {
+      ticks: {
+        color: '#FFF',
+      },
+      grid: {
+        color: '#4B5563',
+      },
+      title: {
+        display: true,
+        color: '#FFF',
+        text: '% of max Score',
+      }
+    },
+  },
+  plugins: {
+    legend: {
+      display: true,
+      labels: {
+        color: '#FFF',
+      },
+    },
+    title: {
+      display: true,
+      text: 'Stress NG scores per core',
+      color: '#FFF',
+    }
+  },
+  parsing: {
+    xAxisKey: 'cores',
+    yAxisKey: 'percent'
+  }
+};
+
 

@@ -12,7 +12,7 @@ import { FaqComponent } from '../../components/faq/faq.component';
 import { FormsModule } from '@angular/forms';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData } from 'chart.js';
-import { barChartDataEmpty, barChartOptions,  barChartOptionsSSL, lineChartOptionsBWM, lineChartOptionsComp, radarChartOptions, radarDatasetColors } from './chartOptions';
+import { barChartDataEmpty, barChartOptions,  barChartOptionsSSL, lineChartOptionsBWM, lineChartOptionsComp, lineChartOptionsStressNG, lineChartOptionsStressNGPercent, radarChartOptions, radarDatasetColors } from './chartOptions';
 import { Chart } from 'chart.js';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -151,6 +151,11 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   lineChartOptionsCompress: ChartConfiguration<'line'>['options'] = lineChartOptionsComp;
   lineChartDataCompress: ChartData<'line'> | undefined = undefined;
 
+  lineChartOptionsStressNG: ChartConfiguration<'line'>['options'] = JSON.parse(JSON.stringify(lineChartOptionsStressNG));
+  lineChartOptionsStressNGPercent: ChartConfiguration<'line'>['options'] = JSON.parse(JSON.stringify(lineChartOptionsStressNGPercent));
+  lineChartDataStressNG: ChartData<'line'> | undefined = undefined;
+  lineChartDataStressNGPct: ChartData<'line'> | undefined = undefined;
+
   barChartOptionsSSL: ChartConfiguration<'bar'>['options'] = barChartOptionsSSL;
   barChartDataSSL: ChartData<'bar'> | undefined = undefined;
 
@@ -215,6 +220,8 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
           this.serverDetails.vendor = vendors.find((v: any) => v.vendor_id === this.serverDetails.vendor_id);
           this.serverDetails.score = this.serverDetails.benchmark_scores?.find((b) => b.benchmark_id === 'stress_ng:bestn')?.score;
 
+          console.log(benchmarks);
+
           if(prices) {
             this.serverDetails.prices = JSON.parse(JSON.stringify(prices))?.sort((a: any, b: any) => a.price - b.price);
 
@@ -278,6 +285,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
               group.benchmarks.push(b);
             }
           });
+
 
           this.regionFilters = [];
 
@@ -973,6 +981,8 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
       this.lineChartDataBWmem = undefined;
     }
 
+    this.lineChartDataStressNG = this.generateStressNGChart('stress_ng:div16', 'cores');
+
     let data = this.generateLineChart('openssl', 'block_size', 'algo', false);
 
     if(data) {
@@ -1158,7 +1168,6 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
           scales.push(item.config[scaleField]);
         }
       });
-
 
       if(labels) {
         labels.sort((a, b) => {
@@ -1369,6 +1378,56 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
     } else {
       chartTemplate.chartData = undefined;
+    }
+  }
+
+  generateStressNGChart(benchmark_id: string, scaleField: string, isLineChart: boolean = true) {
+    const dataSet = this.benchmarksByCategory?.find(x => x.benchmark_id === benchmark_id);
+
+    if(dataSet && dataSet.benchmarks?.length) {
+      let scales: number[] = [];
+      dataSet.benchmarks.forEach((item: any) => {
+
+        if((item.config[scaleField] || item.config[scaleField] === 0) && scales.indexOf(item.config[scaleField]) === -1) {
+          scales.push(item.config[scaleField]);
+        }
+      });
+
+      scales.sort((a, b) => a - b);
+
+      let max = dataSet.benchmarks[0].score;
+
+      dataSet.benchmarks.forEach((item: any) => {
+        if(item.score > max) {
+          max = item.score;
+        }
+      });
+
+      let chartData: any = {
+        labels: scales, //scales.map((s) => s.toString()),
+        datasets: [{
+              data: [],
+              label: this.serverDetails.display_name,
+              spanGaps: isLineChart,
+              borderColor: radarDatasetColors[0].borderColor,
+              backgroundColor: isLineChart ? radarDatasetColors[0].backgroundColor : radarDatasetColors[0].borderColor
+            }]
+      };
+
+      scales.forEach((size: number) => {
+        const item = dataSet.benchmarks.find((b: any) => b.config[scaleField] === size);
+        if(item) {
+          chartData.datasets[0].data.push({cores: size, score: item.score, percent: item.score / max * 100});
+        } else {
+          chartData.datasets[0].data.push(null);
+        }
+      });
+
+      console.log(chartData);
+      return chartData;
+
+    } else {
+      return undefined;
     }
   }
 

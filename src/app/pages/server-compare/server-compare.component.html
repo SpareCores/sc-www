@@ -229,6 +229,13 @@
                         (mouseleave)="hideTooltip()">
                       </lucide-icon>
                       <lucide-icon
+                        *ngIf="category.id === 'stress_ng' || category.id === 'stress_ng_pct'"
+                        name="info"
+                        class="h-4 w-4 text-gray-200"
+                        (mouseenter)="showTooltipChart($event, 'stress_ng:div16')"
+                        (mouseleave)="hideTooltip()">
+                      </lucide-icon>
+                      <lucide-icon
                         *ngIf="category.id === 'compress'"
                         name="info"
                         class="h-4 w-4 text-gray-200"
@@ -295,6 +302,38 @@
                               [data]="barChartDataSSL"
                               [options]="barChartOptionsSSL"
                               [type]="barChartType"
+                            >
+                            </canvas>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div *ngIf="category.id === 'stress_ng'" >
+                      <div class="block_full_inline" *ngIf="lineChartDataStressNG">
+                        <div *ngIf="isBrowser()">
+                          <div chartType="line">
+                            <canvas
+                              style="height: 400px; max-height: 400px; width: 100%"
+                              baseChart
+                              [data]="lineChartDataStressNG"
+                              [options]="lineChartOptionsStressNG"
+                              [type]="lineChartType"
+                            >
+                            </canvas>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div *ngIf="category.id === 'stress_ng_pct'" >
+                      <div class="block_full_inline" *ngIf="lineChartDataStressNG">
+                        <div *ngIf="isBrowser()">
+                          <div chartType="line">
+                            <canvas
+                              style="height: 400px; max-height: 400px; width: 100%"
+                              baseChart
+                              [data]="lineChartDataStressNG"
+                              [options]="lineChartOptionsStressNGPercent"
+                              [type]="lineChartType"
                             >
                             </canvas>
                           </div>
@@ -374,6 +413,7 @@
                         </div>
                       </div>
                     </div>
+
                     <div class="mt-4 mb-8 flex justify-center"
                       [ngClass]="{
                         'mb-8': !category.show_more
