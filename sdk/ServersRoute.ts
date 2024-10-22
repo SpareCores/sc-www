@@ -46,7 +46,7 @@ export namespace Servers {
        */
       architecture?: "arm64" | "arm64_mac" | "i386" | "x86_64" | "x86_64_mac";
       /** Processor manufacturer */
-      cpu_manufacturer?: "AMD" | "AWS" | "Ampere" | "Apple" | "Intel" | "MICROSOFT CORPORATION";
+      cpu_manufacturer?: "AMD" | "AWS" | "Ampere" | "Apple" | "Intel" | "Microsoft";
       /** Processor family */
       cpu_family?: "ARM" | "ARMv8" | "Ampere Altra" | "EPYC" | "Xeon";
       /**

@@ -46,7 +46,7 @@ export namespace ServerPrices {
        */
       architecture?: "arm64" | "arm64_mac" | "i386" | "x86_64" | "x86_64_mac";
       /** Processor manufacturer */
-      cpu_manufacturer?: "AMD" | "AWS" | "Ampere" | "Apple" | "Intel" | "MICROSOFT CORPORATION";
+      cpu_manufacturer?: "AMD" | "AWS" | "Ampere" | "Apple" | "Intel" | "Microsoft";
       /** Processor family */
       cpu_family?: "ARM" | "ARMv8" | "Ampere Altra" | "EPYC" | "Xeon";
       /**
@@ -82,7 +82,7 @@ export namespace ServerPrices {
       only_active?: boolean | null;
       /**
        * Green energy
-       * Filter for regions with kow CO2 emission only.
+       * Filter for regions that are 100% powered by renewable energy.
        */
       green_energy?: boolean | null;
       /**

@@ -385,7 +385,7 @@ export enum CpuManufacturers {
   Ampere = "Ampere",
   Apple = "Apple",
   Intel = "Intel",
-  MICROSOFTCORPORATION = "MICROSOFT CORPORATION",
+  Microsoft = "Microsoft",
 }
 
 /**
@@ -2780,7 +2780,7 @@ export interface SearchServersServersGetParams {
    */
   architecture?: "arm64" | "arm64_mac" | "i386" | "x86_64" | "x86_64_mac";
   /** Processor manufacturer */
-  cpu_manufacturer?: "AMD" | "AWS" | "Ampere" | "Apple" | "Intel" | "MICROSOFT CORPORATION";
+  cpu_manufacturer?: "AMD" | "AWS" | "Ampere" | "Apple" | "Intel" | "Microsoft";
   /** Processor family */
   cpu_family?: "ARM" | "ARMv8" | "Ampere Altra" | "EPYC" | "Xeon";
   /**
@@ -2930,7 +2930,7 @@ export interface SearchServerPricesServerPricesGetParams {
    */
   architecture?: "arm64" | "arm64_mac" | "i386" | "x86_64" | "x86_64_mac";
   /** Processor manufacturer */
-  cpu_manufacturer?: "AMD" | "AWS" | "Ampere" | "Apple" | "Intel" | "MICROSOFT CORPORATION";
+  cpu_manufacturer?: "AMD" | "AWS" | "Ampere" | "Apple" | "Intel" | "Microsoft";
   /** Processor family */
   cpu_family?: "ARM" | "ARMv8" | "Ampere Altra" | "EPYC" | "Xeon";
   /**
@@ -2966,7 +2966,7 @@ export interface SearchServerPricesServerPricesGetParams {
   only_active?: boolean | null;
   /**
    * Green energy
-   * Filter for regions with kow CO2 emission only.
+   * Filter for regions that are 100% powered by renewable energy.
    */
   green_energy?: boolean | null;
   /**
@@ -3260,7 +3260,7 @@ export interface SearchStoragePricesStoragePricesGetParams {
   vendor?: "aws" | "azure" | "gcp" | "hcloud";
   /**
    * Green energy
-   * Filter for regions with kow CO2 emission only.
+   * Filter for regions that are 100% powered by renewable energy.
    */
   green_energy?: boolean | null;
   /**
@@ -3500,7 +3500,7 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
   vendor?: "aws" | "azure" | "gcp" | "hcloud";
   /**
    * Green energy
-   * Filter for regions with kow CO2 emission only.
+   * Filter for regions that are 100% powered by renewable energy.
    */
   green_energy?: boolean | null;
   /**
