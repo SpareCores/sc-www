@@ -452,7 +452,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
   }
 
   getMemory(item: ExtendedServerDetails) {
-    return ((item.memory_amount || 0) / 1024).toFixed((item.memory_amount || 0) > 1024 ? 0 : 1) + ' GiB';
+    return ((item.memory_amount || 0) / 1024).toFixed((item.memory_amount || 0) >= 1024 ? 0 : 1) + ' GiB';
   }
 
   getGPUMemory(item: ExtendedServerDetails) {
