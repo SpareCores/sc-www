@@ -901,44 +901,19 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
 
       this.servers.forEach((server: any, i: number) => {
 
-        let max = server.benchmark_scores.find((b: any) => b.benchmark_id === benchmark_id)?.score || 1;
-
-        server.benchmark_scores.filter((b: any) => b.benchmark_id === benchmark_id).forEach((item: any) => {
-          if(item.score > max) {
-            max = item.score;
-          }
-        });
+        let score1 = server.benchmark_scores.find((b: any) => b.benchmark_id === benchmark_id && b.config.cores === 1)?.score || 1;
 
         scales.forEach((size: number) => {
           const item = server.benchmark_scores.find((b: any) => b.benchmark_id === benchmark_id && b.config[scaleField] === size);
           if(item) {
-            chartData.datasets[i].data.push({cores: size, score: item.score, percent: item.score / max * 100 });
+            chartData.datasets[i].data.push({cores: size, score: item.score, percent: (item.score / (size * score1)) * 100 });
           } else {
             chartData.datasets[i].data.push(null);
           }
         });
       });
 
-      console.log(chartData);
-
-      //reset the annotations
-      //if(this.lineChartOptionsBWMem?.plugins?.annotation) {
-      //  this.lineChartOptionsBWMem.plugins.annotation = {};
-      //}
-
       this.lineChartDataStressNG = { labels: chartData.labels, datasets: chartData.datasets };
-
-      //(this.lineChartOptionsBWMem as any).plugins.tooltip.callbacks.title = function(this: TooltipModel<"line">, tooltipItems: TooltipItem<"line">[]) {
-      //  return selectedName + ' ops with ' + tooltipItems[0].label + ' MB block size';
-      //};
-
-      /*
-      if(!this.dropdownBWmem) {
-        this.dropdownManager.initDropdown('bw_mem_button', 'bw_mem_options').then((dropdown) => {
-          this.dropdownBWmem = dropdown;
-        });
-      }
-      */
     }
   }
 

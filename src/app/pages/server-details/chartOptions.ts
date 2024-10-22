@@ -783,7 +783,7 @@ export const lineChartOptionsStressNGPercent: ChartConfiguration<'line'>['option
       title: {
         display: true,
         color: '#FFF',
-        text: '% of max Score',
+        text: '% of (single core * threads)',
       }
     },
   },

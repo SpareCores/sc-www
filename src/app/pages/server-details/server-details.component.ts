@@ -220,8 +220,6 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
           this.serverDetails.vendor = vendors.find((v: any) => v.vendor_id === this.serverDetails.vendor_id);
           this.serverDetails.score = this.serverDetails.benchmark_scores?.find((b) => b.benchmark_id === 'stress_ng:bestn')?.score;
 
-          console.log(benchmarks);
-
           if(prices) {
             this.serverDetails.prices = JSON.parse(JSON.stringify(prices))?.sort((a: any, b: any) => a.price - b.price);
 
@@ -1395,13 +1393,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
       scales.sort((a, b) => a - b);
 
-      let max = dataSet.benchmarks[0].score;
-
-      dataSet.benchmarks.forEach((item: any) => {
-        if(item.score > max) {
-          max = item.score;
-        }
-      });
+      let score1 = dataSet.benchmarks.find((x: any) => x.config[scaleField] === 1)?.score || dataSet.benchmarks[0].score;
 
       let chartData: any = {
         labels: scales, //scales.map((s) => s.toString()),
@@ -1417,13 +1409,12 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
       scales.forEach((size: number) => {
         const item = dataSet.benchmarks.find((b: any) => b.config[scaleField] === size);
         if(item) {
-          chartData.datasets[0].data.push({cores: size, score: item.score, percent: item.score / max * 100});
+          chartData.datasets[0].data.push({cores: size, score: item.score, percent: (item.score / (size * score1)) * 100});
         } else {
           chartData.datasets[0].data.push(null);
         }
       });
 
-      console.log(chartData);
       return chartData;
 
     } else {
