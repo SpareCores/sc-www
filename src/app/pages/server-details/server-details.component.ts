@@ -11,8 +11,8 @@ import { SeoHandlerService } from '../../services/seo-handler.service';
 import { FaqComponent } from '../../components/faq/faq.component';
 import { FormsModule } from '@angular/forms';
 import { BaseChartDirective } from 'ng2-charts';
-import { ChartConfiguration, ChartData } from 'chart.js';
-import { barChartDataEmpty, barChartOptions,  barChartOptionsSSL, lineChartOptionsBWM, lineChartOptionsComp, radarChartOptions, radarDatasetColors } from './chartOptions';
+import { ChartConfiguration, ChartData, TooltipItem, TooltipModel } from 'chart.js';
+import { barChartDataEmpty, barChartOptions,  barChartOptionsSSL, lineChartOptionsBWM, lineChartOptionsComp, lineChartOptionsStressNG, lineChartOptionsStressNGPercent, radarChartOptions, radarDatasetColors } from './chartOptions';
 import { Chart } from 'chart.js';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -151,6 +151,11 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   lineChartOptionsCompress: ChartConfiguration<'line'>['options'] = lineChartOptionsComp;
   lineChartDataCompress: ChartData<'line'> | undefined = undefined;
 
+  lineChartOptionsStressNG: ChartConfiguration<'line'>['options'] = JSON.parse(JSON.stringify(lineChartOptionsStressNG));
+  lineChartOptionsStressNGPercent: ChartConfiguration<'line'>['options'] = JSON.parse(JSON.stringify(lineChartOptionsStressNGPercent));
+  lineChartDataStressNG: ChartData<'line'> | undefined = undefined;
+  lineChartDataStressNGPct: ChartData<'line'> | undefined = undefined;
+
   barChartOptionsSSL: ChartConfiguration<'bar'>['options'] = barChartOptionsSSL;
   barChartDataSSL: ChartData<'bar'> | undefined = undefined;
 
@@ -213,7 +218,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
           this.serverDetails.benchmark_scores = benchmarks;
           this.serverDetails.vendor = vendors.find((v: any) => v.vendor_id === this.serverDetails.vendor_id);
-          this.serverDetails.score = this.serverDetails.benchmark_scores?.find((b) => b.benchmark_id === 'stress_ng:cpu_all' && (b.config as any)?.cores === this.serverDetails.vcpus)?.score;
+          this.serverDetails.score = this.serverDetails.benchmark_scores?.find((b) => b.benchmark_id === 'stress_ng:bestn')?.score;
 
           if(prices) {
             this.serverDetails.prices = JSON.parse(JSON.stringify(prices))?.sort((a: any, b: any) => a.price - b.price);
@@ -278,6 +283,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
               group.benchmarks.push(b);
             }
           });
+
 
           this.regionFilters = [];
 
@@ -973,6 +979,8 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
       this.lineChartDataBWmem = undefined;
     }
 
+    this.lineChartDataStressNG = this.generateStressNGChart('stress_ng:div16', 'cores');
+
     let data = this.generateLineChart('openssl', 'block_size', 'algo', false);
 
     if(data) {
@@ -1158,7 +1166,6 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
           scales.push(item.config[scaleField]);
         }
       });
-
 
       if(labels) {
         labels.sort((a, b) => {
@@ -1372,16 +1379,115 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     }
   }
 
+  generateStressNGChart(benchmark_id: string, scaleField: string, isLineChart: boolean = true) {
+    const dataSet = this.benchmarksByCategory?.find(x => x.benchmark_id === benchmark_id);
+
+    if(dataSet && dataSet.benchmarks?.length) {
+      let scales: number[] = [];
+      dataSet.benchmarks.forEach((item: any) => {
+        if((item.config[scaleField] || item.config[scaleField] === 0) && scales.indexOf(item.config[scaleField]) === -1) {
+          scales.push(item.config[scaleField]);
+        }
+      });
+
+      scales.sort((a, b) => a - b);
+
+      // chart with only 1 point, looks odd better not to show anything at all
+      if(scales.length <= 1) {
+        return undefined;
+      }
+
+      let score1 = dataSet.benchmarks.find((x: any) => x.config[scaleField] === 1)?.score || dataSet.benchmarks[0].score;
+
+      let chartData: any = {
+        labels: scales,
+        datasets: [{
+              data: [],
+              label: this.serverDetails.display_name,
+              spanGaps: isLineChart,
+              borderColor: radarDatasetColors[0].borderColor,
+              backgroundColor: isLineChart ? radarDatasetColors[0].backgroundColor : radarDatasetColors[0].borderColor
+            }]
+      };
+
+      scales.forEach((size: number) => {
+        const item = dataSet.benchmarks.find((b: any) => b.config[scaleField] === size);
+        if(item) {
+          chartData.datasets[0].data.push({cores: size, score: item.score, percent: (item.score / (size * score1)) * 100});
+        } else {
+          chartData.datasets[0].data.push(null);
+        }
+      });
+
+      (this.lineChartOptionsStressNG!.plugins as any).legend.display = false;
+      (this.lineChartOptionsStressNGPercent!.plugins as any).legend.display = false;
+
+      (this.lineChartOptionsStressNGPercent!.plugins as any).tooltip = {
+        callbacks: {
+          label: function(this: TooltipModel<"line">, tooltipItem: TooltipItem<"line">) {
+            return `Performance: ${tooltipItem.formattedValue}% (${tooltipItem.dataset.label})`;
+          },
+          title: function(this: TooltipModel<"line">, tooltipItems: TooltipItem<"line">[]) {
+            return `${tooltipItems[0].label} vCPUs`;
+          }
+        }
+      };
+
+      (this.lineChartOptionsStressNG!.plugins as any).tooltip = {
+        callbacks: {
+          label: function(this: TooltipModel<"line">, tooltipItem: TooltipItem<"line">) {
+            return `Performance: ${tooltipItem.formattedValue} (${tooltipItem.dataset.label})`;
+          },
+          title: function(this: TooltipModel<"line">, tooltipItems: TooltipItem<"line">[]) {
+            return `${tooltipItems[0].label} vCPUs`;
+          }
+        }
+      };
+
+      if(this.serverDetails.cpu_cores) {
+        let idx = scales.findIndex((d: any) => d === this.serverDetails.cpu_cores);
+        if(idx > -1) {
+          let annotationLine = {
+              type: 'line',
+              borderWidth: 3,
+              borderColor: '#EF4444',
+              xMin: idx,
+              xMax: idx,
+              label: {
+                rotation: 'auto',
+                position: 'start',
+                content: 'CPU cores',
+                backgroundColor: '#EF4444',
+                display: true
+              }
+          };
+
+          (this.lineChartOptionsStressNG! as any).plugins.annotation = {
+            annotations: {
+              line1: annotationLine
+            }
+          };
+          (this.lineChartOptionsStressNGPercent! as any).plugins.annotation = {
+            annotations: {
+              line1: annotationLine
+            }
+          };
+        }
+      }
+
+      return chartData;
+
+    } else {
+      return undefined;
+    }
+  }
+
   public numberWithCommas(x: number) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
 
   getBenchmark(isMulti: boolean) {
-    if(!isMulti) {
-      return this.serverDetails.benchmark_scores?.find((b: any) => b.benchmark_id === 'stress_ng:cpu_all' && (b.config as any)?.cores === 1)?.score?.toFixed(0) || '-';
-    } else {
-      return this.serverDetails.benchmark_scores?.find((b: any) => b.benchmark_id === 'stress_ng:cpu_all' && (b.config as any)?.cores === this.serverDetails.vcpus)?.score?.toFixed(0) || '-';
-    }
+    return this.serverDetails.benchmark_scores?.find((b: any) => b.benchmark_id === (isMulti ? 'stress_ng:bestn' : 'stress_ng:best1'))?.score?.toFixed(0) || '-';
   }
 
   addToCompare() {

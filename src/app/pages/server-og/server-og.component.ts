@@ -106,10 +106,6 @@ export class ServerOGComponent implements OnInit {
   }
 
   getBenchmark(isMulti: boolean) {
-    if(!isMulti) {
-      return this.serverDetails.benchmark_scores?.find((b: any) => b.benchmark_id === 'stress_ng:cpu_all' && (b.config as any)?.cores === 1)?.score?.toFixed(0) || '-';
-    } else {
-      return this.serverDetails.benchmark_scores?.find((b: any) => b.benchmark_id === 'stress_ng:cpu_all' && (b.config as any)?.cores === this.serverDetails.vcpus)?.score?.toFixed(0) || '-';
-    }
+    return this.serverDetails.benchmark_scores?.find((b: any) => b.benchmark_id ===  isMulti ? 'stress_ng:bestn' : 'stress_ng:best1')?.score?.toFixed(0) || '-';
   }
 }

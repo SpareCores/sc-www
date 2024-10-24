@@ -716,4 +716,94 @@ export const lineChartOptionsCompareDecompress: ChartConfiguration<'line'>['opti
   }
 };
 
+export const lineChartOptionsStressNG: ChartConfiguration<'line'>['options'] = {
+  scales: {
+    x: {
+      ticks: {
+        color: '#FFF',
+      },
+      title: {
+        display: true,
+        color: '#FFF',
+        text: 'vCPUs',
+      },
+    },
+    y: {
+      ticks: {
+        color: '#FFF',
+      },
+      grid: {
+        color: '#4B5563',
+      },
+      title: {
+        display: true,
+        color: '#FFF',
+        text: 'Score',
+      }
+    },
+  },
+  plugins: {
+    legend: {
+      display: true,
+      labels: {
+        color: '#FFF',
+      },
+    },
+    title: {
+      display: true,
+      text: 'stress-ng div16 raw scores per vCPU',
+      color: '#FFF',
+    }
+  },
+  parsing: {
+    xAxisKey: 'cores',
+    yAxisKey: 'score'
+  }
+};
+
+export const lineChartOptionsStressNGPercent: ChartConfiguration<'line'>['options'] = {
+  scales: {
+    x: {
+      ticks: {
+        color: '#FFF',
+      },
+      title: {
+        display: true,
+        color: '#FFF',
+        text: 'vCPUs',
+      },
+    },
+    y: {
+      ticks: {
+        color: '#FFF',
+      },
+      grid: {
+        color: '#4B5563',
+      },
+      title: {
+        display: true,
+        color: '#FFF',
+        text: 'Relative performance (%)',
+      }
+    },
+  },
+  plugins: {
+    legend: {
+      display: true,
+      labels: {
+        color: '#FFF',
+      },
+    },
+    title: {
+      display: true,
+      text: 'stress-ng relative multicore performance per vCPU',
+      color: '#FFF',
+    }
+  },
+  parsing: {
+    xAxisKey: 'cores',
+    yAxisKey: 'percent'
+  }
+};
+
 
