@@ -11,7 +11,7 @@ import { SeoHandlerService } from '../../services/seo-handler.service';
 import { FaqComponent } from '../../components/faq/faq.component';
 import { FormsModule } from '@angular/forms';
 import { BaseChartDirective } from 'ng2-charts';
-import { ChartConfiguration, ChartData } from 'chart.js';
+import { ChartConfiguration, ChartData, TooltipItem, TooltipModel } from 'chart.js';
 import { barChartDataEmpty, barChartOptions,  barChartOptionsSSL, lineChartOptionsBWM, lineChartOptionsComp, lineChartOptionsStressNG, lineChartOptionsStressNGPercent, radarChartOptions, radarDatasetColors } from './chartOptions';
 import { Chart } from 'chart.js';
 import annotationPlugin from 'chartjs-plugin-annotation';
@@ -1421,6 +1421,28 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
       (this.lineChartOptionsStressNG!.plugins as any).legend.display = false;
       (this.lineChartOptionsStressNGPercent!.plugins as any).legend.display = false;
+
+      (this.lineChartOptionsStressNGPercent!.plugins as any).tooltip = {
+        callbacks: {
+          label: function(this: TooltipModel<"line">, tooltipItem: TooltipItem<"line">) {
+            return `Performance: ${tooltipItem.formattedValue}% (${tooltipItem.dataset.label})`;
+          },
+          title: function(this: TooltipModel<"line">, tooltipItems: TooltipItem<"line">[]) {
+            return `${tooltipItems[0].label} vCPUs`;
+          }
+        }
+      };
+
+      (this.lineChartOptionsStressNG!.plugins as any).tooltip = {
+        callbacks: {
+          label: function(this: TooltipModel<"line">, tooltipItem: TooltipItem<"line">) {
+            return `Performance: ${tooltipItem.formattedValue} (${tooltipItem.dataset.label})`;
+          },
+          title: function(this: TooltipModel<"line">, tooltipItems: TooltipItem<"line">[]) {
+            return `${tooltipItems[0].label} vCPUs`;
+          }
+        }
+      };
 
       return chartData;
 

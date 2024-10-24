@@ -206,7 +206,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
       show_more: false
     },
     {
-      name: 'Strees NG',
+      name: 'stress-ng div16 raw scores per vCPU',
       id: 'stress_ng',
       benchmarks: [ 'stress_ng:div16' ],
       data: [],
@@ -214,7 +214,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
       hidden: false
     },
     {
-      name: 'Strees NG Percent',
+      name: 'stress-ng relative multicore performance per vCPU',
       id: 'stress_ng_pct',
       benchmarks: [ 'stress_ng:div16' ],
       data: [],
@@ -934,6 +934,29 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
       });
 
       this.lineChartDataStressNG = { labels: chartData.labels, datasets: chartData.datasets };
+
+      (this.lineChartOptionsStressNGPercent!.plugins as any).tooltip = {
+        callbacks: {
+          label: function(this: TooltipModel<"line">, tooltipItem: TooltipItem<"line">) {
+            return `Performance: ${tooltipItem.formattedValue}% (${tooltipItem.dataset.label})`;
+          },
+          title: function(this: TooltipModel<"line">, tooltipItems: TooltipItem<"line">[]) {
+            return `${tooltipItems[0].label} vCPUs`;
+          }
+        }
+      };
+
+      (this.lineChartOptionsStressNG!.plugins as any).tooltip = {
+        callbacks: {
+          label: function(this: TooltipModel<"line">, tooltipItem: TooltipItem<"line">) {
+            return `Performance: ${tooltipItem.formattedValue} (${tooltipItem.dataset.label})`;
+          },
+          title: function(this: TooltipModel<"line">, tooltipItems: TooltipItem<"line">[]) {
+            return `${tooltipItems[0].label} vCPUs`;
+          }
+        }
+      };
+
     }
   }
 
