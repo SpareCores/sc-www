@@ -1,6 +1,6 @@
 import { E2EEvent } from "../support/generics";
 
-const BENCHMARKS_COUNT = 6;
+const BENCHMARKS_COUNT = 8;
 
 describe('Server Compare', () => {
 
