@@ -181,7 +181,8 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
       "geekbench:asset_compression"
       ],
       data: [],
-      show_more: false
+      show_more: false,
+      hidden: false
     },
     {
       name: 'Memory bandwidth',
@@ -209,14 +210,16 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
       id: 'stress_ng',
       benchmarks: [ 'stress_ng:div16' ],
       data: [],
-      show_more: false
+      show_more: false,
+      hidden: false
     },
     {
       name: 'Strees NG Percent',
       id: 'stress_ng_pct',
       benchmarks: [ 'stress_ng:div16' ],
       data: [],
-      show_more: false
+      show_more: false,
+      hidden: false
     }
   ];
 
@@ -897,6 +900,12 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
       });
 
       scales.sort((a, b) => a - b);
+
+      if(scales.length <= 1) {
+        this.benchmarkCategories.find((c) => c.id === 'stress_ng').hidden = true;
+        this.benchmarkCategories.find((c) => c.id === 'stress_ng_pct').hidden = true;
+        return;
+      }
 
       let chartData: any = {
         labels: scales, //scales.map((s) => s.toString()),
