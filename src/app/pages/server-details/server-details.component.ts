@@ -1444,6 +1444,37 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
         }
       };
 
+      if(this.serverDetails.cpu_cores) {
+        let idx = scales.findIndex((d: any) => d === this.serverDetails.cpu_cores);
+        if(idx > -1) {
+          let annotationLine = {
+              type: 'line',
+              borderWidth: 3,
+              borderColor: '#EF4444',
+              xMin: idx,
+              xMax: idx,
+              label: {
+                rotation: 'auto',
+                position: 'start',
+                content: 'CPU cores',
+                backgroundColor: '#EF4444',
+                display: true
+              }
+          };
+
+          (this.lineChartOptionsStressNG! as any).plugins.annotation = {
+            annotations: {
+              line1: annotationLine
+            }
+          };
+          (this.lineChartOptionsStressNGPercent! as any).plugins.annotation = {
+            annotations: {
+              line1: annotationLine
+            }
+          };
+        }
+      }
+
       return chartData;
 
     } else {
