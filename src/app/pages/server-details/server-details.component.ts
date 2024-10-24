@@ -1385,7 +1385,6 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     if(dataSet && dataSet.benchmarks?.length) {
       let scales: number[] = [];
       dataSet.benchmarks.forEach((item: any) => {
-
         if((item.config[scaleField] || item.config[scaleField] === 0) && scales.indexOf(item.config[scaleField]) === -1) {
           scales.push(item.config[scaleField]);
         }
@@ -1393,10 +1392,15 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
       scales.sort((a, b) => a - b);
 
+      // chart with only 1 point, looks odd better not to show anything at all
+      if(scales.length <= 1) {
+        return undefined;
+      }
+
       let score1 = dataSet.benchmarks.find((x: any) => x.config[scaleField] === 1)?.score || dataSet.benchmarks[0].score;
 
       let chartData: any = {
-        labels: scales, //scales.map((s) => s.toString()),
+        labels: scales,
         datasets: [{
               data: [],
               label: this.serverDetails.display_name,
@@ -1414,6 +1418,9 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
           chartData.datasets[0].data.push(null);
         }
       });
+
+      (this.lineChartOptionsStressNG!.plugins as any).legend.display = false;
+      (this.lineChartOptionsStressNGPercent!.plugins as any).legend.display = false;
 
       return chartData;
 

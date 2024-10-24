@@ -229,10 +229,17 @@
                         (mouseleave)="hideTooltip()">
                       </lucide-icon>
                       <lucide-icon
-                        *ngIf="category.id === 'stress_ng' || category.id === 'stress_ng_pct'"
+                        *ngIf="category.id === 'stress_ng'"
                         name="info"
                         class="h-4 w-4 text-gray-200"
                         (mouseenter)="showTooltipChart($event, 'stress_ng:div16')"
+                        (mouseleave)="hideTooltip()">
+                      </lucide-icon>
+                      <lucide-icon
+                        *ngIf="category.id === 'stress_ng_pct'"
+                        name="info"
+                        class="h-4 w-4 text-gray-200"
+                        (mouseenter)="showTooltip($event, 'The relative performance is a percentage showing the multi-core SCore\'s normalized value (multi-core SCore/vCPUs)  compared to the single-core SCore. This metric shows how well a server can scale to multiple vCPUs, and e.g. the effect of Hyper-Threading.')"
                         (mouseleave)="hideTooltip()">
                       </lucide-icon>
                       <lucide-icon

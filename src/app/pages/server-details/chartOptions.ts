@@ -725,7 +725,7 @@ export const lineChartOptionsStressNG: ChartConfiguration<'line'>['options'] = {
       title: {
         display: true,
         color: '#FFF',
-        text: 'Number of threads',
+        text: 'vCPUs',
       },
     },
     y: {
@@ -751,7 +751,7 @@ export const lineChartOptionsStressNG: ChartConfiguration<'line'>['options'] = {
     },
     title: {
       display: true,
-      text: 'Stress NG scores per core',
+      text: 'stress-ng div16 raw scores per vCPU',
       color: '#FFF',
     }
   },
@@ -770,7 +770,7 @@ export const lineChartOptionsStressNGPercent: ChartConfiguration<'line'>['option
       title: {
         display: true,
         color: '#FFF',
-        text: 'Number of threads',
+        text: 'vCPUs',
       },
     },
     y: {
@@ -783,7 +783,7 @@ export const lineChartOptionsStressNGPercent: ChartConfiguration<'line'>['option
       title: {
         display: true,
         color: '#FFF',
-        text: '% of (single core * threads)',
+        text: 'Relative performance (%)',
       }
     },
   },
@@ -796,7 +796,7 @@ export const lineChartOptionsStressNGPercent: ChartConfiguration<'line'>['option
     },
     title: {
       display: true,
-      text: 'Stress NG scores per core',
+      text: 'stress-ng relative multicore performance per vCPU',
       color: '#FFF',
     }
   },

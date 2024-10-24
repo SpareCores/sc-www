@@ -392,6 +392,17 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
               category.data = this.benchmarkMeta.filter((b: any) => category.benchmarks.includes(b.benchmark_id));
             });
 
+            // sort the stress_ng and stress_ng_pct by config.cores
+            let ngData: any[] = this.benchmarkCategories.find((c) => c.id === 'stress_ng').data;
+            if(ngData?.length > 0) {
+              ngData[0].configs = ngData[0].configs.sort((a: any, b: any) => {
+                return a.config.cores - b.config.cores;
+              });
+            }
+
+            this.benchmarkCategories.find((c) => c.id === 'stress_ng_pct').data = ngData;
+
+
             this.multiBarCharts.forEach((chartTemplate) => {
               const benchmarks = chartTemplate.chart.options.map((o: any) => o.benchmark_id);
               chartTemplate.data = this.benchmarkMeta.filter((b: any) => benchmarks.includes(b.benchmark_id));
