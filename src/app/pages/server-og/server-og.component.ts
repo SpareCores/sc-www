@@ -94,7 +94,7 @@ export class ServerOGComponent implements OnInit {
 
   getMemory(memory: number | undefined = undefined) {
     const memoryAmount = memory || this.serverDetails.memory_amount || 0;
-    return ((memoryAmount) / 1024).toFixed((memoryAmount ? 0 : 1)) + ' GiB';
+    return ((memoryAmount) / 1024).toFixed((memoryAmount >= 1024 ? 0 : 1)) + ' GiB';
   }
 
   getStorage() {
