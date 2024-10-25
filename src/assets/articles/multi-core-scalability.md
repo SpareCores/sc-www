@@ -1,9 +1,9 @@
 ---
 # ~50 chars
-title: "vCPUs in the real world: do they truly scale?"
+title: "vCPUs in the Real World: Do They Truly Scale?"
 date: 2024-10-24
 # ~100 character
-teaser: "Is it enough to choose a cloud instance based solely on the number of vCPUs?"
+teaser: "Analyzing empirical data to see if it is enough to choose a cloud instance based solely on the number of vCPUs?"
 # 320x220
 image: /assets/images/blog/thumbnails/multi-core-scalability-cpu.webp
 image_alt: CPU close-up
@@ -59,7 +59,7 @@ which must be dissipated—an expensive task, prompting data center operators to
 servers at an acceptable temperature as cheaply as possible.
 
 Some providers’ machines may run hotter (perhaps because an air conditioner failed, raising the temperature by a 
-few degrees), which means those machines will perform more slowly than identical counterparts elsewhere (or perhaps 
+few degrees), which means those machines will perform slower than identical counterparts elsewhere (or perhaps 
 with a different provider).
 
 Along with distant neighbors in the data center, nearby neighbors can also be problematic. If a machine has 32 cores, 
