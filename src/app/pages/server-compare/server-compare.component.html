@@ -41,15 +41,18 @@
         <div class="bg-secondary rounded-lg flex flex-col py-6 px-6 gap-2 text-white" *ngFor="let item of specialCompares">
           <a routerLink="/compare/{{item.id}}" class="text-emerald-400 text-2xl font-semibold"> {{item.title}} </a>
           <div class="description_inner_html" [innerHTML]="item.description"> </div>
+          <details *ngIf="item.query" class="flex flex-col gap-2 [&_svg]:open:-rotate-90">
+            <summary class="text-sm list-none cursor-pointer">
+              SQL query used to select instances
+              <svg class="inline fill-current opacity-75 w-4 h-4 -mr-1 rotate-90" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.95 10.707l.707-.707L8 4.343 6.586 5.757 10.828 10l-4.242 4.243L8 15.657l4.95-4.95z"/></svg>
+            </summary>
+            <pre class="sourceCode sql"><code class="sourceCode sql">{{item.query}}</code></pre>
+          </details>          
           <div class="text-sm flex gap-2"> Instances:
             <a *ngFor="let instance of item.instances" class="underline decoration-dotted whitespace-nowrap" routerLink="/server/{{instance.vendor}}/{{instance.server}}" >
               {{instance.server}} ({{instance.vendor}})
             </a>
           </div>
-          <details *ngIf="item.query" class="flex flex-col gap-2">
-            <summary class="text-sm">Query: </summary>
-            <pre class="sourceCode sql"><code class="sourceCode sql">{{item.query}}</code></pre>
-          </details>
         </div>
       </div>
 
