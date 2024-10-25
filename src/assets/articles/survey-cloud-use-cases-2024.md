@@ -8,7 +8,7 @@ teaser: Our latest survey on preferred cloud compute features, deployment method
 image: /assets/images/blog/thumbnails/survey-cover-cropped.webp
 image_alt: AI-generated image showing multiple persons working on laptops analyzing data and charts.
 author: Gergely Daroczi
-tags: [survey, featured]
+tags: [survey]
 ---
 
 As most of our open-source components have reached the beta,
