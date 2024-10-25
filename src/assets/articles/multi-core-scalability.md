@@ -8,7 +8,7 @@ teaser: "Is it enough to choose a cloud instance based solely on the number of v
 image: /assets/images/blog/thumbnails/multi-core-scalability-cpu.webp
 image_alt: CPU close-up
 author: Attila Nagy
-tags: [benchmark, performance, scalability, vcpu]
+tags: [benchmark, performance, scalability, vcpu, featured]
 ---
 
 ## What Instance Should I Choose? {#choosing-instances}
