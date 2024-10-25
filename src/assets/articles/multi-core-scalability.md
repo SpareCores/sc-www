@@ -363,7 +363,7 @@ for a vertically scaling application, and I concluded the following:
 2. If your application frequently needs to use many cores, you should definitely measure its performance on the selected 
    machines, using the scaling graphs on [Spare Cores](https://sparecores.com/) as a guide.
 3. "Neighbors" can significantly affect your machine's performance. It's possible that using multiple smaller machines 
-   is better than using one large one!
+   is better than using a large one!
 4. Hyper-Threading is still present in our lives, but it's worth using it cautiously and measuring how your application 
    performs with it. It may be worth disabling it (if the provider allows) or software-limiting the CPU cores used.
 5. In terms of pricing, even the "big players" can vary significantly, but if your cloud environment permits, it may 
