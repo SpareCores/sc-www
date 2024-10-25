@@ -70,23 +70,23 @@ LIMIT 25;`,
       {
         vendor: 'hcloud',
         server: 'cx21'
-        },
-        {
-          vendor: 'hcloud',
-          server: 'cx22'
-        },
-        {
-          vendor: 'hcloud',
-          server: 'cpx11'
-        },
-        {
-          vendor: 'hcloud',
-          server: 'cax11'
-        },
-        {
-          vendor: 'hcloud',
-          server: 'ccx13'
-        }
+      },
+      {
+        vendor: 'hcloud',
+        server: 'cx22'
+      },
+      {
+        vendor: 'hcloud',
+        server: 'cpx11'
+      },
+      {
+        vendor: 'hcloud',
+        server: 'cax11'
+      },
+      {
+        vendor: 'hcloud',
+        server: 'ccx13'
+      }
     ]
   },
   {
@@ -97,23 +97,23 @@ LIMIT 25;`,
       {
         vendor: 'hcloud',
         server: 'cx41'
-        },
-        {
-          vendor: 'hcloud',
-          server: 'cx32'
-        },
-        {
-          vendor: 'hcloud',
-          server: 'cpx31'
-        },
-        {
-          vendor: 'hcloud',
-          server: 'cax21'
-        },
-        {
-          vendor: 'hcloud',
-          server: 'ccx23'
-        }
+      },
+      {
+        vendor: 'hcloud',
+        server: 'cx32'
+      },
+      {
+        vendor: 'hcloud',
+        server: 'cpx31'
+      },
+      {
+        vendor: 'hcloud',
+        server: 'cax21'
+      },
+      {
+        vendor: 'hcloud',
+        server: 'ccx23'
+      }
     ]
   },
   {
@@ -124,23 +124,23 @@ LIMIT 25;`,
       {
         vendor: 'hcloud',
         server: 'cx51'
-        },
-        {
-          vendor: 'hcloud',
-          server: 'cx42'
-        },
-        {
-          vendor: 'hcloud',
-          server: 'cpx41'
-        },
-        {
-          vendor: 'hcloud',
-          server: 'cax31'
-        },
-        {
-          vendor: 'hcloud',
-          server: 'ccx33'
-        }
+      },
+      {
+        vendor: 'hcloud',
+        server: 'cx42'
+      },
+      {
+        vendor: 'hcloud',
+        server: 'cpx41'
+      },
+      {
+        vendor: 'hcloud',
+        server: 'cax31'
+      },
+      {
+        vendor: 'hcloud',
+        server: 'ccx33'
+      }
     ]
   },
   {
