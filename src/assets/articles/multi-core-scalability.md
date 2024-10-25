@@ -102,7 +102,7 @@ Give it a pat at the end of each day if it’s done its job well!
 
 The task is clear: we want to measure a machine’s scalability. Among the many options, which one should we choose? 
 We aim to include as many tools in our toolkit as possible, but for the most fundamental measurement of CPU scalability, 
-we use the CPU stress-testing component of [stress-ng](/article/cloud-compute-performance-benchmarks).
+we use the CPU stress-testing component of [`stress-ng`](/article/cloud-compute-performance-benchmarks).
 
 This program/test performs a very specific, simple operation and measures its operational speed, either in single or 
 multiple instances. It’s straightforward, so memory bandwidth matters very little, allowing us to detect issues at the 
@@ -226,7 +226,7 @@ Some cloud vendors offer options to modify boost settings. For example, Google p
 <a href="https://cloud.google.com/compute/docs/reference/rest/v1/instances/insert" target="_blank" rel="noopener">advancedMachineFeatures.turboMode</a>
 option  for the instance mentioned above, with the following description:
 
-> Turbo frequency mode to use for the instance. Supported modes include: * ALL_CORE_MAX  
+> Turbo frequency mode to use for the instance. Supported modes include: * `ALL_CORE_MAX`
 > Using an empty string or not setting this field will use the platform-specific default turbo mode.
 
 If that isn't clear enough, the web UI provides a more understandable explanation:
@@ -242,7 +242,7 @@ Our measurement above was made with default settings, but let's see how the perf
     alt="Graph showing stress-ng scalability for GCP c4-highcpu-192 with/without ALL_CORES_MAX"
     title="stress-ng scalability for GCP c4-highcpu-192 with/without ALL_CORES_MAX"
     src="/assets/images/blog/multi-core-scalability-c4-highcpu-192-all-cores-max.webp"/>
-  <p>stress-ng scalability for GCP <a href="/server/gcp/c4-highcpu-192"><code>c4-highcpu-192</code></a><br /> with and without <code>ALL_CORES_MAX</code><br />(data collected and visualized by Spare Cores)</p>
+  <p><code>stress-ng</code> scalability for GCP <a href="/server/gcp/c4-highcpu-192"><code>c4-highcpu-192</code></a><br /> with and without <code>ALL_CORES_MAX</code><br />(data collected and visualized by Spare Cores)</p>
 </div>
 
 As you can see, with the `ALL_CORES_MAX` setting, the scaling is almost linear up to the number of physical cores (96).  
@@ -256,7 +256,7 @@ Because, in general, we benefit more by letting the boost work:
     alt="Graph showing stress-ng score for GCP c4-highcpu-192 with/without ALL_CORES_MAX"
     title="stress-ng score for GCP c4-highcpu-192 with/without ALL_CORES_MAX"
     src="/assets/images/blog/multi-core-scalability-c4-highcpu-192-all-cores-max-score.webp"/>
-  <p>stress-ng score for GCP <a href="/server/gcp/c4-highcpu-192"><code>c4-highcpu-192</code></a><br />with and without <code>ALL_CORES_MAX</code><br />(data collected and visualized by Spare Cores)</p>
+  <p><code>stress-ng</code> score for GCP <a href="/server/gcp/c4-highcpu-192"><code>c4-highcpu-192</code></a><br />with and without <code>ALL_CORES_MAX</code><br />(data collected and visualized by Spare Cores)</p>
 </div>
 
 Up to about half of the physical cores, we get significantly higher performance per core (around 25% more). 
@@ -317,7 +317,7 @@ For reference, here are the actual scores achieved:
     alt="Graph showing stress-ng scores for different CPU manufacturers (AMD, ARM, Intel)"
     title="stress-ng scores for different CPU manufacturers (AMD, ARM, Intel)"
     src="/assets/images/blog/multi-core-scalability-amd-arm-intel-scores.webp"/>
-  <p>stress-ng scores for different CPU manufacturers (AMD, ARM, Intel)<br />(data collected and visualized by Spare Cores)</p>
+  <p><code>stress-ng</code> scores for different CPU manufacturers (AMD, ARM, Intel)<br />(data collected and visualized by Spare Cores)</p>
 </div>
 
 The ARM and Intel are practically neck and neck, with Intel's advantage coming solely from Turbo Boost, which it 
@@ -337,7 +337,7 @@ the highest overall `stress-ng` score.
     alt="Graph showing stress-ng scalability at AWS, Azure, GCP and Hetzner Cloud"
     title="stress-ng scalability at AWS, Azure, GCP and Hetzner Cloud"
     src="/assets/images/blog/multi-core-scalability-multicloud-scalability.webp"/>
-  <p>stress-ng scalability at AWS, Azure, GCP and Hetzner Cloud<br />(data collected and visualized by Spare Cores)</p>
+  <p><code>stress-ng</code> scalability at AWS, Azure, GCP and Hetzner Cloud<br />(data collected and visualized by Spare Cores)</p>
 </div>
 
 As you can see, there is no significant difference in scalability, and under peak load, Hetzner provides the most 
@@ -353,7 +353,7 @@ The chart showing the actual scores indicates that I managed to select machines 
     alt="Graph showing stress-ng scores at AWS, Azure, GCP and Hetzner Cloud"
     title="stress-ng scores at AWS, Azure, GCP and Hetzner Cloud"
     src="/assets/images/blog/multi-core-scalability-multicloud-scores.webp"/>
-  <p>stress-ng scores at AWS, Azure, GCP and Hetzner Cloud<br />(data collected and visualized by Spare Cores)</p>
+  <p><code>stress-ng</code> scores at AWS, Azure, GCP and Hetzner Cloud<br />(data collected and visualized by Spare Cores)</p>
 </div>
 
 The machines from Microsoft and Google seem almost identical. Hetzner's advantage here might not be unexpected, as 
