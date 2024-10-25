@@ -1,10 +1,9 @@
-
 const specialCompares = [
   {
     id: 'best-singlecore-2vcpu',
     title: 'Best single-core performance servers with 2 vCPUs',
     description: `This is a manually curated list of 2 vCPU servers with the best single-core performance as per stress-ng's <code>div16</code> CPU burning method.
-    Note that servers using the same CPU model at the same vendor were deduped, and only the most general options was kept (e.g. AWS's <code>r6a.large</code>, <code>m6a.large</code>, and <code>c6a.large</code> showing only <code>m6a.large</code> with 8 GiB of memory; similarly GCP's <code>c2d-highmem-2</code>, <code>c2d-standard-2</code>, and <code>c2d-highcpu-2</code> showing only <code>c2d-standard-2</code> with 8 GiB of memory as well).`,
+    Note that servers using the same CPU model at the same vendor were deduplicated, and only the most general options were kept (e.g. from AWS's <code>r6a.large</code>, <code>m6a.large</code>, and <code>c6a.large</code> showing only <code>m6a.large</code> with 8 GiB of memory; similarly GCP's <code>c2d-highmem-2</code>, <code>c2d-standard-2</code>, and <code>c2d-highcpu-2</code> showing only <code>c2d-standard-2</code> with 8 GiB of memory).`,
     query:
   `WITH minprice AS (
   SELECT vendor_id, server_id, MIN(price) AS price
