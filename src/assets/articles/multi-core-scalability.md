@@ -11,7 +11,7 @@ author: Attila Nagy
 tags: [benchmark, performance, scalability, vcpu]
 ---
 
-## What Instance Should I Choose?
+## What Instance Should I Choose? {#choosing-instances}
 
 When you want to run something in the cloud, the question usually arises: exactly what kind of instances should you
 choose for the task? Some parameters are straightforward: we generally know how much memory is needed and what 1 GiB
@@ -31,7 +31,7 @@ giving us no chance of estimating what the CPU can really do.
 If you're grappling with such dilemmas, you're in the right place: the Spare Cores project aims to answer questions 
 like this.
 
-## What About Vertical Scalability?
+## What About Vertical Scalability? {#vertical-scalability}
 
 Great, you've figured out which machine to place your perfectly scalable application on, you launch it on a machine,
 it churns through data, working smoothly. But you need more. Since your application scales perfectly vertically (i.e., 
@@ -49,9 +49,9 @@ on the chosen cloud instance? Pretty much everything. In the worst case, even th
 
 Let’s try to go through these factors, intentionally leaving out many elements that are irrelevant to this article.
 
-## What Affects Scalability?
+## What Affects Scalability? {#about-scalability}
 
-### Physical Factors
+### Physical Factors {#physical-factors}
 
 Modern CPUs are smart; they won’t let themselves overheat. If they get too hot, they throttle their performance to 
 protect themselves. Where does this affect you, you might ask, since the server you’re using is in the cloud. But 
@@ -76,7 +76,7 @@ memory architecture, interconnect speeds, latency, topology, etc., which all inf
 single-threaded/single-instance application will yield proportionately more performance when run in many 
 threads/instances, matching the additional CPUs you put beneath it.
 
-### Software Environment
+### Software Environment {#software-environment}
 
 In a cloud environment, providers generally sell you partitions from a larger machine, with this task managed by 
 software (assisted by hardware, of course). Each provider uses different software with different configurations, 
@@ -88,7 +88,7 @@ collection, etc.) may also take from the resources sold to you. These are typica
 they still need to run somewhere, and if the provider sells 32 CPUs from a 32-CPU machine, it’ll happen at the expense 
 of one of its customers, which manifests as performance variability.
 
-## What Does This Look Like in Reality?
+## What Does This Look Like in Reality? {#reality}
 
 The Spare Cores project actually launches individual cloud instances to gather data on them. Of course, as explained 
 above, this doesn’t guarantee that the data is universally valid; it’s just a snapshot of a given machine, possibly 
@@ -99,7 +99,7 @@ You can never know what your poor buddy is going through in reality.
 
 Give it a pat at the end of each day if it’s done its job well!
 
-### What Should We Use for Measurement?
+### What Should We Use for Measurement? {#tools}
 
 The task is clear: we want to measure a machine’s scalability. Among the many options, which one should we choose? 
 We aim to include as many tools in our toolkit as possible, but for the most fundamental measurement of CPU scalability, 
@@ -116,7 +116,7 @@ that’s how many we could launch out of 2,084 across four providers—though th
 for another article)!
 
 
-### The Ancient
+### The Ancient {#xen-machines}
 
 We have our data, so let’s start by finding the
 [oldest one](https://aws.amazon.com/blogs/aws/ec2-instance-history/)!
@@ -153,7 +153,7 @@ clearly reflected on the scalability graph.
 In terms of the scalability of our application, it makes a significant difference whether 2 vCPUs represent two 
 physical cores or one physical core and one logical core (HT).
 
-### Rock or Metal?
+### Rock or Metal? {#metal-machines}
 
 Just because we jump forward in time a bit and look at more recent instances, we can still see interesting things.
 
@@ -182,7 +182,7 @@ The following observations can be made:
 * Unfortunately, it's not enough to just look at the number of vCPUs; we actually need to measure how the instance 
   scales under your workload.
 
-### Frequency boosting (Turbo Boost etc)
+### Frequency boosting (Turbo Boost etc) {#turbo-boost}
 
 The function, referred to with various marketing names, represents the CPU's ability to dynamically adjust its clock 
 speed within its available power budget. For example, if we have a 192-core CPU, it likely has a power budget that 
@@ -291,7 +291,7 @@ rather than a large one. This way, if we end up with neighbors who don't consume
 we can use it ourselves. In the worst-case scenario, we'll still extract as much (minus some VM overhead) as if we 
 rented a single large machine, so ultimately, if we’re lucky, we get extra performance for free.
 
-### AMD vs. ARM vs. Intel?
+### AMD vs. ARM vs. Intel? {#amd-arm-intel}
 
 Let's see how each CPU performs in a 96 physical core configuration:
 
@@ -324,7 +324,7 @@ For reference, here are the actual scores achieved:
 The ARM and Intel are practically neck and neck, with Intel's advantage coming solely from Turbo Boost, which it 
 completely loses under full load. Meanwhile, AMD is leading by a wide margin in this test.
 
-### What about other providers?
+### What about other providers? {#providers}
 
 Unfortunately, it is quite difficult to find identical instances among the providers we are currently examining 
 (AWS, Azure, GCP, and Hetzner Cloud).
@@ -364,7 +364,7 @@ On the [comparison page](https://sparecores.com/compare?instances=W3sidmVuZG9yIj
 you can also compare other parameters of the machines, including the currently lowest prices, where Hetzner leads by 
 less than half the price compared to all the other major providers, earning them the virtual crown.
 
-## Summary
+## Summary {#summary}
 
 In this article, I tried to explore what considerations are worth taking into account when choosing cloud resources 
 for a vertically scaling application, and I concluded the following:
