@@ -360,7 +360,7 @@ for a vertically scaling application, and I concluded the following:
 
 1. If single-core performance is important, feel free to choose a machine with Turbo Boost (or similar) 
    enabled! [Spare Cores](https://sparecores.com/) helps find the best single-core performance machine.
-2. If your application frequently needs to use many cores, we should definitely measure its performance on the selected 
+2. If your application frequently needs to use many cores, you should definitely measure its performance on the selected 
    machines, using the scaling graphs on [Spare Cores](https://sparecores.com/) as a guide.
 3. "Neighbors" can significantly affect your machine's performance. It's possible that using multiple smaller machines 
    is better than using one large one!
