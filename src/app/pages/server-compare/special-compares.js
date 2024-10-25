@@ -330,6 +330,102 @@ LIMIT 25;`,
     ]
   },
   {
+    id: 'best-static-web-below-0.1usd',
+    title: 'Best performance servers for static web serving below ¢10/hour',
+    description: `Manually curated list of servers with the highest performance for serving static websites as per our extrapolated RPS based on the <code>binserve</code> + <code>wrk</code> benchmarks.`,
+    query:
+  `WITH minprice AS (
+  SELECT vendor_id, server_id, MIN(price) AS price
+  FROM server_price
+  WHERE allocation = 'ONDEMAND'
+  GROUP BY 1, 2
+),
+benchmarks AS (
+  SELECT vendor_id, server_id, MAX(score) AS score
+  FROM benchmark_score
+  WHERE benchmark_id = 'static_web:rps-extrapolated' AND status = 'ACTIVE'
+  GROUP BY 1, 2
+)
+SELECT
+  s.vendor_id, s.family, s.api_reference,
+  s.cpu_architecture, s.cpu_manufacturer, s.cpu_family, s.cpu_model, s.cpu_speed, s.vcpus,
+  s.memory_amount / 1024 AS memory,
+  b.score,
+  p.price
+FROM server AS s
+LEFT JOIN benchmarks AS b
+  ON s.vendor_id = b.vendor_id and s.server_id = b.server_id
+LEFT JOIN minprice AS p
+  ON s.vendor_id = p.vendor_id and s.server_id = p.server_id
+WHERE s.status = 'ACTIVE' AND p.price < 0.1
+ORDER BY b.score DESC
+LIMIT 25;`,
+    instances: [
+      {
+        vendor: 'hcloud',
+        server: 'cpx51'
+      },
+      {
+        vendor: 'hcloud',
+        server: 'cx52'
+      },
+      {
+        vendor: 'hcloud',
+        server: 'cax41'
+      },
+      {
+        vendor: 'hcloud',
+        server: 'ccx33'
+      },
+      {
+        vendor: 'aws',
+        server: 'c7g.xlarge'
+      },
+      {
+        vendor: 'gcp',
+        server: 'c4-highcpu-2'
+      },
+      {
+        vendor: 'azure',
+        server: 'Standard_B4als_v2'
+      }
+    ]
+  },
+  {
+    id: 'best-static-web-below-0.5usd',
+    title: 'Best performance servers for static web serving below ¢50/hour',
+    instances: [
+      {
+        vendor: 'hcloud',
+        server: 'ccx63'
+      },
+      {
+        vendor: 'hcloud',
+        server: 'ccx53'
+      },
+      {
+        vendor: 'aws',
+        server: 'm7g.4xlarge'
+      },
+      {
+        vendor: 'gcp',
+        server: 't2d-standard-16'
+      },
+      {
+        vendor: 'hcloud',
+        server: 'ccx43'
+      },
+      {
+        vendor: 'hcloud',
+        server: 'cpx51'
+      },
+      {
+        vendor: 'azure',
+        server: 'Standard_DC8s_v3'
+      }
+    ]
+  },
+  {
     id: 'hcloud-2vcpus',
     title: '2 vCPU servers at Hetzner Cloud',
     description: 'All Hetzner Cloud server types with 2 shared or dedicated vCPUs.',
