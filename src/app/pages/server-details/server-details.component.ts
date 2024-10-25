@@ -809,7 +809,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     if(name === 'storages') {
       let html = '<ul>';
       (prop as any[]).forEach((s: any, index: number) => {
-        html += `<li>${s.size} GB ${s.storage_type ? s.storage_type : ''}</li>`;
+        html += `<li>${s.size} GB ${s.storage_type ? s.storage_type : ''}${s.description ? ' (' + s.description + ')' : ''}</li>`;
       });
       html += '</ul>';
       return html;
