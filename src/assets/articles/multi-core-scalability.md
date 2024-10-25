@@ -164,7 +164,7 @@ Just because we jump forward in time a bit and look at more recent instances, we
   <p>Multi core performance degradation on AWS <code>c7i</code> instance family<br />(data collected and visualized by Spare Cores)</p>
 </div>
 
-The image shows four instances from the `c7i` series: <a href="/server/aws/c7i.48xlarge">`c7i.48xlarge`</a>, <a href="/server/aws/c7i.metal-48xl">`c7i.metal-48xl`</a>, <a href="/server/aws/c7i.24xlarge">`c7i.24xlarge`</a>, <a href="/server/aws/c7i.metal-24xl">`c7i.metal-24xl`</a>.
+The image shows four instances from the `c7i` series: <a href="/server/aws/c7i.48xlarge">`c7i.48xlarge`</a>, <a href="/server/aws/c7i.metal-48xl">`c7i.metal-48xl`</a>, <a href="/server/aws/c7i.24xlarge">`c7i.24xlarge`</a>, <a href="/server/aws/c7i.metal-24xl">`c7i.metal-24xl`</a> ([comparison page](/compare?instances=W3sidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzdpLjQ4eGxhcmdlIn0seyJ2ZW5kb3IiOiJhd3MiLCJzZXJ2ZXIiOiJjN2kubWV0YWwtNDh4bCJ9LHsidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzdpLjI0eGxhcmdlIn0seyJ2ZW5kb3IiOiJhd3MiLCJzZXJ2ZXIiOiJjN2kubWV0YWwtMjR4bCJ9XQ%3D%3D)).
 The `48xl` machines are dual-socket servers, while the `24xl` machines have only one CPU.
 What they have in common is that there are no neighbors; whether virtual or metal, only we are using them.
 
@@ -264,7 +264,7 @@ Between roughly 50-78 cores, this advantage drops to about 5%, and beyond that, 
 machine can provide the same performance as with the `ALL_CORES_MAX` setting.
 
 With the <a href="/server/gcp/c4-highcpu-192">`c4-highcpu-192`</a> instance size, it's likely that we don't have any neighbors, meaning we have exclusive 
-control over the machine. However, with smaller instances, we won’t be as lucky. Let's see how those perform:
+control over the machine. However, with smaller instances, we won’t be as lucky. Let's see how those perform on their [comparison page](/compare?instances=W3sidmVuZG9yIjoiZ2NwIiwic2VydmVyIjoiYzQtaGlnaGNwdS0xNiJ9LHsidmVuZG9yIjoiZ2NwIiwic2VydmVyIjoiYzQtaGlnaGNwdS0zMiJ9LHsidmVuZG9yIjoiZ2NwIiwic2VydmVyIjoiYzQtaGlnaGNwdS00OCJ9LHsidmVuZG9yIjoiZ2NwIiwic2VydmVyIjoiYzQtaGlnaGNwdS05NiJ9LHsidmVuZG9yIjoiZ2NwIiwic2VydmVyIjoiYzQtaGlnaGNwdS0xOTIifV0%3D):
 
 <div class="text-center m-2.5 mt-8 mb-6">
   <img class="zoomin w-full"
@@ -302,7 +302,7 @@ Let's see how each CPU performs in a 96 physical core configuration:
   <p>Scalability of different CPU manufacturers (AMD, ARM, Intel)<br />(data collected and visualized by Spare Cores)</p>
 </div>
 
-As shown, with AMD (<a href="/server/aws/c7a.24xlarge">`c7a.24xlarge`</a>), we only get physical cores, without HyperThreading, and the same is true for the 
+As shown on their [comparison page](/compare?instances=W3sidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzdpLm1ldGFsLTQ4eGwifSx7InZlbmRvciI6ImF3cyIsInNlcnZlciI6ImM3YS4yNHhsYXJnZSJ9LHsidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzhnLm1ldGFsLTI0eGwifV0%3D), with AMD (<a href="/server/aws/c7a.24xlarge">`c7a.24xlarge`</a>), we only get physical cores, without HyperThreading, and the same is true for the 
 ARM-based machine (<a href="/server/aws/c8g.metal-24xl">`c8g.metal-24xl`</a>). In contrast, Intel (<a href="/server/aws/c7i.metal-48xl">`c7i.metal-48xl`</a>) shows 192 cores to the OS due to HTT, but 
 it still has 96 physical cores.
 
@@ -340,11 +340,11 @@ the highest overall `stress-ng` score.
   <p><code>stress-ng</code> scalability at AWS, Azure, GCP and Hetzner Cloud<br />(data collected and visualized by Spare Cores)</p>
 </div>
 
-As you can see, there is no significant difference in scalability, and under peak load, Hetzner provides the most 
-consistent performance with its [ccx63](/server/hcloud/ccx63) machine, followed by AWS's 
-[c6a.12xlarge](/server/aws/c6a.12xlarge). Trailing significantly behind are Azure's 
-[D48as_v5](/server/azure/Standard_D48as_v5) and, lastly, Google's 
-[n2d-highcpu-48](/server/gcp/n2d-highcpu-48) machine.
+As you can see on their [comparison page](/compare?instances=W3sidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY2N4NjMifSx7InZlbmRvciI6ImF3cyIsInNlcnZlciI6ImM2YS4xMnhsYXJnZSJ9LHsidmVuZG9yIjoiYXp1cmUiLCJzZXJ2ZXIiOiJTdGFuZGFyZF9ENDhhc192NSJ9LHsidmVuZG9yIjoiZ2NwIiwic2VydmVyIjoibjJkLWhpZ2hjcHUtNDgifV0%3D), there is no significant difference in scalability, and under peak load, Hetzner provides the most 
+consistent performance with its [`ccx63`](/server/hcloud/ccx63) machine, followed by AWS's 
+[`c6a.12xlarge`](/server/aws/c6a.12xlarge). Trailing significantly behind are Azure's 
+[`D48as_v5`](/server/azure/Standard_D48as_v5) and, lastly, Google's 
+[`n2d-highcpu-48`](/server/gcp/n2d-highcpu-48) machine.
 
 The chart showing the actual scores indicates that I managed to select machines with similar capabilities.
 
