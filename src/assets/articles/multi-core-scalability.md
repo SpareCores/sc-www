@@ -123,6 +123,7 @@ We have our data, so let’s start by finding the
 
 <div class="text-center m-2.5 mt-8 mb-6">
   <img class="zoomin w-full"
+    alt="Graph showing stress-ng relative multicore performance for AWS m1.xlarge"
     title="stress-ng relative multicore performance for AWS m1.xlarge"
     src="/assets/images/blog/multi-core-scalability-m1.xlarge.webp"/>
   <p>Multi core performance degradation on AWS m1.xlarge<br />(data collected and visualized by Spare Cores)</p>
@@ -143,6 +144,7 @@ clearly reflected on the scalability graph.
 
 <div class="text-center m-2.5 mt-8 mb-6">
   <img class="zoomin w-full"
+    alt="Graph showing stress-ng relative multicore performance for AWS x1e.2xlarge"
     title="stress-ng relative multicore performance for AWS x1e.2xlarge"
     src="/assets/images/blog/multi-core-scalability-x1e.2xlarge.webp"/>
   <p>Multi core performance degradation on AWS x1e.2xlarge<br />(data collected and visualized by Spare Cores)</p>
@@ -157,6 +159,7 @@ Just because we jump forward in time a bit and look at more recent instances, we
 
 <div class="text-center m-2.5 mt-8 mb-6">
   <img class="zoomin w-full"
+    alt="Graph showing stress-ng relative multicore performance for AWS the c7i instance family"
     title="stress-ng relative multicore performance comparison for AWS the c7i instance family"
     src="/assets/images/blog/multi-core-scalability-c7i.webp"/>
   <p>Multi core performance degradation on AWS c7i instance family<br />(data collected and visualized by Spare Cores)</p>
@@ -207,6 +210,7 @@ it perform in reality?
 
 <div class="text-center m-2.5 mt-8 mb-6">
   <img class="zoomin w-full"
+    alt="Graph showing stress-ng relative multicore performance for GCP c4-highcpu-192"
     title="stress-ng relative multicore performance for GCP c4-highcpu-192"
     src="/assets/images/blog/multi-core-scalability-c4-highcpu-192.webp"/>
   <p>Multi core performance degradation on GCP c4-highcpu-192<br />(data collected and visualized by Spare Cores)</p>
@@ -236,6 +240,7 @@ Our measurement above was made with default settings, but let's see how the perf
 
 <div class="text-center m-2.5 mt-8 mb-6">
   <img class="zoomin w-full"
+    alt="Graph showing stress-ng scalability for GCP c4-highcpu-192 with/without ALL_CORES_MAX"
     title="stress-ng scalability for GCP c4-highcpu-192 with/without ALL_CORES_MAX"
     src="/assets/images/blog/multi-core-scalability-c4-highcpu-192-all-cores-max.webp"/>
   <p>stress-ng scalability for GCP c4-highcpu-192 with/without ALL_CORES_MAX<br />(data collected and visualized by Spare Cores)</p>
@@ -249,6 +254,7 @@ Because, in general, we benefit more by letting the boost work:
 
 <div class="text-center m-2.5 mt-8 mb-6">
   <img class="zoomin w-full"
+    alt="Graph showing stress-ng score for GCP c4-highcpu-192 with/without ALL_CORES_MAX"
     title="stress-ng score for GCP c4-highcpu-192 with/without ALL_CORES_MAX"
     src="/assets/images/blog/multi-core-scalability-c4-highcpu-192-all-cores-max-score.webp"/>
   <p>stress-ng score for GCP c4-highcpu-192 with/without ALL_CORES_MAX<br />(data collected and visualized by Spare Cores)</p>
@@ -263,6 +269,7 @@ control over the machine. However, with smaller instances, we won’t be as luck
 
 <div class="text-center m-2.5 mt-8 mb-6">
   <img class="zoomin w-full"
+    alt="Graph showing the scalability of multiple GCP c4 instance sizes"
     title="Comparison of the scalability of multiple GCP c4 instance sizes"
     src="/assets/images/blog/multi-core-scalability-c4-highcpu-different-sizes.webp"/>
   <p>Comparison of the scalability of multiple GCP c4 instance sizes<br />(data collected and visualized by Spare Cores)</p>
@@ -290,6 +297,7 @@ Let's see how each CPU performs in a 96 physical core configuration:
 
 <div class="text-center m-2.5 mt-8 mb-6">
   <img class="zoomin w-full"
+    alt="Graph showing the scalability of different CPU manufacturers (AMD, ARM, Intel)"
     title="Comparison of the scalability of different CPU manufacturers (AMD, ARM, Intel)"
     src="/assets/images/blog/multi-core-scalability-amd-arm-intel-scalability.webp"/>
   <p>Comparison of the scalability of different CPU manufacturers (AMD, ARM, Intel)<br />(data collected and visualized by Spare Cores)</p>
@@ -307,6 +315,7 @@ For reference, here are the actual scores achieved:
 
 <div class="text-center m-2.5 mt-8 mb-6">
   <img class="zoomin w-full"
+    alt="Graph showing stress-ng scores for different CPU manufacturers (AMD, ARM, Intel)"
     title="stress-ng scores for different CPU manufacturers (AMD, ARM, Intel)"
     src="/assets/images/blog/multi-core-scalability-amd-arm-intel-scores.webp"/>
   <p>stress-ng scores for different CPU manufacturers (AMD, ARM, Intel)<br />(data collected and visualized by Spare Cores)</p>
@@ -326,6 +335,7 @@ the highest overall `stress-ng` score.
 
 <div class="text-center m-2.5 mt-8 mb-6">
   <img class="zoomin w-full"
+    alt="Graph showing stress-ng scalability at AWS, Azure, GCP and Hetzner Cloud"
     title="stress-ng scalability at AWS, Azure, GCP and Hetzner Cloud"
     src="/assets/images/blog/multi-core-scalability-multicloud-scalability.webp"/>
   <p>stress-ng scalability at AWS, Azure, GCP and Hetzner Cloud<br />(data collected and visualized by Spare Cores)</p>
@@ -341,6 +351,7 @@ The chart showing the actual scores indicates that I managed to select machines 
 
 <div class="text-center m-2.5 mt-8 mb-6">
   <img class="zoomin w-full"
+    alt="Graph showing stress-ng scores at AWS, Azure, GCP and Hetzner Cloud"
     title="stress-ng scores at AWS, Azure, GCP and Hetzner Cloud"
     src="/assets/images/blog/multi-core-scalability-multicloud-scores.webp"/>
   <p>stress-ng scores at AWS, Azure, GCP and Hetzner Cloud<br />(data collected and visualized by Spare Cores)</p>
