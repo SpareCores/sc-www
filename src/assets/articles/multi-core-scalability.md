@@ -280,7 +280,7 @@ each instance):
 
 What conclusion can we draw from this? If your application scales not only vertically but also horizontally 
 (running on multiple machines instead of a larger one), it might be worthwhile to run on several smaller machines 
-rather than one large one. This way, if we end up with neighbors who don't consume their share of the CPU budget, 
+rather than a large one. This way, if we end up with neighbors who don't consume their share of the CPU budget, 
 we can use it ourselves. In the worst-case scenario, we'll still extract as much (minus some VM overhead) as if we 
 rented a single large machine, so ultimately, if we’re lucky, we get extra performance for free.
 
