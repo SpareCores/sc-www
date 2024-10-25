@@ -182,7 +182,7 @@ The following observations can be made:
 * Unfortunately, it's not enough to just look at the number of vCPUs; we actually need to measure how the instance 
   scales under your workload.
 
-### Frequency boosting (Turbo Boost etc) {#turbo-boost}
+### Frequency boosting (Turbo Boost etc.) {#turbo-boost}
 
 The function, referred to with various marketing names, represents the CPU's ability to dynamically adjust its clock 
 speed within its available power budget. For example, if we have a 192-core CPU, it likely has a power budget that 
