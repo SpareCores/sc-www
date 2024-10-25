@@ -121,16 +121,16 @@ We have our data, so let’s start by finding the
 <a href="https://aws.amazon.com/blogs/aws/ec2-instance-history/" target="_blank" rel="noopener">oldest one</a>!
 
 <div class="text-center m-2.5 mt-8 mb-6">
-  <img class="zoomin w-full"
+  <img class="w-full"
     alt="Graph showing stress-ng relative multicore performance for AWS m1.xlarge"
     title="stress-ng relative multicore performance for AWS m1.xlarge"
     src="/assets/images/blog/multi-core-scalability-m1.xlarge.webp"/>
-  <p>Multi core performance degradation on AWS m1.xlarge<br />(data collected and visualized by Spare Cores)</p>
+  <p>Multi core performance degradation on AWS <a href="/server/aws/m1.xlarge"><code>m1.xlarge</code></a><br />(data collected and visualized by Spare Cores)</p>
 </div>
 
 The CPU used here supports hyperthreading, but the machine reports to the OS that it’s not active (so we reflect 
 this in the data), supported by the fact that a 1 vCPU machine is also available as 
-[m1.small](/server/aws/m1.small). According to our graph, 
+[`m1.small`](/server/aws/m1.small). According to our graph, 
 with two out of four vCPUs in use, we achieve 200% performance (marked as 100% on the graph, as it doubles the 
 single-core performance), but performance drops drastically when using three or four cores.
 
@@ -142,11 +142,11 @@ Newer instances using the Xen hypervisor now run with HTT enabled, and this is n
 clearly reflected on the scalability graph.
 
 <div class="text-center m-2.5 mt-8 mb-6">
-  <img class="zoomin w-full"
+  <img class="w-full"
     alt="Graph showing stress-ng relative multicore performance for AWS x1e.2xlarge"
     title="stress-ng relative multicore performance for AWS x1e.2xlarge"
     src="/assets/images/blog/multi-core-scalability-x1e.2xlarge.webp"/>
-  <p>Multi core performance degradation on AWS x1e.2xlarge<br />(data collected and visualized by Spare Cores)</p>
+  <p>Multi core performance degradation on AWS <a href="/server/aws/x1e.2xlarge"><code>x1e.2xlarge</code></a><br />(data collected and visualized by Spare Cores)</p>
 </div>
 
 In terms of the scalability of our application, it makes a significant difference whether 2 vCPUs represent two 
@@ -161,10 +161,10 @@ Just because we jump forward in time a bit and look at more recent instances, we
     alt="Graph showing stress-ng relative multicore performance for AWS the c7i instance family"
     title="stress-ng relative multicore performance comparison for AWS the c7i instance family"
     src="/assets/images/blog/multi-core-scalability-c7i.webp"/>
-  <p>Multi core performance degradation on AWS c7i instance family<br />(data collected and visualized by Spare Cores)</p>
+  <p>Multi core performance degradation on AWS <code>c7i</code> instance family<br />(data collected and visualized by Spare Cores)</p>
 </div>
 
-The image shows four instances from the `c7i` series: `c7i.48xlarge`, `c7i.metal-48xl`, `c7i.24xlarge`, `c7i.metal-24xl`.
+The image shows four instances from the `c7i` series: <a href="/server/aws/c7i.48xlarge">`c7i.48xlarge`</a>, <a href="/server/aws/c7i.metal-48xl">`c7i.metal-48xl`</a>, <a href="/server/aws/c7i.24xlarge">`c7i.24xlarge`</a>, <a href="/server/aws/c7i.metal-24xl">`c7i.metal-24xl`</a>.
 The `48xl` machines are dual-socket servers, while the `24xl` machines have only one CPU.
 What they have in common is that there are no neighbors; whether virtual or metal, only we are using them.
 
@@ -204,15 +204,15 @@ on many factors, such as the CPU type, the cloud vendor's settings, or even the 
 
 But let’s look at an example!
 
-Google's `c4-highcpu-192` machine seems like a real beast: fifth-generation Intel Xeon Scalable CPUs. But how does 
+Google's <a href="/server/gcp/c4-highcpu-192">`c4-highcpu-192`</a> machine seems like a real beast: fifth-generation Intel Xeon Scalable CPUs. But how does 
 it perform in reality?
 
 <div class="text-center m-2.5 mt-8 mb-6">
-  <img class="zoomin w-full"
+  <img class="w-full"
     alt="Graph showing stress-ng relative multicore performance for GCP c4-highcpu-192"
     title="stress-ng relative multicore performance for GCP c4-highcpu-192"
     src="/assets/images/blog/multi-core-scalability-c4-highcpu-192.webp"/>
-  <p>Multi core performance degradation on GCP c4-highcpu-192<br />(data collected and visualized by Spare Cores)</p>
+  <p>Multi core performance degradation on GCP <a href="/server/gcp/c4-highcpu-192"><code>c4-highcpu-192</code></a><br />(data collected and visualized by Spare Cores)</p>
 </div>
 
 We can observe the following:
@@ -238,11 +238,11 @@ If that isn't clear enough, the web UI provides a more understandable explanatio
 Our measurement above was made with default settings, but let's see how the performance per core changes with each setting:
 
 <div class="text-center m-2.5 mt-8 mb-6">
-  <img class="zoomin w-full"
+  <img class="w-full"
     alt="Graph showing stress-ng scalability for GCP c4-highcpu-192 with/without ALL_CORES_MAX"
     title="stress-ng scalability for GCP c4-highcpu-192 with/without ALL_CORES_MAX"
     src="/assets/images/blog/multi-core-scalability-c4-highcpu-192-all-cores-max.webp"/>
-  <p>stress-ng scalability for GCP c4-highcpu-192 with/without ALL_CORES_MAX<br />(data collected and visualized by Spare Cores)</p>
+  <p>stress-ng scalability for GCP <a href="/server/gcp/c4-highcpu-192"><code>c4-highcpu-192</code></a><br /> with and without <code>ALL_CORES_MAX</code><br />(data collected and visualized by Spare Cores)</p>
 </div>
 
 As you can see, with the `ALL_CORES_MAX` setting, the scaling is almost linear up to the number of physical cores (96).  
@@ -252,18 +252,18 @@ But then, why isn't this the default?
 Because, in general, we benefit more by letting the boost work:
 
 <div class="text-center m-2.5 mt-8 mb-6">
-  <img class="zoomin w-full"
+  <img class="w-full"
     alt="Graph showing stress-ng score for GCP c4-highcpu-192 with/without ALL_CORES_MAX"
     title="stress-ng score for GCP c4-highcpu-192 with/without ALL_CORES_MAX"
     src="/assets/images/blog/multi-core-scalability-c4-highcpu-192-all-cores-max-score.webp"/>
-  <p>stress-ng score for GCP c4-highcpu-192 with/without ALL_CORES_MAX<br />(data collected and visualized by Spare Cores)</p>
+  <p>stress-ng score for GCP <a href="/server/gcp/c4-highcpu-192"><code>c4-highcpu-192</code></a><br />with and without <code>ALL_CORES_MAX</code><br />(data collected and visualized by Spare Cores)</p>
 </div>
 
 Up to about half of the physical cores, we get significantly higher performance per core (around 25% more). 
 Between roughly 50-78 cores, this advantage drops to about 5%, and beyond that, due to the base clock speed, the 
 machine can provide the same performance as with the `ALL_CORES_MAX` setting.
 
-With the `c4-highcpu-192` instance size, it's likely that we don't have any neighbors, meaning we have exclusive 
+With the <a href="/server/gcp/c4-highcpu-192">`c4-highcpu-192`</a> instance size, it's likely that we don't have any neighbors, meaning we have exclusive 
 control over the machine. However, with smaller instances, we won’t be as lucky. Let's see how those perform:
 
 <div class="text-center m-2.5 mt-8 mb-6">
@@ -271,7 +271,7 @@ control over the machine. However, with smaller instances, we won’t be as luck
     alt="Graph showing the scalability of multiple GCP c4 instance sizes"
     title="Comparison of the scalability of multiple GCP c4 instance sizes"
     src="/assets/images/blog/multi-core-scalability-c4-highcpu-different-sizes.webp"/>
-  <p>Comparison of the scalability of multiple GCP c4 instance sizes<br />(data collected and visualized by Spare Cores)</p>
+  <p>Scalability of multiple GCP <code>c4</code> instance sizes<br />(data collected and visualized by Spare Cores)</p>
 </div>
 
 A very interesting graph, reveals the following observations (red vertical lines indicate the physical core count of 
@@ -299,11 +299,11 @@ Let's see how each CPU performs in a 96 physical core configuration:
     alt="Graph showing the scalability of different CPU manufacturers (AMD, ARM, Intel)"
     title="Comparison of the scalability of different CPU manufacturers (AMD, ARM, Intel)"
     src="/assets/images/blog/multi-core-scalability-amd-arm-intel-scalability.webp"/>
-  <p>Comparison of the scalability of different CPU manufacturers (AMD, ARM, Intel)<br />(data collected and visualized by Spare Cores)</p>
+  <p>Scalability of different CPU manufacturers (AMD, ARM, Intel)<br />(data collected and visualized by Spare Cores)</p>
 </div>
 
-As shown, with AMD (`c7a.24xlarge`), we only get physical cores, without HyperThreading, and the same is true for the 
-ARM-based machine (`c8g.metal-24xl`). In contrast, Intel (`c7i.metal-48xl`) shows 192 cores to the OS due to HTT, but 
+As shown, with AMD (<a href="/server/aws/c7a.24xlarge">`c7a.24xlarge`</a>), we only get physical cores, without HyperThreading, and the same is true for the 
+ARM-based machine (<a href="/server/aws/c8g.metal-24xl">`c8g.metal-24xl`</a>). In contrast, Intel (<a href="/server/aws/c7i.metal-48xl">`c7i.metal-48xl`</a>) shows 192 cores to the OS due to HTT, but 
 it still has 96 physical cores.
 
 As we saw earlier, the shape of the Intel curve is influenced by Turbo. AMD also supports this technology, but its 
@@ -359,7 +359,7 @@ The chart showing the actual scores indicates that I managed to select machines 
 The machines from Microsoft and Google seem almost identical. Hetzner's advantage here might not be unexpected, as 
 it is their largest instance, meaning we likely don't have to share the machine with anyone.
 
-On the [comparison page](/compare?instances=W3sidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY2N4NjMifSx7InZlbmRvciI6ImF3cyIsInNlcnZlciI6ImM2YS4xMnhsYXJnZSJ9LHsidmVuZG9yIjoiYXp1cmUiLCJzZXJ2ZXIiOiJTdGFuZGFyZF9ENDhhc192NSJ9LHsidmVuZG9yIjoiZ2NwIiwic2VydmVyIjoibjJkLWhpZ2hjcHUtNDgifV0%3D), 
+On the related [comparison page](/compare?instances=W3sidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY2N4NjMifSx7InZlbmRvciI6ImF3cyIsInNlcnZlciI6ImM2YS4xMnhsYXJnZSJ9LHsidmVuZG9yIjoiYXp1cmUiLCJzZXJ2ZXIiOiJTdGFuZGFyZF9ENDhhc192NSJ9LHsidmVuZG9yIjoiZ2NwIiwic2VydmVyIjoibjJkLWhpZ2hjcHUtNDgifV0%3D), 
 you can also compare other parameters of the machines, including the currently lowest prices, where Hetzner leads by 
 less than half the price compared to all the other major providers, earning them the virtual crown.
 
