@@ -36,7 +36,8 @@ it churns through data, working smoothly. But you need more. Since your applicat
 if it can process one unit of work on one CPU, it can process four units on four CPUs, and so on), and the pricing 
 of providers is typically linear (twice as many vCPUs cost twice as much), your task is simply to increase the vCPU 
 count of the underlying machine as your application’s CPU demand grows. (let's generously overlook the fact that 
-there's a huge difference between vCPUs, which we also try to illustrate on the [server comparison page](https://sparecores.com/servers))
+there's a huge difference between vCPUs, which we also try to illustrate on the [server listing](/servers) 
+and [server comparison](/compare) pages)
 
 So if it managed one unit of work on 1 vCPU, will it handle 192 times as much on 192 vCPUs?
 
@@ -101,7 +102,7 @@ Give it a pat at the end of each day if it’s done its job well!
 
 The task is clear: we want to measure a machine’s scalability. Among the many options, which one should we choose? 
 We aim to include as many tools in our toolkit as possible, but for the most fundamental measurement of CPU scalability, 
-we use the CPU stress-testing component of [stress-ng](https://sparecores.com/article/cloud-compute-performance-benchmarks).
+we use the CPU stress-testing component of [stress-ng](/article/cloud-compute-performance-benchmarks).
 
 This program/test performs a very specific, simple operation and measures its operational speed, either in single or 
 multiple instances. It’s straightforward, so memory bandwidth matters very little, allowing us to detect issues at the 
@@ -117,7 +118,7 @@ for another article)!
 ### The Ancient
 
 We have our data, so let’s start by finding the
-[oldest one](https://aws.amazon.com/blogs/aws/ec2-instance-history/)!
+<a href="https://aws.amazon.com/blogs/aws/ec2-instance-history/" target="_blank" rel="noopener">oldest one</a>!
 
 <div class="text-center m-2.5 mt-8 mb-6">
   <img class="zoomin w-full"
@@ -129,7 +130,7 @@ We have our data, so let’s start by finding the
 
 The CPU used here supports hyperthreading, but the machine reports to the OS that it’s not active (so we reflect 
 this in the data), supported by the fact that a 1 vCPU machine is also available as 
-[m1.small](https://sparecores.com/server/aws/m1.small). According to our graph, 
+[m1.small](/server/aws/m1.small). According to our graph, 
 with two out of four vCPUs in use, we achieve 200% performance (marked as 100% on the graph, as it doubles the 
 single-core performance), but performance drops drastically when using three or four cores.
 
@@ -222,8 +223,8 @@ We can observe the following:
   boost frequency due to cooling constraints.
 
 Some cloud vendors offer options to modify boost settings. For example, Google provides the
-[advancedMachineFeatures.turboMode](https://cloud.google.com/compute/docs/reference/rest/v1/instances/insert) option 
-for the instance mentioned above, with the following description:
+<a href="https://cloud.google.com/compute/docs/reference/rest/v1/instances/insert" target="_blank" rel="noopener">advancedMachineFeatures.turboMode</a>
+option  for the instance mentioned above, with the following description:
 
 > Turbo frequency mode to use for the instance. Supported modes include: * ALL_CORE_MAX  
 > Using an empty string or not setting this field will use the platform-specific default turbo mode.
@@ -340,10 +341,10 @@ the highest overall `stress-ng` score.
 </div>
 
 As you can see, there is no significant difference in scalability, and under peak load, Hetzner provides the most 
-consistent performance with its [ccx63](https://sparecores.com/server/hcloud/ccx63) machine, followed by AWS's 
-[c6a.12xlarge](https://sparecores.com/server/aws/c6a.12xlarge). Trailing significantly behind are Azure's 
-[D48as_v5](https://sparecores.com/server/azure/Standard_D48as_v5) and, lastly, Google's 
-[n2d-highcpu-48](https://sparecores.com/server/gcp/n2d-highcpu-48) machine.
+consistent performance with its [ccx63](/server/hcloud/ccx63) machine, followed by AWS's 
+[c6a.12xlarge](/server/aws/c6a.12xlarge). Trailing significantly behind are Azure's 
+[D48as_v5](/server/azure/Standard_D48as_v5) and, lastly, Google's 
+[n2d-highcpu-48](/server/gcp/n2d-highcpu-48) machine.
 
 The chart showing the actual scores indicates that I managed to select machines with similar capabilities.
 
@@ -358,7 +359,7 @@ The chart showing the actual scores indicates that I managed to select machines 
 The machines from Microsoft and Google seem almost identical. Hetzner's advantage here might not be unexpected, as 
 it is their largest instance, meaning we likely don't have to share the machine with anyone.
 
-On the [comparison page](https://sparecores.com/compare?instances=W3sidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY2N4NjMifSx7InZlbmRvciI6ImF3cyIsInNlcnZlciI6ImM2YS4xMnhsYXJnZSJ9LHsidmVuZG9yIjoiYXp1cmUiLCJzZXJ2ZXIiOiJTdGFuZGFyZF9ENDhhc192NSJ9LHsidmVuZG9yIjoiZ2NwIiwic2VydmVyIjoibjJkLWhpZ2hjcHUtNDgifV0%3D), 
+On the [comparison page](/compare?instances=W3sidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY2N4NjMifSx7InZlbmRvciI6ImF3cyIsInNlcnZlciI6ImM2YS4xMnhsYXJnZSJ9LHsidmVuZG9yIjoiYXp1cmUiLCJzZXJ2ZXIiOiJTdGFuZGFyZF9ENDhhc192NSJ9LHsidmVuZG9yIjoiZ2NwIiwic2VydmVyIjoibjJkLWhpZ2hjcHUtNDgifV0%3D), 
 you can also compare other parameters of the machines, including the currently lowest prices, where Hetzner leads by 
 less than half the price compared to all the other major providers, earning them the virtual crown.
 
