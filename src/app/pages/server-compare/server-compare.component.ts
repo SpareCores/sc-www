@@ -9,7 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { Allocation, ServerPKs } from '../../../../sdk/data-contracts';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { Chart, ChartConfiguration, ChartData, TooltipItem, TooltipModel } from 'chart.js';
-import { barChartOptionsRedisCompare, barChartOptionsSSLCompare, barChartOptionsStaticWebCompare, lineChartOptionsBWM, lineChartOptionsCompareCompress, lineChartOptionsCompareDecompress, radarChartOptions, radarDatasetColors } from '../server-details/chartOptions';
+import { barChartOptionsRedisCompare, barChartOptionsSSLCompare, barChartOptionsStaticWebCompare, lineChartOptionsBWM, lineChartOptionsCompareCompress, lineChartOptionsCompareDecompress, lineChartOptionsStressNG, lineChartOptionsStressNGPercent, radarChartOptions, radarDatasetColors } from '../server-details/chartOptions';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import { BaseChartDirective } from 'ng2-charts';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -86,6 +86,10 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
   lineChartType = 'line' as const;
   lineChartOptionsBWMem: ChartConfiguration<'line'>['options'] = lineChartOptionsBWM;
   lineChartDataBWmem: ChartData<'line'> | undefined = undefined;
+
+  lineChartOptionsStressNG: ChartConfiguration<'line'>['options'] = JSON.parse(JSON.stringify(lineChartOptionsStressNG));
+  lineChartOptionsStressNGPercent: ChartConfiguration<'line'>['options'] = JSON.parse(JSON.stringify(lineChartOptionsStressNGPercent));
+  lineChartDataStressNG: ChartData<'line'> | undefined = undefined;
 
   barChartType = 'bar' as const;
   barChartOptionsSSL: ChartConfiguration<'bar'>['options'] = barChartOptionsSSLCompare;
@@ -179,7 +183,8 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
       "geekbench:asset_compression"
       ],
       data: [],
-      show_more: false
+      show_more: false,
+      hidden: false
     },
     {
       name: 'Memory bandwidth',
@@ -201,6 +206,22 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
       benchmarks: [ 'compression_text:ratio', 'compression_text:decompress', 'compression_text:compress' ],
       data: [],
       show_more: false
+    },
+    {
+      name: 'stress-ng div16 raw scores per vCPU',
+      id: 'stress_ng',
+      benchmarks: [ 'stress_ng:div16' ],
+      data: [],
+      show_more: false,
+      hidden: false
+    },
+    {
+      name: 'stress-ng relative multicore performance per vCPU',
+      id: 'stress_ng_pct',
+      benchmarks: [ 'stress_ng:div16' ],
+      data: [],
+      show_more: false,
+      hidden: false
     }
   ];
 
@@ -354,7 +375,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
             });
           }
 
-          server.score = server.benchmark_scores?.find((b: any) => b.benchmark_id === 'stress_ng:cpu_all' && (b.config as any)?.cores === server.vcpus)?.score;
+          server.score = server.benchmark_scores?.find((b: any) => b.benchmark_id === 'stress_ng:bestn')?.score;
           server.price = server.prices?.length ? server.prices[0].price : 0;
           server.score_per_price = server.price && server.score ? server.score / server.price : (server.score || 0);
 
@@ -429,6 +450,22 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
           category.data = this.benchmarkMeta.filter((b: any) => category.benchmarks.includes(b.benchmark_id));
         });
 
+        // sort the stress_ng and stress_ng_pct by config.cores
+        let ngData: any[] = this.benchmarkCategories.find((c) => c.id === 'stress_ng').data;
+        if(ngData?.length > 0) {
+          ngData[0].configs = ngData[0].configs.sort((a: any, b: any) => {
+            return a.config.cores - b.config.cores;
+          });
+        }
+
+        this.benchmarkCategories.find((c) => c.id === 'stress_ng_pct').data = ngData;
+
+
+        this.multiBarCharts.forEach((chartTemplate) => {
+          const benchmarks = chartTemplate.chart.options.map((o: any) => o.benchmark_id);
+          chartTemplate.data = this.benchmarkMeta.filter((b: any) => benchmarks.includes(b.benchmark_id));
+        });
+
         this.multiBarCharts.forEach((chartTemplate) => {
           const benchmarks = chartTemplate.chart.options.map((o: any) => o.benchmark_id);
           chartTemplate.data = this.benchmarkMeta.filter((b: any) => benchmarks.includes(b.benchmark_id));
@@ -438,12 +475,11 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
 
           this.initializeBenchmarkCharts();
 
-          this.getCompressChartOptions();
-
           this.generateChartsData();
           this.generateBWMemChart();
           this.generateSSLChart();
           this.generateCompressChart();
+          this.generateStressNGChart();
 
           this.multiBarCharts.forEach((chart) => {
             this.generateMultiBarChart(chart.chart);
@@ -517,7 +553,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
   }
 
   getMemory(item: ExtendedServerDetails) {
-    return ((item.memory_amount || 0) / 1024).toFixed((item.memory_amount || 0) > 1024 ? 0 : 1) + ' GiB';
+    return ((item.memory_amount || 0) / 1024).toFixed((item.memory_amount || 0) >= 1024 ? 0 : 1) + ' GiB';
   }
 
   getGPUMemory(item: ExtendedServerDetails) {
@@ -651,9 +687,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
 
   getBecnchmarkStyle(server: ExtendedServerDetails, isMulti: boolean) {
     const prop = server.benchmark_scores
-    ?.find((b) =>
-        b.benchmark_id === 'stress_ng:cpu_all'
-        && ((isMulti && server.vcpus && server.vcpus > 1) ? ((b.config as any)?.cores > 1) : (b.config as any)?.cores === 1))?.score;
+    ?.find((b) => b.benchmark_id === (isMulti ? 'stress_ng:bestn' : 'stress_ng:best1'))?.score;
 
     if(prop === undefined || prop === null || prop === 0) {
       return '';
@@ -661,9 +695,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
 
     let isBest = true;
     this.servers?.forEach((s: ExtendedServerDetails) => {
-      const temp = s.benchmark_scores?.find((b) =>
-        b.benchmark_id === 'stress_ng:cpu_all' &&
-        ((isMulti && s.vcpus && s.vcpus > 1) ? ((b.config as any)?.cores > 1) :(b.config as any)?.cores === 1))?.score || 0;
+      const temp = s.benchmark_scores?.find((b) => b.benchmark_id === (isMulti ? 'stress_ng:bestn' : 'stress_ng:best1'))?.score || 0;
       if(temp > prop) {
         isBest = false;
       }
@@ -737,11 +769,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
   }
 
   getBenchmark(server: ExtendedServerDetails, isMulti: boolean) {
-    if(!isMulti) {
-      return server.benchmark_scores?.find((b) => b.benchmark_id === 'stress_ng:cpu_all' && (b.config as any)?.cores === 1)?.score?.toFixed(0) || '-';
-    } else {
-      return server.benchmark_scores?.find((b) => b.benchmark_id === 'stress_ng:cpu_all' && (b.config as any)?.cores === server.vcpus)?.score?.toFixed(0) || '-';
-    }
+    return server.benchmark_scores?.find((b) => b.benchmark_id === (isMulti ? 'stress_ng:bestn' : 'stress_ng:best1'))?.score?.toFixed(0) || '-';
   }
 
   getSScore(server: ExtendedServerDetails) {
@@ -880,7 +908,6 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
         }
       });
 
-
       scales.sort((a, b) => a - b);
 
       let chartData: any = {
@@ -922,6 +949,82 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
           this.dropdownBWmem = dropdown;
         });
       }
+
+    }
+  }
+
+  generateStressNGChart() {
+    const scaleField = 'cores';
+    const benchmark_id = 'stress_ng:div16';
+
+    const dataSet = this.benchmarkMeta?.find((x: any) => x.benchmark_id === benchmark_id);
+
+    if(dataSet) {
+      let scales: number[] = [];
+      dataSet.configs.forEach((item: any) => {
+        if((item.config[scaleField]) && scales.indexOf(item.config[scaleField]) === -1) {
+          scales.push(item.config[scaleField]);
+        }
+      });
+
+      scales.sort((a, b) => a - b);
+
+      if(scales.length <= 1) {
+        this.benchmarkCategories.find((c) => c.id === 'stress_ng').hidden = true;
+        this.benchmarkCategories.find((c) => c.id === 'stress_ng_pct').hidden = true;
+        return;
+      }
+
+      let chartData: any = {
+        labels: scales, //scales.map((s) => s.toString()),
+        datasets: this.servers.map((server: ServerPKs, index: number) => {
+          return {
+            data: [],
+            label: server.display_name,
+            spanGaps: true,
+            borderColor: radarDatasetColors[index % 8].borderColor,
+            backgroundColor: radarDatasetColors[index % 8].backgroundColor };
+          })
+      };
+
+      this.servers.forEach((server: any, i: number) => {
+
+        let score1 = server.benchmark_scores.find((b: any) => b.benchmark_id === benchmark_id && b.config.cores === 1)?.score || 1;
+
+        scales.forEach((size: number) => {
+          const item = server.benchmark_scores.find((b: any) => b.benchmark_id === benchmark_id && b.config[scaleField] === size);
+          if(item) {
+            chartData.datasets[i].data.push({cores: size, score: item.score, percent: (item.score / (size * score1)) * 100 });
+          } else {
+            chartData.datasets[i].data.push(null);
+          }
+        });
+      });
+
+      this.lineChartDataStressNG = { labels: chartData.labels, datasets: chartData.datasets };
+
+      (this.lineChartOptionsStressNGPercent!.plugins as any).tooltip = {
+        callbacks: {
+          label: function(this: TooltipModel<"line">, tooltipItem: TooltipItem<"line">) {
+            return `Performance: ${tooltipItem.formattedValue}% (${tooltipItem.dataset.label})`;
+          },
+          title: function(this: TooltipModel<"line">, tooltipItems: TooltipItem<"line">[]) {
+            return `${tooltipItems[0].label} vCPUs`;
+          }
+        }
+      };
+
+      (this.lineChartOptionsStressNG!.plugins as any).tooltip = {
+        callbacks: {
+          label: function(this: TooltipModel<"line">, tooltipItem: TooltipItem<"line">) {
+            return `Performance: ${tooltipItem.formattedValue} (${tooltipItem.dataset.label})`;
+          },
+          title: function(this: TooltipModel<"line">, tooltipItems: TooltipItem<"line">[]) {
+            return `${tooltipItems[0].label} vCPUs`;
+          }
+        }
+      };
+
     }
   }
 
