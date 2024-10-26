@@ -2,8 +2,8 @@ const specialCompares = [
   {
     type: 'section', 
     title: 'Best multi-core performance servers',
-    description: `<p>Manually curated lists of servers with the best multi-core performance as per stress-ng's <code>div16</code> CPU burning method.</p>
-    <p>Servers using the same CPU model at the same vendor were deduplicated, and only the most general options were kept with similar memory amounts (e.g. from AWS's <code>r6a.large</code>, <code>m6a.large</code>, and <code>c6a.large</code> showing only <code>m6a.large</code> with 8 GiB of memory; similarly GCP's <code>c2d-highmem-2</code>, <code>c2d-standard-2</code>, and <code>c2d-highcpu-2</code> showing only <code>c2d-standard-2</code> with 8 GiB of memory).</p><p>While we suggest comparing servers based on the number of physical cores instead of vCPUs, we provide both options due to the popularity of vCPUs in the cloud market and comparisons.</p>`,
+    description: `<p>Manually curated lists of servers with the best multi-core performance as per stress-ng's <code>div16</code> CPU burning method. This benchmark is a good indicator of how well a server can handle CPU-bound workloads that can perfectly scale to all available processor cores.</p>
+    <p>Servers using the same CPU model at the same vendor were deduplicated, and only the most general options were kept with similar memory amounts (e.g. from AWS's <code>r6a.large</code>, <code>m6a.large</code>, and <code>c6a.large</code> showing only <code>m6a.large</code> with 8 GiB of memory; similarly GCP's <code>c2d-highmem-2</code>, <code>c2d-standard-2</code>, and <code>c2d-highcpu-2</code> showing only <code>c2d-standard-2</code> with 8 GiB of memory).</p>`,
     query:
   `WITH minprice AS (
   SELECT vendor_id, server_id, MIN(price) AS price
@@ -188,76 +188,75 @@ LIMIT 25;`,
     ]
   },
   {
-  type: 'section', 
-  title: 'Best single-core performance servers',
-  description: `Manually curated lists of servers with the best single-core performance as per stress-ng's <code>div16</code> CPU burning method.
-  Note that servers using the same CPU model at the same vendor were deduplicated, and only the most general options were kept with similar memory amounts (e.g. from AWS's <code>r6a.large</code>, <code>m6a.large</code>, and <code>c6a.large</code> showing only <code>m6a.large</code> with 8 GiB of memory; similarly GCP's <code>c2d-highmem-2</code>, <code>c2d-standard-2</code>, and <code>c2d-highcpu-2</code> showing only <code>c2d-standard-2</code> with 8 GiB of memory).`,
-  query:
+    type: 'section', 
+    title: 'Best single-core performance servers',
+    description: `<p>Manually curated lists of servers with the best single-core performance as per stress-ng's <code>div16</code> CPU burning method.</p>
+    <p>Servers using the same CPU model at the same vendor were deduplicated, and only the cheaper options were kept, usually with lower number of physical cores (e.g. from AWS's <code>m7a.medium</code> and <code>c7a.large</code> showing only <code>m7a.medium</code> with a single core; or from <code>c6i.large</code>, <code>c6in.large</code>, and <code>c6id.large</code> only the first).</p>`,
+    query:
 `WITH minprice AS (
-SELECT vendor_id, server_id, MIN(price) AS price
-FROM server_price
-WHERE allocation = 'ONDEMAND'
-GROUP BY 1, 2
+  SELECT vendor_id, server_id, MIN(price) AS price
+  FROM server_price
+  WHERE allocation = 'ONDEMAND'
+  GROUP BY 1, 2
 ),
 benchmarks AS (
-SELECT vendor_id, server_id, MAX(score) AS score
-FROM benchmark_score
-WHERE benchmark_id = 'stress_ng:best1' AND status = 'ACTIVE'
-GROUP BY 1, 2
+  SELECT vendor_id, server_id, MAX(score) AS score
+  FROM benchmark_score
+  WHERE benchmark_id = 'stress_ng:best1' AND status = 'ACTIVE'
+  GROUP BY 1, 2
 )
 SELECT
-s.vendor_id, s.family, s.api_reference,
-s.cpu_architecture, s.cpu_manufacturer, s.cpu_family, s.cpu_model, s.cpu_speed,
-s.memory_amount / 1024,
-b.score,
-p.price
+  s.vendor_id, s.family, s.api_reference,
+  s.cpu_architecture, s.cpu_manufacturer, s.cpu_family, s.cpu_model, 
+  s.vcpus, s.cpu_cores, s.cpu_speed,
+  b.score,
+  p.price
 FROM server AS s
 LEFT JOIN benchmarks AS b
-ON s.vendor_id = b.vendor_id and s.server_id = b.server_id
+  ON s.vendor_id = b.vendor_id and s.server_id = b.server_id
 LEFT JOIN minprice AS p
-ON s.vendor_id = p.vendor_id and s.server_id = p.server_id
+  ON s.vendor_id = p.vendor_id and s.server_id = p.server_id
 WHERE 
-s.status = 'ACTIVE' 
--- AND s.vcpus = 2
--- AND s.cpu_cores = 2
+  s.status = 'ACTIVE' 
+  -- AND s.memory_amount / 1024 = 4
 ORDER BY b.score DESC
 LIMIT 25;`,
   },
   {
     type: 'card',
-    id: 'best-singlecore-2vcpu',
-    title: 'Best single-core performance servers with 2 vCPUs',
-    description: `This is a manually curated list of 2 vCPU servers with the best single-core performance as per stress-ng's <code>div16</code> CPU burning method.
-    Note that servers using the same CPU model at the same vendor were deduplicated, and only the most general options were kept with similar memory amounts(e.g. from AWS's <code>r6a.large</code>, <code>m6a.large</code>, and <code>c6a.large</code> showing only <code>m6a.large</code> with 8 GiB of memory; similarly GCP's <code>c2d-highmem-2</code>, <code>c2d-standard-2</code>, and <code>c2d-highcpu-2</code> showing only <code>c2d-standard-2</code> with 8 GiB of memory).`,
+    id: 'best-singlecore-4gb',
+    title: 'Best single-core performance servers with 4 GiB of memory',
+    description: `<p>This is a manually curated list of low memory (4 GiB) servers with the best single-core performance as per stress-ng's <code>div16</code> CPU burning method.</p>
+    <p>Note that servers using the same CPU model at the same vendor were deduplicated, and only the cheaper options were kept -- usually with lower number of physical cores (e.g. from AWS's <code>m7a.medium</code> and <code>c7a.large</code> showing only <code>m7a.medium</code> with a single core; or from <code>c6i.large</code>, <code>c6in.large</code>, and <code>c6id.large</code> showing only <code>c6i.large</code>).</p>`,
     hide_description_in_index: true,
     instances: [
       {
         vendor: 'aws',
-        server: 'm7a.large'
-      },
-      {
-        vendor: 'hcloud',
-        server: 'ccx13'
+        server: 'm7a.medium'
       },
       {
         vendor: 'aws',
-        server: 'm6a.large'
+        server: 'c6a.large'
       },
       {
         vendor: 'gcp',
-        server: 'c2d-standard-2'
+        server: 'c2d-highcpu-2'
       },
       {
         vendor: 'azure',
-        server: 'Standard_D2as_v4'
+        server: 'Standard_B2als_v2'
       },
       {
-        vendor: 'azure',
-        server: 'Standard_B2as_v2'
+        vendor: 'hcloud',
+        server: 'cpx21'
       },
       {
         vendor: 'gcp',
-        server: 't2d-standard-2'
+        server: 't2d-standard-1'
+      },
+      {
+        vendor: 'gcp',
+        server: 'e2-medium'
       }
     ]
   },
