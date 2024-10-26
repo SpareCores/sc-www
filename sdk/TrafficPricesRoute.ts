@@ -29,7 +29,7 @@ export namespace TrafficPrices {
       vendor?: "aws" | "azure" | "gcp" | "hcloud";
       /**
        * Green energy
-       * Filter for regions with kow CO2 emission only.
+       * Filter for regions that are 100% powered by renewable energy.
        */
       green_energy?: boolean | null;
       /**
