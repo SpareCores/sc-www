@@ -2,8 +2,8 @@ const specialCompares = [
   {
     type: 'section', 
     title: 'Best multi-core performance servers',
-    description: `Manually curated lists of servers with the best multi-core performance as per stress-ng's <code>div16</code> CPU burning method.
-    Note that servers using the same CPU model at the same vendor were deduplicated, and only the most general options were kept with similar memory amounts (e.g. from AWS's <code>r6a.large</code>, <code>m6a.large</code>, and <code>c6a.large</code> showing only <code>m6a.large</code> with 8 GiB of memory; similarly GCP's <code>c2d-highmem-2</code>, <code>c2d-standard-2</code>, and <code>c2d-highcpu-2</code> showing only <code>c2d-standard-2</code> with 8 GiB of memory).`,
+    description: `<p>Manually curated lists of servers with the best multi-core performance as per stress-ng's <code>div16</code> CPU burning method.</p>
+    <p>Servers using the same CPU model at the same vendor were deduplicated, and only the most general options were kept with similar memory amounts (e.g. from AWS's <code>r6a.large</code>, <code>m6a.large</code>, and <code>c6a.large</code> showing only <code>m6a.large</code> with 8 GiB of memory; similarly GCP's <code>c2d-highmem-2</code>, <code>c2d-standard-2</code>, and <code>c2d-highcpu-2</code> showing only <code>c2d-standard-2</code> with 8 GiB of memory).</p><p>While we suggest comparing servers based on the number of physical cores instead of vCPUs, we provide both options due to the popularity of vCPUs in the cloud market and comparisons.</p>`,
     query:
   `WITH minprice AS (
   SELECT vendor_id, server_id, MIN(price) AS price

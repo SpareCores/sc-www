@@ -53,10 +53,13 @@
           <div 
             *ngIf="item.description && item.hide_description_in_index !==  true" 
             class="description_inner_html" 
-            [ngClass]="{'text-lg': item.type === 'section'}"
+            [ngClass]="{'text-lg space-y-4': item.type === 'section'}"
             [innerHTML]="item.description"> 
           </div>
-          <details *ngIf="item.query" class="flex flex-col gap-2 [&_svg]:open:-rotate-90">
+          <details 
+            *ngIf="item.query" 
+            class="flex flex-col gap-2 [&_svg]:open:-rotate-90"
+            [ngClass]="{'mt-4': item.type === 'section'}">
             <summary class="text-sm list-none cursor-pointer">
               SQL query used to select instances
               <svg class="inline fill-current opacity-75 w-4 h-4 -mr-1 rotate-90" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.95 10.707l.707-.707L8 4.343 6.586 5.757 10.828 10l-4.242 4.243L8 15.657l4.95-4.95z"/></svg>
