@@ -1,9 +1,9 @@
 const specialCompares = [
   {
-    id: 'best-multicore-2vcpu',
-    title: 'Best multi-core performance servers with 2 vCPUs',
-    description: `This is a manually curated list of 2 vCPU servers with the best multi-core performance as per stress-ng's <code>div16</code> CPU burning method.
-    Note that servers using the same CPU model at the same vendor were deduplicated, and only the most general options were kept with similar memory amounts(e.g. from AWS's <code>r6a.large</code>, <code>m6a.large</code>, and <code>c6a.large</code> showing only <code>m6a.large</code> with 8 GiB of memory; similarly GCP's <code>c2d-highmem-2</code>, <code>c2d-standard-2</code>, and <code>c2d-highcpu-2</code> showing only <code>c2d-standard-2</code> with 8 GiB of memory).`,
+    type: 'section', 
+    title: 'Best multi-core performance servers',
+    description: `Manually curated lists of servers with the best multi-core performance as per stress-ng's <code>div16</code> CPU burning method.
+    Note that servers using the same CPU model at the same vendor were deduplicated, and only the most general options were kept with similar memory amounts (e.g. from AWS's <code>r6a.large</code>, <code>m6a.large</code>, and <code>c6a.large</code> showing only <code>m6a.large</code> with 8 GiB of memory; similarly GCP's <code>c2d-highmem-2</code>, <code>c2d-standard-2</code>, and <code>c2d-highcpu-2</code> showing only <code>c2d-standard-2</code> with 8 GiB of memory).`,
     query:
   `WITH minprice AS (
   SELECT vendor_id, server_id, MIN(price) AS price
@@ -28,9 +28,20 @@ LEFT JOIN benchmarks AS b
   ON s.vendor_id = b.vendor_id and s.server_id = b.server_id
 LEFT JOIN minprice AS p
   ON s.vendor_id = p.vendor_id and s.server_id = p.server_id
-WHERE s.status = 'ACTIVE' AND s.vcpus = 2
+WHERE 
+  s.status = 'ACTIVE' 
+  -- AND s.vcpus = 2
+  -- AND s.cpu_cores = 2
 ORDER BY b.score DESC
 LIMIT 25;`,
+  },
+  {
+    type: 'card',
+    id: 'best-multicore-2vcpu',
+    title: 'Best multi-core performance servers with 2 vCPUs',
+    description: `This is a manually curated list of 2 vCPU servers with the best multi-core performance as per stress-ng's <code>div16</code> CPU burning method.
+    Note that servers using the same CPU model at the same vendor were deduplicated, and only the most general options were kept with similar memory amounts(e.g. from AWS's <code>r6a.large</code>, <code>m6a.large</code>, and <code>c6a.large</code> showing only <code>m6a.large</code> with 8 GiB of memory; similarly GCP's <code>c2d-highmem-2</code>, <code>c2d-standard-2</code>, and <code>c2d-highcpu-2</code> showing only <code>c2d-standard-2</code> with 8 GiB of memory).`,
+    hide_description_in_index: true,
     instances: [
       {
         vendor: 'aws',
@@ -63,8 +74,12 @@ LIMIT 25;`,
     ]
   },
   {
+    type: 'card',
     id: 'best-multicore-4vcpu',
     title: 'Best multi-core performance servers with 4 vCPUs',
+    description: `This is a manually curated list of 4 vCPU servers with the best multi-core performance as per stress-ng's <code>div16</code> CPU burning method.
+    Note that servers using the same CPU model at the same vendor were deduplicated, and only the most general options were kept with similar memory amounts(e.g. from AWS's <code>r6a.xlarge</code>, <code>m6a.xlarge</code>, and <code>c6a.xlarge</code> showing only <code>m6a.xlarge</code> with 16 GiB of memory; similarly GCP's <code>c2d-highmem-4</code>, <code>c2d-standard-4</code>, and <code>c2d-highcpu-4</code> showing only <code>c2d-standard-4</code> with 16 GiB of memory).`,
+    hide_description_in_index: true,
     instances: [
       {
         vendor: 'aws',
@@ -97,8 +112,12 @@ LIMIT 25;`,
     ]
   },
   {
+    type: 'card',
     id: 'best-multicore-8vcpu',
     title: 'Best multi-core performance servers with 8 vCPUs',
+    description: `This is a manually curated list of 8 vCPU servers with the best multi-core performance as per stress-ng's <code>div16</code> CPU burning method.
+    Note that servers using the same CPU model at the same vendor were deduplicated, and only the most general options were kept with similar memory amounts(e.g. from AWS's <code>r6a.2xlarge</code>, <code>m6a.2xlarge</code>, and <code>c6a.2xlarge</code> showing only <code>m6a.2xlarge</code> with 32 GiB of memory; similarly GCP's <code>c2d-highmem-8</code>, <code>c2d-standard-8</code>, and <code>c2d-highcpu-8</code> showing only <code>c2d-standard-8</code> with 32 GiB of memory).`,
+    hide_description_in_index: true,
     instances: [
       {
         vendor: 'aws',
@@ -131,8 +150,12 @@ LIMIT 25;`,
     ]
   },
   {
+    type: 'card',
     id: 'best-multicore-16vcpu',
     title: 'Best multi-core performance servers with 16 vCPUs',
+    description: `This is a manually curated list of 16 vCPU servers with the best multi-core performance as per stress-ng's <code>div16</code> CPU burning method.
+    Note that servers using the same CPU model at the same vendor were deduplicated, and only the most general options were kept with similar memory amounts(e.g. from AWS's <code>r6a.4xlarge</code>, <code>m6a.4xlarge</code>, and <code>c6a.4xlarge</code> showing only <code>m6a.4xlarge</code> with 64 GiB of memory; similarly GCP's <code>c2d-highmem-16</code>, <code>c2d-standard-16</code>, and <code>c2d-highcpu-16</code> showing only <code>c2d-standard-16</code> with 64 GiB of memory).`,
+    hide_description_in_index: true,
     instances: [
       {
         vendor: 'aws',
@@ -163,39 +186,50 @@ LIMIT 25;`,
         server: 'm8g.4xlarge'
       }
     ]
-  },  
+  },
   {
+  type: 'section', 
+  title: 'Best single-core performance servers',
+  description: `Manually curated lists of servers with the best single-core performance as per stress-ng's <code>div16</code> CPU burning method.
+  Note that servers using the same CPU model at the same vendor were deduplicated, and only the most general options were kept with similar memory amounts (e.g. from AWS's <code>r6a.large</code>, <code>m6a.large</code>, and <code>c6a.large</code> showing only <code>m6a.large</code> with 8 GiB of memory; similarly GCP's <code>c2d-highmem-2</code>, <code>c2d-standard-2</code>, and <code>c2d-highcpu-2</code> showing only <code>c2d-standard-2</code> with 8 GiB of memory).`,
+  query:
+`WITH minprice AS (
+SELECT vendor_id, server_id, MIN(price) AS price
+FROM server_price
+WHERE allocation = 'ONDEMAND'
+GROUP BY 1, 2
+),
+benchmarks AS (
+SELECT vendor_id, server_id, MAX(score) AS score
+FROM benchmark_score
+WHERE benchmark_id = 'stress_ng:best1' AND status = 'ACTIVE'
+GROUP BY 1, 2
+)
+SELECT
+s.vendor_id, s.family, s.api_reference,
+s.cpu_architecture, s.cpu_manufacturer, s.cpu_family, s.cpu_model, s.cpu_speed,
+s.memory_amount / 1024,
+b.score,
+p.price
+FROM server AS s
+LEFT JOIN benchmarks AS b
+ON s.vendor_id = b.vendor_id and s.server_id = b.server_id
+LEFT JOIN minprice AS p
+ON s.vendor_id = p.vendor_id and s.server_id = p.server_id
+WHERE 
+s.status = 'ACTIVE' 
+-- AND s.vcpus = 2
+-- AND s.cpu_cores = 2
+ORDER BY b.score DESC
+LIMIT 25;`,
+  },
+  {
+    type: 'card',
     id: 'best-singlecore-2vcpu',
     title: 'Best single-core performance servers with 2 vCPUs',
     description: `This is a manually curated list of 2 vCPU servers with the best single-core performance as per stress-ng's <code>div16</code> CPU burning method.
     Note that servers using the same CPU model at the same vendor were deduplicated, and only the most general options were kept with similar memory amounts(e.g. from AWS's <code>r6a.large</code>, <code>m6a.large</code>, and <code>c6a.large</code> showing only <code>m6a.large</code> with 8 GiB of memory; similarly GCP's <code>c2d-highmem-2</code>, <code>c2d-standard-2</code>, and <code>c2d-highcpu-2</code> showing only <code>c2d-standard-2</code> with 8 GiB of memory).`,
-    query:
-  `WITH minprice AS (
-  SELECT vendor_id, server_id, MIN(price) AS price
-  FROM server_price
-  WHERE allocation = 'ONDEMAND'
-  GROUP BY 1, 2
-),
-benchmarks AS (
-  SELECT vendor_id, server_id, MAX(score) AS score
-  FROM benchmark_score
-  WHERE benchmark_id = 'stress_ng:best1' AND status = 'ACTIVE'
-  GROUP BY 1, 2
-)
-SELECT
-  s.vendor_id, s.family, s.api_reference,
-  s.cpu_architecture, s.cpu_manufacturer, s.cpu_family, s.cpu_model, s.cpu_speed,
-  s.memory_amount / 1024,
-  b.score,
-  p.price
-FROM server AS s
-LEFT JOIN benchmarks AS b
-  ON s.vendor_id = b.vendor_id and s.server_id = b.server_id
-LEFT JOIN minprice AS p
-  ON s.vendor_id = p.vendor_id and s.server_id = p.server_id
-WHERE s.status = 'ACTIVE' AND s.vcpus = 2
-ORDER BY b.score DESC
-LIMIT 25;`,
+    hide_description_in_index: true,
     instances: [
       {
         vendor: 'aws',
@@ -228,8 +262,12 @@ LIMIT 25;`,
     ]
   },
   {
+    type: 'card',
     id: 'best-singlecore-4vcpu',
     title: 'Best single-core performance servers with 4 vCPUs',
+    description: `This is a manually curated list of 4 vCPU servers with the best single-core performance as per stress-ng's <code>div16</code> CPU burning method.
+    Note that servers using the same CPU model at the same vendor were deduplicated, and only the most general options were kept with similar memory amounts(e.g. from AWS's <code>r6a.xlarge</code>, <code>m6a.xlarge</code>, and <code>c6a.xlarge</code> showing only <code>m6a.xlarge</code> with 16 GiB of memory; similarly GCP's <code>c2d-highmem-4</code>, <code>c2d-standard-4</code>, and <code>c2d-highcpu-4</code> showing only <code>c2d-standard-4</code> with 16 GiB of memory).`,
+    hide_description_in_index: true,
     instances: [
       {
         vendor: 'aws',
@@ -262,8 +300,12 @@ LIMIT 25;`,
     ]
   },
   {
+    type: 'card',
     id: 'best-singlecore-8vcpu',
     title: 'Best single-core performance servers with 8 vCPUs',
+    description: `This is a manually curated list of 8 vCPU servers with the best single-core performance as per stress-ng's <code>div16</code> CPU burning method.
+    Note that servers using the same CPU model at the same vendor were deduplicated, and only the most general options were kept with similar memory amounts(e.g. from AWS's <code>r6a.2xlarge</code>, <code>m6a.2xlarge</code>, and <code>c6a.2xlarge</code> showing only <code>m6a.2xlarge</code> with 32 GiB of memory; similarly GCP's <code>c2d-highmem-8</code>, <code>c2d-standard-8</code>, and <code>c2d-highcpu-8</code> showing only <code>c2d-standard-8</code> with 32 GiB of memory).`,
+    hide_description_in_index: true,
     instances: [
       {
         vendor: 'aws',
@@ -296,8 +338,12 @@ LIMIT 25;`,
     ]
   },
   {
+    type: 'card',
     id: 'best-singlecore-16vcpu',
     title: 'Best single-core performance servers with 16 vCPUs',
+    description: `This is a manually curated list of 16 vCPU servers with the best single-core performance as per stress-ng's <code>div16</code> CPU burning method.
+    Note that servers using the same CPU model at the same vendor were deduplicated, and only the most general options were kept with similar memory amounts(e.g. from AWS's <code>r6a.4xlarge</code>, <code>m6a.4xlarge</code>, and <code>c6a.4xlarge</code> showing only <code>m6a.4xlarge</code> with 64 GiB of memory; similarly GCP's <code>c2d-highmem-16</code>, <code>c2d-standard-16</code>, and <code>c2d-highcpu-16</code> showing only <code>c2d-standard-16</code> with 64 GiB of memory).`,
+    hide_description_in_index: true,
     instances: [
       {
         vendor: 'aws',
@@ -330,8 +376,8 @@ LIMIT 25;`,
     ]
   },
   {
-    id: 'best-static-web-below-0.1usd',
-    title: 'Best performance servers for static web serving below ¢10/hour',
+    type: 'section', 
+    title: 'Best performance servers for static web serving',
     description: `Manually curated list of servers with the highest performance for serving static websites as per our extrapolated RPS based on the <code>binserve</code> + <code>wrk</code> benchmarks.`,
     query:
   `WITH minprice AS (
@@ -357,9 +403,18 @@ LEFT JOIN benchmarks AS b
   ON s.vendor_id = b.vendor_id and s.server_id = b.server_id
 LEFT JOIN minprice AS p
   ON s.vendor_id = p.vendor_id and s.server_id = p.server_id
-WHERE s.status = 'ACTIVE' AND p.price < 0.1
+WHERE 
+  s.status = 'ACTIVE' 
+  -- AND p.price < 0.1
 ORDER BY b.score DESC
 LIMIT 25;`,
+  },
+  {
+    type: 'card',
+    id: 'best-static-web-below-0.1usd',
+    title: 'Best performance servers for static web serving below ¢10/hour',
+    description: `Manually curated list of servers with the highest performance for serving static websites as per our extrapolated RPS based on the <code>binserve</code> + <code>wrk</code> benchmarks.`,
+    hide_description_in_index: true,
     instances: [
       {
         vendor: 'hcloud',
@@ -392,8 +447,11 @@ LIMIT 25;`,
     ]
   },
   {
+    type: 'card',
     id: 'best-static-web-below-0.5usd',
     title: 'Best performance servers for static web serving below ¢50/hour',
+    description: `Manually curated list of servers with the highest performance for serving static websites as per our extrapolated RPS based on the <code>binserve</code> + <code>wrk</code> benchmarks.`,
+    hide_description_in_index: true,
     instances: [
       {
         vendor: 'hcloud',
@@ -426,8 +484,8 @@ LIMIT 25;`,
     ]
   },
   {
-    id: 'best-redis-below-0.1usd',
-    title: 'Best performance servers for Redis below ¢10/hour',
+    type: 'section', 
+    title: 'Best performance servers for Redis',
     description: `Manually curated list of servers with the highest performance for Redis as per our extrapolated RPS based on <code>memetier_benchmark</code>.`,
     query:
   `WITH minprice AS (
@@ -453,9 +511,18 @@ LEFT JOIN benchmarks AS b
   ON s.vendor_id = b.vendor_id and s.server_id = b.server_id
 LEFT JOIN minprice AS p
   ON s.vendor_id = p.vendor_id and s.server_id = p.server_id
-WHERE s.status = 'ACTIVE' AND p.price < 0.1
+WHERE 
+  s.status = 'ACTIVE' 
+  -- AND p.price < 0.1
 ORDER BY b.score DESC
 LIMIT 25;`,
+  },
+  {
+    type: 'card',
+    id: 'best-redis-below-0.1usd',
+    title: 'Best performance servers for Redis below ¢10/hour',
+    description: `Manually curated list of servers with the highest performance for Redis as per our extrapolated RPS based on <code>memetier_benchmark</code>.`,
+    hide_description_in_index: true,
     instances: [
       {
         vendor: 'hcloud',
@@ -488,8 +555,11 @@ LIMIT 25;`,
     ]
   },
   {
+    type: 'card',
     id: 'best-redis-below-0.5usd',
     title: 'Best performance servers for Redis below ¢50/hour',
+    description: `Manually curated list of servers with the highest performance for Redis as per our extrapolated RPS based on <code>memetier_benchmark</code>.`,
+    hide_description_in_index: true,
     instances: [
       {
         vendor: 'hcloud',
@@ -522,9 +592,16 @@ LIMIT 25;`,
     ]
   },
   {
+    type: 'section', 
+    title: 'Hetzner Cloud offerings',
+    description: `List of all Hetzner Cloud server types with 2, 4, 8, and 16 vCPUs for easy comparison.`,
+  },
+  {
+    type: 'card',
     id: 'hcloud-2vcpus',
     title: '2 vCPU servers at Hetzner Cloud',
     description: 'All Hetzner Cloud server types with 2 shared or dedicated vCPUs.',
+    hide_description_in_index: true,
     instances: [
       {
         vendor: 'hcloud',
@@ -549,9 +626,11 @@ LIMIT 25;`,
     ]
   },
   {
+    type: 'card',
     id: 'hcloud-4vcpus',
     title: '4 vCPU servers at Hetzner Cloud',
     description: 'All Hetzner Cloud server types with 4 shared or dedicated vCPUs.',
+    hide_description_in_index: true,
     instances: [
       {
         vendor: 'hcloud',
@@ -576,9 +655,11 @@ LIMIT 25;`,
     ]
   },
   {
+    type: 'card',
     id: 'hcloud-8vcpus',
     title: '8 vCPU servers at Hetzner Cloud',
     description: 'All Hetzner Cloud server types with 8 shared or dedicated vCPUs.',
+    hide_description_in_index: true,
     instances: [
       {
         vendor: 'hcloud',
@@ -603,9 +684,11 @@ LIMIT 25;`,
     ]
   },
   {
+    type: 'card',
     id: 'hcloud-16vcpus',
     title: '16 vCPU servers at Hetzner Cloud',
     description: 'All Hetzner Cloud server types with 16 shared or dedicated vCPUs.',
+    hide_description_in_index: true,
     instances: [
         {
           vendor: 'hcloud',
@@ -626,6 +709,12 @@ LIMIT 25;`,
     ]
   },
   {
+    type: 'section', 
+    title: 'Further interesting lists of servers',
+    description: `Curated lists of servers from various vendors that we used to publish blog posts or in social media.`,
+  },
+  {
+    type: 'card',
     id: 'aws-c-large',
     title: 'C5/C6/C7 Large Instances at AWS',
     description: '3 generations with mixed x86 and ARM architecture of the large size instances from the C series at AWS.',
@@ -649,5 +738,6 @@ LIMIT 25;`,
     ]
   }
 ]
+
 
 module.exports = specialCompares;

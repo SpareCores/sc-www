@@ -38,9 +38,25 @@
       </div>
 
       <div class="flex flex-col gap-4 mt-4">
-        <div class="bg-secondary rounded-lg flex flex-col py-6 px-6 gap-2 text-white" *ngFor="let item of specialCompares">
-          <a routerLink="/compare/{{item.id}}" class="text-emerald-400 text-2xl font-semibold"> {{item.title}} </a>
-          <div *ngIf="item.description" class="description_inner_html" [innerHTML]="item.description"> </div>
+        <div
+          class="flex flex-col py-6 gap-2 text-white"
+          [ngClass]="{
+            'bg-secondary rounded-lg px-6': item.type === 'card'
+          }"
+          *ngFor="let item of specialCompares"
+        >
+          <h2 *ngIf="item.type === 'section'" class="text-2xl font-semibold">
+            {{item.title}}
+          </h2>
+          <h3 *ngIf="item.type === 'card'">
+            <a routerLink="/compare/{{item.id}}" class="text-emerald-400 text-xl font-semibold"> {{item.title}} </a>
+          </h3>
+          <div 
+            *ngIf="item.description && item.hide_description_in_index !==  true" 
+            class="description_inner_html" 
+            [ngClass]="{'text-lg': item.type === 'section'}"
+            [innerHTML]="item.description"> 
+          </div>
           <details *ngIf="item.query" class="flex flex-col gap-2 [&_svg]:open:-rotate-90">
             <summary class="text-sm list-none cursor-pointer">
               SQL query used to select instances
@@ -48,7 +64,7 @@
             </summary>
             <pre class="sourceCode sql"><code class="sourceCode sql">{{item.query}}</code></pre>
           </details>          
-          <div class="text-sm flex gap-2"> Instances:
+          <div *ngIf="item.instances" class="text-sm flex gap-2"> Instances:
             <a *ngFor="let instance of item.instances" class="underline decoration-dotted whitespace-nowrap" routerLink="/server/{{instance.vendor}}/{{instance.server}}" >
               {{instance.server}} ({{instance.vendor}})
             </a>
