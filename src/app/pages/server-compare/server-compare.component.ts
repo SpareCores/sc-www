@@ -461,6 +461,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
 
         this.benchmarkCategories.find((c) => c.id === 'stress_ng_pct').data = ngData;
 
+        this.getCompressChartOptions();
 
         this.multiBarCharts.forEach((chartTemplate) => {
           const benchmarks = chartTemplate.chart.options.map((o: any) => o.benchmark_id);
