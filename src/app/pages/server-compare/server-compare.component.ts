@@ -1,7 +1,7 @@
 /* eslint-disable prefer-const */
 import { AfterViewInit, Component, ElementRef, HostBinding, Inject, OnInit, PLATFORM_ID, ViewChild } from '@angular/core';
 import { KeeperAPIService } from '../../services/keeper-api.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { LucideAngularModule } from 'lucide-angular';
 import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
@@ -19,13 +19,14 @@ import { AnalyticsService } from '../../services/analytics.service';
 import { CurrencyOption, availableCurrencies } from '../../tools/shared_data';
 import { ChartFromBenchmarkTemplate, ChartFromBenchmarkTemplateOptions, redisChartTemplate, redisChartTemplateCallbacks, staticWebChartCompareTemplate, staticWebChartTemplateCallbacks } from '../server-details/chartFromBenchmarks';
 import { ExtendedServerDetails } from '../server-details/server-details.component';
+import hljs from 'highlight.js';
 
 Chart.register(annotationPlugin);
 
 @Component({
   selector: 'app-server-compare',
   standalone: true,
-  imports: [BreadcrumbsComponent, LucideAngularModule, CommonModule, FormsModule, BaseChartDirective],
+  imports: [BreadcrumbsComponent, LucideAngularModule, CommonModule, FormsModule, BaseChartDirective, RouterModule],
   templateUrl: './server-compare.component.html',
   styleUrl: './server-compare.component.scss',
 })
@@ -33,6 +34,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
 
   @ViewChild('tableFirstCol') tableFirstCol!: ElementRef;
   @HostBinding('attr.ngSkipHydration') ngSkipHydration = 'true';
+  @ViewChild('comparesDiv') comparesDiv!: ElementRef;
 
   breadcrumbs: BreadcrumbSegment[] = [
     { name: 'Home', url: '/' },
@@ -230,6 +232,15 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
   @ViewChild('tableHolder') tableHolder!: ElementRef;
   isTableOutsideViewport = false;
 
+  title = 'Server Comparison';
+  description = 'Compare cloud servers characteristics, such as CPU, GPU, memory and storage details, and the performance of the instances by various benchmarking workloads to find the optimal compute resource for your needs.';
+  keywords = 'compare, servers, server, hosting, cloud, vps, dedicated, comparison';
+
+  instances: any[] = [];
+
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  specialCompares: any[] = require('./special-compares');
+
   constructor(
     @Inject(PLATFORM_ID) private platformId: object,
     @Inject(DOCUMENT) private document: Document,
@@ -242,12 +253,18 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     private route: ActivatedRoute) { }
 
   ngOnInit() {
+    const id = this.route.snapshot.paramMap.get('id');
 
-    const title = 'Compare Servers';
-    const description = 'Compare cloud server characteristics and benchmark scores.';
-    const keywords = 'compare, servers, server, hosting, cloud, vps, dedicated, comparison';
+    if(id) {
+      const specialCompare = this.specialCompares.find((x: any) => x.id === id);
+      if(specialCompare) {
+        this.title = specialCompare.title;
+        this.description = specialCompare.description;
+        this.breadcrumbs.push({ name: specialCompare.title, url: `/compare/${specialCompare.id}`});
+      }
+    }
 
-    this.seoHandler.updateTitleAndMetaTags(title, description, keywords);
+    this.seoHandler.updateTitleAndMetaTags(this.title, this.description, this.keywords);
 
     (this.radarChartOptionsSingle as any).plugins.legend.display = true;
     (this.radarChartOptionsMulti as any).plugins.legend.display = true;
@@ -263,196 +280,247 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
       color: '#FFF',
     };
 
-    this.route.queryParams.subscribe(params => {
-      const param = params['instances'];
-      if(param){
-          this.isLoading = true;
-
-          const decodedParams = JSON.parse(atob(param));
-
-          let serverCount = decodedParams?.length || 0;
-
-          let promises: Promise<any>[] = [
-            this.keeperAPI.getServerMeta(),
-            this.keeperAPI.getServerBenchmarkMeta(),
-            this.keeperAPI.getVendors(),
-            this.keeperAPI.getRegions(),
-            this.keeperAPI.getZones()
-          ];
-          decodedParams?.forEach((instance: any) => {
-            promises.push(
-              this.keeperAPI.getServerV2(instance.vendor, instance.server,)
-            );
-            promises.push(
-              this.keeperAPI.getServerPrices(instance.vendor, instance.server, this.selectedCurrency.slug)
-            );
-            promises.push(
-              this.keeperAPI.getServerBenchmark(instance.vendor, instance.server)
-            );
-          });
-          Promise.all(promises).then((data) => {
-            const promiseAllData = data.map((x: any) => x.body);
-            const[meta, benchmarkMeta, vendors, regions, zones, ...servers] = promiseAllData;
-
-            this.zones = zones;
-            this.regions = regions;
-
-            this.instanceProperties = meta.fields;
-
-            this.instancePropertyCategories.forEach((c) => {
-              c.properties = [];
-            });
-
-            this.servers = [];
-            this.serverCompare.clearCompare();
-
-            for(let i = 0; i < serverCount; i++){
-              let server = servers[i * 3];
-
-              server.benchmark_scores = servers[i * 3 + 2];
-              server.prices = servers[i * 3 + 1]?.sort((a: any, b: any) => a.price - b.price);
-
-              server.vendor = vendors.find((v: any) => v.vendor_id === server.vendor_id);
-
-              if(server.prices?.length > 0) {
-                server.prices.forEach((price: any) => {
-                  price.region = regions.find((r: any) => r.region_id === price.region_id);
-                  price.zone = zones.find((z: any) => z.zone_id === price.zone_id);
-                });
-              }
-
-              server.score = server.benchmark_scores?.find((b: any) => b.benchmark_id === 'stress_ng:bestn')?.score;
-              server.price = server.prices?.length ? server.prices[0].price : 0;
-              server.score_per_price = server.price && server.score ? server.score / server.price : (server.score || 0);
-
-              this.servers.push(server);
-              this.serverCompare.toggleCompare(true, server);
-            }
-
-            this.instanceProperties.forEach((p: any) => {
-              const group = this.instancePropertyCategories.find((g) => g.category === p.category);
-              const hasValue =
-                this.servers.some((s: any) =>
-                  s[p.id] !== undefined &&
-                  s[p.id] !== null &&
-                  s[p.id] !== '' &&
-                  !Array.isArray(s[p.id]));
-
-              if(group && hasValue) {
-                group.properties.push(p);
-              }
-            });
-
-            this.benchmarkMeta = benchmarkMeta
-              ?.filter((benchmark: any) => {
-                let found = false;
-                this.servers.forEach((s: any) => {
-                  if(s.benchmark_scores?.find((score: any) => score.benchmark_id === benchmark.benchmark_id)){
-                    found = true;
-                  }
-                });
-                return found;
-              })
-              .map((b: any) => {
-              return {
-                ...b,
-                collapsed: true,
-                configs: []
-              }
-            });
-
-            this.benchmarkMeta.forEach((benchmark: any) => {
-              this.servers.forEach((server: any) => {
-                const scores = server.benchmark_scores?.filter((s: any) => s.benchmark_id === benchmark.benchmark_id);
-                if(scores) {
-                  scores.forEach((score: any) => {
-                    const config = benchmark.configs.find((c: any) => {
-                      return JSON.stringify(c.config) === JSON.stringify(score.config);
-                    });
-                    if(!config) {
-                      benchmark.configs.push({
-                        config: score.config,
-                        values: []
-                      });
-                    }
-                  });
-                }
-              });
-            });
-
-            this.benchmarkMeta.forEach((benchmark: any) => {
-              benchmark.configs.forEach((config: any) => {
-                this.servers.forEach((server: any) => {
-                  const score = server.benchmark_scores
-                    ?.find((s: any) => s.benchmark_id === benchmark.benchmark_id && JSON.stringify(s.config) === JSON.stringify(config.config));
-                    config.values.push(
-                      score ? (Math.floor(score.score * 100) / 100) : '-'
-                    );
-                });
-              });
-            });
-
-            this.benchmarkCategories.forEach((category) => {
-              category.data = this.benchmarkMeta.filter((b: any) => category.benchmarks.includes(b.benchmark_id));
-            });
-
-            // sort the stress_ng and stress_ng_pct by config.cores
-            let ngData: any[] = this.benchmarkCategories.find((c) => c.id === 'stress_ng').data;
-            if(ngData?.length > 0) {
-              ngData[0].configs = ngData[0].configs.sort((a: any, b: any) => {
-                return a.config.cores - b.config.cores;
-              });
-            }
-
-            this.benchmarkCategories.find((c) => c.id === 'stress_ng_pct').data = ngData;
-
-
-            this.multiBarCharts.forEach((chartTemplate) => {
-              const benchmarks = chartTemplate.chart.options.map((o: any) => o.benchmark_id);
-              chartTemplate.data = this.benchmarkMeta.filter((b: any) => benchmarks.includes(b.benchmark_id));
-            });
-
-            if(isPlatformBrowser(this.platformId)) {
-
-              this.initializeBenchmarkCharts();
-
-              this.getCompressChartOptions();
-
-              this.generateChartsData();
-              this.generateBWMemChart();
-              this.generateSSLChart();
-              this.generateCompressChart();
-              this.generateStressNGChart();
-
-              this.multiBarCharts.forEach((chart) => {
-                this.generateMultiBarChart(chart.chart);
-              });
-
-              this.dropdownManager.initDropdown('currency_button', 'currency_options').then((dropdown) => {
-                this.dropdownCurrency = dropdown;
-              });
-
-              this.multiBarCharts.forEach((chart) => {
-                this.dropdownManager.initDropdown(chart.chart.id + '_button', chart.chart.id + '_options').then((dropdown) => {
-                  chart.dropdown = dropdown;
-                });
-                if(chart.chart.secondaryOptions?.length > 1) {
-                  this.dropdownManager.initDropdown(chart.chart.id + '_button2', chart.chart.id + '_options2').then((dropdown) => {
-                    chart.dropdown2 = dropdown;
-                  });
-                }
-
-              });
-
-            }
-          }).catch((err) => {
-            this.analytics.SentryException(err, {tags: { location: this.constructor.name, function: 'compareInit' }});
-            console.error(err);
-          }).finally(() => {
-            this.isLoading = false;
-          });
-      }
+    this.route.queryParams.subscribe(() => {
+      this.setup();
     });
+
+    this.route.params.subscribe(() => {
+      this.setup();
+    });
+  }
+
+  setup() {
+    const id = this.route.snapshot.paramMap.get('id');
+    const param = this.route.snapshot.queryParams['instances'];
+
+    this.instances = [];
+
+    if(id) {
+      const specialCompare = this.specialCompares.find((x: any) => x.id === id);
+      if(specialCompare) {
+        this.instances = specialCompare.instances;
+        let breadcrumb = { name: specialCompare.title, url: `/compare/${specialCompare.id}`};
+        if(this.breadcrumbs.length < 3) {
+          this.breadcrumbs.push(breadcrumb);
+        } else {
+          this.breadcrumbs[2] = breadcrumb;
+        }
+      }
+    } else if(param) {
+      this.instances = JSON.parse(atob(param));
+      if(this.instances?.length) {
+        let breadcrumb = { name: `Compare (${this.instances?.length})`, url: `/compare`, queryParams: { instances: param }};
+        if(this.breadcrumbs.length < 3) {
+          this.breadcrumbs.push(breadcrumb);
+        } else {
+          this.breadcrumbs[2] = breadcrumb;
+        }
+      }
+    } else {
+      if(this.breadcrumbs.length > 2) {
+        this.breadcrumbs.pop();
+      }
+    }
+
+    if(this.instances?.length > 0) {
+      this.isLoading = true;
+
+      let serverCount = this.instances?.length || 0;
+
+      let promises: Promise<any>[] = [
+        this.keeperAPI.getServerMeta(),
+        this.keeperAPI.getServerBenchmarkMeta(),
+        this.keeperAPI.getVendors(),
+        this.keeperAPI.getRegions(),
+        this.keeperAPI.getZones()
+      ];
+      this.instances?.forEach((instance: any) => {
+        promises.push(
+          this.keeperAPI.getServerV2(instance.vendor, instance.server,)
+        );
+        promises.push(
+          this.keeperAPI.getServerPrices(instance.vendor, instance.server, this.selectedCurrency.slug)
+        );
+        promises.push(
+          this.keeperAPI.getServerBenchmark(instance.vendor, instance.server)
+        );
+      });
+      Promise.all(promises).then((data) => {
+        const promiseAllData = data.map((x: any) => x.body);
+        const[meta, benchmarkMeta, vendors, regions, zones, ...servers] = promiseAllData;
+
+        this.zones = zones;
+        this.regions = regions;
+
+        this.instanceProperties = meta.fields;
+
+        this.instancePropertyCategories.forEach((c) => {
+          c.properties = [];
+        });
+
+        this.servers = [];
+        this.serverCompare.clearCompare();
+
+        for(let i = 0; i < serverCount; i++){
+          let server = servers[i * 3];
+
+          server.benchmark_scores = servers[i * 3 + 2];
+          server.prices = servers[i * 3 + 1]?.sort((a: any, b: any) => a.price - b.price);
+
+          server.vendor = vendors.find((v: any) => v.vendor_id === server.vendor_id);
+
+          if(server.prices?.length > 0) {
+            server.prices.forEach((price: any) => {
+              price.region = regions.find((r: any) => r.region_id === price.region_id);
+              price.zone = zones.find((z: any) => z.zone_id === price.zone_id);
+            });
+          }
+
+          server.score = server.benchmark_scores?.find((b: any) => b.benchmark_id === 'stress_ng:bestn')?.score;
+          server.price = server.prices?.length ? server.prices[0].price : 0;
+          server.score_per_price = server.price && server.score ? server.score / server.price : (server.score || 0);
+
+          this.servers.push(server);
+          this.serverCompare.toggleCompare(true, server);
+        }
+
+        this.instanceProperties.forEach((p: any) => {
+          const group = this.instancePropertyCategories.find((g) => g.category === p.category);
+          const hasValue =
+            this.servers.some((s: any) =>
+              s[p.id] !== undefined &&
+              s[p.id] !== null &&
+              s[p.id] !== '' &&
+              !Array.isArray(s[p.id]));
+
+          if(group && hasValue) {
+            group.properties.push(p);
+          }
+        });
+
+        this.benchmarkMeta = benchmarkMeta
+          ?.filter((benchmark: any) => {
+            let found = false;
+            this.servers.forEach((s: any) => {
+              if(s.benchmark_scores?.find((score: any) => score.benchmark_id === benchmark.benchmark_id)){
+                found = true;
+              }
+            });
+            return found;
+          })
+          .map((b: any) => {
+          return {
+            ...b,
+            collapsed: true,
+            configs: []
+          }
+        });
+
+        this.benchmarkMeta.forEach((benchmark: any) => {
+          this.servers.forEach((server: any) => {
+            const scores = server.benchmark_scores?.filter((s: any) => s.benchmark_id === benchmark.benchmark_id);
+            if(scores) {
+              scores.forEach((score: any) => {
+                const config = benchmark.configs.find((c: any) => {
+                  return JSON.stringify(c.config) === JSON.stringify(score.config);
+                });
+                if(!config) {
+                  benchmark.configs.push({
+                    config: score.config,
+                    values: []
+                  });
+                }
+              });
+            }
+          });
+        });
+
+        this.benchmarkMeta.forEach((benchmark: any) => {
+          benchmark.configs.forEach((config: any) => {
+            this.servers.forEach((server: any) => {
+              const score = server.benchmark_scores
+                ?.find((s: any) => s.benchmark_id === benchmark.benchmark_id && JSON.stringify(s.config) === JSON.stringify(config.config));
+                config.values.push(
+                  score ? (Math.floor(score.score * 100) / 100) : '-'
+                );
+            });
+          });
+        });
+
+        this.benchmarkCategories.forEach((category) => {
+          category.data = this.benchmarkMeta.filter((b: any) => category.benchmarks.includes(b.benchmark_id));
+        });
+
+        // sort the stress_ng and stress_ng_pct by config.cores
+        let ngData: any[] = this.benchmarkCategories.find((c) => c.id === 'stress_ng').data;
+        if(ngData?.length > 0) {
+          ngData[0].configs = ngData[0].configs.sort((a: any, b: any) => {
+            return a.config.cores - b.config.cores;
+          });
+        }
+
+        this.benchmarkCategories.find((c) => c.id === 'stress_ng_pct').data = ngData;
+
+
+        this.multiBarCharts.forEach((chartTemplate) => {
+          const benchmarks = chartTemplate.chart.options.map((o: any) => o.benchmark_id);
+          chartTemplate.data = this.benchmarkMeta.filter((b: any) => benchmarks.includes(b.benchmark_id));
+        });
+
+        this.multiBarCharts.forEach((chartTemplate) => {
+          const benchmarks = chartTemplate.chart.options.map((o: any) => o.benchmark_id);
+          chartTemplate.data = this.benchmarkMeta.filter((b: any) => benchmarks.includes(b.benchmark_id));
+        });
+
+        if(isPlatformBrowser(this.platformId)) {
+
+          this.initializeBenchmarkCharts();
+
+          this.generateChartsData();
+          this.generateBWMemChart();
+          this.generateSSLChart();
+          this.generateCompressChart();
+          this.generateStressNGChart();
+
+          this.multiBarCharts.forEach((chart) => {
+            this.generateMultiBarChart(chart.chart);
+          });
+
+          this.dropdownManager.initDropdown('currency_button', 'currency_options').then((dropdown) => {
+            this.dropdownCurrency = dropdown;
+          });
+
+          this.multiBarCharts.forEach((chart) => {
+            this.dropdownManager.initDropdown(chart.chart.id + '_button', chart.chart.id + '_options').then((dropdown) => {
+              chart.dropdown = dropdown;
+            });
+            if(chart.chart.secondaryOptions?.length > 1) {
+              this.dropdownManager.initDropdown(chart.chart.id + '_button2', chart.chart.id + '_options2').then((dropdown) => {
+                chart.dropdown2 = dropdown;
+              });
+            }
+
+          });
+
+        }
+      }).catch((err) => {
+        this.analytics.SentryException(err, {tags: { location: this.constructor.name, function: 'compareInit' }});
+        console.error(err);
+      }).finally(() => {
+        this.isLoading = false;
+      });
+    }
+
+    if(isPlatformBrowser(this.platformId)) {
+      // Wait for the articleDiv to be rendered
+      const checkExist = setInterval(() => {
+        if (this.comparesDiv) {
+          hljs.highlightAll();
+
+          clearInterval(checkExist);
+        }
+      }, 100);
+    }
   }
 
   ngAfterViewInit() {
