@@ -3,7 +3,7 @@
   <div class="content pt-16 pb-16">
     <app-breadcrumbs [segments]="breadcrumbs"></app-breadcrumbs>
 
-    <div class="flex flex-col gap-4 my-8">
+    <div class="flex flex-col gap-4 my-8 mx-2 xl:mx-0">
       <div class="flex gap-4 items-center w-full justify-between">
         <h1 class="text-white font-bold text-3xl">{{title}}</h1>
         <div *ngIf="instances.length" class="flex gap-4">
@@ -28,14 +28,14 @@
       </div>
     </div>
 
-    <div *ngIf="!instances.length" class="flex flex-col gap-4" id="comparesDiv" #comparesDiv>
+    <div *ngIf="!instances.length" class="flex flex-col gap-4 mx-2 xl:mx-0" id="comparesDiv" #comparesDiv>
       <div class="text-white text-xl pr-16">
         Compare cloud servers and their characteristics, such as CPU, GPU, memory, and storage details, and the performance of the instances by various benchmarking workloads to find the optimal compute resource for your needs.
       </div>
       <div class="text-white text-xl pr-16">
         To get started, select at least two servers using the checkboxes in the left column of our <a class="text-emerald-400" routerLink="/servers" >servers listing page</a>, and optionally add/remove servers on their dedicated server details pages as well via the "Compare" button, or find below a curated list of server comparison sets.
       </div>
-      
+
       <div class="flex flex-col gap-4 mt-4">
         <div
           class="flex flex-col py-6 gap-2 text-white"
@@ -50,14 +50,14 @@
           <h3 *ngIf="item.type === 'card'">
             <a routerLink="/compare/{{item.id}}" class="text-emerald-400 text-xl font-semibold"> {{item.title}} </a>
           </h3>
-          <div 
-            *ngIf="item.description && item.hide_description_in_index !==  true" 
-            class="description_inner_html" 
+          <div
+            *ngIf="item.description && item.hide_description_in_index !==  true"
+            class="description_inner_html"
             [ngClass]="{'text-lg space-y-4': item.type === 'section'}"
-            [innerHTML]="item.description"> 
+            [innerHTML]="item.description">
           </div>
-          <details 
-            *ngIf="item.query" 
+          <details
+            *ngIf="item.query"
             class="flex flex-col gap-2 [&_svg]:open:-rotate-90"
             [ngClass]="{'mt-4': item.type === 'section'}">
             <summary class="text-sm list-none cursor-pointer">
@@ -65,7 +65,7 @@
               <svg class="inline fill-current opacity-75 w-4 h-4 -mr-1 rotate-90" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.95 10.707l.707-.707L8 4.343 6.586 5.757 10.828 10l-4.242 4.243L8 15.657l4.95-4.95z"/></svg>
             </summary>
             <pre class="sourceCode sql"><code class="sourceCode sql">{{item.query}}</code></pre>
-          </details>          
+          </details>
           <div *ngIf="item.instances" class="text-sm flex flex-wrap gap-2"> Instances:
             <a *ngFor="let instance of item.instances" class="underline decoration-dotted whitespace-nowrap" routerLink="/server/{{instance.vendor}}/{{instance.server}}" >
               {{instance.server}} ({{instance.vendor}})
@@ -82,7 +82,7 @@
 
     </div>
 
-    <div *ngIf="instances.length" id="table_holder" #tableHolder class="w-full overflow-x-auto relative min-h-screen" style="padding-left: 1px;">
+    <div *ngIf="instances.length" id="table_holder" #tableHolder class="overflow-x-auto relative min-h-screen mx-2 xl:mx-0" style="padding-left: 1px;">
       <div *ngIf="isLoading" class="absolute top-0 left-0 w-full h-full z-10" style="background-color: rgba(0,0,0,0.2);" >
         <div class="flex justify-center mt-16 opacity-100" role="status">
           <svg aria-hidden="true" class="inline w-12 h-12 text-gray-200 animate-spin fill-emerald-400" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -96,7 +96,7 @@
         <table class="items_table" [style]="getMainTableWidth()">
           <thead>
             <tr>
-              <th style="max-width: 250px; width: 250px">
+              <th [style]="getStickyHeaderFirstColStyle()">
               </th>
               <th *ngFor="let item of servers let i = index" [style]="getStyle()">
                 <a class="underline decoration-dotted" href="/server/{{item.vendor_id}}/{{item.api_reference}}" target="_blank">
@@ -111,7 +111,7 @@
         <table id="main-table" #mainTable class="items_table">
           <thead>
             <tr>
-              <th style="max-width: 250px; width: 250px">
+              <th #tableFirstCol >
               </th>
               <th *ngFor="let item of servers" [style]="getStyle()" class="align-baseline" id="main-table-th">
                 <div class="flex flex-col gap-1 justify-center" style="width: fit-content;" >
@@ -235,7 +235,7 @@
                 </td>
               </tr>
               <tr *ngFor="let column of category.properties; let i = index" >
-                <td>
+                <td class="whitespace-nowrap">
                   <div class="flex gap-2 items-center">
                     {{column.name}}
                     <lucide-icon

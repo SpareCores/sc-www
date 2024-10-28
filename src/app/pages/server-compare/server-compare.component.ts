@@ -32,6 +32,7 @@ Chart.register(annotationPlugin);
 })
 export class ServerCompareComponent implements OnInit, AfterViewInit {
 
+  @ViewChild('tableFirstCol') tableFirstCol!: ElementRef;
   @HostBinding('attr.ngSkipHydration') ngSkipHydration = 'true';
   @ViewChild('comparesDiv') comparesDiv!: ElementRef;
 
@@ -460,6 +461,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
 
         this.benchmarkCategories.find((c) => c.id === 'stress_ng_pct').data = ngData;
 
+        this.getCompressChartOptions();
 
         this.multiBarCharts.forEach((chartTemplate) => {
           const benchmarks = chartTemplate.chart.options.map((o: any) => o.benchmark_id);
@@ -1429,5 +1431,13 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
   getFixedDivStyle() {
     const div = document?.getElementById('table_holder');
     return `width: ${div?.clientWidth}px; overflow: hidden;`;
+  }
+
+  getStickyHeaderFirstColStyle() {
+    if (this.tableFirstCol && this.tableFirstCol.nativeElement) {
+      const width = this.tableFirstCol.nativeElement.offsetWidth;
+      return { width: `${width}px` };
+    }
+    return {};
   }
 }
