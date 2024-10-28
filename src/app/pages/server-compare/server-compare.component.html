@@ -43,7 +43,7 @@
         <table class="items_table" [style]="getMainTableWidth()">
           <thead>
             <tr>
-              <th style="max-width: 250px; width: 250px">
+              <th style="max-width: 250px; width: 250px; min-width: 250px;">
               </th>
               <th *ngFor="let item of servers let i = index" [style]="getStyle()">
                 <a class="underline decoration-dotted" href="/server/{{item.vendor_id}}/{{item.api_reference}}" target="_blank">
@@ -58,7 +58,7 @@
         <table id="main-table" #mainTable class="items_table">
           <thead>
             <tr>
-              <th style="max-width: 250px; width: 250px">
+              <th style="max-width: 250px; width: 250px; min-width: 250px;">
               </th>
               <th *ngFor="let item of servers" [style]="getStyle()" class="align-baseline" id="main-table-th">
                 <div class="flex flex-col gap-1 justify-center" style="width: fit-content;" >
