@@ -13,6 +13,7 @@
           itemtype="https://schema.org/ListItem">
           <a  itemprop="item"
               routerLink="{{item.url}}"
+              [queryParams]="item.queryParams"
               class="text-white hover:text-emerald-400">
             <span itemprop="name">{{item.name}}</span>
           </a>
