@@ -1,5 +1,5 @@
 .items_table {
-  @apply w-full text-white;
+  @apply text-white;
 
   thead {
     @apply border-b border-gray-200 border-solid bg-secondary;
@@ -44,4 +44,11 @@
   height: 10px;
   border-radius: 50%;
   margin-right: 5px;
+}
+
+@media screen and (max-width: 1280px) {
+	.datamaps_div {
+		width: calc(100% - 1rem);
+    margin: 0.5rem;
+	}
 }

@@ -3,7 +3,7 @@
   <div class="content pt-16 pb-16">
     <app-breadcrumbs [segments]="breadcrumbs"></app-breadcrumbs>
 
-    <div class="flex flex-col gap-4 my-8">
+    <div class="flex flex-col gap-4 my-8 mx-2 xl:mx-0">
       <div class="flex gap-4 items-center w-full justify-between">
         <h1 class="text-white font-bold text-3xl">Cloud Compute Prices</h1>
         <button class="btn-primary py-2 px-3 flex gap-1 items-center" (click)="clipboardURL($event)">
@@ -16,7 +16,7 @@
       </div>
     </div>
 
-    <div class="flex gap-8">
+    <div class="flex gap-8 mx-2 xl:mx-0">
       <div class="filter_bar bg-primary"
         [ngClass]="{
           'collapsed': isCollapsed
