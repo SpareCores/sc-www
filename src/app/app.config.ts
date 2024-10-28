@@ -1,5 +1,5 @@
 import { APP_INITIALIZER, ApplicationConfig, ErrorHandler, importProvidersFrom } from '@angular/core';
-import { Router, provideRouter } from '@angular/router';
+import { Router, provideRouter, withInMemoryScrolling } from '@angular/router';
 
 import { routes } from './app.routes';
 import { provideClientHydration, withHttpTransferCacheOptions } from '@angular/platform-browser';
@@ -19,7 +19,11 @@ function customErrorHandler(error: any) {
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideRouter(routes),
+    provideRouter(routes,
+      withInMemoryScrolling({
+        scrollPositionRestoration: "top",
+        anchorScrolling: "enabled",
+      })),
     provideClientHydration(
       withHttpTransferCacheOptions({
         includeHeaders: ['x-total-count', 'x-request-id'],
