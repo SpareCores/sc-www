@@ -31,6 +31,7 @@ Chart.register(annotationPlugin);
 })
 export class ServerCompareComponent implements OnInit, AfterViewInit {
 
+  @ViewChild('tableFirstCol') tableFirstCol!: ElementRef;
   @HostBinding('attr.ngSkipHydration') ngSkipHydration = 'true';
 
   breadcrumbs: BreadcrumbSegment[] = [
@@ -1361,5 +1362,13 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
   getFixedDivStyle() {
     const div = document?.getElementById('table_holder');
     return `width: ${div?.clientWidth}px; overflow: hidden;`;
+  }
+
+  getStickyHeaderFirstColStyle() {
+    if (this.tableFirstCol && this.tableFirstCol.nativeElement) {
+      const width = this.tableFirstCol.nativeElement.offsetWidth;
+      return { width: `${width}px` };
+    }
+    return {};
   }
 }
