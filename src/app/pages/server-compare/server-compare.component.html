@@ -259,7 +259,7 @@
             <ng-container *ngFor="let category of benchmarkCategories">
               <ng-container *ngIf="category.data.length && !category.hidden">
                 <tr class="section_header" id="benchmark_line_{{category.id}}">
-                  <td [colSpan]="2" >
+                  <td [colSpan]="getSectionColSpan()" >
                     <h3 class="text-xl font-semibold flex gap-2 items-center">{{category.name}}
                       <lucide-icon
                         name="circle-arrow-up"
@@ -302,10 +302,10 @@
                         (mouseenter)="showTooltip($event, 'Measuring the compression ratio and speed while compressing and decompressing the dickens.txt of the Silesia corpus (10 MB uncompressed) using various algorithms, compressions levels and other extra arguments.')"
                         (mouseleave)="hideTooltip()">
                       </lucide-icon>
+                      <button class="btn-primary py-2 px-3 flex gap-1 items-center" (click)="clipboardURL($event, 'benchmark_line_' + category.id)">
+                        <lucide-icon name="{{clipboardIcon}}" size="16"></lucide-icon>
+                      </button>
                     </h3>
-                  </td>
-                  <td [colSpan]="servers.length -1">
-
                   </td>
                 </tr>
                 <tr>

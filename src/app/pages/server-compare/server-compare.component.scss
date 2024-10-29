@@ -1,3 +1,4 @@
+
 .items_table {
   @apply w-full text-white;
 
@@ -27,6 +28,7 @@
       td:nth-of-type(1) {
         @apply bg-secondary;
       }
+      scroll-margin-top: 10rem;
     }
 
     tr {
@@ -55,7 +57,7 @@
 .fixed_thead {
   position: fixed;
   top: 68px;
-  z-index: 99;
+  z-index: 40;
 }
 
 ::-webkit-scrollbar {
