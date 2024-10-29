@@ -564,20 +564,22 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     return text?.toUpperCase();
   }
 
-  clipboardURL(event: any, frgament?: string) {
+  clipboardURL(event: any, fragment?: string) {
 
     let url = window.location.href;
 
-    if(frgament) {
+    if(fragment) {
       // replace url fragment
-      url = url.replace(/#.*$/, '') + '#' + frgament;
+      url = url.replace(/#.*$/, '') + '#' + fragment;
     }
 
     navigator.clipboard.writeText(url);
 
     this.clipboardIcon = 'check';
 
-    this.showTooltip(event, 'Link copied to clipboard!', true);
+    if(!fragment) {
+      this.showTooltip(event, 'Link copied to clipboard!', true);
+    }
 
     setTimeout(() => {
       this.clipboardIcon = 'clipboard';
