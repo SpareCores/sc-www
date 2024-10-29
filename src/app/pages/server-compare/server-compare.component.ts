@@ -1,7 +1,7 @@
 /* eslint-disable prefer-const */
-import { AfterViewInit, Component, ElementRef, HostBinding, HostListener, Inject, OnInit, PLATFORM_ID, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostBinding, Inject, OnInit, PLATFORM_ID, ViewChild } from '@angular/core';
 import { KeeperAPIService } from '../../services/keeper-api.service';
-import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { LucideAngularModule } from 'lucide-angular';
 import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
