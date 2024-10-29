@@ -1,5 +1,5 @@
 import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
-import { Component, ElementRef, Inject, Input, PLATFORM_ID, Renderer2, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, Input, OnChanges, PLATFORM_ID, Renderer2, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ChartConfiguration, ChartData, TooltipItem, TooltipModel } from 'chart.js';
@@ -7,7 +7,7 @@ import { LucideAngularModule } from 'lucide-angular';
 import { BaseChartDirective } from 'ng2-charts';
 import { Benchmark } from '../../../../sdk/data-contracts';
 import { staticWebChartTemplate, staticWebChartTemplateCallbacks, redisChartTemplate, redisChartTemplateCallbacks, ChartFromBenchmarkTemplate, ChartFromBenchmarkTemplateOptions } from '../../pages/server-details/chartFromBenchmarks';
-import { barChartOptions, barChartDataEmpty, radarChartOptions, lineChartOptionsBWM, lineChartOptionsComp, lineChartOptionsStressNG, lineChartOptionsStressNGPercent, barChartOptionsSSL, radarDatasetColors } from '../../pages/server-details/chartOptions';
+import { radarChartOptions, lineChartOptionsBWM, lineChartOptionsComp, lineChartOptionsStressNG, lineChartOptionsStressNGPercent, barChartOptionsSSL, radarDatasetColors } from '../../pages/server-details/chartOptions';
 import { DomSanitizer } from '@angular/platform-browser';
 import { AnalyticsService } from '../../services/analytics.service';
 import { DropdownManagerService } from '../../services/dropdown-manager.service';
@@ -22,7 +22,7 @@ import { ServerCompareService } from '../../services/server-compare.service';
   templateUrl: './server-charts.component.html',
   styleUrl: './server-charts.component.scss'
 })
-export class ServerChartsComponent {
+export class ServerChartsComponent implements OnChanges {
 
   @ViewChild('tooltipDefault') tooltip!: ElementRef;
   @ViewChild('tooltipGeekbench') tooltipGB!: ElementRef;

@@ -1,7 +1,7 @@
 import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { AfterViewInit, Component, Inject, OnInit, Optional, PLATFORM_ID } from '@angular/core';
 import { Meta } from '@angular/platform-browser';
-import { NavigationEnd, NavigationError, NavigationStart, Router, Event, RouterModule } from '@angular/router';
+import { NavigationEnd, NavigationError, NavigationStart, Router, Event, RouterModule, RoutesRecognized } from '@angular/router';
 import { register } from 'swiper/element/bundle';
 import { HeaderComponent } from './layout/header/header.component';
 import { FooterComponent } from './layout/footer/footer.component';
@@ -49,6 +49,16 @@ export class AppComponent implements OnInit, AfterViewInit {
           // update canonical url with query params as well
 
           this.updateCanonical(url.toLowerCase());
+        }
+
+        if(event instanceof RoutesRecognized) {
+          if(event?.urlAfterRedirects?.startsWith('/og/') || event?.urlAfterRedirects?.startsWith('/embed/')) {
+            this.showHeader = false;
+            this.showFooter = false;
+          } else {
+            this.showHeader = true;
+            this.showFooter = true;
+          }
         }
 
         if (event instanceof NavigationError) {

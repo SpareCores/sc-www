@@ -3,7 +3,7 @@
 import { Component, ElementRef, Inject, PLATFORM_ID, OnInit, ViewChild, OnDestroy, Renderer2 } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { KeeperAPIService } from '../../services/keeper-api.service';
-import { Benchmark, BenchmarkScore, GetSimilarServersServerVendorServerSimilarServersByNumGetData, Server, ServerBase, ServerPKs, ServerPrice} from '../../../../sdk/data-contracts';
+import { Benchmark, BenchmarkScore, GetSimilarServersServerVendorServerSimilarServersByNumGetData, Server, ServerPKs, ServerPrice} from '../../../../sdk/data-contracts';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
@@ -11,8 +11,8 @@ import { SeoHandlerService } from '../../services/seo-handler.service';
 import { FaqComponent } from '../../components/faq/faq.component';
 import { FormsModule } from '@angular/forms';
 import { BaseChartDirective } from 'ng2-charts';
-import { ChartConfiguration, ChartData, TooltipItem, TooltipModel } from 'chart.js';
-import { barChartDataEmpty, barChartOptions,  barChartOptionsSSL, lineChartOptionsBWM, lineChartOptionsComp, lineChartOptionsStressNG, lineChartOptionsStressNGPercent, radarChartOptions, radarDatasetColors } from './chartOptions';
+import { ChartConfiguration, ChartData } from 'chart.js';
+import { barChartDataEmpty, barChartOptions } from './chartOptions';
 import { Chart } from 'chart.js';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -23,7 +23,6 @@ import { initGiscus } from '../../tools/initGiscus';
 import { Location } from '@angular/common';
 import { AnalyticsService } from '../../services/analytics.service';
 import { DropdownManagerService } from '../../services/dropdown-manager.service';
-import { ChartFromBenchmarkTemplate, ChartFromBenchmarkTemplateOptions, redisChartTemplate, redisChartTemplateCallbacks, staticWebChartTemplate, staticWebChartTemplateCallbacks } from './chartFromBenchmarks';
 import { ServerChartsComponent } from '../../components/server-charts/server-charts.component';
 
 Chart.register(annotationPlugin);
@@ -236,7 +235,6 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
               group.benchmarks.push(b);
             }
           });
-
 
           this.regionFilters = [];
 
@@ -782,11 +780,6 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
     const i = Math.floor(Math.log(bytes) / Math.log(1024));
     return (bytes / Math.pow(1024, i)).toFixed(0) + ' ' + sizes[i+idx];
-  }
-
-
-  public numberWithCommas(x: number) {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
 
   getBenchmark(isMulti: boolean) {

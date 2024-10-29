@@ -288,6 +288,7 @@
 <div id="compress_method_options" class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid">
   <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
     <li *ngFor="let item of compressMethods" class="flex py-1 gap-2 items-center">
+      <!-- eslint-disable-next-line @angular-eslint/template/interactive-supports-focus -->
         <div
           class="text-emerald-400 hover:text-emerald-500 cursor-pointer font-bold ml-2"
           (click)="refreshCompressChart(item)">
@@ -301,6 +302,7 @@
   <div id="{{charItem.chart.id}}_options" class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid">
     <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
       <li *ngFor="let item of charItem.chart.options, let i = index" class="flex py-1 gap-2 items-center">
+        <!-- eslint-disable-next-line @angular-eslint/template/interactive-supports-focus -->
           <div
             class="text-emerald-400 hover:text-emerald-500 cursor-pointer font-bold ml-2"
             (click)="selectChartTemplateOption(charItem, i)">

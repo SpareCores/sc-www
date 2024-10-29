@@ -1,27 +1,19 @@
-import { DOCUMENT, isPlatformBrowser } from '@angular/common';
-import { Component, Inject, PLATFORM_ID, Renderer2 } from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Chart } from 'chart.js';
-import { CountryIdtoNamePipe } from '../../pipes/country-idto-name.pipe';
+import { CommonModule} from '@angular/common';
+import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { AnalyticsService } from '../../services/analytics.service';
-import { DropdownManagerService } from '../../services/dropdown-manager.service';
 import { KeeperAPIService } from '../../services/keeper-api.service';
-import { SeoHandlerService } from '../../services/seo-handler.service';
-import { ServerCompareService } from '../../services/server-compare.service';
-import { initGiscus } from '../../tools/initGiscus';
-import { ExtendedServerPrice } from '../server-details/server-details.component';
 import { Benchmark } from '../../../../sdk/data-contracts';
 import { ServerChartsComponent } from '../../components/server-charts/server-charts.component';
 
 @Component({
   selector: 'app-embedded-server-chart',
   standalone: true,
-  imports: [ServerChartsComponent],
+  imports: [ServerChartsComponent, CommonModule],
   templateUrl: './embedded-server-chart.component.html',
   styleUrl: './embedded-server-chart.component.scss'
 })
-export class EmbeddedServerChartComponent {
+export class EmbeddedServerChartComponent implements OnInit {
 
   benchmarkMeta!: Benchmark[];
   benchmarksByCategory!: any[];
@@ -43,14 +35,12 @@ export class EmbeddedServerChartComponent {
       this.showChart = chartname || 'all';
 
       Promise.all([
-        this.keeperAPI.getServerMeta(),
         this.keeperAPI.getServerBenchmarkMeta(),
         this.keeperAPI.getServerBenchmark(vendor, id),
         this.keeperAPI.getServerV2(vendor, id),
-        this.keeperAPI.getVendors(),
       ]).then((dataAll) => {
         const promisAllResponses = dataAll.map((d) => d.body);
-        const [serverMeta, benchmarkMeta, benchmarks, serverDetails, vendors] = promisAllResponses;
+        const [benchmarkMeta, benchmarks, serverDetails] = promisAllResponses;
 
         this.benchmarkMeta = benchmarkMeta || {};
 
@@ -58,7 +48,6 @@ export class EmbeddedServerChartComponent {
           this.serverDetails = JSON.parse(JSON.stringify(serverDetails)) as any;
 
           this.serverDetails.benchmark_scores = benchmarks;
-          this.serverDetails.vendor = vendors.find((v: any) => v.vendor_id === this.serverDetails.vendor_id);
           this.serverDetails.score = this.serverDetails.benchmark_scores?.find((b: any) => b.benchmark_id === 'stress_ng:bestn')?.score;
           this.serverDetails.score_per_price = this.serverDetails.min_price && this.serverDetails.score ? this.serverDetails.score / this.serverDetails.min_price : (this.serverDetails.score || 0);
 

@@ -1,4 +1,4 @@
-<div class="content">
+<div class="content_embed">
   <app-server-charts
     class="w-full flex flex-wrap gap-8"
     [serverDetails]="serverDetails"
@@ -6,4 +6,14 @@
     [benchmarkMeta]="benchmarkMeta"
     [showChart]="showChart"
   ></app-server-charts>
+  <button *ngIf="serverDetails" class="w-full flex">
+    <a
+      class="w-full flex justify-center items-center gap-2 text-white bg-primary px-4 py-2 hover:bg-secondary"
+      target="_blank"
+      href="https://sparecores.com/server/{{serverDetails.vendor_id}}/{{serverDetails.server_id}}"
+      >View Server at
+      <img _ngcontent-ng-c4175204996="" src="./assets/images/logos/logo_header.png" alt="Spare Cores Logo" class="h-8">
+      </a
+    >
+  </button>
 </div>
