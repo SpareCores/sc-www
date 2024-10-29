@@ -1,0 +1,20 @@
+<div class="bg-white py-8 px-8 w-full">
+  <div class="flex gap-4 mb-8">
+    <div>Height</div>
+    <input
+      type="text"
+      [(ngModel)]="height"
+      class="border border-gray-300 p-2"
+    />
+    <div>Width</div>
+    <input
+      type="text"
+      [(ngModel)]="width"
+      class="border border-gray-300 p-2"
+    />
+  </div>
+  <iframe
+     [src]="src"
+    [style]="getStyles()"
+  ></iframe>
+</div>

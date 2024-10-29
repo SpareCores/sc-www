@@ -1,10 +1,11 @@
 <div class="content_embed">
   <app-server-charts
-    class="w-full flex flex-wrap gap-8"
+    class="w-full flex flex-wrap gap-8 bg-secondary"
     [serverDetails]="serverDetails"
     [benchmarksByCategory]="benchmarksByCategory"
     [benchmarkMeta]="benchmarkMeta"
     [showChart]="showChart"
+    style="height: calc(100% - 48px);"
   ></app-server-charts>
   <button *ngIf="serverDetails" class="w-full flex">
     <a
