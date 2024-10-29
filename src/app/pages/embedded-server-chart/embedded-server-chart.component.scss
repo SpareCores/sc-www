@@ -1,0 +1,31 @@
+.content {
+  color: #fff;
+
+}
+
+:host ::ng-deep .block_half {
+  @apply px-6 py-6 bg-secondary border-emerald-400 border border-solid rounded-lg flex flex-col gap-4 relative overflow-hidden;
+  width: calc(100%);
+  min-height: 460px;
+  height: 460px;
+}
+
+:host ::ng-deep .block_half_taller {
+  @apply px-6 py-6 bg-secondary border-emerald-400 border border-solid rounded-lg flex flex-col relative overflow-hidden;
+  width: calc(100%);
+  min-height: 615px;
+  height: 615px;
+  margin: auto;
+}
+
+:host ::ng-deep .block_full {
+  @apply px-6 py-6 bg-secondary border-emerald-400 border border-solid rounded-lg flex flex-col gap-4 relative overflow-hidden;
+  width: calc(100%);
+  min-height: 460px;
+  height: 460px;
+
+}
+
+:host ::ng-deep .block_half.open {
+  height: unset !important;
+}

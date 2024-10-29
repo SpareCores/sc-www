@@ -37,7 +37,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           let url = 'https://sparecores.com';
           if(event?.urlAfterRedirects?.length > 1) {
             url += event?.urlAfterRedirects;
-            if(event?.urlAfterRedirects?.startsWith('/og/')) {
+            if(event?.urlAfterRedirects?.startsWith('/og/') || event?.urlAfterRedirects?.startsWith('/embed/')) {
               this.showHeader = false;
               this.showFooter = false;
             } else {

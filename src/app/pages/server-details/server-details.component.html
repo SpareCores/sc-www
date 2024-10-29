@@ -260,7 +260,13 @@
       <div class="my-2 w-full" *ngIf="serverDetails.benchmark_scores?.length">
         <h2 class="text-3xl font-bold"> Performance </h2>
       </div>
-
+      <app-server-charts
+        class="w-full flex flex-wrap gap-8"
+        [serverDetails]="serverDetails"
+        [benchmarksByCategory]="benchmarksByCategory"
+        [benchmarkMeta]="benchmarkMeta"
+      ></app-server-charts>
+      <!--
       <div class="block_half" *ngIf="lineChartDataBWmem" id="bw_mem_chart">
         <h3 class="text-2xl flex items-center gap-2" >Memory bandwidth
           <lucide-icon
@@ -546,6 +552,7 @@
           </div>
         </div>
       </div>
+      -->
 
       <div class="my-2 w-full">
         <h2 class="text-3xl font-bold"> Alternatives </h2>
@@ -688,18 +695,6 @@
   </ul>
 </div>
 
-<div id="compress_method_options" class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid">
-  <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
-    <li *ngFor="let item of compressMethods" class="flex py-1 gap-2 items-center">
-        <div
-          class="text-emerald-400 hover:text-emerald-500 cursor-pointer font-bold ml-2"
-          (click)="refreshCompressChart(item)">
-          {{item.name}}
-        </div>
-    </li>
-  </ul>
-</div>
-
 <div id="similar_server_options" class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid">
   <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
     <li *ngFor="let item of similarOptions" class="flex py-1 gap-2 items-center">
@@ -712,32 +707,11 @@
   </ul>
 </div>
 
-<ng-container *ngFor="let charItem of multiBarCharts">
-  <div id="{{charItem.chart.id}}_options" class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid">
-    <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
-      <li *ngFor="let item of charItem.chart.options, let i = index" class="flex py-1 gap-2 items-center">
-          <div
-            class="text-emerald-400 hover:text-emerald-500 cursor-pointer font-bold ml-2"
-            (click)="selectChartTemplateOption(charItem, i)">
-            {{item.name}}
-          </div>
-      </li>
-    </ul>
-  </div>
-</ng-container>
-
 <div id="tooltipDefault"
   #tooltipDefault
   style="opacity: 0;"
   class="max-w-225 absolute z-10 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-secondary border border-solid border-emerald-400 rounded-lg">
   {{tooltipContent}}
-</div>
-
-<div id="tooltipGeekbench"
-  #tooltipGeekbench
-  style="opacity: 0; display: none;"
-  class="absolute z-10 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-secondary border border-solid border-emerald-400 rounded-lg">
-  <div [innerHTML]="geekbenchHTML" ></div>
 </div>
 
 <div
