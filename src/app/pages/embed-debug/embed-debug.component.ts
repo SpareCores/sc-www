@@ -22,6 +22,18 @@ export class EmbedDebugComponent {
   height = '510px';
   width: string = '100%';
 
+  charts = [
+    'bw_mem',
+    'compress',
+    'geek_single',
+    'geek_multi',
+    'ssl',
+    'stress_ng_div16',
+    'stress_ng_relative',
+    'static_web',
+    'redis'
+  ];
+
   constructor(
     private route: ActivatedRoute,
     private sanitizer: DomSanitizer
@@ -45,5 +57,15 @@ export class EmbedDebugComponent {
       'width': this.width
     };
   }
+
+  updateSrc() {
+    this.src = this.sanitizer.bypassSecurityTrustResourceUrl(`http://localhost:4200/embed/server/${this.vendor}/${this.id}/${this.chartname}`);
+  }
+
+  ClipboardIframeHTML() {
+    const content = `<iframe src="https://sparecores.com/embed/server/${this.vendor}/${this.id}/${this.chartname}" style="height: ${this.height}; width: ${this.width}"></iframe>`;
+    navigator.clipboard.writeText(content);
+  }
+
 
 }

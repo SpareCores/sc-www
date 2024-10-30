@@ -5,15 +5,19 @@
     [benchmarksByCategory]="benchmarksByCategory"
     [benchmarkMeta]="benchmarkMeta"
     [showChart]="showChart"
-    style="height: calc(100% - 48px);"
+    style="height: calc(100% - 64px);"
   ></app-server-charts>
   <button *ngIf="serverDetails" class="w-full flex">
     <a
-      class="w-full flex justify-center items-center gap-2 text-white bg-primary px-4 py-2 hover:bg-secondary"
+      class="w-full flex flex-col justify-center items-center text-white bg-primary px-4 py-2 hover:text-gray-200"
       target="_blank"
       href="https://sparecores.com/server/{{serverDetails.vendor_id}}/{{serverDetails.server_id}}"
-      >View Server at
-      <img _ngcontent-ng-c4175204996="" src="./assets/images/logos/logo_header.png" alt="Spare Cores Logo" class="h-8">
+      >
+      <div class="flex gap-2">
+        <span>Powered by</span>
+        <img _ngcontent-ng-c4175204996="" src="./assets/images/logos/logo_header.png" alt="Spare Cores Logo" class="h-8">
+      </div>
+      <span class="text-xs">Click here to learn more about <i class="text-emerald-400">{{serverDetails.display_name}}</i></span>
       </a
     >
   </button>

@@ -741,7 +741,7 @@ export class ServerChartsComponent implements OnChanges {
       const tooltip = this.tooltip.nativeElement;
       const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
       tooltip.style.left = `${el.target.getBoundingClientRect().right + 5}px`;
-      tooltip.style.top = `${el.target.getBoundingClientRect().top - 45 + scrollPosition}px`;
+      tooltip.style.top = `${el.target.getBoundingClientRect().top - 25 + scrollPosition}px`;
       tooltip.style.display = 'block';
       tooltip.style.opacity = '1';
 
@@ -755,7 +755,7 @@ export class ServerChartsComponent implements OnChanges {
       const tooltip = this.tooltip.nativeElement;
       const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
       tooltip.style.left = `${el.target.getBoundingClientRect().right + 5}px`;
-      tooltip.style.top = `${el.target.getBoundingClientRect().top - 45 + scrollPosition}px`;
+      tooltip.style.top = `${el.target.getBoundingClientRect().top - 25 + scrollPosition}px`;
       tooltip.style.display = 'block';
       tooltip.style.opacity = '1';
 
