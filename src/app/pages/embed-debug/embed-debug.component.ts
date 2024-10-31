@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
+import { SeoHandlerService } from '../../services/seo-handler.service';
 
 @Component({
   selector: 'app-embed-debug',
@@ -36,19 +37,18 @@ export class EmbedDebugComponent {
 
   constructor(
     private route: ActivatedRoute,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private SEOHandler: SeoHandlerService
   ) { }
 
   ngOnInit() {
     this.route.params.subscribe(params => {
-      console.log(params);
       this.vendor = params['vendor'];
       this.id = params['id'];
       this.chartname = params['chartname'];
 
-      this.src = this.sanitizer.bypassSecurityTrustResourceUrl(`http://localhost:4200/embed/server/${this.vendor}/${this.id}/${this.chartname}`);
-
-    })
+      this.src = this.sanitizer.bypassSecurityTrustResourceUrl(`${this.SEOHandler.getBaseURL()}/embed/server/${this.vendor}/${this.id}/${this.chartname}`);
+    });
   }
 
   getStyles() {
@@ -66,6 +66,5 @@ export class EmbedDebugComponent {
     const content = `<iframe src="https://sparecores.com/embed/server/${this.vendor}/${this.id}/${this.chartname}" style="height: ${this.height}; width: ${this.width}"></iframe>`;
     navigator.clipboard.writeText(content);
   }
-
 
 }
