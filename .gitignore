@@ -67,6 +67,7 @@ aio/content/examples/.DS_Store
 src/assets/articles/all.json
 src/assets/slides/slides.json
 prerender_routes.txt
+src/assets/legal/legal-documents.json
 
 # custom patterns
 src/assets/slides/render.sh
