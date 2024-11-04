@@ -8,6 +8,9 @@
   width: calc(50% - 1.0rem);
   min-height: 460px;
   height: 460px;
+  canvas {
+    max-height: 350px;
+  }
 }
 
 :host ::ng-deep .block_half_taller {
@@ -16,6 +19,9 @@
   min-height: 615px;
   height: 615px;
   margin: auto;
+  canvas {
+    max-height: 530px;
+  }
 }
 
 :host ::ng-deep .block_full {
@@ -23,7 +29,9 @@
   width: calc(100%);
   min-height: 460px;
   height: 460px;
-
+  canvas {
+    max-height: 350px;
+  }
 }
 
 :host ::ng-deep .block_half.open {

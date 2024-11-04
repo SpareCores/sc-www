@@ -17,7 +17,6 @@
   <div *ngIf="isBrowser()">
     <div chartType="bar">
       <canvas
-        style="max-height: 350px; max-width:100%"
         baseChart
         [data]="lineChartDataBWmem"
         [options]="lineChartOptionsBWMem"
@@ -62,7 +61,6 @@
   <div *ngIf="isBrowser()">
     <div chartType="bar">
       <canvas
-        style="max-height: 350px; max-width: 100%"
         baseChart
         [data]="lineChartDataCompress"
         [options]="lineChartOptionsCompress"
@@ -98,7 +96,6 @@
       <canvas
         #chartPriceLowest
         id="chartPriceLowest"
-        style="max-height: 530px; max-width:100%"
         baseChart
         [data]="radarChartDataGeekSingle"
         [options]="radarChartOptions"
@@ -132,7 +129,6 @@
   <div *ngIf="isBrowser()">
     <div chartType="bar">
       <canvas
-        style="max-height: 530px; max-width:100%"
         baseChart
         [data]="radarChartDataGeekMulti"
         [options]="radarChartOptions"
@@ -164,7 +160,6 @@
   <div *ngIf="isBrowser()">
     <div chartType="bar">
       <canvas
-        style="max-height: 350px; width:100%"
         baseChart
         [data]="barChartDataSSL"
         [options]="barChartOptionsSSL"
@@ -209,7 +204,6 @@
     <div *ngIf="isBrowser()">
       <div chartType="bar">
         <canvas
-          style="max-height: 350px; width:100%"
           baseChart
           [data]="chartItem.chart.chartData"
           [options]="chartItem.chart.chartOptions"
@@ -242,7 +236,6 @@
   <div *ngIf="isBrowser()">
     <div chartType="bar">
       <canvas
-        style="max-height: 350px; max-width:100%"
         baseChart
         [data]="lineChartDataStressNG"
         [options]="lineChartOptionsStressNG"
@@ -274,7 +267,6 @@
   <div *ngIf="isBrowser()">
     <div chartType="bar">
       <canvas
-        style="max-height: 350px; max-width:100%"
         baseChart
         [data]="lineChartDataStressNG"
         [options]="lineChartOptionsStressNGPercent"
