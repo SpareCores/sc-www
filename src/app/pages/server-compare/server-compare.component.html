@@ -259,53 +259,55 @@
             <ng-container *ngFor="let category of benchmarkCategories">
               <ng-container *ngIf="category.data.length && !category.hidden">
                 <tr class="section_header" id="benchmark_line_{{category.id}}">
-                  <td [colSpan]="2" >
-                    <h3 class="text-xl font-semibold flex gap-2 items-center">{{category.name}}
-                      <lucide-icon
-                        name="circle-arrow-up"
-                        class="h-4 w-4 text-gray-200"
-                        (mouseenter)="showTooltip($event, 'Higher is better.')"
-                        (mouseleave)="hideTooltip()">
-                      </lucide-icon>
-                      <lucide-icon
-                        *ngIf="category.id === 'geekbench'"
-                        name="info"
-                        class="h-4 w-4 text-gray-200"
-                        (mouseenter)="showTooltipGB($event)"
-                        (mouseleave)="hideTooltipGB()">
-                      </lucide-icon>
-                      <lucide-icon
-                        *ngIf="category.id === 'bw_mem' || category.id === 'openssl'"
-                        name="info"
-                        class="h-4 w-4 text-gray-200"
-                        (mouseenter)="showTooltipChart($event, category.id)"
-                        (mouseleave)="hideTooltip()">
-                      </lucide-icon>
-                      <lucide-icon
-                        *ngIf="category.id === 'stress_ng'"
-                        name="info"
-                        class="h-4 w-4 text-gray-200"
-                        (mouseenter)="showTooltipChart($event, 'stress_ng:div16')"
-                        (mouseleave)="hideTooltip()">
-                      </lucide-icon>
-                      <lucide-icon
-                        *ngIf="category.id === 'stress_ng_pct'"
-                        name="info"
-                        class="h-4 w-4 text-gray-200"
-                        (mouseenter)="showTooltip($event, 'The relative performance is a percentage showing the multi-core SCore\'s normalized value (multi-core SCore/vCPUs)  compared to the single-core SCore. This metric shows how well a server can scale to multiple vCPUs, and e.g. the effect of Hyper-Threading.')"
-                        (mouseleave)="hideTooltip()">
-                      </lucide-icon>
-                      <lucide-icon
-                        *ngIf="category.id === 'compress'"
-                        name="info"
-                        class="h-4 w-4 text-gray-200"
-                        (mouseenter)="showTooltip($event, 'Measuring the compression ratio and speed while compressing and decompressing the dickens.txt of the Silesia corpus (10 MB uncompressed) using various algorithms, compressions levels and other extra arguments.')"
-                        (mouseleave)="hideTooltip()">
-                      </lucide-icon>
-                    </h3>
-                  </td>
-                  <td [colSpan]="servers.length -1">
-
+                  <td [colSpan]="getSectionColSpan()" >
+                    <div class="flex justify-between">
+                      <h3 class="text-xl font-semibold flex gap-2 items-center">{{category.name}}
+                        <lucide-icon
+                          name="circle-arrow-up"
+                          class="h-4 w-4 text-gray-200"
+                          (mouseenter)="showTooltip($event, 'Higher is better.')"
+                          (mouseleave)="hideTooltip()">
+                        </lucide-icon>
+                        <lucide-icon
+                          *ngIf="category.id === 'geekbench'"
+                          name="info"
+                          class="h-4 w-4 text-gray-200"
+                          (mouseenter)="showTooltipGB($event)"
+                          (mouseleave)="hideTooltipGB()">
+                        </lucide-icon>
+                        <lucide-icon
+                          *ngIf="category.id === 'bw_mem' || category.id === 'openssl'"
+                          name="info"
+                          class="h-4 w-4 text-gray-200"
+                          (mouseenter)="showTooltipChart($event, category.id)"
+                          (mouseleave)="hideTooltip()">
+                        </lucide-icon>
+                        <lucide-icon
+                          *ngIf="category.id === 'stress_ng'"
+                          name="info"
+                          class="h-4 w-4 text-gray-200"
+                          (mouseenter)="showTooltipChart($event, 'stress_ng:div16')"
+                          (mouseleave)="hideTooltip()">
+                        </lucide-icon>
+                        <lucide-icon
+                          *ngIf="category.id === 'stress_ng_pct'"
+                          name="info"
+                          class="h-4 w-4 text-gray-200"
+                          (mouseenter)="showTooltip($event, 'The relative performance is a percentage showing the multi-core SCore\'s normalized value (multi-core SCore/vCPUs)  compared to the single-core SCore. This metric shows how well a server can scale to multiple vCPUs, and e.g. the effect of Hyper-Threading.')"
+                          (mouseleave)="hideTooltip()">
+                        </lucide-icon>
+                        <lucide-icon
+                          *ngIf="category.id === 'compress'"
+                          name="info"
+                          class="h-4 w-4 text-gray-200"
+                          (mouseenter)="showTooltip($event, 'Measuring the compression ratio and speed while compressing and decompressing the dickens.txt of the Silesia corpus (10 MB uncompressed) using various algorithms, compressions levels and other extra arguments.')"
+                          (mouseleave)="hideTooltip()">
+                        </lucide-icon>
+                      </h3>
+                      <button class="btn-primary py-2 px-3 flex gap-1 items-center sticky right-2" (click)="clipboardURL($event, 'benchmark_line_' + category.id)">
+                        <lucide-icon name="{{clipboardIcon}}" size="16"></lucide-icon>
+                      </button>
+                    </div>
                   </td>
                 </tr>
                 <tr>
