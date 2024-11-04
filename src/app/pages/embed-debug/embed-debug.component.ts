@@ -59,7 +59,7 @@ export class EmbedDebugComponent {
   }
 
   updateSrc() {
-    this.src = this.sanitizer.bypassSecurityTrustResourceUrl(`http://localhost:4200/embed/server/${this.vendor}/${this.id}/${this.chartname}`);
+    this.src = this.sanitizer.bypassSecurityTrustResourceUrl(`${this.SEOHandler.getBaseURL()}/embed/server/${this.vendor}/${this.id}/${this.chartname}`);
   }
 
   ClipboardIframeHTML() {
