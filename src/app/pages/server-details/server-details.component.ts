@@ -24,8 +24,16 @@ import { Location } from '@angular/common';
 import { AnalyticsService } from '../../services/analytics.service';
 import { DropdownManagerService } from '../../services/dropdown-manager.service';
 import { ServerChartsComponent } from '../../components/server-charts/server-charts.component';
+import { Modal, ModalOptions } from 'flowbite';
+import { EmbedDebugComponent } from '../embed-debug/embed-debug.component';
 
 Chart.register(annotationPlugin);
+
+const optionsModal: ModalOptions = {
+  backdropClasses:
+      'bg-gray-900/50 fixed inset-0 z-40',
+  closable: true,
+};
 
 export interface ExtendedServerPrice extends ServerPrice {
   region: any;
@@ -40,7 +48,7 @@ export interface ExtendedServerDetails extends ServerPKs {
 @Component({
   selector: 'app-server-details',
   standalone: true,
-  imports: [BreadcrumbsComponent, CommonModule, LucideAngularModule, FaqComponent, FormsModule, RouterModule, BaseChartDirective, ReduceUnitNamePipe, CountryIdtoNamePipe, ServerChartsComponent],
+  imports: [BreadcrumbsComponent, CommonModule, LucideAngularModule, FaqComponent, FormsModule, RouterModule, BaseChartDirective, ReduceUnitNamePipe, CountryIdtoNamePipe, ServerChartsComponent, EmbedDebugComponent],
   templateUrl: './server-details.component.html',
   styleUrl: './server-details.component.scss'
 })
@@ -116,6 +124,8 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   toastErrorMsg: string = 'Failed to load server data. Please try again later.';
 
   activeFAQ: number = -1;
+
+  modalEmbed: any;
 
   @ViewChild('tooltipDefault') tooltip!: ElementRef;
   @ViewChild('tooltipGeekbench') tooltipGB!: ElementRef;
@@ -370,6 +380,14 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
                 this.selectedSimilarOption = this.similarOptions.find((o) => o.key === similarCategory);
               }
             }, 100);
+
+
+            const targetElModal = document.getElementById('large-modal');
+
+            this.modalEmbed = new Modal(targetElModal, optionsModal,  {
+              id: 'large-modal',
+              override: true
+            });
 
             // https://github.com/chartjs/Chart.js/issues/5387
             // TODO: check and remove later
@@ -898,4 +916,13 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
       this.location.go(`server/${this.serverDetails.vendor_id}/${this.serverDetails.api_reference}`);
     }
   }
+
+  openModal() {
+    this.modalEmbed?.show();
+  }
+
+  closeModal(confirm: boolean) {
+    this.modalEmbed?.hide();
+  }
+
 }

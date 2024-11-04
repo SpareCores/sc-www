@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
@@ -14,9 +14,10 @@ import { SeoHandlerService } from '../../services/seo-handler.service';
 })
 export class EmbedDebugComponent {
 
-  vendor!: string;
-  id!: string;
-  chartname!: string;
+  @Input() vendor!: string;
+  @Input() id!: string;
+  @Input() chartname!: string;
+  @Input() isModal!: boolean;
 
   src: any;
 
@@ -24,15 +25,15 @@ export class EmbedDebugComponent {
   width: string = '100%';
 
   charts = [
-    'bw_mem',
-    'compress',
-    'geek_single',
-    'geek_multi',
-    'ssl',
-    'stress_ng_div16',
-    'stress_ng_relative',
-    'static_web',
-    'redis'
+    {id: 'bw_mem', name: 'Memory bandwidth' },
+    {id: 'compress', name: 'Compression' },
+    {id: 'geek_single', name: 'Geekbench single core' },
+    {id: 'geek_multi', name: 'Geekbench multi core' },
+    {id: 'ssl', name: 'SSL' },
+    {id: 'stress_ng_div16', name: 'Stress-ng div16' },
+    {id: 'stress_ng_relative', name: 'Stress-ng relative' },
+    {id: 'static_web', name: 'Static web' },
+    {id: 'redis', name: 'Redis' }
   ];
 
   constructor(
@@ -51,10 +52,16 @@ export class EmbedDebugComponent {
     });
   }
 
+  ngOnChanges() {
+    this.updateSrc();
+  }
+
   getStyles() {
     return {
       'height': this.height,
-      'width': this.width
+      'width': this.width,
+      'border': '1px solid #34d399',
+      'border-radius': '8px',
     };
   }
 
@@ -63,7 +70,8 @@ export class EmbedDebugComponent {
   }
 
   ClipboardIframeHTML() {
-    const content = `<iframe src="https://sparecores.com/embed/server/${this.vendor}/${this.id}/${this.chartname}" style="height: ${this.height}; width: ${this.width}"></iframe>`;
+    const content =
+    `<iframe src="https://sparecores.com/embed/server/${this.vendor}/${this.id}/${this.chartname}" style="height: ${this.height}; width: ${this.width}; boder: 1px solid #34d399; border-radius: 8px"></iframe>`;
     navigator.clipboard.writeText(content);
   }
 

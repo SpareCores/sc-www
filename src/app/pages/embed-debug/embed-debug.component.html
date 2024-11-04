@@ -1,48 +1,54 @@
-<div class="bg-white py-8 px-8 w-full gap-4 flex flex-col">
-  <div class="flex gap-4 items-center">
+<div class="bg-primary py-4 px-4 w-full gap-4 flex flex-col">
+  <h3 class="text-white text-xl"> Iframe Options </h3>
+  <div class="flex gap-4 items-center text-white">
     <div>Height</div>
     <input
       type="text"
       [(ngModel)]="height"
-      class="border border-gray-300 p-2"
+      class="w-full  accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm pr-8 text-black"
     />
     <div>Width</div>
     <input
       type="text"
       [(ngModel)]="width"
-      class="border border-gray-300 p-2"
+      class="w-full  accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm pr-8 text-black"
     />
   </div>
-  <div class="flex gap-4 items-center">
+  <div class="flex gap-4 items-center text-white" *ngIf="!isModal">
     <div>Vendor</div>
     <input
       type="text"
       [(ngModel)]="vendor"
       (ngModelChange)="updateSrc()"
-      class="border border-gray-300 p-2"
+      class="w-full  accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm pr-8 text-black"
     />
     <div>Id</div>
     <input
       type="text"
       [(ngModel)]="id"
       (ngModelChange)="updateSrc()"
-      class="border border-gray-300 p-2"
+      class="w-full accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm pr-8 text-black"
     />
+  </div>
+  <div class="flex gap-4 items-center text-white">
     <div>Chart</div>
     <select
-    [(ngModel)]="chartname"
-    (ngModelChange)="updateSrc()"
-    >
-      <option *ngFor="let item of charts" >{{item}}</option>
-    </select>
+      [(ngModel)]="chartname"
+      (ngModelChange)="updateSrc()"
+      class="w-full accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm text-black"
+      >
+        <option *ngFor="let item of charts" value="{{item.id}}" >{{item.name}}</option>
+      </select>
+  </div>
+  <div class="flex gap-4 items-center text-white">
     <button
-      class="btn-primary py-2 px-3"
+      class="w-full btn-primary py-2 px-3"
       (click)="ClipboardIframeHTML()"
     >
-      Generate IFRAME
+      Clipboard IFRAME code
     </button>
   </div>
-
+  <h3 class="text-white text-xl"> Iframe Preview </h3>
   <iframe
     [src]="src"
     [style]="getStyles()"
