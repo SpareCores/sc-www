@@ -26,6 +26,7 @@ import { DropdownManagerService } from '../../services/dropdown-manager.service'
 import { ServerChartsComponent } from '../../components/server-charts/server-charts.component';
 import { Modal, ModalOptions } from 'flowbite';
 import { EmbedDebugComponent } from '../embed-debug/embed-debug.component';
+import hljs from 'highlight.js';
 
 Chart.register(annotationPlugin);
 

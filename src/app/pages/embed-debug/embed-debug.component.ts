@@ -1,14 +1,15 @@
-import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Component, Inject, Input, PLATFORM_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { SeoHandlerService } from '../../services/seo-handler.service';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-embed-debug',
   standalone: true,
-  imports: [FormsModule, CommonModule],
+  imports: [FormsModule, CommonModule, LucideAngularModule],
   templateUrl: './embed-debug.component.html',
   styleUrl: './embed-debug.component.scss'
 })
@@ -24,6 +25,8 @@ export class EmbedDebugComponent {
   height = '510px';
   width: string = '100%';
 
+  copyIcon = 'copy';
+
   charts = [
     {id: 'bw_mem', name: 'Memory bandwidth' },
     {id: 'compress', name: 'Compression' },
@@ -37,6 +40,7 @@ export class EmbedDebugComponent {
   ];
 
   constructor(
+    @Inject(PLATFORM_ID) private platformId: object,
     private route: ActivatedRoute,
     private sanitizer: DomSanitizer,
     private SEOHandler: SeoHandlerService
@@ -67,12 +71,27 @@ export class EmbedDebugComponent {
 
   updateSrc() {
     this.src = this.sanitizer.bypassSecurityTrustResourceUrl(`${this.SEOHandler.getBaseURL()}/embed/server/${this.vendor}/${this.id}/${this.chartname}`);
+    if(isPlatformBrowser(this.platformId)) {
+      //hljs.highlightAll();
+    }
+  }
+
+  getIframeHTML() {
+    return `<iframe \n src="${this.SEOHandler.getBaseURL()}/embed/server/${this.vendor}/${this.id}/${this.chartname}" \n style="height: ${this.height}; width: ${this.width}; border: 1px solid #34d399; border-radius: 8px">\n</iframe>`;
   }
 
   ClipboardIframeHTML() {
-    const content =
-    `<iframe src="https://sparecores.com/embed/server/${this.vendor}/${this.id}/${this.chartname}" style="height: ${this.height}; width: ${this.width}; boder: 1px solid #34d399; border-radius: 8px"></iframe>`;
+    const content = this.getIframeHTML();
     navigator.clipboard.writeText(content);
+
+    this.copyIcon = 'check';
+    setTimeout(() => {
+      this.copyIcon = 'copy';
+    }, 2000);
+  }
+
+  getCopyIcon() {
+    return this.copyIcon;
   }
 
 }

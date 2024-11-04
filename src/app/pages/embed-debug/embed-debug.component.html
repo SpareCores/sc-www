@@ -1,36 +1,36 @@
 <div class="bg-primary py-4 px-4 w-full gap-4 flex flex-col">
   <h3 class="text-white text-xl"> Iframe Options </h3>
-  <div class="flex gap-4 items-center text-white">
-    <div>Height</div>
-    <input
-      type="text"
-      [(ngModel)]="height"
-      class="w-full  accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm pr-8 text-black"
-    />
-    <div>Width</div>
-    <input
-      type="text"
-      [(ngModel)]="width"
-      class="w-full  accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm pr-8 text-black"
-    />
-  </div>
   <div class="flex gap-4 items-center text-white" *ngIf="!isModal">
     <div>Vendor</div>
     <input
       type="text"
       [(ngModel)]="vendor"
       (ngModelChange)="updateSrc()"
-      class="w-full  accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm pr-8 text-black"
+      class="w-full  accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm  text-black"
     />
     <div>Id</div>
     <input
       type="text"
       [(ngModel)]="id"
       (ngModelChange)="updateSrc()"
-      class="w-full accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm pr-8 text-black"
+      class="w-full accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm  text-black"
     />
   </div>
   <div class="flex gap-4 items-center text-white">
+    <div>Height</div>
+    <input
+      type="text"
+      [(ngModel)]="height"
+      (ngModelChange)="updateSrc()"
+      class="w-20 p-2 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm text-black"
+    />
+    <div>Width</div>
+    <input
+      type="text"
+      [(ngModel)]="width"
+      (ngModelChange)="updateSrc()"
+      class="w-20 p-2 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm  text-black"
+    />
     <div>Chart</div>
     <select
       [(ngModel)]="chartname"
@@ -40,16 +40,18 @@
         <option *ngFor="let item of charts" value="{{item.id}}" >{{item.name}}</option>
       </select>
   </div>
-  <div class="flex gap-4 items-center text-white">
+
+  <div *ngIf="chartname" class="relative">
+    <pre  class="html text-white bg-secondary rounded-lg"><code class="html">{{getIframeHTML()}}</code></pre>
     <button
-      class="w-full btn-primary py-2 px-3"
-      (click)="ClipboardIframeHTML()"
-    >
-      Clipboard IFRAME code
+      class="absolute top-2 right-2 p-2 bg-emerald-400 h-8 w-8 rounded-lg flex text-white"
+      (click)="ClipboardIframeHTML()">
+      <lucide-icon name="{{copyIcon}}" class="h-4 w-4"></lucide-icon>
     </button>
   </div>
   <h3 class="text-white text-xl"> Iframe Preview </h3>
-  <iframe
+  <p class="text-white" *ngIf="!chartname"> Select which chart to show. </p>
+  <iframe *ngIf="chartname"
     [src]="src"
     [style]="getStyles()"
   ></iframe>
