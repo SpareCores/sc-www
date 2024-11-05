@@ -8,8 +8,10 @@
   width: calc(50% - 1.0rem);
   min-height: 460px;
   height: 460px;
-  canvas {
-    max-height: 350px;
+  .chart_div {
+    max-height: 350px !important;
+    height: 350px !important;
+    max-width:100% !important;
   }
 }
 
@@ -19,8 +21,12 @@
   min-height: 615px;
   height: 615px;
   margin: auto;
-  canvas {
+  .chart_div {
     max-height: 530px;
+    height: 530px !important;
+    max-width:100% !important;
+    display: flex;
+    justify-content: center;
   }
 }
 
@@ -29,8 +35,10 @@
   width: calc(100%);
   min-height: 460px;
   height: 460px;
-  canvas {
+  .chart_div {
     max-height: 350px;
+    height: 350px !important;
+    max-width:100% !important;
   }
 }
 

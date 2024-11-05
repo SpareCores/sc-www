@@ -14,8 +14,8 @@
       (mouseleave)="hideTooltip()">
     </lucide-icon>
   </h3>
-  <div *ngIf="isBrowser()">
-    <div chartType="bar">
+  <div class="h-full" *ngIf="isBrowser()">
+    <div class="chart_div" chartType="bar">
       <canvas
         id="bw_mem_canvas"
         baseChart
@@ -59,8 +59,8 @@
       </button>
     </div>
   </div>
-  <div *ngIf="isBrowser()">
-    <div chartType="bar">
+  <div class="h-full" *ngIf="isBrowser()">
+    <div class="chart_div" chartType="bar">
       <canvas
         id="compress_canvas"
         baseChart
@@ -93,8 +93,8 @@
       Score: {{geekScoreSingle}}
     </div>
   </div>
-  <div *ngIf="isBrowser()">
-    <div chartType="bar">
+  <div class="h-full" *ngIf="isBrowser()">
+    <div class="chart_div" chartType="bar">
       <canvas
         #chartPriceLowest
         id="chartPriceLowest"
@@ -128,8 +128,8 @@
       Score: {{geekScoreMulti}}
     </div>
   </div>
-  <div *ngIf="isBrowser()">
-    <div chartType="bar">
+  <div class="h-full" *ngIf="isBrowser()">
+    <div class="chart_div" chartType="bar">
       <canvas
         baseChart
         [data]="radarChartDataGeekMulti"
@@ -159,8 +159,8 @@
       </lucide-icon>
     </h3>
   </div>
-  <div *ngIf="isBrowser()">
-    <div chartType="bar">
+  <div class="h-full" *ngIf="isBrowser()">
+    <div class="chart_div" chartType="bar">
       <canvas
         id="ssl_canvas"
         baseChart
@@ -204,8 +204,8 @@
         </div>
       </button>
     </div>
-    <div *ngIf="isBrowser()">
-      <div chartType="bar">
+    <div class="h-full" *ngIf="isBrowser()">
+      <div class="chart_div" chartType="bar">
         <canvas
           baseChart
           id="{{chartItem.chart.id}}_canvas"
@@ -237,8 +237,8 @@
       </lucide-icon>
     </h3>
   </div>
-  <div *ngIf="isBrowser()">
-    <div chartType="bar">
+  <div class="h-full" *ngIf="isBrowser()">
+    <div class="chart_div" chartType="bar">
       <canvas
         id="stress_ng_div16_canvas"
         baseChart
@@ -269,8 +269,8 @@
       </lucide-icon>
     </h3>
   </div>
-  <div *ngIf="isBrowser()">
-    <div chartType="bar">
+  <div class="h-full" *ngIf="isBrowser()">
+    <div class="chart_div" chartType="bar">
       <canvas
         id="stress_ng_relative_canvas"
         baseChart

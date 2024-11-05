@@ -21,7 +21,7 @@ Chart.register(annotationPlugin);
   templateUrl: './server-charts.component.html',
   styleUrl: './server-charts.component.scss'
 })
-export class ServerChartsComponent implements OnChanges, OnInit {
+export class ServerChartsComponent implements OnChanges {
 
   @ViewChild('tooltipDefault') tooltip!: ElementRef;
   @ViewChild('tooltipGeekbench') tooltipGB!: ElementRef;
@@ -92,58 +92,6 @@ export class ServerChartsComponent implements OnChanges, OnInit {
   @Inject(DOCUMENT) private document: Document,
   private dropdownManager: DropdownManagerService,
   private sanitizer: DomSanitizer) {
-  }
-
-  ngOnInit() {
-    let options = [
-      { id: 'bw_mem', option: this.lineChartOptionsBWMem},
-      { id: 'compress', option: this.lineChartOptionsCompress},
-      { id: 'ssl', option: this.barChartOptionsSSL},
-      { id: 'stress_ng', option: this.lineChartOptionsStressNG},
-      { id: 'stress_ng_percent', option: this.lineChartOptionsStressNGPercent},
-    ];
-    if(this.isBrowser() && this.isEmbedded) {
-      options.forEach((option) => {
-        if(option.option) {
-          option.option.maintainAspectRatio = false;
-          option.option.onResize = (chart) => {
-            this.resizeCanvas(chart, option.id);
-          };
-        }
-      });
-      this.multiBarCharts.forEach((chart) => {
-        chart.chart.chartOptions.maintainAspectRatio = false;
-        chart.chart.chartOptions.onResize = (chartItem: any) => {
-          this.resizeCanvas(chartItem, chart.chart.id);
-        };
-      });
-    } else {
-      options.forEach((option) => {
-        if(option.option) {
-          option.option.maintainAspectRatio = true;
-          option.option.onResize = undefined;
-        }
-      });
-    }
-  }
-
-  resizeCanvas(chart: any, id: string) {
-    if(!this.isChartShown(id)) {
-      return;
-    }
-
-    const outerDiv = this.document.getElementById(`${id}_chart`);
-    let height = outerDiv?.clientHeight || 0;
-
-    height -= 102;
-
-    let chartElem = this.document.getElementById(`${id}_canvas`);
-    if(chartElem && height > 0 && (Math.abs(chartElem.offsetHeight - height) > chartElem.offsetHeight / 20)) {
-      chartElem.setAttribute('height', height.toString());
-    }
-    setTimeout(() => {
-      chart.update();
-    }, 500);
   }
 
   ngOnChanges() {
