@@ -27,7 +27,7 @@ export class EmbedDebugComponent implements OnInit, OnChanges {
 
   copyIcon = 'copy';
 
-  charts = [
+  @Input() charts = [
     {id: 'bw_mem', name: 'Memory bandwidth' },
     {id: 'compress', name: 'Compression' },
     {id: 'geek_single', name: 'Geekbench single core' },
@@ -73,6 +73,7 @@ export class EmbedDebugComponent implements OnInit, OnChanges {
       'width': this.width,
       'border': '1px solid #34d399',
       'border-radius': '8px',
+      'min-height': '400px'
     };
   }
 
@@ -81,7 +82,7 @@ export class EmbedDebugComponent implements OnInit, OnChanges {
   }
 
   getIframeHTML() {
-    return `<iframe \n src="${this.SEOHandler.getBaseURL()}/embed/server/${this.vendor}/${this.id}/${this.chartname}" \n style="height: ${this.height}; width: ${this.width}; border: 1px solid #34d399; border-radius: 8px">\n</iframe>`;
+    return `<iframe \n src="${this.SEOHandler.getBaseURL()}/embed/server/${this.vendor}/${this.id}/${this.chartname}" \n style="height: ${this.height}; width: ${this.width}; border: 1px solid #34d399; border-radius: 8px; min-height: 400px">\n</iframe>`;
   }
 
   ClipboardIframeHTML() {

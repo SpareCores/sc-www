@@ -2,7 +2,7 @@ import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { Component, ElementRef, Inject, Input, OnChanges, OnInit, PLATFORM_ID, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { ChartConfiguration, ChartData, TooltipItem, TooltipModel } from 'chart.js';
+import { Chart, ChartConfiguration, ChartData, TooltipItem, TooltipModel } from 'chart.js';
 import { LucideAngularModule } from 'lucide-angular';
 import { BaseChartDirective } from 'ng2-charts';
 import { Benchmark } from '../../../../sdk/data-contracts';
@@ -10,6 +10,9 @@ import { staticWebChartTemplate, staticWebChartTemplateCallbacks, redisChartTemp
 import { radarChartOptions, lineChartOptionsBWM, lineChartOptionsComp, lineChartOptionsStressNG, lineChartOptionsStressNGPercent, barChartOptionsSSL, radarDatasetColors } from '../../pages/server-details/chartOptions';
 import { DomSanitizer } from '@angular/platform-browser';
 import { DropdownManagerService } from '../../services/dropdown-manager.service';
+import annotationPlugin from 'chartjs-plugin-annotation';
+
+Chart.register(annotationPlugin);
 
 @Component({
   selector: 'app-server-charts',

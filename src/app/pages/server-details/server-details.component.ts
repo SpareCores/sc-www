@@ -26,7 +26,6 @@ import { DropdownManagerService } from '../../services/dropdown-manager.service'
 import { ServerChartsComponent } from '../../components/server-charts/server-charts.component';
 import { Modal, ModalOptions } from 'flowbite';
 import { EmbedDebugComponent } from '../embed-debug/embed-debug.component';
-import hljs from 'highlight.js';
 
 Chart.register(annotationPlugin);
 
@@ -127,6 +126,16 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   activeFAQ: number = -1;
 
   modalEmbed: any;
+
+  embeddableCharts = [
+    {id: 'bw_mem', name: 'Memory bandwidth' },
+    {id: 'compress', name: 'Compression' },
+    {id: 'geek_single', name: 'Geekbench single core' },
+    {id: 'geek_multi', name: 'Geekbench multi core' },
+    {id: 'ssl', name: 'SSL' },
+    {id: 'static_web', name: 'Static web' },
+    {id: 'redis', name: 'Redis' }
+  ];
 
   @ViewChild('tooltipDefault') tooltip!: ElementRef;
   @ViewChild('tooltipGeekbench') tooltipGB!: ElementRef;
@@ -362,6 +371,11 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
           this.generateSchemaJSON();
 
+          if(this.serverDetails.vcpus && this.serverDetails.vcpus > 1) {
+            this.embeddableCharts.push({id: 'stress_ng_div16', name: 'Stress-ng div16' });
+            this.embeddableCharts.push({id: 'stress_ng_relative', name: 'Stress-ng relative' });
+          }
+
           if(isPlatformBrowser(this.platformId)) {
 
             setTimeout(() => {
@@ -409,7 +423,6 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
                 initGiscus(this.renderer, this.giscusParent, baseUrl, 'Servers', 'DIC_kwDOLesFQM4CgznN', 'pathname');
                 clearInterval(giscusInterval);
               }
-
             }, 250);
 
             this.selectSimilarServerOption(this.selectedSimilarOption, false);
