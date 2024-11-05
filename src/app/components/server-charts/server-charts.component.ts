@@ -1,5 +1,5 @@
 import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
-import { Component, ElementRef, Inject, Input, OnChanges, PLATFORM_ID, Renderer2, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, Input, OnChanges, OnInit, PLATFORM_ID, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { ChartConfiguration, ChartData, TooltipItem, TooltipModel } from 'chart.js';
@@ -18,7 +18,7 @@ import { DropdownManagerService } from '../../services/dropdown-manager.service'
   templateUrl: './server-charts.component.html',
   styleUrl: './server-charts.component.scss'
 })
-export class ServerChartsComponent implements OnChanges {
+export class ServerChartsComponent implements OnChanges, OnInit {
 
   @ViewChild('tooltipDefault') tooltip!: ElementRef;
   @ViewChild('tooltipGeekbench') tooltipGB!: ElementRef;

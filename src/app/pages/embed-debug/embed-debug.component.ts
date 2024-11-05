@@ -1,5 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Component, Inject, Input, PLATFORM_ID } from '@angular/core';
+import { Component, Inject, Input, OnChanges, OnInit, PLATFORM_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
@@ -13,7 +13,7 @@ import { LucideAngularModule } from 'lucide-angular';
   templateUrl: './embed-debug.component.html',
   styleUrl: './embed-debug.component.scss'
 })
-export class EmbedDebugComponent {
+export class EmbedDebugComponent implements OnInit, OnChanges {
 
   @Input() vendor!: string;
   @Input() id!: string;
