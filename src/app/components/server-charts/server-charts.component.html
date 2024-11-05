@@ -17,6 +17,7 @@
   <div *ngIf="isBrowser()">
     <div chartType="bar">
       <canvas
+        id="bw_mem_canvas"
         baseChart
         [data]="lineChartDataBWmem"
         [options]="lineChartOptionsBWMem"
@@ -61,6 +62,7 @@
   <div *ngIf="isBrowser()">
     <div chartType="bar">
       <canvas
+        id="compress_canvas"
         baseChart
         [data]="lineChartDataCompress"
         [options]="lineChartOptionsCompress"
@@ -160,6 +162,7 @@
   <div *ngIf="isBrowser()">
     <div chartType="bar">
       <canvas
+        id="ssl_canvas"
         baseChart
         [data]="barChartDataSSL"
         [options]="barChartOptionsSSL"
@@ -205,6 +208,7 @@
       <div chartType="bar">
         <canvas
           baseChart
+          id="{{chartItem.chart.id}}_canvas"
           [data]="chartItem.chart.chartData"
           [options]="chartItem.chart.chartOptions"
           [type]="chartItem.chart.chartType"
@@ -215,7 +219,7 @@
   </div>
 </ng-container>
 
-<div class="block_half" *ngIf="lineChartDataStressNG && isChartShown('stress_ng_div16')" id="stress_ng_div16 ">
+<div class="block_half" *ngIf="lineChartDataStressNG && isChartShown('stress_ng_div16')" id="stress_ng_div16_chart">
   <div class="flex justify-between items-center">
     <h3 class="text-2xl flex items-center gap-2" >
       stress-ng raw scores
@@ -236,6 +240,7 @@
   <div *ngIf="isBrowser()">
     <div chartType="bar">
       <canvas
+        id="stress_ng_div16_canvas"
         baseChart
         [data]="lineChartDataStressNG"
         [options]="lineChartOptionsStressNG"
@@ -246,7 +251,7 @@
   </div>
 </div>
 
-<div class="block_half" *ngIf="lineChartDataStressNG && isChartShown('stress_ng_relative')" id="stress_ng_relative">
+<div class="block_half" *ngIf="lineChartDataStressNG && isChartShown('stress_ng_relative')" id="stress_ng_relative_chart">
   <div class="flex justify-between items-center">
     <h3 class="text-2xl flex items-center gap-2" >
       stress-ng relative multicore performance
@@ -267,6 +272,7 @@
   <div *ngIf="isBrowser()">
     <div chartType="bar">
       <canvas
+        id="stress_ng_relative_canvas"
         baseChart
         [data]="lineChartDataStressNG"
         [options]="lineChartOptionsStressNGPercent"

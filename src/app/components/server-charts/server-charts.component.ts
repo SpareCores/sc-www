@@ -1,7 +1,7 @@
 import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { Component, ElementRef, Inject, Input, OnChanges, PLATFORM_ID, Renderer2, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { ChartConfiguration, ChartData, TooltipItem, TooltipModel } from 'chart.js';
 import { LucideAngularModule } from 'lucide-angular';
 import { BaseChartDirective } from 'ng2-charts';
@@ -9,11 +9,7 @@ import { Benchmark } from '../../../../sdk/data-contracts';
 import { staticWebChartTemplate, staticWebChartTemplateCallbacks, redisChartTemplate, redisChartTemplateCallbacks, ChartFromBenchmarkTemplate, ChartFromBenchmarkTemplateOptions } from '../../pages/server-details/chartFromBenchmarks';
 import { radarChartOptions, lineChartOptionsBWM, lineChartOptionsComp, lineChartOptionsStressNG, lineChartOptionsStressNGPercent, barChartOptionsSSL, radarDatasetColors } from '../../pages/server-details/chartOptions';
 import { DomSanitizer } from '@angular/platform-browser';
-import { AnalyticsService } from '../../services/analytics.service';
 import { DropdownManagerService } from '../../services/dropdown-manager.service';
-import { KeeperAPIService } from '../../services/keeper-api.service';
-import { SeoHandlerService } from '../../services/seo-handler.service';
-import { ServerCompareService } from '../../services/server-compare.service';
 
 @Component({
   selector: 'app-server-charts',
@@ -31,6 +27,7 @@ export class ServerChartsComponent implements OnChanges {
   @Input() benchmarksByCategory: any[] = [];
   @Input() benchmarkMeta!: Benchmark[];
   @Input() showChart: string = 'all';
+  @Input() isEmbedded: boolean = false;
 
   multiBarCharts: any[] = [
     {
@@ -86,17 +83,64 @@ export class ServerChartsComponent implements OnChanges {
   geekScoreSingle: string = '0';
   geekScoreMulti: string = '0';
 
+  resizeTimeout: any;
+
   constructor(@Inject(PLATFORM_ID) private platformId: object,
   @Inject(DOCUMENT) private document: Document,
-  private route: ActivatedRoute,
-  private analytics: AnalyticsService,
-  private keeperAPI: KeeperAPIService,
-  private SEOHandler: SeoHandlerService,
-  private serverCompare: ServerCompareService,
-  private router: Router,
-  private renderer: Renderer2,
   private dropdownManager: DropdownManagerService,
   private sanitizer: DomSanitizer) {
+  }
+
+  ngOnInit() {
+    let options = [
+      { id: 'bw_mem', option: this.lineChartOptionsBWMem},
+      { id: 'compress', option: this.lineChartOptionsCompress},
+      { id: 'ssl', option: this.barChartOptionsSSL},
+      { id: 'stress_ng', option: this.lineChartOptionsStressNG},
+      { id: 'stress_ng_percent', option: this.lineChartOptionsStressNGPercent},
+    ];
+    if(this.isBrowser() && this.isEmbedded) {
+      options.forEach((option) => {
+        if(option.option) {
+          option.option.maintainAspectRatio = false;
+          option.option.onResize = (chart) => {
+            this.resizeCanvas(chart, option.id);
+          };
+        }
+      });
+      this.multiBarCharts.forEach((chart) => {
+        chart.chart.chartOptions.maintainAspectRatio = false;
+        chart.chart.chartOptions.onResize = (chartItem: any) => {
+          this.resizeCanvas(chartItem, chart.chart.id);
+        };
+      });
+    } else {
+      options.forEach((option) => {
+        if(option.option) {
+          option.option.maintainAspectRatio = true;
+          option.option.onResize = undefined;
+        }
+      });
+    }
+  }
+
+  resizeCanvas(chart: any, id: string) {
+    if(!this.isChartShown(id)) {
+      return;
+    }
+
+    const outerDiv = this.document.getElementById(`${id}_chart`);
+    let height = outerDiv?.clientHeight || 0;
+
+    height -= 102;
+
+    let chartElem = this.document.getElementById(`${id}_canvas`);
+    if(chartElem && height > 0 && (Math.abs(chartElem.offsetHeight - height) > chartElem.offsetHeight / 20)) {
+      chartElem.setAttribute('height', height.toString());
+    }
+    setTimeout(() => {
+      chart.update();
+    }, 500);
   }
 
   ngOnChanges() {

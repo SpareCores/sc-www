@@ -44,7 +44,9 @@ export class EmbedDebugComponent {
     private route: ActivatedRoute,
     private sanitizer: DomSanitizer,
     private SEOHandler: SeoHandlerService
-  ) { }
+  ) {
+
+  }
 
   ngOnInit() {
     this.route.params.subscribe(params => {
@@ -54,10 +56,15 @@ export class EmbedDebugComponent {
 
       this.src = this.sanitizer.bypassSecurityTrustResourceUrl(`${this.SEOHandler.getBaseURL()}/embed/server/${this.vendor}/${this.id}/${this.chartname}`);
     });
+
   }
 
   ngOnChanges() {
     this.updateSrc();
+  }
+
+  isBrowser() {
+    return isPlatformBrowser(this.platformId);
   }
 
   getStyles() {
@@ -71,9 +78,6 @@ export class EmbedDebugComponent {
 
   updateSrc() {
     this.src = this.sanitizer.bypassSecurityTrustResourceUrl(`${this.SEOHandler.getBaseURL()}/embed/server/${this.vendor}/${this.id}/${this.chartname}`);
-    if(isPlatformBrowser(this.platformId)) {
-      //hljs.highlightAll();
-    }
   }
 
   getIframeHTML() {

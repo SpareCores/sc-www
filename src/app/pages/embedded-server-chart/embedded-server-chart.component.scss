@@ -9,6 +9,10 @@
   width: calc(100%);
   max-height: calc(100vh - 64px);
   height: calc(100vh - 64px);
+  canvas {
+    height: 100% !important;
+    width: 100% !important;
+  }
 }
 
 :host ::ng-deep .block_half_taller {
@@ -24,6 +28,10 @@
   width: calc(100%);
   max-height: calc(100vh - 64px);
   height: calc(100vh - 64px);
+  canvas {
+    height: 100% !important;
+    width: 100% !important;
+  }
 }
 
 :host ::ng-deep canvas {

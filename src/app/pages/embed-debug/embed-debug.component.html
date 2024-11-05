@@ -1,4 +1,4 @@
-<div class="bg-primary py-4 px-4 w-full gap-4 flex flex-col">
+<div class="bg-primary py-4 px-4 w-full gap-4 flex flex-col" *ngIf="isBrowser()">
   <h3 class="text-white text-xl"> Iframe Options </h3>
   <div class="flex gap-4 items-center text-white" *ngIf="!isModal">
     <div>Vendor</div>
@@ -21,6 +21,7 @@
     <input
       type="text"
       [(ngModel)]="height"
+      min="400"
       (ngModelChange)="updateSrc()"
       class="w-20 p-2 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm text-black"
     />
@@ -28,6 +29,7 @@
     <input
       type="text"
       [(ngModel)]="width"
+      min="400"
       (ngModelChange)="updateSrc()"
       class="w-20 p-2 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm  text-black"
     />
@@ -51,7 +53,14 @@
   </div>
   <h3 class="text-white text-xl"> Iframe Preview </h3>
   <p class="text-white" *ngIf="!chartname"> Select which chart to show. </p>
-  <iframe *ngIf="chartname"
+  <script>
+    window.onload = function() {
+      var iframe = document.getElementById('myIframe');
+      iframe.style.height = (iframe.offsetWidth * 0.6) + 'px';
+    };
+  </script>
+  <iframe
+    id="myIframe"
     [src]="src"
     [style]="getStyles()"
   ></iframe>
