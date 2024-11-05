@@ -5,6 +5,7 @@ import { AnalyticsService } from '../../services/analytics.service';
 import { KeeperAPIService } from '../../services/keeper-api.service';
 import { Benchmark } from '../../../../sdk/data-contracts';
 import { ServerChartsComponent } from '../../components/server-charts/server-charts.component';
+import { SeoHandlerService } from '../../services/seo-handler.service';
 
 @Component({
   selector: 'app-embedded-server-chart',
@@ -21,6 +22,7 @@ export class EmbeddedServerChartComponent implements OnInit {
   showChart: string = 'all';
 
   constructor(@Inject(PLATFORM_ID) private platformId: object,
+    private SEOHandler: SeoHandlerService,
     private route: ActivatedRoute,
     private analytics: AnalyticsService,
     private keeperAPI: KeeperAPIService) {
@@ -70,6 +72,10 @@ export class EmbeddedServerChartComponent implements OnInit {
         }
       });
     });
+  }
+
+  getBaseURL() {
+    return this.SEOHandler.getBaseURL();
   }
 
 }
