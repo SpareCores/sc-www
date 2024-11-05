@@ -127,12 +127,12 @@ div.giscus {
 
 @media screen and (max-width: 800px) {
 
-  .block_half {
+  :host ::ng-deep .block_half {
     width: calc(100%);
     margin: auto;
   }
 
-  .block_half_taller {
+  :host ::ng-deep .block_half_taller {
     width: calc(100%);
     margin: auto;
   }
