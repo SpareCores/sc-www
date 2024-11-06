@@ -2,6 +2,7 @@
 import { ChartConfiguration, ChartData, TooltipItem, TooltipModel } from "chart.js";
 
 export const  barChartOptions: ChartConfiguration<'bar'>['options'] = {
+
   scales: {
     x: {
       ticks: {
@@ -34,6 +35,7 @@ export const  barChartOptions: ChartConfiguration<'bar'>['options'] = {
 };
 
 export const  barChartOptionsSSL: ChartConfiguration<'bar'>['options'] = {
+  maintainAspectRatio: false,
   scales: {
     ...barChartOptions.scales,
     y: {
@@ -115,6 +117,7 @@ export const  barChartOptionsStaticWeb: ChartConfiguration<'bar'>['options'] = {
 };
 
 export const  barChartOptionsTemplate: ChartConfiguration<'bar'>['options'] = {
+  maintainAspectRatio: false,
   scales: {
     ...barChartOptions.scales,
     y: {
@@ -426,6 +429,7 @@ export const radarDatasetColors = [
 ];
 
 export const lineChartOptionsBWM: ChartConfiguration<'line'>['options'] = {
+  maintainAspectRatio: false,
   scales: {
     x: {
       ticks: {
@@ -513,6 +517,7 @@ export const lineChartOptionsBWM: ChartConfiguration<'line'>['options'] = {
 };
 
 export const lineChartOptionsComp: ChartConfiguration<'line'>['options'] = {
+  maintainAspectRatio: false,
   scales: {
     x: {
       ticks: {
@@ -717,6 +722,7 @@ export const lineChartOptionsCompareDecompress: ChartConfiguration<'line'>['opti
 };
 
 export const lineChartOptionsStressNG: ChartConfiguration<'line'>['options'] = {
+  maintainAspectRatio: false,
   scales: {
     x: {
       ticks: {
@@ -762,6 +768,7 @@ export const lineChartOptionsStressNG: ChartConfiguration<'line'>['options'] = {
 };
 
 export const lineChartOptionsStressNGPercent: ChartConfiguration<'line'>['options'] = {
+  maintainAspectRatio: false,
   scales: {
     x: {
       ticks: {

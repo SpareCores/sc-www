@@ -484,7 +484,7 @@
                         {{category.show_more ? 'Hide' : 'Show'}} Details
                       </button>
                     </div>
-                </td>
+                  </td>
                 </tr>
                 <ng-container *ngIf="category.show_more">
                   <ng-container *ngFor="let item of category.data">
@@ -741,13 +741,13 @@
   </ul>
 </div>
 
-<ng-container *ngFor="let charItem of multiBarCharts">
-  <div id="{{charItem.chart.id}}_options" class="z-100 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid">
+<ng-container *ngFor="let chartItem of multiBarCharts">
+  <div id="{{chartItem.chart.id}}_options" class="z-100 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid">
     <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
-      <li *ngFor="let item of charItem.chart.options, let i = index" class="flex py-1 gap-2 items-center">
+      <li *ngFor="let item of chartItem.chart.options, let i = index" class="flex py-1 gap-2 items-center">
           <div
             class="text-emerald-400 hover:text-emerald-500 cursor-pointer font-bold ml-2"
-            (click)="selectChartTemplateOption(charItem, i)">
+            (click)="selectChartTemplateOption(chartItem, i)">
             {{item.name}}
           </div>
       </li>
@@ -755,14 +755,14 @@
   </div>
 
   <div
-    *ngIf="charItem.chart.secondaryOptions?.length > 1"
-    id="{{charItem.chart.id}}_options2"
+    *ngIf="chartItem.chart.secondaryOptions?.length > 1"
+    id="{{chartItem.chart.id}}_options2"
     class="z-100 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid">
     <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
-      <li *ngFor="let item of charItem.chart.secondaryOptions, let i = index" class="flex py-1 gap-2 items-center">
+      <li *ngFor="let item of chartItem.chart.secondaryOptions, let i = index" class="flex py-1 gap-2 items-center">
           <div
             class="text-emerald-400 hover:text-emerald-500 cursor-pointer font-bold ml-2"
-            (click)="selectChartTemplateOption2(charItem, i)">
+            (click)="selectChartTemplateOption2(chartItem, i)">
             {{item.name}}
           </div>
       </li>

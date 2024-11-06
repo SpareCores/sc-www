@@ -31,5 +31,9 @@ export const routes: Routes = [
 
   { path: 'survey/:id', loadComponent: () => import('./pages/survey-fill/survey-fill.component').then(m => m.SurveyFillComponent)},
 
+  { path: 'embed/server/:vendor/:id/:chartname', loadComponent: () => import('./pages/embedded-server-chart/embedded-server-chart.component').then(m => m.EmbeddedServerChartComponent)},
+
+  { path: 'embed_debug/:vendor/:id/:chartname', loadComponent: () => import('./pages/embed-debug/embed-debug.component').then(m => m.EmbedDebugComponent)},
+
   { path: '**', redirectTo: '' }
 ];
