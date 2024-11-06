@@ -323,6 +323,14 @@ export class LandingpageComponent implements OnInit {
         }
       }
 
+      // try to find 3 different vendors from servers
+      for(let i = 1; i < 3; i++) {
+        let server = servers.find(s => top3server.findIndex((t)=> t.server.vendor_id === s.server.vendor_id) === -1);
+        if(server) {
+          top3server[i] = server;
+        }
+      }
+
       indices.forEach((index, i) => {
         this.spinnerContents[0][index] = { name: top3server[i].vendor.vendor_id.toString().toUpperCase(), logo: top3server[i].vendor.logo};
         this.spinnerContents[1][index] = { name: top3server[i].server.display_name, architecture: top3server[i].server.cpu_architecture};
