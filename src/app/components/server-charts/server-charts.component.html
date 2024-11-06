@@ -47,7 +47,7 @@
     <div class="flex gap-4">
       <button
         id="compress_method_button"
-        data-ph-capture-attribute-sc-event="server details price allocation select"
+        data-ph-capture-attribute-sc-event="server charts compress method select"
         class="dropdown_button"
         type="button">
         <div class="px-3 py-2">
@@ -296,14 +296,14 @@
   </ul>
 </div>
 
-<ng-container *ngFor="let charItem of multiBarCharts">
-  <div id="{{charItem.chart.id}}_options" class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid">
+<ng-container *ngFor="let chartItem of multiBarCharts">
+  <div id="{{chartItem.chart.id}}_options" class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid">
     <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
-      <li *ngFor="let item of charItem.chart.options, let i = index" class="flex py-1 gap-2 items-center">
+      <li *ngFor="let item of chartItem.chart.options, let i = index" class="flex py-1 gap-2 items-center">
         <!-- eslint-disable-next-line @angular-eslint/template/interactive-supports-focus -->
           <div
             class="text-emerald-400 hover:text-emerald-500 cursor-pointer font-bold ml-2"
-            (click)="selectChartTemplateOption(charItem, i)">
+            (click)="selectChartTemplateOption(chartItem, i)">
             {{item.name}}
           </div>
       </li>
