@@ -108,6 +108,15 @@
         </table>
       </div>
       <div>
+        <app-server-compare-charts
+        [servers]="servers"
+        [instanceProperties]="instanceProperties"
+        [benchmarkMeta]="benchmarkMeta"
+        [benchmarkCategories]="benchmarkCategories"
+        [instancePropertyCategories]="instancePropertyCategories"
+        >
+        </app-server-compare-charts>
+        <!--
         <table id="main-table" #mainTable class="items_table">
           <thead>
             <tr>
@@ -692,6 +701,7 @@
             </tr>
           </tbody>
         </table>
+        -->
       </div>
     </div>
   </div>
@@ -721,62 +731,4 @@
   </ul>
 </div>
 
-<div id="bw_mem_options" class="z-100 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid">
-  <ul class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
-    <li *ngFor="let item of availableBWmem"
-      class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-      (click)="selectBWMemOperation(item)" >
-      <div class="text-white text-sm ">{{item.name}}</div>
-    </li>
-  </ul>
-</div>
 
-<div id="ssl_options" class="z-100 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid">
-  <ul class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
-    <li *ngFor="let item of availableSSLAlgos"
-      class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-      (click)="selecSSLAlgorithm(item)" >
-      <div class="text-white text-sm ">{{item.name}}</div>
-    </li>
-  </ul>
-</div>
-
-<ng-container *ngFor="let chartItem of multiBarCharts">
-  <div id="{{chartItem.chart.id}}_options" class="z-100 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid">
-    <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
-      <li *ngFor="let item of chartItem.chart.options, let i = index" class="flex py-1 gap-2 items-center">
-          <div
-            class="text-emerald-400 hover:text-emerald-500 cursor-pointer font-bold ml-2"
-            (click)="selectChartTemplateOption(chartItem, i)">
-            {{item.name}}
-          </div>
-      </li>
-    </ul>
-  </div>
-
-  <div
-    *ngIf="chartItem.chart.secondaryOptions?.length > 1"
-    id="{{chartItem.chart.id}}_options2"
-    class="z-100 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid">
-    <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
-      <li *ngFor="let item of chartItem.chart.secondaryOptions, let i = index" class="flex py-1 gap-2 items-center">
-          <div
-            class="text-emerald-400 hover:text-emerald-500 cursor-pointer font-bold ml-2"
-            (click)="selectChartTemplateOption2(chartItem, i)">
-            {{item.name}}
-          </div>
-      </li>
-    </ul>
-  </div>
-
-</ng-container>
-
-<div id="compress_method_options" class="z-100 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid">
-  <ul class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
-    <li *ngFor="let item of availableCompressMethods"
-      class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-      (click)="selectCompressMethod(item)" >
-      <div class="text-white text-sm ">{{item.name}}</div>
-    </li>
-  </ul>
-</div>
