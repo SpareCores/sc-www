@@ -1,0 +1,123 @@
+
+.items_table {
+  @apply w-full text-white;
+
+  position: relative;
+  border-collapse: collapse;
+
+  thead {
+    @apply border-b border-gray-200 border-solid bg-secondary;
+    th {
+      @apply text-left px-5 py-3 font-normal text-xs;
+    }
+
+    tr {
+      th:nth-of-type(1) {
+        position: sticky;
+        left: -1px;
+        z-index: 21;
+        @apply bg-secondary;
+      }
+    }
+  }
+
+  tbody {
+
+    tr.section_header {
+      @apply bg-secondary text-white;
+      td:nth-of-type(1) {
+        @apply bg-secondary;
+      }
+      scroll-margin-top: 10rem;
+    }
+
+    tr {
+      @apply bg-primary;
+
+      td:nth-of-type(1) {
+        @apply bg-primary;
+      }
+
+    }
+
+    tr {
+      td {
+        @apply px-5 py-3 text-left text-sm;
+      }
+
+      td:nth-of-type(1) {
+        position: sticky;
+        left: -1px;
+        z-index: 20;
+      }
+    }
+  }
+}
+
+.fixed_thead {
+  position: fixed;
+  top: 68px;
+  z-index: 40;
+}
+
+::-webkit-scrollbar {
+  width: 5px; /* width of the entire scrollbar */
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-secondary;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #9CA3AF;
+  border-radius: 20px; /* roundness of the scroll thumb */
+  border: 3px solid #9CA3AF; /* creates padding around scroll thumb */
+}
+
+.number_line {
+  text-align: right !important;
+}
+
+.block_full_inline {
+  @apply px-6 py-6 bg-transparent flex flex-col gap-4 relative overflow-hidden;
+  width: calc(100%);
+  min-height: 460px;
+  height: 460px;
+}
+
+.block_full {
+  @apply px-6 py-6 bg-secondary border-emerald-400 border border-solid rounded-lg flex flex-col gap-4 relative overflow-hidden;
+  width: calc(100%);
+  min-height: 660px;
+  height: 660px;
+}
+
+.block_full_short_inline {
+  @apply px-4 py-4 bg-transparent flex flex-col gap-4 relative overflow-hidden;
+  width: calc(100%);
+  min-height: 460px;
+  height: 460px;
+  .charts_div {
+    @apply flex gap-4;
+    .chart_div {
+      @apply w-1/2;
+      height: 420px;
+    }
+  }
+}
+
+.block_full_short {
+  @apply px-6 py-6 bg-secondary border-emerald-400 border border-solid rounded-lg flex flex-col gap-4 relative overflow-hidden;
+  width: calc(100%);
+  min-height: 460px;
+  height: 460px;
+  .charts_div {
+    @apply flex gap-4;
+    .chart_div {
+      @apply w-1/2;
+      height: 350px;
+    }
+  }
+
+}

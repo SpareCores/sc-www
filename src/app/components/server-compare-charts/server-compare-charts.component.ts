@@ -153,6 +153,10 @@ export class ServerCompareChartsComponent {
   }
 
   setup() {
+    if(this.servers.length === 0 || !this.benchmarkMeta || !this.instanceProperties || !this.benchmarkCategories) {
+      return;
+    }
+
     this.getCompressChartOptions();
 
     this.multiBarCharts.forEach((chartTemplate) => {

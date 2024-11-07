@@ -644,3 +644,17 @@
     </li>
   </ul>
 </div>
+
+<div id="tooltipDefault"
+  #tooltipDefault
+  style="opacity: 0; z-index: 22"
+  class="absolute z-100 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-secondary border border-solid border-emerald-400 rounded-lg">
+  {{tooltipContent}}
+</div>
+
+<div id="tooltipGeekbench"
+  #tooltipGeekbench
+  style="opacity: 0; display: none;"
+  class="absolute z-100 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-secondary border border-solid border-emerald-400 rounded-lg">
+  <div [innerHTML]="geekbenchHTML" ></div>
+</div>

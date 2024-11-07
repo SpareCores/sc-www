@@ -67,7 +67,6 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
   @ViewChild('tooltipDefault') tooltip!: ElementRef;
   @ViewChild('tooltipGeekbench') tooltipGB!: ElementRef;
   tooltipContent = '';
-  geekbenchHTML: any;
 
   instancePropertyCategories: any[] = [
     { name: 'CPU', category: 'cpu', properties: [] },
@@ -147,8 +146,6 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
   ];
 
 
-
-  @ViewChild('mainTable') mainTable!: ElementRef;
   @ViewChild('tableHolder') tableHolder!: ElementRef;
   isTableOutsideViewport = false;
 
@@ -393,7 +390,9 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     if(isPlatformBrowser(this.platformId)) {
       window.addEventListener('scroll', () => {
-        const rect = this.mainTable?.nativeElement.getBoundingClientRect();
+        // replace this with document getelementbyId()
+        //const rect = this.mainTable?.nativeElement.getBoundingClientRect();
+        const rect: any = document.getElementById('main-table')?.getBoundingClientRect();
         if (rect?.top < 70) {
           this.isTableOutsideViewport = true;
         } else {
@@ -529,7 +528,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
 
   getMainTableWidth() {
     const thead = document?.querySelector('#main-table thead');
-    const rect = this.mainTable?.nativeElement.getBoundingClientRect();
+    const rect = document.getElementById('main-table')?.getBoundingClientRect();
     const rect2 = this.tableHolder?.nativeElement.getBoundingClientRect();
     const posLeft = rect && rect2 ? rect.x - rect2.x : 0;
     return `width: ${thead?.clientWidth}px; left: ${posLeft}px`;
