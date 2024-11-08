@@ -6,28 +6,19 @@ import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadc
 import { LucideAngularModule } from 'lucide-angular';
 import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Allocation, ServerPKs } from '../../../../sdk/data-contracts';
 import { SeoHandlerService } from '../../services/seo-handler.service';
-import { Chart, ChartConfiguration, ChartData, TooltipItem, TooltipModel } from 'chart.js';
-import { barChartOptionsRedisCompare, barChartOptionsSSLCompare, barChartOptionsStaticWebCompare, lineChartOptionsBWM, lineChartOptionsCompareCompress, lineChartOptionsCompareDecompress, lineChartOptionsStressNG, lineChartOptionsStressNGPercent, radarChartOptions, radarDatasetColors } from '../server-details/chartOptions';
-import annotationPlugin from 'chartjs-plugin-annotation';
-import { BaseChartDirective } from 'ng2-charts';
-import { DomSanitizer } from '@angular/platform-browser';
 import { ServerCompareService } from '../../services/server-compare.service';
 import { DropdownManagerService } from '../../services/dropdown-manager.service';
 import { AnalyticsService } from '../../services/analytics.service';
 import { CurrencyOption, availableCurrencies } from '../../tools/shared_data';
-import { ChartFromBenchmarkTemplate, ChartFromBenchmarkTemplateOptions, redisChartTemplate, redisChartTemplateCallbacks, staticWebChartCompareTemplate, staticWebChartTemplateCallbacks } from '../server-details/chartFromBenchmarks';
 import { ExtendedServerDetails } from '../server-details/server-details.component';
 import hljs from 'highlight.js';
 import { ServerCompareChartsComponent } from "../../components/server-compare-charts/server-compare-charts.component";
 
-Chart.register(annotationPlugin);
-
 @Component({
   selector: 'app-server-compare',
   standalone: true,
-  imports: [BreadcrumbsComponent, LucideAngularModule, CommonModule, FormsModule, BaseChartDirective, RouterModule, ServerCompareChartsComponent],
+  imports: [BreadcrumbsComponent, LucideAngularModule, CommonModule, FormsModule, RouterModule, ServerCompareChartsComponent],
   templateUrl: './server-compare.component.html',
   styleUrl: './server-compare.component.scss',
 })
@@ -163,7 +154,6 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     @Inject(DOCUMENT) private document: Document,
     private keeperAPI: KeeperAPIService,
     private seoHandler: SeoHandlerService,
-    private sanitizer: DomSanitizer,
     private serverCompare: ServerCompareService,
     private dropdownManager: DropdownManagerService,
     private analytics: AnalyticsService,
@@ -364,6 +354,12 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
         }
 
         this.benchmarkCategories.find((c) => c.id === 'stress_ng_pct').data = ngData;
+
+        if(isPlatformBrowser(this.platformId)) {
+          this.dropdownManager.initDropdown('currency_button', 'currency_options').then((dropdown) => {
+            this.dropdownCurrency = dropdown;
+          });
+        }
 
       }).catch((err) => {
         this.analytics.SentryException(err, {tags: { location: this.constructor.name, function: 'compareInit' }});

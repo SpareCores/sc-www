@@ -114,11 +114,11 @@ export class EmbeddedCompareChartComponent {
 
   ngOnInit() {
 
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe(() => {
       this.setup();
     });
 
-    this.route.params.subscribe(params => {
+    this.route.params.subscribe(() => {
       this.setup();
     });
   }
