@@ -11,6 +11,7 @@
   height: calc(100vh - 200px);
   .charts_div {
     @apply flex gap-4;
+    height: 100%;
     .chart_div {
       @apply w-1/2;
       height: 100%;

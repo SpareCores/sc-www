@@ -338,8 +338,9 @@
               <div *ngIf="category.id === 'geekbench'">
                 <div class="block_full_short_inline" *ngIf="radarChartDataGeekSingle">
                   <div *ngIf="isBrowser()" class="charts_div">
-                    <div chartType="bar"  class="chart_div">
+                    <div chartType="bar"  class="chart_div w-full flex justify-center">
                       <canvas
+                        style="max-width: 100%; width: 100%;"
                         #chartPriceLowest
                         id="chartPriceLowest"
                         baseChart
@@ -349,8 +350,9 @@
                       >
                       </canvas>
                     </div>
-                    <div chartType="bar"  class="chart_div">
+                    <div chartType="bar"  class="chart_div w-full flex justify-center">
                       <canvas
+                        style="max-width: 100%; width: 100%;"
                         #chartPriceLowest
                         id="chartPriceLowest"
                         baseChart
