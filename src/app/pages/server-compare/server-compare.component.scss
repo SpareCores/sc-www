@@ -1,4 +1,5 @@
 
+
 .items_table {
   @apply w-full text-white;
 
@@ -54,6 +55,7 @@
   }
 }
 
+
 .fixed_thead {
   position: fixed;
   top: 68px;
@@ -79,21 +81,18 @@
   text-align: right !important;
 }
 
-.block_full_inline {
+:host ::ng-deep .block_full_inline {
   @apply px-6 py-6 bg-transparent flex flex-col gap-4 relative overflow-hidden;
   width: calc(100%);
   min-height: 460px;
   height: 460px;
+  .chart_div {
+    height: 100% !important;
+  }
 }
 
-.block_full {
-  @apply px-6 py-6 bg-secondary border-emerald-400 border border-solid rounded-lg flex flex-col gap-4 relative overflow-hidden;
-  width: calc(100%);
-  min-height: 660px;
-  height: 660px;
-}
 
-.block_full_short_inline {
+:host ::ng-deep .block_full_short_inline {
   @apply px-4 py-4 bg-transparent flex flex-col gap-4 relative overflow-hidden;
   width: calc(100%);
   min-height: 460px;
@@ -107,23 +106,8 @@
   }
 }
 
-.block_full_short {
-  @apply px-6 py-6 bg-secondary border-emerald-400 border border-solid rounded-lg flex flex-col gap-4 relative overflow-hidden;
-  width: calc(100%);
-  min-height: 460px;
-  height: 460px;
-  .charts_div {
-    @apply flex gap-4;
-    .chart_div {
-      @apply w-1/2;
-      height: 350px;
-    }
-  }
-
-}
-
 @media screen and (max-width: 1024px) {
-  .block_full_short_inline {
+  :host ::ng-deep .block_full_short_inline {
     min-height: 860px;
     height: 860px;
     .charts_div {
@@ -133,18 +117,6 @@
       }
     }
   }
-
-  .block_full_short {
-    min-height: 860px;
-    height: 860px;
-    .charts_div {
-      flex-direction: column;
-      .chart_div {
-        width: 100%;
-      }
-    }
-  }
-
 }
 
 .align-baseline {

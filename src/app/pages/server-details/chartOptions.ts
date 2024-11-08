@@ -227,6 +227,7 @@ export const  barChartOptionsRedis: ChartConfiguration<'bar'>['options'] = {
 };
 
 export const  barChartOptionsSSLCompare: ChartConfiguration<'bar'>['options'] = {
+  maintainAspectRatio: false,
   scales: {
     ...barChartOptions.scales,
     y: {

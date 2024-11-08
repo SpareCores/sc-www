@@ -7,7 +7,6 @@ import { TooltipModel, TooltipItem, ChartConfiguration, ChartData } from 'chart.
 import { Allocation, ServerPKs } from '../../../../sdk/data-contracts';
 import { ChartFromBenchmarkTemplate, ChartFromBenchmarkTemplateOptions, redisChartTemplate, redisChartTemplateCallbacks, staticWebChartCompareTemplate, staticWebChartTemplateCallbacks } from '../../pages/server-details/chartFromBenchmarks';
 import { barChartOptionsRedisCompare, barChartOptionsSSLCompare, barChartOptionsStaticWebCompare, lineChartOptionsBWM, lineChartOptionsCompareCompress, lineChartOptionsCompareDecompress, lineChartOptionsStressNG, lineChartOptionsStressNGPercent, radarChartOptions, radarDatasetColors } from '../../pages/server-details/chartOptions';
-import { CurrencyOption, availableCurrencies } from '../../tools/shared_data';
 import { DomSanitizer } from '@angular/platform-browser';
 import { AnalyticsService } from '../../services/analytics.service';
 import { DropdownManagerService } from '../../services/dropdown-manager.service';
@@ -30,6 +29,8 @@ export class ServerCompareChartsComponent {
   @Input() benchmarkMeta: any;
   @Input() benchmarkCategories: any[] = [];
   @Input() instancePropertyCategories: any[] = [];
+  @Input() isEmbedded = false;
+  @Input() showChart = 'all';
 
   @ViewChild('tooltipDefault') tooltip!: ElementRef;
   @ViewChild('tooltipGeekbench') tooltipGB!: ElementRef;
@@ -103,6 +104,7 @@ export class ServerCompareChartsComponent {
       dropdown2: undefined,
       data: [],
       show_more: false,
+      hidden: false
     },
     {
       chart: JSON.parse(JSON.stringify(redisChartTemplate)),
@@ -111,6 +113,7 @@ export class ServerCompareChartsComponent {
       dropdown2: undefined,
       data: [],
       show_more: false,
+      hidden: false
     }
   ];
 
@@ -162,12 +165,11 @@ export class ServerCompareChartsComponent {
     this.multiBarCharts.forEach((chartTemplate) => {
       const benchmarks = chartTemplate.chart.options.map((o: any) => o.benchmark_id);
       chartTemplate.data = this.benchmarkMeta.filter((b: any) => benchmarks.includes(b.benchmark_id));
+
+      chartTemplate.hidden = !(chartTemplate.chart.id === this.showChart || this.showChart === 'all');
     });
 
-    this.multiBarCharts.forEach((chartTemplate) => {
-      const benchmarks = chartTemplate.chart.options.map((o: any) => o.benchmark_id);
-      chartTemplate.data = this.benchmarkMeta.filter((b: any) => benchmarks.includes(b.benchmark_id));
-    });
+
 
     if(isPlatformBrowser(this.platformId)) {
 
@@ -195,6 +197,13 @@ export class ServerCompareChartsComponent {
 
       });
     }
+  }
+
+  isChartShown(id: string): boolean {
+    if(!this.showChart || this.showChart === 'all') {
+      return true;
+    }
+    return this.showChart === id;
   }
 
   toUpper(text: string) {

@@ -1,6 +1,6 @@
 <div>
   <table id="main-table" #mainTable class="items_table">
-    <thead>
+    <thead *ngIf="isChartShown('generic')">
       <tr>
         <th #tableFirstCol >
         </th>
@@ -33,7 +33,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr>
+      <tr *ngIf="isChartShown('generic')">
         <td>
           Vendor
         </td>
@@ -48,7 +48,7 @@
           </td>
         </ng-container>
       </tr>
-      <tr>
+      <tr *ngIf="isChartShown('generic')">
         <td>
           <div class="flex gap-1 items-center" >
             $Core
@@ -68,7 +68,7 @@
           </td>
         </ng-container>
       </tr>
-      <tr>
+      <tr *ngIf="isChartShown('generic')">
         <td>
           SCore All
         </td>
@@ -80,7 +80,7 @@
           </td>
         </ng-container>
       </tr>
-      <tr>
+      <tr *ngIf="isChartShown('generic')">
         <td>
           SCore Single
         </td>
@@ -92,7 +92,7 @@
           </td>
         </ng-container>
       </tr>
-      <tr>
+      <tr *ngIf="isChartShown('generic')">
         <td>
           Best spot price
         </td>
@@ -104,7 +104,7 @@
           </td>
         </ng-container>
       </tr>
-      <tr>
+      <tr *ngIf="isChartShown('generic')">
         <td>
           Best ondemand price
         </td>
@@ -116,36 +116,38 @@
           </td>
         </ng-container>
       </tr>
-      <ng-container *ngFor="let category of instancePropertyCategories">
-        <tr class="section_header">
-          <td>
-            <h2 class="text-xl font-semibold">{{category.name}}</h2>
-          </td>
-          <td [colSpan]="servers.length">
-
-          </td>
-        </tr>
-        <tr *ngFor="let column of category.properties; let i = index" >
-          <td class="whitespace-nowrap">
-            <div class="flex gap-2 items-center">
-              {{column.name}}
-              <lucide-icon
-                *ngIf="column.description"
-                name="info"
-                class="h-4 w-4 text-gray-200"
-                (mouseenter)="showTooltip($event, column.description)"
-                (mouseleave)="hideTooltip()">
-              </lucide-icon>
-            </div>
-          </td>
-          <ng-container *ngFor="let server of servers">
+      <ng-container *ngIf="isChartShown('generic')">
+        <ng-container *ngFor="let category of instancePropertyCategories">
+          <tr class="section_header">
             <td>
-              <div [style]="getBestCellStyle(column.id, server)" >
-                {{getProperty(column, server)}}
+              <h2 class="text-xl font-semibold">{{category.name}}</h2>
+            </td>
+            <td [colSpan]="servers.length">
+
+            </td>
+          </tr>
+          <tr *ngFor="let column of category.properties; let i = index" >
+            <td class="whitespace-nowrap">
+              <div class="flex gap-2 items-center">
+                {{column.name}}
+                <lucide-icon
+                  *ngIf="column.description"
+                  name="info"
+                  class="h-4 w-4 text-gray-200"
+                  (mouseenter)="showTooltip($event, column.description)"
+                  (mouseleave)="hideTooltip()">
+                </lucide-icon>
               </div>
             </td>
-          </ng-container>
-        </tr>
+            <ng-container *ngFor="let server of servers">
+              <td>
+                <div [style]="getBestCellStyle(column.id, server)" >
+                  {{getProperty(column, server)}}
+                </div>
+              </td>
+            </ng-container>
+          </tr>
+        </ng-container>
       </ng-container>
       <ng-container *ngFor="let category of benchmarkCategories">
         <ng-container *ngIf="category.data.length && !category.hidden">
@@ -195,7 +197,10 @@
                     (mouseleave)="hideTooltip()">
                   </lucide-icon>
                 </h3>
-                <button class="btn-primary py-2 px-3 flex gap-1 items-center sticky right-2" (click)="clipboardURL($event, 'benchmark_line_' + category.id)">
+                <button
+                  *ngIf="!isEmbedded"
+                  class="btn-primary py-2 px-3 flex gap-1 items-center sticky right-2"
+                  (click)="clipboardURL($event, 'benchmark_line_' + category.id)">
                   <lucide-icon name="{{clipboardIcon}}" size="16"></lucide-icon>
                 </button>
               </div>
@@ -218,10 +223,9 @@
                         </div>
                     </button>
                   </div>
-                  <div *ngIf="isBrowser()">
-                    <div chartType="bar">
+                  <div class="h-full" *ngIf="isBrowser()">
+                    <div class="chart_div" chartType="bar">
                       <canvas
-                        style="height: 350px; max-height: 350px; max-width:100%"
                         baseChart
                         [data]="lineChartDataBWmem"
                         [options]="lineChartOptionsBWMem"
@@ -247,10 +251,9 @@
                         </div>
                     </button>
                   </div>
-                  <div *ngIf="isBrowser()">
-                    <div chartType="bar">
+                  <div class="h-full" *ngIf="isBrowser()">
+                    <div class="chart_div" chartType="bar">
                       <canvas
-                        style="height: 350px; max-height: 350px; width: 100%"
                         baseChart
                         [data]="barChartDataSSL"
                         [options]="barChartOptionsSSL"
@@ -263,10 +266,9 @@
               </div>
               <div *ngIf="category.id === 'stress_ng'" >
                 <div class="block_full_inline" *ngIf="lineChartDataStressNG">
-                  <div *ngIf="isBrowser()">
-                    <div chartType="line">
+                  <div class="h-full" *ngIf="isBrowser()">
+                    <div class="chart_div" chartType="line">
                       <canvas
-                        style="height: 400px; max-height: 400px; width: 100%"
                         baseChart
                         [data]="lineChartDataStressNG"
                         [options]="lineChartOptionsStressNG"
@@ -279,10 +281,9 @@
               </div>
               <div *ngIf="category.id === 'stress_ng_pct'" >
                 <div class="block_full_inline" *ngIf="lineChartDataStressNG">
-                  <div *ngIf="isBrowser()">
-                    <div chartType="line">
+                  <div class="h-full" *ngIf="isBrowser()">
+                    <div class="chart_div" chartType="line">
                       <canvas
-                        style="height: 400px; max-height: 400px; width: 100%"
                         baseChart
                         [data]="lineChartDataStressNG"
                         [options]="lineChartOptionsStressNGPercent"
@@ -315,7 +316,6 @@
                   <div *ngIf="isBrowser()" class="charts_div">
                     <div chartType="bar" class="chart_div">
                       <canvas
-                        style="height: 350px; max-width:100%"
                         baseChart
                         [data]="lineChartDataCompress"
                         [options]="lineChartOptionsCompress"
@@ -325,7 +325,6 @@
                     </div>
                     <div chartType="bar" class="chart_div">
                       <canvas
-                        style="height: 350px; max-width:100%"
                         baseChart
                         [data]="lineChartDataDecompress"
                         [options]="lineChartOptionsDecompress"
@@ -343,7 +342,6 @@
                       <canvas
                         #chartPriceLowest
                         id="chartPriceLowest"
-                        style="max-height: 420px; max-width:100%"
                         baseChart
                         [data]="radarChartDataGeekSingle"
                         [options]="radarChartOptionsSingle"
@@ -355,7 +353,6 @@
                       <canvas
                         #chartPriceLowest
                         id="chartPriceLowest"
-                        style="max-height: 420px; max-width:100%"
                         baseChart
                         [data]="radarChartDataGeekMulti"
                         [options]="radarChartOptionsMulti"
@@ -368,6 +365,7 @@
               </div>
 
               <div class="mt-4 mb-8 flex justify-center"
+                *ngIf="!isEmbedded"
                 [ngClass]="{
                   'mb-8': !category.show_more
                 }">
@@ -377,7 +375,7 @@
               </div>
             </td>
           </tr>
-          <ng-container *ngIf="category.show_more">
+          <ng-container *ngIf="category.show_more && !isEmbedded">
             <ng-container *ngFor="let item of category.data">
               <tr *ngIf="category.data.length > 1">
                 <td [colSpan]="servers.length + 1" >
@@ -416,7 +414,7 @@
       </ng-container>
       </ng-container>
       <ng-container *ngFor="let chartItem of multiBarCharts">
-        <ng-container *ngIf="chartItem.chart.chartData">
+        <ng-container *ngIf="chartItem.chart.chartData && !chartItem.hidden">
           <tr class="section_header" id="benchmark_line">
             <td [colSpan]="2" >
               <h3 class="text-xl font-semibold flex gap-2 items-center">{{chartItem.chart.name}}
@@ -468,10 +466,9 @@
                       </div>
                     </button>
                   </div>
-                  <div *ngIf="isBrowser()">
-                    <div chartType="bar">
+                  <div class="h-full" *ngIf="isBrowser()">
+                    <div class="chart_div" chartType="bar">
                       <canvas
-                        style="height: 350px; max-height: 350px; max-width:100%"
                         baseChart
                         [data]="chartItem.chart.chartData"
                         [options]="chartItem.chart.chartOptions"
@@ -483,6 +480,7 @@
                 </div>
               </div>
               <div class="mt-4 mb-8 flex justify-center"
+                *ngIf="!isEmbedded"
                 [ngClass]="{
                   'mb-8': !chartItem.show_more
                 }">
@@ -531,7 +529,7 @@
       </ng-container>
       </ng-container>
 
-      <ng-container *ngIf="getUncategorizedBenchmarksCategories()?.length">
+      <ng-container *ngIf="getUncategorizedBenchmarksCategories()?.length && !isEmbedded">
         <tr class="section_header">
           <td [colSpan]="2" >
             <h3 class="pl-3 text-xl font-semibold">Further Benchmarks</h3>

@@ -184,8 +184,6 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
 
     this.seoHandler.updateTitleAndMetaTags(this.title, this.description, this.keywords);
 
-
-
     this.route.queryParams.subscribe(() => {
       this.setup();
     });
