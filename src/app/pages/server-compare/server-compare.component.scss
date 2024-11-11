@@ -101,7 +101,20 @@
     @apply flex gap-4;
     .chart_div {
       @apply w-1/2;
-      height: 420px;
+      height: 380px;
+    }
+  }
+}
+:host ::ng-deep .block_full_short_geekbench {
+  @apply px-4 py-4 bg-transparent flex flex-col gap-4 relative overflow-hidden;
+  width: calc(100%);
+  min-height: 460px;
+  height: 500px;
+  .charts_div {
+    @apply flex gap-4;
+    .chart_div {
+      @apply w-1/2;
+      height: 460px;
     }
   }
 }
@@ -110,6 +123,16 @@
   :host ::ng-deep .block_full_short_inline {
     min-height: 860px;
     height: 860px;
+    .charts_div {
+      flex-direction: column;
+      .chart_div {
+        width: 100%;
+      }
+    }
+  }
+  :host ::ng-deep .block_full_short_geekbench {
+    min-height: 940px;
+    height: 940px;
     .charts_div {
       flex-direction: column;
       .chart_div {
