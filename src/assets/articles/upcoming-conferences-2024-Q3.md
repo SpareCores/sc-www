@@ -5,7 +5,7 @@ date: 2024-04-24
 # ~100 character
 teaser: "We are excited to publicly announce the Spare Cores project to the dev community at three events in June/July."
 # 320x220
-image: /assets/images/blog/thumbnails/devops-conf-cover.jpg
+image: /assets/images/blog/thumbnails/devops-conf-cover.webp
 image_alt: AI-generated cover image on a DevOps conference with many attendees.
 author: Gergely Daroczi
 tags: [conference, talk, slides]

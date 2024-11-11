@@ -259,53 +259,55 @@
             <ng-container *ngFor="let category of benchmarkCategories">
               <ng-container *ngIf="category.data.length && !category.hidden">
                 <tr class="section_header" id="benchmark_line_{{category.id}}">
-                  <td [colSpan]="2" >
-                    <h3 class="text-xl font-semibold flex gap-2 items-center">{{category.name}}
-                      <lucide-icon
-                        name="circle-arrow-up"
-                        class="h-4 w-4 text-gray-200"
-                        (mouseenter)="showTooltip($event, 'Higher is better.')"
-                        (mouseleave)="hideTooltip()">
-                      </lucide-icon>
-                      <lucide-icon
-                        *ngIf="category.id === 'geekbench'"
-                        name="info"
-                        class="h-4 w-4 text-gray-200"
-                        (mouseenter)="showTooltipGB($event)"
-                        (mouseleave)="hideTooltipGB()">
-                      </lucide-icon>
-                      <lucide-icon
-                        *ngIf="category.id === 'bw_mem' || category.id === 'openssl'"
-                        name="info"
-                        class="h-4 w-4 text-gray-200"
-                        (mouseenter)="showTooltipChart($event, category.id)"
-                        (mouseleave)="hideTooltip()">
-                      </lucide-icon>
-                      <lucide-icon
-                        *ngIf="category.id === 'stress_ng'"
-                        name="info"
-                        class="h-4 w-4 text-gray-200"
-                        (mouseenter)="showTooltipChart($event, 'stress_ng:div16')"
-                        (mouseleave)="hideTooltip()">
-                      </lucide-icon>
-                      <lucide-icon
-                        *ngIf="category.id === 'stress_ng_pct'"
-                        name="info"
-                        class="h-4 w-4 text-gray-200"
-                        (mouseenter)="showTooltip($event, 'The relative performance is a percentage showing the multi-core SCore\'s normalized value (multi-core SCore/vCPUs)  compared to the single-core SCore. This metric shows how well a server can scale to multiple vCPUs, and e.g. the effect of Hyper-Threading.')"
-                        (mouseleave)="hideTooltip()">
-                      </lucide-icon>
-                      <lucide-icon
-                        *ngIf="category.id === 'compress'"
-                        name="info"
-                        class="h-4 w-4 text-gray-200"
-                        (mouseenter)="showTooltip($event, 'Measuring the compression ratio and speed while compressing and decompressing the dickens.txt of the Silesia corpus (10 MB uncompressed) using various algorithms, compressions levels and other extra arguments.')"
-                        (mouseleave)="hideTooltip()">
-                      </lucide-icon>
-                    </h3>
-                  </td>
-                  <td [colSpan]="servers.length -1">
-
+                  <td [colSpan]="getSectionColSpan()" >
+                    <div class="flex justify-between">
+                      <h3 class="text-xl font-semibold flex gap-2 items-center">{{category.name}}
+                        <lucide-icon
+                          name="circle-arrow-up"
+                          class="h-4 w-4 text-gray-200"
+                          (mouseenter)="showTooltip($event, 'Higher is better.')"
+                          (mouseleave)="hideTooltip()">
+                        </lucide-icon>
+                        <lucide-icon
+                          *ngIf="category.id === 'geekbench'"
+                          name="info"
+                          class="h-4 w-4 text-gray-200"
+                          (mouseenter)="showTooltipGB($event)"
+                          (mouseleave)="hideTooltipGB()">
+                        </lucide-icon>
+                        <lucide-icon
+                          *ngIf="category.id === 'bw_mem' || category.id === 'openssl'"
+                          name="info"
+                          class="h-4 w-4 text-gray-200"
+                          (mouseenter)="showTooltipChart($event, category.id)"
+                          (mouseleave)="hideTooltip()">
+                        </lucide-icon>
+                        <lucide-icon
+                          *ngIf="category.id === 'stress_ng'"
+                          name="info"
+                          class="h-4 w-4 text-gray-200"
+                          (mouseenter)="showTooltipChart($event, 'stress_ng:div16')"
+                          (mouseleave)="hideTooltip()">
+                        </lucide-icon>
+                        <lucide-icon
+                          *ngIf="category.id === 'stress_ng_pct'"
+                          name="info"
+                          class="h-4 w-4 text-gray-200"
+                          (mouseenter)="showTooltip($event, 'The relative performance is a percentage showing the multi-core SCore\'s normalized value (multi-core SCore/vCPUs)  compared to the single-core SCore. This metric shows how well a server can scale to multiple vCPUs, and e.g. the effect of Hyper-Threading.')"
+                          (mouseleave)="hideTooltip()">
+                        </lucide-icon>
+                        <lucide-icon
+                          *ngIf="category.id === 'compress'"
+                          name="info"
+                          class="h-4 w-4 text-gray-200"
+                          (mouseenter)="showTooltip($event, 'Measuring the compression ratio and speed while compressing and decompressing the dickens.txt of the Silesia corpus (10 MB uncompressed) using various algorithms, compressions levels and other extra arguments.')"
+                          (mouseleave)="hideTooltip()">
+                        </lucide-icon>
+                      </h3>
+                      <button class="btn-primary py-2 px-3 flex gap-1 items-center sticky right-2" (click)="clipboardURL($event, 'benchmark_line_' + category.id)">
+                        <lucide-icon name="{{clipboardIcon}}" size="16"></lucide-icon>
+                      </button>
+                    </div>
                   </td>
                 </tr>
                 <tr>
@@ -482,7 +484,7 @@
                         {{category.show_more ? 'Hide' : 'Show'}} Details
                       </button>
                     </div>
-                </td>
+                  </td>
                 </tr>
                 <ng-container *ngIf="category.show_more">
                   <ng-container *ngFor="let item of category.data">
@@ -739,13 +741,13 @@
   </ul>
 </div>
 
-<ng-container *ngFor="let charItem of multiBarCharts">
-  <div id="{{charItem.chart.id}}_options" class="z-100 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid">
+<ng-container *ngFor="let chartItem of multiBarCharts">
+  <div id="{{chartItem.chart.id}}_options" class="z-100 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid">
     <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
-      <li *ngFor="let item of charItem.chart.options, let i = index" class="flex py-1 gap-2 items-center">
+      <li *ngFor="let item of chartItem.chart.options, let i = index" class="flex py-1 gap-2 items-center">
           <div
             class="text-emerald-400 hover:text-emerald-500 cursor-pointer font-bold ml-2"
-            (click)="selectChartTemplateOption(charItem, i)">
+            (click)="selectChartTemplateOption(chartItem, i)">
             {{item.name}}
           </div>
       </li>
@@ -753,14 +755,14 @@
   </div>
 
   <div
-    *ngIf="charItem.chart.secondaryOptions?.length > 1"
-    id="{{charItem.chart.id}}_options2"
+    *ngIf="chartItem.chart.secondaryOptions?.length > 1"
+    id="{{chartItem.chart.id}}_options2"
     class="z-100 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid">
     <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
-      <li *ngFor="let item of charItem.chart.secondaryOptions, let i = index" class="flex py-1 gap-2 items-center">
+      <li *ngFor="let item of chartItem.chart.secondaryOptions, let i = index" class="flex py-1 gap-2 items-center">
           <div
             class="text-emerald-400 hover:text-emerald-500 cursor-pointer font-bold ml-2"
-            (click)="selectChartTemplateOption2(charItem, i)">
+            (click)="selectChartTemplateOption2(chartItem, i)">
             {{item.name}}
           </div>
       </li>

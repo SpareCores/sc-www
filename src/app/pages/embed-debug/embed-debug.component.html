@@ -1,0 +1,67 @@
+<div class="bg-primary py-4 px-4 w-full gap-4 flex flex-col" *ngIf="isBrowser()">
+  <h3 class="text-white text-xl"> Iframe Options </h3>
+  <div class="flex gap-4 items-center text-white" *ngIf="!isModal">
+    <div>Vendor</div>
+    <input
+      type="text"
+      [(ngModel)]="vendor"
+      (ngModelChange)="updateSrc()"
+      class="w-full  accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm  text-black"
+    />
+    <div>Id</div>
+    <input
+      type="text"
+      [(ngModel)]="id"
+      (ngModelChange)="updateSrc()"
+      class="w-full accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm  text-black"
+    />
+  </div>
+  <div class="flex gap-4 items-center text-white">
+    <div>Height</div>
+    <input
+      type="text"
+      [(ngModel)]="height"
+      min="400"
+      (ngModelChange)="updateSrc()"
+      class="w-20 p-2 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm text-black"
+    />
+    <div>Width</div>
+    <input
+      type="text"
+      [(ngModel)]="width"
+      min="400"
+      (ngModelChange)="updateSrc()"
+      class="w-20 p-2 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm  text-black"
+    />
+    <div>Chart</div>
+    <select
+      [(ngModel)]="chartname"
+      (ngModelChange)="updateSrc()"
+      class="w-full accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm text-black"
+      >
+        <option *ngFor="let item of charts" value="{{item.id}}" >{{item.name}}</option>
+      </select>
+  </div>
+
+  <div *ngIf="chartname" class="relative">
+    <pre  class="html text-white bg-secondary rounded-lg"><code class="html">{{getIframeHTML()}}</code></pre>
+    <button
+      class="absolute top-2 right-2 p-2 bg-emerald-400 h-8 w-8 rounded-lg flex text-white"
+      (click)="ClipboardIframeHTML()">
+      <lucide-icon name="{{copyIcon}}" class="h-4 w-4"></lucide-icon>
+    </button>
+  </div>
+  <h3 class="text-white text-xl"> Iframe Preview </h3>
+  <p class="text-white" *ngIf="!chartname"> Select which chart to show. </p>
+  <script>
+    window.onload = function() {
+      var iframe = document.getElementById('myIframe');
+      iframe.style.height = (iframe.offsetWidth * 0.6) + 'px';
+    };
+  </script>
+  <iframe
+    id="myIframe"
+    [src]="src"
+    [style]="getStyles()"
+  ></iframe>
+</div>

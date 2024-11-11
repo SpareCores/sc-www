@@ -1,7 +1,7 @@
 /* eslint-disable prefer-const */
 import { AfterViewInit, Component, ElementRef, HostBinding, Inject, OnInit, PLATFORM_ID, ViewChild } from '@angular/core';
 import { KeeperAPIService } from '../../services/keeper-api.service';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { LucideAngularModule } from 'lucide-angular';
 import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
@@ -250,6 +250,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     private serverCompare: ServerCompareService,
     private dropdownManager: DropdownManagerService,
     private analytics: AnalyticsService,
+    private router: Router,
     private route: ActivatedRoute) { }
 
   ngOnInit() {
@@ -534,6 +535,28 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
           this.isTableOutsideViewport = false;
         }
       });
+
+      this.adjustScrollForFragment();
+    }
+  }
+
+  private adjustScrollForFragment() {
+    const fragment = window.location.hash;
+    if (fragment) {
+      const interval = setInterval(() => {
+        const element = document.querySelector(fragment);
+        if (element) {
+          const headerOffset = 6.75 * 16;
+          const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+          const offsetPosition = elementPosition - headerOffset;
+
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          });
+          clearInterval(interval);
+        }
+      }, 50);
     }
   }
 
@@ -541,13 +564,22 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     return text?.toUpperCase();
   }
 
-  clipboardURL(event: any) {
-    const url = window.location.href;
+  clipboardURL(event: any, fragment?: string) {
+
+    let url = window.location.href;
+
+    if(fragment) {
+      // replace url fragment
+      url = url.replace(/#.*$/, '') + '#' + fragment;
+    }
+
     navigator.clipboard.writeText(url);
 
     this.clipboardIcon = 'check';
 
-    this.showTooltip(event, 'Link copied to clipboard!', true);
+    if(!fragment) {
+      this.showTooltip(event, 'Link copied to clipboard!', true);
+    }
 
     setTimeout(() => {
       this.clipboardIcon = 'clipboard';
@@ -1439,5 +1471,9 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
       return { width: `${width}px` };
     }
     return {};
+  }
+
+  getSectionColSpan() {
+    return Math.max(this.servers.length + 1, 3);
   }
 }

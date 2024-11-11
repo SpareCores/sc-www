@@ -28,6 +28,7 @@ export class LandingpageComponent implements OnInit {
     '✅ Google Cloud Platform (Done)',
     '✅ Hetzner Cloud (Done)',
     '✅ Microsoft Azure (Done)',
+    '⚙️ UpCloud (In Progress)',
     '⚙️ Vultr (In Progress)',
     '🗓️ Oracle Cloud Infrastructure (Planned)',
     '🗓️ Scaleway (Planned)',
@@ -45,11 +46,11 @@ export class LandingpageComponent implements OnInit {
       text: 'server types'
     },
     {
-      count: '366,488',
+      count: '800,000+',
       text: 'benchmark scores'
     },
     {
-      count: '270,228',
+      count: '~275,000',
       text: 'live price records'
     },
     {
@@ -317,6 +318,14 @@ export class LandingpageComponent implements OnInit {
       // try to find 3 different machines from servers
       for(let i = 1; i < 3; i++) {
         let server = servers.find(s => top3server.findIndex((t)=> t.server.server_id === s.server.server_id) === -1);
+        if(server) {
+          top3server[i] = server;
+        }
+      }
+
+      // try to find 3 different vendors from servers
+      for(let i = 1; i < 3; i++) {
+        let server = servers.find(s => top3server.findIndex((t)=> t.server.vendor_id === s.server.vendor_id) === -1);
         if(server) {
           top3server[i] = server;
         }
