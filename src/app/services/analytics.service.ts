@@ -23,22 +23,24 @@ export class AnalyticsService {
     }
 
     if (!this.trackingInitialized && POSTHOG_KEY && POSTHOG_HOST && typeof window !== 'undefined' && typeof document !== 'undefined') {
+      /*
       posthog.init(POSTHOG_KEY, {
         api_host: POSTHOG_HOST,
         persistence: 'sessionStorage',
       });
       this.trackingInitialized = true;
+      */
     }
   }
 
   public trackEvent(eventName: string, properties: { [key: string]: any }): void {
     if (this.trackingInitialized) {
-      posthog.capture(eventName, properties)
+      //posthog.capture(eventName, properties)
     }
   }
 
   public getId() {
-    return posthog.get_distinct_id();
+    //return posthog.get_distinct_id();
   }
 
   public SentryException(exception: any, hint?: any) {
