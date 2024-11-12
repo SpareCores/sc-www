@@ -1,4 +1,4 @@
-import { Component, HostBinding, Inject, PLATFORM_ID, OnInit, ViewChild, ElementRef} from '@angular/core';
+import { Component, Inject, PLATFORM_ID, OnInit, ViewChild, ElementRef} from '@angular/core';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { KeeperAPIService } from '../../services/keeper-api.service';
 import { OrderDir, ServerPriceWithPKs } from '../../../../sdk/data-contracts';
