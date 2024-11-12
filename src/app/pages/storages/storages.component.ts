@@ -23,7 +23,6 @@ import { DropdownManagerService } from '../../services/dropdown-manager.service'
 })
 export class StoragesComponent implements OnInit {
 
-  @HostBinding('attr.ngSkipHydration') ngSkipHydration = 'true';
 
   limit = 10;
   page = 1;

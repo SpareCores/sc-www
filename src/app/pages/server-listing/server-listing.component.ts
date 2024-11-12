@@ -62,7 +62,6 @@ export type RegionVendorMetadata = {
   styleUrl: './server-listing.component.scss',
 })
 export class ServerListingComponent implements OnInit, OnDestroy {
-  @HostBinding('attr.ngSkipHydration') ngSkipHydration = 'true';
 
   isCollapsed = false;
 

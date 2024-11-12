@@ -60,7 +60,6 @@ export type RegionVendorMetadata = {
   styleUrl: './server-prices.component.scss'
 })
 export class ServerPricesComponent implements OnInit {
-  @HostBinding('attr.ngSkipHydration') ngSkipHydration = 'true';
 
   isCollapsed = false;
 
