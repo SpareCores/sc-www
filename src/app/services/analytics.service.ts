@@ -32,14 +32,16 @@ export class AnalyticsService {
     }
   }
 
-  public trackEvent(): void {
+  public trackEvent(eventName: string, properties: { [key: string]: any }): void {
     if (this.trackingInitialized) {
       //posthog.capture(eventName, properties)
+      console.log('Event tracked:', eventName, properties);
     }
   }
 
   public getId() {
     //return posthog.get_distinct_id();
+    return '';
   }
 
   public SentryException(exception: any, hint?: any) {
