@@ -1,6 +1,5 @@
 import { isPlatformBrowser } from '@angular/common';
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
-import posthog from 'posthog-js'
 import * as Sentry from "@sentry/angular";
 
 const POSTHOG_KEY = import.meta?.env?.NG_APP_POSTHOG_KEY;
@@ -33,7 +32,7 @@ export class AnalyticsService {
     }
   }
 
-  public trackEvent(eventName: string, properties: { [key: string]: any }): void {
+  public trackEvent(): void {
     if (this.trackingInitialized) {
       //posthog.capture(eventName, properties)
     }
