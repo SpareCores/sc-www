@@ -23,8 +23,6 @@ import { TableColumn } from '../server-listing/server-listing.component';
 })
 export class TrafficPricesComponent implements OnInit {
 
-  @HostBinding('attr.ngSkipHydration') ngSkipHydration = 'true';
-
   limit = 10;
   page = 1;
   totalPages = 1;
