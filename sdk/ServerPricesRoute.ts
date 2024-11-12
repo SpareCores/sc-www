@@ -284,7 +284,8 @@ export namespace ServerPrices {
         | "SG"
         | "TW"
         | "US"
-        | "ZA";
+        | "ZA"
+        | "NZ";
       /**
        * GPU count
        * Minimum number of GPUs.
