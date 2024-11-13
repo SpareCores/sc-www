@@ -6,11 +6,12 @@ import { KeeperAPIService } from '../../services/keeper-api.service';
 import { Benchmark } from '../../../../sdk/data-contracts';
 import { ServerChartsComponent } from '../../components/server-charts/server-charts.component';
 import { SeoHandlerService } from '../../services/seo-handler.service';
+import { LucideAngularModule } from 'lucide-angular';
 
 @Component({
   selector: 'app-embedded-server-chart',
   standalone: true,
-  imports: [ServerChartsComponent, CommonModule],
+  imports: [ServerChartsComponent, CommonModule, LucideAngularModule],
   templateUrl: './embedded-server-chart.component.html',
   styleUrl: './embedded-server-chart.component.scss'
 })

@@ -10,16 +10,17 @@
   ></app-server-charts>
   <button *ngIf="serverDetails" class="w-full flex">
     <a
-      class="w-full flex flex-col justify-center items-center text-white bg-primary px-4 py-2 hover:text-gray-200"
+      class="w-full flex flex-col justify-center items-center text-white bg-primary px-6 py-4 hover:text-gray-200"
       target="_blank"
       href="{{getBaseURL()}}/server/{{serverDetails.vendor_id}}/{{serverDetails.server_id}}"
       >
-      <div class="flex gap-2 items-center">
-        <span class="flex items-center">Powered by</span>
-        <img _ngcontent-ng-c4175204996="" src="./assets/images/logos/logo_header.png" alt="Spare Cores Logo" class="h-8">
+      <div class="w-full flex gap-2 items-center justify-between">
+        <img src="./assets/images/logos/logo_embed_footer.png" alt="Spare Cores Logo" class="h-8">
+        <div class="flex gap-2">
+          <lucide-icon name="external-link" class="text-emerald-400 h-5 w-5"></lucide-icon>
+          <span class="text-sm underline">Learn more about <i class="text-emerald-400 underline decoration-emerald-400">{{serverDetails.display_name}}</i></span>
+        </div>
       </div>
-      <span class="text-xs">Click here to learn more about <i class="text-emerald-400">{{serverDetails.display_name}}</i></span>
-      </a
-    >
+    </a>
   </button>
 </div>
