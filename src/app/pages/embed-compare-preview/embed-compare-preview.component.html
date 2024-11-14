@@ -46,12 +46,6 @@
   </div>
   <h3 class="text-white text-xl"> Iframe Preview </h3>
   <p class="text-white" *ngIf="!chartname"> Select which chart to show. </p>
-  <script>
-    window.onload = function() {
-      var iframe = document.getElementById('myIframe');
-      iframe.style.height = (iframe.offsetWidth * 0.6) + 'px';
-    };
-  </script>
   <iframe
     id="myIframe"
     [src]="src"

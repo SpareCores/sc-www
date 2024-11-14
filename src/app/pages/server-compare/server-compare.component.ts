@@ -14,11 +14,19 @@ import { CurrencyOption, availableCurrencies } from '../../tools/shared_data';
 import { ExtendedServerDetails } from '../server-details/server-details.component';
 import hljs from 'highlight.js';
 import { ServerCompareChartsComponent } from "../../components/server-compare-charts/server-compare-charts.component";
+import { EmbedComparePreviewComponent } from '../embed-compare-preview/embed-compare-preview.component';
+import { Modal, ModalOptions } from 'flowbite';
+
+const optionsModal: ModalOptions = {
+  backdropClasses:
+      'bg-gray-900/50 fixed inset-0 z-40',
+  closable: true,
+};
 
 @Component({
   selector: 'app-server-compare',
   standalone: true,
-  imports: [BreadcrumbsComponent, LucideAngularModule, CommonModule, FormsModule, RouterModule, ServerCompareChartsComponent],
+  imports: [BreadcrumbsComponent, LucideAngularModule, CommonModule, FormsModule, RouterModule, ServerCompareChartsComponent, EmbedComparePreviewComponent],
   templateUrl: './server-compare.component.html',
   styleUrl: './server-compare.component.scss',
 })
@@ -145,6 +153,20 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
   keywords = 'compare, servers, server, hosting, cloud, vps, dedicated, comparison';
 
   instances: any[] = [];
+  instancesRaw!: string;
+
+  embeddableCharts = [
+    {id: 'bw_mem', name: 'Memory bandwidth' },
+    {id: 'compress', name: 'Compression' },
+    {id: 'geekbench', name: 'Geekbench' },
+    {id: 'openssl', name: 'OpenSSL' },
+    {id: 'stress_ng_div16', name: 'Stress-ng div16' },
+    {id: 'stress_ng_relative', name: 'Stress-ng relative' },
+    {id: 'static_web', name: 'Static web' },
+    {id: 'redis', name: 'Redis' }
+  ];
+
+  modalEmbed: any;
 
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   specialCompares: any[] = require('./special-compares');
@@ -201,7 +223,9 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
         }
       }
     } else if(param) {
-      this.instances = JSON.parse(atob(param));
+      this.instancesRaw = param;
+      this.instances = JSON.parse(atob(this.instancesRaw));
+
       if(this.instances?.length) {
         let breadcrumb = { name: `Compare (${this.instances?.length})`, url: `/compare`, queryParams: { instances: param }};
         if(this.breadcrumbs.length < 3) {
@@ -358,6 +382,13 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
         if(isPlatformBrowser(this.platformId)) {
           this.dropdownManager.initDropdown('currency_button', 'currency_options').then((dropdown) => {
             this.dropdownCurrency = dropdown;
+          });
+
+          const targetElModal = document.getElementById('large-modal');
+
+          this.modalEmbed = new Modal(targetElModal, optionsModal,  {
+            id: 'large-modal',
+            override: true
           });
         }
 
@@ -540,4 +571,13 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     }
     return {};
   }
+
+  openModal() {
+    this.modalEmbed?.show();
+  }
+
+  closeModal(confirm: boolean) {
+    this.modalEmbed?.hide();
+  }
+
 }

@@ -15,7 +15,6 @@ import { LucideAngularModule } from 'lucide-angular';
 })
 export class EmbedComparePreviewComponent {
 
-
   @Input() instances!: string;
   @Input() chartname!: string;
   @Input() isModal!: boolean;
