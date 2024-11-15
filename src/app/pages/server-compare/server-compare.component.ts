@@ -158,7 +158,9 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
   embeddableCharts = [
     {id: 'bw_mem', name: 'Memory bandwidth' },
     {id: 'compress', name: 'Compression' },
-    {id: 'geekbench', name: 'Geekbench' },
+    {id: 'geekbench', name: 'Geekbench Both' },
+    {id: 'geekbench_single', name: 'Geekbench SingleCore' },
+    {id: 'geekbench_multi', name: 'Geekbench MultiCore' },
     {id: 'openssl', name: 'OpenSSL' },
     {id: 'stress_ng_div16', name: 'Stress-ng div16' },
     {id: 'stress_ng_relative', name: 'Stress-ng relative' },
@@ -215,6 +217,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
       const specialCompare = this.specialCompares.find((x: any) => x.id === id);
       if(specialCompare) {
         this.instances = specialCompare.instances;
+        this.instancesRaw = btoa(JSON.stringify(this.instances));
         let breadcrumb = { name: specialCompare.title, url: `/compare/${specialCompare.id}`};
         if(this.breadcrumbs.length < 3) {
           this.breadcrumbs.push(breadcrumb);
@@ -576,7 +579,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     this.modalEmbed?.show();
   }
 
-  closeModal(confirm: boolean) {
+  closeModal() {
     this.modalEmbed?.hide();
   }
 

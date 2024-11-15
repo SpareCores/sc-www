@@ -162,7 +162,7 @@
                     (mouseleave)="hideTooltip()">
                   </lucide-icon>
                   <lucide-icon
-                    *ngIf="category.id === 'geekbench'"
+                    *ngIf="category.id === 'geekbench' || category.id === 'geekbench_single' || category.id === 'geekbench_multi'"
                     name="info"
                     class="h-4 w-4 text-gray-200"
                     (mouseenter)="showTooltipGB($event)"
@@ -335,10 +335,13 @@
                   </div>
                 </div>
               </div>
-              <div *ngIf="category.id === 'geekbench'">
+              <div *ngIf="category.id === 'geekbench' || category.id === 'geekbench_single' || category.id === 'geekbench_multi'">
                 <div class="block_full_short_geekbench" *ngIf="radarChartDataGeekSingle">
-                  <div *ngIf="isBrowser()" class="charts_div">
-                    <div chartType="bar"  class="chart_div w-full flex justify-center">
+                  <div *ngIf="isBrowser()" class="charts_div justify-center">
+                    <div
+                      *ngIf="category.id !== 'geekbench_multi'"
+                      chartType="bar"
+                      class="chart_div w-full flex justify-center">
                       <canvas
                         style="max-width: 100%; width: 100%;"
                         #chartPriceLowest
@@ -350,7 +353,10 @@
                       >
                       </canvas>
                     </div>
-                    <div chartType="bar"  class="chart_div w-full flex justify-center">
+                    <div
+                      chartType="bar"
+                      *ngIf="category.id !== 'geekbench_single'"
+                      class="chart_div w-full flex justify-center">
                       <canvas
                         style="max-width: 100%; width: 100%;"
                         #chartPriceLowest

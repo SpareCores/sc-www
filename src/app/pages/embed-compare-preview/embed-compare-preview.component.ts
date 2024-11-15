@@ -29,7 +29,9 @@ export class EmbedComparePreviewComponent {
   @Input() charts = [
     {id: 'bw_mem', name: 'Memory bandwidth' },
     {id: 'compress', name: 'Compression' },
-    {id: 'geekbench', name: 'Geekbench' },
+    {id: 'geekbench', name: 'Geekbench Both' },
+    {id: 'geekbench_single', name: 'Geekbench SingleCore' },
+    {id: 'geekbench_multi', name: 'Geekbench MultiCore' },
     {id: 'openssl', name: 'OpenSSL' },
     {id: 'stress_ng_div16', name: 'Stress-ng div16' },
     {id: 'stress_ng_relative', name: 'Stress-ng relative' },
@@ -49,14 +51,13 @@ export class EmbedComparePreviewComponent {
 
   ngOnInit() {
     this.route.params.subscribe(params => {
-      this.chartname = params['chartname'];
+      this.chartname = params['chartname'] || this.chartname;
     });
 
     this.route.queryParams.subscribe(params => {
-      this.instances = params['instances'];
+      this.instances = params['instances'] || this.instances;
       this.setup();
     });
-
   }
 
   setup() {
@@ -84,7 +85,7 @@ export class EmbedComparePreviewComponent {
   }
 
   updateSrc() {
-    this.src = this.sanitizer.bypassSecurityTrustResourceUrl(`${this.SEOHandler.getBaseURL()}/embed/compare/${this.chartname}?instances=${this.instances}`);
+    this.setup();
   }
 
   getIframeHTML() {

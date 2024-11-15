@@ -63,6 +63,56 @@ export class EmbeddedCompareChartComponent {
       show_more: false,
       hidden: true
     },
+    { name: 'Geekbench',
+      id: 'geekbench_single',
+      benchmarks: [
+      "geekbench:text_processing",
+      "geekbench:structure_from_motion",
+      "geekbench:score",
+      "geekbench:ray_tracer",
+      "geekbench:photo_library",
+      "geekbench:photo_filter",
+      "geekbench:pdf_renderer",
+      "geekbench:object_remover",
+      "geekbench:object_detection",
+      "geekbench:navigation",
+      "geekbench:html5_browser",
+      "geekbench:horizon_detection",
+      "geekbench:hdr",
+      "geekbench:file_compression",
+      "geekbench:clang",
+      "geekbench:background_blur",
+      "geekbench:asset_compression"
+      ],
+      data: [],
+      show_more: false,
+      hidden: true
+    },
+    { name: 'Geekbench',
+      id: 'geekbench_multi',
+      benchmarks: [
+      "geekbench:text_processing",
+      "geekbench:structure_from_motion",
+      "geekbench:score",
+      "geekbench:ray_tracer",
+      "geekbench:photo_library",
+      "geekbench:photo_filter",
+      "geekbench:pdf_renderer",
+      "geekbench:object_remover",
+      "geekbench:object_detection",
+      "geekbench:navigation",
+      "geekbench:html5_browser",
+      "geekbench:horizon_detection",
+      "geekbench:hdr",
+      "geekbench:file_compression",
+      "geekbench:clang",
+      "geekbench:background_blur",
+      "geekbench:asset_compression"
+      ],
+      data: [],
+      show_more: false,
+      hidden: true
+    },
     {
       name: 'Memory bandwidth',
       id: 'bw_mem',
@@ -126,7 +176,7 @@ export class EmbeddedCompareChartComponent {
   setup() {
     const chartname = this.route.snapshot.params['chartname'];
 
-    this.showChart = chartname || 'all';
+    this.showChart = chartname;
     this.instancesRaw = this.route.snapshot.queryParams['instances'];
 
     if(!this.instancesRaw) {
@@ -134,7 +184,7 @@ export class EmbeddedCompareChartComponent {
     }
 
     this.benchmarkCategories.forEach((category) => {
-      category.hidden = !this.showChart.includes(category.id) || this.showChart === 'all';
+      category.hidden = !(this.showChart === category.id || this.showChart === 'all');
     });
 
     this.instances = JSON.parse(atob(this.instancesRaw));

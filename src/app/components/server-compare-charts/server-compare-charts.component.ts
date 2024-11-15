@@ -169,8 +169,6 @@ export class ServerCompareChartsComponent {
       chartTemplate.hidden = !(chartTemplate.chart.id === this.showChart || this.showChart === 'all');
     });
 
-
-
     if(isPlatformBrowser(this.platformId)) {
 
       this.initializeBenchmarkCharts();
@@ -379,8 +377,8 @@ showTooltipChart(el: any, type: string) {
   if(content) {
     const tooltip = this.tooltip.nativeElement;
     const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
-    tooltip.style.left = `${el.target.getBoundingClientRect().right + 5}px`;
-    tooltip.style.top = `${el.target.getBoundingClientRect().top - 45 + scrollPosition}px`;
+    tooltip.style.left = `${el.target.getBoundingClientRect().left - 25}px`;
+    tooltip.style.top = `${el.target.getBoundingClientRect().bottom + 5 + scrollPosition}px`;
     tooltip.style.display = 'block';
     tooltip.style.opacity = '1';
 
