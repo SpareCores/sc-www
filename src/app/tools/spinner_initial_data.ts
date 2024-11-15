@@ -2,147 +2,147 @@ export const spinner_initial_data = [
   [
     {
       "name": "AWS",
-      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/aws.svg"
+      "logo": "/assets/images/vendors/aws.svg"
     },
     {
       "name": "AWS",
-      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/aws.svg"
+      "logo": "/assets/images/vendors/aws.svg"
     },
     {
       "name": "GCP",
-      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/gcp.svg"
+      "logo": "/assets/images/vendors/gcp.svg"
     },
     {
       "name": "GCP",
-      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/gcp.svg"
+      "logo": "/assets/images/vendors/gcp.svg"
     },
     {
       "name": "AWS",
-      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/aws.svg"
+      "logo": "/assets/images/vendors/aws.svg"
     },
     {
       "name": "GCP",
-      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/gcp.svg"
+      "logo": "/assets/images/vendors/gcp.svg"
     },
     {
       "name": "Hetzner",
-      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/hcloud.svg"
+      "logo": "/assets/images/vendors/hcloud.svg"
     },
     {
       "name": "GCP",
-      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/gcp.svg"
+      "logo": "/assets/images/vendors/gcp.svg"
     },
     {
       "name": "GCP",
-      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/gcp.svg"
+      "logo": "/assets/images/vendors/gcp.svg"
     },
     {
       "name": "AWS",
-      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/aws.svg"
+      "logo": "/assets/images/vendors/aws.svg"
     },
     {
       "name": "Hetzner",
-      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/hcloud.svg"
+      "logo": "/assets/images/vendors/hcloud.svg"
     },
     {
       "name": "AWS",
-      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/aws.svg"
+      "logo": "/assets/images/vendors/aws.svg"
     },
     {
       "name": "GCP",
-      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/gcp.svg"
+      "logo": "/assets/images/vendors/gcp.svg"
     },
     {
       "name": "AWS",
-      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/aws.svg"
+      "logo": "/assets/images/vendors/aws.svg"
     },
     {
       "name": "AWS",
-      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/aws.svg"
+      "logo": "/assets/images/vendors/aws.svg"
     },
     {
       "name": "AWS",
-      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/aws.svg"
+      "logo": "/assets/images/vendors/aws.svg"
     },
     {
       "name": "Hetzner",
-      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/hcloud.svg"
+      "logo": "/assets/images/vendors/hcloud.svg"
     },
     {
       "name": "AWS",
-      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/aws.svg"
+      "logo": "/assets/images/vendors/aws.svg"
     },
     {
       "name": "GCP",
-      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/gcp.svg"
+      "logo": "/assets/images/vendors/gcp.svg"
     },
     {
       "name": "AWS",
-      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/aws.svg"
+      "logo": "/assets/images/vendors/aws.svg"
     },
     {
       "name": "AWS",
-      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/aws.svg"
+      "logo": "/assets/images/vendors/aws.svg"
     },
     {
       "name": "AWS",
-      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/aws.svg"
+      "logo": "/assets/images/vendors/aws.svg"
     },
     {
       "name": "GCP",
-      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/gcp.svg"
+      "logo": "/assets/images/vendors/gcp.svg"
     },
     {
       "name": "Hetzner",
-      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/hcloud.svg"
+      "logo": "/assets/images/vendors/hcloud.svg"
     },
     {
       "name": "AWS",
-      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/aws.svg"
+      "logo": "/assets/images/vendors/aws.svg"
     },
     {
       "name": "AWS",
-      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/aws.svg"
+      "logo": "/assets/images/vendors/aws.svg"
     },
     {
       "name": "GCP",
-      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/gcp.svg"
+      "logo": "/assets/images/vendors/gcp.svg"
     },
     {
       "name": "AWS",
-      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/aws.svg"
+      "logo": "/assets/images/vendors/aws.svg"
     },
     {
       "name": "AWS",
-      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/aws.svg"
+      "logo": "/assets/images/vendors/aws.svg"
     },
     {
       "name": "Hetzner",
-      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/hcloud.svg"
+      "logo": "/assets/images/vendors/hcloud.svg"
     },
     {
       "name": "AWS",
-      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/aws.svg"
+      "logo": "/assets/images/vendors/aws.svg"
     },
     {
       "name": "AWS",
-      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/aws.svg"
+      "logo": "/assets/images/vendors/aws.svg"
     },
     {
       "name": "AWS",
-      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/aws.svg"
+      "logo": "/assets/images/vendors/aws.svg"
     },
     {
       "name": "GCP",
-      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/gcp.svg"
+      "logo": "/assets/images/vendors/gcp.svg"
     },
     {
       "name": "AWS",
-      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/aws.svg"
+      "logo": "/assets/images/vendors/aws.svg"
     },
     {
       "name": "GCP",
-      "logo": "https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/gcp.svg"
+      "logo": "/assets/images/vendors/gcp.svg"
     }
   ],
   [
