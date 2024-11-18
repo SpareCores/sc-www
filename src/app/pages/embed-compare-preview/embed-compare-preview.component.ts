@@ -33,8 +33,8 @@ export class EmbedComparePreviewComponent {
     {id: 'geekbench_single', name: 'Geekbench SingleCore' },
     {id: 'geekbench_multi', name: 'Geekbench MultiCore' },
     {id: 'openssl', name: 'OpenSSL' },
-    {id: 'stress_ng_div16', name: 'Stress-ng div16' },
-    {id: 'stress_ng_relative', name: 'Stress-ng relative' },
+    {id: 'stress_ng', name: 'Stress-ng div16' },
+    {id: 'stress_ng_pct', name: 'Stress-ng relative' },
     {id: 'static_web', name: 'Static web' },
     {id: 'redis', name: 'Redis' }
   ];
