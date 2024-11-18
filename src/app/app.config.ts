@@ -80,7 +80,7 @@ export const appConfig: ApplicationConfig = {
         CircleArrowDown,
         CircleArrowUp,
         ArrowUpDown,
-        Copy
+        Copy,
       }),
     ),
     importProvidersFrom(MarkdownModule.forRoot()),
