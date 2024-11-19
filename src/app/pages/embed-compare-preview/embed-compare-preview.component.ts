@@ -51,6 +51,7 @@ export class EmbedComparePreviewComponent {
   ngOnInit() {
     this.route.params.subscribe(params => {
       this.chartname = params['chartname'] || this.chartname;
+      this.setup();
     });
 
     this.route.queryParams.subscribe(params => {

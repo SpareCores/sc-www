@@ -164,7 +164,7 @@
                 <span class="sr-only">Close modal</span>
               </button>
           </div>
-          <div class="space-y-4 flex flex-col">
+          <div *ngIf="instancesRaw" class="space-y-4 flex flex-col">
               <app-embed-compare-preview *ngIf="instancesRaw"
                 [instances]="instancesRaw"
                 [isModal]="true"

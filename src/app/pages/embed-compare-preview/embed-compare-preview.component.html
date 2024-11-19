@@ -47,6 +47,7 @@
   <h3 class="text-white text-xl"> Iframe Preview </h3>
   <p class="text-white" *ngIf="!chartname"> Select which chart to show. </p>
   <iframe
+    *ngIf="src"
     id="myIframe"
     [src]="src"
     [style]="getStyles()"
