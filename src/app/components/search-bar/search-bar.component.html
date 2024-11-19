@@ -33,9 +33,16 @@
             </lucide-icon>
           </div>
           <div *ngIf="getParameterType(parameter) === 'range'" class="mb-4 mt-4" >
-            <div class="text-white text-sm"
+            <div class="text-white text-sm flex gap-1 items-center"
                   *ngIf="parameter.modelValue && !(parameter.modelValue === parameter.schema.range_max && parameter.modelValue === parameter.schema.null_value)"
-                  id="filter_range_value_{{parameter.name}}" >{{parameter.modelValue}} {{parameter.schema.unit}}</div>
+                  id="filter_range_value_{{parameter.name}}" >
+                  <input
+                    type="number"
+                    class="bg-primary px-2 py-0 border-emerald-400 border-dotted outline-none text-white text-right rounded-sm h-5"
+                    [(ngModel)]="parameter.modelValue"
+                    [ngStyle]="getInputStyle(parameter)"
+                    (ngModelChange)="valueChanged(parameter)"> {{parameter.schema.unit}}
+            </div>
             <div class="text-white text-sm"
                   *ngIf="parameter.modelValue === parameter.schema.range_max && parameter.modelValue === parameter.schema.null_value"
                   id="filter_range_value_{{parameter.name}}" > &#8734; {{parameter.schema.unit}}</div>
