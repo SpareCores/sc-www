@@ -39,7 +39,6 @@ export class EmbedComparePreviewComponent {
     {id: 'redis', name: 'Redis' }
   ];
 
-
   constructor(
     @Inject(PLATFORM_ID) private platformId: object,
     private route: ActivatedRoute,
