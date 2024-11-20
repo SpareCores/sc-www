@@ -48,9 +48,13 @@
                   </a>
                   <a *ngIf="item.conference_talk_video" title="Video recording" [href]="item.conference_talk_video" target="_blank" rel="noopener">
                     <lucide-icon name="youtube">
-
                     </lucide-icon>
                   </a>
+                  <span *ngIf="!item.conference_talk_slides && !item.conference_talk_video" class="flex items-center gap-2">
+                    <lucide-icon name="hourglass">
+                    </lucide-icon>
+                    <span class="text-sm">TBA</span>
+                  </span>
                 </div>
               </td>
             </tr>

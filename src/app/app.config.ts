@@ -4,7 +4,7 @@ import { Router, provideRouter, withInMemoryScrolling } from '@angular/router';
 import { routes } from './app.routes';
 import { provideClientHydration, withHttpTransferCacheOptions } from '@angular/platform-browser';
 import { HttpRequest, provideHttpClient, withFetch } from '@angular/common/http';
-import { ArrowDownNarrowWide, ArrowDownWideNarrow, BookText, Clipboard, Box, Check, ChevronDown, ChevronLeft, ChevronRight, Codesandbox, Cpu, Database, DollarSign, Facebook, Github, Home, Hotel, Linkedin, LucideAngularModule, MemoryStick, PcCase, Search, Server, SquareKanban, Twitter, User, Building2, Heater, CandlestickChart, MapPinned, Scale, Ellipsis, Menu, Leaf, ShoppingCart, ChevronUp, ExternalLink, Info, ClipboardCheck, ScrollText, Youtube, Trash, CircleX, X, CircleArrowDown, CircleArrowUp, ArrowUpDown, Copy } from 'lucide-angular';
+import { ArrowDownNarrowWide, ArrowDownWideNarrow, BookText, Clipboard, Box, Check, ChevronDown, ChevronLeft, ChevronRight, Codesandbox, Cpu, Database, DollarSign, Facebook, Github, Home, Hotel, Linkedin, LucideAngularModule, MemoryStick, PcCase, Search, Server, SquareKanban, Twitter, User, Building2, Heater, CandlestickChart, MapPinned, Scale, Ellipsis, Menu, Leaf, ShoppingCart, ChevronUp, ExternalLink, Info, ClipboardCheck, ScrollText, Youtube, Trash, CircleX, X, CircleArrowDown, CircleArrowUp, ArrowUpDown, Copy, Hourglass } from 'lucide-angular';
 import { MarkdownModule } from 'ngx-markdown';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import * as Sentry from "@sentry/angular";
@@ -81,6 +81,7 @@ export const appConfig: ApplicationConfig = {
         CircleArrowUp,
         ArrowUpDown,
         Copy,
+        Hourglass,
       }),
     ),
     importProvidersFrom(MarkdownModule.forRoot()),
