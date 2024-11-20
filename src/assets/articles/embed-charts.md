@@ -20,7 +20,7 @@ We have been using static screenshots of the Spare Cores charts in our blog post
 
 To address these issues, we have now added the ability to embed the Spare Cores charts dynamically using Iframes, either for a single server or for a comparison of servers. This allows you to add the charts to your own website with a single line of code!
 
-To embed a chart of a server's specific benchmarks, go to the server details page, and click on the `Embed chart` button in the `Performance` section. This will pop up a modal window where you can choose the benchmarks you want to embed, set the dimensions of the Iframe, and get a HTML code chunk to embed the chart. A quick example:
+To embed a chart of a server's specific benchmarks, go to the server details page, and click on the `Embed chart` button in the `Performance` section. This will pop up a modal window where you can choose the benchmarks you want to embed, set the dimensions of the Iframe, and get an HTML code chunk to embed the chart. A quick example:
 
 <iframe 
  src="/embed/server/azure/Standard_DC16s_v3/static_web" 
