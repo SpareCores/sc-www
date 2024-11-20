@@ -25,7 +25,7 @@ describe('Server prices', () => {
     // wea re on page 2 now
     E2EEvent.isVisible(`[id="pagination_prev_arrow"]`);
 
-    E2EEvent.hasText(`filter_range_value_vcpus_min`, '11 vCPUs');
+    E2EEvent.hasValue(`filter_range_value_vcpus_min`, '11');
 
     E2EEvent.hasValue(`filter_number_benchmark_score_stressng_cpu_min`, '200');
 
