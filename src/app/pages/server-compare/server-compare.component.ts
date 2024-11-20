@@ -158,13 +158,13 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
   embeddableCharts = [
     {id: 'bw_mem', name: 'Memory bandwidth' },
     {id: 'compress', name: 'Compression' },
-    {id: 'geekbench', name: 'Geekbench Both' },
-    {id: 'geekbench_single', name: 'Geekbench SingleCore' },
-    {id: 'geekbench_multi', name: 'Geekbench MultiCore' },
-    {id: 'openssl', name: 'OpenSSL' },
+    {id: 'geekbench', name: 'Geekbench single- and multi-core' },
+    {id: 'geekbench_single', name: 'Geekbench single-core' },
+    {id: 'geekbench_multi', name: 'Geekbench multi-core' },
+    {id: 'openssl', name: 'OpenSSL speed' },
     {id: 'stress_ng', name: 'Stress-ng div16' },
     {id: 'stress_ng_pct', name: 'Stress-ng relative' },
-    {id: 'static_web', name: 'Static web' },
+    {id: 'static_web', name: 'Static web server' },
     {id: 'redis', name: 'Redis' }
   ];
 
