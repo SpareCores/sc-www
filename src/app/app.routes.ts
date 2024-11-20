@@ -32,8 +32,11 @@ export const routes: Routes = [
   { path: 'survey/:id', loadComponent: () => import('./pages/survey-fill/survey-fill.component').then(m => m.SurveyFillComponent)},
 
   { path: 'embed/server/:vendor/:id/:chartname', loadComponent: () => import('./pages/embedded-server-chart/embedded-server-chart.component').then(m => m.EmbeddedServerChartComponent)},
-
   { path: 'embed_debug/:vendor/:id/:chartname', loadComponent: () => import('./pages/embed-debug/embed-debug.component').then(m => m.EmbedDebugComponent)},
+
+  { path: 'embed/compare/:chartname', loadComponent: () => import('./pages/embedded-compare-chart/embedded-compare-chart.component').then(m => m.EmbeddedCompareChartComponent)},
+  { path: 'embed_compare_debug/:chartname', loadComponent: () => import('./pages/embed-compare-preview/embed-compare-preview.component').then(m => m.EmbedComparePreviewComponent)},
+
 
   { path: '**', redirectTo: '' }
 ];
