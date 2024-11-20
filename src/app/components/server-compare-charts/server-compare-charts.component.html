@@ -40,7 +40,7 @@
         <ng-container *ngFor="let item of servers">
           <td>
             <div *ngIf="item.vendor.logo" class="w-9 h-9 px-1 py-1 bg-white rounded-lg">
-              <img [src]="item.vendor.logo" alt="{{item.vendor.name}} logo" >
+              <img [src]="item.vendor.logo" alt="{{item.vendor.name}} logo" width="28" height="28">
             </div>
             <div *ngIf="!item.vendor.logo" class="text-white text-sm">
                 {{item.vendor.name}}
