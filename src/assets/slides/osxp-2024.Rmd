@@ -1,0 +1,24 @@
+---
+title: "Vendor-independent cloud computing hardware information and benchmarking"
+author: Gergely Daroczi
+date: "2024-12-04"
+conference: "Open Source Experience 2024"
+conference_url: "https://www.opensource-experience.com"
+conference_talk_url: "https://www.opensource-experience.com/en/event#conf-16444"
+location: "Paris, France"
+output:
+  revealjs::revealjs_presentation:
+    theme: white
+    highlight: tango
+    transition: default
+    includes:
+      in_header: header.html
+    template: template.html
+    reveal_options:
+      slideNumber: true
+      previewLinks: false
+      width: 1244
+    self_contained: false
+    lib_dir: libs
+    reveal_plugins: ["notes", "zoom"]
+---
