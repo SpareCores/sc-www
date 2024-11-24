@@ -227,6 +227,7 @@ export const  barChartOptionsRedis: ChartConfiguration<'bar'>['options'] = {
 };
 
 export const  barChartOptionsSSLCompare: ChartConfiguration<'bar'>['options'] = {
+  maintainAspectRatio: false,
   scales: {
     ...barChartOptions.scales,
     y: {
@@ -604,6 +605,7 @@ export const lineChartOptionsCompRatio: ChartConfiguration<'line'>['options'] = 
 };
 
 export const lineChartOptionsCompareCompress: ChartConfiguration<'line'>['options'] = {
+  maintainAspectRatio: false,
   scales: {
     x: {
       ticks: {
@@ -663,6 +665,7 @@ export const lineChartOptionsCompareCompress: ChartConfiguration<'line'>['option
 };
 
 export const lineChartOptionsCompareDecompress: ChartConfiguration<'line'>['options'] = {
+  maintainAspectRatio: false,
   scales: {
     x: {
       ticks: {

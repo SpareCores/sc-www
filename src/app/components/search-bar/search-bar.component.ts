@@ -472,4 +472,12 @@ export class SearchBarComponent implements OnInit, OnChanges{
     tooltip.style.opacity = '0';
   }
 
+  getInputStyle(parameter: any) {
+    if(!parameter.modelValue) {
+      return { 'max-width': '3ch' };
+    }
+
+    return { 'max-width': `${parameter.modelValue.toString().length + 2}ch` };
+  }
+
 }

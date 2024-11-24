@@ -6,6 +6,7 @@ conference: "SFSCON 2024"
 conference_url: "https://www.sfscon.it"
 conference_talk_url: "https://www.sfscon.it/talks/optimizing-cloud-compute-resources-with-spare-cores/"
 conference_talk_slides: "/assets/slides/sfscon-2024.html#/coverslide"
+conference_talk_video: "https://vimeo.com/1030650515"
 location: "Bolzano, Italy"
 output:
   revealjs::revealjs_presentation:
