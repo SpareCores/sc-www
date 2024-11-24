@@ -209,6 +209,10 @@ export class ServerPricesComponent implements OnInit {
       if(query.order_by && query.order_dir) {
         this.orderBy = query.order_by;
         this.orderDir = query.order_dir;
+
+        if(this.possibleColumns.find((column) => column.orderField === this.orderBy)) {
+          this.possibleColumns.find((column) => column.orderField === this.orderBy)!.show = true;
+        }
       }
 
       if(query.currency) {
