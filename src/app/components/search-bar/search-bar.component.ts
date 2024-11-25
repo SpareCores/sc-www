@@ -262,7 +262,7 @@ export class SearchBarComponent implements OnInit, OnChanges{
     return 'text';
   }
 
-  valueChanged(item?: any) {
+  valueChanged() {
     this.valueChangeDebouncer.next(0);
   }
 
