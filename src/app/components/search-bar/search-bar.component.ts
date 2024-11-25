@@ -75,6 +75,13 @@ export class SearchBarComponent implements OnInit, OnChanges{
     });
 
     this.valueChangeDebouncer.pipe(debounceTime(500)).subscribe(() => {
+
+      let vcpu_max = this.searchParameters.find((param: any) => param.name === 'vcpus_max');
+      let vcpu_min = this.searchParameters.find((param: any) => param.name === 'vcpus_min');
+      if(vcpu_min?.modelValue > 0 && vcpu_max?.modelValue > 0 && vcpu_min.modelValue > vcpu_max.modelValue) {
+        vcpu_max.modelValue = vcpu_min.modelValue;
+      }
+
       this.filterServers();
     });
 
@@ -256,18 +263,6 @@ export class SearchBarComponent implements OnInit, OnChanges{
   }
 
   valueChanged(item?: any) {
-    if(item && item.name === 'vcpus_min') {
-      let vcpu_max = this.searchParameters.find((param: any) => param.name === 'vcpus_max');
-      if(vcpu_max.modelValue && vcpu_max.modelValue < item.modelValue) {
-        vcpu_max.modelValue = item.modelValue;
-      }
-    }
-    if(item && item.name === 'vcpus_max') {
-      let vcpu_min = this.searchParameters.find((param: any) => param.name === 'vcpus_min');
-      if(vcpu_min.modelValue && vcpu_min.modelValue > item.modelValue) {
-        vcpu_min.modelValue = item.modelValue;
-      }
-    }
     this.valueChangeDebouncer.next(0);
   }
 
