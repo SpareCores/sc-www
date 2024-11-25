@@ -1,4 +1,4 @@
-import { Component, HostBinding, Inject, PLATFORM_ID, OnInit, ViewChild, ElementRef} from '@angular/core';
+import { Component, Inject, PLATFORM_ID, OnInit, ViewChild, ElementRef} from '@angular/core';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { KeeperAPIService } from '../../services/keeper-api.service';
 import { OrderDir, ServerPriceWithPKs } from '../../../../sdk/data-contracts';
@@ -60,7 +60,6 @@ export type RegionVendorMetadata = {
   styleUrl: './server-prices.component.scss'
 })
 export class ServerPricesComponent implements OnInit {
-  @HostBinding('attr.ngSkipHydration') ngSkipHydration = 'true';
 
   isCollapsed = false;
 
@@ -210,6 +209,10 @@ export class ServerPricesComponent implements OnInit {
       if(query.order_by && query.order_dir) {
         this.orderBy = query.order_by;
         this.orderDir = query.order_dir;
+
+        if(this.possibleColumns.find((column) => column.orderField === this.orderBy)) {
+          this.possibleColumns.find((column) => column.orderField === this.orderBy)!.show = true;
+        }
       }
 
       if(query.currency) {

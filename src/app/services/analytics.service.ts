@@ -1,7 +1,7 @@
 import { isPlatformBrowser } from '@angular/common';
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
-import posthog from 'posthog-js'
 import * as Sentry from "@sentry/angular";
+import posthog from 'posthog-js';
 
 const POSTHOG_KEY = import.meta?.env?.NG_APP_POSTHOG_KEY;
 const POSTHOG_HOST = import.meta?.env?.NG_APP_POSTHOG_HOST;

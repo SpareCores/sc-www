@@ -221,7 +221,8 @@ export namespace StoragePrices {
         | "SG"
         | "TW"
         | "US"
-        | "ZA";
+        | "ZA"
+        | "NZ";
       /**
        * Limit
        * Maximum number of results. Set to -1 for unlimited.

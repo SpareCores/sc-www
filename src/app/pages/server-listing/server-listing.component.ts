@@ -1,4 +1,4 @@
-import { Component, HostBinding, Inject, PLATFORM_ID, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
+import { Component, Inject, PLATFORM_ID, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { KeeperAPIService } from '../../services/keeper-api.service';
 import { OrderDir, ServerPKs, ServerPriceWithPKs } from '../../../../sdk/data-contracts';
@@ -62,7 +62,6 @@ export type RegionVendorMetadata = {
   styleUrl: './server-listing.component.scss',
 })
 export class ServerListingComponent implements OnInit, OnDestroy {
-  @HostBinding('attr.ngSkipHydration') ngSkipHydration = 'true';
 
   isCollapsed = false;
 
@@ -188,6 +187,11 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       if(query.order_by && query.order_dir) {
         this.orderBy = query.order_by;
         this.orderDir = query.order_dir;
+
+        if(this.possibleColumns.find((column) => column.orderField === this.orderBy)) {
+          this.possibleColumns.find((column) => column.orderField === this.orderBy)!.show = true;
+        }
+
       }
 
       if(query.page) {

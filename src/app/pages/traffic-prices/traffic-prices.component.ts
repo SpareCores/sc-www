@@ -1,5 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Component, HostBinding, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { Component,  Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, ActivatedRoute, Params, Router } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
@@ -22,8 +22,6 @@ import { TableColumn } from '../server-listing/server-listing.component';
   styleUrl: './traffic-prices.component.scss'
 })
 export class TrafficPricesComponent implements OnInit {
-
-  @HostBinding('attr.ngSkipHydration') ngSkipHydration = 'true';
 
   limit = 10;
   page = 1;

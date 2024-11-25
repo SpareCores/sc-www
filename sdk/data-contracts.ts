@@ -249,6 +249,7 @@ export enum Countries {
   TW = "TW",
   US = "US",
   ZA = "ZA",
+  NZ = "NZ",
 }
 
 /**
@@ -410,6 +411,8 @@ export interface Disk {
   size?: number;
   /** Type of a storage, e.g. HDD or SSD. */
   storage_type: StorageType;
+  /** Description */
+  description?: string | null;
 }
 
 /**
@@ -3168,7 +3171,8 @@ export interface SearchServerPricesServerPricesGetParams {
     | "SG"
     | "TW"
     | "US"
-    | "ZA";
+    | "ZA"
+    | "NZ";
   /**
    * GPU count
    * Minimum number of GPUs.
@@ -3452,7 +3456,8 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "SG"
     | "TW"
     | "US"
-    | "ZA";
+    | "ZA"
+    | "NZ";
   /**
    * Limit
    * Maximum number of results. Set to -1 for unlimited.
@@ -3682,7 +3687,8 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "SG"
     | "TW"
     | "US"
-    | "ZA";
+    | "ZA"
+    | "NZ";
   /**
    * Direction
    * Direction of the Internet traffic.

@@ -211,7 +211,8 @@ export namespace TrafficPrices {
         | "SG"
         | "TW"
         | "US"
-        | "ZA";
+        | "ZA"
+        | "NZ";
       /**
        * Direction
        * Direction of the Internet traffic.

@@ -47,7 +47,7 @@
     "ng2-charts": "^6.0.1",
     "ngx-lightbox": "^3.0.0",
     "ngx-markdown": "^17.2.1",
-    "posthog-js": "^1.132.2",
+    "posthog-js": "^1.186.0",
     "process": "^0.11.10",
     "rxjs": "~7.8.0",
     "serverless-http": "^3.2.0",
