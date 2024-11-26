@@ -82,6 +82,19 @@ export class SearchBarComponent implements OnInit, OnChanges{
         vcpu_max.modelValue = vcpu_min.modelValue;
       }
 
+      // fix min-max range values
+      this.searchParameters.forEach((param: any) => {
+        if(param.schema.range_min && param.schema.range_max) {
+          if(param.modelValue < param.schema.range_min) {
+            param.modelValue = param.schema.range_min;
+          }
+
+          if(param.modelValue > param.schema.range_max) {
+            param.modelValue = param.schema.range_max;
+          }
+        }
+      });
+
       this.filterServers();
     });
 
