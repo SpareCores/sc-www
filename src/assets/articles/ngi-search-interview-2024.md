@@ -6,7 +6,7 @@ date: 2024-10-20
 teaser: Spare Cores was featured in the NGI Search Interview series and NGI Innovators Expo directory.
 # 320x220
 image: /assets/images/blog/thumbnails/ngi-search-inteview-cover.webp
-image_alt: Screenshot on the number oflikes on the Pragmatic Engineer post shared on social media.
+image_alt: Cover image of the NGI Search interview, including a profile picture of Gergely Daroczi and the affiliation with Spare Cores.
 author: Gergely Daroczi
 tags: [interview, media]
 ---

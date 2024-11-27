@@ -13,7 +13,7 @@ tags: [interview, talk, media]
 
 Thanks to the visibility provided by the recent
 <a href="/article/pragmatic-engineer-pulse-2024/">Pragmatic Engineer post</a>,
-we were invited for an hour-long interview at the
+we were invited for an interview at the
 <a href="https://www.youtube.com/@architectureweekly" target="_blank" rel="noopener">Architecture Weekly channel</a>.
 
 We had an hour-long conversation with Vladimir, who brought exciting questions and topics to discuss. Thank you!

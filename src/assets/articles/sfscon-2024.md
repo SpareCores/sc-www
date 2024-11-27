@@ -32,7 +32,7 @@ This was also the first time we had a booth at a conference, and we are super gr
 
 <div class="text-center m-2.5 mt-8 mb-6">
   <img class="zoomin w-full"
-    title="Photo of Gergely Daroczi sitting at the Spare Cores booth (table) at SFSCon 2024 in Bolzano, Italy."
+    alt="Photo of Gergely Daroczi sitting at the Spare Cores booth (table) at SFSCon 2024 in Bolzano, Italy."
     src="/assets/images/blog/sfscon-2024-booth.webp"/> 
 </div>
 
