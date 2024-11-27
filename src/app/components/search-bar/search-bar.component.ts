@@ -75,6 +75,26 @@ export class SearchBarComponent implements OnInit, OnChanges{
     });
 
     this.valueChangeDebouncer.pipe(debounceTime(500)).subscribe(() => {
+
+      let vcpu_max = this.searchParameters.find((param: any) => param.name === 'vcpus_max');
+      let vcpu_min = this.searchParameters.find((param: any) => param.name === 'vcpus_min');
+      if(vcpu_min?.modelValue > 0 && vcpu_max?.modelValue > 0 && vcpu_min.modelValue > vcpu_max.modelValue) {
+        vcpu_max.modelValue = vcpu_min.modelValue;
+      }
+
+      // fix min-max range values
+      this.searchParameters.forEach((param: any) => {
+        if(param.schema.range_min && param.schema.range_max) {
+          if(param.modelValue < param.schema.range_min) {
+            param.modelValue = param.schema.range_min;
+          }
+
+          if(param.modelValue > param.schema.range_max) {
+            param.modelValue = param.schema.range_max;
+          }
+        }
+      });
+
       this.filterServers();
     });
 
@@ -255,19 +275,7 @@ export class SearchBarComponent implements OnInit, OnChanges{
     return 'text';
   }
 
-  valueChanged(item?: any) {
-    if(item && item.name === 'vcpus_min') {
-      let vcpu_max = this.searchParameters.find((param: any) => param.name === 'vcpus_max');
-      if(vcpu_max.modelValue && vcpu_max.modelValue < item.modelValue) {
-        vcpu_max.modelValue = item.modelValue;
-      }
-    }
-    if(item && item.name === 'vcpus_max') {
-      let vcpu_min = this.searchParameters.find((param: any) => param.name === 'vcpus_min');
-      if(vcpu_min.modelValue && vcpu_min.modelValue > item.modelValue) {
-        vcpu_min.modelValue = item.modelValue;
-      }
-    }
+  valueChanged() {
     this.valueChangeDebouncer.next(0);
   }
 

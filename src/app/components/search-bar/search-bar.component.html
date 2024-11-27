@@ -41,7 +41,7 @@
                     class="bg-primary px-2 py-0 border-emerald-400 border-dotted outline-none text-white rounded-sm h-5 text-center"
                     [(ngModel)]="parameter.modelValue"
                     [ngStyle]="getInputStyle(parameter)"
-                    (ngModelChange)="valueChanged(parameter)"> {{parameter.schema.unit}}
+                    (ngModelChange)="valueChanged()"> {{parameter.schema.unit}}
             </div>
             <div class="text-white text-sm"
                   *ngIf="parameter.modelValue === parameter.schema.range_max && parameter.modelValue === parameter.schema.null_value"
@@ -53,7 +53,7 @@
                    [attr.data-ph-capture-attribute-server-listing-filter-id]="parameter.name"
                    [attr.data-ph-capture-attribute-server-listing-filter-category]="item.category_id"
                    [(ngModel)]="parameter.modelValue"
-                   (ngModelChange)="valueChanged(parameter)"
+                   (ngModelChange)="valueChanged()"
                    class="w-full h-2 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm">
           </div>
           <div *ngIf="getParameterType(parameter) === 'number'" class="mb-4 mt-4 relative" >
