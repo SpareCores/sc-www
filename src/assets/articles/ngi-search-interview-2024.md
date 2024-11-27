@@ -11,7 +11,7 @@ author: Gergely Daroczi
 tags: [interview, media]
 ---
 
-As an [NGI Search beneficiary](/article/ngi-search-grant), we were invited for an interview to share project updates on Spare Cores. The interview was published in the <a href="https://spaces.fundingbox.com/spaces/ngi-community-ngi-innovators/67136d6eaef37c9e08371df4" target="_blank" rel="noopener">NGI Innovators Expo</a> directory, but for easier access, we also published it below:
+As an [NGI Search beneficiary](/article/ngi-search-grant), we were invited for an interview to share project updates on Spare Cores. The interview was published in the <a href="https://spaces.fundingbox.com/spaces/ngi-community-ngi-innovators/67136d6eaef37c9e08371df4" target="_blank" rel="noopener">NGI Innovators Expo</a> directory, but for easier access, we also mirrored it below:
 
 <hr class="my-6" />
 

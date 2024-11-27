@@ -38,6 +38,6 @@ This was also the first time we had a booth at a conference, and we are super gr
 
 <p style="margin: 0px 50px 20px 50px; text-align: center; color: #999;">Image source: <a href="https://www.flickr.com/photos/free-software-center/54134544698/in/album-72177720321889353" target="_blank" rel="noopener">Conference photographer</a>.</p>
 
-It was a busy 2 days, and I met many interesting people. I must highlight how well organized the conference was, and how helpful and professionalthe organizers were. Thank you!
+It was a busy 2 days, and I met many interesting people. I must highlight how well organized the conference was, and how helpful and professional the organizers were. Thank you!
 
 Now we are preparing for our upcoming trip to Paris next week (Dec 4-5, 2024) to the <a href="https://www.opensource-experience.com/" target="_blank" rel="noopener">Open Source Experience</a> conference with over 5,000 expected attendees, where we will also give a talk and run a booth along with the OW2 and NGI Search teams. If you are around, please don't be a stranger, and stop by to say hi!
