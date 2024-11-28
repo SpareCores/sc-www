@@ -149,7 +149,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
         "passmark:cpu_compression_test",
         "passmark:cpu_encryption_test",
         "passmark:cpu_extended_instructions_test",
-        ​"passmark:cpu_floating_point_maths_test",
+        "passmark:cpu_floating_point_maths_test",
         "passmark:cpu_integer_maths_test",
         "passmark:cpu_mark",
         "passmark:cpu_physics_test",
