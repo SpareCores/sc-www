@@ -311,6 +311,68 @@
   </div>
 </ng-container>
 
+<div class="block_half" *ngIf="isChartShown('passmark:cpu')" id="passmark_cpu">
+  <div class="flex items-center" style="min-height: 42px;">
+    <h3 class="text-2xl">Passmark CPU scores</h3>
+  </div>
+  <table class="items_table_passmark" id="similar_family_table">
+    <thead>
+      <tr>
+        <th>BENCHMARK</th>
+        <th>SCORE</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of getBenchmarkCategory('passmark:cpu')" id="similar_family_line">
+        <td>
+         {{item.name}}
+        </td>
+        <td>
+          {{item.score}}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div *ngIf="getBenchmarkCategory('passmark:cpu').length > 7" class="absolute bottom-0 laft-0 w-full py-3 flex justify-center" id="passmark_cpu_more"
+      style="background: linear-gradient(360deg, #06263A 23.44%, rgba(6, 38, 58, 0) 100%);" >
+    <button class="btn-primary py-2 px-3" (click)="openBox('passmark_cpu')"
+            id="availability_more_button"
+            data-ph-capture-attribute-sc-event="passmark_cpu show more availability">
+      Show more
+    </button>
+  </div>
+  <div class="w-full pt-3 flex justify-center hidden" id="passmark_cpu_less">
+    <button class="btn-primary py-2 px-3" (click)="openBox('passmark_cpu')"
+            data-ph-capture-attribute-sc-event="passmark_cpu show less availability">
+      Show less
+    </button>
+  </div>
+</div>
+
+<div class="block_half" *ngIf="isChartShown('passmark:other')" id="passmark_other">
+  <div class="flex items-center" style="min-height: 42px;">
+    <h3 class="text-2xl">Passmark memory/GPU scores</h3>
+  </div>
+  <table class="items_table_passmark" id="similar_family_table">
+    <thead>
+      <tr>
+        <th>BENCHMARK</th>
+        <th>SCORE</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of getBenchmarkCategory('passmark:other')" id="similar_family_line">
+        <td>
+         {{item.name}}
+        </td>
+        <td>
+          {{item.score}}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
 <div id="tooltipGeekbench"
   #tooltipGeekbench
   style="opacity: 0; display: none;"

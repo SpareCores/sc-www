@@ -726,6 +726,15 @@ export class ServerChartsComponent implements OnChanges {
     this.compressDropdown?.hide();
   }
 
+  getBenchmarkCategory(category: string) {
+    return (this.benchmarksByCategory?.find(x => x.benchmark_id === category)?.benchmarks || []).map((e: any) => {
+      return {
+        ...e,
+        score: Math.round(e.score),
+        name: this.benchmarkMeta.find((b: any) => b.benchmark_id === e.benchmark_id)?.name
+      }
+    });
+  }
 
   public numberWithCommas(x: number) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -781,6 +790,21 @@ export class ServerChartsComponent implements OnChanges {
 
   isBrowser() {
     return isPlatformBrowser(this.platformId);
+  }
+
+  openBox(boxId: string) {
+    const el = document.getElementById(boxId);
+    if(el) {
+      el.classList.toggle('open');
+    }
+    const el2 = document.getElementById(boxId+'_more');
+    if(el2) {
+      el2.classList.toggle('hidden');
+    }
+    const el3 = document.getElementById(boxId+'_less');
+    if(el3) {
+      el3.classList.toggle('hidden');
+    }
   }
 
 }

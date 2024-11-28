@@ -1,0 +1,24 @@
+.items_table_passmark {
+  @apply w-full text-white;
+
+  thead {
+    th {
+      @apply bg-secondary border-b border-gray-200 border-solid text-left px-5 py-3 font-normal;
+    }
+  }
+
+  tbody {
+    tr:not(:last-child) {
+      @apply bg-secondary border-b border-gray-200 border-solid;
+    }
+
+    tr {
+      td {
+        @apply px-5 py-3 text-left text-sm;
+      }
+      td.fixed_width {
+        width: 250px;
+      }
+    }
+  }
+}
