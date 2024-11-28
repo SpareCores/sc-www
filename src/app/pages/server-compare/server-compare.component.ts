@@ -141,6 +141,40 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
       data: [],
       show_more: false,
       hidden: false
+    },
+    {
+      name: 'PassMark CPU benchmarks',
+      id: 'passmark_cpu',
+      benchmarks: [
+        "passmark:cpu_compression_test",
+        "passmark:cpu_encryption_test",
+        "passmark:cpu_extended_instructions_test",
+        ​"passmark:cpu_floating_point_maths_test",
+        "passmark:cpu_integer_maths_test",
+        "passmark:cpu_mark",
+        "passmark:cpu_physics_test",
+        "passmark:cpu_prime_numbers_test",
+        "passmark:cpu_single_threaded_test",
+        "passmark:cpu_string_sorting_test",
+
+       ],
+      data: [],
+      show_more: true,
+      hidden: false
+    },
+    {
+      name: 'PassMark Memory benchmarks',
+      id: 'passmark_other',
+      benchmarks: [
+        "passmark:database_operations",
+        "passmark:memory_latency",
+        "passmark:memory_mark",
+        "passmark:memory_read_cached",
+        "passmark:memory_read_uncached",
+        "passmark:memory_write" ],
+      data: [],
+      show_more: true,
+      hidden: false
     }
   ];
 
