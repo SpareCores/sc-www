@@ -12,7 +12,7 @@ import { LucideAngularModule } from 'lucide-angular';
 import { CountryIdtoNamePipe } from '../../pipes/country-idto-name.pipe';
 import { SearchBarComponent } from '../../components/search-bar/search-bar.component';
 import { PaginationComponent } from '../../components/pagination/pagination.component';
-import { ServerCompareService } from '../../services/server-compare.service';
+import { ServerCompare, ServerCompareService } from '../../services/server-compare.service';
 import { DropdownManagerService } from '../../services/dropdown-manager.service';
 import { AnalyticsService } from '../../services/analytics.service';
 
@@ -217,9 +217,9 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
     if(isPlatformBrowser(this.platformId)) {
 
-      this.sub = this.serverCompare.selectionChanged.subscribe((selectedServers: ServerPKs[]) => {
+      this.sub = this.serverCompare.selectionChanged.subscribe((selectedServers: ServerCompare[]) => {
         this.servers?.forEach((server: any) => {
-          server.selected = selectedServers.findIndex((item: ServerPKs) => item.vendor_id === server.vendor_id && item.server_id === server.server_id) !== -1;
+          server.selected = selectedServers.findIndex((item: ServerCompare) => item.vendor === server.vendor_id && item.server === server.api_reference) !== -1;
         });
       });
 
@@ -337,7 +337,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       // set stored selected state
       this.servers?.forEach((server: any) => {
         server.selected = this.serverCompare.selectedForCompare
-          .findIndex((item) => item.vendor_id === server.vendor_id && item.server_id === server.server_id) !== -1;
+          .findIndex((item) => item.vendor === server.vendor_id && item.server === server.api_reference) !== -1;
       });
 
       if(updateTotalCount) {
@@ -463,7 +463,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   }
 
   toggleCompare(event: boolean, server: ServerPKs| any) {
-    this.serverCompare.toggleCompare(event, server);
+    this.serverCompare.toggleCompare(event, {server: server.api_reference, vendor: server.vendor_id, display_name: server.display_name});
   }
 
   compareCount() {

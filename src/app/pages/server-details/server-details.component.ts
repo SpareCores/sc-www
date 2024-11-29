@@ -43,6 +43,8 @@ export interface ExtendedServerPrice extends ServerPrice {
 export interface ExtendedServerDetails extends ServerPKs {
   benchmark_scores: BenchmarkScore[],
   prices: ExtendedServerPrice[],
+  bestOndemandPrice?: ExtendedServerPrice,
+  bestSpotPrice?: ExtendedServerPrice,
 }
 
 @Component({
@@ -819,7 +821,9 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   }
 
   addToCompare() {
-    this.serverCompare.toggleCompare(!this.serverCompare.isSelected(this.serverDetails), this.serverDetails);
+    this.serverCompare.toggleCompare(
+      !this.serverCompare.isSelected(
+        this.serverDetails), {server: this.serverDetails.api_reference, vendor: this.serverDetails.vendor_id, display_name: this.serverDetails.display_name});
   }
 
   compareText() {

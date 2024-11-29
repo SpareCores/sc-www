@@ -1,25 +1,34 @@
 import { Injectable } from '@angular/core';
-import { ServerPKs } from '../../../sdk/data-contracts';
+import { ServerPKs, ServerPriceWithPKs } from '../../../sdk/data-contracts';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
+
+export interface ServerCompare {
+  display_name: string;
+  vendor: string;
+  server: string;
+  zone?: string;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class ServerCompareService {
 
-  selectedForCompare: ServerPKs[] = [];
-  public selectionChanged: Subject<ServerPKs[]> = new Subject();
+  selectedForCompare: ServerCompare[] = [];
+  public selectionChanged: Subject<ServerCompare[]> = new Subject();
 
   constructor(private router: Router) { }
 
-  toggleCompare(event: boolean, server: ServerPKs| any) {
+  toggleCompare(event: boolean, server: ServerCompare) {
     if(event) {
-      if(this.selectedForCompare.findIndex((item) => item.vendor_id === server.vendor_id && item.server_id === server.server_id) === -1) {
+      if(this.selectedForCompare.findIndex((item) =>
+          item.vendor === server.vendor && item.server === server.server && (!server.zone || item.zone === server.zone)) === -1) {
         this.selectedForCompare.push(server);
       }
     } else {
-      this.selectedForCompare = this.selectedForCompare.filter((item) => item.vendor_id !== server.vendor_id || item.server_id !== server.server_id);
+      this.selectedForCompare = this.selectedForCompare.filter((item) =>
+        item.vendor !== server.vendor || item.server !== server.server && (!server.zone || item.zone === server.zone));
     }
     this.selectionChanged.next(this.selectedForCompare);
   }
@@ -34,7 +43,7 @@ export class ServerCompareService {
   }
 
   isSelected(server: ServerPKs) {
-    return this.selectedForCompare.findIndex((item) => item.vendor_id === server.vendor_id && item.server_id === server.server_id) !== -1;
+    return this.selectedForCompare.findIndex((item) => item.vendor === server.vendor_id && item.server === server.api_reference) !== -1;
   }
 
   openCompare() {
@@ -45,12 +54,8 @@ export class ServerCompareService {
       return;
     }
 
-    const serverIds = selectedServers.map((server) => {
-      return {vendor: server.vendor_id, server: server.api_reference}
-    });
-
     // encode atob to avoid issues with special characters
-    const encoded = btoa(JSON.stringify(serverIds));
+    const encoded = btoa(JSON.stringify(selectedServers));
 
     this.router.navigateByUrl('/compare?instances=' + encoded);
   }

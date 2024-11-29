@@ -31,6 +31,7 @@ export class ServerCompareChartsComponent {
   @Input() instancePropertyCategories: any[] = [];
   @Input() isEmbedded = false;
   @Input() showChart = 'all';
+  @Input() showZone = false;
 
   @ViewChild('tooltipDefault') tooltip!: ElementRef;
   @ViewChild('tooltipGeekbench') tooltipGB!: ElementRef;
@@ -228,9 +229,38 @@ export class ServerCompareChartsComponent {
   }
 
   getBestPrice(server: ExtendedServerDetails, allocation: Allocation | string = Allocation.Ondemand) {
-    if(server.prices?.find((p) => p.allocation === allocation)){
-      const best = server.prices.filter(x => x.allocation === allocation).sort((a,b) => a.price - b.price)[0];
-      return `${best.price} ${best.currency}`;
+    let priceData = null;
+
+    switch(allocation) {
+      case Allocation.Ondemand:
+        priceData = server.bestOndemandPrice;
+        break;
+      case Allocation.Spot:
+        priceData = server.bestSpotPrice;
+        break;
+    }
+
+    if(priceData){
+      return `${priceData.price} ${priceData.currency}`;
+    } else {
+      return '-';
+    }
+  }
+
+  getBestZone(server: ExtendedServerDetails, allocation: Allocation | string = Allocation.Ondemand) {
+    let priceData = null;
+
+    switch(allocation) {
+      case Allocation.Ondemand:
+        priceData = server.bestOndemandPrice;
+        break;
+      case Allocation.Spot:
+        priceData = server.bestSpotPrice;
+        break;
+    }
+
+    if(priceData){
+      return `${priceData.zone.display_name}`;
     } else {
       return '-';
     }

@@ -1,7 +1,7 @@
 import { Component, Inject, PLATFORM_ID, OnInit, ViewChild, ElementRef} from '@angular/core';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { KeeperAPIService } from '../../services/keeper-api.service';
-import { OrderDir, ServerPriceWithPKs } from '../../../../sdk/data-contracts';
+import { OrderDir, ServerPKs, ServerPriceWithPKs } from '../../../../sdk/data-contracts';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { StorageHandlerService } from '../../services/storage-handler.service';
@@ -14,6 +14,7 @@ import { PaginationComponent } from '../../components/pagination/pagination.comp
 import { DropdownManagerService } from '../../services/dropdown-manager.service';
 import { AnalyticsService } from '../../services/analytics.service';
 import { CurrencyOption, availableCurrencies } from '../../tools/shared_data';
+import { ServerCompareService } from '../../services/server-compare.service';
 
 export type TableColumn = {
   name: string;
@@ -177,6 +178,7 @@ export class ServerPricesComponent implements OnInit {
               private SEOHandler: SeoHandlerService,
               private analytics: AnalyticsService,
               private dropdownManager: DropdownManagerService,
+              private serverCompare: ServerCompareService,
               private storageHandler: StorageHandlerService) { }
 
   ngOnInit() {
@@ -581,6 +583,31 @@ export class ServerPricesComponent implements OnInit {
     const tooltip = this.tooltip.nativeElement;
     tooltip.style.display = 'none';
     tooltip.style.opacity = '0';
+  }
+
+  toggleCompare2(event: any, server: ServerPriceWithPKs| any) {
+    event.stopPropagation();
+    server.selected = !server.selected;
+    this.toggleCompare(server.selected, server);
+  }
+
+  toggleCompare(event: boolean, server: ServerPriceWithPKs| any) {
+    this.serverCompare.toggleCompare(event, {server: server.server.api_reference, vendor: server.vendor_id, zone: server.zone_id, display_name: server.server.display_name});
+  }
+
+  compareCount() {
+    return this.serverCompare.compareCount();
+  }
+
+  clearCompare() {
+    this.serverCompare.clearCompare();
+    this.servers?.forEach((server: any) => {
+      server.selected = false;
+    });
+  }
+
+  openCompare() {
+    this.serverCompare.openCompare();
   }
 
 }

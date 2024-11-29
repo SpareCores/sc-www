@@ -16,6 +16,7 @@ import hljs from 'highlight.js';
 import { ServerCompareChartsComponent } from "../../components/server-compare-charts/server-compare-charts.component";
 import { EmbedComparePreviewComponent } from '../embed-compare-preview/embed-compare-preview.component';
 import { Modal, ModalOptions } from 'flowbite';
+import { Allocation } from '../../../../sdk/data-contracts';
 
 const optionsModal: ModalOptions = {
   backdropClasses:
@@ -173,6 +174,8 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   specialCompares: any[] = require('./special-compares');
 
+  showZoneId = false;
+
   constructor(
     @Inject(PLATFORM_ID) private platformId: object,
     @Inject(DOCUMENT) private document: Document,
@@ -283,7 +286,12 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
         this.serverCompare.clearCompare();
 
         for(let i = 0; i < serverCount; i++){
-          let server = servers[i * 3];
+          let server: ExtendedServerDetails = servers[i * 3];
+          const selectedZone = this.instances[i].zone;
+
+          if(selectedZone) {
+            this.showZoneId = true;
+          }
 
           server.benchmark_scores = servers[i * 3 + 2];
           server.prices = servers[i * 3 + 1]?.sort((a: any, b: any) => a.price - b.price);
@@ -295,6 +303,14 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
               price.region = regions.find((r: any) => r.region_id === price.region_id);
               price.zone = zones.find((z: any) => z.zone_id === price.zone_id);
             });
+
+            if(selectedZone) {
+              server.bestOndemandPrice = server.prices.find((x: any) => x.zone.zone_id === selectedZone && x.allocation === Allocation.Ondemand);
+              server.bestSpotPrice = server.prices.find((x: any) => x.zone.zone_id === selectedZone && x.allocation === Allocation.Spot);
+            } else {
+              server.bestOndemandPrice = server.prices.filter(x => x.allocation === Allocation.Ondemand).sort((a,b) => a.price - b.price).at(0);
+              server.bestSpotPrice = server.prices.filter(x => x.allocation === Allocation.Spot).sort((a,b) => a.price - b.price).at(0);
+            }
           }
 
           server.score = server.benchmark_scores?.find((b: any) => b.benchmark_id === 'stress_ng:bestn')?.score;
@@ -302,8 +318,15 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
           server.score_per_price = server.price && server.score ? server.score / server.price : (server.score || 0);
 
           this.servers.push(server);
-          this.serverCompare.toggleCompare(true, server);
+          this.serverCompare.toggleCompare(true, {
+            server: server.api_reference,
+            vendor: server.vendor_id,
+            display_name: server.display_name,
+            zone: selectedZone
+          });
         }
+
+        console.log(this.servers);
 
         this.instanceProperties.forEach((p: any) => {
           const group = this.instancePropertyCategories.find((g) => g.category === p.category);
@@ -539,6 +562,8 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
             price.region = this.regions.find((r: any) => r.region_id === price.region_id);
             price.zone = this.zones.find((z: any) => z.zone_id === price.zone_id);
           });
+          server.bestOndemandPrice = server.prices.filter(x => x.allocation === Allocation.Ondemand).sort((a,b) => a.price - b.price).at(0);
+          server.bestSpotPrice = server.prices.filter(x => x.allocation === Allocation.Spot).sort((a,b) => a.price - b.price).at(0);
         }
 
         server.price = server.prices?.length ? server.prices[0].price : 0;
