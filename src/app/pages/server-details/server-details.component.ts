@@ -264,10 +264,6 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
             }
           });
 
-          console.log(this.serverDetails.benchmark_scores?.map((b: any) => b.benchmark_id));
-
-          console.log(this.benchmarksByCategory);
-
           this.regionFilters = [];
 
           this.serverDetails.prices?.sort((a, b) => a.price - b.price);

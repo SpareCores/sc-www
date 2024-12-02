@@ -371,9 +371,8 @@
                   </div>
                 </div>
               </div>
-
               <div class="mt-4 mb-8 flex justify-center"
-                *ngIf="!isEmbedded"
+                *ngIf="!isEmbedded && category.id !== 'passmark_cpu' && category.id !== 'passmark_other'"
                 [ngClass]="{
                   'mb-8': !category.show_more
                 }">
@@ -383,6 +382,31 @@
               </div>
             </td>
           </tr>
+          <ng-container *ngIf="category.id === 'passmark_cpu' || category.id === 'passmark_other'">
+            <ng-container *ngFor="let item of category.data">
+              <tr>
+                <td>
+                  <div class="ml-4 flex justify-between">
+                    <div class="flex gap-2 items-center">
+                      {{item.name}}
+                      <lucide-icon
+                        *ngIf="item.description"
+                        name="info"
+                        class="h-4 w-4 text-gray-200"
+                        (mouseenter)="showTooltip($event, item.description)"
+                        (mouseleave)="hideTooltip()">
+                      </lucide-icon>
+                    </div>
+                  </div>
+                </td>
+                <ng-container *ngIf="item.configs?.length > 0" >
+                  <td *ngFor="let value of item.configs[0].values" [style]="isBestStyle(value, item.configs[0].values, item)">
+                    {{numberWithCommas(value)}}
+                  </td>
+                </ng-container>
+              </tr>
+            </ng-container>
+          </ng-container>
           <ng-container *ngIf="category.show_more && !isEmbedded">
             <ng-container *ngFor="let item of category.data">
               <tr *ngIf="category.data.length > 1">
@@ -654,13 +678,16 @@
 <div id="tooltipDefault"
   #tooltipDefault
   style="opacity: 0; z-index: 22"
-  class="absolute z-100 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-secondary border border-solid border-emerald-400 rounded-lg">
+  class="z-100 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-secondary border border-solid border-emerald-400 rounded-lg"
+  [ngClass]="{'absolute': isEmbedded, 'fixed': !isEmbedded}"
+  >
   {{tooltipContent}}
 </div>
 
 <div id="tooltipGeekbench"
   #tooltipGeekbench
   style="opacity: 0; display: none;"
-  class="absolute z-100 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-secondary border border-solid border-emerald-400 rounded-lg">
+  class="z-100 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-secondary border border-solid border-emerald-400 rounded-lg"
+  [ngClass]="{'absolute': isEmbedded, 'fixed': !isEmbedded}">
   <div [innerHTML]="geekbenchHTML" ></div>
 </div>

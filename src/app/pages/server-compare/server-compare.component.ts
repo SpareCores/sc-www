@@ -159,7 +159,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
 
        ],
       data: [],
-      show_more: true,
+      show_more: false,
       hidden: false
     },
     {
@@ -173,7 +173,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
         "passmark:memory_read_uncached",
         "passmark:memory_write" ],
       data: [],
-      show_more: true,
+      show_more: false,
       hidden: false
     }
   ];
@@ -404,6 +404,9 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
 
         this.benchmarkCategories.forEach((category) => {
           category.data = this.benchmarkMeta.filter((b: any) => category.benchmarks.includes(b.benchmark_id));
+          category.data?.forEach((d: any) => {
+            d.name = d.name.replace('PassMark: CPU', '').replace('PassMark: ', '');
+          });
         });
 
         // sort the stress_ng and stress_ng_pct by config.cores

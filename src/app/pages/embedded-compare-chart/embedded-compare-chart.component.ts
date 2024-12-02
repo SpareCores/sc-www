@@ -314,6 +314,9 @@ export class EmbeddedCompareChartComponent {
 
         this.benchmarkCategories.forEach((category) => {
           category.data = this.benchmarkMeta.filter((b: any) => category.benchmarks.includes(b.benchmark_id));
+          category.data?.forEach((d: any) => {
+            d.name = d.name.replace('PassMark: CPU', '').replace('PassMark: ', '');
+          });
         });
 
         // sort the stress_ng and stress_ng_pct by config.cores
