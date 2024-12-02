@@ -592,7 +592,7 @@ export class ServerPricesComponent implements OnInit {
   }
 
   toggleCompare(event: boolean, server: ServerPriceWithPKs| any) {
-    this.serverCompare.toggleCompare(event, {server: server.server.api_reference, vendor: server.vendor_id, zone: server.zone_id, display_name: server.server.display_name});
+    this.serverCompare.toggleCompare(event, {server: server.server.api_reference, vendor: server.vendor_id, zones: server.zone_id, display_name: server.server.display_name});
   }
 
   compareCount() {

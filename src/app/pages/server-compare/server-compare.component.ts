@@ -322,7 +322,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
             server: server.api_reference,
             vendor: server.vendor_id,
             display_name: server.display_name,
-            zone: selectedZone
+            zones: selectedZone
           });
         }
 

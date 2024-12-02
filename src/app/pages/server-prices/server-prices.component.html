@@ -100,6 +100,11 @@
             <table class="items_table" id="server_prices_table">
               <thead>
                 <tr>
+                  <th class="checkbox_column">
+                    <div class="text-white">
+                      <lucide-icon class="h-4 w-4" name="scale" ></lucide-icon>
+                    </div>
+                  </th>
                   <th *ngFor="let item of tableColumns"
                       [ngClass]="{
                         'cursor-pointer': item.orderField
