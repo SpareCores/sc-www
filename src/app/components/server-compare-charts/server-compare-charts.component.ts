@@ -383,9 +383,8 @@ hideTooltip() {
 
 showTooltipGB(el: any) {
   const tooltip = this.tooltipGB.nativeElement;
-  const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
   tooltip.style.left = `${20}px`;
-  tooltip.style.top = `${el.target.getBoundingClientRect().bottom + 5 + scrollPosition}px`;
+  tooltip.style.top = `${el.target.getBoundingClientRect().bottom + 5}px`;
   tooltip.style.display = 'block';
   tooltip.style.opacity = '1';
 }
