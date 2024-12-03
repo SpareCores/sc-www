@@ -126,6 +126,44 @@
           </td>
         </ng-container>
       </tr>
+      <tr *ngIf="isChartShown('generic') && showZone">
+        <td class="align-top">
+          Specific ondemand prices
+        </td>
+        <ng-container *ngFor="let item of servers">
+          <td>
+            <div class="flex flex-col gap-2">
+              <div class="flex flex-col" *ngFor="let priceData of item.additionalOndemandPrices">
+                <div>
+                  {{priceData.price}} {{priceData.currency}}
+                </div>
+                <div class="text-xs">
+                  {{priceData.zone.display_name}}
+                </div>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+      </tr>
+      <tr *ngIf="isChartShown('generic') && showZone">
+        <td class="align-top">
+          Specific spot prices
+        </td>
+        <ng-container *ngFor="let item of servers">
+          <td>
+            <div class="flex flex-col gap-2" >
+              <div *ngFor="let priceData of item.additionalSpotPrices" class="flex flex-col">
+                <div>
+                  {{priceData.price}} {{priceData.currency}}
+                </div>
+                <div class="text-xs">
+                  {{priceData.zone.display_name}}
+                </div>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+      </tr>
       <ng-container *ngIf="isChartShown('generic')">
         <ng-container *ngFor="let category of instancePropertyCategories">
           <tr class="section_header">

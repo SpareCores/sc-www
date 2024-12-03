@@ -45,6 +45,8 @@ export interface ExtendedServerDetails extends ServerPKs {
   prices: ExtendedServerPrice[],
   bestOndemandPrice?: ExtendedServerPrice,
   bestSpotPrice?: ExtendedServerPrice,
+  additionalOndemandPrices?: ExtendedServerPrice[],
+  additionalSpotPrices?: ExtendedServerPrice[],
 }
 
 @Component({

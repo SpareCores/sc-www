@@ -14,7 +14,7 @@ import { PaginationComponent } from '../../components/pagination/pagination.comp
 import { DropdownManagerService } from '../../services/dropdown-manager.service';
 import { AnalyticsService } from '../../services/analytics.service';
 import { CurrencyOption, availableCurrencies } from '../../tools/shared_data';
-import { ServerCompareService } from '../../services/server-compare.service';
+import { ServerCompare, ServerCompareService } from '../../services/server-compare.service';
 
 export type TableColumn = {
   name: string;
@@ -366,7 +366,14 @@ export class ServerPricesComponent implements OnInit {
 
     this.keeperAPI.searchServerPrices(query).then(servers => {
       this.servers = servers?.body.map((item: any) => {
-        return {...item, selected: false};
+        return {
+          ...item,
+          selected: this.serverCompare.selectedForCompare.findIndex(
+            (compareItem: ServerCompare) =>
+              compareItem.vendor === item.vendor_id &&
+              compareItem.server === item.server.api_reference &&
+              compareItem.zonesRegions.findIndex(x => x.zone === item.zone_id && x.region === item.region_id) > -1) !== -1
+        };
       });
 
       if(updateTotalCount) {
@@ -592,7 +599,12 @@ export class ServerPricesComponent implements OnInit {
   }
 
   toggleCompare(event: boolean, server: ServerPriceWithPKs| any) {
-    this.serverCompare.toggleCompare(event, {server: server.server.api_reference, vendor: server.vendor_id, zones: server.zone_id, display_name: server.server.display_name});
+    this.serverCompare.toggleCompare(event, {
+      server: server.server.api_reference,
+      vendor: server.vendor_id,
+      zoneRegion: {zone: server.zone_id, region: server.region_id},
+      display_name: server.server.display_name
+    });
   }
 
   compareCount() {

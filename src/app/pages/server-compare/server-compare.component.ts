@@ -7,7 +7,7 @@ import { LucideAngularModule } from 'lucide-angular';
 import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SeoHandlerService } from '../../services/seo-handler.service';
-import { ServerCompareService } from '../../services/server-compare.service';
+import { ServerCompareService, ZoneAndRegion } from '../../services/server-compare.service';
 import { DropdownManagerService } from '../../services/dropdown-manager.service';
 import { AnalyticsService } from '../../services/analytics.service';
 import { CurrencyOption, availableCurrencies } from '../../tools/shared_data';
@@ -174,7 +174,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   specialCompares: any[] = require('./special-compares');
 
-  showZoneId = false;
+  showZoneIds = false;
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: object,
@@ -287,10 +287,10 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
 
         for(let i = 0; i < serverCount; i++){
           let server: ExtendedServerDetails = servers[i * 3];
-          const selectedZone = this.instances[i].zone;
+          const selectedZones: ZoneAndRegion[] = this.instances[i].zonesRegions || [];
 
-          if(selectedZone) {
-            this.showZoneId = true;
+          if(selectedZones.length) {
+            this.showZoneIds = true;
           }
 
           server.benchmark_scores = servers[i * 3 + 2];
@@ -301,15 +301,19 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
           if(server.prices?.length > 0) {
             server.prices.forEach((price: any) => {
               price.region = regions.find((r: any) => r.region_id === price.region_id);
-              price.zone = zones.find((z: any) => z.zone_id === price.zone_id);
+              price.zone = zones.find((z: any) => z.zone_id === price.zone_id && z.region_id === price.region_id && z.vendor_id === price.vendor_id);
             });
 
-            if(selectedZone) {
-              server.bestOndemandPrice = server.prices.find((x: any) => x.zone.zone_id === selectedZone && x.allocation === Allocation.Ondemand);
-              server.bestSpotPrice = server.prices.find((x: any) => x.zone.zone_id === selectedZone && x.allocation === Allocation.Spot);
-            } else {
-              server.bestOndemandPrice = server.prices.filter(x => x.allocation === Allocation.Ondemand).sort((a,b) => a.price - b.price).at(0);
-              server.bestSpotPrice = server.prices.filter(x => x.allocation === Allocation.Spot).sort((a,b) => a.price - b.price).at(0);
+            server.bestOndemandPrice = server.prices.filter(x => x.allocation === Allocation.Ondemand).sort((a,b) => a.price - b.price).at(0);
+            server.bestSpotPrice = server.prices.filter(x => x.allocation === Allocation.Spot).sort((a,b) => a.price - b.price).at(0);
+
+            if(selectedZones.length) {
+              server.additionalOndemandPrices =
+                server.prices.filter(x => x.allocation === Allocation.Ondemand && selectedZones.findIndex((z: any) => z.zone === x.zone_id && z.region === x.region_id) > -1)
+                  .sort((a,b) => a.price - b.price);
+              server.additionalSpotPrices =
+                server.prices.filter(x => x.allocation === Allocation.Spot && selectedZones.findIndex((z: any) => z.zone === x.zone_id && z.region === x.region_id) > -1)
+                  .sort((a,b) => a.price - b.price);
             }
           }
 
@@ -318,15 +322,23 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
           server.score_per_price = server.price && server.score ? server.score / server.price : (server.score || 0);
 
           this.servers.push(server);
-          this.serverCompare.toggleCompare(true, {
-            server: server.api_reference,
-            vendor: server.vendor_id,
-            display_name: server.display_name,
-            zones: selectedZone
-          });
+          if(selectedZones.length) {
+            selectedZones.forEach((zone: any) => {
+              this.serverCompare.toggleCompare(true, {
+                server: server.api_reference,
+                vendor: server.vendor_id,
+                display_name: server.display_name,
+                zoneRegion: zone
+              });
+            });
+          } else {
+            this.serverCompare.toggleCompare(true, {
+              server: server.api_reference,
+              vendor: server.vendor_id,
+              display_name: server.display_name
+            });
+          }
         }
-
-        console.log(this.servers);
 
         this.instanceProperties.forEach((p: any) => {
           const group = this.instancePropertyCategories.find((g) => g.category === p.category);
