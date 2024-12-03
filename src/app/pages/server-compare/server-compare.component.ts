@@ -80,6 +80,27 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
   selectedCurrency = this.availableCurrencies[0];
 
   benchmarkCategories: any[] = [
+    {
+      name: 'Memory bandwidth',
+      id: 'bw_mem',
+      benchmarks: ['bw_mem'],
+      data: [],
+      show_more: false
+    },
+    {
+      name: 'Compression',
+      id: 'compress',
+      benchmarks: [ 'compression_text:ratio', 'compression_text:decompress', 'compression_text:compress' ],
+      data: [],
+      show_more: false
+    },
+    {
+      name: 'OpenSSL speed',
+      id: 'openssl',
+      benchmarks: [ 'openssl' ],
+      data: [],
+      show_more: false
+    },
     { name: 'Geekbench',
       id: 'geekbench',
       benchmarks: [
@@ -101,43 +122,6 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
       "geekbench:background_blur",
       "geekbench:asset_compression"
       ],
-      data: [],
-      show_more: false,
-      hidden: false
-    },
-    {
-      name: 'Memory bandwidth',
-      id: 'bw_mem',
-      benchmarks: ['bw_mem'],
-      data: [],
-      show_more: false
-    },
-    {
-      name: 'OpenSSL speed',
-      id: 'openssl',
-      benchmarks: [ 'openssl' ],
-      data: [],
-      show_more: false
-    },
-    {
-      name: 'Compression',
-      id: 'compress',
-      benchmarks: [ 'compression_text:ratio', 'compression_text:decompress', 'compression_text:compress' ],
-      data: [],
-      show_more: false
-    },
-    {
-      name: 'stress-ng div16 raw scores per vCPU',
-      id: 'stress_ng',
-      benchmarks: [ 'stress_ng:div16' ],
-      data: [],
-      show_more: false,
-      hidden: false
-    },
-    {
-      name: 'stress-ng relative multicore performance per vCPU',
-      id: 'stress_ng_pct',
-      benchmarks: [ 'stress_ng:div16' ],
       data: [],
       show_more: false,
       hidden: false
@@ -172,6 +156,22 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
         "passmark:memory_read_cached",
         "passmark:memory_read_uncached",
         "passmark:memory_write" ],
+      data: [],
+      show_more: false,
+      hidden: false
+    },
+    {
+      name: 'stress-ng div16 raw scores per vCPU',
+      id: 'stress_ng',
+      benchmarks: [ 'stress_ng:div16' ],
+      data: [],
+      show_more: false,
+      hidden: false
+    },
+    {
+      name: 'stress-ng relative multicore performance per vCPU',
+      id: 'stress_ng_pct',
+      benchmarks: [ 'stress_ng:div16' ],
       data: [],
       show_more: false,
       hidden: false

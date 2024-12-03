@@ -28,7 +28,7 @@ export class ServerCompareChartsComponent {
   @Input() isEmbedded = false;
   @Input() showChart = 'all';
 
-  @ViewChild('tooltipDefault') tooltip!: ElementRef;
+  @ViewChild('tooltipcompareDefault') tooltip!: ElementRef;
   @ViewChild('tooltipGeekbench') tooltipGB!: ElementRef;
 
   tooltipContent = '';
@@ -346,10 +346,9 @@ export class ServerCompareChartsComponent {
 
   showTooltip(el: any, content?: string, autoHide = false) {
     const tooltip = this.tooltip.nativeElement;
-    const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
 
     tooltip.style.left = `${el.target.getBoundingClientRect().left - 25}px`;
-    tooltip.style.top = `${el.target.getBoundingClientRect().bottom + 5 + scrollPosition}px`;
+    tooltip.style.top = `${el.target.getBoundingClientRect().bottom + 5}px`;
     tooltip.style.display = 'block';
     tooltip.style.opacity = '1';
 
@@ -366,10 +365,9 @@ showTooltipChart(el: any, type: string) {
   let content = this.benchmarkMeta.find((b: any) => b.benchmark_id === type)?.description;
   if(content) {
     const tooltip = this.tooltip.nativeElement;
-    const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
 
     tooltip.style.left = `${el.target.getBoundingClientRect().left - 25}px`;
-    tooltip.style.top = `${el.target.getBoundingClientRect().bottom + 5 + scrollPosition}px`;
+    tooltip.style.top = `${el.target.getBoundingClientRect().bottom + 5}px`;
     tooltip.style.display = 'block';
     tooltip.style.opacity = '1';
 

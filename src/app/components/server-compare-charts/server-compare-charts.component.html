@@ -675,11 +675,10 @@
   </ul>
 </div>
 
-<div id="tooltipDefault"
-  #tooltipDefault
+<div id="tooltipcompareDefault"
+  #tooltipcompareDefault
   style="opacity: 0; z-index: 22"
-  class="z-100 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-secondary border border-solid border-emerald-400 rounded-lg"
-  [ngClass]="{'absolute': isEmbedded, 'fixed': !isEmbedded}"
+  class="fixed z-100 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-secondary border border-solid border-emerald-400 rounded-lg"
   >
   {{tooltipContent}}
 </div>
@@ -687,7 +686,7 @@
 <div id="tooltipGeekbench"
   #tooltipGeekbench
   style="opacity: 0; display: none;"
-  class="z-100 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-secondary border border-solid border-emerald-400 rounded-lg"
-  [ngClass]="{'absolute': isEmbedded, 'fixed': !isEmbedded}">
+  class="fixed z-100 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-secondary border border-solid border-emerald-400 rounded-lg"
+  >
   <div [innerHTML]="geekbenchHTML" ></div>
 </div>
