@@ -80,6 +80,27 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
   selectedCurrency = this.availableCurrencies[0];
 
   benchmarkCategories: any[] = [
+    {
+      name: 'Memory bandwidth',
+      id: 'bw_mem',
+      benchmarks: ['bw_mem'],
+      data: [],
+      show_more: false
+    },
+    {
+      name: 'Compression',
+      id: 'compress',
+      benchmarks: [ 'compression_text:ratio', 'compression_text:decompress', 'compression_text:compress' ],
+      data: [],
+      show_more: false
+    },
+    {
+      name: 'OpenSSL speed',
+      id: 'openssl',
+      benchmarks: [ 'openssl' ],
+      data: [],
+      show_more: false
+    },
     { name: 'Geekbench',
       id: 'geekbench',
       benchmarks: [
@@ -106,25 +127,38 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
       hidden: false
     },
     {
-      name: 'Memory bandwidth',
-      id: 'bw_mem',
-      benchmarks: ['bw_mem'],
+      name: 'PassMark CPU benchmarks',
+      id: 'passmark_cpu',
+      benchmarks: [
+        "passmark:cpu_compression_test",
+        "passmark:cpu_encryption_test",
+        "passmark:cpu_extended_instructions_test",
+        "passmark:cpu_floating_point_maths_test",
+        "passmark:cpu_integer_maths_test",
+        "passmark:cpu_mark",
+        "passmark:cpu_physics_test",
+        "passmark:cpu_prime_numbers_test",
+        "passmark:cpu_single_threaded_test",
+        "passmark:cpu_string_sorting_test",
+
+       ],
       data: [],
-      show_more: false
+      show_more: false,
+      hidden: false
     },
     {
-      name: 'OpenSSL speed',
-      id: 'openssl',
-      benchmarks: [ 'openssl' ],
+      name: 'PassMark Memory benchmarks',
+      id: 'passmark_other',
+      benchmarks: [
+        "passmark:database_operations",
+        "passmark:memory_latency",
+        "passmark:memory_mark",
+        "passmark:memory_read_cached",
+        "passmark:memory_read_uncached",
+        "passmark:memory_write" ],
       data: [],
-      show_more: false
-    },
-    {
-      name: 'Compression',
-      id: 'compress',
-      benchmarks: [ 'compression_text:ratio', 'compression_text:decompress', 'compression_text:compress' ],
-      data: [],
-      show_more: false
+      show_more: false,
+      hidden: false
     },
     {
       name: 'stress-ng div16 raw scores per vCPU',
@@ -370,6 +404,9 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
 
         this.benchmarkCategories.forEach((category) => {
           category.data = this.benchmarkMeta.filter((b: any) => category.benchmarks.includes(b.benchmark_id));
+          category.data?.forEach((d: any) => {
+            d.name = d.name.replace(/PassMark: CPU (.*?) Test|PassMark: CPU (.*?)/, '$1$2').replace(/PassMark: (.*?) Test|PassMark: (.*?)/, '$1$2');
+          });
         });
 
         // sort the stress_ng and stress_ng_pct by config.cores

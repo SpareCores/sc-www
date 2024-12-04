@@ -248,9 +248,17 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
           this.benchmarksByCategory = [];
           this.serverDetails.benchmark_scores?.forEach((b: any) => {
-            const group = this.benchmarksByCategory.find((g) => g.benchmark_id === b.benchmark_id);
+            let group_id = b.benchmark_id;
+            if(group_id.includes('passmark:')) {
+              if(group_id.includes('passmark:cpu_')) {
+                group_id = 'passmark:cpu';
+              } else {
+                group_id = 'passmark:other';
+              }
+            }
+            const group = this.benchmarksByCategory.find((g) => g.benchmark_id === group_id);
             if(!group) {
-              this.benchmarksByCategory.push({benchmark_id: b.benchmark_id, benchmarks: [b]});
+              this.benchmarksByCategory.push({benchmark_id: group_id, benchmarks: [b]});
             } else {
               group.benchmarks.push(b);
             }

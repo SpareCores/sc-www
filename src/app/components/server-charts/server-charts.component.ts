@@ -88,6 +88,9 @@ export class ServerChartsComponent implements OnChanges {
 
   resizeTimeout: any;
 
+  passmarkCPUData: any[] | null = null;
+  passmarkOTHERData: any[] | null = null;
+
   constructor(@Inject(PLATFORM_ID) private platformId: object,
   @Inject(DOCUMENT) private document: Document,
   private dropdownManager: DropdownManagerService,
@@ -230,6 +233,9 @@ export class ServerChartsComponent implements OnChanges {
     this.generateGeekbenchChart();
 
     this.generateCompressChart();
+
+    this.passmarkCPUData = this.getBenchmarkCategory('passmark:cpu');
+    this.passmarkOTHERData = this.getBenchmarkCategory('passmark:other');
 
     this.multiBarCharts.forEach((chartItem: any) => {
       this.generateMultiBarChart(chartItem.chart);
@@ -726,6 +732,17 @@ export class ServerChartsComponent implements OnChanges {
     this.compressDropdown?.hide();
   }
 
+  getBenchmarkCategory(category: string) {
+    return (this.benchmarksByCategory?.find(x => x.benchmark_id === category)?.benchmarks || []).map((e: any) => {
+      return {
+        ...e,
+        score: Math.round(e.score),
+        name: this.benchmarkMeta.find((b: any) => b.benchmark_id === e.benchmark_id)?.name
+          ?.replace(/PassMark: CPU (.*?) Test|PassMark: CPU (.*?)/, '$1$2')
+          .replace(/PassMark: (.*?) Test|PassMark: (.*?)/, '$1$2') || e.benchmark_id,
+      }
+    });
+  }
 
   public numberWithCommas(x: number) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -781,6 +798,21 @@ export class ServerChartsComponent implements OnChanges {
 
   isBrowser() {
     return isPlatformBrowser(this.platformId);
+  }
+
+  openBox(boxId: string) {
+    const el = document.getElementById(boxId);
+    if(el) {
+      el.classList.toggle('open');
+    }
+    const el2 = document.getElementById(boxId+'_more');
+    if(el2) {
+      el2.classList.toggle('hidden');
+    }
+    const el3 = document.getElementById(boxId+'_less');
+    if(el3) {
+      el3.classList.toggle('hidden');
+    }
   }
 
 }

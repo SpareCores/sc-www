@@ -72,74 +72,6 @@
     </div>
   </div>
 </div>
-<div class="block_half_taller" *ngIf="radarChartDataGeekSingle && isChartShown('geek_single')" id="geekbench_chart">
-  <div class="flex justify-between items-center">
-    <h3 class="text-2xl flex items-center gap-2" >
-      Geekbench Single-Core
-      <lucide-icon
-        name="circle-arrow-up"
-        class="h-4 w-4 text-gray-200"
-        (mouseenter)="showTooltip($event, 'Higher is better.')"
-        (mouseleave)="hideTooltip()">
-      </lucide-icon>
-      <lucide-icon
-        name="info"
-        class="h-4 w-4 text-gray-200"
-        (mouseenter)="showTooltipGB($event)"
-        (mouseleave)="hideTooltipGB()">
-      </lucide-icon>
-    </h3>
-    <div class="py-2 px-2 border-emerald-400 border-solid rounded-lg border">
-      Score: {{geekScoreSingle}}
-    </div>
-  </div>
-  <div class="h-full" *ngIf="isBrowser()">
-    <div class="chart_div" chartType="bar">
-      <canvas
-        #chartPriceLowest
-        id="chartPriceLowest"
-        baseChart
-        [data]="radarChartDataGeekSingle"
-        [options]="radarChartOptions"
-        [type]="radarChartType"
-      >
-      </canvas>
-    </div>
-  </div>
-</div>
-<div class="block_half_taller" *ngIf="radarChartDataGeekMulti  && isChartShown('geek_multi')">
-  <div class="flex justify-between items-center">
-    <h3 class="text-2xl flex items-center gap-2" >
-      Geekbench Multi-Core
-      <lucide-icon
-        name="circle-arrow-up"
-        class="h-4 w-4 text-gray-200"
-        (mouseenter)="showTooltip($event, 'Higher is better.')"
-        (mouseleave)="hideTooltip()">
-      </lucide-icon>
-      <lucide-icon
-        name="info"
-        class="h-4 w-4 text-gray-200"
-        (mouseenter)="showTooltipGB($event)"
-        (mouseleave)="hideTooltipGB()">
-      </lucide-icon>
-    </h3>
-    <div class="py-2 px-2 border-emerald-400 border-solid rounded-lg border">
-      Score: {{geekScoreMulti}}
-    </div>
-  </div>
-  <div class="h-full" *ngIf="isBrowser()">
-    <div class="chart_div" chartType="bar">
-      <canvas
-        baseChart
-        [data]="radarChartDataGeekMulti"
-        [options]="radarChartOptions"
-        [type]="radarChartType"
-      >
-      </canvas>
-    </div>
-  </div>
-</div>
 
 <div class="block_full" *ngIf="barChartDataSSL  && isChartShown('ssl')" id="ssl_chart">
   <div class="flex justify-between items-center">
@@ -173,51 +105,153 @@
   </div>
 </div>
 
-<ng-container *ngFor="let chartItem of multiBarCharts">
-  <div class="block_half" *ngIf="chartItem.chart.chartData && isChartShown(chartItem.chart.id)" id="{{chartItem.chart.id}}_chart">
-    <div class="flex justify-between items-center">
-      <h3 class="text-2xl flex items-center gap-2" >
-        {{chartItem.chart.name}}
-        <lucide-icon
-          name="info"
-          class="h-4 w-4 text-gray-200"
-          (mouseenter)="showTooltipChart($event, chartItem.chart.options[chartItem.chart.selectedOption].benchmark_id)"
-          (mouseleave)="hideTooltip()">
-        </lucide-icon>
-        <lucide-icon
-          *ngIf="chartItem.chart.options[chartItem.chart.selectedOption].icon"
-          name="{{chartItem.chart.options[chartItem.chart.selectedOption].icon}}"
-          class="h-4 w-4 text-gray-200"
-          (mouseenter)="showTooltip($event, chartItem.chart.options[chartItem.chart.selectedOption].tooltip)"
-          (mouseleave)="hideTooltip()">
-        </lucide-icon>
-      </h3>
-      <button
-        id="{{chartItem.chart.id}}_button"
-        class="dropdown_button"
-        type="button">
-        <div class="px-3 py-2">
-          {{chartItem.chart.options[chartItem.chart.selectedOption].name}}
-        </div>
-        <div class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
-          <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
-        </div>
-      </button>
-    </div>
-    <div class="h-full" *ngIf="isBrowser()">
-      <div class="chart_div" chartType="bar">
-        <canvas
-          baseChart
-          id="{{chartItem.chart.id}}_canvas"
-          [data]="chartItem.chart.chartData"
-          [options]="chartItem.chart.chartOptions"
-          [type]="chartItem.chart.chartType"
-        >
-        </canvas>
-      </div>
+<div class="block_half_taller" *ngIf="radarChartDataGeekSingle && isChartShown('geek_single')" id="geekbench_chart">
+  <div class="flex justify-between items-center">
+    <h3 class="text-2xl flex items-center gap-2" >
+      Geekbench Single-Core
+      <lucide-icon
+        name="circle-arrow-up"
+        class="h-4 w-4 text-gray-200"
+        (mouseenter)="showTooltip($event, 'Higher is better.')"
+        (mouseleave)="hideTooltip()">
+      </lucide-icon>
+      <lucide-icon
+        name="info"
+        class="h-4 w-4 text-gray-200"
+        (mouseenter)="showTooltipGB($event)"
+        (mouseleave)="hideTooltipGB()">
+      </lucide-icon>
+    </h3>
+    <div class="py-2 px-2 border-emerald-400 border-solid rounded-lg border">
+      Score: {{geekScoreSingle}}
     </div>
   </div>
-</ng-container>
+  <div class="h-full" *ngIf="isBrowser()">
+    <div class="chart_div" chartType="bar">
+      <canvas
+        id="geekbench_single_canvas"
+        baseChart
+        [data]="radarChartDataGeekSingle"
+        [options]="radarChartOptions"
+        [type]="radarChartType"
+      >
+      </canvas>
+    </div>
+  </div>
+</div>
+
+<div class="block_half_taller" *ngIf="radarChartDataGeekMulti  && isChartShown('geek_multi')">
+  <div class="flex justify-between items-center">
+    <h3 class="text-2xl flex items-center gap-2" >
+      Geekbench Multi-Core
+      <lucide-icon
+        name="circle-arrow-up"
+        class="h-4 w-4 text-gray-200"
+        (mouseenter)="showTooltip($event, 'Higher is better.')"
+        (mouseleave)="hideTooltip()">
+      </lucide-icon>
+      <lucide-icon
+        id="geekbench_multi_canvas"
+        name="info"
+        class="h-4 w-4 text-gray-200"
+        (mouseenter)="showTooltipGB($event)"
+        (mouseleave)="hideTooltipGB()">
+      </lucide-icon>
+    </h3>
+    <div class="py-2 px-2 border-emerald-400 border-solid rounded-lg border">
+      Score: {{geekScoreMulti}}
+    </div>
+  </div>
+  <div class="h-full" *ngIf="isBrowser()">
+    <div class="chart_div" chartType="bar">
+      <canvas
+        baseChart
+        [data]="radarChartDataGeekMulti"
+        [options]="radarChartOptions"
+        [type]="radarChartType"
+      >
+      </canvas>
+    </div>
+  </div>
+</div>
+
+<div class="block_half" *ngIf="isChartShown('passmark:cpu') && passmarkCPUData?.length" id="passmark_cpu">
+  <div class="flex items-center" style="min-height: 42px;">
+    <h3 class="text-2xl">Passmark CPU scores</h3>
+  </div>
+  <table class="items_table_passmark" id="similar_family_table">
+    <thead>
+      <tr>
+        <th>BENCHMARK</th>
+        <th>SCORE</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of passmarkCPUData" id="similar_family_line">
+        <td>
+          <div class="flex gap-1 items-center">
+            {{item.name}}
+            <lucide-icon
+              name="info"
+              class="h-4 w-4 text-gray-200"
+              (mouseenter)="showTooltipChart($event, item.benchmark_id)"
+              (mouseleave)="hideTooltip()">
+            </lucide-icon>
+          </div>
+        </td>
+        <td>
+          {{item.score}}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div *ngIf="getBenchmarkCategory('passmark:cpu').length > 7" class="absolute bottom-0 laft-0 w-full py-3 flex justify-center" id="passmark_cpu_more"
+      style="background: linear-gradient(360deg, #06263A 23.44%, rgba(6, 38, 58, 0) 100%);" >
+    <button class="btn-primary py-2 px-3" (click)="openBox('passmark_cpu')"
+            id="availability_more_button"
+            data-ph-capture-attribute-sc-event="passmark_cpu show more availability">
+      Show more
+    </button>
+  </div>
+  <div class="w-full pt-3 flex justify-center hidden" id="passmark_cpu_less">
+    <button class="btn-primary py-2 px-3" (click)="openBox('passmark_cpu')"
+            data-ph-capture-attribute-sc-event="passmark_cpu show less availability">
+      Show less
+    </button>
+  </div>
+</div>
+
+<div class="block_half" *ngIf="isChartShown('passmark:other') && passmarkOTHERData?.length" id="passmark_other">
+  <div class="flex items-center" style="min-height: 42px;">
+    <h3 class="text-2xl">Passmark Memory scores</h3>
+  </div>
+  <table class="items_table_passmark" id="similar_family_table">
+    <thead>
+      <tr>
+        <th>BENCHMARK</th>
+        <th>SCORE</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of passmarkOTHERData" id="similar_family_line">
+        <td>
+          <div class="flex gap-1 items-center">
+            {{item.name}}
+            <lucide-icon
+              name="info"
+              class="h-4 w-4 text-gray-200"
+              (mouseenter)="showTooltipChart($event, item.benchmark_id)"
+              (mouseleave)="hideTooltip()">
+            </lucide-icon>
+          </div>
+        </td>
+        <td>
+          {{item.score}}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
 <div class="block_half" *ngIf="lineChartDataStressNG && isChartShown('stress_ng_div16')" id="stress_ng_div16_chart">
   <div class="flex justify-between items-center">
@@ -282,6 +316,52 @@
     </div>
   </div>
 </div>
+
+<ng-container *ngFor="let chartItem of multiBarCharts">
+  <div class="block_half" *ngIf="chartItem.chart.chartData && isChartShown(chartItem.chart.id)" id="{{chartItem.chart.id}}_chart">
+    <div class="flex justify-between items-center">
+      <h3 class="text-2xl flex items-center gap-2" >
+        {{chartItem.chart.name}}
+        <lucide-icon
+          name="info"
+          class="h-4 w-4 text-gray-200"
+          (mouseenter)="showTooltipChart($event, chartItem.chart.options[chartItem.chart.selectedOption].benchmark_id)"
+          (mouseleave)="hideTooltip()">
+        </lucide-icon>
+        <lucide-icon
+          *ngIf="chartItem.chart.options[chartItem.chart.selectedOption].icon"
+          name="{{chartItem.chart.options[chartItem.chart.selectedOption].icon}}"
+          class="h-4 w-4 text-gray-200"
+          (mouseenter)="showTooltip($event, chartItem.chart.options[chartItem.chart.selectedOption].tooltip)"
+          (mouseleave)="hideTooltip()">
+        </lucide-icon>
+      </h3>
+      <button
+        id="{{chartItem.chart.id}}_button"
+        class="dropdown_button"
+        type="button">
+        <div class="px-3 py-2">
+          {{chartItem.chart.options[chartItem.chart.selectedOption].name}}
+        </div>
+        <div class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
+          <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
+        </div>
+      </button>
+    </div>
+    <div class="h-full" *ngIf="isBrowser()">
+      <div class="chart_div" chartType="bar">
+        <canvas
+          baseChart
+          id="{{chartItem.chart.id}}_canvas"
+          [data]="chartItem.chart.chartData"
+          [options]="chartItem.chart.chartOptions"
+          [type]="chartItem.chart.chartType"
+        >
+        </canvas>
+      </div>
+    </div>
+  </div>
+</ng-container>
 
 <div id="compress_method_options" class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid">
   <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">

@@ -1,6 +1,6 @@
-import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Component, ElementRef, Inject, Input, PLATFORM_ID, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 import { ExtendedServerDetails } from '../../pages/server-details/server-details.component';
 import { TooltipModel, TooltipItem, ChartConfiguration, ChartData } from 'chart.js';
@@ -8,11 +8,7 @@ import { Allocation, ServerPKs } from '../../../../sdk/data-contracts';
 import { ChartFromBenchmarkTemplate, ChartFromBenchmarkTemplateOptions, redisChartTemplate, redisChartTemplateCallbacks, staticWebChartCompareTemplate, staticWebChartTemplateCallbacks } from '../../pages/server-details/chartFromBenchmarks';
 import { barChartOptionsRedisCompare, barChartOptionsSSLCompare, barChartOptionsStaticWebCompare, lineChartOptionsBWM, lineChartOptionsCompareCompress, lineChartOptionsCompareDecompress, lineChartOptionsStressNG, lineChartOptionsStressNGPercent, radarChartOptions, radarDatasetColors } from '../../pages/server-details/chartOptions';
 import { DomSanitizer } from '@angular/platform-browser';
-import { AnalyticsService } from '../../services/analytics.service';
 import { DropdownManagerService } from '../../services/dropdown-manager.service';
-import { KeeperAPIService } from '../../services/keeper-api.service';
-import { SeoHandlerService } from '../../services/seo-handler.service';
-import { ServerCompareService } from '../../services/server-compare.service';
 import { BaseChartDirective } from 'ng2-charts';
 
 @Component({
@@ -32,7 +28,7 @@ export class ServerCompareChartsComponent {
   @Input() isEmbedded = false;
   @Input() showChart = 'all';
 
-  @ViewChild('tooltipDefault') tooltip!: ElementRef;
+  @ViewChild('tooltipcompareDefault') tooltip!: ElementRef;
   @ViewChild('tooltipGeekbench') tooltipGB!: ElementRef;
 
   tooltipContent = '';
@@ -125,15 +121,8 @@ export class ServerCompareChartsComponent {
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: object,
-    @Inject(DOCUMENT) private document: Document,
-    private keeperAPI: KeeperAPIService,
-    private seoHandler: SeoHandlerService,
     private sanitizer: DomSanitizer,
-    private serverCompare: ServerCompareService,
-    private dropdownManager: DropdownManagerService,
-    private analytics: AnalyticsService,
-    private router: Router,
-    private route: ActivatedRoute) { }
+    private dropdownManager: DropdownManagerService) { }
 
   ngOnInit() {
     (this.radarChartOptionsSingle as any).plugins.legend.display = true;
@@ -357,9 +346,9 @@ export class ServerCompareChartsComponent {
 
   showTooltip(el: any, content?: string, autoHide = false) {
     const tooltip = this.tooltip.nativeElement;
-    const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+
     tooltip.style.left = `${el.target.getBoundingClientRect().left - 25}px`;
-    tooltip.style.top = `${el.target.getBoundingClientRect().bottom + 5 + scrollPosition}px`;
+    tooltip.style.top = `${el.target.getBoundingClientRect().bottom + 5}px`;
     tooltip.style.display = 'block';
     tooltip.style.opacity = '1';
 
@@ -376,9 +365,9 @@ showTooltipChart(el: any, type: string) {
   let content = this.benchmarkMeta.find((b: any) => b.benchmark_id === type)?.description;
   if(content) {
     const tooltip = this.tooltip.nativeElement;
-    const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+
     tooltip.style.left = `${el.target.getBoundingClientRect().left - 25}px`;
-    tooltip.style.top = `${el.target.getBoundingClientRect().bottom + 5 + scrollPosition}px`;
+    tooltip.style.top = `${el.target.getBoundingClientRect().bottom + 5}px`;
     tooltip.style.display = 'block';
     tooltip.style.opacity = '1';
 
@@ -394,9 +383,8 @@ hideTooltip() {
 
 showTooltipGB(el: any) {
   const tooltip = this.tooltipGB.nativeElement;
-  const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
   tooltip.style.left = `${20}px`;
-  tooltip.style.top = `${el.target.getBoundingClientRect().bottom + 5 + scrollPosition}px`;
+  tooltip.style.top = `${el.target.getBoundingClientRect().bottom + 5}px`;
   tooltip.style.display = 'block';
   tooltip.style.opacity = '1';
 }
