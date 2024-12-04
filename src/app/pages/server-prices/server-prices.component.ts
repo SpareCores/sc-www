@@ -368,6 +368,8 @@ export class ServerPricesComponent implements OnInit {
       this.servers = servers?.body.map((item: any) => {
         return {
           ...item,
+          partiallySelected: this.serverCompare.selectedForCompare.findIndex(
+            x => x.server === item.server.api_reference && x.vendor === item.vendor_id) > -1,
           selected: this.serverCompare.selectedForCompare.findIndex(
             (compareItem: ServerCompare) =>
               compareItem.vendor === item.vendor_id &&
@@ -594,7 +596,9 @@ export class ServerPricesComponent implements OnInit {
 
   toggleCompare2(event: any, server: ServerPriceWithPKs| any) {
     event.stopPropagation();
+
     server.selected = !server.selected;
+
     this.toggleCompare(server.selected, server);
   }
 
@@ -604,6 +608,13 @@ export class ServerPricesComponent implements OnInit {
       vendor: server.vendor_id,
       zoneRegion: {zone: server.zone_id, region: server.region_id},
       display_name: server.server.display_name
+    });
+    this.servers.forEach((item) => {
+      if(this.serverCompare.selectedForCompare.findIndex(x => x.server === item.server.api_reference && x.vendor === item.vendor_id) > -1) {
+        item.partiallySelected = true;
+      } else {
+        item.partiallySelected = false;
+      }
     });
   }
 

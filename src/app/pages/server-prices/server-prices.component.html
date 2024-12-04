@@ -143,7 +143,8 @@
                         [(ngModel)]="item.selected"
                         (ngModelChange)="toggleCompare($event, item)"
                         (click)="$event.stopPropagation()"
-                        class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer" >
+                        class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer"
+                        [ngClass]="{'partially_selected': item.partiallySelected && !item.selected }" >
                     </div>
                   </td>
                   <ng-container *ngFor="let column of tableColumns">
