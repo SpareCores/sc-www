@@ -1,7 +1,7 @@
 import { Component, Inject, PLATFORM_ID, OnInit, ViewChild, ElementRef} from '@angular/core';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { KeeperAPIService } from '../../services/keeper-api.service';
-import { OrderDir, ServerPKs, ServerPriceWithPKs } from '../../../../sdk/data-contracts';
+import { OrderDir, ServerPriceWithPKs } from '../../../../sdk/data-contracts';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { StorageHandlerService } from '../../services/storage-handler.service';
