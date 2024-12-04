@@ -88,6 +88,9 @@ export class ServerChartsComponent implements OnChanges {
 
   resizeTimeout: any;
 
+  passmarkCPUData: any[] | null = null;
+  passmarkOTHERData: any[] | null = null;
+
   constructor(@Inject(PLATFORM_ID) private platformId: object,
   @Inject(DOCUMENT) private document: Document,
   private dropdownManager: DropdownManagerService,
@@ -230,6 +233,9 @@ export class ServerChartsComponent implements OnChanges {
     this.generateGeekbenchChart();
 
     this.generateCompressChart();
+
+    this.passmarkCPUData = this.getBenchmarkCategory('passmark:cpu');
+    this.passmarkOTHERData = this.getBenchmarkCategory('passmark:other');
 
     this.multiBarCharts.forEach((chartItem: any) => {
       this.generateMultiBarChart(chartItem.chart);

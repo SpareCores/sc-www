@@ -175,7 +175,7 @@
   </div>
 </div>
 
-<div class="block_half" *ngIf="isChartShown('passmark:cpu')" id="passmark_cpu">
+<div class="block_half" *ngIf="isChartShown('passmark:cpu') && passmarkCPUData?.length" id="passmark_cpu">
   <div class="flex items-center" style="min-height: 42px;">
     <h3 class="text-2xl">Passmark CPU scores</h3>
   </div>
@@ -187,7 +187,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let item of getBenchmarkCategory('passmark:cpu')" id="similar_family_line">
+      <tr *ngFor="let item of passmarkCPUData" id="similar_family_line">
         <td>
           <div class="flex gap-1 items-center">
             {{item.name}}
@@ -221,7 +221,7 @@
   </div>
 </div>
 
-<div class="block_half" *ngIf="isChartShown('passmark:other')" id="passmark_other">
+<div class="block_half" *ngIf="isChartShown('passmark:other') && passmarkOTHERData?.length" id="passmark_other">
   <div class="flex items-center" style="min-height: 42px;">
     <h3 class="text-2xl">Passmark Memory scores</h3>
   </div>
@@ -233,7 +233,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let item of getBenchmarkCategory('passmark:other')" id="similar_family_line">
+      <tr *ngFor="let item of passmarkOTHERData" id="similar_family_line">
         <td>
           <div class="flex gap-1 items-center">
             {{item.name}}
