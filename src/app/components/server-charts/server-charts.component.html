@@ -129,8 +129,7 @@
   <div class="h-full" *ngIf="isBrowser()">
     <div class="chart_div" chartType="bar">
       <canvas
-        #chartPriceLowest
-        id="chartPriceLowest"
+        id="geekbench_single_canvas"
         baseChart
         [data]="radarChartDataGeekSingle"
         [options]="radarChartOptions"
@@ -152,6 +151,7 @@
         (mouseleave)="hideTooltip()">
       </lucide-icon>
       <lucide-icon
+        id="geekbench_multi_canvas"
         name="info"
         class="h-4 w-4 text-gray-200"
         (mouseenter)="showTooltipGB($event)"
@@ -174,54 +174,6 @@
     </div>
   </div>
 </div>
-
-
-
-<ng-container *ngFor="let chartItem of multiBarCharts">
-  <div class="block_half" *ngIf="chartItem.chart.chartData && isChartShown(chartItem.chart.id)" id="{{chartItem.chart.id}}_chart">
-    <div class="flex justify-between items-center">
-      <h3 class="text-2xl flex items-center gap-2" >
-        {{chartItem.chart.name}}
-        <lucide-icon
-          name="info"
-          class="h-4 w-4 text-gray-200"
-          (mouseenter)="showTooltipChart($event, chartItem.chart.options[chartItem.chart.selectedOption].benchmark_id)"
-          (mouseleave)="hideTooltip()">
-        </lucide-icon>
-        <lucide-icon
-          *ngIf="chartItem.chart.options[chartItem.chart.selectedOption].icon"
-          name="{{chartItem.chart.options[chartItem.chart.selectedOption].icon}}"
-          class="h-4 w-4 text-gray-200"
-          (mouseenter)="showTooltip($event, chartItem.chart.options[chartItem.chart.selectedOption].tooltip)"
-          (mouseleave)="hideTooltip()">
-        </lucide-icon>
-      </h3>
-      <button
-        id="{{chartItem.chart.id}}_button"
-        class="dropdown_button"
-        type="button">
-        <div class="px-3 py-2">
-          {{chartItem.chart.options[chartItem.chart.selectedOption].name}}
-        </div>
-        <div class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
-          <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
-        </div>
-      </button>
-    </div>
-    <div class="h-full" *ngIf="isBrowser()">
-      <div class="chart_div" chartType="bar">
-        <canvas
-          baseChart
-          id="{{chartItem.chart.id}}_canvas"
-          [data]="chartItem.chart.chartData"
-          [options]="chartItem.chart.chartOptions"
-          [type]="chartItem.chart.chartType"
-        >
-        </canvas>
-      </div>
-    </div>
-  </div>
-</ng-container>
 
 <div class="block_half" *ngIf="isChartShown('passmark:cpu')" id="passmark_cpu">
   <div class="flex items-center" style="min-height: 42px;">
@@ -365,6 +317,51 @@
   </div>
 </div>
 
+<ng-container *ngFor="let chartItem of multiBarCharts">
+  <div class="block_half" *ngIf="chartItem.chart.chartData && isChartShown(chartItem.chart.id)" id="{{chartItem.chart.id}}_chart">
+    <div class="flex justify-between items-center">
+      <h3 class="text-2xl flex items-center gap-2" >
+        {{chartItem.chart.name}}
+        <lucide-icon
+          name="info"
+          class="h-4 w-4 text-gray-200"
+          (mouseenter)="showTooltipChart($event, chartItem.chart.options[chartItem.chart.selectedOption].benchmark_id)"
+          (mouseleave)="hideTooltip()">
+        </lucide-icon>
+        <lucide-icon
+          *ngIf="chartItem.chart.options[chartItem.chart.selectedOption].icon"
+          name="{{chartItem.chart.options[chartItem.chart.selectedOption].icon}}"
+          class="h-4 w-4 text-gray-200"
+          (mouseenter)="showTooltip($event, chartItem.chart.options[chartItem.chart.selectedOption].tooltip)"
+          (mouseleave)="hideTooltip()">
+        </lucide-icon>
+      </h3>
+      <button
+        id="{{chartItem.chart.id}}_button"
+        class="dropdown_button"
+        type="button">
+        <div class="px-3 py-2">
+          {{chartItem.chart.options[chartItem.chart.selectedOption].name}}
+        </div>
+        <div class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
+          <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
+        </div>
+      </button>
+    </div>
+    <div class="h-full" *ngIf="isBrowser()">
+      <div class="chart_div" chartType="bar">
+        <canvas
+          baseChart
+          id="{{chartItem.chart.id}}_canvas"
+          [data]="chartItem.chart.chartData"
+          [options]="chartItem.chart.chartOptions"
+          [type]="chartItem.chart.chartType"
+        >
+        </canvas>
+      </div>
+    </div>
+  </div>
+</ng-container>
 
 <div id="compress_method_options" class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid">
   <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
