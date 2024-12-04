@@ -732,7 +732,7 @@ export class ServerChartsComponent implements OnChanges {
         ...e,
         score: Math.round(e.score),
         name: this.benchmarkMeta.find((b: any) => b.benchmark_id === e.benchmark_id)?.name
-          ?.replace(/PassMark CPU: (.*?) Test|PassMark CPU: (.*?)/, '$1$2')
+          ?.replace(/PassMark: CPU (.*?) Test|PassMark: CPU (.*?)/, '$1$2')
           .replace(/PassMark: (.*?) Test|PassMark: (.*?)/, '$1$2') || e.benchmark_id,
       }
     });

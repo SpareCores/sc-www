@@ -405,7 +405,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
         this.benchmarkCategories.forEach((category) => {
           category.data = this.benchmarkMeta.filter((b: any) => category.benchmarks.includes(b.benchmark_id));
           category.data?.forEach((d: any) => {
-            d.name = d.name.replace(/PassMark CPU: (.*?) Test|PassMark CPU: (.*?)/, '$1$2').replace(/PassMark: (.*?) Test|PassMark: (.*?)/, '$1$2');
+            d.name = d.name.replace(/PassMark: CPU (.*?) Test|PassMark: CPU (.*?)/, '$1$2').replace(/PassMark: (.*?) Test|PassMark: (.*?)/, '$1$2');
           });
         });
 
