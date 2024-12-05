@@ -98,8 +98,13 @@
         </td>
         <ng-container *ngFor="let item of servers">
           <td>
-            <div [style]="getBestPriceStyle(item, 'spot')">
-              {{getBestPrice(item, "spot")}}
+            <div class="flex flex-col">
+              <div [style]="getBestPriceStyle(item, 'spot')">
+                {{getBestPrice(item, "spot")}}
+              </div>
+              <div class="text-xs">
+                {{getBestZone(item, "spot")}}
+              </div>
             </div>
           </td>
         </ng-container>
@@ -110,8 +115,51 @@
         </td>
         <ng-container *ngFor="let item of servers">
           <td>
-            <div [style]="getBestPriceStyle(item)">
-              {{getBestPrice(item)}}
+            <div class="flex flex-col">
+              <div [style]="getBestPriceStyle(item)">
+                {{getBestPrice(item)}}
+              </div>
+              <div class="text-xs">
+                {{getBestZone(item)}}
+              </div>
+            </div>
+          </td>
+        </ng-container>
+      </tr>
+      <tr *ngIf="isChartShown('generic') && showZone">
+        <td class="align-top">
+          Selected ondemand prices
+        </td>
+        <ng-container *ngFor="let item of servers">
+          <td>
+            <div class="flex flex-col gap-2">
+              <div class="flex flex-col" *ngFor="let priceData of item.additionalOndemandPrices">
+                <div>
+                  {{priceData.price}} {{priceData.currency}}
+                </div>
+                <div class="text-xs">
+                  {{priceData.zone.display_name}}
+                </div>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+      </tr>
+      <tr *ngIf="isChartShown('generic') && showZone">
+        <td class="align-top">
+          Selected spot prices
+        </td>
+        <ng-container *ngFor="let item of servers">
+          <td>
+            <div class="flex flex-col gap-2" >
+              <div *ngFor="let priceData of item.additionalSpotPrices" class="flex flex-col">
+                <div>
+                  {{priceData.price}} {{priceData.currency}}
+                </div>
+                <div class="text-xs">
+                  {{priceData.zone.display_name}}
+                </div>
+              </div>
             </div>
           </td>
         </ng-container>

@@ -91,3 +91,25 @@
   top: 2.25rem;
   transform: translateY(-2rem);
 }
+
+.fixed_buttons {
+  position: fixed;
+  bottom: 2rem;
+  left: calc(50% - 10rem);
+  z-index: 100;
+  button {
+    width: 9rem;
+  }
+}
+
+.partially_selected {
+  background-image: url("data:image/svg+xml,%3csvg aria-hidden='true' xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 16 12'%3e %3cpath stroke='white' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M1 5.917 5.724 10.5 15 1.5'/%3e %3c/svg%3e");
+  background-repeat: no-repeat;
+  background-size: 0.55em 0.55em;
+  background-position: center;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+  background-color: currentColor;
+  opacity: 0.5;
+}
+

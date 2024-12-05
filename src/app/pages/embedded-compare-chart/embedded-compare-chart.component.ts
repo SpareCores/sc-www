@@ -7,6 +7,7 @@ import { AnalyticsService } from '../../services/analytics.service';
 import { KeeperAPIService } from '../../services/keeper-api.service';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { ExtendedServerDetails } from '../server-details/server-details.component';
+import { Allocation } from '../../../../sdk/data-contracts';
 
 @Component({
   selector: 'app-embedded-compare-chart',
@@ -228,7 +229,7 @@ export class EmbeddedCompareChartComponent {
         this.servers = [];
 
         for(let i = 0; i < serverCount; i++){
-          let server = servers[i * 3];
+          let server: ExtendedServerDetails = servers[i * 3];
 
           server.benchmark_scores = servers[i * 3 + 2];
           server.prices = servers[i * 3 + 1]?.sort((a: any, b: any) => a.price - b.price);
@@ -240,6 +241,8 @@ export class EmbeddedCompareChartComponent {
               price.region = regions.find((r: any) => r.region_id === price.region_id);
               price.zone = zones.find((z: any) => z.zone_id === price.zone_id);
             });
+            server.bestOndemandPrice = server.prices.filter(x => x.allocation === Allocation.Ondemand).sort((a,b) => a.price - b.price).at(0);
+            server.bestSpotPrice = server.prices.filter(x => x.allocation === Allocation.Spot).sort((a,b) => a.price - b.price).at(0);
           }
 
           server.score = server.benchmark_scores?.find((b: any) => b.benchmark_id === 'stress_ng:bestn')?.score;

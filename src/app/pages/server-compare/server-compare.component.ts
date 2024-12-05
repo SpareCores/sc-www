@@ -7,7 +7,7 @@ import { LucideAngularModule } from 'lucide-angular';
 import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SeoHandlerService } from '../../services/seo-handler.service';
-import { ServerCompareService } from '../../services/server-compare.service';
+import { ServerCompareService, ZoneAndRegion } from '../../services/server-compare.service';
 import { DropdownManagerService } from '../../services/dropdown-manager.service';
 import { AnalyticsService } from '../../services/analytics.service';
 import { CurrencyOption, availableCurrencies } from '../../tools/shared_data';
@@ -16,6 +16,7 @@ import hljs from 'highlight.js';
 import { ServerCompareChartsComponent } from "../../components/server-compare-charts/server-compare-charts.component";
 import { EmbedComparePreviewComponent } from '../embed-compare-preview/embed-compare-preview.component';
 import { Modal, ModalOptions } from 'flowbite';
+import { Allocation } from '../../../../sdk/data-contracts';
 
 const optionsModal: ModalOptions = {
   backdropClasses:
@@ -207,6 +208,8 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   specialCompares: any[] = require('./special-compares');
 
+  showZoneIds = false;
+
   constructor(
     @Inject(PLATFORM_ID) private platformId: object,
     @Inject(DOCUMENT) private document: Document,
@@ -317,7 +320,12 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
         this.serverCompare.clearCompare();
 
         for(let i = 0; i < serverCount; i++){
-          let server = servers[i * 3];
+          let server: ExtendedServerDetails = servers[i * 3];
+          const selectedZones: ZoneAndRegion[] = this.instances[i].zonesRegions || [];
+
+          if(selectedZones.length) {
+            this.showZoneIds = true;
+          }
 
           server.benchmark_scores = servers[i * 3 + 2];
           server.prices = servers[i * 3 + 1]?.sort((a: any, b: any) => a.price - b.price);
@@ -327,8 +335,20 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
           if(server.prices?.length > 0) {
             server.prices.forEach((price: any) => {
               price.region = regions.find((r: any) => r.region_id === price.region_id);
-              price.zone = zones.find((z: any) => z.zone_id === price.zone_id);
+              price.zone = zones.find((z: any) => z.zone_id === price.zone_id && z.region_id === price.region_id && z.vendor_id === price.vendor_id);
             });
+
+            server.bestOndemandPrice = server.prices.filter(x => x.allocation === Allocation.Ondemand).sort((a,b) => a.price - b.price).at(0);
+            server.bestSpotPrice = server.prices.filter(x => x.allocation === Allocation.Spot).sort((a,b) => a.price - b.price).at(0);
+
+            if(selectedZones.length) {
+              server.additionalOndemandPrices =
+                server.prices.filter(x => x.allocation === Allocation.Ondemand && selectedZones.findIndex((z: any) => z.zone === x.zone_id && z.region === x.region_id) > -1)
+                  .sort((a,b) => a.price - b.price);
+              server.additionalSpotPrices =
+                server.prices.filter(x => x.allocation === Allocation.Spot && selectedZones.findIndex((z: any) => z.zone === x.zone_id && z.region === x.region_id) > -1)
+                  .sort((a,b) => a.price - b.price);
+            }
           }
 
           server.score = server.benchmark_scores?.find((b: any) => b.benchmark_id === 'stress_ng:bestn')?.score;
@@ -336,7 +356,22 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
           server.score_per_price = server.price && server.score ? server.score / server.price : (server.score || 0);
 
           this.servers.push(server);
-          this.serverCompare.toggleCompare(true, server);
+          if(selectedZones.length) {
+            selectedZones.forEach((zone: any) => {
+              this.serverCompare.toggleCompare(true, {
+                server: server.api_reference,
+                vendor: server.vendor_id,
+                display_name: server.display_name,
+                zoneRegion: zone
+              });
+            });
+          } else {
+            this.serverCompare.toggleCompare(true, {
+              server: server.api_reference,
+              vendor: server.vendor_id,
+              display_name: server.display_name
+            });
+          }
         }
 
         this.instanceProperties.forEach((p: any) => {
@@ -576,6 +611,8 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
             price.region = this.regions.find((r: any) => r.region_id === price.region_id);
             price.zone = this.zones.find((z: any) => z.zone_id === price.zone_id);
           });
+          server.bestOndemandPrice = server.prices.filter(x => x.allocation === Allocation.Ondemand).sort((a,b) => a.price - b.price).at(0);
+          server.bestSpotPrice = server.prices.filter(x => x.allocation === Allocation.Spot).sort((a,b) => a.price - b.price).at(0);
         }
 
         server.price = server.prices?.length ? server.prices[0].price : 0;

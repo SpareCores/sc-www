@@ -3,23 +3,67 @@ import { ServerPKs } from '../../../sdk/data-contracts';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 
+export interface ZoneAndRegion {
+  zone: string;
+  region: string;
+}
+
+export interface ServerCompare {
+  display_name: string;
+  vendor: string;
+  server: string;
+  zonesRegions: ZoneAndRegion[];
+}
+
+export interface ServerCompareItem {
+  display_name: string;
+  vendor: string;
+  server: string;
+  zoneRegion?: ZoneAndRegion;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class ServerCompareService {
 
-  selectedForCompare: ServerPKs[] = [];
-  public selectionChanged: Subject<ServerPKs[]> = new Subject();
+  public selectedForCompare: ServerCompare[] = [];
+  public selectionChanged: Subject<ServerCompare[]> = new Subject();
 
   constructor(private router: Router) { }
 
-  toggleCompare(event: boolean, server: ServerPKs| any) {
+  toggleCompare(event: boolean, server: ServerCompareItem) {
     if(event) {
-      if(this.selectedForCompare.findIndex((item) => item.vendor_id === server.vendor_id && item.server_id === server.server_id) === -1) {
-        this.selectedForCompare.push(server);
+      let existing = this.selectedForCompare.find((item) => item.vendor === server.vendor && item.server === server.server);
+      if(existing) {
+        if(server.zoneRegion && !existing.zonesRegions.find((zone) => zone.region === server.zoneRegion?.region && zone.zone === server.zoneRegion?.zone)) {
+          existing.zonesRegions.push(server.zoneRegion);
+        }
+      } else {
+        this.selectedForCompare.push({
+            display_name: server.display_name,
+            vendor: server.vendor,
+            server: server.server,
+            zonesRegions: server.zoneRegion ? [server.zoneRegion] : []
+          });
       }
     } else {
-      this.selectedForCompare = this.selectedForCompare.filter((item) => item.vendor_id !== server.vendor_id || item.server_id !== server.server_id);
+      // removing the whole server
+      if(!server.zoneRegion) {
+        this.selectedForCompare = this.selectedForCompare.filter((item) =>
+          item.vendor !== server.vendor || item.server !== server.server);
+      } else {
+        // removing a zone
+        let existing = this.selectedForCompare.find((item) => item.vendor === server.vendor && item.server === server.server);
+        if(existing) {
+          // remove if no zones left
+          existing.zonesRegions = existing.zonesRegions.filter((zone) => zone.region !== server.zoneRegion?.region && zone.zone !== server.zoneRegion?.zone);
+          if(existing.zonesRegions.length === 0) {
+            this.selectedForCompare = this.selectedForCompare.filter((item) =>
+              item.vendor !== server.vendor || item.server !== server.server);
+          }
+        }
+      }
     }
     this.selectionChanged.next(this.selectedForCompare);
   }
@@ -34,7 +78,7 @@ export class ServerCompareService {
   }
 
   isSelected(server: ServerPKs) {
-    return this.selectedForCompare.findIndex((item) => item.vendor_id === server.vendor_id && item.server_id === server.server_id) !== -1;
+    return this.selectedForCompare.findIndex((item) => item.vendor === server.vendor_id && item.server === server.api_reference) !== -1;
   }
 
   openCompare() {
@@ -45,12 +89,8 @@ export class ServerCompareService {
       return;
     }
 
-    const serverIds = selectedServers.map((server) => {
-      return {vendor: server.vendor_id, server: server.api_reference}
-    });
-
     // encode atob to avoid issues with special characters
-    const encoded = btoa(JSON.stringify(serverIds));
+    const encoded = btoa(JSON.stringify(selectedServers));
 
     this.router.navigateByUrl('/compare?instances=' + encoded);
   }

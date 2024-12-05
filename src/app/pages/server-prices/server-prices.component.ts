@@ -14,6 +14,7 @@ import { PaginationComponent } from '../../components/pagination/pagination.comp
 import { DropdownManagerService } from '../../services/dropdown-manager.service';
 import { AnalyticsService } from '../../services/analytics.service';
 import { CurrencyOption, availableCurrencies } from '../../tools/shared_data';
+import { ServerCompare, ServerCompareService } from '../../services/server-compare.service';
 
 export type TableColumn = {
   name: string;
@@ -177,6 +178,7 @@ export class ServerPricesComponent implements OnInit {
               private SEOHandler: SeoHandlerService,
               private analytics: AnalyticsService,
               private dropdownManager: DropdownManagerService,
+              private serverCompare: ServerCompareService,
               private storageHandler: StorageHandlerService) { }
 
   ngOnInit() {
@@ -364,7 +366,16 @@ export class ServerPricesComponent implements OnInit {
 
     this.keeperAPI.searchServerPrices(query).then(servers => {
       this.servers = servers?.body.map((item: any) => {
-        return {...item, selected: false};
+        return {
+          ...item,
+          partiallySelected: this.serverCompare.selectedForCompare.findIndex(
+            x => x.server === item.server.api_reference && x.vendor === item.vendor_id) > -1,
+          selected: this.serverCompare.selectedForCompare.findIndex(
+            (compareItem: ServerCompare) =>
+              compareItem.vendor === item.vendor_id &&
+              compareItem.server === item.server.api_reference &&
+              compareItem.zonesRegions.findIndex(x => x.zone === item.zone_id && x.region === item.region_id) > -1) !== -1
+        };
       });
 
       if(updateTotalCount) {
@@ -581,6 +592,45 @@ export class ServerPricesComponent implements OnInit {
     const tooltip = this.tooltip.nativeElement;
     tooltip.style.display = 'none';
     tooltip.style.opacity = '0';
+  }
+
+  toggleCompare2(event: any, server: ServerPriceWithPKs| any) {
+    event.stopPropagation();
+
+    server.selected = !server.selected;
+
+    this.toggleCompare(server.selected, server);
+  }
+
+  toggleCompare(event: boolean, server: ServerPriceWithPKs| any) {
+    this.serverCompare.toggleCompare(event, {
+      server: server.server.api_reference,
+      vendor: server.vendor_id,
+      zoneRegion: {zone: server.zone_id, region: server.region_id},
+      display_name: server.server.display_name
+    });
+    this.servers.forEach((item) => {
+      if(this.serverCompare.selectedForCompare.findIndex(x => x.server === item.server.api_reference && x.vendor === item.vendor_id) > -1) {
+        item.partiallySelected = true;
+      } else {
+        item.partiallySelected = false;
+      }
+    });
+  }
+
+  compareCount() {
+    return this.serverCompare.compareCount();
+  }
+
+  clearCompare() {
+    this.serverCompare.clearCompare();
+    this.servers?.forEach((server: any) => {
+      server.selected = false;
+    });
+  }
+
+  openCompare() {
+    this.serverCompare.openCompare();
   }
 
 }

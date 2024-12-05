@@ -100,6 +100,11 @@
             <table class="items_table" id="server_prices_table">
               <thead>
                 <tr>
+                  <th class="checkbox_column">
+                    <div class="text-white">
+                      <lucide-icon class="h-4 w-4" name="scale" ></lucide-icon>
+                    </div>
+                  </th>
                   <th *ngFor="let item of tableColumns"
                       [ngClass]="{
                         'cursor-pointer': item.orderField
@@ -130,6 +135,18 @@
                     [attr.data-ph-capture-attribute-server-listing-row-index]="i+1"
                     [attr.data-ph-capture-attribute-server-listing-row-page-size]="limit"
                     id="server_table_data_line">
+
+                  <td (click)="toggleCompare2($event, item)" class="checkbox_column">
+                    <div class="flex items-center">
+                      <input type="checkbox"
+                        id="server_compare_checkbox_{{item.server_id}}"
+                        [(ngModel)]="item.selected"
+                        (ngModelChange)="toggleCompare($event, item)"
+                        (click)="$event.stopPropagation()"
+                        class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer"
+                        [ngClass]="{'partially_selected': item.partiallySelected && !item.selected }" >
+                    </div>
+                  </td>
                   <ng-container *ngFor="let column of tableColumns">
                     <td *ngIf="column.type === 'name'" class="min-w-225">
                       <div class="text-sm text-white flex gap-1">
@@ -292,6 +309,25 @@
 
     </div>
 
+  </div>
+</div>
+
+<div *ngIf="compareCount() >= 2" class="fixed_buttons">
+  <div class="flex gap-4" >
+    <button
+      class="flex justify-center bg-red-400 text-white py-2 px-4 rounded-lg font-bold hover:bg-red-500"
+      data-ph-capture-attribute-sc-event="server listing compare"
+      data-ph-capture-attribute-server-listing-compare-action="open"
+      (click)="clearCompare()">
+      Clear
+    </button>
+    <button
+      class="flex justify-center bg-emerald-400 text-white py-2 px-4 rounded-lg font-bold hover:bg-emerald-500"
+      data-ph-capture-attribute-sc-event="server listing compare"
+      data-ph-capture-attribute-server-listing-compare-action="open"
+      (click)="openCompare()">
+      Compare ({{compareCount()}})
+    </button>
   </div>
 </div>
 
