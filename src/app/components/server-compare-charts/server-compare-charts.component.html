@@ -431,12 +431,12 @@
               <tr>
                 <td>
                   <div class="ml-4 flex justify-between">
-                    <div class="flex gap-2 items-center">
-                      {{item.name}}
+                    <div class="inline-block gap-2 items-center">
+                      <span class="inline">{{item.name}}</span>
                       <lucide-icon
                         *ngIf="item.description"
                         name="info"
-                        class="h-4 w-4 text-gray-200"
+                        class="inline-block h-4 w-4 text-gray-200 ml-1"
                         (mouseenter)="showTooltip($event, item.description)"
                         (mouseleave)="hideTooltip()">
                       </lucide-icon>
@@ -456,12 +456,12 @@
               <tr *ngIf="category.data.length > 1">
                 <td [colSpan]="servers.length + 1" >
                   <div class="ml-4 flex justify-between">
-                    <div class="flex gap-2 items-center">
-                      {{item.name}}
+                    <div class="inline-block gap-2 items-center">
+                      <span class="inline">{{item.name}}</span>
                       <lucide-icon
                         *ngIf="item.description"
                         name="info"
-                        class="h-4 w-4 text-gray-200"
+                        class="inline-block h-4 w-4 text-gray-200 ml-1"
                         (mouseenter)="showTooltip($event, item.description)"
                         (mouseleave)="hideTooltip()">
                       </lucide-icon>
