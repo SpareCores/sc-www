@@ -236,14 +236,13 @@ export class ServerPricesComponent implements OnInit {
         this.limit = parseInt(query.limit);
       }
 
-      const tableColumnsStr = query.columns;
-      if(tableColumnsStr && tableColumnsStr.length) {
-        const tableColumns: number[] = tableColumnsStr.split('').map((item: string) => parseInt(item));
-        // in case of column count mismatch, e.g. version update do not apply the stored column settings
-        if(tableColumns.length === this.possibleColumns.length) {
+      const tableColumns: string = query.columns;
+      if(tableColumns && parseInt(tableColumns) ) {
+        const tableColumnsArray: number[] = Number(tableColumns).toString(2).split('').map(Number);
+        if(tableColumnsArray.length === this.possibleColumns.length) {
           this.hasCustomColumns = true;
           this.possibleColumns.forEach((column, index) => {
-            column.show = tableColumns[index] === 1;
+            column.show = tableColumnsArray[index] === 1;
           });
         }
       }
@@ -346,7 +345,7 @@ export class ServerPricesComponent implements OnInit {
     }
 
     if(this.hasCustomColumns) {
-      let columns = this.possibleColumns.map((column) => column.show ? 1 : 0).join('');
+      let columns = this.possibleColumns.map((column) => column.show ? 1 : 0).reduce((acc: number, bit) => ((acc << 1) | bit), 0);
       queryParams.columns = columns;
     }
 
@@ -489,10 +488,10 @@ export class ServerPricesComponent implements OnInit {
 
     if(encodedQuery?.length) {
       // update the URL
-      window.history.pushState({}, '', '/servers?' + encodedQuery);
+      window.history.pushState({}, '', '/server_prices?' + encodedQuery);
     } else {
       // remove the query params
-      window.history.pushState({}, '', '/servers');
+      window.history.pushState({}, '', '/server_prices');
     }
   }
 
@@ -559,7 +558,7 @@ export class ServerPricesComponent implements OnInit {
     }
 
     if(this.hasCustomColumns) {
-      let columns = this.possibleColumns.map((column) => column.show ? 1 : 0).join('');
+      let columns = this.possibleColumns.map((column) => column.show ? 1 : 0).reduce((acc: number, bit) => ((acc << 1) | bit), 0);
       paramObject.columns = columns;
     }
 

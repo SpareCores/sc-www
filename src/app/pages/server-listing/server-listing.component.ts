@@ -203,14 +203,13 @@ export class ServerListingComponent implements OnInit, OnDestroy {
         this.limit = parseInt(query.limit);
       }
 
-      const tableColumnsStr = query.columns;
-      if(tableColumnsStr && tableColumnsStr.length) {
-        const tableColumns: number[] = tableColumnsStr.split('').map((item: string) => parseInt(item));
-        // in case of column count mismatch, e.g. version update do not apply the stored column settings
-        if(tableColumns.length === this.possibleColumns.length) {
+      const tableColumns: string = query.columns;
+      if(tableColumns && parseInt(tableColumns) ) {
+        const tableColumnsArray: number[] = Number(tableColumns).toString(2).split('').map(Number);
+        if(tableColumnsArray.length === this.possibleColumns.length) {
           this.hasCustomColumns = true;
           this.possibleColumns.forEach((column, index) => {
-            column.show = tableColumns[index] === 1;
+            column.show = tableColumnsArray[index] === 1;
           });
         }
       }
@@ -311,7 +310,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     }
 
     if(this.hasCustomColumns) {
-      let columns = this.possibleColumns.map((column) => column.show ? 1 : 0).join('');
+      let columns = this.possibleColumns.map((column) => column.show ? 1 : 0).reduce((acc: number, bit) => ((acc << 1) | bit), 0);
       queryParams.columns = columns;
     }
 
@@ -405,7 +404,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     }
 
     if(this.hasCustomColumns) {
-      let columns = this.possibleColumns.map((column) => column.show ? 1 : 0).join('');
+      let columns = this.possibleColumns.map((column) => column.show ? 1 : 0).reduce((acc: number, bit) => ((acc << 1) | bit), 0);
       paramObject.columns = columns;
     }
 
