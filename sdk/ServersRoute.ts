@@ -79,7 +79,7 @@ export namespace Servers {
        * Vendor id
        * Identifier of the cloud provider vendor.
        */
-      vendor?: "aws" | "azure" | "gcp" | "hcloud";
+      vendor?: "aws" | "azure" | "gcp" | "hcloud" | "upcloud";
       /**
        * Compliance Framework id
        * Compliance framework implemented at the vendor.
@@ -134,10 +134,12 @@ export namespace Servers {
         | "L4"
         | "L40S"
         | "M60"
+        | "NVIDIA"
         | "T4"
         | "T4G"
         | "V100"
-        | "V520";
+        | "V520"
+        | "nvidia-h100-80gb";
       /**
        * Limit
        * Maximum number of results. Set to -1 for unlimited.

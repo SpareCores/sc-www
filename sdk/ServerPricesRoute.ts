@@ -94,7 +94,7 @@ export namespace ServerPrices {
        * Vendor id
        * Identifier of the cloud provider vendor.
        */
-      vendor?: "aws" | "azure" | "gcp" | "hcloud";
+      vendor?: "aws" | "azure" | "gcp" | "hcloud" | "upcloud";
       /**
        * Region id
        * Identifier of the region.
@@ -162,6 +162,7 @@ export namespace ServerPrices {
         | "australiacentral2"
         | "australiaeast"
         | "australiasoutheast"
+        | "au-syd1"
         | "brazilsouth"
         | "brazilsoutheast"
         | "brazilus"
@@ -174,11 +175,13 @@ export namespace ServerPrices {
         | "centraluseuap"
         | "cn-north-1"
         | "cn-northwest-1"
+        | "de-fra1"
         | "eastasia"
         | "eastus"
         | "eastus2"
         | "eastus2euap"
         | "eastusstg"
+        | "es-mad1"
         | "eu-central-1"
         | "eu-central-2"
         | "eu-north-1"
@@ -187,6 +190,8 @@ export namespace ServerPrices {
         | "eu-west-1"
         | "eu-west-2"
         | "eu-west-3"
+        | "fi-hel1"
+        | "fi-hel2"
         | "francecentral"
         | "francesouth"
         | "germanynorth"
@@ -204,13 +209,17 @@ export namespace ServerPrices {
         | "me-south-1"
         | "mexicocentral"
         | "newzealandnorth"
+        | "nl-ams1"
         | "northcentralus"
         | "northeurope"
         | "norwayeast"
         | "norwaywest"
+        | "pl-waw1"
         | "polandcentral"
         | "qatarcentral"
         | "sa-east-1"
+        | "se-sto1"
+        | "sg-sin1"
         | "southafricanorth"
         | "southafricawest"
         | "southcentralus"
@@ -223,10 +232,14 @@ export namespace ServerPrices {
         | "switzerlandwest"
         | "uaecentral"
         | "uaenorth"
+        | "uk-lon1"
         | "uksouth"
         | "ukwest"
+        | "us-chi1"
         | "us-east-1"
         | "us-east-2"
+        | "us-nyc1"
+        | "us-sjo1"
         | "us-west-1"
         | "us-west-2"
         | "westcentralus"
@@ -328,10 +341,12 @@ export namespace ServerPrices {
         | "L4"
         | "L40S"
         | "M60"
+        | "NVIDIA"
         | "T4"
         | "T4G"
         | "V100"
-        | "V520";
+        | "V520"
+        | "nvidia-h100-80gb";
       /**
        * Limit
        * Maximum number of results.
