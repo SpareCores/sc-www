@@ -1,0 +1,2346 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Gergely Daroczi" />
+  <meta name="dcterms.date" content="2024-12-12" />
+  <title>Spare Cores: Bringing Clarity to Cloud Server Options</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="libs/reveal.js-3.3.0.1/css/reveal.css"/>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #204a87; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #8f5902; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #204a87; font-weight: bold; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #ce5c00; font-weight: bold; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="libs/reveal.js-3.3.0.1/css/theme/white.css" id="theme">
+
+
+  <!-- some tweaks to reveal css -->
+  <style type="text/css">
+    .reveal h1 { font-size: 2.0em; }
+    .reveal h2 { font-size: 1.5em;  }
+    .reveal h3 { font-size: 1.25em;     }
+    .reveal h4 { font-size: 1em;        }
+
+    .reveal .slides>section,
+    .reveal .slides>section>section {
+      padding: 0px 0px;
+    }
+
+
+
+    .reveal table {
+      border-width: 1px;
+      border-spacing: 2px;
+      border-style: dotted;
+      border-color: gray;
+      border-collapse: collapse;
+      font-size: 0.7em;
+    }
+
+    .reveal table th {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      font-weight: bold;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+    .reveal table td {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+
+  </style>
+
+    <style type="text/css">code{white-space: pre;}</style>
+
+
+<!-- Printing and PDF exports -->
+<script id="paper-css" type="application/dynamic-css">
+
+/* Default Print Stylesheet Template
+   by Rob Glazebrook of CSSnewbie.com
+   Last Updated: June 4, 2008
+
+   Feel free (nay, compelled) to edit, append, and
+   manipulate this file as you see fit. */
+
+
+@media print {
+
+        /* SECTION 1: Set default width, margin, float, and
+           background. This prevents elements from extending
+           beyond the edge of the printed page, and prevents
+           unnecessary background images from printing */
+        html {
+                background: #fff;
+                width: auto;
+                height: auto;
+                overflow: visible;
+        }
+        body {
+                background: #fff;
+                font-size: 20pt;
+                width: auto;
+                height: auto;
+                border: 0;
+                margin: 0 5%;
+                padding: 0;
+                overflow: visible;
+                float: none !important;
+        }
+
+        /* SECTION 2: Remove any elements not needed in print.
+           This would include navigation, ads, sidebars, etc. */
+        .nestedarrow,
+        .controls,
+        .fork-reveal,
+        .share-reveal,
+        .state-background,
+        .reveal .progress,
+        .reveal .backgrounds {
+                display: none !important;
+        }
+
+        /* SECTION 3: Set body font face, size, and color.
+           Consider using a serif font for readability. */
+        body, p, td, li, div {
+                font-size: 20pt!important;
+                font-family: Georgia, "Times New Roman", Times, serif !important;
+                color: #000;
+        }
+
+        /* SECTION 4: Set heading font face, sizes, and color.
+           Differentiate your headings from your body text.
+           Perhaps use a large sans-serif for distinction. */
+        h1,h2,h3,h4,h5,h6 {
+                color: #000!important;
+                height: auto;
+                line-height: normal;
+                font-family: Georgia, "Times New Roman", Times, serif !important;
+                text-shadow: 0 0 0 #000 !important;
+                text-align: left;
+                letter-spacing: normal;
+        }
+        /* Need to reduce the size of the fonts for printing */
+        h1 { font-size: 28pt !important;  }
+        h2 { font-size: 24pt !important; }
+        h3 { font-size: 22pt !important; }
+        h4 { font-size: 22pt !important; font-variant: small-caps; }
+        h5 { font-size: 21pt !important; }
+        h6 { font-size: 20pt !important; font-style: italic; }
+
+        /* SECTION 5: Make hyperlinks more usable.
+           Ensure links are underlined, and consider appending
+           the URL to the end of the link for usability. */
+        a:link,
+        a:visited {
+                color: #000 !important;
+                font-weight: bold;
+                text-decoration: underline;
+        }
+        /*
+        .reveal a:link:after,
+        .reveal a:visited:after {
+                content: " (" attr(href) ") ";
+                color: #222 !important;
+                font-size: 90%;
+        }
+        */
+
+
+        /* SECTION 6: more reveal.js specific additions by @skypanther */
+        ul, ol, div, p {
+                visibility: visible;
+                position: static;
+                width: auto;
+                height: auto;
+                display: block;
+                overflow: visible;
+                margin: 0;
+                text-align: left !important;
+        }
+        .reveal pre,
+        .reveal table {
+                margin-left: 0;
+                margin-right: 0;
+        }
+        .reveal pre code {
+                padding: 20px;
+                border: 1px solid #ddd;
+        }
+        .reveal blockquote {
+                margin: 20px 0;
+        }
+        .reveal .slides {
+                position: static !important;
+                width: auto !important;
+                height: auto !important;
+
+                left: 0 !important;
+                top: 0 !important;
+                margin-left: 0 !important;
+                margin-top: 0 !important;
+                padding: 0 !important;
+                zoom: 1 !important;
+
+                overflow: visible !important;
+                display: block !important;
+
+                text-align: left !important;
+                -webkit-perspective: none;
+                   -moz-perspective: none;
+                    -ms-perspective: none;
+                        perspective: none;
+
+                -webkit-perspective-origin: 50% 50%;
+                   -moz-perspective-origin: 50% 50%;
+                    -ms-perspective-origin: 50% 50%;
+                        perspective-origin: 50% 50%;
+        }
+        .reveal .slides section {
+                visibility: visible !important;
+                position: static !important;
+                width: auto !important;
+                height: auto !important;
+                display: block !important;
+                overflow: visible !important;
+
+                left: 0 !important;
+                top: 0 !important;
+                margin-left: 0 !important;
+                margin-top: 0 !important;
+                padding: 60px 20px !important;
+                z-index: auto !important;
+
+                opacity: 1 !important;
+
+                page-break-after: always !important;
+
+                -webkit-transform-style: flat !important;
+                   -moz-transform-style: flat !important;
+                    -ms-transform-style: flat !important;
+                        transform-style: flat !important;
+
+                -webkit-transform: none !important;
+                   -moz-transform: none !important;
+                    -ms-transform: none !important;
+                        transform: none !important;
+
+                -webkit-transition: none !important;
+                   -moz-transition: none !important;
+                    -ms-transition: none !important;
+                        transition: none !important;
+        }
+        .reveal .slides section.stack {
+                padding: 0 !important;
+        }
+        .reveal section:last-of-type {
+                page-break-after: avoid !important;
+        }
+        .reveal section .fragment {
+                opacity: 1 !important;
+                visibility: visible !important;
+
+                -webkit-transform: none !important;
+                   -moz-transform: none !important;
+                    -ms-transform: none !important;
+                        transform: none !important;
+        }
+        .reveal section img {
+                display: block;
+                margin: 15px 0px;
+                background: rgba(255,255,255,1);
+                border: 1px solid #666;
+                box-shadow: none;
+        }
+
+        .reveal section small {
+                font-size: 0.8em;
+        }
+
+}
+</script>
+
+
+<script id="pdf-css" type="application/dynamic-css">
+
+/**
+ * This stylesheet is used to print reveal.js
+ * presentations to PDF.
+ *
+ * https://github.com/hakimel/reveal.js#pdf-export
+ */
+
+* {
+        -webkit-print-color-adjust: exact;
+}
+
+body {
+        margin: 0 auto !important;
+        border: 0;
+        padding: 0;
+        float: none !important;
+        overflow: visible;
+}
+
+html {
+        width: 100%;
+        height: 100%;
+        overflow: visible;
+}
+
+/* Remove any elements not needed in print. */
+.nestedarrow,
+.reveal .controls,
+.reveal .progress,
+.reveal .playback,
+.reveal.overview,
+.fork-reveal,
+.share-reveal,
+.state-background {
+        display: none !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+        text-shadow: 0 0 0 #000 !important;
+}
+
+.reveal pre code {
+        overflow: hidden !important;
+        font-family: Courier, 'Courier New', monospace !important;
+}
+
+ul, ol, div, p {
+        visibility: visible;
+        position: static;
+        width: auto;
+        height: auto;
+        display: block;
+        overflow: visible;
+        margin: auto;
+}
+.reveal {
+        width: auto !important;
+        height: auto !important;
+        overflow: hidden !important;
+}
+.reveal .slides {
+        position: static;
+        width: 100%;
+        height: auto;
+
+        left: auto;
+        top: auto;
+        margin: 0 !important;
+        padding: 0 !important;
+
+        overflow: visible;
+        display: block;
+
+        -webkit-perspective: none;
+           -moz-perspective: none;
+            -ms-perspective: none;
+                perspective: none;
+
+        -webkit-perspective-origin: 50% 50%; /* there isn't a none/auto value but 50-50 is the default */
+           -moz-perspective-origin: 50% 50%;
+            -ms-perspective-origin: 50% 50%;
+                perspective-origin: 50% 50%;
+}
+
+.reveal .slides section {
+        page-break-after: always !important;
+
+        visibility: visible !important;
+        position: relative !important;
+        display: block !important;
+        position: relative !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+        box-sizing: border-box !important;
+        min-height: 1px;
+
+        opacity: 1 !important;
+
+        -webkit-transform-style: flat !important;
+           -moz-transform-style: flat !important;
+            -ms-transform-style: flat !important;
+                transform-style: flat !important;
+
+        -webkit-transform: none !important;
+           -moz-transform: none !important;
+            -ms-transform: none !important;
+                transform: none !important;
+}
+
+.reveal section.stack {
+        margin: 0 !important;
+        padding: 0 !important;
+        page-break-after: avoid !important;
+        height: auto !important;
+        min-height: auto !important;
+}
+
+.reveal img {
+        box-shadow: none;
+}
+
+.reveal .roll {
+        overflow: visible;
+        line-height: 1em;
+}
+
+/* Slide backgrounds are placed inside of their slide when exporting to PDF */
+.reveal section .slide-background {
+        display: block !important;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: -1;
+}
+
+/* All elements should be above the slide-background */
+.reveal section>* {
+        position: relative;
+        z-index: 1;
+}
+
+/* Display slide speaker notes when 'showNotes' is enabled */
+.reveal .speaker-notes-pdf {
+        display: block;
+        width: 100%;
+        max-height: none;
+        left: auto;
+        top: auto;
+        z-index: 100;
+}
+
+/* Display slide numbers when 'slideNumber' is enabled */
+.reveal .slide-number-pdf {
+        display: block;
+        position: absolute;
+        font-size: 14px;
+}
+
+</script>
+
+
+<script>
+var style = document.createElement( 'style' );
+style.type = 'text/css';
+var style_script_id = window.location.search.match( /print-pdf/gi ) ? 'pdf-css' : 'paper-css';
+var style_script = document.getElementById(style_script_id).text;
+style.innerHTML = style_script;
+document.getElementsByTagName('head')[0].appendChild(style);
+</script>
+
+    <link rel="stylesheet" href="css/custom.css"/>
+    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+    <script src="libs/header-attrs-2.28/header-attrs.js"></script>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section data-background-image="img/1920x1080-white.jpg"
+         data-background-size="100%"
+         id="first-slide">
+    This page intentionally left blank.
+</section>
+
+
+<section id="dummy-slide" class="slide level2">
+<h2>dummy slide</h2>
+<!--add custom CSS for the speaker view-->
+<script>
+  if (window.self !== window.top) {
+    document.body.className += " speakerview";
+  }
+</script>
+<!--javascript to remove dummy slide-->
+<script>
+document.getElementById("dummy-slide").remove();
+</script>
+<!--end dummy slide-->
+</section>
+<section id="coverslide">
+<div class="centered">
+<p><img src="images/ow2-webinar.webp"
+     class="toplogo" style="width: 951px; height: 214px;  margin-top: 50px; margin-left: -475px; background-color:transparent;" /></p>
+</div>
+<h1 class="subtitle" style="color:#eee;font-size:1.75em;text-align: center; margin-top:325px; color:#34d399;">
+Spare Cores: Bringing Clarity to Cloud Server Options
+</h1>
+<h2 class="author" style="color:#eee;padding-top:15px;font-size:1.25em;text-align: center !important;margin-bottom: 0px;">
+Gergely Daróczi
+</h2>
+<h3 class="author" style="color:#eee;font-size:1.1em;text-align: center !important; font-weight: normal;">
+Spare Cores Team
+</h3>
+<h3 class="author onlineMode" style="color:#eee;padding-top:25px;font-size:1.1em;text-align: center !important; padding-top: 10px;font-weight: normal; ">
+Slides:
+<a href="https://sparecores.com/talks" target="_blank">sparecores.com/talks</a>
+</h3>
+<p class="author offlineMode" style="color:#eee;font-size:0.75em;text-align: right !important; padding-top: 10px;font-weight: normal;margin-top:30px; ">
+Press Space or click the green arrow icons to navigate the slides -&gt;
+</p>
+<aside class="notes">
+<p>Bonjour, Je suis Gergely Daroczi de Spare Cores. C’est un grand
+plaisir d’etre ici. Mais comme je ne parlais pas bien francias .. I’ll
+switch to English</p>
+<p>focus: how to utilize cloud compute resources in the most
+cost-efficient way</p>
+</aside>
+</section>
+<section>
+<section class="titleslide slide level1" data-transition="slide-in fade-out">
+<h2>
+&gt;&gt;&gt; from sparecores import why
+</h2>
+<p class="fragment">
+Data Science / Machine Learning batch jobs:
+</p>
+<ul>
+<li class="fragment">
+run SQL
+</li>
+<li class="fragment">
+run R or Python script
+</li>
+<ul>
+<li class="fragment">
+train a simple model, reporting, API integrations etc.
+</li>
+<li class="fragment">
+train hierarchical models/GBMs/neural nets etc.
+</li>
+</ul>
+</ul>
+<aside class="notes">
+<p>I’ve been working as a DS/Dir of Analytics/Sr Dir of Data Ops in the
+past decade, responsible for the DS infrastructure to run various
+algorithm, e.g.</p>
+<ul>
+<li>SQL: lightweight on the client side</li>
+<li>scripts: can be lightweight as well (e.g. API integrations or simple
+models),</li>
+</ul>
+<p>BUT might require a lot of compute resource depending on the type of
+the model</p>
+</aside>
+</section>
+<section id="from-sparecores-import-why" class="slide level2"
+data-transition="fade-in slide-out">
+<h2 data-transition="fade-in slide-out">&gt;&gt;&gt; from sparecores
+import why</h2>
+<p class="gray">
+Data Science / Machine Learning batch jobs:
+</p>
+<ul class="gray">
+<li>
+run SQL
+</li>
+<li>
+run R or Python script
+</li>
+<ul>
+<li>
+train a simple model, reporting, API integrations etc.
+</li>
+<li>
+train hierarchical models/GBMs/neural nets etc.
+</li>
+</ul>
+</ul>
+<p class="bold">
+Scaling (DS) infrastructure.
+</p>
+<aside class="notes">
+<p>in short, different tasks (DS in this example) have different compute
+requirements</p>
+<p>NEXT after mentioning varying needs</p>
+</aside>
+</section>
+<section id="from-sparecores-import-why-1" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import why</h2>
+<div class="centered">
+<p><img style="margin-top:-30px;width:95%;"  src="images/adtech-usecase-job-metrics.png" /></p>
+</div>
+<aside class="notes">
+<p>To give you an example: here’s a job that we monitored every few
+seconds and saw that it doesn’t really scale to multiple CPUs, but
+taking up to ~200 gigs of memory – probably training a hierarchical
+model that cannot be paralellized.</p>
+<p>so we had around 4k/day …</p>
+</aside>
+</section>
+<section id="from-sparecores-import-why-2" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import why</h2>
+<div class="centered">
+<p><img style="margin-top:-30px;width:95%;" src="images/adtech-usecase-jobs.png" /></p>
+</div>
+<aside class="notes">
+<p>so we had around 4k jobs/day with varying needs</p>
+<ul>
+<li>Training hierarchical models on a large dataset using R required
+several hundreds GBs of RAM,</li>
+<li>NLP models in Python required GPUs,</li>
+<li>Parallelized time-series forecasting models required many CPUs,</li>
+<li>Many small jobs mostly waiting for SQL results running on a shared
+host.</li>
+<li>or submitting new bid amounts on ads on a social network</li>
+</ul>
+</aside>
+</section>
+<section id="from-sparecores-import-why-3" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import why</h2>
+<div class="colcontainer mt-60">
+<div class="col">
+<img class="fragment w-25" data-fragment-index="1" src="images/aws_ecs.png" style="background: none;" />
+<p class="fragment mt--20 centered" data-fragment-index="1">
+AWS ECS
+</p>
+<img class="fragment w-25" data-fragment-index="2" src="images/aws_batch.png" style="background: none;" />
+<p class="fragment mt--20 centered" data-fragment-index="2">
+AWS Batch
+</p>
+</div>
+<div class="col">
+<img class="fragment w-50" data-fragment-index="3" src="images/kubernetes.svg" style="margin-top:60px;background: none;" />
+<p class="fragment mt--20 centered" data-fragment-index="3">
+Kubernetes
+</p>
+</div>
+</div>
+<aside class="notes">
+<p>to solve for that, at some point we used Amazon ECS … super excited
+when AWS Batch was announces with the promise of managing the clusters
+for us</p>
+<p>… similarly how other teams got excited about Kubernetes</p>
+<p>AWS Batch seemed like a good fit and relatively convenient solution,
+but after a few months trial, we experienced unexpected costs due to
+developers misconfiguring resource requirements</p>
+<ul>
+<li>overprovisioning to avoid errors</li>
+<li>forgot to update etc</li>
+</ul>
+<p>and bin packing …</p>
+</aside>
+</section>
+<section id="from-sparecores-import-why-4" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import why</h2>
+<div class="centered">
+<p><img class="mt--30" src="images/xkcd_square_packing.png" style="width:45%;" /></p>
+</div>
+<p class="centered mt--20">
+Source: <a href="https://xkcd.com/2740/">xkcd</a>
+</p>
+<aside class="notes">
+<p>AWS bin packing smaller jobs to already running larger nodes (started
+for heavy jobs), which resulted in keeping the expensive nodes running
+for a longer time.</p>
+<p>so instead, we decided to roll our own solution after all .. building
+on the fact that the price of the cloud resources is not discounted by
+its size .. so running two containers on a larger node VS running on
+separate nodes make no difference from a pricing perspective</p>
+</aside>
+</section>
+<section id="from-sparecores-import-why-5" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import why</h2>
+<div class="centered">
+<p><img style="margin-top:-30px;width:95%;" src="images/adtech-usecase-job-run.png" /></p>
+</div>
+<aside class="notes">
+<p>here’s an example of a job for which our monitoring system recorded
+that it can scale to many (100) CPUs, and needs high memory … so
+filtered for the matching servers and ordered by price, and tried
+starting those based on availability</p>
+</aside>
+</section>
+<section id="from-sparecores-import-why-6" class="slide level2"
+data-transition="slide-in none-out">
+<h2 data-transition="slide-in none-out">&gt;&gt;&gt; from sparecores
+import why</h2>
+<div class="centered">
+<p><img class="mt--30 w-70" src="images/adtech-usecase-job-stopped-0.png" /></p>
+</div>
+<aside class="notes">
+<p>once the job finished, it updated the compute resource requirements,
+job status etc and retries if more compute is needed</p>
+</aside>
+</section>
+<section id="from-sparecores-import-why-7" class="slide level2"
+data-transition="none-in slide-out">
+<h2 data-transition="none-in slide-out">&gt;&gt;&gt; from sparecores
+import why</h2>
+<div class="centered">
+<p><img class="mt--30 w-70" src="images/adtech-usecase-job-stopped-0.png" /></p>
+</div>
+<div class="centered">
+<p><img class="mt--30 w-70" src="images/adtech-usecase-job-stopped-1.png" /></p>
+</div>
+</section>
+<section id="from-sparecores-import-why-8" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import why</h2>
+<p class="bold">
+Other use-cases:
+</p>
+<ul>
+<li>stats/ML/AI model training,</li>
+<li>ETL pipelines,</li>
+<li>traditional CI/CD workflows for compiling and testing software,</li>
+<li>building Docker images,</li>
+<li>rendering images and videos,</li>
+<li>etc.</li>
+</ul>
+<aside class="notes">
+<p>so it’s like AWS Fargate or Google Cloud Run … but with auto-scaling
+and much much cheaper, especially while AWS supported spot instances
+with blocked duration (until a couple of months ago)</p>
+<p>as it seemed useful for many use-cases, we decided and were supported
+to open-source most of the infra tooling …</p>
+</aside>
+</section>
+<section id="from-sparecores-import-why-9" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import why</h2>
+<div class="centered">
+<p><img class="mt--45 w-70" src="images/mikata.png" /></p>
+</div>
+<div class="centered">
+<p><img class="mt--70 w-70" src="images/mikata-repos.png" /></p>
+</div>
+<aside class="notes">
+<p>was released as “cloudperf” a couple years ago, and the team has been
+maintaining it since then</p>
+<p>BUT, it was limited to a single vendor, we also had some new ideas,
+so it was time to build the next generation … called Spare Cores, which
+started thanks to the generous support of the NGI Search project.</p>
+</aside>
+</section>
+</section>
+<section>
+<section class="titleslide slide level1">
+<h2>
+&gt;&gt;&gt; from sparecores import intro
+</h2>
+<ul>
+<li>Open-source tools, database schemas and documentation to inspect and
+inventory cloud vendors and their compute resource offerings.</li>
+</ul>
+<div class="fragment">
+<ul>
+<li>Managed infrastructure, databases, APIs, SDKs, and web applications
+to make these data sources publicly accessible.</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>Helpers to start and manage instances in your own environment.</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>SaaS to run containers in a managed environment without direct
+vendor engagement.</li>
+</ul>
+<aside class="notes">
+<ul>
+<li>so Spare Cores is an open-source ecosystem, including software,
+database schemas, guides,</li>
+<li>and actual databases if you don’t want to run the ETL tooling
+yourself .. also providing APIs, SDKs etc to make it easier to query
+data</li>
+<li>unified CLI to start machines</li>
+<li>and working on an an optional SaaS offering built on the top of the
+open-source tooling for folks who would rather avoid registering with
+all cloud providers etc: give us a Docker image, a command to run, and
+you credit card .. all set, we will run it wherever it’s cheapest.</li>
+</ul>
+<p>We help DevOps, DS, ML, AI, ETL, AV, and other engineering teams to
+find optimal instances for their batch jobs (e.g. “8 CPU cores, 64 GB of
+RAM, and a TPU needed in an EU datacenter to train ML models for 6
+hours”) by providing:</p>
+<ul>
+<li>Open-source tools, database schemas and documentation to monitor
+cloud and flexible VPS/dedicated server vendors and their compute
+resource offerings in an innovative and truly comparative way, including
+vendor details (e.g. location, certificates, green power), compute
+capabilities (e.g. CPU, memory, GPU/TPU), pricing (especially of spot
+instances), and performance (by running task-specific benchmarks).</li>
+<li>Managed infrastructure, databases, APIs, SDKs, and web applications
+to make these continuously and transparently tracked data sources
+publicly available and comparable in a validated, unbiased, structured,
+and searchable manner.</li>
+<li>Helpers to easily start and manage instances at all the supported
+vendors with a standardized API.</li>
+<li>SaaS</li>
+</ul>
+BUT let’s focus on the open-source and open-data components ..
+</aside>
+</div>
+</section>
+<section id="from-sparecores-import-intro" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import intro</h2>
+<p><img style="margin-top:-10px; width:100%;" src="images/homepage-stats-2024q4.png" /></p>
+<p class="centered" style="margin-top: -10px;">
+Source: <a href="https://sparecores.com">sparecores.com</a>
+</p>
+<aside class="notes">
+<!-- TODO update img with no of benchmarks instead of AZs -->
+To show you some stats on the data being tracked: - we are limited to 3
+vendors now, but in a month or two we should have a coverage of all
+major players, - already tracking X servers …
+</aside>
+</section>
+<section id="from-sparecores-import-intro-1" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import intro</h2>
+<div class="centered">
+<p><img style="margin-top:-55px;width:95%;" src="images/sc-www-listing.png" /></p>
+</div>
+<aside class="notes">
+The easiest way to query this data is through our web component, as you
+can see on the screen …
+</aside>
+</section>
+<section id="from-sparecores-import-intro-2" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import intro</h2>
+<div class="centered">
+<p><img style="margin-top:-55px; width: 90%;" src="images/sc-www-server-details-top.png" /></p>
+</div>
+<aside class="notes">
+Clicking on a server shows you the technical details of the instance –
+much more than what’s provided publicly by the vendor, even more than
+what ChatGPT knows … as we actually start each machine and inspect the
+hardware. More on that later.
+</aside>
+</section>
+<section id="from-sparecores-import-intro-3" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import intro</h2>
+<div class="centered">
+<p><img style="margin-top:-55px; width: 77.5%;" src="images/sc-www-server-details-prices.png" /></p>
+</div>
+<aside class="notes">
+Live and historical pricing
+</aside>
+</section>
+<section id="from-sparecores-import-intro-4" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import intro</h2>
+<!-- https://sparecores.com/server/aws/c5d.2xlarge -->
+<div class="centered">
+<p><img style="margin-top:-55px; width: 77%;" src="images/sc-www-server-details-benchmarks-1.png" /></p>
+</div>
+<aside class="notes">
+<p>and we also run benchmark scenarios on the servers, e.g.:</p>
+<ul>
+<li>memory bandwidth of read, write and mixed operations using various
+block sizes and also including the related L1/L2/L3 cache amounts</li>
+<li>or benchmarking compression algos - having the compression ratio on
+the x axis, and the bandwidth on the y axis, it’s clear that
+<code>zpaq</code> is a beast when it comes to compressing text, but
+might be slow on this machine</li>
+<li>OpenSSL hash functions and block ciphers</li>
+</ul>
+</aside>
+</section>
+<section id="from-sparecores-import-intro-5" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import intro</h2>
+<p><img style="margin-top: 0px;" src="images/sc-www-server-details-benchmarks-2.png" /></p>
+<aside class="notes">
+also running Geekbench 6, which has been a standard tool for some time
+including workloads for text and image processing, compiling software
+etc
+</aside>
+</section>
+<section id="from-sparecores-import-intro-6" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import intro</h2>
+<div class="centered">
+<p><img style="margin-top:-55px; width: 83%;" src="images/sc-www-server-compare.png" /></p>
+</div>
+<!-- https://sparecores.com/compare?instances=W3sidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzVhZC4xMnhsYXJnZSJ9LHsidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzVkLjJ4bGFyZ2UifSx7InZlbmRvciI6ImF3cyIsInNlcnZlciI6ImM2Zy4xNnhsYXJnZSJ9LHsidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY2N4MzMifV0%3D -->
+<aside class="notes">
+and making all these data available in comparison tables
+</aside>
+</section>
+<section id="from-sparecores-import-intro-7" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import intro</h2>
+<div class="centered">
+<p><img style="margin-top:-55px; width: 75%;" src="images/sc-www-server-compare-charts.png" /></p>
+</div>
+<aside class="notes">
+or plots as well for human inspection
+</aside>
+</section>
+<section id="from-sparecores-import-intro-8" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import intro</h2>
+<div class="centered">
+<p><img style="margin-top:-15px;width:95%;" src="images/sc-keeper-preview.png" /></p>
+</div>
+<aside class="notes">
+for computers, we provide APIs …
+</aside>
+</section>
+<section id="from-sparecores-import-intro-9" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import intro</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode py"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> <span class="im">from</span> rich <span class="im">import</span> <span class="bu">print</span> <span class="im">as</span> pp</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> <span class="im">from</span> sc_crawler.tables <span class="im">import</span> Server</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> <span class="im">from</span> sqlmodel <span class="im">import</span> create_engine, Session, select</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> engine <span class="op">=</span> create_engine(<span class="st">&quot;sqlite:///sc-data-all.db&quot;</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> session <span class="op">=</span> Session(engine)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> server <span class="op">=</span> session.<span class="bu">exec</span>(select(Server).where(Server.server_id <span class="op">==</span> <span class="st">&#39;g4dn.xlarge&#39;</span>)).one()</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> pp(server)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>Server(</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    server_id<span class="op">=</span><span class="st">&#39;g4dn.xlarge&#39;</span>,</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    vendor_id<span class="op">=</span><span class="st">&#39;aws&#39;</span>,</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    display_name<span class="op">=</span><span class="st">&#39;g4dn.xlarge&#39;</span>,</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    api_reference<span class="op">=</span><span class="st">&#39;g4dn.xlarge&#39;</span>,</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">&#39;g4dn.xlarge&#39;</span>,</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    family<span class="op">=</span><span class="st">&#39;g4dn&#39;</span>,</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    description<span class="op">=</span><span class="st">&#39;Graphics intensive [Instance store volumes] [Network and EBS optimized] Gen4 xlarge&#39;</span>,</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    status<span class="op">=&lt;</span>Status.ACTIVE: <span class="st">&#39;active&#39;</span><span class="op">&gt;</span>,</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    observed_at<span class="op">=</span>datetime.datetime(<span class="dv">2024</span>, <span class="dv">6</span>, <span class="dv">6</span>, <span class="dv">10</span>, <span class="dv">18</span>, <span class="dv">4</span>, <span class="dv">127254</span>),</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    hypervisor<span class="op">=</span><span class="st">&#39;nitro&#39;</span>,</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    vcpus<span class="op">=</span><span class="dv">4</span>,</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    cpu_cores<span class="op">=</span><span class="dv">2</span>,</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    cpu_allocation<span class="op">=&lt;</span>CpuAllocation.DEDICATED: <span class="st">&#39;Dedicated&#39;</span><span class="op">&gt;</span>,</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    cpu_manufacturer<span class="op">=</span><span class="st">&#39;Intel&#39;</span>,</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    cpu_family<span class="op">=</span><span class="st">&#39;Xeon&#39;</span>,</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    cpu_model<span class="op">=</span><span class="st">&#39;8259CL&#39;</span>,</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    cpu_architecture<span class="op">=&lt;</span>CpuArchitecture.X86_64: <span class="st">&#39;x86_64&#39;</span><span class="op">&gt;</span>,</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    cpu_speed<span class="op">=</span><span class="fl">3.5</span>,</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>    cpu_l1_cache<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>    cpu_l2_cache<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>    cpu_l3_cache<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>    cpu_flags<span class="op">=</span>[],</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>    memory_amount<span class="op">=</span><span class="dv">16384</span>,</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>    memory_generation<span class="op">=&lt;</span>DdrGeneration.DDR4: <span class="st">&#39;DDR4&#39;</span><span class="op">&gt;</span>,</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>    memory_speed<span class="op">=</span><span class="dv">3200</span>,</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>    memory_ecc<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>    gpu_count<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>    gpu_memory_min<span class="op">=</span><span class="dv">16384</span>,</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>    gpu_memory_total<span class="op">=</span><span class="dv">16384</span>,</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>    gpu_manufacturer<span class="op">=</span><span class="st">&#39;Nvidia&#39;</span>,</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>    gpu_family<span class="op">=</span><span class="st">&#39;Turing&#39;</span>,</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>    gpu_model<span class="op">=</span><span class="st">&#39;Tesla T4&#39;</span>,</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>    gpus<span class="op">=</span>[</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>        {</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;manufacturer&#39;</span>: <span class="st">&#39;Nvidia&#39;</span>,</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;family&#39;</span>: <span class="st">&#39;Turing&#39;</span>,</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;model&#39;</span>: <span class="st">&#39;Tesla T4&#39;</span>,</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;memory&#39;</span>: <span class="dv">15360</span>,</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;firmware_version&#39;</span>: <span class="st">&#39;535.171.04&#39;</span>,</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;bios_version&#39;</span>: <span class="st">&#39;90.04.96.00.A0&#39;</span>,</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;graphics_clock&#39;</span>: <span class="dv">1590</span>,</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;sm_clock&#39;</span>: <span class="dv">1590</span>,</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;mem_clock&#39;</span>: <span class="dv">5001</span>,</span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;video_clock&#39;</span>: <span class="dv">1470</span></span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>    ],</span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>    storage_size<span class="op">=</span><span class="dv">125</span>,</span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>    storage_type<span class="op">=&lt;</span>StorageType.NVME_SSD: <span class="st">&#39;nvme ssd&#39;</span><span class="op">&gt;</span>,</span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>    storages<span class="op">=</span>[{<span class="st">&#39;size&#39;</span>: <span class="dv">125</span>, <span class="st">&#39;storage_type&#39;</span>: <span class="st">&#39;nvme ssd&#39;</span>}],</span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a>    network_speed<span class="op">=</span><span class="fl">5.0</span>,</span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a>    inbound_traffic<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a>    outbound_traffic<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>    ipv4<span class="op">=</span><span class="dv">0</span>,</span>
+<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<aside class="notes">
+and SDKs as well, e.g. querying the details of this instance type:
+SCROLL through!
+</aside>
+</section>
+</section>
+<section>
+<section class="titleslide slide level1">
+<h2>
+&gt;&gt;&gt; sparecores.__dir__()
+</h2>
+<p><img style="margin-top:30px; width: 100%;" src="images/sc-components-2024-july.png" /></p>
+<aside class="notes">
+As mentioned previously, this is made available via multiple components
+that I’d like to walk through in the next slides.
+</aside>
+</section>
+</section>
+<section>
+<section class="titleslide slide level1">
+<h2>
+&gt;&gt;&gt; import sc_crawler
+</h2>
+<ul>
+<li>ETL framework with database schema and inventory method
+definitions</li>
+</ul>
+<div class="fragment">
+<ul>
+<li>Database migration tool supporting multiple database engines</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>Manual list of vendors and metadata</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>Vendor API integrations to list regions, zones, servers, storages,
+prices, included free traffic and IPv4 addresses etc.</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>Spare Cores Inspector integration for hardware discovery and
+benchmark scores</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>Dependency for other Spare Cores components (schemas)</li>
+</ul>
+<aside class="notes">
+<p>Let me start with the Crawler, our data ingest framework, which
+defines database schemas, and knows how to interact with the cloud
+provider APIs.</p>
+<p>,,,</p>
+<p>vendor metadata: foundation year, or compliance frameworks
+implemented</p>
+<p>how to get prices info at a vendor, e.g. for IPv4 addresses which
+became more and more important in the recent months</p>
+<p>,,,,</p>
+sounds relatively straightforward .. but we had a few interesting
+experiences :) that I wanted to share
+</aside>
+</div>
+</section>
+<section id="import-sc_crawler" class="slide level2">
+<h2>&gt;&gt;&gt; import sc_crawler</h2>
+<div class="centered">
+<p><img style="margin-top:-50px; width: 50%; background: none;"  src="images/not-easy.png" /></p>
+</div>
+</section>
+<section id="from-sc_crawler-import-fks" class="slide level2">
+<h2>&gt;&gt;&gt; from sc_crawler import fks</h2>
+<div class="centered">
+<p><img style="margin-top:-50px; width: 66%;"  src="images/dbdocs-relations.png" /></p>
+</div>
+<p class="centered mt--30">
+Source:
+<a href="https://dbdocs.io/spare-cores/sc-crawler">dbdocs.io/spare-cores</a>
+</p>
+<aside class="notes">
+for example, looking at the server price table definition, you can see
+that there are 5 primary keys our of which 4 are foreign keys as well:
+pointing to vendor, region, zone, and server. well, all these foreign
+keys have a vendor as well, so to set up the relationships between the
+tables properly, you have to use overlapping compound foreign keys …
+which is not the most intuitive thing when it comes to ORMs
+</aside>
+</section>
+<section id="from-sc_crawler-import-scd" class="slide level2">
+<h2>&gt;&gt;&gt; from sc_crawler import scd</h2>
+<p>Need to optionally track price etc. changes.</p>
+<div class="fragment">
+<div style="margin-top: 75px;">
+
+</div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode py"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Scd(ScModel):</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">&quot;&quot;&quot;Override the `observed_at` column to be primary key in SCD tables.&quot;&quot;&quot;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    observed_at: datetime <span class="op">=</span> Field(</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>        primary_key<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        default_factory<span class="op">=</span>datetime.utcnow,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        sa_column_kwargs<span class="op">=</span>{<span class="st">&quot;onupdate&quot;</span>: datetime.utcnow},</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>        description<span class="op">=</span><span class="st">&quot;Timestamp of the last observation.&quot;</span>,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    )</span></code></pre></div>
+<aside class="notes">
+this became even more complex when created the SCD versions of the
+tables to track prices
+</aside>
+</div>
+</section>
+<section id="from-sc_crawler-import-alembic" class="slide level2">
+<h2>&gt;&gt;&gt; from sc_crawler import alembic</h2>
+<p>Let’s update the <code>cpu_cores</code> column to be optional, as
+some vendors as shy sharing that over their APIs. We will backfill with
+the Spare Cores Inspector!</p>
+<div class="fragment">
+<div class="sourceCode" id="cb3"><pre class="sourceCode py"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">&quot;&quot;&quot;v0.1.1 cores optional</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">Revision ID: 4691089690c2</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">Revises: 98894dffd37c</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">Create Date: 2024-04-10 00:59:03.509522</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">&quot;&quot;&quot;</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> typing <span class="im">import</span> Sequence, Union</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sqlalchemy <span class="im">as</span> sa</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sqlmodel</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> alembic <span class="im">import</span> op</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co"># revision identifiers, used by Alembic.</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>revision: <span class="bu">str</span> <span class="op">=</span> <span class="st">&quot;4691089690c2&quot;</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>down_revision: Union[<span class="bu">str</span>, <span class="va">None</span>] <span class="op">=</span> <span class="st">&quot;98894dffd37c&quot;</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>branch_labels: Union[<span class="bu">str</span>, Sequence[<span class="bu">str</span>], <span class="va">None</span>] <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>depends_on: Union[<span class="bu">str</span>, Sequence[<span class="bu">str</span>], <span class="va">None</span>] <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="co">## need to provide the table schema for offline mode support</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>meta <span class="op">=</span> sa.MetaData()</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>server_table <span class="op">=</span> sa.Table(</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;server_scd&quot;</span> <span class="cf">if</span> op.get_context().config.attributes.get(<span class="st">&quot;scd&quot;</span>) <span class="cf">else</span> <span class="st">&quot;server&quot;</span>,</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    meta,</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;vendor_id&quot;</span>,</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>        sqlmodel.sql.sqltypes.AutoString(),</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;server_id&quot;</span>,</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>        sqlmodel.sql.sqltypes.AutoString(),</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;name&quot;</span>,</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>        sqlmodel.sql.sqltypes.AutoString(),</span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;vcpus&quot;</span>,</span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>        sa.Integer(),</span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;hypervisor&quot;</span>,</span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>        sqlmodel.sql.sqltypes.AutoString(),</span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;cpu_allocation&quot;</span>,</span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>        sa.Enum(<span class="st">&quot;SHARED&quot;</span>, <span class="st">&quot;BURSTABLE&quot;</span>, <span class="st">&quot;DEDICATED&quot;</span>, name<span class="op">=</span><span class="st">&quot;cpuallocation&quot;</span>),</span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;cpu_cores&quot;</span>,</span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>        sa.Integer(),</span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;cpu_speed&quot;</span>,</span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a>        sa.Float(),</span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;cpu_architecture&quot;</span>,</span>
+<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a>        sa.Enum(</span>
+<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;ARM64&quot;</span>,</span>
+<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;ARM64_MAC&quot;</span>,</span>
+<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;I386&quot;</span>,</span>
+<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;X86_64&quot;</span>,</span>
+<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;X86_64_MAC&quot;</span>,</span>
+<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a>            name<span class="op">=</span><span class="st">&quot;cpuarchitecture&quot;</span>,</span>
+<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a>        ),</span>
+<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;cpu_manufacturer&quot;</span>,</span>
+<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a>        sqlmodel.sql.sqltypes.AutoString(),</span>
+<span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-83"><a href="#cb3-83" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-84"><a href="#cb3-84" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;cpu_family&quot;</span>,</span>
+<span id="cb3-85"><a href="#cb3-85" aria-hidden="true" tabindex="-1"></a>        sqlmodel.sql.sqltypes.AutoString(),</span>
+<span id="cb3-86"><a href="#cb3-86" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb3-87"><a href="#cb3-87" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-88"><a href="#cb3-88" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-89"><a href="#cb3-89" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;cpu_model&quot;</span>,</span>
+<span id="cb3-90"><a href="#cb3-90" aria-hidden="true" tabindex="-1"></a>        sqlmodel.sql.sqltypes.AutoString(),</span>
+<span id="cb3-91"><a href="#cb3-91" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb3-92"><a href="#cb3-92" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-93"><a href="#cb3-93" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-94"><a href="#cb3-94" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;cpus&quot;</span>,</span>
+<span id="cb3-95"><a href="#cb3-95" aria-hidden="true" tabindex="-1"></a>        sa.JSON(),</span>
+<span id="cb3-96"><a href="#cb3-96" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb3-97"><a href="#cb3-97" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-98"><a href="#cb3-98" aria-hidden="true" tabindex="-1"></a>    sa.Column(<span class="st">&quot;memory&quot;</span>, sa.Integer(), nullable<span class="op">=</span><span class="va">False</span>),</span>
+<span id="cb3-99"><a href="#cb3-99" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-100"><a href="#cb3-100" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;gpu_count&quot;</span>,</span>
+<span id="cb3-101"><a href="#cb3-101" aria-hidden="true" tabindex="-1"></a>        sa.Integer(),</span>
+<span id="cb3-102"><a href="#cb3-102" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb3-103"><a href="#cb3-103" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-104"><a href="#cb3-104" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-105"><a href="#cb3-105" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;gpu_memory_min&quot;</span>,</span>
+<span id="cb3-106"><a href="#cb3-106" aria-hidden="true" tabindex="-1"></a>        sa.Integer(),</span>
+<span id="cb3-107"><a href="#cb3-107" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb3-108"><a href="#cb3-108" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-109"><a href="#cb3-109" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-110"><a href="#cb3-110" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;gpu_memory_total&quot;</span>,</span>
+<span id="cb3-111"><a href="#cb3-111" aria-hidden="true" tabindex="-1"></a>        sa.Integer(),</span>
+<span id="cb3-112"><a href="#cb3-112" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb3-113"><a href="#cb3-113" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-114"><a href="#cb3-114" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-115"><a href="#cb3-115" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;gpu_manufacturer&quot;</span>,</span>
+<span id="cb3-116"><a href="#cb3-116" aria-hidden="true" tabindex="-1"></a>        sqlmodel.sql.sqltypes.AutoString(),</span>
+<span id="cb3-117"><a href="#cb3-117" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb3-118"><a href="#cb3-118" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-119"><a href="#cb3-119" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-120"><a href="#cb3-120" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;gpu_model&quot;</span>,</span>
+<span id="cb3-121"><a href="#cb3-121" aria-hidden="true" tabindex="-1"></a>        sqlmodel.sql.sqltypes.AutoString(),</span>
+<span id="cb3-122"><a href="#cb3-122" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb3-123"><a href="#cb3-123" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-124"><a href="#cb3-124" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-125"><a href="#cb3-125" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;gpus&quot;</span>,</span>
+<span id="cb3-126"><a href="#cb3-126" aria-hidden="true" tabindex="-1"></a>        sa.JSON(),</span>
+<span id="cb3-127"><a href="#cb3-127" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb3-128"><a href="#cb3-128" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-129"><a href="#cb3-129" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-130"><a href="#cb3-130" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;storage_size&quot;</span>,</span>
+<span id="cb3-131"><a href="#cb3-131" aria-hidden="true" tabindex="-1"></a>        sa.Integer(),</span>
+<span id="cb3-132"><a href="#cb3-132" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb3-133"><a href="#cb3-133" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-134"><a href="#cb3-134" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-135"><a href="#cb3-135" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;storage_type&quot;</span>,</span>
+<span id="cb3-136"><a href="#cb3-136" aria-hidden="true" tabindex="-1"></a>        sa.Enum(<span class="st">&quot;HDD&quot;</span>, <span class="st">&quot;SSD&quot;</span>, <span class="st">&quot;NVME_SSD&quot;</span>, <span class="st">&quot;NETWORK&quot;</span>, name<span class="op">=</span><span class="st">&quot;storagetype&quot;</span>),</span>
+<span id="cb3-137"><a href="#cb3-137" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb3-138"><a href="#cb3-138" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-139"><a href="#cb3-139" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-140"><a href="#cb3-140" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;storages&quot;</span>,</span>
+<span id="cb3-141"><a href="#cb3-141" aria-hidden="true" tabindex="-1"></a>        sa.JSON(),</span>
+<span id="cb3-142"><a href="#cb3-142" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb3-143"><a href="#cb3-143" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-144"><a href="#cb3-144" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-145"><a href="#cb3-145" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;network_speed&quot;</span>,</span>
+<span id="cb3-146"><a href="#cb3-146" aria-hidden="true" tabindex="-1"></a>        sa.Float(),</span>
+<span id="cb3-147"><a href="#cb3-147" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb3-148"><a href="#cb3-148" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-149"><a href="#cb3-149" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-150"><a href="#cb3-150" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;inbound_traffic&quot;</span>,</span>
+<span id="cb3-151"><a href="#cb3-151" aria-hidden="true" tabindex="-1"></a>        sa.Float(),</span>
+<span id="cb3-152"><a href="#cb3-152" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb3-153"><a href="#cb3-153" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-154"><a href="#cb3-154" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-155"><a href="#cb3-155" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;outbound_traffic&quot;</span>,</span>
+<span id="cb3-156"><a href="#cb3-156" aria-hidden="true" tabindex="-1"></a>        sa.Float(),</span>
+<span id="cb3-157"><a href="#cb3-157" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb3-158"><a href="#cb3-158" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-159"><a href="#cb3-159" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-160"><a href="#cb3-160" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;ipv4&quot;</span>,</span>
+<span id="cb3-161"><a href="#cb3-161" aria-hidden="true" tabindex="-1"></a>        sa.Integer(),</span>
+<span id="cb3-162"><a href="#cb3-162" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb3-163"><a href="#cb3-163" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-164"><a href="#cb3-164" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-165"><a href="#cb3-165" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;status&quot;</span>,</span>
+<span id="cb3-166"><a href="#cb3-166" aria-hidden="true" tabindex="-1"></a>        sa.Enum(<span class="st">&quot;ACTIVE&quot;</span>, <span class="st">&quot;INACTIVE&quot;</span>, name<span class="op">=</span><span class="st">&quot;status&quot;</span>),</span>
+<span id="cb3-167"><a href="#cb3-167" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb3-168"><a href="#cb3-168" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-169"><a href="#cb3-169" aria-hidden="true" tabindex="-1"></a>    sa.Column(</span>
+<span id="cb3-170"><a href="#cb3-170" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;observed_at&quot;</span>,</span>
+<span id="cb3-171"><a href="#cb3-171" aria-hidden="true" tabindex="-1"></a>        sa.DateTime(),</span>
+<span id="cb3-172"><a href="#cb3-172" aria-hidden="true" tabindex="-1"></a>        nullable<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb3-173"><a href="#cb3-173" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-174"><a href="#cb3-174" aria-hidden="true" tabindex="-1"></a>    sa.ForeignKeyConstraint(</span>
+<span id="cb3-175"><a href="#cb3-175" aria-hidden="true" tabindex="-1"></a>        [<span class="st">&quot;vendor_id&quot;</span>],</span>
+<span id="cb3-176"><a href="#cb3-176" aria-hidden="true" tabindex="-1"></a>        [<span class="st">&quot;vendor.vendor_id&quot;</span>],</span>
+<span id="cb3-177"><a href="#cb3-177" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb3-178"><a href="#cb3-178" aria-hidden="true" tabindex="-1"></a>    sa.PrimaryKeyConstraint(<span class="st">&quot;vendor_id&quot;</span>, <span class="st">&quot;server_id&quot;</span>, <span class="st">&quot;observed_at&quot;</span>)</span>
+<span id="cb3-179"><a href="#cb3-179" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> op.get_context().config.attributes.get(<span class="st">&quot;scd&quot;</span>)</span>
+<span id="cb3-180"><a href="#cb3-180" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> sa.PrimaryKeyConstraint(<span class="st">&quot;vendor_id&quot;</span>, <span class="st">&quot;server_id&quot;</span>),</span>
+<span id="cb3-181"><a href="#cb3-181" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-182"><a href="#cb3-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-183"><a href="#cb3-183" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> upgrade() <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb3-184"><a href="#cb3-184" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> op.get_context().config.attributes.get(<span class="st">&quot;scd&quot;</span>):</span>
+<span id="cb3-185"><a href="#cb3-185" aria-hidden="true" tabindex="-1"></a>        <span class="cf">with</span> op.batch_alter_table(</span>
+<span id="cb3-186"><a href="#cb3-186" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;server_scd&quot;</span>, schema<span class="op">=</span><span class="va">None</span>, copy_from<span class="op">=</span>server_table</span>
+<span id="cb3-187"><a href="#cb3-187" aria-hidden="true" tabindex="-1"></a>        ) <span class="im">as</span> batch_op:</span>
+<span id="cb3-188"><a href="#cb3-188" aria-hidden="true" tabindex="-1"></a>            batch_op.alter_column(</span>
+<span id="cb3-189"><a href="#cb3-189" aria-hidden="true" tabindex="-1"></a>                <span class="st">&quot;cpu_cores&quot;</span>, existing_type<span class="op">=</span>sa.INTEGER(), nullable<span class="op">=</span><span class="va">True</span></span>
+<span id="cb3-190"><a href="#cb3-190" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb3-191"><a href="#cb3-191" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb3-192"><a href="#cb3-192" aria-hidden="true" tabindex="-1"></a>        <span class="cf">with</span> op.batch_alter_table(</span>
+<span id="cb3-193"><a href="#cb3-193" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;server&quot;</span>, schema<span class="op">=</span><span class="va">None</span>, copy_from<span class="op">=</span>server_table</span>
+<span id="cb3-194"><a href="#cb3-194" aria-hidden="true" tabindex="-1"></a>        ) <span class="im">as</span> batch_op:</span>
+<span id="cb3-195"><a href="#cb3-195" aria-hidden="true" tabindex="-1"></a>            batch_op.alter_column(</span>
+<span id="cb3-196"><a href="#cb3-196" aria-hidden="true" tabindex="-1"></a>                <span class="st">&quot;cpu_cores&quot;</span>, existing_type<span class="op">=</span>sa.INTEGER(), nullable<span class="op">=</span><span class="va">True</span></span>
+<span id="cb3-197"><a href="#cb3-197" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb3-198"><a href="#cb3-198" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-199"><a href="#cb3-199" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-200"><a href="#cb3-200" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> downgrade() <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb3-201"><a href="#cb3-201" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> op.get_context().config.attributes.get(<span class="st">&quot;scd&quot;</span>):</span>
+<span id="cb3-202"><a href="#cb3-202" aria-hidden="true" tabindex="-1"></a>        <span class="cf">with</span> op.batch_alter_table(</span>
+<span id="cb3-203"><a href="#cb3-203" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;server_scd&quot;</span>, schema<span class="op">=</span><span class="va">None</span>, copy_from<span class="op">=</span>server_table</span>
+<span id="cb3-204"><a href="#cb3-204" aria-hidden="true" tabindex="-1"></a>        ) <span class="im">as</span> batch_op:</span>
+<span id="cb3-205"><a href="#cb3-205" aria-hidden="true" tabindex="-1"></a>            batch_op.alter_column(</span>
+<span id="cb3-206"><a href="#cb3-206" aria-hidden="true" tabindex="-1"></a>                <span class="st">&quot;cpu_cores&quot;</span>, existing_type<span class="op">=</span>sa.INTEGER(), nullable<span class="op">=</span><span class="va">False</span></span>
+<span id="cb3-207"><a href="#cb3-207" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb3-208"><a href="#cb3-208" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb3-209"><a href="#cb3-209" aria-hidden="true" tabindex="-1"></a>        <span class="cf">with</span> op.batch_alter_table(</span>
+<span id="cb3-210"><a href="#cb3-210" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;server&quot;</span>, schema<span class="op">=</span><span class="va">None</span>, copy_from<span class="op">=</span>server_table</span>
+<span id="cb3-211"><a href="#cb3-211" aria-hidden="true" tabindex="-1"></a>        ) <span class="im">as</span> batch_op:</span>
+<span id="cb3-212"><a href="#cb3-212" aria-hidden="true" tabindex="-1"></a>            batch_op.alter_column(</span>
+<span id="cb3-213"><a href="#cb3-213" aria-hidden="true" tabindex="-1"></a>                <span class="st">&quot;cpu_cores&quot;</span>, existing_type<span class="op">=</span>sa.INTEGER(), nullable<span class="op">=</span><span class="va">False</span></span>
+<span id="cb3-214"><a href="#cb3-214" aria-hidden="true" tabindex="-1"></a>            )</span></code></pre></div>
+<aside class="notes">
+<p>Another complexity was due supporting multiple database engines,
+e.g. publishing most recent data in SQLite and collecting SCD data in
+Postges and CockrochDB, and maintaining the database migration tool with
+support for all of these. In this example we just changed a single
+column from <code>NOT NULL</code> to nullable, as it turned out that
+even the number of cores of a server might be unknown at some
+vendors.</p>
+<p>offline mode support -&gt; table def for both the SCD and non-SCD
+tables, same for PKs supporting upgrade and downgrade path</p>
+but once that’s done ..
+</aside>
+</div>
+</section>
+<section id="from-sc_crawler-import-alembic-1" class="slide level2">
+<h2>&gt;&gt;&gt; from sc_crawler import alembic</h2>
+<div class="sourceCode" id="cb4"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sc-crawler schemas upgrade <span class="at">--sql</span></span></code></pre></div>
+<div class="fragment">
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> _alembic_tmp_server (</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    vendor_id <span class="dt">VARCHAR</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    server_id <span class="dt">VARCHAR</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    name <span class="dt">VARCHAR</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    vcpus <span class="dt">INTEGER</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    hypervisor <span class="dt">VARCHAR</span>,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    cpu_allocation <span class="dt">VARCHAR</span>(<span class="dv">9</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    cpu_cores <span class="dt">INTEGER</span>,</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    cpu_speed <span class="dt">FLOAT</span>,</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    cpu_architecture <span class="dt">VARCHAR</span>(<span class="dv">10</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    cpu_manufacturer <span class="dt">VARCHAR</span>,</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    cpu_family <span class="dt">VARCHAR</span>,</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    cpu_model <span class="dt">VARCHAR</span>,</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    cpus JSON <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    memory <span class="dt">INTEGER</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    gpu_count <span class="dt">INTEGER</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    gpu_memory_min <span class="dt">INTEGER</span>,</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    gpu_memory_total <span class="dt">INTEGER</span>,</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    gpu_manufacturer <span class="dt">VARCHAR</span>,</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    gpu_model <span class="dt">VARCHAR</span>,</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>    gpus JSON <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>    storage_size <span class="dt">INTEGER</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>    storage_type <span class="dt">VARCHAR</span>(<span class="dv">8</span>),</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>    storages JSON <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>    network_speed <span class="dt">FLOAT</span>,</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>    inbound_traffic <span class="dt">FLOAT</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>    outbound_traffic <span class="dt">FLOAT</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>    ipv4 <span class="dt">INTEGER</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>    status <span class="dt">VARCHAR</span>(<span class="dv">8</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>    observed_at DATETIME <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>    description <span class="dt">VARCHAR</span>,</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>    <span class="kw">PRIMARY</span> <span class="kw">KEY</span> (vendor_id, server_id),</span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FOREIGN</span> <span class="kw">KEY</span>(vendor_id) <span class="kw">REFERENCES</span> vendor (vendor_id)</span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>);</span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a><span class="kw">INSERT</span> <span class="kw">INTO</span> _alembic_tmp_server (vendor_id, server_id, name, vcpus, hypervisor, cpu_allocation, cpu_cores, cpu_speed, cpu_architecture, cpu_manufacturer, cpu_family, cpu_model, cpus, memory, gpu_count, gpu_memory_min, gpu_memory_total, gpu</span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>_manufacturer, gpu_model, gpus, storage_size, storage_type, storages, network_speed, inbound_traffic, outbound_traffic, ipv4, status, observed_at) <span class="kw">SELECT</span> server.vendor_id, server.server_id, server.name, server.vcpus, server.hypervisor, ser</span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>ver.cpu_allocation, server.cpu_cores, server.cpu_speed, server.cpu_architecture, server.cpu_manufacturer, server.cpu_family, server.cpu_model, server.cpus, server.memory, server.gpu_count, server.gpu_memory_min, server.gpu_memory_total, se</span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>rver.gpu_manufacturer, server.gpu_model, server.gpus, server.storage_size, server.storage_type, server.storages, server.network_speed, server.inbound_traffic, server.outbound_traffic, server.ipv4, server.status, server.observed_at</span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> server;</span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a><span class="kw">DROP</span> <span class="kw">TABLE</span> server;</span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> _alembic_tmp_server <span class="kw">RENAME</span> <span class="kw">TO</span> server;</span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a><span class="kw">UPDATE</span> alembic_version <span class="kw">SET</span> version_num<span class="op">=</span><span class="st">&#39;4691089690c2&#39;</span> <span class="kw">WHERE</span> alembic_version.version_num <span class="op">=</span> <span class="st">&#39;98894dffd37c&#39;</span>;</span></code></pre></div>
+<aside class="notes">
+but once that’s done .. the user-facing command is straighforward, and
+can support most database engines both online and offline as well, as
+you can see in the generated SQL for offline mode
+</aside>
+</div>
+</section>
+<section id="from-sc_crawler-import-hwinfo" class="slide level2"
+data-transition="slide-in none-out">
+<h2 data-transition="slide-in none-out">&gt;&gt;&gt; from sc_crawler
+import hwinfo</h2>
+<ul style="margin-top: -20px;">
+<li>
+Varying quality and availability of data at different vendors.
+</li>
+</ul>
+<p><img class="fragment" style="width:100%;" src="images/chatgpt-datasource.png" /></p>
+<aside class="notes">
+<p>as mentioned previously, data quality and availability on the server
+details is pretty random .. and I’m not even talking about structured
+data, but in most cases the data doesn’t exist in any form. and before
+anyone asks .. not, not even ChatGPT knows:</p>
+<p>,,,</p>
+I mean … after searching for 6 or 7 sources online .. this guy failed
+heavily
+</aside>
+</section>
+<section id="from-sc_crawler-import-hwinfo-1" class="slide level2"
+data-transition="none">
+<h2 data-transition="none">&gt;&gt;&gt; from sc_crawler import
+hwinfo</h2>
+<ul style="margin-top: -20px;">
+<li>
+Varying quality and availability of data at different vendors.
+</li>
+</ul>
+<p><img style="width:100%;" src="images/chatgpt-datasource-highlighted.png" /></p>
+<aside class="notes">
+multiplying 12 by 2 … so we really hoped there’s a better way.
+</aside>
+</section>
+<section id="from-sc_crawler-import-hwinfo-2" class="slide level2"
+data-transition="none-in slide-out">
+<h2 data-transition="none-in slide-out">&gt;&gt;&gt; from sc_crawler
+import hwinfo</h2>
+<ul style="margin-top: -20px;">
+<li>
+Varying quality and availability of data at different vendors.
+</li>
+<ul>
+<li class="fragment">
+No SSD info via the API. Parse from server description! 🙀
+</li>
+<li class="fragment">
+No CPU info via the API. Extracting from homepage! 😿
+</li>
+<li class="fragment">
+No hypervisor info via the API. Manual mappings! 🙀😿
+</li>
+</ul>
+<li class="fragment">
+Region, right?
+</li>
+</ul>
+<div class="colcontainer mt-0">
+<div class="col">
+<ul>
+<ul>
+<li class="fragment">
+ID, eg <code>eu-west-1</code>
+</li>
+<li class="fragment">
+Name, eg <code>Europe (Ireland)</code>
+</li>
+<li class="fragment">
+Alias, eg <code>EU (Ireland)</code>
+</li>
+</ul>
+</ul>
+</div>
+<div class="col">
+<ul>
+<ul>
+<li class="fragment">
+API reference, eg <code>eu-west-1</code>
+</li>
+<li class="fragment">
+Display name, eg <code>Dublin (IE)</code>
+</li>
+<li class="fragment">
+Exact location? Energy source?
+</li>
+</ul>
+</ul>
+</div>
+</div>
+<aside class="notes">
+<p>So that storage data is sometimes missing from the API response .. at
+least in a structured way. And we need to parse the availability of an
+attached local SSD from the server description.</p>
+<p>Sometimes it’s not even there .. need to extract CPU info from the
+vendor homepage.</p>
+<p>And sometimes data is not even there … we had to look that up and
+provide manual mappings, later automated scripts to collect that data
+right from the nodes.</p>
+But looking at simpler things, e.g. region definitions. Straightforward,
+right?
+</aside>
+</section>
+<section id="from-sc_crawler-import-pricing" class="slide level2">
+<h2>&gt;&gt;&gt; from sc_crawler import pricing</h2>
+<ul>
+<li>No way to find SKUs by filtering in the API call. Get all, search
+locally.</li>
+</ul>
+<div class="fragment">
+<ul>
+<li><p><code>f1-micro</code> is one out of 2 instances with simple
+pricing.</p>
+<ul>
+<li>For other instances, lookup SKUs for CPU + RAM and do the math.</li>
+</ul></li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>Match instance family with SKU via search in description,
+e.g. <code>C2D</code>.</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>Except for <code>c2</code>, which is called “Compute
+optimized”.</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>And <code>m2</code> is actually priced at a premium on the top of
+<code>m1</code>.</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>The <code>n1</code> resource group is not CPU/RAM, but
+<code>N1Standard</code>, extract if it’s CPU or RAM price from
+description.</li>
+</ul>
+<aside class="notes">
+<p>Anyone from Google here today?</p>
+<ul>
+<li>Great, because I have some examples to share.</li>
+<li>Okay, I’ll politely avoid naming which vendor might have one of the
+most interestingly implemented pricing schema …</li>
+</ul>
+<p>2 x 2 numbers .. don’t ask ChatGPT to do that for you!!!</p>
+<p>,,,</p>
+<p>m2 pricing: look up m1 cpu/ram pricing + add the premium skus and do
+the math (2 times 2 numbers added and multiplied – involving 5 api
+lookups)</p>
+<p>Don’t bother with zones reported that are not existing (us-west8 on
+May 22 .. edge network?)</p>
+<p>it’s a mess …</p>
+okay, enough horror stories. beleive me … it’s good to have a
+standardize database schema and data
+</aside>
+</div>
+</section>
+<section id="import-sc_crawler-1" class="slide level2">
+<h2>&gt;&gt;&gt; import sc_crawler</h2>
+<div class="centered">
+<p><img style="margin-top:-50px; width: 100%;"  src="images/dbhub.png" /></p>
+</div>
+<p class="centered mt--30">
+Source:
+<a href="https://dbhub.io/sparecores/sc-data-priceless.db">dbhub.io/sparecores</a>
+</p>
+<aside class="notes">
+so I’m super happy to introduce this cleaned up dataset to you all,
+which is actually another component of the SC ecocystem, as we license
+all our software by MPL, but the data by creative commons
+attribution/share-alike
+</aside>
+</section>
+</section>
+<section>
+<section class="titleslide slide level1">
+<h2>
+&gt;&gt;&gt; import sc_data
+</h2>
+<ul style="margin-top: -20px;">
+<li class="fragment">
+GitHub Action set up to run the Crawler every 5 minutes.
+</li>
+<div class="colcontainer mt-0">
+<div class="col">
+<ul>
+<li class="fragment">
+~30,000 GHA runs
+</li>
+</ul>
+</div>
+<div class="col2">
+<ul>
+<li class="fragment">
+~900 releases (with non-price changes)
+</li>
+</ul>
+</div>
+</div>
+<li class="fragment">
+Make the data available in a public (CC BY-SA) SQLite database:
+</li>
+<ul>
+<li class="fragment">
+350 MiB SQLite
+</li>
+<li class="fragment">
+2,000+ active servers and their ~275k prices tracked
+</li>
+<li class="fragment">
+800k+ measured scores across 24 benchmarks
+</li>
+</ul>
+<li class="fragment">
+Thin Python package to keep the data updated from S3.
+</li>
+<ul>
+<li class="fragment">
+Package version is tied to Crawler version.
+</li>
+</ul>
+</ul>
+<aside class="notes">
+<p>so we have a separate GitHub repo set up for the data, including GH
+Actions to run the Crawler every 5 minutes</p>
+<p>and publishing the most recent data as an SQLite database and Python
+package</p>
+This data includes data collected outside of the vendor APIs …
+</aside>
+</section>
+</section>
+<section>
+<section class="titleslide slide level1">
+<h2>
+&gt;&gt;&gt; import sc_inspector
+</h2>
+<p>Information collected from vendor APIs is very limited, so we
+run:</p>
+<div class="colcontainer mt-0">
+  <div class="col">
+    <ul style="margin-top: -20px;">
+      <li class="fragment">Hardware inspection tools:</li>
+      <ul>
+        <li class="fragment"><code>dmidecode</code></li>
+        <li class="fragment"><code>lscpu</code></li>
+        <li class="fragment"><code>lshw</code></li>
+        <li class="fragment"><code>nvidia-smi</code></li>
+      </ul>
+    </ul>
+  </div>
+  <div class="col">
+    <ul style="margin-top: -20px;">
+      <li class="fragment">Benchmarking workloads:</li>
+      <ul>
+        <li class="fragment"><code>bw_mem</code></li>
+        <li class="fragment">Compression algos</li>
+        <li class="fragment">OpenSSL hash functions and block ciphers</li>
+        <li class="fragment">Geekbench 6</li>
+        <li class="fragment"><code>stress-ng</code></li>
+      </ul>
+    </ul>
+  </div>
+</ul>
+<aside class="notes">
+<p>This data includes data collected outside of the vendor APIs … in the
+means of our Inspector tool.</p>
+<p>which runs …</p>
+And we indeed start all cloud servers (more than a 1000), and run all
+these things on them, so that you don’t have to :)
+</aside>
+</section>
+<section id="import-sc_inspector" class="slide level2">
+<h2>&gt;&gt;&gt; import sc_inspector</h2>
+<p class="mt-0">
+Data is collected in public: <code>sc-inspector-data</code> repo on
+GitHub.
+</p>
+<div class="centered">
+<p><img style="margin-top:-30px;width:95%;" src="images/sc-inspector-data-gha.png" /></p>
+</div>
+<aside class="notes">
+This data is also collected in public, running GH Actions to start the
+machines, run the benchmarks, parse results, clean up the resources etc.
+</aside>
+</section>
+<section id="import-sc_inspector-1" class="slide level2">
+<h2>&gt;&gt;&gt; import sc_inspector</h2>
+<div class="centered">
+<p><img style="margin-top:-40px;width:95%;" src="images/sc-inspector-data-files.png" /></p>
+</div>
+<aside class="notes">
+<p>And besides integrating in the Data package, everything is stored in
+the GitHub repo, like:</p>
+<ul>
+<li>stout</li>
+<li>stderr</li>
+<li>parsed results</li>
+<li>metadata</li>
+</ul>
+</aside>
+</section>
+<section id="import-sc_inspector-2" class="slide level2">
+<h2>&gt;&gt;&gt; import sc_inspector</h2>
+<div class="sourceCode" id="cb6"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">--rm</span> <span class="at">-ti</span> <span class="at">-v</span> /var/run/docker.sock:/var/run/docker.sock <span class="dt">\</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">-e</span> GITHUB_TOKEN=<span class="va">${GITHUB_TOKEN}</span> <span class="dt">\</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">-e</span> BENCHMARK_SECRETS_PASSPHRASE=<span class="va">${BENCHMARK_SECRETS_PASSPHRASE}</span> <span class="dt">\</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    ghcr.io/sparecores/sc-inspector:main <span class="dt">\</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    inspect <span class="at">--vendor</span> <span class="va">${VENDOR}</span> <span class="at">--instance</span> <span class="va">${INSTANCE}</span> <span class="at">--gpu-count</span> <span class="va">${GPU_COUNT}</span></span></code></pre></div>
+<div class="centered">
+<p><img class="fragment" src="images/sc-images.png" style="margin-top:-40px !important;width:67%;" /></p>
+</div>
+<aside class="notes">
+If you want, you can run the inspector on any machine .. by using our
+related Docker images.
+</aside>
+</section>
+</section>
+<section>
+<section class="titleslide slide level1">
+<h2>
+&gt;&gt;&gt; import sc_runner
+</h2>
+<div class="sourceCode" id="cb7"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> docker run <span class="at">--rm</span> <span class="at">-ti</span> <span class="dt">\</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  ghcr.io/sparecores/sc-runner:main <span class="dt">\</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    create aws <span class="at">--instance</span> t4g.nano</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="ex">Updating</span> <span class="er">(</span><span class="ex">aws.us-west-2.None.t4g.nano</span><span class="kw">)</span><span class="bu">:</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="ex">pulumi:pulumi:Stack</span> runner-aws.us-west-2.None.t4g.nano running</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a> <span class="ex">+</span>  pulumi:providers:aws us-west-2 creating <span class="er">(</span><span class="ex">0s</span><span class="kw">)</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="ex">@</span> updating....</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a> <span class="ex">+</span>  pulumi:providers:aws us-west-2 created <span class="er">(</span><span class="ex">0.29s</span><span class="kw">)</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a> <span class="ex">+</span>  aws:ec2:SecurityGroup t4g.nano creating <span class="er">(</span><span class="ex">0s</span><span class="kw">)</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="ex">@</span> updating.....</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a> <span class="ex">+</span>  aws:ec2:SecurityGroup t4g.nano created <span class="er">(</span><span class="ex">2s</span><span class="kw">)</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="ex">@</span> updating....</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a> <span class="ex">+</span>  aws:vpc:SecurityGroupIngressRule t4g.nano-0 creating <span class="er">(</span><span class="ex">0s</span><span class="kw">)</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a> <span class="ex">+</span>  aws:vpc:SecurityGroupIngressRule t4g.nano-1 creating <span class="er">(</span><span class="ex">0s</span><span class="kw">)</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a> <span class="ex">+</span>  aws:ec2:Instance t4g.nano creating <span class="er">(</span><span class="ex">0s</span><span class="kw">)</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a> <span class="ex">+</span>  aws:vpc:SecurityGroupEgressRule t4g.nano-1 creating <span class="er">(</span><span class="ex">0s</span><span class="kw">)</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a> <span class="ex">+</span>  aws:vpc:SecurityGroupEgressRule t4g.nano-0 creating <span class="er">(</span><span class="ex">0s</span><span class="kw">)</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="ex">@</span> updating....</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a> <span class="ex">+</span>  aws:vpc:SecurityGroupIngressRule t4g.nano-0 created <span class="er">(</span><span class="ex">1s</span><span class="kw">)</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a> <span class="ex">+</span>  aws:vpc:SecurityGroupIngressRule t4g.nano-1 created <span class="er">(</span><span class="ex">1s</span><span class="kw">)</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a> <span class="ex">+</span>  aws:vpc:SecurityGroupEgressRule t4g.nano-1 created <span class="er">(</span><span class="ex">1s</span><span class="kw">)</span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a><span class="ex">@</span> updating....</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a> <span class="ex">+</span>  aws:vpc:SecurityGroupEgressRule t4g.nano-0 created <span class="er">(</span><span class="ex">1s</span><span class="kw">)</span></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a><span class="ex">@</span> updating..............</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a> <span class="ex">+</span>  aws:ec2:Instance t4g.nano created <span class="er">(</span><span class="ex">13s</span><span class="kw">)</span></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a><span class="ex">@</span> updating....</span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>    <span class="ex">pulumi:pulumi:Stack</span> runner-aws.us-west-2.None.t4g.nano</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a><span class="ex">Resources:</span></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>    <span class="ex">+</span> 7 created</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>    <span class="ex">1</span> unchanged</span></code></pre></div>
+<aside class="notes">
+<p>To start the machines, we are heavily relying on the open-source
+version of Pulumi, and we have created Pulumi stack templates to spin up
+machines, as you can see here.</p>
+The command is super simple: provide vendor and instance type, make sure
+you have the credentials, and we take care of the rest using this
+unified CLI.
+</aside>
+</section>
+<section id="import-sc_runner" class="slide level2"
+data-transition="slide-in none-out">
+<h2 data-transition="slide-in none-out">&gt;&gt;&gt; import
+sc_runner</h2>
+<div class="centered">
+<p><img src="images/aws-quota-request-quota.png" style="width:57%;margin-top:-30px;"/></p>
+</div>
+<aside class="notes">
+We faced only a few problems while starting almost 1K sever types at AWS
+for benchmarking … namely not being allowed to spin up that many
+instances due to quotas.
+</aside>
+</section>
+<section id="import-sc_runner-1" class="slide level2"
+data-transition="none-in slide-out">
+<h2 data-transition="none-in slide-out">&gt;&gt;&gt; import
+sc_runner</h2>
+<div class="centered">
+<p><img src="images/aws-quota-request-quota-achievement-unlocked.png" style="width:57%;margin-top:-30px;"/></p>
+</div>
+<aside class="notes">
+<p>Never imagined we would be hitting the “quote update request quota”
+🤐</p>
+Quite an achievement!
+</aside>
+</section>
+</section>
+<section>
+<section class="titleslide slide level1">
+<h2>
+&gt;&gt;&gt; import sc_keeper
+</h2>
+<div class="sourceCode" id="cb8"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> curl https://keeper.sparecores.net/server/aws/g4dn.xlarge <span class="kw">|</span> <span class="ex">jq</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="ex">%</span> Total    % Received % Xferd  Average Speed   Time    Time     Time  Current</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>                                 <span class="ex">Dload</span>  Upload   Total   Spent    Left  Speed</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="ex">100</span>  111k  100  111k    0     0  79795      0  0:00:01  0:00:01 <span class="at">--:--:--</span> 79799</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;vendor_id&quot;</span><span class="fu">:</span> <span class="st">&quot;aws&quot;</span><span class="fu">,</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;server_id&quot;</span><span class="fu">:</span> <span class="st">&quot;g4dn.xlarge&quot;</span><span class="fu">,</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;g4dn.xlarge&quot;</span><span class="fu">,</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;api_reference&quot;</span><span class="fu">:</span> <span class="st">&quot;g4dn.xlarge&quot;</span><span class="fu">,</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;display_name&quot;</span><span class="fu">:</span> <span class="st">&quot;g4dn.xlarge&quot;</span><span class="fu">,</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;Graphics intensive [Instance store volumes] [Network and EBS optimized] Gen4 xlarge&quot;</span><span class="fu">,</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;family&quot;</span><span class="fu">:</span> <span class="st">&quot;g4dn&quot;</span><span class="fu">,</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;vcpus&quot;</span><span class="fu">:</span> <span class="dv">4</span><span class="fu">,</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;hypervisor&quot;</span><span class="fu">:</span> <span class="st">&quot;nitro&quot;</span><span class="fu">,</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;cpu_allocation&quot;</span><span class="fu">:</span> <span class="st">&quot;Dedicated&quot;</span><span class="fu">,</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;cpu_cores&quot;</span><span class="fu">:</span> <span class="dv">2</span><span class="fu">,</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;cpu_speed&quot;</span><span class="fu">:</span> <span class="fl">3.5</span><span class="fu">,</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;cpu_architecture&quot;</span><span class="fu">:</span> <span class="st">&quot;x86_64&quot;</span><span class="fu">,</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;cpu_manufacturer&quot;</span><span class="fu">:</span> <span class="st">&quot;Intel&quot;</span><span class="fu">,</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;cpu_family&quot;</span><span class="fu">:</span> <span class="st">&quot;Xeon&quot;</span><span class="fu">,</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;cpu_model&quot;</span><span class="fu">:</span> <span class="st">&quot;8259CL&quot;</span><span class="fu">,</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;cpu_l1_cache&quot;</span><span class="fu">:</span> <span class="dv">131072</span><span class="fu">,</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;cpu_l2_cache&quot;</span><span class="fu">:</span> <span class="dv">2097152</span><span class="fu">,</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;cpu_l3_cache&quot;</span><span class="fu">:</span> <span class="dv">37486592</span><span class="fu">,</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;cpu_flags&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;fpu&quot;</span><span class="ot">,</span></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;vme&quot;</span><span class="ot">,</span></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;de&quot;</span><span class="ot">,</span></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;pse&quot;</span><span class="ot">,</span></span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;tsc&quot;</span><span class="ot">,</span></span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;msr&quot;</span><span class="ot">,</span></span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;pae&quot;</span><span class="ot">,</span></span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>    <span class="er">...</span></span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;cpus&quot;</span><span class="fu">:</span> <span class="ot">[]</span><span class="fu">,</span></span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;memory_amount&quot;</span><span class="fu">:</span> <span class="dv">16384</span><span class="fu">,</span></span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;memory_generation&quot;</span><span class="fu">:</span> <span class="st">&quot;DDR4&quot;</span><span class="fu">,</span></span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;memory_speed&quot;</span><span class="fu">:</span> <span class="dv">2933</span><span class="fu">,</span></span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;memory_ecc&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;gpu_count&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;gpu_memory_min&quot;</span><span class="fu">:</span> <span class="dv">16384</span><span class="fu">,</span></span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;gpu_memory_total&quot;</span><span class="fu">:</span> <span class="dv">16384</span><span class="fu">,</span></span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;gpu_manufacturer&quot;</span><span class="fu">:</span> <span class="st">&quot;Nvidia&quot;</span><span class="fu">,</span></span>
+<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;gpu_family&quot;</span><span class="fu">:</span> <span class="st">&quot;Turing&quot;</span><span class="fu">,</span></span>
+<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;gpu_model&quot;</span><span class="fu">:</span> <span class="st">&quot;Tesla T4&quot;</span><span class="fu">,</span></span>
+<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;gpus&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;manufacturer&quot;</span><span class="fu">:</span> <span class="st">&quot;Nvidia&quot;</span><span class="fu">,</span></span>
+<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;family&quot;</span><span class="fu">:</span> <span class="st">&quot;Turing&quot;</span><span class="fu">,</span></span>
+<span id="cb9-46"><a href="#cb9-46" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;model&quot;</span><span class="fu">:</span> <span class="st">&quot;Tesla T4&quot;</span><span class="fu">,</span></span>
+<span id="cb9-47"><a href="#cb9-47" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;memory&quot;</span><span class="fu">:</span> <span class="dv">15360</span><span class="fu">,</span></span>
+<span id="cb9-48"><a href="#cb9-48" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;firmware_version&quot;</span><span class="fu">:</span> <span class="st">&quot;535.171.04&quot;</span><span class="fu">,</span></span>
+<span id="cb9-49"><a href="#cb9-49" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;bios_version&quot;</span><span class="fu">:</span> <span class="st">&quot;90.04.96.00.A0&quot;</span><span class="fu">,</span></span>
+<span id="cb9-50"><a href="#cb9-50" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;graphics_clock&quot;</span><span class="fu">:</span> <span class="dv">1590</span><span class="fu">,</span></span>
+<span id="cb9-51"><a href="#cb9-51" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;sm_clock&quot;</span><span class="fu">:</span> <span class="dv">1590</span><span class="fu">,</span></span>
+<span id="cb9-52"><a href="#cb9-52" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;mem_clock&quot;</span><span class="fu">:</span> <span class="dv">5001</span><span class="fu">,</span></span>
+<span id="cb9-53"><a href="#cb9-53" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;video_clock&quot;</span><span class="fu">:</span> <span class="dv">1470</span></span>
+<span id="cb9-54"><a href="#cb9-54" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb9-55"><a href="#cb9-55" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb9-56"><a href="#cb9-56" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;storage_size&quot;</span><span class="fu">:</span> <span class="dv">125</span><span class="fu">,</span></span>
+<span id="cb9-57"><a href="#cb9-57" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;storage_type&quot;</span><span class="fu">:</span> <span class="st">&quot;nvme ssd&quot;</span><span class="fu">,</span></span>
+<span id="cb9-58"><a href="#cb9-58" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;storages&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb9-59"><a href="#cb9-59" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb9-60"><a href="#cb9-60" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;size&quot;</span><span class="fu">:</span> <span class="dv">125</span><span class="fu">,</span></span>
+<span id="cb9-61"><a href="#cb9-61" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;storage_type&quot;</span><span class="fu">:</span> <span class="st">&quot;nvme ssd&quot;</span></span>
+<span id="cb9-62"><a href="#cb9-62" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb9-63"><a href="#cb9-63" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb9-64"><a href="#cb9-64" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;network_speed&quot;</span><span class="fu">:</span> <span class="fl">5.0</span><span class="fu">,</span></span>
+<span id="cb9-65"><a href="#cb9-65" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;inbound_traffic&quot;</span><span class="fu">:</span> <span class="dv">0</span><span class="er">.</span><span class="dv">0</span><span class="fu">,</span></span>
+<span id="cb9-66"><a href="#cb9-66" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;outbound_traffic&quot;</span><span class="fu">:</span> <span class="dv">0</span><span class="er">.</span><span class="dv">0</span><span class="fu">,</span></span>
+<span id="cb9-67"><a href="#cb9-67" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;ipv4&quot;</span><span class="fu">:</span> <span class="dv">0</span><span class="fu">,</span></span>
+<span id="cb9-68"><a href="#cb9-68" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;status&quot;</span><span class="fu">:</span> <span class="st">&quot;active&quot;</span><span class="fu">,</span></span>
+<span id="cb9-69"><a href="#cb9-69" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;observed_at&quot;</span><span class="fu">:</span> <span class="st">&quot;2024-06-09T21:20:22.005194&quot;</span><span class="fu">,</span></span>
+<span id="cb9-70"><a href="#cb9-70" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;vendor&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb9-71"><a href="#cb9-71" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;logo&quot;</span><span class="fu">:</span> <span class="st">&quot;https://sc-data-public-40e9d310.s3.amazonaws.com/cdn/logos/aws.svg&quot;</span><span class="fu">,</span></span>
+<span id="cb9-72"><a href="#cb9-72" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;address_line&quot;</span><span class="fu">:</span> <span class="st">&quot;410 Terry Ave N&quot;</span><span class="fu">,</span></span>
+<span id="cb9-73"><a href="#cb9-73" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Amazon Web Services&quot;</span><span class="fu">,</span></span>
+<span id="cb9-74"><a href="#cb9-74" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;zip_code&quot;</span><span class="fu">:</span> <span class="st">&quot;98109&quot;</span><span class="fu">,</span></span>
+<span id="cb9-75"><a href="#cb9-75" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;founding_year&quot;</span><span class="fu">:</span> <span class="dv">2002</span><span class="fu">,</span></span>
+<span id="cb9-76"><a href="#cb9-76" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;state&quot;</span><span class="fu">:</span> <span class="st">&quot;Washington&quot;</span><span class="fu">,</span></span>
+<span id="cb9-77"><a href="#cb9-77" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;status_page&quot;</span><span class="fu">:</span> <span class="st">&quot;https://health.aws.amazon.com/health/status&quot;</span><span class="fu">,</span></span>
+<span id="cb9-78"><a href="#cb9-78" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;vendor_id&quot;</span><span class="fu">:</span> <span class="st">&quot;aws&quot;</span><span class="fu">,</span></span>
+<span id="cb9-79"><a href="#cb9-79" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;homepage&quot;</span><span class="fu">:</span> <span class="st">&quot;https://aws.amazon.com&quot;</span><span class="fu">,</span></span>
+<span id="cb9-80"><a href="#cb9-80" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;country_id&quot;</span><span class="fu">:</span> <span class="st">&quot;US&quot;</span><span class="fu">,</span></span>
+<span id="cb9-81"><a href="#cb9-81" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;status&quot;</span><span class="fu">:</span> <span class="st">&quot;active&quot;</span><span class="fu">,</span></span>
+<span id="cb9-82"><a href="#cb9-82" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;observed_at&quot;</span><span class="fu">:</span> <span class="st">&quot;2024-06-09T21:50:32.658281&quot;</span><span class="fu">,</span></span>
+<span id="cb9-83"><a href="#cb9-83" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;city&quot;</span><span class="fu">:</span> <span class="st">&quot;Seattle&quot;</span></span>
+<span id="cb9-84"><a href="#cb9-84" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb9-85"><a href="#cb9-85" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;prices&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb9-86"><a href="#cb9-86" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb9-87"><a href="#cb9-87" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;vendor_id&quot;</span><span class="fu">:</span> <span class="st">&quot;aws&quot;</span><span class="fu">,</span></span>
+<span id="cb9-88"><a href="#cb9-88" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;region_id&quot;</span><span class="fu">:</span> <span class="st">&quot;af-south-1&quot;</span><span class="fu">,</span></span>
+<span id="cb9-89"><a href="#cb9-89" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;zone_id&quot;</span><span class="fu">:</span> <span class="st">&quot;afs1-az1&quot;</span><span class="fu">,</span></span>
+<span id="cb9-90"><a href="#cb9-90" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;server_id&quot;</span><span class="fu">:</span> <span class="st">&quot;g4dn.xlarge&quot;</span><span class="fu">,</span></span>
+<span id="cb9-91"><a href="#cb9-91" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;operating_system&quot;</span><span class="fu">:</span> <span class="st">&quot;Linux&quot;</span><span class="fu">,</span></span>
+<span id="cb9-92"><a href="#cb9-92" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;allocation&quot;</span><span class="fu">:</span> <span class="st">&quot;ondemand&quot;</span><span class="fu">,</span></span>
+<span id="cb9-93"><a href="#cb9-93" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;unit&quot;</span><span class="fu">:</span> <span class="st">&quot;hour&quot;</span><span class="fu">,</span></span>
+<span id="cb9-94"><a href="#cb9-94" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;price&quot;</span><span class="fu">:</span> <span class="dv">0</span><span class="er">.</span><span class="dv">698</span><span class="fu">,</span></span>
+<span id="cb9-95"><a href="#cb9-95" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;price_upfront&quot;</span><span class="fu">:</span> <span class="dv">0</span><span class="er">.</span><span class="dv">0</span><span class="fu">,</span></span>
+<span id="cb9-96"><a href="#cb9-96" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;price_tiered&quot;</span><span class="fu">:</span> <span class="ot">[]</span><span class="fu">,</span></span>
+<span id="cb9-97"><a href="#cb9-97" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;currency&quot;</span><span class="fu">:</span> <span class="st">&quot;USD&quot;</span><span class="fu">,</span></span>
+<span id="cb9-98"><a href="#cb9-98" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;status&quot;</span><span class="fu">:</span> <span class="st">&quot;active&quot;</span><span class="fu">,</span></span>
+<span id="cb9-99"><a href="#cb9-99" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;observed_at&quot;</span><span class="fu">:</span> <span class="st">&quot;2024-06-09T21:21:10.015921&quot;</span><span class="fu">,</span></span>
+<span id="cb9-100"><a href="#cb9-100" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;region&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb9-101"><a href="#cb9-101" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;country_id&quot;</span><span class="fu">:</span> <span class="st">&quot;ZA&quot;</span><span class="fu">,</span></span>
+<span id="cb9-102"><a href="#cb9-102" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;state&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
+<span id="cb9-103"><a href="#cb9-103" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;founding_year&quot;</span><span class="fu">:</span> <span class="dv">2020</span><span class="fu">,</span></span>
+<span id="cb9-104"><a href="#cb9-104" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;green_energy&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span></span>
+<span id="cb9-105"><a href="#cb9-105" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Africa (Cape Town)&quot;</span><span class="fu">,</span></span>
+<span id="cb9-106"><a href="#cb9-106" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;city&quot;</span><span class="fu">:</span> <span class="st">&quot;Cape Town&quot;</span><span class="fu">,</span></span>
+<span id="cb9-107"><a href="#cb9-107" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;status&quot;</span><span class="fu">:</span> <span class="st">&quot;active&quot;</span><span class="fu">,</span></span>
+<span id="cb9-108"><a href="#cb9-108" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;address_line&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
+<span id="cb9-109"><a href="#cb9-109" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;observed_at&quot;</span><span class="fu">:</span> <span class="st">&quot;2024-06-09T21:19:37.529944&quot;</span><span class="fu">,</span></span>
+<span id="cb9-110"><a href="#cb9-110" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;zip_code&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
+<span id="cb9-111"><a href="#cb9-111" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;lon&quot;</span><span class="fu">:</span> <span class="fl">18.3758801</span><span class="fu">,</span></span>
+<span id="cb9-112"><a href="#cb9-112" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;region_id&quot;</span><span class="fu">:</span> <span class="st">&quot;af-south-1&quot;</span><span class="fu">,</span></span>
+<span id="cb9-113"><a href="#cb9-113" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;display_name&quot;</span><span class="fu">:</span> <span class="st">&quot;Cape Town (ZA)&quot;</span><span class="fu">,</span></span>
+<span id="cb9-114"><a href="#cb9-114" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;lat&quot;</span><span class="fu">:</span> <span class="fl">-33.914651</span><span class="fu">,</span></span>
+<span id="cb9-115"><a href="#cb9-115" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;vendor_id&quot;</span><span class="fu">:</span> <span class="st">&quot;aws&quot;</span><span class="fu">,</span></span>
+<span id="cb9-116"><a href="#cb9-116" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;api_reference&quot;</span><span class="fu">:</span> <span class="st">&quot;af-south-1&quot;</span><span class="fu">,</span></span>
+<span id="cb9-117"><a href="#cb9-117" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;aliases&quot;</span><span class="fu">:</span> <span class="ot">[]</span></span>
+<span id="cb9-118"><a href="#cb9-118" aria-hidden="true" tabindex="-1"></a>      <span class="fu">},</span></span>
+<span id="cb9-119"><a href="#cb9-119" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;zone&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb9-120"><a href="#cb9-120" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;region_id&quot;</span><span class="fu">:</span> <span class="st">&quot;af-south-1&quot;</span><span class="fu">,</span></span>
+<span id="cb9-121"><a href="#cb9-121" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;zone_id&quot;</span><span class="fu">:</span> <span class="st">&quot;afs1-az1&quot;</span><span class="fu">,</span></span>
+<span id="cb9-122"><a href="#cb9-122" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;api_reference&quot;</span><span class="fu">:</span> <span class="st">&quot;af-south-1a&quot;</span><span class="fu">,</span></span>
+<span id="cb9-123"><a href="#cb9-123" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;status&quot;</span><span class="fu">:</span> <span class="st">&quot;active&quot;</span><span class="fu">,</span></span>
+<span id="cb9-124"><a href="#cb9-124" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;vendor_id&quot;</span><span class="fu">:</span> <span class="st">&quot;aws&quot;</span><span class="fu">,</span></span>
+<span id="cb9-125"><a href="#cb9-125" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;af-south-1a&quot;</span><span class="fu">,</span></span>
+<span id="cb9-126"><a href="#cb9-126" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;display_name&quot;</span><span class="fu">:</span> <span class="st">&quot;af-south-1a&quot;</span><span class="fu">,</span></span>
+<span id="cb9-127"><a href="#cb9-127" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;observed_at&quot;</span><span class="fu">:</span> <span class="st">&quot;2024-06-09T21:19:40.425499&quot;</span></span>
+<span id="cb9-128"><a href="#cb9-128" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb9-129"><a href="#cb9-129" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb9-130"><a href="#cb9-130" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb9-131"><a href="#cb9-131" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;vendor_id&quot;</span><span class="fu">:</span> <span class="st">&quot;aws&quot;</span><span class="fu">,</span></span>
+<span id="cb9-132"><a href="#cb9-132" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;region_id&quot;</span><span class="fu">:</span> <span class="st">&quot;af-south-1&quot;</span><span class="fu">,</span></span>
+<span id="cb9-133"><a href="#cb9-133" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;zone_id&quot;</span><span class="fu">:</span> <span class="st">&quot;afs1-az2&quot;</span><span class="fu">,</span></span>
+<span id="cb9-134"><a href="#cb9-134" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;server_id&quot;</span><span class="fu">:</span> <span class="st">&quot;g4dn.xlarge&quot;</span><span class="fu">,</span></span>
+<span id="cb9-135"><a href="#cb9-135" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;operating_system&quot;</span><span class="fu">:</span> <span class="st">&quot;Linux&quot;</span><span class="fu">,</span></span>
+<span id="cb9-136"><a href="#cb9-136" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;allocation&quot;</span><span class="fu">:</span> <span class="st">&quot;spot&quot;</span><span class="fu">,</span></span>
+<span id="cb9-137"><a href="#cb9-137" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;unit&quot;</span><span class="fu">:</span> <span class="st">&quot;hour&quot;</span><span class="fu">,</span></span>
+<span id="cb9-138"><a href="#cb9-138" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;price&quot;</span><span class="fu">:</span> <span class="dv">0</span><span class="er">.</span><span class="dv">2251</span><span class="fu">,</span></span>
+<span id="cb9-139"><a href="#cb9-139" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;price_upfront&quot;</span><span class="fu">:</span> <span class="dv">0</span><span class="er">.</span><span class="dv">0</span><span class="fu">,</span></span>
+<span id="cb9-140"><a href="#cb9-140" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;price_tiered&quot;</span><span class="fu">:</span> <span class="ot">[]</span><span class="fu">,</span></span>
+<span id="cb9-141"><a href="#cb9-141" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;currency&quot;</span><span class="fu">:</span> <span class="st">&quot;USD&quot;</span><span class="fu">,</span></span>
+<span id="cb9-142"><a href="#cb9-142" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;status&quot;</span><span class="fu">:</span> <span class="st">&quot;active&quot;</span><span class="fu">,</span></span>
+<span id="cb9-143"><a href="#cb9-143" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;observed_at&quot;</span><span class="fu">:</span> <span class="st">&quot;2024-06-09T18:16:26&quot;</span><span class="fu">,</span></span>
+<span id="cb9-144"><a href="#cb9-144" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;region&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb9-145"><a href="#cb9-145" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;country_id&quot;</span><span class="fu">:</span> <span class="st">&quot;ZA&quot;</span><span class="fu">,</span></span>
+<span id="cb9-146"><a href="#cb9-146" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;state&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
+<span id="cb9-147"><a href="#cb9-147" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;founding_year&quot;</span><span class="fu">:</span> <span class="dv">2020</span><span class="fu">,</span></span>
+<span id="cb9-148"><a href="#cb9-148" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;green_energy&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span></span>
+<span id="cb9-149"><a href="#cb9-149" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Africa (Cape Town)&quot;</span><span class="fu">,</span></span>
+<span id="cb9-150"><a href="#cb9-150" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;city&quot;</span><span class="fu">:</span> <span class="st">&quot;Cape Town&quot;</span><span class="fu">,</span></span>
+<span id="cb9-151"><a href="#cb9-151" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;status&quot;</span><span class="fu">:</span> <span class="st">&quot;active&quot;</span><span class="fu">,</span></span>
+<span id="cb9-152"><a href="#cb9-152" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;address_line&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
+<span id="cb9-153"><a href="#cb9-153" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;observed_at&quot;</span><span class="fu">:</span> <span class="st">&quot;2024-06-09T21:19:37.529944&quot;</span><span class="fu">,</span></span>
+<span id="cb9-154"><a href="#cb9-154" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;zip_code&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
+<span id="cb9-155"><a href="#cb9-155" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;lon&quot;</span><span class="fu">:</span> <span class="fl">18.3758801</span><span class="fu">,</span></span>
+<span id="cb9-156"><a href="#cb9-156" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;region_id&quot;</span><span class="fu">:</span> <span class="st">&quot;af-south-1&quot;</span><span class="fu">,</span></span>
+<span id="cb9-157"><a href="#cb9-157" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;display_name&quot;</span><span class="fu">:</span> <span class="st">&quot;Cape Town (ZA)&quot;</span><span class="fu">,</span></span>
+<span id="cb9-158"><a href="#cb9-158" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;lat&quot;</span><span class="fu">:</span> <span class="fl">-33.914651</span><span class="fu">,</span></span>
+<span id="cb9-159"><a href="#cb9-159" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;vendor_id&quot;</span><span class="fu">:</span> <span class="st">&quot;aws&quot;</span><span class="fu">,</span></span>
+<span id="cb9-160"><a href="#cb9-160" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;api_reference&quot;</span><span class="fu">:</span> <span class="st">&quot;af-south-1&quot;</span><span class="fu">,</span></span>
+<span id="cb9-161"><a href="#cb9-161" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;aliases&quot;</span><span class="fu">:</span> <span class="ot">[]</span></span>
+<span id="cb9-162"><a href="#cb9-162" aria-hidden="true" tabindex="-1"></a>      <span class="fu">},</span></span>
+<span id="cb9-163"><a href="#cb9-163" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;zone&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb9-164"><a href="#cb9-164" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;region_id&quot;</span><span class="fu">:</span> <span class="st">&quot;af-south-1&quot;</span><span class="fu">,</span></span>
+<span id="cb9-165"><a href="#cb9-165" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;zone_id&quot;</span><span class="fu">:</span> <span class="st">&quot;afs1-az2&quot;</span><span class="fu">,</span></span>
+<span id="cb9-166"><a href="#cb9-166" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;api_reference&quot;</span><span class="fu">:</span> <span class="st">&quot;af-south-1b&quot;</span><span class="fu">,</span></span>
+<span id="cb9-167"><a href="#cb9-167" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;status&quot;</span><span class="fu">:</span> <span class="st">&quot;active&quot;</span><span class="fu">,</span></span>
+<span id="cb9-168"><a href="#cb9-168" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;vendor_id&quot;</span><span class="fu">:</span> <span class="st">&quot;aws&quot;</span><span class="fu">,</span></span>
+<span id="cb9-169"><a href="#cb9-169" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;af-south-1b&quot;</span><span class="fu">,</span></span>
+<span id="cb9-170"><a href="#cb9-170" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;display_name&quot;</span><span class="fu">:</span> <span class="st">&quot;af-south-1b&quot;</span><span class="fu">,</span></span>
+<span id="cb9-171"><a href="#cb9-171" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;observed_at&quot;</span><span class="fu">:</span> <span class="st">&quot;2024-06-09T21:19:40.425554&quot;</span></span>
+<span id="cb9-172"><a href="#cb9-172" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb9-173"><a href="#cb9-173" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb9-174"><a href="#cb9-174" aria-hidden="true" tabindex="-1"></a>    <span class="er">...</span></span>
+<span id="cb9-175"><a href="#cb9-175" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb9-176"><a href="#cb9-176" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;benchmark_scores&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb9-177"><a href="#cb9-177" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb9-178"><a href="#cb9-178" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;server_id&quot;</span><span class="fu">:</span> <span class="st">&quot;g4dn.xlarge&quot;</span><span class="fu">,</span></span>
+<span id="cb9-179"><a href="#cb9-179" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;config&quot;</span><span class="fu">:</span> <span class="fu">{},</span></span>
+<span id="cb9-180"><a href="#cb9-180" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;status&quot;</span><span class="fu">:</span> <span class="st">&quot;active&quot;</span><span class="fu">,</span></span>
+<span id="cb9-181"><a href="#cb9-181" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;vendor_id&quot;</span><span class="fu">:</span> <span class="st">&quot;aws&quot;</span><span class="fu">,</span></span>
+<span id="cb9-182"><a href="#cb9-182" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;benchmark_id&quot;</span><span class="fu">:</span> <span class="st">&quot;bogomips&quot;</span><span class="fu">,</span></span>
+<span id="cb9-183"><a href="#cb9-183" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;score&quot;</span><span class="fu">:</span> <span class="fl">5000.0</span><span class="fu">,</span></span>
+<span id="cb9-184"><a href="#cb9-184" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;note&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
+<span id="cb9-185"><a href="#cb9-185" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;observed_at&quot;</span><span class="fu">:</span> <span class="st">&quot;2024-06-07T04:26:48.643640&quot;</span></span>
+<span id="cb9-186"><a href="#cb9-186" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb9-187"><a href="#cb9-187" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb9-188"><a href="#cb9-188" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;server_id&quot;</span><span class="fu">:</span> <span class="st">&quot;g4dn.xlarge&quot;</span><span class="fu">,</span></span>
+<span id="cb9-189"><a href="#cb9-189" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;config&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb9-190"><a href="#cb9-190" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;cores&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb9-191"><a href="#cb9-191" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;framework_version&quot;</span><span class="fu">:</span> <span class="st">&quot;0.17.08&quot;</span></span>
+<span id="cb9-192"><a href="#cb9-192" aria-hidden="true" tabindex="-1"></a>      <span class="fu">},</span></span>
+<span id="cb9-193"><a href="#cb9-193" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;status&quot;</span><span class="fu">:</span> <span class="st">&quot;active&quot;</span><span class="fu">,</span></span>
+<span id="cb9-194"><a href="#cb9-194" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;vendor_id&quot;</span><span class="fu">:</span> <span class="st">&quot;aws&quot;</span><span class="fu">,</span></span>
+<span id="cb9-195"><a href="#cb9-195" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;benchmark_id&quot;</span><span class="fu">:</span> <span class="st">&quot;stress_ng:cpu_all&quot;</span><span class="fu">,</span></span>
+<span id="cb9-196"><a href="#cb9-196" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;score&quot;</span><span class="fu">:</span> <span class="fl">1385.583093</span><span class="fu">,</span></span>
+<span id="cb9-197"><a href="#cb9-197" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;note&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
+<span id="cb9-198"><a href="#cb9-198" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;observed_at&quot;</span><span class="fu">:</span> <span class="st">&quot;2024-06-07T04:27:14.552982&quot;</span></span>
+<span id="cb9-199"><a href="#cb9-199" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb9-200"><a href="#cb9-200" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb9-201"><a href="#cb9-201" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;server_id&quot;</span><span class="fu">:</span> <span class="st">&quot;g4dn.xlarge&quot;</span><span class="fu">,</span></span>
+<span id="cb9-202"><a href="#cb9-202" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;config&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb9-203"><a href="#cb9-203" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;cores&quot;</span><span class="fu">:</span> <span class="dv">4</span><span class="fu">,</span></span>
+<span id="cb9-204"><a href="#cb9-204" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;framework_version&quot;</span><span class="fu">:</span> <span class="st">&quot;0.17.08&quot;</span></span>
+<span id="cb9-205"><a href="#cb9-205" aria-hidden="true" tabindex="-1"></a>      <span class="fu">},</span></span>
+<span id="cb9-206"><a href="#cb9-206" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;status&quot;</span><span class="fu">:</span> <span class="st">&quot;active&quot;</span><span class="fu">,</span></span>
+<span id="cb9-207"><a href="#cb9-207" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;vendor_id&quot;</span><span class="fu">:</span> <span class="st">&quot;aws&quot;</span><span class="fu">,</span></span>
+<span id="cb9-208"><a href="#cb9-208" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;benchmark_id&quot;</span><span class="fu">:</span> <span class="st">&quot;stress_ng:cpu_all&quot;</span><span class="fu">,</span></span>
+<span id="cb9-209"><a href="#cb9-209" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;score&quot;</span><span class="fu">:</span> <span class="fl">4013.022928</span><span class="fu">,</span></span>
+<span id="cb9-210"><a href="#cb9-210" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;note&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
+<span id="cb9-211"><a href="#cb9-211" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;observed_at&quot;</span><span class="fu">:</span> <span class="st">&quot;2024-06-07T04:27:02.508145&quot;</span></span>
+<span id="cb9-212"><a href="#cb9-212" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb9-213"><a href="#cb9-213" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
+<span id="cb9-214"><a href="#cb9-214" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<aside class="notes">
+<p>python sdk to search the database and also to make that available as
+a public HTTP API</p>
+<ul>
+<li>note size</li>
+<li>relationships loaded</li>
+<li>even pricing and benchmarks</li>
+</ul>
+<p>,,,</p>
+SCROLL DOWN FOR ChatGPT integration!
+</aside>
+</section>
+<section id="import-sc_keeper" class="slide level2">
+<h2>&gt;&gt;&gt; import sc_keeper</h2>
+<div class="centered">
+<p><img style="margin-top:-30px;width:95%;"  src="images/sc-keeper-redoc.png" /></p>
+</div>
+</section>
+<section id="import-sc_keeper-1" class="slide level2">
+<h2>&gt;&gt;&gt; import sc_keeper</h2>
+<div class="centered">
+<p><img style="margin-top:-30px;width:95%;"  src="images/sc-keeper-ai.png" /></p>
+</div>
+</section>
+</section>
+<section>
+<section class="titleslide slide level1">
+<h2>
+import { AppModule } from ‘sc-www’;
+</h2>
+<div class="centered">
+<p><img style="margin-top:-30px;width:90%;" src="images/sc-www-collage.png" /></p>
+</div>
+<aside class="notes">
+TODO
+</aside>
+</section>
+<section id="import-appmodule-from-sc-www" class="slide level2">
+<h2>import { AppModule } from ‘sc-www’;</h2>
+<p><img class="mt--60" src="images/homepage-lander-noheader.png" /></p>
+<p class="centered mt--30">
+Source: <a href="https://sparecores.com">sparecores.com</a>
+</p>
+<aside class="notes">
+First of all, we have a pretty cool slot machine … TODO
+</aside>
+<aside class="notes">
+TODO
+</aside>
+</section>
+</section>
+<section class="titleslide slide level1">
+<h2>
+&gt;&gt;&gt; import __future__
+</h2>
+<ul style="margin-top: -20px;">
+<li class="fragment">
+Add support for more vendors
+</li>
+<ul>
+<li class="fragment">
+Crawler (vendor API integration)
+</li>
+<li class="fragment">
+Runner (pulumi)
+</li>
+</ul>
+<li class="fragment">
+More SDKs (PyPI, npm, CRAN, etc.)
+</li>
+<li class="fragment">
+More benchmarks (e.g. LLM inference speed)
+</li>
+<li class="fragment">
+Data analysis, blog posts
+</li>
+<li class="fragment">
+My Spare Cores (dashboard)
+</li>
+<li class="fragment">
+SaaS 👀
+</li>
+<aside class="notes">
+TODO
+</aside>
+</section>
+</section>
+<section>
+<section class="titleslide slide level1" data-transition="slide-in none-out">
+<h2>
+&gt;&gt;&gt; from sparecores import team
+</h2>
+<div class="colcontainer mt-60 centered">
+<div class="col">
+<img src="https://avatars.githubusercontent.com/u/820331?v=4" class="rounded w-70" />
+<p class="bold mt-0">
+<span class="citation" data-cites="bra-fsn">@bra-fsn</span>
+</p>
+</div>
+<div class="col">
+<img src="https://avatars.githubusercontent.com/u/5794264?v=4" class="rounded w-70" />
+<p class="bold mt-0">
+<span class="citation" data-cites="palabola">@palabola</span>
+</p>
+</div>
+<div class="col">
+<img src="https://avatars.githubusercontent.com/u/495736?v=4" class="rounded w-70" />
+<p class="bold mt-0">
+<span class="citation" data-cites="daroczig">@daroczig</span>
+</p>
+</div>
+</div>
+<aside class="notes">
+TODO
+</aside>
+</section>
+<section id="from-sparecores-import-team" class="slide level2"
+data-transition="none-in slide-out">
+<h2 data-transition="none-in slide-out">&gt;&gt;&gt; from sparecores
+import team</h2>
+<div class="colcontainer mt-60 centered">
+<div class="col">
+<img src="https://avatars.githubusercontent.com/u/820331?v=4" class="rounded w-70" />
+<p class="bold mt-0">
+<span class="citation" data-cites="bra-fsn">@bra-fsn</span>
+</p>
+<p class="mt-0">
+Infrastructure and Python veteran.
+</p>
+</div>
+<div class="col">
+<img src="https://avatars.githubusercontent.com/u/5794264?v=4" class="rounded w-70" />
+<p class="bold mt-0">
+<span class="citation" data-cites="palabola">@palabola</span>
+</p>
+<p class="mt-0">
+Guardian of the front-end and Node.js tools.
+</p>
+</div>
+<div class="col">
+<img src="https://avatars.githubusercontent.com/u/495736?v=4" class="rounded w-70" />
+<p class="bold mt-0">
+<span class="citation" data-cites="daroczig">@daroczig</span>
+</p>
+<p class="mt-0">
+Hack of all trades, master of <code>NaN</code>.
+</p>
+</div>
+</div>
+<aside class="notes">
+TODO
+</aside>
+</section>
+<section id="from-sparecores-import-support" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import support</h2>
+<div class="centered">
+<p><img style="margin-top:-30px;width:70%;" src="images/ngi-eu-open-source.png" /></p>
+</div>
+<aside class="notes">
+TODO
+</aside>
+</section>
+</section>
+<section>
+<section class="titleslide slide level1" data-transition="slide-in none-out">
+<!-- https://carbon.now.sh/?bg=rgba%288%2C47%2C73%2C1%29&t=theme%3A0bcewbfyk9yl&wt=none&l=python&width=680&ds=false&dsyoff=20px&dsblur=68px&wc=true&wa=true&pv=5px&ph=5px&ln=false&fl=1&fm=Hack&fs=18px&lh=161%25&si=false&es=2x&wm=false&code=%253E%253E%253E%2520import%2520os%250A%253E%253E%253E%2520import%2520signal%250A%253E%253E%253E%2520os.kill%28os.getpid%28%29%252C%2520signal.SIGKILL%29%2520%2520%250A%250A%253E%253E%253E%2520visit_booth_in_person%28%27C20%27%29%250A%253E%253E%253E%2520browse%28%27https%253A%252F%252Fsparecores.com%27%29%250A%253E%253E%253E%2520email%28%27daroczig%2540sparecores.com%27%29%250A%253E%253E%253E%2520follow%28%27%2540SpareCores%27%29%250A%250A%253E%253E%253E%2520os._exit%28status%253D0%29%250AProcess%2520finished%2520at%252013%253A00%253A00%2520%28Dec%25204%252C%25202024%29%2520 -->
+<div class="centered">
+<p><img src="images/bye-ow2-webinar-1.png" style="background: none;" class="mt--70 w-75" /></p>
+</div>
+<aside class="notes">
+TODO
+</aside>
+</section>
+<section data-transition="none">
+<div class="centered">
+<p><img src="images/bye-ow2-webinar-2.png" style="background: none;" class="mt--70 w-75" /></p>
+</div>
+<aside class="notes">
+TODO
+</aside>
+</section>
+<section data-transition="none">
+<div class="centered">
+<p><img src="images/bye-ow2-webinar-3.png" style="background: none;" class="mt--70 w-75" /></p>
+</div>
+<p class="author offlineMode" style="color:#eee;font-size:0.75em;text-align: center !important; margin-top:-40px; padding-top:0px;">
+Slides:
+<a href="https://sparecores.com/talks" target="_blank">sparecores.com/talks</a>
+</p>
+<aside class="notes">
+TODO
+</aside>
+</section>
+<!--toggle visibility of items in live mode-->
+<script>
+var url = document.location.href;
+if (url.match("/?live")) {
+  const elements = document.getElementsByClassName('offlineMode');
+  for (let i = 0; i < elements.length; i++) {
+    element = elements.item(i);
+    element.style.display = 'none';
+  }
+} else {
+  const elements = document.getElementsByClassName('onlineMode');
+  for (let i = 0; i < elements.length; i++) {
+    element = elements.item(i);
+    element.style.display = 'none';
+  }
+}
+</script>
+</section>
+    </div>
+  </div>
+
+  <script src="libs/reveal.js-3.3.0.1/lib/js/head.min.js"></script>
+  <script src="libs/reveal.js-3.3.0.1/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Display controls in the bottom right corner
+        controls: true,
+        // Display a presentation progress bar
+        progress: true,
+        // Display the page number of the current slide
+        slideNumber: true,
+        // Push each slide change to the browser history
+        history: true,
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+        // Enable the slide overview mode
+        overview: true,
+        // Vertical centering of slides
+        center: false,
+        // Enables touch navigation on devices with touch input
+        touch: true,
+        // Turns fragments on and off globally
+        fragments: true,
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+        // Transition style
+        transition: 'default', // none/fade/slide/convex/concave/zoom
+        // Transition speed
+        transitionSpeed: 'default', // default/fast/slow
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1244,
+
+
+
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: 'libs/reveal.js-3.3.0.1/plugin/notes/notes.js', async: true },
+          { src: 'libs/reveal.js-3.3.0.1/plugin/zoom-js/zoom.js', async: true },
+        ]
+      });
+    </script>
+  <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+
+<script>
+  (function() {
+    if (window.jQuery) {
+      Reveal.addEventListener( 'slidechanged', function(event) {
+        window.jQuery(event.previousSlide).trigger('hidden');
+        window.jQuery(event.currentSlide).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+
+  </body>
+</html>
