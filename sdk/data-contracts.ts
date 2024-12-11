@@ -239,8 +239,10 @@ export enum Countries {
   IT = "IT",
   JP = "JP",
   KR = "KR",
+  MX = "MX",
   NL = "NL",
   NO = "NO",
+  NZ = "NZ",
   PL = "PL",
   QA = "QA",
   SA = "SA",
@@ -249,7 +251,6 @@ export enum Countries {
   TW = "TW",
   US = "US",
   ZA = "ZA",
-  NZ = "NZ",
 }
 
 /**
@@ -896,6 +897,7 @@ export enum Regions {
   Value1590 = "1590",
   Value1600 = "1600",
   Value1610 = "1610",
+  Value1640 = "1640",
   Value2 = "2",
   Value3 = "3",
   Value4 = "4",
@@ -958,6 +960,7 @@ export enum Regions {
   MeCentral1 = "me-central-1",
   MeSouth1 = "me-south-1",
   Mexicocentral = "mexicocentral",
+  Newzealandnorth = "newzealandnorth",
   Northcentralus = "northcentralus",
   Northeurope = "northeurope",
   Norwayeast = "norwayeast",
@@ -3027,6 +3030,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "1590"
     | "1600"
     | "1610"
+    | "1640"
     | "2"
     | "3"
     | "4"
@@ -3089,6 +3093,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "me-central-1"
     | "me-south-1"
     | "mexicocentral"
+    | "newzealandnorth"
     | "northcentralus"
     | "northeurope"
     | "norwayeast"
@@ -3162,8 +3167,10 @@ export interface SearchServerPricesServerPricesGetParams {
     | "IT"
     | "JP"
     | "KR"
+    | "MX"
     | "NL"
     | "NO"
+    | "NZ"
     | "PL"
     | "QA"
     | "SA"
@@ -3171,8 +3178,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "SG"
     | "TW"
     | "US"
-    | "ZA"
-    | "NZ";
+    | "ZA";
   /**
    * GPU count
    * Minimum number of GPUs.
@@ -3327,6 +3333,7 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "1590"
     | "1600"
     | "1610"
+    | "1640"
     | "2"
     | "3"
     | "4"
@@ -3389,6 +3396,7 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "me-central-1"
     | "me-south-1"
     | "mexicocentral"
+    | "newzealandnorth"
     | "northcentralus"
     | "northeurope"
     | "norwayeast"
@@ -3447,8 +3455,10 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "IT"
     | "JP"
     | "KR"
+    | "MX"
     | "NL"
     | "NO"
+    | "NZ"
     | "PL"
     | "QA"
     | "SA"
@@ -3456,8 +3466,7 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "SG"
     | "TW"
     | "US"
-    | "ZA"
-    | "NZ";
+    | "ZA";
   /**
    * Limit
    * Maximum number of results. Set to -1 for unlimited.
@@ -3558,6 +3567,7 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "1590"
     | "1600"
     | "1610"
+    | "1640"
     | "2"
     | "3"
     | "4"
@@ -3620,6 +3630,7 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "me-central-1"
     | "me-south-1"
     | "mexicocentral"
+    | "newzealandnorth"
     | "northcentralus"
     | "northeurope"
     | "norwayeast"
@@ -3678,8 +3689,10 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "IT"
     | "JP"
     | "KR"
+    | "MX"
     | "NL"
     | "NO"
+    | "NZ"
     | "PL"
     | "QA"
     | "SA"
@@ -3687,8 +3700,7 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "SG"
     | "TW"
     | "US"
-    | "ZA"
-    | "NZ";
+    | "ZA";
   /**
    * Direction
    * Direction of the Internet traffic.

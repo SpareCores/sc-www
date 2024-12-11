@@ -140,6 +140,7 @@ export namespace ServerPrices {
         | "1590"
         | "1600"
         | "1610"
+        | "1640"
         | "2"
         | "3"
         | "4"
@@ -202,6 +203,7 @@ export namespace ServerPrices {
         | "me-central-1"
         | "me-south-1"
         | "mexicocentral"
+        | "newzealandnorth"
         | "northcentralus"
         | "northeurope"
         | "norwayeast"
@@ -275,8 +277,10 @@ export namespace ServerPrices {
         | "IT"
         | "JP"
         | "KR"
+        | "MX"
         | "NL"
         | "NO"
+        | "NZ"
         | "PL"
         | "QA"
         | "SA"
@@ -284,8 +288,7 @@ export namespace ServerPrices {
         | "SG"
         | "TW"
         | "US"
-        | "ZA"
-        | "NZ";
+        | "ZA";
       /**
        * GPU count
        * Minimum number of GPUs.

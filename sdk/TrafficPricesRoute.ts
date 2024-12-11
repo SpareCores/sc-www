@@ -82,6 +82,7 @@ export namespace TrafficPrices {
         | "1590"
         | "1600"
         | "1610"
+        | "1640"
         | "2"
         | "3"
         | "4"
@@ -144,6 +145,7 @@ export namespace TrafficPrices {
         | "me-central-1"
         | "me-south-1"
         | "mexicocentral"
+        | "newzealandnorth"
         | "northcentralus"
         | "northeurope"
         | "norwayeast"
@@ -202,8 +204,10 @@ export namespace TrafficPrices {
         | "IT"
         | "JP"
         | "KR"
+        | "MX"
         | "NL"
         | "NO"
+        | "NZ"
         | "PL"
         | "QA"
         | "SA"
@@ -211,8 +215,7 @@ export namespace TrafficPrices {
         | "SG"
         | "TW"
         | "US"
-        | "ZA"
-        | "NZ";
+        | "ZA";
       /**
        * Direction
        * Direction of the Internet traffic.
