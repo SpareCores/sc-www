@@ -6,6 +6,7 @@ conference: "OW2 Open Source Webinar #3"
 conference_url: "https://www.ow2.org/view/webinar/"
 conference_talk_url: "https://www.ow2.org/view/webinar/webinar_3"
 conference_talk_slides: "/assets/slides/ow2-webinar-2024-3.html#/coverslide"
+conference_talk_video: "https://www.youtube.com/watch?v=fP_byBLlHVM&t=830s"
 location: "Virtual"
 output:
   revealjs::revealjs_presentation:
@@ -70,11 +71,8 @@ document.getElementById("dummy-slide").remove();
 </p>
 
 <div class="notes">
-Bonjour, Je suis Gergely Daroczi de Spare Cores.
-C'est un grand plaisir d'etre ici.
-Mais comme je ne parlais pas bien francias .. I'll switch to English
-
 focus: how to utilize cloud compute resources in the most cost-efficient way
+using our open-source tools and data
 </div>
 
 </section>
