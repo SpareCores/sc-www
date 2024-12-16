@@ -26,7 +26,7 @@ export namespace TrafficPrices {
        * Vendor id
        * Identifier of the cloud provider vendor.
        */
-      vendor?: "aws" | "azure" | "gcp" | "hcloud";
+      vendor?: "aws" | "azure" | "gcp" | "hcloud" | "upcloud";
       /**
        * Green energy
        * Filter for regions that are 100% powered by renewable energy.
@@ -82,6 +82,7 @@ export namespace TrafficPrices {
         | "1590"
         | "1600"
         | "1610"
+        | "1640"
         | "2"
         | "3"
         | "4"
@@ -103,6 +104,7 @@ export namespace TrafficPrices {
         | "australiacentral2"
         | "australiaeast"
         | "australiasoutheast"
+        | "au-syd1"
         | "brazilsouth"
         | "brazilsoutheast"
         | "brazilus"
@@ -115,11 +117,13 @@ export namespace TrafficPrices {
         | "centraluseuap"
         | "cn-north-1"
         | "cn-northwest-1"
+        | "de-fra1"
         | "eastasia"
         | "eastus"
         | "eastus2"
         | "eastus2euap"
         | "eastusstg"
+        | "es-mad1"
         | "eu-central-1"
         | "eu-central-2"
         | "eu-north-1"
@@ -128,6 +132,8 @@ export namespace TrafficPrices {
         | "eu-west-1"
         | "eu-west-2"
         | "eu-west-3"
+        | "fi-hel1"
+        | "fi-hel2"
         | "francecentral"
         | "francesouth"
         | "germanynorth"
@@ -144,13 +150,18 @@ export namespace TrafficPrices {
         | "me-central-1"
         | "me-south-1"
         | "mexicocentral"
+        | "newzealandnorth"
+        | "nl-ams1"
         | "northcentralus"
         | "northeurope"
         | "norwayeast"
         | "norwaywest"
+        | "pl-waw1"
         | "polandcentral"
         | "qatarcentral"
         | "sa-east-1"
+        | "se-sto1"
+        | "sg-sin1"
         | "southafricanorth"
         | "southafricawest"
         | "southcentralus"
@@ -163,10 +174,14 @@ export namespace TrafficPrices {
         | "switzerlandwest"
         | "uaecentral"
         | "uaenorth"
+        | "uk-lon1"
         | "uksouth"
         | "ukwest"
+        | "us-chi1"
         | "us-east-1"
         | "us-east-2"
+        | "us-nyc1"
+        | "us-sjo1"
         | "us-west-1"
         | "us-west-2"
         | "westcentralus"
@@ -202,8 +217,10 @@ export namespace TrafficPrices {
         | "IT"
         | "JP"
         | "KR"
+        | "MX"
         | "NL"
         | "NO"
+        | "NZ"
         | "PL"
         | "QA"
         | "SA"
@@ -211,8 +228,7 @@ export namespace TrafficPrices {
         | "SG"
         | "TW"
         | "US"
-        | "ZA"
-        | "NZ";
+        | "ZA";
       /**
        * Direction
        * Direction of the Internet traffic.
