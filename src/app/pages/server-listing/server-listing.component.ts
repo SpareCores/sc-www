@@ -113,6 +113,8 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     { name: 'STATUS', show: false, type: 'text', key: 'status' },
   ];
 
+  hasCustomColumns = false;
+
   pageLimits = [10, 25, 50, 100, 250];
 
   limit = 25;
@@ -191,7 +193,6 @@ export class ServerListingComponent implements OnInit, OnDestroy {
         if(this.possibleColumns.find((column) => column.orderField === this.orderBy)) {
           this.possibleColumns.find((column) => column.orderField === this.orderBy)!.show = true;
         }
-
       }
 
       if(query.page) {
@@ -202,12 +203,15 @@ export class ServerListingComponent implements OnInit, OnDestroy {
         this.limit = parseInt(query.limit);
       }
 
-      const tableColumnsStr = this.storageHandler.get('serverListTableColumns');
-      if(tableColumnsStr) {
-        const tableColumns: string[] = JSON.parse(tableColumnsStr);
-        this.possibleColumns.forEach((column) => {
-          column.show = tableColumns.findIndex((item) => item === column.name) !== -1;
-        });
+      const tableColumns: string = query.columns;
+      if(tableColumns && parseInt(tableColumns) ) {
+        const tableColumnsArray: number[] = Number(tableColumns).toString(2).split('').map(Number);
+        if(tableColumnsArray.length === this.possibleColumns.length) {
+          this.hasCustomColumns = true;
+          this.possibleColumns.forEach((column, index) => {
+            column.show = tableColumnsArray[index] === 1;
+          });
+        }
       }
 
       this.refreshColumns(false);
@@ -305,6 +309,11 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       delete queryParams.limit;
     }
 
+    if(this.hasCustomColumns) {
+      let columns = this.possibleColumns.map((column) => column.show ? 1 : 0).reduce((acc: number, bit) => ((acc << 1) | bit), 0);
+      queryParams.columns = columns;
+    }
+
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: queryParams
@@ -394,32 +403,12 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       delete paramObject.limit;
     }
 
+    if(this.hasCustomColumns) {
+      let columns = this.possibleColumns.map((column) => column.show ? 1 : 0).reduce((acc: number, bit) => ((acc << 1) | bit), 0);
+      paramObject.columns = columns;
+    }
+
     return paramObject;
-  }
-
-  getQueryObject() {
-    const paramObject = this.searchParameters?.map((param: any) => {
-      return ((param.modelValue || param.modelValue === false) && param.schema.category_id && param.schema.default !== param.modelValue) ?
-              {[param.name]: param.modelValue} :
-              {};
-    }).reduce((acc: any, curr: any) => {  return {...acc, ...curr}; }, {});
-
-    if(this.orderBy && this.orderDir) {
-      paramObject.order_by = this.orderBy;
-      paramObject.order_dir = this.orderDir;
-    }
-
-    if(this.page > 1) {
-      paramObject.page = this.page;
-    }
-
-    if(this.limit !== 25) {
-      paramObject.limit = this.limit;
-    } else {
-      delete paramObject.limit;
-    }
-
-    return paramObject || {};
   }
 
   updateQueryParams(object: any) {
@@ -434,11 +423,12 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     }
   }
 
+
   refreshColumns(save = true) {
     this.tableColumns = this.possibleColumns.filter((column) => column.show);
-
-    if(save) {
-      this.storageHandler.set('serverListTableColumns', JSON.stringify(this.tableColumns.map(item => item.name)));
+    if(isPlatformBrowser(this.platformId) && save) {
+      this.hasCustomColumns = true;
+      this.updateQueryParams(this.getQueryObjectBase());
     }
   }
 

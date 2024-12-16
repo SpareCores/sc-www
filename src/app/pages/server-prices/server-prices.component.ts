@@ -15,6 +15,7 @@ import { DropdownManagerService } from '../../services/dropdown-manager.service'
 import { AnalyticsService } from '../../services/analytics.service';
 import { CurrencyOption, availableCurrencies } from '../../tools/shared_data';
 import { ServerCompare, ServerCompareService } from '../../services/server-compare.service';
+import { encodeQueryParams } from '../../tools/queryParamFunctions';
 
 export type TableColumn = {
   name: string;
@@ -115,6 +116,8 @@ export class ServerPricesComponent implements OnInit {
     { name: 'PRICE', show: true, type: 'price', orderField: 'price' },
     { name: 'STATUS', show: false, type: 'text', key: 'server.status' },
   ];
+
+  hasCustomColumns = false;
 
   availableCurrencies: CurrencyOption[] = availableCurrencies;
 
@@ -233,12 +236,15 @@ export class ServerPricesComponent implements OnInit {
         this.limit = parseInt(query.limit);
       }
 
-      const tableColumnsStr = this.storageHandler.get('serverListTableColumns');
-      if(tableColumnsStr) {
-        const tableColumns: string[] = JSON.parse(tableColumnsStr);
-        this.possibleColumns.forEach((column) => {
-          column.show = tableColumns.findIndex((item) => item === column.name) !== -1;
-        });
+      const tableColumns: string = query.columns;
+      if(tableColumns && parseInt(tableColumns) ) {
+        const tableColumnsArray: number[] = Number(tableColumns).toString(2).split('').map(Number);
+        if(tableColumnsArray.length === this.possibleColumns.length) {
+          this.hasCustomColumns = true;
+          this.possibleColumns.forEach((column, index) => {
+            column.show = tableColumnsArray[index] === 1;
+          });
+        }
       }
 
       this.refreshColumns(false);
@@ -336,6 +342,11 @@ export class ServerPricesComponent implements OnInit {
       queryParams.limit = this.limit;
     } else {
       delete queryParams.limit;
+    }
+
+    if(this.hasCustomColumns) {
+      let columns = this.possibleColumns.map((column) => column.show ? 1 : 0).reduce((acc: number, bit) => ((acc << 1) | bit), 0);
+      queryParams.columns = columns;
     }
 
     this.router.navigate([], {
@@ -472,11 +483,24 @@ export class ServerPricesComponent implements OnInit {
     return paramObject;
   }
 
+  updateQueryParams(object: any) {
+    const encodedQuery = encodeQueryParams(object);
+
+    if(encodedQuery?.length) {
+      // update the URL
+      window.history.pushState({}, '', '/server_prices?' + encodedQuery);
+    } else {
+      // remove the query params
+      window.history.pushState({}, '', '/server_prices');
+    }
+  }
+
   refreshColumns(save = true) {
     this.tableColumns = this.possibleColumns.filter((column) => column.show);
 
-    if(save) {
-      this.storageHandler.set('serverListTableColumns', JSON.stringify(this.tableColumns.map(item => item.name)));
+    if(isPlatformBrowser(this.platformId) && save) {
+      this.hasCustomColumns = true;
+      this.updateQueryParams(this.getQueryObjectBase());
     }
   }
 
@@ -531,6 +555,11 @@ export class ServerPricesComponent implements OnInit {
       paramObject.limit = this.limit;
     } else {
       delete paramObject.limit;
+    }
+
+    if(this.hasCustomColumns) {
+      let columns = this.possibleColumns.map((column) => column.show ? 1 : 0).reduce((acc: number, bit) => ((acc << 1) | bit), 0);
+      paramObject.columns = columns;
     }
 
     return paramObject;
