@@ -662,5 +662,9 @@ export class ServerPricesComponent implements OnInit {
     this.serverCompare.openCompare();
   }
 
+  showAPIReference(item: any) {
+    return item.server.display_name !== item.server.api_reference && item.server.display_name !== item.server.api_reference.replace('Standard_', '');
+  }
+
 }
 
