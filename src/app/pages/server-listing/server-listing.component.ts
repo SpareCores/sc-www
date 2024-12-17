@@ -506,4 +506,8 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     tooltip.style.opacity = '0';
   }
 
+  showAPIReference(item: ServerPKs) {
+    return item.display_name !== item.api_reference && item.display_name !== item.api_reference.replace('Standard_', '');
+  }
+
 }

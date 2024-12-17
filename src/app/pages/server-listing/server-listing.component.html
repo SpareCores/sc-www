@@ -122,8 +122,8 @@
                            [attr.data-ph-capture-attribute-server-listing-row-page-size]="limit">
                           <div class="text-sm text-white flex gap-1">
                             <span>{{item.display_name}} </span>
-                            <span *ngIf="item.display_name !== item.api_reference" class="text-emerald-400" >|</span>
-                            <span *ngIf="item.display_name !== item.api_reference">{{item.api_reference}} </span>
+                            <span *ngIf="showAPIReference(item)" class="text-emerald-400" >|</span>
+                            <span *ngIf="showAPIReference(item)">{{item.api_reference}} </span>
                           </div>
                           <div class="text-xs text-white flex gap-1">
                             <span>{{item.vendor_id}}</span>

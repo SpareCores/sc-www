@@ -151,8 +151,8 @@
                     <td *ngIf="column.type === 'name'" class="min-w-225">
                       <div class="text-sm text-white flex gap-1">
                         <span>{{item.server.display_name}} </span>
-                        <span *ngIf="item.server.display_name !== item.server.api_reference" class="text-emerald-400" >|</span>
-                        <span *ngIf="item.server.display_name !== item.server.api_reference">{{item.server.api_reference}} </span>
+                        <span *ngIf="showAPIReference(item)" class="text-emerald-400" >|</span>
+                        <span *ngIf="showAPIReference(item)">{{item.server.api_reference}} </span>
                       </div>
                       <div class="text-xs text-white flex gap-1">
                         <span class="whitespace-nowrap">{{item.vendor_id}}</span>
