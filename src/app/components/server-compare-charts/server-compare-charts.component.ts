@@ -217,6 +217,14 @@ export class ServerCompareChartsComponent {
     return this.numberWithCommas(Math.round(server.score_per_price)) + '/USD';
   }
 
+  getSScoreCustom(server: ExtendedServerDetails, price: number | undefined) {
+    let baseline = server.benchmark_scores?.find((b) => b.benchmark_id === 'stress_ng:bestn')?.score || 0;
+    if(!baseline || !price) {
+      return '-';
+    }
+    return this.numberWithCommas(Math.round(baseline / price)) + '/USD';
+  }
+
   getBestPrice(server: ExtendedServerDetails, allocation: Allocation | string = Allocation.Ondemand) {
     let priceData = null;
 

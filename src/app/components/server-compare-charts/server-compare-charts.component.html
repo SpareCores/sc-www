@@ -61,9 +61,25 @@
           </div>
         </td>
         <ng-container *ngFor="let item of servers">
-          <td>
+          <td class="align-baseline">
             <div [style]="getSScoreStyle(item)">
                 {{getSScore(item)}}
+            </div>
+            <div class="text-xs">
+              Best (ondemand): {{getSScoreCustom(item, item.bestOndemandPrice?.price)}}
+            </div>
+            <div class="text-xs">
+              Best (spot): {{getSScoreCustom(item, item.bestSpotPrice?.price)}}
+            </div>
+            <div class="flex flex-col" *ngFor="let priceData of item.additionalSpotPrices">
+              <div class="text-xs">
+                {{priceData.zone.display_name}} (spot): {{getSScoreCustom(item, priceData.price)}}
+              </div>
+            </div>
+            <div class="flex flex-col" *ngFor="let priceData of item.additionalOndemandPrices">
+              <div class="text-xs">
+                {{priceData.zone.display_name}} (ondemand): {{getSScoreCustom(item, priceData.price)}}
+              </div>
             </div>
           </td>
         </ng-container>
