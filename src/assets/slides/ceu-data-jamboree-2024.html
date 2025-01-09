@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Gergely Daroczi" />
+  <meta name="dcterms.date" content="2025-01-10" />
+  <title>From idea to product: creating Spare Cores</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="libs/reveal.js-3.3.0.1/css/reveal.css"/>
+
+
+<style type="text/css">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #204a87; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #8f5902; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #204a87; font-weight: bold; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #ce5c00; font-weight: bold; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="libs/reveal.js-3.3.0.1/css/theme/white.css" id="theme">
+
+
+  <!-- some tweaks to reveal css -->
+  <style type="text/css">
+    .reveal h1 { font-size: 2.0em; }
+    .reveal h2 { font-size: 1.5em;  }
+    .reveal h3 { font-size: 1.25em;     }
+    .reveal h4 { font-size: 1em;        }
+
+    .reveal .slides>section,
+    .reveal .slides>section>section {
+      padding: 0px 0px;
+    }
+
+
+
+    .reveal table {
+      border-width: 1px;
+      border-spacing: 2px;
+      border-style: dotted;
+      border-color: gray;
+      border-collapse: collapse;
+      font-size: 0.7em;
+    }
+
+    .reveal table th {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      font-weight: bold;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+    .reveal table td {
+      border-width: 1px;
+      padding-left: 10px;
+      padding-right: 25px;
+      border-style: dotted;
+      border-color: gray;
+    }
+
+
+  </style>
+
+    <style type="text/css">code{white-space: pre;}</style>
+
+
+<!-- Printing and PDF exports -->
+<script id="paper-css" type="application/dynamic-css">
+
+/* Default Print Stylesheet Template
+   by Rob Glazebrook of CSSnewbie.com
+   Last Updated: June 4, 2008
+
+   Feel free (nay, compelled) to edit, append, and
+   manipulate this file as you see fit. */
+
+
+@media print {
+
+        /* SECTION 1: Set default width, margin, float, and
+           background. This prevents elements from extending
+           beyond the edge of the printed page, and prevents
+           unnecessary background images from printing */
+        html {
+                background: #fff;
+                width: auto;
+                height: auto;
+                overflow: visible;
+        }
+        body {
+                background: #fff;
+                font-size: 20pt;
+                width: auto;
+                height: auto;
+                border: 0;
+                margin: 0 5%;
+                padding: 0;
+                overflow: visible;
+                float: none !important;
+        }
+
+        /* SECTION 2: Remove any elements not needed in print.
+           This would include navigation, ads, sidebars, etc. */
+        .nestedarrow,
+        .controls,
+        .fork-reveal,
+        .share-reveal,
+        .state-background,
+        .reveal .progress,
+        .reveal .backgrounds {
+                display: none !important;
+        }
+
+        /* SECTION 3: Set body font face, size, and color.
+           Consider using a serif font for readability. */
+        body, p, td, li, div {
+                font-size: 20pt!important;
+                font-family: Georgia, "Times New Roman", Times, serif !important;
+                color: #000;
+        }
+
+        /* SECTION 4: Set heading font face, sizes, and color.
+           Differentiate your headings from your body text.
+           Perhaps use a large sans-serif for distinction. */
+        h1,h2,h3,h4,h5,h6 {
+                color: #000!important;
+                height: auto;
+                line-height: normal;
+                font-family: Georgia, "Times New Roman", Times, serif !important;
+                text-shadow: 0 0 0 #000 !important;
+                text-align: left;
+                letter-spacing: normal;
+        }
+        /* Need to reduce the size of the fonts for printing */
+        h1 { font-size: 28pt !important;  }
+        h2 { font-size: 24pt !important; }
+        h3 { font-size: 22pt !important; }
+        h4 { font-size: 22pt !important; font-variant: small-caps; }
+        h5 { font-size: 21pt !important; }
+        h6 { font-size: 20pt !important; font-style: italic; }
+
+        /* SECTION 5: Make hyperlinks more usable.
+           Ensure links are underlined, and consider appending
+           the URL to the end of the link for usability. */
+        a:link,
+        a:visited {
+                color: #000 !important;
+                font-weight: bold;
+                text-decoration: underline;
+        }
+        /*
+        .reveal a:link:after,
+        .reveal a:visited:after {
+                content: " (" attr(href) ") ";
+                color: #222 !important;
+                font-size: 90%;
+        }
+        */
+
+
+        /* SECTION 6: more reveal.js specific additions by @skypanther */
+        ul, ol, div, p {
+                visibility: visible;
+                position: static;
+                width: auto;
+                height: auto;
+                display: block;
+                overflow: visible;
+                margin: 0;
+                text-align: left !important;
+        }
+        .reveal pre,
+        .reveal table {
+                margin-left: 0;
+                margin-right: 0;
+        }
+        .reveal pre code {
+                padding: 20px;
+                border: 1px solid #ddd;
+        }
+        .reveal blockquote {
+                margin: 20px 0;
+        }
+        .reveal .slides {
+                position: static !important;
+                width: auto !important;
+                height: auto !important;
+
+                left: 0 !important;
+                top: 0 !important;
+                margin-left: 0 !important;
+                margin-top: 0 !important;
+                padding: 0 !important;
+                zoom: 1 !important;
+
+                overflow: visible !important;
+                display: block !important;
+
+                text-align: left !important;
+                -webkit-perspective: none;
+                   -moz-perspective: none;
+                    -ms-perspective: none;
+                        perspective: none;
+
+                -webkit-perspective-origin: 50% 50%;
+                   -moz-perspective-origin: 50% 50%;
+                    -ms-perspective-origin: 50% 50%;
+                        perspective-origin: 50% 50%;
+        }
+        .reveal .slides section {
+                visibility: visible !important;
+                position: static !important;
+                width: auto !important;
+                height: auto !important;
+                display: block !important;
+                overflow: visible !important;
+
+                left: 0 !important;
+                top: 0 !important;
+                margin-left: 0 !important;
+                margin-top: 0 !important;
+                padding: 60px 20px !important;
+                z-index: auto !important;
+
+                opacity: 1 !important;
+
+                page-break-after: always !important;
+
+                -webkit-transform-style: flat !important;
+                   -moz-transform-style: flat !important;
+                    -ms-transform-style: flat !important;
+                        transform-style: flat !important;
+
+                -webkit-transform: none !important;
+                   -moz-transform: none !important;
+                    -ms-transform: none !important;
+                        transform: none !important;
+
+                -webkit-transition: none !important;
+                   -moz-transition: none !important;
+                    -ms-transition: none !important;
+                        transition: none !important;
+        }
+        .reveal .slides section.stack {
+                padding: 0 !important;
+        }
+        .reveal section:last-of-type {
+                page-break-after: avoid !important;
+        }
+        .reveal section .fragment {
+                opacity: 1 !important;
+                visibility: visible !important;
+
+                -webkit-transform: none !important;
+                   -moz-transform: none !important;
+                    -ms-transform: none !important;
+                        transform: none !important;
+        }
+        .reveal section img {
+                display: block;
+                margin: 15px 0px;
+                background: rgba(255,255,255,1);
+                border: 1px solid #666;
+                box-shadow: none;
+        }
+
+        .reveal section small {
+                font-size: 0.8em;
+        }
+
+}
+</script>
+
+
+<script id="pdf-css" type="application/dynamic-css">
+
+/**
+ * This stylesheet is used to print reveal.js
+ * presentations to PDF.
+ *
+ * https://github.com/hakimel/reveal.js#pdf-export
+ */
+
+* {
+        -webkit-print-color-adjust: exact;
+}
+
+body {
+        margin: 0 auto !important;
+        border: 0;
+        padding: 0;
+        float: none !important;
+        overflow: visible;
+}
+
+html {
+        width: 100%;
+        height: 100%;
+        overflow: visible;
+}
+
+/* Remove any elements not needed in print. */
+.nestedarrow,
+.reveal .controls,
+.reveal .progress,
+.reveal .playback,
+.reveal.overview,
+.fork-reveal,
+.share-reveal,
+.state-background {
+        display: none !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+        text-shadow: 0 0 0 #000 !important;
+}
+
+.reveal pre code {
+        overflow: hidden !important;
+        font-family: Courier, 'Courier New', monospace !important;
+}
+
+ul, ol, div, p {
+        visibility: visible;
+        position: static;
+        width: auto;
+        height: auto;
+        display: block;
+        overflow: visible;
+        margin: auto;
+}
+.reveal {
+        width: auto !important;
+        height: auto !important;
+        overflow: hidden !important;
+}
+.reveal .slides {
+        position: static;
+        width: 100%;
+        height: auto;
+
+        left: auto;
+        top: auto;
+        margin: 0 !important;
+        padding: 0 !important;
+
+        overflow: visible;
+        display: block;
+
+        -webkit-perspective: none;
+           -moz-perspective: none;
+            -ms-perspective: none;
+                perspective: none;
+
+        -webkit-perspective-origin: 50% 50%; /* there isn't a none/auto value but 50-50 is the default */
+           -moz-perspective-origin: 50% 50%;
+            -ms-perspective-origin: 50% 50%;
+                perspective-origin: 50% 50%;
+}
+
+.reveal .slides section {
+        page-break-after: always !important;
+
+        visibility: visible !important;
+        position: relative !important;
+        display: block !important;
+        position: relative !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+        box-sizing: border-box !important;
+        min-height: 1px;
+
+        opacity: 1 !important;
+
+        -webkit-transform-style: flat !important;
+           -moz-transform-style: flat !important;
+            -ms-transform-style: flat !important;
+                transform-style: flat !important;
+
+        -webkit-transform: none !important;
+           -moz-transform: none !important;
+            -ms-transform: none !important;
+                transform: none !important;
+}
+
+.reveal section.stack {
+        margin: 0 !important;
+        padding: 0 !important;
+        page-break-after: avoid !important;
+        height: auto !important;
+        min-height: auto !important;
+}
+
+.reveal img {
+        box-shadow: none;
+}
+
+.reveal .roll {
+        overflow: visible;
+        line-height: 1em;
+}
+
+/* Slide backgrounds are placed inside of their slide when exporting to PDF */
+.reveal section .slide-background {
+        display: block !important;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: -1;
+}
+
+/* All elements should be above the slide-background */
+.reveal section>* {
+        position: relative;
+        z-index: 1;
+}
+
+/* Display slide speaker notes when 'showNotes' is enabled */
+.reveal .speaker-notes-pdf {
+        display: block;
+        width: 100%;
+        max-height: none;
+        left: auto;
+        top: auto;
+        z-index: 100;
+}
+
+/* Display slide numbers when 'slideNumber' is enabled */
+.reveal .slide-number-pdf {
+        display: block;
+        position: absolute;
+        font-size: 14px;
+}
+
+</script>
+
+
+<script>
+var style = document.createElement( 'style' );
+style.type = 'text/css';
+var style_script_id = window.location.search.match( /print-pdf/gi ) ? 'pdf-css' : 'paper-css';
+var style_script = document.getElementById(style_script_id).text;
+style.innerHTML = style_script;
+document.getElementsByTagName('head')[0].appendChild(style);
+</script>
+
+    <link rel="stylesheet" href="css/custom.css"/>
+    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+    <script src="libs/header-attrs-2.28/header-attrs.js"></script>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+<section data-background-image="img/1920x1080-white.jpg"
+         data-background-size="100%"
+         id="first-slide">
+    This page intentionally left blank.
+</section>
+
+
+<section id="dummy-slide" class="slide level2">
+<h2>dummy slide</h2>
+<!--add custom CSS for the speaker view-->
+<script>
+  if (window.self !== window.top) {
+    document.body.className += " speakerview";
+  }
+</script>
+<!--javascript to remove dummy slide-->
+<script>
+document.getElementById("dummy-slide").remove();
+</script>
+<!--end dummy slide-->
+</section>
+<section id="coverslide">
+<p><img src="images/vdsg-bw.png"
+    style="height: 150px; position: fixed; margin-top: 0px; margin-left: 700px; background-color:transparent;"
+/> <img src="images/ceu.svg"
+    style="height: 150px; position: fixed; margin-top: 0px; margin-left: 50px; background-color:transparent;"
+/></p>
+<h1 class="subtitle" style="color:#eee;font-size:1.75em;text-align: center; margin-top:325px; color:#34d399;">
+From idea to product:<br />creating Spare Cores
+</h1>
+<h2 class="author" style="color:#eee;padding-top:15px;font-size:1.25em;text-align: center !important;margin-bottom: 0px;">
+Gergely Daróczi
+</h2>
+<h3 class="author" style="color:#eee;font-size:1.1em;text-align: center !important; font-weight: normal;">
+Jan 10, 2025
+</h3>
+<h3 class="author onlineMode" style="color:#eee;padding-top:25px;font-size:1.1em;text-align: center !important; padding-top: 10px;font-weight: normal; ">
+Slides:
+<a href="https://sparecores.com/talks" target="_blank">sparecores.com/talks</a>
+</h3>
+<p class="author offlineMode" style="color:#eee;font-size:0.75em;text-align: right !important; padding-top: 10px;font-weight: normal;margin-top:30px; ">
+Press Space or click the green arrow icons to navigate the slides -&gt;
+</p>
+<aside class="notes">
+<p>focus: how to utilize cloud compute resources in the most
+cost-efficient way using our open-source tools and data</p>
+</aside>
+</section>
+<section>
+<section class="titleslide slide level1" data-transition="slide-in fade-out">
+<h2>
+&gt;&gt;&gt; from sparecores import why
+</h2>
+<p class="fragment">
+Data Science / Machine Learning batch jobs:
+</p>
+<ul>
+<li class="fragment">
+run SQL
+</li>
+<li class="fragment">
+run R or Python script
+</li>
+<ul>
+<li class="fragment">
+train a simple model, reporting, API integrations etc.
+</li>
+<li class="fragment">
+train hierarchical models/GBMs/neural nets etc.
+</li>
+</ul>
+</ul>
+<aside class="notes">
+<p>I’ve been working as a DS/Dir of Analytics/Sr Dir of Data Ops in the
+past decade, responsible for the DS infrastructure to run various
+algorithm, e.g.</p>
+<ul>
+<li>SQL: lightweight on the client side</li>
+<li>scripts: can be lightweight as well (e.g. API integrations or simple
+models),</li>
+</ul>
+<p>BUT might require a lot of compute resource depending on the type of
+the model</p>
+</aside>
+</section>
+<section id="from-sparecores-import-why" class="slide level2"
+data-transition="fade-in slide-out">
+<h2 data-transition="fade-in slide-out">&gt;&gt;&gt; from sparecores
+import why</h2>
+<p class="gray">
+Data Science / Machine Learning batch jobs:
+</p>
+<ul class="gray">
+<li>
+run SQL
+</li>
+<li>
+run R or Python script
+</li>
+<ul>
+<li>
+train a simple model, reporting, API integrations etc.
+</li>
+<li>
+train hierarchical models/GBMs/neural nets etc.
+</li>
+</ul>
+</ul>
+<p class="bold">
+Scaling (DS) infrastructure.
+</p>
+<aside class="notes">
+<p>in short, different tasks (DS in this example) have different compute
+requirements</p>
+<p>NEXT after mentioning varying needs</p>
+</aside>
+</section>
+<section id="from-sparecores-import-why-1" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import why</h2>
+<div class="centered">
+<p><img style="margin-top:-30px;width:95%;" src="images/adtech-usecase-jobs.png" /></p>
+</div>
+<aside class="notes">
+<p>so we had around 4k jobs/day with varying needs</p>
+<ul>
+<li>Training hierarchical models on a large dataset using R required
+several hundreds GBs of RAM,</li>
+<li>NLP models in Python required GPUs,</li>
+<li>Parallelized time-series forecasting models required many CPUs,</li>
+<li>Many small jobs mostly waiting for SQL results running on a shared
+host.</li>
+<li>or submitting new bid amounts on ads on a social network</li>
+</ul>
+</aside>
+</section>
+<section id="from-sparecores-import-why-2" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import why</h2>
+<div class="centered">
+<p><img style="margin-top:-30px;width:95%;"  src="images/adtech-usecase-job-metrics.png" /></p>
+</div>
+<aside class="notes">
+<p>To give you an example: here’s a job that we monitored every few
+seconds and saw that it doesn’t really scale to multiple CPUs, but
+taking up to ~200 gigs of memory – probably training a hierarchical
+model that cannot be paralellized.</p>
+<p>so we had around 4k/day …</p>
+</aside>
+</section>
+<section id="from-sparecores-import-why-3" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import why</h2>
+<div class="colcontainer mt-60">
+<div class="col">
+<img class="fragment w-25" data-fragment-index="1" src="images/aws_ecs.png" style="background: none;" />
+<p class="fragment mt--20 centered" data-fragment-index="1">
+AWS ECS
+</p>
+<img class="fragment w-25" data-fragment-index="2" src="images/aws_batch.png" style="background: none;" />
+<p class="fragment mt--20 centered" data-fragment-index="2">
+AWS Batch
+</p>
+</div>
+<div class="col">
+<img class="fragment w-50" data-fragment-index="3" src="images/kubernetes.svg" style="margin-top:60px;background: none;" />
+<p class="fragment mt--20 centered" data-fragment-index="3">
+Kubernetes
+</p>
+</div>
+</div>
+<aside class="notes">
+<p>to solve for that, at some point we used Amazon ECS … super excited
+when AWS Batch was announces with the promise of managing the clusters
+for us</p>
+<p>… similarly how other teams got excited about Kubernetes</p>
+<p>AWS Batch seemed like a good fit and relatively convenient solution,
+but after a few months trial, we experienced unexpected costs due to
+developers misconfiguring resource requirements</p>
+<ul>
+<li>overprovisioning to avoid errors</li>
+<li>forgot to update etc</li>
+</ul>
+<p>and bin packing …</p>
+</aside>
+</section>
+<section id="from-sparecores-import-why-4" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import why</h2>
+<div class="centered">
+<p><img class="mt--30" src="images/xkcd_square_packing.png" style="width:45%;" /></p>
+</div>
+<p class="centered mt--20">
+Source: <a href="https://xkcd.com/2740/">xkcd</a>
+</p>
+<aside class="notes">
+<p>AWS bin packing smaller jobs to already running larger nodes (started
+for heavy jobs), which resulted in keeping the expensive nodes running
+for a longer time.</p>
+<p>so instead, we decided to roll our own solution after all .. building
+on the fact that the price of the cloud resources is not discounted by
+its size .. so running two containers on a larger node VS running on
+separate nodes make no difference from a pricing perspective</p>
+</aside>
+</section>
+<section id="from-sparecores-import-why-5" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import why</h2>
+<div class="centered">
+<p><img style="margin-top:-30px;width:95%;" src="images/adtech-usecase-job-run.png" /></p>
+</div>
+<aside class="notes">
+<p>here’s an example of a job for which our monitoring system recorded
+that it can scale to many (100) CPUs, and needs high memory … so
+filtered for the matching servers and ordered by price, and tried
+starting those based on availability</p>
+</aside>
+</section>
+<section id="from-sparecores-import-why-6" class="slide level2"
+data-transition="slide-in none-out">
+<h2 data-transition="slide-in none-out">&gt;&gt;&gt; from sparecores
+import why</h2>
+<div class="centered">
+<p><img class="mt--30 w-70" src="images/adtech-usecase-job-stopped-0.png" /></p>
+</div>
+<aside class="notes">
+<p>once the job finished, it updated the compute resource requirements,
+job status etc and retries if more compute is needed</p>
+</aside>
+</section>
+<section id="from-sparecores-import-why-7" class="slide level2"
+data-transition="none-in slide-out">
+<h2 data-transition="none-in slide-out">&gt;&gt;&gt; from sparecores
+import why</h2>
+<div class="centered">
+<p><img class="mt--30 w-70" src="images/adtech-usecase-job-stopped-0.png" /></p>
+</div>
+<div class="centered">
+<p><img class="mt--30 w-70" src="images/adtech-usecase-job-stopped-1.png" /></p>
+</div>
+</section>
+<section id="from-sparecores-import-why-8" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import why</h2>
+<p class="bold">
+Other use-cases:
+</p>
+<ul>
+<li>stats/ML/AI model training,</li>
+<li>ETL pipelines,</li>
+<li>traditional CI/CD workflows for compiling and testing software,</li>
+<li>building Docker images,</li>
+<li>rendering images and videos,</li>
+<li>etc.</li>
+</ul>
+<aside class="notes">
+<p>so it’s like AWS Fargate or Google Cloud Run … but with auto-scaling
+and much much cheaper, especially while AWS supported spot instances
+with blocked duration (until a couple of months ago)</p>
+<p>as it seemed useful for many use-cases, we decided and were supported
+to open-source most of the infra tooling …</p>
+</aside>
+</section>
+<section id="from-sparecores-import-why-9" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import why</h2>
+<div class="centered">
+<p><img class="mt--45 w-70" src="images/mikata.png" /></p>
+</div>
+<div class="centered">
+<p><img class="mt--70 w-70" src="images/mikata-repos.png" /></p>
+</div>
+<aside class="notes">
+<p>was released as “cloudperf” a couple years ago, and the team has been
+maintaining it since then</p>
+<p>BUT, it was limited to a single vendor, we also had some new ideas,
+so it was time to build the next generation … called Spare Cores, which
+started thanks to the generous support of the NGI Search project.</p>
+</aside>
+</section>
+</section>
+<section>
+<section class="titleslide slide level1">
+<h2>
+&gt;&gt;&gt; from sparecores import support
+</h2>
+<div class="centered">
+<p><img style="margin-top:-30px;width:70%;" src="images/ngi-eu-open-source.png" /></p>
+</div>
+<aside class="notes">
+TODO
+</aside>
+</section>
+</section>
+<section>
+<section class="titleslide slide level1">
+<h2>
+&gt;&gt;&gt; from sparecores import intro
+</h2>
+<ul>
+<li>Open-source tools, database schemas and documentation to inspect and
+inventory cloud vendors and their compute resource offerings.</li>
+</ul>
+<div class="fragment">
+<ul>
+<li>Managed infrastructure, databases, APIs, SDKs, and web applications
+to make these data sources publicly accessible.</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>Helpers to start and manage instances in your own environment.</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>SaaS to run containers in a managed environment without direct
+vendor engagement.</li>
+</ul>
+<aside class="notes">
+<ul>
+<li>so Spare Cores is an open-source ecosystem, including software,
+database schemas, guides,</li>
+<li>and actual databases if you don’t want to run the ETL tooling
+yourself .. also providing APIs, SDKs etc to make it easier to query
+data</li>
+<li>unified CLI to start machines</li>
+<li>and working on an an optional SaaS offering built on the top of the
+open-source tooling for folks who would rather avoid registering with
+all cloud providers etc: give us a Docker image, a command to run, and
+you credit card .. all set, we will run it wherever it’s cheapest.</li>
+</ul>
+<p>We help DevOps, DS, ML, AI, ETL, AV, and other engineering teams to
+find optimal instances for their batch jobs (e.g. “8 CPU cores, 64 GB of
+RAM, and a TPU needed in an EU datacenter to train ML models for 6
+hours”) by providing:</p>
+<ul>
+<li>Open-source tools, database schemas and documentation to monitor
+cloud and flexible VPS/dedicated server vendors and their compute
+resource offerings in an innovative and truly comparative way, including
+vendor details (e.g. location, certificates, green power), compute
+capabilities (e.g. CPU, memory, GPU/TPU), pricing (especially of spot
+instances), and performance (by running task-specific benchmarks).</li>
+<li>Managed infrastructure, databases, APIs, SDKs, and web applications
+to make these continuously and transparently tracked data sources
+publicly available and comparable in a validated, unbiased, structured,
+and searchable manner.</li>
+<li>Helpers to easily start and manage instances at all the supported
+vendors with a standardized API.</li>
+<li>SaaS</li>
+</ul>
+BUT let’s focus on the open-source and open-data components ..
+</aside>
+</div>
+</section>
+<section id="from-sparecores-import-intro" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import intro</h2>
+<p><img style="margin-top:-10px; width:100%;" src="images/homepage-stats-2024q4.png" /></p>
+<p class="centered" style="margin-top: -10px;">
+Source: <a href="https://sparecores.com">sparecores.com</a>
+</p>
+<aside class="notes">
+<!-- TODO update img with no of benchmarks instead of AZs -->
+To show you some stats on the data being tracked: - we are limited to 3
+vendors now, but in a month or two we should have a coverage of all
+major players, - already tracking X servers …
+</aside>
+</section>
+<section id="from-sparecores-import-intro-1" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import intro</h2>
+<div class="centered">
+<p><img style="margin-top:-55px;width:95%;" src="images/sc-www-listing.png" /></p>
+</div>
+<aside class="notes">
+The easiest way to query this data is through our web component, as you
+can see on the screen …
+</aside>
+</section>
+<section id="from-sparecores-import-intro-2" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import intro</h2>
+<div class="centered">
+<p><img style="margin-top:-55px; width: 90%;" src="images/sc-www-server-details-top.png" /></p>
+</div>
+<aside class="notes">
+Clicking on a server shows you the technical details of the instance –
+much more than what’s provided publicly by the vendor, even more than
+what ChatGPT knows … as we actually start each machine and inspect the
+hardware. More on that later.
+</aside>
+</section>
+<section id="from-sparecores-import-intro-3" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import intro</h2>
+<div class="centered">
+<p><img style="margin-top:-55px; width: 77.5%;" src="images/sc-www-server-details-prices.png" /></p>
+</div>
+<aside class="notes">
+Live and historical pricing
+</aside>
+</section>
+<section id="from-sparecores-import-intro-4" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import intro</h2>
+<!-- https://sparecores.com/server/aws/c5d.2xlarge -->
+<div class="centered">
+<p><img style="margin-top:-55px; width: 77%;" src="images/sc-www-server-details-benchmarks-1.png" /></p>
+</div>
+<aside class="notes">
+<p>and we also run benchmark scenarios on the servers, e.g.:</p>
+<ul>
+<li>memory bandwidth of read, write and mixed operations using various
+block sizes and also including the related L1/L2/L3 cache amounts</li>
+<li>or benchmarking compression algos - having the compression ratio on
+the x axis, and the bandwidth on the y axis, it’s clear that
+<code>zpaq</code> is a beast when it comes to compressing text, but
+might be slow on this machine</li>
+<li>OpenSSL hash functions and block ciphers</li>
+</ul>
+</aside>
+</section>
+<section id="from-sparecores-import-intro-5" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import intro</h2>
+<p><img style="margin-top: 0px;" src="images/sc-www-server-details-benchmarks-2.png" /></p>
+<aside class="notes">
+also running Geekbench 6, which has been a standard tool for some time
+including workloads for text and image processing, compiling software
+etc
+</aside>
+</section>
+<section id="from-sparecores-import-intro-6" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import intro</h2>
+<div class="centered">
+<p><img style="margin-top:-55px; width: 83%;" src="images/sc-www-server-compare.png" /></p>
+</div>
+<!-- https://sparecores.com/compare?instances=W3sidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzVhZC4xMnhsYXJnZSJ9LHsidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzVkLjJ4bGFyZ2UifSx7InZlbmRvciI6ImF3cyIsInNlcnZlciI6ImM2Zy4xNnhsYXJnZSJ9LHsidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY2N4MzMifV0%3D -->
+<aside class="notes">
+and making all these data available in comparison tables
+</aside>
+</section>
+<section id="from-sparecores-import-intro-7" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import intro</h2>
+<div class="centered">
+<p><img style="margin-top:-55px; width: 75%;" src="images/sc-www-server-compare-charts.png" /></p>
+</div>
+<aside class="notes">
+or plots as well for human inspection
+</aside>
+</section>
+<section id="from-sparecores-import-intro-8" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import intro</h2>
+<div class="centered">
+<p><img style="margin-top:-15px;width:95%;" src="images/sc-keeper-preview.png" /></p>
+</div>
+<aside class="notes">
+for computers, we provide APIs …
+</aside>
+</section>
+<section id="from-sparecores-import-intro-9" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import intro</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode py"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> <span class="im">from</span> rich <span class="im">import</span> <span class="bu">print</span> <span class="im">as</span> pp</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> <span class="im">from</span> sc_crawler.tables <span class="im">import</span> Server</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> <span class="im">from</span> sqlmodel <span class="im">import</span> create_engine, Session, select</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> engine <span class="op">=</span> create_engine(<span class="st">&quot;sqlite:///sc-data-all.db&quot;</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> session <span class="op">=</span> Session(engine)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> server <span class="op">=</span> session.<span class="bu">exec</span>(select(Server).where(Server.server_id <span class="op">==</span> <span class="st">&#39;g4dn.xlarge&#39;</span>)).one()</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> pp(server)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>Server(</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    server_id<span class="op">=</span><span class="st">&#39;g4dn.xlarge&#39;</span>,</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    vendor_id<span class="op">=</span><span class="st">&#39;aws&#39;</span>,</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    display_name<span class="op">=</span><span class="st">&#39;g4dn.xlarge&#39;</span>,</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    api_reference<span class="op">=</span><span class="st">&#39;g4dn.xlarge&#39;</span>,</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="st">&#39;g4dn.xlarge&#39;</span>,</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    family<span class="op">=</span><span class="st">&#39;g4dn&#39;</span>,</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    description<span class="op">=</span><span class="st">&#39;Graphics intensive [Instance store volumes] [Network and EBS optimized] Gen4 xlarge&#39;</span>,</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    status<span class="op">=&lt;</span>Status.ACTIVE: <span class="st">&#39;active&#39;</span><span class="op">&gt;</span>,</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    observed_at<span class="op">=</span>datetime.datetime(<span class="dv">2024</span>, <span class="dv">6</span>, <span class="dv">6</span>, <span class="dv">10</span>, <span class="dv">18</span>, <span class="dv">4</span>, <span class="dv">127254</span>),</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    hypervisor<span class="op">=</span><span class="st">&#39;nitro&#39;</span>,</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    vcpus<span class="op">=</span><span class="dv">4</span>,</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    cpu_cores<span class="op">=</span><span class="dv">2</span>,</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    cpu_allocation<span class="op">=&lt;</span>CpuAllocation.DEDICATED: <span class="st">&#39;Dedicated&#39;</span><span class="op">&gt;</span>,</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    cpu_manufacturer<span class="op">=</span><span class="st">&#39;Intel&#39;</span>,</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    cpu_family<span class="op">=</span><span class="st">&#39;Xeon&#39;</span>,</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    cpu_model<span class="op">=</span><span class="st">&#39;8259CL&#39;</span>,</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    cpu_architecture<span class="op">=&lt;</span>CpuArchitecture.X86_64: <span class="st">&#39;x86_64&#39;</span><span class="op">&gt;</span>,</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    cpu_speed<span class="op">=</span><span class="fl">3.5</span>,</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>    cpu_l1_cache<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>    cpu_l2_cache<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>    cpu_l3_cache<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>    cpu_flags<span class="op">=</span>[],</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>    memory_amount<span class="op">=</span><span class="dv">16384</span>,</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>    memory_generation<span class="op">=&lt;</span>DdrGeneration.DDR4: <span class="st">&#39;DDR4&#39;</span><span class="op">&gt;</span>,</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>    memory_speed<span class="op">=</span><span class="dv">3200</span>,</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>    memory_ecc<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>    gpu_count<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>    gpu_memory_min<span class="op">=</span><span class="dv">16384</span>,</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>    gpu_memory_total<span class="op">=</span><span class="dv">16384</span>,</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>    gpu_manufacturer<span class="op">=</span><span class="st">&#39;Nvidia&#39;</span>,</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>    gpu_family<span class="op">=</span><span class="st">&#39;Turing&#39;</span>,</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>    gpu_model<span class="op">=</span><span class="st">&#39;Tesla T4&#39;</span>,</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>    gpus<span class="op">=</span>[</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>        {</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;manufacturer&#39;</span>: <span class="st">&#39;Nvidia&#39;</span>,</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;family&#39;</span>: <span class="st">&#39;Turing&#39;</span>,</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;model&#39;</span>: <span class="st">&#39;Tesla T4&#39;</span>,</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;memory&#39;</span>: <span class="dv">15360</span>,</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;firmware_version&#39;</span>: <span class="st">&#39;535.171.04&#39;</span>,</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;bios_version&#39;</span>: <span class="st">&#39;90.04.96.00.A0&#39;</span>,</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;graphics_clock&#39;</span>: <span class="dv">1590</span>,</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;sm_clock&#39;</span>: <span class="dv">1590</span>,</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;mem_clock&#39;</span>: <span class="dv">5001</span>,</span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;video_clock&#39;</span>: <span class="dv">1470</span></span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>    ],</span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>    storage_size<span class="op">=</span><span class="dv">125</span>,</span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>    storage_type<span class="op">=&lt;</span>StorageType.NVME_SSD: <span class="st">&#39;nvme ssd&#39;</span><span class="op">&gt;</span>,</span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>    storages<span class="op">=</span>[{<span class="st">&#39;size&#39;</span>: <span class="dv">125</span>, <span class="st">&#39;storage_type&#39;</span>: <span class="st">&#39;nvme ssd&#39;</span>}],</span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a>    network_speed<span class="op">=</span><span class="fl">5.0</span>,</span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a>    inbound_traffic<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a>    outbound_traffic<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>    ipv4<span class="op">=</span><span class="dv">0</span>,</span>
+<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+<aside class="notes">
+and SDKs as well, e.g. querying the details of this instance type:
+SCROLL through!
+</aside>
+</section>
+</section>
+<section>
+<section class="titleslide slide level1">
+<h2>
+&gt;&gt;&gt; sparecores.__dir__()
+</h2>
+<p><img style="margin-top:30px; width: 100%;" src="images/sc-components-2024-july.png" /></p>
+<aside class="notes">
+As mentioned previously, this is made available via multiple components
+that I’d like to walk through in the next slides.
+</aside>
+</section>
+</section>
+<section>
+<section class="titleslide slide level1" data-transition="slide-in none-out">
+<h2>
+&gt;&gt;&gt; input(“Biggest challenge?”)
+</h2>
+<div class="centered">
+<p><img class="fragment" src="images/aws-quota-request-quota.png" style="width:57%;margin-top:-30px;"/></p>
+</div>
+</section>
+<section id="inputbiggest-challenge" class="slide level2"
+data-transition="none-in slide-out">
+<h2 data-transition="none-in slide-out">&gt;&gt;&gt; input(“Biggest
+challenge?”)</h2>
+<div class="centered">
+<p><img src="images/aws-quota-request-quota-achievement-unlocked.png" style="width:57%;margin-top:-30px;"/></p>
+</div>
+<aside class="notes">
+<p>Never imagined we would be hitting the “quote update request quota”
+🤐</p>
+Quite an achievement!
+</aside>
+</section>
+<section id="inputwhy-not-use-chatgpt" class="slide level2"
+data-transition="slide-in none-out">
+<h2 data-transition="slide-in none-out">&gt;&gt;&gt; input(“Why not use
+ChatGPT?!”)</h2>
+<div class="centered">
+<p><img class="fragment" style="width:100%;" src="images/chatgpt-datasource.png" /></p>
+</div>
+</section>
+<section id="inputwhy-not-use-chatgpt-1" class="slide level2"
+data-transition="none-in slide-out">
+<h2 data-transition="none-in slide-out">&gt;&gt;&gt; input(“Why not use
+ChatGPT?!”)</h2>
+<div class="centered">
+<p><img style="width:100%;" src="images/chatgpt-datasource-highlighted.png" /></p>
+</div>
+</section>
+<section id="inputburned-150k-on-this" class="slide level2">
+<h2>&gt;&gt;&gt; input(“Burned 150k on this?!”)</h2>
+<div class="centered">
+<p><img class="fragment" style="margin-top:-50px; width: 50%; background: none;"  src="images/not-easy.png" /></p>
+</div>
+</section>
+<section id="from-sc_crawler-import-pricing" class="slide level2">
+<h2>&gt;&gt;&gt; from sc_crawler import pricing</h2>
+<ul>
+<li>No way to find SKUs by filtering in the API call. Get all, search
+locally.</li>
+</ul>
+<div class="fragment">
+<ul>
+<li><p><code>f1-micro</code> is one out of 2 instances with simple
+pricing.</p>
+<ul>
+<li>For other instances, lookup SKUs for CPU + RAM and do the math.</li>
+</ul></li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>Match instance family with SKU via search in description,
+e.g. <code>C2D</code>.</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>Except for <code>c2</code>, which is called “Compute
+optimized”.</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>And <code>m2</code> is actually priced at a premium on the top of
+<code>m1</code>.</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>The <code>n1</code> resource group is not CPU/RAM, but
+<code>N1Standard</code>, extract if it’s CPU or RAM price from
+description.</li>
+</ul>
+<aside class="notes">
+<p>Anyone from Google here today?</p>
+<ul>
+<li>Great, because I have some examples to share.</li>
+<li>Okay, I’ll politely avoid naming which vendor might have one of the
+most interestingly implemented pricing schema …</li>
+</ul>
+<p>2 x 2 numbers .. don’t ask ChatGPT to do that for you!!!</p>
+<p>,,,</p>
+<p>m2 pricing: look up m1 cpu/ram pricing + add the premium skus and do
+the math (2 times 2 numbers added and multiplied – involving 5 api
+lookups)</p>
+<p>Don’t bother with zones reported that are not existing (us-west8 on
+May 22 .. edge network?)</p>
+<p>it’s a mess …</p>
+okay, enough horror stories. beleive me … it’s good to have a
+standardize database schema and data
+</aside>
+</div>
+</section>
+<section id="import-sc_data" class="slide level2">
+<h2>&gt;&gt;&gt; import sc_data</h2>
+<div class="centered">
+<p><img style="margin-top:-50px; width: 100%;"  src="images/dbhub.png" /></p>
+</div>
+<p class="centered mt--30">
+Source:
+<a href="https://dbhub.io/sparecores/sc-data-priceless.db">dbhub.io/sparecores</a>
+</p>
+<aside class="notes">
+so I’m super happy to introduce this cleaned up dataset to you all,
+which is actually another component of the SC ecocystem, as we license
+all our software by MPL, but the data by creative commons
+attribution/share-alike
+</aside>
+</section>
+</section>
+<section>
+<section class="titleslide slide level1" data-transition="slide-in none-out">
+<h2>
+&gt;&gt;&gt; from sparecores import team
+</h2>
+<div class="colcontainer mt-60 centered">
+<div class="col">
+<img src="https://avatars.githubusercontent.com/u/820331?v=4" class="rounded w-70" />
+<p class="bold mt-0">
+<span class="citation" data-cites="bra-fsn">@bra-fsn</span>
+</p>
+</div>
+<div class="col">
+<img src="https://avatars.githubusercontent.com/u/5794264?v=4" class="rounded w-70" />
+<p class="bold mt-0">
+<span class="citation" data-cites="palabola">@palabola</span>
+</p>
+</div>
+<div class="col">
+<img src="https://avatars.githubusercontent.com/u/495736?v=4" class="rounded w-70" />
+<p class="bold mt-0">
+<span class="citation" data-cites="daroczig">@daroczig</span>
+</p>
+</div>
+</div>
+<aside class="notes">
+TODO
+</aside>
+</section>
+<section id="from-sparecores-import-team" class="slide level2"
+data-transition="none-in slide-out">
+<h2 data-transition="none-in slide-out">&gt;&gt;&gt; from sparecores
+import team</h2>
+<div class="colcontainer mt-60 centered">
+<div class="col">
+<img src="https://avatars.githubusercontent.com/u/820331?v=4" class="rounded w-70" />
+<p class="bold mt-0">
+<span class="citation" data-cites="bra-fsn">@bra-fsn</span>
+</p>
+<p class="mt-0">
+Infrastructure and Python veteran.
+</p>
+</div>
+<div class="col">
+<img src="https://avatars.githubusercontent.com/u/5794264?v=4" class="rounded w-70" />
+<p class="bold mt-0">
+<span class="citation" data-cites="palabola">@palabola</span>
+</p>
+<p class="mt-0">
+Guardian of the front-end and Node.js tools.
+</p>
+</div>
+<div class="col">
+<img src="https://avatars.githubusercontent.com/u/495736?v=4" class="rounded w-70" />
+<p class="bold mt-0">
+<span class="citation" data-cites="daroczig">@daroczig</span>
+</p>
+<p class="mt-0">
+Hack of all trades, master of <code>NaN</code>.
+</p>
+</div>
+</div>
+<aside class="notes">
+TODO
+</aside>
+</section>
+</section>
+<section>
+<section class="titleslide slide level1" data-transition="slide-in none-out">
+<!-- https://carbon.now.sh/?bg=rgba%288%2C47%2C73%2C1%29&t=theme%3A0bcewbfyk9yl&wt=none&l=python&width=680&ds=false&dsyoff=20px&dsblur=68px&wc=true&wa=true&pv=5px&ph=5px&ln=false&fl=1&fm=Hack&fs=18px&lh=161%25&si=false&es=2x&wm=false&code=%253E%253E%253E%2520import%2520os%250A%253E%253E%253E%2520import%2520signal%250A%253E%253E%253E%2520os.kill%28os.getpid%28%29%252C%2520signal.SIGKILL%29%2520%2520%250A%250A%253E%253E%253E%2520visit_booth_in_person%28%27C20%27%29%250A%253E%253E%253E%2520browse%28%27https%253A%252F%252Fsparecores.com%27%29%250A%253E%253E%253E%2520email%28%27daroczig%2540sparecores.com%27%29%250A%253E%253E%253E%2520follow%28%27%2540SpareCores%27%29%250A%250A%253E%253E%253E%2520os._exit%28status%253D0%29%250AProcess%2520finished%2520at%252013%253A00%253A00%2520%28Dec%25204%252C%25202024%29%2520 -->
+<div class="centered">
+<p><img src="images/by-ceu-vdsg-1.png" style="background: none;" class="mt--70 w-75" /></p>
+</div>
+<aside class="notes">
+TODO
+</aside>
+</section>
+<section data-transition="none">
+<div class="centered">
+<p><img src="images/by-ceu-vdsg-2.png" style="background: none;" class="mt--70 w-75" /></p>
+</div>
+<aside class="notes">
+TODO
+</aside>
+</section>
+<section data-transition="none">
+<div class="centered">
+<p><img src="images/by-ceu-vdsg-3.png" style="background: none;" class="mt--70 w-75" /></p>
+</div>
+<p class="author offlineMode" style="color:#eee;font-size:0.75em;text-align: center !important; margin-top:-40px; padding-top:0px;">
+Slides:
+<a href="https://sparecores.com/talks" target="_blank">sparecores.com/talks</a>
+</p>
+<aside class="notes">
+TODO
+</aside>
+</section>
+<!--toggle visibility of items in live mode-->
+<script>
+var url = document.location.href;
+if (url.match("/?live")) {
+  const elements = document.getElementsByClassName('offlineMode');
+  for (let i = 0; i < elements.length; i++) {
+    element = elements.item(i);
+    element.style.display = 'none';
+  }
+} else {
+  const elements = document.getElementsByClassName('onlineMode');
+  for (let i = 0; i < elements.length; i++) {
+    element = elements.item(i);
+    element.style.display = 'none';
+  }
+}
+</script>
+</section>
+    </div>
+  </div>
+
+  <script src="libs/reveal.js-3.3.0.1/lib/js/head.min.js"></script>
+  <script src="libs/reveal.js-3.3.0.1/js/reveal.js"></script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        // Display controls in the bottom right corner
+        controls: true,
+        // Display a presentation progress bar
+        progress: true,
+        // Display the page number of the current slide
+        slideNumber: true,
+        // Push each slide change to the browser history
+        history: true,
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+        // Enable the slide overview mode
+        overview: true,
+        // Vertical centering of slides
+        center: false,
+        // Enables touch navigation on devices with touch input
+        touch: true,
+        // Turns fragments on and off globally
+        fragments: true,
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+        // Transition style
+        transition: 'default', // none/fade/slide/convex/concave/zoom
+        // Transition speed
+        transitionSpeed: 'default', // default/fast/slow
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1244,
+
+
+
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: 'libs/reveal.js-3.3.0.1/plugin/notes/notes.js', async: true },
+          { src: 'libs/reveal.js-3.3.0.1/plugin/zoom-js/zoom.js', async: true },
+        ]
+      });
+    </script>
+  <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+
+<script>
+  (function() {
+    if (window.jQuery) {
+      Reveal.addEventListener( 'slidechanged', function(event) {
+        window.jQuery(event.previousSlide).trigger('hidden');
+        window.jQuery(event.currentSlide).trigger('shown');
+      });
+    }
+  })();
+</script>
+
+
+  </body>
+</html>
