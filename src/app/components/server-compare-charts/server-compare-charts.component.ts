@@ -36,7 +36,7 @@ export class ServerCompareChartsComponent {
   geekbenchHTML: any;
 
   bestCellStyle = 'font-weight: 600; color: #34D399';
-  SSCoreTooltip = "Performance benchmark score using stress-ng's div16 method (doing 16 bit unsigned integer divisions for 20 seconds): simulating CPU heavy workload that scales well on any number of (v)CPUs. The score/price value shows the div16 performance measured for 1 USD/hour.";
+  SSCoreTooltip = "Performance benchmark score using stress-ng's div16 method (doing 16 bit unsigned integer divisions for 20 seconds): simulating CPU heavy workload that scales well on any number of (v)CPUs. The score/price value shows the div16 performance measured for 1 USD/hour -- when otherwise not noted, using the best (usually spot) price of all zones.";
 
   radarChartType = 'radar' as const;
   radarChartOptionsMulti: ChartConfiguration<'radar'>['options'] = JSON.parse(JSON.stringify(radarChartOptions));
