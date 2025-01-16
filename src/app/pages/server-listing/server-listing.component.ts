@@ -187,7 +187,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       this.orderBy = order.schema.default;
     }
 
-    this.route.params.subscribe((params: Params) => {
+    this.route.params.subscribe(() => {
       this.setSpecialList();
     });
 
