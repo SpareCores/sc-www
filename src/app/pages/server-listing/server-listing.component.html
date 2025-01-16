@@ -5,14 +5,14 @@
 
     <div class="flex flex-col gap-4 my-8 mx-2 xl:mx-0">
       <div class="flex gap-4 items-center w-full justify-between">
-        <h1 class="text-white font-bold text-3xl">Cloud Compute Resources</h1>
+        <h1 class="text-white font-bold text-3xl">{{title}}</h1>
         <button class="btn-primary py-2 px-3 flex gap-1 items-center" (click)="clipboardURL($event)">
           Share
           <lucide-icon name="{{clipboardIcon}}" size="16" class="ml-2"></lucide-icon>
         </button>
       </div>
       <div class="text-white text-xl pr-16">
-        Explore, search, and evaluate the supported cloud compute resources in the table below. This comprehensive comparison includes diverse attributes such as CPU count, detailed processor information, memory, GPU, storage, network speed and capacity, available operating systems. Use the sidebar to filter the results, or enter your freetext query in the “Search prompt” bar. You can also compare servers by selecting at least two rows using the checkboxes.
+        {{description}}
       </div>
     </div>
 
@@ -30,6 +30,7 @@
         [query]="query"
         [filterCategories]="filterCategories"
         [searchParameters]="searchParameters"
+        [extraParameters]="specialParameters"
         (searchChanged)="searchBarChanged($event)"
         > </app-search-bar>
       </div>

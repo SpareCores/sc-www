@@ -66,7 +66,8 @@
                    [(ngModel)]="parameter.modelValue"
                    (ngModelChange)="valueChanged()"
                    min="{{parameter.schema.range_min || 0}}"
-                   class="w-full h-8 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm pr-8">
+                   [disabled]="isParameterDisabled(parameter.name)"
+                   class="w-full h-8 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm pr-8 disabled:bg-gray-400">
             <span *ngIf="parameter.schema.unit" class="unit text-gray-600">{{parameter.schema.unit}}</span>
           </div>
           <div *ngIf="getParameterType(parameter) === 'price'" class="mb-4 mt-4 relative" >
@@ -90,7 +91,8 @@
                    [attr.data-ph-capture-attribute-server-listing-filter-category]="item.category_id"
                    [(ngModel)]="parameter.modelValue"
                    (ngModelChange)="valueChanged()"
-                   class="w-full h-8 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm">
+                   [disabled]="isParameterDisabled(parameter.name)"
+                   class="w-full h-8 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm disabled:bg-gray-400">
           </div>
           <div *ngIf="getParameterType(parameter) === 'checkbox'" class="flex gap-2 mb-4 mt-4" >
             <input type="checkbox"
@@ -101,7 +103,8 @@
                    [attr.data-ph-capture-attribute-server-listing-filter-category]="item.category_id"
                    [(ngModel)]="parameter.modelValue"
                    (ngModelChange)="filterServers()"
-                   class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
+                   [disabled]="isParameterDisabled(parameter.name)"
+                   class="checkbox" >
             <div class="flex gap-2 items-center">
               <div class="text-white text-sm">
                 {{parameter.schema.title}}
@@ -125,7 +128,8 @@
                      [attr.data-ph-capture-attribute-server-listing-filter-category]="item.category_id"
                      [ngModel]="isEnumSelected(parameter, enum)"
                      (click)="selectEnumItem(parameter, enum)"
-                     class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
+                     [disabled]="isParameterDisabled(parameter.name)"
+                     class="checkbox" >
               <div class="text-white text-sm">{{enum?.value ? enum?.value : enum}}</div>
             </div>
           </div>
@@ -139,7 +143,8 @@
                      [attr.data-ph-capture-attribute-server-listing-filter-category]="item.category_id"
                      [ngModel]="isEnumSelected(parameter, enum)"
                      (click)="selectEnumItem(parameter, enum)"
-                     class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
+                     [disabled]="isParameterDisabled(parameter.name)"
+                     class="checkbox" >
               <div class="text-white text-sm">{{getComplianceFrameworkName(enum)}}</div>
             </div>
           </div>
@@ -153,7 +158,8 @@
                      [attr.data-ph-capture-attribute-server-listing-filter-category]="item.category_id"
                      [ngModel]="isEnumSelected(parameter, enum)"
                      (click)="selectEnumItem(parameter, enum)"
-                     class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
+                     [disabled]="isParameterDisabled(parameter.name)"
+                     class="checkbox" >
               <div class="text-white text-sm">{{getVendorName(enum)}}</div>
             </div>
           </div>
@@ -167,7 +173,8 @@
                      [attr.data-ph-capture-attribute-server-listing-filter-category]="item.category_id"
                      [ngModel]="isEnumSelected(parameter, enum)"
                      (click)="selectEnumItem(parameter, enum)"
-                     class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
+                     [disabled]="isParameterDisabled(parameter.name)"
+                     class="checkbox" >
               <div class="text-white text-sm">{{getStorageName(enum)}}</div>
             </div>
           </div>
@@ -183,7 +190,8 @@
                            data-ph-capture-attribute-server-listing-filter-category="continent"
                            [ngModel]="continent.selected"
                            (click)="selectContinent(continent)"
-                           class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
+                           [disabled]="isParameterDisabled(parameter.name)"
+                           class="checkbox" >
                     <div class="text-white text-sm">{{continent.continent}}</div>
                   </div>
                   <lucide-icon name="chevron-down" class="h-4 w-4 text-white cursor-pointer" (click)="collapseItem(continent)"></lucide-icon>
@@ -198,7 +206,8 @@
                            data-ph-capture-attribute-server-listing-filter-category="country"
                            [(ngModel)]="country.selected"
                            (ngModelChange)="filterServers()"
-                           class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
+                           [disabled]="isParameterDisabled(parameter.name)"
+                           class="checkbox" >
                     <div class="text-white text-sm">{{country.country_id | countryIdtoName}}</div>
                   </div>
                 </div>
@@ -216,6 +225,7 @@
                            data-ph-capture-attribute-server-listing-filter-category="vendor"
                            [ngModel]="vendor.selected"
                            (click)="selectRegionrVendor(vendor)"
+                           [disabled]="isParameterDisabled(parameter.name)"
                            class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
                     <div class="text-white text-sm">{{vendor.name}}</div>
                   </div>
@@ -231,6 +241,7 @@
                            data-ph-capture-attribute-server-listing-filter-category="region"
                            [(ngModel)]="region.selected"
                            (ngModelChange)="filterServers()"
+                           [disabled]="isParameterDisabled(parameter.name)"
                            class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none" >
                     <div class="text-white text-sm">{{region.name}}</div>
                     <lucide-icon *ngIf="region.green_energy" name="leaf" class="h-4 w-4 text-emerald-400"></lucide-icon>

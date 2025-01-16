@@ -149,6 +149,12 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
   sub: any;
 
+  specialServerLists: any[] = require('./special-lists');
+  specialList: any = null;
+  specialParameters: any = {};
+  title: string = 'Cloud Compute Resources';
+  description: string = 'Explore, search, and evaluate the supported cloud compute resources in the table below. This comprehensive comparison includes diverse attributes such as CPU count, detailed processor information, memory, GPU, storage, network speed and capacity, available operating systems. Use the sidebar to filter the results, or enter your freetext query in the “Search prompt” bar. You can also compare servers by selecting at least two rows using the checkboxes.';
+
   constructor(@Inject(PLATFORM_ID) private platformId: object,
               private keeperAPI: KeeperAPIService,
               private route: ActivatedRoute,
@@ -180,6 +186,10 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     if(order && order.schema && order.schema.default) {
       this.orderBy = order.schema.default;
     }
+
+    this.route.params.subscribe((params: Params) => {
+      this.setSpecialList();
+    });
 
     this.route.queryParams.subscribe((params: Params) => {
       const query: any = JSON.parse(JSON.stringify(params || '{}'));
@@ -214,6 +224,8 @@ export class ServerListingComponent implements OnInit, OnDestroy {
         }
       }
 
+      this.setSpecialList();
+
       this.refreshColumns(false);
 
       this._searchServers(true);
@@ -240,6 +252,20 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
   ngOnDestroy () {
     this.sub?.unsubscribe();
+  }
+
+  setSpecialList() {
+    const id = this.route.snapshot.paramMap.get('id');
+
+    if(id) {
+      this.specialList = this.specialServerLists.find((list) => list.id === id);
+    } else {
+      this.specialList = null;
+    }
+
+    this.specialParameters = this.specialList?.parameters || {};
+    this.title = this.specialList?.title || 'Cloud Compute Resources';
+    this.description = this.specialList?.description || 'Explore, search, and evaluate the supported cloud compute resources in the table below. This comprehensive comparison includes diverse attributes such as CPU count, detailed processor information, memory, GPU, storage, network speed and capacity, available operating systems. Use the sidebar to filter the results, or enter your freetext query in the “Search prompt” bar. You can also compare servers by selecting at least two rows using the checkboxes.';
   }
 
   toggleCollapse() {
@@ -324,6 +350,10 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     this.isLoading = true;
 
     let query = JSON.parse(JSON.stringify(this.query));
+
+    if(this.specialParameters) {
+      query = {...query, ...this.specialParameters};
+    }
 
     if(updateTotalCount) {
       query.add_total_count_header = true;
