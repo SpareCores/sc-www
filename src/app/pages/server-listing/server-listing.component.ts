@@ -213,18 +213,18 @@ export class ServerListingComponent implements OnInit, OnDestroy {
         this.limit = parseInt(query.limit);
       }
 
-      const tableColumns: string = query.columns;
+      this.setSpecialList();
+
+      const tableColumns: string = this.specialList?.columns || query.columns;
       if(tableColumns && parseInt(tableColumns) ) {
         const tableColumnsArray: number[] = Number(tableColumns).toString(2).split('').map(Number);
         if(tableColumnsArray.length === this.possibleColumns.length) {
-          this.hasCustomColumns = true;
+          this.hasCustomColumns = query.columns !== undefined;
           this.possibleColumns.forEach((column, index) => {
             column.show = tableColumnsArray[index] === 1;
           });
         }
       }
-
-      this.setSpecialList();
 
       this.refreshColumns(false);
 
@@ -443,13 +443,14 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
   updateQueryParams(object: any) {
     const encodedQuery = encodeQueryParams(object);
+    const path = window.location.pathname || '/servers';
 
     if(encodedQuery?.length) {
       // update the URL
-      window.history.pushState({}, '', '/servers?' + encodedQuery);
+      window.history.pushState({}, '', `${path}?${encodedQuery}`);
     } else {
       // remove the query params
-      window.history.pushState({}, '', '/servers');
+      window.history.pushState({}, '', path);
     }
   }
 

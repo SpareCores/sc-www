@@ -201,7 +201,7 @@ export class SearchBarComponent implements OnInit, OnChanges{
   }
 
   getQueryObject() {
-    const paramObject = this.searchParameters?.map((param: any) => {
+    const paramObject = this.searchParameters?.filter(item => !this.isParameterDisabled(item.name)).map((param: any) => {
       return ((param.modelValue || param.modelValue === false) &&
               param.schema.category_id &&
               param.schema.default !== param.modelValue &&

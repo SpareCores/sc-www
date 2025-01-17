@@ -8,7 +8,8 @@ const specialServerLists = [
         "aws"
       ],
       gpu_min: 2
-    }
+    },
+    columns: '516096'
   }
 
 ]
