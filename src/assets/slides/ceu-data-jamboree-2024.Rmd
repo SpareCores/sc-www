@@ -6,6 +6,7 @@ conference: "Vienna Data Science Group"
 conference_url: "https://viennadatasciencegroup.at"
 conference_talk_url: "https://events.ceu.edu/2025-01-10/ceu-data-analytics-business-jamboree"
 conference_talk_slides: "/assets/slides/ceu-data-jamboree-2024.html#/coverslide"
+conference_talk_video: "https://www.youtube.com/watch?v=RSqD1qEbvJM"
 location: "Vienna, Austria"
 output:
   revealjs::revealjs_presentation:
@@ -389,7 +390,7 @@ also running Geekbench 6, which has been a standard tool for some time including
 
 <!-- https://sparecores.com/compare?instances=W3sidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzVhZC4xMnhsYXJnZSJ9LHsidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzVkLjJ4bGFyZ2UifSx7InZlbmRvciI6ImF3cyIsInNlcnZlciI6ImM2Zy4xNnhsYXJnZSJ9LHsidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY2N4MzMifV0%3D -->
 <aside class="notes">
-and making all these data available in comparison tables 
+and making all these data available in comparison tables
 </aside>
 
 ## >>> from sparecores import intro
