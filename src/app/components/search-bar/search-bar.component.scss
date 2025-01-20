@@ -26,6 +26,6 @@
   }
 
   .checkbox {
-    @apply focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none disabled:accent-gray-400  disabled:text-gray-400
+    @apply focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none disabled:accent-gray-400  disabled:text-gray-400 disabled:bg-gray-400;
   }
 }
