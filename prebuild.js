@@ -4,6 +4,7 @@ const matter = require('gray-matter');
 const { SitemapStream, streamToPromise } = require( 'sitemap' )
 const { Readable } = require( 'stream' )
 const specialCompares = require('./src/app/pages/server-compare/special-compares');
+const specialServerLists = require('./src/app/pages/server-listing/special-lists');
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -107,6 +108,12 @@ allArticles.forEach((article) => {
 if(specialCompares?.length) {
   specialCompares.forEach((specialCompare) => {
     links.push({ url: `compare/${specialCompare.id}`, changefreq: 'daily', priority: 0.9 });
+  });
+}
+
+if(specialServerLists?.length) {
+  specialServerLists.forEach((specialList) => {
+    links.push({ url: `servers/${specialList.id}`, changefreq: 'hourly', priority: 0.75 });
   });
 }
 
