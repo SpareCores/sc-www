@@ -189,21 +189,19 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
     this.route.params.subscribe(() => {
       this.setSpecialList();
+      if(this.specialList) {
+       this.breadcrumbs.push({ name: this.specialList.title, url: `/servers/${this.specialList.id}` });
+       this.SEOHandler.updateTitleAndMetaTags(
+          `${this.specialList.title} - Spare Cores`,
+          this.specialList.description,
+          'cloud, server, instance, price, comparison, spot, sparecores');
+      }
     });
 
     this.route.queryParams.subscribe((params: Params) => {
       const query: any = JSON.parse(JSON.stringify(params || '{}'));
 
       this.query = query;
-
-      if(query.order_by && query.order_dir) {
-        this.orderBy = query.order_by;
-        this.orderDir = query.order_dir;
-
-        if(this.possibleColumns.find((column) => column.orderField === this.orderBy)) {
-          this.possibleColumns.find((column) => column.orderField === this.orderBy)!.show = true;
-        }
-      }
 
       if(query.page) {
         this.page = parseInt(query.page);
@@ -224,6 +222,20 @@ export class ServerListingComponent implements OnInit, OnDestroy {
             column.show = tableColumnsArray[index] === 1;
           });
         }
+      }
+
+      if(this.specialList?.order_by && this.specialList?.order_dir) {
+        this.orderBy = this.specialList.order_by;
+        this.orderDir = this.specialList.order_dir;
+      }
+
+      if(query.order_by && query.order_dir) {
+        this.orderBy = query.order_by;
+        this.orderDir = query.order_dir;
+      }
+
+      if(this.orderBy && this.possibleColumns.find((column) => column.orderField === this.orderBy)) {
+        this.possibleColumns.find((column) => column.orderField === this.orderBy)!.show = true;
       }
 
       this.refreshColumns(false);
