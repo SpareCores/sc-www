@@ -91,6 +91,14 @@ export interface Benchmark {
   observed_at?: string;
 }
 
+/** BenchmarkConfig */
+export interface BenchmarkConfig {
+  /** Benchmark Id */
+  benchmark_id: string;
+  /** Config */
+  config: string;
+}
+
 /**
  * BenchmarkScore
  * Results of running Benchmark scenarios on Servers.
@@ -3838,3 +3846,6 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
 
 /** Response Search Traffic Prices Traffic Prices Get */
 export type SearchTrafficPricesTrafficPricesGetData = TrafficPriceWithPKsWithMonthlyTraffic[];
+
+/** Response Search Benchmark Configs Benchmark Configs Get */
+export type SearchBenchmarkConfigsBenchmarkConfigsGetData = BenchmarkConfig[];
