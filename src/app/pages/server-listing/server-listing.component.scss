@@ -50,6 +50,23 @@
   width: calc(100% - 20rem);
 }
 
+.dropdown_input {
+  @apply py-3 ps-4 pe-4 block w-full border-emerald-400 rounded-lg text-sm text-white bg-emerald-400;
+  min-width: 300px;
+}
+
+.dropdown_input::placeholder {
+  color: #fff !important;
+}
+
+:host ::ng-deep .dropdown_group_button {
+  @apply px-2 py-2 text-white bg-emerald-400 capitalize items-center gap-x-2 text-sm text-nowrap rounded-md border border-emerald-400 bg-transparent text-emerald-400 shadow-sm focus:outline-none;
+}
+
+:host ::ng-deep .dropdown_group_button.active {
+  @apply bg-emerald-400 border-emerald-400 focus:border-emerald-400 text-white
+}
+
 .items_table {
   @apply w-full text-white;
 

@@ -10,6 +10,7 @@ import { ServerPrices } from '../../../sdk/ServerPrices';
 import { StoragePrices } from '../../../sdk/StoragePrices';
 import { V2 } from '../../../sdk/V2';
 import { TrafficPrices } from '../../../sdk/TrafficPrices';
+import { BenchmarkConfigs } from '../../../sdk/BenchmarkConfigs';
 
 @Injectable({
   providedIn: 'root'
@@ -25,6 +26,7 @@ export class KeeperAPIService {
   public AIController: Ai = new Ai(this.myHttp);
   public StorageController: StoragePrices = new StoragePrices(this.myHttp);
   public TrafficController: TrafficPrices = new TrafficPrices(this.myHttp);
+  public BenchmarksController: BenchmarkConfigs = new BenchmarkConfigs(this.myHttp);
   public V2Controller: V2 = new V2(this.myHttp);
 
   constructor(
@@ -113,6 +115,10 @@ export class KeeperAPIService {
 
   public getTrafficPrices(query: SearchTrafficPricesTrafficPricesGetParams): Promise<any> {
     return this.TrafficController.searchTrafficPricesTrafficPricesGet(query);
+  }
+
+  public getBenchamarkConfigs(): Promise<any> {
+    return this.BenchmarksController.searchBenchmarkConfigsBenchmarkConfigsGet();
   }
 
 }

@@ -100,6 +100,12 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       orderField: 'score_per_price',
       info: "SCore/price showing stress-ng's div16 performance measured for 1 USD/hour, using the best (usually spot) price of all zones."
     },
+    { name: 'BENCHMARK',
+      show: false,
+      type: 'benchmark',
+      orderField: 'selected_benchmark_score	550',
+      info: "Performance benchmark score using the selected Benchmark. The value in the second line shows the performance measured for 1 USD/hour, using the best (usually spot) price of all zones."
+    },
     { name: 'MEMORY', show: true, type: 'memory', orderField: 'memory_amount' },
     { name: 'STORAGE', show: true, type: 'storage', orderField: 'storage_size' },
     { name: 'STORAGE TYPE', show: false, type: 'text', key: 'storage_type' },
@@ -142,6 +148,9 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   modalResponseStr: string[] = [];
 
   vendorMetadata: any[] = [];
+  benchmarkMetadata: any[] = [];
+  benchmarksConfigs: any[] = [];
+  selectedBenchmarkConfig: any = null;
 
   @ViewChild('tooltipDefault') tooltip!: ElementRef;
   clipboardIcon = 'clipboard';
@@ -242,6 +251,21 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
       this._searchServers(true);
     });
+    Promise.all([
+      this.keeperAPI.getServerBenchmarkMeta(),
+      this.keeperAPI.getBenchamarkConfigs()]).then((data) => {
+        this.benchmarkMetadata = data[0]?.body;
+
+        this.benchmarksConfigs = data[1]?.body.map((config: any) => {
+          let template = this.benchmarkMetadata.find((benchmark: any) => benchmark.benchmark_id === config.benchmark_id);
+          return {
+            ...config,
+            config_title: config.config.replaceAll(/[{}"]/g, ''),
+            benchmarkTemplate: template,
+            group: JSON.stringify({group: {title: template.name, name: template.benchmark_id}})
+          };
+        });
+    });
 
     if(isPlatformBrowser(this.platformId)) {
 
@@ -259,7 +283,14 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       this.dropdownManager.initDropdown('pagesize_button', 'pagesize_options').then((dropdown) => {
         this.dropdownPage = dropdown;
       });
+
+      this.initDropdown();
     }
+  }
+
+  private async initDropdown() {
+    const { default: HSComboBox } = await import('@preline/combobox');
+    HSComboBox.autoInit();
   }
 
   ngOnDestroy () {
@@ -380,6 +411,11 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     if(this.orderBy && this.orderDir) {
       query.order_by = this.orderBy;
       query.order_dir = this.orderDir;
+    }
+
+    if(this.selectedBenchmarkConfig) {
+      query.benchmark_config = this.selectedBenchmarkConfig.config;
+      query.benchmark_id = this.selectedBenchmarkConfig.benchmark_id;
     }
 
     this.keeperAPI.searchServers(query).then(servers => {
@@ -551,6 +587,11 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
   showAPIReference(item: ServerPKs) {
     return item.display_name !== item.api_reference && item.display_name !== item.api_reference.replace('Standard_', '');
+  }
+
+  comboboxPicked(item: any) {
+    this.selectedBenchmarkConfig = item;
+    this._searchServers();
   }
 
 }

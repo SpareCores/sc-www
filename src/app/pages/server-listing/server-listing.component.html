@@ -40,6 +40,41 @@
             'w-full': isCollapsed
           }">
         <div class="top_buttons w-full flex justify-end gap-6 items-center" >
+          <!-- SearchBox -->
+          <div class="relative"
+            id="hs-combobox-benchmark"
+            data-hs-combo-box='{
+              "groupingType": "tabs",
+              "isOpenOnFocus": true,
+              "groupingTitleTemplate": "<button type=\"button\" class=\"dropdown_group_button \"></button>"
+            }'>
+            <div class="relative">
+
+              <input class="dropdown_input"
+                type="text"
+                role="combobox"
+                aria-expanded="false"
+                placeholder="Select Benchmark Type"
+                value=""
+                data-hs-combo-box-input="">
+            </div>
+
+            <!-- SearchBox Dropdown -->
+            <div class="absolute z-50 w-full bg-secondary text-white rounded-lg border border-emerald-400" style="display: none;" data-hs-combo-box-output="">
+              <div class="max-h-[500px] p-2 overflow-y-auto overflow-hidden [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-track]:bg-neutral-700 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500" data-hs-combo-box-output-items-wrapper="">
+                <div *ngFor="let item of benchmarksConfigs, let i = index"
+                      (click)="comboboxPicked(item)"
+                      [attr.data-hs-combo-box-output-item]="item.group" tabindex="{{i}}">
+                  <div class="py-2 px-3 flex flex-col hover:bg-primary rounded-lg">
+                    <span class="text-sm text-white " [attr.data-hs-combo-box-search-text]="item.benchmarkTemplate?.name" data-hs-combo-box-value="">{{item.benchmarkTemplate?.name}}</span>
+                    <span class="text-xs text-white " [attr.data-hs-combo-box-search-text]="item.config" data-hs-combo-box-value="">{{item.config_title}}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- End SearchBox Dropdown -->
+          </div>
+          <!-- End SearchBox -->
           <div>
             <button
               id="column_button"
@@ -157,6 +192,14 @@
                         *ngIf="item.score_per_price"
                         class="text-xs text-white flex gap-1">
                         <span>{{getScore(item.score_per_price)}} / USD</span>
+                      </div>
+                    </td>
+                    <td *ngIf="column.type === 'benchmark'">
+                      <div class="text-sm text-white">{{getScore(item.selected_benchmark_score)}}</div>
+                      <div
+                        *ngIf="item.selected_benchmark_score_per_price"
+                        class="text-xs text-white flex gap-1">
+                        <span>{{getScore(item.selected_benchmark_score_per_price)}} / USD</span>
                       </div>
                     </td>
                     <td *ngIf="column.type === 'score_per_price'">
