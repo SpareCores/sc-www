@@ -268,9 +268,11 @@ export class ServerListingComponent implements OnInit, OnDestroy {
             ...config,
             config_title: config.config.replaceAll(/[{}"]/g, ''),
             benchmarkTemplate: template,
-            group: JSON.stringify({group: {title: template.name, name: template.benchmark_id}})
+            group: JSON.stringify({group: {title: config.category, name: config.category}})
           };
         });
+
+        //console.log(this.benchmarksConfigs);
 
         if(isPlatformBrowser(this.platformId)) {
           this.initDropdown();
