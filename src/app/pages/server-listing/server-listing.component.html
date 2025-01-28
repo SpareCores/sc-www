@@ -49,7 +49,9 @@
               "groupingTitleTemplate": "<button type=\"button\" class=\"dropdown_group_button \"></button>"
             }'>
             <div class="relative">
-
+              <div class="absolute inset-y-0 start-0 flex items-center pointer-events-none z-20 ps-3.5">
+                <lucide-icon class="text-white w-5 h-5" name="gauge"></lucide-icon>
+              </div>
               <input class="dropdown_input"
                 type="text"
                 role="combobox"
@@ -60,7 +62,7 @@
             </div>
 
             <!-- SearchBox Dropdown -->
-            <div class="absolute z-50 w-full bg-secondary text-white rounded-lg border border-emerald-400" style="display: none;" data-hs-combo-box-output="">
+            <div class="absolute z-50 w-full bg-secondary text-white rounded-lg border border-emerald-400 narrow-scrollbar" style="display: none;" data-hs-combo-box-output="">
               <div class="max-h-[500px] p-2 overflow-y-auto overflow-hidden [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-track]:bg-neutral-700 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500" data-hs-combo-box-output-items-wrapper="">
                 <div *ngFor="let item of benchmarksConfigs, let i = index"
                       (click)="comboboxPicked(item)"
@@ -205,6 +207,10 @@
                     <td *ngIf="column.type === 'score_per_price'">
                       <span *ngIf="item.score_per_price">{{getScore(item.score_per_price)}} / USD</span>
                       <span *ngIf="!item.score_per_price">-</span>
+                    </td>
+                    <td *ngIf="column.type === 'benchmark_score_per_price'">
+                      <span *ngIf="item.selected_benchmark_score_per_price">{{getScore(item.selected_benchmark_score_per_price)}} / USD</span>
+                      <span *ngIf="!item.selected_benchmark_score_per_price">-</span>
                     </td>
                     <td *ngIf="column.type === 'memory'">
                       <div class="text-sm text-white">{{getMemory(item)}}</div>

@@ -103,8 +103,14 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     { name: 'BENCHMARK',
       show: false,
       type: 'benchmark',
-      orderField: 'selected_benchmark_score	550',
+      orderField: 'selected_benchmark_score',
       info: "Performance benchmark score using the selected Benchmark. The value in the second line shows the performance measured for 1 USD/hour, using the best (usually spot) price of all zones."
+    },
+    { name: 'BENCHMARK $SCORE',
+      show: false,
+      type: 'benchmark_score_per_price',
+      orderField: 'selected_benchmark_score_per_price ',
+      info: "SCore/price showing the selected benchmark performance measured for 1 USD/hour, using the best (usually spot) price of all zones."
     },
     { name: 'MEMORY', show: true, type: 'memory', orderField: 'memory_amount' },
     { name: 'STORAGE', show: true, type: 'storage', orderField: 'storage_size' },
@@ -393,6 +399,10 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     this.isLoading = true;
 
     let query = JSON.parse(JSON.stringify(this.query));
+
+    if(query.columns) {
+      delete query.columns;
+    }
 
     if(this.specialParameters) {
       query = {...query, ...this.specialParameters};

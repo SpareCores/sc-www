@@ -51,7 +51,7 @@
 }
 
 .dropdown_input {
-  @apply py-3 ps-4 pe-4 block w-full border-emerald-400 rounded-lg text-sm text-white bg-emerald-400;
+  @apply py-3 ps-10 pe-4 block w-full border-emerald-400 rounded-lg text-sm text-white bg-emerald-400;
   min-width: 300px;
 }
 
@@ -59,8 +59,23 @@
   color: #fff !important;
 }
 
+:host ::-webkit-scrollbar {
+  width: 5px; /* width of the entire scrollbar */
+  height: 5px;
+}
+
+:host ::-webkit-scrollbar-track {
+  @apply bg-secondary;
+}
+
+:host ::-webkit-scrollbar-thumb {
+  background-color: #9CA3AF;
+  border-radius: 20px; /* roundness of the scroll thumb */
+  border: 3px solid #9CA3AF; /* creates padding around scroll thumb */
+}
+
 :host ::ng-deep .dropdown_group_button {
-  @apply px-2 py-2 text-white bg-emerald-400 capitalize items-center gap-x-2 text-sm text-nowrap rounded-md border border-emerald-400 bg-transparent text-emerald-400 shadow-sm focus:outline-none;
+  @apply mx-2 px-2 py-2 text-white bg-emerald-400 capitalize items-center gap-x-2 text-sm text-nowrap rounded-md border border-emerald-400 bg-transparent text-emerald-400 shadow-sm focus:outline-none;
 }
 
 :host ::ng-deep .dropdown_group_button.active {
