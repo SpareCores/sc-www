@@ -271,6 +271,8 @@ export class ServerListingComponent implements OnInit, OnDestroy {
             group: JSON.stringify({group: {title: template.name, name: template.benchmark_id}})
           };
         });
+
+        this.initDropdown();
     });
 
     if(isPlatformBrowser(this.platformId)) {
@@ -289,8 +291,6 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       this.dropdownManager.initDropdown('pagesize_button', 'pagesize_options').then((dropdown) => {
         this.dropdownPage = dropdown;
       });
-
-      this.initDropdown();
     }
   }
 
@@ -339,7 +339,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   }
 
   getScore(value: number | null): string {
-    return value ? value.toFixed(0) : '-';
+    return value ? (value > 100 ?  value.toFixed(0) : (Math.round(value * 100) / 100).toFixed(2)) : '-';
   }
 
   openServerDetails(server: ServerPKs) {
