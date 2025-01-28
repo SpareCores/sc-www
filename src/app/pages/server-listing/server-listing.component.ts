@@ -106,11 +106,11 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       orderField: 'selected_benchmark_score',
       info: "Performance benchmark score using the selected Benchmark. The value in the second line shows the performance measured for 1 USD/hour, using the best (usually spot) price of all zones."
     },
-    { name: 'BENCHMARK $SCORE',
+    { name: 'BENCHMARK/USD',
       show: false,
       type: 'benchmark_score_per_price',
       orderField: 'selected_benchmark_score_per_price ',
-      info: "SCore/price showing the selected benchmark performance measured for 1 USD/hour, using the best (usually spot) price of all zones."
+      info: "Benchmark/price showing the selected benchmark performance measured for 1 USD/hour, using the best (usually spot) price of all zones."
     },
     { name: 'MEMORY', show: true, type: 'memory', orderField: 'memory_amount' },
     { name: 'STORAGE', show: true, type: 'storage', orderField: 'storage_size' },
@@ -271,6 +271,15 @@ export class ServerListingComponent implements OnInit, OnDestroy {
             group: JSON.stringify({group: {title: config.category, name: config.category}})
           };
         });
+
+        const benchmarkId = this.route.snapshot.queryParams.benchmark_id || this.specialList?.benchmark_id;
+        const benchmarkConfig = this.route.snapshot.queryParams.benchmark_config || this.specialList?.benchmark_config;
+
+        if(benchmarkId && benchmarkConfig) {
+          this.selectedBenchmarkConfig = this.benchmarksConfigs.find((config: any) => config.benchmark_id === benchmarkId && config.config === benchmarkConfig);
+        }
+
+        this._searchServers(true);
 
         //console.log(this.benchmarksConfigs);
 
