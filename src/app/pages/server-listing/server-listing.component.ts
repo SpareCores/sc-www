@@ -272,7 +272,9 @@ export class ServerListingComponent implements OnInit, OnDestroy {
           };
         });
 
-        this.initDropdown();
+        if(isPlatformBrowser(this.platformId)) {
+          this.initDropdown();
+        }
     });
 
     if(isPlatformBrowser(this.platformId)) {
