@@ -18,9 +18,12 @@
     }
 
     tr {
-      @apply hover:border hover:border-emerald-400 hover:border-solid cursor-pointer;
+      @apply hover:outline hover:outline-1 hover:-outline-offset-1 hover:outline-emerald-400 cursor-pointer;
       td {
         @apply px-5 py-3 text-left text-sm;
+        img {
+          @apply max-h-8;
+        }
       }
     }
   }
