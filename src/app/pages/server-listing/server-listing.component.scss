@@ -59,23 +59,23 @@
   color: #fff !important;
 }
 
-:host ::-webkit-scrollbar {
+.custom-scrollbar::-webkit-scrollbar {
   width: 5px; /* width of the entire scrollbar */
   height: 5px;
 }
 
-:host ::-webkit-scrollbar-track {
+.custom-scrollbar::-webkit-scrollbar-track {
   @apply bg-secondary;
 }
 
-:host ::-webkit-scrollbar-thumb {
+.custom-scrollbar::-webkit-scrollbar-thumb {
   background-color: #9CA3AF;
   border-radius: 20px; /* roundness of the scroll thumb */
   border: 3px solid #9CA3AF; /* creates padding around scroll thumb */
 }
 
 :host ::ng-deep .dropdown_group_button {
-  @apply mx-2 px-2 py-2 text-white bg-emerald-400 capitalize items-center gap-x-2 text-sm text-nowrap rounded-md border border-emerald-400 bg-transparent text-emerald-400 shadow-sm focus:outline-none;
+  @apply mx-2 px-2 py-2 text-white bg-emerald-400 items-center gap-x-2 text-sm text-nowrap rounded-md border border-emerald-400 bg-transparent text-emerald-400 shadow-sm focus:outline-none;
   text-wrap: auto;
 }
 

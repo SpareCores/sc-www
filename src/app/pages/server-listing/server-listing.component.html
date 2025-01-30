@@ -51,7 +51,7 @@
                 Select Benchmark
               </div>
               <div class="px-4 py-3 capitalize" *ngIf="selectedBenchmarkConfig">
-                {{selectedBenchmarkConfig.benchmark_id}}
+                {{selectedBenchmarkConfig.benchmarkTemplate.name}}
               </div>
               <div class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
                 <lucide-icon name="gauge" class="h-6 w-6 text-emerald-400"></lucide-icon>
@@ -386,14 +386,14 @@
               <button
                 (click)="selectBenchmarkCategory('All')"
                 type="button"
-                class="dropdown_group_button ">
+                class="dropdown_group_button capitalize">
                 All
               </button>
               <button
                *ngFor="let item of benchmarkCategories"
                 (click)="selectBenchmarkCategory(item)"
                 type="button"
-                class="dropdown_group_button ">
+                class="dropdown_group_button capitalize">
                 {{item}}
               </button>
             </div>
@@ -409,18 +409,20 @@
                   [(ngModel)]="modalFilterTerm"
                   (ngModelChange)="updateFilterTerm()" >
               </div>
-              <button
-               *ngFor="let item of tempfilteredBenchmarkConfigs"
-                (click)="selectBenchmarkConfig(item)"
-                type="button"
-                class="dropdown_group_button">
-                <div>
-                  {{item.benchmark_id}}
-                </div>
-                <div class="text-xs">
-                  {{item.config}}
-                </div>
-              </button>
+              <div class="flex flex-col gap-2 overflow-y-auto custom-scrollbar" style="max-height: 70vh;">
+                <button
+                *ngFor="let item of tempfilteredBenchmarkConfigs"
+                  (click)="selectBenchmarkConfig(item)"
+                  type="button"
+                  class="dropdown_group_button">
+                  <div class="capitalize">
+                    {{item.benchmarkTemplate.name}}
+                  </div>
+                  <div class="text-xs">
+                    {{item.config}}
+                  </div>
+                </button>
+              </div>
             </div>
             <div *ngIf="tempSelectedBenchmarkCategory" class="w-full flex justify-center">
               <button class="border-none text-emerald-400 bg-transparet hover:underline flex items-center" (click)="selectBenchmarkCategory(null)" >
