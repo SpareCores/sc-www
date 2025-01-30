@@ -15,6 +15,7 @@ import { PaginationComponent } from '../../components/pagination/pagination.comp
 import { ServerCompare, ServerCompareService } from '../../services/server-compare.service';
 import { DropdownManagerService } from '../../services/dropdown-manager.service';
 import { AnalyticsService } from '../../services/analytics.service';
+import { Modal, ModalOptions } from 'flowbite';
 
 export type TableColumn = {
   name: string;
@@ -51,6 +52,12 @@ export type RegionVendorMetadata = {
   name: string;
   selected?: boolean;
   collapsed?: boolean;
+};
+
+const optionsModal: ModalOptions = {
+  backdropClasses:
+      'bg-gray-900/50 fixed inset-0 z-40',
+  closable: true,
 };
 
 
@@ -144,7 +151,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
   dropdownColumn: any;
   dropdownPage: any;
-  modalSearch: any;
+
 
   isLoading = false;
 
@@ -156,7 +163,15 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   vendorMetadata: any[] = [];
   benchmarkMetadata: any[] = [];
   benchmarksConfigs: any[] = [];
+  benchmarkCategories: any[] = [];
   selectedBenchmarkConfig: any = null;
+  modalBenchmarkSelect: any;
+
+  //modal
+  modalText: string = 'Select Benchmark Category';
+  tempfilteredBenchmarkConfigs: any[] = [];
+  tempSelectedBenchmarkCategory: string | null = null;
+  tempSelectedBenchmarkConfig: any = null;
 
   @ViewChild('tooltipDefault') tooltip!: ElementRef;
   clipboardIcon = 'clipboard';
@@ -272,6 +287,13 @@ export class ServerListingComponent implements OnInit, OnDestroy {
           };
         });
 
+        this.benchmarkCategories = [];
+        this.benchmarksConfigs.forEach((config: any) => {
+          if(!this.benchmarkCategories.find((category: any) => category === config.category)) {
+            this.benchmarkCategories.push(config.category);
+          }
+        });
+
         const benchmarkId = this.route.snapshot.queryParams.benchmark_id || this.specialList?.benchmark_id;
         const benchmarkConfig = this.route.snapshot.queryParams.benchmark_config || this.specialList?.benchmark_config;
 
@@ -296,13 +318,19 @@ export class ServerListingComponent implements OnInit, OnDestroy {
         });
       });
 
-
       this.dropdownManager.initDropdown('column_button', 'column_options').then((dropdown) => {
         this.dropdownColumn = dropdown;
       });
 
       this.dropdownManager.initDropdown('pagesize_button', 'pagesize_options').then((dropdown) => {
         this.dropdownPage = dropdown;
+      });
+
+      const targetElModal = document.getElementById('benchmark-type-modal');
+
+      this.modalBenchmarkSelect = new Modal(targetElModal, optionsModal,  {
+        id: 'benchmark-type-modal',
+        override: true
       });
     }
   }
@@ -509,6 +537,11 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       paramObject.columns = columns;
     }
 
+    if(this.selectedBenchmarkConfig) {
+      paramObject.benchmark_config = this.selectedBenchmarkConfig.config;
+      paramObject.benchmark_id = this.selectedBenchmarkConfig.benchmark_id;
+    }
+
     return paramObject;
   }
 
@@ -612,9 +645,32 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     return item.display_name !== item.api_reference && item.display_name !== item.api_reference.replace('Standard_', '');
   }
 
-  comboboxPicked(item: any) {
-    this.selectedBenchmarkConfig = item;
-    this._searchServers();
+  openModal() {
+    this.modalText = 'Select Benchmark Category';
+    this.modalBenchmarkSelect.show();
+  }
+
+  closeModal(confirm: boolean) {
+    this.modalBenchmarkSelect?.hide();
+  }
+
+  selecBenchmarkCategory(category: any) {
+    this.tempSelectedBenchmarkCategory = category;
+
+    if(category) {
+      this.tempfilteredBenchmarkConfigs = this.benchmarksConfigs.filter((config: any) => config.category === category);
+      this.modalText = `Select ${this.tempSelectedBenchmarkCategory} Configuration`;
+    } else {
+      this.modalText = 'Select Benchmark Category';
+    }
+  }
+
+  selectBenchmarkConfig(config: any) {
+    this.tempSelectedBenchmarkCategory = null;
+    this.selectedBenchmarkConfig = config;
+    this.modalBenchmarkSelect?.hide();
+    this.updateQueryParams(this.getQueryObjectBase());
+    this._searchServers(true);
   }
 
 }

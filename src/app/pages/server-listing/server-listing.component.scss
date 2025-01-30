@@ -76,9 +76,10 @@
 
 :host ::ng-deep .dropdown_group_button {
   @apply mx-2 px-2 py-2 text-white bg-emerald-400 capitalize items-center gap-x-2 text-sm text-nowrap rounded-md border border-emerald-400 bg-transparent text-emerald-400 shadow-sm focus:outline-none;
+  text-wrap: auto;
 }
 
-:host ::ng-deep .dropdown_group_button.active {
+:host ::ng-deep .dropdown_group_button:hover {
   @apply bg-emerald-400 border-emerald-400 focus:border-emerald-400 text-white
 }
 

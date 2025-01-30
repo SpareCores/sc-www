@@ -40,44 +40,24 @@
             'w-full': isCollapsed
           }">
         <div class="top_buttons w-full flex justify-end gap-6 items-center" >
-          <!-- SearchBox -->
-          <div class="relative"
-            id="hs-combobox-benchmark"
-            data-hs-combo-box='{
-              "groupingType": "tabs",
-              "isOpenOnFocus": true,
-              "groupingTitleTemplate": "<button type=\"button\" class=\"dropdown_group_button \"></button>"
-            }'>
-            <div class="relative">
-              <div class="border border-emerald-400 absolute inset-y-0 end-0 flex items-center pointer-events-none z-20 px-3 bg-secondary rounded-r-lg">
-                <lucide-icon class="text-emerald-400 w-5 h-5" name="gauge"></lucide-icon>
+          <div>
+            <button
+              id="benchmark_select_button"
+              data-ph-capture-attribute-sc-event="server listing benchmark select"
+              class="dropdown_button"
+              (click)="openModal()"
+              type="button">
+              <div class="px-4 py-3" *ngIf="!selectedBenchmarkConfig">
+                Select Benchmark
               </div>
-              <input class="dropdown_input"
-                type="text"
-                role="combobox"
-                aria-controls="hs-combo-box-benchmark"
-                aria-expanded="false"
-                placeholder="Select Benchmark Type"
-                value=""
-                data-hs-combo-box-input="">
-            </div>
-
-            <!-- SearchBox Dropdown -->
-            <div class="absolute z-50 w-full bg-secondary text-white rounded-lg border border-emerald-400 narrow-scrollbar" style="display: none;" data-hs-combo-box-output="">
-              <div class="max-h-[500px] p-2 overflow-y-auto overflow-hidden [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-track]:bg-neutral-700 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500" data-hs-combo-box-output-items-wrapper="">
-                <div *ngFor="let item of benchmarksConfigs, let i = index"
-                      (click)="comboboxPicked(item)"
-                      [attr.data-hs-combo-box-output-item]="item.group" tabindex="{{i}}">
-                  <div class="py-2 px-3 flex flex-col hover:bg-primary rounded-lg">
-                    <span class="text-sm text-white " [attr.data-hs-combo-box-search-text]="item.benchmarkTemplate?.name" data-hs-combo-box-value="">{{item.benchmarkTemplate?.name}}</span>
-                    <span class="text-xs text-white " [attr.data-hs-combo-box-search-text]="item.config" data-hs-combo-box-value="">{{item.config_title}}</span>
-                  </div>
-                </div>
+              <div class="px-4 py-3 capitalize" *ngIf="selectedBenchmarkConfig">
+                {{selectedBenchmarkConfig.benchmark_id}}
               </div>
-            </div>
-            <!-- End SearchBox Dropdown -->
+              <div class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
+                <lucide-icon name="gauge" class="h-6 w-6 text-emerald-400"></lucide-icon>
+              </div>
+            </button>
           </div>
-          <!-- End SearchBox -->
           <div>
             <button
               id="column_button"
@@ -378,4 +358,60 @@
   style="opacity: 0;"
   class="absolute z-10 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-secondary border border-solid border-emerald-400 rounded-lg">
   {{tooltipContent}}
+</div>
+
+<!-- Large Modal -->
+<div id="benchmark-type-modal"
+    tabindex="-1"
+    class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
+  <div class="relative w-full max-w-xl max-h-full">
+      <div class="relative bg-secondary rounded-lg shadow border border-solid border-emerald-400 " >
+          <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
+              <h3 class="text-xl font-medium text-white dark:text-white">
+                  {{modalText}}
+              </h3>
+              <button type="button"
+                      data-ph-capture-attribute-sc-event="server listing search prompt close"
+                      data-ph-capture-attribute-server-listing-search-prompt-action="close"
+                      class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
+                      (click)="closeModal(false)">
+                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                </svg>
+                <span class="sr-only">Close modal</span>
+              </button>
+          </div>
+          <div class="p-4 md:p-5 space-y-4 flex flex-col">
+            <div class="flex gap-2 flex-wrap" *ngIf="!tempSelectedBenchmarkCategory">
+              <button
+               *ngFor="let item of benchmarkCategories"
+                (click)="selecBenchmarkCategory(item)"
+                type="button"
+                class="dropdown_group_button ">
+                {{item}}
+              </button>
+            </div>
+            <div class="flex flex-col gap-2 " *ngIf="tempSelectedBenchmarkCategory">
+              <button
+               *ngFor="let item of tempfilteredBenchmarkConfigs"
+                (click)="selectBenchmarkConfig(item)"
+                type="button"
+                class="dropdown_group_button">
+                <div>
+                  {{item.benchmark_id}}
+                </div>
+                <div class="text-xs">
+                  {{item.config}}
+                </div>
+              </button>
+            </div>
+            <div *ngIf="tempSelectedBenchmarkCategory" class="w-full flex justify-center">
+              <button class="border-none text-emerald-400 bg-transparet hover:underline flex items-center" (click)="selecBenchmarkCategory(null)" >
+                <lucide-icon name="chevron-left" class="h-5 w-5"></lucide-icon>
+                 Back
+                </button>
+            </div>
+          </div>
+      </div>
+  </div>
 </div>
