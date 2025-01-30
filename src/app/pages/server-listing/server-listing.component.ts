@@ -172,6 +172,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   tempfilteredBenchmarkConfigs: any[] = [];
   tempSelectedBenchmarkCategory: string | null = null;
   tempSelectedBenchmarkConfig: any = null;
+  modalFilterTerm: string | null = null;
 
   @ViewChild('tooltipDefault') tooltip!: ElementRef;
   clipboardIcon = 'clipboard';
@@ -654,11 +655,14 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     this.modalBenchmarkSelect?.hide();
   }
 
-  selecBenchmarkCategory(category: any) {
+  selectBenchmarkCategory(category: any, searcTerm: string | null = null) {
     this.tempSelectedBenchmarkCategory = category;
 
     if(category) {
-      this.tempfilteredBenchmarkConfigs = this.benchmarksConfigs.filter((config: any) => config.category === category);
+      this.tempfilteredBenchmarkConfigs = this.benchmarksConfigs
+        .filter((config: any) =>
+          (category ==='All' || config.category === category) &&
+          (!searcTerm || config.benchmark_id.toLowerCase().includes(searcTerm.toLowerCase()) || config.config.toLowerCase().includes(searcTerm.toLowerCase())));
       this.modalText = `Select ${this.tempSelectedBenchmarkCategory} Configuration`;
     } else {
       this.modalText = 'Select Benchmark Category';
@@ -671,6 +675,10 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     this.modalBenchmarkSelect?.hide();
     this.updateQueryParams(this.getQueryObjectBase());
     this._searchServers(true);
+  }
+
+  updateFilterTerm() {
+    this.selectBenchmarkCategory(this.tempSelectedBenchmarkCategory, this.modalFilterTerm);
   }
 
 }

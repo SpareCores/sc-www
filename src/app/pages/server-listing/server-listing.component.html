@@ -384,14 +384,31 @@
           <div class="p-4 md:p-5 space-y-4 flex flex-col">
             <div class="flex gap-2 flex-wrap" *ngIf="!tempSelectedBenchmarkCategory">
               <button
+                (click)="selectBenchmarkCategory('All')"
+                type="button"
+                class="dropdown_group_button ">
+                All
+              </button>
+              <button
                *ngFor="let item of benchmarkCategories"
-                (click)="selecBenchmarkCategory(item)"
+                (click)="selectBenchmarkCategory(item)"
                 type="button"
                 class="dropdown_group_button ">
                 {{item}}
               </button>
             </div>
             <div class="flex flex-col gap-2 " *ngIf="tempSelectedBenchmarkCategory">
+              <div class="relative mx-2">
+                <div class="border border-emerald-400 absolute inset-x-0start-0 flex items-center pointer-events-none z-20 px-3 bg-secondary rounded-l-lg w-12 h-full">
+                  <lucide-icon class="text-emerald-400 w-5 h-5" name="search"></lucide-icon>
+                </div>
+                <input
+                  placeholder="Filter"
+                  type="text"
+                  class="dropdown_input"
+                  [(ngModel)]="modalFilterTerm"
+                  (ngModelChange)="updateFilterTerm()" >
+              </div>
               <button
                *ngFor="let item of tempfilteredBenchmarkConfigs"
                 (click)="selectBenchmarkConfig(item)"
@@ -406,7 +423,7 @@
               </button>
             </div>
             <div *ngIf="tempSelectedBenchmarkCategory" class="w-full flex justify-center">
-              <button class="border-none text-emerald-400 bg-transparet hover:underline flex items-center" (click)="selecBenchmarkCategory(null)" >
+              <button class="border-none text-emerald-400 bg-transparet hover:underline flex items-center" (click)="selectBenchmarkCategory(null)" >
                 <lucide-icon name="chevron-left" class="h-5 w-5"></lucide-icon>
                  Back
                 </button>
