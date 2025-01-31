@@ -304,8 +304,6 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
         this._searchServers(true);
 
-        //console.log(this.benchmarksConfigs);
-
         if(isPlatformBrowser(this.platformId)) {
           this.initDropdown();
         }
@@ -655,14 +653,14 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     this.modalBenchmarkSelect?.hide();
   }
 
-  selectBenchmarkCategory(category: any, searcTerm: string | null = null) {
+  selectBenchmarkCategory(category: any, searchTerm: string | null = null) {
     this.tempSelectedBenchmarkCategory = category;
 
     if(category) {
       this.tempfilteredBenchmarkConfigs = this.benchmarksConfigs
         .filter((config: any) =>
           (category ==='All' || config.category === category) &&
-          (!searcTerm || config.benchmark_id.toLowerCase().includes(searcTerm.toLowerCase()) || config.config.toLowerCase().includes(searcTerm.toLowerCase())));
+          (!searchTerm || config.benchmarkTemplate.name.toLowerCase().includes(searchTerm.toLowerCase()) || config.config.toLowerCase().includes(searchTerm.toLowerCase())));
       this.modalText = `Select ${this.tempSelectedBenchmarkCategory} Configuration`;
     } else {
       this.modalText = 'Select Benchmark Category';
