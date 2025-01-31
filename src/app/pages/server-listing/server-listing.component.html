@@ -368,9 +368,9 @@
 <!-- Large Modal -->
 <div id="benchmark-type-modal"
     tabindex="-1"
-    class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
-  <div class="relative w-full max-w-xl max-h-full">
-      <div class="relative bg-secondary rounded-lg shadow border border-solid border-emerald-400 " >
+    class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-fit min-h-full flex items-center">
+  <div class="relative w-full max-w-xl">
+      <div class="relative bg-secondary rounded-lg shadow border border-solid border-emerald-400 flex flex-col max-h-[calc(100vh-2rem)]" >
           <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
               <h3 class="text-xl font-medium text-white dark:text-white">
                   {{modalText}}
@@ -386,7 +386,7 @@
                 <span class="sr-only">Close modal</span>
               </button>
           </div>
-          <div class="p-4 md:p-5 space-y-4 flex flex-col">
+          <div class="p-4 md:p-5 space-y-4 flex flex-col flex-1 min-h-0">
             <div class="flex gap-2 flex-wrap justify-center" *ngIf="!tempSelectedBenchmarkCategory">
               <button
                 (click)="selectBenchmarkCategory('All')"
@@ -402,7 +402,7 @@
                 {{item}}
               </button>
             </div>
-            <div class="flex flex-col gap-2 " *ngIf="tempSelectedBenchmarkCategory">
+            <div class="flex flex-col gap-2 flex-1 min-h-0" *ngIf="tempSelectedBenchmarkCategory">
               <div class="relative mx-2">
                 <div class="border border-emerald-400 absolute inset-x-0start-0 flex items-center pointer-events-none z-20 px-3 bg-secondary rounded-l-lg w-12 h-full">
                   <lucide-icon class="text-emerald-400 w-5 h-5" name="search"></lucide-icon>
@@ -414,7 +414,7 @@
                   [(ngModel)]="modalFilterTerm"
                   (ngModelChange)="updateFilterTerm()" >
               </div>
-              <div class="flex flex-col overflow-y-auto custom-scrollbar button_list_holder max-h-[70vh]">
+              <div class="flex flex-col overflow-y-auto custom-scrollbar button_list_holder flex-1">
                 <button
                 *ngFor="let item of tempfilteredBenchmarkConfigs"
                   (click)="selectBenchmarkConfig(item)"
@@ -433,12 +433,12 @@
               </div>
             </div>
           </div>
-        <div *ngIf="tempSelectedBenchmarkCategory" class="flex justify-center p-4 md:p-5 space-x-3 border-t border-gray-200 rounded-b">
-          <button class="flex justify-center border border-emerald-400 text-emerald-400 py-2 px-4 rounded-lg hover:bg-emerald-400 hover:text-white items-center" (click)="selectBenchmarkCategory(null)">
-            <lucide-icon name="chevron-left" class="h-5 w-5"></lucide-icon>
-            Back to benchmark categories
-          </button>
-        </div>
+          <div *ngIf="tempSelectedBenchmarkCategory" class="flex justify-center p-4 md:p-5 space-x-3 border-t border-gray-200 rounded-b">
+            <button class="flex justify-center border border-emerald-400 text-emerald-400 py-2 px-4 rounded-lg hover:bg-emerald-400 hover:text-white items-center" (click)="selectBenchmarkCategory(null)">
+              <lucide-icon name="chevron-left" class="h-5 w-5"></lucide-icon>
+              Back to benchmark categories
+            </button>
+          </div>
       </div>
   </div>
 </div>
