@@ -651,7 +651,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     this.modalBenchmarkSelect.show();
   }
 
-  closeModal(confirm: boolean) {
+  closeModal() {
     this.modalBenchmarkSelect?.hide();
   }
 
