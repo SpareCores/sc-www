@@ -50,7 +50,7 @@
               <div class="px-4 py-3" *ngIf="!selectedBenchmarkConfig">
                 Select Benchmark
               </div>
-              <div class="px-4 py-3 flex flex-col" *ngIf="selectedBenchmarkConfig">
+              <div class="px-4 py-0 flex flex-col" *ngIf="selectedBenchmarkConfig">
                 <div>
                   {{selectedBenchmarkConfig.benchmarkTemplate.name}}
                 </div>
@@ -58,14 +58,9 @@
                   {{selectedBenchmarkConfig.config}}
                 </div>
               </div>
-              <div *ngIf="!selectedBenchmarkConfig"
-                class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
+              <div class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
                 <lucide-icon name="gauge" class="h-6 w-6 text-emerald-400"></lucide-icon>
               </div>
-              <div *ngIf="selectedBenchmarkConfig"
-              class="px-4 py-5 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
-              <lucide-icon name="gauge" class="h-6 w-6 text-emerald-400"></lucide-icon>
-            </div>
             </button>
           </div>
           <div>
