@@ -663,6 +663,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
           (!searchTerm || config.benchmarkTemplate.name.toLowerCase().includes(searchTerm.toLowerCase()) || config.config.toLowerCase().includes(searchTerm.toLowerCase())));
       this.modalText = `Select ${this.tempSelectedBenchmarkCategory} Configuration`;
     } else {
+      this.modalFilterTerm = null;
       this.modalText = 'Select Benchmark Category';
     }
   }
@@ -672,6 +673,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     this.selectedBenchmarkConfig = config;
     this.modalBenchmarkSelect?.hide();
     this.updateQueryParams(this.getQueryObjectBase());
+    this.modalFilterTerm = null;
     this._searchServers(true);
   }
 
