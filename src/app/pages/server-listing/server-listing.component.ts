@@ -116,7 +116,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     { name: 'BENCHMARK/USD',
       show: false,
       type: 'benchmark_score_per_price',
-      orderField: 'selected_benchmark_score_per_price ',
+      orderField: 'selected_benchmark_score_per_price',
       info: "Benchmark/price showing the selected benchmark performance measured for 1 USD/hour, using the best (usually spot) price of all zones."
     },
     { name: 'MEMORY', show: true, type: 'memory', orderField: 'memory_amount' },
@@ -381,7 +381,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   }
 
   getScore(value: number | null): string {
-    return value ? (value > 100 ?  value.toFixed(0) : (Math.round(value * 100) / 100).toFixed(2)) : '-';
+    return value ? (value > 100 ?  value.toFixed(0) : (Math.round(value * 100) / 100).toFixed(4)) : '-';
   }
 
   openServerDetails(server: ServerPKs) {

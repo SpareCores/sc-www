@@ -50,12 +50,22 @@
               <div class="px-4 py-3" *ngIf="!selectedBenchmarkConfig">
                 Select Benchmark
               </div>
-              <div class="px-4 py-3 capitalize" *ngIf="selectedBenchmarkConfig">
-                {{selectedBenchmarkConfig.benchmarkTemplate.name}}
+              <div class="px-4 py-3 flex flex-col" *ngIf="selectedBenchmarkConfig">
+                <div>
+                  {{selectedBenchmarkConfig.benchmarkTemplate.name}}
+                </div>
+                <div class="text-xs">
+                  {{selectedBenchmarkConfig.config}}
+                </div>
               </div>
-              <div class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
+              <div *ngIf="!selectedBenchmarkConfig"
+                class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
                 <lucide-icon name="gauge" class="h-6 w-6 text-emerald-400"></lucide-icon>
               </div>
+              <div *ngIf="selectedBenchmarkConfig"
+              class="px-4 py-5 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
+              <lucide-icon name="gauge" class="h-6 w-6 text-emerald-400"></lucide-icon>
+            </div>
             </button>
           </div>
           <div>
@@ -382,18 +392,18 @@
               </button>
           </div>
           <div class="p-4 md:p-5 space-y-4 flex flex-col">
-            <div class="flex gap-2 flex-wrap" *ngIf="!tempSelectedBenchmarkCategory">
+            <div class="flex gap-2 flex-wrap justify-center" *ngIf="!tempSelectedBenchmarkCategory">
               <button
                 (click)="selectBenchmarkCategory('All')"
                 type="button"
-                class="dropdown_group_button capitalize">
+                class="dropdown_group_button">
                 All
               </button>
               <button
                *ngFor="let item of benchmarkCategories"
                 (click)="selectBenchmarkCategory(item)"
                 type="button"
-                class="dropdown_group_button capitalize">
+                class="dropdown_group_button">
                 {{item}}
               </button>
             </div>
@@ -409,13 +419,16 @@
                   [(ngModel)]="modalFilterTerm"
                   (ngModelChange)="updateFilterTerm()" >
               </div>
-              <div class="flex flex-col gap-2 overflow-y-auto custom-scrollbar" style="max-height: 70vh;">
+              <div class="flex flex-col overflow-y-auto custom-scrollbar button_list_holder" style="max-height: 70vh;">
                 <button
                 *ngFor="let item of tempfilteredBenchmarkConfigs"
                   (click)="selectBenchmarkConfig(item)"
                   type="button"
-                  class="dropdown_group_button">
-                  <div class="capitalize">
+                  [ngClass]="{
+                    'active': item === selectedBenchmarkConfig
+                  }"
+                  class="button_list_item">
+                  <div >
                     {{item.benchmarkTemplate.name}}
                   </div>
                   <div class="text-xs">
@@ -424,13 +437,13 @@
                 </button>
               </div>
             </div>
-            <div *ngIf="tempSelectedBenchmarkCategory" class="w-full flex justify-center">
-              <button class="border-none text-emerald-400 bg-transparet hover:underline flex items-center" (click)="selectBenchmarkCategory(null)" >
-                <lucide-icon name="chevron-left" class="h-5 w-5"></lucide-icon>
-                 Back
-                </button>
-            </div>
           </div>
+        <div *ngIf="tempSelectedBenchmarkCategory" class="flex justify-center p-4 md:p-5 space-x-3 border-t border-gray-200 rounded-b ">
+          <button class="border-none text-emerald-400 bg-transparet hover:underline flex items-center" (click)="selectBenchmarkCategory(null)" >
+            <lucide-icon name="chevron-left" class="h-5 w-5"></lucide-icon>
+              Back
+            </button>
+        </div>
       </div>
   </div>
 </div>

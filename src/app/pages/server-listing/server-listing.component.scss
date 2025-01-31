@@ -139,3 +139,22 @@
     width: 9rem;
   }
 }
+
+.button_list_holder {
+
+  .button_list_item:nth-child(2n+1) {
+    @apply bg-primary;
+  }
+  .button_list_item:nth-child(2n) {
+    @apply bg-secondary;
+  }
+
+  .button_list_item {
+    @apply py-2 text-white border-transparent border hover:border hover:border-emerald-400 hover:border-solid cursor-pointer;
+  }
+
+  .button_list_item.active {
+    @apply border-emerald-400;
+  }
+}
+
