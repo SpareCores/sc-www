@@ -1,4 +1,19 @@
-const specialServerLists = [
+/**
+ * Special server listing configuration
+ * 
+ * Supported fields:
+ * - id: string - unique identifier for the listing, will become part of the URL
+ * - title: string - shown on the top of the page
+ * - description: string - description below the title, above the table
+ * - parameters: object - query parameters to filter servers
+ * - columns: string - bitmask of visible columns encoded as decimal number
+ * - order_by: string - field to sort by
+ * - order_dir: 'asc'|'desc' - sort direction
+ * - benchmark_id: string - ID of benchmark to run
+ * - benchmark_config: string - JSON string with benchmark configuration
+ */
+
+var specialServerLists = [
   {
     id: 'gpu',
     title: 'GPU Servers',
