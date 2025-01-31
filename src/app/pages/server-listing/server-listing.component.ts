@@ -405,6 +405,17 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     this.searchOptionsChanged(event);
   }
 
+  /**
+   * Updates URL query parameters
+   * @param event Object containing search/filter parameters from the search form
+   * @description
+   * This method:
+   * - Takes parameters to be added to the URL
+   * - Adds non-filter parameters (ordering, pagination, columns)
+   * - Adds benchmark configuration as JSON/base64 encoded string
+   * - Updates the URL with new query parameters
+   * Note that URL params are also updated at updateQueryParams/encodeQueryParams (TODO refactor)
+   */
   searchOptionsChanged(event: any) {
     const queryObject: any = event;
 
@@ -559,6 +570,15 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     return paramObject;
   }
 
+  /**
+   * Updates the URL query parameters without triggering a page reload
+   * @param object An object containing the query parameters to be encoded
+   * @description
+   * This method:
+   * - calls encodeQueryParams to standardize the URL params
+   * - Updates the browser URL using History API
+   * Note that URL params are also updated at searchOptionsChanged (TODO refactor)
+   */
   updateQueryParams(object: any) {
     const encodedQuery = encodeQueryParams(object);
     const path = window.location.pathname || '/servers';
