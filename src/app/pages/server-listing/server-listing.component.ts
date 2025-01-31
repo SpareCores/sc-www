@@ -295,11 +295,15 @@ export class ServerListingComponent implements OnInit, OnDestroy {
           }
         });
 
-        const benchmarkId = this.route.snapshot.queryParams.benchmark_id || this.specialList?.benchmark_id;
-        const benchmarkConfig = this.route.snapshot.queryParams.benchmark_config || this.specialList?.benchmark_config;
-
-        if(benchmarkId && benchmarkConfig) {
-          this.selectedBenchmarkConfig = this.benchmarksConfigs.find((config: any) => config.benchmark_id === benchmarkId && config.config === benchmarkConfig);
+        // load benhcmark id and configuration
+        if (this.specialList?.benchmark_id && this.specialList?.benchmark_config) {
+          this.selectedBenchmarkConfig = this.benchmarksConfigs.find((config: any) => config.benchmark_id === this.specialList.benchmark_id && config.config === this.specialList.benchmark_config);
+        }
+        // allow overriding preselected benchmark via URL parameters
+        const benchmarkDataEncoded = this.route.snapshot.queryParams.benchmark;
+        if(benchmarkDataEncoded) {
+          const benchmarkData = JSON.parse(atob(benchmarkDataEncoded));
+          this.selectedBenchmarkConfig = this.benchmarksConfigs.find((config: any) => config.benchmark_id === benchmarkData.id && config.config === benchmarkData.config);
         }
 
         this._searchServers(true);
@@ -429,6 +433,14 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       queryParams.columns = columns;
     }
 
+    if(this.selectedBenchmarkConfig) {
+      const benchmarkData = {
+        id: this.selectedBenchmarkConfig.benchmark_id,
+        config: this.selectedBenchmarkConfig.config
+      };
+      queryParams.benchmark = btoa(JSON.stringify(benchmarkData));
+    }
+
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: queryParams
@@ -537,8 +549,11 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     }
 
     if(this.selectedBenchmarkConfig) {
-      paramObject.benchmark_config = this.selectedBenchmarkConfig.config;
-      paramObject.benchmark_id = this.selectedBenchmarkConfig.benchmark_id;
+      const benchmarkData = {
+        id: this.selectedBenchmarkConfig.benchmark_id,
+        config: this.selectedBenchmarkConfig.config
+      };
+      paramObject.benchmark = btoa(JSON.stringify(benchmarkData));
     }
 
     return paramObject;
