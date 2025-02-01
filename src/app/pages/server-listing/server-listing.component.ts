@@ -185,7 +185,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   specialList: any = null;
   specialParameters: any = {};
   title: string = 'Cloud Compute Resources';
-  description: string = 'Explore, search, and evaluate the supported cloud compute resources in the table below. This comprehensive comparison includes diverse attributes such as CPU count, detailed processor information, memory, GPU, storage, network speed and capacity, available operating systems. Use the sidebar to filter the results, or enter your freetext query in the “Search prompt” bar. You can also compare servers by selecting at least two rows using the checkboxes.';
+  description: string = 'Explore, search, and evaluate the supported cloud compute resources in the table below. This comprehensive comparison includes diverse attributes such as CPU count, detailed processor information, memory, GPU, storage, network speed and capacity, available operating systems. Use the sidebar to filter the results, or enter your freetext query in the "Search prompt" bar. You can also compare servers by selecting at least two rows using the checkboxes.';
 
   constructor(@Inject(PLATFORM_ID) private platformId: object,
               private keeperAPI: KeeperAPIService,
@@ -233,7 +233,6 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
     this.route.queryParams.subscribe((params: Params) => {
       const query: any = JSON.parse(JSON.stringify(params || '{}'));
-
       this.query = query;
 
       if(query.page) {
@@ -273,7 +272,13 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
       this.refreshColumns(false);
 
-      this._searchServers(true);
+      // only search right away if we don't have a benchmark parameter
+      // as we need to parse the benchmark URL param to benchmark_id and benchmark_config
+      // before hitting the Keeper API
+      if (!query.benchmark) {
+        this._searchServers(true);
+      }
+
     });
     Promise.all([
       this.keeperAPI.getServerBenchmarkMeta(),
@@ -360,7 +365,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
     this.specialParameters = this.specialList?.parameters || {};
     this.title = this.specialList?.title || 'Cloud Compute Resources';
-    this.description = this.specialList?.description || 'Explore, search, and evaluate the supported cloud compute resources in the table below. This comprehensive comparison includes diverse attributes such as CPU count, detailed processor information, memory, GPU, storage, network speed and capacity, available operating systems. Use the sidebar to filter the results, or enter your freetext query in the “Search prompt” bar. You can also compare servers by selecting at least two rows using the checkboxes.';
+    this.description = this.specialList?.description || 'Explore, search, and evaluate the supported cloud compute resources in the table below. This comprehensive comparison includes diverse attributes such as CPU count, detailed processor information, memory, GPU, storage, network speed and capacity, available operating systems. Use the sidebar to filter the results, or enter your freetext query in the "Search prompt" bar. You can also compare servers by selecting at least two rows using the checkboxes.';
   }
 
   toggleCollapse() {
@@ -464,6 +469,9 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     this.isLoading = true;
 
     let query = JSON.parse(JSON.stringify(this.query));
+
+    // drop the encoded benchmark URL parameter since we use the decoded benchmark_id and benchmark_config
+    delete query.benchmark;
 
     if(query.columns) {
       delete query.columns;
