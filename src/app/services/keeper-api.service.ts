@@ -117,7 +117,7 @@ export class KeeperAPIService {
     return this.TrafficController.searchTrafficPricesTrafficPricesGet(query);
   }
 
-  public getBenchamarkConfigs(): Promise<any> {
+  public getBenchmarkConfigs(): Promise<any> {
     return this.BenchmarksController.searchBenchmarkConfigsBenchmarkConfigsGet();
   }
 

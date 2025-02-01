@@ -291,7 +291,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
     Promise.all([
       this.keeperAPI.getServerBenchmarkMeta(),
-      this.keeperAPI.getBenchamarkConfigs()]).then((data) => {
+      this.keeperAPI.getBenchmarkConfigs()]).then((data) => {
         this.benchmarkMetadata = data[0]?.body;
 
         this.benchmarksConfigs = data[1]?.body.map((config: any) => {
@@ -311,7 +311,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
           }
         });
 
-        // load benhcmark id and configuration
+        // load benchmark id and configuration
         if (this.specialList?.benchmark_id && this.specialList?.benchmark_config) {
           this.selectedBenchmarkConfig = this.benchmarksConfigs.find((config: any) => config.benchmark_id === this.specialList.benchmark_id && config.config === this.specialList.benchmark_config);
         }
