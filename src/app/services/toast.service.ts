@@ -7,7 +7,7 @@ export interface ToastOptions {
   title: string;
   body?: string;
   type?: ToastType;
-  duration?: number;
+  duration?: number | null;
 }
 
 @Injectable({
@@ -33,7 +33,7 @@ export class ToastService {
       title,
       body,
       type = 'info',
-      duration = 3000
+      duration = null
     } = options;
 
     const colorClasses = this.getColorClasses(type);
@@ -47,31 +47,34 @@ export class ToastService {
       <div class="flex flex-col w-full max-w-xs p-4 rounded-lg shadow ${colorClasses.background} ${colorClasses.text}" role="alert">
         <div class="flex items-center w-full">
           <div class="ml-3 text-sm font-semibold">${title}</div>
-          <button type="button" class="ml-auto -mx-1.5 -my-1.5 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 inline-flex h-8 w-8 ${colorClasses.hover}" aria-label="Close">
-            <span class="sr-only">Close</span>
-            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
-          </button>
+          ${!duration ? `
+            <button type="button" class="ml-auto -mx-1.5 -my-1.5 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 inline-flex h-8 w-8 ${colorClasses.hover}" aria-label="Close">
+              <span class="sr-only">Close</span>
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+            </button>
+          ` : ''}
         </div>
         ${body ? `<div class="ml-3 text-sm font-normal mt-1">${body}</div>` : ''}
       </div>
     `;
 
-    const closeButton = toastElement.querySelector('button');
-    if (closeButton) {
-      closeButton.addEventListener('click', () => this.removeToast(toastId));
+    if (!duration) {
+      const closeButton = toastElement.querySelector('button');
+      if (closeButton) {
+        closeButton.addEventListener('click', () => this.removeToast(toastId));
+      }
     }
 
     this.toastContainer.appendChild(toastElement);
 
-    // Trigger entrance animation
     requestAnimationFrame(() => {
       toastElement.style.opacity = '1';
       toastElement.style.transform = 'translateX(0)';
     });
 
-    const timeoutId = window.setTimeout(() => {
+    const timeoutId = duration ? window.setTimeout(() => {
       this.removeToast(toastId);
-    }, duration);
+    }, duration) : 0;
 
     this.toasts.set(toastId, { element: toastElement, timeoutId });
   }
