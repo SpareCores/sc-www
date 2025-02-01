@@ -404,7 +404,16 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   }
 
   getScore(value: number | null): string {
-    return value ? (value > 100 ?  value.toFixed(0) : (Math.round(value * 100) / 100).toFixed(4)) : '-';
+    if (!value) return '-';
+    // make sure to show small numbers
+    if (value < 1) {
+      return value.toPrecision(1);
+    }
+    // but suppress decimals for larger numbers, without rounding
+    if (value < 100) {
+      return Number.isInteger(value) ? value.toString() : value.toFixed(2);
+    }
+    return Number.isInteger(value) ? value.toString() : value.toFixed(0);
   }
 
   openServerDetails(server: ServerPKs) {
