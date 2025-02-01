@@ -16,6 +16,7 @@ import { AnalyticsService } from '../../services/analytics.service';
 import { CurrencyOption, availableCurrencies } from '../../tools/shared_data';
 import { ServerCompare, ServerCompareService } from '../../services/server-compare.service';
 import { encodeQueryParams } from '../../tools/queryParamFunctions';
+import { ToastService } from '../../services/toast.service';
 
 export type TableColumn = {
   name: string;
@@ -182,7 +183,8 @@ export class ServerPricesComponent implements OnInit {
               private analytics: AnalyticsService,
               private dropdownManager: DropdownManagerService,
               private serverCompare: ServerCompareService,
-              private storageHandler: StorageHandlerService) { }
+              private storageHandler: StorageHandlerService,
+              private toastService: ToastService) { }
 
   ngOnInit() {
 
@@ -594,7 +596,11 @@ export class ServerPricesComponent implements OnInit {
 
     this.clipboardIcon = 'check';
 
-    this.showTooltip(event, 'Link copied to clipboard!', true);
+    this.toastService.show({
+      title: 'Link copied to clipboard!',
+      type: 'success',
+      duration: 1000
+    });
 
     setTimeout(() => {
       this.clipboardIcon = 'clipboard';
