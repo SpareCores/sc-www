@@ -231,6 +231,10 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       }
     });
 
+    // initial load is special as we need to decode the benchmark URL param
+    let isInitialLoad = true;
+    let shouldSearchAfterBenchmarks = false;
+
     this.route.queryParams.subscribe((params: Params) => {
       const query: any = JSON.parse(JSON.stringify(params || '{}'));
       this.query = query;
@@ -272,14 +276,19 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
       this.refreshColumns(false);
 
-      // only search right away if we don't have a benchmark parameter
-      // as we need to parse the benchmark URL param to benchmark_id and benchmark_config
-      // before hitting the Keeper API
-      if (!query.benchmark) {
+      // we don't want to search yet on initial load
+      // as we need to decode the benchmark URL param first,
+      // and will do the search after getBenchmarkConfigs is called
+      if (!isInitialLoad) {
         this._searchServers(true);
+        return;
       }
 
+      if (!query.benchmark) {
+        shouldSearchAfterBenchmarks = true;
+      }
     });
+
     Promise.all([
       this.keeperAPI.getServerBenchmarkMeta(),
       this.keeperAPI.getBenchamarkConfigs()]).then((data) => {
@@ -313,11 +322,16 @@ export class ServerListingComponent implements OnInit, OnDestroy {
           this.selectedBenchmarkConfig = this.benchmarksConfigs.find((config: any) => config.benchmark_id === benchmarkData.id && config.config === benchmarkData.config);
         }
 
-        this._searchServers(true);
+        // only search once after benchmarks are loaded on initial load
+        if (shouldSearchAfterBenchmarks || this.route.snapshot.queryParams.benchmark) {
+          this._searchServers(true);
+        }
 
         if(isPlatformBrowser(this.platformId)) {
           this.initDropdown();
         }
+
+        isInitialLoad = false;
     });
 
     if(isPlatformBrowser(this.platformId)) {
