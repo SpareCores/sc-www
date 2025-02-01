@@ -4,18 +4,23 @@ import { isPlatformBrowser } from '@angular/common';
 export type ToastType = 'success' | 'error' | 'warning' | 'info';
 
 export interface ToastOptions {
+  /** The title text to display on the first line of the toast notification */
   title: string;
+  /** Optional body text to display below the title */
   body?: string;
+  /** The type/style of toast - 'success', 'error', 'warning', or 'info' (default: 'info') */
   type?: ToastType;
+  /** Duration in ms to show the toast. If null, toast requires manual dismissal (default: null) */
   duration?: number | null;
+  /** Optional unique ID for the toast, so that it can be referenced/removed later. If not provided, one will be auto-generated */
+  id?: string;
 }
-
 @Injectable({
   providedIn: 'root'
 })
 export class ToastService {
   private toastContainer: HTMLDivElement | null = null;
-  private toasts: Map<string, { element: HTMLDivElement, timeoutId: number }> = new Map();
+  private toasts = new Map<string, { element: HTMLElement, timeoutId?: any }>();
   private platformId = inject(PLATFORM_ID);
 
   constructor() {
@@ -33,12 +38,17 @@ export class ToastService {
       title,
       body,
       type = 'info',
-      duration = null
+      duration = null,
+      id
     } = options;
 
     const colorClasses = this.getColorClasses(type);
-    const toastId = `toast-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const toastId = id || `toast-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     
+    if (id) {
+      this.removeToast(id);
+    }
+
     const toastElement = document.createElement('div');
     toastElement.style.transition = 'all 300ms ease-in-out';
     toastElement.style.opacity = '0';
@@ -72,27 +82,41 @@ export class ToastService {
       toastElement.style.transform = 'translateX(0)';
     });
 
-    const timeoutId = duration ? window.setTimeout(() => {
-      this.removeToast(toastId);
-    }, duration) : 0;
+    let timeoutId: any;
+    if (duration !== null) {
+      timeoutId = setTimeout(() => {
+        this.removeToast(toastId);
+      }, duration);
+    }
 
-    this.toasts.set(toastId, { element: toastElement, timeoutId });
+    this.toasts.set(toastId, { 
+      element: toastElement,
+      timeoutId
+    });
+
+    return toastId;
   }
 
-  private removeToast(toastId: string) {
+  public removeToast(toastId: string) {
     const toast = this.toasts.get(toastId);
     if (!toast) return;
 
     const { element, timeoutId } = toast;
-    clearTimeout(timeoutId);
 
-    element.style.opacity = '0';
-    element.style.transform = 'translateX(100%)';
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
 
-    element.addEventListener('transitionend', () => {
-      element.remove();
-      this.toasts.delete(toastId);
-    }, { once: true });
+    if (element && element.parentNode) {
+      element.classList.add('fade-out');
+      setTimeout(() => {
+        if (element.parentNode) {
+          element.parentNode.removeChild(element);
+        }
+      }, 300);
+    }
+
+    this.toasts.delete(toastId);
   }
 
   private getColorClasses(type: ToastType): { background: string; text: string; hover: string } {

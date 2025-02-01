@@ -516,6 +516,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     }
 
     this.keeperAPI.searchServers(query).then(servers => {
+      this.toastService.removeToast('query-error');
       this.servers = servers?.body;
 
       // set stored selected state
@@ -533,7 +534,8 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       this.toastService.show({
         title: 'Query error!',
         body: err.error?.detail || 'Please try again later.',
-        type: 'error'
+        type: 'error',
+        id: 'query-error'
       });
     }).finally(() => {
       this.isLoading = false;
