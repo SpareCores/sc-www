@@ -509,7 +509,8 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       this.analytics.SentryException(err, {tags: { location: this.constructor.name, function: '_searchServers' }});
       console.error(err);
       this.toastService.show({
-        title: 'Error loading servers. Please try again.',
+        title: 'Query error!',
+        body: err.error?.detail || 'Please try again later.',
         type: 'error'
       });
     }).finally(() => {
