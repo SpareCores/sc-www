@@ -24,9 +24,13 @@ export class ToastService {
   private platformId = inject(PLATFORM_ID);
 
   constructor() {
-    if (isPlatformBrowser(this.platformId)) {
+    this.setupContainer();
+  }
+
+  private setupContainer() {
+    if (isPlatformBrowser(this.platformId) && !this.toastContainer) {
       this.toastContainer = document.createElement('div');
-      this.toastContainer.className = 'fixed top-[80px] right-4 z-50 flex flex-col items-end gap-2';
+      this.toastContainer.className = 'fixed top-[80px] right-4 z-50 flex flex-col items-end gap-1';
       document.body.appendChild(this.toastContainer);
     }
   }
@@ -42,23 +46,21 @@ export class ToastService {
       id
     } = options;
 
-    const colorClasses = this.getColorClasses(type);
     const toastId = id || `toast-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    
+
     if (id) {
       this.removeToast(id);
     }
 
-    const toastElement = document.createElement('div');
-    toastElement.style.transition = 'all 300ms ease-in-out';
-    toastElement.style.opacity = '0';
-    toastElement.style.transform = 'translateX(1rem)';
-    toastElement.innerHTML = `
-      <div class="flex flex-col w-full max-w-xs p-4 rounded-lg shadow ${colorClasses.background} ${colorClasses.text}" role="alert">
+    const toast = document.createElement('div');
+    toast.className = 'rounded-lg p-2 transform transition-all duration-300 ease-in-out translate-x-0';
+    
+    toast.innerHTML = `
+      <div class="flex flex-col w-full max-w-xs p-4 rounded-lg shadow ${this.getColorClasses(type).background} ${this.getColorClasses(type).text}" role="alert">
         <div class="flex items-center w-full">
           <div class="ml-3 text-sm font-semibold">${title}</div>
           ${!duration ? `
-            <button type="button" class="ml-auto -mx-1.5 -my-1.5 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 inline-flex h-8 w-8 ${colorClasses.hover}" aria-label="Close">
+            <button type="button" class="ml-auto -mx-1.5 -my-1.5 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 inline-flex h-8 w-8 ${this.getColorClasses(type).hover}" aria-label="Close">
               <span class="sr-only">Close</span>
               <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
             </button>
@@ -69,18 +71,13 @@ export class ToastService {
     `;
 
     if (!duration) {
-      const closeButton = toastElement.querySelector('button');
+      const closeButton = toast.querySelector('button');
       if (closeButton) {
         closeButton.addEventListener('click', () => this.removeToast(toastId));
       }
     }
 
-    this.toastContainer.appendChild(toastElement);
-
-    requestAnimationFrame(() => {
-      toastElement.style.opacity = '1';
-      toastElement.style.transform = 'translateX(0)';
-    });
+    this.toastContainer.appendChild(toast);
 
     let timeoutId: any;
     if (duration !== null) {
@@ -90,14 +87,14 @@ export class ToastService {
     }
 
     this.toasts.set(toastId, { 
-      element: toastElement,
+      element: toast,
       timeoutId
     });
 
     return toastId;
   }
 
-  public removeToast(toastId: string) {
+  private removeToastWithAnimation(toastId: string) {
     const toast = this.toasts.get(toastId);
     if (!toast) return;
 
@@ -108,15 +105,24 @@ export class ToastService {
     }
 
     if (element && element.parentNode) {
-      element.classList.add('fade-out');
+      element.classList.remove('translate-x-0');
+      element.classList.add('translate-x-full');
+      
       setTimeout(() => {
         if (element.parentNode) {
           element.parentNode.removeChild(element);
         }
+        this.toasts.delete(toastId);
       }, 300);
+    } else {
+      this.toasts.delete(toastId);
     }
+  }
 
-    this.toasts.delete(toastId);
+  public removeToast(toastId: string) {
+    setTimeout(() => {
+      this.removeToastWithAnimation(toastId);
+    }, 0);
   }
 
   private getColorClasses(type: ToastType): { background: string; text: string; hover: string } {
