@@ -590,8 +590,8 @@ export class ServerPricesComponent implements OnInit {
     this.modalSearch?.hide();
   }
 
-  clipboardURL(event: any) {
-    const url = window.location.href;
+  clipboardURL() {
+    let url = window.location.href;
     navigator.clipboard.writeText(url);
 
     this.clipboardIcon = 'check';

@@ -1,4 +1,4 @@
-import { Component, Inject, Input, PLATFORM_ID } from '@angular/core';
+import { Component, Inject, Input, PLATFORM_ID, OnInit, OnChanges } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { SeoHandlerService } from '../../services/seo-handler.service';
@@ -13,7 +13,7 @@ import { LucideAngularModule } from 'lucide-angular';
   templateUrl: './embed-compare-preview.component.html',
   styleUrl: './embed-compare-preview.component.scss'
 })
-export class EmbedComparePreviewComponent {
+export class EmbedComparePreviewComponent implements OnInit, OnChanges {
 
   @Input() instances!: string;
   @Input() chartname!: string;

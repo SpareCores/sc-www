@@ -1,5 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Component, ElementRef, Inject, Input, PLATFORM_ID, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, Input, PLATFORM_ID, ViewChild, OnInit, OnChanges } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 import { ExtendedServerDetails } from '../../pages/server-details/server-details.component';
@@ -19,7 +19,7 @@ import { ToastService } from '../../services/toast.service';
   templateUrl: './server-compare-charts.component.html',
   styleUrl: './server-compare-charts.component.scss'
 })
-export class ServerCompareChartsComponent {
+export class ServerCompareChartsComponent implements OnInit, OnChanges {
 
   @Input() servers: ExtendedServerDetails[] = [];
   @Input() instanceProperties: any[] = [];

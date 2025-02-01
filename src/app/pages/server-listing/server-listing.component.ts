@@ -681,8 +681,8 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     this.serverCompare.openCompare();
   }
 
-  clipboardURL(event: any) {
-    const url = window.location.href;
+  clipboardURL() {
+    let url = window.location.href;
     navigator.clipboard.writeText(url);
 
     this.clipboardIcon = 'check';
