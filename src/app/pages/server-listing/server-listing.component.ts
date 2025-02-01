@@ -16,6 +16,7 @@ import { ServerCompare, ServerCompareService } from '../../services/server-compa
 import { DropdownManagerService } from '../../services/dropdown-manager.service';
 import { AnalyticsService } from '../../services/analytics.service';
 import { Modal, ModalOptions } from 'flowbite';
+import { ToastService } from '../../services/toast.service';
 
 export type TableColumn = {
   name: string;
@@ -194,7 +195,8 @@ export class ServerListingComponent implements OnInit, OnDestroy {
               private storageHandler: StorageHandlerService,
               private dropdownManager: DropdownManagerService,
               private analytics: AnalyticsService,
-              private serverCompare: ServerCompareService) { }
+              private serverCompare: ServerCompareService,
+              private toastService: ToastService) { }
 
   ngOnInit() {
 
@@ -506,6 +508,10 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     }).catch(err => {
       this.analytics.SentryException(err, {tags: { location: this.constructor.name, function: '_searchServers' }});
       console.error(err);
+      this.toastService.show({
+        title: 'Error loading servers. Please try again.',
+        type: 'error'
+      });
     }).finally(() => {
       this.isLoading = false;
     });
@@ -645,8 +651,12 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     navigator.clipboard.writeText(url);
 
     this.clipboardIcon = 'check';
-
-    this.showTooltip(event, 'Link copied to clipboard!', true);
+    
+    this.toastService.show({
+      title: 'Link copied to clipboard!',
+      type: 'success',
+      duration: 1000
+    });
 
     setTimeout(() => {
       this.clipboardIcon = 'clipboard';
