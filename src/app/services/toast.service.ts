@@ -14,12 +14,20 @@ export interface ToastOptions {
   providedIn: 'root'
 })
 export class ToastService {
+  private toastContainer: HTMLDivElement | null = null;
+  private toasts: Map<string, { element: HTMLDivElement, timeoutId: number }> = new Map();
   private platformId = inject(PLATFORM_ID);
-  private toastElement: HTMLElement | null = null;
-  private hideTimeout: any = null;
+
+  constructor() {
+    if (isPlatformBrowser(this.platformId)) {
+      this.toastContainer = document.createElement('div');
+      this.toastContainer.className = 'fixed top-[80px] right-4 z-50 flex flex-col items-end gap-2';
+      document.body.appendChild(this.toastContainer);
+    }
+  }
 
   show(options: ToastOptions) {
-    if (!isPlatformBrowser(this.platformId)) return;
+    if (!isPlatformBrowser(this.platformId) || !this.toastContainer) return;
 
     const {
       title,
@@ -28,25 +36,15 @@ export class ToastService {
       duration = 3000
     } = options;
 
-    // Clear existing timeout
-    if (this.hideTimeout) {
-      clearTimeout(this.hideTimeout);
-    }
-
-    // Create toast element if it doesn't exist
-    if (!this.toastElement) {
-      this.toastElement = document.createElement('div');
-      this.toastElement.id = 'toast-notification';
-      this.toastElement.className = 'fixed top-20 right-5 z-50 transform transition-all duration-300';
-      document.body.appendChild(this.toastElement);
-    }
-
-    // Get color classes based on type
     const colorClasses = this.getColorClasses(type);
-
-    // Set toast content
-    this.toastElement.innerHTML = `
-      <div class="flex flex-col w-full max-w-xs p-4 mb-4 rounded-lg shadow ${colorClasses.background} ${colorClasses.text}" role="alert">
+    const toastId = `toast-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    
+    const toastElement = document.createElement('div');
+    toastElement.style.transition = 'all 300ms ease-in-out';
+    toastElement.style.opacity = '0';
+    toastElement.style.transform = 'translateY(1rem)';
+    toastElement.innerHTML = `
+      <div class="flex flex-col w-full max-w-xs p-4 rounded-lg shadow ${colorClasses.background} ${colorClasses.text}" role="alert">
         <div class="flex items-center w-full">
           <div class="ml-3 text-sm font-semibold">${title}</div>
           <button type="button" class="ml-auto -mx-1.5 -my-1.5 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 inline-flex h-8 w-8 ${colorClasses.hover}" aria-label="Close">
@@ -58,38 +56,40 @@ export class ToastService {
       </div>
     `;
 
-    // Show toast with animation
+    const closeButton = toastElement.querySelector('button');
+    if (closeButton) {
+      closeButton.addEventListener('click', () => this.removeToast(toastId));
+    }
+
+    this.toastContainer.appendChild(toastElement);
+
+    // Trigger entrance animation
     requestAnimationFrame(() => {
-      if (this.toastElement) {
-        this.toastElement.style.opacity = '1';
-        this.toastElement.style.transform = 'translateY(0)';
-      }
+      toastElement.style.opacity = '1';
+      toastElement.style.transform = 'translateY(0)';
     });
 
-    // Add click handler for close button
-    const closeButton = this.toastElement.querySelector('button');
-    if (closeButton) {
-      closeButton.addEventListener('click', () => this.hide());
-    }
-
-    // Auto hide after duration
-    this.hideTimeout = setTimeout(() => {
-      this.hide();
+    const timeoutId = window.setTimeout(() => {
+      this.removeToast(toastId);
     }, duration);
+
+    this.toasts.set(toastId, { element: toastElement, timeoutId });
   }
 
-  private hide() {
-    if (this.toastElement) {
-      this.toastElement.style.opacity = '0';
-      this.toastElement.style.transform = 'translateY(-100%)';
-      
-      setTimeout(() => {
-        if (this.toastElement) {
-          this.toastElement.remove();
-          this.toastElement = null;
-        }
-      }, 300); // Match the transition duration
-    }
+  private removeToast(toastId: string) {
+    const toast = this.toasts.get(toastId);
+    if (!toast) return;
+
+    const { element, timeoutId } = toast;
+    clearTimeout(timeoutId);
+
+    element.style.opacity = '0';
+    element.style.transform = 'translateY(-1rem)';
+
+    element.addEventListener('transitionend', () => {
+      element.remove();
+      this.toasts.delete(toastId);
+    }, { once: true });  // Ensure the listener is only called once
   }
 
   private getColorClasses(type: ToastType): { background: string; text: string; hover: string } {
