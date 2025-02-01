@@ -42,7 +42,7 @@ export class ToastService {
     const toastElement = document.createElement('div');
     toastElement.style.transition = 'all 300ms ease-in-out';
     toastElement.style.opacity = '0';
-    toastElement.style.transform = 'translateY(1rem)';
+    toastElement.style.transform = 'translateX(1rem)';
     toastElement.innerHTML = `
       <div class="flex flex-col w-full max-w-xs p-4 rounded-lg shadow ${colorClasses.background} ${colorClasses.text}" role="alert">
         <div class="flex items-center w-full">
@@ -66,7 +66,7 @@ export class ToastService {
     // Trigger entrance animation
     requestAnimationFrame(() => {
       toastElement.style.opacity = '1';
-      toastElement.style.transform = 'translateY(0)';
+      toastElement.style.transform = 'translateX(0)';
     });
 
     const timeoutId = window.setTimeout(() => {
@@ -84,40 +84,40 @@ export class ToastService {
     clearTimeout(timeoutId);
 
     element.style.opacity = '0';
-    element.style.transform = 'translateY(-1rem)';
+    element.style.transform = 'translateX(100%)';
 
     element.addEventListener('transitionend', () => {
       element.remove();
       this.toasts.delete(toastId);
-    }, { once: true });  // Ensure the listener is only called once
+    }, { once: true });
   }
 
   private getColorClasses(type: ToastType): { background: string; text: string; hover: string } {
     switch (type) {
       case 'success':
         return {
-          background: 'bg-green-100 dark:bg-green-800',
-          text: 'text-green-500 dark:text-green-200',
-          hover: 'hover:bg-green-200 dark:hover:bg-green-700'
+          background: 'bg-emerald-400',
+          text: 'text-white',
+          hover: 'hover:bg-emerald-500'
         };
       case 'error':
         return {
-          background: 'bg-red-100 dark:bg-red-800',
-          text: 'text-red-500 dark:text-red-200',
-          hover: 'hover:bg-red-200 dark:hover:bg-red-700'
+          background: 'bg-red-500',
+          text: 'text-white',
+          hover: 'hover:bg-red-600'
         };
       case 'warning':
         return {
-          background: 'bg-yellow-100 dark:bg-yellow-800',
-          text: 'text-yellow-500 dark:text-yellow-200',
-          hover: 'hover:bg-yellow-200 dark:hover:bg-yellow-700'
+          background: 'bg-yellow-400',
+          text: 'text-white',
+          hover: 'hover:bg-yellow-500'
         };
       case 'info':
       default:
         return {
-          background: 'bg-blue-100 dark:bg-blue-800',
-          text: 'text-blue-500 dark:text-blue-200',
-          hover: 'hover:bg-blue-200 dark:hover:bg-blue-700'
+          background: 'bg-sky-950',
+          text: 'text-white',
+          hover: 'hover:bg-sky-900'
         };
     }
   }
