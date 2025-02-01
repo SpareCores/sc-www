@@ -48,10 +48,6 @@ export class ToastService {
 
     const toastId = id || `toast-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
-    if (id) {
-      this.removeToast(id);
-    }
-
     const toast = document.createElement('div');
     toast.className = 'rounded-lg p-2 transform transition-all duration-300 ease-in-out translate-x-0';
     
@@ -77,6 +73,18 @@ export class ToastService {
       }
     }
 
+    // if there's an existing toast with the same ID, remove before adding the new one
+    const existingToast = this.toasts.get(toastId);
+    if (existingToast) {
+      const { element, timeoutId } = existingToast;
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+      if (element && element.parentNode) {
+        element.parentNode.removeChild(element);
+      }
+      this.toasts.delete(toastId);
+    }
     this.toastContainer.appendChild(toast);
 
     let timeoutId: any;

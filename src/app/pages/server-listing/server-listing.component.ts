@@ -515,10 +515,9 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       query.benchmark_id = this.selectedBenchmarkConfig.benchmark_id;
     }
 
-    this.keeperAPI.searchServers(query).then(servers => {
-      this.toastService.removeToast('query-error');
+    this.keeperAPI.searchServers(query).then(servers => {      
       this.servers = servers?.body;
-
+      
       // set stored selected state
       this.servers?.forEach((server: any) => {
         server.selected = this.serverCompare.selectedForCompare
@@ -528,6 +527,8 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       if(updateTotalCount) {
         this.totalPages = Math.ceil(parseInt(servers?.headers?.get('x-total-count') || '0') / this.limit);
       }
+      
+      this.toastService.removeToast('query-error');
     }).catch(err => {
       this.analytics.SentryException(err, {tags: { location: this.constructor.name, function: '_searchServers' }});
       console.error(err);
