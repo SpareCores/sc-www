@@ -47,8 +47,9 @@
               class="dropdown_button min-w-0 max-w-full"
               (click)="openModal()"
               type="button">
-              <div class="px-4 py-3" *ngIf="!selectedBenchmarkConfig">
-                Select Benchmark
+              <div class="px-4 py-3 flex-1 min-w-0" *ngIf="!selectedBenchmarkConfig">
+                <span class="hidden md:inline truncate block">Select Benchmark</span>
+                <span class="md:hidden truncate block">Benchmark</span>
               </div>
               <div class="px-4 py-0 flex flex-col min-w-0" *ngIf="selectedBenchmarkConfig">
                 <div class="truncate">
