@@ -1,13 +1,12 @@
 ---
-title: "From idea to product: creating Spare Cores"
+title: "Spare Cores introduction and project updates"
 author: Gergely Daroczi
-date: "2025-01-10"
-conference: "Vienna Data Science Group"
-conference_url: "https://viennadatasciencegroup.at"
-conference_talk_url: "https://events.ceu.edu/2025-01-10/ceu-data-analytics-business-jamboree"
-conference_talk_slides: "/assets/slides/ceu-data-jamboree-2024.html#/coverslide"
-conference_talk_video: "https://www.youtube.com/watch?v=RSqD1qEbvJM"
-location: "Vienna, Austria"
+date: "2025-01-30"
+conference: "NGI Search Standup #6"
+conference_url: "https://www.ngisearch.eu/view/Events/"
+conference_talk_url: "https://www.ngisearch.eu/view/Events/Stand-up_meeting"
+conference_talk_slides: "/assets/slides/ngi-search-standup-2025.html#/coverslide"
+location: "Virtual"
 output:
   revealjs::revealjs_presentation:
     theme: white
@@ -45,16 +44,12 @@ document.getElementById("dummy-slide").remove();
 
 <section id="coverslide">
 
-<img src="images/vdsg-bw.png"
-    style="height: 150px; position: fixed; margin-top: 0px; margin-left: 700px; background-color:transparent;"
+<img src="images/NGISearch_logo_tag_icon.svg"
+    style="height: 150px; position: fixed; margin-top: 0px; margin-left: 300px; background-color:transparent;"
 />
-<img src="images/ceu.svg"
-    style="height: 150px; position: fixed; margin-top: 0px; margin-left: 50px; background-color:transparent;"
-/>
-
 
 <h1 class="subtitle" style="color:#eee;font-size:1.75em;text-align: center; margin-top:325px; color:#34d399;">
-  From idea to product:<br />creating Spare Cores
+  Spare Cores introduction<br />and project updates
 </h1>
 
 <h2 class="author" style="color:#eee;padding-top:15px;font-size:1.25em;text-align: center !important;margin-bottom: 0px;">
@@ -62,7 +57,7 @@ document.getElementById("dummy-slide").remove();
 </h2>
 
 <h3 class="author" style="color:#eee;font-size:1.1em;text-align: center !important; font-weight: normal;">
-  Jan 10, 2025
+  Jan 30, 2025
 </h3>
 
 <h3 class="author onlineMode" style="color:#eee;padding-top:25px;font-size:1.1em;text-align: center !important; padding-top: 10px;font-weight: normal; ">
@@ -82,7 +77,7 @@ using our open-source tools and data
 
 <section>
 <section class="titleslide slide level1" data-transition="slide-in fade-out">
-  <h2>&#62;&#62;&#62; from sparecores import why</h2>
+  <h2>&#62;&#62;&#62; from spare_cores import why</h2>
 
 <p class="fragment">Data Science / Machine Learning batch jobs:</p>
 
@@ -105,7 +100,7 @@ responsible for the DS infrastructure to run various algorithm, e.g.
 BUT might require a lot of compute resource depending on the type of the model
 </div>
 
-## >>> from sparecores import why {data-transition="fade-in slide-out"}
+## >>> from spare_cores import why {data-transition="fade-in slide-out"}
 
 <p class="gray">Data Science / Machine Learning batch jobs:</p>
 
@@ -122,18 +117,16 @@ BUT might require a lot of compute resource depending on the type of the model
 
 <div class="notes">
 in short, different tasks (DS in this example) have different compute requirements
-
-NEXT after mentioning varying needs
 </div>
 
-## >>> from sparecores import why
+## >>> from spare_cores import why
 
 ::: {.centered}
 <img style="margin-top:-30px;width:95%;" src="images/adtech-usecase-jobs.png" />
 :::
 
 <div class="notes">
-so we had around 4k jobs/day with varying needs
+to give you an example: we had around 4k jobs/day at a previous role
 
 - Training hierarchical models on a large dataset using R required several hundreds GBs of RAM,
 - NLP models in Python required GPUs,
@@ -142,19 +135,7 @@ so we had around 4k jobs/day with varying needs
 - or submitting new bid amounts on ads on a social network
 </div>
 
-## >>> from sparecores import why
-
-::: {.centered}
-<img style="margin-top:-30px;width:95%;"  src="images/adtech-usecase-job-metrics.png" />
-:::
-
-<div class="notes">
-To give you an example: here's a job that we monitored every few seconds and saw that it doesn't really scale to multiple CPUs, but taking up to ~200 gigs of memory -- probably training a hierarchical model that cannot be paralellized.
-
-so we had around 4k/day ...
-</div>
-
-## >>> from sparecores import why
+## >>> from spare_cores import why
 
 ::: {.colcontainer .mt-60}
 :::: {.col}
@@ -185,7 +166,7 @@ due to developers misconfiguring resource requirements
 and bin packing ...
 </div>
 
-## >>> from sparecores import why
+## >>> from spare_cores import why
 
 ::: {.centered}
 <img class="mt--30" src="images/xkcd_square_packing.png" style="width:45%;" />
@@ -199,7 +180,17 @@ AWS bin packing smaller jobs to already running larger nodes (started for heavy 
 so instead, we decided to roll our own solution after all .. building on the fact that the price of the cloud resources is not discounted by its size .. so running two containers on a larger node VS running on separate nodes make no difference from a pricing perspective
 </div>
 
-## >>> from sparecores import why
+## >>> from spare_cores import why
+
+::: {.centered}
+<img style="margin-top:-30px;width:95%;"  src="images/adtech-usecase-job-metrics.png" />
+:::
+
+<div class="notes">
+To give you an example: here's a job that we monitored every few seconds and saw that it doesn't really scale to multiple CPUs, but taking up to ~200 gigs of memory -- probably training a hierarchical model that cannot be paralellized.
+</div>
+
+## >>> from spare_cores import why
 
 ::: {.centered}
 <img style="margin-top:-30px;width:95%;" src="images/adtech-usecase-job-run.png" />
@@ -209,7 +200,7 @@ so instead, we decided to roll our own solution after all .. building on the fac
 here's an example of a job for which our monitoring system recorded that it can scale to many (100) CPUs, and needs high memory ... so filtered for the matching servers and ordered by price, and tried starting those based on availability
 </div>
 
-## >>> from sparecores import why {data-transition="slide-in none-out"}
+## >>> from spare_cores import why {data-transition="slide-in none-out"}
 
 ::: {.centered}
 <img class="mt--30 w-70" src="images/adtech-usecase-job-stopped-0.png" />
@@ -220,7 +211,7 @@ once the job finished, it updated the compute resource requirements, job status 
 and retries if more compute is needed
 </div>
 
-## >>> from sparecores import why {data-transition="none-in slide-out"}
+## >>> from spare_cores import why {data-transition="none-in slide-out"}
 
 ::: {.centered}
 <img class="mt--30 w-70" src="images/adtech-usecase-job-stopped-0.png" />
@@ -230,7 +221,7 @@ and retries if more compute is needed
 <img class="mt--30 w-70" src="images/adtech-usecase-job-stopped-1.png" />
 :::
 
-## >>> from sparecores import why
+## >>> from spare_cores import why
 
 <p class="bold">Other use-cases:</p>
 
@@ -247,7 +238,7 @@ so it's like AWS Fargate or Google Cloud Run ... but with auto-scaling and much 
 as it seemed useful for many use-cases, we decided and were supported to open-source most of the infra tooling ...
 </div>
 
-## >>> from sparecores import why
+## >>> from spare_cores import why
 
 ::: {.centered}
 <img class="mt--45 w-70" src="images/mikata.png" />
@@ -265,25 +256,9 @@ BUT, it was limited to a single vendor, we also had some new ideas, so it was ti
 
 </section></section>
 
-
 <section>
 <section class="titleslide slide level1">
-  <h2>&#62;&#62;&#62; from sparecores import support</h2>
-
-::: {.centered}
-<img style="margin-top:-30px;width:70%;" src="images/ngi-eu-open-source.png" />
-:::
-
-<aside class="notes">
-TODO
-</aside>
-
-
-</section></section>
-
-<section>
-<section class="titleslide slide level1">
-  <h2>&#62;&#62;&#62; from sparecores import intro</h2>
+  <h2>&#62;&#62;&#62; from spare_cores import intro</h2>
 
 * Open-source tools, database schemas and documentation to inspect and inventory cloud vendors and their compute resource offerings.
 
@@ -315,7 +290,7 @@ We help DevOps, DS, ML, AI, ETL, AV, and other engineering teams to find optimal
 BUT let's focus on the open-source and open-data components ..
 </aside>
 
-## >>> from sparecores import intro
+## >>> from spare_cores import intro
 
 <img style="margin-top:-10px; width:100%;" src="images/homepage-stats-2024q4.png" />
 
@@ -328,7 +303,7 @@ To show you some stats on the data being tracked:
 - already tracking X servers ...
 </aside>
 
-## >>> from sparecores import intro
+## >>> from spare_cores import intro
 
 ::: {.centered}
 <img style="margin-top:-55px;width:95%;" src="images/sc-www-listing.png" />
@@ -338,7 +313,7 @@ To show you some stats on the data being tracked:
 The easiest way to query this data is through our web component, as you can see on the screen ...
 </aside>
 
-## >>> from sparecores import intro
+## >>> from spare_cores import intro
 
 ::: {.centered}
 <img style="margin-top:-55px; width: 90%;" src="images/sc-www-server-details-top.png" />
@@ -348,7 +323,7 @@ The easiest way to query this data is through our web component, as you can see 
 Clicking on a server shows you the technical details of the instance -- much more than what's provided publicly by the vendor, even more than what ChatGPT knows ... as we actually start each machine and inspect the hardware. More on that later.
 </aside>
 
-## >>> from sparecores import intro
+## >>> from spare_cores import intro
 
 ::: {.centered}
 <img style="margin-top:-55px; width: 77.5%;" src="images/sc-www-server-details-prices.png" />
@@ -358,7 +333,7 @@ Clicking on a server shows you the technical details of the instance -- much mor
 Live and historical pricing
 </aside>
 
-## >>> from sparecores import intro
+## >>> from spare_cores import intro
 
 <!-- https://sparecores.com/server/aws/c5d.2xlarge -->
 
@@ -374,7 +349,7 @@ and we also run benchmark scenarios on the servers, e.g.:
 - OpenSSL hash functions and block ciphers
 </aside>
 
-## >>> from sparecores import intro
+## >>> from spare_cores import intro
 
 <img style="margin-top: 0px;" src="images/sc-www-server-details-benchmarks-2.png" />
 
@@ -382,7 +357,7 @@ and we also run benchmark scenarios on the servers, e.g.:
 also running Geekbench 6, which has been a standard tool for some time including workloads for text and image processing, compiling software etc
 </aside>
 
-## >>> from sparecores import intro
+## >>> from spare_cores import intro
 
 ::: {.centered}
 <img style="margin-top:-55px; width: 83%;" src="images/sc-www-server-compare.png" />
@@ -393,7 +368,7 @@ also running Geekbench 6, which has been a standard tool for some time including
 and making all these data available in comparison tables
 </aside>
 
-## >>> from sparecores import intro
+## >>> from spare_cores import intro
 
 ::: {.centered}
 <img style="margin-top:-55px; width: 75%;" src="images/sc-www-server-compare-charts.png" />
@@ -404,7 +379,7 @@ or plots as well for human inspection
 </aside>
 
 
-## >>> from sparecores import intro
+## >>> from spare_cores import intro
 
 ::: {.centered}
 <img style="margin-top:-15px;width:95%;" src="images/sc-keeper-preview.png" />
@@ -414,7 +389,7 @@ or plots as well for human inspection
 for computers, we provide APIs ...
 </aside>
 
-## >>> from sparecores import intro
+## >>> from spare_cores import intro
 
 ```py
 >>> from rich import print as pp
@@ -495,7 +470,7 @@ and SDKs as well, e.g. querying the details of this instance type: SCROLL throug
 
 <section>
 <section class="titleslide slide level1">
-  <h2>&#62;&#62;&#62; sparecores.\_\_dir\_\_()</h2>
+  <h2>&#62;&#62;&#62; spare_cores.\_\_dir\_\_()</h2>
 
 <img style="margin-top:30px; width: 100%;" src="images/sc-components-2024-july.png" />
 
@@ -507,13 +482,13 @@ As mentioned previously, this is made available via multiple components that I'd
 
 <section>
 <section class="titleslide slide level1" data-transition="slide-in none-out">
-  <h2>&#62;&#62;&#62; input("Biggest challenge?")</h2>
+  <h2>&#62;&#62;&#62; spare_cores.challenges("quotas")</h2>
 
 ::: {.centered}
 <img class="fragment" src="images/aws-quota-request-quota.png" style="width:57%;margin-top:-30px;"/>
 :::
 
-## >>> input("Biggest challenge?") {data-transition="none-in slide-out"}
+## >>> spare_cores.challenges("quotas") {data-transition="none-in slide-out"}
 
 ::: {.centered}
 <img src="images/aws-quota-request-quota-achievement-unlocked.png" style="width:57%;margin-top:-30px;"/>
@@ -525,18 +500,18 @@ Never imagined we would be hitting the "quote update request quota" 🤐
 Quite an achievement!
 </aside>
 
-## >>> input("Why not use ChatGPT?!") {data-transition="slide-in none-out"}
+## >>> spare_cores.challenges("LLMs") {data-transition="slide-in none-out"}
 
 ::: {.centered}
 <img class="fragment" style="width:100%;" src="images/chatgpt-datasource.png" />
 :::
 
-## >>> input("Why not use ChatGPT?!") {data-transition="none-in slide-out"}
+## >>> spare_cores.challenges("LLMs") {data-transition="none-in slide-out"}
 
 ::: {.centered}
 <img style="width:100%;" src="images/chatgpt-datasource-highlighted.png" />
 :::
-## >>> input("Burned 150k on this?!")
+## >>> spare_cores.challenges("data")
 
 ::: {.centered}
 <img class="fragment" style="margin-top:-50px; width: 50%; background: none;"  src="images/not-easy.png" />
@@ -603,7 +578,50 @@ so I'm super happy to introduce this cleaned up dataset to you all, which is act
 
 <section>
 <section class="titleslide slide level1" data-transition="slide-in none-out">
-  <h2>&#62;&#62;&#62; from sparecores import team</h2>
+  <h2>&#62;&#62;&#62; changelogs.get("spare_cores")</h2>
+
+. . .
+
+- Featured by the Programatic Engineer's The Pulse
+
+. . .
+
+- Top post on the AWS subreddit
+
+. . .
+
+- 6 conferences in 5 countries (2024)
+
+. . .
+
+- New vendor: UpCloud
+
+. . .
+
+- Web update: Embed any Spare Cores chart as Iframe
+- Web update: Custom list of servers for comparison
+- Web update: Order and filter by any benchmark score
+
+. . .
+
+- New benchmarks: PassMark
+
+## >>> changelogs.get("spare_cores")  {data-transition="none-in slide-out"}
+
+- New benchmarks: LLM inference (`pp` and `tg` up to 32k tokens)
+
+    - SmolLM-135M.Q4_K_M.gguf (135 M params; 100 MB)
+    - Qwen1.5-0.5B-Chat.gguf (0.5 B params; 400 MB)
+    - gemma-2b.Q4_K_M.gguf (2B params; 1.5 GB)
+    - LLaMA-7b.gguf (7B params; 4 GB)
+    - phi-4-q4.gguf (14 B params; 9 GB)
+    - Llama-3.3-70B-Instruct-Q4_K_M.gguf (70 B params; 42 GB)
+
+</section></section>
+
+<section>
+<section class="titleslide slide level1" data-transition="slide-in none-out">
+  <h2>&#62;&#62;&#62; from spare_cores import team</h2>
 
 ::: {.colcontainer .mt-60 .centered}
 :::: {.col}
@@ -624,7 +642,7 @@ so I'm super happy to introduce this cleaned up dataset to you all, which is act
 TODO
 </aside>
 
-## >>> from sparecores import team  {data-transition="none-in slide-out"}
+## >>> from spare_cores import team  {data-transition="none-in slide-out"}
 
 ::: {.colcontainer .mt-60 .centered}
 :::: {.col}
@@ -648,15 +666,25 @@ TODO
 TODO
 </aside>
 
+## >>> from spare_cores import support
+
+::: {.centered}
+<img style="margin-top:-30px;width:70%;" src="images/ngi-eu-open-source.png" />
+:::
+
+<aside class="notes">
+TODO
+</aside>
+
 
 </section></section>
 
 <section>
 <section class="titleslide slide level1" data-transition="slide-in none-out">
-    <!-- https://carbon.now.sh/?bg=rgba%288%2C47%2C73%2C1%29&t=theme%3A0bcewbfyk9yl&wt=none&l=python&width=680&ds=false&dsyoff=20px&dsblur=68px&wc=true&wa=true&pv=5px&ph=5px&ln=false&fl=1&fm=Hack&fs=18px&lh=161%25&si=false&es=2x&wm=false&code=%253E%253E%253E%2520import%2520os%250A%253E%253E%253E%2520import%2520signal%250A%253E%253E%253E%2520os.kill%28os.getpid%28%29%252C%2520signal.SIGKILL%29%2520%2520%250A%250A%253E%253E%253E%2520visit_booth_in_person%28%27C20%27%29%250A%253E%253E%253E%2520browse%28%27https%253A%252F%252Fsparecores.com%27%29%250A%253E%253E%253E%2520email%28%27daroczig%2540sparecores.com%27%29%250A%253E%253E%253E%2520follow%28%27%2540SpareCores%27%29%250A%250A%253E%253E%253E%2520os._exit%28status%253D0%29%250AProcess%2520finished%2520at%252013%253A00%253A00%2520%28Dec%25204%252C%25202024%29%2520 -->
+    <!-- https://carbon.now.sh/?bg=rgba%288%2C47%2C73%2C1%29&t=theme%3A0bcewbfyk9yl&wt=none&l=python&width=680&ds=false&dsyoff=20px&dsblur=68px&wc=true&wa=true&pv=5px&ph=5px&ln=false&fl=1&fm=Hack&fs=18px&lh=161%25&si=false&es=2x&wm=false&code=%253E%253E%253E%2520import%2520os%250A%253E%253E%253E%2520import%2520signal%250A%253E%253E%253E%2520os.kill%28os.getpid%28%29%252C%2520signal.SIGKILL%29%2520%2520%250A%250A%253E%253E%253E%2520visit%28%27https%253A%252F%252Fsparecores.com%27%29%250A%253E%253E%253E%2520email%28%27daroczig%2540sparecores.com%27%29%2520%2520%2520%2520%2520%2520%2520%250A%253E%253E%253E%2520follow%28%27%2540SpareCores%27%29%250A%250A%253E%253E%253E%2520os._exit%28status%253D0%29%250AProcess%2520finished%2520at%252011%253A50%253A00%2520%28Jan%252030%252C%25202024%29%2520 -->
 
 ::: {.centered}
-<img src="images/by-ceu-vdsg-1.png" style="background: none;" class="mt--70 w-75" />
+<img src="images/by-ngi-search-standup-6-1.png" style="background: none;" class="mt--45 w-75" />
 :::
 
 <aside class="notes">
@@ -667,7 +695,7 @@ TODO
 <section data-transition="none">
 
 ::: {.centered}
-<img src="images/by-ceu-vdsg-2.png" style="background: none;" class="mt--70 w-75" />
+<img src="images/by-ngi-search-standup-6-2.png" style="background: none;" class="mt--45 w-75" />
 :::
 
 <aside class="notes">
@@ -678,7 +706,7 @@ TODO
 <section data-transition="none">
 
 ::: {.centered}
-<img src="images/by-ceu-vdsg-3.png" style="background: none;" class="mt--70 w-75" />
+<img src="images/by-ngi-search-standup-6-3.png" style="background: none;" class="mt--45 w-75" />
 :::
 
 <p class="author offlineMode" style="color:#eee;font-size:0.75em;text-align: center !important; margin-top:-40px; padding-top:0px;">

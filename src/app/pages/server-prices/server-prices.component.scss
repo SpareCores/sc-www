@@ -70,7 +70,7 @@
     }
 
     tr {
-      @apply hover:border hover:border-emerald-400 hover:border-solid cursor-pointer;
+      @apply hover:outline hover:outline-1 hover:-outline-offset-1 hover:outline-emerald-400 cursor-pointer;
       td {
         @apply pl-3 pr-2 py-3 text-left text-sm;
       }
