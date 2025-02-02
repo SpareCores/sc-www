@@ -1073,13 +1073,11 @@ public generateChartsData() {
     navigator.clipboard.writeText(url);
     this.clipboardIcon = 'check';
     
-    if(!fragment) {
-      this.toastService.show({
-        title: 'Link copied to clipboard!',
-        type: 'success',
-        duration: 1000
-      });
-    }
+    this.toastService.show({
+      title: 'Link copied to clipboard!',
+      type: 'success',
+      duration: 2000
+    });
 
     setTimeout(() => {
       this.clipboardIcon = 'clipboard';

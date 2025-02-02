@@ -599,7 +599,7 @@ export class ServerPricesComponent implements OnInit {
     this.toastService.show({
       title: 'Link copied to clipboard!',
       type: 'success',
-      duration: 1000
+      duration: 2000
     });
 
     setTimeout(() => {
