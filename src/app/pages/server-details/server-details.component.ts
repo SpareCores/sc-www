@@ -26,6 +26,7 @@ import { DropdownManagerService } from '../../services/dropdown-manager.service'
 import { ServerChartsComponent } from '../../components/server-charts/server-charts.component';
 import { Modal, ModalOptions } from 'flowbite';
 import { EmbedDebugComponent } from '../embed-debug/embed-debug.component';
+import { finalize } from 'rxjs/operators';
 
 Chart.register(annotationPlugin);
 
@@ -145,6 +146,8 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   @ViewChild('tooltipGeekbench') tooltipGB!: ElementRef;
   @ViewChild('giscusParent') giscusParent!: ElementRef;
 
+  isLoading = false;
+
   constructor(@Inject(PLATFORM_ID) private platformId: object,
               @Inject(DOCUMENT) private document: Document,
               private route: ActivatedRoute,
@@ -160,7 +163,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-
+    this.isLoading = true;
     const countryIdtoNamePipe = new CountryIdtoNamePipe();
     this.route.params.subscribe(params => {
       const vendor = params['vendor'];
@@ -462,6 +465,8 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
           this.analytics.SentryException(error, {tags: { location: this.constructor.name, function: 'getServers' }});
           this.keeperResponseErrorMsg = 'Failed to load server data. Please try again later.';
         }
+      }).finally(() => {
+        this.isLoading = false;
       });
     });
   }
