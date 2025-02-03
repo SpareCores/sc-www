@@ -3,6 +3,10 @@
   <div class="content pt-16 pb-16 text-white">
     <app-breadcrumbs [segments]="breadcrumbs"></app-breadcrumbs>
 
+    <div *ngIf="!serverDetails" class="flex justify-center items-center mt-12">
+      <div class="text-2xl text-red-400">{{keeperResponseErrorMsg}}</div>
+    </div>
+
     <div *ngIf="serverDetails"
       id="server_base_info_box"
       class="mx-2 xl:mx-0 flex flex-wrap justify-between rounded-lg gap-8 px-6 py-6 bg-secondary border-emerald-400 border boder-solid mt-12"  >
@@ -429,16 +433,6 @@
   style="opacity: 0;"
   class="max-w-225 absolute z-10 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-secondary border border-solid border-emerald-400 rounded-lg">
   {{tooltipContent}}
-</div>
-
-<div
-  id="toast-danger" #toastDanger
-  class="flex items-center w-full max-w-xs p-4 mb-4 text-white bg-yellow-400 rounded-lg border boder-solid border-red-400" role="alert">
-  <div class="ms-3 text-sm font-normal">{{toastErrorMsg}}</div>
-  <button type="button" class="ms-auto -mx-1.5 -my-1.5 bg-yellow-400 text-white hover:text-gray-200 rounded-lg p-1.5 inline-flex items-center justify-center h-8 w-8 " data-dismiss-target="#toast-danger" aria-label="Close">
-      <span class="sr-only">Close</span>
-      <lucide-icon name="x"></lucide-icon>
-  </button>
 </div>
 
 <!-- Large Modal -->
