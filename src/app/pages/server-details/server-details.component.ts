@@ -408,10 +408,10 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
             }, 100);
 
 
-            const targetElModal = document.getElementById('large-modal');
+            const targetElModal = document.getElementById('embed-charts-modal');
 
             this.modalEmbed = new Modal(targetElModal, optionsModal,  {
-              id: 'large-modal',
+              id: 'embed-charts-modal',
               override: true
             });
 

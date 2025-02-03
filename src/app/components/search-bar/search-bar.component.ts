@@ -101,10 +101,10 @@ export class SearchBarComponent implements OnInit, OnChanges{
 
     if(isPlatformBrowser(this.platformId)) {
 
-      const targetElModal = document.getElementById('large-modal');
+      const targetElModal = document.getElementById('search-prompt-modal');
 
       this.modalSearch = new Modal(targetElModal, optionsModal,  {
-        id: 'large-modal',
+        id: 'search-prompt-modal',
         override: true
       });
     }

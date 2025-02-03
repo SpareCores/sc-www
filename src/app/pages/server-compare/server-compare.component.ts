@@ -461,10 +461,10 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
             this.dropdownCurrency = dropdown;
           });
 
-          const targetElModal = document.getElementById('large-modal');
+          const targetElModal = document.getElementById('embed-compare-modal');
 
           this.modalEmbed = new Modal(targetElModal, optionsModal,  {
-            id: 'large-modal',
+            id: 'embed-compare-modal',
             override: true
           });
         }
