@@ -752,6 +752,12 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   selectBenchmarkConfig(config: any) {
     this.tempSelectedBenchmarkCategory = null;
     this.selectedBenchmarkConfig = config;
+
+    // make sure benchmark column is shown when a benchmark is selected
+    const benchmarkColumn = this.possibleColumns.find(col => col.type === 'benchmark');
+    if (benchmarkColumn) benchmarkColumn.show = true;
+    this.refreshColumns(true);
+
     this.modalBenchmarkSelect?.hide();
     this.updateQueryParams(this.getQueryObjectBase());
     this.modalFilterTerm = null;
