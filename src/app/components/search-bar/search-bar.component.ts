@@ -240,7 +240,7 @@ export class SearchBarComponent implements OnInit, OnChanges{
   }
 
   isParameterDisabled(parameterName: string): boolean {
-    return this.extraParameters && this.extraParameters[parameterName];
+    return this.extraParameters?.[parameterName] != null;
   }
 
   getParameterType(parameter: any) {
@@ -299,7 +299,7 @@ export class SearchBarComponent implements OnInit, OnChanges{
 
   isEnumSelected(param: any, valueOrObj: any) {
     const value = typeof valueOrObj === 'string' ? valueOrObj : valueOrObj.key;
-    return (param.modelValue && param.modelValue.indexOf(value) !== -1);
+    return param.modelValue?.indexOf(value) !== -1;
   }
 
   selectEnumItem(param: any, valueOrObj: any) {
