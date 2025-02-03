@@ -13,11 +13,12 @@ import { SeoHandlerService } from '../../services/seo-handler.service';
 import { TableColumn } from '../server-listing/server-listing.component';
 import { CurrencyOption, availableCurrencies } from '../../tools/shared_data';
 import { DropdownManagerService } from '../../services/dropdown-manager.service';
+import { LoadingSpinnerComponent } from '../../components/loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-storages',
   standalone: true,
-  imports: [CommonModule, FormsModule, BreadcrumbsComponent, LucideAngularModule, CountryIdtoNamePipe, RouterModule, SearchBarComponent, PaginationComponent],
+  imports: [CommonModule, FormsModule, BreadcrumbsComponent, LucideAngularModule, CountryIdtoNamePipe, RouterModule, SearchBarComponent, PaginationComponent, LoadingSpinnerComponent],
   templateUrl: './storages.component.html',
   styleUrl: './storages.component.scss'
 })

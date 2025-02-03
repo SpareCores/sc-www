@@ -18,6 +18,7 @@ import { EmbedComparePreviewComponent } from '../embed-compare-preview/embed-com
 import { Modal, ModalOptions } from 'flowbite';
 import { Allocation } from '../../../../sdk/data-contracts';
 import { ToastService } from '../../services/toast.service';
+import { LoadingSpinnerComponent } from '../../components/loading-spinner/loading-spinner.component';
 
 const optionsModal: ModalOptions = {
   backdropClasses:
@@ -28,7 +29,7 @@ const optionsModal: ModalOptions = {
 @Component({
   selector: 'app-server-compare',
   standalone: true,
-  imports: [BreadcrumbsComponent, LucideAngularModule, CommonModule, FormsModule, RouterModule, ServerCompareChartsComponent, EmbedComparePreviewComponent],
+  imports: [BreadcrumbsComponent, LucideAngularModule, CommonModule, FormsModule, RouterModule, ServerCompareChartsComponent, EmbedComparePreviewComponent, LoadingSpinnerComponent],
   templateUrl: './server-compare.component.html',
   styleUrl: './server-compare.component.scss',
 })

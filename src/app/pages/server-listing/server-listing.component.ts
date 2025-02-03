@@ -17,6 +17,7 @@ import { DropdownManagerService } from '../../services/dropdown-manager.service'
 import { AnalyticsService } from '../../services/analytics.service';
 import { Modal, ModalOptions } from 'flowbite';
 import { ToastService } from '../../services/toast.service';
+import { LoadingSpinnerComponent } from '../../components/loading-spinner/loading-spinner.component';
 
 export type TableColumn = {
   name: string;
@@ -65,7 +66,7 @@ const optionsModal: ModalOptions = {
 @Component({
   selector: 'app-server-listing',
   standalone: true,
-  imports: [CommonModule, FormsModule, BreadcrumbsComponent, LucideAngularModule, CountryIdtoNamePipe, RouterModule, SearchBarComponent, PaginationComponent],
+  imports: [CommonModule, FormsModule, BreadcrumbsComponent, LucideAngularModule, CountryIdtoNamePipe, RouterModule, SearchBarComponent, PaginationComponent, LoadingSpinnerComponent],
   templateUrl: './server-listing.component.html',
   styleUrl: './server-listing.component.scss',
 })

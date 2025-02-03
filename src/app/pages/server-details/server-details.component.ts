@@ -27,6 +27,7 @@ import { ServerChartsComponent } from '../../components/server-charts/server-cha
 import { Modal, ModalOptions } from 'flowbite';
 import { EmbedDebugComponent } from '../embed-debug/embed-debug.component';
 import { finalize } from 'rxjs/operators';
+import { LoadingSpinnerComponent } from '../../components/loading-spinner/loading-spinner.component';
 
 Chart.register(annotationPlugin);
 
@@ -53,7 +54,7 @@ export interface ExtendedServerDetails extends ServerPKs {
 @Component({
   selector: 'app-server-details',
   standalone: true,
-  imports: [BreadcrumbsComponent, CommonModule, LucideAngularModule, FaqComponent, FormsModule, RouterModule, BaseChartDirective, ReduceUnitNamePipe, CountryIdtoNamePipe, ServerChartsComponent, EmbedDebugComponent],
+  imports: [BreadcrumbsComponent, CommonModule, LucideAngularModule, FaqComponent, FormsModule, RouterModule, BaseChartDirective, ReduceUnitNamePipe, CountryIdtoNamePipe, ServerChartsComponent, EmbedDebugComponent, LoadingSpinnerComponent],
   templateUrl: './server-details.component.html',
   styleUrl: './server-details.component.scss'
 })

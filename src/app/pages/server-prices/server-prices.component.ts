@@ -17,6 +17,7 @@ import { CurrencyOption, availableCurrencies } from '../../tools/shared_data';
 import { ServerCompare, ServerCompareService } from '../../services/server-compare.service';
 import { encodeQueryParams } from '../../tools/queryParamFunctions';
 import { ToastService } from '../../services/toast.service';
+import { LoadingSpinnerComponent } from '../../components/loading-spinner/loading-spinner.component';
 
 export type TableColumn = {
   name: string;
@@ -58,7 +59,7 @@ export type RegionVendorMetadata = {
 @Component({
   selector: 'app-server-prices',
   standalone: true,
-  imports: [CommonModule, FormsModule, BreadcrumbsComponent, LucideAngularModule, CountryIdtoNamePipe, RouterModule, SearchBarComponent, PaginationComponent],
+  imports: [CommonModule, FormsModule, BreadcrumbsComponent, LucideAngularModule, CountryIdtoNamePipe, RouterModule, SearchBarComponent, PaginationComponent, LoadingSpinnerComponent],
   templateUrl: './server-prices.component.html',
   styleUrl: './server-prices.component.scss'
 })
