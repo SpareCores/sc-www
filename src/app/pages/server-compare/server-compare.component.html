@@ -86,10 +86,11 @@
 
     </div>
 
-    <div *ngIf="instances.length" id="table_holder" #tableHolder class="overflow-x-auto overflow-y-hidden relative min-h-screen mx-2 xl:mx-0" style="padding-left: 1px;">
-      <div *ngIf="isLoading" class="flex justify-center items-center mt-12">
-        <app-loading-spinner size="md" text="Loading comparison data..."></app-loading-spinner>
-      </div>
+    <div *ngIf="isLoading" class="flex justify-center items-center mt-12 text-white">
+      <app-loading-spinner size="md" text="Loading comparison data..."></app-loading-spinner>
+    </div>
+
+    <div *ngIf="!isLoading && instances.length" id="table_holder" #tableHolder class="overflow-x-auto overflow-y-hidden relative min-h-screen mx-2 xl:mx-0" style="padding-left: 1px;">
       <div *ngIf="isBrowser() && isTableOutsideViewport" class="fixed_thead" [style]="getFixedDivStyle()">
         <table class="items_table" [style]="getMainTableWidth()">
           <thead>
