@@ -126,6 +126,12 @@ export class SearchBarComponent implements OnInit, OnChanges{
     }
 
     this.searchParameters?.forEach((item: any) => {
+      
+      // init modelValue as empty array for enumArray types if not already set
+      if (this.getParameterType(item) === 'enumArray' && !item.modelValue) {
+        item.modelValue = [];
+      }
+
       let value = this.extraParameters[item.name] || this.query[item.name] || item.schema.default || null;
 
       // if type is a string try split by ,
@@ -299,21 +305,21 @@ export class SearchBarComponent implements OnInit, OnChanges{
 
   isEnumSelected(param: any, valueOrObj: any) {
     const value = typeof valueOrObj === 'string' ? valueOrObj : valueOrObj.key;
-    return param.modelValue?.indexOf(value) !== -1;
+    return Array.isArray(param.modelValue) && param.modelValue.includes(value);
   }
 
   selectEnumItem(param: any, valueOrObj: any) {
-    if(!param.modelValue) {
+    if (!Array.isArray(param.modelValue)) {
       param.modelValue = [];
     }
 
     const value = typeof valueOrObj === 'string' ? valueOrObj : valueOrObj.key;
-
     const index = param.modelValue.indexOf(value);
-    if(index !== -1) {
-      param.modelValue.splice(index, 1);
+    
+    if (index !== -1) {
+      param.modelValue = param.modelValue.filter((v: any) => v !== value);
     } else {
-      param.modelValue.push(value);
+      param.modelValue = [...param.modelValue, value];
     }
 
     this.valueChanged();
