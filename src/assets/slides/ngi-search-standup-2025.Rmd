@@ -6,6 +6,7 @@ conference: "NGI Search Standup #6"
 conference_url: "https://www.ngisearch.eu/view/Events/"
 conference_talk_url: "https://www.ngisearch.eu/view/Events/Stand-up_meeting"
 conference_talk_slides: "/assets/slides/ngi-search-standup-2025.html#/coverslide"
+conference_talk_video: "https://www.youtube.com/watch?v=9eSHdynBu8E"
 location: "Virtual"
 output:
   revealjs::revealjs_presentation:
