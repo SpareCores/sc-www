@@ -106,6 +106,6 @@ export class ServerOGComponent implements OnInit {
   }
 
   getBenchmark(isMulti: boolean) {
-    return this.serverDetails.benchmark_scores?.find((b: any) => b.benchmark_id ===  isMulti ? 'stress_ng:bestn' : 'stress_ng:best1')?.score?.toFixed(0) || '-';
+    return this.serverDetails.benchmark_scores?.find((b: any) => b.benchmark_id === (isMulti ? 'stress_ng:bestn' : 'stress_ng:best1'))?.score?.toFixed(0) || '-';
   }
 }
