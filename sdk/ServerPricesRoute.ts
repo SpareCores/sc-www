@@ -55,13 +55,13 @@ export namespace ServerPrices {
        */
       cpu_allocation?: "Shared" | "Burstable" | "Dedicated";
       /**
-       * SCore
+       * Minimum SCore
        * Minimum stress-ng div16 CPU workload score.
        */
       benchmark_score_stressng_cpu_min?: number | null;
       /**
-       * $Core
-       * Minimum stress-ng div16 CPU workload score per USD/hr.
+       * Minimum $Core
+       * Minimum stress-ng div16 CPU workload score per USD/hr (using the best ondemand or spot price of all zones).
        */
       benchmark_score_per_price_stressng_cpu_min?: number | null;
       /**
@@ -346,7 +346,7 @@ export namespace ServerPrices {
         | "T4G"
         | "V100"
         | "V520"
-        | "nvidia-h100-80gb";
+        | "nvidia-h200-141gb";
       /**
        * Limit
        * Maximum number of results.

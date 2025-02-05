@@ -1,5 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Component, ElementRef, Inject, Input, PLATFORM_ID, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, Input, PLATFORM_ID, ViewChild, OnInit, OnChanges } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 import { ExtendedServerDetails } from '../../pages/server-details/server-details.component';
@@ -10,6 +10,7 @@ import { barChartOptionsRedisCompare, barChartOptionsSSLCompare, barChartOptions
 import { DomSanitizer } from '@angular/platform-browser';
 import { DropdownManagerService } from '../../services/dropdown-manager.service';
 import { BaseChartDirective } from 'ng2-charts';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-server-compare-charts',
@@ -18,7 +19,7 @@ import { BaseChartDirective } from 'ng2-charts';
   templateUrl: './server-compare-charts.component.html',
   styleUrl: './server-compare-charts.component.scss'
 })
-export class ServerCompareChartsComponent {
+export class ServerCompareChartsComponent implements OnInit, OnChanges {
 
   @Input() servers: ExtendedServerDetails[] = [];
   @Input() instanceProperties: any[] = [];
@@ -123,7 +124,8 @@ export class ServerCompareChartsComponent {
   constructor(
     @Inject(PLATFORM_ID) private platformId: object,
     private sanitizer: DomSanitizer,
-    private dropdownManager: DropdownManagerService) { }
+    private dropdownManager: DropdownManagerService,
+    private toastService: ToastService) { }
 
   ngOnInit() {
     (this.radarChartOptionsSingle as any).plugins.legend.display = true;
@@ -1061,7 +1063,6 @@ public generateChartsData() {
   }
 
   clipboardURL(event: any, fragment?: string) {
-
     let url = window.location.href;
 
     if(fragment) {
@@ -1070,12 +1071,13 @@ public generateChartsData() {
     }
 
     navigator.clipboard.writeText(url);
-
     this.clipboardIcon = 'check';
-
-    if(!fragment) {
-      this.showTooltip(event, 'Link copied to clipboard!', true);
-    }
+    
+    this.toastService.show({
+      title: 'Link copied to clipboard!',
+      type: 'success',
+      duration: 2000
+    });
 
     setTimeout(() => {
       this.clipboardIcon = 'clipboard';

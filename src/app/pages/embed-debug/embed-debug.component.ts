@@ -5,6 +5,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { LucideAngularModule } from 'lucide-angular';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-embed-debug',
@@ -43,7 +44,8 @@ export class EmbedDebugComponent implements OnInit, OnChanges {
     @Inject(PLATFORM_ID) private platformId: object,
     private route: ActivatedRoute,
     private sanitizer: DomSanitizer,
-    private SEOHandler: SeoHandlerService
+    private SEOHandler: SeoHandlerService,
+    private toastService: ToastService
   ) {
 
   }
@@ -90,6 +92,11 @@ export class EmbedDebugComponent implements OnInit, OnChanges {
     navigator.clipboard.writeText(content);
 
     this.copyIcon = 'check';
+    this.toastService.show({
+      title: 'Link copied to clipboard!',
+      type: 'success',
+      duration: 2000
+    });
     setTimeout(() => {
       this.copyIcon = 'copy';
     }, 2000);

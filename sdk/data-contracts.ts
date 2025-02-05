@@ -91,6 +91,14 @@ export interface Benchmark {
   observed_at?: string;
 }
 
+/** BenchmarkConfig */
+export interface BenchmarkConfig {
+  /** Benchmark Id */
+  benchmark_id: string;
+  /** Config */
+  config: string;
+}
+
 /**
  * BenchmarkScore
  * Results of running Benchmark scenarios on Servers.
@@ -479,7 +487,7 @@ export enum GpuModels {
   T4G = "T4G",
   V100 = "V100",
   V520 = "V520",
-  NvidiaH10080Gb = "nvidia-h100-80gb",
+  NvidiaH200141Gb = "nvidia-h200-141gb",
 }
 
 /** HTTPValidationError */
@@ -1686,6 +1694,10 @@ export interface ServerPKs {
   min_price_ondemand?: number | null;
   /** Score Per Price */
   score_per_price?: number | null;
+  /** Selected Benchmark Score */
+  selected_benchmark_score?: number | null;
+  /** Selected Benchmark Score Per Price */
+  selected_benchmark_score_per_price?: number | null;
   vendor: VendorBase;
 }
 
@@ -2075,6 +2087,10 @@ export interface ServerWithScore {
   min_price_ondemand?: number | null;
   /** Score Per Price */
   score_per_price?: number | null;
+  /** Selected Benchmark Score */
+  selected_benchmark_score?: number | null;
+  /** Selected Benchmark Score Per Price */
+  selected_benchmark_score_per_price?: number | null;
 }
 
 /**
@@ -2811,15 +2827,35 @@ export interface SearchServersServersGetParams {
    */
   cpu_allocation?: "Shared" | "Burstable" | "Dedicated";
   /**
-   * SCore
+   * Minimum SCore
    * Minimum stress-ng div16 CPU workload score.
    */
   benchmark_score_stressng_cpu_min?: number | null;
   /**
-   * $Core
-   * Minimum stress-ng div16 CPU workload score per USD/hr.
+   * Minimum $Core
+   * Minimum stress-ng div16 CPU workload score per USD/hr (using the best ondemand or spot price of all zones).
    */
   benchmark_score_per_price_stressng_cpu_min?: number | null;
+  /**
+   * Benchmark Id
+   * Benchmark id to use as the main score for the server.
+   */
+  benchmark_id?: string;
+  /**
+   * Benchmark Config
+   * Optional benchmark config dict JSON to filter results of a benchmark_id.
+   */
+  benchmark_config?: string | null;
+  /**
+   * Minimum benchmark score
+   * Minimum value of the selected benchmark score.
+   */
+  benchmark_score_min?: number | null;
+  /**
+   * Minimum benchmark score/price
+   * Minimum value of the selected benchmark score per USD/hr (using the best ondemand or spot price of all zones).
+   */
+  benchmark_score_per_price_min?: number | null;
   /**
    * Minimum memory
    * Minimum amount of memory in GBs.
@@ -2895,7 +2931,7 @@ export interface SearchServersServersGetParams {
     | "T4G"
     | "V100"
     | "V520"
-    | "nvidia-h100-80gb";
+    | "nvidia-h200-141gb";
   /**
    * Limit
    * Maximum number of results. Set to -1 for unlimited.
@@ -2963,13 +2999,13 @@ export interface SearchServerPricesServerPricesGetParams {
    */
   cpu_allocation?: "Shared" | "Burstable" | "Dedicated";
   /**
-   * SCore
+   * Minimum SCore
    * Minimum stress-ng div16 CPU workload score.
    */
   benchmark_score_stressng_cpu_min?: number | null;
   /**
-   * $Core
-   * Minimum stress-ng div16 CPU workload score per USD/hr.
+   * Minimum $Core
+   * Minimum stress-ng div16 CPU workload score per USD/hr (using the best ondemand or spot price of all zones).
    */
   benchmark_score_per_price_stressng_cpu_min?: number | null;
   /**
@@ -3254,7 +3290,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "T4G"
     | "V100"
     | "V520"
-    | "nvidia-h100-80gb";
+    | "nvidia-h200-141gb";
   /**
    * Limit
    * Maximum number of results.
@@ -3810,3 +3846,6 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
 
 /** Response Search Traffic Prices Traffic Prices Get */
 export type SearchTrafficPricesTrafficPricesGetData = TrafficPriceWithPKsWithMonthlyTraffic[];
+
+/** Response Search Benchmark Configs Benchmark Configs Get */
+export type SearchBenchmarkConfigsBenchmarkConfigsGetData = BenchmarkConfig[];

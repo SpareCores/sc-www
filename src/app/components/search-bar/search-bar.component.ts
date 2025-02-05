@@ -26,6 +26,7 @@ export class SearchBarComponent implements OnInit, OnChanges{
 
   @Input() query: any = {};
   @Input() searchParameters: any[] = [];
+  @Input() extraParameters: any = {};
   @Input() filterCategories: any[] = [];
   @Input() selectedCurrency: any | null = null;
   @Input() AIAssistantType = 'servers';
@@ -100,10 +101,10 @@ export class SearchBarComponent implements OnInit, OnChanges{
 
     if(isPlatformBrowser(this.platformId)) {
 
-      const targetElModal = document.getElementById('large-modal');
+      const targetElModal = document.getElementById('search-prompt-modal');
 
       this.modalSearch = new Modal(targetElModal, optionsModal,  {
-        id: 'large-modal',
+        id: 'search-prompt-modal',
         override: true
       });
     }
@@ -125,14 +126,20 @@ export class SearchBarComponent implements OnInit, OnChanges{
     }
 
     this.searchParameters?.forEach((item: any) => {
-      let value = this.query[item.name] || item.schema.default || null;
+      
+      // init modelValue as empty array for enumArray types if not already set
+      if (this.getParameterType(item) === 'enumArray' && !item.modelValue) {
+        item.modelValue = [];
+      }
+
+      let value = this.extraParameters[item.name] || this.query[item.name] || item.schema.default || null;
 
       // if type is a string try split by ,
       if(typeof this.query[item.name] === 'string') {
         value = this.query[item.name].indexOf(',') !== -1 ? this.query[item.name].split(',') : this.query[item.name];
       }
 
-      // if only one value is selected as qurry parameter, it is parsed as string, so we need to convert it to array
+      // if only one value is selected as query parameter, it is parsed as string, so we need to convert it to array
       if(this.query[item.name] &&
         (this.getParameterType(item) === 'enumArray' || this.getParameterType(item) === 'compliance_framework' || this.getParameterType(item) === 'vendor' ) &&
         !Array.isArray(this.query[item.name])) {
@@ -142,6 +149,19 @@ export class SearchBarComponent implements OnInit, OnChanges{
       if(this.query[item.name]) {
         if(this.filterCategories.find((column) => column.category_id === item.schema.category_id)) {
           this.filterCategories.find((column) => column.category_id === item.schema.category_id)!.collapsed = false;
+        }
+      }
+
+      if(this.extraParameters[item.name]) {
+        if(typeof this.extraParameters[item.name] === 'string') {
+          value = this.extraParameters[item.name].indexOf(',') !== -1 ? this.extraParameters[item.name].split(',') : this.extraParameters[item.name];
+        }
+
+        // if only one value is selected as query parameter, it is parsed as string, so we need to convert it to array
+        if(this.extraParameters[item.name] &&
+          (this.getParameterType(item) === 'enumArray' || this.getParameterType(item) === 'compliance_framework' || this.getParameterType(item) === 'vendor' ) &&
+          !Array.isArray(this.extraParameters[item.name])) {
+          value = [this.extraParameters[item.name]];
         }
       }
 
@@ -187,7 +207,7 @@ export class SearchBarComponent implements OnInit, OnChanges{
   }
 
   getQueryObject() {
-    const paramObject = this.searchParameters?.map((param: any) => {
+    const paramObject = this.searchParameters?.filter(item => !this.isParameterDisabled(item.name)).map((param: any) => {
       return ((param.modelValue || param.modelValue === false) &&
               param.schema.category_id &&
               param.schema.default !== param.modelValue &&
@@ -223,6 +243,10 @@ export class SearchBarComponent implements OnInit, OnChanges{
     if(!this.searchParameters) return [];
 
     return this.searchParameters?.filter((param: any) => param.schema?.category_id === category);
+  }
+
+  isParameterDisabled(parameterName: string): boolean {
+    return this.extraParameters?.[parameterName] != null;
   }
 
   getParameterType(parameter: any) {
@@ -281,21 +305,21 @@ export class SearchBarComponent implements OnInit, OnChanges{
 
   isEnumSelected(param: any, valueOrObj: any) {
     const value = typeof valueOrObj === 'string' ? valueOrObj : valueOrObj.key;
-    return param.modelValue && param.modelValue.indexOf(value) !== -1;
+    return Array.isArray(param.modelValue) && param.modelValue.includes(value);
   }
 
   selectEnumItem(param: any, valueOrObj: any) {
-    if(!param.modelValue) {
+    if (!Array.isArray(param.modelValue)) {
       param.modelValue = [];
     }
 
     const value = typeof valueOrObj === 'string' ? valueOrObj : valueOrObj.key;
-
     const index = param.modelValue.indexOf(value);
-    if(index !== -1) {
-      param.modelValue.splice(index, 1);
+    
+    if (index !== -1) {
+      param.modelValue = param.modelValue.filter((v: any) => v !== value);
     } else {
-      param.modelValue.push(value);
+      param.modelValue = [...param.modelValue, value];
     }
 
     this.valueChanged();

@@ -26,6 +26,8 @@ import { DropdownManagerService } from '../../services/dropdown-manager.service'
 import { ServerChartsComponent } from '../../components/server-charts/server-charts.component';
 import { Modal, ModalOptions } from 'flowbite';
 import { EmbedDebugComponent } from '../embed-debug/embed-debug.component';
+import { finalize } from 'rxjs/operators';
+import { LoadingSpinnerComponent } from '../../components/loading-spinner/loading-spinner.component';
 
 Chart.register(annotationPlugin);
 
@@ -52,7 +54,7 @@ export interface ExtendedServerDetails extends ServerPKs {
 @Component({
   selector: 'app-server-details',
   standalone: true,
-  imports: [BreadcrumbsComponent, CommonModule, LucideAngularModule, FaqComponent, FormsModule, RouterModule, BaseChartDirective, ReduceUnitNamePipe, CountryIdtoNamePipe, ServerChartsComponent, EmbedDebugComponent],
+  imports: [BreadcrumbsComponent, CommonModule, LucideAngularModule, FaqComponent, FormsModule, RouterModule, BaseChartDirective, ReduceUnitNamePipe, CountryIdtoNamePipe, ServerChartsComponent, EmbedDebugComponent, LoadingSpinnerComponent],
   templateUrl: './server-details.component.html',
   styleUrl: './server-details.component.scss'
 })
@@ -125,7 +127,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   geekScoreSingle: string = '0';
   geekScoreMulti: string = '0';
 
-  toastErrorMsg: string = 'Failed to load server data. Please try again later.';
+  keeperResponseErrorMsg: string = 'Failed to load server data. Please try again later.';
 
   activeFAQ: number = -1;
 
@@ -144,7 +146,8 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   @ViewChild('tooltipDefault') tooltip!: ElementRef;
   @ViewChild('tooltipGeekbench') tooltipGB!: ElementRef;
   @ViewChild('giscusParent') giscusParent!: ElementRef;
-  @ViewChild('toastDanger') toastDanger!: ElementRef;
+
+  isLoading = false;
 
   constructor(@Inject(PLATFORM_ID) private platformId: object,
               @Inject(DOCUMENT) private document: Document,
@@ -161,7 +164,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-
+    this.isLoading = true;
     const countryIdtoNamePipe = new CountryIdtoNamePipe();
     this.route.params.subscribe(params => {
       const vendor = params['vendor'];
@@ -409,10 +412,10 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
             }, 100);
 
 
-            const targetElModal = document.getElementById('large-modal');
+            const targetElModal = document.getElementById('embed-charts-modal');
 
             this.modalEmbed = new Modal(targetElModal, optionsModal,  {
-              id: 'large-modal',
+              id: 'embed-charts-modal',
               override: true
             });
 
@@ -455,17 +458,16 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
       }).catch((error) => {
         console.error(error);
         if(error?.status === 404) {
-          this.toastErrorMsg = 'Server not found. Please try again later.';
+          this.keeperResponseErrorMsg = 'The requested server was not found.';
         } else if(error?.status === 500) {
           this.analytics.SentryException(error, {tags: { location: this.constructor.name, function: 'getServers' }});
-          this.toastErrorMsg = 'Internal server error. Please try again later.';
+          this.keeperResponseErrorMsg = 'Internal server error. Please try again later.';
         } else {
           this.analytics.SentryException(error, {tags: { location: this.constructor.name, function: 'getServers' }});
-          this.toastErrorMsg = 'Failed to load server data. Please try again later.';
+          this.keeperResponseErrorMsg = 'Failed to load server data. Please try again later.';
         }
-        if(isPlatformBrowser(this.platformId)) {
-          this.showToast();
-        }
+      }).finally(() => {
+        this.isLoading = false;
       });
     });
   }
@@ -885,10 +887,6 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     }
 
     this.SEOHandler.setupStructuredData(this.document, [JSON.stringify(json)]);
-  }
-
-  showToast() {
-    this.renderer.addClass(this.toastDanger.nativeElement, 'show');
   }
 
   diffBy(s: ServerPKs, field: keyof ServerPKs) {

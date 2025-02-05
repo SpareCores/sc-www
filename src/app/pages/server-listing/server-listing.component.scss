@@ -50,6 +50,39 @@
   width: calc(100% - 20rem);
 }
 
+.dropdown_input {
+  @apply py-3 ps-14 pe-4 block w-full border-emerald-400 rounded-lg text-sm text-white bg-emerald-400;
+  min-width: 300px;
+}
+
+.dropdown_input::placeholder {
+  color: #fff !important;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px; /* width of the entire scrollbar */
+  height: 5px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  @apply bg-secondary;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #9CA3AF;
+  border-radius: 20px; /* roundness of the scroll thumb */
+  border: 3px solid #9CA3AF; /* creates padding around scroll thumb */
+}
+
+:host ::ng-deep .dropdown_group_button {
+  @apply mx-2 px-2 py-2 text-white bg-emerald-400 items-center gap-x-2 text-sm text-nowrap rounded-md border border-emerald-400 bg-transparent text-emerald-400 shadow-sm focus:outline-none;
+  text-wrap: auto;
+}
+
+:host ::ng-deep .dropdown_group_button:hover {
+  @apply bg-emerald-400 border-emerald-400 focus:border-emerald-400 text-white
+}
+
 .items_table {
   @apply w-full text-white;
 
@@ -106,3 +139,22 @@
     width: 9rem;
   }
 }
+
+.button_list_holder {
+
+  .button_list_item:nth-child(2n+1) {
+    @apply bg-primary;
+  }
+  .button_list_item:nth-child(2n) {
+    @apply bg-secondary;
+  }
+
+  .button_list_item {
+    @apply py-2 text-white border-transparent border hover:border hover:border-emerald-400 hover:border-solid cursor-pointer;
+  }
+
+  .button_list_item.active {
+    @apply border-emerald-400;
+  }
+}
+

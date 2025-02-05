@@ -17,6 +17,8 @@ import { ServerCompareChartsComponent } from "../../components/server-compare-ch
 import { EmbedComparePreviewComponent } from '../embed-compare-preview/embed-compare-preview.component';
 import { Modal, ModalOptions } from 'flowbite';
 import { Allocation } from '../../../../sdk/data-contracts';
+import { ToastService } from '../../services/toast.service';
+import { LoadingSpinnerComponent } from '../../components/loading-spinner/loading-spinner.component';
 
 const optionsModal: ModalOptions = {
   backdropClasses:
@@ -27,7 +29,7 @@ const optionsModal: ModalOptions = {
 @Component({
   selector: 'app-server-compare',
   standalone: true,
-  imports: [BreadcrumbsComponent, LucideAngularModule, CommonModule, FormsModule, RouterModule, ServerCompareChartsComponent, EmbedComparePreviewComponent],
+  imports: [BreadcrumbsComponent, LucideAngularModule, CommonModule, FormsModule, RouterModule, ServerCompareChartsComponent, EmbedComparePreviewComponent, LoadingSpinnerComponent],
   templateUrl: './server-compare.component.html',
   styleUrl: './server-compare.component.scss',
 })
@@ -219,7 +221,8 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     private dropdownManager: DropdownManagerService,
     private analytics: AnalyticsService,
     private router: Router,
-    private route: ActivatedRoute) { }
+    private route: ActivatedRoute,
+    private toastService: ToastService) { }
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
@@ -459,10 +462,10 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
             this.dropdownCurrency = dropdown;
           });
 
-          const targetElModal = document.getElementById('large-modal');
+          const targetElModal = document.getElementById('embed-compare-modal');
 
           this.modalEmbed = new Modal(targetElModal, optionsModal,  {
-            id: 'large-modal',
+            id: 'embed-compare-modal',
             override: true
           });
         }
@@ -529,7 +532,6 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
   }
 
   clipboardURL(event: any, fragment?: string) {
-
     let url = window.location.href;
 
     if(fragment) {
@@ -538,12 +540,13 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     }
 
     navigator.clipboard.writeText(url);
-
     this.clipboardIcon = 'check';
-
-    if(!fragment) {
-      this.showTooltip(event, 'Link copied to clipboard!', true);
-    }
+    
+    this.toastService.show({
+      title: 'Link copied to clipboard!',
+      type: 'success',
+      duration: 2000
+    });
 
     setTimeout(() => {
       this.clipboardIcon = 'clipboard';

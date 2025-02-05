@@ -16,6 +16,8 @@ import { AnalyticsService } from '../../services/analytics.service';
 import { CurrencyOption, availableCurrencies } from '../../tools/shared_data';
 import { ServerCompare, ServerCompareService } from '../../services/server-compare.service';
 import { encodeQueryParams } from '../../tools/queryParamFunctions';
+import { ToastService } from '../../services/toast.service';
+import { LoadingSpinnerComponent } from '../../components/loading-spinner/loading-spinner.component';
 
 export type TableColumn = {
   name: string;
@@ -57,7 +59,7 @@ export type RegionVendorMetadata = {
 @Component({
   selector: 'app-server-prices',
   standalone: true,
-  imports: [CommonModule, FormsModule, BreadcrumbsComponent, LucideAngularModule, CountryIdtoNamePipe, RouterModule, SearchBarComponent, PaginationComponent],
+  imports: [CommonModule, FormsModule, BreadcrumbsComponent, LucideAngularModule, CountryIdtoNamePipe, RouterModule, SearchBarComponent, PaginationComponent, LoadingSpinnerComponent],
   templateUrl: './server-prices.component.html',
   styleUrl: './server-prices.component.scss'
 })
@@ -182,7 +184,8 @@ export class ServerPricesComponent implements OnInit {
               private analytics: AnalyticsService,
               private dropdownManager: DropdownManagerService,
               private serverCompare: ServerCompareService,
-              private storageHandler: StorageHandlerService) { }
+              private storageHandler: StorageHandlerService,
+              private toastService: ToastService) { }
 
   ngOnInit() {
 
@@ -588,13 +591,17 @@ export class ServerPricesComponent implements OnInit {
     this.modalSearch?.hide();
   }
 
-  clipboardURL(event: any) {
-    const url = window.location.href;
+  clipboardURL() {
+    let url = window.location.href;
     navigator.clipboard.writeText(url);
 
     this.clipboardIcon = 'check';
 
-    this.showTooltip(event, 'Link copied to clipboard!', true);
+    this.toastService.show({
+      title: 'Link copied to clipboard!',
+      type: 'success',
+      duration: 2000
+    });
 
     setTimeout(() => {
       this.clipboardIcon = 'clipboard';

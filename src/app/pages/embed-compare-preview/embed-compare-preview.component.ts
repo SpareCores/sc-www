@@ -1,10 +1,11 @@
-import { Component, Inject, Input, PLATFORM_ID } from '@angular/core';
+import { Component, Inject, Input, PLATFORM_ID, OnInit, OnChanges } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-embed-compare-preview',
@@ -13,7 +14,7 @@ import { LucideAngularModule } from 'lucide-angular';
   templateUrl: './embed-compare-preview.component.html',
   styleUrl: './embed-compare-preview.component.scss'
 })
-export class EmbedComparePreviewComponent {
+export class EmbedComparePreviewComponent implements OnInit, OnChanges {
 
   @Input() instances!: string;
   @Input() chartname!: string;
@@ -43,7 +44,8 @@ export class EmbedComparePreviewComponent {
     @Inject(PLATFORM_ID) private platformId: object,
     private route: ActivatedRoute,
     private sanitizer: DomSanitizer,
-    private SEOHandler: SeoHandlerService
+    private SEOHandler: SeoHandlerService,
+    private toastService: ToastService
   ) {
 
   }
@@ -97,6 +99,11 @@ export class EmbedComparePreviewComponent {
     navigator.clipboard.writeText(content);
 
     this.copyIcon = 'check';
+    this.toastService.show({
+      title: 'Link copied to clipboard!',
+      type: 'success',
+      duration: 2000
+    });
     setTimeout(() => {
       this.copyIcon = 'copy';
     }, 2000);

@@ -13,11 +13,12 @@ import { KeeperAPIService } from '../../services/keeper-api.service';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { CurrencyOption, availableCurrencies } from '../../tools/shared_data';
 import { TableColumn } from '../server-listing/server-listing.component';
+import { LoadingSpinnerComponent } from '../../components/loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-traffic-prices',
   standalone: true,
-  imports: [CommonModule, FormsModule, BreadcrumbsComponent, LucideAngularModule, CountryIdtoNamePipe, RouterModule, SearchBarComponent, PaginationComponent],
+  imports: [CommonModule, FormsModule, BreadcrumbsComponent, LucideAngularModule, CountryIdtoNamePipe, RouterModule, SearchBarComponent, PaginationComponent, LoadingSpinnerComponent],
   templateUrl: './traffic-prices.component.html',
   styleUrl: './traffic-prices.component.scss'
 })
@@ -90,12 +91,12 @@ export class TrafficPricesComponent implements OnInit {
     this.searchParameters = parameters;
 
     let limit = this.searchParameters.find((param: any) => param.name === 'limit');
-    if(limit && limit.schema && limit.schema.default) {
+    if(limit?.schema?.default) {
       this.limit = limit.schema.default;
     }
 
     let order = this.searchParameters.find((param: any) => param.name === 'order_by');
-    if(order && order.schema && order.schema.default) {
+    if(order?.schema?.default) {
       this.orderBy = order.schema.default;
     }
 

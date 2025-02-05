@@ -55,15 +55,35 @@ export namespace Servers {
        */
       cpu_allocation?: "Shared" | "Burstable" | "Dedicated";
       /**
-       * SCore
+       * Minimum SCore
        * Minimum stress-ng div16 CPU workload score.
        */
       benchmark_score_stressng_cpu_min?: number | null;
       /**
-       * $Core
-       * Minimum stress-ng div16 CPU workload score per USD/hr.
+       * Minimum $Core
+       * Minimum stress-ng div16 CPU workload score per USD/hr (using the best ondemand or spot price of all zones).
        */
       benchmark_score_per_price_stressng_cpu_min?: number | null;
+      /**
+       * Benchmark Id
+       * Benchmark id to use as the main score for the server.
+       */
+      benchmark_id?: string;
+      /**
+       * Benchmark Config
+       * Optional benchmark config dict JSON to filter results of a benchmark_id.
+       */
+      benchmark_config?: string | null;
+      /**
+       * Minimum benchmark score
+       * Minimum value of the selected benchmark score.
+       */
+      benchmark_score_min?: number | null;
+      /**
+       * Minimum benchmark score/price
+       * Minimum value of the selected benchmark score per USD/hr (using the best ondemand or spot price of all zones).
+       */
+      benchmark_score_per_price_min?: number | null;
       /**
        * Minimum memory
        * Minimum amount of memory in GBs.
@@ -139,7 +159,7 @@ export namespace Servers {
         | "T4G"
         | "V100"
         | "V520"
-        | "nvidia-h100-80gb";
+        | "nvidia-h200-141gb";
       /**
        * Limit
        * Maximum number of results. Set to -1 for unlimited.

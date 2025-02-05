@@ -15,6 +15,9 @@ import { PaginationComponent } from '../../components/pagination/pagination.comp
 import { ServerCompare, ServerCompareService } from '../../services/server-compare.service';
 import { DropdownManagerService } from '../../services/dropdown-manager.service';
 import { AnalyticsService } from '../../services/analytics.service';
+import { Modal, ModalOptions } from 'flowbite';
+import { ToastService } from '../../services/toast.service';
+import { LoadingSpinnerComponent } from '../../components/loading-spinner/loading-spinner.component';
 
 export type TableColumn = {
   name: string;
@@ -53,11 +56,17 @@ export type RegionVendorMetadata = {
   collapsed?: boolean;
 };
 
+const optionsModal: ModalOptions = {
+  backdropClasses:
+      'bg-gray-900/50 fixed inset-0 z-40',
+  closable: true,
+};
+
 
 @Component({
   selector: 'app-server-listing',
   standalone: true,
-  imports: [CommonModule, FormsModule, BreadcrumbsComponent, LucideAngularModule, CountryIdtoNamePipe, RouterModule, SearchBarComponent, PaginationComponent],
+  imports: [CommonModule, FormsModule, BreadcrumbsComponent, LucideAngularModule, CountryIdtoNamePipe, RouterModule, SearchBarComponent, PaginationComponent, LoadingSpinnerComponent],
   templateUrl: './server-listing.component.html',
   styleUrl: './server-listing.component.scss',
 })
@@ -100,6 +109,18 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       orderField: 'score_per_price',
       info: "SCore/price showing stress-ng's div16 performance measured for 1 USD/hour, using the best (usually spot) price of all zones."
     },
+    { name: 'BENCHMARK',
+      show: false,
+      type: 'benchmark',
+      orderField: 'selected_benchmark_score',
+      info: "Performance benchmark score using the selected Benchmark. The value in the second line shows the performance measured for 1 USD/hour, using the best (usually spot) price of all zones."
+    },
+    { name: 'BENCHMARK/USD',
+      show: false,
+      type: 'benchmark_score_per_price',
+      orderField: 'selected_benchmark_score_per_price',
+      info: "Benchmark/price showing the selected benchmark performance measured for 1 USD/hour, using the best (usually spot) price of all zones."
+    },
     { name: 'MEMORY', show: true, type: 'memory', orderField: 'memory_amount' },
     { name: 'STORAGE', show: true, type: 'storage', orderField: 'storage_size' },
     { name: 'STORAGE TYPE', show: false, type: 'text', key: 'storage_type' },
@@ -132,7 +153,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
   dropdownColumn: any;
   dropdownPage: any;
-  modalSearch: any;
+
 
   isLoading = false;
 
@@ -142,12 +163,30 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   modalResponseStr: string[] = [];
 
   vendorMetadata: any[] = [];
+  benchmarkMetadata: any[] = [];
+  benchmarksConfigs: any[] = [];
+  benchmarkCategories: any[] = [];
+  selectedBenchmarkConfig: any = null;
+  modalBenchmarkSelect: any;
+
+  //modal
+  modalText: string = 'Select Benchmark Category';
+  tempfilteredBenchmarkConfigs: any[] = [];
+  tempSelectedBenchmarkCategory: string | null = null;
+  tempSelectedBenchmarkConfig: any = null;
+  modalFilterTerm: string | null = null;
 
   @ViewChild('tooltipDefault') tooltip!: ElementRef;
   clipboardIcon = 'clipboard';
   tooltipContent = '';
 
   sub: any;
+
+  specialServerLists: any[] = require('./special-lists');
+  specialList: any = null;
+  specialParameters: any = {};
+  title: string = 'Cloud Compute Resources';
+  description: string = 'Explore, search, and evaluate the supported cloud compute resources in the table below. This comprehensive comparison includes diverse attributes such as CPU count, detailed processor information, memory, GPU, storage, network speed and capacity, available operating systems. Use the sidebar to filter the results, or enter your freetext query in the "Search prompt" bar. You can also compare servers by selecting at least two rows using the checkboxes.';
 
   constructor(@Inject(PLATFORM_ID) private platformId: object,
               private keeperAPI: KeeperAPIService,
@@ -157,7 +196,8 @@ export class ServerListingComponent implements OnInit, OnDestroy {
               private storageHandler: StorageHandlerService,
               private dropdownManager: DropdownManagerService,
               private analytics: AnalyticsService,
-              private serverCompare: ServerCompareService) { }
+              private serverCompare: ServerCompareService,
+              private toastService: ToastService) { }
 
   ngOnInit() {
 
@@ -172,28 +212,33 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     this.searchParameters = parameters;
 
     let limit = this.searchParameters.find((param: any) => param.name === 'limit');
-    if(limit && limit.schema && limit.schema.default) {
+    if(limit?.schema?.default) {
       this.limit = limit.schema.default;
     }
 
     let order = this.searchParameters.find((param: any) => param.name === 'order_by');
-    if(order && order.schema && order.schema.default) {
-      this.orderBy = order.schema.default;
-    }
+    if(order?.schema?.default) {
+      this.orderBy = order.schema.default;  
+     }
+
+    this.route.params.subscribe(() => {
+      this.setSpecialList();
+      if(this.specialList) {
+       this.breadcrumbs.push({ name: this.specialList.title, url: `/servers/${this.specialList.id}` });
+       this.SEOHandler.updateTitleAndMetaTags(
+          `${this.specialList.title} - Spare Cores`,
+          this.specialList.description,
+          'cloud, server, instance, price, comparison, spot, sparecores');
+      }
+    });
+
+    // initial load is special as we need to decode the benchmark URL param
+    let isInitialLoad = true;
+    let shouldSearchAfterBenchmarks = false;
 
     this.route.queryParams.subscribe((params: Params) => {
       const query: any = JSON.parse(JSON.stringify(params || '{}'));
-
       this.query = query;
-
-      if(query.order_by && query.order_dir) {
-        this.orderBy = query.order_by;
-        this.orderDir = query.order_dir;
-
-        if(this.possibleColumns.find((column) => column.orderField === this.orderBy)) {
-          this.possibleColumns.find((column) => column.orderField === this.orderBy)!.show = true;
-        }
-      }
 
       if(query.page) {
         this.page = parseInt(query.page);
@@ -203,20 +248,91 @@ export class ServerListingComponent implements OnInit, OnDestroy {
         this.limit = parseInt(query.limit);
       }
 
-      const tableColumns: string = query.columns;
+      this.setSpecialList();
+
+      const tableColumns: string = this.specialList?.columns || query.columns;
       if(tableColumns && parseInt(tableColumns) ) {
         const tableColumnsArray: number[] = Number(tableColumns).toString(2).split('').map(Number);
         if(tableColumnsArray.length === this.possibleColumns.length) {
-          this.hasCustomColumns = true;
+          this.hasCustomColumns = query.columns !== undefined;
           this.possibleColumns.forEach((column, index) => {
             column.show = tableColumnsArray[index] === 1;
           });
         }
       }
 
+      if(this.specialList?.order_by && this.specialList?.order_dir) {
+        this.orderBy = this.specialList.order_by;
+        this.orderDir = this.specialList.order_dir;
+      }
+
+      if(query.order_by && query.order_dir) {
+        this.orderBy = query.order_by;
+        this.orderDir = query.order_dir;
+      }
+
+      if(this.orderBy && this.possibleColumns.find((column) => column.orderField === this.orderBy)) {
+        this.possibleColumns.find((column) => column.orderField === this.orderBy)!.show = true;
+      }
+
       this.refreshColumns(false);
 
-      this._searchServers(true);
+      // we don't want to search yet on initial load
+      // as we need to decode the benchmark URL param first,
+      // and will do the search after getBenchmarkConfigs is called
+      if (!isInitialLoad) {
+        this._searchServers(true);
+        return;
+      }
+
+      if (!query.benchmark) {
+        shouldSearchAfterBenchmarks = true;
+      }
+    });
+
+    Promise.all([
+      this.keeperAPI.getServerBenchmarkMeta(),
+      this.keeperAPI.getBenchmarkConfigs()]).then((data) => {
+        this.benchmarkMetadata = data[0]?.body;
+
+        this.benchmarksConfigs = data[1]?.body.map((config: any) => {
+          let template = this.benchmarkMetadata.find((benchmark: any) => benchmark.benchmark_id === config.benchmark_id);
+          return {
+            ...config,
+            config_title: config.config.replaceAll(/[{}"]/g, ''),
+            benchmarkTemplate: template,
+            group: JSON.stringify({group: {title: config.category, name: config.category}})
+          };
+        });
+
+        this.benchmarkCategories = [];
+        this.benchmarksConfigs.forEach((config: any) => {
+          if(!this.benchmarkCategories.find((category: any) => category === config.category)) {
+            this.benchmarkCategories.push(config.category);
+          }
+        });
+
+        // load benchmark id and configuration
+        if (this.specialList?.benchmark_id && this.specialList?.benchmark_config) {
+          this.selectedBenchmarkConfig = this.benchmarksConfigs.find((config: any) => config.benchmark_id === this.specialList.benchmark_id && config.config === this.specialList.benchmark_config);
+        }
+        // allow overriding preselected benchmark via URL parameters
+        const benchmarkDataEncoded = this.route.snapshot.queryParams.benchmark;
+        if(benchmarkDataEncoded) {
+          const benchmarkData = JSON.parse(atob(benchmarkDataEncoded));
+          this.selectedBenchmarkConfig = this.benchmarksConfigs.find((config: any) => config.benchmark_id === benchmarkData.id && config.config === benchmarkData.config);
+        }
+
+        // only search once after benchmarks are loaded on initial load
+        if (shouldSearchAfterBenchmarks || this.route.snapshot.queryParams.benchmark) {
+          this._searchServers(true);
+        }
+
+        if(isPlatformBrowser(this.platformId)) {
+          this.initDropdown();
+        }
+
+        isInitialLoad = false;
     });
 
     if(isPlatformBrowser(this.platformId)) {
@@ -227,7 +343,6 @@ export class ServerListingComponent implements OnInit, OnDestroy {
         });
       });
 
-
       this.dropdownManager.initDropdown('column_button', 'column_options').then((dropdown) => {
         this.dropdownColumn = dropdown;
       });
@@ -235,11 +350,37 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       this.dropdownManager.initDropdown('pagesize_button', 'pagesize_options').then((dropdown) => {
         this.dropdownPage = dropdown;
       });
+
+      const targetElModal = document.getElementById('benchmark-type-modal');
+
+      this.modalBenchmarkSelect = new Modal(targetElModal, optionsModal,  {
+        id: 'benchmark-type-modal',
+        override: true
+      });
     }
+  }
+
+  private async initDropdown() {
+    const { default: HSComboBox } = await import('@preline/combobox');
+    HSComboBox.autoInit();
   }
 
   ngOnDestroy () {
     this.sub?.unsubscribe();
+  }
+
+  setSpecialList() {
+    const id = this.route.snapshot.paramMap.get('id');
+
+    if(id) {
+      this.specialList = this.specialServerLists.find((list) => list.id === id);
+    } else {
+      this.specialList = null;
+    }
+
+    this.specialParameters = this.specialList?.parameters || {};
+    this.title = this.specialList?.title || 'Cloud Compute Resources';
+    this.description = this.specialList?.description || 'Explore, search, and evaluate the supported cloud compute resources in the table below. This comprehensive comparison includes diverse attributes such as CPU count, detailed processor information, memory, GPU, storage, network speed and capacity, available operating systems. Use the sidebar to filter the results, or enter your freetext query in the "Search prompt" bar. You can also compare servers by selecting at least two rows using the checkboxes.';
   }
 
   toggleCollapse() {
@@ -264,7 +405,16 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   }
 
   getScore(value: number | null): string {
-    return value ? value.toFixed(0) : '-';
+    if (!value) return '-';
+    // make sure to show small numbers
+    if (value < 1) {
+      return value.toPrecision(1);
+    }
+    // but suppress decimals for larger numbers, without rounding
+    if (value < 100) {
+      return Number.isInteger(value) ? value.toString() : value.toFixed(2);
+    }
+    return Number.isInteger(value) ? value.toString() : value.toFixed(0);
   }
 
   openServerDetails(server: ServerPKs) {
@@ -286,6 +436,17 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     this.searchOptionsChanged(event);
   }
 
+  /**
+   * Updates URL query parameters
+   * @param event Object containing search/filter parameters from the search form
+   * @description
+   * This method:
+   * - Takes parameters to be added to the URL
+   * - Adds non-filter parameters (ordering, pagination, columns)
+   * - Adds benchmark configuration as JSON/base64 encoded string
+   * - Updates the URL with new query parameters
+   * Note that URL params are also updated at updateQueryParams/encodeQueryParams (TODO refactor)
+   */
   searchOptionsChanged(event: any) {
     const queryObject: any = event;
 
@@ -314,6 +475,14 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       queryParams.columns = columns;
     }
 
+    if(this.selectedBenchmarkConfig) {
+      const benchmarkData = {
+        id: this.selectedBenchmarkConfig.benchmark_id,
+        config: this.selectedBenchmarkConfig.config
+      };
+      queryParams.benchmark = btoa(JSON.stringify(benchmarkData));
+    }
+
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: queryParams
@@ -324,6 +493,17 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     this.isLoading = true;
 
     let query = JSON.parse(JSON.stringify(this.query));
+
+    // drop the encoded benchmark URL parameter since we use the decoded benchmark_id and benchmark_config
+    delete query.benchmark;
+
+    if(query.columns) {
+      delete query.columns;
+    }
+
+    if(this.specialParameters) {
+      query = {...query, ...this.specialParameters};
+    }
 
     if(updateTotalCount) {
       query.add_total_count_header = true;
@@ -340,9 +520,14 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       query.order_dir = this.orderDir;
     }
 
-    this.keeperAPI.searchServers(query).then(servers => {
-      this.servers = servers?.body;
+    if(this.selectedBenchmarkConfig) {
+      query.benchmark_config = this.selectedBenchmarkConfig.config;
+      query.benchmark_id = this.selectedBenchmarkConfig.benchmark_id;
+    }
 
+    this.keeperAPI.searchServers(query).then(servers => {      
+      this.servers = servers?.body;
+      
       // set stored selected state
       this.servers?.forEach((server: any) => {
         server.selected = this.serverCompare.selectedForCompare
@@ -352,9 +537,17 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       if(updateTotalCount) {
         this.totalPages = Math.ceil(parseInt(servers?.headers?.get('x-total-count') || '0') / this.limit);
       }
+      
+      this.toastService.removeToast('query-error');
     }).catch(err => {
       this.analytics.SentryException(err, {tags: { location: this.constructor.name, function: '_searchServers' }});
       console.error(err);
+      this.toastService.show({
+        title: 'Query error!',
+        body: err.error?.detail || 'Please try again later.',
+        type: 'error',
+        id: 'query-error'
+      });
     }).finally(() => {
       this.isLoading = false;
     });
@@ -408,18 +601,36 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       paramObject.columns = columns;
     }
 
+    if(this.selectedBenchmarkConfig) {
+      const benchmarkData = {
+        id: this.selectedBenchmarkConfig.benchmark_id,
+        config: this.selectedBenchmarkConfig.config
+      };
+      paramObject.benchmark = btoa(JSON.stringify(benchmarkData));
+    }
+
     return paramObject;
   }
 
+  /**
+   * Updates the URL query parameters without triggering a page reload
+   * @param object An object containing the query parameters to be encoded
+   * @description
+   * This method:
+   * - calls encodeQueryParams to standardize the URL params
+   * - Updates the browser URL using History API
+   * Note that URL params are also updated at searchOptionsChanged (TODO refactor)
+   */
   updateQueryParams(object: any) {
     const encodedQuery = encodeQueryParams(object);
+    const path = window.location.pathname || '/servers';
 
     if(encodedQuery?.length) {
       // update the URL
-      window.history.pushState({}, '', '/servers?' + encodedQuery);
+      window.history.pushState({}, '', `${path}?${encodedQuery}`);
     } else {
       // remove the query params
-      window.history.pushState({}, '', '/servers');
+      window.history.pushState({}, '', path);
     }
   }
 
@@ -471,13 +682,17 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     this.serverCompare.openCompare();
   }
 
-  clipboardURL(event: any) {
-    const url = window.location.href;
+  clipboardURL() {
+    let url = window.location.href;
     navigator.clipboard.writeText(url);
 
     this.clipboardIcon = 'check';
-
-    this.showTooltip(event, 'Link copied to clipboard!', true);
+    
+    this.toastService.show({
+      title: 'Link copied to clipboard!',
+      type: 'success',
+      duration: 2000
+    });
 
     setTimeout(() => {
       this.clipboardIcon = 'clipboard';
@@ -508,6 +723,49 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
   showAPIReference(item: ServerPKs) {
     return item.display_name !== item.api_reference && item.display_name !== item.api_reference.replace('Standard_', '');
+  }
+
+  openModal() {
+    this.modalText = 'Select Benchmark Category';
+    this.modalBenchmarkSelect.show();
+  }
+
+  closeModal() {
+    this.modalBenchmarkSelect?.hide();
+  }
+
+  selectBenchmarkCategory(category: any, searchTerm: string | null = null) {
+    this.tempSelectedBenchmarkCategory = category;
+
+    if(category) {
+      this.tempfilteredBenchmarkConfigs = this.benchmarksConfigs
+        .filter((config: any) =>
+          (category ==='All' || config.category === category) &&
+          (!searchTerm || config.benchmarkTemplate.name.toLowerCase().includes(searchTerm.toLowerCase()) || config.config.toLowerCase().includes(searchTerm.toLowerCase())));
+      this.modalText = `Select ${this.tempSelectedBenchmarkCategory} Configuration`;
+    } else {
+      this.modalFilterTerm = null;
+      this.modalText = 'Select Benchmark Category';
+    }
+  }
+
+  selectBenchmarkConfig(config: any) {
+    this.tempSelectedBenchmarkCategory = null;
+    this.selectedBenchmarkConfig = config;
+
+    // make sure benchmark column is shown when a benchmark is selected
+    const benchmarkColumn = this.possibleColumns.find(col => col.type === 'benchmark');
+    if (benchmarkColumn) benchmarkColumn.show = true;
+    this.refreshColumns(true);
+
+    this.modalBenchmarkSelect?.hide();
+    this.updateQueryParams(this.getQueryObjectBase());
+    this.modalFilterTerm = null;
+    this._searchServers(true);
+  }
+
+  updateFilterTerm() {
+    this.selectBenchmarkCategory(this.tempSelectedBenchmarkCategory, this.modalFilterTerm);
   }
 
 }

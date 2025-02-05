@@ -8,6 +8,7 @@ import { KeeperAPIService } from '../../services/keeper-api.service';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { ExtendedServerDetails } from '../server-details/server-details.component';
 import { Allocation } from '../../../../sdk/data-contracts';
+import { OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-embedded-compare-chart',
@@ -16,7 +17,7 @@ import { Allocation } from '../../../../sdk/data-contracts';
   templateUrl: './embedded-compare-chart.component.html',
   styleUrl: './embedded-compare-chart.component.scss'
 })
-export class EmbeddedCompareChartComponent {
+export class EmbeddedCompareChartComponent implements OnInit {
 
   showChart: string = 'all';
 

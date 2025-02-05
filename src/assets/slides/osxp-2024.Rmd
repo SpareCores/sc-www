@@ -6,6 +6,7 @@ conference: "Open Source Experience 2024"
 conference_url: "https://www.opensource-experience.com"
 conference_talk_url: "https://www.opensource-experience.com/en/event#conf-16444"
 conference_talk_slides: "/assets/slides/osxp-2024.html#/coverslide"
+conference_talk_video: "https://youtu.be/lGoMdKqte7Q?si=DjOhNbrFqFlFPJf2"
 location: "Paris, France"
 output:
   revealjs::revealjs_presentation:

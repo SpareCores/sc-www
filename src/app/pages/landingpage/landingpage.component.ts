@@ -28,7 +28,7 @@ export class LandingpageComponent implements OnInit {
     '✅ Google Cloud Platform (Done)',
     '✅ Hetzner Cloud (Done)',
     '✅ Microsoft Azure (Done)',
-    '⚙️ UpCloud (In Progress)',
+    '✅ UpCloud (Done)',
     '⚙️ Vultr (In Progress)',
     '🗓️ Oracle Cloud Infrastructure (Planned)',
     '🗓️ Scaleway (Planned)',
@@ -38,19 +38,19 @@ export class LandingpageComponent implements OnInit {
 
   features: any[] = [
     {
-      count: '334',
+      count: '353',
       text: 'availability zones'
     },
     {
-      count: '2014',
+      count: '2344',
       text: 'server types'
     },
     {
-      count: '800,000+',
+      count: '970,000+',
       text: 'benchmark scores'
     },
     {
-      count: '~275,000',
+      count: '~310,000',
       text: 'live price records'
     },
     {
@@ -59,7 +59,7 @@ export class LandingpageComponent implements OnInit {
     },
 
     {
-      count: '~20M',
+      count: '~45M',
       text: 'historical records'
     },
   ];
