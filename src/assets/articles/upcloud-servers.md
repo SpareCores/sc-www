@@ -9,7 +9,7 @@ teaser: Excited to share the detailed hardware specs and performance data on UpC
 image: /assets/images/blog/thumbnails/upcloud-banner.webp
 image_alt: Clipart of rack servers with gauges and sliders. This images was copied from UpCloud's website.
 author: Gergely Daroczi
-tags: [benchmark, performance, score, compute power, upcloud, vendor]
+tags: [benchmark, performance, score, upcloud, vendor, featured]
 ---
 
 We are thrilled to announce that
