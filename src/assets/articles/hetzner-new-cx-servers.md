@@ -8,7 +8,7 @@ teaser: Cheaper and better performance compared to the previous generation of sh
 image: /assets/images/blog/thumbnails/hetzner.jpg
 image_alt: Hetzner Cloud's CX server family media photo taken from Hetzner.com
 author: Gergely Daroczi
-tags: [benchmark, performance, score, compute power, hcloud]
+tags: [benchmark, performance, score, compute power, hcloud, vendor]
 ---
 
 Hetzner Cloud recently <a href="https://www.hetzner.com/news/new-cx-plans/" target="_blank" rel="noopener">announced</a>
