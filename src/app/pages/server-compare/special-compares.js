@@ -60,16 +60,16 @@ LIMIT 25;`,
         server: 'Standard_DC2s_v3'
       },
       {
-        vendor: 'azure',
-        server: 'Standard_D2ps_v5'
-      },
-      {
         vendor: 'hcloud',
         server: 'cax11'
       },
       {
         vendor: 'gcp',
         server: 't2a-standard-2'
+      },
+      {
+        vendor: 'upcloud',
+        server: 'CLOUDNATIVE-2xCPU-4GB'
       }
     ]
   },
@@ -108,6 +108,10 @@ LIMIT 25;`,
       {
         vendor: 'gcp',
         server: 't2a-standard-4'
+      },
+      {
+        vendor: 'upcloud',
+        server: '4xCPU-8GB'
       }
     ]
   },
@@ -146,6 +150,10 @@ LIMIT 25;`,
       {
         vendor: 'hcloud',
         server: 'cax31'
+      },
+      {
+        vendor: 'upcloud',
+        server: 'CLOUDNATIVE-8xCPU-32GB'
       }
     ]
   },
@@ -184,6 +192,10 @@ LIMIT 25;`,
       {
         vendor: 'aws',
         server: 'm8g.4xlarge'
+      },
+      {
+        vendor: 'upcloud',
+        server: 'CLOUDNATIVE-16xCPU-64GB'
       }
     ]
   },
@@ -257,6 +269,10 @@ LIMIT 25;`,
       {
         vendor: 'gcp',
         server: 'e2-medium'
+      },
+      {
+        vendor: 'upcloud',
+        server: 'CLOUDNATIVE-2xCPU-4GB'
       }
     ]
   },

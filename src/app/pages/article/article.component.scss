@@ -28,8 +28,13 @@ div.giscus {
     @apply text-gray-500;
   }
 
+  ul li {
+    @apply list-disc;
+  }
+  ol li {
+    @apply list-decimal;
+  }
   li {
-    @apply list-disc ml-4;
     @apply text-lg;
     @apply my-1;
     @apply ml-8;
