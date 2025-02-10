@@ -78,6 +78,21 @@
           </div>
         </div>
 
+        <div class="flex items-center space-x-2">
+          <input
+            type="checkbox"
+            id="privacyPolicy"
+            formControlName="privacyPolicy"
+            class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none">
+          <label for="privacyPolicy" class="font-medium text-white">
+            I have read and accept the <a href="/legal/privacy-policy" class="text-emerald-500 underline" target="_blank">Privacy Policy</a>.
+          </label>
+        </div>
+        <div *ngIf="contactForm.get('privacyPolicy')?.invalid && contactForm.get('privacyPolicy')?.touched" class="text-sm text-red-500">
+            You must accept our Privacy Policy so that we can process your data and receive your message.
+            If you prefer not to, please consider reaching out to us through other available channels.
+        </div>
+
         <div class="pt-6">
           <button
             type="submit"

@@ -12,7 +12,7 @@ import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadc
 })
 export class ContactComponent implements OnInit {
   contactForm!: FormGroup;
-  
+
   breadcrumbs: BreadcrumbSegment[] = [
     {
       name: 'Home',
@@ -32,7 +32,8 @@ export class ContactComponent implements OnInit {
       affiliation: [''],
       email: ['', [Validators.required, Validators.email]],
       phone: [''],
-      message: ['', [Validators.required]]
+      message: ['', [Validators.required]],
+      privacyPolicy: [false, Validators.requiredTrue]
     });
   }
 
