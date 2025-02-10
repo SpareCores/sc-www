@@ -69,6 +69,12 @@ export class ContactComponent {
     }
   }
 
+  disableAllInputs(): void {
+    Object.keys(this.contactForm.controls).forEach(controlName => {
+      this.contactForm.controls[controlName].disable();
+    });
+  }
+
   onSubmit(): void {
     if (this.contactForm.valid) {
       this.isLoading = true;
@@ -77,10 +83,11 @@ export class ContactComponent {
         this.contactForm.patchValue({ powChallenge: this.powChallenge });
         this.solvePoW(this.powChallenge, 4);
 
-        // Handle form submission after solving PoW
+        // TODO Handle form submission after solving PoW
         console.log('Form submitted', this.contactForm.value);
         this.isSubmitted = true;
-        this.toastService.show({ title: 'Form submitted successfully!', type: 'success' });
+        this.disableAllInputs();
+        this.toastService.show({ title: 'Message sent!', type: 'success' });
       }).catch(() => {
         this.isLoading = false;
       });
