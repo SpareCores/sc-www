@@ -6,6 +6,9 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join, resolve } from 'node:path';
 import bootstrap from './src/main.server';
 import { REQUEST, RESPONSE } from './src/express.tokens';
+import crypto from 'crypto';
+
+const POW_NONCE = process.env['POW_NONCE'] || '';
 
 // The Express app is exported so that it can be used by serverless Functions.
 export function app(): express.Express {
@@ -58,6 +61,19 @@ export function app(): express.Express {
     };
     res.status(200).json(stats);
   });
+
+  // Generate PoW challenge
+  server.get('/api/generate-pow-challenge', (req, res) => {
+    const timestamp = Date.now();
+    const challenge = crypto.randomBytes(16).toString('hex');
+    const hmac = crypto.createHmac('sha256', POW_NONCE);
+    hmac.update(`${challenge}:${timestamp}`);
+    const signature = hmac.digest('hex');
+
+    res.json({ challenge, timestamp, signature });
+  });
+
+  // TODO add post handler for contact form
 
   // redirect from www
   server.use((req, res, next) => {
