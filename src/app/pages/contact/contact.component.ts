@@ -3,11 +3,13 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { CommonModule } from '@angular/common';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import * as crypto from 'crypto-js';
+import { LoadingSpinnerComponent } from '../../components/loading-spinner/loading-spinner.component';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-contact',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, BreadcrumbsComponent],
+  imports: [ReactiveFormsModule, CommonModule, BreadcrumbsComponent, LoadingSpinnerComponent],
   templateUrl: './contact.component.html',
   styleUrls: ['./contact.component.scss']
 })
@@ -25,8 +27,10 @@ export class ContactComponent {
       url: '/contact'
     }
   ];
+  isLoading = false;
+  isSubmitted = false;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private toastService: ToastService) {
     this.contactForm = this.fb.group({
       name: ['', Validators.required],
       affiliation: [''],
@@ -40,10 +44,15 @@ export class ContactComponent {
   }
 
    async fetchChallengeFromServer(): Promise<string> {
-    const response = await fetch('/api/generate-pow-challenge');
-    const data = await response.json();
-    // don't care about the random challenge and timestamp, just the signature
-    return data.signature;
+    try {
+      const response = await fetch('/api/generate-pow-challenge');
+      const data = await response.json();
+      // don't care about the random challenge and timestamp, just the signature
+      return data.signature;
+    } catch (error) {
+      this.toastService.show({ title: 'Failed to fetch PoW challenge. Please try again later!', type: 'error' })
+      throw error;
+    }
   }
 
   solvePoW(challenge: string, difficulty: number): void {
@@ -62,17 +71,19 @@ export class ContactComponent {
 
   onSubmit(): void {
     if (this.contactForm.valid) {
+      this.isLoading = true;
       this.fetchChallengeFromServer().then(challenge => {
         this.powChallenge = challenge;
         this.contactForm.patchValue({ powChallenge: this.powChallenge });
-        // medium difficulty (level 4 => ~1 second to solve)
         this.solvePoW(this.powChallenge, 4);
 
         // Handle form submission after solving PoW
         console.log('Form submitted', this.contactForm.value);
+        this.isSubmitted = true;
+        this.toastService.show({ title: 'Form submitted successfully!', type: 'success' });
+      }).catch(() => {
+        this.isLoading = false;
       });
-    } else {
-      console.log('Form is invalid');
     }
   }
 }
