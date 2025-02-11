@@ -38,27 +38,31 @@ export class ContactComponent {
       phone: [''],
       message: ['', Validators.required],
       privacyPolicy: [false, Validators.requiredTrue],
+      // received from server
       powChallenge: [''],
-      powSolution: [''],
+      powTimestamp: [0],
+      powSignature: [''],
+      // calculated by client
+      powSolution: [0],
       powDuration: [0]
     });
   }
 
-   async fetchChallengeFromServer(): Promise<string> {
+  async fetchChallengeFromServer(): Promise<{ challenge: string, timestamp: number, signature: string }> {
     try {
       const response = await fetch('/api/generate-pow-challenge');
       const data = await response.json();
-      // don't care about the random challenge and timestamp, just the signature
-      return data.signature;
+      return data;
     } catch (error) {
-      this.toastService.show({ title: 'Failed to fetch PoW challenge. Please try again later!', type: 'error' })
+      this.toastService.show({ title: 'Failed to fetch PoW challenge. Please try again later!', type: 'error' });
       throw error;
     }
   }
 
-  solvePoW(challenge: string, difficulty: number): void {
+  solvePoW(challenge: string): void {
     let solution = 0;
-    const target = '0'.repeat(difficulty);
+    // difficulty set to 4
+    const target = '0'.repeat(4);
     const startTime = Date.now();
     while (true) {
       const hash = crypto.SHA256(challenge + solution).toString();
@@ -80,19 +84,43 @@ export class ContactComponent {
     });
   }
 
+  async submitFormToServer(): Promise<void> {
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(this.contactForm.value)
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`Failed to send the message: ${errorData.error || 'Unknown error'}`);
+      }
+
+      this.toastService.show({ title: 'Message sent!', type: 'success' });
+    } catch (error) {
+      this.toastService.show({ title: 'Failed to send message. Please try again later!', type: 'error' });
+      throw error;
+    }
+  }
+
   onSubmit(): void {
     if (this.contactForm.valid) {
       this.isLoading = true;
       this.disableAllInputs();
-      this.fetchChallengeFromServer().then(challenge => {
+      this.fetchChallengeFromServer().then(({ challenge, timestamp, signature }) => {
         this.powChallenge = challenge;
         this.contactForm.patchValue({ powChallenge: this.powChallenge });
-        this.solvePoW(this.powChallenge, 4);
-
-        // TODO Handle form submission after solving PoW
-        console.log('Form submitted', this.contactForm.value);
-        this.isSubmitted = true;
-        this.toastService.show({ title: 'Message sent!', type: 'success' });
+        this.contactForm.patchValue({ powTimestamp: timestamp });
+        this.contactForm.patchValue({ powSignature: signature });
+        this.solvePoW(this.powChallenge);
+        this.submitFormToServer().then(() => {
+          this.isSubmitted = true;
+        }).catch(() => {
+          this.isLoading = false;
+        });
       }).catch(() => {
         this.isLoading = false;
       });

@@ -8,7 +8,7 @@ import bootstrap from './src/main.server';
 import { REQUEST, RESPONSE } from './src/express.tokens';
 import crypto from 'crypto';
 
-const POW_NONCE = process.env['POW_NONCE'] || '';
+const POW_SECRET_KEY = process.env['POW_SECRET_KEY'] || '';
 
 // The Express app is exported so that it can be used by serverless Functions.
 export function app(): express.Express {
@@ -62,18 +62,51 @@ export function app(): express.Express {
     res.status(200).json(stats);
   });
 
-  // Generate PoW challenge
+  // generate PoW challenge for the contact form
   server.get('/api/generate-pow-challenge', (req, res) => {
     const timestamp = Date.now();
     const challenge = crypto.randomBytes(16).toString('hex');
-    const hmac = crypto.createHmac('sha256', POW_NONCE);
+    const hmac = crypto.createHmac('sha256', POW_SECRET_KEY);
     hmac.update(`${challenge}:${timestamp}`);
     const signature = hmac.digest('hex');
-
-    res.json({ challenge, timestamp, signature });
+    console.log(JSON.stringify({"event": "generate-pow-challenge", "challenge": challenge, "timestamp": timestamp, "signature": signature}));
+    res.status(200).json({ challenge, timestamp, signature });
   });
 
-  // TODO add post handler for contact form
+  // handle contact form submission
+  server.post('/api/contact', express.json(), (req, res) => {
+    console.log(JSON.stringify({"event": "contact", "body": req.body}));
+
+    const { powChallenge, powTimestamp, powSignature, powSolution } = req.body;
+
+    // verify that the PoW challenge was not tampered with
+    const hmac = crypto.createHmac('sha256', POW_SECRET_KEY);
+    hmac.update(`${powChallenge}:${powTimestamp}`);
+    const expectedSignature = hmac.digest('hex');
+    if (expectedSignature !== powSignature) {
+      return res.status(400).json({ error: 'Invalid PoW signature' });
+    }
+
+    // verify that the PoW challenge is not too old
+    const currentTime = Date.now();
+    const fiveMinutesInMillis = 5 * 60 * 1000;
+    if (currentTime - powTimestamp > fiveMinutesInMillis) {
+      return res.status(400).json({ error: 'PoW timestamp is too old' });
+    }
+
+    // verify the PoW solution
+    const hash = crypto.createHash('sha256');
+    hash.update(powChallenge + powSolution);
+    const powHash = hash.digest('hex');
+    const difficulty = '0000';
+    if (!powHash.startsWith(difficulty)) {
+      return res.status(400).json({ error: 'Invalid PoW solution' });
+    }
+
+    // TODO emal using env variables
+    res.status(200).json({ status: 'Message sent' });
+    return;
+  });
 
   // redirect from www
   server.use((req, res, next) => {
