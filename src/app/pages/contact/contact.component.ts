@@ -39,7 +39,8 @@ export class ContactComponent {
       message: ['', Validators.required],
       privacyPolicy: [false, Validators.requiredTrue],
       powChallenge: [''],
-      powSolution: ['']
+      powSolution: [''],
+      powDuration: [0]
     });
   }
 
@@ -58,11 +59,15 @@ export class ContactComponent {
   solvePoW(challenge: string, difficulty: number): void {
     let solution = 0;
     const target = '0'.repeat(difficulty);
+    const startTime = Date.now();
     while (true) {
       const hash = crypto.SHA256(challenge + solution).toString();
-      if (hash.startsWith(target)) {
+      // make it more difficult than just looking at the first 4 characters
+      // by enforcing min 1e5 iterations and checking the 5th character for around 50% difficulty increase
+      if (solution > 10000 && hash.startsWith(target) && parseInt(hash[4], 16) <= 7) {
         this.powSolution = solution;
         this.contactForm.patchValue({ powSolution: this.powSolution });
+        this.contactForm.patchValue({ powDuration: Date.now() - startTime });
         break;
       }
       solution++;
@@ -78,6 +83,7 @@ export class ContactComponent {
   onSubmit(): void {
     if (this.contactForm.valid) {
       this.isLoading = true;
+      this.disableAllInputs();
       this.fetchChallengeFromServer().then(challenge => {
         this.powChallenge = challenge;
         this.contactForm.patchValue({ powChallenge: this.powChallenge });
@@ -86,7 +92,6 @@ export class ContactComponent {
         // TODO Handle form submission after solving PoW
         console.log('Form submitted', this.contactForm.value);
         this.isSubmitted = true;
-        this.disableAllInputs();
         this.toastService.show({ title: 'Message sent!', type: 'success' });
       }).catch(() => {
         this.isLoading = false;
