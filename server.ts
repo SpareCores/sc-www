@@ -9,6 +9,7 @@ import { REQUEST, RESPONSE } from './src/express.tokens';
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 import handlebars from 'handlebars';
+import rateLimit from 'express-rate-limit';
 
 const serverDistFolder = dirname(fileURLToPath(import.meta.url));
 const browserDistFolder = resolve(serverDistFolder, '../browser');
@@ -31,6 +32,15 @@ const transporter = nodemailer.createTransport({
     user: SMTP_USER,
     pass: SMTP_PASS,
   },
+});
+
+// max 50 PoW challenge requests from the same IP per 5 minutes
+const powLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000,
+  max: 50,
+  message: { error: 'Too many PoW challenge requests, please try again later' },
+  standardHeaders: true,
+  legacyHeaders: false,
 });
 
 class EmailTemplateManager {
@@ -107,7 +117,7 @@ export function app(): express.Express {
   });
 
   // generate PoW challenge for the contact form
-  server.get('/api/generate-pow-challenge', (req, res) => {
+  server.get('/api/generate-pow-challenge', powLimiter, (req, res) => {
     const timestamp = Date.now();
     const challenge = crypto.randomBytes(16).toString('hex');
     const hmac = crypto.createHmac('sha256', POW_SECRET_KEY);

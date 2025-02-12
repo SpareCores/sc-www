@@ -41,6 +41,7 @@
     "chartjs-plugin-annotation": "^3.0.1",
     "crypto-js": "^4.2.0",
     "express": "^4.19.2",
+    "express-rate-limit": "^7.5.0",
     "flowbite": "^2.3.0",
     "gray-matter": "^4.0.3",
     "handlebars": "^4.7.8",
