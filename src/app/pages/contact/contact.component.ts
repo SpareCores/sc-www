@@ -15,7 +15,6 @@ import { ToastService } from '../../services/toast.service';
 })
 export class ContactComponent {
   contactForm: FormGroup;
-  powChallenge!: string;
   powSolution!: number;
   breadcrumbs: BreadcrumbSegment[] = [
     {
@@ -111,11 +110,10 @@ export class ContactComponent {
       this.isLoading = true;
       this.disableAllInputs();
       this.fetchChallengeFromServer().then(({ challenge, timestamp, signature }) => {
-        this.powChallenge = challenge;
-        this.contactForm.patchValue({ powChallenge: this.powChallenge });
+        this.contactForm.patchValue({ powChallenge: challenge });
         this.contactForm.patchValue({ powTimestamp: timestamp });
         this.contactForm.patchValue({ powSignature: signature });
-        this.solvePoW(this.powChallenge);
+        this.solvePoW(challenge);
         this.submitFormToServer().then(() => {
           this.isSubmitted = true;
         }).catch(() => {
