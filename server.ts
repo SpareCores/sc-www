@@ -7,8 +7,56 @@ import { dirname, join, resolve } from 'node:path';
 import bootstrap from './src/main.server';
 import { REQUEST, RESPONSE } from './src/express.tokens';
 import crypto from 'crypto';
+import nodemailer from 'nodemailer';
+import handlebars from 'handlebars';
 
+const serverDistFolder = dirname(fileURLToPath(import.meta.url));
+const browserDistFolder = resolve(serverDistFolder, '../browser');
+//const browserDistFolder = resolve(serverDistFolder, './static');
+const indexHtml = join(serverDistFolder, 'index.server.html');
+
+const SMTP_HOST = process.env['SMTP_HOST'] || '';
+const SMTP_PORT = parseInt(process.env['SMTP_PORT'] || '587', 10);
+const SMTP_USER = process.env['SMTP_USER'] || '';
+const SMTP_PASS = process.env['SMTP_PASS'] || '';
+const CONTACT_FORM_TO = process.env['CONTACT_FORM_TO'] || '';
 const POW_SECRET_KEY = process.env['POW_SECRET_KEY'] || '';
+
+const transporter = nodemailer.createTransport({
+  host: SMTP_HOST,
+  port: SMTP_PORT,
+  secure: SMTP_PORT === 465,
+  auth: {
+    user: SMTP_USER,
+    pass: SMTP_PASS,
+  },
+});
+
+class EmailTemplateManager {
+  private templates: Map<string, handlebars.TemplateDelegate> = new Map();
+  private templateDir: string = resolve(browserDistFolder, 'email-templates');
+
+  async getTemplate(name: string): Promise<handlebars.TemplateDelegate> {
+    const cached = this.templates.get(name);
+    if (cached) return cached;
+    try {
+      const fs = await import('fs/promises');
+      const templatePath = join(this.templateDir, `${name}.hbs`);
+      const source = await fs.readFile(templatePath, 'utf-8');
+      const compiled = handlebars.compile(source);
+      this.templates.set(name, compiled);
+      return compiled;
+    } catch (error) {
+      console.error(`Failed to load email template '${name}':`, error);
+      throw new Error(`Email template '${name}' not found`);
+    }
+  }
+
+  clearCache() {
+    this.templates.clear();
+  }
+}
+const emailTemplates = new EmailTemplateManager();
 
 // The Express app is exported so that it can be used by serverless Functions.
 export function app(): express.Express {
@@ -33,11 +81,6 @@ export function app(): express.Express {
     next();
   });
 
-  const serverDistFolder = dirname(fileURLToPath(import.meta.url));
-  //const browserDistFolder = resolve(serverDistFolder, '../browser');
-  const browserDistFolder = resolve(serverDistFolder, './static');
-  const indexHtml = join(serverDistFolder, 'index.server.html');
-
   const commonEngine = new CommonEngine({
     enablePerformanceProfiler: process.env['ENABLE_PERFORMANCE_PROFILER'] === "true",
   });
@@ -59,7 +102,7 @@ export function app(): express.Express {
       },
       uptime: process.uptime().toFixed(2)
     };
-    res.status(200).json(stats);
+    return res.status(200).json(stats);
   });
 
   // generate PoW challenge for the contact form
@@ -70,14 +113,14 @@ export function app(): express.Express {
     hmac.update(`${challenge}:${timestamp}`);
     const signature = hmac.digest('hex');
     console.log(JSON.stringify({"event": "generate-pow-challenge", "challenge": challenge, "timestamp": timestamp, "signature": signature}));
-    res.status(200).json({ challenge, timestamp, signature });
+    return res.status(200).json({ challenge, timestamp, signature });
   });
 
   // handle contact form submission
-  server.post('/api/contact', express.json(), (req, res) => {
+  server.post('/api/contact', express.json(), async (req, res) => {
     console.log(JSON.stringify({"event": "contact", "body": req.body}));
 
-    const { powChallenge, powTimestamp, powSignature, powSolution } = req.body;
+    const { powChallenge, powTimestamp, powSignature, powSolution, name, affiliation, email, phone, message } = req.body;
 
     // verify that the PoW challenge was not tampered with
     const hmac = crypto.createHmac('sha256', POW_SECRET_KEY);
@@ -103,9 +146,29 @@ export function app(): express.Express {
       return res.status(400).json({ error: 'Invalid PoW solution' });
     }
 
-    // TODO emal using env variables
-    res.status(200).json({ status: 'Message sent' });
-    return;
+    // send email using the contact template
+    try {
+      const template = await emailTemplates.getTemplate('contact');
+      const htmlContent = template({
+        name,
+        affiliation,
+        email,
+        phone,
+        message
+      });
+      console.log(htmlContent);
+      await transporter.sendMail({
+        from: SMTP_USER,
+        to: CONTACT_FORM_TO,
+        subject: `New Contact Form Message from ${name}`,
+        html: htmlContent,
+        replyTo: email
+      });
+      return res.status(200).json({ status: 'Message sent' });
+    } catch (error) {
+      console.error('Failed to send email:', error);
+      return res.status(500).json({ error: 'Failed to send message' });
+    }
   });
 
   // redirect from www

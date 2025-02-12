@@ -105,23 +105,26 @@ export class ContactComponent {
     }
   }
 
-  onSubmit(): void {
-    if (this.contactForm.valid) {
-      this.isLoading = true;
+  async onSubmit(): Promise<void> {
+    if (!this.contactForm.valid) {
+      return;
+    }
+    this.isLoading = true;
+    try {
       this.disableAllInputs();
-      this.fetchChallengeFromServer().then(({ challenge, timestamp, signature }) => {
-        this.contactForm.patchValue({ powChallenge: challenge });
-        this.contactForm.patchValue({ powTimestamp: timestamp });
-        this.contactForm.patchValue({ powSignature: signature });
-        this.solvePoW(challenge);
-        this.submitFormToServer().then(() => {
-          this.isSubmitted = true;
-        }).catch(() => {
-          this.isLoading = false;
-        });
-      }).catch(() => {
-        this.isLoading = false;
+      const { challenge, timestamp, signature } = await this.fetchChallengeFromServer();
+      this.contactForm.patchValue({ 
+        powChallenge: challenge,
+        powTimestamp: timestamp,
+        powSignature: signature 
       });
+      this.solvePoW(challenge);
+      await this.submitFormToServer();
+      this.isSubmitted = true;
+    } catch (error) {
+      this.contactForm.enable();
+    } finally {
+      this.isLoading = false;
     }
   }
 }
