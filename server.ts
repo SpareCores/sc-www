@@ -19,6 +19,7 @@ const SMTP_HOST = process.env['SMTP_HOST'] || '';
 const SMTP_PORT = parseInt(process.env['SMTP_PORT'] || '587', 10);
 const SMTP_USER = process.env['SMTP_USER'] || '';
 const SMTP_PASS = process.env['SMTP_PASS'] || '';
+const CONTACT_FORM_FROM = process.env['CONTACT_FORM_FROM'] || process.env['SMTP_USER'] || '';
 const CONTACT_FORM_TO = process.env['CONTACT_FORM_TO'] || '';
 const POW_SECRET_KEY = process.env['POW_SECRET_KEY'] || '';
 
@@ -158,7 +159,7 @@ export function app(): express.Express {
       });
       console.log(htmlContent);
       await transporter.sendMail({
-        from: SMTP_USER,
+        from: CONTACT_FORM_FROM,
         to: CONTACT_FORM_TO,
         subject: `New Contact Form Message from ${name}`,
         html: htmlContent,

@@ -5,15 +5,14 @@ the Spare Cores project and ecosystem at sparecores.com.
 
 ## Prerequisites
 
-To compile the project, you need to set up the below environment variables:
+To compile the project, you need to set up the below environment variables at build time:
 
 - NG_APP_BACKEND_BASE_URI: [Keeper API](https://github.com/SpareCores/sc-keeper)
   endpoint to be used on the client-side
 - NG_APP_BACKEND_BASE_URI_SSR: [Keeper API](https://github.com/SpareCores/sc-keeper)
   endpoint to be used on the server-side
 
-This can also be done via defining an `.env` file based on the
-provided `.env.example` template file.
+This can also be done via defining an `.env` file based on the provided `.env.example` template file.
 
 You also need to provide your own Terms of Service and Privacy Policy
 documents as markdown files with YAML front matter (title, date,
@@ -42,6 +41,16 @@ following environment variable(s):
 - NG_APP_SENTRY_PROFILE_SAMPLE_RATE (default to 0)
 - NG_APP_SENTRY_ENVIRONMENT (default to "development")
 - NG_APP_SENTRY_RELEASE
+
+The server-side (runtime) environment variables for sending emails (e.g. on the contact form) are:
+
+- SMTP_HOST
+- SMTP_PORT
+- SMTP_USER
+- SMTP_PASS
+- CONTACT_FORM_TO
+- CONTACT_FORM_FROM
+- POW_SECRET_KEY: the secret key for signing the the Proof of Work (POW) challenges to deterrent spam bots
 
 If you need to update the Keeper SDK, use the `generate-api(-prod)` script.
 
