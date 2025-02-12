@@ -63,15 +63,16 @@ export class ContactComponent {
     // difficulty set to 4
     const target = '0'.repeat(4);
     const startTime = Date.now();
-    while (true) {
+    let solved = false;
+    while (!solved) {
       const hash = crypto.SHA256(challenge + solution).toString();
       // make it more difficult than just looking at the first 4 characters
       // by enforcing min 1e5 iterations and checking the 5th character for around 50% difficulty increase
       if (solution > 10000 && hash.startsWith(target) && parseInt(hash[4], 16) <= 7) {
+        solved = true;
         this.powSolution = solution;
         this.contactForm.patchValue({ powSolution: this.powSolution });
         this.contactForm.patchValue({ powDuration: Date.now() - startTime });
-        break;
       }
       solution++;
     }
