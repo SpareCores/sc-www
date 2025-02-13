@@ -32,7 +32,8 @@
               "src/sitemap.xml",
               "src/robots.txt",
               "src/manifest.webmanifest",
-              "src/_headers"
+              "src/_headers",
+              "src/email-templates"
             ],
             "styles": [
               "src/styles.scss",
