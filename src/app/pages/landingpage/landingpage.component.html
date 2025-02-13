@@ -196,7 +196,7 @@
       </div>
     </div>
   </div>
-  <div class="content_section">
+  <div class="content_section" id="resource_optimization">
     <div class="content">
       <div class="flex flex-col gap-12 justify-center">
         <app-theme-text text="resource_optimization" classes="text-4xl justify-center font-light"></app-theme-text>
@@ -245,7 +245,16 @@
           </div>
         </div>
         <div class="flex justify-center">
-          <button class="btn-primary py-5 px-5" routerLink="/contact">Contact us to learn more!</button>
+          <p class="text-xl w-full lg:w-5/6">Besides our open-source projects, we are also working on a
+          Container-as-a-Service platform to manage the full lifecycle of
+          your containers — including provisioning, monitoring, scaling and
+          scheduling without direct vendor engagement or any infrastructure
+          operations. This is ideal if you do not have the capacity to
+          manage your own cloud environment, but want to leverage the
+          benefits of cloud computing in a cost-efficient and seamless way.</p>
+        </div>
+        <div class="flex justify-center">
+          <button class="btn-primary py-5 px-5" routerLink="/contact">Contact us to learn more</button>
         </div>
       </div>
     </div>
@@ -261,17 +270,18 @@
           <div class="text-2xl mt-8 mb-8 mr-8">
             Spare Cores is the successor to <code>cloudperf</code>, an AWS-focused open
             dataset and toolset for exploring spot prices and <code>stress-ng</code>
-            benchmarks, which began in 2017. This next-generation project was
+            benchmarks, which we started in 2017. This next-generation project was
             launched in Q3 of 2023 and gained momentum in 2024, particularly
             due to the support from <a href="https://www.ngisearch.eu"
             class="underline decoration-dotted hover:text-gray-500"
             target="_blank" rel="noopener">NGI Search</a> funding.
           </div>
-          <div>
-            <a class="flex gap-8 justify-center lg:justify-start"
-               href="https://github.com/SpareCores" target="_blank" rel="noopener">
-              <button class="btn-primary py-4 px-4">Go to GitHub</button>
-              <button class="bg-transparend text-teal-500 py-4 px-4 font-bold hover:text-teal-600">Learn more ></button>
+          <div class="flex gap-8 justify-center lg:justify-start">
+            <a href="https://github.com/SpareCores" target="_blank" rel="noopener">
+              <button class="btn-primary py-4 px-4 flex gap-2"><lucide-icon name="github"></lucide-icon> Check us out on GitHub</button>
+            </a>
+            <a href="/articles?tag=funding">
+              <button class="bg-transparend text-teal-500 py-4 px-4 font-bold hover:text-teal-600">Learn more about who is funding us ></button>
             </a>
           </div>
         </div>
@@ -290,7 +300,7 @@
         <app-theme-text text="project_components" classes="text-4xl justify-center font-light"></app-theme-text>
         <div class="flex gap-4 justify-center">
           <div class="font-mono text-2xl text-center">
-            The status and brief descriptions of all the existing and planned Spare Cores components:
+            The status and brief descriptions of all the existing open-source Spare Cores components:
           </div>
         </div>
         <table class="repo_table mb-8">
