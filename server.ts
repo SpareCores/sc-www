@@ -12,8 +12,8 @@ import handlebars from 'handlebars';
 import rateLimit from 'express-rate-limit';
 
 const serverDistFolder = dirname(fileURLToPath(import.meta.url));
-const browserDistFolder = resolve(serverDistFolder, '../browser');
-//const browserDistFolder = resolve(serverDistFolder, './static');
+//const browserDistFolder = resolve(serverDistFolder, '../browser');
+const browserDistFolder = resolve(serverDistFolder, './static');
 const indexHtml = join(serverDistFolder, 'index.server.html');
 
 const SMTP_HOST = process.env['SMTP_HOST'] || '';
