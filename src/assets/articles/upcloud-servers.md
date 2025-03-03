@@ -130,15 +130,9 @@ our main [Server Comparison](/compare) page with the UpCloud offerings.
 In general, when considering the older generation Zen CPUs, the SCore values are
 not the strongest in the competition. However, the Cloud Native plans offer a
 very good performance/price ratio, especially in PassMark workloads, such as
-encryption or compression, or some memory read operations.
-
-It's also important to highlight that all UpCloud plans come with dedicated CPU
-cores, meaning the cores are not shared with other virtual machines. They are
-not limited by boost credits, and the reported virtual processor cores represent
-actual physical cores, not hyper-threaded logical cores, which is a significant
-advantage compared to Intel-based cloud servers. As a quick example, here's a
-comparison of UpCloud's 4-vCPU Cloud Native plan with four generations of 4-vCPU
-AWS servers with mixed Intel and ARM CPUs:
+encryption or compression, or some memory read operations. As a quick example,
+here's a comparison of UpCloud's 4-vCPU Cloud Native plan with four generations
+of 4-vCPU AWS servers with mixed Intel and ARM CPUs:
 
 <div class="text-center m-2.5 mt-8 mb-6">
   <img class="zoomin w-full"
