@@ -7,7 +7,7 @@ teaser: Excited to share the detailed hardware specs and performance data on UpC
 # 320x220
 # cropped from https://upcloud.com/free-migration-upcloud
 image: /assets/images/blog/thumbnails/upcloud-banner.webp
-image_alt: Clipart of rack servers with gauges and sliders. This images was copied from UpCloud's website.
+image_alt: Clipart of rack servers with gauges and sliders. This image was copied from UpCloud's website.
 author: Gergely Daroczi
 tags: [benchmark, performance, score, upcloud, vendor, featured]
 ---
