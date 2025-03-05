@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+  <body>
+    <div
+      style='background-color:#06263A;color:#242424;font-family:"Helvetica Neue", "Arial Nova", "Nimbus Sans", Arial, sans-serif;font-size:16px;font-weight:400;letter-spacing:0.15008px;line-height:1.5;margin:0;padding:32px 0;min-height:100%;width:100%'
+    >
+      <table
+        align="center"
+        width="100%"
+        style="margin:0 auto;max-width:600px;background-color:#082F49;border-radius:8px;border:1px solid #34D399"
+        role="presentation"
+        cellspacing="0"
+        cellpadding="0"
+        border="0"
+      >
+        <tbody>
+          <tr style="width:100%">
+            <td>
+              <div style="padding:24px 24px 0px 24px;text-align:center">
+                <a
+                  href="https://sparecores.com"
+                  style="text-decoration:none"
+                  target="_blank"
+                  ><img
+                    alt="Spare Cores"
+                    src="https://sparecores.com/assets/images/logos/logo_header.png"
+                    width="250"
+                    style="width:250px;outline:none;border:none;text-decoration:none;vertical-align:middle;display:inline-block;max-width:100%"
+                /></a>
+              </div>
+              <div style="padding:16px 0px 16px 0px">
+                <hr
+                  style="width:100%;border:none;border-top:1px solid #34D399;margin:0"
+                />
+              </div>
+              <div
+                style="color:#FFFFFF;font-weight:normal;padding:0px 24px 16px 24px"
+              >
+                <h2>New Contact Form Submission</h2>
+                <p><strong>From:</strong> {{name}} ({{email}})</p>
+                {{#if affiliation}}
+                <p><strong>Affiliation:</strong> {{affiliation}}</p>
+                {{/if}}
+                {{#if phone}}
+                <p><strong>Phone number:</strong> {{phone}}</p>
+                {{/if}}
+                <p><strong>Message:</strong></p>
+                <p style="white-space: pre-wrap;">{{message}}</p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <table
+        align="center"
+        width="100%"
+        style="margin:0 auto;max-width:600px;"
+        role="presentation"
+        cellspacing="0"
+        cellpadding="0"
+        border="0"
+      >
+        <tbody>
+          <tr style="width:100%">
+            <td>
+                <p style="color:#fff; font-size: 10px; text-align: center;">You are receiving this email because you requested it on <a href="https://sparecores.com" style="color:#34D399;">sparecores.com</a>. If you did not make this request, we apologize for any inconvenience it caused, and you may safely ignore this message or report it to <a href="mailto:legal@sparecores.com" style="color:#34D399;">legal@sparecores.com</a>.</p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </body>
+</html>
