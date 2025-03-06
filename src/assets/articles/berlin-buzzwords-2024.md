@@ -8,7 +8,7 @@ teaser: Debuted Spare Cores at a major in-person conference for the first time! 
 image: /assets/images/blog/thumbnails/berlin-buzzwords-2024-cover.jpg
 image_alt: Screenshot of a slide presented on Spare Cores at the Berlin Buzzwords 2024 conference.
 author: Gergely Daroczi
-tags: [conference, talk, slides, featured]
+tags: [conference, talk, slides]
 ---
 
 We have debuted the Spare Cores project at a major in-person
