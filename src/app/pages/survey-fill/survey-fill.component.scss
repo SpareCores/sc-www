@@ -5,6 +5,22 @@
   label.sd-rating__item-star svg {
     stroke: #34d399;
   }
+  div[data-name="privacy_policy"] {
+    padding: 10px 10px 10px 25px;
+  }
+  code {
+    background-color: #06253A;
+    padding: 2px 4px;
+    border-radius: 4px;
+  }
+  p {
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
+  h3 {
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
 }
 
 .content_outer {
