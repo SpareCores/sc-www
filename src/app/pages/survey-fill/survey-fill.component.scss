@@ -5,8 +5,14 @@
   label.sd-rating__item-star svg {
     stroke: #34d399;
   }
-  div[data-name="privacy_policy"] {
+  div[data-name="legal_checkmark"] {
     padding: 10px 10px 10px 25px;
+  }
+  div[data-name="legal_checkmark"] div.sd-error {
+    padding-left: 10px;
+    margin-top: -30px;
+    margin-left: -25px;
+    margin-bottom: -10px;
   }
   code {
     background-color: #06253A;
@@ -17,9 +23,17 @@
     margin-top: 5px;
     margin-bottom: 5px;
   }
+  h2 {
+    margin-bottom: 20px;
+  }
   h3 {
     margin-top: 20px;
     margin-bottom: 20px;
+  }
+  input.sd-btn {
+    background-color: #34d399;
+    color: #fff;
+    border-radius: 6px;
   }
 }
 
