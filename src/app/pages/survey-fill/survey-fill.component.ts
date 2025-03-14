@@ -52,7 +52,12 @@ export class SurveyFillComponent implements OnInit {
   setup(id: string) {
     this.http.get('assets/surveys/' + id + '.json').subscribe((data: any) => {
 
-      this.SEOhandler.updateTitleAndMetaTags(data.title  + ' - SpareCores', data.description, '');
+      const title = data.title || data.metaTitle || `${id} Survey`;
+      const description = data.description || data.metaDescription;
+      this.SEOhandler.updateTitleAndMetaTags(title + ' - SpareCores', description, '');
+      if (data.ogImage) {
+        this.SEOhandler.updateThumbnail(data.ogImage);
+      }
 
       if (isPlatformBrowser(this.platformId)) {
         this.surveyModel = new Model(data);
