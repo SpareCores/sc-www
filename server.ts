@@ -10,6 +10,7 @@ import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 import handlebars from 'handlebars';
 import rateLimit from 'express-rate-limit';
+import https from 'node:https';
 
 const serverDistFolder = dirname(fileURLToPath(import.meta.url));
 //const browserDistFolder = resolve(serverDistFolder, '../browser');
@@ -23,6 +24,7 @@ const SMTP_PASS = process.env['SMTP_PASS'] || '';
 const CONTACT_FORM_FROM = process.env['CONTACT_FORM_FROM'] || process.env['SMTP_USER'] || '';
 const CONTACT_FORM_TO = process.env['CONTACT_FORM_TO'] || '';
 const POW_SECRET_KEY = process.env['POW_SECRET_KEY'] || '';
+const S3_BUCKET_URL = process.env['S3_BUCKET_URL'] || '';
 
 const transporter = nodemailer.createTransport({
   host: SMTP_HOST,
@@ -179,6 +181,62 @@ export function app(): express.Express {
     } catch (error) {
       console.error('Failed to send email:', error);
       return res.status(500).json({ error: 'Failed to send message' });
+    }
+  });
+
+  // handle survey data submission
+  server.post('/api/survey-data', express.json(), async (req, res) => {
+    try {
+      const { filename, payload } = req.body;
+      const enrichedPayload = {
+        ...payload,
+        clientInfo: {
+          ip: req.headers['x-forwarded-for'] ? (req.headers['x-forwarded-for'] as string).split(',')[0] : req.ip,
+          userAgent: req.headers['user-agent'],
+          country: req.headers['cloudfront-viewer-country'],
+          timestamp: new Date().toISOString()
+        }
+      };
+      console.log(JSON.stringify({
+        event: "survey-data-submission",
+        filename: filename,
+        payload: enrichedPayload,
+        ip: enrichedPayload.clientInfo.ip,
+        timestamp: enrichedPayload.clientInfo.timestamp
+      }));
+
+      const result = await new Promise<{success: boolean, statusCode?: number}>((resolve, reject) => {
+        const url = new URL(filename, S3_BUCKET_URL);
+        const data = JSON.stringify(enrichedPayload);
+        const options = {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Content-Length': Buffer.byteLength(data),
+            'Referer': req.headers['referer'],
+          }
+        };
+        const request = https.request(url, options, (response: any) => {
+          if (response.statusCode !== 200) {
+            resolve({success: false, statusCode: response.statusCode});
+          } else {
+            resolve({success: true});
+          }
+        });
+        request.on('error', (error: Error) => {
+          reject(error);
+        });
+        request.write(data);
+        request.end();
+      });
+      if (!result.success) {
+        console.error(`Failed to save survey data to S3: Status ${result.statusCode}`);
+        return res.status(500).json({ error: 'Failed to save survey data' });
+      }
+      return res.status(200).json({ status: 'Survey data saved' });
+    } catch (error) {
+      console.error('Failed to save survey data to S3:', error);
+      return res.status(500).json({ error: 'Failed to save survey data' });
     }
   });
 
