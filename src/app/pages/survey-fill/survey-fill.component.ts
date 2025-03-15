@@ -125,7 +125,7 @@ export class SurveyFillComponent implements OnInit {
   }
 
   /**
-   * Saves survey response data to S3 storage
+   * Saves survey response data to S3 storage via server API
    * @param payload The survey data payload to save
    * @param event_name Optional event name to append to the filename (e.g. 'submit', 'pageChange')
    * @private
@@ -141,9 +141,12 @@ export class SurveyFillComponent implements OnInit {
     const eventPart = event_name ? `_${event_name}` : '';
     const currentTimestamp = Date.now();
     const filename = `id_${this.visitorID}${eventPart}_timestamp_${currentTimestamp}`;
-    const payloadString = JSON.stringify(payload);
     try {
-      this.http.put('https://eibaishapeexooyahs2chei9gohd4che.s3.eu-central-1.amazonaws.com/' + filename, payloadString).subscribe(() => {
+      this.http.post('/api/survey-data', {
+        filename: filename,
+        payload: payload
+      }).subscribe({
+        error: (error) => console.error('Failed to save survey data', error)
       });
     } catch (e) {
       console.error('Failed to save survey data', e);
