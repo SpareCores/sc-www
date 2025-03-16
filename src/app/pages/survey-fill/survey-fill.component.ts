@@ -105,6 +105,7 @@ export class SurveyFillComponent implements OnInit {
     payload.pageChangedAt = Date.now();
     payload.finishedPageIndex = options.oldCurrentPage.visibleIndex + 1;
     payload.isComplete = false;
+    this.analytics.trackEvent('survey pageChange', payload);
     this.saveSurveyData(payload, 'pageChange' + payload.finishedPageIndex);
   }
 
