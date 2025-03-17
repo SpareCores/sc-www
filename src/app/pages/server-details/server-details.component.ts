@@ -303,7 +303,8 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
           this.description += `, ${this.getMemory()} of memory and ${this.getStorage()} of storage.`;
 
           if(this.serverDetails.prices[0]) {
-            this.description += ` The pricing starts at ${this.serverDetails.prices[0].price} ${this.serverDetails.prices[0].currency} per hour.`;
+            const roundedPrice = Math.round(this.serverDetails.prices[0].price * 1000000) / 1000000;
+            this.description += ` The pricing starts at ${roundedPrice} ${this.serverDetails.prices[0].currency} per hour.`;
           }
 
           this.faqs = [
