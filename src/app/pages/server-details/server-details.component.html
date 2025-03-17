@@ -460,7 +460,7 @@
               </button>
           </div>
           <div class="space-y-4 flex flex-col">
-              <app-embed-debug *ngIf="serverDetails"
+              <app-embed-debug *ngIf="serverDetails && isModalOpen"
                 [id]="serverDetails.server_id"
                 [vendor]="serverDetails.vendor_id"
                 [isModal]="true"

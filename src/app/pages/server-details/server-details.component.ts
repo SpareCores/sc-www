@@ -148,6 +148,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   @ViewChild('giscusParent') giscusParent!: ElementRef;
 
   isLoading = false;
+  isModalOpen = false;
 
   constructor(@Inject(PLATFORM_ID) private platformId: object,
               @Inject(DOCUMENT) private document: Document,
@@ -945,11 +946,15 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   }
 
   openModal() {
+    this.isModalOpen = true;
     this.modalEmbed?.show();
   }
 
   closeModal(confirm: boolean) {
     this.modalEmbed?.hide();
+    setTimeout(() => {
+      this.isModalOpen = false;
+    }, 300);
   }
 
 }
