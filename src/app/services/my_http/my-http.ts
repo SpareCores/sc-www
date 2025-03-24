@@ -28,7 +28,8 @@ const BACKEND_BASE_URI_SSR = import.meta.env['NG_APP_BACKEND_BASE_URI_SSR'];
         }
 
         const headers = new HttpHeaders({
-            'Content-Type': type || 'application/json'
+            'Content-Type': type || 'application/json',
+            'X-Application-ID': 'sc-www',
         });
 
         const response: any = await this._requestWithRetries(method, url, body, headers);
