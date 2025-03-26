@@ -8,7 +8,7 @@ teaser: "The program benefits boost and extend our performance benchmarking effo
 image: /assets/images/blog/thumbnails/nvidia-inception-banner.png
 image_alt: Image showing the logos of the NVIDIA Inception Program and Spare Cores, next to a laptop with charts on it.
 author: Gergely Daroczi
-tags: [nvidia-inception, funding, featured]
+tags: [nvidia-inception, funding]
 ---
 
 We are excited and proud to announce that,
