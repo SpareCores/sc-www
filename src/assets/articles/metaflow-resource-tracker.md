@@ -267,3 +267,34 @@ And yes, it works in local and remote executions as well, so you can use it in
 Kubernetes (`@kubernetes`), AWS Batch (`@batch`), or your other preferred remote
 compute service.
 
+## Roadmap
+
+The resource tracker is living its early days, and we have plans to extend it
+with many more open-source and some centrally managed enterprise features as
+well, including
+
+- A 360° dashboard to track historical resource usage for all your steps,
+  complete with anomaly annotations, future trend predictions, and tailored
+  recommendations.
+- Proactive resource monitoring and alerting about overprovisioning and
+  potential job failures due to insufficient allocated resources.
+- Automated `@resources` tuning so that you can focus on your code and models
+  while the resource tracker optimizes the infrastructure parameters.
+- More granular, line-by-line resource tracking of steps, complementing the
+  time-based approach.
+- Recommendations for splitting steps when resource usage patterns change, such
+  as separating data loading from model training.
+
+A quick peek at that latter planned feature:
+
+<img src="/assets/images/resource_tracker/resource-usage-code-optimizer.webp" style="padding: 0px 0px 0px 30px;">
+
+Please find more details and optionally subscribe to our related announcements at
+<a href="/feedback/metaflow-resource-tracker">sparecores.com/feedback/metaflow-resource-tracker</a>.
+
+## Feedback
+
+We are always looking for feedback and suggestions, so please share your
+thoughts and suggestions either below in the comment box, or open a ticket in
+our <a href="https://github.com/sparecores/resource-tracker/issues/new"
+target="_blank">GitHub repository</a> 🙇
