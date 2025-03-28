@@ -1,6 +1,6 @@
 ---
 # ~50 chars
-title: Optimizing Resource Usage for Batch Jobs
+title: Optimizing Resource Usage of Batch Jobs
 date: 2025-03-28
 # ~100 character
 teaser: Seamlessly track the resource usage of e.g. Metaflow steps and find the best value servers for any workload!
