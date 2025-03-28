@@ -81,3 +81,26 @@ extra dependency, while the `procfs` implementation works without any additional
 dependencies, but only on Linux. This latter can be useful when deploying cloud
 applications in limited environments without easy control over the dependencies
 (e.g. Metaflow step decorator without explicit `@pypi` config).
+
+## Installation
+
+The
+<a href="https://pypi.org/project/resource-tracker/" target="_blank">
+  `resource-tracker` package
+  <img src="https://img.shields.io/pypi/v/resource-tracker?color=%2332C955" alt="resource-tracker package on PyPI" style="display: inline-block; vertical-align: middle;"/>
+</a>
+is available on PyPI, so you can install it with:
+
+```sh
+pip install resource-tracker
+```
+
+Development version can be installed directly from the git repository:
+
+```sh
+pip install \
+  git+https://github.com/sparecores/resource-tracker.git
+```
+
+Note that depending on your operating system, you might need to also install
+`psutil` (e.g. on MacOS and Windows).
