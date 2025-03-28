@@ -144,3 +144,126 @@ processes, but simply log resource usage to the standard output or a file. For
 more details, consult the package documentation, including detailed API
 references at <https://sparecores.github.io/resource-tracker/>.
 
+## Beyond Tracking
+
+But again, why would you bother with all this? Our initial goal was to provide a
+super simple way to track the resource usage of your Python application, and
+then automatically find the best value servers for your workload based on the
+collected data. So data collection is an essential first step, but then we need
+analytics to dive deeper into the data, and a recommender system integrated into
+the Spare Cores data to find the best value servers for your workload.
+
+This more complex scenario works best with a framework that can handle both the
+data collection and the analytics etc. in an automated way, but we did not want
+to come up with a new `n+1th` standard for that ... instead we decided to look
+at the existing solutions and how we can integrate with them without much
+compromises.
+
+## Metaflow Integration
+
+<a href="https://metaflow.org/" target="_blank">Metaflow</a> is a popular
+workflow orchestration framework for data science and machine learning,
+providing powerful features like automatically versioned artifacts, HTML-based
+step reports potentially including complex visualization, scalability etc., but
+it lacks detailed step-level resource monitoring.
+
+Integrating `resource-tracker` via a Metaflow extension seemed like an ideal
+solution to address this gap: offering comprehensive step profiling and
+automated cloud resource recommendations in a seamless way, so that you can
+focus on your work.
+
+The `resource-tracker` package already provides this Metaflow extension, so
+making use of it is as simple as adding the `@resource_tracker` decorator to
+your steps:
+
+```python
+from time import sleep
+
+from metaflow import FlowSpec, step, track_resources
+
+
+class MinimalFlow(FlowSpec):
+    @step
+    def start(self):
+        print("Starting")
+        self.next(self.do_heavy_computation)
+
+    @track_resources
+    @step
+    def do_heavy_computation(self):
+        # reserve 500 MB memory
+        big_array = bytearray(500 * 1024 * 1024)
+        # do some calcs
+        total = 0
+        for i in range(int(1e7)):
+            total += i**3
+        # do nothing for bit after releasing memory
+        del big_array
+        sleep(1)
+        self.next(self.end)
+
+    @step
+    def end(self):
+        pass
+
+
+if __name__ == "__main__":
+    MinimalFlow()
+```
+
+Note that there's no need to import the `resource-tracker` package explicitly,
+as the `@track_resources` decorator comes from the Metaflow extension, made
+available through the `metaflow` Python package (second line of the example).
+
+Once you add the `@track_resources` decorator to any of your steps (see e.g. the
+`do_heavy_computation` step in the example above), the resource tracker will be
+activated for that step, and you will see the resource usage data and cloud
+resource recommendations in the auto-generated step report as a Metaflow card.
+
+👉 For a live example, check out
+<a href="/assets/slides/example-resource-tracker-report-in-metaflow.html" target="_blank">this example report 📜</a>
+
+## Metaflow Card Details
+
+The Metaflow card shows the resource usage of the step both at the process and
+system level (including CPU, memory, GPU, disk and traffic), plus the cloud
+resource recommendations based on the collected data enriched with Spare Cores
+data on cloud servers.
+
+In more details, the card shows the following information (with example screenshots):
+
+- High-level hardware configuration of the server that executed the step.
+
+<img src="/assets/images/resource_tracker/resource-usage-server.webp" style="padding: 30px 0px 30px 30px;">
+
+- Automated cloud and instance type discovery with the related costs 
+  (using public cloud pricing data from Spare Cores).
+
+<img src="/assets/images/resource_tracker/resource-usage-cloud.webp" style="padding: 30px 0px 30px 30px;">
+
+- Line charts showing the CPU, memory, GPU, disk and traffic usage over time.
+
+<img src="/assets/images/resource_tracker/resource-usage-cpu.webp" style="padding: 30px 0px 30px 30px;">
+
+- Aggregated resource usage analysis of the most recent run, enhanced with
+  historical data from the last five successful runs.
+
+<img src="/assets/images/resource_tracker/resource-usage-stats.webp" style="padding: 30px 0px 30px 30px;">
+
+- `@resources` recommendation for future runs based on the average CPU usage,
+  peak memory reservation, and GPU utilization of the step — accompanied by a
+  quick lookup for the cheapest server type across clouds that meets your step's
+  resource requirements, and the related forecasted cloud expenses.
+
+<img src="/assets/images/resource_tracker/resource-usage-rec.webp" style="padding: 30px 0px 30px 30px;">
+
+But again, you better check out the
+<a href="/assets/slides/example-resource-tracker-report-in-metaflow.html" target="_blank">example report 📜</a>
+yourself, or even better, try it out in your own Metaflow workflows by
+installing `resource-tracker` and then  importing and decorating your 
+steps with the `@track_resources` decorator!
+
+And yes, it works in local and remote executions as well, so you can use it in
+Kubernetes (`@kubernetes`), AWS Batch (`@batch`), or your other preferred remote
+compute service.
+
