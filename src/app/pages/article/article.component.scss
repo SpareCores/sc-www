@@ -51,9 +51,16 @@ div.giscus {
     margin: 20px 10px;
     border: 1px solid #34D399;
     border-radius: 10px;
-    code {
-      padding: 0px;
-    }
+    overflow-x: auto;
+  }
+
+  pre {
+    scrollbar-width: 2px;
+    scrollbar-color: #34D399 #374151;
+  }
+
+  pre code {
+    padding: 0px;
   }
 
   code {
