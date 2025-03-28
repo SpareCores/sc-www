@@ -8,7 +8,7 @@ teaser: Effortlessly filter and rank servers by benchmark score or per dollar va
 image: /assets/images/blog/thumbnails/select-benchmark.webp
 image_alt: Screenshot of the Server search page on the Spare Cores website with a selected benchmark in the background and a modal window to select another one.
 author: Gergely Daroczi
-tags: [benchmark, performance, score, featured]
+tags: [benchmark, performance, score]
 ---
 
 Since the project's inception, one of the most common feature requests has been to allow users to search and sort servers by any benchmark score, not only the default `stress-ng` multi-core CPU score that we use as our standard `SCore` (you can read more details about this latter in the ["One SCore to Rule Them All" section of our "Unlocking Cloud Compute Performance" article](/article/cloud-compute-performance-benchmarks)).
