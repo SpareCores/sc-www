@@ -228,7 +228,7 @@ resource recommendations in the auto-generated step report as a Metaflow card.
 ## Metaflow Card Details
 
 The Metaflow card shows the resource usage of the step both at the process and
-system level (including CPU, memory, GPU, disk and traffic), plus the cloud
+system level (including CPU, memory, GPU, disk, and traffic), plus the cloud
 resource recommendations based on the collected data enriched with Spare Cores
 data on cloud servers.
 
@@ -244,7 +244,7 @@ screenshots):
 
 <img src="/assets/images/resource_tracker/resource-usage-cloud.webp" style="padding: 30px 0px 30px 30px;">
 
-- Line charts showing the CPU, memory, GPU, disk and traffic usage over time.
+- Line charts showing the CPU, memory, GPU, disk, and traffic usage over time.
 
 <img src="/assets/images/resource_tracker/resource-usage-cpu.webp" style="padding: 30px 0px 30px 30px;">
 
@@ -279,16 +279,16 @@ enterprise features, including:
 - A 360° dashboard to track historical resource usage for all your steps,
   complete with anomaly annotations, future trend predictions, and tailored
   recommendations.
-- Proactive resource monitoring and alerting about overprovisioning and
+- Proactive resource monitoring and email alerting about overprovisioning and
   potential job failures due to insufficient allocated resources.
-- Automated `@resources` tuning so that you can focus on your code and models
+- Automated `@resources` tuning so that you can focus on your core business
   while the resource tracker optimizes the infrastructure parameters.
 - More granular, line-by-line resource tracking of steps, complementing the
   time-based approach.
 - Recommendations for splitting steps when resource usage patterns change, such
   as separating data loading from model training.
 
-Here's a preview of the latter, code optimization planned feature:
+Here's a preview of the latter, planned code optimization feature:
 
 <img src="/assets/images/resource_tracker/resource-usage-code-optimizer.webp" style="padding: 0px 0px 0px 30px;">
 
