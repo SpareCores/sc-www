@@ -57,7 +57,8 @@ export class ArticlesService {
     // replace headers with anchored versions
     return markdown.replace(/^(#{2,6})\s+(.+)$/gm, (match, hashes, headerText) => {
       const id = headerText.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-');
-      return `${hashes} ${headerText} <a class="header-anchor" id="${id}" href="/article/${slug}#${id}">#</a>`;
+      // add a hidden element before the header to offset the scroll position due to the sticky navbar
+      return `<div id="${id}" style="position: relative; top: -80px; visibility: hidden"></div>\n\n${hashes} ${headerText} <a class="header-anchor" href="/article/${slug}#${id}">#</a>`;
     });
   }
 
