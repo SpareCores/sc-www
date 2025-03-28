@@ -104,3 +104,43 @@ pip install \
 
 Note that depending on your operating system, you might need to also install
 `psutil` (e.g. on MacOS and Windows).
+
+## Standalone Usage
+
+The package comes with several helper functions and classes to collect resource
+usage of CPU, memory, GPU, disk and network at the process level, and at the
+system level as well.
+
+The highest level of abstraction is the `ResourceTracker` class, which spawns or
+forks descendant process(es) for the data collection, so not blocking your
+Python script or application. Quickstart example:
+
+```python
+from resource_tracker import ResourceTracker
+
+tracker = ResourceTracker()
+# your compute-heavy code
+tracker.stop()
+
+# your analytics code utilizing the collected data
+tracker.pid_tracker
+tracker.system_tracker
+```
+
+This `ResourceTracker` instance gives you access to the collected data in
+real-time, or after stopping the trackers via the `pid_tracker` and
+`system_tracker` properties.
+Both are <a href="https://sparecores.github.io/resource-tracker/reference/resource_tracker/tiny_data_frame/" target="_blank">`TinyDataFrame` objects</a>, 
+which are essentially dictionaries of lists, with some convenience methods for
+selecting rows and columns, pretty-printing and saving to CSV file.
+
+It's possible to track only the system-wide or process-level resource usage by
+the related init parameters, just like controlling the sampling interval, or how
+to start (e.g. spawn or fork) the subprocesses of the trackers.
+
+For even more control, you can use the underlying `PidTracker` and
+`SystemTracker` classes directly, which are not starting and handling descendant
+processes, but simply log resource usage to the standard output or a file. For
+more details, consult the package documentation, including detailed API
+references at <https://sparecores.github.io/resource-tracker/>.
+
