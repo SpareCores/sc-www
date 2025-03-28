@@ -50,7 +50,15 @@ export class ArticlesService {
 
   async getArticle(slug: string): Promise<string> {
     const files = await firstValueFrom(this.http.get(`./assets/articles/${slug}.md`, { responseType: 'text' } ));
-    return files as string;
+    return this.addHeaderAnchors(files as string, slug);
+  }
+
+  private addHeaderAnchors(markdown: string, slug: string): string {
+    // replace headers with anchored versions
+    return markdown.replace(/^(#{2,6})\s+(.+)$/gm, (match, hashes, headerText) => {
+      const id = headerText.toLowerCase().replace(/[^\w\s-]/g, '').replace(/\s+/g, '-');
+      return `${hashes} ${headerText} <a class="header-anchor" id="${id}" href="/article/${slug}#${id}">#</a>`;
+    });
   }
 
   async getSlides(): Promise<SlidesMeta[]> {
