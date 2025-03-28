@@ -1,6 +1,6 @@
 ---
 # ~50 chars
-title: Optimize Resource Usage of Batch Jobs
+title: Optimizing Resource Usage for Batch Jobs
 date: 2025-03-28
 # ~100 character
 teaser: Seamlessly track the resource usage of e.g. Metaflow steps and find the best value servers for any workload!
@@ -11,35 +11,36 @@ author: Gergely Daroczi
 tags: [resource-tracker, metaflow, featured]
 ---
 
-We have spent the past year or so at Spare Cores on collecting (sometimes
-generating) and standardizing pricing and performance data of 2000+ cloud
-servers across clouds, but we did so not only for the sake of it. Although this
-data is already valuable and useful on its own, but the long-term goal of the
-Spare Cores project has been to provide a simple way to find the best value
-servers for any workload, in a seamless way, which includes monitoring the
-resource usage of those workloads that we can use as a baseline when looking for
-the optimal server configuration for future runs.
+Over the past year, we focused on collecting, generating, and standardizing
+pricing and performance data for over 2000 cloud servers across clouds. This
+effort was not merely for data collection's sake.
+
+Although this dataset is already valuable and useful on its own, the long-term
+goal of the Spare Cores project has been to provide a seamless way to find the
+best value servers for any workload, which includes monitoring the resource
+usage of those workloads that we can use as a baseline when looking for the
+optimal server configuration for future runs.
 
 ## Previous Work
 
-As described in our [67% costs savings at adtech
+As described in our [67% cost savings at adtech
 company](/article/67pct-cost-saving-at-adtech-company) article, we have built a
 custom resource tracker at a previous role to monitor the resource usage of data
 science and machine learning batch jobs run in containers, usually on spot
-instances. This was rather specific to the company's infrastructure and the data
-science team's workflow orchestrator, including simplifications - such as being
-limited to a single region of a single vendor, and being able to rely on
-collecting resource usage at the `cgroups` level - so we couldn't reuse it at Spare
-Cores.
+instances. This solution was tailored to the company's specific infrastructure
+and the data science team's workflow orchestrator, with simplifications such as
+being limited to a single region of a single vendor and relying on `cgroups`
+level resource usage collection. Consequently, it was not reusable at Spare Cores.
 
-Now that we had the chance to work on Spare Cores as an open-source project,
+With Spare Cores developed as an open-source project from the beginning,
 partially funded by an EU grant and not driven by specific business needs, we
 decided to build a resource tracker that is agnostic to the infrastructure and
 workflow, and can be used by a wider audience.
 
 As noted above, this has been on the roadmap for a while, but we were always
-busy with new vendor integrations and benchmarks. Thanks to an inspiring
-conversation with Ville Tuulos from <a href="https://outerbounds.com" target="_blank">Outerbounds</a>,
+busy with new vendor integrations, benchmarks and related visualizations. Thanks
+to an inspiring conversation with Ville Tuulos from
+<a href="https://outerbounds.com" target="_blank">Outerbounds</a>,
 we decided to prioritize this feature at last in March 2025!
 
 ## Introducing the Resource Tracker Python Package
@@ -48,14 +49,14 @@ First, we wanted to build a resource tracker that is agnostic to the
 infrastructure, and can be extended to be used in different frameworks and
 environments, such as in Metaflow, Flyte, Airflow or Argo Workflows.
 
-This suggested us to implement a Python package with minimal dependencies that
-can be used anywhere without assumptions on the operating system, the Python
+This led us to implement a Python package with minimal dependencies, designed to
+be universally applicable without assumptions about the operating system, Python
 version, or installed packages. Although this might sound like a simple task
 (there are many resource tracker tools and agents out there), it was challenging
-to support collecting resource usage on different operating systems -- both at
-the system level, and at the process level. This latter means that we
-closely monitor a single process and its descendants, separated from the
-system-level resource usage.
+to support collecting resource usage on different operating systems — both at
+the system level, and at the process level. The latter means that we closely
+monitor a single process and its descendants, separated from the system-level
+resource usage.
 
 First, I came up with a quick and dirty `procfs` implementation with the
 advantage of a fully self-contained solution that does not require any
@@ -65,16 +66,16 @@ non-Linux systems, and multiple workflow management tools used by them are well
 supported on MacOS, so it was clear that we needed to find a more universal
 solution.
 
-This led to introducing an alternative `psutil` implementation that works on all
-operating systems, but requires installing additional software. Now the package
-can automatically detect the best way to collect the resource usage data based
-on the operating system and installed packages -- with the preference of using
+So we implemented an alternative `psutil` approach that works on all operating
+systems, but requires installing additional software. Now the package can
+automatically detect the best way to collect the resource usage data based on
+the operating system and installed packages — with the preference of using
 `psutil` when available.
 
 The performance of the `procfs` and the `psutil` implementations is similar (if
 interested in more details, see the relevant section of the
 <a href="https://sparecores.github.io/resource-tracker/#performance" target="_blank">package docs</a>), 
-so you might wonder why kept both implementations.
+so you might wonder why we kept both implementations.
 
 The `psutil` implementation works on all operating systems at the cost of the
 extra dependency, while the `procfs` implementation works without any additional
@@ -107,9 +108,9 @@ Note that depending on your operating system, you might need to also install
 
 ## Standalone Usage
 
-The package comes with several helper functions and classes to collect resource
-usage of CPU, memory, GPU, disk and network at the process level, and at the
-system level as well.
+The package includes several helper functions and classes for collecting
+resource usage data on CPU, memory, GPU, disk, and network at both the process
+and system level.
 
 The highest level of abstraction is the `ResourceTracker` class, which spawns or
 forks descendant process(es) for the data collection, so not blocking your
@@ -146,12 +147,13 @@ references at <https://sparecores.github.io/resource-tracker/>.
 
 ## Beyond Tracking
 
-But again, why would you bother with all this? Our initial goal was to provide a
-super simple way to track the resource usage of your Python application, and
-then automatically find the best value servers for your workload based on the
-collected data. So data collection is an essential first step, but then we need
-analytics to dive deeper into the data, and a recommender system integrated into
-the Spare Cores data to find the best value servers for your workload.
+But again, why would you bother with running a resource monitoring tool on your
+own? The initial goal was to provide a super simple way to track the resource
+usage of Python applications, and then automatically find the best value servers
+for the workload based on the collected data. So data collection is an essential
+first step, but then we need analytics to dive deeper into the data, and a
+recommender system integrated into the Spare Cores data to find the best value
+servers for your workload.
 
 This more complex scenario works best with a framework that can handle both the
 data collection and the analytics etc. in an automated way, but we did not want
@@ -163,14 +165,14 @@ compromises.
 
 <a href="https://metaflow.org/" target="_blank">Metaflow</a> is a popular
 workflow orchestration framework for data science and machine learning,
-providing powerful features like automatically versioned artifacts, HTML-based
+providing powerful features such as automatically versioned artifacts, HTML-based
 step reports potentially including complex visualization, scalability etc., but
 it lacks detailed step-level resource monitoring.
 
-Integrating `resource-tracker` via a Metaflow extension seemed like an ideal
-solution to address this gap: offering comprehensive step profiling and
-automated cloud resource recommendations in a seamless way, so that you can
-focus on your work.
+Integrating `resource-tracker` through a Metaflow extension provides an ideal
+solution to this gap, offering seamless, comprehensive step profiling and
+automated cloud resource recommendations, allowing you to focus on your core
+business.
 
 The `resource-tracker` package already provides this Metaflow extension, so
 making use of it is as simple as adding the `@resource_tracker` decorator to
@@ -230,13 +232,14 @@ system level (including CPU, memory, GPU, disk and traffic), plus the cloud
 resource recommendations based on the collected data enriched with Spare Cores
 data on cloud servers.
 
-In more details, the card shows the following information (with example screenshots):
+In more detail, the card displays the following information (with example
+screenshots):
 
 - High-level hardware configuration of the server that executed the step.
 
 <img src="/assets/images/resource_tracker/resource-usage-server.webp" style="padding: 30px 0px 30px 30px;">
 
-- Automated cloud and instance type discovery with the related costs 
+- Automated cloud and instance type discovery with the related costs
   (using public cloud pricing data from Spare Cores).
 
 <img src="/assets/images/resource_tracker/resource-usage-cloud.webp" style="padding: 30px 0px 30px 30px;">
@@ -269,9 +272,9 @@ compute service.
 
 ## Roadmap
 
-The resource tracker is living its early days, and we have plans to extend it
-with many more open-source and some centrally managed enterprise features as
-well, including
+The resource tracker is still in its early stages, with a lot of potential, and
+we plan to extend it with additional open-source and some centrally managed
+enterprise features, including:
 
 - A 360° dashboard to track historical resource usage for all your steps,
   complete with anomaly annotations, future trend predictions, and tailored
@@ -285,7 +288,7 @@ well, including
 - Recommendations for splitting steps when resource usage patterns change, such
   as separating data loading from model training.
 
-A quick peek at that latter planned feature:
+Here's a preview of the latter, code optimization planned feature:
 
 <img src="/assets/images/resource_tracker/resource-usage-code-optimizer.webp" style="padding: 0px 0px 0px 30px;">
 
@@ -294,7 +297,7 @@ Please find more details and optionally subscribe to our related announcements a
 
 ## Feedback
 
-We are always looking for feedback and suggestions, so please share your
-thoughts and suggestions either below in the comment box, or open a ticket in
-our <a href="https://github.com/sparecores/resource-tracker/issues/new"
+We are always looking for and value feedback, so please share your thoughts and
+suggestions either below in the comment box, or open a ticket in our <a
+href="https://github.com/sparecores/resource-tracker/issues/new"
 target="_blank">GitHub repository</a> 🙇
