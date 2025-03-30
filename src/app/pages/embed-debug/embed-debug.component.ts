@@ -1,12 +1,11 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Component, Inject, Input, OnChanges, OnInit, PLATFORM_ID } from '@angular/core';
+import { Component, Inject, Input, OnChanges, OnInit, PLATFORM_ID, ElementRef, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { LucideAngularModule } from 'lucide-angular';
-import { ToastService } from '../../services/toast.service';
-
+import { PrismService } from '../../services/prism.service';
 @Component({
   selector: 'app-embed-debug',
   standalone: true,
@@ -40,12 +39,14 @@ export class EmbedDebugComponent implements OnInit, OnChanges {
     {id: 'redis', name: 'Redis' }
   ];
 
+  @ViewChild('iframeCodeBlock') iframeCodeBlockElement!: ElementRef;
+
   constructor(
     @Inject(PLATFORM_ID) private platformId: object,
     private route: ActivatedRoute,
     private sanitizer: DomSanitizer,
     private SEOHandler: SeoHandlerService,
-    private toastService: ToastService
+    private prismService: PrismService
   ) {
 
   }
@@ -81,29 +82,19 @@ export class EmbedDebugComponent implements OnInit, OnChanges {
 
   updateSrc() {
     this.src = this.sanitizer.bypassSecurityTrustResourceUrl(`${this.SEOHandler.getBaseURL()}/embed/server/${this.vendor}/${this.id}/${this.chartname}`);
+    const checkExist = setInterval(() => {
+      if (this.iframeCodeBlockElement && this.iframeCodeBlockElement.nativeElement) {
+        this.iframeCodeBlockElement.nativeElement.textContent = this.getIframeHTML();
+        setTimeout(() => {
+          this.prismService.highlightElement(this.iframeCodeBlockElement.nativeElement);
+        }, 0);
+        clearInterval(checkExist);
+      }
+    }, 100);
   }
 
   getIframeHTML() {
     return `<iframe \n src="${this.SEOHandler.getBaseURL()}/embed/server/${this.vendor}/${this.id}/${this.chartname}" \n style="height: ${this.height}; width: ${this.width}; border: 1px solid #34d399; border-radius: 8px; min-height: 400px">\n</iframe>`;
-  }
-
-  ClipboardIframeHTML() {
-    const content = this.getIframeHTML();
-    navigator.clipboard.writeText(content);
-
-    this.copyIcon = 'check';
-    this.toastService.show({
-      title: 'Link copied to clipboard!',
-      type: 'success',
-      duration: 2000
-    });
-    setTimeout(() => {
-      this.copyIcon = 'copy';
-    }, 2000);
-  }
-
-  getCopyIcon() {
-    return this.copyIcon;
   }
 
 }
