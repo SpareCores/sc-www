@@ -25,8 +25,6 @@ export class EmbedComparePreviewComponent implements OnInit, OnChanges {
   height = '710px';
   width: string = '100%';
 
-  copyIcon = 'copy';
-
   @Input() charts = [
     {id: 'bw_mem', name: 'Memory bandwidth' },
     {id: 'compress', name: 'Compression' },
