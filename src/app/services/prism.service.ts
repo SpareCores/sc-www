@@ -24,7 +24,7 @@ import 'prismjs/plugins/normalize-whitespace/prism-normalize-whitespace';
 import 'prismjs/plugins/toolbar/prism-toolbar';
 import 'prismjs/plugins/toolbar/prism-toolbar.css';
 import 'prismjs/plugins/copy-to-clipboard/prism-copy-to-clipboard';
-// custom styles (actually loaded in angular.json)
+// custom styles (actually loaded in angular.json with the other CSS files)
 import '../../assets/prism-js-override.css';
 
 @Injectable({

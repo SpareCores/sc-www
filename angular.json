@@ -39,6 +39,11 @@
               "src/styles.scss",
               "./node_modules/ngx-lightbox/lightbox.css",
               "node_modules/survey-core/defaultV2.min.css",
+              "node_modules/prismjs/themes/prism-tomorrow.min.css",
+              "node_modules/prismjs/plugins/line-highlight/prism-line-highlight.min.css",
+              "node_modules/prismjs/plugins/line-numbers/prism-line-numbers.min.css",
+              "node_modules/prismjs/plugins/command-line/prism-command-line.min.css",
+              "node_modules/prismjs/plugins/toolbar/prism-toolbar.min.css",
               "src/assets/prism-js-override.css"
             ],
             "scripts": [
