@@ -39,7 +39,7 @@
               "src/styles.scss",
               "./node_modules/ngx-lightbox/lightbox.css",
               "node_modules/survey-core/defaultV2.min.css",
-              "node_modules/highlight.js/styles/atom-one-dark.css"
+              "src/assets/prism-js-override.css"
             ],
             "scripts": [
               "node_modules/flowbite/dist/flowbite.min.js",

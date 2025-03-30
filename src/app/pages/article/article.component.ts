@@ -12,8 +12,8 @@ import * as yaml from 'js-yaml';
 import { REQUEST } from '../../../express.tokens';
 import { Request } from 'express';
 import { initGiscus } from '../../tools/initGiscus';
-import hljs from 'highlight.js';
 import { ToastService } from '../../services/toast.service';
+import { PrismService } from '../../services/prism.service';
 
 
 @Component({
@@ -47,6 +47,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
     private lightbox: Lightbox,
     private renderer: Renderer2,
     private toastService: ToastService,
+    private prismService: PrismService,
     @Inject('netlify.request') @Optional() private request_netlify?: Request,
     @Inject(REQUEST) @Optional() private request_express?: Request,
   ) { }
@@ -101,7 +102,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
               });
               initGiscus(this.renderer, this.articleDiv, baseUrl, 'Blog posts', 'DIC_kwDOLesFQM4CgusO', 'og:title');
 
-              hljs.highlightAll();
+              this.prismService.highlightAll();
 
               clearInterval(checkExist);
             }

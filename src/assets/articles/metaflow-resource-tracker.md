@@ -92,16 +92,16 @@ The
 </a>
 is available on PyPI, so you can install it with:
 
-```sh
+<pre class="command-line" data-prompt="$"><code class="language-sh">
 pip install resource-tracker
-```
+</code></pre>
 
 Development version can be installed directly from the git repository:
 
-```sh
+<pre class="command-line" data-prompt="$" data-continuation-str="\"><code class="language-sh">
 pip install \
   git+https://github.com/sparecores/resource-tracker.git
-```
+</code></pre>
 
 Note that depending on your operating system, you might need to also install
 `psutil` (e.g. on MacOS and Windows).
@@ -116,7 +116,7 @@ The highest level of abstraction is the `ResourceTracker` class, which spawns or
 forks descendant process(es) for the data collection, so not blocking your
 Python script or application. Quickstart example:
 
-```python
+<pre class="line-numbers"><code class="language-python">
 from resource_tracker import ResourceTracker
 
 tracker = ResourceTracker()
@@ -126,7 +126,7 @@ tracker.stop()
 # your analytics code utilizing the collected data
 tracker.pid_tracker
 tracker.system_tracker
-```
+</code></pre>
 
 This `ResourceTracker` instance gives you access to the collected data in
 real-time, or after stopping the trackers via the `pid_tracker` and
@@ -178,7 +178,7 @@ The `resource-tracker` package already provides this Metaflow extension, so
 making use of it is as simple as adding the `@resource_tracker` decorator to
 your steps:
 
-```python
+<pre class="line-numbers" data-line="3,12"><code class="language-python">
 from time import sleep
 
 from metaflow import FlowSpec, step, track_resources
@@ -211,7 +211,7 @@ class MinimalFlow(FlowSpec):
 
 if __name__ == "__main__":
     MinimalFlow()
-```
+</code></pre>
 
 Note that there's no need to import the `resource-tracker` package explicitly,
 as the `@track_resources` decorator comes from the Metaflow extension, made

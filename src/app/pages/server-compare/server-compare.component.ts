@@ -12,13 +12,13 @@ import { DropdownManagerService } from '../../services/dropdown-manager.service'
 import { AnalyticsService } from '../../services/analytics.service';
 import { CurrencyOption, availableCurrencies } from '../../tools/shared_data';
 import { ExtendedServerDetails } from '../server-details/server-details.component';
-import hljs from 'highlight.js';
 import { ServerCompareChartsComponent } from "../../components/server-compare-charts/server-compare-charts.component";
 import { EmbedComparePreviewComponent } from '../embed-compare-preview/embed-compare-preview.component';
 import { Modal, ModalOptions } from 'flowbite';
 import { Allocation } from '../../../../sdk/data-contracts';
 import { ToastService } from '../../services/toast.service';
 import { LoadingSpinnerComponent } from '../../components/loading-spinner/loading-spinner.component';
+import { PrismService } from '../../services/prism.service';
 
 const optionsModal: ModalOptions = {
   backdropClasses:
@@ -213,6 +213,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
   showZoneIds = false;
 
   constructor(
+    private prismService: PrismService,
     @Inject(PLATFORM_ID) private platformId: object,
     @Inject(DOCUMENT) private document: Document,
     private keeperAPI: KeeperAPIService,
@@ -479,11 +480,9 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     }
 
     if(isPlatformBrowser(this.platformId)) {
-      // Wait for the articleDiv to be rendered
       const checkExist = setInterval(() => {
         if (this.comparesDiv) {
-          hljs.highlightAll();
-
+          this.prismService.highlightAll();
           clearInterval(checkExist);
         }
       }, 100);

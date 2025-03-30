@@ -45,27 +45,9 @@ div.giscus {
     @apply text-lg;
   }
 
-  pre {
-    @apply bg-secondary;
-    padding: 10px 15px;
-    margin: 20px 10px;
-    border: 1px solid #34D399;
-    border-radius: 10px;
-    overflow-x: auto;
-  }
-
-  pre {
-    scrollbar-width: 2px;
-    scrollbar-color: #34D399 #374151;
-  }
-
-  pre code {
-    padding: 0px;
-  }
-
-  code {
-    @apply bg-secondary;
-    padding: 2px 5px;
+  div.code-toolbar {
+    width: calc(100% - 20px);
+    margin: 0px 10px;
   }
 
   blockquote {
