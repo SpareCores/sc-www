@@ -82,15 +82,17 @@ export class EmbedDebugComponent implements OnInit, OnChanges {
 
   updateSrc() {
     this.src = this.sanitizer.bypassSecurityTrustResourceUrl(`${this.SEOHandler.getBaseURL()}/embed/server/${this.vendor}/${this.id}/${this.chartname}`);
-    const checkExist = setInterval(() => {
-      if (this.iframeCodeBlockElement && this.iframeCodeBlockElement.nativeElement) {
-        this.iframeCodeBlockElement.nativeElement.textContent = this.getIframeHTML();
-        setTimeout(() => {
-          this.prismService.highlightElement(this.iframeCodeBlockElement.nativeElement);
-        }, 0);
-        clearInterval(checkExist);
-      }
-    }, 100);
+    if (this.isBrowser()) {
+      const checkExist = setInterval(() => {
+        if (this.iframeCodeBlockElement && this.iframeCodeBlockElement.nativeElement) {
+          this.iframeCodeBlockElement.nativeElement.textContent = this.getIframeHTML();
+          setTimeout(() => {
+            this.prismService.highlightElement(this.iframeCodeBlockElement.nativeElement);
+          }, 0);
+          clearInterval(checkExist);
+        }
+      }, 100);
+    }
   }
 
   getIframeHTML() {
