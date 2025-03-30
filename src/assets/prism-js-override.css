@@ -55,6 +55,7 @@ pre[class*="language-"].line-numbers {
 }
 div.line-highlight {
     background: linear-gradient(to right, #34D39966 50%, #06263a);
+    width: calc(100% - 25px) !important;
 }
 
 /* Scrollbar styling */
