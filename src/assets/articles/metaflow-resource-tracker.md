@@ -113,7 +113,7 @@ resource usage data on CPU, memory, GPU, disk, and network at both the process
 and system level.
 
 The highest level of abstraction is the `ResourceTracker` class, which spawns or
-forks descendant process(es) for the data collection, so not blocking your
+forks descendant process(es) for the data collection, so it doesn't block your
 Python script or application. Quickstart example:
 
 <pre class="line-numbers"><code class="language-python">
@@ -140,7 +140,7 @@ the related init parameters, just like controlling the sampling interval, or how
 to start (e.g. spawn or fork) the subprocesses of the trackers.
 
 For even more control, you can use the underlying `PidTracker` and
-`SystemTracker` classes directly, which are not starting and handling descendant
+`SystemTracker` classes directly. These do not start or manage descendant
 processes, but simply log resource usage to the standard output or a file. For
 more details, consult the package documentation, including detailed API
 references at <https://sparecores.github.io/resource-tracker/>.
