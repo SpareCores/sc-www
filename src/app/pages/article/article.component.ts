@@ -12,7 +12,8 @@ import * as yaml from 'js-yaml';
 import { REQUEST } from '../../../express.tokens';
 import { Request } from 'express';
 import { initGiscus } from '../../tools/initGiscus';
-import hljs from 'highlight.js';
+import { ToastService } from '../../services/toast.service';
+import { PrismService } from '../../services/prism.service';
 
 
 @Component({
@@ -45,6 +46,8 @@ export class ArticleComponent implements OnInit, OnDestroy {
     private articleHandler: ArticlesService,
     private lightbox: Lightbox,
     private renderer: Renderer2,
+    private toastService: ToastService,
+    private prismService: PrismService,
     @Inject('netlify.request') @Optional() private request_netlify?: Request,
     @Inject(REQUEST) @Optional() private request_express?: Request,
   ) { }
@@ -55,10 +58,15 @@ export class ArticleComponent implements OnInit, OnDestroy {
       const id = params['id'];
       this.id = id;
       this.articleHandler.getArticle(id).then((file: any) => {
+        if (!file) {
+          this.handleArticleNotFound(id);
+          return;
+        }
 
         // Assuming `file` is a string containing your Markdown content...
         const match = /---\r?\n([\s\S]+?)\r?\n---/.exec(file);
         if(match === null) {
+          this.handleArticleNotFound(id);
           return;
         }
         const data = yaml.load(match[1]);
@@ -94,13 +102,17 @@ export class ArticleComponent implements OnInit, OnDestroy {
               });
               initGiscus(this.renderer, this.articleDiv, baseUrl, 'Blog posts', 'DIC_kwDOLesFQM4CgusO', 'og:title');
 
-              hljs.highlightAll();
+              this.prismService.highlightAll();
 
               clearInterval(checkExist);
             }
           }, 100);
         }
 
+      })
+      .catch(error => {
+        console.error('Error loading article:', error);
+        this.handleArticleNotFound(id);
       });
     });
   }
@@ -159,6 +171,22 @@ export class ArticleComponent implements OnInit, OnDestroy {
         };
 
     this.SEOHandler.setupStructuredData(this.document, [JSON.stringify(json)]);
+  }
+
+  private handleArticleNotFound(id: string) {
+    if (isPlatformBrowser(this.platformId)) {
+      this.toastService.show({
+        title: 'Article Not Found',
+        body: `We couldn't find the article "${id}". It may have been removed or doesn't exist.`,
+        type: 'error',
+      });
+    }
+    // Update SEO to reflect 404 status
+    this.SEOHandler.updateTitleAndMetaTags(
+      'Article Not Found',
+      'The requested article could not be found',
+      'error,404'
+    );
   }
 
 }

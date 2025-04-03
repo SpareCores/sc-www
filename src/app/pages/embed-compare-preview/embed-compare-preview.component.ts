@@ -1,11 +1,11 @@
-import { Component, Inject, Input, PLATFORM_ID, OnInit, OnChanges } from '@angular/core';
+import { Component, Inject, Input, PLATFORM_ID, OnInit, OnChanges, ElementRef, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
-import { ToastService } from '../../services/toast.service';
+import { PrismService } from '../../services/prism.service';
 
 @Component({
   selector: 'app-embed-compare-preview',
@@ -25,8 +25,6 @@ export class EmbedComparePreviewComponent implements OnInit, OnChanges {
   height = '710px';
   width: string = '100%';
 
-  copyIcon = 'copy';
-
   @Input() charts = [
     {id: 'bw_mem', name: 'Memory bandwidth' },
     {id: 'compress', name: 'Compression' },
@@ -40,12 +38,14 @@ export class EmbedComparePreviewComponent implements OnInit, OnChanges {
     {id: 'redis', name: 'Redis' }
   ];
 
+  @ViewChild('iframeCodeBlock') iframeCodeBlockElement!: ElementRef;
+
   constructor(
     @Inject(PLATFORM_ID) private platformId: object,
     private route: ActivatedRoute,
     private sanitizer: DomSanitizer,
     private SEOHandler: SeoHandlerService,
-    private toastService: ToastService
+    private prismService: PrismService
   ) {
 
   }
@@ -88,29 +88,21 @@ export class EmbedComparePreviewComponent implements OnInit, OnChanges {
 
   updateSrc() {
     this.setup();
+    if (this.isBrowser()) {
+      const checkExist = setInterval(() => {
+        if (this.iframeCodeBlockElement && this.iframeCodeBlockElement.nativeElement) {
+          this.iframeCodeBlockElement.nativeElement.textContent = this.getIframeHTML();
+          setTimeout(() => {
+            this.prismService.highlightElement(this.iframeCodeBlockElement.nativeElement);
+          }, 0);
+          clearInterval(checkExist);
+        }
+      }, 100);
+    }
   }
 
   getIframeHTML() {
     return `<iframe \n src="${this.SEOHandler.getBaseURL()}/embed/compare/${this.chartname}?instances=${this.instances}" \n style="height: ${this.height}; width: ${this.width}; border: 1px solid #34d399; border-radius: 8px; min-height: 600px">\n</iframe>`;
-  }
-
-  ClipboardIframeHTML() {
-    const content = this.getIframeHTML();
-    navigator.clipboard.writeText(content);
-
-    this.copyIcon = 'check';
-    this.toastService.show({
-      title: 'Link copied to clipboard!',
-      type: 'success',
-      duration: 2000
-    });
-    setTimeout(() => {
-      this.copyIcon = 'copy';
-    }, 2000);
-  }
-
-  getCopyIcon() {
-    return this.copyIcon;
   }
 
 }

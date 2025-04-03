@@ -45,20 +45,9 @@ div.giscus {
     @apply text-lg;
   }
 
-  pre {
-    @apply bg-secondary;
-    padding: 10px 15px;
-    margin: 20px 10px;
-    border: 1px solid #34D399;
-    border-radius: 10px;
-    code {
-      padding: 0px;
-    }
-  }
-
-  code {
-    @apply bg-secondary;
-    padding: 2px 5px;
+  div.code-toolbar {
+    width: calc(100% - 20px);
+    margin: 0px 10px;
   }
 
   blockquote {
@@ -105,5 +94,21 @@ div.giscus {
     }
   }
 
-
+  .header-anchor {
+    opacity: 0;
+    text-decoration: none;
+    margin-left: 0.5rem;
+    transition: opacity 0.2s;
+    &:hover {
+      @apply text-emerald-400;
+    }
+  }
+  h1:hover .header-anchor,
+  h2:hover .header-anchor,
+  h3:hover .header-anchor,
+  h4:hover .header-anchor,
+  h5:hover .header-anchor,
+  h6:hover .header-anchor {
+    opacity: 1;
+  }
 }

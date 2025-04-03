@@ -37,12 +37,7 @@
   </div>
 
   <div *ngIf="chartname" class="relative">
-    <pre  class="html text-white bg-secondary rounded-lg"><code class="html">{{getIframeHTML()}}</code></pre>
-    <button
-      class="absolute top-2 right-2 p-2 bg-emerald-400 h-8 w-8 rounded-lg flex text-white"
-      (click)="ClipboardIframeHTML()">
-      <lucide-icon name="{{copyIcon}}" class="h-4 w-4"></lucide-icon>
-    </button>
+    <pre><code #iframeCodeBlock class="language-html">{{ getIframeHTML() }}</code></pre>
   </div>
   <h3 class="text-white text-xl"> Iframe Preview </h3>
   <p class="text-white" *ngIf="!chartname"> Select which chart to show. </p>
