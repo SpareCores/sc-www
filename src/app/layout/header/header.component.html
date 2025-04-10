@@ -9,16 +9,18 @@
       <div class="justify-end items-center w-full flex w-auto order-1" id="mobile-menu-2">
           <ul class="flex font-medium flex-row space-x-8 mt-0 items-center">
               <li class="hidden lg:flex">
-                  <a class="navbar_link" routerLink="/servers" >
-                    <lucide-icon class="h-4 w-4" name="pc-case"></lucide-icon>
-                    Servers
+                <div class="navbar_link cursor-pointer">
+                  <a class="navbar_link" routerLink="/about" >
+                    <lucide-icon class="h-4 w-4" name="info"></lucide-icon>
+                    About
                   </a>
+                </div>
               </li>
               <li class="hidden lg:flex">
-                <a class="navbar_link" routerLink="/compare" >
-                  <lucide-icon class="h-4 w-4" name="scale"></lucide-icon>
-                  Compare Servers
-                </a>
+                <div class="navbar_link cursor-pointer" id="servers_button">
+                    <lucide-icon class="h-4 w-4" name="pc-case"></lucide-icon>
+                    Servers
+                </div>
               </li>
               <li class="hidden lg:flex" >
                 <div class="navbar_link cursor-pointer" id="prices_button">
@@ -26,19 +28,17 @@
                     class="cursor-pointer h-4 w-4"
                     name="dollar-sign" >
                   </lucide-icon>
-                  Prices
+                  Realtime Prices
                 </div>
               </li>
-              <li class="hidden lg:flex">
-                <a class="navbar_link" routerLink="/regions" >
-                  <lucide-icon class="h-4 w-4" name="hotel"></lucide-icon>
-                  Regions
-                </a>
-              </li>
-              <li class="hidden lg:flex">
-                <a class="navbar_link" routerLink="/vendors" >
-                  <lucide-icon class="h-4 w-4" name="home"></lucide-icon>
-                  Vendors
+              <li class="py-1">
+                <a class="navbar_link" href="https://cal.com/daroczig" target="_blank" >
+                  <button
+                    id="demo_button"
+                    class="text-white bg-emerald-400 hover:bg-emerald-500 rounded-lg px-3 py-2 relative flex gap-2 items-center" >
+                    <lucide-icon class="h-4 w-4" name="calendar-days"></lucide-icon>
+                    Book a Demo
+                </button>
                 </a>
               </li>
               <li [ngClass]="
@@ -65,7 +65,6 @@
       </div>
   </div>
 </nav>
-
 
 <div id="menu_options" class="z-10 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid">
   <ul
@@ -117,6 +116,26 @@
   </ul>
 </div>
 
+<div id="servers_options" class="z-100 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid">
+  <ul
+    class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
+    aria-labelledby="dropdownDefaultButton"
+    (click)="closeServers()">
+    <li class="py-2">
+      <a class="navbar_link" routerLink="/servers" >
+        <lucide-icon class="h-4 w-4" name="ship-wheel"></lucide-icon>
+        Navigator
+      </a>
+    </li>
+    <li class="py-2">
+      <a class="navbar_link" routerLink="/compare" >
+        <lucide-icon class="h-4 w-4" name="scale"></lucide-icon>
+        Compare Guide
+      </a>
+    </li>
+  </ul>
+</div>
+
 <div id="prices_options" class="z-100 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid">
   <ul
     class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
@@ -128,6 +147,20 @@
         Server Prices
       </a>
     </li>
+    <ul>
+      <li class="py-2 ml-6">
+        <a class="navbar_link" routerLink="/vendors" >
+          <lucide-icon class="h-4 w-4" name="home"></lucide-icon>
+          By Vendor
+        </a>
+      </li>
+      <li class="py-2 ml-6">
+        <a class="navbar_link" routerLink="/regions" >
+          <lucide-icon class="h-4 w-4" name="hotel"></lucide-icon>
+          By Region
+        </a>
+      </li>
+    </ul>
     <li class="py-2">
       <a class="navbar_link" routerLink="/storages" >
         <lucide-icon class="h-4 w-4" name="database"></lucide-icon>
