@@ -36,7 +36,7 @@ export class TrafficPricesComponent implements OnInit {
 
   breadcrumbs: BreadcrumbSegment[] = [
     { name: 'Home', url: '/' },
-    { name: 'Storage prices', url: '/storages' }
+    { name: 'Network traffic prices', url: '/traffic-prices' }
   ];
 
   isCollapsed = false;
