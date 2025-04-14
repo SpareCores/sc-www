@@ -317,6 +317,70 @@
   </div>
 </div>
 
+<div class="block_half" *ngIf="barChartLLMPromptData && isChartShown('llm_prompt')" id="llm_prompt_chart">
+  <div class="flex justify-between items-center">
+    <h3 class="text-2xl flex items-center gap-2" >
+      LLM Inference Speed for Prompt Processing
+      <lucide-icon
+        name="circle-arrow-up"
+        class="h-4 w-4 text-gray-200"
+        (mouseenter)="showTooltip($event, 'Higher is better.')"
+        (mouseleave)="hideTooltip()">
+      </lucide-icon>
+      <lucide-icon
+        name="info"
+        class="h-4 w-4 text-gray-200"
+        (mouseenter)="showTooltipChart($event, 'llm_speed:prompt_processing')"
+        (mouseleave)="hideTooltip()">
+      </lucide-icon>
+    </h3>
+  </div>
+  <div class="h-full" *ngIf="isBrowser()">
+    <div class="chart_div" chartType="bar">
+      <canvas
+        id="llm_prompt_canvas"
+        baseChart
+        [data]="barChartLLMPromptData"
+        [options]="barChartLLMPromptOptions"
+        [type]="barChartType"
+      >
+      </canvas>
+    </div>
+  </div>
+</div>
+
+<div class="block_half" *ngIf="barChartLLMGenerationData && isChartShown('llm_generation')" id="llm_generation_chart">
+  <div class="flex justify-between items-center">
+    <h3 class="text-2xl flex items-center gap-2" >
+      LLM Inference Speed for Text Generation
+      <lucide-icon
+        name="circle-arrow-up"
+        class="h-4 w-4 text-gray-200"
+        (mouseenter)="showTooltip($event, 'Higher is better.')"
+        (mouseleave)="hideTooltip()">
+      </lucide-icon>
+      <lucide-icon
+        name="info"
+        class="h-4 w-4 text-gray-200"
+        (mouseenter)="showTooltipChart($event, 'llm_speed:text_generation')"
+        (mouseleave)="hideTooltip()">
+      </lucide-icon>
+    </h3>
+  </div>
+  <div class="h-full" *ngIf="isBrowser()">
+    <div class="chart_div" chartType="bar">
+      <canvas
+        id="llm_generation_canvas"
+        baseChart
+        [data]="barChartLLMGenerationData"
+        [options]="barChartLLMGenerationOptions"
+        [type]="barChartType"
+      >
+      </canvas>
+    </div>
+  </div>
+</div>
+
 <ng-container *ngFor="let chartItem of multiBarCharts">
   <div class="block_half" *ngIf="chartItem.chart.chartData && isChartShown(chartItem.chart.id)" id="{{chartItem.chart.id}}_chart">
     <div class="flex justify-between items-center">

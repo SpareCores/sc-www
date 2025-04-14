@@ -393,6 +393,18 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
             this.embeddableCharts.push({id: 'stress_ng_relative', name: 'Stress-ng relative' });
           }
 
+          // Add LLM charts if benchmark data is available
+          const hasLLMPromptData = this.benchmarksByCategory.some(c => c.benchmark_id === 'llm_speed:prompt_processing');
+          const hasLLMGenerationData = this.benchmarksByCategory.some(c => c.benchmark_id === 'llm_speed:text_generation');
+
+          if (hasLLMPromptData) {
+            this.embeddableCharts.push({id: 'llm_prompt', name: 'LLM Prompt Processing' });
+          }
+
+          if (hasLLMGenerationData) {
+            this.embeddableCharts.push({id: 'llm_generation', name: 'LLM Text Generation' });
+          }
+
           if(isPlatformBrowser(this.platformId)) {
 
             setTimeout(() => {
