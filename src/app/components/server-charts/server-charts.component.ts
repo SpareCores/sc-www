@@ -239,24 +239,26 @@ export class ServerChartsComponent implements OnChanges {
     let llmPromptData = this.generateLLMBarChart('llm_speed:prompt_processing', 'tokens', 'model');
     if(llmPromptData) {
       this.barChartLLMPromptData = { labels: llmPromptData.labels, datasets: llmPromptData.datasets };
-      if(this.barChartLLMPromptOptions?.scales?.y) {
-        (this.barChartLLMPromptOptions.scales.y.title as any).text = 'Tokens/second';
-      }
-      if(this.barChartLLMPromptOptions?.plugins?.title) {
-        (this.barChartLLMPromptOptions.plugins.title as any).text = 'Prompt length';
-      }
+      (this.barChartLLMPromptOptions!.scales!.y!.title as any).text = 'Tokens/second';
+      (this.barChartLLMPromptOptions!.plugins!.title as any).display = false;
+      (this.barChartLLMPromptOptions!.scales!.x!.title as any) = {
+        display: true,
+        text: "Prompt's length (tokens).",
+        color: '#FFFFFF'
+      };
     } else {
       this.barChartLLMPromptData = undefined;
     }
     let llmGenerationData = this.generateLLMBarChart('llm_speed:text_generation', 'tokens', 'model');
     if(llmGenerationData) {
       this.barChartLLMGenerationData = { labels: llmGenerationData.labels, datasets: llmGenerationData.datasets };
-      if(this.barChartLLMGenerationOptions?.scales?.y) {
-        (this.barChartLLMGenerationOptions.scales.y.title as any).text = 'Tokens/second';
-      }
-      if(this.barChartLLMGenerationOptions?.plugins?.title) {
-        (this.barChartLLMGenerationOptions.plugins.title as any).text = 'Requested text length';
-      }
+      (this.barChartLLMGenerationOptions!.scales!.y!.title as any).text = 'Tokens/second';
+      (this.barChartLLMGenerationOptions!.plugins!.title as any).display = false;
+      (this.barChartLLMGenerationOptions!.scales!.x!.title as any) = {
+        display: true,
+        text: "Requested text length (tokens).",
+        color: '#FFFFFF'
+      };
     } else {
       this.barChartLLMGenerationData = undefined;
     }
@@ -849,28 +851,26 @@ export class ServerChartsComponent implements OnChanges {
     const dataSet = this.benchmarksByCategory?.find(x => x.benchmark_id === benchmark_id);
 
     if(dataSet && dataSet.benchmarks?.length) {
-      let labels: any[] = [];
-      let scales: any[] = [];
+      let tokenLabels: any[] = [];
+      let modelScales: any[] = [];
 
-      // extract unique values for model_name (x-axis) and tokens (series/colors)
+      // extract unique values for tokens (x-axis) and model (series/colors)
       dataSet.benchmarks.forEach((item: any) => {
-        if(item.config[labelsField] && labels.indexOf(item.config[labelsField]) === -1) {
-          labels.push(item.config[labelsField]);
+        if(item.config[labelsField] && tokenLabels.indexOf(item.config[labelsField]) === -1) {
+          tokenLabels.push(item.config[labelsField]);
         }
-        if((item.config[scaleField]) && scales.indexOf(item.config[scaleField]) === -1) {
-          scales.push(item.config[scaleField]);
+        if((item.config[scaleField]) && modelScales.indexOf(item.config[scaleField]) === -1) {
+          modelScales.push(item.config[scaleField]);
         }
       });
 
-      // sort labels numerically if they are numbers
-      if(labels) {
-        labels.sort((a, b) => {
-          if(!isNaN(a) && !isNaN(b)) {
-            return a - b;
-          }
-          return a.toString().localeCompare(b.toString());
-        });
-      }
+      // sort token labels numerically 
+      tokenLabels.sort((a, b) => {
+        if(!isNaN(a) && !isNaN(b)) {
+          return a - b;
+        }
+        return a.toString().localeCompare(b.toString());
+      });
 
       // custom model order
       const modelOrder = [
@@ -882,7 +882,7 @@ export class ServerChartsComponent implements OnChanges {
         'Llama-3.3-70B-Instruct-Q4_K_M.gguf'
       ];
 
-      scales.sort((a, b) => {
+      modelScales.sort((a, b) => {
         const indexA = modelOrder.indexOf(a);
         const indexB = modelOrder.indexOf(b);
         if (indexA !== -1 && indexB !== -1) {
@@ -895,21 +895,21 @@ export class ServerChartsComponent implements OnChanges {
       });
 
       let chartData: any = {
-        // drop .gguf extension from displayed model names
-        labels: scales.map(scale => scale.toString().replace('.gguf', '')),
-        datasets: labels.map((label: any, index: number) => {
+        labels: tokenLabels,
+        datasets: modelScales.map((model: any, index: number) => {
           return {
             data: [],
-            label: label + ' tokens',
+            // drop .gguf extension from displayed model names in the legend
+            label: model.toString().replace('.gguf', ''),
             borderColor: radarDatasetColors[index].borderColor,
             backgroundColor: radarDatasetColors[index].borderColor
           };
         })
       };
 
-      labels.forEach((label: any, i: number) => {
-        scales.forEach((scale: any) => {
-          const item = dataSet.benchmarks.find((b: any) => b.config[labelsField] === label && b.config[scaleField] === scale);
+      modelScales.forEach((model: any, i: number) => {
+        tokenLabels.forEach((token: any) => {
+          const item = dataSet.benchmarks.find((b: any) => b.config[scaleField] === model && b.config[labelsField] === token);
           if(item) {
             chartData.datasets[i].data.push(item.score);
           } else {
