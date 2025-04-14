@@ -40,6 +40,7 @@ export const routes: Routes = [
   { path: 'embed_compare_debug/:chartname', loadComponent: () => import('./pages/embed-compare-preview/embed-compare-preview.component').then(m => m.EmbedComparePreviewComponent)},
 
   { path: 'contact', loadComponent: () => import('./pages/contact/contact.component').then(m => m.ContactComponent)},
+  { path: 'about', loadComponent: () => import('./pages/about/about.component').then(m => m.AboutComponent)},
 
   { path: '**', redirectTo: '' }
 ];

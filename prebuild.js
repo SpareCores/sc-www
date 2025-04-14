@@ -89,6 +89,7 @@ const sitemapStream = new SitemapStream({ hostname: 'https://sparecores.com/' })
 
 const links = [
   { url: '',  changefreq: 'monthly', priority: 1.0  },
+  { url: 'about',  changefreq: 'monthly', priority: 1.0 },
   { url: 'servers',  changefreq: 'hourly', priority: 0.75  },
   { url: 'server_prices',  changefreq: 'hourly', priority: 0.75  },
   { url: 'vendors',  changefreq: 'monthly', priority: 0.5  },

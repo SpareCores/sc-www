@@ -4,7 +4,10 @@
 
     <div class="flex flex-col gap-4 my-8 mx-2 xl:mx-0">
       <div class="flex gap-4 items-center w-full justify-between">
-        <h1 class="text-white font-bold text-3xl">{{title}}</h1>
+        <h1 class="text-white font-bold text-3xl flex items-center">
+          <lucide-icon class="h-8 w-8 mr-2" name="dollar-sign"></lucide-icon>
+          {{title}}
+        </h1>
       </div>
       <div class="text-white text-xl pr-16">
         Explore, search, and evaluate ingress (inbound) and egress (outbound) traffic pricing options and tiers of various cloud providers in the table below. Note that the pricing tiers usually apply at the account level. Enter the estimated monthly traffic (instead of the default 1 GB) to calculate pricing based on the known tiers.

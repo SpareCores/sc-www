@@ -185,7 +185,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   specialServerLists: any[] = require('./special-lists');
   specialList: any = null;
   specialParameters: any = {};
-  title: string = 'Cloud Compute Resources';
+  title: string = 'Cloud Servers Navigator';
   description: string = 'Explore, search, and evaluate the supported cloud compute resources in the table below. This comprehensive comparison includes diverse attributes such as CPU count, detailed processor information, memory, GPU, storage, network speed and capacity, available operating systems. Use the sidebar to filter the results, or enter your freetext query in the "Search prompt" bar. You can also compare servers by selecting at least two rows using the checkboxes.';
 
   constructor(@Inject(PLATFORM_ID) private platformId: object,
@@ -202,7 +202,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   ngOnInit() {
 
     this.SEOHandler.updateTitleAndMetaTags(
-      'Listing of Cloud Compute Resources - Spare Cores',
+      'Cloud Servers Navigator - Spare Cores',
       'Harnessing the compute resources of the cloud to optimize efficiency and costs of batch and service tasks.',
       'cloud, server, instance, price, comparison, spot, sparecores');
 
@@ -379,7 +379,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     }
 
     this.specialParameters = this.specialList?.parameters || {};
-    this.title = this.specialList?.title || 'Cloud Compute Resources';
+    this.title = this.specialList?.title || 'Cloud Servers Navigator';
     this.description = this.specialList?.description || 'Explore, search, and evaluate the supported cloud compute resources in the table below. This comprehensive comparison includes diverse attributes such as CPU count, detailed processor information, memory, GPU, storage, network speed and capacity, available operating systems. Use the sidebar to filter the results, or enter your freetext query in the "Search prompt" bar. You can also compare servers by selecting at least two rows using the checkboxes.';
   }
 

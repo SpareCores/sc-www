@@ -185,7 +185,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
   @ViewChild('tableHolder') tableHolder!: ElementRef;
   isTableOutsideViewport = false;
 
-  title = 'Server Comparison';
+  title = 'Server Compare Guide';
   description = 'Compare cloud servers characteristics, such as CPU, GPU, memory and storage details, and the performance of the instances by various benchmarking workloads to find the optimal compute resource for your needs.';
   keywords = 'compare, servers, server, hosting, cloud, vps, dedicated, comparison';
 
