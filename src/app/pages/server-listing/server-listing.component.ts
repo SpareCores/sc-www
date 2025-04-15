@@ -361,8 +361,15 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   }
 
   private async initDropdown() {
-    const { default: HSComboBox } = await import('@preline/combobox');
-    HSComboBox.autoInit();
+    try {
+      const { default: HSComboBox } = await import('@preline/combobox');
+      // small delay to avoid "r.autoInit is not a function" error
+      setTimeout(() => {
+        HSComboBox.autoInit();
+      }, 200);
+    } catch (error) {
+      console.error('Error initializing dropdown:', error);
+    }
   }
 
   ngOnDestroy () {
