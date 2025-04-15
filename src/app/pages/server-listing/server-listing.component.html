@@ -176,18 +176,14 @@
                     </td>
                     <td *ngIf="column.type === 'score'">
                       <div class="text-sm text-white">{{getScore(item.score)}}</div>
-                      <div
-                        *ngIf="item.score_per_price"
-                        class="text-xs text-white flex gap-1">
+                      <div *ngIf="item.score_per_price" class="text-xs text-white flex gap-1">
                         <span>{{getScore(item.score_per_price)}} / USD</span>
                       </div>
                     </td>
                     <td *ngIf="column.type === 'benchmark'">
                       <div class="text-sm text-white">{{getScore(item.selected_benchmark_score)}}</div>
-                      <div
-                        *ngIf="item.selected_benchmark_score_per_price"
-                        class="text-xs text-white flex gap-1">
-                        <span>{{getScore(item.selected_benchmark_score_per_price)}} / USD</span>
+                      <div *ngIf="item.selected_benchmark_score" class="text-xs text-white flex gap-1">
+                        <span>{{selectedBenchmarkConfig.short_unit}}</span>
                       </div>
                     </td>
                     <td *ngIf="column.type === 'score_per_price'">
@@ -195,7 +191,10 @@
                       <span *ngIf="!item.score_per_price">-</span>
                     </td>
                     <td *ngIf="column.type === 'benchmark_score_per_price'">
-                      <span *ngIf="item.selected_benchmark_score_per_price">{{getScore(item.selected_benchmark_score_per_price)}} / USD</span>
+                      <span *ngIf="item.selected_benchmark_score_per_price">{{getScore(item.selected_benchmark_score_per_price)}}  {{selectedBenchmarkConfig.unit_abbreviation}}</span>
+                      <div *ngIf="item.selected_benchmark_score_per_price" class="text-xs text-white flex gap-1">
+                        <span>for $1/hour</span>
+                      </div>
                       <span *ngIf="!item.selected_benchmark_score_per_price">-</span>
                     </td>
                     <td *ngIf="column.type === 'memory'">

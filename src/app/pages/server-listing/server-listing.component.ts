@@ -113,7 +113,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       show: false,
       type: 'benchmark',
       orderField: 'selected_benchmark_score',
-      info: "Performance benchmark score using the selected Benchmark. The value in the second line shows the performance measured for 1 USD/hour, using the best (usually spot) price of all zones."
+      info: "Performance benchmark score using the selected Benchmark."
     },
     { name: 'BENCHMARK/USD',
       show: false,
@@ -166,7 +166,17 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   benchmarkMetadata: any[] = [];
   benchmarksConfigs: any[] = [];
   benchmarkCategories: any[] = [];
-  selectedBenchmarkConfig: any = null;
+
+  // getter/setter instead of direct property for setting up a hook on change
+  private _selectedBenchmarkConfig: any = null;
+  get selectedBenchmarkConfig(): any {
+    return this._selectedBenchmarkConfig;
+  }
+  set selectedBenchmarkConfig(value: any) {
+    this._selectedBenchmarkConfig = value;
+    this.onBenchmarkConfigChanged();
+  }
+
   modalBenchmarkSelect: any;
 
   //modal
@@ -218,7 +228,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
     let order = this.searchParameters.find((param: any) => param.name === 'order_by');
     if(order?.schema?.default) {
-      this.orderBy = order.schema.default;  
+      this.orderBy = order.schema.default;
      }
 
     this.route.params.subscribe(() => {
@@ -550,9 +560,9 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       query.benchmark_id = this.selectedBenchmarkConfig.benchmark_id;
     }
 
-    this.keeperAPI.searchServers(query).then(servers => {      
+    this.keeperAPI.searchServers(query).then(servers => {
       this.servers = servers?.body;
-      
+
       // set stored selected state
       this.servers?.forEach((server: any) => {
         server.selected = this.serverCompare.selectedForCompare
@@ -562,7 +572,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       if(updateTotalCount) {
         this.totalPages = Math.ceil(parseInt(servers?.headers?.get('x-total-count') || '0') / this.limit);
       }
-      
+
       this.toastService.removeToast('query-error');
     }).catch(err => {
       this.analytics.SentryException(err, {tags: { location: this.constructor.name, function: '_searchServers' }});
@@ -712,7 +722,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     navigator.clipboard.writeText(url);
 
     this.clipboardIcon = 'check';
-    
+
     this.toastService.show({
       title: 'Link copied to clipboard!',
       type: 'success',
@@ -778,11 +788,6 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     this.tempSelectedBenchmarkCategory = null;
     this.selectedBenchmarkConfig = config;
 
-    // make sure benchmark column is shown when a benchmark is selected
-    const benchmarkColumn = this.possibleColumns.find(col => col.type === 'benchmark');
-    if (benchmarkColumn) benchmarkColumn.show = true;
-    this.refreshColumns(true);
-
     this.modalBenchmarkSelect?.hide();
     this.updateQueryParams(this.getQueryObjectBase());
     this.modalFilterTerm = null;
@@ -791,6 +796,27 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
   updateFilterTerm() {
     this.selectBenchmarkCategory(this.tempSelectedBenchmarkCategory, this.modalFilterTerm);
+  }
+
+  private onBenchmarkConfigChanged(): void {
+    // make sure benchmark column is shown when a benchmark is selected
+    if (this._selectedBenchmarkConfig) {
+      const benchmarkColumn = this.possibleColumns.find(col => col.type === 'benchmark');
+      if (benchmarkColumn) benchmarkColumn.show = true;
+      this.refreshColumns(true);
+    }
+
+    // extract unit of selected benchmark config in short form
+    const unit = this._selectedBenchmarkConfig.benchmarkTemplate.unit;
+    // remove short form (at the end of the string, in parentheses)
+    this._selectedBenchmarkConfig.unit = unit.replace(/\s*\([^)]*\)\s*$/, '');
+    // keep short form (in parentheses)
+    this._selectedBenchmarkConfig.unit_abbreviation = unit.match(/\(([^)]*)\)/)?.at(1) || unit;
+    if (unit.length < 25) {
+      this._selectedBenchmarkConfig.short_unit = this._selectedBenchmarkConfig.unit
+    } else {
+      this._selectedBenchmarkConfig.short_unit = this._selectedBenchmarkConfig.unit_abbreviation;
+    }
   }
 
 }
