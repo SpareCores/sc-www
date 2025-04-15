@@ -26,14 +26,15 @@ export class EmbedDebugComponent implements OnInit, OnChanges {
   width: string = '100%';
 
   @Input() charts = [
-    {id: 'bw_mem', name: 'Memory bandwidth' },
+    {id: 'bw_mem', name: 'Memory Bandwidth' },
     {id: 'compress', name: 'Compression' },
-    {id: 'geek_single', name: 'Geekbench single-core' },
-    {id: 'geek_multi', name: 'Geekbench multi-core' },
-    {id: 'ssl', name: 'OpenSSL speed' },
+    {id: 'geek_single', name: 'Geekbench Single-core' },
+    {id: 'geek_multi', name: 'Geekbench Multi-core' },
+    {id: 'ssl', name: 'OpenSSL' },
     {id: 'stress_ng_div16', name: 'Stress-ng div16' },
-    {id: 'stress_ng_relative', name: 'Stress-ng relative' },
-    {id: 'static_web', name: 'Static web server' },
+    {id: 'stress_ng_relative', name: 'Stress-ng Relative' },
+    {id: 'llm_inference', name: 'LLM Inference' },
+    {id: 'static_web', name: 'Static Web Server' },
     {id: 'redis', name: 'Redis' }
   ];
 

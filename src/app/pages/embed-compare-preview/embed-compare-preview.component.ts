@@ -31,15 +31,16 @@ export class EmbedComparePreviewComponent implements OnInit, OnChanges {
   width: string = '100%';
 
   @Input() charts: ChartOption[] = [
-    {id: 'bw_mem', name: 'Memory bandwidth' },
+    {id: 'bw_mem', name: 'Memory Bandwidth' },
     {id: 'compress', name: 'Compression' },
-    {id: 'geekbench', name: 'Geekbench single- and multi-core' },
-    {id: 'geekbench_single', name: 'Geekbench single-core' },
-    {id: 'geekbench_multi', name: 'Geekbench multi-core' },
-    {id: 'openssl', name: 'OpenSSL speed' },
+    {id: 'geekbench', name: 'Geekbench Single- and Multi-core' },
+    {id: 'geekbench_single', name: 'Geekbench Single-core' },
+    {id: 'geekbench_multi', name: 'Geekbench Multi-core' },
+    {id: 'openssl', name: 'OpenSSL' },
     {id: 'stress_ng', name: 'Stress-ng div16' },
-    {id: 'stress_ng_pct', name: 'Stress-ng relative' },
-    {id: 'static_web', name: 'Static web server' },
+    {id: 'stress_ng_pct', name: 'Stress-ng Relative' },
+    {id: 'llm_inference', name: 'LLM Inference' },
+    {id: 'static_web', name: 'Static Web Server' },
     {id: 'redis', name: 'Redis' }
   ];
 

@@ -116,7 +116,7 @@ export class EmbeddedCompareChartComponent implements OnInit {
       hidden: true
     },
     {
-      name: 'Memory bandwidth',
+      name: 'Memory Bandwidth',
       id: 'bw_mem',
       benchmarks: ['bw_mem'],
       data: [],
@@ -124,7 +124,7 @@ export class EmbeddedCompareChartComponent implements OnInit {
       hidden: true
     },
     {
-      name: 'OpenSSL speed',
+      name: 'OpenSSL',
       id: 'openssl',
       benchmarks: [ 'openssl' ],
       data: [],
@@ -140,7 +140,7 @@ export class EmbeddedCompareChartComponent implements OnInit {
       hidden: true
     },
     {
-      name: 'stress-ng div16 raw scores per vCPU',
+      name: 'Stress-ng div16 Raw Scores per vCPU',
       id: 'stress_ng',
       benchmarks: [ 'stress_ng:div16' ],
       data: [],
@@ -148,7 +148,7 @@ export class EmbeddedCompareChartComponent implements OnInit {
       hidden: true,
     },
     {
-      name: 'stress-ng relative multicore performance per vCPU',
+      name: 'Stress-ng Relative Multicore Performance per vCPU',
       id: 'stress_ng_pct',
       benchmarks: [ 'stress_ng:div16' ],
       data: [],

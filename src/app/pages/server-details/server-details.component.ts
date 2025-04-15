@@ -134,12 +134,12 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   modalEmbed: any;
 
   embeddableCharts = [
-    {id: 'bw_mem', name: 'Memory bandwidth' },
+    {id: 'bw_mem', name: 'Memory Bandwidth' },
     {id: 'compress', name: 'Compression' },
-    {id: 'geek_single', name: 'Geekbench single-core' },
-    {id: 'geek_multi', name: 'Geekbench multi-core' },
-    {id: 'ssl', name: 'OpenSSL speed' },
-    {id: 'static_web', name: 'Static web server' },
+    {id: 'geek_single', name: 'Geekbench Single-core' },
+    {id: 'geek_multi', name: 'Geekbench Multi-core' },
+    {id: 'ssl', name: 'OpenSSL' },
+    {id: 'static_web', name: 'Static Web Server' },
     {id: 'redis', name: 'Redis' }
   ];
 
