@@ -362,13 +362,31 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
   private async initDropdown() {
     try {
-      const { default: HSComboBox } = await import('@preline/combobox');
-      // small delay to avoid "r.autoInit is not a function" error
-      setTimeout(() => {
-        HSComboBox.autoInit();
-      }, 200);
+      const prelineModule = await import('@preline/combobox');
+      // try to initialize using the default export, which works in dev
+      if (prelineModule.default && typeof prelineModule.default.autoInit === 'function') {
+        prelineModule.default.autoInit();
+      } else {
+        // need to fall back to manual initialization in prod :shrug:
+        document.querySelectorAll('[data-hs-combobox]').forEach(el => {
+          if (prelineModule.default && typeof prelineModule.default === 'function') {
+            try {
+              // @ts-ignore - Attempting to initialize even if types don't match
+              new prelineModule.default(el);
+            } catch (e) {
+              console.error('Failed to initialize combobox:', e);
+            }
+          }
+        });
+      }
     } catch (error) {
       console.error('Error initializing dropdown:', error);
+      // fall back to trying to load globally if it exists
+      // @ts-ignore - Window might have HSComboBox globally
+      if (window.HSComboBox && typeof window.HSComboBox.autoInit === 'function') {
+        // @ts-ignore - Accessing global variable
+        window.HSComboBox.autoInit();
+      }
     }
   }
 
