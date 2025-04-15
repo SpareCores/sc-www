@@ -172,13 +172,26 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
       hidden: false
     },
     {
-      name: 'stress-ng relative multicore performance per vCPU',
+      name: 'Stress-ng Relative Multicore Performance per vCPU',
       id: 'stress_ng_pct',
       benchmarks: [ 'stress_ng:div16' ],
       data: [],
+      order: 2,
       show_more: false,
-      hidden: false
-    }
+      icon: 'circle-arrow-up',
+      tooltip: 'Higher is better.'
+    },
+    {
+      id: 'llm_inference',
+      name: 'LLM Inference Speed',
+      benchmarks: ['llm_speed:prompt_processing', 'llm_speed:text_generation'],
+      description: 'Compares the speed of LLM (Large Language Model) inference across servers for both prompt processing and text generation tasks.',
+      data: [],
+      order: 3,
+      show_more: false,
+      icon: 'circle-arrow-up',
+      tooltip: 'Higher is better.'
+    },
   ];
 
 
@@ -201,6 +214,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     {id: 'openssl', name: 'OpenSSL speed' },
     {id: 'stress_ng', name: 'Stress-ng div16' },
     {id: 'stress_ng_pct', name: 'Stress-ng relative' },
+    {id: 'llm_inference', name: 'LLM Inference Speed' },
     {id: 'static_web', name: 'Static web server' },
     {id: 'redis', name: 'Redis' }
   ];

@@ -119,6 +119,15 @@ export class ServerCompareChartsComponent implements OnInit, OnChanges {
   availableCompressMethods: any[] = [];
   selectedCompressMethod: any;
 
+  barChartLLMPromptOptions: ChartConfiguration<'bar'>['options'] = JSON.parse(JSON.stringify(barChartOptionsSSLCompare));
+  barChartLLMPromptData: ChartData<'bar'> | undefined = undefined;
+  barChartLLMGenerationOptions: ChartConfiguration<'bar'>['options'] = JSON.parse(JSON.stringify(barChartOptionsSSLCompare));
+  barChartLLMGenerationData: ChartData<'bar'> | undefined = undefined;
+
+  llmModelsDropdown: any;
+  availableLLMModels: any[] = [];
+  selectedLLMModel: any;
+
   clipboardIcon = 'clipboard';
 
   constructor(
@@ -170,6 +179,8 @@ export class ServerCompareChartsComponent implements OnInit, OnChanges {
       this.generateSSLChart();
       this.generateCompressChart();
       this.generateStressNGChart();
+      this.initializeLLMModels();
+      this.generateLLMCharts();
 
       this.multiBarCharts.forEach((chart) => {
         this.generateMultiBarChart(chart.chart);
@@ -184,8 +195,15 @@ export class ServerCompareChartsComponent implements OnInit, OnChanges {
             chart.dropdown2 = dropdown;
           });
         }
-
       });
+
+      // Initialize LLM dropdown
+      if(this.availableLLMModels?.length) {
+        this.dropdownManager.initDropdown('llm_models_button', 'llm_models_options').then((dropdown) => {
+          this.llmModelsDropdown = dropdown;
+        });
+      }
+
     }
   }
 
@@ -1072,7 +1090,7 @@ public generateChartsData() {
 
     navigator.clipboard.writeText(url);
     this.clipboardIcon = 'check';
-    
+
     this.toastService.show({
       title: 'Link copied to clipboard!',
       type: 'success',
@@ -1099,4 +1117,251 @@ public generateChartsData() {
     window.open(`/server/${server.vendor_id}/${server.api_reference}`, '_blank');
   }
 
+  initializeLLMModels() {
+    const llmPromptData = this.benchmarkMeta?.find((category: any) => category.benchmark_id === 'llm_speed:prompt_processing');
+    if (!llmPromptData) {
+      console.warn('No LLM prompt processing benchmark data found');
+      return;
+    }
+
+    let models: any[] = [];
+    if (llmPromptData.configs) {
+      models = [...new Set(llmPromptData.configs
+        .filter((config: any) => config.config?.model)
+        .map((config: any) => config.config.model))];
+    }
+    if (models.length === 0) {
+      console.warn('No LLM models found in benchmark data');
+      return;
+    }
+
+    // custom model order (by size)
+    const modelOrder = [
+      'SmolLM-135M.Q4_K_M.gguf',
+      'qwen1_5-0_5b-chat-q4_k_m.gguf',
+      'gemma-2b.Q4_K_M.gguf',
+      'llama-7b.Q4_K_M.gguf',
+      'phi-4-q4.gguf',
+      'Llama-3.3-70B-Instruct-Q4_K_M.gguf'
+    ];
+
+    models.sort((a, b) => {
+      const aStr = String(a);
+      const bStr = String(b);
+      const indexA = modelOrder.indexOf(aStr);
+      const indexB = modelOrder.indexOf(bStr);
+      if (indexA !== -1 && indexB !== -1) {
+        return indexA - indexB;
+      }
+      if (indexA !== -1) return -1;
+      if (indexB !== -1) return 1;
+      // sort models alphabetically if not in our predefined list
+      return aStr.localeCompare(bStr);
+    });
+
+    this.availableLLMModels = models.map((model) => ({
+      // drop .gguf extension for display
+      name: String(model).replace('.gguf', ''),
+      value: model
+    }));
+
+    if (this.availableLLMModels.length > 0) {
+      this.selectedLLMModel = this.availableLLMModels[0];
+    }
+  }
+
+  generateLLMCharts() {
+    if (!this.selectedLLMModel) {
+      console.warn('No LLM model selected or available.');
+      this.barChartLLMPromptData = undefined;
+      this.barChartLLMGenerationData = undefined;
+      return;
+    }
+
+    this.barChartLLMPromptData = this.generateLLMBarChart('llm_speed:prompt_processing');
+    this.barChartLLMGenerationData = this.generateLLMBarChart('llm_speed:text_generation');
+
+    const promptTitle = 'Prompt Processing';
+    const generationTitle = 'Text Generation';
+    const promptXAxisTitle = "Prompt's length (tokens).";
+    const generationXAxisTitle = "Requested text length (tokens).";
+
+    this.barChartLLMPromptOptions = {
+      ...this.barChartLLMPromptOptions,
+      plugins: {
+        ...(this.barChartLLMPromptOptions?.plugins),
+        title: { display: true, text: promptTitle, color: '#FFF' },
+        tooltip: {
+          ...(this.barChartLLMPromptOptions?.plugins?.tooltip),
+          callbacks: {
+            ...(this.barChartLLMPromptOptions?.plugins?.tooltip?.callbacks),
+            title: function(this: TooltipModel<'bar'>, tooltipItems: TooltipItem<'bar'>[]) {
+              return `${tooltipItems[0].label} Tokens (${tooltipItems[0].dataset.label})`;
+            },
+            label: function(this: TooltipModel<'bar'>, tooltipItem: TooltipItem<'bar'>) {
+              return `Speed: ${tooltipItem.formattedValue} tokens/sec`;
+            }
+          }
+        }
+      },
+      scales: {
+        ...(this.barChartLLMPromptOptions?.scales),
+        y: {
+          ...(this.barChartLLMPromptOptions?.scales?.y),
+          title: { display: true, text: 'Tokens/second', color: '#FFF' }
+        },
+        x: {
+          ...(this.barChartLLMPromptOptions?.scales?.x),
+          title: { display: true, text: promptXAxisTitle, color: '#FFF' }
+        }
+      },
+      layout: {
+        padding: {
+          bottom: 20
+        }
+      }
+    };
+
+    this.barChartLLMGenerationOptions = {
+      ...this.barChartLLMGenerationOptions,
+      plugins: {
+        ...(this.barChartLLMGenerationOptions?.plugins),
+        title: { display: true, text: generationTitle, color: '#FFF' },
+        tooltip: {
+          ...(this.barChartLLMGenerationOptions?.plugins?.tooltip),
+          callbacks: {
+            ...(this.barChartLLMGenerationOptions?.plugins?.tooltip?.callbacks),
+            title: function(this: TooltipModel<'bar'>, tooltipItems: TooltipItem<'bar'>[]) {
+              return `${tooltipItems[0].label} Tokens (${tooltipItems[0].dataset.label})`;
+            },
+            label: function(this: TooltipModel<'bar'>, tooltipItem: TooltipItem<'bar'>) {
+              return `Speed: ${tooltipItem.formattedValue} tokens/sec`;
+            }
+          }
+        }
+      },
+      scales: {
+        ...(this.barChartLLMGenerationOptions?.scales),
+        y: {
+          ...(this.barChartLLMGenerationOptions?.scales?.y),
+          title: { display: true, text: 'Tokens/second', color: '#FFF' }
+        },
+        x: {
+          ...(this.barChartLLMGenerationOptions?.scales?.x),
+          title: { display: true, text: generationXAxisTitle, color: '#FFF' }
+        }
+      },
+      layout: {
+        padding: {
+          bottom: 20
+        }
+      }
+    };
+  }
+
+  generateLLMBarChart(benchmarkId: string): ChartData<'bar'> | undefined {
+    const selectedModelValue = this.selectedLLMModel.value;
+    const scaleField = 'tokens';
+
+    const dataSet = this.benchmarkMeta?.find((x: any) => x.benchmark_id === benchmarkId);
+    if (!dataSet || !dataSet.configs) {
+      console.warn(`No benchmark metadata or configs found for ${benchmarkId}`);
+      return undefined;
+    }
+
+    let scales: number[] = [];
+    this.servers.forEach(server => {
+      server.benchmark_scores
+        .filter(score => score.benchmark_id === benchmarkId && (score.config as any)?.model === selectedModelValue && (score.config as any)?.[scaleField]) // Cast to any and use optional chaining
+        .forEach(score => {
+          const tokenValue = (score.config as any)?.[scaleField]; // Cast to any and use optional chaining
+          if (tokenValue !== undefined && scales.indexOf(tokenValue) === -1) { // Check if tokenValue is defined
+            scales.push(tokenValue);
+          }
+        });
+    });
+    if (scales.length === 0) {
+      return undefined;
+    }
+    scales.sort((a, b) => a - b); // Sort token counts numerically
+
+    let chartData: any = {
+      labels: scales,
+      datasets: this.servers.map((server: ServerPKs, index: number) => ({
+        data: [],
+        label: server.display_name,
+        borderColor: radarDatasetColors[index % 8].borderColor,
+        backgroundColor: radarDatasetColors[index % 8].borderColor,
+      })),
+    };
+
+    this.servers.forEach((server: any, i: number) => {
+      scales.forEach((tokenCount: number) => {
+        const item = server.benchmark_scores.find(
+          (b: any) =>
+            b.benchmark_id === benchmarkId &&
+            (b.config as any)?.model === selectedModelValue &&
+            (b.config as any)?.[scaleField] === tokenCount
+        );
+        chartData.datasets[i].data.push(item ? item.score : null);
+      });
+    });
+
+    return { labels: chartData.labels, datasets: chartData.datasets };
+  }
+
+  refreshLLMCharts(model: any) {
+    this.selectedLLMModel = model;
+    this.generateLLMCharts();
+    this.llmModelsDropdown?.hide();
+  }
+
+  private formatNumber(value: number): string {
+    if (value === undefined || value === null) {
+      return '-';
+    }
+    return value.toLocaleString('en-US');
+  }
+
+  sortLLMConfigs(configs: any[]): any[] {
+    if (!configs) return [];
+
+    const modelOrder = [
+      'SmolLM-135M.Q4_K_M.gguf',
+      'qwen1_5-0_5b-chat-q4_k_m.gguf',
+      'gemma-2b.Q4_K_M.gguf',
+      'llama-7b.Q4_K_M.gguf',
+      'phi-4-q4.gguf',
+      'Llama-3.3-70B-Instruct-Q4_K_M.gguf'
+    ];
+
+    return configs.sort((a, b) => {
+      const modelA = a.config?.model;
+      const modelB = b.config?.model;
+      const tokensA = a.config?.tokens;
+      const tokensB = b.config?.tokens;
+
+      // model might be missing?
+      if (!modelA || !modelB) return 0;
+
+      const indexA = modelOrder.indexOf(modelA);
+      const indexB = modelOrder.indexOf(modelB);
+
+      if (indexA !== -1 && indexB !== -1) {
+        if (indexA !== indexB) return indexA - indexB;
+      } else if (indexA !== -1) {
+        return -1;
+      } else if (indexB !== -1) {
+        return 1;
+      } else {
+        const modelCompare = modelA.localeCompare(modelB);
+        if (modelCompare !== 0) return modelCompare;
+      }
+
+      if (tokensA !== undefined && tokensB !== undefined) {
+        return tokensA - tokensB;
+      }
+      return 0;
+    });
+  }
 }

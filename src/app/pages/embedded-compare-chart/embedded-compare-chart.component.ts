@@ -154,7 +154,14 @@ export class EmbeddedCompareChartComponent implements OnInit {
       data: [],
       show_more: false,
       hidden: true,
-    }
+    },
+    {
+      id: 'llm_inference',
+      name: 'LLM Inference Speed',
+      benchmarks: ['llm_speed:prompt_processing', 'llm_speed:text_generation'],
+      data: [],
+      show_more: false,
+    },
   ];
 
   constructor(@Inject(PLATFORM_ID) private platformId: object,

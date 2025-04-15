@@ -7,6 +7,11 @@ import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
 import { PrismService } from '../../services/prism.service';
 
+interface ChartOption {
+  id: string;
+  name: string;
+}
+
 @Component({
   selector: 'app-embed-compare-preview',
   standalone: true,
@@ -25,7 +30,7 @@ export class EmbedComparePreviewComponent implements OnInit, OnChanges {
   height = '710px';
   width: string = '100%';
 
-  @Input() charts = [
+  @Input() charts: ChartOption[] = [
     {id: 'bw_mem', name: 'Memory bandwidth' },
     {id: 'compress', name: 'Compression' },
     {id: 'geekbench', name: 'Geekbench single- and multi-core' },

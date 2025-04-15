@@ -260,6 +260,13 @@
                     (mouseenter)="showTooltip($event, 'Measuring the compression ratio and speed while compressing and decompressing the dickens.txt of the Silesia corpus (10 MB uncompressed) using various algorithms, compressions levels and other extra arguments.')"
                     (mouseleave)="hideTooltip()">
                   </lucide-icon>
+                  <lucide-icon
+                    *ngIf="category.id === 'llm_inference'"
+                    name="info"
+                    class="h-4 w-4 text-gray-200"
+                    (mouseenter)="showTooltip($event, 'Running llama-bench from llama.cpp using various quantized model files to measure the speed of processing 16 to 16k tokens (prompt processing) and generating 16 to 4k tokens (text generation).')"
+                    (mouseleave)="hideTooltip()">
+                  </lucide-icon>
                 </h3>
                 <button
                   *ngIf="!isEmbedded"
@@ -431,6 +438,50 @@
                   </div>
                 </div>
               </div>
+              <div *ngIf="category.id === 'llm_inference'">
+                <div class="block_full_short_inline" *ngIf="availableLLMModels?.length">
+                  <div class="flex justify-end items-center mb-4">
+                    <div class="flex gap-4">
+                      <button
+                        id="llm_models_button"
+                        data-ph-capture-attribute-sc-event="server compare llm model select"
+                        data-dropdown-toggle="llm_models_options"
+                        class="dropdown_button"
+                        type="button">
+                        <div class="px-3 py-2">
+                          {{selectedLLMModel?.name || 'Select Model'}}
+                        </div>
+                        <div class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
+                          <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+                  <div *ngIf="isBrowser() && (barChartLLMPromptData || barChartLLMGenerationData)" class="charts_div">
+                    <div *ngIf="barChartLLMPromptData" chartType="bar" class="chart_div">
+                      <canvas
+                        baseChart
+                        [data]="barChartLLMPromptData"
+                        [options]="barChartLLMPromptOptions"
+                        [type]="barChartType"
+                      >
+                      </canvas>
+                    </div>
+                    <div *ngIf="barChartLLMGenerationData" chartType="bar" class="chart_div">
+                      <canvas
+                        baseChart
+                        [data]="barChartLLMGenerationData"
+                        [options]="barChartLLMGenerationOptions"
+                        [type]="barChartType"
+                      >
+                      </canvas>
+                    </div>
+                  </div>
+                  <div *ngIf="!(barChartLLMPromptData || barChartLLMGenerationData)" class="text-center py-4 text-gray-500">
+                    No data available for the selected model.
+                  </div>
+                </div>
+              </div>
               <div class="mt-4 mb-8 flex justify-center"
                 *ngIf="!isEmbedded && category.id !== 'passmark_cpu' && category.id !== 'passmark_other'"
                 [ngClass]="{
@@ -472,12 +523,12 @@
               <tr *ngIf="category.data.length > 1">
                 <td [colSpan]="servers.length + 1" >
                   <div class="ml-4 flex justify-between">
-                    <div class="inline-block gap-2 items-center">
-                      <span class="inline">{{item.name}}</span>
+                    <div class="flex gap-2 items-center">
+                      {{item.name}}
                       <lucide-icon
                         *ngIf="item.description"
                         name="info"
-                        class="inline-block h-4 w-4 text-gray-200 ml-1"
+                        class="h-4 w-4 text-gray-200"
                         (mouseenter)="showTooltip($event, item.description)"
                         (mouseleave)="hideTooltip()">
                       </lucide-icon>
@@ -493,17 +544,19 @@
                 </td>
               </tr>
               <ng-container *ngIf="!item.collapsed" >
-                <tr *ngFor="let config of item.configs">
+                <!-- special sorting for LLM -->
+                <tr *ngFor="let config of (category.id === 'llm_inference' ? sortLLMConfigs(item.configs) : item.configs)">
                   <td>
-                    <div class="ml-6" [innerHTML]="serializeConfig(config.config)" ></div></td>
+                    <div class="ml-6" [innerHTML]="serializeConfig(config.config)" ></div>
+                  </td>
                   <td *ngFor="let value of config.values" [style]="isBestStyle(value, config.values, item)">
-                        {{numberWithCommas(value)}}
+                    {{numberWithCommas(value)}}
                   </td>
                 </tr>
               </ng-container>
             </ng-container>
           </ng-container>
-      </ng-container>
+        </ng-container>
       </ng-container>
       <ng-container *ngFor="let chartItem of multiBarCharts">
         <ng-container *ngIf="chartItem.chart.chartData && !chartItem.hidden">
@@ -731,6 +784,16 @@
       class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
       (click)="selectCompressMethod(item)" >
       <div class="text-white text-sm ">{{item.name}}</div>
+    </li>
+  </ul>
+</div>
+
+<div id="llm_models_options" class="z-100 hidden bg-secondary rounded-lg shadow w-64 border border-emerald-400 border-solid">
+  <ul class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200 max-h-60 overflow-y-auto" aria-labelledby="llm_models_button">
+    <li *ngFor="let item of availableLLMModels"
+      class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+      (click)="refreshLLMCharts(item)" >
+      <div class="text-white text-sm whitespace-nowrap overflow-hidden text-ellipsis">{{item.name}}</div>
     </li>
   </ul>
 </div>
