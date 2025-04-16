@@ -76,6 +76,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
   filterCategories = [
     {category_id: 'basic', name: 'Basics', icon: 'server', collapsed: true},
+    {category_id: 'performance', name: 'Performance', icon: 'gauge', collapsed: true},
     {category_id: 'processor', name: 'Processor', icon: 'microchip', collapsed: false},
     {category_id: 'gpu', name: 'GPU', icon: 'cpu', collapsed: true},
     {category_id: 'memory', name: 'Memory', icon: 'memory-stick', collapsed: true},
