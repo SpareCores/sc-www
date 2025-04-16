@@ -799,24 +799,23 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   }
 
   private onBenchmarkConfigChanged(): void {
-    // make sure benchmark column is shown when a benchmark is selected
     if (this._selectedBenchmarkConfig) {
+      // make sure benchmark column is shown when a benchmark is selected
       const benchmarkColumn = this.possibleColumns.find(col => col.type === 'benchmark');
       if (benchmarkColumn) benchmarkColumn.show = true;
       this.refreshColumns(true);
-    }
 
-    // extract unit of selected benchmark config in short form
-    const unit = this._selectedBenchmarkConfig.benchmarkTemplate.unit;
-    // remove short form (at the end of the string, in parentheses)
-    this._selectedBenchmarkConfig.unit = unit.replace(/\s*\([^)]*\)\s*$/, '');
-    // keep short form (in parentheses)
-    this._selectedBenchmarkConfig.unit_abbreviation = unit.match(/\(([^)]*)\)/)?.at(1) || unit;
-    if (unit.length < 25) {
-      this._selectedBenchmarkConfig.short_unit = this._selectedBenchmarkConfig.unit
-    } else {
-      this._selectedBenchmarkConfig.short_unit = this._selectedBenchmarkConfig.unit_abbreviation;
-    }
+      // extract unit of selected benchmark config in short form
+      const unit = this._selectedBenchmarkConfig.benchmarkTemplate.unit;
+      // remove short form (at the end of the string, in parentheses)
+      this._selectedBenchmarkConfig.unit = unit.replace(/\s*\([^)]*\)\s*$/, '');
+      // keep short form (in parentheses)
+      this._selectedBenchmarkConfig.unit_abbreviation = unit.match(/\(([^)]*)\)/)?.at(1) || unit;
+      if (unit.length < 25) {
+        this._selectedBenchmarkConfig.short_unit = this._selectedBenchmarkConfig.unit
+      } else {
+        this._selectedBenchmarkConfig.short_unit = this._selectedBenchmarkConfig.unit_abbreviation;
+      }
   }
 
 }
