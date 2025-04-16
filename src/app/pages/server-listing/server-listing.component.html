@@ -103,7 +103,7 @@
                         'cursor-pointer': item.orderField
                       }"
                       (click)="toggleOrdering(item)" >
-                      <div class="flex gap-1">
+                      <div class="flex gap-1 whitespace-nowrap">
                         {{item.name}}
                         <lucide-icon
                           *ngIf="item.info"
