@@ -816,6 +816,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       } else {
         this._selectedBenchmarkConfig.short_unit = this._selectedBenchmarkConfig.unit_abbreviation;
       }
+    }
   }
 
 }
