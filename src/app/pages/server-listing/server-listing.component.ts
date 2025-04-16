@@ -113,13 +113,13 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       show: false,
       type: 'benchmark',
       orderField: 'selected_benchmark_score',
-      info: "Performance benchmark score using the selected Benchmark."
+      info: "Performance benchmark score as per the selected Benchmark at the top of the table."
     },
-    { name: 'BENCHMARK/USD',
+    { name: '$ EFFICIENCY',
       show: false,
       type: 'benchmark_score_per_price',
       orderField: 'selected_benchmark_score_per_price',
-      info: "Benchmark/price showing the selected benchmark performance measured for 1 USD/hour, using the best (usually spot) price of all zones."
+      info: "Benchmark/price ratio showing the selected benchmark performance measured for 1 USD/hour, using the best (usually spot) price of all zones. In other words: how much performance you get for your money."
     },
     { name: 'MEMORY', show: true, type: 'memory', orderField: 'memory_amount' },
     { name: 'STORAGE', show: true, type: 'storage', orderField: 'storage_size' },
