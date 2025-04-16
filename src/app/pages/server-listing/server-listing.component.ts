@@ -245,6 +245,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     // initial load is special as we need to decode the benchmark URL param
     let isInitialLoad = true;
     let shouldSearchAfterBenchmarks = false;
+    let benchmarkDataEncoded: string | null = null;
 
     this.route.queryParams.subscribe((params: Params) => {
       const query: any = JSON.parse(JSON.stringify(params || '{}'));
@@ -287,6 +288,11 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
       this.refreshColumns(false);
 
+      // will process later
+      if (query.benchmark) {
+        benchmarkDataEncoded = query.benchmark;
+      }
+
       // we don't want to search yet on initial load
       // as we need to decode the benchmark URL param first,
       // and will do the search after getBenchmarkConfigs is called
@@ -327,10 +333,15 @@ export class ServerListingComponent implements OnInit, OnDestroy {
           this.selectedBenchmarkConfig = this.benchmarksConfigs.find((config: any) => config.benchmark_id === this.specialList.benchmark_id && config.config === this.specialList.benchmark_config);
         }
         // allow overriding preselected benchmark via URL parameters
-        const benchmarkDataEncoded = this.route.snapshot.queryParams.benchmark;
-        if(benchmarkDataEncoded) {
-          const benchmarkData = JSON.parse(atob(benchmarkDataEncoded));
-          this.selectedBenchmarkConfig = this.benchmarksConfigs.find((config: any) => config.benchmark_id === benchmarkData.id && config.config === benchmarkData.config);
+        if (benchmarkDataEncoded) {
+          try {
+            const benchmarkData = JSON.parse(atob(benchmarkDataEncoded));
+            this.selectedBenchmarkConfig = this.benchmarksConfigs.find((config: any) =>
+              config.benchmark_id === benchmarkData.id &&
+              config.config === benchmarkData.config);
+          } catch (error) {
+            console.error('Error decoding benchmark data:', error);
+          }
         }
 
         // only search once after benchmarks are loaded on initial load
