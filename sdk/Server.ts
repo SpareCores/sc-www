@@ -42,7 +42,6 @@ export class Server<SecurityDataType = unknown> {
       path: `/server/${vendor}/${server}/similar_servers/${by}/${num}`,
       method: "GET",
       query: query,
-      format: "json",
       ...params,
     });
   /**
@@ -61,7 +60,6 @@ export class Server<SecurityDataType = unknown> {
       path: `/server/${vendor}/${server}/prices`,
       method: "GET",
       query: query,
-      format: "json",
       ...params,
     });
   /**
@@ -76,7 +74,6 @@ export class Server<SecurityDataType = unknown> {
     this.http.request<GetServerBenchmarksServerVendorServerBenchmarksGetData, HTTPValidationError>({
       path: `/server/${vendor}/${server}/benchmarks`,
       method: "GET",
-      format: "json",
       ...params,
     });
 }

@@ -81,6 +81,12 @@ export class ServerChartsComponent implements OnChanges {
   barChartOptionsSSL: ChartConfiguration<'bar'>['options'] = barChartOptionsSSL;
   barChartDataSSL: ChartData<'bar'> | undefined = undefined;
 
+  barChartLLMPromptOptions: ChartConfiguration<'bar'>['options'] = JSON.parse(JSON.stringify(barChartOptionsSSL));
+  barChartLLMPromptData: ChartData<'bar'> | undefined = undefined;
+
+  barChartLLMGenerationOptions: ChartConfiguration<'bar'>['options'] = JSON.parse(JSON.stringify(barChartOptionsSSL));
+  barChartLLMGenerationData: ChartData<'bar'> | undefined = undefined;
+
   geekbenchHTML: any;
 
   geekScoreSingle: string = '0';
@@ -230,8 +236,34 @@ export class ServerChartsComponent implements OnChanges {
       this.barChartDataSSL = undefined;
     }
 
-    this.generateGeekbenchChart();
+    let llmPromptData = this.generateLLMBarChart('llm_speed:prompt_processing', 'tokens', 'model');
+    if(llmPromptData) {
+      this.barChartLLMPromptData = { labels: llmPromptData.labels, datasets: llmPromptData.datasets };
+      (this.barChartLLMPromptOptions!.scales!.y!.title as any).text = 'Tokens/second';
+      (this.barChartLLMPromptOptions!.plugins!.title as any).display = false;
+      (this.barChartLLMPromptOptions!.scales!.x!.title as any) = {
+        display: true,
+        text: "Prompt's length (tokens).",
+        color: '#FFFFFF'
+      };
+    } else {
+      this.barChartLLMPromptData = undefined;
+    }
+    let llmGenerationData = this.generateLLMBarChart('llm_speed:text_generation', 'tokens', 'model');
+    if(llmGenerationData) {
+      this.barChartLLMGenerationData = { labels: llmGenerationData.labels, datasets: llmGenerationData.datasets };
+      (this.barChartLLMGenerationOptions!.scales!.y!.title as any).text = 'Tokens/second';
+      (this.barChartLLMGenerationOptions!.plugins!.title as any).display = false;
+      (this.barChartLLMGenerationOptions!.scales!.x!.title as any) = {
+        display: true,
+        text: "Requested text length (tokens).",
+        color: '#FFFFFF'
+      };
+    } else {
+      this.barChartLLMGenerationData = undefined;
+    }
 
+    this.generateGeekbenchChart();
     this.generateCompressChart();
 
     this.passmarkCPUData = this.getBenchmarkCategory('passmark:cpu');
@@ -812,6 +844,83 @@ export class ServerChartsComponent implements OnChanges {
     const el3 = document.getElementById(boxId+'_less');
     if(el3) {
       el3.classList.toggle('hidden');
+    }
+  }
+
+  generateLLMBarChart(benchmark_id: string, labelsField: string, scaleField: string) {
+    const dataSet = this.benchmarksByCategory?.find(x => x.benchmark_id === benchmark_id);
+
+    if(dataSet && dataSet.benchmarks?.length) {
+      let tokenLabels: any[] = [];
+      let modelScales: any[] = [];
+
+      // extract unique values for tokens (x-axis) and model (series/colors)
+      dataSet.benchmarks.forEach((item: any) => {
+        if(item.config[labelsField] && tokenLabels.indexOf(item.config[labelsField]) === -1) {
+          tokenLabels.push(item.config[labelsField]);
+        }
+        if((item.config[scaleField]) && modelScales.indexOf(item.config[scaleField]) === -1) {
+          modelScales.push(item.config[scaleField]);
+        }
+      });
+
+      // sort token labels numerically 
+      tokenLabels.sort((a, b) => {
+        if(!isNaN(a) && !isNaN(b)) {
+          return a - b;
+        }
+        return a.toString().localeCompare(b.toString());
+      });
+
+      // custom model order
+      const modelOrder = [
+        'SmolLM-135M.Q4_K_M.gguf',
+        'qwen1_5-0_5b-chat-q4_k_m.gguf',
+        'gemma-2b.Q4_K_M.gguf',
+        'llama-7b.Q4_K_M.gguf',
+        'phi-4-q4.gguf',
+        'Llama-3.3-70B-Instruct-Q4_K_M.gguf'
+      ];
+
+      modelScales.sort((a, b) => {
+        const indexA = modelOrder.indexOf(a);
+        const indexB = modelOrder.indexOf(b);
+        if (indexA !== -1 && indexB !== -1) {
+          return indexA - indexB;
+        }
+        if (indexA !== -1) return -1;
+        if (indexB !== -1) return 1;
+        // sort models alphabetically if not in our predefined list
+        return a.toString().localeCompare(b.toString());
+      });
+
+      let chartData: any = {
+        labels: tokenLabels,
+        datasets: modelScales.map((model: any, index: number) => {
+          return {
+            data: [],
+            // drop .gguf extension from displayed model names in the legend
+            label: model.toString().replace('.gguf', ''),
+            borderColor: radarDatasetColors[index].borderColor,
+            backgroundColor: radarDatasetColors[index].borderColor
+          };
+        })
+      };
+
+      modelScales.forEach((model: any, i: number) => {
+        tokenLabels.forEach((token: any) => {
+          const item = dataSet.benchmarks.find((b: any) => b.config[scaleField] === model && b.config[labelsField] === token);
+          if(item) {
+            chartData.datasets[i].data.push(item.score);
+          } else {
+            chartData.datasets[i].data.push(null);
+          }
+        });
+      });
+
+      return chartData;
+    } else {
+      return undefined;
     }
   }
 

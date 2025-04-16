@@ -32,7 +32,6 @@ export class Servers<SecurityDataType = unknown> {
       path: `/servers`,
       method: "GET",
       query: query,
-      format: "json",
       ...params,
     });
 }

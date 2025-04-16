@@ -39,7 +39,6 @@ export class StoragePrices<SecurityDataType = unknown> {
       path: `/storage_prices`,
       method: "GET",
       query: query,
-      format: "json",
       ...params,
     });
 }

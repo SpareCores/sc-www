@@ -1,6 +1,6 @@
 
 <div class="block_half" *ngIf="lineChartDataBWmem && isChartShown('bw_mem')" id="bw_mem_chart">
-  <h3 class="text-2xl flex items-center gap-2" >Memory bandwidth
+  <h3 class="text-2xl flex items-center gap-2" >Memory Bandwidth
     <lucide-icon
       name="circle-arrow-up"
       class="h-4 w-4 text-gray-200"
@@ -177,7 +177,7 @@
 
 <div class="block_half" *ngIf="isChartShown('passmark:cpu') && passmarkCPUData?.length" id="passmark_cpu">
   <div class="flex items-center" style="min-height: 42px;">
-    <h3 class="text-2xl">Passmark CPU scores</h3>
+    <h3 class="text-2xl">Passmark CPU Scores</h3>
   </div>
   <table class="items_table_passmark" id="similar_family_table">
     <thead>
@@ -223,7 +223,7 @@
 
 <div class="block_half" *ngIf="isChartShown('passmark:other') && passmarkOTHERData?.length" id="passmark_other">
   <div class="flex items-center" style="min-height: 42px;">
-    <h3 class="text-2xl">Passmark Memory scores</h3>
+    <h3 class="text-2xl">Passmark Memory Scores</h3>
   </div>
   <table class="items_table_passmark" id="similar_family_table">
     <thead>
@@ -256,7 +256,7 @@
 <div class="block_half" *ngIf="lineChartDataStressNG && isChartShown('stress_ng_div16')" id="stress_ng_div16_chart">
   <div class="flex justify-between items-center">
     <h3 class="text-2xl flex items-center gap-2" >
-      stress-ng raw scores
+      Stress-ng Raw Scores
       <lucide-icon
         name="circle-arrow-up"
         class="h-4 w-4 text-gray-200"
@@ -288,7 +288,7 @@
 <div class="block_half" *ngIf="lineChartDataStressNG && isChartShown('stress_ng_relative')" id="stress_ng_relative_chart">
   <div class="flex justify-between items-center">
     <h3 class="text-2xl flex items-center gap-2" >
-      stress-ng relative multicore performance
+      Stress-ng Relative Multicore Performance
       <lucide-icon
         name="circle-arrow-up"
         class="h-4 w-4 text-gray-200"
@@ -311,6 +311,70 @@
         [data]="lineChartDataStressNG"
         [options]="lineChartOptionsStressNGPercent"
         [type]="lineChartType"
+      >
+      </canvas>
+    </div>
+  </div>
+</div>
+
+<div class="block_half" *ngIf="barChartLLMPromptData && isChartShown('llm_prompt')" id="llm_prompt_chart">
+  <div class="flex justify-between items-center">
+    <h3 class="text-2xl flex items-center gap-2" >
+      LLM Inference Speed for Prompt Processing
+      <lucide-icon
+        name="circle-arrow-up"
+        class="h-4 w-4 text-gray-200"
+        (mouseenter)="showTooltip($event, 'Higher is better.')"
+        (mouseleave)="hideTooltip()">
+      </lucide-icon>
+      <lucide-icon
+        name="info"
+        class="h-4 w-4 text-gray-200"
+        (mouseenter)="showTooltipChart($event, 'llm_speed:prompt_processing')"
+        (mouseleave)="hideTooltip()">
+      </lucide-icon>
+    </h3>
+  </div>
+  <div class="h-full" *ngIf="isBrowser()">
+    <div class="chart_div" chartType="bar">
+      <canvas
+        id="llm_prompt_canvas"
+        baseChart
+        [data]="barChartLLMPromptData"
+        [options]="barChartLLMPromptOptions"
+        [type]="barChartType"
+      >
+      </canvas>
+    </div>
+  </div>
+</div>
+
+<div class="block_half" *ngIf="barChartLLMGenerationData && isChartShown('llm_generation')" id="llm_generation_chart">
+  <div class="flex justify-between items-center">
+    <h3 class="text-2xl flex items-center gap-2" >
+      LLM Inference Speed for Text Generation
+      <lucide-icon
+        name="circle-arrow-up"
+        class="h-4 w-4 text-gray-200"
+        (mouseenter)="showTooltip($event, 'Higher is better.')"
+        (mouseleave)="hideTooltip()">
+      </lucide-icon>
+      <lucide-icon
+        name="info"
+        class="h-4 w-4 text-gray-200"
+        (mouseenter)="showTooltipChart($event, 'llm_speed:text_generation')"
+        (mouseleave)="hideTooltip()">
+      </lucide-icon>
+    </h3>
+  </div>
+  <div class="h-full" *ngIf="isBrowser()">
+    <div class="chart_div" chartType="bar">
+      <canvas
+        id="llm_generation_canvas"
+        baseChart
+        [data]="barChartLLMGenerationData"
+        [options]="barChartLLMGenerationOptions"
+        [type]="barChartType"
       >
       </canvas>
     </div>

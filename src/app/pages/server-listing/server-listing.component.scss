@@ -158,3 +158,17 @@
   }
 }
 
+.overflow-x-auto {
+  scrollbar-width: thin;
+  scrollbar-color: #34D399 #374151;
+}
+.overflow-x-auto::-webkit-scrollbar {
+  height: 2px;
+}
+.overflow-x-auto::-webkit-scrollbar-track {
+  background: #374151;
+}
+.overflow-x-auto::-webkit-scrollbar-thumb {
+  background-color: #34D399;
+  border-radius: 3px;
+}

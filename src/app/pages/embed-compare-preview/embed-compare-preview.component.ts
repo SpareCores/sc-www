@@ -7,6 +7,11 @@ import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
 import { PrismService } from '../../services/prism.service';
 
+interface ChartOption {
+  id: string;
+  name: string;
+}
+
 @Component({
   selector: 'app-embed-compare-preview',
   standalone: true,
@@ -25,16 +30,17 @@ export class EmbedComparePreviewComponent implements OnInit, OnChanges {
   height = '710px';
   width: string = '100%';
 
-  @Input() charts = [
-    {id: 'bw_mem', name: 'Memory bandwidth' },
+  @Input() charts: ChartOption[] = [
+    {id: 'bw_mem', name: 'Memory Bandwidth' },
     {id: 'compress', name: 'Compression' },
-    {id: 'geekbench', name: 'Geekbench single- and multi-core' },
-    {id: 'geekbench_single', name: 'Geekbench single-core' },
-    {id: 'geekbench_multi', name: 'Geekbench multi-core' },
-    {id: 'openssl', name: 'OpenSSL speed' },
+    {id: 'geekbench', name: 'Geekbench Single- and Multi-core' },
+    {id: 'geekbench_single', name: 'Geekbench Single-core' },
+    {id: 'geekbench_multi', name: 'Geekbench Multi-core' },
+    {id: 'openssl', name: 'OpenSSL' },
     {id: 'stress_ng', name: 'Stress-ng div16' },
-    {id: 'stress_ng_pct', name: 'Stress-ng relative' },
-    {id: 'static_web', name: 'Static web server' },
+    {id: 'stress_ng_pct', name: 'Stress-ng Relative' },
+    {id: 'llm_inference', name: 'LLM Inference' },
+    {id: 'static_web', name: 'Static Web Server' },
     {id: 'redis', name: 'Redis' }
   ];
 

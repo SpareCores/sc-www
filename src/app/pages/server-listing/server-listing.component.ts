@@ -76,7 +76,8 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
   filterCategories = [
     {category_id: 'basic', name: 'Basics', icon: 'server', collapsed: true},
-    {category_id: 'processor', name: 'Processor', icon: 'cpu', collapsed: false},
+    {category_id: 'performance', name: 'Performance', icon: 'gauge', collapsed: true},
+    {category_id: 'processor', name: 'Processor', icon: 'microchip', collapsed: false},
     {category_id: 'gpu', name: 'GPU', icon: 'cpu', collapsed: true},
     {category_id: 'memory', name: 'Memory', icon: 'memory-stick', collapsed: true},
     {category_id: 'storage', name: 'Storage', icon: 'database', collapsed: true},
@@ -98,7 +99,8 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     { name: 'CPU MODEL', show: false, type: 'cpu_model' },
     { name: 'CPU ALLOCATION', show: false, type: 'text', key: 'cpu_allocation' },
     { name: 'SCORE',
-      show: true,
+      // benchmark (set to SCore by default) is the new default
+      show: false,
       type: 'score',
       orderField: 'score',
       info: "Performance benchmark score using stress-ng's div16 method (doing 16 bit unsigned integer divisions for 20 seconds): simulating CPU heavy workload that scales well on any number of (v)CPUs. The SCore/price value in the second line shows the div16 performance measured for 1 USD/hour, using the best (usually spot) price of all zones. To order by the latter, enable the $Core column."
@@ -110,16 +112,16 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       info: "SCore/price showing stress-ng's div16 performance measured for 1 USD/hour, using the best (usually spot) price of all zones."
     },
     { name: 'BENCHMARK',
-      show: false,
+      show: true,
       type: 'benchmark',
       orderField: 'selected_benchmark_score',
-      info: "Performance benchmark score using the selected Benchmark. The value in the second line shows the performance measured for 1 USD/hour, using the best (usually spot) price of all zones."
+      info: "Performance benchmark score as per the selected Benchmark at the top of the table."
     },
-    { name: 'BENCHMARK/USD',
-      show: false,
+    { name: '$ EFFICIENCY',
+      show: true,
       type: 'benchmark_score_per_price',
       orderField: 'selected_benchmark_score_per_price',
-      info: "Benchmark/price showing the selected benchmark performance measured for 1 USD/hour, using the best (usually spot) price of all zones."
+      info: "Benchmark/price ratio showing the selected benchmark performance measured for 1 USD/hour, using the best (usually spot) price of all zones. In other words: how much performance you get for your money."
     },
     { name: 'MEMORY', show: true, type: 'memory', orderField: 'memory_amount' },
     { name: 'STORAGE', show: true, type: 'storage', orderField: 'storage_size' },
@@ -166,7 +168,17 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   benchmarkMetadata: any[] = [];
   benchmarksConfigs: any[] = [];
   benchmarkCategories: any[] = [];
-  selectedBenchmarkConfig: any = null;
+
+  // getter/setter instead of direct property for setting up a hook on change
+  private _selectedBenchmarkConfig: any = null;
+  get selectedBenchmarkConfig(): any {
+    return this._selectedBenchmarkConfig;
+  }
+  set selectedBenchmarkConfig(value: any) {
+    this._selectedBenchmarkConfig = value;
+    this.onBenchmarkConfigChanged();
+  }
+
   modalBenchmarkSelect: any;
 
   //modal
@@ -218,7 +230,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
     let order = this.searchParameters.find((param: any) => param.name === 'order_by');
     if(order?.schema?.default) {
-      this.orderBy = order.schema.default;  
+      this.orderBy = order.schema.default;
      }
 
     this.route.params.subscribe(() => {
@@ -235,6 +247,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     // initial load is special as we need to decode the benchmark URL param
     let isInitialLoad = true;
     let shouldSearchAfterBenchmarks = false;
+    let benchmarkDataEncoded: string | null = null;
 
     this.route.queryParams.subscribe((params: Params) => {
       const query: any = JSON.parse(JSON.stringify(params || '{}'));
@@ -277,6 +290,11 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
       this.refreshColumns(false);
 
+      // will process later
+      if (query.benchmark) {
+        benchmarkDataEncoded = query.benchmark;
+      }
+
       // we don't want to search yet on initial load
       // as we need to decode the benchmark URL param first,
       // and will do the search after getBenchmarkConfigs is called
@@ -317,10 +335,44 @@ export class ServerListingComponent implements OnInit, OnDestroy {
           this.selectedBenchmarkConfig = this.benchmarksConfigs.find((config: any) => config.benchmark_id === this.specialList.benchmark_id && config.config === this.specialList.benchmark_config);
         }
         // allow overriding preselected benchmark via URL parameters
-        const benchmarkDataEncoded = this.route.snapshot.queryParams.benchmark;
-        if(benchmarkDataEncoded) {
-          const benchmarkData = JSON.parse(atob(benchmarkDataEncoded));
-          this.selectedBenchmarkConfig = this.benchmarksConfigs.find((config: any) => config.benchmark_id === benchmarkData.id && config.config === benchmarkData.config);
+        if (benchmarkDataEncoded) {
+          try {
+            const benchmarkData = JSON.parse(atob(benchmarkDataEncoded));
+            this.selectedBenchmarkConfig = this.benchmarksConfigs.find((config: any) =>
+              config.benchmark_id === benchmarkData.id &&
+              config.config === benchmarkData.config);
+            if (!this.selectedBenchmarkConfig && isPlatformBrowser(this.platformId)) {
+              this.toastService.show({
+                title: 'Benchmark Not Found',
+                body: 'The provided benchmark URL parameter is unknown in our database. Please select a benchmark manually.',
+                type: 'error',
+                id: 'bad-benchmark-url-param'
+              });
+            }
+          } catch (error) {
+            if (isPlatformBrowser(this.platformId)) {
+              this.toastService.show({
+                title: 'Invalid Benchmark',
+                body: 'The benchmark data in the URL is invalid. Please select a benchmark manually.',
+                type: 'error',
+                id: 'bad-benchmark-url-param'
+              });
+            }
+          }
+        }
+
+        // set default benchmark to stress-ng multi-code SCore
+        else if (!this.selectedBenchmarkConfig && this.benchmarksConfigs.length > 0) {
+          // let the user decide if something was wrong in the URL
+          if (!benchmarkDataEncoded) {
+            const defaultBenchmarkId = "stress_ng:bestn";
+            const defaultBenchmarkConfig = "{\"framework_version\": \"0.17.08\"}";
+            this.selectedBenchmarkConfig = this.benchmarksConfigs.find(
+              (config: any) => 
+                config.benchmark_id === defaultBenchmarkId && 
+                config.config === defaultBenchmarkConfig
+            );
+          }
         }
 
         // only search once after benchmarks are loaded on initial load
@@ -361,8 +413,33 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   }
 
   private async initDropdown() {
-    const { default: HSComboBox } = await import('@preline/combobox');
-    HSComboBox.autoInit();
+    try {
+      const prelineModule = await import('@preline/combobox');
+      // try to initialize using the default export, which works in dev
+      if (prelineModule.default && typeof prelineModule.default.autoInit === 'function') {
+        prelineModule.default.autoInit();
+      } else {
+        // need to fall back to manual initialization in prod :shrug:
+        document.querySelectorAll('[data-hs-combobox]').forEach(el => {
+          if (prelineModule.default && typeof prelineModule.default === 'function') {
+            try {
+              // @ts-expect-error - Attempting to initialize even if types don't match
+              new prelineModule.default(el);
+            } catch (e) {
+              console.error('Failed to initialize combobox:', e);
+            }
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Error initializing dropdown:', error);
+      // fall back to trying to load globally if it exists
+      // @ts-expect-error - Window might have HSComboBox globally
+      if (window.HSComboBox && typeof window.HSComboBox.autoInit === 'function') {
+        // @ts-expect-error - Accessing global variable
+        window.HSComboBox.autoInit();
+      }
+    }
   }
 
   ngOnDestroy () {
@@ -525,9 +602,9 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       query.benchmark_id = this.selectedBenchmarkConfig.benchmark_id;
     }
 
-    this.keeperAPI.searchServers(query).then(servers => {      
+    this.keeperAPI.searchServers(query).then(servers => {
       this.servers = servers?.body;
-      
+
       // set stored selected state
       this.servers?.forEach((server: any) => {
         server.selected = this.serverCompare.selectedForCompare
@@ -537,7 +614,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       if(updateTotalCount) {
         this.totalPages = Math.ceil(parseInt(servers?.headers?.get('x-total-count') || '0') / this.limit);
       }
-      
+
       this.toastService.removeToast('query-error');
     }).catch(err => {
       this.analytics.SentryException(err, {tags: { location: this.constructor.name, function: '_searchServers' }});
@@ -687,7 +764,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     navigator.clipboard.writeText(url);
 
     this.clipboardIcon = 'check';
-    
+
     this.toastService.show({
       title: 'Link copied to clipboard!',
       type: 'success',
@@ -753,11 +830,6 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     this.tempSelectedBenchmarkCategory = null;
     this.selectedBenchmarkConfig = config;
 
-    // make sure benchmark column is shown when a benchmark is selected
-    const benchmarkColumn = this.possibleColumns.find(col => col.type === 'benchmark');
-    if (benchmarkColumn) benchmarkColumn.show = true;
-    this.refreshColumns(true);
-
     this.modalBenchmarkSelect?.hide();
     this.updateQueryParams(this.getQueryObjectBase());
     this.modalFilterTerm = null;
@@ -766,6 +838,31 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
   updateFilterTerm() {
     this.selectBenchmarkCategory(this.tempSelectedBenchmarkCategory, this.modalFilterTerm);
+  }
+
+  private onBenchmarkConfigChanged(): void {
+    if (this._selectedBenchmarkConfig) {
+      // make sure benchmark column is shown when a benchmark is selected
+      // NOTE this is not in active use now, as we use a default benchmark automatically selected, but keeping it here for future use
+      const benchmarkColumn = this.possibleColumns.find(col => col.type === 'benchmark');
+      if (benchmarkColumn) benchmarkColumn.show = true;
+      this.refreshColumns(true);
+
+      // extract unit of selected benchmark config in short form
+      const unit = this._selectedBenchmarkConfig.benchmarkTemplate.unit;
+      // remove short form (at the end of the string, in parentheses)
+      this._selectedBenchmarkConfig.unit = unit.replace(/\s*\([^)]*\)\s*$/, '');
+      // keep short form (in parentheses)
+      this._selectedBenchmarkConfig.unit_abbreviation = unit.match(/\(([^)]*)\)/)?.at(1) || unit;
+      if (unit.length < 25) {
+        this._selectedBenchmarkConfig.short_unit = this._selectedBenchmarkConfig.unit
+      } else {
+        this._selectedBenchmarkConfig.short_unit = this._selectedBenchmarkConfig.unit_abbreviation;
+      }
+
+      // remove error toast if it exists
+      this.toastService.removeToast('bad-benchmark-url-param');
+    }
   }
 
 }

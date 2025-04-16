@@ -41,7 +41,6 @@ export class Table<SecurityDataType = unknown> {
     this.http.request<TableBenchmarkTableBenchmarkGetData, any>({
       path: `/table/benchmark`,
       method: "GET",
-      format: "json",
       ...params,
     });
   /**
@@ -56,7 +55,6 @@ export class Table<SecurityDataType = unknown> {
     this.http.request<TableCountryTableCountryGetData, any>({
       path: `/table/country`,
       method: "GET",
-      format: "json",
       ...params,
     });
   /**
@@ -71,7 +69,6 @@ export class Table<SecurityDataType = unknown> {
     this.http.request<TableComplianceFrameworksTableComplianceFrameworkGetData, any>({
       path: `/table/compliance_framework`,
       method: "GET",
-      format: "json",
       ...params,
     });
   /**
@@ -86,7 +83,6 @@ export class Table<SecurityDataType = unknown> {
     this.http.request<TableVendorTableVendorGetData, any>({
       path: `/table/vendor`,
       method: "GET",
-      format: "json",
       ...params,
     });
   /**
@@ -101,7 +97,6 @@ export class Table<SecurityDataType = unknown> {
     this.http.request<TableRegionTableRegionGetData, any>({
       path: `/table/region`,
       method: "GET",
-      format: "json",
       ...params,
     });
   /**
@@ -116,7 +111,6 @@ export class Table<SecurityDataType = unknown> {
     this.http.request<TableZoneTableZoneGetData, any>({
       path: `/table/zone`,
       method: "GET",
-      format: "json",
       ...params,
     });
   /**
@@ -131,7 +125,6 @@ export class Table<SecurityDataType = unknown> {
     this.http.request<TableServerTableServerGetData, any>({
       path: `/table/server`,
       method: "GET",
-      format: "json",
       ...params,
     });
   /**
@@ -146,7 +139,6 @@ export class Table<SecurityDataType = unknown> {
     this.http.request<TableStorageTableStorageGetData, any>({
       path: `/table/storage`,
       method: "GET",
-      format: "json",
       ...params,
     });
   /**
@@ -161,7 +153,6 @@ export class Table<SecurityDataType = unknown> {
     this.http.request<TableMetadataServerTableServerMetaGetData, any>({
       path: `/table/server/meta`,
       method: "GET",
-      format: "json",
       ...params,
     });
 }

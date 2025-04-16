@@ -10,10 +10,11 @@ describe('Server listing', () => {
 
     // search bar visible and not visible fields
     E2EEvent.isVisible(`[id="serverSearchBar"]`);
-    E2EEvent.isVisible(`[id="filter_title_benchmark_score_stressng_cpu_min"]`);
+    E2EEvent.isVisible(`[id="filter_range_value_vcpus_min"]`);
     E2EEvent.doesNotExist(`[id="filter_title_partial_name_or_id"]`);
+    E2EEvent.doesNotExist(`[id="filter_number_benchmark_score_stressng_cpu_min"]`);
 
-    // columnsdropwdown button
+    // columns' dropwdown button
     E2EEvent.isVisible(`[id="column_button"]`);
 
     // data table
@@ -29,10 +30,11 @@ describe('Server listing', () => {
 
     E2EEvent.visitURL('/server_prices?vcpus_min=11&benchmark_score_stressng_cpu_min=200&page=2', 4000);
 
-    // wea re on page 2 now
+    // we are on page 2 now
     E2EEvent.isVisible(`[id="pagination_prev_arrow"]`);
 
     E2EEvent.hasValue(`filter_range_value_vcpus_min`, '11');
+    E2EEvent.isVisible(`[id="filter_title_benchmark_score_stressng_cpu_min"]`);
 
     E2EEvent.hasValue(`filter_number_benchmark_score_stressng_cpu_min`, '200');
 

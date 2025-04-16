@@ -84,7 +84,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
 
   benchmarkCategories: any[] = [
     {
-      name: 'Memory bandwidth',
+      name: 'Memory Bandwidth',
       id: 'bw_mem',
       benchmarks: ['bw_mem'],
       data: [],
@@ -98,7 +98,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
       show_more: false
     },
     {
-      name: 'OpenSSL speed',
+      name: 'OpenSSL',
       id: 'openssl',
       benchmarks: [ 'openssl' ],
       data: [],
@@ -130,7 +130,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
       hidden: false
     },
     {
-      name: 'PassMark CPU benchmarks',
+      name: 'PassMark (CPU)',
       id: 'passmark_cpu',
       benchmarks: [
         "passmark:cpu_compression_test",
@@ -150,7 +150,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
       hidden: false
     },
     {
-      name: 'PassMark Memory benchmarks',
+      name: 'PassMark (Memory)',
       id: 'passmark_other',
       benchmarks: [
         "passmark:database_operations",
@@ -164,7 +164,7 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
       hidden: false
     },
     {
-      name: 'stress-ng div16 raw scores per vCPU',
+      name: 'Stress-ng div16 Raw Scores per vCPU',
       id: 'stress_ng',
       benchmarks: [ 'stress_ng:div16' ],
       data: [],
@@ -172,13 +172,26 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
       hidden: false
     },
     {
-      name: 'stress-ng relative multicore performance per vCPU',
+      name: 'Stress-ng Relative Multicore Performance per vCPU',
       id: 'stress_ng_pct',
       benchmarks: [ 'stress_ng:div16' ],
       data: [],
+      order: 2,
       show_more: false,
-      hidden: false
-    }
+      icon: 'circle-arrow-up',
+      tooltip: 'Higher is better.'
+    },
+    {
+      id: 'llm_inference',
+      name: 'LLM Inference Speed',
+      benchmarks: ['llm_speed:prompt_processing', 'llm_speed:text_generation'],
+      description: 'Compares the speed of LLM (Large Language Model) inference across servers for both prompt processing and text generation tasks.',
+      data: [],
+      order: 3,
+      show_more: false,
+      icon: 'circle-arrow-up',
+      tooltip: 'Higher is better.'
+    },
   ];
 
 
@@ -193,15 +206,16 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
   instancesRaw!: string;
 
   embeddableCharts = [
-    {id: 'bw_mem', name: 'Memory bandwidth' },
+    {id: 'bw_mem', name: 'Memory Bandwidth' },
     {id: 'compress', name: 'Compression' },
-    {id: 'geekbench', name: 'Geekbench single- and multi-core' },
-    {id: 'geekbench_single', name: 'Geekbench single-core' },
-    {id: 'geekbench_multi', name: 'Geekbench multi-core' },
-    {id: 'openssl', name: 'OpenSSL speed' },
+    {id: 'geekbench', name: 'Geekbench Single- and Multi-core' },
+    {id: 'geekbench_single', name: 'Geekbench Single-core' },
+    {id: 'geekbench_multi', name: 'Geekbench Multi-core' },
+    {id: 'openssl', name: 'OpenSSL' },
     {id: 'stress_ng', name: 'Stress-ng div16' },
-    {id: 'stress_ng_pct', name: 'Stress-ng relative' },
-    {id: 'static_web', name: 'Static web server' },
+    {id: 'stress_ng_pct', name: 'Stress-ng Relative' },
+    {id: 'llm_inference', name: 'LLM Inference' },
+    {id: 'static_web', name: 'Static Web Server' },
     {id: 'redis', name: 'Redis' }
   ];
 
@@ -625,8 +639,19 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     this.dropdownCurrency?.hide();
   }
 
-  getStyle() {
-    return `width: ${100 / (this.servers.length + 1)}%; max-width: ${100 / (this.servers.length + 1)}%;`
+  getStyle(index: number) {
+    // lookup the width of the corresponding column in the main table
+    const mainTable = document.getElementById('main-table');
+    if (mainTable) {
+      const headerCells = mainTable.querySelectorAll('thead th');
+      // 1st cell (index 0) is the label column, so add 1 to get the correct col
+      if (headerCells && headerCells[index + 1]) {
+        const width = headerCells[index + 1].getBoundingClientRect().width;
+        return `width: ${width}px; min-width: ${width}px; max-width: ${width}px;`;
+      }
+    }
+    // fallback to approximate calculation
+    return `width: ${100 / (this.servers.length + 1)}%; max-width: ${100 / (this.servers.length + 1)}%;`;
   }
 
 

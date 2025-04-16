@@ -45,7 +45,6 @@ export class Ai<SecurityDataType = unknown> {
       path: `/ai/assist_server_filters`,
       method: "GET",
       query: query,
-      format: "json",
       ...params,
     });
   /**
@@ -64,7 +63,6 @@ export class Ai<SecurityDataType = unknown> {
       path: `/ai/assist_server_price_filters`,
       method: "GET",
       query: query,
-      format: "json",
       ...params,
     });
   /**
@@ -83,7 +81,6 @@ export class Ai<SecurityDataType = unknown> {
       path: `/ai/assist_storage_price_filters`,
       method: "GET",
       query: query,
-      format: "json",
       ...params,
     });
   /**
@@ -102,7 +99,6 @@ export class Ai<SecurityDataType = unknown> {
       path: `/ai/assist_traffic_price_filters`,
       method: "GET",
       query: query,
-      format: "json",
       ...params,
     });
 }

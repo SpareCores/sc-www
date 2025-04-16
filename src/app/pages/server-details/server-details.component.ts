@@ -134,12 +134,12 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   modalEmbed: any;
 
   embeddableCharts = [
-    {id: 'bw_mem', name: 'Memory bandwidth' },
+    {id: 'bw_mem', name: 'Memory Bandwidth' },
     {id: 'compress', name: 'Compression' },
-    {id: 'geek_single', name: 'Geekbench single-core' },
-    {id: 'geek_multi', name: 'Geekbench multi-core' },
-    {id: 'ssl', name: 'OpenSSL speed' },
-    {id: 'static_web', name: 'Static web server' },
+    {id: 'geek_single', name: 'Geekbench Single-core' },
+    {id: 'geek_multi', name: 'Geekbench Multi-core' },
+    {id: 'ssl', name: 'OpenSSL' },
+    {id: 'static_web', name: 'Static Web Server' },
     {id: 'redis', name: 'Redis' }
   ];
 
@@ -391,6 +391,18 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
           if(this.serverDetails.vcpus && this.serverDetails.vcpus > 1) {
             this.embeddableCharts.push({id: 'stress_ng_div16', name: 'Stress-ng div16' });
             this.embeddableCharts.push({id: 'stress_ng_relative', name: 'Stress-ng relative' });
+          }
+
+          // Add LLM charts if benchmark data is available
+          const hasLLMPromptData = this.benchmarksByCategory.some(c => c.benchmark_id === 'llm_speed:prompt_processing');
+          const hasLLMGenerationData = this.benchmarksByCategory.some(c => c.benchmark_id === 'llm_speed:text_generation');
+
+          if (hasLLMPromptData) {
+            this.embeddableCharts.push({id: 'llm_prompt', name: 'LLM Prompt Processing' });
+          }
+
+          if (hasLLMGenerationData) {
+            this.embeddableCharts.push({id: 'llm_generation', name: 'LLM Text Generation' });
           }
 
           if(isPlatformBrowser(this.platformId)) {
