@@ -381,7 +381,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
         document.querySelectorAll('[data-hs-combobox]').forEach(el => {
           if (prelineModule.default && typeof prelineModule.default === 'function') {
             try {
-              // @ts-ignore - Attempting to initialize even if types don't match
+              // @ts-expect-error - Attempting to initialize even if types don't match
               new prelineModule.default(el);
             } catch (e) {
               console.error('Failed to initialize combobox:', e);
@@ -392,9 +392,9 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     } catch (error) {
       console.error('Error initializing dropdown:', error);
       // fall back to trying to load globally if it exists
-      // @ts-ignore - Window might have HSComboBox globally
+      // @ts-expect-error - Window might have HSComboBox globally
       if (window.HSComboBox && typeof window.HSComboBox.autoInit === 'function') {
-        // @ts-ignore - Accessing global variable
+        // @ts-expect-error - Accessing global variable
         window.HSComboBox.autoInit();
       }
     }
