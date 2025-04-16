@@ -98,7 +98,8 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     { name: 'CPU MODEL', show: false, type: 'cpu_model' },
     { name: 'CPU ALLOCATION', show: false, type: 'text', key: 'cpu_allocation' },
     { name: 'SCORE',
-      show: true,
+      // benchmark (set to SCore by default) is the new default
+      show: false,
       type: 'score',
       orderField: 'score',
       info: "Performance benchmark score using stress-ng's div16 method (doing 16 bit unsigned integer divisions for 20 seconds): simulating CPU heavy workload that scales well on any number of (v)CPUs. The SCore/price value in the second line shows the div16 performance measured for 1 USD/hour, using the best (usually spot) price of all zones. To order by the latter, enable the $Core column."
@@ -110,13 +111,13 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       info: "SCore/price showing stress-ng's div16 performance measured for 1 USD/hour, using the best (usually spot) price of all zones."
     },
     { name: 'BENCHMARK',
-      show: false,
+      show: true,
       type: 'benchmark',
       orderField: 'selected_benchmark_score',
       info: "Performance benchmark score as per the selected Benchmark at the top of the table."
     },
     { name: '$ EFFICIENCY',
-      show: false,
+      show: true,
       type: 'benchmark_score_per_price',
       orderField: 'selected_benchmark_score_per_price',
       info: "Benchmark/price ratio showing the selected benchmark performance measured for 1 USD/hour, using the best (usually spot) price of all zones. In other words: how much performance you get for your money."
@@ -356,6 +357,20 @@ export class ServerListingComponent implements OnInit, OnDestroy {
                 id: 'bad-benchmark-url-param'
               });
             }
+          }
+        }
+
+        // set default benchmark to stress-ng multi-code SCore
+        else if (!this.selectedBenchmarkConfig && this.benchmarksConfigs.length > 0) {
+          // let the user decide if something was wrong in the URL
+          if (!benchmarkDataEncoded) {
+            const defaultBenchmarkId = "stress_ng:bestn";
+            const defaultBenchmarkConfig = "{\"framework_version\": \"0.17.08\"}";
+            this.selectedBenchmarkConfig = this.benchmarksConfigs.find(
+              (config: any) => 
+                config.benchmark_id === defaultBenchmarkId && 
+                config.config === defaultBenchmarkConfig
+            );
           }
         }
 
@@ -827,6 +842,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   private onBenchmarkConfigChanged(): void {
     if (this._selectedBenchmarkConfig) {
       // make sure benchmark column is shown when a benchmark is selected
+      // NOTE this is not in active use now, as we use a default benchmark automatically selected, but keeping it here for future use
       const benchmarkColumn = this.possibleColumns.find(col => col.type === 'benchmark');
       if (benchmarkColumn) benchmarkColumn.show = true;
       this.refreshColumns(true);
@@ -843,7 +859,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
         this._selectedBenchmarkConfig.short_unit = this._selectedBenchmarkConfig.unit_abbreviation;
       }
 
-      // remove toast if it exists
+      // remove error toast if it exists
       this.toastService.removeToast('bad-benchmark-url-param');
     }
   }
