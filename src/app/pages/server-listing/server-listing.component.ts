@@ -339,8 +339,23 @@ export class ServerListingComponent implements OnInit, OnDestroy {
             this.selectedBenchmarkConfig = this.benchmarksConfigs.find((config: any) =>
               config.benchmark_id === benchmarkData.id &&
               config.config === benchmarkData.config);
+            if (!this.selectedBenchmarkConfig && isPlatformBrowser(this.platformId)) {
+              this.toastService.show({
+                title: 'Benchmark Not Found',
+                body: 'The provided benchmark URL parameter is unknown in our database. Please select a benchmark manually.',
+                type: 'error',
+                id: 'bad-benchmark-url-param'
+              });
+            }
           } catch (error) {
-            console.error('Error decoding benchmark data:', error);
+            if (isPlatformBrowser(this.platformId)) {
+              this.toastService.show({
+                title: 'Invalid Benchmark',
+                body: 'The benchmark data in the URL is invalid. Please select a benchmark manually.',
+                type: 'error',
+                id: 'bad-benchmark-url-param'
+              });
+            }
           }
         }
 
@@ -827,6 +842,9 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       } else {
         this._selectedBenchmarkConfig.short_unit = this._selectedBenchmarkConfig.unit_abbreviation;
       }
+
+      // remove toast if it exists
+      this.toastService.removeToast('bad-benchmark-url-param');
     }
   }
 
