@@ -639,8 +639,19 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     this.dropdownCurrency?.hide();
   }
 
-  getStyle() {
-    return `width: ${100 / (this.servers.length + 1)}%; max-width: ${100 / (this.servers.length + 1)}%;`
+  getStyle(index: number) {
+    // lookup the width of the corresponding column in the main table
+    const mainTable = document.getElementById('main-table');
+    if (mainTable) {
+      const headerCells = mainTable.querySelectorAll('thead th');
+      // 1st cell (index 0) is the label column, so add 1 to get the correct col
+      if (headerCells && headerCells[index + 1]) {
+        const width = headerCells[index + 1].getBoundingClientRect().width;
+        return `width: ${width}px; min-width: ${width}px; max-width: ${width}px;`;
+      }
+    }
+    // fallback to approximate calculation
+    return `width: ${100 / (this.servers.length + 1)}%; max-width: ${100 / (this.servers.length + 1)}%;`;
   }
 
 

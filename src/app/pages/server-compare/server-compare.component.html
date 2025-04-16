@@ -100,7 +100,7 @@
             <tr>
               <th [style]="getStickyHeaderFirstColStyle()">
               </th>
-              <th *ngFor="let item of servers let i = index" [style]="getStyle()">
+              <th *ngFor="let item of servers let i = index" [style]="getStyle(i)">
                 <a class="underline decoration-dotted" href="/server/{{item.vendor_id}}/{{item.api_reference}}" target="_blank">
                   {{toUpper(item.display_name)}}
                 </a>
