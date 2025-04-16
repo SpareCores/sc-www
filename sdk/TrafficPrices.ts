@@ -39,7 +39,6 @@ export class TrafficPrices<SecurityDataType = unknown> {
       path: `/traffic_prices`,
       method: "GET",
       query: query,
-      format: "json",
       ...params,
     });
 }

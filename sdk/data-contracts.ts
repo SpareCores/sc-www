@@ -61,7 +61,7 @@ export interface Benchmark {
    * A dictionary of descriptions on the framework-specific config options, e.g. {"bandwidth": "Memory amount to use for compression in MB."}.
    * @default {}
    */
-  config_fields?: object;
+  config_fields?: Record<string, any>;
   /**
    * Measurement
    * The name of measurement recoreded in the benchmark.
@@ -97,6 +97,8 @@ export interface BenchmarkConfig {
   benchmark_id: string;
   /** Config */
   config: string;
+  /** Category */
+  category?: string | null;
 }
 
 /**
@@ -134,7 +136,7 @@ export interface BenchmarkScore {
    * Dictionary of config parameters of the specific benchmark, e.g. {"bandwidth": 4096}
    * @default {}
    */
-  config?: object;
+  config?: Record<string, any>;
   /**
    * Score
    * The resulting score of the benchmark.
@@ -482,12 +484,10 @@ export enum GpuModels {
   L4 = "L4",
   L40S = "L40S",
   M60 = "M60",
-  NVIDIA = "NVIDIA",
   T4 = "T4",
   T4G = "T4G",
   V100 = "V100",
   V520 = "V520",
-  NvidiaH200141Gb = "nvidia-h200-141gb",
 }
 
 /** HTTPValidationError */
@@ -499,7 +499,7 @@ export interface HTTPValidationError {
 /** HealthcheckResponse */
 export interface HealthcheckResponse {
   /** Packages */
-  packages: object;
+  packages: Record<string, any>;
   /** Database Last Updated */
   database_last_updated: number;
   /** Database Hash */
@@ -908,6 +908,7 @@ export enum Regions {
   Value1600 = "1600",
   Value1610 = "1610",
   Value1640 = "1640",
+  Value1650 = "1650",
   Value2 = "2",
   Value3 = "3",
   Value4 = "4",
@@ -964,6 +965,7 @@ export enum Regions {
   Germanynorth = "germanynorth",
   Germanywestcentral = "germanywestcentral",
   IlCentral1 = "il-central-1",
+  Indonesiacentral = "indonesiacentral",
   Israelcentral = "israelcentral",
   Italynorth = "italynorth",
   Japaneast = "japaneast",
@@ -2756,7 +2758,7 @@ export interface AssistServerFiltersAiAssistServerFiltersGetParams {
 }
 
 /** Response Assist Server Filters Ai Assist Server Filters Get */
-export type AssistServerFiltersAiAssistServerFiltersGetData = object;
+export type AssistServerFiltersAiAssistServerFiltersGetData = Record<string, any>;
 
 export interface AssistServerPriceFiltersAiAssistServerPriceFiltersGetParams {
   /** Text */
@@ -2764,7 +2766,7 @@ export interface AssistServerPriceFiltersAiAssistServerPriceFiltersGetParams {
 }
 
 /** Response Assist Server Price Filters Ai Assist Server Price Filters Get */
-export type AssistServerPriceFiltersAiAssistServerPriceFiltersGetData = object;
+export type AssistServerPriceFiltersAiAssistServerPriceFiltersGetData = Record<string, any>;
 
 export interface AssistStoragePriceFiltersAiAssistStoragePriceFiltersGetParams {
   /** Text */
@@ -2772,7 +2774,7 @@ export interface AssistStoragePriceFiltersAiAssistStoragePriceFiltersGetParams {
 }
 
 /** Response Assist Storage Price Filters Ai Assist Storage Price Filters Get */
-export type AssistStoragePriceFiltersAiAssistStoragePriceFiltersGetData = object;
+export type AssistStoragePriceFiltersAiAssistStoragePriceFiltersGetData = Record<string, any>;
 
 export interface AssistTrafficPriceFiltersAiAssistTrafficPriceFiltersGetParams {
   /** Text */
@@ -2780,7 +2782,7 @@ export interface AssistTrafficPriceFiltersAiAssistTrafficPriceFiltersGetParams {
 }
 
 /** Response Assist Traffic Price Filters Ai Assist Traffic Price Filters Get */
-export type AssistTrafficPriceFiltersAiAssistTrafficPriceFiltersGetData = object;
+export type AssistTrafficPriceFiltersAiAssistTrafficPriceFiltersGetData = Record<string, any>;
 
 export interface SearchRegionsRegionsGetParams {
   /**
@@ -2926,12 +2928,10 @@ export interface SearchServersServersGetParams {
     | "L4"
     | "L40S"
     | "M60"
-    | "NVIDIA"
     | "T4"
     | "T4G"
     | "V100"
-    | "V520"
-    | "nvidia-h200-141gb";
+    | "V520";
   /**
    * Limit
    * Maximum number of results. Set to -1 for unlimited.
@@ -2946,7 +2946,7 @@ export interface SearchServersServersGetParams {
   /**
    * Order By
    * Order by column.
-   * @default "vcpus"
+   * @default "min_price"
    */
   order_by?: string;
   /**
@@ -3085,6 +3085,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "1600"
     | "1610"
     | "1640"
+    | "1650"
     | "2"
     | "3"
     | "4"
@@ -3141,6 +3142,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "germanynorth"
     | "germanywestcentral"
     | "il-central-1"
+    | "indonesiacentral"
     | "israelcentral"
     | "italynorth"
     | "japaneast"
@@ -3285,12 +3287,10 @@ export interface SearchServerPricesServerPricesGetParams {
     | "L4"
     | "L40S"
     | "M60"
-    | "NVIDIA"
     | "T4"
     | "T4G"
     | "V100"
-    | "V520"
-    | "nvidia-h200-141gb";
+    | "V520";
   /**
    * Limit
    * Maximum number of results.
@@ -3403,6 +3403,7 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "1600"
     | "1610"
     | "1640"
+    | "1650"
     | "2"
     | "3"
     | "4"
@@ -3459,6 +3460,7 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "germanynorth"
     | "germanywestcentral"
     | "il-central-1"
+    | "indonesiacentral"
     | "israelcentral"
     | "italynorth"
     | "japaneast"
@@ -3650,6 +3652,7 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "1600"
     | "1610"
     | "1640"
+    | "1650"
     | "2"
     | "3"
     | "4"
@@ -3706,6 +3709,7 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "germanynorth"
     | "germanywestcentral"
     | "il-central-1"
+    | "indonesiacentral"
     | "israelcentral"
     | "italynorth"
     | "japaneast"

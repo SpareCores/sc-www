@@ -31,7 +31,6 @@ export class V2<SecurityDataType = unknown> {
     this.http.request<GetServerWithoutRelationsV2ServerVendorServerGetData, HTTPValidationError>({
       path: `/v2/server/${vendor}/${server}`,
       method: "GET",
-      format: "json",
       ...params,
     });
 }
