@@ -454,17 +454,83 @@ TODO
 
 <section>
 <section class="titleslide slide level1" data-transition="slide-in none-out">
-  <h2>&#62;&#62;&#62; input("How much money did you burn on this?!")</h2>
+  <h2>&#62;&#62;&#62; input("How much did it cost?!")</h2>
 
-::: {.centered}
-<img class="fragment" src="images/TODO.png" style="width:57%;margin-top:-30px;"/>
+
+::: {.colcontainer .mt-60 .centered .fragment}
+:::: {.col}
+<img src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExZG5vdHcyaWJmeHVhcjZ2Zzl1dTNmZzgxZHd0YXM5Y2F5bDc3cHkyNyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/N6mPyicEmayO93TMQt/giphy.gif" style="width:75%;margin-top:-30px;"/>
+::::
+:::: {.col}
+<table style="margin-top: 100px;" class="fragment">
+<thead>
+  <tr>
+  <th>
+    <b>Vendor</b>
+  </th>
+  <th>
+    <b>Cost</b>
+  </th>
+  </tr>
+</thead>
+<tr><td>AWS</td><td>2153.68 USD</td></tr>
+<tr><td>GCP</td><td>696.9 USD</td></tr>
+<tr><td>Azure</td><td>4036.71 USD</td></tr>
+<tr><td>Hetzner</td><td>8.65 EUR</td></tr>
+<tr><td>Upcloud</td><td>170.21 EUR</td></tr>
+</table>
+
+<div class="fragment">
+  <p style="color: #34d399;">
+    <b>Overall: </b>-
+  </p>
+  <p style="margin-top: 0px;">
+    Thanks for the cloud credits! 🙇
+  </p>
+</div>
+
+::::
 :::
 
-## >>> input("So which is the best server for LLMs?")
+
+## >>> input("Known limitations?")
+
+- Cannot scale to multiple GPUs with small models
+- Needs CUDA for GPU-accelerated inference
+    - Only CPU is utilized in the AMD, Habana etc. servers
+    - Even some NVIDIA GPUs (e.g. T4G) are incompatible
+
+More details: <a href="https://sparecores.com/servers?vendor=aws&gpu_min=1&limit=100&columns=1187496&benchmark=eyJpZCI6ImxsbV9zcGVlZDpwcm9tcHRfcHJvY2Vzc2luZyIsImNvbmZpZyI6IntcImZyYW1ld29ya192ZXJzaW9uXCI6IFwiNTFmMzExZTBcIiwgXCJtb2RlbFwiOiBcImdlbW1hLTJiLlE0X0tfTS5nZ3VmXCIsIFwidG9rZW5zXCI6IDEwMjR9In0=&order_by=selected_benchmark_score&order_dir=desc" target="_blank">Spare Cores listing for GPU-accelerated instances</a>
+
+## >>> input("Best server for LLMs?")
 
 ::: {.centered}
-<img class="fragment" style="width:100%;" src="images/TODO.png" />
+<p class="fragment">It depends ...</p>
 :::
+
+## >>> input("Best server for LLMs?") {data-transition="slide-in none-out"}
+
+::: {.centered}
+<img style="width:100%;" src="images/llm-epyc-1.png" />
+
+<p>Source: <a href="https://sparecores.com/compare?instances=W3siZGlzcGxheV9uYW1lIjoiRjRhc192NiIsInZlbmRvciI6ImF6dXJlIiwic2VydmVyIjoiU3RhbmRhcmRfRjRhc192NiIsInpvbmVzUmVnaW9ucyI6W119LHsiZGlzcGxheV9uYW1lIjoicjZhLjR4bGFyZ2UiLCJ2ZW5kb3IiOiJhd3MiLCJzZXJ2ZXIiOiJyNmEuNHhsYXJnZSIsInpvbmVzUmVnaW9ucyI6W119XQ%3D%3D" target="_blank">F4AS_V6 vs r6a.4xlarge</a></p>
+:::
+
+<aside class="notes">
+E.g. looking at 4 vs 8 vCPU AMD EPYC (9V74 vs 7R13) and 16 VS 128 gigs of memory for a super small model, there's a slight advantage for the Azure server
+</aside>
+
+## >>> input("Best server for LLMs?") {data-transition="none-in slide-out"}
+
+::: {.centered}
+<img style="width:100%;" src="images/llm-epyc-2.png" />
+
+<p>Source: <a href="https://sparecores.com/compare?instances=W3siZGlzcGxheV9uYW1lIjoiRjRhc192NiIsInZlbmRvciI6ImF6dXJlIiwic2VydmVyIjoiU3RhbmRhcmRfRjRhc192NiIsInpvbmVzUmVnaW9ucyI6W119LHsiZGlzcGxheV9uYW1lIjoicjZhLjR4bGFyZ2UiLCJ2ZW5kb3IiOiJhd3MiLCJzZXJ2ZXIiOiJyNmEuNHhsYXJnZSIsInpvbmVzUmVnaW9ucyI6W119XQ%3D%3D" target="_blank">F4AS_V6 vs r6a.4xlarge</a></p>
+:::
+
+<aside class="notes">
+but when looking at a larger model, although the Azure server is still a bit faster for text generataion than the AWS machine and can even do 512 tokens request (despite older CPU and much less memory), AWS is the clear winner for prompt processing
+</aside>
 
 </section></section>
 
