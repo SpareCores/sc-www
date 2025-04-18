@@ -41,7 +41,7 @@ jobs:
             SENTRY_ORG=${{ secrets.SENTRY_ORG }}
             SENTRY_PROJECT=${{ secrets.SENTRY_PROJECT }}
             SENTRY_URL=${{ secrets.SENTRY_URL }}
-            SENTRY_RELEASE=${{ env.GITHUB_SHA }}
+            SENTRY_RELEASE=${{ github.sha }}
             SENTRY_TRACE_SAMPLE_RATE=1
             SENTRY_PROFILE_SAMPLE_RATE=1
 
