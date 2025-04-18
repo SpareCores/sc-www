@@ -474,8 +474,13 @@ TODO
 
 <section>
 <section class="titleslide slide level1" data-transition="slide-in none-out">
-  <h2>&#62;&#62;&#62; input("How much did it cost?!")</h2>
 
+
+::: {.centered}
+<img style="width:75%;margin-top:-30px;" src="images/no-time-for-questions.png" />
+:::
+
+## >>> input("How much did it cost?!")
 
 ::: {.colcontainer .mt-60 .centered .fragment}
 :::: {.col}
