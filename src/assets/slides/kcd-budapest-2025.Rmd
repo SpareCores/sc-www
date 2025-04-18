@@ -166,6 +166,16 @@ To show you some stats on the data being tracked:
 
 ## >>> from sparecores import intro
 
+<img style="margin-top:-10px; width:100%;" src="images/gha-actions-2025q1.png" />
+
+<p class="centered" style="margin-top: -10px;">Source: <a href="https://sparecores.com">sparecores.com</a></p>
+
+<aside class="notes">
+FTR this dataset was generated, collected, standardized, and published in public GHA if ou are interested in the details
+</aside>
+
+## >>> from sparecores import intro
+
 ::: {.centered}
 <img style="margin-top:-55px;width:95%;" src="images/sc-www-listing-top-2025q1.png" />
 :::
@@ -389,6 +399,16 @@ As mentioned previously, this is made available via multiple components that I'd
 <section>
 <section class="titleslide slide level1">
   <h2>&#62;&#62;&#62; from sc_inspector import llm</h2>
+
+::: {.centered}
+<img style="margin-top:-30px; width: 80%;" src="images/gh-image-llm-benchmark.png" />
+:::
+
+<aside class="notes">
+We have created a Docker image that includes llama.ccp build for various CPU architectures and CUDA as well -- so with a single command we can run this on x86, ARM, and most of the GPU-accelerated machines as well.
+</aside>
+
+## >>> from sc_inspector import llm 
 
 <iframe
  src="https://sparecores.com/embed/server/gcp/g2-standard-16/llm_prompt"
