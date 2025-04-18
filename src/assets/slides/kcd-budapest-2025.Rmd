@@ -166,9 +166,10 @@ To show you some stats on the data being tracked:
 
 ## >>> from sparecores import intro
 
-<img style="margin-top:-10px; width:100%;" src="images/gha-actions-2025q1.png" />
+::: {.centered}
 
-<p class="centered" style="margin-top: -10px;">Source: <a href="https://sparecores.com">sparecores.com</a></p>
+<img style="margin-top:-20px; width:80%;" src="images/gha-actions-2025q1.png" />
+:::
 
 <aside class="notes">
 FTR this dataset was generated, collected, standardized, and published in public GHA if ou are interested in the details
