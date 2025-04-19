@@ -1,6 +1,6 @@
 const specialCompares = [
   {
-    type: 'section', 
+    type: 'section',
     title: 'Best multi-core performance servers',
     description: `<p>Manually curated lists of servers with the best multi-core performance as per stress-ng's <code>div16</code> CPU burning method. This benchmark is a good indicator of how well a server can handle CPU-bound workloads that can perfectly scale to all available processor cores.</p>
     <p>Servers using the same CPU model at the same vendor were deduplicated, and only the most general options were kept with similar memory amounts (e.g. from AWS's <code>r6a.large</code>, <code>m6a.large</code>, and <code>c6a.large</code> showing only <code>m6a.large</code> with 8 GiB of memory; similarly GCP's <code>c2d-highmem-2</code>, <code>c2d-standard-2</code>, and <code>c2d-highcpu-2</code> showing only <code>c2d-standard-2</code> with 8 GiB of memory).</p>`,
@@ -28,8 +28,8 @@ LEFT JOIN benchmarks AS b
   ON s.vendor_id = b.vendor_id and s.server_id = b.server_id
 LEFT JOIN minprice AS p
   ON s.vendor_id = p.vendor_id and s.server_id = p.server_id
-WHERE 
-  s.status = 'ACTIVE' 
+WHERE
+  s.status = 'ACTIVE'
   -- AND s.vcpus = 2
   -- AND s.cpu_cores = 2
 ORDER BY b.score DESC
@@ -200,7 +200,7 @@ LIMIT 25;`,
     ]
   },
   {
-    type: 'section', 
+    type: 'section',
     title: 'Best single-core performance servers',
     description: `<p>Manually curated lists of servers with the best single-core performance as per stress-ng's <code>div16</code> CPU burning method.</p>
     <p>Servers using the same CPU model at the same vendor were deduplicated, and only the cheaper options were kept, usually with lower number of physical cores (e.g. from AWS's <code>m7a.medium</code> and <code>c7a.large</code> showing only <code>m7a.medium</code> with a single core; or from <code>c6i.large</code>, <code>c6in.large</code>, and <code>c6id.large</code> only the first).</p>`,
@@ -219,7 +219,7 @@ benchmarks AS (
 )
 SELECT
   s.vendor_id, s.family, s.api_reference,
-  s.cpu_architecture, s.cpu_manufacturer, s.cpu_family, s.cpu_model, 
+  s.cpu_architecture, s.cpu_manufacturer, s.cpu_family, s.cpu_model,
   s.vcpus, s.cpu_cores, s.cpu_speed,
   b.score,
   p.price
@@ -228,8 +228,8 @@ LEFT JOIN benchmarks AS b
   ON s.vendor_id = b.vendor_id and s.server_id = b.server_id
 LEFT JOIN minprice AS p
   ON s.vendor_id = p.vendor_id and s.server_id = p.server_id
-WHERE 
-  s.status = 'ACTIVE' 
+WHERE
+  s.status = 'ACTIVE'
   -- AND s.memory_amount / 1024 = 4
 ORDER BY b.score DESC
 LIMIT 25;`,
@@ -391,7 +391,7 @@ LIMIT 25;`,
     ]
   },
   {
-    type: 'section', 
+    type: 'section',
     title: 'Best performance servers for static web serving',
     description: `Manually curated list of servers with the highest performance for serving static websites as per our extrapolated RPS based on the <code>binserve</code> + <code>wrk</code> benchmarks.`,
     query:
@@ -418,8 +418,8 @@ LEFT JOIN benchmarks AS b
   ON s.vendor_id = b.vendor_id and s.server_id = b.server_id
 LEFT JOIN minprice AS p
   ON s.vendor_id = p.vendor_id and s.server_id = p.server_id
-WHERE 
-  s.status = 'ACTIVE' 
+WHERE
+  s.status = 'ACTIVE'
   -- AND p.price < 0.1
 ORDER BY b.score DESC
 LIMIT 25;`,
@@ -499,7 +499,7 @@ LIMIT 25;`,
     ]
   },
   {
-    type: 'section', 
+    type: 'section',
     title: 'Best performance servers for Redis',
     description: `Manually curated list of servers with the highest performance for Redis as per our extrapolated RPS based on <code>memetier_benchmark</code>.`,
     query:
@@ -526,8 +526,8 @@ LEFT JOIN benchmarks AS b
   ON s.vendor_id = b.vendor_id and s.server_id = b.server_id
 LEFT JOIN minprice AS p
   ON s.vendor_id = p.vendor_id and s.server_id = p.server_id
-WHERE 
-  s.status = 'ACTIVE' 
+WHERE
+  s.status = 'ACTIVE'
   -- AND p.price < 0.1
 ORDER BY b.score DESC
 LIMIT 25;`,
@@ -607,7 +607,7 @@ LIMIT 25;`,
     ]
   },
   {
-    type: 'section', 
+    type: 'section',
     title: 'Hetzner Cloud offerings',
     description: `List of all Hetzner Cloud server types with 2, 4, 8, and 16 vCPUs for easy comparison.`,
   },
@@ -724,7 +724,7 @@ LIMIT 25;`,
     ]
   },
   {
-    type: 'section', 
+    type: 'section',
     title: 'Further interesting lists of servers',
     description: `Curated lists of servers from various vendors that we used to publish blog posts or in social media.`,
   },

@@ -108,7 +108,9 @@ allArticles.forEach((article) => {
 
 if(specialCompares?.length) {
   specialCompares.forEach((specialCompare) => {
-    links.push({ url: `compare/${specialCompare.id}`, changefreq: 'daily', priority: 0.9 });
+    if (specialCompare.type === 'card') {
+      links.push({ url: `compare/${specialCompare.id}`, changefreq: 'daily', priority: 0.9 });
+    }
   });
 }
 
