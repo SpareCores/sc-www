@@ -911,7 +911,7 @@ that I’d like to walk through in the next slides.
 </section>
 </section>
 <section>
-<section class="titleslide slide level1">
+<section class="titleslide slide level1" data-transition="slide-in none-out">
 <h2>
 &gt;&gt;&gt; from sc_inspector import llm
 </h2>
@@ -924,7 +924,162 @@ CPU architectures and CUDA as well – so with a single command we can run
 this on x86, ARM, and most of the GPU-accelerated machines as well.
 </aside>
 </section>
-<section id="from-sc_inspector-import-llm" class="slide level2">
+<section id="from-sc_inspector-import-llm" class="slide level2"
+data-transition="none-in slide-out">
+<h2 data-transition="none-in slide-out">&gt;&gt;&gt; from sc_inspector
+import llm</h2>
+<div class="centered">
+<p><img style="margin-top:-30px; width: 50%;" src="images/cuda-approved-ai.jpeg" /></p>
+</div>
+<aside class="notes">
+The compulsary AI-generated image .. with transparent background .. CUDA
+approved!
+</aside>
+</section>
+<section id="from-sc_inspector-import-llm-1" class="slide level2">
+<h2>&gt;&gt;&gt; from sc_inspector import llm</h2>
+<ul>
+<li>Text generation: 16, 128, 512, 1k, 4k, 16k tokens</li>
+<li>Prompt processing: 16, 128, 512, 1k, 4k tokens</li>
+</ul>
+<style>
+td.file-size span.num {
+  display: inline-block;
+  min-width: 3em; /* Adjust width as needed */
+  text-align: right;
+  padding-right: 0.5em; /* Space before unit */
+}
+td.file-size span.unit {
+  display: inline-block;
+  min-width: 2em; /* Adjust width as needed */
+  text-align: left;
+}
+</style>
+<style>
+td.file-size span.num,
+td.param-size span.num {
+  display: inline-block;
+  min-width: 3em;
+  text-align: right;
+  padding-right: 5px;
+}
+td.file-size span.num {
+  padding-right: 10px;
+}
+td.file-size span.unit,
+td.param-size span.unit {
+  display: inline-block;
+  min-width: 2em;
+  text-align: left;
+}
+</style>
+<table style="margin-top: 50px; margin-bottom: -20px;">
+<thead>
+<tr>
+<th>
+Model
+</th>
+<th>
+Parameters
+</th>
+<th style="text-align: center;">
+File Size
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+SmolLM-135M.Q4_K_M.gguf
+</td>
+<td class="param-size">
+<span class="num">135</span><span class="unit">M</span>
+</td>
+<td class="file-size">
+<span class="num">100</span><span class="unit">MB</span>
+</td>
+</tr>
+<tr>
+<td>
+qwen1_5-0_5b-chat-q4_k_m.gguf
+</td>
+<td class="param-size">
+<span class="num">500</span><span class="unit">M</span>
+</td>
+<td class="file-size">
+<span class="num">400</span><span class="unit">MB</span>
+</td>
+</tr>
+<tr>
+<td>
+gemma-2b.Q4_K_M.gguf
+</td>
+<td class="param-size">
+<span class="num">2</span><span class="unit">B</span>
+</td>
+<td class="file-size">
+<span class="num">1.5</span><span class="unit">GB</span>
+</td>
+</tr>
+<tr>
+<td>
+llama-7b.Q4_K_M.gguf
+</td>
+<td class="param-size">
+<span class="num">7</span><span class="unit">B</span>
+</td>
+<td class="file-size">
+<span class="num">4</span><span class="unit">GB</span>
+</td>
+</tr>
+<tr>
+<td>
+phi-4-q4.gguf
+</td>
+<td class="param-size">
+<span class="num">14</span><span class="unit">B</span>
+</td>
+<td class="file-size">
+<span class="num">9</span><span class="unit">GB</span>
+</td>
+</tr>
+<tr>
+<td>
+Llama-3.3-70B-Instruct-Q4_K_M.gguf
+</td>
+<td class="param-size">
+<span class="num">70</span><span class="unit">B</span>
+</td>
+<td class="file-size">
+<span class="num">42</span><span class="unit">GB</span>
+</td>
+</tr>
+</tbody>
+</table>
+<p style="text-align: center; margin-top: 50px;">
+Expected tokens/second: 1/2/5/10/25/50/250/1k/4k
+</p>
+</section>
+<section id="from-sc_inspector-import-llm-2" class="slide level2">
+<h2>&gt;&gt;&gt; from sc_inspector import llm</h2>
+<div class="sourceCode" id="cb2"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> benchmark_config=<span class="va">$(</span><span class="ex">jq</span> <span class="at">-nc</span> <span class="dt">\</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">--arg</span> version <span class="st">&quot;51f311e0&quot;</span> <span class="dt">\</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--arg</span> model <span class="st">&quot;SmolLM-135M.Q4_K_M.gguf&quot;</span> <span class="dt">\</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">--argjson</span> tokens 128 <span class="dt">\</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">&#39;{framework_version: $version, model: $model, tokens: $tokens}&#39;</span><span class="va">)</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> curl <span class="at">-s</span> <span class="at">-D</span> <span class="at">-</span> <span class="st">&quot;https://keeper.sparecores.net/servers&quot;</span> <span class="dt">\</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">-G</span> <span class="dt">\</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">--data-urlencode</span> <span class="st">&quot;benchmark_score_min=1&quot;</span> <span class="dt">\</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">--data-urlencode</span> <span class="st">&quot;add_total_count_header=true&quot;</span> <span class="dt">\</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">--data-urlencode</span> <span class="st">&quot;limit=25&quot;</span> <span class="dt">\</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">--data-urlencode</span> <span class="st">&quot;benchmark_config=</span><span class="va">$benchmark_config</span><span class="st">&quot;</span> <span class="dt">\</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">--data-urlencode</span> <span class="st">&quot;benchmark_id=llm_speed:prompt_processing&quot;</span> <span class="dt">\</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">-o</span> /dev/null <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-i</span> x-total-count</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode sh fragment"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">x-total-count:</span> 2007</span></code></pre></div>
+</section>
+<section id="from-sc_inspector-import-llm-3" class="slide level2">
 <h2>&gt;&gt;&gt; from sc_inspector import llm</h2>
 <iframe src="https://sparecores.com/embed/server/gcp/g2-standard-16/llm_prompt" style="height: 600px; width: 90%; border: 1px solid #34d399; border-radius: 8px; min-height: 400px;">
 </iframe>
@@ -932,7 +1087,7 @@ this on x86, ARM, and most of the GPU-accelerated machines as well.
 TODO
 </aside>
 </section>
-<section id="from-sc_inspector-import-llm-1" class="slide level2">
+<section id="from-sc_inspector-import-llm-4" class="slide level2">
 <h2>&gt;&gt;&gt; from sc_inspector import llm</h2>
 <div class="centered">
 <p><img style="margin-top:-55px; width: 80%;" src="images/sc-www-demo-g2-standard-16-1.png" /></p>
@@ -941,7 +1096,7 @@ TODO
 TODO
 </aside>
 </section>
-<section id="from-sc_inspector-import-llm-2" class="slide level2"
+<section id="from-sc_inspector-import-llm-5" class="slide level2"
 data-transition="slide-in none-out">
 <h2 data-transition="slide-in none-out">&gt;&gt;&gt; from sc_inspector
 import llm</h2>
@@ -952,7 +1107,7 @@ import llm</h2>
 TODO
 </aside>
 </section>
-<section id="from-sc_inspector-import-llm-3" class="slide level2"
+<section id="from-sc_inspector-import-llm-6" class="slide level2"
 data-transition="none-in slide-out">
 <h2 data-transition="none-in slide-out">&gt;&gt;&gt; from sc_inspector
 import llm</h2>
@@ -963,7 +1118,7 @@ import llm</h2>
 TODO
 </aside>
 </section>
-<section id="from-sc_inspector-import-llm-4" class="slide level2">
+<section id="from-sc_inspector-import-llm-7" class="slide level2">
 <h2>&gt;&gt;&gt; from sc_inspector import llm</h2>
 <div class="centered">
 <p><img style="margin-top:-55px; width: 80%;" src="images/sc-www-demo-g2-standard-16-4.png" /></p>
@@ -972,7 +1127,7 @@ TODO
 TODO
 </aside>
 </section>
-<section id="from-sc_inspector-import-llm-5" class="slide level2">
+<section id="from-sc_inspector-import-llm-8" class="slide level2">
 <h2>&gt;&gt;&gt; from sc_inspector import llm</h2>
 <iframe src="https://sparecores.com/embed/compare/llm_inference?instances=W3siZGlzcGxheV9uYW1lIjoiZzItc3RhbmRhcmQtNCIsInZlbmRvciI6ImdjcCIsInNlcnZlciI6ImcyLXN0YW5kYXJkLTQiLCJ6b25lc1JlZ2lvbnMiOltdfSx7ImRpc3BsYXlfbmFtZSI6Imc1LnhsYXJnZSIsInZlbmRvciI6ImF3cyIsInNlcnZlciI6Imc1LnhsYXJnZSIsInpvbmVzUmVnaW9ucyI6W119LHsiZGlzcGxheV9uYW1lIjoiZzYueGxhcmdlIiwidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiZzYueGxhcmdlIiwiem9uZXNSZWdpb25zIjpbXX1d" style="height: 600px; width: 100%; border: 1px solid #34d399; border-radius: 8px; min-height: 600px">
 </iframe>
@@ -986,6 +1141,14 @@ TODO
 <div class="centered">
 <p><img style="width:75%;margin-top:-30px;" src="images/no-time-for-questions.png" /></p>
 </div>
+<style>
+td.cost-value span.num {
+  display: inline-block;
+  min-width: 5em;
+  text-align: right;
+  padding-right: 0.5em;
+}
+</style>
 </section>
 <section id="inputhow-much-did-it-cost" class="slide level2">
 <h2>&gt;&gt;&gt; input(“How much did it cost?!”)</h2>
@@ -1000,7 +1163,7 @@ TODO
 <th>
 <b>Vendor</b>
 </th>
-<th>
+<th style="text-align: right; ">
 <b>Cost</b>
 </th>
 </tr>
@@ -1009,40 +1172,40 @@ TODO
 <td>
 AWS
 </td>
-<td>
-2153.68 USD
+<td class="cost-value">
+<span class="num">2153.68</span> <span class="unit">USD</span>
 </td>
 </tr>
 <tr>
 <td>
 GCP
 </td>
-<td>
-696.9 USD
+<td class="cost-value">
+<span class="num">696.9</span> <span class="unit">USD</span>
 </td>
 </tr>
 <tr>
 <td>
 Azure
 </td>
-<td>
-4036.71 USD
+<td class="cost-value">
+<span class="num">8036.71</span> <span class="unit">USD</span>
 </td>
 </tr>
 <tr>
 <td>
 Hetzner
 </td>
-<td>
-8.65 EUR
+<td class="cost-value">
+<span class="num">8.65</span> <span class="unit">EUR</span>
 </td>
 </tr>
 <tr>
 <td>
 Upcloud
 </td>
-<td>
-170.21 EUR
+<td class="cost-value">
+<span class="num">170.21</span> <span class="unit">EUR</span>
 </td>
 </tr>
 </table>

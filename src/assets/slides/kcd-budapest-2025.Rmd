@@ -142,7 +142,7 @@ We do that by collecting, generating,  standardizing and publishing pricing and 
 - unified CLI to start machines
 - and working on an an optional SaaS offering built on the top of the open-source tooling for folks who would rather avoid registering with all cloud providers etc: give us a Docker image, a command to run, and you credit card .. all set, we will run it wherever it's cheapest.
 
-We help DevOps, DS, ML, AI, ETL, AV, and other engineering teams to find optimal instances for their batch jobs (e.g. “8 CPU cores, 64 GB of RAM, and a TPU needed in an EU datacenter to train ML models for 6 hours”) by providing:
+We help DevOps, DS, ML, AI, ETL, AV, and other engineering teams to find optimal instances for their batch jobs (e.g. "8 CPU cores, 64 GB of RAM, and a TPU needed in an EU datacenter to train ML models for 6 hours") by providing:
 
 * Open-source tools, database schemas and documentation to monitor cloud and flexible VPS/dedicated server vendors and their compute resource offerings in an innovative and truly comparative way, including vendor details (e.g. location, certificates, green power), compute capabilities (e.g. CPU, memory, GPU/TPU), pricing (especially of spot instances), and performance (by running task-specific benchmarks).
 * Managed infrastructure, databases, APIs, SDKs, and web applications to make these continuously and transparently tracked data sources publicly available and comparable in a validated, unbiased, structured, and searchable manner.
@@ -398,7 +398,7 @@ As mentioned previously, this is made available via multiple components that I'd
 </section></section>
 
 <section>
-<section class="titleslide slide level1">
+<section class="titleslide slide level1" data-transition="slide-in none-out">
   <h2>&#62;&#62;&#62; from sc_inspector import llm</h2>
 
 ::: {.centered}
@@ -409,7 +409,126 @@ As mentioned previously, this is made available via multiple components that I'd
 We have created a Docker image that includes llama.ccp build for various CPU architectures and CUDA as well -- so with a single command we can run this on x86, ARM, and most of the GPU-accelerated machines as well.
 </aside>
 
-## >>> from sc_inspector import llm 
+## >>> from sc_inspector import llm {data-transition="none-in slide-out"}
+
+::: {.centered}
+<img style="margin-top:-30px; width: 50%;" src="images/cuda-approved-ai.jpeg" />
+:::
+
+<aside class="notes">
+The compulsary AI-generated image .. with transparent background .. CUDA approved!
+</aside>
+
+
+## >>> from sc_inspector import llm
+
+- Text generation: 16, 128, 512, 1k, 4k, 16k tokens
+- Prompt processing: 16, 128, 512, 1k, 4k tokens
+
+<style>
+td.file-size span.num {
+  display: inline-block;
+  min-width: 3em; /* Adjust width as needed */
+  text-align: right;
+  padding-right: 0.5em; /* Space before unit */
+}
+td.file-size span.unit {
+  display: inline-block;
+  min-width: 2em; /* Adjust width as needed */
+  text-align: left;
+}
+</style>
+
+<style>
+td.file-size span.num,
+td.param-size span.num {
+  display: inline-block;
+  min-width: 3em;
+  text-align: right;
+  padding-right: 5px;
+}
+td.file-size span.num {
+  padding-right: 10px;
+}
+td.file-size span.unit,
+td.param-size span.unit {
+  display: inline-block;
+  min-width: 2em;
+  text-align: left;
+}
+</style>
+
+<table style="margin-top: 50px; margin-bottom: -20px;">
+  <thead>
+    <tr>
+      <th>Model</th>
+      <th>Parameters</th>
+      <th style="text-align: center;">File Size</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>SmolLM-135M.Q4_K_M.gguf</td>
+      <td class="param-size"><span class="num">135</span><span class="unit">M</span></td>
+      <td class="file-size"><span class="num">100</span><span class="unit">MB</span></td>
+    </tr>
+    <tr>
+      <td>qwen1_5-0_5b-chat-q4_k_m.gguf</td>
+      <td class="param-size"><span class="num">500</span><span class="unit">M</span></td>
+      <td class="file-size"><span class="num">400</span><span class="unit">MB</span></td>
+    </tr>
+    <tr>
+      <td>gemma-2b.Q4_K_M.gguf</td>
+      <td class="param-size"><span class="num">2</span><span class="unit">B</span></td>
+      <td class="file-size"><span class="num">1.5</span><span class="unit">GB</span></td>
+    </tr>
+    <tr>
+      <td>llama-7b.Q4_K_M.gguf</td>
+      <td class="param-size"><span class="num">7</span><span class="unit">B</span></td>
+      <td class="file-size"><span class="num">4</span><span class="unit">GB</span></td>
+    </tr>
+    <tr>
+      <td>phi-4-q4.gguf</td>
+      <td class="param-size"><span class="num">14</span><span class="unit">B</span></td>
+      <td class="file-size"><span class="num">9</span><span class="unit">GB</span></td>
+    </tr>
+    <tr>
+      <td>Llama-3.3-70B-Instruct-Q4_K_M.gguf</td>
+      <td class="param-size"><span class="num">70</span><span class="unit">B</span></td>
+      <td class="file-size"><span class="num">42</span><span class="unit">GB</span></td>
+    </tr>
+  </tbody>
+</table>
+
+<p style="text-align: center; margin-top: 50px;">
+Expected tokens/second: 1/2/5/10/25/50/250/1k/4k
+</p>
+
+## >>> from sc_inspector import llm
+
+```sh
+$ benchmark_config=$(jq -nc \
+  --arg version "51f311e0" \
+  --arg model "SmolLM-135M.Q4_K_M.gguf" \
+  --argjson tokens 128 \
+  '{framework_version: $version, model: $model, tokens: $tokens}')
+
+$ curl -s -D - "https://keeper.sparecores.net/servers" \
+  -G \
+  --data-urlencode "benchmark_score_min=1" \
+  --data-urlencode "add_total_count_header=true" \
+  --data-urlencode "limit=25" \
+  --data-urlencode "benchmark_config=$benchmark_config" \
+  --data-urlencode "benchmark_id=llm_speed:prompt_processing" \
+  -o /dev/null | grep -i x-total-count
+
+```
+
+```sh {.fragment}
+x-total-count: 2007
+```
+
+## >>> from sc_inspector import llm
 
 <iframe
  src="https://sparecores.com/embed/server/gcp/g2-standard-16/llm_prompt"
@@ -420,7 +539,7 @@ We have created a Docker image that includes llama.ccp build for various CPU arc
 TODO
 </aside>
 
-## >>> from sc_inspector import llm 
+## >>> from sc_inspector import llm
 
 ::: {.centered}
 <img style="margin-top:-55px; width: 80%;" src="images/sc-www-demo-g2-standard-16-1.png" />
@@ -481,6 +600,15 @@ TODO
 <img style="width:75%;margin-top:-30px;" src="images/no-time-for-questions.png" />
 :::
 
+<style>
+td.cost-value span.num {
+  display: inline-block;
+  min-width: 5em;
+  text-align: right;
+  padding-right: 0.5em;
+}
+</style>
+
 ## >>> input("How much did it cost?!")
 
 ::: {.colcontainer .mt-60 .centered .fragment}
@@ -494,16 +622,16 @@ TODO
   <th>
     <b>Vendor</b>
   </th>
-  <th>
+  <th style="text-align: right; padding-right: 10px;">
     <b>Cost</b>
   </th>
   </tr>
 </thead>
-<tr><td>AWS</td><td>2153.68 USD</td></tr>
-<tr><td>GCP</td><td>696.9 USD</td></tr>
-<tr><td>Azure</td><td>4036.71 USD</td></tr>
-<tr><td>Hetzner</td><td>8.65 EUR</td></tr>
-<tr><td>Upcloud</td><td>170.21 EUR</td></tr>
+<tr><td>AWS</td><td class="cost-value"><span class="num">2153.68</span> <span class="unit">USD</span></td></tr>
+<tr><td>GCP</td><td class="cost-value"><span class="num">696.9</span> <span class="unit">USD</span></td></tr>
+<tr><td>Azure</td><td class="cost-value"><span class="num">8036.71</span> <span class="unit">USD</span></td></tr>
+<tr><td>Hetzner</td><td class="cost-value"><span class="num">8.65</span> <span class="unit">EUR</span></td></tr>
+<tr><td>Upcloud</td><td class="cost-value"><span class="num">170.21</span> <span class="unit">EUR</span></td></tr>
 </table>
 
 <div class="fragment">
