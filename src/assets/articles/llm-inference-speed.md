@@ -81,24 +81,6 @@ target="_blank" rel="noopener">select the appropriate backend at runtime</a>.
 
 To provide a comprehensive benchmark, we selected a wide range of popular LLMs with varying sizes and capabilities:
 
-<style>
-td.file-size span.num,
-td.param-size span.num {
-  display: inline-block;
-  min-width: 3em;
-  text-align: right;
-  padding-right: 5px;
-}
-td.file-size span.num {
-  padding-right: 10px;
-}
-td.file-size span.unit,
-td.param-size span.unit {
-  display: inline-block;
-  min-width: 2em;
-  text-align: left;
-}
-</style>
 <table>
   <thead>
     <tr>
@@ -173,14 +155,6 @@ ensured we kept runtime and related costs under control.
 After applying these compromises to keep the overall budget below $10k, we ended
 up with the following cost breakdown per vendor:
 
-<style>
-td.cost-value span.num {
-  display: inline-block;
-  min-width: 5em;
-  text-align: right;
-  padding-right: 0.5em;
-}
-</style>
 <table>
 <thead>
   <tr>
