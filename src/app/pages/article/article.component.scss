@@ -68,6 +68,12 @@ div.giscus {
     @apply mx-auto;
     @apply mb-2;
 
+    // make the tables scrollable
+    display: block;
+    width: fit-content;
+    max-width: 100%;
+    overflow: auto;
+
     thead {
       @apply border-b border-emerald-400 border-solid;
       th {
@@ -85,6 +91,7 @@ div.giscus {
 
       tr {
         td {
+          @apply whitespace-nowrap;
           @apply px-5 py-3 text-sm;
           a:hover {
             opacity: 0.5;
@@ -116,6 +123,14 @@ div.giscus {
         padding-right: 0.5em;
       }
     }
+  }
+  table::-webkit-scrollbar{
+    height: 4px;
+    width: 4px;
+    background: #34D39933;
+  }
+  table::-webkit-scrollbar-thumb:horizontal{
+    background: #34D399;
   }
 
   .header-anchor {
