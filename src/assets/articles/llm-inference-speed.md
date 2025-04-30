@@ -128,11 +128,11 @@ covering model sizes ranging from a hundred million parameters to 70 billion
 parameters.
 
 Starting each machine from a clean state required downloading our combined
-container image (~7 GB) and then the selected models (~60 GB). This meant
+container image (\~7 GB) and then the selected models (\~60 GB). This meant
 benchmarks needed to run on machines with at least 75 GB of disk space.
 
 Keeping costs under control was also crucial. For example, downloading the
-largest model (~42 GB) on a small machine with limited bandwidth could take
+largest model (\~42 GB) on a small machine with limited bandwidth could take
 over an hour, potentially failing due to memory constraints.
 
 To manage this, we started downloading models sequentially, ordered by their
