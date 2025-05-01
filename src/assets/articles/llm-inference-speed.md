@@ -327,7 +327,7 @@ In this scenario, the smallest GPU options are the most cost efficient: with a
 single GPU, minimal CPU and irrelevant memory amount as data get stored in the
 VRAM anyway.
 
-The computed `score_pre_price` shows how much inference speed you can buy with a
+The computed `score_per_price` shows how much inference speed you can buy with a
 1 USD/hour. The most cost-effective option from the above table suggests that a
 `g2-standard-4` costs $0.14631/hour, so we could get almost 7 servers for 1
 USD/hour, providing 8164+ tokens/second overall inference speed.
