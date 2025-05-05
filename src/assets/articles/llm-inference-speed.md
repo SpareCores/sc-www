@@ -1,7 +1,7 @@
 ---
 # ~50 chars
 title: LLM Inference Speed Benchmarks
-date: 2025-04-30
+date: 2025-05-05
 # ~100 character
 teaser: We measured the prompt processing and text generation speed of different LLMs on 2000+ cloud servers.
 # 320x220
