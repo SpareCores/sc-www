@@ -349,7 +349,8 @@ VRAM anyway.
 The computed `score_per_price` shows how much inference speed you can buy with
 1 USD/hour. The most cost-effective option from the above table suggests that a
 `g2-standard-4` costs $0.14631/hour, so we could get almost 7 servers for 1
-USD/hour, providing 8164+ tokens/second overall inference speed.
+USD/hour, providing 8164+ tokens/second overall inference speed, which
+translates to \~3.4 US cents per 1M tokens when fully utilized.
 
 The next best option (`g2-standard-8`) provides the same performance as equipped
 with the same GPU, which is doing all the work independent of the extra CPU
