@@ -16,8 +16,12 @@
               />
           </div>
           <div>
-            <p>Published on {{articleMeta.date | timeToShortDate}} by {{articleMeta.author}}.</p>
-            <div class="flex gap-2">Topics:
+            <p>
+              Published on {{articleMeta.date | timeToShortDate}} by {{articleMeta.author}}.
+              Read time: {{readingTime}} mins.
+            </p>
+            <div class="flex gap-2">
+              Topics:
               <a *ngFor="let tag of articleMeta.tags;" routerLink="/articles" [queryParams]="{ tag }">
                 #{{tag.trim()}}
               </a>

@@ -68,6 +68,12 @@ div.giscus {
     @apply mx-auto;
     @apply mb-2;
 
+    // make the tables scrollable
+    display: block;
+    width: fit-content;
+    max-width: 100%;
+    overflow: auto;
+
     thead {
       @apply border-b border-emerald-400 border-solid;
       th {
@@ -85,13 +91,46 @@ div.giscus {
 
       tr {
         td {
+          @apply whitespace-nowrap;
           @apply px-5 py-3 text-sm;
           a:hover {
             opacity: 0.5;
           }
         }
       }
+
+      // special formatting for table columns with units
+      td.file-size span.num,
+      td.param-size span.num {
+        display: inline-block;
+        min-width: 3em;
+        text-align: right;
+        padding-right: 5px;
+      }
+      td.file-size span.num {
+        padding-right: 10px;
+      }
+      td.file-size span.unit,
+      td.param-size span.unit {
+        display: inline-block;
+        min-width: 2em;
+        text-align: left;
+      }
+      td.cost-value span.num {
+        display: inline-block;
+        min-width: 5em;
+        text-align: right;
+        padding-right: 0.5em;
+      }
     }
+  }
+  table::-webkit-scrollbar{
+    height: 4px;
+    width: 4px;
+    background: #34D39933;
+  }
+  table::-webkit-scrollbar-thumb:horizontal{
+    background: #34D399;
   }
 
   .header-anchor {

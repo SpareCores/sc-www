@@ -35,6 +35,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
   id!: string;
   articleMeta: any;
   articleBody: any;
+  readingTime: number = 0;
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: object,
@@ -75,7 +76,6 @@ export class ArticleComponent implements OnInit, OnDestroy {
         this.articleMeta = data;
         this.articleBody = this.domSanitizer.bypassSecurityTrustHtml(
           this.markdownService.parse(content, {disableSanitizer: true}) as string);
-
         this.breadcrumbs = [
           { name: 'Home', url: '/' },
           { name: 'Articles', url: `/articles` },
@@ -100,9 +100,16 @@ export class ArticleComponent implements OnInit, OnDestroy {
                   this.openLightbox(event.target.src);
                 }
               });
+              // add comment section
               initGiscus(this.renderer, this.articleDiv, baseUrl, 'Blog posts', 'DIC_kwDOLesFQM4CgusO', 'og:title');
-
+              // highlight code blocks
               this.prismService.highlightAll();
+              // estimate reading time
+              const text = this.articleDiv.nativeElement.textContent || this.articleDiv.nativeElement.innerText || '';
+              const words = text.split(/\s+/).filter(Boolean);
+              const readingTime = Math.ceil(words.length / 265);  // as per medium.com
+              this.readingTime = readingTime;
+
 
               clearInterval(checkExist);
             }
