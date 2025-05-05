@@ -40,8 +40,8 @@ some of our highlights:
   fit all layers into VRAM, smaller models don't scale performance significantly
   across multiple GPUs.
 
-If you're primarily interested in the benchmark data and further anal rather than the
-technical details, feel free to skip ahead to the
+If you're primarily interested in the benchmark data and further analysis
+rather than the technical details, feel free to skip ahead to the
 [Results](/article/llm-inference-speed#results).
 
 ## Infrastructure
@@ -158,7 +158,7 @@ benchmarks needed to run on machines with at least 75 GB of disk space.
 
 Keeping costs under control was also crucial. For example, downloading the
 largest model (\~42 GB) on a small machine with limited bandwidth could take
-over an hour, and then eventually failing due to memory constraints.
+over an hour and eventually fail due to memory constraints.
 
 To mitigate this, we implemented a background thread downloading the models
 sequentially, prioritized by size. Once a model was downloaded, we marked it as
@@ -300,7 +300,7 @@ This returned around 600 servers, ranging from:
 ## Price-Performance Analysis
 
 Calculating the performance for the price requires us to join the `server_price`
-table, for example taking into account the best on-demand server price:
+table. For example, considering the best on-demand server price:
 
 ```sql
 WITH scores AS (
