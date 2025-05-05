@@ -40,8 +40,9 @@ some of our highlights:
   fit all layers into VRAM, smaller models don't scale performance significantly
   across multiple GPUs.
 
-If you're primarily interested in the benchmark data and further analysis,
-feel free to skip ahead to the [Results](/article/llm-inference-speed#results).
+If you're primarily interested in the benchmark data and further anal rather than the
+technical details, feel free to skip ahead to the
+[Results](/article/llm-inference-speed#results).
 
 ## Infrastructure
 
@@ -342,16 +343,16 @@ This returns the following top 10 servers on April 30, 2025:
 | gcp | a2-highgpu-2g | 24 | 170 | 2 | A100 | 2469.94 | 1.47895 | 1670.06 |
 
 In this scenario, the smallest GPU options are the most cost efficient: with a
-single GPU, minimal CPU and irrelevant memory amount as data get stored in the
+single GPU, minimal CPU and irrelevant memory amount as data are stored in the
 VRAM anyway.
 
-The computed `score_per_price` shows how much inference speed you can buy with a
+The computed `score_per_price` shows how much inference speed you can buy with
 1 USD/hour. The most cost-effective option from the above table suggests that a
 `g2-standard-4` costs $0.14631/hour, so we could get almost 7 servers for 1
 USD/hour, providing 8164+ tokens/second overall inference speed.
 
 The next best option (`g2-standard-8`) provides the same performance as equipped
-with the same GPU, which is doing all the work independent from the extra CPU
+with the same GPU, which is doing all the work independent of the extra CPU
 cores or memory amount, so the cost efficiency is around the half of the first
 one due to the doubled costs, with identical throughput.
 
@@ -370,7 +371,7 @@ Just select the preferred LLM inference speed benchmark instead of the default
 <p style="margin: 0px 50px 20px 50px; text-align: center; color: #999;">Image source: <a href="/servers?order_by=selected_benchmark_score&order_dir=desc&columns=1187464&benchmark=eyJpZCI6ImxsbV9zcGVlZDpwcm9tcHRfcHJvY2Vzc2luZyIsImNvbmZpZyI6IntcImZyYW1ld29ya192ZXJzaW9uXCI6IFwiNTFmMzExZTBcIiwgXCJtb2RlbFwiOiBcInBoaS00LXE0LmdndWZcIiwgXCJ0b2tlbnNcIjogNTEyfSJ9" target="_blank">Spare Cores server listing</a>.</p>
 
 Clicking on a row will take you to the server details page, including all the
-LLM inference speed results that is also embedded below for the above-mentioned
+LLM inference speed results that are also embedded below for the above-mentioned
 `g2-standard-4` server as interactive charts:
 
 <iframe
@@ -404,7 +405,7 @@ servers. Another similar example using the 70B model for text generation:
 </p>
 
 In this case, GPUs with more memory are required to load all layers into VRAM,
-so the most cost efficient options are the cheapest instances with a A100 GPU.
+so the most cost-efficient options are the cheapest instances with a A100 GPU.
 
 Although the CPU-only options are much less performant (a single A100 delivers
 20+ tokens/second, while 32 vCPUs provide overall 3-4 tokens/second), there are
