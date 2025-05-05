@@ -23,7 +23,25 @@ related work at last to meet the deadline.
 
 This article offers a technical overview of some of our related design
 decisions and the implementation details. But if you're here for the numbers,
-feel free to skip ahead to the [Results](/article/llm-inference-speed#results)!
+some of our highlights:
+
+- **No one-size-fits-all**: There is no single instance type that is the optimal
+  choice for all LLM serving needs. Depending on the LLM size and task (e.g.
+  prompt processing VS text generation), different server options deliver the
+  fastest speed and highest cost-efficiency.
+- **Performance vs. Cost Trade-off**: While NVIDIA GPUs generally provide
+  significantly higher performance due to CUDA optimization, CPU-only servers
+  can sometimes be more cost-efficient, especially when considering the
+  aggregate performance of multiple cheaper instances compared to a few
+  expensive GPU servers.
+- **Multi-GPU Utilization Challenges**: Despite advancements in LLM serving
+  frameworks, effectively utilizing multiple GPUs on a single server remains
+  challenging. While beneficial for large models that require multiple GPUs to
+  fit all layers into VRAM, smaller models don't scale performance significantly
+  across multiple GPUs.
+
+If you're primarily interested in the benchmark data and further analysis,
+feel free to skip ahead to the [Results](/article/llm-inference-speed#results).
 
 ## Infrastructure
 
