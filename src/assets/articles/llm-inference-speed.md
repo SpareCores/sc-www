@@ -6,7 +6,7 @@ date: 2025-04-30
 teaser: We measured the prompt processing and text generation speed of different LLMs on 2000+ cloud servers.
 # 320x220
 image: /assets/images/blog/thumbnails/llm-inference-speed.webp
-image_alt: Cover image of the Youtube video of the Architecture Weekly interview with Gergely and Attila.
+image_alt: AI-generated, stylized illustration representing LLM inference speed benchmarks.
 author: Gergely Daroczi
 tags: [benchmark, performance, score, llm, featured]
 ---
@@ -161,7 +161,7 @@ largest model (\~42 GB) on a small machine with limited bandwidth could take
 over an hour, and then eventually failing due to memory constraints.
 
 To mitigate this, we implemented a background thread downloading the models
-sequentially, priotitized by size. Once a model was downloaded, we marked it as
+sequentially, prioritized by size. Once a model was downloaded, we marked it as
 ready for benchmarking in the main thread. Models were then evaluated in
 sequence, with early termination if inference speed fell below a predefined
 threshold. If the next model in line was likely to exceed bandwidth or
@@ -406,7 +406,7 @@ servers. Another similar example using the 70B model for text generation:
 </p>
 
 In this case, GPUs with more memory are required to load all layers into VRAM,
-so the most cost-efficient options are the cheapest instances with a A100 GPU.
+so the most cost-efficient options are the cheapest instances with an A100 GPU.
 
 Although the CPU-only options are much less performant (a single A100 delivers
 20+ tokens/second, while 32 vCPUs provide overall 3-4 tokens/second), there are
