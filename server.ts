@@ -74,12 +74,11 @@ const emailTemplates = new EmailTemplateManager();
 // The Express app is exported so that it can be used by serverless Functions.
 export function app(): express.Express {
   const server = express();
-  const loggerData: Record<string, any> = {};
 
   // access log
   server.use((req, res, next) => {
-    loggerData.startTime = new Date();
-    loggerData.resourceUsage = process.resourceUsage();
+    (req as any).requestStartTime = new Date();
+    (req as any).requestResourceUsage = process.resourceUsage();
     const { protocol, originalUrl, ip, headers } = req;
     const log = {
       event: "request",
@@ -103,15 +102,16 @@ export function app(): express.Express {
 
   // return early with stats
   server.get('/healthcheck', (req, res) => {
+    const currentResourceUsage = process.resourceUsage();
     const stats = {
       status: 'healthy',
       host: os.hostname(),
       memory: {
-        maxRss: loggerData.resourceUsage.maxRSS,
+        maxRss: currentResourceUsage.maxRSS,
       },
       cpu: {
-        user: loggerData.resourceUsage.userCPUTime,
-        sys: loggerData.resourceUsage.systemCPUTime,
+        user: currentResourceUsage.userCPUTime,
+        sys: currentResourceUsage.systemCPUTime,
       },
       uptime: process.uptime().toFixed(2)
     };
@@ -280,20 +280,25 @@ export function app(): express.Express {
   // log time to generate dynamic content
   server.use((req, res, next) => {
     res.on("close", () => {
-      const currentResourceUsage = process.resourceUsage();
-      const currentTime = new Date();
-      const elapsedTime = (currentTime.getTime() - loggerData.startTime.getTime()) / 1e3;
-      const userTime = (currentResourceUsage.userCPUTime - loggerData.resourceUsage.userCPUTime) / 1e6;
-      const sysTime = (currentResourceUsage.systemCPUTime - loggerData.resourceUsage.systemCPUTime) / 1e6;
-      const log = {
-        event: "response",
-        path: req.originalUrl,
-        real: elapsedTime.toFixed(2),
-        user: userTime.toFixed(2),
-        sys: sysTime.toFixed(2),
-        wait: (elapsedTime - userTime - sysTime).toFixed(2),
+      const requestStartTime = (req as any).requestStartTime;
+      const requestResourceUsage = (req as any).requestResourceUsage;
+
+      if (requestStartTime && requestResourceUsage) {
+        const currentResourceUsage = process.resourceUsage();
+        const currentTime = new Date();
+        const elapsedTime = (currentTime.getTime() - requestStartTime.getTime()) / 1e3;
+        const userTime = (currentResourceUsage.userCPUTime - requestResourceUsage.userCPUTime) / 1e6;
+        const sysTime = (currentResourceUsage.systemCPUTime - requestResourceUsage.systemCPUTime) / 1e6;
+        const log = {
+          event: "response",
+          path: req.originalUrl,
+          real: elapsedTime.toFixed(2),
+          user: userTime.toFixed(2),
+          sys: sysTime.toFixed(2),
+          wait: (elapsedTime - userTime - sysTime).toFixed(2),
+        }
+        console.log(JSON.stringify(log));
       }
-      console.log(JSON.stringify(log));
     })
     next()
   })
