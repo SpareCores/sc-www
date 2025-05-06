@@ -28,6 +28,7 @@ import { Modal, ModalOptions } from 'flowbite';
 import { EmbedDebugComponent } from '../embed-debug/embed-debug.component';
 import { finalize } from 'rxjs/operators';
 import { LoadingSpinnerComponent } from '../../components/loading-spinner/loading-spinner.component';
+import { Subscription } from 'rxjs';
 
 Chart.register(annotationPlugin);
 
@@ -150,6 +151,8 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   isLoading = false;
   isModalOpen = false;
 
+  private subscription = new Subscription();
+
   constructor(@Inject(PLATFORM_ID) private platformId: object,
               @Inject(DOCUMENT) private document: Document,
               private route: ActivatedRoute,
@@ -167,327 +170,330 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.isLoading = true;
     const countryIdtoNamePipe = new CountryIdtoNamePipe();
-    this.route.params.subscribe(params => {
-      const vendor = params['vendor'];
-      const id = params['id'];
+    this.subscription.add(
+      this.route.params.subscribe(params => {
+        const vendor = params['vendor'];
+        const id = params['id'];
 
-      Promise.all([
-        this.keeperAPI.getServerMeta(),
-        this.keeperAPI.getServerBenchmarkMeta(),
-        this.keeperAPI.getServerSimilarServers(vendor, id, 'family', 7),
-        this.keeperAPI.getServerSimilarServers(vendor, id, 'specs', 7),
-        this.keeperAPI.getServerPrices(vendor, id),
-        this.keeperAPI.getServerBenchmark(vendor, id),
-        this.keeperAPI.getServerV2(vendor, id),
-        this.keeperAPI.getVendors(),
-        this.keeperAPI.getRegions(),
-        this.keeperAPI.getZones()
-      ]).then((dataAll) => {
-        const promisAllResponses = dataAll.map((d) => d.body);
-        const [serverMeta, benchmarkMeta, similarByFamily, similarBySpecs, prices, benchmarks, serverDetails, vendors, regions, zones] = promisAllResponses;
+        Promise.all([
+          this.keeperAPI.getServerMeta(),
+          this.keeperAPI.getServerBenchmarkMeta(),
+          this.keeperAPI.getServerSimilarServers(vendor, id, 'family', 7),
+          this.keeperAPI.getServerSimilarServers(vendor, id, 'specs', 7),
+          this.keeperAPI.getServerPrices(vendor, id),
+          this.keeperAPI.getServerBenchmark(vendor, id),
+          this.keeperAPI.getServerV2(vendor, id),
+          this.keeperAPI.getVendors(),
+          this.keeperAPI.getRegions(),
+          this.keeperAPI.getZones()
+        ]).then((dataAll) => {
+          const promisAllResponses = dataAll.map((d) => d.body);
+          const [serverMeta, benchmarkMeta, similarByFamily, similarBySpecs, prices, benchmarks, serverDetails, vendors, regions, zones] = promisAllResponses;
 
-        this.instanceProperties = serverMeta?.fields || [];
+          this.instanceProperties = serverMeta?.fields || [];
 
-        this.benchmarkMeta = benchmarkMeta || {};
+          this.benchmarkMeta = benchmarkMeta || {};
 
-        this.similarByFamily = similarByFamily;
-        this.similarBySpecs = similarBySpecs;
+          this.similarByFamily = similarByFamily;
+          this.similarBySpecs = similarBySpecs;
 
-        if(serverDetails){
-          this.serverDetails = JSON.parse(JSON.stringify(serverDetails)) as any;
+          if(serverDetails){
+            this.serverDetails = JSON.parse(JSON.stringify(serverDetails)) as any;
 
-          this.serverDetails.benchmark_scores = benchmarks;
-          this.serverDetails.vendor = vendors.find((v: any) => v.vendor_id === this.serverDetails.vendor_id);
-          this.serverDetails.score = this.serverDetails.benchmark_scores?.find((b) => b.benchmark_id === 'stress_ng:bestn')?.score;
+            this.serverDetails.benchmark_scores = benchmarks;
+            this.serverDetails.vendor = vendors.find((v: any) => v.vendor_id === this.serverDetails.vendor_id);
+            this.serverDetails.score = this.serverDetails.benchmark_scores?.find((b) => b.benchmark_id === 'stress_ng:bestn')?.score;
 
-          if(prices) {
-            this.serverDetails.prices = JSON.parse(JSON.stringify(prices))?.sort((a: any, b: any) => a.price - b.price);
+            if(prices) {
+              this.serverDetails.prices = JSON.parse(JSON.stringify(prices))?.sort((a: any, b: any) => a.price - b.price);
 
-            if(this.serverDetails.prices?.length > 0) {
-              this.serverDetails.min_price = this.serverDetails.prices ? this.serverDetails.prices[0].price : 0;
-              this.serverDetails.prices.forEach((price: any) => {
-                price.region = regions.find((r: any) => r.region_id === price.region_id);
-                price.zone = zones.find((z: any) => z.zone_id === price.zone_id);
-              });
-            }
-          }
-
-          this.serverDetails.score_per_price = this.serverDetails.min_price && this.serverDetails.score ? this.serverDetails.score / this.serverDetails.min_price : (this.serverDetails.score || 0);
-
-          // list all regions where the server is available
-          this.serverDetails.prices?.forEach((price: ExtendedServerPrice) => {
-            this.serverZones.push(price.zone.display_name);
-            if(!this.serverRegions.includes(price.region.display_name)) {
-              this.serverRegions.push(price.region.display_name);
-            }
-          })
-
-          this.breadcrumbs[2] =
-            { name: this.serverDetails.display_name, url: '/server/' + this.serverDetails.vendor.vendor_id + '/' + this.serverDetails.api_reference };
-
-          const url = this.SEOHandler.getBaseURL() + '/server/' + this.serverDetails.vendor.vendor_id + '/' + this.serverDetails.api_reference;
-          this.SEOHandler.updateCanonical(this.document, url);
-
-          this.features = [];
-          if(this.serverDetails.cpu_cores || this.serverDetails.vcpus) {
-            this.features.push({name: 'vCPU', value: `${this.serverDetails.vcpus || this.serverDetails.cpu_cores}`});
-          }
-          if(this.serverDetails.memory_amount) {
-            this.features.push({name: 'Memory', value: this.getMemory()});
-          }
-          if(this.serverDetails.storage_size) {
-            this.features.push({name: 'Storage', value: this.getStorage()});
-          }
-          if(this.serverDetails.gpu_count) {
-            this.features.push({name: 'GPU', value: this.serverDetails.gpu_count});
-          }
-
-          this.instancePropertyCategories.forEach((c) => {
-            c.properties = [];
-          });
-
-          this.instanceProperties.forEach((p: any) => {
-            const group = this.instancePropertyCategories.find((g) => g.category === p.category);
-            const value = this.getProperty(p);
-            if(group && value) {
-              group.properties.push(p);
-            }
-          });
-
-          this.benchmarksByCategory = [];
-          this.serverDetails.benchmark_scores?.forEach((b: any) => {
-            let group_id = b.benchmark_id;
-            if(group_id.includes('passmark:')) {
-              if(group_id.includes('passmark:cpu_')) {
-                group_id = 'passmark:cpu';
-              } else {
-                group_id = 'passmark:other';
-              }
-            }
-            const group = this.benchmarksByCategory.find((g) => g.benchmark_id === group_id);
-            if(!group) {
-              this.benchmarksByCategory.push({benchmark_id: group_id, benchmarks: [b]});
-            } else {
-              group.benchmarks.push(b);
-            }
-          });
-
-          this.regionFilters = [];
-
-          this.serverDetails.prices?.sort((a, b) => a.price - b.price);
-          this.serverDetails.prices?.forEach((price: ExtendedServerPrice) => {
-              const region = this.regionFilters.find((z) => z.region_id === price.region_id);
-              if(!region) {
-                this.regionFilters.push({name: price.region.display_name, region_id: price.region_id, selected: false});
-              }
-            });
-
-          if(this.regionFilters[0]) {
-            this.regionFilters[0].selected = true;
-          }
-
-          if(this.serverDetails.prices?.length > 0 && (this.barChartOptions?.scales as any)?.y?.title?.text) {
-            (this.barChartOptions!.scales as any).y.title.text = `${this.serverDetails.prices[0].currency}/h`;
-          }
-
-          // This also initializes important underlying data has to be called here
-          this.refreshPricesGraphs();
-
-          this.title = `${this.serverDetails.display_name} by ${this.serverDetails.vendor.name} - Spare Cores`;
-          this.description =
-            `${this.serverDetails.display_name} is a ${this.serverDetails.description} server offered by ${this.serverDetails.vendor.name} with`;
-          if(this.serverDetails.vcpus) {
-            this.description += ` ${this.serverDetails.vcpus} vCPUs`;
-          } else if(this.serverDetails.cpu_cores) {
-            this.description += ` ${this.serverDetails.cpu_cores} CPUs`;
-          }
-          this.description += `, ${this.getMemory()} of memory and ${this.getStorage()} of storage.`;
-
-          if(this.serverDetails.prices[0]) {
-            const roundedPrice = Math.round(this.serverDetails.prices[0].price * 1000000) / 1000000;
-            this.description += ` The pricing starts at ${roundedPrice} ${this.serverDetails.prices[0].currency} per hour.`;
-          }
-
-          this.faqs = [
-            {
-              question: `What is ${this.serverDetails.display_name}?`,
-              answer: this.description
-            },
-            {
-              question: `What are the specs of the ${this.serverDetails.display_name} server?`,
-              answer: `The ${this.serverDetails.display_name} server is equipped with ${this.serverDetails.vcpus} logical CPU core${this.serverDetails.vcpus! > 1 ? "s" : ""} on ${this.serverDetails.cpu_cores || "unknown number of"} ${this.serverDetails.cpu_manufacturer || ""} ${this.serverDetails.cpu_family || ""} ${this.serverDetails.cpu_model || ""} physical CPU core${this.serverDetails.cpu_cores ? this.serverDetails.cpu_cores! > 1 ? "s" : "" : "(s)"}${this.serverDetails.memory_speed ? " running at max. " + this.serverDetails.cpu_speed + " Ghz" : ""}, ${this.getMemory()} of ${this.serverDetails.memory_generation || ""} memory${this.serverDetails.memory_speed ? " with " + this.serverDetails.memory_speed + " Mhz clock rate" : ""}, ${this.getStorage()} of ${this.serverDetails.storage_type || ""} storage, and ${this.serverDetails.gpu_count! > 0 ? this.serverDetails.gpu_count : "no"} ${this.serverDetails.gpu_manufacturer || ""} ${this.serverDetails.gpu_family || ""} ${this.serverDetails.gpu_model || ""} GPU${this.serverDetails.gpu_count! > 1 ? "s" : ""}. Additional block storage can be attached as needed.`
-            }
-          ];
-
-          if(this.serverDetails.benchmark_scores.length > 0) {
-            const benchmarkFrameworks = new Set<string>();
-            for (const item of this.serverDetails.benchmark_scores) {
-              benchmarkFrameworks.add(item['benchmark_id']);
-            }
-            let answer = `We have run ${benchmarkFrameworks.size} frameworks on the ${this.serverDetails.display_name} server, and collected ${this.serverDetails.benchmark_scores.length} performance metrics. Depending on your use case, you might want to look at our Memory bandwidth, Compression algo, or OpenSSL speed benchmarks, among others.`;
-            for (const item of this.serverDetails.benchmark_scores) {
-              if (item.benchmark_id === "geekbench:score" && (item.config as any)?.cores === "Multi-Core Performance") {
-                answer += ` As a baseline example, the multi-core Geekbench6 compound score suggests that the ${this.serverDetails.display_name} server is ${item.score/2500}x ${item.score > 2500 ? "faster" : "slower"} than the baseline Dell Precision 3460 with a Core i7-12700 processor.`;
-              }
-            }
-            this.faqs.push(
-              {
-                question: `How fast is the ${this.serverDetails.display_name} server?`,
-                answer: answer
-              }
-            );
-          }
-
-          if(this.serverDetails.prices[0]) {
-            this.faqs.push(
-              {
-                question: `How much does the ${this.serverDetails.display_name} server cost?`,
-                answer: `The pricing for ${this.serverDetails.display_name} servers starts at ${this.serverDetails.prices[0].price} ${this.serverDetails.prices[0].currency} per hour, but the actual price depends on the selected region, zone and server allocation method (e.g. on-demand versus spot pricing options): currently, we track the prices in ${this.serverDetails.prices.length} regions and zones every 5 minutes, and the maximum price stands at ${this.serverDetails.prices.slice(-1)[0].price} ${this.serverDetails.prices.slice(-1)[0].currency}.`
-              }
-            );
-          }
-
-          this.faqs.push(
-              {
-                question: `Who is the provider of the ${this.serverDetails.display_name} server?`,
-                html: `The ${this.serverDetails.display_name} server is offered by ${this.serverDetails.vendor.name}, founded in ${this.serverDetails.vendor.founding_year}, headquartered in ${this.serverDetails.vendor.state}, ${countryIdtoNamePipe.transform(this.serverDetails.vendor.country_id)}. For more information, visit the <a href="${this.serverDetails.vendor.homepage}" target="_blank" rel="noopener" class="underline decoration-dotted hover:text-gray-500">${this.serverDetails.vendor.name} homepage</a>.`
-                // TODO add compliance frameworks implemented
-              }
-            );
-
-          if (this.serverRegions) {
-            this.faqs.push(
-              {
-                question: `Where is the ${this.serverDetails.display_name} server available?`,
-                html: `The ${this.serverDetails.display_name} server is available in ${this.serverZones.length} availability zones of the following ${this.serverRegions.length} regions: ${this.serverRegions.join(', ')}.`
-              }
-            );
-
-          }
-          const keywords = this.title + ', ' + this.serverDetails.server_id + ', ' + this.serverDetails.vendor.vendor_id;
-
-          this.SEOHandler.updateTitleAndMetaTags(this.title, this.description, keywords);
-          this.SEOHandler.updateThumbnail(`https://og.sparecores.com/images/${this.serverDetails.vendor_id}/${this.serverDetails.api_reference}.png`);
-
-          if (this.similarByFamily?.length > 0) {
-            this.faqs.push(
-              {
-                question: `Are there any other sized servers in the ${this.serverDetails.family} server family?`,
-                html: `Yes! In addition to the ${this.serverDetails.display_name} server, the ${this.serverDetails.family} server family includes ${this.similarByFamily.length} other sizes: ${this.similarByFamily.map((s: any) => this.serverUrl(s, true)).join(', ')}.`
-              });
-
-          }
-
-          if(this.similarBySpecs?.length > 0) {
-            this.faqs.push(
-              {
-                question: `What other servers offer similar performance to ${this.serverDetails.display_name}?`,
-                html: `Looking at the number of GPU, vCPUs, and memory amount, the following top 10 servers come with similar specs: ${this.similarBySpecs.map((s: any) => this.serverUrl(s, true)).join(', ')}.`
-              });
-          }
-
-          this.generateSchemaJSON();
-
-          if(this.serverDetails.vcpus && this.serverDetails.vcpus > 1) {
-            this.embeddableCharts.push({id: 'stress_ng_div16', name: 'Stress-ng div16' });
-            this.embeddableCharts.push({id: 'stress_ng_relative', name: 'Stress-ng relative' });
-          }
-
-          // Add LLM charts if benchmark data is available
-          const hasLLMPromptData = this.benchmarksByCategory.some(c => c.benchmark_id === 'llm_speed:prompt_processing');
-          const hasLLMGenerationData = this.benchmarksByCategory.some(c => c.benchmark_id === 'llm_speed:text_generation');
-
-          if (hasLLMPromptData) {
-            this.embeddableCharts.push({id: 'llm_prompt', name: 'LLM Prompt Processing' });
-          }
-
-          if (hasLLMGenerationData) {
-            this.embeddableCharts.push({id: 'llm_generation', name: 'LLM Text Generation' });
-          }
-
-          if(isPlatformBrowser(this.platformId)) {
-
-            setTimeout(() => {
-              const showDetails = this.route.snapshot.queryParams['showDetails'];
-              const activeFAQ = this.route.snapshot.queryParams['openFAQ'];
-              const similarCategory = this.route.snapshot.queryParams['similarCategory'];
-
-              if(activeFAQ) {
-                this.activeFAQ = parseInt(activeFAQ);
-              }
-
-              if(showDetails) {
-                this.openBox('details', false);
-              }
-
-              if(similarCategory) {
-                this.selectedSimilarOption = this.similarOptions.find((o) => o.key === similarCategory);
-              }
-            }, 100);
-
-
-            const targetElModal = document.getElementById('embed-charts-modal');
-
-            this.modalEmbed = new Modal(targetElModal, optionsModal,  {
-              id: 'embed-charts-modal',
-              override: true
-            });
-
-            // https://github.com/chartjs/Chart.js/issues/5387
-            // TODO: check and remove later
-            document.addEventListener('visibilitychange', event => {
-              if (document.visibilityState === 'visible') {
-                  // keep a instance for the chart
-                 const allCharts = Object.values(Chart.instances);
-                 allCharts?.forEach((chart: any) => {
-                    chart.update();
+              if(this.serverDetails.prices?.length > 0) {
+                this.serverDetails.min_price = this.serverDetails.prices ? this.serverDetails.prices[0].price : 0;
+                this.serverDetails.prices.forEach((price: any) => {
+                  price.region = regions.find((r: any) => r.region_id === price.region_id);
+                  price.zone = zones.find((z: any) => z.zone_id === price.zone_id);
                 });
               }
-            });
+            }
 
-            let giscusInterval = setInterval(() => {
+            this.serverDetails.score_per_price = this.serverDetails.min_price && this.serverDetails.score ? this.serverDetails.score / this.serverDetails.min_price : (this.serverDetails.score || 0);
 
-              if(this.giscusParent?.nativeElement) {
-                let baseUrl = this.SEOHandler.getBaseURL();
-                initGiscus(this.renderer, this.giscusParent, baseUrl, 'Servers', 'DIC_kwDOLesFQM4CgznN', 'pathname');
-                clearInterval(giscusInterval);
+            // list all regions where the server is available
+            this.serverDetails.prices?.forEach((price: ExtendedServerPrice) => {
+              this.serverZones.push(price.zone.display_name);
+              if(!this.serverRegions.includes(price.region.display_name)) {
+                this.serverRegions.push(price.region.display_name);
               }
-            }, 250);
+            })
 
-            this.selectSimilarServerOption(this.selectedSimilarOption, false);
+            this.breadcrumbs[2] =
+              { name: this.serverDetails.display_name, url: '/server/' + this.serverDetails.vendor.vendor_id + '/' + this.serverDetails.api_reference };
 
-            this.dropdownManager.initDropdown('allocation_button', 'allocation_options');
+            const url = this.SEOHandler.getBaseURL() + '/server/' + this.serverDetails.vendor.vendor_id + '/' + this.serverDetails.api_reference;
+            this.SEOHandler.updateCanonical(this.document, url);
 
-            this.dropdownManager.initDropdown('allocation_button2', 'allocation_options2');
+            this.features = [];
+            if(this.serverDetails.cpu_cores || this.serverDetails.vcpus) {
+              this.features.push({name: 'vCPU', value: `${this.serverDetails.vcpus || this.serverDetails.cpu_cores}`});
+            }
+            if(this.serverDetails.memory_amount) {
+              this.features.push({name: 'Memory', value: this.getMemory()});
+            }
+            if(this.serverDetails.storage_size) {
+              this.features.push({name: 'Storage', value: this.getStorage()});
+            }
+            if(this.serverDetails.gpu_count) {
+              this.features.push({name: 'GPU', value: this.serverDetails.gpu_count});
+            }
 
-            this.dropdownManager.initDropdown('region_button', 'region_options').then((dropdown) => {
+            this.instancePropertyCategories.forEach((c) => {
+              c.properties = [];
             });
 
-            this.dropdownManager.initDropdown('similar_type_button', 'similar_server_options').then((dropdown) => {
-              this.dropdownSimilar = dropdown;
+            this.instanceProperties.forEach((p: any) => {
+              const group = this.instancePropertyCategories.find((g) => g.category === p.category);
+              const value = this.getProperty(p);
+              if(group && value) {
+                group.properties.push(p);
+              }
             });
 
+            this.benchmarksByCategory = [];
+            this.serverDetails.benchmark_scores?.forEach((b: any) => {
+              let group_id = b.benchmark_id;
+              if(group_id.includes('passmark:')) {
+                if(group_id.includes('passmark:cpu_')) {
+                  group_id = 'passmark:cpu';
+                } else {
+                  group_id = 'passmark:other';
+                }
+              }
+              const group = this.benchmarksByCategory.find((g) => g.benchmark_id === group_id);
+              if(!group) {
+                this.benchmarksByCategory.push({benchmark_id: group_id, benchmarks: [b]});
+              } else {
+                group.benchmarks.push(b);
+              }
+            });
+
+            this.regionFilters = [];
+
+            this.serverDetails.prices?.sort((a, b) => a.price - b.price);
+            this.serverDetails.prices?.forEach((price: ExtendedServerPrice) => {
+                const region = this.regionFilters.find((z) => z.region_id === price.region_id);
+                if(!region) {
+                  this.regionFilters.push({name: price.region.display_name, region_id: price.region_id, selected: false});
+                }
+              });
+
+            if(this.regionFilters[0]) {
+              this.regionFilters[0].selected = true;
+            }
+
+            if(this.serverDetails.prices?.length > 0 && (this.barChartOptions?.scales as any)?.y?.title?.text) {
+              (this.barChartOptions!.scales as any).y.title.text = `${this.serverDetails.prices[0].currency}/h`;
+            }
+
+            // This also initializes important underlying data has to be called here
+            this.refreshPricesGraphs();
+
+            this.title = `${this.serverDetails.display_name} by ${this.serverDetails.vendor.name} - Spare Cores`;
+            this.description =
+              `${this.serverDetails.display_name} is a ${this.serverDetails.description} server offered by ${this.serverDetails.vendor.name} with`;
+            if(this.serverDetails.vcpus) {
+              this.description += ` ${this.serverDetails.vcpus} vCPUs`;
+            } else if(this.serverDetails.cpu_cores) {
+              this.description += ` ${this.serverDetails.cpu_cores} CPUs`;
+            }
+            this.description += `, ${this.getMemory()} of memory and ${this.getStorage()} of storage.`;
+
+            if(this.serverDetails.prices[0]) {
+              const roundedPrice = Math.round(this.serverDetails.prices[0].price * 1000000) / 1000000;
+              this.description += ` The pricing starts at ${roundedPrice} ${this.serverDetails.prices[0].currency} per hour.`;
+            }
+
+            this.faqs = [
+              {
+                question: `What is ${this.serverDetails.display_name}?`,
+                answer: this.description
+              },
+              {
+                question: `What are the specs of the ${this.serverDetails.display_name} server?`,
+                answer: `The ${this.serverDetails.display_name} server is equipped with ${this.serverDetails.vcpus} logical CPU core${this.serverDetails.vcpus! > 1 ? "s" : ""} on ${this.serverDetails.cpu_cores || "unknown number of"} ${this.serverDetails.cpu_manufacturer || ""} ${this.serverDetails.cpu_family || ""} ${this.serverDetails.cpu_model || ""} physical CPU core${this.serverDetails.cpu_cores ? this.serverDetails.cpu_cores! > 1 ? "s" : "" : "(s)"}${this.serverDetails.memory_speed ? " running at max. " + this.serverDetails.cpu_speed + " Ghz" : ""}, ${this.getMemory()} of ${this.serverDetails.memory_generation || ""} memory${this.serverDetails.memory_speed ? " with " + this.serverDetails.memory_speed + " Mhz clock rate" : ""}, ${this.getStorage()} of ${this.serverDetails.storage_type || ""} storage, and ${this.serverDetails.gpu_count! > 0 ? this.serverDetails.gpu_count : "no"} ${this.serverDetails.gpu_manufacturer || ""} ${this.serverDetails.gpu_family || ""} ${this.serverDetails.gpu_model || ""} GPU${this.serverDetails.gpu_count! > 1 ? "s" : ""}. Additional block storage can be attached as needed.`
+              }
+            ];
+
+            if(this.serverDetails.benchmark_scores.length > 0) {
+              const benchmarkFrameworks = new Set<string>();
+              for (const item of this.serverDetails.benchmark_scores) {
+                benchmarkFrameworks.add(item['benchmark_id']);
+              }
+              let answer = `We have run ${benchmarkFrameworks.size} frameworks on the ${this.serverDetails.display_name} server, and collected ${this.serverDetails.benchmark_scores.length} performance metrics. Depending on your use case, you might want to look at our Memory bandwidth, Compression algo, or OpenSSL speed benchmarks, among others.`;
+              for (const item of this.serverDetails.benchmark_scores) {
+                if (item.benchmark_id === "geekbench:score" && (item.config as any)?.cores === "Multi-Core Performance") {
+                  answer += ` As a baseline example, the multi-core Geekbench6 compound score suggests that the ${this.serverDetails.display_name} server is ${item.score/2500}x ${item.score > 2500 ? "faster" : "slower"} than the baseline Dell Precision 3460 with a Core i7-12700 processor.`;
+                }
+              }
+              this.faqs.push(
+                {
+                  question: `How fast is the ${this.serverDetails.display_name} server?`,
+                  answer: answer
+                }
+              );
+            }
+
+            if(this.serverDetails.prices[0]) {
+              this.faqs.push(
+                {
+                  question: `How much does the ${this.serverDetails.display_name} server cost?`,
+                  answer: `The pricing for ${this.serverDetails.display_name} servers starts at ${this.serverDetails.prices[0].price} ${this.serverDetails.prices[0].currency} per hour, but the actual price depends on the selected region, zone and server allocation method (e.g. on-demand versus spot pricing options): currently, we track the prices in ${this.serverDetails.prices.length} regions and zones every 5 minutes, and the maximum price stands at ${this.serverDetails.prices.slice(-1)[0].price} ${this.serverDetails.prices.slice(-1)[0].currency}.`
+                }
+              );
+            }
+
+            this.faqs.push(
+                {
+                  question: `Who is the provider of the ${this.serverDetails.display_name} server?`,
+                  html: `The ${this.serverDetails.display_name} server is offered by ${this.serverDetails.vendor.name}, founded in ${this.serverDetails.vendor.founding_year}, headquartered in ${this.serverDetails.vendor.state}, ${countryIdtoNamePipe.transform(this.serverDetails.vendor.country_id)}. For more information, visit the <a href="${this.serverDetails.vendor.homepage}" target="_blank" rel="noopener" class="underline decoration-dotted hover:text-gray-500">${this.serverDetails.vendor.name} homepage</a>.`
+                  // TODO add compliance frameworks implemented
+                }
+              );
+
+            if (this.serverRegions) {
+              this.faqs.push(
+                {
+                  question: `Where is the ${this.serverDetails.display_name} server available?`,
+                  html: `The ${this.serverDetails.display_name} server is available in ${this.serverZones.length} availability zones of the following ${this.serverRegions.length} regions: ${this.serverRegions.join(', ')}.`
+                }
+              );
+
+            }
+            const keywords = this.title + ', ' + this.serverDetails.server_id + ', ' + this.serverDetails.vendor.vendor_id;
+
+            this.SEOHandler.updateTitleAndMetaTags(this.title, this.description, keywords);
+            this.SEOHandler.updateThumbnail(`https://og.sparecores.com/images/${this.serverDetails.vendor_id}/${this.serverDetails.api_reference}.png`);
+
+            if (this.similarByFamily?.length > 0) {
+              this.faqs.push(
+                {
+                  question: `Are there any other sized servers in the ${this.serverDetails.family} server family?`,
+                  html: `Yes! In addition to the ${this.serverDetails.display_name} server, the ${this.serverDetails.family} server family includes ${this.similarByFamily.length} other sizes: ${this.similarByFamily.map((s: any) => this.serverUrl(s, true)).join(', ')}.`
+                });
+
+            }
+
+            if(this.similarBySpecs?.length > 0) {
+              this.faqs.push(
+                {
+                  question: `What other servers offer similar performance to ${this.serverDetails.display_name}?`,
+                  html: `Looking at the number of GPU, vCPUs, and memory amount, the following top 10 servers come with similar specs: ${this.similarBySpecs.map((s: any) => this.serverUrl(s, true)).join(', ')}.`
+                });
+            }
+
+            this.generateSchemaJSON();
+
+            if(this.serverDetails.vcpus && this.serverDetails.vcpus > 1) {
+              this.embeddableCharts.push({id: 'stress_ng_div16', name: 'Stress-ng div16' });
+              this.embeddableCharts.push({id: 'stress_ng_relative', name: 'Stress-ng relative' });
+            }
+
+            // Add LLM charts if benchmark data is available
+            const hasLLMPromptData = this.benchmarksByCategory.some(c => c.benchmark_id === 'llm_speed:prompt_processing');
+            const hasLLMGenerationData = this.benchmarksByCategory.some(c => c.benchmark_id === 'llm_speed:text_generation');
+
+            if (hasLLMPromptData) {
+              this.embeddableCharts.push({id: 'llm_prompt', name: 'LLM Prompt Processing' });
+            }
+
+            if (hasLLMGenerationData) {
+              this.embeddableCharts.push({id: 'llm_generation', name: 'LLM Text Generation' });
+            }
+
+            if(isPlatformBrowser(this.platformId)) {
+
+              setTimeout(() => {
+                const showDetails = this.route.snapshot.queryParams['showDetails'];
+                const activeFAQ = this.route.snapshot.queryParams['openFAQ'];
+                const similarCategory = this.route.snapshot.queryParams['similarCategory'];
+
+                if(activeFAQ) {
+                  this.activeFAQ = parseInt(activeFAQ);
+                }
+
+                if(showDetails) {
+                  this.openBox('details', false);
+                }
+
+                if(similarCategory) {
+                  this.selectedSimilarOption = this.similarOptions.find((o) => o.key === similarCategory);
+                }
+              }, 100);
+
+
+              const targetElModal = document.getElementById('embed-charts-modal');
+
+              this.modalEmbed = new Modal(targetElModal, optionsModal,  {
+                id: 'embed-charts-modal',
+                override: true
+              });
+
+              // https://github.com/chartjs/Chart.js/issues/5387
+              // TODO: check and remove later
+              document.addEventListener('visibilitychange', event => {
+                if (document.visibilityState === 'visible') {
+                    // keep a instance for the chart
+                   const allCharts = Object.values(Chart.instances);
+                   allCharts?.forEach((chart: any) => {
+                      chart.update();
+                  });
+                }
+              });
+
+              let giscusInterval = setInterval(() => {
+
+                if(this.giscusParent?.nativeElement) {
+                  let baseUrl = this.SEOHandler.getBaseURL();
+                  initGiscus(this.renderer, this.giscusParent, baseUrl, 'Servers', 'DIC_kwDOLesFQM4CgznN', 'pathname');
+                  clearInterval(giscusInterval);
+                }
+              }, 250);
+
+              this.selectSimilarServerOption(this.selectedSimilarOption, false);
+
+              this.dropdownManager.initDropdown('allocation_button', 'allocation_options');
+
+              this.dropdownManager.initDropdown('allocation_button2', 'allocation_options2');
+
+              this.dropdownManager.initDropdown('region_button', 'region_options').then((dropdown) => {
+              });
+
+              this.dropdownManager.initDropdown('similar_type_button', 'similar_server_options').then((dropdown) => {
+                this.dropdownSimilar = dropdown;
+              });
+
+            }
           }
-        }
-      }).catch((error) => {
-        console.error(error);
-        if(error?.status === 404) {
-          this.keeperResponseErrorMsg = 'The requested server was not found.';
-        } else if(error?.status === 500) {
-          this.analytics.SentryException(error, {tags: { location: this.constructor.name, function: 'getServers' }});
-          this.keeperResponseErrorMsg = 'Internal server error. Please try again later.';
-        } else {
-          this.analytics.SentryException(error, {tags: { location: this.constructor.name, function: 'getServers' }});
-          this.keeperResponseErrorMsg = 'Failed to load server data. Please try again later.';
-        }
-      }).finally(() => {
-        this.isLoading = false;
-      });
-    });
+        }).catch((error) => {
+          console.error(error);
+          if(error?.status === 404) {
+            this.keeperResponseErrorMsg = 'The requested server was not found.';
+          } else if(error?.status === 500) {
+            this.analytics.SentryException(error, {tags: { location: this.constructor.name, function: 'getServers' }});
+            this.keeperResponseErrorMsg = 'Internal server error. Please try again later.';
+          } else {
+            this.analytics.SentryException(error, {tags: { location: this.constructor.name, function: 'getServers' }});
+            this.keeperResponseErrorMsg = 'Failed to load server data. Please try again later.';
+          }
+        }).finally(() => {
+          this.isLoading = false;
+        });
+      })
+    );
   }
 
   ngOnDestroy() {
     this.SEOHandler.cleanupStructuredData(this.document);
+    this.subscription.unsubscribe();
   }
 
   isBrowser() {

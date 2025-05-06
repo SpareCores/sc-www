@@ -1,10 +1,10 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Component, ElementRef, EventEmitter, Inject, Input, OnChanges, OnInit, Output, PLATFORM_ID, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Inject, Input, OnChanges, OnDestroy, OnInit, Output, PLATFORM_ID, SimpleChanges, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Modal, ModalOptions } from 'flowbite';
 import { LucideAngularModule } from 'lucide-angular';
 import { KeeperAPIService } from '../../services/keeper-api.service';
-import { Subject, debounceTime } from 'rxjs';
+import { Subject, Subscription, debounceTime } from 'rxjs';
 import { CountryMetadata, ContinentMetadata, RegionMetadata, RegionVendorMetadata } from '../../pages/server-listing/server-listing.component';
 import { CountryIdtoNamePipe } from '../../pipes/country-idto-name.pipe';
 
@@ -22,7 +22,7 @@ const optionsModal: ModalOptions = {
   templateUrl: './search-bar.component.html',
   styleUrl: './search-bar.component.scss'
 })
-export class SearchBarComponent implements OnInit, OnChanges{
+export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() query: any = {};
   @Input() searchParameters: any[] = [];
@@ -57,6 +57,7 @@ export class SearchBarComponent implements OnInit, OnChanges{
   modalResponseStr: string[] = [];
 
   valueChangeDebouncer: Subject<number> = new Subject<number>();
+  private subscription = new Subscription();
 
   constructor(@Inject(PLATFORM_ID) private platformId: object,
     private keeperAPI: KeeperAPIService) { }
@@ -75,29 +76,31 @@ export class SearchBarComponent implements OnInit, OnChanges{
       this.storageIds = response.body;
     });
 
-    this.valueChangeDebouncer.pipe(debounceTime(500)).subscribe(() => {
+    this.subscription.add(
+      this.valueChangeDebouncer.pipe(debounceTime(500)).subscribe(() => {
 
-      let vcpu_max = this.searchParameters.find((param: any) => param.name === 'vcpus_max');
-      let vcpu_min = this.searchParameters.find((param: any) => param.name === 'vcpus_min');
-      if(vcpu_min?.modelValue > 0 && vcpu_max?.modelValue > 0 && vcpu_min.modelValue > vcpu_max.modelValue) {
-        vcpu_max.modelValue = vcpu_min.modelValue;
-      }
-
-      // fix min-max range values
-      this.searchParameters.forEach((param: any) => {
-        if(param.schema.range_min && param.schema.range_max) {
-          if(param.modelValue < param.schema.range_min) {
-            param.modelValue = param.schema.range_min;
-          }
-
-          if(param.modelValue > param.schema.range_max) {
-            param.modelValue = param.schema.range_max;
-          }
+        let vcpu_max = this.searchParameters.find((param: any) => param.name === 'vcpus_max');
+        let vcpu_min = this.searchParameters.find((param: any) => param.name === 'vcpus_min');
+        if(vcpu_min?.modelValue > 0 && vcpu_max?.modelValue > 0 && vcpu_min.modelValue > vcpu_max.modelValue) {
+          vcpu_max.modelValue = vcpu_min.modelValue;
         }
-      });
 
-      this.filterServers();
-    });
+        // fix min-max range values
+        this.searchParameters.forEach((param: any) => {
+          if(param.schema.range_min && param.schema.range_max) {
+            if(param.modelValue < param.schema.range_min) {
+              param.modelValue = param.schema.range_min;
+            }
+
+            if(param.modelValue > param.schema.range_max) {
+              param.modelValue = param.schema.range_max;
+            }
+          }
+        });
+
+        this.filterServers();
+      })
+    );
 
     if(isPlatformBrowser(this.platformId)) {
 
@@ -126,7 +129,7 @@ export class SearchBarComponent implements OnInit, OnChanges{
     }
 
     this.searchParameters?.forEach((item: any) => {
-      
+
       // init modelValue as empty array for enumArray types if not already set
       if (this.getParameterType(item) === 'enumArray' && !item.modelValue) {
         item.modelValue = [];
@@ -315,7 +318,7 @@ export class SearchBarComponent implements OnInit, OnChanges{
 
     const value = typeof valueOrObj === 'string' ? valueOrObj : valueOrObj.key;
     const index = param.modelValue.indexOf(value);
-    
+
     if (index !== -1) {
       param.modelValue = param.modelValue.filter((v: any) => v !== value);
     } else {
@@ -510,6 +513,11 @@ export class SearchBarComponent implements OnInit, OnChanges{
     }
 
     return { 'max-width': `${parameter.modelValue.toString().length + 2}ch` };
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+    this.valueChangeDebouncer.complete();
   }
 
 }

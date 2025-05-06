@@ -1,4 +1,4 @@
-import { Component, Inject, PLATFORM_ID, OnInit, ViewChild, ElementRef} from '@angular/core';
+import { Component, Inject, PLATFORM_ID, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { KeeperAPIService } from '../../services/keeper-api.service';
 import { OrderDir, ServerPriceWithPKs } from '../../../../sdk/data-contracts';
@@ -18,6 +18,7 @@ import { ServerCompare, ServerCompareService } from '../../services/server-compa
 import { encodeQueryParams } from '../../tools/queryParamFunctions';
 import { ToastService } from '../../services/toast.service';
 import { LoadingSpinnerComponent } from '../../components/loading-spinner/loading-spinner.component';
+import { Subscription } from 'rxjs';
 
 export type TableColumn = {
   name: string;
@@ -63,7 +64,9 @@ export type RegionVendorMetadata = {
   templateUrl: './server-prices.component.html',
   styleUrl: './server-prices.component.scss'
 })
-export class ServerPricesComponent implements OnInit {
+export class ServerPricesComponent implements OnInit, OnDestroy {
+
+  private subscription = new Subscription();
 
   isCollapsed = false;
 
@@ -210,51 +213,53 @@ export class ServerPricesComponent implements OnInit {
       this.orderBy = order.schema.default;
     }
 
-    this.route.queryParams.subscribe((params: Params) => {
-      const query: any = JSON.parse(JSON.stringify(params || '{}'));
+    this.subscription.add(
+      this.route.queryParams.subscribe((params: Params) => {
+        const query: any = JSON.parse(JSON.stringify(params || '{}'));
 
-      this.query = query;
+        this.query = query;
 
-      if(query.order_by && query.order_dir) {
-        this.orderBy = query.order_by;
-        this.orderDir = query.order_dir;
+        if(query.order_by && query.order_dir) {
+          this.orderBy = query.order_by;
+          this.orderDir = query.order_dir;
 
-        if(this.possibleColumns.find((column) => column.orderField === this.orderBy)) {
-          this.possibleColumns.find((column) => column.orderField === this.orderBy)!.show = true;
+          if(this.possibleColumns.find((column) => column.orderField === this.orderBy)) {
+            this.possibleColumns.find((column) => column.orderField === this.orderBy)!.show = true;
+          }
         }
-      }
 
-      if(query.currency) {
-        this.selectedCurrency = this.availableCurrencies.find((currency) => currency.slug === query.currency) || this.availableCurrencies[0];
-      }
-
-      if(query.allocation) {
-        this.allocation = this.allocationTypes.find((allocation) => allocation.slug === query.allocation) || this.allocationTypes[0];
-      }
-
-      if(query.page) {
-        this.page = parseInt(query.page);
-      }
-
-      if(query.limit) {
-        this.limit = parseInt(query.limit);
-      }
-
-      const tableColumns: string = query.columns;
-      if(tableColumns && parseInt(tableColumns) ) {
-        const tableColumnsArray: number[] = Number(tableColumns).toString(2).split('').map(Number);
-        if(tableColumnsArray.length === this.possibleColumns.length) {
-          this.hasCustomColumns = true;
-          this.possibleColumns.forEach((column, index) => {
-            column.show = tableColumnsArray[index] === 1;
-          });
+        if(query.currency) {
+          this.selectedCurrency = this.availableCurrencies.find((currency) => currency.slug === query.currency) || this.availableCurrencies[0];
         }
-      }
 
-      this.refreshColumns(false);
+        if(query.allocation) {
+          this.allocation = this.allocationTypes.find((allocation) => allocation.slug === query.allocation) || this.allocationTypes[0];
+        }
 
-      this._searchServers(true);
-    });
+        if(query.page) {
+          this.page = parseInt(query.page);
+        }
+
+        if(query.limit) {
+          this.limit = parseInt(query.limit);
+        }
+
+        const tableColumns: string = query.columns;
+        if(tableColumns && parseInt(tableColumns) ) {
+          const tableColumnsArray: number[] = Number(tableColumns).toString(2).split('').map(Number);
+          if(tableColumnsArray.length === this.possibleColumns.length) {
+            this.hasCustomColumns = true;
+            this.possibleColumns.forEach((column, index) => {
+              column.show = tableColumnsArray[index] === 1;
+            });
+          }
+        }
+
+        this.refreshColumns(false);
+
+        this._searchServers(true);
+      })
+    );
 
     if(isPlatformBrowser(this.platformId)) {
 
@@ -274,6 +279,10 @@ export class ServerPricesComponent implements OnInit {
         this.dropdownPage = dropdown;
       });
     }
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 
   toggleCollapse() {

@@ -1,5 +1,5 @@
 /* eslint-disable prefer-const */
-import { AfterViewInit, Component, ElementRef, HostBinding, Inject, OnInit, PLATFORM_ID, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostBinding, Inject, OnInit, PLATFORM_ID, ViewChild, OnDestroy } from '@angular/core';
 import { KeeperAPIService } from '../../services/keeper-api.service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
@@ -19,6 +19,7 @@ import { Allocation } from '../../../../sdk/data-contracts';
 import { ToastService } from '../../services/toast.service';
 import { LoadingSpinnerComponent } from '../../components/loading-spinner/loading-spinner.component';
 import { PrismService } from '../../services/prism.service';
+import { Subscription } from 'rxjs';
 
 const optionsModal: ModalOptions = {
   backdropClasses:
@@ -33,7 +34,7 @@ const optionsModal: ModalOptions = {
   templateUrl: './server-compare.component.html',
   styleUrl: './server-compare.component.scss',
 })
-export class ServerCompareComponent implements OnInit, AfterViewInit {
+export class ServerCompareComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @ViewChild('tableFirstCol') tableFirstCol!: ElementRef;
   @HostBinding('attr.ngSkipHydration') ngSkipHydration = 'true';
@@ -226,6 +227,9 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
 
   showZoneIds = false;
 
+  private subscription = new Subscription();
+  private checkExistInterval: any;
+
   constructor(
     private prismService: PrismService,
     @Inject(PLATFORM_ID) private platformId: object,
@@ -253,13 +257,25 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
 
     this.seoHandler.updateTitleAndMetaTags(this.title, this.description, this.keywords);
 
-    this.route.queryParams.subscribe(() => {
-      this.setup();
-    });
+    this.subscription.add(
+      this.route.queryParams.subscribe(() => {
+        this.setup();
+      })
+    );
 
-    this.route.params.subscribe(() => {
-      this.setup();
-    });
+    this.subscription.add(
+      this.route.params.subscribe(() => {
+        this.setup();
+      })
+    );
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+
+    if (this.checkExistInterval) {
+      clearInterval(this.checkExistInterval);
+    }
   }
 
   setup() {
@@ -494,10 +510,10 @@ export class ServerCompareComponent implements OnInit, AfterViewInit {
     }
 
     if(isPlatformBrowser(this.platformId)) {
-      const checkExist = setInterval(() => {
+      this.checkExistInterval = setInterval(() => {
         if (this.comparesDiv) {
           this.prismService.highlightAll();
-          clearInterval(checkExist);
+          clearInterval(this.checkExistInterval);
         }
       }, 100);
     }

@@ -1,11 +1,12 @@
 import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
-import { AfterViewInit, Component, Inject, OnInit, Optional, PLATFORM_ID } from '@angular/core';
+import { AfterViewInit, Component, Inject, OnInit, OnDestroy, Optional, PLATFORM_ID } from '@angular/core';
 import { Meta } from '@angular/platform-browser';
 import { NavigationEnd, NavigationError, NavigationStart, Router, Event, RouterModule, RoutesRecognized } from '@angular/router';
 import { register } from 'swiper/element/bundle';
 import { HeaderComponent } from './layout/header/header.component';
 import { FooterComponent } from './layout/footer/footer.component';
 import { AnalyticsService } from './services/analytics.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -14,11 +15,12 @@ import { AnalyticsService } from './services/analytics.service';
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-export class AppComponent implements OnInit, AfterViewInit {
+export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   title = 'sc-www';
 
   showHeader = true;
   showFooter = true;
+  private subscription = new Subscription();
 
   constructor(@Inject(PLATFORM_ID) private platformId: object,
     @Optional() @Inject('sentryClient') private sentryClient: any,
@@ -27,6 +29,7 @@ export class AppComponent implements OnInit, AfterViewInit {
     private analytics: AnalyticsService,
     private metaTagService: Meta) {
 
+    this.subscription.add(
       router.events.subscribe( (event: Event) => {
 
         if (event instanceof NavigationStart) {
@@ -66,7 +69,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
             // Present error to user
         }
-    });
+    }));
   }
 
   ngOnInit(): void {
@@ -77,6 +80,10 @@ export class AppComponent implements OnInit, AfterViewInit {
     if (isPlatformBrowser(this.platformId)) {
       this.analytics.initializeTracking();
     }
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 
   updateCanonical(url: string) {

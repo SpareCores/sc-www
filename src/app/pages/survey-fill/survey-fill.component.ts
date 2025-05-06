@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { Component, Inject, OnInit, OnDestroy, PLATFORM_ID } from '@angular/core';
 import { SurveyModule } from 'survey-angular-ui';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
@@ -9,6 +9,7 @@ import "survey-core/defaultV2.css";
 import { surveyTheme } from './survey_theme';
 import { AnalyticsService } from '../../services/analytics.service';
 import { SeoHandlerService } from '../../services/seo-handler.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-survey-fill',
@@ -17,7 +18,7 @@ import { SeoHandlerService } from '../../services/seo-handler.service';
   templateUrl: './survey-fill.component.html',
   styleUrl: './survey-fill.component.scss'
 })
-export class SurveyFillComponent implements OnInit {
+export class SurveyFillComponent implements OnInit, OnDestroy {
     breadcrumbs: BreadcrumbSegment[] = [
         { name: 'Home', url: '/' },
         { name: 'Survey', url: '/survey' },
@@ -30,6 +31,7 @@ export class SurveyFillComponent implements OnInit {
   trackPing: number = 0;
   startedAt: number = 0;
   prevData: any;
+  private subscription = new Subscription();
 
   constructor(@Inject(PLATFORM_ID) private platformId: object,
       private http: HttpClient,
@@ -48,6 +50,13 @@ export class SurveyFillComponent implements OnInit {
     } else {
       window.open('/', '_self');
     }
+  }
+
+  ngOnDestroy() {
+    if (this.tracker) {
+      clearInterval(this.tracker);
+    }
+    this.subscription.unsubscribe();
   }
 
   private randomUUID(): string {

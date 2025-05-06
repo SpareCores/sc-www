@@ -1,5 +1,6 @@
 import { Injectable, inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { OnDestroy } from '@angular/core';
 
 export type ToastType = 'success' | 'error' | 'warning' | 'info';
 
@@ -18,10 +19,11 @@ export interface ToastOptions {
 @Injectable({
   providedIn: 'root'
 })
-export class ToastService {
+export class ToastService implements OnDestroy {
   private toastContainer: HTMLDivElement | null = null;
   private toasts = new Map<string, { element: HTMLElement, timeoutId?: any }>();
   private platformId = inject(PLATFORM_ID);
+  private toastTimers: { [id: string]: any } = {};
 
   constructor() {
     this.setupContainer();
@@ -50,7 +52,7 @@ export class ToastService {
 
     const toast = document.createElement('div');
     toast.className = 'rounded-lg p-2 transform transition-all duration-300 ease-in-out translate-x-0';
-    
+
     toast.innerHTML = `
       <div class="flex flex-col w-full max-w-xs p-4 rounded-lg shadow ${this.getColorClasses(type).background} ${this.getColorClasses(type).text}" role="alert">
         <div class="flex items-center w-full">
@@ -94,7 +96,7 @@ export class ToastService {
       }, duration);
     }
 
-    this.toasts.set(toastId, { 
+    this.toasts.set(toastId, {
       element: toast,
       timeoutId
     });
@@ -115,7 +117,7 @@ export class ToastService {
     if (element && element.parentNode) {
       element.classList.remove('translate-x-0');
       element.classList.add('translate-x-full');
-      
+
       setTimeout(() => {
         if (element.parentNode) {
           element.parentNode.removeChild(element);
@@ -128,9 +130,19 @@ export class ToastService {
   }
 
   public removeToast(toastId: string) {
-    setTimeout(() => {
+    this.toastTimers[toastId] = setTimeout(() => {
       this.removeToastWithAnimation(toastId);
+      delete this.toastTimers[toastId];
     }, 0);
+  }
+
+  ngOnDestroy() {
+    // clean up any remaining timers
+    Object.keys(this.toastTimers).forEach(id => {
+      if (this.toastTimers[id]) {
+        clearTimeout(this.toastTimers[id]);
+      }
+    });
   }
 
   private getColorClasses(type: ToastType): { background: string; text: string; hover: string } {
@@ -162,4 +174,4 @@ export class ToastService {
         };
     }
   }
-} 
+}

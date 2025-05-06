@@ -1,5 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { Component, Inject, OnInit, PLATFORM_ID, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
@@ -14,6 +14,7 @@ import { TableColumn } from '../server-listing/server-listing.component';
 import { CurrencyOption, availableCurrencies } from '../../tools/shared_data';
 import { DropdownManagerService } from '../../services/dropdown-manager.service';
 import { LoadingSpinnerComponent } from '../../components/loading-spinner/loading-spinner.component';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-storages',
@@ -22,8 +23,9 @@ import { LoadingSpinnerComponent } from '../../components/loading-spinner/loadin
   templateUrl: './storages.component.html',
   styleUrl: './storages.component.scss'
 })
-export class StoragesComponent implements OnInit {
+export class StoragesComponent implements OnInit, OnDestroy {
 
+  private subscription = new Subscription();
 
   limit = 10;
   page = 1;
@@ -109,50 +111,55 @@ export class StoragesComponent implements OnInit {
 
     this.refreshColumns();
 
-    this.route.queryParams.subscribe((params: Params) => {
-      const query: any = JSON.parse(JSON.stringify(params || '{}'));
+    this.subscription.add(
+      this.route.queryParams.subscribe((params: Params) => {
+        const query: any = JSON.parse(JSON.stringify(params || '{}'));
 
-      this.query = query;
+        this.query = query;
 
-      if(query.order_by && query.order_dir) {
-        this.orderBy = query.order_by;
-        this.orderDir = query.order_dir;
-      }
+        if(query.order_by && query.order_dir) {
+          this.orderBy = query.order_by;
+          this.orderDir = query.order_dir;
+        }
 
-      if(query.page) {
-        this.page = parseInt(query.page);
-      }
+        if(query.page) {
+          this.page = parseInt(query.page);
+        }
 
-      if(query.limit) {
-        this.limit = parseInt(query.limit);
-      }
+        if(query.limit) {
+          this.limit = parseInt(query.limit);
+        }
 
-      if(query.currency) {
-        this.selectedCurrency = this.availableCurrencies.find((currency) => currency.slug === query.currency) || this.availableCurrencies[0];
-      }
+        if(query.currency) {
+          this.selectedCurrency = this.availableCurrencies.find((currency) => currency.slug === query.currency) || this.availableCurrencies[0];
+        }
 
-      this.query.add_total_count_header = true;
+        this.query.add_total_count_header = true;
 
-      this._searchStorages();
+        this._searchStorages();
 
-      if(isPlatformBrowser(this.platformId)) {
+        if(isPlatformBrowser(this.platformId)) {
 
-        this.dropdownManager.initDropdown('currency_button', 'currency_options').then((dropdown: any) => {
-          this.dropdownCurrency = dropdown
-        });
+          this.dropdownManager.initDropdown('currency_button', 'currency_options').then((dropdown: any) => {
+            this.dropdownCurrency = dropdown
+          });
 
-        this.dropdownManager.initDropdown('column_button', 'column_options').then((dropdown: any) => {
-          this.dropdownColumn = dropdown
-        });
+          this.dropdownManager.initDropdown('column_button', 'column_options').then((dropdown: any) => {
+            this.dropdownColumn = dropdown
+          });
 
-        this.dropdownManager.initDropdown('pagesize_button', 'pagesize_options').then((dropdown: any) => {
-          this.dropdownPage = dropdown
-        });
-      }
+          this.dropdownManager.initDropdown('pagesize_button', 'pagesize_options').then((dropdown: any) => {
+            this.dropdownPage = dropdown
+          });
+        }
 
-    });
+      })
+    );
 
+  }
 
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 
   toggleCollapse() {

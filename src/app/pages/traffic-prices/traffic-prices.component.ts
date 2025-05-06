@@ -1,5 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Component,  Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { Component,  Inject, OnInit, PLATFORM_ID, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, ActivatedRoute, Params, Router } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
@@ -14,6 +14,7 @@ import { SeoHandlerService } from '../../services/seo-handler.service';
 import { CurrencyOption, availableCurrencies } from '../../tools/shared_data';
 import { TableColumn } from '../server-listing/server-listing.component';
 import { LoadingSpinnerComponent } from '../../components/loading-spinner/loading-spinner.component';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-traffic-prices',
@@ -22,7 +23,9 @@ import { LoadingSpinnerComponent } from '../../components/loading-spinner/loadin
   templateUrl: './traffic-prices.component.html',
   styleUrl: './traffic-prices.component.scss'
 })
-export class TrafficPricesComponent implements OnInit {
+export class TrafficPricesComponent implements OnInit, OnDestroy {
+
+  private subscription = new Subscription();
 
   limit = 10;
   page = 1;
@@ -102,55 +105,61 @@ export class TrafficPricesComponent implements OnInit {
 
     this.refreshColumns();
 
-    this.route.queryParams.subscribe((params: Params) => {
-      const query: any = JSON.parse(JSON.stringify(params || '{}'));
+    this.subscription.add(
+      this.route.queryParams.subscribe((params: Params) => {
+        const query: any = JSON.parse(JSON.stringify(params || '{}'));
 
-      this.query = query;
+        this.query = query;
 
-      if(query.order_by && query.order_dir) {
-        this.orderBy = query.order_by;
-        this.orderDir = query.order_dir;
-      }
+        if(query.order_by && query.order_dir) {
+          this.orderBy = query.order_by;
+          this.orderDir = query.order_dir;
+        }
 
-      if(query.page) {
-        this.page = parseInt(query.page);
-      }
+        if(query.page) {
+          this.page = parseInt(query.page);
+        }
 
-      if(query.limit) {
-        this.limit = parseInt(query.limit);
-      }
+        if(query.limit) {
+          this.limit = parseInt(query.limit);
+        }
 
-      if(query.currency) {
-        this.selectedCurrency = this.availableCurrencies.find((currency) => currency.slug === query.currency) || this.availableCurrencies[0];
-      }
+        if(query.currency) {
+          this.selectedCurrency = this.availableCurrencies.find((currency) => currency.slug === query.currency) || this.availableCurrencies[0];
+        }
 
-      this.SEOHandler.updateTitleAndMetaTags(
-        this.title,
-        'Explore, search, and evaluate ingress (inbound) and egress (outbound) traffic pricing options and tiers of various cloud providers in the table below. Note that the pricing tiers usually apply at the account level. Enter the estimated monthly traffic (instead of the default 1 GB) to calculate pricing based on the known tiers.',
-        'cloud, server, instance, price, comparison, spot, sparecores');
+        this.SEOHandler.updateTitleAndMetaTags(
+          this.title,
+          'Explore, search, and evaluate ingress (inbound) and egress (outbound) traffic pricing options and tiers of various cloud providers in the table below. Note that the pricing tiers usually apply at the account level. Enter the estimated monthly traffic (instead of the default 1 GB) to calculate pricing based on the known tiers.',
+          'cloud, server, instance, price, comparison, spot, sparecores');
 
-      this.query.add_total_count_header = true;
+        this.query.add_total_count_header = true;
 
-      this._searchTrafficPrices();
+        this._searchTrafficPrices();
 
-      if(isPlatformBrowser(this.platformId)) {
+        if(isPlatformBrowser(this.platformId)) {
 
-        this.dropdownManager.initDropdown('currency_button', 'currency_options').then((dropdown: any) => {
-          this.dropdownCurrency = dropdown
-        });
+          this.dropdownManager.initDropdown('currency_button', 'currency_options').then((dropdown: any) => {
+            this.dropdownCurrency = dropdown
+          });
 
-        this.dropdownManager.initDropdown('column_button', 'column_options').then((dropdown: any) => {
-          this.dropdownColumn = dropdown
-        });
+          this.dropdownManager.initDropdown('column_button', 'column_options').then((dropdown: any) => {
+            this.dropdownColumn = dropdown
+          });
 
-        this.dropdownManager.initDropdown('pagesize_button', 'pagesize_options').then((dropdown: any) => {
-          this.dropdownPage = dropdown
-        });
-      }
+          this.dropdownManager.initDropdown('pagesize_button', 'pagesize_options').then((dropdown: any) => {
+            this.dropdownPage = dropdown
+          });
+        }
 
-    });
+      })
+    );
 
 
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 
   toggleCollapse() {

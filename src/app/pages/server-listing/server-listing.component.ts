@@ -18,6 +18,7 @@ import { AnalyticsService } from '../../services/analytics.service';
 import { Modal, ModalOptions } from 'flowbite';
 import { ToastService } from '../../services/toast.service';
 import { LoadingSpinnerComponent } from '../../components/loading-spinner/loading-spinner.component';
+import { Subscription } from 'rxjs';
 
 export type TableColumn = {
   name: string;
@@ -200,6 +201,8 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   title: string = 'Cloud Servers Navigator';
   description: string = 'Explore, search, and evaluate the supported cloud compute resources in the table below. This comprehensive comparison includes diverse attributes such as CPU count, detailed processor information, memory, GPU, storage, network speed and capacity, available operating systems. Use the sidebar to filter the results, or enter your freetext query in the "Search prompt" bar. You can also compare servers by selecting at least two rows using the checkboxes.';
 
+  private subscription = new Subscription();
+
   constructor(@Inject(PLATFORM_ID) private platformId: object,
               private keeperAPI: KeeperAPIService,
               private route: ActivatedRoute,
@@ -249,64 +252,66 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     let shouldSearchAfterBenchmarks = false;
     let benchmarkDataEncoded: string | null = null;
 
-    this.route.queryParams.subscribe((params: Params) => {
-      const query: any = JSON.parse(JSON.stringify(params || '{}'));
-      this.query = query;
+    this.subscription.add(
+      this.route.queryParams.subscribe((params: Params) => {
+        const query: any = JSON.parse(JSON.stringify(params || '{}'));
+        this.query = query;
 
-      if(query.page) {
-        this.page = parseInt(query.page);
-      }
-
-      if(query.limit) {
-        this.limit = parseInt(query.limit);
-      }
-
-      this.setSpecialList();
-
-      const tableColumns: string = this.specialList?.columns || query.columns;
-      if(tableColumns && parseInt(tableColumns) ) {
-        const tableColumnsArray: number[] = Number(tableColumns).toString(2).split('').map(Number);
-        if(tableColumnsArray.length === this.possibleColumns.length) {
-          this.hasCustomColumns = query.columns !== undefined;
-          this.possibleColumns.forEach((column, index) => {
-            column.show = tableColumnsArray[index] === 1;
-          });
+        if(query.page) {
+          this.page = parseInt(query.page);
         }
-      }
 
-      if(this.specialList?.order_by && this.specialList?.order_dir) {
-        this.orderBy = this.specialList.order_by;
-        this.orderDir = this.specialList.order_dir;
-      }
+        if(query.limit) {
+          this.limit = parseInt(query.limit);
+        }
 
-      if(query.order_by && query.order_dir) {
-        this.orderBy = query.order_by;
-        this.orderDir = query.order_dir;
-      }
+        this.setSpecialList();
 
-      if(this.orderBy && this.possibleColumns.find((column) => column.orderField === this.orderBy)) {
-        this.possibleColumns.find((column) => column.orderField === this.orderBy)!.show = true;
-      }
+        const tableColumns: string = this.specialList?.columns || query.columns;
+        if(tableColumns && parseInt(tableColumns) ) {
+          const tableColumnsArray: number[] = Number(tableColumns).toString(2).split('').map(Number);
+          if(tableColumnsArray.length === this.possibleColumns.length) {
+            this.hasCustomColumns = query.columns !== undefined;
+            this.possibleColumns.forEach((column, index) => {
+              column.show = tableColumnsArray[index] === 1;
+            });
+          }
+        }
 
-      this.refreshColumns(false);
+        if(this.specialList?.order_by && this.specialList?.order_dir) {
+          this.orderBy = this.specialList.order_by;
+          this.orderDir = this.specialList.order_dir;
+        }
 
-      // will process later
-      if (query.benchmark) {
-        benchmarkDataEncoded = query.benchmark;
-      }
+        if(query.order_by && query.order_dir) {
+          this.orderBy = query.order_by;
+          this.orderDir = query.order_dir;
+        }
 
-      // we don't want to search yet on initial load
-      // as we need to decode the benchmark URL param first,
-      // and will do the search after getBenchmarkConfigs is called
-      if (!isInitialLoad) {
-        this._searchServers(true);
-        return;
-      }
+        if(this.orderBy && this.possibleColumns.find((column) => column.orderField === this.orderBy)) {
+          this.possibleColumns.find((column) => column.orderField === this.orderBy)!.show = true;
+        }
 
-      if (!query.benchmark) {
-        shouldSearchAfterBenchmarks = true;
-      }
-    });
+        this.refreshColumns(false);
+
+        // will process later
+        if (query.benchmark) {
+          benchmarkDataEncoded = query.benchmark;
+        }
+
+        // we don't want to search yet on initial load
+        // as we need to decode the benchmark URL param first,
+        // and will do the search after getBenchmarkConfigs is called
+        if (!isInitialLoad) {
+          this._searchServers(true);
+          return;
+        }
+
+        if (!query.benchmark) {
+          shouldSearchAfterBenchmarks = true;
+        }
+      })
+    );
 
     Promise.all([
       this.keeperAPI.getServerBenchmarkMeta(),
@@ -389,11 +394,13 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
     if(isPlatformBrowser(this.platformId)) {
 
-      this.sub = this.serverCompare.selectionChanged.subscribe((selectedServers: ServerCompare[]) => {
-        this.servers?.forEach((server: any) => {
-          server.selected = selectedServers.findIndex((item: ServerCompare) => item.vendor === server.vendor_id && item.server === server.api_reference) !== -1;
-        });
-      });
+      this.subscription.add(
+        this.serverCompare.selectionChanged.subscribe((selectedServers: ServerCompare[]) => {
+          this.servers?.forEach((server: any) => {
+            server.selected = selectedServers.findIndex((item: ServerCompare) => item.vendor === server.vendor_id && item.server === server.api_reference) !== -1;
+          });
+        })
+      );
 
       this.dropdownManager.initDropdown('column_button', 'column_options').then((dropdown) => {
         this.dropdownColumn = dropdown;
@@ -444,6 +451,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
   ngOnDestroy () {
     this.sub?.unsubscribe();
+    this.subscription.unsubscribe();
   }
 
   setSpecialList() {

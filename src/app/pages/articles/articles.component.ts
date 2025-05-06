@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ArticleMeta, ArticlesService } from '../../services/articles.service';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { ArticleCardComponent } from '../../components/article-card/article-card.component';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-articles',
@@ -13,7 +14,7 @@ import { ArticleCardComponent } from '../../components/article-card/article-card
   templateUrl: './articles.component.html',
   styleUrl: './articles.component.scss'
 })
-export class ArticlesComponent implements OnInit {
+export class ArticlesComponent implements OnInit, OnDestroy {
 
   breadcrumbs: BreadcrumbSegment[] = [
     { name: 'Home', url: '/' },
@@ -21,6 +22,7 @@ export class ArticlesComponent implements OnInit {
   ];
 
   articles: ArticleMeta[] = [];
+  private subscription = new Subscription();
 
   constructor(
     private SEOHandler: SeoHandlerService,
@@ -28,31 +30,35 @@ export class ArticlesComponent implements OnInit {
     private articleHandler: ArticlesService) { }
 
   ngOnInit() {
-    this.route.queryParams.subscribe(params => {
-      const category = params['tag'];
-      this.articleHandler.getArticlesByType(category).then(articles => {
-        this.articles = articles;
-      });
+    this.subscription.add(
+      this.route.queryParams.subscribe(params => {
+        const category = params['tag'];
+        this.articleHandler.getArticlesByType(category).then(articles => {
+          this.articles = articles;
+        });
 
-      this.breadcrumbs = [
-        { name: 'Home', url: '/' },
-        { name: 'Articles', url: '/articles' },
-      ];
+        this.breadcrumbs = [
+          { name: 'Home', url: '/' },
+          { name: 'Articles', url: '/articles' },
+        ];
 
-      const title = category ? category.charAt(0).toUpperCase() + category.slice(1) : '';
+        const title = category ? category.charAt(0).toUpperCase() + category.slice(1) : '';
 
-      if(category) {
-        this.breadcrumbs.push(
-          { name: `#${category}`, url: `/articles`, queryParams: { tag: category } }
+        if(category) {
+          this.breadcrumbs.push(
+            { name: `#${category}`, url: `/articles`, queryParams: { tag: category } }
+          );
+        }
+
+        this.SEOHandler.updateTitleAndMetaTags(
+          `${title} Articles - SpareCores`, `View all ${title} articles on SpareCores.`,
+          (category?.length ? category + ' ' : '') + `blog posts, articles, guides, tutorials`
         );
-      }
+      })
+    );
+  }
 
-      this.SEOHandler.updateTitleAndMetaTags(
-        `${title} Articles - SpareCores`, `View all ${title} articles on SpareCores.`,
-        (category?.length ? category + ' ' : '') + `blog posts, articles, guides, tutorials`
-      );
-
-    });
-
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 }

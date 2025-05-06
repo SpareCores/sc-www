@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { ServerPKs } from '../../../sdk/data-contracts';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
@@ -25,7 +25,7 @@ export interface ServerCompareItem {
 @Injectable({
   providedIn: 'root'
 })
-export class ServerCompareService {
+export class ServerCompareService implements OnDestroy {
 
   public selectedForCompare: ServerCompare[] = [];
   public selectionChanged: Subject<ServerCompare[]> = new Subject();
@@ -93,5 +93,9 @@ export class ServerCompareService {
     const encoded = btoa(JSON.stringify(selectedServers));
 
     this.router.navigateByUrl('/compare?instances=' + encoded);
+  }
+
+  ngOnDestroy() {
+    this.selectionChanged.complete();
   }
 }
