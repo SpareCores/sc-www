@@ -79,7 +79,8 @@ export function app(): express.Express {
   server.use((req, res, next) => {
     (req as any).requestStartTime = new Date();
     (req as any).requestResourceUsage = process.resourceUsage();
-    const { protocol, originalUrl, ip, headers } = req;
+    (req as any).requestMemoryUsage = process.memoryUsage();
+    const { originalUrl, ip, headers } = req;
     const log = {
       event: "request",
       method: req.method,
@@ -282,13 +283,24 @@ export function app(): express.Express {
     res.on("close", () => {
       const requestStartTime = (req as any).requestStartTime;
       const requestResourceUsage = (req as any).requestResourceUsage;
+      const requestMemoryUsage = (req as any).requestMemoryUsage;
 
-      if (requestStartTime && requestResourceUsage) {
+      if (requestStartTime && requestResourceUsage && requestMemoryUsage) {
         const currentResourceUsage = process.resourceUsage();
         const currentTime = new Date();
         const elapsedTime = (currentTime.getTime() - requestStartTime.getTime()) / 1e3;
         const userTime = (currentResourceUsage.userCPUTime - requestResourceUsage.userCPUTime) / 1e6;
         const sysTime = (currentResourceUsage.systemCPUTime - requestResourceUsage.systemCPUTime) / 1e6;
+
+        const currentMemoryUsage = process.memoryUsage();
+        const memoryDiff = {
+          rss: currentMemoryUsage.rss - requestMemoryUsage.rss,
+          heapTotal: currentMemoryUsage.heapTotal - requestMemoryUsage.heapTotal,
+          heapUsed: currentMemoryUsage.heapUsed - requestMemoryUsage.heapUsed,
+          external: currentMemoryUsage.external - requestMemoryUsage.external,
+          arrayBuffers: currentMemoryUsage.arrayBuffers - requestMemoryUsage.arrayBuffers,
+        };
+
         const log = {
           event: "response",
           path: req.originalUrl,
@@ -296,6 +308,18 @@ export function app(): express.Express {
           user: userTime.toFixed(2),
           sys: sysTime.toFixed(2),
           wait: (elapsedTime - userTime - sysTime).toFixed(2),
+          memory: currentMemoryUsage,
+          memory_diff: memoryDiff
+        }
+        console.log(JSON.stringify(log));
+      } else {
+        const currentTime = new Date();
+        const elapsedTime = (currentTime.getTime() - (requestStartTime || currentTime).getTime()) / 1e3;
+        const log = {
+          event: "response",
+          path: req.originalUrl,
+          real: elapsedTime.toFixed(2),
+          memory_at_end: process.memoryUsage()
         }
         console.log(JSON.stringify(log));
       }
