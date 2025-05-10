@@ -14,8 +14,8 @@ export class NeetoCalService {
       return;
     }
     (window as any).neetoCal = (window as any).neetoCal || {
-      embed: function() {
-        ((window as any).neetoCal.q = (window as any).neetoCal.q || []).push(arguments);
+      embed: function(...args: any[]) {
+        ((window as any).neetoCal.q = (window as any).neetoCal.q || []).push(args);
       }
     };
     if (!this.isScriptLoaded) {
