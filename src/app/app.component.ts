@@ -7,6 +7,7 @@ import { HeaderComponent } from './layout/header/header.component';
 import { FooterComponent } from './layout/footer/footer.component';
 import { AnalyticsService } from './services/analytics.service';
 import { Subscription } from 'rxjs';
+import { NeetoCalService } from './services/neeto-cal.service';
 
 @Component({
   selector: 'app-root',
@@ -27,7 +28,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     @Inject(DOCUMENT) private document: Document,
     private router: Router,
     private analytics: AnalyticsService,
-    private metaTagService: Meta) {
+    private metaTagService: Meta,
+    private neetoCalService: NeetoCalService) {
 
     this.subscription.add(
       router.events.subscribe( (event: Event) => {
@@ -74,6 +76,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit(): void {
     register();
+    this.neetoCalService.initialize();
   }
 
   ngAfterViewInit(): void {

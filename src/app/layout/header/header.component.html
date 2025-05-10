@@ -32,14 +32,12 @@
                 </div>
               </li>
               <li class="py-1">
-                <a class="navbar_link" href="https://calendly.com/spare-cores/30min" target="_blank" data-ph-capture-attribute-sc-event="schedule demo">
-                  <button
-                    id="demo_button"
-                    class="text-white bg-emerald-400 hover:bg-emerald-500 rounded-lg px-3 py-2 relative flex gap-2 items-center">
-                    <lucide-icon class="h-4 w-4" name="calendar-days"></lucide-icon>
-                    Book a Demo
-                  </button>
-                </a>
+                <button
+                  id="header-demo-button"
+                  class="text-white bg-emerald-400 hover:bg-emerald-500 rounded-lg px-3 py-2 relative flex gap-2 items-center">
+                  <lucide-icon class="h-4 w-4" name="calendar-days"></lucide-icon>
+                  Book a Demo
+                </button>
               </li>
               <li [ngClass]="
                     {'hidden' : compareCount() === 0}"
@@ -175,8 +173,6 @@
     </li>
   </ul>
 </div>
-
-
 
 <div id="compare_options" class="z-10 hidden bg-secondary rounded-lg shadow w-250 border border-emerald-400 border-solid">
   <ul
