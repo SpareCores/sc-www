@@ -308,6 +308,7 @@ export function app(): express.Express {
         };
 
         const log = {
+          timestamp: new Date().toISOString(),
           event: "response",
           path: req.originalUrl,
           real: elapsedTime.toFixed(2),
