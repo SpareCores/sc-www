@@ -1,4 +1,4 @@
-import { CUSTOM_ELEMENTS_SCHEMA, Component, Inject, PLATFORM_ID, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, Component, Inject, PLATFORM_ID, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { ArticleMeta, ArticlesService } from '../../services/articles.service';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { KeeperAPIService } from '../../services/keeper-api.service';
@@ -12,6 +12,7 @@ import { LucideAngularModule } from 'lucide-angular';
 import { ArticleCardComponent } from '../../components/article-card/article-card.component';
 import { SearchServerPricesServerPricesGetData } from '../../../../sdk/data-contracts';
 import { AnalyticsService } from '../../services/analytics.service';
+import { NeetoCalService } from '../../services/neeto-cal.service';
 
 @Component({
   selector: 'app-landingpage',
@@ -21,7 +22,7 @@ import { AnalyticsService } from '../../services/analytics.service';
   templateUrl: './landingpage.component.html',
   styleUrl: './landingpage.component.scss'
 })
-export class LandingpageComponent implements OnInit {
+export class LandingpageComponent implements OnInit, AfterViewInit {
 
   vendors: any[] = [
     '✅ Amazon Web Services (Done)',
@@ -133,7 +134,8 @@ export class LandingpageComponent implements OnInit {
               private keeperAPI: KeeperAPIService,
               private SEOHandler: SeoHandlerService,
               private articles: ArticlesService,
-              private analyticsService: AnalyticsService) { }
+              private analyticsService: AnalyticsService,
+              private neetoCalService: NeetoCalService) { }
 
   ngOnInit() {
 
@@ -171,6 +173,12 @@ export class LandingpageComponent implements OnInit {
         }
       });
 
+    }
+  }
+
+  ngAfterViewInit() {
+    if (isPlatformBrowser(this.platformId)) {
+      this.neetoCalService.initialize();
     }
   }
 
