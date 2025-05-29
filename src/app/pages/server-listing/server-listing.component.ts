@@ -857,15 +857,22 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       this.refreshColumns(true);
 
       // extract unit of selected benchmark config in short form
-      const unit = this._selectedBenchmarkConfig.benchmarkTemplate.unit;
-      // remove short form (at the end of the string, in parentheses)
-      this._selectedBenchmarkConfig.unit = unit.replace(/\s*\([^)]*\)\s*$/, '');
-      // keep short form (in parentheses)
-      this._selectedBenchmarkConfig.unit_abbreviation = unit.match(/\(([^)]*)\)/)?.at(1) || unit;
-      if (unit.length < 25) {
-        this._selectedBenchmarkConfig.short_unit = this._selectedBenchmarkConfig.unit
+      const benchmarkTemplate = this._selectedBenchmarkConfig.benchmarkTemplate;
+      if (benchmarkTemplate && typeof benchmarkTemplate.unit === 'string') {
+        const unit = benchmarkTemplate.unit;
+        // remove short form (at the end of the string, in parentheses)
+        this._selectedBenchmarkConfig.unit = unit.replace(/\s*\([^)]*\)\s*$/, '');
+        // keep short form (in parentheses)
+        this._selectedBenchmarkConfig.unit_abbreviation = unit.match(/\(([^)]*)\)/)?.at(1) || unit;
+        if (unit.length < 25) {
+          this._selectedBenchmarkConfig.short_unit = this._selectedBenchmarkConfig.unit;
+        } else {
+          this._selectedBenchmarkConfig.short_unit = this._selectedBenchmarkConfig.unit_abbreviation;
+        }
       } else {
-        this._selectedBenchmarkConfig.short_unit = this._selectedBenchmarkConfig.unit_abbreviation;
+        this._selectedBenchmarkConfig.unit = '';
+        this._selectedBenchmarkConfig.unit_abbreviation = '';
+        this._selectedBenchmarkConfig.short_unit = '';
       }
 
       // remove error toast if it exists
