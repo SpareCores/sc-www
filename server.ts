@@ -278,9 +278,15 @@ export function app(): express.Express {
     next();
   });
 
-  // log time to generate dynamic content
+  // log time it takes to generate dynamic content
   server.use((req, res, next) => {
-    res.on("close", () => {
+
+    // prevent duplicate logging on close event
+    let loggedResponse = false;
+    const logResponse = () => {
+      if (loggedResponse) return;
+      loggedResponse = true;
+
       const requestStartTime = (req as any).requestStartTime;
       const requestResourceUsage = (req as any).requestResourceUsage;
       const requestMemoryUsage = (req as any).requestMemoryUsage;
@@ -323,13 +329,31 @@ export function app(): express.Express {
         }
         console.log(JSON.stringify(log));
       }
-    })
-    next()
+    };
+
+    res.once("finish", logResponse);
+    // fallback on connection closed with with cleanup
+    const closeHandler = () => {
+      logResponse();
+      res.removeListener("finish", logResponse);
+    };
+    res.once("close", closeHandler);
+
+    next();
   })
 
   // All regular routes use the Angular engine
   server.get('*', (req, res, next) => {
     const { protocol, originalUrl, baseUrl, headers } = req;
+
+    // prevent hanging requests
+    const renderTimeout = setTimeout(() => {
+      if (!res.headersSent) {
+        console.error(`SSR timeout for ${originalUrl}`);
+        res.status(500).send('Server rendering timeout');
+      }
+    }, 30000);
+
     commonEngine
       .render({
         bootstrap,
@@ -342,8 +366,15 @@ export function app(): express.Express {
           { provide: REQUEST, useValue: req },
         ],
       })
-      .then((html) => res.send(html))
-      .catch((err) => next(err));
+      .then((html) => {
+        clearTimeout(renderTimeout);
+        res.send(html);
+      })
+      .catch((err) => {
+        clearTimeout(renderTimeout);
+        console.error('SSR Error:', err);
+        next(err);
+      });
   });
 
   return server;
