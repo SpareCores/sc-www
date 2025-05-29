@@ -82,13 +82,13 @@ export function app(): express.Express {
     (req as any).requestMemoryUsage = process.memoryUsage();
     const { originalUrl, ip, headers } = req;
     const log = {
+      timestamp: new Date().toISOString(),
       event: "request",
       method: req.method,
       path: originalUrl,
       userAgent: headers['user-agent'],
       ip: headers['x-forwarded-for'] ? (headers['x-forwarded-for'] as string).split(',')[0] : ip,
-      country: headers['cloudfront-viewer-country'],
-      timestamp: new Date().toISOString()
+      country: headers['cloudfront-viewer-country']
     };
     console.log(JSON.stringify(log));
     next();
