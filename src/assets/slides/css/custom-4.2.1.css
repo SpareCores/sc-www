@@ -11,16 +11,16 @@ body.speakerview {
 }
 
 .reveal .controls button.navigate-right.enabled {
-  border-left-color: #34d399;
+  color: #34d399;
 }
 .reveal .controls button.navigate-left.enabled {
-  border-right-color: #34d399;
+  color: #34d399;
 }
 .reveal .controls button.navigate-down.enabled {
-  border-top-color: #34d399;
+  color: #34d399;
 }
 .reveal .controls button.navigate-up.enabled {
-  border-bottom-color: #34d399;
+  color: #34d399;
 }
 .reveal div.slide-number {
   background-color: #06263a;
@@ -112,6 +112,10 @@ code.sourceCode {
     font-family: Inter !important;
     text-transform: none;
     color: #34d399;
+}
+
+.reveal h2 {
+    font-size: 1.25em;
 }
 
 .reveal h2, .reveal pre, .reveal pre code {
@@ -208,7 +212,7 @@ code span.dv, code span.fl {
 }
 
 .reveal ul {
-    width: 100%;
+    width: calc(100% - 25px);
 }
 .reveal .slides p {
   text-align: left;
