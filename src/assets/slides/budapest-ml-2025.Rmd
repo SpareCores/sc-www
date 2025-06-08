@@ -1,0 +1,93 @@
+---
+title: "Resource Monitoring and Cloud Optimization for Data Science Tasks with Metaflow"
+author: Gergely Daroczi
+date: "2025-06-18"
+conference: "Budapest ML Forum 2025"
+conference_url: "https://budapestdataml.com/en/"
+conference_talk_url: "https://dml25.sessionize.com/session/885322"
+conference_talk_slides: "/assets/slides/budapest-ml-2025.html#/coverslide"
+location: "Budapest, Hungary"
+output:
+  revealjs::revealjs_presentation:
+    theme: white
+    highlight: tango
+    transition: default
+    includes:
+      in_header: header-4.2.1.html
+    template: template-4.2.1.html
+    reveal_options:
+      slideNumber: true
+      previewLinks: false
+      width: 1244
+    self_contained: false
+    lib_dir: libs
+    reveal_plugins: ["notes", "zoom"]
+---
+
+## dummy slide
+
+<!--add custom CSS for the speaker view-->
+<script>
+  if (window.self !== window.top) {
+    document.body.className += " speakerview";
+  }
+</script>
+
+<!--javascript to remove dummy slide-->
+<script>
+document.getElementById("dummy-slide").remove();
+</script>
+
+<!--end dummy slide-->
+</section>
+
+<section id="coverslide">
+
+::: {.centered}
+<img src="images/budapest-data-ml-forum-logo-transparent.png"
+     class="toplogo" style="width: 464px; margin-left: -232px; margin-right: 232px;background-color:transparent;" />
+:::
+
+<h1 class="subtitle" style="color:#eee;font-size:1.25em;text-align: center; margin-top:325px; color:#34d399;">
+  Resource Monitoring and Cloud Optimization<br />for Data Science Tasks with Metaflow
+</h1>
+
+<h2 class="author" style="color:#eee;padding-top:15px;font-size:1.25em;text-align: center !important;margin-bottom: 0px;">
+  Gergely Daróczi
+</h2>
+
+<h3 class="author" style="color:#eee;font-size:1.1em;text-align: center !important; font-weight: normal;">
+  Spare Cores Team
+</h3>
+
+<h3 class="author onlineMode" style="color:#eee;padding-top:25px;font-size:1.1em;text-align: center !important; padding-top: 10px;font-weight: normal; ">
+  Slides: <a href="https://sparecores.com/talks" target="_blank">sparecores.com/talks</a>
+</h3>
+
+<p class="author offlineMode" style="color:#eee;font-size:0.75em;text-align: right !important; padding-top: 10px;font-weight: normal;margin-top:30px; ">
+  Press Space or click the green arrow icons to navigate the slides ->
+</p>
+
+<div class="notes">
+TODO
+</div>
+
+</section>
+
+<!--toggle visibility of items in live mode-->
+<script>
+var url = document.location.href;
+if (url.match("/?live")) {
+  const elements = document.getElementsByClassName('offlineMode');
+  for (let i = 0; i < elements.length; i++) {
+    element = elements.item(i);
+    element.style.display = 'none';
+  }
+} else {
+  const elements = document.getElementsByClassName('onlineMode');
+  for (let i = 0; i < elements.length; i++) {
+    element = elements.item(i);
+    element.style.display = 'none';
+  }
+}
+</script>
