@@ -25,7 +25,8 @@ format:
     transition: slide
     hash-type: title
     code-copy: false
-    # highlight-style
+    code-line-numbers: false
+    highlight-style: gruvbox
   gfm:
     mermaid-format: svg
     theme: neutral
@@ -89,9 +90,9 @@ TODO
   This was awesome, thanks for sharing.
 </blockquote>
 
-<aside class="notes">
+::: {.notes}
 first of all, just to build some credibility for the project
-</aside>
+:::
 
 # >>> from sparecores import intro {#intro transition="convex-in slide-out"}
 
@@ -102,7 +103,7 @@ first of all, just to build some credibility for the project
   <li class="fragment">Add-on services to scale data science workflows, even without direct vendor engagement.</li>
 </ul>
 
-<aside class="notes">
+::: {.notes}
 - so Spare Cores is an open-source ecosystem, including software, database schemas, guides,
 - and actual databases if you don't want to run the ETL tooling yourself .. also providing APIs, SDKs etc to make it easier to query data
 - unified CLI to start machines
@@ -116,7 +117,7 @@ We help DevOps, DS, ML, AI, ETL, AV, and other engineering teams to find optimal
 * SaaS
 
 BUT let's focus on the open-source and open-data components ..
-</aside>
+:::
 
 ## >>> from sparecores import intro
 
@@ -124,9 +125,9 @@ BUT let's focus on the open-source and open-data components ..
 
 <p class="centered" style="margin-top: -10px;">Source: <a href="https://sparecores.com">sparecores.com</a></p>
 
-<aside class="notes">
+::: {.notes}
 TODO
-</aside>
+:::
 
 ## >>> from sparecores import intro
 
@@ -134,9 +135,9 @@ TODO
 <img style="width:95%;" src="images/sc-www-listing-top-2025q1.png" />
 :::
 
-<aside class="notes">
+::: {.notes}
 The easiest way to query this data is through our web component, as you can see on the screen ...
-</aside>
+:::
 
 ## >>> from sparecores import intro
 
@@ -144,9 +145,9 @@ The easiest way to query this data is through our web component, as you can see 
 <img style="width: 90%;" src="images/sc-www-server-details-top-g2-standard-16.png" />
 :::
 
-<aside class="notes">
+::: {.notes}
 Clicking on a server shows you the technical details of the instance -- much more than what's provided publicly by the vendor, even more than what ChatGPT knows ... as we actually start each machine and inspect the hardware. More on that later.
-</aside>
+:::
 
 ## >>> from sparecores import intro
 
@@ -154,9 +155,9 @@ Clicking on a server shows you the technical details of the instance -- much mor
 <img style="width: 80%;" src="images/sc-www-server-details-prices-g2-standard-16.png" />
 :::
 
-<aside class="notes">
+::: {.notes}
 Live and historical pricing
-</aside>
+:::
 
 ## >>> from sparecores import intro
 
@@ -166,53 +167,53 @@ Live and historical pricing
 <img style="width: 80%;" src="images/sc-www-server-details-benchmarks-1-g2-standard-16.png" />
 :::
 
-<aside class="notes">
+::: {.notes}
 and we also run benchmark scenarios on the servers, e.g.:
 
 - memory bandwidth of read, write and mixed operations using various block sizes and also including the related L1/L2/L3 cache amounts
 - or benchmarking compression algos - having the compression ratio on the x axis, and the bandwidth on the y axis, it's clear that `zpaq` is a beast when it comes to compressing text, but might be slow on this machine
 - OpenSSL hash functions and block ciphers
-</aside>
+:::
 
 ## >>> from sparecores import intro
 
 <img src="images/sc-www-server-details-benchmarks-2-g2-standard-16.png" />
 
-<aside class="notes">
+::: {.notes}
 also running test suites like PassMark or ...
-</aside>
+:::
 
 ## >>> from sparecores import intro
 
 <img src="images/sc-www-server-details-benchmarks-3-g2-standard-16.png" />
 
-<aside class="notes">
+::: {.notes}
 Geekbench 6, which has been a standard tool for some time including workloads for text and image processing, compiling software etc
-</aside>
+:::
 
 ## >>> from sparecores import intro
 
 <img src="images/sc-www-server-details-benchmarks-4-g2-standard-16.png" />
 
-<aside class="notes">
+::: {.notes}
 visualizations on how well the machine can scale tasks to multiple CPU cores -- e.g. showing the diminishing return on this Intel Xeon due to hyperthreading
-</aside>
+:::
 
 ## >>> from sparecores import intro
 
 <img src="images/sc-www-server-details-benchmarks-5-g2-standard-16.png" />
 
-<aside class="notes">
+::: {.notes}
 Or looking at LLM Inference Speed that is the main topic for today .. I'll revisit later
-</aside>
+:::
 
 ## >>> from sparecores import intro
 
 <img src="images/sc-www-server-details-benchmarks-6-g2-standard-16.png" />
 
-<aside class="notes">
+::: {.notes}
 and other application-specific benchmarks, like serving a static website or running a key-value store database
-</aside>
+:::
 
 ## >>> from sparecores import intro
 
@@ -221,9 +222,9 @@ and other application-specific benchmarks, like serving a static website or runn
 :::
 
 <!-- https://sparecores.com/compare?instances=W3sidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzVhZC4xMnhsYXJnZSJ9LHsidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzVkLjJ4bGFyZ2UifSx7InZlbmRvciI6ImF3cyIsInNlcnZlciI6ImM2Zy4xNnhsYXJnZSJ9LHsidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY2N4MzMifV0%3D -->
-<aside class="notes">
+::: {.notes}
 and making all these data available in comparison tables
-</aside>
+:::
 
 ## >>> from sparecores import intro
 
@@ -231,9 +232,9 @@ and making all these data available in comparison tables
 <img style="width: 75%;" src="images/sc-www-server-compare-charts.png" />
 :::
 
-<aside class="notes">
+::: {.notes}
 or plots as well for human inspection
-</aside>
+:::
 
 ## >>> from sparecores import intro
 
@@ -241,9 +242,9 @@ or plots as well for human inspection
 <img style="width:95%;" src="images/sc-keeper-preview.png" />
 :::
 
-<aside class="notes">
+::: {.notes}
 for computers, we provide APIs ...
-</aside>
+:::
 
 ## >>> from sparecores import intro
 
@@ -318,17 +319,17 @@ Server(
 )
 ```
 
-<aside class="notes">
+::: {.notes}
 and SDKs as well, e.g. querying the details of this instance type: SCROLL through!
-</aside>
+:::
 
 # >>> from sparecores import components {#components transition="convex-in convex-out"}
 
 <img style="margin-top:30px; width: 100%;" src="images/sc-components.png" />
 
-<aside class="notes">
+::: {.notes}
 As mentioned previously, this is made available via multiple components that I'd like to walk through in the next slides.
-</aside>
+:::
 
 # >>> from sparecores import <img style="height: 46px; padding: 0px; margin: 0px; vertical-align: middle; filter: brightness(0) saturate(100%) invert(47%) sepia(7%) saturate(3650%) hue-rotate(107deg) brightness(146%) contrast(95%);" src="images/metaflow.svg" /> {#metaflow transition="convex-in slide-out"}
 
@@ -345,15 +346,15 @@ As mentioned previously, this is made available via multiple components that I'd
   <li class="fragment">supported by Netflix and Outerbounds</li>
 </ul>
 
-<aside class="notes">
+::: {.notes}
 TODO
-</aside>
+:::
 
 ## >>> import metaflow
 
 :::: {.columns}
 
-::: {.column .centered width="40%"}
+::: {.column .centered .fragment width="40%" }
 
 ```{mermaid}
 flowchart TD
@@ -391,11 +392,12 @@ if __name__ == "__main__":
 
 ::::
 
-
+::: {.notes}
 https://netflixtechblog.com/open-sourcing-metaflow-a-human-centric-framework-for-data-science-fa72e04a5d9
 By design, Metaflow is a deceptively simple Python library:
 
 DAG
+:::
 
 </section></section>
 

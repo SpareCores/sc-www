@@ -6,8 +6,8 @@
 :root {
     --mermaid-bg-color: transparent;
     --mermaid-fg-color: white;
-    --mermaid-node-fg-color: white;
     --mermaid-label-fg-color: white;
+    --mermaid-node-fg-color: #34d399;
     --mermaid-node-bg-color: #06263a;
     --mermaid-edge-color: white;
     --mermaid-font-family: Inter;
@@ -87,6 +87,7 @@ body.speakerview {
 .reveal div.sourceCode pre {
     height: 100%;
     overflow: hidden;
+    background-color: #06263a;
 }
 
 .noborder {
@@ -122,9 +123,16 @@ div.sourceCode {
     /* margin-left: 5% !important; */
     /* margin-right: 5% !important; */
     margin-top: -5px !important;
+    border: 2px solid #34d399 !important;
+    border-radius: 15px !important;
 }
-code.sourceCode {
-    border: 2px solid !important;
+code.sourceCode::-webkit-scrollbar{
+  height: 4px;
+  width: 4px;
+  background: #34D39933;
+}
+code.sourceCode::-webkit-scrollbar-thumb:vertical{
+  background: #34D399;
 }
 
 .reveal code {
