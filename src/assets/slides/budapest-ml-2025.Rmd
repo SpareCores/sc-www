@@ -24,6 +24,9 @@ format:
     slide-number: true
     transition: slide
     hash-type: title
+  gfm:
+    mermaid-format: svg
+    theme: neutral
 ---
 
 # {#cover-slide}
@@ -346,31 +349,44 @@ TODO
 
 ## >>> import metaflow
 
-forgot
+:::: {.columns}
 
+::: {.column .centered width="40%"}
 
 ```{mermaid}
-%%| mermaid-format: png
-flowchart LR
-  A[Hard edge] --> B(Round edge)
-  B --> C{Decision}
-  C --> D[Result one]
-  C --> E[Result two]
+flowchart TD
+    A[start] --> B(hello)
+    B --> C[end]
 ```
 
-<pre><code data-trim class="language-python">
->>> import antigravity
->>> print(b"\x01\x02\x03")
->>> a = 2
-</code></pre>
+:::
 
-<pre><code data-line-numbers="1|2" data-trim class="language-r">
-b <- 1:10
-sum(b) / 10
-</code></pre>
+::: {.column width="60%"}
 
+```python {code-line-numbers="6,11" style="font-size:24px;"}
+from metaflow import FlowSpec, step
 
-<img src="images/metaflow-dag.png" />
+class HelloFlow(FlowSpec):
+    @step
+    def start(self):
+        print("HelloFlow is starting.")
+        self.next(self.hello)
+
+    @step
+    def hello(self):
+        print("Metaflow says: Hi!")
+        self.next(self.end)
+
+    @step
+    def end(self):
+        print("HelloFlow is all done.")
+
+if __name__ == "__main__":
+    HelloFlow()
+```
+
+:::
+
 
 https://netflixtechblog.com/open-sourcing-metaflow-a-human-centric-framework-for-data-science-fa72e04a5d9
 By design, Metaflow is a deceptively simple Python library:

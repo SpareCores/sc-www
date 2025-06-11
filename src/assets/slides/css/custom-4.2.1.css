@@ -1,4 +1,18 @@
+/*-- scss:defaults --*/
+
 /*-- scss:rules --*/
+
+/* marmaid theme */
+:root {
+    --mermaid-bg-color: transparent;
+    --mermaid-fg-color: white;
+    --mermaid-node-fg-color: white;
+    --mermaid-label-fg-color: white;
+    --mermaid-node-bg-color: #06263a;
+    --mermaid-edge-color: white;
+    --mermaid-font-family: Inter;
+
+}
 
 body.reveal-viewport  {
     background-color: #082f49;
@@ -68,7 +82,7 @@ body.speakerview {
 
 .reveal div.sourceCode {
     margin-top: 40px !important;
-    height: 600px;
+    height: auto;
 }
 .reveal div.sourceCode pre {
     height: 100%;
@@ -358,7 +372,7 @@ code span.dv, code span.fl {
   color: #999;
 }
 
-p.centered {
+.centered, p.centered {
   text-align: center !important;
 }
 

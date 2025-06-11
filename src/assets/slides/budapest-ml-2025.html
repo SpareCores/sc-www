@@ -96,7 +96,7 @@
     code span.vs { color: #abe338; } /* VerbatimString */
     code span.wa { color: #dcc6e0; } /* Warning */
   </style>
-  <link rel="stylesheet" href="budapest-ml-2025_files/libs/revealjs/dist/theme/quarto-38e47940d91b6efd312053a6e36fbec6.css">
+  <link rel="stylesheet" href="budapest-ml-2025_files/libs/revealjs/dist/theme/quarto-eb50400388b314e5df62dd2c92809ea7.css">
   <link href="budapest-ml-2025_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="budapest-ml-2025_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="budapest-ml-2025_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -188,6 +188,9 @@
       margin-right: 0; 
     }
   </style>
+  <script src="budapest-ml-2025_files/libs/quarto-diagram/mermaid.min.js"></script>
+  <script src="budapest-ml-2025_files/libs/quarto-diagram/mermaid-init.js"></script>
+  <link href="budapest-ml-2025_files/libs/quarto-diagram/mermaid.css" rel="stylesheet">
 </head>
 <body class="quarto-dark">
   <div class="reveal">
@@ -727,64 +730,43 @@ TODO
 </section>
 <section id="import-metaflow" class="slide level2">
 <h2>&gt;&gt;&gt; import metaflow</h2>
-<p>forgot</p>
-<div class="cell" data-layout-align="default">
+<div class="columns">
+<div class="column centered" style="width:40%;">
+<div class="cell" data-reveal="true" data-layout-align="default">
 <div class="cell-output-display">
 <div>
 <p></p><figure class=""><p></p>
 <div>
-<p><img data-src="budapest-ml-2025_files/figure-revealjs/mermaid-figure-1.png" style="width:6.98in;height:1.81in"></p>
+<pre class="mermaid mermaid-js">flowchart TD
+    A[start] --&gt; B(hello)
+    B --&gt; C[end]
+</pre>
 </div>
 <p></p></figure><p></p>
 </div>
 </div>
 </div>
-<pre><code data-trim="" class="language-python">
-&gt;&gt;&gt; import antigravity
-&gt;&gt;&gt; print(b"\x01\x02\x03")
-&gt;&gt;&gt; a = 2
-</code></pre>
-<pre><code data-line-numbers="1|2" data-trim="" class="language-r">
-b &lt;- 1:10
-sum(b) / 10
-</code></pre>
-<p><img src="images/metaflow-dag.png"></p>
-<p>https://netflixtechblog.com/open-sourcing-metaflow-a-human-centric-framework-for-data-science-fa72e04a5d9 By design, Metaflow is a deceptively simple Python library:</p>
-<p>DAG</p>
-</section>
-</section>
-<section id="future" class="titleslide slide level1">
-<h2>
-&gt;&gt;&gt; import __future__
-</h2>
-<ul style="margin-top: -20px;">
-<li class="fragment">
-Add support for more vendors
-</li>
-<ul>
-<li class="fragment">
-Crawler (vendor API integration)
-</li>
-<li class="fragment">
-Runner (pulumi)
-</li>
-</ul>
-<li class="fragment">
-More SDKs (PyPI, npm, CRAN, etc.)
-</li>
-<li class="fragment">
-Data analysis, blog posts
-</li>
-<li class="fragment">
-My Spare Cores (dashboard)
-</li>
-<li class="fragment">
-SaaS 👀
-</li>
-</ul>
-<aside class="notes">
-TODO
-<style type="text/css">
+</div><div class="column" style="width:60%;">
+<div class="sourceCode" id="cb2" style="font-size:24px;" data-code-line-numbers="6,11"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href=""></a><span class="im">from</span> metaflow <span class="im">import</span> FlowSpec, step</span>
+<span id="cb2-2"><a href=""></a></span>
+<span id="cb2-3"><a href=""></a><span class="kw">class</span> HelloFlow(FlowSpec):</span>
+<span id="cb2-4"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb2-5"><a href=""></a>    <span class="kw">def</span> start(<span class="va">self</span>):</span>
+<span id="cb2-6"><a href=""></a>        <span class="bu">print</span>(<span class="st">"HelloFlow is starting."</span>)</span>
+<span id="cb2-7"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.hello)</span>
+<span id="cb2-8"><a href=""></a></span>
+<span id="cb2-9"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb2-10"><a href=""></a>    <span class="kw">def</span> hello(<span class="va">self</span>):</span>
+<span id="cb2-11"><a href=""></a>        <span class="bu">print</span>(<span class="st">"Metaflow says: Hi!"</span>)</span>
+<span id="cb2-12"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.end)</span>
+<span id="cb2-13"><a href=""></a></span>
+<span id="cb2-14"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb2-15"><a href=""></a>    <span class="kw">def</span> end(<span class="va">self</span>):</span>
+<span id="cb2-16"><a href=""></a>        <span class="bu">print</span>(<span class="st">"HelloFlow is all done."</span>)</span>
+<span id="cb2-17"><a href=""></a></span>
+<span id="cb2-18"><a href=""></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">"__main__"</span>:</span>
+<span id="cb2-19"><a href=""></a>    HelloFlow()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div><p>https://netflixtechblog.com/open-sourcing-metaflow-a-human-centric-framework-for-data-science-fa72e04a5d9 By design, Metaflow is a deceptively simple Python library:</p><p>DAG</p></div></section></section><section id="future" class="titleslide slide level1"><h2>&gt;&gt;&gt; import __future__</h2><ul style="margin-top: -20px;"><li class="fragment">Add support for more vendors</li><ul><li class="fragment">Crawler (vendor API integration)</li><li class="fragment">Runner (pulumi)</li></ul><li class="fragment">More SDKs (PyPI, npm, CRAN, etc.)</li><li class="fragment">Data analysis, blog posts</li><li class="fragment">My Spare Cores (dashboard)</li><li class="fragment">SaaS 👀</li></ul><aside class="notes">TODO<style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
           clip: rect(1px, 1px, 1px, 1px);
@@ -794,14 +776,7 @@ TODO
           width: 1px!important;
           overflow: hidden!important;
           display:block!important;
-      }</style></aside>
-</section>
-<section>
-<section id="team" class="titleslide slide level1" data-transition="slide-in none-out">
-<h2>
-&gt;&gt;&gt; from sparecores import team
-</h2>
-<div class="colcontainer mt-60 centered">
+      }</style></aside></section><section><section id="team" class="titleslide slide level1" data-transition="slide-in none-out"><h2>&gt;&gt;&gt; from sparecores import team</h2><div class="colcontainer mt-60 centered">
 <div class="col">
 <img src="https://avatars.githubusercontent.com/u/820331?v=4" class="rounded w-70">
 <p class="bold mt-0">
@@ -820,10 +795,7 @@ TODO
 <span class="citation" data-cites="daroczig">@daroczig</span>
 </p>
 </div>
-</div>
-<aside class="notes">
-TODO
-<style type="text/css">
+</div><aside class="notes">TODO<style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
           clip: rect(1px, 1px, 1px, 1px);
@@ -833,9 +805,7 @@ TODO
           width: 1px!important;
           overflow: hidden!important;
           display:block!important;
-      }</style></aside>
-</section>
-<section id="team-annotations" class="slide level2" data-transition="none-in slide-out">
+      }</style></aside><section id="team-annotations" class="slide level2" data-transition="none-in slide-out">
 <h2>&gt;&gt;&gt; from sparecores import team</h2>
 <div class="colcontainer mt-60 centered">
 <div class="col">
@@ -961,13 +931,15 @@ if (url.match("/?live")) {
 </script>
 
 </section>
-    </div>
-  <div class="quarto-auto-generated-content" style="display: none;">
+</section></div>
+
+    <div class="quarto-auto-generated-content" style="display: none;">
 <p><img src="images/sc-square-dark-300x300.jpg" class="slide-logo"></p>
 <div class="footer footer-default">
 
 </div>
 </div></div>
+  
 
   <script>window.backupDefine = window.define; window.define = undefined;</script>
   <script src="budapest-ml-2025_files/libs/revealjs/dist/reveal.js"></script>
