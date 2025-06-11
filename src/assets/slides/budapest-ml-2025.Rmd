@@ -24,6 +24,8 @@ format:
     slide-number: true
     transition: slide
     hash-type: title
+    code-copy: false
+    # highlight-style
   gfm:
     mermaid-format: svg
     theme: neutral
@@ -361,7 +363,7 @@ flowchart TD
 
 :::
 
-::: {.column width="60%"}
+::: {.column width="60%" }
 
 ```python {code-line-numbers="6,11" style="font-size:24px;"}
 from metaflow import FlowSpec, step
@@ -386,6 +388,8 @@ if __name__ == "__main__":
 ```
 
 :::
+
+::::
 
 
 https://netflixtechblog.com/open-sourcing-metaflow-a-human-centric-framework-for-data-science-fa72e04a5d9

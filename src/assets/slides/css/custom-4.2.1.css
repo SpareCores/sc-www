@@ -368,6 +368,13 @@ code span.dv, code span.fl {
   height: auto;
 }
 
+.columns-center-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 90%;
+  }
+
 .gray {
   color: #999;
 }
