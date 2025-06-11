@@ -7,41 +7,35 @@ conference_url: "https://budapestdataml.com/en/"
 conference_talk_url: "https://dml25.sessionize.com/session/885322"
 conference_talk_slides: "/assets/slides/budapest-ml-2025.html#/coverslide"
 location: "Budapest, Hungary"
-output:
-  revealjs::revealjs_presentation:
-    theme: white
-    highlight: tango
-    transition: default
-    includes:
-      in_header: header-4.2.1.html
-    template: template-4.2.1.html
-    reveal_options:
-      slideNumber: true
-      previewLinks: false
-      width: 1244
-    self_contained: false
-    lib_dir: libs
-    reveal_plugins: ["notes", "zoom"]
+format:
+  revealjs:
+    theme: [black, css/custom-4.2.1.css]
+    controls: true
+    navigation-mode: vertical
+    controls-layout: bottom-right
+    controls-tutorial: true
+    menu: false
+    logo: images/sc-square-dark-300x300.jpg
+    margin: 0.1
+    height: 700
+    width: 1150
+    # width: 1244  # was used at revealjs 3.x
+    center-title-slide: false
+    slide-number: true
+    transition: slide
+    hash-type: title
 ---
 
-## dummy slide
+# {#cover-slide}
 
-<!--add custom CSS for the speaker view-->
 <script>
+  // add custom CSS for the speaker view
   if (window.self !== window.top) {
     document.body.className += " speakerview";
   }
+  // remove dummy slide
+  document.getElementById("title-slide").remove();
 </script>
-
-<!--javascript to remove dummy slide-->
-<script>
-document.getElementById("dummy-slide").remove();
-</script>
-
-<!--end dummy slide-->
-</section>
-
-<section id="coverslide">
 
 ::: {.centered}
 <img src="images/budapest-data-ml-forum-logo-transparent.png"
@@ -68,37 +62,33 @@ document.getElementById("dummy-slide").remove();
   Press Space or click the green arrow icons to navigate the slides ->
 </p>
 
-<div class="notes">
+::: {.notes}
 TODO
-</div>
+:::
 
-</section>
-
-<section id="badges">
-
-  <h2>&#62;&#62;&#62; from sparecores import badges</h2>
+# >>> from sparecores import badges {#badges transition="convex-in convex-out"}
 
 <ul style="font-size: 0.9em;">
-  <li class="fragment">Funded by NGI Search (EU consortium under Horizon Europe)</li>
+  <li class="fragment" data-fragment-index=1>Funded by NGI Search (EU consortium under Horizon Europe)</li>
   <ul>
-    <li class="fragment">Vendor independent, open-source project</li>
+    <li class="fragment" data-fragment-index=2>Vendor independent, open-source project</li>
   </ul>
-  <li class="fragment">Accepted into the NVIDIA Inception Program</li>
-  <li class="fragment">Beneficiary of cloud credits from 5 vendors (overall ~$100k)</li>
-  <li class="fragment">10 conference talk in 5 countries (e.g. Berlin Buzzwords, KCD)</li>
-  <li class="fragment">Featured by The Pragmatic Engineer in Oct 2024</li>
-  <li class="fragment">Jeff Barr (Chief Evangelist at AWS) said "This was awesome!"</li>
+  <li class="fragment" data-fragment-index=3>Accepted into the NVIDIA Inception Program</li>
+  <li class="fragment" data-fragment-index=4>Beneficiary of cloud credits from 5 vendors (overall ~$100k)</li>
+  <li class="fragment" data-fragment-index=5>10 conference talk in 5 countries (e.g. Berlin Buzzwords, KCD)</li>
+  <li class="fragment" data-fragment-index=6>Featured by The Pragmatic Engineer in Oct 2024</li>
+  <li class="fragment" data-fragment-index=7>Jeff Barr (Chief Evangelist at AWS) said:</li>
 </ul>
+
+<blockquote class="fragment" data-fragment-index=7 style="margin-left: 40px;">
+  This was awesome, thanks for sharing.
+</blockquote>
 
 <aside class="notes">
 first of all, just to build some credibility for the project
 </aside>
 
-</section>
-
-<section>
-<section id="intro" class="titleslide slide level1">
-  <h2>&#62;&#62;&#62; from sparecores import intro</h2>
+# >>> from sparecores import intro {#intro transition="convex-in slide-out"}
 
 <ul style="font-size: 0.9em;">
   <li class="fragment">Open-source tools, database schemas and documentation to inspect and inventory cloud vendors and their offerings, including pricing and measured performance.</li>
@@ -125,7 +115,7 @@ BUT let's focus on the open-source and open-data components ..
 
 ## >>> from sparecores import intro
 
-<img style="margin-top:-10px; width:100%;" src="images/homepage-stats-2025q1.png" />
+<img style="width:100%;" src="images/homepage-stats-2025q1.png" />
 
 <p class="centered" style="margin-top: -10px;">Source: <a href="https://sparecores.com">sparecores.com</a></p>
 
@@ -136,7 +126,7 @@ TODO
 ## >>> from sparecores import intro
 
 ::: {.centered}
-<img style="margin-top:-55px;width:95%;" src="images/sc-www-listing-top-2025q1.png" />
+<img style="width:95%;" src="images/sc-www-listing-top-2025q1.png" />
 :::
 
 <aside class="notes">
@@ -146,7 +136,7 @@ The easiest way to query this data is through our web component, as you can see 
 ## >>> from sparecores import intro
 
 ::: {.centered}
-<img style="margin-top:-55px; width: 90%;" src="images/sc-www-server-details-top-g2-standard-16.png" />
+<img style="width: 90%;" src="images/sc-www-server-details-top-g2-standard-16.png" />
 :::
 
 <aside class="notes">
@@ -156,7 +146,7 @@ Clicking on a server shows you the technical details of the instance -- much mor
 ## >>> from sparecores import intro
 
 ::: {.centered}
-<img style="margin-top:-55px; width: 77.5%;" src="images/sc-www-server-details-prices-g2-standard-16.png" />
+<img style="width: 80%;" src="images/sc-www-server-details-prices-g2-standard-16.png" />
 :::
 
 <aside class="notes">
@@ -168,7 +158,7 @@ Live and historical pricing
 <!-- https://sparecores.com/server/aws/c5d.2xlarge -->
 
 ::: {.centered}
-<img style="margin-top:-55px; width: 77%;" src="images/sc-www-server-details-benchmarks-1-g2-standard-16.png" />
+<img style="width: 80%;" src="images/sc-www-server-details-benchmarks-1-g2-standard-16.png" />
 :::
 
 <aside class="notes">
@@ -181,7 +171,7 @@ and we also run benchmark scenarios on the servers, e.g.:
 
 ## >>> from sparecores import intro
 
-<img style="margin-top: 0px;" src="images/sc-www-server-details-benchmarks-2-g2-standard-16.png" />
+<img src="images/sc-www-server-details-benchmarks-2-g2-standard-16.png" />
 
 <aside class="notes">
 also running test suites like PassMark or ...
@@ -189,7 +179,7 @@ also running test suites like PassMark or ...
 
 ## >>> from sparecores import intro
 
-<img style="margin-top: 0px;" src="images/sc-www-server-details-benchmarks-3-g2-standard-16.png" />
+<img src="images/sc-www-server-details-benchmarks-3-g2-standard-16.png" />
 
 <aside class="notes">
 Geekbench 6, which has been a standard tool for some time including workloads for text and image processing, compiling software etc
@@ -197,7 +187,7 @@ Geekbench 6, which has been a standard tool for some time including workloads fo
 
 ## >>> from sparecores import intro
 
-<img style="margin-top: 0px;" src="images/sc-www-server-details-benchmarks-4-g2-standard-16.png" />
+<img src="images/sc-www-server-details-benchmarks-4-g2-standard-16.png" />
 
 <aside class="notes">
 visualizations on how well the machine can scale tasks to multiple CPU cores -- e.g. showing the diminishing return on this Intel Xeon due to hyperthreading
@@ -205,7 +195,7 @@ visualizations on how well the machine can scale tasks to multiple CPU cores -- 
 
 ## >>> from sparecores import intro
 
-<img style="margin-top: 0px;" src="images/sc-www-server-details-benchmarks-5-g2-standard-16.png" />
+<img src="images/sc-www-server-details-benchmarks-5-g2-standard-16.png" />
 
 <aside class="notes">
 Or looking at LLM Inference Speed that is the main topic for today .. I'll revisit later
@@ -213,7 +203,7 @@ Or looking at LLM Inference Speed that is the main topic for today .. I'll revis
 
 ## >>> from sparecores import intro
 
-<img style="margin-top: 0px;" src="images/sc-www-server-details-benchmarks-6-g2-standard-16.png" />
+<img src="images/sc-www-server-details-benchmarks-6-g2-standard-16.png" />
 
 <aside class="notes">
 and other application-specific benchmarks, like serving a static website or running a key-value store database
@@ -222,7 +212,7 @@ and other application-specific benchmarks, like serving a static website or runn
 ## >>> from sparecores import intro
 
 ::: {.centered}
-<img style="margin-top:-55px; width: 83%;" src="images/sc-www-server-compare.png" />
+<img style="width: 83%;" src="images/sc-www-server-compare.png" />
 :::
 
 <!-- https://sparecores.com/compare?instances=W3sidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzVhZC4xMnhsYXJnZSJ9LHsidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzVkLjJ4bGFyZ2UifSx7InZlbmRvciI6ImF3cyIsInNlcnZlciI6ImM2Zy4xNnhsYXJnZSJ9LHsidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY2N4MzMifV0%3D -->
@@ -233,7 +223,7 @@ and making all these data available in comparison tables
 ## >>> from sparecores import intro
 
 ::: {.centered}
-<img style="margin-top:-55px; width: 75%;" src="images/sc-www-server-compare-charts.png" />
+<img style="width: 75%;" src="images/sc-www-server-compare-charts.png" />
 :::
 
 <aside class="notes">
@@ -243,7 +233,7 @@ or plots as well for human inspection
 ## >>> from sparecores import intro
 
 ::: {.centered}
-<img style="margin-top:-15px;width:95%;" src="images/sc-keeper-preview.png" />
+<img style="width:95%;" src="images/sc-keeper-preview.png" />
 :::
 
 <aside class="notes">
@@ -252,7 +242,7 @@ for computers, we provide APIs ...
 
 ## >>> from sparecores import intro
 
-```py
+```py {style="margin-top: 20px !important; height: 640px;"}
 >>> from rich import print as pp
 >>> from sc_crawler.tables import Server
 >>> from sqlmodel import create_engine, Session, select
@@ -327,11 +317,7 @@ Server(
 and SDKs as well, e.g. querying the details of this instance type: SCROLL through!
 </aside>
 
-</section></section>
-
-<section>
-<section id="components" class="titleslide slide level1">
-  <h2>&#62;&#62;&#62; sparecores.\_\_dir\_\_()</h2>
+# >>> from sparecores import components {#components transition="convex-in convex-out"}
 
 <img style="margin-top:30px; width: 100%;" src="images/sc-components.png" />
 
@@ -339,8 +325,59 @@ and SDKs as well, e.g. querying the details of this instance type: SCROLL throug
 As mentioned previously, this is made available via multiple components that I'd like to walk through in the next slides.
 </aside>
 
-</section></section>
+# >>> from sparecores import <img style="height: 46px; padding: 0px; margin: 0px; vertical-align: middle; filter: brightness(0) saturate(100%) invert(47%) sepia(7%) saturate(3650%) hue-rotate(107deg) brightness(146%) contrast(95%);" src="images/metaflow.svg" /> {#metaflow transition="convex-in slide-out"}
 
+<p class="fragment">
+  A framework for real-life ML, AI, and data science.
+</p>
+
+<ul>
+  <li class="fragment">started at Netflix</li>
+  <li class="fragment"><b>human-centric</b></li>
+  <li class="fragment">reproducible</li>
+  <li class="fragment">scalable</li>
+  <li class="fragment">open-source (since 2019)</li>
+  <li class="fragment">supported by Netflix and Outerbounds</li>
+</ul>
+
+<aside class="notes">
+TODO
+</aside>
+
+## >>> import metaflow
+
+forgot
+
+
+```{mermaid}
+%%| mermaid-format: png
+flowchart LR
+  A[Hard edge] --> B(Round edge)
+  B --> C{Decision}
+  C --> D[Result one]
+  C --> E[Result two]
+```
+
+<pre><code data-trim class="language-python">
+>>> import antigravity
+>>> print(b"\x01\x02\x03")
+>>> a = 2
+</code></pre>
+
+<pre><code data-line-numbers="1|2" data-trim class="language-r">
+b <- 1:10
+sum(b) / 10
+</code></pre>
+
+
+<img src="images/metaflow-dag.png" />
+
+https://netflixtechblog.com/open-sourcing-metaflow-a-human-centric-framework-for-data-science-fa72e04a5d9
+By design, Metaflow is a deceptively simple Python library:
+
+DAG
+
+</section></section>
 
 <section id="future" class="titleslide slide level1">
   <h2>&#62;&#62;&#62; import \_\_future\_\_</h2>

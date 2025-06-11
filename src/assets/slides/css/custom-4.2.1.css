@@ -1,13 +1,34 @@
+/*-- scss:rules --*/
+
 body.reveal-viewport  {
-    background-image: url("../images/sc-square-dark-300x300.jpg");
-    background-size: auto 125px;
-    background-repeat: no-repeat;
-    background-position: left 15px bottom 10px;
     background-color: #082f49;
+}
+.reveal img.slide-logo {
+    left: 15px;
+    max-height: 125px;
 }
 
 body.speakerview {
     background-size: auto 20px;
+}
+
+.reveal.has-logo .slide-number {
+    top: auto !important;
+    bottom: 45px !important;
+    right: 57px !important;
+    transform: translate(50%, 0) !important;
+    background-color: transparent !important;
+}
+/* hide on cover slide */
+.reveal .slide-number > a[href*='#/cover-slide'] {
+    display: none;
+}
+.slide-number a {
+    text-decoration: none !important;
+}
+
+.reveal .progress {
+    color: #34d399;
 }
 
 .reveal .controls button.navigate-right.enabled {
@@ -36,6 +57,22 @@ body.speakerview {
 }
 .reveal div.centered p {
   text-align: center;
+}
+
+.reveal section img {
+    margin-top: 0.4em;
+}
+.reveal .slides section.slide div.centered p img {
+    margin-top: -40px;
+}
+
+.reveal div.sourceCode {
+    margin-top: 40px !important;
+    height: 600px;
+}
+.reveal div.sourceCode pre {
+    height: 100%;
+    overflow: hidden;
 }
 
 .noborder {
@@ -103,7 +140,7 @@ code.sourceCode {
     color: #ffffff;
 }
 
-.reveal h1,
+.reveal .title-slide h1,
 .reveal h2,
 .reveal h3,
 .reveal h4,
@@ -114,15 +151,19 @@ code.sourceCode {
     color: #34d399;
 }
 
-.reveal h2 {
+.reveal .title-slide h1, .reveal h2 {
     font-size: 1.25em;
 }
 
-.reveal h2, .reveal pre, .reveal pre code {
+.reveal .title-slide h1, .reveal h2, .reveal pre, .reveal pre code {
     font-family: "Roboto Mono" !important;
     font-weight: 400 !important;
     text-transform: none;
     text-align: left;
+}
+
+.reveal .title-slide h1.subtitle {
+    font-family: Inter !important;
 }
 
 .reveal pre code {
@@ -175,28 +216,36 @@ code span.dv, code span.fl {
 
 .reveal blockquote {
     width: 90%;
+    border-left: 8px solid #34d399;
+    /* padding-top: 20px;
+    padding-bottom: 20px; */
+    color: white;
+    background: #1c3d52;
 }
 
 .reveal blockquote{
   font-size: 2rem;
   width:90%;
   margin:10px auto;
-  color: #555555;
-  padding:0px 30px 0px 75px;
-  border-left:8px solid #1c3d52;
+  /* color: #555555; */
+  color: white;
+  padding:20px 30px 20px 75px;
+  /* border-left:8px solid #1c3d52; */
+  border-left: 8px solid #34d399;
   line-height:1.6;
   position: relative;
-  background:#EDEDED;
+  /* background:#EDEDED; */
+  background: #1c3d52;
 }
 
 .reveal blockquote::before{
   font-family:Arial;
   content: "\201C";
-  color:#1c3d52;
+  color: #34d399;
   font-size:4em;
   position: absolute;
-  left: 10px;
-  top:-30px;
+  left: 20px;
+  top: -10px;
 }
 
 .reveal clearblockquote::after{
