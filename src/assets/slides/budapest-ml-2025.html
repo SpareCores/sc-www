@@ -95,7 +95,7 @@
     code span.vs { color: #abe338; } /* VerbatimString */
     code span.wa { color: #dcc6e0; } /* Warning */
   </style>
-  <link rel="stylesheet" href="budapest-ml-2025_files/libs/revealjs/dist/theme/quarto-045f47bcc972ae871fcc9b27f9649cd0.css">
+  <link rel="stylesheet" href="budapest-ml-2025_files/libs/revealjs/dist/theme/quarto-00df2dce03027001efa3d46fdb75f5fd.css">
   <link href="budapest-ml-2025_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="budapest-ml-2025_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="budapest-ml-2025_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -701,16 +701,16 @@ started at Netflix
 open-source (since 2019)
 </li>
 <li class="fragment">
-<b>human-centric</b>
+supported by Netflix and Outerbounds
+</li>
+<li class="fragment">
+human-centric
 </li>
 <li class="fragment">
 reproducible
 </li>
 <li class="fragment">
 scalable
-</li>
-<li class="fragment">
-supported by Netflix and Outerbounds
 </li>
 </ul>
 <aside class="notes">
@@ -727,26 +727,9 @@ supported by Netflix and Outerbounds
           display:block!important;
       }</style></aside>
 </section>
-<section id="from-metaflow-import-tutorial" class="slide level2">
+<section id="from-metaflow-import-tutorial" class="slide level2" data-transition="slide-in fade-out">
 <h2>&gt;&gt;&gt; from metaflow import tutorial</h2>
-<div class="columns">
-<div class="column centered fragment" style="width:40%;">
-<div class="cell" data-reveal="true" data-layout-align="default">
-<div class="cell-output-display">
-<div>
-<p></p><figure class=""><p></p>
-<div>
-<pre class="mermaid mermaid-js">flowchart TD
-    A[start] --&gt; B(hello)
-    B --&gt; C[end]
-</pre>
-</div>
-<p></p></figure><p></p>
-</div>
-</div>
-</div>
-</div><div class="column" style="width:60%;">
-<div class="sourceCode" id="cb2" style="font-size:24px;" data-code-line-numbers="6,11"><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb2-1"><a href=""></a><span class="im">from</span> metaflow <span class="im">import</span> FlowSpec, step</span>
+<div class="sourceCode" id="cb2" style="font-size:32px;" data-code-line-numbers="|1|19|3|5,10,15|4,9,14|7,12|6,11,16"><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb2-1"><a href=""></a><span class="im">from</span> metaflow <span class="im">import</span> FlowSpec, step</span>
 <span id="cb2-2"><a href=""></a></span>
 <span id="cb2-3"><a href=""></a><span class="kw">class</span> HelloFlow(FlowSpec):</span>
 <span id="cb2-4"><a href=""></a>    <span class="at">@step</span></span>
@@ -765,6 +748,281 @@ supported by Netflix and Outerbounds
 <span id="cb2-17"><a href=""></a></span>
 <span id="cb2-18"><a href=""></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">"__main__"</span>:</span>
 <span id="cb2-19"><a href=""></a>    HelloFlow()</span></code></pre></div>
+<aside class="notes">
+<p>By design, Metaflow is a deceptively simple Python library</p>
+<p>DAG</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="from-metaflow-import-tutorial-1" class="slide level2" data-transition="fade-in slide-out">
+<h2>&gt;&gt;&gt; from metaflow import tutorial</h2>
+<div class="columns" style="display: block; margin-top: 40px;">
+<div class="column vcenter centered" style="width:30%;">
+<div class="cell" data-reveal="true" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class=""><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart TD
+    A[start] --&gt; B(hello)
+    B --&gt; C[end]
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</div><div class="column vcenter" style="width:70%;">
+<div class="sourceCode" id="cb3" style="font-size:24px;" data-code-line-numbers="5,10,15"><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb3-1"><a href=""></a><span class="im">from</span> metaflow <span class="im">import</span> FlowSpec, step</span>
+<span id="cb3-2"><a href=""></a></span>
+<span id="cb3-3"><a href=""></a><span class="kw">class</span> HelloFlow(FlowSpec):</span>
+<span id="cb3-4"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb3-5"><a href=""></a>    <span class="kw">def</span> start(<span class="va">self</span>):</span>
+<span id="cb3-6"><a href=""></a>        <span class="bu">print</span>(<span class="st">"HelloFlow is starting."</span>)</span>
+<span id="cb3-7"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.hello)</span>
+<span id="cb3-8"><a href=""></a></span>
+<span id="cb3-9"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb3-10"><a href=""></a>    <span class="kw">def</span> hello(<span class="va">self</span>):</span>
+<span id="cb3-11"><a href=""></a>        <span class="bu">print</span>(<span class="st">"Metaflow says: Hi!"</span>)</span>
+<span id="cb3-12"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.end)</span>
+<span id="cb3-13"><a href=""></a></span>
+<span id="cb3-14"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb3-15"><a href=""></a>    <span class="kw">def</span> end(<span class="va">self</span>):</span>
+<span id="cb3-16"><a href=""></a>        <span class="bu">print</span>(<span class="st">"HelloFlow is all done."</span>)</span>
+<span id="cb3-17"><a href=""></a></span>
+<span id="cb3-18"><a href=""></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">"__main__"</span>:</span>
+<span id="cb3-19"><a href=""></a>    HelloFlow()</span></code></pre></div>
+</div></div>
+<aside class="notes">
+<p>By design, Metaflow is a deceptively simple Python library</p>
+<p>DAG</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="from-dnd-import-dices" class="slide level2" data-transition="slide">
+<h2>&gt;&gt;&gt; from DnD import dices</h2>
+
+<img src="images/robot-dice.jpeg" style="border-radius: 25px; box-shadow: #06263a 20px 19px 25px 25px;" class="r-stretch"></section>
+<section id="from-metaflow-import-dices" class="slide level2" data-transition="slide-in fade-out">
+<h2>&gt;&gt;&gt; from metaflow import dices</h2>
+<div class="columns" style="display: block; margin-top: 40px;">
+<div class="column centered vcenter" style="width: 30%; visibility: hidden;">
+<div class="cell" data-reveal="true" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class=""><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart TD
+    A[start] -. dice &lt;br&gt; rolls .-&gt; B(roll)
+    B -. dice &lt;br&gt; rolls &lt;br&gt; dices ..-&gt; C[end]
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</div><div class="column vcenter" style="width:70%;">
+<div class="sourceCode" id="cb4" style="font-size:24px;" data-code-line-numbers="4,9-10,15|8,14,19|9-10,15"><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb4-1"><a href=""></a><span class="im">from</span> random <span class="im">import</span> sample, randint</span>
+<span id="cb4-2"><a href=""></a><span class="im">from</span> metaflow <span class="im">import</span> FlowSpec, step</span>
+<span id="cb4-3"><a href=""></a></span>
+<span id="cb4-4"><a href=""></a>DICES <span class="op">=</span> [<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">6</span>, <span class="dv">8</span>, <span class="dv">10</span>, <span class="dv">100</span>]</span>
+<span id="cb4-5"><a href=""></a></span>
+<span id="cb4-6"><a href=""></a><span class="kw">class</span> DiceRollFlow(FlowSpec):</span>
+<span id="cb4-7"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb4-8"><a href=""></a>    <span class="kw">def</span> start(<span class="va">self</span>):</span>
+<span id="cb4-9"><a href=""></a>        <span class="va">self</span>.dice <span class="op">=</span> sample(DICES, <span class="dv">1</span>)[<span class="dv">0</span>]</span>
+<span id="cb4-10"><a href=""></a>        <span class="va">self</span>.rolls <span class="op">=</span> sample(<span class="bu">range</span>(<span class="dv">3</span>), <span class="dv">1</span>)[<span class="dv">0</span>] <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb4-11"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.roll)</span>
+<span id="cb4-12"><a href=""></a></span>
+<span id="cb4-13"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb4-14"><a href=""></a>    <span class="kw">def</span> roll(<span class="va">self</span>):</span>
+<span id="cb4-15"><a href=""></a>        <span class="va">self</span>.dices <span class="op">=</span> [randint(<span class="dv">1</span>, <span class="va">self</span>.dice) <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>.rolls)]</span>
+<span id="cb4-16"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.end)</span>
+<span id="cb4-17"><a href=""></a></span>
+<span id="cb4-18"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb4-19"><a href=""></a>    <span class="kw">def</span> end(<span class="va">self</span>):</span>
+<span id="cb4-20"><a href=""></a>        <span class="bu">print</span>(<span class="ss">f"Rolled </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>rolls<span class="sc">}</span><span class="ss"> times with a </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>dice<span class="sc">}</span><span class="ss"> sided dice: </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>dices<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb4-21"><a href=""></a></span>
+<span id="cb4-22"><a href=""></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">"__main__"</span>:</span>
+<span id="cb4-23"><a href=""></a>    DiceRollFlow()</span></code></pre></div>
+</div></div>
+<aside class="notes">
+<p>By design, Metaflow is a deceptively simple Python library</p>
+<p>DAG</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="from-metaflow-import-dices-1" class="slide level2" data-transition="fade-in slide-out">
+<h2>&gt;&gt;&gt; from metaflow import dices</h2>
+<div class="columns" style="display: block; margin-top: 40px;">
+<div class="column centered vcenter" style="width:30%;">
+<div class="cell" data-reveal="true" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class=""><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart TD
+    A[start] -. dice &lt;br&gt; rolls .-&gt; B(roll)
+    B -. dice &lt;br&gt; rolls &lt;br&gt; dices ..-&gt; C[end]
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</div><div class="column vcenter" style="width:70%;">
+<div class="sourceCode" id="cb5" style="font-size:24px;" data-code-line-numbers="9-10,15"><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb5-1"><a href=""></a><span class="im">from</span> random <span class="im">import</span> sample, randint</span>
+<span id="cb5-2"><a href=""></a><span class="im">from</span> metaflow <span class="im">import</span> FlowSpec, step</span>
+<span id="cb5-3"><a href=""></a></span>
+<span id="cb5-4"><a href=""></a>DICES <span class="op">=</span> [<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">6</span>, <span class="dv">8</span>, <span class="dv">10</span>, <span class="dv">100</span>]</span>
+<span id="cb5-5"><a href=""></a></span>
+<span id="cb5-6"><a href=""></a><span class="kw">class</span> DiceRollFlow(FlowSpec):</span>
+<span id="cb5-7"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb5-8"><a href=""></a>    <span class="kw">def</span> start(<span class="va">self</span>):</span>
+<span id="cb5-9"><a href=""></a>        <span class="va">self</span>.dice <span class="op">=</span> sample(DICES, <span class="dv">1</span>)[<span class="dv">0</span>]</span>
+<span id="cb5-10"><a href=""></a>        <span class="va">self</span>.rolls <span class="op">=</span> sample(<span class="bu">range</span>(<span class="dv">3</span>), <span class="dv">1</span>)[<span class="dv">0</span>] <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb5-11"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.roll)</span>
+<span id="cb5-12"><a href=""></a></span>
+<span id="cb5-13"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb5-14"><a href=""></a>    <span class="kw">def</span> roll(<span class="va">self</span>):</span>
+<span id="cb5-15"><a href=""></a>        <span class="va">self</span>.dices <span class="op">=</span> [randint(<span class="dv">1</span>, <span class="va">self</span>.dice) <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>.rolls)]</span>
+<span id="cb5-16"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.end)</span>
+<span id="cb5-17"><a href=""></a></span>
+<span id="cb5-18"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb5-19"><a href=""></a>    <span class="kw">def</span> end(<span class="va">self</span>):</span>
+<span id="cb5-20"><a href=""></a>        <span class="bu">print</span>(<span class="ss">f"Rolled </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>rolls<span class="sc">}</span><span class="ss"> times with a </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>dice<span class="sc">}</span><span class="ss"> sided dice: </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>dices<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb5-21"><a href=""></a></span>
+<span id="cb5-22"><a href=""></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">"__main__"</span>:</span>
+<span id="cb5-23"><a href=""></a>    DiceRollFlow()</span></code></pre></div>
+</div></div>
+<aside class="notes">
+<p>By design, Metaflow is a deceptively simple Python library</p>
+<p>DAG</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="from-metaflow-import-dices-2" class="slide level2">
+<h2>&gt;&gt;&gt; from metaflow import dices</h2>
+<div style="margin-top: 40px; background-color: #2E3436; padding: 10px 0px 0px 30px; border-radius: 20px; border: 1px solid #34d399;">
+<div style="float: right; margin-right: 40px;">
+<div class="terminal-buttons terminal-close" style="top: -20px;">
+
+</div>
+<div class="terminal-buttons terminal-minimize" style="top: -20px;">
+
+</div>
+<div class="terminal-buttons terminal-zoom" style="top: -20px;">
+
+</div>
+</div>
+<p><img src="images/metaflow-run-dices.png" style="width: 100%; margin-top: -30px;"></p>
+</div>
+</section>
+<section id="from-metaflow-import-dices-3" class="slide level2">
+<h2>&gt;&gt;&gt; from metaflow import dices</h2>
+<div class="sourceCode" id="cb6" style="margin-top: 40px !important; height: 610px;" data-code-line-numbers="1-3|4-5|6-9|10-11|12-14|15-16|17-18"><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb6-1"><a href=""></a><span class="op">&gt;&gt;&gt;</span> <span class="im">from</span> metaflow <span class="im">import</span> Flow</span>
+<span id="cb6-2"><a href=""></a><span class="op">&gt;&gt;&gt;</span> <span class="bu">print</span>(run <span class="op">:=</span> Flow(<span class="st">"DiceRollFlow"</span>).latest_successful_run)</span>
+<span id="cb6-3"><a href=""></a>Run(<span class="st">'DiceRollFlow/1749762602890590'</span>)</span>
+<span id="cb6-4"><a href=""></a><span class="op">&gt;&gt;&gt;</span> run.created_at</span>
+<span id="cb6-5"><a href=""></a>datetime.datetime(<span class="dv">2025</span>, <span class="dv">6</span>, <span class="dv">12</span>, <span class="dv">23</span>, <span class="dv">10</span>, <span class="dv">2</span>, <span class="dv">891000</span>)</span>
+<span id="cb6-6"><a href=""></a><span class="op">&gt;&gt;&gt;</span> run.data</span>
+<span id="cb6-7"><a href=""></a><span class="op">&lt;</span>MetaflowData: dices, rolls, name, dice<span class="op">&gt;</span></span>
+<span id="cb6-8"><a href=""></a><span class="op">&gt;&gt;&gt;</span> run.data.dices</span>
+<span id="cb6-9"><a href=""></a>[<span class="dv">5</span>, <span class="dv">2</span>, <span class="dv">2</span>]</span>
+<span id="cb6-10"><a href=""></a><span class="op">&gt;&gt;&gt;</span> <span class="bu">list</span>(run.steps())</span>
+<span id="cb6-11"><a href=""></a>[Step(<span class="st">'DiceRollFlow/1749762602890590/end'</span>), Step(<span class="st">'DiceRollFlow/1749762602890590/roll'</span>), Step(<span class="st">'DiceRollFlow/1749762602890590/start'</span>)]</span>
+<span id="cb6-12"><a href=""></a><span class="op">&gt;&gt;&gt;</span> step <span class="op">=</span> <span class="bu">next</span>(run.steps())</span>
+<span id="cb6-13"><a href=""></a><span class="op">&gt;&gt;&gt;</span> step.task.metadata</span>
+<span id="cb6-14"><a href=""></a>[Metadata(name<span class="op">=</span><span class="st">'user'</span>, value<span class="op">=</span><span class="st">'daroczig'</span>, created_at<span class="op">=</span><span class="dv">1749762604068</span>, <span class="bu">type</span><span class="op">=</span><span class="st">'user'</span>, task<span class="op">=</span>Task(<span class="st">'DiceRollFlow/1749762602890590/end/3'</span>)), ...</span>
+<span id="cb6-15"><a href=""></a><span class="op">&gt;&gt;&gt;</span> step.task.stdout</span>
+<span id="cb6-16"><a href=""></a><span class="st">'Rolled 3 time(s) with a 10 sided dice: [5, 2, 2]</span><span class="ch">\n</span><span class="st">'</span></span>
+<span id="cb6-17"><a href=""></a><span class="op">&gt;&gt;&gt;</span> step.task.artifacts.dices.data</span>
+<span id="cb6-18"><a href=""></a>[<span class="dv">5</span>, <span class="dv">2</span>, <span class="dv">2</span>]</span></code></pre></div>
+</section>
+<section id="from-metaflow-import-tutorial-2" class="slide level2" data-transition="slide-in fade-out">
+<h2>&gt;&gt;&gt; from metaflow import tutorial</h2>
+<div class="columns" style="display: block; margin-top: 0px;">
+<div class="column centered" style="width:40%;">
+<div class="cell" data-reveal="true" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class=""><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart TD
+    A[start] --&gt; B1(fitA)
+    A[start] --&gt; B2(fitB)
+    B1 --&gt; C[eval]
+    B2 --&gt; C[eval]
+    C --&gt; D[end]
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:60%;">
+<div class="sourceCode" id="cb7" style="font-size:24px;" data-code-line-numbers=""><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb7-1"><a href=""></a><span class="kw">class</span> ModelingFlow(FlowSpec):</span>
+<span id="cb7-2"><a href=""></a></span>
+<span id="cb7-3"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb7-4"><a href=""></a>    <span class="kw">def</span> start(<span class="va">self</span>):</span>
+<span id="cb7-5"><a href=""></a>        <span class="va">self</span>.data <span class="op">=</span> load_data()</span>
+<span id="cb7-6"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.fitA, <span class="va">self</span>.fitB)</span>
+<span id="cb7-7"><a href=""></a></span>
+<span id="cb7-8"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb7-9"><a href=""></a>    <span class="kw">def</span> fitA(<span class="va">self</span>):</span>
+<span id="cb7-10"><a href=""></a>        <span class="va">self</span>.model <span class="op">=</span> fit(<span class="va">self</span>.data, model<span class="op">=</span><span class="st">'A'</span>)</span>
+<span id="cb7-11"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.<span class="bu">eval</span>)</span>
+<span id="cb7-12"><a href=""></a></span>
+<span id="cb7-13"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb7-14"><a href=""></a>    <span class="kw">def</span> fitB(<span class="va">self</span>):</span>
+<span id="cb7-15"><a href=""></a>        <span class="va">self</span>.model <span class="op">=</span> fit(<span class="va">self</span>.data, model<span class="op">=</span><span class="st">'B'</span>)</span>
+<span id="cb7-16"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.<span class="bu">eval</span>)</span>
+<span id="cb7-17"><a href=""></a></span>
+<span id="cb7-18"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb7-19"><a href=""></a>    <span class="kw">def</span> <span class="bu">eval</span>(<span class="va">self</span>, inputs):</span>
+<span id="cb7-20"><a href=""></a>        <span class="va">self</span>.best <span class="op">=</span> <span class="bu">max</span>((i.model.score, i.model)</span>
+<span id="cb7-21"><a href=""></a>                        <span class="cf">for</span> i <span class="kw">in</span> inputs)[<span class="dv">1</span>]</span>
+<span id="cb7-22"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.end)</span>
+<span id="cb7-23"><a href=""></a></span>
+<span id="cb7-24"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb7-25"><a href=""></a>    <span class="kw">def</span> end(<span class="va">self</span>):</span>
+<span id="cb7-26"><a href=""></a>        <span class="bu">print</span>(<span class="st">'done!'</span>)</span></code></pre></div>
 </div></div>
 <aside class="notes">
 <p>By design, Metaflow is a deceptively simple Python library</p>

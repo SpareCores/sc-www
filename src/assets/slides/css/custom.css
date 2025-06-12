@@ -1,3 +1,9 @@
+/* 
+primary: #34d399
+standard background: #082f49
+darker background: #06263a
+*/
+
 body {
     background-image: url("../images/sc-square-dark-300x300.jpg");
     background-size: auto 125px;
@@ -313,4 +319,3 @@ p.centered {
   text-decoration: underline;
   color: white;
 }
-
