@@ -269,13 +269,13 @@ Accepted into the NVIDIA Inception Program
 Beneficiary of cloud credits from 5 vendors (overall ~$100k)
 </li>
 <li class="fragment" data-fragment-index="5">
-10 conference talk in 5 countries (e.g.&nbsp;Berlin Buzzwords, KCD)
+10 conference talks in 5 countries (e.g.&nbsp;Berlin Buzzwords, KCD)
 </li>
 <li class="fragment" data-fragment-index="6">
 Featured by The Pragmatic Engineer in Oct 2024
 </li>
 <li class="fragment" data-fragment-index="7">
-Jeff Barr (Chief Evangelist at AWS) said:
+Jeff Barr (Chief Evangelist at AWS) on our Reddit post:
 </li>
 </ul>
 <blockquote class="fragment" data-fragment-index="7" style="margin-left: 40px;">
@@ -729,7 +729,7 @@ scalable
 </section>
 <section id="from-metaflow-import-tutorial" class="slide level2" data-transition="slide-in fade-out">
 <h2>&gt;&gt;&gt; from metaflow import tutorial</h2>
-<div class="sourceCode" id="cb2" style="font-size:32px;" data-code-line-numbers="|1|19|3|5,10,15|4,9,14|7,12|6,11,16"><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb2-1"><a href=""></a><span class="im">from</span> metaflow <span class="im">import</span> FlowSpec, step</span>
+<div class="sourceCode" id="cb2" style="font-size:32px;margin-top: 40px !important; height: 515px;" data-code-line-numbers="|1|19|3|5,10,15|4,9,14|7,12|6,11,16"><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb2-1"><a href=""></a><span class="im">from</span> metaflow <span class="im">import</span> FlowSpec, step</span>
 <span id="cb2-2"><a href=""></a></span>
 <span id="cb2-3"><a href=""></a><span class="kw">class</span> HelloFlow(FlowSpec):</span>
 <span id="cb2-4"><a href=""></a>    <span class="at">@step</span></span>
@@ -823,7 +823,7 @@ scalable
 <img src="images/robot-dice.jpeg" style="border-radius: 25px; box-shadow: #06263a 20px 19px 25px 25px;" class="r-stretch"></section>
 <section id="from-metaflow-import-dices" class="slide level2" data-transition="slide-in fade-out">
 <h2>&gt;&gt;&gt; from metaflow import dices</h2>
-<div class="columns" style="display: block; margin-top: 40px;">
+<div class="columns" style="display: block; margin-top: 20px;">
 <div class="column centered vcenter" style="width: 30%; visibility: hidden;">
 <div class="cell" data-reveal="true" data-layout-align="default">
 <div class="cell-output-display">
@@ -840,29 +840,30 @@ scalable
 </div>
 </div>
 </div><div class="column vcenter" style="width:70%;">
-<div class="sourceCode" id="cb4" style="font-size:24px;" data-code-line-numbers="4,9-10,15|8,14,19|9-10,15"><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb4-1"><a href=""></a><span class="im">from</span> random <span class="im">import</span> sample, randint</span>
+<div class="sourceCode" id="cb4" style="font-size:24px;" data-code-line-numbers="4-5,10-11,16|9,15,20|10-11,16"><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb4-1"><a href=""></a><span class="im">from</span> random <span class="im">import</span> sample, randint</span>
 <span id="cb4-2"><a href=""></a><span class="im">from</span> metaflow <span class="im">import</span> FlowSpec, step</span>
 <span id="cb4-3"><a href=""></a></span>
-<span id="cb4-4"><a href=""></a>DICES <span class="op">=</span> [<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">6</span>, <span class="dv">8</span>, <span class="dv">10</span>, <span class="dv">100</span>]</span>
-<span id="cb4-5"><a href=""></a></span>
-<span id="cb4-6"><a href=""></a><span class="kw">class</span> DiceRollFlow(FlowSpec):</span>
-<span id="cb4-7"><a href=""></a>    <span class="at">@step</span></span>
-<span id="cb4-8"><a href=""></a>    <span class="kw">def</span> start(<span class="va">self</span>):</span>
-<span id="cb4-9"><a href=""></a>        <span class="va">self</span>.dice <span class="op">=</span> sample(DICES, <span class="dv">1</span>)[<span class="dv">0</span>]</span>
-<span id="cb4-10"><a href=""></a>        <span class="va">self</span>.rolls <span class="op">=</span> sample(<span class="bu">range</span>(<span class="dv">3</span>), <span class="dv">1</span>)[<span class="dv">0</span>] <span class="op">+</span> <span class="dv">1</span></span>
-<span id="cb4-11"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.roll)</span>
-<span id="cb4-12"><a href=""></a></span>
-<span id="cb4-13"><a href=""></a>    <span class="at">@step</span></span>
-<span id="cb4-14"><a href=""></a>    <span class="kw">def</span> roll(<span class="va">self</span>):</span>
-<span id="cb4-15"><a href=""></a>        <span class="va">self</span>.dices <span class="op">=</span> [randint(<span class="dv">1</span>, <span class="va">self</span>.dice) <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>.rolls)]</span>
-<span id="cb4-16"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.end)</span>
-<span id="cb4-17"><a href=""></a></span>
-<span id="cb4-18"><a href=""></a>    <span class="at">@step</span></span>
-<span id="cb4-19"><a href=""></a>    <span class="kw">def</span> end(<span class="va">self</span>):</span>
-<span id="cb4-20"><a href=""></a>        <span class="bu">print</span>(<span class="ss">f"Rolled </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>rolls<span class="sc">}</span><span class="ss"> times with a </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>dice<span class="sc">}</span><span class="ss"> sided dice: </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>dices<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb4-21"><a href=""></a></span>
-<span id="cb4-22"><a href=""></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">"__main__"</span>:</span>
-<span id="cb4-23"><a href=""></a>    DiceRollFlow()</span></code></pre></div>
+<span id="cb4-4"><a href=""></a><span class="co"># D3, D4, D6, D8, D10, D12, ...</span></span>
+<span id="cb4-5"><a href=""></a>DICES <span class="op">=</span> [<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">6</span>, <span class="dv">8</span>, <span class="dv">10</span>, <span class="dv">12</span>, <span class="dv">100</span>]</span>
+<span id="cb4-6"><a href=""></a></span>
+<span id="cb4-7"><a href=""></a><span class="kw">class</span> DiceRollFlow(FlowSpec):</span>
+<span id="cb4-8"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb4-9"><a href=""></a>    <span class="kw">def</span> start(<span class="va">self</span>):</span>
+<span id="cb4-10"><a href=""></a>        <span class="va">self</span>.dice <span class="op">=</span> sample(DICES, <span class="dv">1</span>)[<span class="dv">0</span>]</span>
+<span id="cb4-11"><a href=""></a>        <span class="va">self</span>.rolls <span class="op">=</span> sample(<span class="bu">range</span>(<span class="dv">3</span>), <span class="dv">1</span>)[<span class="dv">0</span>] <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb4-12"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.roll)</span>
+<span id="cb4-13"><a href=""></a></span>
+<span id="cb4-14"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb4-15"><a href=""></a>    <span class="kw">def</span> roll(<span class="va">self</span>):</span>
+<span id="cb4-16"><a href=""></a>        <span class="va">self</span>.dices <span class="op">=</span> [randint(<span class="dv">1</span>, <span class="va">self</span>.dice) <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>.rolls)]</span>
+<span id="cb4-17"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.end)</span>
+<span id="cb4-18"><a href=""></a></span>
+<span id="cb4-19"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb4-20"><a href=""></a>    <span class="kw">def</span> end(<span class="va">self</span>):</span>
+<span id="cb4-21"><a href=""></a>        <span class="bu">print</span>(<span class="ss">f"Rolled </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>rolls<span class="sc">}</span><span class="ss"> times with a </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>dice<span class="sc">}</span><span class="ss"> sided dice: </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>dices<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb4-22"><a href=""></a></span>
+<span id="cb4-23"><a href=""></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">"__main__"</span>:</span>
+<span id="cb4-24"><a href=""></a>    DiceRollFlow()</span></code></pre></div>
 </div></div>
 <aside class="notes">
 <p>By design, Metaflow is a deceptively simple Python library</p>
@@ -881,7 +882,7 @@ scalable
 </section>
 <section id="from-metaflow-import-dices-1" class="slide level2" data-transition="fade-in slide-out">
 <h2>&gt;&gt;&gt; from metaflow import dices</h2>
-<div class="columns" style="display: block; margin-top: 40px;">
+<div class="columns" style="display: block; margin-top: 20px;">
 <div class="column centered vcenter" style="width:30%;">
 <div class="cell" data-reveal="true" data-layout-align="default">
 <div class="cell-output-display">
@@ -898,29 +899,30 @@ scalable
 </div>
 </div>
 </div><div class="column vcenter" style="width:70%;">
-<div class="sourceCode" id="cb5" style="font-size:24px;" data-code-line-numbers="9-10,15"><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb5-1"><a href=""></a><span class="im">from</span> random <span class="im">import</span> sample, randint</span>
+<div class="sourceCode" id="cb5" style="font-size:24px;" data-code-line-numbers="10-11,16"><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb5-1"><a href=""></a><span class="im">from</span> random <span class="im">import</span> sample, randint</span>
 <span id="cb5-2"><a href=""></a><span class="im">from</span> metaflow <span class="im">import</span> FlowSpec, step</span>
 <span id="cb5-3"><a href=""></a></span>
-<span id="cb5-4"><a href=""></a>DICES <span class="op">=</span> [<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">6</span>, <span class="dv">8</span>, <span class="dv">10</span>, <span class="dv">100</span>]</span>
-<span id="cb5-5"><a href=""></a></span>
-<span id="cb5-6"><a href=""></a><span class="kw">class</span> DiceRollFlow(FlowSpec):</span>
-<span id="cb5-7"><a href=""></a>    <span class="at">@step</span></span>
-<span id="cb5-8"><a href=""></a>    <span class="kw">def</span> start(<span class="va">self</span>):</span>
-<span id="cb5-9"><a href=""></a>        <span class="va">self</span>.dice <span class="op">=</span> sample(DICES, <span class="dv">1</span>)[<span class="dv">0</span>]</span>
-<span id="cb5-10"><a href=""></a>        <span class="va">self</span>.rolls <span class="op">=</span> sample(<span class="bu">range</span>(<span class="dv">3</span>), <span class="dv">1</span>)[<span class="dv">0</span>] <span class="op">+</span> <span class="dv">1</span></span>
-<span id="cb5-11"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.roll)</span>
-<span id="cb5-12"><a href=""></a></span>
-<span id="cb5-13"><a href=""></a>    <span class="at">@step</span></span>
-<span id="cb5-14"><a href=""></a>    <span class="kw">def</span> roll(<span class="va">self</span>):</span>
-<span id="cb5-15"><a href=""></a>        <span class="va">self</span>.dices <span class="op">=</span> [randint(<span class="dv">1</span>, <span class="va">self</span>.dice) <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>.rolls)]</span>
-<span id="cb5-16"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.end)</span>
-<span id="cb5-17"><a href=""></a></span>
-<span id="cb5-18"><a href=""></a>    <span class="at">@step</span></span>
-<span id="cb5-19"><a href=""></a>    <span class="kw">def</span> end(<span class="va">self</span>):</span>
-<span id="cb5-20"><a href=""></a>        <span class="bu">print</span>(<span class="ss">f"Rolled </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>rolls<span class="sc">}</span><span class="ss"> times with a </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>dice<span class="sc">}</span><span class="ss"> sided dice: </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>dices<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb5-21"><a href=""></a></span>
-<span id="cb5-22"><a href=""></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">"__main__"</span>:</span>
-<span id="cb5-23"><a href=""></a>    DiceRollFlow()</span></code></pre></div>
+<span id="cb5-4"><a href=""></a><span class="co"># D3, D4, D6, D8, D10, D12, ...</span></span>
+<span id="cb5-5"><a href=""></a>DICES <span class="op">=</span> [<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">6</span>, <span class="dv">8</span>, <span class="dv">10</span>, <span class="dv">12</span>, <span class="dv">100</span>]</span>
+<span id="cb5-6"><a href=""></a></span>
+<span id="cb5-7"><a href=""></a><span class="kw">class</span> DiceRollFlow(FlowSpec):</span>
+<span id="cb5-8"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb5-9"><a href=""></a>    <span class="kw">def</span> start(<span class="va">self</span>):</span>
+<span id="cb5-10"><a href=""></a>        <span class="va">self</span>.dice <span class="op">=</span> sample(DICES, <span class="dv">1</span>)[<span class="dv">0</span>]</span>
+<span id="cb5-11"><a href=""></a>        <span class="va">self</span>.rolls <span class="op">=</span> sample(<span class="bu">range</span>(<span class="dv">3</span>), <span class="dv">1</span>)[<span class="dv">0</span>] <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb5-12"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.roll)</span>
+<span id="cb5-13"><a href=""></a></span>
+<span id="cb5-14"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb5-15"><a href=""></a>    <span class="kw">def</span> roll(<span class="va">self</span>):</span>
+<span id="cb5-16"><a href=""></a>        <span class="va">self</span>.dices <span class="op">=</span> [randint(<span class="dv">1</span>, <span class="va">self</span>.dice) <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>.rolls)]</span>
+<span id="cb5-17"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.end)</span>
+<span id="cb5-18"><a href=""></a></span>
+<span id="cb5-19"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb5-20"><a href=""></a>    <span class="kw">def</span> end(<span class="va">self</span>):</span>
+<span id="cb5-21"><a href=""></a>        <span class="bu">print</span>(<span class="ss">f"Rolled </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>rolls<span class="sc">}</span><span class="ss"> times with a </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>dice<span class="sc">}</span><span class="ss"> sided dice: </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>dices<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb5-22"><a href=""></a></span>
+<span id="cb5-23"><a href=""></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">"__main__"</span>:</span>
+<span id="cb5-24"><a href=""></a>    DiceRollFlow()</span></code></pre></div>
 </div></div>
 <aside class="notes">
 <p>By design, Metaflow is a deceptively simple Python library</p>
@@ -975,10 +977,10 @@ scalable
 <span id="cb6-17"><a href=""></a><span class="op">&gt;&gt;&gt;</span> step.task.artifacts.dices.data</span>
 <span id="cb6-18"><a href=""></a>[<span class="dv">5</span>, <span class="dv">2</span>, <span class="dv">2</span>]</span></code></pre></div>
 </section>
-<section id="from-metaflow-import-tutorial-2" class="slide level2" data-transition="slide-in fade-out">
-<h2>&gt;&gt;&gt; from metaflow import tutorial</h2>
-<div class="columns" style="display: block; margin-top: 0px;">
-<div class="column centered" style="width:40%;">
+<section id="from-metaflow-import-more" class="slide level2" data-transition="slide-in fade-out">
+<h2>&gt;&gt;&gt; from metaflow import more</h2>
+<div class="columns" style="display: block; margin-top: 20px;">
+<div class="column centered vcenter" style="width:30%;">
 <div class="cell" data-reveal="true" data-layout-align="default">
 <div class="cell-output-display">
 <div>
@@ -996,8 +998,8 @@ scalable
 </div>
 </div>
 </div>
-</div><div class="column" style="width:60%;">
-<div class="sourceCode" id="cb7" style="font-size:24px;" data-code-line-numbers=""><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb7-1"><a href=""></a><span class="kw">class</span> ModelingFlow(FlowSpec):</span>
+</div><div class="column vcenter" style="width:70%;">
+<div class="sourceCode" id="cb7" style="font-size:24px; height: 525px; margin-top: 40px !important;" data-code-line-numbers="6,11,16,19-21"><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb7-1"><a href=""></a><span class="kw">class</span> ModelingFlow(FlowSpec):</span>
 <span id="cb7-2"><a href=""></a></span>
 <span id="cb7-3"><a href=""></a>    <span class="at">@step</span></span>
 <span id="cb7-4"><a href=""></a>    <span class="kw">def</span> start(<span class="va">self</span>):</span>

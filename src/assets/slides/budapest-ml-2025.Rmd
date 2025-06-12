@@ -81,9 +81,9 @@ TODO
   </ul>
   <li class="fragment" data-fragment-index=3>Accepted into the NVIDIA Inception Program</li>
   <li class="fragment" data-fragment-index=4>Beneficiary of cloud credits from 5 vendors (overall ~$100k)</li>
-  <li class="fragment" data-fragment-index=5>10 conference talk in 5 countries (e.g. Berlin Buzzwords, KCD)</li>
+  <li class="fragment" data-fragment-index=5>10 conference talks in 5 countries (e.g. Berlin Buzzwords, KCD)</li>
   <li class="fragment" data-fragment-index=6>Featured by The Pragmatic Engineer in Oct 2024</li>
-  <li class="fragment" data-fragment-index=7>Jeff Barr (Chief Evangelist at AWS) said:</li>
+  <li class="fragment" data-fragment-index=7>Jeff Barr (Chief Evangelist at AWS) on our Reddit post:</li>
 </ul>
 
 <blockquote class="fragment" data-fragment-index=7 style="margin-left: 40px;">
@@ -352,7 +352,7 @@ TODO
 
 ## >>> from metaflow import tutorial {transition="slide-in fade-out"}
 
-```python {code-line-numbers="|1|19|3|5,10,15|4,9,14|7,12|6,11,16" style="font-size:32px;" }
+```python {code-line-numbers="|1|19|3|5,10,15|4,9,14|7,12|6,11,16" style="font-size:32px;margin-top: 40px !important; height: 515px;" }
 from metaflow import FlowSpec, step
 
 class HelloFlow(FlowSpec):
@@ -434,7 +434,7 @@ DAG
 
 ## >>> from metaflow import dices {transition="slide-in fade-out"}
 
-:::: {.columns style="display: block; margin-top: 40px;"}
+:::: {.columns style="display: block; margin-top: 20px;"}
 
 ::: {.column .centered .vcenter style="width: 30%; visibility: hidden;"}
 
@@ -448,11 +448,12 @@ flowchart TD
 
 ::: {.column .vcenter width="70%" }
 
-```python {code-line-numbers="4,9-10,15|8,14,19|9-10,15" style="font-size:24px;" }
+```python {code-line-numbers="4-5,10-11,16|9,15,20|10-11,16" style="font-size:24px;" }
 from random import sample, randint
 from metaflow import FlowSpec, step
 
-DICES = [3, 4, 6, 8, 10, 100]
+# D3, D4, D6, D8, D10, D12, ...
+DICES = [3, 4, 6, 8, 10, 12, 100]
 
 class DiceRollFlow(FlowSpec):
     @step
@@ -486,7 +487,7 @@ DAG
 
 ## >>> from metaflow import dices {transition="fade-in slide-out"}
 
-:::: {.columns style="display: block; margin-top: 40px;"}
+:::: {.columns style="display: block; margin-top: 20px;"}
 
 ::: {.column .centered .vcenter width="30%" }
 
@@ -500,11 +501,12 @@ flowchart TD
 
 ::: {.column .vcenter width="70%" }
 
-```python {code-line-numbers="9-10,15" style="font-size:24px;" }
+```python {code-line-numbers="10-11,16" style="font-size:24px;" }
 from random import sample, randint
 from metaflow import FlowSpec, step
 
-DICES = [3, 4, 6, 8, 10, 100]
+# D3, D4, D6, D8, D10, D12, ...
+DICES = [3, 4, 6, 8, 10, 12, 100]
 
 class DiceRollFlow(FlowSpec):
     @step
@@ -570,11 +572,11 @@ datetime.datetime(2025, 6, 12, 23, 10, 2, 891000)
 [5, 2, 2]
 ```
 
-## >>> from metaflow import tutorial {transition="slide-in fade-out"}
+## >>> from metaflow import more {transition="slide-in fade-out"}
 
-:::: {.columns style="display: block; margin-top: 0px;"}
+:::: {.columns style="display: block; margin-top: 20px;"}
 
-::: {.column .centered width="40%" }
+::: {.column .centered .vcenter width="30%" }
 
 ```{mermaid}
 flowchart TD
@@ -587,9 +589,9 @@ flowchart TD
 
 :::
 
-::: {.column width="60%" }
+::: {.column .vcenter width="70%" }
 
-```python {code-line-numbers="" style="font-size:24px;" }
+```python {code-line-numbers="6,11,16,19-21" style="font-size:24px; height: 525px; margin-top: 40px !important;" }
 class ModelingFlow(FlowSpec):
 
     @step
