@@ -26,7 +26,7 @@ format:
     hash-type: title
     code-copy: false
     code-line-numbers: false
-    highlight-style: gruvbox
+    highlight-style: arrow-dark
   gfm:
     mermaid-format: svg
     theme: neutral
@@ -331,7 +331,7 @@ and SDKs as well, e.g. querying the details of this instance type: SCROLL throug
 As mentioned previously, this is made available via multiple components that I'd like to walk through in the next slides.
 :::
 
-# >>> from sparecores import <img style="height: 46px; padding: 0px; margin: 0px; vertical-align: middle; filter: brightness(0) saturate(100%) invert(47%) sepia(7%) saturate(3650%) hue-rotate(107deg) brightness(146%) contrast(95%);" src="images/metaflow.svg" /> {#metaflow transition="convex-in slide-out"}
+# >>> import <img class="h1-inline-img sc-recolor" src="images/metaflow.svg" /> {#metaflow transition="convex-in slide-out"}
 
 <p class="fragment">
   A framework for real-life ML, AI, and data science.
@@ -339,10 +339,10 @@ As mentioned previously, this is made available via multiple components that I'd
 
 <ul>
   <li class="fragment">started at Netflix</li>
+  <li class="fragment">open-source (since 2019)</li>
   <li class="fragment"><b>human-centric</b></li>
   <li class="fragment">reproducible</li>
   <li class="fragment">scalable</li>
-  <li class="fragment">open-source (since 2019)</li>
   <li class="fragment">supported by Netflix and Outerbounds</li>
 </ul>
 
@@ -350,7 +350,7 @@ As mentioned previously, this is made available via multiple components that I'd
 TODO
 :::
 
-## >>> import metaflow
+## >>> from metaflow import tutorial
 
 :::: {.columns}
 
@@ -393,18 +393,15 @@ if __name__ == "__main__":
 ::::
 
 ::: {.notes}
-https://netflixtechblog.com/open-sourcing-metaflow-a-human-centric-framework-for-data-science-fa72e04a5d9
-By design, Metaflow is a deceptively simple Python library:
+By design, Metaflow is a deceptively simple Python library
 
 DAG
 :::
 
-</section></section>
 
-<section id="future" class="titleslide slide level1">
-  <h2>&#62;&#62;&#62; import \_\_future\_\_</h2>
+# >>> import \_\_future\_\_ {#future transition="convex-in convex-out"}
 
-<ul style="margin-top: -20px;">
+<ul>
   <li class="fragment">Add support for more vendors</li>
   <ul>
     <li class="fragment">Crawler (vendor API integration)</li>
@@ -416,15 +413,11 @@ DAG
   <li class="fragment">SaaS 👀</li>
 </ul>
 
-<aside class="notes">
+::: {.notes}
 TODO
-</aside>
+:::
 
-</section>
-
-<section>
-<section id="team" class="titleslide slide level1" data-transition="slide-in none-out">
-  <h2>&#62;&#62;&#62; from sparecores import team</h2>
+# >>> from sparecores import team {#team transition="convex-in none-out"}
 
 ::: {.colcontainer .mt-60 .centered}
 :::: {.col}
@@ -441,11 +434,11 @@ TODO
 ::::
 :::
 
-<aside class="notes">
+::: {.notes}
 TODO
-</aside>
+:::
 
-## >>> from sparecores import team  {data-transition="none-in slide-out" id="team-annotations"}
+## >>> from sparecores import team  {data-transition="none-in convex-out" id="team-annotations"}
 
 ::: {.colcontainer .mt-60 .centered}
 :::: {.col}
@@ -465,54 +458,35 @@ TODO
 ::::
 :::
 
-<aside class="notes">
+::: {.notes}
 TODO
-</aside>
-
-</section></section>
-
-<section>
-<section id="bye" class="titleslide slide level1" data-transition="slide-in none-out">
-    <!-- https://carbon.now.sh/?bg=rgba%288%2C47%2C73%2C1%29&t=nord&wt=none&l=r&width=680&ds=false&dsyoff=20px&dsblur=68px&wc=true&wa=true&pv=56px&ph=56px&ln=false&fl=1&fm=Hack&fs=18px&lh=161%25&si=false&es=2x&wm=false&code=%253E%2520q%28save%2520%253D%2520%27ask%27%29%250AProcess%2520finished%2520at%2520June%252012%252009%253A50%253A00%25202024%2520%250A%250A%253E%2520visit%28%27https%253A%252F%252Fsparecores.com%27%29%250A%253E%2520email%28%27daroczig%2540sparecores.com%27%29%250A%253E%2520follow%28%27%2540SpareCores%27%29 -->
-    <!-- https://carbon.now.sh/?bg=rgba%288%2C47%2C73%2C1%29&t=nord&wt=none&l=python&width=680&ds=false&dsyoff=20px&dsblur=68px&wc=true&wa=true&pv=5px&ph=5px&ln=false&fl=1&fm=Hack&fs=18px&lh=161%25&si=false&es=2x&wm=false&code=%253E%253E%253E%2520import%2520os%250A%253E%253E%253E%2520import%2520signal%250A%253E%253E%253E%2520os.kill%28os.getpid%28%29%252C%2520signal.SIGKILL%29%2520%2520%250A%250A%253E%253E%253E%2520visit%28%27https%253A%252F%252Fsparecores.com%27%29%250A%253E%253E%253E%2520email%28%27daroczig%2540sparecores.com%27%29%250A%253E%253E%253E%2520follow%28%27%2540SpareCores%27%29%250A%250A%253E%253E%253E%2520os._exit%28status%253D0%29%250AProcess%2520finished%2520at%2520June%252012%252009%253A50%253A00%25202024%2520 -->
-    <!-- https://carbon.now.sh/?bg=rgba%288%2C47%2C73%2C1%29&t=theme%3A0bcewbfyk9yl&wt=none&l=python&width=680&ds=false&dsyoff=20px&dsblur=68px&wc=true&wa=true&pv=5px&ph=5px&ln=false&fl=1&fm=Hack&fs=18px&lh=161%25&si=false&es=2x&wm=false&code=%253E%253E%253E%2520import%2520os%250A%253E%253E%253E%2520import%2520signal%250A%253E%253E%253E%2520os.kill%28os.getpid%28%29%252C%2520signal.SIGKILL%29%2520%2520%250A%250A%253E%253E%253E%2520visit%28%27https%253A%252F%252Fsparecores.com%27%29%250A%253E%253E%253E%2520email%28%27daroczig%2540sparecores.com%27%29%250A%253E%253E%253E%2520follow%28%27%2540SpareCores%27%29%250A%250A%253E%253E%253E%2520os._exit%28status%253D0%29%250AProcess%2520finished%2520at%2520June%252012%252009%253A50%253A00%25202024%2520 -->
-
-::: {.centered}
-<img src="images/bye-1.png" style="background: none;" class="mt--60 w-75" />
 :::
 
-<aside class="notes">
-TODO
-</aside>
+# {#bye transition="convex-in none-out"}
 
-</section>
-
-<section id="bye-bye" data-transition="none">
+<!-- https://carbon.now.sh/?bg=rgba%288%2C47%2C73%2C1%29&t=nord&wt=none&l=r&width=680&ds=false&dsyoff=20px&dsblur=68px&wc=true&wa=true&pv=56px&ph=56px&ln=false&fl=1&fm=Hack&fs=18px&lh=161%25&si=false&es=2x&wm=false&code=%253E%2520q%28save%2520%253D%2520%27ask%27%29%250AProcess%2520finished%2520at%2520June%252012%252009%253A50%253A00%25202024%2520%250A%250A%253E%2520visit%28%27https%253A%252F%252Fsparecores.com%27%29%250A%253E%2520email%28%27daroczig%2540sparecores.com%27%29%250A%253E%2520follow%28%27%2540SpareCores%27%29 -->
+<!-- https://carbon.now.sh/?bg=rgba%288%2C47%2C73%2C1%29&t=nord&wt=none&l=python&width=680&ds=false&dsyoff=20px&dsblur=68px&wc=true&wa=true&pv=5px&ph=5px&ln=false&fl=1&fm=Hack&fs=18px&lh=161%25&si=false&es=2x&wm=false&code=%253E%253E%253E%2520import%2520os%250A%253E%253E%253E%2520import%2520signal%250A%253E%253E%253E%2520os.kill%28os.getpid%28%29%252C%2520signal.SIGKILL%29%2520%2520%250A%250A%253E%253E%253E%2520visit%28%27https%253A%252F%252Fsparecores.com%27%29%250A%253E%253E%253E%2520email%28%27daroczig%2540sparecores.com%27%29%250A%253E%253E%253E%2520follow%28%27%2540SpareCores%27%29%250A%250A%253E%253E%253E%2520os._exit%28status%253D0%29%250AProcess%2520finished%2520at%2520June%252012%252009%253A50%253A00%25202024%2520 -->
+<!-- https://carbon.now.sh/?bg=rgba%288%2C47%2C73%2C1%29&t=theme%3A0bcewbfyk9yl&wt=none&l=python&width=680&ds=false&dsyoff=20px&dsblur=68px&wc=true&wa=true&pv=5px&ph=5px&ln=false&fl=1&fm=Hack&fs=18px&lh=161%25&si=false&es=2x&wm=false&code=%253E%253E%253E%2520import%2520os%250A%253E%253E%253E%2520import%2520signal%250A%253E%253E%253E%2520os.kill%28os.getpid%28%29%252C%2520signal.SIGKILL%29%2520%2520%250A%250A%253E%253E%253E%2520visit%28%27https%253A%252F%252Fsparecores.com%27%29%250A%253E%253E%253E%2520email%28%27daroczig%2540sparecores.com%27%29%250A%253E%253E%253E%2520follow%28%27%2540SpareCores%27%29%250A%250A%253E%253E%253E%2520os._exit%28status%253D0%29%250AProcess%2520finished%2520at%2520June%252012%252009%253A50%253A00%25202024%2520 -->
 
 ::: {.centered}
-<img src="images/bye-2.png" style="background: none;" class="mt--60 w-75" />
+<img src="images/bye-1.png" style="background: none;" class="mt--60 w-80" />
 :::
 
-<aside class="notes">
-TODO
-</aside>
-
-</section>
-<section id="bye-bye-bye" data-transition="none">
+## {#bye-bye transition="none"}
 
 ::: {.centered}
-<img src="images/bye-3-budapest-ml-2024.png" style="background: none;" class="mt--60 w-75" />
+<img src="images/bye-2.png" style="background: none;" class="mt--60 w-80" />
 :::
 
-<p class="author offlineMode" style="color:#eee;font-size:0.75em;text-align: center !important; margin-top:-40px; padding-top:0px;">
+## {#bye-bye-bye transition="none"}
+
+::: {.centered}
+<img src="images/bye-3-budapest-ml-2024.png" style="background: none;" class="mt--60 w-80" />
+:::
+
+<p class="author offlineMode" style="color:#eee;font-size:0.75em;text-align: center !important; margin-top:-30px; padding-top:0px;">
   Slides: <a href="https://sparecores.com/talks" target="_blank">sparecores.com/talks</a>
 </p>
-
-<aside class="notes">
-TODO
-</aside>
-
-</section>
 
 <!--toggle visibility of items in live mode-->
 <script>

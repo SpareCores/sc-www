@@ -111,6 +111,12 @@ img.rounded {
 .w-75 {
   width: 75%;
 }
+.w-80 {
+  width: 80%;
+}
+.w-90 {
+  width: 90%;
+}
 p.bold {
   font-weight: bold;
 }
@@ -394,4 +400,14 @@ code span.dv, code span.fl {
 .reveal a {
   text-decoration: underline;
   color: white;
+}
+
+.sc-recolor {
+  filter: brightness(0) saturate(100%) invert(47%) sepia(7%) saturate(3650%) hue-rotate(107deg) brightness(146%) contrast(95%);
+}
+.h1-inline-img {
+  height: 46px;
+  padding: 0px;
+  margin: 0px !important;
+  vertical-align: middle;
 }
