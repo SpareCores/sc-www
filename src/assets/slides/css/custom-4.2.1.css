@@ -28,8 +28,8 @@ body.speakerview {
 
 .reveal.has-logo .slide-number {
     top: auto !important;
-    bottom: 45px !important;
-    right: 57px !important;
+    bottom: 48px !important;
+    right: 62px !important;
     transform: translate(50%, 0) !important;
     background-color: transparent !important;
 }
