@@ -334,16 +334,17 @@ As mentioned previously, this is made available via multiple components that I'd
 # >>> import <img class="h1-inline-img sc-recolor" src="images/metaflow.svg" /> {#metaflow transition="convex-in slide-out"}
 
 <p class="fragment">
-  A framework for real-life ML, AI, and data science.
+  Workflow orchestration for real-life ML, AI, and DS projects.
 </p>
 
 <ul>
   <li class="fragment">started at Netflix</li>
   <li class="fragment">open-source (since 2019)</li>
-  <li class="fragment">supported by Netflix and Outerbounds</li>
+  <li class="fragment">maintained by Netflix and Outerbounds</li>
   <li class="fragment">human-centric</li>
-  <li class="fragment">reproducible</li>
+  <li class="fragment">reproducible by design</li>
   <li class="fragment">scalable</li>
+  <li class="fragment">supports Python and R</li>
 </ul>
 
 ::: {.notes}
