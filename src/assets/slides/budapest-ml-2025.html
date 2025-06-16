@@ -95,7 +95,7 @@
     code span.vs { color: #abe338; } /* VerbatimString */
     code span.wa { color: #dcc6e0; } /* Warning */
   </style>
-  <link rel="stylesheet" href="budapest-ml-2025_files/libs/revealjs/dist/theme/quarto-00df2dce03027001efa3d46fdb75f5fd.css">
+  <link rel="stylesheet" href="budapest-ml-2025_files/libs/revealjs/dist/theme/quarto-3c2f4b8d85af8c8b1efe27d3b59187bd.css">
   <link href="budapest-ml-2025_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="budapest-ml-2025_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="budapest-ml-2025_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -729,7 +729,7 @@ scalable
 </section>
 <section id="from-metaflow-import-tutorial" class="slide level2" data-transition="slide-in fade-out">
 <h2>&gt;&gt;&gt; from metaflow import tutorial</h2>
-<div class="sourceCode" id="cb2" style="font-size:32px;margin-top: 40px !important; height: 515px;" data-code-line-numbers="|1|19|3|5,10,15|4,9,14|7,12|6,11,16"><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb2-1"><a href=""></a><span class="im">from</span> metaflow <span class="im">import</span> FlowSpec, step</span>
+<div class="sourceCode" id="cb2" style="font-size:32px;margin-top: 40px !important; height: 515px;" data-code-line-numbers="|1|3|5,10,15|4,9,14|7,12|6,11,16|19"><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb2-1"><a href=""></a><span class="im">from</span> metaflow <span class="im">import</span> FlowSpec, step</span>
 <span id="cb2-2"><a href=""></a></span>
 <span id="cb2-3"><a href=""></a><span class="kw">class</span> HelloFlow(FlowSpec):</span>
 <span id="cb2-4"><a href=""></a>    <span class="at">@step</span></span>
@@ -840,30 +840,31 @@ scalable
 </div>
 </div>
 </div><div class="column vcenter" style="width:70%;">
-<div class="sourceCode" id="cb4" style="font-size:24px;" data-code-line-numbers="4-5,10-11,16|9,15,20|10-11,16"><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb4-1"><a href=""></a><span class="im">from</span> random <span class="im">import</span> sample, randint</span>
+<div class="sourceCode" id="cb4" style="font-size:24px;" data-code-line-numbers="6-7|11-12,17|10,16,21|11-12,17"><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb4-1"><a href=""></a><span class="im">from</span> random <span class="im">import</span> sample, randint</span>
 <span id="cb4-2"><a href=""></a><span class="im">from</span> metaflow <span class="im">import</span> FlowSpec, step</span>
 <span id="cb4-3"><a href=""></a></span>
-<span id="cb4-4"><a href=""></a><span class="co"># D3, D4, D6, D8, D10, D12, ...</span></span>
-<span id="cb4-5"><a href=""></a>DICES <span class="op">=</span> [<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">6</span>, <span class="dv">8</span>, <span class="dv">10</span>, <span class="dv">12</span>, <span class="dv">100</span>]</span>
-<span id="cb4-6"><a href=""></a></span>
-<span id="cb4-7"><a href=""></a><span class="kw">class</span> DiceRollFlow(FlowSpec):</span>
-<span id="cb4-8"><a href=""></a>    <span class="at">@step</span></span>
-<span id="cb4-9"><a href=""></a>    <span class="kw">def</span> start(<span class="va">self</span>):</span>
-<span id="cb4-10"><a href=""></a>        <span class="va">self</span>.dice <span class="op">=</span> sample(DICES, <span class="dv">1</span>)[<span class="dv">0</span>]</span>
-<span id="cb4-11"><a href=""></a>        <span class="va">self</span>.rolls <span class="op">=</span> sample(<span class="bu">range</span>(<span class="dv">3</span>), <span class="dv">1</span>)[<span class="dv">0</span>] <span class="op">+</span> <span class="dv">1</span></span>
-<span id="cb4-12"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.roll)</span>
-<span id="cb4-13"><a href=""></a></span>
-<span id="cb4-14"><a href=""></a>    <span class="at">@step</span></span>
-<span id="cb4-15"><a href=""></a>    <span class="kw">def</span> roll(<span class="va">self</span>):</span>
-<span id="cb4-16"><a href=""></a>        <span class="va">self</span>.dices <span class="op">=</span> [randint(<span class="dv">1</span>, <span class="va">self</span>.dice) <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>.rolls)]</span>
-<span id="cb4-17"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.end)</span>
-<span id="cb4-18"><a href=""></a></span>
-<span id="cb4-19"><a href=""></a>    <span class="at">@step</span></span>
-<span id="cb4-20"><a href=""></a>    <span class="kw">def</span> end(<span class="va">self</span>):</span>
-<span id="cb4-21"><a href=""></a>        <span class="bu">print</span>(<span class="ss">f"Rolled </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>rolls<span class="sc">}</span><span class="ss"> times with a </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>dice<span class="sc">}</span><span class="ss"> sided dice: </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>dices<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb4-22"><a href=""></a></span>
-<span id="cb4-23"><a href=""></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">"__main__"</span>:</span>
-<span id="cb4-24"><a href=""></a>    DiceRollFlow()</span></code></pre></div>
+<span id="cb4-4"><a href=""></a></span>
+<span id="cb4-5"><a href=""></a><span class="kw">class</span> DiceRollFlow(FlowSpec):</span>
+<span id="cb4-6"><a href=""></a>    <span class="co"># D3, D4, D6, D8, D10, D12, ...</span></span>
+<span id="cb4-7"><a href=""></a>    DICES <span class="op">=</span> [<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">6</span>, <span class="dv">8</span>, <span class="dv">10</span>, <span class="dv">12</span>, <span class="dv">100</span>]</span>
+<span id="cb4-8"><a href=""></a></span>
+<span id="cb4-9"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb4-10"><a href=""></a>    <span class="kw">def</span> start(<span class="va">self</span>):</span>
+<span id="cb4-11"><a href=""></a>        <span class="va">self</span>.dice <span class="op">=</span> sample(<span class="va">self</span>.DICES, <span class="dv">1</span>)[<span class="dv">0</span>]</span>
+<span id="cb4-12"><a href=""></a>        <span class="va">self</span>.rolls <span class="op">=</span> sample(<span class="bu">range</span>(<span class="dv">3</span>), <span class="dv">1</span>)[<span class="dv">0</span>] <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb4-13"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.roll)</span>
+<span id="cb4-14"><a href=""></a></span>
+<span id="cb4-15"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb4-16"><a href=""></a>    <span class="kw">def</span> roll(<span class="va">self</span>):</span>
+<span id="cb4-17"><a href=""></a>        <span class="va">self</span>.dices <span class="op">=</span> [randint(<span class="dv">1</span>, <span class="va">self</span>.dice) <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>.rolls)]</span>
+<span id="cb4-18"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.end)</span>
+<span id="cb4-19"><a href=""></a></span>
+<span id="cb4-20"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb4-21"><a href=""></a>    <span class="kw">def</span> end(<span class="va">self</span>):</span>
+<span id="cb4-22"><a href=""></a>        <span class="bu">print</span>(<span class="ss">f"Rolled </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>rolls<span class="sc">}</span><span class="ss"> times with a </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>dice<span class="sc">}</span><span class="ss"> sided dice: </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>dices<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb4-23"><a href=""></a></span>
+<span id="cb4-24"><a href=""></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">"__main__"</span>:</span>
+<span id="cb4-25"><a href=""></a>    DiceRollFlow()</span></code></pre></div>
 </div></div>
 <aside class="notes">
 <p>By design, Metaflow is a deceptively simple Python library</p>
@@ -899,30 +900,31 @@ scalable
 </div>
 </div>
 </div><div class="column vcenter" style="width:70%;">
-<div class="sourceCode" id="cb5" style="font-size:24px;" data-code-line-numbers="10-11,16"><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb5-1"><a href=""></a><span class="im">from</span> random <span class="im">import</span> sample, randint</span>
+<div class="sourceCode" id="cb5" style="font-size:24px;" data-code-line-numbers="11-12,17"><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb5-1"><a href=""></a><span class="im">from</span> random <span class="im">import</span> sample, randint</span>
 <span id="cb5-2"><a href=""></a><span class="im">from</span> metaflow <span class="im">import</span> FlowSpec, step</span>
 <span id="cb5-3"><a href=""></a></span>
-<span id="cb5-4"><a href=""></a><span class="co"># D3, D4, D6, D8, D10, D12, ...</span></span>
-<span id="cb5-5"><a href=""></a>DICES <span class="op">=</span> [<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">6</span>, <span class="dv">8</span>, <span class="dv">10</span>, <span class="dv">12</span>, <span class="dv">100</span>]</span>
-<span id="cb5-6"><a href=""></a></span>
-<span id="cb5-7"><a href=""></a><span class="kw">class</span> DiceRollFlow(FlowSpec):</span>
-<span id="cb5-8"><a href=""></a>    <span class="at">@step</span></span>
-<span id="cb5-9"><a href=""></a>    <span class="kw">def</span> start(<span class="va">self</span>):</span>
-<span id="cb5-10"><a href=""></a>        <span class="va">self</span>.dice <span class="op">=</span> sample(DICES, <span class="dv">1</span>)[<span class="dv">0</span>]</span>
-<span id="cb5-11"><a href=""></a>        <span class="va">self</span>.rolls <span class="op">=</span> sample(<span class="bu">range</span>(<span class="dv">3</span>), <span class="dv">1</span>)[<span class="dv">0</span>] <span class="op">+</span> <span class="dv">1</span></span>
-<span id="cb5-12"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.roll)</span>
-<span id="cb5-13"><a href=""></a></span>
-<span id="cb5-14"><a href=""></a>    <span class="at">@step</span></span>
-<span id="cb5-15"><a href=""></a>    <span class="kw">def</span> roll(<span class="va">self</span>):</span>
-<span id="cb5-16"><a href=""></a>        <span class="va">self</span>.dices <span class="op">=</span> [randint(<span class="dv">1</span>, <span class="va">self</span>.dice) <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>.rolls)]</span>
-<span id="cb5-17"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.end)</span>
-<span id="cb5-18"><a href=""></a></span>
-<span id="cb5-19"><a href=""></a>    <span class="at">@step</span></span>
-<span id="cb5-20"><a href=""></a>    <span class="kw">def</span> end(<span class="va">self</span>):</span>
-<span id="cb5-21"><a href=""></a>        <span class="bu">print</span>(<span class="ss">f"Rolled </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>rolls<span class="sc">}</span><span class="ss"> times with a </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>dice<span class="sc">}</span><span class="ss"> sided dice: </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>dices<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb5-22"><a href=""></a></span>
-<span id="cb5-23"><a href=""></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">"__main__"</span>:</span>
-<span id="cb5-24"><a href=""></a>    DiceRollFlow()</span></code></pre></div>
+<span id="cb5-4"><a href=""></a></span>
+<span id="cb5-5"><a href=""></a><span class="kw">class</span> DiceRollFlow(FlowSpec):</span>
+<span id="cb5-6"><a href=""></a>    <span class="co"># D3, D4, D6, D8, D10, D12, ...</span></span>
+<span id="cb5-7"><a href=""></a>    DICES <span class="op">=</span> [<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">6</span>, <span class="dv">8</span>, <span class="dv">10</span>, <span class="dv">12</span>, <span class="dv">100</span>]</span>
+<span id="cb5-8"><a href=""></a></span>
+<span id="cb5-9"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb5-10"><a href=""></a>    <span class="kw">def</span> start(<span class="va">self</span>):</span>
+<span id="cb5-11"><a href=""></a>        <span class="va">self</span>.dice <span class="op">=</span> sample(<span class="va">self</span>.DICES, <span class="dv">1</span>)[<span class="dv">0</span>]</span>
+<span id="cb5-12"><a href=""></a>        <span class="va">self</span>.rolls <span class="op">=</span> sample(<span class="bu">range</span>(<span class="dv">3</span>), <span class="dv">1</span>)[<span class="dv">0</span>] <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb5-13"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.roll)</span>
+<span id="cb5-14"><a href=""></a></span>
+<span id="cb5-15"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb5-16"><a href=""></a>    <span class="kw">def</span> roll(<span class="va">self</span>):</span>
+<span id="cb5-17"><a href=""></a>        <span class="va">self</span>.dices <span class="op">=</span> [randint(<span class="dv">1</span>, <span class="va">self</span>.dice) <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>.rolls)]</span>
+<span id="cb5-18"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.end)</span>
+<span id="cb5-19"><a href=""></a></span>
+<span id="cb5-20"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb5-21"><a href=""></a>    <span class="kw">def</span> end(<span class="va">self</span>):</span>
+<span id="cb5-22"><a href=""></a>        <span class="bu">print</span>(<span class="ss">f"Rolled </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>rolls<span class="sc">}</span><span class="ss"> times with a </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>dice<span class="sc">}</span><span class="ss"> sided dice: </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>dices<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb5-23"><a href=""></a></span>
+<span id="cb5-24"><a href=""></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">"__main__"</span>:</span>
+<span id="cb5-25"><a href=""></a>    DiceRollFlow()</span></code></pre></div>
 </div></div>
 <aside class="notes">
 <p>By design, Metaflow is a deceptively simple Python library</p>
@@ -999,7 +1001,7 @@ scalable
 </div>
 </div>
 </div><div class="column vcenter" style="width:70%;">
-<div class="sourceCode" id="cb7" style="font-size:24px; height: 525px; margin-top: 40px !important;" data-code-line-numbers="6,11,16,19-21"><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb7-1"><a href=""></a><span class="kw">class</span> ModelingFlow(FlowSpec):</span>
+<div class="sourceCode" id="cb7" style="font-size:24px; height: 525px; margin-top: 40px !important;" data-code-line-numbers="6,11,16,19"><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb7-1"><a href=""></a><span class="kw">class</span> ModelingFlow(FlowSpec):</span>
 <span id="cb7-2"><a href=""></a></span>
 <span id="cb7-3"><a href=""></a>    <span class="at">@step</span></span>
 <span id="cb7-4"><a href=""></a>    <span class="kw">def</span> start(<span class="va">self</span>):</span>
@@ -1027,8 +1029,204 @@ scalable
 <span id="cb7-26"><a href=""></a>        <span class="bu">print</span>(<span class="st">'done!'</span>)</span></code></pre></div>
 </div></div>
 <aside class="notes">
-<p>By design, Metaflow is a deceptively simple Python library</p>
-<p>DAG</p>
+
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="from-metaflow-import-more-1" class="slide level2" data-transition="fade-in slide-out">
+<h2>&gt;&gt;&gt; from metaflow import more</h2>
+<div class="columns" style="display: block; margin-top: -63px;">
+<div class="column centered vcenter" style="width:30%;">
+<div class="cell" data-reveal="true" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class=""><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart TD
+    A[start] -- data --&gt; B1(fitA)
+    A[start] -- data --&gt; B2(fitB)
+    B1 -. data&lt;br&gt;model .-&gt; C[eval]
+    B2 -. data&lt;br&gt;model .-&gt; C[eval]
+    C -- data&lt;br&gt;best --&gt; D[end]
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</div><div class="column vcenter" style="width:70%;">
+<div class="sourceCode" id="cb8" style="font-size:24px; height: 525px; margin-top: 40px !important;" data-code-line-numbers="5,10,15,20-21"><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb8-1"><a href=""></a><span class="kw">class</span> ModelingFlow(FlowSpec):</span>
+<span id="cb8-2"><a href=""></a></span>
+<span id="cb8-3"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb8-4"><a href=""></a>    <span class="kw">def</span> start(<span class="va">self</span>):</span>
+<span id="cb8-5"><a href=""></a>        <span class="va">self</span>.data <span class="op">=</span> load_data()</span>
+<span id="cb8-6"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.fitA, <span class="va">self</span>.fitB)</span>
+<span id="cb8-7"><a href=""></a></span>
+<span id="cb8-8"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb8-9"><a href=""></a>    <span class="kw">def</span> fitA(<span class="va">self</span>):</span>
+<span id="cb8-10"><a href=""></a>        <span class="va">self</span>.model <span class="op">=</span> fit(<span class="va">self</span>.data, model<span class="op">=</span><span class="st">'A'</span>)</span>
+<span id="cb8-11"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.<span class="bu">eval</span>)</span>
+<span id="cb8-12"><a href=""></a></span>
+<span id="cb8-13"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb8-14"><a href=""></a>    <span class="kw">def</span> fitB(<span class="va">self</span>):</span>
+<span id="cb8-15"><a href=""></a>        <span class="va">self</span>.model <span class="op">=</span> fit(<span class="va">self</span>.data, model<span class="op">=</span><span class="st">'B'</span>)</span>
+<span id="cb8-16"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.<span class="bu">eval</span>)</span>
+<span id="cb8-17"><a href=""></a></span>
+<span id="cb8-18"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb8-19"><a href=""></a>    <span class="kw">def</span> <span class="bu">eval</span>(<span class="va">self</span>, inputs):</span>
+<span id="cb8-20"><a href=""></a>        <span class="va">self</span>.best <span class="op">=</span> <span class="bu">max</span>((i.model.score, i.model)</span>
+<span id="cb8-21"><a href=""></a>                        <span class="cf">for</span> i <span class="kw">in</span> inputs)[<span class="dv">1</span>]</span>
+<span id="cb8-22"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.end)</span>
+<span id="cb8-23"><a href=""></a></span>
+<span id="cb8-24"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb8-25"><a href=""></a>    <span class="kw">def</span> end(<span class="va">self</span>):</span>
+<span id="cb8-26"><a href=""></a>        <span class="bu">print</span>(<span class="st">'done!'</span>)</span></code></pre></div>
+</div></div>
+<aside class="notes">
+
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="from-metaflow-import-venv" class="slide level2">
+<h2>&gt;&gt;&gt; from metaflow import venv</h2>
+<div class="columns" style="display: block; margin-top: 20px;">
+<div class="column centered vcenter" style="width:30%;">
+<div class="cell" data-reveal="true" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class=""><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart TD
+    style B2 fill:#eab308
+    A[start] --&gt; B1(fitA)
+    A[start] --&gt; B2(fitB)
+    B1 --&gt; C[eval]
+    B2 --&gt; C[eval]
+    C --&gt; D[end]
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</div><div class="column vcenter" style="width:70%;">
+<div class="sourceCode" id="cb9" style="font-size:24px; height: 545px; margin-top: 40px !important;" data-code-line-numbers="13"><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb9-1"><a href=""></a><span class="kw">class</span> ModelingFlow(FlowSpec):</span>
+<span id="cb9-2"><a href=""></a></span>
+<span id="cb9-3"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb9-4"><a href=""></a>    <span class="kw">def</span> start(<span class="va">self</span>):</span>
+<span id="cb9-5"><a href=""></a>        <span class="va">self</span>.data <span class="op">=</span> load_data()</span>
+<span id="cb9-6"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.fitA, <span class="va">self</span>.fitB)</span>
+<span id="cb9-7"><a href=""></a></span>
+<span id="cb9-8"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb9-9"><a href=""></a>    <span class="kw">def</span> fitA(<span class="va">self</span>):</span>
+<span id="cb9-10"><a href=""></a>        <span class="va">self</span>.model <span class="op">=</span> fit(<span class="va">self</span>.data, model<span class="op">=</span><span class="st">'A'</span>)</span>
+<span id="cb9-11"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.<span class="bu">eval</span>)</span>
+<span id="cb9-12"><a href=""></a></span>
+<span id="cb9-13"><a href=""></a>    <span class="at">@pypi</span>(python<span class="op">=</span><span class="st">'3.10.11'</span>, packages<span class="op">=</span>{<span class="st">'scikit-learn'</span>: <span class="st">'1.7'</span>})</span>
+<span id="cb9-14"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb9-15"><a href=""></a>    <span class="kw">def</span> fitB(<span class="va">self</span>):</span>
+<span id="cb9-16"><a href=""></a>        <span class="va">self</span>.model <span class="op">=</span> fit(<span class="va">self</span>.data, model<span class="op">=</span><span class="st">'B'</span>)</span>
+<span id="cb9-17"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.<span class="bu">eval</span>)</span>
+<span id="cb9-18"><a href=""></a></span>
+<span id="cb9-19"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb9-20"><a href=""></a>    <span class="kw">def</span> <span class="bu">eval</span>(<span class="va">self</span>, inputs):</span>
+<span id="cb9-21"><a href=""></a>        <span class="va">self</span>.best <span class="op">=</span> <span class="bu">max</span>((i.model.score, i.model)</span>
+<span id="cb9-22"><a href=""></a>                        <span class="cf">for</span> i <span class="kw">in</span> inputs)[<span class="dv">1</span>]</span>
+<span id="cb9-23"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.end)</span>
+<span id="cb9-24"><a href=""></a></span>
+<span id="cb9-25"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb9-26"><a href=""></a>    <span class="kw">def</span> end(<span class="va">self</span>):</span>
+<span id="cb9-27"><a href=""></a>        <span class="bu">print</span>(<span class="st">'done!'</span>)</span></code></pre></div>
+</div></div>
+<aside class="notes">
+
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="from-metaflow-import-cloud" class="slide level2" data-transition="slide-in convex-out">
+<h2>&gt;&gt;&gt; from metaflow import cloud</h2>
+<div class="columns" style="display: block; margin-top: 20px;">
+<div class="column centered vcenter" style="width:30%;">
+<div class="cell" data-reveal="true" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class=""><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart TD
+    subgraph AWS Batch
+      B1(fitA)
+      B2(fitB)
+    end
+    A[start] .-&gt; B1
+    A[start] .-&gt; B2
+    B1 .-&gt; C[eval]
+    B2 .-&gt; C[eval]
+    C --&gt; D[end]
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</div><div class="column vcenter" style="width:70%;">
+<div class="sourceCode" id="cb10" style="font-size:24px; height: 565px; margin-top: 40px !important;" data-code-line-numbers="8,14"><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb10-1"><a href=""></a><span class="kw">class</span> ModelingFlow(FlowSpec):</span>
+<span id="cb10-2"><a href=""></a></span>
+<span id="cb10-3"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb10-4"><a href=""></a>    <span class="kw">def</span> start(<span class="va">self</span>):</span>
+<span id="cb10-5"><a href=""></a>        <span class="va">self</span>.data <span class="op">=</span> load_data()</span>
+<span id="cb10-6"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.fitA, <span class="va">self</span>.fitB)</span>
+<span id="cb10-7"><a href=""></a></span>
+<span id="cb10-8"><a href=""></a>    <span class="at">@batch</span>(cpu<span class="op">=</span><span class="dv">32</span>, memory<span class="op">=</span><span class="dv">64</span>)</span>
+<span id="cb10-9"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb10-10"><a href=""></a>    <span class="kw">def</span> fitA(<span class="va">self</span>):</span>
+<span id="cb10-11"><a href=""></a>        <span class="va">self</span>.model <span class="op">=</span> fit(<span class="va">self</span>.data, model<span class="op">=</span><span class="st">'A'</span>)</span>
+<span id="cb10-12"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.<span class="bu">eval</span>)</span>
+<span id="cb10-13"><a href=""></a></span>
+<span id="cb10-14"><a href=""></a>    <span class="at">@batch</span>(cpu<span class="op">=</span><span class="dv">4</span>, memory<span class="op">=</span><span class="dv">16</span>, gpu<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb10-15"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb10-16"><a href=""></a>    <span class="kw">def</span> fitB(<span class="va">self</span>):</span>
+<span id="cb10-17"><a href=""></a>        <span class="va">self</span>.model <span class="op">=</span> fit(<span class="va">self</span>.data, model<span class="op">=</span><span class="st">'B'</span>)</span>
+<span id="cb10-18"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.<span class="bu">eval</span>)</span>
+<span id="cb10-19"><a href=""></a></span>
+<span id="cb10-20"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb10-21"><a href=""></a>    <span class="kw">def</span> <span class="bu">eval</span>(<span class="va">self</span>, inputs):</span>
+<span id="cb10-22"><a href=""></a>        <span class="va">self</span>.best <span class="op">=</span> <span class="bu">max</span>((i.model.score, i.model)</span>
+<span id="cb10-23"><a href=""></a>                        <span class="cf">for</span> i <span class="kw">in</span> inputs)[<span class="dv">1</span>]</span>
+<span id="cb10-24"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.end)</span>
+<span id="cb10-25"><a href=""></a></span>
+<span id="cb10-26"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb10-27"><a href=""></a>    <span class="kw">def</span> end(<span class="va">self</span>):</span>
+<span id="cb10-28"><a href=""></a>        <span class="bu">print</span>(<span class="st">'done!'</span>)</span></code></pre></div>
+</div></div>
+<aside class="notes">
+<p>But how much resources did we actually use?</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -1041,6 +1239,135 @@ scalable
           display:block!important;
       }</style></aside>
 </section></section>
+<section>
+<section id="import-resource_tracker" class="title-slide slide level1" data-transition="convex-in slide-out">
+<h1>&gt;&gt;&gt; import resource_tracker</h1>
+<ul>
+<li class="fragment" data-fragment-index="1">
+Lightweight (zero-dependency*) Python package
+</li>
+<li class="fragment" data-fragment-index="3">
+Supports Python 3.9+
+</li>
+<li class="fragment" data-fragment-index="4">
+Monitors system-level and process-level resource usage
+</li>
+<li class="fragment" data-fragment-index="5">
+Tracks CPU, memory, GPU/VRAM, network, storage &amp; more
+</li>
+<li class="fragment" data-fragment-index="6">
+Ease of use, minimal setup, non-blocking
+</li>
+<li class="fragment" data-fragment-index="7">
+Runs in the background, non-blocking
+</li>
+<li class="fragment" data-fragment-index="8">
+Framework extensions (e.g.&nbsp;Metaflow)
+</li>
+<div class="fragment" style="margin-top: 40px;" data-fragment-index="2">
+* No dependencies on Linux; <code>psutil</code> on other OS.
+</div>
+</ul></section>
+<section id="import-resource_tracker-1" class="slide level2">
+<h2>&gt;&gt;&gt; import resource_tracker</h2>
+<p>Install from PyPI: <img style="float:right; height: 30px;" src="https://camo.githubusercontent.com/6c79d35aff64a703207a83f650249e71ea2ace0ab4c81295b07a862cdeb96733/68747470733a2f2f696d672e736869656c64732e696f2f707970692f762f7265736f757263652d747261636b65723f636f6c6f723d253233333243393535"></p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install resource-tracker</span></code></pre></div>
+<div class="fragment">
+<p>Minimal example:</p>
+<div class="sourceCode" id="cb12" data-code-line-numbers="1|3|8-9|5"><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb12-1"><a href=""></a><span class="im">from</span> resource_tracker <span class="im">import</span> ResourceTracker</span>
+<span id="cb12-2"><a href=""></a></span>
+<span id="cb12-3"><a href=""></a>tracker <span class="op">=</span> ResourceTracker()</span>
+<span id="cb12-4"><a href=""></a><span class="co"># your compute-heavy code</span></span>
+<span id="cb12-5"><a href=""></a>tracker.stop()</span>
+<span id="cb12-6"><a href=""></a></span>
+<span id="cb12-7"><a href=""></a><span class="co"># your analytics code utilizing the collected data</span></span>
+<span id="cb12-8"><a href=""></a>tracker.pid_tracker</span>
+<span id="cb12-9"><a href=""></a>tracker.system_tracker</span></code></pre></div>
+</div>
+</section>
+<section id="from-resource_tracker-import-resourcetracker" class="slide level2" style="font-size:39px !important;">
+<h2>&gt;&gt;&gt; from resource_tracker import ResourceTracker</h2>
+<div class="sourceCode" id="cb13" style="font-size:38px; margin-top: 20px !important; height: 640px;" data-code-line-numbers="1-5|6-8|9-12|13-16|19-20"><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb13-1"><a href=""></a><span class="op">&gt;&gt;&gt;</span> <span class="im">from</span> time <span class="im">import</span> sleep</span>
+<span id="cb13-2"><a href=""></a><span class="op">&gt;&gt;&gt;</span> <span class="im">from</span> resource_tracker <span class="im">import</span> ResourceTracker</span>
+<span id="cb13-3"><a href=""></a><span class="op">&gt;&gt;&gt;</span> tracker <span class="op">=</span> ResourceTracker()</span>
+<span id="cb13-4"><a href=""></a><span class="op">&gt;&gt;&gt;</span> tracker.pid_tracker</span>
+<span id="cb13-5"><a href=""></a>TinyDataFrame <span class="cf">with</span> <span class="dv">0</span> rows <span class="kw">and</span> <span class="dv">0</span> columns. First row <span class="im">as</span> a <span class="bu">dict</span>: {}</span>
+<span id="cb13-6"><a href=""></a><span class="op">&gt;&gt;&gt;</span> sleep(<span class="dv">1</span>)</span>
+<span id="cb13-7"><a href=""></a><span class="op">&gt;&gt;&gt;</span> tracker.pid_tracker</span>
+<span id="cb13-8"><a href=""></a>TinyDataFrame <span class="cf">with</span> <span class="dv">1</span> rows <span class="kw">and</span> <span class="dv">12</span> columns. First row <span class="im">as</span> a <span class="bu">dict</span>: {<span class="st">'timestamp'</span>: <span class="fl">1750021603.0219927</span>, <span class="st">'pid'</span>: <span class="fl">265803.0</span>, <span class="st">'children'</span>: <span class="fl">3.0</span>, <span class="st">'utime'</span>: <span class="fl">0.05999999999999997</span>, <span class="st">'stime'</span>: <span class="fl">0.1</span>, <span class="st">'cpu_usage'</span>: <span class="fl">0.16</span>, <span class="st">'memory'</span>: <span class="fl">62343.0</span>, <span class="st">'read_bytes'</span>: <span class="fl">0.0</span>, <span class="st">'write_bytes'</span>: <span class="fl">0.0</span>, <span class="st">'gpu_usage'</span>: <span class="fl">0.0</span>, <span class="st">'gpu_vram'</span>: <span class="fl">0.0</span>, <span class="st">'gpu_utilized'</span>: <span class="fl">0.0</span>}</span>
+<span id="cb13-9"><a href=""></a><span class="op">&gt;&gt;&gt;</span> big_array <span class="op">=</span> <span class="bu">bytearray</span>(<span class="dv">500</span> <span class="op">*</span> <span class="dv">1024</span> <span class="op">*</span> <span class="dv">1024</span>)  <span class="co"># 500 MiB</span></span>
+<span id="cb13-10"><a href=""></a><span class="op">&gt;&gt;&gt;</span> total <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb13-11"><a href=""></a><span class="op">&gt;&gt;&gt;</span> <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">int</span>(<span class="fl">1e7</span>)):</span>
+<span id="cb13-12"><a href=""></a>...     total <span class="op">+=</span> i<span class="op">**</span><span class="dv">3</span></span>
+<span id="cb13-13"><a href=""></a><span class="op">&gt;&gt;&gt;</span> tracker.pid_tracker.tail(<span class="dv">1</span>)</span>
+<span id="cb13-14"><a href=""></a>{<span class="st">'timestamp'</span>: <span class="fl">1750022019.3893294</span>, <span class="st">'pid'</span>: <span class="fl">265803.0</span>, <span class="st">'children'</span>: <span class="fl">3.0</span>, <span class="st">'utime'</span>: <span class="fl">1.0299999999999994</span>, <span class="st">'stime'</span>: <span class="fl">0.06999999999999984</span>, <span class="st">'cpu_usage'</span>: <span class="fl">1.0999</span>, <span class="st">'memory'</span>: <span class="fl">573832.0</span>, <span class="st">'read_bytes'</span>: <span class="fl">0.0</span>, <span class="st">'write_bytes'</span>: <span class="fl">0.0</span>, <span class="st">'gpu_usage'</span>: <span class="fl">0.0</span>, <span class="st">'gpu_vram'</span>: <span class="fl">0.0</span>, <span class="st">'gpu_utilized'</span>: <span class="fl">0.0</span>}</span>
+<span id="cb13-15"><a href=""></a><span class="op">&gt;&gt;&gt;</span> tracker.system_tracker.tail(<span class="dv">1</span>)</span>
+<span id="cb13-16"><a href=""></a>{<span class="st">'timestamp'</span>: <span class="fl">1750022019.3464136</span>, <span class="st">'processes'</span>: <span class="fl">778.0</span>, <span class="st">'utime'</span>: <span class="fl">2.139999999999418</span>, <span class="st">'stime'</span>: <span class="fl">2.60999999998603</span>, <span class="st">'cpu_usage'</span>: <span class="fl">4.7495</span>, <span class="st">'memory_free'</span>: <span class="fl">18372680.0</span>, <span class="st">'memory_used'</span>: <span class="fl">37015416.0</span>, <span class="st">'memory_buffers'</span>: <span class="fl">3612.0</span>, <span class="st">'memory_cached'</span>: <span class="fl">10155400.0</span>, <span class="st">'memory_active'</span>: <span class="fl">29048656.0</span>, <span class="st">'memory_inactive'</span>: <span class="fl">130048.0</span>, <span class="st">'disk_read_bytes'</span>: <span class="fl">95047680.0</span>, <span class="st">'disk_write_bytes'</span>: <span class="fl">7380992.0</span>, <span class="st">'disk_space_total_gb'</span>: <span class="fl">3699.99</span>, <span class="st">'disk_space_used_gb'</span>: <span class="fl">2373.84</span>, <span class="st">'disk_space_free_gb'</span>: <span class="fl">1326.15</span>, <span class="st">'net_recv_bytes'</span>: <span class="fl">8960.0</span>, <span class="st">'net_sent_bytes'</span>: <span class="fl">4732.0</span>, <span class="st">'gpu_usage'</span>: <span class="fl">0.3</span>, <span class="st">'gpu_vram'</span>: <span class="fl">791.0</span>, <span class="st">'gpu_utilized'</span>: <span class="fl">1.0</span>}</span>
+<span id="cb13-17"><a href=""></a><span class="op">&gt;&gt;&gt;</span> tracker.system_tracker</span>
+<span id="cb13-18"><a href=""></a>TinyDataFrame <span class="cf">with</span> <span class="dv">4</span> rows <span class="kw">and</span> <span class="dv">21</span> columns. First row <span class="im">as</span> a <span class="bu">dict</span>: {<span class="st">'timestamp'</span>: <span class="fl">1750022016.3461385</span>, <span class="st">'processes'</span>: <span class="fl">778.0</span>, <span class="st">'utime'</span>: <span class="fl">0.6399999999994179</span>, <span class="st">'stime'</span>: <span class="fl">1.6000000000058208</span>, <span class="st">'cpu_usage'</span>: <span class="fl">2.2398</span>, <span class="st">'memory_free'</span>: <span class="fl">18415448.0</span>, <span class="st">'memory_used'</span>: <span class="fl">36966424.0</span>, <span class="st">'memory_buffers'</span>: <span class="fl">3612.0</span>, <span class="st">'memory_cached'</span>: <span class="fl">10161624.0</span>, <span class="st">'memory_active'</span>: <span class="fl">28951856.0</span>, <span class="st">'memory_inactive'</span>: <span class="fl">130048.0</span>, <span class="st">'disk_read_bytes'</span>: <span class="fl">126976.0</span>, <span class="st">'disk_write_bytes'</span>: <span class="fl">827392.0</span>, <span class="st">'disk_space_total_gb'</span>: <span class="fl">3699.99</span>, <span class="st">'disk_space_used_gb'</span>: <span class="fl">2373.84</span>, <span class="st">'disk_space_free_gb'</span>: <span class="fl">1326.15</span>, <span class="st">'net_recv_bytes'</span>: <span class="fl">9896.0</span>, <span class="st">'net_sent_bytes'</span>: <span class="fl">9101.0</span>, <span class="st">'gpu_usage'</span>: <span class="fl">0.31</span>, <span class="st">'gpu_vram'</span>: <span class="fl">799.0</span>, <span class="st">'gpu_utilized'</span>: <span class="fl">1.0</span>}</span>
+<span id="cb13-19"><a href=""></a><span class="op">&gt;&gt;&gt;</span> <span class="kw">del</span> big_array</span>
+<span id="cb13-20"><a href=""></a><span class="op">&gt;&gt;&gt;</span> tracker.stop()</span></code></pre></div>
+</section>
+<section id="from-resource_tracker-import-resourcetracker-1" class="slide level2" style="font-size:39px !important;">
+<h2>&gt;&gt;&gt; from resource_tracker import ResourceTracker</h2>
+<div class="sourceCode" id="cb14" style="font-size:38px; margin-top: 40px !important;" data-code-line-numbers="|6|7-9"><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb14-1"><a href=""></a><span class="op">&gt;&gt;&gt;</span> <span class="bu">print</span>(tracker.pid_tracker)</span>
+<span id="cb14-2"><a href=""></a>TinyDataFrame <span class="cf">with</span> <span class="dv">7</span> rows <span class="kw">and</span> <span class="dv">12</span> columns:</span>
+<span id="cb14-3"><a href=""></a>timestamp          <span class="op">|</span> pid      <span class="op">|</span> children <span class="op">|</span> utime <span class="op">|</span> stime <span class="op">|</span> cpu_usage <span class="op">|</span> memory   <span class="op">|</span> read_bytes <span class="op">|</span> write_bytes <span class="op">|</span> gpu_usage <span class="op">|</span> gpu_vram <span class="op">|</span> gpu_utilized</span>
+<span id="cb14-4"><a href=""></a><span class="op">-------------------+----------+----------+-------+-------+-----------+----------+------------+-------------+-----------+----------+-------------</span></span>
+<span id="cb14-5"><a href=""></a> <span class="fl">1750022710.052515</span> <span class="op">|</span> <span class="fl">326380.0</span> <span class="op">|</span>      <span class="fl">3.0</span> <span class="op">|</span> <span class="fl">0.040</span> <span class="op">|</span> <span class="fl">0.069</span> <span class="op">|</span>      <span class="fl">0.11</span> <span class="op">|</span>  <span class="fl">62017.0</span> <span class="op">|</span>        <span class="fl">0.0</span> <span class="op">|</span>         <span class="fl">0.0</span> <span class="op">|</span>       <span class="fl">0.0</span> <span class="op">|</span>      <span class="fl">0.0</span> <span class="op">|</span>          <span class="fl">0.0</span></span>
+<span id="cb14-6"><a href=""></a><span class="fl">1750022711.0526254</span> <span class="op">|</span> <span class="fl">326380.0</span> <span class="op">|</span>      <span class="fl">3.0</span> <span class="op">|</span> <span class="fl">0.139</span> <span class="op">|</span> <span class="fl">0.099</span> <span class="op">|</span>      <span class="fl">0.24</span> <span class="op">|</span> <span class="fl">573959.0</span> <span class="op">|</span>        <span class="fl">0.0</span> <span class="op">|</span>         <span class="fl">0.0</span> <span class="op">|</span>       <span class="fl">0.0</span> <span class="op">|</span>      <span class="fl">0.0</span> <span class="op">|</span>          <span class="fl">0.0</span></span>
+<span id="cb14-7"><a href=""></a>  <span class="fl">1750022712.05273</span> <span class="op">|</span> <span class="fl">326380.0</span> <span class="op">|</span>      <span class="fl">3.0</span> <span class="op">|</span> <span class="fl">1.020</span> <span class="op">|</span> <span class="fl">0.072</span> <span class="op">|</span>    <span class="fl">1.0899</span> <span class="op">|</span> <span class="fl">573913.0</span> <span class="op">|</span>        <span class="fl">0.0</span> <span class="op">|</span>         <span class="fl">0.0</span> <span class="op">|</span>       <span class="fl">0.0</span> <span class="op">|</span>      <span class="fl">0.0</span> <span class="op">|</span>          <span class="fl">0.0</span></span>
+<span id="cb14-8"><a href=""></a><span class="fl">1750022713.0528054</span> <span class="op">|</span> <span class="fl">326380.0</span> <span class="op">|</span>      <span class="fl">3.0</span> <span class="op">|</span> <span class="fl">1.029</span> <span class="op">|</span> <span class="fl">0.090</span> <span class="op">|</span>    <span class="fl">1.1199</span> <span class="op">|</span> <span class="fl">573968.0</span> <span class="op">|</span>        <span class="fl">0.0</span> <span class="op">|</span>         <span class="fl">0.0</span> <span class="op">|</span>       <span class="fl">0.0</span> <span class="op">|</span>      <span class="fl">0.0</span> <span class="op">|</span>          <span class="fl">0.0</span></span>
+<span id="cb14-9"><a href=""></a> <span class="fl">1750022714.052872</span> <span class="op">|</span> <span class="fl">326380.0</span> <span class="op">|</span>      <span class="fl">3.0</span> <span class="op">|</span> <span class="fl">1.010</span> <span class="op">|</span> <span class="fl">0.099</span> <span class="op">|</span>    <span class="fl">1.1099</span> <span class="op">|</span> <span class="fl">573923.0</span> <span class="op">|</span>        <span class="fl">0.0</span> <span class="op">|</span>         <span class="fl">0.0</span> <span class="op">|</span>       <span class="fl">0.0</span> <span class="op">|</span>      <span class="fl">0.0</span> <span class="op">|</span>          <span class="fl">0.0</span></span>
+<span id="cb14-10"><a href=""></a><span class="fl">1750022715.0529463</span> <span class="op">|</span> <span class="fl">326380.0</span> <span class="op">|</span>      <span class="fl">3.0</span> <span class="op">|</span> <span class="fl">0.049</span> <span class="op">|</span> <span class="fl">0.079</span> <span class="op">|</span>      <span class="fl">0.13</span> <span class="op">|</span>  <span class="fl">71775.0</span> <span class="op">|</span>        <span class="fl">0.0</span> <span class="op">|</span>         <span class="fl">0.0</span> <span class="op">|</span>       <span class="fl">0.0</span> <span class="op">|</span>      <span class="fl">0.0</span> <span class="op">|</span>          <span class="fl">0.0</span></span>
+<span id="cb14-11"><a href=""></a><span class="fl">1750022716.0530148</span> <span class="op">|</span> <span class="fl">326380.0</span> <span class="op">|</span>      <span class="fl">3.0</span> <span class="op">|</span> <span class="fl">0.060</span> <span class="op">|</span> <span class="fl">0.099</span> <span class="op">|</span>      <span class="fl">0.16</span> <span class="op">|</span>  <span class="fl">61954.0</span> <span class="op">|</span>        <span class="fl">0.0</span> <span class="op">|</span>         <span class="fl">0.0</span> <span class="op">|</span>       <span class="fl">0.0</span> <span class="op">|</span>      <span class="fl">0.0</span> <span class="op">|</span>          <span class="fl">0.0</span></span></code></pre></div>
+<div class="fragment">
+<div class="sourceCode" id="cb15" style="font-size:38px; margin-top: 40px !important;"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb15-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> <span class="bu">sum</span>(tracker.pid_tracker[<span class="st">"utime"</span>]) <span class="op">/</span> <span class="bu">len</span>(tracker.pid_tracker[<span class="st">"utime"</span>])</span>
+<span id="cb15-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fl">0.4785714285714286</span></span>
+<span id="cb15-3"><a href="" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> <span class="bu">max</span>(tracker.pid_tracker[<span class="st">"memory"</span>]) <span class="op">/</span> <span class="dv">1024</span></span>
+<span id="cb15-4"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fl">560.515625</span></span></code></pre></div>
+</div>
+</section>
+<section id="from-resource_tracker-import-pidtracker-systemtracker" class="slide level2" style="font-size:39px !important;">
+<h2>&gt;&gt;&gt; from resource_tracker import PidTracker, SystemTracker</h2>
+<ul>
+<li>Track process and/or system-level resource usage</li>
+<li>Configure to monitor subprocesses</li>
+<li>Configure sampling interval</li>
+<li>Use <code>PidTracker</code> and <code>SystemTracker</code> directly (blocking)</li>
+</ul>
+<p>Learn more by reading the documentation at<br> 📖 <a href="https://sparecores.github.io/resource-tracker/reference/resource_tracker/tracker/" target="_new">sparecores.github.io/resource-tracker</a></p>
+<aside class="notes">
+
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section></section>
+<section id="from-metaflow-import-track_resources" class="title-slide slide level1 smaller-font-header" data-transition="convex-in slide-out">
+<h1>&gt;&gt;&gt; from metaflow import track_resources</h1>
+<aside class="notes">
+
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+
 <section id="future" class="title-slide slide level1" data-transition="convex-in convex-out">
 <h1>&gt;&gt;&gt; import __future__</h1>
 <ul>
@@ -1069,7 +1396,7 @@ SaaS 👀
 </li>
 </ul>
 <aside class="notes">
-<p>TODO</p>
+<p>TODO rewrite this slide</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -1128,7 +1455,7 @@ SaaS 👀
 <p class="bold mt-0">
 <span class="citation" data-cites="bra-fsn">@bra-fsn</span>
 </p>
-<p class="mt-0" style="font-size: 0.9em;">
+<p class="mt-0" style="font-size: 0.9em; white-space: normal;">
 Infrastructure and Python veteran.
 </p>
 </div>
@@ -1137,7 +1464,7 @@ Infrastructure and Python veteran.
 <p class="bold mt-0">
 <span class="citation" data-cites="palabola">@palabola</span>
 </p>
-<p class="mt-0" style="font-size: 0.9em;">
+<p class="mt-0" style="font-size: 0.9em; white-space: normal;">
 Guardian of the front-end and Node.js tools.
 </p>
 </div>
@@ -1146,7 +1473,7 @@ Guardian of the front-end and Node.js tools.
 <p class="bold mt-0">
 <span class="citation" data-cites="daroczig">@daroczig</span>
 </p>
-<p class="mt-0" style="font-size: 0.9em;">
+<p class="mt-0" style="font-size: 0.9em; white-space: normal;">
 Hack of all trades, master of <code>NaN</code>.
 </p>
 </div>
@@ -1184,7 +1511,7 @@ Hack of all trades, master of <code>NaN</code>.
 <section id="bye-bye-bye" class="slide level2" data-transition="none">
 <h2></h2>
 <div class="centered">
-<p><img src="images/bye-3-budapest-ml-2024.png" style="background: none;" class="mt--60 w-80"></p>
+<p><img src="images/by-budapest-ml-forum-3.png" style="background: none;" class="mt--60 w-80"></p>
 </div>
 <p class="author offlineMode" style="color:#eee;font-size:0.75em;text-align: center !important; margin-top:-30px; padding-top:0px;">
 Slides: <a href="https://sparecores.com/talks" target="_blank">sparecores.com/talks</a>

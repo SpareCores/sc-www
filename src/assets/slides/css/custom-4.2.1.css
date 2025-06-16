@@ -21,7 +21,11 @@
 .labelBkg {
   background-color: transparent !important;
 }
-
+.cluster rect {
+  fill: #eab308 !important;
+  border: 1px solid #34d399;
+  border-radius: 5px;
+}
 
 body.reveal-viewport  {
     background-color: #082f49;
@@ -175,6 +179,9 @@ code.sourceCode::-webkit-scrollbar-thumb:vertical{
     font-family: Inter !important;
     text-transform: none;
     color: #ffffff;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .reveal .title-slide h1,
@@ -447,4 +454,8 @@ code span.dv, code span.fl {
   left: 16px;
   background-color: #00d742;
   border-color: #049931;
+}
+
+.smaller-font-header h1 {
+  font-size: 47px !important;
 }

@@ -352,7 +352,7 @@ TODO
 
 ## >>> from metaflow import tutorial {transition="slide-in fade-out"}
 
-```python {code-line-numbers="|1|19|3|5,10,15|4,9,14|7,12|6,11,16" style="font-size:32px;margin-top: 40px !important; height: 515px;" }
+```python {code-line-numbers="|1|3|5,10,15|4,9,14|7,12|6,11,16|19" style="font-size:32px;margin-top: 40px !important; height: 515px;" }
 from metaflow import FlowSpec, step
 
 class HelloFlow(FlowSpec):
@@ -448,17 +448,18 @@ flowchart TD
 
 ::: {.column .vcenter width="70%" }
 
-```python {code-line-numbers="4-5,10-11,16|9,15,20|10-11,16" style="font-size:24px;" }
+```python {code-line-numbers="6-7|11-12,17|10,16,21|11-12,17" style="font-size:24px;" }
 from random import sample, randint
 from metaflow import FlowSpec, step
 
-# D3, D4, D6, D8, D10, D12, ...
-DICES = [3, 4, 6, 8, 10, 12, 100]
 
 class DiceRollFlow(FlowSpec):
+    # D3, D4, D6, D8, D10, D12, ...
+    DICES = [3, 4, 6, 8, 10, 12, 100]
+
     @step
     def start(self):
-        self.dice = sample(DICES, 1)[0]
+        self.dice = sample(self.DICES, 1)[0]
         self.rolls = sample(range(3), 1)[0] + 1
         self.next(self.roll)
 
@@ -501,17 +502,18 @@ flowchart TD
 
 ::: {.column .vcenter width="70%" }
 
-```python {code-line-numbers="10-11,16" style="font-size:24px;" }
+```python {code-line-numbers="11-12,17" style="font-size:24px;" }
 from random import sample, randint
 from metaflow import FlowSpec, step
 
-# D3, D4, D6, D8, D10, D12, ...
-DICES = [3, 4, 6, 8, 10, 12, 100]
 
 class DiceRollFlow(FlowSpec):
+    # D3, D4, D6, D8, D10, D12, ...
+    DICES = [3, 4, 6, 8, 10, 12, 100]
+
     @step
     def start(self):
-        self.dice = sample(DICES, 1)[0]
+        self.dice = sample(self.DICES, 1)[0]
         self.rolls = sample(range(3), 1)[0] + 1
         self.next(self.roll)
 
@@ -591,7 +593,7 @@ flowchart TD
 
 ::: {.column .vcenter width="70%" }
 
-```python {code-line-numbers="6,11,16,19-21" style="font-size:24px; height: 525px; margin-top: 40px !important;" }
+```python {code-line-numbers="6,11,16,19" style="font-size:24px; height: 525px; margin-top: 40px !important;" }
 class ModelingFlow(FlowSpec):
 
     @step
@@ -625,10 +627,288 @@ class ModelingFlow(FlowSpec):
 ::::
 
 ::: {.notes}
-By design, Metaflow is a deceptively simple Python library
-
-DAG
 :::
+
+## >>> from metaflow import more {transition="fade-in slide-out"}
+
+:::: {.columns style="display: block; margin-top: -63px;"}
+
+::: {.column .centered .vcenter width="30%" }
+
+```{mermaid}
+flowchart TD
+    A[start] -- data --> B1(fitA)
+    A[start] -- data --> B2(fitB)
+    B1 -. data<br>model .-> C[eval]
+    B2 -. data<br>model .-> C[eval]
+    C -- data<br>best --> D[end]
+```
+
+:::
+
+::: {.column .vcenter width="70%" }
+
+```python {code-line-numbers="5,10,15,20-21" style="font-size:24px; height: 525px; margin-top: 40px !important;" }
+class ModelingFlow(FlowSpec):
+
+    @step
+    def start(self):
+        self.data = load_data()
+        self.next(self.fitA, self.fitB)
+
+    @step
+    def fitA(self):
+        self.model = fit(self.data, model='A')
+        self.next(self.eval)
+
+    @step
+    def fitB(self):
+        self.model = fit(self.data, model='B')
+        self.next(self.eval)
+
+    @step
+    def eval(self, inputs):
+        self.best = max((i.model.score, i.model)
+                        for i in inputs)[1]
+        self.next(self.end)
+
+    @step
+    def end(self):
+        print('done!')
+```
+
+:::
+
+::::
+
+::: {.notes}
+:::
+
+## >>> from metaflow import venv
+
+:::: {.columns style="display: block; margin-top: 20px;"}
+
+::: {.column .centered .vcenter width="30%" }
+
+```{mermaid}
+flowchart TD
+    style B2 fill:#eab308
+    A[start] --> B1(fitA)
+    A[start] --> B2(fitB)
+    B1 --> C[eval]
+    B2 --> C[eval]
+    C --> D[end]
+```
+
+:::
+
+::: {.column .vcenter width="70%" }
+
+```python {code-line-numbers="13" style="font-size:24px; height: 545px; margin-top: 40px !important;" }
+class ModelingFlow(FlowSpec):
+
+    @step
+    def start(self):
+        self.data = load_data()
+        self.next(self.fitA, self.fitB)
+
+    @step
+    def fitA(self):
+        self.model = fit(self.data, model='A')
+        self.next(self.eval)
+
+    @pypi(python='3.10.11', packages={'scikit-learn': '1.7'})
+    @step
+    def fitB(self):
+        self.model = fit(self.data, model='B')
+        self.next(self.eval)
+
+    @step
+    def eval(self, inputs):
+        self.best = max((i.model.score, i.model)
+                        for i in inputs)[1]
+        self.next(self.end)
+
+    @step
+    def end(self):
+        print('done!')
+```
+
+:::
+
+::::
+
+::: {.notes}
+:::
+
+## >>> from metaflow import cloud {transition="slide-in convex-out"}
+
+:::: {.columns style="display: block; margin-top: 20px;"}
+
+::: {.column .centered .vcenter width="30%" }
+
+```{mermaid}
+flowchart TD
+    subgraph AWS Batch
+      B1(fitA)
+      B2(fitB)
+    end
+    A[start] .-> B1
+    A[start] .-> B2
+    B1 .-> C[eval]
+    B2 .-> C[eval]
+    C --> D[end]
+```
+
+:::
+
+::: {.column .vcenter width="70%" }
+
+```python {code-line-numbers="8,14" style="font-size:24px; height: 565px; margin-top: 40px !important;" }
+class ModelingFlow(FlowSpec):
+
+    @step
+    def start(self):
+        self.data = load_data()
+        self.next(self.fitA, self.fitB)
+
+    @batch(cpu=32, memory=64)
+    @step
+    def fitA(self):
+        self.model = fit(self.data, model='A')
+        self.next(self.eval)
+
+    @batch(cpu=4, memory=16, gpu=1)
+    @step
+    def fitB(self):
+        self.model = fit(self.data, model='B')
+        self.next(self.eval)
+
+    @step
+    def eval(self, inputs):
+        self.best = max((i.model.score, i.model)
+                        for i in inputs)[1]
+        self.next(self.end)
+
+    @step
+    def end(self):
+        print('done!')
+```
+
+:::
+
+::::
+
+::: {.notes}
+But how much resources did we actually use?
+:::
+
+# >>> import resource_tracker {transition="convex-in slide-out"}
+
+<ul>
+<li class="fragment" data-fragment-index=1>Lightweight (zero-dependency*) Python package</li>
+<li class="fragment" data-fragment-index=3>Supports Python 3.9+</li>
+<li class="fragment" data-fragment-index=4>Monitors system-level and process-level resource usage</li>
+<li class="fragment" data-fragment-index=5>Tracks CPU, memory, GPU/VRAM, network, storage & more</li>
+<li class="fragment" data-fragment-index=6>Ease of use, minimal setup, non-blocking</li>
+<li class="fragment" data-fragment-index=7>Runs in the background, non-blocking</li>
+<li class="fragment" data-fragment-index=8>Framework extensions (e.g. Metaflow)</li>
+
+<div class="fragment" style="margin-top: 40px;" data-fragment-index=2>\* No dependencies on Linux; `psutil` on other OS.</div>
+
+## >>> import resource_tracker
+
+Install from PyPI: <img style="float:right; height: 30px;" src="https://camo.githubusercontent.com/6c79d35aff64a703207a83f650249e71ea2ace0ab4c81295b07a862cdeb96733/68747470733a2f2f696d672e736869656c64732e696f2f707970692f762f7265736f757263652d747261636b65723f636f6c6f723d253233333243393535">
+
+```bash
+pip install resource-tracker
+```
+
+. . .
+
+Minimal example:
+
+```python {code-line-numbers="1|3|8-9|5" }
+from resource_tracker import ResourceTracker
+
+tracker = ResourceTracker()
+# your compute-heavy code
+tracker.stop()
+
+# your analytics code utilizing the collected data
+tracker.pid_tracker
+tracker.system_tracker
+```
+
+## >>> from resource_tracker import ResourceTracker {style="font-size:39px !important;"}
+
+```python {code-line-numbers="1-5|6-8|9-12|13-16|19-20" style="font-size:38px; margin-top: 20px !important; height: 640px;" }
+>>> from time import sleep
+>>> from resource_tracker import ResourceTracker
+>>> tracker = ResourceTracker()
+>>> tracker.pid_tracker
+TinyDataFrame with 0 rows and 0 columns. First row as a dict: {}
+>>> sleep(1)
+>>> tracker.pid_tracker
+TinyDataFrame with 1 rows and 12 columns. First row as a dict: {'timestamp': 1750021603.0219927, 'pid': 265803.0, 'children': 3.0, 'utime': 0.05999999999999997, 'stime': 0.1, 'cpu_usage': 0.16, 'memory': 62343.0, 'read_bytes': 0.0, 'write_bytes': 0.0, 'gpu_usage': 0.0, 'gpu_vram': 0.0, 'gpu_utilized': 0.0}
+>>> big_array = bytearray(500 * 1024 * 1024)  # 500 MiB
+>>> total = 0
+>>> for i in range(int(1e7)):
+...     total += i**3
+>>> tracker.pid_tracker.tail(1)
+{'timestamp': 1750022019.3893294, 'pid': 265803.0, 'children': 3.0, 'utime': 1.0299999999999994, 'stime': 0.06999999999999984, 'cpu_usage': 1.0999, 'memory': 573832.0, 'read_bytes': 0.0, 'write_bytes': 0.0, 'gpu_usage': 0.0, 'gpu_vram': 0.0, 'gpu_utilized': 0.0}
+>>> tracker.system_tracker.tail(1)
+{'timestamp': 1750022019.3464136, 'processes': 778.0, 'utime': 2.139999999999418, 'stime': 2.60999999998603, 'cpu_usage': 4.7495, 'memory_free': 18372680.0, 'memory_used': 37015416.0, 'memory_buffers': 3612.0, 'memory_cached': 10155400.0, 'memory_active': 29048656.0, 'memory_inactive': 130048.0, 'disk_read_bytes': 95047680.0, 'disk_write_bytes': 7380992.0, 'disk_space_total_gb': 3699.99, 'disk_space_used_gb': 2373.84, 'disk_space_free_gb': 1326.15, 'net_recv_bytes': 8960.0, 'net_sent_bytes': 4732.0, 'gpu_usage': 0.3, 'gpu_vram': 791.0, 'gpu_utilized': 1.0}
+>>> tracker.system_tracker
+TinyDataFrame with 4 rows and 21 columns. First row as a dict: {'timestamp': 1750022016.3461385, 'processes': 778.0, 'utime': 0.6399999999994179, 'stime': 1.6000000000058208, 'cpu_usage': 2.2398, 'memory_free': 18415448.0, 'memory_used': 36966424.0, 'memory_buffers': 3612.0, 'memory_cached': 10161624.0, 'memory_active': 28951856.0, 'memory_inactive': 130048.0, 'disk_read_bytes': 126976.0, 'disk_write_bytes': 827392.0, 'disk_space_total_gb': 3699.99, 'disk_space_used_gb': 2373.84, 'disk_space_free_gb': 1326.15, 'net_recv_bytes': 9896.0, 'net_sent_bytes': 9101.0, 'gpu_usage': 0.31, 'gpu_vram': 799.0, 'gpu_utilized': 1.0}
+>>> del big_array
+>>> tracker.stop()
+```
+## >>> from resource_tracker import ResourceTracker {style="font-size:39px !important;"}
+
+```python {code-line-numbers="|6|7-9" style="font-size:38px; margin-top: 40px !important;" }
+>>> print(tracker.pid_tracker)
+TinyDataFrame with 7 rows and 12 columns:
+timestamp          | pid      | children | utime | stime | cpu_usage | memory   | read_bytes | write_bytes | gpu_usage | gpu_vram | gpu_utilized
+-------------------+----------+----------+-------+-------+-----------+----------+------------+-------------+-----------+----------+-------------
+ 1750022710.052515 | 326380.0 |      3.0 | 0.040 | 0.069 |      0.11 |  62017.0 |        0.0 |         0.0 |       0.0 |      0.0 |          0.0
+1750022711.0526254 | 326380.0 |      3.0 | 0.139 | 0.099 |      0.24 | 573959.0 |        0.0 |         0.0 |       0.0 |      0.0 |          0.0
+  1750022712.05273 | 326380.0 |      3.0 | 1.020 | 0.072 |    1.0899 | 573913.0 |        0.0 |         0.0 |       0.0 |      0.0 |          0.0
+1750022713.0528054 | 326380.0 |      3.0 | 1.029 | 0.090 |    1.1199 | 573968.0 |        0.0 |         0.0 |       0.0 |      0.0 |          0.0
+ 1750022714.052872 | 326380.0 |      3.0 | 1.010 | 0.099 |    1.1099 | 573923.0 |        0.0 |         0.0 |       0.0 |      0.0 |          0.0
+1750022715.0529463 | 326380.0 |      3.0 | 0.049 | 0.079 |      0.13 |  71775.0 |        0.0 |         0.0 |       0.0 |      0.0 |          0.0
+1750022716.0530148 | 326380.0 |      3.0 | 0.060 | 0.099 |      0.16 |  61954.0 |        0.0 |         0.0 |       0.0 |      0.0 |          0.0
+```
+
+. . . 
+
+```python {style="font-size:38px; margin-top: 40px !important;" }
+>>> sum(tracker.pid_tracker["utime"]) / len(tracker.pid_tracker["utime"])
+0.4785714285714286
+>>> max(tracker.pid_tracker["memory"]) / 1024
+560.515625
+```
+
+## >>> from resource_tracker import PidTracker, SystemTracker {style="font-size:39px !important;"}
+
+- Track process and/or system-level resource usage
+- Configure to monitor subprocesses
+- Configure sampling interval
+- Use `PidTracker` and `SystemTracker` directly (blocking)
+
+Learn more by reading the documentation at<br />
+📖 <a href="https://sparecores.github.io/resource-tracker/reference/resource_tracker/tracker/" target="_new">sparecores.github.io/resource-tracker</a>
+
+::: {.notes}
+:::
+
+
+# >>> from metaflow import track_resources {.smaller-font-header transition="convex-in slide-out"}
+
+
+::: {.notes}
+:::
+
 
 # >>> import \_\_future\_\_ {#future transition="convex-in convex-out"}
 
@@ -645,7 +925,7 @@ DAG
 </ul>
 
 ::: {.notes}
-TODO
+TODO rewrite this slide
 :::
 
 # >>> from sparecores import team {#team transition="convex-in none-out"}
@@ -675,17 +955,17 @@ TODO
 :::: {.col}
 <img src="https://avatars.githubusercontent.com/u/820331?v=4" class="rounded w-70" />
 <p class="bold mt-0">@bra-fsn</p>
-<p class="mt-0" style="font-size: 0.9em;">Infrastructure and Python veteran.</p>
+<p class="mt-0" style="font-size: 0.9em; white-space: normal;">Infrastructure and Python veteran.</p>
 ::::
 :::: {.col}
 <img src="https://avatars.githubusercontent.com/u/5794264?v=4" class="rounded w-70" />
 <p class="bold mt-0">@palabola</p>
-<p class="mt-0" style="font-size: 0.9em;">Guardian of the front-end and Node.js tools.</p>
+<p class="mt-0" style="font-size: 0.9em; white-space: normal;">Guardian of the front-end and Node.js tools.</p>
 ::::
 :::: {.col}
 <img src="https://avatars.githubusercontent.com/u/495736?v=4" class="rounded w-70" />
 <p class="bold mt-0">@daroczig</p>
-<p class="mt-0" style="font-size: 0.9em;">Hack of all trades, master of <code>NaN</code>.</p>
+<p class="mt-0" style="font-size: 0.9em; white-space: normal;">Hack of all trades, master of <code>NaN</code>.</p>
 ::::
 :::
 
@@ -712,7 +992,7 @@ TODO
 ## {#bye-bye-bye transition="none"}
 
 ::: {.centered}
-<img src="images/bye-3-budapest-ml-2024.png" style="background: none;" class="mt--60 w-80" />
+<img src="images/by-budapest-ml-forum-3.png" style="background: none;" class="mt--60 w-80" />
 :::
 
 <p class="author offlineMode" style="color:#eee;font-size:0.75em;text-align: center !important; margin-top:-30px; padding-top:0px;">
