@@ -1,0 +1,247 @@
+/* quarto syntax highlight colors */
+:root {
+  --quarto-hl-ot-color: #FFFFFF;
+  --quarto-hl-at-color: #FFFFFF;
+  --quarto-hl-ss-color: #FFFFFF;
+  --quarto-hl-an-color: #FFFFFF;
+  --quarto-hl-re-color: #FFFFFF;
+  --quarto-hl-fu-color: #FFFFFF;
+  --quarto-hl-st-color: #FFFFFF;
+  --quarto-hl-cf-color: #FFFFFF;
+  --quarto-hl-op-color: #FFFFFF;
+  --quarto-hl-er-color: #FFFFFF;
+  --quarto-hl-bn-color: #FFFFFF;
+  --quarto-hl-al-color: #FFFFFF;
+  --quarto-hl-va-color: #FFFFFF;
+  --quarto-hl-bu-color: #FFFFFF;
+  --quarto-hl-ex-color: #FFFFFF;
+  --quarto-hl-pp-color: #FFFFFF;
+  --quarto-hl-in-color: #FFFFFF;
+  --quarto-hl-vs-color: #FFFFFF;
+  --quarto-hl-wa-color: #FFFFFF;
+  --quarto-hl-do-color: #FFFFFF;
+  --quarto-hl-im-color: #FFFFFF;
+  --quarto-hl-ch-color: #FFFFFF;
+  --quarto-hl-dt-color: #FFFFFF;
+  --quarto-hl-fl-color: #FFFFFF;
+  --quarto-hl-co-color: #FFFFFF;
+  --quarto-hl-cv-color: #FFFFFF;
+  --quarto-hl-cn-color: #FFFFFF;
+  --quarto-hl-sc-color: #FFFFFF;
+  --quarto-hl-dv-color: #FFFFFF;
+  --quarto-hl-kw-color: #FFFFFF;
+}
+
+/* other quarto variables */
+:root {
+  --quarto-font-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+/* syntax highlight based on Pandoc's rules */
+pre > code.sourceCode > span {
+  color: #FFFFFF;
+  font-style: inherit;
+}
+
+code.sourceCode > span {
+  color: #FFFFFF;
+  font-style: inherit;
+}
+
+div.sourceCode,
+div.sourceCode pre.sourceCode {
+  color: #FFFFFF;
+  font-style: inherit;
+}
+
+/* Normal */
+code span {
+  color: #FFFFFF;
+  font-style: inherit;
+}
+
+/* Alert */
+code span.al {
+  color: #FFFFFF;
+  font-style: inherit;
+}
+
+/* Annotation */
+code span.an {
+  color: #FFFFFF;
+  font-style: italic;
+}
+
+/* Attribute */
+code span.at {
+  color: #FFFFFF;
+  font-style: inherit;
+}
+
+/* BaseN */
+code span.bn {
+  color: #FFFFFF;
+  font-style: inherit;
+}
+
+/* BuiltIn */
+code span.bu {
+  color: #FFFFFF;
+  font-style: inherit;
+}
+
+/* ControlFlow */
+code span.cf {
+  color: #FFFFFF;
+  font-style: inherit;
+}
+
+/* Char */
+code span.ch {
+  color: #FFFFFF;
+  font-style: inherit;
+}
+
+/* Constant */
+code span.cn {
+  color: #FFFFFF;
+  font-style: inherit;
+}
+
+/* Comment */
+code span.co {
+  color: #FFFFFF;
+  font-style: italic;
+}
+
+/* CommentVar */
+code span.cv {
+  color: #FFFFFF;
+  font-style: italic;
+}
+
+/* Documentation */
+code span.do {
+  color: #FFFFFF;
+  font-style: italic;
+}
+
+/* DataType */
+code span.dt {
+  color: #FFFFFF;
+  font-style: inherit;
+}
+
+/* DecVal */
+code span.dv {
+  color: #FFFFFF;
+  font-style: inherit;
+}
+
+/* Error */
+code span.er {
+  color: #FFFFFF;
+  font-style: inherit;
+}
+
+/* Extension */
+code span.ex {
+  color: #FFFFFF;
+  font-style: inherit;
+}
+
+/* Float */
+code span.fl {
+  color: #FFFFFF;
+  font-style: inherit;
+}
+
+/* Function */
+code span.fu {
+  color: #FFFFFF;
+  font-style: inherit;
+}
+
+/* Import */
+code span.im {
+  color: #FFFFFF;
+  font-style: inherit;
+}
+
+/* Information */
+code span.in {
+  color: #FFFFFF;
+  font-style: italic;
+}
+
+/* Keyword */
+code span.kw {
+  color: #FFFFFF;
+  font-style: inherit;
+}
+
+/* Operator */
+code span.op {
+  color: #FFFFFF;
+  font-style: inherit;
+}
+
+/* Other */
+code span.ot {
+  color: #FFFFFF;
+  font-style: inherit;
+}
+
+/* Preprocessor */
+code span.pp {
+  color: #FFFFFF;
+  font-style: inherit;
+}
+
+/* RegionMarker */
+code span.re {
+  color: #FFFFFF;
+  font-style: inherit;
+}
+
+/* SpecialChar */
+code span.sc {
+  color: #FFFFFF;
+  font-style: inherit;
+}
+
+/* SpecialString */
+code span.ss {
+  color: #FFFFFF;
+  font-style: inherit;
+}
+
+/* String */
+code span.st {
+  color: #FFFFFF;
+  font-style: inherit;
+}
+
+/* Variable */
+code span.va {
+  color: #FFFFFF;
+  font-style: inherit;
+}
+
+/* VerbatimString */
+code span.vs {
+  color: #FFFFFF;
+  font-style: inherit;
+}
+
+/* Warning */
+code span.wa {
+  color: #FFFFFF;
+  font-style: italic;
+}
+
+.prevent-inlining {
+  content: "</";
+}
+
+/*# sourceMappingURL=d31b0d273b8a0c54ee7e138861318d9c.css.map */
