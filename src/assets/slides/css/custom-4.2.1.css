@@ -179,9 +179,6 @@ code.sourceCode::-webkit-scrollbar-thumb:vertical{
     font-family: Inter !important;
     text-transform: none;
     color: #ffffff;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
 }
 
 .reveal .title-slide h1,
@@ -193,6 +190,9 @@ code.sourceCode::-webkit-scrollbar-thumb:vertical{
     font-family: Inter !important;
     text-transform: none;
     color: #34d399;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .reveal .title-slide h1, .reveal h2 {

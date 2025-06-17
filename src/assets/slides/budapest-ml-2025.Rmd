@@ -906,10 +906,96 @@ Learn more by reading the documentation at<br />
 
 # >>> from metaflow import track_resources {.smaller-font-header transition="convex-in slide-out"}
 
+```python {code-line-numbers="|2,9" style="font-size:30px; margin-top: 20px !important; height: 630px !important;" }
+from time import sleep
+from metaflow import FlowSpec, step, track_resources
+
+class MinimalFlow(FlowSpec):
+    @step
+    def start(self):
+        self.next(self.do_heavy_computation)
+
+    @track_resources
+    @step
+    def do_heavy_computation(self):
+        big_array = bytearray(500 * 1024 * 1024)  # 500 MiB
+        total = 0
+        for i in range(int(1e7)):
+            total += i**3  # heavy calcs
+        del big_array
+        sleep(1)  # do nothing for bit after releasing memory
+        self.next(self.end)
+
+    @step
+    def end(self):
+        pass
+
+if __name__ == "__main__":
+    MinimalFlow()
+```
+
+::: {.notes}
+my talk could have been this single slide
+:::
+
+## >>> from metaflow import track_resources
+
+<a href="/assets/slides/budapest-ml-2025_files/1-minimal-card.html" target="_blank">
+  <img src="images/metaflow-minimal-card-preview.png" style="margin-top: -60px; width: 100%;" />
+</a>
+
+## >>> from metaflow import track_resources
+
+<a href="/assets/slides/example-resource-tracker-report-in-metaflow.html" target="_blank">
+  <img src="images/metaflow-cloud-server-card-preview.png" style="margin-top: -60px; width: 100%;" />
+</a>
+
+## >>> from metaflow import track_resources
+
+<ul>
+  <li class="fragment">Host hardware specs and environment information</li>
+  <li class="fragment">Cloud provider, region and instance type discovery</li>
+  <li class="fragment">Tracks CPU, memory, disk I/O and storage, network, GPU/VRAM, and more</li>
+  <li class="fragment">Summary statistics</li>
+  <li class="fragment">Resource recommendations</li>
+  <li class="fragment">Actual cloud server type recommendation with real-time (spot or on-demand) pricing information</li>
+  <li class="fragment">Easy to use (single decorator) 😊</li>
+</ul>
+
+## >>> from metaflow import track_resources
+
+<div class="centered" style="margin-top: 40px;">
+  <video
+    autoplay loop muted style="width: 75%;"
+    src="/assets/slides/images/demo_time.webm"
+  ></video>
+
+  Source:
+  <a href="https://thecodinglove.com/when-we-demo-our-prototype-to-the-client">
+    When we demo our prototype to the client
+  </a>
+</div>
 
 ::: {.notes}
 :::
 
+## >>> from metaflow import track_resources
+
+<a href="https://docs.outerbounds.com/sandbox/" target="_blank">
+  <img src="images/outerbounds-sandbox.png" style="margin-top: 20px; width: 80%;" />
+</a>
+
+<div class="centered">
+  Source: <a href="https://docs.outerbounds.com/sandbox/" target="_blank">Outerbounds sandbox</a>
+</div>
+
+::: {.notes}
+1. start sandbox
+2. edit "scaling out to the cloud": import + add track_resources
+3. pip install resource-tracker
+4. run the flow .. check cards
+5. realize low memory usage despite asking for 10 gigs!
+:::
 
 # >>> import \_\_future\_\_ {#future transition="convex-in convex-out"}
 

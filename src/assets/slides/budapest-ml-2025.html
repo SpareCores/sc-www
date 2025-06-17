@@ -95,7 +95,7 @@
     code span.vs { color: #abe338; } /* VerbatimString */
     code span.wa { color: #dcc6e0; } /* Warning */
   </style>
-  <link rel="stylesheet" href="budapest-ml-2025_files/libs/revealjs/dist/theme/quarto-3c2f4b8d85af8c8b1efe27d3b59187bd.css">
+  <link rel="stylesheet" href="budapest-ml-2025_files/libs/revealjs/dist/theme/quarto-37058a40523fadd3eb6582a1eaaf1bef.css">
   <link href="budapest-ml-2025_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="budapest-ml-2025_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="budapest-ml-2025_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -1354,8 +1354,88 @@ Framework extensions (e.g.&nbsp;Metaflow)
           display:block!important;
       }</style></aside>
 </section></section>
+<section>
 <section id="from-metaflow-import-track_resources" class="title-slide slide level1 smaller-font-header" data-transition="convex-in slide-out">
 <h1>&gt;&gt;&gt; from metaflow import track_resources</h1>
+<div class="sourceCode" id="cb16" style="font-size:30px; margin-top: 20px !important; height: 630px !important;" data-code-line-numbers="|2,9"><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb16-1"><a href=""></a><span class="im">from</span> time <span class="im">import</span> sleep</span>
+<span id="cb16-2"><a href=""></a><span class="im">from</span> metaflow <span class="im">import</span> FlowSpec, step, track_resources</span>
+<span id="cb16-3"><a href=""></a></span>
+<span id="cb16-4"><a href=""></a><span class="kw">class</span> MinimalFlow(FlowSpec):</span>
+<span id="cb16-5"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb16-6"><a href=""></a>    <span class="kw">def</span> start(<span class="va">self</span>):</span>
+<span id="cb16-7"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.do_heavy_computation)</span>
+<span id="cb16-8"><a href=""></a></span>
+<span id="cb16-9"><a href=""></a>    <span class="at">@track_resources</span></span>
+<span id="cb16-10"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb16-11"><a href=""></a>    <span class="kw">def</span> do_heavy_computation(<span class="va">self</span>):</span>
+<span id="cb16-12"><a href=""></a>        big_array <span class="op">=</span> <span class="bu">bytearray</span>(<span class="dv">500</span> <span class="op">*</span> <span class="dv">1024</span> <span class="op">*</span> <span class="dv">1024</span>)  <span class="co"># 500 MiB</span></span>
+<span id="cb16-13"><a href=""></a>        total <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb16-14"><a href=""></a>        <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">int</span>(<span class="fl">1e7</span>)):</span>
+<span id="cb16-15"><a href=""></a>            total <span class="op">+=</span> i<span class="op">**</span><span class="dv">3</span>  <span class="co"># heavy calcs</span></span>
+<span id="cb16-16"><a href=""></a>        <span class="kw">del</span> big_array</span>
+<span id="cb16-17"><a href=""></a>        sleep(<span class="dv">1</span>)  <span class="co"># do nothing for bit after releasing memory</span></span>
+<span id="cb16-18"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.end)</span>
+<span id="cb16-19"><a href=""></a></span>
+<span id="cb16-20"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb16-21"><a href=""></a>    <span class="kw">def</span> end(<span class="va">self</span>):</span>
+<span id="cb16-22"><a href=""></a>        <span class="cf">pass</span></span>
+<span id="cb16-23"><a href=""></a></span>
+<span id="cb16-24"><a href=""></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">"__main__"</span>:</span>
+<span id="cb16-25"><a href=""></a>    MinimalFlow()</span></code></pre></div>
+<aside class="notes">
+<p>my talk could have been this single slide</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="from-metaflow-import-track_resources-1" class="slide level2">
+<h2>&gt;&gt;&gt; from metaflow import track_resources</h2>
+<p><a href="/assets/slides/budapest-ml-2025_files/1-minimal-card.html" target="_blank"> <img src="images/metaflow-minimal-card-preview.png" style="margin-top: -60px; width: 100%;"> </a></p>
+</section>
+<section id="from-metaflow-import-track_resources-2" class="slide level2">
+<h2>&gt;&gt;&gt; from metaflow import track_resources</h2>
+<p><a href="/assets/slides/example-resource-tracker-report-in-metaflow.html" target="_blank"> <img src="images/metaflow-cloud-server-card-preview.png" style="margin-top: -60px; width: 100%;"> </a></p>
+</section>
+<section id="from-metaflow-import-track_resources-3" class="slide level2">
+<h2>&gt;&gt;&gt; from metaflow import track_resources</h2>
+<ul>
+<li class="fragment">
+Host hardware specs and environment information
+</li>
+<li class="fragment">
+Cloud provider, region and instance type discovery
+</li>
+<li class="fragment">
+Tracks CPU, memory, disk I/O and storage, network, GPU/VRAM, and more
+</li>
+<li class="fragment">
+Summary statistics
+</li>
+<li class="fragment">
+Resource recommendations
+</li>
+<li class="fragment">
+Actual cloud server type recommendation with real-time (spot or on-demand) pricing information
+</li>
+<li class="fragment">
+Easy to use (single decorator) 😊
+</li>
+</ul>
+</section>
+<section id="from-metaflow-import-track_resources-4" class="slide level2">
+<h2>&gt;&gt;&gt; from metaflow import track_resources</h2>
+<div class="centered" style="margin-top: 40px;">
+<p><video autoplay="" loop="" muted="" style="width: 75%;" src="/assets/slides/images/demo_time.webm"></video></p>
+<p>Source: <a href="https://thecodinglove.com/when-we-demo-our-prototype-to-the-client"> When we demo our prototype to the client </a></p>
+</div>
 <aside class="notes">
 
 <style type="text/css">
@@ -1370,7 +1450,32 @@ Framework extensions (e.g.&nbsp;Metaflow)
           display:block!important;
       }</style></aside>
 </section>
-
+<section id="from-metaflow-import-track_resources-5" class="slide level2">
+<h2>&gt;&gt;&gt; from metaflow import track_resources</h2>
+<p><a href="https://docs.outerbounds.com/sandbox/" target="_blank"> <img src="images/outerbounds-sandbox.png" style="margin-top: 20px; width: 80%;"> </a></p>
+<div class="centered">
+<p>Source: <a href="https://docs.outerbounds.com/sandbox/" target="_blank">Outerbounds sandbox</a></p>
+</div>
+<aside class="notes">
+<ol type="1">
+<li>start sandbox</li>
+<li>edit “scaling out to the cloud”: import + add track_resources</li>
+<li>pip install resource-tracker</li>
+<li>run the flow .. check cards</li>
+<li>realize low memory usage despite</li>
+</ol>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section></section>
 <section id="future" class="title-slide slide level1" data-transition="convex-in convex-out">
 <h1>&gt;&gt;&gt; import __future__</h1>
 <ul>
