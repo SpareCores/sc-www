@@ -320,14 +320,6 @@ Add-on services to scale data science workflows, even without direct vendor enga
 <li>unified CLI to start machines</li>
 <li>and working on an an optional SaaS offering built on the top of the open-source tooling for folks who would rather avoid registering with all cloud providers etc: give us a Docker image, a command to run, and you credit card .. all set, we will run it wherever it’s cheapest.</li>
 </ul>
-<p>We help DevOps, DS, ML, AI, ETL, AV, and other engineering teams to find optimal instances for their batch jobs (e.g.&nbsp;“8 CPU cores, 64 GB of RAM, and a TPU needed in an EU datacenter to train ML models for 6 hours”) by providing:</p>
-<ul>
-<li>Open-source tools, database schemas and documentation to monitor cloud and flexible VPS/dedicated server vendors and their compute resource offerings in an innovative and truly comparative way, including vendor details (e.g.&nbsp;location, certificates, green power), compute capabilities (e.g.&nbsp;CPU, memory, GPU/TPU), pricing (especially of spot instances), and performance (by running task-specific benchmarks).</li>
-<li>Managed infrastructure, databases, APIs, SDKs, and web applications to make these continuously and transparently tracked data sources publicly available and comparable in a validated, unbiased, structured, and searchable manner.</li>
-<li>Helpers to easily start and manage instances at all the supported vendors with a standardized API.</li>
-<li>SaaS</li>
-</ul>
-<p>BUT let’s focus on the open-source and open-data components ..</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -347,7 +339,7 @@ Add-on services to scale data science workflows, even without direct vendor enga
 Source: <a href="https://sparecores.com">sparecores.com</a>
 </p>
 <aside class="notes">
-<p>TODO</p>
+<p>high level numbers about the data we collect and make available</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -367,6 +359,7 @@ Source: <a href="https://sparecores.com">sparecores.com</a>
 </div>
 <aside class="notes">
 <p>The easiest way to query this data is through our web component, as you can see on the screen …</p>
+<p>This is not only a list of servers, but you can filter, order, and search for specific instances. We already show some performance metrics by default, along with the cost efficiency based on the spot or on-demand pricing.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -385,7 +378,7 @@ Source: <a href="https://sparecores.com">sparecores.com</a>
 <p><img style="width: 90%;" src="images/sc-www-server-details-top-g2-standard-16.png"></p>
 </div>
 <aside class="notes">
-<p>Clicking on a server shows you the technical details of the instance – much more than what’s provided publicly by the vendor, even more than what ChatGPT knows … as we actually start each machine and inspect the hardware. More on that later.</p>
+<p>Clicking on a server shows you the technical details of the instance – much more than what’s provided publicly by the vendor, even more than what ChatGPT knows … as we actually start each machine and inspect the hardware.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -497,7 +490,7 @@ Source: <a href="https://sparecores.com">sparecores.com</a>
 <h2>&gt;&gt;&gt; from sparecores import intro</h2>
 
 <img src="images/sc-www-server-details-benchmarks-5-g2-standard-16.png" class="r-stretch"><aside class="notes">
-<p>Or looking at LLM Inference Speed that is the main topic for today .. I’ll revisit later</p>
+<p>Or looking at LLM Inference Speed both for prompt processing and text generation, using smaller models with 135M parameters up to 70B larger models.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -673,7 +666,7 @@ Source: <a href="https://sparecores.com">sparecores.com</a>
 <h1>&gt;&gt;&gt; from sparecores import components</h1>
 
 <img style="margin-top:30px; width: 100%;" src="images/sc-components.png" class="r-stretch"><aside class="notes">
-<p>As mentioned previously, this is made available via multiple components that I’d like to walk through in the next slides.</p>
+<p>As mentioned previously, this is made available via multiple components that you can find on GitHub. We don’t have time to go through all of them, but I’d be happy to answer any related questions on Slack, or ping me on LinkedIn :)</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -701,6 +694,9 @@ started at Netflix
 open-source (since 2019)
 </li>
 <li class="fragment">
+supports Python and R
+</li>
+<li class="fragment">
 maintained by Netflix and Outerbounds
 </li>
 <li class="fragment">
@@ -712,12 +708,9 @@ reproducible by design
 <li class="fragment">
 scalable
 </li>
-<li class="fragment">
-supports Python and R
-</li>
 </ul>
 <aside class="notes">
-<p>TODO</p>
+
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -752,8 +745,16 @@ supports Python and R
 <span id="cb2-18"><a href=""></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">"__main__"</span>:</span>
 <span id="cb2-19"><a href=""></a>    HelloFlow()</span></code></pre></div>
 <aside class="notes">
-<p>By design, Metaflow is a deceptively simple Python library</p>
-<p>DAG</p>
+<p>By design, Metaflow is a deceptively simple Python library.</p>
+<ol type="1">
+<li>import a class and a function from the <code>metaflow</code> package</li>
+<li>use that class to inherit from to define our Workflow</li>
+<li>we have a seriees of instance methods</li>
+<li>with the <code>step</code> decorator – marking the steps of our flow</li>
+<li>each step defining which steps follows</li>
+<li>and the rest is the core program: printing to stdout in this case</li>
+<li>and running an instance of the flow class</li>
+</ol>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -806,8 +807,7 @@ supports Python and R
 <span id="cb3-19"><a href=""></a>    HelloFlow()</span></code></pre></div>
 </div></div>
 <aside class="notes">
-<p>By design, Metaflow is a deceptively simple Python library</p>
-<p>DAG</p>
+<p>So in this case we have a linear flow of steps that represents this simple DAG.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -823,7 +823,22 @@ supports Python and R
 <section id="from-dnd-import-dices" class="slide level2" data-transition="slide">
 <h2>&gt;&gt;&gt; from DnD import dices</h2>
 
-<img src="images/robot-dice.jpeg" style="border-radius: 25px; box-shadow: #06263a 20px 19px 25px 25px;" class="r-stretch"></section>
+<img src="images/robot-dice.jpeg" style="border-radius: 25px; box-shadow: #06263a 20px 19px 25px 25px;" class="r-stretch"><aside class="notes">
+<p>But I wanted to bring a bit more realistic project for demonstration purposes, something that includes at least a bit of probability and randomness.</p>
+<p>And I thought everyone knows what a dice is .. and maybe some of you even played role-playing games, such as Dungeons &amp; Dragons, or AD&amp;D .. so you know multiple types of dice, and how important it is to have a full set of dices available at all times.</p>
+<p>So let’s create a Metaflow step that rolls dices!</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
 <section id="from-metaflow-import-dices" class="slide level2" data-transition="slide-in fade-out">
 <h2>&gt;&gt;&gt; from metaflow import dices</h2>
 <div class="columns" style="display: block; margin-top: 20px;">
@@ -870,8 +885,10 @@ supports Python and R
 <span id="cb4-25"><a href=""></a>    DiceRollFlow()</span></code></pre></div>
 </div></div>
 <aside class="notes">
-<p>By design, Metaflow is a deceptively simple Python library</p>
-<p>DAG</p>
+<ol type="1">
+<li>First, let’s define the types of dices we want to support as a constant, a class attribute in this case. Dices might have as low as 3 sides … up to 100.</li>
+<li>Then we decide in each workflow run, what type of dice we want to roll, and how many times. Then actually roll the dice or dices.</li>
+</ol>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -930,8 +947,10 @@ supports Python and R
 <span id="cb5-25"><a href=""></a>    DiceRollFlow()</span></code></pre></div>
 </div></div>
 <aside class="notes">
-<p>By design, Metaflow is a deceptively simple Python library</p>
-<p>DAG</p>
+<ol start="3" type="1">
+<li>So we have the same number of instance methods, or steps here … but besides a linear flow, we also pass data between the steps as instance attributes.</li>
+</ol>
+<p>And this latter is super important and very convenient: whatever you pass as instance attributes between steps, those items are automatically serialized (pickled) and stored as versioned artifacts. In this case, artifacts are stored on disk, but could use AWS S3 or other object storage backends as well for distributed workflows.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -960,6 +979,19 @@ supports Python and R
 </div>
 <p><img src="images/metaflow-run-dices.png" style="width: 100%; margin-top: -30px;"></p>
 </div>
+<aside class="notes">
+<p>Example output of an actual run of this workflow. Note that a new process was spawned for each step, and that the data was passed between those through using artifacts.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section>
 <section id="from-metaflow-import-dices-3" class="slide level2">
 <h2>&gt;&gt;&gt; from metaflow import dices</h2>
@@ -981,6 +1013,24 @@ supports Python and R
 <span id="cb6-16"><a href=""></a><span class="st">'Rolled 3 time(s) with a 10 sided dice: [5, 2, 2]</span><span class="ch">\n</span><span class="st">'</span></span>
 <span id="cb6-17"><a href=""></a><span class="op">&gt;&gt;&gt;</span> step.task.artifacts.dices.data</span>
 <span id="cb6-18"><a href=""></a>[<span class="dv">5</span>, <span class="dv">2</span>, <span class="dv">2</span>]</span></code></pre></div>
+<aside class="notes">
+<p>Now let’s dig into the details of Metaflow to get a better understanding of how it works.</p>
+<p>First, let’s see how we can access the last run.</p>
+<p>We can look up some metadata about the run, such as the creation time, the data that was passed between the steps, and the artifacts that were stored.</p>
+<p>Then we can also get the details of the individual workflow steps, along with metadata such as UNIX user, start time, PID etc.</p>
+<p>Standard out and standard error of the step.</p>
+<p>And the versioned artifacts that were stored.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section>
 <section id="from-metaflow-import-more" class="slide level2" data-transition="slide-in fade-out">
 <h2>&gt;&gt;&gt; from metaflow import more</h2>
@@ -1032,7 +1082,10 @@ supports Python and R
 <span id="cb7-26"><a href=""></a>        <span class="bu">print</span>(<span class="st">'done!'</span>)</span></code></pre></div>
 </div></div>
 <aside class="notes">
-
+<p>Now let’s look at a more complex example, that includes a branching flow, and running two steps in parallel.</p>
+<p>To do so, the first step passes to two independent steps instead of one, both having access to the <code>data</code> instance attribute created in the <code>start</code> step.</p>
+<p>Both parallel steps create a <code>model</code> instance attribute, and pass it to the <code>eval</code> step.</p>
+<p>The <code>eval</code> step then selects the best model based on the score, and passes it to the <code>end</code> step.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -1095,7 +1148,7 @@ supports Python and R
 <span id="cb8-26"><a href=""></a>        <span class="bu">print</span>(<span class="st">'done!'</span>)</span></code></pre></div>
 </div></div>
 <aside class="notes">
-
+<p>I hope this example makes it clear how useful it is to have access to the metadata and actual data of all steps of a workflow for later debugging.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -1160,7 +1213,11 @@ supports Python and R
 <span id="cb9-27"><a href=""></a>        <span class="bu">print</span>(<span class="st">'done!'</span>)</span></code></pre></div>
 </div></div>
 <aside class="notes">
-
+<p>Now let’s talk a bit about dependency management .. which is often pretty crazy in the Python world.</p>
+<p>Let’s say you need a specific version of a library, which you don’t have installed globally, so you could create a virtual environment or Docker image for that .. and use it for a single step.</p>
+<p>Soon, it becomes a mess, and you have to manage multiple environments etc.</p>
+<p>Metaflow helps with that by optionally managing the virtual environments for you. Just use the <code>pypi</code> or <code>conda</code> decorators to specify the version of the library you need, and Metaflow will create and cache the virtual environments for you.</p>
+<p>This works locally, and with cloud services as well!</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -1229,6 +1286,8 @@ supports Python and R
 <span id="cb10-28"><a href=""></a>        <span class="bu">print</span>(<span class="st">'done!'</span>)</span></code></pre></div>
 </div></div>
 <aside class="notes">
+<p>Speaking about cloud services .. you can imagine that sometimes the local resources are just not enough, and we need to run the workflow or a step on a larger machine.</p>
+<p>It’s super easy for the data scientist to do so: use the AWS Batch or Kubernetes decorator, specify the resources you need, and Metaflow will take care of the rest.</p>
 <p>But how much resources did we actually use?</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
@@ -1270,6 +1329,25 @@ Framework extensions (e.g.&nbsp;Metaflow)
 <div class="fragment" style="margin-top: 40px;" data-fragment-index="2">
 * No dependencies on Linux; <code>psutil</code> on other OS.
 </div>
+<aside class="notes">
+<p>And here comes the resource tracker to the rescue!</p>
+<p>If you are running Linux, and most production servers are Linux … it can use the proc filesystem without any further dependencies – other than a modern Linux kernel. On other operating systems, it uses <code>psutil</code> to get the same information.</p>
+<p>It supports recent Python versions, going back to the latest officially supported Python version, so that you can run it anywhere.</p>
+<p>It can monitor the resource usage of the whole system, like logging the overall CPU and memory usage etc But can also track a single process and optionally its children as well – independent from the whole system.</p>
+<p>It can track the CPU usage, memory usage, disk I/O, network usage, GPU usage, and more.</p>
+<p>It’s easy to use, and it’s non-blocking, so you can run it in the background while your code is running.</p>
+<p>By default, it’s framework agnostic .. but comes with a few extensions, e.g.&nbsp;for Metaflow.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </ul></section>
 <section id="import-resource_tracker-1" class="slide level2">
 <h2>&gt;&gt;&gt; import resource_tracker</h2>
@@ -1286,6 +1364,20 @@ Framework extensions (e.g.&nbsp;Metaflow)
 <span id="cb12-7"><a href=""></a><span class="co"># your analytics code utilizing the collected data</span></span>
 <span id="cb12-8"><a href=""></a>tracker.pid_tracker</span>
 <span id="cb12-9"><a href=""></a>tracker.system_tracker</span></code></pre></div>
+<aside class="notes">
+<p>It’s on PyPI, so easy to install and upgrade.</p>
+<p>Here’s a minimal example of how to use the resource tracker: 1. Import the ResourceTracker class 2. Create an instance, which will be run tasks in background threads and processes 3. You have real-time access to the collected data at any time by using the <code>pid_tracker</code> or <code>system_tracker</code> instance attributes 4. You can stop the tracking or it will be auto cleanup with your script</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </div>
 </section>
 <section id="from-resource_tracker-import-resourcetracker" class="slide level2" style="font-size:39px !important;">
@@ -1310,6 +1402,26 @@ Framework extensions (e.g.&nbsp;Metaflow)
 <span id="cb13-18"><a href=""></a>TinyDataFrame <span class="cf">with</span> <span class="dv">4</span> rows <span class="kw">and</span> <span class="dv">21</span> columns. First row <span class="im">as</span> a <span class="bu">dict</span>: {<span class="st">'timestamp'</span>: <span class="fl">1750022016.3461385</span>, <span class="st">'processes'</span>: <span class="fl">778.0</span>, <span class="st">'utime'</span>: <span class="fl">0.6399999999994179</span>, <span class="st">'stime'</span>: <span class="fl">1.6000000000058208</span>, <span class="st">'cpu_usage'</span>: <span class="fl">2.2398</span>, <span class="st">'memory_free'</span>: <span class="fl">18415448.0</span>, <span class="st">'memory_used'</span>: <span class="fl">36966424.0</span>, <span class="st">'memory_buffers'</span>: <span class="fl">3612.0</span>, <span class="st">'memory_cached'</span>: <span class="fl">10161624.0</span>, <span class="st">'memory_active'</span>: <span class="fl">28951856.0</span>, <span class="st">'memory_inactive'</span>: <span class="fl">130048.0</span>, <span class="st">'disk_read_bytes'</span>: <span class="fl">126976.0</span>, <span class="st">'disk_write_bytes'</span>: <span class="fl">827392.0</span>, <span class="st">'disk_space_total_gb'</span>: <span class="fl">3699.99</span>, <span class="st">'disk_space_used_gb'</span>: <span class="fl">2373.84</span>, <span class="st">'disk_space_free_gb'</span>: <span class="fl">1326.15</span>, <span class="st">'net_recv_bytes'</span>: <span class="fl">9896.0</span>, <span class="st">'net_sent_bytes'</span>: <span class="fl">9101.0</span>, <span class="st">'gpu_usage'</span>: <span class="fl">0.31</span>, <span class="st">'gpu_vram'</span>: <span class="fl">799.0</span>, <span class="st">'gpu_utilized'</span>: <span class="fl">1.0</span>}</span>
 <span id="cb13-19"><a href=""></a><span class="op">&gt;&gt;&gt;</span> <span class="kw">del</span> big_array</span>
 <span id="cb13-20"><a href=""></a><span class="op">&gt;&gt;&gt;</span> tracker.stop()</span></code></pre></div>
+<aside class="notes">
+<p>A more realistic example:</p>
+<ol type="1">
+<li>We start the tracker and check the metrics at the process level right away .. it’s empty. By default the sampler runs every 1 second, so it just didn’t have time to collect any data yet.</li>
+<li>We sleep for 1 second, and check the metrics again .. now we have some data: user and system time, overall CPU usage, memory used in megabytes, and more.</li>
+<li>Now let’s reserve some memory and do some computations.</li>
+<li>Once it’s ready, we can check the metrics again .. and see that it accumulated around 1 second of user time in the past second, so it was burning a single CPU core and the memory usage also increased over to 500 MiB. There are 3 children processes shows .. those were actually started by the resource tracker.</li>
+</ol>
+<p>The system tracker shows different stats: this is a laptop, with many Chrome tabs open …. hundreds of processes running and higher CPU usage, ~30 gigs of RAM also used etc. Will visualize this better latter, so let’s move on.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section>
 <section id="from-resource_tracker-import-resourcetracker-1" class="slide level2" style="font-size:39px !important;">
 <h2>&gt;&gt;&gt; from resource_tracker import ResourceTracker</h2>
@@ -1329,6 +1441,24 @@ Framework extensions (e.g.&nbsp;Metaflow)
 <span id="cb15-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fl">0.4785714285714286</span></span>
 <span id="cb15-3"><a href="" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;&gt;&gt;</span> <span class="bu">max</span>(tracker.pid_tracker[<span class="st">"memory"</span>]) <span class="op">/</span> <span class="dv">1024</span></span>
 <span id="cb15-4"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fl">560.515625</span></span></code></pre></div>
+<aside class="notes">
+<p>Here you can see the process-level collected data:</p>
+<ol type="1">
+<li>Here’s the script stopped sleeping .. not much CPU usage, but memory numbers increased.</li>
+<li>Then we see the time spent in the user space increased to 1 for a few seconds .. so that’s the calculations part. The CPU usage shows the percentage of vCPUs used .. so around a single core.</li>
+<li>As said, this is a zero-dependency package, but comes with some simple data frame helpers to do aggregates, see e.g.&nbsp;the average CPU usage and maximum memory usage for the monitored ~7 seconds.</li>
+</ol>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </div>
 </section>
 <section id="from-resource_tracker-import-pidtracker-systemtracker" class="slide level2" style="font-size:39px !important;">
@@ -1341,7 +1471,7 @@ Framework extensions (e.g.&nbsp;Metaflow)
 </ul>
 <p>Learn more by reading the documentation at<br> 📖 <a href="https://sparecores.github.io/resource-tracker/reference/resource_tracker/tracker/" target="_new">sparecores.github.io/resource-tracker</a></p>
 <aside class="notes">
-
+<p>For advanced usage, to update the config for sampling interval etc. – please check the documentation. Or let me know later if you have any related questions, or feedback – I’d love to hear it!</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -1357,7 +1487,7 @@ Framework extensions (e.g.&nbsp;Metaflow)
 <section>
 <section id="from-metaflow-import-track_resources" class="title-slide slide level1 smaller-font-header" data-transition="convex-in slide-out">
 <h1>&gt;&gt;&gt; from metaflow import track_resources</h1>
-<div class="sourceCode" id="cb16" style="font-size:30px; margin-top: 20px !important; height: 630px !important;" data-code-line-numbers="|2,9"><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb16-1"><a href=""></a><span class="im">from</span> time <span class="im">import</span> sleep</span>
+<div class="sourceCode" id="cb16" style="font-size:30px; margin-top: 20px !important; height: 635px !important;" data-code-line-numbers="|12-15|2,9"><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb16-1"><a href=""></a><span class="im">from</span> time <span class="im">import</span> sleep</span>
 <span id="cb16-2"><a href=""></a><span class="im">from</span> metaflow <span class="im">import</span> FlowSpec, step, track_resources</span>
 <span id="cb16-3"><a href=""></a></span>
 <span id="cb16-4"><a href=""></a><span class="kw">class</span> MinimalFlow(FlowSpec):</span>
@@ -1383,7 +1513,11 @@ Framework extensions (e.g.&nbsp;Metaflow)
 <span id="cb16-24"><a href=""></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">"__main__"</span>:</span>
 <span id="cb16-25"><a href=""></a>    MinimalFlow()</span></code></pre></div>
 <aside class="notes">
-<p>my talk could have been this single slide</p>
+<ol type="1">
+<li>Now let’s port the previous example to Metaflow, and see how to use the resource tracker there.</li>
+<li>Creating the memory hog and running the calculations are in the <code>do_heavy_computation</code> step.</li>
+<li>And honestly, my talk could have been this single slide as that’s all we need: import the resource tracker decorator from Metaflow – as it was installed as an extension, and the use that decorator to track the resource usage of any step.</li>
+</ol>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -1399,10 +1533,42 @@ Framework extensions (e.g.&nbsp;Metaflow)
 <section id="from-metaflow-import-track_resources-1" class="slide level2">
 <h2>&gt;&gt;&gt; from metaflow import track_resources</h2>
 <p><a href="/assets/slides/budapest-ml-2025_files/1-minimal-card.html" target="_blank"> <img src="images/metaflow-minimal-card-preview.png" style="margin-top: -60px; width: 100%;"> </a></p>
+<aside class="notes">
+<p>The resource tracker not only records the resource usage of a step at the process and system level, but it also automatically generated an interactive HTML card for the step, which you can see here.</p>
+<p>CLICK for HTML</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section>
 <section id="from-metaflow-import-track_resources-2" class="slide level2">
 <h2>&gt;&gt;&gt; from metaflow import track_resources</h2>
 <p><a href="/assets/slides/example-resource-tracker-report-in-metaflow.html" target="_blank"> <img src="images/metaflow-cloud-server-card-preview.png" style="margin-top: -60px; width: 100%;"> </a></p>
+<aside class="notes">
+<p>A more realistic example run on a cloud server instead of using my laptop:</p>
+<ul>
+<li>Note the cloud environment was automatically discovered.</li>
+<li>Potential cost savings also calculated.</li>
+</ul>
+<p>CLICK for HTML</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section>
 <section id="from-metaflow-import-track_resources-3" class="slide level2">
 <h2>&gt;&gt;&gt; from metaflow import track_resources</h2>
@@ -1429,6 +1595,19 @@ Actual cloud server type recommendation with real-time (spot or on-demand) prici
 Easy to use (single decorator) 😊
 </li>
 </ul>
+<aside class="notes">
+<p>To summarize, using the track resources decorator is super easy, and it gives you a lot of useful information in an automated way: ….</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section>
 <section id="from-metaflow-import-track_resources-4" class="slide level2">
 <h2>&gt;&gt;&gt; from metaflow import track_resources</h2>
@@ -1439,7 +1618,7 @@ Source: <a href="https://thecodinglove.com/when-we-demo-our-prototype-to-the-cli
 </p>
 </div>
 <aside class="notes">
-
+<p>And now it’s time for a quick demo! I’ll use a Kubernetes sandbox to run a flow after live coding for a bit .. so please keep your fingers crossed!</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -1461,6 +1640,7 @@ Source: <a href="https://docs.outerbounds.com/sandbox/" target="_blank">Outerbou
 </p>
 </div>
 <aside class="notes">
+<p>This was made possible but the Outerbounds sandbox – I highly recommend it to anyone starting out with Metaflow, as it’s super convenient to get started.</p>
 <ol type="1">
 <li>start sandbox</li>
 <li>edit “scaling out to the cloud”: import + add track_resources</li>
