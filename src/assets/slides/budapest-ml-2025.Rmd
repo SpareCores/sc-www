@@ -966,14 +966,15 @@ my talk could have been this single slide
 
 <div class="centered" style="margin-top: 40px;">
   <video
-    autoplay loop muted style="width: 75%;"
+    autoplay loop muted style="width: 80%;"
     src="/assets/slides/images/demo_time.webm"
   ></video>
-
-  Source:
-  <a href="https://thecodinglove.com/when-we-demo-our-prototype-to-the-client">
+  <p style="margin-top: 0px;">
+    Source:
+    <a href="https://thecodinglove.com/when-we-demo-our-prototype-to-the-client">
     When we demo our prototype to the client
-  </a>
+    </a>
+  </p>
 </div>
 
 ::: {.notes}
@@ -981,12 +982,14 @@ my talk could have been this single slide
 
 ## >>> from metaflow import track_resources
 
-<a href="https://docs.outerbounds.com/sandbox/" target="_blank">
-  <img src="images/outerbounds-sandbox.png" style="margin-top: 20px; width: 80%;" />
-</a>
-
 <div class="centered">
-  Source: <a href="https://docs.outerbounds.com/sandbox/" target="_blank">Outerbounds sandbox</a>
+  <a href="https://docs.outerbounds.com/sandbox/" target="_blank">
+    <img src="images/outerbounds-sandbox.png" style="margin-top: 0px; width: 65%;" />
+  </a>
+  <p style="margin-top: 0px;">
+    Source:
+    <a href="https://docs.outerbounds.com/sandbox/" target="_blank">Outerbounds sandbox</a>
+  </p>
 </div>
 
 ::: {.notes}
@@ -995,24 +998,26 @@ my talk could have been this single slide
 3. pip install resource-tracker
 4. run the flow .. check cards
 5. realize low memory usage despite asking for 10 gigs!
+6. by default, `@kubernetes` would reserve 4 GiB
 :::
 
 # >>> import \_\_future\_\_ {#future transition="convex-in convex-out"}
 
 <ul>
-  <li class="fragment">Add support for more vendors</li>
+  <li class="fragment">Automated <code>@resources</code> tuning</li>
+  <li class="fragment">More granular resource mapping</li>
+  <li class="fragment">Step optimization assistant</li>
+  <li class="fragment">Central dashboard for all resource usage</li>
+  <li class="fragment">Proactive resource management</li>
   <ul>
-    <li class="fragment">Crawler (vendor API integration)</li>
-    <li class="fragment">Runner (pulumi)</li>
+    <li class="fragment">Email alerts on overprovisioning</li>
+    <li class="fragment">Predict potential job failures due to insufficient resources</li>
   </ul>
-  <li class="fragment">More SDKs (PyPI, npm, CRAN, etc.)</li>
-  <li class="fragment">Data analysis, blog posts</li>
-  <li class="fragment">My Spare Cores (dashboard)</li>
-  <li class="fragment">SaaS 👀</li>
+  <li class="fragment">Effortless remote execution</li>
 </ul>
 
 ::: {.notes}
-TODO rewrite this slide
+
 :::
 
 # >>> from sparecores import team {#team transition="convex-in none-out"}

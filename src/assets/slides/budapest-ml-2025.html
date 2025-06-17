@@ -1433,8 +1433,10 @@ Easy to use (single decorator) 😊
 <section id="from-metaflow-import-track_resources-4" class="slide level2">
 <h2>&gt;&gt;&gt; from metaflow import track_resources</h2>
 <div class="centered" style="margin-top: 40px;">
-<p><video autoplay="" loop="" muted="" style="width: 75%;" src="/assets/slides/images/demo_time.webm"></video></p>
-<p>Source: <a href="https://thecodinglove.com/when-we-demo-our-prototype-to-the-client"> When we demo our prototype to the client </a></p>
+<video autoplay="" loop="" muted="" style="width: 80%;" src="/assets/slides/images/demo_time.webm"></video>
+<p style="margin-top: 0px;">
+Source: <a href="https://thecodinglove.com/when-we-demo-our-prototype-to-the-client"> When we demo our prototype to the client </a>
+</p>
 </div>
 <aside class="notes">
 
@@ -1452,9 +1454,11 @@ Easy to use (single decorator) 😊
 </section>
 <section id="from-metaflow-import-track_resources-5" class="slide level2">
 <h2>&gt;&gt;&gt; from metaflow import track_resources</h2>
-<p><a href="https://docs.outerbounds.com/sandbox/" target="_blank"> <img src="images/outerbounds-sandbox.png" style="margin-top: 20px; width: 80%;"> </a></p>
 <div class="centered">
-<p>Source: <a href="https://docs.outerbounds.com/sandbox/" target="_blank">Outerbounds sandbox</a></p>
+<a href="https://docs.outerbounds.com/sandbox/" target="_blank"> <img src="images/outerbounds-sandbox.png" style="margin-top: 0px; width: 65%;"> </a>
+<p style="margin-top: 0px;">
+Source: <a href="https://docs.outerbounds.com/sandbox/" target="_blank">Outerbounds sandbox</a>
+</p>
 </div>
 <aside class="notes">
 <ol type="1">
@@ -1462,7 +1466,8 @@ Easy to use (single decorator) 😊
 <li>edit “scaling out to the cloud”: import + add track_resources</li>
 <li>pip install resource-tracker</li>
 <li>run the flow .. check cards</li>
-<li>realize low memory usage despite</li>
+<li>realize low memory usage despite asking for 10 gigs!</li>
+<li>by default, <code>@kubernetes</code> would reserve 4 GiB</li>
 </ol>
 <style type="text/css">
         span.MJX_Assistive_MathML {
@@ -1480,31 +1485,34 @@ Easy to use (single decorator) 😊
 <h1>&gt;&gt;&gt; import __future__</h1>
 <ul>
 <li class="fragment">
-Add support for more vendors
+Automated <code><span class="citation" data-cites="resources">@resources</span></code> tuning
+</li>
+<li class="fragment">
+More granular resource mapping
+</li>
+<li class="fragment">
+Step optimization assistant
+</li>
+<li class="fragment">
+Central dashboard for all resource usage
+</li>
+<li class="fragment">
+Proactive resource management
 </li>
 <ul>
 <li class="fragment">
-Crawler (vendor API integration)
+Email alerts on overprovisioning
 </li>
 <li class="fragment">
-Runner (pulumi)
+Predict potential job failures due to insufficient resources
 </li>
 </ul>
 <li class="fragment">
-More SDKs (PyPI, npm, CRAN, etc.)
-</li>
-<li class="fragment">
-Data analysis, blog posts
-</li>
-<li class="fragment">
-My Spare Cores (dashboard)
-</li>
-<li class="fragment">
-SaaS 👀
+Effortless remote execution
 </li>
 </ul>
 <aside class="notes">
-<p>TODO rewrite this slide</p>
+
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
