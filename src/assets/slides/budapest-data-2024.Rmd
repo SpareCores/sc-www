@@ -2,7 +2,7 @@
 title: "Harnessing Spare Cores to Breeze Through Cloud-Based Batch Jobs"
 author: Gergely Daroczi
 date: "2024-06-13"
-conference: "Budapest Data+ML Forum 2024"
+conference: "Budapest Data Forum 2024"
 conference_url: "https://budapestdata.hu/2024/en/"
 conference_talk_url: "https://dataml24.sessionize.com/session/633278"
 conference_talk_slides: "/assets/slides/budapest-data-2024.html#/coverslide"
