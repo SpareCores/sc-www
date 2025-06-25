@@ -25,6 +25,8 @@ const CONTACT_FORM_FROM = process.env['CONTACT_FORM_FROM'] || process.env['SMTP_
 const CONTACT_FORM_TO = process.env['CONTACT_FORM_TO'] || '';
 const POW_SECRET_KEY = process.env['POW_SECRET_KEY'] || '';
 const S3_BUCKET_URL = process.env['S3_BUCKET_URL'] || '';
+// fail healthcheck if RSS is too high (restart due to memory leak)
+const RSS_LIMIT_MB = parseInt(process.env['RSS_LIMIT_MB'] || '600', 10);
 
 const transporter = nodemailer.createTransport({
   host: SMTP_HOST,
@@ -108,7 +110,7 @@ export function app(): express.Express {
       status: 'healthy',
       host: os.hostname(),
       memory: {
-        maxRss: currentResourceUsage.maxRSS,
+        maxRss: currentResourceUsage.maxRSS, // kB
       },
       cpu: {
         user: currentResourceUsage.userCPUTime,
@@ -116,6 +118,9 @@ export function app(): express.Express {
       },
       uptime: process.uptime().toFixed(2)
     };
+    if (currentResourceUsage.maxRSS > RSS_LIMIT_MB * 1024) {
+      return res.status(500).json({ error: 'RSS limit exceeded' });
+    }
     return res.status(200).json(stats);
   });
 
