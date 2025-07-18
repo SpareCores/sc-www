@@ -2,13 +2,13 @@ import { Component } from '@angular/core';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 
 @Component({
-  selector: 'app-about',
+  selector: 'app-about-spare-cores',
   standalone: true,
   imports: [BreadcrumbsComponent],
-  templateUrl: './about.component.html',
-  styleUrl: './about.component.scss'
+  templateUrl: './spare-cores.component.html',
+  styleUrl: './spare-cores.component.scss'
 })
-export class AboutComponent {
+export class AboutSpareCoresComponent {
   breadcrumbs: BreadcrumbSegment[] = [
     {
       name: 'Home',
