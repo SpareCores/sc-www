@@ -4,7 +4,7 @@ import { RouterLink } from '@angular/router';
 
 export type BreadcrumbSegment = {
   name: string;
-  url: string;
+  url?: string;
   queryParams?: { [key: string]: string | number | boolean };
 }
 
