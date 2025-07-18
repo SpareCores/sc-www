@@ -2,13 +2,13 @@ import { Component } from '@angular/core';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 
 @Component({
-  selector: 'app-about-spare-cores',
+  selector: 'app-about-navigator',
   standalone: true,
   imports: [BreadcrumbsComponent],
-  templateUrl: './spare-cores.component.html',
-  styleUrl: './spare-cores.component.scss'
+  templateUrl: './navigator.component.html',
+  styleUrl: './navigator.component.scss'
 })
-export class AboutSpareCoresComponent {
+export class AboutNavigatorComponent {
   breadcrumbs: BreadcrumbSegment[] = [
     {
       name: 'Home',
@@ -18,8 +18,8 @@ export class AboutSpareCoresComponent {
       name: 'About'
     },
     {
-      name: 'Spare Cores',
-      url: '/about/spare-cores'
+      name: 'Navigator',
+      url: '/about/navigator'
     }
   ];
 }

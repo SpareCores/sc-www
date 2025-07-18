@@ -41,6 +41,7 @@ export const routes: Routes = [
 
   { path: 'contact', loadComponent: () => import('./pages/contact/contact.component').then(m => m.ContactComponent)},
   { path: 'about/spare-cores', loadComponent: () => import('./pages/about/spare-cores.component').then(m => m.AboutSpareCoresComponent)},
+  { path: 'about/navigator', loadComponent: () => import('./pages/about/navigator.component').then(m => m.AboutNavigatorComponent)},
   { path: 'about', redirectTo: 'about/spare-cores' },
   
   { path: '**', redirectTo: '' }
