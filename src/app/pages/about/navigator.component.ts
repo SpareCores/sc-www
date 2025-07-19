@@ -6,6 +6,14 @@ import { SeoHandlerService } from '../../services/seo-handler.service';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
+interface Quote {
+  quote: string;
+  author: string;
+  source: string;
+  source_url?: string;
+  consent_to_publish?: boolean;
+}
+
 @Component({
   selector: 'app-about-navigator',
   standalone: true,
@@ -60,7 +68,7 @@ export class AboutNavigatorComponent {
     },
   ];
 
-  quotes = [
+  quotes: Quote[] = [
     {
       quote: 'This is super cool. The folks at @SpareCores built something that compares compute, storage, and transit across multiple providers, creating more transparency into cloud infra pricing. 💯',
       author: 'CEO @ The Duckbill Group',
@@ -89,7 +97,7 @@ export class AboutNavigatorComponent {
       quote: 'Honestly, you’re doing something the industry has been missing for too long—and doing it brilliantly.',
       author: 'FinOps Engineer',
       source: 'email',
-      consent_to_publish: false, // TODO: ask for consent
+      consent_to_publish: true, // July 19, 2025
     },
     {
       quote: 'I\'m impressed by what a useful tool this tiny team built purely from a modest EU grant.',
