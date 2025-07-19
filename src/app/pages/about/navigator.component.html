@@ -4,23 +4,71 @@
   </div>
   <div class="content_section odd first">
       <div class="content w-2/3">
-          <div class="flex flex-col gap-4">
-              <h1 class="font-semibold text-4xl">
-                  Welcome to the Spare Cores Navigator!
-              </h1>
-              <p>
-                  TODO describe
-              </p>
-          </div>
+        <app-theme-text text="navigator" classes="text-6xl justify-center font-bold pb-12"></app-theme-text>
+        <div class="mx-auto my-auto font-bold text-2xl text-center pb-16">
+          A Python-based open-source framework and managed service offering the
+          most detailed, transparent, and up-to-date public dataset on cloud
+          servers.
+        </div>
       </div>
+      <div class="w-2/3 mx-auto flex gap-8 flex-col lg:flex-row" >
+        <div class="flex flex-col gap-12 w-full lg:w-1/4 my-auto">
+          <div class="grid grid-cols-2 lg:grid-cols-1 gap-4 mx-auto lg:ml-0">
+            <div class="flex gap-4 items-center">
+              <div class="bg-white text-emerald-400 py-3 px-3 rounded-lg">
+                <lucide-icon class="h-5 w-5" name="database"></lucide-icon>
+              </div>
+              <div class="text-white font-bold text-lg">Open Data</div>
+            </div>
+            <div class="flex gap-4 items-center">
+              <div class="bg-white text-emerald-400 py-3 px-3 rounded-lg">
+                <lucide-icon class="h-5 w-5" name="package-open"></lucide-icon>
+              </div>
+              <div class="text-white font-bold text-lg">Python</div>
+            </div>
+            <div class="flex gap-4 items-center">
+              <div class="bg-white text-emerald-400 py-3 px-3 rounded-lg">
+                <lucide-icon class="h-5 w-5" name="square-kanban"></lucide-icon>
+              </div>
+              <div class="text-white font-bold text-lg">Benchmarks</div>
+            </div>
+            <div class="flex gap-4 items-center">
+              <div class="bg-white text-emerald-400 py-3 px-3 rounded-lg">
+                <lucide-icon class="h-5 w-5" name="layers"></lucide-icon>
+              </div>
+              <div class="text-white font-bold text-lg">Add-on Services</div>
+            </div>
+          </div>
+          <div class="flex gap-8 justify-center">
+            <a href="/navigator/servers">
+              <button class="btn-primary py-5 px-5">Get Started</button>
+            </a>
+          </div>
+        </div>
+        <div class="w-2/3 mx-auto text-2xl text-center">
+          <p class="pb-4">
+            We run low-level <span class="text-emerald-400">hardware inspection</span>
+            tools and diverse <span class="text-emerald-400">benchmarks</span> on
+            thousands of <span class="text-emerald-400">cloud server</span> options
+            <span class="text-emerald-400">across clouds</span> to collect
+            <span class="text-emerald-400">reliable and reproducible data</span>.
+            Everything is published under <span class="text-emerald-400">open licenses</span>
+            as Python packages, public datasets, API endpoints, and SDKs —
+            making it <span class="text-emerald-400">easy to search, analyze, and integrate</span>.
+          </p>
+          <p>
+            The Spare Cores Navigator is not just about data. It's a full
+            platform: open-source code, interactive data visualizations, and
+            managed infrastructure. For teams that need SLA-backed support or
+            custom features, enterprise-grade services are available too.
+          </p>
+        </div>
+      </div>
+    </div>
   </div>
   <div class="content_section even">
       <div class="flex flex-col gap-12 justify-center">
           <app-theme-text text="extract_transform_load" classes="text-4xl justify-center font-light"></app-theme-text>
-          <div class="w-2/3 mx-auto my-auto font-bold text-2xl text-center">
-              We closely monitor cloud and flexible server providers, tracking details such as their data centers, availability zones, server offerings, and in-depth pricing options for servers, storage, traffic, IPv4 addresses etc.
-              This comprehensive and standardized dataset is openly accessible through our public homepage, databases, APIs, and SDKs.
-          </div>
           <div class="font-mono full flex justify-center mx-auto my-auto text-2xl">
               Here are some key highlights regarding the information we currently cover.
           </div>
@@ -61,7 +109,9 @@
               </div>
           </div>
           <div class="flex justify-center">
-              <button class="btn-primary py-5 px-5" routerLink="/server_prices">Check out server prices</button>
+            <a href="/server_prices">
+              <button class="btn-primary py-5 px-5">Check Out Server Prices</button>
+            </a>
           </div>
       </div>
   </div>
@@ -185,8 +235,7 @@
                   </p>
               </div>
               <div class="flex justify-center">
-                  <!-- TODO replace with schedule a call-->
-                  <button class="btn-primary py-5 px-5" routerLink="/contact">Contact us to learn more</button>
+                  <button id="landing-demo-button" class="btn-primary py-5 px-5">Contact Us to Learn More</button>
               </div>
           </div>
       </div>
@@ -263,18 +312,16 @@
           <div class="w-full lg:w-3/5 my-auto">
               <div class="flex flex-col gap-4 justify-center">
                   <div class="text-center lg:text-left text-4xl gap-2 font-semibold">
-                      <!-- TODO rewrite text to apply only for Navigator-->
                       <span class="text-emerald-400"><</span>spare_cores<span class="text-emerald-400">></span> is <span class="text-emerald-400">100%</span> committed
                       to using and contributing to <span class="text-emerald-400">open-source</span>!
                   </div>
                   <div class="text-2xl mt-8 mb-8 mr-8">
-                      Spare Cores is the successor to <code>cloudperf</code>, an AWS-focused open
-                      dataset and toolset for exploring spot prices and <code>stress-ng</code>
-                      benchmarks, which we started in 2017. This next-generation project was
-                      launched in Q3 of 2023 and gained momentum in 2024, particularly
-                      due to the support from <a href="https://www.ngisearch.eu"
-                      class="underline decoration-dotted hover:text-gray-500"
-                      target="_blank" rel="noopener">NGI Search</a> funding.
+                      The Spare Cores Navigator is the successor to <code>cloudperf</code>,
+                      an AWS-focused open-source project for exploring spot prices and
+                      <code>stress-ng</code> benchmarks, which we started in 2017.
+                      This next-generation framework was launched in Q3 of 2023 and
+                      gained momentum in 2024, particularly due to the support
+                      from <a href="https://www.ngisearch.eu" class="underline decoration-dotted hover:text-gray-500" target="_blank" rel="noopener">NGI Search</a> funding.
                   </div>
                   <div class="flex gap-8 justify-center lg:justify-start">
                       <a href="https://github.com/SpareCores" target="_blank" rel="noopener">

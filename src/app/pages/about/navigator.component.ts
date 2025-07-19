@@ -177,10 +177,9 @@ export class AboutNavigatorComponent {
 
   ngOnInit() {
     this.SEOHandler.updateTitleAndMetaTags(
-      // TODO update title and description
-       'Spare Cores: Inventory and Tooling for Cloud Compute Resources',
-       'Harnessing the compute resources of the cloud to optimize efficiency and costs of batch and service tasks.',
-       'cloud, server, price, comparison, sparecores');
+       'Spare Cores Navigator: Open-Source Cloud Server Benchmarks and Pricing Data',
+       'Open-source Python framework and managed platform providing the most detailed, transparent, and up-to-date public dataset on cloud servers.',
+       'cloud, server, price, comparison, sparecores, navigator');
     this.SEOHandler.updateThumbnail('https://sparecores.com/assets/images/media/landing_image.png');
   }
 
