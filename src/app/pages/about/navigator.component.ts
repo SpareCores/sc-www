@@ -62,10 +62,46 @@ export class AboutNavigatorComponent {
 
   quotes = [
     {
-      quote: 'This is super cool. The folks at &#64;SpareCores built something that compares compute, storage, and transit across multiple providers, creating more transparency into cloud infra pricing. 💯',
-      author: 'CEO &#64; The Duckbill Group',
+      quote: 'This is super cool. The folks at @SpareCores built something that compares compute, storage, and transit across multiple providers, creating more transparency into cloud infra pricing. 💯',
+      author: 'CEO @ The Duckbill Group',
       source: 'Twitter/X',
       source_url: 'https://x.com/mike_julian/status/1845555820635066462'
+    },
+    {
+      quote: 'Spare Cores is straight-up crushing it! 💥 Turning a €150K grant into a killer cloud price tool with just 3 people? That’s some big-brain, lean-team energy. Props to this squad for making it happen! 👏',
+      author: 'Cloud Architect @ European Commission',
+      source: 'LinkedIn',
+      source_url: 'https://www.linkedin.com/feed/update/urn:li:activity:7253413263399432192?commentUrn=urn%3Ali%3Acomment%3A%28activity%3A7253413263399432192%2C7253428631543173120%29&dashCommentUrn=urn%3Ali%3Afsd_comment%3A%287253428631543173120%2Curn%3Ali%3Aactivity%3A7253413263399432192%29'
+    },
+    {
+      quote: 'Thanks for publishing all the instance information! I had wanted to try and pull together [...] but manually digging up instance information on websites was an absurd hassle. Now it’s a SQL query!',
+      author: 'Database Internals Engineer (ex Google, Apple, Snowflake)',
+      source: 'email',
+      consent_to_publish: false, // TODO: ask for consent
+    },
+    {
+      quote: 'I really liked the idea of Spare Cores because pricing comparison across cloud providers is increasingly useful.',
+      author: 'Gergely Orosz @ The Pragmatic Engineer',
+      source: 'The Pulse newsletter',
+      source_url: 'https://blog.pragmaticengineer.com/spare-cores/',
+    },
+    {
+      quote: 'Honestly, you’re doing something the industry has been missing for too long—and doing it brilliantly.',
+      author: 'FinOps Engineer',
+      source: 'email',
+      consent_to_publish: false, // TODO: ask for consent
+    },
+    {
+      quote: 'I\'m impressed by what a useful tool this tiny team built purely from a modest EU grant.',
+      author: 'Gergely Orosz @ The Pragmatic Engineer',
+      source: 'The Pulse newsletter',
+      source_url: 'https://blog.pragmaticengineer.com/spare-cores/',
+    },
+    {
+      quote: 'Truly doing the lord\'s work comparing such a dataset to help people optimize their cloud spend.',
+      author: 'Head of Data Science @ Red Bull',
+      source: 'private message',
+      consent_to_publish: false, // TODO: ask for consent
     }
   ];
 
