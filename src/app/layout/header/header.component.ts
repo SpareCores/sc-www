@@ -15,6 +15,7 @@ import { DropdownManagerService } from '../../services/dropdown-manager.service'
 export class HeaderComponent implements OnInit {
 
   dropdownMenu: any;
+  dropdownAbout: any;
   dropdownCompare: any;
   dropdownPrices: any;
   dropdownServers: any;
@@ -28,6 +29,10 @@ export class HeaderComponent implements OnInit {
     if(isPlatformBrowser(this.platformId)) {
       this.dropdownManager.initDropdown('menu_button', 'menu_options').then((dropdown) => {
         this.dropdownMenu = dropdown;
+      });
+
+      this.dropdownManager.initDropdown('about_button', 'about_options').then((dropdown) => {
+        this.dropdownAbout = dropdown;
       });
 
       this.dropdownManager.initDropdown('compare_button', 'compare_options').then((dropdown) => {
@@ -59,6 +64,10 @@ export class HeaderComponent implements OnInit {
 
   closeServers() {
     this.dropdownServers?.hide();
+  }
+
+  closeAbout() {
+    this.dropdownAbout?.hide();
   }
 
   compareCount(): number {

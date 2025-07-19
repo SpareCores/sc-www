@@ -346,34 +346,36 @@
       <div class="flex flex-col w-full lg:w-2/3 justify-center mx-auto gap-8">
         <app-theme-text text="testimonials" classes="text-4xl justify-center font-light"></app-theme-text>
         <div class="w-full mx-auto my-auto font-bold text-2xl text-center">What the community is saying about the Spare Cores Navigator:</div>
-        <swiper-container class="w-full" slides-per-view="1" speed="2000" loop="true" autoplay="true" pagination="true">
-          <swiper-slide *ngFor="let item of quotes, let i = index">
-            <div class="flex gap-8 items-center px-2 pb-2">
-              <div>
-                <span class="inline-flex justify-center items-center size-[90px] text-emerald-400">
-                  <lucide-icon class="flex-shrink-0 size-[50px]" name="quote"></lucide-icon>
-                </span>
-              </div>
-              <div class="text-2xl">
-                {{item.quote}}
-              </div>
-            </div>
-            <div class="flex gap-8 items-center px-2 pl-[130px] pb-12">
-              <div class="text-xl text-gray-400">
-                —{{item.author}}
-                <span *ngIf="item.source">
-                  via
-                  <a *ngIf="item.source_url && item.consent_to_publish" href="{{item.source_url}}" target="_blank" rel="noopener" class="underline decoration-dotted hover:text-gray-500">
-                    {{item.source}}
-                  </a>
-                  <span *ngIf="!item.source_url">
-                    {{item.source}}
+        <div *ngIf="quotes && quotes.length > 0">
+          <swiper-container #testimonialsSwiper class="w-full" slides-per-view="1" speed="2000" loop="true" autoplay="true" pagination="true" init="false">
+            <swiper-slide *ngFor="let item of quotes, let i = index">
+              <div class="flex gap-8 items-center px-2 pb-2">
+                <div>
+                  <span class="inline-flex justify-center items-center size-[90px] text-emerald-400">
+                    <lucide-icon class="flex-shrink-0 size-[50px]" name="quote"></lucide-icon>
                   </span>
-                </span>
+                </div>
+                <div class="text-2xl">
+                  {{item.quote}}
+                </div>
               </div>
-            </div>
-          </swiper-slide>
-        </swiper-container>
+              <div class="flex gap-8 items-center px-2 pl-[130px] pb-12">
+                <div class="text-xl text-gray-400">
+                  —{{item.author}}
+                  <span *ngIf="item.source">
+                    via
+                    <a *ngIf="item.source_url && item.consent_to_publish" href="{{item.source_url}}" target="_blank" rel="noopener" class="underline decoration-dotted hover:text-gray-500">
+                      {{item.source}}
+                    </a>
+                    <span *ngIf="!item.source_url">
+                      {{item.source}}
+                    </span>
+                  </span>
+                </div>
+              </div>
+            </swiper-slide>
+          </swiper-container>
+        </div>
       </div>
     </div>
 </div>

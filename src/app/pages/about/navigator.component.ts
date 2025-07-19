@@ -1,4 +1,4 @@
-import { Component, ElementRef, Inject, PLATFORM_ID, ViewChild, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component, ElementRef, Inject, PLATFORM_ID, ViewChild, CUSTOM_ELEMENTS_SCHEMA, AfterViewInit } from '@angular/core';
 import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 import { LucideAngularModule } from 'lucide-angular';
 import { ThemeTextComponent } from '../../components/theme-text/theme-text.component';
@@ -22,10 +22,10 @@ interface Quote {
   templateUrl: './navigator.component.html',
   styleUrl: './navigator.component.scss'
 })
-export class AboutNavigatorComponent {
+export class AboutNavigatorComponent implements AfterViewInit {
 
   constructor(@Inject(PLATFORM_ID) private platformId: object,
-  private SEOHandler: SeoHandlerService) { }
+              private SEOHandler: SeoHandlerService) { }
 
   vendors: any[] = [
     '✅ Amazon Web Services (Done)',
@@ -159,8 +159,9 @@ export class AboutNavigatorComponent {
     }
   ];
 
-
   @ViewChild('tooltipVendors') tooltip!: ElementRef;
+  @ViewChild('testimonialsSwiper') testimonialsSwiper?: ElementRef;
+
   breadcrumbs: BreadcrumbSegment[] = [
     {
       name: 'Home',
@@ -183,12 +184,23 @@ export class AboutNavigatorComponent {
     this.SEOHandler.updateThumbnail('https://sparecores.com/assets/images/media/landing_image.png');
   }
 
+  ngAfterViewInit() {
+    // initialize Swiper in the browser
+    if (isPlatformBrowser(this.platformId)) {
+      setTimeout(() => {
+        const swiperElements = document.querySelectorAll('swiper-container[init="false"]');
+        swiperElements.forEach((swiperEl) => {
+          (swiperEl as any).initialize();
+        });
+      }, 0);
+    }
+  }
+
   showTooltip(el: any) {
     const tooltip = this.tooltip.nativeElement;
     const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
     tooltip.style.left = `${el.target.getBoundingClientRect().left - 25}px`;
     tooltip.style.top = `${el.target.getBoundingClientRect().bottom + 5 + scrollPosition}px`;
-
     tooltip.style.display = 'block';
     tooltip.style.opacity = '1';
   }

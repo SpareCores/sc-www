@@ -9,11 +9,9 @@
       <div class="justify-end items-center w-full flex w-auto order-1" id="mobile-menu-2">
           <ul class="flex font-medium flex-row space-x-8 mt-0 items-center">
               <li class="hidden lg:flex">
-                <div class="navbar_link cursor-pointer">
-                  <a class="navbar_link" routerLink="/about" >
+                <div class="navbar_link cursor-pointer" id="about_button">
                     <lucide-icon class="h-4 w-4" name="info"></lucide-icon>
                     About
-                  </a>
                 </div>
               </li>
               <li class="hidden lg:flex">
@@ -113,6 +111,42 @@
     </li>
   </ul>
 </div>
+
+<div id="about_options" class="z-100 hidden bg-secondary rounded-lg shadow w-68 border border-emerald-400 border-solid">
+  <ul
+    class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
+    aria-labelledby="dropdownDefaultButton"
+    (click)="closeAbout()">
+    <li class="py-2">
+      <a class="navbar_link" href="/about/spare-cores" >
+        <lucide-icon class="h-4 w-4" name="handshake"></lucide-icon>
+        Company & Vision
+      </a>
+    </li>
+    <hr class="my-1 mx-3 border-emerald-400">
+    <li class="py-2 text-white font-bold">
+    Spare Cores products:
+    <li class="py-2 ml-4">
+      <a class="navbar_link" routerLink="/about/navigator" >
+        <lucide-icon class="h-4 w-4" name="ship-wheel"></lucide-icon>
+        Navigator
+      </a>
+    </li>
+    <li class="py-2 ml-4">
+      <a class="navbar_link" routerLink="/article/metaflow-resource-tracker" >
+        <lucide-icon class="h-4 w-4" name="gauge"></lucide-icon>
+        Resource Tracker
+      </a>
+    </li>
+    <li class="py-2 ml-4">
+      <a class="navbar_link" routerLink="/article/metaflow-resource-tracker" >
+        <lucide-icon class="h-4 w-4" name="scan-eye"></lucide-icon>
+        Sentinel
+      </a>
+    </li>
+  </ul>
+</div>
+
 
 <div id="servers_options" class="z-100 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid">
   <ul
