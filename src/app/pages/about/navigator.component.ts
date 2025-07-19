@@ -71,15 +71,17 @@ export class AboutNavigatorComponent implements AfterViewInit {
   quotes: Quote[] = [
     {
       quote: 'This is super cool. The folks at @SpareCores built something that compares compute, storage, and transit across multiple providers, creating more transparency into cloud infra pricing. 💯',
-      author: 'CEO @ The Duckbill Group',
+      author: 'Mike Julian, CEO @ The Duckbill Group',
       source: 'Twitter/X',
-      source_url: 'https://x.com/mike_julian/status/1845555820635066462'
+      source_url: 'https://x.com/mike_julian/status/1845555820635066462',
+      consent_to_publish: true, // public post
     },
     {
       quote: 'Spare Cores is straight-up crushing it! 💥 Turning a €150K grant into a killer cloud price tool with just 3 people? That’s some big-brain, lean-team energy. Props to this squad for making it happen! 👏',
-      author: 'Cloud Architect @ European Commission',
+      author: 'Simone Nogara, Cloud Architect @ European Commission',
       source: 'LinkedIn',
-      source_url: 'https://www.linkedin.com/feed/update/urn:li:activity:7253413263399432192?commentUrn=urn%3Ali%3Acomment%3A%28activity%3A7253413263399432192%2C7253428631543173120%29&dashCommentUrn=urn%3Ali%3Afsd_comment%3A%287253428631543173120%2Curn%3Ali%3Aactivity%3A7253413263399432192%29'
+      source_url: 'https://www.linkedin.com/feed/update/urn:li:activity:7253413263399432192?commentUrn=urn%3Ali%3Acomment%3A%28activity%3A7253413263399432192%2C7253428631543173120%29&dashCommentUrn=urn%3Ali%3Afsd_comment%3A%287253428631543173120%2Curn%3Ali%3Aactivity%3A7253413263399432192%29',
+      consent_to_publish: true, // public post
     },
     {
       quote: 'Thanks for publishing all the instance information! I had wanted to try and pull together [...] but manually digging up instance information on websites was an absurd hassle. Now it’s a SQL query!',
@@ -92,6 +94,7 @@ export class AboutNavigatorComponent implements AfterViewInit {
       author: 'Gergely Orosz @ The Pragmatic Engineer',
       source: 'The Pulse newsletter',
       source_url: 'https://blog.pragmaticengineer.com/spare-cores/',
+      consent_to_publish: true, // public post
     },
     {
       quote: 'Honestly, you’re doing something the industry has been missing for too long—and doing it brilliantly.',
@@ -104,6 +107,7 @@ export class AboutNavigatorComponent implements AfterViewInit {
       author: 'Gergely Orosz @ The Pragmatic Engineer',
       source: 'The Pulse newsletter',
       source_url: 'https://blog.pragmaticengineer.com/spare-cores/',
+      consent_to_publish: true, // public post
     },
     {
       quote: 'Truly doing the lord\'s work comparing such a dataset to help people optimize their cloud spend.',
@@ -112,6 +116,9 @@ export class AboutNavigatorComponent implements AfterViewInit {
       consent_to_publish: false, // TODO: ask for consent
     }
   ];
+  get publishableQuotes(): Quote[] {
+    return this.quotes.filter(quote => quote.consent_to_publish === true);
+  }
 
   gitHubComponents: any[] = [
     {
@@ -209,4 +216,5 @@ export class AboutNavigatorComponent implements AfterViewInit {
     tooltip.style.display = 'none';
     tooltip.style.opacity = '0';
   }
+
 }
