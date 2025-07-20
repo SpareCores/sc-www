@@ -29,12 +29,10 @@ export class AboutSpareCoresComponent implements OnInit, AfterViewInit {
     }
   ];
   ngOnInit() {
-
     this.SEOHandler.updateTitleAndMetaTags(
        'About Spare Cores',
        'Spare Cores Products and Services overview.',
        'sparecores');
-
     this.SEOHandler.updateThumbnail('https://sparecores.com/assets/images/media/landing_image.png');
     }
   ngAfterViewInit() {

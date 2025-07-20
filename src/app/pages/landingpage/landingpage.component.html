@@ -1,45 +1,26 @@
 <div class="w-full">
-  <div class="content_section">
+  <div class="content_section" id="hero">
     <div class="content">
       <div class="flex gap-8 flex-col lg:flex-row" >
         <div class="flex flex-col gap-12 w-full lg:w-1/2 my-auto">
           <div class="text-4xl font-bold leading-[3rem]">
-            Maximize <span class="text-emerald-400">Cloud Cost Efficiency</span> and
-            <span class="text-emerald-400">Performance</span> for
-            <span class="text-emerald-400">AI</span> & <span class="text-emerald-400">Data</span> Workflows.
+            Don't gamble with your cloud costs.
+            <span class="text-emerald-400">Use Spare Cores!</span>
           </div>
-          <div class="grid grid-cols-2 gap-4 mx-auto lg:ml-0">
-            <div class="flex gap-4 items-center">
-              <div class="bg-white text-emerald-400 py-3 px-3 rounded-lg">
-                <lucide-icon class="h-5 w-5" name="database"></lucide-icon>
-              </div>
-              <div class="text-white font-bold text-lg">Open Data</div>
-            </div>
-            <div class="flex gap-4 items-center">
-              <div class="bg-white text-emerald-400 py-3 px-3 rounded-lg">
-                <lucide-icon class="h-5 w-5" name="package-open"></lucide-icon>
-              </div>
-              <div class="text-white font-bold text-lg">Python</div>
-            </div>
-            <div class="flex gap-4 items-center">
-              <div class="bg-white text-emerald-400 py-3 px-3 rounded-lg">
-                <lucide-icon class="h-5 w-5" name="square-kanban"></lucide-icon>
-              </div>
-              <div class="text-white font-bold text-lg">Benchmarks</div>
-            </div>
-            <div class="flex gap-4 items-center">
-              <div class="bg-white text-emerald-400 py-3 px-3 rounded-lg">
-                <lucide-icon class="h-5 w-5" name="layers"></lucide-icon>
-              </div>
-              <div class="text-white font-bold text-lg">Add-on Services</div>
-            </div>
+          <div class="text-3xl">
+            <p class="py-2">Run every ML workflow faster and cheaper—no config wrangling required.</p>
+            <p class="py-2">Resource Tracker watches your Metaflow runs, learns real CPU / RAM / GPU needs, and recommends the right instance for the next run.</p>
           </div>
-          <div class="flex gap-8 justify-center lg:justify-start">
-            <button id="landing-demo-button" class="btn-primary py-5 px-5">Book a Demo</button>
-            <button class="bg-transparent text-teal-500 py-5 px-5 font-bold hover:text-teal-600" routerLink="/servers">Navigate Server Options and Prices ></button>
+          <div class="flex gap-8 justify-center lg:justify-start pb-12 lg:pb-0">
+            <a href="https://sparecores.github.io/resource-tracker/" target="_blank" rel="noopener">
+              <div class="flex items-center gap-4">
+                <button class="btn-primary py-5 px-5">Install the Python package<br/>and track your first job in < 5 min.</button>
+                <button class="bg-transparent text-teal-500 py-5 px-5 font-bold hover:text-teal-600">Learn more ></button>
+              </div>
+            </a>
           </div>
         </div>
-        <div class="w-full lg:w-1/2 justify-center flex" style="min-height: 600px;">
+        <div class="w-full lg:w-1/2 justify-center flex" style="min-height: 600px;" id="slot-machine">
           <div class="animated_slot_machine">
             <div class="outer_border" ></div>
             <div class="top_wide_border_segment" ></div>
@@ -146,57 +127,88 @@
             </div>
           </div>
         </div>
-
       </div>
     </div>
   </div>
   <div class="content_section">
     <div class="content">
-      <div class="flex flex-col gap-12 justify-center">
-        <app-theme-text text="extract_transform_load" classes="text-4xl justify-center font-light"></app-theme-text>
-        <div class="w-2/3 mx-auto my-auto font-bold text-2xl text-center">
-          We closely monitor cloud and flexible server providers, tracking details such as their data centers, availability zones, server offerings, and in-depth pricing options for servers, storage, traffic, IPv4 addresses etc.
-          This comprehensive and standardized dataset is openly accessible through our public homepage, databases, APIs, and SDKs.
+      <div class="flex flex-col gap-8 justify-center">
+        <div class="logo_text text-4xl justify-center font-light text-center" >
+          <span class="text-emerald-400"><</span>
+          <span class="text-gray-400">why </span>
+          <span class="text-gray-400">use="</span>spare_cores<span class="text-gray-400">"</span>
+          <span class="text-emerald-400">></span>
         </div>
-        <div class="font-mono full flex justify-center mx-auto my-auto text-2xl">Here are some key highlights regarding the information we currently cover.</div>
-        <div class="flex gap-24 justify-center flex-col lg:flex-row">
-          <div class="flex justify-center">
-            <!-- 550x380 -->
-            <img class="h-full object-contain mx-auto" src="/assets/images/media/sqlstats.webp" alt="SQL query to show statistics on the Spare Cores inventory and update frequency" >
-          </div>
-          <div class="flex flex-col justify-center">
-            <div style="width: 450px; margin: auto;">
-              <div>
-                <div class="flex gap-2 text-2xl items-center text-gray-200">
-                  <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6">
-                  <lucide-icon name="check" class="h-4 w-4"></lucide-icon>
-                  </div>
-                  <b> 5 </b>
-                  <span> (out of
-                    <span
-                      class="underline decoration-dotted cursor-pointer"
-                      (mouseenter)="showTooltip($event)"
-                      (mouseleave)="hideTooltip()">10 planned</span>)
-                    vendors </span>
-                </div>
+        <div class="w-2/3 mx-auto my-auto font-bold text-3xl text-center">
+          Trusted by early adopters tracking and optimizing hundreds of Metaflow steps every day.
+        </div>
+        <div class="w-2/3 mx-auto my-auto text-2xl text-center">
+          Every under‑utilized core is budget you could spend on the next experiment.
+        </div>
+        <div class="flex gap-8 justify-center flex-col lg:flex-row lg:gap-24 pt-20 px-24">
+          <div class="w-full lg:w-1/3 flex flex-col gap-4 p-8 bg-primary border border-emerald-400 rounded-lg relative">
+            <div class="absolute -top-16 left-1/2 transform -translate-x-1/2">
+              <div class="bg-emerald-400 rounded-full flex items-center justify-center h-32 w-32">
+                <span class="text-3xl font-bold text-primary">Track</span>
               </div>
-              <div *ngFor="let item of features, let i = index">
-                <div class="w-full h-4 mb-3 border-b border-gray-400 border-solid" ></div>
-                <div class="flex gap-2 text-2xl items-center text-gray-200">
-                  <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6">
-                  <lucide-icon name="check" class="h-4 w-4"></lucide-icon>
-                  </div>
-                  <b> {{item.count}} </b>
-                  <span> {{item.text}} </span>
-                </div>
-              </div>
-              <div class="text-md mt-4 text-lg">Tracked every 5 mins.</div>
             </div>
-
+            <div class="font-mono text-center text-emerald-400 text-2xl mt-16 mb-4">
+              <span class="text-emerald-400">&lt;</span>
+              <span class="text-white font-light">resource_tracker</span>
+              <span class="text-emerald-400">&gt;</span>
+            </div>
+            <div class="text-left text-white text-xl pb-8">
+              The Spare Cores Resource Tracker provides per-step CPU/GPU/RAM straight from your Metaflow runs, and recommends the right instance for your next run.
+            </div>
+            <div class="absolute bottom-4 right-4">
+              <a routerLink="/about/resource-tracker" class="text-emerald-400">
+                <lucide-icon name="square-arrow-up-right" class="h-[30px] w-[30px]"></lucide-icon>
+              </a>
+            </div>
+          </div>
+          <div class="w-full lg:w-1/3 flex flex-col gap-4 p-8 bg-primary border border-emerald-400 rounded-lg relative">
+            <div class="absolute -top-16 left-1/2 transform -translate-x-1/2">
+              <div class="bg-emerald-400 rounded-full flex items-center justify-center h-32 w-32">
+                <span class="text-3xl font-bold text-primary">Know</span>
+              </div>
+            </div>
+            <div class="font-mono text-center text-emerald-400 text-2xl mt-16 mb-4">
+              <span class="text-emerald-400">&lt;</span>
+              <span class="text-white font-light">navigator</span>
+              <span class="text-emerald-400">&gt;</span>
+            </div>
+            <div class="text-left text-white text-xl pb-8">
+              The Spare Cores Navigator benchmarks 2,000+ instance types across clouds and recommends the best fit.
+            </div>
+            <div class="absolute bottom-4 right-4">
+              <a routerLink="/about/navigator" class="text-emerald-400">
+                <lucide-icon name="square-arrow-up-right" class="h-[30px] w-[30px]"></lucide-icon>
+              </a>
+            </div>
+          </div>
+          <div class="w-full lg:w-1/3 flex flex-col gap-4 p-8 bg-primary border border-emerald-400 rounded-lg relative">
+            <div class="absolute -top-16 left-1/2 transform -translate-x-1/2">
+              <div class="bg-emerald-400 rounded-full flex items-center justify-center h-32 w-32">
+                <span class="text-3xl font-bold text-primary">Do</span>
+              </div>
+            </div>
+            <div class="font-mono text-center text-emerald-400 text-2xl mt-16 mb-4">
+              <span class="text-emerald-400">&lt;</span>
+              <span class="text-white font-light">sentinel</span>
+              <span class="text-emerald-400">&gt;</span>
+            </div>
+            <div class="text-left text-white text-xl pb-8">
+              The Spare Cores Sentinel Access and Sentinel Pro (coming soon) add dashboards, richer reporting, alerts & within or cross‑cloud auto‑tune.
+            </div>
+            <div class="absolute bottom-4 right-4">
+              <a routerLink="/about/sentinel" class="text-emerald-400">
+                <lucide-icon name="square-arrow-up-right" class="h-[30px] w-[30px]"></lucide-icon>
+              </a>
+            </div>
           </div>
         </div>
-        <div class="flex justify-center">
-          <button class="btn-primary py-5 px-5" routerLink="/server_prices">Check out server prices</button>
+        <div class="w-2/3 mx-auto my-auto text-2xl text-center pt-8">
+          Built for bursty DS/ML pipelines—<b>not</b> 24 × 7 web traffic.
         </div>
       </div>
     </div>

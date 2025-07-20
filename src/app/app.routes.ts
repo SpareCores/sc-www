@@ -6,10 +6,11 @@ import { ServerPricesComponent } from './pages/server-prices/server-prices.compo
 export const routes: Routes = [
   { path: '', component: LandingpageComponent },
 
+  { path: 'navigator/servers', component: ServerListingComponent },
+  { path: 'servers', redirectTo: 'navigator/servers' },
+  { path: 'servers/:id', component: ServerListingComponent },
   { path: 'compare', loadComponent: () => import('./pages/server-compare/server-compare.component').then(m => m.ServerCompareComponent)},
   { path: 'compare/:id', loadComponent: () => import('./pages/server-compare/server-compare.component').then(m => m.ServerCompareComponent)},
-  { path: 'servers', component: ServerListingComponent },
-  { path: 'servers/:id', component: ServerListingComponent },
   { path: 'server_prices', component: ServerPricesComponent },
   { path: 'server/:vendor/:id', loadComponent: () => import('./pages/server-details/server-details.component').then(m => m.ServerDetailsComponent)},
   { path: 'og/:vendor/:id', loadComponent: () => import('./pages/server-og/server-og.component').then(m => m.ServerOGComponent)},
@@ -43,8 +44,11 @@ export const routes: Routes = [
 
   { path: 'contact', loadComponent: () => import('./pages/contact/contact.component').then(m => m.ContactComponent)},
   { path: 'about/spare-cores', loadComponent: () => import('./pages/about/spare-cores.component').then(m => m.AboutSpareCoresComponent)},
-  { path: 'about/navigator', loadComponent: () => import('./pages/about/navigator.component').then(m => m.AboutNavigatorComponent)},
+  { path: 'about/navigator', loadComponent: () => import('./pages/about/navigator.component').then(m => m.AboutNavigatorComponent), data: { skipHydration: true }},
+  { path: 'about/resource-tracker', redirectTo: 'article/metaflow-resource-tracker' },
+  { path: 'about/sentinel', redirectTo: 'article/metaflow-resource-tracker' },
   { path: 'about', redirectTo: 'about/spare-cores' },
-  
+  { path: 'navigator', redirectTo: 'about/navigator' },
+
   { path: '**', redirectTo: '' }
 ];
