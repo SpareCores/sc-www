@@ -214,7 +214,7 @@
       </div>
     </div>
   </div>
-  <div id="resource_tracker" style="position: relative; top: -65px; visibility: hidden; height: 0;"></div>
+  <div id="resource-tracker" style="position: relative; top: -65px; visibility: hidden; height: 0;"></div>
   <div class="content_section">
     <div class="content">
       <div class="flex flex-col gap-8 justify-center">
@@ -262,6 +262,27 @@
           <div class="flex items-center">
             <!-- TODO update video URL -->
             <iframe width="560" height="315" src="https://www.youtube.com/embed/hO0KQoxk1SM?si=3JG6jzkPKPUt0Acb" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen class="border-emerald-400 border-2 rounded-lg"></iframe>
+          </div>
+        </div>
+        <div class="w-4/5 mx-auto my-auto text-2xl pt-8">
+          <div class="quote-container flex gap-8 items-center px-2 pb-2">
+            <div>
+              <span class="inline-flex justify-center items-center size-[90px] text-emerald-400">
+                <lucide-icon class="flex-shrink-0 size-[50px]" name="quote"></lucide-icon>
+              </span>
+            </div>
+            <div class="w-full">
+              <div class="quote-preview text-2xl cursor-zoom-in" (click)="toggleQuote($event)">
+                The Resource Tracker has become an essential part of our production workflows [...] we were able to reduce our EC2 costs by 50% [...] <span class="text-gray-400">— Data Engineer, Too Good To Go</span>
+              </div>
+              <div class="quote-full text-2xl hidden">
+                <p class="pb-4">We run several ML pipelines that process high volumes of data daily. Initially, we over-provisioned CPU and memory to avoid performance issues—driving up AWS costs.</p>
+                <p class="pb-4">The Resource Tracker has become an essential part of our production workflows. Once we tuned the CPU and Memory based on the actual usage, we were able to reduce our EC2 costs by 50%.</p>
+                <p class="pb-4">We're particularly excited about the upcoming automated <code>&#64;resources</code> tuning, which promises to eliminate much of the manual analysis and resource adjustment work.</p>
+                <p class="pb-4">Today, it continues to help us stay efficient and cost-conscious by ensuring we use only the resources we truly need.</p>
+                <p class="text-gray-400">— Misael Ramírez Espinosa, Data Engineer, <a href="https://www.toogoodtogo.com/en-us" target="_blank" rel="noopener" class="underline decoration-dotted hover:text-gray-500">Too Good To Go</a></p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -379,6 +400,26 @@
                 <lucide-icon name="check" class="h-4 w-4"></lucide-icon>
               </div>
               <span>Optional on-prem or hybrid deployment</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="w-4/5 mx-auto my-auto text-2xl pt-16">
+        <div class="quote-container flex gap-8 items-center px-2 pb-2">
+          <div>
+            <span class="inline-flex justify-center items-center size-[90px] text-emerald-400">
+              <lucide-icon class="flex-shrink-0 size-[50px]" name="quote"></lucide-icon>
+            </span>
+          </div>
+          <div class="w-full">
+            <div class="quote-preview text-2xl cursor-zoom-in" (click)="toggleQuote($event)">
+              They brought stability and scalability to the platform, significantly reduced on-call incidents, and helped cut our cloud costs [...] <span class="text-gray-400">— Chief Data Officer, System1</span>
+            </div>
+            <div class="quote-full text-2xl hidden">
+              <p class="pb-4">Gergely and his team played a key role in building and productionizing the infrastructure for our data science workflows.</p>
+              <p class="pb-4">They brought stability and scalability to the platform, significantly reduced on-call incidents, and helped cut our cloud costs from $5,000 to $1,500 per month.</p>
+              <p class="pb-4">Their work had a lasting impact.</p>
+              <p class="text-gray-400">— Nathan Janos, Chief Data Officer, <a href="https://system1.com" target="_blank" rel="noopener" class="underline decoration-dotted hover:text-gray-500">System1</a></p>
             </div>
           </div>
         </div>

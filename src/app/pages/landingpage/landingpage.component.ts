@@ -388,4 +388,17 @@ export class LandingpageComponent implements OnInit, AfterViewInit {
     tooltip.style.display = 'none';
     tooltip.style.opacity = '0';
   }
+
+  toggleQuote(event: Event) {
+    const clickedElement = event.currentTarget as HTMLElement;
+    const quoteContainer = clickedElement.closest('.quote-container');
+    if (quoteContainer) {
+      const preview = quoteContainer.querySelector('.quote-preview');
+      const full = quoteContainer.querySelector('.quote-full');
+      if (preview && full) {
+        preview.classList.toggle('hidden');
+        full.classList.toggle('hidden');
+      }
+    }
+  }
 }
