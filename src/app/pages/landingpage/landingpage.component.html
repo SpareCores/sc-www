@@ -12,7 +12,7 @@
             <p class="py-2">Resource Tracker watches your Metaflow runs, learns real CPU / RAM / GPU needs, and recommends the right instance for the next run.</p>
           </div>
           <div class="flex gap-8 justify-center lg:justify-start pb-12 lg:pb-0">
-            <a href="https://sparecores.github.io/resource-tracker/" target="_blank" rel="noopener">
+            <a href="https://sparecores.github.io/resource-tracker/#metaflow-integration" target="_blank" rel="noopener">
               <div class="flex items-center gap-4">
                 <button class="btn-primary py-5 px-5">Install the Python package<br/>and track your first job in < 5 min.</button>
                 <button class="bg-transparent text-teal-500 py-5 px-5 font-bold hover:text-teal-600">Learn more ></button>
@@ -130,6 +130,7 @@
       </div>
     </div>
   </div>
+  <div id="why" style="position: relative; top: -65px; visibility: hidden; height: 0;"></div>
   <div class="content_section">
     <div class="content">
       <div class="flex flex-col gap-8 justify-center">
@@ -213,6 +214,7 @@
       </div>
     </div>
   </div>
+  <div id="resource_tracker" style="position: relative; top: -65px; visibility: hidden; height: 0;"></div>
   <div class="content_section">
     <div class="content">
       <div class="flex flex-col gap-8 justify-center">
@@ -226,7 +228,7 @@
           For ML Engineers & Data Scientists
         </div>
         <div class="flex gap-8 justify-center flex-col lg:flex-row lg:gap-24 pt-4">
-          <div>
+          <div class="flex flex-col justify-center">
             <div class="text-3xl font-bold pb-12">
               No more tedious config tweaking.
             </div>
@@ -252,15 +254,188 @@
                 <span>Metaflow today—other orchestration tools on the roadmap.</span>
               </div>
             </div>
-            <button id="landing-demo-button">
-              <div class="text-2xl font-bold pt-12 text-left">
-                Book a 30‑min live call to share your requirements or feedback with us.
-              </div>
-            </button>
+            <div class="text-2xl font-bold pt-12 text-left">
+              <a href="/about/resource-tracker" class="underline decoration-dotted hover:text-gray-500">Get started now</a>, or
+              <a class="underline decoration-dotted hover:text-gray-500 cursor-pointer" id="landing-demo-button">book a 30‑min live call to share your requirements or feedback with us.</a>
+            </div>
           </div>
-          <div>
+          <div class="flex items-center">
             <!-- TODO update video URL -->
-            <iframe width="560" height="315" src="https://www.youtube.com/embed/hO0KQoxk1SM?si=3JG6jzkPKPUt0Acb" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/hO0KQoxk1SM?si=3JG6jzkPKPUt0Acb" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen class="border-emerald-400 border-2 rounded-lg"></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="sentinel" style="position: relative; top: -65px; visibility: hidden; height: 0;"></div>
+  <div class="content_section">
+    <div class="content">
+      <div class="flex flex-col gap-8 justify-center">
+        <div class="logo_text text-4xl justify-center font-light text-center" >
+          <span class="text-emerald-400"><</span>
+          <span class="text-gray-400">product </span>
+          <span class="text-gray-400">id="</span>sentinel<span class="text-gray-400">"</span>
+          <span class="text-emerald-400">></span>
+        </div>
+        <div class="w-2/3 mx-auto my-auto font-bold text-4xl text-center text-emerald-400">
+          For Data‑Science & FinOp Leads
+        </div>
+        <div class="w-4/5 mx-auto my-auto text-4xl font-light italic text-center pt-8">
+          Your team is wasting time and money. See where every cloud dollar goes—then reclaim it without slowing the team.
+        </div>
+        <div class="flex gap-24 flex-col lg:flex-row lg:gap-24 pt-4">
+          <div class="flex flex-col w-full lg:w-1/2">
+            <div class="flex flex-row gap-4 items-center pb-8">
+              <div class="rounded-full border-2 border-emerald-400 p-6">
+                <lucide-icon name="scan-eye" class="h-12 w-12 text-emerald-400"></lucide-icon>
+              </div>
+              <div>
+                <div class="text-3xl font-bold text-emerald-400">Sentinel Access</div>
+                <div class="text-2xl font-light">(Join the wait-list for Sentinel Access)</div>
+              </div>
+            </div>
+            <div class="flex gap-2 text-2xl font-light text-gray-200">
+              <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]">
+                <lucide-icon name="check" class="h-4 w-4"></lucide-icon>
+              </div>
+              <span>360-view of every job you run in a central dashboard</span>
+            </div>
+            <div class="w-full h-4 my-3 border-b border-gray-400 border-solid"></div>
+            <div class="flex gap-2 text-2xl font-light text-gray-200">
+              <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]">
+                <lucide-icon name="check" class="h-4 w-4"></lucide-icon>
+              </div>
+              <span>Feature-rich reports, 7-day retention</span>
+            </div>
+            <div class="w-full h-4 my-3 border-b border-gray-400 border-solid"></div>
+            <div class="flex gap-2 text-2xl font-light text-gray-200">
+              <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]">
+                <lucide-icon name="check" class="h-4 w-4"></lucide-icon>
+              </div>
+              <span>Auto-tuning resource allocations</span>
+            </div>
+            <div class="w-full h-4 my-3 border-b border-gray-400 border-solid"></div>
+            <div class="flex gap-2 text-2xl font-light text-gray-200">
+              <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]">
+                <lucide-icon name="check" class="h-4 w-4"></lucide-icon>
+              </div>
+              <span>Proactive alerts (over-provision, drift, anomalies)</span>
+            </div>
+            <div class="w-full h-4 my-3 border-b border-gray-400 border-solid"></div>
+            <div class="flex gap-2 text-2xl font-light text-gray-200">
+              <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]">
+                <lucide-icon name="check" class="h-4 w-4"></lucide-icon>
+              </div>
+              <span>Free cloud service for individual users</span>
+            </div>
+          </div>
+          <div class="flex flex-col w-full lg:w-1/2">
+            <div class="flex flex-row gap-4 items-center pb-8">
+              <div class="rounded-full border-2 border-emerald-400 p-6">
+                <lucide-icon name="rocket" class="h-12 w-12 text-emerald-400"></lucide-icon>
+              </div>
+              <div>
+                <div class="text-3xl font-bold text-emerald-400">Sentinel Achiever</div>
+                <div class="text-2xl font-light">(Coming soon)</div>
+              </div>
+            </div>
+            <div class="flex gap-2 text-2xl font-light text-gray-200">
+              <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]">
+                <lucide-icon name="check" class="h-4 w-4"></lucide-icon>
+              </div>
+              <span>Everything in Sentinel Access, plus team support</span>
+            </div>
+            <div class="w-full h-4 my-3 border-b border-gray-400 border-solid"></div>
+            <div class="flex gap-2 text-2xl font-light text-gray-200">
+              <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]">
+                <lucide-icon name="check" class="h-4 w-4"></lucide-icon>
+              </div>
+              <span>Hierarchical or tag-based report breakouts</span>
+            </div>
+            <div class="w-full h-4 my-3 border-b border-gray-400 border-solid"></div>
+            <div class="flex gap-2 text-2xl font-light text-gray-200">
+              <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]">
+                <lucide-icon name="check" class="h-4 w-4"></lucide-icon>
+              </div>
+              <span>Full historical optimization and savings analysis</span>
+            </div>
+            <div class="w-full h-4 my-3 border-b border-gray-400 border-solid"></div>
+            <div class="flex gap-2 text-2xl font-light text-gray-200">
+              <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]">
+                <lucide-icon name="check" class="h-4 w-4"></lucide-icon>
+              </div>
+              <span>Central management (e.g. max GPU hours per project)</span>
+            </div>
+            <div class="w-full h-4 my-3 border-b border-gray-400 border-solid"></div>
+            <div class="flex gap-2 text-2xl font-light text-gray-200">
+              <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]">
+                <lucide-icon name="check" class="h-4 w-4"></lucide-icon>
+              </div>
+              <span>Custom data retention, SLA, SSO & RBAC</span>
+            </div>
+            <div class="w-full h-4 my-3 border-b border-gray-400 border-solid"></div>
+            <div class="flex gap-2 text-2xl font-light text-gray-200">
+              <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]">
+                <lucide-icon name="check" class="h-4 w-4"></lucide-icon>
+              </div>
+              <span>Optional on-prem or hybrid deployment</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="get-started" style="position: relative; top: -65px; visibility: hidden; height: 0;"></div>
+  <div class="content_section">
+    <div class="content">
+      <div class="flex flex-col gap-8 justify-center">
+        <div class="logo_text text-4xl justify-center font-light text-center" >
+          <span class="text-emerald-400"><</span>
+          <span class="text-gray-400">init </span>
+          <span class="text-gray-400">products="</span>resource_tracker sentinel<span class="text-gray-400">"</span>
+          <span class="text-emerald-400">></span>
+        </div>
+        <div class="w-2/3 mx-auto my-auto font-bold text-4xl text-center text-emerald-400">
+          Ready to right‑size your workflows?
+        </div>
+        <div class="flex gap-24 flex-col lg:flex-row lg:gap-24 pt-4">
+          <div class="flex flex-col w-full lg:w-1/2 justify-center">
+            <ol class="list-decimal list-outside text-2xl leading-[42px]">
+              <li class="pb-4">
+                <a href="https://sparecores.github.io/resource-tracker/#metaflow-integration" target="_blank" rel="noopener" class="underline decoration-dotted hover:text-gray-500 font-bold">
+                  Install
+                </a>
+                <span class="font-bold">the <span class="text-emerald-400">open-source</span> Resource Tracker package</span>
+              </li>
+              <li class="pb-4">
+                <a href="/feedback/sentinel-early-access" class="underline decoration-dotted hover:text-gray-500 font-bold">
+                  Sign up
+                </a>
+                <span class="font-bold">for early access to a <span class="text-emerald-400">free Sentinel Access</span> account</span> to see 7‑day workflow history
+              </li>
+              <li class="pb-4">
+                <a class="underline decoration-dotted hover:text-gray-500 cursor-pointer font-bold" id="landing-painpoints-button">
+                  Book a 30‑min live call
+                </a>
+                to share your pain points and <span class="text-emerald-400 font-bold">preview Sentinel Access and Achiever</span>
+              </li>
+            </ol>
+          </div>
+          <div class="flex flex-col w-full lg:w-1/2 justify-center">
+            <pre class="language-python line-numbers" data-line="4"><code>
+              from resource_tracker import ResourceTracker
+
+              # start trackers in the background (non-blocking)
+              tracker = ResourceTracker()
+
+              # your compute-heavy task
+              train_model_or_render_video()
+
+              # view a resource usage report at any time
+              tracker.report()
+              # or get resource allocation advice for future runs
+              tracker.suggest()
+            </code></pre>
           </div>
         </div>
       </div>

@@ -36,7 +36,8 @@ export class NeetoCalService {
     // need to call the embed function for each button
     const buttonSelectors = [
       '#header-demo-button',
-      '#landing-demo-button'
+      '#landing-demo-button',
+      '#landing-painpoints-button'
     ];
     buttonSelectors.forEach(selector => {
       if (document.querySelector(selector)) {

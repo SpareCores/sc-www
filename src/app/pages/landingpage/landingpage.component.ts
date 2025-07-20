@@ -13,6 +13,7 @@ import { ArticleCardComponent } from '../../components/article-card/article-card
 import { SearchServerPricesServerPricesGetData } from '../../../../sdk/data-contracts';
 import { AnalyticsService } from '../../services/analytics.service';
 import { NeetoCalService } from '../../services/neeto-cal.service';
+import { PrismService } from '../../services/prism.service';
 
 @Component({
   selector: 'app-landingpage',
@@ -135,7 +136,8 @@ export class LandingpageComponent implements OnInit, AfterViewInit {
               private SEOHandler: SeoHandlerService,
               private articles: ArticlesService,
               private analyticsService: AnalyticsService,
-              private neetoCalService: NeetoCalService) { }
+              private neetoCalService: NeetoCalService,
+              private prismService: PrismService) { }
 
   ngOnInit() {
 
@@ -178,6 +180,7 @@ export class LandingpageComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     if (isPlatformBrowser(this.platformId)) {
+      this.prismService.highlightAll();
       this.neetoCalService.initialize();
     }
   }
