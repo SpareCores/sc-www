@@ -37,7 +37,10 @@ export class NeetoCalService {
     const buttonSelectors = [
       '#header-demo-button',
       '#landing-demo-button',
-      '#landing-painpoints-button'
+      '#landing-painpoints-button',
+      "#services-meeting-consulting",
+      "#services-meeting-shiny",
+      "#services-meeting-llms",
     ];
     buttonSelectors.forEach(selector => {
       if (document.querySelector(selector)) {
