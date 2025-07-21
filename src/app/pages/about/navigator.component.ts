@@ -5,6 +5,7 @@ import { ThemeTextComponent } from '../../components/theme-text/theme-text.compo
 import { SeoHandlerService } from '../../services/seo-handler.service';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { NeetoCalService } from '../../services/neeto-cal.service';
 
 interface Quote {
   quote: string;
@@ -25,7 +26,8 @@ interface Quote {
 export class AboutNavigatorComponent implements AfterViewInit {
 
   constructor(@Inject(PLATFORM_ID) private platformId: object,
-              private SEOHandler: SeoHandlerService) { }
+              private SEOHandler: SeoHandlerService,
+              private neetoCalService: NeetoCalService) { }
 
   vendors: any[] = [
     '✅ Amazon Web Services (Done)',
@@ -192,8 +194,10 @@ export class AboutNavigatorComponent implements AfterViewInit {
   }
 
   ngAfterViewInit() {
-    // initialize Swiper in the browser
     if (isPlatformBrowser(this.platformId)) {
+      // initialize neetoCal
+      this.neetoCalService.initialize();
+      // initialize Swiper
       setTimeout(() => {
         const swiperElements = document.querySelectorAll('swiper-container[init="false"]');
         swiperElements.forEach((swiperEl) => {
