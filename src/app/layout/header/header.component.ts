@@ -17,8 +17,7 @@ export class HeaderComponent implements OnInit {
   dropdownMenu: any;
   dropdownAbout: any;
   dropdownCompare: any;
-  dropdownPrices: any;
-  dropdownServers: any;
+  dropdownNavigator: any;
   constructor(
     @Inject(PLATFORM_ID) private platformId: object,
     private serverCompare: ServerCompareService,
@@ -39,12 +38,8 @@ export class HeaderComponent implements OnInit {
         this.dropdownCompare = dropdown;
       });
 
-      this.dropdownManager.initDropdown('prices_button', 'prices_options').then((dropdown) => {
-        this.dropdownPrices = dropdown;
-      });
-
-      this.dropdownManager.initDropdown('servers_button', 'servers_options').then((dropdown) => {
-        this.dropdownServers = dropdown;
+      this.dropdownManager.initDropdown('navigator_button', 'navigator_options').then((dropdown) => {
+        this.dropdownNavigator = dropdown;
       });
     }
 
@@ -58,12 +53,8 @@ export class HeaderComponent implements OnInit {
     this.dropdownCompare?.hide();
   }
 
-  closePrices() {
-    this.dropdownPrices?.hide();
-  }
-
-  closeServers() {
-    this.dropdownServers?.hide();
+  closeNavigator() {
+    this.dropdownNavigator?.hide();
   }
 
   closeAbout() {

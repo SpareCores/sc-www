@@ -15,19 +15,19 @@
                 </div>
               </li>
               <li class="hidden lg:flex">
-                <div class="navbar_link cursor-pointer" id="servers_button">
-                    <lucide-icon class="h-4 w-4" name="pc-case"></lucide-icon>
-                    Servers
+                <div class="navbar_link cursor-pointer" id="navigator_button">
+                    <lucide-icon class="h-4 w-4" name="ship-wheel"></lucide-icon>
+                    Navigator
                 </div>
               </li>
               <li class="hidden lg:flex" >
-                <div class="navbar_link cursor-pointer" id="prices_button">
+                <a routerLink="/about/resource-tracker" class="navbar_link">
                   <lucide-icon
                     class="cursor-pointer h-4 w-4"
-                    name="dollar-sign" >
+                    name="gauge" >
                   </lucide-icon>
-                  Realtime Prices
-                </div>
+                  Resource Tracker
+                </a>
               </li>
               <li class="py-1">
                 <button
@@ -119,45 +119,41 @@
     (click)="closeAbout()">
     <li class="py-2">
       <a class="navbar_link" href="/about/spare-cores" >
-        <lucide-icon class="h-4 w-4" name="handshake"></lucide-icon>
-        Company & Vision
+        <lucide-icon class="h-4 w-4" name="heart-handshake"></lucide-icon>
+        Our Mission
       </a>
     </li>
-    <hr class="my-1 mx-3 border-emerald-400">
-    <li class="py-2 text-white font-bold">
-    Spare Cores products:
-    </li>
-    <li class="py-2 ml-4">
-      <a class="navbar_link" routerLink="/about/navigator" >
-        <lucide-icon class="h-4 w-4" name="ship-wheel"></lucide-icon>
-        Navigator
+    <li class="py-2">
+      <a class="navbar_link" routerLink="/articles" >
+        <lucide-icon class="h-4 w-4" name="notebook-text"></lucide-icon>
+        Blog
       </a>
     </li>
-    <li class="py-2 ml-4">
-      <a class="navbar_link" routerLink="/about/resource-tracker" >
-        <lucide-icon class="h-4 w-4" name="gauge"></lucide-icon>
-        Resource Tracker
-      </a>
-    </li>
-    <li class="py-2 ml-4">
-      <a class="navbar_link" routerLink="/about/sentinel" >
-        <lucide-icon class="h-4 w-4" name="scan-eye"></lucide-icon>
-        Sentinel
+    <li class="py-2">
+      <a class="navbar_link" routerLink="/talks" >
+        <lucide-icon class="h-4 w-4" name="projector"></lucide-icon>
+        Talks & Slides
       </a>
     </li>
   </ul>
 </div>
 
-
-<div id="servers_options" class="z-100 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid">
+<div id="navigator_options" class="z-100 hidden bg-secondary rounded-lg shadow w-68 border border-emerald-400 border-solid">
   <ul
     class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
     aria-labelledby="dropdownDefaultButton"
-    (click)="closeServers()">
+    (click)="closeNavigator()">
+    <li class="py-2">
+      <a class="navbar_link" routerLink="/about/navigator" >
+        <lucide-icon class="h-4 w-4" name="book-text"></lucide-icon>
+        Product Info
+      </a>
+    </li>
+    <hr class="mx-3 border-gray-500 mt-3 mb-3">
     <li class="py-2">
       <a class="navbar_link" routerLink="/servers" >
-        <lucide-icon class="h-4 w-4" name="ship-wheel"></lucide-icon>
-        Navigator
+        <lucide-icon class="h-4 w-4" name="pc-case"></lucide-icon>
+        Servers
       </a>
     </li>
     <li class="py-2">
@@ -166,17 +162,10 @@
         Compare Guide
       </a>
     </li>
-  </ul>
-</div>
-
-<div id="prices_options" class="z-100 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid">
-  <ul
-    class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
-    aria-labelledby="dropdownDefaultButton"
-    (click)="closePrices()">
+    <hr class="mx-3 border-gray-500 mt-3 mb-3">
     <li class="py-2">
       <a class="navbar_link" routerLink="/server_prices" >
-        <lucide-icon class="h-4 w-4" name="pc-case"></lucide-icon>
+        <lucide-icon class="h-4 w-4" name="dollar-sign"></lucide-icon>
         Server Prices
       </a>
     </li>
