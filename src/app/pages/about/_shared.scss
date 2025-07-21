@@ -1,0 +1,18 @@
+.content_section {
+  @apply bg-primary;
+  @apply text-white;
+  padding: 4rem 2rem;
+  border-top: 1px solid #34D399;
+}
+
+.content_section.even {
+  @apply bg-secondary;
+}
+
+.content_section.odd {
+  @apply bg-primary;
+}
+
+.content_section.first {
+  border-top: 0px;
+}
