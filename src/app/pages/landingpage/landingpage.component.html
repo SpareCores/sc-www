@@ -140,10 +140,10 @@
           <span class="text-gray-400">use="</span>spare_cores<span class="text-gray-400">"</span>
           <span class="text-emerald-400">></span>
         </div>
-        <div class="w-2/3 mx-auto my-auto font-bold text-4xl text-center">
+        <div class="w-4/5 2xl:w-2/3 mx-auto my-auto font-bold text-4xl text-center">
           Trusted by early adopters tracking and optimizing hundreds of Metaflow steps every day.
         </div>
-        <div class="w-2/3 mx-auto my-auto text-2xl text-center">
+        <div class="w-4/5 lg:w-2/3 mx-auto my-auto text-2xl text-center">
           Every under‑utilized core is budget you could spend on the next experiment.
         </div>
         <div class="flex gap-24 lg:gap-8 2xl:gap-24 justify-center flex-col lg:flex-row pt-20 px-24 lg:px-4 2xl:px-24">
@@ -162,8 +162,8 @@
               The Spare Cores Resource Tracker provides per-step CPU/GPU/RAM straight from your Metaflow runs, and recommends the right instance for your next run.
             </div>
             <div class="absolute bottom-4 right-4">
-              <a routerLink="/about/resource-tracker" class="text-emerald-400">
-                <lucide-icon name="square-arrow-up-right" class="h-[30px] w-[30px]"></lucide-icon>
+              <a (click)="scrollTo('resource-tracker')" class="text-emerald-400 cursor-pointer">
+                <lucide-icon name="square-arrow-down" class="h-[30px] w-[30px]"></lucide-icon>
               </a>
             </div>
           </div>
@@ -202,8 +202,8 @@
               The Spare Cores Sentinel Access and Sentinel Pro (coming soon) add dashboards, richer reporting, alerts & within or cross‑cloud auto‑tune.
             </div>
             <div class="absolute bottom-4 right-4">
-              <a routerLink="/about/sentinel" class="text-emerald-400">
-                <lucide-icon name="square-arrow-up-right" class="h-[30px] w-[30px]"></lucide-icon>
+              <a (click)="scrollTo('sentinel')" class="text-emerald-400 cursor-pointer">
+                <lucide-icon name="square-arrow-down" class="h-[30px] w-[30px]"></lucide-icon>
               </a>
             </div>
           </div>
