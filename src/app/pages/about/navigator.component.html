@@ -5,15 +5,14 @@
   <div class="content_section odd first">
       <div class="content w-2/3">
         <app-theme-text text="navigator" classes="text-6xl justify-center font-bold pb-12"></app-theme-text>
-        <div class="mx-auto my-auto font-bold text-2xl text-center pb-16">
-          A Python-based open-source framework and managed service offering the
-          most detailed, transparent, and up-to-date public dataset on cloud
-          servers.
-        </div>
       </div>
-      <div class="w-2/3 mx-auto flex gap-8 flex-col lg:flex-row" >
-        <div class="flex flex-col gap-12 w-full lg:w-1/4 my-auto">
-          <div class="grid grid-cols-2 lg:grid-cols-1 gap-4 mx-auto lg:ml-0">
+      <div class="w-2/3 mx-auto flex gap-8 flex-col lg:flex-row pb-12" >
+        <div class="flex flex-col gap-12 w-full lg:w-1/2 my-auto">
+          <div class="mx-auto my-auto font-bold text-2xl text-left">
+            A Python-based open-source framework and managed service offering the
+            most detailed and transparent dataset on cloud servers.
+          </div>
+          <div class="grid grid-cols-2 gap-4 mx-auto lg:ml-0">
             <div class="flex gap-4 items-center">
               <div class="bg-white text-emerald-400 py-3 px-3 rounded-lg">
                 <lucide-icon class="h-5 w-5" name="database"></lucide-icon>
@@ -34,35 +33,42 @@
             </div>
             <div class="flex gap-4 items-center">
               <div class="bg-white text-emerald-400 py-3 px-3 rounded-lg">
-                <lucide-icon class="h-5 w-5" name="layers"></lucide-icon>
+                <lucide-icon class="h-5 w-5" name="dollar-sign"></lucide-icon>
               </div>
-              <div class="text-white font-bold text-lg">Add-on Services</div>
+              <div class="text-white font-bold text-lg">Real-time pricing</div>
             </div>
           </div>
-          <div class="flex gap-8 justify-center">
-            <a href="/navigator/servers">
-              <button class="btn-primary py-5 px-5">Get Started</button>
-            </a>
+          <div class="flex gap-8 justify-center lg:justify-start">
+            <button routerLink="/servers" class="btn-primary py-5 px-5">Get Started</button>
+            <button routerLink="/servers" class="bg-transparent text-teal-500 py-5 px-5 font-bold hover:text-teal-600">Explore Server Options and Prices ></button>
           </div>
         </div>
-        <div class="w-2/3 mx-auto text-2xl text-center">
-          <p class="pb-4">
-            We run low-level <span class="text-emerald-400">hardware inspection</span>
-            tools and diverse <span class="text-emerald-400">benchmarks</span> on
-            thousands of <span class="text-emerald-400">cloud server</span> options
-            <span class="text-emerald-400">across clouds</span> to collect
-            <span class="text-emerald-400">reliable and reproducible data</span>.
-            Everything is published under <span class="text-emerald-400">open licenses</span>
-            as Python packages, public datasets, API endpoints, and SDKs —
-            making it <span class="text-emerald-400">easy to search, analyze, and integrate</span>.
-          </p>
-          <p>
-            The Spare Cores Navigator is not just about data. It's a full
-            platform: open-source code, interactive data visualizations, and
-            managed infrastructure. For teams that need SLA-backed support or
-            custom features, enterprise-grade services are available too.
-          </p>
+        <div class="w-full lg:w-1/2 justify-center flex items-center">
+          <div class="w-full min-w-[400px] max-w-[800px]">
+            <div class="relative w-full overflow-hidden aspect-video">
+              <iframe
+                width="100%" height="auto" src="https://www.youtube.com/embed/hO0KQoxk1SM"
+                title="Stop Overpaying for Cloud Servers: Find Cloud Deals on AWS, Azure, & GCP"
+                frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen 
+              class="border-emerald-400 border-2 rounded-lg mx-auto mt-8 lg:mt-0" style="aspect-ratio: 16 / 9"></iframe>
+            </div>
+          </div>
         </div>
+      </div>
+      <div class="w-2/3 mx-auto text-2xl text-left">
+        <p class="pb-4">
+          We run low-level hardware inspection tools and diverse benchmarks on
+          thousands of cloud server options across clouds to collect reliable
+          and reproducible data. Everything is published under open licenses as
+          Python packages, public datasets, API endpoints, and SDKs — making it
+          easy to search, analyze, and integrate.
+        </p>
+        <p>
+          The Spare Cores Navigator is not just about data. It's a full
+          platform: open-source code, interactive data visualizations, and
+          managed infrastructure. For teams that need SLA-backed support or
+          custom features, enterprise-grade services are available too.
+        </p>
       </div>
     </div>
   </div>
