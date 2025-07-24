@@ -6,8 +6,7 @@ import { ServerPricesComponent } from './pages/server-prices/server-prices.compo
 export const routes: Routes = [
   { path: '', component: LandingpageComponent },
 
-  { path: 'navigator/servers', component: ServerListingComponent },
-  { path: 'servers', redirectTo: 'navigator/servers' },
+  { path: 'servers', component: ServerListingComponent },
   { path: 'servers/:id', component: ServerListingComponent },
   { path: 'compare', loadComponent: () => import('./pages/server-compare/server-compare.component').then(m => m.ServerCompareComponent)},
   { path: 'compare/:id', loadComponent: () => import('./pages/server-compare/server-compare.component').then(m => m.ServerCompareComponent)},
@@ -15,8 +14,7 @@ export const routes: Routes = [
   { path: 'server/:vendor/:id', loadComponent: () => import('./pages/server-details/server-details.component').then(m => m.ServerDetailsComponent)},
   { path: 'og/:vendor/:id', loadComponent: () => import('./pages/server-og/server-og.component').then(m => m.ServerOGComponent)},
 
-  { path: 'navigator/debug', loadComponent: () => import('./pages/missing-benchmarks/missing-benchmarks.component').then(m => m.MissingBenchmarksComponent)},
-  { path: 'debug', redirectTo: 'navigator/debug' },
+  { path: 'debug', loadComponent: () => import('./pages/missing-benchmarks/missing-benchmarks.component').then(m => m.MissingBenchmarksComponent)},
 
   { path: 'article/:id', loadComponent: () => import('./pages/article/article.component').then(m => m.ArticleComponent)},
   { path: 'articles', loadComponent: () => import('./pages/articles/articles.component').then(m => m.ArticlesComponent)},
