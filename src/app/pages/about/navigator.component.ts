@@ -86,10 +86,10 @@ export class AboutNavigatorComponent implements AfterViewInit {
       consent_to_publish: true, // public post
     },
     {
-      quote: 'Thanks for publishing all the instance information! I had wanted to try and pull together [...] but manually digging up instance information on websites was an absurd hassle. Now it’s a SQL query!',
+      quote: 'Thanks for publishing all the instance information! I had wanted to try and pull together the trends of vCPU vs local storage size, but manually digging up instance information on websites was an absurd hassle. Now it\'s a SQL query!',
       author: 'Database Internals Engineer (ex Google, Apple, Snowflake)',
       source: 'email',
-      consent_to_publish: false, // TODO: ask for consent
+      consent_to_publish: true, // July 21, 2025
     },
     {
       quote: 'I really liked the idea of Spare Cores because pricing comparison across cloud providers is increasingly useful.',
@@ -111,12 +111,6 @@ export class AboutNavigatorComponent implements AfterViewInit {
       source_url: 'https://blog.pragmaticengineer.com/spare-cores/',
       consent_to_publish: true, // public post
     },
-    {
-      quote: 'Truly doing the lord\'s work comparing such a dataset to help people optimize their cloud spend.',
-      author: 'Head of Data Science @ Red Bull',
-      source: 'private message',
-      consent_to_publish: false, // TODO: ask for consent
-    }
   ];
   get publishableQuotes(): Quote[] {
     return this.quotes.filter(quote => quote.consent_to_publish === true);
