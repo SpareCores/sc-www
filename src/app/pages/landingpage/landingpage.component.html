@@ -12,12 +12,14 @@
             <p class="py-2">Resource Tracker watches your Metaflow runs, learns real CPU / RAM / GPU needs, and recommends the right instance for the next run.</p>
           </div>
           <div class="flex gap-8 justify-center lg:justify-start pb-12 lg:pb-0">
-            <a href="https://sparecores.github.io/resource-tracker/#metaflow-integration" target="_blank" rel="noopener">
-              <div class="flex items-center gap-4">
+            <div class="flex items-center gap-4">
+              <a href="https://sparecores.github.io/resource-tracker/#metaflow-integration" target="_blank" rel="noopener">
                 <button class="btn-primary py-5 px-5">Install the Python package<br/>and track your first job in < 5 min.</button>
+              </a>
+              <a (click)="scrollTo('why')" class="text-emerald-400 cursor-pointer">
                 <button class="bg-transparent text-teal-500 py-5 px-5 font-bold hover:text-teal-600">Learn more ></button>
-              </div>
-            </a>
+              </a>
+            </div>
           </div>
         </div>
         <div class="w-full lg:w-1/2 justify-center flex" style="min-height: 600px;" id="slot-machine">
@@ -575,15 +577,4 @@
       </div>
     </div>
   </div>
-</div>
-
-<div id="tooltipVendors"
-  #tooltipVendors
-  style="opacity: 0;"
-  class="max-w-xl absolute top-0 z-10 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-secondary border border-solid border-emerald-400 rounded-lg">
-  <ul style=" list-style-type: disc; list-style-position: inside;">
-    <li *ngFor="let item of vendors" style="margin-bottom: 0.25rem">
-      {{item}}
-    </li>
-  </ul>
 </div>
