@@ -1,0 +1,29 @@
+@import './_shared.scss';
+
+.repo_table {
+    @apply w-full;
+
+    thead {
+        @apply border-b border-emerald-400 border-solid;
+        th {
+            @apply text-left px-5 py-3 font-normal text-xs;
+
+        }
+    }
+    tbody {
+        tr:nth-child(2n+1) {
+            @apply bg-primary;
+        }
+        tr:nth-child(2n) {
+            @apply bg-secondary;
+        }
+        tr {
+            td {
+                @apply px-5 py-3 text-left text-sm;
+                a:hover {
+                    opacity: 0.5;
+                }
+            }
+        }
+    }
+}

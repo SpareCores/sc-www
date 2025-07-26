@@ -1,0 +1,158 @@
+<div class="w-full bg-primary min-h-screen">
+    <div class="content pt-16 pb-4 text-white flex flex-col gap-8">
+        <app-breadcrumbs [segments]="breadcrumbs"></app-breadcrumbs>
+
+        <div class="max-w-3xl mx-auto w-full px-4">
+            <h1 class="font-semibold text-3xl mb-4">
+                Welcome to Spare Cores!
+            </h1>
+            <p>
+                At Spare Cores, we believe cloud infrastructure shouldn't feel
+                like a guessing game—especially for data science and machine
+                learning teams. Our mission is simple: help you run every ML
+                workflow faster, cheaper, and with less hassle, by turning real
+                usage data into smart, actionable decisions.
+            </p>
+            <p>
+                We're building tools that give teams clarity, control, and
+                cost-efficiency—without the overhead of traditional DevOps. And
+                we're doing it the way we wish every infrastructure tool worked:
+                transparent, developer-first, and workflow-native.
+            </p>
+            <h2>
+                Why we started
+            </h2>
+            <p>
+                Our founder, <a href="https://www.linkedin.com/in/daroczig/" target="_blank" rel="noopener">Gergely Daróczi</a>,
+                spent more than a decade managing infrastructure for data
+                science teams. In that time, he saw the same problems again and
+                again: engineers over-provisioning cloud instances "just to be
+                safe", expensive GPUs sitting idle, and workloads delayed by
+                ticket queues and trial-and-error. The costs added up
+                quickly—but even more painful was the time lost to debugging
+                cloud infrastructure configs instead of building models.
+            </p>
+            <p>
+                Spare Cores started with a simple idea: what if teams could make
+                smart cloud decisions automatically, based on what their jobs
+                actually use—not what they guess they'll need?
+            </p>
+            <p>
+                We began by building a public benchmark engine, measuring thousands
+                of cloud instance types across AWS, GCP, Azure, and Hetzner. That
+                data became the foundation for <a href="/about/navigator">Spare Cores Navigator</a>, our open
+                platform for exploring real-world price and performance. From
+                there, we launched the open-source <a href="/about/resource-tracker">Resource Tracker</a> package—a
+                lightweight Python/R integration for Metaflow (with Flyte,
+                Airflow, and other orchestration tools coming soon), that captures
+                real CPU, RAM, and GPU usage, and recommends better-fitting
+                instances for next time.
+            </p>
+            <p>
+                Today, over 5,000 Metaflow steps per week are tracked with
+                Spare Cores. And we're just getting started.
+            </p>
+            <h2>
+                What we offer
+            </h2>
+            <p>
+                Spare Cores is building a full suite of tools and services to
+                help DS/ML teams cut costs and speed up experimentation—without
+                changing how they work.
+            </p>
+            <p>
+                Our open-source packages plug directly into your workflows,
+                collecting fine-grained usage data and showing exactly where
+                you’re wasting compute. For teams who want more control and
+                visibility, we offer a cloud-based platform called Sentinel,
+                with two flavors:
+            </p>
+            <ul class="list-disc list-inside text-lg mb-6">
+                <li class="mb-2">
+                    <b>Sentinel Access</b> is our free tier. It gives individual users
+                    a dashboard to track their runs, see seven days of history,
+                    and get real-time alerts about over-provisioned jobs.
+                </li>
+                <li>
+                    <b>Sentinel Pro</b> is built for teams. It adds team-wide
+                    dashboards, historical reports, cost savings deltas,
+                    policy-based automation, and cross-cloud optimization—plus
+                    support for SSO and RBAC when you need governance.
+                </li>
+            </ul>
+            <p>
+                Alongside these, we also offer scalable Shiny and Streamlit
+                hosting (on your cloud or ours), cloud optimization consulting,
+                and sizing services for ad-hoc AI workloads like LLM labeling or
+                document processing.
+            </p>
+            <h2>
+                How we're different
+            </h2>
+            <p>
+                There's no shortage of tools that show you where your cloud
+                spend is going. But most of them stop at visibility—and none of
+                them speak the language of ML workflows. Spare Cores lives
+                inside your workflow. No portals to log into. No magic boxes.
+                Just one line of code and actionable results.
+            </p>
+            <p>
+                We're open by design—our benchmark engine is licensed under the
+                Mozilla Public License (MPL 2.0), the related datasets under
+                Creative Commons Attribution-ShareAlike (CC-BY-SA), and we're
+                committed to transparency, verifiability, and community trust.
+                Our tools don't lock you in. They help you make smarter
+                decisions, faster.
+            </p>
+            <p>
+                And unlike traditional FinOps tools built for 24/7 SaaS traffic,
+                we're laser-focused on batch-based experimentation.
+            </p>
+            <p>
+                We aim to be your trusted sidekick—technical, transparent, and
+                always on your side when it comes to cloud costs.
+            </p>
+            <h2>
+                Who we are
+            </h2>
+            <p>
+                Spare Cores is proudly bootstrapped and independent, with early
+                support from a <a href="/articles/ngi-search-grant">€150,000 EU NGI Search grant</a>. We're a member of
+                the <a href="/articles/nvidia-inception">NVIDIA Inception program</a> and 
+                have backing from AWS, GCP, Azure, Hetzner, and UpCloud in the
+                form of compute credits and cloud support.
+            </p>
+            <p>
+                We've been featured in <a href="https://blog.pragmaticengineer.com/spare-cores/" target="_blank" rel="noopener">The Pragmatic Engineer</a>,
+                <a href="/talks">presented at PyData, Berlin Buzzwords, and useR!</a>,
+                and have been lucky to receive early feedback and encouragement
+                from teams at Outerbounds, Too Good To Go, The Duckbill Group,
+                and the European Commission.
+            </p>
+            <p>
+                Our team brings deep experience in data science, MLOps, cloud
+                architecture, product, and growth. But more than anything, we
+                care about building tools we'd want to use ourselves.
+            </p>
+            <h2>
+                Let's talk
+            </h2>
+            <p>
+                If you're struggling with cloud cost control, buried in
+                infrastructure tickets, or just want to spend less time
+                configuring and more time building—Spare Cores is for you.
+            </p>
+            <p>
+                Start by installing the open-source <a href="/about/resource-tracker">Resource Tracker</a>.
+                Sign up for early access to <a href="/feedback/sentinel-early-access">Sentinel Access</a> to see your own 7-day job history.
+                Or <button class="underline decoration-dotted hover:text-gray-500" id="meeting-general-demo">
+                    grab time with us for a quick 30-minute call
+                </button>—we'd love to hear your pain points and preview what's coming next.
+            </p>
+            <p>
+                We're here to help you stop guessing, start optimizing, and make
+                every core count.
+            </p>
+        </div>
+    </div>
+</div>

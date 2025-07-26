@@ -11,12 +11,17 @@
           itemprop="itemListElement"
           itemscope
           itemtype="https://schema.org/ListItem">
-          <a  itemprop="item"
-              routerLink="{{item.url}}"
-              [queryParams]="item.queryParams"
-              class="text-white hover:text-emerald-400">
-            <span itemprop="name">{{item.name}}</span>
-          </a>
+          <ng-container *ngIf="item.url; else noLink">
+            <a itemprop="item"
+                routerLink="{{item.url}}"
+                [queryParams]="item.queryParams"
+                class="text-white hover:text-emerald-400">
+              <span itemprop="name">{{item.name}}</span>
+            </a>
+          </ng-container>
+          <ng-template #noLink>
+            <span itemprop="name" class="text-white">{{item.name}}</span>
+          </ng-template>
           <meta itemprop="position" content="{{i+1}}" />
       </div>
 

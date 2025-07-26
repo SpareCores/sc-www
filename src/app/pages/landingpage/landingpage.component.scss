@@ -1,15 +1,6 @@
 .content_section {
-  @apply bg-primary;
   @apply text-white;
-
   padding: 4rem 2rem;
-}
-
-.content_section:nth-child(2n) {
-  @apply bg-secondary;
-}
-
-.content_section:not(:first-child) {
   border-top: 1px solid#34D399;
 }
 
@@ -279,5 +270,3 @@
   }
 
 }
-
-

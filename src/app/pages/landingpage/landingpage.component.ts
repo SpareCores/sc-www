@@ -13,6 +13,7 @@ import { ArticleCardComponent } from '../../components/article-card/article-card
 import { SearchServerPricesServerPricesGetData } from '../../../../sdk/data-contracts';
 import { AnalyticsService } from '../../services/analytics.service';
 import { NeetoCalService } from '../../services/neeto-cal.service';
+import { PrismService } from '../../services/prism.service';
 
 @Component({
   selector: 'app-landingpage',
@@ -23,93 +24,6 @@ import { NeetoCalService } from '../../services/neeto-cal.service';
   styleUrl: './landingpage.component.scss'
 })
 export class LandingpageComponent implements OnInit, AfterViewInit {
-
-  vendors: any[] = [
-    '✅ Amazon Web Services (Done)',
-    '✅ Google Cloud Platform (Done)',
-    '✅ Hetzner Cloud (Done)',
-    '✅ Microsoft Azure (Done)',
-    '✅ UpCloud (Done)',
-    '⚙️ Vultr (In Progress)',
-    '🗓️ Oracle Cloud Infrastructure (Planned)',
-    '🗓️ Scaleway (Planned)',
-    '🗓️ Alibaba Cloud (Planned)',
-    '🗓️ OVH Cloud (Planned)',
-  ];
-
-  features: any[] = [
-    {
-      count: '353',
-      text: 'availability zones'
-    },
-    {
-      count: '2344',
-      text: 'server types'
-    },
-    {
-      count: '970,000+',
-      text: 'benchmark scores'
-    },
-    {
-      count: '~310,000',
-      text: 'live price records'
-    },
-    {
-      count: '~5k',
-      text: 'records updated hourly'
-    },
-
-    {
-      count: '~45M',
-      text: 'historical records'
-    },
-  ];
-
-  gitHubComponents: any[] = [
-    {
-      component: 'SC Crawler',
-      status: 'Beta',
-      github: 'sc-crawler',
-      pypi: 'sparecores-crawler',
-      docs: 'https://sparecores.github.io/sc-crawler',
-      description: 'Inventory cloud resources into a SQlite database.',
-    },
-    {
-      component: 'SC Inspector',
-      status: 'Beta',
-      description: 'Inspect and benchmark cloud resources.',
-      github: 'sc-inspector',
-      data: 'https://github.com/SpareCores/sc-inspector-data',
-    },
-    {
-      component: 'SC Data',
-      status: 'Beta',
-      github: 'sc-data',
-      pypi: 'sparecores-data',
-      description: 'Wrapper around data collected using the Crawler.',
-      data: 'https://sc-data-public-40e9d310.s3.amazonaws.com/sc-data-all.db.bz2',
-    },
-    {
-      component: 'SC Keeper',
-      status: 'Alpha',
-      description: 'API to search the Data.',
-      github: 'sc-keeper',
-      docs: 'https://keeper.sparecores.net/docs',
-      api: 'https://keeper.sparecores.net',
-    },
-    {
-      component: 'SC Scanner',
-      status: 'Stable',
-      description: 'Web frontend and programming language SDKs for Keeper.',
-      www: 'https://github.com/SpareCores/sc-www',
-    },
-    {
-      component: 'SC Runner',
-      status: 'Beta',
-      description: 'Launching actual cloud instances.',
-      github: 'sc-runner',
-    }
-  ];
 
   featuredArticles: ArticleMeta[] = [];
 
@@ -135,7 +49,8 @@ export class LandingpageComponent implements OnInit, AfterViewInit {
               private SEOHandler: SeoHandlerService,
               private articles: ArticlesService,
               private analyticsService: AnalyticsService,
-              private neetoCalService: NeetoCalService) { }
+              private neetoCalService: NeetoCalService,
+              private prismService: PrismService) { }
 
   ngOnInit() {
 
@@ -178,6 +93,7 @@ export class LandingpageComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     if (isPlatformBrowser(this.platformId)) {
+      this.prismService.highlightAll();
       this.neetoCalService.initialize();
     }
   }
@@ -370,19 +286,23 @@ export class LandingpageComponent implements OnInit, AfterViewInit {
     }, spinAnimEnd)
   }
 
-  showTooltip(el: any) {
-    const tooltip = this.tooltip.nativeElement;
-    const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
-    tooltip.style.left = `${el.target.getBoundingClientRect().left - 25}px`;
-    tooltip.style.top = `${el.target.getBoundingClientRect().bottom + 5 + scrollPosition}px`;
-
-    tooltip.style.display = 'block';
-    tooltip.style.opacity = '1';
+  toggleQuote(event: Event) {
+    const clickedElement = event.currentTarget as HTMLElement;
+    const quoteContainer = clickedElement.closest('.quote-container');
+    if (quoteContainer) {
+      const preview = quoteContainer.querySelector('.quote-preview');
+      const full = quoteContainer.querySelector('.quote-full');
+      if (preview && full) {
+        preview.classList.toggle('hidden');
+        full.classList.toggle('hidden');
+      }
+    }
   }
 
-  hideTooltip() {
-    const tooltip = this.tooltip.nativeElement;
-    tooltip.style.display = 'none';
-    tooltip.style.opacity = '0';
+  scrollTo(id: string) {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
   }
 }

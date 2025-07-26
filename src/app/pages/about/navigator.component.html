@@ -1,0 +1,396 @@
+<div class="w-full">
+  <div class="content pt-16 pb-4 text-white flex flex-col gap-8">
+      <app-breadcrumbs [segments]="breadcrumbs"></app-breadcrumbs>
+  </div>
+  <div class="content_section odd first">
+      <div class="content w-2/3">
+        <app-theme-text text="navigator" classes="text-6xl justify-center font-bold pb-12"></app-theme-text>
+      </div>
+      <div class="w-2/3 mx-auto flex gap-8 flex-col lg:flex-row pb-12" >
+        <div class="flex flex-col gap-12 w-full lg:w-1/2 my-auto">
+          <div class="mx-auto my-auto font-bold text-2xl text-left">
+            A Python-based open-source framework and managed service offering the
+            most detailed and transparent dataset on cloud servers.
+          </div>
+          <div class="grid grid-cols-2 gap-4 mx-auto lg:ml-0">
+            <div class="flex gap-4 items-center">
+              <div class="bg-white text-emerald-400 py-3 px-3 rounded-lg">
+                <lucide-icon class="h-5 w-5" name="database"></lucide-icon>
+              </div>
+              <div class="text-white font-bold text-lg">Open Data</div>
+            </div>
+            <div class="flex gap-4 items-center">
+              <div class="bg-white text-emerald-400 py-3 px-3 rounded-lg">
+                <lucide-icon class="h-5 w-5" name="package-open"></lucide-icon>
+              </div>
+              <div class="text-white font-bold text-lg">Python</div>
+            </div>
+            <div class="flex gap-4 items-center">
+              <div class="bg-white text-emerald-400 py-3 px-3 rounded-lg">
+                <lucide-icon class="h-5 w-5" name="square-kanban"></lucide-icon>
+              </div>
+              <div class="text-white font-bold text-lg">Benchmarks</div>
+            </div>
+            <div class="flex gap-4 items-center">
+              <div class="bg-white text-emerald-400 py-3 px-3 rounded-lg">
+                <lucide-icon class="h-5 w-5" name="dollar-sign"></lucide-icon>
+              </div>
+              <div class="text-white font-bold text-lg">Real-time pricing</div>
+            </div>
+          </div>
+          <div class="flex gap-8 justify-center lg:justify-start">
+            <button routerLink="/servers" class="btn-primary py-5 px-5">Get Started</button>
+            <button routerLink="/servers" class="bg-transparent text-teal-500 py-5 px-5 font-bold hover:text-teal-600">Explore Server Options and Prices ></button>
+          </div>
+        </div>
+        <div class="w-full lg:w-1/2 justify-center flex items-center">
+          <div class="w-full min-w-[400px] max-w-[800px]">
+            <div class="relative w-full overflow-hidden aspect-video">
+              <iframe
+                width="100%" height="auto" src="https://www.youtube.com/embed/hO0KQoxk1SM"
+                title="Stop Overpaying for Cloud Servers: Find Cloud Deals on AWS, Azure, & GCP"
+                frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen 
+              class="border-emerald-400 border-2 rounded-lg mx-auto mt-8 lg:mt-0" style="aspect-ratio: 16 / 9"></iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="w-2/3 mx-auto text-2xl text-left">
+        <p class="pb-4">
+          We run low-level hardware inspection tools and diverse benchmarks on
+          thousands of cloud server options across clouds to collect reliable
+          and reproducible data. Everything is published under open licenses as
+          Python packages, public datasets, API endpoints, and SDKs — making it
+          easy to search, analyze, and integrate.
+        </p>
+        <p>
+          The Spare Cores Navigator is not just about data. It's a full
+          platform: open-source code, interactive data visualizations, and
+          managed infrastructure. For teams that need SLA-backed support or
+          custom features, enterprise-grade services are available too.
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="content_section even">
+      <div class="flex flex-col gap-12 justify-center">
+          <app-theme-text text="extract_transform_load" classes="text-4xl justify-center font-light"></app-theme-text>
+          <div class="font-mono full flex justify-center mx-auto my-auto text-2xl">
+              Here are some key highlights regarding the information we currently cover.
+          </div>
+          <div class="flex gap-24 justify-center flex-col lg:flex-row">
+              <div class="flex justify-center">
+                  <!-- 550x380 -->
+                  <img class="h-full object-contain mx-auto" src="/assets/images/media/sqlstats.webp" alt="SQL query to show statistics on the Spare Cores inventory and update frequency" >
+              </div>
+              <div class="flex flex-col justify-center">
+                  <div style="width: 450px; margin: auto;">
+                      <div>
+                          <div class="flex gap-2 text-2xl items-center text-gray-200">
+                              <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6">
+                                  <lucide-icon name="check" class="h-4 w-4"></lucide-icon>
+                              </div>
+                              <b> 5 </b>
+                              <span> (out of
+                                  <span
+                                  class="underline decoration-dotted cursor-pointer"
+                                  (mouseenter)="showTooltip($event)"
+                                  (mouseleave)="hideTooltip()">10 planned</span>)
+                                  vendors
+                              </span>
+                          </div>
+                          <div *ngFor="let item of features, let i = index">
+                              <div class="w-full h-4 mb-3 border-b border-gray-400 border-solid" ></div>
+                              <div class="flex gap-2 text-2xl items-center text-gray-200">
+                                  <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6">
+                                      <lucide-icon name="check" class="h-4 w-4"></lucide-icon>
+                                  </div>
+                                  <b> {{item.count}} </b>
+                                  <span> {{item.text}} </span>
+                              </div>
+                          </div>
+                          <div class="text-md mt-4 text-lg">Tracked every 5 mins.</div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          <div class="flex justify-center">
+            <a href="/server_prices">
+              <button class="btn-primary py-5 px-5">Check Out Server Prices</button>
+            </a>
+          </div>
+      </div>
+  </div>
+  <div class="content_section odd">
+    <div class="content">
+      <div class="flex flex-col w-full lg:w-1/2 justify-center mx-auto gap-8">
+        <app-theme-text text="fun_facts" classes="text-4xl justify-center font-light"></app-theme-text>
+        <swiper-container class="w-full" slides-per-view="1" speed="2000" loop="true" autoplay="true" pagination="true" init="false">
+          <swiper-slide>
+            <div class="flex gap-8 items-center px-2 pb-12">
+              <div>
+                <span class="inline-flex justify-center items-center size-[90px] rounded-full border border-emerald-400 text-emerald-400">
+                  <lucide-icon class="flex-shrink-0 size-[50px]" name="heater"></lucide-icon>
+                </span>
+              </div>
+              <div class="text-2xl">The most expensive server costs over $250 per hour. It comes with 448 vCPUs and 24TB RAM.</div>
+            </div>
+          </swiper-slide>
+          <swiper-slide>
+            <div class="flex gap-8 items-center px-2 pb-12">
+              <div>
+                <span class="inline-flex justify-center items-center size-[90px] rounded-full border border-emerald-400 text-emerald-400">
+                  <lucide-icon class="flex-shrink-0 size-[50px]" name="building-2"></lucide-icon>
+                </span>
+              </div>
+              <div class="text-2xl">Most regions have 3 independent zones.<br/>Some are single-zone, and one have 6 zones.</div>
+            </div>
+          </swiper-slide>
+          <swiper-slide>
+            <div class="flex gap-8 items-center px-2 pb-12">
+              <div>
+                <span class="inline-flex justify-center items-center size-[90px] rounded-full border border-emerald-400 text-emerald-400">
+                  <lucide-icon class="flex-shrink-0 size-[50px]" name="candlestick-chart"></lucide-icon>
+                </span>
+              </div>
+              <div class="text-2xl">While spot prices are relatively stable nowadays, they can still fluctuate by up to 10% within a day.</div>
+            </div>
+          </swiper-slide>
+          <swiper-slide>
+            <div class="flex gap-8 items-center px-2 pb-12">
+              <div>
+                <span class="inline-flex justify-center items-center size-[90px] rounded-full border border-emerald-400 text-emerald-400">
+                  <lucide-icon class="flex-shrink-0 size-[50px]" name="scale"></lucide-icon>
+                </span>
+              </div>
+              <!-- u-24tb1.112xlarge VS m1.small as per cloudperf/crc16 -->
+              <div class="text-2xl">There is a 2500x performance difference between the fastest and slowest nodes.</div>
+            </div>
+          </swiper-slide>
+          <swiper-slide>
+            <div class="flex gap-8 items-center px-2 pb-12">
+              <div>
+                <span class="inline-flex justify-center items-center size-[90px] rounded-full border border-emerald-400 text-emerald-400">
+                  <lucide-icon class="flex-shrink-0 size-[50px]" name="map-pinned"></lucide-icon>
+                </span>
+              </div>
+              <div class="text-2xl">Some vendors charge 6+ times the price of a public IPv4 address compared to others.</div>
+            </div>
+          </swiper-slide>
+        </swiper-container>
+      </div>
+    </div>
+  </div>
+  <div class="content_section even">
+      <div class="content">
+          <div class="flex flex-col gap-12 justify-center">
+              <app-theme-text text="resource_optimization" classes="text-4xl justify-center font-light"></app-theme-text>
+              <div class="w-full lg:w-2/5 mx-auto my-auto font-bold text-4xl text-center mb-8">
+                  Only 3 Steps to <span class="text-emerald-400">optimize</span> your <span class="text-emerald-400">compute resources</span>
+              </div>
+              <div class="flex gap-12 flex-col lg:flex-row">
+                  <div class="w-full lg:w-1/3 flex flex-col gap-6">
+                      <div class="w-full h-260 rounded-lg">
+                          <!-- 300x260 -->
+                          <img class="rounded-lg h-full object-contain mx-auto" src="/assets/images/media/step1.webp" alt="Screenshot of the server listing page, focusing on the filter elements in the sidebar">
+                      </div>
+                      <div class="flex gap-2 align-center">
+                          <div class="text-emerald-400 rounded-full bg-white px-2 font-bold">1</div>
+                          <div class="text-emerald-400 font-bold">Step</div>
+                          <div class="w-full my-auto border-b border-emerald-400 border-solid"></div>
+                      </div>
+                      <div class="text-emerald-400 font-bold text-2xl">Define Your Needs</div>
+                      <div class="text-white text-xl">Utilize our platform's dozens of filters to precisely outline your workload requirements, specifying details like number of vCPUs, amount of memory/storage, or GPU options.</div>
+                  </div>
+                  <div class="w-full lg:w-1/3 flex flex-col gap-6">
+                      <div class="w-full h-260 rounded-lg">
+                          <!-- 300x260 -->
+                          <img class="rounded-lg h-full object-contain mx-auto" src="/assets/images/media/step2.webp" alt="Screenshot of the server listing page, focusing on the search results, showing 3 instance records in a table">
+                      </div>
+                      <div class="flex gap-2 align-center">
+                          <div class="text-emerald-400 rounded-full bg-white px-2 font-bold">2</div>
+                          <div class="text-emerald-400 font-bold">Step</div>
+                          <div class="w-full my-auto border-b border-emerald-400 border-solid"></div>
+                      </div>
+                      <div class="text-emerald-400 font-bold text-2xl">Find Optimal Resource</div>
+                      <div class="text-white text-xl">Let Spare Cores narrow down 2,000+ server types and 300,000 pricing options based on your criteria. We prioritize cost efficiency, presenting you with optimal choices.</div>
+                  </div>
+                  <div class="w-full lg:w-1/3 flex flex-col gap-6">
+                      <div class="w-full h-260 rounded-lg">
+                          <!-- 300x260 -->
+                          <img class="rounded-lg h-full object-contain mx-auto" src="/assets/images/media/step3.webp" alt="Running the SC runner CLI tool to start a t4g.nano instance">
+                      </div>
+                      <div class="flex gap-2 align-center">
+                          <div class="text-emerald-400 rounded-full bg-white px-2 font-bold">3</div>
+                          <div class="text-emerald-400 font-bold">Step</div>
+                          <div class="w-full my-auto border-b border-emerald-400 border-solid"></div>
+                      </div>
+                      <div class="text-emerald-400 font-bold text-2xl">Deploy with Ease</div>
+                      <div class="text-white text-xl">Use our CLI tool to launch the selected instance in your cloud environment. Our streamlined process ensures it is up and running without unnecessary complexities.</div>
+                  </div>
+              </div>
+              <div class="flex justify-center">
+                  <p class="text-xl w-full lg:w-5/6">
+                      Besides our open-source projects, we are also working on a
+                      Container-as-a-Service platform to manage the full lifecycle of
+                      your containers — including provisioning, monitoring, scaling and
+                      scheduling without direct vendor engagement or any infrastructure
+                      operations. This is ideal if you do not have the capacity to
+                      manage your own cloud environment, but want to leverage the
+                      benefits of cloud computing in a cost-efficient and seamless way.
+                  </p>
+              </div>
+              <div class="flex justify-center">
+                  <button id="meeting-navigator-caas" class="btn-primary py-5 px-5">Contact Us to Learn More</button>
+              </div>
+          </div>
+      </div>
+  </div>
+  <div class="content_section odd">
+    <div class="content flex justify-center">
+        <div class="w-full lg:w-3/5 flex flex-col gap-12">
+          <app-theme-text text="project_components" classes="text-4xl justify-center font-light"></app-theme-text>
+          <div class="flex gap-4 justify-center">
+            <div class="font-mono text-2xl text-center">
+              The status and brief descriptions of all the existing open-source Spare Cores components:
+            </div>
+          </div>
+          <table class="repo_table mb-8">
+            <thead>
+              <tr>
+                <th>COMPONENT</th>
+                <th>STATUS</th>
+                <th>REPOSITORY</th>
+                <th>DESCRIPTION</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of gitHubComponents">
+                <td>{{item.component}}</td>
+                <td>{{item.status}}</td>
+                <td class="flex gap-1">
+                    <a href="https://github.com/SpareCores/{{item.github}}"
+                        *ngIf="item.github" target="_blank" rel="noopener"
+                        [title]="'GitHub repository of ' + item.github"
+                        [attr.aria-label]="'GitHub repository of ' + item.github">
+                        <lucide-icon name="github"></lucide-icon>
+                    </a>
+                    <a href="https://pypi.org/project/{{item.pypi}}"
+                        *ngIf="item.pypi" target="_blank" rel="noopener"
+                        [title]="item.pypi + ' on PyPI'"
+                        [attr.aria-label]="item.pypi + ' on PyPI'">
+                        <img src="assets/images/icons/python.svg" alt="Python logo"
+                              style="width: 24px; vertical-align:middle;" />
+                    </a>
+                    <a href="{{item.docs}}"
+                        *ngIf="item.docs" target="_blank" rel="noopener"
+                        [title]="'Documentation site of ' + item.component"
+                        [attr.aria-label]="'Documentation site of ' + item.component">
+                        <lucide-icon name="book-text"></lucide-icon>
+                    </a>
+                    <a href="{{item.www}}" *ngIf="item.www" target="_blank" rel="noopener"
+                        [title]="'Homepage of ' + item.component"
+                        [attr.aria-label]="'Homepage of ' + item.component">
+                        <img src="assets/images/icons/www.svg" alt="WWW logo"
+                              style="width: 24px; vertical-align:middle;" />
+                    </a>
+                    <a href="{{item.api}}" *ngIf="item.api" target="_blank" rel="noopener"
+                        [title]="'API endpoint of ' + item.component"
+                        [attr.aria-label]="'API endpoint of ' + item.component">
+                        <img src="assets/images/icons/api.svg" alt="API logo"
+                              style="width: 24px; vertical-align:middle;" />
+                    </a>
+                    <a href="{{item.data}}" *ngIf="item.data" target="_blank" rel="noopener"
+                        [title]="'Database of ' + item.component"
+                        [attr.aria-label]="'Database of ' + item.component">
+                        <lucide-icon name="database"></lucide-icon>
+                    </a>
+                </td>
+                <td>{{item.description}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+    </div>
+</div>
+  <div class="content_section even">
+      <div class="content flex gap-8 flex-col lg:flex-row">
+          <div class="w-full lg:w-3/5 my-auto">
+              <div class="flex flex-col gap-4 justify-center">
+                  <div class="text-center lg:text-left text-4xl gap-2 font-semibold">
+                      <span class="text-emerald-400"><</span>spare_cores<span class="text-emerald-400">></span> is <span class="text-emerald-400">100%</span> committed
+                      to using and contributing to <span class="text-emerald-400">open-source</span>!
+                  </div>
+                  <div class="text-2xl mt-8 mb-8 mr-8">
+                      The Spare Cores Navigator is the successor to <code>cloudperf</code>,
+                      an AWS-focused open-source project for exploring spot prices and
+                      <code>stress-ng</code> benchmarks, which we started in 2017.
+                      This next-generation framework was launched in Q3 of 2023 and
+                      gained momentum in 2024, particularly due to the support
+                      from <a href="https://www.ngisearch.eu" class="underline decoration-dotted hover:text-gray-500" target="_blank" rel="noopener">NGI Search</a> funding.
+                  </div>
+                  <div class="flex gap-8 justify-center lg:justify-start">
+                      <a href="https://github.com/SpareCores" target="_blank" rel="noopener">
+                          <button class="btn-primary py-4 px-4 flex gap-2"><lucide-icon name="github"></lucide-icon> Check us out on GitHub</button>
+                      </a>
+                      <a href="/articles?tag=funding">
+                          <button class="bg-transparend text-teal-500 py-4 px-4 font-bold hover:text-teal-600">Learn more about who is funding us ></button>
+                      </a>
+                  </div>
+              </div>
+          </div>
+          <div class="w-full lg:w-2/5 justify-center flex">
+              <a href="https://ngi.eu" target="_blank" rel="noopener">
+                  <!-- 550x380 -->
+                  <img class="rounded-lg h-full object-contain mx-auto" src="/assets/images/media/ngi-eu-open-source.webp" alt="Banner image showing NGI (Next Generation Internet) funding for the SC (Spare Cores) project">
+              </a>
+          </div>
+      </div>
+  </div>
+  <div class="content_section odd">
+    <div class="content">
+      <div class="flex flex-col w-full lg:w-2/3 justify-center mx-auto gap-8">
+        <app-theme-text text="testimonials" classes="text-4xl justify-center font-light"></app-theme-text>
+        <div class="w-full mx-auto my-auto font-bold text-2xl text-center">What the community is saying about the Spare Cores Navigator:</div>
+        <swiper-container #testimonialsSwiper class="w-full" slides-per-view="1" speed="2000" loop="true" autoplay="true" pagination="true" init="false">
+          <swiper-slide *ngFor="let item of publishableQuotes">
+            <div class="flex gap-8 items-center px-2 pb-2">
+              <div>
+                <span class="inline-flex justify-center items-center size-[90px] text-emerald-400">
+                  <lucide-icon class="flex-shrink-0 size-[50px]" name="quote"></lucide-icon>
+                </span>
+              </div>
+              <div class="text-2xl">
+                {{item.quote}}
+              </div>
+            </div>
+            <div class="flex gap-8 items-center px-2 pl-[130px] pb-12">
+              <div class="text-xl text-gray-400">
+                —{{item.author}}
+                <span *ngIf="item.source">
+                  via
+                  <a *ngIf="item.source_url" href="{{item.source_url}}" target="_blank" rel="noopener" class="underline decoration-dotted hover:text-gray-500">
+                    {{item.source}}
+                  </a>
+                  <span *ngIf="!item.source_url">
+                    {{item.source}}
+                  </span>
+                </span>
+              </div>
+            </div>
+          </swiper-slide>
+        </swiper-container>
+      </div>
+    </div>
+</div>
+
+<div id="tooltipVendors"
+#tooltipVendors
+style="opacity: 0;"
+class="max-w-xl absolute top-0 z-10 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-secondary border border-solid border-emerald-400 rounded-lg">
+<ul style=" list-style-type: disc; list-style-position: inside;">
+    <li *ngFor="let item of vendors" style="margin-bottom: 0.25rem">
+        {{item}}
+    </li>
+</ul>
+</div>

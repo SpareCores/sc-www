@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AboutComponent } from './about.component';
+import { AboutSpareCoresComponent } from './spare-cores.component';
 
-describe('AboutComponent', () => {
-  let component: AboutComponent;
-  let fixture: ComponentFixture<AboutComponent>;
+describe('AboutSpareCoresComponent', () => {
+  let component: AboutSpareCoresComponent;
+  let fixture: ComponentFixture<AboutSpareCoresComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AboutComponent]
+      imports: [AboutSpareCoresComponent]
     })
     .compileComponents();
-    
-    fixture = TestBed.createComponent(AboutComponent);
+
+    fixture = TestBed.createComponent(AboutSpareCoresComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

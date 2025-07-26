@@ -1,5 +1,6 @@
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { AnalyticsService } from './analytics.service';
 
 @Injectable({
   providedIn: 'root'
@@ -7,7 +8,10 @@ import { isPlatformBrowser } from '@angular/common';
 export class NeetoCalService {
   private isScriptLoaded = false;
 
-  constructor(@Inject(PLATFORM_ID) private platformId: object) {}
+  constructor(
+    @Inject(PLATFORM_ID) private platformId: object,
+    private analyticsService: AnalyticsService
+  ) {}
 
   initialize(): void {
     if (!isPlatformBrowser(this.platformId)) {
@@ -33,18 +37,32 @@ export class NeetoCalService {
   }
 
   private initializeButtons(): void {
-    // need to call the embed function for each button
-    const buttonSelectors = [
-      '#header-demo-button',
-      '#landing-demo-button'
-    ];
+    const buttonContextMap = {
+      '#meeting-header-demo': '',
+      '#meeting-general-demo': '',
+      '#meeting-navigator-caas': 'I am interested in the managed Container-as-a-Service platform.',
+      '#meeting-painpoints': 'Discuss use-cases and painpoints, and get a demo of the Spare Cores Resource Tracker and Sentinel products.',
+      '#meeting-services-consulting': 'I am interested in Cloud-Optimization Consulting services.',
+      '#meeting-services-shiny': 'I would like to discuss Scalable Shiny/Streamlit Hosting.',
+      '#meeting-services-llms': 'I need help with AI Workload Sizing.'
+    } as Record<string, string>;
+    const buttonSelectors = Object.keys(buttonContextMap);
+
     buttonSelectors.forEach(selector => {
-      if (document.querySelector(selector)) {
+      const element = document.querySelector(selector);
+      if (element) {
+        element.addEventListener('click', () => {
+          this.analyticsService.trackEvent("meeting scheduler open", {
+            button_selector: selector.replace('#', '')
+          });
+        });
+        const contextMessage = buttonContextMap[selector];
         (window as any).neetoCal.embed({
           type: "elementClick",
           id: "7c3c0ad8-812b-423f-b064-0ea44d527368",
           organization: "sparecores",
           elementSelector: selector,
+          queryParams: { "context": contextMessage }
         });
       }
     });

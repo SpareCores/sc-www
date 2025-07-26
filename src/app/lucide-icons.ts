@@ -1,4 +1,4 @@
-import { ArrowDownNarrowWide, ArrowDownWideNarrow, BookText, Clipboard, Box, Check, ChevronDown, ChevronLeft, ChevronRight, Mail, Codesandbox, Cpu, Database, DollarSign, Facebook, Github, Home, Hotel, Linkedin, MemoryStick, PcCase, Search, Server, SquareKanban, Twitter, User, Building2, Heater, CandlestickChart, MapPinned, Scale, Ellipsis, Menu, Leaf, ShoppingCart, ChevronUp, ExternalLink, Info, ClipboardCheck, ScrollText, Youtube, Trash, CircleX, X, CircleArrowDown, CircleArrowUp, ArrowUpDown, Copy, Hourglass, Gauge, CalendarDays, ShipWheel, PackageOpen, Layers, Microchip } from 'lucide-angular';
+import { ArrowDownNarrowWide, ArrowDownWideNarrow, BookText, Clipboard, Box, Check, ChevronDown, ChevronLeft, ChevronRight, Mail, Codesandbox, Cpu, Database, DollarSign, Facebook, Github, Home, Hotel, Linkedin, MemoryStick, PcCase, Search, Server, SquareKanban, Twitter, User, Building2, Heater, CandlestickChart, MapPinned, Scale, Ellipsis, Menu, Leaf, ShoppingCart, ChevronUp, ExternalLink, Info, ClipboardCheck, ScrollText, Youtube, Trash, CircleX, X, CircleArrowDown, CircleArrowUp, ArrowUpDown, Copy, Hourglass, Gauge, CalendarDays, ShipWheel, PackageOpen, Layers, Microchip, Quote, Handshake, ScanEye, SquareArrowUpRight, Building, Rocket, MessageSquareMore, SquareArrowDown, Projector, NotebookText, HeartHandshake } from 'lucide-angular';
 
 export const lucideIcons = {
   PcCase,
@@ -55,5 +55,16 @@ export const lucideIcons = {
   ShipWheel,
   PackageOpen,
   Layers,
-  Microchip
+  Microchip,
+  Quote,
+  Handshake,
+  ScanEye,
+  SquareArrowUpRight,
+  Building,
+  Rocket,
+  MessageSquareMore,
+  SquareArrowDown,
+  NotebookText,
+  Projector,
+  HeartHandshake,
 };
