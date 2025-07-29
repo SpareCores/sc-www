@@ -13,7 +13,7 @@
             <tr>
               <th>DATE</th>
               <th>CONFERENCE</th>
-              <th>SPEAKER</th>
+              <th class="hidden lg:table-cell">SPEAKER</th>
               <th>TITLE</th>
               <th>LINK</th>
             </tr>
@@ -27,7 +27,7 @@
                   <div class="text-sm text-gray-200" >{{ item.location }}</div>
                 </div>
               </td>
-              <td>
+              <td class="hidden lg:table-cell">
                 <div class="flex gap-2 items-center">
                   <div>
                     <img
@@ -39,7 +39,7 @@
                   <div>{{ item.author }}</div>
                 </div>
               </td>
-              <td> 
+              <td>
                 <a *ngIf="item.conference_talk_url" [href]="item.conference_talk_url" target="_blank" rel="noopener">{{ item.title }}</a>
                 <span *ngIf="!item.conference_talk_url">{{ item.title }}</span>
               </td>
