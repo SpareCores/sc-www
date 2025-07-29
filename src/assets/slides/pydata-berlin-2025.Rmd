@@ -1,0 +1,32 @@
+---
+title: "Benchmarking 2000+ Cloud Servers for GBM Model Training and LLM Inference Speed"
+author: Gergely Daroczi
+date: "2025-09-02"
+conference: "PyData Berlin 2025"
+conference_url: "https://pydata.org/berlin2025"
+conference_talk_url: "https://cfp.pydata.org/berlin2025/talk/ZLJRNN/"
+location: "Berlin, Germany"
+format:
+  revealjs:
+    theme: [black, css/custom-4.2.1.css]
+    controls: true
+    navigation-mode: vertical
+    controls-layout: bottom-right
+    controls-tutorial: true
+    menu: false
+    logo: images/sc-square-dark-300x300.jpg
+    margin: 0.1
+    height: 700
+    width: 1150
+    # width: 1244  # was used at revealjs 3.x
+    center-title-slide: false
+    slide-number: true
+    transition: slide
+    hash-type: title
+    code-copy: false
+    code-line-numbers: false
+    highlight-style: arrow-dark
+  gfm:
+    mermaid-format: svg
+    theme: neutral
+---

@@ -6,6 +6,7 @@ conference: "KCD Budapest 2025"
 conference_url: "https://community.cncf.io/events/details/cncf-kcd-budapest-presents-kcd-budapest-2025/"
 conference_talk_url: "https://schedule.kcdbudapest.hu/"
 conference_talk_slides: "/assets/slides/kcd-budapest-2025.html#/coverslide"
+conference_talk_video: "https://www.youtube.com/watch?v=LZI6dXhD67E"
 location: "Budapest, Hungary"
 output:
   revealjs::revealjs_presentation:
