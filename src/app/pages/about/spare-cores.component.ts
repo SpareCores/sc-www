@@ -33,7 +33,6 @@ export class AboutSpareCoresComponent implements OnInit, AfterViewInit {
        'About Spare Cores',
        'Spare Cores Products and Services overview.',
        'sparecores');
-    this.SEOHandler.updateThumbnail('https://sparecores.com/assets/images/media/landing_image.png');
     }
   ngAfterViewInit() {
     if (isPlatformBrowser(this.platformId)) {

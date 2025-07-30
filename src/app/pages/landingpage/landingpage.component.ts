@@ -55,11 +55,11 @@ export class LandingpageComponent implements OnInit, AfterViewInit {
   ngOnInit() {
 
     this.SEOHandler.updateTitleAndMetaTags(
-       'Spare Cores: Inventory and Tooling for Cloud Compute Resources',
-       'Harnessing the compute resources of the cloud to optimize efficiency and costs of batch and service tasks.',
-       'cloud, server, price, comparison, sparecores');
+       'Spare Cores: Run DS/ML/AI Workloads Faster, Cheaper, and with Less Hassle',
+       'Help you auto-track resource usage and optimize allocations on optimal cloud servers.',
+       'data science, machine learning, batch workloads, cloud, server, price, comparison, sparecores');
 
-    this.SEOHandler.updateThumbnail('https://sparecores.com/assets/images/media/landing_image.png');
+    this.SEOHandler.updateThumbnail('https://sparecores.com/assets/images/media/landing.png');
 
     if (isPlatformBrowser(this.platformId)) {
       this.articles.getArticlesByType('featured').then(articles => {
