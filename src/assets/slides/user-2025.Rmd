@@ -334,7 +334,7 @@ log_eval(nrow(mtcars), level = TRACE)
 
 . . .
 
-```r {code-line-numbers="1-1" style="margin-top: 20px !important; font-size: 0.85em;"}
+```r {code-line-numbers="1-1|3-3" style="margin-top: 20px !important; font-size: 0.85em;"}
 log_warnings()
 chisq.test(table(mtcars$gear, mtcars$am))
 #> WARN [2025-08-09 12:32:04] Chi-squared approximation may be incorrect
@@ -553,7 +553,7 @@ layout_json()(level = INFO, msg = 'Hello, world!')
 
 ## > system.time(appender)
 
-```r {code-line-numbers="4|8-9" style="margin-top: 20px !important; font-size: 1em;"}
+```r {code-line-numbers="1-1|4|8-9" style="margin-top: 20px !important; font-size: 1em;"}
 appender_file_slow <- function(file) {
     force(file)
     function(lines) {
@@ -1268,7 +1268,7 @@ tracker$recommend_server()
 
 ## > resource.tracker::process_metrics
 
-```r {code-line-numbers="1-1|10-10|19-19" style="margin-top: 30px !important; font-size: 1em; height: 600px;"}
+```r {code-line-numbers="1-1|10-10|20-20" style="margin-top: 30px !important; font-size: 1em; height: 600px;"}
 tracker$system_metrics
 # 'data.frame':   7 obs. of  21 variables:
 #  $ timestamp          : POSIXct, format: "2025-08-08 00:02:28" "2025-08-08 00:02:29" ...
@@ -1344,7 +1344,7 @@ tracker$report()$browse()
   <img src="images/bye-user-2025-1.png" width="100%"/>
 </div>
 
-# {#stickers data-background-image="images/logger-stickers.jpg" transition="convex"}
+# {#stickers data-background-image="images/logger-stickers.jpg" transition="convex-in none-out"}
 
 <!--toggle visibility of items in live mode-->
 <script>
