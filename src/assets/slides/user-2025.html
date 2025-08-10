@@ -453,63 +453,63 @@ Job output is informative (logging), recorded (logging) and <b>monitored</b> (e.
 <section>
 <section id="demo" class="title-slide slide level1" data-transition="convex-in slide-out">
 <h1>&gt; demo(logger)</h1>
-<div class="sourceCode" id="cb10" style="margin-top: 20px !important; font-size: 0.85em;"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(logger)</span>
-<span id="cb10-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">log_threshold</span>(DEBUG)</span>
-<span id="cb10-3"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">log_info</span>(<span class="st">'Script starting up...'</span>)</span>
-<span id="cb10-4"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; INFO [2018-20-11 22:49:36] Script starting up...</span></span></code></pre></div>
+<div class="sourceCode" id="cb10" style="margin-top: 20px !important; font-size: 0.85em;" data-code-line-numbers="2-2"><pre class="sourceCode numberSource r number-lines"><code class="sourceCode r"><span id="cb10-1"><a href=""></a><span class="fu">library</span>(logger)</span>
+<span id="cb10-2"><a href=""></a><span class="fu">log_info</span>(<span class="st">'Script starting up...'</span>)</span>
+<span id="cb10-3"><a href=""></a><span class="co">#&gt; INFO [2018-20-11 22:49:36] Script starting up...</span></span></code></pre></div>
 <div class="fragment">
-<div class="sourceCode" id="cb11" style="margin-top: 20px !important; font-size: 0.85em;"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="" aria-hidden="true" tabindex="-1"></a>pkgs <span class="ot">&lt;-</span> <span class="fu">available.packages</span>()</span>
-<span id="cb11-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">log_info</span>(<span class="st">'There are {nrow(pkgs)} R packages hosted on CRAN!'</span>)</span>
-<span id="cb11-3"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; INFO [2018-20-11 22:49:37] There are 13433 R packages hosted on CRAN!</span></span></code></pre></div>
+<div class="sourceCode" id="cb11" style="margin-top: 20px !important; font-size: 0.85em;" data-code-line-numbers="2-2"><pre class="sourceCode numberSource r number-lines"><code class="sourceCode r"><span id="cb11-1"><a href=""></a>pkgs <span class="ot">&lt;-</span> <span class="fu">available.packages</span>()</span>
+<span id="cb11-2"><a href=""></a><span class="fu">log_info</span>(<span class="st">'There are {nrow(pkgs)} R packages hosted on CRAN!'</span>)</span>
+<span id="cb11-3"><a href=""></a><span class="co">#&gt; INFO [2018-20-11 22:49:37] There are 13433 R packages hosted on CRAN!</span></span></code></pre></div>
 </div>
 <div class="fragment">
-<div class="sourceCode" id="cb12" style="margin-top: 20px !important; font-size: 0.85em;"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (letter <span class="cf">in</span> letters) {</span>
-<span id="cb12-2"><a href="" aria-hidden="true" tabindex="-1"></a>    lpkgs <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">grepl</span>(letter, pkgs[, <span class="st">'Package'</span>], <span class="at">ignore.case =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb12-3"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="fu">log_level</span>(<span class="cf">if</span> (lpkgs <span class="sc">&lt;</span> <span class="dv">5000</span>) TRACE <span class="cf">else</span> DEBUG,</span>
-<span id="cb12-4"><a href="" aria-hidden="true" tabindex="-1"></a>              <span class="st">'{lpkgs} R packages including the {shQuote(letter)} letter'</span>)</span>
-<span id="cb12-5"><a href="" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb12-6"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; DEBUG [2018-20-11 22:49:38] 6300 R packages including the 'a' letter</span></span>
-<span id="cb12-7"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; DEBUG [2018-20-11 22:49:38] 6772 R packages including the 'e' letter</span></span>
-<span id="cb12-8"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; DEBUG [2018-20-11 22:49:38] 5412 R packages including the 'i' letter</span></span>
-<span id="cb12-9"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; DEBUG [2018-20-11 22:49:38] 7014 R packages including the 'r' letter</span></span>
-<span id="cb12-10"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; DEBUG [2018-20-11 22:49:38] 6402 R packages including the 's' letter</span></span>
-<span id="cb12-11"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; DEBUG [2018-20-11 22:49:38] 5864 R packages including the 't' letter</span></span></code></pre></div>
+<div class="sourceCode" id="cb12" style="margin-top: 20px !important; font-size: 0.85em;" data-code-line-numbers="2-3|1,4-5"><pre class="sourceCode numberSource r number-lines"><code class="sourceCode r"><span id="cb12-1"><a href=""></a><span class="fu">log_threshold</span>(DEBUG)</span>
+<span id="cb12-2"><a href=""></a><span class="cf">for</span> (letter <span class="cf">in</span> letters) {</span>
+<span id="cb12-3"><a href=""></a>    lpkgs <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">grepl</span>(letter, pkgs[, <span class="st">'Package'</span>], <span class="at">ignore.case =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb12-4"><a href=""></a>    <span class="fu">log_level</span>(<span class="cf">if</span> (lpkgs <span class="sc">&lt;</span> <span class="dv">5000</span>) TRACE <span class="cf">else</span> DEBUG,</span>
+<span id="cb12-5"><a href=""></a>              <span class="st">'{lpkgs} R packages including the {shQuote(letter)} letter'</span>)</span>
+<span id="cb12-6"><a href=""></a>}</span>
+<span id="cb12-7"><a href=""></a><span class="co">#&gt; DEBUG [2018-20-11 22:49:38] 6300 R packages including the 'a' letter</span></span>
+<span id="cb12-8"><a href=""></a><span class="co">#&gt; DEBUG [2018-20-11 22:49:38] 6772 R packages including the 'e' letter</span></span>
+<span id="cb12-9"><a href=""></a><span class="co">#&gt; DEBUG [2018-20-11 22:49:38] 5412 R packages including the 'i' letter</span></span>
+<span id="cb12-10"><a href=""></a><span class="co">#&gt; DEBUG [2018-20-11 22:49:38] 7014 R packages including the 'r' letter</span></span>
+<span id="cb12-11"><a href=""></a><span class="co">#&gt; DEBUG [2018-20-11 22:49:38] 6402 R packages including the 's' letter</span></span>
+<span id="cb12-12"><a href=""></a><span class="co">#&gt; DEBUG [2018-20-11 22:49:38] 5864 R packages including the 't' letter</span></span></code></pre></div>
 </div>
 </section>
 <section id="demohelpers" class="slide level2">
 <h2>&gt; demo(helpers)</h2>
-<div class="sourceCode" id="cb13" style="margin-top: 20px !important; font-size: 0.85em;"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">log_threshold</span>(TRACE)</span>
-<span id="cb13-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">log_eval</span>(<span class="fu">nrow</span>(mtcars), <span class="at">level =</span> TRACE)</span>
-<span id="cb13-3"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; TRACE [2019-04-04 04:25:17] 'nrow(mtcars)' =&gt; '32L'</span></span></code></pre></div>
+<div class="sourceCode" id="cb13" style="margin-top: 20px !important; font-size: 0.85em;" data-code-line-numbers="2-2"><pre class="sourceCode numberSource r number-lines"><code class="sourceCode r"><span id="cb13-1"><a href=""></a><span class="fu">log_threshold</span>(TRACE)</span>
+<span id="cb13-2"><a href=""></a><span class="fu">log_eval</span>(<span class="fu">nrow</span>(mtcars), <span class="at">level =</span> TRACE)</span>
+<span id="cb13-3"><a href=""></a><span class="co">#&gt; TRACE [2025-08-09 04:25:17] 'nrow(mtcars)' =&gt; '32L'</span></span></code></pre></div>
 <div class="fragment">
-<div class="sourceCode" id="cb14" style="margin-top: 20px !important; font-size: 0.85em;"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">log_warnings</span>()</span>
-<span id="cb14-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">chisq.test</span>(<span class="fu">table</span>(mtcars<span class="sc">$</span>gear, mtcars<span class="sc">$</span>am))</span>
-<span id="cb14-3"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; WARN [2020-01-27 12:32:04] Chi-squared approximation may be incorrect</span></span>
-<span id="cb14-4"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;</span></span>
-<span id="cb14-5"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  Pearson's Chi-squared test</span></span>
-<span id="cb14-6"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;</span></span>
-<span id="cb14-7"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; data:  table(mtcars$gear, mtcars$am)</span></span>
-<span id="cb14-8"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; X-squared = 20.945, df = 2, p-value = 2.831e-05</span></span>
-<span id="cb14-9"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;</span></span>
-<span id="cb14-10"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Warning message:</span></span>
-<span id="cb14-11"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; In chisq.test(table(mtcars$gear, mtcars$am)) :</span></span>
-<span id="cb14-12"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   Chi-squared approximation may be incorrect</span></span></code></pre></div>
+<div class="sourceCode" id="cb14" style="margin-top: 20px !important; font-size: 0.85em;" data-code-line-numbers="1-1"><pre class="sourceCode numberSource r number-lines"><code class="sourceCode r"><span id="cb14-1"><a href=""></a><span class="fu">log_warnings</span>()</span>
+<span id="cb14-2"><a href=""></a><span class="fu">chisq.test</span>(<span class="fu">table</span>(mtcars<span class="sc">$</span>gear, mtcars<span class="sc">$</span>am))</span>
+<span id="cb14-3"><a href=""></a><span class="co">#&gt; WARN [2025-08-09 12:32:04] Chi-squared approximation may be incorrect</span></span>
+<span id="cb14-4"><a href=""></a><span class="co">#&gt;</span></span>
+<span id="cb14-5"><a href=""></a><span class="co">#&gt;  Pearson's Chi-squared test</span></span>
+<span id="cb14-6"><a href=""></a><span class="co">#&gt;</span></span>
+<span id="cb14-7"><a href=""></a><span class="co">#&gt; data:  table(mtcars$gear, mtcars$am)</span></span>
+<span id="cb14-8"><a href=""></a><span class="co">#&gt; X-squared = 20.945, df = 2, p-value = 2.831e-05</span></span>
+<span id="cb14-9"><a href=""></a><span class="co">#&gt;</span></span>
+<span id="cb14-10"><a href=""></a><span class="co">#&gt; Warning message:</span></span>
+<span id="cb14-11"><a href=""></a><span class="co">#&gt; In chisq.test(table(mtcars$gear, mtcars$am)) :</span></span>
+<span id="cb14-12"><a href=""></a><span class="co">#&gt;   Chi-squared approximation may be incorrect</span></span></code></pre></div>
 </div>
 </section>
 <section id="demorainbow" class="slide level2">
 <h2>&gt; demo(rainbow)</h2>
-<div class="sourceCode" id="cb15" style="margin-top: 20px !important; font-size: 0.85em;"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(logger)</span>
-<span id="cb15-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">log_layout</span>(layout_glue_colors)</span>
-<span id="cb15-3"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">log_threshold</span>(TRACE)</span>
-<span id="cb15-4"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">log_info</span>(<span class="st">'Starting the script...'</span>)</span>
-<span id="cb15-5"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">log_debug</span>(<span class="st">'This is the second log line'</span>)</span>
-<span id="cb15-6"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">log_trace</span>(<span class="st">'Note that the 2nd line is being placed right after the 1st one.'</span>)</span>
-<span id="cb15-7"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">log_success</span>(<span class="st">'Doing pretty well so far!'</span>)</span>
-<span id="cb15-8"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">log_warn</span>(<span class="st">'But beware, as some errors might come :/'</span>)</span>
-<span id="cb15-9"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">log_error</span>(<span class="st">'This is a problem'</span>)</span>
-<span id="cb15-10"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">log_debug</span>(<span class="st">'Note that getting an error is usually bad'</span>)</span>
-<span id="cb15-11"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">log_error</span>(<span class="st">'This is another problem'</span>)</span>
-<span id="cb15-12"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">log_fatal</span>(<span class="st">'The last problem'</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb15" style="margin-top: 20px !important; font-size: 0.85em;" data-code-line-numbers="2-2"><pre class="sourceCode numberSource r number-lines"><code class="sourceCode r"><span id="cb15-1"><a href=""></a><span class="fu">library</span>(logger)</span>
+<span id="cb15-2"><a href=""></a><span class="fu">log_layout</span>(layout_glue_colors)</span>
+<span id="cb15-3"><a href=""></a><span class="fu">log_threshold</span>(TRACE)</span>
+<span id="cb15-4"><a href=""></a><span class="fu">log_info</span>(<span class="st">'Starting the script...'</span>)</span>
+<span id="cb15-5"><a href=""></a><span class="fu">log_debug</span>(<span class="st">'This is the second log line'</span>)</span>
+<span id="cb15-6"><a href=""></a><span class="fu">log_trace</span>(<span class="st">'Note that the 2nd line is being placed right after the 1st one.'</span>)</span>
+<span id="cb15-7"><a href=""></a><span class="fu">log_success</span>(<span class="st">'Doing pretty well so far!'</span>)</span>
+<span id="cb15-8"><a href=""></a><span class="fu">log_warn</span>(<span class="st">'But beware, as some errors might come :/'</span>)</span>
+<span id="cb15-9"><a href=""></a><span class="fu">log_error</span>(<span class="st">'This is a problem'</span>)</span>
+<span id="cb15-10"><a href=""></a><span class="fu">log_debug</span>(<span class="st">'Note that getting an error is usually bad'</span>)</span>
+<span id="cb15-11"><a href=""></a><span class="fu">log_error</span>(<span class="st">'This is another problem'</span>)</span>
+<span id="cb15-12"><a href=""></a><span class="fu">log_fatal</span>(<span class="st">'The last problem'</span>)</span></code></pre></div>
 <div class="fragment">
 <p><img src="https://github.com/daroczig/logger/raw/main/man/figures/colors.png" width="75%" style="margin-top: -20px; padding: 0px;border-radius: 5px; border: 1px solid #34d399;"></p>
 </div>
@@ -588,7 +588,7 @@ Job output is informative (logging), recorded (logging) and <b>monitored</b> (e.
 <span id="cb22-2"><a href="" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb22-3"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">log_trace</span>(<span class="st">'Hello, {name}!'</span>)</span>
 <span id="cb22-4"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">log_info</span>(<span class="st">'Hello, {name}!'</span>)</span>
-<span id="cb22-5"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; INFO [2019-09-18 00:05:32] Hello, world!</span></span></code></pre></div>
+<span id="cb22-5"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; INFO [2025-08-09 00:05:32] Hello, world!</span></span></code></pre></div>
 </div>
 </section>
 <section id="formatter" class="slide level2">
@@ -644,7 +644,7 @@ Job output is informative (logging), recorded (logging) and <b>monitored</b> (e.
 <span id="cb28-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; {"time":"2025-08-09 10:00:00","level":"INFO","ns":null,"ans":"global",</span></span>
 <span id="cb28-3"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  "topenv":"R_GlobalEnv","fn":"cat","node":"nevermind","arch":"x86_64",</span></span>
 <span id="cb28-4"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  "os_name":"Linux","os_release":"4.15.0-20-generic",</span></span>
-<span id="cb28-5"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  "os_version":"#21-Ubuntu SMP Tue Apr 24 06:16:15 UTC 2018",</span></span>
+<span id="cb28-5"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  "os_version":"#21-Ubuntu SMP Sat Aug 09 06:16:15 UTC 2025",</span></span>
 <span id="cb28-6"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  "pid":3601,"user":"daroczig","msg":"Hello, world!"}</span></span></code></pre></div>
 </div>
 </section>
@@ -868,8 +868,8 @@ check if background process still works …
 <span id="cb39-3"><a href=""></a><span class="fu">log_debug</span>(<span class="st">'bar'</span>)</span></code></pre></div>
 </div>
 <div class="fragment">
-<div class="sourceCode" id="cb40" style="margin-top: 30px !important; font-size: 0.85em;" data-code-line-numbers="1-1"><pre class="sourceCode numberSource r number-lines"><code class="sourceCode r"><span id="cb40-1"><a href=""></a><span class="fu">readLines</span>(<span class="st">'/var/log/yapp.log'</span>)</span>
-<span id="cb40-2"><a href=""></a><span class="co">#&gt; [1] "INFO [2025-08-09 06:15:22] foo"  "DEBUG [2025-08-09 06:15:22] bar"</span></span></code></pre></div>
+<div class="sourceCode" id="cb40" style="margin-top: 30px !important; font-size: 0.85em;" data-code-line-numbers="1-1"><pre class="sourceCode numberSource r number-lines"><code class="sourceCode r"><span id="cb40-1"><a href=""></a><span class="fu">readLines</span>(<span class="st">'/var/log/myapp.log'</span>)</span>
+<span id="cb40-2"><a href=""></a><span class="co">#&gt; [1] "INFO [2025-08c-09 06:15:22] foo"  "DEBUG [2025-08-09 06:15:22] bar"</span></span></code></pre></div>
 </div>
 <div class="fragment">
 <p>Slack: 🙊</p>
@@ -1072,16 +1072,16 @@ Source: <a href="https://medium.com/@urish/thank-you-google-how-to-mine-bitcoin-
 <div class="sourceCode" id="cb59" style="margin-top: 30px !important; font-size: 0.85em;" data-code-line-numbers="1-2"><pre class="sourceCode numberSource r number-lines"><code class="sourceCode r"><span id="cb59-1"><a href=""></a><span class="fu">library</span>(dbr)</span>
 <span id="cb59-2"><a href=""></a><span class="fu">str</span>(<span class="fu">db_query</span>(<span class="st">'SELECT 42'</span>, <span class="st">'sqlite'</span>))</span>
 <span id="cb59-3"><a href=""></a></span>
-<span id="cb59-4"><a href=""></a><span class="co">#&gt; INFO [2018-07-11 17:07:12] Connecting to sqlite</span></span>
-<span id="cb59-5"><a href=""></a><span class="co">#&gt; INFO [2018-07-11 17:07:12] Executing:**********</span></span>
-<span id="cb59-6"><a href=""></a><span class="co">#&gt; INFO [2018-07-11 17:07:12] SELECT 42</span></span>
-<span id="cb59-7"><a href=""></a><span class="co">#&gt; INFO [2018-07-11 17:07:12] ********************</span></span>
-<span id="cb59-8"><a href=""></a><span class="co">#&gt; INFO [2018-07-11 17:07:12] Finished in 0.0007429 secs returning 1 rows</span></span>
-<span id="cb59-9"><a href=""></a><span class="co">#&gt; INFO [2018-07-11 17:07:12] Closing connection to sqlite</span></span>
+<span id="cb59-4"><a href=""></a><span class="co">#&gt; INFO [2025-08-10 17:07:12] Connecting to sqlite</span></span>
+<span id="cb59-5"><a href=""></a><span class="co">#&gt; INFO [2025-08-10 17:07:12] Executing:**********</span></span>
+<span id="cb59-6"><a href=""></a><span class="co">#&gt; INFO [2025-08-10 17:07:12] SELECT 42</span></span>
+<span id="cb59-7"><a href=""></a><span class="co">#&gt; INFO [2025-08-10 17:07:12] ********************</span></span>
+<span id="cb59-8"><a href=""></a><span class="co">#&gt; INFO [2025-08-10 17:07:12] Finished in 0.0007429 secs returning 1 rows</span></span>
+<span id="cb59-9"><a href=""></a><span class="co">#&gt; INFO [2025-08-10 17:07:12] Closing connection to sqlite</span></span>
 <span id="cb59-10"><a href=""></a></span>
 <span id="cb59-11"><a href=""></a><span class="co">#&gt; 'data.frame':  1 obs. of  1 variable:</span></span>
 <span id="cb59-12"><a href=""></a><span class="co">#&gt;  $ 42: int 42</span></span>
-<span id="cb59-13"><a href=""></a><span class="co">#&gt;  - attr(*, "when")= POSIXct, format: "2018-07-11 17:07:12"</span></span>
+<span id="cb59-13"><a href=""></a><span class="co">#&gt;  - attr(*, "when")= POSIXct, format: "2025-08-10 17:07:12"</span></span>
 <span id="cb59-14"><a href=""></a><span class="co">#&gt;  - attr(*, "db")= chr "sqlite"</span></span>
 <span id="cb59-15"><a href=""></a><span class="co">#&gt;  - attr(*, "time_to_exec")=Class 'difftime'  atomic [1:1] 0.000743</span></span>
 <span id="cb59-16"><a href=""></a><span class="co">#&gt;   .. ..- attr(*, "units")= chr "secs"</span></span>

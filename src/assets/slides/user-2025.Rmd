@@ -292,16 +292,15 @@ Execution halted
 
 # > demo(logger) {#demo transition="convex-in slide-out"}
 
-```r {style="margin-top: 20px !important; font-size: 0.85em;"}
+```r {code-line-numbers="2-2" style="margin-top: 20px !important; font-size: 0.85em;"}
 library(logger)
-log_threshold(DEBUG)
 log_info('Script starting up...')
 #> INFO [2018-20-11 22:49:36] Script starting up...
 ```
 
 . . .
 
-```r {style="margin-top: 20px !important; font-size: 0.85em;"}
+```r {code-line-numbers="2-2" style="margin-top: 20px !important; font-size: 0.85em;"}
 pkgs <- available.packages()
 log_info('There are {nrow(pkgs)} R packages hosted on CRAN!')
 #> INFO [2018-20-11 22:49:37] There are 13433 R packages hosted on CRAN!
@@ -309,7 +308,8 @@ log_info('There are {nrow(pkgs)} R packages hosted on CRAN!')
 
 . . .
 
-```r {style="margin-top: 20px !important; font-size: 0.85em;"}
+```r {code-line-numbers="2-3|1,4-5" style="margin-top: 20px !important; font-size: 0.85em;"}
+log_threshold(DEBUG)
 for (letter in letters) {
     lpkgs <- sum(grepl(letter, pkgs[, 'Package'], ignore.case = TRUE))
     log_level(if (lpkgs < 5000) TRACE else DEBUG,
@@ -326,18 +326,18 @@ for (letter in letters) {
 ## > demo(helpers)
 
 
-```r {style="margin-top: 20px !important; font-size: 0.85em;"}
+```r {code-line-numbers="2-2" style="margin-top: 20px !important; font-size: 0.85em;"}
 log_threshold(TRACE)
 log_eval(nrow(mtcars), level = TRACE)
-#> TRACE [2019-04-04 04:25:17] 'nrow(mtcars)' => '32L'
+#> TRACE [2025-08-09 04:25:17] 'nrow(mtcars)' => '32L'
 ```
 
 . . .
 
-```r {style="margin-top: 20px !important; font-size: 0.85em;"}
+```r {code-line-numbers="1-1" style="margin-top: 20px !important; font-size: 0.85em;"}
 log_warnings()
 chisq.test(table(mtcars$gear, mtcars$am))
-#> WARN [2020-01-27 12:32:04] Chi-squared approximation may be incorrect
+#> WARN [2025-08-09 12:32:04] Chi-squared approximation may be incorrect
 #>
 #>  Pearson's Chi-squared test
 #>
@@ -351,7 +351,7 @@ chisq.test(table(mtcars$gear, mtcars$am))
 
 ## > demo(rainbow)
 
-```r {style="margin-top: 20px !important; font-size: 0.85em;"}
+```r {code-line-numbers="2-2" style="margin-top: 20px !important; font-size: 0.85em;"}
 library(logger)
 log_layout(layout_glue_colors)
 log_threshold(TRACE)
@@ -457,7 +457,7 @@ log_threshold(INFO)
 
 log_trace('Hello, {name}!')
 log_info('Hello, {name}!')
-#> INFO [2019-09-18 00:05:32] Hello, world!
+#> INFO [2025-08-09 00:05:32] Hello, world!
 ```
 
 ## > ??formatter
@@ -516,7 +516,7 @@ layout_json()(level = INFO, msg = 'Hello, world!')
 #> {"time":"2025-08-09 10:00:00","level":"INFO","ns":null,"ans":"global",
 #>  "topenv":"R_GlobalEnv","fn":"cat","node":"nevermind","arch":"x86_64",
 #>  "os_name":"Linux","os_release":"4.15.0-20-generic",
-#>  "os_version":"#21-Ubuntu SMP Tue Apr 24 06:16:15 UTC 2018",
+#>  "os_version":"#21-Ubuntu SMP Sat Aug 09 06:16:15 UTC 2025",
 #>  "pid":3601,"user":"daroczig","msg":"Hello, world!"}
 ```
 
@@ -725,8 +725,8 @@ log_debug('bar')
 . . .
 
 ```r {code-line-numbers="1-1" style="margin-top: 30px !important; font-size: 0.85em;"}
-readLines('/var/log/yapp.log')
-#> [1] "INFO [2025-08-09 06:15:22] foo"  "DEBUG [2025-08-09 06:15:22] bar"
+readLines('/var/log/myapp.log')
+#> [1] "INFO [2025-08c-09 06:15:22] foo"  "DEBUG [2025-08-09 06:15:22] bar"
 ```
 
 . . .
@@ -981,16 +981,16 @@ sqlite:
 library(dbr)
 str(db_query('SELECT 42', 'sqlite'))
 
-#> INFO [2018-07-11 17:07:12] Connecting to sqlite
-#> INFO [2018-07-11 17:07:12] Executing:**********
-#> INFO [2018-07-11 17:07:12] SELECT 42
-#> INFO [2018-07-11 17:07:12] ********************
-#> INFO [2018-07-11 17:07:12] Finished in 0.0007429 secs returning 1 rows
-#> INFO [2018-07-11 17:07:12] Closing connection to sqlite
+#> INFO [2025-08-10 17:07:12] Connecting to sqlite
+#> INFO [2025-08-10 17:07:12] Executing:**********
+#> INFO [2025-08-10 17:07:12] SELECT 42
+#> INFO [2025-08-10 17:07:12] ********************
+#> INFO [2025-08-10 17:07:12] Finished in 0.0007429 secs returning 1 rows
+#> INFO [2025-08-10 17:07:12] Closing connection to sqlite
 
 #> 'data.frame':  1 obs. of  1 variable:
 #>  $ 42: int 42
-#>  - attr(*, "when")= POSIXct, format: "2018-07-11 17:07:12"
+#>  - attr(*, "when")= POSIXct, format: "2025-08-10 17:07:12"
 #>  - attr(*, "db")= chr "sqlite"
 #>  - attr(*, "time_to_exec")=Class 'difftime'  atomic [1:1] 0.000743
 #>   .. ..- attr(*, "units")= chr "secs"
