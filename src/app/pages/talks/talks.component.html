@@ -23,7 +23,8 @@
               <td>{{ item.date | timeToShortDate }}</td>
               <td>
                 <div class="flex flex-col">
-                  <a [href]="item.conference_url" target="_blank" rel="noopener">{{ item.conference }}</a>
+                  <a *ngIf="item.conference_url" [href]="item.conference_url" target="_blank" rel="noopener">{{ item.conference }}</a>
+                  <span *ngIf="!item.conference_url">{{ item.conference }}</span>
                   <div class="text-sm text-gray-200" >{{ item.location }}</div>
                 </div>
               </td>

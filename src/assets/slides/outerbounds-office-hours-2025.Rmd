@@ -1,11 +1,10 @@
 ---
-title: "Benchmarking 2000+ Cloud Servers for GBM Model Training and LLM Inference Speed"
+title: "Magically Right Size the Compute Resources Dedicated to Your AI/ML Workloads"
 author: Gergely Daroczi
-date: "2025-09-01"
-conference: "PyData Berlin 2025"
-conference_url: "https://pydata.org/berlin2025"
-conference_talk_url: "https://cfp.pydata.org/berlin2025/talk/ZLJRNN/"
-location: "Berlin, Germany"
+date: "2025-09-02"
+conference: "Outerbounds Office Hours"
+conference_talk_url: "https://lu.ma/office-hours-with-spare-cores"
+location: "Virtual"
 format:
   revealjs:
     theme: [black, css/custom-4.2.1.css]
