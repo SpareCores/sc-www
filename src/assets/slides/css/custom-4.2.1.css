@@ -41,8 +41,8 @@ body.speakerview {
 
 .reveal.has-logo .slide-number {
     top: auto !important;
-    bottom: 48px !important;
-    right: 62px !important;
+    bottom: 44px !important;
+    right: 57px !important;
     transform: translate(50%, 0) !important;
     background-color: transparent !important;
 }
@@ -54,8 +54,12 @@ body.speakerview {
     text-decoration: none !important;
 }
 
+.greeen {
+color: #34d399;
+}
+
 .reveal .progress {
-    color: #34d399;
+  color: #34d399;
 }
 
 .reveal .controls button.navigate-right.enabled {
@@ -282,6 +286,10 @@ code span.dv, code span.fl {
   background: #1c3d52;
 }
 
+.reveal blockquote.yellow {
+  border-left: 8px solid #eab308;
+}
+
 .reveal blockquote::before{
   font-family:Arial;
   content: "\201C";
@@ -290,6 +298,10 @@ code span.dv, code span.fl {
   position: absolute;
   left: 20px;
   top: -10px;
+}
+.reveal blockquote.yellow::before{
+  color: #eab308;
+  content: "\201D";
 }
 
 .reveal clearblockquote::after{
