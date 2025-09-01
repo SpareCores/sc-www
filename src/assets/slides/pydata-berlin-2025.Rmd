@@ -5,6 +5,7 @@ date: "2025-09-01"
 conference: "PyData Berlin 2025"
 conference_url: "https://pydata.org/berlin2025"
 conference_talk_url: "https://cfp.pydata.org/berlin2025/talk/ZLJRNN/"
+conference_talk_slides: "/assets/slides/pydata-berlin-2025.html#/coverslide"
 location: "Berlin, Germany"
 format:
   revealjs:
@@ -90,7 +91,8 @@ TODO
 </blockquote>
 
 ::: {.notes}
-first of all, just to build some credibility for the project
+first of all, just to build some credibility for the project:
+we are committed to be vendor-agnostic, open-source, and transparent about our data
 :::
 
 # >>> from sparecores import intro {#intro transition="convex-in convex-out"}
