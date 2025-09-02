@@ -1,0 +1,1889 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="outerbounds-office-hours-2025_files/libs/quarto-html/tabby.min.js"></script>
+<script src="outerbounds-office-hours-2025_files/libs/quarto-html/popper.min.js"></script>
+<script src="outerbounds-office-hours-2025_files/libs/quarto-html/tippy.umd.min.js"></script>
+<link href="outerbounds-office-hours-2025_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="outerbounds-office-hours-2025_files/libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="outerbounds-office-hours-2025_files/libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.7.32">
+
+  <meta name="author" content="Gergely Daroczi">
+  <meta name="dcterms.date" content="2025-09-02">
+  <title>Magically Right Size the Compute Resources Dedicated to Your AI/ML Workloads</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="outerbounds-office-hours-2025_files/libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="outerbounds-office-hours-2025_files/libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+      }
+    pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+    div.sourceCode
+      { color: #f8f8f2;  }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #f8f8f2; } /* Normal */
+    code span.al { color: #f07178; } /* Alert */
+    code span.an { color: #d4d0ab; } /* Annotation */
+    code span.at { color: #00e0e0; } /* Attribute */
+    code span.bn { color: #d4d0ab; } /* BaseN */
+    code span.bu { color: #abe338; } /* BuiltIn */
+    code span.cf { color: #ffa07a; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #abe338; } /* Char */
+    code span.cn { color: #ffd700; } /* Constant */
+    code span.co { color: #f8f8f2; font-style: italic; } /* Comment */
+    code span.cv { color: #ffd700; } /* CommentVar */
+    code span.do { color: #f8f8f2; } /* Documentation */
+    code span.dt { color: #ffa07a; } /* DataType */
+    code span.dv { color: #d4d0ab; } /* DecVal */
+    code span.er { color: #f07178; text-decoration: underline; } /* Error */
+    code span.ex { color: #00e0e0; font-weight: bold; } /* Extension */
+    code span.fl { color: #d4d0ab; } /* Float */
+    code span.fu { color: #ffa07a; } /* Function */
+    code span.im { color: #abe338; } /* Import */
+    code span.in { color: #d4d0ab; } /* Information */
+    code span.kw { color: #ffa07a; font-weight: bold; } /* Keyword */
+    code span.op { color: #ffa07a; } /* Operator */
+    code span.ot { color: #00e0e0; } /* Other */
+    code span.pp { color: #dcc6e0; } /* Preprocessor */
+    code span.re { color: #00e0e0; background-color: #f8f8f2; } /* RegionMarker */
+    code span.sc { color: #abe338; } /* SpecialChar */
+    code span.ss { color: #abe338; } /* SpecialString */
+    code span.st { color: #abe338; } /* String */
+    code span.va { color: #00e0e0; } /* Variable */
+    code span.vs { color: #abe338; } /* VerbatimString */
+    code span.wa { color: #dcc6e0; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="outerbounds-office-hours-2025_files/libs/revealjs/dist/theme/quarto-1cbed4ae37b5cc1a805d6d8e9ba45727.css">
+  <link href="outerbounds-office-hours-2025_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="outerbounds-office-hours-2025_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="outerbounds-office-hours-2025_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="outerbounds-office-hours-2025_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+  <script src="outerbounds-office-hours-2025_files/libs/quarto-diagram/mermaid.min.js"></script>
+  <script src="outerbounds-office-hours-2025_files/libs/quarto-diagram/mermaid-init.js"></script>
+  <link href="outerbounds-office-hours-2025_files/libs/quarto-diagram/mermaid.css" rel="stylesheet">
+</head>
+<body class="quarto-dark">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block">
+  <h1 class="title">Magically Right Size the Compute Resources Dedicated to Your AI/ML Workloads</h1>
+
+<div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+Gergely Daroczi 
+</div>
+</div>
+</div>
+
+  <p class="date">2025-09-02</p>
+</section>
+<section id="cover-slide" class="title-slide slide level1">
+<h1></h1>
+<script>
+  // add custom CSS for the speaker view
+  if (window.self !== window.top) {
+    document.body.className += " speakerview";
+  }
+  // remove dummy slide
+  document.getElementById("title-slide").remove();
+</script>
+<div class="centered">
+<p><img src="images/outerbounds-office-hours.png" class="toplogo" style="margin-top: 15px; width: 464px; margin-left: -232px; margin-right: 232px;background-color:transparent;"></p>
+</div>
+<h1 class="subtitle" style="color:#eee;font-size:1.25em;text-align: center; margin-top:325px; color:#34d399;">
+Outerbounds Office Hours<br>with Spare Cores
+</h1>
+<h2 class="author" style="color:#eee;padding-top:65px;font-size:1.25em;text-align: center !important;margin-bottom: 0px;">
+Gergely Daroczi
+</h2>
+<h3 class="author" style="color:#eee;font-size:1.1em;text-align: center !important; font-weight: normal;">
+Sep 2, 2025
+</h3>
+<h3 class="author onlineMode" style="color:#eee;padding-top:65px;font-size:1.1em;text-align: center !important; padding-top: 10px;font-weight: normal; ">
+Slides: <a href="https://sparecores.com/talks" target="_blank">sparecores.com/talks</a>
+</h3>
+<p class="author offlineMode" style="color:#eee;font-size:0.75em;text-align: right !important; padding-top: 0px;font-weight: normal;margin-top:30px; ">
+Press Space or click the green arrow icons to navigate the slides -&gt;
+</p>
+</section>
+
+<section id="badges" class="title-slide slide level1" data-transition="convex-in convex-out">
+<h1>&gt;&gt;&gt; from sparecores import badges</h1>
+<ul style="font-size: 0.9em;">
+<li class="fragment" data-fragment-index="1">
+Vendor independent, open-source project
+</li>
+<ul>
+<li class="fragment" data-fragment-index="2">
+Funded by NGI Search (EU consortium under Horizon Europe)
+</li>
+<li class="fragment" data-fragment-index="3">
+Accepted into the NVIDIA Inception Program
+</li>
+<li class="fragment" data-fragment-index="4">
+Beneficiary of cloud credits from 5 vendors (overall ~$100k)
+</li>
+</ul>
+<li class="fragment" data-fragment-index="5">
+10+ conference talks in 6 countries (e.g.&nbsp;Berlin Buzzwords, KCD)
+</li>
+<li class="fragment" data-fragment-index="6">
+Featured by The Pragmatic Engineer in Oct 2024
+</li>
+<li class="fragment" data-fragment-index="7">
+Jeff Barr (Chief Evangelist at AWS) on our Reddit post:
+</li>
+</ul>
+<blockquote class="fragment" data-fragment-index="7" style="margin-left: 40px;">
+This was awesome, thanks for sharing.
+</blockquote>
+<aside class="notes">
+<p>first of all, just to build some credibility for the project</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+
+<section>
+<section id="intro" class="title-slide slide level1" data-transition="convex-in none-out">
+<h1>&gt;&gt;&gt; from sparecores import intro</h1>
+<ul style="font-size: 0.9em;">
+<li class="fragment">
+Open-source tools, database schemas and documentation to inspect and inventory cloud vendors and their offerings, including pricing and measured performance via benchmark workloads.
+</li>
+<img class="fragment" style="width:100%;" src="images/homepage-stats-2025q1.png">
+</ul>
+<aside class="notes">
+<ul>
+<li>so Spare Cores is an open-source ecosystem, including software, database schemas, guides,</li>
+<li>and actual databases if you don’t want to run the ETL tooling yourself .. also providing APIs, SDKs etc to make it easier to query data</li>
+<li>unified CLI to start machines</li>
+<li>and working on an an optional SaaS offering built on the top of the open-source tooling for folks who would rather avoid registering with all cloud providers etc: give us a Docker image, a command to run, and you credit card .. all set, we will run it wherever it’s cheapest.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="intro-list" class="slide level2" data-transition="none-in convex-out">
+<h2>&gt;&gt;&gt; from sparecores import intro</h2>
+<ul style="font-size: 0.9em;">
+<li>
+Open-source tools, database schemas and documentation to inspect and inventory cloud vendors and their offerings, including pricing and measured performance via benchmark workloads.
+</li>
+<li>
+Managed infrastructure, databases, APIs, SDKs, and web applications to make this data publicly accessible.
+</li>
+<li class="fragment">
+Open-source helpers to select, start and manage instances in your own environment.
+</li>
+<li class="fragment" style="font-weight: bold;">
+Open-source Python/R packages and workflow orchestration extensions (e.g.&nbsp;<span class="greeen">Metaflow</span>) to track resource usage and cost of DS/ML/AI jobs. Open-source tooling to right-size instances.
+</li>
+<li class="fragment">
+Add-on services to scale data science workflows, even without direct vendor engagement.
+</li>
+</ul>
+<aside class="notes">
+<ul>
+<li>so Spare Cores started as an open-source ecosystem, including software, database schemas, guides,</li>
+<li>and actual databases if you don’t want to run the ETL tooling yourself .. also providing APIs, SDKs etc to make it easier to query data</li>
+<li>unified CLI to start machines</li>
+<li>and working on an an optional SaaS offering built on the top of the open-source tooling for folks who would rather avoid registering with all cloud providers etc: give us a Docker image, a command to run, and you credit card .. all set, we will run it wherever it’s cheapest.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section></section>
+<section>
+<section id="metaflow" class="title-slide slide level1" data-transition="convex-in slide-out">
+<h1>&gt;&gt;&gt; import <img class="h1-inline-img sc-recolor" src="images/metaflow.svg"></h1>
+<p class="fragment">
+Workflow orchestration for real-life ML, AI, and DS projects.
+</p>
+<ul>
+<li class="fragment">
+started at Netflix
+</li>
+<li class="fragment">
+open-source (since 2019)
+</li>
+<li class="fragment">
+supports Python and R
+</li>
+<li class="fragment">
+maintained by Netflix and Outerbounds
+</li>
+<li class="fragment">
+human-centric
+</li>
+<li class="fragment">
+reproducible by design
+</li>
+<li class="fragment">
+scalable
+</li>
+</ul>
+<aside class="notes">
+
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="from-metaflow-import-tutorial" class="slide level2" data-transition="slide-in fade-out">
+<h2>&gt;&gt;&gt; from metaflow import tutorial</h2>
+<div class="columns" style="display: block; margin-top: 40px;">
+<div class="column vcenter centered" style="width:30%;">
+
+</div><div class="column vcenter" style="width:70%;">
+<div class="sourceCode" id="cb1" style="font-size:24px;" data-code-line-numbers="|1|3|5,10,15|4,9,14|7,12|6,11,16|19"><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb1-1"><a href=""></a><span class="im">from</span> metaflow <span class="im">import</span> FlowSpec, step</span>
+<span id="cb1-2"><a href=""></a></span>
+<span id="cb1-3"><a href=""></a><span class="kw">class</span> HelloFlow(FlowSpec):</span>
+<span id="cb1-4"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb1-5"><a href=""></a>    <span class="kw">def</span> start(<span class="va">self</span>):</span>
+<span id="cb1-6"><a href=""></a>        <span class="bu">print</span>(<span class="st">"HelloFlow is starting."</span>)</span>
+<span id="cb1-7"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.hello)</span>
+<span id="cb1-8"><a href=""></a></span>
+<span id="cb1-9"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb1-10"><a href=""></a>    <span class="kw">def</span> hello(<span class="va">self</span>):</span>
+<span id="cb1-11"><a href=""></a>        <span class="bu">print</span>(<span class="st">"Metaflow says: Hi!"</span>)</span>
+<span id="cb1-12"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.end)</span>
+<span id="cb1-13"><a href=""></a></span>
+<span id="cb1-14"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb1-15"><a href=""></a>    <span class="kw">def</span> end(<span class="va">self</span>):</span>
+<span id="cb1-16"><a href=""></a>        <span class="bu">print</span>(<span class="st">"HelloFlow is all done."</span>)</span>
+<span id="cb1-17"><a href=""></a></span>
+<span id="cb1-18"><a href=""></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">"__main__"</span>:</span>
+<span id="cb1-19"><a href=""></a>    HelloFlow()</span></code></pre></div>
+</div></div>
+<aside class="notes">
+<p>By design, Metaflow is a deceptively simple Python library.</p>
+<ol type="1">
+<li>import a class and a function from the <code>metaflow</code> package</li>
+<li>use that class to inherit from to define our Workflow</li>
+<li>we have a seriees of instance methods</li>
+<li>with the <code>step</code> decorator – marking the steps of our flow</li>
+<li>each step defining which steps follows</li>
+<li>and the rest is the core program: printing to stdout in this case</li>
+<li>and running an instance of the flow class</li>
+</ol>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="from-metaflow-import-tutorial-1" class="slide level2" data-transition="fade-in slide-out">
+<h2>&gt;&gt;&gt; from metaflow import tutorial</h2>
+<div class="columns" style="display: block; margin-top: 40px;">
+<div class="column vcenter centered" style="width:30%;">
+<div class="cell" data-reveal="true" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class=""><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart TD
+    A[start] --&gt; B(hello)
+    B --&gt; C[end]
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</div><div class="column vcenter" style="width:70%;">
+<div class="sourceCode" id="cb2" style="font-size:24px;" data-code-line-numbers="5,10,15"><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb2-1"><a href=""></a><span class="im">from</span> metaflow <span class="im">import</span> FlowSpec, step</span>
+<span id="cb2-2"><a href=""></a></span>
+<span id="cb2-3"><a href=""></a><span class="kw">class</span> HelloFlow(FlowSpec):</span>
+<span id="cb2-4"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb2-5"><a href=""></a>    <span class="kw">def</span> start(<span class="va">self</span>):</span>
+<span id="cb2-6"><a href=""></a>        <span class="bu">print</span>(<span class="st">"HelloFlow is starting."</span>)</span>
+<span id="cb2-7"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.hello)</span>
+<span id="cb2-8"><a href=""></a></span>
+<span id="cb2-9"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb2-10"><a href=""></a>    <span class="kw">def</span> hello(<span class="va">self</span>):</span>
+<span id="cb2-11"><a href=""></a>        <span class="bu">print</span>(<span class="st">"Metaflow says: Hi!"</span>)</span>
+<span id="cb2-12"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.end)</span>
+<span id="cb2-13"><a href=""></a></span>
+<span id="cb2-14"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb2-15"><a href=""></a>    <span class="kw">def</span> end(<span class="va">self</span>):</span>
+<span id="cb2-16"><a href=""></a>        <span class="bu">print</span>(<span class="st">"HelloFlow is all done."</span>)</span>
+<span id="cb2-17"><a href=""></a></span>
+<span id="cb2-18"><a href=""></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">"__main__"</span>:</span>
+<span id="cb2-19"><a href=""></a>    HelloFlow()</span></code></pre></div>
+</div></div>
+<aside class="notes">
+<p>So in this case we have a linear flow of steps that represents this simple DAG.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="from-dnd-import-dices" class="slide level2" data-transition="slide">
+<h2>&gt;&gt;&gt; from DnD import dices</h2>
+
+<img src="images/robot-dice.jpeg" style="border-radius: 25px; box-shadow: #06263a 20px 19px 25px 25px;" class="r-stretch"><aside class="notes">
+<p>But I wanted to bring a bit more realistic project for demonstration purposes, something that includes at least a bit of probability and randomness.</p>
+<p>And I thought everyone knows what a dice is .. and maybe some of you even played role-playing games, such as Dungeons &amp; Dragons, or AD&amp;D .. so you know multiple types of dice, and how important it is to have a full set of dices available at all times.</p>
+<p>So let’s create a Metaflow step that rolls dices!</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="from-metaflow-import-dices" class="slide level2" data-transition="slide-in fade-out">
+<h2>&gt;&gt;&gt; from metaflow import dices</h2>
+<div class="columns" style="display: block; margin-top: 20px;">
+<div class="column centered vcenter" style="width: 30%; visibility: hidden;">
+<div class="cell" data-reveal="true" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class=""><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart TD
+    A[start] -. dice &lt;br&gt; rolls .-&gt; B(roll)
+    B -. dice &lt;br&gt; rolls &lt;br&gt; dices ..-&gt; C[end]
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</div><div class="column vcenter" style="width:70%;">
+<div class="sourceCode" id="cb3" style="font-size:24px;" data-code-line-numbers="6-7|11-12|17|10,16,21|11-12,17"><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb3-1"><a href=""></a><span class="im">from</span> random <span class="im">import</span> sample, randint</span>
+<span id="cb3-2"><a href=""></a><span class="im">from</span> metaflow <span class="im">import</span> FlowSpec, step</span>
+<span id="cb3-3"><a href=""></a></span>
+<span id="cb3-4"><a href=""></a></span>
+<span id="cb3-5"><a href=""></a><span class="kw">class</span> DiceRollFlow(FlowSpec):</span>
+<span id="cb3-6"><a href=""></a>    <span class="co"># D3, D4, D6, D8, D10, D12, ...</span></span>
+<span id="cb3-7"><a href=""></a>    DICES <span class="op">=</span> [<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">6</span>, <span class="dv">8</span>, <span class="dv">10</span>, <span class="dv">12</span>, <span class="dv">100</span>]</span>
+<span id="cb3-8"><a href=""></a></span>
+<span id="cb3-9"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb3-10"><a href=""></a>    <span class="kw">def</span> start(<span class="va">self</span>):</span>
+<span id="cb3-11"><a href=""></a>        <span class="va">self</span>.dice <span class="op">=</span> sample(<span class="va">self</span>.DICES, <span class="dv">1</span>)[<span class="dv">0</span>]</span>
+<span id="cb3-12"><a href=""></a>        <span class="va">self</span>.rolls <span class="op">=</span> sample(<span class="bu">range</span>(<span class="dv">3</span>), <span class="dv">1</span>)[<span class="dv">0</span>] <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb3-13"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.roll)</span>
+<span id="cb3-14"><a href=""></a></span>
+<span id="cb3-15"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb3-16"><a href=""></a>    <span class="kw">def</span> roll(<span class="va">self</span>):</span>
+<span id="cb3-17"><a href=""></a>        <span class="va">self</span>.dices <span class="op">=</span> [randint(<span class="dv">1</span>, <span class="va">self</span>.dice) <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>.rolls)]</span>
+<span id="cb3-18"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.end)</span>
+<span id="cb3-19"><a href=""></a></span>
+<span id="cb3-20"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb3-21"><a href=""></a>    <span class="kw">def</span> end(<span class="va">self</span>):</span>
+<span id="cb3-22"><a href=""></a>        <span class="bu">print</span>(<span class="ss">f"Rolled </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>rolls<span class="sc">}</span><span class="ss"> times with a </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>dice<span class="sc">}</span><span class="ss"> sided dice: </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>dices<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb3-23"><a href=""></a></span>
+<span id="cb3-24"><a href=""></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">"__main__"</span>:</span>
+<span id="cb3-25"><a href=""></a>    DiceRollFlow()</span></code></pre></div>
+</div></div>
+<aside class="notes">
+<ol type="1">
+<li>First, let’s define the types of dices we want to support as a constant, a class attribute in this case. Dices might have as low as 3 sides … up to 100.</li>
+<li>Then we decide in each workflow run, what type of dice we want to roll, and how many times. Then actually roll the dice or dices.</li>
+</ol>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="from-metaflow-import-dices-1" class="slide level2" data-transition="fade-in slide-out">
+<h2>&gt;&gt;&gt; from metaflow import dices</h2>
+<div class="columns" style="display: block; margin-top: 20px;">
+<div class="column centered vcenter" style="width:30%;">
+<div class="cell" data-reveal="true" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class=""><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart TD
+    A[start] -. dice &lt;br&gt; rolls .-&gt; B(roll)
+    B -. dice &lt;br&gt; rolls &lt;br&gt; dices ..-&gt; C[end]
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</div><div class="column vcenter" style="width:70%;">
+<div class="sourceCode" id="cb4" style="font-size:24px;" data-code-line-numbers="11-12,17"><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb4-1"><a href=""></a><span class="im">from</span> random <span class="im">import</span> sample, randint</span>
+<span id="cb4-2"><a href=""></a><span class="im">from</span> metaflow <span class="im">import</span> FlowSpec, step</span>
+<span id="cb4-3"><a href=""></a></span>
+<span id="cb4-4"><a href=""></a></span>
+<span id="cb4-5"><a href=""></a><span class="kw">class</span> DiceRollFlow(FlowSpec):</span>
+<span id="cb4-6"><a href=""></a>    <span class="co"># D3, D4, D6, D8, D10, D12, ...</span></span>
+<span id="cb4-7"><a href=""></a>    DICES <span class="op">=</span> [<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">6</span>, <span class="dv">8</span>, <span class="dv">10</span>, <span class="dv">12</span>, <span class="dv">100</span>]</span>
+<span id="cb4-8"><a href=""></a></span>
+<span id="cb4-9"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb4-10"><a href=""></a>    <span class="kw">def</span> start(<span class="va">self</span>):</span>
+<span id="cb4-11"><a href=""></a>        <span class="va">self</span>.dice <span class="op">=</span> sample(<span class="va">self</span>.DICES, <span class="dv">1</span>)[<span class="dv">0</span>]</span>
+<span id="cb4-12"><a href=""></a>        <span class="va">self</span>.rolls <span class="op">=</span> sample(<span class="bu">range</span>(<span class="dv">3</span>), <span class="dv">1</span>)[<span class="dv">0</span>] <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb4-13"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.roll)</span>
+<span id="cb4-14"><a href=""></a></span>
+<span id="cb4-15"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb4-16"><a href=""></a>    <span class="kw">def</span> roll(<span class="va">self</span>):</span>
+<span id="cb4-17"><a href=""></a>        <span class="va">self</span>.dices <span class="op">=</span> [randint(<span class="dv">1</span>, <span class="va">self</span>.dice) <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>.rolls)]</span>
+<span id="cb4-18"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.end)</span>
+<span id="cb4-19"><a href=""></a></span>
+<span id="cb4-20"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb4-21"><a href=""></a>    <span class="kw">def</span> end(<span class="va">self</span>):</span>
+<span id="cb4-22"><a href=""></a>        <span class="bu">print</span>(<span class="ss">f"Rolled </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>rolls<span class="sc">}</span><span class="ss"> times with a </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>dice<span class="sc">}</span><span class="ss"> sided dice: </span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>dices<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb4-23"><a href=""></a></span>
+<span id="cb4-24"><a href=""></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">"__main__"</span>:</span>
+<span id="cb4-25"><a href=""></a>    DiceRollFlow()</span></code></pre></div>
+</div></div>
+<aside class="notes">
+<ol start="3" type="1">
+<li>So we have the same number of instance methods, or steps here … but besides a linear flow, we also pass data between the steps as instance attributes.</li>
+</ol>
+<p>And this latter is super important and very convenient: whatever you pass as instance attributes between steps, those items are automatically serialized (pickled) and stored as versioned artifacts. In this case, artifacts are stored on disk, but could use AWS S3 or other object storage backends as well for distributed workflows.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="from-metaflow-import-dices-2" class="slide level2">
+<h2>&gt;&gt;&gt; from metaflow import dices</h2>
+<div style="margin-top: 40px; background-color: #2E3436; padding: 10px 0px 0px 30px; border-radius: 20px; border: 1px solid #34d399;">
+<div style="float: right; margin-right: 40px;">
+<div class="terminal-buttons terminal-close" style="top: -20px;">
+
+</div>
+<div class="terminal-buttons terminal-minimize" style="top: -20px;">
+
+</div>
+<div class="terminal-buttons terminal-zoom" style="top: -20px;">
+
+</div>
+</div>
+<p><img src="images/metaflow-run-dices.png" style="width: 100%; margin-top: -30px;"></p>
+</div>
+<aside class="notes">
+<p>Example output of an actual run of this workflow. Note that a new process was spawned for each step, and that the data was passed between those through using artifacts.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="from-metaflow-import-dices-3" class="slide level2">
+<h2>&gt;&gt;&gt; from metaflow import dices</h2>
+<div class="sourceCode" id="cb5" style="margin-top: 40px !important; height: 610px;" data-code-line-numbers="1-3|4-5|6-9|10-11|12-14|15-16|17-18"><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb5-1"><a href=""></a><span class="op">&gt;&gt;&gt;</span> <span class="im">from</span> metaflow <span class="im">import</span> Flow</span>
+<span id="cb5-2"><a href=""></a><span class="op">&gt;&gt;&gt;</span> <span class="bu">print</span>(run <span class="op">:=</span> Flow(<span class="st">"DiceRollFlow"</span>).latest_successful_run)</span>
+<span id="cb5-3"><a href=""></a>Run(<span class="st">'DiceRollFlow/1749762602890590'</span>)</span>
+<span id="cb5-4"><a href=""></a><span class="op">&gt;&gt;&gt;</span> run.created_at</span>
+<span id="cb5-5"><a href=""></a>datetime.datetime(<span class="dv">2025</span>, <span class="dv">6</span>, <span class="dv">12</span>, <span class="dv">23</span>, <span class="dv">10</span>, <span class="dv">2</span>, <span class="dv">891000</span>)</span>
+<span id="cb5-6"><a href=""></a><span class="op">&gt;&gt;&gt;</span> run.data</span>
+<span id="cb5-7"><a href=""></a><span class="op">&lt;</span>MetaflowData: dices, rolls, name, dice<span class="op">&gt;</span></span>
+<span id="cb5-8"><a href=""></a><span class="op">&gt;&gt;&gt;</span> run.data.dices</span>
+<span id="cb5-9"><a href=""></a>[<span class="dv">5</span>, <span class="dv">2</span>, <span class="dv">2</span>]</span>
+<span id="cb5-10"><a href=""></a><span class="op">&gt;&gt;&gt;</span> <span class="bu">list</span>(run.steps())</span>
+<span id="cb5-11"><a href=""></a>[Step(<span class="st">'DiceRollFlow/1749762602890590/end'</span>), Step(<span class="st">'DiceRollFlow/1749762602890590/roll'</span>), Step(<span class="st">'DiceRollFlow/1749762602890590/start'</span>)]</span>
+<span id="cb5-12"><a href=""></a><span class="op">&gt;&gt;&gt;</span> step <span class="op">=</span> <span class="bu">next</span>(run.steps())</span>
+<span id="cb5-13"><a href=""></a><span class="op">&gt;&gt;&gt;</span> step.task.metadata</span>
+<span id="cb5-14"><a href=""></a>[Metadata(name<span class="op">=</span><span class="st">'user'</span>, value<span class="op">=</span><span class="st">'daroczig'</span>, created_at<span class="op">=</span><span class="dv">1749762604068</span>, <span class="bu">type</span><span class="op">=</span><span class="st">'user'</span>, task<span class="op">=</span>Task(<span class="st">'DiceRollFlow/1749762602890590/end/3'</span>)), ...</span>
+<span id="cb5-15"><a href=""></a><span class="op">&gt;&gt;&gt;</span> step.task.stdout</span>
+<span id="cb5-16"><a href=""></a><span class="st">'Rolled 3 time(s) with a 10 sided dice: [5, 2, 2]</span><span class="ch">\n</span><span class="st">'</span></span>
+<span id="cb5-17"><a href=""></a><span class="op">&gt;&gt;&gt;</span> step.task.artifacts.dices.data</span>
+<span id="cb5-18"><a href=""></a>[<span class="dv">5</span>, <span class="dv">2</span>, <span class="dv">2</span>]</span></code></pre></div>
+<aside class="notes">
+<p>Now let’s dig into the details of Metaflow to get a better understanding of how it works.</p>
+<p>First, let’s see how we can access the last run.</p>
+<p>We can look up some metadata about the run, such as the creation time, the data that was passed between the steps, and the artifacts that were stored.</p>
+<p>Then we can also get the details of the individual workflow steps, along with metadata such as UNIX user, start time, PID etc.</p>
+<p>Standard out and standard error of the step.</p>
+<p>And the versioned artifacts that were stored.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="from-metaflow-import-more" class="slide level2" data-transition="slide-in fade-out">
+<h2>&gt;&gt;&gt; from metaflow import more</h2>
+<div class="columns" style="display: block; margin-top: 20px;">
+<div class="column centered vcenter" style="width:30%;">
+<div class="cell" data-reveal="true" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class=""><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart TD
+    A[start] --&gt; B1(fitA)
+    A[start] --&gt; B2(fitB)
+    B1 --&gt; C[eval]
+    B2 --&gt; C[eval]
+    C --&gt; D[end]
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</div><div class="column vcenter" style="width:70%;">
+<div class="sourceCode" id="cb6" style="font-size:24px; height: 525px; margin-top: 40px !important;" data-code-line-numbers="6,11,16,19"><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb6-1"><a href=""></a><span class="kw">class</span> ModelingFlow(FlowSpec):</span>
+<span id="cb6-2"><a href=""></a></span>
+<span id="cb6-3"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb6-4"><a href=""></a>    <span class="kw">def</span> start(<span class="va">self</span>):</span>
+<span id="cb6-5"><a href=""></a>        <span class="va">self</span>.data <span class="op">=</span> load_data()</span>
+<span id="cb6-6"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.fitA, <span class="va">self</span>.fitB)</span>
+<span id="cb6-7"><a href=""></a></span>
+<span id="cb6-8"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb6-9"><a href=""></a>    <span class="kw">def</span> fitA(<span class="va">self</span>):</span>
+<span id="cb6-10"><a href=""></a>        <span class="va">self</span>.model <span class="op">=</span> fit(<span class="va">self</span>.data, model<span class="op">=</span><span class="st">'A'</span>)</span>
+<span id="cb6-11"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.<span class="bu">eval</span>)</span>
+<span id="cb6-12"><a href=""></a></span>
+<span id="cb6-13"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb6-14"><a href=""></a>    <span class="kw">def</span> fitB(<span class="va">self</span>):</span>
+<span id="cb6-15"><a href=""></a>        <span class="va">self</span>.model <span class="op">=</span> fit(<span class="va">self</span>.data, model<span class="op">=</span><span class="st">'B'</span>)</span>
+<span id="cb6-16"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.<span class="bu">eval</span>)</span>
+<span id="cb6-17"><a href=""></a></span>
+<span id="cb6-18"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb6-19"><a href=""></a>    <span class="kw">def</span> <span class="bu">eval</span>(<span class="va">self</span>, inputs):</span>
+<span id="cb6-20"><a href=""></a>        <span class="va">self</span>.best <span class="op">=</span> <span class="bu">max</span>((i.model.score, i.model)</span>
+<span id="cb6-21"><a href=""></a>                        <span class="cf">for</span> i <span class="kw">in</span> inputs)[<span class="dv">1</span>]</span>
+<span id="cb6-22"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.end)</span>
+<span id="cb6-23"><a href=""></a></span>
+<span id="cb6-24"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb6-25"><a href=""></a>    <span class="kw">def</span> end(<span class="va">self</span>):</span>
+<span id="cb6-26"><a href=""></a>        <span class="bu">print</span>(<span class="st">'done!'</span>)</span></code></pre></div>
+</div></div>
+<aside class="notes">
+<p>Now let’s look at a more complex example, that includes a branching flow, and running two steps in parallel.</p>
+<p>To do so, the first step passes to two independent steps instead of one, both having access to the <code>data</code> instance attribute created in the <code>start</code> step.</p>
+<p>Both parallel steps create a <code>model</code> instance attribute, and pass it to the <code>eval</code> step.</p>
+<p>The <code>eval</code> step then selects the best model based on the score, and passes it to the <code>end</code> step.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="from-metaflow-import-more-1" class="slide level2" data-transition="fade-in slide-out">
+<h2>&gt;&gt;&gt; from metaflow import more</h2>
+<div class="columns" style="display: block; margin-top: -63px;">
+<div class="column centered vcenter" style="width:30%;">
+<div class="cell" data-reveal="true" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class=""><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart TD
+    A[start] -- data --&gt; B1(fitA)
+    A[start] -- data --&gt; B2(fitB)
+    B1 -. data&lt;br&gt;model .-&gt; C[eval]
+    B2 -. data&lt;br&gt;model .-&gt; C[eval]
+    C -- data&lt;br&gt;best --&gt; D[end]
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</div><div class="column vcenter" style="width:70%;">
+<div class="sourceCode" id="cb7" style="font-size:24px; height: 525px; margin-top: 40px !important;" data-code-line-numbers="5,10,15,20-21"><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb7-1"><a href=""></a><span class="kw">class</span> ModelingFlow(FlowSpec):</span>
+<span id="cb7-2"><a href=""></a></span>
+<span id="cb7-3"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb7-4"><a href=""></a>    <span class="kw">def</span> start(<span class="va">self</span>):</span>
+<span id="cb7-5"><a href=""></a>        <span class="va">self</span>.data <span class="op">=</span> load_data()</span>
+<span id="cb7-6"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.fitA, <span class="va">self</span>.fitB)</span>
+<span id="cb7-7"><a href=""></a></span>
+<span id="cb7-8"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb7-9"><a href=""></a>    <span class="kw">def</span> fitA(<span class="va">self</span>):</span>
+<span id="cb7-10"><a href=""></a>        <span class="va">self</span>.model <span class="op">=</span> fit(<span class="va">self</span>.data, model<span class="op">=</span><span class="st">'A'</span>)</span>
+<span id="cb7-11"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.<span class="bu">eval</span>)</span>
+<span id="cb7-12"><a href=""></a></span>
+<span id="cb7-13"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb7-14"><a href=""></a>    <span class="kw">def</span> fitB(<span class="va">self</span>):</span>
+<span id="cb7-15"><a href=""></a>        <span class="va">self</span>.model <span class="op">=</span> fit(<span class="va">self</span>.data, model<span class="op">=</span><span class="st">'B'</span>)</span>
+<span id="cb7-16"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.<span class="bu">eval</span>)</span>
+<span id="cb7-17"><a href=""></a></span>
+<span id="cb7-18"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb7-19"><a href=""></a>    <span class="kw">def</span> <span class="bu">eval</span>(<span class="va">self</span>, inputs):</span>
+<span id="cb7-20"><a href=""></a>        <span class="va">self</span>.best <span class="op">=</span> <span class="bu">max</span>((i.model.score, i.model)</span>
+<span id="cb7-21"><a href=""></a>                        <span class="cf">for</span> i <span class="kw">in</span> inputs)[<span class="dv">1</span>]</span>
+<span id="cb7-22"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.end)</span>
+<span id="cb7-23"><a href=""></a></span>
+<span id="cb7-24"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb7-25"><a href=""></a>    <span class="kw">def</span> end(<span class="va">self</span>):</span>
+<span id="cb7-26"><a href=""></a>        <span class="bu">print</span>(<span class="st">'done!'</span>)</span></code></pre></div>
+</div></div>
+<div class="centered fragment" style="margin-top: -80px;">
+<p>And conditional and recursive steps since Metaflow 2.18!</p>
+</div>
+<aside class="notes">
+<p>I hope this example makes it clear how useful it is to have access to the metadata and actual data of all steps of a workflow for later debugging.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="from-metaflow-import-venv" class="slide level2">
+<h2>&gt;&gt;&gt; from metaflow import venv</h2>
+<div class="columns" style="display: block; margin-top: 20px;">
+<div class="column centered vcenter" style="width:30%;">
+<div class="cell" data-reveal="true" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class=""><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart TD
+    style B2 fill:#eab308
+    A[start] --&gt; B1(fitA)
+    A[start] --&gt; B2(fitB)
+    B1 --&gt; C[eval]
+    B2 --&gt; C[eval]
+    C --&gt; D[end]
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</div><div class="column vcenter" style="width:70%;">
+<div class="sourceCode" id="cb8" style="font-size:24px; height: 545px; margin-top: 40px !important;" data-code-line-numbers="13"><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb8-1"><a href=""></a><span class="kw">class</span> ModelingFlow(FlowSpec):</span>
+<span id="cb8-2"><a href=""></a></span>
+<span id="cb8-3"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb8-4"><a href=""></a>    <span class="kw">def</span> start(<span class="va">self</span>):</span>
+<span id="cb8-5"><a href=""></a>        <span class="va">self</span>.data <span class="op">=</span> load_data()</span>
+<span id="cb8-6"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.fitA, <span class="va">self</span>.fitB)</span>
+<span id="cb8-7"><a href=""></a></span>
+<span id="cb8-8"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb8-9"><a href=""></a>    <span class="kw">def</span> fitA(<span class="va">self</span>):</span>
+<span id="cb8-10"><a href=""></a>        <span class="va">self</span>.model <span class="op">=</span> fit(<span class="va">self</span>.data, model<span class="op">=</span><span class="st">'A'</span>)</span>
+<span id="cb8-11"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.<span class="bu">eval</span>)</span>
+<span id="cb8-12"><a href=""></a></span>
+<span id="cb8-13"><a href=""></a>    <span class="at">@pypi</span>(python<span class="op">=</span><span class="st">'3.10.11'</span>, packages<span class="op">=</span>{<span class="st">'scikit-learn'</span>: <span class="st">'1.7'</span>})</span>
+<span id="cb8-14"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb8-15"><a href=""></a>    <span class="kw">def</span> fitB(<span class="va">self</span>):</span>
+<span id="cb8-16"><a href=""></a>        <span class="va">self</span>.model <span class="op">=</span> fit(<span class="va">self</span>.data, model<span class="op">=</span><span class="st">'B'</span>)</span>
+<span id="cb8-17"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.<span class="bu">eval</span>)</span>
+<span id="cb8-18"><a href=""></a></span>
+<span id="cb8-19"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb8-20"><a href=""></a>    <span class="kw">def</span> <span class="bu">eval</span>(<span class="va">self</span>, inputs):</span>
+<span id="cb8-21"><a href=""></a>        <span class="va">self</span>.best <span class="op">=</span> <span class="bu">max</span>((i.model.score, i.model)</span>
+<span id="cb8-22"><a href=""></a>                        <span class="cf">for</span> i <span class="kw">in</span> inputs)[<span class="dv">1</span>]</span>
+<span id="cb8-23"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.end)</span>
+<span id="cb8-24"><a href=""></a></span>
+<span id="cb8-25"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb8-26"><a href=""></a>    <span class="kw">def</span> end(<span class="va">self</span>):</span>
+<span id="cb8-27"><a href=""></a>        <span class="bu">print</span>(<span class="st">'done!'</span>)</span></code></pre></div>
+</div></div>
+<aside class="notes">
+<p>Now let’s talk a bit about dependency management .. which is often pretty crazy in the Python world.</p>
+<p>Let’s say you need a specific version of a library, which you don’t have installed globally, so you could create a virtual environment or Docker image for that .. and use it for a single step.</p>
+<p>Soon, it becomes a mess, and you have to manage multiple environments etc.</p>
+<p>Metaflow helps with that by optionally managing the virtual environments for you. Just use the <code>pypi</code> or <code>conda</code> decorators to specify the version of the library you need, and Metaflow will create and cache the virtual environments for you.</p>
+<p>This works locally, and with cloud services as well!</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="from-metaflow-import-cloud" class="slide level2" data-transition="slide-in convex-out">
+<h2>&gt;&gt;&gt; from metaflow import cloud</h2>
+<div class="columns" style="display: block; margin-top: 20px;">
+<div class="column centered vcenter" style="width:30%;">
+<div class="cell" data-reveal="true" data-layout-align="default">
+<div class="cell-output-display">
+<div>
+<p></p><figure class=""><p></p>
+<div>
+<pre class="mermaid mermaid-js">flowchart TD
+    subgraph AWS Batch
+      B1(fitA)
+      B2(fitB)
+    end
+    A[start] .-&gt; B1
+    A[start] .-&gt; B2
+    B1 .-&gt; C[eval]
+    B2 .-&gt; C[eval]
+    C --&gt; D[end]
+</pre>
+</div>
+<p></p></figure><p></p>
+</div>
+</div>
+</div>
+</div><div class="column vcenter" style="width:70%;">
+<div class="sourceCode" id="cb9" style="font-size:24px; height: 565px; margin-top: 40px !important;" data-code-line-numbers="8,14"><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb9-1"><a href=""></a><span class="kw">class</span> ModelingFlow(FlowSpec):</span>
+<span id="cb9-2"><a href=""></a></span>
+<span id="cb9-3"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb9-4"><a href=""></a>    <span class="kw">def</span> start(<span class="va">self</span>):</span>
+<span id="cb9-5"><a href=""></a>        <span class="va">self</span>.data <span class="op">=</span> load_data()</span>
+<span id="cb9-6"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.fitA, <span class="va">self</span>.fitB)</span>
+<span id="cb9-7"><a href=""></a></span>
+<span id="cb9-8"><a href=""></a>    <span class="at">@batch</span>(cpu<span class="op">=</span><span class="dv">32</span>, memory<span class="op">=</span><span class="dv">64</span>)</span>
+<span id="cb9-9"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb9-10"><a href=""></a>    <span class="kw">def</span> fitA(<span class="va">self</span>):</span>
+<span id="cb9-11"><a href=""></a>        <span class="va">self</span>.model <span class="op">=</span> fit(<span class="va">self</span>.data, model<span class="op">=</span><span class="st">'A'</span>)</span>
+<span id="cb9-12"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.<span class="bu">eval</span>)</span>
+<span id="cb9-13"><a href=""></a></span>
+<span id="cb9-14"><a href=""></a>    <span class="at">@batch</span>(cpu<span class="op">=</span><span class="dv">4</span>, memory<span class="op">=</span><span class="dv">16</span>, gpu<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb9-15"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb9-16"><a href=""></a>    <span class="kw">def</span> fitB(<span class="va">self</span>):</span>
+<span id="cb9-17"><a href=""></a>        <span class="va">self</span>.model <span class="op">=</span> fit(<span class="va">self</span>.data, model<span class="op">=</span><span class="st">'B'</span>)</span>
+<span id="cb9-18"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.<span class="bu">eval</span>)</span>
+<span id="cb9-19"><a href=""></a></span>
+<span id="cb9-20"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb9-21"><a href=""></a>    <span class="kw">def</span> <span class="bu">eval</span>(<span class="va">self</span>, inputs):</span>
+<span id="cb9-22"><a href=""></a>        <span class="va">self</span>.best <span class="op">=</span> <span class="bu">max</span>((i.model.score, i.model)</span>
+<span id="cb9-23"><a href=""></a>                        <span class="cf">for</span> i <span class="kw">in</span> inputs)[<span class="dv">1</span>]</span>
+<span id="cb9-24"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.end)</span>
+<span id="cb9-25"><a href=""></a></span>
+<span id="cb9-26"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb9-27"><a href=""></a>    <span class="kw">def</span> end(<span class="va">self</span>):</span>
+<span id="cb9-28"><a href=""></a>        <span class="bu">print</span>(<span class="st">'done!'</span>)</span></code></pre></div>
+</div></div>
+<aside class="notes">
+<p>Speaking about cloud services .. you can imagine that sometimes the local resources are just not enough, and we need to run the workflow or a step on a larger machine.</p>
+<p>It’s super easy for the data scientist to do so: use the AWS Batch or Kubernetes decorator, specify the resources you need, and Metaflow will take care of the rest.</p>
+<p>But how much resources did we actually use?</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section></section>
+<section>
+<section id="import-resource_tracker" class="title-slide slide level1" data-transition="convex-in slide-out">
+<h1>&gt;&gt;&gt; import resource_tracker</h1>
+<ul>
+<li class="fragment" data-fragment-index="1">
+Lightweight (zero-dependency*) Python package
+</li>
+<li class="fragment" data-fragment-index="3">
+Supports Python 3.9+
+</li>
+<li class="fragment" data-fragment-index="4">
+Monitors system-level and process-level resource usage
+</li>
+<li class="fragment" data-fragment-index="5">
+Tracks CPU, memory, GPU/VRAM, network, storage &amp; more
+</li>
+<li class="fragment" data-fragment-index="6">
+Ease of use, minimal setup
+</li>
+<li class="fragment" data-fragment-index="7">
+Runs in the background, non-blocking
+</li>
+<li class="fragment" data-fragment-index="8">
+Framework extensions (e.g.&nbsp;Metaflow)
+</li>
+<div class="fragment" style="margin-top: 40px;" data-fragment-index="2">
+* No dependencies on Linux; <code>psutil</code> on other OS.
+</div>
+<aside class="notes">
+<p>And here comes the resource tracker to the rescue!</p>
+<p>If you are running Linux, and most production servers are Linux … it can use the proc filesystem without any further dependencies – other than a modern Linux kernel. On other operating systems, it uses <code>psutil</code> to get the same information.</p>
+<p>It supports recent Python versions, going back to the latest officially supported Python version, so that you can run it anywhere.</p>
+<p>It can monitor the resource usage of the whole system, like logging the overall CPU and memory usage etc But can also track a single process and optionally its children as well – independent from the whole system.</p>
+<p>It can track the CPU usage, memory usage, disk I/O, network usage, GPU usage, and more.</p>
+<p>It’s easy to use, and it’s non-blocking, so you can run it in the background while your code is running.</p>
+<p>By default, it’s framework agnostic .. but comes with a few extensions, e.g.&nbsp;for Metaflow.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</ul></section>
+<section id="import-resource_tracker-1" class="slide level2">
+<h2>&gt;&gt;&gt; import resource_tracker</h2>
+<p>Installation: <img style="float:right; height: 30px;" src="https://camo.githubusercontent.com/6c79d35aff64a703207a83f650249e71ea2ace0ab4c81295b07a862cdeb96733/68747470733a2f2f696d672e736869656c64732e696f2f707970692f762f7265736f757263652d747261636b65723f636f6c6f723d253233333243393535"></p>
+<div class="sourceCode" id="cb10" style="margin-top: 20px !important;" data-code-line-numbers="1-1"><pre class="sourceCode numberSource bash number-lines"><code class="sourceCode bash"><span id="cb10-1"><a href=""></a><span class="ex">pip</span> install resource-tracker</span></code></pre></div>
+<div class="fragment">
+<p>Minimal usage:</p>
+<div class="sourceCode" id="cb11" style="margin-top: 20px !important;" data-code-line-numbers="1|3|4|6-7"><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb11-1"><a href=""></a><span class="im">from</span> resource_tracker <span class="im">import</span> ResourceTracker</span>
+<span id="cb11-2"><a href=""></a></span>
+<span id="cb11-3"><a href=""></a>tracker <span class="op">=</span> ResourceTracker()</span>
+<span id="cb11-4"><a href=""></a><span class="co"># your compute-heavy code</span></span>
+<span id="cb11-5"><a href=""></a></span>
+<span id="cb11-6"><a href=""></a>tracker.stop()</span>
+<span id="cb11-7"><a href=""></a>tracker.report().browse()</span></code></pre></div>
+<aside class="notes">
+<p>It’s on PyPI, so easy to install and upgrade.</p>
+<p>Here’s a minimal example of how to use the resource tracker: 1. Import the ResourceTracker class 2. Create an instance, which will be run tasks in background threads and processes 3. You have real-time access to the collected data at any time by using the <code>pid_tracker</code> or <code>system_tracker</code> instance attributes 4. You can stop the tracking or it will be auto cleanup with your script</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</div>
+</section>
+<section id="resource_tracker.report.browse" class="slide level2">
+<h2>&gt;&gt;&gt; resource_tracker.report().browse()</h2>
+<div class="centered">
+<p><a href="https://sparecores.com/assets/slides/example-resource-tracker-report-in-metaflow.html" target="_blank"> <img src="https://sparecores.github.io/resource-tracker/track_resources-card-example.png" width="92%"> </a></p>
+</div>
+</section>
+<section id="resourcetracker.system_metrics" class="slide level2">
+<h2>&gt;&gt;&gt; ResourceTracker.system_metrics</h2>
+<div class="sourceCode" id="cb12" style="margin-top: 60px !important;" data-code-line-numbers="1-1|2-2|3-3"><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb12-1"><a href=""></a><span class="op">&gt;&gt;&gt;</span> <span class="bu">print</span>(tracker.system_metrics)</span>
+<span id="cb12-2"><a href=""></a>TinyDataFrame <span class="cf">with</span> <span class="dv">221</span> rows <span class="kw">and</span> <span class="dv">21</span> columns:</span>
+<span id="cb12-3"><a href=""></a>timestamp    <span class="op">|</span> processes <span class="op">|</span> utime <span class="op">|</span> stime <span class="op">|</span> cpu_usage <span class="op">|</span> memory_free <span class="op">|</span> memory_used <span class="op">|</span> memory_buffers <span class="op">|</span> memory_cached <span class="op">|</span> memory_active <span class="op">|</span> memory_inactive <span class="op">|</span> disk_read_bytes <span class="op">|</span> disk_write_bytes <span class="op">|</span> disk_space_total_gb <span class="op">|</span> disk_space_used_gb <span class="op">|</span> disk_space_free_gb <span class="op">|</span> net_recv_bytes <span class="op">|</span> net_sent_bytes <span class="op">|</span> gpu_usage <span class="op">|</span> gpu_vram <span class="op">|</span> gpu_utilized</span>
+<span id="cb12-4"><a href=""></a><span class="op">-------------+-----------+-------+-------+-----------+-------------+-------------+----------------+---------------+---------------+-----------------+-----------------+------------------+---------------------+--------------------+--------------------+----------------+----------------+-----------+----------+-------------</span></span>
+<span id="cb12-5"><a href=""></a><span class="fl">1756711946.0</span> <span class="op">|</span>     <span class="fl">720.0</span> <span class="op">|</span>  <span class="fl">0.62</span> <span class="op">|</span>  <span class="fl">0.41</span> <span class="op">|</span>    <span class="fl">1.0303</span> <span class="op">|</span>  <span class="fl">18888932.0</span> <span class="op">|</span>  <span class="fl">38098620.0</span> <span class="op">|</span>         <span class="fl">3612.0</span> <span class="op">|</span>     <span class="fl">8555708.0</span> <span class="op">|</span>    <span class="fl">25858216.0</span> <span class="op">|</span>        <span class="fl">110860.0</span> <span class="op">|</span>        <span class="fl">872448.0</span> <span class="op">|</span>         <span class="fl">274432.0</span> <span class="op">|</span>             <span class="fl">3699.99</span> <span class="op">|</span>            <span class="fl">2600.86</span> <span class="op">|</span>            <span class="fl">1099.13</span> <span class="op">|</span>         <span class="fl">4627.0</span> <span class="op">|</span>         <span class="fl">3251.0</span> <span class="op">|</span>      <span class="fl">0.19</span> <span class="op">|</span>   <span class="fl">1610.0</span> <span class="op">|</span>          <span class="fl">1.0</span></span>
+<span id="cb12-6"><a href=""></a><span class="fl">1756711947.0</span> <span class="op">|</span>     <span class="fl">718.0</span> <span class="op">|</span>  <span class="fl">0.56</span> <span class="op">|</span>  <span class="fl">0.51</span> <span class="op">|</span>    <span class="fl">1.0699</span> <span class="op">|</span>  <span class="fl">18878644.0</span> <span class="op">|</span>  <span class="fl">38108908.0</span> <span class="op">|</span>         <span class="fl">3612.0</span> <span class="op">|</span>     <span class="fl">8555708.0</span> <span class="op">|</span>    <span class="fl">25858092.0</span> <span class="op">|</span>        <span class="fl">110860.0</span> <span class="op">|</span>         <span class="fl">53248.0</span> <span class="op">|</span>        <span class="fl">5705728.0</span> <span class="op">|</span>             <span class="fl">3699.99</span> <span class="op">|</span>            <span class="fl">2600.85</span> <span class="op">|</span>            <span class="fl">1099.14</span> <span class="op">|</span>         <span class="fl">4666.0</span> <span class="op">|</span>          <span class="fl">952.0</span> <span class="op">|</span>      <span class="fl">0.18</span> <span class="op">|</span>   <span class="fl">1610.0</span> <span class="op">|</span>          <span class="fl">1.0</span></span>
+<span id="cb12-7"><a href=""></a><span class="fl">1756711948.0</span> <span class="op">|</span>     <span class="fl">718.0</span> <span class="op">|</span>  <span class="fl">0.65</span> <span class="op">|</span>  <span class="fl">0.41</span> <span class="op">|</span>      <span class="fl">1.06</span> <span class="op">|</span>  <span class="fl">18887904.0</span> <span class="op">|</span>  <span class="fl">38099648.0</span> <span class="op">|</span>         <span class="fl">3612.0</span> <span class="op">|</span>     <span class="fl">8555708.0</span> <span class="op">|</span>    <span class="fl">25873876.0</span> <span class="op">|</span>        <span class="fl">110860.0</span> <span class="op">|</span>        <span class="fl">499712.0</span> <span class="op">|</span>              <span class="fl">0.0</span> <span class="op">|</span>             <span class="fl">3699.99</span> <span class="op">|</span>            <span class="fl">2600.85</span> <span class="op">|</span>            <span class="fl">1099.14</span> <span class="op">|</span>         <span class="fl">4141.0</span> <span class="op">|</span>          <span class="fl">749.0</span> <span class="op">|</span>      <span class="fl">0.17</span> <span class="op">|</span>   <span class="fl">1610.0</span> <span class="op">|</span>          <span class="fl">1.0</span></span>
+<span id="cb12-8"><a href=""></a><span class="fl">1756711949.0</span> <span class="op">|</span>     <span class="fl">718.0</span> <span class="op">|</span>  <span class="fl">0.56</span> <span class="op">|</span>  <span class="fl">0.31</span> <span class="op">|</span>      <span class="fl">0.87</span> <span class="op">|</span>  <span class="fl">18893768.0</span> <span class="op">|</span>  <span class="fl">38093784.0</span> <span class="op">|</span>         <span class="fl">3612.0</span> <span class="op">|</span>     <span class="fl">8555708.0</span> <span class="op">|</span>    <span class="fl">25873732.0</span> <span class="op">|</span>        <span class="fl">110860.0</span> <span class="op">|</span>          <span class="fl">8192.0</span> <span class="op">|</span>              <span class="fl">0.0</span> <span class="op">|</span>             <span class="fl">3699.99</span> <span class="op">|</span>            <span class="fl">2600.85</span> <span class="op">|</span>            <span class="fl">1099.14</span> <span class="op">|</span>         <span class="fl">5230.0</span> <span class="op">|</span>         <span class="fl">3534.0</span> <span class="op">|</span>      <span class="fl">0.13</span> <span class="op">|</span>   <span class="fl">1610.0</span> <span class="op">|</span>          <span class="fl">1.0</span></span>
+<span id="cb12-9"><a href=""></a><span class="fl">1756711950.0</span> <span class="op">|</span>     <span class="fl">717.0</span> <span class="op">|</span>   <span class="fl">0.6</span> <span class="op">|</span>  <span class="fl">0.43</span> <span class="op">|</span>    <span class="fl">1.0301</span> <span class="op">|</span>  <span class="fl">18872532.0</span> <span class="op">|</span>  <span class="fl">38112844.0</span> <span class="op">|</span>         <span class="fl">3612.0</span> <span class="op">|</span>     <span class="fl">8557884.0</span> <span class="op">|</span>    <span class="fl">25876444.0</span> <span class="op">|</span>        <span class="fl">110860.0</span> <span class="op">|</span>          <span class="fl">8192.0</span> <span class="op">|</span>              <span class="fl">0.0</span> <span class="op">|</span>             <span class="fl">3699.99</span> <span class="op">|</span>            <span class="fl">2600.85</span> <span class="op">|</span>            <span class="fl">1099.14</span> <span class="op">|</span>        <span class="fl">11204.0</span> <span class="op">|</span>        <span class="fl">10237.0</span> <span class="op">|</span>      <span class="fl">0.14</span> <span class="op">|</span>   <span class="fl">1611.0</span> <span class="op">|</span>          <span class="fl">1.0</span></span>
+<span id="cb12-10"><a href=""></a><span class="fl">1756711951.0</span> <span class="op">|</span>     <span class="fl">717.0</span> <span class="op">|</span>  <span class="fl">0.67</span> <span class="op">|</span>  <span class="fl">0.45</span> <span class="op">|</span>    <span class="fl">1.1199</span> <span class="op">|</span>  <span class="fl">18877492.0</span> <span class="op">|</span>  <span class="fl">38110060.0</span> <span class="op">|</span>         <span class="fl">3612.0</span> <span class="op">|</span>     <span class="fl">8555708.0</span> <span class="op">|</span>    <span class="fl">25874972.0</span> <span class="op">|</span>        <span class="fl">110860.0</span> <span class="op">|</span>             <span class="fl">0.0</span> <span class="op">|</span>              <span class="fl">0.0</span> <span class="op">|</span>             <span class="fl">3699.99</span> <span class="op">|</span>            <span class="fl">2600.85</span> <span class="op">|</span>            <span class="fl">1099.14</span> <span class="op">|</span>         <span class="fl">4605.0</span> <span class="op">|</span>         <span class="fl">2372.0</span> <span class="op">|</span>      <span class="fl">0.12</span> <span class="op">|</span>   <span class="fl">1611.0</span> <span class="op">|</span>          <span class="fl">1.0</span></span>
+<span id="cb12-11"><a href=""></a><span class="fl">1756711952.0</span> <span class="op">|</span>     <span class="fl">722.0</span> <span class="op">|</span>  <span class="fl">0.61</span> <span class="op">|</span>  <span class="fl">0.41</span> <span class="op">|</span>    <span class="fl">1.0201</span> <span class="op">|</span>  <span class="fl">18866980.0</span> <span class="op">|</span>  <span class="fl">38120572.0</span> <span class="op">|</span>         <span class="fl">3612.0</span> <span class="op">|</span>     <span class="fl">8555708.0</span> <span class="op">|</span>    <span class="fl">25876556.0</span> <span class="op">|</span>        <span class="fl">110860.0</span> <span class="op">|</span>         <span class="fl">20480.0</span> <span class="op">|</span>        <span class="fl">3383296.0</span> <span class="op">|</span>             <span class="fl">3699.99</span> <span class="op">|</span>            <span class="fl">2600.85</span> <span class="op">|</span>            <span class="fl">1099.14</span> <span class="op">|</span>         <span class="fl">4569.0</span> <span class="op">|</span>         <span class="fl">3845.0</span> <span class="op">|</span>      <span class="fl">0.17</span> <span class="op">|</span>   <span class="fl">1611.0</span> <span class="op">|</span>          <span class="fl">1.0</span></span>
+<span id="cb12-12"><a href=""></a><span class="fl">1756711953.0</span> <span class="op">|</span>     <span class="fl">718.0</span> <span class="op">|</span>  <span class="fl">1.07</span> <span class="op">|</span>  <span class="fl">0.49</span> <span class="op">|</span>      <span class="fl">1.56</span> <span class="op">|</span>  <span class="fl">18883100.0</span> <span class="op">|</span>  <span class="fl">38101332.0</span> <span class="op">|</span>         <span class="fl">3612.0</span> <span class="op">|</span>     <span class="fl">8558828.0</span> <span class="op">|</span>    <span class="fl">25880244.0</span> <span class="op">|</span>        <span class="fl">110860.0</span> <span class="op">|</span>        <span class="fl">385024.0</span> <span class="op">|</span>         <span class="fl">606208.0</span> <span class="op">|</span>             <span class="fl">3699.99</span> <span class="op">|</span>            <span class="fl">2600.85</span> <span class="op">|</span>            <span class="fl">1099.14</span> <span class="op">|</span>        <span class="fl">27694.0</span> <span class="op">|</span>        <span class="fl">14736.0</span> <span class="op">|</span>      <span class="fl">0.32</span> <span class="op">|</span>   <span class="fl">1625.0</span> <span class="op">|</span>          <span class="fl">1.0</span></span>
+<span id="cb12-13"><a href=""></a><span class="fl">1756711954.0</span> <span class="op">|</span>     <span class="fl">718.0</span> <span class="op">|</span>  <span class="fl">1.06</span> <span class="op">|</span>  <span class="fl">0.44</span> <span class="op">|</span>    <span class="fl">1.5001</span> <span class="op">|</span>  <span class="fl">18872284.0</span> <span class="op">|</span>  <span class="fl">38110084.0</span> <span class="op">|</span>         <span class="fl">3612.0</span> <span class="op">|</span>     <span class="fl">8560892.0</span> <span class="op">|</span>    <span class="fl">25891068.0</span> <span class="op">|</span>        <span class="fl">110860.0</span> <span class="op">|</span>         <span class="fl">90112.0</span> <span class="op">|</span>              <span class="fl">0.0</span> <span class="op">|</span>             <span class="fl">3699.99</span> <span class="op">|</span>            <span class="fl">2600.85</span> <span class="op">|</span>            <span class="fl">1099.14</span> <span class="op">|</span>        <span class="fl">17429.0</span> <span class="op">|</span>        <span class="fl">16417.0</span> <span class="op">|</span>      <span class="fl">0.17</span> <span class="op">|</span>   <span class="fl">1638.0</span> <span class="op">|</span>          <span class="fl">1.0</span></span>
+<span id="cb12-14"><a href=""></a><span class="fl">1756711955.0</span> <span class="op">|</span>     <span class="fl">717.0</span> <span class="op">|</span>  <span class="fl">1.93</span> <span class="op">|</span>  <span class="fl">0.46</span> <span class="op">|</span>    <span class="fl">2.3897</span> <span class="op">|</span>  <span class="fl">18870824.0</span> <span class="op">|</span>  <span class="fl">38111536.0</span> <span class="op">|</span>         <span class="fl">3612.0</span> <span class="op">|</span>     <span class="fl">8560900.0</span> <span class="op">|</span>    <span class="fl">25878008.0</span> <span class="op">|</span>        <span class="fl">110860.0</span> <span class="op">|</span>        <span class="fl">692224.0</span> <span class="op">|</span>         <span class="fl">262144.0</span> <span class="op">|</span>             <span class="fl">3699.99</span> <span class="op">|</span>            <span class="fl">2600.85</span> <span class="op">|</span>            <span class="fl">1099.14</span> <span class="op">|</span>        <span class="fl">97172.0</span> <span class="op">|</span>       <span class="fl">114005.0</span> <span class="op">|</span>      <span class="fl">0.23</span> <span class="op">|</span>   <span class="fl">1656.0</span> <span class="op">|</span>          <span class="fl">1.0</span></span>
+<span id="cb12-15"><a href=""></a>...</span></code></pre></div>
+</section>
+<section id="resourcetracker.process_metrics" class="slide level2">
+<h2>&gt;&gt;&gt; ResourceTracker.process_metrics</h2>
+<div class="sourceCode" id="cb13" style="margin-top: 60px !important;" data-code-line-numbers="1-1|3-3"><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb13-1"><a href=""></a><span class="op">&gt;&gt;&gt;</span> <span class="bu">print</span>(tracker.process_metrics)</span>
+<span id="cb13-2"><a href=""></a>TinyDataFrame <span class="cf">with</span> <span class="dv">221</span> rows <span class="kw">and</span> <span class="dv">12</span> columns:</span>
+<span id="cb13-3"><a href=""></a>timestamp    <span class="op">|</span> pid       <span class="op">|</span> children <span class="op">|</span> utime <span class="op">|</span> stime <span class="op">|</span> cpu_usage <span class="op">|</span> memory  <span class="op">|</span> read_bytes <span class="op">|</span> write_bytes <span class="op">|</span> gpu_usage <span class="op">|</span> gpu_vram <span class="op">|</span> gpu_utilized</span>
+<span id="cb13-4"><a href=""></a><span class="op">-------------+-----------+----------+-------+-------+-----------+---------+------------+-------------+-----------+----------+-------------</span></span>
+<span id="cb13-5"><a href=""></a><span class="fl">1756711946.0</span> <span class="op">|</span> <span class="fl">1542538.0</span> <span class="op">|</span>      <span class="fl">4.0</span> <span class="op">|</span>  <span class="fl">0.07</span> <span class="op">|</span>  <span class="fl">0.08</span> <span class="op">|</span>      <span class="fl">0.15</span> <span class="op">|</span> <span class="fl">84612.0</span> <span class="op">|</span>        <span class="fl">0.0</span> <span class="op">|</span>         <span class="fl">0.0</span> <span class="op">|</span>       <span class="fl">0.0</span> <span class="op">|</span>      <span class="fl">0.0</span> <span class="op">|</span>          <span class="fl">0.0</span></span>
+<span id="cb13-6"><a href=""></a><span class="fl">1756711947.0</span> <span class="op">|</span> <span class="fl">1542538.0</span> <span class="op">|</span>      <span class="fl">3.0</span> <span class="op">|</span>  <span class="fl">0.09</span> <span class="op">|</span>  <span class="fl">0.17</span> <span class="op">|</span>      <span class="fl">0.26</span> <span class="op">|</span> <span class="fl">74270.0</span> <span class="op">|</span>        <span class="fl">0.0</span> <span class="op">|</span>         <span class="fl">0.0</span> <span class="op">|</span>       <span class="fl">0.0</span> <span class="op">|</span>      <span class="fl">0.0</span> <span class="op">|</span>          <span class="fl">0.0</span></span>
+<span id="cb13-7"><a href=""></a><span class="fl">1756711948.0</span> <span class="op">|</span> <span class="fl">1542538.0</span> <span class="op">|</span>      <span class="fl">4.0</span> <span class="op">|</span>  <span class="fl">0.19</span> <span class="op">|</span>  <span class="fl">0.06</span> <span class="op">|</span>      <span class="fl">0.25</span> <span class="op">|</span> <span class="fl">99062.0</span> <span class="op">|</span>   <span class="fl">945664.0</span> <span class="op">|</span>         <span class="fl">0.0</span> <span class="op">|</span>       <span class="fl">0.0</span> <span class="op">|</span>      <span class="fl">0.0</span> <span class="op">|</span>          <span class="fl">0.0</span></span>
+<span id="cb13-8"><a href=""></a><span class="fl">1756711949.0</span> <span class="op">|</span> <span class="fl">1542538.0</span> <span class="op">|</span>      <span class="fl">3.0</span> <span class="op">|</span>  <span class="fl">0.07</span> <span class="op">|</span>   <span class="fl">0.1</span> <span class="op">|</span>      <span class="fl">0.17</span> <span class="op">|</span> <span class="fl">87491.0</span> <span class="op">|</span>        <span class="fl">0.0</span> <span class="op">|</span>         <span class="fl">0.0</span> <span class="op">|</span>       <span class="fl">0.0</span> <span class="op">|</span>      <span class="fl">0.0</span> <span class="op">|</span>          <span class="fl">0.0</span></span>
+<span id="cb13-9"><a href=""></a><span class="fl">1756711950.0</span> <span class="op">|</span> <span class="fl">1542538.0</span> <span class="op">|</span>      <span class="fl">4.0</span> <span class="op">|</span>  <span class="fl">0.09</span> <span class="op">|</span>  <span class="fl">0.13</span> <span class="op">|</span>      <span class="fl">0.22</span> <span class="op">|</span> <span class="fl">87462.0</span> <span class="op">|</span>        <span class="fl">0.0</span> <span class="op">|</span>         <span class="fl">0.0</span> <span class="op">|</span>       <span class="fl">0.0</span> <span class="op">|</span>      <span class="fl">0.0</span> <span class="op">|</span>          <span class="fl">0.0</span></span>
+<span id="cb13-10"><a href=""></a><span class="fl">1756711951.0</span> <span class="op">|</span> <span class="fl">1542538.0</span> <span class="op">|</span>      <span class="fl">4.0</span> <span class="op">|</span>  <span class="fl">0.02</span> <span class="op">|</span>  <span class="fl">0.06</span> <span class="op">|</span>      <span class="fl">0.08</span> <span class="op">|</span> <span class="fl">99156.0</span> <span class="op">|</span>        <span class="fl">0.0</span> <span class="op">|</span>         <span class="fl">0.0</span> <span class="op">|</span>       <span class="fl">0.0</span> <span class="op">|</span>      <span class="fl">0.0</span> <span class="op">|</span>          <span class="fl">0.0</span></span>
+<span id="cb13-11"><a href=""></a><span class="fl">1756711952.0</span> <span class="op">|</span> <span class="fl">1542538.0</span> <span class="op">|</span>      <span class="fl">4.0</span> <span class="op">|</span>  <span class="fl">0.06</span> <span class="op">|</span>  <span class="fl">0.13</span> <span class="op">|</span>      <span class="fl">0.19</span> <span class="op">|</span> <span class="fl">99163.0</span> <span class="op">|</span>        <span class="fl">0.0</span> <span class="op">|</span>         <span class="fl">0.0</span> <span class="op">|</span>       <span class="fl">0.0</span> <span class="op">|</span>      <span class="fl">0.0</span> <span class="op">|</span>          <span class="fl">0.0</span></span>
+<span id="cb13-12"><a href=""></a><span class="fl">1756711953.0</span> <span class="op">|</span> <span class="fl">1542538.0</span> <span class="op">|</span>      <span class="fl">4.0</span> <span class="op">|</span>  <span class="fl">0.04</span> <span class="op">|</span>   <span class="fl">0.1</span> <span class="op">|</span>      <span class="fl">0.14</span> <span class="op">|</span> <span class="fl">99198.0</span> <span class="op">|</span>        <span class="fl">0.0</span> <span class="op">|</span>         <span class="fl">0.0</span> <span class="op">|</span>       <span class="fl">0.0</span> <span class="op">|</span>      <span class="fl">0.0</span> <span class="op">|</span>          <span class="fl">0.0</span></span>
+<span id="cb13-13"><a href=""></a><span class="fl">1756711954.0</span> <span class="op">|</span> <span class="fl">1542538.0</span> <span class="op">|</span>      <span class="fl">4.0</span> <span class="op">|</span>  <span class="fl">0.04</span> <span class="op">|</span>  <span class="fl">0.09</span> <span class="op">|</span>      <span class="fl">0.13</span> <span class="op">|</span> <span class="fl">98916.0</span> <span class="op">|</span>        <span class="fl">0.0</span> <span class="op">|</span>         <span class="fl">0.0</span> <span class="op">|</span>       <span class="fl">0.0</span> <span class="op">|</span>      <span class="fl">0.0</span> <span class="op">|</span>          <span class="fl">0.0</span></span>
+<span id="cb13-14"><a href=""></a><span class="fl">1756711955.0</span> <span class="op">|</span> <span class="fl">1542538.0</span> <span class="op">|</span>      <span class="fl">4.0</span> <span class="op">|</span>  <span class="fl">0.04</span> <span class="op">|</span>  <span class="fl">0.12</span> <span class="op">|</span>      <span class="fl">0.16</span> <span class="op">|</span> <span class="fl">99333.0</span> <span class="op">|</span>        <span class="fl">0.0</span> <span class="op">|</span>         <span class="fl">0.0</span> <span class="op">|</span>       <span class="fl">0.0</span> <span class="op">|</span>      <span class="fl">0.0</span> <span class="op">|</span>          <span class="fl">0.0</span></span>
+<span id="cb13-15"><a href=""></a>...</span></code></pre></div>
+<aside class="notes">
+<p>A bit less number of metrics, e.g.&nbsp;network traffic and storage is not measurable. BUT we do have GPU usage tracker at the process level! Up-to 4 GPUs…</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="resourcetracker.get_combined_metrics" class="slide level2">
+<h2>&gt;&gt;&gt; ResourceTracker.get_combined_metrics</h2>
+<div class="sourceCode" id="cb14" style="margin-top: 30px !important; font-size: 28px; height: 590px;" data-code-line-numbers="1-2|4-4|5-24|24-35"><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb14-1"><a href=""></a><span class="op">&gt;&gt;&gt;</span> <span class="im">from</span> rich <span class="im">import</span> <span class="bu">print</span> <span class="im">as</span> pp</span>
+<span id="cb14-2"><a href=""></a><span class="op">&gt;&gt;&gt;</span> pp(tracker.get_combined_metrics(human_names<span class="op">=</span><span class="va">True</span>)[<span class="dv">0</span>])</span>
+<span id="cb14-3"><a href=""></a>{</span>
+<span id="cb14-4"><a href=""></a>    <span class="st">'Timestamp'</span>: <span class="fl">1756711946.0</span>,</span>
+<span id="cb14-5"><a href=""></a>    <span class="st">'System processes'</span>: <span class="fl">720.0</span>,</span>
+<span id="cb14-6"><a href=""></a>    <span class="st">'System CPU time (user)'</span>: <span class="fl">0.62</span>,</span>
+<span id="cb14-7"><a href=""></a>    <span class="st">'System CPU time (system)'</span>: <span class="fl">0.41</span>,</span>
+<span id="cb14-8"><a href=""></a>    <span class="st">'System CPU usage'</span>: <span class="fl">1.0303</span>,</span>
+<span id="cb14-9"><a href=""></a>    <span class="st">'System free memory'</span>: <span class="fl">18888932.0</span>,</span>
+<span id="cb14-10"><a href=""></a>    <span class="st">'System used memory'</span>: <span class="fl">38098620.0</span>,</span>
+<span id="cb14-11"><a href=""></a>    <span class="st">'System memory buffers'</span>: <span class="fl">3612.0</span>,</span>
+<span id="cb14-12"><a href=""></a>    <span class="st">'System memory page/file cached'</span>: <span class="fl">8555708.0</span>,</span>
+<span id="cb14-13"><a href=""></a>    <span class="st">'System active memory'</span>: <span class="fl">25858216.0</span>,</span>
+<span id="cb14-14"><a href=""></a>    <span class="st">'System inactive memory'</span>: <span class="fl">110860.0</span>,</span>
+<span id="cb14-15"><a href=""></a>    <span class="st">'System disk read'</span>: <span class="fl">872448.0</span>,</span>
+<span id="cb14-16"><a href=""></a>    <span class="st">'System disk write'</span>: <span class="fl">274432.0</span>,</span>
+<span id="cb14-17"><a href=""></a>    <span class="st">'System disk space total'</span>: <span class="fl">3699.99</span>,</span>
+<span id="cb14-18"><a href=""></a>    <span class="st">'System disk space used'</span>: <span class="fl">2600.86</span>,</span>
+<span id="cb14-19"><a href=""></a>    <span class="st">'System disk space free'</span>: <span class="fl">1099.13</span>,</span>
+<span id="cb14-20"><a href=""></a>    <span class="st">'System inbound network traffic'</span>: <span class="fl">4627.0</span>,</span>
+<span id="cb14-21"><a href=""></a>    <span class="st">'System outbound network traffic'</span>: <span class="fl">3251.0</span>,</span>
+<span id="cb14-22"><a href=""></a>    <span class="st">'System GPU usage'</span>: <span class="fl">0.19</span>,</span>
+<span id="cb14-23"><a href=""></a>    <span class="st">'System VRAM used'</span>: <span class="fl">1610.0</span>,</span>
+<span id="cb14-24"><a href=""></a>    <span class="st">'System GPUs in use'</span>: <span class="fl">1.0</span>,</span>
+<span id="cb14-25"><a href=""></a>    <span class="st">'Process PID'</span>: <span class="fl">1542538.0</span>,</span>
+<span id="cb14-26"><a href=""></a>    <span class="st">'Process children'</span>: <span class="fl">4.0</span>,</span>
+<span id="cb14-27"><a href=""></a>    <span class="st">'Process CPU time (user)'</span>: <span class="fl">0.07</span>,</span>
+<span id="cb14-28"><a href=""></a>    <span class="st">'Process CPU time (system)'</span>: <span class="fl">0.08</span>,</span>
+<span id="cb14-29"><a href=""></a>    <span class="st">'Process CPU usage'</span>: <span class="fl">0.15</span>,</span>
+<span id="cb14-30"><a href=""></a>    <span class="st">'Process memory usage'</span>: <span class="fl">84612.0</span>,</span>
+<span id="cb14-31"><a href=""></a>    <span class="st">'Process disk read'</span>: <span class="fl">0.0</span>,</span>
+<span id="cb14-32"><a href=""></a>    <span class="st">'Process disk write'</span>: <span class="fl">0.0</span>,</span>
+<span id="cb14-33"><a href=""></a>    <span class="st">'Process GPU usage'</span>: <span class="fl">0.0</span>,</span>
+<span id="cb14-34"><a href=""></a>    <span class="st">'Process VRAM used'</span>: <span class="fl">0.0</span>,</span>
+<span id="cb14-35"><a href=""></a>    <span class="st">'Process GPUs in use'</span>: <span class="fl">0.0</span></span>
+<span id="cb14-36"><a href=""></a>}</span></code></pre></div>
+</section>
+<section id="resourcetracker.stats" class="slide level2">
+<h2>&gt;&gt;&gt; ResourceTracker.stats</h2>
+<div class="columns" style="display: block; margin-top: 40px;">
+<div class="column vcenter centered" style="width:35%;">
+<div class="sourceCode" id="cb15" style="margin-top: 30px !important; font-size: 28px; height: 595px; margin-top: -10px !important;" data-code-line-numbers="1-1|3-24"><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb15-1"><a href=""></a><span class="op">&gt;&gt;&gt;</span> pp(tracker.stats())</span>
+<span id="cb15-2"><a href=""></a>defaultdict(<span class="op">&lt;</span><span class="kw">class</span> <span class="st">'dict'</span><span class="op">&gt;</span>, {</span>
+<span id="cb15-3"><a href=""></a>    <span class="st">'process_cpu_usage'</span>:</span>
+<span id="cb15-4"><a href=""></a>      {<span class="st">'mean'</span>: <span class="fl">0.14</span>,</span>
+<span id="cb15-5"><a href=""></a>       <span class="st">'max'</span>: <span class="fl">0.26</span>},</span>
+<span id="cb15-6"><a href=""></a>    <span class="st">'process_memory'</span>:</span>
+<span id="cb15-7"><a href=""></a>      {<span class="st">'mean'</span>: <span class="fl">94373.43</span>,</span>
+<span id="cb15-8"><a href=""></a>       <span class="st">'max'</span>: <span class="fl">109308.0</span>},</span>
+<span id="cb15-9"><a href=""></a>    <span class="st">'process_gpu_usage'</span>:</span>
+<span id="cb15-10"><a href=""></a>      {<span class="st">'mean'</span>: <span class="fl">0.0</span>,</span>
+<span id="cb15-11"><a href=""></a>       <span class="st">'max'</span>: <span class="fl">0.0</span>},</span>
+<span id="cb15-12"><a href=""></a>    <span class="st">'process_gpu_vram'</span>:</span>
+<span id="cb15-13"><a href=""></a>      {<span class="st">'mean'</span>: <span class="fl">0.0</span>,</span>
+<span id="cb15-14"><a href=""></a>       <span class="st">'max'</span>: <span class="fl">0.0</span>},</span>
+<span id="cb15-15"><a href=""></a>    <span class="st">'process_gpu_utilized'</span>:</span>
+<span id="cb15-16"><a href=""></a>      {<span class="st">'mean'</span>: <span class="fl">0.0</span>,</span>
+<span id="cb15-17"><a href=""></a>       <span class="st">'max'</span>: <span class="fl">0.0</span>},</span>
+<span id="cb15-18"><a href=""></a>    <span class="st">'system_disk_space_used_gb'</span>:</span>
+<span id="cb15-19"><a href=""></a>      {<span class="st">'max'</span>: <span class="fl">2600.87</span>},</span>
+<span id="cb15-20"><a href=""></a>    <span class="st">'system_net_recv_bytes'</span>:</span>
+<span id="cb15-21"><a href=""></a>      {<span class="st">'sum'</span>: <span class="fl">111299615.0</span>},</span>
+<span id="cb15-22"><a href=""></a>    <span class="st">'system_net_sent_bytes'</span>:</span>
+<span id="cb15-23"><a href=""></a>      {<span class="st">'sum'</span>: <span class="fl">103073415.0</span>},</span>
+<span id="cb15-24"><a href=""></a>    <span class="st">'timestamp'</span>: {<span class="st">'duration'</span>: <span class="fl">221.0</span>}</span>
+<span id="cb15-25"><a href=""></a>})</span></code></pre></div>
+</div><div class="column vcenter centered fragment" style="width:65%;">
+<p><img src="images/resource-tracker-stats-method.png" width="100%%" style="max-width: 100%;"></p>
+</div></div>
+</section>
+<section id="resourcetracker.recommendations" class="slide level2">
+<h2>&gt;&gt;&gt; ResourceTracker.recommendations</h2>
+<div class="sourceCode" id="cb16" style="margin-top: 30px !important; margin-bottom: 30px !important; font-size: 32px" data-code-line-numbers="1-1|2-2"><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb16-1"><a href=""></a><span class="op">&gt;&gt;&gt;</span> tracker.recommend_resources()</span>
+<span id="cb16-2"><a href=""></a>{<span class="st">'cpu'</span>: <span class="dv">1</span>, <span class="st">'memory'</span>: <span class="dv">256</span>, <span class="st">'gpu'</span>: <span class="dv">0</span>, <span class="st">'vram'</span>: <span class="dv">0</span>}</span></code></pre></div>
+<div class="fragment">
+<p>Super simple algorithm:</p>
+<ul>
+<li><code>cpu</code>: average CPU usage of the process(es)</li>
+<li><code>memory</code>: maximum memory usage of the process(es) with a 20% buffer</li>
+<li><code>gpu</code>: maximum number of GPUs used by the process(es)</li>
+<li><code>vram</code>: maximum VRAM usage of the process(es) with a 20% buffer</li>
+</ul>
+</div>
+</section>
+<section id="resourcetracker.recommendations-1" class="slide level2">
+<h2>&gt;&gt;&gt; ResourceTracker.recommendations</h2>
+<div class="sourceCode" id="cb17" style="margin-top: 30px !important; margin-bottom: 30px !important; font-size: 32px" data-code-line-numbers="1-1|12-13"><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb17-1"><a href=""></a><span class="op">&gt;&gt;&gt;</span> <span class="bu">print</span>(ResourceTracker.recommend_resources.__doc__)</span>
+<span id="cb17-2"><a href=""></a>Recommend optimal resource allocation based on the measured resource tracker data.</span>
+<span id="cb17-3"><a href=""></a></span>
+<span id="cb17-4"><a href=""></a>The recommended resources are based on the following rules:</span>
+<span id="cb17-5"><a href=""></a></span>
+<span id="cb17-6"><a href=""></a><span class="op">-</span> target average CPU usage of the process(es)</span>
+<span id="cb17-7"><a href=""></a><span class="op">-</span> target maximum memory usage of the process(es) <span class="cf">with</span> a <span class="dv">20</span><span class="op">%</span> <span class="bu">buffer</span></span>
+<span id="cb17-8"><a href=""></a><span class="op">-</span> target maximum number of GPUs used by the process(es)</span>
+<span id="cb17-9"><a href=""></a><span class="op">-</span> target maximum VRAM usage of the process(es) <span class="cf">with</span> a <span class="dv">20</span><span class="op">%</span> <span class="bu">buffer</span></span>
+<span id="cb17-10"><a href=""></a></span>
+<span id="cb17-11"><a href=""></a>Args:</span>
+<span id="cb17-12"><a href=""></a>    historical_stats: Optional <span class="bu">list</span> of historical statistics (<span class="im">as</span> returned by [resource_tracker.ResourceTracker.stats][])</span>
+<span id="cb17-13"><a href=""></a>                      to consider when making recommendations. These will be combined <span class="cf">with</span> the current stats.</span>
+<span id="cb17-14"><a href=""></a></span>
+<span id="cb17-15"><a href=""></a>Returns:</span>
+<span id="cb17-16"><a href=""></a>    A dictionary containing the recommended resources (cpu, memory, gpu, vram).</span></code></pre></div>
+</section>
+<section id="resourcetracker.recommendations-2" class="slide level2">
+<h2>&gt;&gt;&gt; ResourceTracker.recommendations</h2>
+<div class="sourceCode" id="cb18" style="margin-top: 10px !important; margin-bottom: -30px !important; font-size: 32px; height: 550px;" data-code-line-numbers="1-1|10,24,28,30"><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb18-1"><a href=""></a><span class="op">&gt;&gt;&gt;</span> pp(tracker.recommend_server())</span>
+<span id="cb18-2"><a href=""></a>{</span>
+<span id="cb18-3"><a href=""></a>    <span class="st">'vendor_id'</span>: <span class="st">'aws'</span>,</span>
+<span id="cb18-4"><a href=""></a>    <span class="st">'server_id'</span>: <span class="st">'t4g.nano'</span>,</span>
+<span id="cb18-5"><a href=""></a>    <span class="st">'name'</span>: <span class="st">'t4g.nano'</span>,</span>
+<span id="cb18-6"><a href=""></a>    <span class="st">'api_reference'</span>: <span class="st">'t4g.nano'</span>,</span>
+<span id="cb18-7"><a href=""></a>    <span class="st">'display_name'</span>: <span class="st">'t4g.nano'</span>,</span>
+<span id="cb18-8"><a href=""></a>    <span class="st">'description'</span>: <span class="st">'Burstable performance [AWS Graviton processors] Gen4 nano'</span>,</span>
+<span id="cb18-9"><a href=""></a>    <span class="st">'family'</span>: <span class="st">'t4g'</span>,</span>
+<span id="cb18-10"><a href=""></a>    <span class="st">'vcpus'</span>: <span class="dv">2</span>,</span>
+<span id="cb18-11"><a href=""></a>    <span class="st">'hypervisor'</span>: <span class="st">'nitro'</span>,</span>
+<span id="cb18-12"><a href=""></a>    <span class="st">'cpu_allocation'</span>: <span class="st">'Burstable'</span>,</span>
+<span id="cb18-13"><a href=""></a>    <span class="st">'cpu_cores'</span>: <span class="dv">2</span>,</span>
+<span id="cb18-14"><a href=""></a>    <span class="st">'cpu_speed'</span>: <span class="fl">2.5</span>,</span>
+<span id="cb18-15"><a href=""></a>    <span class="st">'cpu_architecture'</span>: <span class="st">'arm64'</span>,</span>
+<span id="cb18-16"><a href=""></a>    <span class="st">'cpu_manufacturer'</span>: <span class="st">'AWS'</span>,</span>
+<span id="cb18-17"><a href=""></a>    <span class="st">'cpu_family'</span>: <span class="st">'ARMv8'</span>,</span>
+<span id="cb18-18"><a href=""></a>    <span class="st">'cpu_model'</span>: <span class="st">'Neoverse-N1'</span>,</span>
+<span id="cb18-19"><a href=""></a>    <span class="st">'cpu_l1_cache'</span>: <span class="dv">262144</span>,</span>
+<span id="cb18-20"><a href=""></a>    <span class="st">'cpu_l2_cache'</span>: <span class="dv">2097152</span>,</span>
+<span id="cb18-21"><a href=""></a>    <span class="st">'cpu_l3_cache'</span>: <span class="dv">33554432</span>,</span>
+<span id="cb18-22"><a href=""></a>    <span class="st">'cpu_flags'</span>: [<span class="st">'fp'</span>, <span class="st">'asimd'</span>, <span class="st">'evtstrm'</span>, <span class="st">'aes'</span>, <span class="st">'pmull'</span>, <span class="st">'sha1'</span>, <span class="st">'sha2'</span>, <span class="st">'crc32'</span>, <span class="st">'atomics'</span>, <span class="st">'fphp'</span>, <span class="st">'asimdhp'</span>, <span class="st">'cpuid'</span>, <span class="st">'asimdrdm'</span>, <span class="st">'lrcpc'</span>, <span class="st">'dcpop'</span>, <span class="st">'asimddp'</span>, <span class="st">'ssbs'</span>],</span>
+<span id="cb18-23"><a href=""></a>    <span class="st">'cpus'</span>: [],</span>
+<span id="cb18-24"><a href=""></a>    <span class="st">'memory_amount'</span>: <span class="dv">512</span>,</span>
+<span id="cb18-25"><a href=""></a>    <span class="st">'memory_generation'</span>: <span class="va">None</span>,</span>
+<span id="cb18-26"><a href=""></a>    <span class="st">'memory_speed'</span>: <span class="va">None</span>,</span>
+<span id="cb18-27"><a href=""></a>    <span class="st">'memory_ecc'</span>: <span class="va">None</span>,</span>
+<span id="cb18-28"><a href=""></a>    <span class="st">'gpu_count'</span>: <span class="dv">0</span>,</span>
+<span id="cb18-29"><a href=""></a>    <span class="st">'gpu_memory_min'</span>: <span class="va">None</span>,</span>
+<span id="cb18-30"><a href=""></a>    <span class="st">'gpu_memory_total'</span>: <span class="va">None</span>,</span>
+<span id="cb18-31"><a href=""></a>    <span class="st">'gpu_manufacturer'</span>: <span class="va">None</span>,</span>
+<span id="cb18-32"><a href=""></a>    <span class="st">'gpu_family'</span>: <span class="va">None</span>,</span>
+<span id="cb18-33"><a href=""></a>    <span class="st">'gpu_model'</span>: <span class="va">None</span>,</span>
+<span id="cb18-34"><a href=""></a>    <span class="st">'gpus'</span>: [],</span>
+<span id="cb18-35"><a href=""></a>    <span class="st">'storage_size'</span>: <span class="dv">0</span>,</span>
+<span id="cb18-36"><a href=""></a>    <span class="st">'storage_type'</span>: <span class="va">None</span>,</span>
+<span id="cb18-37"><a href=""></a>    <span class="st">'storages'</span>: [],</span>
+<span id="cb18-38"><a href=""></a>    <span class="st">'network_speed'</span>: <span class="fl">0.032</span>,</span>
+<span id="cb18-39"><a href=""></a>    <span class="st">'inbound_traffic'</span>: <span class="fl">0.0</span>,</span>
+<span id="cb18-40"><a href=""></a>    <span class="st">'outbound_traffic'</span>: <span class="fl">0.0</span>,</span>
+<span id="cb18-41"><a href=""></a>    <span class="st">'ipv4'</span>: <span class="dv">0</span>,</span>
+<span id="cb18-42"><a href=""></a>    <span class="st">'status'</span>: <span class="st">'active'</span>,</span>
+<span id="cb18-43"><a href=""></a>    <span class="st">'observed_at'</span>: <span class="st">'2025-09-01T18:34:34.309153'</span>,</span>
+<span id="cb18-44"><a href=""></a>    <span class="st">'score'</span>: <span class="fl">3000.57</span>,</span>
+<span id="cb18-45"><a href=""></a>    <span class="st">'price'</span>: <span class="fl">0.0003</span>,</span>
+<span id="cb18-46"><a href=""></a>    <span class="st">'min_price'</span>: <span class="fl">0.0003</span>,</span>
+<span id="cb18-47"><a href=""></a>    <span class="st">'min_price_spot'</span>: <span class="fl">0.0003</span>,</span>
+<span id="cb18-48"><a href=""></a>    <span class="st">'min_price_ondemand'</span>: <span class="fl">0.0028</span>,</span>
+<span id="cb18-49"><a href=""></a>    <span class="st">'score_per_price'</span>: <span class="fl">10001900.0</span>,</span>
+<span id="cb18-50"><a href=""></a>    <span class="st">'selected_benchmark_score'</span>: <span class="va">None</span>,</span>
+<span id="cb18-51"><a href=""></a>    <span class="st">'selected_benchmark_score_per_price'</span>: <span class="va">None</span>,</span>
+<span id="cb18-52"><a href=""></a>    <span class="st">'vendor'</span>: {</span>
+<span id="cb18-53"><a href=""></a>        <span class="st">'vendor_id'</span>: <span class="st">'aws'</span>,</span>
+<span id="cb18-54"><a href=""></a>        <span class="st">'status'</span>: <span class="st">'active'</span>,</span>
+<span id="cb18-55"><a href=""></a>        <span class="st">'country_id'</span>: <span class="st">'US'</span>,</span>
+<span id="cb18-56"><a href=""></a>        <span class="st">'state'</span>: <span class="st">'Washington'</span>,</span>
+<span id="cb18-57"><a href=""></a>        <span class="st">'observed_at'</span>: <span class="st">'2025-09-01T18:59:50.235097'</span>,</span>
+<span id="cb18-58"><a href=""></a>        <span class="st">'name'</span>: <span class="st">'Amazon Web Services'</span>,</span>
+<span id="cb18-59"><a href=""></a>        <span class="st">'city'</span>: <span class="st">'Seattle'</span>,</span>
+<span id="cb18-60"><a href=""></a>        <span class="st">'address_line'</span>: <span class="st">'410 Terry Ave N'</span>,</span>
+<span id="cb18-61"><a href=""></a>        <span class="st">'logo'</span>: <span class="st">'https://sparecores.com/assets/images/vendors/aws.svg'</span>,</span>
+<span id="cb18-62"><a href=""></a>        <span class="st">'zip_code'</span>: <span class="st">'98109'</span>,</span>
+<span id="cb18-63"><a href=""></a>        <span class="st">'homepage'</span>: <span class="st">'https://aws.amazon.com'</span>,</span>
+<span id="cb18-64"><a href=""></a>        <span class="st">'founding_year'</span>: <span class="dv">2002</span>,</span>
+<span id="cb18-65"><a href=""></a>        <span class="st">'status_page'</span>: <span class="st">'https://health.aws.amazon.com/health/status'</span></span>
+<span id="cb18-66"><a href=""></a>    }</span>
+<span id="cb18-67"><a href=""></a>}</span></code></pre></div>
+<div class="fragment">
+<p>Super simple algorithm: cheapest server w/ rec resources.</p>
+</div>
+</section>
+<section id="printresourcetracker.__doc__" class="slide level2">
+<h2>&gt;&gt;&gt; print(ResourceTracker.__doc__)</h2>
+<p><a href="https://sparecores.github.io/resource-tracker/reference/resource_tracker/tracker/#resource_tracker.tracker.ResourceTracker" target="_blank"> <img src="images/resource-tracker-docs.png" width="80%" style="margin-top: -40px !important;"> </a></p>
+</section>
+<section id="todo.sh-listall-resource-tracker" class="slide level2" data-transition="slide-in convex-out">
+<h2>$ todo.sh listall +resource-tracker</h2>
+<ul>
+<li class="fragment">
+Stream resource usage data to a central location
+</li>
+<li class="fragment">
+Tweak resource recommender algorithm?
+</li>
+<li class="fragment">
+Configure the server recommender algorithm!
+</li>
+<ul>
+<li class="fragment">
+Limit to vendor, region, compliance framework etc.
+</li>
+<li class="fragment">
+Prioritize for cost efficiency instead of cheapest
+</li>
+<li class="fragment">
+Find related benchmarks
+</li>
+</ul>
+<li class="fragment">
+Change-detection for resource usage
+</li>
+<li class="fragment">
+…
+</li>
+<li class="fragment">
+Framework integrations!
+</li>
+</ul>
+</section></section>
+<section>
+<section id="from-metaflow-import-track_resources" class="title-slide slide level1" data-transition="convex-in slide-out">
+<h1>&gt;&gt;&gt; from metaflow import track_resources</h1>
+<div class="sourceCode" id="cb19" style="margin-top: 30px !important; margin-bottom: 30px !important; font-size: 32px; height: 595px;" data-code-line-numbers="1,9"><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb19-1"><a href=""></a><span class="im">from</span> metaflow <span class="im">import</span> Flow, FlowSpec, step, track_resources</span>
+<span id="cb19-2"><a href=""></a></span>
+<span id="cb19-3"><a href=""></a><span class="kw">class</span> ResourceTrackingFlow(FlowSpec):</span>
+<span id="cb19-4"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb19-5"><a href=""></a>    <span class="kw">def</span> start(<span class="va">self</span>):</span>
+<span id="cb19-6"><a href=""></a>        <span class="bu">print</span>(<span class="st">"Starting step"</span>)</span>
+<span id="cb19-7"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.my_sleeping_data)</span>
+<span id="cb19-8"><a href=""></a></span>
+<span id="cb19-9"><a href=""></a>    <span class="at">@track_resources</span></span>
+<span id="cb19-10"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb19-11"><a href=""></a>    <span class="kw">def</span> my_sleeping_data(<span class="va">self</span>):</span>
+<span id="cb19-12"><a href=""></a>        data <span class="op">=</span> <span class="bu">bytearray</span>(<span class="dv">500</span> <span class="op">*</span> <span class="dv">1024</span> <span class="op">*</span> <span class="dv">1024</span>)  <span class="co"># 500MB</span></span>
+<span id="cb19-13"><a href=""></a>        sleep(<span class="dv">3</span>)</span>
+<span id="cb19-14"><a href=""></a>        <span class="va">self</span>.<span class="bu">next</span>(<span class="va">self</span>.end)</span>
+<span id="cb19-15"><a href=""></a></span>
+<span id="cb19-16"><a href=""></a>    <span class="at">@step</span></span>
+<span id="cb19-17"><a href=""></a>    <span class="kw">def</span> end(<span class="va">self</span>):</span>
+<span id="cb19-18"><a href=""></a>        <span class="bu">print</span>(<span class="st">"Step finished"</span>)</span>
+<span id="cb19-19"><a href=""></a>        <span class="cf">pass</span></span>
+<span id="cb19-20"><a href=""></a></span>
+<span id="cb19-21"><a href=""></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">"__main__"</span>:</span>
+<span id="cb19-22"><a href=""></a>    ResourceTrackingFlow()</span></code></pre></div>
+</section>
+<section id="from-metaflow-import-track_resources-1" class="slide level2">
+<h2>&gt;&gt;&gt; from metaflow import track_resources</h2>
+<p><code>@track_resources</code> decorator starts <code>ResourceTracker</code> to:</p>
+<ul>
+<li class="fragment">
+Look up hardware specs and environment information
+</li>
+<li class="fragment">
+Discover the cloud provider, region and instance type
+</li>
+<li class="fragment">
+Track CPU, memory, disk I/O and storage, network, GPU/VRAM, and more
+</li>
+<li class="fragment">
+Generate summary statistics
+</li>
+<li class="fragment">
+Recommend optimal resource allocations for the step
+</li>
+<li class="fragment">
+Recommend the cheapest cloud server type for future runs
+</li>
+<li class="fragment">
+Present all this in an auto-generated card attached 😊
+</li>
+</ul>
+</section>
+<section id="from-metaflow-import-track_resources-2" class="slide level2">
+<h2>&gt;&gt;&gt; from metaflow import track_resources</h2>
+<div class="centered" style="margin-top: 40px;">
+<video autoplay="" loop="" muted="" style="width: 80%;" src="images/demo_time.webm"></video>
+<p style="margin-top: 0px;">
+Source: <a href="https://thecodinglove.com/when-we-demo-our-prototype-to-the-client"> When we demo our prototype to the client </a>
+</p>
+</div>
+<aside class="notes">
+<p>And now it’s time for a quick demo! I’ll use a Kubernetes sandbox to run a flow after live coding for a bit .. so please keep your fingers crossed!</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="from-metaflow-import-track_resources-3" class="slide level2">
+<h2>&gt;&gt;&gt; from metaflow import track_resources</h2>
+<div class="centered">
+<a href="https://docs.outerbounds.com/sandbox/" target="_blank"> <img src="images/outerbounds-sandbox.png" style="margin-top: 0px; width: 65%;"> </a>
+<p style="margin-top: 0px;">
+Source: <a href="https://docs.outerbounds.com/sandbox/" target="_blank">Outerbounds sandbox</a>
+</p>
+</div>
+<aside class="notes">
+<ol type="1">
+<li>start sandbox</li>
+<li>go to “scaling out to the cloud”</li>
+<li>pip install resource-tracker</li>
+<li>import + add track_resources</li>
+<li>split len(“X” * 1e9) to bytes = x*1e9 and then self.bytes_used so that we can see the memory usage</li>
+<li>add 2 x time.sleep(2) before/after to the memory hog step so that we have time to collect data</li>
+<li>run the flow .. check cards</li>
+<li>realize low memory usage despite asking for 10 gigs!</li>
+<li>by default, <code>@kubernetes</code> would reserve 4 GiB</li>
+</ol>
+<p><span class="citation" data-cites="track_resources">@track_resources</span> <span class="citation" data-cites="kubernetes">@kubernetes</span>(memory=10000) <span class="citation" data-cites="catch">@catch</span> <span class="citation" data-cites="step">@step</span> def memory_hog(self): time.sleep(2) print(“Requesting a lot of memory”) bytes = “x” * 1_000_000_000 self.bytes_used = len(bytes) print(“Success!”) time.sleep(2) self.next(self.join)</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="inspect.getsourcetrack_resources" class="slide level2">
+<h2>&gt;&gt;&gt; inspect.getsource(track_resources)</h2>
+<ul>
+<li>Historical data: fetch <code>resource_usage</code> artifacts from up-to 5 recent successful runs.</li>
+</ul>
+<div class="fragment">
+<ul>
+<li>Generate card by default by injecting a decorator:</li>
+</ul>
+<div class="sourceCode" id="cb20" style="margin-left: 45px !important; font-size: 32px;"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb20-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> step_init(<span class="va">self</span>):</span>
+<span id="cb20-2"><a href="" aria-hidden="true" tabindex="-1"></a>    decorators.append(CardDecorator(attributes<span class="op">=</span>{<span class="st">"type"</span>: <span class="st">"tracked_resources"</span>, ...}))</span></code></pre></div>
+</div>
+<div class="fragment">
+<ul>
+<li>Probably nicer ways to do this nowadays?</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>Generate card even if step failed:</li>
+</ul>
+<div class="sourceCode" id="cb21" style="margin-left: 45px !important; font-size: 32px;"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb21-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> task_finished(<span class="va">self</span>):</span>
+<span id="cb21-2"><a href="" aria-hidden="true" tabindex="-1"></a>    decorator.card_creator.create(...)</span></code></pre></div>
+</div>
+<div class="fragment">
+<ul>
+<li>Limitations: only runs at the end of a step, not real-time.</li>
+</ul>
+</div>
+</section></section>
+<section id="future" class="title-slide slide level1" data-transition="convex-in convex-out">
+<h1>&gt;&gt;&gt; import __future__</h1>
+<ul>
+<li class="fragment">
+Automated <code><span class="citation" data-cites="resources">@resources</span></code> tuning (POC is ready)
+</li>
+<li class="fragment">
+Central usage data storage and dashboard (design ready)
+</li>
+<li class="fragment">
+More granular resource mapping (e.g.&nbsp;VRAM) – Metaflow?
+</li>
+<li class="fragment">
+Step optimization assistant (e.g.&nbsp;split step)
+</li>
+<li class="fragment">
+Proactive resource management via SaaS add-on:
+</li>
+<ul>
+<li class="fragment">
+Email alerts on overprovisioning
+</li>
+<li class="fragment">
+Predict potential job failures due to insufficient resources
+</li>
+</ul>
+<li class="fragment">
+Effortless remote execution (CaaS)
+</li>
+</ul>
+</section>
+
+<section id="thanks" class="title-slide slide level1">
+<h1></h1>
+<div class="centered">
+<p>Thanks!</p>
+<p><a href="mailto:daroczig@sparecores.com">daroczig@sparecores.com</a></p>
+</div>
+<p class="author offlineMode" style="color:#eee;font-size:0.75em;text-align: center !important; margin-top:-30px; padding-top:0px;">
+Slides: <a href="https://sparecores.com/talks" target="_blank">sparecores.com/talks</a>
+</p>
+<!--toggle visibility of items in live mode-->
+<script>
+var url = document.location.href;
+if (url.match("/?live")) {
+  const elements = document.getElementsByClassName('offlineMode');
+  for (let i = 0; i < elements.length; i++) {
+    element = elements.item(i);
+    element.style.display = 'none';
+  }
+} else {
+  const elements = document.getElementsByClassName('onlineMode');
+  for (let i = 0; i < elements.length; i++) {
+    element = elements.item(i);
+    element.style.display = 'none';
+  }
+}
+</script>
+
+</section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<p><img src="images/sc-square-dark-300x300.jpg" class="slide-logo"></p>
+<div class="footer footer-default">
+
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="outerbounds-office-hours-2025_files/libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="outerbounds-office-hours-2025_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="outerbounds-office-hours-2025_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="outerbounds-office-hours-2025_files/libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="outerbounds-office-hours-2025_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="outerbounds-office-hours-2025_files/libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="outerbounds-office-hours-2025_files/libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="outerbounds-office-hours-2025_files/libs/revealjs/plugin/search/search.js"></script>
+  <script src="outerbounds-office-hours-2025_files/libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="outerbounds-office-hours-2025_files/libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': false,
+'previewLinksAuto': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":false},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: true,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: true,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'bottom-right',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'h.v',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'default',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'slide',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1150,
+
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    
+    <script>
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+      // slide changes (different for each slide format).
+      (function () {
+        // dispatch for htmlwidgets
+        function fireSlideEnter() {
+          const event = window.document.createEvent("Event");
+          event.initEvent("slideenter", true, true);
+          window.document.dispatchEvent(event);
+        }
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+          fireSlideEnter();
+
+          // dispatch for shiny
+          if (window.jQuery) {
+            if (previousSlide) {
+              window.jQuery(previousSlide).trigger("hidden");
+            }
+            if (currentSlide) {
+              window.jQuery(currentSlide).trigger("shown");
+            }
+          }
+        }
+
+        // hookup for slidy
+        if (window.w3c_slidy) {
+          window.w3c_slidy.add_observer(function (slide_num) {
+            // slide_num starts at position 1
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+          });
+        }
+
+      })();
+    </script>
+
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp('/' + window.location.host + '/');
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    
+
+</body></html>
