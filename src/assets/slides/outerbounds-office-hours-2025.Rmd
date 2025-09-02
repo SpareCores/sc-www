@@ -1159,7 +1159,7 @@ Thanks!
 <a href="mailto:daroczig@sparecores.com">daroczig@sparecores.com</a>
 :::
 
-<p class="author offlineMode" style="color:#eee;font-size:0.75em;text-align: center !important; margin-top:-30px; padding-top:0px;">
+<p class="author offlineMode" style="color:#eee;font-size:1em; text-align: center !important; position: absolute; bottom: -20px; left: 50%; transform: translate(-50%, 0);">
   Slides: <a href="https://sparecores.com/talks" target="_blank">sparecores.com/talks</a>
 </p>
 
