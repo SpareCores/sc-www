@@ -65,7 +65,7 @@ export class AboutNavigatorComponent implements AfterViewInit {
     },
 
     {
-      count: '~45M',
+      count: '~75M',
       text: 'historical records'
     },
   ];
