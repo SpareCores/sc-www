@@ -5,6 +5,7 @@ date: "2025-09-02"
 conference: "Outerbounds Office Hours"
 conference_talk_url: "https://lu.ma/office-hours-with-spare-cores"
 conference_talk_slides: "/assets/slides/outerbounds-office-hours-2025.html#/coverslide"
+conference_talk_video: "https://www.youtube.com/watch?v=F7UL1kR05gQ"
 location: "Virtual"
 format:
   revealjs:

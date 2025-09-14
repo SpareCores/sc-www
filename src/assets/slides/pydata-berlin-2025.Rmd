@@ -6,7 +6,7 @@ conference: "PyData Berlin 2025"
 conference_url: "https://pydata.org/berlin2025"
 conference_talk_url: "https://cfp.pydata.org/berlin2025/talk/ZLJRNN/"
 conference_talk_slides: "/assets/slides/pydata-berlin-2025.html#/coverslide"
-conference_talk_video: "https://player.vimeo.com/video/1114949530?h=001b9bb826#t=3m8s"
+conference_talk_video: "https://videos.pydata-berlin.org/talks/50/"
 location: "Berlin, Germany"
 format:
   revealjs:
