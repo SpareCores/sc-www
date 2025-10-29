@@ -6,6 +6,7 @@ conference: "useR! 2025"
 conference_url: "https://user2025.r-project.org/"
 conference_talk_url: "https://user2025.r-project.org/progrdam-2025/talk/UK7LSY/https://user2025.r-project.org/program/in-person/"
 conference_talk_slides: "/assets/slides/user-2025.html#/coverslide"
+conference_talk_video: "https://www.youtube.com/watch?v=8R8ulz4MVm0"
 location: "Durham, NC, USA"
 format:
   revealjs:
