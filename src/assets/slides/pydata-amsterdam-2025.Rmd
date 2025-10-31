@@ -6,6 +6,7 @@ conference: "PyData Amsterdam 2025"
 conference_url: "https://amsterdam.pydata.org/"
 conference_talk_url: "https://cfp.pydata.org/pydata-amsterdam-2025/talk/UK7LSY/"
 conference_talk_slides: "/assets/slides/pydata-amsterdam-2025.html#/coverslide"
+conference_talk_video: "https://www.youtube.com/watch?v=Au981BTAcAk"
 location: "Amsterdam, Netherlands"
 format:
   revealjs:
