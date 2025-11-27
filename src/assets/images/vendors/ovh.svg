@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" xmlns:bx="https://boxy-svg.com">
+  <defs>
+    <bx:export>
+      <bx:file format="svg" href="#object-0"/>
+    </bx:export>
+  </defs>
+  <path class="cls-1" d="M 74.139 19.132 C 82.027 33.349 80.55 50.922 70.399 63.622 L 48.959 63.622 L 55.559 51.952 L 46.829 51.952 L 57.119 33.822 L 65.899 33.822 L 74.139 19.152 L 74.139 19.132 Z M 31.799 63.622 L 9.939 63.622 C -0.409 50.967 -1.915 33.253 6.149 19.032 L 20.329 43.662 L 35.959 16.442 L 58.959 16.442 L 31.809 63.602 L 31.799 63.622 Z" style="fill: rgb(0, 14, 156); fill-rule: evenodd; stroke-width: 1;" id="object-0"/>
+</svg>
