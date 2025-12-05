@@ -153,10 +153,25 @@ cloud servers for your workloads with the least environmental impact.
 # >>> \_\_main\_\_.dir() {transition="convex-in slide-out"}
 
 - Control plane: 3 cloud servers (2 vCPUs, 4 GiB RAM)
+
+. . .
+
 - Always-on worker node: 1 dedicated server (256 GiB RAM)
+
+. . .
+
 - Dynamic worker nodes: 0-10 cloud servers (32 GiB RAM)
+
+. . .
+
 - Networking: private networks, vSwitch, Tailscale, exit node
+
+. . .
+
 - Ingress: CloudFlare tunnel
+
+. . .
+
 - GitOps: pulumi, flux
 
 ## >>> \_\_main\_\_.dir()
