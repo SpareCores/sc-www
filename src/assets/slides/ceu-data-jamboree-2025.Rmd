@@ -101,8 +101,7 @@ cloud servers for your workloads with the least environmental impact.
 # >>> import open_analytics.shinyproxy {#shinyproxy transition="convex-in slide-out"}
 
 ::: {.centered}
-<img src="images/shinyproxy-homepage.png"
-    style="width:52%; margin-top: -30px;"/>
+<img src="images/shinyproxy-homepage.png" style="width:52%; margin-top: -30px;" alt="ShinyProxy homepage"/>
 :::
 
 <div class="notes">
@@ -136,19 +135,19 @@ cloud servers for your workloads with the least environmental impact.
 # >>> from sparecores import servers
 
 <div class="vcenter centered">
-  <img style="margin-top:-30px;width:95%;" src="images/sc-www-search-k3s-control-plane.png" />
+  <img style="margin-top:-30px;width:95%;" src="images/sc-www-search-k3s-control-plane.png" alt="Search for cheap servers at sparecores.com" />
 </div>
 
 ## >>> from hetzner import cloud
 
 <div class="vcenter centered">
-  <img style="margin-top:-30px;width:95%;" src="images/sc-www-search-k3s-control-plane-hetzner.png" />
+  <img style="margin-top:-30px;width:95%;" src="images/sc-www-search-k3s-control-plane-hetzner.png" alt="Search for cheap cloud servers at Hetzner Cloud" />
 </div>
 
 ## >>> from hetzner import dedicated {transition="slide-in convex-out"}
 
 <div class="vcenter centered">
-  <img style="margin-top:-30px;width:95%;" src="images/sc-www-search-k3s-worker-hetzner.png" />
+  <img style="margin-top:-30px;width:95%;" src="images/sc-www-search-k3s-worker-hetzner.png" alt="Search for cheap dedicated servers at Hetzner Cloud" />
 </div>
 
 # >>> \_\_main\_\_.dir() {transition="convex-in slide-out"}
