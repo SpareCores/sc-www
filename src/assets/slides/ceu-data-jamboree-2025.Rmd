@@ -74,15 +74,6 @@ format:
 
 </div>
 
-# >>> import spare_cores {#intro transition="convex-in convex-out"}
-
-<img src="images/sc-www-spinner-20251205.png" style="width:57%; margin-top: 50px;"/>
-
-<div class="notes">
-We build open-source tools to help you pick the most cost-efficient
-cloud servers for your workloads with the least environmental impact.
-</div>
-
 # >>> from gabors import requirements {#specs transition="convex-in convex-out"}
 
 - Hosting interactive dashboards
@@ -97,6 +88,16 @@ cloud servers for your workloads with the least environmental impact.
 
 <div class="notes">
 </div>
+
+# >>> import spare_cores {#intro transition="convex-in convex-out"}
+
+<img src="images/sc-www-spinner-20251205.png" style="width:57%; margin-top: 50px;"/>
+
+<div class="notes">
+We build open-source tools to help you pick the most cost-efficient
+cloud servers for your workloads with the least environmental impact.
+</div>
+
 
 # >>> import open_analytics.shinyproxy {#shinyproxy transition="convex-in slide-out"}
 
