@@ -61,7 +61,7 @@ export interface Benchmark {
    * A dictionary of descriptions on the framework-specific config options, e.g. {"bandwidth": "Memory amount to use for compression in MB."}.
    * @default {}
    */
-  config_fields?: Record<string, any>;
+  config_fields?: object;
   /**
    * Measurement
    * The name of measurement recoreded in the benchmark.
@@ -136,7 +136,7 @@ export interface BenchmarkScore {
    * Dictionary of config parameters of the specific benchmark, e.g. {"bandwidth": 4096}
    * @default {}
    */
-  config?: Record<string, any>;
+  config?: object;
   /**
    * Score
    * The resulting score of the benchmark.
@@ -228,6 +228,7 @@ export enum ComplianceFrameworks {
 /** Countries */
 export enum Countries {
   AE = "AE",
+  AT = "AT",
   AU = "AU",
   BE = "BE",
   BH = "BH",
@@ -250,6 +251,7 @@ export enum Countries {
   JP = "JP",
   KR = "KR",
   MX = "MX",
+  MY = "MY",
   NL = "NL",
   NO = "NO",
   NZ = "NZ",
@@ -385,6 +387,7 @@ export enum CpuArchitecture {
 export enum CpuFamilies {
   ARM = "ARM",
   ARMv8 = "ARMv8",
+  ARMv9 = "ARMv9",
   AmpereAltra = "Ampere Altra",
   EPYC = "EPYC",
   Xeon = "Xeon",
@@ -475,8 +478,14 @@ export enum GpuManufacturers {
 
 /** GpuModels */
 export enum GpuModels {
+  A10 = "A10",
   A100 = "A100",
   A10G = "A10G",
+  B200 = "B200",
+  B300 = "B300",
+  GeForceGTX1060 = "GeForce GTX 1060",
+  GeForceGTX1070 = "GeForce GTX 1070",
+  GeForceGTX1080Ti = "GeForce GTX 1080 Ti",
   H100 = "H100",
   H200 = "H200",
   HL205 = "HL-205",
@@ -484,10 +493,14 @@ export enum GpuModels {
   L4 = "L4",
   L40S = "L40S",
   M60 = "M60",
+  RTX5000 = "RTX 5000",
+  RTXPro6000 = "RTX Pro 6000",
   T4 = "T4",
   T4G = "T4G",
   V100 = "V100",
+  V100S = "V100S",
   V520 = "V520",
+  Tpu7X = "tpu7x",
 }
 
 /** HTTPValidationError */
@@ -499,7 +512,7 @@ export interface HTTPValidationError {
 /** HealthcheckResponse */
 export interface HealthcheckResponse {
   /** Packages */
-  packages: Record<string, any>;
+  packages: object;
   /** Database Last Updated */
   database_last_updated: number;
   /** Database Hash */
@@ -926,24 +939,37 @@ export enum Regions {
   ApSoutheast2 = "ap-southeast-2",
   ApSoutheast3 = "ap-southeast-3",
   ApSoutheast4 = "ap-southeast-4",
+  APSOUTHEASTSYD = "AP-SOUTHEAST-SYD",
+  APSOUTHEASTSYD2 = "AP-SOUTHEAST-SYD-2",
+  APSOUTHMUM = "AP-SOUTH-MUM",
+  APSOUTHMUM1 = "AP-SOUTH-MUM-1",
   Australiacentral = "australiacentral",
   Australiacentral2 = "australiacentral2",
   Australiaeast = "australiaeast",
   Australiasoutheast = "australiasoutheast",
+  Austriaeast = "austriaeast",
   AuSyd1 = "au-syd1",
+  Belgiumcentral = "belgiumcentral",
+  BHS = "BHS",
+  BHS5 = "BHS5",
   Brazilsouth = "brazilsouth",
   Brazilsoutheast = "brazilsoutheast",
   Brazilus = "brazilus",
   CaCentral1 = "ca-central-1",
+  CAEASTTOR = "CA-EAST-TOR",
   Canadacentral = "canadacentral",
   Canadaeast = "canadaeast",
   CaWest1 = "ca-west-1",
   Centralindia = "centralindia",
   Centralus = "centralus",
   Centraluseuap = "centraluseuap",
+  Chilecentral = "chilecentral",
   CnNorth1 = "cn-north-1",
   CnNorthwest1 = "cn-northwest-1",
+  DE = "DE",
+  DE1 = "DE1",
   DeFra1 = "de-fra1",
+  DkCph1 = "dk-cph1",
   Eastasia = "eastasia",
   Eastus = "eastus",
   Eastus2 = "eastus2",
@@ -955,15 +981,21 @@ export enum Regions {
   EuNorth1 = "eu-north-1",
   EuSouth1 = "eu-south-1",
   EuSouth2 = "eu-south-2",
+  EUSOUTHMIL = "EU-SOUTH-MIL",
   EuWest1 = "eu-west-1",
   EuWest2 = "eu-west-2",
   EuWest3 = "eu-west-3",
+  EUWESTPAR = "EU-WEST-PAR",
   FiHel1 = "fi-hel1",
   FiHel2 = "fi-hel2",
   Francecentral = "francecentral",
   Francesouth = "francesouth",
   Germanynorth = "germanynorth",
   Germanywestcentral = "germanywestcentral",
+  GRA = "GRA",
+  GRA11 = "GRA11",
+  GRA7 = "GRA7",
+  GRA9 = "GRA9",
   IlCentral1 = "il-central-1",
   Indonesiacentral = "indonesiacentral",
   Israelcentral = "israelcentral",
@@ -974,6 +1006,7 @@ export enum Regions {
   Jioindiawest = "jioindiawest",
   Koreacentral = "koreacentral",
   Koreasouth = "koreasouth",
+  Malaysiawest = "malaysiawest",
   MeCentral1 = "me-central-1",
   MeSouth1 = "me-south-1",
   Mexicocentral = "mexicocentral",
@@ -986,8 +1019,16 @@ export enum Regions {
   PlWaw1 = "pl-waw1",
   Polandcentral = "polandcentral",
   Qatarcentral = "qatarcentral",
+  RBX = "RBX",
+  RBXA = "RBX-A",
+  RBXARCHIVE = "RBX-ARCHIVE",
   SaEast1 = "sa-east-1",
+  SBG = "SBG",
+  SBG5 = "SBG5",
+  SBG7 = "SBG7",
   SeSto1 = "se-sto1",
+  SGP = "SGP",
+  SGP1 = "SGP1",
   SgSin1 = "sg-sin1",
   Southafricanorth = "southafricanorth",
   Southafricawest = "southafricawest",
@@ -999,8 +1040,12 @@ export enum Regions {
   Swedencentral = "swedencentral",
   Switzerlandnorth = "switzerlandnorth",
   Switzerlandwest = "switzerlandwest",
+  SYD = "SYD",
+  SYD1 = "SYD1",
   Uaecentral = "uaecentral",
   Uaenorth = "uaenorth",
+  UK = "UK",
+  UK1 = "UK1",
   UkLon1 = "uk-lon1",
   Uksouth = "uksouth",
   Ukwest = "ukwest",
@@ -1011,6 +1056,8 @@ export enum Regions {
   UsSjo1 = "us-sjo1",
   UsWest1 = "us-west-1",
   UsWest2 = "us-west-2",
+  WAW = "WAW",
+  WAW1 = "WAW1",
   Westcentralus = "westcentralus",
   Westeurope = "westeurope",
   Westindia = "westindia",
@@ -2553,6 +2600,7 @@ export enum Vendors {
   Azure = "azure",
   Gcp = "gcp",
   Hcloud = "hcloud",
+  Ovh = "ovh",
   Upcloud = "upcloud",
 }
 
@@ -2758,7 +2806,7 @@ export interface AssistServerFiltersAiAssistServerFiltersGetParams {
 }
 
 /** Response Assist Server Filters Ai Assist Server Filters Get */
-export type AssistServerFiltersAiAssistServerFiltersGetData = Record<string, any>;
+export type AssistServerFiltersAiAssistServerFiltersGetData = object;
 
 export interface AssistServerPriceFiltersAiAssistServerPriceFiltersGetParams {
   /** Text */
@@ -2766,7 +2814,7 @@ export interface AssistServerPriceFiltersAiAssistServerPriceFiltersGetParams {
 }
 
 /** Response Assist Server Price Filters Ai Assist Server Price Filters Get */
-export type AssistServerPriceFiltersAiAssistServerPriceFiltersGetData = Record<string, any>;
+export type AssistServerPriceFiltersAiAssistServerPriceFiltersGetData = object;
 
 export interface AssistStoragePriceFiltersAiAssistStoragePriceFiltersGetParams {
   /** Text */
@@ -2774,7 +2822,7 @@ export interface AssistStoragePriceFiltersAiAssistStoragePriceFiltersGetParams {
 }
 
 /** Response Assist Storage Price Filters Ai Assist Storage Price Filters Get */
-export type AssistStoragePriceFiltersAiAssistStoragePriceFiltersGetData = Record<string, any>;
+export type AssistStoragePriceFiltersAiAssistStoragePriceFiltersGetData = object;
 
 export interface AssistTrafficPriceFiltersAiAssistTrafficPriceFiltersGetParams {
   /** Text */
@@ -2782,14 +2830,14 @@ export interface AssistTrafficPriceFiltersAiAssistTrafficPriceFiltersGetParams {
 }
 
 /** Response Assist Traffic Price Filters Ai Assist Traffic Price Filters Get */
-export type AssistTrafficPriceFiltersAiAssistTrafficPriceFiltersGetData = Record<string, any>;
+export type AssistTrafficPriceFiltersAiAssistTrafficPriceFiltersGetData = object;
 
 export interface SearchRegionsRegionsGetParams {
   /**
    * Vendor id
    * Identifier of the cloud provider vendor.
    */
-  vendor?: "aws" | "azure" | "gcp" | "hcloud" | "upcloud";
+  vendor?: "aws" | "azure" | "gcp" | "hcloud" | "ovh" | "upcloud";
 }
 
 /** Response Search Regions Regions Get */
@@ -2822,7 +2870,7 @@ export interface SearchServersServersGetParams {
   /** Processor manufacturer */
   cpu_manufacturer?: "AMD" | "AWS" | "Ampere" | "Apple" | "Intel" | "Microsoft";
   /** Processor family */
-  cpu_family?: "ARM" | "ARMv8" | "Ampere Altra" | "EPYC" | "Xeon";
+  cpu_family?: "ARM" | "ARMv8" | "ARMv9" | "Ampere Altra" | "EPYC" | "Xeon";
   /**
    * CPU allocation
    * Allocation of the CPU(s) to the server, e.g. shared, burstable or dedicated.
@@ -2873,7 +2921,7 @@ export interface SearchServersServersGetParams {
    * Vendor id
    * Identifier of the cloud provider vendor.
    */
-  vendor?: "aws" | "azure" | "gcp" | "hcloud" | "upcloud";
+  vendor?: "aws" | "azure" | "gcp" | "hcloud" | "ovh" | "upcloud";
   /**
    * Compliance Framework id
    * Compliance framework implemented at the vendor.
@@ -2919,8 +2967,14 @@ export interface SearchServersServersGetParams {
     | "Volta";
   /** GPU model */
   gpu_model?:
+    | "A10"
     | "A100"
     | "A10G"
+    | "B200"
+    | "B300"
+    | "GeForce GTX 1060"
+    | "GeForce GTX 1070"
+    | "GeForce GTX 1080 Ti"
     | "H100"
     | "H200"
     | "HL-205"
@@ -2928,10 +2982,14 @@ export interface SearchServersServersGetParams {
     | "L4"
     | "L40S"
     | "M60"
+    | "RTX 5000"
+    | "RTX Pro 6000"
     | "T4"
     | "T4G"
     | "V100"
-    | "V520";
+    | "V100S"
+    | "V520"
+    | "tpu7x";
   /**
    * Limit
    * Maximum number of results. Set to -1 for unlimited.
@@ -2992,7 +3050,7 @@ export interface SearchServerPricesServerPricesGetParams {
   /** Processor manufacturer */
   cpu_manufacturer?: "AMD" | "AWS" | "Ampere" | "Apple" | "Intel" | "Microsoft";
   /** Processor family */
-  cpu_family?: "ARM" | "ARMv8" | "Ampere Altra" | "EPYC" | "Xeon";
+  cpu_family?: "ARM" | "ARMv8" | "ARMv9" | "Ampere Altra" | "EPYC" | "Xeon";
   /**
    * CPU allocation
    * Allocation of the CPU(s) to the server, e.g. shared, burstable or dedicated.
@@ -3038,7 +3096,7 @@ export interface SearchServerPricesServerPricesGetParams {
    * Vendor id
    * Identifier of the cloud provider vendor.
    */
-  vendor?: "aws" | "azure" | "gcp" | "hcloud" | "upcloud";
+  vendor?: "aws" | "azure" | "gcp" | "hcloud" | "ovh" | "upcloud";
   /**
    * Region id
    * Identifier of the region.
@@ -3103,24 +3161,37 @@ export interface SearchServerPricesServerPricesGetParams {
     | "ap-southeast-2"
     | "ap-southeast-3"
     | "ap-southeast-4"
+    | "AP-SOUTHEAST-SYD"
+    | "AP-SOUTHEAST-SYD-2"
+    | "AP-SOUTH-MUM"
+    | "AP-SOUTH-MUM-1"
     | "australiacentral"
     | "australiacentral2"
     | "australiaeast"
     | "australiasoutheast"
+    | "austriaeast"
     | "au-syd1"
+    | "belgiumcentral"
+    | "BHS"
+    | "BHS5"
     | "brazilsouth"
     | "brazilsoutheast"
     | "brazilus"
     | "ca-central-1"
+    | "CA-EAST-TOR"
     | "canadacentral"
     | "canadaeast"
     | "ca-west-1"
     | "centralindia"
     | "centralus"
     | "centraluseuap"
+    | "chilecentral"
     | "cn-north-1"
     | "cn-northwest-1"
+    | "DE"
+    | "DE1"
     | "de-fra1"
+    | "dk-cph1"
     | "eastasia"
     | "eastus"
     | "eastus2"
@@ -3132,15 +3203,21 @@ export interface SearchServerPricesServerPricesGetParams {
     | "eu-north-1"
     | "eu-south-1"
     | "eu-south-2"
+    | "EU-SOUTH-MIL"
     | "eu-west-1"
     | "eu-west-2"
     | "eu-west-3"
+    | "EU-WEST-PAR"
     | "fi-hel1"
     | "fi-hel2"
     | "francecentral"
     | "francesouth"
     | "germanynorth"
     | "germanywestcentral"
+    | "GRA"
+    | "GRA11"
+    | "GRA7"
+    | "GRA9"
     | "il-central-1"
     | "indonesiacentral"
     | "israelcentral"
@@ -3151,6 +3228,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "jioindiawest"
     | "koreacentral"
     | "koreasouth"
+    | "malaysiawest"
     | "me-central-1"
     | "me-south-1"
     | "mexicocentral"
@@ -3163,8 +3241,16 @@ export interface SearchServerPricesServerPricesGetParams {
     | "pl-waw1"
     | "polandcentral"
     | "qatarcentral"
+    | "RBX"
+    | "RBX-A"
+    | "RBX-ARCHIVE"
     | "sa-east-1"
+    | "SBG"
+    | "SBG5"
+    | "SBG7"
     | "se-sto1"
+    | "SGP"
+    | "SGP1"
     | "sg-sin1"
     | "southafricanorth"
     | "southafricawest"
@@ -3176,8 +3262,12 @@ export interface SearchServerPricesServerPricesGetParams {
     | "swedencentral"
     | "switzerlandnorth"
     | "switzerlandwest"
+    | "SYD"
+    | "SYD1"
     | "uaecentral"
     | "uaenorth"
+    | "UK"
+    | "UK1"
     | "uk-lon1"
     | "uksouth"
     | "ukwest"
@@ -3188,6 +3278,8 @@ export interface SearchServerPricesServerPricesGetParams {
     | "us-sjo1"
     | "us-west-1"
     | "us-west-2"
+    | "WAW"
+    | "WAW1"
     | "westcentralus"
     | "westeurope"
     | "westindia"
@@ -3215,6 +3307,7 @@ export interface SearchServerPricesServerPricesGetParams {
    */
   countries?:
     | "AE"
+    | "AT"
     | "AU"
     | "BE"
     | "BH"
@@ -3237,6 +3330,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "JP"
     | "KR"
     | "MX"
+    | "MY"
     | "NL"
     | "NO"
     | "NZ"
@@ -3278,8 +3372,14 @@ export interface SearchServerPricesServerPricesGetParams {
     | "Volta";
   /** GPU model */
   gpu_model?:
+    | "A10"
     | "A100"
     | "A10G"
+    | "B200"
+    | "B300"
+    | "GeForce GTX 1060"
+    | "GeForce GTX 1070"
+    | "GeForce GTX 1080 Ti"
     | "H100"
     | "H200"
     | "HL-205"
@@ -3287,10 +3387,14 @@ export interface SearchServerPricesServerPricesGetParams {
     | "L4"
     | "L40S"
     | "M60"
+    | "RTX 5000"
+    | "RTX Pro 6000"
     | "T4"
     | "T4G"
     | "V100"
-    | "V520";
+    | "V100S"
+    | "V520"
+    | "tpu7x";
   /**
    * Limit
    * Maximum number of results.
@@ -3336,7 +3440,7 @@ export interface SearchStoragePricesStoragePricesGetParams {
    * Vendor id
    * Identifier of the cloud provider vendor.
    */
-  vendor?: "aws" | "azure" | "gcp" | "hcloud" | "upcloud";
+  vendor?: "aws" | "azure" | "gcp" | "hcloud" | "ovh" | "upcloud";
   /**
    * Green energy
    * Filter for regions that are 100% powered by renewable energy.
@@ -3421,24 +3525,37 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "ap-southeast-2"
     | "ap-southeast-3"
     | "ap-southeast-4"
+    | "AP-SOUTHEAST-SYD"
+    | "AP-SOUTHEAST-SYD-2"
+    | "AP-SOUTH-MUM"
+    | "AP-SOUTH-MUM-1"
     | "australiacentral"
     | "australiacentral2"
     | "australiaeast"
     | "australiasoutheast"
+    | "austriaeast"
     | "au-syd1"
+    | "belgiumcentral"
+    | "BHS"
+    | "BHS5"
     | "brazilsouth"
     | "brazilsoutheast"
     | "brazilus"
     | "ca-central-1"
+    | "CA-EAST-TOR"
     | "canadacentral"
     | "canadaeast"
     | "ca-west-1"
     | "centralindia"
     | "centralus"
     | "centraluseuap"
+    | "chilecentral"
     | "cn-north-1"
     | "cn-northwest-1"
+    | "DE"
+    | "DE1"
     | "de-fra1"
+    | "dk-cph1"
     | "eastasia"
     | "eastus"
     | "eastus2"
@@ -3450,15 +3567,21 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "eu-north-1"
     | "eu-south-1"
     | "eu-south-2"
+    | "EU-SOUTH-MIL"
     | "eu-west-1"
     | "eu-west-2"
     | "eu-west-3"
+    | "EU-WEST-PAR"
     | "fi-hel1"
     | "fi-hel2"
     | "francecentral"
     | "francesouth"
     | "germanynorth"
     | "germanywestcentral"
+    | "GRA"
+    | "GRA11"
+    | "GRA7"
+    | "GRA9"
     | "il-central-1"
     | "indonesiacentral"
     | "israelcentral"
@@ -3469,6 +3592,7 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "jioindiawest"
     | "koreacentral"
     | "koreasouth"
+    | "malaysiawest"
     | "me-central-1"
     | "me-south-1"
     | "mexicocentral"
@@ -3481,8 +3605,16 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "pl-waw1"
     | "polandcentral"
     | "qatarcentral"
+    | "RBX"
+    | "RBX-A"
+    | "RBX-ARCHIVE"
     | "sa-east-1"
+    | "SBG"
+    | "SBG5"
+    | "SBG7"
     | "se-sto1"
+    | "SGP"
+    | "SGP1"
     | "sg-sin1"
     | "southafricanorth"
     | "southafricawest"
@@ -3494,8 +3626,12 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "swedencentral"
     | "switzerlandnorth"
     | "switzerlandwest"
+    | "SYD"
+    | "SYD1"
     | "uaecentral"
     | "uaenorth"
+    | "UK"
+    | "UK1"
     | "uk-lon1"
     | "uksouth"
     | "ukwest"
@@ -3506,6 +3642,8 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "us-sjo1"
     | "us-west-1"
     | "us-west-2"
+    | "WAW"
+    | "WAW1"
     | "westcentralus"
     | "westeurope"
     | "westindia"
@@ -3518,6 +3656,7 @@ export interface SearchStoragePricesStoragePricesGetParams {
    */
   countries?:
     | "AE"
+    | "AT"
     | "AU"
     | "BE"
     | "BH"
@@ -3540,6 +3679,7 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "JP"
     | "KR"
     | "MX"
+    | "MY"
     | "NL"
     | "NO"
     | "NZ"
@@ -3595,7 +3735,7 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
    * Vendor id
    * Identifier of the cloud provider vendor.
    */
-  vendor?: "aws" | "azure" | "gcp" | "hcloud" | "upcloud";
+  vendor?: "aws" | "azure" | "gcp" | "hcloud" | "ovh" | "upcloud";
   /**
    * Green energy
    * Filter for regions that are 100% powered by renewable energy.
@@ -3670,24 +3810,37 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "ap-southeast-2"
     | "ap-southeast-3"
     | "ap-southeast-4"
+    | "AP-SOUTHEAST-SYD"
+    | "AP-SOUTHEAST-SYD-2"
+    | "AP-SOUTH-MUM"
+    | "AP-SOUTH-MUM-1"
     | "australiacentral"
     | "australiacentral2"
     | "australiaeast"
     | "australiasoutheast"
+    | "austriaeast"
     | "au-syd1"
+    | "belgiumcentral"
+    | "BHS"
+    | "BHS5"
     | "brazilsouth"
     | "brazilsoutheast"
     | "brazilus"
     | "ca-central-1"
+    | "CA-EAST-TOR"
     | "canadacentral"
     | "canadaeast"
     | "ca-west-1"
     | "centralindia"
     | "centralus"
     | "centraluseuap"
+    | "chilecentral"
     | "cn-north-1"
     | "cn-northwest-1"
+    | "DE"
+    | "DE1"
     | "de-fra1"
+    | "dk-cph1"
     | "eastasia"
     | "eastus"
     | "eastus2"
@@ -3699,15 +3852,21 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "eu-north-1"
     | "eu-south-1"
     | "eu-south-2"
+    | "EU-SOUTH-MIL"
     | "eu-west-1"
     | "eu-west-2"
     | "eu-west-3"
+    | "EU-WEST-PAR"
     | "fi-hel1"
     | "fi-hel2"
     | "francecentral"
     | "francesouth"
     | "germanynorth"
     | "germanywestcentral"
+    | "GRA"
+    | "GRA11"
+    | "GRA7"
+    | "GRA9"
     | "il-central-1"
     | "indonesiacentral"
     | "israelcentral"
@@ -3718,6 +3877,7 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "jioindiawest"
     | "koreacentral"
     | "koreasouth"
+    | "malaysiawest"
     | "me-central-1"
     | "me-south-1"
     | "mexicocentral"
@@ -3730,8 +3890,16 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "pl-waw1"
     | "polandcentral"
     | "qatarcentral"
+    | "RBX"
+    | "RBX-A"
+    | "RBX-ARCHIVE"
     | "sa-east-1"
+    | "SBG"
+    | "SBG5"
+    | "SBG7"
     | "se-sto1"
+    | "SGP"
+    | "SGP1"
     | "sg-sin1"
     | "southafricanorth"
     | "southafricawest"
@@ -3743,8 +3911,12 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "swedencentral"
     | "switzerlandnorth"
     | "switzerlandwest"
+    | "SYD"
+    | "SYD1"
     | "uaecentral"
     | "uaenorth"
+    | "UK"
+    | "UK1"
     | "uk-lon1"
     | "uksouth"
     | "ukwest"
@@ -3755,6 +3927,8 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "us-sjo1"
     | "us-west-1"
     | "us-west-2"
+    | "WAW"
+    | "WAW1"
     | "westcentralus"
     | "westeurope"
     | "westindia"
@@ -3767,6 +3941,7 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
    */
   countries?:
     | "AE"
+    | "AT"
     | "AU"
     | "BE"
     | "BH"
@@ -3789,6 +3964,7 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "JP"
     | "KR"
     | "MX"
+    | "MY"
     | "NL"
     | "NO"
     | "NZ"
