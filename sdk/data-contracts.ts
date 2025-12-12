@@ -462,7 +462,6 @@ export enum GpuFamilies {
   Ampere = "Ampere",
   Gaudi = "Gaudi",
   Hopper = "Hopper",
-  Kepler = "Kepler",
   Maxwell = "Maxwell",
   RadeonProNavi = "Radeon Pro Navi",
   Turing = "Turing",
@@ -483,13 +482,9 @@ export enum GpuModels {
   A10G = "A10G",
   B200 = "B200",
   B300 = "B300",
-  GeForceGTX1060 = "GeForce GTX 1060",
-  GeForceGTX1070 = "GeForce GTX 1070",
-  GeForceGTX1080Ti = "GeForce GTX 1080 Ti",
   H100 = "H100",
   H200 = "H200",
   HL205 = "HL-205",
-  K80 = "K80",
   L4 = "L4",
   L40S = "L40S",
   M60 = "M60",
@@ -500,7 +495,6 @@ export enum GpuModels {
   V100 = "V100",
   V100S = "V100S",
   V520 = "V520",
-  Tpu7X = "tpu7x",
 }
 
 /** HTTPValidationError */
@@ -2955,16 +2949,7 @@ export interface SearchServersServersGetParams {
   /** GPU manufacturer */
   gpu_manufacturer?: "AMD" | "Habana" | "NVIDIA";
   /** GPU family */
-  gpu_family?:
-    | "Ada Lovelace"
-    | "Ampere"
-    | "Gaudi"
-    | "Hopper"
-    | "Kepler"
-    | "Maxwell"
-    | "Radeon Pro Navi"
-    | "Turing"
-    | "Volta";
+  gpu_family?: "Ada Lovelace" | "Ampere" | "Gaudi" | "Hopper" | "Maxwell" | "Radeon Pro Navi" | "Turing" | "Volta";
   /** GPU model */
   gpu_model?:
     | "A10"
@@ -2972,13 +2957,9 @@ export interface SearchServersServersGetParams {
     | "A10G"
     | "B200"
     | "B300"
-    | "GeForce GTX 1060"
-    | "GeForce GTX 1070"
-    | "GeForce GTX 1080 Ti"
     | "H100"
     | "H200"
     | "HL-205"
-    | "K80"
     | "L4"
     | "L40S"
     | "M60"
@@ -2988,8 +2969,7 @@ export interface SearchServersServersGetParams {
     | "T4G"
     | "V100"
     | "V100S"
-    | "V520"
-    | "tpu7x";
+    | "V520";
   /**
    * Limit
    * Maximum number of results. Set to -1 for unlimited.
@@ -3360,16 +3340,7 @@ export interface SearchServerPricesServerPricesGetParams {
   /** GPU manufacturer */
   gpu_manufacturer?: "AMD" | "Habana" | "NVIDIA";
   /** GPU family */
-  gpu_family?:
-    | "Ada Lovelace"
-    | "Ampere"
-    | "Gaudi"
-    | "Hopper"
-    | "Kepler"
-    | "Maxwell"
-    | "Radeon Pro Navi"
-    | "Turing"
-    | "Volta";
+  gpu_family?: "Ada Lovelace" | "Ampere" | "Gaudi" | "Hopper" | "Maxwell" | "Radeon Pro Navi" | "Turing" | "Volta";
   /** GPU model */
   gpu_model?:
     | "A10"
@@ -3377,13 +3348,9 @@ export interface SearchServerPricesServerPricesGetParams {
     | "A10G"
     | "B200"
     | "B300"
-    | "GeForce GTX 1060"
-    | "GeForce GTX 1070"
-    | "GeForce GTX 1080 Ti"
     | "H100"
     | "H200"
     | "HL-205"
-    | "K80"
     | "L4"
     | "L40S"
     | "M60"
@@ -3393,8 +3360,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "T4G"
     | "V100"
     | "V100S"
-    | "V520"
-    | "tpu7x";
+    | "V520";
   /**
    * Limit
    * Maximum number of results.
