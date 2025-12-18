@@ -35,28 +35,28 @@ export class AboutNavigatorComponent implements AfterViewInit {
     '✅ Hetzner Cloud (Done)',
     '✅ Microsoft Azure (Done)',
     '✅ UpCloud (Done)',
-    '⚙️ Vultr (In Progress)',
+    '✅ OVH Cloud (Done)',
+    '⚙️ Alibaba Cloud (In Progress)',
     '🗓️ Oracle Cloud Infrastructure (Planned)',
+    '🗓️ Vultr (Planned)',
     '🗓️ Scaleway (Planned)',
-    '🗓️ Alibaba Cloud (Planned)',
-    '🗓️ OVH Cloud (Planned)',
   ];
 
   features: any[] = [
     {
-      count: '353',
+      count: '413',
       text: 'availability zones'
     },
     {
-      count: '2344',
+      count: '3,060',
       text: 'server types'
     },
     {
-      count: '970,000+',
+      count: '1,290,041',
       text: 'benchmark scores'
     },
     {
-      count: '~310,000',
+      count: '~410,000',
       text: 'live price records'
     },
     {
@@ -65,7 +65,7 @@ export class AboutNavigatorComponent implements AfterViewInit {
     },
 
     {
-      count: '~75M',
+      count: '100M+', // 68M from server_price_scd_20250701
       text: 'historical records'
     },
   ];
