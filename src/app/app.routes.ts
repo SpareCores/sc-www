@@ -48,5 +48,7 @@ export const routes: Routes = [
   { path: 'about', redirectTo: 'about/spare-cores' },
   { path: 'navigator', redirectTo: 'about/navigator' },
 
+  { path: 'hu/funding/bnl', loadComponent: () => import('./pages/funding-information/funding-information.component').then(c => c.FundingInformationComponent)},
+
   { path: '**', redirectTo: '' }
 ];
