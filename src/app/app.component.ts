@@ -42,7 +42,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
           let url = 'https://sparecores.com';
           if(event?.urlAfterRedirects?.length > 1) {
             url += event?.urlAfterRedirects;
-            if(event?.urlAfterRedirects?.startsWith('/og/') || event?.urlAfterRedirects?.startsWith('/embed/')) {
+            if(event?.urlAfterRedirects?.startsWith('/og/') || event?.urlAfterRedirects?.startsWith('/embed/') || event.urlAfterRedirects?.startsWith('/hu/')) {
               this.showHeader = false;
               this.showFooter = false;
             } else {
@@ -57,7 +57,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         }
 
         if(event instanceof RoutesRecognized) {
-          if(event?.urlAfterRedirects?.startsWith('/og/') || event?.urlAfterRedirects?.startsWith('/embed/')) {
+          if(event?.urlAfterRedirects?.startsWith('/og/') || event?.urlAfterRedirects?.startsWith('/embed/') || event.urlAfterRedirects?.startsWith('/hu/')) {
             this.showHeader = false;
             this.showFooter = false;
           } else {
