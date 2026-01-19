@@ -9,6 +9,12 @@ describe("FundingInformationComponent", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [FundingInformationComponent],
+      providers: [
+        {
+          provide: SeoHandlerService,
+          useValue: { updateTitleAndMetaTags: jasmine.createSpy() }
+        }
+      ]
     }).compileComponents();
 
     fixture = TestBed.createComponent(FundingInformationComponent);
