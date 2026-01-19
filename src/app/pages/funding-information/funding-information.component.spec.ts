@@ -23,6 +23,6 @@ describe("FundingInformationComponent", () => {
   });
 
   it("should create", () => {
-    expect(component).to.ok;
+    expect(component).toBeTruthy();
   });
 });
