@@ -1,0 +1,45 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background-color: white;
+  font-family: "Garamond";
+}
+
+.funding-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  color: black;
+  text-align: left;
+}
+
+.funding-image {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin-bottom: 40px;
+}
+
+.funding-content {
+  line-height: 1.4;
+  font-size: 18px;
+
+  p {
+    margin: 12px 0;
+  }
+
+  a {
+    color: black;
+    text-decoration: underline;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+}
+
+.project-summary {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
