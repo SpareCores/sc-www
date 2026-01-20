@@ -17,7 +17,7 @@
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
     "generate-api": "npx swagger-typescript-api -p http://localhost:8000/openapi.json -o ./sdk -n KeeperApi.ts --extract-request-params --extract-request-body --extract-response-body --route-types --modular --single-http-client",
-    "generate-api-prod": "wget https://keeper.sparecores.net/openapi.json -O sdk/openapi.json && npx swagger-typescript-api -p https://keeper.sparecores.net/openapi.json -o ./sdk -n KeeperApi.ts --extract-request-params --extract-request-body --extract-response-body --route-types --modular --single-http-client"
+    "generate-api-prod": "wget https://keeper.sparecores.net/openapi.json -O sdk/openapi.json && npx swagger-typescript-api generate -p https://keeper.sparecores.net/openapi.json -o ./sdk -n KeeperApi.ts --extract-request-params --extract-request-body --extract-response-body --route-types --modular --single-http-client"
   },
   "private": true,
   "dependencies": {
