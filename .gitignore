@@ -72,3 +72,6 @@ src/sitemap.xml
 
 # custom patterns
 src/assets/slides/render.sh
+
+# .env files
+.env
