@@ -1,5 +1,6 @@
 /* eslint-disable */
 /* tslint:disable */
+// @ts-nocheck
 /*
  * ---------------------------------------------------------------
  * ## THIS FILE WAS GENERATED VIA SWAGGER-TYPESCRIPT-API        ##
@@ -9,7 +10,11 @@
  * ---------------------------------------------------------------
  */
 
-import { HTTPValidationError, SearchServersServersGetData, SearchServersServersGetParams } from "./data-contracts";
+import {
+  HTTPValidationError,
+  SearchServersServersGetData,
+  SearchServersServersGetParams,
+} from "./data-contracts";
 import { HttpClient, RequestParams } from "./http-client";
 
 export class Servers<SecurityDataType = unknown> {
@@ -27,11 +32,15 @@ export class Servers<SecurityDataType = unknown> {
    * @summary Search Servers
    * @request GET:/servers
    */
-  searchServersServersGet = (query: SearchServersServersGetParams, params: RequestParams = {}) =>
+  searchServersServersGet = (
+    query: SearchServersServersGetParams,
+    params: RequestParams = {},
+  ) =>
     this.http.request<SearchServersServersGetData, HTTPValidationError>({
       path: `/servers`,
       method: "GET",
       query: query,
+      format: "json",
       ...params,
     });
 }

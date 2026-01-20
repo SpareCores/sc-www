@@ -10,21 +10,22 @@
  * ---------------------------------------------------------------
  */
 
-import { HealthcheckHealthcheckGetData } from "./data-contracts";
+import { MeMeGetData } from "./data-contracts";
 
-export namespace Healthcheck {
+export namespace Me {
   /**
-   * @description Quickly return package and database version information.
+   * @description Return the current user after authentication.
    * @tags Administrative endpoints
-   * @name HealthcheckHealthcheckGet
-   * @summary Healthcheck
-   * @request GET:/healthcheck
+   * @name MeMeGet
+   * @summary Me
+   * @request GET:/me
+   * @secure
    */
-  export namespace HealthcheckHealthcheckGet {
+  export namespace MeMeGet {
     export type RequestParams = {};
     export type RequestQuery = {};
     export type RequestBody = never;
     export type RequestHeaders = {};
-    export type ResponseBody = HealthcheckHealthcheckGetData;
+    export type ResponseBody = MeMeGetData;
   }
 }

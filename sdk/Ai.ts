@@ -1,5 +1,6 @@
 /* eslint-disable */
 /* tslint:disable */
+// @ts-nocheck
 /*
  * ---------------------------------------------------------------
  * ## THIS FILE WAS GENERATED VIA SWAGGER-TYPESCRIPT-API        ##
@@ -41,10 +42,14 @@ export class Ai<SecurityDataType = unknown> {
     query: AssistServerFiltersAiAssistServerFiltersGetParams,
     params: RequestParams = {},
   ) =>
-    this.http.request<AssistServerFiltersAiAssistServerFiltersGetData, HTTPValidationError>({
+    this.http.request<
+      AssistServerFiltersAiAssistServerFiltersGetData,
+      HTTPValidationError
+    >({
       path: `/ai/assist_server_filters`,
       method: "GET",
       query: query,
+      format: "json",
       ...params,
     });
   /**
@@ -59,10 +64,14 @@ export class Ai<SecurityDataType = unknown> {
     query: AssistServerPriceFiltersAiAssistServerPriceFiltersGetParams,
     params: RequestParams = {},
   ) =>
-    this.http.request<AssistServerPriceFiltersAiAssistServerPriceFiltersGetData, HTTPValidationError>({
+    this.http.request<
+      AssistServerPriceFiltersAiAssistServerPriceFiltersGetData,
+      HTTPValidationError
+    >({
       path: `/ai/assist_server_price_filters`,
       method: "GET",
       query: query,
+      format: "json",
       ...params,
     });
   /**
@@ -77,10 +86,14 @@ export class Ai<SecurityDataType = unknown> {
     query: AssistStoragePriceFiltersAiAssistStoragePriceFiltersGetParams,
     params: RequestParams = {},
   ) =>
-    this.http.request<AssistStoragePriceFiltersAiAssistStoragePriceFiltersGetData, HTTPValidationError>({
+    this.http.request<
+      AssistStoragePriceFiltersAiAssistStoragePriceFiltersGetData,
+      HTTPValidationError
+    >({
       path: `/ai/assist_storage_price_filters`,
       method: "GET",
       query: query,
+      format: "json",
       ...params,
     });
   /**
@@ -95,10 +108,14 @@ export class Ai<SecurityDataType = unknown> {
     query: AssistTrafficPriceFiltersAiAssistTrafficPriceFiltersGetParams,
     params: RequestParams = {},
   ) =>
-    this.http.request<AssistTrafficPriceFiltersAiAssistTrafficPriceFiltersGetData, HTTPValidationError>({
+    this.http.request<
+      AssistTrafficPriceFiltersAiAssistTrafficPriceFiltersGetData,
+      HTTPValidationError
+    >({
       path: `/ai/assist_traffic_price_filters`,
       method: "GET",
       query: query,
+      format: "json",
       ...params,
     });
 }

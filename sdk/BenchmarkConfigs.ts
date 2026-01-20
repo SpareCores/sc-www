@@ -1,5 +1,6 @@
 /* eslint-disable */
 /* tslint:disable */
+// @ts-nocheck
 /*
  * ---------------------------------------------------------------
  * ## THIS FILE WAS GENERATED VIA SWAGGER-TYPESCRIPT-API        ##
@@ -31,6 +32,7 @@ export class BenchmarkConfigs<SecurityDataType = unknown> {
     this.http.request<SearchBenchmarkConfigsBenchmarkConfigsGetData, any>({
       path: `/benchmark_configs`,
       method: "GET",
+      format: "json",
       ...params,
     });
 }

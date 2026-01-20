@@ -1,5 +1,6 @@
 /* eslint-disable */
 /* tslint:disable */
+// @ts-nocheck
 /*
  * ---------------------------------------------------------------
  * ## THIS FILE WAS GENERATED VIA SWAGGER-TYPESCRIPT-API        ##
@@ -8,6 +9,481 @@
  * ## SOURCE: https://github.com/acacode/swagger-typescript-api ##
  * ---------------------------------------------------------------
  */
+
+/** Vendors */
+export enum Vendors {
+  Alicloud = "alicloud",
+  Aws = "aws",
+  Azure = "azure",
+  Gcp = "gcp",
+  Hcloud = "hcloud",
+  Ovh = "ovh",
+  Upcloud = "upcloud",
+}
+
+/**
+ * TrafficDirection
+ * Direction of the network traffic.
+ */
+export enum TrafficDirection {
+  Inbound = "inbound",
+  Outbound = "outbound",
+}
+
+/**
+ * StorageType
+ * Type of a storage, e.g. HDD or SSD.
+ */
+export enum StorageType {
+  Hdd = "hdd",
+  Ssd = "ssd",
+  NvmeSsd = "nvme ssd",
+  Network = "network",
+}
+
+/**
+ * Status
+ * Last known status of a resource, e.g. active or inactive.
+ */
+export enum Status {
+  Active = "active",
+  Inactive = "inactive",
+}
+
+/** Regions */
+export enum Regions {
+  Value1000 = "1000",
+  Value1100 = "1100",
+  Value1210 = "1210",
+  Value1220 = "1220",
+  Value1230 = "1230",
+  Value1250 = "1250",
+  Value1260 = "1260",
+  Value1270 = "1270",
+  Value1280 = "1280",
+  Value1290 = "1290",
+  Value1300 = "1300",
+  Value1310 = "1310",
+  Value1320 = "1320",
+  Value1330 = "1330",
+  Value1340 = "1340",
+  Value1350 = "1350",
+  Value1360 = "1360",
+  Value1370 = "1370",
+  Value1380 = "1380",
+  Value1390 = "1390",
+  Value1410 = "1410",
+  Value1420 = "1420",
+  Value1430 = "1430",
+  Value1440 = "1440",
+  Value1450 = "1450",
+  Value1460 = "1460",
+  Value1470 = "1470",
+  Value1480 = "1480",
+  Value1490 = "1490",
+  Value1510 = "1510",
+  Value1520 = "1520",
+  Value1530 = "1530",
+  Value1540 = "1540",
+  Value1550 = "1550",
+  Value1560 = "1560",
+  Value1570 = "1570",
+  Value1580 = "1580",
+  Value1590 = "1590",
+  Value1600 = "1600",
+  Value1610 = "1610",
+  Value1640 = "1640",
+  Value1650 = "1650",
+  Value1680 = "1680",
+  Value2 = "2",
+  Value3 = "3",
+  Value4 = "4",
+  Value5 = "5",
+  Value6 = "6",
+  Value7 = "7",
+  AfSouth1 = "af-south-1",
+  ApEast1 = "ap-east-1",
+  ApEast2 = "ap-east-2",
+  ApNortheast1 = "ap-northeast-1",
+  ApNortheast2 = "ap-northeast-2",
+  ApNortheast3 = "ap-northeast-3",
+  ApSouth1 = "ap-south-1",
+  ApSouth2 = "ap-south-2",
+  ApSoutheast1 = "ap-southeast-1",
+  ApSoutheast2 = "ap-southeast-2",
+  ApSoutheast3 = "ap-southeast-3",
+  ApSoutheast4 = "ap-southeast-4",
+  ApSoutheast5 = "ap-southeast-5",
+  ApSoutheast6 = "ap-southeast-6",
+  ApSoutheast7 = "ap-southeast-7",
+  APSOUTHEASTSYD = "AP-SOUTHEAST-SYD",
+  APSOUTHEASTSYD2 = "AP-SOUTHEAST-SYD-2",
+  APSOUTHMUM = "AP-SOUTH-MUM",
+  APSOUTHMUM1 = "AP-SOUTH-MUM-1",
+  Australiacentral = "australiacentral",
+  Australiacentral2 = "australiacentral2",
+  Australiaeast = "australiaeast",
+  Australiasoutheast = "australiasoutheast",
+  Austriaeast = "austriaeast",
+  AuSyd1 = "au-syd1",
+  Belgiumcentral = "belgiumcentral",
+  BHS = "BHS",
+  BHS5 = "BHS5",
+  Brazilsouth = "brazilsouth",
+  Brazilsoutheast = "brazilsoutheast",
+  Brazilus = "brazilus",
+  CaCentral1 = "ca-central-1",
+  CAEASTTOR = "CA-EAST-TOR",
+  Canadacentral = "canadacentral",
+  Canadaeast = "canadaeast",
+  CaWest1 = "ca-west-1",
+  Centralindia = "centralindia",
+  Centralus = "centralus",
+  Centraluseuap = "centraluseuap",
+  Chilecentral = "chilecentral",
+  CnBeijing = "cn-beijing",
+  CnChengdu = "cn-chengdu",
+  CnFuzhou = "cn-fuzhou",
+  CnGuangzhou = "cn-guangzhou",
+  CnHangzhou = "cn-hangzhou",
+  CnHeyuan = "cn-heyuan",
+  CnHongkong = "cn-hongkong",
+  CnHuhehaote = "cn-huhehaote",
+  CnNanjing = "cn-nanjing",
+  CnNorth1 = "cn-north-1",
+  CnNorthwest1 = "cn-northwest-1",
+  CnQingdao = "cn-qingdao",
+  CnShanghai = "cn-shanghai",
+  CnShenzhen = "cn-shenzhen",
+  CnWuhanLr = "cn-wuhan-lr",
+  CnWulanchabu = "cn-wulanchabu",
+  CnZhangjiakou = "cn-zhangjiakou",
+  DE = "DE",
+  DE1 = "DE1",
+  DeFra1 = "de-fra1",
+  DkCph1 = "dk-cph1",
+  Eastasia = "eastasia",
+  Eastus = "eastus",
+  Eastus2 = "eastus2",
+  Eastus2Euap = "eastus2euap",
+  Eastusstg = "eastusstg",
+  EsMad1 = "es-mad1",
+  EuCentral1 = "eu-central-1",
+  EuCentral2 = "eu-central-2",
+  EuNorth1 = "eu-north-1",
+  EuSouth1 = "eu-south-1",
+  EuSouth2 = "eu-south-2",
+  EUSOUTHMIL = "EU-SOUTH-MIL",
+  EuWest1 = "eu-west-1",
+  EuWest2 = "eu-west-2",
+  EuWest3 = "eu-west-3",
+  EUWESTPAR = "EU-WEST-PAR",
+  FiHel1 = "fi-hel1",
+  FiHel2 = "fi-hel2",
+  Francecentral = "francecentral",
+  Francesouth = "francesouth",
+  Germanynorth = "germanynorth",
+  Germanywestcentral = "germanywestcentral",
+  GRA = "GRA",
+  GRA11 = "GRA11",
+  GRA7 = "GRA7",
+  GRA9 = "GRA9",
+  IlCentral1 = "il-central-1",
+  Indonesiacentral = "indonesiacentral",
+  Israelcentral = "israelcentral",
+  Italynorth = "italynorth",
+  Japaneast = "japaneast",
+  Japanwest = "japanwest",
+  Jioindiacentral = "jioindiacentral",
+  Jioindiawest = "jioindiawest",
+  Koreacentral = "koreacentral",
+  Koreasouth = "koreasouth",
+  Malaysiawest = "malaysiawest",
+  MeCentral1 = "me-central-1",
+  MeEast1 = "me-east-1",
+  MeSouth1 = "me-south-1",
+  Mexicocentral = "mexicocentral",
+  MxCentral1 = "mx-central-1",
+  NaSouth1 = "na-south-1",
+  Newzealandnorth = "newzealandnorth",
+  NlAms1 = "nl-ams1",
+  Northcentralus = "northcentralus",
+  Northeurope = "northeurope",
+  Norwayeast = "norwayeast",
+  Norwaywest = "norwaywest",
+  NoSvg1 = "no-svg1",
+  PlWaw1 = "pl-waw1",
+  Polandcentral = "polandcentral",
+  Qatarcentral = "qatarcentral",
+  RBX = "RBX",
+  RBXA = "RBX-A",
+  RBXARCHIVE = "RBX-ARCHIVE",
+  SaEast1 = "sa-east-1",
+  SBG = "SBG",
+  SBG5 = "SBG5",
+  SBG7 = "SBG7",
+  SeSto1 = "se-sto1",
+  SGP = "SGP",
+  SGP1 = "SGP1",
+  SgSin1 = "sg-sin1",
+  Southafricanorth = "southafricanorth",
+  Southafricawest = "southafricawest",
+  Southcentralus = "southcentralus",
+  Southcentralusstg = "southcentralusstg",
+  Southeastasia = "southeastasia",
+  Southindia = "southindia",
+  Spaincentral = "spaincentral",
+  Swedencentral = "swedencentral",
+  Switzerlandnorth = "switzerlandnorth",
+  Switzerlandwest = "switzerlandwest",
+  SYD = "SYD",
+  SYD1 = "SYD1",
+  Uaecentral = "uaecentral",
+  Uaenorth = "uaenorth",
+  UK = "UK",
+  UK1 = "UK1",
+  UkLon1 = "uk-lon1",
+  Uksouth = "uksouth",
+  Ukwest = "ukwest",
+  UsChi1 = "us-chi1",
+  UsEast1 = "us-east-1",
+  UsEast2 = "us-east-2",
+  UsNyc1 = "us-nyc1",
+  UsSjo1 = "us-sjo1",
+  UsWest1 = "us-west-1",
+  UsWest2 = "us-west-2",
+  WAW = "WAW",
+  WAW1 = "WAW1",
+  Westcentralus = "westcentralus",
+  Westeurope = "westeurope",
+  Westindia = "westindia",
+  Westus = "westus",
+  Westus2 = "westus2",
+  Westus3 = "westus3",
+}
+
+/**
+ * PriceUnit
+ * Supported units for the price tables.
+ */
+export enum PriceUnit {
+  Year = "year",
+  Month = "month",
+  Hour = "hour",
+  GiB = "GiB",
+  GB = "GB",
+  GBMonth = "GB/month",
+}
+
+/** OrderDir */
+export enum OrderDir {
+  Asc = "asc",
+  Desc = "desc",
+}
+
+/** GpuModels */
+export enum GpuModels {
+  Value509032G = "5090 32G",
+  Value5880 = "5880",
+  A10 = "A10",
+  A101 = "A10*1",
+  A10112 = "A10*1/12",
+  A1012 = "A10*1/2",
+  A1013 = "A10*1/3",
+  A1016 = "A10*1/6",
+  A100 = "A100",
+  A10080G = "A100 80G",
+  A10G = "A10G",
+  A30 = "A30",
+  A800 = "A800",
+  A80040G = "A800 40G",
+  A910E = "A910E",
+  A910X = "A910X",
+  A910Z = "A910Z",
+  AGF027 = "AGF 027",
+  ALINPU800 = "ALINPU 800",
+  AMDS7150 = "AMD S7150",
+  AMDS71502 = "AMD S7150/2",
+  AMDS71504 = "AMD S7150/4",
+  B200 = "B200",
+  B300 = "B300",
+  G39 = "G39",
+  G49 = "G49",
+  G49E = "G49E",
+  G59 = "G59",
+  GA107 = "GA107",
+  GPUA = "GPU A",
+  GPUH = "GPU H",
+  GPUHE = "GPU H-e",
+  H100 = "H100",
+  H100PCIe = "H100 PCIe",
+  H20Virt1 = "H20-virt1",
+  H200 = "H200",
+  HL205 = "HL-205",
+  INTELARRIA10GX1150 = "INTEL ARRIA 10 GX 1150",
+  L20 = "L20",
+  L20N48G = "L20N 48G",
+  L20N72G = "L20N 72G",
+  L4 = "L4",
+  L40S = "L40S",
+  Lovelace = "Lovelace",
+  M40 = "M40",
+  M60 = "M60",
+  MI308X = "MI-308X",
+  NETINTT408 = "NETINT T408",
+  NvidiaTeslaV100 = "Nvidia Tesla V100",
+  P100 = "P100",
+  P4 = "P4",
+  P412 = "P4*1/2",
+  P414 = "P4*1/4",
+  P418 = "P4*1/8",
+  PPU810 = "PPU 810",
+  RTX5000 = "RTX 5000",
+  RTX5880 = "RTX 5880",
+  RTX6000 = "RTX 6000",
+  RTXPro6000 = "RTX Pro 6000",
+  T4 = "T4",
+  T42 = "T4/2",
+  T44 = "T4/4",
+  T48 = "T4/8",
+  T4G = "T4G",
+  V100 = "V100",
+  V100PCIE16GB = "V100-PCIE-16GB",
+  V100SPCIE32GB = "V100S-PCIE-32GB",
+  V520 = "V520",
+  VG1000 = "VG1000",
+  XilinxVU9P = "Xilinx VU9p",
+  IntelSG1 = "intel SG1",
+  VGPU816G = "vGPU8-16G",
+  VGPU824G = "vGPU8-24G",
+  VGPU82G = "vGPU8-2G",
+  VGPU848G = "vGPU8-48G",
+  VGPU84G = "vGPU8-4G",
+  VGPU88G = "vGPU8-8G",
+}
+
+/** GpuManufacturers */
+export enum GpuManufacturers {
+  AMD = "AMD",
+  Habana = "Habana",
+  NVIDIA = "NVIDIA",
+  QuadroRTX = "Quadro RTX",
+}
+
+/** GpuFamilies */
+export enum GpuFamilies {
+  AdaLovelace = "Ada Lovelace",
+  Ampere = "Ampere",
+  Gaudi = "Gaudi",
+  Hopper = "Hopper",
+  Maxwell = "Maxwell",
+  RadeonProNavi = "Radeon Pro Navi",
+  Turing = "Turing",
+  Volta = "Volta",
+}
+
+/**
+ * DdrGeneration
+ * Generation of the DDR SDRAM.
+ */
+export enum DdrGeneration {
+  DDR3 = "DDR3",
+  DDR4 = "DDR4",
+  DDR5 = "DDR5",
+}
+
+/** CpuManufacturers */
+export enum CpuManufacturers {
+  AMD = "AMD",
+  AWS = "AWS",
+  Alibaba = "Alibaba",
+  AlibabaCloud = "Alibaba Cloud",
+  Ampere = "Ampere",
+  Apple = "Apple",
+  Hygon = "Hygon",
+  Intel = "Intel",
+  Microsoft = "Microsoft",
+}
+
+/** CpuFamilies */
+export enum CpuFamilies {
+  ARM = "ARM",
+  ARMv8 = "ARMv8",
+  ARMv9 = "ARMv9",
+  AmpereAltra = "Ampere Altra",
+  EPYC = "EPYC",
+  Xeon = "Xeon",
+  Yitian = "Yitian",
+}
+
+/**
+ * CpuArchitecture
+ * CPU architectures.
+ */
+export enum CpuArchitecture {
+  Arm64 = "arm64",
+  Arm64Mac = "arm64_mac",
+  I386 = "i386",
+  X8664 = "x86_64",
+  X8664Mac = "x86_64_mac",
+}
+
+/**
+ * CpuAllocation
+ * CPU allocation methods at cloud vendors.
+ */
+export enum CpuAllocation {
+  Shared = "Shared",
+  Burstable = "Burstable",
+  Dedicated = "Dedicated",
+}
+
+/** Countries */
+export enum Countries {
+  AE = "AE",
+  AT = "AT",
+  AU = "AU",
+  BE = "BE",
+  BH = "BH",
+  BR = "BR",
+  CA = "CA",
+  CH = "CH",
+  CL = "CL",
+  CN = "CN",
+  DE = "DE",
+  ES = "ES",
+  FI = "FI",
+  FR = "FR",
+  GB = "GB",
+  HK = "HK",
+  ID = "ID",
+  IE = "IE",
+  IL = "IL",
+  IN = "IN",
+  IT = "IT",
+  JP = "JP",
+  KR = "KR",
+  MX = "MX",
+  MY = "MY",
+  NL = "NL",
+  NO = "NO",
+  NZ = "NZ",
+  PL = "PL",
+  QA = "QA",
+  SA = "SA",
+  SE = "SE",
+  SG = "SG",
+  TW = "TW",
+  US = "US",
+  ZA = "ZA",
+}
+
+/** ComplianceFrameworks */
+export enum ComplianceFrameworks {
+  Hipaa = "hipaa",
+  Iso27001 = "iso27001",
+  Soc2T2 = "soc2t2",
+}
 
 /**
  * Allocation
@@ -218,53 +694,6 @@ export interface ComplianceFramework {
   observed_at?: string;
 }
 
-/** ComplianceFrameworks */
-export enum ComplianceFrameworks {
-  Hipaa = "hipaa",
-  Iso27001 = "iso27001",
-  Soc2T2 = "soc2t2",
-}
-
-/** Countries */
-export enum Countries {
-  AE = "AE",
-  AT = "AT",
-  AU = "AU",
-  BE = "BE",
-  BH = "BH",
-  BR = "BR",
-  CA = "CA",
-  CH = "CH",
-  CL = "CL",
-  CN = "CN",
-  DE = "DE",
-  ES = "ES",
-  FI = "FI",
-  FR = "FR",
-  GB = "GB",
-  HK = "HK",
-  ID = "ID",
-  IE = "IE",
-  IL = "IL",
-  IN = "IN",
-  IT = "IT",
-  JP = "JP",
-  KR = "KR",
-  MX = "MX",
-  MY = "MY",
-  NL = "NL",
-  NO = "NO",
-  NZ = "NZ",
-  PL = "PL",
-  QA = "QA",
-  SA = "SA",
-  SE = "SE",
-  SG = "SG",
-  TW = "TW",
-  US = "US",
-  ZA = "ZA",
-}
-
 /**
  * Country
  * Country and continent mapping.
@@ -362,58 +791,6 @@ export interface Cpu {
 }
 
 /**
- * CpuAllocation
- * CPU allocation methods at cloud vendors.
- */
-export enum CpuAllocation {
-  Shared = "Shared",
-  Burstable = "Burstable",
-  Dedicated = "Dedicated",
-}
-
-/**
- * CpuArchitecture
- * CPU architectures.
- */
-export enum CpuArchitecture {
-  Arm64 = "arm64",
-  Arm64Mac = "arm64_mac",
-  I386 = "i386",
-  X8664 = "x86_64",
-  X8664Mac = "x86_64_mac",
-}
-
-/** CpuFamilies */
-export enum CpuFamilies {
-  ARM = "ARM",
-  ARMv8 = "ARMv8",
-  ARMv9 = "ARMv9",
-  AmpereAltra = "Ampere Altra",
-  EPYC = "EPYC",
-  Xeon = "Xeon",
-}
-
-/** CpuManufacturers */
-export enum CpuManufacturers {
-  AMD = "AMD",
-  AWS = "AWS",
-  Ampere = "Ampere",
-  Apple = "Apple",
-  Intel = "Intel",
-  Microsoft = "Microsoft",
-}
-
-/**
- * DdrGeneration
- * Generation of the DDR SDRAM.
- */
-export enum DdrGeneration {
-  DDR3 = "DDR3",
-  DDR4 = "DDR4",
-  DDR5 = "DDR5",
-}
-
-/**
  * Disk
  * Disk definition based on size and storage type.
  */
@@ -456,47 +833,6 @@ export interface Gpu {
   video_clock?: number | null;
 }
 
-/** GpuFamilies */
-export enum GpuFamilies {
-  AdaLovelace = "Ada Lovelace",
-  Ampere = "Ampere",
-  Gaudi = "Gaudi",
-  Hopper = "Hopper",
-  Maxwell = "Maxwell",
-  RadeonProNavi = "Radeon Pro Navi",
-  Turing = "Turing",
-  Volta = "Volta",
-}
-
-/** GpuManufacturers */
-export enum GpuManufacturers {
-  AMD = "AMD",
-  Habana = "Habana",
-  NVIDIA = "NVIDIA",
-}
-
-/** GpuModels */
-export enum GpuModels {
-  A10 = "A10",
-  A100 = "A100",
-  A10G = "A10G",
-  B200 = "B200",
-  B300 = "B300",
-  H100 = "H100",
-  H200 = "H200",
-  HL205 = "HL-205",
-  L4 = "L4",
-  L40S = "L40S",
-  M60 = "M60",
-  RTX5000 = "RTX 5000",
-  RTXPro6000 = "RTX Pro 6000",
-  T4 = "T4",
-  T4G = "T4G",
-  V100 = "V100",
-  V100S = "V100S",
-  V520 = "V520",
-}
-
 /** HTTPValidationError */
 export interface HTTPValidationError {
   /** Detail */
@@ -537,12 +873,6 @@ export interface NameAndDescription {
   description: string;
 }
 
-/** OrderDir */
-export enum OrderDir {
-  Asc = "asc",
-  Desc = "desc",
-}
-
 /**
  * PriceTier
  * Price tier definition.
@@ -560,19 +890,6 @@ export interface PriceTier {
   upper: number | string;
   /** Price */
   price: number;
-}
-
-/**
- * PriceUnit
- * Supported units for the price tables.
- */
-export enum PriceUnit {
-  Year = "year",
-  Month = "month",
-  Hour = "hour",
-  GiB = "GiB",
-  GB = "GB",
-  GBMonth = "GB/month",
 }
 
 /**
@@ -870,194 +1187,6 @@ export interface RegionPKs {
    */
   observed_at?: string;
   vendor: VendorBase;
-}
-
-/** Regions */
-export enum Regions {
-  Value1000 = "1000",
-  Value1100 = "1100",
-  Value1210 = "1210",
-  Value1220 = "1220",
-  Value1230 = "1230",
-  Value1250 = "1250",
-  Value1260 = "1260",
-  Value1270 = "1270",
-  Value1280 = "1280",
-  Value1290 = "1290",
-  Value1300 = "1300",
-  Value1310 = "1310",
-  Value1320 = "1320",
-  Value1330 = "1330",
-  Value1340 = "1340",
-  Value1350 = "1350",
-  Value1360 = "1360",
-  Value1370 = "1370",
-  Value1380 = "1380",
-  Value1390 = "1390",
-  Value1410 = "1410",
-  Value1420 = "1420",
-  Value1430 = "1430",
-  Value1440 = "1440",
-  Value1450 = "1450",
-  Value1460 = "1460",
-  Value1470 = "1470",
-  Value1480 = "1480",
-  Value1490 = "1490",
-  Value1510 = "1510",
-  Value1520 = "1520",
-  Value1530 = "1530",
-  Value1540 = "1540",
-  Value1550 = "1550",
-  Value1560 = "1560",
-  Value1570 = "1570",
-  Value1580 = "1580",
-  Value1590 = "1590",
-  Value1600 = "1600",
-  Value1610 = "1610",
-  Value1640 = "1640",
-  Value1650 = "1650",
-  Value2 = "2",
-  Value3 = "3",
-  Value4 = "4",
-  Value5 = "5",
-  Value6 = "6",
-  Value7 = "7",
-  AfSouth1 = "af-south-1",
-  ApEast1 = "ap-east-1",
-  ApNortheast1 = "ap-northeast-1",
-  ApNortheast2 = "ap-northeast-2",
-  ApNortheast3 = "ap-northeast-3",
-  ApSouth1 = "ap-south-1",
-  ApSouth2 = "ap-south-2",
-  ApSoutheast1 = "ap-southeast-1",
-  ApSoutheast2 = "ap-southeast-2",
-  ApSoutheast3 = "ap-southeast-3",
-  ApSoutheast4 = "ap-southeast-4",
-  APSOUTHEASTSYD = "AP-SOUTHEAST-SYD",
-  APSOUTHEASTSYD2 = "AP-SOUTHEAST-SYD-2",
-  APSOUTHMUM = "AP-SOUTH-MUM",
-  APSOUTHMUM1 = "AP-SOUTH-MUM-1",
-  Australiacentral = "australiacentral",
-  Australiacentral2 = "australiacentral2",
-  Australiaeast = "australiaeast",
-  Australiasoutheast = "australiasoutheast",
-  Austriaeast = "austriaeast",
-  AuSyd1 = "au-syd1",
-  Belgiumcentral = "belgiumcentral",
-  BHS = "BHS",
-  BHS5 = "BHS5",
-  Brazilsouth = "brazilsouth",
-  Brazilsoutheast = "brazilsoutheast",
-  Brazilus = "brazilus",
-  CaCentral1 = "ca-central-1",
-  CAEASTTOR = "CA-EAST-TOR",
-  Canadacentral = "canadacentral",
-  Canadaeast = "canadaeast",
-  CaWest1 = "ca-west-1",
-  Centralindia = "centralindia",
-  Centralus = "centralus",
-  Centraluseuap = "centraluseuap",
-  Chilecentral = "chilecentral",
-  CnNorth1 = "cn-north-1",
-  CnNorthwest1 = "cn-northwest-1",
-  DE = "DE",
-  DE1 = "DE1",
-  DeFra1 = "de-fra1",
-  DkCph1 = "dk-cph1",
-  Eastasia = "eastasia",
-  Eastus = "eastus",
-  Eastus2 = "eastus2",
-  Eastus2Euap = "eastus2euap",
-  Eastusstg = "eastusstg",
-  EsMad1 = "es-mad1",
-  EuCentral1 = "eu-central-1",
-  EuCentral2 = "eu-central-2",
-  EuNorth1 = "eu-north-1",
-  EuSouth1 = "eu-south-1",
-  EuSouth2 = "eu-south-2",
-  EUSOUTHMIL = "EU-SOUTH-MIL",
-  EuWest1 = "eu-west-1",
-  EuWest2 = "eu-west-2",
-  EuWest3 = "eu-west-3",
-  EUWESTPAR = "EU-WEST-PAR",
-  FiHel1 = "fi-hel1",
-  FiHel2 = "fi-hel2",
-  Francecentral = "francecentral",
-  Francesouth = "francesouth",
-  Germanynorth = "germanynorth",
-  Germanywestcentral = "germanywestcentral",
-  GRA = "GRA",
-  GRA11 = "GRA11",
-  GRA7 = "GRA7",
-  GRA9 = "GRA9",
-  IlCentral1 = "il-central-1",
-  Indonesiacentral = "indonesiacentral",
-  Israelcentral = "israelcentral",
-  Italynorth = "italynorth",
-  Japaneast = "japaneast",
-  Japanwest = "japanwest",
-  Jioindiacentral = "jioindiacentral",
-  Jioindiawest = "jioindiawest",
-  Koreacentral = "koreacentral",
-  Koreasouth = "koreasouth",
-  Malaysiawest = "malaysiawest",
-  MeCentral1 = "me-central-1",
-  MeSouth1 = "me-south-1",
-  Mexicocentral = "mexicocentral",
-  Newzealandnorth = "newzealandnorth",
-  NlAms1 = "nl-ams1",
-  Northcentralus = "northcentralus",
-  Northeurope = "northeurope",
-  Norwayeast = "norwayeast",
-  Norwaywest = "norwaywest",
-  PlWaw1 = "pl-waw1",
-  Polandcentral = "polandcentral",
-  Qatarcentral = "qatarcentral",
-  RBX = "RBX",
-  RBXA = "RBX-A",
-  RBXARCHIVE = "RBX-ARCHIVE",
-  SaEast1 = "sa-east-1",
-  SBG = "SBG",
-  SBG5 = "SBG5",
-  SBG7 = "SBG7",
-  SeSto1 = "se-sto1",
-  SGP = "SGP",
-  SGP1 = "SGP1",
-  SgSin1 = "sg-sin1",
-  Southafricanorth = "southafricanorth",
-  Southafricawest = "southafricawest",
-  Southcentralus = "southcentralus",
-  Southcentralusstg = "southcentralusstg",
-  Southeastasia = "southeastasia",
-  Southindia = "southindia",
-  Spaincentral = "spaincentral",
-  Swedencentral = "swedencentral",
-  Switzerlandnorth = "switzerlandnorth",
-  Switzerlandwest = "switzerlandwest",
-  SYD = "SYD",
-  SYD1 = "SYD1",
-  Uaecentral = "uaecentral",
-  Uaenorth = "uaenorth",
-  UK = "UK",
-  UK1 = "UK1",
-  UkLon1 = "uk-lon1",
-  Uksouth = "uksouth",
-  Ukwest = "ukwest",
-  UsChi1 = "us-chi1",
-  UsEast1 = "us-east-1",
-  UsEast2 = "us-east-2",
-  UsNyc1 = "us-nyc1",
-  UsSjo1 = "us-sjo1",
-  UsWest1 = "us-west-1",
-  UsWest2 = "us-west-2",
-  WAW = "WAW",
-  WAW1 = "WAW1",
-  Westcentralus = "westcentralus",
-  Westeurope = "westeurope",
-  Westindia = "westindia",
-  Westus = "westus",
-  Westus2 = "westus2",
-  Westus3 = "westus3",
 }
 
 /**
@@ -2137,15 +2266,6 @@ export interface ServerWithScore {
 }
 
 /**
- * Status
- * Last known status of a resource, e.g. active or inactive.
- */
-export enum Status {
-  Active = "active",
-  Inactive = "inactive",
-}
-
-/**
  * Storage
  * Flexible storage options that can be attached to a Server.
  *
@@ -2333,26 +2453,6 @@ export interface StoragePriceWithPKs {
   storage: StorageBase;
 }
 
-/**
- * StorageType
- * Type of a storage, e.g. HDD or SSD.
- */
-export enum StorageType {
-  Hdd = "hdd",
-  Ssd = "ssd",
-  NvmeSsd = "nvme ssd",
-  Network = "network",
-}
-
-/**
- * TrafficDirection
- * Direction of the network traffic.
- */
-export enum TrafficDirection {
-  Inbound = "inbound",
-  Outbound = "outbound",
-}
-
 /** TrafficPriceWithPKsWithMonthlyTraffic */
 export interface TrafficPriceWithPKsWithMonthlyTraffic {
   /**
@@ -2407,6 +2507,18 @@ export interface TrafficPriceWithPKsWithMonthlyTraffic {
   vendor: VendorBase;
   /** Price Monthly Traffic */
   price_monthly_traffic?: number | null;
+}
+
+/**
+ * User
+ * User object extracted from OAuth 2.0 token introspection.
+ */
+export interface User {
+  /** User Id */
+  user_id: string;
+  /** Api Credits Per Minute */
+  api_credits_per_minute?: number | null;
+  [key: string]: any;
 }
 
 /** ValidationError */
@@ -2588,16 +2700,6 @@ export interface VendorBase {
   observed_at?: string;
 }
 
-/** Vendors */
-export enum Vendors {
-  Aws = "aws",
-  Azure = "azure",
-  Gcp = "gcp",
-  Hcloud = "hcloud",
-  Ovh = "ovh",
-  Upcloud = "upcloud",
-}
-
 /**
  * Zone
  * Availability zones of Regions.
@@ -2703,6 +2805,8 @@ export interface ZoneBase {
 
 export type HealthcheckHealthcheckGetData = HealthcheckResponse;
 
+export type MeMeGetData = User;
+
 /** Response Table Benchmark Table Benchmark Get */
 export type TableBenchmarkTableBenchmarkGetData = Benchmark[];
 
@@ -2710,7 +2814,8 @@ export type TableBenchmarkTableBenchmarkGetData = Benchmark[];
 export type TableCountryTableCountryGetData = Country[];
 
 /** Response Table Compliance Frameworks Table Compliance Framework Get */
-export type TableComplianceFrameworksTableComplianceFrameworkGetData = ComplianceFramework[];
+export type TableComplianceFrameworksTableComplianceFrameworkGetData =
+  ComplianceFramework[];
 
 /** Response Table Vendor Table Vendor Get */
 export type TableVendorTableVendorGetData = Vendor[];
@@ -2724,10 +2829,263 @@ export type TableZoneTableZoneGetData = Zone[];
 /** Response Table Server Table Server Get */
 export type TableServerTableServerGetData = Server[];
 
+export interface TableServerPricesTableServerPricesGetParams {
+  /**
+   * Vendor id
+   * Identifier of the cloud provider vendor.
+   */
+  vendor?: "alicloud" | "aws" | "azure" | "gcp" | "hcloud" | "ovh" | "upcloud";
+  /**
+   * Region id
+   * Identifier of the region.
+   */
+  region?:
+    | "1000"
+    | "1100"
+    | "1210"
+    | "1220"
+    | "1230"
+    | "1250"
+    | "1260"
+    | "1270"
+    | "1280"
+    | "1290"
+    | "1300"
+    | "1310"
+    | "1320"
+    | "1330"
+    | "1340"
+    | "1350"
+    | "1360"
+    | "1370"
+    | "1380"
+    | "1390"
+    | "1410"
+    | "1420"
+    | "1430"
+    | "1440"
+    | "1450"
+    | "1460"
+    | "1470"
+    | "1480"
+    | "1490"
+    | "1510"
+    | "1520"
+    | "1530"
+    | "1540"
+    | "1550"
+    | "1560"
+    | "1570"
+    | "1580"
+    | "1590"
+    | "1600"
+    | "1610"
+    | "1640"
+    | "1650"
+    | "1680"
+    | "2"
+    | "3"
+    | "4"
+    | "5"
+    | "6"
+    | "7"
+    | "af-south-1"
+    | "ap-east-1"
+    | "ap-east-2"
+    | "ap-northeast-1"
+    | "ap-northeast-2"
+    | "ap-northeast-3"
+    | "ap-south-1"
+    | "ap-south-2"
+    | "ap-southeast-1"
+    | "ap-southeast-2"
+    | "ap-southeast-3"
+    | "ap-southeast-4"
+    | "ap-southeast-5"
+    | "ap-southeast-6"
+    | "ap-southeast-7"
+    | "AP-SOUTHEAST-SYD"
+    | "AP-SOUTHEAST-SYD-2"
+    | "AP-SOUTH-MUM"
+    | "AP-SOUTH-MUM-1"
+    | "australiacentral"
+    | "australiacentral2"
+    | "australiaeast"
+    | "australiasoutheast"
+    | "austriaeast"
+    | "au-syd1"
+    | "belgiumcentral"
+    | "BHS"
+    | "BHS5"
+    | "brazilsouth"
+    | "brazilsoutheast"
+    | "brazilus"
+    | "ca-central-1"
+    | "CA-EAST-TOR"
+    | "canadacentral"
+    | "canadaeast"
+    | "ca-west-1"
+    | "centralindia"
+    | "centralus"
+    | "centraluseuap"
+    | "chilecentral"
+    | "cn-beijing"
+    | "cn-chengdu"
+    | "cn-fuzhou"
+    | "cn-guangzhou"
+    | "cn-hangzhou"
+    | "cn-heyuan"
+    | "cn-hongkong"
+    | "cn-huhehaote"
+    | "cn-nanjing"
+    | "cn-north-1"
+    | "cn-northwest-1"
+    | "cn-qingdao"
+    | "cn-shanghai"
+    | "cn-shenzhen"
+    | "cn-wuhan-lr"
+    | "cn-wulanchabu"
+    | "cn-zhangjiakou"
+    | "DE"
+    | "DE1"
+    | "de-fra1"
+    | "dk-cph1"
+    | "eastasia"
+    | "eastus"
+    | "eastus2"
+    | "eastus2euap"
+    | "eastusstg"
+    | "es-mad1"
+    | "eu-central-1"
+    | "eu-central-2"
+    | "eu-north-1"
+    | "eu-south-1"
+    | "eu-south-2"
+    | "EU-SOUTH-MIL"
+    | "eu-west-1"
+    | "eu-west-2"
+    | "eu-west-3"
+    | "EU-WEST-PAR"
+    | "fi-hel1"
+    | "fi-hel2"
+    | "francecentral"
+    | "francesouth"
+    | "germanynorth"
+    | "germanywestcentral"
+    | "GRA"
+    | "GRA11"
+    | "GRA7"
+    | "GRA9"
+    | "il-central-1"
+    | "indonesiacentral"
+    | "israelcentral"
+    | "italynorth"
+    | "japaneast"
+    | "japanwest"
+    | "jioindiacentral"
+    | "jioindiawest"
+    | "koreacentral"
+    | "koreasouth"
+    | "malaysiawest"
+    | "me-central-1"
+    | "me-east-1"
+    | "me-south-1"
+    | "mexicocentral"
+    | "mx-central-1"
+    | "na-south-1"
+    | "newzealandnorth"
+    | "nl-ams1"
+    | "northcentralus"
+    | "northeurope"
+    | "norwayeast"
+    | "norwaywest"
+    | "no-svg1"
+    | "pl-waw1"
+    | "polandcentral"
+    | "qatarcentral"
+    | "RBX"
+    | "RBX-A"
+    | "RBX-ARCHIVE"
+    | "sa-east-1"
+    | "SBG"
+    | "SBG5"
+    | "SBG7"
+    | "se-sto1"
+    | "SGP"
+    | "SGP1"
+    | "sg-sin1"
+    | "southafricanorth"
+    | "southafricawest"
+    | "southcentralus"
+    | "southcentralusstg"
+    | "southeastasia"
+    | "southindia"
+    | "spaincentral"
+    | "swedencentral"
+    | "switzerlandnorth"
+    | "switzerlandwest"
+    | "SYD"
+    | "SYD1"
+    | "uaecentral"
+    | "uaenorth"
+    | "UK"
+    | "UK1"
+    | "uk-lon1"
+    | "uksouth"
+    | "ukwest"
+    | "us-chi1"
+    | "us-east-1"
+    | "us-east-2"
+    | "us-nyc1"
+    | "us-sjo1"
+    | "us-west-1"
+    | "us-west-2"
+    | "WAW"
+    | "WAW1"
+    | "westcentralus"
+    | "westeurope"
+    | "westindia"
+    | "westus"
+    | "westus2"
+    | "westus3";
+  /**
+   * Allocation
+   * Server allocation method.
+   */
+  allocation?: "ondemand" | "reserved" | "spot";
+  /**
+   * Active only
+   * Filter for active servers only.
+   * @default true
+   */
+  only_active?: boolean | null;
+  /**
+   * Currency
+   * Currency used for prices.
+   */
+  currency?: string | null;
+}
+
+/** Response Table Server Prices Table Server Prices Get */
+export type TableServerPricesTableServerPricesGetData = ServerPrice[];
+
 /** Response Table Storage Table Storage Get */
 export type TableStorageTableStorageGetData = Storage[];
 
 export type TableMetadataServerTableServerMetaGetData = ServerTableMetaData;
+
+export interface GetServerWithoutRelationsV2ServerVendorServerGetParams {
+  /**
+   * Vendor
+   * A Vendor's ID.
+   */
+  vendor: string;
+  /**
+   * Server
+   * A Server's ID or API reference.
+   */
+  server: string;
+}
 
 export type GetServerWithoutRelationsV2ServerVendorServerGetData = ServerBase;
 
@@ -2768,7 +3126,8 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
 }
 
 /** Response Get Similar Servers Server  Vendor   Server  Similar Servers  By   Num  Get */
-export type GetSimilarServersServerVendorServerSimilarServersByNumGetData = ServerPKs[];
+export type GetSimilarServersServerVendorServerSimilarServersByNumGetData =
+  ServerPKs[];
 
 export interface GetServerPricesServerVendorServerPricesGetParams {
   /**
@@ -2791,8 +3150,22 @@ export interface GetServerPricesServerVendorServerPricesGetParams {
 /** Response Get Server Prices Server  Vendor   Server  Prices Get */
 export type GetServerPricesServerVendorServerPricesGetData = ServerPrice[];
 
+export interface GetServerBenchmarksServerVendorServerBenchmarksGetParams {
+  /**
+   * Vendor
+   * A Vendor's ID.
+   */
+  vendor: string;
+  /**
+   * Server
+   * A Server's ID or API reference.
+   */
+  server: string;
+}
+
 /** Response Get Server Benchmarks Server  Vendor   Server  Benchmarks Get */
-export type GetServerBenchmarksServerVendorServerBenchmarksGetData = BenchmarkScore[];
+export type GetServerBenchmarksServerVendorServerBenchmarksGetData =
+  BenchmarkScore[];
 
 export interface AssistServerFiltersAiAssistServerFiltersGetParams {
   /** Text */
@@ -2816,7 +3189,8 @@ export interface AssistStoragePriceFiltersAiAssistStoragePriceFiltersGetParams {
 }
 
 /** Response Assist Storage Price Filters Ai Assist Storage Price Filters Get */
-export type AssistStoragePriceFiltersAiAssistStoragePriceFiltersGetData = object;
+export type AssistStoragePriceFiltersAiAssistStoragePriceFiltersGetData =
+  object;
 
 export interface AssistTrafficPriceFiltersAiAssistTrafficPriceFiltersGetParams {
   /** Text */
@@ -2824,14 +3198,15 @@ export interface AssistTrafficPriceFiltersAiAssistTrafficPriceFiltersGetParams {
 }
 
 /** Response Assist Traffic Price Filters Ai Assist Traffic Price Filters Get */
-export type AssistTrafficPriceFiltersAiAssistTrafficPriceFiltersGetData = object;
+export type AssistTrafficPriceFiltersAiAssistTrafficPriceFiltersGetData =
+  object;
 
 export interface SearchRegionsRegionsGetParams {
   /**
    * Vendor id
    * Identifier of the cloud provider vendor.
    */
-  vendor?: "aws" | "azure" | "gcp" | "hcloud" | "ovh" | "upcloud";
+  vendor?: "alicloud" | "aws" | "azure" | "gcp" | "hcloud" | "ovh" | "upcloud";
 }
 
 /** Response Search Regions Regions Get */
@@ -2862,9 +3237,25 @@ export interface SearchServersServersGetParams {
    */
   architecture?: "arm64" | "arm64_mac" | "i386" | "x86_64" | "x86_64_mac";
   /** Processor manufacturer */
-  cpu_manufacturer?: "AMD" | "AWS" | "Ampere" | "Apple" | "Intel" | "Microsoft";
+  cpu_manufacturer?:
+    | "AMD"
+    | "AWS"
+    | "Alibaba"
+    | "Alibaba Cloud"
+    | "Ampere"
+    | "Apple"
+    | "Hygon"
+    | "Intel"
+    | "Microsoft";
   /** Processor family */
-  cpu_family?: "ARM" | "ARMv8" | "ARMv9" | "Ampere Altra" | "EPYC" | "Xeon";
+  cpu_family?:
+    | "ARM"
+    | "ARMv8"
+    | "ARMv9"
+    | "Ampere Altra"
+    | "EPYC"
+    | "Xeon"
+    | "Yitian";
   /**
    * CPU allocation
    * Allocation of the CPU(s) to the server, e.g. shared, burstable or dedicated.
@@ -2915,7 +3306,7 @@ export interface SearchServersServersGetParams {
    * Vendor id
    * Identifier of the cloud provider vendor.
    */
-  vendor?: "aws" | "azure" | "gcp" | "hcloud" | "ovh" | "upcloud";
+  vendor?: "alicloud" | "aws" | "azure" | "gcp" | "hcloud" | "ovh" | "upcloud";
   /**
    * Compliance Framework id
    * Compliance framework implemented at the vendor.
@@ -2947,29 +3338,96 @@ export interface SearchServersServersGetParams {
    */
   gpu_memory_total?: number | null;
   /** GPU manufacturer */
-  gpu_manufacturer?: "AMD" | "Habana" | "NVIDIA";
+  gpu_manufacturer?: "AMD" | "Habana" | "NVIDIA" | "Quadro RTX";
   /** GPU family */
-  gpu_family?: "Ada Lovelace" | "Ampere" | "Gaudi" | "Hopper" | "Maxwell" | "Radeon Pro Navi" | "Turing" | "Volta";
+  gpu_family?:
+    | "Ada Lovelace"
+    | "Ampere"
+    | "Gaudi"
+    | "Hopper"
+    | "Maxwell"
+    | "Radeon Pro Navi"
+    | "Turing"
+    | "Volta";
   /** GPU model */
   gpu_model?:
+    | "5090 32G"
+    | "5880"
     | "A10"
+    | "A10*1"
+    | "A10*1/12"
+    | "A10*1/2"
+    | "A10*1/3"
+    | "A10*1/6"
     | "A100"
+    | "A100 80G"
     | "A10G"
+    | "A30"
+    | "A800"
+    | "A800 40G"
+    | "A910E"
+    | "A910X"
+    | "A910Z"
+    | "AGF 027"
+    | "ALINPU 800"
+    | "AMD S7150"
+    | "AMD S7150/2"
+    | "AMD S7150/4"
     | "B200"
     | "B300"
+    | "G39"
+    | "G49"
+    | "G49E"
+    | "G59"
+    | "GA107"
+    | "GPU A"
+    | "GPU H"
+    | "GPU H-e"
     | "H100"
+    | "H100 PCIe"
+    | "H20-virt1"
     | "H200"
     | "HL-205"
+    | "INTEL ARRIA 10 GX 1150"
+    | "L20"
+    | "L20N 48G"
+    | "L20N 72G"
     | "L4"
     | "L40S"
+    | "Lovelace"
+    | "M40"
     | "M60"
+    | "MI-308X"
+    | "NETINT T408"
+    | "Nvidia Tesla V100"
+    | "P100"
+    | "P4"
+    | "P4*1/2"
+    | "P4*1/4"
+    | "P4*1/8"
+    | "PPU 810"
     | "RTX 5000"
+    | "RTX 5880"
+    | "RTX 6000"
     | "RTX Pro 6000"
     | "T4"
+    | "T4/2"
+    | "T4/4"
+    | "T4/8"
     | "T4G"
     | "V100"
-    | "V100S"
-    | "V520";
+    | "V100-PCIE-16GB"
+    | "V100S-PCIE-32GB"
+    | "V520"
+    | "VG1000"
+    | "Xilinx VU9p"
+    | "intel SG1"
+    | "vGPU8-16G"
+    | "vGPU8-24G"
+    | "vGPU8-2G"
+    | "vGPU8-48G"
+    | "vGPU8-4G"
+    | "vGPU8-8G";
   /**
    * Limit
    * Maximum number of results. Set to -1 for unlimited.
@@ -3028,9 +3486,25 @@ export interface SearchServerPricesServerPricesGetParams {
    */
   architecture?: "arm64" | "arm64_mac" | "i386" | "x86_64" | "x86_64_mac";
   /** Processor manufacturer */
-  cpu_manufacturer?: "AMD" | "AWS" | "Ampere" | "Apple" | "Intel" | "Microsoft";
+  cpu_manufacturer?:
+    | "AMD"
+    | "AWS"
+    | "Alibaba"
+    | "Alibaba Cloud"
+    | "Ampere"
+    | "Apple"
+    | "Hygon"
+    | "Intel"
+    | "Microsoft";
   /** Processor family */
-  cpu_family?: "ARM" | "ARMv8" | "ARMv9" | "Ampere Altra" | "EPYC" | "Xeon";
+  cpu_family?:
+    | "ARM"
+    | "ARMv8"
+    | "ARMv9"
+    | "Ampere Altra"
+    | "EPYC"
+    | "Xeon"
+    | "Yitian";
   /**
    * CPU allocation
    * Allocation of the CPU(s) to the server, e.g. shared, burstable or dedicated.
@@ -3076,7 +3550,7 @@ export interface SearchServerPricesServerPricesGetParams {
    * Vendor id
    * Identifier of the cloud provider vendor.
    */
-  vendor?: "aws" | "azure" | "gcp" | "hcloud" | "ovh" | "upcloud";
+  vendor?: "alicloud" | "aws" | "azure" | "gcp" | "hcloud" | "ovh" | "upcloud";
   /**
    * Region id
    * Identifier of the region.
@@ -3124,6 +3598,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "1610"
     | "1640"
     | "1650"
+    | "1680"
     | "2"
     | "3"
     | "4"
@@ -3132,6 +3607,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "7"
     | "af-south-1"
     | "ap-east-1"
+    | "ap-east-2"
     | "ap-northeast-1"
     | "ap-northeast-2"
     | "ap-northeast-3"
@@ -3141,6 +3617,9 @@ export interface SearchServerPricesServerPricesGetParams {
     | "ap-southeast-2"
     | "ap-southeast-3"
     | "ap-southeast-4"
+    | "ap-southeast-5"
+    | "ap-southeast-6"
+    | "ap-southeast-7"
     | "AP-SOUTHEAST-SYD"
     | "AP-SOUTHEAST-SYD-2"
     | "AP-SOUTH-MUM"
@@ -3166,8 +3645,23 @@ export interface SearchServerPricesServerPricesGetParams {
     | "centralus"
     | "centraluseuap"
     | "chilecentral"
+    | "cn-beijing"
+    | "cn-chengdu"
+    | "cn-fuzhou"
+    | "cn-guangzhou"
+    | "cn-hangzhou"
+    | "cn-heyuan"
+    | "cn-hongkong"
+    | "cn-huhehaote"
+    | "cn-nanjing"
     | "cn-north-1"
     | "cn-northwest-1"
+    | "cn-qingdao"
+    | "cn-shanghai"
+    | "cn-shenzhen"
+    | "cn-wuhan-lr"
+    | "cn-wulanchabu"
+    | "cn-zhangjiakou"
     | "DE"
     | "DE1"
     | "de-fra1"
@@ -3210,14 +3704,18 @@ export interface SearchServerPricesServerPricesGetParams {
     | "koreasouth"
     | "malaysiawest"
     | "me-central-1"
+    | "me-east-1"
     | "me-south-1"
     | "mexicocentral"
+    | "mx-central-1"
+    | "na-south-1"
     | "newzealandnorth"
     | "nl-ams1"
     | "northcentralus"
     | "northeurope"
     | "norwayeast"
     | "norwaywest"
+    | "no-svg1"
     | "pl-waw1"
     | "polandcentral"
     | "qatarcentral"
@@ -3338,29 +3836,96 @@ export interface SearchServerPricesServerPricesGetParams {
    */
   gpu_memory_total?: number | null;
   /** GPU manufacturer */
-  gpu_manufacturer?: "AMD" | "Habana" | "NVIDIA";
+  gpu_manufacturer?: "AMD" | "Habana" | "NVIDIA" | "Quadro RTX";
   /** GPU family */
-  gpu_family?: "Ada Lovelace" | "Ampere" | "Gaudi" | "Hopper" | "Maxwell" | "Radeon Pro Navi" | "Turing" | "Volta";
+  gpu_family?:
+    | "Ada Lovelace"
+    | "Ampere"
+    | "Gaudi"
+    | "Hopper"
+    | "Maxwell"
+    | "Radeon Pro Navi"
+    | "Turing"
+    | "Volta";
   /** GPU model */
   gpu_model?:
+    | "5090 32G"
+    | "5880"
     | "A10"
+    | "A10*1"
+    | "A10*1/12"
+    | "A10*1/2"
+    | "A10*1/3"
+    | "A10*1/6"
     | "A100"
+    | "A100 80G"
     | "A10G"
+    | "A30"
+    | "A800"
+    | "A800 40G"
+    | "A910E"
+    | "A910X"
+    | "A910Z"
+    | "AGF 027"
+    | "ALINPU 800"
+    | "AMD S7150"
+    | "AMD S7150/2"
+    | "AMD S7150/4"
     | "B200"
     | "B300"
+    | "G39"
+    | "G49"
+    | "G49E"
+    | "G59"
+    | "GA107"
+    | "GPU A"
+    | "GPU H"
+    | "GPU H-e"
     | "H100"
+    | "H100 PCIe"
+    | "H20-virt1"
     | "H200"
     | "HL-205"
+    | "INTEL ARRIA 10 GX 1150"
+    | "L20"
+    | "L20N 48G"
+    | "L20N 72G"
     | "L4"
     | "L40S"
+    | "Lovelace"
+    | "M40"
     | "M60"
+    | "MI-308X"
+    | "NETINT T408"
+    | "Nvidia Tesla V100"
+    | "P100"
+    | "P4"
+    | "P4*1/2"
+    | "P4*1/4"
+    | "P4*1/8"
+    | "PPU 810"
     | "RTX 5000"
+    | "RTX 5880"
+    | "RTX 6000"
     | "RTX Pro 6000"
     | "T4"
+    | "T4/2"
+    | "T4/4"
+    | "T4/8"
     | "T4G"
     | "V100"
-    | "V100S"
-    | "V520";
+    | "V100-PCIE-16GB"
+    | "V100S-PCIE-32GB"
+    | "V520"
+    | "VG1000"
+    | "Xilinx VU9p"
+    | "intel SG1"
+    | "vGPU8-16G"
+    | "vGPU8-24G"
+    | "vGPU8-2G"
+    | "vGPU8-48G"
+    | "vGPU8-4G"
+    | "vGPU8-8G";
   /**
    * Limit
    * Maximum number of results.
@@ -3406,7 +3971,7 @@ export interface SearchStoragePricesStoragePricesGetParams {
    * Vendor id
    * Identifier of the cloud provider vendor.
    */
-  vendor?: "aws" | "azure" | "gcp" | "hcloud" | "ovh" | "upcloud";
+  vendor?: "alicloud" | "aws" | "azure" | "gcp" | "hcloud" | "ovh" | "upcloud";
   /**
    * Green energy
    * Filter for regions that are 100% powered by renewable energy.
@@ -3474,6 +4039,7 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "1610"
     | "1640"
     | "1650"
+    | "1680"
     | "2"
     | "3"
     | "4"
@@ -3482,6 +4048,7 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "7"
     | "af-south-1"
     | "ap-east-1"
+    | "ap-east-2"
     | "ap-northeast-1"
     | "ap-northeast-2"
     | "ap-northeast-3"
@@ -3491,6 +4058,9 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "ap-southeast-2"
     | "ap-southeast-3"
     | "ap-southeast-4"
+    | "ap-southeast-5"
+    | "ap-southeast-6"
+    | "ap-southeast-7"
     | "AP-SOUTHEAST-SYD"
     | "AP-SOUTHEAST-SYD-2"
     | "AP-SOUTH-MUM"
@@ -3516,8 +4086,23 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "centralus"
     | "centraluseuap"
     | "chilecentral"
+    | "cn-beijing"
+    | "cn-chengdu"
+    | "cn-fuzhou"
+    | "cn-guangzhou"
+    | "cn-hangzhou"
+    | "cn-heyuan"
+    | "cn-hongkong"
+    | "cn-huhehaote"
+    | "cn-nanjing"
     | "cn-north-1"
     | "cn-northwest-1"
+    | "cn-qingdao"
+    | "cn-shanghai"
+    | "cn-shenzhen"
+    | "cn-wuhan-lr"
+    | "cn-wulanchabu"
+    | "cn-zhangjiakou"
     | "DE"
     | "DE1"
     | "de-fra1"
@@ -3560,14 +4145,18 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "koreasouth"
     | "malaysiawest"
     | "me-central-1"
+    | "me-east-1"
     | "me-south-1"
     | "mexicocentral"
+    | "mx-central-1"
+    | "na-south-1"
     | "newzealandnorth"
     | "nl-ams1"
     | "northcentralus"
     | "northeurope"
     | "norwayeast"
     | "norwaywest"
+    | "no-svg1"
     | "pl-waw1"
     | "polandcentral"
     | "qatarcentral"
@@ -3701,7 +4290,7 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
    * Vendor id
    * Identifier of the cloud provider vendor.
    */
-  vendor?: "aws" | "azure" | "gcp" | "hcloud" | "ovh" | "upcloud";
+  vendor?: "alicloud" | "aws" | "azure" | "gcp" | "hcloud" | "ovh" | "upcloud";
   /**
    * Green energy
    * Filter for regions that are 100% powered by renewable energy.
@@ -3759,6 +4348,7 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "1610"
     | "1640"
     | "1650"
+    | "1680"
     | "2"
     | "3"
     | "4"
@@ -3767,6 +4357,7 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "7"
     | "af-south-1"
     | "ap-east-1"
+    | "ap-east-2"
     | "ap-northeast-1"
     | "ap-northeast-2"
     | "ap-northeast-3"
@@ -3776,6 +4367,9 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "ap-southeast-2"
     | "ap-southeast-3"
     | "ap-southeast-4"
+    | "ap-southeast-5"
+    | "ap-southeast-6"
+    | "ap-southeast-7"
     | "AP-SOUTHEAST-SYD"
     | "AP-SOUTHEAST-SYD-2"
     | "AP-SOUTH-MUM"
@@ -3801,8 +4395,23 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "centralus"
     | "centraluseuap"
     | "chilecentral"
+    | "cn-beijing"
+    | "cn-chengdu"
+    | "cn-fuzhou"
+    | "cn-guangzhou"
+    | "cn-hangzhou"
+    | "cn-heyuan"
+    | "cn-hongkong"
+    | "cn-huhehaote"
+    | "cn-nanjing"
     | "cn-north-1"
     | "cn-northwest-1"
+    | "cn-qingdao"
+    | "cn-shanghai"
+    | "cn-shenzhen"
+    | "cn-wuhan-lr"
+    | "cn-wulanchabu"
+    | "cn-zhangjiakou"
     | "DE"
     | "DE1"
     | "de-fra1"
@@ -3845,14 +4454,18 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "koreasouth"
     | "malaysiawest"
     | "me-central-1"
+    | "me-east-1"
     | "me-south-1"
     | "mexicocentral"
+    | "mx-central-1"
+    | "na-south-1"
     | "newzealandnorth"
     | "nl-ams1"
     | "northcentralus"
     | "northeurope"
     | "norwayeast"
     | "norwaywest"
+    | "no-svg1"
     | "pl-waw1"
     | "polandcentral"
     | "qatarcentral"
@@ -3991,7 +4604,8 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
 }
 
 /** Response Search Traffic Prices Traffic Prices Get */
-export type SearchTrafficPricesTrafficPricesGetData = TrafficPriceWithPKsWithMonthlyTraffic[];
+export type SearchTrafficPricesTrafficPricesGetData =
+  TrafficPriceWithPKsWithMonthlyTraffic[];
 
 /** Response Search Benchmark Configs Benchmark Configs Get */
 export type SearchBenchmarkConfigsBenchmarkConfigsGetData = BenchmarkConfig[];

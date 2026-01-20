@@ -1,5 +1,6 @@
 /* eslint-disable */
 /* tslint:disable */
+// @ts-nocheck
 /*
  * ---------------------------------------------------------------
  * ## THIS FILE WAS GENERATED VIA SWAGGER-TYPESCRIPT-API        ##
@@ -46,9 +47,25 @@ export namespace Servers {
        */
       architecture?: "arm64" | "arm64_mac" | "i386" | "x86_64" | "x86_64_mac";
       /** Processor manufacturer */
-      cpu_manufacturer?: "AMD" | "AWS" | "Ampere" | "Apple" | "Intel" | "Microsoft";
+      cpu_manufacturer?:
+        | "AMD"
+        | "AWS"
+        | "Alibaba"
+        | "Alibaba Cloud"
+        | "Ampere"
+        | "Apple"
+        | "Hygon"
+        | "Intel"
+        | "Microsoft";
       /** Processor family */
-      cpu_family?: "ARM" | "ARMv8" | "Ampere Altra" | "EPYC" | "Xeon";
+      cpu_family?:
+        | "ARM"
+        | "ARMv8"
+        | "ARMv9"
+        | "Ampere Altra"
+        | "EPYC"
+        | "Xeon"
+        | "Yitian";
       /**
        * CPU allocation
        * Allocation of the CPU(s) to the server, e.g. shared, burstable or dedicated.
@@ -99,7 +116,14 @@ export namespace Servers {
        * Vendor id
        * Identifier of the cloud provider vendor.
        */
-      vendor?: "aws" | "azure" | "gcp" | "hcloud" | "upcloud";
+      vendor?:
+        | "alicloud"
+        | "aws"
+        | "azure"
+        | "gcp"
+        | "hcloud"
+        | "ovh"
+        | "upcloud";
       /**
        * Compliance Framework id
        * Compliance framework implemented at the vendor.
@@ -131,35 +155,96 @@ export namespace Servers {
        */
       gpu_memory_total?: number | null;
       /** GPU manufacturer */
-      gpu_manufacturer?: "AMD" | "Habana" | "NVIDIA";
+      gpu_manufacturer?: "AMD" | "Habana" | "NVIDIA" | "Quadro RTX";
       /** GPU family */
       gpu_family?:
         | "Ada Lovelace"
         | "Ampere"
         | "Gaudi"
         | "Hopper"
-        | "Kepler"
         | "Maxwell"
         | "Radeon Pro Navi"
         | "Turing"
         | "Volta";
       /** GPU model */
       gpu_model?:
+        | "5090 32G"
+        | "5880"
+        | "A10"
+        | "A10*1"
+        | "A10*1/12"
+        | "A10*1/2"
+        | "A10*1/3"
+        | "A10*1/6"
         | "A100"
+        | "A100 80G"
         | "A10G"
+        | "A30"
+        | "A800"
+        | "A800 40G"
+        | "A910E"
+        | "A910X"
+        | "A910Z"
+        | "AGF 027"
+        | "ALINPU 800"
+        | "AMD S7150"
+        | "AMD S7150/2"
+        | "AMD S7150/4"
+        | "B200"
+        | "B300"
+        | "G39"
+        | "G49"
+        | "G49E"
+        | "G59"
+        | "GA107"
+        | "GPU A"
+        | "GPU H"
+        | "GPU H-e"
         | "H100"
+        | "H100 PCIe"
+        | "H20-virt1"
         | "H200"
         | "HL-205"
-        | "K80"
+        | "INTEL ARRIA 10 GX 1150"
+        | "L20"
+        | "L20N 48G"
+        | "L20N 72G"
         | "L4"
         | "L40S"
+        | "Lovelace"
+        | "M40"
         | "M60"
-        | "NVIDIA"
+        | "MI-308X"
+        | "NETINT T408"
+        | "Nvidia Tesla V100"
+        | "P100"
+        | "P4"
+        | "P4*1/2"
+        | "P4*1/4"
+        | "P4*1/8"
+        | "PPU 810"
+        | "RTX 5000"
+        | "RTX 5880"
+        | "RTX 6000"
+        | "RTX Pro 6000"
         | "T4"
+        | "T4/2"
+        | "T4/4"
+        | "T4/8"
         | "T4G"
         | "V100"
+        | "V100-PCIE-16GB"
+        | "V100S-PCIE-32GB"
         | "V520"
-        | "nvidia-h200-141gb";
+        | "VG1000"
+        | "Xilinx VU9p"
+        | "intel SG1"
+        | "vGPU8-16G"
+        | "vGPU8-24G"
+        | "vGPU8-2G"
+        | "vGPU8-48G"
+        | "vGPU8-4G"
+        | "vGPU8-8G";
       /**
        * Limit
        * Maximum number of results. Set to -1 for unlimited.
@@ -174,7 +259,7 @@ export namespace Servers {
       /**
        * Order By
        * Order by column.
-       * @default "vcpus"
+       * @default "min_price"
        */
       order_by?: string;
       /**
