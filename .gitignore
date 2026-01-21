@@ -75,3 +75,5 @@ src/assets/slides/render.sh
 
 # .env files
 .env
+.env.example
+
