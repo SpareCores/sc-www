@@ -51,7 +51,6 @@ export namespace Servers {
         | "AMD"
         | "AWS"
         | "Alibaba"
-        | "Alibaba Cloud"
         | "Ampere"
         | "Apple"
         | "Hygon"
@@ -155,7 +154,7 @@ export namespace Servers {
        */
       gpu_memory_total?: number | null;
       /** GPU manufacturer */
-      gpu_manufacturer?: "AMD" | "Habana" | "NVIDIA" | "Quadro RTX";
+      gpu_manufacturer?: "AMD" | "Habana" | "NVIDIA";
       /** GPU family */
       gpu_family?:
         | "Ada Lovelace"
@@ -168,26 +167,15 @@ export namespace Servers {
         | "Volta";
       /** GPU model */
       gpu_model?:
-        | "5090 32G"
         | "A10"
-        | "A10*1"
-        | "A10*1/12"
-        | "A10*1/2"
-        | "A10*1/3"
-        | "A10*1/6"
         | "A100"
-        | "A100 80G"
         | "A10G"
         | "A30"
         | "A800"
-        | "A800 40G"
         | "A910E"
         | "A910X"
         | "A910Z"
         | "AGF 027"
-        | "AMD S7150"
-        | "AMD S7150/2"
-        | "AMD S7150/4"
         | "B200"
         | "B300"
         | "G39"
@@ -200,46 +188,31 @@ export namespace Servers {
         | "GPU H-e"
         | "H100"
         | "H100 PCIe"
-        | "H20-virt1"
         | "H200"
         | "HL-205"
         | "INTEL ARRIA 10 GX 1150"
         | "L20"
-        | "L20N 48G"
-        | "L20N 72G"
+        | "L20N"
         | "L4"
         | "L40S"
         | "M40"
         | "M60"
-        | "Nvidia Tesla V100"
         | "P100"
         | "P4"
-        | "P4*1/2"
-        | "P4*1/4"
-        | "P4*1/8"
         | "PPU 810"
         | "RTX 5000"
         | "RTX 5880"
         | "RTX 6000"
-        | "RTX PRO Server 6000"
         | "RTX Pro 6000"
+        | "S7150"
         | "T4"
-        | "T4/2"
-        | "T4/4"
-        | "T4/8"
         | "T4G"
         | "V100"
-        | "V100-PCIE-16GB"
-        | "V100S-PCIE-32GB"
+        | "V100S"
         | "V520"
         | "Xilinx VU9p"
         | "intel SG1"
-        | "vGPU8-16G"
-        | "vGPU8-24G"
-        | "vGPU8-2G"
-        | "vGPU8-48G"
-        | "vGPU8-4G"
-        | "vGPU8-8G";
+        | "vGPU8";
       /**
        * Limit
        * Maximum number of results. Set to -1 for unlimited.

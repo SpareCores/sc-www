@@ -283,26 +283,15 @@ export enum OrderDir {
 
 /** GpuModels */
 export enum GpuModels {
-  Value509032G = "5090 32G",
   A10 = "A10",
-  A101 = "A10*1",
-  A10112 = "A10*1/12",
-  A1012 = "A10*1/2",
-  A1013 = "A10*1/3",
-  A1016 = "A10*1/6",
   A100 = "A100",
-  A10080G = "A100 80G",
   A10G = "A10G",
   A30 = "A30",
   A800 = "A800",
-  A80040G = "A800 40G",
   A910E = "A910E",
   A910X = "A910X",
   A910Z = "A910Z",
   AGF027 = "AGF 027",
-  AMDS7150 = "AMD S7150",
-  AMDS71502 = "AMD S7150/2",
-  AMDS71504 = "AMD S7150/4",
   B200 = "B200",
   B300 = "B300",
   G39 = "G39",
@@ -315,46 +304,31 @@ export enum GpuModels {
   GPUHE = "GPU H-e",
   H100 = "H100",
   H100PCIe = "H100 PCIe",
-  H20Virt1 = "H20-virt1",
   H200 = "H200",
   HL205 = "HL-205",
   INTELARRIA10GX1150 = "INTEL ARRIA 10 GX 1150",
   L20 = "L20",
-  L20N48G = "L20N 48G",
-  L20N72G = "L20N 72G",
+  L20N = "L20N",
   L4 = "L4",
   L40S = "L40S",
   M40 = "M40",
   M60 = "M60",
-  NvidiaTeslaV100 = "Nvidia Tesla V100",
   P100 = "P100",
   P4 = "P4",
-  P412 = "P4*1/2",
-  P414 = "P4*1/4",
-  P418 = "P4*1/8",
   PPU810 = "PPU 810",
   RTX5000 = "RTX 5000",
   RTX5880 = "RTX 5880",
   RTX6000 = "RTX 6000",
-  RTXPROServer6000 = "RTX PRO Server 6000",
   RTXPro6000 = "RTX Pro 6000",
+  S7150 = "S7150",
   T4 = "T4",
-  T42 = "T4/2",
-  T44 = "T4/4",
-  T48 = "T4/8",
   T4G = "T4G",
   V100 = "V100",
-  V100PCIE16GB = "V100-PCIE-16GB",
-  V100SPCIE32GB = "V100S-PCIE-32GB",
+  V100S = "V100S",
   V520 = "V520",
   XilinxVU9P = "Xilinx VU9p",
   IntelSG1 = "intel SG1",
-  VGPU816G = "vGPU8-16G",
-  VGPU824G = "vGPU8-24G",
-  VGPU82G = "vGPU8-2G",
-  VGPU848G = "vGPU8-48G",
-  VGPU84G = "vGPU8-4G",
-  VGPU88G = "vGPU8-8G",
+  VGPU8 = "vGPU8",
 }
 
 /** GpuManufacturers */
@@ -362,7 +336,6 @@ export enum GpuManufacturers {
   AMD = "AMD",
   Habana = "Habana",
   NVIDIA = "NVIDIA",
-  QuadroRTX = "Quadro RTX",
 }
 
 /** GpuFamilies */
@@ -392,7 +365,6 @@ export enum CpuManufacturers {
   AMD = "AMD",
   AWS = "AWS",
   Alibaba = "Alibaba",
-  AlibabaCloud = "Alibaba Cloud",
   Ampere = "Ampere",
   Apple = "Apple",
   Hygon = "Hygon",
@@ -3236,7 +3208,6 @@ export interface SearchServersServersGetParams {
     | "AMD"
     | "AWS"
     | "Alibaba"
-    | "Alibaba Cloud"
     | "Ampere"
     | "Apple"
     | "Hygon"
@@ -3333,7 +3304,7 @@ export interface SearchServersServersGetParams {
    */
   gpu_memory_total?: number | null;
   /** GPU manufacturer */
-  gpu_manufacturer?: "AMD" | "Habana" | "NVIDIA" | "Quadro RTX";
+  gpu_manufacturer?: "AMD" | "Habana" | "NVIDIA";
   /** GPU family */
   gpu_family?:
     | "Ada Lovelace"
@@ -3346,26 +3317,15 @@ export interface SearchServersServersGetParams {
     | "Volta";
   /** GPU model */
   gpu_model?:
-    | "5090 32G"
     | "A10"
-    | "A10*1"
-    | "A10*1/12"
-    | "A10*1/2"
-    | "A10*1/3"
-    | "A10*1/6"
     | "A100"
-    | "A100 80G"
     | "A10G"
     | "A30"
     | "A800"
-    | "A800 40G"
     | "A910E"
     | "A910X"
     | "A910Z"
     | "AGF 027"
-    | "AMD S7150"
-    | "AMD S7150/2"
-    | "AMD S7150/4"
     | "B200"
     | "B300"
     | "G39"
@@ -3378,46 +3338,31 @@ export interface SearchServersServersGetParams {
     | "GPU H-e"
     | "H100"
     | "H100 PCIe"
-    | "H20-virt1"
     | "H200"
     | "HL-205"
     | "INTEL ARRIA 10 GX 1150"
     | "L20"
-    | "L20N 48G"
-    | "L20N 72G"
+    | "L20N"
     | "L4"
     | "L40S"
     | "M40"
     | "M60"
-    | "Nvidia Tesla V100"
     | "P100"
     | "P4"
-    | "P4*1/2"
-    | "P4*1/4"
-    | "P4*1/8"
     | "PPU 810"
     | "RTX 5000"
     | "RTX 5880"
     | "RTX 6000"
-    | "RTX PRO Server 6000"
     | "RTX Pro 6000"
+    | "S7150"
     | "T4"
-    | "T4/2"
-    | "T4/4"
-    | "T4/8"
     | "T4G"
     | "V100"
-    | "V100-PCIE-16GB"
-    | "V100S-PCIE-32GB"
+    | "V100S"
     | "V520"
     | "Xilinx VU9p"
     | "intel SG1"
-    | "vGPU8-16G"
-    | "vGPU8-24G"
-    | "vGPU8-2G"
-    | "vGPU8-48G"
-    | "vGPU8-4G"
-    | "vGPU8-8G";
+    | "vGPU8";
   /**
    * Limit
    * Maximum number of results. Set to -1 for unlimited.
@@ -3480,7 +3425,6 @@ export interface SearchServerPricesServerPricesGetParams {
     | "AMD"
     | "AWS"
     | "Alibaba"
-    | "Alibaba Cloud"
     | "Ampere"
     | "Apple"
     | "Hygon"
@@ -3826,7 +3770,7 @@ export interface SearchServerPricesServerPricesGetParams {
    */
   gpu_memory_total?: number | null;
   /** GPU manufacturer */
-  gpu_manufacturer?: "AMD" | "Habana" | "NVIDIA" | "Quadro RTX";
+  gpu_manufacturer?: "AMD" | "Habana" | "NVIDIA";
   /** GPU family */
   gpu_family?:
     | "Ada Lovelace"
@@ -3839,26 +3783,15 @@ export interface SearchServerPricesServerPricesGetParams {
     | "Volta";
   /** GPU model */
   gpu_model?:
-    | "5090 32G"
     | "A10"
-    | "A10*1"
-    | "A10*1/12"
-    | "A10*1/2"
-    | "A10*1/3"
-    | "A10*1/6"
     | "A100"
-    | "A100 80G"
     | "A10G"
     | "A30"
     | "A800"
-    | "A800 40G"
     | "A910E"
     | "A910X"
     | "A910Z"
     | "AGF 027"
-    | "AMD S7150"
-    | "AMD S7150/2"
-    | "AMD S7150/4"
     | "B200"
     | "B300"
     | "G39"
@@ -3871,46 +3804,31 @@ export interface SearchServerPricesServerPricesGetParams {
     | "GPU H-e"
     | "H100"
     | "H100 PCIe"
-    | "H20-virt1"
     | "H200"
     | "HL-205"
     | "INTEL ARRIA 10 GX 1150"
     | "L20"
-    | "L20N 48G"
-    | "L20N 72G"
+    | "L20N"
     | "L4"
     | "L40S"
     | "M40"
     | "M60"
-    | "Nvidia Tesla V100"
     | "P100"
     | "P4"
-    | "P4*1/2"
-    | "P4*1/4"
-    | "P4*1/8"
     | "PPU 810"
     | "RTX 5000"
     | "RTX 5880"
     | "RTX 6000"
-    | "RTX PRO Server 6000"
     | "RTX Pro 6000"
+    | "S7150"
     | "T4"
-    | "T4/2"
-    | "T4/4"
-    | "T4/8"
     | "T4G"
     | "V100"
-    | "V100-PCIE-16GB"
-    | "V100S-PCIE-32GB"
+    | "V100S"
     | "V520"
     | "Xilinx VU9p"
     | "intel SG1"
-    | "vGPU8-16G"
-    | "vGPU8-24G"
-    | "vGPU8-2G"
-    | "vGPU8-48G"
-    | "vGPU8-4G"
-    | "vGPU8-8G";
+    | "vGPU8";
   /**
    * Limit
    * Maximum number of results.
