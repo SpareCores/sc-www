@@ -284,7 +284,6 @@ export enum OrderDir {
 /** GpuModels */
 export enum GpuModels {
   Value509032G = "5090 32G",
-  Value5880 = "5880",
   A10 = "A10",
   A101 = "A10*1",
   A10112 = "A10*1/12",
@@ -301,7 +300,6 @@ export enum GpuModels {
   A910X = "A910X",
   A910Z = "A910Z",
   AGF027 = "AGF 027",
-  ALINPU800 = "ALINPU 800",
   AMDS7150 = "AMD S7150",
   AMDS71502 = "AMD S7150/2",
   AMDS71504 = "AMD S7150/4",
@@ -326,11 +324,8 @@ export enum GpuModels {
   L20N72G = "L20N 72G",
   L4 = "L4",
   L40S = "L40S",
-  Lovelace = "Lovelace",
   M40 = "M40",
   M60 = "M60",
-  MI308X = "MI-308X",
-  NETINTT408 = "NETINT T408",
   NvidiaTeslaV100 = "Nvidia Tesla V100",
   P100 = "P100",
   P4 = "P4",
@@ -341,6 +336,7 @@ export enum GpuModels {
   RTX5000 = "RTX 5000",
   RTX5880 = "RTX 5880",
   RTX6000 = "RTX 6000",
+  RTXPROServer6000 = "RTX PRO Server 6000",
   RTXPro6000 = "RTX Pro 6000",
   T4 = "T4",
   T42 = "T4/2",
@@ -351,7 +347,6 @@ export enum GpuModels {
   V100PCIE16GB = "V100-PCIE-16GB",
   V100SPCIE32GB = "V100S-PCIE-32GB",
   V520 = "V520",
-  VG1000 = "VG1000",
   XilinxVU9P = "Xilinx VU9p",
   IntelSG1 = "intel SG1",
   VGPU816G = "vGPU8-16G",
@@ -3352,7 +3347,6 @@ export interface SearchServersServersGetParams {
   /** GPU model */
   gpu_model?:
     | "5090 32G"
-    | "5880"
     | "A10"
     | "A10*1"
     | "A10*1/12"
@@ -3369,7 +3363,6 @@ export interface SearchServersServersGetParams {
     | "A910X"
     | "A910Z"
     | "AGF 027"
-    | "ALINPU 800"
     | "AMD S7150"
     | "AMD S7150/2"
     | "AMD S7150/4"
@@ -3394,11 +3387,8 @@ export interface SearchServersServersGetParams {
     | "L20N 72G"
     | "L4"
     | "L40S"
-    | "Lovelace"
     | "M40"
     | "M60"
-    | "MI-308X"
-    | "NETINT T408"
     | "Nvidia Tesla V100"
     | "P100"
     | "P4"
@@ -3409,6 +3399,7 @@ export interface SearchServersServersGetParams {
     | "RTX 5000"
     | "RTX 5880"
     | "RTX 6000"
+    | "RTX PRO Server 6000"
     | "RTX Pro 6000"
     | "T4"
     | "T4/2"
@@ -3419,7 +3410,6 @@ export interface SearchServersServersGetParams {
     | "V100-PCIE-16GB"
     | "V100S-PCIE-32GB"
     | "V520"
-    | "VG1000"
     | "Xilinx VU9p"
     | "intel SG1"
     | "vGPU8-16G"
@@ -3850,7 +3840,6 @@ export interface SearchServerPricesServerPricesGetParams {
   /** GPU model */
   gpu_model?:
     | "5090 32G"
-    | "5880"
     | "A10"
     | "A10*1"
     | "A10*1/12"
@@ -3867,7 +3856,6 @@ export interface SearchServerPricesServerPricesGetParams {
     | "A910X"
     | "A910Z"
     | "AGF 027"
-    | "ALINPU 800"
     | "AMD S7150"
     | "AMD S7150/2"
     | "AMD S7150/4"
@@ -3892,11 +3880,8 @@ export interface SearchServerPricesServerPricesGetParams {
     | "L20N 72G"
     | "L4"
     | "L40S"
-    | "Lovelace"
     | "M40"
     | "M60"
-    | "MI-308X"
-    | "NETINT T408"
     | "Nvidia Tesla V100"
     | "P100"
     | "P4"
@@ -3907,6 +3892,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "RTX 5000"
     | "RTX 5880"
     | "RTX 6000"
+    | "RTX PRO Server 6000"
     | "RTX Pro 6000"
     | "T4"
     | "T4/2"
@@ -3917,7 +3903,6 @@ export interface SearchServerPricesServerPricesGetParams {
     | "V100-PCIE-16GB"
     | "V100S-PCIE-32GB"
     | "V520"
-    | "VG1000"
     | "Xilinx VU9p"
     | "intel SG1"
     | "vGPU8-16G"
