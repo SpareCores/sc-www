@@ -1,5 +1,6 @@
 /* eslint-disable */
 /* tslint:disable */
+// @ts-nocheck
 /*
  * ---------------------------------------------------------------
  * ## THIS FILE WAS GENERATED VIA SWAGGER-TYPESCRIPT-API        ##
@@ -10,11 +11,14 @@
  */
 
 import {
+  HTTPValidationError,
   TableBenchmarkTableBenchmarkGetData,
   TableComplianceFrameworksTableComplianceFrameworkGetData,
   TableCountryTableCountryGetData,
   TableMetadataServerTableServerMetaGetData,
   TableRegionTableRegionGetData,
+  TableServerPricesTableServerPricesGetData,
+  TableServerPricesTableServerPricesGetParams,
   TableServerTableServerGetData,
   TableStorageTableStorageGetData,
   TableVendorTableVendorGetData,
@@ -41,6 +45,7 @@ export class Table<SecurityDataType = unknown> {
     this.http.request<TableBenchmarkTableBenchmarkGetData, any>({
       path: `/table/benchmark`,
       method: "GET",
+      format: "json",
       ...params,
     });
   /**
@@ -55,6 +60,7 @@ export class Table<SecurityDataType = unknown> {
     this.http.request<TableCountryTableCountryGetData, any>({
       path: `/table/country`,
       method: "GET",
+      format: "json",
       ...params,
     });
   /**
@@ -65,10 +71,16 @@ export class Table<SecurityDataType = unknown> {
    * @summary Table Compliance Frameworks
    * @request GET:/table/compliance_framework
    */
-  tableComplianceFrameworksTableComplianceFrameworkGet = (params: RequestParams = {}) =>
-    this.http.request<TableComplianceFrameworksTableComplianceFrameworkGetData, any>({
+  tableComplianceFrameworksTableComplianceFrameworkGet = (
+    params: RequestParams = {},
+  ) =>
+    this.http.request<
+      TableComplianceFrameworksTableComplianceFrameworkGetData,
+      any
+    >({
       path: `/table/compliance_framework`,
       method: "GET",
+      format: "json",
       ...params,
     });
   /**
@@ -83,6 +95,7 @@ export class Table<SecurityDataType = unknown> {
     this.http.request<TableVendorTableVendorGetData, any>({
       path: `/table/vendor`,
       method: "GET",
+      format: "json",
       ...params,
     });
   /**
@@ -97,6 +110,7 @@ export class Table<SecurityDataType = unknown> {
     this.http.request<TableRegionTableRegionGetData, any>({
       path: `/table/region`,
       method: "GET",
+      format: "json",
       ...params,
     });
   /**
@@ -111,6 +125,7 @@ export class Table<SecurityDataType = unknown> {
     this.http.request<TableZoneTableZoneGetData, any>({
       path: `/table/zone`,
       method: "GET",
+      format: "json",
       ...params,
     });
   /**
@@ -125,6 +140,31 @@ export class Table<SecurityDataType = unknown> {
     this.http.request<TableServerTableServerGetData, any>({
       path: `/table/server`,
       method: "GET",
+      format: "json",
+      ...params,
+    });
+  /**
+   * @description Query ServerPrices records without relationships resolved.
+   *
+   * @tags Table dumps
+   * @name TableServerPricesTableServerPricesGet
+   * @summary Table Server Prices
+   * @request GET:/table/server_prices
+   * @secure
+   */
+  tableServerPricesTableServerPricesGet = (
+    query: TableServerPricesTableServerPricesGetParams,
+    params: RequestParams = {},
+  ) =>
+    this.http.request<
+      TableServerPricesTableServerPricesGetData,
+      HTTPValidationError
+    >({
+      path: `/table/server_prices`,
+      method: "GET",
+      query: query,
+      secure: true,
+      format: "json",
       ...params,
     });
   /**
@@ -139,6 +179,7 @@ export class Table<SecurityDataType = unknown> {
     this.http.request<TableStorageTableStorageGetData, any>({
       path: `/table/storage`,
       method: "GET",
+      format: "json",
       ...params,
     });
   /**
@@ -153,6 +194,7 @@ export class Table<SecurityDataType = unknown> {
     this.http.request<TableMetadataServerTableServerMetaGetData, any>({
       path: `/table/server/meta`,
       method: "GET",
+      format: "json",
       ...params,
     });
 }

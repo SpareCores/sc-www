@@ -1,5 +1,6 @@
 /* eslint-disable */
 /* tslint:disable */
+// @ts-nocheck
 /*
  * ---------------------------------------------------------------
  * ## THIS FILE WAS GENERATED VIA SWAGGER-TYPESCRIPT-API        ##
@@ -9,7 +10,11 @@
  * ---------------------------------------------------------------
  */
 
-import { GetServerWithoutRelationsV2ServerVendorServerGetData, HTTPValidationError } from "./data-contracts";
+import {
+  GetServerWithoutRelationsV2ServerVendorServerGetData,
+  GetServerWithoutRelationsV2ServerVendorServerGetParams,
+  HTTPValidationError,
+} from "./data-contracts";
 import { HttpClient, RequestParams } from "./http-client";
 
 export class V2<SecurityDataType = unknown> {
@@ -27,10 +32,21 @@ export class V2<SecurityDataType = unknown> {
    * @summary Get Server Without Relations
    * @request GET:/v2/server/{vendor}/{server}
    */
-  getServerWithoutRelationsV2ServerVendorServerGet = (vendor: string, server: string, params: RequestParams = {}) =>
-    this.http.request<GetServerWithoutRelationsV2ServerVendorServerGetData, HTTPValidationError>({
+  getServerWithoutRelationsV2ServerVendorServerGet = (
+    {
+      vendor,
+      server,
+      ...query
+    }: GetServerWithoutRelationsV2ServerVendorServerGetParams,
+    params: RequestParams = {},
+  ) =>
+    this.http.request<
+      GetServerWithoutRelationsV2ServerVendorServerGetData,
+      HTTPValidationError
+    >({
       path: `/v2/server/${vendor}/${server}`,
       method: "GET",
+      format: "json",
       ...params,
     });
 }

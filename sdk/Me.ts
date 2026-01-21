@@ -10,14 +10,10 @@
  * ---------------------------------------------------------------
  */
 
-import {
-  HTTPValidationError,
-  SearchTrafficPricesTrafficPricesGetData,
-  SearchTrafficPricesTrafficPricesGetParams,
-} from "./data-contracts";
+import { MeMeGetData } from "./data-contracts";
 import { HttpClient, RequestParams } from "./http-client";
 
-export class TrafficPrices<SecurityDataType = unknown> {
+export class Me<SecurityDataType = unknown> {
   http: HttpClient<SecurityDataType>;
 
   constructor(http: HttpClient<SecurityDataType>) {
@@ -25,24 +21,19 @@ export class TrafficPrices<SecurityDataType = unknown> {
   }
 
   /**
-   * No description
+   * @description Return the current user after authentication.
    *
-   * @tags Query Resources
-   * @name SearchTrafficPricesTrafficPricesGet
-   * @summary Search Traffic Prices
-   * @request GET:/traffic_prices
+   * @tags Administrative endpoints
+   * @name MeMeGet
+   * @summary Me
+   * @request GET:/me
+   * @secure
    */
-  searchTrafficPricesTrafficPricesGet = (
-    query: SearchTrafficPricesTrafficPricesGetParams,
-    params: RequestParams = {},
-  ) =>
-    this.http.request<
-      SearchTrafficPricesTrafficPricesGetData,
-      HTTPValidationError
-    >({
-      path: `/traffic_prices`,
+  meMeGet = (params: RequestParams = {}) =>
+    this.http.request<MeMeGetData, any>({
+      path: `/me`,
       method: "GET",
-      query: query,
+      secure: true,
       format: "json",
       ...params,
     });

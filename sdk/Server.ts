@@ -1,5 +1,6 @@
 /* eslint-disable */
 /* tslint:disable */
+// @ts-nocheck
 /*
  * ---------------------------------------------------------------
  * ## THIS FILE WAS GENERATED VIA SWAGGER-TYPESCRIPT-API        ##
@@ -11,6 +12,7 @@
 
 import {
   GetServerBenchmarksServerVendorServerBenchmarksGetData,
+  GetServerBenchmarksServerVendorServerBenchmarksGetParams,
   GetServerPricesServerVendorServerPricesGetData,
   GetServerPricesServerVendorServerPricesGetParams,
   GetSimilarServersServerVendorServerSimilarServersByNumGetData,
@@ -35,13 +37,23 @@ export class Server<SecurityDataType = unknown> {
    * @request GET:/server/{vendor}/{server}/similar_servers/{by}/{num}
    */
   getSimilarServersServerVendorServerSimilarServersByNumGet = (
-    { vendor, server, by, num, ...query }: GetSimilarServersServerVendorServerSimilarServersByNumGetParams,
+    {
+      vendor,
+      server,
+      by,
+      num,
+      ...query
+    }: GetSimilarServersServerVendorServerSimilarServersByNumGetParams,
     params: RequestParams = {},
   ) =>
-    this.http.request<GetSimilarServersServerVendorServerSimilarServersByNumGetData, HTTPValidationError>({
+    this.http.request<
+      GetSimilarServersServerVendorServerSimilarServersByNumGetData,
+      HTTPValidationError
+    >({
       path: `/server/${vendor}/${server}/similar_servers/${by}/${num}`,
       method: "GET",
       query: query,
+      format: "json",
       ...params,
     });
   /**
@@ -53,13 +65,21 @@ export class Server<SecurityDataType = unknown> {
    * @request GET:/server/{vendor}/{server}/prices
    */
   getServerPricesServerVendorServerPricesGet = (
-    { vendor, server, ...query }: GetServerPricesServerVendorServerPricesGetParams,
+    {
+      vendor,
+      server,
+      ...query
+    }: GetServerPricesServerVendorServerPricesGetParams,
     params: RequestParams = {},
   ) =>
-    this.http.request<GetServerPricesServerVendorServerPricesGetData, HTTPValidationError>({
+    this.http.request<
+      GetServerPricesServerVendorServerPricesGetData,
+      HTTPValidationError
+    >({
       path: `/server/${vendor}/${server}/prices`,
       method: "GET",
       query: query,
+      format: "json",
       ...params,
     });
   /**
@@ -70,10 +90,21 @@ export class Server<SecurityDataType = unknown> {
    * @summary Get Server Benchmarks
    * @request GET:/server/{vendor}/{server}/benchmarks
    */
-  getServerBenchmarksServerVendorServerBenchmarksGet = (vendor: string, server: string, params: RequestParams = {}) =>
-    this.http.request<GetServerBenchmarksServerVendorServerBenchmarksGetData, HTTPValidationError>({
+  getServerBenchmarksServerVendorServerBenchmarksGet = (
+    {
+      vendor,
+      server,
+      ...query
+    }: GetServerBenchmarksServerVendorServerBenchmarksGetParams,
+    params: RequestParams = {},
+  ) =>
+    this.http.request<
+      GetServerBenchmarksServerVendorServerBenchmarksGetData,
+      HTTPValidationError
+    >({
       path: `/server/${vendor}/${server}/benchmarks`,
       method: "GET",
+      format: "json",
       ...params,
     });
 }

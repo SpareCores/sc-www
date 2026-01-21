@@ -1,5 +1,6 @@
 /* eslint-disable */
 /* tslint:disable */
+// @ts-nocheck
 /*
  * ---------------------------------------------------------------
  * ## THIS FILE WAS GENERATED VIA SWAGGER-TYPESCRIPT-API        ##
@@ -31,11 +32,18 @@ export class ServerPrices<SecurityDataType = unknown> {
    * @summary Search Server Prices
    * @request GET:/server_prices
    */
-  searchServerPricesServerPricesGet = (query: SearchServerPricesServerPricesGetParams, params: RequestParams = {}) =>
-    this.http.request<SearchServerPricesServerPricesGetData, HTTPValidationError>({
+  searchServerPricesServerPricesGet = (
+    query: SearchServerPricesServerPricesGetParams,
+    params: RequestParams = {},
+  ) =>
+    this.http.request<
+      SearchServerPricesServerPricesGetData,
+      HTTPValidationError
+    >({
       path: `/server_prices`,
       method: "GET",
       query: query,
+      format: "json",
       ...params,
     });
 }

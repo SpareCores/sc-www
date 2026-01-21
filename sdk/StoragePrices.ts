@@ -1,5 +1,6 @@
 /* eslint-disable */
 /* tslint:disable */
+// @ts-nocheck
 /*
  * ---------------------------------------------------------------
  * ## THIS FILE WAS GENERATED VIA SWAGGER-TYPESCRIPT-API        ##
@@ -35,10 +36,14 @@ export class StoragePrices<SecurityDataType = unknown> {
     query: SearchStoragePricesStoragePricesGetParams,
     params: RequestParams = {},
   ) =>
-    this.http.request<SearchStoragePricesStoragePricesGetData, HTTPValidationError>({
+    this.http.request<
+      SearchStoragePricesStoragePricesGetData,
+      HTTPValidationError
+    >({
       path: `/storage_prices`,
       method: "GET",
       query: query,
+      format: "json",
       ...params,
     });
 }

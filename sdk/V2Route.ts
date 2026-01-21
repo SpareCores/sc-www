@@ -1,5 +1,6 @@
 /* eslint-disable */
 /* tslint:disable */
+// @ts-nocheck
 /*
  * ---------------------------------------------------------------
  * ## THIS FILE WAS GENERATED VIA SWAGGER-TYPESCRIPT-API        ##
@@ -35,6 +36,7 @@ export namespace V2 {
     export type RequestQuery = {};
     export type RequestBody = never;
     export type RequestHeaders = {};
-    export type ResponseBody = GetServerWithoutRelationsV2ServerVendorServerGetData;
+    export type ResponseBody =
+      GetServerWithoutRelationsV2ServerVendorServerGetData;
   }
 }

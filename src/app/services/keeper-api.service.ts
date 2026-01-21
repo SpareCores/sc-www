@@ -35,7 +35,7 @@ export class KeeperAPIService {
   }
 
   public getServerV2(vendor: string, id: string): Promise<any> {
-    return this.V2Controller.getServerWithoutRelationsV2ServerVendorServerGet(vendor, id);
+    return this.V2Controller.getServerWithoutRelationsV2ServerVendorServerGet({vendor, server: id});
   }
 
   public getServerPrices(vendor: string, id: string, currency?: string): Promise<any> {
@@ -43,7 +43,7 @@ export class KeeperAPIService {
   }
 
   public getServerBenchmark(vendor: string, id: string): Promise<any> {
-    return this.ServerController.getServerBenchmarksServerVendorServerBenchmarksGet(vendor, id);
+    return this.ServerController.getServerBenchmarksServerVendorServerBenchmarksGet({vendor, server: id});
   }
 
 

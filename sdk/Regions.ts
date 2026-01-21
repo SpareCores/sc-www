@@ -1,5 +1,6 @@
 /* eslint-disable */
 /* tslint:disable */
+// @ts-nocheck
 /*
  * ---------------------------------------------------------------
  * ## THIS FILE WAS GENERATED VIA SWAGGER-TYPESCRIPT-API        ##
@@ -9,7 +10,11 @@
  * ---------------------------------------------------------------
  */
 
-import { HTTPValidationError, SearchRegionsRegionsGetData, SearchRegionsRegionsGetParams } from "./data-contracts";
+import {
+  HTTPValidationError,
+  SearchRegionsRegionsGetData,
+  SearchRegionsRegionsGetParams,
+} from "./data-contracts";
 import { HttpClient, RequestParams } from "./http-client";
 
 export class Regions<SecurityDataType = unknown> {
@@ -27,11 +32,15 @@ export class Regions<SecurityDataType = unknown> {
    * @summary Search Regions
    * @request GET:/regions
    */
-  searchRegionsRegionsGet = (query: SearchRegionsRegionsGetParams, params: RequestParams = {}) =>
+  searchRegionsRegionsGet = (
+    query: SearchRegionsRegionsGetParams,
+    params: RequestParams = {},
+  ) =>
     this.http.request<SearchRegionsRegionsGetData, HTTPValidationError>({
       path: `/regions`,
       method: "GET",
       query: query,
+      format: "json",
       ...params,
     });
 }

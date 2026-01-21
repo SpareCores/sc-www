@@ -1,5 +1,6 @@
 /* eslint-disable */
 /* tslint:disable */
+// @ts-nocheck
 /*
  * ---------------------------------------------------------------
  * ## THIS FILE WAS GENERATED VIA SWAGGER-TYPESCRIPT-API        ##
@@ -63,7 +64,8 @@ export namespace Server {
     };
     export type RequestBody = never;
     export type RequestHeaders = {};
-    export type ResponseBody = GetSimilarServersServerVendorServerSimilarServersByNumGetData;
+    export type ResponseBody =
+      GetSimilarServersServerVendorServerSimilarServersByNumGetData;
   }
 
   /**
@@ -121,6 +123,7 @@ export namespace Server {
     export type RequestQuery = {};
     export type RequestBody = never;
     export type RequestHeaders = {};
-    export type ResponseBody = GetServerBenchmarksServerVendorServerBenchmarksGetData;
+    export type ResponseBody =
+      GetServerBenchmarksServerVendorServerBenchmarksGetData;
   }
 }

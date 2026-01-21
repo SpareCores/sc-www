@@ -36,27 +36,27 @@ export class AboutNavigatorComponent implements AfterViewInit {
     '✅ Microsoft Azure (Done)',
     '✅ UpCloud (Done)',
     '✅ OVH Cloud (Done)',
-    '⚙️ Alibaba Cloud (In Progress)',
-    '🗓️ Oracle Cloud Infrastructure (Planned)',
+    '✅ Alibaba Cloud (Done)',
+    '⚙️ Oracle Cloud Infrastructure (In Progress)',
     '🗓️ Vultr (Planned)',
     '🗓️ Scaleway (Planned)',
   ];
 
   features: any[] = [
     {
-      count: '413',
+      count: '522',
       text: 'availability zones'
     },
     {
-      count: '3,060',
+      count: '4,984',
       text: 'server types'
     },
     {
-      count: '1,290,041',
+      count: '1,342,689',
       text: 'benchmark scores'
     },
     {
-      count: '~410,000',
+      count: '467,693',
       text: 'live price records'
     },
     {

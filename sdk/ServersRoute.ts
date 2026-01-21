@@ -1,5 +1,6 @@
 /* eslint-disable */
 /* tslint:disable */
+// @ts-nocheck
 /*
  * ---------------------------------------------------------------
  * ## THIS FILE WAS GENERATED VIA SWAGGER-TYPESCRIPT-API        ##
@@ -46,9 +47,24 @@ export namespace Servers {
        */
       architecture?: "arm64" | "arm64_mac" | "i386" | "x86_64" | "x86_64_mac";
       /** Processor manufacturer */
-      cpu_manufacturer?: "AMD" | "AWS" | "Ampere" | "Apple" | "Intel" | "Microsoft";
+      cpu_manufacturer?:
+        | "AMD"
+        | "AWS"
+        | "Alibaba"
+        | "Ampere"
+        | "Apple"
+        | "Hygon"
+        | "Intel"
+        | "Microsoft";
       /** Processor family */
-      cpu_family?: "ARM" | "ARMv8" | "Ampere Altra" | "EPYC" | "Xeon";
+      cpu_family?:
+        | "ARM"
+        | "ARMv8"
+        | "ARMv9"
+        | "Ampere Altra"
+        | "EPYC"
+        | "Xeon"
+        | "Yitian";
       /**
        * CPU allocation
        * Allocation of the CPU(s) to the server, e.g. shared, burstable or dedicated.
@@ -99,7 +115,14 @@ export namespace Servers {
        * Vendor id
        * Identifier of the cloud provider vendor.
        */
-      vendor?: "aws" | "azure" | "gcp" | "hcloud" | "upcloud";
+      vendor?:
+        | "alicloud"
+        | "aws"
+        | "azure"
+        | "gcp"
+        | "hcloud"
+        | "ovh"
+        | "upcloud";
       /**
        * Compliance Framework id
        * Compliance framework implemented at the vendor.
@@ -138,28 +161,58 @@ export namespace Servers {
         | "Ampere"
         | "Gaudi"
         | "Hopper"
-        | "Kepler"
         | "Maxwell"
         | "Radeon Pro Navi"
         | "Turing"
         | "Volta";
       /** GPU model */
       gpu_model?:
+        | "A10"
         | "A100"
         | "A10G"
+        | "A30"
+        | "A800"
+        | "A910E"
+        | "A910X"
+        | "A910Z"
+        | "AGF 027"
+        | "B200"
+        | "B300"
+        | "G39"
+        | "G49"
+        | "G49E"
+        | "G59"
+        | "GA107"
+        | "GPU A"
+        | "GPU H"
+        | "GPU H-e"
         | "H100"
+        | "H100 PCIe"
         | "H200"
         | "HL-205"
-        | "K80"
+        | "INTEL ARRIA 10 GX 1150"
+        | "L20"
+        | "L20N"
         | "L4"
         | "L40S"
+        | "M40"
         | "M60"
-        | "NVIDIA"
+        | "P100"
+        | "P4"
+        | "PPU 810"
+        | "RTX 5000"
+        | "RTX 5880"
+        | "RTX 6000"
+        | "RTX Pro 6000"
+        | "S7150"
         | "T4"
         | "T4G"
         | "V100"
+        | "V100S"
         | "V520"
-        | "nvidia-h200-141gb";
+        | "Xilinx VU9p"
+        | "intel SG1"
+        | "vGPU8";
       /**
        * Limit
        * Maximum number of results. Set to -1 for unlimited.
@@ -174,7 +227,7 @@ export namespace Servers {
       /**
        * Order By
        * Order by column.
-       * @default "vcpus"
+       * @default "min_price"
        */
       order_by?: string;
       /**

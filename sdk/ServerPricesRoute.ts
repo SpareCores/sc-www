@@ -1,5 +1,6 @@
 /* eslint-disable */
 /* tslint:disable */
+// @ts-nocheck
 /*
  * ---------------------------------------------------------------
  * ## THIS FILE WAS GENERATED VIA SWAGGER-TYPESCRIPT-API        ##
@@ -9,7 +10,10 @@
  * ---------------------------------------------------------------
  */
 
-import { OrderDir, SearchServerPricesServerPricesGetData } from "./data-contracts";
+import {
+  OrderDir,
+  SearchServerPricesServerPricesGetData,
+} from "./data-contracts";
 
 export namespace ServerPrices {
   /**
@@ -46,9 +50,24 @@ export namespace ServerPrices {
        */
       architecture?: "arm64" | "arm64_mac" | "i386" | "x86_64" | "x86_64_mac";
       /** Processor manufacturer */
-      cpu_manufacturer?: "AMD" | "AWS" | "Ampere" | "Apple" | "Intel" | "Microsoft";
+      cpu_manufacturer?:
+        | "AMD"
+        | "AWS"
+        | "Alibaba"
+        | "Ampere"
+        | "Apple"
+        | "Hygon"
+        | "Intel"
+        | "Microsoft";
       /** Processor family */
-      cpu_family?: "ARM" | "ARMv8" | "Ampere Altra" | "EPYC" | "Xeon";
+      cpu_family?:
+        | "ARM"
+        | "ARMv8"
+        | "ARMv9"
+        | "Ampere Altra"
+        | "EPYC"
+        | "Xeon"
+        | "Yitian";
       /**
        * CPU allocation
        * Allocation of the CPU(s) to the server, e.g. shared, burstable or dedicated.
@@ -94,7 +113,14 @@ export namespace ServerPrices {
        * Vendor id
        * Identifier of the cloud provider vendor.
        */
-      vendor?: "aws" | "azure" | "gcp" | "hcloud" | "upcloud";
+      vendor?:
+        | "alicloud"
+        | "aws"
+        | "azure"
+        | "gcp"
+        | "hcloud"
+        | "ovh"
+        | "upcloud";
       /**
        * Region id
        * Identifier of the region.
@@ -141,6 +167,8 @@ export namespace ServerPrices {
         | "1600"
         | "1610"
         | "1640"
+        | "1650"
+        | "1680"
         | "2"
         | "3"
         | "4"
@@ -149,6 +177,7 @@ export namespace ServerPrices {
         | "7"
         | "af-south-1"
         | "ap-east-1"
+        | "ap-east-2"
         | "ap-northeast-1"
         | "ap-northeast-2"
         | "ap-northeast-3"
@@ -158,24 +187,55 @@ export namespace ServerPrices {
         | "ap-southeast-2"
         | "ap-southeast-3"
         | "ap-southeast-4"
+        | "ap-southeast-5"
+        | "ap-southeast-6"
+        | "ap-southeast-7"
+        | "AP-SOUTHEAST-SYD"
+        | "AP-SOUTHEAST-SYD-2"
+        | "AP-SOUTH-MUM"
+        | "AP-SOUTH-MUM-1"
         | "australiacentral"
         | "australiacentral2"
         | "australiaeast"
         | "australiasoutheast"
+        | "austriaeast"
         | "au-syd1"
+        | "belgiumcentral"
+        | "BHS"
+        | "BHS5"
         | "brazilsouth"
         | "brazilsoutheast"
         | "brazilus"
         | "ca-central-1"
+        | "CA-EAST-TOR"
         | "canadacentral"
         | "canadaeast"
         | "ca-west-1"
         | "centralindia"
         | "centralus"
         | "centraluseuap"
+        | "chilecentral"
+        | "cn-beijing"
+        | "cn-chengdu"
+        | "cn-fuzhou"
+        | "cn-guangzhou"
+        | "cn-hangzhou"
+        | "cn-heyuan"
+        | "cn-hongkong"
+        | "cn-huhehaote"
+        | "cn-nanjing"
         | "cn-north-1"
         | "cn-northwest-1"
+        | "cn-qingdao"
+        | "cn-shanghai"
+        | "cn-shenzhen"
+        | "cn-wuhan-lr"
+        | "cn-wulanchabu"
+        | "cn-zhangjiakou"
+        | "DE"
+        | "DE1"
         | "de-fra1"
+        | "dk-cph1"
         | "eastasia"
         | "eastus"
         | "eastus2"
@@ -187,16 +247,23 @@ export namespace ServerPrices {
         | "eu-north-1"
         | "eu-south-1"
         | "eu-south-2"
+        | "EU-SOUTH-MIL"
         | "eu-west-1"
         | "eu-west-2"
         | "eu-west-3"
+        | "EU-WEST-PAR"
         | "fi-hel1"
         | "fi-hel2"
         | "francecentral"
         | "francesouth"
         | "germanynorth"
         | "germanywestcentral"
+        | "GRA"
+        | "GRA11"
+        | "GRA7"
+        | "GRA9"
         | "il-central-1"
+        | "indonesiacentral"
         | "israelcentral"
         | "italynorth"
         | "japaneast"
@@ -205,20 +272,33 @@ export namespace ServerPrices {
         | "jioindiawest"
         | "koreacentral"
         | "koreasouth"
+        | "malaysiawest"
         | "me-central-1"
+        | "me-east-1"
         | "me-south-1"
         | "mexicocentral"
+        | "mx-central-1"
+        | "na-south-1"
         | "newzealandnorth"
         | "nl-ams1"
         | "northcentralus"
         | "northeurope"
         | "norwayeast"
         | "norwaywest"
+        | "no-svg1"
         | "pl-waw1"
         | "polandcentral"
         | "qatarcentral"
+        | "RBX"
+        | "RBX-A"
+        | "RBX-ARCHIVE"
         | "sa-east-1"
+        | "SBG"
+        | "SBG5"
+        | "SBG7"
         | "se-sto1"
+        | "SGP"
+        | "SGP1"
         | "sg-sin1"
         | "southafricanorth"
         | "southafricawest"
@@ -230,8 +310,12 @@ export namespace ServerPrices {
         | "swedencentral"
         | "switzerlandnorth"
         | "switzerlandwest"
+        | "SYD"
+        | "SYD1"
         | "uaecentral"
         | "uaenorth"
+        | "UK"
+        | "UK1"
         | "uk-lon1"
         | "uksouth"
         | "ukwest"
@@ -242,6 +326,8 @@ export namespace ServerPrices {
         | "us-sjo1"
         | "us-west-1"
         | "us-west-2"
+        | "WAW"
+        | "WAW1"
         | "westcentralus"
         | "westeurope"
         | "westindia"
@@ -269,6 +355,7 @@ export namespace ServerPrices {
        */
       countries?:
         | "AE"
+        | "AT"
         | "AU"
         | "BE"
         | "BH"
@@ -291,6 +378,7 @@ export namespace ServerPrices {
         | "JP"
         | "KR"
         | "MX"
+        | "MY"
         | "NL"
         | "NO"
         | "NZ"
@@ -325,28 +413,58 @@ export namespace ServerPrices {
         | "Ampere"
         | "Gaudi"
         | "Hopper"
-        | "Kepler"
         | "Maxwell"
         | "Radeon Pro Navi"
         | "Turing"
         | "Volta";
       /** GPU model */
       gpu_model?:
+        | "A10"
         | "A100"
         | "A10G"
+        | "A30"
+        | "A800"
+        | "A910E"
+        | "A910X"
+        | "A910Z"
+        | "AGF 027"
+        | "B200"
+        | "B300"
+        | "G39"
+        | "G49"
+        | "G49E"
+        | "G59"
+        | "GA107"
+        | "GPU A"
+        | "GPU H"
+        | "GPU H-e"
         | "H100"
+        | "H100 PCIe"
         | "H200"
         | "HL-205"
-        | "K80"
+        | "INTEL ARRIA 10 GX 1150"
+        | "L20"
+        | "L20N"
         | "L4"
         | "L40S"
+        | "M40"
         | "M60"
-        | "NVIDIA"
+        | "P100"
+        | "P4"
+        | "PPU 810"
+        | "RTX 5000"
+        | "RTX 5880"
+        | "RTX 6000"
+        | "RTX Pro 6000"
+        | "S7150"
         | "T4"
         | "T4G"
         | "V100"
+        | "V100S"
         | "V520"
-        | "nvidia-h200-141gb";
+        | "Xilinx VU9p"
+        | "intel SG1"
+        | "vGPU8";
       /**
        * Limit
        * Maximum number of results.

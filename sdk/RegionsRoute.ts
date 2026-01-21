@@ -1,5 +1,6 @@
 /* eslint-disable */
 /* tslint:disable */
+// @ts-nocheck
 /*
  * ---------------------------------------------------------------
  * ## THIS FILE WAS GENERATED VIA SWAGGER-TYPESCRIPT-API        ##
@@ -26,7 +27,14 @@ export namespace Regions {
        * Vendor id
        * Identifier of the cloud provider vendor.
        */
-      vendor?: "aws" | "azure" | "gcp" | "hcloud" | "upcloud";
+      vendor?:
+        | "alicloud"
+        | "aws"
+        | "azure"
+        | "gcp"
+        | "hcloud"
+        | "ovh"
+        | "upcloud";
     };
     export type RequestBody = never;
     export type RequestHeaders = {};

@@ -1,5 +1,6 @@
 /* eslint-disable */
 /* tslint:disable */
+// @ts-nocheck
 /*
  * ---------------------------------------------------------------
  * ## THIS FILE WAS GENERATED VIA SWAGGER-TYPESCRIPT-API        ##
@@ -9,7 +10,10 @@
  * ---------------------------------------------------------------
  */
 
-import { OrderDir, SearchStoragePricesStoragePricesGetData } from "./data-contracts";
+import {
+  OrderDir,
+  SearchStoragePricesStoragePricesGetData,
+} from "./data-contracts";
 
 export namespace StoragePrices {
   /**
@@ -26,7 +30,14 @@ export namespace StoragePrices {
        * Vendor id
        * Identifier of the cloud provider vendor.
        */
-      vendor?: "aws" | "azure" | "gcp" | "hcloud" | "upcloud";
+      vendor?:
+        | "alicloud"
+        | "aws"
+        | "azure"
+        | "gcp"
+        | "hcloud"
+        | "ovh"
+        | "upcloud";
       /**
        * Green energy
        * Filter for regions that are 100% powered by renewable energy.
@@ -93,6 +104,8 @@ export namespace StoragePrices {
         | "1600"
         | "1610"
         | "1640"
+        | "1650"
+        | "1680"
         | "2"
         | "3"
         | "4"
@@ -101,6 +114,7 @@ export namespace StoragePrices {
         | "7"
         | "af-south-1"
         | "ap-east-1"
+        | "ap-east-2"
         | "ap-northeast-1"
         | "ap-northeast-2"
         | "ap-northeast-3"
@@ -110,24 +124,55 @@ export namespace StoragePrices {
         | "ap-southeast-2"
         | "ap-southeast-3"
         | "ap-southeast-4"
+        | "ap-southeast-5"
+        | "ap-southeast-6"
+        | "ap-southeast-7"
+        | "AP-SOUTHEAST-SYD"
+        | "AP-SOUTHEAST-SYD-2"
+        | "AP-SOUTH-MUM"
+        | "AP-SOUTH-MUM-1"
         | "australiacentral"
         | "australiacentral2"
         | "australiaeast"
         | "australiasoutheast"
+        | "austriaeast"
         | "au-syd1"
+        | "belgiumcentral"
+        | "BHS"
+        | "BHS5"
         | "brazilsouth"
         | "brazilsoutheast"
         | "brazilus"
         | "ca-central-1"
+        | "CA-EAST-TOR"
         | "canadacentral"
         | "canadaeast"
         | "ca-west-1"
         | "centralindia"
         | "centralus"
         | "centraluseuap"
+        | "chilecentral"
+        | "cn-beijing"
+        | "cn-chengdu"
+        | "cn-fuzhou"
+        | "cn-guangzhou"
+        | "cn-hangzhou"
+        | "cn-heyuan"
+        | "cn-hongkong"
+        | "cn-huhehaote"
+        | "cn-nanjing"
         | "cn-north-1"
         | "cn-northwest-1"
+        | "cn-qingdao"
+        | "cn-shanghai"
+        | "cn-shenzhen"
+        | "cn-wuhan-lr"
+        | "cn-wulanchabu"
+        | "cn-zhangjiakou"
+        | "DE"
+        | "DE1"
         | "de-fra1"
+        | "dk-cph1"
         | "eastasia"
         | "eastus"
         | "eastus2"
@@ -139,16 +184,23 @@ export namespace StoragePrices {
         | "eu-north-1"
         | "eu-south-1"
         | "eu-south-2"
+        | "EU-SOUTH-MIL"
         | "eu-west-1"
         | "eu-west-2"
         | "eu-west-3"
+        | "EU-WEST-PAR"
         | "fi-hel1"
         | "fi-hel2"
         | "francecentral"
         | "francesouth"
         | "germanynorth"
         | "germanywestcentral"
+        | "GRA"
+        | "GRA11"
+        | "GRA7"
+        | "GRA9"
         | "il-central-1"
+        | "indonesiacentral"
         | "israelcentral"
         | "italynorth"
         | "japaneast"
@@ -157,20 +209,33 @@ export namespace StoragePrices {
         | "jioindiawest"
         | "koreacentral"
         | "koreasouth"
+        | "malaysiawest"
         | "me-central-1"
+        | "me-east-1"
         | "me-south-1"
         | "mexicocentral"
+        | "mx-central-1"
+        | "na-south-1"
         | "newzealandnorth"
         | "nl-ams1"
         | "northcentralus"
         | "northeurope"
         | "norwayeast"
         | "norwaywest"
+        | "no-svg1"
         | "pl-waw1"
         | "polandcentral"
         | "qatarcentral"
+        | "RBX"
+        | "RBX-A"
+        | "RBX-ARCHIVE"
         | "sa-east-1"
+        | "SBG"
+        | "SBG5"
+        | "SBG7"
         | "se-sto1"
+        | "SGP"
+        | "SGP1"
         | "sg-sin1"
         | "southafricanorth"
         | "southafricawest"
@@ -182,8 +247,12 @@ export namespace StoragePrices {
         | "swedencentral"
         | "switzerlandnorth"
         | "switzerlandwest"
+        | "SYD"
+        | "SYD1"
         | "uaecentral"
         | "uaenorth"
+        | "UK"
+        | "UK1"
         | "uk-lon1"
         | "uksouth"
         | "ukwest"
@@ -194,6 +263,8 @@ export namespace StoragePrices {
         | "us-sjo1"
         | "us-west-1"
         | "us-west-2"
+        | "WAW"
+        | "WAW1"
         | "westcentralus"
         | "westeurope"
         | "westindia"
@@ -206,6 +277,7 @@ export namespace StoragePrices {
        */
       countries?:
         | "AE"
+        | "AT"
         | "AU"
         | "BE"
         | "BH"
@@ -228,6 +300,7 @@ export namespace StoragePrices {
         | "JP"
         | "KR"
         | "MX"
+        | "MY"
         | "NL"
         | "NO"
         | "NZ"
