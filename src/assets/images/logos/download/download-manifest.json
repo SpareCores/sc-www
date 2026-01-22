@@ -1,0 +1,494 @@
+﻿{
+  "basePath": "assets/images/logos/download",
+  "generatedAt": "2026-01-22T16:16:58+01:00",
+  "items": [
+    {
+      "folder": "hex-sticker-ngi",
+      "files": ["lores.png", "lores.webp", "hires.png"]
+    },
+    {
+      "folder": "hex-transparent-ngi",
+      "files": ["hires.png"]
+    },
+    {
+      "folder": "horizontal-bg-dark",
+      "files": [
+        "16x3.png",
+        "32x5.png",
+        "64x11.png",
+        "150x25.png",
+        "192x32.png",
+        "256x43.png",
+        "512x86.png",
+        "800x135.png"
+      ]
+    },
+    {
+      "folder": "horizontal-bg-white",
+      "files": [
+        "16x3.png",
+        "32x5.png",
+        "64x11.png",
+        "150x25.png",
+        "192x32.png",
+        "256x43.png",
+        "512x86.png",
+        "800x135.png"
+      ]
+    },
+    {
+      "folder": "horizontal-dark-theme",
+      "files": [
+        "16x3.png",
+        "32x5.png",
+        "64x11.png",
+        "150x25.png",
+        "192x32.png",
+        "256x43.png",
+        "512x86.png",
+        "800x135.png"
+      ]
+    },
+    {
+      "folder": "horizontal-light-theme",
+      "files": [
+        "16x3.png",
+        "32x5.png",
+        "64x11.png",
+        "150x25.png",
+        "192x32.png",
+        "256x43.png",
+        "512x86.png",
+        "800x135.png"
+      ]
+    },
+    {
+      "folder": "logo-only-1x1-cropped",
+      "files": [
+        "16x16.png",
+        "32x32.png",
+        "64x64.png",
+        "150x150.png",
+        "192x192.png",
+        "256x256.png",
+        "512x512.png"
+      ]
+    },
+    {
+      "folder": "stacked-bg-dark-16x9",
+      "files": [
+        "16x9.png",
+        "32x18.png",
+        "64x36.png",
+        "150x84.png",
+        "192x108.png",
+        "256x144.png",
+        "512x288.png",
+        "1000x562.png"
+      ]
+    },
+    {
+      "folder": "stacked-bg-dark-16x9-cropped",
+      "files": [
+        "16x9.png",
+        "32x18.png",
+        "64x36.png",
+        "150x84.png",
+        "192x108.png",
+        "256x144.png",
+        "512x288.png",
+        "801x450.png"
+      ]
+    },
+    {
+      "folder": "stacked-bg-dark-1x1",
+      "files": [
+        "16x16.png",
+        "32x32.png",
+        "64x64.png",
+        "150x150.png",
+        "192x192.png",
+        "256x256.png",
+        "512x512.png",
+        "707x707.png"
+      ]
+    },
+    {
+      "folder": "stacked-bg-dark-1x1-cropped",
+      "files": [
+        "16x16.png",
+        "32x32.png",
+        "64x64.png",
+        "150x150.png",
+        "192x192.png",
+        "256x256.png",
+        "512x512.png",
+        "550x550.png"
+      ]
+    },
+    {
+      "folder": "stacked-bg-dark-2x1",
+      "files": [
+        "16x8.png",
+        "32x16.png",
+        "64x32.png",
+        "150x75.png",
+        "192x96.png",
+        "256x128.png",
+        "512x256.png",
+        "1000x500.png"
+      ]
+    },
+    {
+      "folder": "stacked-bg-dark-3x4",
+      "files": [
+        "16x21.png",
+        "32x43.png",
+        "64x85.png",
+        "150x200.png",
+        "192x256.png",
+        "256x341.png",
+        "512x683.png",
+        "530x707.png"
+      ]
+    },
+    {
+      "folder": "stacked-bg-dark-4x3",
+      "files": [
+        "16x12.png",
+        "32x24.png",
+        "64x48.png",
+        "150x113.png",
+        "192x144.png",
+        "256x192.png",
+        "512x384.png",
+        "942x707.png"
+      ]
+    },
+    {
+      "folder": "stacked-bg-dark-4x3-cropped",
+      "files": [
+        "16x12.png",
+        "32x24.png",
+        "64x48.png",
+        "150x113.png",
+        "192x144.png",
+        "256x192.png",
+        "512x384.png",
+        "942x707.png"
+      ]
+    },
+    {
+      "folder": "stacked-bg-white-16x9",
+      "files": [
+        "16x9.png",
+        "32x18.png",
+        "64x36.png",
+        "150x84.png",
+        "192x108.png",
+        "256x144.png",
+        "512x288.png",
+        "1000x562.png"
+      ]
+    },
+    {
+      "folder": "stacked-bg-white-16x9-cropped",
+      "files": [
+        "16x9.png",
+        "32x18.png",
+        "64x36.png",
+        "150x84.png",
+        "192x108.png",
+        "256x144.png",
+        "512x288.png",
+        "801x450.png"
+      ]
+    },
+    {
+      "folder": "stacked-bg-white-1x1",
+      "files": [
+        "16x16.png",
+        "32x32.png",
+        "64x64.png",
+        "150x150.png",
+        "192x192.png",
+        "256x256.png",
+        "512x512.png",
+        "707x707.png"
+      ]
+    },
+    {
+      "folder": "stacked-bg-white-1x1-cropped",
+      "files": [
+        "16x16.png",
+        "32x32.png",
+        "64x64.png",
+        "150x150.png",
+        "192x192.png",
+        "256x256.png",
+        "512x512.png",
+        "550x550.png"
+      ]
+    },
+    {
+      "folder": "stacked-bg-white-2x1",
+      "files": [
+        "16x8.png",
+        "32x16.png",
+        "64x32.png",
+        "150x75.png",
+        "192x96.png",
+        "256x128.png",
+        "512x256.png",
+        "1000x500.png"
+      ]
+    },
+    {
+      "folder": "stacked-bg-white-3x4",
+      "files": [
+        "16x21.png",
+        "32x43.png",
+        "64x85.png",
+        "150x200.png",
+        "192x256.png",
+        "256x341.png",
+        "512x683.png",
+        "530x707.png"
+      ]
+    },
+    {
+      "folder": "stacked-bg-white-4x3",
+      "files": [
+        "16x12.png",
+        "32x24.png",
+        "64x48.png",
+        "150x113.png",
+        "192x144.png",
+        "256x192.png",
+        "512x384.png",
+        "942x707.png"
+      ]
+    },
+    {
+      "folder": "stacked-bg-white-4x3-cropped",
+      "files": [
+        "16x12.png",
+        "32x24.png",
+        "64x48.png",
+        "150x113.png",
+        "192x144.png",
+        "256x192.png",
+        "512x384.png",
+        "666x500.png"
+      ]
+    },
+    {
+      "folder": "stacked-dark-theme-16x9",
+      "files": [
+        "16x9.png",
+        "32x18.png",
+        "64x36.png",
+        "150x84.png",
+        "192x108.png",
+        "256x144.png",
+        "512x288.png",
+        "1000x562.png"
+      ]
+    },
+    {
+      "folder": "stacked-dark-theme-16x9-cropped",
+      "files": [
+        "16x9.png",
+        "32x18.png",
+        "64x36.png",
+        "150x84.png",
+        "192x108.png",
+        "256x144.png",
+        "512x288.png",
+        "801x450.png"
+      ]
+    },
+    {
+      "folder": "stacked-dark-theme-1x1",
+      "files": [
+        "16x16.png",
+        "32x32.png",
+        "64x64.png",
+        "150x150.png",
+        "192x192.png",
+        "256x256.png",
+        "512x512.png",
+        "707x707.png"
+      ]
+    },
+    {
+      "folder": "stacked-dark-theme-1x1-cropped",
+      "files": [
+        "16x16.png",
+        "32x32.png",
+        "64x64.png",
+        "150x150.png",
+        "192x192.png",
+        "256x256.png",
+        "512x512.png",
+        "550x550.png"
+      ]
+    },
+    {
+      "folder": "stacked-dark-theme-2x1",
+      "files": [
+        "16x8.png",
+        "32x16.png",
+        "64x32.png",
+        "150x75.png",
+        "192x96.png",
+        "256x128.png",
+        "512x256.png",
+        "1000x500.png"
+      ]
+    },
+    {
+      "folder": "stacked-dark-theme-3x4",
+      "files": [
+        "16x21.png",
+        "32x43.png",
+        "64x85.png",
+        "150x200.png",
+        "192x256.png",
+        "256x341.png",
+        "512x683.png",
+        "530x707.png"
+      ]
+    },
+    {
+      "folder": "stacked-dark-theme-4x3",
+      "files": [
+        "16x12.png",
+        "32x24.png",
+        "64x48.png",
+        "150x113.png",
+        "192x144.png",
+        "256x192.png",
+        "512x384.png",
+        "942x707.png"
+      ]
+    },
+    {
+      "folder": "stacked-dark-theme-4x3-cropped",
+      "files": [
+        "16x12.png",
+        "32x24.png",
+        "64x48.png",
+        "150x113.png",
+        "192x144.png",
+        "256x192.png",
+        "512x384.png",
+        "666x500.png"
+      ]
+    },
+    {
+      "folder": "stacked-light-theme-16x9",
+      "files": [
+        "16x9.png",
+        "32x18.png",
+        "64x36.png",
+        "150x84.png",
+        "192x108.png",
+        "256x144.png",
+        "512x288.png",
+        "1000x562.png"
+      ]
+    },
+    {
+      "folder": "stacked-light-theme-16x9-cropped",
+      "files": [
+        "16x9.png",
+        "32x18.png",
+        "64x36.png",
+        "150x84.png",
+        "192x108.png",
+        "256x144.png",
+        "512x288.png",
+        "801x450.png"
+      ]
+    },
+    {
+      "folder": "stacked-light-theme-1x1",
+      "files": [
+        "16x16.png",
+        "32x32.png",
+        "64x64.png",
+        "150x150.png",
+        "192x192.png",
+        "256x256.png",
+        "512x512.png",
+        "707x707.png"
+      ]
+    },
+    {
+      "folder": "stacked-light-theme-1x1-cropped",
+      "files": [
+        "16x16.png",
+        "32x32.png",
+        "64x64.png",
+        "150x150.png",
+        "192x192.png",
+        "256x256.png",
+        "512x512.png",
+        "550x550.png"
+      ]
+    },
+    {
+      "folder": "stacked-light-theme-2x1",
+      "files": [
+        "16x8.png",
+        "32x16.png",
+        "64x32.png",
+        "150x75.png",
+        "192x96.png",
+        "256x128.png",
+        "512x256.png",
+        "1000x500.png"
+      ]
+    },
+    {
+      "folder": "stacked-light-theme-3x4",
+      "files": [
+        "16x21.png",
+        "32x43.png",
+        "64x85.png",
+        "150x200.png",
+        "192x256.png",
+        "256x341.png",
+        "512x683.png",
+        "530x707.png"
+      ]
+    },
+    {
+      "folder": "stacked-light-theme-4x3",
+      "files": [
+        "16x12.png",
+        "32x24.png",
+        "64x48.png",
+        "150x113.png",
+        "192x144.png",
+        "256x192.png",
+        "512x384.png",
+        "942x707.png"
+      ]
+    },
+    {
+      "folder": "stacked-light-theme-4x3-cropped",
+      "files": [
+        "16x12.png",
+        "32x24.png",
+        "64x48.png",
+        "150x113.png",
+        "192x144.png",
+        "256x192.png",
+        "512x384.png",
+        "666x500.png"
+      ]
+    }
+  ]
+}
