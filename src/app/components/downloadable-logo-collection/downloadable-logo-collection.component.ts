@@ -4,27 +4,14 @@ import {
   NgOptimizedImage,
 } from "@angular/common";
 import {
-  AfterViewInit,
   Component,
+  HostListener,
   Inject,
   Input,
-  HostListener,
   OnChanges,
   PLATFORM_ID,
   SimpleChanges,
 } from "@angular/core";
-
-type PrelineCollapseModule = {
-  default?: {
-    autoInit?: () => void;
-  };
-};
-
-type PrelineWindow = Window & {
-  HSStaticMethods?: {
-    autoInit?: () => void;
-  };
-};
 
 type DownloadItemVm = {
   file: string;
@@ -39,17 +26,15 @@ type DownloadItemVm = {
   templateUrl: "./downloadable-logo-collection.component.html",
   styleUrl: "./downloadable-logo-collection.component.scss",
 })
-export class DownloadableLogoCollectionComponent
-  implements AfterViewInit, OnChanges
-{
+export class DownloadableLogoCollectionComponent implements OnChanges {
   @Input() folderName: string = "";
   @Input() fileNames: string[] = [];
   @Input() basePath: string = "assets/images/logos/download";
 
   downloadItems: DownloadItemVm[] = [];
+  isOpen = false;
 
   private readonly isBrowser: boolean;
-  private readonly COLLAPSE_ANIMATION_DELAY_MS = 300;
 
   constructor(@Inject(PLATFORM_ID) private readonly platformId: object) {
     this.isBrowser = isPlatformBrowser(this.platformId);
@@ -62,6 +47,7 @@ export class DownloadableLogoCollectionComponent
         href: this.fileHref(file),
         downloadName: this.fileDownloadName(file),
       }));
+      this.isOpen = false;
     }
   }
 
@@ -79,7 +65,7 @@ export class DownloadableLogoCollectionComponent
     return `sc-downloads-toggle-${this.safeIdPart}`;
   }
 
-  get downloadsCollapseId(): string {
+  get downloadsDropdownId(): string {
     return `sc-downloads-${this.safeIdPart}`;
   }
 
@@ -109,82 +95,63 @@ export class DownloadableLogoCollectionComponent
       .replace(/^-|-$/g, "");
   }
 
-  async ngAfterViewInit(): Promise<void> {
+  onToggleClick(_event: Event): void {
     if (!this.isBrowser) return;
 
-    let collapseModule: PrelineCollapseModule;
-    try {
-      collapseModule =
-        (await import("@preline/collapse")) as PrelineCollapseModule;
-    } catch (error) {
-      console.warn("Failed to load @preline/collapse:", error);
-      return;
-    }
+    this.isOpen = !this.isOpen;
 
-    if (typeof collapseModule.default?.autoInit === "function") {
-      collapseModule.default.autoInit();
-      return;
-    }
-
-    const w = window as PrelineWindow;
-    if (typeof w.HSStaticMethods?.autoInit === "function") {
-      w.HSStaticMethods.autoInit();
-      return;
+    if (this.isOpen) {
+      // Wait for the dropdown to render, then ensure it is within viewport.
+      setTimeout(() => this.scrollDropdownIntoViewIfNeeded(), 0);
     }
   }
 
-  onDownloadClick(): void {
-    this.closeCollapseIfOpen();
-  }
-
-  onToggleClick(): void {
-    if (!this.isBrowser) return;
-    setTimeout(
-      () => this.scrollCollapseIntoViewIfOpen(),
-      this.COLLAPSE_ANIMATION_DELAY_MS,
-    );
+  onDownloadClick(event?: Event): void {
+    // Keep download click from toggling ancestor handlers that might reopen it.
+    event?.stopPropagation();
+    this.closeDropdown();
   }
 
   @HostListener("document:click", ["$event"])
   handleDocumentClick(event: MouseEvent): void {
     if (!this.isBrowser) return;
+    if (!this.isOpen) return;
 
     const target = event.target as HTMLElement | null;
     if (!target) return;
 
     const toggleEl = document.getElementById(this.downloadsToggleId);
-    const panelEl = document.getElementById(this.downloadsCollapseId);
+    const panelEl = document.getElementById(this.downloadsDropdownId);
 
     if (toggleEl && (toggleEl === target || toggleEl.contains(target))) return;
     if (panelEl && (panelEl === target || panelEl.contains(target))) return;
 
-    this.closeCollapseIfOpen();
+    this.closeDropdown();
   }
 
-  private closeCollapseIfOpen(): void {
-    const toggleEl = document.getElementById(this.downloadsToggleId);
-    if (!toggleEl) return;
-
-    const isExpanded = toggleEl.getAttribute("aria-expanded") === "true";
-    if (isExpanded) {
-      toggleEl.dispatchEvent(new Event("click", { bubbles: true }));
-    }
+  @HostListener("document:keydown.escape")
+  handleEscape(): void {
+    this.closeDropdown();
   }
 
-  private scrollCollapseIntoViewIfOpen(): void {
-    const toggleEl = document.getElementById(this.downloadsToggleId);
-    const panelEl = document.getElementById(this.downloadsCollapseId);
-    if (!toggleEl || !panelEl) return;
+  private closeDropdown(): void {
+    if (!this.isOpen) return;
+    this.isOpen = false;
+  }
 
-    const isExpanded = toggleEl.getAttribute("aria-expanded") === "true";
-    if (!isExpanded || panelEl.clientHeight === 0) return;
+  private scrollDropdownIntoViewIfNeeded(): void {
+    const panelEl = document.getElementById(this.downloadsDropdownId);
+    if (!panelEl) return;
 
     const rect = panelEl.getBoundingClientRect();
-    const vh = window.innerHeight || document.documentElement.clientHeight;
+    const viewportHeight =
+      window.innerHeight || document.documentElement.clientHeight;
 
-    const fullyVisible = rect.top >= 0 && rect.bottom <= vh;
-    if (fullyVisible) return;
+    const isAbove = rect.top < 0;
+    const isBelow = rect.bottom > viewportHeight;
 
-    panelEl.scrollIntoView({ behavior: "smooth", block: "center" });
+    if (isAbove || isBelow) {
+      panelEl.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
   }
 }

@@ -6,7 +6,7 @@
   >
     <div class="relative max-h-20 max-w-[80%] h-20 w-full">
       <img
-        *ngIf="folderName && fileNames.length"
+        *ngIf="folderName && fileNames?.length"
         [ngSrc]="previewSrc"
         [alt]="folderName || 'Logo'"
         fill
@@ -22,19 +22,19 @@
         {{ folderName }}
       </h3>
     </div>
-    <div class="mt-auto w-full flex flex-col gap-2">
+    <div class="mt-auto w-full flex flex-col gap-2 relative">
       <button
         type="button"
-        class="w-full hs-collapse-toggle py-2 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-emerald-400 text-white hover:bg-emerald-500 focus:outline-hidden focus:bg-emerald-500 disabled:opacity-50 disabled:pointer-events-none"
+        class="w-full py-2 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-emerald-400 text-white hover:bg-emerald-500 focus:outline-hidden focus:bg-emerald-500 disabled:opacity-50 disabled:pointer-events-none"
         [id]="downloadsToggleId"
-        aria-expanded="false"
-        [attr.aria-controls]="downloadsCollapseId"
-        [attr.data-hs-collapse]="'#' + downloadsCollapseId"
-        (click)="onToggleClick()"
+        [attr.aria-expanded]="isOpen"
+        [attr.aria-controls]="downloadsDropdownId"
+        (click)="onToggleClick($event)"
       >
         Downloadable versions
         <svg
-          class="hs-collapse-open:rotate-180 shrink-0 size-4 text-white transition-transform duration-300"
+          class="shrink-0 size-4 text-white transition-transform duration-300"
+          [class.rotate-180]="isOpen"
           xmlns="http://www.w3.org/2000/svg"
           width="24"
           height="24"
@@ -51,8 +51,9 @@
       </button>
 
       <div
-        [id]="downloadsCollapseId"
-        class="hs-collapse hidden w-full mt-2 overflow-hidden transition-[height] duration-300 bg-white border border-emerald-400 rounded-lg shadow-2xs dark:bg-neutral-900 dark:border-emerald-400"
+        *ngIf="isOpen"
+        [id]="downloadsDropdownId"
+        class="absolute left-0 right-0 top-full z-20 mt-2 w-full bg-white border border-emerald-400 rounded-lg shadow-2xs dark:bg-neutral-900 dark:border-emerald-400"
         [attr.aria-labelledby]="downloadsToggleId"
       >
         <div class="p-2 grid grid-cols-1 gap-2">
@@ -61,7 +62,7 @@
             class="py-2 px-4 inline-flex justify-center items-center text-sm font-medium rounded-lg border border-transparent bg-emerald-400 text-white hover:bg-emerald-500 focus:outline-hidden focus:bg-emerald-500 disabled:opacity-50 disabled:pointer-events-none"
             [href]="item.href"
             [attr.download]="item.downloadName"
-            (click)="onDownloadClick()"
+            (click)="onDownloadClick($event)"
           >
             {{ item.file }}
           </a>
