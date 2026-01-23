@@ -10,10 +10,15 @@ type LogoDownloadItems = {
   fileNames: string[];
 };
 
+type LogoDownloadManifestItem = {
+  folder: string;
+  files: string[];
+};
+
 type LogoDownloadManifest = {
   basePath: string;
   generatedAt: string;
-  items: LogoDownloadItems[];
+  items: LogoDownloadManifestItem[];
 };
 
 @Component({
@@ -50,8 +55,8 @@ export class DesignComponent implements OnInit {
       const manifest = (await response.json()) as LogoDownloadManifest;
       this.logoDownloadsBasePath = manifest.basePath;
       this.logoDownloadItems = (manifest.items ?? []).map((item) => ({
-        folderName: item.folderName,
-        fileNames: item.fileNames,
+        folderName: item.folder,
+        fileNames: item.files,
       }));
     } catch (error) {
       console.warn("Failed to load logo download manifest.", error);
