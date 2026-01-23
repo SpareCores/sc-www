@@ -6,6 +6,7 @@
   >
     <div class="relative max-h-20 max-w-[80%] h-20 w-full">
       <img
+        *ngIf="folderName && fileNames?.length"
         [ngSrc]="previewSrc"
         [alt]="folderName || 'Logo'"
         fill
