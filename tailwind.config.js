@@ -13,7 +13,7 @@ module.exports = {
     extend: {
       fontFamily: {
         'sans': ['Inter', 'sans-serif'],
-        'mono': ['Roboto Mono', 'sans-serif']
+        'mono': ['Roboto Mono', 'monospace', 'sans-serif']
       },
       colors: {
         'default': '#fff',
