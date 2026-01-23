@@ -33,6 +33,7 @@
     "@angular/router": "^17.2.0",
     "@angular/ssr": "^17.2.3",
     "@netlify/functions": "^2.6.0",
+    "@preline/collapse": "^3.2.3",
     "@preline/combobox": "^2.5.2",
     "@sentry/angular": "^8.22.0",
     "@sentry/cli": "^2.33.1",
