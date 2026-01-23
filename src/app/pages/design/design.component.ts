@@ -1,5 +1,7 @@
 import { CommonModule, isPlatformBrowser } from "@angular/common";
+import { HttpClient, HttpClientModule } from "@angular/common/http";
 import { Component, Inject, OnInit, PLATFORM_ID } from "@angular/core";
+import { firstValueFrom } from "rxjs";
 import { ThemeTextComponent } from "../../components/theme-text/theme-text.component";
 import { DesignPageCardComponent } from "../../components/design-page-card/design-page-card.component";
 import { DownloadableLogoCollectionComponent } from "../../components/downloadable-logo-collection/downloadable-logo-collection.component";
@@ -26,6 +28,7 @@ type LogoDownloadManifest = {
   standalone: true,
   imports: [
     CommonModule,
+    HttpClientModule,
     ThemeTextComponent,
     DesignPageCardComponent,
     DownloadableLogoCollectionComponent,
@@ -40,6 +43,7 @@ export class DesignComponent implements OnInit {
     "assets/images/logos/download/download-manifest.json";
 
   constructor(
+    private http: HttpClient,
     private toastService: ToastService,
     @Inject(PLATFORM_ID) private readonly platformId: object,
   ) {}
@@ -48,16 +52,9 @@ export class DesignComponent implements OnInit {
     if (!isPlatformBrowser(this.platformId)) return;
 
     try {
-      const response = await fetch(this.logoDownloadManifestPath);
-
-      if (!response.ok) {
-        console.warn(
-          `Failed to load logo download manifest (HTTP ${response.status}).`,
-        );
-        return;
-      }
-
-      const manifest = (await response.json()) as LogoDownloadManifest;
+      const manifest = await firstValueFrom(
+        this.http.get<LogoDownloadManifest>(this.logoDownloadManifestPath),
+      );
       this.logoDownloadsBasePath = manifest.basePath;
       this.logoDownloadItems = (manifest.items ?? []).map((item) => ({
         folderName: item.folder,
