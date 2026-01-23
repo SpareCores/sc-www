@@ -66,11 +66,13 @@ export class DownloadableLogoCollectionComponent
   }
 
   get previewSrc(): string {
-    if (this.folderName && this.fileNames?.length) {
-      return `${this.basePath}/${this.folderName}/${this.fileNames[this.fileNames.length - 1]}`;
+    if (!this.folderName || !this.fileNames?.length) {
+      throw new Error(
+        "Logo preview source is unavailable: missing folderName or fileNames.",
+      );
     }
 
-    return "assets/images/logos/sc-logo-only-square-256x256.webp";
+    return `${this.basePath}/${this.folderName}/${this.fileNames[this.fileNames.length - 1]}`;
   }
 
   get downloadsToggleId(): string {
