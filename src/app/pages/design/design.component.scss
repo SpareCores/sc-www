@@ -1,0 +1,29 @@
+.design-button {
+  @apply py-2 px-4 inline-flex justify-center items-center text-sm font-medium rounded-lg border border-transparent bg-emerald-400 text-white hover:bg-emerald-500 focus:outline-none focus:bg-emerald-500 disabled:opacity-50 disabled:pointer-events-none;
+}
+
+.design-gradient-fill-with-brand-colors {
+  @apply text-white font-semibold text-4xl;
+  background: radial-gradient(
+    ellipse at top right,
+    theme("colors.emerald.400"),
+    theme("colors.teal.500"),
+    theme("colors.sky.950")
+  );
+}
+
+.design-grid {
+  @apply grid gap-5 md:grid-cols-3 justify-items-center place-content-center max-w-4xl mx-auto;
+}
+
+.design-grid-wide {
+  @apply grid gap-5 sm:grid-cols-2 lg:grid-cols-4 justify-items-center place-content-center max-w-6xl mx-auto mt-6;
+}
+
+.section-title-container {
+  @apply w-full md:w-2/3 mx-auto mt-24 mb-10;
+}
+
+.dual-card-row {
+  @apply col-span-full flex flex-col gap-5 md:flex-row md:justify-center;
+}
