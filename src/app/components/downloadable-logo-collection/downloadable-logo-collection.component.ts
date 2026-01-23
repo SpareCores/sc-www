@@ -49,7 +49,7 @@ export class DownloadableLogoCollectionComponent
   downloadItems: DownloadItemVm[] = [];
 
   private readonly isBrowser: boolean;
-  private readonly COLLAPSE_ANIMATION_DELAY_MS = 200;
+  private readonly COLLAPSE_ANIMATION_DELAY_MS = 300;
 
   constructor(@Inject(PLATFORM_ID) private readonly platformId: object) {
     this.isBrowser = isPlatformBrowser(this.platformId);
