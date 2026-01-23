@@ -50,13 +50,18 @@ export class DesignComponent implements OnInit {
     try {
       const response = await fetch(this.logoDownloadManifestPath);
 
-      if (!response.ok) return;
+      if (!response.ok) {
+        console.warn(
+          `Failed to load logo download manifest (HTTP ${response.status}).`,
+        );
+        return;
+      }
 
       const manifest = (await response.json()) as LogoDownloadManifest;
       this.logoDownloadsBasePath = manifest.basePath;
       this.logoDownloadItems = (manifest.items ?? []).map((item) => ({
-        folderName: item.folder,
-        fileNames: item.files,
+        folderName: item.folderName,
+        fileNames: item.fileNames,
       }));
     } catch (error) {
       console.warn("Failed to load logo download manifest.", error);
