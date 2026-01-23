@@ -4,7 +4,7 @@ module.exports = {
     require('flowbite/plugin')
   ],
   content: [
-    "./src/**/*.{html,ts}",
+    "./src/**/*.{html,ts,scss}",
     "./src/assets/articles/*.md",
     "./node_modules/flowbite/**/*.js",
     "./node_modules/preline/dist/*.js",
