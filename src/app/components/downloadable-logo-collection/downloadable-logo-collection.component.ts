@@ -95,7 +95,7 @@ export class DownloadableLogoCollectionComponent implements OnChanges {
       .replace(/^-|-$/g, "");
   }
 
-  onToggleClick(_event: Event): void {
+  onToggleClick(): void {
     if (!this.isBrowser) return;
 
     this.isOpen = !this.isOpen;
