@@ -1,0 +1,71 @@
+<div
+  class="flex flex-col w-full max-w-xs md:max-w-[17.75rem] aspect-square bg-white border border-emerald-400 shadow-2xs rounded-xl dark:bg-neutral-900 dark:border-emerald-400 dark:shadow-neutral-700/70"
+>
+  <div
+    class="w-full h-32 rounded-t-xl flex items-center justify-center bg-[conic-gradient(at_bottom,_var(--tw-gradient-stops))] from-neutral-100 via-neutral-500 to-stone-900"
+  >
+    <div class="relative max-h-20 max-w-[80%] h-20 w-full">
+      <img
+        [ngSrc]="previewSrc"
+        [alt]="folderName || 'Logo'"
+        fill
+        class="object-contain"
+        sizes="(max-width: 768px) 80vw, 20vw"
+      />
+    </div>
+  </div>
+
+  <div class="p-4 md:p-5 space-y-3 flex-1 w-full flex flex-col justify-between">
+    <div>
+      <h3 class="text-lg font-bold text-gray-800 dark:text-white">
+        {{ folderName }}
+      </h3>
+    </div>
+    <div class="mt-auto w-full flex flex-col gap-2">
+      <button
+        type="button"
+        class="w-full hs-collapse-toggle py-2 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-emerald-400 text-white hover:bg-emerald-500 focus:outline-hidden focus:bg-emerald-500 disabled:opacity-50 disabled:pointer-events-none"
+        [id]="downloadsToggleId"
+        aria-expanded="false"
+        [attr.aria-controls]="downloadsCollapseId"
+        [attr.data-hs-collapse]="'#' + downloadsCollapseId"
+        (click)="onToggleClick()"
+      >
+        Downloadable versions
+        <svg
+          class="hs-collapse-open:rotate-180 shrink-0 size-4 text-white transition-transform duration-300"
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="m6 9 6 6 6-6"></path>
+        </svg>
+      </button>
+
+      <div
+        [id]="downloadsCollapseId"
+        class="hs-collapse hidden w-full mt-2 overflow-hidden transition-[height] duration-300 bg-white border border-emerald-400 rounded-lg shadow-2xs dark:bg-neutral-900 dark:border-emerald-400"
+        [attr.aria-labelledby]="downloadsToggleId"
+      >
+        <div class="p-2 grid grid-cols-1 gap-2">
+          <a
+            *ngFor="let item of downloadItems; trackBy: trackByFile"
+            class="py-2 px-4 inline-flex justify-center items-center text-sm font-medium rounded-lg border border-transparent bg-emerald-400 text-white hover:bg-emerald-500 focus:outline-hidden focus:bg-emerald-500 disabled:opacity-50 disabled:pointer-events-none"
+            [href]="item.href"
+            [attr.download]="item.downloadName"
+            (click)="onDownloadClick()"
+          >
+            {{ item.file }}
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
