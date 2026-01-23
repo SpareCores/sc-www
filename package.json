@@ -53,6 +53,7 @@
     "ngx-markdown": "^17.2.1",
     "nodemailer": "^6.10.0",
     "posthog-js": "^1.186.0",
+    "preline": "^3.2.3",
     "prismjs": "^1.30.0",
     "process": "^0.11.10",
     "rxjs": "~7.8.0",
