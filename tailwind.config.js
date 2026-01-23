@@ -6,7 +6,8 @@ module.exports = {
   content: [
     "./src/**/*.{html,ts}",
     "./src/assets/articles/*.md",
-    "./node_modules/flowbite/**/*.js"
+    "./node_modules/flowbite/**/*.js",
+    "./node_modules/preline/dist/*.js",
   ],
   theme: {
     extend: {
