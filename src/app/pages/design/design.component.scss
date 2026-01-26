@@ -13,7 +13,7 @@
 }
 
 .design-grid {
-  @apply grid gap-5 md:grid-cols-3 justify-items-center place-content-center max-w-4xl mx-auto;
+  @apply grid gap-5 grid-cols-[minmax(0,20rem)] justify-items-stretch place-content-center max-w-4xl mx-auto px-4 md:grid-cols-3 md:justify-items-center md:auto-rows-fr md:px-0;
 }
 
 .design-grid-wide {
