@@ -12,6 +12,7 @@ import {
   PLATFORM_ID,
   SimpleChanges,
 } from "@angular/core";
+import { AnalyticsService } from "../../services/analytics.service";
 
 type DownloadItemVm = {
   file: string;
@@ -36,7 +37,10 @@ export class DownloadableLogoCollectionComponent implements OnChanges {
 
   private readonly isBrowser: boolean;
 
-  constructor(@Inject(PLATFORM_ID) private readonly platformId: object) {
+  constructor(
+    @Inject(PLATFORM_ID) private readonly platformId: object,
+    private readonly analytics: AnalyticsService,
+  ) {
     this.isBrowser = isPlatformBrowser(this.platformId);
   }
 
@@ -106,9 +110,15 @@ export class DownloadableLogoCollectionComponent implements OnChanges {
     }
   }
 
-  onDownloadClick(event?: Event): void {
-    // Keep download click from toggling ancestor handlers that might reopen it.
+  onDownloadClick(event: Event, item: DownloadItemVm): void {
     event?.stopPropagation();
+
+    if (this.isBrowser) {
+      this.analytics.trackEvent("download", {
+        relativePath: item.href,
+      });
+    }
+
     this.closeDropdown();
   }
 
