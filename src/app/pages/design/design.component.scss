@@ -17,11 +17,11 @@
 }
 
 .design-grid-wide {
-  @apply grid gap-5 sm:grid-cols-2 lg:grid-cols-4 justify-items-center place-content-center max-w-6xl mx-auto mt-6;
+  @apply grid gap-5 sm:grid-cols-2 lg:grid-cols-4 justify-items-center place-content-center max-w-6xl mx-auto;
 }
 
 .section-title-container {
-  @apply w-full md:w-2/3 mx-auto mt-24 mb-10;
+  @apply w-full md:w-2/3 mx-auto mt-16 mb-16;
 }
 
 .dual-card-row {
