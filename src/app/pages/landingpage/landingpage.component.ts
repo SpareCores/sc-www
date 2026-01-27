@@ -1,33 +1,49 @@
-import { CUSTOM_ELEMENTS_SCHEMA, Component, Inject, PLATFORM_ID, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
-import { ArticleMeta, ArticlesService } from '../../services/articles.service';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { KeeperAPIService } from '../../services/keeper-api.service';
-import { spinner_initial_data } from '../../tools/spinner_initial_data';
-import { SeoHandlerService } from '../../services/seo-handler.service';
-import { FormsModule } from '@angular/forms';
-import { ThemeTextComponent } from '../../components/theme-text/theme-text.component';
-import { RouterLink } from '@angular/router';
-import { TimeToShortDatePipe } from '../../pipes/time-to-short-date.pipe';
-import { LucideAngularModule } from 'lucide-angular';
-import { ArticleCardComponent } from '../../components/article-card/article-card.component';
-import { SearchServerPricesServerPricesGetData } from '../../../../sdk/data-contracts';
-import { AnalyticsService } from '../../services/analytics.service';
-import { NeetoCalService } from '../../services/neeto-cal.service';
-import { PrismService } from '../../services/prism.service';
+import {
+  CUSTOM_ELEMENTS_SCHEMA,
+  Component,
+  Inject,
+  PLATFORM_ID,
+  OnInit,
+  ViewChild,
+  ElementRef,
+  AfterViewInit,
+} from "@angular/core";
+import { ArticleMeta, ArticlesService } from "../../services/articles.service";
+import { CommonModule, isPlatformBrowser } from "@angular/common";
+import { KeeperAPIService } from "../../services/keeper-api.service";
+import { spinner_initial_data } from "../../tools/spinner_initial_data";
+import { SeoHandlerService } from "../../services/seo-handler.service";
+import { FormsModule } from "@angular/forms";
+import { ThemeTextComponent } from "../../components/theme-text/theme-text.component";
+import { RouterLink } from "@angular/router";
+import { TimeToShortDatePipe } from "../../pipes/time-to-short-date.pipe";
+import { LucideAngularModule } from "lucide-angular";
+import { ArticleCardComponent } from "../../components/article-card/article-card.component";
+import { SearchServerPricesServerPricesGetData } from "../../../../sdk/data-contracts";
+import { AnalyticsService } from "../../services/analytics.service";
+import { NeetoCalService } from "../../services/neeto-cal.service";
+import { PrismService } from "../../services/prism.service";
 
 @Component({
-  selector: 'app-landingpage',
+  selector: "app-landingpage",
   standalone: true,
-  imports: [CommonModule, FormsModule, ThemeTextComponent, RouterLink, TimeToShortDatePipe, LucideAngularModule, ArticleCardComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ThemeTextComponent,
+    RouterLink,
+    TimeToShortDatePipe,
+    LucideAngularModule,
+    ArticleCardComponent,
+  ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  templateUrl: './landingpage.component.html',
-  styleUrl: './landingpage.component.scss'
+  templateUrl: "./landingpage.component.html",
+  styleUrl: "./landingpage.component.scss",
 })
 export class LandingpageComponent implements OnInit, AfterViewInit {
-
   featuredArticles: ArticleMeta[] = [];
 
-  priceValue = '$0.00150';
+  priceValue = "$0.00150";
   cpuCount = 2;
   ramCount = 4;
 
@@ -42,52 +58,59 @@ export class LandingpageComponent implements OnInit, AfterViewInit {
   hasRealValues = false;
   spinStart: number = 0;
 
-  @ViewChild('tooltipVendors') tooltip!: ElementRef;
+  @ViewChild("tooltipVendors") tooltip!: ElementRef;
 
-  constructor(@Inject(PLATFORM_ID) private platformId: object,
-              private keeperAPI: KeeperAPIService,
-              private SEOHandler: SeoHandlerService,
-              private articles: ArticlesService,
-              private analyticsService: AnalyticsService,
-              private neetoCalService: NeetoCalService,
-              private prismService: PrismService) { }
+  constructor(
+    @Inject(PLATFORM_ID) private platformId: object,
+    private keeperAPI: KeeperAPIService,
+    private SEOHandler: SeoHandlerService,
+    private articles: ArticlesService,
+    private analyticsService: AnalyticsService,
+    private neetoCalService: NeetoCalService,
+    private prismService: PrismService,
+  ) {}
 
   ngOnInit() {
-
     this.SEOHandler.updateTitleAndMetaTags(
-       'Spare Cores: Run DS/ML/AI Workloads Faster, Cheaper, and with Less Hassle',
-       'Help you auto-track resource usage and optimize allocations on optimal cloud servers.',
-       'data science, machine learning, batch workloads, cloud, server, price, comparison, sparecores');
+      "Spare Cores: Run DS/ML/AI Workloads Faster, Cheaper, and with Less Hassle",
+      "Help you auto-track resource usage and optimize allocations on optimal cloud servers.",
+      "data science, machine learning, batch workloads, cloud, server, price, comparison, sparecores",
+    );
 
-    this.SEOHandler.updateThumbnail('https://sparecores.com/assets/images/media/landing.png');
+    this.SEOHandler.updateThumbnail(
+      "https://sparecores.com/assets/images/media/landing.png",
+    );
 
     if (isPlatformBrowser(this.platformId)) {
-      this.articles.getArticlesByType('featured').then(articles => {
+      this.articles.getArticlesByType("featured").then((articles) => {
         this.featuredArticles = articles;
       });
 
       const spinner1 = [];
       const spinner2 = [];
       const spinner3 = [];
-      for(let i = 0; i < this.SPINNER_COUNT; i++) {
-        spinner1.push({name: 'AWS'});
-        spinner2.push({name: 't4g.nano'});
-        spinner3.push({name: 'US East', city: 'Ashburn'});
+      for (let i = 0; i < this.SPINNER_COUNT; i++) {
+        spinner1.push({ name: "AWS" });
+        spinner2.push({ name: "t4g.nano" });
+        spinner3.push({ name: "US East", city: "Ashburn" });
       }
       this.welcomeAnim();
 
-      document.getElementById('ramCount')?.addEventListener('keypress', function(e) {
-        if (!/[0-9]/.test(String.fromCharCode(e.which))) {
-          e.preventDefault();
-        }
-      });
+      document
+        .getElementById("ramCount")
+        ?.addEventListener("keypress", function (e) {
+          if (!/[0-9]/.test(String.fromCharCode(e.which))) {
+            e.preventDefault();
+          }
+        });
 
-      document.getElementById('cpuCount')?.addEventListener('keypress', function(e) {
-        if (!/[0-9]/.test(String.fromCharCode(e.which))) {
-          e.preventDefault();
-        }
-      });
-
+      document
+        .getElementById("cpuCount")
+        ?.addEventListener("keypress", function (e) {
+          if (!/[0-9]/.test(String.fromCharCode(e.which))) {
+            e.preventDefault();
+          }
+        });
     }
   }
 
@@ -99,116 +122,134 @@ export class LandingpageComponent implements OnInit, AfterViewInit {
   }
 
   welcomeAnim(startingDelay: number = 1000) {
-
     // get the cheapest machine
-    this.keeperAPI.searchServerPrices({vcpus_min: this.cpuCount, memory_min: this.ramCount, limit: 100}).then(servers => {
+    this.keeperAPI
+      .searchServerPrices({
+        vcpus_min: this.cpuCount,
+        memory_min: this.ramCount,
+        limit: 100,
+      })
+      .then((servers) => {
+        if (!this.spinnerClicked) {
+          setTimeout(() => {
+            if (!this.spinnerClicked) {
+              // move spin_button up and down a bit to attact attention
+              const spinButton = document.getElementById("spin_button");
+              if (spinButton) {
+                spinButton.style.animation = "bounce 1s 3";
+              }
+            }
+          }, startingDelay + 7000);
 
-      if(!this.spinnerClicked) {
-
-        setTimeout(() => {
-          if(!this.spinnerClicked) {
-            // move spin_button up and down a bit to attact attention
-            const spinButton = document.getElementById('spin_button');
+          setTimeout(() => {
+            const spinButton = document.getElementById("spin_button");
             if (spinButton) {
-              spinButton.style.animation = 'bounce 1s 3';
+              spinButton.style.animation = "press 1.0s";
             }
-          }
-        }, startingDelay + 7000);
 
-        setTimeout(() => {
+            const spinners = ["ring1", "ring2", "ring3"];
+            spinners.forEach((spinner, i) => {
+              const el = document.getElementById(spinner);
+              if (el) {
+                el.style.animation = `${Math.random() > 0.5 ? "spin-slot" : "spin-back-slot"} ${3.5 + i * 0.25}s ease-in-out`;
+              }
+            });
 
-          const spinButton = document.getElementById('spin_button');
-          if (spinButton) {
-            spinButton.style.animation = 'press 1.0s';
-          }
+            this.spinStart = Date.now();
 
-          const spinners = ['ring1', 'ring2', 'ring3'];
-          spinners.forEach((spinner, i) => {
-            const el = document.getElementById(spinner);
-            if (el) {
-              el.style.animation = `${Math.random() > 0.5 ? 'spin-slot' : 'spin-back-slot'} ${(3.5 + i * 0.25)}s ease-in-out`;
-            }
-          });
-
-          this.spinStart = Date.now();
-
-          this.spinAnim(servers.body, true);
-        }, startingDelay);
-      }
-
-    }).catch(err => {
-      this.analyticsService.SentryException(err, {tags: { location: this.constructor.name, function: 'welcomeAnim' }});
-      console.error(err);
-    });
+            this.spinAnim(servers.body, true);
+          }, startingDelay);
+        }
+      })
+      .catch((err) => {
+        this.analyticsService.SentryException(err, {
+          tags: { location: this.constructor.name, function: "welcomeAnim" },
+        });
+        console.error(err);
+      });
   }
 
   getStyle(i: number) {
-    const transform = 'rotateX(' + (360 / this.SPINNER_COUNT * i) + 'deg) translateZ(' + this.SPINNER_RADIUS + 'px)';
+    const transform =
+      "rotateX(" +
+      (360 / this.SPINNER_COUNT) * i +
+      "deg) translateZ(" +
+      this.SPINNER_RADIUS +
+      "px)";
     return {
-      transform: transform
+      transform: transform,
     };
   }
 
   getInnerStyle(i: number) {
-    if(i > 0) {
-      return '';
+    if (i > 0) {
+      return "";
     }
 
-    if(this.isSpinning || !this.hasRealValues) {
-      return ''
+    if (this.isSpinning || !this.hasRealValues) {
+      return "";
     }
 
-    return 'background: rgba(255,255,255,1) !important; color: #000 !important;';
+    return "background: rgba(255,255,255,1) !important; color: #000 !important;";
   }
 
   spinClicked() {
-
-    if(Number.isNaN(this.cpuCount) || !this.cpuCount || this.cpuCount < 1) {
+    if (Number.isNaN(this.cpuCount) || !this.cpuCount || this.cpuCount < 1) {
       this.cpuCount = 2;
     }
 
-    if(Number.isNaN(this.ramCount) || !this.ramCount || this.ramCount < 0.1) {
+    if (Number.isNaN(this.ramCount) || !this.ramCount || this.ramCount < 0.1) {
       this.ramCount = 4;
     }
 
-    if(this.cpuCount > this.MAX_CPU_COUNT) {
+    if (this.cpuCount > this.MAX_CPU_COUNT) {
       this.cpuCount = this.MAX_CPU_COUNT;
     }
-    if(this.ramCount > this.MAX_RAM_COUNT) {
+    if (this.ramCount > this.MAX_RAM_COUNT) {
       this.ramCount = this.MAX_RAM_COUNT;
     }
 
-    const spinButton = document.getElementById('spin_button');
+    const spinButton = document.getElementById("spin_button");
     if (spinButton) {
-      spinButton.style.animation = 'press 1.0s';
+      spinButton.style.animation = "press 1.0s";
     }
 
-    const spinners = ['ring1', 'ring2', 'ring3'];
+    const spinners = ["ring1", "ring2", "ring3"];
     spinners.forEach((spinner, i) => {
       const el = document.getElementById(spinner);
       if (el) {
-        el.style.animation = `${Math.random() > 0.5 ? 'spin-slot' : 'spin-back-slot'} ${(3.5 + i * 0.25)}s ease-in-out`;
+        el.style.animation = `${Math.random() > 0.5 ? "spin-slot" : "spin-back-slot"} ${3.5 + i * 0.25}s ease-in-out`;
       }
     });
 
     this.spinStart = Date.now();
 
-    this.keeperAPI.searchServerPrices({vcpus_min: this.cpuCount, memory_min: this.ramCount, limit: 100}).then(servers => {
-      this.spinAnim(servers.body);
-    }).catch(err => {
-      this.analyticsService.SentryException(err, {tags: { location: this.constructor.name, function: 'spinClicked' }});
-      console.error(err);
-    });
+    this.keeperAPI
+      .searchServerPrices({
+        vcpus_min: this.cpuCount,
+        memory_min: this.ramCount,
+        limit: 100,
+      })
+      .then((servers) => {
+        this.spinAnim(servers.body);
+      })
+      .catch((err) => {
+        this.analyticsService.SentryException(err, {
+          tags: { location: this.constructor.name, function: "spinClicked" },
+        });
+        console.error(err);
+      });
   }
 
   spinAnim(servers: SearchServerPricesServerPricesGetData, isFake = false) {
-
-    this.analyticsService.trackEvent('slot machine started', {'autostarted': isFake});
-    if(this.isSpinning) {
+    this.analyticsService.trackEvent("slot machine started", {
+      autostarted: isFake,
+    });
+    if (this.isSpinning) {
       return;
     }
 
-    if(!isFake) {
+    if (!isFake) {
       this.spinnerClicked = true;
     }
 
@@ -216,9 +257,9 @@ export class LandingpageComponent implements OnInit, AfterViewInit {
 
     const spinAnimDiff = Date.now() - this.spinStart;
     const spinAnimEnd = Math.max(0, 4200 - spinAnimDiff);
-    const spinAnimFraction = Math.max(0, 50 - (spinAnimDiff / 50));
+    const spinAnimFraction = Math.max(0, 50 - spinAnimDiff / 50);
 
-    const animPriceStart = servers[servers.length-1].price;
+    const animPriceStart = servers[servers.length - 1].price;
     const animPriceEnd = servers[0].price;
 
     let price = animPriceStart;
@@ -229,10 +270,10 @@ export class LandingpageComponent implements OnInit, AfterViewInit {
 
     const interval = setInterval(() => {
       price -= fraction;
-      if(price < animPriceEnd) {
+      if (price < animPriceEnd) {
         price = animPriceEnd;
       }
-      this.priceValue = '$' + Math.round(price * 10000) / 10000;
+      this.priceValue = "$" + Math.round(price * 10000) / 10000;
     }, spinAnimFraction);
 
     setTimeout(() => {
@@ -240,61 +281,79 @@ export class LandingpageComponent implements OnInit, AfterViewInit {
       let top3server = servers.slice(0, 3);
 
       // try to find 3 different machines from servers
-      for(let i = 1; i < 3; i++) {
-        let server = servers.find(s => top3server.findIndex((t)=> t.server.server_id === s.server.server_id) === -1);
-        if(server) {
+      for (let i = 1; i < 3; i++) {
+        let server = servers.find(
+          (s) =>
+            top3server.findIndex(
+              (t) => t.server.server_id === s.server.server_id,
+            ) === -1,
+        );
+        if (server) {
           top3server[i] = server;
         }
       }
 
       // try to find 3 different vendors from servers
-      for(let i = 1; i < 3; i++) {
-        let server = servers.find(s => top3server.findIndex((t)=> t.server.vendor_id === s.server.vendor_id) === -1);
-        if(server) {
+      for (let i = 1; i < 3; i++) {
+        let server = servers.find(
+          (s) =>
+            top3server.findIndex(
+              (t) => t.server.vendor_id === s.server.vendor_id,
+            ) === -1,
+        );
+        if (server) {
           top3server[i] = server;
         }
       }
 
       indices.forEach((index, i) => {
-        this.spinnerContents[0][index] = { name: top3server[i].vendor.vendor_id.toString().toUpperCase(), logo: top3server[i].vendor.logo};
-        this.spinnerContents[1][index] = { name: top3server[i].server.display_name, architecture: top3server[i].server.cpu_architecture};
+        this.spinnerContents[0][index] = {
+          name: top3server[i].vendor.vendor_id.toString().toUpperCase(),
+          logo: top3server[i].vendor.logo,
+        };
+        this.spinnerContents[1][index] = {
+          name: top3server[i].server.display_name,
+          architecture: top3server[i].server.cpu_architecture,
+        };
         this.spinnerContents[2][index] = {
           name: top3server[i].region?.display_name,
-          city: top3server[i].zone?.display_name
+          city: top3server[i].zone?.display_name,
         };
       });
     }, 200);
 
     setTimeout(() => {
-      const spinButton = document.getElementById('spin_button');
+      const spinButton = document.getElementById("spin_button");
       if (spinButton) {
-        spinButton.style.animation = 'none';
+        spinButton.style.animation = "none";
       }
 
-      const spinners = ['ring1', 'ring2', 'ring3'];
-      spinners.forEach(spinner => {
+      const spinners = ["ring1", "ring2", "ring3"];
+      spinners.forEach((spinner) => {
         const el = document.getElementById(spinner);
         if (el) {
-          el.style.animation = 'none';
+          el.style.animation = "none";
         }
       });
       clearInterval(interval);
-      this.priceValue = '$' + animPriceEnd;
+      this.priceValue = "$" + animPriceEnd;
       this.isSpinning = false;
       this.hasRealValues = true;
-      this.analyticsService.trackEvent('slot machine finished', {'autostarted': isFake});
-    }, spinAnimEnd)
+      this.analyticsService.trackEvent("slot machine finished", {
+        autostarted: isFake,
+      });
+    }, spinAnimEnd);
   }
 
   toggleQuote(event: Event) {
     const clickedElement = event.currentTarget as HTMLElement;
-    const quoteContainer = clickedElement.closest('.quote-container');
+    const quoteContainer = clickedElement.closest(".quote-container");
     if (quoteContainer) {
-      const preview = quoteContainer.querySelector('.quote-preview');
-      const full = quoteContainer.querySelector('.quote-full');
+      const preview = quoteContainer.querySelector(".quote-preview");
+      const full = quoteContainer.querySelector(".quote-full");
       if (preview && full) {
-        preview.classList.toggle('hidden');
-        full.classList.toggle('hidden');
+        preview.classList.toggle("hidden");
+        full.classList.toggle("hidden");
       }
     }
   }
@@ -302,7 +361,7 @@ export class LandingpageComponent implements OnInit, AfterViewInit {
   scrollTo(id: string) {
     const element = document.getElementById(id);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+      element.scrollIntoView({ behavior: "smooth" });
     }
   }
 }

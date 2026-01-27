@@ -1,8 +1,8 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed } from "@angular/core/testing";
 
-import { KeeperAPIService } from './keeper-api.service';
+import { KeeperAPIService } from "./keeper-api.service";
 
-describe('KeeperAPIService', () => {
+describe("KeeperAPIService", () => {
   let service: KeeperAPIService;
 
   beforeEach(() => {
@@ -10,7 +10,7 @@ describe('KeeperAPIService', () => {
     service = TestBed.inject(KeeperAPIService);
   });
 
-  it('should be created', () => {
+  it("should be created", () => {
     expect(service).toBeTruthy();
   });
 });

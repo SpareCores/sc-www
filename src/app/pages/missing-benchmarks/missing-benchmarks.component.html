@@ -3,36 +3,29 @@
     <app-breadcrumbs [segments]="breadcrumbs"></app-breadcrumbs>
     <h1 class="text-4xl font-bold">Benchmark Completion Report</h1>
     <div class="text-white text-xl pr-16">
-      Although we try hard, we were not able to start some instances for hardware inspections and to run our benchmark workloads. You can find a breakdown of these servers, including the likely root cause for the missing data.
+      Although we try hard, we were not able to start some instances for
+      hardware inspections and to run our benchmark workloads. You can find a
+      breakdown of these servers, including the likely root cause for the
+      missing data.
     </div>
 
     <table class="items_table">
       <thead>
         <tr>
-          <th >
-            <div class="flex gap-1">
-              VENDOR
-            </div>
+          <th>
+            <div class="flex gap-1">VENDOR</div>
           </th>
           <th>
-            <div class="flex justify-end">
-              IDENTIFIED SERVERS
-            </div>
+            <div class="flex justify-end">IDENTIFIED SERVERS</div>
           </th>
           <th>
-            <div class="flex justify-end">
-              EVALUATED SERVERS
-            </div>
+            <div class="flex justify-end">EVALUATED SERVERS</div>
           </th>
           <th>
-            <div class="flex justify-end">
-              MISSING SERVERS
-            </div>
+            <div class="flex justify-end">MISSING SERVERS</div>
           </th>
           <th>
-            <div class="flex justify-end">
-              MISSING RATE
-            </div>
+            <div class="flex justify-end">MISSING RATE</div>
           </th>
         </tr>
       </thead>
@@ -40,48 +33,45 @@
         <tr *ngFor="let item of vendors">
           <td>
             <div class="flex gap-1">
-              {{item.name}}
+              {{ item.name }}
             </div>
           </td>
           <td>
             <div class="flex justify-end">
-              {{item.servers}}
+              {{ item.servers }}
             </div>
           </td>
           <td>
             <div class="flex justify-end">
-              {{item.evaluated}}
+              {{ item.evaluated }}
             </div>
           </td>
           <td>
             <div class="flex justify-end">
-              {{item.missing}}
+              {{ item.missing }}
             </div>
           </td>
           <td>
-            <div class="flex justify-end">
-              {{item.percentage}}%
-            </div>
+            <div class="flex justify-end">{{ item.percentage }}%</div>
           </td>
         </tr>
       </tbody>
     </table>
 
     <div *ngFor="let item of vendors">
-      <div class="flex flex-col gap-2 mb-8" *ngIf="item.missing_servers?.length">
-        <h2 class="text-3xl mb-2" > {{item.name}} </h2>
+      <div
+        class="flex flex-col gap-2 mb-8"
+        *ngIf="item.missing_servers?.length"
+      >
+        <h2 class="text-3xl mb-2">{{ item.name }}</h2>
         <table class="items_table">
           <thead>
             <tr>
               <th>
-                <div class="flex gap-1">
-                  SERVER
-                </div>
+                <div class="flex gap-1">SERVER</div>
               </th>
               <th>
-                <div class="flex gap-1">
-                  MISSING REASON
-                </div>
+                <div class="flex gap-1">MISSING REASON</div>
               </th>
             </tr>
           </thead>
@@ -89,12 +79,12 @@
             <tr *ngFor="let server of item.missing_servers">
               <td>
                 <div class="pl-2 flex gap-1">
-                  {{server.name}}
+                  {{ server.name }}
                 </div>
               </td>
               <td>
                 <div class="flex gap-1">
-                  {{server.reason}}
+                  {{ server.reason }}
                 </div>
               </td>
             </tr>
@@ -102,6 +92,5 @@
         </table>
       </div>
     </div>
-
   </div>
 </div>

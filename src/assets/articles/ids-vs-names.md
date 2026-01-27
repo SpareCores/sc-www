@@ -50,19 +50,18 @@ ORDER BY CAST(server_id as INTEGER);
 ```
 
 | server_id | name  | vcpus | memory |
-|----------:|:------|------:|-------:|
-| 1         | cx11  | 1     | 2048   |
-| 3         | cx21  | 2     | 4096   |
-| 5         | cx31  | 2     | 8192   |
-| 7         | cx41  | 4     | 16384  |
-| 9         | cx51  | 8     | 32768  |
-| 96        | ccx13 | 2     | 8192   |
-| 97        | ccx23 | 4     | 16384  |
-| 98        | ccx33 | 8     | 32768  |
-| 99        | ccx43 | 16    | 65536  |
-| 100       | ccx53 | 32    | 131072 |
-| 101       | ccx63 | 48    | 196608 |
-
+| --------: | :---- | ----: | -----: |
+|         1 | cx11  |     1 |   2048 |
+|         3 | cx21  |     2 |   4096 |
+|         5 | cx31  |     2 |   8192 |
+|         7 | cx41  |     4 |  16384 |
+|         9 | cx51  |     8 |  32768 |
+|        96 | ccx13 |     2 |   8192 |
+|        97 | ccx23 |     4 |  16384 |
+|        98 | ccx33 |     8 |  32768 |
+|        99 | ccx43 |    16 |  65536 |
+|       100 | ccx53 |    32 | 131072 |
+|       101 | ccx63 |    48 | 196608 |
 
 Honestly, you better rely on the server names to identify what
 hardware is covered. Fortunately, this is very well supported by their
@@ -94,8 +93,8 @@ ORDER BY RANDOM()
 LIMIT 10;
 ```
 
-| region_id      |           name           |      aliases       |
-|:---------------|:-------------------------|:-------------------|
+| region_id      | name                     | aliases            |
+| :------------- | :----------------------- | :----------------- |
 | cn-northwest-1 | China (Ningxia)          | []                 |
 | eu-west-2      | Europe (London)          | ["EU (London)"]    |
 | ap-south-1     | Asia Pacific (Mumbai)    | []                 |
@@ -106,7 +105,6 @@ LIMIT 10;
 | ap-east-1      | Asia Pacific (Hong Kong) | []                 |
 | eu-west-1      | Europe (Ireland)         | ["EU (Ireland)"]   |
 | eu-central-1   | Europe (Frankfurt)       | ["EU (Frankfurt)"] |
-
 
 This is a bit painful, but manageable problem: we have been
 maintaining the list of aliases manually in the SC Crawler package,

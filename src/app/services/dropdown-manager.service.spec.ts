@@ -1,8 +1,8 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed } from "@angular/core/testing";
 
-import { DropdownManagerService } from './dropdown-manager.service';
+import { DropdownManagerService } from "./dropdown-manager.service";
 
-describe('DropdownManagerService', () => {
+describe("DropdownManagerService", () => {
   let service: DropdownManagerService;
 
   beforeEach(() => {
@@ -10,7 +10,7 @@ describe('DropdownManagerService', () => {
     service = TestBed.inject(DropdownManagerService);
   });
 
-  it('should be created', () => {
+  it("should be created", () => {
     expect(service).toBeTruthy();
   });
 });

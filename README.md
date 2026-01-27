@@ -1,6 +1,6 @@
 # Spare Cores web interface and public homepage
 
-This is  an Angular 17.2.3 project to provide the public homepage of
+This is an Angular 17.2.3 project to provide the public homepage of
 the Spare Cores project and ecosystem at sparecores.com.
 
 ## Prerequisites
@@ -75,6 +75,12 @@ metrics on the SSR steps.
 ## Linting tools
 
 Run `ng lint` to check code formatting on all `ts` and `html` files.
+
+## Formatting tools
+
+Run `npm run prettier:check` to check code style on all required files.
+
+Run `npm run prettier:fix` to fix code style on all required files.
 
 ## Running unit tests
 

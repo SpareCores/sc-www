@@ -11,12 +11,11 @@
     @apply border-b border-emerald-400 border-solid;
     th {
       @apply text-left px-5 py-3 font-normal text-xs;
-
     }
   }
 
   tbody {
-    tr:nth-child(2n+1) {
+    tr:nth-child(2n + 1) {
       @apply bg-primary;
     }
     tr:nth-child(2n) {
@@ -40,13 +39,13 @@
 
 .animated_slot_machine {
   position: relative;
-  width:560px;
+  width: 560px;
   .outer_border {
     position: absolute;
     left: 0;
     top: 55px;
     border-radius: 1rem;
-    border: 1px solid #34D399;
+    border: 1px solid #34d399;
     width: 560px;
     height: 500px;
   }
@@ -57,7 +56,7 @@
     width: 320px;
     height: 16px;
     border-radius: 8px;
-    background-color: #34D399;
+    background-color: #34d399;
   }
 
   .top_bottom_border_segment {
@@ -67,11 +66,11 @@
     width: 270px;
     height: 16px;
     border-radius: 8px;
-    background-color: #34D399;
+    background-color: #34d399;
   }
   .input_border {
     border-radius: 1rem;
-    border: 2px solid #34D399;
+    border: 2px solid #34d399;
   }
 
   .price_input {
@@ -145,7 +144,7 @@
     position: relative;
     height: 400px;
     width: 145px;
-    background: linear-gradient(0deg,#082F49 10%, #34D399 50%, #082F49 100%);
+    background: linear-gradient(0deg, #082f49 10%, #34d399 50%, #082f49 100%);
     overflow: hidden;
     z-index: 2;
 
@@ -154,10 +153,9 @@
       top: 130px;
       width: 145px;
       height: 140px;
-      border-top: 1px solid #34D399;
-      border-bottom: 1px solid #34D399;
+      border-top: 1px solid #34d399;
+      border-bottom: 1px solid #34d399;
     }
-
   }
   .spin_ring {
     position: absolute;
@@ -175,15 +173,14 @@
       height: 135px;
       box-sizing: border-box;
       opacity: 0.9;
-      color: rgba(255,255,255,0.7);
+      color: rgba(255, 255, 255, 0.7);
       display: flex;
       justify-content: center;
       align-items: center;
       background: transparent;
       -webkit-backface-visibility: hidden;
-         -moz-backface-visibility: hidden;
-              backface-visibility: hidden;
-
+      -moz-backface-visibility: hidden;
+      backface-visibility: hidden;
     }
 
     .slot_inner {
@@ -220,7 +217,7 @@
     height: 50px;
     border: none;
     color: #fff;
-    letter-spacing: .2rem;
+    letter-spacing: 0.2rem;
     background-color: #ef0040;
     border: 1px solid #c3002b;
     border-radius: 15px;
@@ -234,7 +231,10 @@
   }
   .container > .button:hover {
     background-color: #a70012;
-    text-shadow: 0px 0px 60px white, 0px 0px 40px white, 0 0 20px white;
+    text-shadow:
+      0px 0px 60px white,
+      0px 0px 40px white,
+      0 0 20px white;
     border: 1px solid #800000;
   }
   .container > .button:disabled {
@@ -257,7 +257,7 @@
     position: absolute;
     z-index: 2;
   }
-  .container .button__bottom[disabled=true] {
+  .container .button__bottom[disabled="true"] {
     background-color: #440000;
   }
 
@@ -268,5 +268,4 @@
   .ram_input:disabled {
     @apply text-gray-200;
   }
-
 }

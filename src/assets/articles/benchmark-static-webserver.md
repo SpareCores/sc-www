@@ -44,7 +44,6 @@ However, the examples shared in the tweet inspired us to dig deeper:
   </div>
 </blockquote>
 
-
 We will follow-up on the redis use-case, as we have several
 database-related benchmarks to be covered in our roadmap, but wanted
 to quickly react on the HTTP proxy workload.
@@ -175,7 +174,6 @@ terms, trying to control for the client resource usage:
     src="/assets/images/blog/binserve-compare-plot-16-extrapolated.webp"/>
   <p>Extrapolated server performance on 16 connections per vCPU<br />(data collected an visualized by Spare Cores)</p>
 </div>
-
 
 ## Further Metrics
 

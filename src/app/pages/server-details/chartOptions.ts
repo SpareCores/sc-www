@@ -1,25 +1,29 @@
 /* eslint-disable no-var */
-import { ChartConfiguration, ChartData, TooltipItem, TooltipModel } from "chart.js";
+import {
+  ChartConfiguration,
+  ChartData,
+  TooltipItem,
+  TooltipModel,
+} from "chart.js";
 
-export const  barChartOptions: ChartConfiguration<'bar'>['options'] = {
-
+export const barChartOptions: ChartConfiguration<"bar">["options"] = {
   scales: {
     x: {
       ticks: {
-        color: '#FFF',
-      }
+        color: "#FFF",
+      },
     },
     y: {
       ticks: {
-        color: '#FFF',
+        color: "#FFF",
       },
       grid: {
-        color: '#4B5563',
+        color: "#4B5563",
       },
       title: {
         display: true,
-        color: '#FFF',
-        text: 'USD/h',
+        color: "#FFF",
+        text: "USD/h",
       },
     },
   },
@@ -27,28 +31,27 @@ export const  barChartOptions: ChartConfiguration<'bar'>['options'] = {
     legend: {
       display: true,
       labels: {
-        color: '#FFF',
+        color: "#FFF",
       },
-    }
+    },
   },
-
 };
 
-export const  barChartOptionsSSL: ChartConfiguration<'bar'>['options'] = {
+export const barChartOptionsSSL: ChartConfiguration<"bar">["options"] = {
   maintainAspectRatio: false,
   scales: {
     ...barChartOptions.scales,
     y: {
       ticks: {
-        color: '#FFF',
+        color: "#FFF",
       },
       grid: {
-        color: '#4B5563',
+        color: "#4B5563",
       },
       title: {
         display: true,
-        color: '#FFF',
-        text: 'byte/s',
+        color: "#FFF",
+        text: "byte/s",
       },
     },
   },
@@ -56,764 +59,827 @@ export const  barChartOptionsSSL: ChartConfiguration<'bar'>['options'] = {
     ...barChartOptions.plugins,
     title: {
       display: true,
-      text: 'Block size (byte)',
-      color: '#FFF',
-    }
+      text: "Block size (byte)",
+      color: "#FFF",
+    },
   },
 };
 
-export const  barChartOptionsStaticWeb: ChartConfiguration<'bar'>['options'] = {
+export const barChartOptionsStaticWeb: ChartConfiguration<"bar">["options"] = {
   scales: {
     ...barChartOptions.scales,
     y: {
       ticks: {
-        color: '#FFF',
+        color: "#FFF",
       },
       grid: {
-        color: '#4B5563',
+        color: "#4B5563",
       },
       title: {
         display: true,
-        color: '#FFF',
-        text: 'Request per second',
+        color: "#FFF",
+        text: "Request per second",
       },
     },
     x: {
       ticks: {
-        color: '#FFF',
+        color: "#FFF",
       },
       grid: {
-        color: '#4B5563',
+        color: "#4B5563",
       },
       title: {
         display: true,
-        color: '#FFF',
-        text: 'Connections per vCPU(s)',
+        color: "#FFF",
+        text: "Connections per vCPU(s)",
       },
-    }
+    },
   },
   plugins: {
     ...barChartOptions.plugins,
     title: {
       display: true,
-      text: 'File size (KBs)',
-      color: '#FFF',
+      text: "File size (KBs)",
+      color: "#FFF",
     },
-    tooltip:{
+    tooltip: {
       callbacks: {
-        label: function(this: TooltipModel<"bar">, tooltipItem: TooltipItem<"bar">) {
+        label: function (
+          this: TooltipModel<"bar">,
+          tooltipItem: TooltipItem<"bar">,
+        ) {
           return `${tooltipItem.formattedValue} ${(tooltipItem as any).raw.unit}; Note: ${(tooltipItem as any).raw.note}`;
         },
-        title: function(this: TooltipModel<"bar">, tooltipItems: TooltipItem<"bar">[]) {
-          return tooltipItems[0].label + 'Kb file size';
+        title: function (
+          this: TooltipModel<"bar">,
+          tooltipItems: TooltipItem<"bar">[],
+        ) {
+          return tooltipItems[0].label + "Kb file size";
         },
-      }
+      },
     },
   },
   parsing: {
-    xAxisKey: 'label',
-    yAxisKey: 'data'
-  }
+    xAxisKey: "label",
+    yAxisKey: "data",
+  },
 };
 
-export const  barChartOptionsTemplate: ChartConfiguration<'bar'>['options'] = {
+export const barChartOptionsTemplate: ChartConfiguration<"bar">["options"] = {
   maintainAspectRatio: false,
   scales: {
     ...barChartOptions.scales,
     y: {
       ticks: {
-        color: '#FFF',
+        color: "#FFF",
       },
       grid: {
-        color: '#4B5563',
+        color: "#4B5563",
       },
       title: {
         display: true,
-        color: '#FFF',
-        text: 'Benchmark Score',
+        color: "#FFF",
+        text: "Benchmark Score",
       },
     },
     x: {
       ticks: {
-        color: '#FFF',
+        color: "#FFF",
       },
       grid: {
-        color: '#4B5563',
+        color: "#4B5563",
       },
       title: {
         display: true,
-        color: '#FFF',
-        text: 'scaleField values',
+        color: "#FFF",
+        text: "scaleField values",
       },
-    }
+    },
   },
   plugins: {
     ...barChartOptions.plugins,
     title: {
       display: true,
-      text: 'labelsField description',
-      color: '#FFF',
+      text: "labelsField description",
+      color: "#FFF",
     },
     // NOTE: Add customized tooltip callbacks
-    tooltip:{
+    tooltip: {
       callbacks: {
-        label: function(this: TooltipModel<"bar">, tooltipItem: TooltipItem<"bar">) {
+        label: function (
+          this: TooltipModel<"bar">,
+          tooltipItem: TooltipItem<"bar">,
+        ) {
           return `${tooltipItem.formattedValue} ${(tooltipItem as any).raw.unit}; Note: ${(tooltipItem as any).raw.note}`;
         },
-        title: function(this: TooltipModel<"bar">, tooltipItems: TooltipItem<"bar">[]) {
-          return tooltipItems[0].label + ' concurrent pipelined requests';
+        title: function (
+          this: TooltipModel<"bar">,
+          tooltipItems: TooltipItem<"bar">[],
+        ) {
+          return tooltipItems[0].label + " concurrent pipelined requests";
         },
-      }
+      },
     },
   },
   parsing: {
-    xAxisKey: 'label',
-    yAxisKey: 'data'
-  }
+    xAxisKey: "label",
+    yAxisKey: "data",
+  },
 };
 
-export const  barChartOptionsRedis: ChartConfiguration<'bar'>['options'] = {
+export const barChartOptionsRedis: ChartConfiguration<"bar">["options"] = {
   scales: {
     ...barChartOptions.scales,
     y: {
       ticks: {
-        color: '#FFF',
+        color: "#FFF",
       },
       grid: {
-        color: '#4B5563',
+        color: "#4B5563",
       },
       title: {
         display: true,
-        color: '#FFF',
-        text: 'Request per second',
+        color: "#FFF",
+        text: "Request per second",
       },
     },
     x: {
       ticks: {
-        color: '#FFF',
+        color: "#FFF",
       },
       grid: {
-        color: '#4B5563',
+        color: "#4B5563",
       },
       title: {
         display: true,
-        color: '#FFF',
-        text: 'Number of concurrent pipelined requests',
+        color: "#FFF",
+        text: "Number of concurrent pipelined requests",
       },
-    }
+    },
   },
   plugins: {
     ...barChartOptions.plugins,
     title: {
       display: true,
-      text: 'Operation',
-      color: '#FFF',
+      text: "Operation",
+      color: "#FFF",
     },
-    tooltip:{
+    tooltip: {
       callbacks: {
-        label: function(this: TooltipModel<"bar">, tooltipItem: TooltipItem<"bar">) {
+        label: function (
+          this: TooltipModel<"bar">,
+          tooltipItem: TooltipItem<"bar">,
+        ) {
           return `${tooltipItem.formattedValue} ${(tooltipItem as any).raw.unit}; Note: ${(tooltipItem as any).raw.note}`;
         },
-        title: function(this: TooltipModel<"bar">, tooltipItems: TooltipItem<"bar">[]) {
-          return tooltipItems[0].label + ' concurrent pipelined requests';
+        title: function (
+          this: TooltipModel<"bar">,
+          tooltipItems: TooltipItem<"bar">[],
+        ) {
+          return tooltipItems[0].label + " concurrent pipelined requests";
         },
-      }
+      },
     },
   },
   parsing: {
-    xAxisKey: 'label',
-    yAxisKey: 'data'
-  }
+    xAxisKey: "label",
+    yAxisKey: "data",
+  },
 };
 
-export const  barChartOptionsSSLCompare: ChartConfiguration<'bar'>['options'] = {
+export const barChartOptionsSSLCompare: ChartConfiguration<"bar">["options"] = {
   maintainAspectRatio: false,
   scales: {
     ...barChartOptions.scales,
     y: {
       ticks: {
-        color: '#FFF',
+        color: "#FFF",
       },
       grid: {
-        color: '#4B5563',
+        color: "#4B5563",
       },
       title: {
         display: true,
-        color: '#FFF',
-        text: 'byte/s',
+        color: "#FFF",
+        text: "byte/s",
       },
     },
     x: {
       ticks: {
-        color: '#FFF',
+        color: "#FFF",
       },
       grid: {
-        color: '#4B5563',
+        color: "#4B5563",
       },
       title: {
         display: true,
-        color: '#FFF',
-        text: 'Block Size (byte)',
+        color: "#FFF",
+        text: "Block Size (byte)",
       },
-    }
+    },
   },
   plugins: {
     ...barChartOptions.plugins,
-    tooltip:{
+    tooltip: {
       callbacks: {
-        label: function(this: TooltipModel<"bar">, tooltipItem: TooltipItem<"bar">) {
-          return tooltipItem.formattedValue + ' byte/s';
+        label: function (
+          this: TooltipModel<"bar">,
+          tooltipItem: TooltipItem<"bar">,
+        ) {
+          return tooltipItem.formattedValue + " byte/s";
         },
-        title: function(this: TooltipModel<"bar">, tooltipItems: TooltipItem<"bar">[]) {
-          return tooltipItems[0].label + '-byte block size';
+        title: function (
+          this: TooltipModel<"bar">,
+          tooltipItems: TooltipItem<"bar">[],
+        ) {
+          return tooltipItems[0].label + "-byte block size";
         },
-      }
+      },
     },
   },
 };
 
-export const  barChartOptionsStaticWebCompare: ChartConfiguration<'bar'>['options'] = {
-  scales: {
-    ...barChartOptions.scales,
-    y: {
-      ticks: {
-        color: '#FFF',
+export const barChartOptionsStaticWebCompare: ChartConfiguration<"bar">["options"] =
+  {
+    scales: {
+      ...barChartOptions.scales,
+      y: {
+        ticks: {
+          color: "#FFF",
+        },
+        grid: {
+          color: "#4B5563",
+        },
+        title: {
+          display: true,
+          color: "#FFF",
+          text: "Request per second",
+        },
       },
-      grid: {
-        color: '#4B5563',
-      },
-      title: {
-        display: true,
-        color: '#FFF',
-        text: 'Request per second',
+      x: {
+        ticks: {
+          color: "#FFF",
+        },
+        grid: {
+          color: "#4B5563",
+        },
+        title: {
+          display: true,
+          color: "#FFF",
+          text: "File Size",
+        },
       },
     },
-    x: {
-      ticks: {
-        color: '#FFF',
-      },
-      grid: {
-        color: '#4B5563',
-      },
-      title: {
-        display: true,
-        color: '#FFF',
-        text: 'File Size',
-      },
-    }
-  },
-  plugins: {
-    ...barChartOptions.plugins,
-    tooltip:{
-      callbacks: {
-        label: function(this: TooltipModel<"bar">, tooltipItem: TooltipItem<"bar">) {
-          return `${tooltipItem.formattedValue} ${(tooltipItem as any).raw.unit}; Note: ${(tooltipItem as any).raw.note}`;
+    plugins: {
+      ...barChartOptions.plugins,
+      tooltip: {
+        callbacks: {
+          label: function (
+            this: TooltipModel<"bar">,
+            tooltipItem: TooltipItem<"bar">,
+          ) {
+            return `${tooltipItem.formattedValue} ${(tooltipItem as any).raw.unit}; Note: ${(tooltipItem as any).raw.note}`;
+          },
+          title: function (
+            this: TooltipModel<"bar">,
+            tooltipItems: TooltipItem<"bar">[],
+          ) {
+            return tooltipItems[0].label;
+          },
         },
-        title: function(this: TooltipModel<"bar">, tooltipItems: TooltipItem<"bar">[]) {
-          return tooltipItems[0].label;
-        },
-      }
+      },
     },
-  },
-  parsing: {
-    xAxisKey: 'label',
-    yAxisKey: 'data'
-  }
-};
+    parsing: {
+      xAxisKey: "label",
+      yAxisKey: "data",
+    },
+  };
 
-export const  barChartOptionsRedisCompare: ChartConfiguration<'bar'>['options'] = {
-  scales: {
-    ...barChartOptions.scales,
-    y: {
-      ticks: {
-        color: '#FFF',
+export const barChartOptionsRedisCompare: ChartConfiguration<"bar">["options"] =
+  {
+    scales: {
+      ...barChartOptions.scales,
+      y: {
+        ticks: {
+          color: "#FFF",
+        },
+        grid: {
+          color: "#4B5563",
+        },
+        title: {
+          display: true,
+          color: "#FFF",
+          text: "Request per second",
+        },
       },
-      grid: {
-        color: '#4B5563',
-      },
-      title: {
-        display: true,
-        color: '#FFF',
-        text: 'Request per second',
+      x: {
+        ticks: {
+          color: "#FFF",
+        },
+        grid: {
+          color: "#4B5563",
+        },
+        title: {
+          display: true,
+          color: "#FFF",
+          text: "Number of concurrent pipelined requests",
+        },
       },
     },
-    x: {
-      ticks: {
-        color: '#FFF',
-      },
-      grid: {
-        color: '#4B5563',
-      },
-      title: {
-        display: true,
-        color: '#FFF',
-        text: 'Number of concurrent pipelined requests',
-      },
-    }
-  },
-  plugins: {
-    ...barChartOptions.plugins,
-    tooltip:{
-      callbacks: {
-        label: function(this: TooltipModel<"bar">, tooltipItem: TooltipItem<"bar">) {
-          return `${tooltipItem.formattedValue} ${(tooltipItem as any).raw.unit}; Note: ${(tooltipItem as any).raw.note}`;
+    plugins: {
+      ...barChartOptions.plugins,
+      tooltip: {
+        callbacks: {
+          label: function (
+            this: TooltipModel<"bar">,
+            tooltipItem: TooltipItem<"bar">,
+          ) {
+            return `${tooltipItem.formattedValue} ${(tooltipItem as any).raw.unit}; Note: ${(tooltipItem as any).raw.note}`;
+          },
+          title: function (
+            this: TooltipModel<"bar">,
+            tooltipItems: TooltipItem<"bar">[],
+          ) {
+            return tooltipItems[0].label;
+          },
         },
-        title: function(this: TooltipModel<"bar">, tooltipItems: TooltipItem<"bar">[]) {
-          return tooltipItems[0].label;
-        },
-      }
+      },
     },
-  },
-  parsing: {
-    xAxisKey: 'label',
-    yAxisKey: 'data'
-  }
-};
+    parsing: {
+      xAxisKey: "label",
+      yAxisKey: "data",
+    },
+  };
 
-export const barChartDataEmpty: ChartData<'bar'> = {
+export const barChartDataEmpty: ChartData<"bar"> = {
   labels: [],
   datasets: [
-    { data: [], label: 'Spot', backgroundColor: '#34D399'},
-    { data: [], label: 'Ondemand', backgroundColor: '#E5E7EB'},
+    { data: [], label: "Spot", backgroundColor: "#34D399" },
+    { data: [], label: "Ondemand", backgroundColor: "#E5E7EB" },
   ],
 };
 
-export const radarChartOptions: ChartConfiguration<'radar'>['options'] = {
+export const radarChartOptions: ChartConfiguration<"radar">["options"] = {
   scales: {
     r: {
       ticks: {
-        color: '#4B5563',
-        backdropColor: '#06263a',
+        color: "#4B5563",
+        backdropColor: "#06263a",
       },
       grid: {
-        color: '#4B5563',
+        color: "#4B5563",
       },
       pointLabels: {
-        color: '#E5E7EB',
+        color: "#E5E7EB",
       },
       angleLines: {
-        color: '#4B5563',
+        color: "#4B5563",
         display: true,
       },
       min: 0,
     },
   },
   parsing: {
-    key: 'value',
+    key: "value",
   },
   plugins: {
-    tooltip:{
+    tooltip: {
       callbacks: {
-        label: function(this: TooltipModel<"radar">, tooltipItem: TooltipItem<"radar">) {
-          return (tooltipItem.dataset.data[tooltipItem.dataIndex] as any).value + '; ' + (tooltipItem.dataset.data[tooltipItem.dataIndex] as any).tooltip;
-        }
-      }
+        label: function (
+          this: TooltipModel<"radar">,
+          tooltipItem: TooltipItem<"radar">,
+        ) {
+          return (
+            (tooltipItem.dataset.data[tooltipItem.dataIndex] as any).value +
+            "; " +
+            (tooltipItem.dataset.data[tooltipItem.dataIndex] as any).tooltip
+          );
+        },
+      },
     },
     legend: {
       display: false,
       labels: {
-        color: '#FFF',
+        color: "#FFF",
       },
-    }
+    },
   },
 };
 
 export const radarDatasetColors = [
-  { borderColor: '#34D399', backgroundColor: '#34D39933'},
-  { borderColor: '#E5E7EB', backgroundColor: '#E5E7EB33'},
-  { borderColor: '#38BDF8', backgroundColor: '#38BDF833'},
-  { borderColor: '#FACC15', backgroundColor: '#FACC1533'},
-  { borderColor: '#F87171', backgroundColor: '#F8717133'},
-  { borderColor: '#A3E635', backgroundColor: '#A3E63533'},
-  { borderColor: '#818CF8', backgroundColor: '#818CF833'},
-  { borderColor: '#94A3B8', backgroundColor: '#94A3B833'}
+  { borderColor: "#34D399", backgroundColor: "#34D39933" },
+  { borderColor: "#E5E7EB", backgroundColor: "#E5E7EB33" },
+  { borderColor: "#38BDF8", backgroundColor: "#38BDF833" },
+  { borderColor: "#FACC15", backgroundColor: "#FACC1533" },
+  { borderColor: "#F87171", backgroundColor: "#F8717133" },
+  { borderColor: "#A3E635", backgroundColor: "#A3E63533" },
+  { borderColor: "#818CF8", backgroundColor: "#818CF833" },
+  { borderColor: "#94A3B8", backgroundColor: "#94A3B833" },
 ];
 
-export const lineChartOptionsBWM: ChartConfiguration<'line'>['options'] = {
+export const lineChartOptionsBWM: ChartConfiguration<"line">["options"] = {
   maintainAspectRatio: false,
   scales: {
     x: {
       ticks: {
-        color: '#FFF',
+        color: "#FFF",
         autoSkip: false,
         major: {
-          enabled: true
-        }
+          enabled: true,
+        },
       },
       title: {
         display: true,
-        color: '#FFF',
-        text: 'MB',
+        color: "#FFF",
+        text: "MB",
       },
       grid: {
-        color: '#4B5563',
+        color: "#4B5563",
       },
-      type: 'logarithmic',
+      type: "logarithmic",
       min: 0,
-      afterBuildTicks: function(scale: any) {
+      afterBuildTicks: function (scale: any) {
         scale.ticks = [
-          0.016384,
-          0.262144,
-          1,
-          2,
-          4,
-          8,
-          16,
-          32,
-          64,
-          256,
-          512
-        ].map(v => ({ value: v, label: v, major: true}));
+          0.016384, 0.262144, 1, 2, 4, 8, 16, 32, 64, 256, 512,
+        ].map((v) => ({ value: v, label: v, major: true }));
       },
-      afterTickToLabelConversion: function(scale: any) {
+      afterTickToLabelConversion: function (scale: any) {
         scale.ticks = [
-          0.016384,
-          0.262144,
-          1,
-          2,
-          4,
-          8,
-          16,
-          32,
-          64,
-          256,
-          512
-        ].map(v => ({ value: v, label: v, major: true}));
-      }
+          0.016384, 0.262144, 1, 2, 4, 8, 16, 32, 64, 256, 512,
+        ].map((v) => ({ value: v, label: v, major: true }));
+      },
     },
     y: {
       ticks: {
-        color: '#FFF',
+        color: "#FFF",
       },
       grid: {
-        color: '#4B5563',
+        color: "#4B5563",
       },
-      type: 'logarithmic',
+      type: "logarithmic",
       title: {
         display: true,
-        color: '#FFF',
-        text: 'MB/sec',
-      }
+        color: "#FFF",
+        text: "MB/sec",
+      },
     },
   },
   plugins: {
-    tooltip:{
+    tooltip: {
       callbacks: {
-        title: function(this: TooltipModel<"line">, tooltipItems: TooltipItem<"line">[]) {
-          return tooltipItems[0].label + ' MB block size';
+        title: function (
+          this: TooltipModel<"line">,
+          tooltipItems: TooltipItem<"line">[],
+        ) {
+          return tooltipItems[0].label + " MB block size";
         },
-        label: function(this: TooltipModel<"line">, tooltipItem: TooltipItem<"line">) {
-          return tooltipItem.formattedValue + ' MB/s';
-        }
-      }
+        label: function (
+          this: TooltipModel<"line">,
+          tooltipItem: TooltipItem<"line">,
+        ) {
+          return tooltipItem.formattedValue + " MB/s";
+        },
+      },
     },
     annotation: {},
     legend: {
       display: true,
       labels: {
-        color: '#FFF',
+        color: "#FFF",
       },
-    }
+    },
   },
 };
 
-export const lineChartOptionsComp: ChartConfiguration<'line'>['options'] = {
+export const lineChartOptionsComp: ChartConfiguration<"line">["options"] = {
   maintainAspectRatio: false,
   scales: {
     x: {
       ticks: {
-        color: '#FFF',
+        color: "#FFF",
       },
       title: {
         display: true,
-        color: '#FFF',
-        text: 'Compression Level',
+        color: "#FFF",
+        text: "Compression Level",
       },
     },
     y: {
       ticks: {
-        color: '#FFF',
+        color: "#FFF",
       },
       grid: {
-        color: '#4B5563',
+        color: "#4B5563",
       },
-      type: 'logarithmic',
+      type: "logarithmic",
       title: {
         display: true,
-        color: '#FFF',
-        text: 'byte/s',
-      }
+        color: "#FFF",
+        text: "byte/s",
+      },
     },
   },
   plugins: {
-    tooltip:{
+    tooltip: {
       callbacks: {
-        label: function(this: TooltipModel<"line">, tooltipItem: TooltipItem<"line">) {
-          return (tooltipItem.parsed as any).y.toFixed(0) + ' (' + (tooltipItem.dataset.data[tooltipItem.dataIndex] as any).tooltip + ')';
-        }
-      }
-    },
-    legend: {
-      display: true,
-      labels: {
-        color: '#FFF',
-      },
-    },
-  },
-  parsing: {
-    xAxisKey: 'compression_level',
-    yAxisKey: 'compress'
-  }
-};
-
-export const lineChartOptionsCompRatio: ChartConfiguration<'line'>['options'] = {
-  scales: {
-    x: {
-      ticks: {
-        color: '#FFF',
-      },
-      title: {
-        display: true,
-        color: '#FFF',
-        text: 'Compression Level',
-      },
-    },
-    y: {
-      ticks: {
-        color: '#FFF',
-      },
-      grid: {
-        color: '#4B5563',
-      },
-      type: 'linear',
-      title: {
-        display: true,
-        color: '#FFF',
-        text: 'Compression Ratio',
-      },
-      min: 0
-    },
-  },
-  plugins: {
-    legend: {
-      display: true,
-      labels: {
-        color: '#FFF',
-      },
-    }
-  },
-};
-
-export const lineChartOptionsCompareCompress: ChartConfiguration<'line'>['options'] = {
-  maintainAspectRatio: false,
-  scales: {
-    x: {
-      ticks: {
-        color: '#FFF',
-      },
-      grid: {
-        color: '#4B5563',
-      },
-      title: {
-        display: true,
-        color: '#FFF',
-        text: 'Compression Ratio',
-      },
-    },
-    y: {
-      ticks: {
-        color: '#FFF',
-      },
-      grid: {
-        color: '#4B5563',
-      },
-      type: 'logarithmic',
-      title: {
-        display: true,
-        color: '#FFF',
-        text: 'byte/s',
-      }
-    },
-  },
-  plugins: {
-    tooltip:{
-      callbacks: {
-        label: function(this: TooltipModel<"line">, tooltipItem: TooltipItem<"line">) {
-          return tooltipItem.formattedValue + ' byte/s (' + (tooltipItem.dataset.data[tooltipItem.dataIndex] as any).tooltip + ')';
+        label: function (
+          this: TooltipModel<"line">,
+          tooltipItem: TooltipItem<"line">,
+        ) {
+          return (
+            (tooltipItem.parsed as any).y.toFixed(0) +
+            " (" +
+            (tooltipItem.dataset.data[tooltipItem.dataIndex] as any).tooltip +
+            ")"
+          );
         },
-        title: function(this: TooltipModel<"line">, tooltipItems: TooltipItem<"line">[]) {
-          return tooltipItems[0].label + '% compression ratio';
-        }
-      }
+      },
     },
     legend: {
       display: true,
       labels: {
-        color: '#FFF',
+        color: "#FFF",
       },
     },
-    title: {
-      display: true,
-      text: 'Compression Speed / Ratio',
-      color: '#FFF',
-    }
   },
   parsing: {
-    xAxisKey: 'ratio',
-    yAxisKey: 'compress'
-  }
+    xAxisKey: "compression_level",
+    yAxisKey: "compress",
+  },
 };
 
-export const lineChartOptionsCompareDecompress: ChartConfiguration<'line'>['options'] = {
-  maintainAspectRatio: false,
-  scales: {
-    x: {
-      ticks: {
-        color: '#FFF',
-      },
-      grid: {
-        color: '#4B5563',
-      },
-      title: {
-        display: true,
-        color: '#FFF',
-        text: 'Compression Ratio',
-      },
-    },
-    y: {
-      ticks: {
-        color: '#FFF',
-      },
-      grid: {
-        color: '#4B5563',
-      },
-      type: 'logarithmic',
-      title: {
-        display: true,
-        color: '#FFF',
-        text: 'byte/s',
-      }
-    },
-  },
-  plugins: {
-    tooltip:{
-      callbacks: {
-        label: function(this: TooltipModel<"line">, tooltipItem: TooltipItem<"line">) {
-          return tooltipItem.formattedValue + ' byte/s (' + (tooltipItem.dataset.data[tooltipItem.dataIndex] as any).tooltip + ')';
+export const lineChartOptionsCompRatio: ChartConfiguration<"line">["options"] =
+  {
+    scales: {
+      x: {
+        ticks: {
+          color: "#FFF",
         },
-        title: function(this: TooltipModel<"line">, tooltipItems: TooltipItem<"line">[]) {
-          return tooltipItems[0].label + '% compression ratio';
-        }
-      }
-    },
-    legend: {
-      display: true,
-      labels: {
-        color: '#FFF',
+        title: {
+          display: true,
+          color: "#FFF",
+          text: "Compression Level",
+        },
+      },
+      y: {
+        ticks: {
+          color: "#FFF",
+        },
+        grid: {
+          color: "#4B5563",
+        },
+        type: "linear",
+        title: {
+          display: true,
+          color: "#FFF",
+          text: "Compression Ratio",
+        },
+        min: 0,
       },
     },
-    title: {
-      display: true,
-      text: 'Decompression Speed / Ratio',
-      color: '#FFF',
-    }
-  },
-  parsing: {
-    xAxisKey: 'ratio',
-    yAxisKey: 'decompress'
-  }
-};
+    plugins: {
+      legend: {
+        display: true,
+        labels: {
+          color: "#FFF",
+        },
+      },
+    },
+  };
 
-export const lineChartOptionsStressNG: ChartConfiguration<'line'>['options'] = {
+export const lineChartOptionsCompareCompress: ChartConfiguration<"line">["options"] =
+  {
+    maintainAspectRatio: false,
+    scales: {
+      x: {
+        ticks: {
+          color: "#FFF",
+        },
+        grid: {
+          color: "#4B5563",
+        },
+        title: {
+          display: true,
+          color: "#FFF",
+          text: "Compression Ratio",
+        },
+      },
+      y: {
+        ticks: {
+          color: "#FFF",
+        },
+        grid: {
+          color: "#4B5563",
+        },
+        type: "logarithmic",
+        title: {
+          display: true,
+          color: "#FFF",
+          text: "byte/s",
+        },
+      },
+    },
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: function (
+            this: TooltipModel<"line">,
+            tooltipItem: TooltipItem<"line">,
+          ) {
+            return (
+              tooltipItem.formattedValue +
+              " byte/s (" +
+              (tooltipItem.dataset.data[tooltipItem.dataIndex] as any).tooltip +
+              ")"
+            );
+          },
+          title: function (
+            this: TooltipModel<"line">,
+            tooltipItems: TooltipItem<"line">[],
+          ) {
+            return tooltipItems[0].label + "% compression ratio";
+          },
+        },
+      },
+      legend: {
+        display: true,
+        labels: {
+          color: "#FFF",
+        },
+      },
+      title: {
+        display: true,
+        text: "Compression Speed / Ratio",
+        color: "#FFF",
+      },
+    },
+    parsing: {
+      xAxisKey: "ratio",
+      yAxisKey: "compress",
+    },
+  };
+
+export const lineChartOptionsCompareDecompress: ChartConfiguration<"line">["options"] =
+  {
+    maintainAspectRatio: false,
+    scales: {
+      x: {
+        ticks: {
+          color: "#FFF",
+        },
+        grid: {
+          color: "#4B5563",
+        },
+        title: {
+          display: true,
+          color: "#FFF",
+          text: "Compression Ratio",
+        },
+      },
+      y: {
+        ticks: {
+          color: "#FFF",
+        },
+        grid: {
+          color: "#4B5563",
+        },
+        type: "logarithmic",
+        title: {
+          display: true,
+          color: "#FFF",
+          text: "byte/s",
+        },
+      },
+    },
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: function (
+            this: TooltipModel<"line">,
+            tooltipItem: TooltipItem<"line">,
+          ) {
+            return (
+              tooltipItem.formattedValue +
+              " byte/s (" +
+              (tooltipItem.dataset.data[tooltipItem.dataIndex] as any).tooltip +
+              ")"
+            );
+          },
+          title: function (
+            this: TooltipModel<"line">,
+            tooltipItems: TooltipItem<"line">[],
+          ) {
+            return tooltipItems[0].label + "% compression ratio";
+          },
+        },
+      },
+      legend: {
+        display: true,
+        labels: {
+          color: "#FFF",
+        },
+      },
+      title: {
+        display: true,
+        text: "Decompression Speed / Ratio",
+        color: "#FFF",
+      },
+    },
+    parsing: {
+      xAxisKey: "ratio",
+      yAxisKey: "decompress",
+    },
+  };
+
+export const lineChartOptionsStressNG: ChartConfiguration<"line">["options"] = {
   maintainAspectRatio: false,
   scales: {
     x: {
       ticks: {
-        color: '#FFF',
+        color: "#FFF",
       },
       title: {
         display: true,
-        color: '#FFF',
-        text: 'vCPUs',
+        color: "#FFF",
+        text: "vCPUs",
       },
     },
     y: {
       ticks: {
-        color: '#FFF',
+        color: "#FFF",
       },
       grid: {
-        color: '#4B5563',
+        color: "#4B5563",
       },
       title: {
         display: true,
-        color: '#FFF',
-        text: 'Score',
-      }
+        color: "#FFF",
+        text: "Score",
+      },
     },
   },
   plugins: {
     legend: {
       display: true,
       labels: {
-        color: '#FFF',
+        color: "#FFF",
       },
     },
     title: {
       display: true,
-      text: 'stress-ng div16 raw scores per vCPU',
-      color: '#FFF',
-    }
+      text: "stress-ng div16 raw scores per vCPU",
+      color: "#FFF",
+    },
   },
   parsing: {
-    xAxisKey: 'cores',
-    yAxisKey: 'score'
-  }
+    xAxisKey: "cores",
+    yAxisKey: "score",
+  },
 };
 
-export const lineChartOptionsStressNGPercent: ChartConfiguration<'line'>['options'] = {
-  maintainAspectRatio: false,
-  scales: {
-    x: {
-      ticks: {
-        color: '#FFF',
+export const lineChartOptionsStressNGPercent: ChartConfiguration<"line">["options"] =
+  {
+    maintainAspectRatio: false,
+    scales: {
+      x: {
+        ticks: {
+          color: "#FFF",
+        },
+        title: {
+          display: true,
+          color: "#FFF",
+          text: "vCPUs",
+        },
+      },
+      y: {
+        ticks: {
+          color: "#FFF",
+        },
+        grid: {
+          color: "#4B5563",
+        },
+        title: {
+          display: true,
+          color: "#FFF",
+          text: "Relative performance (%)",
+        },
+      },
+    },
+    plugins: {
+      legend: {
+        display: true,
+        labels: {
+          color: "#FFF",
+        },
       },
       title: {
         display: true,
-        color: '#FFF',
-        text: 'vCPUs',
+        text: "stress-ng relative multicore performance per vCPU",
+        color: "#FFF",
       },
     },
-    y: {
-      ticks: {
-        color: '#FFF',
-      },
-      grid: {
-        color: '#4B5563',
-      },
-      title: {
-        display: true,
-        color: '#FFF',
-        text: 'Relative performance (%)',
-      }
+    parsing: {
+      xAxisKey: "cores",
+      yAxisKey: "percent",
     },
-  },
-  plugins: {
-    legend: {
-      display: true,
-      labels: {
-        color: '#FFF',
-      },
-    },
-    title: {
-      display: true,
-      text: 'stress-ng relative multicore performance per vCPU',
-      color: '#FFF',
-    }
-  },
-  parsing: {
-    xAxisKey: 'cores',
-    yAxisKey: 'percent'
-  }
-};
-
-
+  };

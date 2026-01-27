@@ -1,30 +1,29 @@
-
 .content {
   min-height: 75vh;
 }
 
 :host ::ng-deep .block_half {
   @apply px-6 py-6 bg-secondary border-emerald-400 border border-solid rounded-lg flex flex-col gap-4 relative overflow-hidden;
-  width: calc(50% - 1.0rem);
+  width: calc(50% - 1rem);
   min-height: 460px;
   height: 460px;
   .chart_div {
     max-height: 350px !important;
     height: 350px !important;
-    max-width:100% !important;
+    max-width: 100% !important;
   }
 }
 
 :host ::ng-deep .block_half_taller {
   @apply px-6 py-6 bg-secondary border-emerald-400 border border-solid rounded-lg flex flex-col relative overflow-hidden;
-  width: calc(50% - 1.0rem);
+  width: calc(50% - 1rem);
   min-height: 615px;
   height: 615px;
   margin: auto;
   .chart_div {
     max-height: 530px;
     height: 530px !important;
-    max-width:100% !important;
+    max-width: 100% !important;
     display: flex;
     justify-content: center;
   }
@@ -38,7 +37,7 @@
   .chart_div {
     max-height: 350px;
     height: 350px !important;
-    max-width:100% !important;
+    max-width: 100% !important;
   }
 }
 
@@ -134,7 +133,6 @@ div.giscus {
 }
 
 @media screen and (max-width: 800px) {
-
   :host ::ng-deep .block_half {
     width: calc(100%);
     margin: auto;

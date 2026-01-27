@@ -1,7 +1,10 @@
-
-
 ::ng-deep .html_content {
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-bold text-emerald-400 my-4;
   }
   h1 {
@@ -35,7 +38,7 @@
     @apply bg-secondary;
     padding: 10px 15px;
     margin: 20px 10px;
-    border: 1px solid #34D399;
+    border: 1px solid #34d399;
     border-radius: 10px;
     code {
       padding: 0px;
@@ -48,7 +51,7 @@
   }
 
   blockquote {
-    border-left: 1px solid #34D399;
+    border-left: 1px solid #34d399;
     padding: 0px 10px 0px 10px;
     margin: 10px;
   }
@@ -73,7 +76,7 @@
     }
 
     tbody {
-      tr:nth-child(2n+1) {
+      tr:nth-child(2n + 1) {
         @apply bg-primary;
       }
       tr:nth-child(2n) {
@@ -90,6 +93,4 @@
       }
     }
   }
-
-
 }

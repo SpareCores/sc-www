@@ -130,7 +130,7 @@ server details pages, which is also available in our public datasets:
 Although Geekbench already provides a File Compression workload, it's
 limited to two algorithms and does not provide detailed information,
 only a combined score. So, we decided to benchmark six compression
-algorithms using different configurations (e.g.  compression level,
+algorithms using different configurations (e.g. compression level,
 number of threads, and block size) on the Silesia corpus (10 MB
 uncompressed) to measure the speed of compression and decompression,
 and also recording the compression ratio.

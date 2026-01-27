@@ -5,12 +5,11 @@
     @apply border-b border-gray-200 border-solid bg-secondary;
     th {
       @apply text-left px-5 py-3 font-normal text-xs;
-
     }
   }
 
   tbody {
-    tr:nth-child(2n+1) {
+    tr:nth-child(2n + 1) {
       @apply bg-primary;
     }
     tr:nth-child(2n) {
@@ -47,8 +46,8 @@
 }
 
 @media screen and (max-width: 1280px) {
-	.datamaps_div {
-		width: calc(100% - 1rem);
+  .datamaps_div {
+    width: calc(100% - 1rem);
     margin: 0.5rem;
-	}
+  }
 }

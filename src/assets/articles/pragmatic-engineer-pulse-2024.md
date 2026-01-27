@@ -11,7 +11,7 @@ author: Gergely Daroczi
 tags: [interview, media]
 ---
 
-A couple of days ago, Spare Cores had the incredible honor of being featured on <a href="https://www.pragmaticengineer.com/" target="_blank" rel="noopener">The Pragmatic Engineer</a>, one of the most influential blogs in the software engineering world. This blog, founded by Gergely Orosz, is a go-to resource for hundreds of thousands of engineers, leaders, and decision-makers. The accompanying newsletter, *The Pulse*, reaches a staggering 750k subscribers. For a young project with a small team like ours, this was a game-changer for visibility and engagement. 🚀
+A couple of days ago, Spare Cores had the incredible honor of being featured on <a href="https://www.pragmaticengineer.com/" target="_blank" rel="noopener">The Pragmatic Engineer</a>, one of the most influential blogs in the software engineering world. This blog, founded by Gergely Orosz, is a go-to resource for hundreds of thousands of engineers, leaders, and decision-makers. The accompanying newsletter, _The Pulse_, reaches a staggering 750k subscribers. For a young project with a small team like ours, this was a game-changer for visibility and engagement. 🚀
 
 ## How it happened?
 
@@ -41,8 +41,8 @@ Furthermore, we received numerous direct emails:
 
 ## Thank you!
 
-We owe a huge thanks to Gergely Orosz and *The Pragmatic Engineer* for this opportunity. It’s incredible to see the impact of being featured on a platform that engineers truly trust.  
+We owe a huge thanks to Gergely Orosz and _The Pragmatic Engineer_ for this opportunity. It’s incredible to see the impact of being featured on a platform that engineers truly trust.
 
-And thank you to everyone who engaged with us, asked questions, provided feedback, or opened a few doors for us! 
+And thank you to everyone who engaged with us, asked questions, provided feedback, or opened a few doors for us!
 
-If you missed the article, you can read it here: [The Pragmatic Engineer: Spare Cores](https://blog.pragmaticengineer.com/spare-cores/).  
+If you missed the article, you can read it here: [The Pragmatic Engineer: Spare Cores](https://blog.pragmaticengineer.com/spare-cores/).

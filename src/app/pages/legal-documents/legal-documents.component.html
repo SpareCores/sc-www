@@ -3,11 +3,12 @@
     <app-breadcrumbs [segments]="breadcrumbs"></app-breadcrumbs>
 
     <div class="flex flex-col mt-8 text-white">
-      <h1 class="font-semibold text-3xl mb-4"> Spare Cores Legal Documents </h1>
+      <h1 class="font-semibold text-3xl mb-4">Spare Cores Legal Documents</h1>
       <div class="text-white text-xl pr-16 mb-4">
-        Below, you can find the legal documents currently in effect for our web service.
-        These documents currently include our Terms of Service and Privacy Policy.
-        Please review them to understand your rights and obligations while using our services.
+        Below, you can find the legal documents currently in effect for our web
+        service. These documents currently include our Terms of Service and
+        Privacy Policy. Please review them to understand your rights and
+        obligations while using our services.
       </div>
       <div class="w-full flex flex-col gap-4 px-6 py-4">
         <table class="items_table">
@@ -20,7 +21,7 @@
           <tbody>
             <tr *ngFor="let item of docs">
               <td>
-                <a routerLink="/legal/{{item.filename}}">
+                <a routerLink="/legal/{{ item.filename }}">
                   {{ item.title }}
                 </a>
               </td>
@@ -30,6 +31,5 @@
         </table>
       </div>
     </div>
-
   </div>
 </div>

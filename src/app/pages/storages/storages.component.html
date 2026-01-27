@@ -10,43 +10,60 @@
         </h1>
       </div>
       <div class="text-white text-xl pr-16">
-        Explore, search, and evaluate block storage options and their pricing at various cloud providers in the table below. Note that the quoted pricing only includes capacity, and some options require extra payment for provisioned IOPS etc.
+        Explore, search, and evaluate block storage options and their pricing at
+        various cloud providers in the table below. Note that the quoted pricing
+        only includes capacity, and some options require extra payment for
+        provisioned IOPS etc.
       </div>
     </div>
 
     <div class="flex gap-8 mx-2 xl:mx-0">
-      <div class="filter_bar bg-primary"
+      <div
+        class="filter_bar bg-primary"
         [ngClass]="{
-          'collapsed': isCollapsed
-        }">
-        <div class="collapser bg-secondary" (click)="toggleCollapse()" tabindex="0"
-             data-ph-capture-attribute-sc-event="server listing toggle sidebar">
-          <lucide-icon name="chevron-left" class="h-6 w-6 text-emerald-400"></lucide-icon>
+          collapsed: isCollapsed,
+        }"
+      >
+        <div
+          class="collapser bg-secondary"
+          (click)="toggleCollapse()"
+          tabindex="0"
+          data-ph-capture-attribute-sc-event="server listing toggle sidebar"
+        >
+          <lucide-icon
+            name="chevron-left"
+            class="h-6 w-6 text-emerald-400"
+          ></lucide-icon>
         </div>
 
         <app-search-bar
-        [query]="query"
-        [filterCategories]="filterCategories"
-        [searchParameters]="searchParameters"
-        AIAssistantType="storages"
-        (searchChanged)="searchBarChanged($event)"
-        > </app-search-bar>
+          [query]="query"
+          [filterCategories]="filterCategories"
+          [searchParameters]="searchParameters"
+          AIAssistantType="storages"
+          (searchChanged)="searchBarChanged($event)"
+        >
+        </app-search-bar>
       </div>
-      <div class=" list_holder flex flex-col gap-4"
-          [ngClass]="{
-            'limited-full': !isCollapsed,
-            'w-full': isCollapsed
-          }">
-        <div class="top_buttons w-full flex justify-end gap-6 items-center" >
-          <button
-            id="currency_button"
-            class="dropdown_button"
-            type="button">
+      <div
+        class="list_holder flex flex-col gap-4"
+        [ngClass]="{
+          'limited-full': !isCollapsed,
+          'w-full': isCollapsed,
+        }"
+      >
+        <div class="top_buttons w-full flex justify-end gap-6 items-center">
+          <button id="currency_button" class="dropdown_button" type="button">
             <div class="px-4 py-3">
-            {{selectedCurrency.slug}}
+              {{ selectedCurrency.slug }}
             </div>
-            <div class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
-              <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
+            <div
+              class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
+            >
+              <lucide-icon
+                name="chevron-down"
+                class="h-6 w-6 text-emerald-400"
+              ></lucide-icon>
             </div>
           </button>
           <button
@@ -54,79 +71,123 @@
             data-ph-capture-attribute-sc-event="server listing columns select"
             data-dropdown-toggle="column_options"
             class="dropdown_button"
-            type="button">
-            <div class="px-4 py-3">
-            Columns
-            </div>
-            <div class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
-              <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
+            type="button"
+          >
+            <div class="px-4 py-3">Columns</div>
+            <div
+              class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
+            >
+              <lucide-icon
+                name="chevron-down"
+                class="h-6 w-6 text-emerald-400"
+              ></lucide-icon>
             </div>
           </button>
         </div>
         <div>
-          <div class="w-full overflow-x-auto relative" style="padding-left: 1px;">
-            <div *ngIf="isLoading" class="absolute top-0 left-0 w-full h-full pt-16" style="background-color: rgba(0,0,0,0.2);" >
+          <div
+            class="w-full overflow-x-auto relative"
+            style="padding-left: 1px"
+          >
+            <div
+              *ngIf="isLoading"
+              class="absolute top-0 left-0 w-full h-full pt-16"
+              style="background-color: rgba(0, 0, 0, 0.2)"
+            >
               <app-loading-spinner size="lg"></app-loading-spinner>
             </div>
             <table class="items_table">
               <thead>
                 <tr>
-                  <th *ngFor="let item of tableColumns"
-                      [ngClass]="{
-                        'cursor-pointer': item.orderField
-                      }"
-                      (click)="toggleOrdering(item)" >
-                      <div class="flex gap-1">
-                        {{item.name}}
-                        <lucide-icon
-                          *ngIf="item.info"
-                          name="info"
-                          class="h-4 w-4 text-gray-200">
-                        </lucide-icon>
-                        <lucide-icon *ngIf="getOrderingIcon(item)" name="{{getOrderingIcon(item)}}" class="h-4 w-4 text-white"></lucide-icon>
-                      </div>
+                  <th
+                    *ngFor="let item of tableColumns"
+                    [ngClass]="{
+                      'cursor-pointer': item.orderField,
+                    }"
+                    (click)="toggleOrdering(item)"
+                  >
+                    <div class="flex gap-1">
+                      {{ item.name }}
+                      <lucide-icon
+                        *ngIf="item.info"
+                        name="info"
+                        class="h-4 w-4 text-gray-200"
+                      >
+                      </lucide-icon>
+                      <lucide-icon
+                        *ngIf="getOrderingIcon(item)"
+                        name="{{ getOrderingIcon(item) }}"
+                        class="h-4 w-4 text-white"
+                      ></lucide-icon>
+                    </div>
                   </th>
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let item of storages; let i = index"
-                    data-ph-capture-attribute-sc-event="server listing route to server details"
-                    [attr.data-ph-capture-attribute-server-listing-row-vendor]="item.vendor_id"
-                    [attr.data-ph-capture-attribute-server-listing-row-index]="i+1"
-                    [attr.data-ph-capture-attribute-server-listing-row-page-size]="limit">
-
-                    <ng-container *ngFor="let column of tableColumns">
-                      <td *ngIf="column.type === 'name'">
-                        <div class="text-sm text-white">{{item.storage.name}}</div>
-                        <div class="text-xs text-white flex gap-1">
-                          {{item.storage.description}}
-                        </div>
-                      </td>
-                      <td *ngIf="column.type === 'price'">
-                        <div class="text-sm text-white">{{item.price}} {{item.currency}}/{{item.unit}}</div>
-                      </td>
-                      <td *ngIf="column.type === 'price2' && column.key">
-                        <div class="text-sm text-white">{{getField(item, column.key) || '0'}} {{item.currency}}</div>
-                      </td>
-                      <td *ngIf="column.type === 'storage' && column.key" >
-                        <div class="text-sm text-white">{{getStorage(getField(item, column.key))}}</div>
-                      </td>
-                      <td *ngIf="column.type === 'text' && column.key">
-                        {{getField(item, column.key)}}
-                      </td>
-                      <td *ngIf="column.type === 'vendor'" >
-                        <div *ngIf="item.vendor.logo" class="w-9 h-9 px-1 py-1 bg-white rounded-lg">
-                          <img [src]="item.vendor.logo" alt="{{item.vendor.name}} logo" >
-                        </div>
-                        <div *ngIf="!item.vendor.logo" class="text-white text-sm">
-                            {{item.vendor.name}}
-                        </div>
-                      </td>
-                      <td *ngIf="column.type === 'region'" class="min-w-225">
-                        <div class="text-sm text-white">{{item.region.display_name}}</div>
-                        <div class="text-xs text-white flex gap-1"> <span>{{item.region.region_id}} </span> </div>
-                      </td>
-                    </ng-container>
+                <tr
+                  *ngFor="let item of storages; let i = index"
+                  data-ph-capture-attribute-sc-event="server listing route to server details"
+                  [attr.data-ph-capture-attribute-server-listing-row-vendor]="
+                    item.vendor_id
+                  "
+                  [attr.data-ph-capture-attribute-server-listing-row-index]="
+                    i + 1
+                  "
+                  [attr.data-ph-capture-attribute-server-listing-row-page-size]="
+                    limit
+                  "
+                >
+                  <ng-container *ngFor="let column of tableColumns">
+                    <td *ngIf="column.type === 'name'">
+                      <div class="text-sm text-white">
+                        {{ item.storage.name }}
+                      </div>
+                      <div class="text-xs text-white flex gap-1">
+                        {{ item.storage.description }}
+                      </div>
+                    </td>
+                    <td *ngIf="column.type === 'price'">
+                      <div class="text-sm text-white">
+                        {{ item.price }} {{ item.currency }}/{{ item.unit }}
+                      </div>
+                    </td>
+                    <td *ngIf="column.type === 'price2' && column.key">
+                      <div class="text-sm text-white">
+                        {{ getField(item, column.key) || "0" }}
+                        {{ item.currency }}
+                      </div>
+                    </td>
+                    <td *ngIf="column.type === 'storage' && column.key">
+                      <div class="text-sm text-white">
+                        {{ getStorage(getField(item, column.key)) }}
+                      </div>
+                    </td>
+                    <td *ngIf="column.type === 'text' && column.key">
+                      {{ getField(item, column.key) }}
+                    </td>
+                    <td *ngIf="column.type === 'vendor'">
+                      <div
+                        *ngIf="item.vendor.logo"
+                        class="w-9 h-9 px-1 py-1 bg-white rounded-lg"
+                      >
+                        <img
+                          [src]="item.vendor.logo"
+                          alt="{{ item.vendor.name }} logo"
+                        />
+                      </div>
+                      <div *ngIf="!item.vendor.logo" class="text-white text-sm">
+                        {{ item.vendor.name }}
+                      </div>
+                    </td>
+                    <td *ngIf="column.type === 'region'" class="min-w-225">
+                      <div class="text-sm text-white">
+                        {{ item.region.display_name }}
+                      </div>
+                      <div class="text-xs text-white flex gap-1">
+                        <span>{{ item.region.region_id }} </span>
+                      </div>
+                    </td>
+                  </ng-container>
                 </tr>
               </tbody>
             </table>
@@ -139,15 +200,21 @@
                   data-ph-capture-attribute-sc-event="server listing page size select"
                   data-dropdown-toggle="pagesize_options"
                   class="dropdown_button"
-                  type="button">
+                  type="button"
+                >
                   <div class="px-4 py-2">
-                  {{limit}}
+                    {{ limit }}
                   </div>
-                  <div class="px-2 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
-                    <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
+                  <div
+                    class="px-2 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
+                  >
+                    <lucide-icon
+                      name="chevron-down"
+                      class="h-6 w-6 text-emerald-400"
+                    ></lucide-icon>
                   </div>
                 </button>
-                <span class="text-white" > items per page</span>
+                <span class="text-white"> items per page</span>
               </div>
               <div>
                 <app-pagination
@@ -155,50 +222,74 @@
                   [currentPage]="page"
                   [totalPages]="totalPages"
                   [baseQueryParams]="getQueryObjectBase()"
-                  >
+                >
                 </app-pagination>
               </div>
             </div>
           </div>
         </div>
       </div>
-
     </div>
-
   </div>
 </div>
 
-
-<div id="pagesize_options" class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid">
-  <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
-    <li *ngFor="let item of pageLimits"
+<div
+  id="pagesize_options"
+  class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid"
+>
+  <ul
+    class="py-2 px-1 text-sm text-gray-700"
+    aria-labelledby="dropdownDefaultButton"
+  >
+    <li
+      *ngFor="let item of pageLimits"
       class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-      (click)="selectPageSize(item)" tabindex="0">
-      <div class="text-white text-sm">{{item}} </div>
+      (click)="selectPageSize(item)"
+      tabindex="0"
+    >
+      <div class="text-white text-sm">{{ item }}</div>
     </li>
   </ul>
 </div>
 
-<div id="column_options" class="z-10 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid">
-  <ul class="py-2 px-3 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
-    <li *ngFor="let item of possibleColumns" class="flex py-1 gap-2 items-center">
-      <input type="checkbox"
-      [(ngModel)]="item.show"
-      (ngModelChange)="refreshColumns()"
-      class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer" >
-      <div class="text-white text-sm">{{item.name}}</div>
+<div
+  id="column_options"
+  class="z-10 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid"
+>
+  <ul
+    class="py-2 px-3 text-sm text-gray-700"
+    aria-labelledby="dropdownDefaultButton"
+  >
+    <li
+      *ngFor="let item of possibleColumns"
+      class="flex py-1 gap-2 items-center"
+    >
+      <input
+        type="checkbox"
+        [(ngModel)]="item.show"
+        (ngModelChange)="refreshColumns()"
+        class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer"
+      />
+      <div class="text-white text-sm">{{ item.name }}</div>
     </li>
   </ul>
 </div>
 
-<div id="currency_options" class="z-100 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid">
-  <ul class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
-    <li *ngFor="let item of availableCurrencies"
+<div
+  id="currency_options"
+  class="z-100 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid"
+>
+  <ul
+    class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
+    aria-labelledby="dropdownDefaultButton"
+  >
+    <li
+      *ngFor="let item of availableCurrencies"
       tabindex="0"
       class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-      (click)="selectCurrency(item)" >
-      <div class="text-white text-sm ">{{item.name}} ({{item.symbol}})</div>
+      (click)="selectCurrency(item)"
+    >
+      <div class="text-white text-sm">{{ item.name }} ({{ item.symbol }})</div>
     </li>
   </ul>
 </div>
-

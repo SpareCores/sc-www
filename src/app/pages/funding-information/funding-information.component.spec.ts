@@ -12,9 +12,9 @@ describe("FundingInformationComponent", () => {
       providers: [
         {
           provide: SeoHandlerService,
-          useValue: { updateTitleAndMetaTags: jasmine.createSpy() }
-        }
-      ]
+          useValue: { updateTitleAndMetaTags: jasmine.createSpy() },
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(FundingInformationComponent);

@@ -2,7 +2,7 @@
   @apply w-full text-white;
 
   .checkbox_column {
-    width: 2.0rem !important;
+    width: 2rem !important;
     padding-right: 0.5rem !important;
     padding-left: 0.75rem !important;
   }
@@ -15,7 +15,7 @@
   }
 
   tbody {
-    tr:nth-child(2n+1) {
+    tr:nth-child(2n + 1) {
       @apply bg-primary;
     }
     tr:nth-child(2n) {

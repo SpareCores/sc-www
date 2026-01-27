@@ -1,7 +1,7 @@
-import { Injectable, OnDestroy } from '@angular/core';
-import { ServerPKs } from '../../../sdk/data-contracts';
-import { Router } from '@angular/router';
-import { Subject } from 'rxjs';
+import { Injectable, OnDestroy } from "@angular/core";
+import { ServerPKs } from "../../../sdk/data-contracts";
+import { Router } from "@angular/router";
+import { Subject } from "rxjs";
 
 export interface ZoneAndRegion {
   zone: string;
@@ -23,44 +23,64 @@ export interface ServerCompareItem {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class ServerCompareService implements OnDestroy {
-
   public selectedForCompare: ServerCompare[] = [];
   public selectionChanged: Subject<ServerCompare[]> = new Subject();
 
-  constructor(private router: Router) { }
+  constructor(private router: Router) {}
 
   toggleCompare(event: boolean, server: ServerCompareItem) {
-    if(event) {
-      let existing = this.selectedForCompare.find((item) => item.vendor === server.vendor && item.server === server.server);
-      if(existing) {
-        if(server.zoneRegion && !existing.zonesRegions.find((zone) => zone.region === server.zoneRegion?.region && zone.zone === server.zoneRegion?.zone)) {
+    if (event) {
+      let existing = this.selectedForCompare.find(
+        (item) =>
+          item.vendor === server.vendor && item.server === server.server,
+      );
+      if (existing) {
+        if (
+          server.zoneRegion &&
+          !existing.zonesRegions.find(
+            (zone) =>
+              zone.region === server.zoneRegion?.region &&
+              zone.zone === server.zoneRegion?.zone,
+          )
+        ) {
           existing.zonesRegions.push(server.zoneRegion);
         }
       } else {
         this.selectedForCompare.push({
-            display_name: server.display_name,
-            vendor: server.vendor,
-            server: server.server,
-            zonesRegions: server.zoneRegion ? [server.zoneRegion] : []
-          });
+          display_name: server.display_name,
+          vendor: server.vendor,
+          server: server.server,
+          zonesRegions: server.zoneRegion ? [server.zoneRegion] : [],
+        });
       }
     } else {
       // removing the whole server
-      if(!server.zoneRegion) {
-        this.selectedForCompare = this.selectedForCompare.filter((item) =>
-          item.vendor !== server.vendor || item.server !== server.server);
+      if (!server.zoneRegion) {
+        this.selectedForCompare = this.selectedForCompare.filter(
+          (item) =>
+            item.vendor !== server.vendor || item.server !== server.server,
+        );
       } else {
         // removing a zone
-        let existing = this.selectedForCompare.find((item) => item.vendor === server.vendor && item.server === server.server);
-        if(existing) {
+        let existing = this.selectedForCompare.find(
+          (item) =>
+            item.vendor === server.vendor && item.server === server.server,
+        );
+        if (existing) {
           // remove if no zones left
-          existing.zonesRegions = existing.zonesRegions.filter((zone) => zone.region !== server.zoneRegion?.region && zone.zone !== server.zoneRegion?.zone);
-          if(existing.zonesRegions.length === 0) {
-            this.selectedForCompare = this.selectedForCompare.filter((item) =>
-              item.vendor !== server.vendor || item.server !== server.server);
+          existing.zonesRegions = existing.zonesRegions.filter(
+            (zone) =>
+              zone.region !== server.zoneRegion?.region &&
+              zone.zone !== server.zoneRegion?.zone,
+          );
+          if (existing.zonesRegions.length === 0) {
+            this.selectedForCompare = this.selectedForCompare.filter(
+              (item) =>
+                item.vendor !== server.vendor || item.server !== server.server,
+            );
           }
         }
       }
@@ -78,21 +98,27 @@ export class ServerCompareService implements OnDestroy {
   }
 
   isSelected(server: ServerPKs) {
-    return this.selectedForCompare.findIndex((item) => item.vendor === server.vendor_id && item.server === server.api_reference) !== -1;
+    return (
+      this.selectedForCompare.findIndex(
+        (item) =>
+          item.vendor === server.vendor_id &&
+          item.server === server.api_reference,
+      ) !== -1
+    );
   }
 
   openCompare() {
     const selectedServers = this.selectedForCompare;
 
-    if(selectedServers.length < 2) {
-      alert('Please select at least two servers to compare');
+    if (selectedServers.length < 2) {
+      alert("Please select at least two servers to compare");
       return;
     }
 
     // encode atob to avoid issues with special characters
     const encoded = btoa(JSON.stringify(selectedServers));
 
-    this.router.navigateByUrl('/compare?instances=' + encoded);
+    this.router.navigateByUrl("/compare?instances=" + encoded);
   }
 
   ngOnDestroy() {

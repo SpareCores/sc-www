@@ -3,7 +3,13 @@
     <app-breadcrumbs [segments]="breadcrumbs"></app-breadcrumbs>
     <h1 class="text-4xl font-bold mx-2 xl:mx-0">Supported Vendors</h1>
     <div class="text-white text-xl pr-16 mx-2 xl:mx-0">
-      Currently we are tracking {{ this.vendors.length }} cloud provider vendors as part of the <a href="/#project_components" class="underline decoration-dotted hover:text-gray-500">SC Crawler project</a>:
+      Currently we are tracking {{ this.vendors.length }} cloud provider vendors
+      as part of the
+      <a
+        href="/#project_components"
+        class="underline decoration-dotted hover:text-gray-500"
+        >SC Crawler project</a
+      >:
     </div>
 
     <table class="items_table mx-2 xl:mx-0">
@@ -11,29 +17,19 @@
         <tr>
           <th></th>
           <th>
-            <div class="flex gap-1">
-              NAME
-            </div>
+            <div class="flex gap-1">NAME</div>
           </th>
           <th>
-            <div class="flex gap-1">
-              HEADQUARTER
-            </div>
+            <div class="flex gap-1">HEADQUARTER</div>
           </th>
           <th>
-            <div class="flex gap-1">
-              FOUNDED
-            </div>
+            <div class="flex gap-1">FOUNDED</div>
           </th>
           <th>
-            <div class="flex gap-1">
-              HOMEPAGE
-            </div>
+            <div class="flex gap-1">HOMEPAGE</div>
           </th>
           <th>
-            <div class="flex gap-1">
-              REGIONS
-            </div>
+            <div class="flex gap-1">REGIONS</div>
           </th>
           <th></th>
         </tr>
@@ -41,26 +37,40 @@
       <tbody>
         <tr *ngFor="let item of vendors" (click)="openLink(item)">
           <td>
-            <img class="bg-white rounded" src="{{item.logo}}" alt="{{item.name}} logo" />
+            <img
+              class="bg-white rounded"
+              src="{{ item.logo }}"
+              alt="{{ item.name }} logo"
+            />
           </td>
           <td>
-            {{item.name}}
+            {{ item.name }}
           </td>
-          <td> {{item.city}}, {{item.country_id | countryIdtoName}}</td>
-          <td> {{item.founding_year}} </td>
+          <td>{{ item.city }}, {{ item.country_id | countryIdtoName }}</td>
+          <td>{{ item.founding_year }}</td>
           <td>
-            <a href="{{item.homepage}}" (click)="$event.stopPropagation()"
-               class="underline decoration-dotted hover:text-gray-500"
-               target="_blank" rel="noopener">
-              {{item.homepage}}
+            <a
+              href="{{ item.homepage }}"
+              (click)="$event.stopPropagation()"
+              class="underline decoration-dotted hover:text-gray-500"
+              target="_blank"
+              rel="noopener"
+            >
+              {{ item.homepage }}
             </a>
           </td>
-          <td> {{item.regions}} </td>
+          <td>{{ item.regions }}</td>
           <td>
             <!-- eslint-disable-next-line @angular-eslint/template/interactive-supports-focus -->
             <div class="flex justify-end" (click)="$event.stopPropagation()">
-              <a routerLink="/servers" [queryParams]="{vendor: item.vendor_id, limit: 100}">
-                <lucide-icon name="chevron-right" class="h-6 w-6 text-emerald-400"></lucide-icon>
+              <a
+                routerLink="/servers"
+                [queryParams]="{ vendor: item.vendor_id, limit: 100 }"
+              >
+                <lucide-icon
+                  name="chevron-right"
+                  class="h-6 w-6 text-emerald-400"
+                ></lucide-icon>
               </a>
             </div>
           </td>

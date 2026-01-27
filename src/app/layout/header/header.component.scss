@@ -1,4 +1,3 @@
-
 .navbar_link {
   color: white;
   text-decoration: none;
@@ -8,16 +7,17 @@
 }
 
 li {
-  @apply px-3
+  @apply px-3;
 }
 
 .bg-custom {
-  background: linear-gradient(180deg, #072437 7.11%, rgba(6, 38, 58, 0) 75.52%), #082f49;
+  background:
+    linear-gradient(180deg, #072437 7.11%, rgba(6, 38, 58, 0) 75.52%), #082f49;
 }
 
 .login_button {
-  background-color: #E5E7EB;
-  color: #1F2937;
+  background-color: #e5e7eb;
+  color: #1f2937;
   padding: 6px 12px;
   border-radius: 0.5rem;
   border: none;

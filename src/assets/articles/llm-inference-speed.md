@@ -264,14 +264,14 @@ ORDER BY 2 DESC;
 
 Results as of April 30, 2025:
 
-| model                                | COUNT(*) |
-|--------------------------------------|----------|
-| SmolLM-135M.Q4_K_M.gguf              | 2086     |
-| qwen1_5-0_5b-chat-q4_k_m.gguf        | 1962     |
-| gemma-2b.Q4_K_M.gguf                 | 1883     |
-| llama-7b.Q4_K_M.gguf                 | 1713     |
-| phi-4-q4.gguf                        | 1448     |
-| Llama-3.3-70B-Instruct-Q4_K_M.gguf   | 1229     |
+| model                              | COUNT(\*) |
+| ---------------------------------- | --------- |
+| SmolLM-135M.Q4_K_M.gguf            | 2086      |
+| qwen1_5-0_5b-chat-q4_k_m.gguf      | 1962      |
+| gemma-2b.Q4_K_M.gguf               | 1883      |
+| llama-7b.Q4_K_M.gguf               | 1713      |
+| phi-4-q4.gguf                      | 1448      |
+| Llama-3.3-70B-Instruct-Q4_K_M.gguf | 1229      |
 
 Thus, depending on your LLM inference needs, the number of viable server options
 might be limited — but still having over 1,000 cloud server types for the
@@ -294,6 +294,7 @@ ORDER BY score DESC;
 ```
 
 This returned around 600 servers, ranging from:
+
 - **Fastest**: 4,768 tokens/sec (AWS `g6e` family with NVIDIA L40S GPUs)
 - **Slowest**: Just over the provided threshold, using CPU only.
 
@@ -317,8 +318,8 @@ prices AS (
   WHERE allocation = 'ONDEMAND'
   GROUP BY 1, 2)
 SELECT
-  scores.vendor_id AS vendor, api_reference AS server, 
-  vcpus, memory_amount / 1024 AS memory, gpu_count AS gpus, gpu_model, 
+  scores.vendor_id AS vendor, api_reference AS server,
+  vcpus, memory_amount / 1024 AS memory, gpu_count AS gpus, gpu_model,
   ROUND(score, 2) AS score, price, ROUND(score / price, 2) AS score_per_price
 FROM scores
 LEFT JOIN prices USING (vendor_id, server_id)
@@ -329,18 +330,18 @@ LIMIT 10;
 
 This returns the following top 10 servers on April 30, 2025:
 
-| vendor | server | vcpus | memory | gpus | gpu_model | score | price | score_per_price |
-|---|---|---|---|---|---|---|---|---|
-| gcp | g2-standard-4 | 4 | 16 | 1 | L4 | 1194.57 | 0.14631 | 8164.64 |
-| gcp | g2-standard-8 | 8 | 32 | 1 | L4 | 1137.47 | 0.29262 | 3887.2 |
-| gcp | a2-highgpu-1g | 12 | 85 | 1 | A100 | 2468.31 | 0.73948 | 3337.9 |
-| gcp | g2-standard-12 | 12 | 48 | 1 | L4 | 1162.21 | 0.43893 | 2647.82 |
-| aws | g6e.xlarge | 4 | 32 | 1 | L40S | 4660.96 | 1.861 | 2504.54 |
-| gcp | a2-ultragpu-1g | 12 | 170 | 1 | A100 | 2475.82 | 1.09962 | 2251.52 |
-| aws | g6e.2xlarge | 8 | 64 | 1 | L40S | 4677.89 | 2.24208 | 2086.4 |
-| gcp | g2-standard-16 | 16 | 64 | 1 | L4 | 1117.46 | 0.58525 | 1909.36 |
-| aws | g5.xlarge | 4 | 16 | 1 | A10G | 1887.03 | 1.006 | 1875.77 |
-| gcp | a2-highgpu-2g | 24 | 170 | 2 | A100 | 2469.94 | 1.47895 | 1670.06 |
+| vendor | server         | vcpus | memory | gpus | gpu_model | score   | price   | score_per_price |
+| ------ | -------------- | ----- | ------ | ---- | --------- | ------- | ------- | --------------- |
+| gcp    | g2-standard-4  | 4     | 16     | 1    | L4        | 1194.57 | 0.14631 | 8164.64         |
+| gcp    | g2-standard-8  | 8     | 32     | 1    | L4        | 1137.47 | 0.29262 | 3887.2          |
+| gcp    | a2-highgpu-1g  | 12    | 85     | 1    | A100      | 2468.31 | 0.73948 | 3337.9          |
+| gcp    | g2-standard-12 | 12    | 48     | 1    | L4        | 1162.21 | 0.43893 | 2647.82         |
+| aws    | g6e.xlarge     | 4     | 32     | 1    | L40S      | 4660.96 | 1.861   | 2504.54         |
+| gcp    | a2-ultragpu-1g | 12    | 170    | 1    | A100      | 2475.82 | 1.09962 | 2251.52         |
+| aws    | g6e.2xlarge    | 8     | 64     | 1    | L40S      | 4677.89 | 2.24208 | 2086.4          |
+| gcp    | g2-standard-16 | 16    | 64     | 1    | L4        | 1117.46 | 0.58525 | 1909.36         |
+| aws    | g5.xlarge      | 4     | 16     | 1    | A10G      | 1887.03 | 1.006   | 1875.77         |
+| gcp    | a2-highgpu-2g  | 24    | 170    | 2    | A100      | 2469.94 | 1.47895 | 1670.06         |
 
 In this scenario, the smallest GPU options are the most cost efficient: with a
 single GPU, minimal CPU and irrelevant memory amount as data are stored in the

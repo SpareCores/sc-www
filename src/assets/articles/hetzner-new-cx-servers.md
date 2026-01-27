@@ -21,7 +21,7 @@ Spare Cores makes it easy to compare the pricing, hardware features and
 benchmark scores of any number of servers. Simply select the servers
 on our <a href="/servers" target="_blank">server listing pages</a>
 (e.g. you can filter for the Hetzner Cloud servers,
-and also include  inactive ones), then click the "Compare" button.
+and also include inactive ones), then click the "Compare" button.
 To save you time, we've provided a direct link to the <a href="/compare?instances=W3sidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY3gyMSJ9LHsidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY3gyMiJ9LHsidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY3B4MTEifSx7InZlbmRvciI6ImhjbG91ZCIsInNlcnZlciI6ImNheDExIn0seyJ2ZW5kb3IiOiJoY2xvdWQiLCJzZXJ2ZXIiOiJjY3gxMyJ9XQ%3D%3D" target="_blank">comparison page of all `hcloud` servers with 2 vCPUs and 2-4 GiB of memory</a>.
 Screenshots from that page are also included below.
 

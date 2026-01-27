@@ -74,7 +74,7 @@ the operating system and installed packages — with the preference of using
 
 The performance of the `procfs` and the `psutil` implementations is similar (if
 interested in more details, see the relevant section of the
-<a href="https://sparecores.github.io/resource-tracker/#performance" target="_blank">package docs</a>), 
+<a href="https://sparecores.github.io/resource-tracker/#performance" target="_blank">package docs</a>),
 so you might wonder why we kept both implementations.
 
 The `psutil` implementation works on all operating systems at the cost of the
@@ -87,8 +87,8 @@ applications in limited environments without easy control over the dependencies
 
 The
 <a href="https://pypi.org/project/resource-tracker/" target="_blank">
-  `resource-tracker` package
-  <img src="https://img.shields.io/pypi/v/resource-tracker?color=%2332C955" alt="resource-tracker package on PyPI" style="display: inline-block; vertical-align: middle;"/>
+`resource-tracker` package
+<img src="https://img.shields.io/pypi/v/resource-tracker?color=%2332C955" alt="resource-tracker package on PyPI" style="display: inline-block; vertical-align: middle;"/>
 </a>
 is available on PyPI, so you can install it with:
 
@@ -131,7 +131,7 @@ tracker.system_tracker
 This `ResourceTracker` instance gives you access to the collected data in
 real-time, or after stopping the trackers via the `pid_tracker` and
 `system_tracker` properties.
-Both are <a href="https://sparecores.github.io/resource-tracker/reference/resource_tracker/tiny_data_frame/" target="_blank">`TinyDataFrame` objects</a>, 
+Both are <a href="https://sparecores.github.io/resource-tracker/reference/resource_tracker/tiny_data_frame/" target="_blank">`TinyDataFrame` objects</a>,
 which are essentially dictionaries of lists, with some convenience methods for
 selecting rows and columns, pretty-printing and saving to CSV file.
 
@@ -263,7 +263,7 @@ screenshots):
 But again, you better check out the
 <a href="/assets/slides/example-resource-tracker-report-in-metaflow.html" target="_blank">example report 📜</a>
 yourself, or even better, try it out in your own Metaflow workflows by
-installing `resource-tracker` and then  importing and decorating your 
+installing `resource-tracker` and then importing and decorating your
 steps with the `@track_resources` decorator!
 
 And yes, it works in local and remote executions as well, so you can use it in

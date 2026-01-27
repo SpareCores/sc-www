@@ -10,6 +10,8 @@ jobs:
         run: npm install --include=dev
       - name: Run ESLint
         run: npm run lint
+      - name: Run Prettier check
+        run: npm run prettier:check
 
   cypress-run:
     runs-on: ubuntu-22.04
@@ -20,7 +22,7 @@ jobs:
         with:
           build: npm run prebuild
           start: npm start
-          wait-on: 'http://localhost:4200'
+          wait-on: "http://localhost:4200"
         env:
           CYPRESS_BASE_URL: http://localhost:4200
           NG_APP_BACKEND_BASE_URI: https://keeper.sparecores.net

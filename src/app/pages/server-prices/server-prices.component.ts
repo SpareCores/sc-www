@@ -1,24 +1,38 @@
-import { Component, Inject, PLATFORM_ID, OnInit, ViewChild, ElementRef, OnDestroy } from '@angular/core';
-import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
-import { KeeperAPIService } from '../../services/keeper-api.service';
-import { OrderDir, ServerPriceWithPKs } from '../../../../sdk/data-contracts';
-import { ActivatedRoute, Params, Router, RouterModule } from '@angular/router';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { StorageHandlerService } from '../../services/storage-handler.service';
-import { SeoHandlerService } from '../../services/seo-handler.service';
-import { FormsModule } from '@angular/forms';
-import { LucideAngularModule } from 'lucide-angular';
-import { CountryIdtoNamePipe } from '../../pipes/country-idto-name.pipe';
-import { SearchBarComponent } from '../../components/search-bar/search-bar.component';
-import { PaginationComponent } from '../../components/pagination/pagination.component';
-import { DropdownManagerService } from '../../services/dropdown-manager.service';
-import { AnalyticsService } from '../../services/analytics.service';
-import { CurrencyOption, availableCurrencies } from '../../tools/shared_data';
-import { ServerCompare, ServerCompareService } from '../../services/server-compare.service';
-import { encodeQueryParams } from '../../tools/queryParamFunctions';
-import { ToastService } from '../../services/toast.service';
-import { LoadingSpinnerComponent } from '../../components/loading-spinner/loading-spinner.component';
-import { Subscription } from 'rxjs';
+import {
+  Component,
+  Inject,
+  PLATFORM_ID,
+  OnInit,
+  ViewChild,
+  ElementRef,
+  OnDestroy,
+} from "@angular/core";
+import {
+  BreadcrumbSegment,
+  BreadcrumbsComponent,
+} from "../../components/breadcrumbs/breadcrumbs.component";
+import { KeeperAPIService } from "../../services/keeper-api.service";
+import { OrderDir, ServerPriceWithPKs } from "../../../../sdk/data-contracts";
+import { ActivatedRoute, Params, Router, RouterModule } from "@angular/router";
+import { CommonModule, isPlatformBrowser } from "@angular/common";
+import { StorageHandlerService } from "../../services/storage-handler.service";
+import { SeoHandlerService } from "../../services/seo-handler.service";
+import { FormsModule } from "@angular/forms";
+import { LucideAngularModule } from "lucide-angular";
+import { CountryIdtoNamePipe } from "../../pipes/country-idto-name.pipe";
+import { SearchBarComponent } from "../../components/search-bar/search-bar.component";
+import { PaginationComponent } from "../../components/pagination/pagination.component";
+import { DropdownManagerService } from "../../services/dropdown-manager.service";
+import { AnalyticsService } from "../../services/analytics.service";
+import { CurrencyOption, availableCurrencies } from "../../tools/shared_data";
+import {
+  ServerCompare,
+  ServerCompareService,
+} from "../../services/server-compare.service";
+import { encodeQueryParams } from "../../tools/queryParamFunctions";
+import { ToastService } from "../../services/toast.service";
+import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
+import { Subscription } from "rxjs";
 
 export type TableColumn = {
   name: string;
@@ -47,7 +61,7 @@ export type RegionMetadata = {
   name: string;
   api_reference: string;
   green_energy: boolean;
-  selected? : boolean;
+  selected?: boolean;
 };
 
 export type RegionVendorMetadata = {
@@ -58,69 +72,140 @@ export type RegionVendorMetadata = {
 };
 
 @Component({
-  selector: 'app-server-prices',
+  selector: "app-server-prices",
   standalone: true,
-  imports: [CommonModule, FormsModule, BreadcrumbsComponent, LucideAngularModule, CountryIdtoNamePipe, RouterModule, SearchBarComponent, PaginationComponent, LoadingSpinnerComponent],
-  templateUrl: './server-prices.component.html',
-  styleUrl: './server-prices.component.scss'
+  imports: [
+    CommonModule,
+    FormsModule,
+    BreadcrumbsComponent,
+    LucideAngularModule,
+    CountryIdtoNamePipe,
+    RouterModule,
+    SearchBarComponent,
+    PaginationComponent,
+    LoadingSpinnerComponent,
+  ],
+  templateUrl: "./server-prices.component.html",
+  styleUrl: "./server-prices.component.scss",
 })
 export class ServerPricesComponent implements OnInit, OnDestroy {
-
   private subscription = new Subscription();
 
   isCollapsed = false;
 
   filterCategories = [
-    {category_id: 'basic', name: 'Basics', icon: 'server', collapsed: true},
-    {category_id: 'price', name: 'Pricing', icon: 'dollar-sign', collapsed: true},
-    {category_id: 'performance', name: 'Performance', icon: 'gauge', collapsed: true},
-    {category_id: 'processor', name: 'Processor', icon: 'microchip', collapsed: false},
-    {category_id: 'gpu', name: 'GPU', icon: 'cpu', collapsed: true},
-    {category_id: 'memory', name: 'Memory', icon: 'memory-stick', collapsed: true},
-    {category_id: 'storage', name: 'Storage', icon: 'database', collapsed: true},
-    {category_id: 'vendor', name: 'Vendor', icon: 'home', collapsed: true},
-    {category_id: 'region', name: 'Region', icon: 'hotel', collapsed: true},
+    { category_id: "basic", name: "Basics", icon: "server", collapsed: true },
+    {
+      category_id: "price",
+      name: "Pricing",
+      icon: "dollar-sign",
+      collapsed: true,
+    },
+    {
+      category_id: "performance",
+      name: "Performance",
+      icon: "gauge",
+      collapsed: true,
+    },
+    {
+      category_id: "processor",
+      name: "Processor",
+      icon: "microchip",
+      collapsed: false,
+    },
+    { category_id: "gpu", name: "GPU", icon: "cpu", collapsed: true },
+    {
+      category_id: "memory",
+      name: "Memory",
+      icon: "memory-stick",
+      collapsed: true,
+    },
+    {
+      category_id: "storage",
+      name: "Storage",
+      icon: "database",
+      collapsed: true,
+    },
+    { category_id: "vendor", name: "Vendor", icon: "home", collapsed: true },
+    { category_id: "region", name: "Region", icon: "hotel", collapsed: true },
   ];
 
   breadcrumbs: BreadcrumbSegment[] = [
-    { name: 'Home', url: '/' },
-    { name: 'Server prices', url: '/server_prices' }
+    { name: "Home", url: "/" },
+    { name: "Server prices", url: "/server_prices" },
   ];
 
   tableColumns: TableColumn[] = [];
 
   possibleColumns: TableColumn[] = [
-    { name: 'NAME & PROVIDER', show: true, type: 'name'},
-    { name: 'VENDOR', show: false, type: 'vendor' },
-    { name: 'REGION', show: false, type: 'region' },
-    { name: 'ZONE', show: false, type: 'text', key: 'zone.name' },
-    { name: 'CONTINENT', show: false, type: 'text', key: 'region.country.continent' },
-    { name: 'COUNTRY', show: false, type: 'country' },
-    { name: 'ARCHITECTURE', show: false, type: 'text', key: 'server.cpu_architecture' },
-    { name: 'PROCESSOR', show: true, type: 'processor', orderField: 'vcpus' },
-    { name: 'CPU MODEL', show: false, type: 'cpu_model' },
-    { name: 'CPU ALLOCATION', show: false, type: 'text', key: 'server.cpu_allocation' },
-    { name: 'SCORE',
-      show: true,
-      type: 'score',
-      orderField: 'score',
-      info: "Performance benchmark score using stress-ng's div16 method (doing 16 bit unsigned integer divisions for 20 seconds): simulating CPU heavy workload that scales well on any number of (v)CPUs. The SCore/price value in the second line shows the div16 performance measured for 1 USD/hour, using the best (usually spot) price of all zones. To order by the latter, enable the $Core column."
-    },
-    { name: '$CORE',
+    { name: "NAME & PROVIDER", show: true, type: "name" },
+    { name: "VENDOR", show: false, type: "vendor" },
+    { name: "REGION", show: false, type: "region" },
+    { name: "ZONE", show: false, type: "text", key: "zone.name" },
+    {
+      name: "CONTINENT",
       show: false,
-      type: 'score_per_price',
-      orderField: 'score_per_price',
-      info: "SCore/price showing stress-ng's div16 performance measured for 1 USD/hour, using the best (usually spot) price of all zones."
+      type: "text",
+      key: "region.country.continent",
     },
-    { name: 'MEMORY', show: true, type: 'memory', orderField: 'memory_amount' },
-    { name: 'STORAGE', show: true, type: 'storage', orderField: 'storage_size' },
-    { name: 'STORAGE TYPE', show: false, type: 'text', key: 'server.storage_type' },
-    { name: 'GPUs', show: true, type: 'gpu', orderField: 'server.gpu_count' },
-    { name: 'GPU MIN MEMORY', show: false, type: 'gpu_memory', key: 'server.gpu_memory_min' },
-    { name: 'GPU TOTAL MEMORY', show: false, type: 'gpu_memory', key: 'server.gpu_memory_total' },
-    { name: 'GPU MODEL', show: false, type: 'gpu_model' },
-    { name: 'PRICE', show: true, type: 'price', orderField: 'price' },
-    { name: 'STATUS', show: false, type: 'text', key: 'server.status' },
+    { name: "COUNTRY", show: false, type: "country" },
+    {
+      name: "ARCHITECTURE",
+      show: false,
+      type: "text",
+      key: "server.cpu_architecture",
+    },
+    { name: "PROCESSOR", show: true, type: "processor", orderField: "vcpus" },
+    { name: "CPU MODEL", show: false, type: "cpu_model" },
+    {
+      name: "CPU ALLOCATION",
+      show: false,
+      type: "text",
+      key: "server.cpu_allocation",
+    },
+    {
+      name: "SCORE",
+      show: true,
+      type: "score",
+      orderField: "score",
+      info: "Performance benchmark score using stress-ng's div16 method (doing 16 bit unsigned integer divisions for 20 seconds): simulating CPU heavy workload that scales well on any number of (v)CPUs. The SCore/price value in the second line shows the div16 performance measured for 1 USD/hour, using the best (usually spot) price of all zones. To order by the latter, enable the $Core column.",
+    },
+    {
+      name: "$CORE",
+      show: false,
+      type: "score_per_price",
+      orderField: "score_per_price",
+      info: "SCore/price showing stress-ng's div16 performance measured for 1 USD/hour, using the best (usually spot) price of all zones.",
+    },
+    { name: "MEMORY", show: true, type: "memory", orderField: "memory_amount" },
+    {
+      name: "STORAGE",
+      show: true,
+      type: "storage",
+      orderField: "storage_size",
+    },
+    {
+      name: "STORAGE TYPE",
+      show: false,
+      type: "text",
+      key: "server.storage_type",
+    },
+    { name: "GPUs", show: true, type: "gpu", orderField: "server.gpu_count" },
+    {
+      name: "GPU MIN MEMORY",
+      show: false,
+      type: "gpu_memory",
+      key: "server.gpu_memory_min",
+    },
+    {
+      name: "GPU TOTAL MEMORY",
+      show: false,
+      type: "gpu_memory",
+      key: "server.gpu_memory_total",
+    },
+    { name: "GPU MODEL", show: false, type: "gpu_model" },
+    { name: "PRICE", show: true, type: "price", orderField: "price" },
+    { name: "STATUS", show: false, type: "text", key: "server.status" },
   ];
 
   hasCustomColumns = false;
@@ -128,9 +213,9 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
   availableCurrencies: CurrencyOption[] = availableCurrencies;
 
   allocationTypes = [
-    {name: 'Both', slug: null},
-    {name: 'Spot', slug: 'spot'},
-    {name: 'On Demand', slug: 'ondemand'}
+    { name: "Both", slug: null },
+    { name: "Spot", slug: "spot" },
+    { name: "On Demand", slug: "ondemand" },
   ];
 
   pageLimits = [10, 25, 50, 100, 250];
@@ -148,9 +233,9 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
 
   servers: ServerPriceWithPKs[] | any[] = [];
 
-  openApiJson: any = require('../../../../sdk/openapi.json');
+  openApiJson: any = require("../../../../sdk/openapi.json");
   searchParameters: any;
-  query: any= {};
+  query: any = {};
 
   dropdownCurrency: any;
   dropdownAllocation: any;
@@ -173,81 +258,105 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
 
   vendorMetadata: any[] = [];
 
-  @ViewChild('tooltipDefault') tooltip!: ElementRef;
-  clipboardIcon = 'clipboard';
-  tooltipContent = '';
+  @ViewChild("tooltipDefault") tooltip!: ElementRef;
+  clipboardIcon = "clipboard";
+  tooltipContent = "";
 
   selectedCountries: string[] = [];
   selectedRegions: string[] = [];
 
-  constructor(@Inject(PLATFORM_ID) private platformId: object,
-              private keeperAPI: KeeperAPIService,
-              private route: ActivatedRoute,
-              private router: Router,
-              private SEOHandler: SeoHandlerService,
-              private analytics: AnalyticsService,
-              private dropdownManager: DropdownManagerService,
-              private serverCompare: ServerCompareService,
-              private storageHandler: StorageHandlerService,
-              private toastService: ToastService) { }
+  constructor(
+    @Inject(PLATFORM_ID) private platformId: object,
+    private keeperAPI: KeeperAPIService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private SEOHandler: SeoHandlerService,
+    private analytics: AnalyticsService,
+    private dropdownManager: DropdownManagerService,
+    private serverCompare: ServerCompareService,
+    private storageHandler: StorageHandlerService,
+    private toastService: ToastService,
+  ) {}
 
   ngOnInit() {
-
     this.SEOHandler.updateTitleAndMetaTags(
-      'Price Listing of Cloud Compute Resources - Spare Cores',
-      'Harnessing the compute resources of the cloud to optimize efficiency and costs of batch and service tasks.',
-      'cloud, server, instance, price, comparison, spot, sparecores');
+      "Price Listing of Cloud Compute Resources - Spare Cores",
+      "Harnessing the compute resources of the cloud to optimize efficiency and costs of batch and service tasks.",
+      "cloud, server, instance, price, comparison, spot, sparecores",
+    );
 
-    this.SEOHandler.updateThumbnail('https://sparecores.com/assets/images/media/server_list_image.png');
+    this.SEOHandler.updateThumbnail(
+      "https://sparecores.com/assets/images/media/server_list_image.png",
+    );
 
-    const parameters = this.openApiJson.paths['/server_prices'].get.parameters || [];
+    const parameters =
+      this.openApiJson.paths["/server_prices"].get.parameters || [];
     this.searchParameters = parameters;
 
-    let limit = this.searchParameters.find((param: any) => param.name === 'limit');
-    if(limit && limit.schema && limit.schema.default) {
+    let limit = this.searchParameters.find(
+      (param: any) => param.name === "limit",
+    );
+    if (limit && limit.schema && limit.schema.default) {
       this.limit = limit.schema.default;
     }
 
-    let order = this.searchParameters.find((param: any) => param.name === 'order_by');
-    if(order && order.schema && order.schema.default) {
+    let order = this.searchParameters.find(
+      (param: any) => param.name === "order_by",
+    );
+    if (order && order.schema && order.schema.default) {
       this.orderBy = order.schema.default;
     }
 
     this.subscription.add(
       this.route.queryParams.subscribe((params: Params) => {
-        const query: any = JSON.parse(JSON.stringify(params || '{}'));
+        const query: any = JSON.parse(JSON.stringify(params || "{}"));
 
         this.query = query;
 
-        if(query.order_by && query.order_dir) {
+        if (query.order_by && query.order_dir) {
           this.orderBy = query.order_by;
           this.orderDir = query.order_dir;
 
-          if(this.possibleColumns.find((column) => column.orderField === this.orderBy)) {
-            this.possibleColumns.find((column) => column.orderField === this.orderBy)!.show = true;
+          if (
+            this.possibleColumns.find(
+              (column) => column.orderField === this.orderBy,
+            )
+          ) {
+            this.possibleColumns.find(
+              (column) => column.orderField === this.orderBy,
+            )!.show = true;
           }
         }
 
-        if(query.currency) {
-          this.selectedCurrency = this.availableCurrencies.find((currency) => currency.slug === query.currency) || this.availableCurrencies[0];
+        if (query.currency) {
+          this.selectedCurrency =
+            this.availableCurrencies.find(
+              (currency) => currency.slug === query.currency,
+            ) || this.availableCurrencies[0];
         }
 
-        if(query.allocation) {
-          this.allocation = this.allocationTypes.find((allocation) => allocation.slug === query.allocation) || this.allocationTypes[0];
+        if (query.allocation) {
+          this.allocation =
+            this.allocationTypes.find(
+              (allocation) => allocation.slug === query.allocation,
+            ) || this.allocationTypes[0];
         }
 
-        if(query.page) {
+        if (query.page) {
           this.page = parseInt(query.page);
         }
 
-        if(query.limit) {
+        if (query.limit) {
           this.limit = parseInt(query.limit);
         }
 
         const tableColumns: string = query.columns;
-        if(tableColumns && parseInt(tableColumns) ) {
-          const tableColumnsArray: number[] = Number(tableColumns).toString(2).split('').map(Number);
-          if(tableColumnsArray.length === this.possibleColumns.length) {
+        if (tableColumns && parseInt(tableColumns)) {
+          const tableColumnsArray: number[] = Number(tableColumns)
+            .toString(2)
+            .split("")
+            .map(Number);
+          if (tableColumnsArray.length === this.possibleColumns.length) {
             this.hasCustomColumns = true;
             this.possibleColumns.forEach((column, index) => {
               column.show = tableColumnsArray[index] === 1;
@@ -258,26 +367,33 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
         this.refreshColumns(false);
 
         this._searchServers(true);
-      })
+      }),
     );
 
-    if(isPlatformBrowser(this.platformId)) {
+    if (isPlatformBrowser(this.platformId)) {
+      this.dropdownManager
+        .initDropdown("currency_button", "currency_options")
+        .then((dropdown: any) => {
+          this.dropdownCurrency = dropdown;
+        });
 
-      this.dropdownManager.initDropdown('currency_button', 'currency_options').then((dropdown: any) => {
-        this.dropdownCurrency = dropdown
-      });
+      this.dropdownManager
+        .initDropdown("allocation_button", "allocation_options")
+        .then((dropdown: any) => {
+          this.dropdownAllocation = dropdown;
+        });
 
-      this.dropdownManager.initDropdown('allocation_button', 'allocation_options').then((dropdown: any) => {
-        this.dropdownAllocation = dropdown;
-      });
+      this.dropdownManager
+        .initDropdown("column_button", "column_options")
+        .then((dropdown: any) => {
+          this.dropdownColumn = dropdown;
+        });
 
-      this.dropdownManager.initDropdown('column_button', 'column_options').then((dropdown: any) => {
-        this.dropdownColumn = dropdown;
-      });
-
-      this.dropdownManager.initDropdown('pagesize_button', 'pagesize_options').then((dropdown: any) => {
-        this.dropdownPage = dropdown;
-      });
+      this.dropdownManager
+        .initDropdown("pagesize_button", "pagesize_options")
+        .then((dropdown: any) => {
+          this.dropdownPage = dropdown;
+        });
     }
   }
 
@@ -290,31 +406,36 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
   }
 
   getMemory(item: ServerPriceWithPKs) {
-    return ((item.server.memory_amount || 0) / 1024).toFixed(1) + ' GiB';
+    return ((item.server.memory_amount || 0) / 1024).toFixed(1) + " GiB";
   }
 
   getGPUMemory(item: ServerPriceWithPKs) {
-    return ((item.server.gpu_memory_min || 0) / 1024).toFixed(1) + ' GiB';
+    return ((item.server.gpu_memory_min || 0) / 1024).toFixed(1) + " GiB";
   }
 
   getStorage(item: ServerPriceWithPKs) {
-    if(!item.server.storage_size) return '-';
+    if (!item.server.storage_size) return "-";
 
-    if(item.server.storage_size < 1000) return `${item.server.storage_size} GB`;
+    if (item.server.storage_size < 1000)
+      return `${item.server.storage_size} GB`;
 
     return `${(item.server.storage_size / 1000).toFixed(1)} TB`;
   }
 
   getScore(value: number | null): string {
-    return value ? value.toFixed(0) : '-';
+    return value ? value.toFixed(0) : "-";
   }
 
   getAllocationName(allocation: string | null) {
-    return this.allocationTypes.find((item) => item.slug === allocation)?.name || '-';
+    return (
+      this.allocationTypes.find((item) => item.slug === allocation)?.name || "-"
+    );
   }
 
   openServerDetails(server: ServerPriceWithPKs) {
-    this.router.navigateByUrl(`/server/${server.vendor.vendor_id}/${server.server.api_reference}`);
+    this.router.navigateByUrl(
+      `/server/${server.vendor.vendor_id}/${server.server.api_reference}`,
+    );
   }
 
   searchBarChanged(event: any) {
@@ -327,7 +448,7 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
 
     let queryParams: any = queryObject;
 
-    if(this.orderBy && this.orderDir) {
+    if (this.orderBy && this.orderDir) {
       queryParams.order_by = this.orderBy;
       queryParams.order_dir = this.orderDir;
     } else {
@@ -335,36 +456,38 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
       delete queryParams.order_dir;
     }
 
-    if(this.selectedCurrency.slug !== 'USD') {
+    if (this.selectedCurrency.slug !== "USD") {
       queryParams.currency = this.selectedCurrency.slug;
     } else {
       delete queryParams.currency;
     }
 
-    if(this.allocation.slug) {
+    if (this.allocation.slug) {
       queryParams.allocation = this.allocation.slug;
     } else {
       delete queryParams.allocation;
     }
 
-    if(this.page > 1) {
+    if (this.page > 1) {
       queryParams.page = this.page;
     }
 
-    if(this.limit !== 25) {
+    if (this.limit !== 25) {
       queryParams.limit = this.limit;
     } else {
       delete queryParams.limit;
     }
 
-    if(this.hasCustomColumns) {
-      let columns = this.possibleColumns.map((column) => column.show ? 1 : 0).reduce((acc: number, bit) => ((acc << 1) | bit), 0);
+    if (this.hasCustomColumns) {
+      let columns = this.possibleColumns
+        .map((column) => (column.show ? 1 : 0))
+        .reduce((acc: number, bit) => (acc << 1) | bit, 0);
       queryParams.columns = columns;
     }
 
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: queryParams
+      queryParams: queryParams,
     });
   }
 
@@ -373,55 +496,71 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
 
     let query = JSON.parse(JSON.stringify(this.query));
 
-    if(updateTotalCount) {
+    if (updateTotalCount) {
       query.add_total_count_header = true;
     }
 
-    if(this.page > 1) {
+    if (this.page > 1) {
       query.page = this.page;
     }
 
     query.limit = this.limit;
 
-    if(this.orderBy && this.orderDir) {
+    if (this.orderBy && this.orderDir) {
       query.order_by = this.orderBy;
       query.order_dir = this.orderDir;
     }
 
-    this.keeperAPI.searchServerPrices(query).then(servers => {
-      this.servers = servers?.body.map((item: any) => {
-        return {
-          ...item,
-          partiallySelected: this.serverCompare.selectedForCompare.findIndex(
-            x => x.server === item.server.api_reference && x.vendor === item.vendor_id) > -1,
-          selected: this.serverCompare.selectedForCompare.findIndex(
-            (compareItem: ServerCompare) =>
-              compareItem.vendor === item.vendor_id &&
-              compareItem.server === item.server.api_reference &&
-              compareItem.zonesRegions.findIndex(x => x.zone === item.zone_id && x.region === item.region_id) > -1) !== -1
-        };
-      });
+    this.keeperAPI
+      .searchServerPrices(query)
+      .then((servers) => {
+        this.servers = servers?.body.map((item: any) => {
+          return {
+            ...item,
+            partiallySelected:
+              this.serverCompare.selectedForCompare.findIndex(
+                (x) =>
+                  x.server === item.server.api_reference &&
+                  x.vendor === item.vendor_id,
+              ) > -1,
+            selected:
+              this.serverCompare.selectedForCompare.findIndex(
+                (compareItem: ServerCompare) =>
+                  compareItem.vendor === item.vendor_id &&
+                  compareItem.server === item.server.api_reference &&
+                  compareItem.zonesRegions.findIndex(
+                    (x) =>
+                      x.zone === item.zone_id && x.region === item.region_id,
+                  ) > -1,
+              ) !== -1,
+          };
+        });
 
-      if(updateTotalCount) {
-        this.totalPages = Math.ceil(parseInt(servers?.headers?.get('x-total-count') || '0') / this.limit);
-      }
-    }).catch(err => {
-      this.analytics.SentryException(err, {tags: { location: this.constructor.name, function: '_searchServers' }});
-      console.error(err);
-    }).finally(() => {
-      this.isLoading = false;
-    });
+        if (updateTotalCount) {
+          this.totalPages = Math.ceil(
+            parseInt(servers?.headers?.get("x-total-count") || "0") /
+              this.limit,
+          );
+        }
+      })
+      .catch((err) => {
+        this.analytics.SentryException(err, {
+          tags: { location: this.constructor.name, function: "_searchServers" },
+        });
+        console.error(err);
+      })
+      .finally(() => {
+        this.isLoading = false;
+      });
   }
 
   toggleOrdering(column: TableColumn) {
+    if (!column.orderField) return;
 
-    if(!column.orderField) return;
-
-    if(this.orderBy === column.orderField) {
-      if(this.orderDir === OrderDir.Desc) {
+    if (this.orderBy === column.orderField) {
+      if (this.orderDir === OrderDir.Desc) {
         this.orderDir = OrderDir.Asc;
-      }
-      else {
+      } else {
         this.orderDir = undefined;
         this.orderBy = undefined;
       }
@@ -434,64 +573,72 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
   }
 
   getOrderingIcon(column: TableColumn) {
-    if(!column.orderField) return null;
+    if (!column.orderField) return null;
 
-    if(this.orderBy === column.orderField) {
-      return this.orderDir === OrderDir.Desc ? 'arrow-down-wide-narrow' : 'arrow-down-narrow-wide';
+    if (this.orderBy === column.orderField) {
+      return this.orderDir === OrderDir.Desc
+        ? "arrow-down-wide-narrow"
+        : "arrow-down-narrow-wide";
     }
     return null;
   }
 
   getQueryObject() {
-    const paramObject = this.searchParameters?.map((param: any) => {
-      return ((param.modelValue || param.modelValue === false) && param.schema.category_id && param.schema.default !== param.modelValue) ?
-              {[param.name]: param.modelValue} :
-              {};
-    }).reduce((acc: any, curr: any) => {  return {...acc, ...curr}; }, {});
+    const paramObject = this.searchParameters
+      ?.map((param: any) => {
+        return (param.modelValue || param.modelValue === false) &&
+          param.schema.category_id &&
+          param.schema.default !== param.modelValue
+          ? { [param.name]: param.modelValue }
+          : {};
+      })
+      .reduce((acc: any, curr: any) => {
+        return { ...acc, ...curr };
+      }, {});
 
-    if(this.orderBy && this.orderDir) {
+    if (this.orderBy && this.orderDir) {
       paramObject.order_by = this.orderBy;
       paramObject.order_dir = this.orderDir;
     }
 
-    if(this.selectedCurrency.slug !== 'USD') {
+    if (this.selectedCurrency.slug !== "USD") {
       paramObject.currency = this.selectedCurrency.slug;
     }
 
-    if(this.allocation.slug) {
+    if (this.allocation.slug) {
       paramObject.allocation = this.allocation.slug;
     }
 
-    if(this.page > 1) {
+    if (this.page > 1) {
       paramObject.page = this.page;
     }
 
-    if(this.limit !== 25) {
+    if (this.limit !== 25) {
       paramObject.limit = this.limit;
     } else {
       delete paramObject.limit;
     }
 
-    if(this.countryMetadata.find((country) => country.selected)) {
+    if (this.countryMetadata.find((country) => country.selected)) {
       paramObject.countries = [];
       this.countryMetadata.forEach((country) => {
-        if(country.selected) {
+        if (country.selected) {
           paramObject.countries.push(country.country_id);
         }
       });
     } else {
-      if(paramObject.countries) delete paramObject.countries;
+      if (paramObject.countries) delete paramObject.countries;
     }
 
-    if(this.regionMetadata.find((region) => region.selected)) {
+    if (this.regionMetadata.find((region) => region.selected)) {
       paramObject.regions = [];
       this.regionMetadata.forEach((region) => {
-        if(region.selected) {
+        if (region.selected) {
           paramObject.regions.push(region.region_id);
         }
       });
     } else {
-      if(paramObject.datacregionsenters) delete paramObject.regions;
+      if (paramObject.datacregionsenters) delete paramObject.regions;
     }
     return paramObject;
   }
@@ -499,19 +646,19 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
   updateQueryParams(object: any) {
     const encodedQuery = encodeQueryParams(object);
 
-    if(encodedQuery?.length) {
+    if (encodedQuery?.length) {
       // update the URL
-      window.history.pushState({}, '', '/server_prices?' + encodedQuery);
+      window.history.pushState({}, "", "/server_prices?" + encodedQuery);
     } else {
       // remove the query params
-      window.history.pushState({}, '', '/server_prices');
+      window.history.pushState({}, "", "/server_prices");
     }
   }
 
   refreshColumns(save = true) {
     this.tableColumns = this.possibleColumns.filter((column) => column.show);
 
-    if(isPlatformBrowser(this.platformId) && save) {
+    if (isPlatformBrowser(this.platformId) && save) {
       this.hasCustomColumns = true;
       this.updateQueryParams(this.getQueryObjectBase());
     }
@@ -545,33 +692,41 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
   }
 
   getField(item: ServerPriceWithPKs, field: string) {
-    return field.split('.').reduce((obj, key) => (obj && (obj as any)[key]) ? (obj as any)[key] : undefined, item);
+    return field
+      .split(".")
+      .reduce(
+        (obj, key) =>
+          obj && (obj as any)[key] ? (obj as any)[key] : undefined,
+        item,
+      );
   }
 
   getQueryObjectBase() {
     const paramObject = JSON.parse(JSON.stringify(this.query));
 
-    if(this.orderBy && this.orderDir) {
+    if (this.orderBy && this.orderDir) {
       paramObject.order_by = this.orderBy;
       paramObject.order_dir = this.orderDir;
     }
 
-    if(this.selectedCurrency.slug !== 'USD') {
+    if (this.selectedCurrency.slug !== "USD") {
       paramObject.currency = this.selectedCurrency.slug;
     }
 
-    if(this.allocation.slug) {
+    if (this.allocation.slug) {
       paramObject.allocation = this.allocation.slug;
     }
 
-    if(this.limit !== 25) {
+    if (this.limit !== 25) {
       paramObject.limit = this.limit;
     } else {
       delete paramObject.limit;
     }
 
-    if(this.hasCustomColumns) {
-      let columns = this.possibleColumns.map((column) => column.show ? 1 : 0).reduce((acc: number, bit) => ((acc << 1) | bit), 0);
+    if (this.hasCustomColumns) {
+      let columns = this.possibleColumns
+        .map((column) => (column.show ? 1 : 0))
+        .reduce((acc: number, bit) => (acc << 1) | bit, 0);
       paramObject.columns = columns;
     }
 
@@ -579,22 +734,23 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
   }
 
   closeModal(confirm: boolean) {
-    if(confirm) {
-
+    if (confirm) {
       this.searchParameters.forEach((param: any) => {
         param.modelValue = param.schema.default;
       });
 
       Object.keys(this.modalResponse).forEach((key) => {
-        const param = this.searchParameters.find((param: any) => param.name === key);
-        if(param) {
+        const param = this.searchParameters.find(
+          (param: any) => param.name === key,
+        );
+        if (param) {
           param.modelValue = this.modalResponse[key];
         }
       });
 
       //this.filterServers();
 
-      this.freetextSearchInput = '';
+      this.freetextSearchInput = "";
       this.modalResponse = null;
     }
 
@@ -605,29 +761,30 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
     let url = window.location.href;
     navigator.clipboard.writeText(url);
 
-    this.clipboardIcon = 'check';
+    this.clipboardIcon = "check";
 
     this.toastService.show({
-      title: 'Link copied to clipboard!',
-      type: 'success',
-      duration: 2000
+      title: "Link copied to clipboard!",
+      type: "success",
+      duration: 2000,
     });
 
     setTimeout(() => {
-      this.clipboardIcon = 'clipboard';
+      this.clipboardIcon = "clipboard";
     }, 3000);
   }
 
-   showTooltip(el: any, content: string, autoHide = false) {
+  showTooltip(el: any, content: string, autoHide = false) {
     this.tooltipContent = content;
     const tooltip = this.tooltip.nativeElement;
-    const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+    const scrollPosition =
+      window.pageYOffset || document.documentElement.scrollTop;
     tooltip.style.left = `${el.target.getBoundingClientRect().right + 5}px`;
     tooltip.style.top = `${el.target.getBoundingClientRect().top - 5 + scrollPosition}px`;
-    tooltip.style.display = 'block';
-    tooltip.style.opacity = '1';
+    tooltip.style.display = "block";
+    tooltip.style.opacity = "1";
 
-    if(autoHide) {
+    if (autoHide) {
       setTimeout(() => {
         this.hideTooltip();
       }, 3000);
@@ -636,11 +793,11 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
 
   hideTooltip() {
     const tooltip = this.tooltip.nativeElement;
-    tooltip.style.display = 'none';
-    tooltip.style.opacity = '0';
+    tooltip.style.display = "none";
+    tooltip.style.opacity = "0";
   }
 
-  toggleCompare2(event: any, server: ServerPriceWithPKs| any) {
+  toggleCompare2(event: any, server: ServerPriceWithPKs | any) {
     event.stopPropagation();
 
     server.selected = !server.selected;
@@ -648,15 +805,21 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
     this.toggleCompare(server.selected, server);
   }
 
-  toggleCompare(event: boolean, server: ServerPriceWithPKs| any) {
+  toggleCompare(event: boolean, server: ServerPriceWithPKs | any) {
     this.serverCompare.toggleCompare(event, {
       server: server.server.api_reference,
       vendor: server.vendor_id,
-      zoneRegion: {zone: server.zone_id, region: server.region_id},
-      display_name: server.server.display_name
+      zoneRegion: { zone: server.zone_id, region: server.region_id },
+      display_name: server.server.display_name,
     });
     this.servers.forEach((item) => {
-      if(this.serverCompare.selectedForCompare.findIndex(x => x.server === item.server.api_reference && x.vendor === item.vendor_id) > -1) {
+      if (
+        this.serverCompare.selectedForCompare.findIndex(
+          (x) =>
+            x.server === item.server.api_reference &&
+            x.vendor === item.vendor_id,
+        ) > -1
+      ) {
         item.partiallySelected = true;
       } else {
         item.partiallySelected = false;
@@ -680,8 +843,10 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
   }
 
   showAPIReference(item: any) {
-    return item.server.display_name !== item.server.api_reference && item.server.display_name !== item.server.api_reference.replace('Standard_', '');
+    return (
+      item.server.display_name !== item.server.api_reference &&
+      item.server.display_name !==
+        item.server.api_reference.replace("Standard_", "")
+    );
   }
-
 }
-

@@ -1,8 +1,8 @@
-import { Injectable, inject, PLATFORM_ID } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
-import { OnDestroy } from '@angular/core';
+import { Injectable, inject, PLATFORM_ID } from "@angular/core";
+import { isPlatformBrowser } from "@angular/common";
+import { OnDestroy } from "@angular/core";
 
-export type ToastType = 'success' | 'error' | 'warning' | 'info';
+export type ToastType = "success" | "error" | "warning" | "info";
 
 export interface ToastOptions {
   /** The title text to display on the first line of the toast notification */
@@ -17,11 +17,11 @@ export interface ToastOptions {
   id?: string;
 }
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class ToastService implements OnDestroy {
   private toastContainer: HTMLDivElement | null = null;
-  private toasts = new Map<string, { element: HTMLElement, timeoutId?: any }>();
+  private toasts = new Map<string, { element: HTMLElement; timeoutId?: any }>();
   private platformId = inject(PLATFORM_ID);
   private toastTimers: { [id: string]: any } = {};
 
@@ -31,8 +31,9 @@ export class ToastService implements OnDestroy {
 
   private setupContainer() {
     if (isPlatformBrowser(this.platformId) && !this.toastContainer) {
-      this.toastContainer = document.createElement('div');
-      this.toastContainer.className = 'fixed top-[80px] right-4 z-50 flex flex-col items-end gap-1';
+      this.toastContainer = document.createElement("div");
+      this.toastContainer.className =
+        "fixed top-[80px] right-4 z-50 flex flex-col items-end gap-1";
       document.body.appendChild(this.toastContainer);
     }
   }
@@ -40,38 +41,38 @@ export class ToastService implements OnDestroy {
   show(options: ToastOptions) {
     if (!isPlatformBrowser(this.platformId) || !this.toastContainer) return;
 
-    const {
-      title,
-      body,
-      type = 'info',
-      duration = null,
-      id
-    } = options;
+    const { title, body, type = "info", duration = null, id } = options;
 
-    const toastId = id || `toast-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const toastId =
+      id || `toast-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
-    const toast = document.createElement('div');
-    toast.className = 'rounded-lg p-2 transform transition-all duration-300 ease-in-out translate-x-0';
+    const toast = document.createElement("div");
+    toast.className =
+      "rounded-lg p-2 transform transition-all duration-300 ease-in-out translate-x-0";
 
     toast.innerHTML = `
       <div class="flex flex-col w-full max-w-xs p-4 rounded-lg shadow ${this.getColorClasses(type).background} ${this.getColorClasses(type).text}" role="alert">
         <div class="flex items-center w-full">
           <div class="ml-3 text-sm font-semibold">${title}</div>
-          ${!duration ? `
+          ${
+            !duration
+              ? `
             <button type="button" class="ml-auto -mx-1.5 -my-1.5 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 inline-flex h-8 w-8 ${this.getColorClasses(type).hover}" aria-label="Close">
               <span class="sr-only">Close</span>
               <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
             </button>
-          ` : ''}
+          `
+              : ""
+          }
         </div>
-        ${body ? `<div class="ml-3 text-sm font-normal mt-1">${body}</div>` : ''}
+        ${body ? `<div class="ml-3 text-sm font-normal mt-1">${body}</div>` : ""}
       </div>
     `;
 
     if (!duration) {
-      const closeButton = toast.querySelector('button');
+      const closeButton = toast.querySelector("button");
       if (closeButton) {
-        closeButton.addEventListener('click', () => this.removeToast(toastId));
+        closeButton.addEventListener("click", () => this.removeToast(toastId));
       }
     }
 
@@ -98,7 +99,7 @@ export class ToastService implements OnDestroy {
 
     this.toasts.set(toastId, {
       element: toast,
-      timeoutId
+      timeoutId,
     });
 
     return toastId;
@@ -115,8 +116,8 @@ export class ToastService implements OnDestroy {
     }
 
     if (element && element.parentNode) {
-      element.classList.remove('translate-x-0');
-      element.classList.add('translate-x-full');
+      element.classList.remove("translate-x-0");
+      element.classList.add("translate-x-full");
 
       setTimeout(() => {
         if (element.parentNode) {
@@ -138,39 +139,43 @@ export class ToastService implements OnDestroy {
 
   ngOnDestroy() {
     // clean up any remaining timers
-    Object.keys(this.toastTimers).forEach(id => {
+    Object.keys(this.toastTimers).forEach((id) => {
       if (this.toastTimers[id]) {
         clearTimeout(this.toastTimers[id]);
       }
     });
   }
 
-  private getColorClasses(type: ToastType): { background: string; text: string; hover: string } {
+  private getColorClasses(type: ToastType): {
+    background: string;
+    text: string;
+    hover: string;
+  } {
     switch (type) {
-      case 'success':
+      case "success":
         return {
-          background: 'bg-emerald-400',
-          text: 'text-white',
-          hover: 'hover:bg-emerald-500'
+          background: "bg-emerald-400",
+          text: "text-white",
+          hover: "hover:bg-emerald-500",
         };
-      case 'error':
+      case "error":
         return {
-          background: 'bg-red-500',
-          text: 'text-white',
-          hover: 'hover:bg-red-600'
+          background: "bg-red-500",
+          text: "text-white",
+          hover: "hover:bg-red-600",
         };
-      case 'warning':
+      case "warning":
         return {
-          background: 'bg-yellow-500',
-          text: 'text-white',
-          hover: 'hover:bg-yellow-400'
+          background: "bg-yellow-500",
+          text: "text-white",
+          hover: "hover:bg-yellow-400",
         };
-      case 'info':
+      case "info":
       default:
         return {
-          background: 'bg-sky-950',
-          text: 'text-white',
-          hover: 'hover:bg-sky-900'
+          background: "bg-sky-950",
+          text: "text-white",
+          hover: "hover:bg-sky-900",
         };
     }
   }

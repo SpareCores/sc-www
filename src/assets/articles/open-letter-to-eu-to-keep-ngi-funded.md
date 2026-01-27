@@ -73,4 +73,3 @@ funding schemes.
 NGI supports free and open source software since 2020, which lets us
 keep our data local and favors a community-wide economy and know-how,
 while allowing an international collaboration.
-

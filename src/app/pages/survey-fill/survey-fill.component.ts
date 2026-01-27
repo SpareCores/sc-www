@@ -1,31 +1,46 @@
-import { Component, Inject, OnInit, OnDestroy, PLATFORM_ID } from '@angular/core';
-import { SurveyModule } from 'survey-angular-ui';
-import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import {
+  Component,
+  Inject,
+  OnInit,
+  OnDestroy,
+  PLATFORM_ID,
+} from "@angular/core";
+import { SurveyModule } from "survey-angular-ui";
+import {
+  BreadcrumbSegment,
+  BreadcrumbsComponent,
+} from "../../components/breadcrumbs/breadcrumbs.component";
+import { CommonModule, isPlatformBrowser } from "@angular/common";
+import { ActivatedRoute, RouterModule } from "@angular/router";
 import { Model } from "survey-core";
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from "@angular/common/http";
 import "survey-core/defaultV2.css";
-import { surveyTheme } from './survey_theme';
-import { AnalyticsService } from '../../services/analytics.service';
-import { SeoHandlerService } from '../../services/seo-handler.service';
-import { Subscription } from 'rxjs';
+import { surveyTheme } from "./survey_theme";
+import { AnalyticsService } from "../../services/analytics.service";
+import { SeoHandlerService } from "../../services/seo-handler.service";
+import { Subscription } from "rxjs";
 
 @Component({
-  selector: 'app-survey-fill',
+  selector: "app-survey-fill",
   standalone: true,
-  imports: [SurveyModule, BreadcrumbsComponent, CommonModule, RouterModule, HttpClientModule],
-  templateUrl: './survey-fill.component.html',
-  styleUrl: './survey-fill.component.scss'
+  imports: [
+    SurveyModule,
+    BreadcrumbsComponent,
+    CommonModule,
+    RouterModule,
+    HttpClientModule,
+  ],
+  templateUrl: "./survey-fill.component.html",
+  styleUrl: "./survey-fill.component.scss",
 })
 export class SurveyFillComponent implements OnInit, OnDestroy {
-    breadcrumbs: BreadcrumbSegment[] = [
-        { name: 'Home', url: '/' },
-        { name: 'Survey', url: '/survey' },
-    ];
+  breadcrumbs: BreadcrumbSegment[] = [
+    { name: "Home", url: "/" },
+    { name: "Survey", url: "/survey" },
+  ];
 
   surveyModel!: Model;
-  visitorID: string = '';
+  visitorID: string = "";
 
   tracker: any;
   trackPing: number = 0;
@@ -33,22 +48,21 @@ export class SurveyFillComponent implements OnInit, OnDestroy {
   prevData: any;
   private subscription = new Subscription();
 
-  constructor(@Inject(PLATFORM_ID) private platformId: object,
-      private http: HttpClient,
-      private SEOhandler: SeoHandlerService,
-      private analytics: AnalyticsService,
-      private route: ActivatedRoute) {
-
-  }
+  constructor(
+    @Inject(PLATFORM_ID) private platformId: object,
+    private http: HttpClient,
+    private SEOhandler: SeoHandlerService,
+    private analytics: AnalyticsService,
+    private route: ActivatedRoute,
+  ) {}
 
   ngOnInit() {
+    let id = this.route.snapshot.paramMap.get("id");
 
-    let id = this.route.snapshot.paramMap.get('id');
-
-    if(id) {
-        this.setup(id);
+    if (id) {
+      this.setup(id);
     } else {
-      window.open('/', '_self');
+      window.open("/", "_self");
     }
   }
 
@@ -60,19 +74,26 @@ export class SurveyFillComponent implements OnInit, OnDestroy {
   }
 
   private randomUUID(): string {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-      const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-      return v.toString(16);
-    });
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
+      /[xy]/g,
+      function (c) {
+        const r = (Math.random() * 16) | 0,
+          v = c == "x" ? r : (r & 0x3) | 0x8;
+        return v.toString(16);
+      },
+    );
   }
 
   setup(id: string) {
     this.visitorID = this.analytics.getId() || this.randomUUID();
-    this.http.get('assets/surveys/' + id + '.json').subscribe((data: any) => {
-
+    this.http.get("assets/surveys/" + id + ".json").subscribe((data: any) => {
       const title = data.title || data.metaTitle || `${id} Survey`;
       const description = data.description || data.metaDescription;
-      this.SEOhandler.updateTitleAndMetaTags(title + ' - SpareCores', description, '');
+      this.SEOhandler.updateTitleAndMetaTags(
+        title + " - SpareCores",
+        description,
+        "",
+      );
       if (data.ogImage) {
         this.SEOhandler.updateThumbnail(data.ogImage);
       }
@@ -83,7 +104,9 @@ export class SurveyFillComponent implements OnInit, OnDestroy {
         this.surveyModel.applyTheme(surveyTheme);
 
         this.surveyModel.onComplete.add(this.submit.bind(this));
-        this.surveyModel.onCurrentPageChanging.add((sender, options) => this.pageChange(sender, options));
+        this.surveyModel.onCurrentPageChanging.add((sender, options) =>
+          this.pageChange(sender, options),
+        );
 
         this.tracker = setInterval(this.trackProgress.bind(this), 10000);
         this.startedAt = Date.now();
@@ -93,12 +116,12 @@ export class SurveyFillComponent implements OnInit, OnDestroy {
 
   submit(sender: any) {
     const payload = this.createBasePayload(sender.data);
-    payload.event = 'submit';
+    payload.event = "submit";
     payload.finishedAt = Date.now();
     payload.isComplete = true;
 
-    this.analytics.trackEvent('survey submit', payload);
-    this.saveSurveyData(payload, 'submit');
+    this.analytics.trackEvent("survey submit", payload);
+    this.saveSurveyData(payload, "submit");
 
     clearInterval(this.tracker);
   }
@@ -110,12 +133,12 @@ export class SurveyFillComponent implements OnInit, OnDestroy {
    */
   pageChange(sender: any, options: any) {
     const payload = this.createBasePayload(sender.data);
-    payload.event = 'pageChange';
+    payload.event = "pageChange";
     payload.pageChangedAt = Date.now();
     payload.finishedPageIndex = options.oldCurrentPage.visibleIndex + 1;
     payload.isComplete = false;
-    this.analytics.trackEvent('survey pageChange', payload);
-    this.saveSurveyData(payload, 'pageChange' + payload.finishedPageIndex);
+    this.analytics.trackEvent("survey pageChange", payload);
+    this.saveSurveyData(payload, "pageChange" + payload.finishedPageIndex);
   }
 
   /**
@@ -130,7 +153,7 @@ export class SurveyFillComponent implements OnInit, OnDestroy {
       duration: Date.now() - this.startedAt,
       counter: this.trackPing,
       referrer: document.referrer,
-      payload: data
+      payload: data,
     };
   }
 
@@ -147,19 +170,21 @@ export class SurveyFillComponent implements OnInit, OnDestroy {
    * id_abc123_submit_timestamp_1234567890
    * id_abc123_pageChange_timestamp_1234567890
    */
-  private saveSurveyData(payload: any, event_name: string = '') {
-    const eventPart = event_name ? `_${event_name}` : '';
+  private saveSurveyData(payload: any, event_name: string = "") {
+    const eventPart = event_name ? `_${event_name}` : "";
     const currentTimestamp = Date.now();
     const filename = `id_${this.visitorID}${eventPart}_timestamp_${currentTimestamp}`;
     try {
-      this.http.post('/api/survey-data', {
-        filename: filename,
-        payload: payload
-      }).subscribe({
-        error: (error) => console.error('Failed to save survey data', error)
-      });
+      this.http
+        .post("/api/survey-data", {
+          filename: filename,
+          payload: payload,
+        })
+        .subscribe({
+          error: (error) => console.error("Failed to save survey data", error),
+        });
     } catch (e) {
-      console.error('Failed to save survey data', e);
+      console.error("Failed to save survey data", e);
     }
   }
 
@@ -178,16 +203,15 @@ export class SurveyFillComponent implements OnInit, OnDestroy {
    */
   trackProgress() {
     const actualData = JSON.stringify(this.surveyModel?.data);
-    if (this.prevData === actualData || actualData === '{}') {
+    if (this.prevData === actualData || actualData === "{}") {
       return;
     }
     this.prevData = actualData;
 
-    this.analytics.trackEvent('survey autosave', {
+    this.analytics.trackEvent("survey autosave", {
       startedAt: this.startedAt,
       counter: this.trackPing,
-      payload: this.surveyModel.data
+      payload: this.surveyModel.data,
     });
   }
-
 }

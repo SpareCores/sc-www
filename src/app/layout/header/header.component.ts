@@ -1,19 +1,18 @@
-import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { LucideAngularModule } from 'lucide-angular';
-import { ServerCompareService } from '../../services/server-compare.service';
-import { DropdownManagerService } from '../../services/dropdown-manager.service';
+import { CommonModule, isPlatformBrowser } from "@angular/common";
+import { Component, Inject, OnInit, PLATFORM_ID } from "@angular/core";
+import { RouterLink } from "@angular/router";
+import { LucideAngularModule } from "lucide-angular";
+import { ServerCompareService } from "../../services/server-compare.service";
+import { DropdownManagerService } from "../../services/dropdown-manager.service";
 
 @Component({
-  selector: 'app-header',
+  selector: "app-header",
   standalone: true,
   imports: [LucideAngularModule, RouterLink, CommonModule],
-  templateUrl: './header.component.html',
-  styleUrl: './header.component.scss'
+  templateUrl: "./header.component.html",
+  styleUrl: "./header.component.scss",
 })
 export class HeaderComponent implements OnInit {
-
   dropdownMenu: any;
   dropdownAbout: any;
   dropdownCompare: any;
@@ -21,28 +20,35 @@ export class HeaderComponent implements OnInit {
   constructor(
     @Inject(PLATFORM_ID) private platformId: object,
     private serverCompare: ServerCompareService,
-    private dropdownManager: DropdownManagerService
-  ) { }
+    private dropdownManager: DropdownManagerService,
+  ) {}
 
   ngOnInit() {
-    if(isPlatformBrowser(this.platformId)) {
-      this.dropdownManager.initDropdown('menu_button', 'menu_options').then((dropdown) => {
-        this.dropdownMenu = dropdown;
-      });
+    if (isPlatformBrowser(this.platformId)) {
+      this.dropdownManager
+        .initDropdown("menu_button", "menu_options")
+        .then((dropdown) => {
+          this.dropdownMenu = dropdown;
+        });
 
-      this.dropdownManager.initDropdown('about_button', 'about_options').then((dropdown) => {
-        this.dropdownAbout = dropdown;
-      });
+      this.dropdownManager
+        .initDropdown("about_button", "about_options")
+        .then((dropdown) => {
+          this.dropdownAbout = dropdown;
+        });
 
-      this.dropdownManager.initDropdown('compare_button', 'compare_options').then((dropdown) => {
-        this.dropdownCompare = dropdown;
-      });
+      this.dropdownManager
+        .initDropdown("compare_button", "compare_options")
+        .then((dropdown) => {
+          this.dropdownCompare = dropdown;
+        });
 
-      this.dropdownManager.initDropdown('navigator_button', 'navigator_options').then((dropdown) => {
-        this.dropdownNavigator = dropdown;
-      });
+      this.dropdownManager
+        .initDropdown("navigator_button", "navigator_options")
+        .then((dropdown) => {
+          this.dropdownNavigator = dropdown;
+        });
     }
-
   }
 
   closeMenu() {
@@ -77,5 +83,4 @@ export class HeaderComponent implements OnInit {
     event.stopPropagation();
     this.serverCompare.toggleCompare(false, server);
   }
-
 }

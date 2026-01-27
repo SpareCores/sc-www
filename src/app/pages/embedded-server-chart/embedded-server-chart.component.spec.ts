@@ -1,23 +1,22 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { EmbeddedServerChartComponent } from './embedded-server-chart.component';
+import { EmbeddedServerChartComponent } from "./embedded-server-chart.component";
 
-describe('EmbeddedServerChartComponent', () => {
+describe("EmbeddedServerChartComponent", () => {
   let component: EmbeddedServerChartComponent;
   let fixture: ComponentFixture<EmbeddedServerChartComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EmbeddedServerChartComponent]
-    })
-    .compileComponents();
-    
+      imports: [EmbeddedServerChartComponent],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(EmbeddedServerChartComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

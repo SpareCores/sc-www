@@ -1,24 +1,22 @@
-import { isPlatformBrowser } from '@angular/common';
-import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
-import { Dropdown, DropdownOptions, initFlowbite } from 'flowbite';
+import { isPlatformBrowser } from "@angular/common";
+import { Inject, Injectable, PLATFORM_ID } from "@angular/core";
+import { Dropdown, DropdownOptions, initFlowbite } from "flowbite";
 
 const options: DropdownOptions = {
-  placement: 'bottom',
-  triggerType: 'click',
+  placement: "bottom",
+  triggerType: "click",
   offsetSkidding: 0,
   offsetDistance: 10,
-  delay: 300
+  delay: 300,
 };
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class DropdownManagerService {
-
   inited = false;
 
-  constructor(
-    @Inject(PLATFORM_ID) private platformId: object) {
+  constructor(@Inject(PLATFORM_ID) private platformId: object) {
     if (isPlatformBrowser(this.platformId)) {
       initFlowbite();
       this.inited = true;
@@ -27,16 +25,14 @@ export class DropdownManagerService {
 
   async initDropdown(triggerID: string, targetID: string) {
     if (isPlatformBrowser(this.platformId)) {
-      const {triggerEl, targetEl} = await this.waitForElements(triggerID, targetID);
-      return new Dropdown(
-        targetEl,
-        triggerEl,
-        options,
-        {
-          id: targetID,
-          override: true
-        }
+      const { triggerEl, targetEl } = await this.waitForElements(
+        triggerID,
+        targetID,
       );
+      return new Dropdown(targetEl, triggerEl, options, {
+        id: targetID,
+        override: true,
+      });
     } else {
       return undefined;
     }
@@ -46,15 +42,14 @@ export class DropdownManagerService {
     return new Promise((resolve) => {
       const observer = new MutationObserver(() => {
         const targetEl: HTMLElement | null = document.getElementById(targetID);
-        const triggerEl: HTMLElement | null = document.getElementById(triggerID);
+        const triggerEl: HTMLElement | null =
+          document.getElementById(triggerID);
         if (this.inited && targetEl && triggerEl) {
           observer.disconnect();
-          resolve({triggerEl, targetEl});
+          resolve({ triggerEl, targetEl });
         }
       });
       observer.observe(document.body, { childList: true, subtree: true });
     });
   }
-
-
 }
