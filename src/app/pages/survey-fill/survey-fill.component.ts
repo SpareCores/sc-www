@@ -6,14 +6,11 @@ import {
   PLATFORM_ID,
 } from "@angular/core";
 import { SurveyModule } from "survey-angular-ui";
-import {
-  BreadcrumbSegment,
-  BreadcrumbsComponent,
-} from "../../components/breadcrumbs/breadcrumbs.component";
+import { BreadcrumbSegment } from "../../components/breadcrumbs/breadcrumbs.component";
 import { CommonModule, isPlatformBrowser } from "@angular/common";
 import { ActivatedRoute, RouterModule } from "@angular/router";
 import { Model } from "survey-core";
-import { HttpClient, HttpClientModule } from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import "survey-core/defaultV2.css";
 import { surveyTheme } from "./survey_theme";
 import { AnalyticsService } from "../../services/analytics.service";
@@ -23,13 +20,7 @@ import { Subscription } from "rxjs";
 @Component({
   selector: "app-survey-fill",
   standalone: true,
-  imports: [
-    SurveyModule,
-    BreadcrumbsComponent,
-    CommonModule,
-    RouterModule,
-    HttpClientModule,
-  ],
+  imports: [SurveyModule, CommonModule, RouterModule],
   templateUrl: "./survey-fill.component.html",
   styleUrl: "./survey-fill.component.scss",
 })
