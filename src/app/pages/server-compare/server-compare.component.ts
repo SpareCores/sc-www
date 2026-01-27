@@ -427,7 +427,9 @@ export class ServerCompareComponent
             if (server.prices?.length > 0) {
               server.prices.forEach((price: any) => {
                 price.region = regions.find(
-                  (r: any) => r.region_id === price.region_id,
+                  (r: any) =>
+                    r.region_id === price.region_id &&
+                    r.vendor_id === price.vendor_id,
                 );
                 price.zone = zones.find(
                   (z: any) =>
@@ -770,7 +772,9 @@ export class ServerCompareComponent
         if (server.prices?.length > 0) {
           server.prices.forEach((price: any) => {
             price.region = this.regions.find(
-              (r: any) => r.region_id === price.region_id,
+              (r: any) =>
+                r.region_id === price.region_id &&
+                r.vendor_id === price.vendor_id,
             );
             price.zone = this.zones.find(
               (z: any) => z.zone_id === price.zone_id,
