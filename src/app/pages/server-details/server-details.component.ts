@@ -932,8 +932,8 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
         if (!zone) {
           const data: any = {
             vendor_id: price.vendor_id,
-            zone_id: price.zone_id,
             region_id: price.region_id,
+            zone_id: price.zone_id,
             display_name: price.zone.display_name,
             spot: {
               price: 0,
