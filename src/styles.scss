@@ -138,3 +138,7 @@ input[type=number]::-webkit-outer-spin-button {
   }
 }
 
+.design-gradient-fill-with-brand-colors {
+  @apply text-white font-semibold text-4xl;
+  background: radial-gradient(ellipse at top right, #34d399, #14b8a6, #0c4a6e);
+}

@@ -161,9 +161,9 @@ export class ToastService implements OnDestroy {
         };
       case 'warning':
         return {
-          background: 'bg-yellow-400',
+          background: 'bg-yellow-500',
           text: 'text-white',
-          hover: 'hover:bg-yellow-500'
+          hover: 'hover:bg-yellow-400'
         };
       case 'info':
       default:

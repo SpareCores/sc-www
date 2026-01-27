@@ -1,64 +1,64 @@
 <!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
 <nav class="bg-custom px-4 lg:px-6 py-2.5 w-full">
   <div class="content flex justify-between items-center w-full">
-      <a routerLink="/" class="h-12" style="max-width: 284px; width: 284px">
+    <a routerLink="/" class="h-12" style="max-width: 284px; width: 284px">
         <img class="h-12" style="max-width: 284px; width: 284px"
-             src="./assets/images/logos/logo_header.png"
+        src="./assets/images/logos/logo_header.png"
              alt="Spare Cores Logo" />
-      </a>
+    </a>
       <div class="justify-end items-center w-full flex w-auto order-1" id="mobile-menu-2">
-          <ul class="flex font-medium flex-row space-x-8 mt-0 items-center">
-              <li class="hidden lg:flex">
-                <div class="navbar_link cursor-pointer" id="about_button">
-                    <lucide-icon class="h-4 w-4" name="info"></lucide-icon>
-                    About
-                </div>
-              </li>
-              <li class="hidden lg:flex">
-                <div class="navbar_link cursor-pointer" id="navigator_button">
-                    <lucide-icon class="h-4 w-4" name="ship-wheel"></lucide-icon>
-                    Navigator
-                </div>
-              </li>
+      <ul class="flex font-medium flex-row space-x-8 mt-0 items-center">
+        <li class="hidden lg:flex">
+          <div class="navbar_link cursor-pointer" id="about_button">
+            <lucide-icon class="h-4 w-4" name="info"></lucide-icon>
+            About
+          </div>
+        </li>
+        <li class="hidden lg:flex">
+          <div class="navbar_link cursor-pointer" id="navigator_button">
+            <lucide-icon class="h-4 w-4" name="ship-wheel"></lucide-icon>
+            Navigator
+          </div>
+        </li>
               <li class="hidden lg:flex" >
-                <a routerLink="/about/resource-tracker" class="navbar_link">
+          <a routerLink="/about/resource-tracker" class="navbar_link">
                   <lucide-icon
                     class="cursor-pointer h-4 w-4"
                     name="gauge" >
-                  </lucide-icon>
-                  Resource Tracker
-                </a>
-              </li>
-              <li class="py-1">
-                <button
-                  id="meeting-header-demo"
+            </lucide-icon>
+            Resource Tracker
+          </a>
+        </li>
+        <li class="py-1">
+          <button
+            id="meeting-header-demo"
                   class="text-white bg-emerald-400 hover:bg-emerald-500 rounded-lg px-3 py-2 relative flex gap-2 items-center">
-                  <lucide-icon class="h-4 w-4" name="calendar-days"></lucide-icon>
-                  Book a Call
-                </button>
-              </li>
+            <lucide-icon class="h-4 w-4" name="calendar-days"></lucide-icon>
+            Book a Call
+          </button>
+        </li>
               <li [ngClass]="
                     {'hidden' : compareCount() === 0}"
                 >
-                <button
-                  id="compare_button"
+          <button
+            id="compare_button"
                   class="text-white bg-emerald-400 hover:bg-emerald-500 rounded-lg px-3 py-3 relative" >
-                  <span
-                    class="h-4 w-4 absolute text-white bg-red-500 z-10 top-2 right-2 rounded-full"
+            <span
+              class="h-4 w-4 absolute text-white bg-red-500 z-10 top-2 right-2 rounded-full"
                     style="top: 2px; font-size: 0.625rem; right: 2px" >{{compareCount()}}
-                  </span>
-                  <lucide-icon class="h-4 w-4" name="scale"></lucide-icon>
-                </button>
-              </li>
-              <li class="lg:hidden">
-                <lucide-icon
-                  id="menu_button"
-                  class="navbar_link cursor-pointer h-8 w-8"
+            </span>
+            <lucide-icon class="h-4 w-4" name="scale"></lucide-icon>
+          </button>
+        </li>
+        <li class="lg:hidden">
+          <lucide-icon
+            id="menu_button"
+            class="navbar_link cursor-pointer h-8 w-8"
                   name="menu" >
-                </lucide-icon>
-              </li>
-          </ul>
-      </div>
+          </lucide-icon>
+        </li>
+      </ul>
+    </div>
   </div>
 </nav>
 
@@ -89,6 +89,12 @@
       <a class="navbar_link" routerLink="/talks" >
         <lucide-icon class="h-4 w-4" name="projector"></lucide-icon>
         Talks & Slides
+      </a>
+    </li>
+    <li class="py-2 ml-6">
+      <a class="navbar_link" routerLink="/design">
+        <lucide-icon class="h-4 w-4" name="palette"></lucide-icon>
+        Design
       </a>
     </li>
     <li class="py-2">
@@ -175,6 +181,12 @@
       <a class="navbar_link" routerLink="/talks" >
         <lucide-icon class="h-4 w-4" name="projector"></lucide-icon>
         Talks & Slides
+      </a>
+    </li>
+    <li class="py-2">
+      <a class="navbar_link" routerLink="/design" >
+        <lucide-icon class="h-4 w-4" name="palette"></lucide-icon>
+        Design
       </a>
     </li>
   </ul>

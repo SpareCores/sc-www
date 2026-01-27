@@ -4,15 +4,15 @@ module.exports = {
     require('flowbite/plugin')
   ],
   content: [
-    "./src/**/*.{html,ts}",
+    "./src/**/*.{html,ts,scss}",
     "./src/assets/articles/*.md",
-    "./node_modules/flowbite/**/*.js"
+    "./node_modules/flowbite/**/*.js",
   ],
   theme: {
     extend: {
       fontFamily: {
         'sans': ['Inter', 'sans-serif'],
-        'mono': ['Roboto Mono', 'sans-serif']
+        'mono': ['Roboto Mono', 'monospace', 'sans-serif']
       },
       colors: {
         'default': '#fff',
