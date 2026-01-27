@@ -738,6 +738,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
         const allocation = price.allocation || "spot";
         if (!zone) {
           const data: any = {
+            vendor_id: price.vendor_id,
             region_id: price.region_id,
             display_name: price.region.display_name,
             api_reference: price.region.api_reference,
@@ -827,6 +828,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
         );
         if (!zone) {
           const data: any = {
+            vendor_id: price.vendor_id,
             zone_id: price.zone_id,
             region_id: price.region_id,
             display_name: price.zone.display_name,
@@ -922,8 +924,8 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
         );
         if (!zone) {
           const data: any = {
-            zone_id: price.zone_id,
             vendor_id: price.vendor_id,
+            zone_id: price.zone_id,
             display_name: price.zone.display_name,
             spot: {
               price: 0,
