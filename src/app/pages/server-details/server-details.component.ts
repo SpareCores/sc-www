@@ -384,7 +384,9 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
               this.serverDetails.prices?.forEach(
                 (price: ExtendedServerPrice) => {
                   const region = this.regionFilters.find(
-                    (z) => z.region_id === price.region_id,
+                    (z) =>
+                      z.region_id === price.region_id &&
+                      z.vendor_id === price.vendor_id,
                   );
                   if (!region) {
                     this.regionFilters.push({
