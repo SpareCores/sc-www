@@ -3,8 +3,8 @@
 @tailwind components;
 @tailwind utilities;
 
-@import './assets/fonts/font_roboto_mono_main.css';
-@import './assets/fonts/font_inter_main.css';
+@import "./assets/fonts/font_roboto_mono_main.css";
+@import "./assets/fonts/font_inter_main.css";
 
 $content-max-width: 1400px;
 
@@ -43,10 +43,10 @@ $content-max-width: 1400px;
   }
 
   .shadow_border {
-    border-color: rgba(#34D399, 0.2);
+    border-color: rgba(#34d399, 0.2);
   }
 
-  .content{
+  .content {
     max-width: $content-max-width;
     margin: auto;
   }
@@ -57,7 +57,7 @@ body {
 }
 
 :root {
-  --swiper-pagination-color: #34D399;
+  --swiper-pagination-color: #34d399;
   --swiper-pagination-bullet-size: 8px;
   --swiper-pagination-bullet-width: 8px;
   --swiper-pagination-bullet-height: 8px;
@@ -68,33 +68,32 @@ body {
   --swiper-pagination-bullet-vertical-gap: 6px;
 }
 
-input[type=range]::-webkit-slider-thumb {
+input[type="range"]::-webkit-slider-thumb {
   background: #34d399; /* This is the color for emerald-400 in Tailwind CSS */
 }
 
-input[type=range]::-moz-range-thumb {
+input[type="range"]::-moz-range-thumb {
   background: #34d399;
 }
 
-input[type=range]::-ms-thumb {
+input[type="range"]::-ms-thumb {
   background: #34d399;
 }
 
-
-input[type=range]::-moz-range-progress {
+input[type="range"]::-moz-range-progress {
   background: #34d399; /* This is the color for emerald-400 in Tailwind CSS */
 }
 
-input[type=range]::-ms-fill-upper {
+input[type="range"]::-ms-fill-upper {
   background: #34d399;
 }
 
-input[type=number] {
+input[type="number"] {
   -webkit-appearance: textfield; /* This removes the default browser styling */
 }
 
-input[type=number]::-webkit-inner-spin-button,
-input[type=number]::-webkit-outer-spin-button {
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none; /* This hides the spinners */
   margin: 0; /* This removes the extra space created by the spinners */
 }
@@ -118,7 +117,11 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 @keyframes bounce {
-  0%, 20%, 50%, 80%, 100% {
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
     transform: translateY(0);
   }
   40% {
@@ -130,7 +133,8 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 @keyframes press {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   20% {

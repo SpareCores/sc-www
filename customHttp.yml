@@ -1,7 +1,7 @@
 customHeaders:
-  - pattern: '/assets/giscus.css'
+  - pattern: "/assets/giscus.css"
     headers:
-    - key: 'Access-Control-Allow-Origin'
-      value: 'https://giscus.app'
-    - key: 'Access-Control-Allow-Methods'
-      value: 'OPTIONS,GET'
+      - key: "Access-Control-Allow-Origin"
+        value: "https://giscus.app"
+      - key: "Access-Control-Allow-Methods"
+        value: "OPTIONS,GET"

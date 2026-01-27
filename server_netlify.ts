@@ -1,9 +1,9 @@
-import { APP_BASE_HREF } from '@angular/common';
-import { CommonEngine } from '@angular/ssr';
-import express, { Router } from 'express';
-import { fileURLToPath } from 'node:url';
-import { dirname, join, resolve } from 'node:path';
-import { AppServerModule } from './src/app/app.server.module';
+import { APP_BASE_HREF } from "@angular/common";
+import { CommonEngine } from "@angular/ssr";
+import express, { Router } from "express";
+import { fileURLToPath } from "node:url";
+import { dirname, join, resolve } from "node:path";
+import { AppServerModule } from "./src/app/app.server.module";
 import serverless from "serverless-http";
 
 // The Express app is exported so that it can be used by serverless Functions.
@@ -52,7 +52,7 @@ export function app(): express.Express {
 }
 
 function run(): void {
-  const port = process.env['PORT'] || 4000;
+  const port = process.env["PORT"] || 4000;
 
   // Start up the Node server
   const server = app();

@@ -2,12 +2,12 @@
   display: block;
   min-height: 100vh;
   background-color: white;
- :host {
-   display: block;
-   min-height: 100vh;
-   background-color: white;
-   font-family: "Garamond", "Times New Roman", serif;
- }
+  :host {
+    display: block;
+    min-height: 100vh;
+    background-color: white;
+    font-family: "Garamond", "Times New Roman", serif;
+  }
 }
 
 .funding-container {

@@ -1,51 +1,136 @@
-<div class="border-t border-solid border-emerald-400 bg-secondary px-4 lg:px-6 pt-12 pb-16 w-full">
+<div
+  class="border-t border-solid border-emerald-400 bg-secondary px-4 lg:px-6 pt-12 pb-16 w-full"
+>
   <div class="content flex flex-wrap justify-between items-center gap-6 w-full">
     <div class="flex gap-6 items-center">
-      <img style="max-width: 140px; max-height: 70px;" src="./assets/images/logos/logo.png" alt="Spare Cores Small Logo" >
+      <img
+        style="max-width: 140px; max-height: 70px"
+        src="./assets/images/logos/logo.png"
+        alt="Spare Cores Small Logo"
+      />
       <div class="flex flex-col gap-2">
-        <app-theme-text text="spare_cores" classes="text-xl" ></app-theme-text>
-        <div class="text-white flex gap-1 text-sm font-light">© 2023-{{ currentYear }} Spare Cores <div class="text-emerald-400">|</div> Some rights reserved.</div>
+        <app-theme-text text="spare_cores" classes="text-xl"></app-theme-text>
+        <div class="text-white flex gap-1 text-sm font-light">
+          © 2023-{{ currentYear }} Spare Cores
+          <div class="text-emerald-400">|</div>
+          Some rights reserved.
+        </div>
       </div>
     </div>
     <div class="w-full lg:w-auto flex gap-6 items-center justify-end">
       <div class="flex flex-col gap-2">
-        <div class="text-white text-md font-bold text-right">Company & Legal</div>
+        <div class="text-white text-md font-bold text-right">
+          Company & Legal
+        </div>
         <div class="text-white flex gap-1 text-sm font-light">
-          <a routerLink="/legal/terms-of-service" class="hover:text-gray-500">Terms of Service</a>
+          <a routerLink="/legal/terms-of-service" class="hover:text-gray-500"
+            >Terms of Service</a
+          >
           <div class="text-emerald-400">|</div>
-          <a routerLink="/legal/privacy-policy" class="hover:text-gray-500">Privacy Policy</a>
+          <a routerLink="/legal/privacy-policy" class="hover:text-gray-500"
+            >Privacy Policy</a
+          >
         </div>
       </div>
       <div class="flex gap-3 text-white">
-        <a href="/contact" class="hover:text-gray-500" aria-label="Contact us" >
+        <a href="/contact" class="hover:text-gray-500" aria-label="Contact us">
           <lucide-icon name="mail"></lucide-icon>
         </a>
-        <a href="https://github.com/SpareCores" target="_blank" rel="noopener" class="hover:text-gray-500" aria-label="GitHub repository" >
+        <a
+          href="https://github.com/SpareCores"
+          target="_blank"
+          rel="noopener"
+          class="hover:text-gray-500"
+          aria-label="GitHub repository"
+        >
           <lucide-icon name="github"></lucide-icon>
         </a>
-        <a href="https://dbdocs.io/spare-cores/sc-crawler" target="_blank" rel="noopener" class="hover:text-gray-500" aria-label="Database documentation">
+        <a
+          href="https://dbdocs.io/spare-cores/sc-crawler"
+          target="_blank"
+          rel="noopener"
+          class="hover:text-gray-500"
+          aria-label="Database documentation"
+        >
           <lucide-icon name="codesandbox"></lucide-icon>
         </a>
-        <a href="https://status.sparecores.com" target="_blank" rel="noopener" class="hover:text-gray-500" aria-label="Status page">
-          <svg role="img" width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" >
-            <path d="m.7792 10.7479-.7654 6.6384a2.0957 2.0957 0 0 0 .696 1.8122l1.8965 1.672c.6494.5725 1.658.0145 1.5185-.84L2.6039 10.705c-.1723-1.056-1.7022-1.02-1.8247.0429Zm12.3733 8.714L8.63 6.431c-.5023-1.4472-2.6082-1.3845-3.0203.0898l-1.376 4.9234c-.156.559-.216.8822.0005 1.4212h.5225l1.8993 6.0694c.294.7324.9017 1.3009 1.6611 1.5538l2.8315.9435c1.2417.4137 2.4268-.7513 2.004-1.97zm10.6297-1.0332L15.7907 3.4433c-.6971-1.3072-2.5779-1.2727-3.227.0589l-1.9652 3.9555c-.2375.487-.1274.6608.07.9435.1585.2268.526.2447.6758.012.147-.2287.488-.2076.6058.0375l5.1379 10.687a2.735 2.735 0 0 0 2.1416 1.6016l2.7183.3476c1.4628.1924 2.5299-1.3539 1.8343-2.6582z"/>
+        <a
+          href="https://status.sparecores.com"
+          target="_blank"
+          rel="noopener"
+          class="hover:text-gray-500"
+          aria-label="Status page"
+        >
+          <svg
+            role="img"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path
+              d="m.7792 10.7479-.7654 6.6384a2.0957 2.0957 0 0 0 .696 1.8122l1.8965 1.672c.6494.5725 1.658.0145 1.5185-.84L2.6039 10.705c-.1723-1.056-1.7022-1.02-1.8247.0429Zm12.3733 8.714L8.63 6.431c-.5023-1.4472-2.6082-1.3845-3.0203.0898l-1.376 4.9234c-.156.559-.216.8822.0005 1.4212h.5225l1.8993 6.0694c.294.7324.9017 1.3009 1.6611 1.5538l2.8315.9435c1.2417.4137 2.4268-.7513 2.004-1.97zm10.6297-1.0332L15.7907 3.4433c-.6971-1.3072-2.5779-1.2727-3.227.0589l-1.9652 3.9555c-.2375.487-.1274.6608.07.9435.1585.2268.526.2447.6758.012.147-.2287.488-.2076.6058.0375l5.1379 10.687a2.735 2.735 0 0 0 2.1416 1.6016l2.7183.3476c1.4628.1924 2.5299-1.3539 1.8343-2.6582z"
+            />
           </svg>
         </a>
-        <a href="https://linkedin.com/company/SpareCores" target="_blank" rel="noopener" class="hover:text-gray-500" aria-label="LinkedIn profile">
+        <a
+          href="https://linkedin.com/company/SpareCores"
+          target="_blank"
+          rel="noopener"
+          class="hover:text-gray-500"
+          aria-label="LinkedIn profile"
+        >
           <lucide-icon name="linkedin"></lucide-icon>
         </a>
-        <a href="https://www.youtube.com/@SpareCores" target="_blank" rel="noopener" class="hover:text-gray-500" aria-label="YouTube channel">
+        <a
+          href="https://www.youtube.com/@SpareCores"
+          target="_blank"
+          rel="noopener"
+          class="hover:text-gray-500"
+          aria-label="YouTube channel"
+        >
           <lucide-icon name="youtube"></lucide-icon>
         </a>
-        <a rel="me noopener" href="https://fosstodon.org/@sparecores" target="_blank" class="hover:text-gray-500" aria-label="Fosstodon/Mastodon profile">
+        <a
+          rel="me noopener"
+          href="https://fosstodon.org/@sparecores"
+          target="_blank"
+          class="hover:text-gray-500"
+          aria-label="Fosstodon/Mastodon profile"
+        >
           <!-- TODO how to reference the SVG file in the icons folder while keeping CSS>currentColor interactivity? -->
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-brand-mastodon">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="icon icon-tabler icons-tabler-outline icon-tabler-brand-mastodon"
+          >
             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-            <path d="M18.648 15.254c-1.816 1.763 -6.648 1.626 -6.648 1.626a18.262 18.262 0 0 1 -3.288 -.256c1.127 1.985 4.12 2.81 8.982 2.475c-1.945 2.013 -13.598 5.257 -13.668 -7.636l-.026 -1.154c0 -3.036 .023 -4.115 1.352 -5.633c1.671 -1.91 6.648 -1.666 6.648 -1.666s4.977 -.243 6.648 1.667c1.329 1.518 1.352 2.597 1.352 5.633s-.456 4.074 -1.352 4.944z" />
-            <path d="M12 11.204v-2.926c0 -1.258 -.895 -2.278 -2 -2.278s-2 1.02 -2 2.278v4.722m4 -4.722c0 -1.258 .895 -2.278 2 -2.278s2 1.02 2 2.278v4.722" />
+            <path
+              d="M18.648 15.254c-1.816 1.763 -6.648 1.626 -6.648 1.626a18.262 18.262 0 0 1 -3.288 -.256c1.127 1.985 4.12 2.81 8.982 2.475c-1.945 2.013 -13.598 5.257 -13.668 -7.636l-.026 -1.154c0 -3.036 .023 -4.115 1.352 -5.633c1.671 -1.91 6.648 -1.666 6.648 -1.666s4.977 -.243 6.648 1.667c1.329 1.518 1.352 2.597 1.352 5.633s-.456 4.074 -1.352 4.944z"
+            />
+            <path
+              d="M12 11.204v-2.926c0 -1.258 -.895 -2.278 -2 -2.278s-2 1.02 -2 2.278v4.722m4 -4.722c0 -1.258 .895 -2.278 2 -2.278s2 1.02 2 2.278v4.722"
+            />
           </svg>
         </a>
-        <a href="https://twitter.com/SpareCores" target="_blank" rel="noopener" class="hover:text-gray-500" aria-label="Twitter profile">
+        <a
+          href="https://twitter.com/SpareCores"
+          target="_blank"
+          rel="noopener"
+          class="hover:text-gray-500"
+          aria-label="Twitter profile"
+        >
           <lucide-icon name="twitter"></lucide-icon>
         </a>
       </div>

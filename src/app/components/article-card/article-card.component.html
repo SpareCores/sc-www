@@ -1,8 +1,20 @@
-<div class="w-full flex flex-col gap-4" >
-  <a routerLink="/article/{{article.filename}}" [attr.aria-label]="article.title">
-    <img class="rounded-xl mb-4 w-full" [src]="article.image" [attr.alt]="article.image_alt" >
+<div class="w-full flex flex-col gap-4">
+  <a
+    routerLink="/article/{{ article.filename }}"
+    [attr.aria-label]="article.title"
+  >
+    <img
+      class="rounded-xl mb-4 w-full"
+      [src]="article.image"
+      [attr.alt]="article.image_alt"
+    />
   </a>
-  <div> {{article.date | timeToShortDate}} </div>
-  <a routerLink="/article/{{article.filename}}" class="font-bold text-2xl text-emerald-400 hover:text-emerald-500"> {{article.title}} </a>
-  <div> {{article.teaser}} </div>
+  <div>{{ article.date | timeToShortDate }}</div>
+  <a
+    routerLink="/article/{{ article.filename }}"
+    class="font-bold text-2xl text-emerald-400 hover:text-emerald-500"
+  >
+    {{ article.title }}
+  </a>
+  <div>{{ article.teaser }}</div>
 </div>

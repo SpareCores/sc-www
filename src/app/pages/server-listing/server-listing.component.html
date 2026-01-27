@@ -7,63 +7,98 @@
       <div class="flex gap-4 items-center w-full justify-between">
         <h1 class="text-white font-bold text-3xl flex items-center">
           <lucide-icon class="h-8 w-8 mr-2" name="ship-wheel"></lucide-icon>
-          {{title}}
+          {{ title }}
         </h1>
-        <button class="btn-primary py-2 px-3 flex gap-1 items-center" (click)="clipboardURL()">
+        <button
+          class="btn-primary py-2 px-3 flex gap-1 items-center"
+          (click)="clipboardURL()"
+        >
           Share
-          <lucide-icon name="{{clipboardIcon}}" size="16" class="ml-2"></lucide-icon>
+          <lucide-icon
+            name="{{ clipboardIcon }}"
+            size="16"
+            class="ml-2"
+          ></lucide-icon>
         </button>
       </div>
       <div class="text-white text-xl pr-16">
-        {{description}}
+        {{ description }}
       </div>
     </div>
 
     <div class="flex gap-8 mx-2 xl:mx-0">
-      <div class="filter_bar bg-primary"
+      <div
+        class="filter_bar bg-primary"
         [ngClass]="{
-          'collapsed': isCollapsed
-        }">
-        <div class="collapser bg-secondary" (click)="toggleCollapse()" tabindex="0"
-             data-ph-capture-attribute-sc-event="server listing toggle sidebar">
-          <lucide-icon name="chevron-left" class="h-6 w-6 text-emerald-400"></lucide-icon>
+          collapsed: isCollapsed,
+        }"
+      >
+        <div
+          class="collapser bg-secondary"
+          (click)="toggleCollapse()"
+          tabindex="0"
+          data-ph-capture-attribute-sc-event="server listing toggle sidebar"
+        >
+          <lucide-icon
+            name="chevron-left"
+            class="h-6 w-6 text-emerald-400"
+          ></lucide-icon>
         </div>
 
         <app-search-bar
-        [query]="query"
-        [filterCategories]="filterCategories"
-        [searchParameters]="searchParameters"
-        [extraParameters]="specialParameters"
-        (searchChanged)="searchBarChanged($event)"
-        > </app-search-bar>
+          [query]="query"
+          [filterCategories]="filterCategories"
+          [searchParameters]="searchParameters"
+          [extraParameters]="specialParameters"
+          (searchChanged)="searchBarChanged($event)"
+        >
+        </app-search-bar>
       </div>
-      <div class=" list_holder flex flex-col gap-4"
-          [ngClass]="{
-            'limited-full': !isCollapsed,
-            'w-full': isCollapsed
-          }">
-        <div class="top_buttons w-[calc(100%-60px)] flex justify-end gap-6 items-center ml-auto" >
+      <div
+        class="list_holder flex flex-col gap-4"
+        [ngClass]="{
+          'limited-full': !isCollapsed,
+          'w-full': isCollapsed,
+        }"
+      >
+        <div
+          class="top_buttons w-[calc(100%-60px)] flex justify-end gap-6 items-center ml-auto"
+        >
           <div class="min-w-0">
             <button
               id="benchmark_select_button"
               data-ph-capture-attribute-sc-event="server listing benchmark select"
               class="dropdown_button min-w-0 max-w-full"
               (click)="openModal()"
-              type="button">
-              <div class="px-4 py-3 flex-1 min-w-0" *ngIf="!selectedBenchmarkConfig">
-                <span class="hidden md:inline truncate block">Select Benchmark</span>
+              type="button"
+            >
+              <div
+                class="px-4 py-3 flex-1 min-w-0"
+                *ngIf="!selectedBenchmarkConfig"
+              >
+                <span class="hidden md:inline truncate block"
+                  >Select Benchmark</span
+                >
                 <span class="md:hidden truncate block">Benchmark</span>
               </div>
-              <div class="px-4 py-0 flex flex-col min-w-0" *ngIf="selectedBenchmarkConfig">
+              <div
+                class="px-4 py-0 flex flex-col min-w-0"
+                *ngIf="selectedBenchmarkConfig"
+              >
                 <div class="truncate">
-                  {{selectedBenchmarkConfig.benchmarkTemplate.name}}
+                  {{ selectedBenchmarkConfig.benchmarkTemplate.name }}
                 </div>
                 <div class="text-xs truncate">
-                  {{selectedBenchmarkConfig.config}}
+                  {{ selectedBenchmarkConfig.config }}
                 </div>
               </div>
-              <div class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
-                <lucide-icon name="gauge" class="h-6 w-6 text-emerald-400"></lucide-icon>
+              <div
+                class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
+              >
+                <lucide-icon
+                  name="gauge"
+                  class="h-6 w-6 text-emerald-400"
+                ></lucide-icon>
               </div>
             </button>
           </div>
@@ -73,19 +108,30 @@
               data-ph-capture-attribute-sc-event="server listing columns select"
               data-dropdown-toggle="column_options"
               class="dropdown_button"
-              type="button">
-              <div class="px-4 py-3">
-              Columns
-              </div>
-              <div class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
-                <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
+              type="button"
+            >
+              <div class="px-4 py-3">Columns</div>
+              <div
+                class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
+              >
+                <lucide-icon
+                  name="chevron-down"
+                  class="h-6 w-6 text-emerald-400"
+                ></lucide-icon>
               </div>
             </button>
           </div>
         </div>
         <div>
-          <div class="w-full overflow-x-auto relative" style="padding-left: 1px;">
-            <div *ngIf="isLoading" class="absolute top-0 left-0 w-full h-full" style="background-color: rgba(0,0,0,0.2);" >
+          <div
+            class="w-full overflow-x-auto relative"
+            style="padding-left: 1px"
+          >
+            <div
+              *ngIf="isLoading"
+              class="absolute top-0 left-0 w-full h-full"
+              style="background-color: rgba(0, 0, 0, 0.2)"
+            >
               <div class="flex justify-center mt-16 opacity-100">
                 <app-loading-spinner size="lg"></app-loading-spinner>
               </div>
@@ -95,182 +141,313 @@
                 <tr>
                   <th class="checkbox_column">
                     <div class="text-white">
-                      <lucide-icon class="h-4 w-4" name="scale" ></lucide-icon>
+                      <lucide-icon class="h-4 w-4" name="scale"></lucide-icon>
                     </div>
                   </th>
-                  <th *ngFor="let item of tableColumns"
-                      [ngClass]="{
-                        'cursor-pointer': item.orderField
-                      }"
-                      (click)="toggleOrdering(item)" >
-                      <div class="flex gap-1 whitespace-nowrap">
-                        {{item.name}}
-                        <lucide-icon
-                          *ngIf="item.info"
-                          name="info"
-                          (mouseenter)="showTooltip($event, item.info)"
-                          (mouseleave)="hideTooltip()"
-                          class="h-4 w-4 text-gray-200">
-                        </lucide-icon>
-                        <lucide-icon *ngIf="getOrderingIcon(item)" name="{{getOrderingIcon(item)}}" class="h-4 w-4 text-white"></lucide-icon>
-                      </div>
+                  <th
+                    *ngFor="let item of tableColumns"
+                    [ngClass]="{
+                      'cursor-pointer': item.orderField,
+                    }"
+                    (click)="toggleOrdering(item)"
+                  >
+                    <div class="flex gap-1 whitespace-nowrap">
+                      {{ item.name }}
+                      <lucide-icon
+                        *ngIf="item.info"
+                        name="info"
+                        (mouseenter)="showTooltip($event, item.info)"
+                        (mouseleave)="hideTooltip()"
+                        class="h-4 w-4 text-gray-200"
+                      >
+                      </lucide-icon>
+                      <lucide-icon
+                        *ngIf="getOrderingIcon(item)"
+                        name="{{ getOrderingIcon(item) }}"
+                        class="h-4 w-4 text-white"
+                      ></lucide-icon>
+                    </div>
                   </th>
                   <th></th>
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let item of servers; let i = index" (click)="openServerDetails(item)"
-                    data-ph-capture-attribute-sc-event="server listing route to server details"
-                    [attr.data-ph-capture-attribute-server-listing-row-vendor]="item.vendor_id"
-                    [attr.data-ph-capture-attribute-server-listing-row-index]="i+1"
-                    [attr.data-ph-capture-attribute-server-listing-row-page-size]="limit"
-                    id="server_table_data_line">
-
-                  <td (click)="toggleCompare2($event, item)" class="checkbox_column">
+                <tr
+                  *ngFor="let item of servers; let i = index"
+                  (click)="openServerDetails(item)"
+                  data-ph-capture-attribute-sc-event="server listing route to server details"
+                  [attr.data-ph-capture-attribute-server-listing-row-vendor]="
+                    item.vendor_id
+                  "
+                  [attr.data-ph-capture-attribute-server-listing-row-index]="
+                    i + 1
+                  "
+                  [attr.data-ph-capture-attribute-server-listing-row-page-size]="
+                    limit
+                  "
+                  id="server_table_data_line"
+                >
+                  <td
+                    (click)="toggleCompare2($event, item)"
+                    class="checkbox_column"
+                  >
                     <div class="flex items-center">
-                      <input type="checkbox"
-                        id="server_compare_checkbox_{{item.server_id}}"
+                      <input
+                        type="checkbox"
+                        id="server_compare_checkbox_{{ item.server_id }}"
                         [(ngModel)]="item.selected"
                         (ngModelChange)="toggleCompare($event, item)"
                         (click)="$event.stopPropagation()"
-                        class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer" >
+                        class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer"
+                      />
                     </div>
                   </td>
                   <ng-container *ngFor="let column of tableColumns">
                     <td *ngIf="column.type === 'name'">
                       <div (click)="$event.stopPropagation()">
-                        <a routerLink="/server/{{item.vendor.vendor_id}}/{{item.api_reference}}"
-                           data-ph-capture-attribute-sc-event="server listing route to server details"
-                           [attr.data-ph-capture-attribute-server-listing-row-vendor]="item.vendor_id"
-                           [attr.data-ph-capture-attribute-server-listing-row-index]="i+1"
-                           [attr.data-ph-capture-attribute-server-listing-row-page-size]="limit">
+                        <a
+                          routerLink="/server/{{ item.vendor.vendor_id }}/{{
+                            item.api_reference
+                          }}"
+                          data-ph-capture-attribute-sc-event="server listing route to server details"
+                          [attr.data-ph-capture-attribute-server-listing-row-vendor]="
+                            item.vendor_id
+                          "
+                          [attr.data-ph-capture-attribute-server-listing-row-index]="
+                            i + 1
+                          "
+                          [attr.data-ph-capture-attribute-server-listing-row-page-size]="
+                            limit
+                          "
+                        >
                           <div class="text-sm text-white flex gap-1">
-                            <span class="whitespace-nowrap">{{item.display_name}} </span>
-                            <span *ngIf="showAPIReference(item)" class="text-emerald-400" >|</span>
-                            <span *ngIf="showAPIReference(item)" class="whitespace-nowrap">{{item.api_reference}} </span>
+                            <span class="whitespace-nowrap"
+                              >{{ item.display_name }}
+                            </span>
+                            <span
+                              *ngIf="showAPIReference(item)"
+                              class="text-emerald-400"
+                              >|</span
+                            >
+                            <span
+                              *ngIf="showAPIReference(item)"
+                              class="whitespace-nowrap"
+                              >{{ item.api_reference }}
+                            </span>
                           </div>
                           <div class="text-xs text-white flex gap-1">
-                            <span>{{item.vendor_id}}</span>
+                            <span>{{ item.vendor_id }}</span>
                           </div>
                         </a>
                       </div>
                     </td>
                     <td *ngIf="column.type === 'processor'">
-                      <div class="text-sm text-white whitespace-nowrap">{{item.vcpus}} vCPUs ({{item.cpu_architecture}})</div>
+                      <div class="text-sm text-white whitespace-nowrap">
+                        {{ item.vcpus }} vCPUs ({{ item.cpu_architecture }})
+                      </div>
                       <div class="flex gap-1">
                         <div
                           *ngIf="item.cpu_cores && item.cpu_speed"
-                          class="text-xs text-white flex gap-1">
-                          <span class="whitespace-nowrap">{{item.cpu_cores}} cores &#64; {{item.cpu_speed}} GHz</span>
+                          class="text-xs text-white flex gap-1"
+                        >
+                          <span class="whitespace-nowrap"
+                            >{{ item.cpu_cores }} cores &#64;
+                            {{ item.cpu_speed }} GHz</span
+                          >
                         </div>
                         <div
-                          *ngIf="item.cpu_allocation && item.cpu_allocation !== 'Dedicated'"
-                          class="text-xs text-white flex gap-1">
-                          <span>({{item.cpu_allocation}})</span>
+                          *ngIf="
+                            item.cpu_allocation &&
+                            item.cpu_allocation !== 'Dedicated'
+                          "
+                          class="text-xs text-white flex gap-1"
+                        >
+                          <span>({{ item.cpu_allocation }})</span>
                         </div>
                       </div>
                     </td>
                     <td *ngIf="column.type === 'price'">
-                      <div *ngIf="item[column.key || 'price']" class="text-sm text-white whitespace-nowrap">{{item[column.key || 'price']}} USD</div>
-                      <div *ngIf="!item[column.key || 'price']" class="text-sm text-white">-</div>
+                      <div
+                        *ngIf="item[column.key || 'price']"
+                        class="text-sm text-white whitespace-nowrap"
+                      >
+                        {{ item[column.key || "price"] }} USD
+                      </div>
+                      <div
+                        *ngIf="!item[column.key || 'price']"
+                        class="text-sm text-white"
+                      >
+                        -
+                      </div>
                     </td>
                     <td *ngIf="column.type === 'score'">
-                      <div class="text-sm text-white whitespace-nowrap">{{getScore(item.score)}}</div>
-                      <div *ngIf="item.score_per_price" class="text-xs text-white flex gap-1">
-                        <span class="whitespace-nowrap">{{getScore(item.score_per_price)}} / USD</span>
+                      <div class="text-sm text-white whitespace-nowrap">
+                        {{ getScore(item.score) }}
+                      </div>
+                      <div
+                        *ngIf="item.score_per_price"
+                        class="text-xs text-white flex gap-1"
+                      >
+                        <span class="whitespace-nowrap"
+                          >{{ getScore(item.score_per_price) }} / USD</span
+                        >
                       </div>
                     </td>
                     <td *ngIf="column.type === 'benchmark'">
-                      <div class="text-sm text-white whitespace-nowrap">{{getScore(item.selected_benchmark_score)}}</div>
-                      <div *ngIf="item.selected_benchmark_score" class="text-xs text-white flex gap-1">
-                        <span class="whitespace-nowrap">{{selectedBenchmarkConfig.short_unit}}</span>
+                      <div class="text-sm text-white whitespace-nowrap">
+                        {{ getScore(item.selected_benchmark_score) }}
+                      </div>
+                      <div
+                        *ngIf="item.selected_benchmark_score"
+                        class="text-xs text-white flex gap-1"
+                      >
+                        <span class="whitespace-nowrap">{{
+                          selectedBenchmarkConfig.short_unit
+                        }}</span>
                       </div>
                     </td>
                     <td *ngIf="column.type === 'score_per_price'">
-                      <span *ngIf="item.score_per_price" class="whitespace-nowrap">{{getScore(item.score_per_price)}} / USD</span>
+                      <span
+                        *ngIf="item.score_per_price"
+                        class="whitespace-nowrap"
+                        >{{ getScore(item.score_per_price) }} / USD</span
+                      >
                       <span *ngIf="!item.score_per_price">-</span>
                     </td>
                     <td *ngIf="column.type === 'benchmark_score_per_price'">
-                      <span *ngIf="item.selected_benchmark_score_per_price" class="whitespace-nowrap">{{getScore(item.selected_benchmark_score_per_price)}}  {{selectedBenchmarkConfig.unit_abbreviation}}</span>
-                      <div *ngIf="item.selected_benchmark_score_per_price" class="text-xs text-white flex gap-1">
+                      <span
+                        *ngIf="item.selected_benchmark_score_per_price"
+                        class="whitespace-nowrap"
+                        >{{ getScore(item.selected_benchmark_score_per_price) }}
+                        {{ selectedBenchmarkConfig.unit_abbreviation }}</span
+                      >
+                      <div
+                        *ngIf="item.selected_benchmark_score_per_price"
+                        class="text-xs text-white flex gap-1"
+                      >
                         <span class="whitespace-nowrap">for $1/hour</span>
                       </div>
-                      <span *ngIf="!item.selected_benchmark_score_per_price">-</span>
+                      <span *ngIf="!item.selected_benchmark_score_per_price"
+                        >-</span
+                      >
                     </td>
                     <td *ngIf="column.type === 'memory'">
-                      <div class="text-sm text-white">{{getMemory(item)}}</div>
+                      <div class="text-sm text-white">
+                        {{ getMemory(item) }}
+                      </div>
                       <div
                         *ngIf="item.memory_speed"
-                        class="text-xs text-white flex gap-1">
-                        <span *ngIf="!item.memory_generation" class="whitespace-nowrap">{{item.memory_speed}} MHz</span>
-                        <span *ngIf="item.memory_generation" class="whitespace-nowrap">{{item.memory_speed}} MHz ({{item.memory_generation}})</span>
+                        class="text-xs text-white flex gap-1"
+                      >
+                        <span
+                          *ngIf="!item.memory_generation"
+                          class="whitespace-nowrap"
+                          >{{ item.memory_speed }} MHz</span
+                        >
+                        <span
+                          *ngIf="item.memory_generation"
+                          class="whitespace-nowrap"
+                          >{{ item.memory_speed }} MHz ({{
+                            item.memory_generation
+                          }})</span
+                        >
                       </div>
                     </td>
                     <td *ngIf="column.type === 'gpu_memory_min'">
-                      {{getGPUMemory(item, 'min')}}
+                      {{ getGPUMemory(item, "min") }}
                     </td>
                     <td *ngIf="column.type === 'gpu_memory_total'">
-                      {{getGPUMemory(item, 'total')}}
+                      {{ getGPUMemory(item, "total") }}
                     </td>
                     <td *ngIf="column.type === 'storage'">
-                      <div class="text-sm text-white">{{getStorage(item)}}</div>
-                      <div
-                        *ngIf="item.storage_type"
-                        class="text-xs text-white">
-                        <span>{{item.storage_type}}</span>
+                      <div class="text-sm text-white">
+                        {{ getStorage(item) }}
+                      </div>
+                      <div *ngIf="item.storage_type" class="text-xs text-white">
+                        <span>{{ item.storage_type }}</span>
                       </div>
                     </td>
                     <td *ngIf="column.type === 'gpu'">
-                      <div class="text-sm text-white">{{item.gpu_count}}</div>
+                      <div class="text-sm text-white">{{ item.gpu_count }}</div>
                       <div
                         *ngIf="item.gpu_model"
-                        class="text-xs text-white flex gap-1">
-                        <span>{{item.gpu_model}}</span>
+                        class="text-xs text-white flex gap-1"
+                      >
+                        <span>{{ item.gpu_model }}</span>
                       </div>
                     </td>
                     <td *ngIf="column.type === 'cpu_model'">
                       <div
                         *ngIf="item.cpu_model"
-                        class="text-sm text-white flex gap-1">
-                        <span>{{item.cpu_model}}</span>
+                        class="text-sm text-white flex gap-1"
+                      >
+                        <span>{{ item.cpu_model }}</span>
                       </div>
                       <div class="text-xs text-white">
-                        <span *ngIf="item.cpu_manufacturer">{{item.cpu_manufacturer}} </span>
-                        <span *ngIf="item.cpu_family">{{item.cpu_family}} </span>
+                        <span *ngIf="item.cpu_manufacturer"
+                          >{{ item.cpu_manufacturer }}
+                        </span>
+                        <span *ngIf="item.cpu_family"
+                          >{{ item.cpu_family }}
+                        </span>
                       </div>
                     </td>
                     <td *ngIf="column.type === 'gpu_model'">
                       <div
                         *ngIf="item.gpu_model"
-                        class="text-sm text-white flex gap-1">
-                        <span>{{item.gpu_model}}</span>
+                        class="text-sm text-white flex gap-1"
+                      >
+                        <span>{{ item.gpu_model }}</span>
                       </div>
                       <div class="text-xs text-white">
-                        <span *ngIf="item.gpu_manufacturer">{{item.gpu_manufacturer}} </span>
-                        <span *ngIf="item.gpu_family">{{item.gpu_family}} </span>
+                        <span *ngIf="item.gpu_manufacturer"
+                          >{{ item.gpu_manufacturer }}
+                        </span>
+                        <span *ngIf="item.gpu_family"
+                          >{{ item.gpu_family }}
+                        </span>
                       </div>
                     </td>
                     <td *ngIf="column.type === 'text' && column.key">
-                      {{getField(item, column.key)}}
+                      {{ getField(item, column.key) }}
                     </td>
-                    <td *ngIf="column.type === 'vendor'" >
-                      <div *ngIf="item.vendor.logo" class="w-9 h-9 px-1 py-1 bg-white rounded-lg">
-                        <img [src]="item.vendor.logo" alt="{{item.vendor.name}} logo" >
+                    <td *ngIf="column.type === 'vendor'">
+                      <div
+                        *ngIf="item.vendor.logo"
+                        class="w-9 h-9 px-1 py-1 bg-white rounded-lg"
+                      >
+                        <img
+                          [src]="item.vendor.logo"
+                          alt="{{ item.vendor.name }} logo"
+                        />
                       </div>
                       <div *ngIf="!item.vendor.logo" class="text-white text-sm">
-                          {{item.vendor.name}}
+                        {{ item.vendor.name }}
                       </div>
                     </td>
                   </ng-container>
                   <td>
                     <!-- eslint-disable-next-line @angular-eslint/template/interactive-supports-focus -->
                     <div (click)="$event.stopPropagation()">
-                      <a routerLink="/server/{{item.vendor.vendor_id}}/{{item.api_reference}}"
-                         data-ph-capture-attribute-sc-event="server listing route to server details"
-                         [attr.data-ph-capture-attribute-server-listing-row-vendor]="item.vendor_id"
-                         [attr.data-ph-capture-attribute-server-listing-row-index]="i+1"
-                         [attr.data-ph-capture-attribute-server-listing-row-page-size]="limit">
-                        <lucide-icon name="chevron-right" class="h-6 w-6 text-emerald-400"></lucide-icon>
+                      <a
+                        routerLink="/server/{{ item.vendor.vendor_id }}/{{
+                          item.api_reference
+                        }}"
+                        data-ph-capture-attribute-sc-event="server listing route to server details"
+                        [attr.data-ph-capture-attribute-server-listing-row-vendor]="
+                          item.vendor_id
+                        "
+                        [attr.data-ph-capture-attribute-server-listing-row-index]="
+                          i + 1
+                        "
+                        [attr.data-ph-capture-attribute-server-listing-row-page-size]="
+                          limit
+                        "
+                      >
+                        <lucide-icon
+                          name="chevron-right"
+                          class="h-6 w-6 text-emerald-400"
+                        ></lucide-icon>
                       </a>
                     </div>
                   </td>
@@ -285,15 +462,21 @@
                   id="pagesize_button"
                   data-ph-capture-attribute-sc-event="server listing page size select"
                   class="dropdown_button"
-                  type="button">
+                  type="button"
+                >
                   <div class="px-4 py-2">
-                  {{limit}}
+                    {{ limit }}
                   </div>
-                  <div class="px-2 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
-                    <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
+                  <div
+                    class="px-2 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
+                  >
+                    <lucide-icon
+                      name="chevron-down"
+                      class="h-6 w-6 text-emerald-400"
+                    ></lucide-icon>
                   </div>
                 </button>
-                <span class="text-white" > items per page</span>
+                <span class="text-white"> items per page</span>
               </div>
               <div>
                 <app-pagination
@@ -301,143 +484,206 @@
                   [currentPage]="page"
                   [totalPages]="totalPages"
                   [baseQueryParams]="getQueryObjectBase()"
-                  >
+                >
                 </app-pagination>
               </div>
             </div>
           </div>
         </div>
       </div>
-
     </div>
-
   </div>
 </div>
 
 <div *ngIf="compareCount() >= 2" class="fixed_buttons">
-  <div class="flex gap-4" >
+  <div class="flex gap-4">
     <button
       class="flex justify-center bg-red-400 text-white py-2 px-4 rounded-lg font-bold hover:bg-red-500"
       data-ph-capture-attribute-sc-event="server listing compare"
       data-ph-capture-attribute-server-listing-compare-action="open"
-      (click)="clearCompare()">
+      (click)="clearCompare()"
+    >
       Clear
     </button>
     <button
       class="flex justify-center bg-emerald-400 text-white py-2 px-4 rounded-lg font-bold hover:bg-emerald-500"
       data-ph-capture-attribute-sc-event="server listing compare"
       data-ph-capture-attribute-server-listing-compare-action="open"
-      (click)="openCompare()">
-      Compare ({{compareCount()}})
+      (click)="openCompare()"
+    >
+      Compare ({{ compareCount() }})
     </button>
   </div>
 </div>
 
-
-
-<div id="pagesize_options" class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid">
-  <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
-    <li *ngFor="let item of pageLimits"
+<div
+  id="pagesize_options"
+  class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid"
+>
+  <ul
+    class="py-2 px-1 text-sm text-gray-700"
+    aria-labelledby="dropdownDefaultButton"
+  >
+    <li
+      *ngFor="let item of pageLimits"
       class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-      (click)="selectPageSize(item)" tabindex="0">
-      <div class="text-white text-sm">{{item}} </div>
+      (click)="selectPageSize(item)"
+      tabindex="0"
+    >
+      <div class="text-white text-sm">{{ item }}</div>
     </li>
   </ul>
 </div>
 
-<div id="column_options" class="z-10 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid">
-  <ul class="py-2 px-3 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
-    <li *ngFor="let item of possibleColumns" class="flex py-1 gap-2 items-center">
-      <input type="checkbox"
-      [(ngModel)]="item.show"
-      (ngModelChange)="refreshColumns()"
-      class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer" >
-      <div class="text-white text-sm">{{item.name}}</div>
+<div
+  id="column_options"
+  class="z-10 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid"
+>
+  <ul
+    class="py-2 px-3 text-sm text-gray-700"
+    aria-labelledby="dropdownDefaultButton"
+  >
+    <li
+      *ngFor="let item of possibleColumns"
+      class="flex py-1 gap-2 items-center"
+    >
+      <input
+        type="checkbox"
+        [(ngModel)]="item.show"
+        (ngModelChange)="refreshColumns()"
+        class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer"
+      />
+      <div class="text-white text-sm">{{ item.name }}</div>
     </li>
   </ul>
 </div>
 
-<div id="tooltipDefault"
+<div
+  id="tooltipDefault"
   #tooltipDefault
-  style="opacity: 0;"
-  class="absolute z-10 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-secondary border border-solid border-emerald-400 rounded-lg">
-  {{tooltipContent}}
+  style="opacity: 0"
+  class="absolute z-10 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-secondary border border-solid border-emerald-400 rounded-lg"
+>
+  {{ tooltipContent }}
 </div>
 
 <!-- Large Modal -->
-<div id="benchmark-type-modal"
-    tabindex="-1"
-    class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-fit min-h-full flex items-center">
+<div
+  id="benchmark-type-modal"
+  tabindex="-1"
+  class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-fit min-h-full flex items-center"
+>
   <div class="relative w-full max-w-xl">
-      <div class="relative bg-secondary rounded-lg shadow border border-solid border-emerald-400 flex flex-col max-h-[calc(100vh-2rem)]" >
-          <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
-              <h3 class="text-xl font-medium text-white dark:text-white">
-                  {{modalText}}
-              </h3>
-              <button type="button"
-                      data-ph-capture-attribute-sc-event="server listing search prompt close"
-                      data-ph-capture-attribute-server-listing-search-prompt-action="close"
-                      class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
-                      (click)="closeModal()">
-                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-                </svg>
-                <span class="sr-only">Close modal</span>
-              </button>
-          </div>
-          <div class="p-4 md:p-5 space-y-4 flex flex-col flex-1 min-h-0">
-            <div class="flex gap-2 flex-wrap justify-center" *ngIf="!tempSelectedBenchmarkCategory">
-              <button
-                (click)="selectBenchmarkCategory('All')"
-                type="button"
-                class="dropdown_group_button">
-                All
-              </button>
-              <button
-               *ngFor="let item of benchmarkCategories"
-                (click)="selectBenchmarkCategory(item)"
-                type="button"
-                class="dropdown_group_button">
-                {{item}}
-              </button>
+    <div
+      class="relative bg-secondary rounded-lg shadow border border-solid border-emerald-400 flex flex-col max-h-[calc(100vh-2rem)]"
+    >
+      <div
+        class="flex items-center justify-between p-4 md:p-5 border-b rounded-t"
+      >
+        <h3 class="text-xl font-medium text-white dark:text-white">
+          {{ modalText }}
+        </h3>
+        <button
+          type="button"
+          data-ph-capture-attribute-sc-event="server listing search prompt close"
+          data-ph-capture-attribute-server-listing-search-prompt-action="close"
+          class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
+          (click)="closeModal()"
+        >
+          <svg
+            class="w-3 h-3"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 14 14"
+          >
+            <path
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+            />
+          </svg>
+          <span class="sr-only">Close modal</span>
+        </button>
+      </div>
+      <div class="p-4 md:p-5 space-y-4 flex flex-col flex-1 min-h-0">
+        <div
+          class="flex gap-2 flex-wrap justify-center"
+          *ngIf="!tempSelectedBenchmarkCategory"
+        >
+          <button
+            (click)="selectBenchmarkCategory('All')"
+            type="button"
+            class="dropdown_group_button"
+          >
+            All
+          </button>
+          <button
+            *ngFor="let item of benchmarkCategories"
+            (click)="selectBenchmarkCategory(item)"
+            type="button"
+            class="dropdown_group_button"
+          >
+            {{ item }}
+          </button>
+        </div>
+        <div
+          class="flex flex-col gap-2 flex-1 min-h-0"
+          *ngIf="tempSelectedBenchmarkCategory"
+        >
+          <div class="relative mx-2">
+            <div
+              class="border border-emerald-400 absolute inset-x-0start-0 flex items-center pointer-events-none z-20 px-3 bg-secondary rounded-l-lg w-12 h-full"
+            >
+              <lucide-icon
+                class="text-emerald-400 w-5 h-5"
+                name="search"
+              ></lucide-icon>
             </div>
-            <div class="flex flex-col gap-2 flex-1 min-h-0" *ngIf="tempSelectedBenchmarkCategory">
-              <div class="relative mx-2">
-                <div class="border border-emerald-400 absolute inset-x-0start-0 flex items-center pointer-events-none z-20 px-3 bg-secondary rounded-l-lg w-12 h-full">
-                  <lucide-icon class="text-emerald-400 w-5 h-5" name="search"></lucide-icon>
-                </div>
-                <input
-                  placeholder="Filter"
-                  type="text"
-                  class="dropdown_input"
-                  [(ngModel)]="modalFilterTerm"
-                  (ngModelChange)="updateFilterTerm()" >
-              </div>
-              <div class="flex flex-col overflow-y-auto custom-scrollbar button_list_holder flex-1">
-                <button
-                *ngFor="let item of tempfilteredBenchmarkConfigs"
-                  (click)="selectBenchmarkConfig(item)"
-                  type="button"
-                  [ngClass]="{
-                    'active': item === selectedBenchmarkConfig
-                  }"
-                  class="button_list_item">
-                  <div >
-                    {{item.benchmarkTemplate.name}}
-                  </div>
-                  <div class="text-xs">
-                    {{item.config}}
-                  </div>
-                </button>
-              </div>
-            </div>
+            <input
+              placeholder="Filter"
+              type="text"
+              class="dropdown_input"
+              [(ngModel)]="modalFilterTerm"
+              (ngModelChange)="updateFilterTerm()"
+            />
           </div>
-          <div *ngIf="tempSelectedBenchmarkCategory" class="flex justify-center p-4 md:p-5 space-x-3 border-t border-gray-200 rounded-b">
-            <button class="flex justify-center border border-emerald-400 text-emerald-400 py-2 px-4 rounded-lg hover:bg-emerald-400 hover:text-white items-center" (click)="selectBenchmarkCategory(null)">
-              <lucide-icon name="chevron-left" class="h-5 w-5"></lucide-icon>
-              Back to benchmark categories
+          <div
+            class="flex flex-col overflow-y-auto custom-scrollbar button_list_holder flex-1"
+          >
+            <button
+              *ngFor="let item of tempfilteredBenchmarkConfigs"
+              (click)="selectBenchmarkConfig(item)"
+              type="button"
+              [ngClass]="{
+                active: item === selectedBenchmarkConfig,
+              }"
+              class="button_list_item"
+            >
+              <div>
+                {{ item.benchmarkTemplate.name }}
+              </div>
+              <div class="text-xs">
+                {{ item.config }}
+              </div>
             </button>
           </div>
+        </div>
       </div>
+      <div
+        *ngIf="tempSelectedBenchmarkCategory"
+        class="flex justify-center p-4 md:p-5 space-x-3 border-t border-gray-200 rounded-b"
+      >
+        <button
+          class="flex justify-center border border-emerald-400 text-emerald-400 py-2 px-4 rounded-lg hover:bg-emerald-400 hover:text-white items-center"
+          (click)="selectBenchmarkCategory(null)"
+        >
+          <lucide-icon name="chevron-left" class="h-5 w-5"></lucide-icon>
+          Back to benchmark categories
+        </button>
+      </div>
+    </div>
   </div>
 </div>

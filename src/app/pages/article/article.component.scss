@@ -10,7 +10,12 @@ div.giscus {
 }
 
 ::ng-deep .html_content {
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-bold text-emerald-400 my-4;
   }
   h1 {
@@ -51,7 +56,7 @@ div.giscus {
   }
 
   blockquote {
-    border-left: 1px solid #34D399;
+    border-left: 1px solid #34d399;
     padding: 0px 10px 0px 10px;
     margin: 10px;
   }
@@ -82,7 +87,7 @@ div.giscus {
     }
 
     tbody {
-      tr:nth-child(2n+1) {
+      tr:nth-child(2n + 1) {
         @apply bg-primary;
       }
       tr:nth-child(2n) {
@@ -124,13 +129,13 @@ div.giscus {
       }
     }
   }
-  table::-webkit-scrollbar{
+  table::-webkit-scrollbar {
     height: 4px;
     width: 4px;
-    background: #34D39933;
+    background: #34d39933;
   }
-  table::-webkit-scrollbar-thumb:horizontal{
-    background: #34D399;
+  table::-webkit-scrollbar-thumb:horizontal {
+    background: #34d399;
   }
 
   .header-anchor {

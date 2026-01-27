@@ -1,53 +1,71 @@
-import { Component, Inject, OnInit, PLATFORM_ID, Renderer2 } from '@angular/core';
-import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
-import { SeoHandlerService } from '../../services/seo-handler.service';
-import { KeeperAPIService } from '../../services/keeper-api.service';
-import { OrderDir, TableRegionTableRegionGetData } from '../../../../sdk/data-contracts';
-import { CountryIdtoNamePipe } from '../../pipes/country-idto-name.pipe';
-import { FormsModule } from '@angular/forms';
-import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
-import { LucideAngularModule } from 'lucide-angular';
-import { Router, RouterModule } from '@angular/router';
+import {
+  Component,
+  Inject,
+  OnInit,
+  PLATFORM_ID,
+  Renderer2,
+} from "@angular/core";
+import {
+  BreadcrumbSegment,
+  BreadcrumbsComponent,
+} from "../../components/breadcrumbs/breadcrumbs.component";
+import { SeoHandlerService } from "../../services/seo-handler.service";
+import { KeeperAPIService } from "../../services/keeper-api.service";
+import {
+  OrderDir,
+  TableRegionTableRegionGetData,
+} from "../../../../sdk/data-contracts";
+import { CountryIdtoNamePipe } from "../../pipes/country-idto-name.pipe";
+import { FormsModule } from "@angular/forms";
+import { CommonModule, DOCUMENT, isPlatformBrowser } from "@angular/common";
+import { LucideAngularModule } from "lucide-angular";
+import { Router, RouterModule } from "@angular/router";
 
 declare let Datamap: any;
 
-const SCRIPT_PATH = 'assets/datamaps/d3.min.js';
-const SCRIPT_PATH2 = 'assets/datamaps/topojson.js';
-const SCRIPT_PATH3 = 'assets/datamaps/datamaps.world.min.js';
+const SCRIPT_PATH = "assets/datamaps/d3.min.js";
+const SCRIPT_PATH2 = "assets/datamaps/topojson.js";
+const SCRIPT_PATH3 = "assets/datamaps/datamaps.world.min.js";
 
 const colors = [
-  '#3B82F6',
-  '#F87171',
-  '#FBBF24',
-  '#F472B6',
-  '#34D399',
-  '#E5E7EB',
-  '#38BDF8',
-  '#FACC15',
-  '#F87171',
-  '#A3E635',
-  '#818CF8',
-  '#94A3B8'
+  "#3B82F6",
+  "#F87171",
+  "#FBBF24",
+  "#F472B6",
+  "#34D399",
+  "#E5E7EB",
+  "#38BDF8",
+  "#FACC15",
+  "#F87171",
+  "#A3E635",
+  "#818CF8",
+  "#94A3B8",
 ];
 
 @Component({
-  selector: 'app-regions',
+  selector: "app-regions",
   standalone: true,
-  imports: [BreadcrumbsComponent, CountryIdtoNamePipe, FormsModule, CommonModule, RouterModule, LucideAngularModule],
-  templateUrl: './regions.component.html',
-  styleUrl: './regions.component.scss'
+  imports: [
+    BreadcrumbsComponent,
+    CountryIdtoNamePipe,
+    FormsModule,
+    CommonModule,
+    RouterModule,
+    LucideAngularModule,
+  ],
+  templateUrl: "./regions.component.html",
+  styleUrl: "./regions.component.scss",
 })
 export class RegionsComponent implements OnInit {
-
   breadcrumbs: BreadcrumbSegment[] = [
     {
-      name: 'Home',
-      url: '/'
+      name: "Home",
+      url: "/",
     },
     {
-      name: 'Regions',
-      url: '/regions'
-    }
+      name: "Regions",
+      url: "/regions",
+    },
   ];
 
   regions: TableRegionTableRegionGetData = [];
@@ -65,17 +83,21 @@ export class RegionsComponent implements OnInit {
     private SEOHandler: SeoHandlerService,
     private renderer: Renderer2,
     private API: KeeperAPIService,
-    private router: Router
-  ) { }
+    private router: Router,
+  ) {}
 
   ngOnInit() {
-    this.SEOHandler.updateTitleAndMetaTags('Regions - Spare Cores', 'List of all regions', 'AWS regions, Google Cloud regions');
+    this.SEOHandler.updateTitleAndMetaTags(
+      "Regions - Spare Cores",
+      "List of all regions",
+      "AWS regions, Google Cloud regions",
+    );
 
-    this.API.getRegions().then(regions => {
+    this.API.getRegions().then((regions) => {
       this.regions = regions.body;
     });
 
-    this.API.getVendors().then(vendors => {
+    this.API.getVendors().then((vendors) => {
       this.vendors = vendors.body;
     });
 
@@ -84,52 +106,54 @@ export class RegionsComponent implements OnInit {
         .then(() => this.loadJsScript(SCRIPT_PATH2))
         .then(() => this.loadJsScript(SCRIPT_PATH3))
         .then(() => {
-          Promise.all([
-            this.API.getRegions(),
-            this.API.getVendors()
-          ]).then(([regions, vendors]) => {
-            this.regions = regions.body;
-            this.vendors = vendors.body;
+          Promise.all([this.API.getRegions(), this.API.getVendors()]).then(
+            ([regions, vendors]) => {
+              this.regions = regions.body;
+              this.vendors = vendors.body;
 
-            this.vendors = this.vendors.map((vendor, index) => {
-              return {selected: true, color: colors[index % colors.length],  ...vendor}
-            });
+              this.vendors = this.vendors.map((vendor, index) => {
+                return {
+                  selected: true,
+                  color: colors[index % colors.length],
+                  ...vendor,
+                };
+              });
 
-            let element = this.document.getElementById("datamapdiv");
+              let element = this.document.getElementById("datamapdiv");
 
-            let fills: any = {
-              defaultFill: '#06263a'
-            };
+              let fills: any = {
+                defaultFill: "#06263a",
+              };
 
-            this.vendors.forEach((vendor, index) => {
-              fills[vendor.vendor_id] = colors[index % colors.length];
-            });
+              this.vendors.forEach((vendor, index) => {
+                fills[vendor.vendor_id] = colors[index % colors.length];
+              });
 
-            this.bubble_map = new Datamap({
-              element: element,
-              geographyConfig: {
-                popupOnHover: false,
-                highlightOnHover: false
-              },
-              bubblesConfig: {
-                fillOpacity: 1,
-                borderOpacity: 0,
-                highlightFillColor: '#34d399',
-                highlightBorderOpacity: 0,
-              },
-              fills: fills
-            });
+              this.bubble_map = new Datamap({
+                element: element,
+                geographyConfig: {
+                  popupOnHover: false,
+                  highlightOnHover: false,
+                },
+                bubblesConfig: {
+                  fillOpacity: 1,
+                  borderOpacity: 0,
+                  highlightFillColor: "#34d399",
+                  highlightBorderOpacity: 0,
+                },
+                fills: fills,
+              });
 
-            this.generateBubbles();
-
-          });
-        })
+              this.generateBubbles();
+            },
+          );
+        });
     }
   }
 
   public loadJsScript(src: string): Promise<void> {
     return new Promise((resolve, reject) => {
-      const script = this.renderer.createElement('script');
+      const script = this.renderer.createElement("script");
       script.src = src;
       script.onload = () => resolve();
       script.onerror = () => reject(new Error(`Failed to load script: ${src}`));
@@ -140,25 +164,26 @@ export class RegionsComponent implements OnInit {
   generateBubbles() {
     this.bubble_map.bubbles(
       this.regions
-        .filter(region => this.isVendorSelected(region.vendor_id))
-        .map(region => {
-        return {
-          name: region.name,
-          display_name: `${region.display_name}`,
-          region: region.region_id,
-          vendor: region.vendor_id,
-          founding_year: region.founding_year,
-          green_energy: region.green_energy,
-          location: `${region.lat},${region.lon}`,
-          radius: 5,
-          country: region.country_id,
-          fillKey: region.vendor_id,
-          latitude: region.lat,
-          longitude: region.lon
-      }}),
+        .filter((region) => this.isVendorSelected(region.vendor_id))
+        .map((region) => {
+          return {
+            name: region.name,
+            display_name: `${region.display_name}`,
+            region: region.region_id,
+            vendor: region.vendor_id,
+            founding_year: region.founding_year,
+            green_energy: region.green_energy,
+            location: `${region.lat},${region.lon}`,
+            radius: 5,
+            country: region.country_id,
+            fillKey: region.vendor_id,
+            latitude: region.lat,
+            longitude: region.lon,
+          };
+        }),
       {
-        popupTemplate: this.popupTemplate.bind(this)
-      }
+        popupTemplate: this.popupTemplate.bind(this),
+      },
     );
   }
 
@@ -170,26 +195,24 @@ export class RegionsComponent implements OnInit {
     html += `<li><b>Region name</b>: ${data.name}</li>`;
     html += `<li><b>Country</b>: ${countryName}</li>`;
     html += `<li><b>Location</b>: ${data.display_name}</li>`;
-    if(data.founding_year) {
+    if (data.founding_year) {
       html += `<li><b>Founding year</b>: ${data.founding_year}</li>`;
     }
-    html += `<li><b>100% green energy</b>: ${data.green_energy ? '✅' : '🔴'}</li>`;
+    html += `<li><b>100% green energy</b>: ${data.green_energy ? "✅" : "🔴"}</li>`;
     html += `</ul> </div>`;
     return html;
   }
 
   getVendorName(vendorId: string): string {
-    const vendor = this.vendors.find(vendor => vendor.vendor_id === vendorId);
-    return vendor ? vendor.name : '';
+    const vendor = this.vendors.find((vendor) => vendor.vendor_id === vendorId);
+    return vendor ? vendor.name : "";
   }
 
   toggleOrdering(column: string) {
-
-    if(this.orderBy === column) {
-      if(this.orderDir === OrderDir.Desc) {
+    if (this.orderBy === column) {
+      if (this.orderDir === OrderDir.Desc) {
         this.orderDir = OrderDir.Asc;
-      }
-      else {
+      } else {
         this.orderDir = null;
         this.orderBy = null;
       }
@@ -198,26 +221,36 @@ export class RegionsComponent implements OnInit {
       this.orderDir = OrderDir.Desc;
     }
 
-    if(this.orderBy === 'region') {
+    if (this.orderBy === "region") {
       this.regions.sort((a, b) => {
-        return this.orderDir === OrderDir.Desc ? a.display_name.localeCompare(b.display_name) : b.display_name.localeCompare(a.display_name);
+        return this.orderDir === OrderDir.Desc
+          ? a.display_name.localeCompare(b.display_name)
+          : b.display_name.localeCompare(a.display_name);
       });
-    }
-    else if(this.orderBy === 'vendor') {
+    } else if (this.orderBy === "vendor") {
       this.regions.sort((a, b) => {
-        return this.orderDir === OrderDir.Desc ? this.getVendorName(a.vendor_id).localeCompare(this.getVendorName(b.vendor_id)) : this.getVendorName(b.vendor_id).localeCompare(this.getVendorName(a.vendor_id));
+        return this.orderDir === OrderDir.Desc
+          ? this.getVendorName(a.vendor_id).localeCompare(
+              this.getVendorName(b.vendor_id),
+            )
+          : this.getVendorName(b.vendor_id).localeCompare(
+              this.getVendorName(a.vendor_id),
+            );
       });
-    } else if(this.orderBy === 'country') {
+    } else if (this.orderBy === "country") {
       this.regions.sort((a, b) => {
-        return this.orderDir === OrderDir.Desc ? a.country_id.localeCompare(b.country_id) : b.country_id.localeCompare(a.country_id);
+        return this.orderDir === OrderDir.Desc
+          ? a.country_id.localeCompare(b.country_id)
+          : b.country_id.localeCompare(a.country_id);
       });
     }
   }
 
   getOrderingIcon(column: string) {
-
-    if(this.orderBy === column) {
-      return this.orderDir === OrderDir.Desc ? 'arrow-down-wide-narrow' : 'arrow-down-narrow-wide';
+    if (this.orderBy === column) {
+      return this.orderDir === OrderDir.Desc
+        ? "arrow-down-wide-narrow"
+        : "arrow-down-narrow-wide";
     }
     return null;
   }
@@ -227,16 +260,17 @@ export class RegionsComponent implements OnInit {
   }
 
   toggleVendorSelected(vendorId: string) {
-    this.vendors.find(vendor => vendor.vendor_id === vendorId).selected = !this.vendors.find(vendor => vendor.vendor_id === vendorId).selected;
+    this.vendors.find((vendor) => vendor.vendor_id === vendorId).selected =
+      !this.vendors.find((vendor) => vendor.vendor_id === vendorId).selected;
     this.generateBubbles();
   }
 
   isVendorSelected(vendorId: string) {
-    return this.vendors?.find(vendor => vendor.vendor_id === vendorId)?.selected;
+    return this.vendors?.find((vendor) => vendor.vendor_id === vendorId)
+      ?.selected;
   }
 
   getColorStyle(vendor: any) {
-    return `background-color: ${vendor.color || '#06263a'}`;
+    return `background-color: ${vendor.color || "#06263a"}`;
   }
-
 }

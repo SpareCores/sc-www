@@ -1,17 +1,23 @@
-
-<div class="block_half" *ngIf="lineChartDataBWmem && isChartShown('bw_mem')" id="bw_mem_chart">
-  <h3 class="text-2xl flex items-center gap-2" >Memory Bandwidth
+<div
+  class="block_half"
+  *ngIf="lineChartDataBWmem && isChartShown('bw_mem')"
+  id="bw_mem_chart"
+>
+  <h3 class="text-2xl flex items-center gap-2">
+    Memory Bandwidth
     <lucide-icon
       name="circle-arrow-up"
       class="h-4 w-4 text-gray-200"
       (mouseenter)="showTooltip($event, 'Higher is better.')"
-      (mouseleave)="hideTooltip()">
+      (mouseleave)="hideTooltip()"
+    >
     </lucide-icon>
     <lucide-icon
       name="info"
       class="h-4 w-4 text-gray-200"
       (mouseenter)="showTooltipChart($event, 'bw_mem')"
-      (mouseleave)="hideTooltip()">
+      (mouseleave)="hideTooltip()"
+    >
     </lucide-icon>
   </h3>
   <div class="h-full" *ngIf="isBrowser()">
@@ -27,21 +33,32 @@
     </div>
   </div>
 </div>
-<div class="block_half" *ngIf="lineChartDataCompress && isChartShown('compress')" id="compress_chart">
+<div
+  class="block_half"
+  *ngIf="lineChartDataCompress && isChartShown('compress')"
+  id="compress_chart"
+>
   <div class="flex justify-between items-center">
-    <h3 class="text-2xl flex items-center gap-2" >
+    <h3 class="text-2xl flex items-center gap-2">
       Compression
       <lucide-icon
-        name="{{selectedCompressMethod.icon}}"
+        name="{{ selectedCompressMethod.icon }}"
         class="h-4 w-4 text-gray-200"
         (mouseenter)="showTooltip($event, selectedCompressMethod.order)"
-        (mouseleave)="hideTooltip()">
+        (mouseleave)="hideTooltip()"
+      >
       </lucide-icon>
       <lucide-icon
         name="info"
         class="h-4 w-4 text-gray-200"
-        (mouseenter)="showTooltip($event, 'Measuring the compression ratio and speed while compressing and decompressing the dickens.txt of the Silesia corpus (10 MB uncompressed) using various algorithms, compressions levels and other extra arguments.')"
-        (mouseleave)="hideTooltip()">
+        (mouseenter)="
+          showTooltip(
+            $event,
+            'Measuring the compression ratio and speed while compressing and decompressing the dickens.txt of the Silesia corpus (10 MB uncompressed) using various algorithms, compressions levels and other extra arguments.'
+          )
+        "
+        (mouseleave)="hideTooltip()"
+      >
       </lucide-icon>
     </h3>
     <div class="flex gap-4">
@@ -49,12 +66,18 @@
         id="compress_method_button"
         data-ph-capture-attribute-sc-event="server charts compress method select"
         class="dropdown_button"
-        type="button">
+        type="button"
+      >
         <div class="px-3 py-2">
-          {{selectedCompressMethod.name}}
+          {{ selectedCompressMethod.name }}
         </div>
-        <div class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
-          <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
+        <div
+          class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
+        >
+          <lucide-icon
+            name="chevron-down"
+            class="h-6 w-6 text-emerald-400"
+          ></lucide-icon>
         </div>
       </button>
     </div>
@@ -73,21 +96,27 @@
   </div>
 </div>
 
-<div class="block_full" *ngIf="barChartDataSSL  && isChartShown('ssl')" id="ssl_chart">
+<div
+  class="block_full"
+  *ngIf="barChartDataSSL && isChartShown('ssl')"
+  id="ssl_chart"
+>
   <div class="flex justify-between items-center">
-    <h3 class="text-2xl flex items-center gap-2" >
+    <h3 class="text-2xl flex items-center gap-2">
       OpenSSL
       <lucide-icon
         name="circle-arrow-up"
         class="h-4 w-4 text-gray-200"
         (mouseenter)="showTooltip($event, 'Higher is better.')"
-        (mouseleave)="hideTooltip()">
+        (mouseleave)="hideTooltip()"
+      >
       </lucide-icon>
       <lucide-icon
         name="info"
         class="h-4 w-4 text-gray-200"
         (mouseenter)="showTooltipChart($event, 'openssl')"
-        (mouseleave)="hideTooltip()">
+        (mouseleave)="hideTooltip()"
+      >
       </lucide-icon>
     </h3>
   </div>
@@ -105,25 +134,31 @@
   </div>
 </div>
 
-<div class="block_half_taller" *ngIf="radarChartDataGeekSingle && isChartShown('geek_single')" id="geekbench_chart">
+<div
+  class="block_half_taller"
+  *ngIf="radarChartDataGeekSingle && isChartShown('geek_single')"
+  id="geekbench_chart"
+>
   <div class="flex justify-between items-center">
-    <h3 class="text-2xl flex items-center gap-2" >
+    <h3 class="text-2xl flex items-center gap-2">
       Geekbench Single-Core
       <lucide-icon
         name="circle-arrow-up"
         class="h-4 w-4 text-gray-200"
         (mouseenter)="showTooltip($event, 'Higher is better.')"
-        (mouseleave)="hideTooltip()">
+        (mouseleave)="hideTooltip()"
+      >
       </lucide-icon>
       <lucide-icon
         name="info"
         class="h-4 w-4 text-gray-200"
         (mouseenter)="showTooltipGB($event)"
-        (mouseleave)="hideTooltipGB()">
+        (mouseleave)="hideTooltipGB()"
+      >
       </lucide-icon>
     </h3>
     <div class="py-2 px-2 border-emerald-400 border-solid rounded-lg border">
-      Score: {{geekScoreSingle}}
+      Score: {{ geekScoreSingle }}
     </div>
   </div>
   <div class="h-full" *ngIf="isBrowser()">
@@ -140,26 +175,31 @@
   </div>
 </div>
 
-<div class="block_half_taller" *ngIf="radarChartDataGeekMulti  && isChartShown('geek_multi')">
+<div
+  class="block_half_taller"
+  *ngIf="radarChartDataGeekMulti && isChartShown('geek_multi')"
+>
   <div class="flex justify-between items-center">
-    <h3 class="text-2xl flex items-center gap-2" >
+    <h3 class="text-2xl flex items-center gap-2">
       Geekbench Multi-Core
       <lucide-icon
         name="circle-arrow-up"
         class="h-4 w-4 text-gray-200"
         (mouseenter)="showTooltip($event, 'Higher is better.')"
-        (mouseleave)="hideTooltip()">
+        (mouseleave)="hideTooltip()"
+      >
       </lucide-icon>
       <lucide-icon
         id="geekbench_multi_canvas"
         name="info"
         class="h-4 w-4 text-gray-200"
         (mouseenter)="showTooltipGB($event)"
-        (mouseleave)="hideTooltipGB()">
+        (mouseleave)="hideTooltipGB()"
+      >
       </lucide-icon>
     </h3>
     <div class="py-2 px-2 border-emerald-400 border-solid rounded-lg border">
-      Score: {{geekScoreMulti}}
+      Score: {{ geekScoreMulti }}
     </div>
   </div>
   <div class="h-full" *ngIf="isBrowser()">
@@ -175,8 +215,12 @@
   </div>
 </div>
 
-<div class="block_half" *ngIf="isChartShown('passmark:cpu') && passmarkCPUData?.length" id="passmark_cpu">
-  <div class="flex items-center" style="min-height: 42px;">
+<div
+  class="block_half"
+  *ngIf="isChartShown('passmark:cpu') && passmarkCPUData?.length"
+  id="passmark_cpu"
+>
+  <div class="flex items-center" style="min-height: 42px">
     <h3 class="text-2xl">Passmark CPU Scores</h3>
   </div>
   <table class="items_table_passmark" id="similar_family_table">
@@ -190,39 +234,60 @@
       <tr *ngFor="let item of passmarkCPUData" id="similar_family_line">
         <td>
           <div class="flex gap-1 items-center">
-            {{item.name}}
+            {{ item.name }}
             <lucide-icon
               name="info"
               class="h-4 w-4 text-gray-200"
               (mouseenter)="showTooltipChart($event, item.benchmark_id)"
-              (mouseleave)="hideTooltip()">
+              (mouseleave)="hideTooltip()"
+            >
             </lucide-icon>
           </div>
         </td>
         <td>
-          {{item.score}}
+          {{ item.score }}
         </td>
       </tr>
     </tbody>
   </table>
-  <div *ngIf="getBenchmarkCategory('passmark:cpu').length > 7" class="absolute bottom-0 laft-0 w-full py-3 flex justify-center" id="passmark_cpu_more"
-      style="background: linear-gradient(360deg, #06263A 23.44%, rgba(6, 38, 58, 0) 100%);" >
-    <button class="btn-primary py-2 px-3" (click)="openBox('passmark_cpu')"
-            id="availability_more_button"
-            data-ph-capture-attribute-sc-event="passmark_cpu show more availability">
+  <div
+    *ngIf="getBenchmarkCategory('passmark:cpu').length > 7"
+    class="absolute bottom-0 laft-0 w-full py-3 flex justify-center"
+    id="passmark_cpu_more"
+    style="
+      background: linear-gradient(
+        360deg,
+        #06263a 23.44%,
+        rgba(6, 38, 58, 0) 100%
+      );
+    "
+  >
+    <button
+      class="btn-primary py-2 px-3"
+      (click)="openBox('passmark_cpu')"
+      id="availability_more_button"
+      data-ph-capture-attribute-sc-event="passmark_cpu show more availability"
+    >
       Show more
     </button>
   </div>
   <div class="w-full pt-3 flex justify-center hidden" id="passmark_cpu_less">
-    <button class="btn-primary py-2 px-3" (click)="openBox('passmark_cpu')"
-            data-ph-capture-attribute-sc-event="passmark_cpu show less availability">
+    <button
+      class="btn-primary py-2 px-3"
+      (click)="openBox('passmark_cpu')"
+      data-ph-capture-attribute-sc-event="passmark_cpu show less availability"
+    >
       Show less
     </button>
   </div>
 </div>
 
-<div class="block_half" *ngIf="isChartShown('passmark:other') && passmarkOTHERData?.length" id="passmark_other">
-  <div class="flex items-center" style="min-height: 42px;">
+<div
+  class="block_half"
+  *ngIf="isChartShown('passmark:other') && passmarkOTHERData?.length"
+  id="passmark_other"
+>
+  <div class="flex items-center" style="min-height: 42px">
     <h3 class="text-2xl">Passmark Memory Scores</h3>
   </div>
   <table class="items_table_passmark" id="similar_family_table">
@@ -236,38 +301,45 @@
       <tr *ngFor="let item of passmarkOTHERData" id="similar_family_line">
         <td>
           <div class="flex gap-1 items-center">
-            {{item.name}}
+            {{ item.name }}
             <lucide-icon
               name="info"
               class="h-4 w-4 text-gray-200"
               (mouseenter)="showTooltipChart($event, item.benchmark_id)"
-              (mouseleave)="hideTooltip()">
+              (mouseleave)="hideTooltip()"
+            >
             </lucide-icon>
           </div>
         </td>
         <td>
-          {{item.score}}
+          {{ item.score }}
         </td>
       </tr>
     </tbody>
   </table>
 </div>
 
-<div class="block_half" *ngIf="lineChartDataStressNG && isChartShown('stress_ng_div16')" id="stress_ng_div16_chart">
+<div
+  class="block_half"
+  *ngIf="lineChartDataStressNG && isChartShown('stress_ng_div16')"
+  id="stress_ng_div16_chart"
+>
   <div class="flex justify-between items-center">
-    <h3 class="text-2xl flex items-center gap-2" >
+    <h3 class="text-2xl flex items-center gap-2">
       Stress-ng Raw Scores
       <lucide-icon
         name="circle-arrow-up"
         class="h-4 w-4 text-gray-200"
         (mouseenter)="showTooltip($event, 'Higher is better.')"
-        (mouseleave)="hideTooltip()">
+        (mouseleave)="hideTooltip()"
+      >
       </lucide-icon>
       <lucide-icon
         name="info"
         class="h-4 w-4 text-gray-200"
         (mouseenter)="showTooltipChart($event, 'stress_ng:div16')"
-        (mouseleave)="hideTooltip()">
+        (mouseleave)="hideTooltip()"
+      >
       </lucide-icon>
     </h3>
   </div>
@@ -285,21 +357,32 @@
   </div>
 </div>
 
-<div class="block_half" *ngIf="lineChartDataStressNG && isChartShown('stress_ng_relative')" id="stress_ng_relative_chart">
+<div
+  class="block_half"
+  *ngIf="lineChartDataStressNG && isChartShown('stress_ng_relative')"
+  id="stress_ng_relative_chart"
+>
   <div class="flex justify-between items-center">
-    <h3 class="text-2xl flex items-center gap-2" >
+    <h3 class="text-2xl flex items-center gap-2">
       Stress-ng Relative Multicore Performance
       <lucide-icon
         name="circle-arrow-up"
         class="h-4 w-4 text-gray-200"
         (mouseenter)="showTooltip($event, 'Higher is better.')"
-        (mouseleave)="hideTooltip()">
+        (mouseleave)="hideTooltip()"
+      >
       </lucide-icon>
       <lucide-icon
         name="info"
         class="h-4 w-4 text-gray-200"
-        (mouseenter)="showTooltip($event, 'The relative performance is a percentage showing the multi-core SCore\'s normalized value (multi-core SCore/vCPUs)  compared to the single-core SCore. This metric shows how well a server can scale to multiple vCPUs, and e.g. the effect of Hyper-Threading.')"
-        (mouseleave)="hideTooltip()">
+        (mouseenter)="
+          showTooltip(
+            $event,
+            'The relative performance is a percentage showing the multi-core SCore\'s normalized value (multi-core SCore/vCPUs)  compared to the single-core SCore. This metric shows how well a server can scale to multiple vCPUs, and e.g. the effect of Hyper-Threading.'
+          )
+        "
+        (mouseleave)="hideTooltip()"
+      >
       </lucide-icon>
     </h3>
   </div>
@@ -317,21 +400,27 @@
   </div>
 </div>
 
-<div class="block_half" *ngIf="barChartLLMPromptData && isChartShown('llm_prompt')" id="llm_prompt_chart">
+<div
+  class="block_half"
+  *ngIf="barChartLLMPromptData && isChartShown('llm_prompt')"
+  id="llm_prompt_chart"
+>
   <div class="flex justify-between items-center">
-    <h3 class="text-2xl flex items-center gap-2" >
+    <h3 class="text-2xl flex items-center gap-2">
       LLM Inference Speed for Prompt Processing
       <lucide-icon
         name="circle-arrow-up"
         class="h-4 w-4 text-gray-200"
         (mouseenter)="showTooltip($event, 'Higher is better.')"
-        (mouseleave)="hideTooltip()">
+        (mouseleave)="hideTooltip()"
+      >
       </lucide-icon>
       <lucide-icon
         name="info"
         class="h-4 w-4 text-gray-200"
         (mouseenter)="showTooltipChart($event, 'llm_speed:prompt_processing')"
-        (mouseleave)="hideTooltip()">
+        (mouseleave)="hideTooltip()"
+      >
       </lucide-icon>
     </h3>
   </div>
@@ -349,21 +438,27 @@
   </div>
 </div>
 
-<div class="block_half" *ngIf="barChartLLMGenerationData && isChartShown('llm_generation')" id="llm_generation_chart">
+<div
+  class="block_half"
+  *ngIf="barChartLLMGenerationData && isChartShown('llm_generation')"
+  id="llm_generation_chart"
+>
   <div class="flex justify-between items-center">
-    <h3 class="text-2xl flex items-center gap-2" >
+    <h3 class="text-2xl flex items-center gap-2">
       LLM Inference Speed for Text Generation
       <lucide-icon
         name="circle-arrow-up"
         class="h-4 w-4 text-gray-200"
         (mouseenter)="showTooltip($event, 'Higher is better.')"
-        (mouseleave)="hideTooltip()">
+        (mouseleave)="hideTooltip()"
+      >
       </lucide-icon>
       <lucide-icon
         name="info"
         class="h-4 w-4 text-gray-200"
         (mouseenter)="showTooltipChart($event, 'llm_speed:text_generation')"
-        (mouseleave)="hideTooltip()">
+        (mouseleave)="hideTooltip()"
+      >
       </lucide-icon>
     </h3>
   </div>
@@ -382,33 +477,58 @@
 </div>
 
 <ng-container *ngFor="let chartItem of multiBarCharts">
-  <div class="block_half" *ngIf="chartItem.chart.chartData && isChartShown(chartItem.chart.id)" id="{{chartItem.chart.id}}_chart">
+  <div
+    class="block_half"
+    *ngIf="chartItem.chart.chartData && isChartShown(chartItem.chart.id)"
+    id="{{ chartItem.chart.id }}_chart"
+  >
     <div class="flex justify-between items-center">
-      <h3 class="text-2xl flex items-center gap-2" >
-        {{chartItem.chart.name}}
+      <h3 class="text-2xl flex items-center gap-2">
+        {{ chartItem.chart.name }}
         <lucide-icon
           name="info"
           class="h-4 w-4 text-gray-200"
-          (mouseenter)="showTooltipChart($event, chartItem.chart.options[chartItem.chart.selectedOption].benchmark_id)"
-          (mouseleave)="hideTooltip()">
+          (mouseenter)="
+            showTooltipChart(
+              $event,
+              chartItem.chart.options[chartItem.chart.selectedOption]
+                .benchmark_id
+            )
+          "
+          (mouseleave)="hideTooltip()"
+        >
         </lucide-icon>
         <lucide-icon
           *ngIf="chartItem.chart.options[chartItem.chart.selectedOption].icon"
-          name="{{chartItem.chart.options[chartItem.chart.selectedOption].icon}}"
+          name="{{
+            chartItem.chart.options[chartItem.chart.selectedOption].icon
+          }}"
           class="h-4 w-4 text-gray-200"
-          (mouseenter)="showTooltip($event, chartItem.chart.options[chartItem.chart.selectedOption].tooltip)"
-          (mouseleave)="hideTooltip()">
+          (mouseenter)="
+            showTooltip(
+              $event,
+              chartItem.chart.options[chartItem.chart.selectedOption].tooltip
+            )
+          "
+          (mouseleave)="hideTooltip()"
+        >
         </lucide-icon>
       </h3>
       <button
-        id="{{chartItem.chart.id}}_button"
+        id="{{ chartItem.chart.id }}_button"
         class="dropdown_button"
-        type="button">
+        type="button"
+      >
         <div class="px-3 py-2">
-          {{chartItem.chart.options[chartItem.chart.selectedOption].name}}
+          {{ chartItem.chart.options[chartItem.chart.selectedOption].name }}
         </div>
-        <div class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg">
-          <lucide-icon name="chevron-down" class="h-6 w-6 text-emerald-400"></lucide-icon>
+        <div
+          class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
+        >
+          <lucide-icon
+            name="chevron-down"
+            class="h-6 w-6 text-emerald-400"
+          ></lucide-icon>
         </div>
       </button>
     </div>
@@ -416,7 +536,7 @@
       <div class="chart_div" chartType="bar">
         <canvas
           baseChart
-          id="{{chartItem.chart.id}}_canvas"
+          id="{{ chartItem.chart.id }}_canvas"
           [data]="chartItem.chart.chartData"
           [options]="chartItem.chart.chartOptions"
           [type]="chartItem.chart.chartType"
@@ -427,45 +547,68 @@
   </div>
 </ng-container>
 
-<div id="compress_method_options" class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid">
-  <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
-    <li *ngFor="let item of compressMethods" class="flex py-1 gap-2 items-center">
+<div
+  id="compress_method_options"
+  class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid"
+>
+  <ul
+    class="py-2 px-1 text-sm text-gray-700"
+    aria-labelledby="dropdownDefaultButton"
+  >
+    <li
+      *ngFor="let item of compressMethods"
+      class="flex py-1 gap-2 items-center"
+    >
       <!-- eslint-disable-next-line @angular-eslint/template/interactive-supports-focus -->
-        <div
-          class="text-emerald-400 hover:text-emerald-500 cursor-pointer font-bold ml-2"
-          (click)="refreshCompressChart(item)">
-          {{item.name}}
-        </div>
+      <div
+        class="text-emerald-400 hover:text-emerald-500 cursor-pointer font-bold ml-2"
+        (click)="refreshCompressChart(item)"
+      >
+        {{ item.name }}
+      </div>
     </li>
   </ul>
 </div>
 
 <ng-container *ngFor="let chartItem of multiBarCharts">
-  <div id="{{chartItem.chart.id}}_options" class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid">
-    <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="dropdownDefaultButton">
-      <li *ngFor="let item of chartItem.chart.options, let i = index" class="flex py-1 gap-2 items-center">
+  <div
+    id="{{ chartItem.chart.id }}_options"
+    class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid"
+  >
+    <ul
+      class="py-2 px-1 text-sm text-gray-700"
+      aria-labelledby="dropdownDefaultButton"
+    >
+      <li
+        *ngFor="let item of chartItem.chart.options; let i = index"
+        class="flex py-1 gap-2 items-center"
+      >
         <!-- eslint-disable-next-line @angular-eslint/template/interactive-supports-focus -->
-          <div
-            class="text-emerald-400 hover:text-emerald-500 cursor-pointer font-bold ml-2"
-            (click)="selectChartTemplateOption(chartItem, i)">
-            {{item.name}}
-          </div>
+        <div
+          class="text-emerald-400 hover:text-emerald-500 cursor-pointer font-bold ml-2"
+          (click)="selectChartTemplateOption(chartItem, i)"
+        >
+          {{ item.name }}
+        </div>
       </li>
     </ul>
   </div>
 </ng-container>
 
-<div id="tooltipGeekbench"
+<div
+  id="tooltipGeekbench"
   #tooltipGeekbench
-  style="opacity: 0; display: none;"
-  class="absolute z-10 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-secondary border border-solid border-emerald-400 rounded-lg">
-  <div [innerHTML]="geekbenchHTML" ></div>
+  style="opacity: 0; display: none"
+  class="absolute z-10 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-secondary border border-solid border-emerald-400 rounded-lg"
+>
+  <div [innerHTML]="geekbenchHTML"></div>
 </div>
 
-<div id="tooltipDefault"
+<div
+  id="tooltipDefault"
   #tooltipDefault
-  style="opacity: 0;"
-  class="absolute z-10 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-secondary border border-solid border-emerald-400 rounded-lg">
-  {{tooltipContent}}
+  style="opacity: 0"
+  class="absolute z-10 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-secondary border border-solid border-emerald-400 rounded-lg"
+>
+  {{ tooltipContent }}
 </div>
-

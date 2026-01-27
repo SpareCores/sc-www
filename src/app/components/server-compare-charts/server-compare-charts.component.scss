@@ -1,4 +1,3 @@
-
 .items_table {
   @apply w-full text-white;
 
@@ -22,7 +21,6 @@
   }
 
   tbody {
-
     tr.section_header {
       @apply bg-secondary text-white;
       td:nth-of-type(1) {
@@ -37,7 +35,6 @@
       td:nth-of-type(1) {
         @apply bg-primary;
       }
-
     }
 
     tr {
@@ -70,12 +67,11 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #9CA3AF;
+  background-color: #9ca3af;
   border-radius: 20px; /* roundness of the scroll thumb */
-  border: 3px solid #9CA3AF; /* creates padding around scroll thumb */
+  border: 3px solid #9ca3af; /* creates padding around scroll thumb */
 }
 
 .number_line {
   text-align: right !important;
 }
-

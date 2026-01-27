@@ -9,7 +9,7 @@
     justify-content: center;
     display: flex;
     padding: 0.5rem;
-    border-top: 1px solid #34D399;
+    border-top: 1px solid #34d399;
   }
   .collapser {
     position: absolute;
@@ -26,12 +26,12 @@
     border-bottom: 1px solid;
     border-right: 1px solid;
     border-top: 1px solid;
-    border-color: #34D399;
+    border-color: #34d399;
     cursor: pointer;
   }
 
   .filters {
-    border-right: 1px solid #34D399;
+    border-right: 1px solid #34d399;
     padding-bottom: 1rem;
     height: calc(100% - 4rem);
   }
@@ -69,9 +69,9 @@
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: #9CA3AF;
+  background-color: #9ca3af;
   border-radius: 20px; /* roundness of the scroll thumb */
-  border: 3px solid #9CA3AF; /* creates padding around scroll thumb */
+  border: 3px solid #9ca3af; /* creates padding around scroll thumb */
 }
 
 :host ::ng-deep .dropdown_group_button {
@@ -80,14 +80,14 @@
 }
 
 :host ::ng-deep .dropdown_group_button:hover {
-  @apply bg-emerald-400 border-emerald-400 focus:border-emerald-400 text-white
+  @apply bg-emerald-400 border-emerald-400 focus:border-emerald-400 text-white;
 }
 
 .items_table {
   @apply w-full text-white;
 
   .checkbox_column {
-    width: 2.0rem !important;
+    width: 2rem !important;
     padding-right: 0.5rem !important;
     padding-left: 0.75rem !important;
   }
@@ -100,7 +100,7 @@
   }
 
   tbody {
-    tr:nth-child(2n+1) {
+    tr:nth-child(2n + 1) {
       @apply bg-primary;
     }
     tr:nth-child(2n) {
@@ -141,8 +141,7 @@
 }
 
 .button_list_holder {
-
-  .button_list_item:nth-child(2n+1) {
+  .button_list_item:nth-child(2n + 1) {
     @apply bg-primary;
   }
   .button_list_item:nth-child(2n) {
@@ -160,7 +159,7 @@
 
 .overflow-x-auto {
   scrollbar-width: thin;
-  scrollbar-color: #34D399 #374151;
+  scrollbar-color: #34d399 #374151;
 }
 .overflow-x-auto::-webkit-scrollbar {
   height: 2px;
@@ -169,6 +168,6 @@
   background: #374151;
 }
 .overflow-x-auto::-webkit-scrollbar-thumb {
-  background-color: #34D399;
+  background-color: #34d399;
   border-radius: 3px;
 }

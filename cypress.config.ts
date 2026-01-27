@@ -1,9 +1,9 @@
 import { defineConfig } from "cypress";
 
 export default defineConfig({
-  videosFolder: 'cypress/videos',
-  screenshotsFolder: 'cypress/screenshots',
-  fixturesFolder: 'cypress/fixtures',
+  videosFolder: "cypress/videos",
+  screenshotsFolder: "cypress/screenshots",
+  fixturesFolder: "cypress/fixtures",
   defaultCommandTimeout: 12000,
   video: false,
   chromeWebSecurity: false,

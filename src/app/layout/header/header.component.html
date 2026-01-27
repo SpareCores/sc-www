@@ -2,11 +2,17 @@
 <nav class="bg-custom px-4 lg:px-6 py-2.5 w-full">
   <div class="content flex justify-between items-center w-full">
     <a routerLink="/" class="h-12" style="max-width: 284px; width: 284px">
-        <img class="h-12" style="max-width: 284px; width: 284px"
+      <img
+        class="h-12"
+        style="max-width: 284px; width: 284px"
         src="./assets/images/logos/logo_header.png"
-             alt="Spare Cores Logo" />
+        alt="Spare Cores Logo"
+      />
     </a>
-      <div class="justify-end items-center w-full flex w-auto order-1" id="mobile-menu-2">
+    <div
+      class="justify-end items-center w-full flex w-auto order-1"
+      id="mobile-menu-2"
+    >
       <ul class="flex font-medium flex-row space-x-8 mt-0 items-center">
         <li class="hidden lg:flex">
           <div class="navbar_link cursor-pointer" id="about_button">
@@ -20,11 +26,9 @@
             Navigator
           </div>
         </li>
-              <li class="hidden lg:flex" >
+        <li class="hidden lg:flex">
           <a routerLink="/about/resource-tracker" class="navbar_link">
-                  <lucide-icon
-                    class="cursor-pointer h-4 w-4"
-                    name="gauge" >
+            <lucide-icon class="cursor-pointer h-4 w-4" name="gauge">
             </lucide-icon>
             Resource Tracker
           </a>
@@ -32,20 +36,21 @@
         <li class="py-1">
           <button
             id="meeting-header-demo"
-                  class="text-white bg-emerald-400 hover:bg-emerald-500 rounded-lg px-3 py-2 relative flex gap-2 items-center">
+            class="text-white bg-emerald-400 hover:bg-emerald-500 rounded-lg px-3 py-2 relative flex gap-2 items-center"
+          >
             <lucide-icon class="h-4 w-4" name="calendar-days"></lucide-icon>
             Book a Call
           </button>
         </li>
-              <li [ngClass]="
-                    {'hidden' : compareCount() === 0}"
-                >
+        <li [ngClass]="{ hidden: compareCount() === 0 }">
           <button
             id="compare_button"
-                  class="text-white bg-emerald-400 hover:bg-emerald-500 rounded-lg px-3 py-3 relative" >
+            class="text-white bg-emerald-400 hover:bg-emerald-500 rounded-lg px-3 py-3 relative"
+          >
             <span
               class="h-4 w-4 absolute text-white bg-red-500 z-10 top-2 right-2 rounded-full"
-                    style="top: 2px; font-size: 0.625rem; right: 2px" >{{compareCount()}}
+              style="top: 2px; font-size: 0.625rem; right: 2px"
+              >{{ compareCount() }}
             </span>
             <lucide-icon class="h-4 w-4" name="scale"></lucide-icon>
           </button>
@@ -54,7 +59,8 @@
           <lucide-icon
             id="menu_button"
             class="navbar_link cursor-pointer h-8 w-8"
-                  name="menu" >
+            name="menu"
+          >
           </lucide-icon>
         </li>
       </ul>
@@ -62,31 +68,35 @@
   </div>
 </nav>
 
-<div id="menu_options" class="z-10 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid">
+<div
+  id="menu_options"
+  class="z-10 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid"
+>
   <ul
     class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
     aria-labelledby="dropdownDefaultButton"
-    (click)="closeMenu()">
+    (click)="closeMenu()"
+  >
     <li class="py-2">
-      <span class="navbar_link hover:!text-white" >
+      <span class="navbar_link hover:!text-white">
         <lucide-icon class="h-4 w-4" name="info"></lucide-icon>
         About
       </span>
     </li>
     <li class="py-2 ml-6">
-      <a class="navbar_link" href="/about/spare-cores" >
+      <a class="navbar_link" href="/about/spare-cores">
         <lucide-icon class="h-4 w-4" name="heart-handshake"></lucide-icon>
         Our Mission
       </a>
     </li>
     <li class="py-2 ml-6">
-      <a class="navbar_link" routerLink="/articles" >
+      <a class="navbar_link" routerLink="/articles">
         <lucide-icon class="h-4 w-4" name="notebook-text"></lucide-icon>
         Blog
       </a>
     </li>
     <li class="py-2 ml-6">
-      <a class="navbar_link" routerLink="/talks" >
+      <a class="navbar_link" routerLink="/talks">
         <lucide-icon class="h-4 w-4" name="projector"></lucide-icon>
         Talks & Slides
       </a>
@@ -98,61 +108,61 @@
       </a>
     </li>
     <li class="py-2">
-      <span class="navbar_link hover:!text-white" >
+      <span class="navbar_link hover:!text-white">
         <lucide-icon class="h-4 w-4" name="ship-wheel"></lucide-icon>
         Navigator
       </span>
     </li>
     <li class="py-2 ml-6">
-      <a class="navbar_link" routerLink="/about/navigator" >
+      <a class="navbar_link" routerLink="/about/navigator">
         <lucide-icon class="h-4 w-4" name="book-text"></lucide-icon>
         Product Info
       </a>
     </li>
     <li class="py-2 ml-6">
-      <a class="navbar_link" routerLink="/servers" >
+      <a class="navbar_link" routerLink="/servers">
         <lucide-icon class="h-4 w-4" name="pc-case"></lucide-icon>
         Servers
       </a>
     </li>
     <li class="py-2 ml-6">
-      <a class="navbar_link" routerLink="/compare" >
+      <a class="navbar_link" routerLink="/compare">
         <lucide-icon class="h-4 w-4" name="scale"></lucide-icon>
         Compare Guide
       </a>
     </li>
     <li class="py-2 ml-6">
-      <a class="navbar_link" routerLink="/server_prices" >
+      <a class="navbar_link" routerLink="/server_prices">
         <lucide-icon class="h-4 w-4" name="dollar-sign"></lucide-icon>
         Server Prices
       </a>
     </li>
     <li class="py-2 ml-6">
-      <a class="navbar_link" routerLink="/storages" >
+      <a class="navbar_link" routerLink="/storages">
         <lucide-icon class="h-4 w-4" name="database"></lucide-icon>
         Storage Prices
       </a>
     </li>
     <li class="py-2 ml-6">
-      <a class="navbar_link" routerLink="/traffic-prices" >
+      <a class="navbar_link" routerLink="/traffic-prices">
         <lucide-icon class="h-4 w-4" name="arrow-up-down"></lucide-icon>
         Traffic Prices
       </a>
     </li>
     <li class="py-2 ml-6">
-      <a class="navbar_link" routerLink="/regions" >
+      <a class="navbar_link" routerLink="/regions">
         <lucide-icon class="h-4 w-4" name="hotel"></lucide-icon>
         Regions
       </a>
     </li>
     <li class="py-2 ml-6">
-      <a class="navbar_link" routerLink="/vendors" >
+      <a class="navbar_link" routerLink="/vendors">
         <lucide-icon class="h-4 w-4" name="home"></lucide-icon>
         Vendors
       </a>
     </li>
     <li class="py-2">
-      <a routerLink="/about/resource-tracker" class="navbar_link" >
+      <a routerLink="/about/resource-tracker" class="navbar_link">
         <lucide-icon class="h-4 w-4" name="gauge"></lucide-icon>
         Resource Tracker
       </a>
@@ -160,31 +170,35 @@
   </ul>
 </div>
 
-<div id="about_options" class="z-100 hidden bg-secondary rounded-lg shadow w-68 border border-emerald-400 border-solid">
+<div
+  id="about_options"
+  class="z-100 hidden bg-secondary rounded-lg shadow w-68 border border-emerald-400 border-solid"
+>
   <ul
     class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
     aria-labelledby="dropdownDefaultButton"
-    (click)="closeAbout()">
+    (click)="closeAbout()"
+  >
     <li class="py-2">
-      <a class="navbar_link" href="/about/spare-cores" >
+      <a class="navbar_link" href="/about/spare-cores">
         <lucide-icon class="h-4 w-4" name="heart-handshake"></lucide-icon>
         Our Mission
       </a>
     </li>
     <li class="py-2">
-      <a class="navbar_link" routerLink="/articles" >
+      <a class="navbar_link" routerLink="/articles">
         <lucide-icon class="h-4 w-4" name="notebook-text"></lucide-icon>
         Blog
       </a>
     </li>
     <li class="py-2">
-      <a class="navbar_link" routerLink="/talks" >
+      <a class="navbar_link" routerLink="/talks">
         <lucide-icon class="h-4 w-4" name="projector"></lucide-icon>
         Talks & Slides
       </a>
     </li>
     <li class="py-2">
-      <a class="navbar_link" routerLink="/design" >
+      <a class="navbar_link" routerLink="/design">
         <lucide-icon class="h-4 w-4" name="palette"></lucide-icon>
         Design
       </a>
@@ -192,59 +206,63 @@
   </ul>
 </div>
 
-<div id="navigator_options" class="z-100 hidden bg-secondary rounded-lg shadow w-68 border border-emerald-400 border-solid">
+<div
+  id="navigator_options"
+  class="z-100 hidden bg-secondary rounded-lg shadow w-68 border border-emerald-400 border-solid"
+>
   <ul
     class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
     aria-labelledby="dropdownDefaultButton"
-    (click)="closeNavigator()">
+    (click)="closeNavigator()"
+  >
     <li class="py-2">
-      <a class="navbar_link" routerLink="/about/navigator" >
+      <a class="navbar_link" routerLink="/about/navigator">
         <lucide-icon class="h-4 w-4" name="book-text"></lucide-icon>
         Product Info
       </a>
     </li>
-    <hr class="mx-3 border-gray-500 mt-3 mb-3">
+    <hr class="mx-3 border-gray-500 mt-3 mb-3" />
     <li class="py-2">
-      <a class="navbar_link" routerLink="/servers" >
+      <a class="navbar_link" routerLink="/servers">
         <lucide-icon class="h-4 w-4" name="pc-case"></lucide-icon>
         Servers
       </a>
     </li>
     <li class="py-2">
-      <a class="navbar_link" routerLink="/compare" >
+      <a class="navbar_link" routerLink="/compare">
         <lucide-icon class="h-4 w-4" name="scale"></lucide-icon>
         Compare Guide
       </a>
     </li>
-    <hr class="mx-3 border-gray-500 mt-3 mb-3">
+    <hr class="mx-3 border-gray-500 mt-3 mb-3" />
     <li class="py-2">
-      <a class="navbar_link" routerLink="/server_prices" >
+      <a class="navbar_link" routerLink="/server_prices">
         <lucide-icon class="h-4 w-4" name="dollar-sign"></lucide-icon>
         Server Prices
       </a>
     </li>
     <ul>
       <li class="py-2 ml-6">
-        <a class="navbar_link" routerLink="/vendors" >
+        <a class="navbar_link" routerLink="/vendors">
           <lucide-icon class="h-4 w-4" name="home"></lucide-icon>
           By Vendor
         </a>
       </li>
       <li class="py-2 ml-6">
-        <a class="navbar_link" routerLink="/regions" >
+        <a class="navbar_link" routerLink="/regions">
           <lucide-icon class="h-4 w-4" name="hotel"></lucide-icon>
           By Region
         </a>
       </li>
     </ul>
     <li class="py-2">
-      <a class="navbar_link" routerLink="/storages" >
+      <a class="navbar_link" routerLink="/storages">
         <lucide-icon class="h-4 w-4" name="database"></lucide-icon>
         Storage Prices
       </a>
     </li>
     <li class="py-2">
-      <a class="navbar_link" routerLink="/traffic-prices" >
+      <a class="navbar_link" routerLink="/traffic-prices">
         <lucide-icon class="h-4 w-4" name="arrow-up-down"></lucide-icon>
         Traffic Prices
       </a>
@@ -252,27 +270,40 @@
   </ul>
 </div>
 
-<div id="compare_options" class="z-10 hidden bg-secondary rounded-lg shadow w-250 border border-emerald-400 border-solid">
+<div
+  id="compare_options"
+  class="z-10 hidden bg-secondary rounded-lg shadow w-250 border border-emerald-400 border-solid"
+>
   <ul
     class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
     aria-labelledby="dropdownDefaultButton"
-    (click)="closeCompare()">
-    <li class="py-2 flex justify-between" *ngFor="let item of getServersForCompare()">
-      <a class="navbar_link" routerLink="/server/{{item.vendor}}/{{item.server}}" >
+    (click)="closeCompare()"
+  >
+    <li
+      class="py-2 flex justify-between"
+      *ngFor="let item of getServersForCompare()"
+    >
+      <a
+        class="navbar_link"
+        routerLink="/server/{{ item.vendor }}/{{ item.server }}"
+      >
         <lucide-icon class="h-4 w-4" name="pc-case"></lucide-icon>
-        {{item.vendor}}: {{item.display_name}}
+        {{ item.vendor }}: {{ item.display_name }}
       </a>
       <div (click)="$event.stopPropagation()">
         <button
           class="text-red-500 px-2 py-2"
-          (click)="removeFromCompare($event, item)">
+          (click)="removeFromCompare($event, item)"
+        >
           <lucide-icon class="h-4 w-4" name="trash"></lucide-icon>
         </button>
       </div>
     </li>
     <li class="py-2">
-      <button class="w-full font-bold text-white bg-emerald-400 hover:bg-emerald-500 rounded-sm py-2"
-        (click)="compareServers()">
+      <button
+        class="w-full font-bold text-white bg-emerald-400 hover:bg-emerald-500 rounded-sm py-2"
+        (click)="compareServers()"
+      >
         Compare
       </button>
     </li>

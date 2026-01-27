@@ -26,4 +26,3 @@ The interview is now live, and you can watch it on YouTube:
 <p style="margin: 5px 50px 20px 50px; text-align: center;color: #999;">Play the video
 here with Privacy Enhanced Mode setting, so that it will not influence
 your YouTube browsing experience later.</p>
-

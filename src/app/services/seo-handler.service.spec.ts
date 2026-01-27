@@ -1,8 +1,8 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed } from "@angular/core/testing";
 
-import { SeoHandlerService } from './seo-handler.service';
+import { SeoHandlerService } from "./seo-handler.service";
 
-describe('SeoHandlerService', () => {
+describe("SeoHandlerService", () => {
   let service: SeoHandlerService;
 
   beforeEach(() => {
@@ -10,7 +10,7 @@ describe('SeoHandlerService', () => {
     service = TestBed.inject(SeoHandlerService);
   });
 
-  it('should be created', () => {
+  it("should be created", () => {
     expect(service).toBeTruthy();
   });
 });

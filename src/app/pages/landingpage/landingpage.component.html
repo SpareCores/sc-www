@@ -1,55 +1,87 @@
 <div class="w-full">
   <div class="content_section !border-t-0" id="hero">
     <div class="content">
-      <div class="flex gap-8 flex-col lg:flex-row" >
+      <div class="flex gap-8 flex-col lg:flex-row">
         <div class="flex flex-col gap-12 w-full lg:w-1/2 my-auto">
           <div class="text-4xl font-bold leading-[3rem]">
             Don't gamble with your cloud costs.
             <span class="text-emerald-400">Use Spare Cores!</span>
           </div>
           <div class="text-3xl">
-            <p class="py-2">Run every ML workflow faster and cheaper—no config wrangling required.</p>
-            <p class="py-2">Resource Tracker watches your Metaflow runs, learns real CPU / RAM / GPU needs, and recommends the right instance for the next run.</p>
+            <p class="py-2">
+              Run every ML workflow faster and cheaper—no config wrangling
+              required.
+            </p>
+            <p class="py-2">
+              Resource Tracker watches your Metaflow runs, learns real CPU / RAM
+              / GPU needs, and recommends the right instance for the next run.
+            </p>
           </div>
           <div class="flex gap-8 justify-center lg:justify-start pb-12 lg:pb-0">
             <div class="flex items-center gap-4">
-              <a href="https://sparecores.github.io/resource-tracker/#metaflow-integration" target="_blank" rel="noopener">
-                <button class="btn-primary py-5 px-5">Install the Python package<br/>and track your first job in < 5 min.</button>
+              <a
+                href="https://sparecores.github.io/resource-tracker/#metaflow-integration"
+                target="_blank"
+                rel="noopener"
+              >
+                <button class="btn-primary py-5 px-5">
+                  Install the Python package<br />and track your first job in <
+                  5 min.
+                </button>
               </a>
-              <a (click)="scrollTo('why')" class="text-emerald-400 cursor-pointer">
-                <button class="bg-transparent text-teal-500 py-5 px-5 font-bold hover:text-teal-600">Learn more ></button>
+              <a
+                (click)="scrollTo('why')"
+                class="text-emerald-400 cursor-pointer"
+              >
+                <button
+                  class="bg-transparent text-teal-500 py-5 px-5 font-bold hover:text-teal-600"
+                >
+                  Learn more >
+                </button>
               </a>
             </div>
           </div>
         </div>
-        <div class="w-full lg:w-1/2 justify-center flex" style="min-height: 600px;" id="slot-machine">
+        <div
+          class="w-full lg:w-1/2 justify-center flex"
+          style="min-height: 600px"
+          id="slot-machine"
+        >
           <div class="animated_slot_machine">
-            <div class="outer_border" ></div>
-            <div class="top_wide_border_segment" ></div>
-            <div class="top_bottom_border_segment" ></div>
-            <div class="font-mono font-light text-lg price_div" >PRICE/HOURS</div>
-            <div class="font-mono font-light text-sm cpu_div" >CPU</div>
-            <div class="font-mono font-light text-sm ram_div" >RAM (GB)</div>
+            <div class="outer_border"></div>
+            <div class="top_wide_border_segment"></div>
+            <div class="top_bottom_border_segment"></div>
+            <div class="font-mono font-light text-lg price_div">
+              PRICE/HOURS
+            </div>
+            <div class="font-mono font-light text-sm cpu_div">CPU</div>
+            <div class="font-mono font-light text-sm ram_div">RAM (GB)</div>
             <div class="container">
-              <button id="spin_button"
-                      data-ph-capture-attribute-sc-event="landing slot machine start"
-                      data-ph-capture-attribute-slot-machine-action="start"
-                      class="button font-bold text-3xl"
-                      [disabled]="isSpinning"
-                      (click)="spinClicked()"
-                     >SPIN
+              <button
+                id="spin_button"
+                data-ph-capture-attribute-sc-event="landing slot machine start"
+                data-ph-capture-attribute-slot-machine-action="start"
+                class="button font-bold text-3xl"
+                [disabled]="isSpinning"
+                (click)="spinClicked()"
+              >
+                SPIN
               </button>
               <div class="button__bottom" [attr.disabled]="isSpinning"></div>
             </div>
-            <input [(ngModel)]="priceValue" aria-label="Price of highlighted instance"
+            <input
+              [(ngModel)]="priceValue"
+              aria-label="Price of highlighted instance"
               class="input_border price_input bg-primary text-center text-4xl font-bold"
               [ngClass]="{
                 'text-gray-400': isSpinning,
                 'text-gray-200': !isSpinning,
               }"
               readonly
-              disabled >
-            <input id="cpuCount"
+              disabled
+            />
+            <input
+              id="cpuCount"
               [(ngModel)]="cpuCount"
               step="1"
               aria-label="Minimum vCPU filter"
@@ -59,8 +91,10 @@
               [disabled]="isSpinning"
               data-ph-capture-attribute-sc-event="landing slot machine filter"
               data-ph-capture-attribute-slot-machine-action="filter"
-              data-ph-capture-attribute-slot-machine-filter="cpu">
-            <input id="ramCount"
+              data-ph-capture-attribute-slot-machine-filter="cpu"
+            />
+            <input
+              id="ramCount"
               [(ngModel)]="ramCount"
               step="1"
               aria-label="Minimum memory filter"
@@ -70,61 +104,95 @@
               [disabled]="isSpinning"
               data-ph-capture-attribute-sc-event="landing slot machine filter"
               data-ph-capture-attribute-slot-machine-action="filter"
-              data-ph-capture-attribute-slot-machine-filter="memory">
+              data-ph-capture-attribute-slot-machine-filter="memory"
+            />
             <div class="spinner_box_1">
-              <div class="font-mono font-light text-sm text-center w-145">CLOUD VENDOR</div>
+              <div class="font-mono font-light text-sm text-center w-145">
+                CLOUD VENDOR
+              </div>
               <div class="spinner_holder">
                 <div id="ring1" class="spin_ring">
-                  <div class="slot flex flex-col align-center" [style]="getStyle(i)" *ngFor="let item of spinnerContents[0], let i = index" >
+                  <div
+                    class="slot flex flex-col align-center"
+                    [style]="getStyle(i)"
+                    *ngFor="let item of spinnerContents[0]; let i = index"
+                  >
                     <div class="slot_inner" [style]="getInnerStyle(i)">
-                      <div *ngIf="!item.logo" class="text-center font-bold text-3xl">{{item.name}}</div>
-                      <img *ngIf="item.logo" src="{{item.logo}}" style="margin: 0.5rem;" class="rounded-lg" alt="{{item.name}} logo">
+                      <div
+                        *ngIf="!item.logo"
+                        class="text-center font-bold text-3xl"
+                      >
+                        {{ item.name }}
+                      </div>
+                      <img
+                        *ngIf="item.logo"
+                        src="{{ item.logo }}"
+                        style="margin: 0.5rem"
+                        class="rounded-lg"
+                        alt="{{ item.name }} logo"
+                      />
                     </div>
                   </div>
                 </div>
-                <div class="ring_lines" ></div>
+                <div class="ring_lines"></div>
               </div>
             </div>
             <div class="spinner_box_2">
-              <div class="font-mono font-light text-sm text-center w-145">SERVER TYPE</div>
+              <div class="font-mono font-light text-sm text-center w-145">
+                SERVER TYPE
+              </div>
               <div class="spinner_holder">
                 <div id="ring2" class="spin_ring">
-                  <div class="slot flex flex-col align-center" [style]="getStyle(i)" *ngFor="let item of spinnerContents[1], let i = index" >
+                  <div
+                    class="slot flex flex-col align-center"
+                    [style]="getStyle(i)"
+                    *ngFor="let item of spinnerContents[1]; let i = index"
+                  >
                     <div class="slot_inner" [style]="getInnerStyle(i)">
-                      <div  class="text-center font-bold overflow-hidden"
-                            style="text-overflow: ''"
-                            [ngClass]="{
-                              'text-xl': item.name.length < 13,
-                              'text-md': item.name.length >= 13
-                            }">
-                        {{item.name}}
+                      <div
+                        class="text-center font-bold overflow-hidden"
+                        style="text-overflow: &quot;&quot;"
+                        [ngClass]="{
+                          'text-xl': item.name.length < 13,
+                          'text-md': item.name.length >= 13,
+                        }"
+                      >
+                        {{ item.name }}
                       </div>
-                      <div class="text-center">{{item.architecture}}</div>
+                      <div class="text-center">{{ item.architecture }}</div>
                     </div>
                   </div>
                 </div>
-                <div class="ring_lines" ></div>
+                <div class="ring_lines"></div>
               </div>
             </div>
             <div class="spinner_box_3">
-              <div class="font-mono font-light text-sm text-center w-145">REGION</div>
+              <div class="font-mono font-light text-sm text-center w-145">
+                REGION
+              </div>
               <div class="spinner_holder">
                 <div id="ring3" class="spin_ring">
-                  <div class="slot flex flex-col align-center" [style]="getStyle(i)" *ngFor="let item of spinnerContents[2], let i = index" >
+                  <div
+                    class="slot flex flex-col align-center"
+                    [style]="getStyle(i)"
+                    *ngFor="let item of spinnerContents[2]; let i = index"
+                  >
                     <div class="slot_inner" [style]="getInnerStyle(i)">
-                      <div  class="text-center font-bold overflow-hidden"
-                            style="text-overflow: ''"
-                            [ngClass]="{
-                              'text-xl': item.name.length < 13,
-                              'text-md': item.name.length >= 13
-                            }">
-                          {{item.name}}
-                        </div>
-                      <div class="text-center">{{item.city}}</div>
+                      <div
+                        class="text-center font-bold overflow-hidden"
+                        style="text-overflow: &quot;&quot;"
+                        [ngClass]="{
+                          'text-xl': item.name.length < 13,
+                          'text-md': item.name.length >= 13,
+                        }"
+                      >
+                        {{ item.name }}
+                      </div>
+                      <div class="text-center">{{ item.city }}</div>
                     </div>
                   </div>
                 </div>
-                <div class="ring_lines" ></div>
+                <div class="ring_lines"></div>
               </div>
             </div>
           </div>
@@ -132,80 +200,130 @@
       </div>
     </div>
   </div>
-  <div id="why" style="position: relative; top: -65px; visibility: hidden; height: 0;"></div>
+  <div
+    id="why"
+    style="position: relative; top: -65px; visibility: hidden; height: 0"
+  ></div>
   <div class="content_section bg-secondary">
     <div class="content">
       <div class="flex flex-col gap-8 justify-center">
-        <div class="logo_text text-4xl justify-center font-light text-center" >
+        <div class="logo_text text-4xl justify-center font-light text-center">
           <span class="text-emerald-400"><</span>
           <span class="text-gray-400">why </span>
-          <span class="text-gray-400">use="</span>spare_cores<span class="text-gray-400">"</span>
+          <span class="text-gray-400">use="</span>spare_cores<span
+            class="text-gray-400"
+            >"</span
+          >
           <span class="text-emerald-400">></span>
         </div>
-        <div class="w-4/5 2xl:w-2/3 mx-auto my-auto font-bold text-4xl text-center">
-          Trusted by early adopters tracking and optimizing hundreds of Metaflow steps every day.
+        <div
+          class="w-4/5 2xl:w-2/3 mx-auto my-auto font-bold text-4xl text-center"
+        >
+          Trusted by early adopters tracking and optimizing hundreds of Metaflow
+          steps every day.
         </div>
         <div class="w-4/5 lg:w-2/3 mx-auto my-auto text-2xl text-center">
-          Every under‑utilized core is budget you could spend on the next experiment.
+          Every under‑utilized core is budget you could spend on the next
+          experiment.
         </div>
-        <div class="flex gap-24 lg:gap-8 2xl:gap-24 justify-center flex-col lg:flex-row pt-20 px-24 lg:px-4 2xl:px-24">
-          <div class="w-full lg:w-1/3 flex flex-col gap-4 p-8 bg-primary border border-emerald-400 rounded-lg relative">
+        <div
+          class="flex gap-24 lg:gap-8 2xl:gap-24 justify-center flex-col lg:flex-row pt-20 px-24 lg:px-4 2xl:px-24"
+        >
+          <div
+            class="w-full lg:w-1/3 flex flex-col gap-4 p-8 bg-primary border border-emerald-400 rounded-lg relative"
+          >
             <div class="absolute -top-16 left-1/2 transform -translate-x-1/2">
-              <div class="bg-emerald-400 rounded-full flex items-center justify-center h-32 w-32">
+              <div
+                class="bg-emerald-400 rounded-full flex items-center justify-center h-32 w-32"
+              >
                 <span class="text-3xl font-bold text-primary">Track</span>
               </div>
             </div>
-            <div class="font-mono text-center text-emerald-400 text-2xl mt-16 mb-4">
+            <div
+              class="font-mono text-center text-emerald-400 text-2xl mt-16 mb-4"
+            >
               <span class="text-emerald-400">&lt;</span>
               <span class="text-white font-light">resource_tracker</span>
               <span class="text-emerald-400">&gt;</span>
             </div>
             <div class="text-left text-white text-xl pb-8">
-              The Spare Cores Resource Tracker provides per-step CPU/GPU/RAM straight from your Metaflow runs, and recommends the right instance for your next run.
+              The Spare Cores Resource Tracker provides per-step CPU/GPU/RAM
+              straight from your Metaflow runs, and recommends the right
+              instance for your next run.
             </div>
             <div class="absolute bottom-4 right-4">
-              <a (click)="scrollTo('resource-tracker')" class="text-emerald-400 cursor-pointer">
-                <lucide-icon name="square-arrow-down" class="h-[30px] w-[30px]"></lucide-icon>
+              <a
+                (click)="scrollTo('resource-tracker')"
+                class="text-emerald-400 cursor-pointer"
+              >
+                <lucide-icon
+                  name="square-arrow-down"
+                  class="h-[30px] w-[30px]"
+                ></lucide-icon>
               </a>
             </div>
           </div>
-          <div class="w-full lg:w-1/3 flex flex-col gap-4 p-8 bg-primary border border-emerald-400 rounded-lg relative">
+          <div
+            class="w-full lg:w-1/3 flex flex-col gap-4 p-8 bg-primary border border-emerald-400 rounded-lg relative"
+          >
             <div class="absolute -top-16 left-1/2 transform -translate-x-1/2">
-              <div class="bg-emerald-400 rounded-full flex items-center justify-center h-32 w-32">
+              <div
+                class="bg-emerald-400 rounded-full flex items-center justify-center h-32 w-32"
+              >
                 <span class="text-3xl font-bold text-primary">Know</span>
               </div>
             </div>
-            <div class="font-mono text-center text-emerald-400 text-2xl mt-16 mb-4">
+            <div
+              class="font-mono text-center text-emerald-400 text-2xl mt-16 mb-4"
+            >
               <span class="text-emerald-400">&lt;</span>
               <span class="text-white font-light">navigator</span>
               <span class="text-emerald-400">&gt;</span>
             </div>
             <div class="text-left text-white text-xl pb-8">
-              The Spare Cores Navigator benchmarks 2,000+ instance types across clouds and recommends the best fit.
+              The Spare Cores Navigator benchmarks 2,000+ instance types across
+              clouds and recommends the best fit.
             </div>
             <div class="absolute bottom-4 right-4">
               <a routerLink="/about/navigator" class="text-emerald-400">
-                <lucide-icon name="square-arrow-up-right" class="h-[30px] w-[30px]"></lucide-icon>
+                <lucide-icon
+                  name="square-arrow-up-right"
+                  class="h-[30px] w-[30px]"
+                ></lucide-icon>
               </a>
             </div>
           </div>
-          <div class="w-full lg:w-1/3 flex flex-col gap-4 p-8 bg-primary border border-emerald-400 rounded-lg relative">
+          <div
+            class="w-full lg:w-1/3 flex flex-col gap-4 p-8 bg-primary border border-emerald-400 rounded-lg relative"
+          >
             <div class="absolute -top-16 left-1/2 transform -translate-x-1/2">
-              <div class="bg-emerald-400 rounded-full flex items-center justify-center h-32 w-32">
+              <div
+                class="bg-emerald-400 rounded-full flex items-center justify-center h-32 w-32"
+              >
                 <span class="text-3xl font-bold text-primary">Do</span>
               </div>
             </div>
-            <div class="font-mono text-center text-emerald-400 text-2xl mt-16 mb-4">
+            <div
+              class="font-mono text-center text-emerald-400 text-2xl mt-16 mb-4"
+            >
               <span class="text-emerald-400">&lt;</span>
               <span class="text-white font-light">sentinel</span>
               <span class="text-emerald-400">&gt;</span>
             </div>
             <div class="text-left text-white text-xl pb-8">
-              The Spare Cores Sentinel Access and Sentinel Pro (coming soon) add dashboards, richer reporting, alerts & within or cross‑cloud auto‑tune.
+              The Spare Cores Sentinel Access and Sentinel Pro (coming soon) add
+              dashboards, richer reporting, alerts & within or cross‑cloud
+              auto‑tune.
             </div>
             <div class="absolute bottom-4 right-4">
-              <a (click)="scrollTo('sentinel')" class="text-emerald-400 cursor-pointer">
-                <lucide-icon name="square-arrow-down" class="h-[30px] w-[30px]"></lucide-icon>
+              <a
+                (click)="scrollTo('sentinel')"
+                class="text-emerald-400 cursor-pointer"
+              >
+                <lucide-icon
+                  name="square-arrow-down"
+                  class="h-[30px] w-[30px]"
+                ></lucide-icon>
               </a>
             </div>
           </div>
@@ -216,76 +334,173 @@
       </div>
     </div>
   </div>
-  <div id="resource-tracker" style="position: relative; top: -65px; visibility: hidden; height: 0;"></div>
+  <div
+    id="resource-tracker"
+    style="position: relative; top: -65px; visibility: hidden; height: 0"
+  ></div>
   <div class="content_section">
     <div class="content">
       <div class="flex flex-col gap-8 justify-center">
-        <div class="logo_text text-4xl justify-center font-light text-center" >
+        <div class="logo_text text-4xl justify-center font-light text-center">
           <span class="text-emerald-400"><</span>
           <span class="text-gray-400">product </span>
-          <span class="text-gray-400">id="</span>resource_tracker<span class="text-gray-400">"</span>
+          <span class="text-gray-400">id="</span>resource_tracker<span
+            class="text-gray-400"
+            >"</span
+          >
           <span class="text-emerald-400">></span>
         </div>
-        <div class="w-2/3 mx-auto my-auto font-bold text-4xl text-center text-emerald-400">
+        <div
+          class="w-2/3 mx-auto my-auto font-bold text-4xl text-center text-emerald-400"
+        >
           For ML Engineers & Data Scientists
         </div>
-        <div class="flex gap-8 justify-center flex-col xl:flex-row xl:gap-12 pt-4">
+        <div
+          class="flex gap-8 justify-center flex-col xl:flex-row xl:gap-12 pt-4"
+        >
           <div class="flex flex-col justify-center">
             <div class="text-3xl font-bold pb-12">
               No more tedious config tweaking.
             </div>
             <div>
               <div class="flex gap-2 text-2xl font-light text-gray-200">
-                <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]">
+                <div
+                  class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]"
+                >
                   <lucide-icon name="check" class="h-4 w-4"></lucide-icon>
                 </div>
-                <span><code>&#64;track_resources</code> decorator → report and sizing advice.</span>
+                <span
+                  ><code>&#64;track_resources</code> decorator → report and
+                  sizing advice.</span
+                >
               </div>
-              <div class="w-full h-1 my-4 mb-6 border-b border-gray-400 border-solid"></div>
+              <div
+                class="w-full h-1 my-4 mb-6 border-b border-gray-400 border-solid"
+              ></div>
               <div class="flex gap-2 text-2xl font-light text-gray-200">
-                <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]">
+                <div
+                  class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]"
+                >
                   <lucide-icon name="check" class="h-4 w-4"></lucide-icon>
                 </div>
-                <span>Open‑source, MPL‑licensed—full control, no vendor lock‑in.</span>
+                <span
+                  >Open‑source, MPL‑licensed—full control, no vendor
+                  lock‑in.</span
+                >
               </div>
-              <div class="w-full h-1 my-4 mb-6 border-b border-gray-400 border-solid"></div>
+              <div
+                class="w-full h-1 my-4 mb-6 border-b border-gray-400 border-solid"
+              ></div>
               <div class="flex gap-2 text-2xl font-light text-gray-200">
-                <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]">
+                <div
+                  class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]"
+                >
                   <lucide-icon name="check" class="h-4 w-4"></lucide-icon>
                 </div>
-                <span>Metaflow today—other orchestration tools on the roadmap.</span>
+                <span
+                  >Metaflow today—other orchestration tools on the
+                  roadmap.</span
+                >
               </div>
             </div>
-            <div class="w-4/5 lg:w-full text-2xl font-bold pt-12 text-center lg:text-left mx-auto">
-              <a href="/about/resource-tracker" class="underline decoration-dotted hover:text-gray-500">Get started now</a>, or
-              <a class="underline decoration-dotted hover:text-gray-500 cursor-pointer" id="meeting-general-demo">book a 30‑min live call to share your requirements or feedback with us.</a>
+            <div
+              class="w-4/5 lg:w-full text-2xl font-bold pt-12 text-center lg:text-left mx-auto"
+            >
+              <a
+                href="/about/resource-tracker"
+                class="underline decoration-dotted hover:text-gray-500"
+                >Get started now</a
+              >, or
+              <a
+                class="underline decoration-dotted hover:text-gray-500 cursor-pointer"
+                id="meeting-general-demo"
+                >book a 30‑min live call to share your requirements or feedback
+                with us.</a
+              >
             </div>
           </div>
-          <div class="flex w-4/5 xl:w-full 2xl:w-2/3 items-center justify-center mx-auto">
+          <div
+            class="flex w-4/5 xl:w-full 2xl:w-2/3 items-center justify-center mx-auto"
+          >
             <iframe
-              width="100%" height="auto" src="https://www.youtube.com/embed/obkavneTmwU"
+              width="100%"
+              height="auto"
+              src="https://www.youtube.com/embed/obkavneTmwU"
               title="Optimizing Resource Allocation in Metaflow"
-              frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen 
-              class="border-emerald-400 border-2 rounded-lg mx-auto mt-8 lg:mt-0" style="aspect-ratio: 16 / 9"></iframe>
+              frameborder="0"
+              allow="
+                accelerometer;
+                autoplay;
+                clipboard-write;
+                encrypted-media;
+                gyroscope;
+                picture-in-picture;
+                web-share;
+              "
+              referrerpolicy="strict-origin-when-cross-origin"
+              allowfullscreen
+              class="border-emerald-400 border-2 rounded-lg mx-auto mt-8 lg:mt-0"
+              style="aspect-ratio: 16 / 9"
+            ></iframe>
           </div>
         </div>
         <div class="w-full lg:w-4/5 mx-auto my-auto text-2xl pt-8">
           <div class="quote-container flex gap-8 items-center px-2 pb-2">
             <div>
-              <span class="inline-flex justify-center items-center size-[90px] text-emerald-400">
-                <lucide-icon class="flex-shrink-0 size-[50px]" name="quote"></lucide-icon>
+              <span
+                class="inline-flex justify-center items-center size-[90px] text-emerald-400"
+              >
+                <lucide-icon
+                  class="flex-shrink-0 size-[50px]"
+                  name="quote"
+                ></lucide-icon>
               </span>
             </div>
             <div class="w-full">
-              <button class="quote-preview text-2xl cursor-zoom-in" (click)="toggleQuote($event)">
-                The Resource Tracker has become an essential part of our production workflows [...] we were able to reduce our EC2 costs by 50% [...] <span class="text-gray-400">— Data Engineer, Too Good To Go</span>
+              <button
+                class="quote-preview text-2xl cursor-zoom-in"
+                (click)="toggleQuote($event)"
+              >
+                The Resource Tracker has become an essential part of our
+                production workflows [...] we were able to reduce our EC2 costs
+                by 50% [...]
+                <span class="text-gray-400"
+                  >— Data Engineer, Too Good To Go</span
+                >
               </button>
               <div class="quote-full text-2xl hidden">
-                <p class="pb-4">We run several ML pipelines that process high volumes of data daily. Initially, we over-provisioned CPU and memory to avoid performance issues—driving up AWS costs.</p>
-                <p class="pb-4">The Resource Tracker has become an essential part of our production workflows. Once we tuned the CPU and Memory based on the actual usage, we were able to reduce our EC2 costs by 50%.</p>
-                <p class="pb-4">We're particularly excited about the upcoming automated <code>&#64;resources</code> tuning, which promises to eliminate much of the manual analysis and resource adjustment work.</p>
-                <p class="pb-4">Today, it continues to help us stay efficient and cost-conscious by ensuring we use only the resources we truly need.</p>
-                <p class="text-gray-400">— Misael Ramírez Espinosa, Data Engineer, <a href="https://www.toogoodtogo.com/en-us" target="_blank" rel="noopener" class="underline decoration-dotted hover:text-gray-500">Too Good To Go</a></p>
+                <p class="pb-4">
+                  We run several ML pipelines that process high volumes of data
+                  daily. Initially, we over-provisioned CPU and memory to avoid
+                  performance issues—driving up AWS costs.
+                </p>
+                <p class="pb-4">
+                  The Resource Tracker has become an essential part of our
+                  production workflows. Once we tuned the CPU and Memory based
+                  on the actual usage, we were able to reduce our EC2 costs by
+                  50%.
+                </p>
+                <p class="pb-4">
+                  We're particularly excited about the upcoming automated
+                  <code>&#64;resources</code> tuning, which promises to
+                  eliminate much of the manual analysis and resource adjustment
+                  work.
+                </p>
+                <p class="pb-4">
+                  Today, it continues to help us stay efficient and
+                  cost-conscious by ensuring we use only the resources we truly
+                  need.
+                </p>
+                <p class="text-gray-400">
+                  — Misael Ramírez Espinosa, Data Engineer,
+                  <a
+                    href="https://www.toogoodtogo.com/en-us"
+                    target="_blank"
+                    rel="noopener"
+                    class="underline decoration-dotted hover:text-gray-500"
+                    >Too Good To Go</a
+                  >
+                </p>
               </div>
             </div>
           </div>
@@ -293,32 +508,53 @@
       </div>
     </div>
   </div>
-  <div id="sentinel" style="position: relative; top: -65px; visibility: hidden; height: 0;"></div>
+  <div
+    id="sentinel"
+    style="position: relative; top: -65px; visibility: hidden; height: 0"
+  ></div>
   <div class="content_section bg-secondary">
     <div class="content">
       <div class="flex flex-col gap-8 justify-center">
-        <div class="logo_text text-4xl justify-center font-light text-center" >
+        <div class="logo_text text-4xl justify-center font-light text-center">
           <span class="text-emerald-400"><</span>
           <span class="text-gray-400">product </span>
-          <span class="text-gray-400">id="</span>sentinel<span class="text-gray-400">"</span>
+          <span class="text-gray-400">id="</span>sentinel<span
+            class="text-gray-400"
+            >"</span
+          >
           <span class="text-emerald-400">></span>
         </div>
-        <div class="w-2/3 mx-auto my-auto font-bold text-4xl text-center text-emerald-400">
+        <div
+          class="w-2/3 mx-auto my-auto font-bold text-4xl text-center text-emerald-400"
+        >
           For Data‑Science & FinOp Leads
         </div>
-        <div class="w-4/5 mx-auto my-auto text-4xl font-light italic text-center pt-8">
-          Your team is wasting time and money. See where every cloud dollar goes—then reclaim it without slowing the team.
+        <div
+          class="w-4/5 mx-auto my-auto text-4xl font-light italic text-center pt-8"
+        >
+          Your team is wasting time and money. See where every cloud dollar
+          goes—then reclaim it without slowing the team.
         </div>
         <div class="flex gap-24 flex-col lg:flex-row lg:gap-24 pt-8">
           <div class="flex flex-col w-full lg:w-1/2">
             <div class="flex flex-row gap-4 items-center pb-8">
               <div class="rounded-full border-2 border-emerald-400 p-6">
-                <lucide-icon name="scan-eye" class="h-12 w-12 text-emerald-400"></lucide-icon>
+                <lucide-icon
+                  name="scan-eye"
+                  class="h-12 w-12 text-emerald-400"
+                ></lucide-icon>
               </div>
               <div>
-                <div class="text-3xl font-bold text-emerald-400">Sentinel Access</div>
+                <div class="text-3xl font-bold text-emerald-400">
+                  Sentinel Access
+                </div>
                 <div class="text-2xl font-light">
-                  (<a href="/feedback/sentinel-early-access" class="underline decoration-dotted hover:text-gray-500">Join the wait-list</a> for Sentinel Access)
+                  (<a
+                    href="/feedback/sentinel-early-access"
+                    class="underline decoration-dotted hover:text-gray-500"
+                    >Join the wait-list</a
+                  >
+                  for Sentinel Access)
                 </div>
               </div>
             </div>
@@ -328,28 +564,36 @@
               </div>
               <span>360-view of every job you run in a central dashboard</span>
             </div>
-            <div class="w-full h-1 my-4 mb-6 border-b border-gray-400 border-solid"></div>
+            <div
+              class="w-full h-1 my-4 mb-6 border-b border-gray-400 border-solid"
+            ></div>
             <div class="flex gap-2 text-2xl font-light text-gray-200">
               <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]">
                 <lucide-icon name="check" class="h-4 w-4"></lucide-icon>
               </div>
               <span>Feature-rich reports, 7-day retention</span>
             </div>
-            <div class="w-full h-1 my-4 mb-6 border-b border-gray-400 border-solid"></div>
+            <div
+              class="w-full h-1 my-4 mb-6 border-b border-gray-400 border-solid"
+            ></div>
             <div class="flex gap-2 text-2xl font-light text-gray-200">
               <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]">
                 <lucide-icon name="check" class="h-4 w-4"></lucide-icon>
               </div>
               <span>Auto-tuning resource allocations</span>
             </div>
-            <div class="w-full h-1 my-4 mb-6 border-b border-gray-400 border-solid"></div>
+            <div
+              class="w-full h-1 my-4 mb-6 border-b border-gray-400 border-solid"
+            ></div>
             <div class="flex gap-2 text-2xl font-light text-gray-200">
               <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]">
                 <lucide-icon name="check" class="h-4 w-4"></lucide-icon>
               </div>
               <span>Proactive alerts (over-provision, drift, anomalies)</span>
             </div>
-            <div class="w-full h-1 my-4 mb-6 border-b border-gray-400 border-solid"></div>
+            <div
+              class="w-full h-1 my-4 mb-6 border-b border-gray-400 border-solid"
+            ></div>
             <div class="flex gap-2 text-2xl font-light text-gray-200">
               <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]">
                 <lucide-icon name="check" class="h-4 w-4"></lucide-icon>
@@ -360,10 +604,15 @@
           <div class="flex flex-col w-full lg:w-1/2">
             <div class="flex flex-row gap-4 items-center pb-8">
               <div class="rounded-full border-2 border-emerald-400 p-6">
-                <lucide-icon name="rocket" class="h-12 w-12 text-emerald-400"></lucide-icon>
+                <lucide-icon
+                  name="rocket"
+                  class="h-12 w-12 text-emerald-400"
+                ></lucide-icon>
               </div>
               <div>
-                <div class="text-3xl font-bold text-emerald-400">Sentinel Pro</div>
+                <div class="text-3xl font-bold text-emerald-400">
+                  Sentinel Pro
+                </div>
                 <div class="text-2xl font-light">(Coming soon)</div>
               </div>
             </div>
@@ -373,35 +622,45 @@
               </div>
               <span>Everything in Sentinel Access, plus team support</span>
             </div>
-            <div class="w-full h-1 my-4 mb-6 border-b border-gray-400 border-solid"></div>
+            <div
+              class="w-full h-1 my-4 mb-6 border-b border-gray-400 border-solid"
+            ></div>
             <div class="flex gap-2 text-2xl font-light text-gray-200">
               <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]">
                 <lucide-icon name="check" class="h-4 w-4"></lucide-icon>
               </div>
               <span>Hierarchical or tag-based report breakouts</span>
             </div>
-            <div class="w-full h-1 my-4 mb-6 border-b border-gray-400 border-solid"></div>
+            <div
+              class="w-full h-1 my-4 mb-6 border-b border-gray-400 border-solid"
+            ></div>
             <div class="flex gap-2 text-2xl font-light text-gray-200">
               <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]">
                 <lucide-icon name="check" class="h-4 w-4"></lucide-icon>
               </div>
               <span>Full historical optimization and savings analysis</span>
             </div>
-            <div class="w-full h-1 my-4 mb-6 border-b border-gray-400 border-solid"></div>
+            <div
+              class="w-full h-1 my-4 mb-6 border-b border-gray-400 border-solid"
+            ></div>
             <div class="flex gap-2 text-2xl font-light text-gray-200">
               <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]">
                 <lucide-icon name="check" class="h-4 w-4"></lucide-icon>
               </div>
               <span>Central management (e.g. max GPU hours per project)</span>
             </div>
-            <div class="w-full h-1 my-4 mb-6 border-b border-gray-400 border-solid"></div>
+            <div
+              class="w-full h-1 my-4 mb-6 border-b border-gray-400 border-solid"
+            ></div>
             <div class="flex gap-2 text-2xl font-light text-gray-200">
               <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]">
                 <lucide-icon name="check" class="h-4 w-4"></lucide-icon>
               </div>
               <span>Custom data retention, SLA, SSO & RBAC</span>
             </div>
-            <div class="w-full h-1 my-4 mb-6 border-b border-gray-400 border-solid"></div>
+            <div
+              class="w-full h-1 my-4 mb-6 border-b border-gray-400 border-solid"
+            ></div>
             <div class="flex gap-2 text-2xl font-light text-gray-200">
               <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6 mt-[4px]">
                 <lucide-icon name="check" class="h-4 w-4"></lucide-icon>
@@ -414,58 +673,118 @@
       <div class="w-4/5 mx-auto my-auto text-2xl pt-16">
         <div class="quote-container flex gap-8 items-center px-2 pb-2">
           <div>
-            <span class="inline-flex justify-center items-center size-[90px] text-emerald-400">
-              <lucide-icon class="flex-shrink-0 size-[50px]" name="quote"></lucide-icon>
+            <span
+              class="inline-flex justify-center items-center size-[90px] text-emerald-400"
+            >
+              <lucide-icon
+                class="flex-shrink-0 size-[50px]"
+                name="quote"
+              ></lucide-icon>
             </span>
           </div>
           <div class="w-full">
-            <button class="quote-preview text-2xl cursor-zoom-in" (click)="toggleQuote($event)">
-              They brought stability and scalability to the platform, significantly reduced on-call incidents, and helped cut our cloud costs [...] <span class="text-gray-400">— Chief Data Officer, System1</span>
+            <button
+              class="quote-preview text-2xl cursor-zoom-in"
+              (click)="toggleQuote($event)"
+            >
+              They brought stability and scalability to the platform,
+              significantly reduced on-call incidents, and helped cut our cloud
+              costs [...]
+              <span class="text-gray-400">— Chief Data Officer, System1</span>
             </button>
             <div class="quote-full text-2xl hidden">
-              <p class="pb-4">Gergely and his team played a key role in building and productionizing the infrastructure for our data science workflows.</p>
-              <p class="pb-4">They brought stability and scalability to the platform, significantly reduced on-call incidents, and helped cut our cloud costs from $5,000 to $1,500 per month.</p>
+              <p class="pb-4">
+                Gergely and his team played a key role in building and
+                productionizing the infrastructure for our data science
+                workflows.
+              </p>
+              <p class="pb-4">
+                They brought stability and scalability to the platform,
+                significantly reduced on-call incidents, and helped cut our
+                cloud costs from $5,000 to $1,500 per month.
+              </p>
               <p class="pb-4">Their work had a lasting impact.</p>
-              <p class="text-gray-400">— Nathan Janos, Chief Data Officer, <a href="https://system1.com" target="_blank" rel="noopener" class="underline decoration-dotted hover:text-gray-500">System1</a></p>
+              <p class="text-gray-400">
+                — Nathan Janos, Chief Data Officer,
+                <a
+                  href="https://system1.com"
+                  target="_blank"
+                  rel="noopener"
+                  class="underline decoration-dotted hover:text-gray-500"
+                  >System1</a
+                >
+              </p>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-  <div id="get-started" style="position: relative; top: -65px; visibility: hidden; height: 0;"></div>
+  <div
+    id="get-started"
+    style="position: relative; top: -65px; visibility: hidden; height: 0"
+  ></div>
   <div class="content_section">
     <div class="content">
       <div class="flex flex-col gap-8 justify-center">
-        <div class="logo_text text-4xl justify-center font-light text-center" >
+        <div class="logo_text text-4xl justify-center font-light text-center">
           <span class="text-emerald-400"><</span>
           <span class="text-gray-400">init </span>
-          <span class="text-gray-400">products="</span>resource_tracker sentinel<span class="text-gray-400">"</span>
+          <span class="text-gray-400">products="</span>resource_tracker
+          sentinel<span class="text-gray-400">"</span>
           <span class="text-emerald-400">></span>
         </div>
-        <div class="w-2/3 mx-auto my-auto font-bold text-4xl text-center text-emerald-400">
+        <div
+          class="w-2/3 mx-auto my-auto font-bold text-4xl text-center text-emerald-400"
+        >
           Ready to right‑size your workflows?
         </div>
-        <div class="w-4/5 lg:w-full mx-auto flex gap-8 lg:gap-24 flex-col lg:flex-row pt-4 px-4">
+        <div
+          class="w-4/5 lg:w-full mx-auto flex gap-8 lg:gap-24 flex-col lg:flex-row pt-4 px-4"
+        >
           <div class="flex flex-col w-full lg:w-1/2 justify-center">
             <ol class="list-decimal list-outside text-2xl leading-[42px]">
               <li class="pb-4">
-                <a href="https://sparecores.github.io/resource-tracker/#metaflow-integration" target="_blank" rel="noopener" class="underline decoration-dotted hover:text-gray-500 font-bold">
+                <a
+                  href="https://sparecores.github.io/resource-tracker/#metaflow-integration"
+                  target="_blank"
+                  rel="noopener"
+                  class="underline decoration-dotted hover:text-gray-500 font-bold"
+                >
                   Install
                 </a>
-                <span class="font-bold">the <span class="text-emerald-400">open-source</span> Resource Tracker package</span>
+                <span class="font-bold"
+                  >the
+                  <span class="text-emerald-400">open-source</span> Resource
+                  Tracker package</span
+                >
               </li>
               <li class="pb-4">
-                <a href="/feedback/sentinel-early-access" class="underline decoration-dotted hover:text-gray-500 font-bold">
+                <a
+                  href="/feedback/sentinel-early-access"
+                  class="underline decoration-dotted hover:text-gray-500 font-bold"
+                >
                   Sign up
                 </a>
-                <span class="font-bold">for early access to a <span class="text-emerald-400">free Sentinel Access</span> account</span> to see 7‑day workflow history
+                <span class="font-bold"
+                  >for early access to a
+                  <span class="text-emerald-400">free Sentinel Access</span>
+                  account</span
+                >
+                to see 7‑day workflow history
               </li>
               <li class="pb-4">
-                <a class="underline decoration-dotted hover:text-gray-500 cursor-pointer font-bold" id="meeting-painpoints" data-ph-capture-attribute-sc-event="meeting scheduler open">
+                <a
+                  class="underline decoration-dotted hover:text-gray-500 cursor-pointer font-bold"
+                  id="meeting-painpoints"
+                  data-ph-capture-attribute-sc-event="meeting scheduler open"
+                >
                   Book a 30‑min live call
                 </a>
-                to share your pain points and <span class="text-emerald-400 font-bold">preview Sentinel Access and Pro</span>
+                to share your pain points and
+                <span class="text-emerald-400 font-bold"
+                  >preview Sentinel Access and Pro</span
+                >
               </li>
             </ol>
           </div>
@@ -489,69 +808,112 @@
       </div>
     </div>
   </div>
-  <div id="services" style="position: relative; top: -65px; visibility: hidden; height: 0;"></div>
+  <div
+    id="services"
+    style="position: relative; top: -65px; visibility: hidden; height: 0"
+  ></div>
   <div class="content_section bg-secondary">
     <div class="content">
       <div class="flex flex-col gap-8 justify-center">
-        <div class="logo_text text-4xl justify-center font-light text-center" >
+        <div class="logo_text text-4xl justify-center font-light text-center">
           <span class="text-emerald-400"><</span>
           <span class="text-gray-400">services </span>
-          <span class="text-gray-400">from="</span>spare_cores<span class="text-gray-400">"</span>
+          <span class="text-gray-400">from="</span>spare_cores<span
+            class="text-gray-400"
+            >"</span
+          >
           <span class="text-emerald-400">></span>
         </div>
-        <div class="w-2/3 mx-auto my-auto font-bold text-4xl text-center text-emerald-400">
+        <div
+          class="w-2/3 mx-auto my-auto font-bold text-4xl text-center text-emerald-400"
+        >
           More ways Spare Cores helps
         </div>
-        <div class="flex gap-8 justify-center flex-col lg:flex-row lg:gap-6 pt-8 px-4">
-          <div class="w-full lg:w-1/3 flex flex-col gap-4 p-8 bg-primary border border-emerald-400 rounded-lg relative">
+        <div
+          class="flex gap-8 justify-center flex-col lg:flex-row lg:gap-6 pt-8 px-4"
+        >
+          <div
+            class="w-full lg:w-1/3 flex flex-col gap-4 p-8 bg-primary border border-emerald-400 rounded-lg relative"
+          >
             <div class="text-emerald-400 text-2xl font-bold mt-2 mb-4">
               Spare Cores Navigator
             </div>
             <div class="text-left text-white text-xl pb-8">
-              Real‑time benchmarks for 2 000 + AWS, GCP, Azure & Hetzner instance types—LLM, DB, compression and more.
+              Real‑time benchmarks for 2 000 + AWS, GCP, Azure & Hetzner
+              instance types—LLM, DB, compression and more.
             </div>
             <div class="absolute bottom-4 right-4">
               <a routerLink="/about/navigator" class="text-emerald-400">
-                <lucide-icon name="square-arrow-up-right" class="h-[30px] w-[30px]"></lucide-icon>
+                <lucide-icon
+                  name="square-arrow-up-right"
+                  class="h-[30px] w-[30px]"
+                ></lucide-icon>
               </a>
             </div>
           </div>
-          <div class="w-full lg:w-1/3 flex flex-col gap-4 p-8 bg-primary border border-emerald-400 rounded-lg relative">
+          <div
+            class="w-full lg:w-1/3 flex flex-col gap-4 p-8 bg-primary border border-emerald-400 rounded-lg relative"
+          >
             <div class="text-emerald-400 text-2xl font-bold mt-2 mb-4">
               Cloud‑Optimization Consulting
             </div>
             <div class="text-left text-white text-xl pb-8">
-              Custom benchmarks, spend audits, and right‑sizing plans that unlock another 10–20 % savings.
+              Custom benchmarks, spend audits, and right‑sizing plans that
+              unlock another 10–20 % savings.
             </div>
             <div class="absolute bottom-4 right-4">
-              <a id="meeting-services-consulting" class="text-emerald-400 cursor-pointer">
-                <lucide-icon name="message-square-more" class="h-[30px] w-[30px]"></lucide-icon>
+              <a
+                id="meeting-services-consulting"
+                class="text-emerald-400 cursor-pointer"
+              >
+                <lucide-icon
+                  name="message-square-more"
+                  class="h-[30px] w-[30px]"
+                ></lucide-icon>
               </a>
             </div>
           </div>
-          <div class="w-full lg:w-1/3 flex flex-col gap-4 p-8 bg-primary border border-emerald-400 rounded-lg relative">
+          <div
+            class="w-full lg:w-1/3 flex flex-col gap-4 p-8 bg-primary border border-emerald-400 rounded-lg relative"
+          >
             <div class="text-emerald-400 text-2xl font-bold mt-2 mb-4">
               Scalable Shiny / Streamlit Hosting
             </div>
             <div class="text-left text-white text-xl pb-8">
-              Monitoring and auto‑scaling containerized dashboards from zero to thousands of users on your cloud—or ours.
+              Monitoring and auto‑scaling containerized dashboards from zero to
+              thousands of users on your cloud—or ours.
             </div>
             <div class="absolute bottom-4 right-4">
-              <a id="meeting-services-shiny" class="text-emerald-400 cursor-pointer">
-                <lucide-icon name="message-square-more" class="h-[30px] w-[30px]"></lucide-icon>
+              <a
+                id="meeting-services-shiny"
+                class="text-emerald-400 cursor-pointer"
+              >
+                <lucide-icon
+                  name="message-square-more"
+                  class="h-[30px] w-[30px]"
+                ></lucide-icon>
               </a>
             </div>
           </div>
-          <div class="w-full lg:w-1/3 flex flex-col gap-4 p-8 bg-primary border border-emerald-400 rounded-lg relative">
+          <div
+            class="w-full lg:w-1/3 flex flex-col gap-4 p-8 bg-primary border border-emerald-400 rounded-lg relative"
+          >
             <div class="text-emerald-400 text-2xl font-bold mt-2 mb-4">
               Ad-hoc AI Workload Sizing
             </div>
             <div class="text-left text-white text-xl pb-8">
-              Instantly pick the lowest-cost, right-sized infra for one-off tasks—like labeling 10 k PDFs with an LLM.
+              Instantly pick the lowest-cost, right-sized infra for one-off
+              tasks—like labeling 10 k PDFs with an LLM.
             </div>
             <div class="absolute bottom-4 right-4">
-              <a id="meeting-services-llms" class="text-emerald-400 cursor-pointer">
-                <lucide-icon name="message-square-more" class="h-[30px] w-[30px]"></lucide-icon>
+              <a
+                id="meeting-services-llms"
+                class="text-emerald-400 cursor-pointer"
+              >
+                <lucide-icon
+                  name="message-square-more"
+                  class="h-[30px] w-[30px]"
+                ></lucide-icon>
               </a>
             </div>
           </div>
@@ -559,23 +921,39 @@
       </div>
     </div>
   </div>
-  <div id="articles" style="position: relative; top: -65px; visibility: hidden; height: 0;"></div>
+  <div
+    id="articles"
+    style="position: relative; top: -65px; visibility: hidden; height: 0"
+  ></div>
   <div class="content_section">
-      <div class="content flex flex-col gap-12">
-      <app-theme-text text="release_notes" classes="text-4xl justify-center font-light"></app-theme-text>
+    <div class="content flex flex-col gap-12">
+      <app-theme-text
+        text="release_notes"
+        classes="text-4xl justify-center font-light"
+      ></app-theme-text>
       <div class="text-xl text-center font-medium w-3/5 mx-auto">
-        We publish case studies, learnings from implementing Spare
-        Cores components, and other project updates from time to
-        time. Find some of our featured articles below:
+        We publish case studies, learnings from implementing Spare Cores
+        components, and other project updates from time to time. Find some of
+        our featured articles below:
       </div>
       <div class="articles_holder flex mt-4 flex-wrap">
-        <div class="w-full md:w-1/2 lg:w-1/4 flex flex-col gap-4 px-6 py-4" *ngFor="let item of featuredArticles">
+        <div
+          class="w-full md:w-1/2 lg:w-1/4 flex flex-col gap-4 px-6 py-4"
+          *ngFor="let item of featuredArticles"
+        >
           <app-article-card [article]="item"></app-article-card>
         </div>
       </div>
       <div class="flex justify-center">
-        <button class="btn-primary py-4 px-4" routerLink="/articles">Read more articles</button>
-        <button class="bg-transparent text-teal-500 py-5 px-5 font-bold hover:text-teal-600" routerLink="/talks">Or check out our conference talks ></button>
+        <button class="btn-primary py-4 px-4" routerLink="/articles">
+          Read more articles
+        </button>
+        <button
+          class="bg-transparent text-teal-500 py-5 px-5 font-bold hover:text-teal-600"
+          routerLink="/talks"
+        >
+          Or check out our conference talks >
+        </button>
       </div>
     </div>
   </div>

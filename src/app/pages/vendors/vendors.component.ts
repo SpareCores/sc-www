@@ -1,32 +1,43 @@
-import { Component, OnInit } from '@angular/core';
-import { SeoHandlerService } from '../../services/seo-handler.service';
-import { BreadcrumbSegment, BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
-import { KeeperAPIService } from '../../services/keeper-api.service';
-import { OrderDir, TableRegionTableRegionGetData } from '../../../../sdk/data-contracts';
-import { LucideAngularModule } from 'lucide-angular';
-import { CountryIdtoNamePipe } from '../../pipes/country-idto-name.pipe';
-import { Router, RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit } from "@angular/core";
+import { SeoHandlerService } from "../../services/seo-handler.service";
+import {
+  BreadcrumbSegment,
+  BreadcrumbsComponent,
+} from "../../components/breadcrumbs/breadcrumbs.component";
+import { KeeperAPIService } from "../../services/keeper-api.service";
+import {
+  OrderDir,
+  TableRegionTableRegionGetData,
+} from "../../../../sdk/data-contracts";
+import { LucideAngularModule } from "lucide-angular";
+import { CountryIdtoNamePipe } from "../../pipes/country-idto-name.pipe";
+import { Router, RouterModule } from "@angular/router";
+import { CommonModule } from "@angular/common";
 
 @Component({
-  selector: 'app-vendors',
+  selector: "app-vendors",
   standalone: true,
-  imports: [BreadcrumbsComponent, LucideAngularModule, CountryIdtoNamePipe, RouterModule, CommonModule],
-  templateUrl: './vendors.component.html',
-  styleUrl: './vendors.component.scss'
+  imports: [
+    BreadcrumbsComponent,
+    LucideAngularModule,
+    CountryIdtoNamePipe,
+    RouterModule,
+    CommonModule,
+  ],
+  templateUrl: "./vendors.component.html",
+  styleUrl: "./vendors.component.scss",
 })
 export class VendorsComponent implements OnInit {
   breadcrumbs: BreadcrumbSegment[] = [
     {
-      name: 'Home',
-      url: '/'
+      name: "Home",
+      url: "/",
     },
     {
-      name: 'Vendors',
-      url: '/vendors'
-    }
+      name: "Vendors",
+      url: "/vendors",
+    },
   ];
-
 
   regions: TableRegionTableRegionGetData = [];
   vendors: any[] = [];
@@ -37,41 +48,44 @@ export class VendorsComponent implements OnInit {
   constructor(
     private SEOHandler: SeoHandlerService,
     private API: KeeperAPIService,
-    private router: Router
-  ) { }
+    private router: Router,
+  ) {}
 
   ngOnInit() {
-    this.SEOHandler.updateTitleAndMetaTags('Vendors - Spare Cores', 'List of all vendors', 'AWS, Google Cloud, Hetzner');
+    this.SEOHandler.updateTitleAndMetaTags(
+      "Vendors - Spare Cores",
+      "List of all vendors",
+      "AWS, Google Cloud, Hetzner",
+    );
 
-    this.API.getVendors().then(vendors => {
+    this.API.getVendors().then((vendors) => {
       this.vendors = vendors.body;
       for (let i = 0; i < this.vendors.length; i++) {
         this.vendors[i].regions = 0;
       }
-      this.API.getRegions().then(regions => {
+      this.API.getRegions().then((regions) => {
         this.regions = regions.body;
         // count regions per vendor
         for (let i = 0; i < this.regions.length; i++) {
-          const vendor = this.vendors.find((v: any) => v.vendor_id === this.regions[i].vendor_id);
+          const vendor = this.vendors.find(
+            (v: any) => v.vendor_id === this.regions[i].vendor_id,
+          );
           vendor.regions++;
         }
       });
     });
-
   }
 
   getVendorName(vendorId: string): string {
-    const vendor = this.vendors.find(vendor => vendor.vendor_id === vendorId);
-    return vendor ? vendor.name : '';
+    const vendor = this.vendors.find((vendor) => vendor.vendor_id === vendorId);
+    return vendor ? vendor.name : "";
   }
 
   toggleOrdering(column: string) {
-
-    if(this.orderBy === column) {
-      if(this.orderDir === OrderDir.Desc) {
+    if (this.orderBy === column) {
+      if (this.orderDir === OrderDir.Desc) {
         this.orderDir = OrderDir.Asc;
-      }
-      else {
+      } else {
         this.orderDir = null;
         this.orderBy = null;
       }
@@ -80,26 +94,36 @@ export class VendorsComponent implements OnInit {
       this.orderDir = OrderDir.Desc;
     }
 
-    if(this.orderBy === 'region') {
+    if (this.orderBy === "region") {
       this.regions.sort((a, b) => {
-        return this.orderDir === OrderDir.Desc ? a.display_name.localeCompare(b.display_name) : b.display_name.localeCompare(a.display_name);
+        return this.orderDir === OrderDir.Desc
+          ? a.display_name.localeCompare(b.display_name)
+          : b.display_name.localeCompare(a.display_name);
       });
-    }
-    else if(this.orderBy === 'vendor') {
+    } else if (this.orderBy === "vendor") {
       this.regions.sort((a, b) => {
-        return this.orderDir === OrderDir.Desc ? this.getVendorName(a.vendor_id).localeCompare(this.getVendorName(b.vendor_id)) : this.getVendorName(b.vendor_id).localeCompare(this.getVendorName(a.vendor_id));
+        return this.orderDir === OrderDir.Desc
+          ? this.getVendorName(a.vendor_id).localeCompare(
+              this.getVendorName(b.vendor_id),
+            )
+          : this.getVendorName(b.vendor_id).localeCompare(
+              this.getVendorName(a.vendor_id),
+            );
       });
-    } else if(this.orderBy === 'country') {
+    } else if (this.orderBy === "country") {
       this.regions.sort((a, b) => {
-        return this.orderDir === OrderDir.Desc ? a.country_id.localeCompare(b.country_id) : b.country_id.localeCompare(a.country_id);
+        return this.orderDir === OrderDir.Desc
+          ? a.country_id.localeCompare(b.country_id)
+          : b.country_id.localeCompare(a.country_id);
       });
     }
   }
 
   getOrderingIcon(column: string) {
-
-    if(this.orderBy === column) {
-      return this.orderDir === OrderDir.Desc ? 'arrow-down-wide-narrow' : 'arrow-down-narrow-wide';
+    if (this.orderBy === column) {
+      return this.orderDir === OrderDir.Desc
+        ? "arrow-down-wide-narrow"
+        : "arrow-down-narrow-wide";
     }
     return null;
   }
