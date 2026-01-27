@@ -598,12 +598,10 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     } catch (error) {
       console.error("Error initializing dropdown:", error);
       // fall back to trying to load globally if it exists
-      // @ts-expect-error - Window might have HSComboBox globally
       if (
         window.HSComboBox &&
         typeof window.HSComboBox.autoInit === "function"
       ) {
-        // @ts-expect-error - Accessing global variable
         window.HSComboBox.autoInit();
       }
     }
