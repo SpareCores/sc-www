@@ -265,8 +265,8 @@ export class EmbeddedCompareChartComponent implements OnInit {
               server.prices.forEach((price: any) => {
                 price.region = regions.find(
                   (r: any) =>
-                    r.region_id === price.region_id &&
-                    r.vendor_id === price.vendor_id,
+                    r.vendor_id === price.vendor_id &&
+                    r.region_id === price.region_id,
                 );
                 price.zone = zones.find(
                   (z: any) =>
