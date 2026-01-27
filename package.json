@@ -17,7 +17,9 @@
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
     "generate-api": "npx swagger-typescript-api -p http://localhost:8000/openapi.json -o ./sdk -n KeeperApi.ts --extract-request-params --extract-request-body --extract-response-body --route-types --modular --single-http-client",
-    "generate-api-prod": "wget https://keeper.sparecores.net/openapi.json -O sdk/openapi.json && npx swagger-typescript-api generate -p https://keeper.sparecores.net/openapi.json -o ./sdk -n KeeperApi.ts --extract-request-params --extract-request-body --extract-response-body --route-types --modular --single-http-client"
+    "generate-api-prod": "wget https://keeper.sparecores.net/openapi.json -O sdk/openapi.json && npx swagger-typescript-api generate -p https://keeper.sparecores.net/openapi.json -o ./sdk -n KeeperApi.ts --extract-request-params --extract-request-body --extract-response-body --route-types --modular --single-http-client",
+    "prettier:check": "prettier . --check",
+    "prettier:fix": "prettier . --write"
   },
   "private": true,
   "dependencies": {
@@ -92,6 +94,7 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
     "postcss": "^8.4.35",
+    "prettier": "3.8.1",
     "tailwindcss": "^3.4.1",
     "typescript": "~5.3.2"
   }
