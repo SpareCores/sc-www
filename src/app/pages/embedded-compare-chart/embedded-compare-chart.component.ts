@@ -264,10 +264,15 @@ export class EmbeddedCompareChartComponent implements OnInit {
             if (server.prices?.length > 0) {
               server.prices.forEach((price: any) => {
                 price.region = regions.find(
-                  (r: any) => r.region_id === price.region_id,
+                  (r: any) =>
+                    r.vendor_id === price.vendor_id &&
+                    r.region_id === price.region_id,
                 );
                 price.zone = zones.find(
-                  (z: any) => z.zone_id === price.zone_id,
+                  (z: any) =>
+                    z.vendor_id === price.vendor_id &&
+                    z.region_id === price.region_id &&
+                    z.zone_id === price.zone_id,
                 );
               });
               server.bestOndemandPrice = server.prices
