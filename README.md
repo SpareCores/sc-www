@@ -76,6 +76,12 @@ metrics on the SSR steps.
 
 Run `ng lint` to check code formatting on all `ts` and `html` files.
 
+## Formatting tools
+
+Run `npm run prettier:check` to check code style on all required files.
+
+Run `npm run prettier:fix` to fix code style on all required files.
+
 ## Running unit tests
 
 Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
