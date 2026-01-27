@@ -455,9 +455,7 @@ export class ServerCompareComponent
                       x.allocation === Allocation.Ondemand &&
                       selectedZones.findIndex(
                         (z: any) =>
-                          z.zone === x.zone_id &&
-                          z.region === x.region_id &&
-                          z.vendor === x.vendor_id,
+                          z.zone === x.zone_id && z.region === x.region_id,
                       ) > -1,
                   )
                   .sort((a, b) => a.price - b.price);
@@ -467,9 +465,7 @@ export class ServerCompareComponent
                       x.allocation === Allocation.Spot &&
                       selectedZones.findIndex(
                         (z: any) =>
-                          z.zone === x.zone_id &&
-                          z.region === x.region_id &&
-                          z.vendor === x.vendor_id,
+                          z.zone === x.zone_id && z.region === x.region_id,
                       ) > -1,
                   )
                   .sort((a, b) => a.price - b.price);

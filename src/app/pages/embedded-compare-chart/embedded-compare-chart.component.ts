@@ -271,6 +271,7 @@ export class EmbeddedCompareChartComponent implements OnInit {
                 price.zone = zones.find(
                   (z: any) =>
                     z.vendor_id === price.vendor_id &&
+                    z.region_id === price.region_id &&
                     z.zone_id === price.zone_id,
                 );
               });
