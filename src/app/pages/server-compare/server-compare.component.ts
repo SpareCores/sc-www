@@ -777,7 +777,7 @@ export class ServerCompareComponent
                 r.vendor_id === price.vendor_id,
             );
             price.zone = this.zones.find(
-              (z: any) => z.zone_id === price.zone_id,
+              (z: any) => z.vendor_id === price.vendor_id && z.zone_id === price.zone_id,
             );
           });
           server.bestOndemandPrice = server.prices

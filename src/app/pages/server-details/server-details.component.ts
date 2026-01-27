@@ -280,7 +280,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
                         r.vendor_id === price.vendor_id,
                     );
                     price.zone = zones.find(
-                      (z: any) => z.zone_id === price.zone_id,
+                      (z: any) => z.vendor_id === price.vendor_id && z.zone_id === price.zone_id,
                     );
                   });
                 }
@@ -384,11 +384,12 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
               this.serverDetails.prices?.forEach(
                 (price: ExtendedServerPrice) => {
                   const region = this.regionFilters.find(
-                    (z) => z.region_id === price.region_id,
+                    (z) =>z.vendor_id === price.vendor_id && z.region_id === price.region_id,
                   );
                   if (!region) {
                     this.regionFilters.push({
                       name: price.region.display_name,
+                      vendor_id: price.vendor_id,
                       region_id: price.region_id,
                       selected: false,
                     });
@@ -818,7 +819,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     if (this.serverDetails.prices.length > 0) {
       this.serverDetails.prices.forEach((price: ExtendedServerPrice) => {
         const zone = this.availabilityZones.find(
-          (z) => z.zone_id === price.zone_id,
+          (z) => z.vendor_id === price.vendor_id && z.zone_id === price.zone_id,
         );
         if (!zone) {
           const data: any = {
@@ -888,7 +889,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
       this.availabilityZones.forEach((zone: any) => {
         if (
-          this.regionFilters.find((z) => z.region_id === zone.region_id)
+          this.regionFilters.find((z) => z.vendor_id === zone.vendor_id && z.region_id === zone.region_id)
             ?.selected
         ) {
           series.labels!.push(zone.display_name);
@@ -910,10 +911,11 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     if (this.serverDetails.prices.length > 0) {
       for (let i = 0; i < this.serverDetails.prices.length && i < 10; i++) {
         const price = this.serverDetails.prices[i];
-        const zone = pricesPerZone.find((z) => z.zone_id === price.zone_id);
+        const zone = pricesPerZone.find((z) => z.vendor_id === price.vendor_id && z.zone_id === price.zone_id);
         if (!zone) {
           const data: any = {
             zone_id: price.zone_id,
+            vendor_id: price.vendor_id,
             display_name: price.zone.display_name,
             spot: {
               price: 0,
