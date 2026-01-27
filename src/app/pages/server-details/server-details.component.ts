@@ -282,6 +282,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
                     price.zone = zones.find(
                       (z: any) =>
                         z.vendor_id === price.vendor_id &&
+                        z.region_id === price.region_id &&
                         z.zone_id === price.zone_id,
                     );
                   });
@@ -824,13 +825,16 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     if (this.serverDetails.prices.length > 0) {
       this.serverDetails.prices.forEach((price: ExtendedServerPrice) => {
         const zone = this.availabilityZones.find(
-          (z) => z.vendor_id === price.vendor_id && z.zone_id === price.zone_id,
+          (z) =>
+            z.vendor_id === price.vendor_id &&
+            z.region_id === price.region_id &&
+            z.zone_id === price.zone_id,
         );
         if (!zone) {
           const data: any = {
             vendor_id: price.vendor_id,
-            zone_id: price.zone_id,
             region_id: price.region_id,
+            zone_id: price.zone_id,
             display_name: price.zone.display_name,
             spot: {
               price: 0,
@@ -897,7 +901,9 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
         if (
           this.regionFilters.find(
             (z) =>
-              z.vendor_id === zone.vendor_id && z.region_id === zone.region_id,
+              z.vendor_id === zone.vendor_id &&
+              z.region_id === zone.region_id &&
+              z.zone_id === zone.zone_id,
           )?.selected
         ) {
           series.labels!.push(zone.display_name);
@@ -920,12 +926,16 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
       for (let i = 0; i < this.serverDetails.prices.length && i < 10; i++) {
         const price = this.serverDetails.prices[i];
         const zone = pricesPerZone.find(
-          (z) => z.vendor_id === price.vendor_id && z.zone_id === price.zone_id,
+          (z) =>
+            z.vendor_id === price.vendor_id &&
+            z.region_id === price.region_id &&
+            z.zone_id === price.zone_id,
         );
         if (!zone) {
           const data: any = {
             vendor_id: price.vendor_id,
             zone_id: price.zone_id,
+            region_id: price.region_id,
             display_name: price.zone.display_name,
             spot: {
               price: 0,
