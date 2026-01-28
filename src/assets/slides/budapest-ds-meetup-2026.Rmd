@@ -938,7 +938,7 @@ More details:<br /><a href="https://sparecores.com/servers?vendor=aws&gpu_min=1&
 In this case, we are happy to be your friend .. and help out!
 :::
 
-## $ pip show navigator | grep -i budget { data-transition="slide-in convex-out" }
+## >>> from llm-benchmarks import budget { data-transition="slide-in convex-out" }
 
 <style>
 td.cost-value span.num {
@@ -946,6 +946,7 @@ td.cost-value span.num {
   min-width: 5em;
   text-align: right;
   padding-right: 0.5em;
+  font-family: monospace;
 }
 </style>
 
@@ -966,13 +967,14 @@ td.cost-value span.num {
   </tr>
 </thead>
 <tr><td>AWS</td><td class="cost-value"><span class="num">2153.68</span> <span class="unit">USD</span></td></tr>
-<tr><td>GCP</td><td class="cost-value"><span class="num">696.9</span> <span class="unit">USD</span></td></tr>
+<tr><td>GCP</td><td class="cost-value"><span class="num">696.90</span> <span class="unit">USD</span></td></tr>
 <tr><td>Azure</td><td class="cost-value"><span class="num">8036.71</span> <span class="unit">USD</span></td></tr>
 <tr><td>Hetzner</td><td class="cost-value"><span class="num">8.65</span> <span class="unit">EUR</span></td></tr>
 <tr><td>Upcloud</td><td class="cost-value"><span class="num">170.21</span> <span class="unit">EUR</span></td></tr>
+<tr><td class="fragment" colspan="2">+2 new vendors</td></tr>
 </table>
 
-<div class="fragment">
+<div class="fragment" style="margin-top: -60px;">
   <p style="color: #34d399;">
     <b>Overall: </b>€0.00
   </p>
@@ -1035,7 +1037,7 @@ Next benchmark?
 GBM: share @szilard repo .. ask for feedback from the community, it's the time to make a diff on this .. before we burn another $10k. visit at the booth!
 </aside>
 
-## $ curl -X POST -d @README.md chatgpt.com
+## $ curl -X POST -d @README.md chat.gpt
 
 Airline dataset:
 
@@ -1081,7 +1083,7 @@ Hardware:
 ::::
 :::
 
-## $ curl -X POST -d @README.md chatgpt.com
+## $ curl -X POST -d @README.md chat.gpt
 
 <table style="font-size: 0.8em; margin-top: 30px;">
   <thead>
@@ -1164,7 +1166,7 @@ Hardware:
 NVIDIA V100
 :::
 
-## $ curl -X POST -d @README.md chatgpt.com
+## $ curl -X POST -d @README.md chat.gpt
 
 - Up-to 2x speed-up on newer generation CPUs
 - Up-to 1.3x speed-up on newer generation GPUs
