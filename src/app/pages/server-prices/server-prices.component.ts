@@ -530,7 +530,7 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
                   compareItem.server === item.server.api_reference &&
                   compareItem.zonesRegions.findIndex(
                     (x) =>
-                      x.zone === item.zone_id && x.region === item.region_id,
+                      x.region === item.region_id && x.zone === item.zone_id,
                   ) > -1,
               ) !== -1,
           };

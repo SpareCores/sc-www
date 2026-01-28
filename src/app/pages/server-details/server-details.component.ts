@@ -275,10 +275,15 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
                     : 0;
                   this.serverDetails.prices.forEach((price: any) => {
                     price.region = regions.find(
-                      (r: any) => r.region_id === price.region_id,
+                      (r: any) =>
+                        r.vendor_id === price.vendor_id &&
+                        r.region_id === price.region_id,
                     );
                     price.zone = zones.find(
-                      (z: any) => z.zone_id === price.zone_id,
+                      (z: any) =>
+                        z.vendor_id === price.vendor_id &&
+                        z.region_id === price.region_id &&
+                        z.zone_id === price.zone_id,
                     );
                   });
                 }
@@ -382,11 +387,14 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
               this.serverDetails.prices?.forEach(
                 (price: ExtendedServerPrice) => {
                   const region = this.regionFilters.find(
-                    (z) => z.region_id === price.region_id,
+                    (z) =>
+                      z.vendor_id === price.vendor_id &&
+                      z.region_id === price.region_id,
                   );
                   if (!region) {
                     this.regionFilters.push({
                       name: price.region.display_name,
+                      vendor_id: price.vendor_id,
                       region_id: price.region_id,
                       selected: false,
                     });
@@ -724,12 +732,14 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     this.availabilityRegions = [];
     if (this.serverDetails.prices.length > 0) {
       this.serverDetails.prices.forEach((price: ExtendedServerPrice) => {
-        const zone = this.availabilityRegions.find(
-          (z) => z.region_id === price.region_id,
+        const region = this.availabilityRegions.find(
+          (r) =>
+            r.vendor_id === price.vendor_id && r.region_id === price.region_id,
         );
         const allocation = price.allocation || "spot";
-        if (!zone) {
+        if (!region) {
           const data: any = {
+            vendor_id: price.vendor_id,
             region_id: price.region_id,
             display_name: price.region.display_name,
             api_reference: price.region.api_reference,
@@ -748,22 +758,23 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
           };
           data[allocation].price += price.price;
           data[allocation].count++;
-
           this.availabilityRegions.push(data);
         } else {
-          zone[allocation].price += price.price;
-          zone[allocation].count++;
+          region[allocation].price += price.price;
+          region[allocation].count++;
         }
       });
 
-      this.availabilityRegions.forEach((zone: any) => {
-        if (zone.spot.count)
-          zone.spot.price =
-            Math.round((zone.spot.price / zone.spot.count) * 1000000) / 1000000;
-        if (zone.ondemand.count)
-          zone.ondemand.price =
-            Math.round((zone.ondemand.price / zone.ondemand.count) * 1000000) /
+      this.availabilityRegions.forEach((region: any) => {
+        if (region.spot.count)
+          region.spot.price =
+            Math.round((region.spot.price / region.spot.count) * 1000000) /
             1000000;
+        if (region.ondemand.count)
+          region.ondemand.price =
+            Math.round(
+              (region.ondemand.price / region.ondemand.count) * 1000000,
+            ) / 1000000;
       });
 
       this.availabilityRegions.sort(
@@ -796,13 +807,13 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
         (s: any) => s.label === "Ondemand",
       );
 
-      this.availabilityRegions.forEach((zone: any) => {
-        series.labels!.push(zone.display_name);
+      this.availabilityRegions.forEach((region: any) => {
+        series.labels!.push(region.display_name);
         if (spotIdx > -1) {
-          series.datasets[spotIdx].data.push(zone.spot?.price || 0);
+          series.datasets[spotIdx].data.push(region.spot?.price || 0);
         }
         if (ondemandIdx > -1) {
-          series.datasets[ondemandIdx].data.push(zone.ondemand?.price || 0);
+          series.datasets[ondemandIdx].data.push(region.ondemand?.price || 0);
         }
       });
 
@@ -815,12 +826,16 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     if (this.serverDetails.prices.length > 0) {
       this.serverDetails.prices.forEach((price: ExtendedServerPrice) => {
         const zone = this.availabilityZones.find(
-          (z) => z.zone_id === price.zone_id,
+          (z) =>
+            z.vendor_id === price.vendor_id &&
+            z.region_id === price.region_id &&
+            z.zone_id === price.zone_id,
         );
         if (!zone) {
           const data: any = {
-            zone_id: price.zone_id,
+            vendor_id: price.vendor_id,
             region_id: price.region_id,
+            zone_id: price.zone_id,
             display_name: price.zone.display_name,
             spot: {
               price: 0,
@@ -835,7 +850,6 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
           };
           data[price.allocation || "spot"].price += price.price;
           data[price.allocation || "spot"].count++;
-
           this.availabilityZones.push(data);
         } else {
           zone[price.allocation || "spot"].price += price.price;
@@ -885,8 +899,10 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
       this.availabilityZones.forEach((zone: any) => {
         if (
-          this.regionFilters.find((z) => z.region_id === zone.region_id)
-            ?.selected
+          this.regionFilters.find(
+            (z) =>
+              z.vendor_id === zone.vendor_id && z.region_id === zone.region_id,
+          )?.selected
         ) {
           series.labels!.push(zone.display_name);
           if (spotIdx > -1) {
@@ -907,9 +923,16 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     if (this.serverDetails.prices.length > 0) {
       for (let i = 0; i < this.serverDetails.prices.length && i < 10; i++) {
         const price = this.serverDetails.prices[i];
-        const zone = pricesPerZone.find((z) => z.zone_id === price.zone_id);
+        const zone = pricesPerZone.find(
+          (z) =>
+            z.vendor_id === price.vendor_id &&
+            z.region_id === price.region_id &&
+            z.zone_id === price.zone_id,
+        );
         if (!zone) {
           const data: any = {
+            vendor_id: price.vendor_id,
+            region_id: price.region_id,
             zone_id: price.zone_id,
             display_name: price.zone.display_name,
             spot: {

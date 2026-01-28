@@ -427,13 +427,15 @@ export class ServerCompareComponent
             if (server.prices?.length > 0) {
               server.prices.forEach((price: any) => {
                 price.region = regions.find(
-                  (r: any) => r.region_id === price.region_id,
+                  (r: any) =>
+                    r.vendor_id === price.vendor_id &&
+                    r.region_id === price.region_id,
                 );
                 price.zone = zones.find(
                   (z: any) =>
-                    z.zone_id === price.zone_id &&
+                    z.vendor_id === price.vendor_id &&
                     z.region_id === price.region_id &&
-                    z.vendor_id === price.vendor_id,
+                    z.zone_id === price.zone_id,
                 );
               });
 
@@ -453,7 +455,7 @@ export class ServerCompareComponent
                       x.allocation === Allocation.Ondemand &&
                       selectedZones.findIndex(
                         (z: any) =>
-                          z.zone === x.zone_id && z.region === x.region_id,
+                          z.region === x.region_id && z.zone === x.zone_id,
                       ) > -1,
                   )
                   .sort((a, b) => a.price - b.price);
@@ -463,7 +465,7 @@ export class ServerCompareComponent
                       x.allocation === Allocation.Spot &&
                       selectedZones.findIndex(
                         (z: any) =>
-                          z.zone === x.zone_id && z.region === x.region_id,
+                          z.region === x.region_id && z.zone === x.zone_id,
                       ) > -1,
                   )
                   .sort((a, b) => a.price - b.price);
@@ -770,10 +772,15 @@ export class ServerCompareComponent
         if (server.prices?.length > 0) {
           server.prices.forEach((price: any) => {
             price.region = this.regions.find(
-              (r: any) => r.region_id === price.region_id,
+              (r: any) =>
+                r.vendor_id === price.vendor_id &&
+                r.region_id === price.region_id,
             );
             price.zone = this.zones.find(
-              (z: any) => z.zone_id === price.zone_id,
+              (z: any) =>
+                z.vendor_id === price.vendor_id &&
+                z.region_id === price.region_id &&
+                z.zone_id === price.zone_id,
             );
           });
           server.bestOndemandPrice = server.prices
