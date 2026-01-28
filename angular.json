@@ -47,6 +47,16 @@
               "node_modules/flowbite/dist/flowbite.min.js",
               "node_modules/@preline/combobox/index.js"
             ],
+            "allowedCommonJsDependencies": [
+              "survey-core",
+              "survey-angular-ui",
+              "crypto-js",
+              "nodemailer",
+              "handlebars",
+              "prismjs",
+              "file-saver",
+              "@preline/combobox"
+            ],
             "server": "src/main.server.ts",
             "prerender": {
               "discoverRoutes": false,
