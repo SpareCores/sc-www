@@ -24,6 +24,7 @@ import { CurrencyOption, availableCurrencies } from "../../tools/shared_data";
 import { DropdownManagerService } from "../../services/dropdown-manager.service";
 import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
 import { Subscription } from "rxjs";
+import openApiSpec from "../../../../sdk/openapi.json";
 
 @Component({
   selector: "app-storages",
@@ -74,7 +75,7 @@ export class StoragesComponent implements OnInit, OnDestroy {
     { category_id: "region", name: "Region", icon: "hotel", collapsed: true },
   ];
 
-  openApiJson: any = require("../../../../sdk/openapi.json");
+  openApiJson: any = openApiSpec;
   searchParameters: any;
   query: any = {};
 
