@@ -54,7 +54,7 @@
     "ngx-lightbox": "^3.0.0",
     "ngx-markdown": "^18.1.0",
     "nodemailer": "^6.10.0",
-    "posthog-js": "^1.186.0",
+    "posthog-js": "^1.335.5",
     "prismjs": "^1.30.0",
     "process": "^0.11.10",
     "rxjs": "~7.8.0",
