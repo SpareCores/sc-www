@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: "class",
   plugins: [require("flowbite/plugin")],
   content: [
     "./src/**/*.{html,ts,scss}",
