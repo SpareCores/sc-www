@@ -6,7 +6,6 @@ import {
   PLATFORM_ID,
 } from "@angular/core";
 import { SurveyModule } from "survey-angular-ui";
-import { BreadcrumbSegment } from "../../components/breadcrumbs/breadcrumbs.component";
 import { CommonModule, isPlatformBrowser } from "@angular/common";
 import { ActivatedRoute, RouterModule } from "@angular/router";
 import { Model } from "survey-core";
@@ -25,11 +24,6 @@ import { Subscription } from "rxjs";
   styleUrl: "./survey-fill.component.scss",
 })
 export class SurveyFillComponent implements OnInit, OnDestroy {
-  breadcrumbs: BreadcrumbSegment[] = [
-    { name: "Home", url: "/" },
-    { name: "Survey", url: "/survey" },
-  ];
-
   surveyModel!: Model;
   visitorID: string = "";
 
