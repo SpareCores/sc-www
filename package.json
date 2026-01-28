@@ -87,7 +87,7 @@
     "@typescript-eslint/parser": "^8.54.0",
     "@typescript-eslint/utils": "^8.54.0",
     "autoprefixer": "^10.4.18",
-    "cypress": "^13.14.1",
+    "cypress": "^15.9.0",
     "eslint": "^8.57.0",
     "jasmine-core": "~5.1.0",
     "karma": "~6.4.0",
