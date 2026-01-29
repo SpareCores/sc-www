@@ -31,5 +31,8 @@ jobs:
         if: always()
         with:
           name: cypress-screenshots
-          path: cypress/screenshots
+          path: | 
+            cypress/screenshots
+            cypress-image-diff-screenshots
+            cypress-image-diff-html-report
           if-no-files-found: ignore
