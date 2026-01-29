@@ -251,7 +251,7 @@
         <h2 class="text-3xl font-bold">Economics</h2>
       </div>
 
-      <div class="block_full">
+      <div class="block_full" id="average-price-per-region">
         <div class="flex justify-between items-center">
           <h3 class="text-2xl">Average Price per Region</h3>
           <div>
@@ -288,7 +288,7 @@
         </div>
       </div>
 
-      <div class="block_half">
+      <div class="block_half" id="prices-per-zone">
         <div class="flex justify-between items-center">
           <h3 class="text-2xl">Prices per Zone</h3>
           <div class="flex gap-4">
@@ -341,7 +341,7 @@
           </div>
         </div>
       </div>
-      <div class="block_half">
+      <div class="block_half" id="lowest-prices">
         <h3 class="text-2xl">Lowest Prices</h3>
         <div *ngIf="isBrowser()">
           <div chartType="bar">
@@ -410,7 +410,7 @@
           </tbody>
         </table>
       </div>
-      <div class="block_half">
+      <div class="block_half" id="similar_servers">
         <div class="flex justify-between items-center">
           <h3 class="text-2xl">Similar Servers</h3>
           <div class="flex gap-4">

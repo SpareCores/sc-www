@@ -72,7 +72,7 @@
           </td>
         </ng-container>
       </tr>
-      <tr *ngIf="isChartShown('generic')">
+      <tr *ngIf="isChartShown('generic')" id="score-row">
         <td>
           <div class="flex gap-1 items-center">
             $Core
@@ -139,7 +139,7 @@
           </td>
         </ng-container>
       </tr>
-      <tr *ngIf="isChartShown('generic')">
+      <tr *ngIf="isChartShown('generic')" id="best-spot-price-row">
         <td>Best spot price</td>
         <ng-container *ngFor="let item of servers">
           <td>
@@ -154,7 +154,7 @@
           </td>
         </ng-container>
       </tr>
-      <tr *ngIf="isChartShown('generic')">
+      <tr *ngIf="isChartShown('generic')" id="best-on-demand-price-row">
         <td>Best ondemand price</td>
         <ng-container *ngFor="let item of servers">
           <td>
