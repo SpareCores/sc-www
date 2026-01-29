@@ -1,0 +1,2511 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="budapest-ds-meetup-2026_files/libs/quarto-html/tabby.min.js"></script>
+<script src="budapest-ds-meetup-2026_files/libs/quarto-html/popper.min.js"></script>
+<script src="budapest-ds-meetup-2026_files/libs/quarto-html/tippy.umd.min.js"></script>
+<link href="budapest-ds-meetup-2026_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="budapest-ds-meetup-2026_files/libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="budapest-ds-meetup-2026_files/libs/quarto-html/quarto-syntax-highlighting-dark-4d9afe2b8d18ee9fa5d0d57b5ed4214d.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.8.27">
+
+  <meta name="author" content="Gergely Daroczi">
+  <meta name="dcterms.date" content="2026-01-29">
+  <title>Benchmarking 2000+ Cloud Servers for DS/ML/AI Workloads</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="budapest-ds-meetup-2026_files/libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="budapest-ds-meetup-2026_files/libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+      }
+    pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+    div.sourceCode
+      { color: #f8f8f2;  }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #f8f8f2; } /* Normal */
+    code span.al { color: #f07178; } /* Alert */
+    code span.an { color: #d4d0ab; } /* Annotation */
+    code span.at { color: #00e0e0; } /* Attribute */
+    code span.bn { color: #d4d0ab; } /* BaseN */
+    code span.bu { color: #abe338; } /* BuiltIn */
+    code span.cf { color: #ffa07a; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #abe338; } /* Char */
+    code span.cn { color: #ffd700; } /* Constant */
+    code span.co { color: #f8f8f2; font-style: italic; } /* Comment */
+    code span.cv { color: #ffd700; } /* CommentVar */
+    code span.do { color: #f8f8f2; } /* Documentation */
+    code span.dt { color: #ffa07a; } /* DataType */
+    code span.dv { color: #d4d0ab; } /* DecVal */
+    code span.er { color: #f07178; text-decoration: underline; } /* Error */
+    code span.ex { color: #00e0e0; font-weight: bold; } /* Extension */
+    code span.fl { color: #d4d0ab; } /* Float */
+    code span.fu { color: #ffa07a; } /* Function */
+    code span.im { color: #abe338; } /* Import */
+    code span.in { color: #d4d0ab; } /* Information */
+    code span.kw { color: #ffa07a; font-weight: bold; } /* Keyword */
+    code span.op { color: #ffa07a; } /* Operator */
+    code span.ot { color: #00e0e0; } /* Other */
+    code span.pp { color: #dcc6e0; } /* Preprocessor */
+    code span.re { color: #00e0e0; background-color: #f8f8f2; } /* RegionMarker */
+    code span.sc { color: #abe338; } /* SpecialChar */
+    code span.ss { color: #abe338; } /* SpecialString */
+    code span.st { color: #abe338; } /* String */
+    code span.va { color: #00e0e0; } /* Variable */
+    code span.vs { color: #abe338; } /* VerbatimString */
+    code span.wa { color: #dcc6e0; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="budapest-ds-meetup-2026_files/libs/revealjs/dist/theme/quarto-d88f0b166b2d708e8780829c1a33cb9e.css">
+  <link href="budapest-ds-meetup-2026_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="budapest-ds-meetup-2026_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="budapest-ds-meetup-2026_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="budapest-ds-meetup-2026_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-dark">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block">
+  <h1 class="title">Benchmarking 2000+ Cloud Servers for DS/ML/AI Workloads</h1>
+
+<div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+Gergely Daroczi 
+</div>
+</div>
+</div>
+
+  <p class="date">2026-01-29</p>
+</section>
+<section id="cover-slide" class="title-slide slide level1">
+<h1></h1>
+<script>
+  // add custom CSS for the speaker view
+  if (window.self !== window.top) {
+    document.body.className += " speakerview";
+  }
+  // remove dummy slide
+  document.getElementById("title-slide").remove();
+</script>
+<div class="centered">
+<p><img src="images/meetup-com-2002.png" class="toplogo" style="height: 209px; width: 500px; margin-left: -250px; margin-right: 250px; background-color:transparent; margin-top: 40px;"></p>
+</div>
+<h1 class="subtitle" style="color:#eee;font-size:1.5em;text-align: center; margin-top:325px; color:#34d399;">
+Benchmarking 2000+ Cloud Servers for<br>DS/ML/AI Workloads
+</h1>
+<h2 class="author" style="color:#eee;padding-top:40px;font-size:1.1em;text-align: center !important;margin-bottom: 0px;">
+Gergely Daroczi, Spare Cores
+</h2>
+<h3 class="author" style="color:#eee;font-size:1.1em;text-align: center !important; font-weight: normal;">
+Jan 29, 2026 @ Budapest Data Science Meetup
+</h3>
+<h3 class="author onlineMode" style="color:#eee;padding-top:65px;font-size:1.1em;text-align: center !important; padding-top: 10px;font-weight: normal; ">
+Slides: <a href="https://sparecores.com/talks" target="_blank">sparecores.com/talks</a>
+</h3>
+<p class="author offlineMode" style="color:#eee;font-size:0.75em;text-align: right !important; padding-top: 0px;font-weight: normal;margin-top:30px; ">
+Press Space or click the green arrow icons to navigate the slides -&gt;
+</p>
+<aside class="notes">
+<p>TODO</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+
+<section id="badges" class="title-slide slide level1" data-transition="convex-in convex-out">
+<h1>&gt;&gt;&gt; from sparecores import badges</h1>
+<ul style="font-size: 0.9em;">
+<li class="fragment" data-fragment-index="1">
+Funded by NGI Search (EU consortium under Horizon Europe)
+</li>
+<ul>
+<li class="fragment" data-fragment-index="2">
+Vendor independent, open-source project
+</li>
+</ul>
+<li class="fragment" data-fragment-index="3">
+Accepted into the NVIDIA Inception Program
+</li>
+<li class="fragment" data-fragment-index="4">
+Beneficiary of cloud credits from 6 vendors (overall ~$100k)
+</li>
+<li class="fragment" data-fragment-index="5">
+10+ conference talks in 7 countries (e.g.&nbsp;PyData, useR!, KCD)
+</li>
+<li class="fragment" data-fragment-index="6">
+Featured by The Pragmatic Engineer in Oct 2024
+</li>
+<li class="fragment" data-fragment-index="7">
+Jeff Barr (Chief Evangelist at AWS) on our Reddit post:
+</li>
+</ul>
+<blockquote class="fragment" data-fragment-index="7" style="margin-left: 40px;">
+This was awesome, thanks for sharing.
+</blockquote>
+<ul style="font-size: 0.9em;">
+<li class="fragment" data-fragment-index="8">
+Raised a pre-seed round to start a new product line (Dec 2025)
+</li>
+</ul>
+<aside class="notes">
+<p>first of all, just to build some credibility for the project: we are committed to be vendor-agnostic, open-source, and transparent about our data</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+
+<section id="intro" class="title-slide slide level1" data-transition="convex-in convex-out">
+<h1>&gt;&gt;&gt; from sparecores import intro</h1>
+<ul style="font-size: 0.9em;">
+<li class="fragment">
+Open-source tools, database schemas and documentation to inspect and inventory cloud vendors and their offerings, including pricing and measured performance.
+</li>
+<li class="fragment">
+Managed infrastructure, databases, APIs, SDKs, and web applications to make this data publicly accessible.
+</li>
+<li class="fragment">
+Open-source helpers to select, start and manage instances in your own environment.
+</li>
+<li class="fragment">
+Open-source Python/R packages and workflow orchestration extensions (e.g.&nbsp;Metaflow) to track resource usage and cost of DS/ML/AI jobs. Open-source tooling to right-size instances.
+</li>
+<li class="fragment">
+Add-on services to scale data science workflows, even without direct vendor engagement.
+</li>
+</ul>
+<aside class="notes">
+<ul>
+<li>so Spare Cores is an open-source ecosystem, including software, database schemas, guides,</li>
+<li>and actual databases if you don’t want to run the ETL tooling yourself .. also providing APIs, SDKs etc to make it easier to query data</li>
+<li>unified CLI to start machines</li>
+<li>and working on an an optional SaaS offering built on the top of the open-source tooling for folks who would rather avoid registering with all cloud providers etc: give us a Docker image, a command to run, and you credit card .. all set, we will run it wherever it’s cheapest.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+
+<section>
+<section id="from-sparecores-import-navigator" class="title-slide slide level1" data-transition="convex-in slide-out">
+<h1>&gt;&gt;&gt; from sparecores import navigator</h1>
+
+<img style="width:100%; margin-top: 30px;" src="images/homepage-stats-2026q1.png" class="r-stretch"><p class="centered" style="margin-top: -10px;">
+Source: <a href="https://sparecores.com">sparecores.com</a>
+</p>
+<aside class="notes">
+<p>high level numbers about the data we collect and make available</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="from-sparecores-import-navigator-1" class="slide level2">
+<h2>&gt;&gt;&gt; from sparecores import navigator</h2>
+<div class="centered">
+<p><img style="margin-top:-20px; width:80%;" src="images/gha-actions-2025q1.png"></p>
+</div>
+<aside class="notes">
+FTR this dataset was generated, collected, standardized, and published in public GHA if ou are interested in the details. running around 100k jobs over 10k hours…
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="from-navigator.www-import-search" class="slide level2">
+<h2>&gt;&gt;&gt; from navigator.www import search</h2>
+<div class="centered">
+<p><a href="https://sparecores.com/servers" target="_blank"> <img style="width:95%;" src="images/sc-www-listing-top-2025q1.png"> </a></p>
+</div>
+<aside class="notes">
+<p>The easiest way to query this data is through our web component, as you can see on the screen …</p>
+<p>This is not only a list of servers, but you can filter, order, and search for specific instances. We already show some performance metrics by default, along with the cost efficiency based on the spot or on-demand pricing.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="from-navigator.www-import-server" class="slide level2">
+<h2>&gt;&gt;&gt; from navigator.www import server</h2>
+<div class="centered">
+<p><a href="https://sparecores.com/server/gcp/g2-standard-16" target="_blank"> <img style="width: 90%;" src="images/sc-www-server-details-top-g2-standard-16.png"> </a></p>
+</div>
+<aside class="notes">
+<p>Clicking on a server shows you the technical details of the instance – much more than what’s provided publicly by the vendor, even more than what ChatGPT knows … as we actually start each machine and inspect the hardware.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="from-navigator.www-import-server-1" class="slide level2">
+<h2>&gt;&gt;&gt; from navigator.www import server</h2>
+<div class="centered">
+<p><a href="https://sparecores.com/server/gcp/g2-standard-16" target="_blank"> <img style="width: 80%;" src="images/sc-www-server-details-prices-g2-standard-16.png"> </a></p>
+</div>
+<aside class="notes">
+<p>Live and historical pricing</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="from-navigator.www-import-server-2" class="slide level2">
+<h2>&gt;&gt;&gt; from navigator.www import server</h2>
+<!--
+<iframe
+ src="https://sparecores.com/embed/server/gcp/g2-standard-16/bw_mem"
+ style="height: 510px; width: 100%; border: 1px solid #34d399; border-radius: 8px; min-height: 400px">
+</iframe>
+-->
+<div class="centered">
+<p><a href="https://sparecores.com/server/gcp/g2-standard-16" target="_blank"> <img style="width: 80%;" src="images/sc-www-server-details-benchmarks-1-g2-standard-16.png"> </a></p>
+</div>
+<aside class="notes">
+<p>and we also run benchmark scenarios on the servers, e.g.:</p>
+<ul>
+<li>memory bandwidth of read, write and mixed operations using various block sizes and also including the related L1/L2/L3 cache amounts</li>
+<li>or benchmarking compression algos - having the compression ratio on the x axis, and the bandwidth on the y axis, it’s clear that <code>zpaq</code> is a beast when it comes to compressing text, but might be slow on this machine</li>
+<li>OpenSSL hash functions and block ciphers</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="from-navigator.www-import-server-3" class="slide level2">
+<h2>&gt;&gt;&gt; from navigator.www import server</h2>
+<p><a href="https://sparecores.com/server/gcp/g2-standard-16" target="_blank"> <img src="images/sc-www-server-details-benchmarks-2-g2-standard-16.png"> </a></p>
+<aside class="notes">
+<p>also running test suites like PassMark or …</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="from-navigator.www-import-server-4" class="slide level2">
+<h2>&gt;&gt;&gt; from navigator.www import server</h2>
+<p><a href="https://sparecores.com/server/gcp/g2-standard-16" target="_blank"> <img src="images/sc-www-server-details-benchmarks-3-g2-standard-16.png"> </a></p>
+<aside class="notes">
+<p>Geekbench 6, which has been a standard tool for some time including workloads for text and image processing, compiling software etc</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="from-navigator.www-import-server-5" class="slide level2">
+<h2>&gt;&gt;&gt; from navigator.www import server</h2>
+<p><a href="https://sparecores.com/server/gcp/g2-standard-16" target="_blank"> <img src="images/sc-www-server-details-benchmarks-4-g2-standard-16.png"> </a></p>
+<aside class="notes">
+<p>visualizations on how well the machine can scale tasks to multiple CPU cores – e.g.&nbsp;showing the diminishing return on this Intel Xeon due to hyperthreading</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="from-navigator.www-import-server-6" class="slide level2">
+<h2>&gt;&gt;&gt; from navigator.www import server</h2>
+<p><a href="https://sparecores.com/server/gcp/g2-standard-16" target="_blank"> <img src="images/sc-www-server-details-benchmarks-5-g2-standard-16.png"> </a></p>
+<aside class="notes">
+<p>Or looking at LLM Inference Speed both for prompt processing and text generation, using smaller models with 135M parameters up to 70B larger models.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="from-navigator.www-import-server-7" class="slide level2">
+<h2>&gt;&gt;&gt; from navigator.www import server</h2>
+<p><a href="https://sparecores.com/server/gcp/g2-standard-16" target="_blank"> <img src="images/sc-www-server-details-benchmarks-6-g2-standard-16.png"> </a></p>
+<aside class="notes">
+<p>and other application-specific benchmarks, like serving a static website or running a key-value store database</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="from-navigator.www-import-servers" class="slide level2">
+<h2>&gt;&gt;&gt; from navigator.www import servers</h2>
+<div class="centered">
+<p><a href="https://sparecores.com/compare?instances=W3sidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzVhZC4xMnhsYXJnZSJ9LHsidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzVkLjJ4bGFyZ2UifSx7InZlbmRvciI6ImF3cyIsInNlcnZlciI6ImM2Zy4xNnhsYXJnZSJ9LHsidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY2N4MzMifV0%3D" target="_blank"> <img style="width: 80%;" src="images/sc-www-server-compare-2025-q4.png"> </a></p>
+</div>
+<aside class="notes">
+<p>and making all these data available in comparison tables, e.g.&nbsp;you can see “Best performance servers for Redis below ¢50/hour” here</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="from-navigator.www-import-servers-1" class="slide level2">
+<h2>&gt;&gt;&gt; from navigator.www import servers</h2>
+<div class="centered">
+<p><a href="https://sparecores.com/compare?instances=W3sidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzVhZC4xMnhsYXJnZSJ9LHsidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzVkLjJ4bGFyZ2UifSx7InZlbmRvciI6ImF3cyIsInNlcnZlciI6ImM2Zy4xNnhsYXJnZSJ9LHsidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY2N4MzMifV0%3D" target="_blank"> <img style="width: 75%;" src="images/sc-www-server-compare-charts.png"> </a></p>
+</div>
+<aside class="notes">
+<p>or plots as well for human inspection</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="from-navigator-import-api" class="slide level2">
+<h2>&gt;&gt;&gt; from navigator import api</h2>
+<div class="centered">
+<p><img style="width:95%;" src="images/sc-keeper-preview.png"></p>
+</div>
+<aside class="notes">
+<p>for computers, we provide APIs …</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="from-navigator-import-data" class="slide level2">
+<h2>&gt;&gt;&gt; from navigator import data</h2>
+<div class="sourceCode" id="cb1" style="margin-top: 20px !important; height: 640px;" data-code-line-numbers="2-3|4-5|6|9-10|15|20-28|34-37|39-58|51-52|60-67"><pre class="sourceCode numberSource py number-lines"><code class="sourceCode python"><span id="cb1-1"><a href=""></a><span class="op">&gt;&gt;&gt;</span> <span class="im">from</span> rich <span class="im">import</span> <span class="bu">print</span> <span class="im">as</span> pp</span>
+<span id="cb1-2"><a href=""></a><span class="op">&gt;&gt;&gt;</span> <span class="im">from</span> sc_crawler.tables <span class="im">import</span> Server</span>
+<span id="cb1-3"><a href=""></a><span class="op">&gt;&gt;&gt;</span> <span class="im">from</span> sqlmodel <span class="im">import</span> create_engine, Session, select</span>
+<span id="cb1-4"><a href=""></a><span class="op">&gt;&gt;&gt;</span> engine <span class="op">=</span> create_engine(<span class="st">"sqlite:///sc-data-all.db"</span>)</span>
+<span id="cb1-5"><a href=""></a><span class="op">&gt;&gt;&gt;</span> session <span class="op">=</span> Session(engine)</span>
+<span id="cb1-6"><a href=""></a><span class="op">&gt;&gt;&gt;</span> server <span class="op">=</span> session.<span class="bu">exec</span>(select(Server).where(Server.server_id <span class="op">==</span> <span class="st">'g4dn.xlarge'</span>)).one()</span>
+<span id="cb1-7"><a href=""></a><span class="op">&gt;&gt;&gt;</span> pp(server)</span>
+<span id="cb1-8"><a href=""></a>Server(</span>
+<span id="cb1-9"><a href=""></a>    server_id<span class="op">=</span><span class="st">'g4dn.xlarge'</span>,</span>
+<span id="cb1-10"><a href=""></a>    vendor_id<span class="op">=</span><span class="st">'aws'</span>,</span>
+<span id="cb1-11"><a href=""></a>    display_name<span class="op">=</span><span class="st">'g4dn.xlarge'</span>,</span>
+<span id="cb1-12"><a href=""></a>    api_reference<span class="op">=</span><span class="st">'g4dn.xlarge'</span>,</span>
+<span id="cb1-13"><a href=""></a>    name<span class="op">=</span><span class="st">'g4dn.xlarge'</span>,</span>
+<span id="cb1-14"><a href=""></a>    family<span class="op">=</span><span class="st">'g4dn'</span>,</span>
+<span id="cb1-15"><a href=""></a>    description<span class="op">=</span><span class="st">'Graphics intensive [Instance store volumes] [Network and EBS optimized] Gen4 xlarge'</span>,</span>
+<span id="cb1-16"><a href=""></a></span>
+<span id="cb1-17"><a href=""></a>    status<span class="op">=&lt;</span>Status.ACTIVE: <span class="st">'active'</span><span class="op">&gt;</span>,</span>
+<span id="cb1-18"><a href=""></a>    observed_at<span class="op">=</span>datetime.datetime(<span class="dv">2024</span>, <span class="dv">6</span>, <span class="dv">6</span>, <span class="dv">10</span>, <span class="dv">18</span>, <span class="dv">4</span>, <span class="dv">127254</span>),</span>
+<span id="cb1-19"><a href=""></a></span>
+<span id="cb1-20"><a href=""></a>    hypervisor<span class="op">=</span><span class="st">'nitro'</span>,</span>
+<span id="cb1-21"><a href=""></a>    vcpus<span class="op">=</span><span class="dv">4</span>,</span>
+<span id="cb1-22"><a href=""></a>    cpu_cores<span class="op">=</span><span class="dv">2</span>,</span>
+<span id="cb1-23"><a href=""></a>    cpu_allocation<span class="op">=&lt;</span>CpuAllocation.DEDICATED: <span class="st">'Dedicated'</span><span class="op">&gt;</span>,</span>
+<span id="cb1-24"><a href=""></a>    cpu_manufacturer<span class="op">=</span><span class="st">'Intel'</span>,</span>
+<span id="cb1-25"><a href=""></a>    cpu_family<span class="op">=</span><span class="st">'Xeon'</span>,</span>
+<span id="cb1-26"><a href=""></a>    cpu_model<span class="op">=</span><span class="st">'8259CL'</span>,</span>
+<span id="cb1-27"><a href=""></a>    cpu_architecture<span class="op">=&lt;</span>CpuArchitecture.X86_64: <span class="st">'x86_64'</span><span class="op">&gt;</span>,</span>
+<span id="cb1-28"><a href=""></a>    cpu_speed<span class="op">=</span><span class="fl">3.5</span>,</span>
+<span id="cb1-29"><a href=""></a>    cpu_l1_cache<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb1-30"><a href=""></a>    cpu_l2_cache<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb1-31"><a href=""></a>    cpu_l3_cache<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb1-32"><a href=""></a>    cpu_flags<span class="op">=</span>[],</span>
+<span id="cb1-33"><a href=""></a></span>
+<span id="cb1-34"><a href=""></a>    memory_amount<span class="op">=</span><span class="dv">16384</span>,</span>
+<span id="cb1-35"><a href=""></a>    memory_generation<span class="op">=&lt;</span>DdrGeneration.DDR4: <span class="st">'DDR4'</span><span class="op">&gt;</span>,</span>
+<span id="cb1-36"><a href=""></a>    memory_speed<span class="op">=</span><span class="dv">3200</span>,</span>
+<span id="cb1-37"><a href=""></a>    memory_ecc<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb1-38"><a href=""></a></span>
+<span id="cb1-39"><a href=""></a>    gpu_count<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb1-40"><a href=""></a>    gpu_memory_min<span class="op">=</span><span class="dv">16384</span>,</span>
+<span id="cb1-41"><a href=""></a>    gpu_memory_total<span class="op">=</span><span class="dv">16384</span>,</span>
+<span id="cb1-42"><a href=""></a>    gpu_manufacturer<span class="op">=</span><span class="st">'Nvidia'</span>,</span>
+<span id="cb1-43"><a href=""></a>    gpu_family<span class="op">=</span><span class="st">'Turing'</span>,</span>
+<span id="cb1-44"><a href=""></a>    gpu_model<span class="op">=</span><span class="st">'Tesla T4'</span>,</span>
+<span id="cb1-45"><a href=""></a>    gpus<span class="op">=</span>[</span>
+<span id="cb1-46"><a href=""></a>        {</span>
+<span id="cb1-47"><a href=""></a>            <span class="st">'manufacturer'</span>: <span class="st">'Nvidia'</span>,</span>
+<span id="cb1-48"><a href=""></a>            <span class="st">'family'</span>: <span class="st">'Turing'</span>,</span>
+<span id="cb1-49"><a href=""></a>            <span class="st">'model'</span>: <span class="st">'Tesla T4'</span>,</span>
+<span id="cb1-50"><a href=""></a>            <span class="st">'memory'</span>: <span class="dv">15360</span>,</span>
+<span id="cb1-51"><a href=""></a>            <span class="st">'firmware_version'</span>: <span class="st">'535.171.04'</span>,</span>
+<span id="cb1-52"><a href=""></a>            <span class="st">'bios_version'</span>: <span class="st">'90.04.96.00.A0'</span>,</span>
+<span id="cb1-53"><a href=""></a>            <span class="st">'graphics_clock'</span>: <span class="dv">1590</span>,</span>
+<span id="cb1-54"><a href=""></a>            <span class="st">'sm_clock'</span>: <span class="dv">1590</span>,</span>
+<span id="cb1-55"><a href=""></a>            <span class="st">'mem_clock'</span>: <span class="dv">5001</span>,</span>
+<span id="cb1-56"><a href=""></a>            <span class="st">'video_clock'</span>: <span class="dv">1470</span></span>
+<span id="cb1-57"><a href=""></a>        }</span>
+<span id="cb1-58"><a href=""></a>    ],</span>
+<span id="cb1-59"><a href=""></a></span>
+<span id="cb1-60"><a href=""></a>    storage_size<span class="op">=</span><span class="dv">125</span>,</span>
+<span id="cb1-61"><a href=""></a>    storage_type<span class="op">=&lt;</span>StorageType.NVME_SSD: <span class="st">'nvme ssd'</span><span class="op">&gt;</span>,</span>
+<span id="cb1-62"><a href=""></a>    storages<span class="op">=</span>[{<span class="st">'size'</span>: <span class="dv">125</span>, <span class="st">'storage_type'</span>: <span class="st">'nvme ssd'</span>}],</span>
+<span id="cb1-63"><a href=""></a></span>
+<span id="cb1-64"><a href=""></a>    network_speed<span class="op">=</span><span class="fl">5.0</span>,</span>
+<span id="cb1-65"><a href=""></a>    inbound_traffic<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb1-66"><a href=""></a>    outbound_traffic<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb1-67"><a href=""></a>    ipv4<span class="op">=</span><span class="dv">0</span>,</span>
+<span id="cb1-68"><a href=""></a>)</span></code></pre></div>
+<aside class="notes">
+<p>and SDKs as well, e.g.&nbsp;querying the details of this instance type: SCROLL through!</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="from-navigator-export-sqlite" class="slide level2" data-transition="slide-in convex-out">
+<h2>&gt;&gt;&gt; from navigator export sqlite</h2>
+<div class="centered">
+<p><img style="margin-top:-20px; width: 100%;" src="images/dbhub.png"></p>
+</div>
+<aside class="notes">
+database files are also available
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section></section>
+<section id="components" class="title-slide slide level1" data-transition="convex-in convex-out">
+<h1>&gt;&gt;&gt; sparecores.navigator.__dir__()</h1>
+
+<img style="margin-top:30px; width: 100%;" src="images/sc-components.png" class="r-stretch"><aside class="notes">
+<p>As mentioned previously, this is made available via multiple components that you can find on GitHub. We don’t have time to go through all of them, but I’d be happy to answer any related questions on Slack, or ping me on LinkedIn :)</p>
+<p>WE will focus on the inspector now!</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+
+<section>
+<section id="from-sc_inspector-import-llm" class="title-slide slide level1" data-transition="convex-in slide-out">
+<h1>&gt;&gt;&gt; from sc_inspector import llm</h1>
+<div class="centered">
+<p><img style="margin-top:-30px; width: 80%;" src="images/gh-image-llm-benchmark.png"></p>
+</div>
+<aside class="notes">
+We have created a Docker image that includes llama.ccp build for various CPU architectures and CUDA as well – so with a single command we can run this on x86, ARM, and most of the GPU-accelerated machines as well.
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="from-sc_inspector-import-llm-1" class="slide level2">
+<h2>&gt;&gt;&gt; from sc_inspector import llm</h2>
+<div class="centered">
+<p><img style="margin-top:-30px; width: 50%;" src="images/cuda-approved-ai.jpeg"></p>
+</div>
+<aside class="notes">
+The compulsary AI-generated image .. with transparent background .. CUDA approved!
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="docker-build--t-llm-benchmark-." class="slide level2">
+<h2>$ docker build -t llm-benchmark .</h2>
+<ul>
+<li class="fragment">
+Multi-arch Docker build with x86 and ARM support.
+</li>
+<li class="fragment">
+Bundles <code>llama.cpp</code> binaries built for various CPU architectures and CUDA as well.
+</li>
+<ul style="font-size: 0.9em;">
+<li class="fragment">
+Recursive lookup of linked libraries from multiple parent images and mixing them in a single image under different paths 🫣
+</li>
+</ul>
+<li class="fragment">
+Python script to run the benchmark:
+</li>
+<ul style="font-size: 0.9em;">
+<li class="fragment">
+Hardware discovery to pick the correct binary, <code>$PATH</code> overrides.
+</li>
+<li class="fragment">
+Download models in a background thread, sequentially from Hugging Face with sane timeouts.
+</li>
+<li class="fragment">
+Find optimal <code>ngl</code> setting for each model when GPU is available.
+</li>
+<li class="fragment">
+Run the benchmarks in sequence with sane timeouts.
+</li>
+</ul>
+</ul>
+<aside class="notes">
+Describe how <code>ngl</code> was found!
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="from-bencmark-llm-import-models" class="slide level2">
+<h2>&gt;&gt;&gt; from bencmark-llm import models</h2>
+<style>
+td.file-size span.num {
+  display: inline-block;
+  min-width: 3em; /* Adjust width as needed */
+  text-align: right;
+  padding-right: 0.5em; /* Space before unit */
+}
+td.file-size span.unit {
+  display: inline-block;
+  min-width: 2em; /* Adjust width as needed */
+  text-align: left;
+}
+</style>
+<style>
+td.file-size span.num,
+td.param-size span.num {
+  display: inline-block;
+  min-width: 3em;
+  text-align: right;
+  padding-right: 5px;
+}
+td.file-size span.num {
+  padding-right: 10px;
+}
+td.file-size span.unit,
+td.param-size span.unit {
+  display: inline-block;
+  min-width: 2em;
+  text-align: left;
+}
+</style>
+<table style="margin-top: 50px; margin-bottom: -20px; font-size: 2rem; margin-left: 0px;">
+<thead>
+<tr>
+<th>
+Model
+</th>
+<th>
+Parameters
+</th>
+<th style="text-align: center;">
+File Size
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+SmolLM-135M.Q4_K_M.gguf
+</td>
+<td class="param-size">
+<span class="num">135</span><span class="unit">M</span>
+</td>
+<td class="file-size">
+<span class="num">100</span><span class="unit">MB</span>
+</td>
+</tr>
+<tr>
+<td>
+qwen1_5-0_5b-chat-q4_k_m.gguf
+</td>
+<td class="param-size">
+<span class="num">500</span><span class="unit">M</span>
+</td>
+<td class="file-size">
+<span class="num">400</span><span class="unit">MB</span>
+</td>
+</tr>
+<tr>
+<td>
+gemma-2b.Q4_K_M.gguf
+</td>
+<td class="param-size">
+<span class="num">2</span><span class="unit">B</span>
+</td>
+<td class="file-size">
+<span class="num">1.5</span><span class="unit">GB</span>
+</td>
+</tr>
+<tr>
+<td>
+llama-7b.Q4_K_M.gguf
+</td>
+<td class="param-size">
+<span class="num">7</span><span class="unit">B</span>
+</td>
+<td class="file-size">
+<span class="num">4</span><span class="unit">GB</span>
+</td>
+</tr>
+<tr>
+<td>
+phi-4-q4.gguf
+</td>
+<td class="param-size">
+<span class="num">14</span><span class="unit">B</span>
+</td>
+<td class="file-size">
+<span class="num">9</span><span class="unit">GB</span>
+</td>
+</tr>
+<tr>
+<td>
+Llama-3.3-70B-Instruct-Q4_K_M.gguf
+</td>
+<td class="param-size">
+<span class="num">70</span><span class="unit">B</span>
+</td>
+<td class="file-size">
+<span class="num">42</span><span class="unit">GB</span>
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="from-bencmark-llm-import-workloads" class="slide level2">
+<h2>&gt;&gt;&gt; from bencmark-llm import workloads</h2>
+<style>
+.reveal table td.right {
+  text-align: right;
+}
+</style>
+<div class="columns" style="display: block; margin-top: 40px;">
+<div class="column" style="width:50%;">
+<ul>
+<li>Prompt processing</li>
+</ul>
+<table style="font-size: 2rem; margin-left: 0px;">
+<thead>
+<tr>
+<th>
+Token length
+</th>
+<th>
+Expected TPS
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="right">
+16
+</td>
+<td class="right">
+2
+</td>
+</tr>
+<tr class="fragment">
+<td class="right">
+128
+</td>
+<td class="right">
+10
+</td>
+</tr>
+<tr class="fragment">
+<td class="right">
+512
+</td>
+<td class="right">
+25
+</td>
+</tr>
+<tr class="fragment">
+<td class="right">
+1,024
+</td>
+<td class="right">
+50
+</td>
+</tr>
+<tr class="fragment">
+<td class="right">
+4,096
+</td>
+<td class="right">
+250
+</td>
+</tr>
+<tr class="fragment">
+<td class="right">
+16,384
+</td>
+<td class="right">
+1,000
+</td>
+</tr>
+</tbody>
+</table>
+</div><div class="column fragment" style="width:50%;">
+<ul>
+<li>Text generation</li>
+</ul>
+<table style="font-size: 2rem; margin-left: 0px;">
+<thead>
+<tr>
+<th>
+Token length
+</th>
+<th>
+Expected TPS
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="right">
+16
+</td>
+<td class="right">
+1
+</td>
+</tr>
+<tr>
+<td class="right">
+128
+</td>
+<td class="right">
+5
+</td>
+</tr>
+<tr>
+<td class="right">
+512
+</td>
+<td class="right">
+25
+</td>
+</tr>
+<tr>
+<td class="right">
+1,024
+</td>
+<td class="right">
+50
+</td>
+</tr>
+<tr>
+<td class="right">
+4,096
+</td>
+<td class="right">
+250
+</td>
+</tr>
+</tbody>
+</table>
+</div></div>
+<div class="fragment">
+<p style="margin-top: 20px;">
+Timeout: model load into memory (250 MB/s) + 5 iterations with expected TPS + 1s overhead
+</p>
+</div>
+</section>
+<section id="from-bencmark-llm-import-example" class="slide level2">
+<h2>&gt;&gt;&gt; from bencmark-llm import example</h2>
+<div class="sourceCode" id="cb2" style="font-size:24px; margin-top: 50px; height: 620px;" data-code-line-numbers="1-2|3-5,7|6|8-9|10|11|12|13-14|16-17|15,18-19|20-24|25|70-79|80-81"><pre class="sourceCode numberSource shell number-lines"><code class="sourceCode"><span id="cb2-1"><a href=""></a>2025-04-16 13:41:53,991 - INFO - Using CPU-build of llama.cpp</span>
+<span id="cb2-2"><a href=""></a>load_backend: loaded CPU backend from ./libggml-cpu-haswell.so</span>
+<span id="cb2-3"><a href=""></a>2025-04-16 13:41:54,017 - INFO - Benchmarking model SmolLM-135M.Q4_K_M.gguf ...</span>
+<span id="cb2-4"><a href=""></a>2025-04-16 13:41:54,019 - DEBUG - Downloading model SmolLM-135M.Q4_K_M.gguf from https://huggingface.co/QuantFactory/SmolLM-135M-GGUF/resolve/main/SmolLM-135M.Q4_K_M.gguf</span>
+<span id="cb2-5"><a href=""></a>2025-04-16 13:41:54,401 - DEBUG - Downloaded model SmolLM-135M.Q4_K_M.gguf (100.57 MB) in 0.38 sec (264.17 MB/s)</span>
+<span id="cb2-6"><a href=""></a>2025-04-16 13:41:54,403 - DEBUG - Downloading model qwen1_5-0_5b-chat-q4_k_m.gguf from https://huggingface.co/Qwen/Qwen1.5-0.5B-Chat-GGUF/resolve/main/qwen1_5-0_5b-chat-q4_k_m.gguf</span>
+<span id="cb2-7"><a href=""></a>2025-04-16 13:41:54,404 - DEBUG - Model SmolLM-135M.Q4_K_M.gguf found at /models/SmolLM-135M.Q4_K_M.gguf (0.10 GB)</span>
+<span id="cb2-8"><a href=""></a>2025-04-16 13:41:54,404 - DEBUG - Using ngl 0 for model SmolLM-135M.Q4_K_M.gguf</span>
+<span id="cb2-9"><a href=""></a>2025-04-16 13:41:54,404 - DEBUG - Benchmarking prompt processing with 16 tokens for max 41 sec</span>
+<span id="cb2-10"><a href=""></a>2025-04-16 13:41:54,773 - DEBUG - Benchmarking prompt processing with 128 tokens for max 65 sec</span>
+<span id="cb2-11"><a href=""></a>2025-04-16 13:41:56,499 - DEBUG - Benchmarking prompt processing with 512 tokens for max 104 sec</span>
+<span id="cb2-12"><a href=""></a>2025-04-16 13:42:03,289 - DEBUG - Benchmarking prompt processing with 1024 tokens for max 104 sec</span>
+<span id="cb2-13"><a href=""></a>2025-04-16 13:42:03,637 - DEBUG - Downloaded model qwen1_5-0_5b-chat-q4_k_m.gguf (388.29 MB) in 9.23 sec (42.05 MB/s)</span>
+<span id="cb2-14"><a href=""></a>2025-04-16 13:42:03,684 - DEBUG - Downloading model gemma-2b.Q4_K_M.gguf from https://huggingface.co/mlabonne/gemma-2b-GGUF/resolve/main/gemma-2b.Q4_K_M.gguf</span>
+<span id="cb2-15"><a href=""></a>2025-04-16 13:42:20,270 - DEBUG - Benchmarking prompt processing with 4096 tokens for max 83 sec</span>
+<span id="cb2-16"><a href=""></a>2025-04-16 13:42:54,763 - DEBUG - Downloaded model gemma-2b.Q4_K_M.gguf (1425.83 MB) in 51.08 sec (27.91 MB/s)</span>
+<span id="cb2-17"><a href=""></a>2025-04-16 13:42:54,860 - DEBUG - Downloading model llama-7b.Q4_K_M.gguf from https://huggingface.co/TheBloke/LLaMA-7b-GGUF/resolve/main/llama-7b.Q4_K_M.gguf</span>
+<span id="cb2-18"><a href=""></a>2025-04-16 13:43:43,279 - ERROR - Error: Command '['./llama-bench', '-t', '4', '-sm', 'layer', '-fa', '1', '-ub', '512', '-b', '2048', '-o', 'jsonl', '-m', '/models/SmolLM-135M.Q4_K_M.gguf', '-ngl', '0', '-p', '4096', '-n', '0']' timed out after 82.99997042499999 seconds</span>
+<span id="cb2-19"><a href=""></a>2025-04-16 13:43:43,279 - INFO - Skipping prompt processing benchmarks with 4096+ tokens due to time constraints.</span>
+<span id="cb2-20"><a href=""></a>2025-04-16 13:43:43,279 - DEBUG - Benchmarking text generation with 16 tokens for max 81 sec</span>
+<span id="cb2-21"><a href=""></a>2025-04-16 13:43:43,997 - DEBUG - Benchmarking text generation with 128 tokens for max 129 sec</span>
+<span id="cb2-22"><a href=""></a>2025-04-16 13:43:47,728 - DEBUG - Benchmarking text generation with 512 tokens for max 104 sec</span>
+<span id="cb2-23"><a href=""></a>2025-04-16 13:44:04,864 - DEBUG - Benchmarking text generation with 1024 tokens for max 104 sec</span>
+<span id="cb2-24"><a href=""></a>2025-04-16 13:44:45,497 - ERROR - Skipping text generation benchmarks with 1024+ tokens as it's unlikely to hit the expected 250 tokens/sec.</span>
+<span id="cb2-25"><a href=""></a>2025-04-16 13:44:45,497 - INFO - Benchmarking model qwen1_5-0_5b-chat-q4_k_m.gguf ...</span>
+<span id="cb2-26"><a href=""></a>2025-04-16 13:44:45,501 - DEBUG - Model qwen1_5-0_5b-chat-q4_k_m.gguf found at /models/qwen1_5-0_5b-chat-q4_k_m.gguf (0.38 GB)</span>
+<span id="cb2-27"><a href=""></a>2025-04-16 13:44:45,501 - DEBUG - Using ngl 0 for model qwen1_5-0_5b-chat-q4_k_m.gguf</span>
+<span id="cb2-28"><a href=""></a>2025-04-16 13:44:45,501 - DEBUG - Benchmarking prompt processing with 16 tokens for max 43 sec</span>
+<span id="cb2-29"><a href=""></a>2025-04-16 13:44:47,523 - DEBUG - Benchmarking prompt processing with 128 tokens for max 67 sec</span>
+<span id="cb2-30"><a href=""></a>2025-04-16 13:44:48,115 - DEBUG - Downloaded model llama-7b.Q4_K_M.gguf (3891.95 MB) in 113.23 sec (34.37 MB/s)</span>
+<span id="cb2-31"><a href=""></a>2025-04-16 13:44:48,167 - DEBUG - Downloading model phi-4-q4.gguf from https://huggingface.co/microsoft/phi-4-gguf/resolve/main/phi-4-q4.gguf</span>
+<span id="cb2-32"><a href=""></a>2025-04-16 13:44:51,206 - DEBUG - Benchmarking prompt processing with 512 tokens for max 105 sec</span>
+<span id="cb2-33"><a href=""></a>2025-04-16 13:45:05,527 - DEBUG - Benchmarking prompt processing with 1024 tokens for max 105 sec</span>
+<span id="cb2-34"><a href=""></a>2025-04-16 13:45:38,910 - ERROR - Skipping prompt processing benchmarks with 1024+ tokens as it's unlikely to hit the expected 250 tokens/sec.</span>
+<span id="cb2-35"><a href=""></a>2025-04-16 13:45:38,911 - DEBUG - Benchmarking text generation with 16 tokens for max 83 sec</span>
+<span id="cb2-36"><a href=""></a>2025-04-16 13:45:40,231 - DEBUG - Benchmarking text generation with 128 tokens for max 131 sec</span>
+<span id="cb2-37"><a href=""></a>2025-04-16 13:45:48,681 - DEBUG - Benchmarking text generation with 512 tokens for max 105 sec</span>
+<span id="cb2-38"><a href=""></a>2025-04-16 13:46:25,599 - DEBUG - Benchmarking text generation with 1024 tokens for max 105 sec</span>
+<span id="cb2-39"><a href=""></a>2025-04-16 13:47:58,761 - ERROR - Skipping text generation benchmarks with 1024+ tokens as it's unlikely to hit the expected 250 tokens/sec.</span>
+<span id="cb2-40"><a href=""></a>2025-04-16 13:47:58,761 - INFO - Benchmarking model gemma-2b.Q4_K_M.gguf ...</span>
+<span id="cb2-41"><a href=""></a>2025-04-16 13:47:58,765 - DEBUG - Model gemma-2b.Q4_K_M.gguf found at /models/gemma-2b.Q4_K_M.gguf (1.39 GB)</span>
+<span id="cb2-42"><a href=""></a>2025-04-16 13:47:58,765 - DEBUG - Using ngl 0 for model gemma-2b.Q4_K_M.gguf</span>
+<span id="cb2-43"><a href=""></a>2025-04-16 13:47:58,765 - DEBUG - Benchmarking prompt processing with 16 tokens for max 47 sec</span>
+<span id="cb2-44"><a href=""></a>2025-04-16 13:48:02,795 - DEBUG - Benchmarking prompt processing with 128 tokens for max 71 sec</span>
+<span id="cb2-45"><a href=""></a>2025-04-16 13:48:18,069 - DEBUG - Benchmarking prompt processing with 512 tokens for max 109 sec</span>
+<span id="cb2-46"><a href=""></a>2025-04-16 13:49:18,691 - DEBUG - Benchmarking prompt processing with 1024 tokens for max 109 sec</span>
+<span id="cb2-47"><a href=""></a>2025-04-16 13:51:07,724 - ERROR - Error: Command '['./llama-bench', '-t', '4', '-sm', 'layer', '-fa', '1', '-ub', '512', '-b', '2048', '-o', 'jsonl', '-m', '/models/gemma-2b.Q4_K_M.gguf', '-ngl', '0', '-p', '1024', '-n', '0']' timed out after 108.99997727900006 seconds</span>
+<span id="cb2-48"><a href=""></a>2025-04-16 13:51:07,724 - INFO - Skipping prompt processing benchmarks with 1024+ tokens due to time constraints.</span>
+<span id="cb2-49"><a href=""></a>2025-04-16 13:51:07,724 - DEBUG - Benchmarking text generation with 16 tokens for max 87 sec</span>
+<span id="cb2-50"><a href=""></a>2025-04-16 13:51:11,557 - DEBUG - Benchmarking text generation with 128 tokens for max 135 sec</span>
+<span id="cb2-51"><a href=""></a>2025-04-16 13:51:36,713 - DEBUG - Benchmarking text generation with 512 tokens for max 109 sec</span>
+<span id="cb2-52"><a href=""></a>2025-04-16 13:52:31,657 - DEBUG - Downloaded model phi-4-q4.gguf (8633.72 MB) in 463.27 sec (18.64 MB/s)</span>
+<span id="cb2-53"><a href=""></a>2025-04-16 13:52:31,783 - DEBUG - Downloading model Llama-3.3-70B-Instruct-Q4_K_M.gguf from https://huggingface.co/unsloth/Llama-3.3-70B-Instruct-GGUF/resolve/main/Llama-3.3-70B-Instruct-Q4_K_M.gguf</span>
+<span id="cb2-54"><a href=""></a>2025-04-16 13:53:17,342 - DEBUG - Benchmarking text generation with 1024 tokens for max 109 sec</span>
+<span id="cb2-55"><a href=""></a>2025-04-16 13:55:06,375 - ERROR - Error: Command '['./llama-bench', '-t', '4', '-sm', 'layer', '-fa', '1', '-ub', '512', '-b', '2048', '-o', 'jsonl', '-m', '/models/gemma-2b.Q4_K_M.gguf', '-ngl', '0', '-n', '1024', '-p', '0']' timed out after 108.99998397000002 seconds</span>
+<span id="cb2-56"><a href=""></a>2025-04-16 13:55:06,375 - INFO - Skipping text generation benchmarks with 1024+ tokens due to time constraints.</span>
+<span id="cb2-57"><a href=""></a>2025-04-16 13:55:06,375 - INFO - Benchmarking model llama-7b.Q4_K_M.gguf ...</span>
+<span id="cb2-58"><a href=""></a>2025-04-16 13:55:06,378 - DEBUG - Model llama-7b.Q4_K_M.gguf found at /models/llama-7b.Q4_K_M.gguf (3.80 GB)</span>
+<span id="cb2-59"><a href=""></a>2025-04-16 13:55:06,378 - DEBUG - Using ngl 0 for model llama-7b.Q4_K_M.gguf</span>
+<span id="cb2-60"><a href=""></a>2025-04-16 13:55:06,378 - DEBUG - Benchmarking prompt processing with 16 tokens for max 56 sec</span>
+<span id="cb2-61"><a href=""></a>2025-04-16 13:55:17,076 - DEBUG - Benchmarking prompt processing with 128 tokens for max 80 sec</span>
+<span id="cb2-62"><a href=""></a>2025-04-16 13:56:05,012 - DEBUG - Benchmarking prompt processing with 512 tokens for max 119 sec</span>
+<span id="cb2-63"><a href=""></a>2025-04-16 13:58:04,139 - ERROR - Error: Command '['./llama-bench', '-t', '4', '-sm', 'layer', '-fa', '1', '-ub', '512', '-b', '2048', '-o', 'jsonl', '-m', '/models/llama-7b.Q4_K_M.gguf', '-ngl', '0', '-p', '512', '-n', '0']' timed out after 118.99998227699996 seconds</span>
+<span id="cb2-64"><a href=""></a>2025-04-16 13:58:04,140 - INFO - Skipping prompt processing benchmarks with 512+ tokens due to time constraints.</span>
+<span id="cb2-65"><a href=""></a>2025-04-16 13:58:04,140 - DEBUG - Benchmarking text generation with 16 tokens for max 96 sec</span>
+<span id="cb2-66"><a href=""></a>2025-04-16 13:58:13,091 - DEBUG - Benchmarking text generation with 128 tokens for max 144 sec</span>
+<span id="cb2-67"><a href=""></a>2025-04-16 13:59:20,008 - DEBUG - Benchmarking text generation with 512 tokens for max 119 sec</span>
+<span id="cb2-68"><a href=""></a>2025-04-16 14:01:19,103 - ERROR - Error: Command '['./llama-bench', '-t', '4', '-sm', 'layer', '-fa', '1', '-ub', '512', '-b', '2048', '-o', 'jsonl', '-m', '/models/llama-7b.Q4_K_M.gguf', '-ngl', '0', '-n', '512', '-p', '0']' timed out after 118.99996960299995 seconds</span>
+<span id="cb2-69"><a href=""></a>2025-04-16 14:01:19,103 - INFO - Skipping text generation benchmarks with 512+ tokens due to time constraints.</span>
+<span id="cb2-70"><a href=""></a>2025-04-16 14:01:19,103 - INFO - Benchmarking model phi-4-q4.gguf ...</span>
+<span id="cb2-71"><a href=""></a>2025-04-16 14:01:19,108 - DEBUG - Model phi-4-q4.gguf found at /models/phi-4-q4.gguf (8.43 GB)</span>
+<span id="cb2-72"><a href=""></a>2025-04-16 14:01:19,108 - DEBUG - Using ngl 0 for model phi-4-q4.gguf</span>
+<span id="cb2-73"><a href=""></a>2025-04-16 14:01:19,108 - DEBUG - Benchmarking prompt processing with 16 tokens for max 75 sec</span>
+<span id="cb2-74"><a href=""></a>2025-04-16 14:02:22,300 - DEBUG - Benchmarking prompt processing with 128 tokens for max 99 sec</span>
+<span id="cb2-75"><a href=""></a>2025-04-16 14:04:01,479 - ERROR - Error: Command '['./llama-bench', '-t', '4', '-sm', 'layer', '-fa', '1', '-ub', '512', '-b', '2048', '-o', 'jsonl', '-m', '/models/phi-4-q4.gguf', '-ngl', '0', '-p', '128', '-n', '0']' timed out after 98.99997493299998 seconds</span>
+<span id="cb2-76"><a href=""></a>2025-04-16 14:04:01,490 - INFO - Skipping prompt processing benchmarks with 128+ tokens due to time constraints.</span>
+<span id="cb2-77"><a href=""></a>2025-04-16 14:04:01,491 - DEBUG - Benchmarking text generation with 16 tokens for max 115 sec</span>
+<span id="cb2-78"><a href=""></a>2025-04-16 14:05:56,724 - ERROR - Error: Command '['./llama-bench', '-t', '4', '-sm', 'layer', '-fa', '1', '-ub', '512', '-b', '2048', '-o', 'jsonl', '-m', '/models/phi-4-q4.gguf', '-ngl', '0', '-n', '16', '-p', '0']' timed out after 114.99991323800009 seconds</span>
+<span id="cb2-79"><a href=""></a>2025-04-16 14:05:56,729 - INFO - Benchmarking failed with simplest task, so skipping larger models.</span>
+<span id="cb2-80"><a href=""></a>2025-04-16 14:05:56,732 - INFO - Received interrupt signal, cleaning up...</span>
+<span id="cb2-81"><a href=""></a>2025-04-16 14:05:56,734 - DEBUG - Deleted partially downloaded model file: Llama-3.3-70B-Instruct-Q4_K_M.gguf.part</span></code></pre></div>
+<p style="font-size: 1rem; margin-top: 10px;">
+Source: <a href="https://github.com/SpareCores/sc-inspector-data/blob/main/data/hcloud/cpx31/llm/stderr">https://github.com/SpareCores/sc-inspector-data/blob/main/data/hcloud/cpx31/llm/stderr</a>
+</p>
+</section>
+<section id="from-bencmark-llm-import-example-1" class="slide level2">
+<h2>&gt;&gt;&gt; from bencmark-llm import example</h2>
+<div class="sourceCode" id="cb3" style="font-size:24px; margin-top: 50px; height: 620px;" data-code-line-numbers="1-1"><pre class="sourceCode numberSource shell number-lines"><code class="sourceCode"><span id="cb3-1"><a href=""></a>{"build_commit": "51f311e0", "build_number": 4753, "cpu_info": "AMD EPYC-Rome Processor", "gpu_info": "", "backends": "CPU", "model_filename": "/models/SmolLM-135M.Q4_K_M.gguf", "model_type": "llama ?B Q4_K - Medium", "model_size": 103668480, "model_n_params": 134515008, "n_batch": 2048, "n_ubatch": 512, "n_threads": 4, "cpu_mask": "0x0", "cpu_strict": false, "poll": 50, "type_k": "f16", "type_v": "f16", "n_gpu_layers": 0, "split_mode": "layer", "main_gpu": 0, "no_kv_offload": false, "flash_attn": true, "tensor_split": "0.00", "use_mmap": true, "embeddings": false, "n_prompt": 16, "n_gen": 0, "test_time": "2025-04-16T13:41:54Z", "avg_ns": 29425803, "stddev_ns": 2633928, "avg_ts": 547.524574, "stddev_ts": 52.956226, "samples_ns": [ 31321572, 31803362, 29934339, 25189353, 28880389 ],"samples_ts": [ 510.83, 503.091, 534.503, 635.189, 554.009 ]}</span>
+<span id="cb3-2"><a href=""></a>{"build_commit": "51f311e0", "build_number": 4753, "cpu_info": "AMD EPYC-Rome Processor", "gpu_info": "", "backends": "CPU", "model_filename": "/models/SmolLM-135M.Q4_K_M.gguf", "model_type": "llama ?B Q4_K - Medium", "model_size": 103668480, "model_n_params": 134515008, "n_batch": 2048, "n_ubatch": 512, "n_threads": 4, "cpu_mask": "0x0", "cpu_strict": false, "poll": 50, "type_k": "f16", "type_v": "f16", "n_gpu_layers": 0, "split_mode": "layer", "main_gpu": 0, "no_kv_offload": false, "flash_attn": true, "tensor_split": "0.00", "use_mmap": true, "embeddings": false, "n_prompt": 128, "n_gen": 0, "test_time": "2025-04-16T13:41:54Z", "avg_ns": 233632645, "stddev_ns": 9120854, "avg_ts": 548.527531, "stddev_ts": 21.101188, "samples_ns": [ 240395549, 227846673, 224613694, 246016255, 229291056 ],"samples_ts": [ 532.456, 561.781, 569.867, 520.291, 558.242 ]}</span>
+<span id="cb3-3"><a href=""></a>{"build_commit": "51f311e0", "build_number": 4753, "cpu_info": "AMD EPYC-Rome Processor", "gpu_info": "", "backends": "CPU", "model_filename": "/models/SmolLM-135M.Q4_K_M.gguf", "model_type": "llama ?B Q4_K - Medium", "model_size": 103668480, "model_n_params": 134515008, "n_batch": 2048, "n_ubatch": 512, "n_threads": 4, "cpu_mask": "0x0", "cpu_strict": false, "poll": 50, "type_k": "f16", "type_v": "f16", "n_gpu_layers": 0, "split_mode": "layer", "main_gpu": 0, "no_kv_offload": false, "flash_attn": true, "tensor_split": "0.00", "use_mmap": true, "embeddings": false, "n_prompt": 512, "n_gen": 0, "test_time": "2025-04-16T13:41:56Z", "avg_ns": 1107877439, "stddev_ns": 34935205, "avg_ts": 462.513620, "stddev_ts": 14.616548, "samples_ns": [ 1127364831, 1064661879, 1081647591, 1114166670, 1151546228 ],"samples_ts": [ 454.156, 480.904, 473.352, 459.536, 444.62 ]}</span>
+<span id="cb3-4"><a href=""></a>{"build_commit": "51f311e0", "build_number": 4753, "cpu_info": "AMD EPYC-Rome Processor", "gpu_info": "", "backends": "CPU", "model_filename": "/models/SmolLM-135M.Q4_K_M.gguf", "model_type": "llama ?B Q4_K - Medium", "model_size": 103668480, "model_n_params": 134515008, "n_batch": 2048, "n_ubatch": 512, "n_threads": 4, "cpu_mask": "0x0", "cpu_strict": false, "poll": 50, "type_k": "f16", "type_v": "f16", "n_gpu_layers": 0, "split_mode": "layer", "main_gpu": 0, "no_kv_offload": false, "flash_attn": true, "tensor_split": "0.00", "use_mmap": true, "embeddings": false, "n_prompt": 1024, "n_gen": 0, "test_time": "2025-04-16T13:42:03Z", "avg_ns": 2735385583, "stddev_ns": 125973030, "avg_ts": 374.988808, "stddev_ts": 17.260522, "samples_ns": [ 2832889408, 2740268018, 2604040465, 2615189266, 2884540762 ],"samples_ts": [ 361.468, 373.686, 393.235, 391.559, 354.996 ]}</span>
+<span id="cb3-5"><a href=""></a>{"build_commit": "51f311e0", "build_number": 4753, "cpu_info": "AMD EPYC-Rome Processor", "gpu_info": "", "backends": "CPU", "model_filename": "/models/SmolLM-135M.Q4_K_M.gguf", "model_type": "llama ?B Q4_K - Medium", "model_size": 103668480, "model_n_params": 134515008, "n_batch": 2048, "n_ubatch": 512, "n_threads": 4, "cpu_mask": "0x0", "cpu_strict": false, "poll": 50, "type_k": "f16", "type_v": "f16", "n_gpu_layers": 0, "split_mode": "layer", "main_gpu": 0, "no_kv_offload": false, "flash_attn": true, "tensor_split": "0.00", "use_mmap": true, "embeddings": false, "n_prompt": 0, "n_gen": 16, "test_time": "2025-04-16T13:43:43Z", "avg_ns": 87002061, "stddev_ns": 6566828, "avg_ts": 184.729581, "stddev_ts": 13.687935, "samples_ns": [ 92503974, 95323826, 80012676, 84203122, 82966710 ],"samples_ts": [ 172.966, 167.849, 199.968, 190.017, 192.848 ]}</span>
+<span id="cb3-6"><a href=""></a>{"build_commit": "51f311e0", "build_number": 4753, "cpu_info": "AMD EPYC-Rome Processor", "gpu_info": "", "backends": "CPU", "model_filename": "/models/SmolLM-135M.Q4_K_M.gguf", "model_type": "llama ?B Q4_K - Medium", "model_size": 103668480, "model_n_params": 134515008, "n_batch": 2048, "n_ubatch": 512, "n_threads": 4, "cpu_mask": "0x0", "cpu_strict": false, "poll": 50, "type_k": "f16", "type_v": "f16", "n_gpu_layers": 0, "split_mode": "layer", "main_gpu": 0, "no_kv_offload": false, "flash_attn": true, "tensor_split": "0.00", "use_mmap": true, "embeddings": false, "n_prompt": 0, "n_gen": 128, "test_time": "2025-04-16T13:43:44Z", "avg_ns": 690783893, "stddev_ns": 8557061, "avg_ts": 185.319590, "stddev_ts": 2.306403, "samples_ns": [ 698437313, 689595912, 678290911, 688381890, 699213443 ],"samples_ts": [ 183.266, 185.616, 188.71, 185.943, 183.063 ]}</span>
+<span id="cb3-7"><a href=""></a>{"build_commit": "51f311e0", "build_number": 4753, "cpu_info": "AMD EPYC-Rome Processor", "gpu_info": "", "backends": "CPU", "model_filename": "/models/SmolLM-135M.Q4_K_M.gguf", "model_type": "llama ?B Q4_K - Medium", "model_size": 103668480, "model_n_params": 134515008, "n_batch": 2048, "n_ubatch": 512, "n_threads": 4, "cpu_mask": "0x0", "cpu_strict": false, "poll": 50, "type_k": "f16", "type_v": "f16", "n_gpu_layers": 0, "split_mode": "layer", "main_gpu": 0, "no_kv_offload": false, "flash_attn": true, "tensor_split": "0.00", "use_mmap": true, "embeddings": false, "n_prompt": 0, "n_gen": 512, "test_time": "2025-04-16T13:43:47Z", "avg_ns": 3370098262, "stddev_ns": 97732646, "avg_ts": 152.023246, "stddev_ts": 4.263015, "samples_ns": [ 3326730840, 3297454249, 3357141922, 3328364047, 3540800254 ],"samples_ts": [ 153.905, 155.271, 152.511, 153.829, 144.6 ]}</span>
+<span id="cb3-8"><a href=""></a>{"build_commit": "51f311e0", "build_number": 4753, "cpu_info": "AMD EPYC-Rome Processor", "gpu_info": "", "backends": "CPU", "model_filename": "/models/SmolLM-135M.Q4_K_M.gguf", "model_type": "llama ?B Q4_K - Medium", "model_size": 103668480, "model_n_params": 134515008, "n_batch": 2048, "n_ubatch": 512, "n_threads": 4, "cpu_mask": "0x0", "cpu_strict": false, "poll": 50, "type_k": "f16", "type_v": "f16", "n_gpu_layers": 0, "split_mode": "layer", "main_gpu": 0, "no_kv_offload": false, "flash_attn": true, "tensor_split": "0.00", "use_mmap": true, "embeddings": false, "n_prompt": 0, "n_gen": 1024, "test_time": "2025-04-16T13:44:04Z", "avg_ns": 8001929540, "stddev_ns": 262150259, "avg_ts": 128.079991, "stddev_ts": 4.231092, "samples_ns": [ 8287642141, 8221401731, 7906358169, 7635775657, 7958470003 ],"samples_ts": [ 123.557, 124.553, 129.516, 134.106, 128.668 ]}</span>
+<span id="cb3-9"><a href=""></a>{"build_commit": "51f311e0", "build_number": 4753, "cpu_info": "AMD EPYC-Rome Processor", "gpu_info": "", "backends": "CPU", "model_filename": "/models/qwen1_5-0_5b-chat-q4_k_m.gguf", "model_type": "qwen2 0.5B Q4_K - Medium", "model_size": 401210368, "model_n_params": 619570176, "n_batch": 2048, "n_ubatch": 512, "n_threads": 4, "cpu_mask": "0x0", "cpu_strict": false, "poll": 50, "type_k": "f16", "type_v": "f16", "n_gpu_layers": 0, "split_mode": "layer", "main_gpu": 0, "no_kv_offload": false, "flash_attn": true, "tensor_split": "0.00", "use_mmap": true, "embeddings": false, "n_prompt": 16, "n_gen": 0, "test_time": "2025-04-16T13:44:46Z", "avg_ns": 67276867, "stddev_ns": 1251593, "avg_ts": 237.888581, "stddev_ts": 4.393434, "samples_ns": [ 66863667, 66620213, 67924660, 69093364, 65882433 ],"samples_ts": [ 239.293, 240.167, 235.555, 231.571, 242.857 ]}</span>
+<span id="cb3-10"><a href=""></a>{"build_commit": "51f311e0", "build_number": 4753, "cpu_info": "AMD EPYC-Rome Processor", "gpu_info": "", "backends": "CPU", "model_filename": "/models/qwen1_5-0_5b-chat-q4_k_m.gguf", "model_type": "qwen2 0.5B Q4_K - Medium", "model_size": 401210368, "model_n_params": 619570176, "n_batch": 2048, "n_ubatch": 512, "n_threads": 4, "cpu_mask": "0x0", "cpu_strict": false, "poll": 50, "type_k": "f16", "type_v": "f16", "n_gpu_layers": 0, "split_mode": "layer", "main_gpu": 0, "no_kv_offload": false, "flash_attn": true, "tensor_split": "0.00", "use_mmap": true, "embeddings": false, "n_prompt": 128, "n_gen": 0, "test_time": "2025-04-16T13:44:47Z", "avg_ns": 511944655, "stddev_ns": 5021439, "avg_ts": 250.046093, "stddev_ts": 2.429916, "samples_ns": [ 520395778, 511979406, 509989116, 507215609, 510143370 ],"samples_ts": [ 245.967, 250.01, 250.986, 252.358, 250.91 ]}</span>
+<span id="cb3-11"><a href=""></a>{"build_commit": "51f311e0", "build_number": 4753, "cpu_info": "AMD EPYC-Rome Processor", "gpu_info": "", "backends": "CPU", "model_filename": "/models/qwen1_5-0_5b-chat-q4_k_m.gguf", "model_type": "qwen2 0.5B Q4_K - Medium", "model_size": 401210368, "model_n_params": 619570176, "n_batch": 2048, "n_ubatch": 512, "n_threads": 4, "cpu_mask": "0x0", "cpu_strict": false, "poll": 50, "type_k": "f16", "type_v": "f16", "n_gpu_layers": 0, "split_mode": "layer", "main_gpu": 0, "no_kv_offload": false, "flash_attn": true, "tensor_split": "0.00", "use_mmap": true, "embeddings": false, "n_prompt": 512, "n_gen": 0, "test_time": "2025-04-16T13:44:51Z", "avg_ns": 2303963981, "stddev_ns": 45209596, "avg_ts": 222.294383, "stddev_ts": 4.376013, "samples_ns": [ 2359587656, 2328058309, 2312741678, 2275658058, 2243774208 ],"samples_ts": [ 216.987, 219.926, 221.382, 224.99, 228.187 ]}</span>
+<span id="cb3-12"><a href=""></a>{"build_commit": "51f311e0", "build_number": 4753, "cpu_info": "AMD EPYC-Rome Processor", "gpu_info": "", "backends": "CPU", "model_filename": "/models/qwen1_5-0_5b-chat-q4_k_m.gguf", "model_type": "qwen2 0.5B Q4_K - Medium", "model_size": 401210368, "model_n_params": 619570176, "n_batch": 2048, "n_ubatch": 512, "n_threads": 4, "cpu_mask": "0x0", "cpu_strict": false, "poll": 50, "type_k": "f16", "type_v": "f16", "n_gpu_layers": 0, "split_mode": "layer", "main_gpu": 0, "no_kv_offload": false, "flash_attn": true, "tensor_split": "0.00", "use_mmap": true, "embeddings": false, "n_prompt": 1024, "n_gen": 0, "test_time": "2025-04-16T13:45:05Z", "avg_ns": 5487183417, "stddev_ns": 37689507, "avg_ts": 186.623698, "stddev_ts": 1.275571, "samples_ns": [ 5449746916, 5474790612, 5547228579, 5497393560, 5466757421 ],"samples_ts": [ 187.899, 187.039, 184.597, 186.27, 187.314 ]}</span>
+<span id="cb3-13"><a href=""></a>{"build_commit": "51f311e0", "build_number": 4753, "cpu_info": "AMD EPYC-Rome Processor", "gpu_info": "", "backends": "CPU", "model_filename": "/models/qwen1_5-0_5b-chat-q4_k_m.gguf", "model_type": "qwen2 0.5B Q4_K - Medium", "model_size": 401210368, "model_n_params": 619570176, "n_batch": 2048, "n_ubatch": 512, "n_threads": 4, "cpu_mask": "0x0", "cpu_strict": false, "poll": 50, "type_k": "f16", "type_v": "f16", "n_gpu_layers": 0, "split_mode": "layer", "main_gpu": 0, "no_kv_offload": false, "flash_attn": true, "tensor_split": "0.00", "use_mmap": true, "embeddings": false, "n_prompt": 0, "n_gen": 16, "test_time": "2025-04-16T13:45:39Z", "avg_ns": 175408498, "stddev_ns": 3296649, "avg_ts": 91.241421, "stddev_ts": 1.714235, "samples_ns": [ 177546108, 179614622, 175199022, 171256868, 173425870 ],"samples_ts": [ 90.1174, 89.0796, 91.3247, 93.4269, 92.2584 ]}</span>
+<span id="cb3-14"><a href=""></a>{"build_commit": "51f311e0", "build_number": 4753, "cpu_info": "AMD EPYC-Rome Processor", "gpu_info": "", "backends": "CPU", "model_filename": "/models/qwen1_5-0_5b-chat-q4_k_m.gguf", "model_type": "qwen2 0.5B Q4_K - Medium", "model_size": 401210368, "model_n_params": 619570176, "n_batch": 2048, "n_ubatch": 512, "n_threads": 4, "cpu_mask": "0x0", "cpu_strict": false, "poll": 50, "type_k": "f16", "type_v": "f16", "n_gpu_layers": 0, "split_mode": "layer", "main_gpu": 0, "no_kv_offload": false, "flash_attn": true, "tensor_split": "0.00", "use_mmap": true, "embeddings": false, "n_prompt": 0, "n_gen": 128, "test_time": "2025-04-16T13:45:40Z", "avg_ns": 1549490379, "stddev_ns": 30772494, "avg_ts": 82.633558, "stddev_ts": 1.621123, "samples_ns": [ 1540490469, 1555864331, 1515722193, 1598212797, 1537162108 ],"samples_ts": [ 83.0904, 82.2694, 84.4482, 80.0895, 83.2703 ]}</span>
+<span id="cb3-15"><a href=""></a>{"build_commit": "51f311e0", "build_number": 4753, "cpu_info": "AMD EPYC-Rome Processor", "gpu_info": "", "backends": "CPU", "model_filename": "/models/qwen1_5-0_5b-chat-q4_k_m.gguf", "model_type": "qwen2 0.5B Q4_K - Medium", "model_size": 401210368, "model_n_params": 619570176, "n_batch": 2048, "n_ubatch": 512, "n_threads": 4, "cpu_mask": "0x0", "cpu_strict": false, "poll": 50, "type_k": "f16", "type_v": "f16", "n_gpu_layers": 0, "split_mode": "layer", "main_gpu": 0, "no_kv_offload": false, "flash_attn": true, "tensor_split": "0.00", "use_mmap": true, "embeddings": false, "n_prompt": 0, "n_gen": 512, "test_time": "2025-04-16T13:45:48Z", "avg_ns": 7304242594, "stddev_ns": 60524587, "avg_ts": 70.100115, "stddev_ts": 0.583384, "samples_ns": [ 7209987783, 7310762724, 7376312174, 7326387204, 7297763087 ],"samples_ts": [ 71.0126, 70.0337, 69.4114, 69.8844, 70.1585 ]}</span>
+<span id="cb3-16"><a href=""></a>{"build_commit": "51f311e0", "build_number": 4753, "cpu_info": "AMD EPYC-Rome Processor", "gpu_info": "", "backends": "CPU", "model_filename": "/models/qwen1_5-0_5b-chat-q4_k_m.gguf", "model_type": "qwen2 0.5B Q4_K - Medium", "model_size": 401210368, "model_n_params": 619570176, "n_batch": 2048, "n_ubatch": 512, "n_threads": 4, "cpu_mask": "0x0", "cpu_strict": false, "poll": 50, "type_k": "f16", "type_v": "f16", "n_gpu_layers": 0, "split_mode": "layer", "main_gpu": 0, "no_kv_offload": false, "flash_attn": true, "tensor_split": "0.00", "use_mmap": true, "embeddings": false, "n_prompt": 0, "n_gen": 1024, "test_time": "2025-04-16T13:46:25Z", "avg_ns": 18507470660, "stddev_ns": 622845912, "avg_ts": 55.380380, "stddev_ts": 1.908991, "samples_ns": [ 17506323616, 18690681024, 19216102218, 18499857045, 18624389398 ],"samples_ts": [ 58.4931, 54.7867, 53.2886, 55.3518, 54.9817 ]}</span>
+<span id="cb3-17"><a href=""></a>{"build_commit": "51f311e0", "build_number": 4753, "cpu_info": "AMD EPYC-Rome Processor", "gpu_info": "", "backends": "CPU", "model_filename": "/models/gemma-2b.Q4_K_M.gguf", "model_type": "gemma 2B Q4_K - Medium", "model_size": 1489055744, "model_n_params": 2506172416, "n_batch": 2048, "n_ubatch": 512, "n_threads": 4, "cpu_mask": "0x0", "cpu_strict": false, "poll": 50, "type_k": "f16", "type_v": "f16", "n_gpu_layers": 0, "split_mode": "layer", "main_gpu": 0, "no_kv_offload": false, "flash_attn": true, "tensor_split": "0.00", "use_mmap": true, "embeddings": false, "n_prompt": 16, "n_gen": 0, "test_time": "2025-04-16T13:48:00Z", "avg_ns": 320691221, "stddev_ns": 6013047, "avg_ts": 49.906014, "stddev_ts": 0.919069, "samples_ns": [ 319556305, 330864550, 317777341, 320138415, 315119497 ],"samples_ts": [ 50.0694, 48.3582, 50.3497, 49.9784, 50.7744 ]}</span>
+<span id="cb3-18"><a href=""></a>{"build_commit": "51f311e0", "build_number": 4753, "cpu_info": "AMD EPYC-Rome Processor", "gpu_info": "", "backends": "CPU", "model_filename": "/models/gemma-2b.Q4_K_M.gguf", "model_type": "gemma 2B Q4_K - Medium", "model_size": 1489055744, "model_n_params": 2506172416, "n_batch": 2048, "n_ubatch": 512, "n_threads": 4, "cpu_mask": "0x0", "cpu_strict": false, "poll": 50, "type_k": "f16", "type_v": "f16", "n_gpu_layers": 0, "split_mode": "layer", "main_gpu": 0, "no_kv_offload": false, "flash_attn": true, "tensor_split": "0.00", "use_mmap": true, "embeddings": false, "n_prompt": 128, "n_gen": 0, "test_time": "2025-04-16T13:48:03Z", "avg_ns": 2461361005, "stddev_ns": 59088511, "avg_ts": 52.027430, "stddev_ts": 1.233112, "samples_ns": [ 2545829132, 2501576257, 2415216417, 2422378521, 2421804702 ],"samples_ts": [ 50.2783, 51.1677, 52.9973, 52.8406, 52.8531 ]}</span>
+<span id="cb3-19"><a href=""></a>{"build_commit": "51f311e0", "build_number": 4753, "cpu_info": "AMD EPYC-Rome Processor", "gpu_info": "", "backends": "CPU", "model_filename": "/models/gemma-2b.Q4_K_M.gguf", "model_type": "gemma 2B Q4_K - Medium", "model_size": 1489055744, "model_n_params": 2506172416, "n_batch": 2048, "n_ubatch": 512, "n_threads": 4, "cpu_mask": "0x0", "cpu_strict": false, "poll": 50, "type_k": "f16", "type_v": "f16", "n_gpu_layers": 0, "split_mode": "layer", "main_gpu": 0, "no_kv_offload": false, "flash_attn": true, "tensor_split": "0.00", "use_mmap": true, "embeddings": false, "n_prompt": 512, "n_gen": 0, "test_time": "2025-04-16T13:48:18Z", "avg_ns": 10036688731, "stddev_ns": 118930086, "avg_ts": 51.018583, "stddev_ts": 0.605756, "samples_ns": [ 9885559022, 9944975140, 10086923750, 10179108474, 10086877272 ],"samples_ts": [ 51.7927, 51.4833, 50.7588, 50.2991, 50.759 ]}</span>
+<span id="cb3-20"><a href=""></a>{"build_commit": "51f311e0", "build_number": 4753, "cpu_info": "AMD EPYC-Rome Processor", "gpu_info": "", "backends": "CPU", "model_filename": "/models/gemma-2b.Q4_K_M.gguf", "model_type": "gemma 2B Q4_K - Medium", "model_size": 1489055744, "model_n_params": 2506172416, "n_batch": 2048, "n_ubatch": 512, "n_threads": 4, "cpu_mask": "0x0", "cpu_strict": false, "poll": 50, "type_k": "f16", "type_v": "f16", "n_gpu_layers": 0, "split_mode": "layer", "main_gpu": 0, "no_kv_offload": false, "flash_attn": true, "tensor_split": "0.00", "use_mmap": true, "embeddings": false, "n_prompt": 0, "n_gen": 16, "test_time": "2025-04-16T13:51:08Z", "avg_ns": 625071993, "stddev_ns": 24333484, "avg_ts": 25.627274, "stddev_ts": 0.970688, "samples_ns": [ 663217000, 635181545, 609708673, 612766256, 604486494 ],"samples_ts": [ 24.1248, 25.1896, 26.242, 26.1111, 26.4687 ]}</span>
+<span id="cb3-21"><a href=""></a>{"build_commit": "51f311e0", "build_number": 4753, "cpu_info": "AMD EPYC-Rome Processor", "gpu_info": "", "backends": "CPU", "model_filename": "/models/gemma-2b.Q4_K_M.gguf", "model_type": "gemma 2B Q4_K - Medium", "model_size": 1489055744, "model_n_params": 2506172416, "n_batch": 2048, "n_ubatch": 512, "n_threads": 4, "cpu_mask": "0x0", "cpu_strict": false, "poll": 50, "type_k": "f16", "type_v": "f16", "n_gpu_layers": 0, "split_mode": "layer", "main_gpu": 0, "no_kv_offload": false, "flash_attn": true, "tensor_split": "0.00", "use_mmap": true, "embeddings": false, "n_prompt": 0, "n_gen": 128, "test_time": "2025-04-16T13:51:11Z", "avg_ns": 4923532121, "stddev_ns": 111396914, "avg_ts": 26.008117, "stddev_ts": 0.581379, "samples_ns": [ 4940674596, 5097103357, 4800498462, 4919597333, 4859786860 ],"samples_ts": [ 25.9074, 25.1123, 26.6639, 26.0184, 26.3386 ]}</span>
+<span id="cb3-22"><a href=""></a>{"build_commit": "51f311e0", "build_number": 4753, "cpu_info": "AMD EPYC-Rome Processor", "gpu_info": "", "backends": "CPU", "model_filename": "/models/gemma-2b.Q4_K_M.gguf", "model_type": "gemma 2B Q4_K - Medium", "model_size": 1489055744, "model_n_params": 2506172416, "n_batch": 2048, "n_ubatch": 512, "n_threads": 4, "cpu_mask": "0x0", "cpu_strict": false, "poll": 50, "type_k": "f16", "type_v": "f16", "n_gpu_layers": 0, "split_mode": "layer", "main_gpu": 0, "no_kv_offload": false, "flash_attn": true, "tensor_split": "0.00", "use_mmap": true, "embeddings": false, "n_prompt": 0, "n_gen": 512, "test_time": "2025-04-16T13:51:37Z", "avg_ns": 19952116080, "stddev_ns": 430963946, "avg_ts": 25.671116, "stddev_ts": 0.560122, "samples_ns": [ 20445111740, 19800455920, 19305439257, 20182460909, 20027112575 ],"samples_ts": [ 25.0427, 25.858, 26.521, 25.3686, 25.5653 ]}</span>
+<span id="cb3-23"><a href=""></a>{"build_commit": "51f311e0", "build_number": 4753, "cpu_info": "AMD EPYC-Rome Processor", "gpu_info": "", "backends": "CPU", "model_filename": "/models/llama-7b.Q4_K_M.gguf", "model_type": "llama 7B Q4_K - Medium", "model_size": 4080263168, "model_n_params": 6738415616, "n_batch": 2048, "n_ubatch": 512, "n_threads": 4, "cpu_mask": "0x0", "cpu_strict": false, "poll": 50, "type_k": "f16", "type_v": "f16", "n_gpu_layers": 0, "split_mode": "layer", "main_gpu": 0, "no_kv_offload": false, "flash_attn": true, "tensor_split": "0.00", "use_mmap": true, "embeddings": false, "n_prompt": 16, "n_gen": 0, "test_time": "2025-04-16T13:55:10Z", "avg_ns": 994448946, "stddev_ns": 13778245, "avg_ts": 16.091779, "stddev_ts": 0.222546, "samples_ns": [ 990369161, 977862789, 987192172, 1011953542, 1004867069 ],"samples_ts": [ 16.1556, 16.3622, 16.2076, 15.811, 15.9225 ]}</span>
+<span id="cb3-24"><a href=""></a>{"build_commit": "51f311e0", "build_number": 4753, "cpu_info": "AMD EPYC-Rome Processor", "gpu_info": "", "backends": "CPU", "model_filename": "/models/llama-7b.Q4_K_M.gguf", "model_type": "llama 7B Q4_K - Medium", "model_size": 4080263168, "model_n_params": 6738415616, "n_batch": 2048, "n_ubatch": 512, "n_threads": 4, "cpu_mask": "0x0", "cpu_strict": false, "poll": 50, "type_k": "f16", "type_v": "f16", "n_gpu_layers": 0, "split_mode": "layer", "main_gpu": 0, "no_kv_offload": false, "flash_attn": true, "tensor_split": "0.00", "use_mmap": true, "embeddings": false, "n_prompt": 128, "n_gen": 0, "test_time": "2025-04-16T13:55:17Z", "avg_ns": 7939737769, "stddev_ns": 19317778, "avg_ts": 16.121515, "stddev_ts": 0.039163, "samples_ns": [ 7925913791, 7924160621, 7968858935, 7929611024, 7950144478 ],"samples_ts": [ 16.1496, 16.1531, 16.0625, 16.142, 16.1003 ]}</span>
+<span id="cb3-25"><a href=""></a>{"build_commit": "51f311e0", "build_number": 4753, "cpu_info": "AMD EPYC-Rome Processor", "gpu_info": "", "backends": "CPU", "model_filename": "/models/llama-7b.Q4_K_M.gguf", "model_type": "llama 7B Q4_K - Medium", "model_size": 4080263168, "model_n_params": 6738415616, "n_batch": 2048, "n_ubatch": 512, "n_threads": 4, "cpu_mask": "0x0", "cpu_strict": false, "poll": 50, "type_k": "f16", "type_v": "f16", "n_gpu_layers": 0, "split_mode": "layer", "main_gpu": 0, "no_kv_offload": false, "flash_attn": true, "tensor_split": "0.00", "use_mmap": true, "embeddings": false, "n_prompt": 0, "n_gen": 16, "test_time": "2025-04-16T13:58:04Z", "avg_ns": 1672142392, "stddev_ns": 33119213, "avg_ts": 9.571578, "stddev_ts": 0.190255, "samples_ns": [ 1680191447, 1699128019, 1640933001, 1634083066, 1706376430 ],"samples_ts": [ 9.52272, 9.41659, 9.75055, 9.79142, 9.37659 ]}</span>
+<span id="cb3-26"><a href=""></a>{"build_commit": "51f311e0", "build_number": 4753, "cpu_info": "AMD EPYC-Rome Processor", "gpu_info": "", "backends": "CPU", "model_filename": "/models/llama-7b.Q4_K_M.gguf", "model_type": "llama 7B Q4_K - Medium", "model_size": 4080263168, "model_n_params": 6738415616, "n_batch": 2048, "n_ubatch": 512, "n_threads": 4, "cpu_mask": "0x0", "cpu_strict": false, "poll": 50, "type_k": "f16", "type_v": "f16", "n_gpu_layers": 0, "split_mode": "layer", "main_gpu": 0, "no_kv_offload": false, "flash_attn": true, "tensor_split": "0.00", "use_mmap": true, "embeddings": false, "n_prompt": 0, "n_gen": 128, "test_time": "2025-04-16T13:58:13Z", "avg_ns": 13262760196, "stddev_ns": 301316448, "avg_ts": 9.655080, "stddev_ts": 0.219917, "samples_ns": [ 12869155074, 13097432097, 13595745046, 13524903313, 13226565452 ],"samples_ts": [ 9.94626, 9.77291, 9.41471, 9.46402, 9.67749 ]}</span>
+<span id="cb3-27"><a href=""></a>{"build_commit": "51f311e0", "build_number": 4753, "cpu_info": "AMD EPYC-Rome Processor", "gpu_info": "", "backends": "CPU", "model_filename": "/models/phi-4-q4.gguf", "model_type": "phi3 14B Q4_K - Medium", "model_size": 9049559040, "model_n_params": 14659507200, "n_batch": 2048, "n_ubatch": 512, "n_threads": 4, "cpu_mask": "0x0", "cpu_strict": false, "poll": 50, "type_k": "f16", "type_v": "f16", "n_gpu_layers": 0, "split_mode": "layer", "main_gpu": 0, "no_kv_offload": false, "flash_attn": true, "tensor_split": "0.00", "use_mmap": true, "embeddings": false, "n_prompt": 16, "n_gen": 0, "test_time": "2025-04-16T14:01:28Z", "avg_ns": 8871663562, "stddev_ns": 517599918, "avg_ts": 1.808353, "stddev_ts": 0.104175, "samples_ns": [ 9091521129, 9598508214, 8334751597, 8914518010, 8419018861 ],"samples_ts": [ 1.75988, 1.66693, 1.91967, 1.79483, 1.90046 ]}</span></code></pre></div>
+<p style="font-size: 1rem; margin-top: 10px;">
+Source: <a href="https://github.com/SpareCores/sc-inspector-data/blob/main/data/hcloud/cpx31/llm/stdout">https://github.com/SpareCores/sc-inspector-data/blob/main/data/hcloud/cpx31/llm/stdout</a>
+</p>
+</section>
+<section id="from-bencmark-llm-import-example-2" class="slide level2">
+<h2>&gt;&gt;&gt; from bencmark-llm import example</h2>
+<div class="columns" style="display: block; margin-top:50px;">
+<div class="column">
+<iframe src="https://sparecores.com/embed/server/hcloud/cpx31/llm_prompt" style="height: 510px; width: 100%; border: 1px solid #34d399; border-radius: 8px; min-height: 400px">
+</iframe>
+</div><div class="column fragment">
+<iframe src="https://sparecores.com/embed/server/hcloud/cpx31/llm_generation" style="height: 510px; width: 100%; border: 1px solid #34d399; border-radius: 8px; min-height: 400px">
+</iframe>
+</div></div>
+</section>
+<section id="from-bencmarks-import-count" class="slide level2">
+<h2>&gt;&gt;&gt; from bencmarks import count</h2>
+<div class="sourceCode" id="cb4" style="margin-top: 30px !important;" data-code-line-numbers="3-4,13"><pre class="sourceCode numberSource sh number-lines"><code class="sourceCode bash"><span id="cb4-1"><a href=""></a><span class="ex">$</span> benchmark_config=<span class="va">$(</span><span class="ex">jq</span> <span class="at">-nc</span> <span class="dt">\</span></span>
+<span id="cb4-2"><a href=""></a>  <span class="at">--arg</span> version <span class="st">"51f311e0"</span> <span class="dt">\</span></span>
+<span id="cb4-3"><a href=""></a>  <span class="at">--arg</span> model <span class="st">"SmolLM-135M.Q4_K_M.gguf"</span> <span class="dt">\</span></span>
+<span id="cb4-4"><a href=""></a>  <span class="at">--argjson</span> tokens 16 <span class="dt">\</span></span>
+<span id="cb4-5"><a href=""></a>  <span class="st">'{framework_version: $version, model: $model, tokens: $tokens}'</span><span class="va">)</span></span>
+<span id="cb4-6"><a href=""></a></span>
+<span id="cb4-7"><a href=""></a><span class="ex">$</span> curl <span class="at">-s</span> <span class="at">-D</span> <span class="at">-</span> <span class="st">"https://keeper.sparecores.net/servers"</span> <span class="dt">\</span></span>
+<span id="cb4-8"><a href=""></a>  <span class="at">-G</span> <span class="dt">\</span></span>
+<span id="cb4-9"><a href=""></a>  <span class="at">--data-urlencode</span> <span class="st">"benchmark_score_min=1"</span> <span class="dt">\</span></span>
+<span id="cb4-10"><a href=""></a>  <span class="at">--data-urlencode</span> <span class="st">"add_total_count_header=true"</span> <span class="dt">\</span></span>
+<span id="cb4-11"><a href=""></a>  <span class="at">--data-urlencode</span> <span class="st">"limit=25"</span> <span class="dt">\</span></span>
+<span id="cb4-12"><a href=""></a>  <span class="at">--data-urlencode</span> <span class="st">"benchmark_config=</span><span class="va">$benchmark_config</span><span class="st">"</span> <span class="dt">\</span></span>
+<span id="cb4-13"><a href=""></a>  <span class="at">--data-urlencode</span> <span class="st">"benchmark_id=llm_speed:prompt_processing"</span> <span class="dt">\</span></span>
+<span id="cb4-14"><a href=""></a>  <span class="at">-o</span> /dev/null <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-i</span> x-total-count</span></code></pre></div>
+<div class="sourceCode" id="cb5" style="margin-top: 30px !important;"><pre class="sourceCode sh fragment"><code class="sourceCode bash"><span id="cb5-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="ex">x-total-count:</span> 2461</span></code></pre></div>
+</section>
+<section id="from-bencmarks-import-count-1" class="slide level2">
+<h2>&gt;&gt;&gt; from bencmarks import count</h2>
+<div class="sourceCode" id="cb6" style="margin-top: 30px !important;" data-code-line-numbers="3-3"><pre class="sourceCode numberSource sh number-lines"><code class="sourceCode bash"><span id="cb6-1"><a href=""></a><span class="ex">$</span> benchmark_config=<span class="va">$(</span><span class="ex">jq</span> <span class="at">-nc</span> <span class="dt">\</span></span>
+<span id="cb6-2"><a href=""></a>  <span class="at">--arg</span> version <span class="st">"51f311e0"</span> <span class="dt">\</span></span>
+<span id="cb6-3"><a href=""></a>  <span class="at">--arg</span> model <span class="st">"Llama-3.3-70B-Instruct-Q4_K_M.gguf"</span> <span class="dt">\</span></span>
+<span id="cb6-4"><a href=""></a>  <span class="at">--argjson</span> tokens 16 <span class="dt">\</span></span>
+<span id="cb6-5"><a href=""></a>  <span class="st">'{framework_version: $version, model: $model, tokens: $tokens}'</span><span class="va">)</span></span>
+<span id="cb6-6"><a href=""></a></span>
+<span id="cb6-7"><a href=""></a><span class="ex">$</span> curl <span class="at">-s</span> <span class="at">-D</span> <span class="at">-</span> <span class="st">"https://keeper.sparecores.net/servers"</span> <span class="dt">\</span></span>
+<span id="cb6-8"><a href=""></a>  <span class="at">-G</span> <span class="dt">\</span></span>
+<span id="cb6-9"><a href=""></a>  <span class="at">--data-urlencode</span> <span class="st">"benchmark_score_min=1"</span> <span class="dt">\</span></span>
+<span id="cb6-10"><a href=""></a>  <span class="at">--data-urlencode</span> <span class="st">"add_total_count_header=true"</span> <span class="dt">\</span></span>
+<span id="cb6-11"><a href=""></a>  <span class="at">--data-urlencode</span> <span class="st">"limit=25"</span> <span class="dt">\</span></span>
+<span id="cb6-12"><a href=""></a>  <span class="at">--data-urlencode</span> <span class="st">"benchmark_config=</span><span class="va">$benchmark_config</span><span class="st">"</span> <span class="dt">\</span></span>
+<span id="cb6-13"><a href=""></a>  <span class="at">--data-urlencode</span> <span class="st">"benchmark_id=llm_speed:prompt_processing"</span> <span class="dt">\</span></span>
+<span id="cb6-14"><a href=""></a>  <span class="at">-o</span> /dev/null <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-i</span> x-total-count</span></code></pre></div>
+<div class="sourceCode" id="cb7" style="margin-top: 30px !important;"><pre class="sourceCode sh fragment"><code class="sourceCode bash"><span id="cb7-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="ex">x-total-count:</span> 1425</span></code></pre></div>
+</section>
+<section id="from-bencmarks-import-count-2" class="slide level2">
+<h2>&gt;&gt;&gt; from bencmarks import count</h2>
+<div class="sourceCode" id="cb8" style="margin-top: 30px !important;" data-code-line-numbers="4,13"><pre class="sourceCode numberSource sh number-lines"><code class="sourceCode bash"><span id="cb8-1"><a href=""></a><span class="ex">$</span> benchmark_config=<span class="va">$(</span><span class="ex">jq</span> <span class="at">-nc</span> <span class="dt">\</span></span>
+<span id="cb8-2"><a href=""></a>  <span class="at">--arg</span> version <span class="st">"51f311e0"</span> <span class="dt">\</span></span>
+<span id="cb8-3"><a href=""></a>  <span class="at">--arg</span> model <span class="st">"Llama-3.3-70B-Instruct-Q4_K_M.gguf"</span> <span class="dt">\</span></span>
+<span id="cb8-4"><a href=""></a>  <span class="at">--argjson</span> tokens 128 <span class="dt">\</span></span>
+<span id="cb8-5"><a href=""></a>  <span class="st">'{framework_version: $version, model: $model, tokens: $tokens}'</span><span class="va">)</span></span>
+<span id="cb8-6"><a href=""></a></span>
+<span id="cb8-7"><a href=""></a><span class="ex">$</span> curl <span class="at">-s</span> <span class="at">-D</span> <span class="at">-</span> <span class="st">"https://keeper.sparecores.net/servers"</span> <span class="dt">\</span></span>
+<span id="cb8-8"><a href=""></a>  <span class="at">-G</span> <span class="dt">\</span></span>
+<span id="cb8-9"><a href=""></a>  <span class="at">--data-urlencode</span> <span class="st">"benchmark_score_min=1"</span> <span class="dt">\</span></span>
+<span id="cb8-10"><a href=""></a>  <span class="at">--data-urlencode</span> <span class="st">"add_total_count_header=true"</span> <span class="dt">\</span></span>
+<span id="cb8-11"><a href=""></a>  <span class="at">--data-urlencode</span> <span class="st">"limit=25"</span> <span class="dt">\</span></span>
+<span id="cb8-12"><a href=""></a>  <span class="at">--data-urlencode</span> <span class="st">"benchmark_config=</span><span class="va">$benchmark_config</span><span class="st">"</span> <span class="dt">\</span></span>
+<span id="cb8-13"><a href=""></a>  <span class="at">--data-urlencode</span> <span class="st">"benchmark_id=llm_speed:text_generation"</span> <span class="dt">\</span></span>
+<span id="cb8-14"><a href=""></a>  <span class="at">-o</span> /dev/null <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-i</span> x-total-count</span></code></pre></div>
+<div class="sourceCode" id="cb9" style="margin-top: 30px !important;"><pre class="sourceCode sh fragment"><code class="sourceCode bash"><span id="cb9-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="ex">x-total-count:</span> 1201</span></code></pre></div>
+<aside class="notes">
+<p>5 tokens per second</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="from-models-import-performance" class="slide level2">
+<h2>&gt;&gt;&gt; from models import performance</h2>
+<p><a target="_blank" href="https://sparecores.com/servers?order_by=selected_benchmark_score_per_price&amp;order_dir=desc&amp;columns=1253032&amp;benchmark=eyJpZCI6ImxsbV9zcGVlZDp0ZXh0X2dlbmVyYXRpb24iLCJjb25maWciOiJ7XCJmcmFtZXdvcmtfdmVyc2lvblwiOiBcIjUxZjMxMWUwXCIsIFwibW9kZWxcIjogXCJsbGFtYS03Yi5RNF9LX00uZ2d1ZlwiLCBcInRva2Vuc1wiOiAxMjh9In0="> <img src="images/navigator-llm-llama-textgen-128.png" style="width: 100%; height: auto; margin-top: -30px;"> </a></p>
+<aside class="notes">
+<ol type="1">
+<li>open sparecores.com/servers in a new tab</li>
+<li>explaing columns</li>
+<li>select LLM benchmark / filter for Llama 7B instead of 70B!!!!</li>
+<li>pick text gen 128</li>
+<li>explain missing values</li>
+<li>sort by benchmark score: 160 TPOS max with A100</li>
+<li>explain GPU limits of <code>llama-cpp</code> – cannot really utilize multiple GPUs</li>
+<li>sort by cost efficiency: 1st is a smaller GPU that can probably load most layers into VRAM … but comes cheap</li>
+<li>2nd is a CPU-only server .. that is a super cheap in some random region</li>
+<li>let’s add a few extra columns: cpu model, best ondemand price</li>
+<li>let’s compare the top 5 (skip g2-standard-8 as it’s the same)</li>
+<li>note that AMD 9V74 is pretty new .. no hyperthreading</li>
+<li>switch llm speed dropdown to llama</li>
+</ol>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="from-models-import-performance-1" class="slide level2">
+<h2>&gt;&gt;&gt; from models import performance</h2>
+<p><a target="_blank" href="https://sparecores.com/servers?order_by=selected_benchmark_score_per_price&amp;order_dir=desc&amp;columns=1253032&amp;benchmark=eyJpZCI6ImxsbV9zcGVlZDp0ZXh0X2dlbmVyYXRpb24iLCJjb25maWciOiJ7XCJmcmFtZXdvcmtfdmVyc2lvblwiOiBcIjUxZjMxMWUwXCIsIFwibW9kZWxcIjogXCJsbGFtYS03Yi5RNF9LX00uZ2d1ZlwiLCBcInRva2Vuc1wiOiAxMjh9In0="> <img src="images/navigator-llm-llama-textgen-128-listing.png" style="width: 100%; height: auto; margin-top: -30px;"> </a></p>
+</section>
+<section id="from-models-import-performance-2" class="slide level2">
+<h2>&gt;&gt;&gt; from models import performance</h2>
+<p><a target="_blank" href="https://sparecores.com/servers?order_by=selected_benchmark_score_per_price&amp;order_dir=desc&amp;columns=1253032&amp;benchmark=eyJpZCI6ImxsbV9zcGVlZDp0ZXh0X2dlbmVyYXRpb24iLCJjb25maWciOiJ7XCJmcmFtZXdvcmtfdmVyc2lvblwiOiBcIjUxZjMxMWUwXCIsIFwibW9kZWxcIjogXCJsbGFtYS03Yi5RNF9LX00uZ2d1ZlwiLCBcInRva2Vuc1wiOiAxMjh9In0="> <img src="images/navigator-llm-llama-textgen-128-compare-select.png" style="width: 100%; height: auto; margin-top: -30px;"> </a></p>
+</section>
+<section id="from-models-import-performance-3" class="slide level2">
+<h2>&gt;&gt;&gt; from models import performance</h2>
+<iframe src="https://sparecores.com/embed/compare/llm_inference?instances=W3siZGlzcGxheV9uYW1lIjoiZzItc3RhbmRhcmQtNCIsInZlbmRvciI6ImdjcCIsInNlcnZlciI6ImcyLXN0YW5kYXJkLTQiLCJ6b25lc1JlZ2lvbnMiOltdfSx7ImRpc3BsYXlfbmFtZSI6IkY0YW1zX3Y2IiwidmVuZG9yIjoiYXp1cmUiLCJzZXJ2ZXIiOiJTdGFuZGFyZF9GNGFtc192NiIsInpvbmVzUmVnaW9ucyI6W119LHsiZGlzcGxheV9uYW1lIjoiZzRkbi54bGFyZ2UiLCJ2ZW5kb3IiOiJhd3MiLCJzZXJ2ZXIiOiJnNGRuLnhsYXJnZSIsInpvbmVzUmVnaW9ucyI6W119LHsiZGlzcGxheV9uYW1lIjoiZzUueGxhcmdlIiwidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiZzUueGxhcmdlIiwiem9uZXNSZWdpb25zIjpbXX0seyJkaXNwbGF5X25hbWUiOiJhMi11bHRyYWdwdS0xZyIsInZlbmRvciI6ImdjcCIsInNlcnZlciI6ImEyLXVsdHJhZ3B1LTFnIiwiem9uZXNSZWdpb25zIjpbXX1d" style="margin-top:15px; height: 610px; width: 100%; border: 1px solid #34d399; border-radius: 8px; min-height: 600px">
+</iframe>
+</section>
+<section id="sqlite-select-from-scores-order-by-price" class="slide level2">
+<h2>sqlite&gt; SELECT * FROM scores ORDER BY price;</h2>
+<blockquote class="fragment" style="margin-top: 50px; margin-left: 40px;">
+So .. which is the best server type to serve LLMs?
+</blockquote>
+<blockquote class="fragment yellow" style="margin-top: 50px; margin-left: 40px;">
+Well .. it depends!
+</blockquote>
+</section>
+<section id="sqlite-select-from-scores-order-by-price-1" class="slide level2">
+<h2>sqlite&gt; SELECT * FROM scores ORDER BY price;</h2>
+<div class="centered">
+<p><img style="width:100%; margin-top: 30px;" src="images/llm-epyc-1.png"></p>
+<p>
+Source: <a href="https://sparecores.com/compare?instances=W3siZGlzcGxheV9uYW1lIjoiRjRhc192NiIsInZlbmRvciI6ImF6dXJlIiwic2VydmVyIjoiU3RhbmRhcmRfRjRhc192NiIsInpvbmVzUmVnaW9ucyI6W119LHsiZGlzcGxheV9uYW1lIjoicjZhLjR4bGFyZ2UiLCJ2ZW5kb3IiOiJhd3MiLCJzZXJ2ZXIiOiJyNmEuNHhsYXJnZSIsInpvbmVzUmVnaW9ucyI6W119XQ%3D%3D" target="_blank">F4AS_V6 vs r6a.4xlarge</a>
+</p>
+</div>
+<aside class="notes">
+E.g. looking at 4 vs 8 vCPU AMD EPYC (9V74 vs 7R13) and 16 VS 128 gigs of memory for a super small model, there’s a slight advantage for the Azure server
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="sqlite-select-from-scores-order-by-price-2" class="slide level2">
+<h2>sqlite&gt; SELECT * FROM scores ORDER BY price;</h2>
+<div class="centered">
+<p><img style="width:100%; margin-top: 30px;" src="images/llm-epyc-2.png"></p>
+<p>
+Source: <a href="https://sparecores.com/compare?instances=W3siZGlzcGxheV9uYW1lIjoiRjRhc192NiIsInZlbmRvciI6ImF6dXJlIiwic2VydmVyIjoiU3RhbmRhcmRfRjRhc192NiIsInpvbmVzUmVnaW9ucyI6W119LHsiZGlzcGxheV9uYW1lIjoicjZhLjR4bGFyZ2UiLCJ2ZW5kb3IiOiJhd3MiLCJzZXJ2ZXIiOiJyNmEuNHhsYXJnZSIsInpvbmVzUmVnaW9ucyI6W119XQ%3D%3D" target="_blank">F4AS_V6 vs r6a.4xlarge</a>
+</p>
+</div>
+<aside class="notes">
+but when looking at a larger model, although the Azure server is still a bit faster for text generataion than the AWS machine and can even do 512 tokens request (despite older CPU and much less memory), AWS is the clear winner for prompt processing
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section></section>
+<section id="printllm-benchmarks.disclaimer" class="title-slide slide level1" data-transition="convex">
+<h1>&gt;&gt;&gt; print(llm-benchmarks.disclaimer)</h1>
+<div class="fragment">
+<ul>
+<li>Cannot scale to multiple GPUs with small models</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>Needs CUDA for GPU-accelerated inference
+<ul>
+<li>Only CPU is utilized in the AMD, Habana etc. servers</li>
+<li>Even some NVIDIA GPUs (e.g.&nbsp;T4G) are incompatible</li>
+</ul></li>
+</ul>
+</div>
+<div class="fragment">
+<p>More details:<br><a href="https://sparecores.com/servers?vendor=aws&amp;gpu_min=1&amp;limit=100&amp;columns=1187496&amp;benchmark=eyJpZCI6ImxsbV9zcGVlZDpwcm9tcHRfcHJvY2Vzc2luZyIsImNvbmZpZyI6IntcImZyYW1ld29ya192ZXJzaW9uXCI6IFwiNTFmMzExZTBcIiwgXCJtb2RlbFwiOiBcImdlbW1hLTJiLlE0X0tfTS5nZ3VmXCIsIFwidG9rZW5zXCI6IDEwMjR9In0=&amp;order_by=selected_benchmark_score&amp;order_dir=desc" target="_blank">Spare Cores listing for GPU-accelerated instances</a></p>
+</div>
+</section>
+
+<section>
+<section id="pip-show-navigator-grep--i-license" class="title-slide slide level1" data-transition="convex-in none-out">
+<h1>$ pip show navigator | grep -i license</h1>
+<p><span class="fragment">🤓 100% open-source! <span class="fragment"> 🤐 BUT …</span></span></p>
+<div class="fragment">
+<div class="centered">
+<p><img src="images/dontryathome1.png" style="width: 50%; margin-top: 0px;"></p>
+</div>
+</div>
+</section>
+<section id="pip-show-navigator-grep--i-license-1" class="slide level2" data-transition="none-in slide-out">
+<h2>$ pip show navigator | grep -i license</h2>
+<p>🤓 100% open-source! 🤐 BUT …</p>
+<div class="centered">
+<p><img src="images/dontryathome2.png" style="width: 50%; margin-top: 0px;"></p>
+</div>
+<aside class="notes">
+<p>In this case, we are happy to be your friend .. and help out!</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="from-llm-benchmarks-import-budget" class="slide level2" data-transition="slide-in convex-out">
+<h2>&gt;&gt;&gt; from llm-benchmarks import budget</h2>
+<style>
+td.cost-value span.num {
+  display: inline-block;
+  min-width: 5em;
+  text-align: right;
+  padding-right: 0.5em;
+  font-family: monospace;
+}
+</style>
+<div class="colcontainer mt-60 centered fragment">
+<div class="col">
+<p><img src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExZG5vdHcyaWJmeHVhcjZ2Zzl1dTNmZzgxZHd0YXM5Y2F5bDc3cHkyNyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/N6mPyicEmayO93TMQt/giphy.gif" style="width:75%;margin-top:-30px;"></p>
+</div>
+<div class="col">
+<table style="margin-top: 20px;font-size: 1em;" class="fragment">
+<thead>
+<tr>
+<th>
+<b>Vendor</b>
+</th>
+<th style="text-align: right; padding-right: 10px;">
+<b>Cost</b>
+</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>
+AWS
+</td>
+<td class="cost-value">
+<span class="num">2153.68</span> <span class="unit">USD</span>
+</td>
+</tr>
+<tr>
+<td>
+GCP
+</td>
+<td class="cost-value">
+<span class="num">696.90</span> <span class="unit">USD</span>
+</td>
+</tr>
+<tr>
+<td>
+Azure
+</td>
+<td class="cost-value">
+<span class="num">8036.71</span> <span class="unit">USD</span>
+</td>
+</tr>
+<tr>
+<td>
+Hetzner
+</td>
+<td class="cost-value">
+<span class="num">8.65</span> <span class="unit">EUR</span>
+</td>
+</tr>
+<tr>
+<td>
+Upcloud
+</td>
+<td class="cost-value">
+<span class="num">170.21</span> <span class="unit">EUR</span>
+</td>
+</tr>
+<tr>
+<td class="fragment" colspan="2">
++2 new vendors
+</td>
+</tr>
+</tbody></table>
+<div class="fragment" style="margin-top: -60px;">
+<p style="color: #34d399;">
+<b>Overall: </b>€0.00
+</p>
+<p style="margin-top: 0px; font-size: 0.8em;">
+Thanks for the cloud credits! 🙇
+</p>
+</div>
+</div>
+</div>
+</section></section>
+<section>
+<section id="head--n-3-roadmap.md" class="title-slide slide level1" data-transition="convex-in slide-out">
+<h1>$ head -n 3 ROADMAP.md</h1>
+<ul>
+<li>Main focus: <code>Resource Tracker</code></li>
+</ul>
+<div class="fragment">
+<ul>
+<li>Extend <code>crawler</code> and <code>runner</code>: onboard new vendors</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>Extend <code>inspector</code>: implement new benchmark workloads</li>
+</ul>
+</div>
+<div class="fragment">
+<ul style="font-size: 0.75em; margin-left: 70px;">
+<li>
+Memory benchmark
+</li>
+<li>
+Compressions algos
+</li>
+<li>
+OpenSSL speed
+</li>
+<li>
+General benchmarking tools (e.g.&nbsp;GeekBench, PassMark)
+</li>
+<li>
+Static web serving
+</li>
+<li>
+Database operations (e.g.&nbsp;Redis)
+</li>
+<li>
+LLM inference speed
+</li>
+</ul>
+</div>
+</section>
+<section id="head--n-3-roadmap.md-tail--n-1" class="slide level2">
+<h2>$ head -n 3 ROADMAP.md | tail -n 1</h2>
+<p>Next benchmark?</p>
+<div class="fragment">
+<div class="centered">
+<p><img src="images/yoda-gbm-by-szilard.png" style="width: 35%; margin-top: 00px;"></p>
+</div>
+</div>
+</section>
+<section id="head--n-3-roadmap.md-tail--n-1-1" class="slide level2">
+<h2>$ head -n 3 ROADMAP.md | tail -n 1</h2>
+<div class="centered">
+<p><img src="images/github-szilard-benchml.png" style="width: 85%; margin-top: 00px;"></p>
+</div>
+</section>
+<section id="head--n-3-roadmap.md-tail--n-1-2" class="slide level2">
+<h2>$ head -n 3 ROADMAP.md | tail -n 1</h2>
+<div class="centered">
+<p><img src="images/github-szilard-benchgbm.png" style="width: 85%; margin-top: 00px;"></p>
+</div>
+<aside class="notes">
+GBM: share <span class="citation" data-cites="szilard">@szilard</span> repo .. ask for feedback from the community, it’s the time to make a diff on this .. before we burn another $10k. visit at the booth!
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="curl--x-post--d-readme.md-chat.gpt" class="slide level2">
+<h2>$ curl -X POST -d <span class="citation" data-cites="README.md">@README.md</span> chat.gpt</h2>
+<p>Airline dataset:</p>
+<ul style="font-size: 0.8em;">
+<li>
+Training data: 100K, 1M, 10M records from 2005/2006
+</li>
+<li>
+Response variable: <code>if a flight is delayed by more than 15 minutes</code>
+</li>
+<li>
+Test data: 100K records from 2007
+</li>
+</ul>
+<div class="columns">
+<div class="column fragment">
+<p>GBM implementations:</p>
+<ul style="font-size: 0.8em;">
+<li>
+h2o
+</li>
+<li>
+xgboost
+</li>
+<li>
+lightgbm
+</li>
+<li>
+catboost
+</li>
+</ul>
+</div><div class="column fragment" style="width:25%;">
+<p>Metrics:</p>
+<ul style="font-size: 0.8em;">
+<li>
+Training time
+</li>
+<li>
+AUC
+</li>
+</ul>
+</div><div class="column fragment" style="width:25%;">
+<p>Hardware:</p>
+<ul style="font-size: 0.8em;">
+<li>
+CPU
+</li>
+<li>
+GPU
+</li>
+</ul>
+</div></div>
+</section>
+<section id="curl--x-post--d-readme.md-chat.gpt-1" class="slide level2">
+<h2>$ curl -X POST -d <span class="citation" data-cites="README.md">@README.md</span> chat.gpt</h2>
+<table style="font-size: 0.8em; margin-top: 30px;">
+<thead>
+<tr>
+<td>
+<code>r4.8xlarge</code>
+</td>
+<td>
+Train 100K
+</td>
+<td>
+Train 1M
+</td>
+<td>
+Train 10M
+</td>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+h2o
+</td>
+<td class="right">
+11.0 s
+</td>
+<td class="right">
+12.0 s
+</td>
+<td class="right">
+60.0 s
+</td>
+</tr>
+<tr>
+<td>
+xgboost
+</td>
+<td class="right">
+<span class="greeen">0.4 s</span>
+</td>
+<td class="right">
+<span class="greeen">2.7 s</span>
+</td>
+<td class="right">
+40.0 s
+</td>
+</tr>
+<tr>
+<td>
+lightgbm
+</td>
+<td class="right">
+2.3 s
+</td>
+<td class="right">
+4.0 s
+</td>
+<td class="right">
+<span class="greeen">20.0 s</span>
+</td>
+</tr>
+<tr>
+<td>
+catboost
+</td>
+<td class="right">
+1.9 s
+</td>
+<td class="right">
+7.0 s
+</td>
+<td class="right">
+70.0 s
+</td>
+</tr>
+</tbody>
+</table>
+<div class="fragment">
+<table style="font-size: 0.8em; margin-top: 30px;">
+<thead>
+<tr>
+<td>
+<code>p3.2xlarge</code>
+</td>
+<td>
+Train 100K
+</td>
+<td>
+Train 1M
+</td>
+<td>
+Train 10M
+</td>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+h2o
+</td>
+<td class="right">
+6.4 s
+</td>
+<td class="right">
+14.0 s
+</td>
+<td class="right">
+42.0 s
+</td>
+</tr>
+<tr>
+<td>
+xgboost
+</td>
+<td class="right">
+<span class="greeen">0.7 s</span>
+</td>
+<td class="right">
+<span class="greeen">1.3 s</span>
+</td>
+<td class="right">
+<span class="greeen">5.0 s</span>
+</td>
+</tr>
+<tr>
+<td>
+lightgbm
+</td>
+<td class="right">
+7.0 s
+</td>
+<td class="right">
+9.0 s
+</td>
+<td class="right">
+40.0 s
+</td>
+</tr>
+<tr>
+<td>
+catboost
+</td>
+<td class="right">
+1.6 s
+</td>
+<td class="right">
+3.4 s
+</td>
+<td class="right">
+23.0 s
+</td>
+</tr>
+</tbody>
+</table>
+<aside class="notes">
+<p>32 cores without HT NVIDIA V100</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</div>
+</section>
+<section id="curl--x-post--d-readme.md-chat.gpt-2" class="slide level2">
+<h2>$ curl -X POST -d <span class="citation" data-cites="README.md">@README.md</span> chat.gpt</h2>
+<ul>
+<li>Up-to 2x speed-up on newer generation CPUs</li>
+<li>Up-to 1.3x speed-up on newer generation GPUs</li>
+</ul>
+<div class="fragment">
+<ul>
+<li>Multi-core and multi-CPU scaling</li>
+</ul>
+<div class="centered">
+<p><img src="https://private-user-images.githubusercontent.com/844827/340436701-8bb2b69e-eca1-42ce-85fa-0b14276553d7.png?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NTYxNTk4NjIsIm5iZiI6MTc1NjE1OTU2MiwicGF0aCI6Ii84NDQ4MjcvMzQwNDM2NzAxLThiYjJiNjllLWVjYTEtNDJjZS04NWZhLTBiMTQyNzY1NTNkNy5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUwODI1JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MDgyNVQyMjA2MDJaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT1hNjYxZDkwYjY4Yzc0NDc5MzUzZWJkNGI0ZGYwZTAyZGIzNzQwNGRkNzRiN2Q3ZTFjNDcyZDNhOWU4YzI2OTY2JlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.ZEWTNTBrU2B-DWjOmdg7zKwZLJac4STS3jkg1iwlgCs" style="width: 65%; margin-top: -60px;"></p>
+</div>
+<aside class="notes">
+
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</div>
+</section>
+<section id="todo.sh-listall-gbm" class="slide level2" data-transition="slide-in convex-out">
+<h2>$ todo.sh listall +gbm</h2>
+<ul style="font-size: 0.8em;">
+<li>
+Use <code>@szilard</code>’s training and test files
+</li>
+<li class="fragment">
+Port R benchmarking scripts to Python
+</li>
+<li class="fragment">
+Single Docker image with CPU and GPU builds of GBM implementations
+</li>
+<ul class="fragment" style="font-size: 0.75em;">
+<li>
+One or more implementations? Which one of the existing ones? Anything to add?
+</li>
+<li>
+Pin package versions for reproducibility … even on servers to be released in the future.
+</li>
+<li>
+When to rerun?
+</li>
+</ul>
+<li class="fragment">
+Use GPU when available
+</li>
+<li class="fragment">
+Disable hyperthreading, use all physical cores
+</li>
+</ul>
+<div class="fragment">
+<hr>
+<ul style="font-size: 0.8em;">
+<li>
+Is GBM the right training method to benchmark?
+</li>
+<li>
+Would you find it useful?
+</li>
+<li>
+What would you like to really see?
+</li>
+</ul>
+</div>
+</section></section>
+<section>
+<section id="import-polars-as-pandas3" class="title-slide slide level1" data-transition="convex-in convex-out">
+<h1>&gt;&gt;&gt; import polars as pandas3</h1>
+<div class="sourceCode" id="cb10" style="font-size:24px; margin-top: 60px; height: 650px;" data-code-line-numbers="|2,7"><pre class="sourceCode numberSource sql number-lines"><code class="sourceCode sql"><span id="cb10-1"><a href=""></a><span class="kw">WITH</span> prices <span class="kw">AS</span> (</span>
+<span id="cb10-2"><a href=""></a>  <span class="kw">SELECT</span> vendor_id, continent, server_id, <span class="fu">ROUND</span>(<span class="fu">AVG</span>(price), <span class="dv">6</span>) <span class="kw">AS</span> price</span>
+<span id="cb10-3"><a href=""></a>  <span class="kw">FROM</span> server_price <span class="kw">AS</span> p</span>
+<span id="cb10-4"><a href=""></a>  <span class="kw">LEFT</span> <span class="kw">JOIN</span> region <span class="kw">AS</span> r <span class="kw">USING</span> (vendor_id, region_id)</span>
+<span id="cb10-5"><a href=""></a>  <span class="kw">LEFT</span> <span class="kw">JOIN</span> country <span class="kw">AS</span> c <span class="kw">USING</span> (country_id)</span>
+<span id="cb10-6"><a href=""></a>  <span class="kw">WHERE</span> p.allocation <span class="op">=</span> <span class="st">'ONDEMAND'</span></span>
+<span id="cb10-7"><a href=""></a>  <span class="kw">GROUP</span> <span class="kw">BY</span> vendor_id, continent, server_id</span>
+<span id="cb10-8"><a href=""></a>),</span>
+<span id="cb10-9"><a href=""></a>benchmarks <span class="kw">AS</span> (</span>
+<span id="cb10-10"><a href=""></a>  <span class="kw">SELECT</span> vendor_id, server_id, score</span>
+<span id="cb10-11"><a href=""></a>  <span class="kw">FROM</span> benchmark_score</span>
+<span id="cb10-12"><a href=""></a>  <span class="kw">WHERE</span> benchmark_id <span class="op">=</span> <span class="st">'llm_speed:prompt_processing'</span> <span class="kw">AND</span></span>
+<span id="cb10-13"><a href=""></a>        config <span class="op">=</span> <span class="st">'{"framework_version": "51f311e0", "model": "gemma-2b.Q4_K_M.gguf", "tokens": 128}'</span></span>
+<span id="cb10-14"><a href=""></a>)</span>
+<span id="cb10-15"><a href=""></a><span class="kw">SELECT</span></span>
+<span id="cb10-16"><a href=""></a>  s.vendor_id <span class="kw">as</span> vendor,</span>
+<span id="cb10-17"><a href=""></a>  s.display_name <span class="kw">as</span> server,</span>
+<span id="cb10-18"><a href=""></a>  continent,</span>
+<span id="cb10-19"><a href=""></a>  s.vcpus,</span>
+<span id="cb10-20"><a href=""></a>  s.memory_amount <span class="kw">AS</span> memory,</span>
+<span id="cb10-21"><a href=""></a>  s.gpu_count,</span>
+<span id="cb10-22"><a href=""></a>  <span class="fu">coalesce</span>(s.gpu_memory_total, <span class="dv">0</span>) <span class="kw">AS</span> vram,</span>
+<span id="cb10-23"><a href=""></a>  s.gpu_model,</span>
+<span id="cb10-24"><a href=""></a>  s.storage_size <span class="kw">AS</span> <span class="kw">storage</span>,</span>
+<span id="cb10-25"><a href=""></a>  price,</span>
+<span id="cb10-26"><a href=""></a>  score,</span>
+<span id="cb10-27"><a href=""></a>  <span class="fu">ROUND</span>(score <span class="op">/</span> price, <span class="dv">4</span>) <span class="kw">AS</span> cost_efficiency</span>
+<span id="cb10-28"><a href=""></a><span class="kw">FROM</span> server <span class="kw">AS</span> s</span>
+<span id="cb10-29"><a href=""></a><span class="kw">LEFT</span> <span class="kw">JOIN</span> prices <span class="kw">AS</span> p <span class="kw">USING</span> (vendor_id, server_id)</span>
+<span id="cb10-30"><a href=""></a><span class="kw">LEFT</span> <span class="kw">JOIN</span> benchmarks <span class="kw">AS</span> bs <span class="kw">USING</span> (vendor_id, server_id)</span>
+<span id="cb10-31"><a href=""></a><span class="kw">WHERE</span> price <span class="kw">IS</span> <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">AND</span> price <span class="op">&gt;</span> <span class="dv">0</span></span>
+<span id="cb10-32"><a href=""></a><span class="kw">ORDER</span> <span class="kw">BY</span> cost_efficiency <span class="kw">DESC</span>;</span></code></pre></div>
+</section>
+<section id="libarydata.table" class="slide level2">
+<h2>&gt; libary(data.table)</h2>
+<div class="sourceCode" id="cb11" style="margin-top: 60px; height: 650px;"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">str</span>(df)</span>
+<span id="cb11-2"><a href="" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="" aria-hidden="true" tabindex="-1"></a>Classes ‘data.table’ and <span class="st">'data.frame'</span><span class="sc">:</span>  <span class="dv">16190</span> obs. of  <span class="dv">13</span> variables<span class="sc">:</span></span>
+<span id="cb11-4"><a href="" aria-hidden="true" tabindex="-1"></a> <span class="er">$</span> vendor         <span class="sc">:</span> chr  <span class="st">"gcp"</span> <span class="st">"gcp"</span> <span class="st">"gcp"</span> <span class="st">"gcp"</span> ...</span>
+<span id="cb11-5"><a href="" aria-hidden="true" tabindex="-1"></a> <span class="sc">$</span> server         <span class="sc">:</span> chr  <span class="st">"g2-standard-4"</span> <span class="st">"g2-standard-4"</span> <span class="st">"g2-standard-4"</span> <span class="st">"g2-standard-4"</span> ...</span>
+<span id="cb11-6"><a href="" aria-hidden="true" tabindex="-1"></a> <span class="sc">$</span> continent      <span class="sc">:</span> Factor w<span class="sc">/</span> <span class="dv">6</span> levels <span class="st">"North America"</span>,..<span class="sc">:</span> <span class="dv">1</span> <span class="dv">4</span> <span class="dv">3</span> <span class="dv">5</span> <span class="dv">2</span> <span class="dv">6</span> <span class="dv">1</span> <span class="dv">4</span> <span class="dv">3</span> <span class="dv">5</span> ...</span>
+<span id="cb11-7"><a href="" aria-hidden="true" tabindex="-1"></a> <span class="sc">$</span> vcpus          <span class="sc">:</span> int  <span class="dv">4</span> <span class="dv">4</span> <span class="dv">4</span> <span class="dv">4</span> <span class="dv">4</span> <span class="dv">4</span> <span class="dv">8</span> <span class="dv">8</span> <span class="dv">8</span> <span class="dv">8</span> ...</span>
+<span id="cb11-8"><a href="" aria-hidden="true" tabindex="-1"></a> <span class="sc">$</span> memory         <span class="sc">:</span> int  <span class="dv">16384</span> <span class="dv">16384</span> <span class="dv">16384</span> <span class="dv">16384</span> <span class="dv">16384</span> <span class="dv">16384</span> <span class="dv">32768</span> <span class="dv">32768</span> <span class="dv">32768</span> <span class="dv">32768</span> ...</span>
+<span id="cb11-9"><a href="" aria-hidden="true" tabindex="-1"></a> <span class="sc">$</span> gpu_count      <span class="sc">:</span> int  <span class="dv">1</span> <span class="dv">1</span> <span class="dv">1</span> <span class="dv">1</span> <span class="dv">1</span> <span class="dv">1</span> <span class="dv">1</span> <span class="dv">1</span> <span class="dv">1</span> <span class="dv">1</span> ...</span>
+<span id="cb11-10"><a href="" aria-hidden="true" tabindex="-1"></a> <span class="sc">$</span> vram           <span class="sc">:</span> int  <span class="dv">23034</span> <span class="dv">23034</span> <span class="dv">23034</span> <span class="dv">23034</span> <span class="dv">23034</span> <span class="dv">23034</span> <span class="dv">23034</span> <span class="dv">23034</span> <span class="dv">23034</span> <span class="dv">23034</span> ...</span>
+<span id="cb11-11"><a href="" aria-hidden="true" tabindex="-1"></a> <span class="sc">$</span> gpu_model      <span class="sc">:</span> chr  <span class="st">"L4"</span> <span class="st">"L4"</span> <span class="st">"L4"</span> <span class="st">"L4"</span> ...</span>
+<span id="cb11-12"><a href="" aria-hidden="true" tabindex="-1"></a> <span class="sc">$</span> storage        <span class="sc">:</span> int  <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> ...</span>
+<span id="cb11-13"><a href="" aria-hidden="true" tabindex="-1"></a> <span class="sc">$</span> price          <span class="sc">:</span> num  <span class="fl">0.16</span> <span class="fl">0.178</span> <span class="fl">0.185</span> <span class="fl">0.187</span> <span class="fl">0.192</span> ...</span>
+<span id="cb11-14"><a href="" aria-hidden="true" tabindex="-1"></a> <span class="sc">$</span> score          <span class="sc">:</span> num  <span class="dv">6107</span> <span class="dv">6107</span> <span class="dv">6107</span> <span class="dv">6107</span> <span class="dv">6107</span> ...</span>
+<span id="cb11-15"><a href="" aria-hidden="true" tabindex="-1"></a> <span class="sc">$</span> cost_efficiency<span class="sc">:</span> num  <span class="dv">38121</span> <span class="dv">34364</span> <span class="dv">32965</span> <span class="dv">32642</span> <span class="dv">31808</span> ...</span>
+<span id="cb11-16"><a href="" aria-hidden="true" tabindex="-1"></a> <span class="sc">$</span> ram_per_vcpu   <span class="sc">:</span> num  <span class="dv">4096</span> <span class="dv">4096</span> <span class="dv">4096</span> <span class="dv">4096</span> <span class="dv">4096</span> ...</span>
+<span id="cb11-17"><a href="" aria-hidden="true" tabindex="-1"></a> <span class="sc">-</span> <span class="fu">attr</span>(<span class="sc">*</span>, <span class="st">".internal.selfref"</span>)<span class="ot">=</span><span class="er">&lt;</span>externalptr<span class="sc">&gt;</span> </span>
+<span id="cb11-18"><a href="" aria-hidden="true" tabindex="-1"></a> <span class="sc">-</span> <span class="fu">attr</span>(<span class="sc">*</span>, <span class="st">"index"</span>)<span class="ot">=</span> <span class="fu">int</span>(<span class="dv">0</span>) </span>
+<span id="cb11-19"><a href="" aria-hidden="true" tabindex="-1"></a>  ..<span class="sc">-</span> <span class="fu">attr</span>(<span class="sc">*</span>, <span class="st">"__vendor"</span>)<span class="ot">=</span> int [<span class="dv">1</span><span class="sc">:</span><span class="dv">16190</span>] <span class="dv">1488</span> <span class="dv">2067</span> <span class="dv">2072</span> <span class="dv">2546</span> <span class="dv">3707</span> <span class="dv">11218</span> <span class="dv">11219</span> <span class="dv">11220</span> <span class="dv">11221</span> <span class="dv">11222</span> ...</span></code></pre></div>
+</section>
+<section id="libarydata.table-1" class="slide level2">
+<h2>&gt; libary(data.table)</h2>
+<div class="sourceCode" id="cb12" style="margin-top: 90px; height: 550px;"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">head</span>(df, <span class="dv">12</span>)</span>
+<span id="cb12-2"><a href="" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="" aria-hidden="true" tabindex="-1"></a>    vendor        server     continent vcpus memory gpu_count  vram gpu_model storage    price    score cost_efficiency ram_per_vcpu</span>
+<span id="cb12-4"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="sc">&lt;</span>char<span class="sc">&gt;</span>        <span class="er">&lt;</span>char<span class="sc">&gt;</span>        <span class="er">&lt;</span>fctr<span class="sc">&gt;</span> <span class="er">&lt;</span>int<span class="sc">&gt;</span>  <span class="er">&lt;</span>int<span class="sc">&gt;</span>     <span class="er">&lt;</span>int<span class="sc">&gt;</span> <span class="er">&lt;</span>int<span class="sc">&gt;</span>    <span class="er">&lt;</span>char<span class="sc">&gt;</span>   <span class="er">&lt;</span>int<span class="sc">&gt;</span>    <span class="er">&lt;</span>num<span class="sc">&gt;</span>    <span class="er">&lt;</span>num<span class="sc">&gt;</span>           <span class="er">&lt;</span>num<span class="sc">&gt;</span>        <span class="er">&lt;</span>num<span class="sc">&gt;</span></span>
+<span id="cb12-5"><a href="" aria-hidden="true" tabindex="-1"></a> <span class="dv">1</span><span class="sc">:</span>    gcp g2<span class="sc">-</span>standard<span class="dv">-4</span> North America     <span class="dv">4</span>  <span class="dv">16384</span>         <span class="dv">1</span> <span class="dv">23034</span>        L4       <span class="dv">0</span> <span class="fl">0.160205</span> <span class="fl">6107.163</span>        <span class="fl">38120.93</span>         <span class="dv">4096</span></span>
+<span id="cb12-6"><a href="" aria-hidden="true" tabindex="-1"></a> <span class="dv">2</span><span class="sc">:</span>    gcp g2<span class="sc">-</span>standard<span class="dv">-4</span>        Europe     <span class="dv">4</span>  <span class="dv">16384</span>         <span class="dv">1</span> <span class="dv">23034</span>        L4       <span class="dv">0</span> <span class="fl">0.177722</span> <span class="fl">6107.163</span>        <span class="fl">34363.57</span>         <span class="dv">4096</span></span>
+<span id="cb12-7"><a href="" aria-hidden="true" tabindex="-1"></a> <span class="dv">3</span><span class="sc">:</span>    gcp g2<span class="sc">-</span>standard<span class="dv">-4</span>          Asia     <span class="dv">4</span>  <span class="dv">16384</span>         <span class="dv">1</span> <span class="dv">23034</span>        L4       <span class="dv">0</span> <span class="fl">0.185262</span> <span class="fl">6107.163</span>        <span class="fl">32965.01</span>         <span class="dv">4096</span></span>
+<span id="cb12-8"><a href="" aria-hidden="true" tabindex="-1"></a> <span class="dv">4</span><span class="sc">:</span>    gcp g2<span class="sc">-</span>standard<span class="dv">-4</span>       Oceania     <span class="dv">4</span>  <span class="dv">16384</span>         <span class="dv">1</span> <span class="dv">23034</span>        L4       <span class="dv">0</span> <span class="fl">0.187095</span> <span class="fl">6107.163</span>        <span class="fl">32642.04</span>         <span class="dv">4096</span></span>
+<span id="cb12-9"><a href="" aria-hidden="true" tabindex="-1"></a> <span class="dv">5</span><span class="sc">:</span>    gcp g2<span class="sc">-</span>standard<span class="dv">-4</span>        Africa     <span class="dv">4</span>  <span class="dv">16384</span>         <span class="dv">1</span> <span class="dv">23034</span>        L4       <span class="dv">0</span> <span class="fl">0.192000</span> <span class="fl">6107.163</span>        <span class="fl">31808.14</span>         <span class="dv">4096</span></span>
+<span id="cb12-10"><a href="" aria-hidden="true" tabindex="-1"></a> <span class="dv">6</span><span class="sc">:</span>    gcp g2<span class="sc">-</span>standard<span class="dv">-4</span> South America     <span class="dv">4</span>  <span class="dv">16384</span>         <span class="dv">1</span> <span class="dv">23034</span>        L4       <span class="dv">0</span> <span class="fl">0.221500</span> <span class="fl">6107.163</span>        <span class="fl">27571.84</span>         <span class="dv">4096</span></span>
+<span id="cb12-11"><a href="" aria-hidden="true" tabindex="-1"></a> <span class="dv">7</span><span class="sc">:</span>    gcp g2<span class="sc">-</span>standard<span class="dv">-8</span> North America     <span class="dv">8</span>  <span class="dv">32768</span>         <span class="dv">1</span> <span class="dv">23034</span>        L4       <span class="dv">0</span> <span class="fl">0.320413</span> <span class="fl">6023.594</span>        <span class="fl">18799.47</span>         <span class="dv">4096</span></span>
+<span id="cb12-12"><a href="" aria-hidden="true" tabindex="-1"></a> <span class="dv">8</span><span class="sc">:</span>    gcp g2<span class="sc">-</span>standard<span class="dv">-8</span>        Europe     <span class="dv">8</span>  <span class="dv">32768</span>         <span class="dv">1</span> <span class="dv">23034</span>        L4       <span class="dv">0</span> <span class="fl">0.355444</span> <span class="fl">6023.594</span>        <span class="fl">16946.67</span>         <span class="dv">4096</span></span>
+<span id="cb12-13"><a href="" aria-hidden="true" tabindex="-1"></a> <span class="dv">9</span><span class="sc">:</span>    gcp g2<span class="sc">-</span>standard<span class="dv">-8</span>          Asia     <span class="dv">8</span>  <span class="dv">32768</span>         <span class="dv">1</span> <span class="dv">23034</span>        L4       <span class="dv">0</span> <span class="fl">0.370522</span> <span class="fl">6023.594</span>        <span class="fl">16257.05</span>         <span class="dv">4096</span></span>
+<span id="cb12-14"><a href="" aria-hidden="true" tabindex="-1"></a><span class="dv">10</span><span class="sc">:</span>    gcp g2<span class="sc">-</span>standard<span class="dv">-8</span>       Oceania     <span class="dv">8</span>  <span class="dv">32768</span>         <span class="dv">1</span> <span class="dv">23034</span>        L4       <span class="dv">0</span> <span class="fl">0.374185</span> <span class="fl">6023.594</span>        <span class="fl">16097.90</span>         <span class="dv">4096</span></span>
+<span id="cb12-15"><a href="" aria-hidden="true" tabindex="-1"></a><span class="dv">11</span><span class="sc">:</span>    gcp g2<span class="sc">-</span>standard<span class="dv">-8</span>        Africa     <span class="dv">8</span>  <span class="dv">32768</span>         <span class="dv">1</span> <span class="dv">23034</span>        L4       <span class="dv">0</span> <span class="fl">0.384010</span> <span class="fl">6023.594</span>        <span class="fl">15686.03</span>         <span class="dv">4096</span></span>
+<span id="cb12-16"><a href="" aria-hidden="true" tabindex="-1"></a><span class="dv">12</span><span class="sc">:</span>    gcp g2<span class="sc">-</span>standard<span class="dv">-8</span> South America     <span class="dv">8</span>  <span class="dv">32768</span>         <span class="dv">1</span> <span class="dv">23034</span>        L4       <span class="dv">0</span> <span class="fl">0.443005</span> <span class="fl">6023.594</span>        <span class="fl">13597.12</span>         <span class="dv">4096</span></span></code></pre></div>
+</section>
+<section id="libaryfixest" class="slide level2">
+<h2>&gt; libary(fixest)</h2>
+<div class="sourceCode" id="cb13" style="margin-top: 80px; height: 650px;" data-code-line-numbers="|1|3|6-9|10-15"><pre class="sourceCode numberSource r number-lines"><code class="sourceCode r"><span id="cb13-1"><a href=""></a>OLS estimation, Dep. Var.<span class="sc">:</span> <span class="fu">log</span>(price)</span>
+<span id="cb13-2"><a href=""></a>Observations<span class="sc">:</span> <span class="dv">16</span>,<span class="dv">190</span></span>
+<span id="cb13-3"><a href=""></a>Fixed<span class="sc">-</span>effects<span class="sc">:</span> vendor<span class="sc">:</span> <span class="dv">7</span>,  continent<span class="sc">:</span> <span class="dv">6</span></span>
+<span id="cb13-4"><a href=""></a>Standard<span class="sc">-</span>errors<span class="sc">:</span> IID </span>
+<span id="cb13-5"><a href=""></a>                            Estimate Std. Error    t value   <span class="fu">Pr</span>(<span class="sc">&gt;</span><span class="er">|</span>t<span class="sc">|</span>)</span>
+<span id="cb13-6"><a href=""></a><span class="fu">log</span>(vcpus)                <span class="fl">1.05204405</span> <span class="fl">0.00793547</span> <span class="fl">132.574971</span>  <span class="sc">&lt;</span> <span class="fl">2.2e-16</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb13-7"><a href=""></a>ram_per_vcpu              <span class="fl">0.00004305</span> <span class="fl">0.00000100</span>  <span class="fl">43.036372</span>  <span class="sc">&lt;</span> <span class="fl">2.2e-16</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb13-8"><a href=""></a>storage                   <span class="fl">0.00000706</span> <span class="fl">0.00000100</span>   <span class="fl">7.052788</span> <span class="fl">1.8247e-12</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb13-9"><a href=""></a>gpu_count                 <span class="fl">0.12503137</span> <span class="fl">0.00336449</span>  <span class="fl">37.162088</span>  <span class="sc">&lt;</span> <span class="fl">2.2e-16</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb13-10"><a href=""></a><span class="fu">log</span>(vcpus)<span class="sc">:</span>vendor....    <span class="sc">-</span><span class="fl">0.02332380</span> <span class="fl">0.00867223</span>  <span class="sc">-</span><span class="fl">2.689481</span> <span class="fl">7.1637e-03</span> <span class="sc">**</span></span>
+<span id="cb13-11"><a href=""></a><span class="fu">log</span>(vcpus)<span class="sc">:</span>vendor....    <span class="sc">-</span><span class="fl">0.01661340</span> <span class="fl">0.00872237</span>  <span class="sc">-</span><span class="fl">1.904689</span> <span class="fl">5.6838e-02</span> .</span>
+<span id="cb13-12"><a href=""></a><span class="fu">log</span>(vcpus)<span class="sc">:</span>vendor....    <span class="sc">-</span><span class="fl">0.03232596</span> <span class="fl">0.00987283</span>  <span class="sc">-</span><span class="fl">3.274234</span> <span class="fl">1.0617e-03</span> <span class="sc">**</span></span>
+<span id="cb13-13"><a href=""></a><span class="fu">log</span>(vcpus)<span class="sc">:</span>vendor....     <span class="fl">0.04401789</span> <span class="fl">0.04387972</span>   <span class="fl">1.003149</span> <span class="fl">3.1580e-01</span></span>
+<span id="cb13-14"><a href=""></a><span class="fu">log</span>(vcpus)<span class="sc">:</span>vendor....    <span class="sc">-</span><span class="fl">0.00564495</span> <span class="fl">0.02240173</span>  <span class="sc">-</span><span class="fl">0.251987</span> <span class="fl">8.0105e-01</span></span>
+<span id="cb13-15"><a href=""></a><span class="fu">log</span>(vcpus)<span class="sc">:</span>vendor....     <span class="fl">0.13554400</span> <span class="fl">0.01703462</span>   <span class="fl">7.956970</span> <span class="fl">1.8791e-15</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb13-16"><a href=""></a><span class="sc">---</span></span>
+<span id="cb13-17"><a href=""></a>Signif. codes<span class="sc">:</span>  <span class="dv">0</span> <span class="st">'***'</span> <span class="fl">0.001</span> <span class="st">'**'</span> <span class="fl">0.01</span> <span class="st">'*'</span> <span class="fl">0.05</span> <span class="st">'.'</span> <span class="fl">0.1</span> <span class="st">' '</span> <span class="dv">1</span></span>
+<span id="cb13-18"><a href=""></a>RMSE<span class="sc">:</span> <span class="fl">0.399378</span>     Adj. R2<span class="sc">:</span> <span class="fl">0.944417</span></span>
+<span id="cb13-19"><a href=""></a>                 Within R2<span class="sc">:</span> <span class="fl">0.940089</span></span></code></pre></div>
+</section>
+<section id="libaryfixest-1" class="slide level2">
+<h2>&gt; libary(fixest)</h2>
+<div class="centered">
+<p><img src="images/budapest-ds-meetup-2026-continent-effect.png" style="background: none;" class="mt--30 w-90"></p>
+</div>
+</section>
+<section id="libaryfixest-2" class="slide level2">
+<h2>&gt; libary(fixest)</h2>
+<div class="centered">
+<p><img src="images/budapest-ds-meetup-2026-vendor-effect.png" style="background: none;" class="mt--30 w-90"></p>
+</div>
+</section>
+<section id="libaryfixest-3" class="slide level2">
+<h2>&gt; libary(fixest)</h2>
+<div class="centered">
+<p><img src="images/budapest-ds-meetup-2026-vcpu-price-per-vendor.png" style="background: none;" class="mt--30 w-90"></p>
+</div>
+</section>
+<section id="vcpu" class="slide level2">
+<h2>&gt; ??vCPU</h2>
+<div class="centered">
+<p><img src="images/budapest-ds-meetup-2026-score-per-vcpu-histogram.png" style="background: none;" class="mt--30 w-90"></p>
+</div>
+</section>
+<section id="libraryfixest" class="slide level2">
+<h2>&gt; library(fixest)</h2>
+<div class="sourceCode" id="cb14" style="font-size:28px; margin-top: 80px; height: 660px;" data-code-line-numbers="|1|6|7-8|9-10|11-23|20|17,23,24"><pre class="sourceCode numberSource r number-lines"><code class="sourceCode r"><span id="cb14-1"><a href=""></a>OLS estimation, Dep. Var.<span class="sc">:</span> <span class="fu">log</span>(price<span class="sc">/</span>score <span class="sc">*</span> <span class="fl">1e+06</span>)</span>
+<span id="cb14-2"><a href=""></a>Observations<span class="sc">:</span> <span class="dv">11</span>,<span class="dv">217</span></span>
+<span id="cb14-3"><a href=""></a>Fixed<span class="sc">-</span>effects<span class="sc">:</span> vendor<span class="sc">:</span> <span class="dv">7</span>,  continent<span class="sc">:</span> <span class="dv">6</span></span>
+<span id="cb14-4"><a href=""></a>Standard<span class="sc">-</span>errors<span class="sc">:</span> IID </span>
+<span id="cb14-5"><a href=""></a>                           Estimate Std. Error    t value   <span class="fu">Pr</span>(<span class="sc">&gt;</span><span class="er">|</span>t<span class="sc">|</span>)    </span>
+<span id="cb14-6"><a href=""></a>vcpus                   <span class="fl">0.000376343</span> <span class="fl">0.00015776</span>   <span class="fl">2.385495</span> <span class="fl">1.7073e-02</span> <span class="sc">*</span>  </span>
+<span id="cb14-7"><a href=""></a>memory                  <span class="fl">0.000000483</span> <span class="fl">0.00000100</span>   <span class="fl">0.482650</span> <span class="fl">6.2935e-01</span>    </span>
+<span id="cb14-8"><a href=""></a>storage                 <span class="fl">0.000008695</span> <span class="fl">0.00000100</span>   <span class="fl">8.680191</span>  <span class="sc">&lt;</span> <span class="fl">2.2e-16</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb14-9"><a href=""></a>cpu_architectureI386   <span class="sc">-</span><span class="fl">1.334620626</span> <span class="fl">0.29885318</span>  <span class="sc">-</span><span class="fl">4.465807</span> <span class="fl">8.0549e-06</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb14-10"><a href=""></a>cpu_architectureX86_64 <span class="sc">-</span><span class="fl">0.072669446</span> <span class="fl">0.01901092</span>  <span class="sc">-</span><span class="fl">3.822510</span> <span class="fl">1.3282e-04</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb14-11"><a href=""></a>gpu_modelA10           <span class="sc">-</span><span class="fl">2.889297644</span> <span class="fl">0.39091329</span>  <span class="sc">-</span><span class="fl">7.391147</span> <span class="fl">1.5595e-13</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb14-12"><a href=""></a>gpu_modelA100          <span class="sc">-</span><span class="fl">3.161830938</span> <span class="fl">0.10223349</span> <span class="sc">-</span><span class="fl">30.927546</span>  <span class="sc">&lt;</span> <span class="fl">2.2e-16</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb14-13"><a href=""></a>gpu_modelA10G          <span class="sc">-</span><span class="fl">3.263855387</span> <span class="fl">0.11476188</span> <span class="sc">-</span><span class="fl">28.440239</span>  <span class="sc">&lt;</span> <span class="fl">2.2e-16</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb14-14"><a href=""></a>gpu_modelH100          <span class="sc">-</span><span class="fl">2.566740868</span> <span class="fl">0.47549412</span>  <span class="sc">-</span><span class="fl">5.398050</span> <span class="fl">6.8746e-08</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb14-15"><a href=""></a>gpu_modelL4            <span class="sc">-</span><span class="fl">3.046668278</span> <span class="fl">0.06793575</span> <span class="sc">-</span><span class="fl">44.846316</span>  <span class="sc">&lt;</span> <span class="fl">2.2e-16</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb14-16"><a href=""></a>gpu_modelL40S          <span class="sc">-</span><span class="fl">3.440737580</span> <span class="fl">0.13608463</span> <span class="sc">-</span><span class="fl">25.283807</span>  <span class="sc">&lt;</span> <span class="fl">2.2e-16</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb14-17"><a href=""></a>gpu_modelM60           <span class="sc">-</span><span class="fl">1.035948800</span> <span class="fl">0.17058666</span>  <span class="sc">-</span><span class="fl">6.072859</span> <span class="fl">1.2973e-09</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb14-18"><a href=""></a>gpu_modelRTX <span class="dv">5000</span>      <span class="sc">-</span><span class="fl">3.345449268</span> <span class="fl">0.39043689</span>  <span class="sc">-</span><span class="fl">8.568476</span>  <span class="sc">&lt;</span> <span class="fl">2.2e-16</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb14-19"><a href=""></a>gpu_modelT4            <span class="sc">-</span><span class="fl">2.994630341</span> <span class="fl">0.11467318</span> <span class="sc">-</span><span class="fl">26.114478</span>  <span class="sc">&lt;</span> <span class="fl">2.2e-16</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb14-20"><a href=""></a>gpu_modelT4G            <span class="fl">0.375192158</span> <span class="fl">0.15977362</span>   <span class="fl">2.348273</span> <span class="fl">1.8878e-02</span> <span class="sc">*</span>  </span>
+<span id="cb14-21"><a href=""></a>gpu_modelV100          <span class="sc">-</span><span class="fl">2.020845917</span> <span class="fl">0.15146706</span> <span class="sc">-</span><span class="fl">13.341818</span>  <span class="sc">&lt;</span> <span class="fl">2.2e-16</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb14-22"><a href=""></a>gpu_modelV100S         <span class="sc">-</span><span class="fl">1.985784483</span> <span class="fl">0.20364977</span>  <span class="sc">-</span><span class="fl">9.750978</span>  <span class="sc">&lt;</span> <span class="fl">2.2e-16</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb14-23"><a href=""></a>gpu_modelV520          <span class="sc">-</span><span class="fl">0.103030343</span> <span class="fl">0.17536975</span>  <span class="sc">-</span><span class="fl">0.587504</span> <span class="fl">5.5688e-01</span>    </span>
+<span id="cb14-24"><a href=""></a>gpu_count               <span class="fl">0.145067914</span> <span class="fl">0.01664163</span>   <span class="fl">8.717171</span>  <span class="sc">&lt;</span> <span class="fl">2.2e-16</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb14-25"><a href=""></a><span class="sc">---</span></span>
+<span id="cb14-26"><a href=""></a>Signif. codes<span class="sc">:</span>  <span class="dv">0</span> <span class="st">'***'</span> <span class="fl">0.001</span> <span class="st">'**'</span> <span class="fl">0.01</span> <span class="st">'*'</span> <span class="fl">0.05</span> <span class="st">'.'</span> <span class="fl">0.1</span> <span class="st">' '</span> <span class="dv">1</span></span>
+<span id="cb14-27"><a href=""></a>RMSE<span class="sc">:</span> <span class="fl">0.666145</span>     Adj. R2<span class="sc">:</span> <span class="fl">0.578168</span></span>
+<span id="cb14-28"><a href=""></a>                 Within R2<span class="sc">:</span> <span class="fl">0.474027</span></span></code></pre></div>
+</section>
+<section id="libraryfixest-1" class="slide level2">
+<h2>&gt; library(fixest)</h2>
+<div class="centered">
+<p><img src="images/budapest-ds-meetup-2026-llm-vendor-premium-vs-alicloud.png" style="background: none;" class="mt--30 w-90"></p>
+</div>
+</section></section>
+<section id="from-sparecores-import-team" class="title-slide slide level1">
+<h1>&gt;&gt;&gt; from sparecores import team</h1>
+<div class="colcontainer mt-60 centered">
+<div class="col">
+<img src="https://avatars.githubusercontent.com/u/820331?v=4" class="rounded w-70" style="width: 150px;">
+<p class="bold mt-0" style="font-size: 18px;">
+<span class="citation" data-cites="bra-fsn">@bra-fsn</span>
+</p>
+<p class="mt-0" style="font-size: 18px;">
+Infrastructure and Python veteran.
+</p>
+</div>
+<div class="col">
+<img src="https://avatars.githubusercontent.com/u/5794264?v=4" class="rounded w-70" style="width: 150px;">
+<p class="bold mt-0" style="font-size: 18px;">
+<span class="citation" data-cites="palabola">@palabola</span>
+</p>
+<p class="mt-0" style="font-size: 18px;">
+Guardian of the front-end and Node.js tools.
+</p>
+</div>
+<div class="col">
+<img src="https://avatars.githubusercontent.com/u/495736?v=4" class="rounded w-70" style="width: 150px;">
+<p class="bold mt-0" style="font-size: 18px;">
+<span class="citation" data-cites="daroczig">@daroczig</span>
+</p>
+<p class="mt-0" style="font-size: 18px;">
+Hack of all trades, master of <code>NaN</code>.
+</p>
+</div>
+</div>
+<div class="fragment">
+<div class="colcontainer mt-60 centered">
+<div class="col">
+<img src="https://ca.slack-edge.com/T0691M5GFR7-U0A73DEA08Z-99092b1f5a1b-512" class="rounded w-70" style="width: 150px;">
+<p class="bold mt-0" style="font-size: 18px;">
+<span class="citation" data-cites="bridgend84">@bridgend84</span>
+</p>
+<p class="mt-0" style="font-size: 18px;">
+Python developer
+</p>
+</div>
+<div class="col">
+<img src="https://avatars.githubusercontent.com/u/105061239?v=4" class="rounded w-70" style="width: 150px;">
+<p class="bold mt-0" style="font-size: 18px;">
+<span class="citation" data-cites="martonszak">@martonszak</span>
+</p>
+<p class="mt-0" style="font-size: 18px;">
+Frontend developer
+</p>
+</div>
+<div class="col fragment">
+<img src="https://avatars.githubusercontent.com/u/42?v=4" class="rounded w-70" style="width: 150px;">
+<p class="bold mt-0" style="font-size: 18px;">
+<span class="citation" data-cites="contractors">@contractors</span>
+</p>
+<p class="mt-0" style="font-size: 18px;">
+DevOps, legal, design
+</p>
+</div>
+<div class="col fragment">
+<img src="images/cloud-bill.png" class="rounded w-70" style="width: 150px;"> <!-- AI generated -->
+<p class="bold mt-0" style="font-size: 18px;">
+<span class="citation" data-cites="BNL">@BNL</span> &amp; <span class="citation" data-cites="FPI">@FPI</span>
+</p>
+<p class="mt-0" style="font-size: 18px;">
+Pre-seed investors
+</p>
+</div>
+</div>
+</div>
+</section>
+
+<section>
+<section id="bye" class="title-slide slide level1" data-transition="convex-in none-out">
+<h1></h1>
+<!-- https://carbon.now.sh/?bg=rgba%288%2C47%2C73%2C1%29&t=theme%3A0bcewbfyk9yl&wt=none&l=python&width=680&ds=false&dsyoff=20px&dsblur=68px&wc=true&wa=true&pv=5px&ph=5px&ln=false&fl=1&fm=Hack&fs=18px&lh=161%25&si=false&es=2x&wm=false&code=%253E%253E%253E%2520import%2520os%250A%253E%253E%253E%2520import%2520signal%250A%253E%253E%253E%2520os.kill%28os.getpid%28%29%252C%2520signal.SIGKILL%29%2520%2520%250A%250A%250A%250A%250A%250A%250A%2520 -->
+<div class="centered">
+<p><img src="images/bye-budapest-ds-meetup-2026-1.png" style="background: none;" class="mt--60 w-80"></p>
+</div>
+</section>
+<section id="bye-bye" class="slide level2" data-transition="none">
+<h2></h2>
+<div class="centered">
+<p><img src="images/bye-budapest-ds-meetup-2026-2.png" style="background: none;" class="mt--60 w-80"></p>
+</div>
+</section>
+<section id="bye-bye-bye" class="slide level2" data-transition="none">
+<h2></h2>
+<div class="centered">
+<p><img src="images/bye-budapest-ds-meetup-2026-3.png" style="background: none;" class="mt--60 w-80"></p>
+</div>
+<p class="author offlineMode" style="color:#eee;font-size:0.75em;text-align: center !important; margin-top:-30px; padding-top:0px;">
+Slides: <a href="https://sparecores.com/talks" target="_blank">sparecores.com/talks</a>
+</p>
+<!--toggle visibility of items in live mode-->
+<script>
+var url = document.location.href;
+if (url.match("/?live")) {
+  const elements = document.getElementsByClassName('offlineMode');
+  for (let i = 0; i < elements.length; i++) {
+    element = elements.item(i);
+    element.style.display = 'none';
+  }
+} else {
+  const elements = document.getElementsByClassName('onlineMode');
+  for (let i = 0; i < elements.length; i++) {
+    element = elements.item(i);
+    element.style.display = 'none';
+  }
+}
+</script>
+
+</section></section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<p><img src="images/sc-square-dark-300x300.jpg" class="slide-logo"></p>
+<div class="footer footer-default">
+
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="budapest-ds-meetup-2026_files/libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="budapest-ds-meetup-2026_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="budapest-ds-meetup-2026_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="budapest-ds-meetup-2026_files/libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="budapest-ds-meetup-2026_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="budapest-ds-meetup-2026_files/libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="budapest-ds-meetup-2026_files/libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="budapest-ds-meetup-2026_files/libs/revealjs/plugin/search/search.js"></script>
+  <script src="budapest-ds-meetup-2026_files/libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="budapest-ds-meetup-2026_files/libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': false,
+'previewLinksAuto': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":false},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: true,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: true,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'bottom-right',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'h.v',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'default',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'slide',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1150,
+
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    
+    <script>
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+      // slide changes (different for each slide format).
+      (function () {
+        // dispatch for htmlwidgets
+        function fireSlideEnter() {
+          const event = window.document.createEvent("Event");
+          event.initEvent("slideenter", true, true);
+          window.document.dispatchEvent(event);
+        }
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+          fireSlideEnter();
+
+          // dispatch for shiny
+          if (window.jQuery) {
+            if (previousSlide) {
+              window.jQuery(previousSlide).trigger("hidden");
+            }
+            if (currentSlide) {
+              window.jQuery(currentSlide).trigger("shown");
+            }
+          }
+        }
+
+        // hookup for slidy
+        if (window.w3c_slidy) {
+          window.w3c_slidy.add_observer(function (slide_num) {
+            // slide_num starts at position 1
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+          });
+        }
+
+      })();
+    </script>
+
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp('/' + window.location.host + '/');
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    
+
+</body></html>
