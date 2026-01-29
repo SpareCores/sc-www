@@ -1209,6 +1209,175 @@ NVIDIA V100
   <li>What would you like to really see?</li>
 </ul>
 
+# >>> import polars as pandas3 {transition="convex-in convex-out"}
+
+```sql {code-line-numbers="|2,7" style="font-size:24px; margin-top: 60px; height: 650px;"}
+WITH prices AS (
+  SELECT vendor_id, continent, server_id, ROUND(AVG(price), 6) AS price
+  FROM server_price AS p
+  LEFT JOIN region AS r USING (vendor_id, region_id)
+  LEFT JOIN country AS c USING (country_id)
+  WHERE p.allocation = 'ONDEMAND'
+  GROUP BY vendor_id, continent, server_id
+),
+benchmarks AS (
+  SELECT vendor_id, server_id, score
+  FROM benchmark_score
+  WHERE benchmark_id = 'llm_speed:prompt_processing' AND
+        config = '{"framework_version": "51f311e0", "model": "gemma-2b.Q4_K_M.gguf", "tokens": 128}'
+)
+SELECT
+  s.vendor_id as vendor,
+  s.display_name as server,
+  continent,
+  s.vcpus,
+  s.memory_amount AS memory,
+  s.gpu_count,
+  coalesce(s.gpu_memory_total, 0) AS vram,
+  s.gpu_model,
+  s.storage_size AS storage,
+  price,
+  score,
+  ROUND(score / price, 4) AS cost_efficiency
+FROM server AS s
+LEFT JOIN prices AS p USING (vendor_id, server_id)
+LEFT JOIN benchmarks AS bs USING (vendor_id, server_id)
+WHERE price IS NOT NULL AND price > 0
+ORDER BY cost_efficiency DESC;
+```
+
+## > libary(data.table)
+
+```r {style="margin-top: 60px; height: 650px;"}
+> str(df)
+
+Classes ‘data.table’ and 'data.frame':  16190 obs. of  13 variables:
+ $ vendor         : chr  "gcp" "gcp" "gcp" "gcp" ...
+ $ server         : chr  "g2-standard-4" "g2-standard-4" "g2-standard-4" "g2-standard-4" ...
+ $ continent      : Factor w/ 6 levels "North America",..: 1 4 3 5 2 6 1 4 3 5 ...
+ $ vcpus          : int  4 4 4 4 4 4 8 8 8 8 ...
+ $ memory         : int  16384 16384 16384 16384 16384 16384 32768 32768 32768 32768 ...
+ $ gpu_count      : int  1 1 1 1 1 1 1 1 1 1 ...
+ $ vram           : int  23034 23034 23034 23034 23034 23034 23034 23034 23034 23034 ...
+ $ gpu_model      : chr  "L4" "L4" "L4" "L4" ...
+ $ storage        : int  0 0 0 0 0 0 0 0 0 0 ...
+ $ price          : num  0.16 0.178 0.185 0.187 0.192 ...
+ $ score          : num  6107 6107 6107 6107 6107 ...
+ $ cost_efficiency: num  38121 34364 32965 32642 31808 ...
+ $ ram_per_vcpu   : num  4096 4096 4096 4096 4096 ...
+ - attr(*, ".internal.selfref")=<externalptr> 
+ - attr(*, "index")= int(0) 
+  ..- attr(*, "__vendor")= int [1:16190] 1488 2067 2072 2546 3707 11218 11219 11220 11221 11222 ...
+```
+
+## > libary(data.table)
+
+```r {style="margin-top: 90px; height: 550px;"}
+> head(df, 12)
+
+    vendor        server     continent vcpus memory gpu_count  vram gpu_model storage    price    score cost_efficiency ram_per_vcpu
+    <char>        <char>        <fctr> <int>  <int>     <int> <int>    <char>   <int>    <num>    <num>           <num>        <num>
+ 1:    gcp g2-standard-4 North America     4  16384         1 23034        L4       0 0.160205 6107.163        38120.93         4096
+ 2:    gcp g2-standard-4        Europe     4  16384         1 23034        L4       0 0.177722 6107.163        34363.57         4096
+ 3:    gcp g2-standard-4          Asia     4  16384         1 23034        L4       0 0.185262 6107.163        32965.01         4096
+ 4:    gcp g2-standard-4       Oceania     4  16384         1 23034        L4       0 0.187095 6107.163        32642.04         4096
+ 5:    gcp g2-standard-4        Africa     4  16384         1 23034        L4       0 0.192000 6107.163        31808.14         4096
+ 6:    gcp g2-standard-4 South America     4  16384         1 23034        L4       0 0.221500 6107.163        27571.84         4096
+ 7:    gcp g2-standard-8 North America     8  32768         1 23034        L4       0 0.320413 6023.594        18799.47         4096
+ 8:    gcp g2-standard-8        Europe     8  32768         1 23034        L4       0 0.355444 6023.594        16946.67         4096
+ 9:    gcp g2-standard-8          Asia     8  32768         1 23034        L4       0 0.370522 6023.594        16257.05         4096
+10:    gcp g2-standard-8       Oceania     8  32768         1 23034        L4       0 0.374185 6023.594        16097.90         4096
+11:    gcp g2-standard-8        Africa     8  32768         1 23034        L4       0 0.384010 6023.594        15686.03         4096
+12:    gcp g2-standard-8 South America     8  32768         1 23034        L4       0 0.443005 6023.594        13597.12         4096
+```
+
+## > libary(fixest)
+
+```r {code-line-numbers="|1|3|6-9|10-15" style="margin-top: 80px; height: 650px;"}
+OLS estimation, Dep. Var.: log(price)
+Observations: 16,190
+Fixed-effects: vendor: 7,  continent: 6
+Standard-errors: IID 
+                            Estimate Std. Error    t value   Pr(>|t|)
+log(vcpus)                1.05204405 0.00793547 132.574971  < 2.2e-16 ***
+ram_per_vcpu              0.00004305 0.00000100  43.036372  < 2.2e-16 ***
+storage                   0.00000706 0.00000100   7.052788 1.8247e-12 ***
+gpu_count                 0.12503137 0.00336449  37.162088  < 2.2e-16 ***
+log(vcpus):vendor....    -0.02332380 0.00867223  -2.689481 7.1637e-03 **
+log(vcpus):vendor....    -0.01661340 0.00872237  -1.904689 5.6838e-02 .
+log(vcpus):vendor....    -0.03232596 0.00987283  -3.274234 1.0617e-03 **
+log(vcpus):vendor....     0.04401789 0.04387972   1.003149 3.1580e-01
+log(vcpus):vendor....    -0.00564495 0.02240173  -0.251987 8.0105e-01
+log(vcpus):vendor....     0.13554400 0.01703462   7.956970 1.8791e-15 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+RMSE: 0.399378     Adj. R2: 0.944417
+                 Within R2: 0.940089
+```
+
+## > libary(fixest)
+
+::: {.centered}
+<img src="images/budapest-ds-meetup-2026-continent-effect.png" style="background: none;" class="mt--30 w-90" />
+:::
+
+## > libary(fixest)
+
+::: {.centered}
+<img src="images/budapest-ds-meetup-2026-vendor-effect.png" style="background: none;" class="mt--30 w-90" />
+:::
+
+## > libary(fixest)
+
+::: {.centered}
+<img src="images/budapest-ds-meetup-2026-vcpu-price-per-vendor.png" style="background: none;" class="mt--30 w-90" />
+:::
+
+## > ??vCPU
+
+::: {.centered}
+<img src="images/budapest-ds-meetup-2026-score-per-vcpu-histogram.png" style="background: none;" class="mt--30 w-90" />
+:::
+
+## > library(fixest)
+
+```r {code-line-numbers="|1|6|7-8|9-10|11-23|20|24" style="font-size:28px; margin-top: 80px; height: 660px;"}
+OLS estimation, Dep. Var.: log(price/score * 1e+06)
+Observations: 11,217
+Fixed-effects: vendor: 7,  continent: 6
+Standard-errors: IID 
+                           Estimate Std. Error    t value   Pr(>|t|)    
+vcpus                   0.000376343 0.00015776   2.385495 1.7073e-02 *  
+memory                  0.000000483 0.00000100   0.482650 6.2935e-01    
+storage                 0.000008695 0.00000100   8.680191  < 2.2e-16 ***
+cpu_architectureI386   -1.334620626 0.29885318  -4.465807 8.0549e-06 ***
+cpu_architectureX86_64 -0.072669446 0.01901092  -3.822510 1.3282e-04 ***
+gpu_modelA10           -2.889297644 0.39091329  -7.391147 1.5595e-13 ***
+gpu_modelA100          -3.161830938 0.10223349 -30.927546  < 2.2e-16 ***
+gpu_modelA10G          -3.263855387 0.11476188 -28.440239  < 2.2e-16 ***
+gpu_modelH100          -2.566740868 0.47549412  -5.398050 6.8746e-08 ***
+gpu_modelL4            -3.046668278 0.06793575 -44.846316  < 2.2e-16 ***
+gpu_modelL40S          -3.440737580 0.13608463 -25.283807  < 2.2e-16 ***
+gpu_modelM60           -1.035948800 0.17058666  -6.072859 1.2973e-09 ***
+gpu_modelRTX 5000      -3.345449268 0.39043689  -8.568476  < 2.2e-16 ***
+gpu_modelT4            -2.994630341 0.11467318 -26.114478  < 2.2e-16 ***
+gpu_modelT4G            0.375192158 0.15977362   2.348273 1.8878e-02 *  
+gpu_modelV100          -2.020845917 0.15146706 -13.341818  < 2.2e-16 ***
+gpu_modelV100S         -1.985784483 0.20364977  -9.750978  < 2.2e-16 ***
+gpu_modelV520          -0.103030343 0.17536975  -0.587504 5.5688e-01    
+gpu_count               0.145067914 0.01664163   8.717171  < 2.2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+RMSE: 0.666145     Adj. R2: 0.578168
+                 Within R2: 0.474027
+```
+
+## > library(fixest)
+
+::: {.centered}
+<img src="images/budapest-ds-meetup-2026-llm-vendor-premium-vs-alicloud.png" style="background: none;" class="mt--30 w-90" />
+:::
+
 # {#bye transition="convex-in none-out"}
 
 <!-- https://carbon.now.sh/?bg=rgba%288%2C47%2C73%2C1%29&t=theme%3A0bcewbfyk9yl&wt=none&l=python&width=680&ds=false&dsyoff=20px&dsblur=68px&wc=true&wa=true&pv=5px&ph=5px&ln=false&fl=1&fm=Hack&fs=18px&lh=161%25&si=false&es=2x&wm=false&code=%253E%253E%253E%2520import%2520os%250A%253E%253E%253E%2520import%2520signal%250A%253E%253E%253E%2520os.kill%28os.getpid%28%29%252C%2520signal.SIGKILL%29%2520%2520%250A%250A%250A%250A%250A%250A%250A%2520 -->

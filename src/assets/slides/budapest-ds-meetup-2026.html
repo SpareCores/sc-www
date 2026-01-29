@@ -1873,6 +1873,166 @@ What would you like to really see?
 </div>
 </section></section>
 <section>
+<section id="import-polars-as-pandas3" class="title-slide slide level1" data-transition="convex-in convex-out">
+<h1>&gt;&gt;&gt; import polars as pandas3</h1>
+<div class="sourceCode" id="cb10" style="font-size:24px; margin-top: 60px; height: 650px;" data-code-line-numbers="|2,7"><pre class="sourceCode numberSource sql number-lines"><code class="sourceCode sql"><span id="cb10-1"><a href=""></a><span class="kw">WITH</span> prices <span class="kw">AS</span> (</span>
+<span id="cb10-2"><a href=""></a>  <span class="kw">SELECT</span> vendor_id, continent, server_id, <span class="fu">ROUND</span>(<span class="fu">AVG</span>(price), <span class="dv">6</span>) <span class="kw">AS</span> price</span>
+<span id="cb10-3"><a href=""></a>  <span class="kw">FROM</span> server_price <span class="kw">AS</span> p</span>
+<span id="cb10-4"><a href=""></a>  <span class="kw">LEFT</span> <span class="kw">JOIN</span> region <span class="kw">AS</span> r <span class="kw">USING</span> (vendor_id, region_id)</span>
+<span id="cb10-5"><a href=""></a>  <span class="kw">LEFT</span> <span class="kw">JOIN</span> country <span class="kw">AS</span> c <span class="kw">USING</span> (country_id)</span>
+<span id="cb10-6"><a href=""></a>  <span class="kw">WHERE</span> p.allocation <span class="op">=</span> <span class="st">'ONDEMAND'</span></span>
+<span id="cb10-7"><a href=""></a>  <span class="kw">GROUP</span> <span class="kw">BY</span> vendor_id, continent, server_id</span>
+<span id="cb10-8"><a href=""></a>),</span>
+<span id="cb10-9"><a href=""></a>benchmarks <span class="kw">AS</span> (</span>
+<span id="cb10-10"><a href=""></a>  <span class="kw">SELECT</span> vendor_id, server_id, score</span>
+<span id="cb10-11"><a href=""></a>  <span class="kw">FROM</span> benchmark_score</span>
+<span id="cb10-12"><a href=""></a>  <span class="kw">WHERE</span> benchmark_id <span class="op">=</span> <span class="st">'llm_speed:prompt_processing'</span> <span class="kw">AND</span></span>
+<span id="cb10-13"><a href=""></a>        config <span class="op">=</span> <span class="st">'{"framework_version": "51f311e0", "model": "gemma-2b.Q4_K_M.gguf", "tokens": 128}'</span></span>
+<span id="cb10-14"><a href=""></a>)</span>
+<span id="cb10-15"><a href=""></a><span class="kw">SELECT</span></span>
+<span id="cb10-16"><a href=""></a>  s.vendor_id <span class="kw">as</span> vendor,</span>
+<span id="cb10-17"><a href=""></a>  s.display_name <span class="kw">as</span> server,</span>
+<span id="cb10-18"><a href=""></a>  continent,</span>
+<span id="cb10-19"><a href=""></a>  s.vcpus,</span>
+<span id="cb10-20"><a href=""></a>  s.memory_amount <span class="kw">AS</span> memory,</span>
+<span id="cb10-21"><a href=""></a>  s.gpu_count,</span>
+<span id="cb10-22"><a href=""></a>  <span class="fu">coalesce</span>(s.gpu_memory_total, <span class="dv">0</span>) <span class="kw">AS</span> vram,</span>
+<span id="cb10-23"><a href=""></a>  s.gpu_model,</span>
+<span id="cb10-24"><a href=""></a>  s.storage_size <span class="kw">AS</span> <span class="kw">storage</span>,</span>
+<span id="cb10-25"><a href=""></a>  price,</span>
+<span id="cb10-26"><a href=""></a>  score,</span>
+<span id="cb10-27"><a href=""></a>  <span class="fu">ROUND</span>(score <span class="op">/</span> price, <span class="dv">4</span>) <span class="kw">AS</span> cost_efficiency</span>
+<span id="cb10-28"><a href=""></a><span class="kw">FROM</span> server <span class="kw">AS</span> s</span>
+<span id="cb10-29"><a href=""></a><span class="kw">LEFT</span> <span class="kw">JOIN</span> prices <span class="kw">AS</span> p <span class="kw">USING</span> (vendor_id, server_id)</span>
+<span id="cb10-30"><a href=""></a><span class="kw">LEFT</span> <span class="kw">JOIN</span> benchmarks <span class="kw">AS</span> bs <span class="kw">USING</span> (vendor_id, server_id)</span>
+<span id="cb10-31"><a href=""></a><span class="kw">WHERE</span> price <span class="kw">IS</span> <span class="kw">NOT</span> <span class="kw">NULL</span> <span class="kw">AND</span> price <span class="op">&gt;</span> <span class="dv">0</span></span>
+<span id="cb10-32"><a href=""></a><span class="kw">ORDER</span> <span class="kw">BY</span> cost_efficiency <span class="kw">DESC</span>;</span></code></pre></div>
+</section>
+<section id="libarydata.table" class="slide level2">
+<h2>&gt; libary(data.table)</h2>
+<div class="sourceCode" id="cb11" style="margin-top: 60px; height: 650px;"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">str</span>(df)</span>
+<span id="cb11-2"><a href="" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="" aria-hidden="true" tabindex="-1"></a>Classes ‘data.table’ and <span class="st">'data.frame'</span><span class="sc">:</span>  <span class="dv">16190</span> obs. of  <span class="dv">13</span> variables<span class="sc">:</span></span>
+<span id="cb11-4"><a href="" aria-hidden="true" tabindex="-1"></a> <span class="er">$</span> vendor         <span class="sc">:</span> chr  <span class="st">"gcp"</span> <span class="st">"gcp"</span> <span class="st">"gcp"</span> <span class="st">"gcp"</span> ...</span>
+<span id="cb11-5"><a href="" aria-hidden="true" tabindex="-1"></a> <span class="sc">$</span> server         <span class="sc">:</span> chr  <span class="st">"g2-standard-4"</span> <span class="st">"g2-standard-4"</span> <span class="st">"g2-standard-4"</span> <span class="st">"g2-standard-4"</span> ...</span>
+<span id="cb11-6"><a href="" aria-hidden="true" tabindex="-1"></a> <span class="sc">$</span> continent      <span class="sc">:</span> Factor w<span class="sc">/</span> <span class="dv">6</span> levels <span class="st">"North America"</span>,..<span class="sc">:</span> <span class="dv">1</span> <span class="dv">4</span> <span class="dv">3</span> <span class="dv">5</span> <span class="dv">2</span> <span class="dv">6</span> <span class="dv">1</span> <span class="dv">4</span> <span class="dv">3</span> <span class="dv">5</span> ...</span>
+<span id="cb11-7"><a href="" aria-hidden="true" tabindex="-1"></a> <span class="sc">$</span> vcpus          <span class="sc">:</span> int  <span class="dv">4</span> <span class="dv">4</span> <span class="dv">4</span> <span class="dv">4</span> <span class="dv">4</span> <span class="dv">4</span> <span class="dv">8</span> <span class="dv">8</span> <span class="dv">8</span> <span class="dv">8</span> ...</span>
+<span id="cb11-8"><a href="" aria-hidden="true" tabindex="-1"></a> <span class="sc">$</span> memory         <span class="sc">:</span> int  <span class="dv">16384</span> <span class="dv">16384</span> <span class="dv">16384</span> <span class="dv">16384</span> <span class="dv">16384</span> <span class="dv">16384</span> <span class="dv">32768</span> <span class="dv">32768</span> <span class="dv">32768</span> <span class="dv">32768</span> ...</span>
+<span id="cb11-9"><a href="" aria-hidden="true" tabindex="-1"></a> <span class="sc">$</span> gpu_count      <span class="sc">:</span> int  <span class="dv">1</span> <span class="dv">1</span> <span class="dv">1</span> <span class="dv">1</span> <span class="dv">1</span> <span class="dv">1</span> <span class="dv">1</span> <span class="dv">1</span> <span class="dv">1</span> <span class="dv">1</span> ...</span>
+<span id="cb11-10"><a href="" aria-hidden="true" tabindex="-1"></a> <span class="sc">$</span> vram           <span class="sc">:</span> int  <span class="dv">23034</span> <span class="dv">23034</span> <span class="dv">23034</span> <span class="dv">23034</span> <span class="dv">23034</span> <span class="dv">23034</span> <span class="dv">23034</span> <span class="dv">23034</span> <span class="dv">23034</span> <span class="dv">23034</span> ...</span>
+<span id="cb11-11"><a href="" aria-hidden="true" tabindex="-1"></a> <span class="sc">$</span> gpu_model      <span class="sc">:</span> chr  <span class="st">"L4"</span> <span class="st">"L4"</span> <span class="st">"L4"</span> <span class="st">"L4"</span> ...</span>
+<span id="cb11-12"><a href="" aria-hidden="true" tabindex="-1"></a> <span class="sc">$</span> storage        <span class="sc">:</span> int  <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> ...</span>
+<span id="cb11-13"><a href="" aria-hidden="true" tabindex="-1"></a> <span class="sc">$</span> price          <span class="sc">:</span> num  <span class="fl">0.16</span> <span class="fl">0.178</span> <span class="fl">0.185</span> <span class="fl">0.187</span> <span class="fl">0.192</span> ...</span>
+<span id="cb11-14"><a href="" aria-hidden="true" tabindex="-1"></a> <span class="sc">$</span> score          <span class="sc">:</span> num  <span class="dv">6107</span> <span class="dv">6107</span> <span class="dv">6107</span> <span class="dv">6107</span> <span class="dv">6107</span> ...</span>
+<span id="cb11-15"><a href="" aria-hidden="true" tabindex="-1"></a> <span class="sc">$</span> cost_efficiency<span class="sc">:</span> num  <span class="dv">38121</span> <span class="dv">34364</span> <span class="dv">32965</span> <span class="dv">32642</span> <span class="dv">31808</span> ...</span>
+<span id="cb11-16"><a href="" aria-hidden="true" tabindex="-1"></a> <span class="sc">$</span> ram_per_vcpu   <span class="sc">:</span> num  <span class="dv">4096</span> <span class="dv">4096</span> <span class="dv">4096</span> <span class="dv">4096</span> <span class="dv">4096</span> ...</span>
+<span id="cb11-17"><a href="" aria-hidden="true" tabindex="-1"></a> <span class="sc">-</span> <span class="fu">attr</span>(<span class="sc">*</span>, <span class="st">".internal.selfref"</span>)<span class="ot">=</span><span class="er">&lt;</span>externalptr<span class="sc">&gt;</span> </span>
+<span id="cb11-18"><a href="" aria-hidden="true" tabindex="-1"></a> <span class="sc">-</span> <span class="fu">attr</span>(<span class="sc">*</span>, <span class="st">"index"</span>)<span class="ot">=</span> <span class="fu">int</span>(<span class="dv">0</span>) </span>
+<span id="cb11-19"><a href="" aria-hidden="true" tabindex="-1"></a>  ..<span class="sc">-</span> <span class="fu">attr</span>(<span class="sc">*</span>, <span class="st">"__vendor"</span>)<span class="ot">=</span> int [<span class="dv">1</span><span class="sc">:</span><span class="dv">16190</span>] <span class="dv">1488</span> <span class="dv">2067</span> <span class="dv">2072</span> <span class="dv">2546</span> <span class="dv">3707</span> <span class="dv">11218</span> <span class="dv">11219</span> <span class="dv">11220</span> <span class="dv">11221</span> <span class="dv">11222</span> ...</span></code></pre></div>
+</section>
+<section id="libarydata.table-1" class="slide level2">
+<h2>&gt; libary(data.table)</h2>
+<div class="sourceCode" id="cb12" style="margin-top: 90px; height: 550px;"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="sc">&gt;</span> <span class="fu">head</span>(df, <span class="dv">12</span>)</span>
+<span id="cb12-2"><a href="" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="" aria-hidden="true" tabindex="-1"></a>    vendor        server     continent vcpus memory gpu_count  vram gpu_model storage    price    score cost_efficiency ram_per_vcpu</span>
+<span id="cb12-4"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="sc">&lt;</span>char<span class="sc">&gt;</span>        <span class="er">&lt;</span>char<span class="sc">&gt;</span>        <span class="er">&lt;</span>fctr<span class="sc">&gt;</span> <span class="er">&lt;</span>int<span class="sc">&gt;</span>  <span class="er">&lt;</span>int<span class="sc">&gt;</span>     <span class="er">&lt;</span>int<span class="sc">&gt;</span> <span class="er">&lt;</span>int<span class="sc">&gt;</span>    <span class="er">&lt;</span>char<span class="sc">&gt;</span>   <span class="er">&lt;</span>int<span class="sc">&gt;</span>    <span class="er">&lt;</span>num<span class="sc">&gt;</span>    <span class="er">&lt;</span>num<span class="sc">&gt;</span>           <span class="er">&lt;</span>num<span class="sc">&gt;</span>        <span class="er">&lt;</span>num<span class="sc">&gt;</span></span>
+<span id="cb12-5"><a href="" aria-hidden="true" tabindex="-1"></a> <span class="dv">1</span><span class="sc">:</span>    gcp g2<span class="sc">-</span>standard<span class="dv">-4</span> North America     <span class="dv">4</span>  <span class="dv">16384</span>         <span class="dv">1</span> <span class="dv">23034</span>        L4       <span class="dv">0</span> <span class="fl">0.160205</span> <span class="fl">6107.163</span>        <span class="fl">38120.93</span>         <span class="dv">4096</span></span>
+<span id="cb12-6"><a href="" aria-hidden="true" tabindex="-1"></a> <span class="dv">2</span><span class="sc">:</span>    gcp g2<span class="sc">-</span>standard<span class="dv">-4</span>        Europe     <span class="dv">4</span>  <span class="dv">16384</span>         <span class="dv">1</span> <span class="dv">23034</span>        L4       <span class="dv">0</span> <span class="fl">0.177722</span> <span class="fl">6107.163</span>        <span class="fl">34363.57</span>         <span class="dv">4096</span></span>
+<span id="cb12-7"><a href="" aria-hidden="true" tabindex="-1"></a> <span class="dv">3</span><span class="sc">:</span>    gcp g2<span class="sc">-</span>standard<span class="dv">-4</span>          Asia     <span class="dv">4</span>  <span class="dv">16384</span>         <span class="dv">1</span> <span class="dv">23034</span>        L4       <span class="dv">0</span> <span class="fl">0.185262</span> <span class="fl">6107.163</span>        <span class="fl">32965.01</span>         <span class="dv">4096</span></span>
+<span id="cb12-8"><a href="" aria-hidden="true" tabindex="-1"></a> <span class="dv">4</span><span class="sc">:</span>    gcp g2<span class="sc">-</span>standard<span class="dv">-4</span>       Oceania     <span class="dv">4</span>  <span class="dv">16384</span>         <span class="dv">1</span> <span class="dv">23034</span>        L4       <span class="dv">0</span> <span class="fl">0.187095</span> <span class="fl">6107.163</span>        <span class="fl">32642.04</span>         <span class="dv">4096</span></span>
+<span id="cb12-9"><a href="" aria-hidden="true" tabindex="-1"></a> <span class="dv">5</span><span class="sc">:</span>    gcp g2<span class="sc">-</span>standard<span class="dv">-4</span>        Africa     <span class="dv">4</span>  <span class="dv">16384</span>         <span class="dv">1</span> <span class="dv">23034</span>        L4       <span class="dv">0</span> <span class="fl">0.192000</span> <span class="fl">6107.163</span>        <span class="fl">31808.14</span>         <span class="dv">4096</span></span>
+<span id="cb12-10"><a href="" aria-hidden="true" tabindex="-1"></a> <span class="dv">6</span><span class="sc">:</span>    gcp g2<span class="sc">-</span>standard<span class="dv">-4</span> South America     <span class="dv">4</span>  <span class="dv">16384</span>         <span class="dv">1</span> <span class="dv">23034</span>        L4       <span class="dv">0</span> <span class="fl">0.221500</span> <span class="fl">6107.163</span>        <span class="fl">27571.84</span>         <span class="dv">4096</span></span>
+<span id="cb12-11"><a href="" aria-hidden="true" tabindex="-1"></a> <span class="dv">7</span><span class="sc">:</span>    gcp g2<span class="sc">-</span>standard<span class="dv">-8</span> North America     <span class="dv">8</span>  <span class="dv">32768</span>         <span class="dv">1</span> <span class="dv">23034</span>        L4       <span class="dv">0</span> <span class="fl">0.320413</span> <span class="fl">6023.594</span>        <span class="fl">18799.47</span>         <span class="dv">4096</span></span>
+<span id="cb12-12"><a href="" aria-hidden="true" tabindex="-1"></a> <span class="dv">8</span><span class="sc">:</span>    gcp g2<span class="sc">-</span>standard<span class="dv">-8</span>        Europe     <span class="dv">8</span>  <span class="dv">32768</span>         <span class="dv">1</span> <span class="dv">23034</span>        L4       <span class="dv">0</span> <span class="fl">0.355444</span> <span class="fl">6023.594</span>        <span class="fl">16946.67</span>         <span class="dv">4096</span></span>
+<span id="cb12-13"><a href="" aria-hidden="true" tabindex="-1"></a> <span class="dv">9</span><span class="sc">:</span>    gcp g2<span class="sc">-</span>standard<span class="dv">-8</span>          Asia     <span class="dv">8</span>  <span class="dv">32768</span>         <span class="dv">1</span> <span class="dv">23034</span>        L4       <span class="dv">0</span> <span class="fl">0.370522</span> <span class="fl">6023.594</span>        <span class="fl">16257.05</span>         <span class="dv">4096</span></span>
+<span id="cb12-14"><a href="" aria-hidden="true" tabindex="-1"></a><span class="dv">10</span><span class="sc">:</span>    gcp g2<span class="sc">-</span>standard<span class="dv">-8</span>       Oceania     <span class="dv">8</span>  <span class="dv">32768</span>         <span class="dv">1</span> <span class="dv">23034</span>        L4       <span class="dv">0</span> <span class="fl">0.374185</span> <span class="fl">6023.594</span>        <span class="fl">16097.90</span>         <span class="dv">4096</span></span>
+<span id="cb12-15"><a href="" aria-hidden="true" tabindex="-1"></a><span class="dv">11</span><span class="sc">:</span>    gcp g2<span class="sc">-</span>standard<span class="dv">-8</span>        Africa     <span class="dv">8</span>  <span class="dv">32768</span>         <span class="dv">1</span> <span class="dv">23034</span>        L4       <span class="dv">0</span> <span class="fl">0.384010</span> <span class="fl">6023.594</span>        <span class="fl">15686.03</span>         <span class="dv">4096</span></span>
+<span id="cb12-16"><a href="" aria-hidden="true" tabindex="-1"></a><span class="dv">12</span><span class="sc">:</span>    gcp g2<span class="sc">-</span>standard<span class="dv">-8</span> South America     <span class="dv">8</span>  <span class="dv">32768</span>         <span class="dv">1</span> <span class="dv">23034</span>        L4       <span class="dv">0</span> <span class="fl">0.443005</span> <span class="fl">6023.594</span>        <span class="fl">13597.12</span>         <span class="dv">4096</span></span></code></pre></div>
+</section>
+<section id="libaryfixest" class="slide level2">
+<h2>&gt; libary(fixest)</h2>
+<div class="sourceCode" id="cb13" style="margin-top: 80px; height: 650px;" data-code-line-numbers="|1|3|6-9|10-15"><pre class="sourceCode numberSource r number-lines"><code class="sourceCode r"><span id="cb13-1"><a href=""></a>OLS estimation, Dep. Var.<span class="sc">:</span> <span class="fu">log</span>(price)</span>
+<span id="cb13-2"><a href=""></a>Observations<span class="sc">:</span> <span class="dv">16</span>,<span class="dv">190</span></span>
+<span id="cb13-3"><a href=""></a>Fixed<span class="sc">-</span>effects<span class="sc">:</span> vendor<span class="sc">:</span> <span class="dv">7</span>,  continent<span class="sc">:</span> <span class="dv">6</span></span>
+<span id="cb13-4"><a href=""></a>Standard<span class="sc">-</span>errors<span class="sc">:</span> IID </span>
+<span id="cb13-5"><a href=""></a>                            Estimate Std. Error    t value   <span class="fu">Pr</span>(<span class="sc">&gt;</span><span class="er">|</span>t<span class="sc">|</span>)</span>
+<span id="cb13-6"><a href=""></a><span class="fu">log</span>(vcpus)                <span class="fl">1.05204405</span> <span class="fl">0.00793547</span> <span class="fl">132.574971</span>  <span class="sc">&lt;</span> <span class="fl">2.2e-16</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb13-7"><a href=""></a>ram_per_vcpu              <span class="fl">0.00004305</span> <span class="fl">0.00000100</span>  <span class="fl">43.036372</span>  <span class="sc">&lt;</span> <span class="fl">2.2e-16</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb13-8"><a href=""></a>storage                   <span class="fl">0.00000706</span> <span class="fl">0.00000100</span>   <span class="fl">7.052788</span> <span class="fl">1.8247e-12</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb13-9"><a href=""></a>gpu_count                 <span class="fl">0.12503137</span> <span class="fl">0.00336449</span>  <span class="fl">37.162088</span>  <span class="sc">&lt;</span> <span class="fl">2.2e-16</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb13-10"><a href=""></a><span class="fu">log</span>(vcpus)<span class="sc">:</span>vendor....    <span class="sc">-</span><span class="fl">0.02332380</span> <span class="fl">0.00867223</span>  <span class="sc">-</span><span class="fl">2.689481</span> <span class="fl">7.1637e-03</span> <span class="sc">**</span></span>
+<span id="cb13-11"><a href=""></a><span class="fu">log</span>(vcpus)<span class="sc">:</span>vendor....    <span class="sc">-</span><span class="fl">0.01661340</span> <span class="fl">0.00872237</span>  <span class="sc">-</span><span class="fl">1.904689</span> <span class="fl">5.6838e-02</span> .</span>
+<span id="cb13-12"><a href=""></a><span class="fu">log</span>(vcpus)<span class="sc">:</span>vendor....    <span class="sc">-</span><span class="fl">0.03232596</span> <span class="fl">0.00987283</span>  <span class="sc">-</span><span class="fl">3.274234</span> <span class="fl">1.0617e-03</span> <span class="sc">**</span></span>
+<span id="cb13-13"><a href=""></a><span class="fu">log</span>(vcpus)<span class="sc">:</span>vendor....     <span class="fl">0.04401789</span> <span class="fl">0.04387972</span>   <span class="fl">1.003149</span> <span class="fl">3.1580e-01</span></span>
+<span id="cb13-14"><a href=""></a><span class="fu">log</span>(vcpus)<span class="sc">:</span>vendor....    <span class="sc">-</span><span class="fl">0.00564495</span> <span class="fl">0.02240173</span>  <span class="sc">-</span><span class="fl">0.251987</span> <span class="fl">8.0105e-01</span></span>
+<span id="cb13-15"><a href=""></a><span class="fu">log</span>(vcpus)<span class="sc">:</span>vendor....     <span class="fl">0.13554400</span> <span class="fl">0.01703462</span>   <span class="fl">7.956970</span> <span class="fl">1.8791e-15</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb13-16"><a href=""></a><span class="sc">---</span></span>
+<span id="cb13-17"><a href=""></a>Signif. codes<span class="sc">:</span>  <span class="dv">0</span> <span class="st">'***'</span> <span class="fl">0.001</span> <span class="st">'**'</span> <span class="fl">0.01</span> <span class="st">'*'</span> <span class="fl">0.05</span> <span class="st">'.'</span> <span class="fl">0.1</span> <span class="st">' '</span> <span class="dv">1</span></span>
+<span id="cb13-18"><a href=""></a>RMSE<span class="sc">:</span> <span class="fl">0.399378</span>     Adj. R2<span class="sc">:</span> <span class="fl">0.944417</span></span>
+<span id="cb13-19"><a href=""></a>                 Within R2<span class="sc">:</span> <span class="fl">0.940089</span></span></code></pre></div>
+</section>
+<section id="libaryfixest-1" class="slide level2">
+<h2>&gt; libary(fixest)</h2>
+<div class="centered">
+<p><img src="images/budapest-ds-meetup-2026-continent-effect.png" style="background: none;" class="mt--30 w-90"></p>
+</div>
+</section>
+<section id="libaryfixest-2" class="slide level2">
+<h2>&gt; libary(fixest)</h2>
+<div class="centered">
+<p><img src="images/budapest-ds-meetup-2026-vendor-effect.png" style="background: none;" class="mt--30 w-90"></p>
+</div>
+</section>
+<section id="libaryfixest-3" class="slide level2">
+<h2>&gt; libary(fixest)</h2>
+<div class="centered">
+<p><img src="images/budapest-ds-meetup-2026-vcpu-price-per-vendor.png" style="background: none;" class="mt--30 w-90"></p>
+</div>
+</section>
+<section id="vcpu" class="slide level2">
+<h2>&gt; ??vCPU</h2>
+<div class="centered">
+<p><img src="images/budapest-ds-meetup-2026-score-per-vcpu-histogram.png" style="background: none;" class="mt--30 w-90"></p>
+</div>
+</section>
+<section id="libraryfixest" class="slide level2">
+<h2>&gt; library(fixest)</h2>
+<div class="sourceCode" id="cb14" style="font-size:28px; margin-top: 80px; height: 660px;" data-code-line-numbers="|1|6|7-8|9-10|11-23|20|24"><pre class="sourceCode numberSource r number-lines"><code class="sourceCode r"><span id="cb14-1"><a href=""></a>OLS estimation, Dep. Var.<span class="sc">:</span> <span class="fu">log</span>(price<span class="sc">/</span>score <span class="sc">*</span> <span class="fl">1e+06</span>)</span>
+<span id="cb14-2"><a href=""></a>Observations<span class="sc">:</span> <span class="dv">11</span>,<span class="dv">217</span></span>
+<span id="cb14-3"><a href=""></a>Fixed<span class="sc">-</span>effects<span class="sc">:</span> vendor<span class="sc">:</span> <span class="dv">7</span>,  continent<span class="sc">:</span> <span class="dv">6</span></span>
+<span id="cb14-4"><a href=""></a>Standard<span class="sc">-</span>errors<span class="sc">:</span> IID </span>
+<span id="cb14-5"><a href=""></a>                           Estimate Std. Error    t value   <span class="fu">Pr</span>(<span class="sc">&gt;</span><span class="er">|</span>t<span class="sc">|</span>)    </span>
+<span id="cb14-6"><a href=""></a>vcpus                   <span class="fl">0.000376343</span> <span class="fl">0.00015776</span>   <span class="fl">2.385495</span> <span class="fl">1.7073e-02</span> <span class="sc">*</span>  </span>
+<span id="cb14-7"><a href=""></a>memory                  <span class="fl">0.000000483</span> <span class="fl">0.00000100</span>   <span class="fl">0.482650</span> <span class="fl">6.2935e-01</span>    </span>
+<span id="cb14-8"><a href=""></a>storage                 <span class="fl">0.000008695</span> <span class="fl">0.00000100</span>   <span class="fl">8.680191</span>  <span class="sc">&lt;</span> <span class="fl">2.2e-16</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb14-9"><a href=""></a>cpu_architectureI386   <span class="sc">-</span><span class="fl">1.334620626</span> <span class="fl">0.29885318</span>  <span class="sc">-</span><span class="fl">4.465807</span> <span class="fl">8.0549e-06</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb14-10"><a href=""></a>cpu_architectureX86_64 <span class="sc">-</span><span class="fl">0.072669446</span> <span class="fl">0.01901092</span>  <span class="sc">-</span><span class="fl">3.822510</span> <span class="fl">1.3282e-04</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb14-11"><a href=""></a>gpu_modelA10           <span class="sc">-</span><span class="fl">2.889297644</span> <span class="fl">0.39091329</span>  <span class="sc">-</span><span class="fl">7.391147</span> <span class="fl">1.5595e-13</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb14-12"><a href=""></a>gpu_modelA100          <span class="sc">-</span><span class="fl">3.161830938</span> <span class="fl">0.10223349</span> <span class="sc">-</span><span class="fl">30.927546</span>  <span class="sc">&lt;</span> <span class="fl">2.2e-16</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb14-13"><a href=""></a>gpu_modelA10G          <span class="sc">-</span><span class="fl">3.263855387</span> <span class="fl">0.11476188</span> <span class="sc">-</span><span class="fl">28.440239</span>  <span class="sc">&lt;</span> <span class="fl">2.2e-16</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb14-14"><a href=""></a>gpu_modelH100          <span class="sc">-</span><span class="fl">2.566740868</span> <span class="fl">0.47549412</span>  <span class="sc">-</span><span class="fl">5.398050</span> <span class="fl">6.8746e-08</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb14-15"><a href=""></a>gpu_modelL4            <span class="sc">-</span><span class="fl">3.046668278</span> <span class="fl">0.06793575</span> <span class="sc">-</span><span class="fl">44.846316</span>  <span class="sc">&lt;</span> <span class="fl">2.2e-16</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb14-16"><a href=""></a>gpu_modelL40S          <span class="sc">-</span><span class="fl">3.440737580</span> <span class="fl">0.13608463</span> <span class="sc">-</span><span class="fl">25.283807</span>  <span class="sc">&lt;</span> <span class="fl">2.2e-16</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb14-17"><a href=""></a>gpu_modelM60           <span class="sc">-</span><span class="fl">1.035948800</span> <span class="fl">0.17058666</span>  <span class="sc">-</span><span class="fl">6.072859</span> <span class="fl">1.2973e-09</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb14-18"><a href=""></a>gpu_modelRTX <span class="dv">5000</span>      <span class="sc">-</span><span class="fl">3.345449268</span> <span class="fl">0.39043689</span>  <span class="sc">-</span><span class="fl">8.568476</span>  <span class="sc">&lt;</span> <span class="fl">2.2e-16</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb14-19"><a href=""></a>gpu_modelT4            <span class="sc">-</span><span class="fl">2.994630341</span> <span class="fl">0.11467318</span> <span class="sc">-</span><span class="fl">26.114478</span>  <span class="sc">&lt;</span> <span class="fl">2.2e-16</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb14-20"><a href=""></a>gpu_modelT4G            <span class="fl">0.375192158</span> <span class="fl">0.15977362</span>   <span class="fl">2.348273</span> <span class="fl">1.8878e-02</span> <span class="sc">*</span>  </span>
+<span id="cb14-21"><a href=""></a>gpu_modelV100          <span class="sc">-</span><span class="fl">2.020845917</span> <span class="fl">0.15146706</span> <span class="sc">-</span><span class="fl">13.341818</span>  <span class="sc">&lt;</span> <span class="fl">2.2e-16</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb14-22"><a href=""></a>gpu_modelV100S         <span class="sc">-</span><span class="fl">1.985784483</span> <span class="fl">0.20364977</span>  <span class="sc">-</span><span class="fl">9.750978</span>  <span class="sc">&lt;</span> <span class="fl">2.2e-16</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb14-23"><a href=""></a>gpu_modelV520          <span class="sc">-</span><span class="fl">0.103030343</span> <span class="fl">0.17536975</span>  <span class="sc">-</span><span class="fl">0.587504</span> <span class="fl">5.5688e-01</span>    </span>
+<span id="cb14-24"><a href=""></a>gpu_count               <span class="fl">0.145067914</span> <span class="fl">0.01664163</span>   <span class="fl">8.717171</span>  <span class="sc">&lt;</span> <span class="fl">2.2e-16</span> <span class="sc">**</span><span class="er">*</span></span>
+<span id="cb14-25"><a href=""></a><span class="sc">---</span></span>
+<span id="cb14-26"><a href=""></a>Signif. codes<span class="sc">:</span>  <span class="dv">0</span> <span class="st">'***'</span> <span class="fl">0.001</span> <span class="st">'**'</span> <span class="fl">0.01</span> <span class="st">'*'</span> <span class="fl">0.05</span> <span class="st">'.'</span> <span class="fl">0.1</span> <span class="st">' '</span> <span class="dv">1</span></span>
+<span id="cb14-27"><a href=""></a>RMSE<span class="sc">:</span> <span class="fl">0.666145</span>     Adj. R2<span class="sc">:</span> <span class="fl">0.578168</span></span>
+<span id="cb14-28"><a href=""></a>                 Within R2<span class="sc">:</span> <span class="fl">0.474027</span></span></code></pre></div>
+</section>
+<section id="libraryfixest-1" class="slide level2">
+<h2>&gt; library(fixest)</h2>
+<div class="centered">
+<p><img src="images/budapest-ds-meetup-2026-llm-vendor-premium-vs-alicloud.png" style="background: none;" class="mt--30 w-90"></p>
+</div>
+</section></section>
+<section>
 <section id="bye" class="title-slide slide level1" data-transition="convex-in none-out">
 <h1></h1>
 <!-- https://carbon.now.sh/?bg=rgba%288%2C47%2C73%2C1%29&t=theme%3A0bcewbfyk9yl&wt=none&l=python&width=680&ds=false&dsyoff=20px&dsblur=68px&wc=true&wa=true&pv=5px&ph=5px&ln=false&fl=1&fm=Hack&fs=18px&lh=161%25&si=false&es=2x&wm=false&code=%253E%253E%253E%2520import%2520os%250A%253E%253E%253E%2520import%2520signal%250A%253E%253E%253E%2520os.kill%28os.getpid%28%29%252C%2520signal.SIGKILL%29%2520%2520%250A%250A%250A%250A%250A%250A%250A%2520 -->
