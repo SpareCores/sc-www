@@ -13,6 +13,13 @@ export default defineConfig({
   viewportWidth: 1440,
   e2e: {
     setupNodeEvents(on, config) {
+      on("task", {
+        log(message) {
+          console.log(message);
+          return null;
+        },
+      });
+
       return getCompareSnapshotPlugin(on, config);
     },
   },
