@@ -24,6 +24,7 @@ import { CurrencyOption, availableCurrencies } from "../../tools/shared_data";
 import { TableColumn } from "../server-listing/server-listing.component";
 import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
 import { Subscription } from "rxjs";
+import openApiSpec from "../../../../sdk/openapi.json";
 
 @Component({
   selector: "app-traffic-prices",
@@ -74,7 +75,7 @@ export class TrafficPricesComponent implements OnInit, OnDestroy {
     { category_id: "region", name: "Region", icon: "hotel", collapsed: true },
   ];
 
-  openApiJson: any = require("../../../../sdk/openapi.json");
+  openApiJson: any = openApiSpec;
   searchParameters: any;
   query: any = {};
 

@@ -1,5 +1,5 @@
 import { CommonModule, isPlatformBrowser } from "@angular/common";
-import { HttpClient, HttpClientModule } from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import { Component, Inject, OnInit, PLATFORM_ID } from "@angular/core";
 import { firstValueFrom } from "rxjs";
 import { ThemeTextComponent } from "../../components/theme-text/theme-text.component";
@@ -28,7 +28,6 @@ type LogoDownloadManifest = {
   standalone: true,
   imports: [
     CommonModule,
-    HttpClientModule,
     ThemeTextComponent,
     DesignPageCardComponent,
     DownloadableLogoCollectionComponent,

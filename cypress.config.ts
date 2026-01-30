@@ -1,3 +1,5 @@
+// @ts-expect-error: TS2307
+import getCompareSnapshotPlugin from "cypress-image-diff-js/plugin";
 import { defineConfig } from "cypress";
 
 export default defineConfig({
@@ -11,7 +13,14 @@ export default defineConfig({
   viewportWidth: 1440,
   e2e: {
     setupNodeEvents(on, config) {
-      // implement node event listeners here
+      on("task", {
+        log(message) {
+          console.log(message);
+          return null;
+        },
+      });
+
+      return getCompareSnapshotPlugin(on, config);
     },
   },
   numTestsKeptInMemory: 1,

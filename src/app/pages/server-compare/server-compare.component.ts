@@ -36,6 +36,7 @@ import { ToastService } from "../../services/toast.service";
 import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
 import { PrismService } from "../../services/prism.service";
 import { Subscription } from "rxjs";
+import specialComparesData from "./special-compares.js";
 
 const optionsModal: ModalOptions = {
   backdropClasses: "bg-gray-900/50 fixed inset-0 z-40",
@@ -254,8 +255,7 @@ export class ServerCompareComponent
 
   modalEmbed: any;
 
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  specialCompares: any[] = require("./special-compares");
+  specialCompares: any[] = specialComparesData;
 
   showZoneIds = false;
 

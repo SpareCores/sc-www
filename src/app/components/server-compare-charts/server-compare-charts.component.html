@@ -1,8 +1,8 @@
 <div>
   <table id="main-table" #mainTable class="items_table">
-    <thead *ngIf="isChartShown('generic')">
+    <thead *ngIf="isChartShown('generic')" id="server-compare-table-header">
       <tr>
-        <th #tableFirstCol></th>
+        <th #tableFirstCol id="server-compare-table-first-col"></th>
         <th
           *ngFor="let item of servers"
           [style]="getStyle()"
@@ -72,7 +72,7 @@
           </td>
         </ng-container>
       </tr>
-      <tr *ngIf="isChartShown('generic')">
+      <tr *ngIf="isChartShown('generic')" class="rows-to-hide-for-test">
         <td>
           <div class="flex gap-1 items-center">
             $Core
@@ -139,7 +139,7 @@
           </td>
         </ng-container>
       </tr>
-      <tr *ngIf="isChartShown('generic')">
+      <tr *ngIf="isChartShown('generic')" class="rows-to-hide-for-test">
         <td>Best spot price</td>
         <ng-container *ngFor="let item of servers">
           <td>
@@ -154,7 +154,7 @@
           </td>
         </ng-container>
       </tr>
-      <tr *ngIf="isChartShown('generic')">
+      <tr *ngIf="isChartShown('generic')" class="rows-to-hide-for-test">
         <td>Best ondemand price</td>
         <ng-container *ngFor="let item of servers">
           <td>

@@ -33,6 +33,7 @@ import { encodeQueryParams } from "../../tools/queryParamFunctions";
 import { ToastService } from "../../services/toast.service";
 import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
 import { Subscription } from "rxjs";
+import openApiSpec from "../../../../sdk/openapi.json";
 
 export type TableColumn = {
   name: string;
@@ -233,7 +234,7 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
 
   servers: ServerPriceWithPKs[] | any[] = [];
 
-  openApiJson: any = require("../../../../sdk/openapi.json");
+  openApiJson: any = openApiSpec;
   searchParameters: any;
   query: any = {};
 
