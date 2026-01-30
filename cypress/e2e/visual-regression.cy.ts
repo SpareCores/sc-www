@@ -71,7 +71,6 @@ describe("Visual regression tests", () => {
         }
       });
     });
-    });
     // Hide the dynamic table header
     cy.document().then((doc) => {
       const style = doc.createElement("style");
