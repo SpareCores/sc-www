@@ -35,10 +35,8 @@ describe("Visual regression tests", () => {
     cy.get("header").invoke("css", "position", "static");
     // Hide availability section for screenshot consistency
     cy.get("#availability").invoke("css", "display", "none");
-    // Hide dynamic elements for screenshot consistency
-    cy.get("#average-price-per-region").invoke("css", "display", "none");
-    cy.get("#prices-per-zone").invoke("css", "display", "none");
-    cy.get("#lowest-prices").invoke("css", "display", "none");
+    // Hide price related sections for screenshot consistency
+    cy.get(".price-sections-to-hide-for-test").invoke("css", "display", "none");
     // Hide similar servers section for screenshot consistency
     cy.get("#similar_servers").invoke("css", "display", "none");
     // Hide comments section for screenshot consistency
@@ -51,15 +49,39 @@ describe("Visual regression tests", () => {
     E2EEvent.visitURL(
       "/compare?instances=W3sidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYTEubWVkaXVtIn0seyJ2ZW5kb3IiOiJhd3MiLCJzZXJ2ZXIiOiJjNmdkLm1lZGl1bSJ9XQ%3D%3D",
     );
+
+    // Force isTableOutsideViewport to always set to false
+    cy.window().then((win: any) => {
+      cy.get("app-server-compare").then(($el) => {
+        if (win.ng) {
+          const component = win.ng.getComponent($el[0]);
+          component.isTableOutsideViewport = false;
+
+          Object.defineProperty(component, "isTableOutsideViewport", {
+            get: () => false,
+            set: () => {},
+            configurable: true,
+          });
+
+          win.ng.applyChanges(component);
+        }
+      });
+    });
+    // Hide the dynamic table header
+    cy.document().then((doc) => {
+      const style = doc.createElement("style");
+      style.innerHTML = `.fixed_thead { 
+        display: none !important; 
+        visibility: hidden !important; 
+        pointer-events: none !important;
+        opacity: 0 !important;
+        }`;
+      doc.head.appendChild(style);
+    });
     // Fix header position for screenshot consistency
     cy.get("header").invoke("css", "position", "static");
-    // Hide $core price row for screenshot consistency
-    cy.get("#score-row").invoke("css", "display", "none");
-    // Hide best spot price row for screenshot consistency
-    cy.get("#best-spot-price-row").invoke("css", "display", "none");
-    // Hide best on-demand price row for screenshot consistency
-    cy.get("#best-on-demand-price-row").invoke("css", "display", "none");
-
+    // Hide price rows for screenshot consistency
+    cy.get(".rows-to-hide-for-test").invoke("css", "display", "none");
     cy.compareSnapshot("server-comparison-aws-a1-medium-c6gd-medium");
   });
 });
