@@ -74,7 +74,7 @@ describe("Visual regression tests", () => {
     // Hide the dynamic table header
     cy.document().then((doc) => {
       const style = doc.createElement("style");
-      style.innerHTML = `.fixed_thead { 
+      style.textContent = `.fixed_thead { 
         display: none !important; 
         visibility: hidden !important; 
         pointer-events: none !important;
