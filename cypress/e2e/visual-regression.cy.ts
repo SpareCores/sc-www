@@ -53,7 +53,7 @@ describe("Visual regression tests", () => {
     // Force isTableOutsideViewport to always set to false
     cy.window().then((win: any) => {
       cy.get("app-server-compare").then(($el) => {
-        if (win.ng) {
+        if (win.ng?.getComponent) {
           const component = win.ng.getComponent($el[0]);
           component.isTableOutsideViewport = false;
 
@@ -64,8 +64,13 @@ describe("Visual regression tests", () => {
           });
 
           win.ng.applyChanges(component);
+        } else {
+          console.warn(
+            "Angular debug API not available; skipping table override",
+          );
         }
       });
+    });
     });
     // Hide the dynamic table header
     cy.document().then((doc) => {
