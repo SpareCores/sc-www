@@ -37,6 +37,8 @@ import { Modal, ModalOptions } from "flowbite";
 import { ToastService } from "../../services/toast.service";
 import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
 import { Subscription } from "rxjs";
+import openApiSpec from "../../../../sdk/openapi.json";
+import specialServerListsData from "./special-lists.js";
 
 export type TableColumn = {
   name: string;
@@ -242,7 +244,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
   servers: ServerPriceWithPKs[] | any[] = [];
 
-  openApiJson: any = require("../../../../sdk/openapi.json");
+  openApiJson: any = openApiSpec;
   searchParameters: any;
   query: any = {};
 
@@ -286,7 +288,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
   sub: any;
 
-  specialServerLists: any[] = require("./special-lists");
+  specialServerLists: any[] = specialServerListsData;
   specialList: any = null;
   specialParameters: any = {};
   title: string = "Cloud Servers Navigator";
@@ -490,6 +492,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
             });
           }
         } catch (error) {
+          console.warn("Invalid benchmark data in URL:", error);
           if (isPlatformBrowser(this.platformId)) {
             this.toastService.show({
               title: "Invalid Benchmark",

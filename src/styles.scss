@@ -39,7 +39,7 @@ $content-max-width: 1400px;
   }
 
   .bg-secondary {
-    background-color: #06263a;
+    @apply bg-[#06263a];
   }
 
   .shadow_border {

@@ -156,6 +156,7 @@ export class ContactComponent {
       await this.submitFormToServer();
       this.isSubmitted = true;
     } catch (error) {
+      console.error("Error submitting contact form:", error);
       this.contactForm.enable();
     } finally {
       this.isLoading = false;

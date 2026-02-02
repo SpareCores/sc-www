@@ -1,4 +1,18 @@
+// @ts-expect-error: TS2307
+import getCompareSnapshotPlugin from "cypress-image-diff-js/plugin";
 import { defineConfig } from "cypress";
+
+const customizeChromeHeadless = (
+  browser: Cypress.Browser,
+  launchOptions: Cypress.BeforeBrowserLaunchOptions,
+) => {
+  if (browser.family === "chromium" && browser.isHeadless) {
+    launchOptions.args.push("--window-size=1440,1080");
+    launchOptions.args.push("--force-device-scale-factor=1");
+    launchOptions.args.push("--hide-scrollbars");
+  }
+  return launchOptions;
+};
 
 export default defineConfig({
   videosFolder: "cypress/videos",
@@ -11,7 +25,15 @@ export default defineConfig({
   viewportWidth: 1440,
   e2e: {
     setupNodeEvents(on, config) {
-      // implement node event listeners here
+      on("task", {
+        log(message) {
+          console.log(message);
+          return null;
+        },
+      });
+      on("before:browser:launch", customizeChromeHeadless);
+
+      return getCompareSnapshotPlugin(on, config);
     },
   },
   numTestsKeptInMemory: 1,

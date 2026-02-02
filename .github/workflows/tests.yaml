@@ -23,6 +23,7 @@ jobs:
           build: npm run prebuild
           start: npm start
           wait-on: "http://localhost:4200"
+          browser: chrome
         env:
           CYPRESS_BASE_URL: http://localhost:4200
           NG_APP_BACKEND_BASE_URI: https://keeper.sparecores.net
@@ -31,5 +32,9 @@ jobs:
         if: always()
         with:
           name: cypress-screenshots
-          path: cypress/screenshots
+          path: |
+            cypress/screenshots
+            cypress-image-diff-screenshots
+            cypress-image-diff-html-report
+          retention-days: 7
           if-no-files-found: ignore
