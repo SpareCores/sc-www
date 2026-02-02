@@ -2,6 +2,18 @@
 import getCompareSnapshotPlugin from "cypress-image-diff-js/plugin";
 import { defineConfig } from "cypress";
 
+const customizeChromeHeadless = (
+  browser: Cypress.Browser,
+  launchOptions: Cypress.BeforeBrowserLaunchOptions,
+) => {
+  if (browser.family === "chromium" && browser.isHeadless) {
+    launchOptions.args.push("--window-size=1440,1080");
+    launchOptions.args.push("--force-device-scale-factor=1");
+    launchOptions.args.push("--hide-scrollbars");
+  }
+  return launchOptions;
+};
+
 export default defineConfig({
   videosFolder: "cypress/videos",
   screenshotsFolder: "cypress/screenshots",
@@ -19,6 +31,7 @@ export default defineConfig({
           return null;
         },
       });
+      on("before:browser:launch", customizeChromeHeadless);
 
       return getCompareSnapshotPlugin(on, config);
     },
