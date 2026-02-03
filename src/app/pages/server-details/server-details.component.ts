@@ -80,7 +80,6 @@ export interface ExtendedServerDetails extends ServerPKs {
     RouterModule,
     BaseChartDirective,
     ReduceUnitNamePipe,
-    CountryIdtoNamePipe,
     ServerChartsComponent,
     EmbedDebugComponent,
     LoadingSpinnerComponent,
