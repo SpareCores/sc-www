@@ -1,6 +1,6 @@
 # Spare Cores web interface and public homepage
 
-This is an Angular 17.2.3 project to provide the public homepage of
+This is an Angular 19 project to provide the public homepage of
 the Spare Cores project and ecosystem at sparecores.com.
 
 ## Prerequisites
