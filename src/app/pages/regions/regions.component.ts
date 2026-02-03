@@ -44,7 +44,6 @@ const colors = [
 
 @Component({
   selector: "app-regions",
-  standalone: true,
   imports: [
     BreadcrumbsComponent,
     CountryIdtoNamePipe,

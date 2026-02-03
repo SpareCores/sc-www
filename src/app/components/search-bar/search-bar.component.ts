@@ -33,7 +33,6 @@ const optionsModal: ModalOptions = {
 
 @Component({
   selector: "app-search-bar",
-  standalone: true,
   imports: [
     CommonModule,
     FormsModule,

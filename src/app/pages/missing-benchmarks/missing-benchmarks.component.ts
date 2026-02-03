@@ -11,7 +11,6 @@ import { SeoHandlerService } from "../../services/seo-handler.service";
 
 @Component({
   selector: "app-missing-benchmarks",
-  standalone: true,
   imports: [
     BreadcrumbsComponent,
     CommonModule,

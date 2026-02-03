@@ -23,7 +23,6 @@ interface ChartOption {
 
 @Component({
   selector: "app-embed-compare-preview",
-  standalone: true,
   imports: [FormsModule, CommonModule, LucideAngularModule],
   templateUrl: "./embed-compare-preview.component.html",
   styleUrl: "./embed-compare-preview.component.scss",

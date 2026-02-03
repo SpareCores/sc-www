@@ -46,7 +46,6 @@ import { ToastService } from "../../services/toast.service";
 
 @Component({
   selector: "app-server-compare-charts",
-  standalone: true,
   imports: [
     CommonModule,
     LucideAngularModule,

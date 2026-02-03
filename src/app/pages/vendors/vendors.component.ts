@@ -16,7 +16,6 @@ import { CommonModule } from "@angular/common";
 
 @Component({
   selector: "app-vendors",
-  standalone: true,
   imports: [
     BreadcrumbsComponent,
     LucideAngularModule,

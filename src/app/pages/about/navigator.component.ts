@@ -29,7 +29,6 @@ interface Quote {
 
 @Component({
   selector: "app-about-navigator",
-  standalone: true,
   imports: [
     CommonModule,
     BreadcrumbsComponent,

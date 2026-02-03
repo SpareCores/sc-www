@@ -15,7 +15,6 @@ import { SeoHandlerService } from "../../services/seo-handler.service";
 
 @Component({
   selector: "app-about-spare-cores",
-  standalone: true,
   imports: [BreadcrumbsComponent],
   templateUrl: "./spare-cores.component.html",
   styleUrl: "./spare-cores.component.scss",

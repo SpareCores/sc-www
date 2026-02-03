@@ -45,7 +45,6 @@ Chart.register(annotationPlugin);
 
 @Component({
   selector: "app-server-charts",
-  standalone: true,
   imports: [
     CommonModule,
     LucideAngularModule,

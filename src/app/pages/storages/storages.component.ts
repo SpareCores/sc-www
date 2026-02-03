@@ -28,7 +28,6 @@ import openApiSpec from "../../../../sdk/openapi.json";
 
 @Component({
   selector: "app-storages",
-  standalone: true,
   imports: [
     CommonModule,
     FormsModule,

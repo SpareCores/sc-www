@@ -17,7 +17,6 @@ import { Subscription } from "rxjs";
 
 @Component({
   selector: "app-embedded-server-chart",
-  standalone: true,
   imports: [ServerChartsComponent, CommonModule, LucideAngularModule],
   templateUrl: "./embedded-server-chart.component.html",
   styleUrl: "./embedded-server-chart.component.scss",

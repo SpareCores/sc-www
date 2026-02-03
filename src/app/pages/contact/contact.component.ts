@@ -16,7 +16,6 @@ import { ToastService } from "../../services/toast.service";
 
 @Component({
   selector: "app-contact",
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     CommonModule,

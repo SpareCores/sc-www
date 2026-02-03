@@ -3,8 +3,6 @@ import { SeoHandlerService } from "../../services/seo-handler.service";
 
 @Component({
   selector: "app-funding-information",
-  standalone: true,
-  imports: [],
   templateUrl: "./funding-information.component.html",
   styleUrl: "./funding-information.component.scss",
 })

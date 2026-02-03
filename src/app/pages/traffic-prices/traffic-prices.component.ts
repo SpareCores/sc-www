@@ -28,7 +28,6 @@ import openApiSpec from "../../../../sdk/openapi.json";
 
 @Component({
   selector: "app-traffic-prices",
-  standalone: true,
   imports: [
     CommonModule,
     FormsModule,

@@ -45,7 +45,6 @@ const optionsModal: ModalOptions = {
 
 @Component({
   selector: "app-server-compare",
-  standalone: true,
   imports: [
     BreadcrumbsComponent,
     LucideAngularModule,

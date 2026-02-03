@@ -9,7 +9,6 @@ import { Subscription } from "rxjs";
 
 @Component({
   selector: "app-server-og",
-  standalone: true,
   imports: [CommonModule, LucideAngularModule],
   templateUrl: "./server-og.component.html",
   styleUrl: "./server-og.component.scss",

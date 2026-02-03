@@ -18,7 +18,6 @@ import { Subscription } from "rxjs";
 
 @Component({
   selector: "app-survey-fill",
-  standalone: true,
   imports: [SurveyModule, CommonModule, RouterModule],
   templateUrl: "./survey-fill.component.html",
   styleUrl: "./survey-fill.component.scss",

@@ -31,7 +31,6 @@ import { Subscription } from "rxjs";
 
 @Component({
   selector: "app-article",
-  standalone: true,
   imports: [
     BreadcrumbsComponent,
     RouterLink,

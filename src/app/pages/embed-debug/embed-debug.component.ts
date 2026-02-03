@@ -17,7 +17,6 @@ import { LucideAngularModule } from "lucide-angular";
 import { PrismService } from "../../services/prism.service";
 @Component({
   selector: "app-embed-debug",
-  standalone: true,
   imports: [FormsModule, CommonModule, LucideAngularModule],
   templateUrl: "./embed-debug.component.html",
   styleUrl: "./embed-debug.component.scss",

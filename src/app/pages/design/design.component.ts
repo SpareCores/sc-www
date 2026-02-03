@@ -25,7 +25,6 @@ type LogoDownloadManifest = {
 
 @Component({
   selector: "app-design",
-  standalone: true,
   imports: [
     CommonModule,
     ThemeTextComponent,

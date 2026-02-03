@@ -16,7 +16,6 @@ import { SeoHandlerService } from "../../services/seo-handler.service";
 import { FormsModule } from "@angular/forms";
 import { ThemeTextComponent } from "../../components/theme-text/theme-text.component";
 import { RouterLink } from "@angular/router";
-import { TimeToShortDatePipe } from "../../pipes/time-to-short-date.pipe";
 import { LucideAngularModule } from "lucide-angular";
 import { ArticleCardComponent } from "../../components/article-card/article-card.component";
 import { SearchServerPricesServerPricesGetData } from "../../../../sdk/data-contracts";
@@ -26,13 +25,11 @@ import { PrismService } from "../../services/prism.service";
 
 @Component({
   selector: "app-landingpage",
-  standalone: true,
   imports: [
     CommonModule,
     FormsModule,
     ThemeTextComponent,
     RouterLink,
-    TimeToShortDatePipe,
     LucideAngularModule,
     ArticleCardComponent,
   ],
