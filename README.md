@@ -36,7 +36,7 @@ page visits, clicks etc via the following environment variables:
 Optionally, you can also use and configure Sentry by setting the
 following environment variable(s):
 
-- NG_APP_SENTRY_DSN
+- NG_APP_SENTRY_DSN (key is mandatory but you can leave the value empty)
 - NG_APP_SENTRY_TRACE_SAMPLE_RATE (default to 0)
 - NG_APP_SENTRY_PROFILE_SAMPLE_RATE (default to 0)
 - NG_APP_SENTRY_ENVIRONMENT (default to "development")
