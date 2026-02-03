@@ -23,7 +23,6 @@
   },
   "private": true,
   "dependencies": {
-    "@angular-devkit/build-angular": "^19.2.19",
     "@angular/animations": "^19.2.18",
     "@angular/cdk": "^19.2.19",
     "@angular/common": "^19.2.18",
@@ -67,6 +66,7 @@
     "zone.js": "~0.15.1"
   },
   "devDependencies": {
+    "@angular-devkit/build-angular": "^19.2.19",
     "@angular-eslint/builder": "19.8.1",
     "@angular-eslint/eslint-plugin": "19.8.1",
     "@angular-eslint/eslint-plugin-template": "19.8.1",
