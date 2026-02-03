@@ -1,14 +1,17 @@
 import {
-  APP_INITIALIZER,
   ApplicationConfig,
   ErrorHandler,
   importProvidersFrom,
+  inject,
+  provideAppInitializer,
+  provideZoneChangeDetection,
 } from "@angular/core";
 import { Router, provideRouter, withInMemoryScrolling } from "@angular/router";
 
 import { routes } from "./app.routes";
 import {
   provideClientHydration,
+  withEventReplay,
   withHttpTransferCacheOptions,
 } from "@angular/platform-browser";
 import {
@@ -32,6 +35,7 @@ function customErrorHandler(error: any) {
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(
       routes,
       withInMemoryScrolling({
