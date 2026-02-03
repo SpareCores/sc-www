@@ -44,6 +44,7 @@ export const appConfig: ApplicationConfig = {
         includeHeaders: ["x-total-count", "x-request-id"],
         filter: httpFilter,
       }),
+      withEventReplay(),
     ),
     provideHttpClient(withFetch()),
     provideCharts(withDefaultRegisterables()),
