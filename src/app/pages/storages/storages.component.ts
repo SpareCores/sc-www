@@ -15,7 +15,6 @@ import {
 } from "../../components/breadcrumbs/breadcrumbs.component";
 import { PaginationComponent } from "../../components/pagination/pagination.component";
 import { SearchBarComponent } from "../../components/search-bar/search-bar.component";
-import { CountryIdtoNamePipe } from "../../pipes/country-idto-name.pipe";
 import { OrderDir } from "../../../../sdk/data-contracts";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
@@ -33,7 +32,6 @@ import openApiSpec from "../../../../sdk/openapi.json";
     FormsModule,
     BreadcrumbsComponent,
     LucideAngularModule,
-    CountryIdtoNamePipe,
     RouterModule,
     SearchBarComponent,
     PaginationComponent,
