@@ -93,7 +93,7 @@
             },
             "netlify": {
               "ssr": {
-                "entry": "server_netlify.ts"
+                "entry": "server.netlify.ts"
               }
             }
           },
