@@ -1,4 +1,4 @@
-import { CommonModule, DOCUMENT, isPlatformBrowser } from "@angular/common";
+import { isPlatformBrowser } from "@angular/common";
 import {
   Component,
   ElementRef,
@@ -7,6 +7,7 @@ import {
   OnChanges,
   PLATFORM_ID,
   ViewChild,
+  DOCUMENT,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
@@ -45,13 +46,7 @@ Chart.register(annotationPlugin);
 
 @Component({
   selector: "app-server-charts",
-  imports: [
-    CommonModule,
-    LucideAngularModule,
-    FormsModule,
-    RouterModule,
-    BaseChartDirective,
-  ],
+  imports: [LucideAngularModule, FormsModule, RouterModule, BaseChartDirective],
   templateUrl: "./server-charts.component.html",
   styleUrl: "./server-charts.component.scss",
 })

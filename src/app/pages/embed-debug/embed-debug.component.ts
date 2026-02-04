@@ -1,4 +1,4 @@
-import { CommonModule, isPlatformBrowser } from "@angular/common";
+import { isPlatformBrowser } from "@angular/common";
 import {
   Component,
   Inject,
@@ -17,7 +17,7 @@ import { LucideAngularModule } from "lucide-angular";
 import { PrismService } from "../../services/prism.service";
 @Component({
   selector: "app-embed-debug",
-  imports: [FormsModule, CommonModule, LucideAngularModule],
+  imports: [FormsModule, LucideAngularModule],
   templateUrl: "./embed-debug.component.html",
   styleUrl: "./embed-debug.component.scss",
 })

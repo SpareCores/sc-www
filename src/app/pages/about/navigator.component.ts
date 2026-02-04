@@ -15,7 +15,7 @@ import {
 import { LucideAngularModule } from "lucide-angular";
 import { ThemeTextComponent } from "../../components/theme-text/theme-text.component";
 import { SeoHandlerService } from "../../services/seo-handler.service";
-import { CommonModule, isPlatformBrowser } from "@angular/common";
+import { isPlatformBrowser } from "@angular/common";
 import { RouterLink } from "@angular/router";
 import { NeetoCalService } from "../../services/neeto-cal.service";
 
@@ -30,7 +30,6 @@ interface Quote {
 @Component({
   selector: "app-about-navigator",
   imports: [
-    CommonModule,
     BreadcrumbsComponent,
     LucideAngularModule,
     ThemeTextComponent,

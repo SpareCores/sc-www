@@ -6,7 +6,7 @@ import {
   PLATFORM_ID,
 } from "@angular/core";
 import { SurveyModule } from "survey-angular-ui";
-import { CommonModule, isPlatformBrowser } from "@angular/common";
+import { isPlatformBrowser } from "@angular/common";
 import { ActivatedRoute, RouterModule } from "@angular/router";
 import { Model } from "survey-core";
 import { HttpClient } from "@angular/common/http";
@@ -18,7 +18,7 @@ import { Subscription } from "rxjs";
 
 @Component({
   selector: "app-survey-fill",
-  imports: [SurveyModule, CommonModule, RouterModule],
+  imports: [SurveyModule, RouterModule],
   templateUrl: "./survey-fill.component.html",
   styleUrl: "./survey-fill.component.scss",
 })

@@ -1,9 +1,14 @@
-import { Component, Inject, OnInit, PLATFORM_ID } from "@angular/core";
+import {
+  Component,
+  Inject,
+  OnInit,
+  PLATFORM_ID,
+  DOCUMENT,
+} from "@angular/core";
 import {
   BreadcrumbSegment,
   BreadcrumbsComponent,
 } from "../../components/breadcrumbs/breadcrumbs.component";
-import { CommonModule, DOCUMENT } from "@angular/common";
 import { LucideAngularModule } from "lucide-angular";
 import { RouterModule } from "@angular/router";
 import { KeeperAPIService } from "../../services/keeper-api.service";
@@ -11,12 +16,7 @@ import { SeoHandlerService } from "../../services/seo-handler.service";
 
 @Component({
   selector: "app-missing-benchmarks",
-  imports: [
-    BreadcrumbsComponent,
-    CommonModule,
-    LucideAngularModule,
-    RouterModule,
-  ],
+  imports: [BreadcrumbsComponent, LucideAngularModule, RouterModule],
   templateUrl: "./missing-benchmarks.component.html",
   styleUrl: "./missing-benchmarks.component.scss",
 })

@@ -5,7 +5,6 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-import { CommonModule } from "@angular/common";
 import {
   BreadcrumbSegment,
   BreadcrumbsComponent,
@@ -16,12 +15,7 @@ import { ToastService } from "../../services/toast.service";
 
 @Component({
   selector: "app-contact",
-  imports: [
-    ReactiveFormsModule,
-    CommonModule,
-    BreadcrumbsComponent,
-    LoadingSpinnerComponent,
-  ],
+  imports: [ReactiveFormsModule, BreadcrumbsComponent, LoadingSpinnerComponent],
   templateUrl: "./contact.component.html",
   styleUrls: ["./contact.component.scss"],
 })

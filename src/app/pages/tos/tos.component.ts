@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import { OnInit } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Component } from "@angular/core";
@@ -17,7 +16,6 @@ import { TimeToShortDatePipe } from "../../pipes/time-to-short-date.pipe";
   imports: [
     BreadcrumbsComponent,
     RouterModule,
-    CommonModule,
     MarkdownModule,
     TimeToShortDatePipe,
   ],

@@ -1,4 +1,4 @@
-import { CommonModule, isPlatformBrowser } from "@angular/common";
+import { isPlatformBrowser } from "@angular/common";
 import { HttpClient } from "@angular/common/http";
 import { Component, Inject, OnInit, PLATFORM_ID } from "@angular/core";
 import { firstValueFrom } from "rxjs";
@@ -26,7 +26,6 @@ type LogoDownloadManifest = {
 @Component({
   selector: "app-design",
   imports: [
-    CommonModule,
     ThemeTextComponent,
     DesignPageCardComponent,
     DownloadableLogoCollectionComponent,

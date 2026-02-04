@@ -1,4 +1,4 @@
-import { CommonModule, DOCUMENT, isPlatformBrowser } from "@angular/common";
+import { isPlatformBrowser } from "@angular/common";
 import {
   AfterViewInit,
   Component,
@@ -7,6 +7,7 @@ import {
   OnDestroy,
   Optional,
   PLATFORM_ID,
+  DOCUMENT,
 } from "@angular/core";
 import { Meta } from "@angular/platform-browser";
 import {
@@ -27,7 +28,7 @@ import { NeetoCalService } from "./services/neeto-cal.service";
 
 @Component({
   selector: "app-root",
-  imports: [HeaderComponent, FooterComponent, RouterModule, CommonModule],
+  imports: [HeaderComponent, FooterComponent, RouterModule],
   templateUrl: "./app.component.html",
   styleUrl: "./app.component.scss",
 })

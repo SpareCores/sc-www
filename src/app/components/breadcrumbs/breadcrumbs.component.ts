@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import { Component, Input } from "@angular/core";
 import { RouterLink } from "@angular/router";
 
@@ -10,7 +9,7 @@ export type BreadcrumbSegment = {
 
 @Component({
   selector: "app-breadcrumbs",
-  imports: [CommonModule, RouterLink],
+  imports: [RouterLink],
   templateUrl: "./breadcrumbs.component.html",
   styleUrl: "./breadcrumbs.component.scss",
 })

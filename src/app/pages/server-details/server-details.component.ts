@@ -9,6 +9,7 @@ import {
   ViewChild,
   OnDestroy,
   Renderer2,
+  DOCUMENT,
 } from "@angular/core";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { KeeperAPIService } from "../../services/keeper-api.service";
@@ -24,7 +25,7 @@ import {
   BreadcrumbSegment,
   BreadcrumbsComponent,
 } from "../../components/breadcrumbs/breadcrumbs.component";
-import { CommonModule, DOCUMENT, isPlatformBrowser } from "@angular/common";
+import { isPlatformBrowser } from "@angular/common";
 import { LucideAngularModule } from "lucide-angular";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { FaqComponent } from "../../components/faq/faq.component";
@@ -73,7 +74,6 @@ export interface ExtendedServerDetails extends ServerPKs {
   selector: "app-server-details",
   imports: [
     BreadcrumbsComponent,
-    CommonModule,
     LucideAngularModule,
     FaqComponent,
     FormsModule,

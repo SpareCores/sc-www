@@ -1,8 +1,4 @@
-import {
-  CommonModule,
-  isPlatformBrowser,
-  NgOptimizedImage,
-} from "@angular/common";
+import { isPlatformBrowser, NgOptimizedImage } from "@angular/common";
 import {
   Component,
   HostListener,
@@ -22,7 +18,7 @@ type DownloadItemVm = {
 
 @Component({
   selector: "app-downloadable-logo-collection",
-  imports: [CommonModule, NgOptimizedImage],
+  imports: [NgOptimizedImage],
   templateUrl: "./downloadable-logo-collection.component.html",
   styleUrl: "./downloadable-logo-collection.component.scss",
 })

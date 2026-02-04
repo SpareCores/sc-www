@@ -11,7 +11,7 @@ import {
 import { DomSanitizer } from "@angular/platform-browser";
 import { ActivatedRoute } from "@angular/router";
 import { SeoHandlerService } from "../../services/seo-handler.service";
-import { CommonModule, isPlatformBrowser } from "@angular/common";
+import { isPlatformBrowser } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { LucideAngularModule } from "lucide-angular";
 import { PrismService } from "../../services/prism.service";
@@ -23,7 +23,7 @@ interface ChartOption {
 
 @Component({
   selector: "app-embed-compare-preview",
-  imports: [FormsModule, CommonModule, LucideAngularModule],
+  imports: [FormsModule, LucideAngularModule],
   templateUrl: "./embed-compare-preview.component.html",
   styleUrl: "./embed-compare-preview.component.scss",
 })

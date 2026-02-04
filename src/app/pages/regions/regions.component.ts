@@ -4,6 +4,7 @@ import {
   OnInit,
   PLATFORM_ID,
   Renderer2,
+  DOCUMENT,
 } from "@angular/core";
 import {
   BreadcrumbSegment,
@@ -17,7 +18,7 @@ import {
 } from "../../../../sdk/data-contracts";
 import { CountryIdtoNamePipe } from "../../pipes/country-idto-name.pipe";
 import { FormsModule } from "@angular/forms";
-import { CommonModule, DOCUMENT, isPlatformBrowser } from "@angular/common";
+import { CommonModule, isPlatformBrowser } from "@angular/common";
 import { LucideAngularModule } from "lucide-angular";
 import { Router, RouterModule } from "@angular/router";
 

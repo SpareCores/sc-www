@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import {
   Component,
   Inject,
@@ -17,7 +16,7 @@ import { Subscription } from "rxjs";
 
 @Component({
   selector: "app-embedded-server-chart",
-  imports: [ServerChartsComponent, CommonModule, LucideAngularModule],
+  imports: [ServerChartsComponent, LucideAngularModule],
   templateUrl: "./embedded-server-chart.component.html",
   styleUrl: "./embedded-server-chart.component.scss",
 })

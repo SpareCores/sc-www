@@ -4,7 +4,6 @@ import {
   BreadcrumbSegment,
   BreadcrumbsComponent,
 } from "../../components/breadcrumbs/breadcrumbs.component";
-import { CommonModule } from "@angular/common";
 import { ActivatedRoute } from "@angular/router";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { ArticleCardComponent } from "../../components/article-card/article-card.component";
@@ -12,7 +11,7 @@ import { Subscription } from "rxjs";
 
 @Component({
   selector: "app-articles",
-  imports: [BreadcrumbsComponent, CommonModule, ArticleCardComponent],
+  imports: [BreadcrumbsComponent, ArticleCardComponent],
   templateUrl: "./articles.component.html",
   styleUrl: "./articles.component.scss",
 })

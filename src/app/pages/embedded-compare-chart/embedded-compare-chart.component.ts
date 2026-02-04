@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import { Component, Inject, PLATFORM_ID } from "@angular/core";
 import { ServerCompareChartsComponent } from "../../components/server-compare-charts/server-compare-charts.component";
 import { LucideAngularModule } from "lucide-angular";
@@ -12,7 +11,7 @@ import { OnInit } from "@angular/core";
 
 @Component({
   selector: "app-embedded-compare-chart",
-  imports: [CommonModule, ServerCompareChartsComponent, LucideAngularModule],
+  imports: [ServerCompareChartsComponent, LucideAngularModule],
   templateUrl: "./embedded-compare-chart.component.html",
   styleUrl: "./embedded-compare-chart.component.scss",
 })

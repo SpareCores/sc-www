@@ -12,7 +12,6 @@ import {
 import { LucideAngularModule } from "lucide-angular";
 import { CountryIdtoNamePipe } from "../../pipes/country-idto-name.pipe";
 import { Router, RouterModule } from "@angular/router";
-import { CommonModule } from "@angular/common";
 
 @Component({
   selector: "app-vendors",
@@ -21,7 +20,6 @@ import { CommonModule } from "@angular/common";
     LucideAngularModule,
     CountryIdtoNamePipe,
     RouterModule,
-    CommonModule,
   ],
   templateUrl: "./vendors.component.html",
   styleUrl: "./vendors.component.scss",

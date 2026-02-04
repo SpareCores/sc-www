@@ -1,4 +1,3 @@
-import { CommonModule } from "@angular/common";
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { LucideAngularModule } from "lucide-angular";
 import { ActivatedRoute } from "@angular/router";
@@ -9,7 +8,7 @@ import { Subscription } from "rxjs";
 
 @Component({
   selector: "app-server-og",
-  imports: [CommonModule, LucideAngularModule],
+  imports: [LucideAngularModule],
   templateUrl: "./server-og.component.html",
   styleUrl: "./server-og.component.scss",
 })

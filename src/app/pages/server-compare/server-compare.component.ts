@@ -9,6 +9,7 @@ import {
   PLATFORM_ID,
   ViewChild,
   OnDestroy,
+  DOCUMENT,
 } from "@angular/core";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
@@ -17,7 +18,7 @@ import {
   BreadcrumbsComponent,
 } from "../../components/breadcrumbs/breadcrumbs.component";
 import { LucideAngularModule } from "lucide-angular";
-import { CommonModule, DOCUMENT, isPlatformBrowser } from "@angular/common";
+import { CommonModule, isPlatformBrowser } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import {

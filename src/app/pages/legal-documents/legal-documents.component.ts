@@ -6,17 +6,11 @@ import {
   BreadcrumbsComponent,
 } from "../../components/breadcrumbs/breadcrumbs.component";
 import { SeoHandlerService } from "../../services/seo-handler.service";
-import { CommonModule } from "@angular/common";
 import { TimeToShortDatePipe } from "../../pipes/time-to-short-date.pipe";
 
 @Component({
   selector: "app-legal-documents",
-  imports: [
-    BreadcrumbsComponent,
-    RouterModule,
-    CommonModule,
-    TimeToShortDatePipe,
-  ],
+  imports: [BreadcrumbsComponent, RouterModule, TimeToShortDatePipe],
   templateUrl: "./legal-documents.component.html",
   styleUrl: "./legal-documents.component.scss",
 })

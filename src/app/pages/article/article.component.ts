@@ -8,13 +8,14 @@ import {
   ViewChild,
   OnDestroy,
   Optional,
+  DOCUMENT,
 } from "@angular/core";
 import {
   BreadcrumbSegment,
   BreadcrumbsComponent,
 } from "../../components/breadcrumbs/breadcrumbs.component";
 import { ActivatedRoute, RouterLink } from "@angular/router";
-import { CommonModule, DOCUMENT, isPlatformBrowser } from "@angular/common";
+import { isPlatformBrowser } from "@angular/common";
 import { MarkdownModule, MarkdownService } from "ngx-markdown";
 import { DomSanitizer } from "@angular/platform-browser";
 import { TimeToShortDatePipe } from "../../pipes/time-to-short-date.pipe";
@@ -34,7 +35,6 @@ import { Subscription } from "rxjs";
   imports: [
     BreadcrumbsComponent,
     RouterLink,
-    CommonModule,
     MarkdownModule,
     TimeToShortDatePipe,
     LightboxModule,
