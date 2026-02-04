@@ -30,67 +30,72 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let item of vendors">
-          <td>
-            <div class="flex gap-1">
-              {{ item.name }}
-            </div>
-          </td>
-          <td>
-            <div class="flex justify-end">
-              {{ item.servers }}
-            </div>
-          </td>
-          <td>
-            <div class="flex justify-end">
-              {{ item.evaluated }}
-            </div>
-          </td>
-          <td>
-            <div class="flex justify-end">
-              {{ item.missing }}
-            </div>
-          </td>
-          <td>
-            <div class="flex justify-end">{{ item.percentage }}%</div>
-          </td>
-        </tr>
+        @for (item of vendors; track item) {
+          <tr>
+            <td>
+              <div class="flex gap-1">
+                {{ item.name }}
+              </div>
+            </td>
+            <td>
+              <div class="flex justify-end">
+                {{ item.servers }}
+              </div>
+            </td>
+            <td>
+              <div class="flex justify-end">
+                {{ item.evaluated }}
+              </div>
+            </td>
+            <td>
+              <div class="flex justify-end">
+                {{ item.missing }}
+              </div>
+            </td>
+            <td>
+              <div class="flex justify-end">{{ item.percentage }}%</div>
+            </td>
+          </tr>
+        }
       </tbody>
     </table>
 
-    <div *ngFor="let item of vendors">
-      <div
-        class="flex flex-col gap-2 mb-8"
-        *ngIf="item.missing_servers?.length"
-      >
-        <h2 class="text-3xl mb-2">{{ item.name }}</h2>
-        <table class="items_table">
-          <thead>
-            <tr>
-              <th>
-                <div class="flex gap-1">SERVER</div>
-              </th>
-              <th>
-                <div class="flex gap-1">MISSING REASON</div>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let server of item.missing_servers">
-              <td>
-                <div class="pl-2 flex gap-1">
-                  {{ server.name }}
-                </div>
-              </td>
-              <td>
-                <div class="flex gap-1">
-                  {{ server.reason }}
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+    @for (item of vendors; track item) {
+      <div>
+        @if (item.missing_servers?.length) {
+          <div class="flex flex-col gap-2 mb-8">
+            <h2 class="text-3xl mb-2">{{ item.name }}</h2>
+            <table class="items_table">
+              <thead>
+                <tr>
+                  <th>
+                    <div class="flex gap-1">SERVER</div>
+                  </th>
+                  <th>
+                    <div class="flex gap-1">MISSING REASON</div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (server of item.missing_servers; track server) {
+                  <tr>
+                    <td>
+                      <div class="pl-2 flex gap-1">
+                        {{ server.name }}
+                      </div>
+                    </td>
+                    <td>
+                      <div class="flex gap-1">
+                        {{ server.reason }}
+                      </div>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
       </div>
-    </div>
+    }
   </div>
 </div>

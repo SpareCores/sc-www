@@ -133,18 +133,20 @@
                 >) vendors
               </span>
             </div>
-            <div *ngFor="let item of features; let i = index">
-              <div
-                class="w-full h-4 mb-3 border-b border-gray-400 border-solid"
-              ></div>
-              <div class="flex gap-2 text-2xl items-center text-gray-200">
-                <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6">
-                  <lucide-icon name="check" class="h-4 w-4"></lucide-icon>
+            @for (item of features; track item; let i = $index) {
+              <div>
+                <div
+                  class="w-full h-4 mb-3 border-b border-gray-400 border-solid"
+                ></div>
+                <div class="flex gap-2 text-2xl items-center text-gray-200">
+                  <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6">
+                    <lucide-icon name="check" class="h-4 w-4"></lucide-icon>
+                  </div>
+                  <b> {{ item.count }} </b>
+                  <span> {{ item.text }} </span>
                 </div>
-                <b> {{ item.count }} </b>
-                <span> {{ item.text }} </span>
               </div>
-            </div>
+            }
             <div class="text-md mt-4 text-lg">Tracked every 5 mins.</div>
           </div>
         </div>
@@ -406,85 +408,95 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let item of gitHubComponents">
-            <td>{{ item.component }}</td>
-            <td>{{ item.status }}</td>
-            <td class="flex gap-1">
-              <a
-                href="https://github.com/SpareCores/{{ item.github }}"
-                *ngIf="item.github"
-                target="_blank"
-                rel="noopener"
-                [title]="'GitHub repository of ' + item.github"
-                [attr.aria-label]="'GitHub repository of ' + item.github"
-              >
-                <lucide-icon name="github"></lucide-icon>
-              </a>
-              <a
-                href="https://pypi.org/project/{{ item.pypi }}"
-                *ngIf="item.pypi"
-                target="_blank"
-                rel="noopener"
-                [title]="item.pypi + ' on PyPI'"
-                [attr.aria-label]="item.pypi + ' on PyPI'"
-              >
-                <img
-                  src="assets/images/icons/python.svg"
-                  alt="Python logo"
-                  style="width: 24px; vertical-align: middle"
-                />
-              </a>
-              <a
-                href="{{ item.docs }}"
-                *ngIf="item.docs"
-                target="_blank"
-                rel="noopener"
-                [title]="'Documentation site of ' + item.component"
-                [attr.aria-label]="'Documentation site of ' + item.component"
-              >
-                <lucide-icon name="book-text"></lucide-icon>
-              </a>
-              <a
-                href="{{ item.www }}"
-                *ngIf="item.www"
-                target="_blank"
-                rel="noopener"
-                [title]="'Homepage of ' + item.component"
-                [attr.aria-label]="'Homepage of ' + item.component"
-              >
-                <img
-                  src="assets/images/icons/www.svg"
-                  alt="WWW logo"
-                  style="width: 24px; vertical-align: middle"
-                />
-              </a>
-              <a
-                href="{{ item.api }}"
-                *ngIf="item.api"
-                target="_blank"
-                rel="noopener"
-                [title]="'API endpoint of ' + item.component"
-                [attr.aria-label]="'API endpoint of ' + item.component"
-              >
-                <img
-                  src="assets/images/icons/api.svg"
-                  alt="API logo"
-                  style="width: 24px; vertical-align: middle"
-                />
-              </a>
-              <a
-                href="{{ item.data }}"
-                *ngIf="item.data"
-                target="_blank"
-                rel="noopener"
-                [title]="'Database of ' + item.component"
-                [attr.aria-label]="'Database of ' + item.component"
-              >
-                <lucide-icon name="database"></lucide-icon>
-              </a>
-            </td>
-            <td>{{ item.description }}</td>
-          </tr>
+          @for (item of gitHubComponents; track item) {
+            <tr>
+              <td>{{ item.component }}</td>
+              <td>{{ item.status }}</td>
+              <td class="flex gap-1">
+                @if (item.github) {
+                  <a
+                    href="https://github.com/SpareCores/{{ item.github }}"
+                    target="_blank"
+                    rel="noopener"
+                    [title]="'GitHub repository of ' + item.github"
+                    [attr.aria-label]="'GitHub repository of ' + item.github"
+                  >
+                    <lucide-icon name="github"></lucide-icon>
+                  </a>
+                }
+                @if (item.pypi) {
+                  <a
+                    href="https://pypi.org/project/{{ item.pypi }}"
+                    target="_blank"
+                    rel="noopener"
+                    [title]="item.pypi + ' on PyPI'"
+                    [attr.aria-label]="item.pypi + ' on PyPI'"
+                  >
+                    <img
+                      src="assets/images/icons/python.svg"
+                      alt="Python logo"
+                      style="width: 24px; vertical-align: middle"
+                    />
+                  </a>
+                }
+                @if (item.docs) {
+                  <a
+                    href="{{ item.docs }}"
+                    target="_blank"
+                    rel="noopener"
+                    [title]="'Documentation site of ' + item.component"
+                    [attr.aria-label]="
+                      'Documentation site of ' + item.component
+                    "
+                  >
+                    <lucide-icon name="book-text"></lucide-icon>
+                  </a>
+                }
+                @if (item.www) {
+                  <a
+                    href="{{ item.www }}"
+                    target="_blank"
+                    rel="noopener"
+                    [title]="'Homepage of ' + item.component"
+                    [attr.aria-label]="'Homepage of ' + item.component"
+                  >
+                    <img
+                      src="assets/images/icons/www.svg"
+                      alt="WWW logo"
+                      style="width: 24px; vertical-align: middle"
+                    />
+                  </a>
+                }
+                @if (item.api) {
+                  <a
+                    href="{{ item.api }}"
+                    target="_blank"
+                    rel="noopener"
+                    [title]="'API endpoint of ' + item.component"
+                    [attr.aria-label]="'API endpoint of ' + item.component"
+                  >
+                    <img
+                      src="assets/images/icons/api.svg"
+                      alt="API logo"
+                      style="width: 24px; vertical-align: middle"
+                    />
+                  </a>
+                }
+                @if (item.data) {
+                  <a
+                    href="{{ item.data }}"
+                    target="_blank"
+                    rel="noopener"
+                    [title]="'Database of ' + item.component"
+                    [attr.aria-label]="'Database of ' + item.component"
+                  >
+                    <lucide-icon name="database"></lucide-icon>
+                  </a>
+                }
+              </td>
+              <td>{{ item.description }}</td>
+            </tr>
+          }
         </tbody>
       </table>
     </div>
@@ -569,43 +581,50 @@
         pagination="true"
         init="false"
       >
-        <swiper-slide *ngFor="let item of publishableQuotes">
-          <div class="flex gap-8 items-center px-2 pb-2">
-            <div>
-              <span
-                class="inline-flex justify-center items-center size-[90px] text-emerald-400"
-              >
-                <lucide-icon
-                  class="flex-shrink-0 size-[50px]"
-                  name="quote"
-                ></lucide-icon>
-              </span>
-            </div>
-            <div class="text-2xl">
-              {{ item.quote }}
-            </div>
-          </div>
-          <div class="flex gap-8 items-center px-2 pl-[130px] pb-12">
-            <div class="text-xl text-gray-400">
-              —{{ item.author }}
-              <span *ngIf="item.source">
-                via
-                <a
-                  *ngIf="item.source_url"
-                  href="{{ item.source_url }}"
-                  target="_blank"
-                  rel="noopener"
-                  class="underline decoration-dotted hover:text-gray-500"
+        @for (item of publishableQuotes; track item) {
+          <swiper-slide>
+            <div class="flex gap-8 items-center px-2 pb-2">
+              <div>
+                <span
+                  class="inline-flex justify-center items-center size-[90px] text-emerald-400"
                 >
-                  {{ item.source }}
-                </a>
-                <span *ngIf="!item.source_url">
-                  {{ item.source }}
+                  <lucide-icon
+                    class="flex-shrink-0 size-[50px]"
+                    name="quote"
+                  ></lucide-icon>
                 </span>
-              </span>
+              </div>
+              <div class="text-2xl">
+                {{ item.quote }}
+              </div>
             </div>
-          </div>
-        </swiper-slide>
+            <div class="flex gap-8 items-center px-2 pl-[130px] pb-12">
+              <div class="text-xl text-gray-400">
+                —{{ item.author }}
+                @if (item.source) {
+                  <span>
+                    via
+                    @if (item.source_url) {
+                      <a
+                        href="{{ item.source_url }}"
+                        target="_blank"
+                        rel="noopener"
+                        class="underline decoration-dotted hover:text-gray-500"
+                      >
+                        {{ item.source }}
+                      </a>
+                    }
+                    @if (!item.source_url) {
+                      <span>
+                        {{ item.source }}
+                      </span>
+                    }
+                  </span>
+                }
+              </div>
+            </div>
+          </swiper-slide>
+        }
       </swiper-container>
     </div>
   </div>
@@ -618,8 +637,10 @@
   class="max-w-xl absolute top-0 z-10 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-secondary border border-solid border-emerald-400 rounded-lg"
 >
   <ul style="list-style-type: disc; list-style-position: inside">
-    <li *ngFor="let item of vendors" style="margin-bottom: 0.25rem">
-      {{ item }}
-    </li>
+    @for (item of vendors; track item) {
+      <li style="margin-bottom: 0.25rem">
+        {{ item }}
+      </li>
+    }
   </ul>
 </div>

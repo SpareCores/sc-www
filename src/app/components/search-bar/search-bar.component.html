@@ -11,448 +11,465 @@
   </div>
 
   <div class="filters overflow-hidden bg-secondary">
-    <div
-      class="mx-2 p-3 border-b border-gray-200"
-      *ngFor="let item of filterCategories"
-    >
-      <div
-        class="flex justify-between cursor-pointer"
-        (click)="toggleCategory(item)"
-        tabindex="0"
-      >
-        <div class="text-white flex gap-2 items-center">
-          <lucide-icon
-            name="{{ item.icon }}"
-            class="h-4 w-4 text-white"
-          ></lucide-icon>
-          <div class="text-sm">{{ item.name }}</div>
-        </div>
-        <div>
-          <lucide-icon
-            name="chevron-down"
-            class="h-4 w-4 text-white"
-          ></lucide-icon>
-        </div>
-      </div>
-      <div *ngIf="!item.collapsed" class="pt-4">
+    @for (item of filterCategories; track item) {
+      <div class="mx-2 p-3 border-b border-gray-200">
         <div
-          *ngFor="let parameter of getParametersByCategory(item.category_id)"
+          class="flex justify-between cursor-pointer"
+          (click)="toggleCategory(item)"
+          tabindex="0"
         >
-          <div
-            *ngIf="getParameterType(parameter) !== 'checkbox'"
-            class="flex gap-2 items-center"
-          >
-            <div
-              class="font-bold text-emerald-400 text-sm"
-              id="filter_title_{{ parameter.name }}"
-            >
-              {{ parameter.schema.title }}
-            </div>
+          <div class="text-white flex gap-2 items-center">
             <lucide-icon
-              *ngIf="parameter.schema.description"
-              name="info"
-              class="h-4 w-4 text-gray-200"
-              (mouseenter)="showTooltip($event, parameter.schema.description)"
-              (mouseleave)="hideTooltip()"
-            >
-            </lucide-icon>
+              name="{{ item.icon }}"
+              class="h-4 w-4 text-white"
+            ></lucide-icon>
+            <div class="text-sm">{{ item.name }}</div>
           </div>
-          <div
-            *ngIf="getParameterType(parameter) === 'range'"
-            class="mb-4 mt-4"
-          >
-            <div
-              class="text-white text-sm flex gap-1 items-center"
-              *ngIf="
-                parameter.modelValue &&
-                !(
-                  parameter.modelValue === parameter.schema.range_max &&
-                  parameter.modelValue === parameter.schema.null_value
-                )
-              "
-            >
-              <input
-                type="number"
-                id="filter_range_value_{{ parameter.name }}"
-                class="bg-primary px-2 py-0 border-emerald-400 border-dotted outline-none text-white rounded-sm h-5 text-center"
-                [(ngModel)]="parameter.modelValue"
-                [ngStyle]="getInputStyle(parameter)"
-                (ngModelChange)="valueChanged()"
-              />
-              {{ parameter.schema.unit }}
-            </div>
-            <div
-              class="text-white text-sm"
-              *ngIf="
-                parameter.modelValue === parameter.schema.range_max &&
-                parameter.modelValue === parameter.schema.null_value
-              "
-              id="filter_range_value_{{ parameter.name }}"
-            >
-              &#8734; {{ parameter.schema.unit }}
-            </div>
-            <input
-              id="filter_range_{{ parameter.name }}"
-              type="range"
-              min="{{ parameter.schema.range_min }}"
-              max="{{ parameter.schema.range_max }}"
-              step="{{ getStep(parameter) }}"
-              data-ph-capture-attribute-sc-event="server listing filter"
-              data-ph-capture-attribute-server-listing-filter-type="range"
-              [attr.data-ph-capture-attribute-server-listing-filter-id]="
-                parameter.name
-              "
-              [attr.data-ph-capture-attribute-server-listing-filter-category]="
-                item.category_id
-              "
-              [(ngModel)]="parameter.modelValue"
-              (ngModelChange)="valueChanged()"
-              class="w-full h-2 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm"
-            />
-          </div>
-          <div
-            *ngIf="getParameterType(parameter) === 'number'"
-            class="mb-4 mt-4 relative"
-          >
-            <input
-              type="number"
-              step="{{ getStep(parameter) }}"
-              id="filter_number_{{ parameter.name }}"
-              data-ph-capture-attribute-sc-event="server listing filter"
-              data-ph-capture-attribute-server-listing-filter-type="number"
-              [attr.data-ph-capture-attribute-server-listing-filter-id]="
-                parameter.name
-              "
-              [attr.data-ph-capture-attribute-server-listing-filter-category]="
-                item.category_id
-              "
-              [(ngModel)]="parameter.modelValue"
-              (ngModelChange)="valueChanged()"
-              min="{{ parameter.schema.range_min || 0 }}"
-              [disabled]="isParameterDisabled(parameter.name)"
-              class="w-full h-8 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm pr-8 disabled:bg-gray-400"
-            />
-            <span *ngIf="parameter.schema.unit" class="unit text-gray-600">{{
-              parameter.schema.unit
-            }}</span>
-          </div>
-          <div
-            *ngIf="getParameterType(parameter) === 'price'"
-            class="mb-4 mt-4 relative"
-          >
-            <input
-              type="number"
-              step="{{ getStep(parameter) }}"
-              id="filter_price_{{ parameter.name }}"
-              data-ph-capture-attribute-sc-event="server listing filter"
-              data-ph-capture-attribute-server-listing-filter-type="number"
-              [attr.data-ph-capture-attribute-server-listing-filter-id]="
-                parameter.name
-              "
-              [attr.data-ph-capture-attribute-server-listing-filter-category]="
-                item.category_id
-              "
-              [(ngModel)]="parameter.modelValue"
-              (ngModelChange)="valueChanged()"
-              class="w-full h-8 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm pr-8"
-            />
-            <span *ngIf="selectedCurrency.slug" class="unit text-gray-600">{{
-              selectedCurrency.slug
-            }}</span>
-          </div>
-          <div *ngIf="getParameterType(parameter) === 'text'" class="mb-4 mt-4">
-            <input
-              type="text"
-              id="filter_text_{{ parameter.name }}"
-              data-ph-capture-attribute-sc-event="server listing filter"
-              data-ph-capture-attribute-server-listing-filter-type="text"
-              [attr.data-ph-capture-attribute-server-listing-filter-id]="
-                parameter.name
-              "
-              [attr.data-ph-capture-attribute-server-listing-filter-category]="
-                item.category_id
-              "
-              [(ngModel)]="parameter.modelValue"
-              (ngModelChange)="valueChanged()"
-              [disabled]="isParameterDisabled(parameter.name)"
-              class="w-full h-8 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm disabled:bg-gray-400"
-            />
-          </div>
-          <div
-            *ngIf="getParameterType(parameter) === 'checkbox'"
-            class="flex gap-2 mb-4 mt-4"
-          >
-            <input
-              type="checkbox"
-              id="filter_checkbox_{{ parameter.name }}"
-              data-ph-capture-attribute-sc-event="server listing filter"
-              data-ph-capture-attribute-server-listing-filter-type="checkbox"
-              [attr.data-ph-capture-attribute-server-listing-filter-id]="
-                parameter.name
-              "
-              [attr.data-ph-capture-attribute-server-listing-filter-category]="
-                item.category_id
-              "
-              [(ngModel)]="parameter.modelValue"
-              (ngModelChange)="filterServers()"
-              [disabled]="isParameterDisabled(parameter.name)"
-              class="checkbox"
-            />
-            <div class="flex gap-2 items-center">
-              <div class="text-white text-sm">
-                {{ parameter.schema.title }}
-              </div>
-              <lucide-icon
-                *ngIf="parameter.schema.description"
-                name="info"
-                class="h-3 w-3 text-gray-200"
-                (mouseenter)="showTooltip($event, parameter.schema.description)"
-                (mouseleave)="hideTooltip()"
-              >
-              </lucide-icon>
-            </div>
-          </div>
-          <div
-            *ngIf="getParameterType(parameter) === 'enumArray'"
-            class="flex flex-col gap-2 mb-4 mt-4"
-          >
-            <div
-              *ngFor="let enum of parameter.schema.enum"
-              class="flex items-center gap-1"
-            >
-              <input
-                type="checkbox"
-                id="filter_enum_{{ parameter.name }}"
-                data-ph-capture-attribute-sc-event="server listing filter"
-                data-ph-capture-attribute-server-listing-filter-type="checkbox"
-                [attr.data-ph-capture-attribute-server-listing-filter-id]="
-                  parameter.name
-                "
-                [attr.data-ph-capture-attribute-server-listing-filter-category]="
-                  item.category_id
-                "
-                [ngModel]="isEnumSelected(parameter, enum)"
-                (click)="selectEnumItem(parameter, enum)"
-                [disabled]="isParameterDisabled(parameter.name)"
-                class="checkbox"
-              />
-              <div class="text-white text-sm">
-                {{ enum?.value ? enum?.value : enum }}
-              </div>
-            </div>
-          </div>
-          <div
-            *ngIf="getParameterType(parameter) === 'compliance_framework'"
-            class="flex flex-col gap-2 mb-4 mt-4"
-          >
-            <div
-              *ngFor="let enum of parameter.schema.enum"
-              class="flex items-center gap-1"
-            >
-              <input
-                type="checkbox"
-                id="filter_enum_{{ parameter.name }}"
-                data-ph-capture-attribute-sc-event="server listing filter"
-                data-ph-capture-attribute-server-listing-filter-type="checkbox"
-                [attr.data-ph-capture-attribute-server-listing-filter-id]="
-                  parameter.name
-                "
-                [attr.data-ph-capture-attribute-server-listing-filter-category]="
-                  item.category_id
-                "
-                [ngModel]="isEnumSelected(parameter, enum)"
-                (click)="selectEnumItem(parameter, enum)"
-                [disabled]="isParameterDisabled(parameter.name)"
-                class="checkbox"
-              />
-              <div class="text-white text-sm">
-                {{ getComplianceFrameworkName(enum) }}
-              </div>
-            </div>
-          </div>
-          <div
-            *ngIf="getParameterType(parameter) === 'vendor'"
-            class="flex flex-col gap-2 mb-4 mt-4"
-          >
-            <div
-              *ngFor="let enum of parameter.schema.enum"
-              class="flex items-center gap-1"
-            >
-              <input
-                type="checkbox"
-                id="filter_enum_{{ parameter.name }}"
-                data-ph-capture-attribute-sc-event="server listing filter"
-                data-ph-capture-attribute-server-listing-filter-type="checkbox"
-                [attr.data-ph-capture-attribute-server-listing-filter-id]="
-                  parameter.name
-                "
-                [attr.data-ph-capture-attribute-server-listing-filter-category]="
-                  item.category_id
-                "
-                [ngModel]="isEnumSelected(parameter, enum)"
-                (click)="selectEnumItem(parameter, enum)"
-                [disabled]="isParameterDisabled(parameter.name)"
-                class="checkbox"
-              />
-              <div class="text-white text-sm">{{ getVendorName(enum) }}</div>
-            </div>
-          </div>
-          <div
-            *ngIf="getParameterType(parameter) === 'storage_id'"
-            class="flex flex-col gap-2 mb-4 mt-4"
-          >
-            <div
-              *ngFor="let enum of parameter.schema.enum"
-              class="flex items-center gap-1"
-            >
-              <input
-                type="checkbox"
-                id="filter_enum_{{ parameter.name }}"
-                data-ph-capture-attribute-sc-event="server listing filter"
-                data-ph-capture-attribute-server-listing-filter-type="checkbox"
-                [attr.data-ph-capture-attribute-server-listing-filter-id]="
-                  parameter.name
-                "
-                [attr.data-ph-capture-attribute-server-listing-filter-category]="
-                  item.category_id
-                "
-                [ngModel]="isEnumSelected(parameter, enum)"
-                (click)="selectEnumItem(parameter, enum)"
-                [disabled]="isParameterDisabled(parameter.name)"
-                class="checkbox"
-              />
-              <div class="text-white text-sm">{{ getStorageName(enum) }}</div>
-            </div>
-          </div>
-          <div
-            *ngIf="getParameterType(parameter) === 'country'"
-            class="mb-4 mt-4 relative flex flex-col gap-2"
-          >
-            <div
-              *ngFor="let continent of continentMetadata"
-              class="flex flex-col gap-3"
-            >
-              <div class="flex justify-between">
-                <div class="flex gap-2 items-center">
-                  <input
-                    type="checkbox"
-                    id="filter_continent_{{ continent.continent }}"
-                    data-ph-capture-attribute-sc-event="server listing filter"
-                    data-ph-capture-attribute-server-listing-filter-type="checkbox"
-                    [attr.data-ph-capture-attribute-server-listing-filter-id]="
-                      continent.continent
-                    "
-                    data-ph-capture-attribute-server-listing-filter-category="continent"
-                    [ngModel]="continent.selected"
-                    (click)="selectContinent(continent)"
-                    [disabled]="isParameterDisabled(parameter.name)"
-                    class="checkbox"
-                  />
-                  <div class="text-white text-sm">
-                    {{ continent.continent }}
-                  </div>
-                </div>
-                <lucide-icon
-                  name="chevron-down"
-                  class="h-4 w-4 text-white cursor-pointer"
-                  (click)="collapseItem(continent)"
-                ></lucide-icon>
-              </div>
-              <div
-                *ngIf="!continent.collapsed"
-                class="flex flex-col gap-3 ml-4"
-              >
-                <div
-                  class="flex gap-2 align-center"
-                  *ngFor="
-                    let country of countriesByContinent(continent.continent)
-                  "
-                >
-                  <input
-                    type="checkbox"
-                    id="filter_country_{{ parameter.name }}"
-                    data-ph-capture-attribute-sc-event="server listing filter"
-                    data-ph-capture-attribute-server-listing-filter-type="checkbox"
-                    [attr.data-ph-capture-attribute-server-listing-filter-id]="
-                      country.country_id
-                    "
-                    data-ph-capture-attribute-server-listing-filter-category="country"
-                    [(ngModel)]="country.selected"
-                    (ngModelChange)="filterServers()"
-                    [disabled]="isParameterDisabled(parameter.name)"
-                    class="checkbox"
-                  />
-                  <div class="text-white text-sm">
-                    {{ country.country_id | countryIdtoName }}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div
-            *ngIf="getParameterType(parameter) === 'regions'"
-            class="mb-4 mt-4 relative flex flex-col gap-2"
-          >
-            <div
-              *ngFor="let vendor of regionVendorMetadata"
-              class="flex flex-col gap-3"
-            >
-              <div class="flex justify-between">
-                <div class="flex gap-2 items-center">
-                  <input
-                    type="checkbox"
-                    id="filter_vendor_{{ parameter.name }}"
-                    data-ph-capture-attribute-sc-event="server listing filter"
-                    data-ph-capture-attribute-server-listing-filter-type="checkbox"
-                    [attr.data-ph-capture-attribute-server-listing-filter-id]="
-                      vendor.vendor_id
-                    "
-                    data-ph-capture-attribute-server-listing-filter-category="vendor"
-                    [ngModel]="vendor.selected"
-                    (click)="selectRegionrVendor(vendor)"
-                    [disabled]="isParameterDisabled(parameter.name)"
-                    class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none"
-                  />
-                  <div class="text-white text-sm">{{ vendor.name }}</div>
-                </div>
-                <lucide-icon
-                  name="chevron-down"
-                  class="h-4 w-4 text-white cursor-pointer"
-                  (click)="collapseItem(vendor)"
-                ></lucide-icon>
-              </div>
-              <div *ngIf="!vendor.collapsed" class="flex flex-col gap-3 ml-4">
-                <div
-                  class="flex gap-2 align-center"
-                  *ngFor="let region of regionsByVendor(vendor.vendor_id)"
-                >
-                  <input
-                    type="checkbox"
-                    id="filter_region_{{ parameter.name }}"
-                    data-ph-capture-attribute-sc-event="server listing filter"
-                    data-ph-capture-attribute-server-listing-filter-type="checkbox"
-                    [attr.data-ph-capture-attribute-server-listing-filter-id]="
-                      region.api_reference
-                    "
-                    data-ph-capture-attribute-server-listing-filter-category="region"
-                    [(ngModel)]="region.selected"
-                    (ngModelChange)="filterServers()"
-                    [disabled]="isParameterDisabled(parameter.name)"
-                    class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none"
-                  />
-                  <div class="text-white text-sm">{{ region.name }}</div>
-                  <lucide-icon
-                    *ngIf="region.green_energy"
-                    name="leaf"
-                    class="h-4 w-4 text-emerald-400"
-                  ></lucide-icon>
-                </div>
-              </div>
-            </div>
+          <div>
+            <lucide-icon
+              name="chevron-down"
+              class="h-4 w-4 text-white"
+            ></lucide-icon>
           </div>
         </div>
+        @if (!item.collapsed) {
+          <div class="pt-4">
+            @for (
+              parameter of getParametersByCategory(item.category_id);
+              track parameter
+            ) {
+              <div>
+                @if (getParameterType(parameter) !== "checkbox") {
+                  <div class="flex gap-2 items-center">
+                    <div
+                      class="font-bold text-emerald-400 text-sm"
+                      id="filter_title_{{ parameter.name }}"
+                    >
+                      {{ parameter.schema.title }}
+                    </div>
+                    @if (parameter.schema.description) {
+                      <lucide-icon
+                        name="info"
+                        class="h-4 w-4 text-gray-200"
+                        (mouseenter)="
+                          showTooltip($event, parameter.schema.description)
+                        "
+                        (mouseleave)="hideTooltip()"
+                      >
+                      </lucide-icon>
+                    }
+                  </div>
+                }
+                @if (getParameterType(parameter) === "range") {
+                  <div class="mb-4 mt-4">
+                    @if (
+                      parameter.modelValue &&
+                      !(
+                        parameter.modelValue === parameter.schema.range_max &&
+                        parameter.modelValue === parameter.schema.null_value
+                      )
+                    ) {
+                      <div class="text-white text-sm flex gap-1 items-center">
+                        <input
+                          type="number"
+                          id="filter_range_value_{{ parameter.name }}"
+                          class="bg-primary px-2 py-0 border-emerald-400 border-dotted outline-none text-white rounded-sm h-5 text-center"
+                          [(ngModel)]="parameter.modelValue"
+                          [ngStyle]="getInputStyle(parameter)"
+                          (ngModelChange)="valueChanged()"
+                        />
+                        {{ parameter.schema.unit }}
+                      </div>
+                    }
+                    @if (
+                      parameter.modelValue === parameter.schema.range_max &&
+                      parameter.modelValue === parameter.schema.null_value
+                    ) {
+                      <div
+                        class="text-white text-sm"
+                        id="filter_range_value_{{ parameter.name }}"
+                      >
+                        &#8734; {{ parameter.schema.unit }}
+                      </div>
+                    }
+                    <input
+                      id="filter_range_{{ parameter.name }}"
+                      type="range"
+                      min="{{ parameter.schema.range_min }}"
+                      max="{{ parameter.schema.range_max }}"
+                      step="{{ getStep(parameter) }}"
+                      data-ph-capture-attribute-sc-event="server listing filter"
+                      data-ph-capture-attribute-server-listing-filter-type="range"
+                      [attr.data-ph-capture-attribute-server-listing-filter-id]="
+                        parameter.name
+                      "
+                      [attr.data-ph-capture-attribute-server-listing-filter-category]="
+                        item.category_id
+                      "
+                      [(ngModel)]="parameter.modelValue"
+                      (ngModelChange)="valueChanged()"
+                      class="w-full h-2 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm"
+                    />
+                  </div>
+                }
+                @if (getParameterType(parameter) === "number") {
+                  <div class="mb-4 mt-4 relative">
+                    <input
+                      type="number"
+                      step="{{ getStep(parameter) }}"
+                      id="filter_number_{{ parameter.name }}"
+                      data-ph-capture-attribute-sc-event="server listing filter"
+                      data-ph-capture-attribute-server-listing-filter-type="number"
+                      [attr.data-ph-capture-attribute-server-listing-filter-id]="
+                        parameter.name
+                      "
+                      [attr.data-ph-capture-attribute-server-listing-filter-category]="
+                        item.category_id
+                      "
+                      [(ngModel)]="parameter.modelValue"
+                      (ngModelChange)="valueChanged()"
+                      min="{{ parameter.schema.range_min || 0 }}"
+                      [disabled]="isParameterDisabled(parameter.name)"
+                      class="w-full h-8 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm pr-8 disabled:bg-gray-400"
+                    />
+                    @if (parameter.schema.unit) {
+                      <span class="unit text-gray-600">{{
+                        parameter.schema.unit
+                      }}</span>
+                    }
+                  </div>
+                }
+                @if (getParameterType(parameter) === "price") {
+                  <div class="mb-4 mt-4 relative">
+                    <input
+                      type="number"
+                      step="{{ getStep(parameter) }}"
+                      id="filter_price_{{ parameter.name }}"
+                      data-ph-capture-attribute-sc-event="server listing filter"
+                      data-ph-capture-attribute-server-listing-filter-type="number"
+                      [attr.data-ph-capture-attribute-server-listing-filter-id]="
+                        parameter.name
+                      "
+                      [attr.data-ph-capture-attribute-server-listing-filter-category]="
+                        item.category_id
+                      "
+                      [(ngModel)]="parameter.modelValue"
+                      (ngModelChange)="valueChanged()"
+                      class="w-full h-8 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm pr-8"
+                    />
+                    @if (selectedCurrency.slug) {
+                      <span class="unit text-gray-600">{{
+                        selectedCurrency.slug
+                      }}</span>
+                    }
+                  </div>
+                }
+                @if (getParameterType(parameter) === "text") {
+                  <div class="mb-4 mt-4">
+                    <input
+                      type="text"
+                      id="filter_text_{{ parameter.name }}"
+                      data-ph-capture-attribute-sc-event="server listing filter"
+                      data-ph-capture-attribute-server-listing-filter-type="text"
+                      [attr.data-ph-capture-attribute-server-listing-filter-id]="
+                        parameter.name
+                      "
+                      [attr.data-ph-capture-attribute-server-listing-filter-category]="
+                        item.category_id
+                      "
+                      [(ngModel)]="parameter.modelValue"
+                      (ngModelChange)="valueChanged()"
+                      [disabled]="isParameterDisabled(parameter.name)"
+                      class="w-full h-8 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm disabled:bg-gray-400"
+                    />
+                  </div>
+                }
+                @if (getParameterType(parameter) === "checkbox") {
+                  <div class="flex gap-2 mb-4 mt-4">
+                    <input
+                      type="checkbox"
+                      id="filter_checkbox_{{ parameter.name }}"
+                      data-ph-capture-attribute-sc-event="server listing filter"
+                      data-ph-capture-attribute-server-listing-filter-type="checkbox"
+                      [attr.data-ph-capture-attribute-server-listing-filter-id]="
+                        parameter.name
+                      "
+                      [attr.data-ph-capture-attribute-server-listing-filter-category]="
+                        item.category_id
+                      "
+                      [(ngModel)]="parameter.modelValue"
+                      (ngModelChange)="filterServers()"
+                      [disabled]="isParameterDisabled(parameter.name)"
+                      class="checkbox"
+                    />
+                    <div class="flex gap-2 items-center">
+                      <div class="text-white text-sm">
+                        {{ parameter.schema.title }}
+                      </div>
+                      @if (parameter.schema.description) {
+                        <lucide-icon
+                          name="info"
+                          class="h-3 w-3 text-gray-200"
+                          (mouseenter)="
+                            showTooltip($event, parameter.schema.description)
+                          "
+                          (mouseleave)="hideTooltip()"
+                        >
+                        </lucide-icon>
+                      }
+                    </div>
+                  </div>
+                }
+                @if (getParameterType(parameter) === "enumArray") {
+                  <div class="flex flex-col gap-2 mb-4 mt-4">
+                    @for (enum of parameter.schema.enum; track enum) {
+                      <div class="flex items-center gap-1">
+                        <input
+                          type="checkbox"
+                          id="filter_enum_{{ parameter.name }}"
+                          data-ph-capture-attribute-sc-event="server listing filter"
+                          data-ph-capture-attribute-server-listing-filter-type="checkbox"
+                          [attr.data-ph-capture-attribute-server-listing-filter-id]="
+                            parameter.name
+                          "
+                          [attr.data-ph-capture-attribute-server-listing-filter-category]="
+                            item.category_id
+                          "
+                          [ngModel]="isEnumSelected(parameter, enum)"
+                          (click)="selectEnumItem(parameter, enum)"
+                          [disabled]="isParameterDisabled(parameter.name)"
+                          class="checkbox"
+                        />
+                        <div class="text-white text-sm">
+                          {{ enum?.value ? enum?.value : enum }}
+                        </div>
+                      </div>
+                    }
+                  </div>
+                }
+                @if (getParameterType(parameter) === "compliance_framework") {
+                  <div class="flex flex-col gap-2 mb-4 mt-4">
+                    @for (enum of parameter.schema.enum; track enum) {
+                      <div class="flex items-center gap-1">
+                        <input
+                          type="checkbox"
+                          id="filter_enum_{{ parameter.name }}"
+                          data-ph-capture-attribute-sc-event="server listing filter"
+                          data-ph-capture-attribute-server-listing-filter-type="checkbox"
+                          [attr.data-ph-capture-attribute-server-listing-filter-id]="
+                            parameter.name
+                          "
+                          [attr.data-ph-capture-attribute-server-listing-filter-category]="
+                            item.category_id
+                          "
+                          [ngModel]="isEnumSelected(parameter, enum)"
+                          (click)="selectEnumItem(parameter, enum)"
+                          [disabled]="isParameterDisabled(parameter.name)"
+                          class="checkbox"
+                        />
+                        <div class="text-white text-sm">
+                          {{ getComplianceFrameworkName(enum) }}
+                        </div>
+                      </div>
+                    }
+                  </div>
+                }
+                @if (getParameterType(parameter) === "vendor") {
+                  <div class="flex flex-col gap-2 mb-4 mt-4">
+                    @for (enum of parameter.schema.enum; track enum) {
+                      <div class="flex items-center gap-1">
+                        <input
+                          type="checkbox"
+                          id="filter_enum_{{ parameter.name }}"
+                          data-ph-capture-attribute-sc-event="server listing filter"
+                          data-ph-capture-attribute-server-listing-filter-type="checkbox"
+                          [attr.data-ph-capture-attribute-server-listing-filter-id]="
+                            parameter.name
+                          "
+                          [attr.data-ph-capture-attribute-server-listing-filter-category]="
+                            item.category_id
+                          "
+                          [ngModel]="isEnumSelected(parameter, enum)"
+                          (click)="selectEnumItem(parameter, enum)"
+                          [disabled]="isParameterDisabled(parameter.name)"
+                          class="checkbox"
+                        />
+                        <div class="text-white text-sm">
+                          {{ getVendorName(enum) }}
+                        </div>
+                      </div>
+                    }
+                  </div>
+                }
+                @if (getParameterType(parameter) === "storage_id") {
+                  <div class="flex flex-col gap-2 mb-4 mt-4">
+                    @for (enum of parameter.schema.enum; track enum) {
+                      <div class="flex items-center gap-1">
+                        <input
+                          type="checkbox"
+                          id="filter_enum_{{ parameter.name }}"
+                          data-ph-capture-attribute-sc-event="server listing filter"
+                          data-ph-capture-attribute-server-listing-filter-type="checkbox"
+                          [attr.data-ph-capture-attribute-server-listing-filter-id]="
+                            parameter.name
+                          "
+                          [attr.data-ph-capture-attribute-server-listing-filter-category]="
+                            item.category_id
+                          "
+                          [ngModel]="isEnumSelected(parameter, enum)"
+                          (click)="selectEnumItem(parameter, enum)"
+                          [disabled]="isParameterDisabled(parameter.name)"
+                          class="checkbox"
+                        />
+                        <div class="text-white text-sm">
+                          {{ getStorageName(enum) }}
+                        </div>
+                      </div>
+                    }
+                  </div>
+                }
+                @if (getParameterType(parameter) === "country") {
+                  <div class="mb-4 mt-4 relative flex flex-col gap-2">
+                    @for (continent of continentMetadata; track continent) {
+                      <div class="flex flex-col gap-3">
+                        <div class="flex justify-between">
+                          <div class="flex gap-2 items-center">
+                            <input
+                              type="checkbox"
+                              id="filter_continent_{{ continent.continent }}"
+                              data-ph-capture-attribute-sc-event="server listing filter"
+                              data-ph-capture-attribute-server-listing-filter-type="checkbox"
+                              [attr.data-ph-capture-attribute-server-listing-filter-id]="
+                                continent.continent
+                              "
+                              data-ph-capture-attribute-server-listing-filter-category="continent"
+                              [ngModel]="continent.selected"
+                              (click)="selectContinent(continent)"
+                              [disabled]="isParameterDisabled(parameter.name)"
+                              class="checkbox"
+                            />
+                            <div class="text-white text-sm">
+                              {{ continent.continent }}
+                            </div>
+                          </div>
+                          <lucide-icon
+                            name="chevron-down"
+                            class="h-4 w-4 text-white cursor-pointer"
+                            (click)="collapseItem(continent)"
+                          ></lucide-icon>
+                        </div>
+                        @if (!continent.collapsed) {
+                          <div class="flex flex-col gap-3 ml-4">
+                            @for (
+                              country of countriesByContinent(
+                                continent.continent
+                              );
+                              track country
+                            ) {
+                              <div class="flex gap-2 align-center">
+                                <input
+                                  type="checkbox"
+                                  id="filter_country_{{ parameter.name }}"
+                                  data-ph-capture-attribute-sc-event="server listing filter"
+                                  data-ph-capture-attribute-server-listing-filter-type="checkbox"
+                                  [attr.data-ph-capture-attribute-server-listing-filter-id]="
+                                    country.country_id
+                                  "
+                                  data-ph-capture-attribute-server-listing-filter-category="country"
+                                  [(ngModel)]="country.selected"
+                                  (ngModelChange)="filterServers()"
+                                  [disabled]="
+                                    isParameterDisabled(parameter.name)
+                                  "
+                                  class="checkbox"
+                                />
+                                <div class="text-white text-sm">
+                                  {{ country.country_id | countryIdtoName }}
+                                </div>
+                              </div>
+                            }
+                          </div>
+                        }
+                      </div>
+                    }
+                  </div>
+                }
+                @if (getParameterType(parameter) === "regions") {
+                  <div class="mb-4 mt-4 relative flex flex-col gap-2">
+                    @for (vendor of regionVendorMetadata; track vendor) {
+                      <div class="flex flex-col gap-3">
+                        <div class="flex justify-between">
+                          <div class="flex gap-2 items-center">
+                            <input
+                              type="checkbox"
+                              id="filter_vendor_{{ parameter.name }}"
+                              data-ph-capture-attribute-sc-event="server listing filter"
+                              data-ph-capture-attribute-server-listing-filter-type="checkbox"
+                              [attr.data-ph-capture-attribute-server-listing-filter-id]="
+                                vendor.vendor_id
+                              "
+                              data-ph-capture-attribute-server-listing-filter-category="vendor"
+                              [ngModel]="vendor.selected"
+                              (click)="selectRegionrVendor(vendor)"
+                              [disabled]="isParameterDisabled(parameter.name)"
+                              class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none"
+                            />
+                            <div class="text-white text-sm">
+                              {{ vendor.name }}
+                            </div>
+                          </div>
+                          <lucide-icon
+                            name="chevron-down"
+                            class="h-4 w-4 text-white cursor-pointer"
+                            (click)="collapseItem(vendor)"
+                          ></lucide-icon>
+                        </div>
+                        @if (!vendor.collapsed) {
+                          <div class="flex flex-col gap-3 ml-4">
+                            @for (
+                              region of regionsByVendor(vendor.vendor_id);
+                              track region
+                            ) {
+                              <div class="flex gap-2 align-center">
+                                <input
+                                  type="checkbox"
+                                  id="filter_region_{{ parameter.name }}"
+                                  data-ph-capture-attribute-sc-event="server listing filter"
+                                  data-ph-capture-attribute-server-listing-filter-type="checkbox"
+                                  [attr.data-ph-capture-attribute-server-listing-filter-id]="
+                                    region.api_reference
+                                  "
+                                  data-ph-capture-attribute-server-listing-filter-category="region"
+                                  [(ngModel)]="region.selected"
+                                  (ngModelChange)="filterServers()"
+                                  [disabled]="
+                                    isParameterDisabled(parameter.name)
+                                  "
+                                  class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none"
+                                />
+                                <div class="text-white text-sm">
+                                  {{ region.name }}
+                                </div>
+                                @if (region.green_energy) {
+                                  <lucide-icon
+                                    name="leaf"
+                                    class="h-4 w-4 text-emerald-400"
+                                  ></lucide-icon>
+                                }
+                              </div>
+                            }
+                          </div>
+                        }
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        }
       </div>
-    </div>
+    }
   </div>
 </div>
 
@@ -514,14 +531,18 @@
         >
           Submit
         </button>
-        <div *ngIf="modalResponse">
-          <div class="text-white">Suggested filter parameters</div>
-          <div class="text-white font-medium text-sm flex flex-col pl-2">
-            <div *ngFor="let item of modalResponseStr">
-              {{ item }}
+        @if (modalResponse) {
+          <div>
+            <div class="text-white">Suggested filter parameters</div>
+            <div class="text-white font-medium text-sm flex flex-col pl-2">
+              @for (item of modalResponseStr; track item) {
+                <div>
+                  {{ item }}
+                </div>
+              }
             </div>
           </div>
-        </div>
+        }
       </div>
       <div
         class="flex flex-col p-4 md:p-5 space-x-3 rtl:space-x-reverse border-t border-gray-200 rounded-b dark:border-gray-600"

@@ -10,31 +10,33 @@
     style="height: calc(100% - 64px)"
   >
   </app-server-compare-charts>
-  <button *ngIf="instancesRaw" class="w-full flex">
-    <a
-      class="w-full flex flex-col justify-center items-center text-white bg-secondary px-6 py-4 hover:text-gray-200"
-      target="_blank"
-      href="{{ getBaseURL() }}/compare?instances={{ instancesRaw }}"
-    >
-      <div class="w-full flex gap-2 items-center justify-between">
-        <img
-          src="./assets/images/logos/logo_embed_footer.png"
-          alt="Spare Cores Logo"
-          class="h-8"
-        />
-        <div class="flex gap-2 items-center">
-          <lucide-icon
-            name="external-link"
-            class="text-emerald-400 h-4 w-4"
-          ></lucide-icon>
-          <span class="text-sm underline"
-            >Learn more about
-            <i class="text-emerald-400 underline decoration-emerald-400"
-              >this comparison</i
-            ></span
-          >
+  @if (instancesRaw) {
+    <button class="w-full flex">
+      <a
+        class="w-full flex flex-col justify-center items-center text-white bg-secondary px-6 py-4 hover:text-gray-200"
+        target="_blank"
+        href="{{ getBaseURL() }}/compare?instances={{ instancesRaw }}"
+      >
+        <div class="w-full flex gap-2 items-center justify-between">
+          <img
+            src="./assets/images/logos/logo_embed_footer.png"
+            alt="Spare Cores Logo"
+            class="h-8"
+          />
+          <div class="flex gap-2 items-center">
+            <lucide-icon
+              name="external-link"
+              class="text-emerald-400 h-4 w-4"
+            ></lucide-icon>
+            <span class="text-sm underline"
+              >Learn more about
+              <i class="text-emerald-400 underline decoration-emerald-400"
+                >this comparison</i
+              ></span
+            >
+          </div>
         </div>
-      </div>
-    </a>
-  </button>
+      </a>
+    </button>
+  }
 </div>

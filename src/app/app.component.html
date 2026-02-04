@@ -1,11 +1,15 @@
-<header class="sticky" *ngIf="showHeader">
-  <app-header></app-header>
-</header>
+@if (showHeader) {
+  <header class="sticky">
+    <app-header></app-header>
+  </header>
+}
 <div>
   <main>
     <router-outlet></router-outlet>
   </main>
-  <footer *ngIf="showFooter">
-    <app-footer></app-footer>
-  </footer>
+  @if (showFooter) {
+    <footer>
+      <app-footer></app-footer>
+    </footer>
+  }
 </div>

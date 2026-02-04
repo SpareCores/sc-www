@@ -281,26 +281,25 @@
     aria-labelledby="dropdownDefaultButton"
     (click)="closeCompare()"
   >
-    <li
-      class="py-2 flex justify-between"
-      *ngFor="let item of getServersForCompare()"
-    >
-      <a
-        class="navbar_link"
-        routerLink="/server/{{ item.vendor }}/{{ item.server }}"
-      >
-        <lucide-icon class="h-4 w-4" name="pc-case"></lucide-icon>
-        {{ item.vendor }}: {{ item.display_name }}
-      </a>
-      <div (click)="$event.stopPropagation()">
-        <button
-          class="text-red-500 px-2 py-2"
-          (click)="removeFromCompare($event, item)"
+    @for (item of getServersForCompare(); track item) {
+      <li class="py-2 flex justify-between">
+        <a
+          class="navbar_link"
+          routerLink="/server/{{ item.vendor }}/{{ item.server }}"
         >
-          <lucide-icon class="h-4 w-4" name="trash"></lucide-icon>
-        </button>
-      </div>
-    </li>
+          <lucide-icon class="h-4 w-4" name="pc-case"></lucide-icon>
+          {{ item.vendor }}: {{ item.display_name }}
+        </a>
+        <div (click)="$event.stopPropagation()">
+          <button
+            class="text-red-500 px-2 py-2"
+            (click)="removeFromCompare($event, item)"
+          >
+            <lucide-icon class="h-4 w-4" name="trash"></lucide-icon>
+          </button>
+        </div>
+      </li>
+    }
     <li class="py-2">
       <button
         class="w-full font-bold text-white bg-emerald-400 hover:bg-emerald-500 rounded-sm py-2"

@@ -19,14 +19,16 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let item of docs">
-              <td>
-                <a routerLink="/legal/{{ item.filename }}">
-                  {{ item.title }}
-                </a>
-              </td>
-              <td>{{ item.date | timeToShortDate }}</td>
-            </tr>
+            @for (item of docs; track item) {
+              <tr>
+                <td>
+                  <a routerLink="/legal/{{ item.filename }}">
+                    {{ item.title }}
+                  </a>
+                </td>
+                <td>{{ item.date | timeToShortDate }}</td>
+              </tr>
+            }
           </tbody>
         </table>
       </div>

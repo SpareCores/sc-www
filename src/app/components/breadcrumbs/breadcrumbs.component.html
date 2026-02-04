@@ -6,30 +6,33 @@
       itemscope
       itemtype="https://schema.org/BreadcrumbList"
     >
-      <div *ngFor="let item of segments; let i = index" class="flex gap-2">
-        <div *ngIf="i > 0" class="text-emerald-400">/</div>
-        <div
-          class="breadcrumb-item"
-          itemprop="itemListElement"
-          itemscope
-          itemtype="https://schema.org/ListItem"
-        >
-          <ng-container *ngIf="item.url; else noLink">
-            <a
-              itemprop="item"
-              routerLink="{{ item.url }}"
-              [queryParams]="item.queryParams"
-              class="text-white hover:text-emerald-400"
-            >
-              <span itemprop="name">{{ item.name }}</span>
-            </a>
-          </ng-container>
-          <ng-template #noLink>
-            <span itemprop="name" class="text-white">{{ item.name }}</span>
-          </ng-template>
-          <meta itemprop="position" content="{{ i + 1 }}" />
+      @for (item of segments; track item; let i = $index) {
+        <div class="flex gap-2">
+          @if (i > 0) {
+            <div class="text-emerald-400">/</div>
+          }
+          <div
+            class="breadcrumb-item"
+            itemprop="itemListElement"
+            itemscope
+            itemtype="https://schema.org/ListItem"
+          >
+            @if (item.url) {
+              <a
+                itemprop="item"
+                routerLink="{{ item.url }}"
+                [queryParams]="item.queryParams"
+                class="text-white hover:text-emerald-400"
+              >
+                <span itemprop="name">{{ item.name }}</span>
+              </a>
+            } @else {
+              <span itemprop="name" class="text-white">{{ item.name }}</span>
+            }
+            <meta itemprop="position" content="{{ i + 1 }}" />
+          </div>
         </div>
-      </div>
+      }
     </div>
   </nav>
   <div class="delimiter"></div>

@@ -1,50 +1,58 @@
-<div
-  class="bg-primary py-4 px-4 w-full gap-4 flex flex-col"
-  *ngIf="isBrowser()"
->
-  <h3 class="text-white text-xl">Iframe Options</h3>
-  <div class="flex gap-4 items-center text-white" *ngIf="!isModal">
-    <div>Instances</div>
-    <input
-      type="text"
-      [(ngModel)]="instances"
-      (ngModelChange)="updateSrc()"
-      class="w-full accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm text-black"
-    />
+@if (isBrowser()) {
+  <div class="bg-primary py-4 px-4 w-full gap-4 flex flex-col">
+    <h3 class="text-white text-xl">Iframe Options</h3>
+    @if (!isModal) {
+      <div class="flex gap-4 items-center text-white">
+        <div>Instances</div>
+        <input
+          type="text"
+          [(ngModel)]="instances"
+          (ngModelChange)="updateSrc()"
+          class="w-full accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm text-black"
+        />
+      </div>
+    }
+    <div class="flex gap-4 items-center text-white">
+      <div>Height</div>
+      <input
+        type="text"
+        [(ngModel)]="height"
+        min="400"
+        (ngModelChange)="updateSrc()"
+        class="w-20 p-2 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm text-black"
+      />
+      <div>Width</div>
+      <input
+        type="text"
+        [(ngModel)]="width"
+        min="400"
+        (ngModelChange)="updateSrc()"
+        class="w-20 p-2 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm text-black"
+      />
+      <div>Chart</div>
+      <select
+        [(ngModel)]="chartname"
+        (ngModelChange)="updateSrc()"
+        class="w-full accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm text-black"
+      >
+        @for (item of charts; track item) {
+          <option value="{{ item.id }}">
+            {{ item.name }}
+          </option>
+        }
+      </select>
+    </div>
+    @if (chartname) {
+      <div class="relative">
+        <pre><code #iframeCodeBlock class="language-html">{{ getIframeHTML() }}</code></pre>
+      </div>
+    }
+    <h3 class="text-white text-xl">Iframe Preview</h3>
+    @if (!chartname) {
+      <p class="text-white">Select which chart to show.</p>
+    }
+    @if (src) {
+      <iframe id="myIframe" [src]="src" [style]="getStyles()"></iframe>
+    }
   </div>
-  <div class="flex gap-4 items-center text-white">
-    <div>Height</div>
-    <input
-      type="text"
-      [(ngModel)]="height"
-      min="400"
-      (ngModelChange)="updateSrc()"
-      class="w-20 p-2 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm text-black"
-    />
-    <div>Width</div>
-    <input
-      type="text"
-      [(ngModel)]="width"
-      min="400"
-      (ngModelChange)="updateSrc()"
-      class="w-20 p-2 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm text-black"
-    />
-    <div>Chart</div>
-    <select
-      [(ngModel)]="chartname"
-      (ngModelChange)="updateSrc()"
-      class="w-full accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm text-black"
-    >
-      <option *ngFor="let item of charts" value="{{ item.id }}">
-        {{ item.name }}
-      </option>
-    </select>
-  </div>
-
-  <div *ngIf="chartname" class="relative">
-    <pre><code #iframeCodeBlock class="language-html">{{ getIframeHTML() }}</code></pre>
-  </div>
-  <h3 class="text-white text-xl">Iframe Preview</h3>
-  <p class="text-white" *ngIf="!chartname">Select which chart to show.</p>
-  <iframe *ngIf="src" id="myIframe" [src]="src" [style]="getStyles()"></iframe>
-</div>
+}

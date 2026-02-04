@@ -217,11 +217,12 @@
   </div>
 
   <div class="design-grid">
-    <app-downloadable-logo-collection
-      *ngFor="let item of logoDownloadItems; trackBy: trackByFolder"
-      [folderName]="item.folderName"
-      [fileNames]="item.fileNames"
-      [basePath]="logoDownloadsBasePath"
-    ></app-downloadable-logo-collection>
+    @for (item of logoDownloadItems; track trackByFolder($index, item)) {
+      <app-downloadable-logo-collection
+        [folderName]="item.folderName"
+        [fileNames]="item.fileNames"
+        [basePath]="logoDownloadsBasePath"
+      ></app-downloadable-logo-collection>
+    }
   </div>
 </div>
