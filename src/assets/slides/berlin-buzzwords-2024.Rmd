@@ -367,7 +367,6 @@ also running Geekbench 6, which has been a standard tool for some time including
 <img style="margin-top:-55px; width: 83%;" src="images/sc-www-server-compare.png" />
 :::
 
-<!-- https://deploy-preview-27--creative-choux-a3c817.netlify.app/compare?instances=W3sidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzVhZC4xMnhsYXJnZSJ9LHsidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzVkLjJ4bGFyZ2UifSx7InZlbmRvciI6ImF3cyIsInNlcnZlciI6ImM2Zy4xNnhsYXJnZSJ9LHsidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY2N4MzMifV0%3D -->
 <aside class="notes">
 and making all these data available in comparison tables as well for human inspection
 </aside>

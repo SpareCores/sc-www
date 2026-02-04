@@ -90,11 +90,6 @@
               "ssr": {
                 "entry": "server.ts"
               }
-            },
-            "netlify": {
-              "ssr": {
-                "entry": "server.netlify.ts"
-              }
             }
           },
           "defaultConfiguration": "production"
