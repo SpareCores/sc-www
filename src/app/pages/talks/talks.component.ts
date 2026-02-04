@@ -12,7 +12,6 @@ import { LucideAngularModule } from "lucide-angular";
 
 @Component({
   selector: "app-talks",
-  standalone: true,
   imports: [
     BreadcrumbsComponent,
     CommonModule,

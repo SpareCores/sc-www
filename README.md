@@ -1,6 +1,6 @@
 # Spare Cores web interface and public homepage
 
-This is an Angular 17.2.3 project to provide the public homepage of
+This is an Angular 19 project to provide the public homepage of
 the Spare Cores project and ecosystem at sparecores.com.
 
 ## Prerequisites
@@ -33,10 +33,10 @@ page visits, clicks etc via the following environment variables:
 - NG_APP_POSTHOG_HOST: The Posthog tracking API endpoint,
   e.g. https://us.i.posthog.com
 
-Optionally, you can also use and configure Sentry by setting the
-following environment variable(s):
+You can configure Sentry by setting the following environment variable(s).
+Note that NG_APP_SENTRY_DSN must be defined (though it can be left empty to disable Sentry):
 
-- NG_APP_SENTRY_DSN
+- NG_APP_SENTRY_DSN (key is mandatory but you can leave the value empty)
 - NG_APP_SENTRY_TRACE_SAMPLE_RATE (default to 0)
 - NG_APP_SENTRY_PROFILE_SAMPLE_RATE (default to 0)
 - NG_APP_SENTRY_ENVIRONMENT (default to "development")

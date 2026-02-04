@@ -31,7 +31,6 @@ import { Subscription } from "rxjs";
 
 @Component({
   selector: "app-article",
-  standalone: true,
   imports: [
     BreadcrumbsComponent,
     RouterLink,
@@ -70,7 +69,6 @@ export class ArticleComponent implements OnInit, OnDestroy {
     private renderer: Renderer2,
     private toastService: ToastService,
     private prismService: PrismService,
-    @Inject("netlify.request") @Optional() private request_netlify?: Request,
     @Inject(REQUEST) @Optional() private request_express?: Request,
   ) {}
 

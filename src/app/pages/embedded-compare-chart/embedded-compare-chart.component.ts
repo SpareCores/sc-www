@@ -12,7 +12,6 @@ import { OnInit } from "@angular/core";
 
 @Component({
   selector: "app-embedded-compare-chart",
-  standalone: true,
   imports: [CommonModule, ServerCompareChartsComponent, LucideAngularModule],
   templateUrl: "./embedded-compare-chart.component.html",
   styleUrl: "./embedded-compare-chart.component.scss",

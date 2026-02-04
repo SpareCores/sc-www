@@ -24,7 +24,6 @@ import { StorageHandlerService } from "../../services/storage-handler.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { FormsModule } from "@angular/forms";
 import { LucideAngularModule } from "lucide-angular";
-import { CountryIdtoNamePipe } from "../../pipes/country-idto-name.pipe";
 import { SearchBarComponent } from "../../components/search-bar/search-bar.component";
 import { PaginationComponent } from "../../components/pagination/pagination.component";
 import {
@@ -84,13 +83,11 @@ const optionsModal: ModalOptions = {
 
 @Component({
   selector: "app-server-listing",
-  standalone: true,
   imports: [
     CommonModule,
     FormsModule,
     BreadcrumbsComponent,
     LucideAngularModule,
-    CountryIdtoNamePipe,
     RouterModule,
     SearchBarComponent,
     PaginationComponent,

@@ -45,7 +45,6 @@ import { DropdownManagerService } from "../../services/dropdown-manager.service"
 import { ServerChartsComponent } from "../../components/server-charts/server-charts.component";
 import { Modal, ModalOptions } from "flowbite";
 import { EmbedDebugComponent } from "../embed-debug/embed-debug.component";
-import { finalize } from "rxjs/operators";
 import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
 import { Subscription } from "rxjs";
 
@@ -72,7 +71,6 @@ export interface ExtendedServerDetails extends ServerPKs {
 
 @Component({
   selector: "app-server-details",
-  standalone: true,
   imports: [
     BreadcrumbsComponent,
     CommonModule,
@@ -82,7 +80,6 @@ export interface ExtendedServerDetails extends ServerPKs {
     RouterModule,
     BaseChartDirective,
     ReduceUnitNamePipe,
-    CountryIdtoNamePipe,
     ServerChartsComponent,
     EmbedDebugComponent,
     LoadingSpinnerComponent,

@@ -3,7 +3,6 @@ import { Component, Input, ChangeDetectionStrategy } from "@angular/core";
 
 @Component({
   selector: "app-design-page-card",
-  standalone: true,
   imports: [CommonModule],
   templateUrl: "./design-page-card.component.html",
   changeDetection: ChangeDetectionStrategy.OnPush,

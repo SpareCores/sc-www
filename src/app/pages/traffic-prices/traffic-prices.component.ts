@@ -16,7 +16,6 @@ import {
 } from "../../components/breadcrumbs/breadcrumbs.component";
 import { PaginationComponent } from "../../components/pagination/pagination.component";
 import { SearchBarComponent } from "../../components/search-bar/search-bar.component";
-import { CountryIdtoNamePipe } from "../../pipes/country-idto-name.pipe";
 import { DropdownManagerService } from "../../services/dropdown-manager.service";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
@@ -28,13 +27,11 @@ import openApiSpec from "../../../../sdk/openapi.json";
 
 @Component({
   selector: "app-traffic-prices",
-  standalone: true,
   imports: [
     CommonModule,
     FormsModule,
     BreadcrumbsComponent,
     LucideAngularModule,
-    CountryIdtoNamePipe,
     RouterModule,
     SearchBarComponent,
     PaginationComponent,

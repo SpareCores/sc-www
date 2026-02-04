@@ -7,7 +7,6 @@ import { DropdownManagerService } from "../../services/dropdown-manager.service"
 
 @Component({
   selector: "app-header",
-  standalone: true,
   imports: [LucideAngularModule, RouterLink, CommonModule],
   templateUrl: "./header.component.html",
   styleUrl: "./header.component.scss",

@@ -27,7 +27,6 @@ import { NeetoCalService } from "./services/neeto-cal.service";
 
 @Component({
   selector: "app-root",
-  standalone: true,
   imports: [HeaderComponent, FooterComponent, RouterModule, CommonModule],
   templateUrl: "./app.component.html",
   styleUrl: "./app.component.scss",

@@ -5,7 +5,6 @@ import { LucideAngularModule } from "lucide-angular";
 
 @Component({
   selector: "app-pagination",
-  standalone: true,
   imports: [CommonModule, RouterModule, LucideAngularModule],
   templateUrl: "./pagination.component.html",
   styleUrl: "./pagination.component.scss",

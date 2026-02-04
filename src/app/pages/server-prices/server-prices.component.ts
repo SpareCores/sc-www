@@ -74,7 +74,6 @@ export type RegionVendorMetadata = {
 
 @Component({
   selector: "app-server-prices",
-  standalone: true,
   imports: [
     CommonModule,
     FormsModule,

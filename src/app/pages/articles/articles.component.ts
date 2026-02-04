@@ -12,7 +12,6 @@ import { Subscription } from "rxjs";
 
 @Component({
   selector: "app-articles",
-  standalone: true,
   imports: [BreadcrumbsComponent, CommonModule, ArticleCardComponent],
   templateUrl: "./articles.component.html",
   styleUrl: "./articles.component.scss",

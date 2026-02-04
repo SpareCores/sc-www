@@ -1,14 +1,17 @@
 import {
-  APP_INITIALIZER,
   ApplicationConfig,
   ErrorHandler,
   importProvidersFrom,
+  inject,
+  provideAppInitializer,
+  provideZoneChangeDetection,
 } from "@angular/core";
 import { Router, provideRouter, withInMemoryScrolling } from "@angular/router";
 
 import { routes } from "./app.routes";
 import {
   provideClientHydration,
+  withEventReplay,
   withHttpTransferCacheOptions,
 } from "@angular/platform-browser";
 import {
@@ -32,6 +35,7 @@ function customErrorHandler(error: any) {
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(
       routes,
       withInMemoryScrolling({
@@ -44,6 +48,7 @@ export const appConfig: ApplicationConfig = {
         includeHeaders: ["x-total-count", "x-request-id"],
         filter: httpFilter,
       }),
+      withEventReplay(),
     ),
     provideHttpClient(withFetch()),
     provideCharts(withDefaultRegisterables()),
@@ -53,12 +58,9 @@ export const appConfig: ApplicationConfig = {
       provide: Sentry.TraceService,
       deps: [Router],
     },
-    {
-      provide: APP_INITIALIZER,
-      useFactory: () => () => {},
-      deps: [Sentry.TraceService],
-      multi: true,
-    },
+    provideAppInitializer(() => {
+      inject(Sentry.TraceService);
+    }),
     {
       provide: ErrorHandler,
       useValue: Sentry.createErrorHandler({

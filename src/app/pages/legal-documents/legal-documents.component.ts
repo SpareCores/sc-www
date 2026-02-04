@@ -11,7 +11,6 @@ import { TimeToShortDatePipe } from "../../pipes/time-to-short-date.pipe";
 
 @Component({
   selector: "app-legal-documents",
-  standalone: true,
   imports: [
     BreadcrumbsComponent,
     RouterModule,

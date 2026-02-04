@@ -22,7 +22,6 @@ type DownloadItemVm = {
 
 @Component({
   selector: "app-downloadable-logo-collection",
-  standalone: true,
   imports: [CommonModule, NgOptimizedImage],
   templateUrl: "./downloadable-logo-collection.component.html",
   styleUrl: "./downloadable-logo-collection.component.scss",

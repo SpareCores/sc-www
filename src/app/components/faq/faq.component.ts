@@ -9,7 +9,6 @@ export type FAQQuestion = {
 
 @Component({
   selector: "app-faq",
-  standalone: true,
   imports: [CommonModule, LucideAngularModule],
   templateUrl: "./faq.component.html",
   styleUrl: "./faq.component.scss",

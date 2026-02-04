@@ -3,7 +3,6 @@ import { CommonModule } from "@angular/common";
 
 @Component({
   selector: "app-loading-spinner",
-  standalone: true,
   imports: [CommonModule],
   template: `
     <div class="flex justify-center items-center" role="status">
