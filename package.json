@@ -75,6 +75,7 @@
     "@angular/build": "^19.2.19",
     "@angular/cli": "^19.2.19",
     "@angular/compiler-cli": "^19.2.18",
+    "@netlify/angular-runtime": "^3.0.1",
     "@ngx-env/builder": "^19.1.0",
     "@types/crypto-js": "^4.2.2",
     "@types/express": "^4.17.21",
