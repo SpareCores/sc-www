@@ -1,4 +1,3 @@
-/* eslint-disable no-var */
 import {
   ChartConfiguration,
   ChartData,

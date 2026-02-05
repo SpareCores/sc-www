@@ -561,7 +561,6 @@
   >
     @for (item of compressMethods; track item) {
       <li class="flex py-1 gap-2 items-center">
-        <!-- eslint-disable-next-line @angular-eslint/template/interactive-supports-focus -->
         <div
           class="text-emerald-400 hover:text-emerald-500 cursor-pointer font-bold ml-2"
           (click)="refreshCompressChart(item)"
@@ -584,7 +583,6 @@
     >
       @for (item of chartItem.chart.options; track item; let i = $index) {
         <li class="flex py-1 gap-2 items-center">
-          <!-- eslint-disable-next-line @angular-eslint/template/interactive-supports-focus -->
           <div
             class="text-emerald-400 hover:text-emerald-500 cursor-pointer font-bold ml-2"
             (click)="selectChartTemplateOption(chartItem, i)"

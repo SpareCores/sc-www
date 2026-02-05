@@ -96,7 +96,6 @@
             <td>{{ item.country_id | countryIdtoName }}</td>
             <td>{{ item.founding_year || "-" }}</td>
             <td>
-              <!-- eslint-disable-next-line @angular-eslint/template/interactive-supports-focus -->
               <div class="flex justify-end" (click)="$event.stopPropagation()">
                 <a
                   routerLink="/server_prices"
