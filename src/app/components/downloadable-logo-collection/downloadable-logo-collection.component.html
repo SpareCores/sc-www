@@ -5,7 +5,7 @@
     class="w-full h-32 rounded-t-xl flex items-center justify-center bg-[conic-gradient(at_bottom,_var(--tw-gradient-stops))] from-neutral-100 via-neutral-500 to-stone-900"
   >
     <div class="relative max-h-20 max-w-[80%] h-20 w-full">
-      @if (folderName && fileNames?.length) {
+      @if (folderName && fileNames.length) {
         <img
           [ngSrc]="previewSrc"
           [alt]="folderName || 'Logo'"
