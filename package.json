@@ -35,7 +35,7 @@
     "@angular/router": "^20.3.16",
     "@angular/ssr": "^20.3.15",
     "@preline/combobox": "^2.5.2",
-    "@sentry/angular": "^8.22.0",
+    "@sentry/angular": "^9.47.1",
     "@sentry/cli": "^2.33.1",
     "buffer": "^6.0.3",
     "chart.js": "^4.3.0",
