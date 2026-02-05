@@ -62,12 +62,4 @@ export default defineConfig([
       "@angular-eslint/template/no-autofocus": "off",
     },
   },
-  {
-    files: ["src/assets/slides/*.html"],
-
-    rules: {
-      "@angular-eslint/template/elements-content": "off",
-      "@angular-eslint/template/alt-text": "off",
-    },
-  },
 ]);
