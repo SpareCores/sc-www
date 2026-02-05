@@ -2,12 +2,12 @@ import { CommonModule, isPlatformBrowser } from "@angular/common";
 import {
   Component,
   ElementRef,
-  Inject,
   Input,
   PLATFORM_ID,
   ViewChild,
   OnInit,
   OnChanges,
+  inject,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
@@ -56,6 +56,11 @@ import { ToastService } from "../../services/toast.service";
   styleUrl: "./server-compare-charts.component.scss",
 })
 export class ServerCompareChartsComponent implements OnInit, OnChanges {
+  private platformId = inject(PLATFORM_ID);
+  private sanitizer = inject(DomSanitizer);
+  private dropdownManager = inject(DropdownManagerService);
+  private toastService = inject(ToastService);
+
   @Input() servers: ExtendedServerDetails[] = [];
   @Input() instanceProperties: any[] = [];
   @Input() benchmarkMeta: any;
@@ -181,13 +186,6 @@ export class ServerCompareChartsComponent implements OnInit, OnChanges {
   selectedLLMModel: any;
 
   clipboardIcon = "clipboard";
-
-  constructor(
-    @Inject(PLATFORM_ID) private platformId: object,
-    private sanitizer: DomSanitizer,
-    private dropdownManager: DropdownManagerService,
-    private toastService: ToastService,
-  ) {}
 
   ngOnInit() {
     (this.radarChartOptionsSingle as any).plugins.legend.display = true;

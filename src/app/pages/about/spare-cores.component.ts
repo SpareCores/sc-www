@@ -1,9 +1,9 @@
 import {
   AfterViewInit,
   Component,
-  Inject,
   OnInit,
   PLATFORM_ID,
+  inject,
 } from "@angular/core";
 import {
   BreadcrumbSegment,
@@ -20,11 +20,10 @@ import { SeoHandlerService } from "../../services/seo-handler.service";
   styleUrl: "./spare-cores.component.scss",
 })
 export class AboutSpareCoresComponent implements OnInit, AfterViewInit {
-  constructor(
-    @Inject(PLATFORM_ID) private platformId: object,
-    private SEOHandler: SeoHandlerService,
-    private neetoCalService: NeetoCalService,
-  ) {}
+  private platformId = inject(PLATFORM_ID);
+  private SEOHandler = inject(SeoHandlerService);
+  private neetoCalService = inject(NeetoCalService);
+
   breadcrumbs: BreadcrumbSegment[] = [
     {
       name: "Home",

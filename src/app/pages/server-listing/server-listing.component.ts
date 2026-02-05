@@ -1,11 +1,11 @@
 import {
   Component,
-  Inject,
   PLATFORM_ID,
   OnInit,
   ViewChild,
   ElementRef,
   OnDestroy,
+  inject,
 } from "@angular/core";
 import {
   BreadcrumbSegment,
@@ -20,7 +20,6 @@ import {
 import { encodeQueryParams } from "../../tools/queryParamFunctions";
 import { ActivatedRoute, Params, Router, RouterModule } from "@angular/router";
 import { CommonModule, isPlatformBrowser } from "@angular/common";
-import { StorageHandlerService } from "../../services/storage-handler.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { FormsModule } from "@angular/forms";
 import { LucideAngularModule } from "lucide-angular";
@@ -97,6 +96,16 @@ const optionsModal: ModalOptions = {
   styleUrl: "./server-listing.component.scss",
 })
 export class ServerListingComponent implements OnInit, OnDestroy {
+  private platformId = inject(PLATFORM_ID);
+  private keeperAPI = inject(KeeperAPIService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private SEOHandler = inject(SeoHandlerService);
+  private dropdownManager = inject(DropdownManagerService);
+  private analytics = inject(AnalyticsService);
+  private serverCompare = inject(ServerCompareService);
+  private toastService = inject(ToastService);
+
   isCollapsed = false;
 
   filterCategories = [
@@ -293,19 +302,6 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     'Explore, search, and evaluate the supported cloud compute resources in the table below. This comprehensive comparison includes diverse attributes such as CPU count, detailed processor information, memory, GPU, storage, network speed and capacity, available operating systems. Use the sidebar to filter the results, or enter your freetext query in the "Search prompt" bar. You can also compare servers by selecting at least two rows using the checkboxes.';
 
   private subscription = new Subscription();
-
-  constructor(
-    @Inject(PLATFORM_ID) private platformId: object,
-    private keeperAPI: KeeperAPIService,
-    private route: ActivatedRoute,
-    private router: Router,
-    private SEOHandler: SeoHandlerService,
-    private storageHandler: StorageHandlerService,
-    private dropdownManager: DropdownManagerService,
-    private analytics: AnalyticsService,
-    private serverCompare: ServerCompareService,
-    private toastService: ToastService,
-  ) {}
 
   ngOnInit() {
     this.SEOHandler.updateTitleAndMetaTags(

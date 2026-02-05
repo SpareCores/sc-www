@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import {
   BreadcrumbSegment,
@@ -25,6 +25,10 @@ import { Router, RouterModule } from "@angular/router";
   styleUrl: "./vendors.component.scss",
 })
 export class VendorsComponent implements OnInit {
+  private SEOHandler = inject(SeoHandlerService);
+  private API = inject(KeeperAPIService);
+  private router = inject(Router);
+
   breadcrumbs: BreadcrumbSegment[] = [
     {
       name: "Home",
@@ -41,12 +45,6 @@ export class VendorsComponent implements OnInit {
 
   orderBy: string | null = null;
   orderDir: OrderDir | null = null;
-
-  constructor(
-    private SEOHandler: SeoHandlerService,
-    private API: KeeperAPIService,
-    private router: Router,
-  ) {}
 
   ngOnInit() {
     this.SEOHandler.updateTitleAndMetaTags(

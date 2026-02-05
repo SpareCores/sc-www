@@ -1,13 +1,13 @@
 import { isPlatformBrowser } from "@angular/common";
-import { Inject, Injectable, PLATFORM_ID } from "@angular/core";
+import { Injectable, PLATFORM_ID, inject } from "@angular/core";
 
 @Injectable({
   providedIn: "root",
 })
 export class StorageHandlerService {
-  disabled = true;
+  private platformId = inject(PLATFORM_ID);
 
-  constructor(@Inject(PLATFORM_ID) private platformId: object) {}
+  disabled = true;
 
   get(key: string): any {
     if (!this.disabled && isPlatformBrowser(this.platformId) && localStorage) {

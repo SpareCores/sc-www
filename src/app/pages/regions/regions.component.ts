@@ -1,10 +1,10 @@
 import {
   Component,
-  Inject,
   OnInit,
   PLATFORM_ID,
   Renderer2,
   DOCUMENT,
+  inject,
 } from "@angular/core";
 import {
   BreadcrumbSegment,
@@ -57,6 +57,13 @@ const colors = [
   styleUrl: "./regions.component.scss",
 })
 export class RegionsComponent implements OnInit {
+  private platformId = inject(PLATFORM_ID);
+  private document = inject<Document>(DOCUMENT);
+  private SEOHandler = inject(SeoHandlerService);
+  private renderer = inject(Renderer2);
+  private API = inject(KeeperAPIService);
+  private router = inject(Router);
+
   breadcrumbs: BreadcrumbSegment[] = [
     {
       name: "Home",
@@ -76,15 +83,6 @@ export class RegionsComponent implements OnInit {
   orderDir: OrderDir | null = null;
 
   bubble_map: any;
-
-  constructor(
-    @Inject(PLATFORM_ID) private platformId: object,
-    @Inject(DOCUMENT) private document: Document,
-    private SEOHandler: SeoHandlerService,
-    private renderer: Renderer2,
-    private API: KeeperAPIService,
-    private router: Router,
-  ) {}
 
   ngOnInit() {
     this.SEOHandler.updateTitleAndMetaTags(

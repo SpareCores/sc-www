@@ -1,5 +1,5 @@
 import { isPlatformBrowser } from "@angular/common";
-import { Inject, Injectable, PLATFORM_ID } from "@angular/core";
+import { Injectable, PLATFORM_ID, inject } from "@angular/core";
 import { Dropdown, DropdownOptions, initFlowbite } from "flowbite";
 
 const options: DropdownOptions = {
@@ -14,9 +14,11 @@ const options: DropdownOptions = {
   providedIn: "root",
 })
 export class DropdownManagerService {
+  private platformId = inject(PLATFORM_ID);
+
   inited = false;
 
-  constructor(@Inject(PLATFORM_ID) private platformId: object) {
+  constructor() {
     if (isPlatformBrowser(this.platformId)) {
       initFlowbite();
       this.inited = true;

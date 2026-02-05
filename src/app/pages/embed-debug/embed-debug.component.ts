@@ -1,13 +1,13 @@
 import { isPlatformBrowser } from "@angular/common";
 import {
   Component,
-  Inject,
   Input,
   OnChanges,
   OnInit,
   PLATFORM_ID,
   ElementRef,
   ViewChild,
+  inject,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { DomSanitizer } from "@angular/platform-browser";
@@ -22,6 +22,12 @@ import { PrismService } from "../../services/prism.service";
   styleUrl: "./embed-debug.component.scss",
 })
 export class EmbedDebugComponent implements OnInit, OnChanges {
+  private platformId = inject(PLATFORM_ID);
+  private route = inject(ActivatedRoute);
+  private sanitizer = inject(DomSanitizer);
+  private SEOHandler = inject(SeoHandlerService);
+  private prismService = inject(PrismService);
+
   @Input() vendor!: string;
   @Input() id!: string;
   @Input() chartname!: string;
@@ -46,14 +52,6 @@ export class EmbedDebugComponent implements OnInit, OnChanges {
   ];
 
   @ViewChild("iframeCodeBlock") iframeCodeBlockElement!: ElementRef;
-
-  constructor(
-    @Inject(PLATFORM_ID) private platformId: object,
-    private route: ActivatedRoute,
-    private sanitizer: DomSanitizer,
-    private SEOHandler: SeoHandlerService,
-    private prismService: PrismService,
-  ) {}
 
   ngOnInit() {
     this.route.params.subscribe((params) => {

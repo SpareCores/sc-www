@@ -1,4 +1,4 @@
-import { Inject, Injectable, Optional, PLATFORM_ID } from "@angular/core";
+import { Injectable, PLATFORM_ID, inject } from "@angular/core";
 import { Meta, Title } from "@angular/platform-browser";
 import { REQUEST } from "../../express.tokens";
 import { isPlatformBrowser } from "@angular/common";
@@ -8,12 +8,10 @@ import { Request } from "express";
   providedIn: "root",
 })
 export class SeoHandlerService {
-  constructor(
-    @Inject(PLATFORM_ID) private platformId: object,
-    private titleService: Title,
-    private metaTagService: Meta,
-    @Inject(REQUEST) @Optional() private request_express?: Request,
-  ) {}
+  private platformId = inject(PLATFORM_ID);
+  private titleService = inject(Title);
+  private metaTagService = inject(Meta);
+  private request_express = inject<Request>(REQUEST, { optional: true });
 
   public getBaseURL(): string {
     let baseUrl = "https://sparecores.com";

@@ -1,5 +1,5 @@
 import { CommonModule, isPlatformBrowser } from "@angular/common";
-import { Component, Inject, OnInit, PLATFORM_ID } from "@angular/core";
+import { Component, OnInit, PLATFORM_ID, inject } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 import { ServerCompareService } from "../../services/server-compare.service";
@@ -12,15 +12,14 @@ import { DropdownManagerService } from "../../services/dropdown-manager.service"
   styleUrl: "./header.component.scss",
 })
 export class HeaderComponent implements OnInit {
+  private platformId = inject(PLATFORM_ID);
+  private serverCompare = inject(ServerCompareService);
+  private dropdownManager = inject(DropdownManagerService);
+
   dropdownMenu: any;
   dropdownAbout: any;
   dropdownCompare: any;
   dropdownNavigator: any;
-  constructor(
-    @Inject(PLATFORM_ID) private platformId: object,
-    private serverCompare: ServerCompareService,
-    private dropdownManager: DropdownManagerService,
-  ) {}
 
   ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {

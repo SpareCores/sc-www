@@ -1,12 +1,12 @@
 import {
   Component,
-  Inject,
   Input,
   PLATFORM_ID,
   OnInit,
   OnChanges,
   ElementRef,
   ViewChild,
+  inject,
 } from "@angular/core";
 import { DomSanitizer } from "@angular/platform-browser";
 import { ActivatedRoute } from "@angular/router";
@@ -28,6 +28,12 @@ interface ChartOption {
   styleUrl: "./embed-compare-preview.component.scss",
 })
 export class EmbedComparePreviewComponent implements OnInit, OnChanges {
+  private platformId = inject(PLATFORM_ID);
+  private route = inject(ActivatedRoute);
+  private sanitizer = inject(DomSanitizer);
+  private SEOHandler = inject(SeoHandlerService);
+  private prismService = inject(PrismService);
+
   @Input() instances!: string;
   @Input() chartname!: string;
   @Input() isModal!: boolean;
@@ -52,14 +58,6 @@ export class EmbedComparePreviewComponent implements OnInit, OnChanges {
   ];
 
   @ViewChild("iframeCodeBlock") iframeCodeBlockElement!: ElementRef;
-
-  constructor(
-    @Inject(PLATFORM_ID) private platformId: object,
-    private route: ActivatedRoute,
-    private sanitizer: DomSanitizer,
-    private SEOHandler: SeoHandlerService,
-    private prismService: PrismService,
-  ) {}
 
   ngOnInit() {
     this.route.params.subscribe((params) => {

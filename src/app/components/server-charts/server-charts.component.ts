@@ -2,12 +2,12 @@ import { isPlatformBrowser } from "@angular/common";
 import {
   Component,
   ElementRef,
-  Inject,
   Input,
   OnChanges,
   PLATFORM_ID,
   ViewChild,
   DOCUMENT,
+  inject,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
@@ -51,6 +51,11 @@ Chart.register(annotationPlugin);
   styleUrl: "./server-charts.component.scss",
 })
 export class ServerChartsComponent implements OnChanges {
+  private platformId = inject(PLATFORM_ID);
+  private document = inject<Document>(DOCUMENT);
+  private dropdownManager = inject(DropdownManagerService);
+  private sanitizer = inject(DomSanitizer);
+
   @ViewChild("tooltipDefault") tooltip!: ElementRef;
   @ViewChild("tooltipGeekbench") tooltipGB!: ElementRef;
 
@@ -159,13 +164,6 @@ export class ServerChartsComponent implements OnChanges {
 
   passmarkCPUData: any[] | null = null;
   passmarkOTHERData: any[] | null = null;
-
-  constructor(
-    @Inject(PLATFORM_ID) private platformId: object,
-    @Inject(DOCUMENT) private document: Document,
-    private dropdownManager: DropdownManagerService,
-    private sanitizer: DomSanitizer,
-  ) {}
 
   ngOnChanges() {
     if (this.serverDetails && this.benchmarksByCategory && this.isBrowser()) {

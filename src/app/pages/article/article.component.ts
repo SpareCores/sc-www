@@ -1,14 +1,13 @@
 import {
   Component,
   ElementRef,
-  Inject,
   PLATFORM_ID,
   Renderer2,
   OnInit,
   ViewChild,
   OnDestroy,
-  Optional,
   DOCUMENT,
+  inject,
 } from "@angular/core";
 import {
   BreadcrumbSegment,
@@ -23,8 +22,6 @@ import { SeoHandlerService } from "../../services/seo-handler.service";
 import { ArticlesService } from "../../services/articles.service";
 import { Lightbox, LightboxModule } from "ngx-lightbox";
 import * as yaml from "js-yaml";
-import { REQUEST } from "../../../express.tokens";
-import { Request } from "express";
 import { initGiscus } from "../../tools/initGiscus";
 import { ToastService } from "../../services/toast.service";
 import { PrismService } from "../../services/prism.service";
@@ -43,6 +40,18 @@ import { Subscription } from "rxjs";
   styleUrl: "./article.component.scss",
 })
 export class ArticleComponent implements OnInit, OnDestroy {
+  private platformId = inject(PLATFORM_ID);
+  private document = inject<Document>(DOCUMENT);
+  private route = inject(ActivatedRoute);
+  private SEOHandler = inject(SeoHandlerService);
+  private markdownService = inject(MarkdownService);
+  private domSanitizer = inject(DomSanitizer);
+  private articleHandler = inject(ArticlesService);
+  private lightbox = inject(Lightbox);
+  private renderer = inject(Renderer2);
+  private toastService = inject(ToastService);
+  private prismService = inject(PrismService);
+
   @ViewChild("articleDiv") articleDiv!: ElementRef;
   private subscription = new Subscription();
 
@@ -56,21 +65,6 @@ export class ArticleComponent implements OnInit, OnDestroy {
   articleBody: any;
   readingTime: number = 0;
   private checkExistInterval: any;
-
-  constructor(
-    @Inject(PLATFORM_ID) private platformId: object,
-    @Inject(DOCUMENT) private document: Document,
-    private route: ActivatedRoute,
-    private SEOHandler: SeoHandlerService,
-    private markdownService: MarkdownService,
-    private domSanitizer: DomSanitizer,
-    private articleHandler: ArticlesService,
-    private lightbox: Lightbox,
-    private renderer: Renderer2,
-    private toastService: ToastService,
-    private prismService: PrismService,
-    @Inject(REQUEST) @Optional() private request_express?: Request,
-  ) {}
 
   ngOnInit() {
     this.subscription.add(

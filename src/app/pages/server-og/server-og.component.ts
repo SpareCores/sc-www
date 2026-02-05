@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
+import { Component, OnInit, OnDestroy, inject } from "@angular/core";
 import { LucideAngularModule } from "lucide-angular";
 import { ActivatedRoute } from "@angular/router";
 import { KeeperAPIService } from "../../services/keeper-api.service";
@@ -13,6 +13,11 @@ import { Subscription } from "rxjs";
   styleUrl: "./server-og.component.scss",
 })
 export class ServerOGComponent implements OnInit, OnDestroy {
+  private route = inject(ActivatedRoute);
+  private keeperAPI = inject(KeeperAPIService);
+  private analytics = inject(AnalyticsService);
+  private SEOHandler = inject(SeoHandlerService);
+
   serverDetails!: any;
 
   features: any[] = [];
@@ -24,13 +29,6 @@ export class ServerOGComponent implements OnInit, OnDestroy {
   benchmarkMeta: any;
 
   private subscription = new Subscription();
-
-  constructor(
-    private route: ActivatedRoute,
-    private keeperAPI: KeeperAPIService,
-    private analytics: AnalyticsService,
-    private SEOHandler: SeoHandlerService,
-  ) {}
 
   ngOnInit() {
     this.subscription.add(

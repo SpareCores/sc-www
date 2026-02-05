@@ -1,12 +1,12 @@
 import {
   Component,
   ElementRef,
-  Inject,
   PLATFORM_ID,
   ViewChild,
   CUSTOM_ELEMENTS_SCHEMA,
   AfterViewInit,
   OnInit,
+  inject,
 } from "@angular/core";
 import {
   BreadcrumbSegment,
@@ -40,11 +40,9 @@ interface Quote {
   styleUrl: "./navigator.component.scss",
 })
 export class AboutNavigatorComponent implements OnInit, AfterViewInit {
-  constructor(
-    @Inject(PLATFORM_ID) private platformId: object,
-    private SEOHandler: SeoHandlerService,
-    private neetoCalService: NeetoCalService,
-  ) {}
+  private platformId = inject(PLATFORM_ID);
+  private SEOHandler = inject(SeoHandlerService);
+  private neetoCalService = inject(NeetoCalService);
 
   vendors: any[] = [
     "✅ Amazon Web Services (Done)",

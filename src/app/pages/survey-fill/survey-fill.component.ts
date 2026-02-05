@@ -1,9 +1,9 @@
 import {
   Component,
-  Inject,
   OnInit,
   OnDestroy,
   PLATFORM_ID,
+  inject,
 } from "@angular/core";
 import { SurveyModule } from "survey-angular-ui";
 import { isPlatformBrowser } from "@angular/common";
@@ -23,6 +23,12 @@ import { Subscription } from "rxjs";
   styleUrl: "./survey-fill.component.scss",
 })
 export class SurveyFillComponent implements OnInit, OnDestroy {
+  private platformId = inject(PLATFORM_ID);
+  private http = inject(HttpClient);
+  private SEOhandler = inject(SeoHandlerService);
+  private analytics = inject(AnalyticsService);
+  private route = inject(ActivatedRoute);
+
   surveyModel!: Model;
   visitorID: string = "";
 
@@ -31,14 +37,6 @@ export class SurveyFillComponent implements OnInit, OnDestroy {
   startedAt: number = 0;
   prevData: any;
   private subscription = new Subscription();
-
-  constructor(
-    @Inject(PLATFORM_ID) private platformId: object,
-    private http: HttpClient,
-    private SEOhandler: SeoHandlerService,
-    private analytics: AnalyticsService,
-    private route: ActivatedRoute,
-  ) {}
 
   ngOnInit() {
     let id = this.route.snapshot.paramMap.get("id");

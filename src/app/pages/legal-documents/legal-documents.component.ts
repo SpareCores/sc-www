@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { ArticlesService, LegalMeta } from "../../services/articles.service";
 import { RouterModule } from "@angular/router";
 import {
@@ -15,17 +15,15 @@ import { TimeToShortDatePipe } from "../../pipes/time-to-short-date.pipe";
   styleUrl: "./legal-documents.component.scss",
 })
 export class LegalDocumentsComponent implements OnInit {
+  private SEOHandler = inject(SeoHandlerService);
+  private articles = inject(ArticlesService);
+
   breadcrumbs: BreadcrumbSegment[] = [
     { name: "Home", url: "/" },
     { name: "Legal", url: "/legal" },
   ];
 
   docs: LegalMeta[] = [];
-
-  constructor(
-    private SEOHandler: SeoHandlerService,
-    private articles: ArticlesService,
-  ) {}
 
   ngOnInit() {
     this.articles.getLegalDocuments().then((articles) => {

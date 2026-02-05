@@ -1,10 +1,4 @@
-import {
-  Component,
-  Inject,
-  OnInit,
-  OnDestroy,
-  PLATFORM_ID,
-} from "@angular/core";
+import { Component, OnInit, OnDestroy, inject } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { AnalyticsService } from "../../services/analytics.service";
 import { KeeperAPIService } from "../../services/keeper-api.service";
@@ -21,19 +15,16 @@ import { Subscription } from "rxjs";
   styleUrl: "./embedded-server-chart.component.scss",
 })
 export class EmbeddedServerChartComponent implements OnInit, OnDestroy {
+  private SEOHandler = inject(SeoHandlerService);
+  private route = inject(ActivatedRoute);
+  private analytics = inject(AnalyticsService);
+  private keeperAPI = inject(KeeperAPIService);
+
   benchmarkMeta!: Benchmark[];
   benchmarksByCategory!: any[];
   serverDetails!: any;
   showChart: string = "all";
   private subscription = new Subscription();
-
-  constructor(
-    @Inject(PLATFORM_ID) private platformId: object,
-    private SEOHandler: SeoHandlerService,
-    private route: ActivatedRoute,
-    private analytics: AnalyticsService,
-    private keeperAPI: KeeperAPIService,
-  ) {}
 
   ngOnInit() {
     this.subscription.add(

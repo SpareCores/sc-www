@@ -3,7 +3,6 @@ import {
   Component,
   ElementRef,
   EventEmitter,
-  Inject,
   Input,
   OnChanges,
   OnDestroy,
@@ -12,6 +11,7 @@ import {
   PLATFORM_ID,
   SimpleChanges,
   ViewChild,
+  inject,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Modal, ModalOptions } from "flowbite";
@@ -43,6 +43,9 @@ const optionsModal: ModalOptions = {
   styleUrl: "./search-bar.component.scss",
 })
 export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
+  private platformId = inject(PLATFORM_ID);
+  private keeperAPI = inject(KeeperAPIService);
+
   @Input() query: any = {};
   @Input() searchParameters: any[] = [];
   @Input() extraParameters: any = {};
@@ -77,11 +80,6 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
 
   valueChangeDebouncer: Subject<number> = new Subject<number>();
   private subscription = new Subscription();
-
-  constructor(
-    @Inject(PLATFORM_ID) private platformId: object,
-    private keeperAPI: KeeperAPIService,
-  ) {}
 
   ngOnInit() {
     this.keeperAPI.getComplianceFrameworks().then((response: any) => {

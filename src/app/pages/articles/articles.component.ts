@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
+import { Component, OnInit, OnDestroy, inject } from "@angular/core";
 import { ArticleMeta, ArticlesService } from "../../services/articles.service";
 import {
   BreadcrumbSegment,
@@ -16,6 +16,10 @@ import { Subscription } from "rxjs";
   styleUrl: "./articles.component.scss",
 })
 export class ArticlesComponent implements OnInit, OnDestroy {
+  private SEOHandler = inject(SeoHandlerService);
+  private route = inject(ActivatedRoute);
+  private articleHandler = inject(ArticlesService);
+
   breadcrumbs: BreadcrumbSegment[] = [
     { name: "Home", url: "/" },
     { name: "Articles", url: "/articles" },
@@ -23,12 +27,6 @@ export class ArticlesComponent implements OnInit, OnDestroy {
 
   articles: ArticleMeta[] = [];
   private subscription = new Subscription();
-
-  constructor(
-    private SEOHandler: SeoHandlerService,
-    private route: ActivatedRoute,
-    private articleHandler: ArticlesService,
-  ) {}
 
   ngOnInit() {
     this.subscription.add(

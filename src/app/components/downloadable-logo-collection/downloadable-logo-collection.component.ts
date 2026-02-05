@@ -2,11 +2,11 @@ import { isPlatformBrowser, NgOptimizedImage } from "@angular/common";
 import {
   Component,
   HostListener,
-  Inject,
   Input,
   OnChanges,
   PLATFORM_ID,
   SimpleChanges,
+  inject,
 } from "@angular/core";
 import { AnalyticsService } from "../../services/analytics.service";
 
@@ -23,6 +23,9 @@ type DownloadItemVm = {
   styleUrl: "./downloadable-logo-collection.component.scss",
 })
 export class DownloadableLogoCollectionComponent implements OnChanges {
+  private readonly platformId = inject(PLATFORM_ID);
+  private readonly analytics = inject(AnalyticsService);
+
   @Input() folderName: string = "";
   @Input() fileNames: string[] = [];
   @Input() basePath: string = "assets/images/logos/download";
@@ -32,10 +35,7 @@ export class DownloadableLogoCollectionComponent implements OnChanges {
 
   private readonly isBrowser: boolean;
 
-  constructor(
-    @Inject(PLATFORM_ID) private readonly platformId: object,
-    private readonly analytics: AnalyticsService,
-  ) {
+  constructor() {
     this.isBrowser = isPlatformBrowser(this.platformId);
   }
 

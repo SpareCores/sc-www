@@ -1,4 +1,4 @@
-import { Component, Inject, PLATFORM_ID } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { ServerCompareChartsComponent } from "../../components/server-compare-charts/server-compare-charts.component";
 import { LucideAngularModule } from "lucide-angular";
 import { ActivatedRoute } from "@angular/router";
@@ -16,6 +16,11 @@ import { OnInit } from "@angular/core";
   styleUrl: "./embedded-compare-chart.component.scss",
 })
 export class EmbeddedCompareChartComponent implements OnInit {
+  private SEOHandler = inject(SeoHandlerService);
+  private route = inject(ActivatedRoute);
+  private analytics = inject(AnalyticsService);
+  private keeperAPI = inject(KeeperAPIService);
+
   showChart: string = "all";
 
   instancesRaw: any;
@@ -167,14 +172,6 @@ export class EmbeddedCompareChartComponent implements OnInit {
       show_more: false,
     },
   ];
-
-  constructor(
-    @Inject(PLATFORM_ID) private platformId: object,
-    private SEOHandler: SeoHandlerService,
-    private route: ActivatedRoute,
-    private analytics: AnalyticsService,
-    private keeperAPI: KeeperAPIService,
-  ) {}
 
   ngOnInit() {
     this.route.queryParams.subscribe(() => {
