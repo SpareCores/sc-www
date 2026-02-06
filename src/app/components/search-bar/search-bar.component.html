@@ -17,6 +17,8 @@
           class="flex justify-between cursor-pointer"
           (click)="toggleCategory(item)"
           tabindex="0"
+          (keydown.enter)="toggleCategory(item)"
+          (keydown.space)="toggleCategory(item); $event.preventDefault()"
         >
           <div class="text-white flex gap-2 items-center">
             <lucide-icon
