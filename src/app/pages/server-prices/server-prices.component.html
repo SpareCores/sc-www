@@ -536,6 +536,8 @@
       <li
         class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
         (click)="selectAllocation(item)"
+        (keydown.enter)="selectAllocation(item)"
+        (keydown.space)="selectAllocation(item); $event.preventDefault()"
         tabindex="0"
       >
         <div class="text-white text-sm">{{ item.name }}</div>
