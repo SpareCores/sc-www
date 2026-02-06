@@ -6,7 +6,6 @@ import {
   OnChanges,
   PLATFORM_ID,
   ViewChild,
-  DOCUMENT,
   inject,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
@@ -52,7 +51,6 @@ Chart.register(annotationPlugin);
 })
 export class ServerChartsComponent implements OnChanges {
   private platformId = inject(PLATFORM_ID);
-  private document = inject<Document>(DOCUMENT);
   private dropdownManager = inject(DropdownManagerService);
   private sanitizer = inject(DomSanitizer);
 
