@@ -228,7 +228,9 @@
                       <div class="flex items-center gap-1">
                         <input
                           type="checkbox"
-                          id="filter_enum_{{ parameter.name }}"
+                          id="filter_enum_{{ parameter.name }}_{{
+                            enum?.value || enum
+                          }}"
                           data-ph-capture-attribute-sc-event="server listing filter"
                           data-ph-capture-attribute-server-listing-filter-type="checkbox"
                           [attr.data-ph-capture-attribute-server-listing-filter-id]="
@@ -255,7 +257,9 @@
                       <div class="flex items-center gap-1">
                         <input
                           type="checkbox"
-                          id="filter_enum_{{ parameter.name }}"
+                          id="filter_enum_{{ parameter.name }}_{{
+                            enum?.value || enum
+                          }}"
                           data-ph-capture-attribute-sc-event="server listing filter"
                           data-ph-capture-attribute-server-listing-filter-type="checkbox"
                           [attr.data-ph-capture-attribute-server-listing-filter-id]="
@@ -282,7 +286,9 @@
                       <div class="flex items-center gap-1">
                         <input
                           type="checkbox"
-                          id="filter_enum_{{ parameter.name }}"
+                          id="filter_enum_{{ parameter.name }}_{{
+                            enum?.value || enum
+                          }}"
                           data-ph-capture-attribute-sc-event="server listing filter"
                           data-ph-capture-attribute-server-listing-filter-type="checkbox"
                           [attr.data-ph-capture-attribute-server-listing-filter-id]="
@@ -309,7 +315,9 @@
                       <div class="flex items-center gap-1">
                         <input
                           type="checkbox"
-                          id="filter_enum_{{ parameter.name }}"
+                          id="filter_enum_{{ parameter.name }}_{{
+                            enum?.value || enum
+                          }}"
                           data-ph-capture-attribute-sc-event="server listing filter"
                           data-ph-capture-attribute-server-listing-filter-type="checkbox"
                           [attr.data-ph-capture-attribute-server-listing-filter-id]="
