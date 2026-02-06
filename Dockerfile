@@ -1,4 +1,4 @@
-FROM public.ecr.aws/docker/library/node:20 AS build
+FROM public.ecr.aws/docker/library/node:lts-jod AS build
 
 ARG BACKEND_BASE_URI=https://keeper.sparecores.net
 ENV NG_APP_BACKEND_BASE_URI=$BACKEND_BASE_URI
@@ -35,7 +35,7 @@ COPY . .
 RUN npm run build \
   --mount=type=secret,id=aws-key-id,env=AWS_ACCESS_KEY_ID
 
-FROM public.ecr.aws/docker/library/node:lts-iron
+FROM public.ecr.aws/docker/library/node:lts-jod
 COPY package*.json ./
 RUN npm install --omit=dev --no-audit
 COPY --from=build /usr/src/app/dist/sc-www/server /usr/share/www
