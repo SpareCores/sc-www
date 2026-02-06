@@ -6,7 +6,6 @@
     "prebuild": "node ./prebuild.js",
     "start": "ng serve",
     "build": "ng build",
-    "postbuild": "./amplify-manifester.sh",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:sc-www": "node dist/sc-www/server/server.mjs",
