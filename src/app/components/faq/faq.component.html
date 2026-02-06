@@ -7,13 +7,15 @@
         itemprop="mainEntity"
         itemtype="https://schema.org/Question"
       >
-        <div
-          class="flex items-center justify-between cursor-pointer mb-2 border-b border-solid border-gray-200 py-3"
+        <button
+          type="button"
+          class="flex items-center justify-between cursor-pointer mb-2 border-b border-solid border-gray-200 py-3 w-full text-left bg-transparent"
           (click)="toggleFAQ(i)"
+          [attr.aria-expanded]="activeFAQ === i"
         >
           <h4 itemprop="name">{{ item.question }}</h4>
           <lucide-icon [name]="FAQIcon(i)"></lucide-icon>
-        </div>
+        </button>
         <p
           itemscope=""
           itemprop="acceptedAnswer"
