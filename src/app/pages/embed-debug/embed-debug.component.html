@@ -58,12 +58,6 @@
     @if (!chartname) {
       <p class="text-white">Select which chart to show.</p>
     }
-    <script>
-      window.onload = function () {
-        var iframe = document.getElementById("myIframe");
-        iframe.style.height = iframe.offsetWidth * 0.6 + "px";
-      };
-    </script>
-    <iframe id="myIframe" [src]="src" [style]="getStyles()"></iframe>
+    <iframe #myIframe [src]="src" [style]="getStyles()"></iframe>
   </div>
 }

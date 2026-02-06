@@ -1,11 +1,13 @@
 import { isPlatformBrowser } from "@angular/common";
 import {
+  AfterViewInit,
   Component,
   Input,
   OnChanges,
   OnInit,
   PLATFORM_ID,
   ElementRef,
+  HostListener,
   ViewChild,
   inject,
 } from "@angular/core";
@@ -21,7 +23,7 @@ import { PrismService } from "../../services/prism.service";
   templateUrl: "./embed-debug.component.html",
   styleUrl: "./embed-debug.component.scss",
 })
-export class EmbedDebugComponent implements OnInit, OnChanges {
+export class EmbedDebugComponent implements OnInit, OnChanges, AfterViewInit {
   private platformId = inject(PLATFORM_ID);
   private route = inject(ActivatedRoute);
   private sanitizer = inject(DomSanitizer);
@@ -52,6 +54,7 @@ export class EmbedDebugComponent implements OnInit, OnChanges {
   ];
 
   @ViewChild("iframeCodeBlock") iframeCodeBlockElement!: ElementRef;
+  @ViewChild("myIframe") iframeRef?: ElementRef<HTMLIFrameElement>;
 
   ngOnInit() {
     this.route.params.subscribe((params) => {
@@ -69,8 +72,28 @@ export class EmbedDebugComponent implements OnInit, OnChanges {
     this.updateSrc();
   }
 
+  ngAfterViewInit() {
+    this.adjustIframeHeight();
+  }
+
+  @HostListener("window:resize")
+  onResize() {
+    this.adjustIframeHeight();
+  }
+
   isBrowser() {
     return isPlatformBrowser(this.platformId);
+  }
+
+  private adjustIframeHeight() {
+    if (!this.isBrowser() || !this.iframeRef?.nativeElement) {
+      return;
+    }
+
+    const iframeEl = this.iframeRef.nativeElement;
+    const heightPx = iframeEl.offsetWidth * 0.6 + "px";
+    this.height = heightPx;
+    iframeEl.style.height = heightPx;
   }
 
   getStyles() {
