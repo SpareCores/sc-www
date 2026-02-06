@@ -23,7 +23,7 @@ describe("Server listing", () => {
     // count lines
     E2EEvent.countElements(
       `[id="servers_table"]`,
-      `[id="server_table_data_line"]`,
+      `.server_table_data_line`,
       25,
     );
 

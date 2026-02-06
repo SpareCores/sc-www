@@ -1,6 +1,6 @@
-import { CommonModule, isPlatformBrowser } from "@angular/common";
+import { isPlatformBrowser } from "@angular/common";
 import { HttpClient } from "@angular/common/http";
-import { Component, Inject, OnInit, PLATFORM_ID } from "@angular/core";
+import { Component, OnInit, PLATFORM_ID, inject } from "@angular/core";
 import { firstValueFrom } from "rxjs";
 import { ThemeTextComponent } from "../../components/theme-text/theme-text.component";
 import { DesignPageCardComponent } from "../../components/design-page-card/design-page-card.component";
@@ -26,7 +26,6 @@ type LogoDownloadManifest = {
 @Component({
   selector: "app-design",
   imports: [
-    CommonModule,
     ThemeTextComponent,
     DesignPageCardComponent,
     DownloadableLogoCollectionComponent,
@@ -35,16 +34,14 @@ type LogoDownloadManifest = {
   styleUrls: ["./design.component.scss"],
 })
 export class DesignComponent implements OnInit {
+  private http = inject(HttpClient);
+  private toastService = inject(ToastService);
+  private readonly platformId = inject(PLATFORM_ID);
+
   logoDownloadsBasePath: string = "assets/images/logos/download";
   logoDownloadItems: LogoDownloadItems[] = [];
   logoDownloadManifestPath: string =
     "assets/images/logos/download/download-manifest.json";
-
-  constructor(
-    private http: HttpClient,
-    private toastService: ToastService,
-    @Inject(PLATFORM_ID) private readonly platformId: object,
-  ) {}
 
   async ngOnInit(): Promise<void> {
     if (!isPlatformBrowser(this.platformId)) return;

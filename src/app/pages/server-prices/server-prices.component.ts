@@ -1,11 +1,11 @@
 import {
   Component,
-  Inject,
   PLATFORM_ID,
   OnInit,
   ViewChild,
   ElementRef,
   OnDestroy,
+  inject,
 } from "@angular/core";
 import {
   BreadcrumbSegment,
@@ -15,7 +15,6 @@ import { KeeperAPIService } from "../../services/keeper-api.service";
 import { OrderDir, ServerPriceWithPKs } from "../../../../sdk/data-contracts";
 import { ActivatedRoute, Params, Router, RouterModule } from "@angular/router";
 import { CommonModule, isPlatformBrowser } from "@angular/common";
-import { StorageHandlerService } from "../../services/storage-handler.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { FormsModule } from "@angular/forms";
 import { LucideAngularModule } from "lucide-angular";
@@ -89,6 +88,16 @@ export type RegionVendorMetadata = {
   styleUrl: "./server-prices.component.scss",
 })
 export class ServerPricesComponent implements OnInit, OnDestroy {
+  private platformId = inject(PLATFORM_ID);
+  private keeperAPI = inject(KeeperAPIService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private SEOHandler = inject(SeoHandlerService);
+  private analytics = inject(AnalyticsService);
+  private dropdownManager = inject(DropdownManagerService);
+  private serverCompare = inject(ServerCompareService);
+  private toastService = inject(ToastService);
+
   private subscription = new Subscription();
 
   isCollapsed = false;
@@ -264,19 +273,6 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
 
   selectedCountries: string[] = [];
   selectedRegions: string[] = [];
-
-  constructor(
-    @Inject(PLATFORM_ID) private platformId: object,
-    private keeperAPI: KeeperAPIService,
-    private route: ActivatedRoute,
-    private router: Router,
-    private SEOHandler: SeoHandlerService,
-    private analytics: AnalyticsService,
-    private dropdownManager: DropdownManagerService,
-    private serverCompare: ServerCompareService,
-    private storageHandler: StorageHandlerService,
-    private toastService: ToastService,
-  ) {}
 
   ngOnInit() {
     this.SEOHandler.updateTitleAndMetaTags(

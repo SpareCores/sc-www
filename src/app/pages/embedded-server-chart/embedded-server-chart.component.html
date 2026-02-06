@@ -8,7 +8,7 @@
     [isEmbedded]="true"
     style="height: calc(100% - 64px)"
   ></app-server-charts>
-  <button *ngIf="serverDetails" class="w-full flex">
+  @if (serverDetails) {
     <a
       class="w-full flex flex-col justify-center items-center text-white bg-primary px-6 py-4 hover:text-gray-200"
       target="_blank"
@@ -36,5 +36,5 @@
         </div>
       </div>
     </a>
-  </button>
+  }
 </div>

@@ -1,12 +1,12 @@
-import { CommonModule, DOCUMENT, isPlatformBrowser } from "@angular/common";
+import { isPlatformBrowser } from "@angular/common";
 import {
   AfterViewInit,
   Component,
-  Inject,
   OnInit,
   OnDestroy,
-  Optional,
   PLATFORM_ID,
+  DOCUMENT,
+  inject,
 } from "@angular/core";
 import { Meta } from "@angular/platform-browser";
 import {
@@ -27,26 +27,27 @@ import { NeetoCalService } from "./services/neeto-cal.service";
 
 @Component({
   selector: "app-root",
-  imports: [HeaderComponent, FooterComponent, RouterModule, CommonModule],
+  imports: [HeaderComponent, FooterComponent, RouterModule],
   templateUrl: "./app.component.html",
   styleUrl: "./app.component.scss",
 })
 export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
+  private platformId = inject(PLATFORM_ID);
+  private document = inject<Document>(DOCUMENT);
+  private router = inject(Router);
+  private analytics = inject(AnalyticsService);
+  private metaTagService = inject(Meta);
+  private neetoCalService = inject(NeetoCalService);
+
   title = "sc-www";
 
   showHeader = true;
   showFooter = true;
   private subscription = new Subscription();
 
-  constructor(
-    @Inject(PLATFORM_ID) private platformId: object,
-    @Optional() @Inject("sentryClient") private sentryClient: any,
-    @Inject(DOCUMENT) private document: Document,
-    private router: Router,
-    private analytics: AnalyticsService,
-    private metaTagService: Meta,
-    private neetoCalService: NeetoCalService,
-  ) {
+  constructor() {
+    const router = this.router;
+
     this.subscription.add(
       router.events.subscribe((event: Event) => {
         if (event instanceof NavigationStart) {

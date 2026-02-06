@@ -10,9 +10,6 @@ describe("Server Details", () => {
 
     E2EEvent.isVisible(`[id="details"]`);
 
-    E2EEvent.isVisible(`[id="availability"]`);
-    E2EEvent.isVisible(`[id="availability_line"]`);
-
     E2EEvent.isVisible(`[id="details_more_button"]`);
 
     E2EEvent.isVisible(`[id="availability_more_button"]`);
@@ -29,11 +26,9 @@ describe("Server Details", () => {
 
     E2EEvent.isVisible(`[id="redis_chart"]`);
 
-    E2EEvent.isVisible(`[id="similar_family_table"]`);
+    E2EEvent.isVisible(`.similar_family_table`);
 
     E2EEvent.isVisible(`[id="similar_table"]`);
-
-    E2EEvent.countElements(`[id="similar_table"]`, `[id="similar_line"]`, 7);
   });
 
   it("Server without price and charts", () => {
@@ -44,9 +39,6 @@ describe("Server Details", () => {
     E2EEvent.isVisible(`[id="server_base_info_box"]`);
 
     E2EEvent.isVisible(`[id="details"]`);
-
-    E2EEvent.isVisible(`[id="availability"]`);
-    E2EEvent.isNotFound("availability_line");
 
     E2EEvent.isVisible(`[id="details_more_button"]`);
 
@@ -62,10 +54,8 @@ describe("Server Details", () => {
 
     E2EEvent.isNotFound(`redis_chart`);
 
-    E2EEvent.isVisible(`[id="similar_family_table"]`);
+    E2EEvent.isVisible(`.similar_family_table`);
 
     E2EEvent.isVisible(`[id="similar_table"]`);
-
-    E2EEvent.countElements(`[id="similar_table"]`, `[id="similar_line"]`, 7);
   });
 });

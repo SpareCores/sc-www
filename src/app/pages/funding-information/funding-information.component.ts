@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 
 @Component({
@@ -7,7 +7,7 @@ import { SeoHandlerService } from "../../services/seo-handler.service";
   styleUrl: "./funding-information.component.scss",
 })
 export class FundingInformationComponent implements OnInit {
-  constructor(private seoHandler: SeoHandlerService) {}
+  private seoHandler = inject(SeoHandlerService);
 
   ngOnInit(): void {
     this.seoHandler.updateTitleAndMetaTags(

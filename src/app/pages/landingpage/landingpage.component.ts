@@ -1,12 +1,12 @@
 import {
   CUSTOM_ELEMENTS_SCHEMA,
   Component,
-  Inject,
   PLATFORM_ID,
   OnInit,
   ViewChild,
   ElementRef,
   AfterViewInit,
+  inject,
 } from "@angular/core";
 import { ArticleMeta, ArticlesService } from "../../services/articles.service";
 import { CommonModule, isPlatformBrowser } from "@angular/common";
@@ -38,6 +38,14 @@ import { PrismService } from "../../services/prism.service";
   styleUrl: "./landingpage.component.scss",
 })
 export class LandingpageComponent implements OnInit, AfterViewInit {
+  private platformId = inject(PLATFORM_ID);
+  private keeperAPI = inject(KeeperAPIService);
+  private SEOHandler = inject(SeoHandlerService);
+  private articles = inject(ArticlesService);
+  private analyticsService = inject(AnalyticsService);
+  private neetoCalService = inject(NeetoCalService);
+  private prismService = inject(PrismService);
+
   featuredArticles: ArticleMeta[] = [];
 
   priceValue = "$0.00150";
@@ -56,16 +64,6 @@ export class LandingpageComponent implements OnInit, AfterViewInit {
   spinStart: number = 0;
 
   @ViewChild("tooltipVendors") tooltip!: ElementRef;
-
-  constructor(
-    @Inject(PLATFORM_ID) private platformId: object,
-    private keeperAPI: KeeperAPIService,
-    private SEOHandler: SeoHandlerService,
-    private articles: ArticlesService,
-    private analyticsService: AnalyticsService,
-    private neetoCalService: NeetoCalService,
-    private prismService: PrismService,
-  ) {}
 
   ngOnInit() {
     this.SEOHandler.updateTitleAndMetaTags(

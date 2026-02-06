@@ -1,17 +1,17 @@
 import {
   Component,
-  Inject,
   Input,
   PLATFORM_ID,
   OnInit,
   OnChanges,
   ElementRef,
   ViewChild,
+  inject,
 } from "@angular/core";
 import { DomSanitizer } from "@angular/platform-browser";
 import { ActivatedRoute } from "@angular/router";
 import { SeoHandlerService } from "../../services/seo-handler.service";
-import { CommonModule, isPlatformBrowser } from "@angular/common";
+import { isPlatformBrowser } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { LucideAngularModule } from "lucide-angular";
 import { PrismService } from "../../services/prism.service";
@@ -23,11 +23,17 @@ interface ChartOption {
 
 @Component({
   selector: "app-embed-compare-preview",
-  imports: [FormsModule, CommonModule, LucideAngularModule],
+  imports: [FormsModule, LucideAngularModule],
   templateUrl: "./embed-compare-preview.component.html",
   styleUrl: "./embed-compare-preview.component.scss",
 })
 export class EmbedComparePreviewComponent implements OnInit, OnChanges {
+  private platformId = inject(PLATFORM_ID);
+  private route = inject(ActivatedRoute);
+  private sanitizer = inject(DomSanitizer);
+  private SEOHandler = inject(SeoHandlerService);
+  private prismService = inject(PrismService);
+
   @Input() instances!: string;
   @Input() chartname!: string;
   @Input() isModal!: boolean;
@@ -52,14 +58,6 @@ export class EmbedComparePreviewComponent implements OnInit, OnChanges {
   ];
 
   @ViewChild("iframeCodeBlock") iframeCodeBlockElement!: ElementRef;
-
-  constructor(
-    @Inject(PLATFORM_ID) private platformId: object,
-    private route: ActivatedRoute,
-    private sanitizer: DomSanitizer,
-    private SEOHandler: SeoHandlerService,
-    private prismService: PrismService,
-  ) {}
 
   ngOnInit() {
     this.route.params.subscribe((params) => {

@@ -1,5 +1,5 @@
 import { HttpClient } from "@angular/common/http";
-import { Inject, Injectable, PLATFORM_ID } from "@angular/core";
+import { Injectable, PLATFORM_ID, inject } from "@angular/core";
 import { MYHTTPClient } from "./my_http/my-http";
 import { Server } from "../../../sdk/Server";
 import { Servers } from "../../../sdk/Servers";
@@ -22,6 +22,9 @@ import { BenchmarkConfigs } from "../../../sdk/BenchmarkConfigs";
   providedIn: "root",
 })
 export class KeeperAPIService {
+  private platformId = inject(PLATFORM_ID);
+  private httpClient = inject(HttpClient);
+
   public myHttp = new MYHTTPClient(this.httpClient, this.platformId);
 
   public SearchController: Servers = new Servers(this.myHttp);
@@ -35,11 +38,6 @@ export class KeeperAPIService {
     this.myHttp,
   );
   public V2Controller: V2 = new V2(this.myHttp);
-
-  constructor(
-    @Inject(PLATFORM_ID) private platformId: object,
-    private httpClient: HttpClient,
-  ) {}
 
   public getServerV2(vendor: string, id: string): Promise<any> {
     return this.V2Controller.getServerWithoutRelationsV2ServerVendorServerGet({

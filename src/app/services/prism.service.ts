@@ -1,4 +1,4 @@
-import { Injectable, Inject, PLATFORM_ID } from "@angular/core";
+import { Injectable, PLATFORM_ID, inject } from "@angular/core";
 import { isPlatformBrowser } from "@angular/common";
 
 // Prism core
@@ -31,7 +31,9 @@ import "../../assets/prism-js-override.css";
   providedIn: "root",
 })
 export class PrismService {
-  constructor(@Inject(PLATFORM_ID) private platformId: object) {
+  private platformId = inject(PLATFORM_ID);
+
+  constructor() {
     // plugin configs
     if (isPlatformBrowser(this.platformId)) {
       const Prism = (window as any).Prism;

@@ -14,7 +14,7 @@ describe("Server prices", () => {
 
     E2EEvent.countElements(
       `[id="server_prices_table"]`,
-      `[id="server_table_data_line"]`,
+      `.server_table_data_line`,
       25,
     );
 

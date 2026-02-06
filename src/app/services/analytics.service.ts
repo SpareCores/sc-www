@@ -1,5 +1,5 @@
 import { isPlatformBrowser } from "@angular/common";
-import { Inject, Injectable, PLATFORM_ID } from "@angular/core";
+import { Injectable, PLATFORM_ID, inject } from "@angular/core";
 import * as Sentry from "@sentry/angular";
 import posthog from "posthog-js";
 
@@ -12,9 +12,9 @@ const SENTRY_DSN = import.meta.env.NG_APP_SENTRY_DSN;
   providedIn: "root",
 })
 export class AnalyticsService {
-  trackingInitialized = false;
+  private platformId = inject(PLATFORM_ID);
 
-  constructor(@Inject(PLATFORM_ID) private platformId: object) {}
+  trackingInitialized = false;
 
   public initializeTracking() {
     if (!isPlatformBrowser(this.platformId)) {

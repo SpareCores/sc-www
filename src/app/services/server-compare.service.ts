@@ -1,4 +1,4 @@
-import { Injectable, OnDestroy } from "@angular/core";
+import { Injectable, OnDestroy, inject } from "@angular/core";
 import { ServerPKs } from "../../../sdk/data-contracts";
 import { Router } from "@angular/router";
 import { Subject } from "rxjs";
@@ -26,10 +26,10 @@ export interface ServerCompareItem {
   providedIn: "root",
 })
 export class ServerCompareService implements OnDestroy {
+  private router = inject(Router);
+
   public selectedForCompare: ServerCompare[] = [];
   public selectionChanged: Subject<ServerCompare[]> = new Subject();
-
-  constructor(private router: Router) {}
 
   toggleCompare(event: boolean, server: ServerCompareItem) {
     if (event) {

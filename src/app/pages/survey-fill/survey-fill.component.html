@@ -1,5 +1,7 @@
 <div class="w-full bg-primary content_outer">
-  <div class="content text-white" *ngIf="isBrowser()">
-    <survey [model]="surveyModel"></survey>
-  </div>
+  @if (isBrowser()) {
+    <div class="content text-white">
+      <survey [model]="surveyModel"></survey>
+    </div>
+  }
 </div>

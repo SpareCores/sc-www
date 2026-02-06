@@ -1,5 +1,5 @@
 import { HttpClient } from "@angular/common/http";
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
 import { firstValueFrom } from "rxjs";
 
 export type ArticleMeta = {
@@ -37,7 +37,7 @@ export type LegalMeta = {
   providedIn: "root",
 })
 export class ArticlesService {
-  constructor(private http: HttpClient) {}
+  private http = inject(HttpClient);
 
   async getArticlesByType(category?: string): Promise<ArticleMeta[]> {
     let files = await firstValueFrom(
