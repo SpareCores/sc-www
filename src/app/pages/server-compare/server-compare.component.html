@@ -304,14 +304,12 @@
       </div>
       @if (instancesRaw) {
         <div class="space-y-4 flex flex-col">
-          @if (instancesRaw) {
-            <app-embed-compare-preview
-              [instances]="instancesRaw"
-              [isModal]="true"
-              [charts]="embeddableCharts"
-            >
-            </app-embed-compare-preview>
-          }
+          <app-embed-compare-preview
+            [instances]="instancesRaw"
+            [isModal]="true"
+            [charts]="embeddableCharts"
+          >
+          </app-embed-compare-preview>
         </div>
       }
     </div>
