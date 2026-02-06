@@ -553,13 +553,14 @@
     class="py-2 px-1 text-sm text-gray-700"
     aria-labelledby="dropdownDefaultButton"
   >
-    `@for` (item of pageLimits; track item) {
+    @for (item of pageLimits; track item) {
       <li
         class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
         (click)="selectPageSize(item)"
         (keydown.enter)="selectPageSize(item)"
         (keydown.space)="selectPageSize(item); $event.preventDefault()"
         role="option"
+        [attr.aria-selected]="item === limit"
         tabindex="0"
       >
         <div class="text-white text-sm">{{ item }}</div>
