@@ -24,7 +24,6 @@
       <input
         type="text"
         [(ngModel)]="height"
-        min="400"
         (ngModelChange)="updateSrc()"
         class="w-20 p-2 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm text-black"
       />
@@ -32,7 +31,6 @@
       <input
         type="text"
         [(ngModel)]="width"
-        min="400"
         (ngModelChange)="updateSrc()"
         class="w-20 p-2 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm text-black"
       />
@@ -49,13 +47,12 @@
         }
       </select>
     </div>
+    <h3 class="text-white text-xl">Iframe Preview</h3>
     @if (chartname) {
       <div class="relative">
         <pre><code #iframeCodeBlock class="language-html">{{ getIframeHTML() }}</code></pre>
       </div>
-    }
-    <h3 class="text-white text-xl">Iframe Preview</h3>
-    @if (!chartname) {
+    } @else {
       <p class="text-white">Select which chart to show.</p>
     }
     <iframe #myIframe [src]="src" [style]="getStyles()"></iframe>

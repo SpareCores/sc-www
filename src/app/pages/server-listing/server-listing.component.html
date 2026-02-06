@@ -228,8 +228,6 @@
                                 </span>
                                 @if (showAPIReference(item)) {
                                   <span class="text-emerald-400">|</span>
-                                }
-                                @if (showAPIReference(item)) {
                                   <span class="whitespace-nowrap"
                                     >{{ item.api_reference }}
                                   </span>
@@ -333,13 +331,10 @@
                                 selectedBenchmarkConfig.unit_abbreviation
                               }}</span
                             >
-                          }
-                          @if (item.selected_benchmark_score_per_price) {
                             <div class="text-xs text-white flex gap-1">
                               <span class="whitespace-nowrap">for $1/hour</span>
                             </div>
-                          }
-                          @if (!item.selected_benchmark_score_per_price) {
+                          } @else {
                             <span>-</span>
                           }
                         </td>
@@ -533,7 +528,7 @@
       <button
         class="flex justify-center bg-red-400 text-white py-2 px-4 rounded-lg font-bold hover:bg-red-500"
         data-ph-capture-attribute-sc-event="server listing compare"
-        data-ph-capture-attribute-server-listing-compare-action="open"
+        data-ph-capture-attribute-server-listing-compare-action="clear"
         (click)="clearCompare()"
       >
         Clear
@@ -667,7 +662,7 @@
           <div class="flex flex-col gap-2 flex-1 min-h-0">
             <div class="relative mx-2">
               <div
-                class="border border-emerald-400 absolute inset-x-0start-0 flex items-center pointer-events-none z-20 px-3 bg-secondary rounded-l-lg w-12 h-full"
+                class="border border-emerald-400 absolute inset-x-0 start-0 flex items-center pointer-events-none z-20 px-3 bg-secondary rounded-l-lg w-12 h-full"
               >
                 <lucide-icon
                   class="text-emerald-400 w-5 h-5"

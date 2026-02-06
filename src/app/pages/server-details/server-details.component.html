@@ -20,7 +20,7 @@
     @if (serverDetails) {
       <div
         id="server_base_info_box"
-        class="mx-2 xl:mx-0 flex flex-wrap justify-between rounded-lg gap-8 px-6 py-6 bg-secondary border-emerald-400 border boder-solid mt-12"
+        class="mx-2 xl:mx-0 flex flex-wrap justify-between rounded-lg gap-8 px-6 py-6 bg-secondary border-emerald-400 border border-solid mt-12"
       >
         <div class="flex gap-8 flex-grow lg:w-1/2 w-full">
           <div class="flex gap-4 flex-col min-w-32">
@@ -404,7 +404,7 @@
           <div class="flex items-center" style="min-height: 42px">
             <h3 class="text-2xl">Servers of the Same Family</h3>
           </div>
-          <table class="items_table_similar" id="similar_family_table">
+          <table class="items_table_similar" class="similar_family_table">
             <thead>
               <tr>
                 <th>INSTANCE</th>
@@ -441,6 +441,7 @@
               <button
                 id="similar_type_button"
                 data-ph-capture-attribute-sc-event="server similar options select"
+                data-dropdown-toggle="similar_server_options"
                 class="dropdown_button"
                 type="button"
               >
@@ -538,11 +539,11 @@
     class="py-2 px-1 text-sm text-gray-700"
     aria-labelledby="dropdownDefaultButton"
   >
-    @for (item of allocationFilters; track item) {
+    @for (item of allocationFilters; track item; let i = $index) {
       <li class="flex py-1 gap-2 items-center">
         <input
           type="checkbox"
-          id="filter_allocation"
+          id="filter_allocation_{{ i }}"
           [(ngModel)]="item.selected"
           (ngModelChange)="refreshPricesGraphs()"
           class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer"
@@ -561,11 +562,11 @@
     class="py-2 px-1 text-sm text-gray-700"
     aria-labelledby="dropdownDefaultButton"
   >
-    @for (item of allocationFilters; track item) {
+    @for (item of allocationFilters; track item; let i = $index) {
       <li class="flex py-1 gap-2 items-center">
         <input
           type="checkbox"
-          id="filter_allocation_2"
+          id="filter_allocation_2_{{ i }}"
           [(ngModel)]="item.selected"
           (ngModelChange)="refreshPricesGraphs()"
           class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer"

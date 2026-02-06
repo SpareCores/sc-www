@@ -11,12 +11,14 @@
   </div>
 
   <div class="filters overflow-hidden bg-secondary">
-    @for (item of filterCategories; track item) {
+    @for (item of filterCategories; track item.category_id) {
       <div class="mx-2 p-3 border-b border-gray-200">
         <div
           class="flex justify-between cursor-pointer"
           (click)="toggleCategory(item)"
           tabindex="0"
+          role="button"
+          [attr.aria-expanded]="!item.collapsed"
           (keydown.enter)="toggleCategory(item)"
           (keydown.space)="toggleCategory(item); $event.preventDefault()"
         >
@@ -379,7 +381,7 @@
                               <div class="flex gap-2 align-center">
                                 <input
                                   type="checkbox"
-                                  id="filter_country_{{ parameter.name }}"
+                                  id="filter_country_{{ country.country_id }}"
                                   data-ph-capture-attribute-sc-event="server listing filter"
                                   data-ph-capture-attribute-server-listing-filter-type="checkbox"
                                   [attr.data-ph-capture-attribute-server-listing-filter-id]="
@@ -545,7 +547,7 @@
           <div>
             <div class="text-white">Suggested filter parameters</div>
             <div class="text-white font-medium text-sm flex flex-col pl-2">
-              @for (item of modalResponseStr; track item) {
+              @for (item of modalResponseStr; track $index) {
                 <div>
                   {{ item }}
                 </div>

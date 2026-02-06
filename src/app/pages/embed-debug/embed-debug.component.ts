@@ -24,6 +24,7 @@ import { PrismService } from "../../services/prism.service";
   styleUrl: "./embed-debug.component.scss",
 })
 export class EmbedDebugComponent implements OnInit, OnChanges, AfterViewInit {
+  private static readonly ASPECT_RATIO = 0.6;
   private platformId = inject(PLATFORM_ID);
   private route = inject(ActivatedRoute);
   private sanitizer = inject(DomSanitizer);
@@ -73,9 +74,8 @@ export class EmbedDebugComponent implements OnInit, OnChanges, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.adjustIframeHeight();
+    setTimeout(() => this.adjustIframeHeight());
   }
-
   @HostListener("window:resize")
   onResize() {
     this.adjustIframeHeight();
@@ -91,9 +91,9 @@ export class EmbedDebugComponent implements OnInit, OnChanges, AfterViewInit {
     }
 
     const iframeEl = this.iframeRef.nativeElement;
-    const heightPx = iframeEl.offsetWidth * 0.6 + "px";
+    const heightPx =
+      iframeEl.offsetWidth * EmbedDebugComponent.ASPECT_RATIO + "px";
     this.height = heightPx;
-    iframeEl.style.height = heightPx;
   }
 
   getStyles() {

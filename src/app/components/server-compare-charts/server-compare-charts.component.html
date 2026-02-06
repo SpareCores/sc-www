@@ -373,7 +373,9 @@
                     <div class="block_full_inline">
                       <div class="flex justify-end items-center">
                         <button
+                        <button
                           id="bw_mem_button"
+                          data-dropdown-toggle="bw_mem_options"
                           class="dropdown_button"
                           type="button"
                         >
@@ -413,12 +415,13 @@
                     <div class="block_full_inline">
                       <div class="flex justify-end items-center">
                         <button
-                          id="ssl_button"
+                          id="bw_mem_button"
+                          data-dropdown-toggle="bw_mem_options"
                           class="dropdown_button"
                           type="button"
                         >
                           <div class="px-4 py-3">
-                            {{ selectedSSLAlgo.name }}
+                            {{ selectedBWMemOperation.name }}
                           </div>
                           <div
                             class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
@@ -698,7 +701,7 @@
                   </div>
                 </td>
                 @if (item.configs?.length > 0) {
-                  @for (value of item.configs[0].values; track value) {
+                  @for (value of item.configs[0].values; track $index) {
                     <td
                       [style]="isBestStyle(value, item.configs[0].values, item)"
                     >

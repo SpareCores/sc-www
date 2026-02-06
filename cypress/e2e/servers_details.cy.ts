@@ -29,7 +29,7 @@ describe("Server Details", () => {
 
     E2EEvent.isVisible(`[id="redis_chart"]`);
 
-    E2EEvent.isVisible(`[id="similar_family_table"]`);
+    E2EEvent.isVisible(`[class="similar_family_table"]`);
 
     E2EEvent.isVisible(`[id="similar_table"]`);
 
@@ -62,7 +62,7 @@ describe("Server Details", () => {
 
     E2EEvent.isNotFound(`redis_chart`);
 
-    E2EEvent.isVisible(`[id="similar_family_table"]`);
+    E2EEvent.isVisible(`[class="similar_family_table"]`);
 
     E2EEvent.isVisible(`[id="similar_table"]`);
 

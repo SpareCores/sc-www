@@ -24,7 +24,7 @@
               <div class="flex gap-2">
                 Topics:
                 @for (tag of articleMeta.tags; track tag) {
-                  <a routerLink="/articles" [queryParams]="{ tag }">
+                  <a routerLink="/articles" [queryParams]="{ tag: tag.trim() }">
                     #{{ tag.trim() }}
                   </a>
                 }

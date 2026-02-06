@@ -25,6 +25,7 @@ import {
   RegionVendorMetadata,
 } from "../../pages/server-listing/server-listing.component";
 import { CountryIdtoNamePipe } from "../../pipes/country-idto-name.pipe";
+import { RouterLink } from "@angular/router";
 
 const optionsModal: ModalOptions = {
   backdropClasses: "bg-gray-900/50 fixed inset-0 z-40",
@@ -38,7 +39,8 @@ const optionsModal: ModalOptions = {
     FormsModule,
     LucideAngularModule,
     CountryIdtoNamePipe,
-  ],
+    RouterLink
+],
   templateUrl: "./search-bar.component.html",
   styleUrl: "./search-bar.component.scss",
 })

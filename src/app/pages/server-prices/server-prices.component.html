@@ -558,6 +558,8 @@
       <li
         class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
         (click)="selectPageSize(item)"
+        (keydown.enter)="selectPageSize(item)"
+        (keydown.space)="$event.preventDefault(); selectPageSize(item)"
         tabindex="0"
       >
         <div class="text-white text-sm">{{ item }}</div>
@@ -600,6 +602,8 @@
       <li
         class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
         (click)="selectCurrency(item)"
+        (keydown.enter)="selectCurrency(item); $event.preventDefault()"
+        (keydown.space)="selectCurrency(item); $event.preventDefault()"
         tabindex="0"
       >
         <div class="text-white text-sm">
