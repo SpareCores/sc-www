@@ -36,7 +36,11 @@
       </thead>
       <tbody>
         @for (item of vendors; track item) {
-          <tr (click)="openLink(item)" (keydown.enter)="openLink(item)" tabindex="0">
+          <tr
+            (click)="openLink(item)"
+            (keydown.enter)="openLink(item)"
+            tabindex="0"
+          >
             <td>
               <img
                 class="bg-white rounded"
