@@ -22,7 +22,9 @@
       1
     </a>
     @if (currentPage > 3) {
-      <button class="text-white py-2 px-4 rounded-lg font-bold">...</button>
+      <span class="text-white py-2 px-4 rounded-lg font-bold" aria-hidden="true"
+        >...</span
+      >
     }
   }
   @for (item of possiblePages(); track item; let i = $index) {
@@ -41,7 +43,9 @@
     </a>
   }
   @if (totalPages > currentPage + 3) {
-    <button class="text-white py-2 px-4 rounded-lg font-bold">...</button>
+    <span class="text-white py-2 px-4 rounded-lg font-bold" aria-hidden="true"
+      >...</span
+    >
     <a
       [routerLink]="baseURL"
       [queryParams]="getQueryObjectForPage(totalPages)"
