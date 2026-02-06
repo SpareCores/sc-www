@@ -27,7 +27,9 @@
                 <span itemprop="name">{{ item.name }}</span>
               </a>
             } @else {
-              <span itemprop="name" class="text-white">{{ item.name }}</span>
+              <span itemprop="item" class="text-white">
+                <span itemprop="name">{{ item.name }}</span>
+              </span>
             }
             <meta itemprop="position" content="{{ i + 1 }}" />
           </div>
