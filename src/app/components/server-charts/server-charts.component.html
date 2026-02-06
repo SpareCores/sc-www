@@ -229,7 +229,7 @@
         </tr>
       </thead>
       <tbody>
-        @for (item of passmarkCPUData; track item) {
+        @for (item of passmarkCPUData; track item.benchmark_id) {
           <tr class="similar_family_line">
             <td>
               <div class="flex gap-1 items-center">
