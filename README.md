@@ -39,7 +39,6 @@ You can configure Sentry by setting the following environment variable(s).
 Note that NG_APP_SENTRY_DSN must be defined (though it can be left empty to disable Sentry):
 
 - NG_APP_SENTRY_DSN (key is mandatory but you can leave the value empty)
-- NG_APP_SENTRY_DSN (key is mandatory but you can leave the value empty)
 - NG_APP_SENTRY_TRACE_SAMPLE_RATE (default to 0)
 - NG_APP_SENTRY_PROFILE_SAMPLE_RATE (default to 0)
 - NG_APP_SENTRY_ENVIRONMENT (default to "development")
