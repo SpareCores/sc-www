@@ -205,19 +205,19 @@
                 <tr>
                   <th [style]="getStickyHeaderFirstColStyle()"></th>
                   @for (
-                    item of servers;
-                    track item.vendor_id + "_" + item.server_id;
+                    server of servers;
+                    track server.vendor_id + "_" + server.server_id;
                     let i = $index
                   ) {
                     <th [style]="getStyle(i)">
                       <a
                         class="underline decoration-dotted"
-                        href="/server/{{ item.vendor_id }}/{{
-                          item.api_reference
+                        href="/server/{{ server.vendor_id }}/{{
+                          server.api_reference
                         }}"
                         target="_blank"
                       >
-                        {{ toUpper(item.display_name) }}
+                        {{ toUpper(server.display_name) }}
                       </a>
                     </th>
                   }

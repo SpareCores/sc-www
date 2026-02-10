@@ -182,7 +182,15 @@
               <tbody>
                 @for (
                   item of servers;
-                  track item.vendor_id + "_" + item.server_id;
+                  track item.vendor_id +
+                    "_" +
+                    item.server_id +
+                    "_" +
+                    item.region_id +
+                    "_" +
+                    item.zone_id +
+                    "_" +
+                    item.allocation;
                   let i = $index
                 ) {
                   <tr
