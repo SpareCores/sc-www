@@ -280,7 +280,10 @@
     aria-labelledby="dropdownDefaultButton"
     (click)="closeCompare()"
   >
-    @for (server of getServersForCompare(); track server.display_name) {
+    @for (
+      server of getServersForCompare();
+      track server.server + "_" + server.vendor
+    ) {
       <li class="py-2 flex justify-between">
         <a
           class="navbar_link"

@@ -199,7 +199,10 @@
               </tr>
             </thead>
             <tbody>
-              @for (region of availabilityRegions; track region.display_name) {
+              @for (
+                region of availabilityRegions;
+                track region.vendor_id + "_" + region.region_id
+              ) {
                 <tr class="availability_line">
                   <td>
                     <div>
