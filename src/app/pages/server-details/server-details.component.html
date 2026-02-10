@@ -200,7 +200,7 @@
             </thead>
             <tbody>
               @for (item of availabilityRegions; track item) {
-                <tr>
+                <tr class="availability_line">
                   <td>
                     <div>
                       <b>{{ item.display_name }}</b> / {{ item.api_reference }}
@@ -479,7 +479,7 @@
             </thead>
             <tbody>
               @for (item of similarServers; track item) {
-                <tr>
+                <tr class="similar_line">
                   <td>
                     <a
                       class="underline decoration-dotted hover:text-gray-500"
