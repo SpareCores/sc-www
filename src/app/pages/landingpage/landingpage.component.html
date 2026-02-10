@@ -953,9 +953,9 @@
         our featured articles below:
       </div>
       <div class="articles_holder flex mt-4 flex-wrap">
-        @for (item of featuredArticles; track item) {
+        @for (article of featuredArticles; track article.title) {
           <div class="w-full md:w-1/2 lg:w-1/4 flex flex-col gap-4 px-6 py-4">
-            <app-article-card [article]="item"></app-article-card>
+            <app-article-card [article]="article"></app-article-card>
           </div>
         }
       </div>

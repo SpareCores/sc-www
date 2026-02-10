@@ -142,27 +142,27 @@
                       <lucide-icon class="h-4 w-4" name="scale"></lucide-icon>
                     </div>
                   </th>
-                  @for (item of tableColumns; track item) {
+                  @for (column of tableColumns; track column.name) {
                     <th
                       [ngClass]="{
-                        'cursor-pointer': item.orderField,
+                        'cursor-pointer': column.orderField,
                       }"
-                      (click)="toggleOrdering(item)"
+                      (click)="toggleOrdering(column)"
                     >
                       <div class="flex gap-1 whitespace-nowrap">
-                        {{ item.name }}
-                        @if (item.info) {
+                        {{ column.name }}
+                        @if (column.info) {
                           <lucide-icon
                             name="info"
-                            (mouseenter)="showTooltip($event, item.info)"
+                            (mouseenter)="showTooltip($event, column.info)"
                             (mouseleave)="hideTooltip()"
                             class="h-4 w-4 text-gray-200"
                           >
                           </lucide-icon>
                         }
-                        @if (getOrderingIcon(item)) {
+                        @if (getOrderingIcon(column)) {
                           <lucide-icon
-                            name="{{ getOrderingIcon(item) }}"
+                            name="{{ getOrderingIcon(column) }}"
                             class="h-4 w-4 text-white"
                           ></lucide-icon>
                         }
@@ -173,7 +173,11 @@
                 </tr>
               </thead>
               <tbody>
-                @for (item of servers; track item; let i = $index) {
+                @for (
+                  item of servers;
+                  track item.vendor_id + "_" + item.server_id;
+                  let i = $index
+                ) {
                   <tr
                     (click)="openServerDetails(item)"
                     data-ph-capture-attribute-sc-event="server listing route to server details"
@@ -203,7 +207,7 @@
                         />
                       </div>
                     </td>
-                    @for (column of tableColumns; track column) {
+                    @for (column of tableColumns; track column.name) {
                       @if (column.type === "name") {
                         <td>
                           <div (click)="$event.stopPropagation()">
@@ -553,17 +557,17 @@
     class="py-2 px-1 text-sm text-gray-700"
     aria-labelledby="dropdownDefaultButton"
   >
-    @for (item of pageLimits; track item) {
+    @for (pageLimit of pageLimits; track $index) {
       <li
         class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-        (click)="selectPageSize(item)"
-        (keydown.enter)="selectPageSize(item)"
-        (keydown.space)="selectPageSize(item); $event.preventDefault()"
+        (click)="selectPageSize(pageLimit)"
+        (keydown.enter)="selectPageSize(pageLimit)"
+        (keydown.space)="selectPageSize(pageLimit); $event.preventDefault()"
         role="option"
-        [attr.aria-selected]="item === limit"
+        [attr.aria-selected]="pageLimit === limit"
         tabindex="0"
       >
-        <div class="text-white text-sm">{{ item }}</div>
+        <div class="text-white text-sm">{{ pageLimit }}</div>
       </li>
     }
   </ul>
@@ -577,15 +581,15 @@
     class="py-2 px-3 text-sm text-gray-700"
     aria-labelledby="dropdownDefaultButton"
   >
-    @for (item of possibleColumns; track item) {
+    @for (column of possibleColumns; track column.name) {
       <li class="flex py-1 gap-2 items-center">
         <input
           type="checkbox"
-          [(ngModel)]="item.show"
+          [(ngModel)]="column.show"
           (ngModelChange)="refreshColumns()"
           class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer"
         />
-        <div class="text-white text-sm">{{ item.name }}</div>
+        <div class="text-white text-sm">{{ column.name }}</div>
       </li>
     }
   </ul>
@@ -651,13 +655,13 @@
             >
               All
             </button>
-            @for (item of benchmarkCategories; track item) {
+            @for (category of benchmarkCategories; track $index) {
               <button
-                (click)="selectBenchmarkCategory(item)"
+                (click)="selectBenchmarkCategory(category)"
                 type="button"
                 class="dropdown_group_button"
               >
-                {{ item }}
+                {{ category }}
               </button>
             }
           </div>
@@ -684,7 +688,10 @@
             <div
               class="flex flex-col overflow-y-auto custom-scrollbar button_list_holder flex-1"
             >
-              @for (item of tempfilteredBenchmarkConfigs; track item) {
+              @for (
+                item of tempfilteredBenchmarkConfigs;
+                track item.benchmarkTemplate.name
+              ) {
                 <button
                   (click)="selectBenchmarkConfig(item)"
                   type="button"

@@ -1,7 +1,7 @@
 <div class="w-full">
   <h3 class="font-bold text-3xl">{{ item }} FAQs</h3>
   <div class="pl-2 mt-2" itemscope="" itemtype="https://schema.org/FAQPage">
-    @for (item of FAQQuestions; track item; let i = $index) {
+    @for (question of FAQQuestions; track question.id; let i = $index) {
       <div
         itemscope=""
         itemprop="mainEntity"
@@ -13,7 +13,7 @@
           (click)="toggleFAQ(i)"
           [attr.aria-expanded]="activeFAQ === i"
         >
-          <h4 itemprop="name">{{ item.question }}</h4>
+          <h4 itemprop="name">{{ question.question }}</h4>
           <lucide-icon [name]="FAQIcon(i)"></lucide-icon>
         </button>
         <p
@@ -26,11 +26,11 @@
             hidden: activeFAQ !== i,
           }"
         >
-          @if (!item.html) {
-            <span itemprop="text">{{ item.answer }} </span>
+          @if (!question.html) {
+            <span itemprop="text">{{ question.answer }} </span>
           }
-          @if (item.html) {
-            <span itemprop="text" [innerHTML]="item.html"></span>
+          @if (question.html) {
+            <span itemprop="text" [innerHTML]="question.html"></span>
           }
         </p>
       </div>

@@ -71,41 +71,44 @@
           of server comparison sets.
         </div>
         <div class="flex flex-col gap-4 mt-4">
-          @for (item of specialCompares; track item) {
+          @for (compare of specialCompares; track compare.title) {
             <div
               class="flex flex-col py-6 gap-2 text-white"
               [ngClass]="{
-                'bg-secondary rounded-lg px-6': item.type === 'card',
+                'bg-secondary rounded-lg px-6': compare.type === 'card',
               }"
             >
-              @if (item.type === "section") {
+              @if (compare.type === "section") {
                 <h2 class="text-2xl font-semibold">
-                  {{ item.title }}
+                  {{ compare.title }}
                 </h2>
               }
-              @if (item.type === "card") {
+              @if (compare.type === "card") {
                 <h3>
                   <a
-                    routerLink="/compare/{{ item.id }}"
+                    routerLink="/compare/{{ compare.id }}"
                     class="text-emerald-400 text-xl font-semibold"
                   >
-                    {{ item.title }}
+                    {{ compare.title }}
                   </a>
                 </h3>
               }
               @if (
-                item.description && item.hide_description_in_index !== true
+                compare.description &&
+                compare.hide_description_in_index !== true
               ) {
                 <div
                   class="description_inner_html"
-                  [ngClass]="{ 'text-lg space-y-4': item.type === 'section' }"
-                  [innerHTML]="item.description"
+                  [ngClass]="{
+                    'text-lg space-y-4': compare.type === 'section',
+                  }"
+                  [innerHTML]="compare.description"
                 ></div>
               }
-              @if (item.query) {
+              @if (compare.query) {
                 <details
                   class="flex flex-col gap-2 [&_svg]:open:-rotate-90"
-                  [ngClass]="{ 'mt-4': item.type === 'section' }"
+                  [ngClass]="{ 'mt-4': compare.type === 'section' }"
                 >
                   <summary class="text-sm list-none cursor-pointer">
                     SQL query used to select instances
@@ -119,13 +122,13 @@
                       />
                     </svg>
                   </summary>
-                  <pre class="language-sql"><code>{{item.query}}</code></pre>
+                  <pre class="language-sql"><code>{{compare.query}}</code></pre>
                 </details>
               }
-              @if (item.instances) {
+              @if (compare.instances) {
                 <div class="text-sm flex flex-wrap gap-2">
                   Instances:
-                  @for (instance of item.instances; track instance) {
+                  @for (instance of compare.instances; track instance.server) {
                     <a
                       class="underline decoration-dotted whitespace-nowrap"
                       routerLink="/server/{{ instance.vendor }}/{{
@@ -198,7 +201,11 @@
               <thead>
                 <tr>
                   <th [style]="getStickyHeaderFirstColStyle()"></th>
-                  @for (item of servers; track item; let i = $index) {
+                  @for (
+                    item of servers;
+                    track item.vendor_id + "_" + item.server_id;
+                    let i = $index
+                  ) {
                     <th [style]="getStyle(i)">
                       <a
                         class="underline decoration-dotted"
@@ -249,13 +256,13 @@
     class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
     aria-labelledby="dropdownDefaultButton"
   >
-    @for (item of availableCurrencies; track item) {
+    @for (currency of availableCurrencies; track currency.name) {
       <li
         class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-        (click)="selectCurrency(item)"
+        (click)="selectCurrency(currency)"
       >
         <div class="text-white text-sm">
-          {{ item.name }} ({{ item.symbol }})
+          {{ currency.name }} ({{ currency.symbol }})
         </div>
       </li>
     }

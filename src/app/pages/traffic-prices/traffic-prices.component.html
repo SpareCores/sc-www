@@ -100,25 +100,25 @@
             <table class="items_table">
               <thead>
                 <tr>
-                  @for (item of tableColumns; track item) {
+                  @for (column of tableColumns; track column.name) {
                     <th
                       [ngClass]="{
-                        'cursor-pointer': item.orderField,
+                        'cursor-pointer': column.orderField,
                       }"
-                      (click)="toggleOrdering(item)"
+                      (click)="toggleOrdering(column)"
                     >
                       <div class="flex gap-1">
-                        {{ item.name }}
-                        @if (item.info) {
+                        {{ column.name }}
+                        @if (column.info) {
                           <lucide-icon
                             name="info"
                             class="h-4 w-4 text-gray-200"
                           >
                           </lucide-icon>
                         }
-                        @if (getOrderingIcon(item)) {
+                        @if (getOrderingIcon(column)) {
                           <lucide-icon
-                            name="{{ getOrderingIcon(item) }}"
+                            name="{{ getOrderingIcon(column) }}"
                             class="h-4 w-4 text-white"
                           ></lucide-icon>
                         }
@@ -128,11 +128,11 @@
                 </tr>
               </thead>
               <tbody>
-                @for (item of traffic_prices; track item; let i = $index) {
+                @for (price of traffic_prices; track price; let i = $index) {
                   <tr
                     data-ph-capture-attribute-sc-event="server listing route to server details"
                     [attr.data-ph-capture-attribute-server-listing-row-vendor]="
-                      item.vendor_id
+                      price.vendor_id
                     "
                     [attr.data-ph-capture-attribute-server-listing-row-index]="
                       i + 1
@@ -141,20 +141,20 @@
                       limit
                     "
                   >
-                    @for (column of tableColumns; track column) {
+                    @for (column of tableColumns; track column.name) {
                       @if (column.type === "vendor") {
                         <td>
-                          @if (item.vendor.logo) {
+                          @if (price.vendor.logo) {
                             <div class="w-9 h-9 px-1 py-1 bg-white rounded-lg">
                               <img
-                                [src]="item.vendor.logo"
-                                alt="{{ item.vendor.name }} logo"
+                                [src]="price.vendor.logo"
+                                alt="{{ price.vendor.name }} logo"
                               />
                             </div>
                           }
-                          @if (!item.vendor.logo) {
+                          @if (!price.vendor.logo) {
                             <div class="text-white text-sm">
-                              {{ item.vendor.name }}
+                              {{ price.vendor.name }}
                             </div>
                           }
                         </td>
@@ -162,25 +162,27 @@
                       @if (column.type === "region") {
                         <td class="min-w-225">
                           <div class="text-sm text-white">
-                            {{ item.region.display_name }}
+                            {{ price.region.display_name }}
                           </div>
                           <div class="text-xs text-white flex gap-1">
-                            <span>{{ item.region.region_id }} </span>
+                            <span>{{ price.region.region_id }} </span>
                           </div>
                         </td>
                       }
                       @if (column.type === "price") {
                         <td>
                           <div class="text-sm text-white">
-                            {{ item.price }} {{ item.currency }}/{{ item.unit }}
+                            {{ price.price }} {{ price.currency }}/{{
+                              price.unit
+                            }}
                           </div>
                         </td>
                       }
                       @if (column.type === "priceMonthly") {
                         <td>
                           <div class="text-sm text-white">
-                            {{ item.price_monthly_traffic }}
-                            {{ item.currency }}/month
+                            {{ price.price_monthly_traffic }}
+                            {{ price.currency }}/month
                           </div>
                         </td>
                       }
@@ -188,7 +190,7 @@
                         <td>
                           <div class="flex flex-col">
                             @for (
-                              tiered_price of item.price_tiered;
+                              tiered_price of price.price_tiered;
                               track tiered_price
                             ) {
                               <div
@@ -207,7 +209,7 @@
                       }
                       @if (column.type === "text" && column.key) {
                         <td>
-                          {{ getField(item, column.key) }}
+                          {{ getField(price, column.key) }}
                         </td>
                       }
                     }
@@ -265,13 +267,13 @@
     class="py-2 px-1 text-sm text-gray-700"
     aria-labelledby="dropdownDefaultButton"
   >
-    @for (item of pageLimits; track item) {
+    @for (pageLimit of pageLimits; track $index) {
       <li
         class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-        (click)="selectPageSize(item)"
+        (click)="selectPageSize(pageLimit)"
         tabindex="0"
       >
-        <div class="text-white text-sm">{{ item }}</div>
+        <div class="text-white text-sm">{{ pageLimit }}</div>
       </li>
     }
   </ul>
@@ -285,15 +287,15 @@
     class="py-2 px-3 text-sm text-gray-700"
     aria-labelledby="dropdownDefaultButton"
   >
-    @for (item of possibleColumns; track item) {
+    @for (column of possibleColumns; track column.name) {
       <li class="flex py-1 gap-2 items-center">
         <input
           type="checkbox"
-          [(ngModel)]="item.show"
+          [(ngModel)]="column.show"
           (ngModelChange)="refreshColumns()"
           class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer"
         />
-        <div class="text-white text-sm">{{ item.name }}</div>
+        <div class="text-white text-sm">{{ column.name }}</div>
       </li>
     }
   </ul>
@@ -307,14 +309,14 @@
     class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
     aria-labelledby="dropdownDefaultButton"
   >
-    @for (item of availableCurrencies; track item) {
+    @for (currency of availableCurrencies; track currency.name) {
       <li
         tabindex="0"
         class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-        (click)="selectCurrency(item)"
+        (click)="selectCurrency(currency)"
       >
         <div class="text-white text-sm">
-          {{ item.name }} ({{ item.symbol }})
+          {{ currency.name }} ({{ currency.symbol }})
         </div>
       </li>
     }

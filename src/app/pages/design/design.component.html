@@ -217,10 +217,13 @@
   </div>
 
   <div class="design-grid">
-    @for (item of logoDownloadItems; track trackByFolder($index, item)) {
+    @for (
+      logoDownloadItem of logoDownloadItems;
+      track trackByFolder($index, logoDownloadItem)
+    ) {
       <app-downloadable-logo-collection
-        [folderName]="item.folderName"
-        [fileNames]="item.fileNames"
+        [folderName]="logoDownloadItem.folderName"
+        [fileNames]="logoDownloadItem.fileNames"
         [basePath]="logoDownloadsBasePath"
       ></app-downloadable-logo-collection>
     }

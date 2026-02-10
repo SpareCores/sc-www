@@ -20,66 +20,66 @@
             </tr>
           </thead>
           <tbody>
-            @for (item of talks; track item) {
+            @for (talk of talks; track talk.title) {
               <tr>
-                <td>{{ item.date | timeToShortDate }}</td>
+                <td>{{ talk.date | timeToShortDate }}</td>
                 <td>
                   <div class="flex flex-col">
-                    @if (item.conference_url) {
+                    @if (talk.conference_url) {
                       <a
-                        [href]="item.conference_url"
+                        [href]="talk.conference_url"
                         target="_blank"
                         rel="noopener"
-                        >{{ item.conference }}</a
+                        >{{ talk.conference }}</a
                       >
                     }
-                    @if (!item.conference_url) {
-                      <span>{{ item.conference }}</span>
+                    @if (!talk.conference_url) {
+                      <span>{{ talk.conference }}</span>
                     }
-                    <div class="text-sm text-gray-200">{{ item.location }}</div>
+                    <div class="text-sm text-gray-200">{{ talk.location }}</div>
                   </div>
                 </td>
                 <td class="hidden lg:table-cell">
                   <div class="flex gap-2 items-center">
                     <div>
                       <img
-                        src="assets/images/team/{{ item.author }}.webp"
+                        src="assets/images/team/{{ talk.author }}.webp"
                         class="w-8 max-h-8 rounded-full"
-                        alt="{{ item.author }} profile picture"
+                        alt="{{ talk.author }} profile picture"
                       />
                     </div>
-                    <div>{{ item.author }}</div>
+                    <div>{{ talk.author }}</div>
                   </div>
                 </td>
                 <td>
-                  @if (item.conference_talk_url) {
+                  @if (talk.conference_talk_url) {
                     <a
-                      [href]="item.conference_talk_url"
+                      [href]="talk.conference_talk_url"
                       target="_blank"
                       rel="noopener"
-                      >{{ item.title }}</a
+                      >{{ talk.title }}</a
                     >
                   }
-                  @if (!item.conference_talk_url) {
-                    <span>{{ item.title }}</span>
+                  @if (!talk.conference_talk_url) {
+                    <span>{{ talk.title }}</span>
                   }
                 </td>
                 <td>
                   <div class="flex gap-2">
-                    @if (item.conference_talk_slides) {
+                    @if (talk.conference_talk_slides) {
                       <a
                         title="Slides"
-                        [href]="item.conference_talk_slides"
+                        [href]="talk.conference_talk_slides"
                         target="_blank"
                         rel="noopener"
                       >
                         <lucide-icon name="scroll-text"> </lucide-icon>
                       </a>
                     }
-                    @if (item.conference_talk_video) {
+                    @if (talk.conference_talk_video) {
                       <a
                         title="Video recording"
-                        [href]="item.conference_talk_video"
+                        [href]="talk.conference_talk_video"
                         target="_blank"
                         rel="noopener"
                       >
@@ -87,8 +87,8 @@
                       </a>
                     }
                     @if (
-                      !item.conference_talk_slides &&
-                      !item.conference_talk_video
+                      !talk.conference_talk_slides &&
+                      !talk.conference_talk_video
                     ) {
                       <span class="flex items-center gap-2">
                         <lucide-icon name="hourglass"> </lucide-icon>

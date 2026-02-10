@@ -30,41 +30,41 @@
         </tr>
       </thead>
       <tbody>
-        @for (item of vendors; track item) {
+        @for (vendor of vendors; track vendor.vendor_id) {
           <tr>
             <td>
               <div class="flex gap-1">
-                {{ item.name }}
+                {{ vendor.name }}
               </div>
             </td>
             <td>
               <div class="flex justify-end">
-                {{ item.servers }}
+                {{ vendor.servers }}
               </div>
             </td>
             <td>
               <div class="flex justify-end">
-                {{ item.evaluated }}
+                {{ vendor.evaluated }}
               </div>
             </td>
             <td>
               <div class="flex justify-end">
-                {{ item.missing }}
+                {{ vendor.missing }}
               </div>
             </td>
             <td>
-              <div class="flex justify-end">{{ item.percentage }}%</div>
+              <div class="flex justify-end">{{ vendor.percentage }}%</div>
             </td>
           </tr>
         }
       </tbody>
     </table>
 
-    @for (item of vendors; track item) {
+    @for (vendor of vendors; track vendor.vendor_id) {
       <div>
-        @if (item.missing_servers?.length) {
+        @if (vendor.missing_servers?.length) {
           <div class="flex flex-col gap-2 mb-8">
-            <h2 class="text-3xl mb-2">{{ item.name }}</h2>
+            <h2 class="text-3xl mb-2">{{ vendor.name }}</h2>
             <table class="items_table">
               <thead>
                 <tr>
@@ -77,7 +77,10 @@
                 </tr>
               </thead>
               <tbody>
-                @for (server of item.missing_servers; track server) {
+                @for (
+                  server of vendor.missing_servers;
+                  track server.vendor_id + "_" + server.server_id
+                ) {
                   <tr>
                     <td>
                       <div class="pl-2 flex gap-1">

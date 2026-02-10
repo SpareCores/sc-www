@@ -6,7 +6,7 @@
       itemscope
       itemtype="https://schema.org/BreadcrumbList"
     >
-      @for (item of segments; track item; let i = $index) {
+      @for (segment of segments; track segment.name; let i = $index) {
         <div class="flex gap-2">
           @if (i > 0) {
             <div class="text-emerald-400">/</div>
@@ -17,18 +17,18 @@
             itemscope
             itemtype="https://schema.org/ListItem"
           >
-            @if (item.url) {
+            @if (segment.url) {
               <a
                 itemprop="item"
-                routerLink="{{ item.url }}"
-                [queryParams]="item.queryParams"
+                routerLink="{{ segment.url }}"
+                [queryParams]="segment.queryParams"
                 class="text-white hover:text-emerald-400"
               >
-                <span itemprop="name">{{ item.name }}</span>
+                <span itemprop="name">{{ segment.name }}</span>
               </a>
             } @else {
               <span itemprop="item" class="text-white">
-                <span itemprop="name">{{ item.name }}</span>
+                <span itemprop="name">{{ segment.name }}</span>
               </span>
             }
             <meta itemprop="position" content="{{ i + 1 }}" />

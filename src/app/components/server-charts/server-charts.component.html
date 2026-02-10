@@ -229,22 +229,27 @@
         </tr>
       </thead>
       <tbody>
-        @for (item of passmarkCPUData; track item.benchmark_id) {
+        @for (
+          cpuBenchmark of passmarkCPUData;
+          track cpuBenchmark.benchmark_id
+        ) {
           <tr class="similar_family_line">
             <td>
               <div class="flex gap-1 items-center">
-                {{ item.name }}
+                {{ cpuBenchmark.name }}
                 <lucide-icon
                   name="info"
                   class="h-4 w-4 text-gray-200"
-                  (mouseenter)="showTooltipChart($event, item.benchmark_id)"
+                  (mouseenter)="
+                    showTooltipChart($event, cpuBenchmark.benchmark_id)
+                  "
                   (mouseleave)="hideTooltip()"
                 >
                 </lucide-icon>
               </div>
             </td>
             <td>
-              {{ item.score }}
+              {{ cpuBenchmark.score }}
             </td>
           </tr>
         }
@@ -297,22 +302,24 @@
         </tr>
       </thead>
       <tbody>
-        @for (item of passmarkOTHERData; track item) {
+        @for (otherBenchmark of passmarkOTHERData; track otherBenchmark) {
           <tr class="similar_family_line">
             <td>
               <div class="flex gap-1 items-center">
-                {{ item.name }}
+                {{ otherBenchmark.name }}
                 <lucide-icon
                   name="info"
                   class="h-4 w-4 text-gray-200"
-                  (mouseenter)="showTooltipChart($event, item.benchmark_id)"
+                  (mouseenter)="
+                    showTooltipChart($event, otherBenchmark.benchmark_id)
+                  "
                   (mouseleave)="hideTooltip()"
                 >
                 </lucide-icon>
               </div>
             </td>
             <td>
-              {{ item.score }}
+              {{ otherBenchmark.score }}
             </td>
           </tr>
         }
@@ -559,13 +566,13 @@
     class="py-2 px-1 text-sm text-gray-700"
     aria-labelledby="dropdownDefaultButton"
   >
-    @for (item of compressMethods; track item) {
+    @for (compressMethod of compressMethods; track compressMethod.key) {
       <li class="flex py-1 gap-2 items-center">
         <div
           class="text-emerald-400 hover:text-emerald-500 cursor-pointer font-bold ml-2"
-          (click)="refreshCompressChart(item)"
+          (click)="refreshCompressChart(compressMethod)"
         >
-          {{ item.name }}
+          {{ compressMethod.name }}
         </div>
       </li>
     }
@@ -581,13 +588,17 @@
       class="py-2 px-1 text-sm text-gray-700"
       aria-labelledby="dropdownDefaultButton"
     >
-      @for (item of chartItem.chart.options; track item; let i = $index) {
+      @for (
+        chartTemplate of chartItem.chart.options;
+        track chartTemplate.id;
+        let i = $index
+      ) {
         <li class="flex py-1 gap-2 items-center">
           <div
             class="text-emerald-400 hover:text-emerald-500 cursor-pointer font-bold ml-2"
             (click)="selectChartTemplateOption(chartItem, i)"
           >
-            {{ item.name }}
+            {{ chartTemplate.name }}
           </div>
         </li>
       }

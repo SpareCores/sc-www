@@ -280,19 +280,19 @@
     aria-labelledby="dropdownDefaultButton"
     (click)="closeCompare()"
   >
-    @for (item of getServersForCompare(); track item) {
+    @for (server of getServersForCompare(); track server.display_name) {
       <li class="py-2 flex justify-between">
         <a
           class="navbar_link"
-          routerLink="/server/{{ item.vendor }}/{{ item.server }}"
+          routerLink="/server/{{ server.vendor }}/{{ server.server }}"
         >
           <lucide-icon class="h-4 w-4" name="pc-case"></lucide-icon>
-          {{ item.vendor }}: {{ item.display_name }}
+          {{ server.vendor }}: {{ server.display_name }}
         </a>
         <div (click)="$event.stopPropagation()">
           <button
             class="text-red-500 px-2 py-2"
-            (click)="removeFromCompare($event, item)"
+            (click)="removeFromCompare($event, server)"
           >
             <lucide-icon class="h-4 w-4" name="trash"></lucide-icon>
           </button>

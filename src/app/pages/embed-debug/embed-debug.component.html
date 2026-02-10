@@ -40,9 +40,9 @@
         (ngModelChange)="updateSrc()"
         class="w-full accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm text-black"
       >
-        @for (item of charts; track item) {
-          <option value="{{ item.id }}">
-            {{ item.name }}
+        @for (chart of charts; track chart.id) {
+          <option value="{{ chart.id }}">
+            {{ chart.name }}
           </option>
         }
       </select>

@@ -19,14 +19,14 @@
             </tr>
           </thead>
           <tbody>
-            @for (item of docs; track item) {
+            @for (document of docs; track document.title) {
               <tr>
                 <td>
-                  <a routerLink="/legal/{{ item.filename }}">
-                    {{ item.title }}
+                  <a routerLink="/legal/{{ document.filename }}">
+                    {{ document.title }}
                   </a>
                 </td>
-                <td>{{ item.date | timeToShortDate }}</td>
+                <td>{{ document.date | timeToShortDate }}</td>
               </tr>
             }
           </tbody>

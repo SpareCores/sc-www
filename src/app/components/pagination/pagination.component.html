@@ -27,19 +27,19 @@
       >
     }
   }
-  @for (item of possiblePages(); track item; let i = $index) {
+  @for (page of possiblePages(); track page; let i = $index) {
     <a
       class="text-white py-2 px-4 rounded-lg font-bold hover:bg-emerald-400"
       [ngClass]="{
-        'bg-emerald-400': item === this.currentPage,
-        'bg-transparent': item !== this.currentPage,
+        'bg-emerald-400': page === this.currentPage,
+        'bg-transparent': page !== this.currentPage,
       }"
       data-ph-capture-attribute-sc-event="server listing paginate"
       [attr.data-ph-capture-attribute-pagination-target]="i"
       [routerLink]="baseURL"
-      [queryParams]="getQueryObjectForPage(item)"
+      [queryParams]="getQueryObjectForPage(page)"
     >
-      {{ item }}
+      {{ page }}
     </a>
   }
   @if (totalPages > currentPage + 3) {

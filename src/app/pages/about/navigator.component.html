@@ -133,7 +133,7 @@
                 >) vendors
               </span>
             </div>
-            @for (item of features; track item; let i = $index) {
+            @for (feature of features; track feature.text; let i = $index) {
               <div>
                 <div
                   class="w-full h-4 mb-3 border-b border-gray-400 border-solid"
@@ -142,8 +142,8 @@
                   <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6">
                     <lucide-icon name="check" class="h-4 w-4"></lucide-icon>
                   </div>
-                  <b> {{ item.count }} </b>
-                  <span> {{ item.text }} </span>
+                  <b> {{ feature.count }} </b>
+                  <span> {{ feature.text }} </span>
                 </div>
               </div>
             }
@@ -408,29 +408,36 @@
           </tr>
         </thead>
         <tbody>
-          @for (item of gitHubComponents; track item) {
+          @for (
+            githubComponent of gitHubComponents;
+            track githubComponent.component
+          ) {
             <tr>
-              <td>{{ item.component }}</td>
-              <td>{{ item.status }}</td>
+              <td>{{ githubComponent.component }}</td>
+              <td>{{ githubComponent.status }}</td>
               <td class="flex gap-1">
-                @if (item.github) {
+                @if (githubComponent.github) {
                   <a
-                    href="https://github.com/SpareCores/{{ item.github }}"
+                    href="https://github.com/SpareCores/{{
+                      githubComponent.github
+                    }}"
                     target="_blank"
                     rel="noopener"
-                    [title]="'GitHub repository of ' + item.github"
-                    [attr.aria-label]="'GitHub repository of ' + item.github"
+                    [title]="'GitHub repository of ' + githubComponent.github"
+                    [attr.aria-label]="
+                      'GitHub repository of ' + githubComponent.github
+                    "
                   >
                     <lucide-icon name="github"></lucide-icon>
                   </a>
                 }
-                @if (item.pypi) {
+                @if (githubComponent.pypi) {
                   <a
-                    href="https://pypi.org/project/{{ item.pypi }}"
+                    href="https://pypi.org/project/{{ githubComponent.pypi }}"
                     target="_blank"
                     rel="noopener"
-                    [title]="item.pypi + ' on PyPI'"
-                    [attr.aria-label]="item.pypi + ' on PyPI'"
+                    [title]="githubComponent.pypi + ' on PyPI'"
+                    [attr.aria-label]="githubComponent.pypi + ' on PyPI'"
                   >
                     <img
                       src="assets/images/icons/python.svg"
@@ -439,26 +446,30 @@
                     />
                   </a>
                 }
-                @if (item.docs) {
+                @if (githubComponent.docs) {
                   <a
-                    href="{{ item.docs }}"
+                    href="{{ githubComponent.docs }}"
                     target="_blank"
                     rel="noopener"
-                    [title]="'Documentation site of ' + item.component"
+                    [title]="
+                      'Documentation site of ' + githubComponent.component
+                    "
                     [attr.aria-label]="
-                      'Documentation site of ' + item.component
+                      'Documentation site of ' + githubComponent.component
                     "
                   >
                     <lucide-icon name="book-text"></lucide-icon>
                   </a>
                 }
-                @if (item.www) {
+                @if (githubComponent.www) {
                   <a
-                    href="{{ item.www }}"
+                    href="{{ githubComponent.www }}"
                     target="_blank"
                     rel="noopener"
-                    [title]="'Homepage of ' + item.component"
-                    [attr.aria-label]="'Homepage of ' + item.component"
+                    [title]="'Homepage of ' + githubComponent.component"
+                    [attr.aria-label]="
+                      'Homepage of ' + githubComponent.component
+                    "
                   >
                     <img
                       src="assets/images/icons/www.svg"
@@ -467,13 +478,15 @@
                     />
                   </a>
                 }
-                @if (item.api) {
+                @if (githubComponent.api) {
                   <a
-                    href="{{ item.api }}"
+                    href="{{ githubComponent.api }}"
                     target="_blank"
                     rel="noopener"
-                    [title]="'API endpoint of ' + item.component"
-                    [attr.aria-label]="'API endpoint of ' + item.component"
+                    [title]="'API endpoint of ' + githubComponent.component"
+                    [attr.aria-label]="
+                      'API endpoint of ' + githubComponent.component
+                    "
                   >
                     <img
                       src="assets/images/icons/api.svg"
@@ -482,19 +495,21 @@
                     />
                   </a>
                 }
-                @if (item.data) {
+                @if (githubComponent.data) {
                   <a
-                    href="{{ item.data }}"
+                    href="{{ githubComponent.data }}"
                     target="_blank"
                     rel="noopener"
-                    [title]="'Database of ' + item.component"
-                    [attr.aria-label]="'Database of ' + item.component"
+                    [title]="'Database of ' + githubComponent.component"
+                    [attr.aria-label]="
+                      'Database of ' + githubComponent.component
+                    "
                   >
                     <lucide-icon name="database"></lucide-icon>
                   </a>
                 }
               </td>
-              <td>{{ item.description }}</td>
+              <td>{{ githubComponent.description }}</td>
             </tr>
           }
         </tbody>
@@ -581,7 +596,7 @@
         pagination="true"
         init="false"
       >
-        @for (item of publishableQuotes; track item) {
+        @for (quote of publishableQuotes; track quote.quote) {
           <swiper-slide>
             <div class="flex gap-8 items-center px-2 pb-2">
               <div>
@@ -595,28 +610,28 @@
                 </span>
               </div>
               <div class="text-2xl">
-                {{ item.quote }}
+                {{ quote.quote }}
               </div>
             </div>
             <div class="flex gap-8 items-center px-2 pl-[130px] pb-12">
               <div class="text-xl text-gray-400">
-                — {{ item.author }}
-                @if (item.source) {
+                — {{ quote.author }}
+                @if (quote.source) {
                   <span>
                     via
-                    @if (item.source_url) {
+                    @if (quote.source_url) {
                       <a
-                        href="{{ item.source_url }}"
+                        href="{{ quote.source_url }}"
                         target="_blank"
                         rel="noopener"
                         class="underline decoration-dotted hover:text-gray-500"
                       >
-                        {{ item.source }}
+                        {{ quote.source }}
                       </a>
                     }
-                    @if (!item.source_url) {
+                    @if (!quote.source_url) {
                       <span>
-                        {{ item.source }}
+                        {{ quote.source }}
                       </span>
                     }
                   </span>
@@ -637,9 +652,9 @@
   class="max-w-xl absolute top-0 z-10 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-secondary border border-solid border-emerald-400 rounded-lg"
 >
   <ul style="list-style-type: disc; list-style-position: inside">
-    @for (item of vendors; track item) {
+    @for (vendor of vendors; track vendor) {
       <li style="margin-bottom: 0.25rem">
-        {{ item }}
+        {{ vendor }}
       </li>
     }
   </ul>

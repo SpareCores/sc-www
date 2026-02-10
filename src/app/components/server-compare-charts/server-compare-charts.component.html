@@ -4,7 +4,10 @@
       <thead id="server-compare-table-header">
         <tr>
           <th #tableFirstCol id="server-compare-table-first-col"></th>
-          @for (item of servers; track item) {
+          @for (
+            server of servers;
+            track server.vendor_id + "_" + server.server_id
+          ) {
             <th [style]="getStyle()" class="align-baseline" id="main-table-th">
               <div
                 class="flex flex-col gap-1 justify-center"
@@ -12,13 +15,15 @@
               >
                 <a
                   class="underline decoration-dotted"
-                  href="/server/{{ item.vendor_id }}/{{ item.api_reference }}"
+                  href="/server/{{ server.vendor_id }}/{{
+                    server.api_reference
+                  }}"
                   target="_blank"
                 >
-                  {{ toUpper(item.display_name) }}
+                  {{ toUpper(server.display_name) }}
                 </a>
                 <div class="flex gap-2 justify-center">
-                  @if (isBestPrice(item)) {
+                  @if (isBestPrice(server)) {
                     <div
                       class="text-emerald-400 text-xl"
                       (mouseenter)="showTooltip($event, 'Lowest price')"
@@ -27,7 +32,7 @@
                       💰
                     </div>
                   }
-                  @if (isBestSSCore(item)) {
+                  @if (isBestSSCore(server)) {
                     <div
                       class="text-emerald-400 text-xl"
                       (mouseenter)="showTooltip($event, 'Best value for price')"
@@ -36,7 +41,7 @@
                       🥇
                     </div>
                   }
-                  @if (getBecnchmarkStyle(item, true) !== "") {
+                  @if (getBecnchmarkStyle(server, true) !== "") {
                     <div
                       class="text-emerald-400 text-xl"
                       (mouseenter)="showTooltip($event, 'Top performance')"
@@ -56,21 +61,24 @@
       @if (isChartShown("generic")) {
         <tr>
           <td>Vendor</td>
-          @for (item of servers; track item) {
+          @for (
+            server of servers;
+            track server.vendor_id + "_" + server.server_id
+          ) {
             <td>
-              @if (item.vendor.logo) {
+              @if (server.vendor.logo) {
                 <div class="w-9 h-9 px-1 py-1 bg-white rounded-lg">
                   <img
-                    [src]="item.vendor.logo"
-                    alt="{{ item.vendor.name }} logo"
+                    [src]="server.vendor.logo"
+                    alt="{{ server.vendor.name }} logo"
                     width="28"
                     height="28"
                   />
                 </div>
               }
-              @if (!item.vendor.logo) {
+              @if (!server.vendor.logo) {
                 <div class="text-white text-sm">
-                  {{ item.vendor.name }}
+                  {{ server.vendor.name }}
                 </div>
               }
             </td>
@@ -91,35 +99,38 @@
               </lucide-icon>
             </div>
           </td>
-          @for (item of servers; track item) {
+          @for (
+            server of servers;
+            track server.vendor_id + "_" + server.server_id
+          ) {
             <td class="align-baseline">
-              <div [style]="getSScoreStyle(item)">
-                {{ getSScore(item) }}
+              <div [style]="getSScoreStyle(server)">
+                {{ getSScore(server) }}
               </div>
               <div class="text-xs">
                 Best (ondemand):
-                {{ getSScoreCustom(item, item.bestOndemandPrice?.price) }}
+                {{ getSScoreCustom(server, server.bestOndemandPrice?.price) }}
               </div>
               <div class="text-xs">
                 Best (spot):
-                {{ getSScoreCustom(item, item.bestSpotPrice?.price) }}
+                {{ getSScoreCustom(server, server.bestSpotPrice?.price) }}
               </div>
-              @for (priceData of item.additionalSpotPrices; track priceData) {
+              @for (priceData of server.additionalSpotPrices; track priceData) {
                 <div class="flex flex-col">
                   <div class="text-xs">
                     {{ priceData.zone.display_name }} (spot):
-                    {{ getSScoreCustom(item, priceData.price) }}
+                    {{ getSScoreCustom(server, priceData.price) }}
                   </div>
                 </div>
               }
               @for (
-                priceData of item.additionalOndemandPrices;
+                priceData of server.additionalOndemandPrices;
                 track priceData
               ) {
                 <div class="flex flex-col">
                   <div class="text-xs">
                     {{ priceData.zone.display_name }} (ondemand):
-                    {{ getSScoreCustom(item, priceData.price) }}
+                    {{ getSScoreCustom(server, priceData.price) }}
                   </div>
                 </div>
               }
@@ -130,10 +141,13 @@
       @if (isChartShown("generic")) {
         <tr>
           <td>SCore All</td>
-          @for (item of servers; track item) {
+          @for (
+            server of servers;
+            track server.vendor_id + "_" + server.server_id
+          ) {
             <td>
-              <div [style]="getBecnchmarkStyle(item, true)">
-                {{ getBenchmark(item, true) }}
+              <div [style]="getBecnchmarkStyle(server, true)">
+                {{ getBenchmark(server, true) }}
               </div>
             </td>
           }
@@ -142,10 +156,13 @@
       @if (isChartShown("generic")) {
         <tr>
           <td>SCore Single</td>
-          @for (item of servers; track item) {
+          @for (
+            server of servers;
+            track server.vendor_id + "_" + server.server_id
+          ) {
             <td>
-              <div [style]="getBecnchmarkStyle(item, false)">
-                {{ getBenchmark(item, false) }}
+              <div [style]="getBecnchmarkStyle(server, false)">
+                {{ getBenchmark(server, false) }}
               </div>
             </td>
           }
@@ -154,14 +171,17 @@
       @if (isChartShown("generic")) {
         <tr class="rows-to-hide-for-test">
           <td>Best spot price</td>
-          @for (item of servers; track item) {
+          @for (
+            server of servers;
+            track server.vendor_id + "_" + server.server_id
+          ) {
             <td>
               <div class="flex flex-col">
-                <div [style]="getBestPriceStyle(item, 'spot')">
-                  {{ getBestPrice(item, "spot") }}
+                <div [style]="getBestPriceStyle(server, 'spot')">
+                  {{ getBestPrice(server, "spot") }}
                 </div>
                 <div class="text-xs">
-                  {{ getBestZone(item, "spot") }}
+                  {{ getBestZone(server, "spot") }}
                 </div>
               </div>
             </td>
@@ -171,14 +191,17 @@
       @if (isChartShown("generic")) {
         <tr class="rows-to-hide-for-test">
           <td>Best ondemand price</td>
-          @for (item of servers; track item) {
+          @for (
+            server of servers;
+            track server.vendor_id + "_" + server.server_id
+          ) {
             <td>
               <div class="flex flex-col">
-                <div [style]="getBestPriceStyle(item)">
-                  {{ getBestPrice(item) }}
+                <div [style]="getBestPriceStyle(server)">
+                  {{ getBestPrice(server) }}
                 </div>
                 <div class="text-xs">
-                  {{ getBestZone(item) }}
+                  {{ getBestZone(server) }}
                 </div>
               </div>
             </td>
@@ -188,11 +211,14 @@
       @if (isChartShown("generic") && showZone) {
         <tr>
           <td class="align-top">Selected ondemand prices</td>
-          @for (item of servers; track item) {
+          @for (
+            server of servers;
+            track server.vendor_id + "_" + server.server_id
+          ) {
             <td>
               <div class="flex flex-col gap-2">
                 @for (
-                  priceData of item.additionalOndemandPrices;
+                  priceData of server.additionalOndemandPrices;
                   track priceData
                 ) {
                   <div class="flex flex-col">
@@ -210,10 +236,16 @@
       @if (isChartShown("generic") && showZone) {
         <tr>
           <td class="align-top">Selected spot prices</td>
-          @for (item of servers; track item) {
+          @for (
+            server of servers;
+            track server.vendor_id + "_" + server.server_id
+          ) {
             <td>
               <div class="flex flex-col gap-2">
-                @for (priceData of item.additionalSpotPrices; track priceData) {
+                @for (
+                  priceData of server.additionalSpotPrices;
+                  track priceData
+                ) {
                   <div class="flex flex-col">
                     <div>{{ priceData.price }} {{ priceData.currency }}</div>
                     <div class="text-xs">
@@ -227,7 +259,7 @@
         </tr>
       }
       @if (isChartShown("generic")) {
-        @for (category of instancePropertyCategories; track category) {
+        @for (category of instancePropertyCategories; track category.name) {
           <tr class="section_header">
             <td>
               <h2 class="text-xl font-semibold">{{ category.name }}</h2>
@@ -250,7 +282,10 @@
                   }
                 </div>
               </td>
-              @for (server of servers; track server) {
+              @for (
+                server of servers;
+                track server.vendor_id + "_" + server.server_id
+              ) {
                 <td>
                   <div [style]="getBestCellStyle(column.id, server)">
                     {{ getProperty(column, server) }}
@@ -261,13 +296,19 @@
           }
         }
       }
-      @for (category of benchmarkCategories; track category) {
-        @if (category.data.length && !category.hidden) {
-          <tr class="section_header" id="benchmark_line_{{ category.id }}">
+      @for (
+        benchmarkCategory of benchmarkCategories;
+        track benchmarkCategory.name
+      ) {
+        @if (benchmarkCategory.data.length && !benchmarkCategory.hidden) {
+          <tr
+            class="section_header"
+            id="benchmark_line_{{ benchmarkCategory.id }}"
+          >
             <td [colSpan]="getSectionColSpan()">
               <div class="flex justify-between">
                 <h3 class="text-xl font-semibold flex gap-2 items-center">
-                  {{ category.name }}
+                  {{ benchmarkCategory.name }}
                   <lucide-icon
                     name="circle-arrow-up"
                     class="h-4 w-4 text-gray-200"
@@ -276,9 +317,9 @@
                   >
                   </lucide-icon>
                   @if (
-                    category.id === "geekbench" ||
-                    category.id === "geekbench_single" ||
-                    category.id === "geekbench_multi"
+                    benchmarkCategory.id === "geekbench" ||
+                    benchmarkCategory.id === "geekbench_single" ||
+                    benchmarkCategory.id === "geekbench_multi"
                   ) {
                     <lucide-icon
                       name="info"
@@ -288,16 +329,21 @@
                     >
                     </lucide-icon>
                   }
-                  @if (category.id === "bw_mem" || category.id === "openssl") {
+                  @if (
+                    benchmarkCategory.id === "bw_mem" ||
+                    benchmarkCategory.id === "openssl"
+                  ) {
                     <lucide-icon
                       name="info"
                       class="h-4 w-4 text-gray-200"
-                      (mouseenter)="showTooltipChart($event, category.id)"
+                      (mouseenter)="
+                        showTooltipChart($event, benchmarkCategory.id)
+                      "
                       (mouseleave)="hideTooltip()"
                     >
                     </lucide-icon>
                   }
-                  @if (category.id === "stress_ng") {
+                  @if (benchmarkCategory.id === "stress_ng") {
                     <lucide-icon
                       name="info"
                       class="h-4 w-4 text-gray-200"
@@ -306,7 +352,7 @@
                     >
                     </lucide-icon>
                   }
-                  @if (category.id === "stress_ng_pct") {
+                  @if (benchmarkCategory.id === "stress_ng_pct") {
                     <lucide-icon
                       name="info"
                       class="h-4 w-4 text-gray-200"
@@ -320,7 +366,7 @@
                     >
                     </lucide-icon>
                   }
-                  @if (category.id === "compress") {
+                  @if (benchmarkCategory.id === "compress") {
                     <lucide-icon
                       name="info"
                       class="h-4 w-4 text-gray-200"
@@ -334,7 +380,7 @@
                     >
                     </lucide-icon>
                   }
-                  @if (category.id === "llm_inference") {
+                  @if (benchmarkCategory.id === "llm_inference") {
                     <lucide-icon
                       name="info"
                       class="h-4 w-4 text-gray-200"
@@ -353,7 +399,10 @@
                   <button
                     class="btn-primary py-2 px-3 flex gap-1 items-center sticky right-2"
                     (click)="
-                      clipboardURL($event, 'benchmark_line_' + category.id)
+                      clipboardURL(
+                        $event,
+                        'benchmark_line_' + benchmarkCategory.id
+                      )
                     "
                   >
                     <lucide-icon
@@ -367,7 +416,7 @@
           </tr>
           <tr>
             <td [colSpan]="servers.length + 1">
-              @if (category.id === "bw_mem") {
+              @if (benchmarkCategory.id === "bw_mem") {
                 <div>
                   @if (lineChartDataBWmem) {
                     <div class="block_full_inline">
@@ -408,7 +457,7 @@
                   }
                 </div>
               }
-              @if (category.id === "openssl") {
+              @if (benchmarkCategory.id === "openssl") {
                 <div>
                   @if (barChartDataSSL) {
                     <div class="block_full_inline">
@@ -449,7 +498,7 @@
                   }
                 </div>
               }
-              @if (category.id === "stress_ng") {
+              @if (benchmarkCategory.id === "stress_ng") {
                 <div>
                   @if (lineChartDataStressNG) {
                     <div class="block_full_inline">
@@ -470,7 +519,7 @@
                   }
                 </div>
               }
-              @if (category.id === "stress_ng_pct") {
+              @if (benchmarkCategory.id === "stress_ng_pct") {
                 <div>
                   @if (lineChartDataStressNG) {
                     <div class="block_full_inline">
@@ -491,7 +540,7 @@
                   }
                 </div>
               }
-              @if (category.id === "compress") {
+              @if (benchmarkCategory.id === "compress") {
                 <div>
                   @if (availableCompressMethods.length) {
                     <div class="block_full_short_inline">
@@ -545,16 +594,16 @@
                 </div>
               }
               @if (
-                category.id === "geekbench" ||
-                category.id === "geekbench_single" ||
-                category.id === "geekbench_multi"
+                benchmarkCategory.id === "geekbench" ||
+                benchmarkCategory.id === "geekbench_single" ||
+                benchmarkCategory.id === "geekbench_multi"
               ) {
                 <div>
                   @if (radarChartDataGeekSingle) {
                     <div class="block_full_short_geekbench">
                       @if (isBrowser()) {
                         <div class="charts_div justify-center">
-                          @if (category.id !== "geekbench_multi") {
+                          @if (benchmarkCategory.id !== "geekbench_multi") {
                             <div
                               chartType="bar"
                               class="chart_div w-full flex justify-center"
@@ -569,7 +618,7 @@
                               </canvas>
                             </div>
                           }
-                          @if (category.id !== "geekbench_single") {
+                          @if (benchmarkCategory.id !== "geekbench_single") {
                             <div
                               chartType="bar"
                               class="chart_div w-full flex justify-center"
@@ -590,7 +639,7 @@
                   }
                 </div>
               }
-              @if (category.id === "llm_inference") {
+              @if (benchmarkCategory.id === "llm_inference") {
                 <div>
                   @if (availableLLMModels.length) {
                     <div class="block_full_short_inline">
@@ -659,39 +708,45 @@
               }
               @if (
                 !isEmbedded &&
-                category.id !== "passmark_cpu" &&
-                category.id !== "passmark_other"
+                benchmarkCategory.id !== "passmark_cpu" &&
+                benchmarkCategory.id !== "passmark_other"
               ) {
                 <div
                   class="mt-4 mb-8 flex justify-center"
                   [ngClass]="{
-                    'mb-8': !category.show_more,
+                    'mb-8': !benchmarkCategory.show_more,
                   }"
                 >
                   <button
                     class="btn-primary py-2 px-3"
-                    (click)="toggleBenchmarkCategory(category)"
+                    (click)="toggleBenchmarkCategory(benchmarkCategory)"
                   >
-                    {{ category.show_more ? "Hide" : "Show" }} Details
+                    {{ benchmarkCategory.show_more ? "Hide" : "Show" }} Details
                   </button>
                 </div>
               }
             </td>
           </tr>
           @if (
-            category.id === "passmark_cpu" || category.id === "passmark_other"
+            benchmarkCategory.id === "passmark_cpu" ||
+            benchmarkCategory.id === "passmark_other"
           ) {
-            @for (item of category.data; track item) {
+            @for (
+              benchmarkData of benchmarkCategory.data;
+              track benchmarkData.name
+            ) {
               <tr>
                 <td>
                   <div class="ml-4 flex justify-between">
                     <div class="inline-block gap-2 items-center">
-                      <span class="inline">{{ item.name }}</span>
-                      @if (item.description) {
+                      <span class="inline">{{ benchmarkData.name }}</span>
+                      @if (benchmarkData.description) {
                         <lucide-icon
                           name="info"
                           class="inline-block h-4 w-4 text-gray-200 ml-1"
-                          (mouseenter)="showTooltip($event, item.description)"
+                          (mouseenter)="
+                            showTooltip($event, benchmarkData.description)
+                          "
                           (mouseleave)="hideTooltip()"
                         >
                         </lucide-icon>
@@ -699,10 +754,19 @@
                     </div>
                   </div>
                 </td>
-                @if (item.configs?.length > 0) {
-                  @for (value of item.configs[0].values; track $index) {
+                @if (benchmarkData.configs?.length > 0) {
+                  @for (
+                    value of benchmarkData.configs[0].values;
+                    track $index
+                  ) {
                     <td
-                      [style]="isBestStyle(value, item.configs[0].values, item)"
+                      [style]="
+                        isBestStyle(
+                          value,
+                          benchmarkData.configs[0].values,
+                          benchmarkData
+                        )
+                      "
                     >
                       {{ numberWithCommas(value) }}
                     </td>
@@ -714,29 +778,34 @@
               <!-- spacer -->
             </tr>
           }
-          @if (category.show_more && !isEmbedded) {
-            @for (item of category.data; track item) {
-              @if (category.data.length > 1) {
+          @if (benchmarkCategory.show_more && !isEmbedded) {
+            @for (
+              benchmarkData of benchmarkCategory.data;
+              track benchmarkData
+            ) {
+              @if (benchmarkCategory.data.length > 1) {
                 <tr>
                   <td [colSpan]="servers.length + 1">
                     <div class="ml-4 flex justify-between">
                       <div class="flex gap-2 items-center">
-                        {{ item.name }}
-                        @if (item.description) {
+                        {{ benchmarkData.name }}
+                        @if (benchmarkData.description) {
                           <lucide-icon
                             name="info"
                             class="h-4 w-4 text-gray-200"
-                            (mouseenter)="showTooltip($event, item.description)"
+                            (mouseenter)="
+                              showTooltip($event, benchmarkData.description)
+                            "
                             (mouseleave)="hideTooltip()"
                           >
                           </lucide-icon>
                         }
                       </div>
-                      @if (item.description) {
+                      @if (benchmarkData.description) {
                         <lucide-icon
-                          [name]="benchmarkIcon(item)"
+                          [name]="benchmarkIcon(benchmarkData)"
                           class="h-6 w-6 text-emerald-400 cursor-pointer"
-                          (click)="toggleBenchmark(item)"
+                          (click)="toggleBenchmark(benchmarkData)"
                         >
                         </lucide-icon>
                       }
@@ -744,12 +813,12 @@
                   </td>
                 </tr>
               }
-              @if (!item.collapsed) {
+              @if (!benchmarkData.collapsed) {
                 <!-- special sorting for LLM -->
                 @for (
-                  config of category.id === "llm_inference"
-                    ? sortLLMConfigs(item.configs)
-                    : item.configs;
+                  config of benchmarkCategory.id === "llm_inference"
+                    ? sortLLMConfigs(benchmarkData.configs)
+                    : benchmarkData.configs;
                   track config
                 ) {
                   <tr>
@@ -760,7 +829,11 @@
                       ></div>
                     </td>
                     @for (value of config.values; track value) {
-                      <td [style]="isBestStyle(value, config.values, item)">
+                      <td
+                        [style]="
+                          isBestStyle(value, config.values, benchmarkData)
+                        "
+                      >
                         {{ numberWithCommas(value) }}
                       </td>
                     }
@@ -899,28 +972,30 @@
             </td>
           </tr>
           @if (chartItem.show_more) {
-            @for (item of chartItem.data; track item) {
+            @for (chartData of chartItem.data; track chartData) {
               @if (chartItem.data.length > 1) {
                 <tr>
                   <td [colSpan]="servers.length + 1">
                     <div class="ml-4 flex justify-between">
                       <div class="flex gap-2 items-center">
-                        {{ item.name }}
-                        @if (item.description) {
+                        {{ chartData.name }}
+                        @if (chartData.description) {
                           <lucide-icon
                             name="info"
                             class="h-4 w-4 text-gray-200"
-                            (mouseenter)="showTooltip($event, item.description)"
+                            (mouseenter)="
+                              showTooltip($event, chartData.description)
+                            "
                             (mouseleave)="hideTooltip()"
                           >
                           </lucide-icon>
                         }
                       </div>
-                      @if (item.description) {
+                      @if (chartData.description) {
                         <lucide-icon
-                          [name]="benchmarkIcon(item)"
+                          [name]="benchmarkIcon(chartData)"
                           class="h-6 w-6 text-emerald-400 cursor-pointer"
-                          (click)="toggleBenchmark(item)"
+                          (click)="toggleBenchmark(chartData)"
                         >
                         </lucide-icon>
                       }
@@ -928,8 +1003,8 @@
                   </td>
                 </tr>
               }
-              @if (!item.collapsed) {
-                @for (config of item.configs; track config) {
+              @if (!chartData.collapsed) {
+                @for (config of chartData.configs; track config) {
                   <tr>
                     <td>
                       <div
@@ -938,7 +1013,9 @@
                       ></div>
                     </td>
                     @for (value of config.values; track value) {
-                      <td [style]="isBestStyle(value, config.values, item)">
+                      <td
+                        [style]="isBestStyle(value, config.values, chartData)"
+                      >
                         {{ numberWithCommas(value) }}
                       </td>
                     }
@@ -957,35 +1034,40 @@
           </td>
           <td [colSpan]="servers.length - 1"></td>
         </tr>
-        @for (item of getUncategorizedBenchmarksCategories(); track item) {
+        @for (
+          benchmarkCategory of getUncategorizedBenchmarksCategories();
+          track benchmarkCategory
+        ) {
           <tr>
             <td [colSpan]="servers.length + 1">
               <div class="pl-4 w-full flex justify-between">
                 <div class="flex gap-2 items-center">
-                  {{ item.name }}
-                  @if (item.description) {
+                  {{ benchmarkCategory.name }}
+                  @if (benchmarkCategory.description) {
                     <lucide-icon
                       name="info"
                       class="h-4 w-4 text-gray-200"
-                      (mouseenter)="showTooltip($event, item.description)"
+                      (mouseenter)="
+                        showTooltip($event, benchmarkCategory.description)
+                      "
                       (mouseleave)="hideTooltip()"
                     >
                     </lucide-icon>
                   }
                 </div>
-                @if (item.description) {
+                @if (benchmarkCategory.description) {
                   <lucide-icon
-                    [name]="benchmarkIcon(item)"
+                    [name]="benchmarkIcon(benchmarkCategory)"
                     class="h-6 w-6 text-emerald-400 cursor-pointer"
-                    (click)="toggleBenchmark(item)"
+                    (click)="toggleBenchmark(benchmarkCategory)"
                   >
                   </lucide-icon>
                 }
               </div>
             </td>
           </tr>
-          @if (!item.collapsed) {
-            @for (config of item.configs; track config) {
+          @if (!benchmarkCategory.collapsed) {
+            @for (config of benchmarkCategory.configs; track config) {
               <tr>
                 <td>
                   <div
@@ -994,7 +1076,11 @@
                   ></div>
                 </td>
                 @for (value of config.values; track value) {
-                  <td [style]="isBestStyle(value, config.values, item)">
+                  <td
+                    [style]="
+                      isBestStyle(value, config.values, benchmarkCategory)
+                    "
+                  >
                     {{ numberWithCommas(value) }}
                   </td>
                 }
@@ -1006,13 +1092,16 @@
       @if (!isEmbedded) {
         <tr>
           <td>View Server</td>
-          @for (item of servers; track item) {
+          @for (
+            server of servers;
+            track server.vendor_id + "_" + server.server_id
+          ) {
             <td>
               <button
                 class="btn-primary py-2 px-3 w-full whitespace-nowrap overflow-hidden text-ellipsis"
-                (click)="viewServer(item)"
+                (click)="viewServer(server)"
               >
-                {{ item.display_name }}
+                {{ server.display_name }}
               </button>
             </td>
           }
@@ -1030,12 +1119,12 @@
     class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
     aria-labelledby="dropdownDefaultButton"
   >
-    @for (item of availableBWmem; track item) {
+    @for (bwMemOperation of availableBWmem; track bwMemOperation.name) {
       <li
         class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-        (click)="selectBWMemOperation(item)"
+        (click)="selectBWMemOperation(bwMemOperation)"
       >
-        <div class="text-white text-sm">{{ item.name }}</div>
+        <div class="text-white text-sm">{{ bwMemOperation.name }}</div>
       </li>
     }
   </ul>
@@ -1049,12 +1138,12 @@
     class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
     aria-labelledby="dropdownDefaultButton"
   >
-    @for (item of availableSSLAlgos; track item) {
+    @for (sslAlgorithm of availableSSLAlgos; track sslAlgorithm.name) {
       <li
         class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-        (click)="selecSSLAlgorithm(item)"
+        (click)="selecSSLAlgorithm(sslAlgorithm)"
       >
-        <div class="text-white text-sm">{{ item.name }}</div>
+        <div class="text-white text-sm">{{ sslAlgorithm.name }}</div>
       </li>
     }
   </ul>
@@ -1069,13 +1158,17 @@
       class="py-2 px-1 text-sm text-gray-700"
       aria-labelledby="dropdownDefaultButton"
     >
-      @for (item of chartItem.chart.options; track item; let i = $index) {
+      @for (
+        chartTemplate of chartItem.chart.options;
+        track chartTemplate;
+        let i = $index
+      ) {
         <li class="flex py-1 gap-2 items-center">
           <div
             class="text-emerald-400 hover:text-emerald-500 cursor-pointer font-bold ml-2"
             (click)="selectChartTemplateOption(chartItem, i)"
           >
-            {{ item.name }}
+            {{ chartTemplate.name }}
           </div>
         </li>
       }
@@ -1117,12 +1210,15 @@
     class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
     aria-labelledby="dropdownDefaultButton"
   >
-    @for (item of availableCompressMethods; track item) {
+    @for (
+      compressMethod of availableCompressMethods;
+      track compressMethod.name
+    ) {
       <li
         class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-        (click)="selectCompressMethod(item)"
+        (click)="selectCompressMethod(compressMethod)"
       >
-        <div class="text-white text-sm">{{ item.name }}</div>
+        <div class="text-white text-sm">{{ compressMethod.name }}</div>
       </li>
     }
   </ul>
@@ -1136,15 +1232,15 @@
     class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200 max-h-60 overflow-y-auto"
     aria-labelledby="llm_models_button"
   >
-    @for (item of availableLLMModels; track item) {
+    @for (llmModel of availableLLMModels; track llmModel.name) {
       <li
         class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-        (click)="refreshLLMCharts(item)"
+        (click)="refreshLLMCharts(llmModel)"
       >
         <div
           class="text-white text-sm whitespace-nowrap overflow-hidden text-ellipsis"
         >
-          {{ item.name }}
+          {{ llmModel.name }}
         </div>
       </li>
     }

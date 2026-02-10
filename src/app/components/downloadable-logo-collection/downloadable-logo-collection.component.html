@@ -58,14 +58,17 @@
           [attr.aria-labelledby]="downloadsToggleId"
         >
           <div class="p-2 grid grid-cols-1 gap-2">
-            @for (item of downloadItems; track trackByFile($index, item)) {
+            @for (
+              downloadItem of downloadItems;
+              track trackByFile($index, downloadItem)
+            ) {
               <a
                 class="py-2 px-4 inline-flex justify-center items-center text-sm font-medium rounded-lg border border-transparent bg-emerald-400 text-white hover:bg-emerald-500 focus:outline-hidden focus:bg-emerald-500 disabled:opacity-50 disabled:pointer-events-none"
-                [href]="item.href"
-                [attr.download]="item.downloadName"
-                (click)="onDownloadClick($event, item)"
+                [href]="downloadItem.href"
+                [attr.download]="downloadItem.downloadName"
+                (click)="onDownloadClick($event, downloadItem)"
               >
-                {{ item.file }}
+                {{ downloadItem.file }}
               </a>
             }
           </div>
