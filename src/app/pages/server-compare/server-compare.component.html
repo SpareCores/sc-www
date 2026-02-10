@@ -128,7 +128,10 @@
               @if (compare.instances) {
                 <div class="text-sm flex flex-wrap gap-2">
                   Instances:
-                  @for (instance of compare.instances; track instance.server) {
+                  @for (
+                    instance of compare.instances;
+                    track instance.vendor + "_" + instance.server
+                  ) {
                     <a
                       class="underline decoration-dotted whitespace-nowrap"
                       routerLink="/server/{{ instance.vendor }}/{{
