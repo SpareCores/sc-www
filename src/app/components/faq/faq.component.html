@@ -1,7 +1,11 @@
 <div class="w-full">
   <h3 class="font-bold text-3xl">{{ item }} FAQs</h3>
   <div class="pl-2 mt-2" itemscope="" itemtype="https://schema.org/FAQPage">
-    @for (question of FAQQuestions; track question.id; let i = $index) {
+    @for (
+      question of FAQQuestions;
+      track question.question + "_" + question.answer;
+      let i = $index
+    ) {
       <div
         itemscope=""
         itemprop="mainEntity"
