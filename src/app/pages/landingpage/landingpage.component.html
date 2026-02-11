@@ -129,7 +129,7 @@
                         }
                         @if (item.logo) {
                           <img
-                            src="{{ item.logo }}"
+                            [src]="item.logo"
                             style="margin: 0.5rem"
                             class="rounded-lg"
                             alt="{{ item.name }} logo"

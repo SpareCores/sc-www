@@ -57,7 +57,7 @@
             </div>
             <div class="flex items-center justify-center gap-8 mt-2">
               <div class="w-20 h-20 bg-white rounded-lg mx-auto">
-                <img src="{{ serverDetails.vendor.logo }}" alt="logo" />
+                <img [src]="serverDetails.vendor.logo" alt="logo" />
               </div>
               <div class="text-gray-200 font-bold text-4xl">
                 {{ serverDetails.vendor.name }}
