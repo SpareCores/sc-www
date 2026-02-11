@@ -181,32 +181,32 @@
               </thead>
               <tbody>
                 @for (
-                  item of servers;
-                  track item.vendor_id +
+                  server of servers;
+                  track server.vendor_id +
                     "_" +
-                    item.server_id +
+                    server.server_id +
                     "_" +
-                    item.region_id +
+                    server.region_id +
                     "_" +
-                    item.zone_id +
+                    server.zone_id +
                     "_" +
-                    item.allocation;
+                    server.allocation;
                   let i = $index
                 ) {
                   <tr
-                    (click)="openServerDetails(item)"
+                    (click)="openServerDetails(server)"
                     data-ph-capture-attribute-sc-event="server listing route to server details"
                     [attr.data-ph-capture-attribute-server-listing-row-vendor]="
-                      item.vendor_id
+                      server.vendor_id
                     "
                     [attr.data-ph-capture-attribute-server-listing-row-region]="
-                      item.region.api_reference
+                      server.region.api_reference
                     "
                     [attr.data-ph-capture-attribute-server-listing-row-zone]="
-                      item.zone.api_reference
+                      server.zone.api_reference
                     "
                     [attr.data-ph-capture-attribute-server-listing-row-server]="
-                      item.server.api_reference
+                      server.server.api_reference
                     "
                     [attr.data-ph-capture-attribute-server-listing-row-index]="
                       i + 1
@@ -217,20 +217,20 @@
                     class="server_table_data_line"
                   >
                     <td
-                      (click)="toggleCompare2($event, item)"
+                      (click)="toggleCompare2($event, server)"
                       class="checkbox_column"
                     >
                       <div class="flex items-center">
                         <input
                           type="checkbox"
-                          id="server_compare_checkbox_{{ item.server_id }}"
-                          [(ngModel)]="item.selected"
-                          (ngModelChange)="toggleCompare($event, item)"
+                          id="server_compare_checkbox_{{ server.server_id }}"
+                          [(ngModel)]="server.selected"
+                          (ngModelChange)="toggleCompare($event, server)"
                           (click)="$event.stopPropagation()"
                           class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer"
                           [ngClass]="{
                             partially_selected:
-                              item.partiallySelected && !item.selected,
+                              server.partiallySelected && !server.selected,
                           }"
                         />
                       </div>
@@ -239,25 +239,25 @@
                       @if (column.type === "name") {
                         <td class="min-w-225">
                           <div class="text-sm text-white flex gap-1">
-                            <span>{{ item.server.display_name }} </span>
-                            @if (showAPIReference(item)) {
+                            <span>{{ server.server.display_name }} </span>
+                            @if (showAPIReference(server)) {
                               <span class="text-emerald-400">|</span>
                             }
-                            @if (showAPIReference(item)) {
-                              <span>{{ item.server.api_reference }} </span>
+                            @if (showAPIReference(server)) {
+                              <span>{{ server.server.api_reference }} </span>
                             }
                           </div>
                           <div class="text-xs text-white flex gap-1">
                             <span class="whitespace-nowrap">{{
-                              item.vendor_id
+                              server.vendor_id
                             }}</span>
                             <span class="text-emerald-400">|</span>
                             <span class="whitespace-nowrap">{{
-                              item.region.display_name
+                              server.region.display_name
                             }}</span>
                             <span class="text-emerald-400">|</span>
                             <span class="whitespace-nowrap">{{
-                              item.zone.display_name
+                              server.zone.display_name
                             }}</span>
                           </div>
                         </td>
@@ -265,27 +265,29 @@
                       @if (column.type === "processor") {
                         <td>
                           <div class="text-sm text-white whitespace-nowrap">
-                            {{ item.server.vcpus }} vCPUs ({{
-                              item.server.cpu_architecture
+                            {{ server.server.vcpus }} vCPUs ({{
+                              server.server.cpu_architecture
                             }})
                           </div>
                           <div class="flex gap-1">
                             @if (
-                              item.server.cpu_cores && item.server.cpu_speed
+                              server.server.cpu_cores && server.server.cpu_speed
                             ) {
                               <div class="text-xs text-white flex gap-1">
                                 <span class="whitespace-nowrap"
-                                  >{{ item.server.cpu_cores }} cores &#64;
-                                  {{ item.server.cpu_speed }} GHz</span
+                                  >{{ server.server.cpu_cores }} cores &#64;
+                                  {{ server.server.cpu_speed }} GHz</span
                                 >
                               </div>
                             }
                             @if (
-                              item.server.cpu_allocation &&
-                              item.server.cpu_allocation !== "Dedicated"
+                              server.server.cpu_allocation &&
+                              server.server.cpu_allocation !== "Dedicated"
                             ) {
                               <div class="text-xs text-white flex gap-1">
-                                <span>({{ item.server.cpu_allocation }})</span>
+                                <span
+                                  >({{ server.server.cpu_allocation }})</span
+                                >
                               </div>
                             }
                           </div>
@@ -293,18 +295,18 @@
                       }
                       @if (column.type === "memory") {
                         <td>
-                          {{ getMemory(item) }}
+                          {{ getMemory(server) }}
                         </td>
                       }
                       @if (column.type === "score") {
                         <td>
                           <div class="text-sm text-white">
-                            {{ getScore(item.server.score) }}
+                            {{ getScore(server.server.score) }}
                           </div>
-                          @if (item.server.score_per_price) {
+                          @if (server.server.score_per_price) {
                             <div class="text-xs text-white flex gap-1">
                               <span class="whitespace-nowrap"
-                                >{{ getScore(item.server.score_per_price) }} /
+                                >{{ getScore(server.server.score_per_price) }} /
                                 USD</span
                               >
                             </div>
@@ -313,30 +315,30 @@
                       }
                       @if (column.type === "score_per_price") {
                         <td>
-                          @if (item.server.score_per_price) {
+                          @if (server.server.score_per_price) {
                             <span
-                              >{{ getScore(item.server.score_per_price) }} /
+                              >{{ getScore(server.server.score_per_price) }} /
                               USD</span
                             >
                           }
-                          @if (!item.server.score_per_price) {
+                          @if (!server.server.score_per_price) {
                             <span>-</span>
                           }
                         </td>
                       }
                       @if (column.type === "gpu_memory") {
                         <td>
-                          {{ getGPUMemory(item) }}
+                          {{ getGPUMemory(server) }}
                         </td>
                       }
                       @if (column.type === "storage") {
                         <td>
                           <div class="text-sm text-white">
-                            {{ getStorage(item) }}
+                            {{ getStorage(server) }}
                           </div>
-                          @if (item.server.storage_type) {
+                          @if (server.server.storage_type) {
                             <div class="text-xs text-white">
-                              <span>{{ item.server.storage_type }}</span>
+                              <span>{{ server.server.storage_type }}</span>
                             </div>
                           }
                         </td>
@@ -344,92 +346,92 @@
                       @if (column.type === "price") {
                         <td class="min-w-160">
                           <div class="text-sm text-white">
-                            {{ item.price }} {{ selectedCurrency.slug }}
+                            {{ server.price }} {{ selectedCurrency.slug }}
                           </div>
                           <div class="text-xs text-white">
-                            {{ getAllocationName(item.allocation) }}
+                            {{ getAllocationName(server.allocation) }}
                           </div>
                         </td>
                       }
                       @if (column.type === "gpu") {
                         <td>
                           <div class="text-sm text-white">
-                            {{ item.server.gpu_count }}
+                            {{ server.server.gpu_count }}
                           </div>
-                          @if (item.server.gpu_model) {
+                          @if (server.server.gpu_model) {
                             <div class="text-xs text-white flex gap-1">
-                              <span>{{ item.server.gpu_model }}</span>
+                              <span>{{ server.server.gpu_model }}</span>
                             </div>
                           }
                         </td>
                       }
                       @if (column.type === "cpu_model") {
                         <td>
-                          @if (item.server.cpu_model) {
+                          @if (server.server.cpu_model) {
                             <div class="text-sm text-white flex gap-1">
-                              <span>{{ item.server.cpu_model }}</span>
+                              <span>{{ server.server.cpu_model }}</span>
                             </div>
                           }
                           <div class="text-xs text-white">
-                            @if (item.server.cpu_manufacturer) {
-                              <span>{{ item.server.cpu_manufacturer }} </span>
+                            @if (server.server.cpu_manufacturer) {
+                              <span>{{ server.server.cpu_manufacturer }} </span>
                             }
-                            @if (item.server.cpu_family) {
-                              <span>{{ item.server.cpu_family }} </span>
+                            @if (server.server.cpu_family) {
+                              <span>{{ server.server.cpu_family }} </span>
                             }
                           </div>
                         </td>
                       }
                       @if (column.type === "gpu_model") {
                         <td>
-                          @if (item.server.gpu_model) {
+                          @if (server.server.gpu_model) {
                             <div class="text-sm text-white flex gap-1">
-                              <span>{{ item.server.gpu_model }}</span>
+                              <span>{{ server.server.gpu_model }}</span>
                             </div>
                           }
                           <div class="text-xs text-white">
-                            @if (item.server.gpu_manufacturer) {
-                              <span>{{ item.server.gpu_manufacturer }} </span>
+                            @if (server.server.gpu_manufacturer) {
+                              <span>{{ server.server.gpu_manufacturer }} </span>
                             }
-                            @if (item.server.gpu_family) {
-                              <span>{{ item.server.gpu_family }} </span>
+                            @if (server.server.gpu_family) {
+                              <span>{{ server.server.gpu_family }} </span>
                             }
                           </div>
                         </td>
                       }
                       @if (column.type === "text" && column.key) {
                         <td>
-                          {{ getField(item, column.key) }}
+                          {{ getField(server, column.key) }}
                         </td>
                       }
                       @if (column.type === "country") {
                         <td>
-                          {{ item.region.country_id | countryIdtoName }}
+                          {{ server.region.country_id | countryIdtoName }}
                         </td>
                       }
                       @if (column.type === "region") {
                         <td class="min-w-225">
                           <div class="text-sm text-white">
-                            {{ item.region.display_name }}
+                            {{ server.region.display_name }}
                           </div>
                           <div class="text-xs text-white flex gap-1">
-                            <span>{{ item.region.region_id }} </span>
+                            <span>{{ server.region.region_id }} </span>
                           </div>
                         </td>
                       }
                       @if (column.type === "vendor") {
                         <td>
-                          @if (item.vendor.logo) {
+                          @if (server.vendor.logo) {
                             <div class="w-9 h-9 px-1 py-1 bg-white rounded-lg">
                               <img
-                                [src]="item.vendor.logo"
-                                alt="{{ item.vendor.name }} logo"
+                                [src]="server.vendor.logo"
+                                alt="{{ server.vendor.name }} logo"
                               />
                             </div>
                           }
-                          @if (!item.vendor.logo) {
+                          @if (!server.vendor.logo) {
                             <div class="text-white text-sm">
-                              {{ item.vendor.name }}
+                              {{ server.vendor.name }}
                             </div>
                           }
                         </td>
@@ -438,21 +440,21 @@
                     <td>
                       <div (click)="$event.stopPropagation()">
                         <a
-                          routerLink="/server/{{ item.vendor.vendor_id }}/{{
-                            item.server.api_reference
+                          routerLink="/server/{{ server.vendor.vendor_id }}/{{
+                            server.server.api_reference
                           }}"
                           data-ph-capture-attribute-sc-event="server listing route to server details"
                           [attr.data-ph-capture-attribute-server-listing-row-vendor]="
-                            item.vendor_id
+                            server.vendor_id
                           "
                           [attr.data-ph-capture-attribute-server-listing-row-region]="
-                            item.region.api_reference
+                            server.region.api_reference
                           "
                           [attr.data-ph-capture-attribute-server-listing-row-zone]="
-                            item.zone.api_reference
+                            server.zone.api_reference
                           "
                           [attr.data-ph-capture-attribute-server-listing-row-server]="
-                            item.server.api_reference
+                            server.server.api_reference
                           "
                           [attr.data-ph-capture-attribute-server-listing-row-index]="
                             i + 1

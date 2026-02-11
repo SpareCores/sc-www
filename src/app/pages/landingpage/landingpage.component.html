@@ -113,8 +113,8 @@
               <div class="spinner_holder">
                 <div id="ring1" class="spin_ring">
                   @for (
-                    item of spinnerContents[0];
-                    track item;
+                    spinnerItem of spinnerContents[0];
+                    track spinnerItem;
                     let i = $index
                   ) {
                     <div
@@ -122,17 +122,17 @@
                       [style]="getStyle(i)"
                     >
                       <div class="slot_inner" [style]="getInnerStyle(i)">
-                        @if (!item.logo) {
+                        @if (!spinnerItem.logo) {
                           <div class="text-center font-bold text-3xl">
-                            {{ item.name }}
+                            {{ spinnerItem.name }}
                           </div>
                         }
-                        @if (item.logo) {
+                        @if (spinnerItem.logo) {
                           <img
-                            [src]="item.logo"
+                            [src]="spinnerItem.logo"
                             style="margin: 0.5rem"
                             class="rounded-lg"
-                            alt="{{ item.name }} logo"
+                            alt="{{ spinnerItem.name }} logo"
                           />
                         }
                       </div>
@@ -149,8 +149,8 @@
               <div class="spinner_holder">
                 <div id="ring2" class="spin_ring">
                   @for (
-                    item of spinnerContents[1];
-                    track item;
+                    spinnerItem of spinnerContents[1];
+                    track spinnerItem;
                     let i = $index
                   ) {
                     <div
@@ -162,13 +162,15 @@
                           class="text-center font-bold overflow-hidden"
                           style="text-overflow: ellipsis"
                           [ngClass]="{
-                            'text-xl': item.name.length < 13,
-                            'text-md': item.name.length >= 13,
+                            'text-xl': spinnerItem.name.length < 13,
+                            'text-md': spinnerItem.name.length >= 13,
                           }"
                         >
-                          {{ item.name }}
+                          {{ spinnerItem.name }}
                         </div>
-                        <div class="text-center">{{ item.architecture }}</div>
+                        <div class="text-center">
+                          {{ spinnerItem.architecture }}
+                        </div>
                       </div>
                     </div>
                   }
@@ -183,8 +185,8 @@
               <div class="spinner_holder">
                 <div id="ring3" class="spin_ring">
                   @for (
-                    item of spinnerContents[2];
-                    track item;
+                    spinnerItem of spinnerContents[2];
+                    track spinnerItem;
                     let i = $index
                   ) {
                     <div
@@ -196,13 +198,13 @@
                           class="text-center font-bold overflow-hidden"
                           style="text-overflow: ellipsis"
                           [ngClass]="{
-                            'text-xl': item.name.length < 13,
-                            'text-md': item.name.length >= 13,
+                            'text-xl': spinnerItem.name.length < 13,
+                            'text-md': spinnerItem.name.length >= 13,
                           }"
                         >
-                          {{ item.name }}
+                          {{ spinnerItem.name }}
                         </div>
-                        <div class="text-center">{{ item.city }}</div>
+                        <div class="text-center">{{ spinnerItem.city }}</div>
                       </div>
                     </div>
                   }

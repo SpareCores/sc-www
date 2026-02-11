@@ -1191,8 +1191,8 @@
         aria-labelledby="dropdownDefaultButton"
       >
         @for (
-          item of chartItem.chart.secondaryOptions;
-          track item;
+          option of chartItem.chart.secondaryOptions;
+          track option;
           let i = $index
         ) {
           <li class="flex py-1 gap-2 items-center">
@@ -1200,7 +1200,7 @@
               class="text-emerald-400 hover:text-emerald-500 cursor-pointer font-bold ml-2"
               (click)="selectChartTemplateOption2(chartItem, i)"
             >
-              {{ item.name }}
+              {{ option.name }}
             </div>
           </li>
         }

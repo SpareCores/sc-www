@@ -420,23 +420,23 @@
             </thead>
             <tbody>
               @for (
-                item of similarByFamily;
-                track item.vendor_id + "_" + item.server_id
+                server of similarByFamily;
+                track server.vendor_id + "_" + server.server_id
               ) {
                 <tr>
                   <td>
                     <a
                       class="underline decoration-dotted hover:text-gray-500"
-                      routerLink="/server/{{ item.vendor_id }}/{{
-                        item.api_reference
+                      routerLink="/server/{{ server.vendor_id }}/{{
+                        server.api_reference
                       }}"
                     >
-                      {{ item.display_name }}
+                      {{ server.display_name }}
                     </a>
                   </td>
-                  <td>{{ item.vcpus }}</td>
-                  <td>{{ getMemory(item.memory_amount) }}</td>
-                  <td>{{ item.gpu_count }}</td>
+                  <td>{{ server.vcpus }}</td>
+                  <td>{{ getMemory(server.memory_amount) }}</td>
+                  <td>{{ server.gpu_count }}</td>
                 </tr>
               }
             </tbody>
@@ -487,36 +487,36 @@
             </thead>
             <tbody>
               @for (
-                item of similarServers;
-                track item.vendor_id + "_" + item.server_id
+                server of similarServers;
+                track server.vendor_id + "_" + server.server_id
               ) {
                 <tr class="similar_line">
                   <td>
                     <a
                       class="underline decoration-dotted hover:text-gray-500"
-                      routerLink="/server/{{ item.vendor_id }}/{{
-                        item.api_reference
+                      routerLink="/server/{{ server.vendor_id }}/{{
+                        server.api_reference
                       }}"
                     >
-                      {{ item.display_name }}
+                      {{ server.display_name }}
                     </a>
                   </td>
-                  <td>{{ item.vendor_id }}</td>
-                  <td>{{ item.vcpus }}</td>
-                  <td>{{ getMemory(item.memory_amount) }}</td>
+                  <td>{{ server.vendor_id }}</td>
+                  <td>{{ server.vcpus }}</td>
+                  <td>{{ getMemory(server.memory_amount) }}</td>
                   @if (selectedSimilarOption.key === "bySpecs") {
                     <td>
-                      {{ item.gpu_count }}
+                      {{ server.gpu_count }}
                     </td>
                   }
                   @if (selectedSimilarOption.key === "byScore") {
                     <td>
-                      {{ item.score?.toFixed(0) || "0" }}
+                      {{ server.score?.toFixed(0) || "0" }}
                     </td>
                   }
                   @if (selectedSimilarOption.key === "byPerformancePerPrice") {
                     <td>
-                      {{ item.score_per_price?.toFixed(0) || "0" }}
+                      {{ server.score_per_price?.toFixed(0) || "0" }}
                     </td>
                   }
                 </tr>
