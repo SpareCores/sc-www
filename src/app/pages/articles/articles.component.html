@@ -3,7 +3,7 @@
     <app-breadcrumbs [segments]="breadcrumbs"></app-breadcrumbs>
 
     <div class="articles_holder flex flex-wrap mt-4 text-white">
-      @for (article of articles; track article.title) {
+      @for (article of articles; track article.title + "_" + article.date) {
         <div class="w-full md:w-1/2 lg:w-1/4 flex flex-col gap-4 px-6 py-4">
           <app-article-card [article]="article"></app-article-card>
         </div>
