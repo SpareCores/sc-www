@@ -130,7 +130,7 @@
               <tbody>
                 @for (
                   storage of storages;
-                  track storage.vendor_id + "_" + storage.storage_id;
+                  track storage.vendor_id + "_" + storage.storage_id + i;
                   let i = $index
                 ) {
                   <tr
