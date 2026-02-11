@@ -128,7 +128,15 @@
                 </tr>
               </thead>
               <tbody>
-                @for (price of traffic_prices; track price; let i = $index) {
+                @for (
+                  price of traffic_prices;
+                  track price.vendor_id +
+                    "_" +
+                    price.region_id +
+                    "_" +
+                    price.direction;
+                  let i = $index
+                ) {
                   <tr
                     data-ph-capture-attribute-sc-event="server listing route to server details"
                     [attr.data-ph-capture-attribute-server-listing-row-vendor]="
