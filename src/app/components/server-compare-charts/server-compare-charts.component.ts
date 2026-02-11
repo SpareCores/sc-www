@@ -475,18 +475,23 @@ export class ServerCompareChartsComponent implements OnInit, OnChanges {
   getBestCellStyle(name: string, server: ExtendedServerDetails) {
     const prop = (server as any)[name];
 
-    if (prop === undefined || prop === null || prop === 0) {
+    if (prop === undefined || prop === null || prop === 0 || !this.servers) {
       return "";
     }
 
     if (typeof prop === "number") {
-      let isBest = true;
-      this.servers?.forEach((s: any) => {
-        if (s[name] > prop) {
-          isBest = false;
-        }
-      });
-      return isBest ? this.bestCellStyle : "";
+      const values = this.servers
+        .map((server: any) => server[name])
+        .filter((value: any) => typeof value === "number");
+
+      if (values.length === 0) return "";
+
+      const max = Math.max(...values);
+      const min = Math.min(...values);
+
+      if (prop === max && max > min) {
+        return this.bestCellStyle;
+      }
     }
 
     return "";
