@@ -676,10 +676,6 @@ export class ServerCompareComponent
     }
   }
 
-  toUpper(text: string) {
-    return text?.toUpperCase();
-  }
-
   clipboardURL(event: any, fragment?: string) {
     let url = window.location.href;
 
