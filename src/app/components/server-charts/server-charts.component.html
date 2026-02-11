@@ -590,7 +590,7 @@
     >
       @for (
         chartTemplate of chartItem.chart.options;
-        track chartTemplate.id;
+        track chartTemplate.name + i;
         let i = $index
       ) {
         <li class="flex py-1 gap-2 items-center">
