@@ -40,7 +40,7 @@
           <div class="pt-4">
             @for (
               parameter of getParametersByCategory(filter.category_id);
-              track parameter
+              track parameter.schema.name + "_" + parameter.schema.title
             ) {
               <div>
                 @if (getParameterType(parameter) !== "checkbox") {
