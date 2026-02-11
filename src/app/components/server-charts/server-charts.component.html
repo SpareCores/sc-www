@@ -231,7 +231,7 @@
       <tbody>
         @for (
           cpuBenchmark of passmarkCPUData;
-          track cpuBenchmark.benchmark_id
+          track cpuBenchmark.benchmark_name + "_" + cpuBenchmark.benchmark_id
         ) {
           <tr class="similar_family_line">
             <td>
@@ -302,7 +302,10 @@
         </tr>
       </thead>
       <tbody>
-        @for (otherBenchmark of passmarkOTHERData; track otherBenchmark) {
+        @for (
+          otherBenchmark of passmarkOTHERData;
+          track otherBenchmark.name + "_" + otherBenchmark.benchmark_id
+        ) {
           <tr class="similar_family_line">
             <td>
               <div class="flex gap-1 items-center">
@@ -485,7 +488,10 @@
   </div>
 }
 
-@for (chartItem of multiBarCharts; track chartItem) {
+@for (
+  chartItem of multiBarCharts;
+  track chartItem.chart.name + "_" + chartItem.chart.id
+) {
   @if (chartItem.chart.chartData && isChartShown(chartItem.chart.id)) {
     <div class="block_half" id="{{ chartItem.chart.id }}_chart">
       <div class="flex justify-between items-center">
@@ -566,7 +572,10 @@
     class="py-2 px-1 text-sm text-gray-700"
     aria-labelledby="dropdownDefaultButton"
   >
-    @for (compressMethod of compressMethods; track compressMethod.key) {
+    @for (
+      compressMethod of compressMethods;
+      track compressMethod.key + "_" + $index
+    ) {
       <li class="flex py-1 gap-2 items-center">
         <div
           class="text-emerald-400 hover:text-emerald-500 cursor-pointer font-bold ml-2"
@@ -579,7 +588,7 @@
   </ul>
 </div>
 
-@for (chartItem of multiBarCharts; track chartItem) {
+@for (chartItem of multiBarCharts; track chartItem.chart.id + "_" + $index) {
   <div
     id="{{ chartItem.chart.id }}_options"
     class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid"
@@ -590,7 +599,7 @@
     >
       @for (
         chartTemplate of chartItem.chart.options;
-        track chartTemplate.name + i;
+        track chartTemplate.benchmark_id;
         let i = $index
       ) {
         <li class="flex py-1 gap-2 items-center">
