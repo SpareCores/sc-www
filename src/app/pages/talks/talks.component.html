@@ -20,7 +20,7 @@
             </tr>
           </thead>
           <tbody>
-            @for (talk of talks; track talk.title) {
+            @for (talk of talks; track talk.title + "_" + talk.date) {
               <tr>
                 <td>{{ talk.date | timeToShortDate }}</td>
                 <td>
