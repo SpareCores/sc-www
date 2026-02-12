@@ -81,7 +81,7 @@ export class ServerCompareComponent
     { name: "Compare Servers", url: "/compare" },
   ];
 
-  isLoading = true;
+  isLoading = false;
 
   servers: ExtendedServerDetails[] = [];
 
