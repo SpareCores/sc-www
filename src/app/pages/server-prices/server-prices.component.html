@@ -1,4 +1,3 @@
-<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
 <div class="w-full bg-primary">
   <div class="content pt-16 pb-16">
     <app-breadcrumbs [segments]="breadcrumbs"></app-breadcrumbs>
@@ -134,13 +133,14 @@
             class="w-full overflow-x-auto relative"
             style="padding-left: 1px"
           >
-            <div
-              *ngIf="isLoading"
-              class="absolute top-0 left-0 w-full h-full pt-16"
-              style="background-color: rgba(0, 0, 0, 0.2)"
-            >
-              <app-loading-spinner size="lg"></app-loading-spinner>
-            </div>
+            @if (isLoading) {
+              <div
+                class="absolute top-0 left-0 w-full h-full pt-16"
+                style="background-color: rgba(0, 0, 0, 0.2)"
+              >
+                <app-loading-spinner size="lg"></app-loading-spinner>
+              </div>
+            }
             <table class="items_table" id="server_prices_table">
               <thead>
                 <tr>
@@ -149,283 +149,329 @@
                       <lucide-icon class="h-4 w-4" name="scale"></lucide-icon>
                     </div>
                   </th>
-                  <th
-                    *ngFor="let item of tableColumns"
-                    [ngClass]="{
-                      'cursor-pointer': item.orderField,
-                    }"
-                    (click)="toggleOrdering(item)"
-                  >
-                    <div class="flex gap-1">
-                      {{ item.name }}
-                      <lucide-icon
-                        *ngIf="item.info"
-                        name="info"
-                        (mouseenter)="showTooltip($event, item.info)"
-                        (mouseleave)="hideTooltip()"
-                        class="h-4 w-4 text-gray-200"
-                      >
-                      </lucide-icon>
-                      <lucide-icon
-                        *ngIf="getOrderingIcon(item)"
-                        name="{{ getOrderingIcon(item) }}"
-                        class="h-4 w-4 text-white"
-                      ></lucide-icon>
-                    </div>
-                  </th>
+                  @for (column of tableColumns; track column.name) {
+                    <th
+                      [ngClass]="{
+                        'cursor-pointer': column.orderField,
+                      }"
+                      (click)="toggleOrdering(column)"
+                    >
+                      <div class="flex gap-1">
+                        {{ column.name }}
+                        @if (column.info) {
+                          <lucide-icon
+                            name="info"
+                            (mouseenter)="showTooltip($event, column.info)"
+                            (mouseleave)="hideTooltip()"
+                            class="h-4 w-4 text-gray-200"
+                          >
+                          </lucide-icon>
+                        }
+                        @if (getOrderingIcon(column)) {
+                          <lucide-icon
+                            name="{{ getOrderingIcon(column) }}"
+                            class="h-4 w-4 text-white"
+                          ></lucide-icon>
+                        }
+                      </div>
+                    </th>
+                  }
                   <th></th>
                 </tr>
               </thead>
               <tbody>
-                <tr
-                  *ngFor="let item of servers; let i = index"
-                  (click)="openServerDetails(item)"
-                  data-ph-capture-attribute-sc-event="server listing route to server details"
-                  [attr.data-ph-capture-attribute-server-listing-row-vendor]="
-                    item.vendor_id
-                  "
-                  [attr.data-ph-capture-attribute-server-listing-row-region]="
-                    item.region.api_reference
-                  "
-                  [attr.data-ph-capture-attribute-server-listing-row-zone]="
-                    item.zone.api_reference
-                  "
-                  [attr.data-ph-capture-attribute-server-listing-row-server]="
-                    item.server.api_reference
-                  "
-                  [attr.data-ph-capture-attribute-server-listing-row-index]="
-                    i + 1
-                  "
-                  [attr.data-ph-capture-attribute-server-listing-row-page-size]="
-                    limit
-                  "
-                  id="server_table_data_line"
-                >
-                  <td
-                    (click)="toggleCompare2($event, item)"
-                    class="checkbox_column"
+                @for (
+                  server of servers;
+                  track server.vendor_id +
+                    "_" +
+                    server.server_id +
+                    "_" +
+                    server.region_id +
+                    "_" +
+                    server.zone_id +
+                    "_" +
+                    server.allocation;
+                  let i = $index
+                ) {
+                  <tr
+                    (click)="openServerDetails(server)"
+                    data-ph-capture-attribute-sc-event="server listing route to server details"
+                    [attr.data-ph-capture-attribute-server-listing-row-vendor]="
+                      server.vendor_id
+                    "
+                    [attr.data-ph-capture-attribute-server-listing-row-region]="
+                      server.region.api_reference
+                    "
+                    [attr.data-ph-capture-attribute-server-listing-row-zone]="
+                      server.zone.api_reference
+                    "
+                    [attr.data-ph-capture-attribute-server-listing-row-server]="
+                      server.server.api_reference
+                    "
+                    [attr.data-ph-capture-attribute-server-listing-row-index]="
+                      i + 1
+                    "
+                    [attr.data-ph-capture-attribute-server-listing-row-page-size]="
+                      limit
+                    "
+                    class="server_table_data_line"
                   >
-                    <div class="flex items-center">
-                      <input
-                        type="checkbox"
-                        id="server_compare_checkbox_{{ item.server_id }}"
-                        [(ngModel)]="item.selected"
-                        (ngModelChange)="toggleCompare($event, item)"
-                        (click)="$event.stopPropagation()"
-                        class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer"
-                        [ngClass]="{
-                          partially_selected:
-                            item.partiallySelected && !item.selected,
-                        }"
-                      />
-                    </div>
-                  </td>
-                  <ng-container *ngFor="let column of tableColumns">
-                    <td *ngIf="column.type === 'name'" class="min-w-225">
-                      <div class="text-sm text-white flex gap-1">
-                        <span>{{ item.server.display_name }} </span>
-                        <span
-                          *ngIf="showAPIReference(item)"
-                          class="text-emerald-400"
-                          >|</span
-                        >
-                        <span *ngIf="showAPIReference(item)"
-                          >{{ item.server.api_reference }}
-                        </span>
-                      </div>
-                      <div class="text-xs text-white flex gap-1">
-                        <span class="whitespace-nowrap">{{
-                          item.vendor_id
-                        }}</span>
-                        <span class="text-emerald-400">|</span>
-                        <span class="whitespace-nowrap">{{
-                          item.region.display_name
-                        }}</span>
-                        <span class="text-emerald-400">|</span>
-                        <span class="whitespace-nowrap">{{
-                          item.zone.display_name
-                        }}</span>
-                      </div>
-                    </td>
-                    <td *ngIf="column.type === 'processor'">
-                      <div class="text-sm text-white whitespace-nowrap">
-                        {{ item.server.vcpus }} vCPUs ({{
-                          item.server.cpu_architecture
-                        }})
-                      </div>
-                      <div class="flex gap-1">
-                        <div
-                          *ngIf="item.server.cpu_cores && item.server.cpu_speed"
-                          class="text-xs text-white flex gap-1"
-                        >
-                          <span class="whitespace-nowrap"
-                            >{{ item.server.cpu_cores }} cores &#64;
-                            {{ item.server.cpu_speed }} GHz</span
-                          >
-                        </div>
-                        <div
-                          *ngIf="
-                            item.server.cpu_allocation &&
-                            item.server.cpu_allocation !== 'Dedicated'
-                          "
-                          class="text-xs text-white flex gap-1"
-                        >
-                          <span>({{ item.server.cpu_allocation }})</span>
-                        </div>
-                      </div>
-                    </td>
-                    <td *ngIf="column.type === 'memory'">
-                      {{ getMemory(item) }}
-                    </td>
-                    <td *ngIf="column.type === 'score'">
-                      <div class="text-sm text-white">
-                        {{ getScore(item.server.score) }}
-                      </div>
-                      <div
-                        *ngIf="item.server.score_per_price"
-                        class="text-xs text-white flex gap-1"
-                      >
-                        <span class="whitespace-nowrap"
-                          >{{ getScore(item.server.score_per_price) }} /
-                          USD</span
-                        >
-                      </div>
-                    </td>
-                    <td *ngIf="column.type === 'score_per_price'">
-                      <span *ngIf="item.server.score_per_price"
-                        >{{ getScore(item.server.score_per_price) }} / USD</span
-                      >
-                      <span *ngIf="!item.server.score_per_price">-</span>
-                    </td>
-                    <td *ngIf="column.type === 'gpu_memory'">
-                      {{ getGPUMemory(item) }}
-                    </td>
-                    <td *ngIf="column.type === 'storage'">
-                      <div class="text-sm text-white">
-                        {{ getStorage(item) }}
-                      </div>
-                      <div
-                        *ngIf="item.server.storage_type"
-                        class="text-xs text-white"
-                      >
-                        <span>{{ item.server.storage_type }}</span>
-                      </div>
-                    </td>
-                    <td *ngIf="column.type === 'price'" class="min-w-160">
-                      <div class="text-sm text-white">
-                        {{ item.price }} {{ selectedCurrency.slug }}
-                      </div>
-                      <div class="text-xs text-white">
-                        {{ getAllocationName(item.allocation) }}
-                      </div>
-                    </td>
-                    <td *ngIf="column.type === 'gpu'">
-                      <div class="text-sm text-white">
-                        {{ item.server.gpu_count }}
-                      </div>
-                      <div
-                        *ngIf="item.server.gpu_model"
-                        class="text-xs text-white flex gap-1"
-                      >
-                        <span>{{ item.server.gpu_model }}</span>
-                      </div>
-                    </td>
-                    <td *ngIf="column.type === 'cpu_model'">
-                      <div
-                        *ngIf="item.server.cpu_model"
-                        class="text-sm text-white flex gap-1"
-                      >
-                        <span>{{ item.server.cpu_model }}</span>
-                      </div>
-                      <div class="text-xs text-white">
-                        <span *ngIf="item.server.cpu_manufacturer"
-                          >{{ item.server.cpu_manufacturer }}
-                        </span>
-                        <span *ngIf="item.server.cpu_family"
-                          >{{ item.server.cpu_family }}
-                        </span>
-                      </div>
-                    </td>
-                    <td *ngIf="column.type === 'gpu_model'">
-                      <div
-                        *ngIf="item.server.gpu_model"
-                        class="text-sm text-white flex gap-1"
-                      >
-                        <span>{{ item.server.gpu_model }}</span>
-                      </div>
-                      <div class="text-xs text-white">
-                        <span *ngIf="item.server.gpu_manufacturer"
-                          >{{ item.server.gpu_manufacturer }}
-                        </span>
-                        <span *ngIf="item.server.gpu_family"
-                          >{{ item.server.gpu_family }}
-                        </span>
-                      </div>
-                    </td>
-                    <td *ngIf="column.type === 'text' && column.key">
-                      {{ getField(item, column.key) }}
-                    </td>
-                    <td *ngIf="column.type === 'country'">
-                      {{ item.region.country_id | countryIdtoName }}
-                    </td>
-                    <td *ngIf="column.type === 'region'" class="min-w-225">
-                      <div class="text-sm text-white">
-                        {{ item.region.display_name }}
-                      </div>
-                      <div class="text-xs text-white flex gap-1">
-                        <span>{{ item.region.region_id }} </span>
-                      </div>
-                    </td>
-                    <td *ngIf="column.type === 'vendor'">
-                      <div
-                        *ngIf="item.vendor.logo"
-                        class="w-9 h-9 px-1 py-1 bg-white rounded-lg"
-                      >
-                        <img
-                          [src]="item.vendor.logo"
-                          alt="{{ item.vendor.name }} logo"
+                    <td
+                      (click)="toggleCompare2($event, server)"
+                      class="checkbox_column"
+                    >
+                      <div class="flex items-center">
+                        <input
+                          type="checkbox"
+                          id="server_compare_checkbox_{{ server.server_id }}"
+                          [(ngModel)]="server.selected"
+                          (ngModelChange)="toggleCompare($event, server)"
+                          (click)="$event.stopPropagation()"
+                          class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer"
+                          [ngClass]="{
+                            partially_selected:
+                              server.partiallySelected && !server.selected,
+                          }"
                         />
                       </div>
-                      <div *ngIf="!item.vendor.logo" class="text-white text-sm">
-                        {{ item.vendor.name }}
+                    </td>
+                    @for (column of tableColumns; track column.name) {
+                      @if (column.type === "name") {
+                        <td class="min-w-225">
+                          <div class="text-sm text-white flex gap-1">
+                            <span>{{ server.server.display_name }} </span>
+                            @if (showAPIReference(server)) {
+                              <span class="text-emerald-400">|</span>
+                            }
+                            @if (showAPIReference(server)) {
+                              <span>{{ server.server.api_reference }} </span>
+                            }
+                          </div>
+                          <div class="text-xs text-white flex gap-1">
+                            <span class="whitespace-nowrap">{{
+                              server.vendor_id
+                            }}</span>
+                            <span class="text-emerald-400">|</span>
+                            <span class="whitespace-nowrap">{{
+                              server.region.display_name
+                            }}</span>
+                            <span class="text-emerald-400">|</span>
+                            <span class="whitespace-nowrap">{{
+                              server.zone.display_name
+                            }}</span>
+                          </div>
+                        </td>
+                      }
+                      @if (column.type === "processor") {
+                        <td>
+                          <div class="text-sm text-white whitespace-nowrap">
+                            {{ server.server.vcpus }} vCPUs ({{
+                              server.server.cpu_architecture
+                            }})
+                          </div>
+                          <div class="flex gap-1">
+                            @if (
+                              server.server.cpu_cores && server.server.cpu_speed
+                            ) {
+                              <div class="text-xs text-white flex gap-1">
+                                <span class="whitespace-nowrap"
+                                  >{{ server.server.cpu_cores }} cores &#64;
+                                  {{ server.server.cpu_speed }} GHz</span
+                                >
+                              </div>
+                            }
+                            @if (
+                              server.server.cpu_allocation &&
+                              server.server.cpu_allocation !== "Dedicated"
+                            ) {
+                              <div class="text-xs text-white flex gap-1">
+                                <span
+                                  >({{ server.server.cpu_allocation }})</span
+                                >
+                              </div>
+                            }
+                          </div>
+                        </td>
+                      }
+                      @if (column.type === "memory") {
+                        <td>
+                          {{ getMemory(server) }}
+                        </td>
+                      }
+                      @if (column.type === "score") {
+                        <td>
+                          <div class="text-sm text-white">
+                            {{ getScore(server.server.score) }}
+                          </div>
+                          @if (server.server.score_per_price) {
+                            <div class="text-xs text-white flex gap-1">
+                              <span class="whitespace-nowrap"
+                                >{{ getScore(server.server.score_per_price) }} /
+                                USD</span
+                              >
+                            </div>
+                          }
+                        </td>
+                      }
+                      @if (column.type === "score_per_price") {
+                        <td>
+                          @if (server.server.score_per_price) {
+                            <span
+                              >{{ getScore(server.server.score_per_price) }} /
+                              USD</span
+                            >
+                          }
+                          @if (!server.server.score_per_price) {
+                            <span>-</span>
+                          }
+                        </td>
+                      }
+                      @if (column.type === "gpu_memory") {
+                        <td>
+                          {{ getGPUMemory(server) }}
+                        </td>
+                      }
+                      @if (column.type === "storage") {
+                        <td>
+                          <div class="text-sm text-white">
+                            {{ getStorage(server) }}
+                          </div>
+                          @if (server.server.storage_type) {
+                            <div class="text-xs text-white">
+                              <span>{{ server.server.storage_type }}</span>
+                            </div>
+                          }
+                        </td>
+                      }
+                      @if (column.type === "price") {
+                        <td class="min-w-160">
+                          <div class="text-sm text-white">
+                            {{ server.price }} {{ selectedCurrency.slug }}
+                          </div>
+                          <div class="text-xs text-white">
+                            {{ getAllocationName(server.allocation) }}
+                          </div>
+                        </td>
+                      }
+                      @if (column.type === "gpu") {
+                        <td>
+                          <div class="text-sm text-white">
+                            {{ server.server.gpu_count | gpuCount }}
+                          </div>
+                          @if (server.server.gpu_model) {
+                            <div class="text-xs text-white flex gap-1">
+                              <span>{{ server.server.gpu_model }}</span>
+                            </div>
+                          }
+                        </td>
+                      }
+                      @if (column.type === "cpu_model") {
+                        <td>
+                          @if (server.server.cpu_model) {
+                            <div class="text-sm text-white flex gap-1">
+                              <span>{{ server.server.cpu_model }}</span>
+                            </div>
+                          }
+                          <div class="text-xs text-white">
+                            @if (server.server.cpu_manufacturer) {
+                              <span>{{ server.server.cpu_manufacturer }} </span>
+                            }
+                            @if (server.server.cpu_family) {
+                              <span>{{ server.server.cpu_family }} </span>
+                            }
+                          </div>
+                        </td>
+                      }
+                      @if (column.type === "gpu_model") {
+                        <td>
+                          @if (server.server.gpu_model) {
+                            <div class="text-sm text-white flex gap-1">
+                              <span>{{ server.server.gpu_model }}</span>
+                            </div>
+                          }
+                          <div class="text-xs text-white">
+                            @if (server.server.gpu_manufacturer) {
+                              <span>{{ server.server.gpu_manufacturer }} </span>
+                            }
+                            @if (server.server.gpu_family) {
+                              <span>{{ server.server.gpu_family }} </span>
+                            }
+                          </div>
+                        </td>
+                      }
+                      @if (column.type === "text" && column.key) {
+                        <td>
+                          {{ getField(server, column.key) }}
+                        </td>
+                      }
+                      @if (column.type === "country") {
+                        <td>
+                          {{ server.region.country_id | countryIdtoName }}
+                        </td>
+                      }
+                      @if (column.type === "region") {
+                        <td class="min-w-225">
+                          <div class="text-sm text-white">
+                            {{ server.region.display_name }}
+                          </div>
+                          <div class="text-xs text-white flex gap-1">
+                            <span>{{ server.region.region_id }} </span>
+                          </div>
+                        </td>
+                      }
+                      @if (column.type === "vendor") {
+                        <td>
+                          @if (server.vendor.logo) {
+                            <div class="w-9 h-9 px-1 py-1 bg-white rounded-lg">
+                              <img
+                                [src]="server.vendor.logo"
+                                alt="{{ server.vendor.name }} logo"
+                              />
+                            </div>
+                          }
+                          @if (!server.vendor.logo) {
+                            <div class="text-white text-sm">
+                              {{ server.vendor.name }}
+                            </div>
+                          }
+                        </td>
+                      }
+                    }
+                    <td>
+                      <div (click)="$event.stopPropagation()">
+                        <a
+                          routerLink="/server/{{ server.vendor.vendor_id }}/{{
+                            server.server.api_reference
+                          }}"
+                          data-ph-capture-attribute-sc-event="server listing route to server details"
+                          [attr.data-ph-capture-attribute-server-listing-row-vendor]="
+                            server.vendor_id
+                          "
+                          [attr.data-ph-capture-attribute-server-listing-row-region]="
+                            server.region.api_reference
+                          "
+                          [attr.data-ph-capture-attribute-server-listing-row-zone]="
+                            server.zone.api_reference
+                          "
+                          [attr.data-ph-capture-attribute-server-listing-row-server]="
+                            server.server.api_reference
+                          "
+                          [attr.data-ph-capture-attribute-server-listing-row-index]="
+                            i + 1
+                          "
+                          [attr.data-ph-capture-attribute-server-listing-row-page-size]="
+                            limit
+                          "
+                        >
+                          <lucide-icon
+                            name="chevron-right"
+                            class="h-6 w-6 text-emerald-400"
+                          ></lucide-icon>
+                        </a>
                       </div>
                     </td>
-                  </ng-container>
-                  <td>
-                    <!-- eslint-disable-next-line @angular-eslint/template/interactive-supports-focus -->
-                    <div (click)="$event.stopPropagation()">
-                      <a
-                        routerLink="/server/{{ item.vendor.vendor_id }}/{{
-                          item.server.api_reference
-                        }}"
-                        data-ph-capture-attribute-sc-event="server listing route to server details"
-                        [attr.data-ph-capture-attribute-server-listing-row-vendor]="
-                          item.vendor_id
-                        "
-                        [attr.data-ph-capture-attribute-server-listing-row-region]="
-                          item.region.api_reference
-                        "
-                        [attr.data-ph-capture-attribute-server-listing-row-zone]="
-                          item.zone.api_reference
-                        "
-                        [attr.data-ph-capture-attribute-server-listing-row-server]="
-                          item.server.api_reference
-                        "
-                        [attr.data-ph-capture-attribute-server-listing-row-index]="
-                          i + 1
-                        "
-                        [attr.data-ph-capture-attribute-server-listing-row-page-size]="
-                          limit
-                        "
-                      >
-                        <lucide-icon
-                          name="chevron-right"
-                          class="h-6 w-6 text-emerald-400"
-                        ></lucide-icon>
-                      </a>
-                    </div>
-                  </td>
-                </tr>
+                  </tr>
+                }
               </tbody>
             </table>
           </div>
@@ -468,26 +514,28 @@
   </div>
 </div>
 
-<div *ngIf="compareCount() >= 2" class="fixed_buttons">
-  <div class="flex gap-4">
-    <button
-      class="flex justify-center bg-red-400 text-white py-2 px-4 rounded-lg font-bold hover:bg-red-500"
-      data-ph-capture-attribute-sc-event="server listing compare"
-      data-ph-capture-attribute-server-listing-compare-action="open"
-      (click)="clearCompare()"
-    >
-      Clear
-    </button>
-    <button
-      class="flex justify-center bg-emerald-400 text-white py-2 px-4 rounded-lg font-bold hover:bg-emerald-500"
-      data-ph-capture-attribute-sc-event="server listing compare"
-      data-ph-capture-attribute-server-listing-compare-action="open"
-      (click)="openCompare()"
-    >
-      Compare ({{ compareCount() }})
-    </button>
+@if (compareCount() >= 2) {
+  <div class="fixed_buttons">
+    <div class="flex gap-4">
+      <button
+        class="flex justify-center bg-red-400 text-white py-2 px-4 rounded-lg font-bold hover:bg-red-500"
+        data-ph-capture-attribute-sc-event="server listing compare"
+        data-ph-capture-attribute-server-listing-compare-action="open"
+        (click)="clearCompare()"
+      >
+        Clear
+      </button>
+      <button
+        class="flex justify-center bg-emerald-400 text-white py-2 px-4 rounded-lg font-bold hover:bg-emerald-500"
+        data-ph-capture-attribute-sc-event="server listing compare"
+        data-ph-capture-attribute-server-listing-compare-action="open"
+        (click)="openCompare()"
+      >
+        Compare ({{ compareCount() }})
+      </button>
+    </div>
   </div>
-</div>
+}
 
 <!-- Dropdown menu -->
 <div
@@ -498,14 +546,19 @@
     class="py-2 px-1 text-sm text-gray-700"
     aria-labelledby="dropdownDefaultButton"
   >
-    <li
-      *ngFor="let item of allocationTypes"
-      class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-      (click)="selectAllocation(item)"
-      tabindex="0"
-    >
-      <div class="text-white text-sm">{{ item.name }}</div>
-    </li>
+    @for (allocationType of allocationTypes; track allocationType.name) {
+      <li
+        class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+        (click)="selectAllocation(allocationType)"
+        (keydown.enter)="selectAllocation(allocationType)"
+        (keydown.space)="
+          selectAllocation(allocationType); $event.preventDefault()
+        "
+        tabindex="0"
+      >
+        <div class="text-white text-sm">{{ allocationType.name }}</div>
+      </li>
+    }
   </ul>
 </div>
 
@@ -517,14 +570,17 @@
     class="py-2 px-1 text-sm text-gray-700"
     aria-labelledby="dropdownDefaultButton"
   >
-    <li
-      *ngFor="let item of pageLimits"
-      class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-      (click)="selectPageSize(item)"
-      tabindex="0"
-    >
-      <div class="text-white text-sm">{{ item }}</div>
-    </li>
+    @for (pageLimit of pageLimits; track $index) {
+      <li
+        class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+        (click)="selectPageSize(pageLimit)"
+        (keydown.enter)="selectPageSize(pageLimit)"
+        (keydown.space)="$event.preventDefault(); selectPageSize(pageLimit)"
+        tabindex="0"
+      >
+        <div class="text-white text-sm">{{ pageLimit }}</div>
+      </li>
+    }
   </ul>
 </div>
 
@@ -536,18 +592,17 @@
     class="py-2 px-3 text-sm text-gray-700"
     aria-labelledby="dropdownDefaultButton"
   >
-    <li
-      *ngFor="let item of possibleColumns"
-      class="flex py-1 gap-2 items-center"
-    >
-      <input
-        type="checkbox"
-        [(ngModel)]="item.show"
-        (ngModelChange)="refreshColumns()"
-        class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer"
-      />
-      <div class="text-white text-sm">{{ item.name }}</div>
-    </li>
+    @for (column of possibleColumns; track column.name) {
+      <li class="flex py-1 gap-2 items-center">
+        <input
+          type="checkbox"
+          [(ngModel)]="column.show"
+          (ngModelChange)="refreshColumns()"
+          class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer"
+        />
+        <div class="text-white text-sm">{{ column.name }}</div>
+      </li>
+    }
   </ul>
 </div>
 
@@ -559,14 +614,19 @@
     class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
     aria-labelledby="dropdownDefaultButton"
   >
-    <li
-      *ngFor="let item of availableCurrencies"
-      class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-      (click)="selectCurrency(item)"
-      tabindex="0"
-    >
-      <div class="text-white text-sm">{{ item.name }} ({{ item.symbol }})</div>
-    </li>
+    @for (currency of availableCurrencies; track currency.name) {
+      <li
+        class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+        (click)="selectCurrency(currency)"
+        (keydown.enter)="selectCurrency(currency); $event.preventDefault()"
+        (keydown.space)="selectCurrency(currency); $event.preventDefault()"
+        tabindex="0"
+      >
+        <div class="text-white text-sm">
+          {{ currency.name }} ({{ currency.symbol }})
+        </div>
+      </li>
+    }
   </ul>
 </div>
 

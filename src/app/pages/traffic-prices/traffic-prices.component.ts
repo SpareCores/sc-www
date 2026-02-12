@@ -1,10 +1,10 @@
 import { CommonModule, isPlatformBrowser } from "@angular/common";
 import {
   Component,
-  Inject,
   OnInit,
   PLATFORM_ID,
   OnDestroy,
+  inject,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule, ActivatedRoute, Params, Router } from "@angular/router";
@@ -41,6 +41,13 @@ import openApiSpec from "../../../../sdk/openapi.json";
   styleUrl: "./traffic-prices.component.scss",
 })
 export class TrafficPricesComponent implements OnInit, OnDestroy {
+  private platformId = inject(PLATFORM_ID);
+  private keeperAPI = inject(KeeperAPIService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private SEOHandler = inject(SeoHandlerService);
+  private dropdownManager = inject(DropdownManagerService);
+
   private subscription = new Subscription();
 
   limit = 10;
@@ -96,15 +103,6 @@ export class TrafficPricesComponent implements OnInit, OnDestroy {
   selectedCurrency: CurrencyOption = availableCurrencies[0];
 
   dropdownCurrency: any;
-
-  constructor(
-    @Inject(PLATFORM_ID) private platformId: object,
-    private keeperAPI: KeeperAPIService,
-    private route: ActivatedRoute,
-    private router: Router,
-    private SEOHandler: SeoHandlerService,
-    private dropdownManager: DropdownManagerService,
-  ) {}
 
   ngOnInit() {
     this.SEOHandler.updateThumbnail(

@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import {
   BreadcrumbSegment,
@@ -12,7 +12,6 @@ import {
 import { LucideAngularModule } from "lucide-angular";
 import { CountryIdtoNamePipe } from "../../pipes/country-idto-name.pipe";
 import { Router, RouterModule } from "@angular/router";
-import { CommonModule } from "@angular/common";
 
 @Component({
   selector: "app-vendors",
@@ -21,12 +20,15 @@ import { CommonModule } from "@angular/common";
     LucideAngularModule,
     CountryIdtoNamePipe,
     RouterModule,
-    CommonModule,
   ],
   templateUrl: "./vendors.component.html",
   styleUrl: "./vendors.component.scss",
 })
 export class VendorsComponent implements OnInit {
+  private SEOHandler = inject(SeoHandlerService);
+  private API = inject(KeeperAPIService);
+  private router = inject(Router);
+
   breadcrumbs: BreadcrumbSegment[] = [
     {
       name: "Home",
@@ -43,12 +45,6 @@ export class VendorsComponent implements OnInit {
 
   orderBy: string | null = null;
   orderDir: OrderDir | null = null;
-
-  constructor(
-    private SEOHandler: SeoHandlerService,
-    private API: KeeperAPIService,
-    private router: Router,
-  ) {}
 
   ngOnInit() {
     this.SEOHandler.updateTitleAndMetaTags(

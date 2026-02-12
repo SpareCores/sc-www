@@ -1,249 +1,321 @@
 <div>
   <table id="main-table" #mainTable class="items_table">
-    <thead *ngIf="isChartShown('generic')" id="server-compare-table-header">
-      <tr>
-        <th #tableFirstCol id="server-compare-table-first-col"></th>
-        <th
-          *ngFor="let item of servers"
-          [style]="getStyle()"
-          class="align-baseline"
-          id="main-table-th"
-        >
-          <div
-            class="flex flex-col gap-1 justify-center"
-            style="width: fit-content"
-          >
-            <a
-              class="underline decoration-dotted"
-              href="/server/{{ item.vendor_id }}/{{ item.api_reference }}"
-              target="_blank"
-            >
-              {{ toUpper(item.display_name) }}
-            </a>
-            <div class="flex gap-2 justify-center">
+    @if (isChartShown("generic")) {
+      <thead id="server-compare-table-header">
+        <tr>
+          <th #tableFirstCol id="server-compare-table-first-col"></th>
+          @for (
+            server of servers;
+            track server.vendor_id + "_" + server.server_id
+          ) {
+            <th [style]="getStyle()" class="align-baseline" id="main-table-th">
               <div
-                class="text-emerald-400 text-xl"
-                (mouseenter)="showTooltip($event, 'Lowest price')"
-                (mouseleave)="hideTooltip()"
-                *ngIf="isBestPrice(item)"
+                class="flex flex-col gap-1 justify-center"
+                style="width: fit-content"
               >
-                💰
+                <a
+                  class="underline decoration-dotted"
+                  href="/server/{{ server.vendor_id }}/{{
+                    server.api_reference
+                  }}"
+                  target="_blank"
+                >
+                  {{ toUpper(server.display_name) }}
+                </a>
+                <div class="flex gap-2 justify-center">
+                  @if (isBestPrice(server)) {
+                    <div
+                      class="text-emerald-400 text-xl"
+                      (mouseenter)="showTooltip($event, 'Lowest price')"
+                      (mouseleave)="hideTooltip()"
+                    >
+                      💰
+                    </div>
+                  }
+                  @if (isBestSSCore(server)) {
+                    <div
+                      class="text-emerald-400 text-xl"
+                      (mouseenter)="showTooltip($event, 'Best value for price')"
+                      (mouseleave)="hideTooltip()"
+                    >
+                      🥇
+                    </div>
+                  }
+                  @if (getBecnchmarkStyle(server, true) !== "") {
+                    <div
+                      class="text-emerald-400 text-xl"
+                      (mouseenter)="showTooltip($event, 'Top performance')"
+                      (mouseleave)="hideTooltip()"
+                    >
+                      💪
+                    </div>
+                  }
+                </div>
               </div>
-              <div
-                class="text-emerald-400 text-xl"
-                (mouseenter)="showTooltip($event, 'Best value for price')"
-                (mouseleave)="hideTooltip()"
-                *ngIf="isBestSSCore(item)"
-              >
-                🥇
-              </div>
-              <div
-                class="text-emerald-400 text-xl"
-                (mouseenter)="showTooltip($event, 'Top performance')"
-                (mouseleave)="hideTooltip()"
-                *ngIf="getBecnchmarkStyle(item, true) !== ''"
-              >
-                💪
-              </div>
-            </div>
-          </div>
-        </th>
-      </tr>
-    </thead>
+            </th>
+          }
+        </tr>
+      </thead>
+    }
     <tbody>
-      <tr *ngIf="isChartShown('generic')">
-        <td>Vendor</td>
-        <ng-container *ngFor="let item of servers">
+      @if (isChartShown("generic")) {
+        <tr>
+          <td>Vendor</td>
+          @for (
+            server of servers;
+            track server.vendor_id + "_" + server.server_id
+          ) {
+            <td>
+              @if (server.vendor.logo) {
+                <div class="w-9 h-9 px-1 py-1 bg-white rounded-lg">
+                  <img
+                    [src]="server.vendor.logo"
+                    alt="{{ server.vendor.name }} logo"
+                    width="28"
+                    height="28"
+                  />
+                </div>
+              }
+              @if (!server.vendor.logo) {
+                <div class="text-white text-sm">
+                  {{ server.vendor.name }}
+                </div>
+              }
+            </td>
+          }
+        </tr>
+      }
+      @if (isChartShown("generic")) {
+        <tr class="rows-to-hide-for-test">
           <td>
-            <div
-              *ngIf="item.vendor.logo"
-              class="w-9 h-9 px-1 py-1 bg-white rounded-lg"
-            >
-              <img
-                [src]="item.vendor.logo"
-                alt="{{ item.vendor.name }} logo"
-                width="28"
-                height="28"
-              />
-            </div>
-            <div *ngIf="!item.vendor.logo" class="text-white text-sm">
-              {{ item.vendor.name }}
-            </div>
-          </td>
-        </ng-container>
-      </tr>
-      <tr *ngIf="isChartShown('generic')" class="rows-to-hide-for-test">
-        <td>
-          <div class="flex gap-1 items-center">
-            $Core
-            <lucide-icon
-              name="info"
-              class="h-4 w-4 text-gray-200"
-              (mouseenter)="showTooltip($event, SSCoreTooltip)"
-              (mouseleave)="hideTooltip()"
-            >
-            </lucide-icon>
-          </div>
-        </td>
-        <ng-container *ngFor="let item of servers">
-          <td class="align-baseline">
-            <div [style]="getSScoreStyle(item)">
-              {{ getSScore(item) }}
-            </div>
-            <div class="text-xs">
-              Best (ondemand):
-              {{ getSScoreCustom(item, item.bestOndemandPrice?.price) }}
-            </div>
-            <div class="text-xs">
-              Best (spot):
-              {{ getSScoreCustom(item, item.bestSpotPrice?.price) }}
-            </div>
-            <div
-              class="flex flex-col"
-              *ngFor="let priceData of item.additionalSpotPrices"
-            >
-              <div class="text-xs">
-                {{ priceData.zone.display_name }} (spot):
-                {{ getSScoreCustom(item, priceData.price) }}
-              </div>
-            </div>
-            <div
-              class="flex flex-col"
-              *ngFor="let priceData of item.additionalOndemandPrices"
-            >
-              <div class="text-xs">
-                {{ priceData.zone.display_name }} (ondemand):
-                {{ getSScoreCustom(item, priceData.price) }}
-              </div>
-            </div>
-          </td>
-        </ng-container>
-      </tr>
-      <tr *ngIf="isChartShown('generic')">
-        <td>SCore All</td>
-        <ng-container *ngFor="let item of servers">
-          <td>
-            <div [style]="getBecnchmarkStyle(item, true)">
-              {{ getBenchmark(item, true) }}
-            </div>
-          </td>
-        </ng-container>
-      </tr>
-      <tr *ngIf="isChartShown('generic')">
-        <td>SCore Single</td>
-        <ng-container *ngFor="let item of servers">
-          <td>
-            <div [style]="getBecnchmarkStyle(item, false)">
-              {{ getBenchmark(item, false) }}
-            </div>
-          </td>
-        </ng-container>
-      </tr>
-      <tr *ngIf="isChartShown('generic')" class="rows-to-hide-for-test">
-        <td>Best spot price</td>
-        <ng-container *ngFor="let item of servers">
-          <td>
-            <div class="flex flex-col">
-              <div [style]="getBestPriceStyle(item, 'spot')">
-                {{ getBestPrice(item, "spot") }}
-              </div>
-              <div class="text-xs">
-                {{ getBestZone(item, "spot") }}
-              </div>
-            </div>
-          </td>
-        </ng-container>
-      </tr>
-      <tr *ngIf="isChartShown('generic')" class="rows-to-hide-for-test">
-        <td>Best ondemand price</td>
-        <ng-container *ngFor="let item of servers">
-          <td>
-            <div class="flex flex-col">
-              <div [style]="getBestPriceStyle(item)">
-                {{ getBestPrice(item) }}
-              </div>
-              <div class="text-xs">
-                {{ getBestZone(item) }}
-              </div>
-            </div>
-          </td>
-        </ng-container>
-      </tr>
-      <tr *ngIf="isChartShown('generic') && showZone">
-        <td class="align-top">Selected ondemand prices</td>
-        <ng-container *ngFor="let item of servers">
-          <td>
-            <div class="flex flex-col gap-2">
-              <div
-                class="flex flex-col"
-                *ngFor="let priceData of item.additionalOndemandPrices"
+            <div class="flex gap-1 items-center">
+              $Core
+              <lucide-icon
+                name="info"
+                class="h-4 w-4 text-gray-200"
+                (mouseenter)="showTooltip($event, SSCoreTooltip)"
+                (mouseleave)="hideTooltip()"
               >
-                <div>{{ priceData.price }} {{ priceData.currency }}</div>
+              </lucide-icon>
+            </div>
+          </td>
+          @for (
+            server of servers;
+            track server.vendor_id + "_" + server.server_id
+          ) {
+            <td class="align-baseline">
+              <div [style]="getSScoreStyle(server)">
+                {{ getSScore(server) }}
+              </div>
+              <div class="text-xs">
+                Best (ondemand):
+                {{ getSScoreCustom(server, server.bestOndemandPrice?.price) }}
+              </div>
+              <div class="text-xs">
+                Best (spot):
+                {{ getSScoreCustom(server, server.bestSpotPrice?.price) }}
+              </div>
+              @for (priceData of server.additionalSpotPrices; track priceData) {
+                <div class="flex flex-col">
+                  <div class="text-xs">
+                    {{ priceData.zone.display_name }} (spot):
+                    {{ getSScoreCustom(server, priceData.price) }}
+                  </div>
+                </div>
+              }
+              @for (
+                priceData of server.additionalOndemandPrices;
+                track priceData
+              ) {
+                <div class="flex flex-col">
+                  <div class="text-xs">
+                    {{ priceData.zone.display_name }} (ondemand):
+                    {{ getSScoreCustom(server, priceData.price) }}
+                  </div>
+                </div>
+              }
+            </td>
+          }
+        </tr>
+      }
+      @if (isChartShown("generic")) {
+        <tr>
+          <td>SCore All</td>
+          @for (
+            server of servers;
+            track server.vendor_id + "_" + server.server_id
+          ) {
+            <td>
+              <div [style]="getBecnchmarkStyle(server, true)">
+                {{ getBenchmark(server, true) }}
+              </div>
+            </td>
+          }
+        </tr>
+      }
+      @if (isChartShown("generic")) {
+        <tr>
+          <td>SCore Single</td>
+          @for (
+            server of servers;
+            track server.vendor_id + "_" + server.server_id
+          ) {
+            <td>
+              <div [style]="getBecnchmarkStyle(server, false)">
+                {{ getBenchmark(server, false) }}
+              </div>
+            </td>
+          }
+        </tr>
+      }
+      @if (isChartShown("generic")) {
+        <tr class="rows-to-hide-for-test">
+          <td>Best spot price</td>
+          @for (
+            server of servers;
+            track server.vendor_id + "_" + server.server_id
+          ) {
+            <td>
+              <div class="flex flex-col">
+                <div [style]="getBestPriceStyle(server, 'spot')">
+                  {{ getBestPrice(server, "spot") }}
+                </div>
                 <div class="text-xs">
-                  {{ priceData.zone.display_name }}
+                  {{ getBestZone(server, "spot") }}
                 </div>
               </div>
-            </div>
-          </td>
-        </ng-container>
-      </tr>
-      <tr *ngIf="isChartShown('generic') && showZone">
-        <td class="align-top">Selected spot prices</td>
-        <ng-container *ngFor="let item of servers">
-          <td>
-            <div class="flex flex-col gap-2">
-              <div
-                *ngFor="let priceData of item.additionalSpotPrices"
-                class="flex flex-col"
-              >
-                <div>{{ priceData.price }} {{ priceData.currency }}</div>
+            </td>
+          }
+        </tr>
+      }
+      @if (isChartShown("generic")) {
+        <tr class="rows-to-hide-for-test">
+          <td>Best ondemand price</td>
+          @for (
+            server of servers;
+            track server.vendor_id + "_" + server.server_id
+          ) {
+            <td>
+              <div class="flex flex-col">
+                <div [style]="getBestPriceStyle(server)">
+                  {{ getBestPrice(server) }}
+                </div>
                 <div class="text-xs">
-                  {{ priceData.zone.display_name }}
+                  {{ getBestZone(server) }}
                 </div>
               </div>
-            </div>
-          </td>
-        </ng-container>
-      </tr>
-      <ng-container *ngIf="isChartShown('generic')">
-        <ng-container *ngFor="let category of instancePropertyCategories">
+            </td>
+          }
+        </tr>
+      }
+      @if (isChartShown("generic") && showZone) {
+        <tr>
+          <td class="align-top">Selected ondemand prices</td>
+          @for (
+            server of servers;
+            track server.vendor_id + "_" + server.server_id
+          ) {
+            <td>
+              <div class="flex flex-col gap-2">
+                @for (
+                  priceData of server.additionalOndemandPrices;
+                  track priceData
+                ) {
+                  <div class="flex flex-col">
+                    <div>{{ priceData.price }} {{ priceData.currency }}</div>
+                    <div class="text-xs">
+                      {{ priceData.zone.display_name }}
+                    </div>
+                  </div>
+                }
+              </div>
+            </td>
+          }
+        </tr>
+      }
+      @if (isChartShown("generic") && showZone) {
+        <tr>
+          <td class="align-top">Selected spot prices</td>
+          @for (
+            server of servers;
+            track server.vendor_id + "_" + server.server_id
+          ) {
+            <td>
+              <div class="flex flex-col gap-2">
+                @for (
+                  priceData of server.additionalSpotPrices;
+                  track priceData
+                ) {
+                  <div class="flex flex-col">
+                    <div>{{ priceData.price }} {{ priceData.currency }}</div>
+                    <div class="text-xs">
+                      {{ priceData.zone.display_name }}
+                    </div>
+                  </div>
+                }
+              </div>
+            </td>
+          }
+        </tr>
+      }
+      @if (isChartShown("generic")) {
+        @for (
+          propertyCategory of instancePropertyCategories;
+          track propertyCategory.name
+        ) {
           <tr class="section_header">
             <td>
-              <h2 class="text-xl font-semibold">{{ category.name }}</h2>
+              <h2 class="text-xl font-semibold">{{ propertyCategory.name }}</h2>
             </td>
             <td [colSpan]="servers.length"></td>
           </tr>
-          <tr *ngFor="let column of category.properties; let i = index">
-            <td class="whitespace-nowrap">
-              <div class="flex gap-2 items-center">
-                {{ column.name }}
-                <lucide-icon
-                  *ngIf="column.description"
-                  name="info"
-                  class="h-4 w-4 text-gray-200"
-                  (mouseenter)="showTooltip($event, column.description)"
-                  (mouseleave)="hideTooltip()"
-                >
-                </lucide-icon>
-              </div>
-            </td>
-            <ng-container *ngFor="let server of servers">
-              <td>
-                <div [style]="getBestCellStyle(column.id, server)">
-                  {{ getProperty(column, server) }}
+          @for (
+            category of propertyCategory.properties;
+            track category.id;
+            let i = $index
+          ) {
+            <tr>
+              <td class="whitespace-nowrap">
+                <div class="flex gap-2 items-center">
+                  {{ category.name }}
+                  @if (category.description) {
+                    <lucide-icon
+                      name="info"
+                      class="h-4 w-4 text-gray-200"
+                      (mouseenter)="showTooltip($event, category.description)"
+                      (mouseleave)="hideTooltip()"
+                    >
+                    </lucide-icon>
+                  }
                 </div>
               </td>
-            </ng-container>
-          </tr>
-        </ng-container>
-      </ng-container>
-      <ng-container *ngFor="let category of benchmarkCategories">
-        <ng-container *ngIf="category.data.length && !category.hidden">
-          <tr class="section_header" id="benchmark_line_{{ category.id }}">
+              @for (
+                server of servers;
+                track server.vendor_id + "_" + server.server_id
+              ) {
+                <td>
+                  <div [style]="getBestCellStyle(category.id, server)">
+                    {{ getProperty(category, server) }}
+                  </div>
+                </td>
+              }
+            </tr>
+          }
+        }
+      }
+      @for (
+        benchmarkCategory of benchmarkCategories;
+        track benchmarkCategory.name
+      ) {
+        @if (benchmarkCategory.data.length && !benchmarkCategory.hidden) {
+          <tr
+            class="section_header"
+            id="benchmark_line_{{ benchmarkCategory.id }}"
+          >
             <td [colSpan]="getSectionColSpan()">
               <div class="flex justify-between">
                 <h3 class="text-xl font-semibold flex gap-2 items-center">
-                  {{ category.name }}
+                  {{ benchmarkCategory.name }}
                   <lucide-icon
                     name="circle-arrow-up"
                     class="h-4 w-4 text-gray-200"
@@ -251,489 +323,560 @@
                     (mouseleave)="hideTooltip()"
                   >
                   </lucide-icon>
-                  <lucide-icon
-                    *ngIf="
-                      category.id === 'geekbench' ||
-                      category.id === 'geekbench_single' ||
-                      category.id === 'geekbench_multi'
-                    "
-                    name="info"
-                    class="h-4 w-4 text-gray-200"
-                    (mouseenter)="showTooltipGB($event)"
-                    (mouseleave)="hideTooltipGB()"
-                  >
-                  </lucide-icon>
-                  <lucide-icon
-                    *ngIf="
-                      category.id === 'bw_mem' || category.id === 'openssl'
-                    "
-                    name="info"
-                    class="h-4 w-4 text-gray-200"
-                    (mouseenter)="showTooltipChart($event, category.id)"
-                    (mouseleave)="hideTooltip()"
-                  >
-                  </lucide-icon>
-                  <lucide-icon
-                    *ngIf="category.id === 'stress_ng'"
-                    name="info"
-                    class="h-4 w-4 text-gray-200"
-                    (mouseenter)="showTooltipChart($event, 'stress_ng:div16')"
-                    (mouseleave)="hideTooltip()"
-                  >
-                  </lucide-icon>
-                  <lucide-icon
-                    *ngIf="category.id === 'stress_ng_pct'"
-                    name="info"
-                    class="h-4 w-4 text-gray-200"
-                    (mouseenter)="
-                      showTooltip(
-                        $event,
-                        'The relative performance is a percentage showing the multi-core SCore\'s normalized value (multi-core SCore/vCPUs)  compared to the single-core SCore. This metric shows how well a server can scale to multiple vCPUs, and e.g. the effect of Hyper-Threading.'
-                      )
-                    "
-                    (mouseleave)="hideTooltip()"
-                  >
-                  </lucide-icon>
-                  <lucide-icon
-                    *ngIf="category.id === 'compress'"
-                    name="info"
-                    class="h-4 w-4 text-gray-200"
-                    (mouseenter)="
-                      showTooltip(
-                        $event,
-                        'Measuring the compression ratio and speed while compressing and decompressing the dickens.txt of the Silesia corpus (10 MB uncompressed) using various algorithms, compressions levels and other extra arguments.'
-                      )
-                    "
-                    (mouseleave)="hideTooltip()"
-                  >
-                  </lucide-icon>
-                  <lucide-icon
-                    *ngIf="category.id === 'llm_inference'"
-                    name="info"
-                    class="h-4 w-4 text-gray-200"
-                    (mouseenter)="
-                      showTooltip(
-                        $event,
-                        'Running llama-bench from llama.cpp using various quantized model files to measure the speed of processing 16 to 16k tokens (prompt processing) and generating 16 to 4k tokens (text generation).'
-                      )
-                    "
-                    (mouseleave)="hideTooltip()"
-                  >
-                  </lucide-icon>
+                  @if (
+                    benchmarkCategory.id === "geekbench" ||
+                    benchmarkCategory.id === "geekbench_single" ||
+                    benchmarkCategory.id === "geekbench_multi"
+                  ) {
+                    <lucide-icon
+                      name="info"
+                      class="h-4 w-4 text-gray-200"
+                      (mouseenter)="showTooltipGB($event)"
+                      (mouseleave)="hideTooltipGB()"
+                    >
+                    </lucide-icon>
+                  }
+                  @if (
+                    benchmarkCategory.id === "bw_mem" ||
+                    benchmarkCategory.id === "openssl"
+                  ) {
+                    <lucide-icon
+                      name="info"
+                      class="h-4 w-4 text-gray-200"
+                      (mouseenter)="
+                        showTooltipChart($event, benchmarkCategory.id)
+                      "
+                      (mouseleave)="hideTooltip()"
+                    >
+                    </lucide-icon>
+                  }
+                  @if (benchmarkCategory.id === "stress_ng") {
+                    <lucide-icon
+                      name="info"
+                      class="h-4 w-4 text-gray-200"
+                      (mouseenter)="showTooltipChart($event, 'stress_ng:div16')"
+                      (mouseleave)="hideTooltip()"
+                    >
+                    </lucide-icon>
+                  }
+                  @if (benchmarkCategory.id === "stress_ng_pct") {
+                    <lucide-icon
+                      name="info"
+                      class="h-4 w-4 text-gray-200"
+                      (mouseenter)="
+                        showTooltip(
+                          $event,
+                          'The relative performance is a percentage showing the multi-core SCore\'s normalized value (multi-core SCore/vCPUs)  compared to the single-core SCore. This metric shows how well a server can scale to multiple vCPUs, and e.g. the effect of Hyper-Threading.'
+                        )
+                      "
+                      (mouseleave)="hideTooltip()"
+                    >
+                    </lucide-icon>
+                  }
+                  @if (benchmarkCategory.id === "compress") {
+                    <lucide-icon
+                      name="info"
+                      class="h-4 w-4 text-gray-200"
+                      (mouseenter)="
+                        showTooltip(
+                          $event,
+                          'Measuring the compression ratio and speed while compressing and decompressing the dickens.txt of the Silesia corpus (10 MB uncompressed) using various algorithms, compressions levels and other extra arguments.'
+                        )
+                      "
+                      (mouseleave)="hideTooltip()"
+                    >
+                    </lucide-icon>
+                  }
+                  @if (benchmarkCategory.id === "llm_inference") {
+                    <lucide-icon
+                      name="info"
+                      class="h-4 w-4 text-gray-200"
+                      (mouseenter)="
+                        showTooltip(
+                          $event,
+                          'Running llama-bench from llama.cpp using various quantized model files to measure the speed of processing 16 to 16k tokens (prompt processing) and generating 16 to 4k tokens (text generation).'
+                        )
+                      "
+                      (mouseleave)="hideTooltip()"
+                    >
+                    </lucide-icon>
+                  }
                 </h3>
-                <button
-                  *ngIf="!isEmbedded"
-                  class="btn-primary py-2 px-3 flex gap-1 items-center sticky right-2"
-                  (click)="
-                    clipboardURL($event, 'benchmark_line_' + category.id)
-                  "
-                >
-                  <lucide-icon
-                    name="{{ clipboardIcon }}"
-                    size="16"
-                  ></lucide-icon>
-                </button>
+                @if (!isEmbedded) {
+                  <button
+                    class="btn-primary py-2 px-3 flex gap-1 items-center sticky right-2"
+                    (click)="
+                      clipboardURL(
+                        $event,
+                        'benchmark_line_' + benchmarkCategory.id
+                      )
+                    "
+                  >
+                    <lucide-icon
+                      name="{{ clipboardIcon }}"
+                      size="16"
+                    ></lucide-icon>
+                  </button>
+                }
               </div>
             </td>
           </tr>
           <tr>
             <td [colSpan]="servers.length + 1">
-              <div *ngIf="category.id === 'bw_mem'">
-                <div class="block_full_inline" *ngIf="lineChartDataBWmem">
-                  <div class="flex justify-end items-center">
-                    <button
-                      id="bw_mem_button"
-                      class="dropdown_button"
-                      type="button"
-                    >
-                      <div class="px-4 py-3">
-                        {{ selectedBWMemOperation.name }}
-                      </div>
-                      <div
-                        class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
-                      >
-                        <lucide-icon
-                          name="chevron-down"
-                          class="h-6 w-6 text-emerald-400"
-                        ></lucide-icon>
-                      </div>
-                    </button>
-                  </div>
-                  <div class="h-full" *ngIf="isBrowser()">
-                    <div class="chart_div" chartType="bar">
-                      <canvas
-                        baseChart
-                        [data]="lineChartDataBWmem"
-                        [options]="lineChartOptionsBWMem"
-                        [type]="lineChartType"
-                      >
-                      </canvas>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div *ngIf="category.id === 'openssl'">
-                <div class="block_full_inline" *ngIf="barChartDataSSL">
-                  <div class="flex justify-end items-center">
-                    <button
-                      id="ssl_button"
-                      class="dropdown_button"
-                      type="button"
-                    >
-                      <div class="px-4 py-3">
-                        {{ selectedSSLAlgo.name }}
-                      </div>
-                      <div
-                        class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
-                      >
-                        <lucide-icon
-                          name="chevron-down"
-                          class="h-6 w-6 text-emerald-400"
-                        ></lucide-icon>
-                      </div>
-                    </button>
-                  </div>
-                  <div class="h-full" *ngIf="isBrowser()">
-                    <div class="chart_div" chartType="bar">
-                      <canvas
-                        baseChart
-                        [data]="barChartDataSSL"
-                        [options]="barChartOptionsSSL"
-                        [type]="barChartType"
-                      >
-                      </canvas>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div *ngIf="category.id === 'stress_ng'">
-                <div class="block_full_inline" *ngIf="lineChartDataStressNG">
-                  <div class="h-full" *ngIf="isBrowser()">
-                    <div class="chart_div" chartType="line">
-                      <canvas
-                        baseChart
-                        [data]="lineChartDataStressNG"
-                        [options]="lineChartOptionsStressNG"
-                        [type]="lineChartType"
-                      >
-                      </canvas>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div *ngIf="category.id === 'stress_ng_pct'">
-                <div class="block_full_inline" *ngIf="lineChartDataStressNG">
-                  <div class="h-full" *ngIf="isBrowser()">
-                    <div class="chart_div" chartType="line">
-                      <canvas
-                        baseChart
-                        [data]="lineChartDataStressNG"
-                        [options]="lineChartOptionsStressNGPercent"
-                        [type]="lineChartType"
-                      >
-                      </canvas>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div *ngIf="category.id === 'compress'">
-                <div
-                  class="block_full_short_inline"
-                  *ngIf="availableCompressMethods?.length"
-                >
-                  <div class="flex justify-end items-center">
-                    <div class="flex gap-4">
-                      <button
-                        id="compress_method_button"
-                        data-ph-capture-attribute-sc-event="server details price allocation select"
-                        data-dropdown-toggle="compress_method_options"
-                        class="dropdown_button"
-                        type="button"
-                      >
-                        <div class="px-3 py-2">
-                          {{ selectedCompressMethod.name }}
-                        </div>
-                        <div
-                          class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
+              @if (benchmarkCategory.id === "bw_mem") {
+                <div>
+                  @if (lineChartDataBWmem) {
+                    <div class="block_full_inline">
+                      <div class="flex justify-end items-center">
+                        <button
+                          id="bw_mem_button"
+                          data-dropdown-toggle="bw_mem_options"
+                          class="dropdown_button"
+                          type="button"
                         >
-                          <lucide-icon
-                            name="chevron-down"
-                            class="h-6 w-6 text-emerald-400"
-                          ></lucide-icon>
+                          <div class="px-4 py-3">
+                            {{ selectedBWMemOperation.name }}
+                          </div>
+                          <div
+                            class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
+                          >
+                            <lucide-icon
+                              name="chevron-down"
+                              class="h-6 w-6 text-emerald-400"
+                            ></lucide-icon>
+                          </div>
+                        </button>
+                      </div>
+                      @if (isBrowser()) {
+                        <div class="h-full">
+                          <div class="chart_div" chartType="bar">
+                            <canvas
+                              baseChart
+                              [data]="lineChartDataBWmem"
+                              [options]="lineChartOptionsBWMem"
+                              [type]="lineChartType"
+                            >
+                            </canvas>
+                          </div>
                         </div>
-                      </button>
+                      }
                     </div>
-                  </div>
-                  <div *ngIf="isBrowser()" class="charts_div">
-                    <div chartType="bar" class="chart_div">
-                      <canvas
-                        baseChart
-                        [data]="lineChartDataCompress"
-                        [options]="lineChartOptionsCompress"
-                        [type]="lineChartType"
-                      >
-                      </canvas>
-                    </div>
-                    <div chartType="bar" class="chart_div">
-                      <canvas
-                        baseChart
-                        [data]="lineChartDataDecompress"
-                        [options]="lineChartOptionsDecompress"
-                        [type]="lineChartType"
-                      >
-                      </canvas>
-                    </div>
-                  </div>
+                  }
                 </div>
-              </div>
-              <div
-                *ngIf="
-                  category.id === 'geekbench' ||
-                  category.id === 'geekbench_single' ||
-                  category.id === 'geekbench_multi'
-                "
-              >
-                <div
-                  class="block_full_short_geekbench"
-                  *ngIf="radarChartDataGeekSingle"
-                >
-                  <div *ngIf="isBrowser()" class="charts_div justify-center">
-                    <div
-                      *ngIf="category.id !== 'geekbench_multi'"
-                      chartType="bar"
-                      class="chart_div w-full flex justify-center"
-                    >
-                      <canvas
-                        style="max-width: 100%; width: 100%"
-                        baseChart
-                        [data]="radarChartDataGeekSingle"
-                        [options]="radarChartOptionsSingle"
-                        [type]="radarChartType"
-                      >
-                      </canvas>
-                    </div>
-                    <div
-                      chartType="bar"
-                      *ngIf="category.id !== 'geekbench_single'"
-                      class="chart_div w-full flex justify-center"
-                    >
-                      <canvas
-                        style="max-width: 100%; width: 100%"
-                        baseChart
-                        [data]="radarChartDataGeekMulti"
-                        [options]="radarChartOptionsMulti"
-                        [type]="radarChartType"
-                      >
-                      </canvas>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div *ngIf="category.id === 'llm_inference'">
-                <div
-                  class="block_full_short_inline"
-                  *ngIf="availableLLMModels?.length"
-                >
-                  <div class="flex justify-end items-center mb-4">
-                    <div class="flex gap-4">
-                      <button
-                        id="llm_models_button"
-                        data-ph-capture-attribute-sc-event="server compare llm model select"
-                        data-dropdown-toggle="llm_models_options"
-                        class="dropdown_button"
-                        type="button"
-                      >
-                        <div class="px-3 py-2">
-                          {{ selectedLLMModel?.name || "Select Model" }}
-                        </div>
-                        <div
-                          class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
+              }
+              @if (benchmarkCategory.id === "openssl") {
+                <div>
+                  @if (barChartDataSSL) {
+                    <div class="block_full_inline">
+                      <div class="flex justify-end items-center">
+                        <button
+                          id="ssl_button"
+                          data-dropdown-toggle="ssl_options"
+                          class="dropdown_button"
+                          type="button"
                         >
-                          <lucide-icon
-                            name="chevron-down"
-                            class="h-6 w-6 text-emerald-400"
-                          ></lucide-icon>
+                          <div class="px-4 py-3">
+                            {{ selectedSSLAlgo.name }}
+                          </div>
+                          <div
+                            class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
+                          >
+                            <lucide-icon
+                              name="chevron-down"
+                              class="h-6 w-6 text-emerald-400"
+                            ></lucide-icon>
+                          </div>
+                        </button>
+                      </div>
+                      @if (isBrowser()) {
+                        <div class="h-full">
+                          <div class="chart_div" chartType="bar">
+                            <canvas
+                              baseChart
+                              [data]="barChartDataSSL"
+                              [options]="barChartOptionsSSL"
+                              [type]="barChartType"
+                            >
+                            </canvas>
+                          </div>
                         </div>
-                      </button>
+                      }
                     </div>
-                  </div>
-                  <div
-                    *ngIf="
-                      isBrowser() &&
-                      (barChartLLMPromptData || barChartLLMGenerationData)
-                    "
-                    class="charts_div"
-                  >
-                    <div
-                      *ngIf="barChartLLMPromptData"
-                      chartType="bar"
-                      class="chart_div"
-                    >
-                      <canvas
-                        baseChart
-                        [data]="barChartLLMPromptData"
-                        [options]="barChartLLMPromptOptions"
-                        [type]="barChartType"
-                      >
-                      </canvas>
-                    </div>
-                    <div
-                      *ngIf="barChartLLMGenerationData"
-                      chartType="bar"
-                      class="chart_div"
-                    >
-                      <canvas
-                        baseChart
-                        [data]="barChartLLMGenerationData"
-                        [options]="barChartLLMGenerationOptions"
-                        [type]="barChartType"
-                      >
-                      </canvas>
-                    </div>
-                  </div>
-                  <div
-                    *ngIf="
-                      !(barChartLLMPromptData || barChartLLMGenerationData)
-                    "
-                    class="text-center py-4 text-gray-500"
-                  >
-                    No data available for the selected model.
-                  </div>
+                  }
                 </div>
-              </div>
-              <div
-                class="mt-4 mb-8 flex justify-center"
-                *ngIf="
-                  !isEmbedded &&
-                  category.id !== 'passmark_cpu' &&
-                  category.id !== 'passmark_other'
-                "
-                [ngClass]="{
-                  'mb-8': !category.show_more,
-                }"
-              >
-                <button
-                  class="btn-primary py-2 px-3"
-                  (click)="toggleBenchmarkCategory(category)"
+              }
+              @if (benchmarkCategory.id === "stress_ng") {
+                <div>
+                  @if (lineChartDataStressNG) {
+                    <div class="block_full_inline">
+                      @if (isBrowser()) {
+                        <div class="h-full">
+                          <div class="chart_div" chartType="line">
+                            <canvas
+                              baseChart
+                              [data]="lineChartDataStressNG"
+                              [options]="lineChartOptionsStressNG"
+                              [type]="lineChartType"
+                            >
+                            </canvas>
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  }
+                </div>
+              }
+              @if (benchmarkCategory.id === "stress_ng_pct") {
+                <div>
+                  @if (lineChartDataStressNG) {
+                    <div class="block_full_inline">
+                      @if (isBrowser()) {
+                        <div class="h-full">
+                          <div class="chart_div" chartType="line">
+                            <canvas
+                              baseChart
+                              [data]="lineChartDataStressNG"
+                              [options]="lineChartOptionsStressNGPercent"
+                              [type]="lineChartType"
+                            >
+                            </canvas>
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  }
+                </div>
+              }
+              @if (benchmarkCategory.id === "compress") {
+                <div>
+                  @if (availableCompressMethods.length) {
+                    <div class="block_full_short_inline">
+                      <div class="flex justify-end items-center">
+                        <div class="flex gap-4">
+                          <button
+                            id="compress_method_button"
+                            data-ph-capture-attribute-sc-event="server details price allocation select"
+                            data-dropdown-toggle="compress_method_options"
+                            class="dropdown_button"
+                            type="button"
+                          >
+                            <div class="px-3 py-2">
+                              {{ selectedCompressMethod.name }}
+                            </div>
+                            <div
+                              class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
+                            >
+                              <lucide-icon
+                                name="chevron-down"
+                                class="h-6 w-6 text-emerald-400"
+                              ></lucide-icon>
+                            </div>
+                          </button>
+                        </div>
+                      </div>
+                      @if (isBrowser()) {
+                        <div class="charts_div">
+                          <div chartType="bar" class="chart_div">
+                            <canvas
+                              baseChart
+                              [data]="lineChartDataCompress"
+                              [options]="lineChartOptionsCompress"
+                              [type]="lineChartType"
+                            >
+                            </canvas>
+                          </div>
+                          <div chartType="bar" class="chart_div">
+                            <canvas
+                              baseChart
+                              [data]="lineChartDataDecompress"
+                              [options]="lineChartOptionsDecompress"
+                              [type]="lineChartType"
+                            >
+                            </canvas>
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  }
+                </div>
+              }
+              @if (
+                benchmarkCategory.id === "geekbench" ||
+                benchmarkCategory.id === "geekbench_single" ||
+                benchmarkCategory.id === "geekbench_multi"
+              ) {
+                <div>
+                  @if (radarChartDataGeekSingle) {
+                    <div class="block_full_short_geekbench">
+                      @if (isBrowser()) {
+                        <div class="charts_div justify-center">
+                          @if (benchmarkCategory.id !== "geekbench_multi") {
+                            <div
+                              chartType="bar"
+                              class="chart_div w-full flex justify-center"
+                            >
+                              <canvas
+                                style="max-width: 100%; width: 100%"
+                                baseChart
+                                [data]="radarChartDataGeekSingle"
+                                [options]="radarChartOptionsSingle"
+                                [type]="radarChartType"
+                              >
+                              </canvas>
+                            </div>
+                          }
+                          @if (benchmarkCategory.id !== "geekbench_single") {
+                            <div
+                              chartType="bar"
+                              class="chart_div w-full flex justify-center"
+                            >
+                              <canvas
+                                style="max-width: 100%; width: 100%"
+                                baseChart
+                                [data]="radarChartDataGeekMulti"
+                                [options]="radarChartOptionsMulti"
+                                [type]="radarChartType"
+                              >
+                              </canvas>
+                            </div>
+                          }
+                        </div>
+                      }
+                    </div>
+                  }
+                </div>
+              }
+              @if (benchmarkCategory.id === "llm_inference") {
+                <div>
+                  @if (availableLLMModels.length) {
+                    <div class="block_full_short_inline">
+                      <div class="flex justify-end items-center mb-4">
+                        <div class="flex gap-4">
+                          <button
+                            id="llm_models_button"
+                            data-ph-capture-attribute-sc-event="server compare llm model select"
+                            data-dropdown-toggle="llm_models_options"
+                            class="dropdown_button"
+                            type="button"
+                          >
+                            <div class="px-3 py-2">
+                              {{ selectedLLMModel?.name || "Select Model" }}
+                            </div>
+                            <div
+                              class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
+                            >
+                              <lucide-icon
+                                name="chevron-down"
+                                class="h-6 w-6 text-emerald-400"
+                              ></lucide-icon>
+                            </div>
+                          </button>
+                        </div>
+                      </div>
+                      @if (
+                        isBrowser() &&
+                        (barChartLLMPromptData || barChartLLMGenerationData)
+                      ) {
+                        <div class="charts_div">
+                          @if (barChartLLMPromptData) {
+                            <div chartType="bar" class="chart_div">
+                              <canvas
+                                baseChart
+                                [data]="barChartLLMPromptData"
+                                [options]="barChartLLMPromptOptions"
+                                [type]="barChartType"
+                              >
+                              </canvas>
+                            </div>
+                          }
+                          @if (barChartLLMGenerationData) {
+                            <div chartType="bar" class="chart_div">
+                              <canvas
+                                baseChart
+                                [data]="barChartLLMGenerationData"
+                                [options]="barChartLLMGenerationOptions"
+                                [type]="barChartType"
+                              >
+                              </canvas>
+                            </div>
+                          }
+                        </div>
+                      }
+                      @if (
+                        !(barChartLLMPromptData || barChartLLMGenerationData)
+                      ) {
+                        <div class="text-center py-4 text-gray-500">
+                          No data available for the selected model.
+                        </div>
+                      }
+                    </div>
+                  }
+                </div>
+              }
+              @if (
+                !isEmbedded &&
+                benchmarkCategory.id !== "passmark_cpu" &&
+                benchmarkCategory.id !== "passmark_other"
+              ) {
+                <div
+                  class="mt-4 mb-8 flex justify-center"
+                  [ngClass]="{
+                    'mb-8': !benchmarkCategory.show_more,
+                  }"
                 >
-                  {{ category.show_more ? "Hide" : "Show" }} Details
-                </button>
-              </div>
+                  <button
+                    class="btn-primary py-2 px-3"
+                    (click)="toggleBenchmarkCategory(benchmarkCategory)"
+                  >
+                    {{ benchmarkCategory.show_more ? "Hide" : "Show" }} Details
+                  </button>
+                </div>
+              }
             </td>
           </tr>
-          <ng-container
-            *ngIf="
-              category.id === 'passmark_cpu' || category.id === 'passmark_other'
-            "
-          >
-            <ng-container *ngFor="let item of category.data">
+          @if (
+            benchmarkCategory.id === "passmark_cpu" ||
+            benchmarkCategory.id === "passmark_other"
+          ) {
+            @for (
+              benchmarkData of benchmarkCategory.data;
+              track benchmarkData.benchmark_id
+            ) {
               <tr>
                 <td>
                   <div class="ml-4 flex justify-between">
                     <div class="inline-block gap-2 items-center">
-                      <span class="inline">{{ item.name }}</span>
-                      <lucide-icon
-                        *ngIf="item.description"
-                        name="info"
-                        class="inline-block h-4 w-4 text-gray-200 ml-1"
-                        (mouseenter)="showTooltip($event, item.description)"
-                        (mouseleave)="hideTooltip()"
-                      >
-                      </lucide-icon>
+                      <span class="inline">{{ benchmarkData.name }}</span>
+                      @if (benchmarkData.description) {
+                        <lucide-icon
+                          name="info"
+                          class="inline-block h-4 w-4 text-gray-200 ml-1"
+                          (mouseenter)="
+                            showTooltip($event, benchmarkData.description)
+                          "
+                          (mouseleave)="hideTooltip()"
+                        >
+                        </lucide-icon>
+                      }
                     </div>
                   </div>
                 </td>
-                <ng-container *ngIf="item.configs?.length > 0">
-                  <td
-                    *ngFor="let value of item.configs[0].values"
-                    [style]="isBestStyle(value, item.configs[0].values, item)"
-                  >
-                    {{ numberWithCommas(value) }}
-                  </td>
-                </ng-container>
+                @if (benchmarkData.configs?.length > 0) {
+                  @for (
+                    value of benchmarkData.configs[0].values;
+                    track $index
+                  ) {
+                    <td
+                      [style]="
+                        isBestStyle(
+                          value,
+                          benchmarkData.configs[0].values,
+                          benchmarkData
+                        )
+                      "
+                    >
+                      {{ numberWithCommas(value) }}
+                    </td>
+                  }
+                }
               </tr>
-            </ng-container>
+            }
             <tr class="h-[1rem]">
               <!-- spacer -->
             </tr>
-          </ng-container>
-          <ng-container *ngIf="category.show_more && !isEmbedded">
-            <ng-container *ngFor="let item of category.data">
-              <tr *ngIf="category.data.length > 1">
-                <td [colSpan]="servers.length + 1">
-                  <div class="ml-4 flex justify-between">
-                    <div class="flex gap-2 items-center">
-                      {{ item.name }}
-                      <lucide-icon
-                        *ngIf="item.description"
-                        name="info"
-                        class="h-4 w-4 text-gray-200"
-                        (mouseenter)="showTooltip($event, item.description)"
-                        (mouseleave)="hideTooltip()"
-                      >
-                      </lucide-icon>
+          }
+          @if (benchmarkCategory.show_more && !isEmbedded) {
+            @for (
+              benchmarkData of benchmarkCategory.data;
+              track benchmarkData.benchmark_id
+            ) {
+              @if (benchmarkCategory.data.length > 1) {
+                <tr>
+                  <td [colSpan]="servers.length + 1">
+                    <div class="ml-4 flex justify-between">
+                      <div class="flex gap-2 items-center">
+                        {{ benchmarkData.name }}
+                        @if (benchmarkData.description) {
+                          <lucide-icon
+                            name="info"
+                            class="h-4 w-4 text-gray-200"
+                            (mouseenter)="
+                              showTooltip($event, benchmarkData.description)
+                            "
+                            (mouseleave)="hideTooltip()"
+                          >
+                          </lucide-icon>
+                        }
+                      </div>
+                      @if (benchmarkData.description) {
+                        <lucide-icon
+                          [name]="benchmarkIcon(benchmarkData)"
+                          class="h-6 w-6 text-emerald-400 cursor-pointer"
+                          (click)="toggleBenchmark(benchmarkData)"
+                        >
+                        </lucide-icon>
+                      }
                     </div>
-                    <lucide-icon
-                      *ngIf="item.description"
-                      [name]="benchmarkIcon(item)"
-                      class="h-6 w-6 text-emerald-400 cursor-pointer"
-                      (click)="toggleBenchmark(item)"
-                    >
-                    </lucide-icon>
-                  </div>
-                </td>
-              </tr>
-              <ng-container *ngIf="!item.collapsed">
-                <!-- special sorting for LLM -->
-                <tr
-                  *ngFor="
-                    let config of category.id === 'llm_inference'
-                      ? sortLLMConfigs(item.configs)
-                      : item.configs
-                  "
-                >
-                  <td>
-                    <div
-                      class="ml-6"
-                      [innerHTML]="serializeConfig(config.config)"
-                    ></div>
-                  </td>
-                  <td
-                    *ngFor="let value of config.values"
-                    [style]="isBestStyle(value, config.values, item)"
-                  >
-                    {{ numberWithCommas(value) }}
                   </td>
                 </tr>
-              </ng-container>
-            </ng-container>
-          </ng-container>
-        </ng-container>
-      </ng-container>
-      <ng-container *ngFor="let chartItem of multiBarCharts">
-        <ng-container *ngIf="chartItem.chart.chartData && !chartItem.hidden">
+              }
+              @if (!benchmarkData.collapsed) {
+                <!-- special sorting for LLM -->
+                @for (
+                  config of benchmarkCategory.id === "llm_inference"
+                    ? sortLLMConfigs(benchmarkData.configs)
+                    : benchmarkData.configs;
+                  track config
+                ) {
+                  <tr>
+                    <td>
+                      <div
+                        class="ml-6"
+                        [innerHTML]="serializeConfig(config.config)"
+                      ></div>
+                    </td>
+                    @for (value of config.values; track $index) {
+                      <td
+                        [style]="
+                          isBestStyle(value, config.values, benchmarkData)
+                        "
+                      >
+                        {{ numberWithCommas(value) }}
+                      </td>
+                    }
+                  </tr>
+                }
+              }
+            }
+          }
+        }
+      }
+      @for (chartItem of multiBarCharts; track chartItem) {
+        @if (chartItem.chart.chartData && !chartItem.hidden) {
           <tr class="section_header" id="benchmark_line">
             <td [colSpan]="2">
               <h3 class="text-xl font-semibold flex gap-2 items-center">
                 {{ chartItem.chart.name }}
-                <lucide-icon
-                  *ngIf="
-                    chartItem.chart.options[chartItem.chart.selectedOption].icon
-                  "
-                  name="{{
-                    chartItem.chart.options[chartItem.chart.selectedOption].icon
-                  }}"
-                  class="h-4 w-4 text-gray-200"
-                  (mouseenter)="
-                    showTooltip(
-                      $event,
+                @if (
+                  chartItem.chart.options[chartItem.chart.selectedOption].icon
+                ) {
+                  <lucide-icon
+                    name="{{
                       chartItem.chart.options[chartItem.chart.selectedOption]
-                        .tooltip
-                    )
-                  "
-                  (mouseleave)="hideTooltip()"
-                >
-                </lucide-icon>
+                        .icon
+                    }}"
+                    class="h-4 w-4 text-gray-200"
+                    (mouseenter)="
+                      showTooltip(
+                        $event,
+                        chartItem.chart.options[chartItem.chart.selectedOption]
+                          .tooltip
+                      )
+                    "
+                    (mouseleave)="hideTooltip()"
+                  >
+                  </lucide-icon>
+                }
                 <lucide-icon
                   name="info"
                   class="h-4 w-4 text-gray-200"
@@ -754,196 +897,223 @@
           <tr>
             <td [colSpan]="servers.length + 1">
               <div>
-                <div
-                  class="block_full_inline"
-                  *ngIf="chartItem.chart.chartData"
-                >
-                  <div class="flex justify-end items-center gap-4">
-                    <button
-                      *ngIf="chartItem.chart.secondaryOptions?.length > 1"
-                      id="{{ chartItem.chart.id }}_button2"
-                      class="dropdown_button"
-                      type="button"
-                    >
-                      <div class="px-3 py-2">
-                        {{
-                          chartItem.chart.secondaryOptions[
-                            chartItem.chart.selectedSecondaryOption
-                          ].name
-                        }}
-                      </div>
-                      <div
-                        class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
+                @if (chartItem.chart.chartData) {
+                  <div class="block_full_inline">
+                    <div class="flex justify-end items-center gap-4">
+                      @if (chartItem.chart.secondaryOptions?.length > 1) {
+                        <button
+                          id="{{ chartItem.chart.id }}_button2"
+                          class="dropdown_button"
+                          type="button"
+                        >
+                          <div class="px-3 py-2">
+                            {{
+                              chartItem.chart.secondaryOptions[
+                                chartItem.chart.selectedSecondaryOption
+                              ].name
+                            }}
+                          </div>
+                          <div
+                            class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
+                          >
+                            <lucide-icon
+                              name="chevron-down"
+                              class="h-6 w-6 text-emerald-400"
+                            ></lucide-icon>
+                          </div>
+                        </button>
+                      }
+                      <button
+                        id="{{ chartItem.chart.id }}_button"
+                        class="dropdown_button"
+                        type="button"
                       >
-                        <lucide-icon
-                          name="chevron-down"
-                          class="h-6 w-6 text-emerald-400"
-                        ></lucide-icon>
-                      </div>
-                    </button>
-                    <button
-                      id="{{ chartItem.chart.id }}_button"
-                      class="dropdown_button"
-                      type="button"
-                    >
-                      <div class="px-3 py-2">
-                        {{
-                          chartItem.chart.options[
-                            chartItem.chart.selectedOption
-                          ].name
-                        }}
-                      </div>
-                      <div
-                        class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
-                      >
-                        <lucide-icon
-                          name="chevron-down"
-                          class="h-6 w-6 text-emerald-400"
-                        ></lucide-icon>
-                      </div>
-                    </button>
-                  </div>
-                  <div class="h-full" *ngIf="isBrowser()">
-                    <div class="chart_div" chartType="bar">
-                      <canvas
-                        baseChart
-                        [data]="chartItem.chart.chartData"
-                        [options]="chartItem.chart.chartOptions"
-                        [type]="chartItem.chart.chartType"
-                      >
-                      </canvas>
+                        <div class="px-3 py-2">
+                          {{
+                            chartItem.chart.options[
+                              chartItem.chart.selectedOption
+                            ].name
+                          }}
+                        </div>
+                        <div
+                          class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
+                        >
+                          <lucide-icon
+                            name="chevron-down"
+                            class="h-6 w-6 text-emerald-400"
+                          ></lucide-icon>
+                        </div>
+                      </button>
                     </div>
+                    @if (isBrowser()) {
+                      <div class="h-full">
+                        <div class="chart_div" chartType="bar">
+                          <canvas
+                            baseChart
+                            [data]="chartItem.chart.chartData"
+                            [options]="chartItem.chart.chartOptions"
+                            [type]="chartItem.chart.chartType"
+                          >
+                          </canvas>
+                        </div>
+                      </div>
+                    }
                   </div>
-                </div>
+                }
               </div>
-              <div
-                class="mt-4 mb-8 flex justify-center"
-                *ngIf="!isEmbedded"
-                [ngClass]="{
-                  'mb-8': !chartItem.show_more,
-                }"
-              >
-                <button
-                  class="btn-primary py-2 px-3"
-                  (click)="toggleBenchmarkCategory(chartItem)"
+              @if (!isEmbedded) {
+                <div
+                  class="mt-4 mb-8 flex justify-center"
+                  [ngClass]="{
+                    'mb-8': !chartItem.show_more,
+                  }"
                 >
-                  {{ chartItem.show_more ? "Hide" : "Show" }} Details
-                </button>
-              </div>
+                  <button
+                    class="btn-primary py-2 px-3"
+                    (click)="toggleBenchmarkCategory(chartItem)"
+                  >
+                    {{ chartItem.show_more ? "Hide" : "Show" }} Details
+                  </button>
+                </div>
+              }
             </td>
           </tr>
-          <ng-container *ngIf="chartItem.show_more">
-            <ng-container *ngFor="let item of chartItem.data">
-              <tr *ngIf="chartItem.data.length > 1">
-                <td [colSpan]="servers.length + 1">
-                  <div class="ml-4 flex justify-between">
-                    <div class="flex gap-2 items-center">
-                      {{ item.name }}
-                      <lucide-icon
-                        *ngIf="item.description"
-                        name="info"
-                        class="h-4 w-4 text-gray-200"
-                        (mouseenter)="showTooltip($event, item.description)"
-                        (mouseleave)="hideTooltip()"
-                      >
-                      </lucide-icon>
+          @if (chartItem.show_more) {
+            @for (chartData of chartItem.data; track chartData) {
+              @if (chartItem.data.length > 1) {
+                <tr>
+                  <td [colSpan]="servers.length + 1">
+                    <div class="ml-4 flex justify-between">
+                      <div class="flex gap-2 items-center">
+                        {{ chartData.name }}
+                        @if (chartData.description) {
+                          <lucide-icon
+                            name="info"
+                            class="h-4 w-4 text-gray-200"
+                            (mouseenter)="
+                              showTooltip($event, chartData.description)
+                            "
+                            (mouseleave)="hideTooltip()"
+                          >
+                          </lucide-icon>
+                        }
+                      </div>
+                      @if (chartData.description) {
+                        <lucide-icon
+                          [name]="benchmarkIcon(chartData)"
+                          class="h-6 w-6 text-emerald-400 cursor-pointer"
+                          (click)="toggleBenchmark(chartData)"
+                        >
+                        </lucide-icon>
+                      }
                     </div>
-                    <lucide-icon
-                      *ngIf="item.description"
-                      [name]="benchmarkIcon(item)"
-                      class="h-6 w-6 text-emerald-400 cursor-pointer"
-                      (click)="toggleBenchmark(item)"
-                    >
-                    </lucide-icon>
-                  </div>
-                </td>
-              </tr>
-              <ng-container *ngIf="!item.collapsed">
-                <tr *ngFor="let config of item.configs">
-                  <td>
-                    <div
-                      class="ml-6"
-                      [innerHTML]="serializeConfig(config.config)"
-                    ></div>
-                  </td>
-                  <td
-                    *ngFor="let value of config.values"
-                    [style]="isBestStyle(value, config.values, item)"
-                  >
-                    {{ numberWithCommas(value) }}
                   </td>
                 </tr>
-              </ng-container>
-            </ng-container>
-          </ng-container>
-        </ng-container>
-      </ng-container>
+              }
+              @if (!chartData.collapsed) {
+                @for (config of chartData.configs; track config) {
+                  <tr>
+                    <td>
+                      <div
+                        class="ml-6"
+                        [innerHTML]="serializeConfig(config.config)"
+                      ></div>
+                    </td>
+                    @for (value of config.values; track value) {
+                      <td
+                        [style]="isBestStyle(value, config.values, chartData)"
+                      >
+                        {{ numberWithCommas(value) }}
+                      </td>
+                    }
+                  </tr>
+                }
+              }
+            }
+          }
+        }
+      }
 
-      <ng-container
-        *ngIf="getUncategorizedBenchmarksCategories()?.length && !isEmbedded"
-      >
+      @if (getUncategorizedBenchmarksCategories()?.length && !isEmbedded) {
         <tr class="section_header">
           <td [colSpan]="2">
             <h3 class="pl-3 text-xl font-semibold">Further Benchmarks</h3>
           </td>
           <td [colSpan]="servers.length - 1"></td>
         </tr>
-        <ng-container
-          *ngFor="let item of getUncategorizedBenchmarksCategories()"
-        >
+        @for (
+          benchmarkCategory of getUncategorizedBenchmarksCategories();
+          track benchmarkCategory.benchmark_id
+        ) {
           <tr>
             <td [colSpan]="servers.length + 1">
               <div class="pl-4 w-full flex justify-between">
                 <div class="flex gap-2 items-center">
-                  {{ item.name }}
+                  {{ benchmarkCategory.name }}
+                  @if (benchmarkCategory.description) {
+                    <lucide-icon
+                      name="info"
+                      class="h-4 w-4 text-gray-200"
+                      (mouseenter)="
+                        showTooltip($event, benchmarkCategory.description)
+                      "
+                      (mouseleave)="hideTooltip()"
+                    >
+                    </lucide-icon>
+                  }
+                </div>
+                @if (benchmarkCategory.description) {
                   <lucide-icon
-                    *ngIf="item.description"
-                    name="info"
-                    class="h-4 w-4 text-gray-200"
-                    (mouseenter)="showTooltip($event, item.description)"
-                    (mouseleave)="hideTooltip()"
+                    [name]="benchmarkIcon(benchmarkCategory)"
+                    class="h-6 w-6 text-emerald-400 cursor-pointer"
+                    (click)="toggleBenchmark(benchmarkCategory)"
                   >
                   </lucide-icon>
-                </div>
-                <lucide-icon
-                  *ngIf="item.description"
-                  [name]="benchmarkIcon(item)"
-                  class="h-6 w-6 text-emerald-400 cursor-pointer"
-                  (click)="toggleBenchmark(item)"
-                >
-                </lucide-icon>
+                }
               </div>
             </td>
           </tr>
-          <ng-container *ngIf="!item.collapsed">
-            <tr *ngFor="let config of item.configs">
-              <td>
-                <div
-                  class="ml-6"
-                  [innerHTML]="serializeConfig(config.config)"
-                ></div>
-              </td>
-              <td
-                *ngFor="let value of config.values"
-                [style]="isBestStyle(value, config.values, item)"
+          @if (!benchmarkCategory.collapsed) {
+            @for (config of benchmarkCategory.configs; track config) {
+              <tr>
+                <td>
+                  <div
+                    class="ml-6"
+                    [innerHTML]="serializeConfig(config.config)"
+                  ></div>
+                </td>
+                @for (value of config.values; track value) {
+                  <td
+                    [style]="
+                      isBestStyle(value, config.values, benchmarkCategory)
+                    "
+                  >
+                    {{ numberWithCommas(value) }}
+                  </td>
+                }
+              </tr>
+            }
+          }
+        }
+      }
+      @if (!isEmbedded) {
+        <tr>
+          <td>View Server</td>
+          @for (
+            server of servers;
+            track server.vendor_id + "_" + server.server_id
+          ) {
+            <td>
+              <button
+                class="btn-primary py-2 px-3 w-full whitespace-nowrap overflow-hidden text-ellipsis"
+                (click)="viewServer(server)"
               >
-                {{ numberWithCommas(value) }}
-              </td>
-            </tr>
-          </ng-container>
-        </ng-container>
-      </ng-container>
-      <tr *ngIf="!isEmbedded">
-        <td>View Server</td>
-        <td *ngFor="let item of servers">
-          <button
-            class="btn-primary py-2 px-3 w-full whitespace-nowrap overflow-hidden text-ellipsis"
-            (click)="viewServer(item)"
-          >
-            {{ item.display_name }}
-          </button>
-        </td>
-      </tr>
+                {{ server.display_name }}
+              </button>
+            </td>
+          }
+        </tr>
+      }
     </tbody>
   </table>
 </div>
@@ -956,13 +1126,14 @@
     class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
     aria-labelledby="dropdownDefaultButton"
   >
-    <li
-      *ngFor="let item of availableBWmem"
-      class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-      (click)="selectBWMemOperation(item)"
-    >
-      <div class="text-white text-sm">{{ item.name }}</div>
-    </li>
+    @for (bwMemOperation of availableBWmem; track bwMemOperation.name) {
+      <li
+        class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+        (click)="selectBWMemOperation(bwMemOperation)"
+      >
+        <div class="text-white text-sm">{{ bwMemOperation.name }}</div>
+      </li>
+    }
   </ul>
 </div>
 
@@ -974,17 +1145,18 @@
     class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
     aria-labelledby="dropdownDefaultButton"
   >
-    <li
-      *ngFor="let item of availableSSLAlgos"
-      class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-      (click)="selecSSLAlgorithm(item)"
-    >
-      <div class="text-white text-sm">{{ item.name }}</div>
-    </li>
+    @for (sslAlgorithm of availableSSLAlgos; track sslAlgorithm.name) {
+      <li
+        class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+        (click)="selecSSLAlgorithm(sslAlgorithm)"
+      >
+        <div class="text-white text-sm">{{ sslAlgorithm.name }}</div>
+      </li>
+    }
   </ul>
 </div>
 
-<ng-container *ngFor="let chartItem of multiBarCharts">
+@for (chartItem of multiBarCharts; track chartItem) {
   <div
     id="{{ chartItem.chart.id }}_options"
     class="z-100 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid"
@@ -993,43 +1165,49 @@
       class="py-2 px-1 text-sm text-gray-700"
       aria-labelledby="dropdownDefaultButton"
     >
-      <li
-        *ngFor="let item of chartItem.chart.options; let i = index"
-        class="flex py-1 gap-2 items-center"
-      >
-        <div
-          class="text-emerald-400 hover:text-emerald-500 cursor-pointer font-bold ml-2"
-          (click)="selectChartTemplateOption(chartItem, i)"
-        >
-          {{ item.name }}
-        </div>
-      </li>
+      @for (
+        chartTemplate of chartItem.chart.options;
+        track chartTemplate;
+        let i = $index
+      ) {
+        <li class="flex py-1 gap-2 items-center">
+          <div
+            class="text-emerald-400 hover:text-emerald-500 cursor-pointer font-bold ml-2"
+            (click)="selectChartTemplateOption(chartItem, i)"
+          >
+            {{ chartTemplate.name }}
+          </div>
+        </li>
+      }
     </ul>
   </div>
-
-  <div
-    *ngIf="chartItem.chart.secondaryOptions?.length > 1"
-    id="{{ chartItem.chart.id }}_options2"
-    class="z-100 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid"
-  >
-    <ul
-      class="py-2 px-1 text-sm text-gray-700"
-      aria-labelledby="dropdownDefaultButton"
+  @if (chartItem.chart.secondaryOptions?.length > 1) {
+    <div
+      id="{{ chartItem.chart.id }}_options2"
+      class="z-100 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid"
     >
-      <li
-        *ngFor="let item of chartItem.chart.secondaryOptions; let i = index"
-        class="flex py-1 gap-2 items-center"
+      <ul
+        class="py-2 px-1 text-sm text-gray-700"
+        aria-labelledby="dropdownDefaultButton"
       >
-        <div
-          class="text-emerald-400 hover:text-emerald-500 cursor-pointer font-bold ml-2"
-          (click)="selectChartTemplateOption2(chartItem, i)"
-        >
-          {{ item.name }}
-        </div>
-      </li>
-    </ul>
-  </div>
-</ng-container>
+        @for (
+          option of chartItem.chart.secondaryOptions;
+          track option;
+          let i = $index
+        ) {
+          <li class="flex py-1 gap-2 items-center">
+            <div
+              class="text-emerald-400 hover:text-emerald-500 cursor-pointer font-bold ml-2"
+              (click)="selectChartTemplateOption2(chartItem, i)"
+            >
+              {{ option.name }}
+            </div>
+          </li>
+        }
+      </ul>
+    </div>
+  }
+}
 
 <div
   id="compress_method_options"
@@ -1039,13 +1217,17 @@
     class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
     aria-labelledby="dropdownDefaultButton"
   >
-    <li
-      *ngFor="let item of availableCompressMethods"
-      class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-      (click)="selectCompressMethod(item)"
-    >
-      <div class="text-white text-sm">{{ item.name }}</div>
-    </li>
+    @for (
+      compressMethod of availableCompressMethods;
+      track compressMethod.name
+    ) {
+      <li
+        class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+        (click)="selectCompressMethod(compressMethod)"
+      >
+        <div class="text-white text-sm">{{ compressMethod.name }}</div>
+      </li>
+    }
   </ul>
 </div>
 
@@ -1057,17 +1239,18 @@
     class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200 max-h-60 overflow-y-auto"
     aria-labelledby="llm_models_button"
   >
-    <li
-      *ngFor="let item of availableLLMModels"
-      class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-      (click)="refreshLLMCharts(item)"
-    >
-      <div
-        class="text-white text-sm whitespace-nowrap overflow-hidden text-ellipsis"
+    @for (llmModel of availableLLMModels; track llmModel.name) {
+      <li
+        class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+        (click)="refreshLLMCharts(llmModel)"
       >
-        {{ item.name }}
-      </div>
-    </li>
+        <div
+          class="text-white text-sm whitespace-nowrap overflow-hidden text-ellipsis"
+        >
+          {{ llmModel.name }}
+        </div>
+      </li>
+    }
   </ul>
 </div>
 

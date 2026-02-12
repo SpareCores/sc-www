@@ -1,9 +1,8 @@
-import { Component, Inject, OnInit, PLATFORM_ID } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import {
   BreadcrumbSegment,
   BreadcrumbsComponent,
 } from "../../components/breadcrumbs/breadcrumbs.component";
-import { CommonModule, DOCUMENT } from "@angular/common";
 import { LucideAngularModule } from "lucide-angular";
 import { RouterModule } from "@angular/router";
 import { KeeperAPIService } from "../../services/keeper-api.service";
@@ -11,16 +10,14 @@ import { SeoHandlerService } from "../../services/seo-handler.service";
 
 @Component({
   selector: "app-missing-benchmarks",
-  imports: [
-    BreadcrumbsComponent,
-    CommonModule,
-    LucideAngularModule,
-    RouterModule,
-  ],
+  imports: [BreadcrumbsComponent, LucideAngularModule, RouterModule],
   templateUrl: "./missing-benchmarks.component.html",
   styleUrl: "./missing-benchmarks.component.scss",
 })
 export class MissingBenchmarksComponent implements OnInit {
+  private keeperAPI = inject(KeeperAPIService);
+  private SEOHandler = inject(SeoHandlerService);
+
   breadcrumbs: BreadcrumbSegment[] = [
     { name: "Home", url: "/" },
     { name: "Debug", url: "/debug" },
@@ -28,13 +25,6 @@ export class MissingBenchmarksComponent implements OnInit {
 
   vendors: any[] = [];
   servers: any[] = [];
-
-  constructor(
-    @Inject(PLATFORM_ID) private platformId: object,
-    @Inject(DOCUMENT) private document: Document,
-    private keeperAPI: KeeperAPIService,
-    private SEOHandler: SeoHandlerService,
-  ) {}
 
   ngOnInit() {
     this.SEOHandler.updateTitleAndMetaTags(

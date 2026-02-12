@@ -12,23 +12,23 @@
       >:
     </div>
 
-    <div
-      class="vendor_labels mt-4 mb-4 flex gap-6 mx-2 xl:mx-0"
-      *ngIf="vendors?.length"
-    >
-      <div
-        class="vendor_label cursor-pointer"
-        tabindex="0"
-        *ngFor="let item of vendors"
-        (click)="toggleVendorSelected(item.vendor_id)"
-        [ngClass]="{
-          'line-through': !isVendorSelected(item.vendor_id),
-        }"
-      >
-        <div class="color_circle" [style]="getColorStyle(item)"></div>
-        {{ item.name }}
+    @if (vendors.length) {
+      <div class="vendor_labels mt-4 mb-4 flex gap-6 mx-2 xl:mx-0">
+        @for (vendor of vendors; track vendor.vendor_id) {
+          <div
+            class="vendor_label cursor-pointer"
+            tabindex="0"
+            (click)="toggleVendorSelected(vendor.vendor_id)"
+            [ngClass]="{
+              'line-through': !isVendorSelected(vendor.vendor_id),
+            }"
+          >
+            <div class="color_circle" [style]="getColorStyle(vendor)"></div>
+            {{ vendor.name }}
+          </div>
+        }
       </div>
-    </div>
+    }
 
     <div
       class="text-black datamaps_div mx-2 xl:mx-0"
@@ -42,31 +42,34 @@
           <th class="cursor-pointer" (click)="toggleOrdering('region')">
             <div class="flex gap-1">
               REGION
-              <lucide-icon
-                *ngIf="getOrderingIcon('region')"
-                name="{{ getOrderingIcon('region') }}"
-                class="h-4 w-4 text-white"
-              ></lucide-icon>
+              @if (getOrderingIcon("region")) {
+                <lucide-icon
+                  name="{{ getOrderingIcon('region') }}"
+                  class="h-4 w-4 text-white"
+                ></lucide-icon>
+              }
             </div>
           </th>
           <th class="cursor-pointer" (click)="toggleOrdering('vendor')">
             <div class="flex gap-1">
               VENDOR
-              <lucide-icon
-                *ngIf="getOrderingIcon('vendor')"
-                name="{{ getOrderingIcon('vendor') }}"
-                class="h-4 w-4 text-white"
-              ></lucide-icon>
+              @if (getOrderingIcon("vendor")) {
+                <lucide-icon
+                  name="{{ getOrderingIcon('vendor') }}"
+                  class="h-4 w-4 text-white"
+                ></lucide-icon>
+              }
             </div>
           </th>
           <th class="cursor-pointer" (click)="toggleOrdering('country')">
             <div class="flex gap-1">
               COUNTRY
-              <lucide-icon
-                *ngIf="getOrderingIcon('country')"
-                name="{{ getOrderingIcon('country') }}"
-                class="h-4 w-4 text-white"
-              ></lucide-icon>
+              @if (getOrderingIcon("country")) {
+                <lucide-icon
+                  name="{{ getOrderingIcon('country') }}"
+                  class="h-4 w-4 text-white"
+                ></lucide-icon>
+              }
             </div>
           </th>
           <th>
@@ -76,35 +79,40 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let item of regions" (click)="openLink(item)">
-          <td>
-            <div class="flex gap-1">
-              {{ item.display_name }}
-              <lucide-icon
-                *ngIf="item.green_energy"
-                name="leaf"
-                class="h-4 w-4 text-emerald-400"
-              ></lucide-icon>
-            </div>
-          </td>
-          <td>{{ getVendorName(item.vendor_id) }}</td>
-          <td>{{ item.country_id | countryIdtoName }}</td>
-          <td>{{ item.founding_year || "-" }}</td>
-          <td>
-            <!-- eslint-disable-next-line @angular-eslint/template/interactive-supports-focus -->
-            <div class="flex justify-end" (click)="$event.stopPropagation()">
-              <a
-                routerLink="/server_prices"
-                [queryParams]="{ regions: item.region_id }"
-              >
-                <lucide-icon
-                  name="chevron-right"
-                  class="h-6 w-6 text-emerald-400"
-                ></lucide-icon>
-              </a>
-            </div>
-          </td>
-        </tr>
+        @for (
+          region of regions;
+          track region.vendor_id + "_" + region.region_id
+        ) {
+          <tr (click)="openLink(region)">
+            <td>
+              <div class="flex gap-1">
+                {{ region.display_name }}
+                @if (region.green_energy) {
+                  <lucide-icon
+                    name="leaf"
+                    class="h-4 w-4 text-emerald-400"
+                  ></lucide-icon>
+                }
+              </div>
+            </td>
+            <td>{{ getVendorName(region.vendor_id) }}</td>
+            <td>{{ region.country_id | countryIdtoName }}</td>
+            <td>{{ region.founding_year || "-" }}</td>
+            <td>
+              <div class="flex justify-end" (click)="$event.stopPropagation()">
+                <a
+                  routerLink="/server_prices"
+                  [queryParams]="{ regions: region.region_id }"
+                >
+                  <lucide-icon
+                    name="chevron-right"
+                    class="h-6 w-6 text-emerald-400"
+                  ></lucide-icon>
+                </a>
+              </div>
+            </td>
+          </tr>
+        }
       </tbody>
     </table>
   </div>

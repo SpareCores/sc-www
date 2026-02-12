@@ -1,16 +1,17 @@
 <div class="flex justify-end gap-4">
-  <a
-    *ngIf="currentPage > 1"
-    [routerLink]="baseURL"
-    [queryParams]="getQueryObjectForPage(this.currentPage - 1)"
-    id="pagination_prev_arrow"
-    class="flex justify-center bg-transparent text-white py-2 px-4 w-10 rounded-lg font-bold hover:bg-emerald-400"
-    data-ph-capture-attribute-sc-event="server listing paginate"
-    data-ph-capture-attribute-pagination-target="prev"
-  >
-    <lucide-icon name="chevron-left"></lucide-icon>
-  </a>
-  <ng-container *ngIf="currentPage > 2">
+  @if (currentPage > 1) {
+    <a
+      [routerLink]="baseURL"
+      [queryParams]="getQueryObjectForPage(this.currentPage - 1)"
+      id="pagination_prev_arrow"
+      class="flex justify-center bg-transparent text-white py-2 px-4 w-10 rounded-lg font-bold hover:bg-emerald-400"
+      data-ph-capture-attribute-sc-event="server listing paginate"
+      data-ph-capture-attribute-pagination-target="prev"
+    >
+      <lucide-icon name="chevron-left"></lucide-icon>
+    </a>
+  }
+  @if (currentPage > 2) {
     <a
       [routerLink]="baseURL"
       [queryParams]="getQueryObjectForPage(1)"
@@ -20,29 +21,31 @@
     >
       1
     </a>
-    <button
-      *ngIf="currentPage > 3"
-      class="text-white py-2 px-4 rounded-lg font-bold"
+    @if (currentPage > 3) {
+      <span class="text-white py-2 px-4 rounded-lg font-bold" aria-hidden="true"
+        >...</span
+      >
+    }
+  }
+  @for (page of possiblePages(); track page; let i = $index) {
+    <a
+      class="text-white py-2 px-4 rounded-lg font-bold hover:bg-emerald-400"
+      [ngClass]="{
+        'bg-emerald-400': page === this.currentPage,
+        'bg-transparent': page !== this.currentPage,
+      }"
+      data-ph-capture-attribute-sc-event="server listing paginate"
+      [attr.data-ph-capture-attribute-pagination-target]="i"
+      [routerLink]="baseURL"
+      [queryParams]="getQueryObjectForPage(page)"
     >
-      ...
-    </button>
-  </ng-container>
-  <a
-    class="text-white py-2 px-4 rounded-lg font-bold hover:bg-emerald-400"
-    [ngClass]="{
-      'bg-emerald-400': item === this.currentPage,
-      'bg-transparent': item !== this.currentPage,
-    }"
-    *ngFor="let item of possiblePages(); let i = index"
-    data-ph-capture-attribute-sc-event="server listing paginate"
-    [attr.data-ph-capture-attribute-pagination-target]="i"
-    [routerLink]="baseURL"
-    [queryParams]="getQueryObjectForPage(item)"
-  >
-    {{ item }}
-  </a>
-  <ng-container *ngIf="totalPages > currentPage + 3">
-    <button class="text-white py-2 px-4 rounded-lg font-bold">...</button>
+      {{ page }}
+    </a>
+  }
+  @if (totalPages > currentPage + 3) {
+    <span class="text-white py-2 px-4 rounded-lg font-bold" aria-hidden="true"
+      >...</span
+    >
     <a
       [routerLink]="baseURL"
       [queryParams]="getQueryObjectForPage(totalPages)"
@@ -52,16 +55,17 @@
     >
       {{ totalPages }}
     </a>
-  </ng-container>
-  <a
-    *ngIf="currentPage < totalPages"
-    [routerLink]="baseURL"
-    [queryParams]="getQueryObjectForPage(this.currentPage + 1)"
-    id="pagination_next_arrow"
-    class="flex justify-center bg-transparent text-white py-2 px-4 w-10 rounded-lg font-bold hover:bg-emerald-400"
-    data-ph-capture-attribute-sc-event="server listing paginate"
-    data-ph-capture-attribute-pagination-target="next"
-  >
-    <lucide-icon name="chevron-right"></lucide-icon>
-  </a>
+  }
+  @if (currentPage < totalPages) {
+    <a
+      [routerLink]="baseURL"
+      [queryParams]="getQueryObjectForPage(this.currentPage + 1)"
+      id="pagination_next_arrow"
+      class="flex justify-center bg-transparent text-white py-2 px-4 w-10 rounded-lg font-bold hover:bg-emerald-400"
+      data-ph-capture-attribute-sc-event="server listing paginate"
+      data-ph-capture-attribute-pagination-target="next"
+    >
+      <lucide-icon name="chevron-right"></lucide-icon>
+    </a>
+  }
 </div>

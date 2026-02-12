@@ -89,106 +89,132 @@
             class="w-full overflow-x-auto relative"
             style="padding-left: 1px"
           >
-            <div
-              *ngIf="isLoading"
-              class="absolute top-0 left-0 w-full h-full pt-16"
-              style="background-color: rgba(0, 0, 0, 0.2)"
-            >
-              <app-loading-spinner size="lg"></app-loading-spinner>
-            </div>
+            @if (isLoading) {
+              <div
+                class="absolute top-0 left-0 w-full h-full pt-16"
+                style="background-color: rgba(0, 0, 0, 0.2)"
+              >
+                <app-loading-spinner size="lg"></app-loading-spinner>
+              </div>
+            }
             <table class="items_table">
               <thead>
                 <tr>
-                  <th
-                    *ngFor="let item of tableColumns"
-                    [ngClass]="{
-                      'cursor-pointer': item.orderField,
-                    }"
-                    (click)="toggleOrdering(item)"
-                  >
-                    <div class="flex gap-1">
-                      {{ item.name }}
-                      <lucide-icon
-                        *ngIf="item.info"
-                        name="info"
-                        class="h-4 w-4 text-gray-200"
-                      >
-                      </lucide-icon>
-                      <lucide-icon
-                        *ngIf="getOrderingIcon(item)"
-                        name="{{ getOrderingIcon(item) }}"
-                        class="h-4 w-4 text-white"
-                      ></lucide-icon>
-                    </div>
-                  </th>
+                  @for (column of tableColumns; track column.name) {
+                    <th
+                      [ngClass]="{
+                        'cursor-pointer': column.orderField,
+                      }"
+                      (click)="toggleOrdering(column)"
+                    >
+                      <div class="flex gap-1">
+                        {{ column.name }}
+                        @if (column.info) {
+                          <lucide-icon
+                            name="info"
+                            class="h-4 w-4 text-gray-200"
+                          >
+                          </lucide-icon>
+                        }
+                        @if (getOrderingIcon(column)) {
+                          <lucide-icon
+                            name="{{ getOrderingIcon(column) }}"
+                            class="h-4 w-4 text-white"
+                          ></lucide-icon>
+                        }
+                      </div>
+                    </th>
+                  }
                 </tr>
               </thead>
               <tbody>
-                <tr
-                  *ngFor="let item of storages; let i = index"
-                  data-ph-capture-attribute-sc-event="server listing route to server details"
-                  [attr.data-ph-capture-attribute-server-listing-row-vendor]="
-                    item.vendor_id
-                  "
-                  [attr.data-ph-capture-attribute-server-listing-row-index]="
-                    i + 1
-                  "
-                  [attr.data-ph-capture-attribute-server-listing-row-page-size]="
-                    limit
-                  "
-                >
-                  <ng-container *ngFor="let column of tableColumns">
-                    <td *ngIf="column.type === 'name'">
-                      <div class="text-sm text-white">
-                        {{ item.storage.name }}
-                      </div>
-                      <div class="text-xs text-white flex gap-1">
-                        {{ item.storage.description }}
-                      </div>
-                    </td>
-                    <td *ngIf="column.type === 'price'">
-                      <div class="text-sm text-white">
-                        {{ item.price }} {{ item.currency }}/{{ item.unit }}
-                      </div>
-                    </td>
-                    <td *ngIf="column.type === 'price2' && column.key">
-                      <div class="text-sm text-white">
-                        {{ getField(item, column.key) || "0" }}
-                        {{ item.currency }}
-                      </div>
-                    </td>
-                    <td *ngIf="column.type === 'storage' && column.key">
-                      <div class="text-sm text-white">
-                        {{ getStorage(getField(item, column.key)) }}
-                      </div>
-                    </td>
-                    <td *ngIf="column.type === 'text' && column.key">
-                      {{ getField(item, column.key) }}
-                    </td>
-                    <td *ngIf="column.type === 'vendor'">
-                      <div
-                        *ngIf="item.vendor.logo"
-                        class="w-9 h-9 px-1 py-1 bg-white rounded-lg"
-                      >
-                        <img
-                          [src]="item.vendor.logo"
-                          alt="{{ item.vendor.name }} logo"
-                        />
-                      </div>
-                      <div *ngIf="!item.vendor.logo" class="text-white text-sm">
-                        {{ item.vendor.name }}
-                      </div>
-                    </td>
-                    <td *ngIf="column.type === 'region'" class="min-w-225">
-                      <div class="text-sm text-white">
-                        {{ item.region.display_name }}
-                      </div>
-                      <div class="text-xs text-white flex gap-1">
-                        <span>{{ item.region.region_id }} </span>
-                      </div>
-                    </td>
-                  </ng-container>
-                </tr>
+                @for (
+                  storage of storages;
+                  track storage.vendor_id + "_" + storage.storage_id + i;
+                  let i = $index
+                ) {
+                  <tr
+                    data-ph-capture-attribute-sc-event="server listing route to server details"
+                    [attr.data-ph-capture-attribute-server-listing-row-vendor]="
+                      storage.vendor_id
+                    "
+                    [attr.data-ph-capture-attribute-server-listing-row-index]="
+                      i + 1
+                    "
+                    [attr.data-ph-capture-attribute-server-listing-row-page-size]="
+                      limit
+                    "
+                  >
+                    @for (column of tableColumns; track column.name) {
+                      @if (column.type === "name") {
+                        <td>
+                          <div class="text-sm text-white">
+                            {{ storage.storage.name }}
+                          </div>
+                          <div class="text-xs text-white flex gap-1">
+                            {{ storage.storage.description }}
+                          </div>
+                        </td>
+                      }
+                      @if (column.type === "price") {
+                        <td>
+                          <div class="text-sm text-white">
+                            {{ storage.price }} {{ storage.currency }}/{{
+                              storage.unit
+                            }}
+                          </div>
+                        </td>
+                      }
+                      @if (column.type === "price2" && column.key) {
+                        <td>
+                          <div class="text-sm text-white">
+                            {{ getField(storage, column.key) || "0" }}
+                            {{ storage.currency }}
+                          </div>
+                        </td>
+                      }
+                      @if (column.type === "storage" && column.key) {
+                        <td>
+                          <div class="text-sm text-white">
+                            {{ getStorage(getField(storage, column.key)) }}
+                          </div>
+                        </td>
+                      }
+                      @if (column.type === "text" && column.key) {
+                        <td>
+                          {{ getField(storage, column.key) }}
+                        </td>
+                      }
+                      @if (column.type === "vendor") {
+                        <td>
+                          @if (storage.vendor.logo) {
+                            <div class="w-9 h-9 px-1 py-1 bg-white rounded-lg">
+                              <img
+                                [src]="storage.vendor.logo"
+                                alt="{{ storage.vendor.name }} logo"
+                              />
+                            </div>
+                          }
+                          @if (!storage.vendor.logo) {
+                            <div class="text-white text-sm">
+                              {{ storage.vendor.name }}
+                            </div>
+                          }
+                        </td>
+                      }
+                      @if (column.type === "region") {
+                        <td class="min-w-225">
+                          <div class="text-sm text-white">
+                            {{ storage.region.display_name }}
+                          </div>
+                          <div class="text-xs text-white flex gap-1">
+                            <span>{{ storage.region.region_id }} </span>
+                          </div>
+                        </td>
+                      }
+                    }
+                  </tr>
+                }
               </tbody>
             </table>
           </div>
@@ -241,14 +267,15 @@
     class="py-2 px-1 text-sm text-gray-700"
     aria-labelledby="dropdownDefaultButton"
   >
-    <li
-      *ngFor="let item of pageLimits"
-      class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-      (click)="selectPageSize(item)"
-      tabindex="0"
-    >
-      <div class="text-white text-sm">{{ item }}</div>
-    </li>
+    @for (pageLimit of pageLimits; track $index) {
+      <li
+        class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+        (click)="selectPageSize(pageLimit)"
+        tabindex="0"
+      >
+        <div class="text-white text-sm">{{ pageLimit }}</div>
+      </li>
+    }
   </ul>
 </div>
 
@@ -260,18 +287,17 @@
     class="py-2 px-3 text-sm text-gray-700"
     aria-labelledby="dropdownDefaultButton"
   >
-    <li
-      *ngFor="let item of possibleColumns"
-      class="flex py-1 gap-2 items-center"
-    >
-      <input
-        type="checkbox"
-        [(ngModel)]="item.show"
-        (ngModelChange)="refreshColumns()"
-        class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer"
-      />
-      <div class="text-white text-sm">{{ item.name }}</div>
-    </li>
+    @for (column of possibleColumns; track column.name) {
+      <li class="flex py-1 gap-2 items-center">
+        <input
+          type="checkbox"
+          [(ngModel)]="column.show"
+          (ngModelChange)="refreshColumns()"
+          class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer"
+        />
+        <div class="text-white text-sm">{{ column.name }}</div>
+      </li>
+    }
   </ul>
 </div>
 
@@ -283,13 +309,16 @@
     class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
     aria-labelledby="dropdownDefaultButton"
   >
-    <li
-      *ngFor="let item of availableCurrencies"
-      tabindex="0"
-      class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-      (click)="selectCurrency(item)"
-    >
-      <div class="text-white text-sm">{{ item.name }} ({{ item.symbol }})</div>
-    </li>
+    @for (currency of availableCurrencies; track currency.name) {
+      <li
+        tabindex="0"
+        class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+        (click)="selectCurrency(currency)"
+      >
+        <div class="text-white text-sm">
+          {{ currency.name }} ({{ currency.symbol }})
+        </div>
+      </li>
+    }
   </ul>
 </div>

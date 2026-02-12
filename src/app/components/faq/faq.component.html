@@ -1,33 +1,43 @@
 <div class="w-full">
   <h3 class="font-bold text-3xl">{{ item }} FAQs</h3>
   <div class="pl-2 mt-2" itemscope="" itemtype="https://schema.org/FAQPage">
-    <div
-      *ngFor="let item of FAQQuestions; let i = index"
-      itemscope=""
-      itemprop="mainEntity"
-      itemtype="https://schema.org/Question"
-    >
-      <!-- eslint-disable-next-line @angular-eslint/template/interactive-supports-focus -->
+    @for (
+      question of FAQQuestions;
+      track question.question + "_" + question.answer;
+      let i = $index
+    ) {
       <div
-        class="flex items-center justify-between cursor-pointer mb-2 border-b border-solid border-gray-200 py-3"
-        (click)="toggleFAQ(i)"
-      >
-        <h4 itemprop="name">{{ item.question }}</h4>
-        <lucide-icon [name]="FAQIcon(i)"></lucide-icon>
-      </div>
-      <p
         itemscope=""
-        itemprop="acceptedAnswer"
-        itemtype="https://schema.org/Answer"
-        class="pl-2"
-        [ngClass]="{
-          flex: activeFAQ === i,
-          hidden: activeFAQ !== i,
-        }"
+        itemprop="mainEntity"
+        itemtype="https://schema.org/Question"
       >
-        <span *ngIf="!item.html" itemprop="text">{{ item.answer }} </span>
-        <span *ngIf="item.html" itemprop="text" [innerHTML]="item.html"></span>
-      </p>
-    </div>
+        <button
+          type="button"
+          class="flex items-center justify-between cursor-pointer mb-2 border-b border-solid border-gray-200 py-3 w-full text-left bg-transparent"
+          (click)="toggleFAQ(i)"
+          [attr.aria-expanded]="activeFAQ === i"
+        >
+          <h4 itemprop="name">{{ question.question }}</h4>
+          <lucide-icon [name]="FAQIcon(i)"></lucide-icon>
+        </button>
+        <p
+          itemscope=""
+          itemprop="acceptedAnswer"
+          itemtype="https://schema.org/Answer"
+          class="pl-2"
+          [ngClass]="{
+            flex: activeFAQ === i,
+            hidden: activeFAQ !== i,
+          }"
+        >
+          @if (!question.html) {
+            <span itemprop="text">{{ question.answer }} </span>
+          }
+          @if (question.html) {
+            <span itemprop="text" [innerHTML]="question.html"></span>
+          }
+        </p>
+      </div>
+    }
   </div>
 </div>

@@ -1,11 +1,10 @@
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import {
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-import { CommonModule } from "@angular/common";
 import {
   BreadcrumbSegment,
   BreadcrumbsComponent,
@@ -16,16 +15,14 @@ import { ToastService } from "../../services/toast.service";
 
 @Component({
   selector: "app-contact",
-  imports: [
-    ReactiveFormsModule,
-    CommonModule,
-    BreadcrumbsComponent,
-    LoadingSpinnerComponent,
-  ],
+  imports: [ReactiveFormsModule, BreadcrumbsComponent, LoadingSpinnerComponent],
   templateUrl: "./contact.component.html",
   styleUrls: ["./contact.component.scss"],
 })
 export class ContactComponent {
+  private fb = inject(FormBuilder);
+  private toastService = inject(ToastService);
+
   contactForm: FormGroup;
   powSolution!: number;
   breadcrumbs: BreadcrumbSegment[] = [
@@ -41,10 +38,7 @@ export class ContactComponent {
   isLoading = false;
   isSubmitted = false;
 
-  constructor(
-    private fb: FormBuilder,
-    private toastService: ToastService,
-  ) {
+  constructor() {
     this.contactForm = this.fb.group({
       name: ["", Validators.required],
       affiliation: [""],

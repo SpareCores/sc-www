@@ -1,4 +1,4 @@
-import { Injectable, Inject, PLATFORM_ID } from "@angular/core";
+import { Injectable, PLATFORM_ID, inject } from "@angular/core";
 import { isPlatformBrowser } from "@angular/common";
 import { AnalyticsService } from "./analytics.service";
 
@@ -6,12 +6,10 @@ import { AnalyticsService } from "./analytics.service";
   providedIn: "root",
 })
 export class NeetoCalService {
-  private isScriptLoaded = false;
+  private platformId = inject(PLATFORM_ID);
+  private analyticsService = inject(AnalyticsService);
 
-  constructor(
-    @Inject(PLATFORM_ID) private platformId: object,
-    private analyticsService: AnalyticsService,
-  ) {}
+  private isScriptLoaded = false;
 
   initialize(): void {
     if (!isPlatformBrowser(this.platformId)) {

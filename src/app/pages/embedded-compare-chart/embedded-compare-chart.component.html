@@ -10,10 +10,11 @@
     style="height: calc(100% - 64px)"
   >
   </app-server-compare-charts>
-  <button *ngIf="instancesRaw" class="w-full flex">
+  @if (instancesRaw) {
     <a
       class="w-full flex flex-col justify-center items-center text-white bg-secondary px-6 py-4 hover:text-gray-200"
       target="_blank"
+      rel="noopener noreferrer"
       href="{{ getBaseURL() }}/compare?instances={{ instancesRaw }}"
     >
       <div class="w-full flex gap-2 items-center justify-between">
@@ -36,5 +37,5 @@
         </div>
       </div>
     </a>
-  </button>
+  }
 </div>

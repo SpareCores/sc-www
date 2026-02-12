@@ -20,77 +20,85 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let item of talks">
-              <td>{{ item.date | timeToShortDate }}</td>
-              <td>
-                <div class="flex flex-col">
-                  <a
-                    *ngIf="item.conference_url"
-                    [href]="item.conference_url"
-                    target="_blank"
-                    rel="noopener"
-                    >{{ item.conference }}</a
-                  >
-                  <span *ngIf="!item.conference_url">{{
-                    item.conference
-                  }}</span>
-                  <div class="text-sm text-gray-200">{{ item.location }}</div>
-                </div>
-              </td>
-              <td class="hidden lg:table-cell">
-                <div class="flex gap-2 items-center">
-                  <div>
-                    <img
-                      src="assets/images/team/{{ item.author }}.webp"
-                      class="w-8 max-h-8 rounded-full"
-                      alt="{{ item.author }} profile picture"
-                    />
+            @for (talk of talks; track talk.title + "_" + talk.date) {
+              <tr>
+                <td>{{ talk.date | timeToShortDate }}</td>
+                <td>
+                  <div class="flex flex-col">
+                    @if (talk.conference_url) {
+                      <a
+                        [href]="talk.conference_url"
+                        target="_blank"
+                        rel="noopener"
+                        >{{ talk.conference }}</a
+                      >
+                    }
+                    @if (!talk.conference_url) {
+                      <span>{{ talk.conference }}</span>
+                    }
+                    <div class="text-sm text-gray-200">{{ talk.location }}</div>
                   </div>
-                  <div>{{ item.author }}</div>
-                </div>
-              </td>
-              <td>
-                <a
-                  *ngIf="item.conference_talk_url"
-                  [href]="item.conference_talk_url"
-                  target="_blank"
-                  rel="noopener"
-                  >{{ item.title }}</a
-                >
-                <span *ngIf="!item.conference_talk_url">{{ item.title }}</span>
-              </td>
-              <td>
-                <div class="flex gap-2">
-                  <a
-                    *ngIf="item.conference_talk_slides"
-                    title="Slides"
-                    [href]="item.conference_talk_slides"
-                    target="_blank"
-                  >
-                    <lucide-icon name="scroll-text"> </lucide-icon>
-                  </a>
-                  <a
-                    *ngIf="item.conference_talk_video"
-                    title="Video recording"
-                    [href]="item.conference_talk_video"
-                    target="_blank"
-                    rel="noopener"
-                  >
-                    <lucide-icon name="youtube"> </lucide-icon>
-                  </a>
-                  <span
-                    *ngIf="
-                      !item.conference_talk_slides &&
-                      !item.conference_talk_video
-                    "
-                    class="flex items-center gap-2"
-                  >
-                    <lucide-icon name="hourglass"> </lucide-icon>
-                    <span class="text-sm">TBA</span>
-                  </span>
-                </div>
-              </td>
-            </tr>
+                </td>
+                <td class="hidden lg:table-cell">
+                  <div class="flex gap-2 items-center">
+                    <div>
+                      <img
+                        src="assets/images/team/{{ talk.author }}.webp"
+                        class="w-8 max-h-8 rounded-full"
+                        alt="{{ talk.author }} profile picture"
+                      />
+                    </div>
+                    <div>{{ talk.author }}</div>
+                  </div>
+                </td>
+                <td>
+                  @if (talk.conference_talk_url) {
+                    <a
+                      [href]="talk.conference_talk_url"
+                      target="_blank"
+                      rel="noopener"
+                      >{{ talk.title }}</a
+                    >
+                  }
+                  @if (!talk.conference_talk_url) {
+                    <span>{{ talk.title }}</span>
+                  }
+                </td>
+                <td>
+                  <div class="flex gap-2">
+                    @if (talk.conference_talk_slides) {
+                      <a
+                        title="Slides"
+                        [href]="talk.conference_talk_slides"
+                        target="_blank"
+                        rel="noopener"
+                      >
+                        <lucide-icon name="scroll-text"> </lucide-icon>
+                      </a>
+                    }
+                    @if (talk.conference_talk_video) {
+                      <a
+                        title="Video recording"
+                        [href]="talk.conference_talk_video"
+                        target="_blank"
+                        rel="noopener"
+                      >
+                        <lucide-icon name="youtube"> </lucide-icon>
+                      </a>
+                    }
+                    @if (
+                      !talk.conference_talk_slides &&
+                      !talk.conference_talk_video
+                    ) {
+                      <span class="flex items-center gap-2">
+                        <lucide-icon name="hourglass"> </lucide-icon>
+                        <span class="text-sm">TBA</span>
+                      </span>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
           </tbody>
         </table>
       </div>

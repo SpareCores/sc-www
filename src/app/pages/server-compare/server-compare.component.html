@@ -1,4 +1,3 @@
-<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
 <div class="w-full bg-primary min-h-screen">
   <div class="content pt-16 pb-16">
     <app-breadcrumbs [segments]="breadcrumbs"></app-breadcrumbs>
@@ -9,215 +8,237 @@
           <lucide-icon class="h-8 w-8 mr-2" name="scale"></lucide-icon>
           {{ title }}
         </h1>
-        <div *ngIf="instances.length" class="flex gap-4">
-          <button id="currency_button" class="dropdown_button" type="button">
-            <div class="px-4 py-3">
-              {{ selectedCurrency.slug }}
-            </div>
-            <div
-              class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
+        @if (instances.length) {
+          <div class="flex gap-4">
+            <button id="currency_button" class="dropdown_button" type="button">
+              <div class="px-4 py-3">
+                {{ selectedCurrency.slug }}
+              </div>
+              <div
+                class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
+              >
+                <lucide-icon
+                  name="chevron-down"
+                  class="h-6 w-6 text-emerald-400"
+                ></lucide-icon>
+              </div>
+            </button>
+            <button
+              class="btn-primary py-2 px-3 flex gap-1 items-center"
+              (click)="clipboardURL($event)"
             >
+              Share
               <lucide-icon
-                name="chevron-down"
-                class="h-6 w-6 text-emerald-400"
+                name="{{ clipboardIcon }}"
+                size="16"
+                class="ml-2"
               ></lucide-icon>
-            </div>
-          </button>
-          <button
-            class="btn-primary py-2 px-3 flex gap-1 items-center"
-            (click)="clipboardURL($event)"
-          >
-            Share
-            <lucide-icon
-              name="{{ clipboardIcon }}"
-              size="16"
-              class="ml-2"
-            ></lucide-icon>
-          </button>
-          <button
-            class="btn-primary py-2 px-3 flex gap-1 items-center"
-            (click)="openModal()"
-          >
-            Embed chart
-            <lucide-icon name="copy" size="16" class="ml-2"></lucide-icon>
-          </button>
-        </div>
+            </button>
+            <button
+              class="btn-primary py-2 px-3 flex gap-1 items-center"
+              (click)="openModal()"
+            >
+              Embed chart
+              <lucide-icon name="copy" size="16" class="ml-2"></lucide-icon>
+            </button>
+          </div>
+        }
       </div>
-      <div
-        *ngIf="instances.length"
-        class="text-white text-xl pr-16"
-        [innerHTML]="description"
-      ></div>
+      @if (instances.length) {
+        <div class="text-white text-xl pr-16" [innerHTML]="description"></div>
+      }
     </div>
 
-    <div
-      *ngIf="!instances.length"
-      class="flex flex-col gap-4 mx-2 xl:mx-0"
-      id="comparesDiv"
-      #comparesDiv
-    >
-      <div class="text-white text-xl pr-16">
-        Compare cloud servers and their characteristics, such as CPU, GPU,
-        memory, and storage details, and the performance of the instances by
-        various benchmarking workloads to find the optimal compute resource for
-        your needs.
-      </div>
-      <div class="text-white text-xl pr-16">
-        To get started, select at least two servers using the checkboxes in the
-        left column of our
-        <a class="text-emerald-400" routerLink="/servers"
-          >servers listing page</a
-        >, and optionally add/remove servers on their dedicated server details
-        pages as well via the "Compare" button, or find below a curated list of
-        server comparison sets.
-      </div>
-
-      <div class="flex flex-col gap-4 mt-4">
-        <div
-          class="flex flex-col py-6 gap-2 text-white"
-          [ngClass]="{
-            'bg-secondary rounded-lg px-6': item.type === 'card',
-          }"
-          *ngFor="let item of specialCompares"
-        >
-          <h2 *ngIf="item.type === 'section'" class="text-2xl font-semibold">
-            {{ item.title }}
-          </h2>
-          <h3 *ngIf="item.type === 'card'">
-            <a
-              routerLink="/compare/{{ item.id }}"
-              class="text-emerald-400 text-xl font-semibold"
-            >
-              {{ item.title }}
-            </a>
-          </h3>
-          <div
-            *ngIf="item.description && item.hide_description_in_index !== true"
-            class="description_inner_html"
-            [ngClass]="{ 'text-lg space-y-4': item.type === 'section' }"
-            [innerHTML]="item.description"
-          ></div>
-          <details
-            *ngIf="item.query"
-            class="flex flex-col gap-2 [&_svg]:open:-rotate-90"
-            [ngClass]="{ 'mt-4': item.type === 'section' }"
-          >
-            <summary class="text-sm list-none cursor-pointer">
-              SQL query used to select instances
-              <svg
-                class="inline fill-current opacity-75 w-4 h-4 -mr-1 rotate-90"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  d="M12.95 10.707l.707-.707L8 4.343 6.586 5.757 10.828 10l-4.242 4.243L8 15.657l4.95-4.95z"
-                />
-              </svg>
-            </summary>
-            <pre class="language-sql"><code>{{item.query}}</code></pre>
-          </details>
-          <div *ngIf="item.instances" class="text-sm flex flex-wrap gap-2">
-            Instances:
-            <a
-              *ngFor="let instance of item.instances"
-              class="underline decoration-dotted whitespace-nowrap"
-              routerLink="/server/{{ instance.vendor }}/{{ instance.server }}"
-            >
-              {{ instance.server }} ({{ instance.vendor }})
-            </a>
-          </div>
+    @if (!instances.length) {
+      <div
+        class="flex flex-col gap-4 mx-2 xl:mx-0"
+        id="comparesDiv"
+        #comparesDiv
+      >
+        <div class="text-white text-xl pr-16">
+          Compare cloud servers and their characteristics, such as CPU, GPU,
+          memory, and storage details, and the performance of the instances by
+          various benchmarking workloads to find the optimal compute resource
+          for your needs.
         </div>
-      </div>
-
-      <hr class="mt-6" />
-      <div class="text-white text-xl pr-16 mt-3">
-        <p>
-          <i
-            >You made it to the bottom of the page and still missing the list of
-            servers you hoped to see?</i
-          >
-        </p>
-        <p class="mt-3">
-          Compile your own comparison as per above on our
+        <div class="text-white text-xl pr-16">
+          To get started, select at least two servers using the checkboxes in
+          the left column of our
           <a class="text-emerald-400" routerLink="/servers"
             >servers listing page</a
-          >, then open a
-          <a
-            href="https://github.com/SpareCores/sc-www/issues/new"
-            class="text-emerald-400"
-            target="_blank"
-            rel="noopener"
-            >GitHub ticket</a
-          >
-          with the crafted URL and some details on why you find it useful, and
-          we will be happy to review your request and add to our repository!
-          Alternatively, open a pull request editing the
-          <a
-            href="https://github.com/SpareCores/sc-www/blob/main/src/app/pages/server-compare/special-compares.js"
-            class="text-emerald-400"
-            target="_blank"
-            rel="noopener"
-            >special-compares.js</a
-          >
-          file directly.
-        </p>
-      </div>
-    </div>
-
-    <div
-      *ngIf="isLoading"
-      class="flex justify-center items-center mt-12 text-white"
-    >
-      <app-loading-spinner
-        size="md"
-        text="Loading comparison data..."
-      ></app-loading-spinner>
-    </div>
-
-    <div
-      *ngIf="!isLoading && instances.length"
-      id="table_holder"
-      #tableHolder
-      class="overflow-x-auto overflow-y-hidden relative min-h-screen mx-2 xl:mx-0"
-      style="padding-left: 1px"
-    >
-      <div
-        *ngIf="isBrowser() && isTableOutsideViewport"
-        class="fixed_thead"
-        [style]="getFixedDivStyle()"
-      >
-        <table class="items_table" [style]="getMainTableWidth()">
-          <thead>
-            <tr>
-              <th [style]="getStickyHeaderFirstColStyle()"></th>
-              <th
-                *ngFor="let item of servers; let i = index"
-                [style]="getStyle(i)"
-              >
-                <a
-                  class="underline decoration-dotted"
-                  href="/server/{{ item.vendor_id }}/{{ item.api_reference }}"
-                  target="_blank"
+          >, and optionally add/remove servers on their dedicated server details
+          pages as well via the "Compare" button, or find below a curated list
+          of server comparison sets.
+        </div>
+        <div class="flex flex-col gap-4 mt-4">
+          @for (compare of specialCompares; track compare.title) {
+            <div
+              class="flex flex-col py-6 gap-2 text-white"
+              [ngClass]="{
+                'bg-secondary rounded-lg px-6': compare.type === 'card',
+              }"
+            >
+              @if (compare.type === "section") {
+                <h2 class="text-2xl font-semibold">
+                  {{ compare.title }}
+                </h2>
+              }
+              @if (compare.type === "card") {
+                <h3>
+                  <a
+                    routerLink="/compare/{{ compare.id }}"
+                    class="text-emerald-400 text-xl font-semibold"
+                  >
+                    {{ compare.title }}
+                  </a>
+                </h3>
+              }
+              @if (
+                compare.description &&
+                compare.hide_description_in_index !== true
+              ) {
+                <div
+                  class="description_inner_html"
+                  [ngClass]="{
+                    'text-lg space-y-4': compare.type === 'section',
+                  }"
+                  [innerHTML]="compare.description"
+                ></div>
+              }
+              @if (compare.query) {
+                <details
+                  class="flex flex-col gap-2 [&_svg]:open:-rotate-90"
+                  [ngClass]="{ 'mt-4': compare.type === 'section' }"
                 >
-                  {{ toUpper(item.display_name) }}
-                </a>
-              </th>
-            </tr>
-          </thead>
-        </table>
+                  <summary class="text-sm list-none cursor-pointer">
+                    SQL query used to select instances
+                    <svg
+                      class="inline fill-current opacity-75 w-4 h-4 -mr-1 rotate-90"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        d="M12.95 10.707l.707-.707L8 4.343 6.586 5.757 10.828 10l-4.242 4.243L8 15.657l4.95-4.95z"
+                      />
+                    </svg>
+                  </summary>
+                  <pre class="language-sql"><code>{{compare.query}}</code></pre>
+                </details>
+              }
+              @if (compare.instances) {
+                <div class="text-sm flex flex-wrap gap-2">
+                  Instances:
+                  @for (
+                    instance of compare.instances;
+                    track instance.vendor + "_" + instance.server
+                  ) {
+                    <a
+                      class="underline decoration-dotted whitespace-nowrap"
+                      routerLink="/server/{{ instance.vendor }}/{{
+                        instance.server
+                      }}"
+                    >
+                      {{ instance.server }} ({{ instance.vendor }})
+                    </a>
+                  }
+                </div>
+              }
+            </div>
+          }
+        </div>
+        <hr class="mt-6" />
+        <div class="text-white text-xl pr-16 mt-3">
+          <p>
+            <i
+              >You made it to the bottom of the page and still missing the list
+              of servers you hoped to see?</i
+            >
+          </p>
+          <p class="mt-3">
+            Compile your own comparison as per above on our
+            <a class="text-emerald-400" routerLink="/servers"
+              >servers listing page</a
+            >, then open a
+            <a
+              href="https://github.com/SpareCores/sc-www/issues/new"
+              class="text-emerald-400"
+              target="_blank"
+              rel="noopener"
+              >GitHub ticket</a
+            >
+            with the crafted URL and some details on why you find it useful, and
+            we will be happy to review your request and add to our repository!
+            Alternatively, open a pull request editing the
+            <a
+              href="https://github.com/SpareCores/sc-www/blob/main/src/app/pages/server-compare/special-compares.js"
+              class="text-emerald-400"
+              target="_blank"
+              rel="noopener"
+              >special-compares.js</a
+            >
+            file directly.
+          </p>
+        </div>
       </div>
-      <div>
-        <app-server-compare-charts
-          [servers]="servers"
-          [instanceProperties]="instanceProperties"
-          [benchmarkMeta]="benchmarkMeta"
-          [benchmarkCategories]="benchmarkCategories"
-          [instancePropertyCategories]="instancePropertyCategories"
-          [showZone]="showZoneIds"
-        >
-        </app-server-compare-charts>
+    }
+
+    @if (isLoading) {
+      <div class="flex justify-center items-center mt-12 text-white">
+        <app-loading-spinner
+          size="md"
+          text="Loading comparison data..."
+        ></app-loading-spinner>
       </div>
-    </div>
+    }
+
+    @if (!isLoading && instances.length) {
+      <div
+        id="table_holder"
+        #tableHolder
+        class="overflow-x-auto overflow-y-hidden relative min-h-screen mx-2 xl:mx-0"
+        style="padding-left: 1px"
+      >
+        @if (isBrowser() && isTableOutsideViewport) {
+          <div class="fixed_thead" [style]="getFixedDivStyle()">
+            <table class="items_table" [style]="getMainTableWidth()">
+              <thead>
+                <tr>
+                  <th [style]="getStickyHeaderFirstColStyle()"></th>
+                  @for (
+                    server of servers;
+                    track server.vendor_id + "_" + server.server_id;
+                    let i = $index
+                  ) {
+                    <th [style]="getStyle(i)">
+                      <a
+                        class="underline decoration-dotted"
+                        href="/server/{{ server.vendor_id }}/{{
+                          server.api_reference
+                        }}"
+                        target="_blank"
+                      >
+                        {{ server.display_name | uppercase }}
+                      </a>
+                    </th>
+                  }
+                </tr>
+              </thead>
+            </table>
+          </div>
+        }
+        <div>
+          <app-server-compare-charts
+            [servers]="servers"
+            [instanceProperties]="instanceProperties"
+            [benchmarkMeta]="benchmarkMeta"
+            [benchmarkCategories]="benchmarkCategories"
+            [instancePropertyCategories]="instancePropertyCategories"
+            [showZone]="showZoneIds"
+          >
+          </app-server-compare-charts>
+        </div>
+      </div>
+    }
   </div>
 </div>
 
@@ -238,13 +259,16 @@
     class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
     aria-labelledby="dropdownDefaultButton"
   >
-    <li
-      *ngFor="let item of availableCurrencies"
-      class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-      (click)="selectCurrency(item)"
-    >
-      <div class="text-white text-sm">{{ item.name }} ({{ item.symbol }})</div>
-    </li>
+    @for (currency of availableCurrencies; track currency.name) {
+      <li
+        class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+        (click)="selectCurrency(currency)"
+      >
+        <div class="text-white text-sm">
+          {{ currency.name }} ({{ currency.symbol }})
+        </div>
+      </li>
+    }
   </ul>
 </div>
 
@@ -288,15 +312,16 @@
           <span class="sr-only">Close modal</span>
         </button>
       </div>
-      <div *ngIf="instancesRaw" class="space-y-4 flex flex-col">
-        <app-embed-compare-preview
-          *ngIf="instancesRaw"
-          [instances]="instancesRaw"
-          [isModal]="true"
-          [charts]="embeddableCharts"
-        >
-        </app-embed-compare-preview>
-      </div>
+      @if (instancesRaw) {
+        <div class="space-y-4 flex flex-col">
+          <app-embed-compare-preview
+            [instances]="instancesRaw"
+            [isModal]="true"
+            [charts]="embeddableCharts"
+          >
+          </app-embed-compare-preview>
+        </div>
+      }
     </div>
   </div>
 </div>

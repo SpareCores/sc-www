@@ -1,23 +1,23 @@
-/* eslint-disable prefer-const */
 import {
   AfterViewInit,
   Component,
   ElementRef,
   HostBinding,
-  Inject,
   OnInit,
   PLATFORM_ID,
   ViewChild,
   OnDestroy,
+  DOCUMENT,
+  inject,
 } from "@angular/core";
 import { KeeperAPIService } from "../../services/keeper-api.service";
-import { ActivatedRoute, Router, RouterModule } from "@angular/router";
+import { ActivatedRoute, RouterModule } from "@angular/router";
 import {
   BreadcrumbSegment,
   BreadcrumbsComponent,
 } from "../../components/breadcrumbs/breadcrumbs.component";
 import { LucideAngularModule } from "lucide-angular";
-import { CommonModule, DOCUMENT, isPlatformBrowser } from "@angular/common";
+import { CommonModule, isPlatformBrowser } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import {
@@ -61,6 +61,17 @@ const optionsModal: ModalOptions = {
 export class ServerCompareComponent
   implements OnInit, AfterViewInit, OnDestroy
 {
+  private prismService = inject(PrismService);
+  private platformId = inject(PLATFORM_ID);
+  private document = inject<Document>(DOCUMENT);
+  private keeperAPI = inject(KeeperAPIService);
+  private seoHandler = inject(SeoHandlerService);
+  private serverCompare = inject(ServerCompareService);
+  private dropdownManager = inject(DropdownManagerService);
+  private analytics = inject(AnalyticsService);
+  private route = inject(ActivatedRoute);
+  private toastService = inject(ToastService);
+
   @ViewChild("tableFirstCol") tableFirstCol!: ElementRef;
   @HostBinding("attr.ngSkipHydration") ngSkipHydration = "true";
   @ViewChild("comparesDiv") comparesDiv!: ElementRef;
@@ -70,7 +81,7 @@ export class ServerCompareComponent
     { name: "Compare Servers", url: "/compare" },
   ];
 
-  isLoading = true;
+  isLoading = false;
 
   servers: ExtendedServerDetails[] = [];
 
@@ -260,20 +271,6 @@ export class ServerCompareComponent
 
   private subscription = new Subscription();
   private checkExistInterval: any;
-
-  constructor(
-    private prismService: PrismService,
-    @Inject(PLATFORM_ID) private platformId: object,
-    @Inject(DOCUMENT) private document: Document,
-    private keeperAPI: KeeperAPIService,
-    private seoHandler: SeoHandlerService,
-    private serverCompare: ServerCompareService,
-    private dropdownManager: DropdownManagerService,
-    private analytics: AnalyticsService,
-    private router: Router,
-    private route: ActivatedRoute,
-    private toastService: ToastService,
-  ) {}
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get("id");
@@ -677,10 +674,6 @@ export class ServerCompareComponent
         }
       }, 50);
     }
-  }
-
-  toUpper(text: string) {
-    return text?.toUpperCase();
   }
 
   clipboardURL(event: any, fragment?: string) {

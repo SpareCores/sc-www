@@ -1,4 +1,3 @@
-<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
 <div class="w-full bg-primary overflow-x-hidden" style="height: 630px">
   <div class="content pt-6 pb-6 text-white">
     <div
@@ -18,71 +17,75 @@
     <div
       class="mx-12 rounded-lg gap-8 px-6 py-6 bg-secondary border-emerald-400 border boder-solid"
     >
-      <div class="mx-6 grid justify-items-center pb-6" *ngIf="serverDetails">
-        <div class="text-8xl text-emerald-400 font-bold">
-          {{ serverDetails.display_name }}
-        </div>
-      </div>
-
-      <div
-        class="mx-2 flex items-center justify-center justify-between gap-8 pb-2"
-        *ngIf="serverDetails"
-      >
-        <div class="w-1/2 flex flex-col gap-6 text-center">
-          <div class="text-white text-5xl font-semibold">
-            Spare <span class="text-emerald-400"> SC</span>ore
-          </div>
-          <div class="flex flex-col gap-6">
-            <div class="text-gray-200" *ngIf="serverDetails.vcpus! > 1">
-              <span class="text-5xl text-white">{{ getBenchmark(false) }}</span
-              ><br />
-              <span class="text-2xl">Single-core</span>
-            </div>
-            <div class="text-gray-200">
-              <span class="text-5xl text-emerald-400 font-semibold">{{
-                getBenchmark(true)
-              }}</span
-              ><br />
-              <span class="text-2xl">All cores</span>
-            </div>
+      @if (serverDetails) {
+        <div class="mx-6 grid justify-items-center pb-6">
+          <div class="text-8xl text-emerald-400 font-bold">
+            {{ serverDetails.display_name }}
           </div>
         </div>
+      }
 
-        <div class="border-r border-solid border-emerald-400 h-72 w-1"></div>
-
-        <div class="flex flex-wrap gap-4">
-          <div class="w-full h-48 pt-2 text-3xl line-clamp-5">
-            {{ description }}
-          </div>
-          <div class="flex items-center justify-center gap-8 mt-2">
-            <div class="w-20 h-20 bg-white rounded-lg mx-auto">
-              <img src="{{ serverDetails.vendor.logo }}" alt="logo" />
+      @if (serverDetails) {
+        <div class="mx-2 flex items-center justify-between gap-8 pb-2">
+          <div class="w-1/2 flex flex-col gap-6 text-center">
+            <div class="text-white text-5xl font-semibold">
+              Spare <span class="text-emerald-400"> SC</span>ore
             </div>
-            <div class="text-gray-200 font-bold text-4xl">
-              {{ serverDetails.vendor.name }}
-            </div>
-          </div>
-        </div>
-
-        <div class="border-r border-solid border-emerald-400 h-72 w-1"></div>
-
-        <div>
-          <div *ngFor="let item of features; let i = index">
-            <div
-              *ngIf="i !== 0"
-              class="w-full h-4 mb-3 border-b border-gray-400 border-solid"
-            ></div>
-            <div class="flex gap-2 text-3xl items-center text-gray-200">
-              <div class="inline text-3xl items-center text-gray-200">
-                <b>
-                  <span class="text-teal-500">{{ item.value }}</span>
-                </b>
-                {{ item.name }}
+            <div class="flex flex-col gap-6">
+              @if (serverDetails.vcpus! > 1) {
+                <div class="text-gray-200">
+                  <span class="text-5xl text-white">{{
+                    getBenchmark(false)
+                  }}</span
+                  ><br />
+                  <span class="text-2xl">Single-core</span>
+                </div>
+              }
+              <div class="text-gray-200">
+                <span class="text-5xl text-emerald-400 font-semibold">{{
+                  getBenchmark(true)
+                }}</span
+                ><br />
+                <span class="text-2xl">All cores</span>
               </div>
             </div>
           </div>
+          <div class="border-r border-solid border-emerald-400 h-72 w-1"></div>
+          <div class="flex flex-wrap gap-4">
+            <div class="w-full h-48 pt-2 text-3xl line-clamp-5">
+              {{ description }}
+            </div>
+            <div class="flex items-center justify-center gap-8 mt-2">
+              <div class="w-20 h-20 bg-white rounded-lg mx-auto">
+                <img [src]="serverDetails.vendor.logo" alt="logo" />
+              </div>
+              <div class="text-gray-200 font-bold text-4xl">
+                {{ serverDetails.vendor.name }}
+              </div>
+            </div>
+          </div>
+          <div class="border-r border-solid border-emerald-400 h-72 w-1"></div>
+          <div>
+            @for (feature of features; track feature.name; let i = $index) {
+              <div>
+                @if (i !== 0) {
+                  <div
+                    class="w-full h-4 mb-3 border-b border-gray-400 border-solid"
+                  ></div>
+                }
+                <div class="flex gap-2 text-3xl items-center text-gray-200">
+                  <div class="inline text-3xl items-center text-gray-200">
+                    <b>
+                      <span class="text-teal-500">{{ feature.value }}</span>
+                    </b>
+                    {{ feature.name }}
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
         </div>
-      </div>
+      }
     </div>
   </div>
 </div>

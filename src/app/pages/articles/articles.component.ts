@@ -1,10 +1,9 @@
-import { Component, OnInit, OnDestroy } from "@angular/core";
+import { Component, OnInit, OnDestroy, inject } from "@angular/core";
 import { ArticleMeta, ArticlesService } from "../../services/articles.service";
 import {
   BreadcrumbSegment,
   BreadcrumbsComponent,
 } from "../../components/breadcrumbs/breadcrumbs.component";
-import { CommonModule } from "@angular/common";
 import { ActivatedRoute } from "@angular/router";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { ArticleCardComponent } from "../../components/article-card/article-card.component";
@@ -12,11 +11,15 @@ import { Subscription } from "rxjs";
 
 @Component({
   selector: "app-articles",
-  imports: [BreadcrumbsComponent, CommonModule, ArticleCardComponent],
+  imports: [BreadcrumbsComponent, ArticleCardComponent],
   templateUrl: "./articles.component.html",
   styleUrl: "./articles.component.scss",
 })
 export class ArticlesComponent implements OnInit, OnDestroy {
+  private SEOHandler = inject(SeoHandlerService);
+  private route = inject(ActivatedRoute);
+  private articleHandler = inject(ArticlesService);
+
   breadcrumbs: BreadcrumbSegment[] = [
     { name: "Home", url: "/" },
     { name: "Articles", url: "/articles" },
@@ -24,12 +27,6 @@ export class ArticlesComponent implements OnInit, OnDestroy {
 
   articles: ArticleMeta[] = [];
   private subscription = new Subscription();
-
-  constructor(
-    private SEOHandler: SeoHandlerService,
-    private route: ActivatedRoute,
-    private articleHandler: ArticlesService,
-  ) {}
 
   ngOnInit() {
     this.subscription.add(

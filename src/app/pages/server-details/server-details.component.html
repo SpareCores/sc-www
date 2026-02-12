@@ -1,493 +1,543 @@
-<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
 <div class="w-full bg-primary">
   <div class="content pt-16 pb-16 text-white">
     <app-breadcrumbs [segments]="breadcrumbs"></app-breadcrumbs>
 
-    <div *ngIf="isLoading" class="flex justify-center items-center mt-12">
-      <app-loading-spinner
-        size="md"
-        text="Loading server data..."
-      ></app-loading-spinner>
-    </div>
+    @if (isLoading) {
+      <div class="flex justify-center items-center mt-12">
+        <app-loading-spinner
+          size="md"
+          text="Loading server data..."
+        ></app-loading-spinner>
+      </div>
+    }
 
-    <div
-      *ngIf="!isLoading && !serverDetails"
-      class="flex justify-center items-center mt-12"
-    >
-      <div class="text-2xl text-red-400">{{ keeperResponseErrorMsg }}</div>
-    </div>
+    @if (!isLoading && !serverDetails) {
+      <div class="flex justify-center items-center mt-12">
+        <div class="text-2xl text-red-400">{{ keeperResponseErrorMsg }}</div>
+      </div>
+    }
 
-    <div
-      *ngIf="serverDetails"
-      id="server_base_info_box"
-      class="mx-2 xl:mx-0 flex flex-wrap justify-between rounded-lg gap-8 px-6 py-6 bg-secondary border-emerald-400 border boder-solid mt-12"
-    >
-      <div class="flex gap-8 flex-grow lg:w-1/2 w-full">
-        <div class="flex gap-4 flex-col min-w-32">
-          <div class="min-w-20 w-20 h-20 bg-white rounded-lg mx-auto">
-            <img src="{{ serverDetails.vendor.logo }}" alt="logo" />
+    @if (serverDetails) {
+      <div
+        id="server_base_info_box"
+        class="mx-2 xl:mx-0 flex flex-wrap justify-between rounded-lg gap-8 px-6 py-6 bg-secondary border-emerald-400 border border-solid mt-12"
+      >
+        <div class="flex gap-8 flex-grow lg:w-1/2 w-full">
+          <div class="flex gap-4 flex-col min-w-32">
+            <div class="min-w-20 w-20 h-20 bg-white rounded-lg mx-auto">
+              <img [src]="serverDetails.vendor.logo" alt="logo" />
+            </div>
+          </div>
+          <div class="flex flex-col gap-3">
+            <h1 class="text-2xl">
+              <span class="text-emerald-400 font-bold">{{
+                serverDetails.display_name
+              }}</span>
+              by {{ serverDetails.vendor.name }}
+            </h1>
+            <div>{{ description }}</div>
+            <div class="flex gap-4">
+              <button
+                class="btn-primary py-3 px-5 flex gap-2"
+                (click)="addToCompare()"
+              >
+                <span> {{ compareText() }} </span>
+                <lucide-icon name="scale" class="h-6 w-6"></lucide-icon>
+              </button>
+              <a
+                class="btn-primary-outline py-3 px-5 flex gap-2"
+                [href]="serverDetails.vendor.homepage"
+                target="_blank"
+                rel="nofollow noopener"
+              >
+                <span> Visit Vendor </span>
+                <lucide-icon name="external-link" class="h-6 w-6"></lucide-icon>
+              </a>
+              <a
+                class="btn-primary-outline py-3 px-5 flex gap-2"
+                [href]="serverDetails.vendor.status_page"
+                target="_blank"
+                rel="nofollow noopener"
+              >
+                <span> Status Page </span>
+                <lucide-icon name="external-link" class="h-6 w-6"></lucide-icon>
+              </a>
+            </div>
           </div>
         </div>
-        <div class="flex flex-col gap-3">
-          <h1 class="text-2xl">
-            <span class="text-emerald-400 font-bold">{{
-              serverDetails.display_name
-            }}</span>
-            by {{ serverDetails.vendor.name }}
-          </h1>
-          <div>{{ description }}</div>
-          <div class="flex gap-4">
+        <div class="w-full lg:w-2/5 flex">
+          <div class="w-1/2 mr-8">
+            @for (feature of features; track feature.name; let i = $index) {
+              <div>
+                @if (i !== 0) {
+                  <div
+                    class="w-full h-4 mb-3 border-b border-gray-400 border-solid"
+                  ></div>
+                }
+                <div class="flex gap-2 text-xl items-center text-gray-200">
+                  <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6">
+                    <lucide-icon name="check" class="h-4 w-4"></lucide-icon>
+                  </div>
+                  <b> {{ feature.value }} </b>
+                  <span> {{ feature.name }} </span>
+                </div>
+              </div>
+            }
+          </div>
+          <div
+            class="border-r border-solid border-emerald-400 h-full w-1"
+          ></div>
+          <div class="w-1/2 flex flex-col gap-4 text-center ml-8">
+            <div class="text-white text-3xl font-semibold">
+              Spare <span class="text-emerald-400"> SC</span>ore
+            </div>
+            <div class="flex flex-col gap-4">
+              <div class="text-gray-200">
+                <span class="text-3xl text-emerald-400 font-semibold">{{
+                  getBenchmark(true)
+                }}</span
+                ><br />
+                (All-cores)
+              </div>
+              <div class="text-gray-200">
+                <span class="text-xl">{{ getBenchmark(false) }}</span
+                ><br />
+                (Single-core)
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    @if (serverDetails) {
+      <div class="mx-2 xl:mx-0 flex flex-wrap gap-8">
+        <div class="my-8 w-full">
+          <h2 class="text-3xl font-bold">Specifications</h2>
+        </div>
+        <div class="block_half" id="details">
+          <h3 class="text-2xl">Server Details</h3>
+          @for (category of instancePropertyCategories; track category.name) {
+            <table class="items_table">
+              @if (category.properties.length) {
+                <thead>
+                  <tr>
+                    <th>{{ category.name }}</th>
+                    <th></th>
+                  </tr>
+                </thead>
+              }
+              <tbody>
+                @for (property of category.properties; track property.name) {
+                  <tr>
+                    <td class="fixed_width">
+                      <div class="flex gap-2 items-center">
+                        <b>{{ property.name }}</b>
+                        @if (property.description) {
+                          <lucide-icon
+                            name="info"
+                            class="h-4 w-4 text-gray-200"
+                            (mouseenter)="
+                              showTooltip($event, property.description)
+                            "
+                            (mouseleave)="hideTooltip()"
+                          >
+                          </lucide-icon>
+                        }
+                      </div>
+                    </td>
+                    <td>
+                      <div
+                        class="property_value"
+                        [innerHTML]="getProperty(property)"
+                      ></div>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          }
+          <div
+            class="absolute bottom-0 left-0 w-full py-3 flex justify-center"
+            id="details_more"
+            style="
+              background: linear-gradient(
+                360deg,
+                #06263a 23.44%,
+                rgba(6, 38, 58, 0) 100%
+              );
+            "
+          >
+            <button
+              class="btn-primary py-2 px-3"
+              (click)="openBox('details')"
+              id="details_more_button"
+              data-ph-capture-attribute-sc-event="server details show more server details"
+            >
+              View more details
+            </button>
+          </div>
+          <div class="w-full pt-3 flex justify-center hidden" id="details_less">
+            <button
+              class="btn-primary py-2 px-3"
+              (click)="openBox('details')"
+              id="details_less_button"
+              data-ph-capture-attribute-sc-event="server details show less server details"
+            >
+              Show less
+            </button>
+          </div>
+        </div>
+        <div class="block_half" id="availability">
+          <h3 class="text-2xl">Availability</h3>
+          <table class="items_table">
+            <thead>
+              <tr>
+                <th>REGION / ID</th>
+                <th>SPOT</th>
+                <th>ONDEMAND</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (
+                region of availabilityRegions;
+                track region.vendor_id + "_" + region.region_id
+              ) {
+                <tr class="availability_line">
+                  <td>
+                    <div>
+                      <b>{{ region.display_name }}</b> /
+                      {{ region.api_reference }}
+                    </div>
+                  </td>
+                  @if (region["spot"].price) {
+                    <td>
+                      {{ region["spot"].price }}
+                      {{ region["spot"].currency }}/{{
+                        region["spot"].unit | reduceUnitName
+                      }}
+                    </td>
+                  }
+                  @if (!region["spot"].price) {
+                    <td>-</td>
+                  }
+                  @if (region["ondemand"].price) {
+                    <td>
+                      {{ region["ondemand"].price }}
+                      {{ region["ondemand"].currency }}/{{
+                        region["ondemand"].unit | reduceUnitName
+                      }}
+                    </td>
+                  }
+                  @if (!region["ondemand"].price) {
+                    <td>-</td>
+                  }
+                </tr>
+              }
+            </tbody>
+          </table>
+          @if (availabilityRegions.length > 7) {
+            <div
+              class="absolute bottom-0 left-0 w-full py-3 flex justify-center"
+              id="availability_more"
+              style="
+                background: linear-gradient(
+                  360deg,
+                  #06263a 23.44%,
+                  rgba(6, 38, 58, 0) 100%
+                );
+              "
+            >
+              <button
+                class="btn-primary py-2 px-3"
+                (click)="openBox('availability')"
+                id="availability_more_button"
+                data-ph-capture-attribute-sc-event="server details show more availability"
+              >
+                Show more
+              </button>
+            </div>
+          }
+          <div
+            class="w-full pt-3 flex justify-center hidden"
+            id="availability_less"
+          >
+            <button
+              class="btn-primary py-2 px-3"
+              (click)="openBox('availability')"
+              data-ph-capture-attribute-sc-event="server details show less availability"
+            >
+              Show less
+            </button>
+          </div>
+        </div>
+        <div class="my-2 w-full">
+          <h2 class="text-3xl font-bold">Economics</h2>
+        </div>
+        <div class="block_full price-sections-to-hide-for-test">
+          <div class="flex justify-between items-center">
+            <h3 class="text-2xl">Average Price per Region</h3>
+            <div>
+              <button
+                id="allocation_button"
+                data-ph-capture-attribute-sc-event="server details price allocation select"
+                data-dropdown-toggle="allocation_options"
+                class="dropdown_button"
+                type="button"
+              >
+                <div class="px-3 py-2">Allocation</div>
+                <div
+                  class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
+                >
+                  <lucide-icon
+                    name="chevron-down"
+                    class="h-6 w-6 text-emerald-400"
+                  ></lucide-icon>
+                </div>
+              </button>
+            </div>
+          </div>
+          @if (isBrowser()) {
+            <div>
+              <div chartType="bar" id="price_chart">
+                <canvas
+                  style="height: 350px; width: 100%"
+                  baseChart
+                  [data]="barChartData"
+                  [options]="barChartOptions"
+                  [type]="barChartType"
+                >
+                </canvas>
+              </div>
+            </div>
+          }
+        </div>
+        <div class="block_half price-sections-to-hide-for-test">
+          <div class="flex justify-between items-center">
+            <h3 class="text-2xl">Prices per Zone</h3>
+            <div class="flex gap-4">
+              <button
+                id="allocation_button2"
+                data-ph-capture-attribute-sc-event="server details price allocation select"
+                data-dropdown-toggle="allocation_options2"
+                class="dropdown_button"
+                type="button"
+              >
+                <div class="px-3 py-2">Allocation</div>
+                <div
+                  class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
+                >
+                  <lucide-icon
+                    name="chevron-down"
+                    class="h-6 w-6 text-emerald-400"
+                  ></lucide-icon>
+                </div>
+              </button>
+              <button
+                id="region_button"
+                data-ph-capture-attribute-sc-event="server details regions select"
+                data-dropdown-toggle="region_options"
+                class="dropdown_button"
+                type="button"
+              >
+                <div class="px-3 py-2">Regions</div>
+                <div
+                  class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
+                >
+                  <lucide-icon
+                    name="chevron-down"
+                    class="h-6 w-6 text-emerald-400"
+                  ></lucide-icon>
+                </div>
+              </button>
+            </div>
+          </div>
+          @if (isBrowser()) {
+            <div>
+              <div chartType="bar">
+                <canvas
+                  style="height: 350px; width: 100%"
+                  baseChart
+                  [data]="barChartData2"
+                  [options]="barChartOptions"
+                  [type]="barChartType"
+                >
+                </canvas>
+              </div>
+            </div>
+          }
+        </div>
+        <div class="block_half price-sections-to-hide-for-test">
+          <h3 class="text-2xl">Lowest Prices</h3>
+          @if (isBrowser()) {
+            <div>
+              <div chartType="bar">
+                <canvas
+                  style="height: 350px; width: 100%"
+                  baseChart
+                  [data]="barChartData3"
+                  [options]="barChartOptions"
+                  [type]="barChartType"
+                >
+                </canvas>
+              </div>
+            </div>
+          }
+        </div>
+        @if (serverDetails.benchmark_scores.length) {
+          <div class="my-2 w-full flex justify-between items-center">
+            <h2 class="text-3xl font-bold">Performance</h2>
             <button
               class="btn-primary py-3 px-5 flex gap-2"
-              (click)="addToCompare()"
+              (click)="openModal()"
             >
-              <span> {{ compareText() }} </span>
-              <lucide-icon name="scale" class="h-6 w-6"></lucide-icon>
+              <span> Embed chart </span>
+              <lucide-icon name="copy" class="h-6 w-6"></lucide-icon>
             </button>
-            <a
-              class="btn-primary-outline py-3 px-5 flex gap-2"
-              [href]="serverDetails.vendor.homepage"
-              target="_blank"
-              rel="nofollow noopener"
-            >
-              <span> Visit Vendor </span>
-              <lucide-icon name="external-link" class="h-6 w-6"></lucide-icon>
-            </a>
-
-            <a
-              class="btn-primary-outline py-3 px-5 flex gap-2"
-              [href]="serverDetails.vendor.status_page"
-              target="_blank"
-              rel="nofollow noopener"
-            >
-              <span> Status Page </span>
-              <lucide-icon name="external-link" class="h-6 w-6"></lucide-icon>
-            </a>
           </div>
+        }
+        <app-server-charts
+          class="w-full flex flex-wrap gap-8"
+          [serverDetails]="serverDetails"
+          [benchmarksByCategory]="benchmarksByCategory"
+          [benchmarkMeta]="benchmarkMeta"
+        ></app-server-charts>
+        <div class="my-2 w-full">
+          <h2 class="text-3xl font-bold">Alternatives</h2>
         </div>
-      </div>
-      <div class="w-full lg:w-2/5 flex">
-        <div class="w-1/2 mr-8">
-          <div *ngFor="let item of features; let i = index">
-            <div
-              *ngIf="i !== 0"
-              class="w-full h-4 mb-3 border-b border-gray-400 border-solid"
-            ></div>
-            <div class="flex gap-2 text-xl items-center text-gray-200">
-              <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6">
-                <lucide-icon name="check" class="h-4 w-4"></lucide-icon>
-              </div>
-              <b> {{ item.value }} </b>
-              <span> {{ item.name }} </span>
-            </div>
+        <div class="block_half">
+          <div class="flex items-center" style="min-height: 42px">
+            <h3 class="text-2xl">Servers of the Same Family</h3>
           </div>
+          <table class="items_table_similar similar_family_table">
+            <thead>
+              <tr>
+                <th>INSTANCE</th>
+                <th>vCPUs</th>
+                <th>MEMORY</th>
+                <th>GPUs</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (
+                server of similarByFamily;
+                track server.vendor_id + "_" + server.server_id
+              ) {
+                <tr>
+                  <td>
+                    <a
+                      class="underline decoration-dotted hover:text-gray-500"
+                      routerLink="/server/{{ server.vendor_id }}/{{
+                        server.api_reference
+                      }}"
+                    >
+                      {{ server.display_name }}
+                    </a>
+                  </td>
+                  <td>{{ server.vcpus }}</td>
+                  <td>{{ getMemory(server.memory_amount) }}</td>
+                  <td>{{ server.gpu_count | gpuCount }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
         </div>
-
-        <div class="border-r border-solid border-emerald-400 h-full w-1"></div>
-
-        <div class="w-1/2 flex flex-col gap-4 text-center ml-8">
-          <div class="text-white text-3xl font-semibold">
-            Spare <span class="text-emerald-400"> SC</span>ore
-          </div>
-          <div class="flex flex-col gap-4">
-            <div class="text-gray-200">
-              <span class="text-3xl text-emerald-400 font-semibold">{{
-                getBenchmark(true)
-              }}</span
-              ><br />
-              (All-cores)
-            </div>
-            <div class="text-gray-200">
-              <span class="text-xl">{{ getBenchmark(false) }}</span
-              ><br />
-              (Single-core)
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div *ngIf="serverDetails" class="mx-2 xl:mx-0 flex flex-wrap gap-8">
-      <div class="my-8 w-full">
-        <h2 class="text-3xl font-bold">Specifications</h2>
-      </div>
-      <div class="block_half" id="details">
-        <h3 class="text-2xl">Server Details</h3>
-        <table
-          class="items_table"
-          *ngFor="let item of instancePropertyCategories"
-        >
-          <thead *ngIf="item.properties.length">
-            <tr>
-              <th>{{ item.name }}</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let property of item.properties">
-              <td class="fixed_width">
-                <div class="flex gap-2 items-center">
-                  <b>{{ property.name }}</b>
-                  <lucide-icon
-                    *ngIf="property.description"
-                    name="info"
-                    class="h-4 w-4 text-gray-200"
-                    (mouseenter)="showTooltip($event, property.description)"
-                    (mouseleave)="hideTooltip()"
-                  >
-                  </lucide-icon>
+        <div class="block_half" id="similar_servers">
+          <div class="flex justify-between items-center">
+            <h3 class="text-2xl">Similar Servers</h3>
+            <div class="flex gap-4">
+              <button
+                id="similar_type_button"
+                data-ph-capture-attribute-sc-event="server similar options select"
+                data-dropdown-toggle="similar_server_options"
+                class="dropdown_button"
+                type="button"
+              >
+                <div class="px-3 py-2">
+                  {{ selectedSimilarOption.name }}
                 </div>
-              </td>
-              <td>
                 <div
-                  class="property_value"
-                  [innerHTML]="getProperty(property)"
-                ></div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-
-        <div
-          class="absolute bottom-0 left-0 w-full py-3 flex justify-center"
-          id="details_more"
-          style="
-            background: linear-gradient(
-              360deg,
-              #06263a 23.44%,
-              rgba(6, 38, 58, 0) 100%
-            );
-          "
-        >
-          <button
-            class="btn-primary py-2 px-3"
-            (click)="openBox('details')"
-            id="details_more_button"
-            data-ph-capture-attribute-sc-event="server details show more server details"
-          >
-            View more details
-          </button>
-        </div>
-        <div class="w-full pt-3 flex justify-center hidden" id="details_less">
-          <button
-            class="btn-primary py-2 px-3"
-            (click)="openBox('details')"
-            id="details_less_button"
-            data-ph-capture-attribute-sc-event="server details show less server details"
-          >
-            Show less
-          </button>
-        </div>
-      </div>
-
-      <div class="block_half" id="availability">
-        <h3 class="text-2xl">Availability</h3>
-        <table class="items_table">
-          <thead>
-            <tr>
-              <th>REGION / ID</th>
-              <th>SPOT</th>
-              <th>ONDEMAND</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let item of availabilityRegions" id="availability_line">
-              <td>
-                <div>
-                  <b>{{ item.display_name }}</b> / {{ item.api_reference }}
+                  class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
+                >
+                  <lucide-icon
+                    name="chevron-down"
+                    class="h-6 w-6 text-emerald-400"
+                  ></lucide-icon>
                 </div>
-              </td>
-              <td *ngIf="item['spot'].price">
-                {{ item["spot"].price }} {{ item["spot"].currency }}/{{
-                  item["spot"].unit | reduceUnitName
-                }}
-              </td>
-              <td *ngIf="!item['spot'].price">-</td>
-              <td *ngIf="item['ondemand'].price">
-                {{ item["ondemand"].price }} {{ item["ondemand"].currency }}/{{
-                  item["ondemand"].unit | reduceUnitName
-                }}
-              </td>
-              <td *ngIf="!item['ondemand'].price">-</td>
-            </tr>
-          </tbody>
-        </table>
-        <div
-          *ngIf="availabilityRegions.length > 7"
-          class="absolute bottom-0 laft-0 w-full py-3 flex justify-center"
-          id="availability_more"
-          style="
-            background: linear-gradient(
-              360deg,
-              #06263a 23.44%,
-              rgba(6, 38, 58, 0) 100%
-            );
-          "
-        >
-          <button
-            class="btn-primary py-2 px-3"
-            (click)="openBox('availability')"
-            id="availability_more_button"
-            data-ph-capture-attribute-sc-event="server details show more availability"
-          >
-            Show more
-          </button>
-        </div>
-        <div
-          class="w-full pt-3 flex justify-center hidden"
-          id="availability_less"
-        >
-          <button
-            class="btn-primary py-2 px-3"
-            (click)="openBox('availability')"
-            data-ph-capture-attribute-sc-event="server details show less availability"
-          >
-            Show less
-          </button>
-        </div>
-      </div>
-
-      <div class="my-2 w-full">
-        <h2 class="text-3xl font-bold">Economics</h2>
-      </div>
-
-      <div class="block_full price-sections-to-hide-for-test">
-        <div class="flex justify-between items-center">
-          <h3 class="text-2xl">Average Price per Region</h3>
-          <div>
-            <button
-              id="allocation_button"
-              data-ph-capture-attribute-sc-event="server details price allocation select"
-              data-dropdown-toggle="allocation_options"
-              class="dropdown_button"
-              type="button"
-            >
-              <div class="px-3 py-2">Allocation</div>
-              <div
-                class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
-              >
-                <lucide-icon
-                  name="chevron-down"
-                  class="h-6 w-6 text-emerald-400"
-                ></lucide-icon>
-              </div>
-            </button>
+              </button>
+            </div>
           </div>
-        </div>
-        <div *ngIf="isBrowser()">
-          <div chartType="bar" id="price_chart">
-            <canvas
-              style="height: 350px; width: 100%"
-              baseChart
-              [data]="barChartData"
-              [options]="barChartOptions"
-              [type]="barChartType"
-            >
-            </canvas>
-          </div>
+          <table class="items_table_similar" id="similar_table">
+            <thead>
+              <tr>
+                <th>INSTANCE</th>
+                <th>VENDOR</th>
+                <th>vCPUs</th>
+                <th>MEMORY</th>
+                @if (selectedSimilarOption.key === "bySpecs") {
+                  <th>GPUs</th>
+                }
+                @if (selectedSimilarOption.key === "byScore") {
+                  <th>SCORE</th>
+                }
+                @if (selectedSimilarOption.key === "byPerformancePerPrice") {
+                  <th>$CORE</th>
+                }
+              </tr>
+            </thead>
+            <tbody>
+              @for (
+                server of similarServers;
+                track server.vendor_id + "_" + server.server_id
+              ) {
+                <tr class="similar_line">
+                  <td>
+                    <a
+                      class="underline decoration-dotted hover:text-gray-500"
+                      routerLink="/server/{{ server.vendor_id }}/{{
+                        server.api_reference
+                      }}"
+                    >
+                      {{ server.display_name }}
+                    </a>
+                  </td>
+                  <td>{{ server.vendor_id }}</td>
+                  <td>{{ server.vcpus }}</td>
+                  <td>{{ getMemory(server.memory_amount) }}</td>
+                  @if (selectedSimilarOption.key === "bySpecs") {
+                    <td>
+                      {{ server.gpu_count | gpuCount }}
+                    </td>
+                  }
+                  @if (selectedSimilarOption.key === "byScore") {
+                    <td>
+                      {{ server.score?.toFixed(0) || "0" }}
+                    </td>
+                  }
+                  @if (selectedSimilarOption.key === "byPerformancePerPrice") {
+                    <td>
+                      {{ server.score_per_price?.toFixed(0) || "0" }}
+                    </td>
+                  }
+                </tr>
+              }
+            </tbody>
+          </table>
         </div>
       </div>
+    }
 
-      <div class="block_half price-sections-to-hide-for-test">
-        <div class="flex justify-between items-center">
-          <h3 class="text-2xl">Prices per Zone</h3>
-          <div class="flex gap-4">
-            <button
-              id="allocation_button2"
-              data-ph-capture-attribute-sc-event="server details price allocation select"
-              data-dropdown-toggle="allocation_options2"
-              class="dropdown_button"
-              type="button"
-            >
-              <div class="px-3 py-2">Allocation</div>
-              <div
-                class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
-              >
-                <lucide-icon
-                  name="chevron-down"
-                  class="h-6 w-6 text-emerald-400"
-                ></lucide-icon>
-              </div>
-            </button>
-            <button
-              id="region_button"
-              data-ph-capture-attribute-sc-event="server details regions select"
-              data-dropdown-toggle="region_options"
-              class="dropdown_button"
-              type="button"
-            >
-              <div class="px-3 py-2">Regions</div>
-              <div
-                class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
-              >
-                <lucide-icon
-                  name="chevron-down"
-                  class="h-6 w-6 text-emerald-400"
-                ></lucide-icon>
-              </div>
-            </button>
-          </div>
-        </div>
-        <div *ngIf="isBrowser()">
-          <div chartType="bar">
-            <canvas
-              style="height: 350px; width: 100%"
-              baseChart
-              [data]="barChartData2"
-              [options]="barChartOptions"
-              [type]="barChartType"
-            >
-            </canvas>
-          </div>
-        </div>
+    @if (serverDetails) {
+      <div #giscusParent class="my-8 w-1/2 m-auto">
+        <app-faq
+          [activeFAQ]="activeFAQ"
+          [FAQQuestions]="faqs"
+          [item]="serverDetails.display_name"
+          (activeFAQChanged)="activeFAQChanged($event)"
+        ></app-faq>
+        <div class="giscus"></div>
       </div>
-      <div class="block_half price-sections-to-hide-for-test">
-        <h3 class="text-2xl">Lowest Prices</h3>
-        <div *ngIf="isBrowser()">
-          <div chartType="bar">
-            <canvas
-              style="height: 350px; width: 100%"
-              baseChart
-              [data]="barChartData3"
-              [options]="barChartOptions"
-              [type]="barChartType"
-            >
-            </canvas>
-          </div>
-        </div>
-      </div>
-
-      <div
-        class="my-2 w-full flex justify-between items-center"
-        *ngIf="serverDetails.benchmark_scores?.length"
-      >
-        <h2 class="text-3xl font-bold">Performance</h2>
-        <button class="btn-primary py-3 px-5 flex gap-2" (click)="openModal()">
-          <span> Embed chart </span>
-          <lucide-icon name="copy" class="h-6 w-6"></lucide-icon>
-        </button>
-      </div>
-      <app-server-charts
-        class="w-full flex flex-wrap gap-8"
-        [serverDetails]="serverDetails"
-        [benchmarksByCategory]="benchmarksByCategory"
-        [benchmarkMeta]="benchmarkMeta"
-      ></app-server-charts>
-
-      <div class="my-2 w-full">
-        <h2 class="text-3xl font-bold">Alternatives</h2>
-      </div>
-
-      <div class="block_half">
-        <div class="flex items-center" style="min-height: 42px">
-          <h3 class="text-2xl">Servers of the Same Family</h3>
-        </div>
-        <table class="items_table_similar" id="similar_family_table">
-          <thead>
-            <tr>
-              <th>INSTANCE</th>
-              <th>vCPUs</th>
-              <th>MEMORY</th>
-              <th>GPUs</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let item of similarByFamily" id="similar_family_line">
-              <td>
-                <a
-                  class="underline decoration-dotted hover:text-gray-500"
-                  routerLink="/server/{{ item.vendor_id }}/{{
-                    item.api_reference
-                  }}"
-                >
-                  {{ item.display_name }}
-                </a>
-              </td>
-              <td>{{ item.vcpus }}</td>
-              <td>{{ getMemory(item.memory_amount) }}</td>
-              <td>{{ item.gpu_count }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="block_half" id="similar_servers">
-        <div class="flex justify-between items-center">
-          <h3 class="text-2xl">Similar Servers</h3>
-          <div class="flex gap-4">
-            <button
-              id="similar_type_button"
-              data-ph-capture-attribute-sc-event="server similar options select"
-              class="dropdown_button"
-              type="button"
-            >
-              <div class="px-3 py-2">
-                {{ selectedSimilarOption.name }}
-              </div>
-              <div
-                class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
-              >
-                <lucide-icon
-                  name="chevron-down"
-                  class="h-6 w-6 text-emerald-400"
-                ></lucide-icon>
-              </div>
-            </button>
-          </div>
-        </div>
-        <table class="items_table_similar" id="similar_table">
-          <thead>
-            <tr>
-              <th>INSTANCE</th>
-              <th>VENDOR</th>
-              <th>vCPUs</th>
-              <th>MEMORY</th>
-              <th *ngIf="selectedSimilarOption.key === 'bySpecs'">GPUs</th>
-              <th *ngIf="selectedSimilarOption.key === 'byScore'">SCORE</th>
-              <th *ngIf="selectedSimilarOption.key === 'byPerformancePerPrice'">
-                $CORE
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let item of similarServers" id="similar_line">
-              <td>
-                <a
-                  class="underline decoration-dotted hover:text-gray-500"
-                  routerLink="/server/{{ item.vendor_id }}/{{
-                    item.api_reference
-                  }}"
-                >
-                  {{ item.display_name }}
-                </a>
-              </td>
-              <td>{{ item.vendor_id }}</td>
-              <td>{{ item.vcpus }}</td>
-              <td>{{ getMemory(item.memory_amount) }}</td>
-              <td *ngIf="selectedSimilarOption.key === 'bySpecs'">
-                {{ item.gpu_count }}
-              </td>
-              <td *ngIf="selectedSimilarOption.key === 'byScore'">
-                {{ item.score?.toFixed(0) || "0" }}
-              </td>
-              <td *ngIf="selectedSimilarOption.key === 'byPerformancePerPrice'">
-                {{ item.score_per_price?.toFixed(0) || "0" }}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <div *ngIf="serverDetails" #giscusParent class="my-8 w-1/2 m-auto">
-      <app-faq
-        [activeFAQ]="activeFAQ"
-        [FAQQuestions]="faqs"
-        [item]="serverDetails.display_name"
-        (activeFAQChanged)="activeFAQChanged($event)"
-      ></app-faq>
-
-      <div class="giscus"></div>
-    </div>
+    }
   </div>
 </div>
 
@@ -500,19 +550,18 @@
     class="py-2 px-1 text-sm text-gray-700"
     aria-labelledby="dropdownDefaultButton"
   >
-    <li
-      *ngFor="let item of allocationFilters"
-      class="flex py-1 gap-2 items-center"
-    >
-      <input
-        type="checkbox"
-        id="filter_allocation"
-        [(ngModel)]="item.selected"
-        (ngModelChange)="refreshPricesGraphs()"
-        class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer"
-      />
-      <div class="text-white text-sm">{{ item.name }}</div>
-    </li>
+    @for (filter of allocationFilters; track filter.name; let i = $index) {
+      <li class="flex py-1 gap-2 items-center">
+        <input
+          type="checkbox"
+          id="filter_allocation_{{ i }}"
+          [(ngModel)]="filter.selected"
+          (ngModelChange)="refreshPricesGraphs()"
+          class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer"
+        />
+        <div class="text-white text-sm">{{ filter.name }}</div>
+      </li>
+    }
   </ul>
 </div>
 
@@ -524,19 +573,18 @@
     class="py-2 px-1 text-sm text-gray-700"
     aria-labelledby="dropdownDefaultButton"
   >
-    <li
-      *ngFor="let item of allocationFilters"
-      class="flex py-1 gap-2 items-center"
-    >
-      <input
-        type="checkbox"
-        id="filter_allocation_2"
-        [(ngModel)]="item.selected"
-        (ngModelChange)="refreshPricesGraphs()"
-        class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer"
-      />
-      <div class="text-white text-sm">{{ item.name }}</div>
-    </li>
+    @for (filter of allocationFilters; track filter.name; let i = $index) {
+      <li class="flex py-1 gap-2 items-center">
+        <input
+          type="checkbox"
+          id="filter_allocation_2_{{ i }}"
+          [(ngModel)]="filter.selected"
+          (ngModelChange)="refreshPricesGraphs()"
+          class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer"
+        />
+        <div class="text-white text-sm">{{ filter.name }}</div>
+      </li>
+    }
   </ul>
 </div>
 
@@ -549,16 +597,18 @@
     class="py-2 px-1 text-sm text-gray-700"
     aria-labelledby="dropdownDefaultButton"
   >
-    <li *ngFor="let item of regionFilters" class="flex py-1 gap-2 items-center">
-      <input
-        type="checkbox"
-        id="filter_region"
-        [(ngModel)]="item.selected"
-        (ngModelChange)="refreshPricesGraphs()"
-        class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer"
-      />
-      <div class="text-white text-sm">{{ item.name }}</div>
-    </li>
+    @for (filter of regionFilters; track filter.name; let i = $index) {
+      <li class="flex py-1 gap-2 items-center">
+        <input
+          type="checkbox"
+          id="filter_region"
+          [(ngModel)]="filter.selected"
+          (ngModelChange)="refreshPricesGraphs()"
+          class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer"
+        />
+        <div class="text-white text-sm">{{ filter.name }}</div>
+      </li>
+    }
   </ul>
 </div>
 
@@ -570,17 +620,16 @@
     class="py-2 px-1 text-sm text-gray-700"
     aria-labelledby="dropdownDefaultButton"
   >
-    <li
-      *ngFor="let item of similarOptions"
-      class="flex py-1 gap-2 items-center"
-    >
-      <div
-        class="text-emerald-400 hover:text-emerald-500 cursor-pointer font-bold ml-2"
-        (click)="selectSimilarServerOption(item)"
-      >
-        {{ item.name }}
-      </div>
-    </li>
+    @for (option of similarOptions; track option.key) {
+      <li class="flex py-1 gap-2 items-center">
+        <div
+          class="text-emerald-400 hover:text-emerald-500 cursor-pointer font-bold ml-2"
+          (click)="selectSimilarServerOption(option)"
+        >
+          {{ option.name }}
+        </div>
+      </li>
+    }
   </ul>
 </div>
 
@@ -634,14 +683,15 @@
         </button>
       </div>
       <div class="space-y-4 flex flex-col">
-        <app-embed-debug
-          *ngIf="serverDetails && isModalOpen"
-          [id]="serverDetails.server_id"
-          [vendor]="serverDetails.vendor_id"
-          [isModal]="true"
-          [charts]="embeddableCharts"
-        >
-        </app-embed-debug>
+        @if (serverDetails && isModalOpen) {
+          <app-embed-debug
+            [id]="serverDetails.server_id"
+            [vendor]="serverDetails.vendor_id"
+            [isModal]="true"
+            [charts]="embeddableCharts"
+          >
+          </app-embed-debug>
+        }
       </div>
     </div>
   </div>

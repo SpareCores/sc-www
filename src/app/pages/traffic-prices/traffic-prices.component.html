@@ -89,108 +89,140 @@
             class="w-full overflow-x-auto relative"
             style="padding-left: 1px"
           >
-            <div
-              *ngIf="isLoading"
-              class="absolute top-0 left-0 w-full h-full pt-16"
-              style="background-color: rgba(0, 0, 0, 0.2)"
-            >
-              <app-loading-spinner size="lg"></app-loading-spinner>
-            </div>
+            @if (isLoading) {
+              <div
+                class="absolute top-0 left-0 w-full h-full pt-16"
+                style="background-color: rgba(0, 0, 0, 0.2)"
+              >
+                <app-loading-spinner size="lg"></app-loading-spinner>
+              </div>
+            }
             <table class="items_table">
               <thead>
                 <tr>
-                  <th
-                    *ngFor="let item of tableColumns"
-                    [ngClass]="{
-                      'cursor-pointer': item.orderField,
-                    }"
-                    (click)="toggleOrdering(item)"
-                  >
-                    <div class="flex gap-1">
-                      {{ item.name }}
-                      <lucide-icon
-                        *ngIf="item.info"
-                        name="info"
-                        class="h-4 w-4 text-gray-200"
-                      >
-                      </lucide-icon>
-                      <lucide-icon
-                        *ngIf="getOrderingIcon(item)"
-                        name="{{ getOrderingIcon(item) }}"
-                        class="h-4 w-4 text-white"
-                      ></lucide-icon>
-                    </div>
-                  </th>
+                  @for (column of tableColumns; track column.name) {
+                    <th
+                      [ngClass]="{
+                        'cursor-pointer': column.orderField,
+                      }"
+                      (click)="toggleOrdering(column)"
+                    >
+                      <div class="flex gap-1">
+                        {{ column.name }}
+                        @if (column.info) {
+                          <lucide-icon
+                            name="info"
+                            class="h-4 w-4 text-gray-200"
+                          >
+                          </lucide-icon>
+                        }
+                        @if (getOrderingIcon(column)) {
+                          <lucide-icon
+                            name="{{ getOrderingIcon(column) }}"
+                            class="h-4 w-4 text-white"
+                          ></lucide-icon>
+                        }
+                      </div>
+                    </th>
+                  }
                 </tr>
               </thead>
               <tbody>
-                <tr
-                  *ngFor="let item of traffic_prices; let i = index"
-                  data-ph-capture-attribute-sc-event="server listing route to server details"
-                  [attr.data-ph-capture-attribute-server-listing-row-vendor]="
-                    item.vendor_id
-                  "
-                  [attr.data-ph-capture-attribute-server-listing-row-index]="
-                    i + 1
-                  "
-                  [attr.data-ph-capture-attribute-server-listing-row-page-size]="
-                    limit
-                  "
-                >
-                  <ng-container *ngFor="let column of tableColumns">
-                    <td *ngIf="column.type === 'vendor'">
-                      <div
-                        *ngIf="item.vendor.logo"
-                        class="w-9 h-9 px-1 py-1 bg-white rounded-lg"
-                      >
-                        <img
-                          [src]="item.vendor.logo"
-                          alt="{{ item.vendor.name }} logo"
-                        />
-                      </div>
-                      <div *ngIf="!item.vendor.logo" class="text-white text-sm">
-                        {{ item.vendor.name }}
-                      </div>
-                    </td>
-                    <td *ngIf="column.type === 'region'" class="min-w-225">
-                      <div class="text-sm text-white">
-                        {{ item.region.display_name }}
-                      </div>
-                      <div class="text-xs text-white flex gap-1">
-                        <span>{{ item.region.region_id }} </span>
-                      </div>
-                    </td>
-                    <td *ngIf="column.type === 'price'">
-                      <div class="text-sm text-white">
-                        {{ item.price }} {{ item.currency }}/{{ item.unit }}
-                      </div>
-                    </td>
-                    <td *ngIf="column.type === 'priceMonthly'">
-                      <div class="text-sm text-white">
-                        {{ item.price_monthly_traffic }}
-                        {{ item.currency }}/month
-                      </div>
-                    </td>
-                    <td *ngIf="column.type === 'price_tiers'">
-                      <div class="flex flex-col">
-                        <div
-                          *ngFor="let tiered_price of item.price_tiered"
-                          class="text-xs text-white flex justify-between"
-                        >
-                          <div>
-                            {{ getTieredPriceText(tiered_price) }}
+                @for (
+                  price of traffic_prices;
+                  track price.vendor_id +
+                    "_" +
+                    price.region_id +
+                    "_" +
+                    price.direction;
+                  let i = $index
+                ) {
+                  <tr
+                    data-ph-capture-attribute-sc-event="server listing route to server details"
+                    [attr.data-ph-capture-attribute-server-listing-row-vendor]="
+                      price.vendor_id
+                    "
+                    [attr.data-ph-capture-attribute-server-listing-row-index]="
+                      i + 1
+                    "
+                    [attr.data-ph-capture-attribute-server-listing-row-page-size]="
+                      limit
+                    "
+                  >
+                    @for (column of tableColumns; track column.name) {
+                      @if (column.type === "vendor") {
+                        <td>
+                          @if (price.vendor.logo) {
+                            <div class="w-9 h-9 px-1 py-1 bg-white rounded-lg">
+                              <img
+                                [src]="price.vendor.logo"
+                                alt="{{ price.vendor.name }} logo"
+                              />
+                            </div>
+                          }
+                          @if (!price.vendor.logo) {
+                            <div class="text-white text-sm">
+                              {{ price.vendor.name }}
+                            </div>
+                          }
+                        </td>
+                      }
+                      @if (column.type === "region") {
+                        <td class="min-w-225">
+                          <div class="text-sm text-white">
+                            {{ price.region.display_name }}
                           </div>
-                          <div>
-                            {{ getTieredPriceValue(tiered_price) }}
+                          <div class="text-xs text-white flex gap-1">
+                            <span>{{ price.region.region_id }} </span>
                           </div>
-                        </div>
-                      </div>
-                    </td>
-                    <td *ngIf="column.type === 'text' && column.key">
-                      {{ getField(item, column.key) }}
-                    </td>
-                  </ng-container>
-                </tr>
+                        </td>
+                      }
+                      @if (column.type === "price") {
+                        <td>
+                          <div class="text-sm text-white">
+                            {{ price.price }} {{ price.currency }}/{{
+                              price.unit
+                            }}
+                          </div>
+                        </td>
+                      }
+                      @if (column.type === "priceMonthly") {
+                        <td>
+                          <div class="text-sm text-white">
+                            {{ price.price_monthly_traffic }}
+                            {{ price.currency }}/month
+                          </div>
+                        </td>
+                      }
+                      @if (column.type === "price_tiers") {
+                        <td>
+                          <div class="flex flex-col">
+                            @for (
+                              tiered_price of price.price_tiered;
+                              track tiered_price
+                            ) {
+                              <div
+                                class="text-xs text-white flex justify-between"
+                              >
+                                <div>
+                                  {{ getTieredPriceText(tiered_price) }}
+                                </div>
+                                <div>
+                                  {{ getTieredPriceValue(tiered_price) }}
+                                </div>
+                              </div>
+                            }
+                          </div>
+                        </td>
+                      }
+                      @if (column.type === "text" && column.key) {
+                        <td>
+                          {{ getField(price, column.key) }}
+                        </td>
+                      }
+                    }
+                  </tr>
+                }
               </tbody>
             </table>
           </div>
@@ -243,14 +275,15 @@
     class="py-2 px-1 text-sm text-gray-700"
     aria-labelledby="dropdownDefaultButton"
   >
-    <li
-      *ngFor="let item of pageLimits"
-      class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-      (click)="selectPageSize(item)"
-      tabindex="0"
-    >
-      <div class="text-white text-sm">{{ item }}</div>
-    </li>
+    @for (pageLimit of pageLimits; track $index) {
+      <li
+        class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+        (click)="selectPageSize(pageLimit)"
+        tabindex="0"
+      >
+        <div class="text-white text-sm">{{ pageLimit }}</div>
+      </li>
+    }
   </ul>
 </div>
 
@@ -262,18 +295,17 @@
     class="py-2 px-3 text-sm text-gray-700"
     aria-labelledby="dropdownDefaultButton"
   >
-    <li
-      *ngFor="let item of possibleColumns"
-      class="flex py-1 gap-2 items-center"
-    >
-      <input
-        type="checkbox"
-        [(ngModel)]="item.show"
-        (ngModelChange)="refreshColumns()"
-        class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer"
-      />
-      <div class="text-white text-sm">{{ item.name }}</div>
-    </li>
+    @for (column of possibleColumns; track column.name) {
+      <li class="flex py-1 gap-2 items-center">
+        <input
+          type="checkbox"
+          [(ngModel)]="column.show"
+          (ngModelChange)="refreshColumns()"
+          class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer"
+        />
+        <div class="text-white text-sm">{{ column.name }}</div>
+      </li>
+    }
   </ul>
 </div>
 
@@ -285,13 +317,16 @@
     class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
     aria-labelledby="dropdownDefaultButton"
   >
-    <li
-      *ngFor="let item of availableCurrencies"
-      tabindex="0"
-      class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-      (click)="selectCurrency(item)"
-    >
-      <div class="text-white text-sm">{{ item.name }} ({{ item.symbol }})</div>
-    </li>
+    @for (currency of availableCurrencies; track currency.name) {
+      <li
+        tabindex="0"
+        class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+        (click)="selectCurrency(currency)"
+      >
+        <div class="text-white text-sm">
+          {{ currency.name }} ({{ currency.symbol }})
+        </div>
+      </li>
+    }
   </ul>
 </div>

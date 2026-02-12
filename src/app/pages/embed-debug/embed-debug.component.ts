@@ -1,13 +1,15 @@
-import { CommonModule, isPlatformBrowser } from "@angular/common";
+import { isPlatformBrowser } from "@angular/common";
 import {
+  AfterViewInit,
   Component,
-  Inject,
   Input,
   OnChanges,
   OnInit,
   PLATFORM_ID,
   ElementRef,
+  HostListener,
   ViewChild,
+  inject,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { DomSanitizer } from "@angular/platform-browser";
@@ -17,11 +19,18 @@ import { LucideAngularModule } from "lucide-angular";
 import { PrismService } from "../../services/prism.service";
 @Component({
   selector: "app-embed-debug",
-  imports: [FormsModule, CommonModule, LucideAngularModule],
+  imports: [FormsModule, LucideAngularModule],
   templateUrl: "./embed-debug.component.html",
   styleUrl: "./embed-debug.component.scss",
 })
-export class EmbedDebugComponent implements OnInit, OnChanges {
+export class EmbedDebugComponent implements OnInit, OnChanges, AfterViewInit {
+  private static readonly ASPECT_RATIO = 0.6;
+  private platformId = inject(PLATFORM_ID);
+  private route = inject(ActivatedRoute);
+  private sanitizer = inject(DomSanitizer);
+  private SEOHandler = inject(SeoHandlerService);
+  private prismService = inject(PrismService);
+
   @Input() vendor!: string;
   @Input() id!: string;
   @Input() chartname!: string;
@@ -46,14 +55,7 @@ export class EmbedDebugComponent implements OnInit, OnChanges {
   ];
 
   @ViewChild("iframeCodeBlock") iframeCodeBlockElement!: ElementRef;
-
-  constructor(
-    @Inject(PLATFORM_ID) private platformId: object,
-    private route: ActivatedRoute,
-    private sanitizer: DomSanitizer,
-    private SEOHandler: SeoHandlerService,
-    private prismService: PrismService,
-  ) {}
+  @ViewChild("myIframe") iframeRef?: ElementRef<HTMLIFrameElement>;
 
   ngOnInit() {
     this.route.params.subscribe((params) => {
@@ -71,8 +73,27 @@ export class EmbedDebugComponent implements OnInit, OnChanges {
     this.updateSrc();
   }
 
+  ngAfterViewInit() {
+    setTimeout(() => this.adjustIframeHeight());
+  }
+  @HostListener("window:resize")
+  onResize() {
+    this.adjustIframeHeight();
+  }
+
   isBrowser() {
     return isPlatformBrowser(this.platformId);
+  }
+
+  private adjustIframeHeight() {
+    if (!this.isBrowser() || !this.iframeRef?.nativeElement) {
+      return;
+    }
+
+    const iframeEl = this.iframeRef.nativeElement;
+    const heightPx =
+      iframeEl.offsetWidth * EmbedDebugComponent.ASPECT_RATIO + "px";
+    this.height = heightPx;
   }
 
   getStyles() {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, inject } from "@angular/core";
 import { ActivatedRoute, RouterModule } from "@angular/router";
 import {
   BreadcrumbSegment,
@@ -6,7 +6,6 @@ import {
 } from "../../components/breadcrumbs/breadcrumbs.component";
 import { ArticlesService, SlidesMeta } from "../../services/articles.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
-import { CommonModule } from "@angular/common";
 import { TimeToShortDatePipe } from "../../pipes/time-to-short-date.pipe";
 import { LucideAngularModule } from "lucide-angular";
 
@@ -14,7 +13,6 @@ import { LucideAngularModule } from "lucide-angular";
   selector: "app-talks",
   imports: [
     BreadcrumbsComponent,
-    CommonModule,
     RouterModule,
     TimeToShortDatePipe,
     LucideAngularModule,
@@ -23,18 +21,16 @@ import { LucideAngularModule } from "lucide-angular";
   styleUrl: "./talks.component.scss",
 })
 export class TalksComponent implements OnInit {
+  private SEOHandler = inject(SeoHandlerService);
+  private route = inject(ActivatedRoute);
+  private articles = inject(ArticlesService);
+
   breadcrumbs: BreadcrumbSegment[] = [
     { name: "Home", url: "/" },
     { name: "Talks", url: "/talks" },
   ];
 
   talks: SlidesMeta[] = [];
-
-  constructor(
-    private SEOHandler: SeoHandlerService,
-    private route: ActivatedRoute,
-    private articles: ArticlesService,
-  ) {}
 
   ngOnInit() {
     this.route.queryParams.subscribe((params) => {

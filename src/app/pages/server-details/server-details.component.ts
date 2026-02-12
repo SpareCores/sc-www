@@ -1,16 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable prefer-const */
 import {
   Component,
   ElementRef,
-  Inject,
   PLATFORM_ID,
   OnInit,
   ViewChild,
   OnDestroy,
   Renderer2,
+  DOCUMENT,
+  inject,
 } from "@angular/core";
-import { ActivatedRoute, Router, RouterModule } from "@angular/router";
+import { ActivatedRoute, RouterModule } from "@angular/router";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import {
   Benchmark,
@@ -24,7 +24,7 @@ import {
   BreadcrumbSegment,
   BreadcrumbsComponent,
 } from "../../components/breadcrumbs/breadcrumbs.component";
-import { CommonModule, DOCUMENT, isPlatformBrowser } from "@angular/common";
+import { isPlatformBrowser } from "@angular/common";
 import { LucideAngularModule } from "lucide-angular";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { FaqComponent } from "../../components/faq/faq.component";
@@ -34,9 +34,9 @@ import { ChartConfiguration, ChartData } from "chart.js";
 import { barChartDataEmpty, barChartOptions } from "./chartOptions";
 import { Chart } from "chart.js";
 import annotationPlugin from "chartjs-plugin-annotation";
-import { DomSanitizer } from "@angular/platform-browser";
 import { ReduceUnitNamePipe } from "../../pipes/reduce-unit-name.pipe";
 import { CountryIdtoNamePipe } from "../../pipes/country-idto-name.pipe";
+import { GpuCountPipe } from "../../pipes/gpu-count.pipe";
 import { ServerCompareService } from "../../services/server-compare.service";
 import { initGiscus } from "../../tools/initGiscus";
 import { Location } from "@angular/common";
@@ -73,13 +73,13 @@ export interface ExtendedServerDetails extends ServerPKs {
   selector: "app-server-details",
   imports: [
     BreadcrumbsComponent,
-    CommonModule,
     LucideAngularModule,
     FaqComponent,
     FormsModule,
     RouterModule,
     BaseChartDirective,
     ReduceUnitNamePipe,
+    GpuCountPipe,
     ServerChartsComponent,
     EmbedDebugComponent,
     LoadingSpinnerComponent,
@@ -88,6 +88,17 @@ export interface ExtendedServerDetails extends ServerPKs {
   styleUrl: "./server-details.component.scss",
 })
 export class ServerDetailsComponent implements OnInit, OnDestroy {
+  private platformId = inject(PLATFORM_ID);
+  private document = inject<Document>(DOCUMENT);
+  private route = inject(ActivatedRoute);
+  private analytics = inject(AnalyticsService);
+  private keeperAPI = inject(KeeperAPIService);
+  private SEOHandler = inject(SeoHandlerService);
+  private serverCompare = inject(ServerCompareService);
+  private renderer = inject(Renderer2);
+  private location = inject(Location);
+  private dropdownManager = inject(DropdownManagerService);
+
   serverDetails!: ExtendedServerDetails;
   serverZones: string[] = [];
   serverRegions: string[] = [];
@@ -189,21 +200,6 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   isModalOpen = false;
 
   private subscription = new Subscription();
-
-  constructor(
-    @Inject(PLATFORM_ID) private platformId: object,
-    @Inject(DOCUMENT) private document: Document,
-    private route: ActivatedRoute,
-    private analytics: AnalyticsService,
-    private keeperAPI: KeeperAPIService,
-    private SEOHandler: SeoHandlerService,
-    private serverCompare: ServerCompareService,
-    private router: Router,
-    private renderer: Renderer2,
-    private location: Location,
-    private dropdownManager: DropdownManagerService,
-    private sanitizer: DomSanitizer,
-  ) {}
 
   ngOnInit() {
     this.isLoading = true;

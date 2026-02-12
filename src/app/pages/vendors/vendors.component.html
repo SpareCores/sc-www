@@ -35,46 +35,53 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let item of vendors" (click)="openLink(item)">
-          <td>
-            <img
-              class="bg-white rounded"
-              src="{{ item.logo }}"
-              alt="{{ item.name }} logo"
-            />
-          </td>
-          <td>
-            {{ item.name }}
-          </td>
-          <td>{{ item.city }}, {{ item.country_id | countryIdtoName }}</td>
-          <td>{{ item.founding_year }}</td>
-          <td>
-            <a
-              href="{{ item.homepage }}"
-              (click)="$event.stopPropagation()"
-              class="underline decoration-dotted hover:text-gray-500"
-              target="_blank"
-              rel="noopener"
-            >
-              {{ item.homepage }}
-            </a>
-          </td>
-          <td>{{ item.regions }}</td>
-          <td>
-            <!-- eslint-disable-next-line @angular-eslint/template/interactive-supports-focus -->
-            <div class="flex justify-end" (click)="$event.stopPropagation()">
+        @for (vendor of vendors; track vendor.vendor_id) {
+          <tr
+            (click)="openLink(vendor)"
+            (keydown.enter)="openLink(vendor)"
+            tabindex="0"
+          >
+            <td>
+              <img
+                class="bg-white rounded"
+                [src]="vendor.logo"
+                alt="{{ vendor.name }} logo"
+              />
+            </td>
+            <td>
+              {{ vendor.name }}
+            </td>
+            <td>
+              {{ vendor.city }}, {{ vendor.country_id | countryIdtoName }}
+            </td>
+            <td>{{ vendor.founding_year }}</td>
+            <td>
               <a
-                routerLink="/servers"
-                [queryParams]="{ vendor: item.vendor_id, limit: 100 }"
+                href="{{ vendor.homepage }}"
+                (click)="$event.stopPropagation()"
+                class="underline decoration-dotted hover:text-gray-500"
+                target="_blank"
+                rel="noopener"
               >
-                <lucide-icon
-                  name="chevron-right"
-                  class="h-6 w-6 text-emerald-400"
-                ></lucide-icon>
+                {{ vendor.homepage }}
               </a>
-            </div>
-          </td>
-        </tr>
+            </td>
+            <td>{{ vendor.regions }}</td>
+            <td>
+              <div class="flex justify-end" (click)="$event.stopPropagation()">
+                <a
+                  routerLink="/servers"
+                  [queryParams]="{ vendor: vendor.vendor_id, limit: 100 }"
+                >
+                  <lucide-icon
+                    name="chevron-right"
+                    class="h-6 w-6 text-emerald-400"
+                  ></lucide-icon>
+                </a>
+              </div>
+            </td>
+          </tr>
+        }
       </tbody>
     </table>
   </div>

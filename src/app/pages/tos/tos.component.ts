@@ -1,5 +1,4 @@
-import { CommonModule } from "@angular/common";
-import { OnInit } from "@angular/core";
+import { OnInit, inject } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Component } from "@angular/core";
 import { ActivatedRoute, RouterModule } from "@angular/router";
@@ -17,7 +16,6 @@ import { TimeToShortDatePipe } from "../../pipes/time-to-short-date.pipe";
   imports: [
     BreadcrumbsComponent,
     RouterModule,
-    CommonModule,
     MarkdownModule,
     TimeToShortDatePipe,
   ],
@@ -25,6 +23,11 @@ import { TimeToShortDatePipe } from "../../pipes/time-to-short-date.pipe";
   styleUrl: "./tos.component.scss",
 })
 export class TOSComponent implements OnInit {
+  private route = inject(ActivatedRoute);
+  private http = inject(HttpClient);
+  private markdownService = inject(MarkdownService);
+  private domSanitizer = inject(DomSanitizer);
+
   articleBody: any;
   articleMeta: any;
 
@@ -32,13 +35,6 @@ export class TOSComponent implements OnInit {
     { name: "Home", url: "/" },
     { name: "Legal", url: "/legal" },
   ];
-
-  constructor(
-    private route: ActivatedRoute,
-    private http: HttpClient,
-    private markdownService: MarkdownService,
-    private domSanitizer: DomSanitizer,
-  ) {}
 
   ngOnInit() {
     this.route.params.subscribe(() => {

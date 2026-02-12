@@ -2,12 +2,12 @@ import { CommonModule, isPlatformBrowser } from "@angular/common";
 import {
   Component,
   ElementRef,
-  Inject,
   Input,
   PLATFORM_ID,
   ViewChild,
   OnInit,
   OnChanges,
+  inject,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
@@ -56,6 +56,11 @@ import { ToastService } from "../../services/toast.service";
   styleUrl: "./server-compare-charts.component.scss",
 })
 export class ServerCompareChartsComponent implements OnInit, OnChanges {
+  private platformId = inject(PLATFORM_ID);
+  private sanitizer = inject(DomSanitizer);
+  private dropdownManager = inject(DropdownManagerService);
+  private toastService = inject(ToastService);
+
   @Input() servers: ExtendedServerDetails[] = [];
   @Input() instanceProperties: any[] = [];
   @Input() benchmarkMeta: any;
@@ -181,13 +186,6 @@ export class ServerCompareChartsComponent implements OnInit, OnChanges {
   selectedLLMModel: any;
 
   clipboardIcon = "clipboard";
-
-  constructor(
-    @Inject(PLATFORM_ID) private platformId: object,
-    private sanitizer: DomSanitizer,
-    private dropdownManager: DropdownManagerService,
-    private toastService: ToastService,
-  ) {}
 
   ngOnInit() {
     (this.radarChartOptionsSingle as any).plugins.legend.display = true;
@@ -477,18 +475,23 @@ export class ServerCompareChartsComponent implements OnInit, OnChanges {
   getBestCellStyle(name: string, server: ExtendedServerDetails) {
     const prop = (server as any)[name];
 
-    if (prop === undefined || prop === null || prop === 0) {
+    if (prop === undefined || prop === null || prop === 0 || !this.servers) {
       return "";
     }
 
     if (typeof prop === "number") {
-      let isBest = true;
-      this.servers?.forEach((s: any) => {
-        if (s[name] > prop) {
-          isBest = false;
-        }
-      });
-      return isBest ? this.bestCellStyle : "";
+      const values = this.servers
+        .map((server: any) => server[name])
+        .filter((value: any) => typeof value === "number");
+
+      if (values.length === 0) return "";
+
+      const max = Math.max(...values);
+      const min = Math.min(...values);
+
+      if (prop === max && max > min) {
+        return this.bestCellStyle;
+      }
     }
 
     return "";
