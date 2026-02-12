@@ -228,6 +228,13 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       orderField: "min_price_ondemand",
     },
     {
+      name: "BEST ONDEMAND MONTHLY PRICE",
+      show: false,
+      type: "price",
+      key: "min_price_ondemand_monthly",
+      orderField: "min_price_ondemand_monthly",
+    },
+    {
       name: "BEST SPOT PRICE",
       show: false,
       type: "price",
