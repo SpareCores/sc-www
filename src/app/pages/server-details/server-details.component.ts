@@ -36,6 +36,7 @@ import { Chart } from "chart.js";
 import annotationPlugin from "chartjs-plugin-annotation";
 import { ReduceUnitNamePipe } from "../../pipes/reduce-unit-name.pipe";
 import { CountryIdtoNamePipe } from "../../pipes/country-idto-name.pipe";
+import { GpuCountPipe } from "../../pipes/gpu-count.pipe";
 import { ServerCompareService } from "../../services/server-compare.service";
 import { initGiscus } from "../../tools/initGiscus";
 import { Location } from "@angular/common";
@@ -78,6 +79,7 @@ export interface ExtendedServerDetails extends ServerPKs {
     RouterModule,
     BaseChartDirective,
     ReduceUnitNamePipe,
+    GpuCountPipe,
     ServerChartsComponent,
     EmbedDebugComponent,
     LoadingSpinnerComponent,

@@ -391,7 +391,7 @@
                       @if (column.type === "gpu") {
                         <td>
                           <div class="text-sm text-white">
-                            {{ item.gpu_count }}
+                            {{ item.gpu_count | gpuCount }}
                           </div>
                           @if (item.gpu_model) {
                             <div class="text-xs text-white flex gap-1">

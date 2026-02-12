@@ -19,6 +19,7 @@ import { SeoHandlerService } from "../../services/seo-handler.service";
 import { FormsModule } from "@angular/forms";
 import { LucideAngularModule } from "lucide-angular";
 import { CountryIdtoNamePipe } from "../../pipes/country-idto-name.pipe";
+import { GpuCountPipe } from "../../pipes/gpu-count.pipe";
 import { SearchBarComponent } from "../../components/search-bar/search-bar.component";
 import { PaginationComponent } from "../../components/pagination/pagination.component";
 import { DropdownManagerService } from "../../services/dropdown-manager.service";
@@ -79,6 +80,7 @@ export type RegionVendorMetadata = {
     BreadcrumbsComponent,
     LucideAngularModule,
     CountryIdtoNamePipe,
+    GpuCountPipe,
     RouterModule,
     SearchBarComponent,
     PaginationComponent,

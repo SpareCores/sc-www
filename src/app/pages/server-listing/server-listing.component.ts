@@ -37,6 +37,7 @@ import { LoadingSpinnerComponent } from "../../components/loading-spinner/loadin
 import { Subscription } from "rxjs";
 import openApiSpec from "../../../../sdk/openapi.json";
 import specialServerListsData from "./special-lists.js";
+import { GpuCountPipe } from "../../pipes/gpu-count.pipe";
 
 export type TableColumn = {
   name: string;
@@ -91,6 +92,7 @@ const optionsModal: ModalOptions = {
     SearchBarComponent,
     PaginationComponent,
     LoadingSpinnerComponent,
+    GpuCountPipe,
   ],
   templateUrl: "./server-listing.component.html",
   styleUrl: "./server-listing.component.scss",
