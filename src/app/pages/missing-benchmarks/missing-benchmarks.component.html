@@ -1,12 +1,14 @@
 <div class="w-full bg-primary">
-  <div class="content pt-16 pb-16 text-white flex flex-col gap-8">
+  <div class="content pt-16 pb-16 text-white flex flex-col gap-6">
     <app-breadcrumbs [segments]="breadcrumbs"></app-breadcrumbs>
     <h1 class="text-4xl font-bold">Benchmark Completion Report</h1>
     <div class="text-white text-xl pr-16">
       Although we try hard, we were not able to start some instances for
-      hardware inspections and to run our benchmark workloads. You can find a
-      breakdown of these servers, including the likely root cause for the
-      missing data.
+      hardware inspections and to run our benchmark workloads. Sometimes this is
+      due to the server not being available (temporarily or permanently out of
+      stock, not GA, etc.), being limited by vendor and account quotas, or facing
+      technical issues (e.g. API rate limiting). You can find a breakdown of
+      these servers by vendor below:
     </div>
 
     <table class="items_table">
@@ -90,18 +92,17 @@
       </tbody>
     </table>
 
-    <div class="text-white text-xl pr-16 mt-8">
-      Below you can find a detailed list of the servers that are missing
-      benchmarks, including the likely root cause for the missing data. Click on
-      a vendor to expand the list of servers:
+    <div class="text-white text-xl pr-16">
+      Detailed list of the servers that are missing benchmarks, including the
+      likely root cause for the missing data:
     </div>
 
     @for (vendor of vendors; track vendor.vendor_id) {
       <div>
         @if (vendor.missing_servers?.length) {
-          <div class="flex flex-col gap-2 mt-6">
+          <div class="flex flex-col">
             <h2
-              class="text-3xl mb-2 flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity"
+              class="text-3xl mb-2 flex items-center cursor-pointer hover:opacity-80 transition-opacity"
               (click)="toggleVendor(vendor.id)"
             >
               <lucide-icon
