@@ -24,7 +24,8 @@ export class MissingBenchmarksComponent implements OnInit {
   ];
 
   vendors: any[] = [];
-  servers: any[] = [];
+  allServers: any[] = [];
+  activeServers: any[] = [];
 
   ngOnInit() {
     this.SEOHandler.updateTitleAndMetaTags(
@@ -35,25 +36,38 @@ export class MissingBenchmarksComponent implements OnInit {
 
     Promise.all([
       this.keeperAPI.getVendors(),
+      this.keeperAPI.searchServers({ limit: 10000, only_active: false, order_by: 'vcpus' }),
       this.keeperAPI.searchServers({ limit: 10000 }),
-    ]).then(([vendors, servers]) => {
+    ]).then(([vendors, allServers, activeServers]) => {
       this.vendors = vendors.body.map((vendor: any) => {
         return {
           name: vendor.name,
           id: vendor.vendor_id,
           servers: 0,
+          active_servers: 0,
           missing: 0,
           evaluated: 0,
           percentage: 0,
           missing_servers: [],
         };
       });
-      this.servers = servers.body;
+      this.allServers = allServers.body;
+      this.activeServers = activeServers.body;
 
-      this.servers.forEach((server: any) => {
+      // Process all servers for identified servers count
+      this.allServers.forEach((server: any) => {
         let vendor = this.vendors.find(
           (vendor: any) => vendor.id === server.vendor.vendor_id,
         );
+        vendor.servers++;
+      });
+
+      // Process active servers for active count, evaluated, and missing
+      this.activeServers.forEach((server: any) => {
+        let vendor = this.vendors.find(
+          (vendor: any) => vendor.id === server.vendor.vendor_id,
+        );
+        vendor.active_servers++;
         if (server.score) {
           vendor.evaluated++;
         } else {
@@ -63,13 +77,12 @@ export class MissingBenchmarksComponent implements OnInit {
           vendor.missing++;
           vendor.missing_servers.push(server);
         }
-        vendor.servers++;
       });
 
       this.vendors.forEach((vendor: any) => {
-        if (vendor.servers > 0) {
+        if (vendor.active_servers > 0) {
           vendor.percentage = parseFloat(
-            ((vendor.missing / vendor.servers) * 100).toFixed(2),
+            ((vendor.missing / vendor.active_servers) * 100).toFixed(2),
           );
         }
         if (vendor.missing_servers.length > 0) {

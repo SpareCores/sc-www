@@ -19,6 +19,9 @@
             <div class="flex justify-end">IDENTIFIED SERVERS</div>
           </th>
           <th>
+            <div class="flex justify-end">ACTIVE SERVERS</div>
+          </th>
+          <th>
             <div class="flex justify-end">EVALUATED SERVERS</div>
           </th>
           <th>
@@ -40,6 +43,11 @@
             <td>
               <div class="flex justify-end">
                 {{ vendor.servers }}
+              </div>
+            </td>
+            <td>
+              <div class="flex justify-end">
+                {{ vendor.active_servers }}
               </div>
             </td>
             <td>
