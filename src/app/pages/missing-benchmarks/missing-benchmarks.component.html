@@ -68,6 +68,12 @@
       </tbody>
     </table>
 
+    <div class="text-white text-xl pr-16">
+      Below you can find a detailed list of the servers that are missing benchmarks,
+      including the likely root cause for the missing data. Click on a vendor to
+      expand the list of servers:
+    </div>
+    
     @for (vendor of vendors; track vendor.vendor_id) {
       <div>
         @if (vendor.missing_servers?.length) {
@@ -80,7 +86,7 @@
                 [name]="isVendorExpanded(vendor.id) ? 'chevron-down' : 'chevron-right'"
                 class="h-8 w-8 flex-shrink-0"
               ></lucide-icon>
-              <span>{{ vendor.name }} ({{ vendor.servers }} servers: {{ vendor.inactive_count }} inactive, {{ vendor.technical_issues_count }} technical issues)</span>
+              <span>{{ vendor.name }} ({{ vendor.servers }} servers: {{ vendor.inactive_count }} inactive, {{ vendor.technical_issues_count }} technical/quota issues)</span>
             </h2>
             @if (isVendorExpanded(vendor.id)) {
               <table class="items_table ml-11">
