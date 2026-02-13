@@ -45,7 +45,7 @@
         </tr>
       </thead>
       <tbody>
-        @for (vendor of vendors; track vendor.vendor_id) {
+        @for (vendor of vendors; track vendor.id) {
           <tr>
             <td class="pl-3 pr-2 py-3">
               <div class="flex gap-1">
@@ -117,7 +117,7 @@
     </table>
 
     <h2 class="text-3xl mt-4">List of inactive servers by vendor</h2>
-    @for (vendor of vendors; track vendor.vendor_id) {
+    @for (vendor of vendors; track vendor.id) {
       @if (vendor.inactive_servers?.length) {
         <div class="flex flex-col">
           <h3
@@ -174,7 +174,7 @@
     <h2 class="text-3xl mt-8">
       List of servers with technical/quota issues by vendor
     </h2>
-    @for (vendor of vendors; track vendor.vendor_id) {
+    @for (vendor of vendors; track vendor.id) {
       @if (vendor.technical_issues_servers?.length) {
         <div class="flex flex-col">
           <h3
