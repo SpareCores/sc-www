@@ -25,7 +25,6 @@ export class MissingBenchmarksComponent implements OnInit {
 
   vendors: any[] = [];
   allServers: any[] = [];
-  activeServers: any[] = [];
 
   ngOnInit() {
     this.SEOHandler.updateTitleAndMetaTags(
@@ -37,8 +36,7 @@ export class MissingBenchmarksComponent implements OnInit {
     Promise.all([
       this.keeperAPI.getVendors(),
       this.keeperAPI.searchServers({ limit: 10000, only_active: false, order_by: 'vcpus' }),
-      this.keeperAPI.searchServers({ limit: 10000 }),
-    ]).then(([vendors, allServers, activeServers]) => {
+    ]).then(([vendors, allServers]) => {
       this.vendors = vendors.body.map((vendor: any) => {
         return {
           name: vendor.name,
@@ -52,28 +50,30 @@ export class MissingBenchmarksComponent implements OnInit {
         };
       });
       this.allServers = allServers.body;
-      this.activeServers = activeServers.body;
 
-      // Process all servers for identified servers count
+      // Process all servers
       this.allServers.forEach((server: any) => {
         let vendor = this.vendors.find(
           (vendor: any) => vendor.id === server.vendor.vendor_id,
         );
         vendor.servers++;
-      });
-
-      // Process active servers for active count, evaluated, and missing
-      this.activeServers.forEach((server: any) => {
-        let vendor = this.vendors.find(
-          (vendor: any) => vendor.id === server.vendor.vendor_id,
-        );
-        vendor.active_servers++;
+        
+        // Check if server is active
+        if (server.status === 'active') {
+          vendor.active_servers++;
+        }
+        
+        // Check for missing benchmarks on all servers
         if (server.score) {
           vendor.evaluated++;
         } else {
-          server.reason = server.price
-            ? "We have run into a quota limit while running this server, or faced other technical issues."
-            : "This server is very likely not be GA (General Availability), as we have not found public pricing information.";
+          if (server.status === 'inactive') {
+            server.reason = "This server is currently inactive and not available for benchmarking.";
+          } else if (!server.min_price) {
+            server.reason = "This server is very likely not GA (General Availability), as we have not found public pricing information.";
+          } else {
+            server.reason = "We have run into a quota limit while running this server, or faced other technical issues.";
+          }
           vendor.missing++;
           vendor.missing_servers.push(server);
         }
