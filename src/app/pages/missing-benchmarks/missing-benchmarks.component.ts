@@ -25,6 +25,19 @@ export class MissingBenchmarksComponent implements OnInit {
 
   vendors: any[] = [];
   allServers: any[] = [];
+  expandedVendors: Set<string> = new Set();
+
+  toggleVendor(vendorId: string) {
+    if (this.expandedVendors.has(vendorId)) {
+      this.expandedVendors.delete(vendorId);
+    } else {
+      this.expandedVendors.add(vendorId);
+    }
+  }
+
+  isVendorExpanded(vendorId: string): boolean {
+    return this.expandedVendors.has(vendorId);
+  }
 
   ngOnInit() {
     this.SEOHandler.updateTitleAndMetaTags(
