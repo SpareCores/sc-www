@@ -18,17 +18,17 @@
           <th>
             <div class="flex justify-end">IDENTIFIED SERVERS</div>
           </th>
-          <th>
-            <div class="flex justify-end">ACTIVE SERVERS</div>
+          <th colspan="2">
+            <div class="flex justify-center">INACTIVE SERVERS</div>
           </th>
-          <th>
-            <div class="flex justify-end">EVALUATED SERVERS</div>
+          <th colspan="2">
+            <div class="flex justify-center">ACTIVE SERVERS</div>
           </th>
-          <th>
-            <div class="flex justify-end">MISSING SERVERS</div>
+          <th colspan="2">
+            <div class="flex justify-center">EVALUATED SERVERS</div>
           </th>
-          <th>
-            <div class="flex justify-end">MISSING RATE</div>
+          <th colspan="2">
+            <div class="flex justify-center">MISSING SERVERS</div>
           </th>
         </tr>
       </thead>
@@ -47,7 +47,22 @@
             </td>
             <td>
               <div class="flex justify-end">
+                {{ vendor.inactive_count }}
+              </div>
+            </td>
+            <td>
+              <div class="flex justify-end">
+                {{ (vendor.inactive_count / vendor.servers * 100).toFixed(2) }}%
+              </div>
+            </td>
+            <td>
+              <div class="flex justify-end">
                 {{ vendor.active_servers }}
+              </div>
+            </td>
+            <td>
+              <div class="flex justify-end">
+                {{ (vendor.active_servers / vendor.servers * 100).toFixed(2) }}%
               </div>
             </td>
             <td>
@@ -57,11 +72,18 @@
             </td>
             <td>
               <div class="flex justify-end">
+                {{ (vendor.evaluated / vendor.servers * 100).toFixed(2) }}%
+              </div>
+            </td>
+            <td>
+              <div class="flex justify-end">
                 {{ vendor.missing }}
               </div>
             </td>
             <td>
-              <div class="flex justify-end">{{ vendor.percentage }}%</div>
+              <div class="flex justify-end">
+                {{ (vendor.missing / vendor.servers * 100).toFixed(2) }}%
+              </div>
             </td>
           </tr>
         }

@@ -104,7 +104,7 @@ export class MissingBenchmarksComponent implements OnInit {
       this.vendors.forEach((vendor: any) => {
         if (vendor.active_servers > 0) {
           vendor.percentage = parseFloat(
-            ((vendor.missing / vendor.active_servers) * 100).toFixed(2),
+            ((vendor.technical_issues_count / vendor.active_servers) * 100).toFixed(2),
           );
         }
         if (vendor.missing_servers.length > 0) {
