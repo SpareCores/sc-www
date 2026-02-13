@@ -60,6 +60,8 @@ export class MissingBenchmarksComponent implements OnInit {
           evaluated: 0,
           percentage: 0,
           missing_servers: [],
+          inactive_count: 0,
+          technical_issues_count: 0,
         };
       });
       this.allServers = allServers.body;
@@ -70,22 +72,25 @@ export class MissingBenchmarksComponent implements OnInit {
           (vendor: any) => vendor.id === server.vendor.vendor_id,
         );
         vendor.servers++;
-        
+
         // Check if server is active
-        if (server.status === 'active') {
+        if (server.status === 'active' && server.min_price) {
           vendor.active_servers++;
         }
-        
+
         // Check for missing benchmarks on all servers
         if (server.score) {
           vendor.evaluated++;
         } else {
           if (server.status === 'inactive') {
             server.reason = "This server is currently inactive and not available for benchmarking.";
+            vendor.inactive_count++;
           } else if (!server.min_price) {
             server.reason = "This server is very likely not GA (General Availability), as we have not found public pricing information.";
+            vendor.inactive_count++;
           } else {
             server.reason = "We have run into a quota limit while running this server, or faced other technical issues.";
+            vendor.technical_issues_count++;
           }
           vendor.missing++;
           vendor.missing_servers.push(server);

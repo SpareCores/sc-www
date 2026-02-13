@@ -80,7 +80,7 @@
                 [name]="isVendorExpanded(vendor.id) ? 'chevron-down' : 'chevron-right'"
                 class="h-8 w-8 flex-shrink-0"
               ></lucide-icon>
-              <span>{{ vendor.name }} ({{ vendor.servers }} servers)</span>
+              <span>{{ vendor.name }} ({{ vendor.servers }} servers: {{ vendor.inactive_count }} inactive, {{ vendor.technical_issues_count }} technical issues)</span>
             </h2>
             @if (isVendorExpanded(vendor.id)) {
               <table class="items_table ml-11">
