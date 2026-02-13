@@ -7,7 +7,6 @@ import { LucideAngularModule } from "lucide-angular";
 import { RouterModule } from "@angular/router";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
-import { Interaction } from "chart.js";
 
 @Component({
   selector: "app-missing-benchmarks",
@@ -92,7 +91,7 @@ export class MissingBenchmarksComponent implements OnInit {
         } else {
           if (server.status === "inactive") {
             server.reason =
-              "This server is currently inactive and not available for benchmarking.";
+              "This server is currently not listed as active in the vendor's API.";
             vendor.inactive_count++;
             vendor.inactive_servers.push(server);
           } else if (!server.min_price) {
