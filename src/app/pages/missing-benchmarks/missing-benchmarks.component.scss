@@ -10,7 +10,7 @@
   thead {
     @apply border-b border-gray-200 border-solid bg-secondary;
     th {
-      @apply text-left pl-3 pr-2 py-3 font-normal text-xs;
+      @apply text-left font-normal text-xs;
     }
   }
 
@@ -24,7 +24,7 @@
 
     tr {
       td {
-        @apply pl-3 pr-2 py-3 text-left text-sm;
+        @apply text-left text-sm;
       }
     }
   }

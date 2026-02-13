@@ -12,75 +12,75 @@
     <table class="items_table">
       <thead>
         <tr>
-          <th>
-            <div class="flex gap-1">VENDOR</div>
+          <th class="py-4 px-4">
+            <div class="flex gap-1 whitespace-nowrap">VENDOR</div>
           </th>
-          <th>
-            <div class="flex justify-end">IDENTIFIED SERVERS</div>
+          <th class="py-4 px-4">
+            <div class="flex justify-end whitespace-nowrap">IDENTIFIED SERVERS</div>
           </th>
-          <th colspan="2">
-            <div class="flex justify-center">INACTIVE SERVERS</div>
+          <th colspan="2" class="border-l border-gray-600 px-12 py-4">
+            <div class="flex justify-center whitespace-nowrap">INACTIVE SERVERS</div>
           </th>
-          <th colspan="2">
-            <div class="flex justify-center">ACTIVE SERVERS</div>
+          <th colspan="2" class="border-l border-gray-600 px-12 py-4">
+            <div class="flex justify-center whitespace-nowrap">ACTIVE SERVERS</div>
           </th>
-          <th colspan="2">
-            <div class="flex justify-center">EVALUATED SERVERS</div>
+          <th colspan="2" class="border-l border-gray-600 px-12 py-4">
+            <div class="flex justify-center whitespace-nowrap">EVALUATED SERVERS</div>
           </th>
-          <th colspan="2">
-            <div class="flex justify-center">MISSING SERVERS</div>
+          <th colspan="2" class="border-l border-gray-600 px-12 py-4">
+            <div class="flex justify-center whitespace-nowrap">MISSING SERVERS</div>
           </th>
         </tr>
       </thead>
       <tbody>
         @for (vendor of vendors; track vendor.vendor_id) {
           <tr>
-            <td>
+            <td class="pl-3 pr-2 py-3">
               <div class="flex gap-1">
                 {{ vendor.name }}
               </div>
             </td>
-            <td>
+            <td class="px-4">
               <div class="flex justify-end">
                 {{ vendor.servers }}
               </div>
             </td>
-            <td>
+            <td class="border-l border-gray-600 w-16 pl-6 pr-1">
               <div class="flex justify-end">
                 {{ vendor.inactive_count }}
               </div>
             </td>
-            <td>
+            <td class="w-20 pl-1 pr-6">
               <div class="flex justify-end">
                 {{ (vendor.inactive_count / vendor.servers * 100).toFixed(2) }}%
               </div>
             </td>
-            <td>
+            <td class="border-l border-gray-600 w-16 pl-6 pr-1">
               <div class="flex justify-end">
                 {{ vendor.active_servers }}
               </div>
             </td>
-            <td>
+            <td class="w-20 pl-1 pr-6">
               <div class="flex justify-end">
                 {{ (vendor.active_servers / vendor.servers * 100).toFixed(2) }}%
               </div>
             </td>
-            <td>
+            <td class="border-l border-gray-600 w-16 pl-6 pr-1">
               <div class="flex justify-end">
                 {{ vendor.evaluated }}
               </div>
             </td>
-            <td>
+            <td class="w-20 pl-1 pr-6">
               <div class="flex justify-end">
                 {{ (vendor.evaluated / vendor.servers * 100).toFixed(2) }}%
               </div>
             </td>
-            <td>
+            <td class="border-l border-gray-600 w-16 pl-6 pr-1">
               <div class="flex justify-end">
                 {{ vendor.missing }}
               </div>
             </td>
-            <td>
+            <td class="w-20 pl-1 pr-6">
               <div class="flex justify-end">
                 {{ (vendor.missing / vendor.servers * 100).toFixed(2) }}%
               </div>
@@ -90,7 +90,7 @@
       </tbody>
     </table>
 
-    <div class="text-white text-xl pr-16">
+    <div class="text-white text-xl pr-16 mt-8">
       Below you can find a detailed list of the servers that are missing
       benchmarks, including the likely root cause for the missing data. Click on
       a vendor to expand the list of servers:
@@ -99,7 +99,7 @@
     @for (vendor of vendors; track vendor.vendor_id) {
       <div>
         @if (vendor.missing_servers?.length) {
-          <div class="flex flex-col gap-2">
+          <div class="flex flex-col gap-2 mt-6">
             <h2
               class="text-3xl mb-2 flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity"
               (click)="toggleVendor(vendor.id)"
@@ -121,10 +121,10 @@
               <table class="items_table ml-11">
                 <thead>
                   <tr>
-                    <th>
+                    <th class="pl-3 pr-2 py-3">
                       <div class="flex gap-1">SERVER</div>
                     </th>
-                    <th>
+                    <th class="pl-3 pr-2 py-3">
                       <div class="flex gap-1">MISSING REASON</div>
                     </th>
                   </tr>
@@ -135,12 +135,12 @@
                     track server.vendor_id + "_" + server.server_id
                   ) {
                     <tr>
-                      <td>
+                      <td class="pl-3 pr-2 py-3">
                         <div class="pl-2 flex gap-1">
                           {{ server.name }}
                         </div>
                       </td>
-                      <td>
+                      <td class="pl-3 pr-2">
                         <div class="flex gap-1">
                           {{ server.reason }}
                         </div>
