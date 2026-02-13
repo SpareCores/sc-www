@@ -62,6 +62,7 @@ export class MissingBenchmarksComponent implements OnInit {
           active_servers: 0,
           missing: 0,
           evaluated: 0,
+          evaluated_active_servers: 0,
           percentage: 0,
           missing_servers: [],
           inactive_count: 0,
@@ -82,6 +83,9 @@ export class MissingBenchmarksComponent implements OnInit {
 
         if (server.score) {
           vendor.evaluated++;
+          if (server.status === "active" && server.min_price) {
+            vendor.evaluated_active_servers++;
+          }
         } else {
           if (server.status === "inactive") {
             server.reason =
@@ -102,11 +106,6 @@ export class MissingBenchmarksComponent implements OnInit {
       });
 
       this.vendors.forEach((vendor: any) => {
-        if (vendor.active_servers > 0) {
-          vendor.percentage = parseFloat(
-            ((vendor.technical_issues_count / vendor.active_servers) * 100).toFixed(2),
-          );
-        }
         if (vendor.missing_servers.length > 0) {
           vendor.missing_servers.sort((a: any, b: any) => {
             if (a.name < b.name) return -1;

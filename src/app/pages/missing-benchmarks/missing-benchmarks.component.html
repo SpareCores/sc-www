@@ -27,10 +27,10 @@
             <div class="flex justify-center whitespace-nowrap">ACTIVE SERVERS</div>
           </th>
           <th colspan="2" class="border-l border-gray-600 px-12 py-4">
-            <div class="flex justify-center whitespace-nowrap">EVALUATED SERVERS</div>
+            <div class="flex justify-center whitespace-nowrap">EVALUATED ACTIVE SERVERS</div>
           </th>
           <th colspan="2" class="border-l border-gray-600 px-12 py-4">
-            <div class="flex justify-center whitespace-nowrap">MISSING SERVERS</div>
+            <div class="flex justify-center whitespace-nowrap">MISSING ACTIVE SERVERS</div>
           </th>
         </tr>
       </thead>
@@ -69,22 +69,22 @@
             </td>
             <td class="border-l border-gray-600 w-16 pl-6 pr-1">
               <div class="flex justify-end">
-                {{ vendor.evaluated }}
+                {{ vendor.evaluated_active_servers }}
               </div>
             </td>
             <td class="w-20 pl-1 pr-6">
               <div class="flex justify-end">
-                {{ (vendor.evaluated / vendor.servers * 100).toFixed(2) }}%
+                {{ (vendor.evaluated_active_servers / vendor.active_servers * 100).toFixed(2) }}%
               </div>
             </td>
             <td class="border-l border-gray-600 w-16 pl-6 pr-1">
               <div class="flex justify-end">
-                {{ vendor.missing }}
+                {{ vendor.technical_issues_count }}
               </div>
             </td>
             <td class="w-20 pl-1 pr-6">
               <div class="flex justify-end">
-                {{ (vendor.missing / vendor.servers * 100).toFixed(2) }}%
+                {{ (vendor.technical_issues_count / vendor.active_servers * 100).toFixed(2) }}%
               </div>
             </td>
           </tr>
@@ -119,7 +119,7 @@
               >
             </h2>
             @if (isVendorExpanded(vendor.id)) {
-              <table class="items_table ml-11">
+              <table class="items_table ml-8 mt-2">
                 <thead>
                   <tr>
                     <th class="pl-3 pr-2 py-3">
