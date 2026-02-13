@@ -7,6 +7,7 @@ import { LucideAngularModule } from "lucide-angular";
 import { RouterModule } from "@angular/router";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
+import { Interaction } from "chart.js";
 
 @Component({
   selector: "app-missing-benchmarks",
@@ -64,6 +65,8 @@ export class MissingBenchmarksComponent implements OnInit {
           evaluated: 0,
           evaluated_active_servers: 0,
           percentage: 0,
+          inactive_servers: [],
+          technical_issues_servers: [],
           missing_servers: [],
           inactive_count: 0,
           technical_issues_count: 0,
@@ -91,14 +94,17 @@ export class MissingBenchmarksComponent implements OnInit {
             server.reason =
               "This server is currently inactive and not available for benchmarking.";
             vendor.inactive_count++;
+            vendor.inactive_servers.push(server);
           } else if (!server.min_price) {
             server.reason =
               "This server is very likely not GA (General Availability), as we have not found public pricing information.";
             vendor.inactive_count++;
+            vendor.inactive_servers.push(server);
           } else {
             server.reason =
               "We have run into a quota limit while running this server, or faced other technical issues.";
             vendor.technical_issues_count++;
+            vendor.technical_issues_servers.push(server);
           }
           vendor.missing++;
           vendor.missing_servers.push(server);
