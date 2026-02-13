@@ -69,11 +69,11 @@
     </table>
 
     <div class="text-white text-xl pr-16">
-      Below you can find a detailed list of the servers that are missing benchmarks,
-      including the likely root cause for the missing data. Click on a vendor to
-      expand the list of servers:
+      Below you can find a detailed list of the servers that are missing
+      benchmarks, including the likely root cause for the missing data. Click on
+      a vendor to expand the list of servers:
     </div>
-    
+
     @for (vendor of vendors; track vendor.vendor_id) {
       <div>
         @if (vendor.missing_servers?.length) {
@@ -83,43 +83,50 @@
               (click)="toggleVendor(vendor.id)"
             >
               <lucide-icon
-                [name]="isVendorExpanded(vendor.id) ? 'chevron-down' : 'chevron-right'"
+                [name]="
+                  isVendorExpanded(vendor.id) ? 'chevron-down' : 'chevron-right'
+                "
                 class="h-8 w-8 flex-shrink-0"
               ></lucide-icon>
-              <span>{{ vendor.name }} ({{ vendor.servers }} servers: {{ vendor.inactive_count }} inactive, {{ vendor.technical_issues_count }} technical/quota issues)</span>
+              <span
+                >{{ vendor.name }} ({{ vendor.servers }} servers:
+                {{ vendor.inactive_count }} inactive,
+                {{ vendor.technical_issues_count }} technical/quota
+                issues)</span
+              >
             </h2>
             @if (isVendorExpanded(vendor.id)) {
               <table class="items_table ml-11">
-              <thead>
-                <tr>
-                  <th>
-                    <div class="flex gap-1">SERVER</div>
-                  </th>
-                  <th>
-                    <div class="flex gap-1">MISSING REASON</div>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                @for (
-                  server of vendor.missing_servers;
-                  track server.vendor_id + "_" + server.server_id
-                ) {
+                <thead>
                   <tr>
-                    <td>
-                      <div class="pl-2 flex gap-1">
-                        {{ server.name }}
-                      </div>
-                    </td>
-                    <td>
-                      <div class="flex gap-1">
-                        {{ server.reason }}
-                      </div>
-                    </td>
+                    <th>
+                      <div class="flex gap-1">SERVER</div>
+                    </th>
+                    <th>
+                      <div class="flex gap-1">MISSING REASON</div>
+                    </th>
                   </tr>
-                }
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  @for (
+                    server of vendor.missing_servers;
+                    track server.vendor_id + "_" + server.server_id
+                  ) {
+                    <tr>
+                      <td>
+                        <div class="pl-2 flex gap-1">
+                          {{ server.name }}
+                        </div>
+                      </td>
+                      <td>
+                        <div class="flex gap-1">
+                          {{ server.reason }}
+                        </div>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
             }
           </div>
         }

@@ -48,7 +48,11 @@ export class MissingBenchmarksComponent implements OnInit {
 
     Promise.all([
       this.keeperAPI.getVendors(),
-      this.keeperAPI.searchServers({ limit: 10000, only_active: false, order_by: 'vcpus' }),
+      this.keeperAPI.searchServers({
+        limit: 10000,
+        only_active: false,
+        order_by: "vcpus",
+      }),
     ]).then(([vendors, allServers]) => {
       this.vendors = vendors.body.map((vendor: any) => {
         return {
@@ -66,30 +70,30 @@ export class MissingBenchmarksComponent implements OnInit {
       });
       this.allServers = allServers.body;
 
-      // Process all servers
       this.allServers.forEach((server: any) => {
         let vendor = this.vendors.find(
           (vendor: any) => vendor.id === server.vendor.vendor_id,
         );
         vendor.servers++;
 
-        // Check if server is active
-        if (server.status === 'active' && server.min_price) {
+        if (server.status === "active" && server.min_price) {
           vendor.active_servers++;
         }
 
-        // Check for missing benchmarks on all servers
         if (server.score) {
           vendor.evaluated++;
         } else {
-          if (server.status === 'inactive') {
-            server.reason = "This server is currently inactive and not available for benchmarking.";
+          if (server.status === "inactive") {
+            server.reason =
+              "This server is currently inactive and not available for benchmarking.";
             vendor.inactive_count++;
           } else if (!server.min_price) {
-            server.reason = "This server is very likely not GA (General Availability), as we have not found public pricing information.";
+            server.reason =
+              "This server is very likely not GA (General Availability), as we have not found public pricing information.";
             vendor.inactive_count++;
           } else {
-            server.reason = "We have run into a quota limit while running this server, or faced other technical issues.";
+            server.reason =
+              "We have run into a quota limit while running this server, or faced other technical issues.";
             vendor.technical_issues_count++;
           }
           vendor.missing++;
