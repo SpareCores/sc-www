@@ -111,8 +111,15 @@ export class MissingBenchmarksComponent implements OnInit {
       });
 
       this.vendors.forEach((vendor: any) => {
-        if (vendor.missing_servers.length > 0) {
-          vendor.missing_servers.sort((a: any, b: any) => {
+        if (vendor.inactive_servers.length > 0) {
+          vendor.inactive_servers.sort((a: any, b: any) => {
+            if (a.name < b.name) return -1;
+            if (a.name > b.name) return 1;
+            return 0;
+          });
+        }
+        if (vendor.technical_issues_servers.length > 0) {
+          vendor.technical_issues_servers.sort((a: any, b: any) => {
             if (a.name < b.name) return -1;
             if (a.name > b.name) return 1;
             return 0;
