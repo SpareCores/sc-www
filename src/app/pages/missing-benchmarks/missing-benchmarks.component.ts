@@ -24,7 +24,20 @@ export class MissingBenchmarksComponent implements OnInit {
   ];
 
   vendors: any[] = [];
-  servers: any[] = [];
+  allServers: any[] = [];
+  expandedVendors: Set<string> = new Set();
+
+  toggleVendor(vendorId: string) {
+    if (this.expandedVendors.has(vendorId)) {
+      this.expandedVendors.delete(vendorId);
+    } else {
+      this.expandedVendors.add(vendorId);
+    }
+  }
+
+  isVendorExpanded(vendorId: string): boolean {
+    return this.expandedVendors.has(vendorId);
+  }
 
   ngOnInit() {
     this.SEOHandler.updateTitleAndMetaTags(
@@ -35,45 +48,78 @@ export class MissingBenchmarksComponent implements OnInit {
 
     Promise.all([
       this.keeperAPI.getVendors(),
-      this.keeperAPI.searchServers({ limit: 10000 }),
-    ]).then(([vendors, servers]) => {
+      this.keeperAPI.searchServers({
+        limit: 10000,
+        only_active: false,
+        order_by: "vcpus",
+      }),
+    ]).then(([vendors, allServers]) => {
       this.vendors = vendors.body.map((vendor: any) => {
         return {
           name: vendor.name,
           id: vendor.vendor_id,
           servers: 0,
+          active_servers: 0,
           missing: 0,
           evaluated: 0,
+          evaluated_active_servers: 0,
           percentage: 0,
+          inactive_servers: [],
+          technical_issues_servers: [],
           missing_servers: [],
+          inactive_count: 0,
+          technical_issues_count: 0,
         };
       });
-      this.servers = servers.body;
+      this.allServers = allServers.body;
 
-      this.servers.forEach((server: any) => {
+      this.allServers.forEach((server: any) => {
         let vendor = this.vendors.find(
           (vendor: any) => vendor.id === server.vendor.vendor_id,
         );
+        vendor.servers++;
+
+        if (server.status === "active" && server.min_price) {
+          vendor.active_servers++;
+        }
+
         if (server.score) {
           vendor.evaluated++;
+          if (server.status === "active" && server.min_price) {
+            vendor.evaluated_active_servers++;
+          }
         } else {
-          server.reason = server.price
-            ? "We have run into a quota limit while running this server, or faced other technical issues."
-            : "This server is very likely not be GA (General Availability), as we have not found public pricing information.";
+          if (server.status === "inactive") {
+            server.reason =
+              "This server is currently not listed as active in the vendor's API.";
+            vendor.inactive_count++;
+            vendor.inactive_servers.push(server);
+          } else if (!server.min_price) {
+            server.reason =
+              "This server is very likely not GA (General Availability), as we have not found public pricing information.";
+            vendor.inactive_count++;
+            vendor.inactive_servers.push(server);
+          } else {
+            server.reason =
+              "We have run into a quota limit while running this server, or faced other technical issues.";
+            vendor.technical_issues_count++;
+            vendor.technical_issues_servers.push(server);
+          }
           vendor.missing++;
           vendor.missing_servers.push(server);
         }
-        vendor.servers++;
       });
 
       this.vendors.forEach((vendor: any) => {
-        if (vendor.servers > 0) {
-          vendor.percentage = parseFloat(
-            ((vendor.missing / vendor.servers) * 100).toFixed(2),
-          );
+        if (vendor.inactive_servers.length > 0) {
+          vendor.inactive_servers.sort((a: any, b: any) => {
+            if (a.name < b.name) return -1;
+            if (a.name > b.name) return 1;
+            return 0;
+          });
         }
-        if (vendor.missing_servers.length > 0) {
-          vendor.missing_servers.sort((a: any, b: any) => {
+        if (vendor.technical_issues_servers.length > 0) {
+          vendor.technical_issues_servers.sort((a: any, b: any) => {
             if (a.name < b.name) return -1;
             if (a.name > b.name) return 1;
             return 0;
