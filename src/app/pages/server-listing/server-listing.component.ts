@@ -39,6 +39,9 @@ import openApiSpec from "../../../../sdk/openapi.json";
 import specialServerListsData from "./special-lists.js";
 import { GpuCountPipe } from "../../pipes/gpu-count.pipe";
 import { CpuCacheSizePipe } from "../../pipes/cpu-cache-size.pipe";
+import { NetworkSpeedPipe } from "../../pipes/network-speed.pipe";
+import { MonthlyTrafficPipe } from "../../pipes/monthly-traffic.pipe";
+import { Ipv4CountPipe } from "../../pipes/ipv4-count.pipe";
 
 export type TableColumn = {
   name: string;
@@ -95,6 +98,9 @@ const optionsModal: ModalOptions = {
     LoadingSpinnerComponent,
     GpuCountPipe,
     CpuCacheSizePipe,
+    NetworkSpeedPipe,
+    MonthlyTrafficPipe,
+    Ipv4CountPipe,
   ],
   templateUrl: "./server-listing.component.html",
   styleUrl: "./server-listing.component.scss",
@@ -160,11 +166,39 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     },
     { name: "PROCESSOR", show: true, type: "processor", orderField: "vcpus" },
     { name: "CPU MODEL", show: false, type: "cpu_model" },
-    { name: "CPU CACHE", show: false, type: "cpu_cache" },
-    { name: "NETWORK SPEED", show: false, type: "network_speed" },
-    { name: "INBOUND TRAFFIC", show: false, type: "inbound_traffic" },
-    { name: "OUTBOUND TRAFFIC", show: false, type: "outbound_traffic" },
-    { name: "IPV4", show: false, type: "ipv4" },
+    {
+      name: "CPU CACHE",
+      show: false,
+      type: "cpu_cache",
+    },
+    {
+      name: "NETWORK SPEED",
+      show: false,
+      type: "text",
+      key: "network_speed",
+      orderField: "network_speed",
+    },
+    {
+      name: "INBOUND TRAFFIC",
+      show: false,
+      type: "text",
+      key: "inbound_traffic",
+      orderField: "inbound_traffic",
+    },
+    {
+      name: "OUTBOUND TRAFFIC",
+      show: false,
+      type: "text",
+      key: "outbound_traffic",
+      orderField: "outbound_traffic",
+    },
+    {
+      name: "IPV4",
+      show: false,
+      type: "text",
+      key: "ipv4",
+      orderField: "ipv4",
+    },
     {
       name: "CPU ALLOCATION",
       show: false,
