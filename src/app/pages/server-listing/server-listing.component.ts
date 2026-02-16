@@ -38,6 +38,10 @@ import { Subscription } from "rxjs";
 import openApiSpec from "../../../../sdk/openapi.json";
 import specialServerListsData from "./special-lists.js";
 import { GpuCountPipe } from "../../pipes/gpu-count.pipe";
+import { CpuCacheSizePipe } from "../../pipes/cpu-cache-size.pipe";
+import { NetworkSpeedPipe } from "../../pipes/network-speed.pipe";
+import { MonthlyTrafficPipe } from "../../pipes/monthly-traffic.pipe";
+import { Ipv4CountPipe } from "../../pipes/ipv4-count.pipe";
 
 export type TableColumn = {
   name: string;
@@ -93,6 +97,10 @@ const optionsModal: ModalOptions = {
     PaginationComponent,
     LoadingSpinnerComponent,
     GpuCountPipe,
+    CpuCacheSizePipe,
+    NetworkSpeedPipe,
+    MonthlyTrafficPipe,
+    Ipv4CountPipe,
   ],
   templateUrl: "./server-listing.component.html",
   styleUrl: "./server-listing.component.scss",
@@ -159,6 +167,11 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     { name: "PROCESSOR", show: true, type: "processor", orderField: "vcpus" },
     { name: "CPU MODEL", show: false, type: "cpu_model" },
     {
+      name: "CPU CACHE",
+      show: false,
+      type: "cpu_cache",
+    },
+    {
       name: "CPU ALLOCATION",
       show: false,
       type: "text",
@@ -194,13 +207,6 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       info: "Benchmark/price ratio showing the selected benchmark performance measured for 1 USD/hour, using the best (usually spot) price of all zones. In other words: how much performance you get for your money.",
     },
     { name: "MEMORY", show: true, type: "memory", orderField: "memory_amount" },
-    {
-      name: "STORAGE",
-      show: true,
-      type: "storage",
-      orderField: "storage_size",
-    },
-    { name: "STORAGE TYPE", show: false, type: "text", key: "storage_type" },
     { name: "GPUs", show: true, type: "gpu", orderField: "gpu_count" },
     {
       name: "GPU MIN MEMORY",
@@ -215,6 +221,41 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       orderField: "gpu_memory_total",
     },
     { name: "GPU MODEL", show: false, type: "gpu_model" },
+    {
+      name: "STORAGE",
+      show: true,
+      type: "storage",
+      orderField: "storage_size",
+    },
+    { name: "STORAGE TYPE", show: false, type: "text", key: "storage_type" },
+    {
+      name: "NETWORK SPEED",
+      show: false,
+      type: "text",
+      key: "network_speed",
+      orderField: "network_speed",
+    },
+    {
+      name: "INBOUND TRAFFIC",
+      show: false,
+      type: "text",
+      key: "inbound_traffic",
+      orderField: "inbound_traffic",
+    },
+    {
+      name: "OUTBOUND TRAFFIC",
+      show: false,
+      type: "text",
+      key: "outbound_traffic",
+      orderField: "outbound_traffic",
+    },
+    {
+      name: "IPV4",
+      show: false,
+      type: "text",
+      key: "ipv4",
+      orderField: "ipv4",
+    },
     {
       name: "BEST PRICE",
       show: true,

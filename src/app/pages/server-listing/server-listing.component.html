@@ -400,6 +400,27 @@
                           }
                         </td>
                       }
+                      @if (column.type === "cpu_cache") {
+                        <td>
+                          @if (
+                            item.cpu_l1_cache ||
+                            item.cpu_l2_cache ||
+                            item.cpu_l3_cache
+                          ) {
+                            <div class="text-xs text-white whitespace-nowrap">
+                              L1: {{ item.cpu_l1_cache | cpuCacheSize }}
+                            </div>
+                            <div class="text-xs text-white whitespace-nowrap">
+                              L2: {{ item.cpu_l2_cache | cpuCacheSize }}
+                            </div>
+                            <div class="text-xs text-white whitespace-nowrap">
+                              L3: {{ item.cpu_l3_cache | cpuCacheSize }}
+                            </div>
+                          } @else {
+                            <div class="text-sm text-white">-</div>
+                          }
+                        </td>
+                      }
                       @if (column.type === "cpu_model") {
                         <td>
                           @if (item.cpu_model) {
@@ -434,7 +455,50 @@
                           </div>
                         </td>
                       }
-                      @if (column.type === "text" && column.key) {
+                      @if (
+                        column.type === "text" && column.key === "network_speed"
+                      ) {
+                        <td>
+                          <span class="whitespace-nowrap">
+                            {{ item.network_speed | networkSpeed }}
+                          </span>
+                        </td>
+                      }
+                      @if (
+                        column.type === "text" &&
+                        column.key === "inbound_traffic"
+                      ) {
+                        <td>
+                          <span class="whitespace-nowrap">
+                            {{ item.inbound_traffic | monthlyTraffic }}
+                          </span>
+                        </td>
+                      }
+                      @if (
+                        column.type === "text" &&
+                        column.key === "outbound_traffic"
+                      ) {
+                        <td>
+                          <span class="whitespace-nowrap">
+                            {{ item.outbound_traffic | monthlyTraffic }}
+                          </span>
+                        </td>
+                      }
+                      @if (column.type === "text" && column.key === "ipv4") {
+                        <td>
+                          <span class="whitespace-nowrap">
+                            {{ item.ipv4 | ipv4Count }}
+                          </span>
+                        </td>
+                      }
+                      @if (
+                        column.type === "text" &&
+                        column.key &&
+                        column.key !== "network_speed" &&
+                        column.key !== "inbound_traffic" &&
+                        column.key !== "outbound_traffic" &&
+                        column.key !== "ipv4"
+                      ) {
                         <td>
                           {{ getField(item, column.key) }}
                         </td>
