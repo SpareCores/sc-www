@@ -1,4 +1,5 @@
 import { Pipe, PipeTransform } from "@angular/core";
+import { formatValue } from "./pipe-utils";
 
 @Pipe({
   name: "cpuCacheSize",
@@ -9,7 +10,7 @@ export class CpuCacheSizePipe implements PipeTransform {
   private readonly MIB = 1024 * 1024;
 
   transform(bytes: number | null | undefined): string {
-    if (bytes === null || bytes === undefined) return "-";
+    if (!bytes || bytes <= 0) return "-";
 
     if (bytes < this.MIB) {
       return `${Math.round(bytes / this.KIB)} KiB`;
@@ -17,7 +18,6 @@ export class CpuCacheSizePipe implements PipeTransform {
 
     const mib = bytes / this.MIB;
 
-    if (mib < 10) return `${mib.toFixed(2)} MiB`;
-    return `${mib.toFixed(1)} MiB`;
+    return `${formatValue(mib)} MiB`;
   }
 }
