@@ -17,15 +17,12 @@ export class NetworkSpeedPipe implements PipeTransform {
   }
 
   private formatValue(value: number): string {
-    if (value < 10) return this.trimZeros(value.toFixed(2));
-    if (value < 100) return this.trimZeros(value.toFixed(1));
-    return Math.round(value).toString();
-  }
+    let formatted: string;
 
-  private trimZeros(value: string): string {
-    if (value.includes(".")) {
-      return value.replace(/\.0+$/, "").replace(/(\.\d*[1-9])0+$/, "$1");
-    }
-    return value;
+    if (value < 10) formatted = value.toFixed(2);
+    else if (value < 100) formatted = value.toFixed(1);
+    else formatted = Math.round(value).toString();
+
+    return parseFloat(formatted).toString();
   }
 }
