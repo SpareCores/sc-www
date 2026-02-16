@@ -161,6 +161,7 @@ export enum Regions {
   DE = "DE",
   DE1 = "DE1",
   DeFra1 = "de-fra1",
+  Denmarkeast = "denmarkeast",
   DkCph1 = "dk-cph1",
   Eastasia = "eastasia",
   Eastus = "eastus",
@@ -286,48 +287,31 @@ export enum GpuModels {
   A10 = "A10",
   A100 = "A100",
   A10G = "A10G",
-  A30 = "A30",
-  A800 = "A800",
-  A910E = "A910E",
-  A910X = "A910X",
-  A910Z = "A910Z",
-  AGF027 = "AGF 027",
   B200 = "B200",
   B300 = "B300",
-  G39 = "G39",
   G49 = "G49",
   G49E = "G49E",
   G59 = "G59",
-  GA107 = "GA107",
-  GPUA = "GPU A",
   GPUH = "GPU H",
-  GPUHE = "GPU H-e",
   H100 = "H100",
-  H100PCIe = "H100 PCIe",
   H200 = "H200",
   HL205 = "HL-205",
-  INTELARRIA10GX1150 = "INTEL ARRIA 10 GX 1150",
   L20 = "L20",
-  L20N = "L20N",
   L4 = "L4",
   L40S = "L40S",
-  M40 = "M40",
   M60 = "M60",
   P100 = "P100",
   P4 = "P4",
-  PPU810 = "PPU 810",
   RTX5000 = "RTX 5000",
-  RTX5880 = "RTX 5880",
-  RTX6000 = "RTX 6000",
   RTXPro6000 = "RTX Pro 6000",
-  S7150 = "S7150",
   T4 = "T4",
   T4G = "T4G",
   V100 = "V100",
   V100S = "V100S",
   V520 = "V520",
-  XilinxVU9P = "Xilinx VU9p",
-  IntelSG1 = "intel SG1",
+  V620 = "V620",
+  V710 = "V710",
+  NvidiaGb200 = "nvidia-gb200",
   VGPU8 = "vGPU8",
 }
 
@@ -342,6 +326,7 @@ export enum GpuManufacturers {
 export enum GpuFamilies {
   AdaLovelace = "Ada Lovelace",
   Ampere = "Ampere",
+  Blackwell = "Blackwell",
   Gaudi = "Gaudi",
   Hopper = "Hopper",
   Maxwell = "Maxwell",
@@ -367,7 +352,6 @@ export enum CpuManufacturers {
   Alibaba = "Alibaba",
   Ampere = "Ampere",
   Apple = "Apple",
-  Hygon = "Hygon",
   Intel = "Intel",
   Microsoft = "Microsoft",
 }
@@ -435,11 +419,13 @@ export enum Countries {
   NL = "NL",
   NO = "NO",
   NZ = "NZ",
+  PH = "PH",
   PL = "PL",
   QA = "QA",
   SA = "SA",
   SE = "SE",
   SG = "SG",
+  TH = "TH",
   TW = "TW",
   US = "US",
   ZA = "ZA",
@@ -472,7 +458,7 @@ export enum Allocation {
  *     description (typing.Optional[str]): Short description.
  *     framework (str): The name of the benchmark framework/software/tool used.
  *     config_fields (dict): A dictionary of descriptions on the framework-specific config options, e.g. {"bandwidth": "Memory amount to use for compression in MB."}.
- *     measurement (typing.Optional[str]): The name of measurement recoreded in the benchmark.
+ *     measurement (typing.Optional[str]): The name of measurement recorded in the benchmark.
  *     unit (typing.Optional[str]): Optional unit of measurement for the benchmark score.
  *     higher_is_better (bool): If higher benchmark score means better performance, or vica versa.
  *     status (Status): Status of the resource (active or inactive).
@@ -507,7 +493,7 @@ export interface Benchmark {
   config_fields?: object;
   /**
    * Measurement
-   * The name of measurement recoreded in the benchmark.
+   * The name of measurement recorded in the benchmark.
    */
   measurement?: string | null;
   /**
@@ -611,7 +597,7 @@ export interface BenchmarkScore {
  *     compliance_framework_id (str): Unique identifier.
  *     name (str): Human-friendly name.
  *     abbreviation (typing.Optional[str]): Short abbreviation of the Framework name.
- *     description (typing.Optional[str]): Description of the framework in a few paragrahs, outlining key features and characteristics for reference.
+ *     description (typing.Optional[str]): Description of the framework in a few paragraphs, outlining key features and characteristics for reference.
  *     logo (typing.Optional[str]): Publicly accessible URL to the image of the Framework's logo.
  *     homepage (typing.Optional[str]): Public homepage with more information on the Framework.
  *     status (Status): Status of the resource (active or inactive).
@@ -635,7 +621,7 @@ export interface ComplianceFramework {
   abbreviation: string | null;
   /**
    * Description
-   * Description of the framework in a few paragrahs, outlining key features and characteristics for reference.
+   * Description of the framework in a few paragraphs, outlining key features and characteristics for reference.
    */
   description: string | null;
   /**
@@ -758,6 +744,28 @@ export interface Cpu {
 }
 
 /**
+ * DebugInfoResponse
+ * Complete debug information about server and benchmark data availability.
+ */
+export interface DebugInfoResponse {
+  /**
+   * Vendors
+   * Per-vendor statistics about benchmark coverage
+   */
+  vendors: VendorDebugInfo[];
+  /**
+   * Servers
+   * Detailed information about each server type
+   */
+  servers: ServerDebugInfo[];
+  /**
+   * Benchmark Families
+   * List of all available benchmark families (e.g., 'stress_ng', 'geekbench', 'passmark')
+   */
+  benchmark_families: string[];
+}
+
+/**
  * Disk
  * Disk definition based on size and storage type.
  */
@@ -867,7 +875,7 @@ export interface PriceTier {
  *     vendor_id (str): Reference to the Vendor.
  *     region_id (str): Unique identifier, as called at the Vendor.
  *     name (str): Human-friendly name.
- *     api_reference (str): How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depening on the vendor and actual API endpoint.
+ *     api_reference (str): How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depending on the vendor and actual API endpoint.
  *     display_name (str): Human-friendly reference (usually the id or name) of the resource.
  *     aliases (typing.List[str]): List of other commonly used names for the same Region.
  *     country_id (str): Reference to the Country, where the Region is located.
@@ -900,7 +908,7 @@ export interface Region {
   name: string;
   /**
    * Api Reference
-   * How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depening on the vendor and actual API endpoint.
+   * How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depending on the vendor and actual API endpoint.
    */
   api_reference: string;
   /**
@@ -991,7 +999,7 @@ export interface RegionBaseWithPKs {
   name: string;
   /**
    * Api Reference
-   * How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depening on the vendor and actual API endpoint.
+   * How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depending on the vendor and actual API endpoint.
    */
   api_reference: string;
   /**
@@ -1083,7 +1091,7 @@ export interface RegionPKs {
   name: string;
   /**
    * Api Reference
-   * How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depening on the vendor and actual API endpoint.
+   * How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depending on the vendor and actual API endpoint.
    */
   api_reference: string;
   /**
@@ -1164,7 +1172,7 @@ export interface RegionPKs {
  *     vendor_id (str): Reference to the Vendor.
  *     server_id (str): Unique identifier, as called at the Vendor.
  *     name (str): Human-friendly name.
- *     api_reference (str): How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depening on the vendor and actual API endpoint.
+ *     api_reference (str): How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depending on the vendor and actual API endpoint.
  *     display_name (str): Human-friendly reference (usually the id or name) of the resource.
  *     description (typing.Optional[str]): Short description.
  *     family (typing.Optional[str]): Server family, e.g. General-purpose machine (GCP), or M5g (AWS).
@@ -1186,7 +1194,7 @@ export interface RegionPKs {
  *     memory_generation (typing.Optional[sc_crawler.table_fields.DdrGeneration]): Generation of the DDR SDRAM, e.g. DDR4 or DDR5.
  *     memory_speed (typing.Optional[int]): DDR SDRAM clock rate (Mhz).
  *     memory_ecc (typing.Optional[bool]): If the DDR SDRAM uses error correction code to detect and correct n-bit data corruption.
- *     gpu_count (int): Number of GPU accelerator(s).
+ *     gpu_count (float): Number of GPU accelerator(s).
  *     gpu_memory_min (typing.Optional[int]): Memory (MiB) allocated to the lowest-end GPU accelerator.
  *     gpu_memory_total (typing.Optional[int]): Overall memory (MiB) allocated to all the GPU accelerator(s).
  *     gpu_manufacturer (typing.Optional[str]): The manufacturer of the primary GPU accelerator, e.g. Nvidia or AMD.
@@ -1221,7 +1229,7 @@ export interface Server {
   name: string;
   /**
    * Api Reference
-   * How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depening on the vendor and actual API endpoint.
+   * How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depending on the vendor and actual API endpoint.
    */
   api_reference: string;
   /**
@@ -1428,7 +1436,7 @@ export interface ServerBase {
   name: string;
   /**
    * Api Reference
-   * How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depening on the vendor and actual API endpoint.
+   * How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depending on the vendor and actual API endpoint.
    */
   api_reference: string;
   /**
@@ -1616,6 +1624,53 @@ export interface ServerBase {
   observed_at?: string;
 }
 
+/**
+ * ServerDebugInfo
+ * Debug information about a single server type and its benchmark coverage.
+ */
+export interface ServerDebugInfo {
+  /**
+   * Vendor Id
+   * Vendor identifier
+   */
+  vendor_id: string;
+  /**
+   * Server Id
+   * Server type identifier
+   */
+  server_id: string;
+  /**
+   * Api Reference
+   * API reference name for the server
+   */
+  api_reference: string;
+  /**
+   * Status
+   * Server status (e.g., 'ACTIVE', 'INACTIVE')
+   */
+  status: string;
+  /**
+   * Has Hw Info
+   * Whether hardware information (e.g. CPU flags) is available
+   */
+  has_hw_info: boolean;
+  /**
+   * Has Price
+   * Whether any pricing data is available
+   */
+  has_price: boolean;
+  /**
+   * Has Benchmarks
+   * Whether any benchmark data is available
+   */
+  has_benchmarks: boolean;
+  /**
+   * Benchmarks
+   * Map of benchmark family names to availability (true if at least one score exists)
+   */
+  benchmarks: Record<string, boolean>;
+}
+
 /** ServerPKs */
 export interface ServerPKs {
   /**
@@ -1635,7 +1690,7 @@ export interface ServerPKs {
   name: string;
   /**
    * Api Reference
-   * How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depening on the vendor and actual API endpoint.
+   * How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depending on the vendor and actual API endpoint.
    */
   api_reference: string;
   /**
@@ -1831,6 +1886,8 @@ export interface ServerPKs {
   min_price_spot?: number | null;
   /** Min Price Ondemand */
   min_price_ondemand?: number | null;
+  /** Min Price Ondemand Monthly */
+  min_price_ondemand_monthly?: number | null;
   /** Score Per Price */
   score_per_price?: number | null;
   /** Selected Benchmark Score */
@@ -2028,7 +2085,7 @@ export interface ServerWithScore {
   name: string;
   /**
    * Api Reference
-   * How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depening on the vendor and actual API endpoint.
+   * How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depending on the vendor and actual API endpoint.
    */
   api_reference: string;
   /**
@@ -2224,6 +2281,8 @@ export interface ServerWithScore {
   min_price_spot?: number | null;
   /** Min Price Ondemand */
   min_price_ondemand?: number | null;
+  /** Min Price Ondemand Monthly */
+  min_price_ondemand_monthly?: number | null;
   /** Score Per Price */
   score_per_price?: number | null;
   /** Selected Benchmark Score */
@@ -2496,21 +2555,25 @@ export interface ValidationError {
   msg: string;
   /** Error Type */
   type: string;
+  /** Input */
+  input?: any;
+  /** Context */
+  ctx?: object;
 }
 
 /**
  * Vendor
  * Compute resource vendors, such as cloud and server providers.
  *
- *     Examples:
- *         >>> from sc_crawler.tables import Vendor
- *         >>> from sc_crawler.lookup import countries
- *         >>> aws = Vendor(vendor_id='aws', name='Amazon Web Services', homepage='https://aws.amazon.com', country=countries["US"], founding_year=2002)
- *         >>> aws
- *         Vendor(vendor_id='aws'...
- *         >>> from sc_crawler import vendors
- *         >>> vendors.aws
- *         Vendor(vendor_id='aws'...
+ * Examples:
+ *     >>> from sc_crawler.tables import Vendor
+ *     >>> from sc_crawler.lookup import countries
+ *     >>> aws = Vendor(vendor_id='aws', name='Amazon Web Services', homepage='https://aws.amazon.com', country=countries["US"], founding_year=2002)
+ *     >>> aws
+ *     Vendor(vendor_id='aws'...
+ *     >>> from sc_crawler import vendors
+ *     >>> vendors.aws
+ *     Vendor(vendor_id='aws'...
  *
  *
  * Attributes:
@@ -2523,7 +2586,7 @@ export interface ValidationError {
  *     city (typing.Optional[str]): Optional city name of the Vendor's main location.
  *     address_line (typing.Optional[str]): Optional address line of the Vendor's main location.
  *     zip_code (typing.Optional[str]): Optional ZIP code of the Vendor's main location.
- *     founding_year (int): 4-digit year when the Vendor was founded.
+ *     founding_year (int): 4-digit year when the public cloud service of the Vendor was launched.
  *     status_page (typing.Optional[str]): Public status page of the Vendor.
  *     status (Status): Status of the resource (active or inactive).
  *     observed_at (datetime): Timestamp of the last observation.
@@ -2576,7 +2639,7 @@ export interface Vendor {
   zip_code?: string | null;
   /**
    * Founding Year
-   * 4-digit year when the Vendor was founded.
+   * 4-digit year when the public cloud service of the Vendor was launched.
    */
   founding_year: number;
   /**
@@ -2646,7 +2709,7 @@ export interface VendorBase {
   zip_code?: string | null;
   /**
    * Founding Year
-   * 4-digit year when the Vendor was founded.
+   * 4-digit year when the public cloud service of the Vendor was launched.
    */
   founding_year: number;
   /**
@@ -2668,6 +2731,43 @@ export interface VendorBase {
 }
 
 /**
+ * VendorDebugInfo
+ * Statistics about benchmark coverage for a specific vendor.
+ */
+export interface VendorDebugInfo {
+  /**
+   * Vendor Id
+   * Vendor identifier (e.g., 'aws', 'gcp')
+   */
+  vendor_id: string;
+  /**
+   * All
+   * Total number of server types for this vendor
+   */
+  all: number;
+  /**
+   * Active
+   * Number of active server types
+   */
+  active: number;
+  /**
+   * Evaluated
+   * Number of servers with at least one benchmark score
+   */
+  evaluated: number;
+  /**
+   * Missing
+   * Number of active servers with prices but no benchmark data
+   */
+  missing: number;
+  /**
+   * Inactive
+   * Number of servers without prices or with inactive status
+   */
+  inactive: number;
+}
+
+/**
  * Zone
  * Availability zones of Regions.
  *
@@ -2676,7 +2776,7 @@ export interface VendorBase {
  *     region_id (str): Reference to the Region.
  *     zone_id (str): Unique identifier, as called at the Vendor.
  *     name (str): Human-friendly name.
- *     api_reference (str): How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depening on the vendor and actual API endpoint.
+ *     api_reference (str): How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depending on the vendor and actual API endpoint.
  *     display_name (str): Human-friendly reference (usually the id or name) of the resource.
  *     status (Status): Status of the resource (active or inactive).
  *     observed_at (datetime): Timestamp of the last observation.
@@ -2704,7 +2804,7 @@ export interface Zone {
   name: string;
   /**
    * Api Reference
-   * How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depening on the vendor and actual API endpoint.
+   * How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depending on the vendor and actual API endpoint.
    */
   api_reference: string;
   /**
@@ -2749,7 +2849,7 @@ export interface ZoneBase {
   name: string;
   /**
    * Api Reference
-   * How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depening on the vendor and actual API endpoint.
+   * How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depending on the vendor and actual API endpoint.
    */
   api_reference: string;
   /**
@@ -2773,6 +2873,25 @@ export interface ZoneBase {
 export type HealthcheckHealthcheckGetData = HealthcheckResponse;
 
 export type MeMeGetData = User;
+
+export interface GetStatsStatsGetParams {
+  /**
+   * Vendor id
+   * Identifier of the cloud provider vendor.
+   */
+  vendor?: "alicloud" | "aws" | "azure" | "gcp" | "hcloud" | "ovh" | "upcloud";
+  /**
+   * Active only
+   * Filter for active servers only.
+   * @default false
+   */
+  only_active?: boolean | null;
+}
+
+/** Response Get Stats Stats Get */
+export type GetStatsStatsGetData = object;
+
+export type GetDebugInfoDebugGetData = DebugInfoResponse;
 
 /** Response Table Benchmark Table Benchmark Get */
 export type TableBenchmarkTableBenchmarkGetData = Benchmark[];
@@ -2916,6 +3035,7 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "DE"
     | "DE1"
     | "de-fra1"
+    | "denmarkeast"
     | "dk-cph1"
     | "eastasia"
     | "eastus"
@@ -3210,7 +3330,6 @@ export interface SearchServersServersGetParams {
     | "Alibaba"
     | "Ampere"
     | "Apple"
-    | "Hygon"
     | "Intel"
     | "Microsoft";
   /** Processor family */
@@ -3309,6 +3428,7 @@ export interface SearchServersServersGetParams {
   gpu_family?:
     | "Ada Lovelace"
     | "Ampere"
+    | "Blackwell"
     | "Gaudi"
     | "Hopper"
     | "Maxwell"
@@ -3320,48 +3440,31 @@ export interface SearchServersServersGetParams {
     | "A10"
     | "A100"
     | "A10G"
-    | "A30"
-    | "A800"
-    | "A910E"
-    | "A910X"
-    | "A910Z"
-    | "AGF 027"
     | "B200"
     | "B300"
-    | "G39"
     | "G49"
     | "G49E"
     | "G59"
-    | "GA107"
-    | "GPU A"
     | "GPU H"
-    | "GPU H-e"
     | "H100"
-    | "H100 PCIe"
     | "H200"
     | "HL-205"
-    | "INTEL ARRIA 10 GX 1150"
     | "L20"
-    | "L20N"
     | "L4"
     | "L40S"
-    | "M40"
     | "M60"
     | "P100"
     | "P4"
-    | "PPU 810"
     | "RTX 5000"
-    | "RTX 5880"
-    | "RTX 6000"
     | "RTX Pro 6000"
-    | "S7150"
     | "T4"
     | "T4G"
     | "V100"
     | "V100S"
     | "V520"
-    | "Xilinx VU9p"
-    | "intel SG1"
+    | "V620"
+    | "V710"
+    | "nvidia-gb200"
     | "vGPU8";
   /**
    * Limit
@@ -3427,7 +3530,6 @@ export interface SearchServerPricesServerPricesGetParams {
     | "Alibaba"
     | "Ampere"
     | "Apple"
-    | "Hygon"
     | "Intel"
     | "Microsoft";
   /** Processor family */
@@ -3599,6 +3701,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "DE"
     | "DE1"
     | "de-fra1"
+    | "denmarkeast"
     | "dk-cph1"
     | "eastasia"
     | "eastus"
@@ -3746,11 +3849,13 @@ export interface SearchServerPricesServerPricesGetParams {
     | "NL"
     | "NO"
     | "NZ"
+    | "PH"
     | "PL"
     | "QA"
     | "SA"
     | "SE"
     | "SG"
+    | "TH"
     | "TW"
     | "US"
     | "ZA";
@@ -3775,6 +3880,7 @@ export interface SearchServerPricesServerPricesGetParams {
   gpu_family?:
     | "Ada Lovelace"
     | "Ampere"
+    | "Blackwell"
     | "Gaudi"
     | "Hopper"
     | "Maxwell"
@@ -3786,48 +3892,31 @@ export interface SearchServerPricesServerPricesGetParams {
     | "A10"
     | "A100"
     | "A10G"
-    | "A30"
-    | "A800"
-    | "A910E"
-    | "A910X"
-    | "A910Z"
-    | "AGF 027"
     | "B200"
     | "B300"
-    | "G39"
     | "G49"
     | "G49E"
     | "G59"
-    | "GA107"
-    | "GPU A"
     | "GPU H"
-    | "GPU H-e"
     | "H100"
-    | "H100 PCIe"
     | "H200"
     | "HL-205"
-    | "INTEL ARRIA 10 GX 1150"
     | "L20"
-    | "L20N"
     | "L4"
     | "L40S"
-    | "M40"
     | "M60"
     | "P100"
     | "P4"
-    | "PPU 810"
     | "RTX 5000"
-    | "RTX 5880"
-    | "RTX 6000"
     | "RTX Pro 6000"
-    | "S7150"
     | "T4"
     | "T4G"
     | "V100"
     | "V100S"
     | "V520"
-    | "Xilinx VU9p"
-    | "intel SG1"
+    | "V620"
+    | "V710"
+    | "nvidia-gb200"
     | "vGPU8";
   /**
    * Limit
@@ -4009,6 +4098,7 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "DE"
     | "DE1"
     | "de-fra1"
+    | "denmarkeast"
     | "dk-cph1"
     | "eastasia"
     | "eastus"
@@ -4141,11 +4231,13 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "NL"
     | "NO"
     | "NZ"
+    | "PH"
     | "PL"
     | "QA"
     | "SA"
     | "SE"
     | "SG"
+    | "TH"
     | "TW"
     | "US"
     | "ZA";
@@ -4318,6 +4410,7 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "DE"
     | "DE1"
     | "de-fra1"
+    | "denmarkeast"
     | "dk-cph1"
     | "eastasia"
     | "eastus"
@@ -4450,11 +4543,13 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "NL"
     | "NO"
     | "NZ"
+    | "PH"
     | "PL"
     | "QA"
     | "SA"
     | "SE"
     | "SG"
+    | "TH"
     | "TW"
     | "US"
     | "ZA";
