@@ -400,6 +400,27 @@
                           }
                         </td>
                       }
+                      @if (column.type === "cpu_cache") {
+                        <td>
+                          @if (
+                            item.cpu_l1_cache ||
+                            item.cpu_l2_cache ||
+                            item.cpu_l3_cache
+                          ) {
+                            <div class="text-xs text-white whitespace-nowrap">
+                              L1: {{ item.cpu_l1_cache | cpuCacheSize }}
+                            </div>
+                            <div class="text-xs text-white whitespace-nowrap">
+                              L2: {{ item.cpu_l2_cache | cpuCacheSize }}
+                            </div>
+                            <div class="text-xs text-white whitespace-nowrap">
+                              L3: {{ item.cpu_l3_cache | cpuCacheSize }}
+                            </div>
+                          } @else {
+                            <div class="text-sm text-white">-</div>
+                          }
+                        </td>
+                      }
                       @if (column.type === "cpu_model") {
                         <td>
                           @if (item.cpu_model) {
