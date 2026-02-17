@@ -66,6 +66,11 @@ import {
   NotebookText,
   HeartHandshake,
   Palette,
+  CircleCheck,
+  Clock,
+  CircleAlert,
+  CircleCheckBig,
+  Activity,
 } from "lucide-angular";
 
 export const lucideIcons = {
@@ -136,4 +141,9 @@ export const lucideIcons = {
   Projector,
   HeartHandshake,
   Palette,
+  CircleCheck,
+  Clock,
+  CircleAlert,
+  CircleCheckBig,
+  Activity,
 };
