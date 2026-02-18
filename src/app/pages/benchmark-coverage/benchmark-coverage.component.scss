@@ -158,7 +158,8 @@
 
   thead {
     th {
-      @apply text-center px-2 py-3 bg-secondary;
+      `@apply` text-center px-2 py-3 bg-secondary;
+
       position: sticky;
       top: 4rem;
       z-index: 40;
