@@ -39,10 +39,10 @@ export const routes: Routes = [
   },
 
   {
-    path: "debug",
+    path: "navigator/benchmark-coverage",
     loadComponent: () =>
-      import("./pages/missing-benchmarks/missing-benchmarks.component").then(
-        (m) => m.MissingBenchmarksComponent,
+      import("./pages/benchmark-coverage/benchmark-coverage.component").then(
+        (m) => m.BenchmarkCoverageComponent,
       ),
   },
 

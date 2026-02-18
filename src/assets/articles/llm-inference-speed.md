@@ -220,7 +220,7 @@ spanning various CPU architectures and configurations:
 While we continue to evaluate the remaining \~235 server types,
 full coverage is unlikely due to the following reasons:
 
-- **Quota limits** imposed by vendors (see our <a href="/debug" target="_blank" rel="noopener">debug page</a> for per-vendor details).
+- **Quota limits** imposed by vendors (see our <a href="/navigator/benchmark-coverage" target="_blank" rel="noopener">debug page</a> for per-vendor details).
 - **Insufficient memory** (less than 1 GiB) to load even the smallest model.
 - **Limited storage** (less than 75 GiB) that cannot be easily extended (e.g., cloud server plans with fixed disk size).
 - **Deprecation** of server types by the vendor.
