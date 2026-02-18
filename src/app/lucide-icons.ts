@@ -73,6 +73,7 @@ import {
   Activity,
   Link,
   FunnelX,
+  TriangleAlert,
 } from "lucide-angular";
 
 export const lucideIcons = {
@@ -150,4 +151,5 @@ export const lucideIcons = {
   Activity,
   Link,
   FunnelX,
+  TriangleAlert,
 };
