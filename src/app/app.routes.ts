@@ -39,6 +39,12 @@ export const routes: Routes = [
   },
 
   {
+    path: "debug",
+    redirectTo: "navigator/benchmark-coverage",
+    pathMatch: "full",
+  },
+
+  {
     path: "navigator/benchmark-coverage",
     loadComponent: () =>
       import("./pages/benchmark-coverage/benchmark-coverage.component").then(

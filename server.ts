@@ -289,6 +289,17 @@ export function app(): express.Express {
     next();
   });
 
+  // redirect old /debug path to new /navigator/benchmark-coverage
+  server.use((req, res, next) => {
+    if (req.path === "/debug" || req.path.startsWith("/debug?")) {
+      const query = req.originalUrl.includes("?")
+        ? req.originalUrl.slice(req.originalUrl.indexOf("?"))
+        : "";
+      return res.redirect(301, `/navigator/benchmark-coverage${query}`);
+    }
+    next();
+  });
+
   // cache headers for the static files
   server.use((req, res, next) => {
     const generatedJsPattern = /-[A-Z0-9]+\.(js|css|woff2)$/;
