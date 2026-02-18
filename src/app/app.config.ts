@@ -33,13 +33,29 @@ function customErrorHandler(error: any) {
   return error;
 }
 
+const SCROLL_DISABLED_PATHS = [
+  "/navigator/benchmark-coverage",
+  "/servers",
+  "/server_prices",
+  "/storages",
+  "/traffic-prices",
+];
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(
       routes,
       withInMemoryScrolling({
-        scrollPositionRestoration: "top",
+        get scrollPositionRestoration() {
+          if (typeof window === "undefined") return "disabled";
+
+          const shouldDisableScroll = SCROLL_DISABLED_PATHS.some((path) =>
+            window.location.pathname.startsWith(path),
+          );
+
+          return shouldDisableScroll ? "disabled" : "top";
+        },
         anchorScrolling: "enabled",
       }),
     ),
