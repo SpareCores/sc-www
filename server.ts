@@ -291,7 +291,7 @@ export function app(): express.Express {
 
   // redirect old /debug path to new /navigator/benchmark-coverage
   server.use((req, res, next) => {
-    if (req.path === "/debug" || req.path.startsWith("/debug?")) {
+    if (req.path === "/debug") {
       const query = req.originalUrl.includes("?")
         ? req.originalUrl.slice(req.originalUrl.indexOf("?"))
         : "";
