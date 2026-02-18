@@ -2,6 +2,22 @@
   min-height: 75vh;
 }
 
+.bounce-3 {
+  animation: bounce 0.8s ease 3;
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0%);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+  }
+  50% {
+    transform: translateY(-25%);
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
+}
+
 :host ::ng-deep .block_half {
   @apply px-6 py-6 bg-secondary border-emerald-400 border border-solid rounded-lg flex flex-col gap-4 relative overflow-hidden;
   width: calc(50% - 1rem);
