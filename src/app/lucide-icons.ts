@@ -72,6 +72,7 @@ import {
   CircleCheckBig,
   Activity,
   Link,
+  FunnelX,
 } from "lucide-angular";
 
 export const lucideIcons = {
@@ -148,4 +149,5 @@ export const lucideIcons = {
   CircleCheckBig,
   Activity,
   Link,
+  FunnelX,
 };
