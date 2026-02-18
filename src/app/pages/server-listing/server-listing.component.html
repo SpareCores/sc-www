@@ -547,6 +547,16 @@
                     </td>
                   </tr>
                 }
+                @if (!servers.length && !isLoading) {
+                  <tr>
+                    <td
+                      [attr.colspan]="tableColumns.length + 2"
+                      class="px-5 py-6 text-center text-gray-400 text-sm"
+                    >
+                      No servers match the selected filters.
+                    </td>
+                  </tr>
+                }
               </tbody>
             </table>
           </div>
