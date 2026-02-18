@@ -290,8 +290,9 @@ export class BenchmarkCoverageComponent implements OnInit {
   readonly hasActiveFilters = computed<boolean>(() => {
     return (
       this.selectedVendorIds().size > 0 ||
-      this.serverStatusFilter() !== "all" ||
-      Object.keys(this.statusBoolFilters()).length > 0 ||
+      this.serverStatusFilter() !== "active" ||
+      JSON.stringify(this.statusBoolFilters()) !==
+        JSON.stringify({ has_price: "yes" }) ||
       Object.keys(this.benchmarkFamilyFilters()).length > 0 ||
       this.searchTerm().trim().length > 0
     );
