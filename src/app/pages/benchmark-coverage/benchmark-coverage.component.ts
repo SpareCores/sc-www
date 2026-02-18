@@ -89,7 +89,7 @@ export class BenchmarkCoverageComponent implements OnInit {
   readonly serverStatusFilter = signal<ServerStatusFilter>("active");
   readonly statusBoolFilters = signal<
     Record<string, BenchmarkFamilyFilterValue>
-  >({});
+  >({ has_price: "yes" });
   readonly searchTerm = signal<string>("");
 
   readonly pageLimits: PageLimitOption[] = [10, 25, 50, 100, 250, "All"];
@@ -408,7 +408,7 @@ export class BenchmarkCoverageComponent implements OnInit {
   clearFilters() {
     this.selectedVendorIds.set(new Set());
     this.serverStatusFilter.set("active");
-    this.statusBoolFilters.set({});
+    this.statusBoolFilters.set({ has_price: "yes" });
     this.benchmarkFamilyFilters.set({});
     this.searchTerm.set("");
     this.page.set(1);
