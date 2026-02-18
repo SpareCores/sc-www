@@ -1,18 +1,50 @@
 <div class="search_bar_content" id="serverSearchBar">
   <div class="top overflow-hidden bg-secondary">
-    <button
-      class="w-full bg-emerald-400 hover:bg-emerald-500 text-white py-3 rounded-lg font-bold"
-      data-ph-capture-attribute-sc-event="server listing search prompt open"
-      data-ph-capture-attribute-server-listing-search-prompt-action="open"
-      (click)="openSearchPrompt()"
-    >
-      Search Prompt
-    </button>
+    @if (useTopSearchInput && getTopSearchParameter(); as topSearchParameter) {
+      <div class="top_search_wrap">
+        <input
+          type="text"
+          class="top_search_input"
+          [placeholder]="topSearchPlaceholder"
+          [(ngModel)]="topSearchParameter.modelValue"
+          (ngModelChange)="valueChanged()"
+        />
+        <button
+          type="button"
+          class="top_search_button"
+          (click)="
+            topSearchHasValue(topSearchParameter)
+              ? clearTopSearch(topSearchParameter)
+              : triggerTopSearch()
+          "
+          [attr.aria-label]="
+            topSearchHasValue(topSearchParameter) ? 'Clear search' : 'Search'
+          "
+        >
+          <lucide-icon
+            [name]="topSearchHasValue(topSearchParameter) ? 'x' : 'search'"
+            class="h-4 w-4"
+          ></lucide-icon>
+        </button>
+      </div>
+    } @else {
+      <button
+        class="w-full bg-emerald-400 hover:bg-emerald-500 text-white py-3 rounded-lg font-bold"
+        data-ph-capture-attribute-sc-event="server listing search prompt open"
+        data-ph-capture-attribute-server-listing-search-prompt-action="open"
+        (click)="openSearchPrompt()"
+      >
+        Search Prompt
+      </button>
+    }
   </div>
 
   <div class="filters overflow-hidden bg-secondary">
     @for (filter of filterCategories; track filter.category_id) {
-      <div class="mx-2 p-3 border-b border-gray-200">
+      <div
+        class="mx-2 p-3 border-b border-gray-200"
+        [attr.data-category-id]="filter.category_id"
+      >
         <div
           class="flex justify-between cursor-pointer"
           (click)="toggleCategory(filter)"
@@ -37,13 +69,18 @@
           </div>
         </div>
         @if (!filter.collapsed) {
-          <div class="pt-4">
+          <div
+            [class.pt-4]="!noTopPaddingCategoryIds.includes(filter.category_id)"
+          >
             @for (
               parameter of getParametersByCategory(filter.category_id);
               track parameter.schema.name + "_" + parameter.schema.title
             ) {
               <div>
-                @if (getParameterType(parameter) !== "checkbox") {
+                @if (
+                  showParameterTitles &&
+                  getParameterType(parameter) !== "checkbox"
+                ) {
                   <div class="flex gap-2 items-center">
                     <div
                       class="font-bold text-emerald-400 text-sm"
@@ -189,7 +226,7 @@
                   </div>
                 }
                 @if (getParameterType(parameter) === "checkbox") {
-                  <div class="flex gap-2 mb-4 mt-4">
+                  <div class="flex items-center gap-1 mb-2">
                     <input
                       type="checkbox"
                       id="filter_checkbox_{{ parameter.name }}"
@@ -206,8 +243,8 @@
                       [disabled]="isParameterDisabled(parameter.name)"
                       class="checkbox"
                     />
-                    <div class="flex gap-2 items-center">
-                      <div class="text-white text-sm">
+                    <div class="flex items-center gap-1">
+                      <div class="text-white text-sm leading-tight">
                         {{ parameter.schema.title }}
                       </div>
                       @if (parameter.schema.description) {
@@ -226,12 +263,17 @@
                 }
                 @if (getParameterType(parameter) === "enumArray") {
                   <div class="flex flex-col gap-2 mb-4 mt-4">
-                    @for (enum of parameter.schema.enum; track enum) {
+                    @for (
+                      enum of parameter.schema.enum;
+                      track benchmarkFilterOptionKey(enum) ||
+                        benchmarkFilterOptionLabel(enum)
+                    ) {
                       <div class="flex items-center gap-1">
                         <input
                           type="checkbox"
                           id="filter_enum_{{ parameter.name }}_{{
-                            enum?.value || enum
+                            benchmarkFilterOptionKey(enum) ||
+                              benchmarkFilterOptionLabel(enum)
                           }}"
                           data-ph-capture-attribute-sc-event="server listing filter"
                           data-ph-capture-attribute-server-listing-filter-type="checkbox"
@@ -247,7 +289,188 @@
                           class="checkbox"
                         />
                         <div class="text-white text-sm">
-                          {{ enum?.value ? enum?.value : enum }}
+                          {{ benchmarkFilterOptionLabel(enum) }}
+                        </div>
+                      </div>
+                    }
+                  </div>
+                }
+                @if (getParameterType(parameter) === "singleRadio") {
+                  @if (!showParameterTitles) {
+                    <div
+                      class="font-bold text-emerald-400 text-sm mb-2"
+                      id="filter_title_{{ parameter.name }}"
+                    >
+                      {{ parameter.schema.title }}
+                    </div>
+                  }
+                  <div
+                    class="flex items-center gap-4 text-sm text-white mb-4 mt-4"
+                  >
+                    @for (
+                      enum of parameter.schema.enum;
+                      track benchmarkFilterOptionKey(enum) ||
+                        benchmarkFilterOptionLabel(enum)
+                    ) {
+                      <label class="flex items-center gap-1 cursor-pointer">
+                        <input
+                          type="radio"
+                          [name]="'single_radio_' + parameter.name"
+                          [value]="benchmarkFilterOptionKey(enum)"
+                          [checked]="
+                            parameter.modelValue ===
+                            benchmarkFilterOptionKey(enum)
+                          "
+                          (change)="
+                            parameter.modelValue =
+                              benchmarkFilterOptionKey(enum);
+                            filterServers()
+                          "
+                          [disabled]="isParameterDisabled(parameter.name)"
+                          class="checkbox"
+                        />
+                        <span>{{ benchmarkFilterOptionLabel(enum) }}</span>
+                      </label>
+                    }
+                  </div>
+                }
+                @if (getParameterType(parameter) === "benchmarkTriState") {
+                  <div class="flex flex-col gap-4 mb-4 mt-4">
+                    @for (
+                      enum of parameter.schema.enum;
+                      track benchmarkFilterOptionKey(enum) ||
+                        benchmarkFilterOptionLabel(enum)
+                    ) {
+                      <div class="flex flex-col gap-2">
+                        <div class="text-emerald-400 text-sm font-bold">
+                          {{ benchmarkFilterOptionLabel(enum) }}
+                        </div>
+                        <div class="flex items-center gap-4 text-sm text-white">
+                          <label
+                            class="flex items-center gap-1 cursor-pointer"
+                            [attr.for]="
+                              'filter_benchmark_' +
+                              parameter.name +
+                              '_' +
+                              benchmarkFilterOptionKey(enum) +
+                              '_all'
+                            "
+                          >
+                            <input
+                              type="radio"
+                              [id]="
+                                'filter_benchmark_' +
+                                parameter.name +
+                                '_' +
+                                benchmarkFilterOptionKey(enum) +
+                                '_all'
+                              "
+                              [name]="
+                                'filter_benchmark_' +
+                                parameter.name +
+                                '_' +
+                                benchmarkFilterOptionKey(enum)
+                              "
+                              [checked]="
+                                benchmarkFilterSelection(parameter, enum) ===
+                                'all'
+                              "
+                              (change)="
+                                setBenchmarkFilterSelection(
+                                  parameter,
+                                  enum,
+                                  'all'
+                                )
+                              "
+                              [disabled]="isParameterDisabled(parameter.name)"
+                              class="checkbox"
+                            />
+                            <span>All</span>
+                          </label>
+
+                          <label
+                            class="flex items-center gap-1 cursor-pointer"
+                            [attr.for]="
+                              'filter_benchmark_' +
+                              parameter.name +
+                              '_' +
+                              benchmarkFilterOptionKey(enum) +
+                              '_yes'
+                            "
+                          >
+                            <input
+                              type="radio"
+                              [id]="
+                                'filter_benchmark_' +
+                                parameter.name +
+                                '_' +
+                                benchmarkFilterOptionKey(enum) +
+                                '_yes'
+                              "
+                              [name]="
+                                'filter_benchmark_' +
+                                parameter.name +
+                                '_' +
+                                benchmarkFilterOptionKey(enum)
+                              "
+                              [checked]="
+                                benchmarkFilterSelection(parameter, enum) ===
+                                'yes'
+                              "
+                              (change)="
+                                setBenchmarkFilterSelection(
+                                  parameter,
+                                  enum,
+                                  'yes'
+                                )
+                              "
+                              [disabled]="isParameterDisabled(parameter.name)"
+                              class="checkbox"
+                            />
+                            <span>Yes</span>
+                          </label>
+
+                          <label
+                            class="flex items-center gap-1 cursor-pointer"
+                            [attr.for]="
+                              'filter_benchmark_' +
+                              parameter.name +
+                              '_' +
+                              benchmarkFilterOptionKey(enum) +
+                              '_no'
+                            "
+                          >
+                            <input
+                              type="radio"
+                              [id]="
+                                'filter_benchmark_' +
+                                parameter.name +
+                                '_' +
+                                benchmarkFilterOptionKey(enum) +
+                                '_no'
+                              "
+                              [name]="
+                                'filter_benchmark_' +
+                                parameter.name +
+                                '_' +
+                                benchmarkFilterOptionKey(enum)
+                              "
+                              [checked]="
+                                benchmarkFilterSelection(parameter, enum) ===
+                                'no'
+                              "
+                              (change)="
+                                setBenchmarkFilterSelection(
+                                  parameter,
+                                  enum,
+                                  'no'
+                                )
+                              "
+                              [disabled]="isParameterDisabled(parameter.name)"
+                              class="checkbox"
+                            />
+                            <span>No</span>
+                          </label>
                         </div>
                       </div>
                     }
@@ -255,12 +478,17 @@
                 }
                 @if (getParameterType(parameter) === "compliance_framework") {
                   <div class="flex flex-col gap-2 mb-4 mt-4">
-                    @for (enum of parameter.schema.enum; track enum) {
+                    @for (
+                      enum of parameter.schema.enum;
+                      track benchmarkFilterOptionKey(enum) ||
+                        benchmarkFilterOptionLabel(enum)
+                    ) {
                       <div class="flex items-center gap-1">
                         <input
                           type="checkbox"
                           id="filter_enum_{{ parameter.name }}_{{
-                            enum?.value || enum
+                            benchmarkFilterOptionKey(enum) ||
+                              benchmarkFilterOptionLabel(enum)
                           }}"
                           data-ph-capture-attribute-sc-event="server listing filter"
                           data-ph-capture-attribute-server-listing-filter-type="checkbox"
@@ -284,12 +512,17 @@
                 }
                 @if (getParameterType(parameter) === "vendor") {
                   <div class="flex flex-col gap-2 mb-4 mt-4">
-                    @for (enum of parameter.schema.enum; track enum) {
+                    @for (
+                      enum of parameter.schema.enum;
+                      track benchmarkFilterOptionKey(enum) ||
+                        benchmarkFilterOptionLabel(enum)
+                    ) {
                       <div class="flex items-center gap-1">
                         <input
                           type="checkbox"
                           id="filter_enum_{{ parameter.name }}_{{
-                            enum?.value || enum
+                            benchmarkFilterOptionKey(enum) ||
+                              benchmarkFilterOptionLabel(enum)
                           }}"
                           data-ph-capture-attribute-sc-event="server listing filter"
                           data-ph-capture-attribute-server-listing-filter-type="checkbox"
@@ -313,12 +546,17 @@
                 }
                 @if (getParameterType(parameter) === "storage_id") {
                   <div class="flex flex-col gap-2 mb-4 mt-4">
-                    @for (enum of parameter.schema.enum; track enum) {
+                    @for (
+                      enum of parameter.schema.enum;
+                      track benchmarkFilterOptionKey(enum) ||
+                        benchmarkFilterOptionLabel(enum)
+                    ) {
                       <div class="flex items-center gap-1">
                         <input
                           type="checkbox"
                           id="filter_enum_{{ parameter.name }}_{{
-                            enum?.value || enum
+                            benchmarkFilterOptionKey(enum) ||
+                              benchmarkFilterOptionLabel(enum)
                           }}"
                           data-ph-capture-attribute-sc-event="server listing filter"
                           data-ph-capture-attribute-server-listing-filter-type="checkbox"

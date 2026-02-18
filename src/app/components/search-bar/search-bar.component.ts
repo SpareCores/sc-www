@@ -31,6 +31,24 @@ const optionsModal: ModalOptions = {
   closable: true,
 };
 
+type SearchBarParameter = {
+  name: string;
+  modelValue: unknown;
+  schema: {
+    category_id?: string;
+    description?: string;
+    default?: unknown;
+    null_value?: unknown;
+    filter_mode?: string;
+    enum?: BenchmarkFilterOption[];
+    type?: string;
+    anyOf?: Array<{ type?: string }>;
+    [key: string]: unknown;
+  };
+};
+
+type BenchmarkFilterOption = string | { key?: string; value?: string };
+
 @Component({
   selector: "app-search-bar",
   imports: [
@@ -52,6 +70,11 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   @Input() filterCategories: any[] = [];
   @Input() selectedCurrency: any | null = null;
   @Input() AIAssistantType = "servers";
+  @Input() useTopSearchInput = false;
+  @Input() topSearchParameterName = "search";
+  @Input() topSearchPlaceholder = "Search vendor or API reference";
+  @Input() showParameterTitles = true;
+  @Input() noTopPaddingCategoryIds: string[] = [];
 
   @Output() searchChanged = new EventEmitter<any>();
 
@@ -166,6 +189,13 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
         item.modelValue = [];
       }
 
+      if (
+        this.getParameterType(item) === "benchmarkTriState" &&
+        (!item.modelValue || typeof item.modelValue !== "object")
+      ) {
+        item.modelValue = {};
+      }
+
       let value =
         this.extraParameters[item.name] ||
         this.query[item.name] ||
@@ -191,7 +221,12 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
         value = [this.query[item.name]];
       }
 
-      if (this.query[item.name]) {
+      const queryValue = this.query[item.name];
+      const hasQueryValue = Array.isArray(queryValue)
+        ? queryValue.length > 0
+        : Boolean(queryValue);
+
+      if (hasQueryValue) {
         if (
           this.filterCategories.find(
             (column) => column.category_id === item.schema.category_id,
@@ -225,6 +260,10 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
 
       if (value === "true" || value === "false") {
         value = value === "true";
+      }
+
+      if (this.getParameterType(item) === "benchmarkTriState") {
+        value = this.normalizeBenchmarkTriStateValue(value);
       }
 
       if (!value && item.schema.null_value) {
@@ -264,9 +303,28 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   getQueryObject() {
-    const paramObject = this.searchParameters
+    const paramObject = (this.searchParameters as SearchBarParameter[])
       ?.filter((item) => !this.isParameterDisabled(item.name))
-      .map((param: any) => {
+      .map((param) => {
+        if (this.getParameterType(param) === "singleRadio") {
+          return param.modelValue ? { [param.name]: param.modelValue } : {};
+        }
+
+        if (this.getParameterType(param) === "benchmarkTriState") {
+          const benchmarkTriStateValue = this.normalizeBenchmarkTriStateValue(
+            param.modelValue,
+          );
+          const activeEntries = Object.entries(benchmarkTriStateValue).filter(
+            ([, value]) => value === "yes" || value === "no",
+          );
+
+          return activeEntries.length > 0
+            ? {
+                [param.name]: Object.fromEntries(activeEntries),
+              }
+            : {};
+        }
+
         return (param.modelValue || param.modelValue === false) &&
           param.schema.category_id &&
           param.schema.default !== param.modelValue &&
@@ -274,27 +332,39 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
           ? { [param.name]: param.modelValue }
           : {};
       })
-      .reduce((acc: any, curr: any) => {
-        return { ...acc, ...curr };
-      }, {});
+      .reduce(
+        (acc, curr) => {
+          return { ...acc, ...curr };
+        },
+        {} as Record<string, unknown>,
+      );
 
     return paramObject || {};
   }
 
-  getComplianceFrameworkName(id: string) {
+  getComplianceFrameworkName(id: BenchmarkFilterOption) {
+    const normalizedId = this.normalizeOptionId(id);
     return (
       this.complianceFrameworks.find(
-        (item) => item.compliance_framework_id === id,
-      )?.abbreviation || id
+        (item) => item.compliance_framework_id === normalizedId,
+      )?.abbreviation || normalizedId
     );
   }
 
-  getVendorName(id: string) {
-    return this.vendors.find((item) => item.vendor_id === id)?.name || id;
+  getVendorName(id: BenchmarkFilterOption) {
+    const normalizedId = this.normalizeOptionId(id);
+    return (
+      this.vendors.find((item) => item.vendor_id === normalizedId)?.name ||
+      normalizedId
+    );
   }
 
-  getStorageName(id: string) {
-    return this.storageIds.find((item) => item.storage_id === id)?.name || id;
+  getStorageName(id: BenchmarkFilterOption) {
+    const normalizedId = this.normalizeOptionId(id);
+    return (
+      this.storageIds.find((item) => item.storage_id === normalizedId)?.name ||
+      normalizedId
+    );
   }
 
   getStep(parameter: any) {
@@ -308,8 +378,25 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   getParametersByCategory(category: string) {
     if (!this.searchParameters) return [];
 
-    return this.searchParameters?.filter(
-      (param: any) => param.schema?.category_id === category,
+    return (this.searchParameters as SearchBarParameter[])?.filter((param) => {
+      if (param.schema?.category_id !== category) {
+        return false;
+      }
+
+      if (
+        this.useTopSearchInput &&
+        param.name === this.topSearchParameterName
+      ) {
+        return false;
+      }
+
+      return true;
+    });
+  }
+
+  getTopSearchParameter() {
+    return (this.searchParameters as SearchBarParameter[])?.find(
+      (param) => param.name === this.topSearchParameterName,
     );
   }
 
@@ -349,6 +436,21 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     if (
+      parameter.schema.filter_mode === "single_radio" &&
+      parameter.schema.enum
+    ) {
+      return "singleRadio";
+    }
+
+    if (
+      parameter.schema.filter_mode === "tri_state_boolean" &&
+      type === "array" &&
+      parameter.schema.enum
+    ) {
+      return "benchmarkTriState";
+    }
+
+    if (
       (type === "integer" || type === "number") &&
       (parameter.schema.range_min || parameter.schema.range_min === 0) &&
       parameter.schema.range_max
@@ -372,8 +474,97 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
     return "text";
   }
 
+  benchmarkFilterOptionKey(valueOrObj: BenchmarkFilterOption) {
+    return typeof valueOrObj === "string" ? valueOrObj : valueOrObj?.key;
+  }
+
+  benchmarkFilterOptionLabel(valueOrObj: BenchmarkFilterOption) {
+    return typeof valueOrObj === "string"
+      ? valueOrObj
+      : valueOrObj?.value || valueOrObj?.key || "";
+  }
+
+  benchmarkFilterSelection(
+    param: SearchBarParameter,
+    valueOrObj: BenchmarkFilterOption,
+  ): "all" | "yes" | "no" {
+    const key = this.benchmarkFilterOptionKey(valueOrObj);
+
+    if (!key) {
+      return "all";
+    }
+
+    const modelValue = this.normalizeBenchmarkTriStateValue(param?.modelValue);
+    const selection = modelValue[key];
+
+    if (selection === "yes" || selection === "no") {
+      return selection;
+    }
+
+    return "all";
+  }
+
+  setBenchmarkFilterSelection(
+    param: SearchBarParameter,
+    valueOrObj: BenchmarkFilterOption,
+    selection: "all" | "yes" | "no",
+  ) {
+    const key = this.benchmarkFilterOptionKey(valueOrObj);
+
+    if (!key) {
+      return;
+    }
+
+    const next = {
+      ...this.normalizeBenchmarkTriStateValue(param?.modelValue),
+    };
+
+    if (selection === "all") {
+      delete next[key];
+    } else {
+      next[key] = selection;
+    }
+
+    param.modelValue = next;
+    this.filterServers();
+  }
+
+  private normalizeBenchmarkTriStateValue(value: unknown) {
+    if (!value || typeof value !== "object" || Array.isArray(value)) {
+      return {} as Record<string, "all" | "yes" | "no">;
+    }
+
+    const normalized: Record<string, "all" | "yes" | "no"> = {};
+
+    Object.entries(value as Record<string, unknown>).forEach(([key, raw]) => {
+      if (raw === "yes" || raw === true || raw === "true") {
+        normalized[key] = "yes";
+        return;
+      }
+
+      if (raw === "no" || raw === false || raw === "false") {
+        normalized[key] = "no";
+      }
+    });
+
+    return normalized;
+  }
+
   valueChanged() {
     this.valueChangeDebouncer.next(0);
+  }
+
+  triggerTopSearch() {
+    this.filterServers();
+  }
+
+  topSearchHasValue(parameter: SearchBarParameter | null | undefined): boolean {
+    return Boolean((parameter?.modelValue ?? "").toString().trim());
+  }
+
+  clearTopSearch(parameter: SearchBarParameter) {
+    parameter.modelValue = "";
+    this.filterServers();
   }
 
   isEnumSelected(param: any, valueOrObj: any) {
@@ -636,5 +827,9 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   ngOnDestroy() {
     this.subscription.unsubscribe();
     this.valueChangeDebouncer.complete();
+  }
+
+  private normalizeOptionId(value: BenchmarkFilterOption): string {
+    return typeof value === "string" ? value : value?.key || value?.value || "";
   }
 }
