@@ -112,7 +112,7 @@
 }
 
 .pagination_controls {
-  @apply flex justify-between items-center mt-12 gap-4;
+  @apply flex justify-between items-center mt-12 gap-4 pb-4;
 }
 
 .page_size_selector {
@@ -217,10 +217,6 @@
 }
 
 @media (max-width: 1200px) {
-  .filter_bar {
-    position: relative;
-  }
-
   .list_holder {
     min-width: 0;
   }
