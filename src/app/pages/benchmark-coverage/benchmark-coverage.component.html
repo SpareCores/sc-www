@@ -314,10 +314,23 @@
                             class="h-4 w-4 text-emerald-400"
                           ></lucide-icon>
                         } @else {
-                          <lucide-icon
-                            name="x"
-                            class="h-4 w-4 text-white"
-                          ></lucide-icon>
+                          <a
+                            [href]="
+                              getBenchmarkRawDataUrl(
+                                row.vendor_id,
+                                row.api_reference,
+                                benchmarkFamily
+                              )
+                            "
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="flex cursor-pointer"
+                          >
+                            <lucide-icon
+                              name="x"
+                              class="h-4 w-4 text-white"
+                            ></lucide-icon>
+                          </a>
                         }
                       </td>
                     }

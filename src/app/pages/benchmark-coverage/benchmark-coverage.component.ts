@@ -94,6 +94,9 @@ export class BenchmarkCoverageComponent implements OnInit {
   >({ has_price: "yes" });
   readonly searchTerm = signal<string>("");
 
+  readonly INSPECTOR_DATA_ROOT_URL =
+    "https://github.com/SpareCores/sc-inspector-data/tree/main/data";
+
   readonly pageLimits = [10, 25, 50, 100, 250, Infinity];
   readonly page = signal<number>(1);
   readonly limit = signal<number>(25);
@@ -528,5 +531,18 @@ export class BenchmarkCoverageComponent implements OnInit {
       benchmark_families: { ...this.benchmarkFamilyFilters() },
     };
     this.searchParameters = this.buildSearchParameters();
+  }
+
+  getBenchmarkRawDataUrl(
+    vendorId: string,
+    apiReference: string,
+    benchmarkFamily: string,
+  ): string {
+    const dirMapping: Record<string, string> = {
+      llm_speed: "llm",
+      stress_ng: "stressngfull",
+    };
+    const dir = dirMapping[benchmarkFamily] ?? benchmarkFamily;
+    return `${this.INSPECTOR_DATA_ROOT_URL}/${vendorId}/${apiReference}/${dir}`;
   }
 }
