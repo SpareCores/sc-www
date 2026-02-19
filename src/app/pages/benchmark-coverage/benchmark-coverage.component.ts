@@ -300,7 +300,7 @@ export class BenchmarkCoverageComponent implements OnInit {
   ngOnInit() {
     this.seoHandler.updateTitleAndMetaTags(
       "Spare Cores - Benchmark Coverage",
-      "This page shows all servers that are missing benchmarks",
+      "View cloud server benchmark coverage across vendors with pricing data, hardware inspection results, and standardized performance measurements from Spare Cores.",
       "missing benchmarks, benchmark status",
     );
 
