@@ -425,6 +425,10 @@ export class BenchmarkCoverageComponent implements OnInit {
 
   toggleCollapse() {
     this.isCollapsed = !this.isCollapsed;
+    const benchmarkCat = this.filterCategories.find(
+      (cat) => cat.category_id === "benchmark",
+    );
+    if (benchmarkCat) benchmarkCat.collapsed = this.isCollapsed;
   }
 
   private async loadDebugData() {

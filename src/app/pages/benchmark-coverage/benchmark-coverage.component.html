@@ -127,8 +127,6 @@
       for active instances.
     </div>
 
-    <div></div>
-
     <div class="flex gap-8 page_layout">
       <div class="filter_bar bg-primary" [class.collapsed]="isCollapsed">
         <div
@@ -158,21 +156,24 @@
         >
         </app-search-bar>
 
-        <div
-          class="px-4 pb-4 bg-secondary flex flex-col gap-3 border-r border-emerald-400 border-solid"
-        >
-          <div class="text-sm text-white text-center">
-            {{ filteredTableRows().length }} of {{ tableRows().length }} servers
-          </div>
-          <button
-            type="button"
-            class="text-white bg-emerald-400 hover:bg-emerald-500 rounded-lg px-3 py-2 relative flex gap-2 items-center justify-center"
-            (click)="clearFilters()"
+        @if (!isCollapsed) {
+          <div
+            class="px-4 pb-4 bg-secondary flex flex-col gap-3 border-r border-emerald-400 border-solid"
           >
-            <lucide-icon class="h-4 w-4" name="funnel-x"></lucide-icon>
-            Clear filters
-          </button>
-        </div>
+            <div class="text-sm text-white text-center">
+              {{ filteredTableRows().length }} of
+              {{ tableRows().length }} servers
+            </div>
+            <button
+              type="button"
+              class="text-white bg-emerald-400 hover:bg-emerald-500 rounded-lg px-3 py-2 relative flex gap-2 items-center justify-center"
+              (click)="clearFilters()"
+            >
+              <lucide-icon class="h-4 w-4" name="funnel-x"></lucide-icon>
+              Clear filters
+            </button>
+          </div>
+        }
       </div>
 
       <div
