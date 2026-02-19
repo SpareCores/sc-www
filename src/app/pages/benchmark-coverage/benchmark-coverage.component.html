@@ -252,7 +252,7 @@
                       @if (row.has_price) {
                         <lucide-icon
                           name="check"
-                          class="h-4 w-4 text-emerald-400"
+                          class="h-4 w-4 text-emerald-400 justify-self-center"
                         ></lucide-icon>
                       } @else {
                         <lucide-icon
@@ -265,12 +265,12 @@
                       @if (row.is_active) {
                         <lucide-icon
                           name="check"
-                          class="h-4 w-4 text-emerald-400"
+                          class="h-4 w-4 text-emerald-400 justify-self-center"
                         ></lucide-icon>
                       } @else {
                         <lucide-icon
                           name="x"
-                          class="h-4 w-4 text-white"
+                          class="h-4 w-4 text-white justify-self-center"
                         ></lucide-icon>
                       }
                     </td>
@@ -278,12 +278,12 @@
                       @if (row.has_hw_info) {
                         <lucide-icon
                           name="check"
-                          class="h-4 w-4 text-emerald-400"
+                          class="h-4 w-4 text-emerald-400 justify-self-center"
                         ></lucide-icon>
                       } @else {
                         <lucide-icon
                           name="x"
-                          class="h-4 w-4 text-white"
+                          class="h-4 w-4 text-white justify-self-center"
                         ></lucide-icon>
                       }
                     </td>
@@ -291,12 +291,12 @@
                       @if (row.has_any_benchmark) {
                         <lucide-icon
                           name="check"
-                          class="h-4 w-4 text-emerald-400"
+                          class="h-4 w-4 text-emerald-400 justify-self-center"
                         ></lucide-icon>
                       } @else {
                         <lucide-icon
                           name="x"
-                          class="h-4 w-4 text-white"
+                          class="h-4 w-4 text-white justify-self-center"
                         ></lucide-icon>
                       }
                     </td>
@@ -336,7 +336,7 @@
                       </td>
                     }
                     <td class="border-l border-gray-600 icon-cell">
-                      <div class="flex" [attr.title]="row.assessment.tooltip">
+                      <div [attr.title]="row.assessment.tooltip">
                         @if (row.assessment.kind === "fully_evaluated") {
                           <lucide-icon
                             [name]="row.assessment.icon"

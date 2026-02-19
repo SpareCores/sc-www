@@ -1,12 +1,6 @@
 .items_table {
   @apply w-full text-white;
 
-  .checkbox_column {
-    width: 2rem !important;
-    padding-right: 0.5rem;
-    padding-left: 0.75rem;
-  }
-
   thead {
     @apply border-b border-gray-200 border-solid;
     th {
@@ -245,5 +239,5 @@
 }
 
 .icon-cell {
-  padding-left: 1rem !important;
+  justify-items: center !important;
 }
