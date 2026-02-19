@@ -110,6 +110,40 @@
       </div>
     }
 
+    @if (serverDetails && getBenchmark(true) === "-") {
+      <div
+        class="mx-2 xl:mx-0 mt-8 bg-yellow-500 text-sm text-gray-900 rounded-lg p-4 flex gap-3 items-center"
+        role="alert"
+      >
+        <lucide-icon
+          name="triangle-alert"
+          class="h-6 w-6 bounce-3"
+        ></lucide-icon>
+        <div>
+          <span class="font-bold"
+            >Benchmark data is currently unavailable for this server.
+          </span>
+          View this
+          <a
+            class="underline font-semibold"
+            routerLink="/navigator/benchmark-coverage"
+            [queryParams]="{
+              search: serverDetails.api_reference,
+            }"
+            fragment="benchmark-coverage-details-pointer"
+          >
+            server's measurement status </a
+          >, or visit the
+          <a
+            class="underline font-semibold"
+            routerLink="/navigator/benchmark-coverage"
+            >general Benchmark Coverage</a
+          >
+          page to learn more about possible causes.
+        </div>
+      </div>
+    }
+
     @if (serverDetails) {
       <div class="mx-2 xl:mx-0 flex flex-wrap gap-8">
         <div class="my-8 w-full">

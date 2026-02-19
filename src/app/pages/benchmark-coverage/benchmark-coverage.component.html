@@ -1,0 +1,517 @@
+<div class="w-full bg-primary">
+  <div class="content pt-16 pb-16">
+    <app-breadcrumbs [segments]="breadcrumbs()"></app-breadcrumbs>
+
+    <div class="flex flex-col gap-4 my-8 mx-2 xl:mx-0">
+      <div class="flex gap-4 items-center w-full justify-between">
+        <h1 class="text-white font-bold text-3xl flex items-center">
+          <lucide-icon class="h-8 w-8 mr-2" name="activity"></lucide-icon>
+          {{ pageTitle }}
+        </h1>
+      </div>
+      <div class="text-white text-xl pr-4 md:pr-16">
+        {{ pageDescription }}
+      </div>
+    </div>
+
+    @if (isLoading()) {
+      <div class="text-white text-lg">Loading benchmark data...</div>
+    } @else if (errorMessage()) {
+      <div class="text-red-300 text-lg">{{ errorMessage() }}</div>
+    } @else {
+      <div class="overflow-x-auto mx-2 xl:mx-0">
+        <table class="items_table no-hover-table">
+          <thead>
+            <tr>
+              <th class="py-4 px-4">
+                <div class="flex gap-1 whitespace-nowrap">VENDOR</div>
+              </th>
+              <th class="py-4 px-4">
+                <div class="flex justify-end whitespace-nowrap">
+                  IDENTIFIED SERVERS
+                </div>
+              </th>
+              <th
+                colspan="2"
+                class="border-l border-gray-600 px-3 md:px-12 py-4"
+              >
+                <div class="flex justify-center whitespace-nowrap">
+                  INACTIVE SERVERS
+                </div>
+              </th>
+              <th
+                colspan="2"
+                class="border-l border-gray-600 px-3 md:px-12 py-4"
+              >
+                <div class="flex justify-center whitespace-nowrap">
+                  ACTIVE SERVERS
+                </div>
+              </th>
+              <th
+                colspan="2"
+                class="border-l border-gray-600 px-3 md:px-12 py-4"
+              >
+                <div class="flex justify-center whitespace-nowrap">
+                  EVALUATED ACTIVE SERVERS
+                </div>
+              </th>
+              <th
+                colspan="2"
+                class="border-l border-gray-600 px-3 md:px-12 py-4"
+              >
+                <div class="flex justify-center whitespace-nowrap">
+                  MISSING ACTIVE SERVERS
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (vendor of vendorDebugData(); track vendor.vendor_id) {
+              <tr>
+                <td class="pl-3 pr-2 py-3">
+                  <div class="flex gap-1">
+                    {{ vendorNameById()[vendor.vendor_id] || vendor.vendor_id }}
+                  </div>
+                </td>
+                <td class="px-4">
+                  <div class="flex justify-end">
+                    {{ vendor.all }}
+                  </div>
+                </td>
+                <td class="border-l border-gray-600 w-16 pl-6 pr-1">
+                  <div class="flex justify-end">
+                    {{ vendor.inactive }}
+                  </div>
+                </td>
+                <td class="w-20 pl-1 pr-6">
+                  <div class="flex justify-end">
+                    {{ vendor.inactive / vendor.all | percent: "1.2" }}
+                  </div>
+                </td>
+                <td class="border-l border-gray-600 w-16 pl-6 pr-1">
+                  <div class="flex justify-end">
+                    {{ vendor.active }}
+                  </div>
+                </td>
+                <td class="w-20 pl-1 pr-6">
+                  <div class="flex justify-end">
+                    {{ vendor.active / vendor.all | percent: "1.2" }}
+                  </div>
+                </td>
+                <td class="border-l border-gray-600 w-16 pl-6 pr-1">
+                  <div class="flex justify-end">
+                    {{ vendor.evaluated }}
+                  </div>
+                </td>
+                <td class="w-20 pl-1 pr-6">
+                  <div class="flex justify-end">
+                    {{ vendor.evaluated / vendor.active | percent: "1.2" }}
+                  </div>
+                </td>
+                <td class="border-l border-gray-600 w-16 pl-6 pr-1">
+                  <div class="flex justify-end">
+                    {{ vendor.missing }}
+                  </div>
+                </td>
+                <td class="w-20 pl-1 pr-6">
+                  <div class="flex justify-end">
+                    {{ vendor.missing / vendor.active | percent: "1.2" }}
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+    <div class="flex flex-col gap-4 mt-8 mb-12 mx-2 xl:mx-0">
+      <div
+        class="text-white text-xl pr-4 md:pr-16"
+        id="benchmark-coverage-details-pointer"
+      >
+        {{ pageHelperText }}
+      </div>
+    </div>
+
+    <div class="flex gap-8 mx-2 xl:mx-0 page_layout">
+      <div class="filter_bar bg-primary" [class.collapsed]="isCollapsed">
+        <div
+          class="collapser bg-secondary"
+          (click)="toggleCollapse()"
+          (keydown.enter)="toggleCollapse()"
+          (keydown.space)="toggleCollapse(); $event.preventDefault()"
+          tabindex="0"
+          role="button"
+          [attr.aria-expanded]="!isCollapsed"
+        >
+          <lucide-icon
+            [name]="isCollapsed ? 'chevron-right' : 'chevron-left'"
+            class="h-6 w-6 text-emerald-400"
+          ></lucide-icon>
+        </div>
+        <app-search-bar
+          [query]="searchQuery"
+          [filterCategories]="filterCategories"
+          [searchParameters]="searchParameters"
+          [useTopSearchInput]="true"
+          topSearchParameterName="search"
+          topSearchPlaceholder="Search vendor or API reference"
+          [showParameterTitles]="false"
+          [noTopPaddingCategoryIds]="['vendor', 'benchmark']"
+          (searchChanged)="searchBarChanged($event)"
+        >
+        </app-search-bar>
+
+        @if (!isCollapsed) {
+          <div
+            class="px-4 pb-4 bg-secondary flex flex-col gap-3 border-r border-emerald-400 border-solid"
+          >
+            <div class="text-sm text-white text-center">
+              {{ filteredTableRows().length }} of
+              {{ tableRows().length }} servers
+            </div>
+            <button
+              type="button"
+              class="text-white bg-emerald-400 hover:bg-emerald-500 rounded-lg px-3 py-2 relative flex gap-2 items-center justify-center"
+              (click)="clearFilters()"
+            >
+              <lucide-icon class="h-4 w-4" name="funnel-x"></lucide-icon>
+              Clear filters
+            </button>
+          </div>
+        }
+      </div>
+
+      <div
+        class="list_holder flex flex-col gap-4"
+        [class.limited-full]="!isCollapsed"
+        [class.w-full]="isCollapsed"
+      >
+        <div
+          class="w-full relative table_scroll_wrapper"
+          style="padding-left: 1px"
+        >
+          <table class="items_table debug_servers_table">
+            <thead>
+              <tr>
+                <th class="bg-secondary"></th>
+                <th class="bg-secondary"></th>
+                <th class="border-l border-gray-600 bg-secondary">
+                  <div class="vertical_header">HAS PRICE</div>
+                </th>
+                <th class="bg-secondary">
+                  <div class="vertical_header">STATUS ACTIVE</div>
+                </th>
+                <th class="bg-secondary">
+                  <div class="vertical_header">HAS HW DISCOVERY</div>
+                </th>
+                <th class="bg-secondary">
+                  <div class="vertical_header">HAS ANY BENCHMARK</div>
+                </th>
+                @for (
+                  benchmarkFamily of benchmarkFamilies();
+                  track benchmarkFamily;
+                  let isFirst = $first
+                ) {
+                  <th
+                    [class.border-l]="isFirst"
+                    class="border-gray-600 bg-secondary"
+                  >
+                    <div class="vertical_header">{{ benchmarkFamily }}</div>
+                  </th>
+                }
+                <th class="border-l border-gray-600 bg-secondary">
+                  <div class="vertical_header">ASSESSMENT</div>
+                </th>
+                <th class="link-column">
+                  <div class="flex justify-center">
+                    <lucide-icon name="link" class="h-4 w-4"></lucide-icon>
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              @if (isLoading()) {
+                <tr>
+                  <td
+                    class="no_data"
+                    [attr.colspan]="8 + benchmarkFamilies().length"
+                  >
+                    Loading benchmark data...
+                  </td>
+                </tr>
+              } @else if (errorMessage()) {
+                <tr>
+                  <td
+                    class="no_data"
+                    [attr.colspan]="8 + benchmarkFamilies().length"
+                  >
+                    {{ errorMessage() }}
+                  </td>
+                </tr>
+              } @else {
+                @for (row of paginatedTableRows(); track row.serverKey) {
+                  <tr>
+                    <td class="text-sm">{{ row.vendor_id }}</td>
+                    <td class="text-sm">{{ row.api_reference }}</td>
+                    <td class="text-center border-l border-gray-600 icon-cell">
+                      @if (row.has_price) {
+                        <lucide-icon
+                          name="check"
+                          class="h-4 w-4 text-emerald-400 justify-self-center"
+                        ></lucide-icon>
+                      } @else {
+                        <lucide-icon
+                          name="x"
+                          class="h-4 w-4 text-white"
+                        ></lucide-icon>
+                      }
+                    </td>
+                    <td class="text-center icon-cell">
+                      @if (row.is_active) {
+                        <lucide-icon
+                          name="check"
+                          class="h-4 w-4 text-emerald-400 justify-self-center"
+                        ></lucide-icon>
+                      } @else {
+                        <lucide-icon
+                          name="x"
+                          class="h-4 w-4 text-white justify-self-center"
+                        ></lucide-icon>
+                      }
+                    </td>
+                    <td class="text-center icon-cell">
+                      @if (row.has_hw_info) {
+                        <lucide-icon
+                          name="check"
+                          class="h-4 w-4 text-emerald-400 justify-self-center"
+                        ></lucide-icon>
+                      } @else {
+                        <lucide-icon
+                          name="x"
+                          class="h-4 w-4 text-white justify-self-center"
+                        ></lucide-icon>
+                      }
+                    </td>
+                    <td class="text-center icon-cell">
+                      @if (row.has_any_benchmark) {
+                        <lucide-icon
+                          name="check"
+                          class="h-4 w-4 text-emerald-400 justify-self-center"
+                        ></lucide-icon>
+                      } @else {
+                        <lucide-icon
+                          name="x"
+                          class="h-4 w-4 text-white justify-self-center"
+                        ></lucide-icon>
+                      }
+                    </td>
+                    @for (
+                      benchmarkFamily of benchmarkFamilies();
+                      track benchmarkFamily;
+                      let isFirst = $first
+                    ) {
+                      <td
+                        class="text-center border-gray-600 icon-cell"
+                        [class.border-l]="isFirst"
+                      >
+                        @if (row.benchmarkFlags[benchmarkFamily]) {
+                          <lucide-icon
+                            name="check"
+                            class="h-4 w-4 text-emerald-400"
+                          ></lucide-icon>
+                        } @else {
+                          <a
+                            [href]="
+                              getBenchmarkRawDataUrl(
+                                row.vendor_id,
+                                row.api_reference,
+                                benchmarkFamily
+                              )
+                            "
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="flex cursor-pointer"
+                          >
+                            <lucide-icon
+                              name="x"
+                              class="h-4 w-4 text-white"
+                            ></lucide-icon>
+                          </a>
+                        }
+                      </td>
+                    }
+                    <td class="border-l border-gray-600 icon-cell">
+                      <div [attr.title]="row.assessment.tooltip">
+                        @if (row.assessment.kind === "fully_evaluated") {
+                          <lucide-icon
+                            [name]="row.assessment.icon"
+                            class="h-4 w-4 text-emerald-400"
+                          ></lucide-icon>
+                        } @else if (
+                          row.assessment.kind === "in_progress" ||
+                          row.assessment.kind === "cannot_evaluate"
+                        ) {
+                          <lucide-icon
+                            [name]="row.assessment.icon"
+                            class="h-4 w-4 text-yellow-500"
+                          ></lucide-icon>
+                        } @else {
+                          <lucide-icon
+                            [name]="row.assessment.icon"
+                            class="h-4 w-4 text-red-500"
+                          ></lucide-icon>
+                        }
+                      </div>
+                    </td>
+                    <td class="border-l border-gray-600 icon-cell flex">
+                      <a
+                        routerLink="/server/{{ row.vendor_id }}/{{
+                          row.api_reference
+                        }}"
+                      >
+                        <lucide-icon
+                          name="chevron-right"
+                          class="h-6 w-6 text-emerald-400"
+                        ></lucide-icon>
+                      </a>
+                    </td>
+                  </tr>
+                }
+                @if (!paginatedTableRows().length) {
+                  <tr>
+                    <td
+                      class="no_data"
+                      [attr.colspan]="8 + benchmarkFamilies().length"
+                    >
+                      No servers match the selected filters.
+                    </td>
+                  </tr>
+                }
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <div class="pagination_controls">
+          <div class="page_size_selector relative">
+            <button
+              id="pagesize_button"
+              class="dropdown_button"
+              type="button"
+              (click)="togglePageSizeOptions()"
+            >
+              <div class="px-4 py-2">
+                {{ limit() | pageLimitLabel }}
+              </div>
+              <div
+                class="px-2 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
+              >
+                <lucide-icon
+                  name="chevron-down"
+                  class="h-6 w-6 text-emerald-400"
+                ></lucide-icon>
+              </div>
+            </button>
+            <span class="text-white hidden md:inline"> items per page</span>
+
+            @if (showPageSizeOptions()) {
+              <div
+                class="z-10 bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid absolute top-12 left-0"
+              >
+                <ul class="py-2 px-1 text-sm text-gray-700" role="listbox">
+                  @for (pageLimit of pageLimits; track pageLimit) {
+                    <li
+                      class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+                      (click)="selectPageSize(pageLimit)"
+                      (keydown.enter)="selectPageSize(pageLimit)"
+                      (keydown.space)="
+                        selectPageSize(pageLimit); $event.preventDefault()
+                      "
+                      role="option"
+                      [attr.aria-selected]="pageLimit === limit()"
+                      tabindex="0"
+                    >
+                      <div class="text-white text-sm">
+                        {{ pageLimit | pageLimitLabel }}
+                      </div>
+                    </li>
+                  }
+                </ul>
+              </div>
+            }
+          </div>
+
+          <div class="pagination_nav" aria-label="Table pagination">
+            @if (page() > 1) {
+              <button
+                type="button"
+                class="flex justify-center bg-transparent text-white py-2 px-4 w-10 rounded-lg font-bold hover:bg-emerald-400"
+                (click)="goToPage(page() - 1)"
+              >
+                <lucide-icon name="chevron-left" class="h-4 w-4"></lucide-icon>
+              </button>
+            }
+            @if (page() > 2) {
+              <button
+                type="button"
+                class="pagination_button"
+                (click)="goToPage(1)"
+              >
+                1
+              </button>
+              @if (page() > 3) {
+                <span
+                  class="text-white py-2 px-4 rounded-lg font-bold"
+                  aria-hidden="true"
+                  >...</span
+                >
+              }
+            }
+            @for (pageNumber of possiblePages(); track pageNumber) {
+              <button
+                type="button"
+                class="pagination_button"
+                [class.pagination_button_active]="pageNumber === page()"
+                (click)="goToPage(pageNumber)"
+              >
+                {{ pageNumber }}
+              </button>
+            }
+            @if (totalPages() > page() + 2) {
+              <span
+                class="text-white py-2 px-4 rounded-lg font-bold"
+                aria-hidden="true"
+                >...</span
+              >
+              <button
+                type="button"
+                class="pagination_button"
+                (click)="goToPage(totalPages())"
+              >
+                {{ totalPages() }}
+              </button>
+            } @else if (totalPages() === page() + 2) {
+              <button
+                type="button"
+                class="pagination_button"
+                (click)="goToPage(totalPages())"
+              >
+                {{ totalPages() }}
+              </button>
+            }
+            @if (page() < totalPages()) {
+              <button
+                type="button"
+                class="pagination_button pagination_arrow"
+                (click)="goToPage(page() + 1)"
+              >
+                <lucide-icon name="chevron-right" class="h-4 w-4"></lucide-icon>
+              </button>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

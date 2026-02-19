@@ -267,6 +267,7 @@ export namespace Table {
         | "DE"
         | "DE1"
         | "de-fra1"
+        | "denmarkeast"
         | "dk-cph1"
         | "eastasia"
         | "eastus"
