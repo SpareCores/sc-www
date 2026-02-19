@@ -3,10 +3,10 @@
 }
 
 .bounce-3 {
-  animation: bounce 0.8s ease 3;
+  animation: server-details-warning-icon-bounce 0.8s ease 3;
 }
 
-@keyframes bounce {
+@keyframes server-details-warning-icon-bounce {
   0%,
   100% {
     transform: translateY(0%);
