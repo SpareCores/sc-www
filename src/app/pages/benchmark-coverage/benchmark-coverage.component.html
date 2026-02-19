@@ -1,18 +1,17 @@
 <div class="w-full bg-primary">
-  <div class="content pt-16 pb-16 text-white flex flex-col gap-6">
+  <div class="content pt-16 pb-16">
     <app-breadcrumbs [segments]="breadcrumbs()"></app-breadcrumbs>
-    <h1 class="text-4xl font-bold">Benchmark Coverage</h1>
-    <div class="text-white text-xl pr-16 mb-4">
-      Spare Cores continuously inspects cloud servers and runs standardized
-      benchmark workloads to measure performance and cost efficiency. Some
-      instances cannot currently be inspected or benchmarked. This may happen
-      when servers are temporarily unavailable (e.g. out of stock), not yet
-      generally available (e.g. no pricing information available), restricted by
-      vendor or account quotas (e.g. we cannot access larger GPU boxes on cloud
-      credits), or affected by technical limitations such as API rate limits.
-      <br />
-      <br />
-      The summary below shows benchmark coverage by cloud vendor:
+
+    <div class="flex flex-col gap-4 my-8 mx-2 xl:mx-0">
+      <div class="flex gap-4 items-center w-full justify-between">
+        <h1 class="text-white font-bold text-3xl flex items-center">
+          <lucide-icon class="h-8 w-8 mr-2" name="activity"></lucide-icon>
+          {{ pageTitle }}
+        </h1>
+      </div>
+      <div class="text-white text-xl pr-4 md:pr-16">
+        {{ pageDescription }}
+      </div>
     </div>
 
     @if (isLoading()) {
@@ -20,100 +19,114 @@
     } @else if (errorMessage()) {
       <div class="text-red-300 text-lg">{{ errorMessage() }}</div>
     } @else {
-      <table class="items_table no-hover-table">
-        <thead>
-          <tr>
-            <th class="py-4 px-4">
-              <div class="flex gap-1 whitespace-nowrap">VENDOR</div>
-            </th>
-            <th class="py-4 px-4">
-              <div class="flex justify-end whitespace-nowrap">
-                IDENTIFIED SERVERS
-              </div>
-            </th>
-            <th colspan="2" class="border-l border-gray-600 px-12 py-4">
-              <div class="flex justify-center whitespace-nowrap">
-                INACTIVE SERVERS
-              </div>
-            </th>
-            <th colspan="2" class="border-l border-gray-600 px-12 py-4">
-              <div class="flex justify-center whitespace-nowrap">
-                ACTIVE SERVERS
-              </div>
-            </th>
-            <th colspan="2" class="border-l border-gray-600 px-12 py-4">
-              <div class="flex justify-center whitespace-nowrap">
-                EVALUATED ACTIVE SERVERS
-              </div>
-            </th>
-            <th colspan="2" class="border-l border-gray-600 px-12 py-4">
-              <div class="flex justify-center whitespace-nowrap">
-                MISSING ACTIVE SERVERS
-              </div>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (vendor of vendorDebugData(); track vendor.vendor_id) {
+      <div class="overflow-x-auto mx-2 xl:mx-0">
+        <table class="items_table no-hover-table">
+          <thead>
             <tr>
-              <td class="pl-3 pr-2 py-3">
-                <div class="flex gap-1">
-                  {{ vendorNameById()[vendor.vendor_id] || vendor.vendor_id }}
+              <th class="py-4 px-4">
+                <div class="flex gap-1 whitespace-nowrap">VENDOR</div>
+              </th>
+              <th class="py-4 px-4">
+                <div class="flex justify-end whitespace-nowrap">
+                  IDENTIFIED SERVERS
                 </div>
-              </td>
-              <td class="px-4">
-                <div class="flex justify-end">
-                  {{ vendor.all }}
+              </th>
+              <th
+                colspan="2"
+                class="border-l border-gray-600 px-3 md:px-12 py-4"
+              >
+                <div class="flex justify-center whitespace-nowrap">
+                  INACTIVE SERVERS
                 </div>
-              </td>
-              <td class="border-l border-gray-600 w-16 pl-6 pr-1">
-                <div class="flex justify-end">
-                  {{ vendor.inactive }}
+              </th>
+              <th
+                colspan="2"
+                class="border-l border-gray-600 px-3 md:px-12 py-4"
+              >
+                <div class="flex justify-center whitespace-nowrap">
+                  ACTIVE SERVERS
                 </div>
-              </td>
-              <td class="w-20 pl-1 pr-6">
-                <div class="flex justify-end">
-                  {{ vendor.inactive / vendor.all | percent: "1.2" }}
+              </th>
+              <th
+                colspan="2"
+                class="border-l border-gray-600 px-3 md:px-12 py-4"
+              >
+                <div class="flex justify-center whitespace-nowrap">
+                  EVALUATED ACTIVE SERVERS
                 </div>
-              </td>
-              <td class="border-l border-gray-600 w-16 pl-6 pr-1">
-                <div class="flex justify-end">
-                  {{ vendor.active }}
+              </th>
+              <th
+                colspan="2"
+                class="border-l border-gray-600 px-3 md:px-12 py-4"
+              >
+                <div class="flex justify-center whitespace-nowrap">
+                  MISSING ACTIVE SERVERS
                 </div>
-              </td>
-              <td class="w-20 pl-1 pr-6">
-                <div class="flex justify-end">
-                  {{ vendor.active / vendor.all | percent: "1.2" }}
-                </div>
-              </td>
-              <td class="border-l border-gray-600 w-16 pl-6 pr-1">
-                <div class="flex justify-end">
-                  {{ vendor.evaluated }}
-                </div>
-              </td>
-              <td class="w-20 pl-1 pr-6">
-                <div class="flex justify-end">
-                  {{ vendor.evaluated / vendor.active | percent: "1.2" }}
-                </div>
-              </td>
-              <td class="border-l border-gray-600 w-16 pl-6 pr-1">
-                <div class="flex justify-end">
-                  {{ vendor.missing }}
-                </div>
-              </td>
-              <td class="w-20 pl-1 pr-6">
-                <div class="flex justify-end">
-                  {{ vendor.missing / vendor.active | percent: "1.2" }}
-                </div>
-              </td>
+              </th>
             </tr>
-          }
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            @for (vendor of vendorDebugData(); track vendor.vendor_id) {
+              <tr>
+                <td class="pl-3 pr-2 py-3">
+                  <div class="flex gap-1">
+                    {{ vendorNameById()[vendor.vendor_id] || vendor.vendor_id }}
+                  </div>
+                </td>
+                <td class="px-4">
+                  <div class="flex justify-end">
+                    {{ vendor.all }}
+                  </div>
+                </td>
+                <td class="border-l border-gray-600 w-16 pl-6 pr-1">
+                  <div class="flex justify-end">
+                    {{ vendor.inactive }}
+                  </div>
+                </td>
+                <td class="w-20 pl-1 pr-6">
+                  <div class="flex justify-end">
+                    {{ vendor.inactive / vendor.all | percent: "1.2" }}
+                  </div>
+                </td>
+                <td class="border-l border-gray-600 w-16 pl-6 pr-1">
+                  <div class="flex justify-end">
+                    {{ vendor.active }}
+                  </div>
+                </td>
+                <td class="w-20 pl-1 pr-6">
+                  <div class="flex justify-end">
+                    {{ vendor.active / vendor.all | percent: "1.2" }}
+                  </div>
+                </td>
+                <td class="border-l border-gray-600 w-16 pl-6 pr-1">
+                  <div class="flex justify-end">
+                    {{ vendor.evaluated }}
+                  </div>
+                </td>
+                <td class="w-20 pl-1 pr-6">
+                  <div class="flex justify-end">
+                    {{ vendor.evaluated / vendor.active | percent: "1.2" }}
+                  </div>
+                </td>
+                <td class="border-l border-gray-600 w-16 pl-6 pr-1">
+                  <div class="flex justify-end">
+                    {{ vendor.missing }}
+                  </div>
+                </td>
+                <td class="w-20 pl-1 pr-6">
+                  <div class="flex justify-end">
+                    {{ vendor.missing / vendor.active | percent: "1.2" }}
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
     }
 
     <div
-      class="text-white text-xl pr-16 mb-4"
+      class="text-white text-xl pr-4 md:pr-16 mb-4 mx-2 xl:mx-0"
       id="benchmark-coverrage-details-pointer"
     >
       <br />
@@ -127,7 +140,7 @@
       for active instances.
     </div>
 
-    <div class="flex gap-8 page_layout">
+    <div class="flex gap-8 mx-2 xl:mx-0 page_layout">
       <div class="filter_bar bg-primary" [class.collapsed]="isCollapsed">
         <div
           class="collapser bg-secondary"

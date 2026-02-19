@@ -217,19 +217,20 @@
 }
 
 @media (max-width: 1200px) {
-  .page_layout {
-    @apply flex-col;
+  .filter_bar {
+    position: relative;
   }
 
-  .filter_bar,
   .list_holder {
-    width: 100%;
-    min-width: 100%;
-    position: static;
+    min-width: 0;
   }
 
   .pagination_controls {
-    @apply flex-col items-start;
+    @apply flex-wrap;
+  }
+
+  .pagination_nav {
+    @apply ml-auto;
   }
 
   .table_scroll_wrapper {
