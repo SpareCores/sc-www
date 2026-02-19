@@ -6,6 +6,6 @@ import { Pipe, PipeTransform } from "@angular/core";
 })
 export class PageLimitPipe implements PipeTransform {
   transform(value: number): string {
-    return value === 1 ? "All" : String(value);
+    return value === Infinity ? "All" : String(value);
   }
 }

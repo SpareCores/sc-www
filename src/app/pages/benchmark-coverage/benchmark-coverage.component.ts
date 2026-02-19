@@ -93,7 +93,7 @@ export class BenchmarkCoverageComponent implements OnInit {
   >({ has_price: "yes" });
   readonly searchTerm = signal<string>("");
 
-  readonly pageLimits = [10, 25, 50, 100, 250, 1];
+  readonly pageLimits = [10, 25, 50, 100, 250, Infinity];
   readonly page = signal<number>(1);
   readonly limit = signal<number>(25);
   readonly showPageSizeOptions = signal<boolean>(false);
@@ -108,7 +108,7 @@ export class BenchmarkCoverageComponent implements OnInit {
     status: this.serverStatusFilter(),
     search: this.searchTerm() || null,
     page: this.page(),
-    limit: this.limit(),
+    limit: this.limit() === Infinity ? "All" : this.limit(),
     bools: JSON.stringify(this.statusBoolFilters()),
     benchmarks: JSON.stringify(this.benchmarkFamilyFilters()),
   }));
@@ -268,6 +268,8 @@ export class BenchmarkCoverageComponent implements OnInit {
     const totalRows = this.filteredTableRows().length;
     const pageLimit = this.limit();
 
+    if (pageLimit === Infinity) return 1;
+
     return Math.max(1, Math.ceil(totalRows / pageLimit));
   });
 
@@ -276,7 +278,7 @@ export class BenchmarkCoverageComponent implements OnInit {
     const currentPage = Math.min(this.page(), this.totalPages());
     const currentLimit = this.limit();
 
-    if (currentLimit === 1) {
+    if (currentLimit === Infinity) {
       return rows;
     }
 
@@ -323,7 +325,7 @@ export class BenchmarkCoverageComponent implements OnInit {
     if (params["limit"]) {
       const limitNum = Number(params["limit"]);
       this.limit.set(
-        params["limit"] === "All" ? 0 : !isNaN(limitNum) ? limitNum : 25,
+        params["limit"] === "All" ? Infinity : !isNaN(limitNum) ? limitNum : 25,
       );
     }
     if (params["vendors"]) {
