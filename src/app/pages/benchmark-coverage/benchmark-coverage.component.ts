@@ -69,13 +69,10 @@ export class BenchmarkCoverageComponent implements OnInit {
   }
 
   pageTitle = "Benchmark Coverage";
-  pageDescription = `Spare Cores continuously inspects cloud servers and runs standardized
-      benchmark workloads to measure performance and cost efficiency. Some
-      instances cannot currently be inspected or benchmarked. This may happen
-      when servers are temporarily unavailable (e.g. out of stock), not yet
-      generally available (e.g. no pricing information available), restricted by
-      vendor or account quotas (e.g. we cannot access larger GPU boxes on cloud
-      credits), or affected by technical limitations such as API rate limits. The summary below shows benchmark coverage by cloud vendor:`;
+  pageDescription =
+    "Spare Cores continuously inspects cloud servers and runs standardized benchmark workloads to measure performance and cost efficiency. Some instances cannot currently be inspected or benchmarked. This may happen when servers are temporarily unavailable (e.g. out of stock), not yet generally available (e.g. no pricing information available), restricted by vendor or account quotas (e.g. we cannot access larger GPU boxes on cloud credits), or affected by technical limitations such as API rate limits. The summary below shows benchmark coverage by cloud vendor:";
+  pageHelperText =
+    "The table below provides detailed status and benchmark coverage for all discovered cloud servers, including pricing availability, hardware inspection results, and high-level benchmark workload status. You can filter the dataset by vendor, status, and specific benchmark families, along with free-text search. By default, the table is filtered for active instances.";
 
   private keeperApi = inject(KeeperAPIService);
   private seoHandler = inject(SeoHandlerService);
