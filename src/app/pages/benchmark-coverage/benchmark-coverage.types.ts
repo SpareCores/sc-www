@@ -29,8 +29,6 @@ export type FilterCategory = {
   collapsed: boolean;
 };
 
-export type PageLimitOption = number;
-
 export type BenchmarkFamilyFilterValue = "all" | "yes" | "no";
 
 export type ServerStatusFilter = "all" | "active" | "inactive";

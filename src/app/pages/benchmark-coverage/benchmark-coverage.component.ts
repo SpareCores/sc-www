@@ -21,11 +21,11 @@ import {
   VendorDebugInfo,
 } from "../../../../sdk/data-contracts";
 import { PercentPipe } from "@angular/common";
+import { PageLimitPipe } from "../../pipes/page-limit.pipe";
 import {
   BenchmarkFamilyFilterValue,
   FilterCategory,
   MissingBenchmarkServerRow,
-  PageLimitOption,
   SearchBarFilters,
   SearchParameter,
   SearchQuery,
@@ -46,6 +46,7 @@ import {
     LucideAngularModule,
     RouterModule,
     PercentPipe,
+    PageLimitPipe,
     SearchBarComponent,
   ],
   templateUrl: "./benchmark-coverage.component.html",
@@ -92,9 +93,9 @@ export class BenchmarkCoverageComponent implements OnInit {
   >({ has_price: "yes" });
   readonly searchTerm = signal<string>("");
 
-  readonly pageLimits: PageLimitOption[] = [10, 25, 50, 100, 250, "All"];
+  readonly pageLimits = [10, 25, 50, 100, 250, 1];
   readonly page = signal<number>(1);
-  readonly limit = signal<PageLimitOption>(25);
+  readonly limit = signal<number>(25);
   readonly showPageSizeOptions = signal<boolean>(false);
   readonly benchmarkFamilyFilters = signal<
     Record<string, BenchmarkFamilyFilterValue>
@@ -267,10 +268,6 @@ export class BenchmarkCoverageComponent implements OnInit {
     const totalRows = this.filteredTableRows().length;
     const pageLimit = this.limit();
 
-    if (pageLimit === "All") {
-      return 1;
-    }
-
     return Math.max(1, Math.ceil(totalRows / pageLimit));
   });
 
@@ -279,7 +276,7 @@ export class BenchmarkCoverageComponent implements OnInit {
     const currentPage = Math.min(this.page(), this.totalPages());
     const currentLimit = this.limit();
 
-    if (currentLimit === "All") {
+    if (currentLimit === 1) {
       return rows;
     }
 
@@ -326,7 +323,7 @@ export class BenchmarkCoverageComponent implements OnInit {
     if (params["limit"]) {
       const limitNum = Number(params["limit"]);
       this.limit.set(
-        params["limit"] === "All" ? "All" : !isNaN(limitNum) ? limitNum : 25,
+        params["limit"] === "All" ? 0 : !isNaN(limitNum) ? limitNum : 25,
       );
     }
     if (params["vendors"]) {
@@ -383,7 +380,7 @@ export class BenchmarkCoverageComponent implements OnInit {
     this.page.set(1);
   }
 
-  selectPageSize(limit: PageLimitOption) {
+  selectPageSize(limit: number) {
     this.limit.set(limit);
     this.page.set(1);
     this.showPageSizeOptions.set(false);
