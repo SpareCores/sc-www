@@ -172,6 +172,12 @@
         @apply bg-primary;
       }
     }
+
+    th.link-column {
+      box-shadow:
+        inset 0 -1px 0 #4b5563,
+        inset 1px 0 0 #4b5563;
+    }
   }
 
   @media (max-width: 1200px) {
