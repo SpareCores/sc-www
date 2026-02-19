@@ -62,6 +62,7 @@ export class BenchmarkCoverageComponent implements OnInit {
         this.router.navigate([], {
           queryParams: params,
           replaceUrl: true,
+          preserveFragment: true,
         });
       }
     });

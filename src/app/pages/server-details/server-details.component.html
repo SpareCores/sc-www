@@ -120,15 +120,27 @@
           class="h-6 w-6 bounce-3"
         ></lucide-icon>
         <div>
-          <span class="font-bold">Benchmark data unavailable.</span>
-          We were not able to run benchmarks on this server. To learn more about
-          the potential root causes, visit the
+          <span class="font-bold"
+            >Benchmark data is currently unavailable for this server.
+          </span>
+          View this
           <a
             class="underline font-semibold"
             routerLink="/navigator/benchmark-coverage"
-            >benchmark coverage</a
+            [queryParams]="{
+              search: serverDetails.api_reference,
+            }"
+            fragment="benchmark-coverrage-details-pointer"
           >
-          page.
+            server's measurement status </a
+          >, or visit the
+          <a
+            class="underline font-semibold"
+            routerLink="/navigator/benchmark-coverage"
+            fragment="benchmark-coverrage-details-pointer"
+            >general Benchmark Coverage</a
+          >
+          page to learn more about possible causes.
         </div>
       </div>
     }

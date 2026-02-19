@@ -110,115 +110,139 @@
           }
         </tbody>
       </table>
+    }
 
-      <div class="text-white text-xl pr-16 mb-4">
-        <br />
-        The table below provides detailed status and benchmark coverage for all
-        discovered cloud servers, including pricing availability, hardware
-        inspection results, and high-level benchmark workload status.
-        <br />
-        <br />
-        You can filter the dataset by vendor, status, and specific benchmark
-        families, along with free-text search. By default, the table is filtered
-        for active instances.
-      </div>
+    <div
+      class="text-white text-xl pr-16 mb-4"
+      id="benchmark-coverrage-details-pointer"
+    >
+      <br />
+      The table below provides detailed status and benchmark coverage for all
+      discovered cloud servers, including pricing availability, hardware
+      inspection results, and high-level benchmark workload status.
+      <br />
+      <br />
+      You can filter the dataset by vendor, status, and specific benchmark
+      families, along with free-text search. By default, the table is filtered
+      for active instances.
+    </div>
 
-      <div class="flex gap-8 page_layout">
-        <div class="filter_bar bg-primary" [class.collapsed]="isCollapsed">
-          <div
-            class="collapser bg-secondary"
-            (click)="toggleCollapse()"
-            (keydown.enter)="toggleCollapse()"
-            (keydown.space)="toggleCollapse(); $event.preventDefault()"
-            tabindex="0"
-            role="button"
-            [attr.aria-expanded]="!isCollapsed"
-          >
-            <lucide-icon
-              [name]="isCollapsed ? 'chevron-right' : 'chevron-left'"
-              class="h-6 w-6 text-emerald-400"
-            ></lucide-icon>
-          </div>
-          <app-search-bar
-            [query]="searchQuery"
-            [filterCategories]="filterCategories"
-            [searchParameters]="searchParameters"
-            [useTopSearchInput]="true"
-            topSearchParameterName="search"
-            topSearchPlaceholder="Search vendor or API reference"
-            [showParameterTitles]="false"
-            [noTopPaddingCategoryIds]="['vendor', 'benchmark']"
-            (searchChanged)="searchBarChanged($event)"
-          >
-          </app-search-bar>
+    <div></div>
 
-          <div
-            class="px-4 pb-4 bg-secondary flex flex-col gap-3 border-r border-emerald-400 border-solid"
-          >
-            <div class="text-sm text-white text-center">
-              {{ filteredTableRows().length }} of
-              {{ tableRows().length }} servers
-            </div>
-            <button
-              type="button"
-              class="text-white bg-emerald-400 hover:bg-emerald-500 rounded-lg px-3 py-2 relative flex gap-2 items-center justify-center"
-              (click)="clearFilters()"
-            >
-              <lucide-icon class="h-4 w-4" name="funnel-x"></lucide-icon>
-              Clear filters
-            </button>
-          </div>
+    <div class="flex gap-8 page_layout">
+      <div class="filter_bar bg-primary" [class.collapsed]="isCollapsed">
+        <div
+          class="collapser bg-secondary"
+          (click)="toggleCollapse()"
+          (keydown.enter)="toggleCollapse()"
+          (keydown.space)="toggleCollapse(); $event.preventDefault()"
+          tabindex="0"
+          role="button"
+          [attr.aria-expanded]="!isCollapsed"
+        >
+          <lucide-icon
+            [name]="isCollapsed ? 'chevron-right' : 'chevron-left'"
+            class="h-6 w-6 text-emerald-400"
+          ></lucide-icon>
         </div>
+        <app-search-bar
+          [query]="searchQuery"
+          [filterCategories]="filterCategories"
+          [searchParameters]="searchParameters"
+          [useTopSearchInput]="true"
+          topSearchParameterName="search"
+          topSearchPlaceholder="Search vendor or API reference"
+          [showParameterTitles]="false"
+          [noTopPaddingCategoryIds]="['vendor', 'benchmark']"
+          (searchChanged)="searchBarChanged($event)"
+        >
+        </app-search-bar>
 
         <div
-          class="list_holder flex flex-col gap-4"
-          [class.limited-full]="!isCollapsed"
-          [class.w-full]="isCollapsed"
+          class="px-4 pb-4 bg-secondary flex flex-col gap-3 border-r border-emerald-400 border-solid"
         >
-          <div
-            class="w-full relative table_scroll_wrapper"
-            style="padding-left: 1px"
+          <div class="text-sm text-white text-center">
+            {{ filteredTableRows().length }} of {{ tableRows().length }} servers
+          </div>
+          <button
+            type="button"
+            class="text-white bg-emerald-400 hover:bg-emerald-500 rounded-lg px-3 py-2 relative flex gap-2 items-center justify-center"
+            (click)="clearFilters()"
           >
-            <table class="items_table debug_servers_table">
-              <thead>
+            <lucide-icon class="h-4 w-4" name="funnel-x"></lucide-icon>
+            Clear filters
+          </button>
+        </div>
+      </div>
+
+      <div
+        class="list_holder flex flex-col gap-4"
+        [class.limited-full]="!isCollapsed"
+        [class.w-full]="isCollapsed"
+      >
+        <div
+          class="w-full relative table_scroll_wrapper"
+          style="padding-left: 1px"
+        >
+          <table class="items_table debug_servers_table">
+            <thead>
+              <tr>
+                <th class="bg-secondary"></th>
+                <th class="bg-secondary"></th>
+                <th class="border-l border-gray-600 bg-secondary">
+                  <div class="vertical_header">HAS PRICE</div>
+                </th>
+                <th class="bg-secondary">
+                  <div class="vertical_header">STATUS ACTIVE</div>
+                </th>
+                <th class="bg-secondary">
+                  <div class="vertical_header">HAS HW DISCOVERY</div>
+                </th>
+                <th class="bg-secondary">
+                  <div class="vertical_header">HAS ANY BENCHMARK</div>
+                </th>
+                @for (
+                  benchmarkFamily of benchmarkFamilies();
+                  track benchmarkFamily;
+                  let isFirst = $first
+                ) {
+                  <th
+                    [class.border-l]="isFirst"
+                    class="border-gray-600 bg-secondary"
+                  >
+                    <div class="vertical_header">{{ benchmarkFamily }}</div>
+                  </th>
+                }
+                <th class="border-l border-gray-600 bg-secondary">
+                  <div class="vertical_header">ASSESSMENT</div>
+                </th>
+                <th class="border-l border-gray-600 link-column bg-secondary">
+                  <div class="flex justify-center">
+                    <lucide-icon name="link" class="h-4 w-4"></lucide-icon>
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              @if (isLoading()) {
                 <tr>
-                  <th class="bg-secondary"></th>
-                  <th class="bg-secondary"></th>
-                  <th class="border-l border-gray-600 bg-secondary">
-                    <div class="vertical_header">HAS PRICE</div>
-                  </th>
-                  <th class="bg-secondary">
-                    <div class="vertical_header">STATUS ACTIVE</div>
-                  </th>
-                  <th class="bg-secondary">
-                    <div class="vertical_header">HAS HW DISCOVERY</div>
-                  </th>
-                  <th class="bg-secondary">
-                    <div class="vertical_header">HAS ANY BENCHMARK</div>
-                  </th>
-                  @for (
-                    benchmarkFamily of benchmarkFamilies();
-                    track benchmarkFamily;
-                    let isFirst = $first
-                  ) {
-                    <th
-                      [class.border-l]="isFirst"
-                      class="border-gray-600 bg-secondary"
-                    >
-                      <div class="vertical_header">{{ benchmarkFamily }}</div>
-                    </th>
-                  }
-                  <th class="border-l border-gray-600 bg-secondary">
-                    <div class="vertical_header">ASSESSMENT</div>
-                  </th>
-                  <th class="border-l border-gray-600 link-column bg-secondary">
-                    <div class="flex justify-center">
-                      <lucide-icon name="link" class="h-4 w-4"></lucide-icon>
-                    </div>
-                  </th>
+                  <td
+                    class="no_data"
+                    [attr.colspan]="8 + benchmarkFamilies().length"
+                  >
+                    Loading benchmark data...
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
+              } @else if (errorMessage()) {
+                <tr>
+                  <td
+                    class="no_data"
+                    [attr.colspan]="8 + benchmarkFamilies().length"
+                  >
+                    {{ errorMessage() }}
+                  </td>
+                </tr>
+              } @else {
                 @for (row of paginatedTableRows(); track row.serverKey) {
                   <tr>
                     <td class="text-sm">{{ row.vendor_id }}</td>
@@ -344,136 +368,130 @@
                     </td>
                   </tr>
                 }
-              </tbody>
-            </table>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <div class="pagination_controls">
+          <div class="page_size_selector relative">
+            <button
+              id="pagesize_button"
+              class="dropdown_button"
+              type="button"
+              (click)="togglePageSizeOptions()"
+            >
+              <div class="px-4 py-2">
+                {{ limit() | pageLimitLabel }}
+              </div>
+              <div
+                class="px-2 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
+              >
+                <lucide-icon
+                  name="chevron-down"
+                  class="h-6 w-6 text-emerald-400"
+                ></lucide-icon>
+              </div>
+            </button>
+            <span class="text-white"> items per page</span>
+
+            @if (showPageSizeOptions()) {
+              <div
+                class="z-10 bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid absolute top-12 left-0"
+              >
+                <ul class="py-2 px-1 text-sm text-gray-700" role="listbox">
+                  @for (pageLimit of pageLimits; track pageLimit) {
+                    <li
+                      class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+                      (click)="selectPageSize(pageLimit)"
+                      (keydown.enter)="selectPageSize(pageLimit)"
+                      (keydown.space)="
+                        selectPageSize(pageLimit); $event.preventDefault()
+                      "
+                      role="option"
+                      [attr.aria-selected]="pageLimit === limit()"
+                      tabindex="0"
+                    >
+                      <div class="text-white text-sm">
+                        {{ pageLimit | pageLimitLabel }}
+                      </div>
+                    </li>
+                  }
+                </ul>
+              </div>
+            }
           </div>
 
-          <div class="pagination_controls">
-            <div class="page_size_selector relative">
+          <div class="pagination_nav" aria-label="Table pagination">
+            @if (page() > 1) {
               <button
-                id="pagesize_button"
-                class="dropdown_button"
                 type="button"
-                (click)="togglePageSizeOptions()"
+                class="flex justify-center bg-transparent text-white py-2 px-4 w-10 rounded-lg font-bold hover:bg-emerald-400"
+                (click)="goToPage(page() - 1)"
               >
-                <div class="px-4 py-2">
-                  {{ limit() | pageLimitLabel }}
-                </div>
-                <div
-                  class="px-2 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
-                >
-                  <lucide-icon
-                    name="chevron-down"
-                    class="h-6 w-6 text-emerald-400"
-                  ></lucide-icon>
-                </div>
+                <lucide-icon name="chevron-left" class="h-4 w-4"></lucide-icon>
               </button>
-              <span class="text-white"> items per page</span>
-
-              @if (showPageSizeOptions()) {
-                <div
-                  class="z-10 bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid absolute top-12 left-0"
-                >
-                  <ul class="py-2 px-1 text-sm text-gray-700" role="listbox">
-                    @for (pageLimit of pageLimits; track pageLimit) {
-                      <li
-                        class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-                        (click)="selectPageSize(pageLimit)"
-                        (keydown.enter)="selectPageSize(pageLimit)"
-                        (keydown.space)="
-                          selectPageSize(pageLimit); $event.preventDefault()
-                        "
-                        role="option"
-                        [attr.aria-selected]="pageLimit === limit()"
-                        tabindex="0"
-                      >
-                        <div class="text-white text-sm">
-                          {{ pageLimit | pageLimitLabel }}
-                        </div>
-                      </li>
-                    }
-                  </ul>
-                </div>
-              }
-            </div>
-
-            <div class="pagination_nav" aria-label="Table pagination">
-              @if (page() > 1) {
-                <button
-                  type="button"
-                  class="flex justify-center bg-transparent text-white py-2 px-4 w-10 rounded-lg font-bold hover:bg-emerald-400"
-                  (click)="goToPage(page() - 1)"
-                >
-                  <lucide-icon
-                    name="chevron-left"
-                    class="h-4 w-4"
-                  ></lucide-icon>
-                </button>
-              }
-              @if (page() > 2) {
-                <button
-                  type="button"
-                  class="pagination_button"
-                  (click)="goToPage(1)"
-                >
-                  1
-                </button>
-                @if (page() > 3) {
-                  <span
-                    class="text-white py-2 px-4 rounded-lg font-bold"
-                    aria-hidden="true"
-                    >...</span
-                  >
-                }
-              }
-              @for (pageNumber of possiblePages(); track pageNumber) {
-                <button
-                  type="button"
-                  class="pagination_button"
-                  [class.pagination_button_active]="pageNumber === page()"
-                  (click)="goToPage(pageNumber)"
-                >
-                  {{ pageNumber }}
-                </button>
-              }
-              @if (totalPages() > page() + 2) {
+            }
+            @if (page() > 2) {
+              <button
+                type="button"
+                class="pagination_button"
+                (click)="goToPage(1)"
+              >
+                1
+              </button>
+              @if (page() > 3) {
                 <span
                   class="text-white py-2 px-4 rounded-lg font-bold"
                   aria-hidden="true"
                   >...</span
                 >
-                <button
-                  type="button"
-                  class="pagination_button"
-                  (click)="goToPage(totalPages())"
-                >
-                  {{ totalPages() }}
-                </button>
-              } @else if (totalPages() === page() + 2) {
-                <button
-                  type="button"
-                  class="pagination_button"
-                  (click)="goToPage(totalPages())"
-                >
-                  {{ totalPages() }}
-                </button>
               }
-              @if (page() < totalPages()) {
-                <button
-                  type="button"
-                  class="pagination_button pagination_arrow"
-                  (click)="goToPage(page() + 1)"
-                >
-                  <lucide-icon
-                    name="chevron-right"
-                    class="h-4 w-4"
-                  ></lucide-icon>
-                </button>
-              }
-            </div>
+            }
+            @for (pageNumber of possiblePages(); track pageNumber) {
+              <button
+                type="button"
+                class="pagination_button"
+                [class.pagination_button_active]="pageNumber === page()"
+                (click)="goToPage(pageNumber)"
+              >
+                {{ pageNumber }}
+              </button>
+            }
+            @if (totalPages() > page() + 2) {
+              <span
+                class="text-white py-2 px-4 rounded-lg font-bold"
+                aria-hidden="true"
+                >...</span
+              >
+              <button
+                type="button"
+                class="pagination_button"
+                (click)="goToPage(totalPages())"
+              >
+                {{ totalPages() }}
+              </button>
+            } @else if (totalPages() === page() + 2) {
+              <button
+                type="button"
+                class="pagination_button"
+                (click)="goToPage(totalPages())"
+              >
+                {{ totalPages() }}
+              </button>
+            }
+            @if (page() < totalPages()) {
+              <button
+                type="button"
+                class="pagination_button pagination_arrow"
+                (click)="goToPage(page() + 1)"
+              >
+                <lucide-icon name="chevron-right" class="h-4 w-4"></lucide-icon>
+              </button>
+            }
           </div>
         </div>
       </div>
-    }
+    </div>
   </div>
 </div>
