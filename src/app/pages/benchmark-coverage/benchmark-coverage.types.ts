@@ -29,7 +29,7 @@ export type FilterCategory = {
   collapsed: boolean;
 };
 
-export type PageLimitOption = number | "All";
+export type PageLimitOption = number;
 
 export type BenchmarkFamilyFilterValue = "all" | "yes" | "no";
 
