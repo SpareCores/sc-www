@@ -206,6 +206,7 @@ export class BenchmarkCoverageComponent implements OnInit {
         is_active: isActive,
         has_hw_info: Boolean(server.has_hw_info),
         has_any_benchmark: hasAnyBenchmark,
+        has_all_benchmarks: hasAllBenchmarks,
         benchmarkFlags,
         assessment: getAssessment({
           isActive,
@@ -254,6 +255,10 @@ export class BenchmarkCoverageComponent implements OnInit {
       const hasAnyBenchmark = statusBoolFilters["has_any_benchmark"];
       if (hasAnyBenchmark === "yes" && !row.has_any_benchmark) return false;
       if (hasAnyBenchmark === "no" && row.has_any_benchmark) return false;
+
+      const hasAllBenchmarks = statusBoolFilters["has_all_benchmarks"];
+      if (hasAllBenchmarks === "yes" && !row.has_all_benchmarks) return false;
+      if (hasAllBenchmarks === "no" && row.has_all_benchmarks) return false;
 
       const benchmarkFilterEntries = Object.entries(benchmarkFamilyFilters);
       if (benchmarkFilterEntries.length > 0) {
@@ -493,7 +498,7 @@ export class BenchmarkCoverageComponent implements OnInit {
           type: "string",
           filter_mode: "single_radio",
           enum: [
-            { key: "all", value: "All" },
+            { key: "all", value: "Any" },
             { key: "active", value: "Active" },
             { key: "inactive", value: "Inactive" },
           ],
@@ -511,6 +516,7 @@ export class BenchmarkCoverageComponent implements OnInit {
             { key: "has_price", value: "Has price" },
             { key: "has_hw_info", value: "Has hardware discovery" },
             { key: "has_any_benchmark", value: "Has any benchmark" },
+            { key: "has_all_benchmarks", value: "Has all benchmarks" },
           ],
         },
         modelValue: { ...this.statusBoolFilters() },
@@ -524,7 +530,7 @@ export class BenchmarkCoverageComponent implements OnInit {
           filter_mode: "tri_state_boolean",
           enum: this.benchmarkFamilies().map((family) => ({
             key: family,
-            value: family,
+            value: `Has ${family}`,
           })),
         },
         modelValue: { ...this.benchmarkFamilyFilters() },
