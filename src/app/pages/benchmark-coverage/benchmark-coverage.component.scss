@@ -25,7 +25,7 @@
   }
 }
 
-.link-column {
+.left-bordered-cell {
   width: 3rem;
   min-width: 3rem;
   max-width: 3rem;
@@ -137,7 +137,7 @@
 
 .debug_servers_table {
   tbody {
-    td.link-column {
+    td.left-bordered-cell {
       justify-content: center;
     }
 
@@ -173,7 +173,7 @@
       }
     }
 
-    th.link-column {
+    th.left-bordered-cell {
       box-shadow:
         inset 0 -1px 0 #4b5563,
         inset 1px 0 0 #4b5563;
@@ -243,4 +243,9 @@
 
 .icon-cell {
   justify-items: center !important;
+}
+
+.icon-cell.border-l {
+  border-left: none;
+  box-shadow: inset 1px 0 0 #4b5563;
 }

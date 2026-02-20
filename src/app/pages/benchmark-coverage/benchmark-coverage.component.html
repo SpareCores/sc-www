@@ -187,16 +187,13 @@
         [class.limited-full]="!isCollapsed"
         [class.w-full]="isCollapsed"
       >
-        <div
-          class="w-full relative table_scroll_wrapper"
-          style="padding-left: 1px"
-        >
+        <div class="w-full relative table_scroll_wrapper">
           <table class="items_table debug_servers_table">
             <thead>
               <tr>
                 <th class="bg-secondary"></th>
                 <th class="bg-secondary"></th>
-                <th class="border-l border-gray-600 bg-secondary">
+                <th class="left-bordered-cell">
                   <div class="vertical_header">HAS PRICE</div>
                 </th>
                 <th class="bg-secondary">
@@ -214,16 +211,16 @@
                   let isFirst = $first
                 ) {
                   <th
-                    [class.border-l]="isFirst"
+                    [class.left-bordered-cell]="isFirst"
                     class="border-gray-600 bg-secondary"
                   >
                     <div class="vertical_header">{{ benchmarkFamily }}</div>
                   </th>
                 }
-                <th class="border-l border-gray-600 bg-secondary">
+                <th class="left-bordered-cell">
                   <div class="vertical_header">ASSESSMENT</div>
                 </th>
-                <th class="link-column">
+                <th class="left-bordered-cell">
                   <div class="flex justify-center">
                     <lucide-icon name="link" class="h-4 w-4"></lucide-icon>
                   </div>
@@ -341,7 +338,7 @@
                         }
                       </td>
                     }
-                    <td class="border-l border-gray-600 icon-cell">
+                    <td class="icon-cell border-l">
                       <div [attr.title]="row.assessment.tooltip">
                         @if (row.assessment.kind === "fully_evaluated") {
                           <lucide-icon
