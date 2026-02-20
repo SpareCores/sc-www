@@ -537,7 +537,7 @@ export class BenchmarkCoverageComponent implements OnInit {
           filter_mode: "tri_state_boolean",
           enum: this.benchmarkFamilies().map((family) => ({
             key: family,
-            value: family,
+            value: `Has ${family}`,
           })),
         },
         modelValue: { ...this.benchmarkFamilyFilters() },
