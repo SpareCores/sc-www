@@ -255,6 +255,18 @@ export class BenchmarkCoverageComponent implements OnInit {
       if (hasAnyBenchmark === "yes" && !row.has_any_benchmark) return false;
       if (hasAnyBenchmark === "no" && row.has_any_benchmark) return false;
 
+      const hasAllBenchmarks = statusBoolFilters["has_all_benchmarks"];
+      if (
+        hasAllBenchmarks === "yes" &&
+        row.assessment.kind !== "fully_evaluated"
+      )
+        return false;
+      if (
+        hasAllBenchmarks === "no" &&
+        row.assessment.kind === "fully_evaluated"
+      )
+        return false;
+
       const benchmarkFilterEntries = Object.entries(benchmarkFamilyFilters);
       if (benchmarkFilterEntries.length > 0) {
         for (const [family, filterValue] of benchmarkFilterEntries) {
@@ -493,7 +505,7 @@ export class BenchmarkCoverageComponent implements OnInit {
           type: "string",
           filter_mode: "single_radio",
           enum: [
-            { key: "all", value: "All" },
+            { key: "all", value: "Any" },
             { key: "active", value: "Active" },
             { key: "inactive", value: "Inactive" },
           ],
@@ -511,6 +523,7 @@ export class BenchmarkCoverageComponent implements OnInit {
             { key: "has_price", value: "Has price" },
             { key: "has_hw_info", value: "Has hardware discovery" },
             { key: "has_any_benchmark", value: "Has any benchmark" },
+            { key: "has_all_benchmarks", value: "Has all benchmarks" },
           ],
         },
         modelValue: { ...this.statusBoolFilters() },
