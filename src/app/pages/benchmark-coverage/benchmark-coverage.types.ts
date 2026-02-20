@@ -18,6 +18,7 @@ export type MissingBenchmarkServerRow = {
   is_active: boolean;
   has_hw_info: boolean;
   has_any_benchmark: boolean;
+  has_all_benchmarks: boolean;
   benchmarkFlags: Record<string, boolean>;
   assessment: ServerAssessment;
 };

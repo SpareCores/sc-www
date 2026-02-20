@@ -206,6 +206,7 @@ export class BenchmarkCoverageComponent implements OnInit {
         is_active: isActive,
         has_hw_info: Boolean(server.has_hw_info),
         has_any_benchmark: hasAnyBenchmark,
+        has_all_benchmarks: hasAllBenchmarks,
         benchmarkFlags,
         assessment: getAssessment({
           isActive,
@@ -256,16 +257,8 @@ export class BenchmarkCoverageComponent implements OnInit {
       if (hasAnyBenchmark === "no" && row.has_any_benchmark) return false;
 
       const hasAllBenchmarks = statusBoolFilters["has_all_benchmarks"];
-      if (
-        hasAllBenchmarks === "yes" &&
-        row.assessment.kind !== "fully_evaluated"
-      )
-        return false;
-      if (
-        hasAllBenchmarks === "no" &&
-        row.assessment.kind === "fully_evaluated"
-      )
-        return false;
+      if (hasAllBenchmarks === "yes" && !row.has_all_benchmarks) return false;
+      if (hasAllBenchmarks === "no" && row.has_all_benchmarks) return false;
 
       const benchmarkFilterEntries = Object.entries(benchmarkFamilyFilters);
       if (benchmarkFilterEntries.length > 0) {
