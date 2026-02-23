@@ -149,6 +149,20 @@ export class BenchmarkCoverageComponent implements OnInit {
     },
   ];
 
+  readonly vendorSummaryStats = computed(() => {
+    const data = this.vendorDebugData();
+    return data.reduce(
+      (vendorSummary, vendor) => ({
+        all: vendorSummary.all + (vendor.all ?? 0),
+        inactive: vendorSummary.inactive + (vendor.inactive ?? 0),
+        active: vendorSummary.active + (vendor.active ?? 0),
+        evaluated: vendorSummary.evaluated + (vendor.evaluated ?? 0),
+        missing: vendorSummary.missing + (vendor.missing ?? 0),
+      }),
+      { all: 0, inactive: 0, active: 0, evaluated: 0, missing: 0 },
+    );
+  });
+
   readonly vendorNameById = computed<Record<string, string>>(() =>
     this.vendors().reduce(
       (acc, vendor) => {
