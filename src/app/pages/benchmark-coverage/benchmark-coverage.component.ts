@@ -332,6 +332,9 @@ export class BenchmarkCoverageComponent implements OnInit {
       "View cloud server benchmark coverage across vendors with pricing data, hardware inspection results, and standardized performance measurements from Spare Cores.",
       "missing benchmarks, benchmark status",
     );
+    this.seoHandler.updateThumbnail(
+      "https://sparecores.com/assets/images/og/debug.png",
+    );
 
     void this.loadDebugData();
 
