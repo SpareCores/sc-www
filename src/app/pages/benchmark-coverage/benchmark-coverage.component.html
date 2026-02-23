@@ -110,7 +110,11 @@
                 <td class="w-20 pl-1 pr-6">
                   <div class="flex justify-start">
                     <div class="w-12 flex justify-end">
-                      {{ vendor.active ? (vendor.evaluated / vendor.active | percent: "1.2") : "—" }}
+                      {{
+                        vendor.active
+                          ? (vendor.evaluated / vendor.active | percent: "1.2")
+                          : "—"
+                      }}
                     </div>
                   </div>
                 </td>
