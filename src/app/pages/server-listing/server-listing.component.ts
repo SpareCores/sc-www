@@ -360,7 +360,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     );
 
     this.SEOHandler.updateThumbnail(
-      "https://sparecores.com/assets/images/media/server_list_image.png",
+      "https://sparecores.com/assets/images/og/server_list_image.png",
     );
 
     const parameters = this.openApiJson.paths["/servers"].get.parameters || [];

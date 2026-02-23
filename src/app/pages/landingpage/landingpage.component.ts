@@ -73,7 +73,7 @@ export class LandingpageComponent implements OnInit, AfterViewInit {
     );
 
     this.SEOHandler.updateThumbnail(
-      "https://sparecores.com/assets/images/media/landing.png",
+      "https://sparecores.com/assets/images/og/landing.png",
     );
 
     if (isPlatformBrowser(this.platformId)) {

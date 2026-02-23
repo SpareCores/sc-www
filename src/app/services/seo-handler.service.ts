@@ -95,7 +95,7 @@ export class SeoHandlerService {
   }
 
   public restoreThumbnail() {
-    const content = "https://sparecores.com/assets/images/media/landing.png";
+    const content = "https://sparecores.com/assets/images/og/landing.png";
     this.metaTagService.updateTag(
       { name: "twitter:image:src", content },
       "name='twitter:image:src'",
