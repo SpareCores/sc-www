@@ -23,11 +23,11 @@
         <table class="items_table no-hover-table">
           <thead>
             <tr>
-              <th class="py-4 px-4">
+              <th class="px-3 md:px-12 py-4 min-w-[16rem]">
                 <div class="flex gap-1 whitespace-nowrap">VENDOR</div>
               </th>
-              <th class="py-4 px-4">
-                <div class="flex justify-end whitespace-nowrap">
+              <th class="px-3 md:px-12 py-4">
+                <div class="flex justify-center whitespace-nowrap">
                   IDENTIFIED SERVERS
                 </div>
               </th>
@@ -74,7 +74,7 @@
                   </div>
                 </td>
                 <td class="px-4">
-                  <div class="flex justify-end">
+                  <div class="flex justify-center">
                     {{ vendor.all }}
                   </div>
                 </td>
@@ -84,8 +84,10 @@
                   </div>
                 </td>
                 <td class="w-20 pl-1 pr-6">
-                  <div class="flex justify-end">
-                    {{ vendor.inactive / vendor.all | percent: "1.2" }}
+                  <div class="flex justify-start">
+                    <div class="w-12 flex justify-end">
+                      {{ vendor.inactive / vendor.all | percent: "1.2" }}
+                    </div>
                   </div>
                 </td>
                 <td class="border-l border-gray-600 w-16 pl-6 pr-1">
@@ -94,8 +96,10 @@
                   </div>
                 </td>
                 <td class="w-20 pl-1 pr-6">
-                  <div class="flex justify-end">
-                    {{ vendor.active / vendor.all | percent: "1.2" }}
+                  <div class="flex justify-start">
+                    <div class="w-12 flex justify-end">
+                      {{ vendor.active / vendor.all | percent: "1.2" }}
+                    </div>
                   </div>
                 </td>
                 <td class="border-l border-gray-600 w-16 pl-6 pr-1">
@@ -104,8 +108,14 @@
                   </div>
                 </td>
                 <td class="w-20 pl-1 pr-6">
-                  <div class="flex justify-end">
-                    {{ vendor.evaluated / vendor.active | percent: "1.2" }}
+                  <div class="flex justify-start">
+                    <div class="w-12 flex justify-end">
+                      {{
+                        vendor.active
+                          ? (vendor.evaluated / vendor.active | percent: "1.2")
+                          : "—"
+                      }}
+                    </div>
                   </div>
                 </td>
                 <td class="border-l border-gray-600 w-16 pl-6 pr-1">
@@ -114,12 +124,44 @@
                   </div>
                 </td>
                 <td class="w-20 pl-1 pr-6">
-                  <div class="flex justify-end">
-                    {{ vendor.missing / vendor.active | percent: "1.2" }}
+                  <div class="flex justify-start">
+                    <div class="w-12 flex justify-end">
+                      {{ vendor.missing / vendor.active | percent: "1.2" }}
+                    </div>
                   </div>
                 </td>
               </tr>
             }
+            <tr class="font-bold border-t-2 border-emerald-400">
+              <td class="pl-3 pr-2 py-3">
+                <div class="flex gap-1">Total</div>
+              </td>
+              <td class="px-4">
+                <div class="flex justify-center">
+                  {{ vendorSummaryStats().all }}
+                </div>
+              </td>
+              <td colspan="2" class="border-l border-gray-600 pl-6 pr-6">
+                <div class="flex justify-center">
+                  {{ vendorSummaryStats().inactive }}
+                </div>
+              </td>
+              <td colspan="2" class="border-l border-gray-600 pl-6 pr-6">
+                <div class="flex justify-center">
+                  {{ vendorSummaryStats().active }}
+                </div>
+              </td>
+              <td colspan="2" class="border-l border-gray-600 pl-6 pr-6">
+                <div class="flex justify-center">
+                  {{ vendorSummaryStats().evaluated }}
+                </div>
+              </td>
+              <td colspan="2" class="border-l border-gray-600 pl-6 pr-6">
+                <div class="flex justify-center">
+                  {{ vendorSummaryStats().missing }}
+                </div>
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>

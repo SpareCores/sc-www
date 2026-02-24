@@ -208,7 +208,7 @@ export class AboutNavigatorComponent implements OnInit, AfterViewInit {
       "cloud, server, price, comparison, sparecores, navigator",
     );
     this.SEOHandler.updateThumbnail(
-      "https://sparecores.com/assets/images/media/landing_navigator.png",
+      "https://sparecores.com/assets/images/og/landing_navigator.png",
     );
   }
 
