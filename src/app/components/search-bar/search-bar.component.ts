@@ -98,7 +98,7 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   vendorMetadata: any[] = [];
 
   // TODO: replace with real auth check once authentication is implemented
-  readonly isAuthenticated = false;
+  @Input() isAuthenticated = true;
 
   modalSearch: any;
   freetextSearchInput: string | null = null;
@@ -297,7 +297,7 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
       queryObject.regions = [];
       this.regionMetadata().forEach((region) => {
         if (region.selected) {
-          queryObject.regions.push(region.region_id);
+          queryObject.regions.push(`${region.vendor_id}~${region.region_id}`);
         }
       });
     } else {
@@ -723,7 +723,10 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
             .map((item: any) => {
               return {
                 ...item,
-                selected: selectedRegionIds.indexOf(item.region_id) !== -1,
+                selected:
+                  selectedRegionIds.indexOf(
+                    `${item.vendor_id}~${item.region_id}`,
+                  ) !== -1,
               };
             })
             .sort((a: any, b: any) => a.name.localeCompare(b.name)),
