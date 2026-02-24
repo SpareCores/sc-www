@@ -779,6 +779,7 @@
                           benchmarkData
                         )
                       "
+                      title="{{ value }}"
                     >
                       {{ value | compactNumber }}
                     </td>
@@ -846,6 +847,7 @@
                         [style]="
                           isBestStyle(value, config.values, benchmarkData)
                         "
+                        title="{{ value }}"
                       >
                         {{ value | compactNumber }}
                       </td>
@@ -1029,6 +1031,7 @@
                       <td
                         class="compact-number"
                         [style]="isBestStyle(value, config.values, chartData)"
+                        title="{{ value }}"
                       >
                         {{ value | compactNumber }}
                       </td>
@@ -1095,6 +1098,7 @@
                     [style]="
                       isBestStyle(value, config.values, benchmarkCategory)
                     "
+                    title="{{ value }}"
                   >
                     {{ value | compactNumber }}
                   </td>
