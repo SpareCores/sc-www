@@ -840,7 +840,7 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
     this.filterServers();
   }
 
-  selectRegionrVendor(vendor: RegionVendorMetadata) {
+  selectRegionVendor(vendor: RegionVendorMetadata) {
     const maxRegions = 3;
     const shouldSelect = !vendor.selected;
 
