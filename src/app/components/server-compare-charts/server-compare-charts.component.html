@@ -767,6 +767,7 @@
                     track $index
                   ) {
                     <td
+                      class="compact-number"
                       [style]="
                         isBestStyle(
                           value,
@@ -775,7 +776,7 @@
                         )
                       "
                     >
-                      {{ numberWithCommas(value) }}
+                      {{ value | compactNumber }}
                     </td>
                   }
                 }
@@ -837,11 +838,12 @@
                     </td>
                     @for (value of config.values; track $index) {
                       <td
+                        class="compact-number"
                         [style]="
                           isBestStyle(value, config.values, benchmarkData)
                         "
                       >
-                        {{ numberWithCommas(value) }}
+                        {{ value | compactNumber }}
                       </td>
                     }
                   </tr>
@@ -1021,9 +1023,10 @@
                     </td>
                     @for (value of config.values; track value) {
                       <td
+                        class="compact-number"
                         [style]="isBestStyle(value, config.values, chartData)"
                       >
-                        {{ numberWithCommas(value) }}
+                        {{ value | compactNumber }}
                       </td>
                     }
                   </tr>
@@ -1084,11 +1087,12 @@
                 </td>
                 @for (value of config.values; track value) {
                   <td
+                    class="compact-number"
                     [style]="
                       isBestStyle(value, config.values, benchmarkCategory)
                     "
                   >
-                    {{ numberWithCommas(value) }}
+                    {{ value | compactNumber }}
                   </td>
                 }
               </tr>
