@@ -678,13 +678,51 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   selectContinent(continent: ContinentMetadata) {
-    continent.selected = !continent.selected;
-    this.countryMetadata.update((countries) =>
-      countries.map((country) =>
-        country.continent === continent.continent
-          ? { ...country, selected: continent.selected }
-          : country,
-      ),
+    const maxCountries = 1;
+    const shouldSelect = !continent.selected;
+
+    if (!shouldSelect) {
+      this.countryMetadata.update((countries) =>
+        countries.map((country) =>
+          country.continent === continent.continent
+            ? { ...country, selected: false }
+            : country,
+        ),
+      );
+    } else {
+      let remainingSlots = maxCountries - this.selectedCountriesCount();
+      if (remainingSlots <= 0) {
+        return;
+      }
+
+      this.countryMetadata.update((countries) =>
+        countries.map((country) => {
+          if (country.continent !== continent.continent) {
+            return country;
+          }
+
+          if (country.selected) {
+            return country;
+          }
+
+          if (remainingSlots > 0) {
+            remainingSlots--;
+            return { ...country, selected: true };
+          }
+
+          return country;
+        }),
+      );
+    }
+
+    const countriesInContinent = this.countryMetadata().filter(
+      (country) => country.continent === continent.continent,
+    );
+    continent.selected = countriesInContinent.every(
+      (country) => country.selected,
+    );
+    continent.collapsed = countriesInContinent.every(
+      (country) => !country.selected,
     );
 
     this.valueChanged();
@@ -803,14 +841,48 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   selectRegionrVendor(vendor: RegionVendorMetadata) {
-    vendor.selected = !vendor.selected;
-    this.regionMetadata.update((regions) =>
-      regions.map((region) =>
-        region.vendor_id === vendor.vendor_id
-          ? { ...region, selected: vendor.selected }
-          : region,
-      ),
+    const maxRegions = 3;
+    const shouldSelect = !vendor.selected;
+
+    if (!shouldSelect) {
+      this.regionMetadata.update((regions) =>
+        regions.map((region) =>
+          region.vendor_id === vendor.vendor_id
+            ? { ...region, selected: false }
+            : region,
+        ),
+      );
+    } else {
+      let remainingSlots = maxRegions - this.selectedRegionsCount();
+      if (remainingSlots <= 0) {
+        return;
+      }
+
+      this.regionMetadata.update((regions) =>
+        regions.map((region) => {
+          if (region.vendor_id !== vendor.vendor_id) {
+            return region;
+          }
+
+          if (region.selected) {
+            return region;
+          }
+
+          if (remainingSlots > 0) {
+            remainingSlots--;
+            return { ...region, selected: true };
+          }
+
+          return region;
+        }),
+      );
+    }
+
+    const vendorRegions = this.regionMetadata().filter(
+      (region) => region.vendor_id === vendor.vendor_id,
     );
+    vendor.selected = vendorRegions.every((region) => region.selected);
+    vendor.collapsed = vendorRegions.every((region) => !region.selected);
 
     this.valueChanged();
   }
