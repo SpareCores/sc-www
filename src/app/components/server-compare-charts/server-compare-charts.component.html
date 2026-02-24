@@ -779,9 +779,12 @@
                           benchmarkData
                         )
                       "
-                      title="{{ value }}"
                     >
-                      {{ value | compactNumber }}
+                      <span
+                        (mouseenter)="showTooltip($event, value.toString())"
+                        (mouseleave)="hideTooltip()"
+                        >{{ value | compactNumber }}</span
+                      >
                     </td>
                   }
                 }
@@ -847,9 +850,12 @@
                         [style]="
                           isBestStyle(value, config.values, benchmarkData)
                         "
-                        title="{{ value }}"
                       >
-                        {{ value | compactNumber }}
+                        <span
+                          (mouseenter)="showTooltip($event, value.toString())"
+                          (mouseleave)="hideTooltip()"
+                          >{{ value | compactNumber }}</span
+                        >
                       </td>
                     }
                   </tr>
@@ -1031,9 +1037,12 @@
                       <td
                         class="compact-number"
                         [style]="isBestStyle(value, config.values, chartData)"
-                        title="{{ value }}"
                       >
-                        {{ value | compactNumber }}
+                        <span
+                          (mouseenter)="showTooltip($event, value.toString())"
+                          (mouseleave)="hideTooltip()"
+                          >{{ value | compactNumber }}</span
+                        >
                       </td>
                     }
                   </tr>
@@ -1098,9 +1107,12 @@
                     [style]="
                       isBestStyle(value, config.values, benchmarkCategory)
                     "
-                    title="{{ value }}"
                   >
-                    {{ value | compactNumber }}
+                    <span
+                      (mouseenter)="showTooltip($event, value.toString())"
+                      (mouseleave)="hideTooltip()"
+                      >{{ value | compactNumber }}</span
+                    >
                   </td>
                 }
               </tr>
