@@ -11,7 +11,9 @@
             <th
               [style]="getStyle()"
               class="align-baseline compact-number-header-cell"
-              id="main-table-th"
+              [id]="
+                'main-table-th-' + server.vendor_id + '_' + server.server_id
+              "
             >
               <div
                 class="flex flex-col gap-1 justify-center ml-auto"
@@ -781,7 +783,10 @@
                       "
                     >
                       <span
-                        (mouseenter)="showTooltip($event, value.toString())"
+                        (mouseenter)="
+                          value !== null &&
+                            showTooltip($event, value.toString())
+                        "
                         (mouseleave)="hideTooltip()"
                         >{{ value | compactNumber }}</span
                       >
@@ -852,7 +857,10 @@
                         "
                       >
                         <span
-                          (mouseenter)="showTooltip($event, value.toString())"
+                          (mouseenter)="
+                            value !== null &&
+                              showTooltip($event, value.toString())
+                          "
                           (mouseleave)="hideTooltip()"
                           >{{ value | compactNumber }}</span
                         >
@@ -1039,7 +1047,10 @@
                         [style]="isBestStyle(value, config.values, chartData)"
                       >
                         <span
-                          (mouseenter)="showTooltip($event, value.toString())"
+                          (mouseenter)="
+                            value !== null &&
+                              showTooltip($event, value.toString())
+                          "
                           (mouseleave)="hideTooltip()"
                           >{{ value | compactNumber }}</span
                         >
@@ -1109,7 +1120,9 @@
                     "
                   >
                     <span
-                      (mouseenter)="showTooltip($event, value.toString())"
+                      (mouseenter)="
+                        value !== null && showTooltip($event, value.toString())
+                      "
                       (mouseleave)="hideTooltip()"
                       >{{ value | compactNumber }}</span
                     >

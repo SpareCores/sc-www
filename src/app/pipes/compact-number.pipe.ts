@@ -20,7 +20,7 @@ const formatterSmall = new Intl.NumberFormat("en-US", {
 export class CompactNumberPipe implements PipeTransform {
   transform(value: number | string): string {
     const num = typeof value === "string" ? parseFloat(value) : value;
-    if (!num || num <= 0) return "-";
+    if (!isFinite(num) || num <= 0) return "-";
     return (num < 1 ? formatterSmall : formatterCompact).format(num);
   }
 }
