@@ -301,7 +301,7 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
         }
       });
     } else {
-      if (queryObject.datacregionsenters) delete queryObject.regions;
+      if (queryObject.regions) delete queryObject.regions;
     }
 
     this.searchChanged.emit(queryObject);
