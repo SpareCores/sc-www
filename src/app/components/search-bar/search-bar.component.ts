@@ -696,6 +696,20 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
         c === country ? { ...c, selected: !c.selected } : c,
       ),
     );
+
+    this.continentMetadata.forEach((continent) => {
+      const countriesInContinent = this.countryMetadata().filter(
+        (c) => c.continent === continent.continent,
+      );
+
+      continent.selected = countriesInContinent.every(
+        (country) => country.selected,
+      );
+      continent.collapsed = countriesInContinent.every(
+        (country) => !country.selected,
+      );
+    });
+
     this.filterServers();
   }
 
@@ -775,6 +789,16 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
     this.regionMetadata.update((regions) =>
       regions.map((r) => (r === region ? { ...r, selected: !r.selected } : r)),
     );
+
+    this.regionVendorMetadata.forEach((vendor) => {
+      const vendorRegions = this.regionMetadata().filter(
+        (r) => r.vendor_id === vendor.vendor_id,
+      );
+
+      vendor.selected = vendorRegions.every((region) => region.selected);
+      vendor.collapsed = vendorRegions.every((region) => !region.selected);
+    });
+
     this.filterServers();
   }
 
