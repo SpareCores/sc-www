@@ -11,7 +11,9 @@ import {
   PLATFORM_ID,
   SimpleChanges,
   ViewChild,
+  computed,
   inject,
+  signal,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Modal, ModalOptions } from "flowbite";
@@ -31,7 +33,7 @@ const optionsModal: ModalOptions = {
   closable: true,
 };
 
-type SearchBarParameter = {
+export type SearchBarParameter = {
   name: string;
   modelValue: unknown;
   schema: {
@@ -86,14 +88,17 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   vendors: any[] = [];
   storageIds: any[] = [];
 
-  countryMetadata: CountryMetadata[] = [];
+  countryMetadata = signal<CountryMetadata[]>([]);
   continentMetadata: ContinentMetadata[] = [];
-  regionMetadata: RegionMetadata[] = [];
+  regionMetadata = signal<RegionMetadata[]>([]);
   regionVendorMetadata: RegionVendorMetadata[] = [];
   selectedCountries: string[] = [];
   selectedRegions: string[] = [];
 
   vendorMetadata: any[] = [];
+
+  // TODO: replace with real auth check once authentication is implemented
+  readonly isAuthenticated = false;
 
   modalSearch: any;
   freetextSearchInput: string | null = null;
@@ -277,9 +282,9 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   filterServers() {
     const queryObject: any = this.getQueryObject() || {};
 
-    if (this.countryMetadata.find((country) => country.selected)) {
+    if (this.countryMetadata().find((country) => country.selected)) {
       queryObject.countries = [];
-      this.countryMetadata.forEach((country) => {
+      this.countryMetadata().forEach((country) => {
         if (country.selected) {
           queryObject.countries.push(country.country_id);
         }
@@ -288,9 +293,9 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
       if (queryObject.countries) delete queryObject.countries;
     }
 
-    if (this.regionMetadata.find((region) => region.selected)) {
+    if (this.regionMetadata().find((region) => region.selected)) {
       queryObject.regions = [];
-      this.regionMetadata.forEach((region) => {
+      this.regionMetadata().forEach((region) => {
         if (region.selected) {
           queryObject.regions.push(region.region_id);
         }
@@ -402,6 +407,22 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
 
   isParameterDisabled(parameterName: string): boolean {
     return this.extraParameters?.[parameterName] != null;
+  }
+
+  selectedRegionsCount = computed(
+    () => this.regionMetadata().filter((r) => r.selected).length,
+  );
+
+  selectedCountriesCount = computed(
+    () => this.countryMetadata().filter((c) => c.selected).length,
+  );
+
+  isRegionCheckboxDisabled(region: RegionMetadata): boolean {
+    return !region.selected && this.selectedRegionsCount() >= 3;
+  }
+
+  isCountryCheckboxDisabled(country: CountryMetadata): boolean {
+    return !country.selected && this.selectedCountriesCount() >= 1;
   }
 
   getParameterType(parameter: any) {
@@ -598,27 +619,30 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
 
     this.keeperAPI.getCountries().then((response) => {
       if (response?.body) {
-        this.countryMetadata = response.body
-          .map((item: any) => {
-            return {
-              ...item,
-              selected: selectedCountryIds.indexOf(item.country_id) !== -1,
-            };
-          })
-          .sort((a: any, b: any) => {
-            const regionNamesInEnglish = new Intl.DisplayNames(["en"], {
-              type: "region",
-            });
-            return (
-              regionNamesInEnglish
-                .of(a.country_id)
-                ?.localeCompare(regionNamesInEnglish.of(b.country_id) || "") ||
-              0
-            );
-          });
+        this.countryMetadata.set(
+          response.body
+            .map((item: any) => {
+              return {
+                ...item,
+                selected: selectedCountryIds.indexOf(item.country_id) !== -1,
+              };
+            })
+            .sort((a: any, b: any) => {
+              const regionNamesInEnglish = new Intl.DisplayNames(["en"], {
+                type: "region",
+              });
+              return (
+                regionNamesInEnglish
+                  .of(a.country_id)
+                  ?.localeCompare(
+                    regionNamesInEnglish.of(b.country_id) || "",
+                  ) || 0
+              );
+            }),
+        );
 
         this.continentMetadata = [];
-        this.countryMetadata.forEach((country) => {
+        this.countryMetadata().forEach((country) => {
           const continent = this.continentMetadata.find(
             (item) => item.continent === country.continent,
           );
@@ -633,12 +657,12 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
 
         this.continentMetadata.forEach((continent) => {
           continent.selected =
-            this.countryMetadata.find(
+            this.countryMetadata().find(
               (country) =>
                 country.continent === continent.continent && !country.selected,
             ) === undefined;
           continent.collapsed =
-            this.countryMetadata.find(
+            this.countryMetadata().find(
               (country) =>
                 country.continent === continent.continent && country.selected,
             ) === undefined;
@@ -648,20 +672,31 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   countriesByContinent(continent: string) {
-    return this.countryMetadata.filter(
+    return this.countryMetadata().filter(
       (country) => country.continent === continent,
     );
   }
 
   selectContinent(continent: ContinentMetadata) {
     continent.selected = !continent.selected;
-    this.countryMetadata.forEach((country) => {
-      if (country.continent === continent.continent) {
-        country.selected = continent.selected;
-      }
-    });
+    this.countryMetadata.update((countries) =>
+      countries.map((country) =>
+        country.continent === continent.continent
+          ? { ...country, selected: continent.selected }
+          : country,
+      ),
+    );
 
     this.valueChanged();
+  }
+
+  toggleCountry(country: CountryMetadata) {
+    this.countryMetadata.update((countries) =>
+      countries.map((c) =>
+        c === country ? { ...c, selected: !c.selected } : c,
+      ),
+    );
+    this.filterServers();
   }
 
   collapseItem(continent: ContinentMetadata | RegionVendorMetadata) {
@@ -683,17 +718,19 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
         this.vendorMetadata = responses[0].body;
       }
       if (responses[1]?.body) {
-        this.regionMetadata = responses[1].body
-          .map((item: any) => {
-            return {
-              ...item,
-              selected: selectedRegionIds.indexOf(item.region_id) !== -1,
-            };
-          })
-          .sort((a: any, b: any) => a.name.localeCompare(b.name));
+        this.regionMetadata.set(
+          responses[1].body
+            .map((item: any) => {
+              return {
+                ...item,
+                selected: selectedRegionIds.indexOf(item.region_id) !== -1,
+              };
+            })
+            .sort((a: any, b: any) => a.name.localeCompare(b.name)),
+        );
 
         this.regionVendorMetadata = [];
-        this.regionMetadata.forEach((region) => {
+        this.regionMetadata().forEach((region) => {
           const vendor = this.regionVendorMetadata.find(
             (item) => item.vendor_id === region.vendor_id,
           );
@@ -711,12 +748,12 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
 
         this.regionVendorMetadata.forEach((vendor) => {
           vendor.selected =
-            this.regionMetadata.find(
+            this.regionMetadata().find(
               (region) =>
                 region.vendor_id === vendor.vendor_id && !region.selected,
             ) === undefined;
           vendor.collapsed =
-            this.regionMetadata.find(
+            this.regionMetadata().find(
               (region) =>
                 region.vendor_id === vendor.vendor_id && region.selected,
             ) === undefined;
@@ -726,18 +763,27 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   regionsByVendor(vendor_id: string) {
-    return this.regionMetadata.filter(
+    return this.regionMetadata().filter(
       (region) => region.vendor_id === vendor_id,
     );
   }
 
+  toggleRegion(region: RegionMetadata) {
+    this.regionMetadata.update((regions) =>
+      regions.map((r) => (r === region ? { ...r, selected: !r.selected } : r)),
+    );
+    this.filterServers();
+  }
+
   selectRegionrVendor(vendor: RegionVendorMetadata) {
     vendor.selected = !vendor.selected;
-    this.regionMetadata.forEach((region) => {
-      if (region.vendor_id === vendor.vendor_id) {
-        region.selected = vendor.selected;
-      }
-    });
+    this.regionMetadata.update((regions) =>
+      regions.map((region) =>
+        region.vendor_id === vendor.vendor_id
+          ? { ...region, selected: vendor.selected }
+          : region,
+      ),
+    );
 
     this.valueChanged();
   }

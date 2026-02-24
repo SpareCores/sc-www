@@ -587,20 +587,26 @@
                       <div class="flex flex-col gap-3">
                         <div class="flex justify-between">
                           <div class="flex gap-2 items-center">
-                            <input
-                              type="checkbox"
-                              id="filter_continent_{{ continent.continent }}"
-                              data-ph-capture-attribute-sc-event="server listing filter"
-                              data-ph-capture-attribute-server-listing-filter-type="checkbox"
-                              [attr.data-ph-capture-attribute-server-listing-filter-id]="
-                                continent.continent
-                              "
-                              data-ph-capture-attribute-server-listing-filter-category="continent"
-                              [ngModel]="continent.selected"
-                              (click)="selectContinent(continent)"
-                              [disabled]="isParameterDisabled(parameter.name)"
-                              class="checkbox"
-                            />
+                            @if (isAuthenticated) {
+                              <input
+                                type="checkbox"
+                                id="filter_continent_{{ continent.continent }}"
+                                data-ph-capture-attribute-sc-event="server listing filter"
+                                data-ph-capture-attribute-server-listing-filter-type="checkbox"
+                                [attr.data-ph-capture-attribute-server-listing-filter-id]="
+                                  continent.continent
+                                "
+                                data-ph-capture-attribute-server-listing-filter-category="continent"
+                                [ngModel]="continent.selected"
+                                (click)="selectContinent(continent)"
+                                [disabled]="
+                                  isParameterDisabled(parameter.name) ||
+                                  (!continent.selected &&
+                                    selectedCountriesCount() >= 1)
+                                "
+                                class="checkbox"
+                              />
+                            }
                             <div class="text-white text-sm">
                               {{ continent.continent }}
                             </div>
@@ -617,7 +623,8 @@
                               country of countriesByContinent(
                                 continent.continent
                               );
-                              track country
+                              let i = $index;
+                              track country + "_" + $index
                             ) {
                               <div class="flex gap-2 align-center">
                                 <input
@@ -629,10 +636,11 @@
                                     country.country_id
                                   "
                                   data-ph-capture-attribute-server-listing-filter-category="country"
-                                  [(ngModel)]="country.selected"
-                                  (ngModelChange)="filterServers()"
+                                  [ngModel]="country.selected"
+                                  (click)="toggleCountry(country)"
                                   [disabled]="
-                                    isParameterDisabled(parameter.name)
+                                    isParameterDisabled(parameter.name) ||
+                                    isCountryCheckboxDisabled(country)
                                   "
                                   class="checkbox"
                                 />
@@ -656,22 +664,28 @@
                       <div class="flex flex-col gap-3">
                         <div class="flex justify-between">
                           <div class="flex gap-2 items-center">
-                            <input
-                              type="checkbox"
-                              id="filter_vendor_{{ parameter.name }}_{{
-                                vendor.vendor_id
-                              }}"
-                              data-ph-capture-attribute-sc-event="server listing filter"
-                              data-ph-capture-attribute-server-listing-filter-type="checkbox"
-                              [attr.data-ph-capture-attribute-server-listing-filter-id]="
-                                vendor.vendor_id
-                              "
-                              data-ph-capture-attribute-server-listing-filter-category="vendor"
-                              [ngModel]="vendor.selected"
-                              (click)="selectRegionrVendor(vendor)"
-                              [disabled]="isParameterDisabled(parameter.name)"
-                              class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none"
-                            />
+                            @if (isAuthenticated) {
+                              <input
+                                type="checkbox"
+                                id="filter_vendor_{{ parameter.name }}_{{
+                                  vendor.vendor_id
+                                }}"
+                                data-ph-capture-attribute-sc-event="server listing filter"
+                                data-ph-capture-attribute-server-listing-filter-type="checkbox"
+                                [attr.data-ph-capture-attribute-server-listing-filter-id]="
+                                  vendor.vendor_id
+                                "
+                                data-ph-capture-attribute-server-listing-filter-category="vendor"
+                                [ngModel]="vendor.selected"
+                                (click)="selectRegionrVendor(vendor)"
+                                [disabled]="
+                                  isParameterDisabled(parameter.name) ||
+                                  (!vendor.selected &&
+                                    selectedRegionsCount() >= 3)
+                                "
+                                class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none disabled:accent-gray-400 disabled:text-gray-400 disabled:bg-gray-400"
+                              />
+                            }
                             <div class="text-white text-sm">
                               {{ vendor.name }}
                             </div>
@@ -698,12 +712,13 @@
                                     region.api_reference
                                   "
                                   data-ph-capture-attribute-server-listing-filter-category="region"
-                                  [(ngModel)]="region.selected"
-                                  (ngModelChange)="filterServers()"
+                                  [ngModel]="region.selected"
+                                  (click)="toggleRegion(region)"
                                   [disabled]="
-                                    isParameterDisabled(parameter.name)
+                                    isParameterDisabled(parameter.name) ||
+                                    isRegionCheckboxDisabled(region)
                                   "
-                                  class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none"
+                                  class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none disabled:accent-gray-400 disabled:text-gray-400 disabled:bg-gray-400"
                                 />
                                 <div class="text-white text-sm">
                                   {{ region.name }}
