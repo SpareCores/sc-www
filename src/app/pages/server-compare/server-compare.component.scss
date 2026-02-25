@@ -10,6 +10,10 @@
       @apply text-left px-5 py-3 font-normal text-xs;
     }
 
+    .compact-number-header-cell {
+      text-align: right !important;
+    }
+
     tr {
       th:nth-of-type(1) {
         position: sticky;
@@ -70,10 +74,6 @@
   background-color: #9ca3af;
   border-radius: 20px; /* roundness of the scroll thumb */
   border: 3px solid #9ca3af; /* creates padding around scroll thumb */
-}
-
-.number_line {
-  text-align: right !important;
 }
 
 :host ::ng-deep .block_full_inline {

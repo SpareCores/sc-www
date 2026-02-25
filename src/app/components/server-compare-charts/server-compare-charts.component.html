@@ -8,9 +8,15 @@
             server of servers;
             track server.vendor_id + "_" + server.server_id
           ) {
-            <th [style]="getStyle()" class="align-baseline" id="main-table-th">
+            <th
+              [style]="getStyle()"
+              class="align-baseline compact-number-header-cell"
+              [id]="
+                'main-table-th-' + server.vendor_id + '_' + server.server_id
+              "
+            >
               <div
-                class="flex flex-col gap-1 justify-center"
+                class="flex flex-col gap-1 justify-center ml-auto"
                 style="width: fit-content"
               >
                 <a
@@ -67,7 +73,7 @@
           ) {
             <td>
               @if (server.vendor.logo) {
-                <div class="w-9 h-9 px-1 py-1 bg-white rounded-lg">
+                <div class="w-9 h-9 px-1 py-1 bg-white rounded-lg ml-auto">
                   <img
                     [src]="server.vendor.logo"
                     alt="{{ server.vendor.name }} logo"
@@ -77,7 +83,7 @@
                 </div>
               }
               @if (!server.vendor.logo) {
-                <div class="text-white text-sm">
+                <div class="text-white text-sm ml-auto">
                   {{ server.vendor.name }}
                 </div>
               }
@@ -767,6 +773,7 @@
                     track $index
                   ) {
                     <td
+                      class="compact-number"
                       [style]="
                         isBestStyle(
                           value,
@@ -775,7 +782,14 @@
                         )
                       "
                     >
-                      {{ numberWithCommas(value) }}
+                      <span
+                        (mouseenter)="
+                          value !== null &&
+                            showTooltip($event, value.toString())
+                        "
+                        (mouseleave)="hideTooltip()"
+                        >{{ value | compactNumber }}</span
+                      >
                     </td>
                   }
                 }
@@ -837,11 +851,19 @@
                     </td>
                     @for (value of config.values; track $index) {
                       <td
+                        class="compact-number"
                         [style]="
                           isBestStyle(value, config.values, benchmarkData)
                         "
                       >
-                        {{ numberWithCommas(value) }}
+                        <span
+                          (mouseenter)="
+                            value !== null &&
+                              showTooltip($event, value.toString())
+                          "
+                          (mouseleave)="hideTooltip()"
+                          >{{ value | compactNumber }}</span
+                        >
                       </td>
                     }
                   </tr>
@@ -1021,9 +1043,17 @@
                     </td>
                     @for (value of config.values; track value) {
                       <td
+                        class="compact-number"
                         [style]="isBestStyle(value, config.values, chartData)"
                       >
-                        {{ numberWithCommas(value) }}
+                        <span
+                          (mouseenter)="
+                            value !== null &&
+                              showTooltip($event, value.toString())
+                          "
+                          (mouseleave)="hideTooltip()"
+                          >{{ value | compactNumber }}</span
+                        >
                       </td>
                     }
                   </tr>
@@ -1084,11 +1114,18 @@
                 </td>
                 @for (value of config.values; track value) {
                   <td
+                    class="compact-number"
                     [style]="
                       isBestStyle(value, config.values, benchmarkCategory)
                     "
                   >
-                    {{ numberWithCommas(value) }}
+                    <span
+                      (mouseenter)="
+                        value !== null && showTooltip($event, value.toString())
+                      "
+                      (mouseleave)="hideTooltip()"
+                      >{{ value | compactNumber }}</span
+                    >
                   </td>
                 }
               </tr>

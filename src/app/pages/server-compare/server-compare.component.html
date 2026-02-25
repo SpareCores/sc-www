@@ -209,7 +209,10 @@
                     track server.vendor_id + "_" + server.server_id;
                     let i = $index
                   ) {
-                    <th [style]="getStyle(i)">
+                    <th
+                      [style]="getStyle(i)"
+                      class="compact-number-header-cell"
+                    >
                       <a
                         class="underline decoration-dotted"
                         href="/server/{{ server.vendor_id }}/{{
