@@ -14,7 +14,7 @@ describe("Server Compare", () => {
 
     E2EEvent.isVisible(`[id="main-table"]`);
 
-    E2EEvent.countElements(`[id="main-table"]`, `[id="main-table-th"]`, 2);
+    E2EEvent.countElements(`[id="main-table"]`, `[id^="main-table-th"]`, 2);
 
     E2EEvent.countElements(
       `[id="main-table"]`,
@@ -33,7 +33,7 @@ describe("Server Compare", () => {
 
     E2EEvent.isVisible(`[id="main-table"]`);
 
-    E2EEvent.countElements(`[id="main-table"]`, `[id="main-table-th"]`, 2);
+    E2EEvent.countElements(`[id="main-table"]`, `[id^="main-table-th"]`, 2);
 
     E2EEvent.countElements(
       `[id="main-table"]`,

@@ -567,9 +567,7 @@ export class ServerCompareComponent
                     s.benchmark_id === benchmark.benchmark_id &&
                     JSON.stringify(s.config) === JSON.stringify(config.config),
                 );
-                config.values.push(
-                  score ? Math.floor(score.score * 100) / 100 : "-",
-                );
+                config.values.push(score ? score.score : "-");
               });
             });
           });

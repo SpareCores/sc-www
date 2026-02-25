@@ -1,4 +1,5 @@
 import { CommonModule, isPlatformBrowser } from "@angular/common";
+import { CompactNumberPipe } from "../../pipes/compact-number.pipe";
 import {
   Component,
   ElementRef,
@@ -51,6 +52,7 @@ import { ToastService } from "../../services/toast.service";
     LucideAngularModule,
     RouterModule,
     BaseChartDirective,
+    CompactNumberPipe,
   ],
   templateUrl: "./server-compare-charts.component.html",
   styleUrl: "./server-compare-charts.component.scss",
