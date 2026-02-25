@@ -97,6 +97,8 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
 
   vendorMetadata: any[] = [];
 
+  vendorRegionCollapsedVendors: Record<string, boolean> = {};
+
   // TODO: replace with real auth check once authentication is implemented
   @Input() isAuthenticated = true;
 
@@ -174,6 +176,21 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
         this.selectedRegions = this.query.regions ? this.query.regions : [];
         this.loadCountries(this.selectedCountries);
         this.loadRegions(this.selectedRegions);
+
+        const vendorRegionValues = this.query.vendor_regions;
+        if (vendorRegionValues) {
+          const values: string[] = Array.isArray(vendorRegionValues)
+            ? vendorRegionValues
+            : [vendorRegionValues];
+          [
+            ...new Set(
+              values.map((vr: string) => vr.split("~")[0]).filter(Boolean),
+            ),
+          ].forEach(
+            (vendorId) => (this.vendorRegionCollapsedVendors[vendorId] = false),
+          );
+        }
+
         if (this.selectedCountries?.length || this.selectedRegions?.length) {
           if (
             this.filterCategories.find(
@@ -189,8 +206,11 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     this.searchParameters?.forEach((item: any) => {
-      // init modelValue as empty array for enumArray types if not already set
-      if (this.getParameterType(item) === "enumArray" && !item.modelValue) {
+      if (
+        (this.getParameterType(item) === "enumArray" ||
+          this.getParameterType(item) === "vendor_regions") &&
+        !item.modelValue
+      ) {
         item.modelValue = [];
       }
 
@@ -220,7 +240,8 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
         this.query[item.name] &&
         (this.getParameterType(item) === "enumArray" ||
           this.getParameterType(item) === "compliance_framework" ||
-          this.getParameterType(item) === "vendor") &&
+          this.getParameterType(item) === "vendor" ||
+          this.getParameterType(item) === "vendor_regions") &&
         !Array.isArray(this.query[item.name])
       ) {
         value = [this.query[item.name]];
@@ -256,7 +277,8 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
           this.extraParameters[item.name] &&
           (this.getParameterType(item) === "enumArray" ||
             this.getParameterType(item) === "compliance_framework" ||
-            this.getParameterType(item) === "vendor") &&
+            this.getParameterType(item) === "vendor" ||
+            this.getParameterType(item) === "vendor_regions") &&
           !Array.isArray(this.extraParameters[item.name])
         ) {
           value = [this.extraParameters[item.name]];
@@ -297,7 +319,7 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
       queryObject.regions = [];
       this.regionMetadata().forEach((region) => {
         if (region.selected) {
-          queryObject.regions.push(`${region.vendor_id}~${region.region_id}`);
+          queryObject.regions.push(region.region_id);
         }
       });
     } else {
@@ -438,6 +460,10 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
 
     if (name === "regions") {
       return "regions";
+    }
+
+    if (name === "vendor_regions") {
+      return "vendor_regions";
     }
 
     if (name === "compliance_framework") {
@@ -775,10 +801,7 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
             .map((item: any) => {
               return {
                 ...item,
-                selected:
-                  selectedRegionIds.indexOf(
-                    `${item.vendor_id}~${item.region_id}`,
-                  ) !== -1,
+                selected: selectedRegionIds.indexOf(item.region_id) !== -1,
               };
             })
             .sort((a: any, b: any) => a.name.localeCompare(b.name)),
@@ -976,5 +999,162 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
 
   private normalizeOptionId(value: BenchmarkFilterOption): string {
     return typeof value === "string" ? value : value?.key || value?.value || "";
+  }
+
+  getVendorRegionVendorIds(parameter: SearchBarParameter): string[] {
+    const vendors: string[] = [];
+    (parameter.schema.enum || []).forEach((value: any) => {
+      const vendorId = (typeof value === "string" ? value : "").split("~")[0];
+      if (vendorId && !vendors.includes(vendorId)) {
+        vendors.push(vendorId);
+      }
+    });
+    return vendors;
+  }
+
+  getVendorRegionsForVendor(
+    parameter: SearchBarParameter,
+    vendorId: string,
+  ): string[] {
+    return (
+      (parameter.schema.enum || []).filter(
+        (value: any) =>
+          typeof value === "string" && value.startsWith(vendorId + "~"),
+      ) as string[]
+    ).sort((a, b) =>
+      this.getVendorRegionDisplayName(a).localeCompare(
+        this.getVendorRegionDisplayName(b),
+      ),
+    );
+  }
+
+  isVendorRegionSelected(
+    parameter: SearchBarParameter,
+    vendorRegion: string,
+  ): boolean {
+    return (
+      Array.isArray(parameter.modelValue) &&
+      (parameter.modelValue as string[]).includes(vendorRegion)
+    );
+  }
+
+  areAllVendorRegionsSelected(
+    parameter: SearchBarParameter,
+    vendorId: string,
+  ): boolean {
+    const vendorRegions = this.getVendorRegionsForVendor(parameter, vendorId);
+    return (
+      vendorRegions.length > 0 &&
+      vendorRegions.every((vr) => this.isVendorRegionSelected(parameter, vr))
+    );
+  }
+
+  selectedVendorRegionsCount(parameter: SearchBarParameter): number {
+    return Array.isArray(parameter.modelValue)
+      ? (parameter.modelValue as string[]).length
+      : 0;
+  }
+
+  isVendorRegionCheckboxDisabled(
+    parameter: SearchBarParameter,
+    vendorRegion: string,
+  ): boolean {
+    if (this.isParameterDisabled(parameter.name)) return true;
+    if (this.isAuthenticated) return false;
+    return (
+      !this.isVendorRegionSelected(parameter, vendorRegion) &&
+      this.selectedVendorRegionsCount(parameter) >= 3
+    );
+  }
+
+  isVendorSelectAllDisabled(
+    parameter: SearchBarParameter,
+    vendorId: string,
+  ): boolean {
+    if (this.isParameterDisabled(parameter.name)) return true;
+    if (this.isAuthenticated) return false;
+    // Disable if all would already be checked, or we're at the limit and nothing to deselect
+    if (this.areAllVendorRegionsSelected(parameter, vendorId)) return false;
+    return this.selectedVendorRegionsCount(parameter) >= 3;
+  }
+
+  toggleVendorRegion(parameter: SearchBarParameter, vendorRegion: string) {
+    if (!Array.isArray(parameter.modelValue)) {
+      parameter.modelValue = [];
+    }
+    const values = parameter.modelValue as string[];
+    if (values.includes(vendorRegion)) {
+      parameter.modelValue = values.filter((v) => v !== vendorRegion);
+    } else {
+      if (!this.isAuthenticated && values.length >= 3) return;
+      parameter.modelValue = [...values, vendorRegion];
+    }
+    this.valueChanged();
+  }
+
+  toggleAllVendorRegions(parameter: SearchBarParameter, vendorId: string) {
+    if (!Array.isArray(parameter.modelValue)) {
+      parameter.modelValue = [];
+    }
+    const vendorRegions = this.getVendorRegionsForVendor(parameter, vendorId);
+    if (this.areAllVendorRegionsSelected(parameter, vendorId)) {
+      parameter.modelValue = (parameter.modelValue as string[]).filter(
+        (v) => !vendorRegions.includes(v),
+      );
+    } else {
+      const newValues = vendorRegions.filter(
+        (vr) => !this.isVendorRegionSelected(parameter, vr),
+      );
+      const remaining = this.isAuthenticated
+        ? newValues
+        : newValues.slice(
+            0,
+            Math.max(0, 3 - this.selectedVendorRegionsCount(parameter)),
+          );
+      parameter.modelValue = [
+        ...(parameter.modelValue as string[]),
+        ...remaining,
+      ];
+    }
+    this.valueChanged();
+  }
+
+  getVendorRegionDisplayName(vendorRegion: string): string {
+    const tilde = vendorRegion.indexOf("~");
+    if (tilde === -1) return vendorRegion;
+    const vendorId = vendorRegion.substring(0, tilde);
+    const regionId = vendorRegion.substring(tilde + 1);
+    const region = this.regionMetadata().find(
+      (r) => r.vendor_id === vendorId && r.region_id === regionId,
+    );
+    return region?.name || regionId;
+  }
+
+  getVendorDisplayNameById(vendorId: string): string {
+    return (
+      this.vendorMetadata.find((v) => v.vendor_id === vendorId)?.name ||
+      vendorId
+    );
+  }
+
+  isVendorRegionGreenEnergy(vendorRegion: string): boolean {
+    const tilde = vendorRegion.indexOf("~");
+    if (tilde === -1) return false;
+    const vendorId = vendorRegion.substring(0, tilde);
+    const regionId = vendorRegion.substring(tilde + 1);
+    return (
+      this.regionMetadata().find(
+        (r) => r.vendor_id === vendorId && r.region_id === regionId,
+      )?.green_energy || false
+    );
+  }
+
+  toggleVendorRegionCollapse(vendorId: string) {
+    const current = this.vendorRegionCollapsedVendors[vendorId] !== false;
+    this.vendorRegionCollapsedVendors[vendorId] = !current;
+  }
+
+  isVendorRegionCollapsed(vendorId: string): boolean {
+    return this.vendorRegionCollapsedVendors[vendorId] !== false;
   }
 }

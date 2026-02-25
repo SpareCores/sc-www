@@ -737,6 +737,103 @@
                     }
                   </div>
                 }
+                @if (getParameterType(parameter) === "vendor_regions") {
+                  <div class="mb-4 mt-4 relative flex flex-col gap-2">
+                    @for (
+                      vendorId of getVendorRegionVendorIds(parameter);
+                      track vendorId
+                    ) {
+                      <div class="flex flex-col gap-3">
+                        <div class="flex justify-between">
+                          <div class="flex gap-2 items-center">
+                            @if (isAuthenticated) {
+                              <input
+                                type="checkbox"
+                                id="filter_vendor_regions_{{ vendorId }}"
+                                data-ph-capture-attribute-sc-event="server listing filter"
+                                data-ph-capture-attribute-server-listing-filter-type="checkbox"
+                                [attr.data-ph-capture-attribute-server-listing-filter-id]="
+                                  vendorId
+                                "
+                                data-ph-capture-attribute-server-listing-filter-category="region"
+                                [ngModel]="
+                                  areAllVendorRegionsSelected(
+                                    parameter,
+                                    vendorId
+                                  )
+                                "
+                                (click)="
+                                  toggleAllVendorRegions(parameter, vendorId)
+                                "
+                                [disabled]="
+                                  isVendorSelectAllDisabled(parameter, vendorId)
+                                "
+                                class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none disabled:accent-gray-400 disabled:text-gray-400 disabled:bg-gray-400"
+                              />
+                            }
+                            <div class="text-white text-sm">
+                              {{ getVendorDisplayNameById(vendorId) }}
+                            </div>
+                          </div>
+                          <lucide-icon
+                            name="chevron-down"
+                            class="h-4 w-4 text-white cursor-pointer"
+                            (click)="toggleVendorRegionCollapse(vendorId)"
+                          ></lucide-icon>
+                        </div>
+                        @if (!isVendorRegionCollapsed(vendorId)) {
+                          <div class="flex flex-col gap-3 ml-4">
+                            @for (
+                              vendorRegion of getVendorRegionsForVendor(
+                                parameter,
+                                vendorId
+                              );
+                              track vendorRegion
+                            ) {
+                              <div class="flex gap-2 align-center">
+                                <input
+                                  type="checkbox"
+                                  id="filter_vendor_region_{{ vendorRegion }}"
+                                  data-ph-capture-attribute-sc-event="server listing filter"
+                                  data-ph-capture-attribute-server-listing-filter-type="checkbox"
+                                  [attr.data-ph-capture-attribute-server-listing-filter-id]="
+                                    vendorRegion
+                                  "
+                                  data-ph-capture-attribute-server-listing-filter-category="region"
+                                  [ngModel]="
+                                    isVendorRegionSelected(
+                                      parameter,
+                                      vendorRegion
+                                    )
+                                  "
+                                  (click)="
+                                    toggleVendorRegion(parameter, vendorRegion)
+                                  "
+                                  [disabled]="
+                                    isVendorRegionCheckboxDisabled(
+                                      parameter,
+                                      vendorRegion
+                                    )
+                                  "
+                                  class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none disabled:accent-gray-400 disabled:text-gray-400 disabled:bg-gray-400"
+                                />
+                                <div class="text-white text-sm">
+                                  {{ getVendorRegionDisplayName(vendorRegion) }}
+                                </div>
+                                @if (isVendorRegionGreenEnergy(vendorRegion)) {
+                                  <lucide-icon
+                                    name="leaf"
+                                    class="h-4 w-4 text-emerald-400"
+                                  ></lucide-icon>
+                                }
+                              </div>
+                            }
+                          </div>
+                        }
+                      </div>
+                    }
+                  </div>
+                }
               </div>
             }
           </div>
