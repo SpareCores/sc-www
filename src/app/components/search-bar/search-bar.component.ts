@@ -99,6 +99,8 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
 
   vendorRegionCollapsedVendors: Record<string, boolean> = {};
 
+  readonly MAX_VENDOR_REGIONS = 3;
+
   // TODO: replace with real auth check once authentication is implemented
   @Input() isAuthenticated = true;
 
@@ -186,9 +188,9 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
             ...new Set(
               values.map((vr: string) => vr.split("~")[0]).filter(Boolean),
             ),
-          ].forEach(
-            (vendorId) => (this.vendorRegionCollapsedVendors[vendorId] = false),
-          );
+          ].forEach((vendorId) => {
+            this.vendorRegionCollapsedVendors[vendorId] = false;
+          });
         }
 
         if (this.selectedCountries?.length || this.selectedRegions?.length) {
@@ -1077,10 +1079,9 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
     vendorRegion: string,
   ): boolean {
     if (this.isParameterDisabled(parameter.name)) return true;
-    if (this.isAuthenticated) return false;
     return (
       !this.isVendorRegionSelected(parameter, vendorRegion) &&
-      this.selectedVendorRegionsCount(parameter) >= 3
+      this.selectedVendorRegionsCount(parameter) >= this.MAX_VENDOR_REGIONS
     );
   }
 
@@ -1089,10 +1090,11 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
     vendorId: string,
   ): boolean {
     if (this.isParameterDisabled(parameter.name)) return true;
-    if (this.isAuthenticated) return false;
     // Disable if all would already be checked, or we're at the limit and nothing to deselect
     if (this.areAllVendorRegionsSelected(parameter, vendorId)) return false;
-    return this.selectedVendorRegionsCount(parameter) >= 3;
+    return (
+      this.selectedVendorRegionsCount(parameter) >= this.MAX_VENDOR_REGIONS
+    );
   }
 
   toggleVendorRegion(parameter: SearchBarParameter, vendorRegion: string) {
@@ -1103,7 +1105,7 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
     if (values.includes(vendorRegion)) {
       parameter.modelValue = values.filter((v) => v !== vendorRegion);
     } else {
-      if (!this.isAuthenticated && values.length >= 3) return;
+      if (values.length >= this.MAX_VENDOR_REGIONS) return;
       parameter.modelValue = [...values, vendorRegion];
     }
     this.valueChanged();
@@ -1122,12 +1124,13 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
       const newValues = vendorRegions.filter(
         (vr) => !this.isVendorRegionSelected(parameter, vr),
       );
-      const remaining = this.isAuthenticated
-        ? newValues
-        : newValues.slice(
-            0,
-            Math.max(0, 3 - this.selectedVendorRegionsCount(parameter)),
-          );
+      const remaining = newValues.slice(
+        0,
+        Math.max(
+          0,
+          this.MAX_VENDOR_REGIONS - this.selectedVendorRegionsCount(parameter),
+        ),
+      );
       parameter.modelValue = [
         ...(parameter.modelValue as string[]),
         ...remaining,
