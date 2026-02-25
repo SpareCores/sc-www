@@ -368,12 +368,8 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     );
 
     const parameters = this.openApiJson.paths["/servers"].get.parameters || [];
-    const serverPricesParameters =
-      this.openApiJson.paths["/server_prices"].get.parameters || [];
-    const regionParams = serverPricesParameters.filter(
-      (p: SearchBarParameter) => p.name === "regions" || p.name === "countries",
-    );
-    this.searchParameters = [...parameters, ...regionParams];
+
+    this.searchParameters = parameters.filter((p: any) => p.name !== "regions");
 
     let limit = this.searchParameters.find(
       (param: any) => param.name === "limit",
