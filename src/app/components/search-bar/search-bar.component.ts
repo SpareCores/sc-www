@@ -24,7 +24,6 @@ import {
   CountryMetadata,
   ContinentMetadata,
   RegionMetadata,
-  RegionVendorMetadata,
 } from "../../pages/server-listing/server-listing.component";
 import { CountryIdtoNamePipe } from "../../pipes/country-idto-name.pipe";
 
@@ -91,9 +90,7 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   countryMetadata = signal<CountryMetadata[]>([]);
   continentMetadata: ContinentMetadata[] = [];
   regionMetadata = signal<RegionMetadata[]>([]);
-  regionVendorMetadata: RegionVendorMetadata[] = [];
   selectedCountries: string[] = [];
-  selectedRegions: string[] = [];
 
   vendorMetadata: any[] = [];
 
@@ -175,9 +172,8 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
         this.selectedCountries = this.query.countries
           ? this.query.countries
           : [];
-        this.selectedRegions = this.query.regions ? this.query.regions : [];
         this.loadCountries(this.selectedCountries);
-        this.loadRegions(this.selectedRegions);
+        this.loadRegions();
 
         const vendorRegionValues = this.query.vendor_regions;
         if (vendorRegionValues) {
@@ -193,7 +189,7 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
           });
         }
 
-        if (this.selectedCountries?.length || this.selectedRegions?.length) {
+        if (this.selectedCountries?.length) {
           if (
             this.filterCategories.find(
               (column) => column.category_id === "region",
@@ -317,17 +313,6 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
       if (queryObject.countries) delete queryObject.countries;
     }
 
-    if (this.regionMetadata().find((region) => region.selected)) {
-      queryObject.regions = [];
-      this.regionMetadata().forEach((region) => {
-        if (region.selected) {
-          queryObject.regions.push(region.region_id);
-        }
-      });
-    } else {
-      if (queryObject.regions) delete queryObject.regions;
-    }
-
     this.searchChanged.emit(queryObject);
   }
 
@@ -433,17 +418,9 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
     return this.extraParameters?.[parameterName] != null;
   }
 
-  selectedRegionsCount = computed(
-    () => this.regionMetadata().filter((r) => r.selected).length,
-  );
-
   selectedCountriesCount = computed(
     () => this.countryMetadata().filter((c) => c.selected).length,
   );
-
-  isRegionCheckboxDisabled(region: RegionMetadata): boolean {
-    return !region.selected && this.selectedRegionsCount() >= 3;
-  }
 
   isCountryCheckboxDisabled(country: CountryMetadata): boolean {
     if (this.isAuthenticated) return false;
@@ -468,10 +445,6 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
 
     if (name === "countries") {
       return "country";
-    }
-
-    if (name === "regions") {
-      return "regions";
     }
 
     if (name === "vendor_regions") {
@@ -800,17 +773,11 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
     this.filterServers();
   }
 
-  collapseItem(continent: ContinentMetadata | RegionVendorMetadata) {
+  collapseItem(continent: ContinentMetadata) {
     continent.collapsed = !continent.collapsed;
   }
 
-  loadRegions(selectedRegions: string | string[] | undefined) {
-    let selectedRegionIds = selectedRegions ? selectedRegions : [];
-
-    if (typeof selectedRegions === "string") {
-      selectedRegionIds = selectedRegions.split(",");
-    }
-
+  loadRegions() {
     Promise.all([
       this.keeperAPI.getVendors(),
       this.keeperAPI.getRegions(),
@@ -820,121 +787,12 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
       }
       if (responses[1]?.body) {
         this.regionMetadata.set(
-          responses[1].body
-            .map((item: any) => {
-              return {
-                ...item,
-                selected: selectedRegionIds.indexOf(item.region_id) !== -1,
-              };
-            })
-            .sort((a: any, b: any) => a.name.localeCompare(b.name)),
+          responses[1].body.sort((a: any, b: any) =>
+            a.name.localeCompare(b.name),
+          ),
         );
-
-        this.regionVendorMetadata = [];
-        this.regionMetadata().forEach((region) => {
-          const vendor = this.regionVendorMetadata.find(
-            (item) => item.vendor_id === region.vendor_id,
-          );
-          if (!vendor) {
-            this.regionVendorMetadata.push({
-              vendor_id: region.vendor_id,
-              name: this.vendorMetadata.find(
-                (vendor) => vendor.vendor_id === region.vendor_id,
-              )?.name,
-              selected: false,
-              collapsed: true,
-            });
-          }
-        });
-
-        this.regionVendorMetadata.forEach((vendor) => {
-          vendor.selected =
-            this.regionMetadata().find(
-              (region) =>
-                region.vendor_id === vendor.vendor_id && !region.selected,
-            ) === undefined;
-          vendor.collapsed =
-            this.regionMetadata().find(
-              (region) =>
-                region.vendor_id === vendor.vendor_id && region.selected,
-            ) === undefined;
-        });
       }
     });
-  }
-
-  regionsByVendor(vendor_id: string) {
-    return this.regionMetadata().filter(
-      (region) => region.vendor_id === vendor_id,
-    );
-  }
-
-  toggleRegion(region: RegionMetadata) {
-    if (!region.selected && this.selectedRegionsCount() >= 3) {
-      return;
-    }
-
-    this.regionMetadata.update((regions) =>
-      regions.map((r) => (r === region ? { ...r, selected: !r.selected } : r)),
-    );
-
-    this.regionVendorMetadata.forEach((vendor) => {
-      const vendorRegions = this.regionMetadata().filter(
-        (r) => r.vendor_id === vendor.vendor_id,
-      );
-
-      vendor.selected = vendorRegions.every((region) => region.selected);
-      vendor.collapsed = vendorRegions.every((region) => !region.selected);
-    });
-
-    this.filterServers();
-  }
-
-  selectRegionVendor(vendor: RegionVendorMetadata) {
-    const maxRegions = 3;
-    const shouldSelect = !vendor.selected;
-
-    if (!shouldSelect) {
-      this.regionMetadata.update((regions) =>
-        regions.map((region) =>
-          region.vendor_id === vendor.vendor_id
-            ? { ...region, selected: false }
-            : region,
-        ),
-      );
-    } else {
-      let remainingSlots = maxRegions - this.selectedRegionsCount();
-      if (remainingSlots <= 0) {
-        return;
-      }
-
-      this.regionMetadata.update((regions) =>
-        regions.map((region) => {
-          if (region.vendor_id !== vendor.vendor_id) {
-            return region;
-          }
-
-          if (region.selected) {
-            return region;
-          }
-
-          if (remainingSlots > 0) {
-            remainingSlots--;
-            return { ...region, selected: true };
-          }
-
-          return region;
-        }),
-      );
-    }
-
-    const vendorRegions = this.regionMetadata().filter(
-      (region) => region.vendor_id === vendor.vendor_id,
-    );
-    vendor.selected = vendorRegions.every((region) => region.selected);
-    vendor.collapsed = vendorRegions.every((region) => !region.selected);
-
-    this.valueChanged();
   }
 
   openSearchPrompt() {
