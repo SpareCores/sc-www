@@ -21,6 +21,231 @@ export enum Vendors {
   Upcloud = "upcloud",
 }
 
+/** VendorRegions */
+export enum VendorRegions {
+  AlicloudApNortheast1 = "alicloud~ap-northeast-1",
+  AlicloudApNortheast2 = "alicloud~ap-northeast-2",
+  AlicloudApSoutheast1 = "alicloud~ap-southeast-1",
+  AlicloudApSoutheast3 = "alicloud~ap-southeast-3",
+  AlicloudApSoutheast5 = "alicloud~ap-southeast-5",
+  AlicloudApSoutheast6 = "alicloud~ap-southeast-6",
+  AlicloudApSoutheast7 = "alicloud~ap-southeast-7",
+  AlicloudCnBeijing = "alicloud~cn-beijing",
+  AlicloudCnChengdu = "alicloud~cn-chengdu",
+  AlicloudCnFuzhou = "alicloud~cn-fuzhou",
+  AlicloudCnGuangzhou = "alicloud~cn-guangzhou",
+  AlicloudCnHangzhou = "alicloud~cn-hangzhou",
+  AlicloudCnHeyuan = "alicloud~cn-heyuan",
+  AlicloudCnHongkong = "alicloud~cn-hongkong",
+  AlicloudCnHuhehaote = "alicloud~cn-huhehaote",
+  AlicloudCnNanjing = "alicloud~cn-nanjing",
+  AlicloudCnQingdao = "alicloud~cn-qingdao",
+  AlicloudCnShanghai = "alicloud~cn-shanghai",
+  AlicloudCnShenzhen = "alicloud~cn-shenzhen",
+  AlicloudCnWuhanLr = "alicloud~cn-wuhan-lr",
+  AlicloudCnWulanchabu = "alicloud~cn-wulanchabu",
+  AlicloudCnZhangjiakou = "alicloud~cn-zhangjiakou",
+  AlicloudEuCentral1 = "alicloud~eu-central-1",
+  AlicloudEuWest1 = "alicloud~eu-west-1",
+  AlicloudMeCentral1 = "alicloud~me-central-1",
+  AlicloudMeEast1 = "alicloud~me-east-1",
+  AlicloudNaSouth1 = "alicloud~na-south-1",
+  AlicloudUsEast1 = "alicloud~us-east-1",
+  AlicloudUsWest1 = "alicloud~us-west-1",
+  AwsAfSouth1 = "aws~af-south-1",
+  AwsApEast1 = "aws~ap-east-1",
+  AwsApEast2 = "aws~ap-east-2",
+  AwsApNortheast1 = "aws~ap-northeast-1",
+  AwsApNortheast2 = "aws~ap-northeast-2",
+  AwsApNortheast3 = "aws~ap-northeast-3",
+  AwsApSouth1 = "aws~ap-south-1",
+  AwsApSouth2 = "aws~ap-south-2",
+  AwsApSoutheast1 = "aws~ap-southeast-1",
+  AwsApSoutheast2 = "aws~ap-southeast-2",
+  AwsApSoutheast3 = "aws~ap-southeast-3",
+  AwsApSoutheast4 = "aws~ap-southeast-4",
+  AwsApSoutheast5 = "aws~ap-southeast-5",
+  AwsApSoutheast6 = "aws~ap-southeast-6",
+  AwsApSoutheast7 = "aws~ap-southeast-7",
+  AwsCaCentral1 = "aws~ca-central-1",
+  AwsCaWest1 = "aws~ca-west-1",
+  AwsCnNorth1 = "aws~cn-north-1",
+  AwsCnNorthwest1 = "aws~cn-northwest-1",
+  AwsEuCentral1 = "aws~eu-central-1",
+  AwsEuCentral2 = "aws~eu-central-2",
+  AwsEuNorth1 = "aws~eu-north-1",
+  AwsEuSouth1 = "aws~eu-south-1",
+  AwsEuSouth2 = "aws~eu-south-2",
+  AwsEuWest1 = "aws~eu-west-1",
+  AwsEuWest2 = "aws~eu-west-2",
+  AwsEuWest3 = "aws~eu-west-3",
+  AwsIlCentral1 = "aws~il-central-1",
+  AwsMeCentral1 = "aws~me-central-1",
+  AwsMeSouth1 = "aws~me-south-1",
+  AwsMxCentral1 = "aws~mx-central-1",
+  AwsSaEast1 = "aws~sa-east-1",
+  AwsUsEast1 = "aws~us-east-1",
+  AwsUsEast2 = "aws~us-east-2",
+  AwsUsWest1 = "aws~us-west-1",
+  AwsUsWest2 = "aws~us-west-2",
+  AzureAustraliacentral = "azure~australiacentral",
+  AzureAustraliacentral2 = "azure~australiacentral2",
+  AzureAustraliaeast = "azure~australiaeast",
+  AzureAustraliasoutheast = "azure~australiasoutheast",
+  AzureAustriaeast = "azure~austriaeast",
+  AzureBelgiumcentral = "azure~belgiumcentral",
+  AzureBrazilsouth = "azure~brazilsouth",
+  AzureBrazilsoutheast = "azure~brazilsoutheast",
+  AzureBrazilus = "azure~brazilus",
+  AzureCanadacentral = "azure~canadacentral",
+  AzureCanadaeast = "azure~canadaeast",
+  AzureCentralindia = "azure~centralindia",
+  AzureCentralus = "azure~centralus",
+  AzureCentraluseuap = "azure~centraluseuap",
+  AzureChilecentral = "azure~chilecentral",
+  AzureDenmarkeast = "azure~denmarkeast",
+  AzureEastasia = "azure~eastasia",
+  AzureEastus = "azure~eastus",
+  AzureEastus2 = "azure~eastus2",
+  AzureEastus2Euap = "azure~eastus2euap",
+  AzureEastusstg = "azure~eastusstg",
+  AzureFrancecentral = "azure~francecentral",
+  AzureFrancesouth = "azure~francesouth",
+  AzureGermanynorth = "azure~germanynorth",
+  AzureGermanywestcentral = "azure~germanywestcentral",
+  AzureIndonesiacentral = "azure~indonesiacentral",
+  AzureIsraelcentral = "azure~israelcentral",
+  AzureItalynorth = "azure~italynorth",
+  AzureJapaneast = "azure~japaneast",
+  AzureJapanwest = "azure~japanwest",
+  AzureJioindiacentral = "azure~jioindiacentral",
+  AzureJioindiawest = "azure~jioindiawest",
+  AzureKoreacentral = "azure~koreacentral",
+  AzureKoreasouth = "azure~koreasouth",
+  AzureMalaysiawest = "azure~malaysiawest",
+  AzureMexicocentral = "azure~mexicocentral",
+  AzureNewzealandnorth = "azure~newzealandnorth",
+  AzureNorthcentralus = "azure~northcentralus",
+  AzureNortheurope = "azure~northeurope",
+  AzureNorwayeast = "azure~norwayeast",
+  AzureNorwaywest = "azure~norwaywest",
+  AzurePolandcentral = "azure~polandcentral",
+  AzureQatarcentral = "azure~qatarcentral",
+  AzureSouthafricanorth = "azure~southafricanorth",
+  AzureSouthafricawest = "azure~southafricawest",
+  AzureSouthcentralus = "azure~southcentralus",
+  AzureSouthcentralusstg = "azure~southcentralusstg",
+  AzureSoutheastasia = "azure~southeastasia",
+  AzureSouthindia = "azure~southindia",
+  AzureSpaincentral = "azure~spaincentral",
+  AzureSwedencentral = "azure~swedencentral",
+  AzureSwitzerlandnorth = "azure~switzerlandnorth",
+  AzureSwitzerlandwest = "azure~switzerlandwest",
+  AzureUaecentral = "azure~uaecentral",
+  AzureUaenorth = "azure~uaenorth",
+  AzureUksouth = "azure~uksouth",
+  AzureUkwest = "azure~ukwest",
+  AzureWestcentralus = "azure~westcentralus",
+  AzureWesteurope = "azure~westeurope",
+  AzureWestindia = "azure~westindia",
+  AzureWestus = "azure~westus",
+  AzureWestus2 = "azure~westus2",
+  AzureWestus3 = "azure~westus3",
+  Gcp1000 = "gcp~1000",
+  Gcp1100 = "gcp~1100",
+  Gcp1210 = "gcp~1210",
+  Gcp1220 = "gcp~1220",
+  Gcp1230 = "gcp~1230",
+  Gcp1250 = "gcp~1250",
+  Gcp1260 = "gcp~1260",
+  Gcp1270 = "gcp~1270",
+  Gcp1280 = "gcp~1280",
+  Gcp1290 = "gcp~1290",
+  Gcp1300 = "gcp~1300",
+  Gcp1310 = "gcp~1310",
+  Gcp1320 = "gcp~1320",
+  Gcp1330 = "gcp~1330",
+  Gcp1340 = "gcp~1340",
+  Gcp1350 = "gcp~1350",
+  Gcp1360 = "gcp~1360",
+  Gcp1370 = "gcp~1370",
+  Gcp1380 = "gcp~1380",
+  Gcp1390 = "gcp~1390",
+  Gcp1410 = "gcp~1410",
+  Gcp1420 = "gcp~1420",
+  Gcp1430 = "gcp~1430",
+  Gcp1440 = "gcp~1440",
+  Gcp1450 = "gcp~1450",
+  Gcp1460 = "gcp~1460",
+  Gcp1470 = "gcp~1470",
+  Gcp1480 = "gcp~1480",
+  Gcp1490 = "gcp~1490",
+  Gcp1510 = "gcp~1510",
+  Gcp1520 = "gcp~1520",
+  Gcp1530 = "gcp~1530",
+  Gcp1540 = "gcp~1540",
+  Gcp1550 = "gcp~1550",
+  Gcp1560 = "gcp~1560",
+  Gcp1570 = "gcp~1570",
+  Gcp1580 = "gcp~1580",
+  Gcp1590 = "gcp~1590",
+  Gcp1600 = "gcp~1600",
+  Gcp1610 = "gcp~1610",
+  Gcp1640 = "gcp~1640",
+  Gcp1650 = "gcp~1650",
+  Gcp1680 = "gcp~1680",
+  Hcloud2 = "hcloud~2",
+  Hcloud3 = "hcloud~3",
+  Hcloud4 = "hcloud~4",
+  Hcloud5 = "hcloud~5",
+  Hcloud6 = "hcloud~6",
+  Hcloud7 = "hcloud~7",
+  OvhAPSOUTHMUM = "ovh~AP-SOUTH-MUM",
+  OvhAPSOUTHMUM1 = "ovh~AP-SOUTH-MUM-1",
+  OvhAPSOUTHEASTSYD = "ovh~AP-SOUTHEAST-SYD",
+  OvhAPSOUTHEASTSYD2 = "ovh~AP-SOUTHEAST-SYD-2",
+  OvhBHS = "ovh~BHS",
+  OvhBHS5 = "ovh~BHS5",
+  OvhCAEASTTOR = "ovh~CA-EAST-TOR",
+  OvhDE = "ovh~DE",
+  OvhDE1 = "ovh~DE1",
+  OvhEUSOUTHMIL = "ovh~EU-SOUTH-MIL",
+  OvhEUWESTPAR = "ovh~EU-WEST-PAR",
+  OvhGRA = "ovh~GRA",
+  OvhGRA11 = "ovh~GRA11",
+  OvhGRA7 = "ovh~GRA7",
+  OvhGRA9 = "ovh~GRA9",
+  OvhRBX = "ovh~RBX",
+  OvhRBXA = "ovh~RBX-A",
+  OvhRBXARCHIVE = "ovh~RBX-ARCHIVE",
+  OvhSBG = "ovh~SBG",
+  OvhSBG5 = "ovh~SBG5",
+  OvhSBG7 = "ovh~SBG7",
+  OvhSGP = "ovh~SGP",
+  OvhSGP1 = "ovh~SGP1",
+  OvhSYD = "ovh~SYD",
+  OvhSYD1 = "ovh~SYD1",
+  OvhUK = "ovh~UK",
+  OvhUK1 = "ovh~UK1",
+  OvhWAW = "ovh~WAW",
+  OvhWAW1 = "ovh~WAW1",
+  UpcloudAuSyd1 = "upcloud~au-syd1",
+  UpcloudDeFra1 = "upcloud~de-fra1",
+  UpcloudDkCph1 = "upcloud~dk-cph1",
+  UpcloudEsMad1 = "upcloud~es-mad1",
+  UpcloudFiHel1 = "upcloud~fi-hel1",
+  UpcloudFiHel2 = "upcloud~fi-hel2",
+  UpcloudNlAms1 = "upcloud~nl-ams1",
+  UpcloudNoSvg1 = "upcloud~no-svg1",
+  UpcloudPlWaw1 = "upcloud~pl-waw1",
+  UpcloudSeSto1 = "upcloud~se-sto1",
+  UpcloudSgSin1 = "upcloud~sg-sin1",
+  UpcloudUkLon1 = "upcloud~uk-lon1",
+  UpcloudUsChi1 = "upcloud~us-chi1",
+  UpcloudUsNyc1 = "upcloud~us-nyc1",
+  UpcloudUsSjo1 = "upcloud~us-sjo1",
+}
+
 /**
  * TrafficDirection
  * Direction of the network traffic.
@@ -2053,6 +2278,8 @@ export interface ServerPriceWithPKs {
    * @format date-time
    */
   observed_at?: string;
+  /** Price Monthly */
+  price_monthly?: number | null;
   vendor: VendorBase;
   region: RegionBaseWithPKs;
   zone: ZoneBase;
@@ -2923,7 +3150,7 @@ export interface TableServerPricesTableServerPricesGetParams {
   vendor?: "alicloud" | "aws" | "azure" | "gcp" | "hcloud" | "ovh" | "upcloud";
   /**
    * Region id
-   * Identifier of the region.
+   * Identifier of the region. Note that region ids are not vendor-specific, so when you select a region, you might get results from multiple vendors. For more precise filtering, use vendor_regions instead.
    */
   region?:
     | "1000"
@@ -3135,6 +3362,232 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "westus"
     | "westus2"
     | "westus3";
+  /**
+   * Vendor and region id
+   * Identifier of the vendor and region, separated by a tilde.
+   */
+  vendor_regions?:
+    | "alicloud~ap-northeast-1"
+    | "alicloud~ap-northeast-2"
+    | "alicloud~ap-southeast-1"
+    | "alicloud~ap-southeast-3"
+    | "alicloud~ap-southeast-5"
+    | "alicloud~ap-southeast-6"
+    | "alicloud~ap-southeast-7"
+    | "alicloud~cn-beijing"
+    | "alicloud~cn-chengdu"
+    | "alicloud~cn-fuzhou"
+    | "alicloud~cn-guangzhou"
+    | "alicloud~cn-hangzhou"
+    | "alicloud~cn-heyuan"
+    | "alicloud~cn-hongkong"
+    | "alicloud~cn-huhehaote"
+    | "alicloud~cn-nanjing"
+    | "alicloud~cn-qingdao"
+    | "alicloud~cn-shanghai"
+    | "alicloud~cn-shenzhen"
+    | "alicloud~cn-wuhan-lr"
+    | "alicloud~cn-wulanchabu"
+    | "alicloud~cn-zhangjiakou"
+    | "alicloud~eu-central-1"
+    | "alicloud~eu-west-1"
+    | "alicloud~me-central-1"
+    | "alicloud~me-east-1"
+    | "alicloud~na-south-1"
+    | "alicloud~us-east-1"
+    | "alicloud~us-west-1"
+    | "aws~af-south-1"
+    | "aws~ap-east-1"
+    | "aws~ap-east-2"
+    | "aws~ap-northeast-1"
+    | "aws~ap-northeast-2"
+    | "aws~ap-northeast-3"
+    | "aws~ap-south-1"
+    | "aws~ap-south-2"
+    | "aws~ap-southeast-1"
+    | "aws~ap-southeast-2"
+    | "aws~ap-southeast-3"
+    | "aws~ap-southeast-4"
+    | "aws~ap-southeast-5"
+    | "aws~ap-southeast-6"
+    | "aws~ap-southeast-7"
+    | "aws~ca-central-1"
+    | "aws~ca-west-1"
+    | "aws~cn-north-1"
+    | "aws~cn-northwest-1"
+    | "aws~eu-central-1"
+    | "aws~eu-central-2"
+    | "aws~eu-north-1"
+    | "aws~eu-south-1"
+    | "aws~eu-south-2"
+    | "aws~eu-west-1"
+    | "aws~eu-west-2"
+    | "aws~eu-west-3"
+    | "aws~il-central-1"
+    | "aws~me-central-1"
+    | "aws~me-south-1"
+    | "aws~mx-central-1"
+    | "aws~sa-east-1"
+    | "aws~us-east-1"
+    | "aws~us-east-2"
+    | "aws~us-west-1"
+    | "aws~us-west-2"
+    | "azure~australiacentral"
+    | "azure~australiacentral2"
+    | "azure~australiaeast"
+    | "azure~australiasoutheast"
+    | "azure~austriaeast"
+    | "azure~belgiumcentral"
+    | "azure~brazilsouth"
+    | "azure~brazilsoutheast"
+    | "azure~brazilus"
+    | "azure~canadacentral"
+    | "azure~canadaeast"
+    | "azure~centralindia"
+    | "azure~centralus"
+    | "azure~centraluseuap"
+    | "azure~chilecentral"
+    | "azure~denmarkeast"
+    | "azure~eastasia"
+    | "azure~eastus"
+    | "azure~eastus2"
+    | "azure~eastus2euap"
+    | "azure~eastusstg"
+    | "azure~francecentral"
+    | "azure~francesouth"
+    | "azure~germanynorth"
+    | "azure~germanywestcentral"
+    | "azure~indonesiacentral"
+    | "azure~israelcentral"
+    | "azure~italynorth"
+    | "azure~japaneast"
+    | "azure~japanwest"
+    | "azure~jioindiacentral"
+    | "azure~jioindiawest"
+    | "azure~koreacentral"
+    | "azure~koreasouth"
+    | "azure~malaysiawest"
+    | "azure~mexicocentral"
+    | "azure~newzealandnorth"
+    | "azure~northcentralus"
+    | "azure~northeurope"
+    | "azure~norwayeast"
+    | "azure~norwaywest"
+    | "azure~polandcentral"
+    | "azure~qatarcentral"
+    | "azure~southafricanorth"
+    | "azure~southafricawest"
+    | "azure~southcentralus"
+    | "azure~southcentralusstg"
+    | "azure~southeastasia"
+    | "azure~southindia"
+    | "azure~spaincentral"
+    | "azure~swedencentral"
+    | "azure~switzerlandnorth"
+    | "azure~switzerlandwest"
+    | "azure~uaecentral"
+    | "azure~uaenorth"
+    | "azure~uksouth"
+    | "azure~ukwest"
+    | "azure~westcentralus"
+    | "azure~westeurope"
+    | "azure~westindia"
+    | "azure~westus"
+    | "azure~westus2"
+    | "azure~westus3"
+    | "gcp~1000"
+    | "gcp~1100"
+    | "gcp~1210"
+    | "gcp~1220"
+    | "gcp~1230"
+    | "gcp~1250"
+    | "gcp~1260"
+    | "gcp~1270"
+    | "gcp~1280"
+    | "gcp~1290"
+    | "gcp~1300"
+    | "gcp~1310"
+    | "gcp~1320"
+    | "gcp~1330"
+    | "gcp~1340"
+    | "gcp~1350"
+    | "gcp~1360"
+    | "gcp~1370"
+    | "gcp~1380"
+    | "gcp~1390"
+    | "gcp~1410"
+    | "gcp~1420"
+    | "gcp~1430"
+    | "gcp~1440"
+    | "gcp~1450"
+    | "gcp~1460"
+    | "gcp~1470"
+    | "gcp~1480"
+    | "gcp~1490"
+    | "gcp~1510"
+    | "gcp~1520"
+    | "gcp~1530"
+    | "gcp~1540"
+    | "gcp~1550"
+    | "gcp~1560"
+    | "gcp~1570"
+    | "gcp~1580"
+    | "gcp~1590"
+    | "gcp~1600"
+    | "gcp~1610"
+    | "gcp~1640"
+    | "gcp~1650"
+    | "gcp~1680"
+    | "hcloud~2"
+    | "hcloud~3"
+    | "hcloud~4"
+    | "hcloud~5"
+    | "hcloud~6"
+    | "hcloud~7"
+    | "ovh~AP-SOUTH-MUM"
+    | "ovh~AP-SOUTH-MUM-1"
+    | "ovh~AP-SOUTHEAST-SYD"
+    | "ovh~AP-SOUTHEAST-SYD-2"
+    | "ovh~BHS"
+    | "ovh~BHS5"
+    | "ovh~CA-EAST-TOR"
+    | "ovh~DE"
+    | "ovh~DE1"
+    | "ovh~EU-SOUTH-MIL"
+    | "ovh~EU-WEST-PAR"
+    | "ovh~GRA"
+    | "ovh~GRA11"
+    | "ovh~GRA7"
+    | "ovh~GRA9"
+    | "ovh~RBX"
+    | "ovh~RBX-A"
+    | "ovh~RBX-ARCHIVE"
+    | "ovh~SBG"
+    | "ovh~SBG5"
+    | "ovh~SBG7"
+    | "ovh~SGP"
+    | "ovh~SGP1"
+    | "ovh~SYD"
+    | "ovh~SYD1"
+    | "ovh~UK"
+    | "ovh~UK1"
+    | "ovh~WAW"
+    | "ovh~WAW1"
+    | "upcloud~au-syd1"
+    | "upcloud~de-fra1"
+    | "upcloud~dk-cph1"
+    | "upcloud~es-mad1"
+    | "upcloud~fi-hel1"
+    | "upcloud~fi-hel2"
+    | "upcloud~nl-ams1"
+    | "upcloud~no-svg1"
+    | "upcloud~pl-waw1"
+    | "upcloud~se-sto1"
+    | "upcloud~sg-sin1"
+    | "upcloud~uk-lon1"
+    | "upcloud~us-chi1"
+    | "upcloud~us-nyc1"
+    | "upcloud~us-sjo1";
   /**
    * Allocation
    * Server allocation method.
@@ -3398,6 +3851,489 @@ export interface SearchServersServersGetParams {
    */
   compliance_framework?: "hipaa" | "iso27001" | "soc2t2";
   /**
+   * Region id
+   * Identifier of the region. Note that region ids are not vendor-specific, so when you select a region, you might get results from multiple vendors. For more precise filtering, use vendor_regions instead.
+   */
+  regions?:
+    | "1000"
+    | "1100"
+    | "1210"
+    | "1220"
+    | "1230"
+    | "1250"
+    | "1260"
+    | "1270"
+    | "1280"
+    | "1290"
+    | "1300"
+    | "1310"
+    | "1320"
+    | "1330"
+    | "1340"
+    | "1350"
+    | "1360"
+    | "1370"
+    | "1380"
+    | "1390"
+    | "1410"
+    | "1420"
+    | "1430"
+    | "1440"
+    | "1450"
+    | "1460"
+    | "1470"
+    | "1480"
+    | "1490"
+    | "1510"
+    | "1520"
+    | "1530"
+    | "1540"
+    | "1550"
+    | "1560"
+    | "1570"
+    | "1580"
+    | "1590"
+    | "1600"
+    | "1610"
+    | "1640"
+    | "1650"
+    | "1680"
+    | "2"
+    | "3"
+    | "4"
+    | "5"
+    | "6"
+    | "7"
+    | "af-south-1"
+    | "ap-east-1"
+    | "ap-east-2"
+    | "ap-northeast-1"
+    | "ap-northeast-2"
+    | "ap-northeast-3"
+    | "ap-south-1"
+    | "ap-south-2"
+    | "ap-southeast-1"
+    | "ap-southeast-2"
+    | "ap-southeast-3"
+    | "ap-southeast-4"
+    | "ap-southeast-5"
+    | "ap-southeast-6"
+    | "ap-southeast-7"
+    | "AP-SOUTHEAST-SYD"
+    | "AP-SOUTHEAST-SYD-2"
+    | "AP-SOUTH-MUM"
+    | "AP-SOUTH-MUM-1"
+    | "australiacentral"
+    | "australiacentral2"
+    | "australiaeast"
+    | "australiasoutheast"
+    | "austriaeast"
+    | "au-syd1"
+    | "belgiumcentral"
+    | "BHS"
+    | "BHS5"
+    | "brazilsouth"
+    | "brazilsoutheast"
+    | "brazilus"
+    | "ca-central-1"
+    | "CA-EAST-TOR"
+    | "canadacentral"
+    | "canadaeast"
+    | "ca-west-1"
+    | "centralindia"
+    | "centralus"
+    | "centraluseuap"
+    | "chilecentral"
+    | "cn-beijing"
+    | "cn-chengdu"
+    | "cn-fuzhou"
+    | "cn-guangzhou"
+    | "cn-hangzhou"
+    | "cn-heyuan"
+    | "cn-hongkong"
+    | "cn-huhehaote"
+    | "cn-nanjing"
+    | "cn-north-1"
+    | "cn-northwest-1"
+    | "cn-qingdao"
+    | "cn-shanghai"
+    | "cn-shenzhen"
+    | "cn-wuhan-lr"
+    | "cn-wulanchabu"
+    | "cn-zhangjiakou"
+    | "DE"
+    | "DE1"
+    | "de-fra1"
+    | "denmarkeast"
+    | "dk-cph1"
+    | "eastasia"
+    | "eastus"
+    | "eastus2"
+    | "eastus2euap"
+    | "eastusstg"
+    | "es-mad1"
+    | "eu-central-1"
+    | "eu-central-2"
+    | "eu-north-1"
+    | "eu-south-1"
+    | "eu-south-2"
+    | "EU-SOUTH-MIL"
+    | "eu-west-1"
+    | "eu-west-2"
+    | "eu-west-3"
+    | "EU-WEST-PAR"
+    | "fi-hel1"
+    | "fi-hel2"
+    | "francecentral"
+    | "francesouth"
+    | "germanynorth"
+    | "germanywestcentral"
+    | "GRA"
+    | "GRA11"
+    | "GRA7"
+    | "GRA9"
+    | "il-central-1"
+    | "indonesiacentral"
+    | "israelcentral"
+    | "italynorth"
+    | "japaneast"
+    | "japanwest"
+    | "jioindiacentral"
+    | "jioindiawest"
+    | "koreacentral"
+    | "koreasouth"
+    | "malaysiawest"
+    | "me-central-1"
+    | "me-east-1"
+    | "me-south-1"
+    | "mexicocentral"
+    | "mx-central-1"
+    | "na-south-1"
+    | "newzealandnorth"
+    | "nl-ams1"
+    | "northcentralus"
+    | "northeurope"
+    | "norwayeast"
+    | "norwaywest"
+    | "no-svg1"
+    | "pl-waw1"
+    | "polandcentral"
+    | "qatarcentral"
+    | "RBX"
+    | "RBX-A"
+    | "RBX-ARCHIVE"
+    | "sa-east-1"
+    | "SBG"
+    | "SBG5"
+    | "SBG7"
+    | "se-sto1"
+    | "SGP"
+    | "SGP1"
+    | "sg-sin1"
+    | "southafricanorth"
+    | "southafricawest"
+    | "southcentralus"
+    | "southcentralusstg"
+    | "southeastasia"
+    | "southindia"
+    | "spaincentral"
+    | "swedencentral"
+    | "switzerlandnorth"
+    | "switzerlandwest"
+    | "SYD"
+    | "SYD1"
+    | "uaecentral"
+    | "uaenorth"
+    | "UK"
+    | "UK1"
+    | "uk-lon1"
+    | "uksouth"
+    | "ukwest"
+    | "us-chi1"
+    | "us-east-1"
+    | "us-east-2"
+    | "us-nyc1"
+    | "us-sjo1"
+    | "us-west-1"
+    | "us-west-2"
+    | "WAW"
+    | "WAW1"
+    | "westcentralus"
+    | "westeurope"
+    | "westindia"
+    | "westus"
+    | "westus2"
+    | "westus3";
+  /**
+   * Vendor and region id
+   * Identifier of the vendor and region, separated by a tilde.
+   */
+  vendor_regions?:
+    | "alicloud~ap-northeast-1"
+    | "alicloud~ap-northeast-2"
+    | "alicloud~ap-southeast-1"
+    | "alicloud~ap-southeast-3"
+    | "alicloud~ap-southeast-5"
+    | "alicloud~ap-southeast-6"
+    | "alicloud~ap-southeast-7"
+    | "alicloud~cn-beijing"
+    | "alicloud~cn-chengdu"
+    | "alicloud~cn-fuzhou"
+    | "alicloud~cn-guangzhou"
+    | "alicloud~cn-hangzhou"
+    | "alicloud~cn-heyuan"
+    | "alicloud~cn-hongkong"
+    | "alicloud~cn-huhehaote"
+    | "alicloud~cn-nanjing"
+    | "alicloud~cn-qingdao"
+    | "alicloud~cn-shanghai"
+    | "alicloud~cn-shenzhen"
+    | "alicloud~cn-wuhan-lr"
+    | "alicloud~cn-wulanchabu"
+    | "alicloud~cn-zhangjiakou"
+    | "alicloud~eu-central-1"
+    | "alicloud~eu-west-1"
+    | "alicloud~me-central-1"
+    | "alicloud~me-east-1"
+    | "alicloud~na-south-1"
+    | "alicloud~us-east-1"
+    | "alicloud~us-west-1"
+    | "aws~af-south-1"
+    | "aws~ap-east-1"
+    | "aws~ap-east-2"
+    | "aws~ap-northeast-1"
+    | "aws~ap-northeast-2"
+    | "aws~ap-northeast-3"
+    | "aws~ap-south-1"
+    | "aws~ap-south-2"
+    | "aws~ap-southeast-1"
+    | "aws~ap-southeast-2"
+    | "aws~ap-southeast-3"
+    | "aws~ap-southeast-4"
+    | "aws~ap-southeast-5"
+    | "aws~ap-southeast-6"
+    | "aws~ap-southeast-7"
+    | "aws~ca-central-1"
+    | "aws~ca-west-1"
+    | "aws~cn-north-1"
+    | "aws~cn-northwest-1"
+    | "aws~eu-central-1"
+    | "aws~eu-central-2"
+    | "aws~eu-north-1"
+    | "aws~eu-south-1"
+    | "aws~eu-south-2"
+    | "aws~eu-west-1"
+    | "aws~eu-west-2"
+    | "aws~eu-west-3"
+    | "aws~il-central-1"
+    | "aws~me-central-1"
+    | "aws~me-south-1"
+    | "aws~mx-central-1"
+    | "aws~sa-east-1"
+    | "aws~us-east-1"
+    | "aws~us-east-2"
+    | "aws~us-west-1"
+    | "aws~us-west-2"
+    | "azure~australiacentral"
+    | "azure~australiacentral2"
+    | "azure~australiaeast"
+    | "azure~australiasoutheast"
+    | "azure~austriaeast"
+    | "azure~belgiumcentral"
+    | "azure~brazilsouth"
+    | "azure~brazilsoutheast"
+    | "azure~brazilus"
+    | "azure~canadacentral"
+    | "azure~canadaeast"
+    | "azure~centralindia"
+    | "azure~centralus"
+    | "azure~centraluseuap"
+    | "azure~chilecentral"
+    | "azure~denmarkeast"
+    | "azure~eastasia"
+    | "azure~eastus"
+    | "azure~eastus2"
+    | "azure~eastus2euap"
+    | "azure~eastusstg"
+    | "azure~francecentral"
+    | "azure~francesouth"
+    | "azure~germanynorth"
+    | "azure~germanywestcentral"
+    | "azure~indonesiacentral"
+    | "azure~israelcentral"
+    | "azure~italynorth"
+    | "azure~japaneast"
+    | "azure~japanwest"
+    | "azure~jioindiacentral"
+    | "azure~jioindiawest"
+    | "azure~koreacentral"
+    | "azure~koreasouth"
+    | "azure~malaysiawest"
+    | "azure~mexicocentral"
+    | "azure~newzealandnorth"
+    | "azure~northcentralus"
+    | "azure~northeurope"
+    | "azure~norwayeast"
+    | "azure~norwaywest"
+    | "azure~polandcentral"
+    | "azure~qatarcentral"
+    | "azure~southafricanorth"
+    | "azure~southafricawest"
+    | "azure~southcentralus"
+    | "azure~southcentralusstg"
+    | "azure~southeastasia"
+    | "azure~southindia"
+    | "azure~spaincentral"
+    | "azure~swedencentral"
+    | "azure~switzerlandnorth"
+    | "azure~switzerlandwest"
+    | "azure~uaecentral"
+    | "azure~uaenorth"
+    | "azure~uksouth"
+    | "azure~ukwest"
+    | "azure~westcentralus"
+    | "azure~westeurope"
+    | "azure~westindia"
+    | "azure~westus"
+    | "azure~westus2"
+    | "azure~westus3"
+    | "gcp~1000"
+    | "gcp~1100"
+    | "gcp~1210"
+    | "gcp~1220"
+    | "gcp~1230"
+    | "gcp~1250"
+    | "gcp~1260"
+    | "gcp~1270"
+    | "gcp~1280"
+    | "gcp~1290"
+    | "gcp~1300"
+    | "gcp~1310"
+    | "gcp~1320"
+    | "gcp~1330"
+    | "gcp~1340"
+    | "gcp~1350"
+    | "gcp~1360"
+    | "gcp~1370"
+    | "gcp~1380"
+    | "gcp~1390"
+    | "gcp~1410"
+    | "gcp~1420"
+    | "gcp~1430"
+    | "gcp~1440"
+    | "gcp~1450"
+    | "gcp~1460"
+    | "gcp~1470"
+    | "gcp~1480"
+    | "gcp~1490"
+    | "gcp~1510"
+    | "gcp~1520"
+    | "gcp~1530"
+    | "gcp~1540"
+    | "gcp~1550"
+    | "gcp~1560"
+    | "gcp~1570"
+    | "gcp~1580"
+    | "gcp~1590"
+    | "gcp~1600"
+    | "gcp~1610"
+    | "gcp~1640"
+    | "gcp~1650"
+    | "gcp~1680"
+    | "hcloud~2"
+    | "hcloud~3"
+    | "hcloud~4"
+    | "hcloud~5"
+    | "hcloud~6"
+    | "hcloud~7"
+    | "ovh~AP-SOUTH-MUM"
+    | "ovh~AP-SOUTH-MUM-1"
+    | "ovh~AP-SOUTHEAST-SYD"
+    | "ovh~AP-SOUTHEAST-SYD-2"
+    | "ovh~BHS"
+    | "ovh~BHS5"
+    | "ovh~CA-EAST-TOR"
+    | "ovh~DE"
+    | "ovh~DE1"
+    | "ovh~EU-SOUTH-MIL"
+    | "ovh~EU-WEST-PAR"
+    | "ovh~GRA"
+    | "ovh~GRA11"
+    | "ovh~GRA7"
+    | "ovh~GRA9"
+    | "ovh~RBX"
+    | "ovh~RBX-A"
+    | "ovh~RBX-ARCHIVE"
+    | "ovh~SBG"
+    | "ovh~SBG5"
+    | "ovh~SBG7"
+    | "ovh~SGP"
+    | "ovh~SGP1"
+    | "ovh~SYD"
+    | "ovh~SYD1"
+    | "ovh~UK"
+    | "ovh~UK1"
+    | "ovh~WAW"
+    | "ovh~WAW1"
+    | "upcloud~au-syd1"
+    | "upcloud~de-fra1"
+    | "upcloud~dk-cph1"
+    | "upcloud~es-mad1"
+    | "upcloud~fi-hel1"
+    | "upcloud~fi-hel2"
+    | "upcloud~nl-ams1"
+    | "upcloud~no-svg1"
+    | "upcloud~pl-waw1"
+    | "upcloud~se-sto1"
+    | "upcloud~sg-sin1"
+    | "upcloud~uk-lon1"
+    | "upcloud~us-chi1"
+    | "upcloud~us-nyc1"
+    | "upcloud~us-sjo1";
+  /**
+   * Countries
+   * Filter for regions in the provided list of countries.
+   */
+  countries?:
+    | "AE"
+    | "AT"
+    | "AU"
+    | "BE"
+    | "BH"
+    | "BR"
+    | "CA"
+    | "CH"
+    | "CL"
+    | "CN"
+    | "DE"
+    | "ES"
+    | "FI"
+    | "FR"
+    | "GB"
+    | "HK"
+    | "ID"
+    | "IE"
+    | "IL"
+    | "IN"
+    | "IT"
+    | "JP"
+    | "KR"
+    | "MX"
+    | "MY"
+    | "NL"
+    | "NO"
+    | "NZ"
+    | "PH"
+    | "PL"
+    | "QA"
+    | "SA"
+    | "SE"
+    | "SG"
+    | "TH"
+    | "TW"
+    | "US"
+    | "ZA";
+  /**
    * Storage Size
    * Minimum amount of storage (GBs).
    */
@@ -3589,7 +4525,7 @@ export interface SearchServerPricesServerPricesGetParams {
   vendor?: "alicloud" | "aws" | "azure" | "gcp" | "hcloud" | "ovh" | "upcloud";
   /**
    * Region id
-   * Identifier of the region.
+   * Identifier of the region. Note that region ids are not vendor-specific, so when you select a region, you might get results from multiple vendors. For more precise filtering, use vendor_regions instead.
    */
   regions?:
     | "1000"
@@ -3801,6 +4737,232 @@ export interface SearchServerPricesServerPricesGetParams {
     | "westus"
     | "westus2"
     | "westus3";
+  /**
+   * Vendor and region id
+   * Identifier of the vendor and region, separated by a tilde.
+   */
+  vendor_regions?:
+    | "alicloud~ap-northeast-1"
+    | "alicloud~ap-northeast-2"
+    | "alicloud~ap-southeast-1"
+    | "alicloud~ap-southeast-3"
+    | "alicloud~ap-southeast-5"
+    | "alicloud~ap-southeast-6"
+    | "alicloud~ap-southeast-7"
+    | "alicloud~cn-beijing"
+    | "alicloud~cn-chengdu"
+    | "alicloud~cn-fuzhou"
+    | "alicloud~cn-guangzhou"
+    | "alicloud~cn-hangzhou"
+    | "alicloud~cn-heyuan"
+    | "alicloud~cn-hongkong"
+    | "alicloud~cn-huhehaote"
+    | "alicloud~cn-nanjing"
+    | "alicloud~cn-qingdao"
+    | "alicloud~cn-shanghai"
+    | "alicloud~cn-shenzhen"
+    | "alicloud~cn-wuhan-lr"
+    | "alicloud~cn-wulanchabu"
+    | "alicloud~cn-zhangjiakou"
+    | "alicloud~eu-central-1"
+    | "alicloud~eu-west-1"
+    | "alicloud~me-central-1"
+    | "alicloud~me-east-1"
+    | "alicloud~na-south-1"
+    | "alicloud~us-east-1"
+    | "alicloud~us-west-1"
+    | "aws~af-south-1"
+    | "aws~ap-east-1"
+    | "aws~ap-east-2"
+    | "aws~ap-northeast-1"
+    | "aws~ap-northeast-2"
+    | "aws~ap-northeast-3"
+    | "aws~ap-south-1"
+    | "aws~ap-south-2"
+    | "aws~ap-southeast-1"
+    | "aws~ap-southeast-2"
+    | "aws~ap-southeast-3"
+    | "aws~ap-southeast-4"
+    | "aws~ap-southeast-5"
+    | "aws~ap-southeast-6"
+    | "aws~ap-southeast-7"
+    | "aws~ca-central-1"
+    | "aws~ca-west-1"
+    | "aws~cn-north-1"
+    | "aws~cn-northwest-1"
+    | "aws~eu-central-1"
+    | "aws~eu-central-2"
+    | "aws~eu-north-1"
+    | "aws~eu-south-1"
+    | "aws~eu-south-2"
+    | "aws~eu-west-1"
+    | "aws~eu-west-2"
+    | "aws~eu-west-3"
+    | "aws~il-central-1"
+    | "aws~me-central-1"
+    | "aws~me-south-1"
+    | "aws~mx-central-1"
+    | "aws~sa-east-1"
+    | "aws~us-east-1"
+    | "aws~us-east-2"
+    | "aws~us-west-1"
+    | "aws~us-west-2"
+    | "azure~australiacentral"
+    | "azure~australiacentral2"
+    | "azure~australiaeast"
+    | "azure~australiasoutheast"
+    | "azure~austriaeast"
+    | "azure~belgiumcentral"
+    | "azure~brazilsouth"
+    | "azure~brazilsoutheast"
+    | "azure~brazilus"
+    | "azure~canadacentral"
+    | "azure~canadaeast"
+    | "azure~centralindia"
+    | "azure~centralus"
+    | "azure~centraluseuap"
+    | "azure~chilecentral"
+    | "azure~denmarkeast"
+    | "azure~eastasia"
+    | "azure~eastus"
+    | "azure~eastus2"
+    | "azure~eastus2euap"
+    | "azure~eastusstg"
+    | "azure~francecentral"
+    | "azure~francesouth"
+    | "azure~germanynorth"
+    | "azure~germanywestcentral"
+    | "azure~indonesiacentral"
+    | "azure~israelcentral"
+    | "azure~italynorth"
+    | "azure~japaneast"
+    | "azure~japanwest"
+    | "azure~jioindiacentral"
+    | "azure~jioindiawest"
+    | "azure~koreacentral"
+    | "azure~koreasouth"
+    | "azure~malaysiawest"
+    | "azure~mexicocentral"
+    | "azure~newzealandnorth"
+    | "azure~northcentralus"
+    | "azure~northeurope"
+    | "azure~norwayeast"
+    | "azure~norwaywest"
+    | "azure~polandcentral"
+    | "azure~qatarcentral"
+    | "azure~southafricanorth"
+    | "azure~southafricawest"
+    | "azure~southcentralus"
+    | "azure~southcentralusstg"
+    | "azure~southeastasia"
+    | "azure~southindia"
+    | "azure~spaincentral"
+    | "azure~swedencentral"
+    | "azure~switzerlandnorth"
+    | "azure~switzerlandwest"
+    | "azure~uaecentral"
+    | "azure~uaenorth"
+    | "azure~uksouth"
+    | "azure~ukwest"
+    | "azure~westcentralus"
+    | "azure~westeurope"
+    | "azure~westindia"
+    | "azure~westus"
+    | "azure~westus2"
+    | "azure~westus3"
+    | "gcp~1000"
+    | "gcp~1100"
+    | "gcp~1210"
+    | "gcp~1220"
+    | "gcp~1230"
+    | "gcp~1250"
+    | "gcp~1260"
+    | "gcp~1270"
+    | "gcp~1280"
+    | "gcp~1290"
+    | "gcp~1300"
+    | "gcp~1310"
+    | "gcp~1320"
+    | "gcp~1330"
+    | "gcp~1340"
+    | "gcp~1350"
+    | "gcp~1360"
+    | "gcp~1370"
+    | "gcp~1380"
+    | "gcp~1390"
+    | "gcp~1410"
+    | "gcp~1420"
+    | "gcp~1430"
+    | "gcp~1440"
+    | "gcp~1450"
+    | "gcp~1460"
+    | "gcp~1470"
+    | "gcp~1480"
+    | "gcp~1490"
+    | "gcp~1510"
+    | "gcp~1520"
+    | "gcp~1530"
+    | "gcp~1540"
+    | "gcp~1550"
+    | "gcp~1560"
+    | "gcp~1570"
+    | "gcp~1580"
+    | "gcp~1590"
+    | "gcp~1600"
+    | "gcp~1610"
+    | "gcp~1640"
+    | "gcp~1650"
+    | "gcp~1680"
+    | "hcloud~2"
+    | "hcloud~3"
+    | "hcloud~4"
+    | "hcloud~5"
+    | "hcloud~6"
+    | "hcloud~7"
+    | "ovh~AP-SOUTH-MUM"
+    | "ovh~AP-SOUTH-MUM-1"
+    | "ovh~AP-SOUTHEAST-SYD"
+    | "ovh~AP-SOUTHEAST-SYD-2"
+    | "ovh~BHS"
+    | "ovh~BHS5"
+    | "ovh~CA-EAST-TOR"
+    | "ovh~DE"
+    | "ovh~DE1"
+    | "ovh~EU-SOUTH-MIL"
+    | "ovh~EU-WEST-PAR"
+    | "ovh~GRA"
+    | "ovh~GRA11"
+    | "ovh~GRA7"
+    | "ovh~GRA9"
+    | "ovh~RBX"
+    | "ovh~RBX-A"
+    | "ovh~RBX-ARCHIVE"
+    | "ovh~SBG"
+    | "ovh~SBG5"
+    | "ovh~SBG7"
+    | "ovh~SGP"
+    | "ovh~SGP1"
+    | "ovh~SYD"
+    | "ovh~SYD1"
+    | "ovh~UK"
+    | "ovh~UK1"
+    | "ovh~WAW"
+    | "ovh~WAW1"
+    | "upcloud~au-syd1"
+    | "upcloud~de-fra1"
+    | "upcloud~dk-cph1"
+    | "upcloud~es-mad1"
+    | "upcloud~fi-hel1"
+    | "upcloud~fi-hel2"
+    | "upcloud~nl-ams1"
+    | "upcloud~no-svg1"
+    | "upcloud~pl-waw1"
+    | "upcloud~se-sto1"
+    | "upcloud~sg-sin1"
+    | "upcloud~uk-lon1"
+    | "upcloud~us-chi1"
+    | "upcloud~us-nyc1"
+    | "upcloud~us-sjo1";
   /**
    * Compliance Framework id
    * Compliance framework implemented at the vendor.
@@ -3986,7 +5148,7 @@ export interface SearchStoragePricesStoragePricesGetParams {
   compliance_framework?: "hipaa" | "iso27001" | "soc2t2";
   /**
    * Region id
-   * Identifier of the region.
+   * Identifier of the region. Note that region ids are not vendor-specific, so when you select a region, you might get results from multiple vendors. For more precise filtering, use vendor_regions instead.
    */
   regions?:
     | "1000"
@@ -4198,6 +5360,232 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "westus"
     | "westus2"
     | "westus3";
+  /**
+   * Vendor and region id
+   * Identifier of the vendor and region, separated by a tilde.
+   */
+  vendor_regions?:
+    | "alicloud~ap-northeast-1"
+    | "alicloud~ap-northeast-2"
+    | "alicloud~ap-southeast-1"
+    | "alicloud~ap-southeast-3"
+    | "alicloud~ap-southeast-5"
+    | "alicloud~ap-southeast-6"
+    | "alicloud~ap-southeast-7"
+    | "alicloud~cn-beijing"
+    | "alicloud~cn-chengdu"
+    | "alicloud~cn-fuzhou"
+    | "alicloud~cn-guangzhou"
+    | "alicloud~cn-hangzhou"
+    | "alicloud~cn-heyuan"
+    | "alicloud~cn-hongkong"
+    | "alicloud~cn-huhehaote"
+    | "alicloud~cn-nanjing"
+    | "alicloud~cn-qingdao"
+    | "alicloud~cn-shanghai"
+    | "alicloud~cn-shenzhen"
+    | "alicloud~cn-wuhan-lr"
+    | "alicloud~cn-wulanchabu"
+    | "alicloud~cn-zhangjiakou"
+    | "alicloud~eu-central-1"
+    | "alicloud~eu-west-1"
+    | "alicloud~me-central-1"
+    | "alicloud~me-east-1"
+    | "alicloud~na-south-1"
+    | "alicloud~us-east-1"
+    | "alicloud~us-west-1"
+    | "aws~af-south-1"
+    | "aws~ap-east-1"
+    | "aws~ap-east-2"
+    | "aws~ap-northeast-1"
+    | "aws~ap-northeast-2"
+    | "aws~ap-northeast-3"
+    | "aws~ap-south-1"
+    | "aws~ap-south-2"
+    | "aws~ap-southeast-1"
+    | "aws~ap-southeast-2"
+    | "aws~ap-southeast-3"
+    | "aws~ap-southeast-4"
+    | "aws~ap-southeast-5"
+    | "aws~ap-southeast-6"
+    | "aws~ap-southeast-7"
+    | "aws~ca-central-1"
+    | "aws~ca-west-1"
+    | "aws~cn-north-1"
+    | "aws~cn-northwest-1"
+    | "aws~eu-central-1"
+    | "aws~eu-central-2"
+    | "aws~eu-north-1"
+    | "aws~eu-south-1"
+    | "aws~eu-south-2"
+    | "aws~eu-west-1"
+    | "aws~eu-west-2"
+    | "aws~eu-west-3"
+    | "aws~il-central-1"
+    | "aws~me-central-1"
+    | "aws~me-south-1"
+    | "aws~mx-central-1"
+    | "aws~sa-east-1"
+    | "aws~us-east-1"
+    | "aws~us-east-2"
+    | "aws~us-west-1"
+    | "aws~us-west-2"
+    | "azure~australiacentral"
+    | "azure~australiacentral2"
+    | "azure~australiaeast"
+    | "azure~australiasoutheast"
+    | "azure~austriaeast"
+    | "azure~belgiumcentral"
+    | "azure~brazilsouth"
+    | "azure~brazilsoutheast"
+    | "azure~brazilus"
+    | "azure~canadacentral"
+    | "azure~canadaeast"
+    | "azure~centralindia"
+    | "azure~centralus"
+    | "azure~centraluseuap"
+    | "azure~chilecentral"
+    | "azure~denmarkeast"
+    | "azure~eastasia"
+    | "azure~eastus"
+    | "azure~eastus2"
+    | "azure~eastus2euap"
+    | "azure~eastusstg"
+    | "azure~francecentral"
+    | "azure~francesouth"
+    | "azure~germanynorth"
+    | "azure~germanywestcentral"
+    | "azure~indonesiacentral"
+    | "azure~israelcentral"
+    | "azure~italynorth"
+    | "azure~japaneast"
+    | "azure~japanwest"
+    | "azure~jioindiacentral"
+    | "azure~jioindiawest"
+    | "azure~koreacentral"
+    | "azure~koreasouth"
+    | "azure~malaysiawest"
+    | "azure~mexicocentral"
+    | "azure~newzealandnorth"
+    | "azure~northcentralus"
+    | "azure~northeurope"
+    | "azure~norwayeast"
+    | "azure~norwaywest"
+    | "azure~polandcentral"
+    | "azure~qatarcentral"
+    | "azure~southafricanorth"
+    | "azure~southafricawest"
+    | "azure~southcentralus"
+    | "azure~southcentralusstg"
+    | "azure~southeastasia"
+    | "azure~southindia"
+    | "azure~spaincentral"
+    | "azure~swedencentral"
+    | "azure~switzerlandnorth"
+    | "azure~switzerlandwest"
+    | "azure~uaecentral"
+    | "azure~uaenorth"
+    | "azure~uksouth"
+    | "azure~ukwest"
+    | "azure~westcentralus"
+    | "azure~westeurope"
+    | "azure~westindia"
+    | "azure~westus"
+    | "azure~westus2"
+    | "azure~westus3"
+    | "gcp~1000"
+    | "gcp~1100"
+    | "gcp~1210"
+    | "gcp~1220"
+    | "gcp~1230"
+    | "gcp~1250"
+    | "gcp~1260"
+    | "gcp~1270"
+    | "gcp~1280"
+    | "gcp~1290"
+    | "gcp~1300"
+    | "gcp~1310"
+    | "gcp~1320"
+    | "gcp~1330"
+    | "gcp~1340"
+    | "gcp~1350"
+    | "gcp~1360"
+    | "gcp~1370"
+    | "gcp~1380"
+    | "gcp~1390"
+    | "gcp~1410"
+    | "gcp~1420"
+    | "gcp~1430"
+    | "gcp~1440"
+    | "gcp~1450"
+    | "gcp~1460"
+    | "gcp~1470"
+    | "gcp~1480"
+    | "gcp~1490"
+    | "gcp~1510"
+    | "gcp~1520"
+    | "gcp~1530"
+    | "gcp~1540"
+    | "gcp~1550"
+    | "gcp~1560"
+    | "gcp~1570"
+    | "gcp~1580"
+    | "gcp~1590"
+    | "gcp~1600"
+    | "gcp~1610"
+    | "gcp~1640"
+    | "gcp~1650"
+    | "gcp~1680"
+    | "hcloud~2"
+    | "hcloud~3"
+    | "hcloud~4"
+    | "hcloud~5"
+    | "hcloud~6"
+    | "hcloud~7"
+    | "ovh~AP-SOUTH-MUM"
+    | "ovh~AP-SOUTH-MUM-1"
+    | "ovh~AP-SOUTHEAST-SYD"
+    | "ovh~AP-SOUTHEAST-SYD-2"
+    | "ovh~BHS"
+    | "ovh~BHS5"
+    | "ovh~CA-EAST-TOR"
+    | "ovh~DE"
+    | "ovh~DE1"
+    | "ovh~EU-SOUTH-MIL"
+    | "ovh~EU-WEST-PAR"
+    | "ovh~GRA"
+    | "ovh~GRA11"
+    | "ovh~GRA7"
+    | "ovh~GRA9"
+    | "ovh~RBX"
+    | "ovh~RBX-A"
+    | "ovh~RBX-ARCHIVE"
+    | "ovh~SBG"
+    | "ovh~SBG5"
+    | "ovh~SBG7"
+    | "ovh~SGP"
+    | "ovh~SGP1"
+    | "ovh~SYD"
+    | "ovh~SYD1"
+    | "ovh~UK"
+    | "ovh~UK1"
+    | "ovh~WAW"
+    | "ovh~WAW1"
+    | "upcloud~au-syd1"
+    | "upcloud~de-fra1"
+    | "upcloud~dk-cph1"
+    | "upcloud~es-mad1"
+    | "upcloud~fi-hel1"
+    | "upcloud~fi-hel2"
+    | "upcloud~nl-ams1"
+    | "upcloud~no-svg1"
+    | "upcloud~pl-waw1"
+    | "upcloud~se-sto1"
+    | "upcloud~sg-sin1"
+    | "upcloud~uk-lon1"
+    | "upcloud~us-chi1"
+    | "upcloud~us-nyc1"
+    | "upcloud~us-sjo1";
   /**
    * Countries
    * Filter for regions in the provided list of countries.
@@ -4298,7 +5686,7 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
   compliance_framework?: "hipaa" | "iso27001" | "soc2t2";
   /**
    * Region id
-   * Identifier of the region.
+   * Identifier of the region. Note that region ids are not vendor-specific, so when you select a region, you might get results from multiple vendors. For more precise filtering, use vendor_regions instead.
    */
   regions?:
     | "1000"
@@ -4510,6 +5898,232 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "westus"
     | "westus2"
     | "westus3";
+  /**
+   * Vendor and region id
+   * Identifier of the vendor and region, separated by a tilde.
+   */
+  vendor_regions?:
+    | "alicloud~ap-northeast-1"
+    | "alicloud~ap-northeast-2"
+    | "alicloud~ap-southeast-1"
+    | "alicloud~ap-southeast-3"
+    | "alicloud~ap-southeast-5"
+    | "alicloud~ap-southeast-6"
+    | "alicloud~ap-southeast-7"
+    | "alicloud~cn-beijing"
+    | "alicloud~cn-chengdu"
+    | "alicloud~cn-fuzhou"
+    | "alicloud~cn-guangzhou"
+    | "alicloud~cn-hangzhou"
+    | "alicloud~cn-heyuan"
+    | "alicloud~cn-hongkong"
+    | "alicloud~cn-huhehaote"
+    | "alicloud~cn-nanjing"
+    | "alicloud~cn-qingdao"
+    | "alicloud~cn-shanghai"
+    | "alicloud~cn-shenzhen"
+    | "alicloud~cn-wuhan-lr"
+    | "alicloud~cn-wulanchabu"
+    | "alicloud~cn-zhangjiakou"
+    | "alicloud~eu-central-1"
+    | "alicloud~eu-west-1"
+    | "alicloud~me-central-1"
+    | "alicloud~me-east-1"
+    | "alicloud~na-south-1"
+    | "alicloud~us-east-1"
+    | "alicloud~us-west-1"
+    | "aws~af-south-1"
+    | "aws~ap-east-1"
+    | "aws~ap-east-2"
+    | "aws~ap-northeast-1"
+    | "aws~ap-northeast-2"
+    | "aws~ap-northeast-3"
+    | "aws~ap-south-1"
+    | "aws~ap-south-2"
+    | "aws~ap-southeast-1"
+    | "aws~ap-southeast-2"
+    | "aws~ap-southeast-3"
+    | "aws~ap-southeast-4"
+    | "aws~ap-southeast-5"
+    | "aws~ap-southeast-6"
+    | "aws~ap-southeast-7"
+    | "aws~ca-central-1"
+    | "aws~ca-west-1"
+    | "aws~cn-north-1"
+    | "aws~cn-northwest-1"
+    | "aws~eu-central-1"
+    | "aws~eu-central-2"
+    | "aws~eu-north-1"
+    | "aws~eu-south-1"
+    | "aws~eu-south-2"
+    | "aws~eu-west-1"
+    | "aws~eu-west-2"
+    | "aws~eu-west-3"
+    | "aws~il-central-1"
+    | "aws~me-central-1"
+    | "aws~me-south-1"
+    | "aws~mx-central-1"
+    | "aws~sa-east-1"
+    | "aws~us-east-1"
+    | "aws~us-east-2"
+    | "aws~us-west-1"
+    | "aws~us-west-2"
+    | "azure~australiacentral"
+    | "azure~australiacentral2"
+    | "azure~australiaeast"
+    | "azure~australiasoutheast"
+    | "azure~austriaeast"
+    | "azure~belgiumcentral"
+    | "azure~brazilsouth"
+    | "azure~brazilsoutheast"
+    | "azure~brazilus"
+    | "azure~canadacentral"
+    | "azure~canadaeast"
+    | "azure~centralindia"
+    | "azure~centralus"
+    | "azure~centraluseuap"
+    | "azure~chilecentral"
+    | "azure~denmarkeast"
+    | "azure~eastasia"
+    | "azure~eastus"
+    | "azure~eastus2"
+    | "azure~eastus2euap"
+    | "azure~eastusstg"
+    | "azure~francecentral"
+    | "azure~francesouth"
+    | "azure~germanynorth"
+    | "azure~germanywestcentral"
+    | "azure~indonesiacentral"
+    | "azure~israelcentral"
+    | "azure~italynorth"
+    | "azure~japaneast"
+    | "azure~japanwest"
+    | "azure~jioindiacentral"
+    | "azure~jioindiawest"
+    | "azure~koreacentral"
+    | "azure~koreasouth"
+    | "azure~malaysiawest"
+    | "azure~mexicocentral"
+    | "azure~newzealandnorth"
+    | "azure~northcentralus"
+    | "azure~northeurope"
+    | "azure~norwayeast"
+    | "azure~norwaywest"
+    | "azure~polandcentral"
+    | "azure~qatarcentral"
+    | "azure~southafricanorth"
+    | "azure~southafricawest"
+    | "azure~southcentralus"
+    | "azure~southcentralusstg"
+    | "azure~southeastasia"
+    | "azure~southindia"
+    | "azure~spaincentral"
+    | "azure~swedencentral"
+    | "azure~switzerlandnorth"
+    | "azure~switzerlandwest"
+    | "azure~uaecentral"
+    | "azure~uaenorth"
+    | "azure~uksouth"
+    | "azure~ukwest"
+    | "azure~westcentralus"
+    | "azure~westeurope"
+    | "azure~westindia"
+    | "azure~westus"
+    | "azure~westus2"
+    | "azure~westus3"
+    | "gcp~1000"
+    | "gcp~1100"
+    | "gcp~1210"
+    | "gcp~1220"
+    | "gcp~1230"
+    | "gcp~1250"
+    | "gcp~1260"
+    | "gcp~1270"
+    | "gcp~1280"
+    | "gcp~1290"
+    | "gcp~1300"
+    | "gcp~1310"
+    | "gcp~1320"
+    | "gcp~1330"
+    | "gcp~1340"
+    | "gcp~1350"
+    | "gcp~1360"
+    | "gcp~1370"
+    | "gcp~1380"
+    | "gcp~1390"
+    | "gcp~1410"
+    | "gcp~1420"
+    | "gcp~1430"
+    | "gcp~1440"
+    | "gcp~1450"
+    | "gcp~1460"
+    | "gcp~1470"
+    | "gcp~1480"
+    | "gcp~1490"
+    | "gcp~1510"
+    | "gcp~1520"
+    | "gcp~1530"
+    | "gcp~1540"
+    | "gcp~1550"
+    | "gcp~1560"
+    | "gcp~1570"
+    | "gcp~1580"
+    | "gcp~1590"
+    | "gcp~1600"
+    | "gcp~1610"
+    | "gcp~1640"
+    | "gcp~1650"
+    | "gcp~1680"
+    | "hcloud~2"
+    | "hcloud~3"
+    | "hcloud~4"
+    | "hcloud~5"
+    | "hcloud~6"
+    | "hcloud~7"
+    | "ovh~AP-SOUTH-MUM"
+    | "ovh~AP-SOUTH-MUM-1"
+    | "ovh~AP-SOUTHEAST-SYD"
+    | "ovh~AP-SOUTHEAST-SYD-2"
+    | "ovh~BHS"
+    | "ovh~BHS5"
+    | "ovh~CA-EAST-TOR"
+    | "ovh~DE"
+    | "ovh~DE1"
+    | "ovh~EU-SOUTH-MIL"
+    | "ovh~EU-WEST-PAR"
+    | "ovh~GRA"
+    | "ovh~GRA11"
+    | "ovh~GRA7"
+    | "ovh~GRA9"
+    | "ovh~RBX"
+    | "ovh~RBX-A"
+    | "ovh~RBX-ARCHIVE"
+    | "ovh~SBG"
+    | "ovh~SBG5"
+    | "ovh~SBG7"
+    | "ovh~SGP"
+    | "ovh~SGP1"
+    | "ovh~SYD"
+    | "ovh~SYD1"
+    | "ovh~UK"
+    | "ovh~UK1"
+    | "ovh~WAW"
+    | "ovh~WAW1"
+    | "upcloud~au-syd1"
+    | "upcloud~de-fra1"
+    | "upcloud~dk-cph1"
+    | "upcloud~es-mad1"
+    | "upcloud~fi-hel1"
+    | "upcloud~fi-hel2"
+    | "upcloud~nl-ams1"
+    | "upcloud~no-svg1"
+    | "upcloud~pl-waw1"
+    | "upcloud~se-sto1"
+    | "upcloud~sg-sin1"
+    | "upcloud~uk-lon1"
+    | "upcloud~us-chi1"
+    | "upcloud~us-nyc1"
+    | "upcloud~us-sjo1";
   /**
    * Countries
    * Filter for regions in the provided list of countries.

@@ -130,7 +130,7 @@ export class StoragesComponent implements OnInit, OnDestroy {
 
     const parameters =
       this.openApiJson.paths["/storage_prices"].get.parameters || [];
-    this.searchParameters = parameters;
+    this.searchParameters = parameters.filter((p: any) => p.name !== "regions");
 
     let limit = this.searchParameters.find(
       (param: any) => param.name === "limit",

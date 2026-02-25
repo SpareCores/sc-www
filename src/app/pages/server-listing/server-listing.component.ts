@@ -23,7 +23,10 @@ import { CommonModule, isPlatformBrowser } from "@angular/common";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { FormsModule } from "@angular/forms";
 import { LucideAngularModule } from "lucide-angular";
-import { SearchBarComponent } from "../../components/search-bar/search-bar.component";
+import {
+  SearchBarComponent,
+  SearchBarParameter,
+} from "../../components/search-bar/search-bar.component";
 import { PaginationComponent } from "../../components/pagination/pagination.component";
 import {
   ServerCompare,
@@ -146,6 +149,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       collapsed: true,
     },
     { category_id: "vendor", name: "Vendor", icon: "home", collapsed: true },
+    { category_id: "region", name: "Region", icon: "hotel", collapsed: true },
   ];
 
   breadcrumbs: BreadcrumbSegment[] = [
@@ -300,7 +304,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   servers: ServerPriceWithPKs[] | any[] = [];
 
   openApiJson: any = openApiSpec;
-  searchParameters: any;
+  searchParameters: SearchBarParameter[] = [];
   query: any = {};
 
   dropdownColumn: any;
@@ -364,20 +368,21 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     );
 
     const parameters = this.openApiJson.paths["/servers"].get.parameters || [];
-    this.searchParameters = parameters;
+
+    this.searchParameters = parameters.filter((p: any) => p.name !== "regions");
 
     let limit = this.searchParameters.find(
       (param: any) => param.name === "limit",
     );
     if (limit?.schema?.default) {
-      this.limit = limit.schema.default;
+      this.limit = limit.schema.default as number;
     }
 
     let order = this.searchParameters.find(
       (param: any) => param.name === "order_by",
     );
     if (order?.schema?.default) {
-      this.orderBy = order.schema.default;
+      this.orderBy = order.schema.default as string;
     }
 
     this.route.params.subscribe(() => {

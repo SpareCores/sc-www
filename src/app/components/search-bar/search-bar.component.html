@@ -587,20 +587,27 @@
                       <div class="flex flex-col gap-3">
                         <div class="flex justify-between">
                           <div class="flex gap-2 items-center">
-                            <input
-                              type="checkbox"
-                              id="filter_continent_{{ continent.continent }}"
-                              data-ph-capture-attribute-sc-event="server listing filter"
-                              data-ph-capture-attribute-server-listing-filter-type="checkbox"
-                              [attr.data-ph-capture-attribute-server-listing-filter-id]="
-                                continent.continent
-                              "
-                              data-ph-capture-attribute-server-listing-filter-category="continent"
-                              [ngModel]="continent.selected"
-                              (click)="selectContinent(continent)"
-                              [disabled]="isParameterDisabled(parameter.name)"
-                              class="checkbox"
-                            />
+                            @if (isAuthenticated) {
+                              <input
+                                type="checkbox"
+                                id="filter_continent_{{ continent.continent }}"
+                                data-ph-capture-attribute-sc-event="server listing filter"
+                                data-ph-capture-attribute-server-listing-filter-type="checkbox"
+                                [attr.data-ph-capture-attribute-server-listing-filter-id]="
+                                  continent.continent
+                                "
+                                data-ph-capture-attribute-server-listing-filter-category="continent"
+                                [ngModel]="continent.selected"
+                                (click)="selectContinent(continent)"
+                                [disabled]="
+                                  isContinentCheckboxDisabled(
+                                    parameter,
+                                    continent
+                                  )
+                                "
+                                class="checkbox"
+                              />
+                            }
                             <div class="text-white text-sm">
                               {{ continent.continent }}
                             </div>
@@ -617,7 +624,7 @@
                               country of countriesByContinent(
                                 continent.continent
                               );
-                              track country
+                              track country.country_id
                             ) {
                               <div class="flex gap-2 align-center">
                                 <input
@@ -629,10 +636,11 @@
                                     country.country_id
                                   "
                                   data-ph-capture-attribute-server-listing-filter-category="country"
-                                  [(ngModel)]="country.selected"
-                                  (ngModelChange)="filterServers()"
+                                  [ngModel]="country.selected"
+                                  (click)="toggleCountry(country)"
                                   [disabled]="
-                                    isParameterDisabled(parameter.name)
+                                    isParameterDisabled(parameter.name) ||
+                                    isCountryCheckboxDisabled(country)
                                   "
                                   class="checkbox"
                                 />
@@ -647,68 +655,90 @@
                     }
                   </div>
                 }
-                @if (getParameterType(parameter) === "regions") {
+                @if (getParameterType(parameter) === "vendor_regions") {
                   <div class="mb-4 mt-4 relative flex flex-col gap-2">
                     @for (
-                      vendor of regionVendorMetadata;
-                      track vendor.vendor_id
+                      vendorId of getVendorRegionVendorIds(parameter);
+                      track vendorId
                     ) {
                       <div class="flex flex-col gap-3">
                         <div class="flex justify-between">
                           <div class="flex gap-2 items-center">
-                            <input
-                              type="checkbox"
-                              id="filter_vendor_{{ parameter.name }}_{{
-                                vendor.vendor_id
-                              }}"
-                              data-ph-capture-attribute-sc-event="server listing filter"
-                              data-ph-capture-attribute-server-listing-filter-type="checkbox"
-                              [attr.data-ph-capture-attribute-server-listing-filter-id]="
-                                vendor.vendor_id
-                              "
-                              data-ph-capture-attribute-server-listing-filter-category="vendor"
-                              [ngModel]="vendor.selected"
-                              (click)="selectRegionrVendor(vendor)"
-                              [disabled]="isParameterDisabled(parameter.name)"
-                              class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none"
-                            />
+                            @if (isAuthenticated) {
+                              <input
+                                type="checkbox"
+                                id="filter_vendor_regions_{{ vendorId }}"
+                                data-ph-capture-attribute-sc-event="server listing filter"
+                                data-ph-capture-attribute-server-listing-filter-type="checkbox"
+                                [attr.data-ph-capture-attribute-server-listing-filter-id]="
+                                  vendorId
+                                "
+                                data-ph-capture-attribute-server-listing-filter-category="region"
+                                [ngModel]="
+                                  areAllVendorRegionsSelected(
+                                    parameter,
+                                    vendorId
+                                  )
+                                "
+                                (click)="
+                                  toggleAllVendorRegions(parameter, vendorId)
+                                "
+                                [disabled]="
+                                  isVendorSelectAllDisabled(parameter, vendorId)
+                                "
+                                class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none disabled:accent-gray-400 disabled:text-gray-400 disabled:bg-gray-400"
+                              />
+                            }
                             <div class="text-white text-sm">
-                              {{ vendor.name }}
+                              {{ getVendorDisplayNameById(vendorId) }}
                             </div>
                           </div>
                           <lucide-icon
                             name="chevron-down"
                             class="h-4 w-4 text-white cursor-pointer"
-                            (click)="collapseItem(vendor)"
+                            (click)="toggleVendorRegionCollapse(vendorId)"
                           ></lucide-icon>
                         </div>
-                        @if (!vendor.collapsed) {
+                        @if (!isVendorRegionCollapsed(vendorId)) {
                           <div class="flex flex-col gap-3 ml-4">
                             @for (
-                              region of regionsByVendor(vendor.vendor_id);
-                              track region.vendor_id + "_" + region.region_id
+                              vendorRegion of getVendorRegionsForVendor(
+                                parameter,
+                                vendorId
+                              );
+                              track vendorRegion
                             ) {
                               <div class="flex gap-2 align-center">
                                 <input
                                   type="checkbox"
-                                  id="filter_region_{{ region.name }}"
+                                  id="filter_vendor_region_{{ vendorRegion }}"
                                   data-ph-capture-attribute-sc-event="server listing filter"
                                   data-ph-capture-attribute-server-listing-filter-type="checkbox"
                                   [attr.data-ph-capture-attribute-server-listing-filter-id]="
-                                    region.api_reference
+                                    vendorRegion
                                   "
                                   data-ph-capture-attribute-server-listing-filter-category="region"
-                                  [(ngModel)]="region.selected"
-                                  (ngModelChange)="filterServers()"
-                                  [disabled]="
-                                    isParameterDisabled(parameter.name)
+                                  [ngModel]="
+                                    isVendorRegionSelected(
+                                      parameter,
+                                      vendorRegion
+                                    )
                                   "
-                                  class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none"
+                                  (click)="
+                                    toggleVendorRegion(parameter, vendorRegion)
+                                  "
+                                  [disabled]="
+                                    isVendorRegionCheckboxDisabled(
+                                      parameter,
+                                      vendorRegion
+                                    )
+                                  "
+                                  class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none disabled:accent-gray-400 disabled:text-gray-400 disabled:bg-gray-400"
                                 />
                                 <div class="text-white text-sm">
-                                  {{ region.name }}
+                                  {{ getVendorRegionDisplayName(vendorRegion) }}
                                 </div>
-                                @if (region.green_energy) {
+                                @if (isVendorRegionGreenEnergy(vendorRegion)) {
                                   <lucide-icon
                                     name="leaf"
                                     class="h-4 w-4 text-emerald-400"
