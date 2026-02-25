@@ -682,6 +682,10 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
           }
         });
 
+        this.continentMetadata.sort((a, b) =>
+          a.continent.localeCompare(b.continent),
+        );
+
         this.continentMetadata.forEach((continent) => {
           continent.selected =
             this.countryMetadata().find(
@@ -1018,7 +1022,11 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
         vendors.push(vendorId);
       }
     });
-    return vendors;
+    return vendors.sort((a, b) =>
+      this.getVendorDisplayNameById(a).localeCompare(
+        this.getVendorDisplayNameById(b),
+      ),
+    );
   }
 
   getVendorRegionsForVendor(
