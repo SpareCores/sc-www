@@ -4,6 +4,17 @@ export interface CurrencyOption {
   symbol: string;
 }
 
+export interface AllocationType {
+  name: string;
+  slug: string | null;
+}
+
+export const allocationTypes: AllocationType[] = [
+  { name: "Both", slug: null },
+  { name: "Spot", slug: "spot" },
+  { name: "On Demand", slug: "ondemand" },
+];
+
 export const availableCurrencies: CurrencyOption[] = [
   { name: "US dollar", slug: "USD", symbol: "$" },
   { name: "Euro", slug: "EUR", symbol: "€" },

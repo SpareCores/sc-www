@@ -45,6 +45,12 @@ import { CpuCacheSizePipe } from "../../pipes/cpu-cache-size.pipe";
 import { NetworkSpeedPipe } from "../../pipes/network-speed.pipe";
 import { MonthlyTrafficPipe } from "../../pipes/monthly-traffic.pipe";
 import { Ipv4CountPipe } from "../../pipes/ipv4-count.pipe";
+import {
+  AllocationType,
+  allocationTypes,
+  CurrencyOption,
+  availableCurrencies,
+} from "../../tools/shared_data";
 
 export type TableColumn = {
   name: string;
@@ -73,14 +79,6 @@ export type RegionMetadata = {
   name: string;
   api_reference: string;
   green_energy: boolean;
-  selected?: boolean;
-};
-
-export type RegionVendorMetadata = {
-  vendor_id: string;
-  name: string;
-  selected?: boolean;
-  collapsed?: boolean;
 };
 
 const optionsModal: ModalOptions = {
@@ -292,6 +290,12 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
   hasCustomColumns = false;
 
+  availableCurrencies: CurrencyOption[] = availableCurrencies;
+  selectedCurrency = this.availableCurrencies[0];
+
+  allocationTypes: AllocationType[] = allocationTypes;
+  allocation = this.allocationTypes[0];
+
   pageLimits = [10, 25, 50, 100, 250];
 
   limit = 25;
@@ -309,6 +313,8 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
   dropdownColumn: any;
   dropdownPage: any;
+  dropdownCurrency: any;
+  dropdownAllocation: any;
 
   isLoading = false;
 
@@ -455,6 +461,24 @@ export class ServerListingComponent implements OnInit, OnDestroy {
           )!.show = true;
         }
 
+        if (query.currency) {
+          this.selectedCurrency =
+            this.availableCurrencies.find(
+              (currency) => currency.slug === query.currency,
+            ) || this.availableCurrencies[0];
+        } else {
+          this.selectedCurrency = this.availableCurrencies[0];
+        }
+
+        if (query.allocation) {
+          this.allocation =
+            this.allocationTypes.find(
+              (allocation) => allocation.slug === query.allocation,
+            ) || this.allocationTypes[0];
+        } else {
+          this.allocation = this.allocationTypes[0];
+        }
+
         this.refreshColumns(false);
 
         // will process later
@@ -598,6 +622,18 @@ export class ServerListingComponent implements OnInit, OnDestroy {
           },
         ),
       );
+
+      this.dropdownManager
+        .initDropdown("currency_button", "currency_options")
+        .then((dropdown: any) => {
+          this.dropdownCurrency = dropdown;
+        });
+
+      this.dropdownManager
+        .initDropdown("allocation_button", "allocation_options")
+        .then((dropdown: any) => {
+          this.dropdownAllocation = dropdown;
+        });
 
       this.dropdownManager
         .initDropdown("column_button", "column_options")
@@ -759,6 +795,18 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       delete queryParams.order_dir;
     }
 
+    if (this.selectedCurrency.slug !== "USD") {
+      queryParams.currency = this.selectedCurrency.slug;
+    } else {
+      delete queryParams.currency;
+    }
+
+    if (this.allocation.slug) {
+      queryParams.allocation = this.allocation.slug;
+    } else {
+      delete queryParams.allocation;
+    }
+
     if (this.page > 1) {
       queryParams.page = this.page;
     }
@@ -819,6 +867,18 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     if (this.orderBy && this.orderDir) {
       query.order_by = this.orderBy;
       query.order_dir = this.orderDir;
+    }
+
+    if (this.selectedCurrency.slug !== "USD") {
+      query.currency = this.selectedCurrency.slug;
+    } else {
+      delete query.currency;
+    }
+
+    if (this.allocation.slug) {
+      query.allocation = this.allocation.slug;
+    } else {
+      delete query.allocation;
     }
 
     if (this.selectedBenchmarkConfig) {
@@ -904,6 +964,17 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       paramObject.order_dir = this.orderDir;
     }
 
+    if (this.selectedCurrency.slug !== "USD") {
+      paramObject.currency = this.selectedCurrency.slug;
+    } else {
+      delete paramObject.currency;
+    }
+
+    if (this.allocation.slug) {
+      paramObject.allocation = this.allocation.slug;
+    } else {
+      delete paramObject.allocation;
+    }
     if (this.limit !== 25) {
       paramObject.limit = this.limit;
     } else {
@@ -956,6 +1027,20 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       this.hasCustomColumns = true;
       this.updateQueryParams(this.getQueryObjectBase());
     }
+  }
+
+  selectCurrency(currency: CurrencyOption) {
+    this.selectedCurrency = currency;
+    this.page = 1;
+    this.searchOptionsChanged(this.query);
+    this.dropdownCurrency?.hide();
+  }
+
+  selectAllocation(allocation: { name: string; slug: string | null }) {
+    this.allocation = allocation;
+    this.page = 1;
+    this.searchOptionsChanged(this.query);
+    this.dropdownAllocation?.hide();
   }
 
   selectPageSize(limit: number) {

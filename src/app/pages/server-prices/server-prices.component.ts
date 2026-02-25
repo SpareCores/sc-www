@@ -24,7 +24,12 @@ import { SearchBarComponent } from "../../components/search-bar/search-bar.compo
 import { PaginationComponent } from "../../components/pagination/pagination.component";
 import { DropdownManagerService } from "../../services/dropdown-manager.service";
 import { AnalyticsService } from "../../services/analytics.service";
-import { CurrencyOption, availableCurrencies } from "../../tools/shared_data";
+import {
+  AllocationType,
+  allocationTypes,
+  CurrencyOption,
+  availableCurrencies,
+} from "../../tools/shared_data";
 import {
   ServerCompare,
   ServerCompareService,
@@ -223,11 +228,7 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
 
   availableCurrencies: CurrencyOption[] = availableCurrencies;
 
-  allocationTypes = [
-    { name: "Both", slug: null },
-    { name: "Spot", slug: "spot" },
-    { name: "On Demand", slug: "ondemand" },
-  ];
+  allocationTypes: AllocationType[] = allocationTypes;
 
   pageLimits = [10, 25, 50, 100, 250];
 

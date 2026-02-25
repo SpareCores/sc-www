@@ -107,6 +107,48 @@
           </div>
           <div>
             <button
+              id="allocation_button"
+              data-ph-capture-attribute-sc-event="server listing price allocation select"
+              data-dropdown-toggle="allocation_options"
+              class="dropdown_button"
+              type="button"
+            >
+              <div class="px-4 py-3">
+                {{ allocation.name }}
+              </div>
+              <div
+                class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
+              >
+                <lucide-icon
+                  name="chevron-down"
+                  class="h-6 w-6 text-emerald-400"
+                ></lucide-icon>
+              </div>
+            </button>
+          </div>
+          <div>
+            <button
+              id="currency_button"
+              data-ph-capture-attribute-sc-event="server listing currency select"
+              data-dropdown-toggle="currency_options"
+              class="dropdown_button"
+              type="button"
+            >
+              <div class="px-4 py-3">
+                {{ selectedCurrency.slug }}
+              </div>
+              <div
+                class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
+              >
+                <lucide-icon
+                  name="chevron-down"
+                  class="h-6 w-6 text-emerald-400"
+                ></lucide-icon>
+              </div>
+            </button>
+          </div>
+          <div>
+            <button
               id="column_button"
               data-ph-capture-attribute-sc-event="server listing columns select"
               data-dropdown-toggle="column_options"
@@ -279,7 +321,8 @@
                         <td>
                           @if (item[column.key || "price"]) {
                             <div class="text-sm text-white whitespace-nowrap">
-                              {{ item[column.key || "price"] }} USD
+                              {{ item[column.key || "price"] }}
+                              {{ selectedCurrency.slug }}
                             </div>
                           }
                           @if (!item[column.key || "price"]) {
@@ -296,7 +339,7 @@
                             <div class="text-xs text-white flex gap-1">
                               <span class="whitespace-nowrap"
                                 >{{ getScore(item.score_per_price) }} /
-                                USD</span
+                                {{ selectedCurrency.slug }}</span
                               >
                             </div>
                           }
@@ -320,7 +363,8 @@
                         <td>
                           @if (item.score_per_price) {
                             <span class="whitespace-nowrap"
-                              >{{ getScore(item.score_per_price) }} / USD</span
+                              >{{ getScore(item.score_per_price) }} /
+                              {{ selectedCurrency.slug }}</span
                             >
                           }
                           @if (!item.score_per_price) {
@@ -648,6 +692,58 @@
         tabindex="0"
       >
         <div class="text-white text-sm">{{ pageLimit }}</div>
+      </li>
+    }
+  </ul>
+</div>
+
+<div
+  id="allocation_options"
+  class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid"
+>
+  <ul
+    class="py-2 px-1 text-sm text-gray-700"
+    aria-labelledby="dropdownDefaultButton"
+  >
+    @for (allocationType of allocationTypes; track allocationType.name) {
+      <li
+        class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+        (click)="selectAllocation(allocationType)"
+        (keydown.enter)="selectAllocation(allocationType)"
+        (keydown.space)="
+          selectAllocation(allocationType); $event.preventDefault()
+        "
+        role="option"
+        [attr.aria-selected]="allocationType === allocation"
+        tabindex="0"
+      >
+        <div class="text-white text-sm">{{ allocationType.name }}</div>
+      </li>
+    }
+  </ul>
+</div>
+
+<div
+  id="currency_options"
+  class="z-10 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid"
+>
+  <ul
+    class="py-2 px-1 text-sm text-gray-700"
+    aria-labelledby="dropdownDefaultButton"
+  >
+    @for (currency of availableCurrencies; track currency.name) {
+      <li
+        class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+        (click)="selectCurrency(currency)"
+        (keydown.enter)="selectCurrency(currency); $event.preventDefault()"
+        (keydown.space)="selectCurrency(currency); $event.preventDefault()"
+        role="option"
+        [attr.aria-selected]="currency === selectedCurrency"
+        tabindex="0"
+      >
+        <div class="text-white text-sm">
+          {{ currency.name }} ({{ currency.symbol }})
+        </div>
       </li>
     }
   </ul>
