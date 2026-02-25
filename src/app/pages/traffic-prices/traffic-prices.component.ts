@@ -111,9 +111,7 @@ export class TrafficPricesComponent implements OnInit, OnDestroy {
 
     const parameters =
       this.openApiJson.paths["/traffic_prices"].get.parameters || [];
-    this.searchParameters = parameters.filter(
-      (p: any) => p.name !== "vendor_regions",
-    );
+    this.searchParameters = parameters.filter((p: any) => p.name !== "regions");
 
     let limit = this.searchParameters.find(
       (param: any) => param.name === "limit",
