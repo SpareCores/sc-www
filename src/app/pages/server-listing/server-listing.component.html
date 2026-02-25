@@ -44,6 +44,11 @@
           ></lucide-icon>
         </div>
 
+        <!--
+          TODO:
+            replace with real auth check once authentication is implemented,
+            false is intentional — locks down select-all and enforces the 3-region limit for unauthenticated users
+        -->
         <app-search-bar
           [query]="query"
           [filterCategories]="filterCategories"

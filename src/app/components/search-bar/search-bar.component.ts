@@ -653,18 +653,19 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
                 selected: selectedCountryIds.indexOf(item.country_id) !== -1,
               };
             })
-            .sort((a: any, b: any) => {
-              const regionNamesInEnglish = new Intl.DisplayNames(["en"], {
-                type: "region",
-              });
-              return (
-                regionNamesInEnglish
-                  .of(a.country_id)
-                  ?.localeCompare(
-                    regionNamesInEnglish.of(b.country_id) || "",
-                  ) || 0
-              );
-            }),
+            .sort(
+              (() => {
+                const regionNamesInEnglish = new Intl.DisplayNames(["en"], {
+                  type: "region",
+                });
+                return (a: any, b: any) =>
+                  regionNamesInEnglish
+                    .of(a.country_id)
+                    ?.localeCompare(
+                      regionNamesInEnglish.of(b.country_id) || "",
+                    ) || 0;
+              })(),
+            ),
         );
 
         this.continentMetadata = [];
@@ -755,6 +756,10 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   toggleCountry(country: CountryMetadata) {
+    if (!country.selected && this.selectedCountriesCount() >= 1) {
+      return;
+    }
+
     this.countryMetadata.update((countries) =>
       countries.map((c) =>
         c === country ? { ...c, selected: !c.selected } : c,
@@ -847,6 +852,10 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   toggleRegion(region: RegionMetadata) {
+    if (!region.selected && this.selectedRegionsCount() >= 3) {
+      return;
+    }
+
     this.regionMetadata.update((regions) =>
       regions.map((r) => (r === region ? { ...r, selected: !r.selected } : r)),
     );
