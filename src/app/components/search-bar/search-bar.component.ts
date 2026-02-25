@@ -657,6 +657,9 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
 
     this.keeperAPI.getCountries().then((response) => {
       if (response?.body) {
+        const regionNamesInEnglish = new Intl.DisplayNames(["en"], {
+          type: "region",
+        });
         this.countryMetadata.set(
           response.body
             .map((item: any) => {
@@ -666,17 +669,12 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
               };
             })
             .sort(
-              (() => {
-                const regionNamesInEnglish = new Intl.DisplayNames(["en"], {
-                  type: "region",
-                });
-                return (a: any, b: any) =>
-                  regionNamesInEnglish
-                    .of(a.country_id)
-                    ?.localeCompare(
-                      regionNamesInEnglish.of(b.country_id) || "",
-                    ) || 0;
-              })(),
+              (a: any, b: any) =>
+                regionNamesInEnglish
+                  .of(a.country_id)
+                  ?.localeCompare(
+                    regionNamesInEnglish.of(b.country_id) || "",
+                  ) || 0,
             ),
         );
 
