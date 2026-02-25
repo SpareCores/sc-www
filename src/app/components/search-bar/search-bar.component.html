@@ -600,9 +600,10 @@
                                 [ngModel]="continent.selected"
                                 (click)="selectContinent(continent)"
                                 [disabled]="
-                                  isParameterDisabled(parameter.name) ||
-                                  (!continent.selected &&
-                                    selectedCountriesCount() >= 1)
+                                  isContinentCheckboxDisabled(
+                                    parameter,
+                                    continent
+                                  )
                                 "
                                 class="checkbox"
                               />

@@ -446,7 +446,17 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   isCountryCheckboxDisabled(country: CountryMetadata): boolean {
+    if (this.isAuthenticated) return false;
     return !country.selected && this.selectedCountriesCount() >= 1;
+  }
+
+  isContinentCheckboxDisabled(
+    parameter: SearchBarParameter,
+    continent: ContinentMetadata,
+  ): boolean {
+    if (this.isParameterDisabled(parameter.name)) return true;
+    if (this.isAuthenticated) return false;
+    return !continent.selected && this.selectedCountriesCount() >= 1;
   }
 
   getParameterType(parameter: any) {
@@ -711,7 +721,7 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   selectContinent(continent: ContinentMetadata) {
-    const maxCountries = 1;
+    const maxCountries = this.isAuthenticated ? Infinity : 1;
     const shouldSelect = !continent.selected;
 
     if (!shouldSelect) {
@@ -762,7 +772,11 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   toggleCountry(country: CountryMetadata) {
-    if (!country.selected && this.selectedCountriesCount() >= 1) {
+    if (
+      !this.isAuthenticated &&
+      !country.selected &&
+      this.selectedCountriesCount() >= 1
+    ) {
       return;
     }
 
@@ -1079,6 +1093,7 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
     vendorRegion: string,
   ): boolean {
     if (this.isParameterDisabled(parameter.name)) return true;
+    if (this.isAuthenticated) return false;
     return (
       !this.isVendorRegionSelected(parameter, vendorRegion) &&
       this.selectedVendorRegionsCount(parameter) >= this.MAX_VENDOR_REGIONS
@@ -1090,6 +1105,7 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
     vendorId: string,
   ): boolean {
     if (this.isParameterDisabled(parameter.name)) return true;
+    if (this.isAuthenticated) return false;
     // Disable if all would already be checked, or we're at the limit and nothing to deselect
     if (this.areAllVendorRegionsSelected(parameter, vendorId)) return false;
     return (
@@ -1105,7 +1121,8 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
     if (values.includes(vendorRegion)) {
       parameter.modelValue = values.filter((v) => v !== vendorRegion);
     } else {
-      if (values.length >= this.MAX_VENDOR_REGIONS) return;
+      if (!this.isAuthenticated && values.length >= this.MAX_VENDOR_REGIONS)
+        return;
       parameter.modelValue = [...values, vendorRegion];
     }
     this.valueChanged();
@@ -1124,13 +1141,16 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
       const newValues = vendorRegions.filter(
         (vr) => !this.isVendorRegionSelected(parameter, vr),
       );
-      const remaining = newValues.slice(
-        0,
-        Math.max(
-          0,
-          this.MAX_VENDOR_REGIONS - this.selectedVendorRegionsCount(parameter),
-        ),
-      );
+      const remaining = this.isAuthenticated
+        ? newValues
+        : newValues.slice(
+            0,
+            Math.max(
+              0,
+              this.MAX_VENDOR_REGIONS -
+                this.selectedVendorRegionsCount(parameter),
+            ),
+          );
       parameter.modelValue = [
         ...(parameter.modelValue as string[]),
         ...remaining,
