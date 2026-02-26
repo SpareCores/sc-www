@@ -703,7 +703,7 @@
 >
   <ul
     class="py-2 px-1 text-sm text-gray-700"
-    aria-labelledby="dropdownDefaultButton"
+    aria-labelledby="allocation_button"
   >
     @for (
       allocationType of bestPriceAllocationTypes;
@@ -730,10 +730,7 @@
   id="currency_options"
   class="z-10 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid"
 >
-  <ul
-    class="py-2 px-1 text-sm text-gray-700"
-    aria-labelledby="dropdownDefaultButton"
-  >
+  <ul class="py-2 px-1 text-sm text-gray-700" aria-labelledby="currency_button">
     @for (currency of availableCurrencies; track currency.name) {
       <li
         class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
