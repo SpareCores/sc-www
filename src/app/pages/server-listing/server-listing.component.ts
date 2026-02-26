@@ -46,8 +46,8 @@ import { NetworkSpeedPipe } from "../../pipes/network-speed.pipe";
 import { MonthlyTrafficPipe } from "../../pipes/monthly-traffic.pipe";
 import { Ipv4CountPipe } from "../../pipes/ipv4-count.pipe";
 import {
-  AllocationType,
-  allocationTypes,
+  BestPriceAllocationType,
+  bestPriceAllocationTypes,
   CurrencyOption,
   availableCurrencies,
 } from "../../tools/shared_data";
@@ -192,7 +192,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       show: false,
       type: "score_per_price",
       orderField: "score_per_price",
-      info: "SCore/price showing stress-ng's div16 performance measured for 1 USD/hour, using the best (usually spot) price of all zones.",
+      info: "SCore/price showing stress-ng's div16 performance measured for one price unit (usually hourly or monthly server price) standardized to USD, using the best price across all selected zones. By default, this equals to the SCore you can get for 1 USD/hour by using the cheapest spot (or ondemand) hourly price in all supported regions and availability zones, but can be filtered down to countries, regions, and price allocation strategies (e.g. using only ondemand pricing).",
     },
     {
       name: "BENCHMARK",
@@ -206,7 +206,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       show: true,
       type: "benchmark_score_per_price",
       orderField: "selected_benchmark_score_per_price",
-      info: "Benchmark/price ratio showing the selected benchmark performance measured for 1 USD/hour, using the best (usually spot) price of all zones. In other words: how much performance you get for your money.",
+      info: "Benchmark/price ratio showing the selected benchmark performance measured for one price unit (usually hourly or monthly server price) standardized to USD, using the best price across all selected zones. By default, this equals to the selected benchmark workload's measured score divided by the cheapest spot (or ondemand) hourly price in all supported regions and availability zones, but can be filtered down to countries, regions, and price allocation strategies (e.g. using only ondemand pricing). In other words: how much performance you get for your money.",
     },
     { name: "MEMORY", show: true, type: "memory", orderField: "memory_amount" },
     { name: "GPUs", show: true, type: "gpu", orderField: "gpu_count" },
@@ -292,9 +292,11 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
   availableCurrencies: CurrencyOption[] = availableCurrencies;
   selectedCurrency = this.availableCurrencies[0];
+  displayedCurrency = this.availableCurrencies[0];
 
-  allocationTypes: AllocationType[] = allocationTypes;
-  allocation = this.allocationTypes[0];
+  bestPriceAllocationTypes: BestPriceAllocationType[] =
+    bestPriceAllocationTypes;
+  bestPriceAllocation = this.bestPriceAllocationTypes[0];
 
   pageLimits = [10, 25, 50, 100, 250];
 
@@ -470,13 +472,13 @@ export class ServerListingComponent implements OnInit, OnDestroy {
           this.selectedCurrency = this.availableCurrencies[0];
         }
 
-        if (query.allocation) {
-          this.allocation =
-            this.allocationTypes.find(
-              (allocation) => allocation.slug === query.allocation,
-            ) || this.allocationTypes[0];
+        if (query.best_price_allocation) {
+          this.bestPriceAllocation =
+            this.bestPriceAllocationTypes.find(
+              (allocation) => allocation.slug === query.best_price_allocation,
+            ) || this.bestPriceAllocationTypes[0];
         } else {
-          this.allocation = this.allocationTypes[0];
+          this.bestPriceAllocation = this.bestPriceAllocationTypes[0];
         }
 
         this.refreshColumns(false);
@@ -783,9 +785,13 @@ export class ServerListingComponent implements OnInit, OnDestroy {
    * Note that URL params are also updated at updateQueryParams/encodeQueryParams (TODO refactor)
    */
   searchOptionsChanged(event: any) {
-    const queryObject: any = event;
+    let queryParams: any = { ...event };
 
-    let queryParams: any = queryObject;
+    if (this.page > 1) {
+      queryParams.page = this.page;
+    } else {
+      delete queryParams.page;
+    }
 
     if (this.orderBy && this.orderDir) {
       queryParams.order_by = this.orderBy;
@@ -801,14 +807,10 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       delete queryParams.currency;
     }
 
-    if (this.allocation.slug) {
-      queryParams.allocation = this.allocation.slug;
+    if (this.bestPriceAllocation.slug !== "ANY") {
+      queryParams.best_price_allocation = this.bestPriceAllocation.slug;
     } else {
-      delete queryParams.allocation;
-    }
-
-    if (this.page > 1) {
-      queryParams.page = this.page;
+      delete queryParams.best_price_allocation;
     }
 
     if (this.limit !== 25) {
@@ -875,10 +877,10 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       delete query.currency;
     }
 
-    if (this.allocation.slug) {
-      query.allocation = this.allocation.slug;
+    if (this.bestPriceAllocation.slug !== "ANY") {
+      query.best_price_allocation = this.bestPriceAllocation.slug;
     } else {
-      delete query.allocation;
+      delete query.best_price_allocation;
     }
 
     if (this.selectedBenchmarkConfig) {
@@ -890,6 +892,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       .searchServers(query)
       .then((servers) => {
         this.servers = servers?.body;
+        this.displayedCurrency = this.selectedCurrency;
 
         // set stored selected state
         this.servers?.forEach((server: any) => {
@@ -970,10 +973,10 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       delete paramObject.currency;
     }
 
-    if (this.allocation.slug) {
-      paramObject.allocation = this.allocation.slug;
+    if (this.bestPriceAllocation.slug !== "ANY") {
+      paramObject.best_price_allocation = this.bestPriceAllocation.slug;
     } else {
-      delete paramObject.allocation;
+      delete paramObject.best_price_allocation;
     }
     if (this.limit !== 25) {
       paramObject.limit = this.limit;
@@ -1036,8 +1039,8 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     this.dropdownCurrency?.hide();
   }
 
-  selectAllocation(allocation: { name: string; slug: string | null }) {
-    this.allocation = allocation;
+  selectAllocation(allocation: BestPriceAllocationType) {
+    this.bestPriceAllocation = allocation;
     this.page = 1;
     this.searchOptionsChanged(this.query);
     this.dropdownAllocation?.hide();
