@@ -192,7 +192,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       show: false,
       type: "score_per_price",
       orderField: "score_per_price",
-      info: "SCore/price showing stress-ng's div16 performance measured for 1 USD/hour, using the best (usually spot) price of all zones.",
+      info: "SCore/price showing stress-ng's div16 performance measured for one price unit (usually hourly or monthly server price) standardized to USD, using the best price across all selected zones. By default, this equals to the SCore you can get for 1 USD/hour by using the cheapest spot (or ondemand) hourly price in all supported regions and availability zones, but can be filtered down to countries, regions, and price allocation strategies (e.g. using only ondemand pricing).",
     },
     {
       name: "BENCHMARK",
@@ -206,7 +206,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       show: true,
       type: "benchmark_score_per_price",
       orderField: "selected_benchmark_score_per_price",
-      info: "Benchmark/price ratio showing the selected benchmark performance measured for 1 USD/hour, using the best (usually spot) price of all zones. In other words: how much performance you get for your money.",
+      info: "Benchmark/price ratio showing the selected benchmark performance measured for one price unit (usually hourly or monthly server price) standardized to USD, using the best price across all selected zones. By default, this equals to the selected benchmark workload's measured score divided by the cheapest spot (or ondemand) hourly price in all supported regions and availability zones, but can be filtered down to countries, regions, and price allocation strategies (e.g. using only ondemand pricing). In other words: how much performance you get for your money.",
     },
     { name: "MEMORY", show: true, type: "memory", orderField: "memory_amount" },
     { name: "GPUs", show: true, type: "gpu", orderField: "gpu_count" },
