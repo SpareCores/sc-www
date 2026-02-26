@@ -43,6 +43,7 @@ import { Location } from "@angular/common";
 import { AnalyticsService } from "../../services/analytics.service";
 import { DropdownManagerService } from "../../services/dropdown-manager.service";
 import { ServerChartsComponent } from "../../components/server-charts/server-charts.component";
+import { ServerLstopoComponent } from "../../components/server-lstopo/server-lstopo.component";
 import { Modal, ModalOptions } from "flowbite";
 import { EmbedDebugComponent } from "../embed-debug/embed-debug.component";
 import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
@@ -81,6 +82,7 @@ export interface ExtendedServerDetails extends ServerPKs {
     ReduceUnitNamePipe,
     GpuCountPipe,
     ServerChartsComponent,
+    ServerLstopoComponent,
     EmbedDebugComponent,
     LoadingSpinnerComponent,
   ],
