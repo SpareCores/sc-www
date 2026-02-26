@@ -64,7 +64,10 @@
 :host ::ng-deep #lstopo {
   height: auto !important;
   min-height: unset !important;
-  overflow: auto;
+  overflow: hidden;
+  width: fit-content !important;
+  min-width: calc(50% - 1rem) !important;
+  max-width: 100% !important;
 }
 
 .dropdown_button {

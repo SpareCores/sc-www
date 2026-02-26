@@ -13,34 +13,23 @@
   }
 }
 
-// Make the SVG responsive (preview scales to container width)
-.lstopo-container svg {
-  width: 100%;
+// Inline display: shrink oversized SVGs to container, never stretch small ones
+.lstopo-inline-svg svg {
+  max-width: 100%;
   height: auto;
+  display: block;
 }
 
-// In the modal the SVG renders at its natural size
+// Base rule for all lstopo containers (modal uses its own overrides below)
+.lstopo-container svg {
+  display: block;
+}
+
+// In the modal the SVG renders at its natural size (scroll/pan if needed)
 .lstopo-modal-svg svg {
   width: auto !important;
   height: auto !important;
   min-width: max-content;
-}
-
-// Thumbnail preview box — clips the top of the full-color inline SVG
-app-server-lstopo .lstopo-preview {
-  height: 230px;
-  max-height: 230px;
-  padding: 0;
-  border: none;
-  background: none;
-  display: block;
-  text-align: left;
-}
-
-.lstopo-preview-svg {
-  width: 100%;
-  overflow: hidden;
-  line-height: 0;
 }
 
 // All text nodes -> white (pointer-events: none so hover passes through to the rect below)

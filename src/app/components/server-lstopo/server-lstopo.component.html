@@ -1,3 +1,18 @@
+<div class="flex justify-between items-center mb-4">
+  <h3 class="text-2xl">CPU and System Topology</h3>
+  @if (inlineSvg && lstopoUrl) {
+    <button
+      class="btn-primary py-3 px-5 flex gap-2"
+      aria-haspopup="dialog"
+      aria-controls="lstopo-modal"
+      (click)="openLstopoModal()"
+    >
+      <span>Open fullscreen</span>
+      <lucide-icon name="maximize-2" class="h-6 w-6"></lucide-icon>
+    </button>
+  }
+</div>
+
 @if (isLoading && !hasError) {
   <div class="flex justify-center items-center py-16">
     <svg
@@ -30,26 +45,7 @@
   </div>
 }
 @if (inlineSvg && lstopoUrl) {
-  <button
-    type="button"
-    class="lstopo-preview relative w-full overflow-hidden rounded cursor-pointer group"
-    aria-haspopup="dialog"
-    aria-controls="lstopo-modal"
-    (click)="openLstopoModal()"
-  >
-    <div
-      class="lstopo-container lstopo-preview-svg pointer-events-none"
-      [innerHTML]="inlineSvg"
-    ></div>
-    <div
-      class="lstopo-overlay absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/50 transition-all duration-200"
-    >
-      <lucide-icon
-        name="maximize-2"
-        class="h-10 w-10 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-      ></lucide-icon>
-    </div>
-  </button>
+  <div class="lstopo-container lstopo-inline-svg" [innerHTML]="inlineSvg"></div>
 
   <div
     #lstopoModal
@@ -64,7 +60,9 @@
         <div
           class="flex items-center justify-between p-4 border-b border-gray-600"
         >
-          <h3 class="text-xl font-medium text-white">List Topology</h3>
+          <h3 class="text-xl font-medium text-white">
+            CPU and System Topology
+          </h3>
           <button
             type="button"
             class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
