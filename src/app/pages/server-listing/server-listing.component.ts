@@ -971,10 +971,10 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       delete paramObject.currency;
     }
 
-    if (this.bestPriceAllocation.slug) {
-      paramObject.allocation = this.bestPriceAllocation.slug;
+    if (this.bestPriceAllocation.slug !== "ANY") {
+      paramObject.best_price_allocation = this.bestPriceAllocation.slug;
     } else {
-      delete paramObject.allocation;
+      delete paramObject.best_price_allocation;
     }
     if (this.limit !== 25) {
       paramObject.limit = this.limit;
