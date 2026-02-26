@@ -4,10 +4,37 @@
  *   sky-950     #082f49  white    #ffffff
  * ------------------------------------------------------------------ */
 
-// Make the SVG responsive
+// Hide scrollbars on modal body while keeping drag-to-pan scroll functional
+.lstopo-modal-body {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+// Make the SVG responsive (preview scales to container width)
 :host ::ng-deep .lstopo-container svg {
   width: 100%;
   height: auto;
+}
+
+// In the modal the SVG renders at its natural size
+:host ::ng-deep .lstopo-modal-svg svg {
+  width: auto !important;
+  height: auto !important;
+  min-width: max-content;
+}
+
+// Thumbnail preview box — clips the top of the full-color inline SVG
+:host .lstopo-preview {
+  height: 230px;
+  max-height: 230px;
+}
+
+:host ::ng-deep .lstopo-preview-svg {
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
 }
 
 // All text nodes -> white (pointer-events: none so hover passes through to the rect below)
