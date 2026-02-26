@@ -784,9 +784,13 @@ export class ServerListingComponent implements OnInit, OnDestroy {
    * Note that URL params are also updated at updateQueryParams/encodeQueryParams (TODO refactor)
    */
   searchOptionsChanged(event: any) {
-    const queryObject: any = event;
+    let queryParams: any = { ...event };
 
-    let queryParams: any = queryObject;
+    if (this.page > 1) {
+      queryParams.page = this.page;
+    } else {
+      delete queryParams.page;
+    }
 
     if (this.orderBy && this.orderDir) {
       queryParams.order_by = this.orderBy;
@@ -806,10 +810,6 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       queryParams.best_price_allocation = this.bestPriceAllocation.slug;
     } else {
       delete queryParams.best_price_allocation;
-    }
-
-    if (this.page > 1) {
-      queryParams.page = this.page;
     }
 
     if (this.limit !== 25) {
