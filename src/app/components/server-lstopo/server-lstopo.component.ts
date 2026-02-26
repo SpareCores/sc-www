@@ -108,5 +108,9 @@ export class ServerLstopoComponent implements OnChanges, OnDestroy {
 
   ngOnDestroy(): void {
     this.svgSub?.unsubscribe();
+    if (isPlatformBrowser(this.platformId) && this.modal) {
+      this.modal.destroyAndRemoveInstance();
+      this.modal = null;
+    }
   }
 }
