@@ -45,7 +45,7 @@
 
 // Physical package -> teal-500 (distinct, meaningful grouping)
 :host ::ng-deep .lstopo-container svg rect.Package {
-  fill: #14b8a6 !important;
+  fill: #082f49 !important;
 }
 
 // Cache levels (L3 / L2 / L1d / L1i) -> sky-900
@@ -53,7 +53,7 @@
 :host ::ng-deep .lstopo-container svg rect.L2,
 :host ::ng-deep .lstopo-container svg rect.L1d,
 :host ::ng-deep .lstopo-container svg rect.L1i {
-  fill: #0c4a6e !important;
+  fill: #082f49 !important;
 }
 
 // CPU Core -> sky-950
@@ -78,17 +78,17 @@
 
 // PCI device -> teal-500 (I/O grouping, mirrors Package)
 :host ::ng-deep .lstopo-container svg rect.PCI {
-  fill: #14b8a6 !important;
+  fill: #0c4a6e !important;
 }
 
 // Network interface -> sky-900
 :host ::ng-deep .lstopo-container svg rect.Net {
-  fill: #0c4a6e !important;
+  fill: #082f49 !important;
 }
 
 // Block / storage device -> sky-900
 :host ::ng-deep .lstopo-container svg rect.Block {
-  fill: #0c4a6e !important;
+  fill: #082f49 !important;
 }
 
 // Misc nodes -> sky-950
