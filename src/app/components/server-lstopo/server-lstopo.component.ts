@@ -18,7 +18,7 @@ import { Observable, Subscription, shareReplay, catchError, of } from "rxjs";
 import { DragToPanDirective } from "../../directives/drag-to-pan.directive";
 
 const LSTOPO_CDN_BASE =
-  "https://cdn.statically.io/gh/SpareCores/sc-inspector-data@main/data";
+  "https://cdn.jsdelivr.net/gh/SpareCores/sc-inspector-data@main/data";
 const LSTOPO_PATH_SUFFIX = "lstopo/lstopo.svg";
 
 const lstopoModalOptions: ModalOptions = {
