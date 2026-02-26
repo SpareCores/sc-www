@@ -1,0 +1,111 @@
+﻿/* ------------------------------------------------------------------
+ * Inline SVG colour overrides using 5 design tokens:
+ *   emerald-400 #34d399  teal-500 #14b8a6  sky-900 #0c4a6e
+ *   sky-950     #082f49  white    #ffffff
+ * ------------------------------------------------------------------ */
+
+// Make the SVG responsive
+:host ::ng-deep .lstopo-container svg {
+  width: 100%;
+  height: auto;
+}
+
+// All text nodes -> white (pointer-events: none so hover passes through to the rect below)
+:host ::ng-deep .lstopo-container svg text {
+  fill: #ffffff !important;
+  font-family: ui-monospace, monospace !important;
+  pointer-events: none;
+}
+
+// All strokes (rect outlines + connector lines) -> emerald-400
+:host ::ng-deep .lstopo-container svg rect,
+:host ::ng-deep .lstopo-container svg line {
+  stroke: #34d399 !important;
+}
+
+// Outermost machine box -> sky-950 (darkest)
+:host ::ng-deep .lstopo-container svg rect.Machine {
+  fill: #082f49 !important;
+}
+
+// Die (sits inside Package, contains caches) -> sky-900
+:host ::ng-deep .lstopo-container svg rect.Die {
+  fill: #0c4a6e !important;
+}
+
+// PCIBridge -> sky-950
+:host ::ng-deep .lstopo-container svg rect.PCIBridge {
+  fill: #082f49 !important;
+}
+
+// NUMA node band -> sky-900
+:host ::ng-deep .lstopo-container svg rect.NUMANode {
+  fill: #0c4a6e !important;
+}
+
+// Physical package -> teal-500 (distinct, meaningful grouping)
+:host ::ng-deep .lstopo-container svg rect.Package {
+  fill: #14b8a6 !important;
+}
+
+// Cache levels (L3 / L2 / L1d / L1i) -> sky-900
+:host ::ng-deep .lstopo-container svg rect.L3,
+:host ::ng-deep .lstopo-container svg rect.L2,
+:host ::ng-deep .lstopo-container svg rect.L1d,
+:host ::ng-deep .lstopo-container svg rect.L1i {
+  fill: #0c4a6e !important;
+}
+
+// CPU Core -> sky-950
+:host ::ng-deep .lstopo-container svg rect.Core {
+  fill: #082f49 !important;
+}
+
+// Processing Unit -> white (leaf node, stands out clearly)
+:host ::ng-deep .lstopo-container svg rect.PU {
+  fill: #ffffff !important;
+}
+
+// PU text override -> sky-950 (white bg needs dark text)
+:host ::ng-deep .lstopo-container svg text.PU {
+  fill: #082f49 !important;
+}
+
+// Host bridge rect -> sky-950
+:host ::ng-deep .lstopo-container svg rect.HostBridge {
+  fill: #082f49 !important;
+}
+
+// PCI device -> teal-500 (I/O grouping, mirrors Package)
+:host ::ng-deep .lstopo-container svg rect.PCI {
+  fill: #14b8a6 !important;
+}
+
+// Network interface -> sky-900
+:host ::ng-deep .lstopo-container svg rect.Net {
+  fill: #0c4a6e !important;
+}
+
+// Block / storage device -> sky-900
+:host ::ng-deep .lstopo-container svg rect.Block {
+  fill: #0c4a6e !important;
+}
+
+// Misc nodes -> sky-950
+:host ::ng-deep .lstopo-container svg rect.Misc {
+  fill: #082f49 !important;
+}
+
+:host ::ng-deep .lstopo-container svg rect {
+  transition:
+    stroke-width 0.15s ease,
+    stroke 0.15s ease,
+    filter 0.15s ease;
+}
+
+:host ::ng-deep .lstopo-container svg rect:hover {
+  stroke: #a7f3d0 !important;
+  stroke-width: 1.5 !important;
+  filter: drop-shadow(0 0 1.5px #34d399);
+  cursor: pointer;
+}

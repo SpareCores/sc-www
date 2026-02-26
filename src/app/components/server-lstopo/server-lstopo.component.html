@@ -1,0 +1,22 @@
+@if (isLoading && !hasError) {
+  <div class="flex justify-center items-center py-16">
+    <app-loading-spinner size="lg"></app-loading-spinner>
+  </div>
+}
+@if (hasError) {
+  <div class="flex flex-col justify-center items-center py-16 gap-4">
+    <lucide-icon
+      name="message-circle-question-mark"
+      class="h-16 w-16 text-emerald-400"
+    ></lucide-icon>
+    <p class="text-emerald-400 text-center">
+      We are sorry but no lstopo image created yet for this server! :-(
+    </p>
+  </div>
+}
+@if (inlineSvg) {
+  <div
+    class="lstopo-container w-full overflow-auto"
+    [innerHTML]="inlineSvg"
+  ></div>
+}
