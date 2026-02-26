@@ -114,13 +114,13 @@
               type="button"
             >
               <div class="px-4 py-3">
-                {{ allocation.name }}
+                {{ bestPriceAllocation.name }}
               </div>
               <div
                 class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
               >
                 <lucide-icon
-                  name="chevron-down"
+                  name="calendar-search"
                   class="h-6 w-6 text-emerald-400"
                 ></lucide-icon>
               </div>
@@ -141,7 +141,7 @@
                 class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
               >
                 <lucide-icon
-                  name="chevron-down"
+                  name="credit-card"
                   class="h-6 w-6 text-emerald-400"
                 ></lucide-icon>
               </div>
@@ -160,7 +160,7 @@
                 class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
               >
                 <lucide-icon
-                  name="chevron-down"
+                  name="columns-3-cog"
                   class="h-6 w-6 text-emerald-400"
                 ></lucide-icon>
               </div>
@@ -705,7 +705,10 @@
     class="py-2 px-1 text-sm text-gray-700"
     aria-labelledby="dropdownDefaultButton"
   >
-    @for (allocationType of allocationTypes; track allocationType.name) {
+    @for (
+      allocationType of bestPriceAllocationTypes;
+      track allocationType.name
+    ) {
       <li
         class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
         (click)="selectAllocation(allocationType)"
@@ -714,7 +717,7 @@
           selectAllocation(allocationType); $event.preventDefault()
         "
         role="option"
-        [attr.aria-selected]="allocationType === allocation"
+        [attr.aria-selected]="allocationType === bestPriceAllocation"
         tabindex="0"
       >
         <div class="text-white text-sm">{{ allocationType.name }}</div>

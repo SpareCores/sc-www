@@ -46,8 +46,8 @@ import { NetworkSpeedPipe } from "../../pipes/network-speed.pipe";
 import { MonthlyTrafficPipe } from "../../pipes/monthly-traffic.pipe";
 import { Ipv4CountPipe } from "../../pipes/ipv4-count.pipe";
 import {
-  AllocationType,
-  allocationTypes,
+  BestPriceAllocationType,
+  bestPriceAllocationTypes,
   CurrencyOption,
   availableCurrencies,
 } from "../../tools/shared_data";
@@ -293,8 +293,9 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   availableCurrencies: CurrencyOption[] = availableCurrencies;
   selectedCurrency = this.availableCurrencies[0];
 
-  allocationTypes: AllocationType[] = allocationTypes;
-  allocation = this.allocationTypes[0];
+  bestPriceAllocationTypes: BestPriceAllocationType[] =
+    bestPriceAllocationTypes;
+  bestPriceAllocation = this.bestPriceAllocationTypes[0];
 
   pageLimits = [10, 25, 50, 100, 250];
 
@@ -470,13 +471,13 @@ export class ServerListingComponent implements OnInit, OnDestroy {
           this.selectedCurrency = this.availableCurrencies[0];
         }
 
-        if (query.allocation) {
-          this.allocation =
-            this.allocationTypes.find(
-              (allocation) => allocation.slug === query.allocation,
-            ) || this.allocationTypes[0];
+        if (query.best_price_allocation) {
+          this.bestPriceAllocation =
+            this.bestPriceAllocationTypes.find(
+              (allocation) => allocation.slug === query.best_price_allocation,
+            ) || this.bestPriceAllocationTypes[0];
         } else {
-          this.allocation = this.allocationTypes[0];
+          this.bestPriceAllocation = this.bestPriceAllocationTypes[0];
         }
 
         this.refreshColumns(false);
@@ -801,10 +802,10 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       delete queryParams.currency;
     }
 
-    if (this.allocation.slug) {
-      queryParams.allocation = this.allocation.slug;
+    if (this.bestPriceAllocation.slug !== "ANY") {
+      queryParams.best_price_allocation = this.bestPriceAllocation.slug;
     } else {
-      delete queryParams.allocation;
+      delete queryParams.best_price_allocation;
     }
 
     if (this.page > 1) {
@@ -875,10 +876,10 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       delete query.currency;
     }
 
-    if (this.allocation.slug) {
-      query.allocation = this.allocation.slug;
+    if (this.bestPriceAllocation.slug !== "ANY") {
+      query.best_price_allocation = this.bestPriceAllocation.slug;
     } else {
-      delete query.allocation;
+      delete query.best_price_allocation;
     }
 
     if (this.selectedBenchmarkConfig) {
@@ -970,8 +971,8 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       delete paramObject.currency;
     }
 
-    if (this.allocation.slug) {
-      paramObject.allocation = this.allocation.slug;
+    if (this.bestPriceAllocation.slug) {
+      paramObject.allocation = this.bestPriceAllocation.slug;
     } else {
       delete paramObject.allocation;
     }
@@ -1036,8 +1037,8 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     this.dropdownCurrency?.hide();
   }
 
-  selectAllocation(allocation: { name: string; slug: string | null }) {
-    this.allocation = allocation;
+  selectAllocation(allocation: BestPriceAllocationType) {
+    this.bestPriceAllocation = allocation;
     this.page = 1;
     this.searchOptionsChanged(this.query);
     this.dropdownAllocation?.hide();
