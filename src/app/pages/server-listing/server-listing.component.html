@@ -339,7 +339,7 @@
                             <div class="text-xs text-white flex gap-1">
                               <span class="whitespace-nowrap"
                                 >{{ getScore(item.score_per_price) }} /
-                                {{ selectedCurrency.slug }}</span
+                                USD</span
                               >
                             </div>
                           }
@@ -363,8 +363,7 @@
                         <td>
                           @if (item.score_per_price) {
                             <span class="whitespace-nowrap"
-                              >{{ getScore(item.score_per_price) }} /
-                              {{ selectedCurrency.slug }}</span
+                              >{{ getScore(item.score_per_price) }} / USD</span
                             >
                           }
                           @if (!item.score_per_price) {
