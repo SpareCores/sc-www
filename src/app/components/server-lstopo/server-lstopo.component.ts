@@ -1,8 +1,10 @@
 import {
   Component,
+  ElementRef,
   Input,
   OnChanges,
   OnDestroy,
+  ViewChild,
   inject,
   PLATFORM_ID,
 } from "@angular/core";
@@ -11,7 +13,8 @@ import { HttpClient } from "@angular/common/http";
 import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
 import { LucideAngularModule } from "lucide-angular";
 import { Modal, ModalOptions } from "flowbite";
-import { Observable, shareReplay, catchError, of } from "rxjs";
+import { Observable, Subscription, shareReplay, catchError, of } from "rxjs";
+import { DragToPanDirective } from "../../directives/drag-to-pan.directive";
 
 const LSTOPO_CDN_BASE =
   "https://cdn.statically.io/gh/SpareCores/sc-inspector-data@main/data";
@@ -26,7 +29,7 @@ const svgCache = new Map<string, Observable<string | null>>();
 
 @Component({
   selector: "app-server-lstopo",
-  imports: [CommonModule, LucideAngularModule],
+  imports: [CommonModule, LucideAngularModule, DragToPanDirective],
   templateUrl: "./server-lstopo.component.html",
   styleUrl: "./server-lstopo.component.scss",
 })
@@ -43,16 +46,11 @@ export class ServerLstopoComponent implements OnChanges, OnDestroy {
   inlineSvg: SafeHtml | null = null;
   isLoading: boolean = false;
   hasError: boolean = false;
-  isDragging: boolean = false;
+
+  @ViewChild("lstopoModal") private lstopoModalRef?: ElementRef<HTMLElement>;
 
   private modal: Modal | null = null;
-  private dragScrollEl: HTMLElement | null = null;
-  private dragStartX = 0;
-  private dragStartY = 0;
-  private dragScrollLeft = 0;
-  private dragScrollTop = 0;
-  private readonly boundDragMove = (e: MouseEvent) => this.onDragMove(e);
-  private readonly boundDragEnd = () => this.onDragEnd();
+  private svgSub?: Subscription;
 
   ngOnChanges(): void {
     if (!this.vendorId || !this.apiReference) return;
@@ -71,18 +69,17 @@ export class ServerLstopoComponent implements OnChanges, OnDestroy {
       );
     }
 
-    svgCache.get(this.lstopoUrl)!.subscribe((svg) => {
+    this.svgSub?.unsubscribe();
+    this.svgSub = svgCache.get(this.lstopoUrl)!.subscribe((svg) => {
       if (!svg) {
         this.hasError = true;
       } else {
         this.inlineSvg = this.sanitizer.bypassSecurityTrustHtml(svg);
         if (isPlatformBrowser(this.platformId)) {
           setTimeout(() => {
-            const el = this.document.getElementById("lstopo-modal");
+            const el = this.lstopoModalRef?.nativeElement;
             if (el) {
-              this.modal = new Modal(el, lstopoModalOptions, {
-                id: "lstopo-modal",
-              });
+              this.modal = new Modal(el, lstopoModalOptions);
             }
           }, 0);
         }
@@ -100,41 +97,6 @@ export class ServerLstopoComponent implements OnChanges, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.removeDragListeners();
-  }
-
-  onDragStart(e: MouseEvent): void {
-    this.dragScrollEl = e.currentTarget as HTMLElement;
-    this.isDragging = true;
-    this.dragStartX = e.clientX;
-    this.dragStartY = e.clientY;
-    this.dragScrollLeft = this.dragScrollEl.scrollLeft;
-    this.dragScrollTop = this.dragScrollEl.scrollTop;
-    if (isPlatformBrowser(this.platformId)) {
-      this.document.addEventListener("mousemove", this.boundDragMove);
-      this.document.addEventListener("mouseup", this.boundDragEnd);
-    }
-  }
-
-  private onDragMove(e: MouseEvent): void {
-    if (!this.isDragging || !this.dragScrollEl) return;
-    e.preventDefault();
-    this.dragScrollEl.scrollLeft =
-      this.dragScrollLeft - (e.clientX - this.dragStartX);
-    this.dragScrollEl.scrollTop =
-      this.dragScrollTop - (e.clientY - this.dragStartY);
-  }
-
-  private onDragEnd(): void {
-    this.isDragging = false;
-    this.dragScrollEl = null;
-    this.removeDragListeners();
-  }
-
-  private removeDragListeners(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      this.document.removeEventListener("mousemove", this.boundDragMove);
-      this.document.removeEventListener("mouseup", this.boundDragEnd);
-    }
+    this.svgSub?.unsubscribe();
   }
 }

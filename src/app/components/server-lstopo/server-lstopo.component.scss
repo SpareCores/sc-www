@@ -1,10 +1,11 @@
-﻿/* ------------------------------------------------------------------
+﻿﻿/* ------------------------------------------------------------------
  * Inline SVG colour overrides using 5 design tokens:
  *   emerald-400 #34d399  teal-500 #14b8a6  sky-900 #0c4a6e
  *   sky-950     #082f49  white    #ffffff
  * ------------------------------------------------------------------ */
 
 // Hide scrollbars on modal body while keeping drag-to-pan scroll functional
+.lstopo-modal-wrapper,
 .lstopo-modal-body {
   scrollbar-width: none;
   &::-webkit-scrollbar {
@@ -70,11 +71,10 @@
   fill: #0c4a6e !important;
 }
 
-// Physical package -> teal-500 (distinct, meaningful grouping)
+// Physical package -> sky-950
 :host ::ng-deep .lstopo-container svg rect.Package {
   fill: #082f49 !important;
 }
-
 // Cache levels (L3 / L2 / L1d / L1i) -> sky-900
 :host ::ng-deep .lstopo-container svg rect.L3,
 :host ::ng-deep .lstopo-container svg rect.L2,
