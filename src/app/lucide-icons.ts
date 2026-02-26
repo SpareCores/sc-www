@@ -74,6 +74,7 @@ import {
   Link,
   FunnelX,
   TriangleAlert,
+  MessageCircleQuestionMark,
 } from "lucide-angular";
 
 export const lucideIcons = {
@@ -152,4 +153,5 @@ export const lucideIcons = {
   Link,
   FunnelX,
   TriangleAlert,
+  MessageCircleQuestionMark,
 };
