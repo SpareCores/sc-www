@@ -5,6 +5,7 @@ import {
   OnChanges,
   OnDestroy,
   ViewChild,
+  ViewEncapsulation,
   inject,
   PLATFORM_ID,
 } from "@angular/core";
@@ -32,6 +33,7 @@ const svgCache = new Map<string, Observable<string | null>>();
   imports: [CommonModule, LucideAngularModule, DragToPanDirective],
   templateUrl: "./server-lstopo.component.html",
   styleUrl: "./server-lstopo.component.scss",
+  encapsulation: ViewEncapsulation.None,
 })
 export class ServerLstopoComponent implements OnChanges, OnDestroy {
   @Input() vendorId: string = "";
