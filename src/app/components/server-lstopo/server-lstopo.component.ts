@@ -89,6 +89,10 @@ export class ServerLstopoComponent implements OnChanges, OnDestroy {
             setTimeout(() => {
               const el = this.lstopoModalRef?.nativeElement;
               if (el) {
+                if (this.modal) {
+                  this.modal.destroyAndRemoveInstance();
+                  this.modal = null;
+                }
                 this.modal = new Modal(el, lstopoModalOptions);
               }
             }, 0);
