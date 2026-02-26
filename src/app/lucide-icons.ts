@@ -74,6 +74,9 @@ import {
   Link,
   FunnelX,
   TriangleAlert,
+  CalendarSearch,
+  CreditCard,
+  Columns3Cog,
 } from "lucide-angular";
 
 export const lucideIcons = {
@@ -152,4 +155,7 @@ export const lucideIcons = {
   Link,
   FunnelX,
   TriangleAlert,
+  CalendarSearch,
+  CreditCard,
+  Columns3Cog,
 };

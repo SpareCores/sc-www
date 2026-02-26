@@ -664,6 +664,17 @@ export enum ComplianceFrameworks {
 }
 
 /**
+ * BestPriceAllocation
+ * Controls how the server's "best price" is computed: use only spot prices, only on-demand prices, or the lowest available price from any allocation type.
+ */
+export enum BestPriceAllocation {
+  ANY = "ANY",
+  SPOT_ONLY = "SPOT_ONLY",
+  ONDEMAND_ONLY = "ONDEMAND_ONLY",
+  MONTHLY = "MONTHLY",
+}
+
+/**
  * Allocation
  * Server allocation options.
  */
@@ -4402,6 +4413,18 @@ export interface SearchServersServersGetParams {
     | "V710"
     | "nvidia-gb200"
     | "vGPU8";
+  /**
+   * Currency
+   * Currency used for prices.
+   * @default "USD"
+   */
+  currency?: string | null;
+  /**
+   * Best price allocation strategy
+   * Controls how the server's "best price" is computed: use only spot prices, only on-demand prices, or the lowest available price from any allocation type.
+   * @default "ANY"
+   */
+  best_price_allocation?: "ANY" | "SPOT_ONLY" | "ONDEMAND_ONLY" | "MONTHLY";
   /**
    * Limit
    * Maximum number of results. Set to -1 for unlimited.

@@ -45,6 +45,12 @@ import { CpuCacheSizePipe } from "../../pipes/cpu-cache-size.pipe";
 import { NetworkSpeedPipe } from "../../pipes/network-speed.pipe";
 import { MonthlyTrafficPipe } from "../../pipes/monthly-traffic.pipe";
 import { Ipv4CountPipe } from "../../pipes/ipv4-count.pipe";
+import {
+  BestPriceAllocationType,
+  bestPriceAllocationTypes,
+  CurrencyOption,
+  availableCurrencies,
+} from "../../tools/shared_data";
 
 export type TableColumn = {
   name: string;
@@ -73,14 +79,6 @@ export type RegionMetadata = {
   name: string;
   api_reference: string;
   green_energy: boolean;
-  selected?: boolean;
-};
-
-export type RegionVendorMetadata = {
-  vendor_id: string;
-  name: string;
-  selected?: boolean;
-  collapsed?: boolean;
 };
 
 const optionsModal: ModalOptions = {
@@ -194,7 +192,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       show: false,
       type: "score_per_price",
       orderField: "score_per_price",
-      info: "SCore/price showing stress-ng's div16 performance measured for 1 USD/hour, using the best (usually spot) price of all zones.",
+      info: "SCore/price showing stress-ng's div16 performance measured for one price unit (usually hourly or monthly server price) standardized to USD, using the best price across all selected zones. By default, this equals to the SCore you can get for 1 USD/hour by using the cheapest spot (or ondemand) hourly price in all supported regions and availability zones, but can be filtered down to countries, regions, and price allocation strategies (e.g. using only ondemand pricing).",
     },
     {
       name: "BENCHMARK",
@@ -208,7 +206,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       show: true,
       type: "benchmark_score_per_price",
       orderField: "selected_benchmark_score_per_price",
-      info: "Benchmark/price ratio showing the selected benchmark performance measured for 1 USD/hour, using the best (usually spot) price of all zones. In other words: how much performance you get for your money.",
+      info: "Benchmark/price ratio showing the selected benchmark performance measured for one price unit (usually hourly or monthly server price) standardized to USD, using the best price across all selected zones. By default, this equals to the selected benchmark workload's measured score divided by the cheapest spot (or ondemand) hourly price in all supported regions and availability zones, but can be filtered down to countries, regions, and price allocation strategies (e.g. using only ondemand pricing). In other words: how much performance you get for your money.",
     },
     { name: "MEMORY", show: true, type: "memory", orderField: "memory_amount" },
     { name: "GPUs", show: true, type: "gpu", orderField: "gpu_count" },
@@ -292,6 +290,14 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
   hasCustomColumns = false;
 
+  availableCurrencies: CurrencyOption[] = availableCurrencies;
+  selectedCurrency = this.availableCurrencies[0];
+  displayedCurrency = this.availableCurrencies[0];
+
+  bestPriceAllocationTypes: BestPriceAllocationType[] =
+    bestPriceAllocationTypes;
+  bestPriceAllocation = this.bestPriceAllocationTypes[0];
+
   pageLimits = [10, 25, 50, 100, 250];
 
   limit = 25;
@@ -309,6 +315,8 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
   dropdownColumn: any;
   dropdownPage: any;
+  dropdownCurrency: any;
+  dropdownAllocation: any;
 
   isLoading = false;
 
@@ -455,6 +463,24 @@ export class ServerListingComponent implements OnInit, OnDestroy {
           )!.show = true;
         }
 
+        if (query.currency) {
+          this.selectedCurrency =
+            this.availableCurrencies.find(
+              (currency) => currency.slug === query.currency,
+            ) || this.availableCurrencies[0];
+        } else {
+          this.selectedCurrency = this.availableCurrencies[0];
+        }
+
+        if (query.best_price_allocation) {
+          this.bestPriceAllocation =
+            this.bestPriceAllocationTypes.find(
+              (allocation) => allocation.slug === query.best_price_allocation,
+            ) || this.bestPriceAllocationTypes[0];
+        } else {
+          this.bestPriceAllocation = this.bestPriceAllocationTypes[0];
+        }
+
         this.refreshColumns(false);
 
         // will process later
@@ -598,6 +624,18 @@ export class ServerListingComponent implements OnInit, OnDestroy {
           },
         ),
       );
+
+      this.dropdownManager
+        .initDropdown("currency_button", "currency_options")
+        .then((dropdown: any) => {
+          this.dropdownCurrency = dropdown;
+        });
+
+      this.dropdownManager
+        .initDropdown("allocation_button", "allocation_options")
+        .then((dropdown: any) => {
+          this.dropdownAllocation = dropdown;
+        });
 
       this.dropdownManager
         .initDropdown("column_button", "column_options")
@@ -747,9 +785,13 @@ export class ServerListingComponent implements OnInit, OnDestroy {
    * Note that URL params are also updated at updateQueryParams/encodeQueryParams (TODO refactor)
    */
   searchOptionsChanged(event: any) {
-    const queryObject: any = event;
+    let queryParams: any = { ...event };
 
-    let queryParams: any = queryObject;
+    if (this.page > 1) {
+      queryParams.page = this.page;
+    } else {
+      delete queryParams.page;
+    }
 
     if (this.orderBy && this.orderDir) {
       queryParams.order_by = this.orderBy;
@@ -759,8 +801,16 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       delete queryParams.order_dir;
     }
 
-    if (this.page > 1) {
-      queryParams.page = this.page;
+    if (this.selectedCurrency.slug !== "USD") {
+      queryParams.currency = this.selectedCurrency.slug;
+    } else {
+      delete queryParams.currency;
+    }
+
+    if (this.bestPriceAllocation.slug !== "ANY") {
+      queryParams.best_price_allocation = this.bestPriceAllocation.slug;
+    } else {
+      delete queryParams.best_price_allocation;
     }
 
     if (this.limit !== 25) {
@@ -821,6 +871,18 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       query.order_dir = this.orderDir;
     }
 
+    if (this.selectedCurrency.slug !== "USD") {
+      query.currency = this.selectedCurrency.slug;
+    } else {
+      delete query.currency;
+    }
+
+    if (this.bestPriceAllocation.slug !== "ANY") {
+      query.best_price_allocation = this.bestPriceAllocation.slug;
+    } else {
+      delete query.best_price_allocation;
+    }
+
     if (this.selectedBenchmarkConfig) {
       query.benchmark_config = this.selectedBenchmarkConfig.config;
       query.benchmark_id = this.selectedBenchmarkConfig.benchmark_id;
@@ -830,6 +892,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       .searchServers(query)
       .then((servers) => {
         this.servers = servers?.body;
+        this.displayedCurrency = this.selectedCurrency;
 
         // set stored selected state
         this.servers?.forEach((server: any) => {
@@ -904,6 +967,17 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       paramObject.order_dir = this.orderDir;
     }
 
+    if (this.selectedCurrency.slug !== "USD") {
+      paramObject.currency = this.selectedCurrency.slug;
+    } else {
+      delete paramObject.currency;
+    }
+
+    if (this.bestPriceAllocation.slug !== "ANY") {
+      paramObject.best_price_allocation = this.bestPriceAllocation.slug;
+    } else {
+      delete paramObject.best_price_allocation;
+    }
     if (this.limit !== 25) {
       paramObject.limit = this.limit;
     } else {
@@ -956,6 +1030,20 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       this.hasCustomColumns = true;
       this.updateQueryParams(this.getQueryObjectBase());
     }
+  }
+
+  selectCurrency(currency: CurrencyOption) {
+    this.selectedCurrency = currency;
+    this.page = 1;
+    this.searchOptionsChanged(this.query);
+    this.dropdownCurrency?.hide();
+  }
+
+  selectAllocation(allocation: BestPriceAllocationType) {
+    this.bestPriceAllocation = allocation;
+    this.page = 1;
+    this.searchOptionsChanged(this.query);
+    this.dropdownAllocation?.hide();
   }
 
   selectPageSize(limit: number) {
