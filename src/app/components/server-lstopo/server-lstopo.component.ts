@@ -62,30 +62,38 @@ export class ServerLstopoComponent implements OnChanges, OnDestroy {
     if (!svgCache.has(this.lstopoUrl)) {
       svgCache.set(
         this.lstopoUrl,
-        this.http.get(this.lstopoUrl, { responseType: "text" }).pipe(
-          catchError(() => of(null)),
-          shareReplay(1),
-        ),
+        this.http
+          .get(this.lstopoUrl, { responseType: "text" })
+          .pipe(shareReplay(1)),
       );
     }
 
+    const url = this.lstopoUrl;
     this.svgSub?.unsubscribe();
-    this.svgSub = svgCache.get(this.lstopoUrl)!.subscribe((svg) => {
-      if (!svg) {
-        this.hasError = true;
-      } else {
-        this.inlineSvg = this.sanitizer.bypassSecurityTrustHtml(svg);
-        if (isPlatformBrowser(this.platformId)) {
-          setTimeout(() => {
-            const el = this.lstopoModalRef?.nativeElement;
-            if (el) {
-              this.modal = new Modal(el, lstopoModalOptions);
-            }
-          }, 0);
+    this.svgSub = svgCache
+      .get(url)!
+      .pipe(
+        catchError(() => {
+          svgCache.delete(url);
+          return of(null);
+        }),
+      )
+      .subscribe((svg) => {
+        if (!svg) {
+          this.hasError = true;
+        } else {
+          this.inlineSvg = this.sanitizer.bypassSecurityTrustHtml(svg);
+          if (isPlatformBrowser(this.platformId)) {
+            setTimeout(() => {
+              const el = this.lstopoModalRef?.nativeElement;
+              if (el) {
+                this.modal = new Modal(el, lstopoModalOptions);
+              }
+            }, 0);
+          }
         }
-      }
-      this.isLoading = false;
-    });
+        this.isLoading = false;
+      });
   }
 
   openLstopoModal(): void {
