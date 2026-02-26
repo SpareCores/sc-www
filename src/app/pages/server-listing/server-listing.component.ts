@@ -292,6 +292,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
   availableCurrencies: CurrencyOption[] = availableCurrencies;
   selectedCurrency = this.availableCurrencies[0];
+  displayedCurrency = this.availableCurrencies[0];
 
   bestPriceAllocationTypes: BestPriceAllocationType[] =
     bestPriceAllocationTypes;
@@ -891,6 +892,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       .searchServers(query)
       .then((servers) => {
         this.servers = servers?.body;
+        this.displayedCurrency = this.selectedCurrency;
 
         // set stored selected state
         this.servers?.forEach((server: any) => {

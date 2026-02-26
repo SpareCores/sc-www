@@ -322,7 +322,7 @@
                           @if (item[column.key || "price"]) {
                             <div class="text-sm text-white whitespace-nowrap">
                               {{ item[column.key || "price"] }}
-                              {{ selectedCurrency.slug }}
+                              {{ displayedCurrency.slug }}
                             </div>
                           }
                           @if (!item[column.key || "price"]) {
