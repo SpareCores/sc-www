@@ -1,6 +1,6 @@
 <div class="flex justify-between items-center mb-4 gap-8">
   <h3 class="text-2xl">CPU and System Topology</h3>
-  @if (inlineSvg && lstopoUrl) {
+  @if (svgImgUrl && lstopoUrl) {
     <button
       class="btn-primary py-2 px-3 flex gap-2 h-[42px]"
       aria-haspopup="dialog"
@@ -34,8 +34,13 @@
   </div>
 }
 
-@if (inlineSvg && lstopoUrl) {
-  <div class="lstopo-container lstopo-inline-svg" [innerHTML]="inlineSvg"></div>
+@if (svgImgUrl && lstopoUrl) {
+  <div class="lstopo-img-wrapper">
+    <img class="lstopo-img" [src]="svgImgUrl" alt="CPU and System Topology" />
+    @if (tooltipSvg) {
+      <div class="lstopo-tooltip-overlay" [innerHTML]="tooltipSvg"></div>
+    }
+  </div>
 
   <div
     #lstopoModal
@@ -63,7 +68,8 @@
               aria-hidden="true"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
-              viewBox="0 0 14 14"
+              viewBox="0 0 100 100"
+              preserveAspectRatio="xMidYMid meet"
             >
               <path
                 stroke="currentColor"
@@ -73,13 +79,14 @@
                 d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
               />
             </svg>
+
             <span class="sr-only">Close modal</span>
           </button>
         </div>
         <div class="lstopo-modal-body overflow-auto max-h-[80vh]" appDragToPan>
           <div
             class="lstopo-container lstopo-modal-svg"
-            [innerHTML]="inlineSvg"
+            [innerHTML]="modalSvg"
           ></div>
         </div>
       </div>

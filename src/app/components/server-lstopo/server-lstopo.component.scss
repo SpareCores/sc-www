@@ -13,11 +13,76 @@
   }
 }
 
-// Inline display: shrink oversized SVGs to container, never stretch small ones
-.lstopo-inline-svg svg {
+// Grid wrapper: sizes itself to the img's rendered dimensions.
+// Both children occupy the same grid cell so the overlay is always pixel-perfect over the img.
+.lstopo-img-wrapper {
+  display: grid;
+  width: fit-content;
+  max-width: 100%;
+  line-height: 0;
+}
+
+.lstopo-img-wrapper > * {
+  grid-area: 1 / 1;
+}
+
+.lstopo-img {
+  width: auto;
   max-width: 100%;
   height: auto;
   display: block;
+}
+
+// Hover-interactive overlay — sits on top of the <img>, all elements transparent by default.
+// Hover strokes appear on top of the img to recreate the hover highlight effect.
+.lstopo-tooltip-overlay {
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.lstopo-tooltip-overlay svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+// All overlay elements invisible by default — only hover states show
+.lstopo-tooltip-overlay svg * {
+  fill: transparent !important;
+  stroke: transparent !important;
+}
+
+// All rects receive pointer events so hover highlights work everywhere
+.lstopo-tooltip-overlay svg rect {
+  pointer-events: all;
+  transition:
+    stroke 0.15s ease,
+    stroke-width 0.15s ease,
+    filter 0.15s ease;
+}
+
+.lstopo-tooltip-overlay svg rect:hover {
+  stroke: #a7f3d0 !important;
+  stroke-width: 1.5 !important;
+  filter: drop-shadow(0 0 1.5px #34d399);
+  cursor: pointer;
+}
+
+// Tooltip text elements: receive pointer events and show help cursor
+.lstopo-tooltip-overlay svg text.HostBridge,
+.lstopo-tooltip-overlay svg text.PCIBridge {
+  pointer-events: all;
+  cursor: help;
+}
+
+// Remaining tooltip-able elements with help cursor
+.lstopo-tooltip-overlay svg rect.L1i,
+.lstopo-tooltip-overlay svg rect.L1d,
+.lstopo-tooltip-overlay svg rect.L2,
+.lstopo-tooltip-overlay svg rect.L3,
+.lstopo-tooltip-overlay svg rect.PU {
+  cursor: help;
 }
 
 // Base rule for all lstopo containers (modal uses its own overrides below)
@@ -130,15 +195,14 @@
   cursor: pointer;
 }
 
-// Enable pointer events on tooltip-able text elements (overrides the global pointer-events:none
+// Tooltip-able text elements: receive pointer events and show help cursor
 .lstopo-container svg text.HostBridge,
 .lstopo-container svg text.PCIBridge {
   pointer-events: all;
+  cursor: help;
 }
 
-// Show help cursor on all elements that have SVG tooltip
-.lstopo-container svg text.HostBridge,
-.lstopo-container svg text.PCIBridge,
+// Remaining tooltip-able elements with help cursor
 .lstopo-container svg rect.L1i,
 .lstopo-container svg rect.L1d,
 .lstopo-container svg rect.L2,

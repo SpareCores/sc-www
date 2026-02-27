@@ -103,6 +103,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
   serverDetails!: ExtendedServerDetails;
   lstopoSvgExists: boolean | null = null;
+  lstopoSvgWidth: number = 0;
   serverZones: string[] = [];
   serverRegions: string[] = [];
 
