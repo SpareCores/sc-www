@@ -70,14 +70,13 @@
   fill: #082f49 !important;
 }
 
-// Cache levels (L3 / L2 / L1d / L1i) -> sky-900
+// Cache levels (L3 / L2 / L1d / L1i) -> sky-950
 .lstopo-container svg rect.L3,
 .lstopo-container svg rect.L2,
 .lstopo-container svg rect.L1d,
 .lstopo-container svg rect.L1i {
   fill: #082f49 !important;
 }
-
 // CPU Core -> sky-950
 .lstopo-container svg rect.Core {
   fill: #082f49 !important;
@@ -98,17 +97,16 @@
   fill: #082f49 !important;
 }
 
-// PCI device -> teal-500 (I/O grouping, mirrors Package)
+// PCI device -> sky-900
 .lstopo-container svg rect.PCI {
   fill: #0c4a6e !important;
 }
-
-// Network interface -> sky-900
+// Network interface -> sky-950
 .lstopo-container svg rect.Net {
   fill: #082f49 !important;
 }
 
-// Block / storage device -> sky-900
+// Block / storage device -> sky-950
 .lstopo-container svg rect.Block {
   fill: #082f49 !important;
 }
@@ -130,4 +128,21 @@
   stroke-width: 1.5 !important;
   filter: drop-shadow(0 0 1.5px #34d399);
   cursor: pointer;
+}
+
+// Enable pointer events on tooltip-able text elements (overrides the global pointer-events:none
+.lstopo-container svg text.HostBridge,
+.lstopo-container svg text.PCIBridge {
+  pointer-events: all;
+}
+
+// Show help cursor on all elements that have SVG tooltip
+.lstopo-container svg text.HostBridge,
+.lstopo-container svg text.PCIBridge,
+.lstopo-container svg rect.L1i,
+.lstopo-container svg rect.L1d,
+.lstopo-container svg rect.L2,
+.lstopo-container svg rect.L3,
+.lstopo-container svg rect.PU {
+  cursor: help;
 }
