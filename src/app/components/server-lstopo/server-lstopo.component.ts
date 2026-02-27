@@ -121,14 +121,17 @@ export class ServerLstopoComponent implements OnChanges, OnDestroy {
             return;
           }
           this.svgExists.emit(true);
-          try {
-            const { w } = this.svgService.parseSvg(svg);
-            if (w) this.svgWidth.emit(w);
-          } catch {
-            // width extraction is best-effort; continue without emitting
-          }
-          this.modalSvg = this.sanitizer.bypassSecurityTrustHtml(svg);
           if (isPlatformBrowser(this.platformId)) {
+            try {
+              const { w } = this.svgService.parseSvg(svg);
+
+              if (w) setTimeout(() => this.svgWidth.emit(w), 0);
+            } catch {
+              // width extraction is best-effort; continue without emitting
+            }
+            this.modalSvg = this.sanitizer.bypassSecurityTrustHtml(
+              this.svgService.normalizeViewBox(svg),
+            );
             try {
               const coloredSvg = this.svgService.buildColoredSvg(svg);
               const blob = new Blob([coloredSvg], { type: "image/svg+xml" });
@@ -167,6 +170,7 @@ export class ServerLstopoComponent implements OnChanges, OnDestroy {
               this.addSvgTooltips();
             }, 0);
           } else {
+            this.modalSvg = this.sanitizer.bypassSecurityTrustHtml(svg);
             this.tooltipSvg = null;
           }
         } finally {

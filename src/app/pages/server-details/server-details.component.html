@@ -316,6 +316,7 @@
             "
           >
             <app-server-lstopo
+              ngSkipHydration
               [vendorId]="serverDetails.vendor_id"
               [apiReference]="serverDetails.api_reference"
               (svgExists)="lstopoSvgExists = $event"

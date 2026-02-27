@@ -67,4 +67,13 @@ export class LstopoSvgService {
     svgEl.removeAttribute("height");
     return new XMLSerializer().serializeToString(doc);
   }
+
+  /**
+   * Returns a serialised SVG string with only the viewBox normalised (unit
+   * suffixes stripped) — used for the modal where natural size is desired.
+   */
+  normalizeViewBox(svgText: string): string {
+    const { doc } = this.parseSvg(svgText);
+    return new XMLSerializer().serializeToString(doc);
+  }
 }
