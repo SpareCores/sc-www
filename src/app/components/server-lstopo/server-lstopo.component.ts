@@ -2,9 +2,11 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
+  EventEmitter,
   Input,
   OnChanges,
   OnDestroy,
+  Output,
   ViewChild,
   ViewEncapsulation,
   inject,
@@ -39,6 +41,7 @@ const svgCache = new Map<string, Observable<string | null>>();
 export class ServerLstopoComponent implements OnChanges, OnDestroy {
   @Input() vendorId: string = "";
   @Input() apiReference: string = "";
+  @Output() svgExists = new EventEmitter<boolean>();
 
   private http = inject(HttpClient);
   private sanitizer = inject(DomSanitizer);
@@ -106,7 +109,9 @@ export class ServerLstopoComponent implements OnChanges, OnDestroy {
     this.svgSub = svgCache.get(url)!.subscribe((svg) => {
       if (!svg) {
         this.hasError = true;
+        this.svgExists.emit(false);
       } else {
+        this.svgExists.emit(true);
         this.inlineSvg = this.sanitizer.bypassSecurityTrustHtml(svg);
         if (isPlatformBrowser(this.platformId)) {
           setTimeout(() => {

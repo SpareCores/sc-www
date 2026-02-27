@@ -305,12 +305,15 @@
             </button>
           </div>
         </div>
-        <div class="block_full" id="lstopo">
-          <app-server-lstopo
-            [vendorId]="serverDetails.vendor_id"
-            [apiReference]="serverDetails.api_reference"
-          ></app-server-lstopo>
-        </div>
+        @if (lstopoSvgExists !== false) {
+          <div class="block_full" id="lstopo">
+            <app-server-lstopo
+              [vendorId]="serverDetails.vendor_id"
+              [apiReference]="serverDetails.api_reference"
+              (svgExists)="lstopoSvgExists = $event"
+            ></app-server-lstopo>
+          </div>
+        }
         <div class="my-2 w-full">
           <h2 class="text-3xl font-bold">Economics</h2>
         </div>

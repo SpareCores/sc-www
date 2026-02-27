@@ -102,6 +102,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   private dropdownManager = inject(DropdownManagerService);
 
   serverDetails!: ExtendedServerDetails;
+  lstopoSvgExists: boolean | null = null;
   serverZones: string[] = [];
   serverRegions: string[] = [];
 
