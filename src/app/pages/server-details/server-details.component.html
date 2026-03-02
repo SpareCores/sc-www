@@ -310,7 +310,7 @@
             class="block_full"
             id="lstopo"
             [style.width]="
-              lstopoSvgWidth > 0 && lstopoSvgWidth <= 600
+              !isSmallScreen && lstopoSvgWidth > 0 && lstopoSvgWidth <= 600
                 ? 'calc(50% - 1rem)'
                 : '100%'
             "
