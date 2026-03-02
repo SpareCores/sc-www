@@ -77,8 +77,6 @@ import {
   CalendarSearch,
   CreditCard,
   Columns3Cog,
-  MessageCircleQuestionMark,
-  Maximize2,
 } from "lucide-angular";
 
 export const lucideIcons = {
@@ -160,6 +158,4 @@ export const lucideIcons = {
   CalendarSearch,
   CreditCard,
   Columns3Cog,
-  MessageCircleQuestionMark,
-  Maximize2,
 };
