@@ -1,0 +1,212 @@
+﻿/* ------------------------------------------------------------------
+ * Inline SVG colour overrides using 5 design tokens:
+ *   emerald-400 #34d399  teal-500 #14b8a6  sky-900 #0c4a6e
+ *   sky-950     #082f49  white    #ffffff
+ * ------------------------------------------------------------------ */
+
+// Hide scrollbars on modal body while keeping drag-to-pan scroll functional
+.lstopo-modal-wrapper,
+.lstopo-modal-body {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+// Grid wrapper: sizes itself to the img's rendered dimensions.
+// Both children occupy the same grid cell so the overlay is always pixel-perfect over the img.
+.lstopo-img-wrapper {
+  display: grid;
+  width: fit-content;
+  max-width: 100%;
+  line-height: 0;
+}
+
+.lstopo-img-wrapper > * {
+  grid-area: 1 / 1;
+}
+
+.lstopo-img {
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+// Hover-interactive overlay — sits on top of the <img>, all elements transparent by default.
+// Hover strokes appear on top of the img to recreate the hover highlight effect.
+.lstopo-tooltip-overlay {
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.lstopo-tooltip-overlay svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+// All overlay elements invisible by default — only hover states show
+.lstopo-tooltip-overlay svg * {
+  fill: transparent !important;
+  stroke: transparent !important;
+}
+
+// All rects receive pointer events so hover highlights work everywhere
+.lstopo-tooltip-overlay svg rect {
+  pointer-events: all;
+  transition:
+    stroke 0.15s ease,
+    stroke-width 0.15s ease,
+    filter 0.15s ease;
+}
+
+.lstopo-tooltip-overlay svg rect:hover {
+  stroke: #a7f3d0 !important;
+  stroke-width: 1.5 !important;
+  filter: drop-shadow(0 0 1.5px #34d399);
+  cursor: pointer;
+}
+
+// Tooltip text elements: receive pointer events and show help cursor
+.lstopo-tooltip-overlay svg text.HostBridge,
+.lstopo-tooltip-overlay svg text.PCIBridge {
+  pointer-events: all;
+  cursor: help;
+}
+
+// Remaining tooltip-able elements with help cursor
+.lstopo-tooltip-overlay svg rect.L1i,
+.lstopo-tooltip-overlay svg rect.L1d,
+.lstopo-tooltip-overlay svg rect.L2,
+.lstopo-tooltip-overlay svg rect.L3,
+.lstopo-tooltip-overlay svg rect.PU {
+  cursor: help;
+}
+
+// Base rule for all lstopo containers (modal uses its own overrides below)
+.lstopo-container svg {
+  display: block;
+}
+
+// In the modal the SVG renders at its natural size (scroll/pan if needed)
+.lstopo-modal-svg svg {
+  width: auto !important;
+  height: auto !important;
+  min-width: max-content;
+}
+
+// All text nodes -> white (pointer-events: none so hover passes through to the rect below)
+.lstopo-container svg text {
+  fill: #ffffff !important;
+  font-family: ui-monospace, monospace !important;
+  pointer-events: none;
+}
+
+// All strokes (rect outlines + connector lines) -> emerald-400
+.lstopo-container svg rect,
+.lstopo-container svg line {
+  stroke: #34d399 !important;
+}
+
+// Outermost machine box -> sky-950 (darkest)
+.lstopo-container svg rect.Machine {
+  fill: #082f49 !important;
+}
+
+// Die (sits inside Package, contains caches) -> sky-900
+.lstopo-container svg rect.Die {
+  fill: #0c4a6e !important;
+}
+
+// PCIBridge -> sky-950
+.lstopo-container svg rect.PCIBridge {
+  fill: #082f49 !important;
+}
+
+// NUMA node band -> sky-900
+.lstopo-container svg rect.NUMANode {
+  fill: #0c4a6e !important;
+}
+
+// Physical package -> sky-950
+.lstopo-container svg rect.Package {
+  fill: #082f49 !important;
+}
+
+// Cache levels (L3 / L2 / L1d / L1i) -> sky-950
+.lstopo-container svg rect.L3,
+.lstopo-container svg rect.L2,
+.lstopo-container svg rect.L1d,
+.lstopo-container svg rect.L1i {
+  fill: #082f49 !important;
+}
+// CPU Core -> sky-950
+.lstopo-container svg rect.Core {
+  fill: #082f49 !important;
+}
+
+// Processing Unit -> white (leaf node, stands out clearly)
+.lstopo-container svg rect.PU {
+  fill: #ffffff !important;
+}
+
+// PU text override -> sky-950 (white bg needs dark text)
+.lstopo-container svg text.PU {
+  fill: #082f49 !important;
+}
+
+// Host bridge rect -> sky-950
+.lstopo-container svg rect.HostBridge {
+  fill: #082f49 !important;
+}
+
+// PCI device -> sky-900
+.lstopo-container svg rect.PCI {
+  fill: #0c4a6e !important;
+}
+// Network interface -> sky-950
+.lstopo-container svg rect.Net {
+  fill: #082f49 !important;
+}
+
+// Block / storage device -> sky-950
+.lstopo-container svg rect.Block {
+  fill: #082f49 !important;
+}
+
+// Misc nodes -> sky-950
+.lstopo-container svg rect.Misc {
+  fill: #082f49 !important;
+}
+
+.lstopo-container svg rect {
+  transition:
+    stroke-width 0.15s ease,
+    stroke 0.15s ease,
+    filter 0.15s ease;
+}
+
+.lstopo-container svg rect:hover {
+  stroke: #a7f3d0 !important;
+  stroke-width: 1.5 !important;
+  filter: drop-shadow(0 0 1.5px #34d399);
+  cursor: pointer;
+}
+
+// Tooltip-able text elements: receive pointer events and show help cursor
+.lstopo-container svg text.HostBridge,
+.lstopo-container svg text.PCIBridge {
+  pointer-events: all;
+  cursor: help;
+}
+
+// Remaining tooltip-able elements with help cursor
+.lstopo-container svg rect.L1i,
+.lstopo-container svg rect.L1d,
+.lstopo-container svg rect.L2,
+.lstopo-container svg rect.L3,
+.lstopo-container svg rect.PU {
+  cursor: help;
+}
