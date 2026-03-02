@@ -2,7 +2,6 @@
 import {
   Component,
   ElementRef,
-  HostListener,
   PLATFORM_ID,
   OnInit,
   ViewChild,
@@ -44,7 +43,6 @@ import { Location } from "@angular/common";
 import { AnalyticsService } from "../../services/analytics.service";
 import { DropdownManagerService } from "../../services/dropdown-manager.service";
 import { ServerChartsComponent } from "../../components/server-charts/server-charts.component";
-import { ServerLstopoComponent } from "../../components/server-lstopo/server-lstopo.component";
 import { Modal, ModalOptions } from "flowbite";
 import { EmbedDebugComponent } from "../embed-debug/embed-debug.component";
 import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
@@ -83,7 +81,6 @@ export interface ExtendedServerDetails extends ServerPKs {
     ReduceUnitNamePipe,
     GpuCountPipe,
     ServerChartsComponent,
-    ServerLstopoComponent,
     EmbedDebugComponent,
     LoadingSpinnerComponent,
   ],
@@ -103,9 +100,6 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   private dropdownManager = inject(DropdownManagerService);
 
   serverDetails!: ExtendedServerDetails;
-  lstopoSvgExists: boolean | null = null;
-  lstopoSvgWidth: number = 0;
-  isSmallScreen = false;
   serverZones: string[] = [];
   serverRegions: string[] = [];
 
@@ -206,13 +200,6 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   isModalOpen = false;
 
   private subscription = new Subscription();
-
-  @HostListener("window:resize")
-  onResize() {
-    if (isPlatformBrowser(this.platformId)) {
-      this.isSmallScreen = window.innerWidth <= 1024;
-    }
-  }
 
   ngOnInit() {
     this.isLoading = true;

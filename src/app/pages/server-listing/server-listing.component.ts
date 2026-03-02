@@ -318,7 +318,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   dropdownCurrency: any;
   dropdownAllocation: any;
 
-  isLoading = true;
+  isLoading = false;
 
   freetextSearchInput: string | null = null;
   modalSubmitted = false;
