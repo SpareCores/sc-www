@@ -305,6 +305,25 @@
             </button>
           </div>
         </div>
+        @if (lstopoSvgExists !== false) {
+          <div
+            class="block_full"
+            id="lstopo"
+            [style.width]="
+              !isSmallScreen && lstopoSvgWidth > 0 && lstopoSvgWidth <= 600
+                ? 'calc(50% - 1rem)'
+                : '100%'
+            "
+          >
+            <app-server-lstopo
+              ngSkipHydration
+              [vendorId]="serverDetails.vendor_id"
+              [apiReference]="serverDetails.api_reference"
+              (svgExists)="lstopoSvgExists = $event"
+              (svgWidth)="lstopoSvgWidth = $event"
+            ></app-server-lstopo>
+          </div>
+        }
         <div class="my-2 w-full">
           <h2 class="text-3xl font-bold">Economics</h2>
         </div>
