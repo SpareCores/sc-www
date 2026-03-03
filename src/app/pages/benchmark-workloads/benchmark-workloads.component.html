@@ -1,7 +1,7 @@
+<!-- Header band -->
 <div class="w-full bg-primary">
   <div class="content pt-16 pb-16">
     <app-breadcrumbs [segments]="breadcrumbs()"></app-breadcrumbs>
-
     <div class="flex flex-col gap-4 my-8 mx-2 xl:mx-0">
       <div class="flex gap-4 items-center w-full justify-between">
         <h1 class="text-white font-bold text-3xl flex items-center">
@@ -9,10 +9,118 @@
           {{ pageTitle }}
         </h1>
       </div>
-
       <div class="text-white text-xl pr-4 md:pr-16">
         {{ pageDescription }}
       </div>
     </div>
   </div>
+</div>
+
+<!-- Main content area -->
+<div class="content py-8 bg-primary min-h-screen">
+  @if (isLoading()) {
+    <div class="flex justify-center items-center mt-16">
+      <app-loading-spinner
+        size="lg"
+        text="Loading benchmark data..."
+      ></app-loading-spinner>
+    </div>
+  } @else if (errorMessage()) {
+    <div class="flex justify-center items-center mt-16">
+      <div class="text-red-400 text-xl">{{ errorMessage() }}</div>
+    </div>
+  } @else {
+    <div class="flex gap-8 mx-2 xl:mx-0 page_layout">
+      <!-- Sticky TOC sidebar -->
+      <div class="filter_bar bg-primary">
+        <!-- TOC navigation -->
+        <nav
+          class="toc_nav px-3 py-4 overflow-y-auto"
+          aria-label="Benchmark workloads table of contents"
+        >
+          <div
+            class="text-gray-400 text-xs uppercase tracking-widest mb-3 px-2"
+          >
+            Benchmarks
+          </div>
+
+          @for (family of benchmarkFamilies(); track family.framework) {
+            <div class="toc_family_group">
+              <!-- Family accordion header -->
+              <button
+                class="toc_family_btn w-full flex items-center justify-between px-2 py-2 rounded-md text-left transition-colors"
+                [class.text-emerald-400]="activeFamily() === family.framework"
+                [class.text-gray-300]="activeFamily() !== family.framework"
+                (click)="toggleFamily(family.framework)"
+              >
+                <span class="font-mono text-xs font-semibold">{{
+                  family.framework
+                }}</span>
+                <lucide-icon
+                  [name]="
+                    isFamilyExpanded(family.framework)
+                      ? 'chevron-down'
+                      : 'chevron-right'
+                  "
+                  class="h-3.5 w-3.5 shrink-0"
+                ></lucide-icon>
+              </button>
+
+              <!-- Family sub-items -->
+              @if (isFamilyExpanded(family.framework)) {
+                <div class="ml-3 flex flex-col gap-0.5">
+                  @for (bm of family.benchmarks; track bm.benchmark_id) {
+                    <button
+                      class="toc_item w-full text-left px-2 py-1.5 rounded text-xs transition-colors"
+                      [class.active]="activeBenchmarkId() === bm.benchmark_id"
+                      (click)="scrollTo(bm.benchmark_id)"
+                    >
+                      {{ bm.name }}
+                    </button>
+                  }
+                </div>
+              }
+            </div>
+          }
+        </nav>
+      </div>
+
+      <!-- Main scrollable content column -->
+      <div class="list_holder limited-full flex flex-col gap-12 pb-16">
+        @for (family of benchmarkFamilies(); track family.framework) {
+          <!-- Family section heading -->
+          <section>
+            <div
+              class="flex items-center gap-3 mb-6 pb-3 border-b border-emerald-400/30"
+              [id]="'family-' + family.framework"
+            >
+              <lucide-icon
+                name="gauge"
+                class="h-6 w-6 text-emerald-400 shrink-0"
+              ></lucide-icon>
+              <h2 class="text-white text-2xl font-bold font-mono">
+                {{ family.framework }}
+              </h2>
+              <span class="ml-auto text-xs text-gray-400 shrink-0">
+                {{ family.benchmarks.length }}
+                {{ family.benchmarks.length === 1 ? "workload" : "workloads" }}
+              </span>
+            </div>
+
+            <!-- Benchmark cards grid -->
+            <div class="flex flex-col gap-8">
+              @for (bm of family.benchmarks; track bm.benchmark_id) {
+                <div [id]="bm.benchmark_id" class="scroll-mt-24">
+                  <app-benchmark-workload
+                    [benchmark]="bm"
+                    [mockData]="getMock(bm.benchmark_id)"
+                  ></app-benchmark-workload>
+                </div>
+              }
+            </div>
+          </section>
+        }
+      </div>
+    </div>
+  }
 </div>

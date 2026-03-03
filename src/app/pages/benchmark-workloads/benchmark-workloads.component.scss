@@ -1,0 +1,76 @@
+/* Page layout — mirrors benchmark-coverage for consistency */
+
+.page_layout {
+  align-items: flex-start;
+}
+
+.filter_bar {
+  z-index: 1;
+  position: sticky;
+  overflow: visible;
+  top: 5rem;
+  width: 20rem;
+  min-width: 20rem;
+}
+
+.list_holder {
+  width: 100%;
+  z-index: 0;
+  min-width: 0;
+}
+
+.limited-full {
+  width: calc(100% - 20rem);
+}
+
+/* TOC navigation tree */
+
+.toc_nav {
+  max-height: calc(100vh - 8rem);
+  border-right: 1px solid rgba(52, 211, 153, 0.25);
+  // subtle inner shadow so content fades as it scrolls off
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    black calc(100% - 2rem),
+    transparent
+  );
+  mask-image: linear-gradient(to bottom, black calc(100% - 2rem), transparent);
+  // hide scrollbar while keeping scroll functionality
+  scrollbar-width: none; // Firefox
+  &::-webkit-scrollbar {
+    display: none; // Chrome / Safari / Edge
+  }
+}
+
+.toc_family_btn {
+  &:hover {
+    background-color: rgba(52, 211, 153, 0.08);
+  }
+}
+
+.toc_item {
+  color: #9ca3af; // gray-400
+
+  &:hover {
+    color: #fff;
+    background-color: rgba(52, 211, 153, 0.06);
+  }
+
+  &.active {
+    color: #34d399;
+    background-color: rgba(52, 211, 153, 0.12);
+    font-weight: 600;
+  }
+}
+
+/* Responsive */
+
+@media (max-width: 1024px) {
+  .filter_bar {
+    display: none;
+  }
+
+  .list_holder.limited-full {
+    width: 100%;
+  }
+}
