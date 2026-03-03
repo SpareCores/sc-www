@@ -13,11 +13,10 @@ import {
   PLATFORM_ID,
 } from "@angular/core";
 import { isPlatformBrowser } from "@angular/common";
-import { HttpClient } from "@angular/common/http";
 import { DomSanitizer, SafeHtml, SafeUrl } from "@angular/platform-browser";
 import { LucideAngularModule } from "lucide-angular";
 import { Modal, ModalOptions } from "flowbite";
-import { Observable, Subscription, shareReplay, catchError, of } from "rxjs";
+import { Subscription } from "rxjs";
 import { DragToPanDirective } from "../../directives/drag-to-pan.directive";
 import { LstopoSvgService } from "./lstopo-svg.service";
 
@@ -29,8 +28,6 @@ const lstopoModalOptions: ModalOptions = {
   backdropClasses: "bg-gray-900/50 fixed inset-0 z-40",
   closable: true,
 };
-
-const svgCache = new Map<string, Observable<string | null>>();
 
 @Component({
   selector: "app-server-lstopo",
@@ -45,7 +42,6 @@ export class ServerLstopoComponent implements OnChanges, OnDestroy {
   @Output() svgExists = new EventEmitter<boolean>();
   @Output() svgWidth = new EventEmitter<number>();
 
-  private http = inject(HttpClient);
   private sanitizer = inject(DomSanitizer);
   private platformId = inject(PLATFORM_ID);
   private elRef = inject(ElementRef);
@@ -101,19 +97,9 @@ export class ServerLstopoComponent implements OnChanges, OnDestroy {
     this.svgWidth.emit(0);
     this.lstopoUrl = `${LSTOPO_CDN_BASE}/${this.vendorId}/${this.apiReference}/${LSTOPO_PATH_SUFFIX}`;
 
-    if (!svgCache.has(this.lstopoUrl)) {
-      svgCache.set(
-        this.lstopoUrl,
-        this.http.get(this.lstopoUrl, { responseType: "text" }).pipe(
-          catchError(() => of(null)),
-          shareReplay(1),
-        ),
-      );
-    }
-
     const url = this.lstopoUrl;
     this.svgSub?.unsubscribe();
-    this.svgSub = svgCache.get(url)!.subscribe({
+    this.svgSub = this.svgService.getSvg(url).subscribe({
       next: (svg) => {
         try {
           if (!svg) {
@@ -123,39 +109,38 @@ export class ServerLstopoComponent implements OnChanges, OnDestroy {
           this.svgExists.emit(true);
           if (isPlatformBrowser(this.platformId)) {
             try {
-              const { w } = this.svgService.parseSvg(svg);
-
+              const {
+                w,
+                coloredSvg,
+                tooltipSvg: tooltipSvgStr,
+                normalizedSvg,
+              } = this.svgService.processSvg(svg);
               if (w) setTimeout(() => this.svgWidth.emit(w), 0);
-            } catch {
-              // width extraction is best-effort; continue without emitting
-            }
-            this.modalSvg = this.sanitizer.bypassSecurityTrustHtml(
-              this.svgService.normalizeViewBox(svg),
-            );
-            try {
-              const coloredSvg = this.svgService.buildColoredSvg(svg);
-              const blob = new Blob([coloredSvg], { type: "image/svg+xml" });
-              this.revokeBlobUrl();
-              this.blobUrl = URL.createObjectURL(blob);
-              this.svgImgUrl = this.sanitizer.bypassSecurityTrustUrl(
-                this.blobUrl,
-              );
+              this.modalSvg =
+                this.sanitizer.bypassSecurityTrustHtml(normalizedSvg);
+              try {
+                const blob = new Blob([coloredSvg], { type: "image/svg+xml" });
+                this.revokeBlobUrl();
+                this.blobUrl = URL.createObjectURL(blob);
+                this.svgImgUrl = this.sanitizer.bypassSecurityTrustUrl(
+                  this.blobUrl,
+                );
+              } catch (e) {
+                console.warn(
+                  "[lstopo] blob build failed, falling back to CDN URL",
+                  e,
+                );
+                this.svgImgUrl = this.sanitizer.bypassSecurityTrustUrl(
+                  this.lstopoUrl,
+                );
+              }
+              this.tooltipSvg =
+                this.sanitizer.bypassSecurityTrustHtml(tooltipSvgStr);
             } catch (e) {
-              console.warn(
-                "[lstopo] blob build failed, falling back to CDN URL",
-                e,
-              );
+              console.warn("[lstopo] SVG processing failed", e);
               this.svgImgUrl = this.sanitizer.bypassSecurityTrustUrl(
                 this.lstopoUrl,
               );
-            }
-            try {
-              this.tooltipSvg = this.sanitizer.bypassSecurityTrustHtml(
-                this.svgService.buildTooltipSvg(svg),
-              );
-            } catch (e) {
-              console.warn("[lstopo] tooltip SVG build failed", e);
-              this.tooltipSvg = null;
             }
             this.cdr.markForCheck();
             setTimeout(() => {

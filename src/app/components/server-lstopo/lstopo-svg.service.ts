@@ -1,4 +1,6 @@
-import { Injectable } from "@angular/core";
+import { Injectable, inject } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+import { Observable, of, catchError } from "rxjs";
 
 const SVG_BAKED_STYLES = `
   text { fill: #ffffff; font-family: ui-monospace, monospace; }
@@ -23,11 +25,53 @@ const SVG_BAKED_STYLES = `
 
 @Injectable({ providedIn: "root" })
 export class LstopoSvgService {
+  private http = inject(HttpClient);
+
+  getSvg(url: string): Observable<string | null> {
+    return this.http
+      .get(url, { responseType: "text" })
+      .pipe(catchError(() => of(null)));
+  }
+
+  /**
+   * Parses the raw SVG text once and derives all three display variants
+   * (coloured thumbnail, tooltip overlay, normalised modal) in a single pass,
+   * avoiding redundant DOMParser/XMLSerializer round-trips.
+   */
+  processSvg(svgText: string): {
+    w: number;
+    h: number;
+    coloredSvg: string;
+    tooltipSvg: string;
+    normalizedSvg: string;
+  } {
+    const { doc, svgEl, w, h } = this.parseSvg(svgText);
+    const serializer = new XMLSerializer();
+
+    // 1. Normalized — viewBox already fixed by parseSvg, nothing else to change.
+    const normalizedSvg = serializer.serializeToString(doc);
+
+    // 2. Tooltip overlay — remove width/height so it stretches to fill container.
+    const tooltipEl = svgEl.cloneNode(true) as SVGSVGElement;
+    tooltipEl.removeAttribute("width");
+    tooltipEl.removeAttribute("height");
+    const tooltipSvg = serializer.serializeToString(tooltipEl);
+
+    // 3. Coloured thumbnail — inject brand-colour <style> block.
+    const coloredEl = svgEl.cloneNode(true) as SVGSVGElement;
+    const styleEl = doc.createElementNS("http://www.w3.org/2000/svg", "style");
+    styleEl.textContent = SVG_BAKED_STYLES;
+    coloredEl.insertBefore(styleEl, coloredEl.firstChild);
+    const coloredSvg = serializer.serializeToString(coloredEl);
+
+    return { w, h, coloredSvg, tooltipSvg, normalizedSvg };
+  }
+
   /**
    * Parses an SVG string, normalises the viewBox (strips unit suffixes like "px")
    * and returns the document, root element and intrinsic dimensions.
    */
-  parseSvg(svgText: string): {
+  private parseSvg(svgText: string): {
     doc: Document;
     svgEl: SVGSVGElement;
     w: number;
@@ -49,7 +93,7 @@ export class LstopoSvgService {
    * Returns a serialised SVG string with brand-colour styles baked in as a
    * <style> element — safe to use as the source of a Blob / <img> URL.
    */
-  buildColoredSvg(svgText: string): string {
+  private buildColoredSvg(svgText: string): string {
     const { doc, svgEl } = this.parseSvg(svgText);
     const styleEl = doc.createElementNS("http://www.w3.org/2000/svg", "style");
     styleEl.textContent = SVG_BAKED_STYLES;
@@ -61,7 +105,7 @@ export class LstopoSvgService {
    * Returns a serialised SVG string with width/height removed so it can
    * stretch to fill its container — used for the transparent hover overlay.
    */
-  buildTooltipSvg(svgText: string): string {
+  private buildTooltipSvg(svgText: string): string {
     const { doc, svgEl } = this.parseSvg(svgText);
     svgEl.removeAttribute("width");
     svgEl.removeAttribute("height");
@@ -72,7 +116,7 @@ export class LstopoSvgService {
    * Returns a serialised SVG string with only the viewBox normalised (unit
    * suffixes stripped) — used for the modal where natural size is desired.
    */
-  normalizeViewBox(svgText: string): string {
+  private normalizeViewBox(svgText: string): string {
     const { doc } = this.parseSvg(svgText);
     return new XMLSerializer().serializeToString(doc);
   }
