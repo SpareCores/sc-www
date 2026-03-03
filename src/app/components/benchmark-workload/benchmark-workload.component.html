@@ -1,0 +1,235 @@
+<div
+  class="relative flex flex-col gap-5 rounded-lg border border-solid border-emerald-400 bg-secondary p-6 overflow-hidden"
+>
+  <!-- Status indicator — absolute top-right corner -->
+  <div class="absolute top-4 right-4">
+    @if (isActive()) {
+      <span
+        class="relative flex h-3 w-3 cursor-help"
+        (mouseenter)="showTooltip($event, 'Active')"
+        (mouseleave)="hideTooltip()"
+      >
+        <span
+          class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
+          style="background-color: #34d399"
+        ></span>
+        <span
+          class="relative inline-flex rounded-full h-3 w-3"
+          style="background-color: #34d399"
+        ></span>
+      </span>
+    } @else {
+      <span
+        class="relative flex h-3 w-3 cursor-help"
+        (mouseenter)="showTooltip($event, 'Inactive')"
+        (mouseleave)="hideTooltip()"
+      >
+        <span
+          class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
+          style="background-color: #ef4444"
+        ></span>
+        <span
+          class="relative inline-flex rounded-full h-3 w-3"
+          style="background-color: #ef4444"
+        ></span>
+      </span>
+    }
+  </div>
+
+  <!-- Section heading: framework family -->
+  <h2 class="text-emerald-400 text-sm font-semibold uppercase tracking-widest">
+    {{ benchmark().framework }}
+  </h2>
+
+  <!-- Workload name + Higher/Lower is better badge -->
+  <div class="flex flex-wrap items-center gap-3 pr-20">
+    <h3 class="text-white text-2xl font-bold leading-tight">
+      {{ benchmark().name }}
+    </h3>
+
+    @if (benchmark().higher_is_better !== false) {
+      <lucide-icon
+        name="circle-arrow-up"
+        class="h-4 w-4 text-gray-200"
+        (mouseenter)="showTooltip($event, 'Higher is better.')"
+        (mouseleave)="hideTooltip()"
+      ></lucide-icon>
+    } @else {
+      <lucide-icon
+        name="circle-arrow-down"
+        class="h-4 w-4 text-gray-200"
+        (mouseenter)="showTooltip($event, 'Lower is better.')"
+        (mouseleave)="hideTooltip()"
+      ></lucide-icon>
+    }
+  </div>
+
+  <!-- Description -->
+  @if (benchmark().description) {
+    <p class="text-gray-300 text-sm leading-relaxed">
+      {{ benchmark().description }}
+    </p>
+  }
+
+  <!-- Metadata inner card -->
+  <div
+    class="rounded-lg border border-solid border-emerald-400/30 bg-primary p-4 flex flex-col gap-3"
+  >
+    <h4 class="text-white text-sm font-semibold uppercase tracking-wide mb-1">
+      Benchmark Details
+    </h4>
+
+    <dl class="grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-6">
+      @let mock = mockData();
+      <!-- Benchmark ID -->
+      <div class="flex flex-col gap-0.5">
+        <dt class="text-gray-400 text-xs">Benchmark ID</dt>
+        <dd class="text-white text-sm font-mono">
+          {{ benchmark().benchmark_id }}
+        </dd>
+      </div>
+
+      <!-- Unit of measurement -->
+      <div class="flex flex-col gap-0.5">
+        <dt class="text-gray-400 text-xs">Unit of Measurement</dt>
+        <dd>
+          @if (unit()) {
+            <span
+              class="inline-flex items-center rounded-full bg-emerald-400/15 border border-emerald-400/30 px-2.5 py-0.5 text-xs font-medium text-emerald-400"
+            >
+              {{ unit() }}
+            </span>
+          } @else {
+            <span class="text-gray-500 text-sm">—</span>
+          }
+        </dd>
+      </div>
+
+      <!-- Number of server types evaluated -->
+      <div class="flex flex-col gap-0.5">
+        <dt class="text-gray-400 text-xs">Server Types Evaluated</dt>
+        <dd class="text-white text-sm">
+          @if (mock?.server_count !== undefined) {
+            <span class="font-semibold">{{ mock?.server_count | number }}</span>
+          } @else {
+            <span class="text-gray-500">N/A</span>
+          }
+        </dd>
+      </div>
+
+      <!-- Number of measurements -->
+      <div class="flex flex-col gap-0.5">
+        <dt class="text-gray-400 text-xs">Total Measurements</dt>
+        <dd class="text-white text-sm">
+          @if (mock?.measurement_count !== undefined) {
+            <span class="font-semibold">{{
+              mock?.measurement_count | number
+            }}</span>
+          } @else {
+            <span class="text-gray-500">N/A</span>
+          }
+        </dd>
+      </div>
+
+      <!-- Range of measurements -->
+      <div class="flex flex-col gap-0.5 sm:col-span-2">
+        <dt class="text-gray-400 text-xs">Range of Measurements</dt>
+        <dd class="text-white text-sm">
+          @if (mock) {
+            <span class="font-semibold">{{ formatRange() }}</span>
+            @if (unit()) {
+              <span class="text-gray-400 ml-1 text-xs">{{ unit() }}</span>
+            }
+          } @else {
+            <span class="text-gray-500">N/A</span>
+          }
+        </dd>
+      </div>
+    </dl>
+  </div>
+
+  <!-- Configuration Options Table -->
+  @if (hasConfigFields() && configEntries.length > 0) {
+    <div class="flex flex-col gap-2">
+      <h4 class="text-white text-sm font-semibold uppercase tracking-wide">
+        Configuration Options
+      </h4>
+      <div
+        class="overflow-x-auto rounded-lg border border-solid border-emerald-400/30"
+      >
+        <table class="config_table w-full text-white text-sm">
+          <thead>
+            <tr>
+              <th>Field</th>
+              <th>Description</th>
+              <th>Example Values</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (entry of configEntries; track entry.key) {
+              <tr>
+                <td
+                  class="font-mono text-emerald-400 text-xs whitespace-nowrap"
+                >
+                  {{ entry.key }}
+                </td>
+                <td class="text-gray-300 text-xs">
+                  {{ entry.description }}
+                </td>
+                <td>
+                  @if (entry.examples.length > 0) {
+                    <div class="flex flex-wrap gap-1">
+                      @for (ex of entry.examples; track ex) {
+                        <span
+                          class="inline-block rounded bg-sky-900/60 border border-sky-700/50 px-1.5 py-0.5 font-mono text-xs text-sky-300"
+                        >
+                          {{ ex }}
+                        </span>
+                      }
+                    </div>
+                  } @else {
+                    <span class="text-gray-500">—</span>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+
+  <!-- Histogram -->
+  <div class="flex flex-col gap-2">
+    <h4 class="text-white text-sm font-semibold uppercase tracking-wide">
+      Score Distribution
+    </h4>
+    @if (histogramData) {
+      <div class="histogram_container">
+        <canvas
+          baseChart
+          [data]="histogramData"
+          [options]="histogramOptions"
+          type="bar"
+        ></canvas>
+      </div>
+    } @else {
+      <div
+        class="histogram_container flex items-center justify-center rounded-lg border border-dashed border-emerald-400/30"
+      >
+        <span class="text-gray-500 text-sm"
+          >No distribution data available</span
+        >
+      </div>
+    }
+  </div>
+</div>
+
+<!-- Floating tooltip -->
+<div
+  #tooltipEl
+  style="opacity: 0; display: none; position: absolute"
+  class="z-50 max-w-48 px-2 py-1 text-xs font-medium text-white bg-secondary border border-solid border-emerald-400 rounded-lg pointer-events-none"
+>
+  {{ tooltipContent }}
+</div>
