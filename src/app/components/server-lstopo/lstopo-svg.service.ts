@@ -88,36 +88,4 @@ export class LstopoSvgService {
     }
     return { doc, svgEl, w, h };
   }
-
-  /**
-   * Returns a serialised SVG string with brand-colour styles baked in as a
-   * <style> element — safe to use as the source of a Blob / <img> URL.
-   */
-  private buildColoredSvg(svgText: string): string {
-    const { doc, svgEl } = this.parseSvg(svgText);
-    const styleEl = doc.createElementNS("http://www.w3.org/2000/svg", "style");
-    styleEl.textContent = SVG_BAKED_STYLES;
-    svgEl.insertBefore(styleEl, svgEl.firstChild);
-    return new XMLSerializer().serializeToString(doc);
-  }
-
-  /**
-   * Returns a serialised SVG string with width/height removed so it can
-   * stretch to fill its container — used for the transparent hover overlay.
-   */
-  private buildTooltipSvg(svgText: string): string {
-    const { doc, svgEl } = this.parseSvg(svgText);
-    svgEl.removeAttribute("width");
-    svgEl.removeAttribute("height");
-    return new XMLSerializer().serializeToString(doc);
-  }
-
-  /**
-   * Returns a serialised SVG string with only the viewBox normalised (unit
-   * suffixes stripped) — used for the modal where natural size is desired.
-   */
-  private normalizeViewBox(svgText: string): string {
-    const { doc } = this.parseSvg(svgText);
-    return new XMLSerializer().serializeToString(doc);
-  }
 }
