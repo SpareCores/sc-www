@@ -18,7 +18,7 @@ import { LucideAngularModule } from "lucide-angular";
 import { Modal, ModalOptions } from "flowbite";
 import { Subscription } from "rxjs";
 import { DragToPanDirective } from "../../directives/drag-to-pan.directive";
-import { LstopoSvgService } from "./lstopo-svg.service";
+import { LstopoSvgService } from "../../services/lstopo-svg.service";
 
 const LSTOPO_CDN_BASE =
   "https://cdn.jsdelivr.net/gh/SpareCores/sc-inspector-data@main/data";
