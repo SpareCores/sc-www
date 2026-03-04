@@ -210,7 +210,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   @HostListener("window:resize")
   onResize() {
     if (isPlatformBrowser(this.platformId)) {
-      this.isSmallScreen = window.innerWidth <= 1024;
+      this.isSmallScreen = window.innerWidth <= 1178;
     }
   }
 
