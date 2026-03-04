@@ -173,6 +173,16 @@ export class ServerLstopoComponent implements OnChanges, OnDestroy {
           this.isLoading = false;
         }
       },
+      error: (err) => {
+        console.warn("[lstopo] failed to load SVG", err);
+        this.isLoading = false;
+        this.svgExists.emit(false);
+        this.modalSvg = null;
+        this.tooltipSvg = null;
+        this.svgImgUrl = null;
+        this.revokeBlobUrl();
+        this.cdr.markForCheck();
+      },
     });
   }
 
