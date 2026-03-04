@@ -90,6 +90,8 @@ export class ServerLstopoComponent implements OnChanges, OnDestroy {
       this.modalSvg = null;
       this.revokeBlobUrl();
       this.lstopoUrl = "";
+      this.svgExists.emit(false);
+      this.svgWidth.emit(0);
       return;
     }
     this.isLoading = true;
@@ -144,6 +146,9 @@ export class ServerLstopoComponent implements OnChanges, OnDestroy {
                 this.sanitizer.bypassSecurityTrustHtml(tooltipSvgStr);
             } catch (e) {
               console.warn("[lstopo] SVG processing failed", e);
+              this.modalSvg = null;
+              this.tooltipSvg = null;
+              this.revokeBlobUrl();
               this.svgImgUrl = this.sanitizer.bypassSecurityTrustUrl(
                 this.lstopoUrl,
               );
