@@ -61,7 +61,7 @@
   height: unset !important;
 }
 
-:host ::ng-deep #lstopo {
+:host #lstopo {
   height: auto !important;
   min-height: unset !important;
   overflow: hidden;
@@ -166,7 +166,7 @@ div.giscus {
     margin: auto;
   }
 
-  :host ::ng-deep #lstopo {
+  :host #lstopo {
     width: 100% !important;
   }
 }

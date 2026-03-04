@@ -104,6 +104,12 @@ export class ServerLstopoComponent implements OnChanges, OnDestroy {
         try {
           if (!svg) {
             this.svgExists.emit(false);
+            this.svgImgUrl = null;
+            this.modalSvg = null;
+            this.tooltipSvg = null;
+            this.svgWidth.emit(0);
+            this.revokeBlobUrl();
+            this.removeSvgTooltips();
             return;
           }
           this.svgExists.emit(true);
@@ -218,9 +224,9 @@ export class ServerLstopoComponent implements OnChanges, OnDestroy {
   }
 
   private removeSvgTooltips(): void {
-    this.tooltipListeners.forEach(({ el, type, fn }) =>
-      el.removeEventListener(type, fn),
-    );
+    this.tooltipListeners.forEach(({ el, type, fn }) => {
+      el.removeEventListener(type, fn);
+    });
     this.tooltipListeners = [];
   }
 
