@@ -216,6 +216,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.isLoading = true;
+    this.onResize();
     const countryIdtoNamePipe = new CountryIdtoNamePipe();
     this.subscription.add(
       this.route.params.subscribe((params) => {
