@@ -1,10 +1,10 @@
 import {
   Component,
+  DestroyRef,
   PLATFORM_ID,
   OnInit,
   ViewChild,
   ElementRef,
-  OnDestroy,
   inject,
 } from "@angular/core";
 import {
@@ -37,7 +37,7 @@ import { AnalyticsService } from "../../services/analytics.service";
 import { Modal, ModalOptions } from "flowbite";
 import { ToastService } from "../../services/toast.service";
 import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
-import { Subscription } from "rxjs";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import openApiSpec from "../../../../sdk/openapi.json";
 import specialServerListsData from "./special-lists.js";
 import { GpuCountPipe } from "../../pipes/gpu-count.pipe";
@@ -106,7 +106,7 @@ const optionsModal: ModalOptions = {
   templateUrl: "./server-listing.component.html",
   styleUrl: "./server-listing.component.scss",
 })
-export class ServerListingComponent implements OnInit, OnDestroy {
+export class ServerListingComponent implements OnInit {
   private platformId = inject(PLATFORM_ID);
   private keeperAPI = inject(KeeperAPIService);
   private route = inject(ActivatedRoute);
@@ -116,6 +116,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   private analytics = inject(AnalyticsService);
   private serverCompare = inject(ServerCompareService);
   private toastService = inject(ToastService);
+  private destroyRef = inject(DestroyRef);
 
   isCollapsed = false;
 
@@ -353,16 +354,12 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   clipboardIcon = "clipboard";
   tooltipContent = "";
 
-  sub: any;
-
   specialServerLists: any[] = specialServerListsData;
   specialList: any = null;
   specialParameters: any = {};
   title: string = "Cloud Servers Navigator";
   description: string =
     'Explore, search, and evaluate the supported cloud compute resources in the table below. This comprehensive comparison includes diverse attributes such as CPU count, detailed processor information, memory, GPU, storage, network speed and capacity, available operating systems. Use the sidebar to filter the results, or enter your freetext query in the "Search prompt" bar. You can also compare servers by selecting at least two rows using the checkboxes.';
-
-  private subscription = new Subscription();
 
   ngOnInit() {
     this.SEOHandler.updateTitleAndMetaTags(
@@ -393,28 +390,31 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       this.orderBy = order.schema.default as string;
     }
 
-    this.route.params.subscribe(() => {
-      this.setSpecialList();
-      if (this.specialList) {
-        this.breadcrumbs.push({
-          name: this.specialList.title,
-          url: `/servers/${this.specialList.id}`,
-        });
-        this.SEOHandler.updateTitleAndMetaTags(
-          `${this.specialList.title} - Spare Cores`,
-          this.specialList.description,
-          "cloud, server, instance, price, comparison, spot, sparecores",
-        );
-      }
-    });
+    this.route.params
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.setSpecialList();
+        if (this.specialList) {
+          this.breadcrumbs.push({
+            name: this.specialList.title,
+            url: `/servers/${this.specialList.id}`,
+          });
+          this.SEOHandler.updateTitleAndMetaTags(
+            `${this.specialList.title} - Spare Cores`,
+            this.specialList.description,
+            "cloud, server, instance, price, comparison, spot, sparecores",
+          );
+        }
+      });
 
     // initial load is special as we need to decode the benchmark URL param
     let isInitialLoad = true;
     let shouldSearchAfterBenchmarks = false;
     let benchmarkDataEncoded: string | null = null;
 
-    this.subscription.add(
-      this.route.queryParams.subscribe((params: Params) => {
+    this.route.queryParams
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params: Params) => {
         const query: any = JSON.parse(JSON.stringify(params || "{}"));
         this.query = query;
 
@@ -499,8 +499,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
         if (!query.benchmark) {
           shouldSearchAfterBenchmarks = true;
         }
-      }),
-    );
+      });
 
     Promise.all([
       this.keeperAPI.getServerBenchmarkMeta(),
@@ -610,20 +609,18 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     });
 
     if (isPlatformBrowser(this.platformId)) {
-      this.subscription.add(
-        this.serverCompare.selectionChanged.subscribe(
-          (selectedServers: ServerCompare[]) => {
-            this.servers?.forEach((server: any) => {
-              server.selected =
-                selectedServers.findIndex(
-                  (item: ServerCompare) =>
-                    item.vendor === server.vendor_id &&
-                    item.server === server.api_reference,
-                ) !== -1;
-            });
-          },
-        ),
-      );
+      this.serverCompare.selectionChanged
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe((selectedServers: ServerCompare[]) => {
+          this.servers?.forEach((server: any) => {
+            server.selected =
+              selectedServers.findIndex(
+                (item: ServerCompare) =>
+                  item.vendor === server.vendor_id &&
+                  item.server === server.api_reference,
+              ) !== -1;
+          });
+        });
 
       this.dropdownManager
         .initDropdown("currency_button", "currency_options")
@@ -693,11 +690,6 @@ export class ServerListingComponent implements OnInit, OnDestroy {
         window.HSComboBox.autoInit();
       }
     }
-  }
-
-  ngOnDestroy() {
-    this.sub?.unsubscribe();
-    this.subscription.unsubscribe();
   }
 
   setSpecialList() {

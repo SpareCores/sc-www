@@ -1,4 +1,3 @@
-// @ts-expect-error: TS2307
 import getCompareSnapshotPlugin from "cypress-image-diff-js/plugin";
 import { defineConfig } from "cypress";
 

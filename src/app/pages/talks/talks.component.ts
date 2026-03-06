@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from "@angular/core";
+import { Component, DestroyRef, OnInit, inject } from "@angular/core";
 import { ActivatedRoute, RouterModule } from "@angular/router";
 import {
   BreadcrumbSegment,
@@ -8,6 +8,7 @@ import { ArticlesService, SlidesMeta } from "../../services/articles.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { TimeToShortDatePipe } from "../../pipes/time-to-short-date.pipe";
 import { LucideAngularModule } from "lucide-angular";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Component({
   selector: "app-talks",
@@ -24,6 +25,7 @@ export class TalksComponent implements OnInit {
   private SEOHandler = inject(SeoHandlerService);
   private route = inject(ActivatedRoute);
   private articles = inject(ArticlesService);
+  private destroyRef = inject(DestroyRef);
 
   breadcrumbs: BreadcrumbSegment[] = [
     { name: "Home", url: "/" },
@@ -33,24 +35,26 @@ export class TalksComponent implements OnInit {
   talks: SlidesMeta[] = [];
 
   ngOnInit() {
-    this.route.queryParams.subscribe((params) => {
-      const category = params["tag"];
-      this.articles.getSlides().then((articles) => {
-        this.talks = articles;
-      });
-
-      if (category) {
-        this.breadcrumbs.push({
-          name: `#${category}`,
-          url: `/articles${category ? "?tag=" + category : ""}`,
+    this.route.queryParams
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params) => {
+        const category = params["tag"];
+        this.articles.getSlides().then((articles) => {
+          this.talks = articles;
         });
-      }
 
-      this.SEOHandler.updateTitleAndMetaTags(
-        `Conference Talks - Spare Cores`,
-        `View all conference talks by the Spare Cores Team.`,
-        `conference, talk, presentation, cloud computing, finops, tutorial`,
-      );
-    });
+        if (category) {
+          this.breadcrumbs.push({
+            name: `#${category}`,
+            url: `/articles${category ? "?tag=" + category : ""}`,
+          });
+        }
+
+        this.SEOHandler.updateTitleAndMetaTags(
+          `Conference Talks - Spare Cores`,
+          `View all conference talks by the Spare Cores Team.`,
+          `conference, talk, presentation, cloud computing, finops, tutorial`,
+        );
+      });
   }
 }

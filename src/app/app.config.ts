@@ -14,20 +14,13 @@ import {
   withEventReplay,
   withHttpTransferCacheOptions,
 } from "@angular/platform-browser";
-import {
-  HttpRequest,
-  provideHttpClient,
-  withFetch,
-} from "@angular/common/http";
+import { provideHttpClient, withFetch } from "@angular/common/http";
 import { LucideAngularModule } from "lucide-angular";
 import { lucideIcons } from "./lucide-icons";
 import { MarkdownModule } from "ngx-markdown";
 import { provideCharts, withDefaultRegisterables } from "ng2-charts";
 import * as Sentry from "@sentry/angular";
-
-function httpFilter(req: HttpRequest<any>): boolean {
-  return req.method === "GET";
-}
+import { httpTransferCacheFilter } from "./transfer-cache.config";
 
 function customErrorHandler(error: any) {
   return error;
@@ -62,7 +55,7 @@ export const appConfig: ApplicationConfig = {
     provideClientHydration(
       withHttpTransferCacheOptions({
         includeHeaders: ["x-total-count", "x-request-id"],
-        filter: httpFilter,
+        filter: httpTransferCacheFilter,
       }),
       withEventReplay(),
     ),

@@ -1,4 +1,5 @@
-import { Component, inject } from "@angular/core";
+import { Component, DestroyRef, OnInit, inject } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ServerCompareChartsComponent } from "../../components/server-compare-charts/server-compare-charts.component";
 import { LucideAngularModule } from "lucide-angular";
 import { ActivatedRoute } from "@angular/router";
@@ -7,7 +8,6 @@ import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { ExtendedServerDetails } from "../server-details/server-details.component";
 import { Allocation } from "../../../../sdk/data-contracts";
-import { OnInit } from "@angular/core";
 
 @Component({
   selector: "app-embedded-compare-chart",
@@ -20,6 +20,7 @@ export class EmbeddedCompareChartComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private analytics = inject(AnalyticsService);
   private keeperAPI = inject(KeeperAPIService);
+  private destroyRef = inject(DestroyRef);
 
   showChart: string = "all";
 
@@ -174,13 +175,17 @@ export class EmbeddedCompareChartComponent implements OnInit {
   ];
 
   ngOnInit() {
-    this.route.queryParams.subscribe(() => {
-      this.setup();
-    });
+    this.route.queryParams
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.setup();
+      });
 
-    this.route.params.subscribe(() => {
-      this.setup();
-    });
+    this.route.params
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.setup();
+      });
   }
 
   setup() {

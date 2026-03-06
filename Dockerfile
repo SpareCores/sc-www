@@ -1,14 +1,14 @@
 FROM public.ecr.aws/docker/library/node:lts-jod AS build
 
 ARG BACKEND_BASE_URI=https://keeper.sparecores.net
-ENV NG_APP_BACKEND_BASE_URI=$BACKEND_BASE_URI
 ARG BACKEND_BASE_URI_SSR=https://keeper.sparecores.net
-ENV NG_APP_BACKEND_BASE_URI_SSR=$BACKEND_BASE_URI_SSR
+ENV BACKEND_BASE_URI=$BACKEND_BASE_URI
+ENV BACKEND_BASE_URI_SSR=$BACKEND_BASE_URI_SSR
 
 ARG POSTHOG_KEY
-ENV NG_APP_POSTHOG_KEY=$POSTHOG_KEY
 ARG POSTHOG_HOST
-ENV NG_APP_POSTHOG_HOST=$POSTHOG_HOST
+ENV POSTHOG_KEY=$POSTHOG_KEY
+ENV POSTHOG_HOST=$POSTHOG_HOST
 
 ARG SENTRY_ORG
 ENV SENTRY_ORG=$SENTRY_ORG
@@ -18,27 +18,29 @@ ARG SENTRY_URL
 ENV SENTRY_URL=$SENTRY_URL
 
 ARG SENTRY_DSN
-ENV NG_APP_SENTRY_DSN=$SENTRY_DSN
 ARG SENTRY_TRACE_SAMPLE_RATE=0
-ENV NG_APP_SENTRY_TRACE_SAMPLE_RATE=$SENTRY_TRACE_SAMPLE_RATE
 ARG SENTRY_PROFILE_SAMPLE_RATE=0
-ENV NG_APP_SENTRY_PROFILE_SAMPLE_RATE=$SENTRY_PROFILE_SAMPLE_RATE
 ARG SENTRY_ENVIRONMENT=development
-ENV NG_APP_SENTRY_ENVIRONMENT=$SENTRY_ENVIRONMENT
 ARG SENTRY_RELEASE
-ENV NG_APP_SENTRY_RELEASE=$SENTRY_RELEASE
+ENV SENTRY_DSN=$SENTRY_DSN
+ENV SENTRY_TRACE_SAMPLE_RATE=$SENTRY_TRACE_SAMPLE_RATE
+ENV SENTRY_PROFILE_SAMPLE_RATE=$SENTRY_PROFILE_SAMPLE_RATE
+ENV SENTRY_ENVIRONMENT=$SENTRY_ENVIRONMENT
+ENV SENTRY_RELEASE=$SENTRY_RELEASE
 
 WORKDIR /usr/src/app
 COPY package*.json ./
 RUN npm install
 COPY . .
-RUN npm run build \
-  --mount=type=secret,id=aws-key-id,env=AWS_ACCESS_KEY_ID
+RUN --mount=type=secret,id=aws-key-id,env=AWS_ACCESS_KEY_ID npm run build:ssr:sc-www
 
 FROM public.ecr.aws/docker/library/node:lts-jod
+
+WORKDIR /usr/share/www
 COPY package*.json ./
 RUN npm install --omit=dev --no-audit
-COPY --from=build /usr/src/app/dist/sc-www/server /usr/share/www
-COPY --from=build /usr/src/app/dist/sc-www/browser /usr/share/www/static
+COPY --from=build /usr/src/app/dist/sc-www/server ./
+COPY --from=build /usr/src/app/dist/sc-www/browser ./static
+
 EXPOSE 3000
-CMD ["node", "/usr/share/www/server.mjs"]
+CMD ["node", "server.mjs"]

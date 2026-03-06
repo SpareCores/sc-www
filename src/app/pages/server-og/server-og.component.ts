@@ -1,10 +1,10 @@
-import { Component, OnInit, OnDestroy, inject } from "@angular/core";
+import { Component, DestroyRef, OnInit, inject } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { LucideAngularModule } from "lucide-angular";
 import { ActivatedRoute } from "@angular/router";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { AnalyticsService } from "../../services/analytics.service";
-import { Subscription } from "rxjs";
 
 @Component({
   selector: "app-server-og",
@@ -12,11 +12,12 @@ import { Subscription } from "rxjs";
   templateUrl: "./server-og.component.html",
   styleUrl: "./server-og.component.scss",
 })
-export class ServerOGComponent implements OnInit, OnDestroy {
+export class ServerOGComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private keeperAPI = inject(KeeperAPIService);
   private analytics = inject(AnalyticsService);
   private SEOHandler = inject(SeoHandlerService);
+  private destroyRef = inject(DestroyRef);
 
   serverDetails!: any;
 
@@ -28,11 +29,10 @@ export class ServerOGComponent implements OnInit, OnDestroy {
   instanceProperties: any[] = [];
   benchmarkMeta: any;
 
-  private subscription = new Subscription();
-
   ngOnInit() {
-    this.subscription.add(
-      this.route.params.subscribe((params) => {
+    this.route.params
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params) => {
         const vendor = params["vendor"];
         const id = params["id"];
 
@@ -104,12 +104,7 @@ export class ServerOGComponent implements OnInit, OnDestroy {
             });
             console.error("Failed to load server data:", error);
           });
-      }),
-    );
-  }
-
-  ngOnDestroy() {
-    this.subscription.unsubscribe();
+      });
   }
 
   getMemory(memory: number | undefined = undefined) {

@@ -1,4 +1,5 @@
-import { Component, OnInit, OnDestroy, inject } from "@angular/core";
+import { Component, DestroyRef, OnInit, inject } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ArticleMeta, ArticlesService } from "../../services/articles.service";
 import {
   BreadcrumbSegment,
@@ -7,7 +8,6 @@ import {
 import { ActivatedRoute } from "@angular/router";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { ArticleCardComponent } from "../../components/article-card/article-card.component";
-import { Subscription } from "rxjs";
 
 @Component({
   selector: "app-articles",
@@ -15,10 +15,11 @@ import { Subscription } from "rxjs";
   templateUrl: "./articles.component.html",
   styleUrl: "./articles.component.scss",
 })
-export class ArticlesComponent implements OnInit, OnDestroy {
+export class ArticlesComponent implements OnInit {
   private SEOHandler = inject(SeoHandlerService);
   private route = inject(ActivatedRoute);
   private articleHandler = inject(ArticlesService);
+  private destroyRef = inject(DestroyRef);
 
   breadcrumbs: BreadcrumbSegment[] = [
     { name: "Home", url: "/" },
@@ -26,11 +27,11 @@ export class ArticlesComponent implements OnInit, OnDestroy {
   ];
 
   articles: ArticleMeta[] = [];
-  private subscription = new Subscription();
 
   ngOnInit() {
-    this.subscription.add(
-      this.route.queryParams.subscribe((params) => {
+    this.route.queryParams
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params) => {
         const category = params["tag"];
         this.articleHandler.getArticlesByType(category).then((articles) => {
           this.articles = articles;
@@ -59,11 +60,6 @@ export class ArticlesComponent implements OnInit, OnDestroy {
           (category?.length ? category + " " : "") +
             `blog posts, articles, guides, tutorials`,
         );
-      }),
-    );
-  }
-
-  ngOnDestroy() {
-    this.subscription.unsubscribe();
+      });
   }
 }

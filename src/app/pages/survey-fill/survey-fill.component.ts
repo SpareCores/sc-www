@@ -1,5 +1,6 @@
 import {
   Component,
+  DestroyRef,
   OnInit,
   OnDestroy,
   PLATFORM_ID,
@@ -14,7 +15,7 @@ import "survey-core/defaultV2.css";
 import { surveyTheme } from "./survey_theme";
 import { AnalyticsService } from "../../services/analytics.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
-import { Subscription } from "rxjs";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Component({
   selector: "app-survey-fill",
@@ -28,6 +29,7 @@ export class SurveyFillComponent implements OnInit, OnDestroy {
   private SEOhandler = inject(SeoHandlerService);
   private analytics = inject(AnalyticsService);
   private route = inject(ActivatedRoute);
+  private destroyRef = inject(DestroyRef);
 
   surveyModel!: Model;
   visitorID: string = "";
@@ -36,7 +38,6 @@ export class SurveyFillComponent implements OnInit, OnDestroy {
   trackPing: number = 0;
   startedAt: number = 0;
   prevData: any;
-  private subscription = new Subscription();
 
   ngOnInit() {
     let id = this.route.snapshot.paramMap.get("id");
@@ -52,7 +53,6 @@ export class SurveyFillComponent implements OnInit, OnDestroy {
     if (this.tracker) {
       clearInterval(this.tracker);
     }
-    this.subscription.unsubscribe();
   }
 
   private randomUUID(): string {
@@ -68,32 +68,35 @@ export class SurveyFillComponent implements OnInit, OnDestroy {
 
   setup(id: string) {
     this.visitorID = this.analytics.getId() || this.randomUUID();
-    this.http.get("assets/surveys/" + id + ".json").subscribe((data: any) => {
-      const title = data.title || data.metaTitle || `${id} Survey`;
-      const description = data.description || data.metaDescription;
-      this.SEOhandler.updateTitleAndMetaTags(
-        title + " - SpareCores",
-        description,
-        "",
-      );
-      if (data.ogImage) {
-        this.SEOhandler.updateThumbnail(data.ogImage);
-      }
-
-      if (isPlatformBrowser(this.platformId)) {
-        this.surveyModel = new Model(data);
-
-        this.surveyModel.applyTheme(surveyTheme);
-
-        this.surveyModel.onComplete.add(this.submit.bind(this));
-        this.surveyModel.onCurrentPageChanging.add((sender, options) =>
-          this.pageChange(sender, options),
+    this.http
+      .get("assets/surveys/" + id + ".json")
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((data: any) => {
+        const title = data.title || data.metaTitle || `${id} Survey`;
+        const description = data.description || data.metaDescription;
+        this.SEOhandler.updateTitleAndMetaTags(
+          title + " - SpareCores",
+          description,
+          "",
         );
+        if (data.ogImage) {
+          this.SEOhandler.updateThumbnail(data.ogImage);
+        }
 
-        this.tracker = setInterval(this.trackProgress.bind(this), 10000);
-        this.startedAt = Date.now();
-      }
-    });
+        if (isPlatformBrowser(this.platformId)) {
+          this.surveyModel = new Model(data);
+
+          this.surveyModel.applyTheme(surveyTheme);
+
+          this.surveyModel.onComplete.add(this.submit.bind(this));
+          this.surveyModel.onCurrentPageChanging.add((sender, options) =>
+            this.pageChange(sender, options),
+          );
+
+          this.tracker = setInterval(this.trackProgress.bind(this), 10000);
+          this.startedAt = Date.now();
+        }
+      });
   }
 
   submit(sender: any) {

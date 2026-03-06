@@ -1,6 +1,7 @@
 import { CommonModule, isPlatformBrowser } from "@angular/common";
 import {
   Component,
+  DestroyRef,
   ElementRef,
   EventEmitter,
   Input,
@@ -15,11 +16,12 @@ import {
   inject,
   signal,
 } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
 import { Modal, ModalOptions } from "flowbite";
 import { LucideAngularModule } from "lucide-angular";
 import { KeeperAPIService } from "../../services/keeper-api.service";
-import { Subject, Subscription, debounceTime } from "rxjs";
+import { Subject, debounceTime } from "rxjs";
 import {
   CountryMetadata,
   ContinentMetadata,
@@ -64,6 +66,7 @@ type BenchmarkFilterOption = string | { key?: string; value?: string };
 export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   private platformId = inject(PLATFORM_ID);
   private keeperAPI = inject(KeeperAPIService);
+  private destroyRef = inject(DestroyRef);
 
   @Input() query: any = {};
   @Input() searchParameters: any[] = [];
@@ -108,7 +111,6 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   modalResponseStr: string[] = [];
 
   valueChangeDebouncer: Subject<number> = new Subject<number>();
-  private subscription = new Subscription();
 
   ngOnInit() {
     this.keeperAPI.getComplianceFrameworks().then((response: any) => {
@@ -123,8 +125,9 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
       this.storageIds = response.body;
     });
 
-    this.subscription.add(
-      this.valueChangeDebouncer.pipe(debounceTime(500)).subscribe(() => {
+    this.valueChangeDebouncer
+      .pipe(debounceTime(500), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
         let vcpu_max = this.searchParameters.find(
           (param: any) => param.name === "vcpus_max",
         );
@@ -153,8 +156,7 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
         });
 
         this.filterServers();
-      }),
-    );
+      });
 
     if (isPlatformBrowser(this.platformId)) {
       const targetElModal = document.getElementById("search-prompt-modal");
@@ -878,7 +880,6 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.subscription.unsubscribe();
     this.valueChangeDebouncer.complete();
   }
 

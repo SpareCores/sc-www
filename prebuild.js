@@ -7,12 +7,6 @@ const specialCompares = require("./src/app/pages/server-compare/special-compares
 const specialServerLists = require("./src/app/pages/server-listing/special-lists");
 
 ////////////////////////////////////////////////////////////////////////////////
-// init the static list of pages to prerender
-////////////////////////////////////////////////////////////////////////////////
-
-fs.copyFileSync("prerender_routes_static.txt", "prerender_routes.txt");
-
-////////////////////////////////////////////////////////////////////////////////
 // compile list of articles and append to prerender list
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -22,8 +16,6 @@ files = files.filter((file) => file.endsWith(".md"));
 
 let allArticles = files.map((file) => {
   const filename = path.parse(file).name;
-  // append to list of pages to prerender
-  fs.appendFileSync("prerender_routes.txt", "/article/" + filename + "\n");
   // extract metadata
   const content = fs.readFileSync(path.join(dirPath, file), "utf-8");
   const { data } = matter(content);

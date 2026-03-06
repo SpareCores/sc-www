@@ -1,3 +1,0 @@
-/talks
-/vendors
-/regions
