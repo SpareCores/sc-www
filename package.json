@@ -8,6 +8,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
+    "build:ssr:sc-www": "tsx ./build.ts --configuration=production",
     "build:ssr:sc-www:local": "tsx ./build.ts --configuration=local-test",
     "serve:ssr:sc-www": "node dist/sc-www/server/server.mjs",
     "lint": "ng lint",

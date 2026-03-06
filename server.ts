@@ -6,6 +6,7 @@ import {
   isMainModule,
 } from "@angular/ssr/node";
 import express from "express";
+import { existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join, resolve } from "node:path";
 import crypto from "crypto";
@@ -14,8 +15,11 @@ import handlebars from "handlebars";
 import rateLimit from "express-rate-limit";
 
 const serverDistFolder = dirname(fileURLToPath(import.meta.url));
-//const browserDistFolder = resolve(serverDistFolder, '../browser');
-const browserDistFolder = resolve(serverDistFolder, "./static");
+const staticBrowserDistFolder = resolve(serverDistFolder, "./static");
+const defaultBrowserDistFolder = resolve(serverDistFolder, "../browser");
+const browserDistFolder = existsSync(staticBrowserDistFolder)
+  ? staticBrowserDistFolder
+  : defaultBrowserDistFolder;
 
 const SMTP_HOST = process.env["SMTP_HOST"] || "";
 const SMTP_PORT = parseInt(process.env["SMTP_PORT"] || "587", 10);

@@ -1,7 +1,5 @@
 #!/usr/bin/env tsx
-import { execSync } from "child_process";
-import { rmSync, cpSync, existsSync } from "fs";
-import path from "path";
+import { execFileSync } from "child_process";
 
 // ─── ANSI helpers ────────────────────────────────────────────────────────────
 const C = {
@@ -31,12 +29,75 @@ function elapsed(start: number): string {
   return `${((Date.now() - start) / 1000).toFixed(1)}s`;
 }
 
+function envOrDefault(names: string[], fallback: string): string {
+  for (const name of names) {
+    const value = process.env[name];
+    if (value) {
+      return value;
+    }
+  }
+
+  return fallback;
+}
+
+function resolveBuildEnv(configuration: string) {
+  const isLocalTest = configuration === "local-test";
+
+  return {
+    backendBaseUri: envOrDefault(
+      ["BACKEND_BASE_URI"],
+      isLocalTest ? "http://localhost:8080" : "https://keeper.sparecores.net",
+    ),
+    backendBaseUriSsr: envOrDefault(
+      ["BACKEND_BASE_URI_SSR"],
+      isLocalTest ? "http://localhost:8080" : "https://keeper.sparecores.net",
+    ),
+    posthogKey: envOrDefault(
+      ["POSTHOG_KEY", "NG_APP_POSTHOG_KEY"],
+      "phc_Fi3yxUniDNXMI6VBP25WSDQSTKiTrNd5UfY5siQoZMT",
+    ),
+    posthogHost: envOrDefault(
+      ["POSTHOG_HOST", "NG_APP_POSTHOG_HOST"],
+      "https://eu.posthog.com",
+    ),
+    sentryDsn: envOrDefault(["SENTRY_DSN", "NG_APP_SENTRY_DSN"], ""),
+    sentryTraceSampleRate: envOrDefault(
+      ["SENTRY_TRACE_SAMPLE_RATE", "NG_APP_SENTRY_TRACE_SAMPLE_RATE"],
+      "0",
+    ),
+    sentryProfileSampleRate: envOrDefault(
+      ["SENTRY_PROFILE_SAMPLE_RATE", "NG_APP_SENTRY_PROFILE_SAMPLE_RATE"],
+      "0",
+    ),
+    sentryEnvironment: envOrDefault(
+      ["SENTRY_ENVIRONMENT", "NG_APP_SENTRY_ENVIRONMENT"],
+      isLocalTest ? "development" : "production",
+    ),
+    sentryRelease:
+      process.env["SENTRY_RELEASE"] ||
+      process.env["NG_APP_SENTRY_RELEASE"] ||
+      undefined,
+  };
+}
+
+function defineArg(name: string, value: string | undefined): string {
+  const literal = value === undefined ? "undefined" : JSON.stringify(value);
+  return `--define=import.meta.env.${name}=${literal}`;
+}
+
+function runNgBuild(args: string[]): void {
+  if (process.platform === "win32") {
+    execFileSync("cmd.exe", ["/d", "/s", "/c", "ng", ...args], {
+      stdio: "inherit",
+    });
+    return;
+  }
+
+  execFileSync("ng", args, { stdio: "inherit" });
+}
+
 // ─── MAIN ─────────────────────────────────────────────────────────────────────
 const totalStart = Date.now();
-
-console.log(`\n${C.bold}${C.cyan}${"═".repeat(55)}${C.reset}`);
-console.log(`${C.bold}${C.cyan}  🚀  Spare Cores Production Build${C.reset}`);
-console.log(`${C.bold}${C.cyan}${"═".repeat(55)}${C.reset}`);
 
 // Read and validate --configuration flag (default: production)
 const ALLOWED_CONFIGS = new Set(["production", "development", "local-test"]);
@@ -46,13 +107,31 @@ const config =
   configFromArg && ALLOWED_CONFIGS.has(configFromArg)
     ? configFromArg
     : "production";
+
+const buildLabel =
+  config === "local-test"
+    ? "Spare Cores Local Test Build"
+    : config === "development"
+      ? "Spare Cores Development Build"
+      : "Spare Cores Production Build";
+
+console.log(`\n${C.bold}${C.cyan}${"═".repeat(55)}${C.reset}`);
+console.log(`${C.bold}${C.cyan}  🚀  ${buildLabel}${C.reset}`);
+console.log(`${C.bold}${C.cyan}${"═".repeat(55)}${C.reset}`);
 console.log(`\n  ${C.dim}configuration:${C.reset} ${cy(config)}`);
+
+const buildEnv = resolveBuildEnv(config);
+
+console.log(`  ${C.dim}client api:${C.reset} ${cy(buildEnv.backendBaseUri)}`);
+console.log(
+  `  ${C.dim}ssr api:${C.reset}    ${cy(buildEnv.backendBaseUriSsr)}`,
+);
 
 // ─── Step 1: Prebuild ──────────────────────────────────────────────────────
 step("📋", "Running prebuild (articles · slides · sitemap)");
 const t1 = Date.now();
 try {
-  execSync("node ./prebuild.js", { stdio: "inherit" });
+  execFileSync("node", ["./prebuild.js"], { stdio: "inherit" });
   console.log(ok(`Prebuild done  ${C.dim}(${elapsed(t1)})${C.reset}`));
 } catch {
   console.error(er("Prebuild failed — aborting."));
@@ -63,31 +142,33 @@ try {
 step("📦", `Compiling Angular app  [${cy(config)}]`);
 const t2 = Date.now();
 try {
-  execSync(`ng build --configuration=${config} --progress=true`, {
-    stdio: "inherit",
-  });
-  console.log(ok(`Angular build done  ${C.dim}(${elapsed(t2)})${C.reset}`));
-} catch {
-  console.error(er("Angular build failed — aborting."));
-  process.exit(1);
-}
+  runNgBuild([
+    "build",
+    `--configuration=${config}`,
+    "--progress=true",
+    defineArg("NG_APP_BACKEND_BASE_URI", buildEnv.backendBaseUri),
+    defineArg("NG_APP_BACKEND_BASE_URI_SSR", buildEnv.backendBaseUriSsr),
+    defineArg("NG_APP_POSTHOG_KEY", buildEnv.posthogKey),
+    defineArg("NG_APP_POSTHOG_HOST", buildEnv.posthogHost),
+    defineArg("NG_APP_SENTRY_DSN", buildEnv.sentryDsn),
+    defineArg(
+      "NG_APP_SENTRY_TRACE_SAMPLE_RATE",
+      buildEnv.sentryTraceSampleRate,
+    ),
+    defineArg(
+      "NG_APP_SENTRY_PROFILE_SAMPLE_RATE",
+      buildEnv.sentryProfileSampleRate,
+    ),
+    defineArg("NG_APP_SENTRY_ENVIRONMENT", buildEnv.sentryEnvironment),
+    defineArg("NG_APP_SENTRY_RELEASE", buildEnv.sentryRelease),
+  ]);
 
-// ─── Step 3: Copy browser → server/static ─────────────────────────────────
-step("📂", "Syncing browser assets → dist/sc-www/server/static");
-const t3 = Date.now();
-const browserDir = path.join("dist", "sc-www", "browser");
-const staticDir = path.join("dist", "sc-www", "server", "static");
-try {
-  if (!existsSync(browserDir)) {
-    throw new Error(`Browser output not found at ${browserDir}`);
+  console.log(ok(`Angular build done  ${C.dim}(${elapsed(t2)})${C.reset}`));
+} catch (error) {
+  if (error instanceof Error) {
+    console.error(er(error.message));
   }
-  rmSync(staticDir, { recursive: true, force: true });
-  cpSync(browserDir, staticDir, { recursive: true });
-  console.log(
-    ok(`Assets copied  ${C.dim}(${elapsed(t3)})  →  ${staticDir}${C.reset}`),
-  );
-} catch (e) {
-  console.error(er(`Asset copy failed: ${(e as Error).message}`));
+  console.error(er("Angular build failed — aborting."));
   process.exit(1);
 }
 
