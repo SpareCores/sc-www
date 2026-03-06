@@ -1,4 +1,5 @@
-import { Component, OnInit, OnDestroy, inject } from "@angular/core";
+import { Component, DestroyRef, OnInit, inject } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { ActivatedRoute } from "@angular/router";
 import { AnalyticsService } from "../../services/analytics.service";
 import { KeeperAPIService } from "../../services/keeper-api.service";
@@ -6,7 +7,6 @@ import { Benchmark } from "../../../../sdk/data-contracts";
 import { ServerChartsComponent } from "../../components/server-charts/server-charts.component";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { LucideAngularModule } from "lucide-angular";
-import { Subscription } from "rxjs";
 
 @Component({
   selector: "app-embedded-server-chart",
@@ -14,21 +14,22 @@ import { Subscription } from "rxjs";
   templateUrl: "./embedded-server-chart.component.html",
   styleUrl: "./embedded-server-chart.component.scss",
 })
-export class EmbeddedServerChartComponent implements OnInit, OnDestroy {
+export class EmbeddedServerChartComponent implements OnInit {
   private SEOHandler = inject(SeoHandlerService);
   private route = inject(ActivatedRoute);
   private analytics = inject(AnalyticsService);
   private keeperAPI = inject(KeeperAPIService);
+  private destroyRef = inject(DestroyRef);
 
   benchmarkMeta!: Benchmark[];
   benchmarksByCategory!: any[];
   serverDetails!: any;
   showChart: string = "all";
-  private subscription = new Subscription();
 
   ngOnInit() {
-    this.subscription.add(
-      this.route.params.subscribe((params) => {
+    this.route.params
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params) => {
         const vendor = params["vendor"];
         const id = params["id"];
         const chartname = params["chartname"];
@@ -96,12 +97,7 @@ export class EmbeddedServerChartComponent implements OnInit, OnDestroy {
               });
             }
           });
-      }),
-    );
-  }
-
-  ngOnDestroy() {
-    this.subscription.unsubscribe();
+      });
   }
 
   getBaseURL() {

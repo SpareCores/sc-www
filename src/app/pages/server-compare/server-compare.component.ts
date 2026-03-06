@@ -1,6 +1,7 @@
 import {
   AfterViewInit,
   Component,
+  DestroyRef,
   ElementRef,
   HostBinding,
   OnInit,
@@ -10,6 +11,7 @@ import {
   DOCUMENT,
   inject,
 } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { ActivatedRoute, RouterModule } from "@angular/router";
 import {
@@ -35,7 +37,6 @@ import { Allocation } from "../../../../sdk/data-contracts";
 import { ToastService } from "../../services/toast.service";
 import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
 import { PrismService } from "../../services/prism.service";
-import { Subscription } from "rxjs";
 import specialComparesData from "./special-compares.js";
 
 const optionsModal: ModalOptions = {
@@ -71,6 +72,7 @@ export class ServerCompareComponent
   private analytics = inject(AnalyticsService);
   private route = inject(ActivatedRoute);
   private toastService = inject(ToastService);
+  private destroyRef = inject(DestroyRef);
 
   @ViewChild("tableFirstCol") tableFirstCol!: ElementRef;
   @HostBinding("attr.ngSkipHydration") ngSkipHydration = "true";
@@ -269,7 +271,6 @@ export class ServerCompareComponent
 
   showZoneIds = false;
 
-  private subscription = new Subscription();
   private checkExistInterval: any;
 
   ngOnInit() {
@@ -293,22 +294,20 @@ export class ServerCompareComponent
       this.keywords,
     );
 
-    this.subscription.add(
-      this.route.queryParams.subscribe(() => {
+    this.route.queryParams
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
         this.setup();
-      }),
-    );
+      });
 
-    this.subscription.add(
-      this.route.params.subscribe(() => {
+    this.route.params
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
         this.setup();
-      }),
-    );
+      });
   }
 
   ngOnDestroy() {
-    this.subscription.unsubscribe();
-
     if (this.checkExistInterval) {
       clearInterval(this.checkExistInterval);
     }

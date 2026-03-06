@@ -1,5 +1,6 @@
 import {
   Component,
+  DestroyRef,
   Input,
   PLATFORM_ID,
   OnInit,
@@ -8,6 +9,7 @@ import {
   ViewChild,
   inject,
 } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { DomSanitizer } from "@angular/platform-browser";
 import { ActivatedRoute } from "@angular/router";
 import { SeoHandlerService } from "../../services/seo-handler.service";
@@ -33,6 +35,7 @@ export class EmbedComparePreviewComponent implements OnInit, OnChanges {
   private sanitizer = inject(DomSanitizer);
   private SEOHandler = inject(SeoHandlerService);
   private prismService = inject(PrismService);
+  private destroyRef = inject(DestroyRef);
 
   @Input() instances!: string;
   @Input() chartname!: string;
@@ -60,15 +63,19 @@ export class EmbedComparePreviewComponent implements OnInit, OnChanges {
   @ViewChild("iframeCodeBlock") iframeCodeBlockElement!: ElementRef;
 
   ngOnInit() {
-    this.route.params.subscribe((params) => {
-      this.chartname = params["chartname"] || this.chartname;
-      this.setup();
-    });
+    this.route.params
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params) => {
+        this.chartname = params["chartname"] || this.chartname;
+        this.setup();
+      });
 
-    this.route.queryParams.subscribe((params) => {
-      this.instances = params["instances"] || this.instances;
-      this.setup();
-    });
+    this.route.queryParams
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params) => {
+        this.instances = params["instances"] || this.instances;
+        this.setup();
+      });
   }
 
   setup() {

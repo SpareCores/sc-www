@@ -1,5 +1,6 @@
 import {
   Component,
+  DestroyRef,
   ElementRef,
   PLATFORM_ID,
   Renderer2,
@@ -9,6 +10,7 @@ import {
   DOCUMENT,
   inject,
 } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import {
   BreadcrumbSegment,
   BreadcrumbsComponent,
@@ -25,7 +27,6 @@ import * as yaml from "js-yaml";
 import { initGiscus } from "../../tools/initGiscus";
 import { ToastService } from "../../services/toast.service";
 import { PrismService } from "../../services/prism.service";
-import { Subscription } from "rxjs";
 
 @Component({
   selector: "app-article",
@@ -51,9 +52,9 @@ export class ArticleComponent implements OnInit, OnDestroy {
   private renderer = inject(Renderer2);
   private toastService = inject(ToastService);
   private prismService = inject(PrismService);
+  private destroyRef = inject(DestroyRef);
 
   @ViewChild("articleDiv") articleDiv!: ElementRef;
-  private subscription = new Subscription();
 
   breadcrumbs: BreadcrumbSegment[] = [
     { name: "Home", url: "/" },
@@ -67,8 +68,9 @@ export class ArticleComponent implements OnInit, OnDestroy {
   private checkExistInterval: any;
 
   ngOnInit() {
-    this.subscription.add(
-      this.route.params.subscribe((params) => {
+    this.route.params
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params) => {
         const id = params["id"];
         this.id = id;
         this.articleHandler
@@ -155,12 +157,10 @@ export class ArticleComponent implements OnInit, OnDestroy {
             console.error("Error loading article:", error);
             this.handleArticleNotFound(id);
           });
-      }),
-    );
+      });
   }
 
   ngOnDestroy() {
-    this.subscription.unsubscribe();
     this.SEOHandler.cleanupStructuredData(this.document);
     this.SEOHandler.restoreThumbnail();
 

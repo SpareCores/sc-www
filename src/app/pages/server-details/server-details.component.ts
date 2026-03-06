@@ -1,15 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Component,
+  DestroyRef,
   ElementRef,
   HostListener,
   PLATFORM_ID,
   OnInit,
   ViewChild,
-  OnDestroy,
   Renderer2,
   DOCUMENT,
   inject,
+  OnDestroy,
 } from "@angular/core";
 import { ActivatedRoute, RouterModule } from "@angular/router";
 import { KeeperAPIService } from "../../services/keeper-api.service";
@@ -48,7 +49,7 @@ import { ServerLstopoComponent } from "../../components/server-lstopo/server-lst
 import { Modal, ModalOptions } from "flowbite";
 import { EmbedDebugComponent } from "../embed-debug/embed-debug.component";
 import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
-import { Subscription } from "rxjs";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 Chart.register(annotationPlugin);
 
@@ -101,6 +102,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   private renderer = inject(Renderer2);
   private location = inject(Location);
   private dropdownManager = inject(DropdownManagerService);
+  private destroyRef = inject(DestroyRef);
 
   serverDetails!: ExtendedServerDetails;
   lstopoSvgExists: boolean | null = null;
@@ -205,8 +207,6 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   isLoading = false;
   isModalOpen = false;
 
-  private subscription = new Subscription();
-
   @HostListener("window:resize")
   onResize() {
     if (isPlatformBrowser(this.platformId)) {
@@ -218,8 +218,9 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.onResize();
     const countryIdtoNamePipe = new CountryIdtoNamePipe();
-    this.subscription.add(
-      this.route.params.subscribe((params) => {
+    this.route.params
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params) => {
         const vendor = params["vendor"];
         const id = params["id"];
 
@@ -668,13 +669,11 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
           .finally(() => {
             this.isLoading = false;
           });
-      }),
-    );
+      });
   }
 
   ngOnDestroy() {
     this.SEOHandler.cleanupStructuredData(this.document);
-    this.subscription.unsubscribe();
   }
 
   isBrowser() {

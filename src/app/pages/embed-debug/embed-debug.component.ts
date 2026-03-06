@@ -2,6 +2,7 @@ import { isPlatformBrowser } from "@angular/common";
 import {
   AfterViewInit,
   Component,
+  DestroyRef,
   Input,
   OnChanges,
   OnInit,
@@ -11,6 +12,7 @@ import {
   ViewChild,
   inject,
 } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
 import { DomSanitizer } from "@angular/platform-browser";
 import { ActivatedRoute } from "@angular/router";
@@ -30,6 +32,7 @@ export class EmbedDebugComponent implements OnInit, OnChanges, AfterViewInit {
   private sanitizer = inject(DomSanitizer);
   private SEOHandler = inject(SeoHandlerService);
   private prismService = inject(PrismService);
+  private destroyRef = inject(DestroyRef);
 
   @Input() vendor!: string;
   @Input() id!: string;
@@ -58,15 +61,17 @@ export class EmbedDebugComponent implements OnInit, OnChanges, AfterViewInit {
   @ViewChild("myIframe") iframeRef?: ElementRef<HTMLIFrameElement>;
 
   ngOnInit() {
-    this.route.params.subscribe((params) => {
-      this.vendor = params["vendor"];
-      this.id = params["id"];
-      this.chartname = params["chartname"];
+    this.route.params
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params) => {
+        this.vendor = params["vendor"];
+        this.id = params["id"];
+        this.chartname = params["chartname"];
 
-      this.src = this.sanitizer.bypassSecurityTrustResourceUrl(
-        `${this.SEOHandler.getBaseURL()}/embed/server/${this.vendor}/${this.id}/${this.chartname}`,
-      );
-    });
+        this.src = this.sanitizer.bypassSecurityTrustResourceUrl(
+          `${this.SEOHandler.getBaseURL()}/embed/server/${this.vendor}/${this.id}/${this.chartname}`,
+        );
+      });
   }
 
   ngOnChanges() {

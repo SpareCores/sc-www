@@ -1,12 +1,13 @@
 import {
   Component,
+  DestroyRef,
   PLATFORM_ID,
   OnInit,
   ViewChild,
   ElementRef,
-  OnDestroy,
   inject,
 } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import {
   BreadcrumbSegment,
   BreadcrumbsComponent,
@@ -37,7 +38,6 @@ import {
 import { encodeQueryParams } from "../../tools/queryParamFunctions";
 import { ToastService } from "../../services/toast.service";
 import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
-import { Subscription } from "rxjs";
 import openApiSpec from "../../../../sdk/openapi.json";
 
 export type TableColumn = {
@@ -94,7 +94,7 @@ export type RegionVendorMetadata = {
   templateUrl: "./server-prices.component.html",
   styleUrl: "./server-prices.component.scss",
 })
-export class ServerPricesComponent implements OnInit, OnDestroy {
+export class ServerPricesComponent implements OnInit {
   private platformId = inject(PLATFORM_ID);
   private keeperAPI = inject(KeeperAPIService);
   private route = inject(ActivatedRoute);
@@ -104,8 +104,7 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
   private dropdownManager = inject(DropdownManagerService);
   private serverCompare = inject(ServerCompareService);
   private toastService = inject(ToastService);
-
-  private subscription = new Subscription();
+  private destroyRef = inject(DestroyRef);
 
   isCollapsed = false;
 
@@ -306,8 +305,9 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
       this.orderBy = order.schema.default;
     }
 
-    this.subscription.add(
-      this.route.queryParams.subscribe((params: Params) => {
+    this.route.queryParams
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params: Params) => {
         const query: any = JSON.parse(JSON.stringify(params || "{}"));
 
         this.query = query;
@@ -366,8 +366,7 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
         this.refreshColumns(false);
 
         this._searchServers(true);
-      }),
-    );
+      });
 
     if (isPlatformBrowser(this.platformId)) {
       this.dropdownManager
@@ -394,10 +393,6 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
           this.dropdownPage = dropdown;
         });
     }
-  }
-
-  ngOnDestroy() {
-    this.subscription.unsubscribe();
   }
 
   toggleCollapse() {

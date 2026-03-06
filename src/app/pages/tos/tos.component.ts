@@ -1,4 +1,4 @@
-import { OnInit, inject } from "@angular/core";
+import { OnInit, DestroyRef, inject } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Component } from "@angular/core";
 import { ActivatedRoute, RouterModule } from "@angular/router";
@@ -10,6 +10,7 @@ import {
 import { DomSanitizer } from "@angular/platform-browser";
 import * as yaml from "js-yaml";
 import { TimeToShortDatePipe } from "../../pipes/time-to-short-date.pipe";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Component({
   selector: "app-tos",
@@ -27,6 +28,7 @@ export class TOSComponent implements OnInit {
   private http = inject(HttpClient);
   private markdownService = inject(MarkdownService);
   private domSanitizer = inject(DomSanitizer);
+  private destroyRef = inject(DestroyRef);
 
   articleBody: any;
   articleMeta: any;
@@ -37,30 +39,33 @@ export class TOSComponent implements OnInit {
   ];
 
   ngOnInit() {
-    this.route.params.subscribe(() => {
-      let id = this.route.snapshot.paramMap.get("id");
+    this.route.params
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        let id = this.route.snapshot.paramMap.get("id");
 
-      this.http
-        .get(`./assets/legal/${id}.md`, { responseType: "text" })
-        .subscribe((file: any) => {
-          // Assuming `file` is a string containing your Markdown content...
-          const match = /---\r?\n([\s\S]+?)\r?\n---/.exec(file);
-          if (match === null) {
-            return;
-          }
-          this.articleMeta = yaml.load(match[1]);
-          const content = file.replace(/---\r?\n[\s\S]+?\r?\n---/, "");
+        this.http
+          .get(`./assets/legal/${id}.md`, { responseType: "text" })
+          .pipe(takeUntilDestroyed(this.destroyRef))
+          .subscribe((file: any) => {
+            // Assuming `file` is a string containing your Markdown content...
+            const match = /---\r?\n([\s\S]+?)\r?\n---/.exec(file);
+            if (match === null) {
+              return;
+            }
+            this.articleMeta = yaml.load(match[1]);
+            const content = file.replace(/---\r?\n[\s\S]+?\r?\n---/, "");
 
-          this.articleBody = this.domSanitizer.bypassSecurityTrustHtml(
-            this.markdownService.parse(content) as string,
-          );
+            this.articleBody = this.domSanitizer.bypassSecurityTrustHtml(
+              this.markdownService.parse(content) as string,
+            );
 
-          this.breadcrumbs = [
-            { name: "Home", url: "/" },
-            { name: "Legal", url: "/legal" },
-            { name: this.articleMeta.title, url: `/legal/${id}` },
-          ];
-        });
-    });
+            this.breadcrumbs = [
+              { name: "Home", url: "/" },
+              { name: "Legal", url: "/legal" },
+              { name: this.articleMeta.title, url: `/legal/${id}` },
+            ];
+          });
+      });
   }
 }

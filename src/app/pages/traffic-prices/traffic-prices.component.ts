@@ -1,11 +1,12 @@
 import { CommonModule, isPlatformBrowser } from "@angular/common";
 import {
   Component,
+  DestroyRef,
   OnInit,
   PLATFORM_ID,
-  OnDestroy,
   inject,
 } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { FormsModule } from "@angular/forms";
 import { RouterModule, ActivatedRoute, Params, Router } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
@@ -22,7 +23,6 @@ import { SeoHandlerService } from "../../services/seo-handler.service";
 import { CurrencyOption, availableCurrencies } from "../../tools/shared_data";
 import { TableColumn } from "../server-listing/server-listing.component";
 import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
-import { Subscription } from "rxjs";
 import openApiSpec from "../../../../sdk/openapi.json";
 
 @Component({
@@ -40,15 +40,14 @@ import openApiSpec from "../../../../sdk/openapi.json";
   templateUrl: "./traffic-prices.component.html",
   styleUrl: "./traffic-prices.component.scss",
 })
-export class TrafficPricesComponent implements OnInit, OnDestroy {
+export class TrafficPricesComponent implements OnInit {
   private platformId = inject(PLATFORM_ID);
   private keeperAPI = inject(KeeperAPIService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private SEOHandler = inject(SeoHandlerService);
   private dropdownManager = inject(DropdownManagerService);
-
-  private subscription = new Subscription();
+  private destroyRef = inject(DestroyRef);
 
   limit = 10;
   page = 1;
@@ -129,8 +128,9 @@ export class TrafficPricesComponent implements OnInit, OnDestroy {
 
     this.refreshColumns();
 
-    this.subscription.add(
-      this.route.queryParams.subscribe((params: Params) => {
+    this.route.queryParams
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params: Params) => {
         const query: any = JSON.parse(JSON.stringify(params || "{}"));
 
         this.query = query;
@@ -184,12 +184,7 @@ export class TrafficPricesComponent implements OnInit, OnDestroy {
               this.dropdownPage = dropdown;
             });
         }
-      }),
-    );
-  }
-
-  ngOnDestroy() {
-    this.subscription.unsubscribe();
+      });
   }
 
   toggleCollapse() {
