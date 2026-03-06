@@ -3,7 +3,6 @@ import {
   AfterViewInit,
   Component,
   OnInit,
-  OnDestroy,
   PLATFORM_ID,
   DOCUMENT,
   inject,
@@ -22,7 +21,7 @@ import { register } from "swiper/element/bundle";
 import { HeaderComponent } from "./layout/header/header.component";
 import { FooterComponent } from "./layout/footer/footer.component";
 import { AnalyticsService } from "./services/analytics.service";
-import { Subscription } from "rxjs";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { NeetoCalService } from "./services/neeto-cal.service";
 
 @Component({
@@ -31,7 +30,7 @@ import { NeetoCalService } from "./services/neeto-cal.service";
   templateUrl: "./app.component.html",
   styleUrl: "./app.component.scss",
 })
-export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
+export class AppComponent implements OnInit, AfterViewInit {
   private platformId = inject(PLATFORM_ID);
   private document = inject<Document>(DOCUMENT);
   private router = inject(Router);
@@ -43,40 +42,19 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
   showHeader = true;
   showFooter = true;
-  private subscription = new Subscription();
 
   constructor() {
     const router = this.router;
 
-    this.subscription.add(
-      router.events.subscribe((event: Event) => {
-        if (event instanceof NavigationStart) {
-          // Show loading indicator
-        }
+    router.events.pipe(takeUntilDestroyed()).subscribe((event: Event) => {
+      if (event instanceof NavigationStart) {
+        // Show loading indicator
+      }
 
-        if (event instanceof NavigationEnd) {
-          let url = "https://sparecores.com";
-          if (event?.urlAfterRedirects?.length > 1) {
-            url += event?.urlAfterRedirects;
-            if (
-              event?.urlAfterRedirects?.startsWith("/og/") ||
-              event?.urlAfterRedirects?.startsWith("/embed/") ||
-              event.urlAfterRedirects?.startsWith("/hu/")
-            ) {
-              this.showHeader = false;
-              this.showFooter = false;
-            } else {
-              this.showHeader = true;
-              this.showFooter = true;
-            }
-          }
-          this.analytics.trackEvent("pageView", {});
-          // update canonical url with query params as well
-
-          this.updateCanonical(url.toLowerCase());
-        }
-
-        if (event instanceof RoutesRecognized) {
+      if (event instanceof NavigationEnd) {
+        let url = "https://sparecores.com";
+        if (event?.urlAfterRedirects?.length > 1) {
+          url += event?.urlAfterRedirects;
           if (
             event?.urlAfterRedirects?.startsWith("/og/") ||
             event?.urlAfterRedirects?.startsWith("/embed/") ||
@@ -89,13 +67,31 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
             this.showFooter = true;
           }
         }
+        this.analytics.trackEvent("pageView", {});
+        // update canonical url with query params as well
 
-        if (event instanceof NavigationError) {
-          // Hide loading indicator
-          // Present error to user
+        this.updateCanonical(url.toLowerCase());
+      }
+
+      if (event instanceof RoutesRecognized) {
+        if (
+          event?.urlAfterRedirects?.startsWith("/og/") ||
+          event?.urlAfterRedirects?.startsWith("/embed/") ||
+          event.urlAfterRedirects?.startsWith("/hu/")
+        ) {
+          this.showHeader = false;
+          this.showFooter = false;
+        } else {
+          this.showHeader = true;
+          this.showFooter = true;
         }
-      }),
-    );
+      }
+
+      if (event instanceof NavigationError) {
+        // Hide loading indicator
+        // Present error to user
+      }
+    });
   }
 
   ngOnInit(): void {
@@ -107,10 +103,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     if (isPlatformBrowser(this.platformId)) {
       this.analytics.initializeTracking();
     }
-  }
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
   }
 
   updateCanonical(url: string) {
