@@ -1,8 +1,6 @@
-import { Injectable, PLATFORM_ID, inject } from "@angular/core";
+import { Injectable, PLATFORM_ID, REQUEST, inject } from "@angular/core";
 import { Meta, Title } from "@angular/platform-browser";
-import { REQUEST } from "../../express.tokens";
 import { isPlatformBrowser } from "@angular/common";
-import { Request } from "express";
 
 @Injectable({
   providedIn: "root",
@@ -11,14 +9,20 @@ export class SeoHandlerService {
   private platformId = inject(PLATFORM_ID);
   private titleService = inject(Title);
   private metaTagService = inject(Meta);
-  private request_express = inject<Request>(REQUEST, { optional: true });
+  // REQUEST is auto-populated by AngularNodeAppEngine with a Fetch API Request
+  private request = inject<Request>(REQUEST, { optional: true });
 
   public getBaseURL(): string {
     let baseUrl = "https://sparecores.com";
     if (isPlatformBrowser(this.platformId)) {
       baseUrl = window.location.origin;
-    } else if (this.request_express) {
-      baseUrl = `${this.request_express?.protocol}://${this.request_express?.get("host")}`;
+    } else if (this.request) {
+      try {
+        const parsed = new URL(this.request.url);
+        baseUrl = `${parsed.protocol}//${parsed.host}`;
+      } catch {
+        // malformed URL, fall back to default
+      }
     }
     return baseUrl;
   }
