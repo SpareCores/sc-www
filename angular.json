@@ -87,6 +87,27 @@
               "ssr": {
                 "entry": "server.ts"
               }
+            },
+            "local-test": {
+              "optimization": false,
+              "outputHashing": "all",
+              "fileReplacements": [
+                {
+                  "replace": "src/app/transfer-cache.config.ts",
+                  "with": "src/app/transfer-cache.config.local-test.ts"
+                }
+              ],
+              "define": {
+                "import.meta.env.NG_APP_BACKEND_BASE_URI": "\"http://localhost:8080\"",
+                "import.meta.env.NG_APP_BACKEND_BASE_URI_SSR": "\"http://localhost:8080\"",
+                "import.meta.env.NG_APP_POSTHOG_KEY": "\"phc_Fi3yxUniDNXMI6VBP25WSDQSTKiTrNd5UfY5siQoZMT\"",
+                "import.meta.env.NG_APP_POSTHOG_HOST": "\"https://eu.posthog.com\"",
+                "import.meta.env.NG_APP_SENTRY_DSN": "\"\"",
+                "import.meta.env.NG_APP_SENTRY_TRACE_SAMPLE_RATE": "\"0\"",
+                "import.meta.env.NG_APP_SENTRY_PROFILE_SAMPLE_RATE": "\"0\"",
+                "import.meta.env.NG_APP_SENTRY_ENVIRONMENT": "\"development\"",
+                "import.meta.env.NG_APP_SENTRY_RELEASE": "undefined"
+              }
             }
           },
           "defaultConfiguration": "production"
