@@ -3,8 +3,8 @@ import { Injectable, PLATFORM_ID, inject } from "@angular/core";
 import * as Sentry from "@sentry/angular";
 import posthog from "posthog-js";
 
-const POSTHOG_KEY = import.meta?.env?.NG_APP_POSTHOG_KEY;
-const POSTHOG_HOST = import.meta?.env?.NG_APP_POSTHOG_HOST;
+const POSTHOG_KEY = import.meta.env.NG_APP_POSTHOG_KEY;
+const POSTHOG_HOST = import.meta.env.NG_APP_POSTHOG_HOST;
 
 const SENTRY_DSN = import.meta.env.NG_APP_SENTRY_DSN;
 
