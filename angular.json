@@ -15,7 +15,7 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@ngx-env/builder:application",
+          "builder": "@angular/build:application",
           "options": {
             "outputPath": "dist/sc-www",
             "index": "src/index.html",
@@ -58,10 +58,7 @@
               "@preline/combobox"
             ],
             "server": "src/main.server.ts",
-            "prerender": {
-              "discoverRoutes": false,
-              "routesFile": "prerender_routes.txt"
-            },
+            "outputMode": "server",
             "ssr": {
               "entry": "server.ts"
             }
@@ -95,7 +92,7 @@
           "defaultConfiguration": "production"
         },
         "serve": {
-          "builder": "@ngx-env/builder:dev-server",
+          "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
               "buildTarget": "sc-www:build:production"
@@ -107,13 +104,13 @@
           "defaultConfiguration": "development"
         },
         "extract-i18n": {
-          "builder": "@ngx-env/builder:extract-i18n",
+          "builder": "@angular/build:extract-i18n",
           "options": {
             "buildTarget": "sc-www:build"
           }
         },
         "test": {
-          "builder": "@ngx-env/builder:karma",
+          "builder": "@angular/build:karma",
           "options": {
             "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "tsconfig.spec.json",
