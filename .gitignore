@@ -80,3 +80,9 @@ cypress-image-diff-html-report
 cypress-image-diff-screenshots/comparison
 cypress-image-diff-screenshots/diff
 cypress/screenshots
+
+# Python files
+__pycache__/
+
+# LeakDetector
+leakdetector/
