@@ -501,7 +501,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
         }
       }),
     );
-    
+
     Promise.all([
       this.keeperAPI.getServerBenchmarkMeta(),
       this.keeperAPI.getBenchmarkConfigs(),
