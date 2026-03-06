@@ -61,6 +61,13 @@
   height: unset !important;
 }
 
+:host #lstopo {
+  height: auto !important;
+  min-height: unset !important;
+  overflow: hidden;
+  max-width: 100% !important;
+}
+
 .dropdown_button {
   @apply text-white bg-emerald-400 hover:bg-emerald-500 focus:outline-none font-medium rounded-lg text-sm text-center inline-flex items-center border-emerald-400 border-solid border;
   transition-duration: 0.15s;
@@ -157,5 +164,9 @@ div.giscus {
   :host ::ng-deep .block_half_taller {
     width: calc(100%);
     margin: auto;
+  }
+
+  :host #lstopo {
+    width: 100% !important;
   }
 }
