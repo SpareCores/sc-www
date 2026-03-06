@@ -501,13 +501,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
         }
       }),
     );
-
-    // Skip API calls during SSR — the page is dynamic and has no value being
-    // server-side rendered with data. The browser will fetch on hydration.
-    if (!isPlatformBrowser(this.platformId)) {
-      return;
-    }
-
+    
     Promise.all([
       this.keeperAPI.getServerBenchmarkMeta(),
       this.keeperAPI.getBenchmarkConfigs(),
