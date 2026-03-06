@@ -1,21 +1,21 @@
 import os from "os";
-import { APP_BASE_HREF } from "@angular/common";
-import { CommonEngine } from "@angular/ssr/node";
+import {
+  AngularNodeAppEngine,
+  createNodeRequestHandler,
+  writeResponseToNodeResponse,
+  isMainModule,
+} from "@angular/ssr/node";
 import express from "express";
 import { fileURLToPath } from "node:url";
 import { dirname, join, resolve } from "node:path";
-import bootstrap from "./src/main.server";
-import { REQUEST, RESPONSE } from "./src/express.tokens";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
 import handlebars from "handlebars";
 import rateLimit from "express-rate-limit";
-import https from "node:https";
 
 const serverDistFolder = dirname(fileURLToPath(import.meta.url));
 //const browserDistFolder = resolve(serverDistFolder, '../browser');
 const browserDistFolder = resolve(serverDistFolder, "./static");
-const indexHtml = join(serverDistFolder, "index.server.html");
 
 const SMTP_HOST = process.env["SMTP_HOST"] || "";
 const SMTP_PORT = parseInt(process.env["SMTP_PORT"] || "587", 10);
@@ -67,10 +67,6 @@ class EmailTemplateManager {
       throw new Error(`Email template '${name}' not found`);
     }
   }
-
-  clearCache() {
-    this.templates.clear();
-  }
 }
 const emailTemplates = new EmailTemplateManager();
 
@@ -80,29 +76,25 @@ export function app(): express.Express {
 
   // access log
   server.use((req, res, next) => {
-    (req as any).requestStartTime = new Date();
-    (req as any).requestResourceUsage = process.resourceUsage();
-    (req as any).requestMemoryUsage = process.memoryUsage();
+    res.locals["requestStartTime"] = Date.now();
+
+    // LOG IMMEDIATELY, DO NOT ATTACH OBJECTS TO REQ
     const { originalUrl, ip, headers } = req;
-    const log = {
-      timestamp: new Date().toISOString(),
-      event: "request",
-      method: req.method,
-      path: originalUrl,
-      userAgent: headers["user-agent"],
-      ip: headers["x-forwarded-for"]
-        ? (headers["x-forwarded-for"] as string).split(",")[0]
-        : ip,
-      country: headers["cloudfront-viewer-country"],
-    };
-    console.log(JSON.stringify(log));
+    console.log(
+      JSON.stringify({
+        timestamp: new Date().toISOString(),
+        event: "request",
+        method: req.method,
+        path: originalUrl,
+        ip: headers["x-forwarded-for"]
+          ? (headers["x-forwarded-for"] as string).split(",")[0]
+          : ip,
+      }),
+    );
     next();
   });
 
-  const commonEngine = new CommonEngine({
-    enablePerformanceProfiler:
-      process.env["ENABLE_PERFORMANCE_PROFILER"] === "true",
-  });
+  const engine = new AngularNodeAppEngine();
 
   server.set("view engine", "html");
   server.set("views", browserDistFolder);
@@ -236,36 +228,21 @@ export function app(): express.Express {
         }),
       );
 
-      const result = await new Promise<{
-        success: boolean;
-        statusCode?: number;
-      }>((resolve, reject) => {
-        const url = new URL(filename, S3_BUCKET_URL);
-        const data = JSON.stringify(enrichedPayload);
-        const options = {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            "Content-Length": Buffer.byteLength(data),
-            Referer: req.headers["referer"],
-          },
-        };
-        const request = https.request(url, options, (response: any) => {
-          if (response.statusCode !== 200) {
-            resolve({ success: false, statusCode: response.statusCode });
-          } else {
-            resolve({ success: true });
-          }
-        });
-        request.on("error", (error: Error) => {
-          reject(error);
-        });
-        request.write(data);
-        request.end();
+      const url = new URL(filename, S3_BUCKET_URL);
+      const data = JSON.stringify(enrichedPayload);
+      const response = await fetch(url, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          ...(req.headers["referer"]
+            ? { Referer: req.headers["referer"] as string }
+            : {}),
+        },
+        body: data,
       });
-      if (!result.success) {
+      if (!response.ok) {
         console.error(
-          `Failed to save survey data to S3: Status ${result.statusCode}`,
+          `Failed to save survey data to S3: Status ${response.status}`,
         );
         return res.status(500).json({ error: "Failed to save survey data" });
       }
@@ -318,85 +295,45 @@ export function app(): express.Express {
 
   // log time it takes to generate dynamic content
   server.use((req, res, next) => {
-    // prevent duplicate logging on close event
     let loggedResponse = false;
+
     const logResponse = () => {
       if (loggedResponse) return;
       loggedResponse = true;
 
-      const requestStartTime = (req as any).requestStartTime;
-      const requestResourceUsage = (req as any).requestResourceUsage;
-      const requestMemoryUsage = (req as any).requestMemoryUsage;
+      const startTime = res.locals["requestStartTime"];
+      if (startTime) {
+        const elapsedTime = (Date.now() - startTime) / 1000;
 
-      if (requestStartTime && requestResourceUsage && requestMemoryUsage) {
-        const currentResourceUsage = process.resourceUsage();
-        const currentTime = new Date();
-        const elapsedTime =
-          (currentTime.getTime() - requestStartTime.getTime()) / 1e3;
-        const userTime =
-          (currentResourceUsage.userCPUTime -
-            requestResourceUsage.userCPUTime) /
-          1e6;
-        const sysTime =
-          (currentResourceUsage.systemCPUTime -
-            requestResourceUsage.systemCPUTime) /
-          1e6;
-
-        const currentMemoryUsage = process.memoryUsage();
-        const memoryDiff = {
-          rss: currentMemoryUsage.rss - requestMemoryUsage.rss,
-          heapTotal:
-            currentMemoryUsage.heapTotal - requestMemoryUsage.heapTotal,
-          heapUsed: currentMemoryUsage.heapUsed - requestMemoryUsage.heapUsed,
-          external: currentMemoryUsage.external - requestMemoryUsage.external,
-          arrayBuffers:
-            currentMemoryUsage.arrayBuffers - requestMemoryUsage.arrayBuffers,
-        };
-
-        const log = {
+        const log: Record<string, unknown> = {
           timestamp: new Date().toISOString(),
           event: "response",
           path: req.originalUrl,
           real: elapsedTime.toFixed(2),
-          user: userTime.toFixed(2),
-          sys: sysTime.toFixed(2),
-          wait: (elapsedTime - userTime - sysTime).toFixed(2),
-          memory: currentMemoryUsage,
-          memory_diff: memoryDiff,
         };
-        console.log(JSON.stringify(log));
-      } else {
-        const currentTime = new Date();
-        const elapsedTime =
-          (currentTime.getTime() -
-            (requestStartTime || currentTime).getTime()) /
-          1e3;
-        const log = {
-          event: "response",
-          path: req.originalUrl,
-          real: elapsedTime.toFixed(2),
-          memory_at_end: process.memoryUsage(),
-        };
+
+        // Only attach memory snapshot on slow requests (>2 s) to avoid
+        // allocating a memoryUsage object + large JSON string on every request.
+        if (elapsedTime > 2) {
+          log["memory"] = process.memoryUsage();
+        }
+
         console.log(JSON.stringify(log));
       }
+
+      res.removeListener("finish", logResponse);
+      res.removeListener("close", logResponse);
     };
 
     res.once("finish", logResponse);
-    // fallback on connection closed with with cleanup
-    const closeHandler = () => {
-      logResponse();
-      res.removeListener("finish", logResponse);
-    };
-    res.once("close", closeHandler);
-
+    res.once("close", logResponse);
     next();
   });
 
   // All regular routes use the Angular engine
   server.get("*", (req, res, next) => {
-    const { protocol, originalUrl, baseUrl, headers } = req;
+    const { originalUrl } = req;
 
-    // prevent hanging requests
     const renderTimeout = setTimeout(() => {
       if (!res.headersSent) {
         console.error(`SSR timeout for ${originalUrl}`);
@@ -404,21 +341,15 @@ export function app(): express.Express {
       }
     }, 30000);
 
-    commonEngine
-      .render({
-        bootstrap,
-        documentFilePath: indexHtml,
-        url: `${protocol}://${headers.host}${originalUrl}`,
-        publicPath: browserDistFolder,
-        providers: [
-          { provide: APP_BASE_HREF, useValue: baseUrl },
-          { provide: RESPONSE, useValue: res },
-          { provide: REQUEST, useValue: req },
-        ],
-      })
-      .then((html) => {
+    engine
+      .handle(req)
+      .then(async (response) => {
         clearTimeout(renderTimeout);
-        res.send(html);
+        if (response) {
+          await writeResponseToNodeResponse(response, res);
+        } else {
+          next();
+        }
       })
       .catch((err) => {
         clearTimeout(renderTimeout);
@@ -430,14 +361,13 @@ export function app(): express.Express {
   return server;
 }
 
-function run(): void {
-  const port = process.env["PORT"] || 3000;
+const expressApp = app();
 
-  // Start up the Node server
-  const server = app();
-  server.listen(port, () => {
+export default createNodeRequestHandler(expressApp);
+
+if (isMainModule(import.meta.url)) {
+  const port = process.env["PORT"] || 3000;
+  expressApp.listen(port, () => {
     console.log(`Node Express server listening on http://localhost:${port}`);
   });
 }
-
-run();
