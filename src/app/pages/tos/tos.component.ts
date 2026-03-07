@@ -52,7 +52,9 @@ export class TOSComponent implements OnInit {
           const content = file.replace(/---\r?\n[\s\S]+?\r?\n---/, "");
 
           this.articleBody = this.domSanitizer.bypassSecurityTrustHtml(
-            this.markdownService.parse(content) as string,
+            this.markdownService.parse(content, {
+              disableSanitizer: true,
+            }) as string,
           );
 
           this.breadcrumbs = [
