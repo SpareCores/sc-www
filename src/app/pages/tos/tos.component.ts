@@ -146,7 +146,7 @@ export class TOSComponent implements OnInit {
   }
 
   private parseArticle(file: string, id: string) {
-    const match = /---\r?\n([\s\S]+?)\r?\n---/.exec(file);
+    const match = /^---\r?\n([\s\S]+?)\r?\n---/.exec(file);
     if (match === null) {
       return throwError(
         () => new Error("Legal article front matter is missing."),
@@ -160,7 +160,7 @@ export class TOSComponent implements OnInit {
       );
     }
 
-    const content = file.replace(/---\r?\n[\s\S]+?\r?\n---/, "");
+    const content = file.replace(/^---\r?\n[\s\S]+?\r?\n---/, "");
     return from(Promise.resolve(this.markdownService.parse(content))).pipe(
       map(
         (body): LegalArticleViewModel => ({
