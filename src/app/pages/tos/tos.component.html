@@ -1,15 +1,17 @@
 <div class="w-full bg-primary">
   <div class="content pt-16 pb-16">
-    <app-breadcrumbs [segments]="breadcrumbs"></app-breadcrumbs>
+    <app-breadcrumbs
+      [segments]="article?.breadcrumbs ?? defaultBreadcrumbs"
+    ></app-breadcrumbs>
 
-    @if (articleBody) {
+    @if (article; as article) {
       <div class="py-12 px-12 mx-auto" style="max-width: 750px">
         <h1 class="text-emerald-400 text-3xl font-bold mb-2">
-          {{ articleMeta.title }}
+          {{ article.meta.title }}
         </h1>
-        <div class="text-white html_content" [innerHTML]="articleBody"></div>
+        <div class="text-white html_content" [innerHTML]="article.body"></div>
         <div class="w-full text-right mt-4 text-white">
-          Last updated: {{ articleMeta.date | timeToShortDate }}
+          Last updated: {{ article.meta.date | timeToShortDate }}
         </div>
       </div>
     }

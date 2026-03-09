@@ -1,4 +1,4 @@
-import { OnInit, inject } from "@angular/core";
+import { DestroyRef, OnInit, inject } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Component } from "@angular/core";
 import { ActivatedRoute, RouterModule } from "@angular/router";
@@ -7,9 +7,22 @@ import {
   BreadcrumbSegment,
   BreadcrumbsComponent,
 } from "../../components/breadcrumbs/breadcrumbs.component";
-import { DomSanitizer } from "@angular/platform-browser";
 import * as yaml from "js-yaml";
 import { TimeToShortDatePipe } from "../../pipes/time-to-short-date.pipe";
+import { catchError, filter, from, map, of, switchMap } from "rxjs";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+
+interface LegalArticleMeta {
+  title: string;
+  date: Date;
+  priority?: number;
+}
+
+interface LegalArticleViewModel {
+  body: string;
+  meta: LegalArticleMeta;
+  breadcrumbs: BreadcrumbSegment[];
+}
 
 @Component({
   selector: "app-tos",
@@ -23,46 +36,101 @@ import { TimeToShortDatePipe } from "../../pipes/time-to-short-date.pipe";
   styleUrl: "./tos.component.scss",
 })
 export class TOSComponent implements OnInit {
+  private readonly legalArticleIdPattern = /^[a-z0-9_-]+$/i;
+  private destroyRef = inject(DestroyRef);
   private route = inject(ActivatedRoute);
   private http = inject(HttpClient);
   private markdownService = inject(MarkdownService);
-  private domSanitizer = inject(DomSanitizer);
 
-  articleBody: any;
-  articleMeta: any;
-
-  breadcrumbs: BreadcrumbSegment[] = [
+  readonly defaultBreadcrumbs: BreadcrumbSegment[] = [
     { name: "Home", url: "/" },
     { name: "Legal", url: "/legal" },
   ];
 
+  article: LegalArticleViewModel | null = null;
+
   ngOnInit() {
-    this.route.params.subscribe(() => {
-      let id = this.route.snapshot.paramMap.get("id");
-
-      this.http
-        .get(`./assets/legal/${id}.md`, { responseType: "text" })
-        .subscribe((file: any) => {
-          // Assuming `file` is a string containing your Markdown content...
-          const match = /---\r?\n([\s\S]+?)\r?\n---/.exec(file);
-          if (match === null) {
-            return;
+    this.route.paramMap
+      .pipe(
+        map((params) => params.get("id")),
+        filter((id): id is string => !!id),
+        switchMap((id) => {
+          if (!this.legalArticleIdPattern.test(id)) {
+            console.warn(`Ignoring invalid legal article id: ${id}`);
+            return of(null);
           }
-          this.articleMeta = yaml.load(match[1]);
-          const content = file.replace(/---\r?\n[\s\S]+?\r?\n---/, "");
 
-          this.articleBody = this.domSanitizer.bypassSecurityTrustHtml(
-            this.markdownService.parse(content, {
-              disableSanitizer: true,
-            }) as string,
-          );
+          return this.http
+            .get(`./assets/legal/${id}.md`, { responseType: "text" })
+            .pipe(
+              switchMap((file) => this.parseArticle(file, id)),
+              catchError((error) => {
+                console.error(`Failed to load legal article: ${id}`, error);
+                return of(null);
+              }),
+            );
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((article) => {
+        this.article = article;
+      });
+  }
 
-          this.breadcrumbs = [
+  private parseArticle(file: string, id: string) {
+    const match = /---\r?\n([\s\S]+?)\r?\n---/.exec(file);
+    if (match === null) {
+      return of(null);
+    }
+
+    const meta = this.parseMeta(match[1]);
+    if (meta === null) {
+      return of(null);
+    }
+
+    const content = file.replace(/---\r?\n[\s\S]+?\r?\n---/, "");
+    return from(Promise.resolve(this.markdownService.parse(content))).pipe(
+      map(
+        (body): LegalArticleViewModel => ({
+          body,
+          meta,
+          breadcrumbs: [
             { name: "Home", url: "/" },
             { name: "Legal", url: "/legal" },
-            { name: this.articleMeta.title, url: `/legal/${id}` },
-          ];
-        });
-    });
+            { name: meta.title, url: `/legal/${id}` },
+          ],
+        }),
+      ),
+    );
+  }
+
+  private parseMeta(frontmatter: string): LegalArticleMeta | null {
+    const value = yaml.load(frontmatter);
+    if (!value || typeof value !== "object") {
+      return null;
+    }
+
+    const candidate = value as Record<string, unknown>;
+    if (
+      typeof candidate["title"] !== "string" ||
+      (typeof candidate["date"] !== "string" &&
+        !(candidate["date"] instanceof Date))
+    ) {
+      return null;
+    }
+
+    const date = new Date(candidate["date"]);
+    if (Number.isNaN(date.getTime())) {
+      return null;
+    }
+
+    return {
+      title: candidate["title"],
+      date,
+      priority:
+        typeof candidate["priority"] === "number"
+          ? candidate["priority"]
+          : undefined,
+    };
   }
 }
