@@ -14,7 +14,6 @@ const customizeChromeHeadless = (
 };
 
 export default defineConfig({
-  allowCypressEnv: false,
   videosFolder: "cypress/videos",
   screenshotsFolder: "cypress/screenshots",
   fixturesFolder: "cypress/fixtures",
