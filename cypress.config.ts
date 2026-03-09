@@ -1,4 +1,3 @@
-// @ts-expect-error: TS2307
 import getCompareSnapshotPlugin from "cypress-image-diff-js/plugin";
 import { defineConfig } from "cypress";
 
@@ -15,6 +14,7 @@ const customizeChromeHeadless = (
 };
 
 export default defineConfig({
+  allowCypressEnv: false,
   videosFolder: "cypress/videos",
   screenshotsFolder: "cypress/screenshots",
   fixturesFolder: "cypress/fixtures",
