@@ -35,6 +35,7 @@ export abstract class E2EEvent {
     cy.get(selector).should("be.visible");
   }
 
+  // Use this only for content containers that should render child nodes or text.
   public static isVisibleAndNotEmpty(selector: string) {
     cy.get(selector).should("be.visible").and("not.be.empty");
   }

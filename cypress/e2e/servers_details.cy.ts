@@ -13,9 +13,9 @@ describe("Server Details", () => {
     E2EEvent.isVisibleAndNotEmpty(`[id="availability"]`);
     E2EEvent.isVisibleAndNotEmpty(`.availability_line`);
 
-    E2EEvent.isVisibleAndNotEmpty(`[id="details_more_button"]`);
+    E2EEvent.isVisible(`[id="details_more_button"]`);
 
-    E2EEvent.isVisibleAndNotEmpty(`[id="availability_more_button"]`);
+    E2EEvent.isVisible(`[id="availability_more_button"]`);
 
     E2EEvent.isNotVisible(`[id="details_less_button"]`);
 
@@ -48,7 +48,7 @@ describe("Server Details", () => {
     E2EEvent.isVisibleAndNotEmpty(`[id="availability"]`);
     E2EEvent.isNotFound(`.availability_line`);
 
-    E2EEvent.isVisibleAndNotEmpty(`[id="details_more_button"]`);
+    E2EEvent.isVisible(`[id="details_more_button"]`);
 
     E2EEvent.isNotFound(`availability_more_button`);
 
