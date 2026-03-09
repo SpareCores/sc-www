@@ -149,8 +149,7 @@ export class TOSComponent implements OnInit {
           body,
           meta,
           breadcrumbs: [
-            { name: "Home", url: "/" },
-            { name: "Legal", url: "/legal" },
+            ...this.defaultBreadcrumbs,
             { name: meta.title, url: `/legal/${id}` },
           ],
         }),
