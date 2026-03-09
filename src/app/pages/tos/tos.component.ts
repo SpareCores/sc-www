@@ -158,7 +158,14 @@ export class TOSComponent implements OnInit {
   }
 
   private parseMeta(frontmatter: string): LegalArticleMeta | null {
-    const value = yaml.load(frontmatter);
+    let value: unknown;
+    try {
+      value = yaml.load(frontmatter);
+    } catch (error) {
+      console.warn("Failed to parse legal article front matter.", error);
+      return null;
+    }
+
     if (!value || typeof value !== "object") {
       return null;
     }
