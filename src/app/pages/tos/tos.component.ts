@@ -9,7 +9,16 @@ import {
 } from "../../components/breadcrumbs/breadcrumbs.component";
 import * as yaml from "js-yaml";
 import { TimeToShortDatePipe } from "../../pipes/time-to-short-date.pipe";
-import { catchError, filter, from, map, of, switchMap, throwError } from "rxjs";
+import {
+  catchError,
+  filter,
+  from,
+  map,
+  of,
+  switchMap,
+  tap,
+  throwError,
+} from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 interface LegalArticleMeta {
@@ -55,12 +64,17 @@ export class TOSComponent implements OnInit {
   article: LegalArticleViewModel | null = null;
   articleNotFound = false;
   articleError: unknown | null = null;
+  isLoading = false;
 
   ngOnInit() {
     this.route.paramMap
       .pipe(
         map((params) => params.get("id")),
         filter((id): id is string => !!id),
+        tap(() => {
+          this.resetViewState();
+          this.isLoading = true;
+        }),
         switchMap((id) => {
           if (!this.legalArticleIdPattern.test(id)) {
             console.warn(`Ignoring invalid legal article id: ${id}`);
@@ -109,9 +123,7 @@ export class TOSComponent implements OnInit {
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((result) => {
-        this.article = null;
-        this.articleNotFound = false;
-        this.articleError = null;
+        this.isLoading = false;
 
         if (result.type === "success") {
           this.article = result.article;
@@ -125,6 +137,12 @@ export class TOSComponent implements OnInit {
 
         this.articleError = result.error;
       });
+  }
+
+  private resetViewState() {
+    this.article = null;
+    this.articleNotFound = false;
+    this.articleError = null;
   }
 
   private parseArticle(file: string, id: string) {
