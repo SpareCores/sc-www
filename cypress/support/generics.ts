@@ -32,7 +32,7 @@ export abstract class E2EEvent {
 
   // property checks and queryies
   public static isVisible(selector: string) {
-    cy.get(selector).should("be.visible");
+    cy.get(selector).should("be.visible").and("not.be.empty");
   }
 
   public static isNotVisible(selector: string) {
@@ -172,5 +172,15 @@ export abstract class E2EEvent {
   // other
   public static wait(wait: number) {
     cy.wait(wait);
+  }
+
+  // Prepare header position for a consistent visual regression snapshot
+  public static prepareHeaderForScreenshot() {
+    cy.get("header").invoke("css", "position", "static");
+  }
+
+  // Hide comments section for screenshot consistency
+  public static hideCommentsForScreenshot() {
+    cy.get(".giscus").invoke("css", "display", "none");
   }
 }
