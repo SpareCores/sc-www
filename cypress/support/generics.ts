@@ -27,11 +27,15 @@ export abstract class E2EEvent {
   }
 
   public static checkBreadcrumbs() {
-    this.isVisible(`[id="breadcrumbNav"]`);
+    this.isVisibleAndNotEmpty(`[id="breadcrumbNav"]`);
   }
 
   // property checks and queryies
   public static isVisible(selector: string) {
+    cy.get(selector).should("be.visible");
+  }
+
+  public static isVisibleAndNotEmpty(selector: string) {
     cy.get(selector).should("be.visible").and("not.be.empty");
   }
 

@@ -5,10 +5,10 @@ describe("Legal Documents", () => {
     E2EEvent.visitURL("/legal/terms-of-service");
 
     // Check Title (Emerald green <h1>)
-    E2EEvent.isVisible("h1.text-emerald-400");
+    E2EEvent.isVisibleAndNotEmpty("h1.text-emerald-400");
 
     // Check rendered Markdown body
-    E2EEvent.isVisible(".html_content");
+    E2EEvent.isVisibleAndNotEmpty(".html_content");
 
     // Verify the breadcrumb navigation matches the metadata title
     E2EEvent.checkBreadcrumbs();

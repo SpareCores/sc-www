@@ -6,11 +6,11 @@ describe("Server prices", () => {
 
     E2EEvent.checkBreadcrumbs();
 
-    E2EEvent.isVisible(`[id="serverSearchBar"]`);
+    E2EEvent.isVisibleAndNotEmpty(`[id="serverSearchBar"]`);
 
-    E2EEvent.isVisible(`[id="column_button"]`);
+    E2EEvent.isVisibleAndNotEmpty(`[id="column_button"]`);
 
-    E2EEvent.isVisible(`[id="server_prices_table"]`);
+    E2EEvent.isVisibleAndNotEmpty(`[id="server_prices_table"]`);
 
     E2EEvent.countElements(
       `[id="server_prices_table"]`,
@@ -18,7 +18,7 @@ describe("Server prices", () => {
       25,
     );
 
-    E2EEvent.isVisible(`[id="pagination_next_arrow"]`);
+    E2EEvent.isVisibleAndNotEmpty(`[id="pagination_next_arrow"]`);
 
     E2EEvent.doesNotExist(`[id="pagination_prev_arrow"]`);
 
@@ -28,7 +28,7 @@ describe("Server prices", () => {
     );
 
     // wea re on page 2 now
-    E2EEvent.isVisible(`[id="pagination_prev_arrow"]`);
+    E2EEvent.isVisibleAndNotEmpty(`[id="pagination_prev_arrow"]`);
 
     E2EEvent.hasValue(`filter_range_value_vcpus_min`, "11");
 
