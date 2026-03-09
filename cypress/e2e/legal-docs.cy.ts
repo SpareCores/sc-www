@@ -1,9 +1,12 @@
 import { E2EEvent } from "../support/generics";
 
 describe("Legal Documents", () => {
-  ["Terms of Service", "Privacy Policy"].forEach((documentId) => {
-    it(`should render the ${documentId} page content, breadcrumbs, and last updated footer`, () => {
-      E2EEvent.visitURL(`/legal/${documentId}`);
+  [
+    { slug: "terms-of-service", title: "Terms of Service" },
+    { slug: "privacy-policy", title: "Privacy Policy" },
+  ].forEach(({ slug, title }) => {
+    it(`should render the ${title} page content, breadcrumbs, and last updated footer`, () => {
+      E2EEvent.visitURL(`/legal/${slug}`);
 
       // Check Title (Emerald green <h1>)
       E2EEvent.isVisibleAndNotEmpty("h1.text-emerald-400");
