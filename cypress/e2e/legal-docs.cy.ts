@@ -6,6 +6,13 @@ describe("Legal Documents", () => {
     { slug: "privacy-policy", title: "Privacy Policy" },
   ].forEach(({ slug, title }) => {
     it(`should render the ${title} page content, breadcrumbs, and last updated footer`, () => {
+      // Verify the markdown file exists and is accessible before visiting the page
+      const markdownUrl = `/assets/legal/${slug}.md`;
+      const markdownRequestUrl = E2EEvent.buildAbsoluteURL(markdownUrl);
+      cy.request(markdownRequestUrl).then((response) => {
+        expect(response.status).to.eq(200);
+      });
+
       E2EEvent.visitURL(`/legal/${slug}`);
 
       // Check Title (Emerald green <h1>)
@@ -14,7 +21,7 @@ describe("Legal Documents", () => {
       // Check rendered Markdown body
       E2EEvent.isVisibleAndNotEmpty(".html_content");
 
-      // Verify the breadcrumb navigation matches the metadata title
+      // Verify the breadcrumbs exists
       E2EEvent.checkBreadcrumbs();
 
       // Check that the footer "Last Updated" is rendered

@@ -13,8 +13,12 @@ const baseUrl = "http://localhost:4200";
 
 export abstract class E2EEvent {
   // special events
+  public static buildAbsoluteURL(url: string) {
+    return baseUrl + url;
+  }
+
   public static visitURL(url: string, wait: number = 2000) {
-    cy.visit(baseUrl + url);
+    cy.visit(this.buildAbsoluteURL(url));
     cy.wait(wait);
   }
 
