@@ -14,6 +14,38 @@
           Last updated: {{ article.meta.date | timeToShortDate }}
         </div>
       </div>
+    } @else if (articleNotFound) {
+      <div class="py-12 px-12 mx-auto text-white" style="max-width: 750px">
+        <h1 class="text-emerald-400 text-3xl font-bold mb-4">
+          Legal Document Not Found
+        </h1>
+        <p class="text-lg mb-4">
+          The legal document you requested does not exist or is no longer
+          available.
+        </p>
+        <a
+          routerLink="/legal"
+          class="underline decoration-dotted text-emerald-400"
+        >
+          Back to legal documents
+        </a>
+      </div>
+    } @else if (articleError) {
+      <div class="py-12 px-12 mx-auto text-white" style="max-width: 750px">
+        <h1 class="text-emerald-400 text-3xl font-bold mb-4">
+          Unable to Load Legal Document
+        </h1>
+        <p class="text-lg mb-4">
+          Something went wrong while loading this legal document. Please try
+          again later.
+        </p>
+        <a
+          routerLink="/legal"
+          class="underline decoration-dotted text-emerald-400"
+        >
+          Back to legal documents
+        </a>
+      </div>
     }
   </div>
 </div>
