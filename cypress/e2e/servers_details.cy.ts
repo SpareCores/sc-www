@@ -6,12 +6,12 @@ describe("Server Details", () => {
 
     E2EEvent.checkBreadcrumbs();
 
-    E2EEvent.isVisible(`[id="server_base_info_box"]`);
+    E2EEvent.isVisibleAndNotEmpty(`[id="server_base_info_box"]`);
 
-    E2EEvent.isVisible(`[id="details"]`);
+    E2EEvent.isVisibleAndNotEmpty(`[id="details"]`);
 
-    E2EEvent.isVisible(`[id="availability"]`);
-    E2EEvent.isVisible(`.availability_line`);
+    E2EEvent.isVisibleAndNotEmpty(`[id="availability"]`);
+    E2EEvent.isVisibleAndNotEmpty(`.availability_line`);
 
     E2EEvent.isVisible(`[id="details_more_button"]`);
 
@@ -19,19 +19,19 @@ describe("Server Details", () => {
 
     E2EEvent.isNotVisible(`[id="details_less_button"]`);
 
-    E2EEvent.isVisible(`[id="price_chart"]`);
+    E2EEvent.isVisibleAndNotEmpty(`[id="price_chart"]`);
 
-    E2EEvent.isVisible(`[id="bw_mem_chart"]`);
+    E2EEvent.isVisibleAndNotEmpty(`[id="bw_mem_chart"]`);
 
-    E2EEvent.isVisible(`[id="ssl_chart"]`);
+    E2EEvent.isVisibleAndNotEmpty(`[id="ssl_chart"]`);
 
-    E2EEvent.isVisible(`[id="static_web_chart"]`);
+    E2EEvent.isVisibleAndNotEmpty(`[id="static_web_chart"]`);
 
-    E2EEvent.isVisible(`[id="redis_chart"]`);
+    E2EEvent.isVisibleAndNotEmpty(`[id="redis_chart"]`);
 
-    E2EEvent.isVisible(`.similar_family_table`);
+    E2EEvent.isVisibleAndNotEmpty(`.similar_family_table`);
 
-    E2EEvent.isVisible(`[id="similar_table"]`);
+    E2EEvent.isVisibleAndNotEmpty(`[id="similar_table"]`);
 
     E2EEvent.countElements(`[id="similar_table"]`, `.similar_line`, 7);
   });
@@ -41,18 +41,18 @@ describe("Server Details", () => {
 
     E2EEvent.checkBreadcrumbs();
 
-    E2EEvent.isVisible(`[id="server_base_info_box"]`);
+    E2EEvent.isVisibleAndNotEmpty(`[id="server_base_info_box"]`);
 
-    E2EEvent.isVisible(`[id="details"]`);
+    E2EEvent.isVisibleAndNotEmpty(`[id="details"]`);
 
-    E2EEvent.isVisible(`[id="availability"]`);
+    E2EEvent.isVisibleAndNotEmpty(`[id="availability"]`);
     E2EEvent.isNotFound(`.availability_line`);
 
     E2EEvent.isVisible(`[id="details_more_button"]`);
 
     E2EEvent.isNotFound(`availability_more_button`);
 
-    E2EEvent.isVisible(`[id="price_chart"]`);
+    E2EEvent.isVisibleAndNotEmpty(`[id="price_chart"]`);
 
     E2EEvent.isNotFound(`bw_mem_chart`);
 
@@ -62,9 +62,9 @@ describe("Server Details", () => {
 
     E2EEvent.isNotFound(`redis_chart`);
 
-    E2EEvent.isVisible(`.similar_family_table`);
+    E2EEvent.isVisibleAndNotEmpty(`.similar_family_table`);
 
-    E2EEvent.isVisible(`[id="similar_table"]`);
+    E2EEvent.isVisibleAndNotEmpty(`[id="similar_table"]`);
 
     E2EEvent.countElements(`[id="similar_table"]`, `.similar_line`, 7);
   });

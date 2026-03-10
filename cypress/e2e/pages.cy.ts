@@ -14,5 +14,8 @@ describe("Visit main pages", () => {
     E2EEvent.visitURL(
       "/compare?instances=W3sidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYTEubWVkaXVtIn0seyJ2ZW5kb3IiOiJhd3MiLCJzZXJ2ZXIiOiJjNmdkLm1lZGl1bSJ9XQ%3D%3D",
     );
+    E2EEvent.visitURL("/legal");
+    E2EEvent.visitURL("/legal/terms-of-service");
+    E2EEvent.visitURL("/legal/privacy-policy");
   });
 });

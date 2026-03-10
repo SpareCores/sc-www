@@ -10,7 +10,7 @@ describe("Server prices", () => {
 
     E2EEvent.isVisible(`[id="column_button"]`);
 
-    E2EEvent.isVisible(`[id="server_prices_table"]`);
+    E2EEvent.isVisibleAndNotEmpty(`[id="server_prices_table"]`);
 
     E2EEvent.countElements(
       `[id="server_prices_table"]`,

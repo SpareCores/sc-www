@@ -13,8 +13,12 @@ const baseUrl = "http://localhost:4200";
 
 export abstract class E2EEvent {
   // special events
+  public static buildAbsoluteURL(url: string) {
+    return baseUrl + url;
+  }
+
   public static visitURL(url: string, wait: number = 2000) {
-    cy.visit(baseUrl + url);
+    cy.visit(this.buildAbsoluteURL(url));
     cy.wait(wait);
   }
 
@@ -27,12 +31,17 @@ export abstract class E2EEvent {
   }
 
   public static checkBreadcrumbs() {
-    this.isVisible(`[id="breadcrumbNav"]`);
+    this.isVisibleAndNotEmpty(`[id="breadcrumbNav"]`);
   }
 
   // property checks and queryies
   public static isVisible(selector: string) {
     cy.get(selector).should("be.visible");
+  }
+
+  // Use this only for content containers that should render child nodes or text.
+  public static isVisibleAndNotEmpty(selector: string) {
+    cy.get(selector).should("be.visible").and("not.be.empty");
   }
 
   public static isNotVisible(selector: string) {
@@ -172,5 +181,15 @@ export abstract class E2EEvent {
   // other
   public static wait(wait: number) {
     cy.wait(wait);
+  }
+
+  // Prepare header position for a consistent visual regression snapshot
+  public static prepareHeaderForScreenshot() {
+    cy.get("header").invoke("css", "position", "static");
+  }
+
+  // Hide comments section for screenshot consistency
+  public static hideCommentsForScreenshot() {
+    cy.get(".giscus").invoke("css", "display", "none");
   }
 }

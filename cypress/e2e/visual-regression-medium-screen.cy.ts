@@ -7,10 +7,13 @@ describe("Visual regression tests (medium screen - 1024px)", () => {
 
   it("should compare screenshot of the landing page", () => {
     E2EEvent.visitURL("/");
-    // Fix header position for screenshot consistency
-    cy.get("header").invoke("css", "position", "static");
+
+    // Prepare header position for a consistent visual regression snapshot
+    E2EEvent.prepareHeaderForScreenshot();
+
     // Hide slot machine for screenshot consistency
     cy.get("#slot-machine").invoke("css", "display", "none");
+
     // Hide resource tracker video for screenshot consistency
     cy.get("#resource-tracker-video").invoke("css", "display", "none");
 
@@ -19,32 +22,39 @@ describe("Visual regression tests (medium screen - 1024px)", () => {
 
   it("should compare screenshot of servers list (Hetzner / GPU >=1)", () => {
     E2EEvent.visitURL("/servers?vendor=hcloud&gpu_min=1&gpu_memory_min=1");
-    // Fix header position for screenshot consistency
-    cy.get("header").invoke("css", "position", "static");
+
+    // Prepare header position for a consistent visual regression snapshot
+    E2EEvent.prepareHeaderForScreenshot();
 
     cy.compareSnapshot("servers-hcloud-gpu1-medium");
   });
 
   it("should compare screenshot of design page", () => {
     E2EEvent.visitURL("/design");
-    // Fix header position for screenshot consistency
-    cy.get("header").invoke("css", "position", "static");
+
+    // Prepare header position for a consistent visual regression snapshot
+    E2EEvent.prepareHeaderForScreenshot();
 
     cy.compareSnapshot("design-page-medium");
   });
 
   it("should compare screenshot of server details page", () => {
     E2EEvent.visitURL("/server/gcp/t2d-standard-1");
-    // Fix header position for screenshot consistency
-    cy.get("header").invoke("css", "position", "static");
+
+    // Prepare header position for a consistent visual regression snapshot
+    E2EEvent.prepareHeaderForScreenshot();
+
     // Hide availability section for screenshot consistency
     cy.get("#availability").invoke("css", "display", "none");
+
     // Hide price related sections for screenshot consistency
     cy.get(".price-sections-to-hide-for-test").invoke("css", "display", "none");
+
     // Hide similar servers section for screenshot consistency
     cy.get("#similar_servers").invoke("css", "display", "none");
+
     // Hide comments section for screenshot consistency
-    cy.get(".giscus").invoke("css", "display", "none");
+    E2EEvent.hideCommentsForScreenshot();
 
     cy.compareSnapshot("server-details-gcp-t2d-standard-1-medium");
   });
@@ -75,6 +85,7 @@ describe("Visual regression tests (medium screen - 1024px)", () => {
         }
       });
     });
+
     // Hide the dynamic table header
     cy.document().then((doc) => {
       const style = doc.createElement("style");
@@ -86,10 +97,25 @@ describe("Visual regression tests (medium screen - 1024px)", () => {
         }`;
       doc.head.appendChild(style);
     });
-    // Fix header position for screenshot consistency
-    cy.get("header").invoke("css", "position", "static");
+
+    // Prepare header position for a consistent visual regression snapshot
+    E2EEvent.prepareHeaderForScreenshot();
+
     // Hide price rows for screenshot consistency
     cy.get(".rows-to-hide-for-test").invoke("css", "display", "none");
     cy.compareSnapshot("server-comparison-aws-a1-medium-c6gd-medium-medium");
+  });
+
+  it("should compare screenshot of legal documents page", () => {
+    E2EEvent.visitURL("/legal");
+
+    // Prepare header position for a consistent visual regression snapshot
+    E2EEvent.prepareHeaderForScreenshot();
+
+    // We check that the table body contains at least one row before snapping.
+    cy.get("table.items_table tbody tr").should("have.length.at.least", 1);
+
+    // Capture the visual snapshot
+    cy.compareSnapshot("legal-documents-list-medium");
   });
 });
