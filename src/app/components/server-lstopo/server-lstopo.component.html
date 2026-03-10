@@ -1,6 +1,6 @@
 <div class="flex justify-between items-center mb-4 gap-8">
   <h3 class="text-2xl">CPU and System Topology</h3>
-  @if (inlineSvg && lstopoUrl) {
+  @if (svgImgUrl && lstopoUrl) {
     <button
       class="btn-primary py-2 px-3 flex gap-2 h-[42px]"
       aria-haspopup="dialog"
@@ -13,7 +13,7 @@
   }
 </div>
 
-@if (isLoading && !hasError) {
+@if (isLoading) {
   <div class="flex justify-center items-center py-16">
     <svg
       aria-hidden="true"
@@ -33,19 +33,14 @@
     </svg>
   </div>
 }
-@if (hasError) {
-  <div class="flex flex-col justify-center items-center py-16 gap-4">
-    <lucide-icon
-      name="message-circle-question-mark"
-      class="h-16 w-16 text-emerald-400"
-    ></lucide-icon>
-    <p class="text-emerald-400 text-center">
-      We are sorry but no lstopo image created yet for this server! :-(
-    </p>
+
+@if (svgImgUrl && lstopoUrl) {
+  <div class="lstopo-img-wrapper">
+    <img class="lstopo-img" [src]="svgImgUrl" alt="CPU and System Topology" />
+    @if (tooltipSvg) {
+      <div class="lstopo-tooltip-overlay" [innerHTML]="tooltipSvg"></div>
+    }
   </div>
-}
-@if (inlineSvg && lstopoUrl) {
-  <div class="lstopo-container lstopo-inline-svg" [innerHTML]="inlineSvg"></div>
 
   <div
     #lstopoModal
@@ -53,7 +48,7 @@
     tabindex="-1"
     class="lstopo-modal-wrapper fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full"
   >
-    <div class="relative w-fit max-w-[87.5rem] mx-auto my-auto">
+    <div class="relative w-full max-w-[87.5rem] mx-auto my-auto">
       <div
         class="relative bg-secondary rounded-lg shadow border border-solid border-emerald-400"
       >
@@ -83,13 +78,14 @@
                 d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
               />
             </svg>
+
             <span class="sr-only">Close modal</span>
           </button>
         </div>
         <div class="lstopo-modal-body overflow-auto max-h-[80vh]" appDragToPan>
           <div
             class="lstopo-container lstopo-modal-svg"
-            [innerHTML]="inlineSvg"
+            [innerHTML]="modalSvg"
           ></div>
         </div>
       </div>

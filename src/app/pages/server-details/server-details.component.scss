@@ -61,12 +61,10 @@
   height: unset !important;
 }
 
-:host ::ng-deep #lstopo {
+:host #lstopo {
   height: auto !important;
   min-height: unset !important;
   overflow: hidden;
-  width: fit-content !important;
-  min-width: calc(50% - 1rem) !important;
   max-width: 100% !important;
 }
 
@@ -166,5 +164,9 @@ div.giscus {
   :host ::ng-deep .block_half_taller {
     width: calc(100%);
     margin: auto;
+  }
+
+  :host #lstopo {
+    width: 100% !important;
   }
 }

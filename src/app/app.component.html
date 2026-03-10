@@ -1,10 +1,10 @@
-@if (showHeader) {
-  <header class="sticky">
-    <app-header></app-header>
-  </header>
-}
-<div>
-  <main>
+<div class="app-shell">
+  @if (showHeader) {
+    <header class="sticky">
+      <app-header></app-header>
+    </header>
+  }
+  <main class="app-main">
     <router-outlet></router-outlet>
   </main>
   @if (showFooter) {

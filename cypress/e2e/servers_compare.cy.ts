@@ -12,7 +12,7 @@ describe("Server Compare", () => {
 
     E2EEvent.checkBreadcrumbs();
 
-    E2EEvent.isVisible(`[id="main-table"]`);
+    E2EEvent.isVisibleAndNotEmpty(`[id="main-table"]`);
 
     E2EEvent.countElements(`[id="main-table"]`, `[id^="main-table-th"]`, 2);
 
@@ -31,7 +31,7 @@ describe("Server Compare", () => {
 
     E2EEvent.checkBreadcrumbs();
 
-    E2EEvent.isVisible(`[id="main-table"]`);
+    E2EEvent.isVisibleAndNotEmpty(`[id="main-table"]`);
 
     E2EEvent.countElements(`[id="main-table"]`, `[id^="main-table-th"]`, 2);
 

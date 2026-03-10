@@ -2,21 +2,23 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
+  EventEmitter,
   Input,
   OnChanges,
   OnDestroy,
+  Output,
   ViewChild,
   ViewEncapsulation,
   inject,
   PLATFORM_ID,
 } from "@angular/core";
-import { CommonModule, isPlatformBrowser, DOCUMENT } from "@angular/common";
-import { HttpClient } from "@angular/common/http";
-import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
+import { isPlatformBrowser } from "@angular/common";
+import { DomSanitizer, SafeHtml, SafeUrl } from "@angular/platform-browser";
 import { LucideAngularModule } from "lucide-angular";
 import { Modal, ModalOptions } from "flowbite";
-import { Observable, Subscription, shareReplay, catchError, of } from "rxjs";
+import { Subscription } from "rxjs";
 import { DragToPanDirective } from "../../directives/drag-to-pan.directive";
+import { LstopoSvgService } from "../../services/lstopo-svg.service";
 
 const LSTOPO_CDN_BASE =
   "https://cdn.jsdelivr.net/gh/SpareCores/sc-inspector-data@main/data";
@@ -27,11 +29,9 @@ const lstopoModalOptions: ModalOptions = {
   closable: true,
 };
 
-const svgCache = new Map<string, Observable<string | null>>();
-
 @Component({
   selector: "app-server-lstopo",
-  imports: [CommonModule, LucideAngularModule, DragToPanDirective],
+  imports: [LucideAngularModule, DragToPanDirective],
   templateUrl: "./server-lstopo.component.html",
   styleUrl: "./server-lstopo.component.scss",
   encapsulation: ViewEncapsulation.None,
@@ -39,18 +39,22 @@ const svgCache = new Map<string, Observable<string | null>>();
 export class ServerLstopoComponent implements OnChanges, OnDestroy {
   @Input() vendorId: string = "";
   @Input() apiReference: string = "";
+  @Output() svgExists = new EventEmitter<boolean>();
+  @Output() svgWidth = new EventEmitter<number>();
 
-  private http = inject(HttpClient);
   private sanitizer = inject(DomSanitizer);
   private platformId = inject(PLATFORM_ID);
-  private document = inject<Document>(DOCUMENT);
   private elRef = inject(ElementRef);
   private cdr = inject(ChangeDetectorRef);
+  private svgService = inject(LstopoSvgService);
 
   lstopoUrl: string = "";
-  inlineSvg: SafeHtml | null = null;
+  svgImgUrl: SafeUrl | null = null;
+  tooltipSvg: SafeHtml | null = null;
+  modalSvg: SafeHtml | null = null;
   isLoading: boolean = false;
-  hasError: boolean = false;
+
+  private blobUrl: string | null = null;
 
   @ViewChild("lstopoModal") private lstopoModalRef?: ElementRef<HTMLElement>;
   @ViewChild("lstopoTooltip") private tooltipRef?: ElementRef<HTMLElement>;
@@ -81,49 +85,112 @@ export class ServerLstopoComponent implements OnChanges, OnDestroy {
       this.svgSub = undefined;
       this.removeSvgTooltips();
       this.isLoading = false;
-      this.hasError = false;
-      this.inlineSvg = null;
+      this.svgImgUrl = null;
+      this.tooltipSvg = null;
+      this.modalSvg = null;
+      this.revokeBlobUrl();
       this.lstopoUrl = "";
+      this.svgExists.emit(false);
+      this.svgWidth.emit(0);
       return;
     }
     this.isLoading = true;
-    this.hasError = false;
-    this.inlineSvg = null;
+    this.svgImgUrl = null;
+    this.svgWidth.emit(0);
     this.lstopoUrl = `${LSTOPO_CDN_BASE}/${this.vendorId}/${this.apiReference}/${LSTOPO_PATH_SUFFIX}`;
-
-    if (!svgCache.has(this.lstopoUrl)) {
-      svgCache.set(
-        this.lstopoUrl,
-        this.http.get(this.lstopoUrl, { responseType: "text" }).pipe(
-          catchError(() => of(null)),
-          shareReplay(1),
-        ),
-      );
-    }
 
     const url = this.lstopoUrl;
     this.svgSub?.unsubscribe();
-    this.svgSub = svgCache.get(url)!.subscribe((svg) => {
-      if (!svg) {
-        this.hasError = true;
-      } else {
-        this.inlineSvg = this.sanitizer.bypassSecurityTrustHtml(svg);
-        if (isPlatformBrowser(this.platformId)) {
-          setTimeout(() => {
-            const el = this.lstopoModalRef?.nativeElement;
-            if (el) {
-              if (this.modal) {
-                this.modal.destroyAndRemoveInstance();
-                this.modal = null;
+    this.svgSub = this.svgService.getSvg(url).subscribe({
+      next: (svg) => {
+        try {
+          if (!svg) {
+            this.svgExists.emit(false);
+            this.svgImgUrl = null;
+            this.modalSvg = null;
+            this.tooltipSvg = null;
+            this.svgWidth.emit(0);
+            this.revokeBlobUrl();
+            this.removeSvgTooltips();
+            return;
+          }
+          this.svgExists.emit(true);
+          if (isPlatformBrowser(this.platformId)) {
+            try {
+              const {
+                w,
+                coloredSvg,
+                tooltipSvg: tooltipSvgStr,
+                normalizedSvg,
+              } = this.svgService.processSvg(svg);
+              if (w) setTimeout(() => this.svgWidth.emit(w), 0);
+              this.modalSvg =
+                this.sanitizer.bypassSecurityTrustHtml(normalizedSvg);
+              try {
+                const blob = new Blob([coloredSvg], { type: "image/svg+xml" });
+                this.revokeBlobUrl();
+                this.blobUrl = URL.createObjectURL(blob);
+                this.svgImgUrl = this.sanitizer.bypassSecurityTrustUrl(
+                  this.blobUrl,
+                );
+              } catch (e) {
+                console.warn(
+                  "[lstopo] blob build failed, falling back to CDN URL",
+                  e,
+                );
+                this.svgImgUrl = this.sanitizer.bypassSecurityTrustUrl(
+                  this.lstopoUrl,
+                );
               }
-              this.modal = new Modal(el, lstopoModalOptions);
+              this.tooltipSvg =
+                this.sanitizer.bypassSecurityTrustHtml(tooltipSvgStr);
+            } catch (e) {
+              console.warn("[lstopo] SVG processing failed", e);
+              this.modalSvg = null;
+              this.tooltipSvg = null;
+              this.revokeBlobUrl();
+              this.svgImgUrl = this.sanitizer.bypassSecurityTrustUrl(
+                this.lstopoUrl,
+              );
             }
-            this.addSvgTooltips();
-          }, 0);
+            this.cdr.markForCheck();
+            setTimeout(() => {
+              const el = this.lstopoModalRef?.nativeElement;
+              if (el) {
+                if (this.modal) {
+                  this.modal.destroyAndRemoveInstance();
+                  this.modal = null;
+                }
+                this.modal = new Modal(el, lstopoModalOptions);
+              }
+              this.addSvgTooltips();
+            }, 0);
+          } else {
+            this.modalSvg = this.sanitizer.bypassSecurityTrustHtml(svg);
+            this.tooltipSvg = null;
+          }
+        } finally {
+          this.isLoading = false;
         }
-      }
-      this.isLoading = false;
+      },
+      error: (err) => {
+        console.warn("[lstopo] failed to load SVG", err);
+        this.isLoading = false;
+        this.svgExists.emit(false);
+        this.modalSvg = null;
+        this.tooltipSvg = null;
+        this.svgImgUrl = null;
+        this.revokeBlobUrl();
+        this.cdr.markForCheck();
+      },
     });
+  }
+
+  private revokeBlobUrl(): void {
+    if (this.blobUrl) {
+      URL.revokeObjectURL(this.blobUrl);
+      this.blobUrl = null;
+    }
   }
 
   openLstopoModal(): void {
@@ -172,15 +239,16 @@ export class ServerLstopoComponent implements OnChanges, OnDestroy {
   }
 
   private removeSvgTooltips(): void {
-    this.tooltipListeners.forEach(({ el, type, fn }) =>
-      el.removeEventListener(type, fn),
-    );
+    this.tooltipListeners.forEach(({ el, type, fn }) => {
+      el.removeEventListener(type, fn);
+    });
     this.tooltipListeners = [];
   }
 
   ngOnDestroy(): void {
     this.svgSub?.unsubscribe();
     this.removeSvgTooltips();
+    this.revokeBlobUrl();
     if (isPlatformBrowser(this.platformId) && this.modal) {
       this.modal.destroyAndRemoveInstance();
       this.modal = null;

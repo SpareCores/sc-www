@@ -1,6 +1,10 @@
 import { E2EEvent } from "../support/generics";
 
-describe("Visual regression tests", () => {
+describe("Visual regression tests (medium screen - 1024px)", () => {
+  beforeEach(() => {
+    cy.viewport(1024, 900);
+  });
+
   it("should compare screenshot of the landing page", () => {
     E2EEvent.visitURL("/");
 
@@ -13,7 +17,7 @@ describe("Visual regression tests", () => {
     // Hide resource tracker video for screenshot consistency
     cy.get("#resource-tracker-video").invoke("css", "display", "none");
 
-    cy.compareSnapshot("landing-page");
+    cy.compareSnapshot("landing-page-medium");
   });
 
   it("should compare screenshot of servers list (Hetzner / GPU >=1)", () => {
@@ -22,16 +26,16 @@ describe("Visual regression tests", () => {
     // Prepare header position for a consistent visual regression snapshot
     E2EEvent.prepareHeaderForScreenshot();
 
-    cy.compareSnapshot("servers-hcloud-gpu1");
+    cy.compareSnapshot("servers-hcloud-gpu1-medium");
   });
 
   it("should compare screenshot of design page", () => {
     E2EEvent.visitURL("/design");
-    // Prepare header position for a consistent visual regression snapshot
 
+    // Prepare header position for a consistent visual regression snapshot
     E2EEvent.prepareHeaderForScreenshot();
 
-    cy.compareSnapshot("design-page");
+    cy.compareSnapshot("design-page-medium");
   });
 
   it("should compare screenshot of server details page", () => {
@@ -52,7 +56,7 @@ describe("Visual regression tests", () => {
     // Hide comments section for screenshot consistency
     E2EEvent.hideCommentsForScreenshot();
 
-    cy.compareSnapshot("server-details-gcp-t2d-standard-1");
+    cy.compareSnapshot("server-details-gcp-t2d-standard-1-medium");
   });
 
   it("should compare screenshot of server comparison page", () => {
@@ -99,7 +103,7 @@ describe("Visual regression tests", () => {
 
     // Hide price rows for screenshot consistency
     cy.get(".rows-to-hide-for-test").invoke("css", "display", "none");
-    cy.compareSnapshot("server-comparison-aws-a1-medium-c6gd-medium");
+    cy.compareSnapshot("server-comparison-aws-a1-medium-c6gd-medium-medium");
   });
 
   it("should compare screenshot of legal documents page", () => {
@@ -112,6 +116,6 @@ describe("Visual regression tests", () => {
     cy.get("table.items_table tbody tr").should("have.length.at.least", 1);
 
     // Capture the visual snapshot
-    cy.compareSnapshot("legal-documents-list");
+    cy.compareSnapshot("legal-documents-list-medium");
   });
 });

@@ -18,7 +18,7 @@ describe("Server listing", () => {
     E2EEvent.isVisible(`[id="column_button"]`);
 
     // data table
-    E2EEvent.isVisible(`[id="servers_table"]`);
+    E2EEvent.isVisibleAndNotEmpty(`[id="servers_table"]`);
 
     // count lines
     E2EEvent.countElements(
@@ -40,7 +40,9 @@ describe("Server listing", () => {
     E2EEvent.isVisible(`[id="pagination_prev_arrow"]`);
 
     E2EEvent.hasValue(`filter_range_value_vcpus_min`, "11");
-    E2EEvent.isVisible(`[id="filter_title_benchmark_score_stressng_cpu_min"]`);
+    E2EEvent.isVisibleAndNotEmpty(
+      `[id="filter_title_benchmark_score_stressng_cpu_min"]`,
+    );
 
     E2EEvent.hasValue(`filter_number_benchmark_score_stressng_cpu_min`, "200");
   });

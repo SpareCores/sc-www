@@ -50,6 +50,10 @@ $content-max-width: 1400px;
     max-width: $content-max-width;
     margin: auto;
   }
+
+  .content_gutter {
+    @apply px-2 xl:px-0;
+  }
 }
 
 body {

@@ -2,6 +2,7 @@
 import {
   Component,
   ElementRef,
+  HostListener,
   PLATFORM_ID,
   OnInit,
   ViewChild,
@@ -102,6 +103,9 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   private dropdownManager = inject(DropdownManagerService);
 
   serverDetails!: ExtendedServerDetails;
+  lstopoSvgExists: boolean | null = null;
+  lstopoSvgWidth: number = 0;
+  isSmallScreen = false;
   serverZones: string[] = [];
   serverRegions: string[] = [];
 
@@ -203,8 +207,16 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
   private subscription = new Subscription();
 
+  @HostListener("window:resize")
+  onResize() {
+    if (isPlatformBrowser(this.platformId)) {
+      this.isSmallScreen = window.innerWidth <= 1178;
+    }
+  }
+
   ngOnInit() {
     this.isLoading = true;
+    this.onResize();
     const countryIdtoNamePipe = new CountryIdtoNamePipe();
     this.subscription.add(
       this.route.params.subscribe((params) => {
