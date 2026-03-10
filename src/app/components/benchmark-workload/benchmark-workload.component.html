@@ -50,14 +50,14 @@
     @if (benchmark().higher_is_better !== false) {
       <lucide-icon
         name="circle-arrow-up"
-        class="h-4 w-4 text-gray-200"
+        class="h-4 w-4 text-gray-200 cursor-help"
         (mouseenter)="showTooltip($event, 'Higher is better.')"
         (mouseleave)="hideTooltip()"
       ></lucide-icon>
     } @else {
       <lucide-icon
         name="circle-arrow-down"
-        class="h-4 w-4 text-gray-200"
+        class="h-4 w-4 text-gray-200 cursor-help"
         (mouseenter)="showTooltip($event, 'Lower is better.')"
         (mouseleave)="hideTooltip()"
       ></lucide-icon>
@@ -154,9 +154,7 @@
       <h4 class="text-white text-sm font-semibold uppercase tracking-wide">
         Configuration Options
       </h4>
-      <div
-        class="overflow-x-auto rounded-lg border border-solid border-emerald-400/30"
-      >
+      <div class="overflow-x-auto">
         <table class="config_table w-full text-white text-sm">
           <thead>
             <tr>
