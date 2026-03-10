@@ -7,6 +7,7 @@ import {
   BreadcrumbSegment,
   BreadcrumbsComponent,
 } from "../../components/breadcrumbs/breadcrumbs.component";
+import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
 import * as yaml from "js-yaml";
 import { TimeToShortDatePipe } from "../../pipes/time-to-short-date.pipe";
 import {
@@ -45,6 +46,7 @@ type LegalArticleLoadResult =
     RouterModule,
     MarkdownModule,
     TimeToShortDatePipe,
+    LoadingSpinnerComponent,
   ],
   templateUrl: "./tos.component.html",
   styleUrl: "./tos.component.scss",
@@ -64,7 +66,7 @@ export class TOSComponent implements OnInit {
   article: LegalArticleViewModel | null = null;
   articleNotFound = false;
   articleError: unknown | null = null;
-  isLoading = false;
+  isLoading = true;
 
   ngOnInit() {
     this.route.paramMap
