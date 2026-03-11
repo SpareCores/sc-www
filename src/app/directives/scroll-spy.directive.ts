@@ -24,28 +24,33 @@ export class ScrollSpyDirective implements OnDestroy {
   private scrollPositionMap = new Map<string, number>();
 
   constructor() {
-    if (isPlatformBrowser(this.platformId)) {
-      this.setupObserver();
-    }
-
     effect(() => {
-      const ids = this.appScrollSpy() || [];
-      if (this.observer && isPlatformBrowser(this.platformId)) {
-        this.observer.disconnect();
-
-        setTimeout(() => {
-          ids.forEach((id) => {
-            const element = document.getElementById(id);
-            if (element) {
-              this.observer?.observe(element);
-            }
-          });
-        });
+      if (!isPlatformBrowser(this.platformId)) {
+        return;
       }
+
+      const ids = this.appScrollSpy() || [];
+      const margin = this.rootMargin();
+      const thresh = this.threshold();
+
+      if (this.observer) {
+        this.observer.disconnect();
+      }
+
+      this.setupObserver(margin, thresh);
+
+      setTimeout(() => {
+        ids.forEach((id) => {
+          const element = document.getElementById(id);
+          if (element) {
+            this.observer?.observe(element);
+          }
+        });
+      });
     });
   }
 
-  private setupObserver() {
+  private setupObserver(rootMargin: string, threshold: number[]) {
     this.observer = new IntersectionObserver(
       (entries) => {
         let activeId = "";
@@ -74,8 +79,8 @@ export class ScrollSpyDirective implements OnDestroy {
         }
       },
       {
-        rootMargin: this.rootMargin(),
-        threshold: this.threshold(),
+        rootMargin,
+        threshold,
       },
     );
   }
