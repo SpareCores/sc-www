@@ -9,15 +9,20 @@ describe("Server Details", () => {
     E2EEvent.isVisibleAndNotEmpty(`[id="server_base_info_box"]`);
 
     E2EEvent.isVisibleAndNotEmpty(`[id="details"]`);
+    E2EEvent.isVisibleAndNotEmpty(`[id="processor"]`);
+    E2EEvent.isVisibleAndNotEmpty(`[id="system_resources"]`);
 
     E2EEvent.isVisibleAndNotEmpty(`[id="availability"]`);
     E2EEvent.isVisibleAndNotEmpty(`.availability_line`);
 
-    E2EEvent.isVisible(`[id="details_more_button"]`);
+    E2EEvent.isNotFound(`[id="details_more_button"]`);
+    E2EEvent.isVisible(`[id="processor_more_button"]`);
+    E2EEvent.isVisible(`[id="system_resources_more_button"]`);
 
     E2EEvent.isVisible(`[id="availability_more_button"]`);
 
-    E2EEvent.isNotVisible(`[id="details_less_button"]`);
+    E2EEvent.isNotFound(`[id="details_less_button"]`);
+    E2EEvent.isNotFound(`[id="availability_less"]`);
 
     E2EEvent.isVisibleAndNotEmpty(`[id="price_chart"]`);
 
@@ -44,23 +49,27 @@ describe("Server Details", () => {
     E2EEvent.isVisibleAndNotEmpty(`[id="server_base_info_box"]`);
 
     E2EEvent.isVisibleAndNotEmpty(`[id="details"]`);
+    E2EEvent.isVisibleAndNotEmpty(`[id="processor"]`);
+    E2EEvent.isVisibleAndNotEmpty(`[id="system_resources"]`);
 
     E2EEvent.isVisibleAndNotEmpty(`[id="availability"]`);
     E2EEvent.isNotFound(`.availability_line`);
 
-    E2EEvent.isVisible(`[id="details_more_button"]`);
+    E2EEvent.isNotFound(`[id="details_more_button"]`);
+    E2EEvent.isVisible(`[id="processor_more_button"]`);
+    E2EEvent.isVisible(`[id="system_resources_more_button"]`);
 
-    E2EEvent.isNotFound(`availability_more_button`);
+    E2EEvent.isNotFound(`[id="availability_more_button"]`);
 
     E2EEvent.isVisibleAndNotEmpty(`[id="price_chart"]`);
 
-    E2EEvent.isNotFound(`bw_mem_chart`);
+    E2EEvent.isNotFound(`[id="bw_mem_chart"]`);
 
-    E2EEvent.isNotFound(`ssl_chart`);
+    E2EEvent.isNotFound(`[id="ssl_chart"]`);
 
-    E2EEvent.isNotFound(`static_web_chart`);
+    E2EEvent.isNotFound(`[id="static_web_chart"]`);
 
-    E2EEvent.isNotFound(`redis_chart`);
+    E2EEvent.isNotFound(`[id="redis_chart"]`);
 
     E2EEvent.isVisibleAndNotEmpty(`.similar_family_table`);
 
