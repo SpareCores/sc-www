@@ -1,5 +1,6 @@
 import {
   Component,
+  ElementRef,
   PLATFORM_ID,
   inject,
   input,
@@ -18,6 +19,7 @@ import { BenchmarkFamily } from "../../pages/benchmark-workloads/benchmark-workl
 })
 export class BenchmarkWorkloadsSidebarComponent {
   private platformId = inject(PLATFORM_ID);
+  private hostEl = inject<ElementRef<HTMLElement>>(ElementRef);
 
   benchmarkFamilies = input.required<BenchmarkFamily[]>();
   isCollapsed = input.required<boolean>();
@@ -76,14 +78,13 @@ export class BenchmarkWorkloadsSidebarComponent {
     }
 
     const rect = target.getBoundingClientRect();
-    const win = document.defaultView;
-    const scrollY = win?.scrollY ?? document.documentElement.scrollTop;
+    const hostRect = this.hostEl.nativeElement.getBoundingClientRect();
 
     this.tooltipState.set({
       content,
       visible: true,
-      left: rect.right + 8,
-      top: rect.top - 8 + scrollY,
+      left: rect.right - hostRect.left + 6,
+      top: rect.top - hostRect.top - 10,
     });
   }
 
