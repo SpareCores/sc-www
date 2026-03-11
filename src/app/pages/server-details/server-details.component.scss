@@ -79,8 +79,9 @@
   @apply w-full text-white;
 
   thead {
+    height: 45px;
     th {
-      @apply bg-secondary border-b border-gray-200 border-solid text-left px-5 py-3 font-normal;
+      @apply bg-secondary border-b border-gray-200 border-solid text-left px-5 py-3 leading-5 font-normal;
     }
   }
 
@@ -105,7 +106,7 @@
 
   thead {
     th {
-      @apply bg-secondary border-b border-gray-200 border-solid text-left px-5 py-3 font-normal;
+      @apply bg-secondary border-b border-gray-200 border-solid text-left px-5 py-3 text-sm leading-5 font-normal;
     }
   }
 
@@ -137,7 +138,6 @@ div.giscus {
   transform: translateX(100%);
   transition: transform 0.5s ease-out;
   display: none;
-  /* other styles... */
 }
 
 #toast-danger.show {

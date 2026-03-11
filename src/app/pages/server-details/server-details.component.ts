@@ -45,6 +45,12 @@ import { AnalyticsService } from "../../services/analytics.service";
 import { DropdownManagerService } from "../../services/dropdown-manager.service";
 import { ServerChartsComponent } from "../../components/server-charts/server-charts.component";
 import { ServerLstopoComponent } from "../../components/server-lstopo/server-lstopo.component";
+import {
+  ServerPropertyCardComponent,
+  ServerPropertyRow,
+  ServerPropertySection,
+  ServerPropertyTooltip,
+} from "../../components/server-property-card/server-property-card.component";
 import { Modal, ModalOptions } from "flowbite";
 import { EmbedDebugComponent } from "../embed-debug/embed-debug.component";
 import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
@@ -71,6 +77,11 @@ export interface ExtendedServerDetails extends ServerPKs {
   additionalSpotPrices?: ExtendedServerPrice[];
 }
 
+interface PropertyCategoryDefinition {
+  name: string;
+  category: string;
+}
+
 @Component({
   selector: "app-server-details",
   imports: [
@@ -84,6 +95,7 @@ export interface ExtendedServerDetails extends ServerPKs {
     GpuCountPipe,
     ServerChartsComponent,
     ServerLstopoComponent,
+    ServerPropertyCardComponent,
     EmbedDebugComponent,
     LoadingSpinnerComponent,
   ],
@@ -150,14 +162,24 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   ];
   selectedSimilarOption: any = this.similarOptions[0];
 
-  instancePropertyCategories: any[] = [
-    { name: "General", category: "meta", properties: [] },
-    { name: "CPU", category: "cpu", properties: [] },
-    { name: "Memory", category: "memory", properties: [] },
-    { name: "GPU", category: "gpu", properties: [] },
-    { name: "Storage", category: "storage", properties: [] },
-    { name: "Network", category: "network", properties: [] },
+  propertyCategoryDefinitions: PropertyCategoryDefinition[] = [
+    { name: "General", category: "meta" },
+    { name: "CPU", category: "cpu" },
+    { name: "Memory", category: "memory" },
+    { name: "GPU", category: "gpu" },
+    { name: "Storage", category: "storage" },
+    { name: "Network", category: "network" },
   ];
+
+  metadataSections: ServerPropertySection[] = [];
+  processorSections: ServerPropertySection[] = [];
+  resourceSections: ServerPropertySection[] = [];
+  expandedCards: Record<string, boolean> = {
+    details: false,
+    processor: false,
+    system_resources: false,
+    availability: false,
+  };
 
   barChartOptions: ChartConfiguration<"bar">["options"] = barChartOptions;
   barChartType = "bar" as const;
@@ -175,8 +197,6 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
   instanceProperties: any[] = [];
   benchmarkMeta!: Benchmark[];
-
-  tooltipContent = "";
 
   geekScoreSingle: string = "0";
   geekScoreMulti: string = "0";
@@ -198,14 +218,14 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     { id: "redis", name: "Redis" },
   ];
 
-  @ViewChild("tooltipDefault") tooltip!: ElementRef;
-  @ViewChild("tooltipGeekbench") tooltipGB!: ElementRef;
   @ViewChild("giscusParent") giscusParent!: ElementRef;
 
   isLoading = false;
   isModalOpen = false;
 
   private subscription = new Subscription();
+  private giscusInterval: ReturnType<typeof setInterval> | null = null;
+  private visibilityChangeHandler: (() => void) | null = null;
 
   @HostListener("window:resize")
   onResize() {
@@ -252,7 +272,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
             this.instanceProperties = serverMeta?.fields || [];
 
-            this.benchmarkMeta = benchmarkMeta || {};
+            this.benchmarkMeta = benchmarkMeta || [];
 
             this.similarByFamily = similarByFamily;
             this.similarBySpecs = similarBySpecs;
@@ -304,6 +324,10 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
               // list all regions where the server is available
               this.serverDetails.prices?.forEach(
                 (price: ExtendedServerPrice) => {
+                  if (!price.zone || !price.region) {
+                    return;
+                  }
+
                   this.serverZones.push(price.zone.display_name);
                   if (!this.serverRegions.includes(price.region.display_name)) {
                     this.serverRegions.push(price.region.display_name);
@@ -351,19 +375,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
                 });
               }
 
-              this.instancePropertyCategories.forEach((c) => {
-                c.properties = [];
-              });
-
-              this.instanceProperties.forEach((p: any) => {
-                const group = this.instancePropertyCategories.find(
-                  (g) => g.category === p.category,
-                );
-                const value = this.getProperty(p);
-                if (group && value) {
-                  group.properties.push(p);
-                }
-              });
+              this.buildPropertyCardSections();
 
               this.benchmarksByCategory = [];
               this.serverDetails.benchmark_scores?.forEach((b: any) => {
@@ -393,6 +405,10 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
               this.serverDetails.prices?.sort((a, b) => a.price - b.price);
               this.serverDetails.prices?.forEach(
                 (price: ExtendedServerPrice) => {
+                  if (!price.region) {
+                    return;
+                  }
+
                   const region = this.regionFilters.find(
                     (z) =>
                       z.vendor_id === price.vendor_id &&
@@ -568,7 +584,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
                   }
 
                   if (showDetails) {
-                    this.openBox("details", false);
+                    this.toggleCard("details", false);
                   }
 
                   if (similarCategory) {
@@ -588,7 +604,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
                 // https://github.com/chartjs/Chart.js/issues/5387
                 // TODO: check and remove later
-                document.addEventListener("visibilitychange", (event) => {
+                this.visibilityChangeHandler = () => {
                   if (document.visibilityState === "visible") {
                     // keep a instance for the chart
                     const allCharts = Object.values(Chart.instances);
@@ -596,11 +612,15 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
                       chart.update();
                     });
                   }
-                });
+                };
+                document.addEventListener(
+                  "visibilitychange",
+                  this.visibilityChangeHandler,
+                );
 
-                let giscusInterval = setInterval(() => {
+                this.giscusInterval = setInterval(() => {
                   if (this.giscusParent?.nativeElement) {
-                    let baseUrl = this.SEOHandler.getBaseURL();
+                    const baseUrl = this.SEOHandler.getBaseURL();
                     initGiscus(
                       this.renderer,
                       this.giscusParent,
@@ -609,7 +629,10 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
                       "DIC_kwDOLesFQM4CgznN",
                       "pathname",
                     );
-                    clearInterval(giscusInterval);
+                    if (this.giscusInterval) {
+                      clearInterval(this.giscusInterval);
+                      this.giscusInterval = null;
+                    }
                   }
                 }, 250);
 
@@ -673,6 +696,19 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    if (this.visibilityChangeHandler) {
+      document.removeEventListener(
+        "visibilitychange",
+        this.visibilityChangeHandler,
+      );
+      this.visibilityChangeHandler = null;
+    }
+
+    if (this.giscusInterval) {
+      clearInterval(this.giscusInterval);
+      this.giscusInterval = null;
+    }
+
     this.SEOHandler.cleanupStructuredData(this.document);
     this.subscription.unsubscribe();
   }
@@ -701,22 +737,11 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
       ${server.display_name}${appendVendor ? " (" + server.vendor_id + ")" : ""}</a>`;
   }
 
-  openBox(boxId: string, updateURL: boolean = true) {
-    const el = document.getElementById(boxId);
-    if (el) {
-      el.classList.toggle("open");
-    }
-    const el2 = document.getElementById(boxId + "_more");
-    if (el2) {
-      el2.classList.toggle("hidden");
-    }
-    const el3 = document.getElementById(boxId + "_less");
-    if (el3) {
-      el3.classList.toggle("hidden");
-    }
+  toggleCard(cardId: string, updateURL: boolean = true) {
+    this.expandedCards[cardId] = !this.expandedCards[cardId];
 
-    if (updateURL) {
-      if (el?.classList.contains("open")) {
+    if (updateURL && cardId === "details") {
+      if (this.expandedCards[cardId]) {
         this.location.go(
           `server/${this.serverDetails.vendor_id}/${this.serverDetails.api_reference}`,
           "showDetails=true",
@@ -1000,26 +1025,6 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     }
   }
 
-  showTooltip(el: any, content: string | undefined) {
-    if (content) {
-      const tooltip = this.tooltip.nativeElement;
-      const scrollPosition =
-        window.pageYOffset || document.documentElement.scrollTop;
-      tooltip.style.left = `${el.target.getBoundingClientRect().right + 5}px`;
-      tooltip.style.top = `${el.target.getBoundingClientRect().top - 45 + scrollPosition}px`;
-      tooltip.style.display = "block";
-      tooltip.style.opacity = "1";
-
-      this.tooltipContent = content;
-    }
-  }
-
-  hideTooltip() {
-    const tooltip = this.tooltip.nativeElement;
-    tooltip.style.display = "none";
-    tooltip.style.opacity = "0";
-  }
-
   getProperty(column: any) {
     const name = column.id;
     const prop = (this.serverDetails as any)[name];
@@ -1127,6 +1132,152 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     return this.serverCompare.isSelected(this.serverDetails)
       ? "Don't Compare"
       : "Compare";
+  }
+
+  private buildPropertyCardSections() {
+    const categorizedSections = this.propertyCategoryDefinitions.map(
+      (definition) => ({
+        name: definition.name,
+        category: definition.category,
+        properties: [] as ServerPropertyRow[],
+      }),
+    );
+
+    this.instanceProperties.forEach((property: any) => {
+      const group = categorizedSections.find(
+        (category) => category.category === property.category,
+      );
+      const value = this.getProperty(property);
+      if (!group || !value) {
+        return;
+      }
+
+      group.properties.push({
+        id: property.id,
+        name: property.name,
+        value,
+        tooltips: property.description
+          ? [
+              {
+                key: property.id,
+                content: property.description,
+              },
+            ]
+          : [],
+      });
+    });
+
+    const metadataProperties =
+      categorizedSections.find((category) => category.category === "meta")
+        ?.properties || [];
+    const cpuProperties =
+      categorizedSections.find((category) => category.category === "cpu")
+        ?.properties || [];
+
+    this.metadataSections = [
+      {
+        name: "Server Metadata",
+        properties: this.dedupeMetadataProperties(metadataProperties),
+      },
+    ];
+    this.processorSections = [
+      {
+        name: "CPU",
+        properties: cpuProperties,
+      },
+    ];
+    this.resourceSections = categorizedSections
+      .filter((category) =>
+        ["memory", "gpu", "storage", "network"].includes(category.category),
+      )
+      .map((category) => ({
+        name: category.name,
+        properties: category.properties,
+      }))
+      .filter((category) => category.properties.length > 0);
+  }
+
+  private dedupeMetadataProperties(
+    properties: ServerPropertyRow[],
+  ): ServerPropertyRow[] {
+    const nameProperty = properties.find((property) => property.id === "name");
+    if (!nameProperty) {
+      return properties;
+    }
+
+    const hiddenMetadataIds = new Set([
+      "server_id",
+      "api_reference",
+      "display_name",
+    ]);
+    const identityPropertyIds = [
+      "server_id",
+      "name",
+      "api_reference",
+      "display_name",
+    ];
+    const matchingIdentityProperties = properties.filter(
+      (property) =>
+        property.id !== "name" &&
+        identityPropertyIds.includes(property.id) &&
+        this.normalizeComparableValue(property.value) ===
+          this.normalizeComparableValue(nameProperty.value),
+    );
+    const shouldAggregateIdentityTooltips =
+      matchingIdentityProperties.length > 0;
+    const nameTooltips = shouldAggregateIdentityTooltips
+      ? this.uniqueTooltips(
+          properties
+            .filter((property) => identityPropertyIds.includes(property.id))
+            .flatMap((property) => property.tooltips || []),
+        )
+      : nameProperty.tooltips || [];
+
+    const filteredProperties = properties.filter((property) => {
+      if (!hiddenMetadataIds.has(property.id)) {
+        return true;
+      }
+
+      if (
+        this.normalizeComparableValue(property.value) !==
+        this.normalizeComparableValue(nameProperty.value)
+      ) {
+        return true;
+      }
+
+      return false;
+    });
+
+    return filteredProperties.map((property) => {
+      if (property.id !== "name") {
+        return property;
+      }
+
+      return {
+        ...property,
+        tooltips: nameTooltips,
+      };
+    });
+  }
+
+  private uniqueTooltips(tooltips: ServerPropertyTooltip[]) {
+    const seen = new Set<string>();
+
+    return tooltips.filter((tooltip) => {
+      if (seen.has(tooltip.key)) {
+        return false;
+      }
+
+      seen.add(tooltip.key);
+      return true;
+    });
+  }
+
+  private normalizeComparableValue(value: string) {
+    return value
+      .replace(/<[^>]*>/g, "")
+      .trim()
+      .toLowerCase();
   }
 
   generateSchemaJSON() {
