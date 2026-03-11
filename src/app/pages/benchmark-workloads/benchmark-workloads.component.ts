@@ -21,6 +21,7 @@ import { BenchmarkWorkloadMockData } from "../../mocks/benchmark-workload.mock.i
 import { getMockData } from "../../mocks/benchmark-workload.mock-data";
 import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
 import { ScrollSpyDirective } from "../../directives/scroll-spy.directive";
+import { BenchmarkWorkloadsSidebarComponent } from "../../components/benchmark-workloads-sidebar/benchmark-workloads-sidebar.component";
 
 export interface BenchmarkWithMock extends Benchmark {
   mockData?: BenchmarkWorkloadMockData;
@@ -39,6 +40,7 @@ export interface BenchmarkFamily {
     BenchmarkWorkloadComponent,
     LoadingSpinnerComponent,
     ScrollSpyDirective,
+    BenchmarkWorkloadsSidebarComponent,
   ],
   templateUrl: "./benchmark-workloads.component.html",
   styleUrl: "./benchmark-workloads.component.scss",
@@ -72,13 +74,6 @@ export class BenchmarkWorkloadsComponent implements OnInit, OnDestroy {
   readonly activeBenchmarkId = signal<string>("");
   readonly expandedFamily = signal<string | null>(null);
   readonly autoCollapseAfterSelection = signal(false);
-
-  readonly tooltipState = signal({
-    content: "",
-    visible: false,
-    top: 0,
-    left: 0,
-  });
 
   readonly activeFamily = computed(() => {
     const family = this.getFamilyByBenchmarkId(this.activeBenchmarkId());
@@ -260,33 +255,6 @@ export class BenchmarkWorkloadsComponent implements OnInit, OnDestroy {
     }
   }
 
-  showSidebarTooltip(event: MouseEvent | FocusEvent, content: string): void {
-    if (!this.isCollapsed() || !isPlatformBrowser(this.platformId)) {
-      return;
-    }
-
-    const target = event.currentTarget as HTMLElement | null;
-
-    if (!target) {
-      return;
-    }
-
-    const rect = target.getBoundingClientRect();
-    const win = this.document.defaultView;
-    const scrollY = win?.scrollY ?? this.document.documentElement.scrollTop;
-
-    this.tooltipState.set({
-      content,
-      visible: true,
-      left: rect.right + 8,
-      top: rect.top - 8 + scrollY,
-    });
-  }
-
-  hideSidebarTooltip(): void {
-    this.tooltipState.update((state) => ({ ...state, visible: false }));
-  }
-
   private clearPendingScrollTarget(): void {
     if (this.pendingScrollTimeout !== null) {
       clearTimeout(this.pendingScrollTimeout);
@@ -304,7 +272,6 @@ export class BenchmarkWorkloadsComponent implements OnInit, OnDestroy {
 
   handleFamilyClick(framework: string): void {
     if (this.isCollapsed()) {
-      this.hideSidebarTooltip();
       this.expandedFamily.set(framework);
       this.autoCollapseAfterSelection.set(true);
       this.setCollapsedStatePreservingViewport(
@@ -318,24 +285,8 @@ export class BenchmarkWorkloadsComponent implements OnInit, OnDestroy {
     this.toggleFamily(framework);
   }
 
-  isFamilyExpanded(framework: string): boolean {
-    return this.expandedFamily() === framework;
-  }
-
-  isFamilyHighlighted(framework: string): boolean {
-    if (this.isCollapsed()) {
-      return this.activeFamily() === framework;
-    }
-
-    return (
-      this.expandedFamily() === framework || this.activeFamily() === framework
-    );
-  }
-
   toggleCollapse(): void {
     const willCollapse = !this.isCollapsed();
-
-    this.hideSidebarTooltip();
 
     if (willCollapse) {
       this.autoCollapseAfterSelection.set(false);

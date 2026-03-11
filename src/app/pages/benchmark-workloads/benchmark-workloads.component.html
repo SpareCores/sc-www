@@ -36,97 +36,16 @@
       [class.layout_static]="disableLayoutTransitions()"
     >
       <!-- Sticky TOC sidebar -->
-      <div class="filter_bar bg-primary" [class.collapsed]="isCollapsed()">
-        <div class="toc_shell">
-          <div class="top overflow-hidden bg-secondary">
-            <div class="top_label" [class.top_label_hidden]="isCollapsed()">
-              Benchmarks
-            </div>
-            <button
-              type="button"
-              class="sidebar_toggle"
-              (click)="toggleCollapse()"
-              [attr.aria-expanded]="!isCollapsed()"
-              [attr.aria-label]="
-                isCollapsed()
-                  ? 'Expand benchmark sidebar'
-                  : 'Collapse benchmark sidebar'
-              "
-            >
-              <lucide-icon
-                [name]="isCollapsed() ? 'chevron-right' : 'chevron-left'"
-                class="h-5 w-5 text-emerald-400"
-              ></lucide-icon>
-            </button>
-          </div>
-
-          <div class="toc_panel_body overflow-hidden bg-secondary">
-            <!-- TOC navigation -->
-            <nav
-              class="toc_nav px-2 pb-3 overflow-y-auto"
-              [class.toc_nav_mini]="isCollapsed()"
-              aria-label="Benchmark workloads table of contents"
-            >
-              @for (family of benchmarkFamilies(); track family.framework) {
-                <div
-                  class="sidebar_family_row mx-2 p-3 border-b border-gray-200"
-                  [class.sidebar_family_row_mini]="isCollapsed()"
-                >
-                  <!-- Family accordion header -->
-                  <button
-                    class="toc_family_btn w-full"
-                    [class.active]="isFamilyHighlighted(family.framework)"
-                    [class.toc_family_btn_mini]="isCollapsed()"
-                    (click)="handleFamilyClick(family.framework)"
-                    (mouseenter)="showSidebarTooltip($event, family.framework)"
-                    (mouseleave)="hideSidebarTooltip()"
-                    (focus)="showSidebarTooltip($event, family.framework)"
-                    (blur)="hideSidebarTooltip()"
-                  >
-                    <span
-                      class="toc_family_info"
-                      [class.toc_family_info_mini]="isCollapsed()"
-                    >
-                      <lucide-icon name="gauge" class="h-4 w-4"></lucide-icon>
-                      <span
-                        class="toc_family_name"
-                        [class.toc_family_name_hidden]="isCollapsed()"
-                        >{{ family.framework }}</span
-                      >
-                    </span>
-                    <lucide-icon
-                      [name]="
-                        isFamilyExpanded(family.framework)
-                          ? 'chevron-down'
-                          : 'chevron-right'
-                      "
-                      class="toc_family_chevron h-4 w-4 shrink-0"
-                      [class.toc_family_chevron_hidden]="isCollapsed()"
-                    ></lucide-icon>
-                  </button>
-
-                  <!-- Family sub-items -->
-                  @if (!isCollapsed() && isFamilyExpanded(family.framework)) {
-                    <div class="toc_family_items mb-3 flex flex-col gap-0.5">
-                      @for (bm of family.benchmarks; track bm.benchmark_id) {
-                        <button
-                          class="toc_item w-full text-left px-2 py-1.5 rounded text-xs transition-colors"
-                          [class.active]="
-                            activeBenchmarkId() === bm.benchmark_id
-                          "
-                          (click)="scrollTo(bm.benchmark_id)"
-                        >
-                          {{ bm.name }}
-                        </button>
-                      }
-                    </div>
-                  }
-                </div>
-              }
-            </nav>
-          </div>
-        </div>
-      </div>
+      <app-benchmark-workloads-sidebar
+        [benchmarkFamilies]="benchmarkFamilies()"
+        [isCollapsed]="isCollapsed()"
+        [activeBenchmarkId]="activeBenchmarkId()"
+        [expandedFamily]="expandedFamily()"
+        [activeFamily]="activeFamily()"
+        (toggleCollapseEvent)="toggleCollapse()"
+        (familyClick)="handleFamilyClick($event)"
+        (benchmarkClick)="scrollTo($event)"
+      ></app-benchmark-workloads-sidebar>
 
       <!-- Main scrollable content column -->
       <div
@@ -172,14 +91,4 @@
       </div>
     </div>
   }
-</div>
-
-<div
-  class="z-50 max-w-48 px-2 py-1 text-xs font-medium text-white bg-secondary border border-solid border-emerald-400 rounded-lg pointer-events-none absolute"
-  [style.display]="tooltipState().visible ? 'block' : 'none'"
-  [style.opacity]="tooltipState().visible ? '1' : '0'"
-  [style.left.px]="tooltipState().left"
-  [style.top.px]="tooltipState().top"
->
-  {{ tooltipState().content }}
 </div>
