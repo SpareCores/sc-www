@@ -642,7 +642,6 @@ export namespace ServerPrices {
         | "Blackwell"
         | "Gaudi"
         | "Hopper"
-        | "Maxwell"
         | "Radeon Pro Navi"
         | "Turing"
         | "Volta";
@@ -663,7 +662,6 @@ export namespace ServerPrices {
         | "L20"
         | "L4"
         | "L40S"
-        | "M60"
         | "P100"
         | "P4"
         | "RTX 5000"
