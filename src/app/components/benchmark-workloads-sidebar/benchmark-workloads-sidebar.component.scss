@@ -97,10 +97,9 @@
 
 .toc_nav {
   max-height: calc(100vh - 10.5rem);
-  // hide scrollbar while keeping scroll functionality
-  scrollbar-width: none; // Firefox
+  scrollbar-width: none;
   &::-webkit-scrollbar {
-    display: none; // Chrome / Safari / Edge
+    display: none;
   }
 }
 
@@ -192,7 +191,7 @@
 
 .toc_item {
   display: block;
-  color: #9ca3af; // gray-400
+  color: #9ca3af;
   font-size: 0.875rem;
   line-height: 1.25rem;
 

@@ -2,6 +2,7 @@ import {
   Component,
   ElementRef,
   PLATFORM_ID,
+  computed,
   inject,
   input,
   output,
@@ -38,6 +39,30 @@ export class BenchmarkWorkloadsSidebarComponent {
     left: 0,
   });
 
+  familiesWithState = computed(() => {
+    const isCollapsed = this.isCollapsed();
+    const expandedFam = this.expandedFamily();
+    const activeFam = this.activeFamily();
+
+    return this.benchmarkFamilies().map((family) => {
+      const framework = family.framework;
+      const isExpanded = expandedFam === framework;
+
+      let isHighlighted = false;
+      if (isCollapsed) {
+        isHighlighted = activeFam === framework;
+      } else {
+        isHighlighted = isExpanded || activeFam === framework;
+      }
+
+      return {
+        ...family,
+        isExpanded,
+        isHighlighted,
+      };
+    });
+  });
+
   handleFamilyClick(framework: string): void {
     if (this.isCollapsed()) {
       this.hideSidebarTooltip();
@@ -52,19 +77,6 @@ export class BenchmarkWorkloadsSidebarComponent {
 
   scrollTo(id: string): void {
     this.benchmarkClick.emit(id);
-  }
-
-  isFamilyExpanded(framework: string): boolean {
-    return this.expandedFamily() === framework;
-  }
-
-  isFamilyHighlighted(framework: string): boolean {
-    if (this.isCollapsed()) {
-      return this.activeFamily() === framework;
-    }
-    return (
-      this.expandedFamily() === framework || this.activeFamily() === framework
-    );
   }
 
   showSidebarTooltip(event: MouseEvent | FocusEvent, content: string): void {

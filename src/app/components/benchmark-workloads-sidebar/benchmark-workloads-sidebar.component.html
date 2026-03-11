@@ -30,7 +30,7 @@
         [class.toc_nav_mini]="isCollapsed()"
         aria-label="Benchmark workloads table of contents"
       >
-        @for (family of benchmarkFamilies(); track family.framework) {
+        @for (family of familiesWithState(); track family.framework) {
           <div
             class="sidebar_family_row mx-2 p-3 border-b border-gray-200"
             [class.sidebar_family_row_mini]="isCollapsed()"
@@ -38,7 +38,7 @@
             <!-- Family accordion header -->
             <button
               class="toc_family_btn w-full"
-              [class.active]="isFamilyHighlighted(family.framework)"
+              [class.active]="family.isHighlighted"
               [class.toc_family_btn_mini]="isCollapsed()"
               (click)="handleFamilyClick(family.framework)"
               (mouseenter)="showSidebarTooltip($event, family.framework)"
@@ -58,18 +58,14 @@
                 >
               </span>
               <lucide-icon
-                [name]="
-                  isFamilyExpanded(family.framework)
-                    ? 'chevron-down'
-                    : 'chevron-right'
-                "
+                [name]="family.isExpanded ? 'chevron-down' : 'chevron-right'"
                 class="toc_family_chevron h-4 w-4 shrink-0"
                 [class.toc_family_chevron_hidden]="isCollapsed()"
               ></lucide-icon>
             </button>
 
             <!-- Family sub-items -->
-            @if (!isCollapsed() && isFamilyExpanded(family.framework)) {
+            @if (!isCollapsed() && family.isExpanded) {
               <div class="toc_family_items mb-3 flex flex-col gap-0.5">
                 @for (bm of family.benchmarks; track bm.benchmark_id) {
                   <button
