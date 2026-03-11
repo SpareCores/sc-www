@@ -1,13 +1,14 @@
 import {
   Component,
-  OnDestroy,
   OnInit,
   PLATFORM_ID,
   computed,
   inject,
   signal,
+  resource,
+  DestroyRef,
 } from "@angular/core";
-import { isPlatformBrowser, DOCUMENT } from "@angular/common";
+import { DOCUMENT, isPlatformBrowser } from "@angular/common";
 import {
   BreadcrumbsComponent,
   BreadcrumbSegment,
@@ -45,16 +46,17 @@ export interface BenchmarkFamily {
   templateUrl: "./benchmark-workloads.component.html",
   styleUrl: "./benchmark-workloads.component.scss",
 })
-export class BenchmarkWorkloadsComponent implements OnInit, OnDestroy {
+export class BenchmarkWorkloadsComponent implements OnInit {
   private static readonly SCROLL_OFFSET = 104;
   private static readonly SCROLL_LOCK_TIMEOUT_MS = 1500;
   private static readonly SIDEBAR_TRANSITION_MS = 300;
   private static readonly DEFAULT_FAMILY_INDEX = 0;
 
-  private platformId = inject(PLATFORM_ID);
   private document = inject(DOCUMENT);
   private keeperAPI = inject(KeeperAPIService);
   private seoHandler = inject(SeoHandlerService);
+  private platformId = inject(PLATFORM_ID);
+  private destroyRef = inject(DestroyRef);
 
   readonly pageTitle = "Benchmark Workloads";
   readonly pageDescription =
@@ -66,11 +68,47 @@ export class BenchmarkWorkloadsComponent implements OnInit, OnDestroy {
     { name: "Benchmark Workloads", url: "/navigator/benchmark-workloads" },
   ]);
 
-  readonly isLoading = signal(true);
-  readonly errorMessage = signal<string | null>(null);
+  private pendingScrollTargetId: string | null = null;
+  private deferredScrollTimeout: ReturnType<typeof setTimeout> | null = null;
+  private pendingScrollTimeout: ReturnType<typeof setTimeout> | null = null;
+
+  constructor() {
+    this.destroyRef.onDestroy(() => {
+      this.clearPendingScrollTarget();
+      this.clearDeferredScroll();
+    });
+  }
+
+  readonly benchmarksResource = resource({
+    loader: async () => {
+      const response = await this.keeperAPI.getServerBenchmarkMeta();
+      const rawData: Benchmark[] = response.body ?? [];
+      const data: BenchmarkWithMock[] = rawData.map((b) => ({
+        ...b,
+        mockData: getMockData(b.benchmark_id),
+      }));
+      const grouped = this.groupByFramework(data);
+
+      if (data.length > 0 && !this.activeBenchmarkId()) {
+        this.activeBenchmarkId.set(data[0].benchmark_id);
+      }
+
+      return grouped;
+    },
+  });
+
+  readonly isLoading = computed(() => this.benchmarksResource.isLoading());
+  readonly errorMessage = computed(() =>
+    this.benchmarksResource.error()
+      ? "Failed to load benchmark data. Please try again later."
+      : null,
+  );
+  readonly benchmarkFamilies = computed(
+    () => this.benchmarksResource.value() ?? [],
+  );
+
   readonly isCollapsed = signal(false);
   readonly disableLayoutTransitions = signal(false);
-  readonly benchmarkFamilies = signal<BenchmarkFamily[]>([]);
   readonly activeBenchmarkId = signal<string>("");
   readonly expandedFamily = signal<string | null>(null);
   readonly autoCollapseAfterSelection = signal(false);
@@ -86,43 +124,12 @@ export class BenchmarkWorkloadsComponent implements OnInit, OnDestroy {
     ),
   );
 
-  private pendingScrollTargetId: string | null = null;
-  private deferredScrollTimeout: ReturnType<typeof setTimeout> | null = null;
-  private pendingScrollTimeout: ReturnType<typeof setTimeout> | null = null;
-
   ngOnInit(): void {
     this.seoHandler.updateTitleAndMetaTags(
       "Spare Cores - Benchmark Workloads",
       "Descriptions of all benchmark families and workloads used by Spare Cores, including units of measurement, configuration options, and score distributions.",
       "benchmark workloads, cloud benchmarks, performance testing, CPU benchmarks",
     );
-    this.loadBenchmarks();
-  }
-
-  ngOnDestroy(): void {
-    this.clearPendingScrollTarget();
-    this.clearDeferredScroll();
-  }
-
-  private async loadBenchmarks(): Promise<void> {
-    try {
-      const response = await this.keeperAPI.getServerBenchmarkMeta();
-      const rawData: Benchmark[] = response.body ?? [];
-      const data: BenchmarkWithMock[] = rawData.map((b) => ({
-        ...b,
-        mockData: getMockData(b.benchmark_id),
-      }));
-      this.benchmarkFamilies.set(this.groupByFramework(data));
-      if (data.length > 0) {
-        this.activeBenchmarkId.set(data[0].benchmark_id);
-      }
-    } catch {
-      this.errorMessage.set(
-        "Failed to load benchmark data. Please try again later.",
-      );
-    } finally {
-      this.isLoading.set(false);
-    }
   }
 
   private groupByFramework(benchmarks: BenchmarkWithMock[]): BenchmarkFamily[] {
