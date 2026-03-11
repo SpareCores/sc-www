@@ -1,6 +1,6 @@
 <!-- Header band -->
 <div class="w-full bg-primary">
-  <div class="content pt-16 pb-16">
+  <div class="content pt-16 pb-4">
     <app-breadcrumbs [segments]="breadcrumbs()"></app-breadcrumbs>
     <div class="flex flex-col gap-4 my-8 mx-2 xl:mx-0">
       <div class="flex gap-4 items-center w-full justify-between">
@@ -22,7 +22,8 @@
     <div class="flex justify-center items-center mt-16">
       <app-loading-spinner
         size="lg"
-        text="Loading benchmark data..."
+        text="Loading benchmark workloads..."
+        textClasses="text-lg text-white"
       ></app-loading-spinner>
     </div>
   } @else if (errorMessage()) {
@@ -30,63 +31,109 @@
       <div class="text-red-400 text-xl">{{ errorMessage() }}</div>
     </div>
   } @else {
-    <div class="flex gap-8 mx-2 xl:mx-0 page_layout">
+    <div
+      class="flex gap-8 mx-2 xl:mx-0 page_layout"
+      [class.layout_static]="disableLayoutTransitions()"
+    >
       <!-- Sticky TOC sidebar -->
-      <div class="filter_bar bg-primary">
-        <!-- TOC navigation -->
-        <nav
-          class="toc_nav px-3 py-4 overflow-y-auto"
-          aria-label="Benchmark workloads table of contents"
-        >
-          <div
-            class="text-gray-400 text-xs uppercase tracking-widest mb-3 px-2"
-          >
-            Benchmarks
+      <div class="filter_bar bg-primary" [class.collapsed]="isCollapsed()">
+        <div class="toc_shell">
+          <div class="top overflow-hidden bg-secondary">
+            <div class="top_label" [class.top_label_hidden]="isCollapsed()">
+              Benchmarks
+            </div>
+            <button
+              type="button"
+              class="sidebar_toggle"
+              (click)="toggleCollapse()"
+              [attr.aria-expanded]="!isCollapsed()"
+              [attr.aria-label]="
+                isCollapsed()
+                  ? 'Expand benchmark sidebar'
+                  : 'Collapse benchmark sidebar'
+              "
+            >
+              <lucide-icon
+                [name]="isCollapsed() ? 'chevron-right' : 'chevron-left'"
+                class="h-5 w-5 text-emerald-400"
+              ></lucide-icon>
+            </button>
           </div>
 
-          @for (family of benchmarkFamilies(); track family.framework) {
-            <div class="toc_family_group">
-              <!-- Family accordion header -->
-              <button
-                class="toc_family_btn w-full flex items-center justify-between px-2 py-2 rounded-md text-left transition-colors"
-                [class.text-emerald-400]="activeFamily() === family.framework"
-                [class.text-gray-300]="activeFamily() !== family.framework"
-                (click)="toggleFamily(family.framework)"
-              >
-                <span class="font-mono text-xs font-semibold">{{
-                  family.framework
-                }}</span>
-                <lucide-icon
-                  [name]="
-                    isFamilyExpanded(family.framework)
-                      ? 'chevron-down'
-                      : 'chevron-right'
-                  "
-                  class="h-3.5 w-3.5 shrink-0"
-                ></lucide-icon>
-              </button>
-
-              <!-- Family sub-items -->
-              @if (isFamilyExpanded(family.framework)) {
-                <div class="ml-3 flex flex-col gap-0.5">
-                  @for (bm of family.benchmarks; track bm.benchmark_id) {
-                    <button
-                      class="toc_item w-full text-left px-2 py-1.5 rounded text-xs transition-colors"
-                      [class.active]="activeBenchmarkId() === bm.benchmark_id"
-                      (click)="scrollTo(bm.benchmark_id)"
+          <div class="toc_panel_body overflow-hidden bg-secondary">
+            <!-- TOC navigation -->
+            <nav
+              class="toc_nav px-2 pb-3 overflow-y-auto"
+              [class.toc_nav_mini]="isCollapsed()"
+              aria-label="Benchmark workloads table of contents"
+            >
+              @for (family of benchmarkFamilies(); track family.framework) {
+                <div
+                  class="sidebar_family_row mx-2 p-3 border-b border-gray-200"
+                  [class.sidebar_family_row_mini]="isCollapsed()"
+                >
+                  <!-- Family accordion header -->
+                  <button
+                    class="toc_family_btn w-full"
+                    [class.active]="isFamilyHighlighted(family.framework)"
+                    [class.toc_family_btn_mini]="isCollapsed()"
+                    (click)="handleFamilyClick(family.framework)"
+                    (mouseenter)="showSidebarTooltip($event, family.framework)"
+                    (mouseleave)="hideSidebarTooltip()"
+                    (focus)="showSidebarTooltip($event, family.framework)"
+                    (blur)="hideSidebarTooltip()"
+                  >
+                    <span
+                      class="toc_family_info"
+                      [class.toc_family_info_mini]="isCollapsed()"
                     >
-                      {{ bm.name }}
-                    </button>
+                      <lucide-icon name="gauge" class="h-4 w-4"></lucide-icon>
+                      <span
+                        class="toc_family_name"
+                        [class.toc_family_name_hidden]="isCollapsed()"
+                        >{{ family.framework }}</span
+                      >
+                    </span>
+                    <lucide-icon
+                      [name]="
+                        isFamilyExpanded(family.framework)
+                          ? 'chevron-down'
+                          : 'chevron-right'
+                      "
+                      class="toc_family_chevron h-4 w-4 shrink-0"
+                      [class.toc_family_chevron_hidden]="isCollapsed()"
+                    ></lucide-icon>
+                  </button>
+
+                  <!-- Family sub-items -->
+                  @if (!isCollapsed() && isFamilyExpanded(family.framework)) {
+                    <div class="toc_family_items mb-3 flex flex-col gap-0.5">
+                      @for (bm of family.benchmarks; track bm.benchmark_id) {
+                        <button
+                          class="toc_item w-full text-left px-2 py-1.5 rounded text-xs transition-colors"
+                          [class.active]="
+                            activeBenchmarkId() === bm.benchmark_id
+                          "
+                          (click)="scrollTo(bm.benchmark_id)"
+                        >
+                          {{ bm.name }}
+                        </button>
+                      }
+                    </div>
                   }
                 </div>
               }
-            </div>
-          }
-        </nav>
+            </nav>
+          </div>
+        </div>
       </div>
 
       <!-- Main scrollable content column -->
-      <div class="list_holder limited-full flex flex-col gap-12 pb-16">
+      <div
+        class="list_holder flex flex-col gap-12"
+        [class.limited-full]="!isCollapsed()"
+        [class.mini-full]="isCollapsed()"
+      >
         @for (family of benchmarkFamilies(); track family.framework) {
           <!-- Family section heading -->
           <section>
@@ -110,7 +157,7 @@
             <!-- Benchmark cards grid -->
             <div class="flex flex-col gap-8">
               @for (bm of family.benchmarks; track bm.benchmark_id) {
-                <div [id]="bm.benchmark_id" class="scroll-mt-24">
+                <div [id]="bm.benchmark_id" class="scroll-mt-[6.5rem]">
                   <app-benchmark-workload
                     [benchmark]="bm"
                     [mockData]="getMock(bm.benchmark_id)"
@@ -123,4 +170,12 @@
       </div>
     </div>
   }
+</div>
+
+<div
+  #sidebarTooltipEl
+  style="opacity: 0; display: none; position: absolute"
+  class="z-50 max-w-48 px-2 py-1 text-xs font-medium text-white bg-secondary border border-solid border-emerald-400 rounded-lg pointer-events-none"
+>
+  {{ sidebarTooltipContent }}
 </div>
