@@ -22,6 +22,7 @@ export class ScrollSpyDirective implements OnDestroy {
   private platformId = inject(PLATFORM_ID);
   private observer: IntersectionObserver | null = null;
   private scrollPositionMap = new Map<string, number>();
+  private pendingTimeout: ReturnType<typeof setTimeout> | null = null;
 
   constructor() {
     effect(() => {
@@ -36,10 +37,16 @@ export class ScrollSpyDirective implements OnDestroy {
       if (this.observer) {
         this.observer.disconnect();
       }
+      this.scrollPositionMap.clear();
 
       this.setupObserver(margin, thresh);
 
-      setTimeout(() => {
+      if (this.pendingTimeout !== null) {
+        clearTimeout(this.pendingTimeout);
+        this.pendingTimeout = null;
+      }
+
+      this.pendingTimeout = setTimeout(() => {
         ids.forEach((id) => {
           const element = document.getElementById(id);
           if (element) {
@@ -47,6 +54,13 @@ export class ScrollSpyDirective implements OnDestroy {
           }
         });
       });
+
+      return () => {
+        if (this.pendingTimeout !== null) {
+          clearTimeout(this.pendingTimeout);
+          this.pendingTimeout = null;
+        }
+      };
     });
   }
 
@@ -88,6 +102,10 @@ export class ScrollSpyDirective implements OnDestroy {
   ngOnDestroy() {
     if (this.observer) {
       this.observer.disconnect();
+    }
+    if (this.pendingTimeout !== null) {
+      clearTimeout(this.pendingTimeout);
+      this.pendingTimeout = null;
     }
   }
 }
