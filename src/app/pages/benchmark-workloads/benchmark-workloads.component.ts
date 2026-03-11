@@ -1,16 +1,13 @@
 import {
   Component,
-  ElementRef,
   OnDestroy,
   OnInit,
   PLATFORM_ID,
   computed,
   inject,
   signal,
-  ViewChild,
 } from "@angular/core";
-import { isPlatformBrowser } from "@angular/common";
-import { DOCUMENT } from "@angular/common";
+import { isPlatformBrowser, DOCUMENT } from "@angular/common";
 import {
   BreadcrumbsComponent,
   BreadcrumbSegment,
@@ -23,10 +20,15 @@ import { BenchmarkWorkloadComponent } from "../../components/benchmark-workload/
 import { BenchmarkWorkloadMockData } from "../../mocks/benchmark-workload.mock.interface";
 import { getMockData } from "../../mocks/benchmark-workload.mock-data";
 import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
+import { ScrollSpyDirective } from "../../directives/scroll-spy.directive";
+
+export interface BenchmarkWithMock extends Benchmark {
+  mockData?: BenchmarkWorkloadMockData;
+}
 
 export interface BenchmarkFamily {
   framework: string;
-  benchmarks: Benchmark[];
+  benchmarks: BenchmarkWithMock[];
 }
 
 @Component({
@@ -36,14 +38,13 @@ export interface BenchmarkFamily {
     LucideAngularModule,
     BenchmarkWorkloadComponent,
     LoadingSpinnerComponent,
+    ScrollSpyDirective,
   ],
   templateUrl: "./benchmark-workloads.component.html",
   styleUrl: "./benchmark-workloads.component.scss",
 })
 export class BenchmarkWorkloadsComponent implements OnInit, OnDestroy {
   private static readonly SCROLL_OFFSET = 104;
-  private static readonly ACTIVE_TRACKING_OFFSET = 180;
-  private static readonly TARGET_SCROLL_TOLERANCE = 24;
   private static readonly SCROLL_LOCK_TIMEOUT_MS = 1500;
   private static readonly SIDEBAR_TRANSITION_MS = 300;
   private static readonly DEFAULT_FAMILY_INDEX = 0;
@@ -72,16 +73,24 @@ export class BenchmarkWorkloadsComponent implements OnInit, OnDestroy {
   readonly expandedFamily = signal<string | null>(null);
   readonly autoCollapseAfterSelection = signal(false);
 
-  sidebarTooltipContent = "";
-  @ViewChild("sidebarTooltipEl") sidebarTooltipEl!: ElementRef<HTMLElement>;
+  readonly tooltipState = signal({
+    content: "",
+    visible: false,
+    top: 0,
+    left: 0,
+  });
 
   readonly activeFamily = computed(() => {
     const family = this.getFamilyByBenchmarkId(this.activeBenchmarkId());
     return family?.framework ?? "";
   });
 
-  private scrollHandler: (() => void) | null = null;
-  private rafId: number | null = null;
+  readonly allBenchmarkIds = computed(() =>
+    this.benchmarkFamilies().flatMap((f) =>
+      f.benchmarks.map((b) => b.benchmark_id),
+    ),
+  );
+
   private pendingScrollTargetId: string | null = null;
   private deferredScrollTimeout: ReturnType<typeof setTimeout> | null = null;
   private pendingScrollTimeout: ReturnType<typeof setTimeout> | null = null;
@@ -96,28 +105,33 @@ export class BenchmarkWorkloadsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.destroyObserver();
+    this.clearPendingScrollTarget();
+    this.clearDeferredScroll();
   }
 
   private async loadBenchmarks(): Promise<void> {
     try {
       const response = await this.keeperAPI.getServerBenchmarkMeta();
-      const data: Benchmark[] = response.body ?? [];
+      const rawData: Benchmark[] = response.body ?? [];
+      const data: BenchmarkWithMock[] = rawData.map((b) => ({
+        ...b,
+        mockData: getMockData(b.benchmark_id),
+      }));
       this.benchmarkFamilies.set(this.groupByFramework(data));
+      if (data.length > 0) {
+        this.activeBenchmarkId.set(data[0].benchmark_id);
+      }
     } catch {
       this.errorMessage.set(
         "Failed to load benchmark data. Please try again later.",
       );
     } finally {
       this.isLoading.set(false);
-      if (isPlatformBrowser(this.platformId)) {
-        setTimeout(() => this.setupObserver(), 150);
-      }
     }
   }
 
-  private groupByFramework(benchmarks: Benchmark[]): BenchmarkFamily[] {
-    const map = new Map<string, Benchmark[]>();
+  private groupByFramework(benchmarks: BenchmarkWithMock[]): BenchmarkFamily[] {
+    const map = new Map<string, BenchmarkWithMock[]>();
     for (const b of benchmarks) {
       if (!map.has(b.framework)) map.set(b.framework, []);
       map.get(b.framework)!.push(b);
@@ -181,12 +195,14 @@ export class BenchmarkWorkloadsComponent implements OnInit, OnDestroy {
       const scrollAdjustment = anchorTopAfterToggle - anchorTopBeforeToggle;
 
       if (scrollAdjustment !== 0) {
-        window.scrollBy({ top: scrollAdjustment, behavior: "auto" });
+        this.document.defaultView?.scrollBy({
+          top: scrollAdjustment,
+          behavior: "auto",
+        });
       }
 
       requestAnimationFrame(() => {
         this.disableLayoutTransitions.set(false);
-        this.updateActiveFromScroll();
       });
     });
   }
@@ -199,13 +215,14 @@ export class BenchmarkWorkloadsComponent implements OnInit, OnDestroy {
 
     this.pendingScrollTimeout = setTimeout(() => {
       this.clearPendingScrollTarget();
-      this.updateActiveFromScroll();
     }, BenchmarkWorkloadsComponent.SCROLL_LOCK_TIMEOUT_MS);
 
     const element = this.document.getElementById(id);
-    if (element) {
-      const elementTop = element.getBoundingClientRect().top + window.scrollY;
-      window.scrollTo({
+    const win = this.document.defaultView;
+
+    if (element && win) {
+      const elementTop = element.getBoundingClientRect().top + win.scrollY;
+      win.scrollTo({
         top: elementTop - BenchmarkWorkloadsComponent.SCROLL_OFFSET,
         behavior: "smooth",
       });
@@ -221,98 +238,19 @@ export class BenchmarkWorkloadsComponent implements OnInit, OnDestroy {
     }, BenchmarkWorkloadsComponent.SIDEBAR_TRANSITION_MS);
   }
 
-  private setupObserver(): void {
-    this.destroyObserver();
-    if (!isPlatformBrowser(this.platformId)) return;
+  onActiveItemChange(id: string): void {
+    if (this.pendingScrollTargetId || this.deferredScrollTimeout !== null) {
+      return;
+    }
 
-    this.scrollHandler = () => {
-      if (this.rafId !== null) return;
-      this.rafId = requestAnimationFrame(() => {
-        this.rafId = null;
-        this.updateActiveFromScroll();
-      });
-    };
+    if (id && id !== this.activeBenchmarkId()) {
+      this.activeBenchmarkId.set(id);
 
-    window.addEventListener("scroll", this.scrollHandler, { passive: true });
-    this.updateActiveFromScroll();
-  }
-
-  private updateActiveFromScroll(): void {
-    const activeTrackingOffset =
-      BenchmarkWorkloadsComponent.ACTIVE_TRACKING_OFFSET;
-
-    if (this.pendingScrollTargetId) {
-      const pendingTargetId = this.pendingScrollTargetId;
-      const targetElement = this.document.getElementById(pendingTargetId);
-
-      if (!targetElement) {
-        this.clearPendingScrollTarget();
-      } else {
-        const pendingTop =
-          targetElement.getBoundingClientRect().top -
-          BenchmarkWorkloadsComponent.SCROLL_OFFSET;
-
-        if (
-          Math.abs(pendingTop) >
-          BenchmarkWorkloadsComponent.TARGET_SCROLL_TOLERANCE
-        ) {
-          return;
-        }
-
-        this.clearPendingScrollTarget();
+      const newFamily = this.getFamilyByBenchmarkId(id)?.framework ?? null;
+      if (!this.expandedFamily() || newFamily !== this.expandedFamily()) {
+        this.expandedFamily.set(newFamily);
       }
     }
-
-    let bestId = "";
-    let bestDistance = Number.POSITIVE_INFINITY;
-    let bestTop = Number.POSITIVE_INFINITY;
-
-    for (const family of this.benchmarkFamilies()) {
-      for (const bm of family.benchmarks) {
-        const el = this.document.getElementById(bm.benchmark_id);
-        if (!el) continue;
-        const top = el.getBoundingClientRect().top - activeTrackingOffset;
-        const distance = Math.abs(top);
-
-        if (
-          distance < bestDistance ||
-          (distance === bestDistance && top <= 0 && bestTop > 0)
-        ) {
-          bestDistance = distance;
-          bestTop = top;
-          bestId = bm.benchmark_id;
-        }
-      }
-    }
-
-    if (!bestId) {
-      bestId = this.benchmarkFamilies()[0]?.benchmarks[0]?.benchmark_id ?? "";
-    }
-
-    if (bestId && bestId !== this.activeBenchmarkId()) {
-      this.activeBenchmarkId.set(bestId);
-      this.expandedFamily.set(
-        this.getFamilyByBenchmarkId(bestId)?.framework ?? null,
-      );
-    } else if (bestId && !this.expandedFamily()) {
-      this.expandedFamily.set(
-        this.getFamilyByBenchmarkId(bestId)?.framework ?? null,
-      );
-    }
-  }
-
-  private destroyObserver(): void {
-    if (this.scrollHandler) {
-      window.removeEventListener("scroll", this.scrollHandler);
-      this.scrollHandler = null;
-    }
-    if (this.rafId !== null) {
-      cancelAnimationFrame(this.rafId);
-      this.rafId = null;
-    }
-
-    this.clearPendingScrollTarget();
-    this.clearDeferredScroll();
   }
 
   private clearDeferredScroll(): void {
@@ -327,32 +265,26 @@ export class BenchmarkWorkloadsComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const tooltip = this.sidebarTooltipEl?.nativeElement;
     const target = event.currentTarget as HTMLElement | null;
 
-    if (!tooltip || !target) {
+    if (!target) {
       return;
     }
 
     const rect = target.getBoundingClientRect();
-    const scrollY = window.scrollY ?? document.documentElement.scrollTop;
+    const win = this.document.defaultView;
+    const scrollY = win?.scrollY ?? this.document.documentElement.scrollTop;
 
-    this.sidebarTooltipContent = content;
-    tooltip.style.left = `${rect.right + 8}px`;
-    tooltip.style.top = `${rect.top - 8 + scrollY}px`;
-    tooltip.style.display = "block";
-    tooltip.style.opacity = "1";
+    this.tooltipState.set({
+      content,
+      visible: true,
+      left: rect.right + 8,
+      top: rect.top - 8 + scrollY,
+    });
   }
 
   hideSidebarTooltip(): void {
-    const tooltip = this.sidebarTooltipEl?.nativeElement;
-
-    if (!tooltip) {
-      return;
-    }
-
-    tooltip.style.display = "none";
-    tooltip.style.opacity = "0";
+    this.tooltipState.update((state) => ({ ...state, visible: false }));
   }
 
   private clearPendingScrollTarget(): void {
@@ -426,7 +358,10 @@ export class BenchmarkWorkloadsComponent implements OnInit, OnDestroy {
     }
 
     if (isPlatformBrowser(this.platformId)) {
-      setTimeout(() => this.updateActiveFromScroll());
+      setTimeout(() => {
+        const id = this.activeBenchmarkId();
+        if (id) this.onActiveItemChange(id);
+      }, 50);
     }
   }
 
@@ -447,9 +382,5 @@ export class BenchmarkWorkloadsComponent implements OnInit, OnDestroy {
 
     this.clearDeferredScroll();
     this.performScrollToBenchmark(id);
-  }
-
-  getMock(benchmark_id: string): BenchmarkWorkloadMockData | undefined {
-    return getMockData(benchmark_id);
   }
 }

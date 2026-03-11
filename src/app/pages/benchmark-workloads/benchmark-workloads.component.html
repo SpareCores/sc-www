@@ -133,6 +133,8 @@
         class="list_holder flex flex-col gap-12"
         [class.limited-full]="!isCollapsed()"
         [class.mini-full]="isCollapsed()"
+        [appScrollSpy]="allBenchmarkIds()"
+        (activeItemId)="onActiveItemChange($event)"
       >
         @for (family of benchmarkFamilies(); track family.framework) {
           <!-- Family section heading -->
@@ -160,7 +162,7 @@
                 <div [id]="bm.benchmark_id" class="scroll-mt-[6.5rem]">
                   <app-benchmark-workload
                     [benchmark]="bm"
-                    [mockData]="getMock(bm.benchmark_id)"
+                    [mockData]="bm.mockData"
                   ></app-benchmark-workload>
                 </div>
               }
@@ -173,9 +175,11 @@
 </div>
 
 <div
-  #sidebarTooltipEl
-  style="opacity: 0; display: none; position: absolute"
-  class="z-50 max-w-48 px-2 py-1 text-xs font-medium text-white bg-secondary border border-solid border-emerald-400 rounded-lg pointer-events-none"
+  class="z-50 max-w-48 px-2 py-1 text-xs font-medium text-white bg-secondary border border-solid border-emerald-400 rounded-lg pointer-events-none absolute"
+  [style.display]="tooltipState().visible ? 'block' : 'none'"
+  [style.opacity]="tooltipState().visible ? '1' : '0'"
+  [style.left.px]="tooltipState().left"
+  [style.top.px]="tooltipState().top"
 >
-  {{ sidebarTooltipContent }}
+  {{ tooltipState().content }}
 </div>
