@@ -1,10 +1,10 @@
 import {
   Component,
   ElementRef,
-  OnInit,
-  ViewChild,
   computed,
   input,
+  signal,
+  viewChild,
 } from "@angular/core";
 import { DecimalPipe } from "@angular/common";
 import { ChartConfiguration, ChartData } from "chart.js";
@@ -28,7 +28,7 @@ export interface BenchmarkConfigEntry {
   templateUrl: "./benchmark-workload.component.html",
   styleUrl: "./benchmark-workload.component.scss",
 })
-export class BenchmarkWorkloadComponent implements OnInit {
+export class BenchmarkWorkloadComponent {
   readonly benchmark = input.required<Benchmark>();
   readonly mockData = input<BenchmarkWorkloadMockData | undefined>(undefined);
 
@@ -47,42 +47,27 @@ export class BenchmarkWorkloadComponent implements OnInit {
     return fields && Object.keys(fields).length > 0;
   });
 
-  configEntries: BenchmarkConfigEntry[] = [];
-  histogramData: ChartData<"bar"> | null = null;
-  histogramOptions: ChartConfiguration<"bar">["options"] = null!;
-
-  tooltipContent = "";
-  @ViewChild("tooltipEl") tooltipEl!: ElementRef<HTMLElement>;
-
-  ngOnInit(): void {
-    this.buildConfigEntries();
-    this.buildHistogram();
-    this.buildHistogramOptions();
-  }
-
-  private buildConfigEntries(): void {
+  readonly configEntries = computed<BenchmarkConfigEntry[]>(() => {
     const fields = this.benchmark().config_fields as
       | Record<string, string>
       | undefined;
     if (!fields) {
-      this.configEntries = [];
-      return;
+      return [];
     }
     const examples = this.mockData()?.config_examples ?? {};
-    this.configEntries = Object.entries(fields).map(([key, description]) => ({
+    return Object.entries(fields).map(([key, description]) => ({
       key,
       description: description as string,
       examples: examples[key] ?? [],
     }));
-  }
+  });
 
-  private buildHistogram(): void {
+  readonly histogramData = computed<ChartData<"bar"> | undefined>(() => {
     const bins = this.mockData()?.histogram;
     if (!bins || bins.length === 0) {
-      this.histogramData = null;
-      return;
+      return undefined;
     }
-    this.histogramData = {
+    return {
       labels: bins.map((b) => this.formatBinLabel(b)),
       datasets: [
         {
@@ -96,56 +81,61 @@ export class BenchmarkWorkloadComponent implements OnInit {
         },
       ],
     };
-  }
+  });
 
-  private buildHistogramOptions(): void {
-    const yLabel = "Server types";
-    const xLabel = this.unit() ? `Score (${this.unit()})` : "Score";
+  readonly histogramOptions = computed<ChartConfiguration<"bar">["options"]>(
+    () => {
+      const yLabel = "Server types";
+      const xLabel = this.unit() ? `Score (${this.unit()})` : "Score";
 
-    this.histogramOptions = {
-      maintainAspectRatio: false,
-      responsive: true,
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          callbacks: {
-            title: (items) => {
-              const bin = this.mockData()?.histogram?.[items[0].dataIndex];
-              if (!bin) return items[0].label;
-              return `${this.formatValue(bin.low)} – ${this.formatValue(bin.high)} ${this.unit()}`;
+      return {
+        maintainAspectRatio: false,
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              title: (items) => {
+                const bin = this.mockData()?.histogram?.[items[0].dataIndex];
+                if (!bin) return items[0].label;
+                return `${this.formatValue(bin.low)} – ${this.formatValue(bin.high)} ${this.unit()}`;
+              },
+              label: (item) => ` ${item.formattedValue} server types`,
             },
-            label: (item) => ` ${item.formattedValue} server types`,
           },
         },
-      },
-      scales: {
-        x: {
-          ticks: {
-            color: "#FFF",
-            maxRotation: 45,
-            font: { size: 10 },
+        scales: {
+          x: {
+            ticks: {
+              color: "#FFF",
+              maxRotation: 45,
+              font: { size: 10 },
+            },
+            grid: { color: "rgba(75,85,99,0.4)" },
+            title: {
+              display: true,
+              text: xLabel,
+              color: "#FFF",
+              font: { size: 11 },
+            },
           },
-          grid: { color: "rgba(75,85,99,0.4)" },
-          title: {
-            display: true,
-            text: xLabel,
-            color: "#FFF",
-            font: { size: 11 },
+          y: {
+            ticks: { color: "#FFF" },
+            grid: { color: "rgba(75,85,99,0.4)" },
+            title: {
+              display: true,
+              text: yLabel,
+              color: "#FFF",
+              font: { size: 11 },
+            },
           },
         },
-        y: {
-          ticks: { color: "#FFF" },
-          grid: { color: "rgba(75,85,99,0.4)" },
-          title: {
-            display: true,
-            text: yLabel,
-            color: "#FFF",
-            font: { size: 11 },
-          },
-        },
-      },
-    };
-  }
+      };
+    },
+  );
+
+  tooltipContent = signal("");
+  tooltipEl = viewChild<ElementRef<HTMLElement>>("tooltipEl");
 
   private formatBinLabel(bin: BenchmarkHistogramBin): string {
     return `${this.formatValue(bin.low)}–${this.formatValue(bin.high)}`;
@@ -167,7 +157,7 @@ export class BenchmarkWorkloadComponent implements OnInit {
   }
 
   showTooltip(ev: MouseEvent, content: string): void {
-    const tooltip = this.tooltipEl?.nativeElement;
+    const tooltip = this.tooltipEl()?.nativeElement;
     if (!tooltip) return;
     const rect = (ev.target as HTMLElement).getBoundingClientRect();
     const scrollY = window.scrollY ?? document.documentElement.scrollTop;
@@ -175,11 +165,11 @@ export class BenchmarkWorkloadComponent implements OnInit {
     tooltip.style.top = `${rect.top - 10 + scrollY}px`;
     tooltip.style.display = "block";
     tooltip.style.opacity = "1";
-    this.tooltipContent = content;
+    this.tooltipContent.set(content);
   }
 
   hideTooltip(): void {
-    const tooltip = this.tooltipEl?.nativeElement;
+    const tooltip = this.tooltipEl()?.nativeElement;
     if (!tooltip) return;
     tooltip.style.display = "none";
     tooltip.style.opacity = "0";

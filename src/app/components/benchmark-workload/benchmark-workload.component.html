@@ -149,7 +149,7 @@
   </div>
 
   <!-- Configuration Options Table -->
-  @if (hasConfigFields() && configEntries.length > 0) {
+  @if (hasConfigFields() && configEntries().length > 0) {
     <div class="flex flex-col gap-2">
       <h4 class="text-white text-sm font-semibold uppercase tracking-wide">
         Configuration Options
@@ -164,7 +164,7 @@
             </tr>
           </thead>
           <tbody>
-            @for (entry of configEntries; track entry.key) {
+            @for (entry of configEntries(); track entry.key) {
               <tr>
                 <td
                   class="font-mono text-emerald-400 text-xs whitespace-nowrap"
@@ -202,12 +202,12 @@
     <h4 class="text-white text-sm font-semibold uppercase tracking-wide">
       Score Distribution
     </h4>
-    @if (histogramData) {
+    @if (histogramData()) {
       <div class="histogram_container">
         <canvas
           baseChart
-          [data]="histogramData"
-          [options]="histogramOptions"
+          [data]="histogramData()"
+          [options]="histogramOptions()"
           type="bar"
         ></canvas>
       </div>
@@ -229,5 +229,5 @@
   style="opacity: 0; display: none; position: absolute"
   class="z-50 max-w-48 px-2 py-1 text-xs font-medium text-white bg-secondary border border-solid border-emerald-400 rounded-lg pointer-events-none"
 >
-  {{ tooltipContent }}
+  {{ tooltipContent() }}
 </div>
