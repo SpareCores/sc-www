@@ -38,16 +38,16 @@
 
   <!-- Section heading: framework family -->
   <h2 class="text-emerald-400 text-sm font-semibold uppercase tracking-widest">
-    {{ benchmark().framework }}
+    {{ workload().framework }}
   </h2>
 
   <!-- Workload name + Higher/Lower is better badge -->
   <div class="flex flex-wrap items-center gap-3 pr-20">
     <h3 class="text-white text-2xl font-bold leading-tight">
-      {{ benchmark().name }}
+      {{ workload().name }}
     </h3>
 
-    @if (benchmark().higher_is_better !== false) {
+    @if (workload().higher_is_better !== false) {
       <lucide-icon
         name="circle-arrow-up"
         class="h-4 w-4 text-gray-200 cursor-help"
@@ -65,9 +65,9 @@
   </div>
 
   <!-- Description -->
-  @if (benchmark().description) {
+  @if (workload().description) {
     <p class="text-gray-300 text-sm leading-relaxed">
-      {{ benchmark().description }}
+      {{ workload().description }}
     </p>
   }
 
@@ -80,12 +80,11 @@
     </h4>
 
     <dl class="grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-6">
-      @let mock = mockData();
       <!-- Benchmark ID -->
       <div class="flex flex-col gap-0.5">
         <dt class="text-gray-400 text-xs">Benchmark ID</dt>
         <dd class="text-white text-sm font-mono">
-          {{ benchmark().benchmark_id }}
+          {{ workload().benchmark_id }}
         </dd>
       </div>
 
@@ -109,8 +108,10 @@
       <div class="flex flex-col gap-0.5">
         <dt class="text-gray-400 text-xs">Server Types Evaluated</dt>
         <dd class="text-white text-sm">
-          @if (mock?.server_count !== undefined) {
-            <span class="font-semibold">{{ mock?.server_count | number }}</span>
+          @if (workload().count_servers !== undefined) {
+            <span class="font-semibold">{{
+              workload().count_servers | number
+            }}</span>
           } @else {
             <span class="text-gray-500">N/A</span>
           }
@@ -121,10 +122,8 @@
       <div class="flex flex-col gap-0.5">
         <dt class="text-gray-400 text-xs">Total Measurements</dt>
         <dd class="text-white text-sm">
-          @if (mock?.measurement_count !== undefined) {
-            <span class="font-semibold">{{
-              mock?.measurement_count | number
-            }}</span>
+          @if (workload().count !== undefined) {
+            <span class="font-semibold">{{ workload().count | number }}</span>
           } @else {
             <span class="text-gray-500">N/A</span>
           }
@@ -135,7 +134,7 @@
       <div class="flex flex-col gap-0.5 sm:col-span-2">
         <dt class="text-gray-400 text-xs">Range of Measurements</dt>
         <dd class="text-white text-sm">
-          @if (mock) {
+          @if (histogramData()) {
             <span class="font-semibold">{{ formatRange() }}</span>
             @if (unit()) {
               <span class="text-gray-400 ml-1 text-xs">{{ unit() }}</span>
@@ -149,7 +148,7 @@
   </div>
 
   <!-- Configuration Options Table -->
-  @if (hasConfigFields() && configEntries().length > 0) {
+  @if (hasConfigs()) {
     <div class="flex flex-col gap-2">
       <h4 class="text-white text-sm font-semibold uppercase tracking-wide">
         Configuration Options

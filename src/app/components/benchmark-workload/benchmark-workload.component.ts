@@ -10,16 +10,22 @@ import { DecimalPipe } from "@angular/common";
 import { ChartConfiguration, ChartData } from "chart.js";
 import { BaseChartDirective } from "ng2-charts";
 import { LucideAngularModule } from "lucide-angular";
-import { Benchmark, Status } from "../../../../sdk/data-contracts";
+import { Status } from "../../../../sdk/data-contracts";
 import {
-  BenchmarkHistogramBin,
-  BenchmarkWorkloadMockData,
-} from "../../mocks/benchmark-workload.mock.interface";
+  BenchmarkWorkloadExample,
+  BenchmarkWorkloadItem,
+} from "../../pages/benchmark-workloads/benchmark-workloads.models";
 
 export interface BenchmarkConfigEntry {
   key: string;
   description: string;
-  examples: string[];
+  examples: BenchmarkWorkloadExample[];
+}
+
+interface HistogramBin {
+  low: number;
+  high: number;
+  count: number;
 }
 
 @Component({
@@ -29,49 +35,56 @@ export interface BenchmarkConfigEntry {
   styleUrl: "./benchmark-workload.component.scss",
 })
 export class BenchmarkWorkloadComponent {
-  readonly benchmark = input.required<Benchmark>();
-  readonly mockData = input<BenchmarkWorkloadMockData | undefined>(undefined);
+  readonly workload = input.required<BenchmarkWorkloadItem>();
 
   readonly isActive = computed(
-    () => !this.benchmark().status || this.benchmark().status === Status.Active,
+    () => this.workload().status !== Status.Inactive,
   );
 
-  readonly unit = computed(
-    () => this.benchmark().unit ?? this.mockData()?.unit ?? "",
-  );
+  readonly unit = computed(() => this.workload().unit ?? "");
 
-  readonly hasConfigFields = computed(() => {
-    const fields = this.benchmark().config_fields as
-      | Record<string, string>
-      | undefined;
-    return fields && Object.keys(fields).length > 0;
-  });
+  readonly hasConfigs = computed(() => this.configEntries().length > 0);
 
   readonly configEntries = computed<BenchmarkConfigEntry[]>(() => {
-    const fields = this.benchmark().config_fields as
-      | Record<string, string>
-      | undefined;
-    if (!fields) {
+    const configs = this.workload().configs;
+    if (!configs) {
       return [];
     }
-    const examples = this.mockData()?.config_examples ?? {};
-    return Object.entries(fields).map(([key, description]) => ({
+    return Object.entries(configs).map(([key, config]) => ({
       key,
-      description: description as string,
-      examples: examples[key] ?? [],
+      description: config.description,
+      examples: config.examples,
+    }));
+  });
+
+  readonly histogramBins = computed<HistogramBin[]>(() => {
+    const histogram = this.workload().histogram;
+    if (!histogram) {
+      return [];
+    }
+
+    const { breakpoints, counts } = histogram;
+    if (breakpoints.length !== counts.length + 1 || counts.length === 0) {
+      return [];
+    }
+
+    return counts.map((count, index) => ({
+      low: breakpoints[index],
+      high: breakpoints[index + 1],
+      count,
     }));
   });
 
   readonly histogramData = computed<ChartData<"bar"> | undefined>(() => {
-    const bins = this.mockData()?.histogram;
-    if (!bins || bins.length === 0) {
+    const bins = this.histogramBins();
+    if (bins.length === 0) {
       return undefined;
     }
     return {
       labels: bins.map((b) => this.formatBinLabel(b)),
       datasets: [
         {
-          data: bins.map((b) => b.N),
+          data: bins.map((b) => b.count),
           label: "Server types",
           backgroundColor: "#34d399",
           hoverBackgroundColor: "#6ee7b7",
@@ -96,7 +109,7 @@ export class BenchmarkWorkloadComponent {
           tooltip: {
             callbacks: {
               title: (items) => {
-                const bin = this.mockData()?.histogram?.[items[0].dataIndex];
+                const bin = this.histogramBins()[items[0].dataIndex];
                 if (!bin) return items[0].label;
                 return `${this.formatValue(bin.low)} – ${this.formatValue(bin.high)} ${this.unit()}`;
               },
@@ -137,7 +150,7 @@ export class BenchmarkWorkloadComponent {
   tooltipContent = signal("");
   tooltipEl = viewChild<ElementRef<HTMLElement>>("tooltipEl");
 
-  private formatBinLabel(bin: BenchmarkHistogramBin): string {
+  private formatBinLabel(bin: HistogramBin): string {
     return `${this.formatValue(bin.low)}–${this.formatValue(bin.high)}`;
   }
 
@@ -151,9 +164,9 @@ export class BenchmarkWorkloadComponent {
   }
 
   formatRange(): string {
-    const mock = this.mockData();
-    if (!mock) return "N/A";
-    return `${this.formatValue(mock.measurement_min)} – ${this.formatValue(mock.measurement_max)}`;
+    const bins = this.histogramBins();
+    if (bins.length === 0) return "N/A";
+    return `${this.formatValue(bins[0].low)} – ${this.formatValue(bins[bins.length - 1].high)}`;
   }
 
   showTooltip(ev: MouseEvent, content: string): void {
