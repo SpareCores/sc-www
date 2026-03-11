@@ -1,0 +1,98 @@
+<div class="block_half" [class.open]="isOpen()" [attr.id]="cardId()" #cardRoot>
+  <h3 class="text-2xl">{{ title() }}</h3>
+  <div class="card_sections">
+    @for (section of visibleSections(); track section.name; let i = $index) {
+      @if (showSectionHeaders() && i > 0) {
+        <div class="items_table_spacer_row" aria-hidden="true"></div>
+      }
+      <table class="items_table">
+        @if (showSectionHeaders()) {
+          <thead>
+            <tr>
+              <th
+                [class.section_header_availability]="
+                  sectionHeaderVariant() === 'availability'
+                "
+              >
+                {{ sectionHeading(section.name) }}
+              </th>
+              <th></th>
+            </tr>
+          </thead>
+        }
+        <tbody>
+          @for (property of section.properties; track property.id) {
+            <tr>
+              <td class="fixed_width">
+                <div class="flex gap-2 items-center">
+                  <b>{{ property.name }}</b>
+                  @for (tooltip of property.tooltips || []; track tooltip.key) {
+                    <lucide-icon
+                      name="info"
+                      class="h-4 w-4 text-gray-200 property_info_icon"
+                      (mouseenter)="showTooltip($event, tooltip.content)"
+                      (mouseleave)="hideTooltip()"
+                    >
+                    </lucide-icon>
+                  }
+                </div>
+              </td>
+              <td>
+                <div class="property_value" [innerHTML]="property.value"></div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+  @if (hasExpandableContent()) {
+    @if (!isOpen()) {
+      <div
+        class="absolute bottom-0 left-0 w-full py-3 flex justify-center"
+        [attr.id]="cardId() + '_more'"
+        style="
+          background: linear-gradient(
+            360deg,
+            #06263a 23.44%,
+            rgba(6, 38, 58, 0) 100%
+          );
+        "
+      >
+        <button
+          class="btn-primary py-2 px-3"
+          [attr.id]="cardId() + '_more_button'"
+          [attr.aria-controls]="cardId()"
+          aria-expanded="false"
+          (click)="requestToggle()"
+        >
+          {{ moreLabel() }}
+        </button>
+      </div>
+    }
+    @if (isOpen()) {
+      <div
+        class="w-full pt-3 flex justify-center"
+        [attr.id]="cardId() + '_less'"
+      >
+        <button
+          class="btn-primary py-2 px-3"
+          [attr.id]="cardId() + '_less_button'"
+          [attr.aria-controls]="cardId()"
+          aria-expanded="true"
+          (click)="requestToggle()"
+        >
+          {{ lessLabel() }}
+        </button>
+      </div>
+    }
+  }
+</div>
+
+<div
+  [attr.id]="cardId() + '_tooltip'"
+  style="opacity: 0"
+  class="max-w-225 absolute z-10 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-secondary border border-solid border-emerald-400 rounded-lg"
+>
+  {{ tooltipContent() }}
+</div>
