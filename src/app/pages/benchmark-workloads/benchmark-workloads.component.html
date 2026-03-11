@@ -80,8 +80,7 @@
               @for (bm of family.benchmarks; track bm.benchmark_id) {
                 <div [id]="bm.benchmark_id" class="scroll-mt-[6.5rem]">
                   <app-benchmark-workload
-                    [benchmark]="bm"
-                    [mockData]="bm.mockData"
+                    [workload]="bm"
                   ></app-benchmark-workload>
                 </div>
               }

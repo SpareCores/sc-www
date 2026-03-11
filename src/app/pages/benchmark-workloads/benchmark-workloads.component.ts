@@ -16,22 +16,26 @@ import {
 import { LucideAngularModule } from "lucide-angular";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { KeeperAPIService } from "../../services/keeper-api.service";
-import { Benchmark } from "../../../../sdk/data-contracts";
+import {
+  BenchmarkScoreStatsItem,
+  Status,
+} from "../../../../sdk/data-contracts";
 import { BenchmarkWorkloadComponent } from "../../components/benchmark-workload/benchmark-workload.component";
-import { BenchmarkWorkloadMockData } from "../../mocks/benchmark-workload.mock.interface";
-import { getMockData } from "../../mocks/benchmark-workload.mock-data";
 import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
 import { ScrollSpyDirective } from "../../directives/scroll-spy.directive";
 import { BenchmarkWorkloadsSidebarComponent } from "../../components/benchmark-workloads-sidebar/benchmark-workloads-sidebar.component";
+import {
+  BenchmarkFamily,
+  BenchmarkWorkloadConfig,
+  BenchmarkWorkloadConfigs,
+  BenchmarkWorkloadExample,
+  BenchmarkWorkloadItem,
+} from "./benchmark-workloads.models";
 
-export interface BenchmarkWithMock extends Benchmark {
-  mockData?: BenchmarkWorkloadMockData;
-}
-
-export interface BenchmarkFamily {
-  framework: string;
-  benchmarks: BenchmarkWithMock[];
-}
+type RawBenchmarkWorkloadConfig = {
+  description?: unknown;
+  examples?: unknown;
+};
 
 @Component({
   selector: "app-benchmark-workloads",
@@ -81,12 +85,9 @@ export class BenchmarkWorkloadsComponent implements OnInit {
 
   readonly benchmarksResource = resource({
     loader: async () => {
-      const response = await this.keeperAPI.getServerBenchmarkMeta();
-      const rawData: Benchmark[] = response.body ?? [];
-      const data: BenchmarkWithMock[] = rawData.map((b) => ({
-        ...b,
-        mockData: getMockData(b.benchmark_id),
-      }));
+      const response = await this.keeperAPI.getBenchmarkWorkloads();
+      const rawData: BenchmarkScoreStatsItem[] = response.body ?? [];
+      const data = rawData.map((workload) => this.normalizeWorkload(workload));
       const grouped = this.groupByFramework(data);
 
       if (data.length > 0 && !this.activeBenchmarkId()) {
@@ -132,8 +133,69 @@ export class BenchmarkWorkloadsComponent implements OnInit {
     );
   }
 
-  private groupByFramework(benchmarks: BenchmarkWithMock[]): BenchmarkFamily[] {
-    const map = new Map<string, BenchmarkWithMock[]>();
+  private normalizeWorkload(
+    workload: BenchmarkScoreStatsItem,
+  ): BenchmarkWorkloadItem {
+    return {
+      ...workload,
+      configs: this.normalizeConfigs(workload.configs),
+      status: this.normalizeStatus(workload.status),
+    };
+  }
+
+  private normalizeConfigs(
+    configs: object | undefined,
+  ): BenchmarkWorkloadConfigs | undefined {
+    if (!configs || typeof configs !== "object") {
+      return undefined;
+    }
+
+    const normalizedEntries = Object.entries(configs as Record<string, unknown>)
+      .map(([key, value]) => {
+        if (!value || typeof value !== "object") {
+          return null;
+        }
+
+        const config = value as RawBenchmarkWorkloadConfig;
+        const description =
+          typeof config.description === "string" ? config.description : "";
+        const examplesSource = Array.isArray(config.examples)
+          ? config.examples
+          : [];
+        const examples = examplesSource.filter(
+          (example): example is BenchmarkWorkloadExample =>
+            typeof example === "boolean" ||
+            typeof example === "number" ||
+            typeof example === "string",
+        );
+
+        const normalizedConfig: BenchmarkWorkloadConfig = {
+          description,
+          examples,
+        };
+
+        return [key, normalizedConfig] as const;
+      })
+      .filter(
+        (entry): entry is readonly [string, BenchmarkWorkloadConfig] =>
+          entry !== null,
+      );
+
+    return normalizedEntries.length > 0
+      ? Object.fromEntries(normalizedEntries)
+      : undefined;
+  }
+
+  private normalizeStatus(status: string): Status {
+    return status.toLowerCase() === Status.Inactive
+      ? Status.Inactive
+      : Status.Active;
+  }
+
+  private groupByFramework(
+    benchmarks: BenchmarkWorkloadItem[],
+  ): BenchmarkFamily[] {
+    const map = new Map<string, BenchmarkWorkloadItem[]>();
     for (const b of benchmarks) {
       if (!map.has(b.framework)) map.set(b.framework, []);
       map.get(b.framework)!.push(b);
