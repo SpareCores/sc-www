@@ -10,7 +10,7 @@ import {
 } from "@angular/core";
 import { CommonModule, isPlatformBrowser } from "@angular/common";
 import { LucideAngularModule } from "lucide-angular";
-import { BenchmarkFamily } from "../../pages/benchmark-workloads/benchmark-workloads.component";
+import { BenchmarkFamily } from "../../pages/benchmark-workloads/benchmark-workloads.models";
 
 @Component({
   selector: "app-benchmark-workloads-sidebar",
