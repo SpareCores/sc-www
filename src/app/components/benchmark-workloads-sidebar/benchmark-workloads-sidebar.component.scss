@@ -3,10 +3,6 @@
   position: sticky;
   top: 6.5rem;
   display: block;
-
-  @media (max-width: 1024px) {
-    display: none;
-  }
 }
 
 .filter_bar {
