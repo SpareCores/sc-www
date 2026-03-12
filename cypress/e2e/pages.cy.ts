@@ -17,5 +17,7 @@ describe("Visit main pages", () => {
     E2EEvent.visitURL("/legal");
     E2EEvent.visitURL("/legal/terms-of-service");
     E2EEvent.visitURL("/legal/privacy-policy");
+    E2EEvent.visitURL("/navigator/benchmark-coverage");
+    E2EEvent.visitURL("/navigator/benchmark-workloads");
   });
 });
