@@ -50,7 +50,10 @@
                 class="toc_family_info"
                 [class.toc_family_info_mini]="isCollapsed()"
               >
-                <lucide-icon name="gauge" class="h-4 w-4"></lucide-icon>
+                <lucide-icon
+                  [name]="family.framework | benchmarkIcon"
+                  class="h-4 w-4"
+                ></lucide-icon>
                 <span
                   class="toc_family_name"
                   [class.toc_family_name_hidden]="isCollapsed()"

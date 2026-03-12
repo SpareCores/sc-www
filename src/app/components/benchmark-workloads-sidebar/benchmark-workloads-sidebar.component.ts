@@ -11,10 +11,11 @@ import {
 import { CommonModule, isPlatformBrowser } from "@angular/common";
 import { LucideAngularModule } from "lucide-angular";
 import { BenchmarkFamily } from "../../pages/benchmark-workloads/benchmark-workloads.models";
+import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
 
 @Component({
   selector: "app-benchmark-workloads-sidebar",
-  imports: [CommonModule, LucideAngularModule],
+  imports: [CommonModule, LucideAngularModule, BenchmarkIconPipe],
   templateUrl: "./benchmark-workloads-sidebar.component.html",
   styleUrl: "./benchmark-workloads-sidebar.component.scss",
 })
