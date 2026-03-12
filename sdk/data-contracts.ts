@@ -524,7 +524,6 @@ export enum GpuModels {
   L20 = "L20",
   L4 = "L4",
   L40S = "L40S",
-  M60 = "M60",
   P100 = "P100",
   P4 = "P4",
   RTX5000 = "RTX 5000",
@@ -554,7 +553,6 @@ export enum GpuFamilies {
   Blackwell = "Blackwell",
   Gaudi = "Gaudi",
   Hopper = "Hopper",
-  Maxwell = "Maxwell",
   RadeonProNavi = "Radeon Pro Navi",
   Turing = "Turing",
   Volta = "Volta",
@@ -767,6 +765,23 @@ export interface BenchmarkConfig {
 }
 
 /**
+ * BenchmarkHistogram
+ * Histogram data for a benchmark score distribution.
+ */
+export interface BenchmarkHistogram {
+  /**
+   * Breakpoints
+   * NUM_BINS + 1 boundary values defining the edges of each bucket
+   */
+  breakpoints: number[];
+  /**
+   * Counts
+   * Number of scores falling in each bucket (length == len(breakpoints) - 1)
+   */
+  counts: number[];
+}
+
+/**
  * BenchmarkScore
  * Results of running Benchmark scenarios on Servers.
  *
@@ -823,6 +838,70 @@ export interface BenchmarkScore {
    * @format date-time
    */
   observed_at?: string;
+}
+
+/**
+ * BenchmarkScoreStatsItem
+ * Aggregate statistics and score distribution for a single benchmark.
+ */
+export interface BenchmarkScoreStatsItem {
+  /**
+   * Benchmark Id
+   * Unique identifier of the benchmark
+   */
+  benchmark_id: string;
+  /**
+   * Name
+   * Human-friendly name of the benchmark
+   */
+  name: string;
+  /**
+   * Description
+   * Short description of the benchmark
+   */
+  description?: string | null;
+  /**
+   * Framework
+   * The benchmark framework/software/tool used
+   */
+  framework: string;
+  /**
+   * Measurement
+   * Name of the measurement recorded
+   */
+  measurement?: string | null;
+  /**
+   * Unit
+   * Optional unit of measurement for the score
+   */
+  unit?: string | null;
+  /**
+   * Higher Is Better
+   * Whether a higher score indicates better performance
+   */
+  higher_is_better: boolean;
+  /**
+   * Status
+   * Benchmark status (e.g., 'ACTIVE', 'INACTIVE')
+   */
+  status: string;
+  /**
+   * Configs
+   * Benchmark config fields enriched with example values. Keys come from Benchmark.config_fields; each value includes the original description plus an 'examples' list of unique observed config values.
+   */
+  configs?: object;
+  /**
+   * Count
+   * Total number of active, non-null benchmark score records
+   */
+  count: number;
+  /**
+   * Count Servers
+   * Number of distinct (vendor_id, server_id) pairs with scores
+   */
+  count_servers: number;
+  /** Score distribution histogram; None when no scores are available */
+  histogram?: BenchmarkHistogram | null;
 }
 
 /**
@@ -1088,17 +1167,17 @@ export interface NameAndDescription {
  * PriceTier
  * Price tier definition.
  *
- * As standard JSON does not support Inf, NaN etc values,
- * those should be passed as string, e.g. for the upper bound.
- *
- * See [float_inf_to_str][sc_crawler.utils.float_inf_to_str] for
- * converting an infinite numeric value into "Infinity".
+ * Infinite bounds (e.g. for an open-ended upper tier) are stored as
+ * `float("inf")` in Python and automatically serialized to the
+ * JSON-safe string `"Infinity"` on export. Both representations are
+ * accepted as input: the model validator converts `"Infinity"` back
+ * to `float("inf")` when loading from JSON.
  */
 export interface PriceTier {
   /** Lower */
-  lower: number | string;
+  lower: number;
   /** Upper */
-  upper: number | string;
+  upper: number;
   /** Price */
   price: number;
 }
@@ -3131,6 +3210,10 @@ export type GetStatsStatsGetData = object;
 
 export type GetDebugInfoDebugGetData = DebugInfoResponse;
 
+/** Response Get Benchmark Score Stats Benchmark Score Stats Get */
+export type GetBenchmarkScoreStatsBenchmarkScoreStatsGetData =
+  BenchmarkScoreStatsItem[];
+
 /** Response Table Benchmark Table Benchmark Get */
 export type TableBenchmarkTableBenchmarkGetData = Benchmark[];
 
@@ -4378,7 +4461,6 @@ export interface SearchServersServersGetParams {
     | "Blackwell"
     | "Gaudi"
     | "Hopper"
-    | "Maxwell"
     | "Radeon Pro Navi"
     | "Turing"
     | "Volta";
@@ -4399,7 +4481,6 @@ export interface SearchServersServersGetParams {
     | "L20"
     | "L4"
     | "L40S"
-    | "M60"
     | "P100"
     | "P4"
     | "RTX 5000"
@@ -5068,7 +5149,6 @@ export interface SearchServerPricesServerPricesGetParams {
     | "Blackwell"
     | "Gaudi"
     | "Hopper"
-    | "Maxwell"
     | "Radeon Pro Navi"
     | "Turing"
     | "Volta";
@@ -5089,7 +5169,6 @@ export interface SearchServerPricesServerPricesGetParams {
     | "L20"
     | "L4"
     | "L40S"
-    | "M60"
     | "P100"
     | "P4"
     | "RTX 5000"
