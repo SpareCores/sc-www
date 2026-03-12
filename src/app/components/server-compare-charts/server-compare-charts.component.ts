@@ -44,6 +44,7 @@ import { DomSanitizer } from "@angular/platform-browser";
 import { DropdownManagerService } from "../../services/dropdown-manager.service";
 import { BaseChartDirective } from "ng2-charts";
 import { ToastService } from "../../services/toast.service";
+import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
 
 @Component({
   selector: "app-server-compare-charts",
@@ -53,6 +54,7 @@ import { ToastService } from "../../services/toast.service";
     RouterModule,
     BaseChartDirective,
     CompactNumberPipe,
+    BenchmarkIconPipe,
   ],
   templateUrl: "./server-compare-charts.component.html",
   styleUrl: "./server-compare-charts.component.scss",

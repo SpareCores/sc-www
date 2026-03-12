@@ -321,6 +321,10 @@
             <td [colSpan]="getSectionColSpan()">
               <div class="flex justify-between">
                 <h3 class="text-xl font-semibold flex gap-2 items-center">
+                  <lucide-icon
+                    [name]="benchmarkCategory.name | benchmarkIcon"
+                    class="h-6 w-6"
+                  ></lucide-icon>
                   {{ benchmarkCategory.name }}
                   <lucide-icon
                     name="circle-arrow-up"
@@ -878,6 +882,10 @@
           <tr class="section_header" id="benchmark_line">
             <td [colSpan]="2">
               <h3 class="text-xl font-semibold flex gap-2 items-center">
+                <lucide-icon
+                  [name]="chartItem.chart.name | benchmarkIcon"
+                  class="h-6 w-6"
+                ></lucide-icon>
                 {{ chartItem.chart.name }}
                 @if (
                   chartItem.chart.options[chartItem.chart.selectedOption].icon
@@ -1079,6 +1087,10 @@
             <td [colSpan]="servers.length + 1">
               <div class="pl-4 w-full flex justify-between">
                 <div class="flex gap-2 items-center">
+                  <lucide-icon
+                    [name]="benchmarkCategory.name | benchmarkIcon"
+                    class="h-6 w-6"
+                  ></lucide-icon>
                   {{ benchmarkCategory.name }}
                   @if (benchmarkCategory.description) {
                     <lucide-icon

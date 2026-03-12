@@ -63,7 +63,7 @@
               [id]="'family-' + family.framework"
             >
               <lucide-icon
-                name="gauge"
+                [name]="family.framework | benchmarkIcon"
                 class="h-6 w-6 text-emerald-400 shrink-0"
               ></lucide-icon>
               <h2 class="text-white text-2xl font-bold font-mono">

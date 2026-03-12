@@ -31,6 +31,7 @@ import {
   BenchmarkWorkloadExample,
   BenchmarkWorkloadItem,
 } from "./benchmark-workloads.models";
+import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
 
 type RawBenchmarkWorkloadConfig = {
   description?: unknown;
@@ -46,6 +47,7 @@ type RawBenchmarkWorkloadConfig = {
     LoadingSpinnerComponent,
     ScrollSpyDirective,
     BenchmarkWorkloadsSidebarComponent,
+    BenchmarkIconPipe,
   ],
   templateUrl: "./benchmark-workloads.component.html",
   styleUrl: "./benchmark-workloads.component.scss",
