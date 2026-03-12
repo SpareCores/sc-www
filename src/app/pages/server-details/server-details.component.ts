@@ -584,7 +584,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
                   }
 
                   if (showDetails) {
-                    this.toggleCard("details", false);
+                    this.setCardState("details", true, false);
                   }
 
                   if (similarCategory) {
@@ -738,7 +738,11 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   }
 
   toggleCard(cardId: string, updateURL: boolean = true) {
-    this.expandedCards[cardId] = !this.expandedCards[cardId];
+    this.setCardState(cardId, !this.expandedCards[cardId], updateURL);
+  }
+
+  setCardState(cardId: string, open: boolean, updateURL: boolean = true) {
+    this.expandedCards[cardId] = open;
 
     if (updateURL && cardId === "details") {
       if (this.expandedCards[cardId]) {
