@@ -18,6 +18,7 @@ import { V2 } from "../../../sdk/V2";
 import { TrafficPrices } from "../../../sdk/TrafficPrices";
 import { BenchmarkConfigs } from "../../../sdk/BenchmarkConfigs";
 import { Debug } from "../../../sdk/Debug";
+import { BenchmarkScoreStats } from "../../../sdk/BenchmarkScoreStats";
 
 @Injectable({
   providedIn: "root",
@@ -38,6 +39,8 @@ export class KeeperAPIService {
   public BenchmarksController: BenchmarkConfigs = new BenchmarkConfigs(
     this.myHttp,
   );
+  public BenchmarkScoreStatsController: BenchmarkScoreStats =
+    new BenchmarkScoreStats(this.myHttp);
   public V2Controller: V2 = new V2(this.myHttp);
   public debugController: Debug = new Debug(this.myHttp);
 
@@ -142,6 +145,10 @@ export class KeeperAPIService {
 
   public getServerBenchmarkMeta(): Promise<any> {
     return this.TableController.tableBenchmarkTableBenchmarkGet();
+  }
+
+  public getBenchmarkWorkloads(): Promise<any> {
+    return this.BenchmarkScoreStatsController.getBenchmarkScoreStatsBenchmarkScoreStatsGet();
   }
 
   public getStorages(): Promise<any> {

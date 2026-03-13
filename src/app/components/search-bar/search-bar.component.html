@@ -82,6 +82,15 @@
                   getParameterType(parameter) !== "checkbox"
                 ) {
                   <div class="flex gap-2 items-center">
+                    @if (
+                      filter.category_id === "benchmark" &&
+                      (parameter.name | benchmarkIcon: "") !== ""
+                    ) {
+                      <lucide-icon
+                        [name]="parameter.name | benchmarkIcon: ''"
+                        class="h-4 w-4 text-emerald-400"
+                      ></lucide-icon>
+                    }
                     <div
                       class="font-bold text-emerald-400 text-sm"
                       id="filter_title_{{ parameter.name }}"
@@ -342,8 +351,22 @@
                         benchmarkFilterOptionLabel(enum)
                     ) {
                       <div class="flex flex-col gap-2">
-                        <div class="text-emerald-400 text-sm font-bold">
-                          {{ benchmarkFilterOptionLabel(enum) }}
+                        <div class="flex gap-2 items-center">
+                          @if (
+                            (benchmarkFilterOptionLabel(enum)
+                              | benchmarkIcon: "") !== ""
+                          ) {
+                            <lucide-icon
+                              [name]="
+                                benchmarkFilterOptionLabel(enum)
+                                  | benchmarkIcon: ''
+                              "
+                              class="h-4 w-4 text-emerald-400"
+                            ></lucide-icon>
+                          }
+                          <div class="text-emerald-400 text-sm font-bold">
+                            {{ benchmarkFilterOptionLabel(enum) }}
+                          </div>
                         </div>
                         <div class="flex items-center gap-4 text-sm text-white">
                           <label

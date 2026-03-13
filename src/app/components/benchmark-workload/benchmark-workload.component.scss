@@ -1,0 +1,37 @@
+.histogram_container {
+  position: relative;
+  height: 220px;
+  width: 100%;
+}
+
+.config_table {
+  @apply w-full text-white;
+  border-collapse: collapse;
+
+  thead {
+    @apply border-b border-gray-200 border-solid bg-secondary;
+    th {
+      @apply text-left pl-3 pr-2 py-3 font-normal text-xs text-white uppercase;
+    }
+  }
+
+  tbody {
+    tr:nth-child(2n + 1) {
+      @apply bg-primary;
+    }
+    tr:nth-child(2n) {
+      @apply bg-secondary;
+    }
+
+    tr {
+      @apply hover:outline hover:outline-1 hover:-outline-offset-1 hover:outline-emerald-400;
+      td {
+        @apply pl-3 pr-2 py-3 text-left text-sm align-middle;
+      }
+    }
+  }
+}
+
+:host {
+  display: block;
+}

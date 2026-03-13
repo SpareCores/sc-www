@@ -1,0 +1,94 @@
+<!-- Header band -->
+<div class="w-full bg-primary">
+  <div class="content pt-16 pb-4">
+    <app-breadcrumbs [segments]="breadcrumbs()"></app-breadcrumbs>
+    <div class="flex flex-col gap-4 my-8 mx-2 xl:mx-0">
+      <div class="flex gap-4 items-center w-full justify-between">
+        <h1 class="text-white font-bold text-3xl flex items-center">
+          <lucide-icon class="h-8 w-8 mr-2" name="notebook-text"></lucide-icon>
+          {{ pageTitle }}
+        </h1>
+      </div>
+      <div class="text-white text-xl pr-4 md:pr-16">
+        {{ pageDescription }}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Main content area -->
+<div class="content py-8 bg-primary min-h-screen">
+  @if (isLoading()) {
+    <div class="flex justify-center items-center mt-16">
+      <app-loading-spinner
+        size="lg"
+        text="Loading benchmark workloads..."
+        textClasses="text-lg text-white"
+      ></app-loading-spinner>
+    </div>
+  } @else if (errorMessage()) {
+    <div class="flex justify-center items-center mt-16">
+      <div class="text-red-400 text-xl">{{ errorMessage() }}</div>
+    </div>
+  } @else {
+    <div
+      class="flex gap-8 page_layout page_layout_spacing"
+      [class.layout_static]="disableLayoutTransitions()"
+      [class.page_layout_mobile]="isMobileViewport()"
+    >
+      <!-- Sticky TOC sidebar -->
+      <app-benchmark-workloads-sidebar
+        [benchmarkFamilies]="benchmarkFamilies()"
+        [isCollapsed]="isCollapsed()"
+        [activeBenchmarkId]="activeBenchmarkId()"
+        [expandedFamily]="expandedFamily()"
+        [activeFamily]="activeFamily()"
+        (toggleCollapseEvent)="toggleCollapse()"
+        (familyClick)="handleFamilyClick($event)"
+        (benchmarkClick)="scrollTo($event)"
+      ></app-benchmark-workloads-sidebar>
+
+      <!-- Main scrollable content column -->
+      <div
+        class="list_holder flex flex-col gap-12"
+        [class.limited-full]="!isCollapsed()"
+        [class.mini-full]="isCollapsed()"
+        [appScrollSpy]="allBenchmarkIds()"
+        (activeItemId)="onActiveItemChange($event)"
+      >
+        @for (family of benchmarkFamilies(); track family.framework) {
+          <!-- Family section heading -->
+          <section>
+            <div
+              class="flex items-center gap-3 mb-6 pb-3 border-b border-emerald-400/30"
+              [id]="'family-' + family.framework"
+            >
+              <lucide-icon
+                [name]="family.framework | benchmarkIcon"
+                class="h-6 w-6 text-emerald-400 shrink-0"
+              ></lucide-icon>
+              <h2 class="text-white text-2xl font-bold font-mono">
+                {{ family.framework }}
+              </h2>
+              <span class="ml-auto text-xs text-gray-400 shrink-0">
+                {{ family.benchmarks.length }}
+                {{ family.benchmarks.length === 1 ? "workload" : "workloads" }}
+              </span>
+            </div>
+
+            <!-- Benchmark cards grid -->
+            <div class="flex flex-col gap-8">
+              @for (bm of family.benchmarks; track bm.benchmark_id) {
+                <div [id]="bm.benchmark_id" class="scroll-mt-[6.5rem]">
+                  <app-benchmark-workload
+                    [workload]="bm"
+                  ></app-benchmark-workload>
+                </div>
+              }
+            </div>
+          </section>
+        }
+      </div>
+    </div>
+  }
+</div>

@@ -10,6 +10,7 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
+import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
 import {
   Chart,
   ChartConfiguration,
@@ -45,7 +46,13 @@ Chart.register(annotationPlugin);
 
 @Component({
   selector: "app-server-charts",
-  imports: [LucideAngularModule, FormsModule, RouterModule, BaseChartDirective],
+  imports: [
+    LucideAngularModule,
+    FormsModule,
+    RouterModule,
+    BaseChartDirective,
+    BenchmarkIconPipe,
+  ],
   templateUrl: "./server-charts.component.html",
   styleUrl: "./server-charts.component.scss",
 })
