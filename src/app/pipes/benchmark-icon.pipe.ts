@@ -19,6 +19,7 @@ export class BenchmarkIconPipe implements PipeTransform {
       case lowerCase.includes("bw_mem"):
       case lowerCase.includes("bwmem"):
       case lowerCase.includes("memory_bandwidth"):
+      case lowerCase.startsWith("memory_"):
       case lowerCase.includes("membench"):
         return "memory-stick";
       case lowerCase.includes("compression"):
