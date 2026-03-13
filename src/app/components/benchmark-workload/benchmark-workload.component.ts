@@ -85,7 +85,7 @@ export class BenchmarkWorkloadComponent {
       datasets: [
         {
           data: bins.map((b) => b.count),
-          label: "Server types",
+          label: "Measurements",
           backgroundColor: "#34d399",
           hoverBackgroundColor: "#6ee7b7",
           borderWidth: 0,
@@ -98,7 +98,7 @@ export class BenchmarkWorkloadComponent {
 
   readonly histogramOptions = computed<ChartConfiguration<"bar">["options"]>(
     () => {
-      const yLabel = "Server types";
+      const yLabel = "Measurements";
       const xLabel = this.unit() ? `Score (${this.unit()})` : "Score";
 
       return {
@@ -113,7 +113,7 @@ export class BenchmarkWorkloadComponent {
                 if (!bin) return items[0].label;
                 return `${this.formatValue(bin.low)} – ${this.formatValue(bin.high)} ${this.unit()}`;
               },
-              label: (item) => ` ${item.formattedValue} server types`,
+              label: (item) => ` ${item.formattedValue} measurements`,
             },
           },
         },
