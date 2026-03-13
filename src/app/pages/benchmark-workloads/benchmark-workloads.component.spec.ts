@@ -5,6 +5,7 @@ import { KeeperAPIService } from "../../services/keeper-api.service";
 import { Status } from "../../../../sdk/data-contracts";
 
 describe("BenchmarkWorkloadsComponent", () => {
+  const originalInnerWidth = window.innerWidth;
   const keeperApiService = {
     getBenchmarkWorkloads: jasmine.createSpy("getBenchmarkWorkloads"),
   };
@@ -13,6 +14,12 @@ describe("BenchmarkWorkloadsComponent", () => {
   let fixture: ComponentFixture<BenchmarkWorkloadsComponent>;
 
   beforeEach(async () => {
+    Object.defineProperty(window, "innerWidth", {
+      configurable: true,
+      value: originalInnerWidth,
+      writable: true,
+    });
+
     keeperApiService.getBenchmarkWorkloads.and.resolveTo({
       body: [
         {
@@ -57,6 +64,14 @@ describe("BenchmarkWorkloadsComponent", () => {
     fixture.detectChanges();
   });
 
+  afterEach(() => {
+    Object.defineProperty(window, "innerWidth", {
+      configurable: true,
+      value: originalInnerWidth,
+      writable: true,
+    });
+  });
+
   it("should create", () => {
     expect(component).toBeTruthy();
   });
@@ -67,5 +82,23 @@ describe("BenchmarkWorkloadsComponent", () => {
     expect(component.benchmarkFamilies()[0].benchmarks[0].status).toBe(
       Status.Active,
     );
+  });
+
+  it("should collapse the sidebar by default on mobile viewports", async () => {
+    Object.defineProperty(window, "innerWidth", {
+      configurable: true,
+      value: 768,
+      writable: true,
+    });
+
+    const mobileFixture = TestBed.createComponent(BenchmarkWorkloadsComponent);
+    const mobileComponent = mobileFixture.componentInstance;
+
+    mobileFixture.detectChanges();
+    await mobileFixture.whenStable();
+    mobileFixture.detectChanges();
+
+    expect(mobileComponent.isMobileViewport()).toBeTrue();
+    expect(mobileComponent.isCollapsed()).toBeTrue();
   });
 });

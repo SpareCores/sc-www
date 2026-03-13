@@ -201,3 +201,24 @@
     font-weight: 600;
   }
 }
+
+@media (max-width: 1024px) {
+  .filter_bar {
+    width: min(18rem, calc(100vw - 1.25rem));
+    min-width: min(18rem, calc(100vw - 1.25rem));
+  }
+
+  .filter_bar.collapsed {
+    width: var(--mini-sidebar-width);
+    min-width: var(--mini-sidebar-width);
+  }
+
+  .toc_shell {
+    min-height: calc(100vh - 6.5rem);
+  }
+
+  .top {
+    padding-right: 0.75rem;
+    border-top-right-radius: 0;
+  }
+}

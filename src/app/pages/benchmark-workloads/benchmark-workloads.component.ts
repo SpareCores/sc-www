@@ -1,5 +1,6 @@
 import {
   Component,
+  HostListener,
   OnInit,
   PLATFORM_ID,
   computed,
@@ -57,6 +58,7 @@ export class BenchmarkWorkloadsComponent implements OnInit {
   private static readonly SCROLL_LOCK_TIMEOUT_MS = 1500;
   private static readonly SIDEBAR_TRANSITION_MS = 300;
   private static readonly DEFAULT_FAMILY_INDEX = 0;
+  private static readonly MOBILE_BREAKPOINT_PX = 1024;
 
   private document = inject(DOCUMENT);
   private keeperAPI = inject(KeeperAPIService);
@@ -77,6 +79,8 @@ export class BenchmarkWorkloadsComponent implements OnInit {
   private pendingScrollTargetId: string | null = null;
   private deferredScrollTimeout: ReturnType<typeof setTimeout> | null = null;
   private pendingScrollTimeout: ReturnType<typeof setTimeout> | null = null;
+  private hasInitializedViewportState = false;
+  private desktopCollapsedState = false;
 
   constructor() {
     this.destroyRef.onDestroy(() => {
@@ -111,6 +115,7 @@ export class BenchmarkWorkloadsComponent implements OnInit {
   );
 
   readonly isCollapsed = signal(false);
+  readonly isMobileViewport = signal(false);
   readonly disableLayoutTransitions = signal(false);
   readonly activeBenchmarkId = signal<string>("");
   readonly expandedFamily = signal<string | null>(null);
@@ -128,11 +133,18 @@ export class BenchmarkWorkloadsComponent implements OnInit {
   );
 
   ngOnInit(): void {
+    this.syncSidebarStateForViewport();
+
     this.seoHandler.updateTitleAndMetaTags(
       "Spare Cores - Benchmark Workloads",
       "Descriptions of all benchmark families and workloads used by Spare Cores, including units of measurement, configuration options, and score distributions.",
       "benchmark workloads, cloud benchmarks, performance testing, CPU benchmarks",
     );
+  }
+
+  @HostListener("window:resize")
+  onWindowResize(): void {
+    this.syncSidebarStateForViewport();
   }
 
   private normalizeWorkload(
@@ -233,6 +245,54 @@ export class BenchmarkWorkloadsComponent implements OnInit {
       this.benchmarkFamilies().find((family) => family.framework === framework)
         ?.benchmarks[0]?.benchmark_id ?? null
     );
+  }
+
+  private syncSidebarStateForViewport(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
+    const viewportWidth = this.document.defaultView?.innerWidth;
+    if (typeof viewportWidth !== "number") {
+      return;
+    }
+
+    const isMobileViewport =
+      viewportWidth <= BenchmarkWorkloadsComponent.MOBILE_BREAKPOINT_PX;
+    const wasMobileViewport = this.isMobileViewport();
+
+    this.isMobileViewport.set(isMobileViewport);
+
+    if (!this.hasInitializedViewportState) {
+      this.hasInitializedViewportState = true;
+      this.desktopCollapsedState = this.isCollapsed();
+
+      if (isMobileViewport) {
+        this.isCollapsed.set(true);
+      }
+
+      return;
+    }
+
+    if (isMobileViewport === wasMobileViewport) {
+      return;
+    }
+
+    if (isMobileViewport) {
+      this.desktopCollapsedState = this.isCollapsed();
+      this.autoCollapseAfterSelection.set(false);
+      this.clearDeferredScroll();
+      this.isCollapsed.set(true);
+      return;
+    }
+
+    this.isCollapsed.set(this.desktopCollapsedState);
+
+    if (!this.isCollapsed() && !this.expandedFamily()) {
+      this.expandedFamily.set(
+        this.activeFamily() || this.getDefaultFamilyFramework(),
+      );
+    }
   }
 
   private setCollapsedStatePreservingViewport(
@@ -368,6 +428,10 @@ export class BenchmarkWorkloadsComponent implements OnInit {
       willCollapse,
       this.activeBenchmarkId() || this.pendingScrollTargetId,
     );
+
+    if (!this.isMobileViewport()) {
+      this.desktopCollapsedState = willCollapse;
+    }
 
     if (willCollapse) {
       return;

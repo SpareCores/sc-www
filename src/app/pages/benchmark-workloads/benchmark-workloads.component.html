@@ -32,8 +32,9 @@
     </div>
   } @else {
     <div
-      class="flex gap-8 mx-2 xl:mx-0 page_layout"
+      class="flex gap-8 page_layout page_layout_spacing"
       [class.layout_static]="disableLayoutTransitions()"
+      [class.page_layout_mobile]="isMobileViewport()"
     >
       <!-- Sticky TOC sidebar -->
       <app-benchmark-workloads-sidebar
