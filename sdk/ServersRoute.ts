@@ -609,7 +609,8 @@ export namespace Servers {
         | "TH"
         | "TW"
         | "US"
-        | "ZA";
+        | "ZA"
+        | "DK";
       /**
        * Storage Size
        * Minimum amount of storage (GBs).

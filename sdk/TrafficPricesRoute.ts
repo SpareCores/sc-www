@@ -530,7 +530,8 @@ export namespace TrafficPrices {
         | "TH"
         | "TW"
         | "US"
-        | "ZA";
+        | "ZA"
+        | "DK";
       /**
        * Direction
        * Direction of the Internet traffic.

@@ -540,7 +540,8 @@ export namespace StoragePrices {
         | "TH"
         | "TW"
         | "US"
-        | "ZA";
+        | "ZA"
+        | "DK";
       /**
        * Limit
        * Maximum number of results. Set to -1 for unlimited.
