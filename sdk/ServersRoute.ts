@@ -583,6 +583,7 @@ export namespace Servers {
         | "CL"
         | "CN"
         | "DE"
+        | "DK"
         | "ES"
         | "FI"
         | "FR"
@@ -609,8 +610,7 @@ export namespace Servers {
         | "TH"
         | "TW"
         | "US"
-        | "ZA"
-        | "DK";
+        | "ZA";
       /**
        * Storage Size
        * Minimum amount of storage (GBs).
