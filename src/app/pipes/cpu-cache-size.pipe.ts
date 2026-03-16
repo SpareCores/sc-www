@@ -9,15 +9,12 @@ export class CpuCacheSizePipe implements PipeTransform {
   private readonly KIB = 1024;
   private readonly MIB = 1024 * 1024;
 
-  transform(bytes: number | null | undefined): string {
-    if (!bytes || bytes <= 0) return "-";
-
-    if (bytes < this.MIB) {
-      return `${Math.round(bytes / this.KIB)} KiB`;
+  transform(kibibytes: number | null | undefined): string {
+    if (!kibibytes || kibibytes <= 0) return "-";
+    if (kibibytes * 1024 < this.MIB) {
+      return `${kibibytes} KiB`;
     }
-
-    const mib = bytes / this.MIB;
-
+    const mib = kibibytes / 1024;
     return `${formatValue(mib)} MiB`;
   }
 }

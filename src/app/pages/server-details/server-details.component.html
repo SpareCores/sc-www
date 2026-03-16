@@ -145,84 +145,23 @@
     }
 
     @if (serverDetails) {
-      <div class="mx-2 xl:mx-0 flex flex-wrap gap-8">
-        <div class="my-8 w-full">
+      <div class="mx-2 xl:mx-0 flex flex-wrap gap-8 mt-8">
+        <div class="my-2 w-full">
           <h2 class="text-3xl font-bold">Specifications</h2>
         </div>
-        <div class="block_half" id="details">
-          <h3 class="text-2xl">Server Details</h3>
-          @for (category of instancePropertyCategories; track category.name) {
-            <table class="items_table">
-              @if (category.properties.length) {
-                <thead>
-                  <tr>
-                    <th>{{ category.name }}</th>
-                    <th></th>
-                  </tr>
-                </thead>
-              }
-              <tbody>
-                @for (property of category.properties; track property.name) {
-                  <tr>
-                    <td class="fixed_width">
-                      <div class="flex gap-2 items-center">
-                        <b>{{ property.name }}</b>
-                        @if (property.description) {
-                          <lucide-icon
-                            name="info"
-                            class="h-4 w-4 text-gray-200"
-                            (mouseenter)="
-                              showTooltip($event, property.description)
-                            "
-                            (mouseleave)="hideTooltip()"
-                          >
-                          </lucide-icon>
-                        }
-                      </div>
-                    </td>
-                    <td>
-                      <div
-                        class="property_value"
-                        [innerHTML]="getProperty(property)"
-                      ></div>
-                    </td>
-                  </tr>
-                }
-              </tbody>
-            </table>
-          }
-          <div
-            class="absolute bottom-0 left-0 w-full py-3 flex justify-center"
-            id="details_more"
-            style="
-              background: linear-gradient(
-                360deg,
-                #06263a 23.44%,
-                rgba(6, 38, 58, 0) 100%
-              );
-            "
-          >
-            <button
-              class="btn-primary py-2 px-3"
-              (click)="openBox('details')"
-              id="details_more_button"
-              data-ph-capture-attribute-sc-event="server details show more server details"
-            >
-              View more details
-            </button>
-          </div>
-          <div class="w-full pt-3 flex justify-center hidden" id="details_less">
-            <button
-              class="btn-primary py-2 px-3"
-              (click)="openBox('details')"
-              id="details_less_button"
-              data-ph-capture-attribute-sc-event="server details show less server details"
-            >
-              Show less
-            </button>
-          </div>
-        </div>
-        <div class="block_half" id="availability">
+        <app-server-property-card
+          title="Server Metadata"
+          cardId="details"
+          [sections]="metadataSections"
+          [showSectionHeaders]="false"
+          [isOpen]="expandedCards.details"
+          (toggleRequested)="toggleCard('details')"
+        ></app-server-property-card>
+        <div
+          class="block_half"
+          id="availability"
+          [class.open]="expandedCards.availability"
+        >
           <h3 class="text-2xl">Availability</h3>
           <table class="items_table">
             <thead>
@@ -270,7 +209,7 @@
               }
             </tbody>
           </table>
-          @if (availabilityRegions.length > 7) {
+          @if (availabilityRegions.length > 7 && !expandedCards.availability) {
             <div
               class="absolute bottom-0 left-0 w-full py-3 flex justify-center"
               id="availability_more"
@@ -284,27 +223,45 @@
             >
               <button
                 class="btn-primary py-2 px-3"
-                (click)="openBox('availability')"
+                (click)="toggleCard('availability', false)"
                 id="availability_more_button"
+                aria-expanded="false"
                 data-ph-capture-attribute-sc-event="server details show more availability"
               >
                 Show more
               </button>
             </div>
           }
-          <div
-            class="w-full pt-3 flex justify-center hidden"
-            id="availability_less"
-          >
-            <button
-              class="btn-primary py-2 px-3"
-              (click)="openBox('availability')"
-              data-ph-capture-attribute-sc-event="server details show less availability"
-            >
-              Show less
-            </button>
-          </div>
+          @if (availabilityRegions.length > 7 && expandedCards.availability) {
+            <div class="w-full pt-3 flex justify-center" id="availability_less">
+              <button
+                class="btn-primary py-2 px-3"
+                (click)="toggleCard('availability', false)"
+                aria-expanded="true"
+                data-ph-capture-attribute-sc-event="server details show less availability"
+              >
+                Show less
+              </button>
+            </div>
+          }
         </div>
+        <app-server-property-card
+          title="Processor"
+          cardId="processor"
+          [sections]="processorSections"
+          [showSectionHeaders]="false"
+          [isOpen]="expandedCards.processor"
+          (toggleRequested)="toggleCard('processor', false)"
+        ></app-server-property-card>
+        <app-server-property-card
+          title="System Resources and Accelerators"
+          cardId="system_resources"
+          [sections]="resourceSections"
+          [showSectionHeaders]="true"
+          sectionHeaderVariant="availability"
+          [isOpen]="expandedCards.system_resources"
+          (toggleRequested)="toggleCard('system_resources', false)"
+        ></app-server-property-card>
         @if (lstopoSvgExists !== false) {
           <div
             class="block_full"
@@ -480,9 +437,11 @@
                   <td>
                     <a
                       class="underline decoration-dotted hover:text-gray-500"
-                      routerLink="/server/{{ server.vendor_id }}/{{
-                        server.api_reference
-                      }}"
+                      [routerLink]="[
+                        '/server',
+                        server.vendor_id,
+                        server.api_reference,
+                      ]"
                     >
                       {{ server.display_name }}
                     </a>
@@ -547,9 +506,11 @@
                   <td>
                     <a
                       class="underline decoration-dotted hover:text-gray-500"
-                      routerLink="/server/{{ server.vendor_id }}/{{
-                        server.api_reference
-                      }}"
+                      [routerLink]="[
+                        '/server',
+                        server.vendor_id,
+                        server.api_reference,
+                      ]"
                     >
                       {{ server.display_name }}
                     </a>
@@ -684,15 +645,6 @@
       </li>
     }
   </ul>
-</div>
-
-<div
-  id="tooltipDefault"
-  #tooltipDefault
-  style="opacity: 0"
-  class="max-w-225 absolute z-10 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-secondary border border-solid border-emerald-400 rounded-lg"
->
-  {{ tooltipContent }}
 </div>
 
 <div

@@ -1,4 +1,10 @@
 import {
+  RefreshCcwDot,
+  Bot,
+  Boxes,
+  EarthLock,
+  DatabaseZap,
+  ImageUp,
   ArrowDownNarrowWide,
   ArrowDownWideNarrow,
   BookText,
@@ -82,6 +88,12 @@ import {
 } from "lucide-angular";
 
 export const lucideIcons = {
+  RefreshCcwDot,
+  Bot,
+  Boxes,
+  EarthLock,
+  DatabaseZap,
+  ImageUp,
   PcCase,
   Hotel,
   Home,

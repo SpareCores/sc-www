@@ -1,0 +1,60 @@
+/* Page layout — mirrors benchmark-coverage for consistency */
+
+.page_layout {
+  align-items: flex-start;
+}
+
+.page_layout_spacing {
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+.page_layout.layout_static {
+  ::ng-deep .filter_bar,
+  .list_holder {
+    transition: none !important;
+  }
+}
+
+.list_holder {
+  width: 100%;
+  z-index: 0;
+  min-width: 0;
+  transition: width 0.3s ease-in-out;
+}
+
+.limited-full {
+  width: calc(100% - 20rem);
+}
+
+.mini-full {
+  width: calc(100% - 3.5rem);
+}
+
+@media (min-width: 1280px) {
+  .page_layout_spacing {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+/* Responsive */
+
+@media (max-width: 1024px) {
+  .page_layout {
+    gap: 0.75rem;
+  }
+
+  .page_layout_spacing {
+    margin-left: 0;
+    margin-right: 0.5rem;
+  }
+
+  .list_holder.limited-full {
+    width: 100%;
+  }
+
+  .list_holder.mini-full {
+    width: calc(100% - 3.5rem);
+  }
+}

@@ -44,6 +44,9 @@ describe("Visual regression tests (small screen - 800px)", () => {
     // Prepare header position for a consistent visual regression snapshot
     E2EEvent.prepareHeaderForScreenshot();
 
+    // Hide "Observed at" row in Server Metadata for screenshot consistency
+    E2EEvent.hideObservedAtForScreenshot();
+
     // Hide availability section for screenshot consistency
     cy.get("#availability").invoke("css", "display", "none");
 

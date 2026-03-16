@@ -453,12 +453,12 @@
                       @if (column.type === "cpu_cache") {
                         <td>
                           @if (
-                            item.cpu_l1_cache ||
+                            item.cpu_l1d_cache ||
                             item.cpu_l2_cache ||
                             item.cpu_l3_cache
                           ) {
                             <div class="text-xs text-white whitespace-nowrap">
-                              L1: {{ item.cpu_l1_cache | cpuCacheSize }}
+                              L1: {{ item.cpu_l1d_cache | cpuCacheSize }}
                             </div>
                             <div class="text-xs text-white whitespace-nowrap">
                               L2: {{ item.cpu_l2_cache | cpuCacheSize }}

@@ -192,4 +192,12 @@ export abstract class E2EEvent {
   public static hideCommentsForScreenshot() {
     cy.get(".giscus").invoke("css", "display", "none");
   }
+
+  // Hide "Observed at" row in Server Metadata for screenshot consistency
+  public static hideObservedAtForScreenshot() {
+    cy.get("#details .property_value")
+      .last()
+      .closest("tr")
+      .invoke("css", "display", "none");
+  }
 }

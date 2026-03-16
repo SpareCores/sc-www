@@ -26,6 +26,7 @@ import {
   RegionMetadata,
 } from "../../pages/server-listing/server-listing.component";
 import { CountryIdtoNamePipe } from "../../pipes/country-idto-name.pipe";
+import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
 
 const optionsModal: ModalOptions = {
   backdropClasses: "bg-gray-900/50 fixed inset-0 z-40",
@@ -57,6 +58,7 @@ type BenchmarkFilterOption = string | { key?: string; value?: string };
     FormsModule,
     LucideAngularModule,
     CountryIdtoNamePipe,
+    BenchmarkIconPipe,
   ],
   templateUrl: "./search-bar.component.html",
   styleUrl: "./search-bar.component.scss",
@@ -453,10 +455,6 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
 
     if (name === "compliance_framework") {
       return "compliance_framework";
-    }
-
-    if (name === "vendor") {
-      return "vendor";
     }
 
     if (name === "vendor") {

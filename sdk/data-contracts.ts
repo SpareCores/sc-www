@@ -652,6 +652,7 @@ export enum Countries {
   TW = "TW",
   US = "US",
   ZA = "ZA",
+  DK = "DK",
 }
 
 /** ComplianceFrameworks */
@@ -1500,9 +1501,14 @@ export interface RegionPKs {
  *     cpu_manufacturer (typing.Optional[str]): The manufacturer of the primary processor, e.g. Intel or AMD.
  *     cpu_family (typing.Optional[str]): The product line/family of the primary processor, e.g. Xeon, Core i7, Ryzen 9.
  *     cpu_model (typing.Optional[str]): The model number of the primary processor, e.g. 9750H.
- *     cpu_l1_cache (typing.Optional[int]): L1 cache size (byte).
- *     cpu_l2_cache (typing.Optional[int]): L2 cache size (byte).
- *     cpu_l3_cache (typing.Optional[int]): L3 cache size (byte).
+ *     cpu_l1d_cache (typing.Optional[int]): L1 data cache size (KiB).
+ *     cpu_l1d_cache_total (typing.Optional[int]): Total L1 data cache size (KiB) across all cores.
+ *     cpu_l1i_cache (typing.Optional[int]): L1 instruction cache size (KiB).
+ *     cpu_l1i_cache_total (typing.Optional[int]): Total L1 instruction cache size (KiB) across all cores.
+ *     cpu_l2_cache (typing.Optional[int]): L2 cache size (KiB).
+ *     cpu_l2_cache_total (typing.Optional[int]): Total L2 cache size (KiB) across all cores.
+ *     cpu_l3_cache (typing.Optional[int]): L3 cache size (KiB).
+ *     cpu_l3_cache_total (typing.Optional[int]): Total L3 cache size (KiB) across all cores.
  *     cpu_flags (typing.List[str]): CPU features/flags.
  *     cpus (typing.List[sc_crawler.table_fields.Cpu]): JSON array of known CPU details, e.g. the manufacturer, family, model; L1/L2/L3 cache size; microcode version; feature flags; bugs etc.
  *     memory_amount (int): RAM amount (MiB).
@@ -1602,20 +1608,45 @@ export interface Server {
    */
   cpu_model?: string | null;
   /**
-   * Cpu L1 Cache
-   * L1 cache size (byte).
+   * Cpu L1D Cache
+   * L1 data cache size (KiB).
    */
-  cpu_l1_cache?: number | null;
+  cpu_l1d_cache?: number | null;
+  /**
+   * Cpu L1D Cache Total
+   * Total L1 data cache size (KiB) across all cores.
+   */
+  cpu_l1d_cache_total?: number | null;
+  /**
+   * Cpu L1I Cache
+   * L1 instruction cache size (KiB).
+   */
+  cpu_l1i_cache?: number | null;
+  /**
+   * Cpu L1I Cache Total
+   * Total L1 instruction cache size (KiB) across all cores.
+   */
+  cpu_l1i_cache_total?: number | null;
   /**
    * Cpu L2 Cache
-   * L2 cache size (byte).
+   * L2 cache size (KiB).
    */
   cpu_l2_cache?: number | null;
   /**
+   * Cpu L2 Cache Total
+   * Total L2 cache size (KiB) across all cores.
+   */
+  cpu_l2_cache_total?: number | null;
+  /**
    * Cpu L3 Cache
-   * L3 cache size (byte).
+   * L3 cache size (KiB).
    */
   cpu_l3_cache?: number | null;
+  /**
+   * Cpu L3 Cache Total
+   * Total L3 cache size (KiB) across all cores.
+   */
+  cpu_l3_cache_total?: number | null;
   /**
    * Cpu Flags
    * CPU features/flags.
@@ -1809,20 +1840,45 @@ export interface ServerBase {
    */
   cpu_model?: string | null;
   /**
-   * Cpu L1 Cache
-   * L1 cache size (byte).
+   * Cpu L1D Cache
+   * L1 data cache size (KiB).
    */
-  cpu_l1_cache?: number | null;
+  cpu_l1d_cache?: number | null;
+  /**
+   * Cpu L1D Cache Total
+   * Total L1 data cache size (KiB) across all cores.
+   */
+  cpu_l1d_cache_total?: number | null;
+  /**
+   * Cpu L1I Cache
+   * L1 instruction cache size (KiB).
+   */
+  cpu_l1i_cache?: number | null;
+  /**
+   * Cpu L1I Cache Total
+   * Total L1 instruction cache size (KiB) across all cores.
+   */
+  cpu_l1i_cache_total?: number | null;
   /**
    * Cpu L2 Cache
-   * L2 cache size (byte).
+   * L2 cache size (KiB).
    */
   cpu_l2_cache?: number | null;
   /**
+   * Cpu L2 Cache Total
+   * Total L2 cache size (KiB) across all cores.
+   */
+  cpu_l2_cache_total?: number | null;
+  /**
    * Cpu L3 Cache
-   * L3 cache size (byte).
+   * L3 cache size (KiB).
    */
   cpu_l3_cache?: number | null;
+  /**
+   * Cpu L3 Cache Total
+   * Total L3 cache size (KiB) across all cores.
+   */
+  cpu_l3_cache_total?: number | null;
   /**
    * Cpu Flags
    * CPU features/flags.
@@ -2063,20 +2119,45 @@ export interface ServerPKs {
    */
   cpu_model?: string | null;
   /**
-   * Cpu L1 Cache
-   * L1 cache size (byte).
+   * Cpu L1D Cache
+   * L1 data cache size (KiB).
    */
-  cpu_l1_cache?: number | null;
+  cpu_l1d_cache?: number | null;
+  /**
+   * Cpu L1D Cache Total
+   * Total L1 data cache size (KiB) across all cores.
+   */
+  cpu_l1d_cache_total?: number | null;
+  /**
+   * Cpu L1I Cache
+   * L1 instruction cache size (KiB).
+   */
+  cpu_l1i_cache?: number | null;
+  /**
+   * Cpu L1I Cache Total
+   * Total L1 instruction cache size (KiB) across all cores.
+   */
+  cpu_l1i_cache_total?: number | null;
   /**
    * Cpu L2 Cache
-   * L2 cache size (byte).
+   * L2 cache size (KiB).
    */
   cpu_l2_cache?: number | null;
   /**
+   * Cpu L2 Cache Total
+   * Total L2 cache size (KiB) across all cores.
+   */
+  cpu_l2_cache_total?: number | null;
+  /**
    * Cpu L3 Cache
-   * L3 cache size (byte).
+   * L3 cache size (KiB).
    */
   cpu_l3_cache?: number | null;
+  /**
+   * Cpu L3 Cache Total
+   * Total L3 cache size (KiB) across all cores.
+   */
+  cpu_l3_cache_total?: number | null;
   /**
    * Cpu Flags
    * CPU features/flags.
@@ -2460,20 +2541,45 @@ export interface ServerWithScore {
    */
   cpu_model?: string | null;
   /**
-   * Cpu L1 Cache
-   * L1 cache size (byte).
+   * Cpu L1D Cache
+   * L1 data cache size (KiB).
    */
-  cpu_l1_cache?: number | null;
+  cpu_l1d_cache?: number | null;
+  /**
+   * Cpu L1D Cache Total
+   * Total L1 data cache size (KiB) across all cores.
+   */
+  cpu_l1d_cache_total?: number | null;
+  /**
+   * Cpu L1I Cache
+   * L1 instruction cache size (KiB).
+   */
+  cpu_l1i_cache?: number | null;
+  /**
+   * Cpu L1I Cache Total
+   * Total L1 instruction cache size (KiB) across all cores.
+   */
+  cpu_l1i_cache_total?: number | null;
   /**
    * Cpu L2 Cache
-   * L2 cache size (byte).
+   * L2 cache size (KiB).
    */
   cpu_l2_cache?: number | null;
   /**
+   * Cpu L2 Cache Total
+   * Total L2 cache size (KiB) across all cores.
+   */
+  cpu_l2_cache_total?: number | null;
+  /**
    * Cpu L3 Cache
-   * L3 cache size (byte).
+   * L3 cache size (KiB).
    */
   cpu_l3_cache?: number | null;
+  /**
+   * Cpu L3 Cache Total
+   * Total L3 cache size (KiB) across all cores.
+   */
+  cpu_l3_cache_total?: number | null;
   /**
    * Cpu Flags
    * CPU features/flags.
@@ -4426,7 +4532,8 @@ export interface SearchServersServersGetParams {
     | "TH"
     | "TW"
     | "US"
-    | "ZA";
+    | "ZA"
+    | "DK";
   /**
    * Storage Size
    * Minimum amount of storage (GBs).
@@ -5124,7 +5231,8 @@ export interface SearchServerPricesServerPricesGetParams {
     | "TH"
     | "TW"
     | "US"
-    | "ZA";
+    | "ZA"
+    | "DK";
   /**
    * GPU count
    * Minimum number of GPUs.
@@ -5730,7 +5838,8 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "TH"
     | "TW"
     | "US"
-    | "ZA";
+    | "ZA"
+    | "DK";
   /**
    * Limit
    * Maximum number of results. Set to -1 for unlimited.
@@ -6268,7 +6377,8 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "TH"
     | "TW"
     | "US"
-    | "ZA";
+    | "ZA"
+    | "DK";
   /**
    * Direction
    * Direction of the Internet traffic.

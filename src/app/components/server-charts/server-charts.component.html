@@ -1,6 +1,10 @@
 @if (lineChartDataBWmem && isChartShown("bw_mem")) {
   <div class="block_half" id="bw_mem_chart">
     <h3 class="text-2xl flex items-center gap-2">
+      <lucide-icon
+        [name]="'bwmem' | benchmarkIcon"
+        class="h-6 w-6"
+      ></lucide-icon>
       Memory Bandwidth
       <lucide-icon
         name="circle-arrow-up"
@@ -37,6 +41,10 @@
   <div class="block_half" id="compress_chart">
     <div class="flex justify-between items-center">
       <h3 class="text-2xl flex items-center gap-2">
+        <lucide-icon
+          [name]="'compression' | benchmarkIcon"
+          class="h-6 w-6"
+        ></lucide-icon>
         Compression
         <lucide-icon
           name="{{ selectedCompressMethod.icon }}"
@@ -100,6 +108,10 @@
   <div class="block_full" id="ssl_chart">
     <div class="flex justify-between items-center">
       <h3 class="text-2xl flex items-center gap-2">
+        <lucide-icon
+          [name]="'openssl' | benchmarkIcon"
+          class="h-6 w-6"
+        ></lucide-icon>
         OpenSSL
         <lucide-icon
           name="circle-arrow-up"
@@ -138,6 +150,10 @@
   <div class="block_half_taller" id="geekbench_chart">
     <div class="flex justify-between items-center">
       <h3 class="text-2xl flex items-center gap-2">
+        <lucide-icon
+          [name]="'geekbench' | benchmarkIcon"
+          class="h-6 w-6"
+        ></lucide-icon>
         Geekbench Single-Core
         <lucide-icon
           name="circle-arrow-up"
@@ -176,9 +192,13 @@
 }
 
 @if (radarChartDataGeekMulti && isChartShown("geek_multi")) {
-  <div class="block_half_taller">
+  <div class="block_half_taller" id="geekbench_multi_chart">
     <div class="flex justify-between items-center">
       <h3 class="text-2xl flex items-center gap-2">
+        <lucide-icon
+          [name]="'geekbench' | benchmarkIcon"
+          class="h-6 w-6"
+        ></lucide-icon>
         Geekbench Multi-Core
         <lucide-icon
           name="circle-arrow-up"
@@ -219,7 +239,13 @@
 @if (isChartShown("passmark:cpu") && passmarkCPUData?.length) {
   <div class="block_half" id="passmark_cpu">
     <div class="flex items-center" style="min-height: 42px">
-      <h3 class="text-2xl">Passmark CPU Scores</h3>
+      <h3 class="text-2xl flex items-center gap-2">
+        <lucide-icon
+          [name]="'passmark' | benchmarkIcon"
+          class="h-6 w-6"
+        ></lucide-icon>
+        Passmark CPU Scores
+      </h3>
     </div>
     <table class="items_table_passmark similar_family_table">
       <thead>
@@ -270,8 +296,8 @@
         <button
           class="btn-primary py-2 px-3"
           (click)="openBox('passmark_cpu')"
-          id="availability_more_button"
-          data-ph-capture-attribute-sc-event="passmark_cpu show more availability"
+          id="passmark_cpu_more_button"
+          data-ph-capture-attribute-sc-event="passmark_cpu show more"
         >
           Show more
         </button>
@@ -281,7 +307,7 @@
       <button
         class="btn-primary py-2 px-3"
         (click)="openBox('passmark_cpu')"
-        data-ph-capture-attribute-sc-event="passmark_cpu show less availability"
+        data-ph-capture-attribute-sc-event="passmark_cpu show less"
       >
         Show less
       </button>
@@ -292,7 +318,13 @@
 @if (isChartShown("passmark:other") && passmarkOTHERData?.length) {
   <div class="block_half" id="passmark_other">
     <div class="flex items-center" style="min-height: 42px">
-      <h3 class="text-2xl">Passmark Memory Scores</h3>
+      <h3 class="text-2xl flex items-center gap-2">
+        <lucide-icon
+          [name]="'passmark' | benchmarkIcon"
+          class="h-6 w-6"
+        ></lucide-icon>
+        Passmark Memory Scores
+      </h3>
     </div>
     <table class="items_table_passmark similar_family_table">
       <thead>
@@ -335,6 +367,10 @@
   <div class="block_half" id="stress_ng_div16_chart">
     <div class="flex justify-between items-center">
       <h3 class="text-2xl flex items-center gap-2">
+        <lucide-icon
+          [name]="'stress_ng' | benchmarkIcon"
+          class="h-6 w-6"
+        ></lucide-icon>
         Stress-ng Raw Scores
         <lucide-icon
           name="circle-arrow-up"
@@ -373,6 +409,10 @@
   <div class="block_half" id="stress_ng_relative_chart">
     <div class="flex justify-between items-center">
       <h3 class="text-2xl flex items-center gap-2">
+        <lucide-icon
+          [name]="'stress_ng' | benchmarkIcon"
+          class="h-6 w-6"
+        ></lucide-icon>
         Stress-ng Relative Multicore Performance
         <lucide-icon
           name="circle-arrow-up"
@@ -416,6 +456,10 @@
   <div class="block_half" id="llm_prompt_chart">
     <div class="flex justify-between items-center">
       <h3 class="text-2xl flex items-center gap-2">
+        <lucide-icon
+          [name]="'llm_speed' | benchmarkIcon"
+          class="h-6 w-6"
+        ></lucide-icon>
         LLM Inference Speed for Prompt Processing
         <lucide-icon
           name="circle-arrow-up"
@@ -454,6 +498,10 @@
   <div class="block_half" id="llm_generation_chart">
     <div class="flex justify-between items-center">
       <h3 class="text-2xl flex items-center gap-2">
+        <lucide-icon
+          [name]="'llm_speed' | benchmarkIcon"
+          class="h-6 w-6"
+        ></lucide-icon>
         LLM Inference Speed for Text Generation
         <lucide-icon
           name="circle-arrow-up"
@@ -496,6 +544,10 @@
     <div class="block_half" id="{{ chartItem.chart.id }}_chart">
       <div class="flex justify-between items-center">
         <h3 class="text-2xl flex items-center gap-2">
+          <lucide-icon
+            [name]="chartItem.chart.id | benchmarkIcon"
+            class="h-6 w-6"
+          ></lucide-icon>
           {{ chartItem.chart.name }}
           <lucide-icon
             name="info"
@@ -627,7 +679,7 @@
 <div
   id="tooltipDefault"
   #tooltipDefault
-  style="opacity: 0"
+  style="opacity: 0; display: none"
   class="absolute z-10 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-secondary border border-solid border-emerald-400 rounded-lg"
 >
   {{ tooltipContent }}

@@ -53,6 +53,14 @@ export const routes: Routes = [
   },
 
   {
+    path: "navigator/benchmark-workloads",
+    loadComponent: () =>
+      import("./pages/benchmark-workloads/benchmark-workloads.component").then(
+        (c) => c.BenchmarkWorkloadsComponent,
+      ),
+  },
+
+  {
     path: "article/:id",
     loadComponent: () =>
       import("./pages/article/article.component").then(

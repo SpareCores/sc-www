@@ -10,6 +10,7 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
+import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
 import {
   Chart,
   ChartConfiguration,
@@ -45,7 +46,13 @@ Chart.register(annotationPlugin);
 
 @Component({
   selector: "app-server-charts",
-  imports: [LucideAngularModule, FormsModule, RouterModule, BaseChartDirective],
+  imports: [
+    LucideAngularModule,
+    FormsModule,
+    RouterModule,
+    BaseChartDirective,
+    BenchmarkIconPipe,
+  ],
   templateUrl: "./server-charts.component.html",
   styleUrl: "./server-charts.component.scss",
 })
@@ -244,18 +251,18 @@ export class ServerChartsComponent implements OnChanges {
 
       if (this.lineChartOptionsBWMem?.plugins?.annotation) {
         if (
-          this.serverDetails.cpu_l1_cache ||
+          this.serverDetails.cpu_l1d_cache ||
           this.serverDetails.cpu_l2_cache ||
           this.serverDetails.cpu_l3_cache
         ) {
           let annotations: any = {};
-          if (this.serverDetails.cpu_l1_cache) {
+          if (this.serverDetails.cpu_l1d_cache) {
             annotations.line1 = {
               type: "line",
               scaleID: "x",
               borderWidth: 3,
               borderColor: "#EF4444",
-              value: this.serverDetails.cpu_l1_cache / (1024 * 1024),
+              value: this.serverDetails.cpu_l1d_cache / 1024,
               label: {
                 rotation: "auto",
                 position: "end",
@@ -271,7 +278,7 @@ export class ServerChartsComponent implements OnChanges {
               scaleID: "x",
               borderWidth: 3,
               borderColor: "#EF4444",
-              value: this.serverDetails.cpu_l2_cache / (1024 * 1024),
+              value: this.serverDetails.cpu_l2_cache / 1024,
               label: {
                 rotation: "auto",
                 position: "start",
@@ -287,7 +294,7 @@ export class ServerChartsComponent implements OnChanges {
               scaleID: "x",
               borderWidth: 3,
               borderColor: "#EF4444",
-              value: this.serverDetails.cpu_l3_cache / (1024 * 1024),
+              value: this.serverDetails.cpu_l3_cache / 1024,
               label: {
                 rotation: "auto",
                 position: "start",
