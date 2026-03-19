@@ -15,6 +15,12 @@ describe("EmbeddedCompareChartComponent", () => {
 
     fixture = TestBed.createComponent(EmbeddedCompareChartComponent);
     component = fixture.componentInstance;
+    component.showChart = "__test__";
+    component.benchmarkMeta = [];
+    component.benchmarkCategories = [];
+    component.instanceProperties = [];
+    component.instancePropertyCategories = [];
+    component.servers = [];
     fixture.detectChanges();
   });
 
