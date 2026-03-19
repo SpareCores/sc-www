@@ -1,0 +1,93 @@
+@if (layout() === "details") {
+  @if (hasDetailsChart()) {
+    <div [class]="blockClass()" [id]="elementId()">
+      <div class="flex justify-between items-center">
+        <h3 class="text-2xl flex items-center gap-2">
+          <lucide-icon
+            [name]="'geekbench' | benchmarkIcon"
+            class="h-6 w-6"
+          ></lucide-icon>
+          {{ title() }}
+          <lucide-icon
+            name="circle-arrow-up"
+            class="h-4 w-4 text-gray-200"
+            (mouseenter)="showTextTooltip($event, orderTooltip())"
+            (mouseleave)="hideTooltip()"
+          >
+          </lucide-icon>
+          <lucide-icon
+            name="info"
+            class="h-4 w-4 text-gray-200"
+            (mouseenter)="showHtmlTooltip($event, resolvedInfoTooltipHtml())"
+            (mouseleave)="hideTooltip()"
+          >
+          </lucide-icon>
+        </h3>
+        <div
+          class="py-2 px-2 border-emerald-400 border-solid rounded-lg border"
+        >
+          Score: {{ resolvedScore() }}
+        </div>
+      </div>
+      @if (isBrowser) {
+        <div class="h-full">
+          <div class="chart_div" chartType="bar">
+            <canvas
+              [id]="canvasId()"
+              baseChart
+              [data]="resolvedDetailsChartData()"
+              [options]="resolvedDetailsChartOptions()"
+              [type]="chartType()"
+            >
+            </canvas>
+          </div>
+        </div>
+      }
+    </div>
+  }
+} @else {
+  @if (hasCompareCharts()) {
+    <div class="block_full_short_geekbench">
+      @if (isBrowser) {
+        <div class="charts_div justify-center">
+          @if (showSingle() && resolvedSingleChartData()) {
+            <div chartType="bar" class="chart_div w-full flex justify-center">
+              <canvas
+                style="max-width: 100%; width: 100%"
+                baseChart
+                [data]="resolvedSingleChartData()"
+                [options]="resolvedSingleChartOptions()"
+                [type]="chartType()"
+              >
+              </canvas>
+            </div>
+          }
+          @if (showMulti() && resolvedMultiChartData()) {
+            <div chartType="bar" class="chart_div w-full flex justify-center">
+              <canvas
+                style="max-width: 100%; width: 100%"
+                baseChart
+                [data]="resolvedMultiChartData()"
+                [options]="resolvedMultiChartOptions()"
+                [type]="chartType()"
+              >
+              </canvas>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+}
+
+<div
+  #tooltipDefault
+  style="opacity: 0; display: none"
+  class="tooltip-panel tooltip-panel--wide fixed z-100"
+>
+  @if (tooltipMode() === "html") {
+    <div [innerHTML]="tooltipHtml()"></div>
+  } @else {
+    {{ tooltipText() }}
+  }
+</div>
