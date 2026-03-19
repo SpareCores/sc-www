@@ -13,6 +13,27 @@ jobs:
       - name: Run Prettier check
         run: npm run prettier:check
 
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install modules
+        run: npm install --include=dev
+      - name: Set up Chrome
+        id: setup-chrome
+        uses: browser-actions/setup-chrome@v1
+      - name: Run Jasmine Karma tests
+        run: npm run test:ci
+        env:
+          CHROME_BIN: ${{ steps.setup-chrome.outputs.chrome-path }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: unit-test-coverage
+          path: coverage
+          retention-days: 7
+          if-no-files-found: ignore
+
   cypress-run:
     runs-on: ubuntu-22.04
     steps:

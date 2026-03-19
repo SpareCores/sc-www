@@ -86,6 +86,14 @@ Run `npm run prettier:fix` to fix code style on all required files.
 
 Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
 
+Run `npm run test:ci` to execute the Jasmine/Karma suite once in headless Chrome using Angular's documented CI flags and generate coverage output under `coverage/`.
+
+Run `npm run test:coverage:open` after generating coverage to serve `coverage/sc-www` locally and open the HTML report in your browser.
+
+GitHub Actions runs the same CI-oriented unit-test command and uploads the generated coverage directory as a workflow artifact.
+
+The explicit Karma setup for browsers, reporters, and coverage output lives in `karma.conf.js`.
+
 ## Running end-to-end tests
 
 End-to-end tests are implemented using Cypress.
