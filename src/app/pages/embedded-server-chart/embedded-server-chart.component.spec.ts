@@ -15,6 +15,10 @@ describe("EmbeddedServerChartComponent", () => {
 
     fixture = TestBed.createComponent(EmbeddedServerChartComponent);
     component = fixture.componentInstance;
+    component.showChart = "__test__";
+    component.benchmarkMeta = [];
+    component.benchmarksByCategory = [];
+    component.serverDetails = {};
     fixture.detectChanges();
   });
 
