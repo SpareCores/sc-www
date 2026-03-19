@@ -93,6 +93,8 @@ input[type="range"]::-ms-fill-upper {
 }
 
 input[type="number"] {
+  appearance: textfield;
+  -moz-appearance: textfield;
   -webkit-appearance: textfield; /* This removes the default browser styling */
 }
 
