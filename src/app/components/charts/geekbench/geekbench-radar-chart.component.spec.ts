@@ -1,5 +1,3 @@
-declare function expect<T>(actual: T): jasmine.Matchers<T>;
-
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { GeekbenchRadarChartComponent } from "./geekbench-radar-chart.component";
