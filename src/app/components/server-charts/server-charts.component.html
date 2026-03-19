@@ -1,239 +1,51 @@
-@if (lineChartDataBWmem && isChartShown("bw_mem")) {
-  <div class="block_half" id="bw_mem_chart">
-    <h3 class="text-2xl flex items-center gap-2">
-      <lucide-icon
-        [name]="'bwmem' | benchmarkIcon"
-        class="h-6 w-6"
-      ></lucide-icon>
-      Memory Bandwidth
-      <lucide-icon
-        name="circle-arrow-up"
-        class="h-4 w-4 text-gray-200"
-        (mouseenter)="showTooltip($event, 'Higher is better.')"
-        (mouseleave)="hideTooltip()"
-      >
-      </lucide-icon>
-      <lucide-icon
-        name="info"
-        class="h-4 w-4 text-gray-200"
-        (mouseenter)="showTooltipChart($event, 'bw_mem')"
-        (mouseleave)="hideTooltip()"
-      >
-      </lucide-icon>
-    </h3>
-    @if (isBrowser()) {
-      <div class="h-full">
-        <div class="chart_div" chartType="bar">
-          <canvas
-            id="bw_mem_canvas"
-            baseChart
-            [data]="lineChartDataBWmem"
-            [options]="lineChartOptionsBWMem"
-            [type]="lineChartType"
-          >
-          </canvas>
-        </div>
-      </div>
-    }
-  </div>
+@if (isChartShown("bw_mem")) {
+  <app-server-memory-chart
+    [serverDetails]="serverDetails"
+    [benchmarksByCategory]="benchmarksByCategory"
+    [benchmarkMeta]="memoryBenchmarkMeta"
+  ></app-server-memory-chart>
 }
-@if (lineChartDataCompress && isChartShown("compress")) {
-  <div class="block_half" id="compress_chart">
-    <div class="flex justify-between items-center">
-      <h3 class="text-2xl flex items-center gap-2">
-        <lucide-icon
-          [name]="'compression' | benchmarkIcon"
-          class="h-6 w-6"
-        ></lucide-icon>
-        Compression
-        <lucide-icon
-          name="{{ selectedCompressMethod.icon }}"
-          class="h-4 w-4 text-gray-200"
-          (mouseenter)="showTooltip($event, selectedCompressMethod.order)"
-          (mouseleave)="hideTooltip()"
-        >
-        </lucide-icon>
-        <lucide-icon
-          name="info"
-          class="h-4 w-4 text-gray-200"
-          (mouseenter)="
-            showTooltip(
-              $event,
-              'Measuring the compression ratio and speed while compressing and decompressing the dickens.txt of the Silesia corpus (10 MB uncompressed) using various algorithms, compressions levels and other extra arguments.'
-            )
-          "
-          (mouseleave)="hideTooltip()"
-        >
-        </lucide-icon>
-      </h3>
-      <div class="flex gap-4">
-        <button
-          id="compress_method_button"
-          data-ph-capture-attribute-sc-event="server charts compress method select"
-          class="dropdown_button"
-          type="button"
-        >
-          <div class="px-3 py-2">
-            {{ selectedCompressMethod.name }}
-          </div>
-          <div
-            class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
-          >
-            <lucide-icon
-              name="chevron-down"
-              class="h-6 w-6 text-emerald-400"
-            ></lucide-icon>
-          </div>
-        </button>
-      </div>
-    </div>
-    @if (isBrowser()) {
-      <div class="h-full">
-        <div class="chart_div" chartType="bar">
-          <canvas
-            id="compress_canvas"
-            baseChart
-            [data]="lineChartDataCompress"
-            [options]="lineChartOptionsCompress"
-            [type]="lineChartType"
-          >
-          </canvas>
-        </div>
-      </div>
-    }
-  </div>
+@if (isChartShown("compress")) {
+  <app-compression-chart
+    [benchmarksByCategory]="benchmarksByCategory"
+  ></app-compression-chart>
 }
 
-@if (barChartDataSSL && isChartShown("ssl")) {
-  <div class="block_full" id="ssl_chart">
-    <div class="flex justify-between items-center">
-      <h3 class="text-2xl flex items-center gap-2">
-        <lucide-icon
-          [name]="'openssl' | benchmarkIcon"
-          class="h-6 w-6"
-        ></lucide-icon>
-        OpenSSL
-        <lucide-icon
-          name="circle-arrow-up"
-          class="h-4 w-4 text-gray-200"
-          (mouseenter)="showTooltip($event, 'Higher is better.')"
-          (mouseleave)="hideTooltip()"
-        >
-        </lucide-icon>
-        <lucide-icon
-          name="info"
-          class="h-4 w-4 text-gray-200"
-          (mouseenter)="showTooltipChart($event, 'openssl')"
-          (mouseleave)="hideTooltip()"
-        >
-        </lucide-icon>
-      </h3>
-    </div>
-    @if (isBrowser()) {
-      <div class="h-full">
-        <div class="chart_div" chartType="bar">
-          <canvas
-            id="ssl_canvas"
-            baseChart
-            [data]="barChartDataSSL"
-            [options]="barChartOptionsSSL"
-            [type]="barChartType"
-          >
-          </canvas>
-        </div>
-      </div>
-    }
-  </div>
+@if (isChartShown("ssl")) {
+  <app-benchmark-line-chart
+    benchmarkKey="openssl"
+    chartSource="details-ssl"
+    title="OpenSSL"
+    blockClass="block_full"
+    elementId="ssl_chart"
+    canvasId="ssl_canvas"
+    chartType="bar"
+    [benchmarksByCategory]="lineBenchmarkGroups"
+    orderTooltip="Higher is better."
+    [infoTooltip]="benchmarkDescription('openssl')"
+  ></app-benchmark-line-chart>
 }
 
-@if (radarChartDataGeekSingle && isChartShown("geek_single")) {
-  <div class="block_half_taller" id="geekbench_chart">
-    <div class="flex justify-between items-center">
-      <h3 class="text-2xl flex items-center gap-2">
-        <lucide-icon
-          [name]="'geekbench' | benchmarkIcon"
-          class="h-6 w-6"
-        ></lucide-icon>
-        Geekbench Single-Core
-        <lucide-icon
-          name="circle-arrow-up"
-          class="h-4 w-4 text-gray-200"
-          (mouseenter)="showTooltip($event, 'Higher is better.')"
-          (mouseleave)="hideTooltip()"
-        >
-        </lucide-icon>
-        <lucide-icon
-          name="info"
-          class="h-4 w-4 text-gray-200"
-          (mouseenter)="showTooltipGB($event)"
-          (mouseleave)="hideTooltipGB()"
-        >
-        </lucide-icon>
-      </h3>
-      <div class="py-2 px-2 border-emerald-400 border-solid rounded-lg border">
-        Score: {{ geekScoreSingle }}
-      </div>
-    </div>
-    @if (isBrowser()) {
-      <div class="h-full">
-        <div class="chart_div" chartType="bar">
-          <canvas
-            id="geekbench_single_canvas"
-            baseChart
-            [data]="radarChartDataGeekSingle"
-            [options]="radarChartOptions"
-            [type]="radarChartType"
-          >
-          </canvas>
-        </div>
-      </div>
-    }
-  </div>
+@if (isChartShown("geek_single")) {
+  <app-geekbench-radar-chart
+    [title]="'Geekbench Single-Core'"
+    detailsChartMode="single"
+    [benchmarksByCategory]="benchmarksByCategory"
+    [benchmarkMeta]="geekbenchBenchmarkMeta"
+    [elementId]="'geekbench_chart'"
+    [canvasId]="'geekbench_single_canvas'"
+  ></app-geekbench-radar-chart>
 }
 
-@if (radarChartDataGeekMulti && isChartShown("geek_multi")) {
-  <div class="block_half_taller" id="geekbench_multi_chart">
-    <div class="flex justify-between items-center">
-      <h3 class="text-2xl flex items-center gap-2">
-        <lucide-icon
-          [name]="'geekbench' | benchmarkIcon"
-          class="h-6 w-6"
-        ></lucide-icon>
-        Geekbench Multi-Core
-        <lucide-icon
-          name="circle-arrow-up"
-          class="h-4 w-4 text-gray-200"
-          (mouseenter)="showTooltip($event, 'Higher is better.')"
-          (mouseleave)="hideTooltip()"
-        >
-        </lucide-icon>
-        <lucide-icon
-          name="info"
-          class="h-4 w-4 text-gray-200"
-          (mouseenter)="showTooltipGB($event)"
-          (mouseleave)="hideTooltipGB()"
-        >
-        </lucide-icon>
-      </h3>
-      <div class="py-2 px-2 border-emerald-400 border-solid rounded-lg border">
-        Score: {{ geekScoreMulti }}
-      </div>
-    </div>
-    @if (isBrowser()) {
-      <div class="h-full">
-        <div class="chart_div" chartType="bar">
-          <canvas
-            id="geekbench_multi_canvas"
-            baseChart
-            [data]="radarChartDataGeekMulti"
-            [options]="radarChartOptions"
-            [type]="radarChartType"
-          >
-          </canvas>
-        </div>
-      </div>
-    }
-  </div>
+@if (isChartShown("geek_multi")) {
+  <app-geekbench-radar-chart
+    [title]="'Geekbench Multi-Core'"
+    detailsChartMode="multi"
+    [benchmarksByCategory]="benchmarksByCategory"
+    [benchmarkMeta]="geekbenchBenchmarkMeta"
+    [elementId]="'geekbench_multi_chart'"
+    [canvasId]="'geekbench_multi_canvas'"
+  ></app-geekbench-radar-chart>
 }
 
 @if (isChartShown("passmark:cpu") && passmarkCPUData?.length) {
@@ -363,318 +175,58 @@
   </div>
 }
 
-@if (lineChartDataStressNG && isChartShown("stress_ng_div16")) {
-  <div class="block_half" id="stress_ng_div16_chart">
-    <div class="flex justify-between items-center">
-      <h3 class="text-2xl flex items-center gap-2">
-        <lucide-icon
-          [name]="'stress_ng' | benchmarkIcon"
-          class="h-6 w-6"
-        ></lucide-icon>
-        Stress-ng Raw Scores
-        <lucide-icon
-          name="circle-arrow-up"
-          class="h-4 w-4 text-gray-200"
-          (mouseenter)="showTooltip($event, 'Higher is better.')"
-          (mouseleave)="hideTooltip()"
-        >
-        </lucide-icon>
-        <lucide-icon
-          name="info"
-          class="h-4 w-4 text-gray-200"
-          (mouseenter)="showTooltipChart($event, 'stress_ng:div16')"
-          (mouseleave)="hideTooltip()"
-        >
-        </lucide-icon>
-      </h3>
-    </div>
-    @if (isBrowser()) {
-      <div class="h-full">
-        <div class="chart_div" chartType="bar">
-          <canvas
-            id="stress_ng_div16_canvas"
-            baseChart
-            [data]="lineChartDataStressNG"
-            [options]="lineChartOptionsStressNG"
-            [type]="lineChartType"
-          >
-          </canvas>
-        </div>
-      </div>
-    }
-  </div>
+@if (isChartShown("stress_ng_div16")) {
+  <app-benchmark-line-chart
+    benchmarkKey="stress_ng"
+    chartSource="details-stress-raw"
+    title="Stress-ng Raw Scores"
+    blockClass="block_half"
+    elementId="stress_ng_div16_chart"
+    canvasId="stress_ng_div16_canvas"
+    chartType="line"
+    [detailsServer]="lineChartDetailsServer"
+    [benchmarksByCategory]="lineBenchmarkGroups"
+    orderTooltip="Higher is better."
+    [infoTooltip]="benchmarkDescription('stress_ng:div16')"
+  ></app-benchmark-line-chart>
 }
 
-@if (lineChartDataStressNG && isChartShown("stress_ng_relative")) {
-  <div class="block_half" id="stress_ng_relative_chart">
-    <div class="flex justify-between items-center">
-      <h3 class="text-2xl flex items-center gap-2">
-        <lucide-icon
-          [name]="'stress_ng' | benchmarkIcon"
-          class="h-6 w-6"
-        ></lucide-icon>
-        Stress-ng Relative Multicore Performance
-        <lucide-icon
-          name="circle-arrow-up"
-          class="h-4 w-4 text-gray-200"
-          (mouseenter)="showTooltip($event, 'Higher is better.')"
-          (mouseleave)="hideTooltip()"
-        >
-        </lucide-icon>
-        <lucide-icon
-          name="info"
-          class="h-4 w-4 text-gray-200"
-          (mouseenter)="
-            showTooltip(
-              $event,
-              'The relative performance is a percentage showing the multi-core SCore\'s normalized value (multi-core SCore/vCPUs)  compared to the single-core SCore. This metric shows how well a server can scale to multiple vCPUs, and e.g. the effect of Hyper-Threading.'
-            )
-          "
-          (mouseleave)="hideTooltip()"
-        >
-        </lucide-icon>
-      </h3>
-    </div>
-    @if (isBrowser()) {
-      <div class="h-full">
-        <div class="chart_div" chartType="bar">
-          <canvas
-            id="stress_ng_relative_canvas"
-            baseChart
-            [data]="lineChartDataStressNG"
-            [options]="lineChartOptionsStressNGPercent"
-            [type]="lineChartType"
-          >
-          </canvas>
-        </div>
-      </div>
-    }
-  </div>
+@if (isChartShown("stress_ng_relative")) {
+  <app-benchmark-line-chart
+    benchmarkKey="stress_ng"
+    chartSource="details-stress-percent"
+    title="Stress-ng Relative Multicore Performance"
+    blockClass="block_half"
+    elementId="stress_ng_relative_chart"
+    canvasId="stress_ng_relative_canvas"
+    chartType="line"
+    [detailsServer]="lineChartDetailsServer"
+    [benchmarksByCategory]="lineBenchmarkGroups"
+    orderTooltip="Higher is better."
+    infoTooltip="The relative performance is a percentage showing the multi-core SCore's normalized value (multi-core SCore/vCPUs) compared to the single-core SCore. This metric shows how well a server can scale to multiple vCPUs, and e.g. the effect of Hyper-Threading."
+  ></app-benchmark-line-chart>
 }
 
-@if (barChartLLMPromptData && isChartShown("llm_prompt")) {
-  <div class="block_half" id="llm_prompt_chart">
-    <div class="flex justify-between items-center">
-      <h3 class="text-2xl flex items-center gap-2">
-        <lucide-icon
-          [name]="'llm_speed' | benchmarkIcon"
-          class="h-6 w-6"
-        ></lucide-icon>
-        LLM Inference Speed for Prompt Processing
-        <lucide-icon
-          name="circle-arrow-up"
-          class="h-4 w-4 text-gray-200"
-          (mouseenter)="showTooltip($event, 'Higher is better.')"
-          (mouseleave)="hideTooltip()"
-        >
-        </lucide-icon>
-        <lucide-icon
-          name="info"
-          class="h-4 w-4 text-gray-200"
-          (mouseenter)="showTooltipChart($event, 'llm_speed:prompt_processing')"
-          (mouseleave)="hideTooltip()"
-        >
-        </lucide-icon>
-      </h3>
-    </div>
-    @if (isBrowser()) {
-      <div class="h-full">
-        <div class="chart_div" chartType="bar">
-          <canvas
-            id="llm_prompt_canvas"
-            baseChart
-            [data]="barChartLLMPromptData"
-            [options]="barChartLLMPromptOptions"
-            [type]="barChartType"
-          >
-          </canvas>
-        </div>
-      </div>
-    }
-  </div>
-}
-
-@if (barChartLLMGenerationData && isChartShown("llm_generation")) {
-  <div class="block_half" id="llm_generation_chart">
-    <div class="flex justify-between items-center">
-      <h3 class="text-2xl flex items-center gap-2">
-        <lucide-icon
-          [name]="'llm_speed' | benchmarkIcon"
-          class="h-6 w-6"
-        ></lucide-icon>
-        LLM Inference Speed for Text Generation
-        <lucide-icon
-          name="circle-arrow-up"
-          class="h-4 w-4 text-gray-200"
-          (mouseenter)="showTooltip($event, 'Higher is better.')"
-          (mouseleave)="hideTooltip()"
-        >
-        </lucide-icon>
-        <lucide-icon
-          name="info"
-          class="h-4 w-4 text-gray-200"
-          (mouseenter)="showTooltipChart($event, 'llm_speed:text_generation')"
-          (mouseleave)="hideTooltip()"
-        >
-        </lucide-icon>
-      </h3>
-    </div>
-    @if (isBrowser()) {
-      <div class="h-full">
-        <div class="chart_div" chartType="bar">
-          <canvas
-            id="llm_generation_canvas"
-            baseChart
-            [data]="barChartLLMGenerationData"
-            [options]="barChartLLMGenerationOptions"
-            [type]="barChartType"
-          >
-          </canvas>
-        </div>
-      </div>
-    }
-  </div>
+@if (isChartShown("llm_prompt") || isChartShown("llm_generation")) {
+  <app-llm-inference-chart
+    [benchmarksByCategory]="benchmarksByCategory"
+    [showPrompt]="isChartShown('llm_prompt')"
+    [showGeneration]="isChartShown('llm_generation')"
+  ></app-llm-inference-chart>
 }
 
 @for (
   chartItem of multiBarCharts;
   track chartItem.chart.name + "_" + chartItem.chart.id
 ) {
-  @if (chartItem.chart.chartData && isChartShown(chartItem.chart.id)) {
-    <div class="block_half" id="{{ chartItem.chart.id }}_chart">
-      <div class="flex justify-between items-center">
-        <h3 class="text-2xl flex items-center gap-2">
-          <lucide-icon
-            [name]="chartItem.chart.id | benchmarkIcon"
-            class="h-6 w-6"
-          ></lucide-icon>
-          {{ chartItem.chart.name }}
-          <lucide-icon
-            name="info"
-            class="h-4 w-4 text-gray-200"
-            (mouseenter)="
-              showTooltipChart(
-                $event,
-                chartItem.chart.options[chartItem.chart.selectedOption]
-                  .benchmark_id
-              )
-            "
-            (mouseleave)="hideTooltip()"
-          >
-          </lucide-icon>
-          @if (chartItem.chart.options[chartItem.chart.selectedOption].icon) {
-            <lucide-icon
-              name="{{
-                chartItem.chart.options[chartItem.chart.selectedOption].icon
-              }}"
-              class="h-4 w-4 text-gray-200"
-              (mouseenter)="
-                showTooltip(
-                  $event,
-                  chartItem.chart.options[chartItem.chart.selectedOption]
-                    .tooltip
-                )
-              "
-              (mouseleave)="hideTooltip()"
-            >
-            </lucide-icon>
-          }
-        </h3>
-        <button
-          id="{{ chartItem.chart.id }}_button"
-          class="dropdown_button"
-          type="button"
-        >
-          <div class="px-3 py-2">
-            {{ chartItem.chart.options[chartItem.chart.selectedOption].name }}
-          </div>
-          <div
-            class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
-          >
-            <lucide-icon
-              name="chevron-down"
-              class="h-6 w-6 text-emerald-400"
-            ></lucide-icon>
-          </div>
-        </button>
-      </div>
-      @if (isBrowser()) {
-        <div class="h-full">
-          <div class="chart_div" chartType="bar">
-            <canvas
-              baseChart
-              id="{{ chartItem.chart.id }}_canvas"
-              [data]="chartItem.chart.chartData"
-              [options]="chartItem.chart.chartOptions"
-              [type]="chartItem.chart.chartType"
-            >
-            </canvas>
-          </div>
-        </div>
-      }
-    </div>
+  @if (isChartShown(chartItem.chart.id)) {
+    <app-benchmark-multi-bar-chart
+      [chartItem]="chartItem"
+      [benchmarkMeta]="benchmarkMeta"
+      [detailsBenchmarks]="benchmarksByCategory"
+    ></app-benchmark-multi-bar-chart>
   }
 }
-
-<div
-  id="compress_method_options"
-  class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid"
->
-  <ul
-    class="py-2 px-1 text-sm text-gray-700"
-    aria-labelledby="dropdownDefaultButton"
-  >
-    @for (
-      compressMethod of compressMethods;
-      track compressMethod.key + "_" + $index
-    ) {
-      <li class="flex py-1 gap-2 items-center">
-        <div
-          class="text-emerald-400 hover:text-emerald-500 cursor-pointer font-bold ml-2"
-          (click)="refreshCompressChart(compressMethod)"
-        >
-          {{ compressMethod.name }}
-        </div>
-      </li>
-    }
-  </ul>
-</div>
-
-@for (chartItem of multiBarCharts; track chartItem.chart.id + "_" + $index) {
-  <div
-    id="{{ chartItem.chart.id }}_options"
-    class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid"
-  >
-    <ul
-      class="py-2 px-1 text-sm text-gray-700"
-      aria-labelledby="dropdownDefaultButton"
-    >
-      @for (
-        chartTemplate of chartItem.chart.options;
-        track chartTemplate.benchmark_id;
-        let i = $index
-      ) {
-        <li class="flex py-1 gap-2 items-center">
-          <div
-            class="text-emerald-400 hover:text-emerald-500 cursor-pointer font-bold ml-2"
-            (click)="selectChartTemplateOption(chartItem, i)"
-          >
-            {{ chartTemplate.name }}
-          </div>
-        </li>
-      }
-    </ul>
-  </div>
-}
-
-<div
-  id="tooltipGeekbench"
-  #tooltipGeekbench
-  style="opacity: 0; display: none"
-  class="absolute z-10 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-secondary border border-solid border-emerald-400 rounded-lg"
->
-  <div [innerHTML]="geekbenchHTML"></div>
-</div>
 
 <div
   id="tooltipDefault"
