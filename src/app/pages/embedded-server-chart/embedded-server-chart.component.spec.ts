@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { EmbeddedServerChartComponent } from "./embedded-server-chart.component";
+import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
 describe("EmbeddedServerChartComponent", () => {
   let component: EmbeddedServerChartComponent;
@@ -9,6 +10,7 @@ describe("EmbeddedServerChartComponent", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [EmbeddedServerChartComponent],
+      providers: [...sharedTestingProviders],
     }).compileComponents();
 
     fixture = TestBed.createComponent(EmbeddedServerChartComponent);

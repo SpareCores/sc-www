@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { EmbeddedCompareChartComponent } from "./embedded-compare-chart.component";
+import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
 describe("EmbeddedCompareChartComponent", () => {
   let component: EmbeddedCompareChartComponent;
@@ -9,6 +10,7 @@ describe("EmbeddedCompareChartComponent", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [EmbeddedCompareChartComponent],
+      providers: [...sharedTestingProviders],
     }).compileComponents();
 
     fixture = TestBed.createComponent(EmbeddedCompareChartComponent);

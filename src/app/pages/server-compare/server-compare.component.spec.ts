@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { ServerCompareComponent } from "./server-compare.component";
+import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
 describe("ServerCompareComponent", () => {
   let component: ServerCompareComponent;
@@ -9,6 +10,7 @@ describe("ServerCompareComponent", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ServerCompareComponent],
+      providers: [...sharedTestingProviders],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ServerCompareComponent);

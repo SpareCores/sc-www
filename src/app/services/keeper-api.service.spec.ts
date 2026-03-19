@@ -1,12 +1,15 @@
 import { TestBed } from "@angular/core/testing";
 
 import { KeeperAPIService } from "./keeper-api.service";
+import { sharedTestingProviders } from "../../testing/testbed.providers";
 
 describe("KeeperAPIService", () => {
   let service: KeeperAPIService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      providers: [...sharedTestingProviders],
+    });
     service = TestBed.inject(KeeperAPIService);
   });
 

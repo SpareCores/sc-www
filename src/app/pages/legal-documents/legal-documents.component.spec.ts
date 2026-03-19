@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { LegalDocumentsComponent } from "./legal-documents.component";
+import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
 describe("LegalDocumentsComponent", () => {
   let component: LegalDocumentsComponent;
@@ -9,6 +10,7 @@ describe("LegalDocumentsComponent", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [LegalDocumentsComponent],
+      providers: [...sharedTestingProviders],
     }).compileComponents();
 
     fixture = TestBed.createComponent(LegalDocumentsComponent);

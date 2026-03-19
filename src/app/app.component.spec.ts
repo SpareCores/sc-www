@@ -1,10 +1,12 @@
 import { TestBed } from "@angular/core/testing";
 import { AppComponent } from "./app.component";
+import { sharedTestingProviders } from "../testing/testbed.providers";
 
 describe("AppComponent", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AppComponent],
+      providers: [...sharedTestingProviders],
     }).compileComponents();
   });
 
