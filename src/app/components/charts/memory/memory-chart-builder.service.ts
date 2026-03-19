@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { Tick, TooltipItem, TooltipModel } from "chart.js";
+import { TooltipItem, TooltipModel } from "chart.js";
 import {
   legacyBWMemOperationLabels,
   membenchSeriesLabels,
