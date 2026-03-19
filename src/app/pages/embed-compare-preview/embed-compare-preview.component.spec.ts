@@ -15,6 +15,9 @@ describe("EmbedComparePreviewComponent", () => {
 
     fixture = TestBed.createComponent(EmbedComparePreviewComponent);
     component = fixture.componentInstance;
+    component.instances = "server-a,server-b";
+    component.chartname = "score";
+    component.isModal = false;
     fixture.detectChanges();
   });
 
