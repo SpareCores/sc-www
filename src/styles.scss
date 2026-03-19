@@ -9,6 +9,14 @@
 $content-max-width: 1400px;
 
 @layer components {
+  .tooltip-panel {
+    @apply inline-block max-w-xl whitespace-normal break-words rounded-lg border border-solid border-emerald-400 bg-secondary px-3 py-2 text-left text-sm font-medium text-white transition-opacity duration-300;
+  }
+
+  .tooltip-panel--wide {
+    max-width: min(72rem, calc(100vw - 2rem));
+  }
+
   .btn-primary {
     @apply bg-emerald-400 text-white rounded-lg font-bold hover:bg-emerald-500 focus:outline-none focus:ring focus:ring-emerald-400 focus:ring-opacity-75;
     transition-duration: 0.15s;
