@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { ServerCompareChartsComponent } from "./server-compare-charts.component";
+import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
 describe("ServerCompareChartsComponent", () => {
   let component: ServerCompareChartsComponent;
@@ -9,6 +10,7 @@ describe("ServerCompareChartsComponent", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ServerCompareChartsComponent],
+      providers: [...sharedTestingProviders],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ServerCompareChartsComponent);
