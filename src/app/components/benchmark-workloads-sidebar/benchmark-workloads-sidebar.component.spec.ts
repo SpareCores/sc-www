@@ -15,6 +15,11 @@ describe("BenchmarkWorkloadsSidebarComponent", () => {
 
     fixture = TestBed.createComponent(BenchmarkWorkloadsSidebarComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput("benchmarkFamilies", []);
+    fixture.componentRef.setInput("isCollapsed", false);
+    fixture.componentRef.setInput("activeBenchmarkId", "");
+    fixture.componentRef.setInput("expandedFamily", null);
+    fixture.componentRef.setInput("activeFamily", "");
     fixture.detectChanges();
   });
 
