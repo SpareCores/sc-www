@@ -15,6 +15,10 @@ describe("ServerChartsComponent", () => {
 
     fixture = TestBed.createComponent(ServerChartsComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput("showChart", "__test__");
+    fixture.componentRef.setInput("benchmarkMeta", []);
+    fixture.componentRef.setInput("benchmarksByCategory", []);
+    fixture.componentRef.setInput("serverDetails", {});
     fixture.detectChanges();
   });
 
