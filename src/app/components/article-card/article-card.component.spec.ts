@@ -15,6 +15,15 @@ describe("ArticleCardComponent", () => {
 
     fixture = TestBed.createComponent(ArticleCardComponent);
     component = fixture.componentInstance;
+    component.article = {
+      title: "Test Article",
+      date: new Date("2025-01-01"),
+      teaser: "Teaser",
+      image: "/assets/test.png",
+      image_alt: "Alt text",
+      filename: "test-article",
+      author: "Spare Cores",
+    };
     fixture.detectChanges();
   });
 
