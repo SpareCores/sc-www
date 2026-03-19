@@ -1,0 +1,150 @@
+@if (layout() === "details") {
+  @if (detailsChartData()) {
+    <div class="block_half" id="compress_chart">
+      <div class="flex justify-between items-center">
+        <h3 class="text-2xl flex items-center gap-2">
+          <lucide-icon
+            [name]="'compression' | benchmarkIcon"
+            class="h-6 w-6"
+          ></lucide-icon>
+          Compression
+          <lucide-icon
+            [name]="currentDetailsMode().icon"
+            class="h-4 w-4 text-gray-200"
+            (mouseenter)="showTooltip($event, currentDetailsMode().order)"
+            (mouseleave)="hideTooltip()"
+          >
+          </lucide-icon>
+          <lucide-icon
+            name="info"
+            class="h-4 w-4 text-gray-200"
+            (mouseenter)="showTooltip($event, infoTooltip)"
+            (mouseleave)="hideTooltip()"
+          >
+          </lucide-icon>
+        </h3>
+        <div class="flex gap-4">
+          <button
+            [id]="buttonId"
+            class="dropdown_button"
+            type="button"
+            [appFlowbiteDropdown]="optionsId"
+            [dropdownEnabled]="isBrowser && hasOptions()"
+          >
+            <div class="px-3 py-2">
+              {{ currentDetailsMode().name }}
+            </div>
+            <div
+              class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
+            >
+              <lucide-icon
+                name="chevron-down"
+                class="h-6 w-6 text-emerald-400"
+              ></lucide-icon>
+            </div>
+          </button>
+        </div>
+      </div>
+      @if (isBrowser) {
+        <div class="h-full">
+          <div class="chart_div" chartType="bar">
+            <canvas
+              id="compress_canvas"
+              baseChart
+              [data]="detailsChartData()"
+              [options]="detailsChartOptions()"
+              [type]="lineChartType"
+            >
+            </canvas>
+          </div>
+        </div>
+      }
+    </div>
+  }
+} @else {
+  @if (compareOptions().length) {
+    <div class="block_full_short_inline">
+      <div class="flex justify-end items-center">
+        <div class="flex gap-4">
+          <button
+            [id]="buttonId"
+            class="dropdown_button"
+            type="button"
+            [appFlowbiteDropdown]="optionsId"
+            [dropdownEnabled]="isBrowser && hasOptions()"
+          >
+            <div class="px-3 py-2">
+              {{ currentCompareOptionName() }}
+            </div>
+            <div
+              class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
+            >
+              <lucide-icon
+                name="chevron-down"
+                class="h-6 w-6 text-emerald-400"
+              ></lucide-icon>
+            </div>
+          </button>
+        </div>
+      </div>
+      @if (isBrowser) {
+        <div class="charts_div">
+          <div chartType="bar" class="chart_div">
+            <canvas
+              baseChart
+              [data]="compareCompressData()"
+              [options]="compareCompressOptions()"
+              [type]="lineChartType"
+            >
+            </canvas>
+          </div>
+          <div chartType="bar" class="chart_div">
+            <canvas
+              baseChart
+              [data]="compareDecompressData()"
+              [options]="compareDecompressOptions()"
+              [type]="lineChartType"
+            >
+            </canvas>
+          </div>
+        </div>
+      }
+    </div>
+  }
+}
+
+@if (hasOptions()) {
+  <div
+    [id]="optionsId"
+    class="z-100 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid"
+  >
+    <ul
+      class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
+      aria-labelledby="dropdownDefaultButton"
+    >
+      @if (layout() === "details") {
+        @for (mode of detailsModes; track mode.key; let i = $index) {
+          <li
+            class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+            (click)="selectDetailsMode(i)"
+          >
+            <div class="text-white text-sm">{{ mode.name }}</div>
+          </li>
+        }
+      } @else {
+        @for (option of compareOptions(); track option.name; let i = $index) {
+          <li
+            class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+            (click)="selectCompareOption(i)"
+          >
+            <div class="text-white text-sm">{{ option.name }}</div>
+          </li>
+        }
+      }
+    </ul>
+  </div>
+}
+
+<div #tooltipDefault style="opacity: 0" class="tooltip-panel absolute z-10">
+  {{ tooltipContent }}
+</div>
