@@ -4771,6 +4771,109 @@ export interface SearchServersServersGetParams {
    */
   cpu_allocation?: "Shared" | "Burstable" | "Dedicated";
   /**
+   * Minimum CPU speed
+   * Minimum CPU speed in GHz.
+   */
+  cpu_speed_min?: 1 | 1.5 | 2 | 2.5 | 3 | 3.5 | 4 | 4.5 | 5;
+  /**
+   * Minimum L1 data cache size
+   * Minimum L1 data cache size in KiBs.
+   */
+  cpu_l1d_cache_min?: 32 | 48 | 64 | 128;
+  /**
+   * Minimum L1 data cache size across all cores
+   * Minimum L1 data cache size across all cores in KiBs.
+   */
+  cpu_l1d_cache_total_min?:
+    | 32
+    | 64
+    | 128
+    | 192
+    | 256
+    | 384
+    | 512
+    | 768
+    | 1024
+    | 1536
+    | 2048
+    | 3072
+    | 4096
+    | 6144
+    | 12288;
+  /**
+   * Minimum L1 instruction cache size
+   * Minimum L1 instruction cache size in KiBs.
+   */
+  cpu_l1i_cache_min?: 32 | 48 | 64 | 128;
+  /**
+   * Minimum L1 instruction cache size across all cores
+   * Minimum L1 instruction cache size across all cores in KiBs.
+   */
+  cpu_l1i_cache_total_min?:
+    | 32
+    | 64
+    | 128
+    | 192
+    | 256
+    | 384
+    | 512
+    | 768
+    | 1024
+    | 1536
+    | 2048
+    | 3072
+    | 4096
+    | 6144
+    | 12288;
+  /**
+   * Minimum L2 cache size
+   * Minimum L2 cache size in KiBs.
+   */
+  cpu_l2_cache_min?: 256 | 512 | 1024 | 2048 | 4096;
+  /**
+   * Minimum L2 cache size across all cores
+   * Minimum L2 cache size across all cores in KiBs.
+   */
+  cpu_l2_cache_total_min?:
+    | 256
+    | 512
+    | 1024
+    | 2048
+    | 4096
+    | 8192
+    | 16384
+    | 24576
+    | 32768
+    | 49152
+    | 65536
+    | 98304
+    | 131072
+    | 196608
+    | 393216;
+  /**
+   * Minimum L3 cache size
+   * Minimum L3 cache size in MiBs.
+   */
+  cpu_l3_cache_min?: 4 | 8 | 16 | 32 | 48 | 64 | 128 | 256 | 480;
+  /**
+   * Minimum L3 cache size across all cores
+   * Minimum L3 cache size across all cores in MiBs.
+   */
+  cpu_l3_cache_total_min?:
+    | 8
+    | 16
+    | 32
+    | 48
+    | 64
+    | 96
+    | 128
+    | 192
+    | 256
+    | 480
+    | 1024
+    | 2048
+    | 4096;
+  /**
    * Minimum SCore
    * Minimum stress-ng div16 CPU workload score.
    */
@@ -4805,6 +4908,25 @@ export interface SearchServersServersGetParams {
    * Minimum amount of memory in GBs.
    */
   memory_min?: number | null;
+  /**
+   * Minimum network speed
+   * Minimum network speed in Gbps.
+   */
+  network_speed_min?:
+    | 0.01
+    | 0.05
+    | 0.1
+    | 0.5
+    | 1
+    | 5
+    | 10
+    | 25
+    | 50
+    | 100
+    | 500
+    | 1000
+    | 10000
+    | 25000;
   /**
    * Active only
    * Filter for active servers only.
