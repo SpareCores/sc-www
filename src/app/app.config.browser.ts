@@ -12,6 +12,9 @@ const SENTRY_ENVIRONMENT =
 const SENTRY_RELEASE = import.meta?.env?.NG_APP_SENTRY_RELEASE || undefined;
 
 const BACKEND_BASE_URI = import.meta.env["NG_APP_BACKEND_BASE_URI"];
+const tracePropagationTargets = ["localhost", /^\//, BACKEND_BASE_URI].filter(
+  (target): target is string | RegExp => target !== undefined,
+);
 
 let sentry_client: any = null;
 let providers = [];
@@ -23,7 +26,7 @@ if (SENTRY_DSN && SENTRY_DSN !== "") {
     release: SENTRY_RELEASE,
 
     integrations: [Sentry.browserTracingIntegration()],
-    tracePropagationTargets: ["localhost", /^\//, BACKEND_BASE_URI],
+    tracePropagationTargets,
     tracesSampleRate: Number(SENTRY_TRACE_SAMPLE_RATE),
     profilesSampleRate: Number(SENTRY_PROFILE_SAMPLE_RATE),
   });
