@@ -1,7 +1,6 @@
 import { ChartData } from "chart.js";
 import {
   BenchmarkConfigShape,
-  BenchmarkConfigValue,
   BenchmarkGroup,
   BenchmarkMetaWithConfigs,
   BenchmarkScoreWithConfig,
@@ -9,8 +8,6 @@ import {
   ChartResult,
   OptionalBenchmarkChartServer,
 } from "../shared/benchmark-data.types";
-
-export type MemoryBenchmarkConfigValue = BenchmarkConfigValue;
 
 export type MemoryBenchmarkConfig = BenchmarkConfigShape & {
   operation?: string;

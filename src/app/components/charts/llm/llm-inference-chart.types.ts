@@ -2,9 +2,7 @@ import { ChartData } from "chart.js";
 import {
   BenchmarkChartServer,
   BenchmarkConfigShape,
-  BenchmarkConfigValue,
   BenchmarkGroup,
-  BenchmarkMetaConfig,
   BenchmarkMetaWithConfigs,
   BenchmarkScoreWithConfig,
   ChartOptionsFor,
@@ -16,16 +14,12 @@ export type LlmModelOption = {
   value: string;
 };
 
-export type LlmBenchmarkConfigValue = BenchmarkConfigValue;
-
 export type LlmBenchmarkConfig = BenchmarkConfigShape & {
   model?: string;
   tokens?: number;
 };
 
 export type LlmBenchmarkScore = BenchmarkScoreWithConfig<LlmBenchmarkConfig>;
-
-export type LlmBenchmarkMetaConfig = BenchmarkMetaConfig<LlmBenchmarkConfig>;
 
 export type LlmBenchmarkMeta = BenchmarkMetaWithConfigs<LlmBenchmarkConfig>;
 

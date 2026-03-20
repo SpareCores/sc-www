@@ -76,8 +76,6 @@ export class ServerChartsComponent implements OnChanges {
 
   tooltipContent = "";
 
-  resizeTimeout: any;
-
   passmarkCPUData: any[] | null = null;
   passmarkOTHERData: any[] | null = null;
 

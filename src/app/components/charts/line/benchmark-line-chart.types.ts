@@ -2,9 +2,7 @@ import { ChartData } from "chart.js";
 import {
   BenchmarkChartServer,
   BenchmarkConfigShape,
-  BenchmarkConfigValue,
   BenchmarkGroup,
-  BenchmarkMetaConfig,
   BenchmarkMetaWithConfigs,
   BenchmarkScoreWithConfig,
   ChartOptionsFor,
@@ -42,8 +40,6 @@ export type BenchmarkLineSelectorOption = {
   value?: string;
 };
 
-export type LineBenchmarkConfigValue = BenchmarkConfigValue;
-
 export type LineBenchmarkConfig = BenchmarkConfigShape & {
   algo?: string;
   block_size?: number;
@@ -53,8 +49,6 @@ export type LineBenchmarkConfig = BenchmarkConfigShape & {
 export type LineBenchmarkScore = BenchmarkScoreWithConfig<LineBenchmarkConfig>;
 
 export type LineBenchmarkGroup = BenchmarkGroup<LineBenchmarkScore>;
-
-export type LineBenchmarkMetaConfig = BenchmarkMetaConfig<LineBenchmarkConfig>;
 
 export type LineBenchmarkMeta = BenchmarkMetaWithConfigs<LineBenchmarkConfig>;
 
