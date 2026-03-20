@@ -7,7 +7,6 @@ import {
   computed,
   inject,
   input,
-  signal,
   viewChild,
 } from "@angular/core";
 import { LucideAngularModule } from "lucide-angular";
@@ -110,7 +109,11 @@ export class GeekbenchRadarChartComponent {
       : this.detailsCharts()?.multiScore || "0";
   });
   readonly resolvedInfoTooltipHtml = computed(
-    () => this.infoTooltipHtml() ?? this.detailsCharts()?.infoTooltipHtml,
+    () =>
+      this.infoTooltipHtml() ??
+      (this.layout() === "compare"
+        ? this.compareCharts()?.infoTooltipHtml
+        : this.detailsCharts()?.infoTooltipHtml),
   );
   readonly resolvedSingleChartData = computed(
     () => this.singleChartData() ?? this.compareCharts()?.singleData,
@@ -129,39 +132,34 @@ export class GeekbenchRadarChartComponent {
     () => !!this.resolvedSingleChartData() || !!this.resolvedMultiChartData(),
   );
 
-  tooltipMode = signal<"text" | "html">("text");
-  tooltipText = signal("");
-  tooltipHtml = signal<GeekbenchTooltipHtml>(null);
+  tooltipContent = "";
+  tooltipHtml: string | null = null;
 
   showTextTooltip(el: MouseEvent, content?: string): void {
     this.tooltipService.showIfPresent({
       tooltipElement: this.tooltip()?.nativeElement,
       event: el,
       content,
-      onShow: (tooltipContent) => {
-        this.tooltipMode.set("text");
-        this.tooltipText.set(tooltipContent);
+      onShow: (text) => {
+        this.tooltipContent = text;
+        this.tooltipHtml = null;
       },
     });
   }
 
   showHtmlTooltip(el: MouseEvent, content?: GeekbenchTooltipHtml): void {
-    this.tooltipService.showIfPresent({
-      tooltipElement: this.tooltip()?.nativeElement,
-      event: el,
-      content,
-      onShow: (tooltipContent) => {
-        this.tooltipMode.set("html");
-        this.tooltipHtml.set(tooltipContent);
-      },
-      placement: {
-        left: "anchor-left",
-        top: "anchor-below",
-      },
-    });
+    const tooltipElement = this.tooltip()?.nativeElement;
+    if (!content || !tooltipElement) {
+      return;
+    }
+    this.tooltipHtml = content as string;
+    this.tooltipContent = "";
+    this.tooltipService.show(tooltipElement, el);
   }
 
   hideTooltip(): void {
     this.tooltipService.hide(this.tooltip()?.nativeElement);
+    this.tooltipContent = "";
+    this.tooltipHtml = null;
   }
 }

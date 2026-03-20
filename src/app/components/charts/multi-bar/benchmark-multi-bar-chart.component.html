@@ -6,13 +6,6 @@
           <lucide-icon [name]="chart().id | benchmarkIcon" class="h-6 w-6">
           </lucide-icon>
           {{ chart().name }}
-          <lucide-icon
-            name="info"
-            class="h-4 w-4 text-gray-200"
-            (mouseenter)="showTooltip($event, currentBenchmarkDescription())"
-            (mouseleave)="hideTooltip()"
-          >
-          </lucide-icon>
           @if (currentOption().icon) {
             <lucide-icon
               [name]="currentOption().icon || 'circle-arrow-up'"
@@ -22,6 +15,13 @@
             >
             </lucide-icon>
           }
+          <lucide-icon
+            name="info"
+            class="h-4 w-4 text-gray-200"
+            (mouseenter)="showTooltip($event, currentBenchmarkDescription())"
+            (mouseleave)="hideTooltip()"
+          >
+          </lucide-icon>
         </h3>
         <button
           #primaryDropdown="appFlowbiteDropdown"
@@ -185,7 +185,11 @@
     </div>
   }
 
-  <div #tooltipDefault style="opacity: 0" class="tooltip-panel absolute z-10">
+  <div
+    #tooltipDefault
+    style="opacity: 0; display: none"
+    class="tooltip-panel fixed z-100 pointer-events-none"
+  >
     {{ tooltipContent }}
   </div>
 }

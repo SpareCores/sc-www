@@ -28,6 +28,7 @@ import {
   CompressionServer,
 } from "../charts/compression/compression-chart.types";
 import { GeekbenchRadarChartComponent } from "../charts/geekbench/geekbench-radar-chart.component";
+import { GeekbenchRadarChartBuilderService } from "../charts/geekbench/geekbench-radar-chart-builder.service";
 import { LlmInferenceChartComponent } from "../charts/llm/llm-inference-chart.component";
 import {
   GeekbenchBenchmarkMeta,
@@ -79,6 +80,7 @@ export class ServerCompareChartsComponent implements OnChanges {
   private platformId = inject(PLATFORM_ID);
   private toastService = inject(ToastService);
   private tooltipService = inject(ChartTooltipService);
+  private geekbenchBuilder = inject(GeekbenchRadarChartBuilderService);
 
   @Input() servers: ExtendedServerDetails[] = [];
   @Input() instanceProperties: any[] = [];
@@ -92,6 +94,7 @@ export class ServerCompareChartsComponent implements OnChanges {
   @ViewChild("tooltipcompareDefault") tooltip!: ElementRef<HTMLElement>;
 
   tooltipContent = "";
+  tooltipHtml = "";
 
   bestCellStyle = "font-weight: 600; color: #34D399";
   SSCoreTooltip =
@@ -358,16 +361,13 @@ export class ServerCompareChartsComponent implements OnChanges {
   }
 
   showTooltip(el: MouseEvent, content?: string, autoHide = false) {
+    this.tooltipHtml = "";
     const didShow = this.tooltipService.showIfPresent({
       tooltipElement: this.tooltip?.nativeElement,
       event: el,
       content,
       onShow: (tooltipContent) => {
         this.tooltipContent = tooltipContent;
-      },
-      placement: {
-        left: "anchor-left",
-        top: "anchor-below",
       },
     });
 
@@ -379,6 +379,7 @@ export class ServerCompareChartsComponent implements OnChanges {
   }
 
   showTooltipChart(el: MouseEvent, type: string) {
+    this.tooltipHtml = "";
     const content = this.benchmarkMeta.find(
       (b: any) => b.benchmark_id === type,
     )?.description;
@@ -390,15 +391,25 @@ export class ServerCompareChartsComponent implements OnChanges {
       onShow: (tooltipContent) => {
         this.tooltipContent = tooltipContent;
       },
-      placement: {
-        left: "anchor-left",
-        top: "anchor-below",
-      },
     });
+  }
+
+  showGeekbenchInfoTooltip(el: MouseEvent): void {
+    const geekbenchMeta = this.geekbenchBenchmarkMeta.filter((b) =>
+      b.benchmark_id?.includes("geekbench"),
+    );
+    const html = this.geekbenchBuilder.buildInfoTooltipHtml(geekbenchMeta);
+    if (!html || !this.tooltip?.nativeElement) {
+      return;
+    }
+    this.tooltipContent = "";
+    this.tooltipHtml = html;
+    this.tooltipService.show(this.tooltip.nativeElement, el);
   }
 
   hideTooltip() {
     this.tooltipService.hide(this.tooltip?.nativeElement);
+    this.tooltipHtml = "";
   }
 
   getProperty(

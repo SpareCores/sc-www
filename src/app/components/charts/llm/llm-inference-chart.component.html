@@ -13,6 +13,14 @@
               <lucide-icon
                 name="circle-arrow-up"
                 class="h-4 w-4 text-gray-200"
+                (mouseenter)="showTooltip($event, orderTooltip)"
+                (mouseleave)="hideTooltip()"
+              ></lucide-icon>
+              <lucide-icon
+                name="info"
+                class="h-4 w-4 text-gray-200"
+                (mouseenter)="showTooltip($event, promptInfoTooltip())"
+                (mouseleave)="hideTooltip()"
               ></lucide-icon>
             </h3>
           </div>
@@ -45,6 +53,14 @@
               <lucide-icon
                 name="circle-arrow-up"
                 class="h-4 w-4 text-gray-200"
+                (mouseenter)="showTooltip($event, orderTooltip)"
+                (mouseleave)="hideTooltip()"
+              ></lucide-icon>
+              <lucide-icon
+                name="info"
+                class="h-4 w-4 text-gray-200"
+                (mouseenter)="showTooltip($event, generationInfoTooltip())"
+                (mouseleave)="hideTooltip()"
               ></lucide-icon>
             </h3>
           </div>
@@ -155,3 +171,11 @@
     </div>
   }
 }
+
+<div
+  #tooltipDefault
+  style="opacity: 0; display: none"
+  class="tooltip-panel fixed z-100 pointer-events-none"
+>
+  {{ tooltipContent() }}
+</div>

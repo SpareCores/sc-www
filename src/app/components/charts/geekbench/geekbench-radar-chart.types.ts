@@ -55,4 +55,5 @@ export type GeekbenchCompareChartsResult = {
   multiData?: GeekbenchRadarChartData;
   singleOptions: GeekbenchRadarChartOptions;
   multiOptions: GeekbenchRadarChartOptions;
+  infoTooltipHtml: string | null;
 };

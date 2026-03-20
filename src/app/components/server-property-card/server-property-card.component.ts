@@ -13,6 +13,7 @@ import {
   DestroyRef,
 } from "@angular/core";
 import { LucideAngularModule } from "lucide-angular";
+import { ChartTooltipService } from "../charts/shared/chart-tooltip.service";
 
 export interface ServerPropertyTooltip {
   key: string;
@@ -38,6 +39,8 @@ export interface ServerPropertySection {
   styleUrl: "./server-property-card.component.scss",
 })
 export class ServerPropertyCardComponent {
+  private tooltipService = inject(ChartTooltipService);
+
   title = input.required<string>();
   cardId = input.required<string>();
   sections = input<ServerPropertySection[]>([]);
@@ -50,6 +53,7 @@ export class ServerPropertyCardComponent {
   toggleRequested = output<void>();
 
   cardRoot = viewChild<ElementRef<HTMLDivElement>>("cardRoot");
+  tooltip = viewChild<ElementRef<HTMLElement>>("tooltip");
 
   tooltipContent = signal("");
   canExpand = signal(false);
@@ -94,33 +98,18 @@ export class ServerPropertyCardComponent {
   }
 
   showTooltip(event: MouseEvent, content: string | undefined) {
-    if (!content) {
-      return;
-    }
-
-    const target = event.target as HTMLElement | null;
-    const tooltip = document.getElementById(`${this.cardId()}_tooltip`);
-    if (!target || !tooltip) {
-      return;
-    }
-
-    const scrollPosition =
-      window.pageYOffset || document.documentElement.scrollTop;
-    this.tooltipContent.set(content);
-    tooltip.style.left = `${target.getBoundingClientRect().right + 5}px`;
-    tooltip.style.top = `${target.getBoundingClientRect().top - 45 + scrollPosition}px`;
-    tooltip.style.display = "block";
-    tooltip.style.opacity = "1";
+    this.tooltipService.showIfPresent({
+      tooltipElement: this.tooltip()?.nativeElement,
+      event,
+      content,
+      onShow: (tooltipContent) => {
+        this.tooltipContent.set(tooltipContent);
+      },
+    });
   }
 
   hideTooltip() {
-    const tooltip = document.getElementById(`${this.cardId()}_tooltip`);
-    if (!tooltip) {
-      return;
-    }
-
-    tooltip.style.display = "none";
-    tooltip.style.opacity = "0";
+    this.tooltipService.hide(this.tooltip()?.nativeElement);
   }
 
   requestToggle() {

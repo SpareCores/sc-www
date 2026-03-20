@@ -37,6 +37,7 @@ import { LoadingSpinnerComponent } from "../../components/loading-spinner/loadin
 import { PrismService } from "../../services/prism.service";
 import { Subscription } from "rxjs";
 import specialComparesData from "./special-compares.js";
+import { ChartTooltipService } from "../../components/charts/shared/chart-tooltip.service";
 
 const optionsModal: ModalOptions = {
   backdropClasses: "bg-gray-900/50 fixed inset-0 z-40",
@@ -71,6 +72,7 @@ export class ServerCompareComponent
   private analytics = inject(AnalyticsService);
   private route = inject(ActivatedRoute);
   private toastService = inject(ToastService);
+  private tooltipService = inject(ChartTooltipService);
 
   @ViewChild("tableFirstCol") tableFirstCol!: ElementRef;
   @HostBinding("attr.ngSkipHydration") ngSkipHydration = "true";
@@ -697,17 +699,16 @@ export class ServerCompareComponent
   }
 
   showTooltip(el: any, content?: string, autoHide = false) {
-    const tooltip = this.tooltip.nativeElement;
-    const scrollPosition =
-      window.pageYOffset || document.documentElement.scrollTop;
-    tooltip.style.left = `${el.target.getBoundingClientRect().left - 25}px`;
-    tooltip.style.top = `${el.target.getBoundingClientRect().bottom + 5 + scrollPosition}px`;
-    tooltip.style.display = "block";
-    tooltip.style.opacity = "1";
+    const didShow = this.tooltipService.showIfPresent({
+      tooltipElement: this.tooltip?.nativeElement,
+      event: el,
+      content,
+      onShow: (tooltipContent) => {
+        this.tooltipContent = tooltipContent;
+      },
+    });
 
-    this.tooltipContent = content || "";
-
-    if (autoHide) {
+    if (didShow && autoHide) {
       setTimeout(() => {
         this.hideTooltip();
       }, 3000);
@@ -715,26 +716,22 @@ export class ServerCompareComponent
   }
 
   showTooltipChart(el: any, type: string) {
-    let content = this.benchmarkMeta.find(
+    const content = this.benchmarkMeta.find(
       (b: any) => b.benchmark_id === type,
     )?.description;
-    if (content) {
-      const tooltip = this.tooltip.nativeElement;
-      const scrollPosition =
-        window.pageYOffset || document.documentElement.scrollTop;
-      tooltip.style.left = `${el.target.getBoundingClientRect().right + 5}px`;
-      tooltip.style.top = `${el.target.getBoundingClientRect().top - 45 + scrollPosition}px`;
-      tooltip.style.display = "block";
-      tooltip.style.opacity = "1";
 
-      this.tooltipContent = content;
-    }
+    this.tooltipService.showIfPresent({
+      tooltipElement: this.tooltip?.nativeElement,
+      event: el,
+      content,
+      onShow: (tooltipContent) => {
+        this.tooltipContent = tooltipContent;
+      },
+    });
   }
 
   hideTooltip() {
-    const tooltip = this.tooltip.nativeElement;
-    tooltip.style.display = "none";
-    tooltip.style.opacity = "0";
+    this.tooltipService.hide(this.tooltip?.nativeElement);
   }
 
   isBrowser() {

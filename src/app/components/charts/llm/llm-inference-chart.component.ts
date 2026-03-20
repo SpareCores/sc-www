@@ -2,12 +2,14 @@ import { CommonModule, isPlatformBrowser } from "@angular/common";
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   PLATFORM_ID,
   computed,
   effect,
   inject,
   input,
   signal,
+  viewChild,
 } from "@angular/core";
 import { LucideAngularModule } from "lucide-angular";
 import { BaseChartDirective } from "ng2-charts";
@@ -26,6 +28,7 @@ import {
   LlmChartServer,
   LlmCompareChartsResult,
 } from "./llm-inference-chart.types";
+import { ChartTooltipService } from "../shared/chart-tooltip.service";
 
 @Component({
   selector: "app-llm-inference-chart",
@@ -51,6 +54,9 @@ export class LlmInferenceChartComponent {
 
   private platformId = inject(PLATFORM_ID);
   private builder = inject(LlmInferenceChartBuilderService);
+  private tooltipService = inject(ChartTooltipService);
+
+  tooltip = viewChild<ElementRef<HTMLElement>>("tooltipDefault");
 
   layout = input<"details" | "compare">("details");
   promptData = input<LlmBarChartData | undefined>(undefined);
@@ -161,6 +167,21 @@ export class LlmInferenceChartComponent {
   readonly currentModelName = computed(
     () => this.currentModel()?.name || "Select Model",
   );
+  readonly promptInfoTooltip = computed(
+    () =>
+      this.benchmarkMeta().find(
+        (benchmark) => benchmark.benchmark_id === "llm_speed:prompt_processing",
+      )?.description || "",
+  );
+  readonly generationInfoTooltip = computed(
+    () =>
+      this.benchmarkMeta().find(
+        (benchmark) => benchmark.benchmark_id === "llm_speed:text_generation",
+      )?.description || "",
+  );
+  readonly orderTooltip = "Higher is better.";
+
+  tooltipContent = signal("");
 
   constructor() {
     effect(() => {
@@ -186,5 +207,20 @@ export class LlmInferenceChartComponent {
     }
 
     this.selectedModelIndex.set(index);
+  }
+
+  showTooltip(el: MouseEvent, content?: string): void {
+    this.tooltipService.showIfPresent({
+      tooltipElement: this.tooltip()?.nativeElement,
+      event: el,
+      content,
+      onShow: (tooltipContent) => {
+        this.tooltipContent.set(tooltipContent);
+      },
+    });
+  }
+
+  hideTooltip(): void {
+    this.tooltipService.hide(this.tooltip()?.nativeElement);
   }
 }

@@ -145,6 +145,10 @@
   </div>
 }
 
-<div #tooltipDefault style="opacity: 0" class="tooltip-panel absolute z-10">
+<div
+  #tooltipDefault
+  style="opacity: 0; display: none"
+  class="tooltip-panel fixed z-100 pointer-events-none"
+>
   {{ tooltipContent }}
 </div>

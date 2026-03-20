@@ -83,11 +83,12 @@
 <div
   #tooltipDefault
   style="opacity: 0; display: none"
-  class="tooltip-panel tooltip-panel--wide fixed z-100"
+  class="tooltip-panel fixed z-100 pointer-events-none"
+  [class.tooltip-panel--wide]="!!tooltipHtml"
 >
-  @if (tooltipMode() === "html") {
-    <div [innerHTML]="tooltipHtml()"></div>
+  @if (tooltipHtml) {
+    <div [innerHTML]="tooltipHtml"></div>
   } @else {
-    {{ tooltipText() }}
+    {{ tooltipContent }}
   }
 </div>

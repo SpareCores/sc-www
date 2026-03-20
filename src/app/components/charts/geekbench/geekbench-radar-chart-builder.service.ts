@@ -117,6 +117,10 @@ export class GeekbenchRadarChartBuilderService {
       (benchmark) => benchmark.benchmark_id,
     );
     const labels = this.createChartLabels(benchmarkIds, params.benchmarkMeta);
+    const geekbenchMeta = params.benchmarkMeta.filter((b) =>
+      b.benchmark_id.includes("geekbench"),
+    );
+    const infoTooltipHtml = this.buildInfoTooltipHtml(geekbenchMeta);
 
     return {
       singleData: this.createCompareData(
@@ -133,6 +137,7 @@ export class GeekbenchRadarChartBuilderService {
       ),
       singleOptions: this.createCompareOptions("Single-core performance"),
       multiOptions: this.createCompareOptions("Multi-core performance"),
+      infoTooltipHtml,
     };
   }
 
@@ -165,9 +170,7 @@ export class GeekbenchRadarChartBuilderService {
     };
   }
 
-  private buildInfoTooltipHtml(
-    benchmarkMeta: GeekbenchBenchmarkMeta[],
-  ): string | null {
+  buildInfoTooltipHtml(benchmarkMeta: GeekbenchBenchmarkMeta[]): string | null {
     if (!benchmarkMeta.length) {
       return null;
     }

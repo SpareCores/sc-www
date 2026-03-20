@@ -11,56 +11,150 @@ export type TooltipPlacement = {
 export class ChartTooltipService {
   private readonly viewportPadding = 16;
   private readonly tooltipOffset = 5;
+  private readonly defaultPlacement: TooltipPlacement = {
+    left: "anchor-right",
+    top: "anchor-below",
+  };
+  private activeTooltipElement?: HTMLElement;
+  private activeAnchorElement?: Element;
+  private animationFrameId?: number;
 
   show(
     tooltipElement: HTMLElement,
     event: MouseEvent,
-    placement: TooltipPlacement = {
-      left: "anchor-right",
-      top: "anchor-above",
-    },
+    placement: TooltipPlacement = this.defaultPlacement,
   ) {
-    const target = event.target as HTMLElement | null;
-    if (!target) {
+    const anchorElement = this.resolveAnchorElement(event);
+    if (!anchorElement) {
       return;
     }
-    const isFixedTooltip =
-      window.getComputedStyle(tooltipElement).position === "fixed";
-    const scrollPosition = isFixedTooltip
-      ? 0
-      : window.pageYOffset || document.documentElement.scrollTop;
-    const targetRect = target.getBoundingClientRect();
-    const baseLeft =
-      placement.left === "fixed-left"
-        ? 20
-        : placement.left === "anchor-left"
-          ? targetRect.left - 25
-          : targetRect.right + 5;
+
+    this.cancelPendingFrame();
+    this.activeTooltipElement = tooltipElement;
+    this.activeAnchorElement = anchorElement;
 
     tooltipElement.style.display = "block";
+    tooltipElement.style.visibility = "hidden";
     tooltipElement.style.opacity = "0";
-    tooltipElement.style.left = `${this.clampLeftPosition(tooltipElement, baseLeft)}px`;
+    tooltipElement.style.left = "0px";
+    tooltipElement.style.top = "0px";
 
-    const tooltipHeight = tooltipElement.offsetHeight;
+    this.animationFrameId = window.requestAnimationFrame(() => {
+      this.animationFrameId = undefined;
 
-    tooltipElement.style.top =
-      placement.top === "anchor-below"
-        ? `${targetRect.bottom + this.tooltipOffset + scrollPosition}px`
-        : `${targetRect.top - tooltipHeight - this.tooltipOffset + scrollPosition}px`;
+      if (
+        this.activeTooltipElement !== tooltipElement ||
+        this.activeAnchorElement !== anchorElement
+      ) {
+        return;
+      }
 
-    tooltipElement.style.opacity = "1";
+      this.positionTooltip(tooltipElement, anchorElement, placement);
+      tooltipElement.style.visibility = "visible";
+      tooltipElement.style.opacity = "1";
+    });
   }
 
-  private clampLeftPosition(
+  private positionTooltip(
     tooltipElement: HTMLElement,
-    preferredLeft: number,
-  ): number {
+    anchorElement: Element,
+    placement: TooltipPlacement,
+  ): void {
+    const isFixedTooltip =
+      window.getComputedStyle(tooltipElement).position === "fixed";
+    const scrollLeft = isFixedTooltip
+      ? 0
+      : window.pageXOffset || document.documentElement.scrollLeft || 0;
+    const scrollTop = isFixedTooltip
+      ? 0
+      : window.pageYOffset || document.documentElement.scrollTop || 0;
+    const targetRect = anchorElement.getBoundingClientRect();
+    const tooltipWidth = tooltipElement.offsetWidth;
+    const tooltipHeight = tooltipElement.offsetHeight;
+
+    const anchorLeft = targetRect.left + scrollLeft;
+    const anchorRight = targetRect.right + scrollLeft;
+    const anchorTop = targetRect.top + scrollTop;
+    const anchorBottom = targetRect.bottom + scrollTop;
+    const minLeft = this.viewportPadding + scrollLeft;
     const maxLeft = Math.max(
-      this.viewportPadding,
-      window.innerWidth - tooltipElement.offsetWidth - this.viewportPadding,
+      minLeft,
+      scrollLeft + window.innerWidth - tooltipWidth - this.viewportPadding,
+    );
+    const minTop = this.viewportPadding + scrollTop;
+    const maxTop = Math.max(
+      minTop,
+      scrollTop + window.innerHeight - tooltipHeight - this.viewportPadding,
     );
 
-    return Math.min(Math.max(preferredLeft, this.viewportPadding), maxLeft);
+    const rightPreferred = anchorRight + this.tooltipOffset;
+    const leftPreferred = anchorLeft - tooltipWidth - this.tooltipOffset;
+    const belowPreferred = anchorBottom + this.tooltipOffset;
+    const abovePreferred = anchorTop - tooltipHeight - this.tooltipOffset;
+
+    const preferredLeft =
+      placement.left === "fixed-left"
+        ? 20 + scrollLeft
+        : placement.left === "anchor-left"
+          ? leftPreferred
+          : rightPreferred;
+    const fallbackLeft =
+      placement.left === "anchor-left" ? rightPreferred : leftPreferred;
+    const resolvedLeft = this.resolveCoordinate({
+      preferred: preferredLeft,
+      fallback: fallbackLeft,
+      min: minLeft,
+      max: maxLeft,
+    });
+
+    const preferredTop =
+      placement.top === "anchor-below" ? belowPreferred : abovePreferred;
+    const fallbackTop =
+      placement.top === "anchor-below" ? abovePreferred : belowPreferred;
+    const resolvedTop = this.resolveCoordinate({
+      preferred: preferredTop,
+      fallback: fallbackTop,
+      min: minTop,
+      max: maxTop,
+    });
+
+    tooltipElement.style.left = `${resolvedLeft}px`;
+    tooltipElement.style.top = `${resolvedTop}px`;
+  }
+
+  private resolveCoordinate(params: {
+    preferred: number;
+    fallback: number;
+    min: number;
+    max: number;
+  }): number {
+    const { preferred, fallback, min, max } = params;
+    if (preferred >= min && preferred <= max) {
+      return preferred;
+    }
+
+    if (fallback >= min && fallback <= max) {
+      return fallback;
+    }
+
+    return Math.min(Math.max(preferred, min), max);
+  }
+
+  private resolveAnchorElement(event: MouseEvent): Element | null {
+    const currentTarget = event.currentTarget;
+    if (currentTarget instanceof Element) {
+      return currentTarget;
+    }
+
+    const target = event.target;
+    return target instanceof Element ? target : null;
+  }
+
+  private cancelPendingFrame(): void {
+    if (this.animationFrameId !== undefined) {
+      window.cancelAnimationFrame(this.animationFrameId);
+      this.animationFrameId = undefined;
+    }
   }
 
   showIfPresent<T>(params: {
@@ -86,7 +180,17 @@ export class ChartTooltipService {
       return;
     }
 
+    if (this.activeTooltipElement === tooltipElement) {
+      this.activeTooltipElement = undefined;
+      this.activeAnchorElement = undefined;
+    }
+
+    this.cancelPendingFrame();
+
     tooltipElement.style.display = "none";
+    tooltipElement.style.visibility = "hidden";
     tooltipElement.style.opacity = "0";
+    tooltipElement.style.left = "0px";
+    tooltipElement.style.top = "0px";
   }
 }

@@ -384,6 +384,19 @@
                     >
                     </lucide-icon>
                   }
+                  @if (
+                    benchmarkCategory.id === "geekbench" ||
+                    benchmarkCategory.id === "geekbench_single" ||
+                    benchmarkCategory.id === "geekbench_multi"
+                  ) {
+                    <lucide-icon
+                      name="info"
+                      class="h-4 w-4 text-gray-200"
+                      (mouseenter)="showGeekbenchInfoTooltip($event)"
+                      (mouseleave)="hideTooltip()"
+                    >
+                    </lucide-icon>
+                  }
                   @if (benchmarkCategory.id === "llm_inference") {
                     <lucide-icon
                       name="info"
@@ -889,8 +902,13 @@
 <div
   id="tooltipcompareDefault"
   #tooltipcompareDefault
-  style="opacity: 0"
-  class="tooltip-panel fixed z-100"
+  style="opacity: 0; display: none"
+  class="tooltip-panel fixed z-100 pointer-events-none"
+  [class.tooltip-panel--wide]="!!tooltipHtml"
 >
-  {{ tooltipContent }}
+  @if (tooltipHtml) {
+    <div [innerHTML]="tooltipHtml"></div>
+  } @else {
+    {{ tooltipContent }}
+  }
 </div>
