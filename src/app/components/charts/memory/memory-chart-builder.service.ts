@@ -373,7 +373,13 @@ export class MemoryChartBuilderService {
       return `${tooltipItem.formattedValue} ${labelSuffix}`;
     };
 
-    this.configureAnnotations(options, !option.singleSeries, serverDetails);
+    this.configureAnnotations(
+      options,
+      option.benchmarkIds.some((benchmarkId) =>
+        benchmarkId.startsWith("membench:"),
+      ),
+      serverDetails,
+    );
   }
 
   private configureCompareOptions(

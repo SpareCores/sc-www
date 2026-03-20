@@ -118,6 +118,62 @@ describe("MemoryChartBuilderService", () => {
     ).toBe(32768 / 1024);
   });
 
+  it("shows cache annotations for the sc-membench latency details chart", () => {
+    const chart = service.buildServerDetailsChart({
+      option: {
+        id: "membench-latency",
+        name: "sc-membench: Latency",
+        benchmarkIds: ["membench:latency"],
+        infoBenchmarkId: "membench:latency",
+        higherIsBetter: false,
+        singleSeries: true,
+      },
+      serverDetails: {
+        cpu_cores: 4,
+        cpu_l1d_cache: 32,
+        cpu_l2_cache: 2048,
+        cpu_l3_cache: 32768,
+      },
+      benchmarkMeta: [
+        {
+          benchmark_id: "membench:latency",
+          unit: "ns",
+          higher_is_better: false,
+        },
+      ],
+      benchmarksByCategory: [
+        {
+          benchmark_id: "membench:latency",
+          benchmarks: [
+            {
+              benchmark_id: "membench:latency",
+              config: { size_kb: 32 },
+              score: 3.1,
+            },
+            {
+              benchmark_id: "membench:latency",
+              config: { size_kb: 1024 },
+              score: 4.2,
+            },
+          ],
+        },
+      ],
+    });
+
+    expect(
+      (chart?.options as any).plugins.annotation.annotations.line1.label
+        .content,
+    ).toBe("L1D Cache");
+    expect(
+      (chart?.options as any).plugins.annotation.annotations.line2.label
+        .content,
+    ).toBe("L2 Cache");
+    expect(
+      (chart?.options as any).plugins.annotation.annotations.line3.label
+        .content,
+    ).toBe("L3 Cache");
+  });
+
   it("builds compare bw_mem charts with legacy MB scale", () => {
     const chart = service.buildServerCompareChart({
       option: {
