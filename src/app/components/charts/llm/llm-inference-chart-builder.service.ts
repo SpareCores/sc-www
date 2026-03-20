@@ -278,7 +278,7 @@ export class LlmInferenceChartBuilderService {
     return options;
   }
   private sortModels(models: string[]): string[] {
-    return models.sort((a, b) => {
+    return [...models].sort((a, b) => {
       const indexA = llmModelOrder.indexOf(a);
       const indexB = llmModelOrder.indexOf(b);
       if (indexA !== -1 && indexB !== -1) {
