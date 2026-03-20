@@ -4,6 +4,7 @@ import { DropdownManagerService } from "../../../services/dropdown-manager.servi
 import { FlowbiteDropdownDirective } from "./flowbite-dropdown.directive";
 
 @Component({
+  standalone: true,
   template: `
     <button
       id="trigger"

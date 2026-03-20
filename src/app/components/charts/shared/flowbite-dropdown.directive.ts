@@ -40,6 +40,14 @@ export class FlowbiteDropdownDirective implements AfterViewInit {
         return;
       }
 
+      const triggerId = this.elementRef.nativeElement.id;
+      const targetId = this.appFlowbiteDropdown();
+      const key = `${triggerId}:${targetId}`;
+      if (this.initializedKey === key) {
+        this.dropdown?.show();
+        return;
+      }
+
       this.initializeDropdown();
     });
   }
