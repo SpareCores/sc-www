@@ -263,8 +263,10 @@ export class MemoryChartBuilderService {
         }),
         label: legacyBWMemOperationLabels[operation] || operation,
         spanGaps: true,
-        borderColor: radarDatasetColors[index].borderColor,
-        backgroundColor: radarDatasetColors[index].backgroundColor,
+        borderColor:
+          radarDatasetColors[index % radarDatasetColors.length].borderColor,
+        backgroundColor:
+          radarDatasetColors[index % radarDatasetColors.length].backgroundColor,
       })),
     };
   }
@@ -324,8 +326,10 @@ export class MemoryChartBuilderService {
           this.getBenchmarkMeta(benchmarkMeta, item.benchmarkId)?.name ||
           item.benchmarkId,
         spanGaps: true,
-        borderColor: radarDatasetColors[index].borderColor,
-        backgroundColor: radarDatasetColors[index].backgroundColor,
+        borderColor:
+          radarDatasetColors[index % radarDatasetColors.length].borderColor,
+        backgroundColor:
+          radarDatasetColors[index % radarDatasetColors.length].backgroundColor,
       })),
     };
   }
