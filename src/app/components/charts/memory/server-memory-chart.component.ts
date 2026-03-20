@@ -62,7 +62,7 @@ export class ServerMemoryChartComponent {
   readonly buttonId = `bw_mem_button_details_${ServerMemoryChartComponent.nextDropdownId++}`;
   readonly optionsId = this.buttonId.replace("button", "options");
 
-  tooltipContent = "";
+  tooltipContent = signal("");
   readonly availableMemoryChartOptions = computed<
     ServerDetailsMemoryChartOption[]
   >(() => this.builder.getAvailableDetailsOptions(this.benchmarksByCategory()));
@@ -140,7 +140,7 @@ export class ServerMemoryChartComponent {
       event: el,
       content,
       onShow: (tooltipContent) => {
-        this.tooltipContent = tooltipContent;
+        this.tooltipContent.set(tooltipContent);
       },
     });
   }
