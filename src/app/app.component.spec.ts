@@ -22,7 +22,7 @@ describe("AppComponent", () => {
     expect(app.title).toEqual("sc-www");
   });
 
-  it("should render title", () => {
+  it("should render the app shell", () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
