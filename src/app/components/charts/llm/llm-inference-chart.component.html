@@ -156,15 +156,19 @@
           track llmModel.name;
           let i = $index
         ) {
-          <li
-            class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-            (click)="selectModel(i)"
-          >
-            <div
-              class="text-white text-sm whitespace-nowrap overflow-hidden text-ellipsis"
+          <li>
+            <button
+              type="button"
+              class="w-full flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm border-0 bg-transparent text-left"
+              (click)="selectModel(i)"
+              [title]="llmModel.name"
             >
-              {{ llmModel.name }}
-            </div>
+              <div
+                class="text-white text-sm whitespace-nowrap overflow-hidden text-ellipsis"
+              >
+                {{ llmModel.name }}
+              </div>
+            </button>
           </li>
         }
       </ul>
