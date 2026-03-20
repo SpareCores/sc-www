@@ -146,13 +146,14 @@
         track chartTemplate.benchmark_id;
         let i = $index
       ) {
-        <li class="flex py-1 gap-2 items-center">
-          <div
-            class="text-emerald-400 hover:text-emerald-500 cursor-pointer font-bold ml-2"
+        <li>
+          <button
+            type="button"
+            class="flex items-center gap-2 py-1 ml-2 font-bold cursor-pointer text-emerald-400 hover:text-emerald-500 border-0 bg-transparent text-left"
             (click)="selectOption(i)"
           >
             {{ chartTemplate.name }}
-          </div>
+          </button>
         </li>
       }
     </ul>
@@ -172,13 +173,14 @@
           track option.name;
           let i = $index
         ) {
-          <li class="flex py-1 gap-2 items-center">
-            <div
-              class="text-emerald-400 hover:text-emerald-500 cursor-pointer font-bold ml-2"
+          <li>
+            <button
+              type="button"
+              class="flex items-center gap-2 py-1 ml-2 font-bold cursor-pointer text-emerald-400 hover:text-emerald-500 border-0 bg-transparent text-left"
               (click)="selectSecondaryOption(i)"
             >
               {{ option.name }}
-            </div>
+            </button>
           </li>
         }
       </ul>

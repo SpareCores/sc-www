@@ -130,7 +130,10 @@ export class BenchmarkMultiBarChartBuilderService {
       const labelValue = item.config[labelsField];
       const scaleValue = item.config[scaleField];
 
-      if (labelValue && labels.indexOf(labelValue) === -1) {
+      if (
+        (labelValue || labelValue === 0) &&
+        labels.indexOf(labelValue) === -1
+      ) {
         labels.push(labelValue);
       }
 
@@ -239,8 +242,10 @@ export class BenchmarkMultiBarChartBuilderService {
         }),
         label: server.display_name,
         spanGaps: true,
-        borderColor: radarDatasetColors[index % 8].borderColor,
-        backgroundColor: radarDatasetColors[index % 8].borderColor,
+        borderColor:
+          radarDatasetColors[index % radarDatasetColors.length].borderColor,
+        backgroundColor:
+          radarDatasetColors[index % radarDatasetColors.length].borderColor,
       })),
     };
   }
