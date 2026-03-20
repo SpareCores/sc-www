@@ -1,11 +1,8 @@
-import { importProvidersFrom } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { LucideAngularModule } from "lucide-angular";
-import { provideCharts, withDefaultRegisterables } from "ng2-charts";
 
 import { ServerMemoryChartComponent } from "./server-memory-chart.component";
 import { DropdownManagerService } from "../../../services/dropdown-manager.service";
-import { lucideIcons } from "../../../lucide-icons";
+import { sharedTestingProviders } from "../../../../testing/testbed.providers";
 import {
   MemoryBenchmarkGroup,
   MemoryBenchmarkMeta,
@@ -20,8 +17,7 @@ describe("ServerMemoryChartComponent", () => {
     await TestBed.configureTestingModule({
       imports: [ServerMemoryChartComponent],
       providers: [
-        provideCharts(withDefaultRegisterables()),
-        importProvidersFrom(LucideAngularModule.pick(lucideIcons)),
+        ...sharedTestingProviders,
         {
           provide: DropdownManagerService,
           useValue: {
