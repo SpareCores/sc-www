@@ -452,6 +452,10 @@ export class ServerCompareChartsComponent implements OnChanges {
     chartItem.chart.selectedSecondaryOption = optionIndex;
   }
 
+  hasMultipleChartData(chartItem: BenchmarkMultiBarChartItem): boolean {
+    return (chartItem.data?.length ?? 0) > 1;
+  }
+
   get compressionServers(): CompressionServer[] {
     return this.servers as unknown as CompressionServer[];
   }

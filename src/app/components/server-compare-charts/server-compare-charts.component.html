@@ -738,7 +738,7 @@
           </tr>
           @if (chartItem.show_more) {
             @for (chartData of chartItem.data ?? []; track chartData) {
-              @if ((chartItem.data?.length ?? 0) > 1) {
+              @if (hasMultipleChartData(chartItem)) {
                 <tr>
                   <td [colSpan]="servers.length + 1">
                     <div class="ml-4 flex justify-between">
