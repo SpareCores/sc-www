@@ -120,24 +120,30 @@
   >
     <ul
       class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
-      aria-labelledby="dropdownDefaultButton"
+      [attr.aria-labelledby]="buttonId"
     >
       @if (layout() === "details") {
         @for (mode of detailsModes; track mode.key; let i = $index) {
-          <li
-            class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-            (click)="selectDetailsMode(i)"
-          >
-            <div class="text-white text-sm">{{ mode.name }}</div>
+          <li>
+            <button
+              type="button"
+              class="w-full flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm border-0 bg-transparent text-left"
+              (click)="selectDetailsMode(i)"
+            >
+              <div class="text-white text-sm">{{ mode.name }}</div>
+            </button>
           </li>
         }
       } @else {
         @for (option of compareOptions(); track option.name; let i = $index) {
-          <li
-            class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-            (click)="selectCompareOption(i)"
-          >
-            <div class="text-white text-sm">{{ option.name }}</div>
+          <li>
+            <button
+              type="button"
+              class="w-full flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm border-0 bg-transparent text-left"
+              (click)="selectCompareOption(i)"
+            >
+              <div class="text-white text-sm">{{ option.name }}</div>
+            </button>
           </li>
         }
       }

@@ -291,11 +291,17 @@ export class CompressionChartBuilderService {
     return {
       compressData: {
         labels: chartData.labels,
-        datasets: chartData.datasets,
+        datasets: chartData.datasets.map((dataset) => ({
+          ...dataset,
+          data: [...dataset.data],
+        })),
       },
       decompressData: {
         labels: chartData.labels,
-        datasets: chartData.datasets,
+        datasets: chartData.datasets.map((dataset) => ({
+          ...dataset,
+          data: [...dataset.data],
+        })),
       },
       compressOptions,
       decompressOptions,
