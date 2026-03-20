@@ -5,6 +5,7 @@ import { cloneChartOptions } from "../shared/chart-options.utils";
 import {
   AnnotationLine,
   CompareSslOption,
+  DEFAULT_COMPARE_SSL_OPTIONS,
   LineBenchmarkConfig,
   LineBenchmarkGroup,
   LineBenchmarkMeta,
@@ -192,13 +193,13 @@ export class BenchmarkLineChartBuilderService {
       return undefined;
     }
 
-    const labels = this.collectOrderedLabels(dataSet.benchmarks, "algo");
+    const labels = this.collectSslAlgorithmLabels(dataSet.benchmarks);
     const scales = this.collectNumericScales(dataSet.benchmarks, "block_size");
 
     const data: ChartConfiguration<"bar">["data"] = {
-      labels: scales,
-      datasets: labels.map((label, index) => ({
-        data: scales.map((size) => {
+      labels,
+      datasets: scales.map((size, index) => ({
+        data: labels.map((label) => {
           const item = dataSet.benchmarks?.find(
             (benchmark) =>
               benchmark.config.algo === label &&
@@ -206,7 +207,7 @@ export class BenchmarkLineChartBuilderService {
           );
           return item?.score ?? null;
         }),
-        label,
+        label: String(size),
         spanGaps: false,
         borderColor:
           radarDatasetColors[index % radarDatasetColors.length].borderColor,
@@ -435,6 +436,18 @@ export class BenchmarkLineChartBuilderService {
     });
 
     return values.sort((a, b) => this.compareMixedValues(a, b));
+  }
+
+  private collectSslAlgorithmLabels(items: LineBenchmarkScore[]): string[] {
+    const availableLabels = this.collectOrderedLabels(items, "algo");
+    const orderedDefaultLabels = DEFAULT_COMPARE_SSL_OPTIONS.map(
+      (option) => option.value,
+    ).filter((label) => availableLabels.includes(label));
+    const additionalLabels = availableLabels.filter(
+      (label) => !orderedDefaultLabels.includes(label),
+    );
+
+    return [...orderedDefaultLabels, ...additionalLabels];
   }
 
   private compareMixedValues(a: string, b: string): number {

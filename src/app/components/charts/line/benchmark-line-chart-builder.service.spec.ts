@@ -115,4 +115,52 @@ describe("BenchmarkLineChartBuilderService", () => {
     expect(result?.data.labels).toEqual([16]);
     expect(result?.data.datasets[0].data).toEqual([22]);
   });
+
+  it("builds details ssl charts with algorithms on the x-axis", () => {
+    const benchmarksByCategory: LineBenchmarkGroup[] = [
+      {
+        benchmark_id: "openssl",
+        benchmarks: [
+          createLineBenchmarkScore({
+            benchmarkId: "openssl",
+            config: { algo: "sha3-256", block_size: 16 },
+            score: 20,
+          }),
+          createLineBenchmarkScore({
+            benchmarkId: "openssl",
+            config: { algo: "blake2b512", block_size: 16 },
+            score: 10,
+          }),
+          createLineBenchmarkScore({
+            benchmarkId: "openssl",
+            config: { algo: "AES-256-CBC", block_size: 64 },
+            score: 34,
+          }),
+          createLineBenchmarkScore({
+            benchmarkId: "openssl",
+            config: { algo: "sha256", block_size: 64 },
+            score: 12,
+          }),
+        ],
+      },
+    ];
+
+    const result = service.buildDetailsSslChart({
+      benchmarksByCategory,
+      baseOptions: {},
+    });
+
+    expect(result?.data.labels).toEqual([
+      "AES-256-CBC",
+      "blake2b512",
+      "sha256",
+      "sha3-256",
+    ]);
+    expect(result?.data.datasets.map((dataset) => dataset.label)).toEqual([
+      "16",
+      "64",
+    ]);
+    expect(result?.data.datasets[0].data).toEqual([null, 10, null, 20]);
+    expect(result?.data.datasets[1].data).toEqual([34, null, 12, null]);
+  });
 });
