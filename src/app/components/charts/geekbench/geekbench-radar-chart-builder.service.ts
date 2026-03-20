@@ -1,8 +1,6 @@
 import { Injectable } from "@angular/core";
-import {
-  radarChartOptions,
-  radarDatasetColors,
-} from "../../../pages/server-details/chartOptions";
+import { radarChartOptions } from "../../../pages/server-details/chartOptions";
+import { radarDatasetColors } from "../shared/chart-colors.constants";
 import { cloneChartOptions } from "../shared/chart-options.utils";
 import { formatNumberWithCommas } from "../shared/server-compare-table.utils";
 import {
@@ -19,6 +17,11 @@ import {
   providedIn: "root",
 })
 export class GeekbenchRadarChartBuilderService {
+  private readonly detailsDatasetColors = {
+    single: radarDatasetColors[1],
+    multi: radarDatasetColors[0],
+  };
+
   buildDetailsCharts(params: {
     benchmarksByCategory: GeekbenchBenchmarkGroup[];
     benchmarkMeta: GeekbenchBenchmarkMeta[];
@@ -201,6 +204,8 @@ export class GeekbenchRadarChartBuilderService {
     labels: string[],
     coreLabel: string,
   ): GeekbenchRadarChartData {
+    const datasetColors = this.getDetailsDatasetColors(coreLabel);
+
     return {
       labels,
       datasets: [
@@ -217,11 +222,17 @@ export class GeekbenchRadarChartBuilderService {
               : { value: 0 };
           }),
           label: coreLabel,
-          borderColor: radarDatasetColors[0].borderColor,
-          backgroundColor: radarDatasetColors[0].backgroundColor,
+          borderColor: datasetColors.borderColor,
+          backgroundColor: datasetColors.backgroundColor,
         },
       ],
     };
+  }
+
+  private getDetailsDatasetColors(coreLabel: string) {
+    return coreLabel.toLowerCase().includes("single")
+      ? this.detailsDatasetColors.single
+      : this.detailsDatasetColors.multi;
   }
 
   private createCompareData(
