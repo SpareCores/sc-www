@@ -28,6 +28,7 @@ export class FlowbiteDropdownDirective implements AfterViewInit {
 
   dropdown: Dropdown | undefined;
   private initializedKey = "";
+  private pendingKey = "";
 
   constructor() {
     effect(() => {
@@ -45,6 +46,10 @@ export class FlowbiteDropdownDirective implements AfterViewInit {
       const key = `${triggerId}:${targetId}`;
       if (this.initializedKey === key) {
         this.dropdown?.show();
+        return;
+      }
+
+      if (this.pendingKey === key) {
         return;
       }
 
@@ -72,17 +77,28 @@ export class FlowbiteDropdownDirective implements AfterViewInit {
     }
 
     const key = `${triggerId}:${targetId}`;
-    if (this.initializedKey === key) {
+    if (this.initializedKey === key || this.pendingKey === key) {
       return;
     }
 
-    this.initializedKey = key;
+    const pendingKey = key;
+    this.pendingKey = pendingKey;
     this.dropdownManager
       .initDropdown(triggerId, targetId)
       .then((dropdown) => {
+        if (this.pendingKey !== pendingKey) {
+          return;
+        }
+
+        this.pendingKey = "";
+        this.initializedKey = pendingKey;
         this.dropdown = dropdown;
       })
       .catch((error) => {
+        if (this.pendingKey === pendingKey) {
+          this.pendingKey = "";
+        }
+
         console.error("Failed to initialize Flowbite dropdown:", error);
       });
   }
