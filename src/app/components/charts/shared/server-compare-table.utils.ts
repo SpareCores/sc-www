@@ -91,14 +91,18 @@ export function getServerPropertyValue(
     return `${((server.memory_amount || 0) / 1024).toFixed((server.memory_amount || 0) >= 1024 ? 0 : 1)} GiB`;
   }
 
-  if (name === "gpu_memory_min" || name === "gpu_memory_total") {
+  if (name === "gpu_memory_min") {
     return `${((server.gpu_memory_min || 0) / 1024).toFixed(1)} GB`;
+  }
+
+  if (name === "gpu_memory_total") {
+    return `${((server.gpu_memory_total || 0) / 1024).toFixed(1)} GB`;
   }
 
   if (name === "storage_size") {
     if (!server.storage_size) return "-";
     if (server.storage_size < 1000) return `${server.storage_size} GB`;
-    return `${(server.storage_size / 1000).toFixed(1)} TB`;
+    return `${(server.storage_size / 1000).toFixed(1)} TiB`;
   }
 
   if (typeof prop === "number") {
@@ -149,8 +153,8 @@ function toFiniteNumber(value: unknown): number | undefined {
 }
 
 function formatBytesToSize(bytes: number) {
-  const sizes = ["Bytes", "KiB", "MiB", "GiB", "TB"];
-  if (bytes === 0) return "0 Byte";
+  const sizes = ["Bytes", "KiB", "MiB", "GiB", "TiB"];
+  if (bytes === 0) return "0 Bytes";
   const index = Math.floor(Math.log(bytes) / Math.log(1024));
   return `${(bytes / Math.pow(1024, index)).toFixed(0)} ${sizes[index]}`;
 }
