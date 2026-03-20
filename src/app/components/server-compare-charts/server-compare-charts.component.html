@@ -672,7 +672,10 @@
       }
       @for (chartItem of multiBarCharts; track chartItem) {
         @if (!chartItem.hidden) {
-          <tr class="section_header" id="benchmark_line">
+          <tr
+            class="section_header"
+            [id]="'benchmark_line_' + chartItem.chart.id"
+          >
             <td [colSpan]="2">
               <h3 class="text-xl font-semibold flex gap-2 items-center">
                 <lucide-icon
