@@ -74,18 +74,20 @@ export class GeekbenchRadarChartComponent {
   infoTooltipHtml = input<GeekbenchTooltipHtml>(null);
 
   readonly isBrowser = isPlatformBrowser(this.platformId);
-  readonly detailsCharts = computed(() =>
-    this.builder.buildDetailsCharts({
+  readonly detailsCharts = computed(() => {
+    if (this.layout() !== "details") return undefined;
+    return this.builder.buildDetailsCharts({
       benchmarksByCategory: this.benchmarksByCategory(),
       benchmarkMeta: this.benchmarkMeta(),
-    }),
-  );
-  readonly compareCharts = computed(() =>
-    this.builder.buildCompareCharts({
+    });
+  });
+  readonly compareCharts = computed(() => {
+    if (this.layout() !== "compare") return undefined;
+    return this.builder.buildCompareCharts({
       servers: this.servers(),
       benchmarkMeta: this.benchmarkMeta(),
-    }),
-  );
+    });
+  });
   readonly resolvedDetailsChartData = computed(() => {
     const directChartData = this.chartData();
     if (directChartData) {
