@@ -140,6 +140,7 @@
       <ul
         class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
         [attr.aria-labelledby]="buttonId"
+        role="listbox"
       >
         @for (
           option of resolvedSelectorOptions();
@@ -149,6 +150,11 @@
           <li
             class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
             (click)="selectOption(i)"
+            (keydown.enter)="selectOption(i)"
+            (keydown.space)="selectOption(i); $event.preventDefault()"
+            role="option"
+            [attr.aria-selected]="resolvedSelectedOptionName() === option.name"
+            tabindex="0"
           >
             <div class="text-white text-sm">{{ option.name }}</div>
           </li>
