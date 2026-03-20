@@ -95,7 +95,12 @@ export class BenchmarkLineChartComponent {
   chartAvailabilityChange = output<boolean>();
 
   tooltipContent = signal("");
-  private selectedCompareSslIndex = signal(5);
+  private selectedCompareSslIndex = signal(
+    DEFAULT_COMPARE_SSL_OPTIONS.findIndex(
+      (option) =>
+        option.name === BenchmarkLineChartComponent.defaultSslOptionName,
+    ),
+  );
   readonly isBrowser = isPlatformBrowser(this.platformId);
   readonly resolvedSelectorOptions = computed<BenchmarkLineSelectorOption[]>(
     () => {
