@@ -73,7 +73,7 @@ export class BenchmarkMultiBarChartComponent {
   secondaryOptionSelected = output<number>();
   detailsToggled = output<void>();
 
-  tooltipContent = "";
+  tooltipContent = signal("");
   private readonly selectedOptionIndex = signal(0);
   private readonly selectedSecondaryOptionIndex = signal<number | undefined>(
     undefined,
@@ -204,7 +204,7 @@ export class BenchmarkMultiBarChartComponent {
       event: el,
       content,
       onShow: (tooltipContent) => {
-        this.tooltipContent = tooltipContent;
+        this.tooltipContent.set(tooltipContent);
       },
     });
   }
