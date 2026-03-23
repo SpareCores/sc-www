@@ -161,6 +161,84 @@
                     />
                   </div>
                 }
+                @if (getParameterType(parameter) === "cpuCacheRange") {
+                  <div class="mb-6 mt-4">
+                    <div
+                      class="text-white text-sm flex gap-1 items-center mb-2"
+                    >
+                      <input
+                        type="number"
+                        id="filter_discrete_range_value_{{ parameter.name }}"
+                        class="bg-primary px-2 py-0 border-emerald-400 border-dotted outline-none text-white rounded-sm h-5 text-center"
+                        [ngModel]="getCpuCacheRangeInputValue(parameter)"
+                        [min]="getCpuCacheRangeMin(parameter)"
+                        [max]="getCpuCacheRangeMax(parameter)"
+                        step="1"
+                        [ngStyle]="getCpuCacheRangeInputStyle(parameter)"
+                        (ngModelChange)="
+                          setCpuCacheRangeDraftValue(parameter, $event)
+                        "
+                        (keyup.enter)="
+                          commitCpuCacheRangeFromEnter(parameter, $event)
+                        "
+                        (blur)="
+                          commitCpuCacheRangeAfterFocusLoss(parameter, $event)
+                        "
+                        [disabled]="isParameterDisabled(parameter.name)"
+                      />
+                      {{ parameter.schema.unit }}
+                    </div>
+                    <div class="cpu-cache-slider">
+                      <input
+                        id="filter_discrete_range_{{ parameter.name }}"
+                        type="range"
+                        min="0"
+                        [max]="getCpuCacheRangeMaxIndex(parameter)"
+                        step="1"
+                        data-ph-capture-attribute-sc-event="server listing filter"
+                        data-ph-capture-attribute-server-listing-filter-type="range"
+                        [attr.data-ph-capture-attribute-server-listing-filter-id]="
+                          parameter.name
+                        "
+                        [attr.data-ph-capture-attribute-server-listing-filter-category]="
+                          filter.category_id
+                        "
+                        [value]="getCpuCacheRangeIndex(parameter)"
+                        (input)="
+                          setCpuCacheRangeIndex(
+                            parameter,
+                            $any($event.target).value
+                          )
+                        "
+                        [disabled]="isParameterDisabled(parameter.name)"
+                        class="w-full h-2 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm disabled:bg-gray-400"
+                      />
+                      <div class="cpu-cache-slider-ticks" aria-hidden="true">
+                        @for (
+                          value of getCpuCacheRangeStops(parameter);
+                          track value
+                        ) {
+                          <span class="cpu-cache-slider-tick"></span>
+                        }
+                      </div>
+                      <div class="cpu-cache-slider-labels" aria-hidden="true">
+                        @for (
+                          value of getCpuCacheRangeLabelValues(parameter);
+                          track value
+                        ) {
+                          <span
+                            class="cpu-cache-slider-label"
+                            [style.left.%]="
+                              getCpuCacheRangeLabelPosition(parameter, value)
+                            "
+                          >
+                            {{ value }}
+                          </span>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                }
                 @if (getParameterType(parameter) === "number") {
                   <div class="mb-4 mt-4 relative">
                     <input
