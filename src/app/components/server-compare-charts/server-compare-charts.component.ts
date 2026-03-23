@@ -45,6 +45,7 @@ import {
   LineChartServer,
 } from "../charts/line/benchmark-line-chart.types";
 import { BenchmarkMultiBarChartComponent } from "../charts/multi-bar/benchmark-multi-bar-chart.component";
+import { BenchmarkMultiBarChartBuilderService } from "../charts/multi-bar/benchmark-multi-bar-chart-builder.service";
 import {
   BenchmarkMultiBarChartItem,
   MultiBarBenchmarkMeta,
@@ -81,6 +82,7 @@ export class ServerCompareChartsComponent implements OnChanges {
   private toastService = inject(ToastService);
   private tooltipService = inject(ChartTooltipService);
   private geekbenchBuilder = inject(GeekbenchRadarChartBuilderService);
+  private multiBarBuilder = inject(BenchmarkMultiBarChartBuilderService);
 
   @Input() servers: ExtendedServerDetails[] = [];
   @Input() instanceProperties: any[] = [];
@@ -134,6 +136,11 @@ export class ServerCompareChartsComponent implements OnChanges {
     }
 
     this.multiBarCharts.forEach((chartTemplate) => {
+      this.multiBarBuilder.initializeCompareTemplate(
+        chartTemplate.chart,
+        this.benchmarkMeta as MultiBarBenchmarkMeta[],
+      );
+
       const benchmarks = chartTemplate.chart.options.map((o) => o.benchmark_id);
       chartTemplate.data = (
         this.benchmarkMeta as MultiBarBenchmarkMeta[]

@@ -682,15 +682,17 @@
                   [name]="chartItem.chart.name | benchmarkIcon"
                   class="h-6 w-6"
                 ></lucide-icon>
-                {{ chartItem.chart.name }}
+                <span class="whitespace-nowrap">{{
+                  chartItem.chart.name
+                }}</span>
                 @if (
                   chartItem.chart.options[chartItem.chart.selectedOption].icon
                 ) {
                   <lucide-icon
-                    name="{{
+                    [name]="
                       chartItem.chart.options[chartItem.chart.selectedOption]
-                        .icon
-                    }}"
+                        .icon || ''
+                    "
                     class="h-4 w-4 text-gray-200"
                     (mouseenter)="
                       showTooltip(

@@ -5,11 +5,11 @@
         <h3 class="text-2xl flex items-center gap-2">
           <lucide-icon [name]="chart().id | benchmarkIcon" class="h-6 w-6">
           </lucide-icon>
-          {{ chart().name }}
+          <span class="whitespace-nowrap">{{ chart().name }}</span>
           @if (currentOption().icon) {
             <lucide-icon
               [name]="currentOption().icon || 'circle-arrow-up'"
-              class="h-4 w-4 text-gray-200"
+              class="benchmark-direction-icon h-4 w-4 text-gray-200"
               (mouseenter)="showTooltip($event, currentOption().tooltip)"
               (mouseleave)="hideTooltip()"
             >
@@ -26,16 +26,19 @@
         <button
           #primaryDropdown="appFlowbiteDropdown"
           [id]="buttonId"
-          class="dropdown_button"
+          class="dropdown_button justify-between overflow-hidden"
           type="button"
           [appFlowbiteDropdown]="optionsId"
           [dropdownEnabled]="isBrowserEnvironment() && !!chartData()"
         >
-          <div class="px-3 py-2">
+          <div
+            class="min-w-0 flex-1 truncate whitespace-nowrap px-3 py-2 text-left"
+            [title]="currentOption().name"
+          >
             {{ currentOption().name }}
           </div>
           <div
-            class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
+            class="px-3 py-2 w-12 h-full shrink-0 bg-primary justify-center items-center flex rounded-r-lg"
           >
             <lucide-icon
               name="chevron-down"
@@ -61,23 +64,26 @@
     </div>
   } @else {
     <div class="block_full_inline">
-      <div class="flex justify-end items-center gap-4">
+      <div class="flex justify-end items-center gap-4 flex-wrap">
         @if (hasSecondaryOptions()) {
           <button
             #secondaryDropdown="appFlowbiteDropdown"
             [id]="secondaryButtonId"
-            class="dropdown_button"
+            class="dropdown_button justify-between overflow-hidden"
             type="button"
             [appFlowbiteDropdown]="secondaryOptionsId"
             [dropdownEnabled]="
               isBrowserEnvironment() && !!chartData() && hasSecondaryOptions()
             "
           >
-            <div class="px-3 py-2">
+            <div
+              class="min-w-0 flex-1 truncate whitespace-nowrap px-3 py-2 text-left"
+              [title]="currentSecondaryOption()?.name || ''"
+            >
               {{ currentSecondaryOption()?.name }}
             </div>
             <div
-              class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
+              class="px-3 py-2 w-12 h-full shrink-0 bg-primary justify-center items-center flex rounded-r-lg"
             >
               <lucide-icon
                 name="chevron-down"
@@ -89,16 +95,19 @@
         <button
           #primaryDropdown="appFlowbiteDropdown"
           [id]="buttonId"
-          class="dropdown_button"
+          class="dropdown_button justify-between overflow-hidden"
           type="button"
           [appFlowbiteDropdown]="optionsId"
           [dropdownEnabled]="isBrowserEnvironment() && !!chartData()"
         >
-          <div class="px-3 py-2">
+          <div
+            class="min-w-0 flex-1 truncate whitespace-nowrap px-3 py-2 text-left"
+            [title]="currentOption().name"
+          >
             {{ currentOption().name }}
           </div>
           <div
-            class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
+            class="px-3 py-2 w-12 h-full shrink-0 bg-primary justify-center items-center flex rounded-r-lg"
           >
             <lucide-icon
               name="chevron-down"
