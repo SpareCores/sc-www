@@ -125,7 +125,13 @@ export class ServerCompareComponent
     {
       name: "Memory Bandwidth",
       id: "bw_mem",
-      benchmarks: ["bw_mem"],
+      benchmarks: [
+        "bw_mem",
+        "membench:bandwidth_read",
+        "membench:bandwidth_write",
+        "membench:bandwidth_copy",
+        "membench:latency",
+      ],
       data: [],
       show_more: false,
     },
