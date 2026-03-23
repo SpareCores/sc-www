@@ -54,4 +54,41 @@
   .checkbox {
     @apply focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none disabled:accent-gray-400  disabled:text-gray-400 disabled:bg-gray-400;
   }
+
+  .cpu-cache-slider {
+    position: relative;
+    padding-bottom: 0.5rem;
+  }
+
+  .cpu-cache-slider-ticks {
+    display: flex;
+    justify-content: space-between;
+    position: absolute;
+    top: 0.25rem;
+    left: 0;
+    right: 0;
+    pointer-events: none;
+    padding: 0 0.2rem;
+  }
+
+  .cpu-cache-slider-tick {
+    width: 1px;
+    height: 0.5rem;
+    background: rgb(16 185 129 / 0.5);
+  }
+
+  .cpu-cache-slider-labels {
+    position: relative;
+    height: 1.25rem;
+    margin-top: 0.35rem;
+  }
+
+  .cpu-cache-slider-label {
+    position: absolute;
+    transform: translateX(-50%);
+    color: rgb(209 213 219);
+    font-size: 0.65rem;
+    line-height: 1;
+    white-space: nowrap;
+  }
 }
