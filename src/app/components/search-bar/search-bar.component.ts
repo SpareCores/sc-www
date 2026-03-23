@@ -19,6 +19,7 @@ import { FormsModule } from "@angular/forms";
 import { Modal, ModalOptions } from "flowbite";
 import { LucideAngularModule } from "lucide-angular";
 import { KeeperAPIService } from "../../services/keeper-api.service";
+import { ToastService } from "../../services/toast.service";
 import { Subject, Subscription, debounceTime } from "rxjs";
 import {
   CountryMetadata,
@@ -45,11 +46,32 @@ export type SearchBarParameter = {
     enum?: BenchmarkFilterOption[];
     type?: string;
     anyOf?: Array<{ type?: string }>;
+    title?: string;
+    unit?: string;
+    step?: number;
+    range_min?: number;
+    range_max?: number;
     [key: string]: unknown;
   };
 };
 
-type BenchmarkFilterOption = string | { key?: string; value?: string };
+type SearchBarParameterType =
+  | "text"
+  | "country"
+  | "vendor_regions"
+  | "compliance_framework"
+  | "vendor"
+  | "storage_id"
+  | "singleRadio"
+  | "benchmarkTriState"
+  | "range"
+  | "cpuCacheRange"
+  | "price"
+  | "number"
+  | "checkbox"
+  | "enumArray";
+
+type BenchmarkFilterOption = string | number | { key?: string; value?: string };
 
 @Component({
   selector: "app-search-bar",
@@ -66,6 +88,7 @@ type BenchmarkFilterOption = string | { key?: string; value?: string };
 export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   private platformId = inject(PLATFORM_ID);
   private keeperAPI = inject(KeeperAPIService);
+  private toastService = inject(ToastService);
 
   @Input() query: any = {};
   @Input() searchParameters: any[] = [];
@@ -108,6 +131,10 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   modalSubmitted = false;
   modalResponse: any;
   modalResponseStr: string[] = [];
+  private readonly cpuCacheRangeErrorToastId = "cpu-cache-input-error";
+
+  cpuCacheRangeDraftValues: Record<string, string> = {};
+  private cpuCacheRangeSkipNextFocusLossCommit: Record<string, boolean> = {};
 
   valueChangeDebouncer: Subject<number> = new Subject<number>();
   private subscription = new Subscription();
@@ -205,7 +232,7 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
       }
     }
 
-    this.searchParameters?.forEach((item: any) => {
+    this.searchParameters?.forEach((item: SearchBarParameter) => {
       if (
         (this.getParameterType(item) === "enumArray" ||
           this.getParameterType(item) === "vendor_regions") &&
@@ -293,11 +320,19 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
         value = this.normalizeBenchmarkTriStateValue(value);
       }
 
+      if (this.getParameterType(item) === "cpuCacheRange") {
+        value = this.normalizeCommittedCpuCacheRangeValue(item, value);
+      }
+
       if (!value && item.schema.null_value) {
         value = item.schema.null_value;
       }
 
       item.modelValue = value;
+
+      if (this.getParameterType(item) === "cpuCacheRange") {
+        this.syncCpuCacheRangeDraftValue(item);
+      }
     });
   }
 
@@ -383,7 +418,7 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
     );
   }
 
-  getStep(parameter: any) {
+  getStep(parameter: SearchBarParameter) {
     return parameter.schema.step || 1;
   }
 
@@ -438,10 +473,10 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
     return !continent.selected && this.selectedCountriesCount() >= 1;
   }
 
-  getParameterType(parameter: any) {
+  getParameterType(parameter: SearchBarParameter): SearchBarParameterType {
     const type =
       parameter.schema.type ||
-      parameter.schema.anyOf?.find((item: any) => item.type !== "null")?.type ||
+      parameter.schema.anyOf?.find((item) => item.type !== "null")?.type ||
       "text";
     const name = parameter.name;
 
@@ -488,6 +523,10 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
       return "range";
     }
 
+    if (this.isCpuCacheRangeParameter(parameter, type)) {
+      return "cpuCacheRange";
+    }
+
     if (type === "integer" || type === "number") {
       if (parameter.schema.category_id === "price") return "price";
       else return "number";
@@ -505,13 +544,19 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   benchmarkFilterOptionKey(valueOrObj: BenchmarkFilterOption) {
-    return typeof valueOrObj === "string" ? valueOrObj : valueOrObj?.key;
+    if (typeof valueOrObj === "string" || typeof valueOrObj === "number") {
+      return valueOrObj;
+    }
+
+    return valueOrObj?.key;
   }
 
   benchmarkFilterOptionLabel(valueOrObj: BenchmarkFilterOption) {
-    return typeof valueOrObj === "string"
-      ? valueOrObj
-      : valueOrObj?.value || valueOrObj?.key || "";
+    if (typeof valueOrObj === "string" || typeof valueOrObj === "number") {
+      return String(valueOrObj);
+    }
+
+    return valueOrObj?.value || valueOrObj?.key || "";
   }
 
   benchmarkFilterSelection(
@@ -584,6 +629,200 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
     this.valueChangeDebouncer.next(0);
   }
 
+  getCpuCacheRangeStops(parameter: SearchBarParameter): number[] {
+    const values = (parameter.schema.enum || [])
+      .map((value) => {
+        if (typeof value === "number") {
+          return value;
+        }
+
+        const numericValue = Number(
+          typeof value === "string" ? value : value?.key || value?.value,
+        );
+
+        return Number.isFinite(numericValue) ? numericValue : null;
+      })
+      .filter((value): value is number => value !== null);
+
+    return [...new Set(values)].sort((left, right) => left - right);
+  }
+
+  getCpuCacheRangeMaxIndex(parameter: SearchBarParameter): number {
+    return Math.max(this.getCpuCacheRangeStops(parameter).length - 1, 0);
+  }
+
+  getCpuCacheRangeIndex(parameter: SearchBarParameter): number {
+    const values = this.getCpuCacheRangeStops(parameter);
+
+    if (!values.length) {
+      return 0;
+    }
+
+    const normalizedValue = this.normalizeCommittedCpuCacheRangeValue(
+      parameter,
+      parameter.modelValue,
+    );
+
+    if (normalizedValue === null) {
+      return 0;
+    }
+
+    return values.reduce(
+      (closestIndex, candidate, index) =>
+        Math.abs(candidate - normalizedValue) <
+        Math.abs(values[closestIndex] - normalizedValue)
+          ? index
+          : closestIndex,
+      0,
+    );
+  }
+
+  setCpuCacheRangeIndex(parameter: SearchBarParameter, rawIndex: unknown) {
+    const values = this.getCpuCacheRangeStops(parameter);
+
+    if (!values.length) {
+      return;
+    }
+
+    const numericIndex = Number(rawIndex);
+    const boundedIndex = Number.isFinite(numericIndex)
+      ? Math.min(Math.max(Math.round(numericIndex), 0), values.length - 1)
+      : 0;
+
+    parameter.modelValue = values[boundedIndex];
+    this.syncCpuCacheRangeDraftValue(parameter);
+    this.toastService.removeToast(this.cpuCacheRangeErrorToastId);
+    this.valueChanged();
+  }
+
+  getCpuCacheRangeInputValue(
+    parameter: SearchBarParameter,
+  ): string | number | null {
+    if (this.cpuCacheRangeDraftValues[parameter.name] !== undefined) {
+      return this.cpuCacheRangeDraftValues[parameter.name];
+    }
+
+    return typeof parameter.modelValue === "number"
+      ? parameter.modelValue
+      : null;
+  }
+
+  getCpuCacheRangeMin(parameter: SearchBarParameter): number | null {
+    const values = this.getCpuCacheRangeStops(parameter);
+    return values.length ? values[0] : null;
+  }
+
+  getCpuCacheRangeMax(parameter: SearchBarParameter): number | null {
+    const values = this.getCpuCacheRangeStops(parameter);
+    return values.length ? values[values.length - 1] : null;
+  }
+
+  setCpuCacheRangeDraftValue(parameter: SearchBarParameter, rawValue: unknown) {
+    this.cpuCacheRangeDraftValues[parameter.name] =
+      rawValue === null || rawValue === undefined ? "" : String(rawValue);
+  }
+
+  setCpuCacheRangeValue(parameter: SearchBarParameter, rawValue: unknown) {
+    this.setCpuCacheRangeDraftValue(parameter, rawValue);
+  }
+
+  commitCpuCacheRangeInput(parameter: SearchBarParameter, event: Event) {
+    this.commitCpuCacheRangeValue(
+      parameter,
+      (event.target as HTMLInputElement | null)?.value,
+    );
+  }
+
+  commitCpuCacheRangeFromEnter(parameter: SearchBarParameter, event: Event) {
+    this.cpuCacheRangeSkipNextFocusLossCommit[parameter.name] = true;
+    this.commitCpuCacheRangeInput(parameter, event);
+  }
+
+  commitCpuCacheRangeAfterFocusLoss(
+    parameter: SearchBarParameter,
+    event: Event,
+  ) {
+    if (this.cpuCacheRangeSkipNextFocusLossCommit[parameter.name]) {
+      delete this.cpuCacheRangeSkipNextFocusLossCommit[parameter.name];
+      return;
+    }
+
+    this.commitCpuCacheRangeInput(parameter, event);
+  }
+
+  commitCpuCacheRangeValue(parameter: SearchBarParameter, rawValue?: unknown) {
+    const previousValue = parameter.modelValue;
+    const normalizedValue = this.normalizeCommittedCpuCacheRangeValue(
+      parameter,
+      rawValue ?? this.cpuCacheRangeDraftValues[parameter.name],
+    );
+
+    if (
+      normalizedValue === null &&
+      rawValue !== null &&
+      rawValue !== undefined &&
+      rawValue !== ""
+    ) {
+      this.syncCpuCacheRangeDraftValue(parameter);
+      this.showCpuCacheRangeValidationError(parameter);
+      return;
+    }
+
+    parameter.modelValue = normalizedValue;
+    this.syncCpuCacheRangeDraftValue(parameter);
+    this.toastService.removeToast(this.cpuCacheRangeErrorToastId);
+
+    if (previousValue === parameter.modelValue) {
+      return;
+    }
+
+    this.valueChanged();
+  }
+
+  getCpuCacheRangeInputStyle(parameter: SearchBarParameter) {
+    const value = this.getCpuCacheRangeInputValue(parameter);
+
+    if (value === null || value === "") {
+      return { "max-width": "3ch" };
+    }
+
+    return { "max-width": `${value.toString().length + 2}ch` };
+  }
+
+  getCpuCacheRangeLabelValues(parameter: SearchBarParameter): number[] {
+    const values = this.getCpuCacheRangeStops(parameter);
+
+    if (values.length <= 6) {
+      return values;
+    }
+
+    const maxIndex = values.length - 1;
+    const step = Math.max(1, Math.ceil(maxIndex / 4));
+    const labelIndexes = new Set<number>([0, maxIndex]);
+
+    for (let index = step; index < maxIndex; index += step) {
+      labelIndexes.add(index);
+    }
+
+    return [...labelIndexes]
+      .sort((left, right) => left - right)
+      .map((index) => values[index]);
+  }
+
+  getCpuCacheRangeLabelPosition(
+    parameter: SearchBarParameter,
+    value: number,
+  ): number {
+    const values = this.getCpuCacheRangeStops(parameter);
+    const maxIndex = values.length - 1;
+
+    if (maxIndex <= 0) {
+      return 0;
+    }
+
+    return (Math.max(values.indexOf(value), 0) / maxIndex) * 100;
+  }
+
   triggerTopSearch() {
     this.filterServers();
   }
@@ -597,23 +836,43 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
     this.filterServers();
   }
 
-  isEnumSelected(param: any, valueOrObj: any) {
-    const value = typeof valueOrObj === "string" ? valueOrObj : valueOrObj.key;
+  isEnumSelected(param: SearchBarParameter, valueOrObj: BenchmarkFilterOption) {
+    const value =
+      typeof valueOrObj === "string" || typeof valueOrObj === "number"
+        ? valueOrObj
+        : valueOrObj.key;
+
+    if (value === undefined) {
+      return false;
+    }
+
     return Array.isArray(param.modelValue) && param.modelValue.includes(value);
   }
 
-  selectEnumItem(param: any, valueOrObj: any) {
+  selectEnumItem(param: SearchBarParameter, valueOrObj: BenchmarkFilterOption) {
     if (!Array.isArray(param.modelValue)) {
       param.modelValue = [];
     }
 
-    const value = typeof valueOrObj === "string" ? valueOrObj : valueOrObj.key;
-    const index = param.modelValue.indexOf(value);
+    const selectedValues = param.modelValue as Array<string | number>;
+
+    const value =
+      typeof valueOrObj === "string" || typeof valueOrObj === "number"
+        ? valueOrObj
+        : valueOrObj.key;
+
+    if (value === undefined) {
+      return;
+    }
+
+    const index = selectedValues.indexOf(value);
 
     if (index !== -1) {
-      param.modelValue = param.modelValue.filter((v: any) => v !== value);
+      param.modelValue = selectedValues.filter(
+        (selectedValue) => selectedValue !== value,
+      );
     } else {
-      param.modelValue = [...param.modelValue, value];
+      param.modelValue = [...selectedValues, value];
     }
 
     this.valueChanged();
@@ -867,7 +1126,7 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
     tooltip.style.opacity = "0";
   }
 
-  getInputStyle(parameter: any) {
+  getInputStyle(parameter: SearchBarParameter) {
     if (!parameter.modelValue) {
       return { "max-width": "3ch" };
     }
@@ -881,12 +1140,93 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private normalizeOptionId(value: BenchmarkFilterOption): string {
-    return typeof value === "string" ? value : value?.key || value?.value || "";
+    if (typeof value === "string" || typeof value === "number") {
+      return String(value);
+    }
+
+    return value?.key || value?.value || "";
+  }
+
+  private isCpuCacheRangeParameter(
+    parameter: SearchBarParameter,
+    type: string,
+  ): boolean {
+    if (parameter?.schema?.category_id !== "cpu_cache") {
+      return false;
+    }
+
+    if (type !== "integer" && type !== "number") {
+      return false;
+    }
+
+    return this.getCpuCacheRangeStops(parameter).length > 0;
+  }
+
+  private normalizeCommittedCpuCacheRangeValue(
+    parameter: SearchBarParameter,
+    rawValue: unknown,
+  ): number | null {
+    if (rawValue === null || rawValue === undefined || rawValue === "") {
+      return null;
+    }
+
+    const numericValue = Number(rawValue);
+
+    if (!Number.isFinite(numericValue)) {
+      return null;
+    }
+
+    const values = this.getCpuCacheRangeStops(parameter);
+
+    if (!values.length) {
+      return numericValue;
+    }
+
+    const min = values[0];
+    const max = values[values.length - 1];
+
+    if (numericValue < min || numericValue > max) {
+      return null;
+    }
+
+    return numericValue;
+  }
+
+  private syncCpuCacheRangeDraftValue(parameter: SearchBarParameter) {
+    if (parameter.modelValue === null || parameter.modelValue === undefined) {
+      delete this.cpuCacheRangeDraftValues[parameter.name];
+      return;
+    }
+
+    this.cpuCacheRangeDraftValues[parameter.name] = String(
+      parameter.modelValue,
+    );
+  }
+
+  private showCpuCacheRangeValidationError(parameter: SearchBarParameter) {
+    const min = this.getCpuCacheRangeMin(parameter);
+    const max = this.getCpuCacheRangeMax(parameter);
+    const title =
+      typeof parameter.schema.title === "string"
+        ? parameter.schema.title
+        : "Invalid CPU cache value";
+    const body =
+      min !== null && max !== null
+        ? `Enter a whole number between ${min} and ${max}${parameter.schema.unit ? ` ${parameter.schema.unit}` : ""}.`
+        : "Enter a valid whole number.";
+
+    this.toastService.show({
+      title,
+      body,
+      type: "error",
+      id: this.cpuCacheRangeErrorToastId,
+      duration: 4000,
+    });
   }
 
   getVendorRegionVendorIds(parameter: SearchBarParameter): string[] {
     const vendors: string[] = [];
-    (parameter.schema.enum || []).forEach((value: any) => {
+    (parameter.schema.enum || []).forEach((value) => {
       const vendorId = (typeof value === "string" ? value : "").split("~")[0];
       if (vendorId && !vendors.includes(vendorId)) {
         vendors.push(vendorId);
@@ -903,16 +1243,16 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
     parameter: SearchBarParameter,
     vendorId: string,
   ): string[] {
-    return (
-      (parameter.schema.enum || []).filter(
-        (value: any) =>
+    return (parameter.schema.enum || [])
+      .filter(
+        (value): value is string =>
           typeof value === "string" && value.startsWith(vendorId + "~"),
-      ) as string[]
-    ).sort((a, b) =>
-      this.getVendorRegionDisplayName(a).localeCompare(
-        this.getVendorRegionDisplayName(b),
-      ),
-    );
+      )
+      .sort((a, b) =>
+        this.getVendorRegionDisplayName(a).localeCompare(
+          this.getVendorRegionDisplayName(b),
+        ),
+      );
   }
 
   isVendorRegionSelected(
