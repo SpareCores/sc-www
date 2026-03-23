@@ -10,6 +10,7 @@ export type ServerDetailsMemoryChartOption = MemoryChartOptionBase & {
   tooltip?: string;
   unitSuffix?: string;
   yAxisLabel?: string;
+  showCacheAnnotations: boolean;
   perCore?: boolean;
   singleSeries?: boolean;
   legacyOperations?: string[];
@@ -27,6 +28,7 @@ export const serverDetailsMemoryChartOptions: ServerDetailsMemoryChartOption[] =
       ],
       infoBenchmarkId: "membench:bandwidth_copy",
       higherIsBetter: true,
+      showCacheAnnotations: true,
     },
     {
       id: "membench-bandwidth-per-core",
@@ -38,6 +40,7 @@ export const serverDetailsMemoryChartOptions: ServerDetailsMemoryChartOption[] =
       ],
       infoBenchmarkId: "membench:bandwidth_copy",
       higherIsBetter: true,
+      showCacheAnnotations: true,
       perCore: true,
     },
     {
@@ -46,6 +49,7 @@ export const serverDetailsMemoryChartOptions: ServerDetailsMemoryChartOption[] =
       benchmarkIds: ["membench:latency"],
       infoBenchmarkId: "membench:latency",
       higherIsBetter: false,
+      showCacheAnnotations: true,
       singleSeries: true,
     },
     {
@@ -54,6 +58,7 @@ export const serverDetailsMemoryChartOptions: ServerDetailsMemoryChartOption[] =
       benchmarkIds: ["bw_mem"],
       infoBenchmarkId: "bw_mem",
       higherIsBetter: true,
+      showCacheAnnotations: true,
       legacyOperations: ["rd", "wr", "rdwr"],
     },
   ];

@@ -379,9 +379,7 @@ export class MemoryChartBuilderService {
 
     this.configureAnnotations(
       options,
-      option.benchmarkIds.some((benchmarkId) =>
-        benchmarkId.startsWith("membench:"),
-      ),
+      option.showCacheAnnotations,
       serverDetails,
     );
   }
