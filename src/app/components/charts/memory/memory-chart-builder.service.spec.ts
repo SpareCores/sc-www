@@ -55,6 +55,7 @@ describe("MemoryChartBuilderService", () => {
         name: "sc-membench: Bandwidth",
         benchmarkIds: ["membench:bandwidth_read", "membench:bandwidth_copy"],
         infoBenchmarkId: "membench:bandwidth_copy",
+        showCacheAnnotations: true,
       },
       serverDetails,
       benchmarkMeta,
@@ -80,6 +81,7 @@ describe("MemoryChartBuilderService", () => {
         name: "sc-membench: Bandwidth",
         benchmarkIds: ["membench:bandwidth_read", "membench:bandwidth_copy"],
         infoBenchmarkId: "membench:bandwidth_copy",
+        showCacheAnnotations: true,
       },
       serverDetails,
       benchmarkMeta,
@@ -126,6 +128,7 @@ describe("MemoryChartBuilderService", () => {
         benchmarkIds: ["membench:latency"],
         infoBenchmarkId: "membench:latency",
         higherIsBetter: false,
+        showCacheAnnotations: true,
         singleSeries: true,
       },
       serverDetails: {
