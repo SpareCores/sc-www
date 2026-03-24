@@ -17,7 +17,7 @@ export type CompressionConfigValue = BenchmarkConfigValue;
 export type CompressionConfig = BenchmarkConfigShape<CompressionConfigValue> & {
   algo: string;
   compression_level?: number;
-  threads?: number;
+  cores?: "single" | "multi";
 };
 
 export type CompressionBenchmarkScore =
