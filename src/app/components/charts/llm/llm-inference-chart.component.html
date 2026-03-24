@@ -1,0 +1,185 @@
+@if (layout() === "details") {
+  @if (hasDetailsData()) {
+    <div class="contents">
+      @if (showPrompt() && detailsPromptData()) {
+        <div class="block_half" id="llm_prompt_chart">
+          <div class="flex justify-between items-center">
+            <h3 class="text-2xl flex items-center gap-2">
+              <lucide-icon
+                [name]="'llm_speed' | benchmarkIcon"
+                class="h-6 w-6"
+              ></lucide-icon>
+              LLM Inference Speed for Prompt Processing
+              <lucide-icon
+                name="circle-arrow-up"
+                class="h-4 w-4 text-gray-200"
+                (mouseenter)="showTooltip($event, orderTooltip)"
+                (mouseleave)="hideTooltip()"
+              ></lucide-icon>
+              <lucide-icon
+                name="info"
+                class="h-4 w-4 text-gray-200"
+                (mouseenter)="showTooltip($event, promptInfoTooltip())"
+                (mouseleave)="hideTooltip()"
+              ></lucide-icon>
+            </h3>
+          </div>
+          @if (isBrowser) {
+            <div class="h-full">
+              <div class="chart_div" chartType="bar">
+                <canvas
+                  id="llm_prompt_canvas"
+                  baseChart
+                  [data]="detailsPromptData()"
+                  [options]="detailsPromptOptions()"
+                  [type]="barChartType"
+                >
+                </canvas>
+              </div>
+            </div>
+          }
+        </div>
+      }
+
+      @if (showGeneration() && detailsGenerationData()) {
+        <div class="block_half" id="llm_generation_chart">
+          <div class="flex justify-between items-center">
+            <h3 class="text-2xl flex items-center gap-2">
+              <lucide-icon
+                [name]="'llm_speed' | benchmarkIcon"
+                class="h-6 w-6"
+              ></lucide-icon>
+              LLM Inference Speed for Text Generation
+              <lucide-icon
+                name="circle-arrow-up"
+                class="h-4 w-4 text-gray-200"
+                (mouseenter)="showTooltip($event, orderTooltip)"
+                (mouseleave)="hideTooltip()"
+              ></lucide-icon>
+              <lucide-icon
+                name="info"
+                class="h-4 w-4 text-gray-200"
+                (mouseenter)="showTooltip($event, generationInfoTooltip())"
+                (mouseleave)="hideTooltip()"
+              ></lucide-icon>
+            </h3>
+          </div>
+          @if (isBrowser) {
+            <div class="h-full">
+              <div class="chart_div" chartType="bar">
+                <canvas
+                  id="llm_generation_canvas"
+                  baseChart
+                  [data]="detailsGenerationData()"
+                  [options]="detailsGenerationOptions()"
+                  [type]="barChartType"
+                >
+                </canvas>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+} @else {
+  @if (availableModels().length) {
+    <div class="block_full_short_inline">
+      <div class="flex justify-end items-center mb-4">
+        <div class="flex gap-4">
+          <button
+            [id]="buttonId"
+            class="dropdown_button"
+            type="button"
+            [appFlowbiteDropdown]="optionsId"
+            [dropdownEnabled]="isBrowser && availableModels().length > 0"
+          >
+            <div class="px-3 py-2">
+              {{ currentModelName() }}
+            </div>
+            <div
+              class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
+            >
+              <lucide-icon
+                name="chevron-down"
+                class="h-6 w-6 text-emerald-400"
+              ></lucide-icon>
+            </div>
+          </button>
+        </div>
+      </div>
+      @if (isBrowser && hasCompareData()) {
+        <div class="charts_div">
+          @if (comparePromptData()) {
+            <div chartType="bar" class="chart_div">
+              <canvas
+                baseChart
+                [data]="comparePromptData()"
+                [options]="comparePromptOptions()"
+                [type]="barChartType"
+              >
+              </canvas>
+            </div>
+          }
+          @if (compareGenerationData()) {
+            <div chartType="bar" class="chart_div">
+              <canvas
+                baseChart
+                [data]="compareGenerationData()"
+                [options]="compareGenerationOptions()"
+                [type]="barChartType"
+              >
+              </canvas>
+            </div>
+          }
+        </div>
+      }
+      @if (!hasCompareData()) {
+        <div class="text-center py-4 text-gray-500">
+          No data available for the selected model.
+        </div>
+      }
+    </div>
+  }
+
+  @if (availableModels().length) {
+    <div
+      [id]="optionsId"
+      class="z-100 hidden bg-secondary rounded-lg shadow w-64 border border-emerald-400 border-solid"
+    >
+      <ul
+        class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200 max-h-60 overflow-y-auto"
+        [attr.aria-labelledby]="buttonId"
+      >
+        @for (
+          llmModel of availableModels();
+          track llmModel.name;
+          let i = $index
+        ) {
+          <li>
+            <button
+              type="button"
+              class="w-full flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm border-0 bg-transparent text-left"
+              (click)="selectModel(i)"
+              [title]="llmModel.name"
+            >
+              <div
+                class="text-white text-sm whitespace-nowrap overflow-hidden text-ellipsis"
+              >
+                {{ llmModel.name }}
+              </div>
+            </button>
+          </li>
+        }
+      </ul>
+    </div>
+  }
+}
+
+<div
+  #tooltipDefault
+  style="opacity: 0; display: none"
+  class="tooltip-panel fixed z-100 pointer-events-none"
+>
+  {{ tooltipContent() }}
+</div>

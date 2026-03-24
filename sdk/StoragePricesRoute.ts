@@ -514,6 +514,7 @@ export namespace StoragePrices {
         | "CL"
         | "CN"
         | "DE"
+        | "DK"
         | "ES"
         | "FI"
         | "FR"
@@ -540,8 +541,7 @@ export namespace StoragePrices {
         | "TH"
         | "TW"
         | "US"
-        | "ZA"
-        | "DK";
+        | "ZA";
       /**
        * Limit
        * Maximum number of results. Set to -1 for unlimited.

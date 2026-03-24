@@ -1,0 +1,101 @@
+@if (chartData() && currentMemoryChartOption()) {
+  <div class="block_half" id="bw_mem_chart">
+    <div
+      class="flex flex-col items-start gap-4 md:flex-row md:items-center md:justify-between"
+    >
+      <h3 class="text-2xl flex items-center gap-2">
+        <lucide-icon
+          [name]="'bwmem' | benchmarkIcon"
+          class="h-6 w-6"
+        ></lucide-icon>
+        <span class="whitespace-nowrap">Memory Bandwidth</span>
+        <lucide-icon
+          [name]="currentMemoryChartIcon()"
+          class="h-4 w-4 text-gray-200"
+          (mouseenter)="showTooltip($event, currentMemoryChartOrderTooltip())"
+          (mouseleave)="hideTooltip()"
+        >
+        </lucide-icon>
+        <lucide-icon
+          name="info"
+          class="h-4 w-4 text-gray-200"
+          (mouseenter)="showTooltip($event, currentMemoryChartInfo())"
+          (mouseleave)="hideTooltip()"
+        >
+        </lucide-icon>
+      </h3>
+      <button
+        #memoryDropdown="appFlowbiteDropdown"
+        [id]="buttonId"
+        class="dropdown_button self-stretch justify-between overflow-hidden md:self-auto"
+        type="button"
+        [appFlowbiteDropdown]="optionsId"
+        [dropdownEnabled]="
+          isBrowser && availableMemoryChartOptions().length > 0
+        "
+      >
+        <div
+          class="min-w-0 flex-1 truncate whitespace-nowrap px-3 py-2 text-left"
+        >
+          {{ currentMemoryChartOption().name }}
+        </div>
+        <div
+          class="px-3 py-2 w-12 h-full shrink-0 bg-primary justify-center items-center flex rounded-r-lg"
+        >
+          <lucide-icon
+            name="chevron-down"
+            class="h-6 w-6 text-emerald-400"
+          ></lucide-icon>
+        </div>
+      </button>
+    </div>
+    @if (isBrowser) {
+      <div class="h-full">
+        <div class="chart_div" chartType="bar">
+          <canvas
+            id="bw_mem_canvas"
+            baseChart
+            [data]="chartData()"
+            [options]="chartOptions()"
+            [type]="lineChartType"
+          >
+          </canvas>
+        </div>
+      </div>
+    }
+  </div>
+
+  <div
+    [id]="optionsId"
+    class="z-10 hidden w-max min-w-64 max-w-[calc(100vw-2rem)] bg-secondary rounded-lg border border-emerald-400 border-solid shadow"
+  >
+    <ul
+      class="py-2 px-1 text-sm text-gray-700"
+      [attr.aria-labelledby]="buttonId"
+    >
+      @for (
+        memoryOption of availableMemoryChartOptions();
+        track memoryOption.id
+      ) {
+        <li class="flex py-1 gap-2 items-center">
+          <button
+            class="ml-2 block max-w-full cursor-pointer whitespace-nowrap font-bold text-emerald-400 hover:text-emerald-500"
+            (click)="selectMemoryChartOption(memoryOption)"
+            [title]="memoryOption.name"
+          >
+            {{ memoryOption.name }}
+          </button>
+        </li>
+      }
+    </ul>
+  </div>
+
+  <div
+    id="tooltipDefault"
+    #tooltipDefault
+    style="opacity: 0; display: none"
+    class="tooltip-panel fixed z-100 pointer-events-none"
+  >
+    {{ tooltipContent() }}
+  </div>
+}

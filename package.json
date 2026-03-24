@@ -8,6 +8,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
+    "test:ci": "ng test --no-watch --no-progress --browsers=ChromeHeadlessNoSandbox --code-coverage",
+    "test:coverage:open": "npx --yes http-server coverage/sc-www -o",
     "serve:ssr:sc-www": "node dist/sc-www/server/server.mjs",
     "lint": "ng lint",
     "sentry:sourcemaps": "sentry-cli sourcemaps inject ./dist/sc-www && sentry-cli sourcemaps upload ./dist/sc-www",

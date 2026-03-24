@@ -1,0 +1,64 @@
+@if (chartData() && selectedOption()) {
+  <div class="block_full_inline">
+    <div class="flex justify-end items-center">
+      <button
+        #memoryCompareDropdown="appFlowbiteDropdown"
+        [id]="buttonId"
+        class="dropdown_button justify-between overflow-hidden"
+        type="button"
+        [appFlowbiteDropdown]="optionsId"
+        [dropdownEnabled]="isBrowser && availableOptions().length > 0"
+      >
+        <div
+          class="min-w-0 flex-1 truncate whitespace-nowrap px-4 py-3 text-left"
+        >
+          {{ currentOptionName() }}
+        </div>
+        <div
+          class="px-4 py-3 w-12 h-full shrink-0 bg-primary justify-center items-center flex rounded-r-lg"
+        >
+          <lucide-icon
+            name="chevron-down"
+            class="h-6 w-6 text-emerald-400"
+          ></lucide-icon>
+        </div>
+      </button>
+    </div>
+    @if (isBrowser) {
+      <div class="h-full">
+        <div class="chart_div" chartType="bar">
+          <canvas
+            baseChart
+            [data]="chartData()"
+            [options]="chartOptions()"
+            [type]="lineChartType"
+          >
+          </canvas>
+        </div>
+      </div>
+    }
+  </div>
+
+  <div
+    [id]="optionsId"
+    class="z-100 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid"
+  >
+    <ul
+      class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
+      [attr.aria-labelledby]="buttonId"
+    >
+      @for (
+        bwMemOperation of availableOptions();
+        track bwMemOperation.id;
+        let i = $index
+      ) {
+        <li
+          class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+          (click)="selectMemoryChartOption(i)"
+        >
+          <div class="text-white text-sm">{{ bwMemOperation.name }}</div>
+        </li>
+      }
+    </ul>
+  </div>
+}

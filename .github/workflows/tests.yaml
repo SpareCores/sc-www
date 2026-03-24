@@ -13,7 +13,33 @@ jobs:
       - name: Run Prettier check
         run: npm run prettier:check
 
+  unit-tests:
+    needs: eslint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install modules
+        run: npm install --include=dev
+      - name: Set up Chrome
+        id: setup-chrome
+        uses: browser-actions/setup-chrome@v1
+      - name: Run Jasmine Karma tests
+        run: npm run test:ci
+        env:
+          CHROME_BIN: ${{ steps.setup-chrome.outputs.chrome-path }}
+          NG_APP_BACKEND_BASE_URI: https://keeper.sparecores.net
+          NG_APP_BACKEND_BASE_URI_SSR: https://keeper.sparecores.net
+          NG_APP_SENTRY_DSN: ""
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: unit-test-coverage
+          path: coverage
+          retention-days: 7
+          if-no-files-found: ignore
+
   cypress-run:
+    needs: unit-tests
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4

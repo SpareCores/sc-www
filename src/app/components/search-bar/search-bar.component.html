@@ -30,7 +30,6 @@
     } @else {
       <button
         class="w-full bg-emerald-400 hover:bg-emerald-500 text-white py-3 rounded-lg font-bold"
-        data-ph-capture-attribute-sc-event="server listing search prompt open"
         data-ph-capture-attribute-server-listing-search-prompt-action="open"
         (click)="openSearchPrompt()"
       >
@@ -877,7 +876,7 @@
   id="tooltipDefault"
   #tooltipDefault
   style="opacity: 0"
-  class="fixed z-10 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-secondary border border-solid border-emerald-400 rounded-lg"
+  class="tooltip-panel fixed z-10"
 >
   {{ tooltipContent }}
 </div>

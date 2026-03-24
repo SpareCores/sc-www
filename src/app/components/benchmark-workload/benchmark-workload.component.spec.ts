@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { BenchmarkWorkloadComponent } from "./benchmark-workload.component";
 import { Status } from "../../../../sdk/data-contracts";
+import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
 describe("BenchmarkWorkloadComponent", () => {
   let component: BenchmarkWorkloadComponent;
@@ -10,6 +11,7 @@ describe("BenchmarkWorkloadComponent", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [BenchmarkWorkloadComponent],
+      providers: [...sharedTestingProviders],
     }).compileComponents();
 
     fixture = TestBed.createComponent(BenchmarkWorkloadComponent);

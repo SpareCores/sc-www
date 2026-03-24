@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { ServerOGComponent } from "./server-og.component";
+import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
 describe("ServerOGComponent", () => {
   let component: ServerOGComponent;
@@ -9,6 +10,7 @@ describe("ServerOGComponent", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ServerOGComponent],
+      providers: [...sharedTestingProviders],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ServerOGComponent);

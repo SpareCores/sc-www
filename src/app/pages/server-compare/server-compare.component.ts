@@ -37,10 +37,35 @@ import { LoadingSpinnerComponent } from "../../components/loading-spinner/loadin
 import { PrismService } from "../../services/prism.service";
 import { Subscription } from "rxjs";
 import specialComparesData from "./special-compares.js";
+import { ChartTooltipService } from "../../components/charts/shared/chart-tooltip.service";
+import {
+  getCompareMemoryChartOption,
+  type CompareMemoryChartOption,
+} from "../../components/charts/shared/memory-chart.types";
+import {
+  type MemoryBenchmarkConfig,
+  type MemoryBenchmarkMeta,
+} from "../../components/charts/memory/memory-chart.types";
 
 const optionsModal: ModalOptions = {
   backdropClasses: "bg-gray-900/50 fixed inset-0 z-40",
   closable: true,
+};
+
+type CompareTableBenchmarkConfig = {
+  config: MemoryBenchmarkConfig;
+  values: Array<number | "-">;
+};
+
+type CompareTableBenchmarkMeta = Omit<
+  MemoryBenchmarkMeta,
+  "configs" | "name"
+> & {
+  name: string;
+  collapsed: boolean;
+  configs: CompareTableBenchmarkConfig[];
+  benchmark_key?: string;
+  legacyOperation?: CompareMemoryChartOption["legacyOperation"];
 };
 
 @Component({
@@ -71,6 +96,7 @@ export class ServerCompareComponent
   private analytics = inject(AnalyticsService);
   private route = inject(ActivatedRoute);
   private toastService = inject(ToastService);
+  private tooltipService = inject(ChartTooltipService);
 
   @ViewChild("tableFirstCol") tableFirstCol!: ElementRef;
   @HostBinding("attr.ngSkipHydration") ngSkipHydration = "true";
@@ -123,7 +149,13 @@ export class ServerCompareComponent
     {
       name: "Memory Bandwidth",
       id: "bw_mem",
-      benchmarks: ["bw_mem"],
+      benchmarks: [
+        "bw_mem",
+        "membench:bandwidth_read",
+        "membench:bandwidth_write",
+        "membench:bandwidth_copy",
+        "membench:latency",
+      ],
       data: [],
       show_more: false,
     },
@@ -572,6 +604,10 @@ export class ServerCompareComponent
             });
           });
 
+          this.benchmarkMeta = this.buildDisplayBenchmarkMeta(
+            this.benchmarkMeta,
+          );
+
           this.benchmarkCategories.forEach((category) => {
             category.data = this.benchmarkMeta.filter((b: any) =>
               category.benchmarks.includes(b.benchmark_id),
@@ -697,17 +733,16 @@ export class ServerCompareComponent
   }
 
   showTooltip(el: any, content?: string, autoHide = false) {
-    const tooltip = this.tooltip.nativeElement;
-    const scrollPosition =
-      window.pageYOffset || document.documentElement.scrollTop;
-    tooltip.style.left = `${el.target.getBoundingClientRect().left - 25}px`;
-    tooltip.style.top = `${el.target.getBoundingClientRect().bottom + 5 + scrollPosition}px`;
-    tooltip.style.display = "block";
-    tooltip.style.opacity = "1";
+    const didShow = this.tooltipService.showIfPresent({
+      tooltipElement: this.tooltip?.nativeElement,
+      event: el,
+      content,
+      onShow: (tooltipContent) => {
+        this.tooltipContent = tooltipContent;
+      },
+    });
 
-    this.tooltipContent = content || "";
-
-    if (autoHide) {
+    if (didShow && autoHide) {
       setTimeout(() => {
         this.hideTooltip();
       }, 3000);
@@ -715,30 +750,88 @@ export class ServerCompareComponent
   }
 
   showTooltipChart(el: any, type: string) {
-    let content = this.benchmarkMeta.find(
+    const content = this.benchmarkMeta.find(
       (b: any) => b.benchmark_id === type,
     )?.description;
-    if (content) {
-      const tooltip = this.tooltip.nativeElement;
-      const scrollPosition =
-        window.pageYOffset || document.documentElement.scrollTop;
-      tooltip.style.left = `${el.target.getBoundingClientRect().right + 5}px`;
-      tooltip.style.top = `${el.target.getBoundingClientRect().top - 45 + scrollPosition}px`;
-      tooltip.style.display = "block";
-      tooltip.style.opacity = "1";
 
-      this.tooltipContent = content;
-    }
+    this.tooltipService.showIfPresent({
+      tooltipElement: this.tooltip?.nativeElement,
+      event: el,
+      content,
+      onShow: (tooltipContent) => {
+        this.tooltipContent = tooltipContent;
+      },
+    });
   }
 
   hideTooltip() {
-    const tooltip = this.tooltip.nativeElement;
-    tooltip.style.display = "none";
-    tooltip.style.opacity = "0";
+    this.tooltipService.hide(this.tooltip?.nativeElement);
   }
 
   isBrowser() {
     return isPlatformBrowser(this.platformId);
+  }
+
+  private buildDisplayBenchmarkMeta(
+    benchmarkMeta: CompareTableBenchmarkMeta[],
+  ): CompareTableBenchmarkMeta[] {
+    return benchmarkMeta.flatMap((benchmark) =>
+      this.buildDisplayBenchmarkEntries(benchmark),
+    );
+  }
+
+  private buildDisplayBenchmarkEntries(
+    benchmark: CompareTableBenchmarkMeta,
+  ): CompareTableBenchmarkMeta[] {
+    if (benchmark.benchmark_id === "bw_mem") {
+      const splitBenchmarks = ["rd", "wr", "rdwr"].reduce<
+        CompareTableBenchmarkMeta[]
+      >((entries, legacyOperation) => {
+        const option = getCompareMemoryChartOption(
+          benchmark.benchmark_id,
+          legacyOperation,
+        );
+        const configs = benchmark.configs.filter(
+          (config) => config.config.operation === legacyOperation,
+        );
+
+        if (!option || !configs.length) {
+          return entries;
+        }
+
+        entries.push({
+          ...benchmark,
+          benchmark_key: `${benchmark.benchmark_id}:${legacyOperation}`,
+          configs: configs.map((config) => {
+            const displayConfig: MemoryBenchmarkConfig = { ...config.config };
+            delete displayConfig.operation;
+
+            return {
+              ...config,
+              config: displayConfig,
+            };
+          }),
+          legacyOperation,
+          name: option.name,
+        });
+
+        return entries;
+      }, []);
+
+      if (splitBenchmarks.length) {
+        return splitBenchmarks;
+      }
+    }
+
+    const option = getCompareMemoryChartOption(benchmark.benchmark_id);
+
+    return [
+      {
+        ...benchmark,
+        benchmark_key: benchmark.benchmark_id,
+        name: option?.name ?? benchmark.name,
+      },
+    ];
   }
 
   selectCurrency(currency: any) {

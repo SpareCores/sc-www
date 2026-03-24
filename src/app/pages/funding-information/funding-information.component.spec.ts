@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { FundingInformationComponent } from "./funding-information.component";
+import { SeoHandlerService } from "../../services/seo-handler.service";
 
 describe("FundingInformationComponent", () => {
   let component: FundingInformationComponent;
