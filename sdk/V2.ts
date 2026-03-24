@@ -33,7 +33,11 @@ export class V2<SecurityDataType = unknown> {
    * @request GET:/v2/server/{vendor}/{server}
    */
   getServerWithoutRelationsV2ServerVendorServerGet = (
-    { vendor, server }: GetServerWithoutRelationsV2ServerVendorServerGetParams,
+    {
+      vendor,
+      server,
+      ...query
+    }: GetServerWithoutRelationsV2ServerVendorServerGetParams,
     params: RequestParams = {},
   ) =>
     this.http.request<
