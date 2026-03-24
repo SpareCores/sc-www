@@ -133,6 +133,12 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       icon: "microchip",
       collapsed: false,
     },
+    {
+      category_id: "cpu_cache",
+      name: "CPU Cache",
+      icon: "layers",
+      collapsed: true,
+    },
     { category_id: "gpu", name: "GPU", icon: "cpu", collapsed: true },
     {
       category_id: "memory",

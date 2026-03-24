@@ -135,7 +135,7 @@ export class GeekbenchRadarChartComponent {
   );
 
   tooltipContent = "";
-  tooltipHtml: string | null = null;
+  tooltipHtml: GeekbenchTooltipHtml = null;
 
   showTextTooltip(el: MouseEvent, content?: string): void {
     this.tooltipService.showIfPresent({
@@ -154,7 +154,7 @@ export class GeekbenchRadarChartComponent {
     if (!content || !tooltipElement) {
       return;
     }
-    this.tooltipHtml = content as string;
+    this.tooltipHtml = content;
     this.tooltipContent = "";
     this.tooltipService.show(tooltipElement, el);
   }
