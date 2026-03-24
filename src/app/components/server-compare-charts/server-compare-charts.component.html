@@ -543,7 +543,7 @@
           ) {
             @for (
               benchmarkData of benchmarkCategory.data;
-              track benchmarkData.benchmark_id
+              track benchmarkData.benchmark_key ?? benchmarkData.benchmark_id
             ) {
               <tr>
                 <td>
@@ -599,7 +599,7 @@
           @if (benchmarkCategory.show_more && !isEmbedded) {
             @for (
               benchmarkData of benchmarkCategory.data;
-              track benchmarkData.benchmark_id
+              track benchmarkData.benchmark_key ?? benchmarkData.benchmark_id
             ) {
               @if (benchmarkCategory.data.length > 1) {
                 <tr>
@@ -818,7 +818,8 @@
         </tr>
         @for (
           benchmarkCategory of getUncategorizedBenchmarksCategories();
-          track benchmarkCategory.benchmark_id
+          track benchmarkCategory.benchmark_key ??
+            benchmarkCategory.benchmark_id
         ) {
           <tr>
             <td [colSpan]="servers.length + 1">

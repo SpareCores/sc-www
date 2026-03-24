@@ -38,10 +38,34 @@ import { PrismService } from "../../services/prism.service";
 import { Subscription } from "rxjs";
 import specialComparesData from "./special-compares.js";
 import { ChartTooltipService } from "../../components/charts/shared/chart-tooltip.service";
+import {
+  getCompareMemoryChartOption,
+  type CompareMemoryChartOption,
+} from "../../components/charts/shared/memory-chart.types";
+import {
+  type MemoryBenchmarkConfig,
+  type MemoryBenchmarkMeta,
+} from "../../components/charts/memory/memory-chart.types";
 
 const optionsModal: ModalOptions = {
   backdropClasses: "bg-gray-900/50 fixed inset-0 z-40",
   closable: true,
+};
+
+type CompareTableBenchmarkConfig = {
+  config: MemoryBenchmarkConfig;
+  values: Array<number | "-">;
+};
+
+type CompareTableBenchmarkMeta = Omit<
+  MemoryBenchmarkMeta,
+  "configs" | "name"
+> & {
+  name: string;
+  collapsed: boolean;
+  configs: CompareTableBenchmarkConfig[];
+  benchmark_key?: string;
+  legacyOperation?: CompareMemoryChartOption["legacyOperation"];
 };
 
 @Component({
@@ -580,6 +604,10 @@ export class ServerCompareComponent
             });
           });
 
+          this.benchmarkMeta = this.buildDisplayBenchmarkMeta(
+            this.benchmarkMeta,
+          );
+
           this.benchmarkCategories.forEach((category) => {
             category.data = this.benchmarkMeta.filter((b: any) =>
               category.benchmarks.includes(b.benchmark_id),
@@ -742,6 +770,68 @@ export class ServerCompareComponent
 
   isBrowser() {
     return isPlatformBrowser(this.platformId);
+  }
+
+  private buildDisplayBenchmarkMeta(
+    benchmarkMeta: CompareTableBenchmarkMeta[],
+  ): CompareTableBenchmarkMeta[] {
+    return benchmarkMeta.flatMap((benchmark) =>
+      this.buildDisplayBenchmarkEntries(benchmark),
+    );
+  }
+
+  private buildDisplayBenchmarkEntries(
+    benchmark: CompareTableBenchmarkMeta,
+  ): CompareTableBenchmarkMeta[] {
+    if (benchmark.benchmark_id === "bw_mem") {
+      const splitBenchmarks = ["rd", "wr", "rdwr"].reduce<
+        CompareTableBenchmarkMeta[]
+      >((entries, legacyOperation) => {
+        const option = getCompareMemoryChartOption(
+          benchmark.benchmark_id,
+          legacyOperation,
+        );
+        const configs = benchmark.configs.filter(
+          (config) => config.config.operation === legacyOperation,
+        );
+
+        if (!option || !configs.length) {
+          return entries;
+        }
+
+        entries.push({
+          ...benchmark,
+          benchmark_key: `${benchmark.benchmark_id}:${legacyOperation}`,
+          configs: configs.map((config) => {
+            const displayConfig: MemoryBenchmarkConfig = { ...config.config };
+            delete displayConfig.operation;
+
+            return {
+              ...config,
+              config: displayConfig,
+            };
+          }),
+          legacyOperation,
+          name: option.name,
+        });
+
+        return entries;
+      }, []);
+
+      if (splitBenchmarks.length) {
+        return splitBenchmarks;
+      }
+    }
+
+    const option = getCompareMemoryChartOption(benchmark.benchmark_id);
+
+    return [
+      {
+        ...benchmark,
+        benchmark_key: benchmark.benchmark_id,
+        name: option?.name ?? benchmark.name,
+      },
+    ];
   }
 
   selectCurrency(currency: any) {

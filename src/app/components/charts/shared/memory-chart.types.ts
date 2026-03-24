@@ -137,3 +137,14 @@ export const compareMemoryChartOptions: CompareMemoryChartOption[] = [
     higherIsBetter: false,
   },
 ];
+
+export function getCompareMemoryChartOption(
+  benchmarkId: string,
+  legacyOperation?: string,
+): CompareMemoryChartOption | undefined {
+  return compareMemoryChartOptions.find(
+    (option) =>
+      option.benchmarkId === benchmarkId &&
+      option.legacyOperation === legacyOperation,
+  );
+}
