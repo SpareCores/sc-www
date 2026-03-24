@@ -802,7 +802,15 @@ export class ServerCompareComponent
         entries.push({
           ...benchmark,
           benchmark_key: `${benchmark.benchmark_id}:${legacyOperation}`,
-          configs,
+          configs: configs.map((config) => {
+            const displayConfig: MemoryBenchmarkConfig = { ...config.config };
+            delete displayConfig.operation;
+
+            return {
+              ...config,
+              config: displayConfig,
+            };
+          }),
           legacyOperation,
           name: option.name,
         });
