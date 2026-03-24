@@ -846,7 +846,16 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
       return false;
     }
 
-    return Array.isArray(param.modelValue) && param.modelValue.includes(value);
+    const normalizedValue = this.normalizeOptionId(value);
+
+    return (
+      Array.isArray(param.modelValue) &&
+      param.modelValue
+        .map((selectedValue) =>
+          this.normalizeOptionId(selectedValue as BenchmarkFilterOption),
+        )
+        .includes(normalizedValue)
+    );
   }
 
   selectEnumItem(param: SearchBarParameter, valueOrObj: BenchmarkFilterOption) {
@@ -854,7 +863,7 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
       param.modelValue = [];
     }
 
-    const selectedValues = param.modelValue as Array<string | number>;
+    const selectedValues = param.modelValue as BenchmarkFilterOption[];
 
     const value =
       typeof valueOrObj === "string" || typeof valueOrObj === "number"
@@ -865,11 +874,15 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
       return;
     }
 
-    const index = selectedValues.indexOf(value);
+    const normalizedValue = this.normalizeOptionId(value);
+    const normalizedValues = selectedValues.map((selectedValue) =>
+      this.normalizeOptionId(selectedValue),
+    );
+    const index = normalizedValues.indexOf(normalizedValue);
 
     if (index !== -1) {
       param.modelValue = selectedValues.filter(
-        (selectedValue) => selectedValue !== value,
+        (_, selectedIndex) => selectedIndex !== index,
       );
     } else {
       param.modelValue = [...selectedValues, value];
