@@ -73,6 +73,11 @@ type SearchBarParameterType =
 
 type BenchmarkFilterOption = string | number | { key?: string; value?: string };
 
+type CpuCacheRangeFocusLossSkip = {
+  target: HTMLInputElement | null;
+  timeoutId: ReturnType<typeof setTimeout>;
+};
+
 @Component({
   selector: "app-search-bar",
   imports: [
@@ -134,7 +139,10 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   private readonly cpuCacheRangeErrorToastId = "cpu-cache-input-error";
 
   cpuCacheRangeDraftValues: Record<string, string> = {};
-  private cpuCacheRangeSkipNextFocusLossCommit: Record<string, boolean> = {};
+  private cpuCacheRangeSkipNextFocusLossCommit: Record<
+    string,
+    CpuCacheRangeFocusLossSkip | undefined
+  > = {};
 
   valueChangeDebouncer: Subject<number> = new Subject<number>();
   private subscription = new Subscription();
@@ -734,7 +742,22 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   commitCpuCacheRangeFromEnter(parameter: SearchBarParameter, event: Event) {
-    this.cpuCacheRangeSkipNextFocusLossCommit[parameter.name] = true;
+    const target = this.getCpuCacheRangeInputElement(event);
+    const existingSkip =
+      this.cpuCacheRangeSkipNextFocusLossCommit[parameter.name];
+
+    if (existingSkip) {
+      clearTimeout(existingSkip.timeoutId);
+    }
+
+    const timeoutId = setTimeout(() => {
+      delete this.cpuCacheRangeSkipNextFocusLossCommit[parameter.name];
+    }, 250);
+
+    this.cpuCacheRangeSkipNextFocusLossCommit[parameter.name] = {
+      target,
+      timeoutId,
+    };
     this.commitCpuCacheRangeInput(parameter, event);
   }
 
@@ -742,7 +765,12 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
     parameter: SearchBarParameter,
     event: Event,
   ) {
-    if (this.cpuCacheRangeSkipNextFocusLossCommit[parameter.name]) {
+    const pendingSkip =
+      this.cpuCacheRangeSkipNextFocusLossCommit[parameter.name];
+    const target = this.getCpuCacheRangeInputElement(event);
+
+    if (pendingSkip && pendingSkip.target === target) {
+      clearTimeout(pendingSkip.timeoutId);
       delete this.cpuCacheRangeSkipNextFocusLossCommit[parameter.name];
       return;
     }
@@ -1148,8 +1176,22 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnDestroy() {
+    Object.values(this.cpuCacheRangeSkipNextFocusLossCommit).forEach(
+      (pendingSkip) => {
+        if (pendingSkip) {
+          clearTimeout(pendingSkip.timeoutId);
+        }
+      },
+    );
+
     this.subscription.unsubscribe();
     this.valueChangeDebouncer.complete();
+  }
+
+  private getCpuCacheRangeInputElement(event: Event): HTMLInputElement | null {
+    const target = event.target;
+
+    return target instanceof HTMLInputElement ? target : null;
   }
 
   private normalizeOptionId(value: BenchmarkFilterOption): string {
