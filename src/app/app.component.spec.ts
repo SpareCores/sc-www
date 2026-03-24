@@ -1,10 +1,12 @@
 import { TestBed } from "@angular/core/testing";
 import { AppComponent } from "./app.component";
+import { sharedTestingProviders } from "../testing/testbed.providers";
 
 describe("AppComponent", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AppComponent],
+      providers: [...sharedTestingProviders],
     }).compileComponents();
   });
 
@@ -20,12 +22,10 @@ describe("AppComponent", () => {
     expect(app.title).toEqual("sc-www");
   });
 
-  it("should render title", () => {
+  it("should render the app shell", () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector("h1")?.textContent).toContain(
-      "Hello, sc-www",
-    );
+    expect(compiled.querySelector(".app-shell")).not.toBeNull();
   });
 });

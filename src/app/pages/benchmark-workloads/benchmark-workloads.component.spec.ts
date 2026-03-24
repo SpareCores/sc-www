@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { BenchmarkWorkloadsComponent } from "./benchmark-workloads.component";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { Status } from "../../../../sdk/data-contracts";
+import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
 describe("BenchmarkWorkloadsComponent", () => {
   const originalInnerWidth = window.innerWidth;
@@ -50,6 +51,7 @@ describe("BenchmarkWorkloadsComponent", () => {
     await TestBed.configureTestingModule({
       imports: [BenchmarkWorkloadsComponent],
       providers: [
+        ...sharedTestingProviders,
         {
           provide: KeeperAPIService,
           useValue: keeperApiService,

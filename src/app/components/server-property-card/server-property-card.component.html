@@ -91,8 +91,9 @@
 
 <div
   [attr.id]="cardId() + '_tooltip'"
-  style="opacity: 0"
-  class="max-w-225 absolute z-10 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-secondary border border-solid border-emerald-400 rounded-lg"
+  #tooltip
+  style="opacity: 0; display: none"
+  class="tooltip-panel max-w-225 fixed z-100 pointer-events-none"
 >
   {{ tooltipContent() }}
 </div>

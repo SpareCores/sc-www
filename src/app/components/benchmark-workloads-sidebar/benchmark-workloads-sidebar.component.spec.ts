@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { BenchmarkWorkloadsSidebarComponent } from "./benchmark-workloads-sidebar.component";
+import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
 describe("BenchmarkWorkloadsSidebarComponent", () => {
   let component: BenchmarkWorkloadsSidebarComponent;
@@ -9,10 +10,16 @@ describe("BenchmarkWorkloadsSidebarComponent", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [BenchmarkWorkloadsSidebarComponent],
+      providers: [...sharedTestingProviders],
     }).compileComponents();
 
     fixture = TestBed.createComponent(BenchmarkWorkloadsSidebarComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput("benchmarkFamilies", []);
+    fixture.componentRef.setInput("isCollapsed", false);
+    fixture.componentRef.setInput("activeBenchmarkId", "");
+    fixture.componentRef.setInput("expandedFamily", null);
+    fixture.componentRef.setInput("activeFamily", "");
     fixture.detectChanges();
   });
 

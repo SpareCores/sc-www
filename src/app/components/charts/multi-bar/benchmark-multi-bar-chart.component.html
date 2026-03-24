@@ -1,0 +1,206 @@
+@if (chartData()) {
+  @if (layout() === "details") {
+    <div class="block_half" id="{{ chart().id }}_chart">
+      <div class="flex justify-between items-center">
+        <h3 class="text-2xl flex items-center gap-2">
+          <lucide-icon [name]="chart().id | benchmarkIcon" class="h-6 w-6">
+          </lucide-icon>
+          <span class="whitespace-nowrap">{{ chart().name }}</span>
+          @if (currentOption().icon) {
+            <lucide-icon
+              [name]="currentOption().icon || 'circle-arrow-up'"
+              class="benchmark-direction-icon h-4 w-4 text-gray-200"
+              (mouseenter)="showTooltip($event, currentOption().tooltip)"
+              (mouseleave)="hideTooltip()"
+            >
+            </lucide-icon>
+          }
+          <lucide-icon
+            name="info"
+            class="h-4 w-4 text-gray-200"
+            (mouseenter)="showTooltip($event, currentBenchmarkDescription())"
+            (mouseleave)="hideTooltip()"
+          >
+          </lucide-icon>
+        </h3>
+        <button
+          #primaryDropdown="appFlowbiteDropdown"
+          [id]="buttonId"
+          class="dropdown_button justify-between overflow-hidden"
+          type="button"
+          [appFlowbiteDropdown]="optionsId"
+          [dropdownEnabled]="isBrowserEnvironment() && !!chartData()"
+        >
+          <div
+            class="min-w-0 flex-1 truncate whitespace-nowrap px-3 py-2 text-left"
+            [title]="currentOption().name"
+          >
+            {{ currentOption().name }}
+          </div>
+          <div
+            class="px-3 py-2 w-12 h-full shrink-0 bg-primary justify-center items-center flex rounded-r-lg"
+          >
+            <lucide-icon
+              name="chevron-down"
+              class="h-6 w-6 text-emerald-400"
+            ></lucide-icon>
+          </div>
+        </button>
+      </div>
+      @if (isBrowserEnvironment()) {
+        <div class="h-full">
+          <div class="chart_div" chartType="bar">
+            <canvas
+              baseChart
+              [id]="chart().id + '_canvas'"
+              [data]="chartData()"
+              [options]="chart().chartOptions"
+              [type]="chart().chartType"
+            >
+            </canvas>
+          </div>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="block_full_inline">
+      <div class="flex justify-end items-center gap-4 flex-wrap">
+        @if (hasSecondaryOptions()) {
+          <button
+            #secondaryDropdown="appFlowbiteDropdown"
+            [id]="secondaryButtonId"
+            class="dropdown_button justify-between overflow-hidden"
+            type="button"
+            [appFlowbiteDropdown]="secondaryOptionsId"
+            [dropdownEnabled]="
+              isBrowserEnvironment() && !!chartData() && hasSecondaryOptions()
+            "
+          >
+            <div
+              class="min-w-0 flex-1 truncate whitespace-nowrap px-3 py-2 text-left"
+              [title]="currentSecondaryOption()?.name || ''"
+            >
+              {{ currentSecondaryOption()?.name }}
+            </div>
+            <div
+              class="px-3 py-2 w-12 h-full shrink-0 bg-primary justify-center items-center flex rounded-r-lg"
+            >
+              <lucide-icon
+                name="chevron-down"
+                class="h-6 w-6 text-emerald-400"
+              ></lucide-icon>
+            </div>
+          </button>
+        }
+        <button
+          #primaryDropdown="appFlowbiteDropdown"
+          [id]="buttonId"
+          class="dropdown_button justify-between overflow-hidden"
+          type="button"
+          [appFlowbiteDropdown]="optionsId"
+          [dropdownEnabled]="isBrowserEnvironment() && !!chartData()"
+        >
+          <div
+            class="min-w-0 flex-1 truncate whitespace-nowrap px-3 py-2 text-left"
+            [title]="currentOption().name"
+          >
+            {{ currentOption().name }}
+          </div>
+          <div
+            class="px-3 py-2 w-12 h-full shrink-0 bg-primary justify-center items-center flex rounded-r-lg"
+          >
+            <lucide-icon
+              name="chevron-down"
+              class="h-6 w-6 text-emerald-400"
+            ></lucide-icon>
+          </div>
+        </button>
+      </div>
+      @if (isBrowserEnvironment()) {
+        <div class="h-full">
+          <div class="chart_div" chartType="bar">
+            <canvas
+              baseChart
+              [data]="chartData()"
+              [options]="chart().chartOptions"
+              [type]="chart().chartType"
+            >
+            </canvas>
+          </div>
+        </div>
+      }
+    </div>
+    @if (!isEmbedded()) {
+      <div
+        class="mt-4 flex justify-center"
+        [ngClass]="{ 'mb-8': !chartItem().show_more }"
+      >
+        <button class="btn-primary py-2 px-3" (click)="toggleDetails()">
+          {{ chartItem().show_more ? "Hide" : "Show" }} Details
+        </button>
+      </div>
+    }
+  }
+
+  <div
+    [id]="optionsId"
+    class="z-100 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid"
+  >
+    <ul
+      class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
+      [attr.aria-labelledby]="buttonId"
+    >
+      @for (
+        chartTemplate of chart().options;
+        track chartTemplate.benchmark_id;
+        let i = $index
+      ) {
+        <li>
+          <button
+            type="button"
+            class="flex items-center gap-2 py-1 ml-2 font-bold cursor-pointer text-emerald-400 hover:text-emerald-500 border-0 bg-transparent text-left"
+            (click)="selectOption(i)"
+          >
+            {{ chartTemplate.name }}
+          </button>
+        </li>
+      }
+    </ul>
+  </div>
+
+  @if (hasSecondaryOptions()) {
+    <div
+      [id]="secondaryOptionsId"
+      class="z-100 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid"
+    >
+      <ul
+        class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
+        [attr.aria-labelledby]="secondaryButtonId"
+      >
+        @for (
+          option of chart().secondaryOptions;
+          track option.name;
+          let i = $index
+        ) {
+          <li>
+            <button
+              type="button"
+              class="flex items-center gap-2 py-1 ml-2 font-bold cursor-pointer text-emerald-400 hover:text-emerald-500 border-0 bg-transparent text-left"
+              (click)="selectSecondaryOption(i)"
+            >
+              {{ option.name }}
+            </button>
+          </li>
+        }
+      </ul>
+    </div>
+  }
+
+  <div
+    #tooltipDefault
+    style="opacity: 0; display: none"
+    class="tooltip-panel fixed z-100 pointer-events-none"
+  >
+    {{ tooltipContent() }}
+  </div>
+}

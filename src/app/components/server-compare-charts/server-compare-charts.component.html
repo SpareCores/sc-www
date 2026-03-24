@@ -334,19 +334,6 @@
                   >
                   </lucide-icon>
                   @if (
-                    benchmarkCategory.id === "geekbench" ||
-                    benchmarkCategory.id === "geekbench_single" ||
-                    benchmarkCategory.id === "geekbench_multi"
-                  ) {
-                    <lucide-icon
-                      name="info"
-                      class="h-4 w-4 text-gray-200"
-                      (mouseenter)="showTooltipGB($event)"
-                      (mouseleave)="hideTooltipGB()"
-                    >
-                    </lucide-icon>
-                  }
-                  @if (
                     benchmarkCategory.id === "bw_mem" ||
                     benchmarkCategory.id === "openssl"
                   ) {
@@ -397,6 +384,19 @@
                     >
                     </lucide-icon>
                   }
+                  @if (
+                    benchmarkCategory.id === "geekbench" ||
+                    benchmarkCategory.id === "geekbench_single" ||
+                    benchmarkCategory.id === "geekbench_multi"
+                  ) {
+                    <lucide-icon
+                      name="info"
+                      class="h-4 w-4 text-gray-200"
+                      (mouseenter)="showGeekbenchInfoTooltip($event)"
+                      (mouseleave)="hideTooltip()"
+                    >
+                    </lucide-icon>
+                  }
                   @if (benchmarkCategory.id === "llm_inference") {
                     <lucide-icon
                       name="info"
@@ -435,179 +435,61 @@
             <td [colSpan]="servers.length + 1">
               @if (benchmarkCategory.id === "bw_mem") {
                 <div>
-                  @if (lineChartDataBWmem) {
-                    <div class="block_full_inline">
-                      <div class="flex justify-end items-center">
-                        <button
-                          id="bw_mem_button"
-                          data-dropdown-toggle="bw_mem_options"
-                          class="dropdown_button"
-                          type="button"
-                        >
-                          <div class="px-4 py-3">
-                            {{ selectedBWMemOperation.name }}
-                          </div>
-                          <div
-                            class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
-                          >
-                            <lucide-icon
-                              name="chevron-down"
-                              class="h-6 w-6 text-emerald-400"
-                            ></lucide-icon>
-                          </div>
-                        </button>
-                      </div>
-                      @if (isBrowser()) {
-                        <div class="h-full">
-                          <div class="chart_div" chartType="bar">
-                            <canvas
-                              baseChart
-                              [data]="lineChartDataBWmem"
-                              [options]="lineChartOptionsBWMem"
-                              [type]="lineChartType"
-                            >
-                            </canvas>
-                          </div>
-                        </div>
-                      }
-                    </div>
-                  }
+                  <app-server-compare-memory-chart
+                    [servers]="memoryCompareServers"
+                    [benchmarkMeta]="memoryBenchmarkMeta"
+                  ></app-server-compare-memory-chart>
                 </div>
               }
               @if (benchmarkCategory.id === "openssl") {
                 <div>
-                  @if (barChartDataSSL) {
-                    <div class="block_full_inline">
-                      <div class="flex justify-end items-center">
-                        <button
-                          id="ssl_button"
-                          data-dropdown-toggle="ssl_options"
-                          class="dropdown_button"
-                          type="button"
-                        >
-                          <div class="px-4 py-3">
-                            {{ selectedSSLAlgo.name }}
-                          </div>
-                          <div
-                            class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
-                          >
-                            <lucide-icon
-                              name="chevron-down"
-                              class="h-6 w-6 text-emerald-400"
-                            ></lucide-icon>
-                          </div>
-                        </button>
-                      </div>
-                      @if (isBrowser()) {
-                        <div class="h-full">
-                          <div class="chart_div" chartType="bar">
-                            <canvas
-                              baseChart
-                              [data]="barChartDataSSL"
-                              [options]="barChartOptionsSSL"
-                              [type]="barChartType"
-                            >
-                            </canvas>
-                          </div>
-                        </div>
-                      }
-                    </div>
-                  }
+                  <app-benchmark-line-chart
+                    layout="compare"
+                    blockClass="block_full_inline"
+                    chartSource="compare-ssl"
+                    chartType="bar"
+                    [servers]="lineCompareServers"
+                    [benchmarkMeta]="lineBenchmarkMeta"
+                  ></app-benchmark-line-chart>
                 </div>
               }
               @if (benchmarkCategory.id === "stress_ng") {
                 <div>
-                  @if (lineChartDataStressNG) {
-                    <div class="block_full_inline">
-                      @if (isBrowser()) {
-                        <div class="h-full">
-                          <div class="chart_div" chartType="line">
-                            <canvas
-                              baseChart
-                              [data]="lineChartDataStressNG"
-                              [options]="lineChartOptionsStressNG"
-                              [type]="lineChartType"
-                            >
-                            </canvas>
-                          </div>
-                        </div>
-                      }
-                    </div>
-                  }
+                  <app-benchmark-line-chart
+                    layout="compare"
+                    blockClass="block_full_inline"
+                    chartSource="compare-stress-raw"
+                    chartType="line"
+                    [servers]="lineCompareServers"
+                    [benchmarkMeta]="lineBenchmarkMeta"
+                    (chartAvailabilityChange)="
+                      setBenchmarkCategoryHidden(benchmarkCategory, !$event)
+                    "
+                  ></app-benchmark-line-chart>
                 </div>
               }
               @if (benchmarkCategory.id === "stress_ng_pct") {
                 <div>
-                  @if (lineChartDataStressNG) {
-                    <div class="block_full_inline">
-                      @if (isBrowser()) {
-                        <div class="h-full">
-                          <div class="chart_div" chartType="line">
-                            <canvas
-                              baseChart
-                              [data]="lineChartDataStressNG"
-                              [options]="lineChartOptionsStressNGPercent"
-                              [type]="lineChartType"
-                            >
-                            </canvas>
-                          </div>
-                        </div>
-                      }
-                    </div>
-                  }
+                  <app-benchmark-line-chart
+                    layout="compare"
+                    blockClass="block_full_inline"
+                    chartSource="compare-stress-percent"
+                    chartType="line"
+                    [servers]="lineCompareServers"
+                    [benchmarkMeta]="lineBenchmarkMeta"
+                    (chartAvailabilityChange)="
+                      setBenchmarkCategoryHidden(benchmarkCategory, !$event)
+                    "
+                  ></app-benchmark-line-chart>
                 </div>
               }
               @if (benchmarkCategory.id === "compress") {
                 <div>
-                  @if (availableCompressMethods.length) {
-                    <div class="block_full_short_inline">
-                      <div class="flex justify-end items-center">
-                        <div class="flex gap-4">
-                          <button
-                            id="compress_method_button"
-                            data-ph-capture-attribute-sc-event="server details price allocation select"
-                            data-dropdown-toggle="compress_method_options"
-                            class="dropdown_button"
-                            type="button"
-                          >
-                            <div class="px-3 py-2">
-                              {{ selectedCompressMethod.name }}
-                            </div>
-                            <div
-                              class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
-                            >
-                              <lucide-icon
-                                name="chevron-down"
-                                class="h-6 w-6 text-emerald-400"
-                              ></lucide-icon>
-                            </div>
-                          </button>
-                        </div>
-                      </div>
-                      @if (isBrowser()) {
-                        <div class="charts_div">
-                          <div chartType="bar" class="chart_div">
-                            <canvas
-                              baseChart
-                              [data]="lineChartDataCompress"
-                              [options]="lineChartOptionsCompress"
-                              [type]="lineChartType"
-                            >
-                            </canvas>
-                          </div>
-                          <div chartType="bar" class="chart_div">
-                            <canvas
-                              baseChart
-                              [data]="lineChartDataDecompress"
-                              [options]="lineChartOptionsDecompress"
-                              [type]="lineChartType"
-                            >
-                            </canvas>
-                          </div>
-                        </div>
-                      }
-                    </div>
-                  }
+                  <app-compression-chart
+                    layout="compare"
+                    [servers]="compressionServers"
+                    [benchmarkMeta]="compressionBenchmarkMeta"
+                  ></app-compression-chart>
                 </div>
               }
               @if (
@@ -616,111 +498,22 @@
                 benchmarkCategory.id === "geekbench_multi"
               ) {
                 <div>
-                  @if (radarChartDataGeekSingle) {
-                    <div class="block_full_short_geekbench">
-                      @if (isBrowser()) {
-                        <div class="charts_div justify-center">
-                          @if (benchmarkCategory.id !== "geekbench_multi") {
-                            <div
-                              chartType="bar"
-                              class="chart_div w-full flex justify-center"
-                            >
-                              <canvas
-                                style="max-width: 100%; width: 100%"
-                                baseChart
-                                [data]="radarChartDataGeekSingle"
-                                [options]="radarChartOptionsSingle"
-                                [type]="radarChartType"
-                              >
-                              </canvas>
-                            </div>
-                          }
-                          @if (benchmarkCategory.id !== "geekbench_single") {
-                            <div
-                              chartType="bar"
-                              class="chart_div w-full flex justify-center"
-                            >
-                              <canvas
-                                style="max-width: 100%; width: 100%"
-                                baseChart
-                                [data]="radarChartDataGeekMulti"
-                                [options]="radarChartOptionsMulti"
-                                [type]="radarChartType"
-                              >
-                              </canvas>
-                            </div>
-                          }
-                        </div>
-                      }
-                    </div>
-                  }
+                  <app-geekbench-radar-chart
+                    layout="compare"
+                    [servers]="geekbenchCompareServers"
+                    [showSingle]="benchmarkCategory.id !== 'geekbench_multi'"
+                    [benchmarkMeta]="geekbenchBenchmarkMeta"
+                    [showMulti]="benchmarkCategory.id !== 'geekbench_single'"
+                  ></app-geekbench-radar-chart>
                 </div>
               }
               @if (benchmarkCategory.id === "llm_inference") {
                 <div>
-                  @if (availableLLMModels.length) {
-                    <div class="block_full_short_inline">
-                      <div class="flex justify-end items-center mb-4">
-                        <div class="flex gap-4">
-                          <button
-                            id="llm_models_button"
-                            data-ph-capture-attribute-sc-event="server compare llm model select"
-                            data-dropdown-toggle="llm_models_options"
-                            class="dropdown_button"
-                            type="button"
-                          >
-                            <div class="px-3 py-2">
-                              {{ selectedLLMModel?.name || "Select Model" }}
-                            </div>
-                            <div
-                              class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
-                            >
-                              <lucide-icon
-                                name="chevron-down"
-                                class="h-6 w-6 text-emerald-400"
-                              ></lucide-icon>
-                            </div>
-                          </button>
-                        </div>
-                      </div>
-                      @if (
-                        isBrowser() &&
-                        (barChartLLMPromptData || barChartLLMGenerationData)
-                      ) {
-                        <div class="charts_div">
-                          @if (barChartLLMPromptData) {
-                            <div chartType="bar" class="chart_div">
-                              <canvas
-                                baseChart
-                                [data]="barChartLLMPromptData"
-                                [options]="barChartLLMPromptOptions"
-                                [type]="barChartType"
-                              >
-                              </canvas>
-                            </div>
-                          }
-                          @if (barChartLLMGenerationData) {
-                            <div chartType="bar" class="chart_div">
-                              <canvas
-                                baseChart
-                                [data]="barChartLLMGenerationData"
-                                [options]="barChartLLMGenerationOptions"
-                                [type]="barChartType"
-                              >
-                              </canvas>
-                            </div>
-                          }
-                        </div>
-                      }
-                      @if (
-                        !(barChartLLMPromptData || barChartLLMGenerationData)
-                      ) {
-                        <div class="text-center py-4 text-gray-500">
-                          No data available for the selected model.
-                        </div>
-                      }
-                    </div>
-                  }
+                  <app-llm-inference-chart
+                    layout="compare"
+                    [benchmarkMeta]="benchmarkMeta"
+                    [servers]="llmCompareServers"
+                  ></app-llm-inference-chart>
                 </div>
               }
               @if (
@@ -750,7 +543,7 @@
           ) {
             @for (
               benchmarkData of benchmarkCategory.data;
-              track benchmarkData.benchmark_id
+              track benchmarkData.benchmark_key ?? benchmarkData.benchmark_id
             ) {
               <tr>
                 <td>
@@ -806,7 +599,7 @@
           @if (benchmarkCategory.show_more && !isEmbedded) {
             @for (
               benchmarkData of benchmarkCategory.data;
-              track benchmarkData.benchmark_id
+              track benchmarkData.benchmark_key ?? benchmarkData.benchmark_id
             ) {
               @if (benchmarkCategory.data.length > 1) {
                 <tr>
@@ -878,23 +671,28 @@
         }
       }
       @for (chartItem of multiBarCharts; track chartItem) {
-        @if (chartItem.chart.chartData && !chartItem.hidden) {
-          <tr class="section_header" id="benchmark_line">
+        @if (!chartItem.hidden) {
+          <tr
+            class="section_header"
+            [id]="'benchmark_line_' + chartItem.chart.id"
+          >
             <td [colSpan]="2">
               <h3 class="text-xl font-semibold flex gap-2 items-center">
                 <lucide-icon
                   [name]="chartItem.chart.name | benchmarkIcon"
                   class="h-6 w-6"
                 ></lucide-icon>
-                {{ chartItem.chart.name }}
+                <span class="whitespace-nowrap">{{
+                  chartItem.chart.name
+                }}</span>
                 @if (
                   chartItem.chart.options[chartItem.chart.selectedOption].icon
                 ) {
                   <lucide-icon
-                    name="{{
+                    [name]="
                       chartItem.chart.options[chartItem.chart.selectedOption]
-                        .icon
-                    }}"
+                        .icon || ''
+                    "
                     class="h-4 w-4 text-gray-200"
                     (mouseenter)="
                       showTooltip(
@@ -927,90 +725,25 @@
           <tr>
             <td [colSpan]="servers.length + 1">
               <div>
-                @if (chartItem.chart.chartData) {
-                  <div class="block_full_inline">
-                    <div class="flex justify-end items-center gap-4">
-                      @if (chartItem.chart.secondaryOptions?.length > 1) {
-                        <button
-                          id="{{ chartItem.chart.id }}_button2"
-                          class="dropdown_button"
-                          type="button"
-                        >
-                          <div class="px-3 py-2">
-                            {{
-                              chartItem.chart.secondaryOptions[
-                                chartItem.chart.selectedSecondaryOption
-                              ].name
-                            }}
-                          </div>
-                          <div
-                            class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
-                          >
-                            <lucide-icon
-                              name="chevron-down"
-                              class="h-6 w-6 text-emerald-400"
-                            ></lucide-icon>
-                          </div>
-                        </button>
-                      }
-                      <button
-                        id="{{ chartItem.chart.id }}_button"
-                        class="dropdown_button"
-                        type="button"
-                      >
-                        <div class="px-3 py-2">
-                          {{
-                            chartItem.chart.options[
-                              chartItem.chart.selectedOption
-                            ].name
-                          }}
-                        </div>
-                        <div
-                          class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
-                        >
-                          <lucide-icon
-                            name="chevron-down"
-                            class="h-6 w-6 text-emerald-400"
-                          ></lucide-icon>
-                        </div>
-                      </button>
-                    </div>
-                    @if (isBrowser()) {
-                      <div class="h-full">
-                        <div class="chart_div" chartType="bar">
-                          <canvas
-                            baseChart
-                            [data]="chartItem.chart.chartData"
-                            [options]="chartItem.chart.chartOptions"
-                            [type]="chartItem.chart.chartType"
-                          >
-                          </canvas>
-                        </div>
-                      </div>
-                    }
-                  </div>
-                }
+                <app-benchmark-multi-bar-chart
+                  [chartItem]="chartItem"
+                  [benchmarkMeta]="benchmarkMeta"
+                  [servers]="multiBarCompareServers"
+                  layout="compare"
+                  [serverCount]="servers.length"
+                  [isEmbedded]="isEmbedded"
+                  (optionSelected)="syncMultiBarHeaderOption(chartItem, $event)"
+                  (secondaryOptionSelected)="
+                    syncMultiBarHeaderSecondaryOption(chartItem, $event)
+                  "
+                  (detailsToggled)="toggleBenchmarkCategory(chartItem)"
+                ></app-benchmark-multi-bar-chart>
               </div>
-              @if (!isEmbedded) {
-                <div
-                  class="mt-4 mb-8 flex justify-center"
-                  [ngClass]="{
-                    'mb-8': !chartItem.show_more,
-                  }"
-                >
-                  <button
-                    class="btn-primary py-2 px-3"
-                    (click)="toggleBenchmarkCategory(chartItem)"
-                  >
-                    {{ chartItem.show_more ? "Hide" : "Show" }} Details
-                  </button>
-                </div>
-              }
             </td>
           </tr>
           @if (chartItem.show_more) {
-            @for (chartData of chartItem.data; track chartData) {
-              @if (chartItem.data.length > 1) {
+            @for (chartData of chartItem.data ?? []; track chartData) {
+              @if (hasMultipleChartData(chartItem)) {
                 <tr>
                   <td [colSpan]="servers.length + 1">
                     <div class="ml-4 flex justify-between">
@@ -1049,10 +782,12 @@
                         [innerHTML]="serializeConfig(config.config)"
                       ></div>
                     </td>
-                    @for (value of config.values; track value) {
+                    @for (value of config.values ?? []; track $index) {
                       <td
                         class="compact-number"
-                        [style]="isBestStyle(value, config.values, chartData)"
+                        [style]="
+                          isBestStyle(value, config.values ?? [], chartData)
+                        "
                       >
                         <span
                           (mouseenter)="
@@ -1060,7 +795,9 @@
                               showTooltip($event, value.toString())
                           "
                           (mouseleave)="hideTooltip()"
-                          >{{ value | compactNumber }}</span
+                          >{{
+                            value === null ? "-" : (value | compactNumber)
+                          }}</span
                         >
                       </td>
                     }
@@ -1081,7 +818,8 @@
         </tr>
         @for (
           benchmarkCategory of getUncategorizedBenchmarksCategories();
-          track benchmarkCategory.benchmark_id
+          track benchmarkCategory.benchmark_key ??
+            benchmarkCategory.benchmark_id
         ) {
           <tr>
             <td [colSpan]="servers.length + 1">
@@ -1124,7 +862,7 @@
                     [innerHTML]="serializeConfig(config.config)"
                   ></div>
                 </td>
-                @for (value of config.values; track value) {
+                @for (value of config.values; track $index) {
                   <td
                     class="compact-number"
                     [style]="
@@ -1168,155 +906,15 @@
 </div>
 
 <div
-  id="bw_mem_options"
-  class="z-100 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid"
->
-  <ul
-    class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
-    aria-labelledby="dropdownDefaultButton"
-  >
-    @for (bwMemOperation of availableBWmem; track bwMemOperation.name) {
-      <li
-        class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-        (click)="selectBWMemOperation(bwMemOperation)"
-      >
-        <div class="text-white text-sm">{{ bwMemOperation.name }}</div>
-      </li>
-    }
-  </ul>
-</div>
-
-<div
-  id="ssl_options"
-  class="z-100 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid"
->
-  <ul
-    class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
-    aria-labelledby="dropdownDefaultButton"
-  >
-    @for (sslAlgorithm of availableSSLAlgos; track sslAlgorithm.name) {
-      <li
-        class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-        (click)="selecSSLAlgorithm(sslAlgorithm)"
-      >
-        <div class="text-white text-sm">{{ sslAlgorithm.name }}</div>
-      </li>
-    }
-  </ul>
-</div>
-
-@for (chartItem of multiBarCharts; track chartItem) {
-  <div
-    id="{{ chartItem.chart.id }}_options"
-    class="z-100 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid"
-  >
-    <ul
-      class="py-2 px-1 text-sm text-gray-700"
-      aria-labelledby="dropdownDefaultButton"
-    >
-      @for (
-        chartTemplate of chartItem.chart.options;
-        track chartTemplate;
-        let i = $index
-      ) {
-        <li class="flex py-1 gap-2 items-center">
-          <div
-            class="text-emerald-400 hover:text-emerald-500 cursor-pointer font-bold ml-2"
-            (click)="selectChartTemplateOption(chartItem, i)"
-          >
-            {{ chartTemplate.name }}
-          </div>
-        </li>
-      }
-    </ul>
-  </div>
-  @if (chartItem.chart.secondaryOptions?.length > 1) {
-    <div
-      id="{{ chartItem.chart.id }}_options2"
-      class="z-100 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid"
-    >
-      <ul
-        class="py-2 px-1 text-sm text-gray-700"
-        aria-labelledby="dropdownDefaultButton"
-      >
-        @for (
-          option of chartItem.chart.secondaryOptions;
-          track option;
-          let i = $index
-        ) {
-          <li class="flex py-1 gap-2 items-center">
-            <div
-              class="text-emerald-400 hover:text-emerald-500 cursor-pointer font-bold ml-2"
-              (click)="selectChartTemplateOption2(chartItem, i)"
-            >
-              {{ option.name }}
-            </div>
-          </li>
-        }
-      </ul>
-    </div>
-  }
-}
-
-<div
-  id="compress_method_options"
-  class="z-100 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid"
->
-  <ul
-    class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
-    aria-labelledby="dropdownDefaultButton"
-  >
-    @for (
-      compressMethod of availableCompressMethods;
-      track compressMethod.name
-    ) {
-      <li
-        class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-        (click)="selectCompressMethod(compressMethod)"
-      >
-        <div class="text-white text-sm">{{ compressMethod.name }}</div>
-      </li>
-    }
-  </ul>
-</div>
-
-<div
-  id="llm_models_options"
-  class="z-100 hidden bg-secondary rounded-lg shadow w-64 border border-emerald-400 border-solid"
->
-  <ul
-    class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200 max-h-60 overflow-y-auto"
-    aria-labelledby="llm_models_button"
-  >
-    @for (llmModel of availableLLMModels; track llmModel.name) {
-      <li
-        class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-        (click)="refreshLLMCharts(llmModel)"
-      >
-        <div
-          class="text-white text-sm whitespace-nowrap overflow-hidden text-ellipsis"
-        >
-          {{ llmModel.name }}
-        </div>
-      </li>
-    }
-  </ul>
-</div>
-
-<div
   id="tooltipcompareDefault"
   #tooltipcompareDefault
-  style="opacity: 0; z-index: 22"
-  class="fixed z-100 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-secondary border border-solid border-emerald-400 rounded-lg"
->
-  {{ tooltipContent }}
-</div>
-
-<div
-  id="tooltipGeekbench"
-  #tooltipGeekbench
   style="opacity: 0; display: none"
-  class="fixed z-100 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-secondary border border-solid border-emerald-400 rounded-lg"
+  class="tooltip-panel fixed z-100 pointer-events-none"
+  [class.tooltip-panel--wide]="!!tooltipHtml"
 >
-  <div [innerHTML]="geekbenchHTML"></div>
+  @if (tooltipHtml) {
+    <div [innerHTML]="tooltipHtml"></div>
+  } @else {
+    {{ tooltipContent }}
+  }
 </div>

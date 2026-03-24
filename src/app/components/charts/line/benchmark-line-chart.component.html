@@ -1,0 +1,173 @@
+@if (hasChartData()) {
+  @if (layout() === "details") {
+    <div [class]="blockClass()" [id]="elementId()">
+      <div class="flex justify-between items-center">
+        <h3 class="text-2xl flex items-center gap-2">
+          @if (benchmarkKey()) {
+            <lucide-icon
+              [name]="benchmarkKey() | benchmarkIcon"
+              class="h-6 w-6"
+            ></lucide-icon>
+          }
+          {{ title() }}
+          @if (orderTooltip()) {
+            <lucide-icon
+              name="circle-arrow-up"
+              class="h-4 w-4 text-gray-200"
+              (mouseenter)="showTooltip($event, orderTooltip())"
+              (mouseleave)="hideTooltip()"
+            >
+            </lucide-icon>
+          }
+          @if (infoTooltip()) {
+            <lucide-icon
+              name="info"
+              class="h-4 w-4 text-gray-200"
+              (mouseenter)="showTooltip($event, infoTooltip())"
+              (mouseleave)="hideTooltip()"
+            >
+            </lucide-icon>
+          }
+        </h3>
+        @if (hasSelector()) {
+          <button
+            #selectorDropdown="appFlowbiteDropdown"
+            [id]="buttonId"
+            class="dropdown_button"
+            type="button"
+            [appFlowbiteDropdown]="optionsId"
+            [dropdownEnabled]="isBrowser && hasSelector()"
+          >
+            <div class="px-3 py-2">
+              {{ resolvedSelectedOptionName() }}
+            </div>
+            <div
+              class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
+            >
+              <lucide-icon
+                name="chevron-down"
+                class="h-6 w-6 text-emerald-400"
+              ></lucide-icon>
+            </div>
+          </button>
+        }
+      </div>
+      @if (isBrowser) {
+        <div class="h-full">
+          <div class="chart_div" [attr.chartType]="chartType()">
+            @if (chartType() === "line") {
+              <canvas
+                baseChart
+                [id]="canvasId()"
+                [data]="lineChartData()"
+                [options]="lineChartOptions()"
+                [type]="'line'"
+              >
+              </canvas>
+            } @else {
+              <canvas
+                baseChart
+                [id]="canvasId()"
+                [data]="barChartData()"
+                [options]="barChartOptions()"
+                [type]="'bar'"
+              >
+              </canvas>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  } @else {
+    <div [class]="blockClass()">
+      @if (hasSelector()) {
+        <div class="flex justify-end items-center">
+          <button
+            #selectorDropdown="appFlowbiteDropdown"
+            [id]="buttonId"
+            class="dropdown_button"
+            type="button"
+            [appFlowbiteDropdown]="optionsId"
+            [dropdownEnabled]="isBrowser && hasSelector()"
+          >
+            <div class="px-4 py-3">
+              {{ resolvedSelectedOptionName() }}
+            </div>
+            <div
+              class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
+            >
+              <lucide-icon
+                name="chevron-down"
+                class="h-6 w-6 text-emerald-400"
+              ></lucide-icon>
+            </div>
+          </button>
+        </div>
+      }
+      @if (isBrowser) {
+        <div class="h-full">
+          <div class="chart_div" [attr.chartType]="chartType()">
+            @if (chartType() === "line") {
+              <canvas
+                baseChart
+                [id]="canvasId()"
+                [data]="lineChartData()"
+                [options]="lineChartOptions()"
+                [type]="'line'"
+              >
+              </canvas>
+            } @else {
+              <canvas
+                baseChart
+                [id]="canvasId()"
+                [data]="barChartData()"
+                [options]="barChartOptions()"
+                [type]="'bar'"
+              >
+              </canvas>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  @if (hasSelector()) {
+    <div
+      [id]="optionsId"
+      class="z-100 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid"
+    >
+      <ul
+        class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
+        [attr.aria-labelledby]="buttonId"
+        role="listbox"
+      >
+        @for (
+          option of resolvedSelectorOptions();
+          track option.name;
+          let i = $index
+        ) {
+          <li
+            class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+            (click)="selectOption(i)"
+            (keydown.enter)="selectOption(i)"
+            (keydown.space)="selectOption(i); $event.preventDefault()"
+            role="option"
+            [attr.aria-selected]="resolvedSelectedOptionName() === option.name"
+            tabindex="0"
+          >
+            <div class="text-white text-sm">{{ option.name }}</div>
+          </li>
+        }
+      </ul>
+    </div>
+  }
+
+  <div
+    #tooltipDefault
+    style="opacity: 0; display: none"
+    class="tooltip-panel fixed z-100 pointer-events-none"
+  >
+    {{ tooltipContent() }}
+  </div>
+}

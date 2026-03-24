@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { AboutSpareCoresComponent } from "./spare-cores.component";
+import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
 describe("AboutSpareCoresComponent", () => {
   let component: AboutSpareCoresComponent;
@@ -9,6 +10,7 @@ describe("AboutSpareCoresComponent", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AboutSpareCoresComponent],
+      providers: [...sharedTestingProviders],
     }).compileComponents();
 
     fixture = TestBed.createComponent(AboutSpareCoresComponent);

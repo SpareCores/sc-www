@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { TOSComponent } from "./tos.component";
+import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
 describe("TOSComponent", () => {
   let component: TOSComponent;
@@ -9,6 +10,7 @@ describe("TOSComponent", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [TOSComponent],
+      providers: [...sharedTestingProviders],
     }).compileComponents();
 
     fixture = TestBed.createComponent(TOSComponent);
