@@ -1172,7 +1172,7 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
 
     const numericValue = Number(rawValue);
 
-    if (!Number.isFinite(numericValue)) {
+    if (!Number.isFinite(numericValue) || !Number.isInteger(numericValue)) {
       return null;
     }
 
