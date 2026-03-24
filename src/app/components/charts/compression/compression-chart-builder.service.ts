@@ -127,13 +127,13 @@ export class CompressionChartBuilderService {
       )?.benchmarks || [];
 
     dataSet1 = dataSet1.filter(
-      (item) => !item.config.threads || item.config.threads === 1,
+      (item) => !item.config.cores || item.config.cores === "single",
     );
     dataSet2 = dataSet2.filter(
-      (item) => !item.config.threads || item.config.threads === 1,
+      (item) => !item.config.cores || item.config.cores === "single",
     );
     dataSet3 = dataSet3.filter(
-      (item) => !item.config.threads || item.config.threads === 1,
+      (item) => !item.config.cores || item.config.cores === "single",
     );
 
     const data: CompressionDetailsChartData = {
@@ -224,7 +224,7 @@ export class CompressionChartBuilderService {
         (benchmark) =>
           benchmark.benchmark_id === "compression_text:ratio" &&
           benchmark.config.algo === selectedConfig.algo &&
-          benchmark.config.threads === selectedConfig.threads,
+          benchmark.config.cores === selectedConfig.cores,
       );
 
       items.forEach((item) => {
@@ -244,7 +244,7 @@ export class CompressionChartBuilderService {
           (benchmark) =>
             benchmark.benchmark_id === "compression_text:ratio" &&
             benchmark.config.algo === selectedConfig.algo &&
-            benchmark.config.threads === selectedConfig.threads &&
+            benchmark.config.cores === selectedConfig.cores &&
             benchmark.score === size,
         );
 
