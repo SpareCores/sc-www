@@ -37,6 +37,8 @@
 @if (inlineSvg && lstopoUrl) {
   <div
     class="lstopo-container lstopo-inline-svg lstopo-interactive"
+    role="img"
+    aria-label="CPU and System Topology diagram"
     [innerHTML]="inlineSvg"
   ></div>
 
@@ -83,6 +85,8 @@
         <div class="lstopo-modal-body overflow-auto max-h-[80vh]" appDragToPan>
           <div
             class="lstopo-container lstopo-modal-svg"
+            role="img"
+            aria-label="CPU and System Topology diagram"
             [innerHTML]="modalSvg"
           ></div>
         </div>
