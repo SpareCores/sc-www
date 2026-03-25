@@ -1,17 +1,18 @@
 import {
   ChangeDetectorRef,
   Component,
+  DestroyRef,
   ElementRef,
   EventEmitter,
   Input,
   OnChanges,
-  OnDestroy,
   Output,
   ViewChild,
   ViewEncapsulation,
   inject,
   PLATFORM_ID,
 } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { isPlatformBrowser } from "@angular/common";
 import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
 import { LucideAngularModule } from "lucide-angular";
@@ -36,7 +37,7 @@ const lstopoModalOptions: ModalOptions = {
   styleUrl: "./server-lstopo.component.scss",
   encapsulation: ViewEncapsulation.None,
 })
-export class ServerLstopoComponent implements OnChanges, OnDestroy {
+export class ServerLstopoComponent implements OnChanges {
   @Input() vendorId: string = "";
   @Input() apiReference: string = "";
   @Output() svgExists = new EventEmitter<boolean>();
@@ -47,6 +48,11 @@ export class ServerLstopoComponent implements OnChanges, OnDestroy {
   private elRef = inject(ElementRef);
   private cdr = inject(ChangeDetectorRef);
   private svgService = inject(LstopoSvgService);
+  private destroyRef = inject(DestroyRef);
+
+  constructor() {
+    this.destroyRef.onDestroy(() => this.resetRenderedSvg());
+  }
 
   lstopoUrl: string = "";
   inlineSvg: SafeHtml | null = null;
@@ -80,75 +86,73 @@ export class ServerLstopoComponent implements OnChanges, OnDestroy {
     if (!this.vendorId || !this.apiReference) {
       this.svgSub?.unsubscribe();
       this.svgSub = undefined;
-      this.removeSvgTooltips();
+      this.resetRenderedSvg();
       this.isLoading = false;
-      this.inlineSvg = null;
-      this.modalSvg = null;
       this.lstopoUrl = "";
       this.svgExists.emit(false);
       this.svgWidth.emit(0);
       return;
     }
     this.isLoading = true;
-    this.inlineSvg = null;
+    this.resetRenderedSvg();
     this.svgWidth.emit(0);
     this.lstopoUrl = `${LSTOPO_CDN_BASE}/${this.vendorId}/${this.apiReference}/${LSTOPO_PATH_SUFFIX}`;
 
     const url = this.lstopoUrl;
     this.svgSub?.unsubscribe();
-    this.svgSub = this.svgService.getSvg(url).subscribe({
-      next: (svg) => {
-        try {
-          if (!svg) {
-            this.svgExists.emit(false);
-            this.inlineSvg = null;
-            this.modalSvg = null;
-            this.svgWidth.emit(0);
-            this.removeSvgTooltips();
-            return;
-          }
-          this.svgExists.emit(true);
-          if (isPlatformBrowser(this.platformId)) {
-            try {
-              const { w, normalizedSvg } = this.svgService.processSvg(svg);
-              if (w) setTimeout(() => this.svgWidth.emit(w), 0);
-              const trustedSvg =
-                this.sanitizer.bypassSecurityTrustHtml(normalizedSvg);
-              this.inlineSvg = trustedSvg;
-              this.modalSvg = trustedSvg;
-            } catch (e) {
-              console.warn("[lstopo] SVG processing failed", e);
-              this.inlineSvg = null;
-              this.modalSvg = null;
+    this.svgSub = this.svgService
+      .getSvg(url)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (svg) => {
+          try {
+            if (!svg) {
+              this.svgExists.emit(false);
+              this.resetRenderedSvg();
+              this.svgWidth.emit(0);
+              return;
             }
-            this.cdr.markForCheck();
-            setTimeout(() => {
-              const el = this.lstopoModalRef?.nativeElement;
-              if (el) {
-                if (this.modal) {
-                  this.modal.destroyAndRemoveInstance();
-                  this.modal = null;
-                }
-                this.modal = new Modal(el, lstopoModalOptions);
+            if (isPlatformBrowser(this.platformId)) {
+              try {
+                const { w, normalizedSvg } = this.svgService.processSvg(svg);
+                if (w) setTimeout(() => this.svgWidth.emit(w), 0);
+                const trustedSvg =
+                  this.sanitizer.bypassSecurityTrustHtml(normalizedSvg);
+                this.inlineSvg = trustedSvg;
+                this.modalSvg = trustedSvg;
+                this.svgExists.emit(true);
+              } catch (e) {
+                console.warn("[lstopo] SVG processing failed", e);
+                this.resetRenderedSvg();
+                this.svgExists.emit(false);
               }
-              this.addSvgTooltips();
-            }, 0);
-          } else {
-            // Skip inline SVG on server to avoid bloating SSR response
+              this.cdr.markForCheck();
+              setTimeout(() => {
+                const el = this.lstopoModalRef?.nativeElement;
+                if (el) {
+                  if (this.modal) {
+                    this.modal.destroyAndRemoveInstance();
+                    this.modal = null;
+                  }
+                  this.modal = new Modal(el, lstopoModalOptions);
+                }
+                this.addSvgTooltips();
+              }, 0);
+            } else {
+              // Skip inline SVG on server to avoid bloating SSR response
+            }
+          } finally {
+            this.isLoading = false;
           }
-        } finally {
+        },
+        error: (err) => {
+          console.warn("[lstopo] failed to load SVG", err);
           this.isLoading = false;
-        }
-      },
-      error: (err) => {
-        console.warn("[lstopo] failed to load SVG", err);
-        this.isLoading = false;
-        this.svgExists.emit(false);
-        this.modalSvg = null;
-        this.inlineSvg = null;
-        this.cdr.markForCheck();
-      },
-    });
+          this.svgExists.emit(false);
+          this.resetRenderedSvg();
+          this.cdr.markForCheck();
+        },
+      });
   }
 
   openLstopoModal(): void {
@@ -207,12 +211,13 @@ export class ServerLstopoComponent implements OnChanges, OnDestroy {
     this.tooltipListeners = [];
   }
 
-  ngOnDestroy(): void {
-    this.svgSub?.unsubscribe();
+  private resetRenderedSvg(): void {
     this.removeSvgTooltips();
     if (isPlatformBrowser(this.platformId) && this.modal) {
       this.modal.destroyAndRemoveInstance();
       this.modal = null;
     }
+    this.inlineSvg = null;
+    this.modalSvg = null;
   }
 }
