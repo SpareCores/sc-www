@@ -29,13 +29,11 @@ export class LstopoSvgService {
 
   /**
    * Parses an SVG string, normalises the viewBox (strips unit suffixes like "px")
-   * and returns the document, root element and intrinsic dimensions.
+   * and returns the document and intrinsic width.
    */
   private parseSvg(svgText: string): {
     doc: Document;
-    svgEl: SVGSVGElement;
     w: number;
-    h: number;
   } {
     const doc = new DOMParser().parseFromString(svgText, "image/svg+xml");
     const svgEl = doc.documentElement as unknown as SVGSVGElement;
@@ -46,6 +44,6 @@ export class LstopoSvgService {
     if ((!existing || /\d+[a-z%]+/i.test(existing)) && w && h) {
       svgEl.setAttribute("viewBox", `0 0 ${w} ${h}`);
     }
-    return { doc, svgEl, w, h };
+    return { doc, w };
   }
 }
