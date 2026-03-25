@@ -118,9 +118,8 @@ export class ServerLstopoComponent implements OnChanges, OnDestroy {
               this.modalSvg = trustedSvg;
             } catch (e) {
               console.warn("[lstopo] SVG processing failed", e);
-              const trustedSvg = this.sanitizer.bypassSecurityTrustHtml(svg);
-              this.inlineSvg = trustedSvg;
-              this.modalSvg = trustedSvg;
+              this.inlineSvg = null;
+              this.modalSvg = null;
             }
             this.cdr.markForCheck();
             setTimeout(() => {
@@ -135,8 +134,7 @@ export class ServerLstopoComponent implements OnChanges, OnDestroy {
               this.addSvgTooltips();
             }, 0);
           } else {
-            this.inlineSvg = this.sanitizer.bypassSecurityTrustHtml(svg);
-            this.modalSvg = this.sanitizer.bypassSecurityTrustHtml(svg);
+            // Skip inline SVG on server to avoid bloating SSR response
           }
         } finally {
           this.isLoading = false;
