@@ -86,25 +86,25 @@ describe("CompressionChartBuilderService", () => {
         benchmark_scores: [
           createCompressionScore({
             benchmarkId: "compression_text:ratio",
-            config: { algo: "gzip", threads: 1, compression_level: 1 },
+            config: { algo: "gzip", cores: "single", compression_level: 1 },
             score: 0.5,
           }),
           createCompressionScore({
             benchmarkId: "compression_text:compress",
-            config: { algo: "gzip", threads: 1, compression_level: 1 },
+            config: { algo: "gzip", cores: "single", compression_level: 1 },
             score: 10,
           }),
           createCompressionScore({
             benchmarkId: "compression_text:decompress",
-            config: { algo: "gzip", threads: 1, compression_level: 1 },
+            config: { algo: "gzip", cores: "single", compression_level: 1 },
             score: 20,
           }),
         ],
       },
     ];
     const selectedOption: CompareCompressionOption = {
-      name: "algo: gzip, threads: 1",
-      options: { algo: "gzip", threads: 1 },
+      name: "algo: gzip, cores: single",
+      options: { algo: "gzip", cores: "single" },
     };
     const compareOptionsBase: CompressionMutableChartOptions = {
       plugins: { tooltip: { callbacks: {} } },
