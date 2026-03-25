@@ -12,9 +12,7 @@ import {
   MutableChartOptions,
 } from "../shared/benchmark-data.types";
 
-export type CompressionConfigValue = BenchmarkConfigValue;
-
-export type CompressionConfig = BenchmarkConfigShape<CompressionConfigValue> & {
+export type CompressionConfig = BenchmarkConfigShape<BenchmarkConfigValue> & {
   algo: string;
   compression_level?: number;
   cores?: "single" | "multi";
