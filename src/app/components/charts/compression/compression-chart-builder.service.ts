@@ -93,7 +93,27 @@ export class CompressionChartBuilderService {
     });
 
     return options
-      .sort((a, b) => (a.algo || "").localeCompare(b.algo || ""))
+      .sort((a, b) => {
+        const algoCompare = (a.algo || "").localeCompare(b.algo || "");
+        if (algoCompare !== 0) return algoCompare;
+
+        const extraKeys = new Set<string>();
+        for (const key of [...Object.keys(a), ...Object.keys(b)]) {
+          if (key !== "algo" && key !== "cores") extraKeys.add(key);
+        }
+        for (const key of [...extraKeys].sort()) {
+          const aValue = String(a[key] ?? "");
+          const bValue = String(b[key] ?? "");
+          const compareValues = aValue.localeCompare(bValue, undefined, {
+            numeric: true,
+          });
+          if (compareValues !== 0) return compareValues;
+        }
+
+        if (a.cores === "single" && b.cores !== "single") return -1;
+        if (a.cores !== "single" && b.cores === "single") return 1;
+        return (a.cores || "").localeCompare(b.cores || "");
+      })
       .map((item) => ({
         options: item,
         name: Object.keys(item)
@@ -106,49 +126,53 @@ export class CompressionChartBuilderService {
     benchmarksByCategory: CompressionBenchmarkGroup[];
     mode: DetailsCompressionMode;
     baseOptions: CompressionChartOptions;
+    coresMode?: "single" | "multi";
   }): CompressionDetailsChartResult | undefined {
-    const { benchmarksByCategory, mode, baseOptions } = params;
-    let dataSet1 =
+    const {
+      benchmarksByCategory,
+      mode,
+      baseOptions,
+      coresMode = "single",
+    } = params;
+    const matchesCores = (item: { config: CompressionConfig }) =>
+      item.config.cores === coresMode ||
+      (!item.config.cores && coresMode === "single");
+
+    let ratioScores =
       benchmarksByCategory?.find(
         (benchmark) => benchmark.benchmark_id === "compression_text:ratio",
       )?.benchmarks || [];
 
-    if (!dataSet1.length) {
+    if (!ratioScores.length) {
       return undefined;
     }
 
-    let dataSet2 =
+    let compressScores =
       benchmarksByCategory?.find(
         (benchmark) => benchmark.benchmark_id === "compression_text:compress",
       )?.benchmarks || [];
-    let dataSet3 =
+    let decompressScores =
       benchmarksByCategory?.find(
         (benchmark) => benchmark.benchmark_id === "compression_text:decompress",
       )?.benchmarks || [];
 
-    dataSet1 = dataSet1.filter(
-      (item) => !item.config.cores || item.config.cores === "single",
-    );
-    dataSet2 = dataSet2.filter(
-      (item) => !item.config.cores || item.config.cores === "single",
-    );
-    dataSet3 = dataSet3.filter(
-      (item) => !item.config.cores || item.config.cores === "single",
-    );
+    ratioScores = ratioScores.filter(matchesCores);
+    compressScores = compressScores.filter(matchesCores);
+    decompressScores = decompressScores.filter(matchesCores);
 
     const data: CompressionDetailsChartData = {
       labels: [],
       datasets: [],
     };
 
-    dataSet1.forEach((item) => {
+    ratioScores.forEach((item) => {
       const found = data.datasets.find(
         (dataset) => dataset.config.algo === item.config.algo,
       );
 
       const entry: CompressionDataPoint = {
         config: item.config,
-        ratio: Math.floor(item.score * 100) / 100,
+        ratio: this.roundRatio(item.score),
         algo: item.config.algo,
         compression_level: item.config.compression_level,
         tooltip: this.buildConfigTooltip(item.config, (key) => key !== "algo"),
@@ -172,10 +196,10 @@ export class CompressionChartBuilderService {
 
     data.datasets.forEach((dataset) => {
       dataset.data.forEach((item) => {
-        const compressItem = dataSet2.find((dataItem) =>
+        const compressItem = compressScores.find((dataItem) =>
           this.matchesConfig(item.config, dataItem.config),
         );
-        const decompressItem = dataSet3.find((dataItem) =>
+        const decompressItem = decompressScores.find((dataItem) =>
           this.matchesConfig(item.config, dataItem.config),
         );
         if (compressItem && decompressItem) {
@@ -236,7 +260,7 @@ export class CompressionChartBuilderService {
 
     chartData.labels = labels
       .sort((a, b) => a - b)
-      .map((label) => Math.floor(label * 100) / 100);
+      .map((label) => this.roundRatio(label));
 
     params.servers.forEach((server, i) => {
       labels.forEach((size: number) => {
@@ -264,7 +288,7 @@ export class CompressionChartBuilderService {
 
           chartData.datasets[i].data.push({
             config: item.config,
-            ratio: Math.floor(item.score * 100) / 100,
+            ratio: this.roundRatio(item.score),
             algo: item.config.algo,
             compression_level: item.config.compression_level,
             tooltip: this.buildConfigTooltip(
@@ -375,6 +399,10 @@ export class CompressionChartBuilderService {
       .filter(includeKey)
       .map((key) => `${key.replace(/_/g, " ")}: ${config[key]}`)
       .join(", ");
+  }
+
+  private roundRatio(value: number): number {
+    return Math.floor(value * 100) / 100;
   }
 
   private matchesConfig(
