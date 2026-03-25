@@ -317,6 +317,7 @@
           <tr
             class="section_header"
             id="benchmark_line_{{ benchmarkCategory.id }}"
+            [class.compare-section-header]="benchmarkCategory.id === 'openssl'"
           >
             <td [colSpan]="getSectionColSpan()">
               <div class="flex justify-between">
@@ -431,7 +432,11 @@
               </div>
             </td>
           </tr>
-          <tr>
+          <tr
+            [class.compare-compression-row]="
+              benchmarkCategory.id === 'compress'
+            "
+          >
             <td [colSpan]="servers.length + 1">
               @if (benchmarkCategory.id === "bw_mem") {
                 <div>
