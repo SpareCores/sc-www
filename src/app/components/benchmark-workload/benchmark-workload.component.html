@@ -203,12 +203,14 @@
     </h4>
     @if (histogramData()) {
       <div class="histogram_container">
-        <canvas
-          baseChart
-          [data]="histogramData()"
-          [options]="histogramOptions()"
-          type="bar"
-        ></canvas>
+        @if (isBrowser) {
+          <canvas
+            baseChart
+            [data]="histogramData()"
+            [options]="histogramOptions()"
+            type="bar"
+          ></canvas>
+        }
       </div>
     } @else {
       <div
