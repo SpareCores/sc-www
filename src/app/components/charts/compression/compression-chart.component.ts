@@ -5,6 +5,7 @@ import {
   ElementRef,
   PLATFORM_ID,
   computed,
+  effect,
   inject,
   input,
   signal,
@@ -78,7 +79,7 @@ export class CompressionChartComponent {
   readonly detailsModes = this.builder.getDetailsModes();
   selectedDetailsModeId = signal(this.detailsModes[0]?.key || "compress");
   selectedCompareIndex = signal(0);
-  selectedCoresMode = signal<"single" | "multi">("single");
+  selectedCoresMode = signal<"single" | "multi">("multi");
 
   readonly availableCoresOptions = computed<Array<"single" | "multi">>(() => {
     const ratioGroup = this.benchmarksByCategory().find(
@@ -106,6 +107,15 @@ export class CompressionChartComponent {
     () => this.availableCoresOptions().length > 1,
   );
   readonly coresLabel = computed(() => `cores: ${this.selectedCoresMode()}`);
+
+  constructor() {
+    effect(() => {
+      const options = this.availableCoresOptions();
+      if (options.length > 0 && !options.includes(this.selectedCoresMode())) {
+        this.selectedCoresMode.set(options[0]);
+      }
+    });
+  }
 
   readonly currentDetailsMode = computed(
     () =>
