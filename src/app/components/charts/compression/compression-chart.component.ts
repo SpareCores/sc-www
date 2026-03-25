@@ -57,6 +57,8 @@ export class CompressionChartComponent {
   private tooltipService = inject(ChartTooltipService);
 
   tooltip = viewChild<ElementRef<HTMLElement>>("tooltipDefault");
+  selectorDropdown = viewChild<FlowbiteDropdownDirective>("selectorDropdown");
+  coresDropdown = viewChild<FlowbiteDropdownDirective>("coresDropdown");
 
   layout = input<"details" | "compare">("details");
   benchmarksByCategory = input<CompressionBenchmarkGroup[]>([]);
@@ -68,12 +70,42 @@ export class CompressionChartComponent {
   readonly idBase = `compression_chart_${CompressionChartComponent.nextId++}`;
   readonly buttonId = `${this.idBase}_button`;
   readonly optionsId = `${this.idBase}_options`;
+  readonly coresButtonId = `${this.idBase}_cores_button`;
+  readonly coresOptionsId = `${this.idBase}_cores_options`;
 
-  tooltipContent = "";
+  tooltipContent = signal("");
   readonly infoTooltip = this.builder.infoTooltip;
   readonly detailsModes = this.builder.getDetailsModes();
   selectedDetailsModeId = signal(this.detailsModes[0]?.key || "compress");
   selectedCompareIndex = signal(0);
+  selectedCoresMode = signal<"single" | "multi">("single");
+
+  readonly availableCoresOptions = computed<Array<"single" | "multi">>(() => {
+    const ratioGroup = this.benchmarksByCategory().find(
+      (benchmarkGroup) =>
+        benchmarkGroup.benchmark_id === "compression_text:ratio",
+    );
+    if (!ratioGroup) {
+      return [];
+    }
+    const coresSet = new Set<"single" | "multi">();
+    for (const benchmark of ratioGroup.benchmarks ?? []) {
+      const cores = benchmark.config.cores;
+      if (cores === "single" || cores === "multi") {
+        coresSet.add(cores);
+      } else if (!cores) {
+        coresSet.add("single");
+      }
+    }
+    const result: Array<"single" | "multi"> = [];
+    if (coresSet.has("single")) result.push("single");
+    if (coresSet.has("multi")) result.push("multi");
+    return result;
+  });
+  readonly hasCoresSelector = computed(
+    () => this.availableCoresOptions().length > 1,
+  );
+  readonly coresLabel = computed(() => `cores: ${this.selectedCoresMode()}`);
 
   readonly currentDetailsMode = computed(
     () =>
@@ -99,6 +131,7 @@ export class CompressionChartComponent {
         benchmarksByCategory: this.benchmarksByCategory(),
         mode: this.currentDetailsMode(),
         baseOptions: lineChartOptionsComp,
+        coresMode: this.selectedCoresMode(),
       });
     },
   );
@@ -146,6 +179,7 @@ export class CompressionChartComponent {
     }
 
     this.selectedDetailsModeId.set(selectedMode.key);
+    this.selectorDropdown()?.hide();
   }
 
   selectCompareOption(index: number): void {
@@ -154,6 +188,12 @@ export class CompressionChartComponent {
     }
 
     this.selectedCompareIndex.set(index);
+    this.selectorDropdown()?.hide();
+  }
+
+  selectCoresMode(mode: "single" | "multi"): void {
+    this.selectedCoresMode.set(mode);
+    this.coresDropdown()?.hide();
   }
 
   showTooltip(el: MouseEvent, content?: string): void {
@@ -162,7 +202,7 @@ export class CompressionChartComponent {
       event: el,
       content,
       onShow: (tooltipContent) => {
-        this.tooltipContent = tooltipContent;
+        this.tooltipContent.set(tooltipContent);
       },
     });
   }
