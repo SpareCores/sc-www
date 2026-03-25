@@ -1,12 +1,14 @@
 import {
   Component,
   ElementRef,
+  PLATFORM_ID,
   computed,
+  inject,
   input,
   signal,
   viewChild,
 } from "@angular/core";
-import { DecimalPipe } from "@angular/common";
+import { DecimalPipe, isPlatformBrowser } from "@angular/common";
 import { ChartConfiguration, ChartData } from "chart.js";
 import { BaseChartDirective } from "ng2-charts";
 import { LucideAngularModule } from "lucide-angular";
@@ -35,6 +37,9 @@ interface HistogramBin {
   styleUrl: "./benchmark-workload.component.scss",
 })
 export class BenchmarkWorkloadComponent {
+  private platformId = inject(PLATFORM_ID);
+  readonly isBrowser = isPlatformBrowser(this.platformId);
+
   readonly workload = input.required<BenchmarkWorkloadItem>();
 
   readonly isActive = computed(
