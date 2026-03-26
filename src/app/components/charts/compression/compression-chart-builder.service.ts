@@ -247,8 +247,7 @@ export class CompressionChartBuilderService {
       const items = server.benchmark_scores.filter(
         (benchmark) =>
           benchmark.benchmark_id === "compression_text:ratio" &&
-          benchmark.config.algo === selectedConfig.algo &&
-          benchmark.config.cores === selectedConfig.cores,
+          this.matchesConfig(selectedConfig, benchmark.config),
       );
 
       items.forEach((item) => {
@@ -267,8 +266,7 @@ export class CompressionChartBuilderService {
         const item = server.benchmark_scores.find(
           (benchmark) =>
             benchmark.benchmark_id === "compression_text:ratio" &&
-            benchmark.config.algo === selectedConfig.algo &&
-            benchmark.config.cores === selectedConfig.cores &&
+            this.matchesConfig(selectedConfig, benchmark.config) &&
             benchmark.score === size,
         );
 
