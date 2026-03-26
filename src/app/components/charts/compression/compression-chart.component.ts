@@ -29,7 +29,7 @@ import {
   lineChartOptionsCompareDecompress,
 } from "../../../pages/server-details/chartOptions";
 import { ChartTooltipService } from "../shared/chart-tooltip.service";
-import { FlowbiteDropdownDirective } from "../shared/flowbite-dropdown.directive";
+import { FlowbiteDropdownDirective } from "../../../directives/flowbite-dropdown.directive";
 
 @Component({
   selector: "app-compression-chart",

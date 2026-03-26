@@ -10,7 +10,7 @@ import {
   signal,
 } from "@angular/core";
 import { Dropdown } from "flowbite";
-import { DropdownManagerService } from "../../../services/dropdown-manager.service";
+import { DropdownManagerService } from "../services/dropdown-manager.service";
 
 @Directive({
   selector: "[appFlowbiteDropdown]",
