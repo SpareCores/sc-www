@@ -6,6 +6,7 @@ import {
   PLATFORM_ID,
   OnInit,
   ViewChild,
+  viewChild,
   OnDestroy,
   Renderer2,
   DOCUMENT,
@@ -42,7 +43,7 @@ import { ServerCompareService } from "../../services/server-compare.service";
 import { initGiscus } from "../../tools/initGiscus";
 import { Location } from "@angular/common";
 import { AnalyticsService } from "../../services/analytics.service";
-import { DropdownManagerService } from "../../services/dropdown-manager.service";
+import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
 import { ServerChartsComponent } from "../../components/server-charts/server-charts.component";
 import { ServerLstopoComponent } from "../../components/server-lstopo/server-lstopo.component";
 import {
@@ -98,6 +99,7 @@ interface PropertyCategoryDefinition {
     ServerPropertyCardComponent,
     EmbedDebugComponent,
     LoadingSpinnerComponent,
+    FlowbiteDropdownDirective,
   ],
   templateUrl: "./server-details.component.html",
   styleUrl: "./server-details.component.scss",
@@ -112,7 +114,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   private serverCompare = inject(ServerCompareService);
   private renderer = inject(Renderer2);
   private location = inject(Location);
-  private dropdownManager = inject(DropdownManagerService);
+  similarDropdown = viewChild<FlowbiteDropdownDirective>("similarDropdown");
 
   serverDetails!: ExtendedServerDetails;
   lstopoSvgExists: boolean | null = null;
@@ -138,8 +140,6 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   availabilityZones: any[] = [];
   pricesPerZone: any[] = [];
 
-  dropdownAllocation: any;
-  dropdownAllocation2: any;
   allocationFilters: any[] = [
     { name: "Spot", selected: true },
     { name: "Ondemand", selected: true },
@@ -154,7 +154,6 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   similarServers: GetSimilarServersServerVendorServerSimilarServersByNumGetData =
     [];
 
-  dropdownSimilar: any;
   similarOptions: any[] = [
     { name: "By GPU, CPU and memory specs", key: "bySpecs" },
     { name: "By CPU performance", key: "byScore" },
@@ -640,26 +639,6 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
                   this.selectedSimilarOption,
                   false,
                 );
-
-                this.dropdownManager.initDropdown(
-                  "allocation_button",
-                  "allocation_options",
-                );
-
-                this.dropdownManager.initDropdown(
-                  "allocation_button2",
-                  "allocation_options2",
-                );
-
-                this.dropdownManager
-                  .initDropdown("region_button", "region_options")
-                  .then((dropdown) => {});
-
-                this.dropdownManager
-                  .initDropdown("similar_type_button", "similar_server_options")
-                  .then((dropdown) => {
-                    this.dropdownSimilar = dropdown;
-                  });
               }
             }
           })
@@ -1425,7 +1404,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
       }
     }
 
-    this.dropdownSimilar?.hide();
+    this.similarDropdown()?.hide();
   }
 
   activeFAQChanged(event: any) {
