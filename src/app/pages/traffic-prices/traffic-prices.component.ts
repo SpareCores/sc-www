@@ -4,6 +4,7 @@ import {
   OnInit,
   PLATFORM_ID,
   OnDestroy,
+  viewChild,
   inject,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
@@ -16,7 +17,7 @@ import {
 } from "../../components/breadcrumbs/breadcrumbs.component";
 import { PaginationComponent } from "../../components/pagination/pagination.component";
 import { SearchBarComponent } from "../../components/search-bar/search-bar.component";
-import { DropdownManagerService } from "../../services/dropdown-manager.service";
+import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { CurrencyOption, availableCurrencies } from "../../tools/shared_data";
@@ -36,6 +37,7 @@ import openApiSpec from "../../../../sdk/openapi.json";
     SearchBarComponent,
     PaginationComponent,
     LoadingSpinnerComponent,
+    FlowbiteDropdownDirective,
   ],
   templateUrl: "./traffic-prices.component.html",
   styleUrl: "./traffic-prices.component.scss",
@@ -46,7 +48,8 @@ export class TrafficPricesComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private SEOHandler = inject(SeoHandlerService);
-  private dropdownManager = inject(DropdownManagerService);
+  currencyDropdown = viewChild<FlowbiteDropdownDirective>("currencyDropdown");
+  pageDropdown = viewChild<FlowbiteDropdownDirective>("pageDropdown");
 
   private subscription = new Subscription();
 
@@ -54,8 +57,6 @@ export class TrafficPricesComponent implements OnInit, OnDestroy {
   page = 1;
   totalPages = 1;
   pageLimits = [10, 25, 50, 100, 250];
-  dropdownPage: any;
-  dropdownColumn: any;
 
   orderBy: string | undefined = undefined;
   orderDir: OrderDir | undefined = undefined;
@@ -101,8 +102,6 @@ export class TrafficPricesComponent implements OnInit, OnDestroy {
   availableCurrencies: CurrencyOption[] = availableCurrencies;
 
   selectedCurrency: CurrencyOption = availableCurrencies[0];
-
-  dropdownCurrency: any;
 
   ngOnInit() {
     this.SEOHandler.updateThumbnail(
@@ -166,23 +165,6 @@ export class TrafficPricesComponent implements OnInit, OnDestroy {
         this._searchTrafficPrices();
 
         if (isPlatformBrowser(this.platformId)) {
-          this.dropdownManager
-            .initDropdown("currency_button", "currency_options")
-            .then((dropdown: any) => {
-              this.dropdownCurrency = dropdown;
-            });
-
-          this.dropdownManager
-            .initDropdown("column_button", "column_options")
-            .then((dropdown: any) => {
-              this.dropdownColumn = dropdown;
-            });
-
-          this.dropdownManager
-            .initDropdown("pagesize_button", "pagesize_options")
-            .then((dropdown: any) => {
-              this.dropdownPage = dropdown;
-            });
         }
       }),
     );
@@ -286,7 +268,7 @@ export class TrafficPricesComponent implements OnInit, OnDestroy {
 
     this.searchOptionsChanged(this.query);
 
-    this.dropdownCurrency?.hide();
+    this.currencyDropdown()?.hide();
   }
 
   getOrderingIcon(column: TableColumn) {
@@ -305,7 +287,7 @@ export class TrafficPricesComponent implements OnInit, OnDestroy {
     this.page = 1;
     this.searchOptionsChanged(this.query);
 
-    this.dropdownPage?.hide();
+    this.pageDropdown()?.hide();
     // scroll to top
     window.scrollTo(0, 0);
   }
