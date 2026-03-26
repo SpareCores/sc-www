@@ -369,9 +369,6 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
         this._searchServers(true);
       }),
     );
-
-    if (isPlatformBrowser(this.platformId)) {
-    }
   }
 
   ngOnDestroy() {

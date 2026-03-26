@@ -1,4 +1,4 @@
-import { CommonModule, isPlatformBrowser } from "@angular/common";
+import { CommonModule } from "@angular/common";
 import {
   Component,
   OnInit,
@@ -176,9 +176,6 @@ export class StoragesComponent implements OnInit, OnDestroy {
         this.query.add_total_count_header = true;
 
         this._searchStorages();
-
-        if (isPlatformBrowser(this.platformId)) {
-        }
       }),
     );
   }
