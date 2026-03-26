@@ -4,6 +4,7 @@ import {
   OnInit,
   PLATFORM_ID,
   OnDestroy,
+  viewChild,
   inject,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
@@ -20,7 +21,7 @@ import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { TableColumn } from "../server-listing/server-listing.component";
 import { CurrencyOption, availableCurrencies } from "../../tools/shared_data";
-import { DropdownManagerService } from "../../services/dropdown-manager.service";
+import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
 import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
 import { Subscription } from "rxjs";
 import openApiSpec from "../../../../sdk/openapi.json";
@@ -36,6 +37,7 @@ import openApiSpec from "../../../../sdk/openapi.json";
     SearchBarComponent,
     PaginationComponent,
     LoadingSpinnerComponent,
+    FlowbiteDropdownDirective,
   ],
   templateUrl: "./storages.component.html",
   styleUrl: "./storages.component.scss",
@@ -46,7 +48,8 @@ export class StoragesComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private SEOHandler = inject(SeoHandlerService);
-  private dropdownManager = inject(DropdownManagerService);
+  currencyDropdown = viewChild<FlowbiteDropdownDirective>("currencyDropdown");
+  pageDropdown = viewChild<FlowbiteDropdownDirective>("pageDropdown");
 
   private subscription = new Subscription();
 
@@ -54,8 +57,6 @@ export class StoragesComponent implements OnInit, OnDestroy {
   page = 1;
   totalPages = 1;
   pageLimits = [10, 25, 50, 100, 250];
-  dropdownPage: any;
-  dropdownColumn: any;
 
   orderBy: string | undefined = undefined;
   orderDir: OrderDir | undefined = undefined;
@@ -114,8 +115,6 @@ export class StoragesComponent implements OnInit, OnDestroy {
   availableCurrencies: CurrencyOption[] = availableCurrencies;
 
   selectedCurrency: CurrencyOption = availableCurrencies[0];
-
-  dropdownCurrency: any;
 
   ngOnInit() {
     this.SEOHandler.updateTitleAndMetaTags(
@@ -179,23 +178,6 @@ export class StoragesComponent implements OnInit, OnDestroy {
         this._searchStorages();
 
         if (isPlatformBrowser(this.platformId)) {
-          this.dropdownManager
-            .initDropdown("currency_button", "currency_options")
-            .then((dropdown: any) => {
-              this.dropdownCurrency = dropdown;
-            });
-
-          this.dropdownManager
-            .initDropdown("column_button", "column_options")
-            .then((dropdown: any) => {
-              this.dropdownColumn = dropdown;
-            });
-
-          this.dropdownManager
-            .initDropdown("pagesize_button", "pagesize_options")
-            .then((dropdown: any) => {
-              this.dropdownPage = dropdown;
-            });
         }
       }),
     );
@@ -299,7 +281,7 @@ export class StoragesComponent implements OnInit, OnDestroy {
 
     this.searchOptionsChanged(this.query);
 
-    this.dropdownCurrency?.hide();
+    this.currencyDropdown()?.hide();
   }
 
   getOrderingIcon(column: TableColumn) {
@@ -318,7 +300,7 @@ export class StoragesComponent implements OnInit, OnDestroy {
     this.page = 1;
     this.searchOptionsChanged(this.query);
 
-    this.dropdownPage?.hide();
+    this.pageDropdown()?.hide();
     // scroll to top
     window.scrollTo(0, 0);
   }
