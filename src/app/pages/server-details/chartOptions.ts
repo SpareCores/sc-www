@@ -660,7 +660,7 @@ export const lineChartOptionsCompareCompress: ChartConfiguration<"line">["option
         title: {
           display: true,
           color: "#FFF",
-          text: "Compression Ratio",
+          text: "Compression Level",
         },
       },
       y: {
@@ -685,18 +685,19 @@ export const lineChartOptionsCompareCompress: ChartConfiguration<"line">["option
             this: TooltipModel<"line">,
             tooltipItem: TooltipItem<"line">,
           ) {
+            const point = tooltipItem.raw as { tooltip?: string } | undefined;
+            const tooltip = point?.tooltip;
             return (
               tooltipItem.formattedValue +
-              " byte/s (" +
-              (tooltipItem.dataset.data[tooltipItem.dataIndex] as any).tooltip +
-              ")"
+              " byte/s" +
+              (tooltip ? " (" + tooltip + ")" : "")
             );
           },
           title: function (
             this: TooltipModel<"line">,
             tooltipItems: TooltipItem<"line">[],
           ) {
-            return tooltipItems[0].label + "% compression ratio";
+            return "Compression level: " + tooltipItems[0].label;
           },
         },
       },
@@ -708,12 +709,12 @@ export const lineChartOptionsCompareCompress: ChartConfiguration<"line">["option
       },
       title: {
         display: true,
-        text: "Compression Speed / Ratio",
+        text: "Compression Speed",
         color: "#FFF",
       },
     },
     parsing: {
-      xAxisKey: "ratio",
+      xAxisKey: "compression_level",
       yAxisKey: "compress",
     },
   };
@@ -732,7 +733,7 @@ export const lineChartOptionsCompareDecompress: ChartConfiguration<"line">["opti
         title: {
           display: true,
           color: "#FFF",
-          text: "Compression Ratio",
+          text: "Compression Level",
         },
       },
       y: {
@@ -757,18 +758,19 @@ export const lineChartOptionsCompareDecompress: ChartConfiguration<"line">["opti
             this: TooltipModel<"line">,
             tooltipItem: TooltipItem<"line">,
           ) {
+            const point = tooltipItem.raw as { tooltip?: string } | undefined;
+            const tooltip = point?.tooltip;
             return (
               tooltipItem.formattedValue +
-              " byte/s (" +
-              (tooltipItem.dataset.data[tooltipItem.dataIndex] as any).tooltip +
-              ")"
+              " byte/s" +
+              (tooltip ? " (" + tooltip + ")" : "")
             );
           },
           title: function (
             this: TooltipModel<"line">,
             tooltipItems: TooltipItem<"line">[],
           ) {
-            return tooltipItems[0].label + "% compression ratio";
+            return "Compression level: " + tooltipItems[0].label;
           },
         },
       },
@@ -780,12 +782,12 @@ export const lineChartOptionsCompareDecompress: ChartConfiguration<"line">["opti
       },
       title: {
         display: true,
-        text: "Decompression Speed / Ratio",
+        text: "Decompression Speed",
         color: "#FFF",
       },
     },
     parsing: {
-      xAxisKey: "ratio",
+      xAxisKey: "compression_level",
       yAxisKey: "decompress",
     },
   };
