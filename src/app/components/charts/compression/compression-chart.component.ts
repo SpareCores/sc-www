@@ -13,6 +13,7 @@ import {
 } from "@angular/core";
 import { LucideAngularModule } from "lucide-angular";
 import { BaseChartDirective } from "ng2-charts";
+import { ChartData, ChartOptions } from "chart.js";
 import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon.pipe";
 import { CompressionChartBuilderService } from "./compression-chart-builder.service";
 import {
@@ -20,6 +21,7 @@ import {
   CompressionBenchmarkGroup,
   CompressionBenchmarkMeta,
   CompressionCompareChartResult,
+  CompressionCompareChartType,
   CompressionDetailsChartResult,
   CompressionServer,
 } from "./compression-chart.types";
@@ -161,17 +163,52 @@ export class CompressionChartComponent {
   );
   readonly detailsChartData = computed(() => this.detailsChart()?.data);
   readonly detailsChartOptions = computed(() => this.detailsChart()?.options);
-  readonly compareCompressData = computed(
-    () => this.compareCharts()?.compressData,
+  readonly compareCompressLineData = computed(() =>
+    this.compareChartType() === "line"
+      ? (this.compareCharts()?.compressData as ChartData<"line"> | undefined)
+      : undefined,
   );
-  readonly compareCompressOptions = computed(
-    () => this.compareCharts()?.compressOptions,
+  readonly compareCompressBarData = computed(() =>
+    this.compareChartType() === "bar"
+      ? (this.compareCharts()?.compressData as ChartData<"bar"> | undefined)
+      : undefined,
   );
-  readonly compareDecompressData = computed(
-    () => this.compareCharts()?.decompressData,
+  readonly compareCompressLineOptions = computed(() =>
+    this.compareChartType() === "line"
+      ? this.compareCharts()?.compressOptions
+      : undefined,
   );
-  readonly compareDecompressOptions = computed(
-    () => this.compareCharts()?.decompressOptions,
+  readonly compareCompressBarOptions = computed(() =>
+    this.compareChartType() === "bar"
+      ? (this.compareCharts()?.compressOptions as
+          | ChartOptions<"bar">
+          | undefined)
+      : undefined,
+  );
+  readonly compareDecompressLineData = computed(() =>
+    this.compareChartType() === "line"
+      ? (this.compareCharts()?.decompressData as ChartData<"line"> | undefined)
+      : undefined,
+  );
+  readonly compareDecompressBarData = computed(() =>
+    this.compareChartType() === "bar"
+      ? (this.compareCharts()?.decompressData as ChartData<"bar"> | undefined)
+      : undefined,
+  );
+  readonly compareDecompressLineOptions = computed(() =>
+    this.compareChartType() === "line"
+      ? this.compareCharts()?.decompressOptions
+      : undefined,
+  );
+  readonly compareDecompressBarOptions = computed(() =>
+    this.compareChartType() === "bar"
+      ? (this.compareCharts()?.decompressOptions as
+          | ChartOptions<"bar">
+          | undefined)
+      : undefined,
+  );
+  readonly compareChartType = computed<CompressionCompareChartType>(
+    () => this.compareCharts()?.chartType ?? "line",
   );
   readonly hasOptions = computed(() =>
     this.layout() === "details"
