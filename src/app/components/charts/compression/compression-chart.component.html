@@ -122,23 +122,43 @@
         </div>
         @if (isBrowser) {
           <div class="charts_div">
-            <div chartType="bar" class="chart_div">
-              <canvas
-                baseChart
-                [data]="compareCompressData()"
-                [options]="compareCompressOptions()"
-                [type]="compareChartType()"
-              >
-              </canvas>
+            <div class="chart_div" [attr.chartType]="compareChartType()">
+              @if (compareChartType() === "line") {
+                <canvas
+                  baseChart
+                  [data]="compareCompressLineData()"
+                  [options]="compareCompressLineOptions()"
+                  [type]="'line'"
+                >
+                </canvas>
+              } @else {
+                <canvas
+                  baseChart
+                  [data]="compareCompressBarData()"
+                  [options]="compareCompressBarOptions()"
+                  [type]="'bar'"
+                >
+                </canvas>
+              }
             </div>
-            <div chartType="bar" class="chart_div">
-              <canvas
-                baseChart
-                [data]="compareDecompressData()"
-                [options]="compareDecompressOptions()"
-                [type]="compareChartType()"
-              >
-              </canvas>
+            <div class="chart_div" [attr.chartType]="compareChartType()">
+              @if (compareChartType() === "line") {
+                <canvas
+                  baseChart
+                  [data]="compareDecompressLineData()"
+                  [options]="compareDecompressLineOptions()"
+                  [type]="'line'"
+                >
+                </canvas>
+              } @else {
+                <canvas
+                  baseChart
+                  [data]="compareDecompressBarData()"
+                  [options]="compareDecompressBarOptions()"
+                  [type]="'bar'"
+                >
+                </canvas>
+              }
             </div>
           </div>
         }
