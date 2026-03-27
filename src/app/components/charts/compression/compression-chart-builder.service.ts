@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import { TooltipItem, TooltipModel } from "chart.js";
+import { formatBytes } from "../../../pipes/pipe-utils";
 import { radarDatasetColors } from "../shared/chart-colors.constants";
 import { cloneChartOptions } from "../shared/chart-options.utils";
 import {
@@ -117,7 +118,10 @@ export class CompressionChartBuilderService {
       .map((item) => ({
         options: item,
         name: Object.keys(item)
-          .map((key) => `${key.replace(/_/g, " ")}: ${item[key]}`)
+          .map(
+            (key) =>
+              `${key.replace(/_/g, " ")}: ${this.formatConfigValue(key, item[key])}`,
+          )
           .join(", "),
       }));
   }
@@ -395,8 +399,18 @@ export class CompressionChartBuilderService {
   ): string {
     return Object.keys(config)
       .filter(includeKey)
-      .map((key) => `${key.replace(/_/g, " ")}: ${config[key]}`)
+      .map(
+        (key) =>
+          `${key.replace(/_/g, " ")}: ${this.formatConfigValue(key, config[key])}`,
+      )
       .join(", ");
+  }
+
+  private formatConfigValue(key: string, value: unknown): string {
+    if (key === "block_size" && typeof value === "number") {
+      return formatBytes(value);
+    }
+    return String(value);
   }
 
   private roundRatio(value: number): number {
