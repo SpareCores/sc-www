@@ -591,7 +591,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
         // let the user decide if something was wrong in the URL
         if (!benchmarkDataEncoded) {
           const defaultBenchmarkId = "stress_ng:bestn";
-          const defaultBenchmarkConfig = '{"framework_version": "0.17.08"}';
+          const defaultBenchmarkConfig = "{}";
           this.selectedBenchmarkConfig = this.benchmarksConfigs.find(
             (config: any) =>
               config.benchmark_id === defaultBenchmarkId &&
