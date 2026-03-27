@@ -7,3 +7,12 @@ export function formatValue(value: number): string {
 
   return parseFloat(formatted).toString();
 }
+
+const IEC_UNITS = ["Bytes", "KiB", "MiB", "GiB", "TiB"];
+
+export function formatBytes(bytes: number): string {
+  if (bytes === 0) return "0 Bytes";
+  const index = Math.floor(Math.log(bytes) / Math.log(1024));
+  const scaled = bytes / Math.pow(1024, index);
+  return `${formatValue(scaled)} ${IEC_UNITS[index]}`;
+}
