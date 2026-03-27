@@ -872,7 +872,7 @@
             >
               @for (
                 benchmarkConfig of tempfilteredBenchmarkConfigs;
-                track benchmarkConfig.benchmarkTemplate.benchmark_id
+                track benchmarkConfig.benchmark_id + $index
               ) {
                 <button
                   (click)="selectBenchmarkConfig(benchmarkConfig)"
