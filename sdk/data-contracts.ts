@@ -45,6 +45,7 @@ export enum VendorRegions {
   AlicloudCnWuhanLr = "alicloud~cn-wuhan-lr",
   AlicloudCnWulanchabu = "alicloud~cn-wulanchabu",
   AlicloudCnZhangjiakou = "alicloud~cn-zhangjiakou",
+  AlicloudCnZhongwei = "alicloud~cn-zhongwei",
   AlicloudEuCentral1 = "alicloud~eu-central-1",
   AlicloudEuWest1 = "alicloud~eu-west-1",
   AlicloudMeCentral1 = "alicloud~me-central-1",
@@ -383,6 +384,7 @@ export enum Regions {
   CnWuhanLr = "cn-wuhan-lr",
   CnWulanchabu = "cn-wulanchabu",
   CnZhangjiakou = "cn-zhangjiakou",
+  CnZhongwei = "cn-zhongwei",
   DE = "DE",
   DE1 = "DE1",
   DeFra1 = "de-fra1",
@@ -791,6 +793,8 @@ export interface BenchmarkHistogram {
  *     server_id (str): Reference to the Server.
  *     benchmark_id (str): Reference to the Benchmark.
  *     config (sc_crawler.table_fields.HashableDict | dict): Dictionary of config parameters of the specific benchmark, e.g. {"bandwidth": 4096}
+ *     framework_version (typing.Optional[str]): The version of the benchmark tool used.
+ *     kernel_version (typing.Optional[str]): The kernel version of the server when the benchmark was run.
  *     score (float): The resulting score of the benchmark.
  *     note (typing.Optional[str]): Optional note, comment or context on the benchmark score.
  *     status (Status): Status of the resource (active or inactive).
@@ -818,6 +822,16 @@ export interface BenchmarkScore {
    * @default {}
    */
   config?: object;
+  /**
+   * Framework Version
+   * The version of the benchmark tool used.
+   */
+  framework_version?: string | null;
+  /**
+   * Kernel Version
+   * The kernel version of the server when the benchmark was run.
+   */
+  kernel_version?: string | null;
   /**
    * Score
    * The resulting score of the benchmark.
@@ -1524,7 +1538,7 @@ export interface RegionPKs {
  *     gpus (typing.List[sc_crawler.table_fields.Gpu]): JSON array of GPU accelerator details, including the manufacturer, name, and memory (MiB) of each GPU.
  *     storage_size (int): Overall size (GB) of the disk(s).
  *     storage_type (typing.Optional[sc_crawler.table_fields.StorageType]): Primary disk type, e.g. HDD, SSD, NVMe SSD, or network).
- *     storages (typing.List[sc_crawler.table_fields.Disk]): JSON array of disks attached to the server, including the size (MiB) and type of each disk.
+ *     storages (typing.List[sc_crawler.table_fields.Disk]): JSON array of disks attached to the server, including the size (GB) and type of each disk.
  *     network_speed (typing.Optional[float]): The baseline network performance (Gbps) of the network card.
  *     inbound_traffic (float): Amount of complimentary inbound traffic (GB) per month.
  *     outbound_traffic (float): Amount of complimentary outbound traffic (GB) per month.
@@ -1723,7 +1737,7 @@ export interface Server {
   storage_type?: StorageType | null;
   /**
    * Storages
-   * JSON array of disks attached to the server, including the size (MiB) and type of each disk.
+   * JSON array of disks attached to the server, including the size (GB) and type of each disk.
    * @default []
    */
   storages?: Disk[];
@@ -1955,7 +1969,7 @@ export interface ServerBase {
   storage_type?: StorageType | null;
   /**
    * Storages
-   * JSON array of disks attached to the server, including the size (MiB) and type of each disk.
+   * JSON array of disks attached to the server, including the size (GB) and type of each disk.
    * @default []
    */
   storages?: Disk[];
@@ -2234,7 +2248,7 @@ export interface ServerPKs {
   storage_type?: StorageType | null;
   /**
    * Storages
-   * JSON array of disks attached to the server, including the size (MiB) and type of each disk.
+   * JSON array of disks attached to the server, including the size (GB) and type of each disk.
    * @default []
    */
   storages?: Disk[];
@@ -2656,7 +2670,7 @@ export interface ServerWithScore {
   storage_type?: StorageType | null;
   /**
    * Storages
-   * JSON array of disks attached to the server, including the size (MiB) and type of each disk.
+   * JSON array of disks attached to the server, including the size (GB) and type of each disk.
    * @default []
    */
   storages?: Disk[];
@@ -3459,6 +3473,7 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "cn-wuhan-lr"
     | "cn-wulanchabu"
     | "cn-zhangjiakou"
+    | "cn-zhongwei"
     | "DE"
     | "DE1"
     | "de-fra1"
@@ -3589,6 +3604,7 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "alicloud~cn-wuhan-lr"
     | "alicloud~cn-wulanchabu"
     | "alicloud~cn-zhangjiakou"
+    | "alicloud~cn-zhongwei"
     | "alicloud~eu-central-1"
     | "alicloud~eu-west-1"
     | "alicloud~me-central-1"
@@ -3941,6 +3957,7 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "cn-wuhan-lr"
     | "cn-wulanchabu"
     | "cn-zhangjiakou"
+    | "cn-zhongwei"
     | "DE"
     | "DE1"
     | "de-fra1"
@@ -4115,6 +4132,7 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "alicloud~cn-wuhan-lr"
     | "alicloud~cn-wulanchabu"
     | "alicloud~cn-zhangjiakou"
+    | "alicloud~cn-zhongwei"
     | "alicloud~eu-central-1"
     | "alicloud~eu-west-1"
     | "alicloud~me-central-1"
@@ -4441,6 +4459,7 @@ export interface GetServerPricesServerVendorServerPricesGetParams {
     | "alicloud~cn-wuhan-lr"
     | "alicloud~cn-wulanchabu"
     | "alicloud~cn-zhangjiakou"
+    | "alicloud~cn-zhongwei"
     | "alicloud~eu-central-1"
     | "alicloud~eu-west-1"
     | "alicloud~me-central-1"
@@ -5054,6 +5073,7 @@ export interface SearchServersServersGetParams {
     | "cn-wuhan-lr"
     | "cn-wulanchabu"
     | "cn-zhangjiakou"
+    | "cn-zhongwei"
     | "DE"
     | "DE1"
     | "de-fra1"
@@ -5184,6 +5204,7 @@ export interface SearchServersServersGetParams {
     | "alicloud~cn-wuhan-lr"
     | "alicloud~cn-wulanchabu"
     | "alicloud~cn-zhangjiakou"
+    | "alicloud~cn-zhongwei"
     | "alicloud~eu-central-1"
     | "alicloud~eu-west-1"
     | "alicloud~me-central-1"
@@ -5738,6 +5759,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "cn-wuhan-lr"
     | "cn-wulanchabu"
     | "cn-zhangjiakou"
+    | "cn-zhongwei"
     | "DE"
     | "DE1"
     | "de-fra1"
@@ -5868,6 +5890,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "alicloud~cn-wuhan-lr"
     | "alicloud~cn-wulanchabu"
     | "alicloud~cn-zhangjiakou"
+    | "alicloud~cn-zhongwei"
     | "alicloud~eu-central-1"
     | "alicloud~eu-west-1"
     | "alicloud~me-central-1"
@@ -6360,6 +6383,7 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "cn-wuhan-lr"
     | "cn-wulanchabu"
     | "cn-zhangjiakou"
+    | "cn-zhongwei"
     | "DE"
     | "DE1"
     | "de-fra1"
@@ -6490,6 +6514,7 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "alicloud~cn-wuhan-lr"
     | "alicloud~cn-wulanchabu"
     | "alicloud~cn-zhangjiakou"
+    | "alicloud~cn-zhongwei"
     | "alicloud~eu-central-1"
     | "alicloud~eu-west-1"
     | "alicloud~me-central-1"
@@ -6899,6 +6924,7 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "cn-wuhan-lr"
     | "cn-wulanchabu"
     | "cn-zhangjiakou"
+    | "cn-zhongwei"
     | "DE"
     | "DE1"
     | "de-fra1"
@@ -7029,6 +7055,7 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "alicloud~cn-wuhan-lr"
     | "alicloud~cn-wulanchabu"
     | "alicloud~cn-zhangjiakou"
+    | "alicloud~cn-zhongwei"
     | "alicloud~eu-central-1"
     | "alicloud~eu-west-1"
     | "alicloud~me-central-1"
