@@ -48,6 +48,7 @@ export type CompressionDataPoint = {
   tooltip: string;
   compress?: number;
   decompress?: number;
+  barLabel?: string;
 };
 
 type CompressionDetailsDataset = ChartDataset<
@@ -63,7 +64,7 @@ type CompressionDetailsDataset = ChartDataset<
 };
 
 type CompressionCompareDataset = ChartDataset<
-  "line",
+  "bar" | "line",
   Array<CompressionDataPoint | null>
 > & {
   data: Array<CompressionDataPoint | null>;
@@ -79,13 +80,15 @@ export type CompressionDetailsChartData = {
 };
 
 export type CompressionCompareChartData = {
-  labels: number[];
+  labels: (number | string)[];
   datasets: CompressionCompareDataset[];
 };
 
 export type CompressionChartOptions = ChartOptionsFor<"line">;
 
 export type CompressionMutableChartOptions = MutableChartOptions<"line">;
+
+export type CompressionCompareChartType = "line" | "bar";
 
 export type CompressionDetailsChartResult = ChartResult<
   CompressionDetailsChartData,
@@ -97,4 +100,5 @@ export type CompressionCompareChartResult = {
   decompressData: CompressionCompareChartData;
   compressOptions: CompressionMutableChartOptions;
   decompressOptions: CompressionMutableChartOptions;
+  chartType: CompressionCompareChartType;
 };
