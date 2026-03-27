@@ -94,7 +94,6 @@ export class Server<SecurityDataType = unknown> {
     {
       vendor,
       server,
-      ...query
     }: GetServerBenchmarksServerVendorServerBenchmarksGetParams,
     params: RequestParams = {},
   ) =>
