@@ -1,19 +1,20 @@
 import {
   ChangeDetectorRef,
   Component,
+  DestroyRef,
   ElementRef,
   EventEmitter,
   Input,
   OnChanges,
-  OnDestroy,
   Output,
   ViewChild,
   ViewEncapsulation,
   inject,
   PLATFORM_ID,
 } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { isPlatformBrowser } from "@angular/common";
-import { DomSanitizer, SafeHtml, SafeUrl } from "@angular/platform-browser";
+import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
 import { LucideAngularModule } from "lucide-angular";
 import { Modal, ModalOptions } from "flowbite";
 import { Subscription } from "rxjs";
@@ -36,7 +37,7 @@ const lstopoModalOptions: ModalOptions = {
   styleUrl: "./server-lstopo.component.scss",
   encapsulation: ViewEncapsulation.None,
 })
-export class ServerLstopoComponent implements OnChanges, OnDestroy {
+export class ServerLstopoComponent implements OnChanges {
   @Input() vendorId: string = "";
   @Input() apiReference: string = "";
   @Output() svgExists = new EventEmitter<boolean>();
@@ -47,14 +48,16 @@ export class ServerLstopoComponent implements OnChanges, OnDestroy {
   private elRef = inject(ElementRef);
   private cdr = inject(ChangeDetectorRef);
   private svgService = inject(LstopoSvgService);
+  private destroyRef = inject(DestroyRef);
+
+  constructor() {
+    this.destroyRef.onDestroy(() => this.resetRenderedSvg());
+  }
 
   lstopoUrl: string = "";
-  svgImgUrl: SafeUrl | null = null;
-  tooltipSvg: SafeHtml | null = null;
+  inlineSvg: SafeHtml | null = null;
   modalSvg: SafeHtml | null = null;
   isLoading: boolean = false;
-
-  private blobUrl: string | null = null;
 
   @ViewChild("lstopoModal") private lstopoModalRef?: ElementRef<HTMLElement>;
   @ViewChild("lstopoTooltip") private tooltipRef?: ElementRef<HTMLElement>;
@@ -69,128 +72,77 @@ export class ServerLstopoComponent implements OnChanges, OnDestroy {
     fn: EventListener;
   }> = [];
 
-  private readonly SVG_TOOLTIP_MAP: Record<string, string> = {
-    "text.HostBridge": "Host bridge speed",
-    "text.PCIBridge": "PCI bridge speed",
-    "rect.L1i": "CPU Level 1 (L1) instruction cache",
-    "rect.L1d": "CPU Level 1 (L1) data cache",
-    "rect.L2": "CPU Level 2 (L2) cache",
-    "rect.L3": "CPU Level 3 (L3) cache",
-    "rect.PU": "Processing Unit",
-  };
-
   ngOnChanges(): void {
     if (!this.vendorId || !this.apiReference) {
       this.svgSub?.unsubscribe();
       this.svgSub = undefined;
-      this.removeSvgTooltips();
+      this.resetRenderedSvg();
       this.isLoading = false;
-      this.svgImgUrl = null;
-      this.tooltipSvg = null;
-      this.modalSvg = null;
-      this.revokeBlobUrl();
       this.lstopoUrl = "";
       this.svgExists.emit(false);
       this.svgWidth.emit(0);
       return;
     }
     this.isLoading = true;
-    this.svgImgUrl = null;
+    this.resetRenderedSvg();
     this.svgWidth.emit(0);
     this.lstopoUrl = `${LSTOPO_CDN_BASE}/${this.vendorId}/${this.apiReference}/${LSTOPO_PATH_SUFFIX}`;
 
     const url = this.lstopoUrl;
     this.svgSub?.unsubscribe();
-    this.svgSub = this.svgService.getSvg(url).subscribe({
-      next: (svg) => {
-        try {
-          if (!svg) {
-            this.svgExists.emit(false);
-            this.svgImgUrl = null;
-            this.modalSvg = null;
-            this.tooltipSvg = null;
-            this.svgWidth.emit(0);
-            this.revokeBlobUrl();
-            this.removeSvgTooltips();
-            return;
-          }
-          this.svgExists.emit(true);
-          if (isPlatformBrowser(this.platformId)) {
-            try {
-              const {
-                w,
-                coloredSvg,
-                tooltipSvg: tooltipSvgStr,
-                normalizedSvg,
-              } = this.svgService.processSvg(svg);
-              if (w) setTimeout(() => this.svgWidth.emit(w), 0);
-              this.modalSvg =
-                this.sanitizer.bypassSecurityTrustHtml(normalizedSvg);
-              try {
-                const blob = new Blob([coloredSvg], { type: "image/svg+xml" });
-                this.revokeBlobUrl();
-                this.blobUrl = URL.createObjectURL(blob);
-                this.svgImgUrl = this.sanitizer.bypassSecurityTrustUrl(
-                  this.blobUrl,
-                );
-              } catch (e) {
-                console.warn(
-                  "[lstopo] blob build failed, falling back to CDN URL",
-                  e,
-                );
-                this.svgImgUrl = this.sanitizer.bypassSecurityTrustUrl(
-                  this.lstopoUrl,
-                );
-              }
-              this.tooltipSvg =
-                this.sanitizer.bypassSecurityTrustHtml(tooltipSvgStr);
-            } catch (e) {
-              console.warn("[lstopo] SVG processing failed", e);
-              this.modalSvg = null;
-              this.tooltipSvg = null;
-              this.revokeBlobUrl();
-              this.svgImgUrl = this.sanitizer.bypassSecurityTrustUrl(
-                this.lstopoUrl,
-              );
+    this.svgSub = this.svgService
+      .getSvg(url)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (svg) => {
+          try {
+            if (!svg) {
+              this.svgExists.emit(false);
+              this.resetRenderedSvg();
+              this.svgWidth.emit(0);
+              return;
             }
-            this.cdr.markForCheck();
-            setTimeout(() => {
-              const el = this.lstopoModalRef?.nativeElement;
-              if (el) {
-                if (this.modal) {
-                  this.modal.destroyAndRemoveInstance();
-                  this.modal = null;
-                }
-                this.modal = new Modal(el, lstopoModalOptions);
+            if (isPlatformBrowser(this.platformId)) {
+              try {
+                const { w, normalizedSvg } = this.svgService.processSvg(svg);
+                if (w) setTimeout(() => this.svgWidth.emit(w), 0);
+                const trustedSvg =
+                  this.sanitizer.bypassSecurityTrustHtml(normalizedSvg);
+                this.inlineSvg = trustedSvg;
+                this.modalSvg = trustedSvg;
+                this.svgExists.emit(true);
+              } catch (e) {
+                console.warn("[lstopo] SVG processing failed", e);
+                this.resetRenderedSvg();
+                this.svgExists.emit(false);
               }
-              this.addSvgTooltips();
-            }, 0);
-          } else {
-            this.modalSvg = this.sanitizer.bypassSecurityTrustHtml(svg);
-            this.tooltipSvg = null;
+              this.cdr.markForCheck();
+              setTimeout(() => {
+                const el = this.lstopoModalRef?.nativeElement;
+                if (el) {
+                  if (this.modal) {
+                    this.modal.destroyAndRemoveInstance();
+                    this.modal = null;
+                  }
+                  this.modal = new Modal(el, lstopoModalOptions);
+                }
+                this.addSvgTooltips();
+              }, 0);
+            } else {
+              // Skip inline SVG on server to avoid bloating SSR response
+            }
+          } finally {
+            this.isLoading = false;
           }
-        } finally {
+        },
+        error: (err) => {
+          console.warn("[lstopo] failed to load SVG", err);
           this.isLoading = false;
-        }
-      },
-      error: (err) => {
-        console.warn("[lstopo] failed to load SVG", err);
-        this.isLoading = false;
-        this.svgExists.emit(false);
-        this.modalSvg = null;
-        this.tooltipSvg = null;
-        this.svgImgUrl = null;
-        this.revokeBlobUrl();
-        this.cdr.markForCheck();
-      },
-    });
-  }
-
-  private revokeBlobUrl(): void {
-    if (this.blobUrl) {
-      URL.revokeObjectURL(this.blobUrl);
-      this.blobUrl = null;
-    }
+          this.svgExists.emit(false);
+          this.resetRenderedSvg();
+          this.cdr.markForCheck();
+        },
+      });
   }
 
   openLstopoModal(): void {
@@ -204,7 +156,10 @@ export class ServerLstopoComponent implements OnChanges, OnDestroy {
   showTooltip(e: Event, content: string): void {
     const tooltip = this.tooltipRef?.nativeElement;
     if (!tooltip) return;
-    const target = e.target as Element;
+    const target =
+      e.currentTarget instanceof Element
+        ? e.currentTarget
+        : (e.target as Element);
     const rect = target.getBoundingClientRect();
     tooltip.style.left = `${rect.left - 25}px`;
     tooltip.style.top = `${rect.bottom + 5}px`;
@@ -224,8 +179,15 @@ export class ServerLstopoComponent implements OnChanges, OnDestroy {
   private addSvgTooltips(): void {
     this.removeSvgTooltips();
     const host: HTMLElement = this.elRef.nativeElement;
-    for (const [selector, content] of Object.entries(this.SVG_TOOLTIP_MAP)) {
-      host.querySelectorAll(selector).forEach((el) => {
+    host
+      .querySelectorAll(
+        ".lstopo-interactive [data-description], .lstopo-modal-svg [data-description]",
+      )
+      .forEach((el) => {
+        const content = el.getAttribute("data-description")?.trim();
+        if (!content) {
+          return;
+        }
         const mouseenter: EventListener = (e) => this.showTooltip(e, content);
         const mouseleave: EventListener = () => this.hideTooltip();
         el.addEventListener("mouseenter", mouseenter);
@@ -235,7 +197,6 @@ export class ServerLstopoComponent implements OnChanges, OnDestroy {
           { el, type: "mouseleave", fn: mouseleave },
         );
       });
-    }
   }
 
   private removeSvgTooltips(): void {
@@ -245,13 +206,13 @@ export class ServerLstopoComponent implements OnChanges, OnDestroy {
     this.tooltipListeners = [];
   }
 
-  ngOnDestroy(): void {
-    this.svgSub?.unsubscribe();
+  private resetRenderedSvg(): void {
     this.removeSvgTooltips();
-    this.revokeBlobUrl();
     if (isPlatformBrowser(this.platformId) && this.modal) {
       this.modal.destroyAndRemoveInstance();
       this.modal = null;
     }
+    this.inlineSvg = null;
+    this.modalSvg = null;
   }
 }
