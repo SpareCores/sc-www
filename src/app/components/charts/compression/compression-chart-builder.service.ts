@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import { TooltipItem, TooltipModel } from "chart.js";
+import { formatBytes } from "../../../pipes/pipe-utils";
 import { radarDatasetColors } from "../shared/chart-colors.constants";
 import { cloneChartOptions } from "../shared/chart-options.utils";
 import {
@@ -9,6 +10,7 @@ import {
   CompressionChartOptions,
   CompressionCompareChartData,
   CompressionCompareChartResult,
+  CompressionCompareChartType,
   CompressionConfig,
   CompressionDataPoint,
   CompressionDetailsChartData,
@@ -93,11 +95,34 @@ export class CompressionChartBuilderService {
     });
 
     return options
-      .sort((a, b) => (a.algo || "").localeCompare(b.algo || ""))
+      .sort((a, b) => {
+        const algoCompare = (a.algo || "").localeCompare(b.algo || "");
+        if (algoCompare !== 0) return algoCompare;
+
+        const extraKeys = new Set<string>();
+        for (const key of [...Object.keys(a), ...Object.keys(b)]) {
+          if (key !== "algo" && key !== "cores") extraKeys.add(key);
+        }
+        for (const key of [...extraKeys].sort()) {
+          const aValue = String(a[key] ?? "");
+          const bValue = String(b[key] ?? "");
+          const compareValues = aValue.localeCompare(bValue, undefined, {
+            numeric: true,
+          });
+          if (compareValues !== 0) return compareValues;
+        }
+
+        if (a.cores === "single" && b.cores !== "single") return -1;
+        if (a.cores !== "single" && b.cores === "single") return 1;
+        return (a.cores || "").localeCompare(b.cores || "");
+      })
       .map((item) => ({
         options: item,
         name: Object.keys(item)
-          .map((key) => `${key.replace(/_/g, " ")}: ${item[key]}`)
+          .map(
+            (key) =>
+              `${key.replace(/_/g, " ")}: ${this.formatConfigValue(key, item[key])}`,
+          )
           .join(", "),
       }));
   }
@@ -106,49 +131,53 @@ export class CompressionChartBuilderService {
     benchmarksByCategory: CompressionBenchmarkGroup[];
     mode: DetailsCompressionMode;
     baseOptions: CompressionChartOptions;
+    coresMode?: "single" | "multi";
   }): CompressionDetailsChartResult | undefined {
-    const { benchmarksByCategory, mode, baseOptions } = params;
-    let dataSet1 =
+    const {
+      benchmarksByCategory,
+      mode,
+      baseOptions,
+      coresMode = "single",
+    } = params;
+    const matchesCores = (item: { config: CompressionConfig }) =>
+      item.config.cores === coresMode ||
+      (!item.config.cores && coresMode === "single");
+
+    let ratioScores =
       benchmarksByCategory?.find(
         (benchmark) => benchmark.benchmark_id === "compression_text:ratio",
       )?.benchmarks || [];
 
-    if (!dataSet1.length) {
+    if (!ratioScores.length) {
       return undefined;
     }
 
-    let dataSet2 =
+    let compressScores =
       benchmarksByCategory?.find(
         (benchmark) => benchmark.benchmark_id === "compression_text:compress",
       )?.benchmarks || [];
-    let dataSet3 =
+    let decompressScores =
       benchmarksByCategory?.find(
         (benchmark) => benchmark.benchmark_id === "compression_text:decompress",
       )?.benchmarks || [];
 
-    dataSet1 = dataSet1.filter(
-      (item) => !item.config.cores || item.config.cores === "single",
-    );
-    dataSet2 = dataSet2.filter(
-      (item) => !item.config.cores || item.config.cores === "single",
-    );
-    dataSet3 = dataSet3.filter(
-      (item) => !item.config.cores || item.config.cores === "single",
-    );
+    ratioScores = ratioScores.filter(matchesCores);
+    compressScores = compressScores.filter(matchesCores);
+    decompressScores = decompressScores.filter(matchesCores);
 
     const data: CompressionDetailsChartData = {
       labels: [],
       datasets: [],
     };
 
-    dataSet1.forEach((item) => {
+    ratioScores.forEach((item) => {
       const found = data.datasets.find(
         (dataset) => dataset.config.algo === item.config.algo,
       );
 
       const entry: CompressionDataPoint = {
         config: item.config,
-        ratio: Math.floor(item.score * 100) / 100,
+        ratio: this.roundRatio(item.score),
         algo: item.config.algo,
         compression_level: item.config.compression_level,
         tooltip: this.buildConfigTooltip(item.config, (key) => key !== "algo"),
@@ -172,10 +201,10 @@ export class CompressionChartBuilderService {
 
     data.datasets.forEach((dataset) => {
       dataset.data.forEach((item) => {
-        const compressItem = dataSet2.find((dataItem) =>
+        const compressItem = compressScores.find((dataItem) =>
           this.matchesConfig(item.config, dataItem.config),
         );
-        const decompressItem = dataSet3.find((dataItem) =>
+        const decompressItem = decompressScores.find((dataItem) =>
           this.matchesConfig(item.config, dataItem.config),
         );
         if (compressItem && decompressItem) {
@@ -204,8 +233,43 @@ export class CompressionChartBuilderService {
       return undefined;
     }
 
+    const allMatchedItems: { config: CompressionConfig; score: number }[] = [];
+    params.servers.forEach((server) => {
+      server.benchmark_scores
+        .filter(
+          (b) =>
+            b.benchmark_id === "compression_text:ratio" &&
+            this.matchesConfig(selectedConfig, b.config),
+        )
+        .forEach((b) =>
+          allMatchedItems.push({ config: b.config, score: b.score }),
+        );
+    });
+
+    const hasCompressionLevel = allMatchedItems.some(
+      (item) => item.config.compression_level != null,
+    );
+    const chartType: CompressionCompareChartType = hasCompressionLevel
+      ? "line"
+      : "bar";
+
+    const labels: (number | string)[] = [];
+    let barLabel: string | undefined;
+    if (hasCompressionLevel) {
+      allMatchedItems.forEach((item) => {
+        const level = item.config.compression_level;
+        if (level != null && labels.indexOf(level) === -1) {
+          labels.push(level);
+        }
+      });
+      (labels as number[]).sort((a, b) => a - b);
+    } else {
+      barLabel = "";
+      labels.push(barLabel);
+    }
+
     const chartData: CompressionCompareChartData = {
-      labels: [],
+      labels: [...labels],
       datasets: params.servers.map((server, index) => ({
         data: [],
         label: server.display_name,
@@ -217,67 +281,39 @@ export class CompressionChartBuilderService {
       })),
     };
 
-    const labels: number[] = [];
-
-    params.servers.forEach((server) => {
-      const items = server.benchmark_scores.filter(
-        (benchmark) =>
-          benchmark.benchmark_id === "compression_text:ratio" &&
-          benchmark.config.algo === selectedConfig.algo &&
-          benchmark.config.cores === selectedConfig.cores,
-      );
-
-      items.forEach((item) => {
-        if (item.score && labels.indexOf(item.score) === -1) {
-          labels.push(item.score);
-        }
-      });
-    });
-
-    chartData.labels = labels
-      .sort((a, b) => a - b)
-      .map((label) => Math.floor(label * 100) / 100);
-
     params.servers.forEach((server, i) => {
-      labels.forEach((size: number) => {
+      if (hasCompressionLevel) {
+        (labels as number[]).forEach((level) => {
+          const item = server.benchmark_scores.find(
+            (b) =>
+              b.benchmark_id === "compression_text:ratio" &&
+              this.matchesConfig(selectedConfig, b.config) &&
+              b.config.compression_level === level,
+          );
+
+          if (item) {
+            chartData.datasets[i].data.push(
+              this.buildCompareDataPoint(item, server, selectedConfig),
+            );
+          } else {
+            chartData.datasets[i].data.push(null);
+          }
+        });
+      } else {
         const item = server.benchmark_scores.find(
-          (benchmark) =>
-            benchmark.benchmark_id === "compression_text:ratio" &&
-            benchmark.config.algo === selectedConfig.algo &&
-            benchmark.config.cores === selectedConfig.cores &&
-            benchmark.score === size,
+          (b) =>
+            b.benchmark_id === "compression_text:ratio" &&
+            this.matchesConfig(selectedConfig, b.config),
         );
 
         if (item) {
-          const compressItem = server.benchmark_scores.find((benchmark) => {
-            return (
-              benchmark.benchmark_id === "compression_text:compress" &&
-              this.matchesConfig(item.config, benchmark.config)
-            );
-          });
-          const decompressItem = server.benchmark_scores.find((benchmark) => {
-            return (
-              benchmark.benchmark_id === "compression_text:decompress" &&
-              this.matchesConfig(item.config, benchmark.config)
-            );
-          });
-
-          chartData.datasets[i].data.push({
-            config: item.config,
-            ratio: Math.floor(item.score * 100) / 100,
-            algo: item.config.algo,
-            compression_level: item.config.compression_level,
-            tooltip: this.buildConfigTooltip(
-              item.config,
-              (key) => key === "compression_level",
-            ),
-            compress: compressItem?.score,
-            decompress: decompressItem?.score,
-          });
+          chartData.datasets[i].data.push(
+            this.buildCompareDataPoint(item, server, selectedConfig, barLabel),
+          );
         } else {
           chartData.datasets[i].data.push(null);
         }
-      });
+      }
     });
 
     const compressOptions = cloneChartOptions(params.compressOptionsBase ?? {});
@@ -285,8 +321,21 @@ export class CompressionChartBuilderService {
       params.decompressOptionsBase ?? {},
     );
 
-    this.setCompareTooltipTitle(compressOptions, selectedName ?? "");
-    this.setCompareTooltipTitle(decompressOptions, selectedName ?? "");
+    this.setCompareTooltipTitle(
+      compressOptions,
+      selectedName ?? "",
+      hasCompressionLevel,
+    );
+    this.setCompareTooltipTitle(
+      decompressOptions,
+      selectedName ?? "",
+      hasCompressionLevel,
+    );
+
+    if (!hasCompressionLevel) {
+      this.configureBarChartOptions(compressOptions);
+      this.configureBarChartOptions(decompressOptions);
+    }
 
     return {
       compressData: {
@@ -305,7 +354,56 @@ export class CompressionChartBuilderService {
       },
       compressOptions,
       decompressOptions,
+      chartType,
     };
+  }
+
+  private buildCompareDataPoint(
+    ratioItem: { score: number; config: CompressionConfig },
+    server: CompressionServer,
+    selectedConfig: CompressionConfig,
+    barLabel?: string,
+  ): CompressionDataPoint {
+    const compressItem = server.benchmark_scores.find(
+      (b) =>
+        b.benchmark_id === "compression_text:compress" &&
+        this.matchesConfig(ratioItem.config, b.config),
+    );
+    const decompressItem = server.benchmark_scores.find(
+      (b) =>
+        b.benchmark_id === "compression_text:decompress" &&
+        this.matchesConfig(ratioItem.config, b.config),
+    );
+
+    return {
+      config: ratioItem.config,
+      ratio: this.roundRatio(ratioItem.score),
+      algo: ratioItem.config.algo,
+      compression_level: ratioItem.config.compression_level,
+      tooltip: "ratio: " + this.roundRatio(ratioItem.score) + "%",
+      compress: compressItem?.score,
+      decompress: decompressItem?.score,
+      barLabel,
+    };
+  }
+
+  private configureBarChartOptions(
+    options: CompressionMutableChartOptions,
+  ): void {
+    const scales = options.scales as
+      | { x?: { title?: { display?: boolean }; ticks?: { display?: boolean } } }
+      | undefined;
+    if (scales?.x?.title) {
+      scales.x.title.display = false;
+    }
+    if (scales?.x?.ticks) {
+      scales.x.ticks.display = false;
+    }
+
+    const parsing = options.parsing;
+    if (parsing) {
+      parsing.xAxisKey = "barLabel";
+    }
   }
 
   private configureDetailsData(
@@ -373,8 +471,23 @@ export class CompressionChartBuilderService {
   ): string {
     return Object.keys(config)
       .filter(includeKey)
-      .map((key) => `${key.replace(/_/g, " ")}: ${config[key]}`)
+      .filter((key) => config[key] != null)
+      .map(
+        (key) =>
+          `${key.replace(/_/g, " ")}: ${this.formatConfigValue(key, config[key])}`,
+      )
       .join(", ");
+  }
+
+  private formatConfigValue(key: string, value: unknown): string {
+    if (key === "block_size" && typeof value === "number") {
+      return formatBytes(value);
+    }
+    return String(value);
+  }
+
+  private roundRatio(value: number): number {
+    return Math.floor(value * 100) / 100;
   }
 
   private matchesConfig(
@@ -410,6 +523,7 @@ export class CompressionChartBuilderService {
   private setCompareTooltipTitle(
     options: CompressionMutableChartOptions,
     selectedName: string,
+    hasCompressionLevel: boolean,
   ): void {
     const callbacks = options.plugins?.tooltip?.callbacks;
 
@@ -418,12 +532,19 @@ export class CompressionChartBuilderService {
     }
 
     callbacks.title = function (
-      this: TooltipModel<"line">,
-      tooltipItems: TooltipItem<"line">[],
+      this: TooltipModel<"line" | "bar">,
+      tooltipItems: TooltipItem<"line" | "bar">[],
     ) {
-      return (
-        tooltipItems[0].label + "% compression ratio (" + selectedName + ")"
-      );
+      if (hasCompressionLevel) {
+        return (
+          "Compression level: " +
+          tooltipItems[0].label +
+          " (" +
+          selectedName +
+          ")"
+        );
+      }
+      return selectedName;
     };
   }
 }

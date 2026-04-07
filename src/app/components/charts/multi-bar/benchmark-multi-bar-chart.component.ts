@@ -22,7 +22,7 @@ import {
 import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon.pipe";
 import { cloneChartOptions } from "../shared/chart-options.utils";
 import { ChartTooltipService } from "../shared/chart-tooltip.service";
-import { FlowbiteDropdownDirective } from "../shared/flowbite-dropdown.directive";
+import { FlowbiteDropdownDirective } from "../../../directives/flowbite-dropdown.directive";
 import { BenchmarkMultiBarChartBuilderService } from "./benchmark-multi-bar-chart-builder.service";
 import {
   BenchmarkMultiBarChartItem,

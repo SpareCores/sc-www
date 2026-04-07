@@ -1,68 +1,43 @@
-import { CommonModule, isPlatformBrowser } from "@angular/common";
-import { Component, OnInit, PLATFORM_ID, inject } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { Component, inject, viewChild } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 import { ServerCompareService } from "../../services/server-compare.service";
-import { DropdownManagerService } from "../../services/dropdown-manager.service";
+import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
 
 @Component({
   selector: "app-header",
-  imports: [LucideAngularModule, RouterLink, CommonModule],
+  imports: [
+    LucideAngularModule,
+    RouterLink,
+    CommonModule,
+    FlowbiteDropdownDirective,
+  ],
   templateUrl: "./header.component.html",
   styleUrl: "./header.component.scss",
 })
-export class HeaderComponent implements OnInit {
-  private platformId = inject(PLATFORM_ID);
+export class HeaderComponent {
   private serverCompare = inject(ServerCompareService);
-  private dropdownManager = inject(DropdownManagerService);
 
-  dropdownMenu: any;
-  dropdownAbout: any;
-  dropdownCompare: any;
-  dropdownNavigator: any;
-
-  ngOnInit() {
-    if (isPlatformBrowser(this.platformId)) {
-      this.dropdownManager
-        .initDropdown("menu_button", "menu_options")
-        .then((dropdown) => {
-          this.dropdownMenu = dropdown;
-        });
-
-      this.dropdownManager
-        .initDropdown("about_button", "about_options")
-        .then((dropdown) => {
-          this.dropdownAbout = dropdown;
-        });
-
-      this.dropdownManager
-        .initDropdown("compare_button", "compare_options")
-        .then((dropdown) => {
-          this.dropdownCompare = dropdown;
-        });
-
-      this.dropdownManager
-        .initDropdown("navigator_button", "navigator_options")
-        .then((dropdown) => {
-          this.dropdownNavigator = dropdown;
-        });
-    }
-  }
+  menuDropdown = viewChild<FlowbiteDropdownDirective>("menuDropdown");
+  aboutDropdown = viewChild<FlowbiteDropdownDirective>("aboutDropdown");
+  compareDropdown = viewChild<FlowbiteDropdownDirective>("compareDropdown");
+  navigatorDropdown = viewChild<FlowbiteDropdownDirective>("navigatorDropdown");
 
   closeMenu() {
-    this.dropdownMenu?.hide();
+    this.menuDropdown()?.hide();
   }
 
   closeCompare() {
-    this.dropdownCompare?.hide();
+    this.compareDropdown()?.hide();
   }
 
   closeNavigator() {
-    this.dropdownNavigator?.hide();
+    this.navigatorDropdown()?.hide();
   }
 
   closeAbout() {
-    this.dropdownAbout?.hide();
+    this.aboutDropdown()?.hide();
   }
 
   compareCount(): number {

@@ -17,7 +17,7 @@ import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon.pipe";
 import { ChartTooltipService } from "../shared/chart-tooltip.service";
 import { MemoryChartBuilderService } from "./memory-chart-builder.service";
 import { ServerDetailsMemoryChartOption } from "../shared/memory-chart.types";
-import { FlowbiteDropdownDirective } from "../shared/flowbite-dropdown.directive";
+import { FlowbiteDropdownDirective } from "../../../directives/flowbite-dropdown.directive";
 import {
   MemoryBenchmarkGroup,
   MemoryBenchmarkMeta,

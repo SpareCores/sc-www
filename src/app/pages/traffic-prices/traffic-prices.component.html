@@ -54,7 +54,13 @@
         }"
       >
         <div class="top_buttons w-full flex justify-end gap-6 items-center">
-          <button id="currency_button" class="dropdown_button" type="button">
+          <button
+            id="currency_button"
+            [appFlowbiteDropdown]="'currency_options'"
+            #currencyDropdown="appFlowbiteDropdown"
+            class="dropdown_button"
+            type="button"
+          >
             <div class="px-4 py-3">
               {{ selectedCurrency.slug }}
             </div>
@@ -70,7 +76,7 @@
           <button
             id="column_button"
             data-ph-capture-attribute-sc-event="server listing columns select"
-            data-dropdown-toggle="column_options"
+            [appFlowbiteDropdown]="'column_options'"
             class="dropdown_button"
             type="button"
           >
@@ -233,7 +239,10 @@
                 <button
                   id="pagesize_button"
                   data-ph-capture-attribute-sc-event="server listing page size select"
-                  data-dropdown-toggle="pagesize_options"
+                  [appFlowbiteDropdown]="'pagesize_options'"
+                  [dropdownFlip]="true"
+                  [dropdownPlacement]="'bottom-start'"
+                  #pageDropdown="appFlowbiteDropdown"
                   class="dropdown_button"
                   type="button"
                 >
@@ -312,7 +321,7 @@
 
 <div
   id="currency_options"
-  class="z-100 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid"
+  class="z-10 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid"
 >
   <ul
     class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"

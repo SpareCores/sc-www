@@ -29,6 +29,16 @@
       scroll-margin-top: 10rem;
     }
 
+    tr.compare-section-header {
+      position: relative;
+      z-index: 1;
+    }
+
+    tr.compare-compression-row {
+      position: relative;
+      z-index: 30;
+    }
+
     tr {
       @apply bg-primary;
 

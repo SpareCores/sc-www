@@ -1,7 +1,9 @@
 @if (layout() === "details") {
   @if (detailsChartData()) {
     <div class="block_half" id="compress_chart">
-      <div class="flex justify-between items-center">
+      <div
+        class="flex flex-col items-start gap-4 md:flex-row md:items-center md:justify-between"
+      >
         <h3 class="text-2xl flex items-center gap-2">
           <lucide-icon
             [name]="'compression' | benchmarkIcon"
@@ -23,19 +25,46 @@
           >
           </lucide-icon>
         </h3>
-        <div class="flex gap-4">
+        <div class="flex min-w-0 gap-4">
+          @if (hasCoresSelector()) {
+            <button
+              #coresDropdown="appFlowbiteDropdown"
+              [id]="coresButtonId"
+              class="dropdown_button min-w-0 justify-between overflow-hidden"
+              type="button"
+              [appFlowbiteDropdown]="coresOptionsId"
+              [dropdownEnabled]="isBrowser"
+            >
+              <div
+                class="min-w-0 flex-1 truncate whitespace-nowrap px-3 py-2 text-left"
+              >
+                {{ coresLabel() }}
+              </div>
+              <div
+                class="px-3 py-2 w-12 h-full shrink-0 bg-primary justify-center items-center flex rounded-r-lg"
+              >
+                <lucide-icon
+                  name="chevron-down"
+                  class="h-6 w-6 text-emerald-400"
+                ></lucide-icon>
+              </div>
+            </button>
+          }
           <button
+            #selectorDropdown="appFlowbiteDropdown"
             [id]="buttonId"
-            class="dropdown_button"
+            class="dropdown_button min-w-0 justify-between overflow-hidden"
             type="button"
             [appFlowbiteDropdown]="optionsId"
             [dropdownEnabled]="isBrowser && hasOptions()"
           >
-            <div class="px-3 py-2">
+            <div
+              class="min-w-0 flex-1 truncate whitespace-nowrap px-3 py-2 text-left"
+            >
               {{ currentDetailsMode().name }}
             </div>
             <div
-              class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
+              class="px-3 py-2 w-12 h-full shrink-0 bg-primary justify-center items-center flex rounded-r-lg"
             >
               <lucide-icon
                 name="chevron-down"
@@ -63,60 +92,106 @@
   }
 } @else {
   @if (compareOptions().length) {
-    <div class="block_full_short_inline">
-      <div class="flex justify-end items-center">
-        <div class="flex gap-4">
-          <button
-            [id]="buttonId"
-            class="dropdown_button"
-            type="button"
-            [appFlowbiteDropdown]="optionsId"
-            [dropdownEnabled]="isBrowser && hasOptions()"
-          >
-            <div class="px-3 py-2">
-              {{ currentCompareOptionName() }}
-            </div>
-            <div
-              class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
+    <div class="relative z-30">
+      <div class="block_full_short_inline">
+        <div class="flex justify-end items-center">
+          <div class="flex gap-4">
+            <button
+              #selectorDropdown="appFlowbiteDropdown"
+              [id]="buttonId"
+              class="dropdown_button self-stretch justify-between overflow-hidden md:self-auto"
+              type="button"
+              [appFlowbiteDropdown]="optionsId"
+              [dropdownEnabled]="isBrowser && hasOptions()"
             >
-              <lucide-icon
-                name="chevron-down"
-                class="h-6 w-6 text-emerald-400"
-              ></lucide-icon>
-            </div>
-          </button>
+              <div
+                class="min-w-0 flex-1 truncate whitespace-nowrap px-3 py-2 text-left"
+              >
+                {{ currentCompareOptionName() }}
+              </div>
+              <div
+                class="px-3 py-2 w-12 h-full shrink-0 bg-primary justify-center items-center flex rounded-r-lg"
+              >
+                <lucide-icon
+                  name="chevron-down"
+                  class="h-6 w-6 text-emerald-400"
+                ></lucide-icon>
+              </div>
+            </button>
+          </div>
         </div>
+        @if (isBrowser) {
+          <div class="charts_div">
+            <div class="chart_div" [attr.chartType]="compareChartType()">
+              @if (compareChartType() === "line") {
+                <canvas
+                  baseChart
+                  [data]="compareCompressLineData()"
+                  [options]="compareCompressLineOptions()"
+                  [type]="'line'"
+                >
+                </canvas>
+              } @else {
+                <canvas
+                  baseChart
+                  [data]="compareCompressBarData()"
+                  [options]="compareCompressBarOptions()"
+                  [type]="'bar'"
+                >
+                </canvas>
+              }
+            </div>
+            <div class="chart_div" [attr.chartType]="compareChartType()">
+              @if (compareChartType() === "line") {
+                <canvas
+                  baseChart
+                  [data]="compareDecompressLineData()"
+                  [options]="compareDecompressLineOptions()"
+                  [type]="'line'"
+                >
+                </canvas>
+              } @else {
+                <canvas
+                  baseChart
+                  [data]="compareDecompressBarData()"
+                  [options]="compareDecompressBarOptions()"
+                  [type]="'bar'"
+                >
+                </canvas>
+              }
+            </div>
+          </div>
+        }
       </div>
-      @if (isBrowser) {
-        <div class="charts_div">
-          <div chartType="bar" class="chart_div">
-            <canvas
-              baseChart
-              [data]="compareCompressData()"
-              [options]="compareCompressOptions()"
-              [type]="lineChartType"
-            >
-            </canvas>
-          </div>
-          <div chartType="bar" class="chart_div">
-            <canvas
-              baseChart
-              [data]="compareDecompressData()"
-              [options]="compareDecompressOptions()"
-              [type]="lineChartType"
-            >
-            </canvas>
-          </div>
-        </div>
-      }
+      <div
+        [id]="optionsId"
+        class="z-10 hidden w-max min-w-64 max-w-[calc(100vw-2rem)] bg-secondary rounded-lg border border-emerald-400 border-solid shadow"
+      >
+        <ul
+          class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
+          [attr.aria-labelledby]="buttonId"
+        >
+          @for (option of compareOptions(); track option.name; let i = $index) {
+            <li>
+              <button
+                type="button"
+                class="w-full flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm border-0 bg-transparent text-left"
+                (click)="selectCompareOption(i)"
+              >
+                <div class="text-white text-sm">{{ option.name }}</div>
+              </button>
+            </li>
+          }
+        </ul>
+      </div>
     </div>
   }
 }
 
-@if (hasOptions()) {
+@if (layout() === "details" && hasOptions()) {
   <div
     [id]="optionsId"
-    class="z-100 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid"
+    class="z-10 hidden w-max min-w-64 max-w-[calc(100vw-2rem)] bg-secondary rounded-lg border border-emerald-400 border-solid shadow"
   >
     <ul
       class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
@@ -134,18 +209,30 @@
             </button>
           </li>
         }
-      } @else {
-        @for (option of compareOptions(); track option.name; let i = $index) {
-          <li>
-            <button
-              type="button"
-              class="w-full flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm border-0 bg-transparent text-left"
-              (click)="selectCompareOption(i)"
-            >
-              <div class="text-white text-sm">{{ option.name }}</div>
-            </button>
-          </li>
-        }
+      }
+    </ul>
+  </div>
+}
+
+@if (hasCoresSelector()) {
+  <div
+    [id]="coresOptionsId"
+    class="z-10 hidden w-max min-w-64 max-w-[calc(100vw-2rem)] bg-secondary rounded-lg border border-emerald-400 border-solid shadow"
+  >
+    <ul
+      class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
+      [attr.aria-labelledby]="coresButtonId"
+    >
+      @for (option of availableCoresOptions(); track option) {
+        <li>
+          <button
+            type="button"
+            class="w-full flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm border-0 bg-transparent text-left"
+            (click)="selectCoresMode(option)"
+          >
+            <div class="text-white text-sm">cores: {{ option }}</div>
+          </button>
+        </li>
       }
     </ul>
   </div>
@@ -156,5 +243,5 @@
   style="opacity: 0; display: none"
   class="tooltip-panel fixed z-100 pointer-events-none"
 >
-  {{ tooltipContent }}
+  {{ tooltipContent() }}
 </div>

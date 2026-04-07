@@ -5,6 +5,7 @@ import {
   ElementRef,
   PLATFORM_ID,
   computed,
+  effect,
   inject,
   input,
   signal,
@@ -12,6 +13,7 @@ import {
 } from "@angular/core";
 import { LucideAngularModule } from "lucide-angular";
 import { BaseChartDirective } from "ng2-charts";
+import { ChartData, ChartOptions } from "chart.js";
 import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon.pipe";
 import { CompressionChartBuilderService } from "./compression-chart-builder.service";
 import {
@@ -19,6 +21,7 @@ import {
   CompressionBenchmarkGroup,
   CompressionBenchmarkMeta,
   CompressionCompareChartResult,
+  CompressionCompareChartType,
   CompressionDetailsChartResult,
   CompressionServer,
 } from "./compression-chart.types";
@@ -28,7 +31,7 @@ import {
   lineChartOptionsCompareDecompress,
 } from "../../../pages/server-details/chartOptions";
 import { ChartTooltipService } from "../shared/chart-tooltip.service";
-import { FlowbiteDropdownDirective } from "../shared/flowbite-dropdown.directive";
+import { FlowbiteDropdownDirective } from "../../../directives/flowbite-dropdown.directive";
 
 @Component({
   selector: "app-compression-chart",
@@ -57,6 +60,8 @@ export class CompressionChartComponent {
   private tooltipService = inject(ChartTooltipService);
 
   tooltip = viewChild<ElementRef<HTMLElement>>("tooltipDefault");
+  selectorDropdown = viewChild<FlowbiteDropdownDirective>("selectorDropdown");
+  coresDropdown = viewChild<FlowbiteDropdownDirective>("coresDropdown");
 
   layout = input<"details" | "compare">("details");
   benchmarksByCategory = input<CompressionBenchmarkGroup[]>([]);
@@ -68,12 +73,51 @@ export class CompressionChartComponent {
   readonly idBase = `compression_chart_${CompressionChartComponent.nextId++}`;
   readonly buttonId = `${this.idBase}_button`;
   readonly optionsId = `${this.idBase}_options`;
+  readonly coresButtonId = `${this.idBase}_cores_button`;
+  readonly coresOptionsId = `${this.idBase}_cores_options`;
 
-  tooltipContent = "";
+  tooltipContent = signal("");
   readonly infoTooltip = this.builder.infoTooltip;
   readonly detailsModes = this.builder.getDetailsModes();
   selectedDetailsModeId = signal(this.detailsModes[0]?.key || "compress");
   selectedCompareIndex = signal(0);
+  selectedCoresMode = signal<"single" | "multi">("multi");
+
+  readonly availableCoresOptions = computed<Array<"single" | "multi">>(() => {
+    const ratioGroup = this.benchmarksByCategory().find(
+      (benchmarkGroup) =>
+        benchmarkGroup.benchmark_id === "compression_text:ratio",
+    );
+    if (!ratioGroup) {
+      return [];
+    }
+    const coresSet = new Set<"single" | "multi">();
+    for (const benchmark of ratioGroup.benchmarks ?? []) {
+      const cores = benchmark.config.cores;
+      if (cores === "single" || cores === "multi") {
+        coresSet.add(cores);
+      } else if (!cores) {
+        coresSet.add("single");
+      }
+    }
+    const result: Array<"single" | "multi"> = [];
+    if (coresSet.has("single")) result.push("single");
+    if (coresSet.has("multi")) result.push("multi");
+    return result;
+  });
+  readonly hasCoresSelector = computed(
+    () => this.availableCoresOptions().length > 1,
+  );
+  readonly coresLabel = computed(() => `cores: ${this.selectedCoresMode()}`);
+
+  constructor() {
+    effect(() => {
+      const options = this.availableCoresOptions();
+      if (options.length > 0 && !options.includes(this.selectedCoresMode())) {
+        this.selectedCoresMode.set(options[0]);
+      }
+    });
+  }
 
   readonly currentDetailsMode = computed(
     () =>
@@ -99,6 +143,7 @@ export class CompressionChartComponent {
         benchmarksByCategory: this.benchmarksByCategory(),
         mode: this.currentDetailsMode(),
         baseOptions: lineChartOptionsComp,
+        coresMode: this.selectedCoresMode(),
       });
     },
   );
@@ -118,17 +163,52 @@ export class CompressionChartComponent {
   );
   readonly detailsChartData = computed(() => this.detailsChart()?.data);
   readonly detailsChartOptions = computed(() => this.detailsChart()?.options);
-  readonly compareCompressData = computed(
-    () => this.compareCharts()?.compressData,
+  readonly compareCompressLineData = computed(() =>
+    this.compareChartType() === "line"
+      ? (this.compareCharts()?.compressData as ChartData<"line"> | undefined)
+      : undefined,
   );
-  readonly compareCompressOptions = computed(
-    () => this.compareCharts()?.compressOptions,
+  readonly compareCompressBarData = computed(() =>
+    this.compareChartType() === "bar"
+      ? (this.compareCharts()?.compressData as ChartData<"bar"> | undefined)
+      : undefined,
   );
-  readonly compareDecompressData = computed(
-    () => this.compareCharts()?.decompressData,
+  readonly compareCompressLineOptions = computed(() =>
+    this.compareChartType() === "line"
+      ? this.compareCharts()?.compressOptions
+      : undefined,
   );
-  readonly compareDecompressOptions = computed(
-    () => this.compareCharts()?.decompressOptions,
+  readonly compareCompressBarOptions = computed(() =>
+    this.compareChartType() === "bar"
+      ? (this.compareCharts()?.compressOptions as
+          | ChartOptions<"bar">
+          | undefined)
+      : undefined,
+  );
+  readonly compareDecompressLineData = computed(() =>
+    this.compareChartType() === "line"
+      ? (this.compareCharts()?.decompressData as ChartData<"line"> | undefined)
+      : undefined,
+  );
+  readonly compareDecompressBarData = computed(() =>
+    this.compareChartType() === "bar"
+      ? (this.compareCharts()?.decompressData as ChartData<"bar"> | undefined)
+      : undefined,
+  );
+  readonly compareDecompressLineOptions = computed(() =>
+    this.compareChartType() === "line"
+      ? this.compareCharts()?.decompressOptions
+      : undefined,
+  );
+  readonly compareDecompressBarOptions = computed(() =>
+    this.compareChartType() === "bar"
+      ? (this.compareCharts()?.decompressOptions as
+          | ChartOptions<"bar">
+          | undefined)
+      : undefined,
+  );
+  readonly compareChartType = computed<CompressionCompareChartType>(
+    () => this.compareCharts()?.chartType ?? "line",
   );
   readonly hasOptions = computed(() =>
     this.layout() === "details"
@@ -146,6 +226,7 @@ export class CompressionChartComponent {
     }
 
     this.selectedDetailsModeId.set(selectedMode.key);
+    this.selectorDropdown()?.hide();
   }
 
   selectCompareOption(index: number): void {
@@ -154,6 +235,12 @@ export class CompressionChartComponent {
     }
 
     this.selectedCompareIndex.set(index);
+    this.selectorDropdown()?.hide();
+  }
+
+  selectCoresMode(mode: "single" | "multi"): void {
+    this.selectedCoresMode.set(mode);
+    this.coresDropdown()?.hide();
   }
 
   showTooltip(el: MouseEvent, content?: string): void {
@@ -162,7 +249,7 @@ export class CompressionChartComponent {
       event: el,
       content,
       onShow: (tooltipContent) => {
-        this.tooltipContent = tooltipContent;
+        this.tooltipContent.set(tooltipContent);
       },
     });
   }

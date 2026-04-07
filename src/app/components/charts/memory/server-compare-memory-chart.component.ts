@@ -14,7 +14,7 @@ import { LucideAngularModule } from "lucide-angular";
 import { BaseChartDirective } from "ng2-charts";
 import { CompareMemoryChartOption } from "../shared/memory-chart.types";
 import { MemoryChartBuilderService } from "./memory-chart-builder.service";
-import { FlowbiteDropdownDirective } from "../shared/flowbite-dropdown.directive";
+import { FlowbiteDropdownDirective } from "../../../directives/flowbite-dropdown.directive";
 import { MemoryBenchmarkMeta, MemoryChartServer } from "./memory-chart.types";
 
 @Component({

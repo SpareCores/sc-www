@@ -6,6 +6,7 @@ import {
   OnInit,
   PLATFORM_ID,
   ViewChild,
+  viewChild,
   OnDestroy,
   DOCUMENT,
   inject,
@@ -24,7 +25,7 @@ import {
   ServerCompareService,
   ZoneAndRegion,
 } from "../../services/server-compare.service";
-import { DropdownManagerService } from "../../services/dropdown-manager.service";
+import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
 import { AnalyticsService } from "../../services/analytics.service";
 import { CurrencyOption, availableCurrencies } from "../../tools/shared_data";
 import { ExtendedServerDetails } from "../server-details/server-details.component";
@@ -79,6 +80,7 @@ type CompareTableBenchmarkMeta = Omit<
     ServerCompareChartsComponent,
     EmbedComparePreviewComponent,
     LoadingSpinnerComponent,
+    FlowbiteDropdownDirective,
   ],
   templateUrl: "./server-compare.component.html",
   styleUrl: "./server-compare.component.scss",
@@ -92,7 +94,7 @@ export class ServerCompareComponent
   private keeperAPI = inject(KeeperAPIService);
   private seoHandler = inject(SeoHandlerService);
   private serverCompare = inject(ServerCompareService);
-  private dropdownManager = inject(DropdownManagerService);
+  currencyDropdown = viewChild<FlowbiteDropdownDirective>("currencyDropdown");
   private analytics = inject(AnalyticsService);
   private route = inject(ActivatedRoute);
   private toastService = inject(ToastService);
@@ -141,7 +143,6 @@ export class ServerCompareComponent
     { name: "Network", category: "network", properties: [] },
   ];
 
-  dropdownCurrency: any;
   availableCurrencies: CurrencyOption[] = availableCurrencies;
   selectedCurrency = this.availableCurrencies[0];
 
@@ -633,12 +634,6 @@ export class ServerCompareComponent
             ngData;
 
           if (isPlatformBrowser(this.platformId)) {
-            this.dropdownManager
-              .initDropdown("currency_button", "currency_options")
-              .then((dropdown) => {
-                this.dropdownCurrency = dropdown;
-              });
-
             const targetElModal = document.getElementById(
               "embed-compare-modal",
             );
@@ -884,7 +879,7 @@ export class ServerCompareComponent
       }
     });
 
-    this.dropdownCurrency?.hide();
+    this.currencyDropdown()?.hide();
   }
 
   getStyle(index: number) {

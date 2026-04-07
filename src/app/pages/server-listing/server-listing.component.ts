@@ -3,6 +3,7 @@ import {
   PLATFORM_ID,
   OnInit,
   ViewChild,
+  viewChild,
   ElementRef,
   OnDestroy,
   inject,
@@ -32,7 +33,7 @@ import {
   ServerCompare,
   ServerCompareService,
 } from "../../services/server-compare.service";
-import { DropdownManagerService } from "../../services/dropdown-manager.service";
+import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
 import { AnalyticsService } from "../../services/analytics.service";
 import { Modal, ModalOptions } from "flowbite";
 import { ToastService } from "../../services/toast.service";
@@ -102,6 +103,7 @@ const optionsModal: ModalOptions = {
     NetworkSpeedPipe,
     MonthlyTrafficPipe,
     Ipv4CountPipe,
+    FlowbiteDropdownDirective,
   ],
   templateUrl: "./server-listing.component.html",
   styleUrl: "./server-listing.component.scss",
@@ -112,7 +114,10 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private SEOHandler = inject(SeoHandlerService);
-  private dropdownManager = inject(DropdownManagerService);
+  currencyDropdown = viewChild<FlowbiteDropdownDirective>("currencyDropdown");
+  allocationDropdown =
+    viewChild<FlowbiteDropdownDirective>("allocationDropdown");
+  pageDropdown = viewChild<FlowbiteDropdownDirective>("pageDropdown");
   private analytics = inject(AnalyticsService);
   private serverCompare = inject(ServerCompareService);
   private toastService = inject(ToastService);
@@ -318,11 +323,6 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   openApiJson: any = openApiSpec;
   searchParameters: SearchBarParameter[] = [];
   query: any = {};
-
-  dropdownColumn: any;
-  dropdownPage: any;
-  dropdownCurrency: any;
-  dropdownAllocation: any;
 
   isLoading = true;
 
@@ -630,30 +630,6 @@ export class ServerListingComponent implements OnInit, OnDestroy {
           },
         ),
       );
-
-      this.dropdownManager
-        .initDropdown("currency_button", "currency_options")
-        .then((dropdown: any) => {
-          this.dropdownCurrency = dropdown;
-        });
-
-      this.dropdownManager
-        .initDropdown("allocation_button", "allocation_options")
-        .then((dropdown: any) => {
-          this.dropdownAllocation = dropdown;
-        });
-
-      this.dropdownManager
-        .initDropdown("column_button", "column_options")
-        .then((dropdown) => {
-          this.dropdownColumn = dropdown;
-        });
-
-      this.dropdownManager
-        .initDropdown("pagesize_button", "pagesize_options")
-        .then((dropdown) => {
-          this.dropdownPage = dropdown;
-        });
 
       const targetElModal = document.getElementById("benchmark-type-modal");
 
@@ -1042,14 +1018,14 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     this.selectedCurrency = currency;
     this.page = 1;
     this.searchOptionsChanged(this.query);
-    this.dropdownCurrency?.hide();
+    this.currencyDropdown()?.hide();
   }
 
   selectAllocation(allocation: BestPriceAllocationType) {
     this.bestPriceAllocation = allocation;
     this.page = 1;
     this.searchOptionsChanged(this.query);
-    this.dropdownAllocation?.hide();
+    this.allocationDropdown()?.hide();
   }
 
   selectPageSize(limit: number) {
@@ -1057,7 +1033,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     this.page = 1;
     this.searchOptionsChanged(this.query);
 
-    this.dropdownPage?.hide();
+    this.pageDropdown()?.hide();
     // scroll to top
     window.scrollTo(0, 0);
   }

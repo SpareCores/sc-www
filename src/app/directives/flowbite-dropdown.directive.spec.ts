@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { DropdownManagerService } from "../../../services/dropdown-manager.service";
+import { DropdownManagerService } from "../services/dropdown-manager.service";
 import { FlowbiteDropdownDirective } from "./flowbite-dropdown.directive";
 
 @Component({
@@ -56,6 +56,7 @@ describe("FlowbiteDropdownDirective", () => {
     expect(initDropdownSpy.calls.mostRecent().args).toEqual([
       "trigger",
       "target",
+      { flip: false },
     ]);
   });
 

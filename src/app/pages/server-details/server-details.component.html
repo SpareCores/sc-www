@@ -291,7 +291,7 @@
               <button
                 id="allocation_button"
                 data-ph-capture-attribute-sc-event="server details price allocation select"
-                data-dropdown-toggle="allocation_options"
+                [appFlowbiteDropdown]="'allocation_options'"
                 class="dropdown_button"
                 type="button"
               >
@@ -329,7 +329,7 @@
               <button
                 id="allocation_button2"
                 data-ph-capture-attribute-sc-event="server details price allocation select"
-                data-dropdown-toggle="allocation_options2"
+                [appFlowbiteDropdown]="'allocation_options2'"
                 class="dropdown_button"
                 type="button"
               >
@@ -346,7 +346,7 @@
               <button
                 id="region_button"
                 data-ph-capture-attribute-sc-event="server details regions select"
-                data-dropdown-toggle="region_options"
+                [appFlowbiteDropdown]="'region_options'"
                 class="dropdown_button"
                 type="button"
               >
@@ -461,7 +461,8 @@
               <button
                 id="similar_type_button"
                 data-ph-capture-attribute-sc-event="server similar options select"
-                data-dropdown-toggle="similar_server_options"
+                [appFlowbiteDropdown]="'similar_server_options'"
+                #similarDropdown="appFlowbiteDropdown"
                 class="dropdown_button"
                 type="button"
               >
