@@ -72,16 +72,6 @@ export class ServerLstopoComponent implements OnChanges {
     fn: EventListener;
   }> = [];
 
-  private readonly SVG_TOOLTIP_MAP: Record<string, string> = {
-    "text.HostBridge": "Host bridge speed",
-    "text.PCIBridge": "PCI bridge speed",
-    "rect.L1i": "CPU Level 1 (L1) instruction cache",
-    "rect.L1d": "CPU Level 1 (L1) data cache",
-    "rect.L2": "CPU Level 2 (L2) cache",
-    "rect.L3": "CPU Level 3 (L3) cache",
-    "rect.PU": "Processing Unit",
-  };
-
   ngOnChanges(): void {
     if (!this.vendorId || !this.apiReference) {
       this.svgSub?.unsubscribe();
@@ -166,7 +156,10 @@ export class ServerLstopoComponent implements OnChanges {
   showTooltip(e: Event, content: string): void {
     const tooltip = this.tooltipRef?.nativeElement;
     if (!tooltip) return;
-    const target = e.target as Element;
+    const target =
+      e.currentTarget instanceof Element
+        ? e.currentTarget
+        : (e.target as Element);
     const rect = target.getBoundingClientRect();
     tooltip.style.left = `${rect.left - 25}px`;
     tooltip.style.top = `${rect.bottom + 5}px`;
@@ -186,22 +179,24 @@ export class ServerLstopoComponent implements OnChanges {
   private addSvgTooltips(): void {
     this.removeSvgTooltips();
     const host: HTMLElement = this.elRef.nativeElement;
-    for (const [selector, content] of Object.entries(this.SVG_TOOLTIP_MAP)) {
-      host
-        .querySelectorAll(
-          `.lstopo-interactive ${selector}, .lstopo-modal-svg ${selector}`,
-        )
-        .forEach((el) => {
-          const mouseenter: EventListener = (e) => this.showTooltip(e, content);
-          const mouseleave: EventListener = () => this.hideTooltip();
-          el.addEventListener("mouseenter", mouseenter);
-          el.addEventListener("mouseleave", mouseleave);
-          this.tooltipListeners.push(
-            { el, type: "mouseenter", fn: mouseenter },
-            { el, type: "mouseleave", fn: mouseleave },
-          );
-        });
-    }
+    host
+      .querySelectorAll(
+        ".lstopo-interactive [data-description], .lstopo-modal-svg [data-description]",
+      )
+      .forEach((el) => {
+        const content = el.getAttribute("data-description")?.trim();
+        if (!content) {
+          return;
+        }
+        const mouseenter: EventListener = (e) => this.showTooltip(e, content);
+        const mouseleave: EventListener = () => this.hideTooltip();
+        el.addEventListener("mouseenter", mouseenter);
+        el.addEventListener("mouseleave", mouseleave);
+        this.tooltipListeners.push(
+          { el, type: "mouseenter", fn: mouseenter },
+          { el, type: "mouseleave", fn: mouseleave },
+        );
+      });
   }
 
   private removeSvgTooltips(): void {
