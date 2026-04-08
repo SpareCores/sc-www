@@ -1,0 +1,68 @@
+<div class="w-full bg-primary">
+  <div class="content pt-16 pb-16">
+    <app-breadcrumbs [segments]="breadcrumbs()"></app-breadcrumbs>
+
+    <div class="flex flex-col gap-4 my-8 mx-2 xl:mx-0">
+      <div class="flex gap-4 items-center w-full justify-between">
+        <h1 class="text-white font-bold text-3xl flex items-center">
+          <lucide-icon class="h-8 w-8 mr-2" name="bot"></lucide-icon>
+          {{ title }}
+        </h1>
+      </div>
+      <div class="text-white text-xl pr-16">
+        {{ description }}
+      </div>
+    </div>
+
+    <div class="flex gap-8 mx-2 xl:mx-0">
+      <div
+        class="filter_bar bg-primary"
+        [ngClass]="{ collapsed: isCollapsed() }"
+      >
+        <div
+          class="collapser bg-secondary"
+          (click)="toggleCollapse()"
+          tabindex="0"
+          role="button"
+          [attr.aria-expanded]="!isCollapsed()"
+          (keydown.enter)="toggleCollapse()"
+          (keydown.space)="toggleCollapse(); $event.preventDefault()"
+        >
+          <lucide-icon
+            name="chevron-left"
+            class="h-6 w-6 text-emerald-400"
+          ></lucide-icon>
+        </div>
+
+        <div class="top overflow-hidden bg-secondary">
+          <div class="text-emerald-400 text-sm font-semibold">
+            Advisor Controls
+          </div>
+        </div>
+
+        <div class="filters overflow-hidden bg-secondary">
+        </div>
+      </div>
+
+      <div
+        class="list_holder flex flex-col gap-4"
+        [ngClass]="{
+          'limited-full': !isCollapsed(),
+          'w-full': isCollapsed(),
+        }"
+      >
+        <div class="top_buttons w-[calc(100%-60px)] ml-auto"></div>
+
+        <div class="placeholder-panel">
+          <div class="placeholder-panel__title">Advisor Workspace Ready</div>
+          <div class="placeholder-panel__body">
+            The dedicated `/advisor` page is now wired and uses the
+            server-listing page shell as the starting point. The next steps will
+            add the search experience, recommendation query state, and results
+            table behavior.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
