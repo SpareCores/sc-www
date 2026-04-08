@@ -1432,13 +1432,42 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  showTooltip(el: any, content: string, autoHide = false) {
+  showTooltip(
+    event: MouseEvent | FocusEvent,
+    content: string,
+    autoHide = false,
+  ) {
+    const trigger = event.currentTarget;
+
+    if (!(trigger instanceof HTMLElement)) {
+      return;
+    }
+
     this.tooltipContent = content;
     const tooltip = this.tooltip.nativeElement;
-    tooltip.style.left = `${el.target.getBoundingClientRect().right + 5}px`;
-    tooltip.style.top = `${el.target.getBoundingClientRect().top - 5}px`;
-
     tooltip.style.display = "block";
+    tooltip.style.opacity = "0";
+
+    const rect = trigger.getBoundingClientRect();
+    const padding = 16;
+    const horizontalOffset = 8;
+    const verticalOffset = 8;
+    const tooltipWidth = tooltip.offsetWidth || 320;
+    const tooltipHeight = tooltip.offsetHeight || 48;
+    const unclampedLeft = rect.right + horizontalOffset;
+    const unclampedTop = rect.top - tooltipHeight - verticalOffset;
+    const maxLeft = Math.max(
+      window.innerWidth - tooltipWidth - padding,
+      padding,
+    );
+    const maxTop = Math.max(
+      window.innerHeight - tooltipHeight - padding,
+      padding,
+    );
+
+    tooltip.style.left = `${Math.min(Math.max(unclampedLeft, padding), maxLeft)}px`;
+    tooltip.style.top = `${Math.min(Math.max(unclampedTop, padding), maxTop)}px`;
+
     tooltip.style.opacity = "1";
 
     if (autoHide) {

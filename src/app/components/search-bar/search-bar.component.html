@@ -84,13 +84,20 @@
                     }
                   </div>
                   @if (control.description) {
-                    <lucide-icon
-                      name="info"
-                      class="h-4 w-4 text-gray-200"
+                    <button
+                      type="button"
+                      class="tooltip-trigger"
+                      aria-label="Show filter description"
                       (mouseenter)="showTooltip($event, control.description)"
                       (mouseleave)="hideTooltip()"
+                      (focus)="showTooltip($event, control.description)"
+                      (blur)="hideTooltip()"
                     >
-                    </lucide-icon>
+                      <lucide-icon
+                        name="info"
+                        class="h-4 w-4 text-gray-200"
+                      ></lucide-icon>
+                    </button>
                   }
                 </div>
 
@@ -396,15 +403,24 @@
                       {{ parameter.schema.title }}
                     </div>
                     @if (parameter.schema.description) {
-                      <lucide-icon
-                        name="info"
-                        class="h-4 w-4 text-gray-200"
+                      <button
+                        type="button"
+                        class="tooltip-trigger"
+                        aria-label="Show filter description"
                         (mouseenter)="
                           showTooltip($event, parameter.schema.description)
                         "
                         (mouseleave)="hideTooltip()"
+                        (focus)="
+                          showTooltip($event, parameter.schema.description)
+                        "
+                        (blur)="hideTooltip()"
                       >
-                      </lucide-icon>
+                        <lucide-icon
+                          name="info"
+                          class="h-4 w-4 text-gray-200"
+                        ></lucide-icon>
+                      </button>
                     }
                   </div>
                 }
@@ -633,15 +649,24 @@
                         {{ parameter.schema.title }}
                       </div>
                       @if (parameter.schema.description) {
-                        <lucide-icon
-                          name="info"
-                          class="h-3 w-3 text-gray-200"
+                        <button
+                          type="button"
+                          class="tooltip-trigger"
+                          aria-label="Show filter description"
                           (mouseenter)="
                             showTooltip($event, parameter.schema.description)
                           "
                           (mouseleave)="hideTooltip()"
+                          (focus)="
+                            showTooltip($event, parameter.schema.description)
+                          "
+                          (blur)="hideTooltip()"
                         >
-                        </lucide-icon>
+                          <lucide-icon
+                            name="info"
+                            class="h-4 w-4 text-gray-200"
+                          ></lucide-icon>
+                        </button>
                       }
                     </div>
                   </div>
