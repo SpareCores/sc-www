@@ -1,5 +1,12 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit, computed, inject, signal } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  computed,
+  effect,
+  inject,
+  signal,
+} from "@angular/core";
 import { LucideAngularModule } from "lucide-angular";
 import {
   BreadcrumbSegment,
@@ -13,10 +20,55 @@ import {
   SearchBarCustomSelectOption,
   SearchBarParameter,
 } from "../../components/search-bar/search-bar.component";
-import { Server } from "../../../../sdk/data-contracts";
+import {
+  BenchmarkScore,
+  OrderDir,
+  SearchServersServersGetData,
+  SearchServersServersGetParams,
+  Server,
+} from "../../../../sdk/data-contracts";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import openApiSpec from "../../../../sdk/openapi.json";
+
+function stableStringify(value: unknown): string {
+  if (Array.isArray(value)) {
+    return `[${value.map((item) => stableStringify(item)).join(",")}]`;
+  }
+
+  if (value && typeof value === "object") {
+    const entries = Object.entries(value as Record<string, unknown>).sort(
+      ([left], [right]) => left.localeCompare(right),
+    );
+
+    return `{${entries
+      .map(
+        ([key, entryValue]) =>
+          `${JSON.stringify(key)}:${stableStringify(entryValue)}`,
+      )
+      .join(",")}}`;
+  }
+
+  return JSON.stringify(value ?? null);
+}
+
+function normalizeBenchmarkConfig(config: unknown): string {
+  if (typeof config === "string") {
+    const trimmed = config.trim();
+
+    if (!trimmed) {
+      return stableStringify({});
+    }
+
+    try {
+      return stableStringify(JSON.parse(trimmed));
+    } catch {
+      return trimmed;
+    }
+  }
+
+  return stableStringify(config ?? {});
+}
 
 @Component({
   selector: "app-advisor",
@@ -55,12 +107,16 @@ export class AdvisorComponent implements OnInit {
     [],
   );
   readonly isLoadingBenchmarkConfigs = signal(false);
+  readonly baselineBenchmarkScores = signal<BenchmarkScore[]>([]);
+  readonly isLoadingBaselineBenchmarkScores = signal(false);
   readonly optimizationGoal = signal<
     "performance" | "cost" | "cost-efficiency"
   >("cost");
   readonly averageCpuUtilization = signal<number | null>(null);
   readonly minimumMemoryGiB = signal<number | null>(null);
   readonly peakGpuMemoryGiB = signal<number>(0);
+  readonly recommendations = signal<SearchServersServersGetData>([]);
+  readonly isLoadingRecommendations = signal(false);
 
   readonly filterCategories = [
     { category_id: "advisor", name: "Advisor", icon: "bot", collapsed: false },
@@ -194,6 +250,42 @@ export class AdvisorComponent implements OnInit {
     }
   });
 
+  readonly matchedBaselineBenchmarkScore = computed<BenchmarkScore | null>(
+    () => {
+      const selectedBenchmarkConfig = this.selectedBenchmarkConfig();
+
+      if (!selectedBenchmarkConfig) {
+        return null;
+      }
+
+      const selectedConfigKey = normalizeBenchmarkConfig(
+        selectedBenchmarkConfig.config,
+      );
+
+      return (
+        this.baselineBenchmarkScores().find((benchmarkScore) => {
+          return (
+            benchmarkScore.benchmark_id ===
+              selectedBenchmarkConfig.benchmark_id &&
+            normalizeBenchmarkConfig(benchmarkScore.config) ===
+              selectedConfigKey
+          );
+        }) || null
+      );
+    },
+  );
+
+  readonly benchmarkScoreMinimum = computed<number | null>(() => {
+    const benchmarkScore = this.matchedBaselineBenchmarkScore();
+    const cpuUtilization = this.averageCpuUtilization();
+
+    if (!benchmarkScore || cpuUtilization === null) {
+      return null;
+    }
+
+    return Number(((benchmarkScore.score * cpuUtilization) / 100).toFixed(2));
+  });
+
   readonly missingRequiredInputs = computed(() => {
     const missing: string[] = [];
 
@@ -221,7 +313,44 @@ export class AdvisorComponent implements OnInit {
   });
 
   readonly canRequestRecommendations = computed(
-    () => this.missingRequiredInputs().length === 0,
+    () =>
+      this.missingRequiredInputs().length === 0 &&
+      this.matchedBaselineBenchmarkScore() !== null,
+  );
+
+  readonly recommendationQuery = computed<SearchServersServersGetParams | null>(
+    () => {
+      const selectedBenchmarkConfig = this.selectedBenchmarkConfig();
+      const benchmarkScoreMinimum = this.benchmarkScoreMinimum();
+      const minimumMemoryGiB = this.minimumMemoryGiB();
+
+      if (
+        !this.canRequestRecommendations() ||
+        !selectedBenchmarkConfig ||
+        benchmarkScoreMinimum === null ||
+        minimumMemoryGiB === null
+      ) {
+        return null;
+      }
+
+      const sharedQuery = {
+        ...(this.query() as SearchServersServersGetParams),
+      };
+
+      return {
+        ...sharedQuery,
+        benchmark_id: selectedBenchmarkConfig.benchmark_id,
+        benchmark_config: selectedBenchmarkConfig.config,
+        benchmark_score_min: benchmarkScoreMinimum,
+        memory_min: minimumMemoryGiB,
+        gpu_memory_total:
+          this.peakGpuMemoryGiB() > 0 ? this.peakGpuMemoryGiB() : undefined,
+        order_by: this.recommendationOrderBy(),
+        order_dir: OrderDir.Asc,
+        limit: 25,
+        page: 1,
+      };
+    },
   );
 
   readonly customControls = computed<SearchBarCustomControl[]>(() => [
@@ -267,7 +396,68 @@ export class AdvisorComponent implements OnInit {
       selectedValue: this.optimizationGoal(),
       selectOptions: this.optimizationGoalOptions,
     },
+    {
+      name: "average_cpu_utilization",
+      category_id: "advisor",
+      type: "rangeSlider",
+      title: "Average CPU utilization",
+      required: true,
+      description:
+        "The selected workload score threshold is derived from the baseline server score scaled by this expected average CPU utilization.",
+      numericValue: this.averageCpuUtilization(),
+      min: 0,
+      max: 100,
+      step: 10,
+      unit: "%",
+      tickValues: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
+    },
+    {
+      name: "minimum_memory",
+      category_id: "advisor",
+      type: "powerOfTwoStepper",
+      title: "Minimum memory",
+      required: true,
+      description:
+        "Memory requirement in GB. The stepper follows powers of two starting at 0.5 GB.",
+      numericValue: this.minimumMemoryGiB(),
+      unit: "GB",
+    },
+    {
+      name: "peak_gpu_memory",
+      category_id: "advisor",
+      type: "powerOfTwoStepper",
+      title: "Peak GPU memory usage",
+      description:
+        "Total GPU memory requirement in GB. Leave at 0 to avoid applying GPU filters.",
+      numericValue: this.peakGpuMemoryGiB(),
+      unit: "GB",
+      allowZero: true,
+    },
   ]);
+
+  constructor() {
+    effect(() => {
+      const selectedBaselineServer = this.selectedBaselineServer();
+
+      if (!selectedBaselineServer) {
+        this.baselineBenchmarkScores.set([]);
+        return;
+      }
+
+      void this.loadBaselineBenchmarkScores(selectedBaselineServer);
+    });
+
+    effect(() => {
+      const recommendationQuery = this.recommendationQuery();
+
+      if (!recommendationQuery) {
+        this.recommendations.set([]);
+        return;
+      }
+
+      void this.loadRecommendations(recommendationQuery);
+    });
+  }
 
   ngOnInit(): void {
     this.seoHandler.updateTitleAndMetaTags(
@@ -344,6 +534,37 @@ export class AdvisorComponent implements OnInit {
       ) {
         this.optimizationGoal.set(selectedValue);
       }
+
+      return;
+    }
+
+    if (event.name === "average_cpu_utilization") {
+      const nextValue =
+        event.value && typeof event.value === "object"
+          ? (event.value as { numericValue?: number | null })
+          : {};
+
+      this.averageCpuUtilization.set(nextValue.numericValue ?? null);
+      return;
+    }
+
+    if (event.name === "minimum_memory") {
+      const nextValue =
+        event.value && typeof event.value === "object"
+          ? (event.value as { numericValue?: number | null })
+          : {};
+
+      this.minimumMemoryGiB.set(nextValue.numericValue ?? null);
+      return;
+    }
+
+    if (event.name === "peak_gpu_memory") {
+      const nextValue =
+        event.value && typeof event.value === "object"
+          ? (event.value as { numericValue?: number | null })
+          : {};
+
+      this.peakGpuMemoryGiB.set(nextValue.numericValue ?? 0);
     }
   }
 
@@ -418,5 +639,39 @@ export class AdvisorComponent implements OnInit {
       .finally(() => {
         this.isLoadingBenchmarkConfigs.set(false);
       });
+  }
+
+  private async loadBaselineBenchmarkScores(server: Server): Promise<void> {
+    this.isLoadingBaselineBenchmarkScores.set(true);
+
+    try {
+      const response = await this.keeperApi.getServerBenchmark(
+        server.vendor_id,
+        server.server_id,
+      );
+
+      this.baselineBenchmarkScores.set(response?.body || []);
+    } catch (error) {
+      console.error("Failed to load advisor baseline benchmark scores", error);
+      this.baselineBenchmarkScores.set([]);
+    } finally {
+      this.isLoadingBaselineBenchmarkScores.set(false);
+    }
+  }
+
+  private async loadRecommendations(
+    recommendationQuery: SearchServersServersGetParams,
+  ): Promise<void> {
+    this.isLoadingRecommendations.set(true);
+
+    try {
+      const response = await this.keeperApi.searchServers(recommendationQuery);
+      this.recommendations.set(response?.body || []);
+    } catch (error) {
+      console.error("Failed to load advisor recommendations", error);
+      this.recommendations.set([]);
+    } finally {
+      this.isLoadingRecommendations.set(false);
+    }
   }
 }

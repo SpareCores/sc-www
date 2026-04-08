@@ -81,10 +81,41 @@
             Benchmark workloads loaded: {{ benchmarkConfigOptions().length }}
           </div>
           <div class="placeholder-panel__meta">
+            Baseline benchmark rows loaded:
+            {{ baselineBenchmarkScores().length }}
+          </div>
+          <div class="placeholder-panel__meta">
             Optimization goal: {{ optimizationGoal() }}
           </div>
           <div class="placeholder-panel__meta">
+            Average CPU utilization:
+            @if (averageCpuUtilization() !== null) {
+              {{ averageCpuUtilization() }}%
+            } @else {
+              Not set
+            }
+          </div>
+          <div class="placeholder-panel__meta">
+            Minimum memory:
+            @if (minimumMemoryGiB() !== null) {
+              {{ minimumMemoryGiB() }} GB
+            } @else {
+              Not set
+            }
+          </div>
+          <div class="placeholder-panel__meta">
+            Peak GPU memory usage: {{ peakGpuMemoryGiB() }} GB
+          </div>
+          <div class="placeholder-panel__meta">
             Derived order_by: {{ recommendationOrderBy() }}
+          </div>
+          <div class="placeholder-panel__meta">
+            Recommendation count:
+            @if (isLoadingRecommendations()) {
+              Loading...
+            } @else {
+              {{ recommendations().length }}
+            }
           </div>
           <div
             class="placeholder-panel__meta"
@@ -110,6 +141,29 @@
               @if (workload.configTitle) {
                 <span class="text-gray-300"> | {{ workload.configTitle }}</span>
               }
+            </div>
+          }
+          @if (matchedBaselineBenchmarkScore(); as baselineScore) {
+            <div class="placeholder-panel__selection">
+              Baseline workload score: {{ baselineScore.score }}
+              @if (benchmarkScoreMinimum() !== null) {
+                <span class="text-gray-300">
+                  | minimum recommendation score: {{ benchmarkScoreMinimum() }}
+                </span>
+              }
+            </div>
+          } @else if (selectedBaselineServer() && selectedBenchmarkConfig()) {
+            <div class="placeholder-panel__selection">
+              No matching benchmark score was found for the selected baseline
+              server and workload combination.
+            </div>
+          }
+          @if (recommendationQuery(); as recommendationQuery) {
+            <div class="placeholder-panel__selection">
+              Derived advisor query:
+              <pre class="placeholder-panel__query">{{
+                recommendationQuery | json
+              }}</pre>
             </div>
           }
           @if (!canRequestRecommendations()) {

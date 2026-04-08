@@ -71,3 +71,7 @@
 .placeholder-panel__selection {
   @apply mt-4 rounded-lg border border-solid border-emerald-400 bg-primary px-4 py-3 text-sm text-white;
 }
+
+.placeholder-panel__query {
+  @apply mt-3 overflow-x-auto whitespace-pre-wrap break-all rounded-lg bg-secondary p-3 text-xs text-gray-200;
+}
