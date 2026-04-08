@@ -51,6 +51,12 @@
   width: calc(100% - 20rem);
 }
 
+.advisor-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
 .placeholder-panel {
   @apply rounded-lg border border-solid border-emerald-400 bg-secondary p-6 text-white;
   min-height: 14rem;
@@ -74,4 +80,72 @@
 
 .placeholder-panel__query {
   @apply mt-3 overflow-x-auto whitespace-pre-wrap break-all rounded-lg bg-secondary p-3 text-xs text-gray-200;
+}
+
+.recommendation-highlight {
+  @apply mt-4 flex flex-col gap-4 rounded-lg border border-solid border-emerald-400 bg-primary p-4;
+}
+
+.recommendation-highlight__name {
+  @apply text-lg font-semibold text-white;
+}
+
+.recommendation-highlight__meta {
+  @apply mt-1 text-sm text-gray-300;
+}
+
+.recommendation-highlight__metrics {
+  @apply grid gap-2 text-sm text-emerald-300;
+}
+
+.advisor-table-wrap {
+  @apply mt-4 overflow-x-auto;
+}
+
+.items_table {
+  @apply w-full text-white;
+
+  thead {
+    @apply border-b border-gray-200 border-solid bg-secondary;
+
+    th {
+      @apply text-left pl-3 pr-2 py-3 font-normal text-xs;
+    }
+  }
+
+  tbody {
+    tr:nth-child(2n + 1) {
+      @apply bg-primary;
+    }
+
+    tr:nth-child(2n) {
+      @apply bg-secondary;
+    }
+
+    td {
+      @apply pl-3 pr-2 py-3 text-left text-sm;
+    }
+  }
+}
+
+.advisor-table__primary {
+  @apply whitespace-nowrap text-sm text-white;
+}
+
+.advisor-table__secondary {
+  @apply text-xs text-gray-300;
+}
+
+.advisor-table__link {
+  @apply whitespace-nowrap text-emerald-400 underline-offset-2 hover:underline;
+}
+
+.advisor-table__empty {
+  @apply mt-4 rounded-lg border border-dashed border-gray-500 px-4 py-6 text-sm text-gray-300;
+}
+
+@media (max-width: 1024px) {
+  .advisor-summary-grid {
+    grid-template-columns: 1fr;
+  }
 }

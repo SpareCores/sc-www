@@ -7,6 +7,7 @@ import {
   inject,
   signal,
 } from "@angular/core";
+import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 import {
   BreadcrumbSegment,
@@ -26,6 +27,7 @@ import {
   SearchServersServersGetData,
   SearchServersServersGetParams,
   Server,
+  ServerPKs,
 } from "../../../../sdk/data-contracts";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
@@ -76,6 +78,7 @@ function normalizeBenchmarkConfig(config: unknown): string {
     CommonModule,
     BreadcrumbsComponent,
     LucideAngularModule,
+    RouterLink,
     SearchBarComponent,
   ],
   templateUrl: "./advisor.component.html",
@@ -317,6 +320,9 @@ export class AdvisorComponent implements OnInit {
       this.missingRequiredInputs().length === 0 &&
       this.matchedBaselineBenchmarkScore() !== null,
   );
+  readonly topRecommendation = computed<ServerPKs | null>(
+    () => this.recommendations()[0] || null,
+  );
 
   readonly recommendationQuery = computed<SearchServersServersGetParams | null>(
     () => {
@@ -483,6 +489,45 @@ export class AdvisorComponent implements OnInit {
 
   toggleCollapse(): void {
     this.isCollapsed.update((value) => !value);
+  }
+
+  formatMemoryGiB(value: number | null | undefined): string {
+    if (!value) {
+      return "-";
+    }
+
+    return `${(value / 1024).toFixed(1)} GiB`;
+  }
+
+  formatStorageGb(value: number | null | undefined): string {
+    if (!value) {
+      return "-";
+    }
+
+    return `${value} GB`;
+  }
+
+  formatPrice(value: number | null | undefined): string {
+    if (value === null || value === undefined) {
+      return "-";
+    }
+
+    return `${value} USD/hr`;
+  }
+
+  formatScore(value: number | null | undefined): string {
+    if (value === null || value === undefined) {
+      return "-";
+    }
+
+    return Number.isInteger(value) ? String(value) : value.toFixed(2);
+  }
+
+  showApiReference(item: ServerPKs): boolean {
+    return (
+      item.display_name !== item.api_reference &&
+      item.display_name !== item.api_reference.replace("Standard_", "")
+    );
   }
 
   onSearchChanged(query: Record<string, unknown>): void {
