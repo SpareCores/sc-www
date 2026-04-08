@@ -109,7 +109,7 @@ export class AdvisorComponent implements OnInit, OnDestroy {
 
   readonly title = "Server Advisor";
   readonly description =
-    "Find better cloud server alternatives for a selected baseline server. This page will reuse the server-listing experience while adding advisor-specific recommendation inputs and workload-aware guidance.";
+    "Compare a baseline server against workload-aware alternatives and surface the best cloud replacement options based on performance, cost efficiency, memory, and GPU constraints. Use the Spare Cores Server Advisor to explore recommendations, refine the workload inputs, and share the resulting query with your team.";
 
   readonly breadcrumbs = signal<BreadcrumbSegment[]>([
     { name: "Home", url: "/" },
@@ -153,40 +153,8 @@ export class AdvisorComponent implements OnInit, OnDestroy {
   readonly manualOrderDir = signal<OrderDir | undefined>(undefined);
   readonly pageLimits = [10, 25, 50, 100];
 
-  readonly filterCategories = [
+  readonly advisorFilterCategories = [
     { category_id: "advisor", name: "Advisor", icon: "bot", collapsed: false },
-    { category_id: "basic", name: "Basics", icon: "server", collapsed: true },
-    {
-      category_id: "performance",
-      name: "Performance",
-      icon: "gauge",
-      collapsed: true,
-    },
-    {
-      category_id: "processor",
-      name: "Processor",
-      icon: "microchip",
-      collapsed: false,
-    },
-    {
-      category_id: "cpu_cache",
-      name: "CPU Cache",
-      icon: "layers",
-      collapsed: true,
-    },
-    { category_id: "gpu", name: "GPU", icon: "cpu", collapsed: true },
-    {
-      category_id: "memory",
-      name: "Memory",
-      icon: "memory-stick",
-      collapsed: true,
-    },
-    {
-      category_id: "storage",
-      name: "Storage",
-      icon: "database",
-      collapsed: true,
-    },
     { category_id: "vendor", name: "Vendor", icon: "home", collapsed: true },
     { category_id: "region", name: "Region", icon: "hotel", collapsed: true },
   ];
@@ -610,8 +578,8 @@ export class AdvisorComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.seoHandler.updateTitleAndMetaTags(
       "Server Advisor - Spare Cores",
-      "Compare a baseline server against better alternatives with the Spare Cores Server Advisor.",
-      "server advisor, cloud servers, recommendation, spare cores",
+      "Compare a baseline server against workload-aware alternatives with the Spare Cores Server Advisor. Explore recommendations based on performance, cost, memory, and GPU requirements, then share the advisor link with your team.",
+      "server advisor, cloud servers, workload recommendations, cost efficiency, performance, spare cores",
     );
 
     const parameters = openApiSpec.paths["/servers"].get.parameters || [];

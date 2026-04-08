@@ -43,9 +43,10 @@
         <div class="filters overflow-hidden bg-secondary">
           <app-search-bar
             [query]="query()"
-            [filterCategories]="filterCategories"
+            [filterCategories]="advisorFilterCategories"
             [searchParameters]="searchParameters"
             [customControls]="customControls()"
+            [showTopSection]="false"
             [isAuthenticated]="false"
             (searchChanged)="onSearchChanged($event)"
             (customControlChanged)="onCustomControlChanged($event)"
@@ -65,185 +66,13 @@
           <button
             id="advisor_share_button"
             type="button"
-            class="advisor-share-button"
+            class="btn-primary py-2 px-3 flex gap-1 items-center"
             (click)="clipboardURL()"
           >
             <lucide-icon [name]="clipboardIcon()" class="h-4 w-4"></lucide-icon>
-            Share advisor
+            Share
           </button>
         </div>
-
-        <div class="advisor-summary-grid">
-          <div class="placeholder-panel" id="advisor_status_panel">
-            <div class="placeholder-panel__title">Recommendation Status</div>
-            <div class="placeholder-panel__body">
-              The advisor is now deriving a workload-aware `/servers` query from
-              the selected baseline server, workload, utilization, and memory
-              requirements.
-            </div>
-            <div class="placeholder-panel__meta">
-              Active shared filters: {{ activeFilterCount() }}
-            </div>
-            <div class="placeholder-panel__meta">
-              Baseline catalog loaded: {{ serverTableRows().length }} servers
-            </div>
-            <div class="placeholder-panel__meta">
-              Benchmark workloads loaded: {{ benchmarkConfigOptions().length }}
-            </div>
-            <div class="placeholder-panel__meta">
-              Baseline benchmark rows loaded:
-              {{ baselineBenchmarkScores().length }}
-            </div>
-            <div class="placeholder-panel__meta">
-              Derived order_by: {{ recommendationOrderBy() }}
-            </div>
-            <div class="placeholder-panel__meta">
-              Recommendation count:
-              @if (isLoadingRecommendations()) {
-                Loading...
-              } @else {
-                {{ recommendations().length }}
-              }
-            </div>
-            <div class="placeholder-panel__meta">
-              Compare selection: {{ compareCount() }} server(s)
-            </div>
-            <div
-              class="placeholder-panel__meta"
-              [class.text-emerald-300]="canRequestRecommendations()"
-              [class.text-amber-300]="!canRequestRecommendations()"
-            >
-              Recommendation query status:
-              {{
-                canRequestRecommendations()
-                  ? "ready"
-                  : "waiting for required inputs"
-              }}
-            </div>
-            @if (!canRequestRecommendations()) {
-              <div class="placeholder-panel__selection">
-                Missing required inputs:
-                {{ missingRequiredInputs().join(", ") }}
-              </div>
-            }
-          </div>
-
-          <div class="placeholder-panel" id="advisor_inputs_panel">
-            <div class="placeholder-panel__title">Advisor Inputs</div>
-            @if (selectedBaselineServer(); as baselineServer) {
-              <div class="placeholder-panel__selection">
-                Selected baseline server: {{ baselineServer.vendor_id }} /
-                {{ baselineServer.api_reference }}
-              </div>
-            }
-            @if (selectedBenchmarkConfig(); as workload) {
-              <div class="placeholder-panel__selection">
-                Selected workload: {{ workload.displayName }}
-                @if (workload.configTitle) {
-                  <span class="text-gray-300">
-                    | {{ workload.configTitle }}</span
-                  >
-                }
-              </div>
-            }
-            <div class="placeholder-panel__selection">
-              Average CPU utilization:
-              @if (averageCpuUtilization() !== null) {
-                {{ averageCpuUtilization() }}%
-              } @else {
-                Not set
-              }
-            </div>
-            <div class="placeholder-panel__selection">
-              Minimum memory:
-              @if (minimumMemoryGiB() !== null) {
-                {{ minimumMemoryGiB() }} GB
-              } @else {
-                Not set
-              }
-            </div>
-            <div class="placeholder-panel__selection">
-              Peak GPU memory usage: {{ peakGpuMemoryGiB() }} GB
-            </div>
-            @if (matchedBaselineBenchmarkScore(); as baselineScore) {
-              <div class="placeholder-panel__selection">
-                Baseline workload score: {{ formatScore(baselineScore.score) }}
-                @if (benchmarkScoreMinimum() !== null) {
-                  <span class="text-gray-300">
-                    | minimum recommendation score:
-                    {{ formatScore(benchmarkScoreMinimum()) }}
-                  </span>
-                }
-              </div>
-            } @else if (selectedBaselineServer() && selectedBenchmarkConfig()) {
-              <div class="placeholder-panel__selection">
-                No matching benchmark score was found for the selected baseline
-                server and workload combination.
-              </div>
-            }
-          </div>
-        </div>
-
-        @if (topRecommendation(); as topRecommendation) {
-          <div class="placeholder-panel" id="advisor_top_recommendation">
-            <div class="placeholder-panel__title">Top Recommendation</div>
-            <div class="recommendation-highlight">
-              <div>
-                <div class="recommendation-highlight__name">
-                  {{ topRecommendation.vendor_id }} /
-                  {{ topRecommendation.api_reference }}
-                </div>
-                <div class="recommendation-highlight__meta">
-                  @if (showApiReference(topRecommendation)) {
-                    {{ topRecommendation.display_name }}
-                  } @else {
-                    {{ topRecommendation.vendor.name }}
-                  }
-                </div>
-              </div>
-              <div class="recommendation-highlight__metrics">
-                <div>Price: {{ formatPrice(topRecommendation.min_price) }}</div>
-                <div>
-                  Workload score:
-                  {{ formatScore(topRecommendation.selected_benchmark_score) }}
-                </div>
-                <div>
-                  Score per USD:
-                  {{
-                    formatScore(
-                      topRecommendation.selected_benchmark_score_per_price
-                    )
-                  }}
-                </div>
-              </div>
-              <div class="recommendation-highlight__actions">
-                <a
-                  id="advisor_top_recommendation_view"
-                  class="recommendation-highlight__button recommendation-highlight__button--primary"
-                  [routerLink]="[
-                    '/server',
-                    topRecommendation.vendor_id,
-                    topRecommendation.api_reference,
-                  ]"
-                >
-                  View details
-                </a>
-                <button
-                  id="advisor_top_recommendation_compare"
-                  type="button"
-                  class="recommendation-highlight__button recommendation-highlight__button--secondary"
-                  (click)="toggleCompareRecommendation(topRecommendation)"
-                >
-                  @if (isSelectedForCompare(topRecommendation)) {
-                    Remove from compare
-                  } @else {
-                    Add to compare
-                  }
-                </button>
-              </div>
-            </div>
-          </div>
-        }
 
         <div class="placeholder-panel" id="advisor_results_panel">
           <div class="placeholder-panel__title">Recommended Servers</div>
@@ -252,21 +81,12 @@
             keeping server-detail navigation immediately available.
           </div>
 
-          @if (recommendationQuery(); as recommendationQuery) {
-            <div class="placeholder-panel__selection">
-              Derived advisor query:
-              <pre class="placeholder-panel__query">{{
-                recommendationQuery | json
-              }}</pre>
-            </div>
-          }
-
           <div class="advisor-table-wrap">
             @if (isLoadingRecommendations()) {
               <div class="advisor-table__empty">Loading recommendations...</div>
             } @else if (!recommendations().length) {
               <div class="advisor-table__empty">
-                No recommendation rows available yet.
+                No recommended servers available.
               </div>
             } @else {
               <table class="items_table" id="advisor_results_table">
