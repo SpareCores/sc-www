@@ -28,7 +28,11 @@ import {
 } from "../../pages/server-listing/server-listing.component";
 import { CountryIdtoNamePipe } from "../../pipes/country-idto-name.pipe";
 import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
-import { Benchmark, BenchmarkConfig, Server } from "../../../../sdk/data-contracts";
+import {
+  Benchmark,
+  BenchmarkConfig,
+  Server,
+} from "../../../../sdk/data-contracts";
 
 const optionsModal: ModalOptions = {
   backdropClasses: "bg-gray-900/50 fixed inset-0 z-40",
@@ -59,7 +63,7 @@ export type SearchBarParameter = {
 export type SearchBarCustomControl = {
   name: string;
   category_id: string;
-  type: "serverAutocomplete" | "benchmarkConfigSelect";
+  type: "serverAutocomplete" | "benchmarkConfigSelect" | "singleSelect";
   title: string;
   placeholder?: string;
   required?: boolean;
@@ -72,6 +76,13 @@ export type SearchBarCustomControl = {
   selectedBenchmarkConfig?: SearchBarBenchmarkConfigOption | null;
   benchmarkOptions?: SearchBarBenchmarkConfigOption[];
   benchmarkGroups?: SearchBarBenchmarkConfigGroup[];
+  selectedValue?: string | null;
+  selectOptions?: SearchBarCustomSelectOption[];
+};
+
+export type SearchBarCustomSelectOption = {
+  value: string;
+  label: string;
 };
 
 export type SearchBarBenchmarkConfigOption = BenchmarkConfig & {
@@ -537,7 +548,8 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
       this.benchmarkGroupExpansion[control.name] = {};
     }
 
-    const current = this.benchmarkGroupExpansion[control.name][groupName] ?? true;
+    const current =
+      this.benchmarkGroupExpansion[control.name][groupName] ?? true;
     this.benchmarkGroupExpansion[control.name][groupName] = !current;
   }
 
@@ -578,6 +590,16 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
     this.customControlChanged.emit({
       name: control.name,
       value: { inputValue: "", selectedBenchmarkConfig: null },
+    });
+  }
+
+  selectCustomControlOption(
+    control: SearchBarCustomControl,
+    option: SearchBarCustomSelectOption,
+  ) {
+    this.customControlChanged.emit({
+      name: control.name,
+      value: { selectedValue: option.value },
     });
   }
 

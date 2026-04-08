@@ -10,6 +10,7 @@ import {
   SearchBarBenchmarkConfigGroup,
   SearchBarBenchmarkConfigOption,
   SearchBarCustomControl,
+  SearchBarCustomSelectOption,
   SearchBarParameter,
 } from "../../components/search-bar/search-bar.component";
 import { Server } from "../../../../sdk/data-contracts";
@@ -48,11 +49,18 @@ export class AdvisorComponent implements OnInit {
   readonly selectedBaselineServer = signal<Server | null>(null);
   readonly isLoadingBaselineServers = signal(false);
   readonly benchmarkConfigInput = signal("");
-  readonly selectedBenchmarkConfig = signal<SearchBarBenchmarkConfigOption | null>(
-    null,
+  readonly selectedBenchmarkConfig =
+    signal<SearchBarBenchmarkConfigOption | null>(null);
+  readonly benchmarkConfigOptions = signal<SearchBarBenchmarkConfigOption[]>(
+    [],
   );
-  readonly benchmarkConfigOptions = signal<SearchBarBenchmarkConfigOption[]>([]);
   readonly isLoadingBenchmarkConfigs = signal(false);
+  readonly optimizationGoal = signal<
+    "performance" | "cost" | "cost-efficiency"
+  >("cost");
+  readonly averageCpuUtilization = signal<number | null>(null);
+  readonly minimumMemoryGiB = signal<number | null>(null);
+  readonly peakGpuMemoryGiB = signal<number>(0);
 
   readonly filterCategories = [
     { category_id: "advisor", name: "Advisor", icon: "bot", collapsed: false },
@@ -93,6 +101,11 @@ export class AdvisorComponent implements OnInit {
   ];
 
   searchParameters: SearchBarParameter[] = [];
+  readonly optimizationGoalOptions: SearchBarCustomSelectOption[] = [
+    { value: "performance", label: "Performance" },
+    { value: "cost", label: "Cost" },
+    { value: "cost-efficiency", label: "Cost-efficiency" },
+  ];
 
   readonly activeFilterCount = computed(() => Object.keys(this.query()).length);
   readonly filteredBaselineServers = computed(() => {
@@ -128,10 +141,16 @@ export class AdvisorComponent implements OnInit {
     }
 
     return options.filter((option) => {
-      const category = (option.category || option.framework || "").toLowerCase();
+      const category = (
+        option.category ||
+        option.framework ||
+        ""
+      ).toLowerCase();
       const displayName = option.displayName.toLowerCase();
       const config = option.config.toLowerCase();
-      const description = (option.benchmarkTemplate?.description || "").toLowerCase();
+      const description = (
+        option.benchmarkTemplate?.description || ""
+      ).toLowerCase();
 
       return (
         category.includes(searchTerm) ||
@@ -162,6 +181,48 @@ export class AdvisorComponent implements OnInit {
         ),
       }));
   });
+
+  readonly recommendationOrderBy = computed(() => {
+    switch (this.optimizationGoal()) {
+      case "performance":
+        return "selected_benchmark_score";
+      case "cost-efficiency":
+        return "selected_benchmark_score_per_price";
+      case "cost":
+      default:
+        return "min_price";
+    }
+  });
+
+  readonly missingRequiredInputs = computed(() => {
+    const missing: string[] = [];
+
+    if (!this.selectedBaselineServer()) {
+      missing.push("Baseline server");
+    }
+
+    if (!this.selectedBenchmarkConfig()) {
+      missing.push("Server workload");
+    }
+
+    if (!this.optimizationGoal()) {
+      missing.push("Optimization goal");
+    }
+
+    if (this.averageCpuUtilization() === null) {
+      missing.push("Average CPU utilization");
+    }
+
+    if (this.minimumMemoryGiB() === null) {
+      missing.push("Minimum memory");
+    }
+
+    return missing;
+  });
+
+  readonly canRequestRecommendations = computed(
+    () => this.missingRequiredInputs().length === 0,
+  );
 
   readonly customControls = computed<SearchBarCustomControl[]>(() => [
     {
@@ -194,6 +255,17 @@ export class AdvisorComponent implements OnInit {
       emptyMessage: this.isLoadingBenchmarkConfigs()
         ? "Loading benchmark workloads..."
         : "No matching workloads found.",
+    },
+    {
+      name: "optimization_goal",
+      category_id: "advisor",
+      type: "singleSelect",
+      title: "Optimization goal",
+      required: true,
+      description:
+        "Selecting performance will search for servers delivering higher performance for the same price, while selecting cost-efficiency will find the cheapest option of right-sized server types.",
+      selectedValue: this.optimizationGoal(),
+      selectOptions: this.optimizationGoalOptions,
     },
   ]);
 
@@ -255,6 +327,23 @@ export class AdvisorComponent implements OnInit {
       this.selectedBenchmarkConfig.set(
         nextValue.selectedBenchmarkConfig || null,
       );
+      return;
+    }
+
+    if (event.name === "optimization_goal") {
+      const nextValue =
+        event.value && typeof event.value === "object"
+          ? (event.value as { selectedValue?: string | null })
+          : {};
+
+      const selectedValue = nextValue.selectedValue;
+      if (
+        selectedValue === "performance" ||
+        selectedValue === "cost" ||
+        selectedValue === "cost-efficiency"
+      ) {
+        this.optimizationGoal.set(selectedValue);
+      }
     }
   }
 

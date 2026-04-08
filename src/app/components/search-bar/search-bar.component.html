@@ -175,7 +175,9 @@
                         "
                         class="custom-autocomplete__input"
                       />
-                      @if (control.inputValue || control.selectedBenchmarkConfig) {
+                      @if (
+                        control.inputValue || control.selectedBenchmarkConfig
+                      ) {
                         <button
                           type="button"
                           class="custom-autocomplete__clear"
@@ -189,7 +191,7 @@
 
                     @if (
                       !customControlHasEnoughInput(control) &&
-                      (control.inputValue || '').trim().length > 0
+                      (control.inputValue || "").trim().length > 0
                     ) {
                       <div class="custom-autocomplete__hint">
                         Enter at least
@@ -208,7 +210,9 @@
                             <button
                               type="button"
                               class="benchmark-group__header"
-                              (click)="toggleBenchmarkGroup(control, group.name)"
+                              (click)="
+                                toggleBenchmarkGroup(control, group.name)
+                              "
                             >
                               <span>{{ group.name }}</span>
                               <lucide-icon
@@ -221,10 +225,14 @@
                               ></lucide-icon>
                             </button>
 
-                            @if (isBenchmarkGroupExpanded(control, group.name)) {
+                            @if (
+                              isBenchmarkGroupExpanded(control, group.name)
+                            ) {
                               @for (
                                 benchmarkOption of group.options;
-                                track benchmarkOption.benchmark_id + '_' + benchmarkOption.config
+                                track benchmarkOption.benchmark_id +
+                                  "_" +
+                                  benchmarkOption.config
                               ) {
                                 <button
                                   type="button"
@@ -254,8 +262,33 @@
                       </div>
                     } @else {
                       <div class="custom-autocomplete__hint">
-                        {{ control.emptyMessage || 'No matching workloads found.' }}
+                        {{
+                          control.emptyMessage || "No matching workloads found."
+                        }}
                       </div>
+                    }
+                  </div>
+                }
+
+                @if (control.type === "singleSelect") {
+                  <div
+                    class="flex items-center gap-4 text-sm text-white mb-4 mt-4"
+                  >
+                    @for (
+                      option of control.selectOptions || [];
+                      track option.value
+                    ) {
+                      <label class="flex items-center gap-1 cursor-pointer">
+                        <input
+                          type="radio"
+                          [name]="'custom_single_select_' + control.name"
+                          [value]="option.value"
+                          [checked]="control.selectedValue === option.value"
+                          (change)="selectCustomControlOption(control, option)"
+                          class="checkbox"
+                        />
+                        <span>{{ option.label }}</span>
+                      </label>
                     }
                   </div>
                 }

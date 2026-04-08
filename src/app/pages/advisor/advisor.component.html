@@ -80,6 +80,24 @@
           <div class="placeholder-panel__meta">
             Benchmark workloads loaded: {{ benchmarkConfigOptions().length }}
           </div>
+          <div class="placeholder-panel__meta">
+            Optimization goal: {{ optimizationGoal() }}
+          </div>
+          <div class="placeholder-panel__meta">
+            Derived order_by: {{ recommendationOrderBy() }}
+          </div>
+          <div
+            class="placeholder-panel__meta"
+            [class.text-emerald-300]="canRequestRecommendations()"
+            [class.text-amber-300]="!canRequestRecommendations()"
+          >
+            Recommendation query status:
+            {{
+              canRequestRecommendations()
+                ? "ready"
+                : "waiting for required inputs"
+            }}
+          </div>
           @if (selectedBaselineServer(); as baselineServer) {
             <div class="placeholder-panel__selection">
               Selected baseline server: {{ baselineServer.vendor_id }} /
@@ -92,6 +110,12 @@
               @if (workload.configTitle) {
                 <span class="text-gray-300"> | {{ workload.configTitle }}</span>
               }
+            </div>
+          }
+          @if (!canRequestRecommendations()) {
+            <div class="placeholder-panel__selection">
+              Missing required inputs:
+              {{ missingRequiredInputs().join(", ") }}
             </div>
           }
         </div>
