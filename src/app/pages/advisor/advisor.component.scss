@@ -105,6 +105,12 @@
 .items_table {
   @apply w-full text-white;
 
+  .checkbox_column {
+    width: 2rem !important;
+    padding-right: 0.5rem !important;
+    padding-left: 0.75rem !important;
+  }
+
   thead {
     @apply border-b border-gray-200 border-solid bg-secondary;
 
@@ -142,6 +148,67 @@
 
 .advisor-table__empty {
   @apply mt-4 rounded-lg border border-dashed border-gray-500 px-4 py-6 text-sm text-gray-300;
+}
+
+.advisor-compare-checkbox {
+  @apply cursor-pointer accent-emerald-400 text-emerald-400 outline-none focus:ring-emerald-400;
+}
+
+.advisor-table__footer {
+  @apply mt-4 flex flex-col gap-4 md:flex-row md:items-center md:justify-between;
+}
+
+.advisor-page-size {
+  @apply flex flex-col gap-2;
+}
+
+.advisor-page-size__options {
+  @apply flex flex-wrap gap-2;
+}
+
+.advisor-page-size__option {
+  @apply rounded-lg border border-solid border-emerald-400 bg-primary px-3 py-2 text-sm text-white transition-colors duration-150 hover:bg-secondary;
+}
+
+.advisor-page-size__option--active {
+  @apply bg-emerald-400 text-white;
+}
+
+.advisor-pagination {
+  @apply flex flex-wrap items-center gap-2;
+}
+
+.advisor-pagination__button {
+  @apply flex min-w-10 items-center justify-center rounded-lg border border-solid border-emerald-400 bg-primary px-3 py-2 text-sm text-white transition-colors duration-150 hover:bg-secondary disabled:cursor-not-allowed disabled:border-gray-600 disabled:text-gray-500;
+}
+
+.advisor-pagination__button--active {
+  @apply bg-emerald-400 text-white;
+}
+
+.advisor-compare-bar {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+}
+
+.advisor-compare-bar__actions {
+  @apply flex gap-4;
+}
+
+.advisor-compare-bar__button {
+  @apply rounded-lg px-4 py-2 font-bold text-white;
+  min-width: 9rem;
+}
+
+.advisor-compare-bar__button--primary {
+  @apply bg-emerald-400 hover:bg-emerald-500;
+}
+
+.advisor-compare-bar__button--secondary {
+  @apply bg-red-400 hover:bg-red-500;
 }
 
 @media (max-width: 1024px) {

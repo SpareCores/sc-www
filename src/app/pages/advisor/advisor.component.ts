@@ -1,6 +1,7 @@
 import { CommonModule } from "@angular/common";
 import {
   Component,
+  OnDestroy,
   OnInit,
   computed,
   effect,
@@ -9,6 +10,7 @@ import {
 } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
+import { Subscription } from "rxjs";
 import {
   BreadcrumbSegment,
   BreadcrumbsComponent,
@@ -31,6 +33,7 @@ import {
 } from "../../../../sdk/data-contracts";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
+import { ServerCompareService } from "../../services/server-compare.service";
 import openApiSpec from "../../../../sdk/openapi.json";
 
 function stableStringify(value: unknown): string {
@@ -72,6 +75,12 @@ function normalizeBenchmarkConfig(config: unknown): string {
   return stableStringify(config ?? {});
 }
 
+type AdvisorTableColumn = {
+  name: string;
+  key: keyof ServerPKs | "details";
+  orderField?: string;
+};
+
 @Component({
   selector: "app-advisor",
   imports: [
@@ -84,9 +93,11 @@ function normalizeBenchmarkConfig(config: unknown): string {
   templateUrl: "./advisor.component.html",
   styleUrl: "./advisor.component.scss",
 })
-export class AdvisorComponent implements OnInit {
+export class AdvisorComponent implements OnInit, OnDestroy {
   private seoHandler = inject(SeoHandlerService);
   private keeperApi = inject(KeeperAPIService);
+  private serverCompare = inject(ServerCompareService);
+  private compareSubscription = new Subscription();
 
   readonly title = "Server Advisor";
   readonly description =
@@ -120,6 +131,13 @@ export class AdvisorComponent implements OnInit {
   readonly peakGpuMemoryGiB = signal<number>(0);
   readonly recommendations = signal<SearchServersServersGetData>([]);
   readonly isLoadingRecommendations = signal(false);
+  readonly compareSelectionKeys = signal<string[]>([]);
+  readonly page = signal(1);
+  readonly limit = signal(25);
+  readonly totalPages = signal(0);
+  readonly manualOrderBy = signal<string | undefined>(undefined);
+  readonly manualOrderDir = signal<OrderDir | undefined>(undefined);
+  readonly pageLimits = [10, 25, 50, 100];
 
   readonly filterCategories = [
     { category_id: "advisor", name: "Advisor", icon: "bot", collapsed: false },
@@ -164,6 +182,32 @@ export class AdvisorComponent implements OnInit {
     { value: "performance", label: "Performance" },
     { value: "cost", label: "Cost" },
     { value: "cost-efficiency", label: "Cost-efficiency" },
+  ];
+  readonly advisorTableColumns: AdvisorTableColumn[] = [
+    { name: "Vendor", key: "vendor_id", orderField: "vendor_id" },
+    {
+      name: "API Reference",
+      key: "api_reference",
+      orderField: "api_reference",
+    },
+    { name: "Status", key: "status", orderField: "status" },
+    { name: "vCPUs", key: "vcpus", orderField: "vcpus" },
+    {
+      name: "Memory",
+      key: "memory_amount",
+      orderField: "memory_amount",
+    },
+    {
+      name: "GPU Memory",
+      key: "gpu_memory_total",
+      orderField: "gpu_memory_total",
+    },
+    {
+      name: "Storage",
+      key: "storage_size",
+      orderField: "storage_size",
+    },
+    { name: "Details", key: "details" },
   ];
 
   readonly activeFilterCount = computed(() => Object.keys(this.query()).length);
@@ -323,6 +367,13 @@ export class AdvisorComponent implements OnInit {
   readonly topRecommendation = computed<ServerPKs | null>(
     () => this.recommendations()[0] || null,
   );
+  readonly compareCount = computed(() => this.compareSelectionKeys().length);
+  readonly activeOrderBy = computed(
+    () => this.manualOrderBy() || this.recommendationOrderBy(),
+  );
+  readonly activeOrderDir = computed(
+    () => this.manualOrderDir() || OrderDir.Desc,
+  );
 
   readonly recommendationQuery = computed<SearchServersServersGetParams | null>(
     () => {
@@ -351,10 +402,11 @@ export class AdvisorComponent implements OnInit {
         memory_min: minimumMemoryGiB,
         gpu_memory_total:
           this.peakGpuMemoryGiB() > 0 ? this.peakGpuMemoryGiB() : undefined,
-        order_by: this.recommendationOrderBy(),
-        order_dir: OrderDir.Asc,
-        limit: 25,
-        page: 1,
+        order_by: this.activeOrderBy(),
+        order_dir: this.activeOrderDir(),
+        limit: this.limit(),
+        page: this.page(),
+        add_total_count_header: true,
       };
     },
   );
@@ -485,10 +537,83 @@ export class AdvisorComponent implements OnInit {
 
     this.loadBaselineServerRows();
     this.loadBenchmarkConfigs();
+    this.syncCompareSelection();
+    this.compareSubscription.add(
+      this.serverCompare.selectionChanged.subscribe(() => {
+        this.syncCompareSelection();
+      }),
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.compareSubscription.unsubscribe();
   }
 
   toggleCollapse(): void {
     this.isCollapsed.update((value) => !value);
+  }
+
+  toggleOrdering(column: AdvisorTableColumn): void {
+    if (!column.orderField) {
+      return;
+    }
+
+    if (this.manualOrderBy() === column.orderField) {
+      if (this.manualOrderDir() === OrderDir.Desc) {
+        this.manualOrderDir.set(OrderDir.Asc);
+      } else {
+        this.manualOrderBy.set(undefined);
+        this.manualOrderDir.set(undefined);
+      }
+    } else {
+      this.manualOrderBy.set(column.orderField);
+      this.manualOrderDir.set(OrderDir.Desc);
+    }
+
+    this.page.set(1);
+  }
+
+  getOrderingIcon(column: AdvisorTableColumn): string | null {
+    if (!column.orderField || this.activeOrderBy() !== column.orderField) {
+      return null;
+    }
+
+    return this.activeOrderDir() === OrderDir.Desc
+      ? "arrow-down-wide-narrow"
+      : "arrow-down-narrow-wide";
+  }
+
+  selectPageSize(limit: number): void {
+    this.limit.set(limit);
+    this.page.set(1);
+  }
+
+  goToPreviousPage(): void {
+    if (this.page() > 1) {
+      this.page.update((page) => page - 1);
+    }
+  }
+
+  goToNextPage(): void {
+    if (this.page() < this.totalPages()) {
+      this.page.update((page) => page + 1);
+    }
+  }
+
+  getVisiblePageNumbers(): number[] {
+    const currentPage = this.page();
+    const totalPages = this.totalPages();
+    const min = Math.max(currentPage - 1, 1);
+    const max = Math.min(currentPage + 1, totalPages);
+
+    return Array.from({ length: Math.max(max - min + 1, 0) }, (_, index) => {
+      return min + index;
+    });
+  }
+
+  goToPage(pageTarget: number): void {
+    const boundedPage = Math.max(1, Math.min(pageTarget, this.totalPages()));
+    this.page.set(boundedPage);
   }
 
   formatMemoryGiB(value: number | null | undefined): string {
@@ -530,8 +655,32 @@ export class AdvisorComponent implements OnInit {
     );
   }
 
+  isSelectedForCompare(server: ServerPKs): boolean {
+    return this.compareSelectionKeys().includes(this.getCompareKey(server));
+  }
+
+  toggleCompareSelection(event: Event, server: ServerPKs): void {
+    event.stopPropagation();
+
+    const shouldSelect = !this.isSelectedForCompare(server);
+    this.serverCompare.toggleCompare(shouldSelect, {
+      server: server.api_reference,
+      vendor: server.vendor_id,
+      display_name: server.display_name,
+    });
+  }
+
+  clearCompareSelection(): void {
+    this.serverCompare.clearCompare();
+  }
+
+  openCompare(): void {
+    this.serverCompare.openCompare();
+  }
+
   onSearchChanged(query: Record<string, unknown>): void {
     this.query.set(query);
+    this.page.set(1);
   }
 
   onCustomControlChanged(event: { name: string; value: unknown }): void {
@@ -546,6 +695,7 @@ export class AdvisorComponent implements OnInit {
 
       this.baselineServerInput.set(nextValue.inputValue || "");
       this.selectedBaselineServer.set(nextValue.selectedServer || null);
+      this.page.set(1);
       return;
     }
 
@@ -562,6 +712,7 @@ export class AdvisorComponent implements OnInit {
       this.selectedBenchmarkConfig.set(
         nextValue.selectedBenchmarkConfig || null,
       );
+      this.page.set(1);
       return;
     }
 
@@ -580,6 +731,8 @@ export class AdvisorComponent implements OnInit {
         this.optimizationGoal.set(selectedValue);
       }
 
+      this.page.set(1);
+
       return;
     }
 
@@ -590,6 +743,7 @@ export class AdvisorComponent implements OnInit {
           : {};
 
       this.averageCpuUtilization.set(nextValue.numericValue ?? null);
+      this.page.set(1);
       return;
     }
 
@@ -600,6 +754,7 @@ export class AdvisorComponent implements OnInit {
           : {};
 
       this.minimumMemoryGiB.set(nextValue.numericValue ?? null);
+      this.page.set(1);
       return;
     }
 
@@ -610,6 +765,7 @@ export class AdvisorComponent implements OnInit {
           : {};
 
       this.peakGpuMemoryGiB.set(nextValue.numericValue ?? 0);
+      this.page.set(1);
     }
   }
 
@@ -711,12 +867,38 @@ export class AdvisorComponent implements OnInit {
 
     try {
       const response = await this.keeperApi.searchServers(recommendationQuery);
+      const totalCount = parseInt(
+        response?.headers?.get("x-total-count") || "0",
+        10,
+      );
+      const totalPages = Math.ceil(totalCount / this.limit());
+
+      this.totalPages.set(totalPages);
+
+      if (totalPages > 0 && this.page() > totalPages) {
+        this.page.set(totalPages);
+        return;
+      }
+
       this.recommendations.set(response?.body || []);
     } catch (error) {
       console.error("Failed to load advisor recommendations", error);
       this.recommendations.set([]);
+      this.totalPages.set(0);
     } finally {
       this.isLoadingRecommendations.set(false);
     }
+  }
+
+  private syncCompareSelection(): void {
+    this.compareSelectionKeys.set(
+      this.serverCompare.selectedForCompare.map((server) => {
+        return `${server.vendor}::${server.server}`;
+      }),
+    );
+  }
+
+  private getCompareKey(server: ServerPKs): string {
+    return `${server.vendor_id}::${server.api_reference}`;
   }
 }
