@@ -20,6 +20,7 @@ import { Modal, ModalOptions } from "flowbite";
 import { LucideAngularModule } from "lucide-angular";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { ToastService } from "../../services/toast.service";
+import { UiTooltipService } from "../../services/ui-tooltip.service";
 import { Subject, Subscription, debounceTime } from "rxjs";
 import {
   CountryMetadata,
@@ -28,6 +29,7 @@ import {
 } from "../../pages/server-listing/server-listing.component";
 import { CountryIdtoNamePipe } from "../../pipes/country-idto-name.pipe";
 import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
+import { formatValue } from "../../pipes/pipe-utils";
 import {
   Benchmark,
   BenchmarkConfig,
@@ -90,6 +92,8 @@ export type SearchBarCustomControl = {
   unit?: string;
   tickValues?: number[];
   allowZero?: boolean;
+  defaultNumericValue?: number | null;
+  showUnitInTicks?: boolean;
 };
 
 export type SearchBarCustomSelectOption = {
@@ -165,6 +169,7 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   private platformId = inject(PLATFORM_ID);
   private keeperAPI = inject(KeeperAPIService);
   private toastService = inject(ToastService);
+  private uiTooltip = inject(UiTooltipService);
 
   @Input() query: any = {};
   @Input() searchParameters: any[] = [];
@@ -577,7 +582,7 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   clearCustomNumericControl(control: SearchBarCustomControl) {
     this.customControlChanged.emit({
       name: control.name,
-      value: { numericValue: null },
+      value: { numericValue: control.defaultNumericValue ?? null },
     });
   }
 
@@ -642,6 +647,10 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
       return "Not set";
     }
 
+    if (control.type === "powerOfTwoStepper" && control.unit === "GB") {
+      return this.formatMemoryStepperValue(value);
+    }
+
     const formattedValue = Number.isInteger(value)
       ? String(value)
       : value.toFixed(1);
@@ -658,6 +667,14 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     return 0;
+  }
+
+  private formatMemoryStepperValue(value: number): string {
+    if (value >= 1024) {
+      return `${formatValue(value / 1024)} TB`;
+    }
+
+    return `${formatValue(value)} GB`;
   }
 
   isBenchmarkGroupExpanded(
@@ -1500,38 +1517,12 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
     content: string,
     autoHide = false,
   ) {
-    const trigger = event.currentTarget;
-
-    if (!(trigger instanceof HTMLElement)) {
-      return;
-    }
-
     this.tooltipContent = content;
     const tooltip = this.tooltip.nativeElement;
-    tooltip.style.display = "block";
-    tooltip.style.opacity = "0";
-
-    const rect = trigger.getBoundingClientRect();
-    const padding = 16;
-    const horizontalOffset = 8;
-    const verticalOffset = 8;
-    const tooltipWidth = tooltip.offsetWidth || 320;
-    const tooltipHeight = tooltip.offsetHeight || 48;
-    const unclampedLeft = rect.right + horizontalOffset;
-    const unclampedTop = rect.top - tooltipHeight - verticalOffset;
-    const maxLeft = Math.max(
-      window.innerWidth - tooltipWidth - padding,
-      padding,
-    );
-    const maxTop = Math.max(
-      window.innerHeight - tooltipHeight - padding,
-      padding,
-    );
-
-    tooltip.style.left = `${Math.min(Math.max(unclampedLeft, padding), maxLeft)}px`;
-    tooltip.style.top = `${Math.min(Math.max(unclampedTop, padding), maxTop)}px`;
-
-    tooltip.style.opacity = "1";
+    this.uiTooltip.show(tooltip, event, {
+      left: "anchor-right",
+      top: "anchor-below",
+    });
 
     if (autoHide) {
       setTimeout(() => {
@@ -1541,9 +1532,7 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   hideTooltip() {
-    const tooltip = this.tooltip.nativeElement;
-    tooltip.style.display = "none";
-    tooltip.style.opacity = "0";
+    this.uiTooltip.hide(this.tooltip.nativeElement);
   }
 
   getInputStyle(parameter: SearchBarParameter) {

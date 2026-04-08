@@ -21,16 +21,13 @@ import {
   SearchBarBenchmarkConfigGroup,
   SearchBarBenchmarkConfigOption,
   SearchBarCustomControl,
-  SearchBarCustomSelectOption,
   SearchBarParameter,
-  SearchBarServerOption,
 } from "../../components/search-bar/search-bar.component";
 import {
   BenchmarkScore,
   OrderDir,
   SearchServersServersGetData,
   SearchServersServersGetParams,
-  Server,
   ServerPKs,
 } from "../../../../sdk/data-contracts";
 import { KeeperAPIService } from "../../services/keeper-api.service";
@@ -39,64 +36,23 @@ import { ServerCompareService } from "../../services/server-compare.service";
 import { ToastService } from "../../services/toast.service";
 import { encodeQueryParams } from "../../tools/queryParamFunctions";
 import openApiSpec from "../../../../sdk/openapi.json";
-
-function stableStringify(value: unknown): string {
-  if (Array.isArray(value)) {
-    return `[${value.map((item) => stableStringify(item)).join(",")}]`;
-  }
-
-  if (value && typeof value === "object") {
-    const entries = Object.entries(value as Record<string, unknown>).sort(
-      ([left], [right]) => left.localeCompare(right),
-    );
-
-    return `{${entries
-      .map(
-        ([key, entryValue]) =>
-          `${JSON.stringify(key)}:${stableStringify(entryValue)}`,
-      )
-      .join(",")}}`;
-  }
-
-  return JSON.stringify(value ?? null);
-}
-
-function normalizeBenchmarkConfig(config: unknown): string {
-  if (typeof config === "string") {
-    const trimmed = config.trim();
-
-    if (!trimmed) {
-      return stableStringify({});
-    }
-
-    try {
-      return stableStringify(JSON.parse(trimmed));
-    } catch {
-      return trimmed;
-    }
-  }
-
-  return stableStringify(config ?? {});
-}
-
-type AdvisorTableColumn = {
-  name: string;
-  key: keyof ServerPKs | "details";
-  orderField?: string;
-};
-
-const ADVISOR_DEFAULT_SERVER_COLUMNS = [
-  "vendor_id",
-  "api_reference",
-  "status",
-  "vcpus",
-  "memory_amount",
-  "gpu_memory_total",
-  "storage_size",
-] as const;
-
-type AdvisorBaselineServer = SearchBarServerOption &
-  Partial<Pick<Server, "status">>;
+import {
+  ADVISOR_BREADCRUMBS,
+  ADVISOR_DEFAULT_SERVER_COLUMNS,
+  ADVISOR_FILTER_CATEGORIES,
+  ADVISOR_OPTIMIZATION_GOAL_OPTIONS,
+  ADVISOR_PAGE_LIMITS,
+  ADVISOR_TABLE_COLUMNS,
+} from "./advisor.constants";
+import {
+  ADVISOR_PAGE_DESCRIPTION,
+  ADVISOR_PAGE_TITLE,
+  ADVISOR_RESULTS_PANEL_DESCRIPTION,
+  ADVISOR_SEO,
+} from "./advisor.copy";
+import { AdvisorUiService } from "./advisor-ui.service";
+import { AdvisorBaselineServer, AdvisorTableColumn } from "./advisor.types";
+import { normalizeBenchmarkConfig } from "./advisor.utils";
 
 @Component({
   selector: "app-advisor",
@@ -117,18 +73,16 @@ export class AdvisorComponent implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private serverCompare = inject(ServerCompareService);
   private toastService = inject(ToastService);
+  private advisorUi = inject(AdvisorUiService);
   private compareSubscription = new Subscription();
   private lastEncodedQuery: string | null = null;
   private clipboardResetTimeout: ReturnType<typeof setTimeout> | null = null;
 
-  readonly title = "Server Advisor";
-  readonly description =
-    "Compare a baseline server against workload-aware alternatives and surface the best cloud replacement options based on performance, cost efficiency, memory, and GPU constraints. Use the Spare Cores Server Advisor to explore recommendations, refine the workload inputs, and share the resulting query with your team.";
+  readonly title = ADVISOR_PAGE_TITLE;
+  readonly description = ADVISOR_PAGE_DESCRIPTION;
+  readonly resultsPanelDescription = ADVISOR_RESULTS_PANEL_DESCRIPTION;
 
-  readonly breadcrumbs = signal<BreadcrumbSegment[]>([
-    { name: "Home", url: "/" },
-    { name: "Advisor", url: "/advisor" },
-  ]);
+  readonly breadcrumbs = signal<BreadcrumbSegment[]>(ADVISOR_BREADCRUMBS);
 
   readonly isCollapsed = signal(false);
   readonly query = signal<Record<string, unknown>>({});
@@ -149,10 +103,11 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     "performance" | "cost" | "cost-efficiency"
   >("cost");
   readonly averageCpuUtilization = signal<number | null>(null);
-  readonly minimumMemoryGiB = signal<number | null>(null);
+  readonly minimumMemoryGiB = signal<number | null>(0.5);
   readonly peakGpuMemoryGiB = signal<number>(0);
   readonly recommendations = signal<SearchServersServersGetData>([]);
   readonly isLoadingRecommendations = signal(false);
+  readonly totalRecommendationCount = signal(0);
   readonly compareSelectionKeys = signal<string[]>([]);
   readonly clipboardIcon = signal("clipboard");
   readonly pendingBaselineVendorId = signal<string | null>(null);
@@ -165,63 +120,20 @@ export class AdvisorComponent implements OnInit, OnDestroy {
   readonly totalPages = signal(0);
   readonly manualOrderBy = signal<string | undefined>(undefined);
   readonly manualOrderDir = signal<OrderDir | undefined>(undefined);
-  readonly pageLimits = [10, 25, 50, 100];
+  readonly pageLimits = ADVISOR_PAGE_LIMITS;
 
-  readonly advisorFilterCategories = [
-    { category_id: "advisor", name: "Advisor", icon: "bot", collapsed: false },
-    { category_id: "vendor", name: "Vendor", icon: "home", collapsed: true },
-    { category_id: "region", name: "Region", icon: "hotel", collapsed: true },
-  ];
+  readonly advisorFilterCategories = ADVISOR_FILTER_CATEGORIES;
 
   searchParameters: SearchBarParameter[] = [];
-  readonly optimizationGoalOptions: SearchBarCustomSelectOption[] = [
-    { value: "performance", label: "Performance" },
-    { value: "cost", label: "Cost" },
-    { value: "cost-efficiency", label: "Cost-efficiency" },
-  ];
-  readonly advisorTableColumns: AdvisorTableColumn[] = [
-    { name: "Vendor", key: "vendor_id", orderField: "vendor_id" },
-    {
-      name: "API Reference",
-      key: "api_reference",
-      orderField: "api_reference",
-    },
-    { name: "Status", key: "status", orderField: "status" },
-    { name: "vCPUs", key: "vcpus", orderField: "vcpus" },
-    {
-      name: "Memory",
-      key: "memory_amount",
-      orderField: "memory_amount",
-    },
-    {
-      name: "GPU Memory",
-      key: "gpu_memory_total",
-      orderField: "gpu_memory_total",
-    },
-    {
-      name: "Storage",
-      key: "storage_size",
-      orderField: "storage_size",
-    },
-    { name: "Details", key: "details" },
-  ];
+  readonly optimizationGoalOptions = ADVISOR_OPTIMIZATION_GOAL_OPTIONS;
+  readonly advisorTableColumns: AdvisorTableColumn[] = ADVISOR_TABLE_COLUMNS;
 
   readonly activeFilterCount = computed(() => Object.keys(this.query()).length);
   readonly filteredBaselineServers = computed(() => {
-    const searchTerm = this.baselineServerInput().trim().toLowerCase();
-
-    if (searchTerm.length < 3) {
-      return [];
-    }
-
-    return this.serverTableRows()
-      .filter((server) => {
-        const vendor = server.vendor_id.toLowerCase();
-        const apiReference = server.api_reference.toLowerCase();
-
-        return vendor.includes(searchTerm) || apiReference.includes(searchTerm);
-      })
-      .slice(0, 20);
+    return this.advisorUi.filterBaselineServers(
+      this.serverTableRows(),
+      this.baselineServerInput(),
+    );
   });
 
   readonly visibleBenchmarkConfigOptions = computed(() => {
@@ -356,6 +268,12 @@ export class AdvisorComponent implements OnInit, OnDestroy {
   readonly topRecommendation = computed<ServerPKs | null>(
     () => this.recommendations()[0] || null,
   );
+  readonly recommendationSummary = computed(() =>
+    this.advisorUi.buildRecommendationSummary(this.totalRecommendationCount()),
+  );
+  readonly recommendationEmptyStateMessage = computed(() =>
+    this.advisorUi.buildMissingInputsMessage(this.missingRequiredInputs()),
+  );
   readonly compareCount = computed(() => this.compareSelectionKeys().length);
   readonly activeOrderBy = computed(
     () => this.manualOrderBy() || this.recommendationOrderBy(),
@@ -457,6 +375,7 @@ export class AdvisorComponent implements OnInit, OnDestroy {
       step: 10,
       unit: "%",
       tickValues: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
+      showUnitInTicks: false,
     },
     {
       name: "minimum_memory",
@@ -468,6 +387,7 @@ export class AdvisorComponent implements OnInit, OnDestroy {
         "Memory requirement in GB. The stepper follows powers of two starting at 0.5 GB.",
       numericValue: this.minimumMemoryGiB(),
       unit: "GB",
+      defaultNumericValue: 0.5,
     },
     {
       name: "peak_gpu_memory",
@@ -479,6 +399,7 @@ export class AdvisorComponent implements OnInit, OnDestroy {
       numericValue: this.peakGpuMemoryGiB(),
       unit: "GB",
       allowZero: true,
+      defaultNumericValue: 0,
     },
   ]);
 
@@ -551,6 +472,7 @@ export class AdvisorComponent implements OnInit, OnDestroy {
 
       if (!recommendationQuery) {
         this.recommendations.set([]);
+        this.totalRecommendationCount.set(0);
         return;
       }
 
@@ -584,9 +506,9 @@ export class AdvisorComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.seoHandler.updateTitleAndMetaTags(
-      "Server Advisor - Spare Cores",
-      "Compare a baseline server against workload-aware alternatives with the Spare Cores Server Advisor. Explore recommendations based on performance, cost, memory, and GPU requirements, then share the advisor link with your team.",
-      "server advisor, cloud servers, workload recommendations, cost efficiency, performance, spare cores",
+      ADVISOR_SEO.title,
+      ADVISOR_SEO.description,
+      ADVISOR_SEO.keywords,
     );
 
     const parameters = openApiSpec.paths["/servers"].get.parameters || [];
@@ -870,7 +792,7 @@ export class AdvisorComponent implements OnInit, OnDestroy {
           ? (event.value as { numericValue?: number | null })
           : {};
 
-      this.minimumMemoryGiB.set(nextValue.numericValue ?? null);
+      this.minimumMemoryGiB.set(nextValue.numericValue ?? 0.5);
       this.page.set(1);
       return;
     }
@@ -992,6 +914,7 @@ export class AdvisorComponent implements OnInit, OnDestroy {
       );
       const totalPages = Math.ceil(totalCount / this.limit());
 
+      this.totalRecommendationCount.set(totalCount);
       this.totalPages.set(totalPages);
 
       if (totalPages > 0 && this.page() > totalPages) {
@@ -1003,6 +926,7 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     } catch (error) {
       console.error("Failed to load advisor recommendations", error);
       this.recommendations.set([]);
+      this.totalRecommendationCount.set(0);
       this.totalPages.set(0);
     } finally {
       this.isLoadingRecommendations.set(false);
@@ -1111,7 +1035,7 @@ export class AdvisorComponent implements OnInit, OnDestroy {
         this.minimumMemoryGiB.set(
           queryParams.minimum_memory !== undefined
             ? Number(queryParams.minimum_memory)
-            : null,
+            : 0.5,
         );
         this.peakGpuMemoryGiB.set(
           queryParams.peak_gpu_memory !== undefined

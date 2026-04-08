@@ -228,8 +228,10 @@
                       !control.selectedBenchmarkConfig ||
                       isBenchmarkConfigDropdownOpen(control)
                     ) {
-                      <div class="custom-autocomplete__panel custom-scrollbar">
-                        @if ((control.benchmarkGroups || []).length > 0) {
+                      @if ((control.benchmarkGroups || []).length > 0) {
+                        <div
+                          class="custom-autocomplete__panel custom-scrollbar"
+                        >
                           @for (
                             group of control.benchmarkGroups || [];
                             track group.name
@@ -290,15 +292,15 @@
                               }
                             </div>
                           }
-                        } @else {
-                          <div class="custom-autocomplete__hint">
-                            {{
-                              control.emptyMessage ||
-                                "No matching workloads found."
-                            }}
-                          </div>
-                        }
-                      </div>
+                        </div>
+                      } @else {
+                        <div class="custom-autocomplete__hint">
+                          {{
+                            control.emptyMessage ||
+                              "No matching workloads found."
+                          }}
+                        </div>
+                      }
                     } @else {
                       <div class="custom-autocomplete__hint">
                         {{
@@ -370,7 +372,7 @@
                         @for (tick of control.tickValues || []; track tick) {
                           <span
                             >{{ tick }}
-                            @if (control.unit) {
+                            @if (control.showUnitInTicks && control.unit) {
                               {{ control.unit }}
                             }
                           </span>
@@ -1309,8 +1311,8 @@
 <div
   id="tooltipDefault"
   #tooltipDefault
-  style="opacity: 0"
-  class="tooltip-panel fixed z-10"
+  style="opacity: 0; display: none"
+  class="tooltip-panel fixed z-100 pointer-events-none"
 >
   {{ tooltipContent }}
 </div>

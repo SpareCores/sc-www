@@ -32,4 +32,21 @@ describe("Advisor page", () => {
       0,
     );
   });
+
+  it("Matches baseline servers across multiple search terms", () => {
+    E2EEvent.visitURL("/advisor", 4000);
+
+    cy.get('input[placeholder="Search for server..."]').type("aws large");
+    cy.get(".custom-autocomplete__panel .custom-autocomplete__option")
+      .should("have.length.greaterThan", 0)
+      .first()
+      .should("contain.text", "aws");
+  });
+
+  it("Shows the summary alert and default minimum memory value", () => {
+    E2EEvent.visitURL("/advisor", 4000);
+
+    cy.contains("No matches yet").should("be.visible");
+    cy.contains("0.5 GB").should("be.visible");
+  });
 });

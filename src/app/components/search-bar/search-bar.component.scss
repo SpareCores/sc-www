@@ -214,7 +214,7 @@
   }
 
   .custom-stepper__button {
-    @apply rounded-lg border border-solid border-emerald-400 bg-primary text-white transition-colors duration-150 hover:bg-secondary disabled:cursor-not-allowed disabled:border-gray-600 disabled:text-gray-500;
+    @apply rounded-lg border border-solid border-emerald-400 bg-secondary text-emerald-400 transition-colors duration-150 hover:bg-emerald-400 hover:text-white disabled:cursor-not-allowed disabled:border-gray-600 disabled:bg-primary disabled:text-gray-500;
     height: 2.5rem;
     display: flex;
     align-items: center;

@@ -63,6 +63,23 @@
         }"
       >
         <div class="top_buttons w-[calc(100%-60px)] ml-auto">
+          @if (recommendationSummary(); as summary) {
+            <div
+              class="advisor-summary-alert"
+              [class.advisor-summary-alert--positive]="
+                summary.tone === 'positive'
+              "
+              [class.advisor-summary-alert--neutral]="
+                summary.tone === 'neutral'
+              "
+            >
+              <div class="advisor-summary-alert__title">
+                {{ summary.title }}
+              </div>
+              <div class="advisor-summary-alert__body">{{ summary.body }}</div>
+            </div>
+          }
+
           <button
             id="advisor_share_button"
             type="button"
@@ -77,8 +94,7 @@
         <div class="placeholder-panel" id="advisor_results_panel">
           <div class="placeholder-panel__title">Recommended Servers</div>
           <div class="placeholder-panel__body">
-            Default advisor columns focus on the requested hardware fields while
-            keeping server-detail navigation immediately available.
+            {{ resultsPanelDescription }}
           </div>
 
           <div class="advisor-table-wrap">
@@ -86,7 +102,7 @@
               <div class="advisor-table__empty">Loading recommendations...</div>
             } @else if (!recommendations().length) {
               <div class="advisor-table__empty">
-                No recommended servers available.
+                {{ recommendationEmptyStateMessage() }}
               </div>
             } @else {
               <table class="items_table" id="advisor_results_table">

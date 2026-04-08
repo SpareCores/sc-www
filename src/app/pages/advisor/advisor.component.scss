@@ -47,7 +47,29 @@
   height: 4rem;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
+}
+
+.advisor-summary-alert {
+  @apply flex-1 rounded-lg border px-4 py-3;
+}
+
+.advisor-summary-alert--positive {
+  @apply border-emerald-400/40 bg-emerald-500/10 text-emerald-100;
+}
+
+.advisor-summary-alert--neutral {
+  @apply border-sky-400/30 bg-sky-500/10 text-sky-100;
+}
+
+.advisor-summary-alert__title {
+  @apply text-sm font-semibold;
+}
+
+.advisor-summary-alert__body {
+  @apply mt-1 text-xs leading-5;
 }
 
 .limited-full {
