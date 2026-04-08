@@ -45,6 +45,13 @@
 
 .top_buttons {
   height: 4rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.advisor-share-button {
+  @apply inline-flex items-center gap-2 rounded-lg border border-solid border-emerald-400 bg-secondary px-4 py-2 text-sm font-semibold text-white transition-colors duration-150 hover:bg-primary;
 }
 
 .limited-full {

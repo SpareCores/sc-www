@@ -1,14 +1,15 @@
-import { CommonModule } from "@angular/common";
+import { CommonModule, isPlatformBrowser } from "@angular/common";
 import {
   Component,
   OnDestroy,
   OnInit,
+  PLATFORM_ID,
   computed,
   effect,
   inject,
   signal,
 } from "@angular/core";
-import { RouterLink } from "@angular/router";
+import { ActivatedRoute, Params, RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 import { Subscription } from "rxjs";
 import {
@@ -34,6 +35,8 @@ import {
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { ServerCompareService } from "../../services/server-compare.service";
+import { ToastService } from "../../services/toast.service";
+import { encodeQueryParams } from "../../tools/queryParamFunctions";
 import openApiSpec from "../../../../sdk/openapi.json";
 
 function stableStringify(value: unknown): string {
@@ -94,10 +97,15 @@ type AdvisorTableColumn = {
   styleUrl: "./advisor.component.scss",
 })
 export class AdvisorComponent implements OnInit, OnDestroy {
+  private platformId = inject(PLATFORM_ID);
   private seoHandler = inject(SeoHandlerService);
   private keeperApi = inject(KeeperAPIService);
+  private route = inject(ActivatedRoute);
   private serverCompare = inject(ServerCompareService);
+  private toastService = inject(ToastService);
   private compareSubscription = new Subscription();
+  private lastEncodedQuery: string | null = null;
+  private clipboardResetTimeout: ReturnType<typeof setTimeout> | null = null;
 
   readonly title = "Server Advisor";
   readonly description =
@@ -132,6 +140,12 @@ export class AdvisorComponent implements OnInit, OnDestroy {
   readonly recommendations = signal<SearchServersServersGetData>([]);
   readonly isLoadingRecommendations = signal(false);
   readonly compareSelectionKeys = signal<string[]>([]);
+  readonly clipboardIcon = signal("clipboard");
+  readonly pendingBaselineVendorId = signal<string | null>(null);
+  readonly pendingBaselineApiReference = signal<string | null>(null);
+  readonly pendingWorkloadId = signal<string | null>(null);
+  readonly pendingWorkloadConfig = signal<string | null>(null);
+  readonly hasRestoredRouteState = signal(false);
   readonly page = signal(1);
   readonly limit = signal(25);
   readonly totalPages = signal(0);
@@ -495,6 +509,58 @@ export class AdvisorComponent implements OnInit, OnDestroy {
 
   constructor() {
     effect(() => {
+      const pendingBaselineVendorId = this.pendingBaselineVendorId();
+      const pendingBaselineApiReference = this.pendingBaselineApiReference();
+
+      if (!pendingBaselineVendorId || !pendingBaselineApiReference) {
+        return;
+      }
+
+      const matchedServer = this.serverTableRows().find((server) => {
+        return (
+          server.vendor_id === pendingBaselineVendorId &&
+          server.api_reference === pendingBaselineApiReference
+        );
+      });
+
+      if (!matchedServer) {
+        return;
+      }
+
+      this.selectedBaselineServer.set(matchedServer);
+      this.baselineServerInput.set(
+        `${matchedServer.vendor_id} ${matchedServer.api_reference}`,
+      );
+      this.pendingBaselineVendorId.set(null);
+      this.pendingBaselineApiReference.set(null);
+    });
+
+    effect(() => {
+      const pendingWorkloadId = this.pendingWorkloadId();
+      const pendingWorkloadConfig = this.pendingWorkloadConfig();
+
+      if (!pendingWorkloadId) {
+        return;
+      }
+
+      const matchedWorkload = this.benchmarkConfigOptions().find((option) => {
+        return (
+          option.benchmark_id === pendingWorkloadId &&
+          option.config === (pendingWorkloadConfig || "{}")
+        );
+      });
+
+      if (!matchedWorkload) {
+        return;
+      }
+
+      this.selectedBenchmarkConfig.set(matchedWorkload);
+      this.benchmarkConfigInput.set(matchedWorkload.displayName);
+      this.pendingWorkloadId.set(null);
+      this.pendingWorkloadConfig.set(null);
+    });
+
+    effect(() => {
       const selectedBaselineServer = this.selectedBaselineServer();
 
       if (!selectedBaselineServer) {
@@ -514,6 +580,30 @@ export class AdvisorComponent implements OnInit, OnDestroy {
       }
 
       void this.loadRecommendations(recommendationQuery);
+    });
+
+    effect(() => {
+      if (
+        !this.hasRestoredRouteState() ||
+        !isPlatformBrowser(this.platformId)
+      ) {
+        return;
+      }
+
+      const encodedQuery = encodeQueryParams(this.getUrlStateQueryParams());
+
+      if (encodedQuery === this.lastEncodedQuery) {
+        return;
+      }
+
+      this.lastEncodedQuery = encodedQuery;
+      const path = window.location.pathname || "/advisor";
+
+      if (encodedQuery?.length) {
+        window.history.pushState({}, "", `${path}?${encodedQuery}`);
+      } else {
+        window.history.pushState({}, "", path);
+      }
     });
   }
 
@@ -537,6 +627,7 @@ export class AdvisorComponent implements OnInit, OnDestroy {
 
     this.loadBaselineServerRows();
     this.loadBenchmarkConfigs();
+    this.restoreStateFromRoute();
     this.syncCompareSelection();
     this.compareSubscription.add(
       this.serverCompare.selectionChanged.subscribe(() => {
@@ -547,6 +638,11 @@ export class AdvisorComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.compareSubscription.unsubscribe();
+
+    if (this.clipboardResetTimeout) {
+      clearTimeout(this.clipboardResetTimeout);
+      this.clipboardResetTimeout = null;
+    }
   }
 
   toggleCollapse(): void {
@@ -674,6 +770,39 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     this.serverCompare.clearCompare();
   }
 
+  async clipboardURL(): Promise<void> {
+    if (!isPlatformBrowser(this.platformId) || !navigator.clipboard) {
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      this.clipboardIcon.set("check");
+      this.toastService.show({
+        title: "Link copied to clipboard!",
+        type: "success",
+        duration: 2000,
+      });
+
+      if (this.clipboardResetTimeout) {
+        clearTimeout(this.clipboardResetTimeout);
+      }
+
+      this.clipboardResetTimeout = setTimeout(() => {
+        this.clipboardIcon.set("clipboard");
+        this.clipboardResetTimeout = null;
+      }, 3000);
+    } catch (error) {
+      console.error("Failed to copy advisor link", error);
+      this.toastService.show({
+        title: "Failed to copy link",
+        body: "Clipboard access is not available in this browser context.",
+        type: "error",
+        duration: 3000,
+      });
+    }
+  }
+
   openCompare(): void {
     this.serverCompare.openCompare();
   }
@@ -695,6 +824,8 @@ export class AdvisorComponent implements OnInit, OnDestroy {
 
       this.baselineServerInput.set(nextValue.inputValue || "");
       this.selectedBaselineServer.set(nextValue.selectedServer || null);
+      this.pendingBaselineVendorId.set(null);
+      this.pendingBaselineApiReference.set(null);
       this.page.set(1);
       return;
     }
@@ -712,6 +843,8 @@ export class AdvisorComponent implements OnInit, OnDestroy {
       this.selectedBenchmarkConfig.set(
         nextValue.selectedBenchmarkConfig || null,
       );
+      this.pendingWorkloadId.set(null);
+      this.pendingWorkloadConfig.set(null);
       this.page.set(1);
       return;
     }
@@ -896,6 +1029,174 @@ export class AdvisorComponent implements OnInit, OnDestroy {
         return `${server.vendor}::${server.server}`;
       }),
     );
+  }
+
+  private restoreStateFromRoute(): void {
+    this.compareSubscription.add(
+      this.route.queryParams.subscribe((params: Params) => {
+        const queryParams = JSON.parse(JSON.stringify(params || {}));
+        const customParamNames = new Set([
+          "page",
+          "limit",
+          "order_by",
+          "order_dir",
+          "baseline_vendor",
+          "baseline_server",
+          "workload_id",
+          "workload_config",
+          "optimization_goal",
+          "avg_cpu_utilization",
+          "minimum_memory",
+          "peak_gpu_memory",
+        ]);
+
+        const baseQuery = Object.fromEntries(
+          Object.entries(queryParams).filter(
+            ([key]) => !customParamNames.has(key),
+          ),
+        );
+
+        this.query.set(baseQuery);
+        this.page.set(
+          queryParams.page ? parseInt(String(queryParams.page), 10) || 1 : 1,
+        );
+        this.limit.set(
+          queryParams.limit
+            ? parseInt(String(queryParams.limit), 10) || 25
+            : 25,
+        );
+        this.manualOrderBy.set(
+          queryParams.order_by ? String(queryParams.order_by) : undefined,
+        );
+
+        const orderDir = queryParams.order_dir;
+        this.manualOrderDir.set(
+          orderDir === OrderDir.Asc || orderDir === OrderDir.Desc
+            ? orderDir
+            : undefined,
+        );
+
+        this.pendingBaselineVendorId.set(
+          queryParams.baseline_vendor
+            ? String(queryParams.baseline_vendor)
+            : null,
+        );
+        this.pendingBaselineApiReference.set(
+          queryParams.baseline_server
+            ? String(queryParams.baseline_server)
+            : null,
+        );
+
+        if (!queryParams.baseline_vendor || !queryParams.baseline_server) {
+          this.selectedBaselineServer.set(null);
+          this.baselineServerInput.set("");
+        }
+
+        this.pendingWorkloadId.set(
+          queryParams.workload_id ? String(queryParams.workload_id) : null,
+        );
+        this.pendingWorkloadConfig.set(
+          queryParams.workload_config
+            ? String(queryParams.workload_config)
+            : null,
+        );
+
+        if (!queryParams.workload_id) {
+          this.selectedBenchmarkConfig.set(null);
+          this.benchmarkConfigInput.set("");
+        }
+
+        const optimizationGoal = queryParams.optimization_goal;
+        if (
+          optimizationGoal === "performance" ||
+          optimizationGoal === "cost" ||
+          optimizationGoal === "cost-efficiency"
+        ) {
+          this.optimizationGoal.set(optimizationGoal);
+        } else {
+          this.optimizationGoal.set("cost");
+        }
+
+        this.averageCpuUtilization.set(
+          queryParams.avg_cpu_utilization !== undefined
+            ? Number(queryParams.avg_cpu_utilization)
+            : null,
+        );
+        this.minimumMemoryGiB.set(
+          queryParams.minimum_memory !== undefined
+            ? Number(queryParams.minimum_memory)
+            : null,
+        );
+        this.peakGpuMemoryGiB.set(
+          queryParams.peak_gpu_memory !== undefined
+            ? Number(queryParams.peak_gpu_memory)
+            : 0,
+        );
+
+        this.lastEncodedQuery = encodeQueryParams(
+          this.getUrlStateQueryParams(),
+        );
+        this.hasRestoredRouteState.set(true);
+      }),
+    );
+  }
+
+  private getUrlStateQueryParams(): Record<string, unknown> {
+    const queryParams: Record<string, unknown> = { ...this.query() };
+    const selectedBaselineServer = this.selectedBaselineServer();
+    const selectedBenchmarkConfig = this.selectedBenchmarkConfig();
+
+    const baselineVendorId =
+      selectedBaselineServer?.vendor_id || this.pendingBaselineVendorId();
+    const baselineApiReference =
+      selectedBaselineServer?.api_reference ||
+      this.pendingBaselineApiReference();
+
+    if (baselineVendorId && baselineApiReference) {
+      queryParams.baseline_vendor = baselineVendorId;
+      queryParams.baseline_server = baselineApiReference;
+    }
+
+    const workloadId =
+      selectedBenchmarkConfig?.benchmark_id || this.pendingWorkloadId();
+    const workloadConfig =
+      selectedBenchmarkConfig?.config || this.pendingWorkloadConfig();
+
+    if (workloadId) {
+      queryParams.workload_id = workloadId;
+      queryParams.workload_config = workloadConfig || "{}";
+    }
+
+    if (this.optimizationGoal() !== "cost") {
+      queryParams.optimization_goal = this.optimizationGoal();
+    }
+
+    if (this.averageCpuUtilization() !== null) {
+      queryParams.avg_cpu_utilization = this.averageCpuUtilization();
+    }
+
+    if (this.minimumMemoryGiB() !== null) {
+      queryParams.minimum_memory = this.minimumMemoryGiB();
+    }
+
+    if (this.peakGpuMemoryGiB() > 0) {
+      queryParams.peak_gpu_memory = this.peakGpuMemoryGiB();
+    }
+
+    if (this.page() > 1) {
+      queryParams.page = this.page();
+    }
+
+    if (this.limit() !== 25) {
+      queryParams.limit = this.limit();
+    }
+
+    if (this.manualOrderBy() && this.manualOrderDir()) {
+      queryParams.order_by = this.manualOrderBy();
+      queryParams.order_dir = this.manualOrderDir();
+    }
+
+    return queryParams;
   }
 
   private getCompareKey(server: ServerPKs): string {

@@ -61,7 +61,16 @@
           'w-full': isCollapsed(),
         }"
       >
-        <div class="top_buttons w-[calc(100%-60px)] ml-auto"></div>
+        <div class="top_buttons w-[calc(100%-60px)] ml-auto">
+          <button
+            type="button"
+            class="advisor-share-button"
+            (click)="clipboardURL()"
+          >
+            <lucide-icon [name]="clipboardIcon()" class="h-4 w-4"></lucide-icon>
+            Share advisor
+          </button>
+        </div>
 
         <div class="advisor-summary-grid">
           <div class="placeholder-panel">
@@ -187,7 +196,7 @@
                   @if (showApiReference(topRecommendation)) {
                     {{ topRecommendation.display_name }}
                   } @else {
-                    {{ topRecommendation.vendor?.name }}
+                    {{ topRecommendation.vendor.name }}
                   }
                 </div>
               </div>
