@@ -17,6 +17,7 @@ import {
   TableMetadataServerTableServerMetaGetData,
   TableRegionTableRegionGetData,
   TableServerPricesTableServerPricesGetData,
+  TableServerSelectTableServerSelectGetData,
   TableServerTableServerGetData,
   TableStorageTableStorageGetData,
   TableVendorTableVendorGetData,
@@ -128,6 +129,73 @@ export namespace Table {
     export type RequestBody = never;
     export type RequestHeaders = {};
     export type ResponseBody = TableServerTableServerGetData;
+  }
+
+  /**
+   * @description Return the Server table with column selection.
+   * @tags Table dumps
+   * @name TableServerSelectTableServerSelectGet
+   * @summary Table Server Select
+   * @request GET:/table/server/select
+   */
+  export namespace TableServerSelectTableServerSelectGet {
+    export type RequestParams = {};
+    export type RequestQuery = {
+      /**
+       * Server columns
+       * Selected server columns.
+       */
+      columns?:
+        | "vendor_id"
+        | "server_id"
+        | "name"
+        | "api_reference"
+        | "display_name"
+        | "description"
+        | "family"
+        | "vcpus"
+        | "hypervisor"
+        | "cpu_allocation"
+        | "cpu_cores"
+        | "cpu_speed"
+        | "cpu_architecture"
+        | "cpu_manufacturer"
+        | "cpu_family"
+        | "cpu_model"
+        | "cpu_l1d_cache"
+        | "cpu_l1d_cache_total"
+        | "cpu_l1i_cache"
+        | "cpu_l1i_cache_total"
+        | "cpu_l2_cache"
+        | "cpu_l2_cache_total"
+        | "cpu_l3_cache"
+        | "cpu_l3_cache_total"
+        | "cpu_flags"
+        | "cpus"
+        | "memory_amount"
+        | "memory_generation"
+        | "memory_speed"
+        | "memory_ecc"
+        | "gpu_count"
+        | "gpu_memory_min"
+        | "gpu_memory_total"
+        | "gpu_manufacturer"
+        | "gpu_family"
+        | "gpu_model"
+        | "gpus"
+        | "storage_size"
+        | "storage_type"
+        | "storages"
+        | "network_speed"
+        | "inbound_traffic"
+        | "outbound_traffic"
+        | "ipv4"
+        | "status"
+        | "observed_at";
+    };
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = TableServerSelectTableServerSelectGetData;
   }
 
   /**
@@ -252,6 +320,7 @@ export namespace Table {
         | "cn-fuzhou"
         | "cn-guangzhou"
         | "cn-hangzhou"
+        | "cn-hangzhou-acdr-ut-3"
         | "cn-heyuan"
         | "cn-hongkong"
         | "cn-huhehaote"
@@ -385,6 +454,7 @@ export namespace Table {
         | "alicloud~cn-fuzhou"
         | "alicloud~cn-guangzhou"
         | "alicloud~cn-hangzhou"
+        | "alicloud~cn-hangzhou-acdr-ut-3"
         | "alicloud~cn-heyuan"
         | "alicloud~cn-hongkong"
         | "alicloud~cn-huhehaote"

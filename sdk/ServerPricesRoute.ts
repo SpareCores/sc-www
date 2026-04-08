@@ -219,6 +219,7 @@ export namespace ServerPrices {
         | "cn-fuzhou"
         | "cn-guangzhou"
         | "cn-hangzhou"
+        | "cn-hangzhou-acdr-ut-3"
         | "cn-heyuan"
         | "cn-hongkong"
         | "cn-huhehaote"
@@ -352,6 +353,7 @@ export namespace ServerPrices {
         | "alicloud~cn-fuzhou"
         | "alicloud~cn-guangzhou"
         | "alicloud~cn-hangzhou"
+        | "alicloud~cn-hangzhou-acdr-ut-3"
         | "alicloud~cn-heyuan"
         | "alicloud~cn-hongkong"
         | "alicloud~cn-huhehaote"
@@ -645,6 +647,7 @@ export namespace ServerPrices {
         | "Blackwell"
         | "Gaudi"
         | "Hopper"
+        | "Pascal"
         | "Radeon Pro Navi"
         | "Turing"
         | "Volta";
