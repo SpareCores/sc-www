@@ -158,6 +158,7 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   @Input() useTopSearchInput = false;
   @Input() topSearchParameterName = "search";
   @Input() topSearchPlaceholder = "Search vendor or API reference";
+  @Input() showTopSection = true;
   @Input() showParameterTitles = true;
   @Input() noTopPaddingCategoryIds: string[] = [];
   @Input() customControls: SearchBarCustomControl[] = [];
@@ -202,6 +203,8 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
     string,
     CpuCacheRangeFocusLossSkip | undefined
   > = {};
+
+  benchmarkConfigDropdownOpen: Record<string, boolean> = {};
 
   valueChangeDebouncer: Subject<number> = new Subject<number>();
   private subscription = new Subscription();
@@ -689,6 +692,8 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
         selectedBenchmarkConfig: benchmarkOption,
       },
     });
+
+    this.closeBenchmarkConfigDropdown(control);
   }
 
   clearBenchmarkConfigSelection(control: SearchBarCustomControl) {
@@ -696,6 +701,47 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
       name: control.name,
       value: { inputValue: "", selectedBenchmarkConfig: null },
     });
+  }
+
+  handleBenchmarkConfigInputFocus(control: SearchBarCustomControl) {
+    if (
+      control.selectedBenchmarkConfig &&
+      (control.inputValue || "").trim() ===
+        control.selectedBenchmarkConfig.displayName
+    ) {
+      this.customControlChanged.emit({
+        name: control.name,
+        value: { inputValue: "" },
+      });
+    }
+
+    this.openBenchmarkConfigDropdown(control);
+  }
+
+  restoreBenchmarkConfigInput(control: SearchBarCustomControl) {
+    if (
+      control.selectedBenchmarkConfig &&
+      !(control.inputValue || "").trim().length
+    ) {
+      this.customControlChanged.emit({
+        name: control.name,
+        value: { inputValue: control.selectedBenchmarkConfig.displayName },
+      });
+    }
+
+    this.closeBenchmarkConfigDropdown(control);
+  }
+
+  isBenchmarkConfigDropdownOpen(control: SearchBarCustomControl): boolean {
+    return this.benchmarkConfigDropdownOpen[control.name] ?? false;
+  }
+
+  openBenchmarkConfigDropdown(control: SearchBarCustomControl) {
+    this.benchmarkConfigDropdownOpen[control.name] = true;
+  }
+
+  closeBenchmarkConfigDropdown(control: SearchBarCustomControl) {
+    this.benchmarkConfigDropdownOpen[control.name] = false;
   }
 
   selectCustomControlOption(

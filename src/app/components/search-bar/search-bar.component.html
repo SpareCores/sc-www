@@ -1,42 +1,51 @@
-<div class="search_bar_content" id="serverSearchBar">
-  <div class="top overflow-hidden bg-secondary">
-    @if (useTopSearchInput && getTopSearchParameter(); as topSearchParameter) {
-      <div class="top_search_wrap">
-        <input
-          type="text"
-          class="top_search_input"
-          [placeholder]="topSearchPlaceholder"
-          [(ngModel)]="topSearchParameter.modelValue"
-          (ngModelChange)="valueChanged()"
-        />
+<div
+  class="search_bar_content"
+  id="serverSearchBar"
+  [class.search_bar_content--without-top]="!showTopSection"
+>
+  @if (showTopSection) {
+    <div class="top overflow-hidden bg-secondary">
+      @if (
+        useTopSearchInput && getTopSearchParameter();
+        as topSearchParameter
+      ) {
+        <div class="top_search_wrap">
+          <input
+            type="text"
+            class="top_search_input"
+            [placeholder]="topSearchPlaceholder"
+            [(ngModel)]="topSearchParameter.modelValue"
+            (ngModelChange)="valueChanged()"
+          />
+          <button
+            type="button"
+            class="top_search_button"
+            (click)="
+              topSearchHasValue(topSearchParameter)
+                ? clearTopSearch(topSearchParameter)
+                : triggerTopSearch()
+            "
+            [attr.aria-label]="
+              topSearchHasValue(topSearchParameter) ? 'Clear search' : 'Search'
+            "
+          >
+            <lucide-icon
+              [name]="topSearchHasValue(topSearchParameter) ? 'x' : 'search'"
+              class="h-4 w-4"
+            ></lucide-icon>
+          </button>
+        </div>
+      } @else {
         <button
-          type="button"
-          class="top_search_button"
-          (click)="
-            topSearchHasValue(topSearchParameter)
-              ? clearTopSearch(topSearchParameter)
-              : triggerTopSearch()
-          "
-          [attr.aria-label]="
-            topSearchHasValue(topSearchParameter) ? 'Clear search' : 'Search'
-          "
+          class="w-full bg-emerald-400 hover:bg-emerald-500 text-white py-3 rounded-lg font-bold"
+          data-ph-capture-attribute-server-listing-search-prompt-action="open"
+          (click)="openSearchPrompt()"
         >
-          <lucide-icon
-            [name]="topSearchHasValue(topSearchParameter) ? 'x' : 'search'"
-            class="h-4 w-4"
-          ></lucide-icon>
+          Search Prompt
         </button>
-      </div>
-    } @else {
-      <button
-        class="w-full bg-emerald-400 hover:bg-emerald-500 text-white py-3 rounded-lg font-bold"
-        data-ph-capture-attribute-server-listing-search-prompt-action="open"
-        (click)="openSearchPrompt()"
-      >
-        Search Prompt
-      </button>
-    }
-  </div>
+      }
+    </div>
+  }
 
   <div class="filters overflow-hidden bg-secondary">
     @for (filter of filterCategories; track filter.category_id) {
@@ -180,6 +189,9 @@
                             $any($event.target).value
                           )
                         "
+                        (click)="handleBenchmarkConfigInputFocus(control)"
+                        (focus)="handleBenchmarkConfigInputFocus(control)"
+                        (blur)="restoreBenchmarkConfigInput(control)"
                         class="custom-autocomplete__input"
                       />
                       @if (
@@ -188,7 +200,10 @@
                         <button
                           type="button"
                           class="custom-autocomplete__clear"
-                          (click)="clearBenchmarkConfigSelection(control)"
+                          (click)="
+                            clearBenchmarkConfigSelection(control);
+                            openBenchmarkConfigDropdown(control)
+                          "
                           aria-label="Clear workload selection"
                         >
                           <lucide-icon name="x" class="h-4 w-4"></lucide-icon>
@@ -207,63 +222,78 @@
                       </div>
                     }
 
-                    @if ((control.benchmarkGroups || []).length > 0) {
+                    @if (
+                      !control.selectedBenchmarkConfig ||
+                      isBenchmarkConfigDropdownOpen(control)
+                    ) {
                       <div class="custom-autocomplete__panel custom-scrollbar">
-                        @for (
-                          group of control.benchmarkGroups || [];
-                          track group.name
-                        ) {
-                          <div class="benchmark-group">
-                            <button
-                              type="button"
-                              class="benchmark-group__header"
-                              (click)="
-                                toggleBenchmarkGroup(control, group.name)
-                              "
-                            >
-                              <span>{{ group.name }}</span>
-                              <lucide-icon
-                                [name]="
-                                  isBenchmarkGroupExpanded(control, group.name)
-                                    ? 'chevron-up'
-                                    : 'chevron-down'
+                        @if ((control.benchmarkGroups || []).length > 0) {
+                          @for (
+                            group of control.benchmarkGroups || [];
+                            track group.name
+                          ) {
+                            <div class="benchmark-group">
+                              <button
+                                type="button"
+                                class="benchmark-group__header"
+                                (click)="
+                                  toggleBenchmarkGroup(control, group.name)
                                 "
-                                class="h-4 w-4"
-                              ></lucide-icon>
-                            </button>
-
-                            @if (
-                              isBenchmarkGroupExpanded(control, group.name)
-                            ) {
-                              @for (
-                                benchmarkOption of group.options;
-                                track benchmarkOption.benchmark_id +
-                                  "_" +
-                                  benchmarkOption.config
-                              ) {
-                                <button
-                                  type="button"
-                                  class="custom-autocomplete__option"
-                                  (click)="
-                                    selectBenchmarkConfigOption(
+                              >
+                                <span>{{ group.name }}</span>
+                                <lucide-icon
+                                  [name]="
+                                    isBenchmarkGroupExpanded(
                                       control,
-                                      benchmarkOption
+                                      group.name
                                     )
+                                      ? 'chevron-up'
+                                      : 'chevron-down'
                                   "
-                                >
-                                  <span class="custom-autocomplete__label">
-                                    {{ benchmarkOption.displayName }}
-                                  </span>
-                                  <span class="custom-autocomplete__meta">
-                                    {{
-                                      formatBenchmarkConfigDescription(
+                                  class="h-4 w-4"
+                                ></lucide-icon>
+                              </button>
+
+                              @if (
+                                isBenchmarkGroupExpanded(control, group.name)
+                              ) {
+                                @for (
+                                  benchmarkOption of group.options;
+                                  track benchmarkOption.benchmark_id +
+                                    "_" +
+                                    benchmarkOption.config
+                                ) {
+                                  <button
+                                    type="button"
+                                    class="custom-autocomplete__option"
+                                    (click)="
+                                      selectBenchmarkConfigOption(
+                                        control,
                                         benchmarkOption
                                       )
-                                    }}
-                                  </span>
-                                </button>
+                                    "
+                                  >
+                                    <span class="custom-autocomplete__label">
+                                      {{ benchmarkOption.displayName }}
+                                    </span>
+                                    <span class="custom-autocomplete__meta">
+                                      {{
+                                        formatBenchmarkConfigDescription(
+                                          benchmarkOption
+                                        )
+                                      }}
+                                    </span>
+                                  </button>
+                                }
                               }
-                            }
+                            </div>
+                          }
+                        } @else {
+                          <div class="custom-autocomplete__hint">
+                            {{
+                              control.emptyMessage ||
+                                "No matching workloads found."
+                            }}
                           </div>
                         }
                       </div>

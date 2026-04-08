@@ -2,6 +2,14 @@
   width: 100%;
   height: calc(100% - 4rem);
 
+  &.search_bar_content--without-top {
+    height: 100%;
+
+    .filters {
+      min-height: 100%;
+    }
+  }
+
   .top {
     height: 4rem;
     align-items: center;
