@@ -292,6 +292,81 @@
                     }
                   </div>
                 }
+
+                @if (control.type === "rangeSlider") {
+                  <div class="custom-slider mt-4">
+                    <div class="custom-slider__header">
+                      <div class="custom-slider__value">
+                        {{ formatCustomNumericValue(control) }}
+                      </div>
+                      @if (control.numericValue !== null) {
+                        <button
+                          type="button"
+                          class="custom-slider__clear"
+                          (click)="clearCustomNumericControl(control)"
+                          aria-label="Clear slider value"
+                        >
+                          <lucide-icon name="x" class="h-4 w-4"></lucide-icon>
+                        </button>
+                      }
+                    </div>
+
+                    <input
+                      type="range"
+                      class="custom-slider__input"
+                      [min]="control.min ?? 0"
+                      [max]="control.max ?? 100"
+                      [step]="control.step ?? 1"
+                      [value]="getRangeSliderValue(control)"
+                      (input)="
+                        onCustomRangeSliderChange(
+                          control,
+                          +$any($event.target).value
+                        )
+                      "
+                    />
+
+                    @if ((control.tickValues || []).length > 0) {
+                      <div class="custom-slider__ticks">
+                        @for (tick of control.tickValues || []; track tick) {
+                          <span
+                            >{{ tick }}
+                            @if (control.unit) {
+                              {{ control.unit }}
+                            }
+                          </span>
+                        }
+                      </div>
+                    }
+                  </div>
+                }
+
+                @if (control.type === "powerOfTwoStepper") {
+                  <div class="custom-stepper mt-4">
+                    <button
+                      type="button"
+                      class="custom-stepper__button"
+                      [disabled]="!canDecrementPowerOfTwoValue(control)"
+                      (click)="decrementPowerOfTwoValue(control)"
+                      aria-label="Decrease value"
+                    >
+                      <lucide-icon name="minus" class="h-4 w-4"></lucide-icon>
+                    </button>
+
+                    <div class="custom-stepper__value">
+                      {{ formatCustomNumericValue(control) }}
+                    </div>
+
+                    <button
+                      type="button"
+                      class="custom-stepper__button"
+                      (click)="incrementPowerOfTwoValue(control)"
+                      aria-label="Increase value"
+                    >
+                      <lucide-icon name="plus" class="h-4 w-4"></lucide-icon>
+                    </button>
+                  </div>
+                }
               </div>
             }
 

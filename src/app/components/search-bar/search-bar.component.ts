@@ -63,7 +63,12 @@ export type SearchBarParameter = {
 export type SearchBarCustomControl = {
   name: string;
   category_id: string;
-  type: "serverAutocomplete" | "benchmarkConfigSelect" | "singleSelect";
+  type:
+    | "serverAutocomplete"
+    | "benchmarkConfigSelect"
+    | "singleSelect"
+    | "rangeSlider"
+    | "powerOfTwoStepper";
   title: string;
   placeholder?: string;
   required?: boolean;
@@ -78,6 +83,13 @@ export type SearchBarCustomControl = {
   benchmarkGroups?: SearchBarBenchmarkConfigGroup[];
   selectedValue?: string | null;
   selectOptions?: SearchBarCustomSelectOption[];
+  numericValue?: number | null;
+  min?: number;
+  max?: number;
+  step?: number;
+  unit?: string;
+  tickValues?: number[];
+  allowZero?: boolean;
 };
 
 export type SearchBarCustomSelectOption = {
@@ -533,6 +545,99 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
       name: control.name,
       value: { inputValue: value },
     });
+  }
+
+  onCustomRangeSliderChange(control: SearchBarCustomControl, value: number) {
+    this.customControlChanged.emit({
+      name: control.name,
+      value: { numericValue: value },
+    });
+  }
+
+  clearCustomNumericControl(control: SearchBarCustomControl) {
+    this.customControlChanged.emit({
+      name: control.name,
+      value: { numericValue: null },
+    });
+  }
+
+  incrementPowerOfTwoValue(control: SearchBarCustomControl) {
+    const currentValue = control.numericValue;
+    let nextValue: number;
+
+    if (currentValue === null || currentValue === undefined) {
+      nextValue = control.allowZero ? 0 : 0.5;
+    } else if (currentValue === 0) {
+      nextValue = 0.5;
+    } else {
+      nextValue = currentValue * 2;
+    }
+
+    this.customControlChanged.emit({
+      name: control.name,
+      value: { numericValue: nextValue },
+    });
+  }
+
+  decrementPowerOfTwoValue(control: SearchBarCustomControl) {
+    const currentValue = control.numericValue;
+    if (currentValue === null || currentValue === undefined) {
+      return;
+    }
+
+    let nextValue: number | null = currentValue;
+
+    if (currentValue === 0) {
+      nextValue = control.allowZero ? 0 : null;
+    } else if (currentValue === 0.5) {
+      nextValue = control.allowZero ? 0 : 0.5;
+    } else {
+      nextValue = currentValue / 2;
+    }
+
+    this.customControlChanged.emit({
+      name: control.name,
+      value: { numericValue: nextValue },
+    });
+  }
+
+  canDecrementPowerOfTwoValue(control: SearchBarCustomControl): boolean {
+    const currentValue = control.numericValue;
+
+    if (currentValue === null || currentValue === undefined) {
+      return false;
+    }
+
+    if (currentValue === 0) {
+      return false;
+    }
+
+    return true;
+  }
+
+  formatCustomNumericValue(control: SearchBarCustomControl): string {
+    const value = control.numericValue;
+
+    if (value === null || value === undefined) {
+      return "Not set";
+    }
+
+    const formattedValue = Number.isInteger(value)
+      ? String(value)
+      : value.toFixed(1);
+    return control.unit ? `${formattedValue} ${control.unit}` : formattedValue;
+  }
+
+  getRangeSliderValue(control: SearchBarCustomControl): number {
+    if (control.numericValue !== null && control.numericValue !== undefined) {
+      return control.numericValue;
+    }
+
+    if (control.min !== undefined) {
+      return control.min;
+    }
+
+    return 0;
   }
 
   isBenchmarkGroupExpanded(

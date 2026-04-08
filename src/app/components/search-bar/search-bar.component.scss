@@ -155,4 +155,61 @@
   .benchmark-group__header {
     @apply flex w-full items-center justify-between bg-secondary px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-emerald-400;
   }
+
+  .custom-slider {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .custom-slider__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  .custom-slider__value {
+    @apply text-sm font-semibold text-white;
+  }
+
+  .custom-slider__clear {
+    @apply text-sky-100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .custom-slider__input {
+    width: 100%;
+    accent-color: #34d399;
+  }
+
+  .custom-slider__ticks {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    color: rgb(209 213 219);
+    font-size: 0.65rem;
+    line-height: 1;
+  }
+
+  .custom-stepper {
+    display: grid;
+    grid-template-columns: 2.5rem minmax(0, 1fr) 2.5rem;
+    gap: 0.75rem;
+    align-items: center;
+  }
+
+  .custom-stepper__button {
+    @apply rounded-lg border border-solid border-emerald-400 bg-primary text-white transition-colors duration-150 hover:bg-secondary disabled:cursor-not-allowed disabled:border-gray-600 disabled:text-gray-500;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .custom-stepper__value {
+    @apply rounded-lg border border-solid border-emerald-400 bg-gray-200 px-4 py-2 text-center text-sm font-semibold text-sky-950;
+  }
 }
