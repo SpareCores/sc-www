@@ -19,6 +19,7 @@ import { Modal, ModalOptions } from "flowbite";
 import { Subscription } from "rxjs";
 import { DragToPanDirective } from "../../directives/drag-to-pan.directive";
 import { LstopoSvgService } from "../../services/lstopo-svg.service";
+import { UiTooltipService } from "../../services/ui-tooltip.service";
 
 const LSTOPO_CDN_BASE =
   "https://cdn.jsdelivr.net/gh/SpareCores/sc-inspector-data@main/data";
@@ -47,6 +48,7 @@ export class ServerLstopoComponent implements OnChanges, OnDestroy {
   private elRef = inject(ElementRef);
   private cdr = inject(ChangeDetectorRef);
   private svgService = inject(LstopoSvgService);
+  private uiTooltip = inject(UiTooltipService);
 
   lstopoUrl: string = "";
   svgImgUrl: SafeUrl | null = null;
@@ -70,7 +72,9 @@ export class ServerLstopoComponent implements OnChanges, OnDestroy {
   }> = [];
 
   private readonly SVG_TOOLTIP_MAP: Record<string, string> = {
+    "rect.HostBridge": "Host bridge speed",
     "text.HostBridge": "Host bridge speed",
+    "rect.PCIBridge": "PCI bridge speed",
     "text.PCIBridge": "PCI bridge speed",
     "rect.L1i": "CPU Level 1 (L1) instruction cache",
     "rect.L1d": "CPU Level 1 (L1) data cache",
@@ -204,21 +208,17 @@ export class ServerLstopoComponent implements OnChanges, OnDestroy {
   showTooltip(e: Event, content: string): void {
     const tooltip = this.tooltipRef?.nativeElement;
     if (!tooltip) return;
-    const target = e.target as Element;
-    const rect = target.getBoundingClientRect();
-    tooltip.style.left = `${rect.left - 25}px`;
-    tooltip.style.top = `${rect.bottom + 5}px`;
-    tooltip.style.display = "block";
-    tooltip.style.opacity = "1";
+
     this.tooltipContent = content;
     this.cdr.detectChanges();
+    this.uiTooltip.show(tooltip, e);
   }
 
   hideTooltip(): void {
     const tooltip = this.tooltipRef?.nativeElement;
     if (!tooltip) return;
-    tooltip.style.display = "none";
-    tooltip.style.opacity = "0";
+
+    this.uiTooltip.hide(tooltip);
   }
 
   private addSvgTooltips(): void {

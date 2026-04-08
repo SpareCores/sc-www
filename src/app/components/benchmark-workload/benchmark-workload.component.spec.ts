@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { BenchmarkWorkloadComponent } from "./benchmark-workload.component";
 import { Status } from "../../../../sdk/data-contracts";
+import { UiTooltipService } from "../../services/ui-tooltip.service";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
 describe("BenchmarkWorkloadComponent", () => {
@@ -49,5 +50,33 @@ describe("BenchmarkWorkloadComponent", () => {
     expect(component.configEntries().length).toBe(1);
     expect(component.formatRange()).toBe("10 – 30");
     expect(component.histogramData()?.datasets[0].data).toEqual([2, 1]);
+  });
+
+  it("uses the shared tooltip service for status and direction tooltips", () => {
+    const tooltipService = TestBed.inject(UiTooltipService);
+    const showSpy = spyOn(tooltipService, "show");
+    const hideSpy = spyOn(tooltipService, "hide");
+    const target = document.createElement("button");
+
+    component.showTooltip(
+      { currentTarget: target, target } as unknown as MouseEvent,
+      "Active",
+    );
+
+    expect(component.tooltipContent()).toBe("Active");
+    expect(showSpy).toHaveBeenCalledOnceWith(
+      component.tooltipEl()?.nativeElement as HTMLElement,
+      jasmine.any(Object),
+      {
+        left: "anchor-right",
+        top: "anchor-above",
+      },
+    );
+
+    component.hideTooltip();
+
+    expect(hideSpy).toHaveBeenCalledOnceWith(
+      component.tooltipEl()?.nativeElement,
+    );
   });
 });

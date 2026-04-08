@@ -13,6 +13,7 @@ import { ChartConfiguration, ChartData } from "chart.js";
 import { BaseChartDirective } from "ng2-charts";
 import { LucideAngularModule } from "lucide-angular";
 import { Status } from "../../../../sdk/data-contracts";
+import { UiTooltipService } from "../../services/ui-tooltip.service";
 import {
   BenchmarkWorkloadExample,
   BenchmarkWorkloadItem,
@@ -38,6 +39,7 @@ interface HistogramBin {
 })
 export class BenchmarkWorkloadComponent {
   private platformId = inject(PLATFORM_ID);
+  private uiTooltip = inject(UiTooltipService);
   readonly isBrowser = isPlatformBrowser(this.platformId);
 
   readonly workload = input.required<BenchmarkWorkloadItem>();
@@ -177,19 +179,18 @@ export class BenchmarkWorkloadComponent {
   showTooltip(ev: MouseEvent, content: string): void {
     const tooltip = this.tooltipEl()?.nativeElement;
     if (!tooltip) return;
-    const rect = (ev.target as HTMLElement).getBoundingClientRect();
-    const scrollY = window.scrollY ?? document.documentElement.scrollTop;
-    tooltip.style.left = `${rect.right + 6}px`;
-    tooltip.style.top = `${rect.top - 10 + scrollY}px`;
-    tooltip.style.display = "block";
-    tooltip.style.opacity = "1";
+
     this.tooltipContent.set(content);
+    this.uiTooltip.show(tooltip, ev, {
+      left: "anchor-right",
+      top: "anchor-above",
+    });
   }
 
   hideTooltip(): void {
     const tooltip = this.tooltipEl()?.nativeElement;
     if (!tooltip) return;
-    tooltip.style.display = "none";
-    tooltip.style.opacity = "0";
+
+    this.uiTooltip.hide(tooltip);
   }
 }

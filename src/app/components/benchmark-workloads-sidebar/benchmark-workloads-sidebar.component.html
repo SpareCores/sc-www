@@ -89,11 +89,9 @@
 </div>
 
 <div
-  class="z-50 max-w-48 px-2 py-1 text-xs font-medium text-white bg-secondary border border-solid border-emerald-400 rounded-lg pointer-events-none absolute"
-  [style.display]="tooltipState().visible ? 'block' : 'none'"
-  [style.opacity]="tooltipState().visible ? '1' : '0'"
-  [style.left.px]="tooltipState().left"
-  [style.top.px]="tooltipState().top"
+  #tooltipEl
+  style="opacity: 0; display: none"
+  class="tooltip-panel fixed z-100 pointer-events-none max-w-48"
 >
-  {{ tooltipState().content }}
+  {{ tooltipContent() }}
 </div>
