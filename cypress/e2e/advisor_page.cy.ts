@@ -15,4 +15,21 @@ describe("Advisor page", () => {
       "Recommended Servers",
     );
   });
+
+  it("Filters baseline servers after three characters", () => {
+    E2EEvent.visitURL("/advisor", 4000);
+
+    cy.get('input[placeholder="Search for server..."]').as(
+      "baselineServerInput",
+    );
+
+    cy.get("@baselineServerInput").type("gc");
+    cy.contains("Enter at least 3 characters to search.").should("be.visible");
+
+    cy.get("@baselineServerInput").type("p");
+    cy.get(".custom-autocomplete__panel .custom-autocomplete__option").should(
+      "have.length.greaterThan",
+      0,
+    );
+  });
 });
