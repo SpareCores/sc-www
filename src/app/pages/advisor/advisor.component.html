@@ -63,6 +63,7 @@
       >
         <div class="top_buttons w-[calc(100%-60px)] ml-auto">
           <button
+            id="advisor_share_button"
             type="button"
             class="advisor-share-button"
             (click)="clipboardURL()"
@@ -73,7 +74,7 @@
         </div>
 
         <div class="advisor-summary-grid">
-          <div class="placeholder-panel">
+          <div class="placeholder-panel" id="advisor_status_panel">
             <div class="placeholder-panel__title">Recommendation Status</div>
             <div class="placeholder-panel__body">
               The advisor is now deriving a workload-aware `/servers` query from
@@ -127,7 +128,7 @@
             }
           </div>
 
-          <div class="placeholder-panel">
+          <div class="placeholder-panel" id="advisor_inputs_panel">
             <div class="placeholder-panel__title">Advisor Inputs</div>
             @if (selectedBaselineServer(); as baselineServer) {
               <div class="placeholder-panel__selection">
@@ -184,7 +185,7 @@
         </div>
 
         @if (topRecommendation(); as topRecommendation) {
-          <div class="placeholder-panel">
+          <div class="placeholder-panel" id="advisor_top_recommendation">
             <div class="placeholder-panel__title">Top Recommendation</div>
             <div class="recommendation-highlight">
               <div>
@@ -217,6 +218,7 @@
               </div>
               <div class="recommendation-highlight__actions">
                 <a
+                  id="advisor_top_recommendation_view"
                   class="recommendation-highlight__button recommendation-highlight__button--primary"
                   [routerLink]="[
                     '/server',
@@ -227,6 +229,7 @@
                   View details
                 </a>
                 <button
+                  id="advisor_top_recommendation_compare"
                   type="button"
                   class="recommendation-highlight__button recommendation-highlight__button--secondary"
                   (click)="toggleCompareRecommendation(topRecommendation)"
@@ -242,7 +245,7 @@
           </div>
         }
 
-        <div class="placeholder-panel">
+        <div class="placeholder-panel" id="advisor_results_panel">
           <div class="placeholder-panel__title">Recommended Servers</div>
           <div class="placeholder-panel__body">
             Default advisor columns focus on the requested hardware fields while
@@ -266,7 +269,7 @@
                 No recommendation rows available yet.
               </div>
             } @else {
-              <table class="items_table">
+              <table class="items_table" id="advisor_results_table">
                 <thead>
                   <tr>
                     <th class="checkbox_column">

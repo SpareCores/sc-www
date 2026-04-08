@@ -4,6 +4,7 @@ describe("Visit main pages", () => {
   it("Visit pages", () => {
     E2EEvent.visitURL("");
     E2EEvent.visitURL("/servers");
+    E2EEvent.visitURL("/advisor");
     E2EEvent.visitURL("/server_prices");
     E2EEvent.visitURL("/vendors");
     E2EEvent.visitURL("/regions");
