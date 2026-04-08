@@ -41,6 +41,16 @@
         </div>
 
         <div class="filters overflow-hidden bg-secondary">
+          <app-search-bar
+            [query]="query()"
+            [filterCategories]="filterCategories"
+            [searchParameters]="searchParameters"
+            [customControls]="customControls()"
+            [isAuthenticated]="false"
+            (searchChanged)="onSearchChanged($event)"
+            (customControlChanged)="onCustomControlChanged($event)"
+          >
+          </app-search-bar>
         </div>
       </div>
 
@@ -56,11 +66,34 @@
         <div class="placeholder-panel">
           <div class="placeholder-panel__title">Advisor Workspace Ready</div>
           <div class="placeholder-panel__body">
-            The dedicated `/advisor` page is now wired and uses the
-            server-listing page shell as the starting point. The next steps will
-            add the search experience, recommendation query state, and results
-            table behavior.
+            The shared search bar is now wired into the dedicated `/advisor`
+            page using the same base filter schema as the server listing page.
+            Advisor-specific controls, recommendation query logic, and result
+            rendering will be added next.
           </div>
+          <div class="placeholder-panel__meta">
+            Active shared filters: {{ activeFilterCount() }}
+          </div>
+          <div class="placeholder-panel__meta">
+            Baseline catalog loaded: {{ serverTableRows().length }} servers
+          </div>
+          <div class="placeholder-panel__meta">
+            Benchmark workloads loaded: {{ benchmarkConfigOptions().length }}
+          </div>
+          @if (selectedBaselineServer(); as baselineServer) {
+            <div class="placeholder-panel__selection">
+              Selected baseline server: {{ baselineServer.vendor_id }} /
+              {{ baselineServer.api_reference }}
+            </div>
+          }
+          @if (selectedBenchmarkConfig(); as workload) {
+            <div class="placeholder-panel__selection">
+              Selected workload: {{ workload.displayName }}
+              @if (workload.configTitle) {
+                <span class="text-gray-300"> | {{ workload.configTitle }}</span>
+              }
+            </div>
+          }
         </div>
       </div>
     </div>

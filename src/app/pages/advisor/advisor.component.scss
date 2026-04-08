@@ -63,3 +63,11 @@
 .placeholder-panel__body {
   @apply mt-3 max-w-3xl text-sm leading-6 text-white;
 }
+
+.placeholder-panel__meta {
+  @apply mt-4 text-xs uppercase tracking-wide text-gray-300;
+}
+
+.placeholder-panel__selection {
+  @apply mt-4 rounded-lg border border-solid border-emerald-400 bg-primary px-4 py-3 text-sm text-white;
+}

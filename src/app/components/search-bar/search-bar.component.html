@@ -72,6 +72,197 @@
             [class.pt-4]="!noTopPaddingCategoryIds.includes(filter.category_id)"
           >
             @for (
+              control of getCustomControlsByCategory(filter.category_id);
+              track control.name
+            ) {
+              <div class="mb-4">
+                <div class="flex gap-2 items-center">
+                  <div class="font-bold text-emerald-400 text-sm">
+                    {{ control.title }}
+                    @if (control.required) {
+                      <span class="text-red-300">*</span>
+                    }
+                  </div>
+                  @if (control.description) {
+                    <lucide-icon
+                      name="info"
+                      class="h-4 w-4 text-gray-200"
+                      (mouseenter)="showTooltip($event, control.description)"
+                      (mouseleave)="hideTooltip()"
+                    >
+                    </lucide-icon>
+                  }
+                </div>
+
+                @if (control.type === "serverAutocomplete") {
+                  <div class="custom-autocomplete mt-4">
+                    <div class="custom-autocomplete__input-wrap">
+                      <input
+                        type="text"
+                        [value]="control.inputValue || ''"
+                        [placeholder]="control.placeholder || ''"
+                        (input)="
+                          onCustomControlInput(
+                            control,
+                            $any($event.target).value
+                          )
+                        "
+                        class="custom-autocomplete__input"
+                      />
+                      @if (control.inputValue || control.selectedServer) {
+                        <button
+                          type="button"
+                          class="custom-autocomplete__clear"
+                          (click)="clearServerAutocompleteSelection(control)"
+                          aria-label="Clear baseline server selection"
+                        >
+                          <lucide-icon name="x" class="h-4 w-4"></lucide-icon>
+                        </button>
+                      }
+                    </div>
+
+                    @if (!customControlHasEnoughInput(control)) {
+                      <div class="custom-autocomplete__hint">
+                        Enter at least
+                        {{ getCustomControlMinCharacters(control) }} characters
+                        to search.
+                      </div>
+                    } @else if ((control.options || []).length > 0) {
+                      <div class="custom-autocomplete__panel custom-scrollbar">
+                        @for (
+                          server of control.options || [];
+                          track server.vendor_id + "_" + server.server_id
+                        ) {
+                          <button
+                            type="button"
+                            class="custom-autocomplete__option"
+                            (click)="
+                              selectServerAutocompleteOption(control, server)
+                            "
+                          >
+                            <span class="custom-autocomplete__label">
+                              {{ server.vendor_id }} /
+                              {{ server.api_reference }}
+                            </span>
+                            <span class="custom-autocomplete__meta">
+                              {{ formatServerAutocompleteDescription(server) }}
+                            </span>
+                          </button>
+                        }
+                      </div>
+                    } @else {
+                      <div class="custom-autocomplete__hint">
+                        {{
+                          control.emptyMessage || "No matching servers found."
+                        }}
+                      </div>
+                    }
+                  </div>
+                }
+
+                @if (control.type === "benchmarkConfigSelect") {
+                  <div class="custom-autocomplete mt-4">
+                    <div class="custom-autocomplete__input-wrap">
+                      <input
+                        type="text"
+                        [value]="control.inputValue || ''"
+                        [placeholder]="control.placeholder || ''"
+                        (input)="
+                          onCustomControlInput(
+                            control,
+                            $any($event.target).value
+                          )
+                        "
+                        class="custom-autocomplete__input"
+                      />
+                      @if (control.inputValue || control.selectedBenchmarkConfig) {
+                        <button
+                          type="button"
+                          class="custom-autocomplete__clear"
+                          (click)="clearBenchmarkConfigSelection(control)"
+                          aria-label="Clear workload selection"
+                        >
+                          <lucide-icon name="x" class="h-4 w-4"></lucide-icon>
+                        </button>
+                      }
+                    </div>
+
+                    @if (
+                      !customControlHasEnoughInput(control) &&
+                      (control.inputValue || '').trim().length > 0
+                    ) {
+                      <div class="custom-autocomplete__hint">
+                        Enter at least
+                        {{ getCustomControlMinCharacters(control) }} characters
+                        to search.
+                      </div>
+                    }
+
+                    @if ((control.benchmarkGroups || []).length > 0) {
+                      <div class="custom-autocomplete__panel custom-scrollbar">
+                        @for (
+                          group of control.benchmarkGroups || [];
+                          track group.name
+                        ) {
+                          <div class="benchmark-group">
+                            <button
+                              type="button"
+                              class="benchmark-group__header"
+                              (click)="toggleBenchmarkGroup(control, group.name)"
+                            >
+                              <span>{{ group.name }}</span>
+                              <lucide-icon
+                                [name]="
+                                  isBenchmarkGroupExpanded(control, group.name)
+                                    ? 'chevron-up'
+                                    : 'chevron-down'
+                                "
+                                class="h-4 w-4"
+                              ></lucide-icon>
+                            </button>
+
+                            @if (isBenchmarkGroupExpanded(control, group.name)) {
+                              @for (
+                                benchmarkOption of group.options;
+                                track benchmarkOption.benchmark_id + '_' + benchmarkOption.config
+                              ) {
+                                <button
+                                  type="button"
+                                  class="custom-autocomplete__option"
+                                  (click)="
+                                    selectBenchmarkConfigOption(
+                                      control,
+                                      benchmarkOption
+                                    )
+                                  "
+                                >
+                                  <span class="custom-autocomplete__label">
+                                    {{ benchmarkOption.displayName }}
+                                  </span>
+                                  <span class="custom-autocomplete__meta">
+                                    {{
+                                      formatBenchmarkConfigDescription(
+                                        benchmarkOption
+                                      )
+                                    }}
+                                  </span>
+                                </button>
+                              }
+                            }
+                          </div>
+                        }
+                      </div>
+                    } @else {
+                      <div class="custom-autocomplete__hint">
+                        {{ control.emptyMessage || 'No matching workloads found.' }}
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+            }
+
+            @for (
               parameter of getParametersByCategory(filter.category_id);
               track parameter.schema.name + "_" + parameter.schema.title
             ) {

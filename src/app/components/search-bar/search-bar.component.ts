@@ -28,6 +28,7 @@ import {
 } from "../../pages/server-listing/server-listing.component";
 import { CountryIdtoNamePipe } from "../../pipes/country-idto-name.pipe";
 import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
+import { Benchmark, BenchmarkConfig, Server } from "../../../../sdk/data-contracts";
 
 const optionsModal: ModalOptions = {
   backdropClasses: "bg-gray-900/50 fixed inset-0 z-40",
@@ -53,6 +54,36 @@ export type SearchBarParameter = {
     range_max?: number;
     [key: string]: unknown;
   };
+};
+
+export type SearchBarCustomControl = {
+  name: string;
+  category_id: string;
+  type: "serverAutocomplete" | "benchmarkConfigSelect";
+  title: string;
+  placeholder?: string;
+  required?: boolean;
+  description?: string;
+  minCharacters?: number;
+  inputValue?: string;
+  selectedServer?: Server | null;
+  options?: Server[];
+  emptyMessage?: string;
+  selectedBenchmarkConfig?: SearchBarBenchmarkConfigOption | null;
+  benchmarkOptions?: SearchBarBenchmarkConfigOption[];
+  benchmarkGroups?: SearchBarBenchmarkConfigGroup[];
+};
+
+export type SearchBarBenchmarkConfigOption = BenchmarkConfig & {
+  benchmarkTemplate?: Benchmark | null;
+  configTitle: string;
+  displayName: string;
+  framework: string;
+};
+
+export type SearchBarBenchmarkConfigGroup = {
+  name: string;
+  options: SearchBarBenchmarkConfigOption[];
 };
 
 type SearchBarParameterType =
@@ -106,8 +137,13 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   @Input() topSearchPlaceholder = "Search vendor or API reference";
   @Input() showParameterTitles = true;
   @Input() noTopPaddingCategoryIds: string[] = [];
+  @Input() customControls: SearchBarCustomControl[] = [];
 
   @Output() searchChanged = new EventEmitter<any>();
+  @Output() customControlChanged = new EventEmitter<{
+    name: string;
+    value: unknown;
+  }>();
 
   @ViewChild("tooltipDefault") tooltip!: ElementRef;
   clipboardIcon = "clipboard";
@@ -146,6 +182,7 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
 
   valueChangeDebouncer: Subject<number> = new Subject<number>();
   private subscription = new Subscription();
+  benchmarkGroupExpansion: Record<string, Record<string, boolean>> = {};
 
   ngOnInit() {
     this.keeperAPI.getComplianceFrameworks().then((response: any) => {
@@ -453,6 +490,12 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
     });
   }
 
+  getCustomControlsByCategory(category: string) {
+    return (this.customControls || []).filter(
+      (control) => control.category_id === category,
+    );
+  }
+
   getTopSearchParameter() {
     return (this.searchParameters as SearchBarParameter[])?.find(
       (param) => param.name === this.topSearchParameterName,
@@ -461,6 +504,123 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
 
   isParameterDisabled(parameterName: string): boolean {
     return this.extraParameters?.[parameterName] != null;
+  }
+
+  getCustomControlMinCharacters(control: SearchBarCustomControl): number {
+    return control.minCharacters || 3;
+  }
+
+  customControlHasEnoughInput(control: SearchBarCustomControl): boolean {
+    return (
+      (control.inputValue || "").trim().length >=
+      this.getCustomControlMinCharacters(control)
+    );
+  }
+
+  onCustomControlInput(control: SearchBarCustomControl, value: string) {
+    this.customControlChanged.emit({
+      name: control.name,
+      value: { inputValue: value },
+    });
+  }
+
+  isBenchmarkGroupExpanded(
+    control: SearchBarCustomControl,
+    groupName: string,
+  ): boolean {
+    const controlExpansion = this.benchmarkGroupExpansion[control.name] || {};
+    return controlExpansion[groupName] ?? true;
+  }
+
+  toggleBenchmarkGroup(control: SearchBarCustomControl, groupName: string) {
+    if (!this.benchmarkGroupExpansion[control.name]) {
+      this.benchmarkGroupExpansion[control.name] = {};
+    }
+
+    const current = this.benchmarkGroupExpansion[control.name][groupName] ?? true;
+    this.benchmarkGroupExpansion[control.name][groupName] = !current;
+  }
+
+  selectServerAutocompleteOption(
+    control: SearchBarCustomControl,
+    server: Server,
+  ) {
+    this.customControlChanged.emit({
+      name: control.name,
+      value: {
+        inputValue: `${server.vendor_id} ${server.api_reference}`,
+        selectedServer: server,
+      },
+    });
+  }
+
+  clearServerAutocompleteSelection(control: SearchBarCustomControl) {
+    this.customControlChanged.emit({
+      name: control.name,
+      value: { inputValue: "", selectedServer: null },
+    });
+  }
+
+  selectBenchmarkConfigOption(
+    control: SearchBarCustomControl,
+    benchmarkOption: SearchBarBenchmarkConfigOption,
+  ) {
+    this.customControlChanged.emit({
+      name: control.name,
+      value: {
+        inputValue: benchmarkOption.displayName,
+        selectedBenchmarkConfig: benchmarkOption,
+      },
+    });
+  }
+
+  clearBenchmarkConfigSelection(control: SearchBarCustomControl) {
+    this.customControlChanged.emit({
+      name: control.name,
+      value: { inputValue: "", selectedBenchmarkConfig: null },
+    });
+  }
+
+  formatBenchmarkConfigDescription(
+    benchmarkOption: SearchBarBenchmarkConfigOption,
+  ): string {
+    const descriptionParts = [benchmarkOption.framework];
+
+    if (benchmarkOption.configTitle) {
+      descriptionParts.push(benchmarkOption.configTitle);
+    }
+
+    if (benchmarkOption.benchmarkTemplate?.unit) {
+      descriptionParts.push(String(benchmarkOption.benchmarkTemplate.unit));
+    }
+
+    return descriptionParts.filter(Boolean).join(" | ");
+  }
+
+  formatServerAutocompleteDescription(server: Server): string {
+    const secondaryParts: string[] = [];
+
+    if (server.vcpus) {
+      secondaryParts.push(`${server.vcpus} vCPU`);
+    }
+
+    if (server.memory_amount) {
+      secondaryParts.push(
+        `${(server.memory_amount / 1024).toFixed(1)} GiB RAM`,
+      );
+    }
+
+    if (server.storage_size) {
+      secondaryParts.push(`${server.storage_size} GB storage`);
+    }
+
+    if (server.gpu_memory_total) {
+      secondaryParts.push(
+        `${(server.gpu_memory_total / 1024).toFixed(1)} GiB GPU`,
+      );
+    }
+
+    return secondaryParts.join(" | ");
   }
 
   selectedCountriesCount = computed(
