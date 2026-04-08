@@ -23,6 +23,7 @@ import {
   SearchBarCustomControl,
   SearchBarCustomSelectOption,
   SearchBarParameter,
+  SearchBarServerOption,
 } from "../../components/search-bar/search-bar.component";
 import {
   BenchmarkScore,
@@ -84,6 +85,19 @@ type AdvisorTableColumn = {
   orderField?: string;
 };
 
+const ADVISOR_DEFAULT_SERVER_COLUMNS = [
+  "vendor_id",
+  "api_reference",
+  "status",
+  "vcpus",
+  "memory_amount",
+  "gpu_memory_total",
+  "storage_size",
+] as const;
+
+type AdvisorBaselineServer = SearchBarServerOption &
+  Partial<Pick<Server, "status">>;
+
 @Component({
   selector: "app-advisor",
   imports: [
@@ -118,9 +132,9 @@ export class AdvisorComponent implements OnInit, OnDestroy {
 
   readonly isCollapsed = signal(false);
   readonly query = signal<Record<string, unknown>>({});
-  readonly serverTableRows = signal<Server[]>([]);
+  readonly serverTableRows = signal<AdvisorBaselineServer[]>([]);
   readonly baselineServerInput = signal("");
-  readonly selectedBaselineServer = signal<Server | null>(null);
+  readonly selectedBaselineServer = signal<AdvisorBaselineServer | null>(null);
   readonly isLoadingBaselineServers = signal(false);
   readonly benchmarkConfigInput = signal("");
   readonly selectedBenchmarkConfig =
@@ -204,15 +218,8 @@ export class AdvisorComponent implements OnInit, OnDestroy {
       .filter((server) => {
         const vendor = server.vendor_id.toLowerCase();
         const apiReference = server.api_reference.toLowerCase();
-        const displayName = server.display_name.toLowerCase();
-        const description = (server.description || "").toLowerCase();
 
-        return (
-          vendor.includes(searchTerm) ||
-          apiReference.includes(searchTerm) ||
-          displayName.includes(searchTerm) ||
-          description.includes(searchTerm)
-        );
+        return vendor.includes(searchTerm) || apiReference.includes(searchTerm);
       })
       .slice(0, 20);
   });
@@ -795,7 +802,7 @@ export class AdvisorComponent implements OnInit, OnDestroy {
         event.value && typeof event.value === "object"
           ? (event.value as {
               inputValue?: string;
-              selectedServer?: Server | null;
+              selectedServer?: AdvisorBaselineServer | null;
             })
           : {};
 
@@ -883,7 +890,7 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     this.isLoadingBaselineServers.set(true);
 
     this.keeperApi
-      .getServers()
+      .getServersSelect([...ADVISOR_DEFAULT_SERVER_COLUMNS])
       .then((response) => {
         this.serverTableRows.set(response?.body || []);
       })
@@ -952,13 +959,15 @@ export class AdvisorComponent implements OnInit, OnDestroy {
       });
   }
 
-  private async loadBaselineBenchmarkScores(server: Server): Promise<void> {
+  private async loadBaselineBenchmarkScores(
+    server: AdvisorBaselineServer,
+  ): Promise<void> {
     this.isLoadingBaselineBenchmarkScores.set(true);
 
     try {
       const response = await this.keeperApi.getServerBenchmark(
         server.vendor_id,
-        server.server_id,
+        server.api_reference,
       );
 
       this.baselineBenchmarkScores.set(response?.body || []);

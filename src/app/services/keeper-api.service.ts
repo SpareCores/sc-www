@@ -9,6 +9,7 @@ import {
   SearchServersServersGetParams,
   SearchStoragePricesStoragePricesGetParams,
   SearchTrafficPricesTrafficPricesGetParams,
+  TableServerSelectTableServerSelectGetParams,
 } from "../../../sdk/data-contracts";
 import { Table } from "../../../sdk/Table";
 import { Ai } from "../../../sdk/Ai";
@@ -133,6 +134,17 @@ export class KeeperAPIService {
 
   public getServers(): Promise<any> {
     return this.TableController.tableServerTableServerGet();
+  }
+
+  public getServersSelect(
+    columns: NonNullable<
+      TableServerSelectTableServerSelectGetParams["columns"]
+    >[],
+  ): Promise<any> {
+    return this.TableController.tableServerSelectTableServerSelectGet({
+      columns:
+        columns as unknown as TableServerSelectTableServerSelectGetParams["columns"],
+    });
   }
 
   public getServerMeta(): Promise<any> {

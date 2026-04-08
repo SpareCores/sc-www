@@ -147,7 +147,9 @@
                       <div class="custom-autocomplete__panel custom-scrollbar">
                         @for (
                           server of control.options || [];
-                          track server.vendor_id + "_" + server.server_id
+                          track server.vendor_id +
+                            "_" +
+                            (server.server_id || server.api_reference)
                         ) {
                           <button
                             type="button"

@@ -75,8 +75,8 @@ export type SearchBarCustomControl = {
   description?: string;
   minCharacters?: number;
   inputValue?: string;
-  selectedServer?: Server | null;
-  options?: Server[];
+  selectedServer?: SearchBarServerOption | null;
+  options?: SearchBarServerOption[];
   emptyMessage?: string;
   selectedBenchmarkConfig?: SearchBarBenchmarkConfigOption | null;
   benchmarkOptions?: SearchBarBenchmarkConfigOption[];
@@ -103,6 +103,23 @@ export type SearchBarBenchmarkConfigOption = BenchmarkConfig & {
   displayName: string;
   framework: string;
 };
+
+export type SearchBarServerOption = Pick<
+  Server,
+  "vendor_id" | "api_reference"
+> &
+  Partial<
+    Pick<
+      Server,
+      | "server_id"
+      | "display_name"
+      | "description"
+      | "vcpus"
+      | "memory_amount"
+      | "storage_size"
+      | "gpu_memory_total"
+    >
+  >;
 
 export type SearchBarBenchmarkConfigGroup = {
   name: string;
@@ -663,7 +680,7 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
 
   selectServerAutocompleteOption(
     control: SearchBarCustomControl,
-    server: Server,
+    server: SearchBarServerOption,
   ) {
     this.customControlChanged.emit({
       name: control.name,
@@ -770,7 +787,7 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
     return descriptionParts.filter(Boolean).join(" | ");
   }
 
-  formatServerAutocompleteDescription(server: Server): string {
+  formatServerAutocompleteDescription(server: SearchBarServerOption): string {
     const secondaryParts: string[] = [];
 
     if (server.vcpus) {
