@@ -6,15 +6,10 @@ describe("Advisor page", () => {
 
     E2EEvent.checkBreadcrumbs();
     E2EEvent.isVisible(`[id="serverSearchBar"]`);
-    E2EEvent.isVisibleAndNotEmpty(`[id="advisor_status_panel"]`);
-    E2EEvent.isVisibleAndNotEmpty(`[id="advisor_inputs_panel"]`);
     E2EEvent.isVisibleAndNotEmpty(`[id="advisor_results_panel"]`);
     E2EEvent.isVisible(`[id="advisor_share_button"]`);
 
-    cy.get(`[id="advisor_status_panel"]`).should(
-      "contain.text",
-      "waiting for required inputs",
-    );
+    E2EEvent.doesNotExist(`[id="advisor_inputs_panel"]`);
     cy.get(`[id="advisor_results_panel"]`).should(
       "contain.text",
       "Recommended Servers",
