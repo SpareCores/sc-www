@@ -808,6 +808,28 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     }
   }
 
+  clearFilters(): void {
+    const defaultBenchmarkConfig = this.getDefaultBenchmarkConfig();
+
+    this.query.set({});
+    this.selectedBaselineServer.set(null);
+    this.baselineServerInput.set("");
+    this.pendingBaselineVendorId.set(null);
+    this.pendingBaselineApiReference.set(null);
+    this.selectedBenchmarkConfig.set(defaultBenchmarkConfig);
+    this.benchmarkConfigInput.set(defaultBenchmarkConfig?.displayName || "");
+    this.pendingWorkloadId.set(null);
+    this.pendingWorkloadConfig.set(null);
+    this.optimizationGoal.set("cost");
+    this.averageCpuUtilization.set(null);
+    this.minimumMemoryGiB.set(0.5);
+    this.peakGpuMemoryGiB.set(0);
+    this.page.set(1);
+    this.limit.set(25);
+    this.manualOrderBy.set(undefined);
+    this.manualOrderDir.set(undefined);
+  }
+
   private loadBaselineServerRows(): void {
     this.isLoadingBaselineServers.set(true);
 
@@ -862,10 +884,7 @@ export class AdvisorComponent implements OnInit, OnDestroy {
 
         this.benchmarkConfigOptions.set(options);
 
-        const defaultOption = options.find(
-          (option: SearchBarBenchmarkConfigOption) =>
-            option.benchmark_id === "stress_ng:bestn" && option.config === "{}",
-        );
+        const defaultOption = this.getDefaultBenchmarkConfig(options);
 
         if (defaultOption && !this.selectedBenchmarkConfig()) {
           this.selectedBenchmarkConfig.set(defaultOption);
@@ -1111,5 +1130,16 @@ export class AdvisorComponent implements OnInit, OnDestroy {
 
   private getCompareKey(server: ServerPKs): string {
     return `${server.vendor_id}::${server.api_reference}`;
+  }
+
+  private getDefaultBenchmarkConfig(
+    options: SearchBarBenchmarkConfigOption[] = this.benchmarkConfigOptions(),
+  ): SearchBarBenchmarkConfigOption | null {
+    return (
+      options.find(
+        (option) =>
+          option.benchmark_id === "stress_ng:bestn" && option.config === "{}",
+      ) || null
+    );
   }
 }

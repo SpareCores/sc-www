@@ -52,6 +52,21 @@
             (customControlChanged)="onCustomControlChanged($event)"
           >
           </app-search-bar>
+
+          @if (!isCollapsed()) {
+            <div
+              class="advisor-filter-actions px-4 pb-4 bg-secondary flex flex-col gap-3 border-r border-emerald-400 border-solid"
+            >
+              <button
+                type="button"
+                class="text-white bg-emerald-400 hover:bg-emerald-500 rounded-lg px-3 py-2 relative flex gap-2 items-center justify-center"
+                (click)="clearFilters()"
+              >
+                <lucide-icon class="h-4 w-4" name="funnel-x"></lucide-icon>
+                Clear filters
+              </button>
+            </div>
+          }
         </div>
       </div>
 

@@ -33,9 +33,30 @@
 
   .filters {
     border-right: 1px solid #34d399;
-    padding-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
     height: calc(100% - 4rem);
   }
+}
+
+.filter_bar app-search-bar {
+  display: block;
+  flex: 1;
+  min-height: 0;
+}
+
+.advisor-filter-actions {
+  border-top: 1px solid rgb(52 211 153 / 0.25);
+}
+
+:host
+  ::ng-deep
+  .filter_bar
+  .filters
+  app-search-bar
+  .search_bar_content
+  .filters {
+  border-right: 0;
 }
 
 .filter_bar.collapsed {
@@ -47,13 +68,20 @@
   height: 4rem;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 1rem;
   width: 100%;
+  flex-wrap: wrap;
 }
 
 .advisor-summary-alert {
-  @apply flex-1 rounded-lg border px-4 py-3;
+  @apply rounded-lg border px-3;
+  width: fit-content;
+  max-width: min(28rem, 100%);
+  margin-left: auto;
+  min-height: 2.5rem;
+  display: inline-flex;
+  align-items: center;
 }
 
 .advisor-summary-alert--positive {
@@ -65,11 +93,12 @@
 }
 
 .advisor-summary-alert__title {
-  @apply text-sm font-semibold;
+  @apply text-xs font-semibold;
+  line-height: 1rem;
 }
 
 .advisor-summary-alert__body {
-  @apply mt-1 text-xs leading-5;
+  @apply hidden;
 }
 
 .limited-full {
