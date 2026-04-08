@@ -105,6 +105,22 @@
   @apply grid gap-2 text-sm text-emerald-300;
 }
 
+.recommendation-highlight__actions {
+  @apply flex flex-wrap gap-3;
+}
+
+.recommendation-highlight__button {
+  @apply inline-flex items-center justify-center rounded-lg border border-solid px-4 py-2 text-sm font-semibold transition-colors duration-150;
+}
+
+.recommendation-highlight__button--primary {
+  @apply border-emerald-400 bg-emerald-400 text-white hover:bg-emerald-500 hover:border-emerald-500;
+}
+
+.recommendation-highlight__button--secondary {
+  @apply border-emerald-400 bg-secondary text-white hover:bg-primary;
+}
+
 .advisor-table-wrap {
   @apply mt-4 overflow-x-auto;
 }

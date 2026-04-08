@@ -215,6 +215,29 @@
                   }}
                 </div>
               </div>
+              <div class="recommendation-highlight__actions">
+                <a
+                  class="recommendation-highlight__button recommendation-highlight__button--primary"
+                  [routerLink]="[
+                    '/server',
+                    topRecommendation.vendor_id,
+                    topRecommendation.api_reference,
+                  ]"
+                >
+                  View details
+                </a>
+                <button
+                  type="button"
+                  class="recommendation-highlight__button recommendation-highlight__button--secondary"
+                  (click)="toggleCompareRecommendation(topRecommendation)"
+                >
+                  @if (isSelectedForCompare(topRecommendation)) {
+                    Remove from compare
+                  } @else {
+                    Add to compare
+                  }
+                </button>
+              </div>
             </div>
           </div>
         }

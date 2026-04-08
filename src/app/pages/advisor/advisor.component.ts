@@ -766,6 +766,15 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     });
   }
 
+  toggleCompareRecommendation(server: ServerPKs): void {
+    const shouldSelect = !this.isSelectedForCompare(server);
+    this.serverCompare.toggleCompare(shouldSelect, {
+      server: server.api_reference,
+      vendor: server.vendor_id,
+      display_name: server.display_name,
+    });
+  }
+
   clearCompareSelection(): void {
     this.serverCompare.clearCompare();
   }
