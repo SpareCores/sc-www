@@ -11,7 +11,7 @@ import {
 } from "@angular/core";
 import { ActivatedRoute, Params, RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
-import { Subscription } from "rxjs";
+import { Subject, Subscription, debounceTime } from "rxjs";
 import {
   BreadcrumbSegment,
   BreadcrumbsComponent,
@@ -52,7 +52,22 @@ import {
 } from "./advisor.copy";
 import { AdvisorUiService } from "./advisor-ui.service";
 import { AdvisorBaselineServer, AdvisorTableColumn } from "./advisor.types";
-import { normalizeBenchmarkConfig } from "./advisor.utils";
+import { normalizeBenchmarkConfig, stableStringify } from "./advisor.utils";
+
+const ADVISOR_RECOMMENDATION_DEBOUNCE_MS = 350;
+const ADVISOR_RECOMMENDATION_CACHE_TTL_MS = 60_000;
+
+type RecommendationRequest = {
+  key: string;
+  query: SearchServersServersGetParams;
+};
+
+type RecommendationCacheEntry = {
+  recommendations: SearchServersServersGetData;
+  totalCount: number;
+  totalPages: number;
+  cachedAt: number;
+};
 
 @Component({
   selector: "app-advisor",
@@ -77,6 +92,10 @@ export class AdvisorComponent implements OnInit, OnDestroy {
   private compareSubscription = new Subscription();
   private lastEncodedQuery: string | null = null;
   private clipboardResetTimeout: ReturnType<typeof setTimeout> | null = null;
+  private recommendationRequests = new Subject<RecommendationRequest | null>();
+  private recommendationCache = new Map<string, RecommendationCacheEntry>();
+  private recommendationRequestVersion = 0;
+  private activeRecommendationRequestKey: string | null = null;
 
   readonly title = ADVISOR_PAGE_TITLE;
   readonly description = ADVISOR_PAGE_DESCRIPTION;
@@ -275,6 +294,22 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     this.advisorUi.buildMissingInputsMessage(this.missingRequiredInputs()),
   );
   readonly compareCount = computed(() => this.compareSelectionKeys().length);
+  readonly isBaselineSelectedForCompare = computed(() => {
+    const selectedBaselineServer = this.selectedBaselineServer();
+
+    if (!selectedBaselineServer) {
+      return false;
+    }
+
+    return this.compareSelectionKeys().includes(
+      this.getCompareKey(selectedBaselineServer),
+    );
+  });
+  readonly baselineCompareButtonLabel = computed(() =>
+    this.isBaselineSelectedForCompare()
+      ? "Remove baseline"
+      : "Compare baseline",
+  );
   readonly activeOrderBy = computed(
     () => this.manualOrderBy() || this.recommendationOrderBy(),
   );
@@ -404,6 +439,18 @@ export class AdvisorComponent implements OnInit, OnDestroy {
   ]);
 
   constructor() {
+    this.compareSubscription.add(
+      this.recommendationRequests
+        .pipe(debounceTime(ADVISOR_RECOMMENDATION_DEBOUNCE_MS))
+        .subscribe((request) => {
+          if (!request) {
+            return;
+          }
+
+          void this.requestRecommendations(request.key, request.query);
+        }),
+    );
+
     effect(() => {
       const pendingBaselineVendorId = this.pendingBaselineVendorId();
       const pendingBaselineApiReference = this.pendingBaselineApiReference();
@@ -471,12 +518,17 @@ export class AdvisorComponent implements OnInit, OnDestroy {
       const recommendationQuery = this.recommendationQuery();
 
       if (!recommendationQuery) {
-        this.recommendations.set([]);
-        this.totalRecommendationCount.set(0);
+        this.recommendationRequestVersion += 1;
+        this.activeRecommendationRequestKey = null;
+        this.resetRecommendationState();
+        this.recommendationRequests.next(null);
         return;
       }
 
-      void this.loadRecommendations(recommendationQuery);
+      this.recommendationRequests.next({
+        key: this.getRecommendationQueryKey(recommendationQuery),
+        query: recommendationQuery,
+      });
     });
 
     effect(() => {
@@ -669,6 +721,23 @@ export class AdvisorComponent implements OnInit, OnDestroy {
       server: server.api_reference,
       vendor: server.vendor_id,
       display_name: server.display_name,
+    });
+  }
+
+  toggleBaselineCompare(): void {
+    const selectedBaselineServer = this.selectedBaselineServer();
+
+    if (!selectedBaselineServer) {
+      return;
+    }
+
+    const shouldSelect = !this.isBaselineSelectedForCompare();
+    this.serverCompare.toggleCompare(shouldSelect, {
+      server: selectedBaselineServer.api_reference,
+      vendor: selectedBaselineServer.vendor_id,
+      display_name:
+        selectedBaselineServer.display_name ||
+        selectedBaselineServer.api_reference,
     });
   }
 
@@ -920,35 +989,76 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     }
   }
 
-  private async loadRecommendations(
+  private async requestRecommendations(
+    requestKey: string,
     recommendationQuery: SearchServersServersGetParams,
   ): Promise<void> {
+    const cachedResult = this.getCachedRecommendation(requestKey);
+
+    if (cachedResult) {
+      this.applyRecommendationResult(cachedResult);
+      return;
+    }
+
+    if (
+      this.isLoadingRecommendations() &&
+      this.activeRecommendationRequestKey === requestKey
+    ) {
+      return;
+    }
+
+    const requestVersion = ++this.recommendationRequestVersion;
+    this.activeRecommendationRequestKey = requestKey;
     this.isLoadingRecommendations.set(true);
 
     try {
       const response = await this.keeperApi.searchServers(recommendationQuery);
+      if (
+        requestVersion !== this.recommendationRequestVersion ||
+        this.activeRecommendationRequestKey !== requestKey
+      ) {
+        return;
+      }
+
       const totalCount = parseInt(
         response?.headers?.get("x-total-count") || "0",
         10,
       );
       const totalPages = Math.ceil(totalCount / this.limit());
 
-      this.totalRecommendationCount.set(totalCount);
-      this.totalPages.set(totalPages);
+      const nextResult: RecommendationCacheEntry = {
+        recommendations: response?.body || [],
+        totalCount,
+        totalPages,
+        cachedAt: Date.now(),
+      };
 
       if (totalPages > 0 && this.page() > totalPages) {
+        this.totalRecommendationCount.set(totalCount);
+        this.totalPages.set(totalPages);
         this.page.set(totalPages);
         return;
       }
 
-      this.recommendations.set(response?.body || []);
+      this.recommendationCache.set(requestKey, nextResult);
+      this.applyRecommendationResult(nextResult);
     } catch (error) {
+      if (
+        requestVersion !== this.recommendationRequestVersion ||
+        this.activeRecommendationRequestKey !== requestKey
+      ) {
+        return;
+      }
+
       console.error("Failed to load advisor recommendations", error);
-      this.recommendations.set([]);
-      this.totalRecommendationCount.set(0);
-      this.totalPages.set(0);
+      this.resetRecommendationState();
     } finally {
-      this.isLoadingRecommendations.set(false);
+      if (
+        requestVersion === this.recommendationRequestVersion &&
+        this.activeRecommendationRequestKey === requestKey
+      ) {
+        this.isLoadingRecommendations.set(false);
+      }
     }
   }
 
@@ -1128,8 +1238,50 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     return queryParams;
   }
 
-  private getCompareKey(server: ServerPKs): string {
+  private getCompareKey(
+    server: Pick<ServerPKs, "vendor_id" | "api_reference">,
+  ): string {
     return `${server.vendor_id}::${server.api_reference}`;
+  }
+
+  private getRecommendationQueryKey(
+    recommendationQuery: SearchServersServersGetParams,
+  ): string {
+    return stableStringify(recommendationQuery);
+  }
+
+  private getCachedRecommendation(
+    requestKey: string,
+  ): RecommendationCacheEntry | null {
+    const cachedResult = this.recommendationCache.get(requestKey);
+
+    if (!cachedResult) {
+      return null;
+    }
+
+    if (
+      Date.now() - cachedResult.cachedAt >
+      ADVISOR_RECOMMENDATION_CACHE_TTL_MS
+    ) {
+      this.recommendationCache.delete(requestKey);
+      return null;
+    }
+
+    return cachedResult;
+  }
+
+  private applyRecommendationResult(result: RecommendationCacheEntry): void {
+    this.totalRecommendationCount.set(result.totalCount);
+    this.totalPages.set(result.totalPages);
+    this.recommendations.set(result.recommendations);
+    this.isLoadingRecommendations.set(false);
+  }
+
+  private resetRecommendationState(): void {
+    this.recommendations.set([]);
+    this.totalRecommendationCount.set(0);
+    this.totalPages.set(0);
+    this.isLoadingRecommendations.set(false);
   }
 
   private getDefaultBenchmarkConfig(
