@@ -26,6 +26,10 @@ const CONTACT_FORM_FROM =
 const CONTACT_FORM_TO = process.env["CONTACT_FORM_TO"] || "";
 const POW_SECRET_KEY = process.env["POW_SECRET_KEY"] || "";
 const S3_BUCKET_URL = process.env["S3_BUCKET_URL"] || "";
+const STATIC_ASSET_BASE_URL =
+  process.env["STATIC_ASSET_BASE_URL"] ||
+  process.env["NG_APP_STATIC_ASSET_BASE_URL"] ||
+  "";
 // fail healthcheck if RSS is too high (restart due to memory leak)
 const RSS_LIMIT_MB = parseInt(process.env["RSS_LIMIT_MB"] || "600", 10);
 
@@ -288,6 +292,23 @@ export function app(): express.Express {
     }
     next();
   });
+
+  const cdnAssetBase = STATIC_ASSET_BASE_URL.replace(/\/+$/, "");
+  const shouldServeFromCdn = (path: string) => {
+    // Static assets have extensions (handled by `*.*` route below).
+    // Keep API and healthcheck local.
+    if (path === "/healthcheck" || path.startsWith("/api/")) return false;
+    return /\.[^/]+$/.test(path);
+  };
+  if (cdnAssetBase) {
+    server.get("*", (req, res, next) => {
+      if (!shouldServeFromCdn(req.path)) {
+        return next();
+      }
+      const target = `${cdnAssetBase}${req.path}${req.url.includes("?") ? req.url.slice(req.url.indexOf("?")) : ""}`;
+      return res.redirect(302, target);
+    });
+  }
 
   // cache headers for the static files
   server.use((req, res, next) => {
