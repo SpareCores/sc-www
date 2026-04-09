@@ -350,9 +350,13 @@ export class AdvisorComponent implements OnInit, OnDestroy {
   readonly activeOrderBy = computed(
     () => this.manualOrderBy() || this.recommendationOrderBy(),
   );
-  readonly activeOrderDir = computed(
-    () => this.manualOrderDir() || OrderDir.Desc,
-  );
+  readonly activeOrderDir = computed(() => {
+    if (this.manualOrderDir()) {
+      return this.manualOrderDir();
+    }
+
+    return this.optimizationGoal() === "cost" ? OrderDir.Asc : OrderDir.Desc;
+  });
 
   readonly recommendationQuery = computed<SearchServersServersGetParams | null>(
     () => {
@@ -1005,6 +1009,8 @@ export class AdvisorComponent implements OnInit, OnDestroy {
         selectedValue === "cost-efficiency"
       ) {
         this.optimizationGoal.set(selectedValue);
+        this.manualOrderBy.set(undefined);
+        this.manualOrderDir.set(undefined);
       }
 
       this.page.set(1);

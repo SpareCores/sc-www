@@ -384,6 +384,39 @@ describe("AdvisorComponent", () => {
     );
   }));
 
+  it("resets to cost ordering when optimization goal changes", fakeAsync(() => {
+    const baselineServer = component.serverTableRows()[0];
+    component.selectedBaselineServer.set(baselineServer);
+    component.baselineServerInput.set("aws large");
+    fixture.detectChanges();
+    flushMicrotasks();
+    fixture.detectChanges();
+
+    component.manualOrderBy.set("status");
+    component.manualOrderDir.set(OrderDir.Asc);
+
+    component.onCustomControlChanged({
+      name: "optimization_goal",
+      value: { selectedValue: "cost" },
+    });
+
+    expect(component.manualOrderBy()).toBeUndefined();
+    expect(component.manualOrderDir()).toBeUndefined();
+    expect(component.activeOrderBy()).toBe("min_price");
+    expect(component.activeOrderDir()).toBe(OrderDir.Asc);
+
+    component.averageCpuUtilization.set(50);
+    fixture.detectChanges();
+    tick(350);
+    flushMicrotasks();
+    fixture.detectChanges();
+
+    expect(searchServers.calls.mostRecent().args[0].order_by).toBe("min_price");
+    expect(searchServers.calls.mostRecent().args[0].order_dir).toBe(
+      OrderDir.Asc,
+    );
+  }));
+
   it("keeps the vendor column informational rather than orderable", () => {
     const vendorColumn = component
       .possibleColumns()
