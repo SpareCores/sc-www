@@ -3,6 +3,7 @@ import {
   PLATFORM_ID,
   OnInit,
   ViewChild,
+  viewChild,
   ElementRef,
   OnDestroy,
   inject,
@@ -22,7 +23,7 @@ import { CountryIdtoNamePipe } from "../../pipes/country-idto-name.pipe";
 import { GpuCountPipe } from "../../pipes/gpu-count.pipe";
 import { SearchBarComponent } from "../../components/search-bar/search-bar.component";
 import { PaginationComponent } from "../../components/pagination/pagination.component";
-import { DropdownManagerService } from "../../services/dropdown-manager.service";
+import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
 import { AnalyticsService } from "../../services/analytics.service";
 import {
   AllocationType,
@@ -91,6 +92,7 @@ export type RegionVendorMetadata = {
     SearchBarComponent,
     PaginationComponent,
     LoadingSpinnerComponent,
+    FlowbiteDropdownDirective,
   ],
   templateUrl: "./server-prices.component.html",
   styleUrl: "./server-prices.component.scss",
@@ -102,7 +104,10 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private SEOHandler = inject(SeoHandlerService);
   private analytics = inject(AnalyticsService);
-  private dropdownManager = inject(DropdownManagerService);
+  currencyDropdown = viewChild<FlowbiteDropdownDirective>("currencyDropdown");
+  allocationDropdown =
+    viewChild<FlowbiteDropdownDirective>("allocationDropdown");
+  pageDropdown = viewChild<FlowbiteDropdownDirective>("pageDropdown");
   private serverCompare = inject(ServerCompareService);
   private toastService = inject(ToastService);
   private uiTooltip = inject(UiTooltipService);
@@ -251,10 +256,6 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
   searchParameters: any;
   query: any = {};
 
-  dropdownCurrency: any;
-  dropdownAllocation: any;
-  dropdownColumn: any;
-  dropdownPage: any;
   modalSearch: any;
 
   isLoading = false;
@@ -370,32 +371,6 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
         this._searchServers(true);
       }),
     );
-
-    if (isPlatformBrowser(this.platformId)) {
-      this.dropdownManager
-        .initDropdown("currency_button", "currency_options")
-        .then((dropdown: any) => {
-          this.dropdownCurrency = dropdown;
-        });
-
-      this.dropdownManager
-        .initDropdown("allocation_button", "allocation_options")
-        .then((dropdown: any) => {
-          this.dropdownAllocation = dropdown;
-        });
-
-      this.dropdownManager
-        .initDropdown("column_button", "column_options")
-        .then((dropdown: any) => {
-          this.dropdownColumn = dropdown;
-        });
-
-      this.dropdownManager
-        .initDropdown("pagesize_button", "pagesize_options")
-        .then((dropdown: any) => {
-          this.dropdownPage = dropdown;
-        });
-    }
   }
 
   ngOnDestroy() {
@@ -670,7 +645,7 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
 
     this.searchOptionsChanged(this.query);
 
-    this.dropdownCurrency?.hide();
+    this.currencyDropdown()?.hide();
   }
 
   selectAllocation(allocation: any) {
@@ -679,7 +654,7 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
 
     this.searchOptionsChanged(this.query);
 
-    this.dropdownAllocation?.hide();
+    this.allocationDropdown()?.hide();
   }
 
   selectPageSize(limit: number) {
@@ -687,7 +662,7 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
     this.page = 1;
 
     this.searchOptionsChanged(this.query);
-    this.dropdownPage?.hide();
+    this.pageDropdown()?.hide();
 
     window.scrollTo(0, 0);
   }

@@ -87,7 +87,7 @@
 }
 
 :host ::ng-deep .block_full_short_inline {
-  @apply px-4 py-4 bg-transparent flex flex-col gap-4 relative overflow-hidden;
+  @apply px-4 py-4 bg-transparent flex flex-col gap-4 relative overflow-visible;
   width: calc(100%);
   min-height: 460px;
   height: 460px;

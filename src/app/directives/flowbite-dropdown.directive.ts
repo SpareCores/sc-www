@@ -10,7 +10,10 @@ import {
   signal,
 } from "@angular/core";
 import { Dropdown } from "flowbite";
-import { DropdownManagerService } from "../../../services/dropdown-manager.service";
+import {
+  DropdownBehaviorOptions,
+  DropdownManagerService,
+} from "../services/dropdown-manager.service";
 
 @Directive({
   selector: "[appFlowbiteDropdown]",
@@ -25,6 +28,8 @@ export class FlowbiteDropdownDirective implements AfterViewInit {
 
   appFlowbiteDropdown = input.required<string>();
   dropdownEnabled = input(true);
+  dropdownFlip = input(false);
+  dropdownPlacement = input<DropdownBehaviorOptions["placement"]>();
 
   dropdown: Dropdown | undefined;
   private initializedKey = "";
@@ -65,6 +70,17 @@ export class FlowbiteDropdownDirective implements AfterViewInit {
     this.dropdown?.hide();
   }
 
+  private getBehaviorOptions(): DropdownBehaviorOptions {
+    const behaviorOptions: DropdownBehaviorOptions = {
+      flip: this.dropdownFlip(),
+    };
+    const placement = this.dropdownPlacement();
+    if (placement) {
+      behaviorOptions.placement = placement;
+    }
+    return behaviorOptions;
+  }
+
   private initializeDropdown() {
     if (!isPlatformBrowser(this.platformId) || !this.dropdownEnabled()) {
       return;
@@ -84,7 +100,7 @@ export class FlowbiteDropdownDirective implements AfterViewInit {
     const pendingKey = key;
     this.pendingKey = pendingKey;
     this.dropdownManager
-      .initDropdown(triggerId, targetId)
+      .initDropdown(triggerId, targetId, this.getBehaviorOptions())
       .then((dropdown) => {
         if (this.pendingKey !== pendingKey) {
           return;

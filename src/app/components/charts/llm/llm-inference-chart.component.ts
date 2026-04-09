@@ -19,7 +19,7 @@ import {
   barChartOptionsSSLCompare,
 } from "../../../pages/server-details/chartOptions";
 import { LlmInferenceChartBuilderService } from "./llm-inference-chart-builder.service";
-import { FlowbiteDropdownDirective } from "../shared/flowbite-dropdown.directive";
+import { FlowbiteDropdownDirective } from "../../../directives/flowbite-dropdown.directive";
 import {
   LlmBarChartData,
   LlmBarChartOptions,

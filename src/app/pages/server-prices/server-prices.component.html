@@ -71,7 +71,8 @@
             <button
               id="allocation_button"
               data-ph-capture-attribute-sc-event="server listing price allocation select"
-              data-dropdown-toggle="allocation_options"
+              [appFlowbiteDropdown]="'allocation_options'"
+              #allocationDropdown="appFlowbiteDropdown"
               class="dropdown_button"
               type="button"
             >
@@ -92,7 +93,8 @@
             <button
               id="currency_button"
               data-ph-capture-attribute-sc-event="server listing currency select"
-              data-dropdown-toggle="currency_options"
+              [appFlowbiteDropdown]="'currency_options'"
+              #currencyDropdown="appFlowbiteDropdown"
               class="dropdown_button"
               type="button"
             >
@@ -113,7 +115,7 @@
             <button
               id="column_button"
               data-ph-capture-attribute-sc-event="server listing columns select"
-              data-dropdown-toggle="column_options"
+              [appFlowbiteDropdown]="'column_options'"
               class="dropdown_button"
               type="button"
             >
@@ -482,7 +484,10 @@
                 <button
                   id="pagesize_button"
                   data-ph-capture-attribute-sc-event="server listing page size select"
-                  data-dropdown-toggle="pagesize_options"
+                  [appFlowbiteDropdown]="'pagesize_options'"
+                  [dropdownFlip]="true"
+                  [dropdownPlacement]="'bottom-start'"
+                  #pageDropdown="appFlowbiteDropdown"
                   class="dropdown_button"
                   type="button"
                 >

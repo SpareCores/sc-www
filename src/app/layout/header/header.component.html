@@ -14,13 +14,25 @@
     >
       <ul class="flex font-medium flex-row space-x-8 mt-0 items-center">
         <li class="hidden lg:flex">
-          <div class="navbar_link cursor-pointer" id="about_button">
+          <div
+            class="navbar_link cursor-pointer"
+            id="about_button"
+            [appFlowbiteDropdown]="'about_options'"
+            [dropdownPlacement]="'bottom'"
+            #aboutDropdown="appFlowbiteDropdown"
+          >
             <lucide-icon class="h-4 w-4" name="info"></lucide-icon>
             About
           </div>
         </li>
         <li class="hidden lg:flex">
-          <div class="navbar_link cursor-pointer" id="navigator_button">
+          <div
+            class="navbar_link cursor-pointer"
+            id="navigator_button"
+            [appFlowbiteDropdown]="'navigator_options'"
+            [dropdownPlacement]="'bottom'"
+            #navigatorDropdown="appFlowbiteDropdown"
+          >
             <lucide-icon class="h-4 w-4" name="ship-wheel"></lucide-icon>
             Navigator
           </div>
@@ -51,6 +63,9 @@
         <li [ngClass]="{ hidden: compareCount() === 0 }">
           <button
             id="compare_button"
+            [appFlowbiteDropdown]="'compare_options'"
+            [dropdownPlacement]="'bottom'"
+            #compareDropdown="appFlowbiteDropdown"
             class="text-white bg-emerald-400 hover:bg-emerald-500 rounded-lg px-3 py-3 relative"
           >
             <span
@@ -64,6 +79,9 @@
         <li class="lg:hidden">
           <lucide-icon
             id="menu_button"
+            [appFlowbiteDropdown]="'menu_options'"
+            [dropdownPlacement]="'bottom'"
+            #menuDropdown="appFlowbiteDropdown"
             class="navbar_link cursor-pointer h-8 w-8"
             name="menu"
           >
@@ -196,7 +214,7 @@
 
 <div
   id="about_options"
-  [attr.inert]="dropdownAbout?._visible ? null : ''"
+  [attr.inert]="aboutDropdown?.dropdown?._visible ? null : ''"
   class="z-100 hidden bg-secondary rounded-lg shadow w-68 border border-emerald-400 border-solid"
 >
   <ul
@@ -233,7 +251,7 @@
 
 <div
   id="navigator_options"
-  [attr.inert]="dropdownNavigator?._visible ? null : ''"
+  [attr.inert]="navigatorDropdown?.dropdown?._visible ? null : ''"
   class="z-100 hidden bg-secondary rounded-lg shadow w-68 border border-emerald-400 border-solid"
 >
   <ul
