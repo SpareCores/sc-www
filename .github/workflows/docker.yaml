@@ -29,8 +29,8 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: ${{ secrets.SC_WWW_GHA_ROLE_ARN }}
+          role-session-name: sc-www-gha
           aws-region: eu-central-1
       - name: Login to Amazon ECR
         id: login-ecr
@@ -63,12 +63,6 @@ jobs:
           trap 'docker rm -f "${CONTAINER_ID}" >/dev/null 2>&1 || true' EXIT
           mkdir -p ./dist/sc-www
           docker cp "${CONTAINER_ID}:/usr/share/www/static" "./dist/sc-www/browser"
-      - name: Configure AWS credentials for CDN upload
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ secrets.SC_WWW_CDN_ROLE_ARN }}
-          role-session-name: sc-www-cdn-upload
-          aws-region: eu-central-1
       - name: Upload static assets to versioned CDN prefix
         env:
           CDN_BUCKET: ${{ vars.CDN_BUCKET }}
