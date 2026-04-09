@@ -51,6 +51,6 @@ export const ADVISOR_REQUIRED_INPUT_LABELS = [
   "Baseline server",
   "Server workload",
   "Optimization goal",
-  "Average CPU utilization",
+  "Average utilization",
   "Minimum memory",
 ] as const;

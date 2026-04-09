@@ -271,7 +271,7 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     }
 
     if (this.averageCpuUtilization() === null) {
-      missing.push("Average CPU utilization");
+      missing.push("Average utilization");
     }
 
     if (this.minimumMemoryGiB() === null) {
@@ -402,10 +402,10 @@ export class AdvisorComponent implements OnInit, OnDestroy {
       name: "average_cpu_utilization",
       category_id: "advisor",
       type: "rangeSlider",
-      title: "Average CPU utilization",
+      title: "Average utilization",
       required: true,
       description:
-        "The selected workload score threshold is derived from the baseline server score scaled by this expected average CPU utilization.",
+        "The selected workload score threshold is derived from the baseline server score scaled by this expected Average utilization.",
       numericValue: this.averageCpuUtilization(),
       min: 0,
       max: 100,
