@@ -8,6 +8,19 @@
           <lucide-icon class="h-8 w-8 mr-2" name="bot"></lucide-icon>
           {{ title }}
         </h1>
+        <button
+          id="advisor_share_button"
+          type="button"
+          class="btn-primary py-2 px-3 flex gap-1 items-center"
+          (click)="clipboardURL()"
+        >
+          Share
+          <lucide-icon
+            [name]="clipboardIcon()"
+            size="16"
+            class="ml-2"
+          ></lucide-icon>
+        </button>
       </div>
       <div class="text-white text-xl pr-16">
         {{ description }}
@@ -75,7 +88,7 @@
           'w-full': isCollapsed(),
         }"
       >
-        <div class="top_buttons w-[calc(100%-60px)] ml-auto">
+        <div class="top_buttons">
           @if (recommendationSummary(); as summary) {
             <div
               class="advisor-summary-alert"
@@ -106,69 +119,128 @@
             {{ baselineCompareButtonLabel() }}
           </button>
 
-          <button
-            id="advisor_share_button"
-            type="button"
-            class="advisor-top-action btn-primary py-2 px-3 flex gap-1 items-center"
-            (click)="clipboardURL()"
-          >
-            <lucide-icon [name]="clipboardIcon()" class="h-4 w-4"></lucide-icon>
-            Share
-          </button>
+          <div class="advisor-top-controls">
+            <div class="min-w-0">
+              <button
+                id="advisor_allocation_button"
+                [appFlowbiteDropdown]="'advisor_allocation_options'"
+                #allocationDropdown="appFlowbiteDropdown"
+                class="dropdown_button min-w-0 max-w-full"
+                type="button"
+              >
+                <div class="px-4 py-3 flex-1 min-w-0 truncate">
+                  {{ bestPriceAllocation().name }}
+                </div>
+                <div
+                  class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
+                >
+                  <lucide-icon
+                    name="calendar-search"
+                    class="h-6 w-6 text-emerald-400"
+                  ></lucide-icon>
+                </div>
+              </button>
+            </div>
+
+            <div>
+              <button
+                id="advisor_currency_button"
+                [appFlowbiteDropdown]="'advisor_currency_options'"
+                #currencyDropdown="appFlowbiteDropdown"
+                class="dropdown_button"
+                type="button"
+              >
+                <div class="px-4 py-3">
+                  {{ selectedCurrency().slug }}
+                </div>
+                <div
+                  class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
+                >
+                  <lucide-icon
+                    name="credit-card"
+                    class="h-6 w-6 text-emerald-400"
+                  ></lucide-icon>
+                </div>
+              </button>
+            </div>
+
+            <div>
+              <button
+                id="advisor_column_button"
+                [appFlowbiteDropdown]="'advisor_column_options'"
+                class="dropdown_button"
+                type="button"
+              >
+                <div class="px-4 py-3">Columns</div>
+                <div
+                  class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
+                >
+                  <lucide-icon
+                    name="columns-3-cog"
+                    class="h-6 w-6 text-emerald-400"
+                  ></lucide-icon>
+                </div>
+              </button>
+            </div>
+          </div>
         </div>
 
-        <div class="placeholder-panel" id="advisor_results_panel">
-          <div class="placeholder-panel__title">Recommended Servers</div>
-          <div class="placeholder-panel__body">
-            {{ resultsPanelDescription }}
-          </div>
-
-          <div class="advisor-table-wrap">
+        <div>
+          <div
+            class="advisor-table-wrap w-full overflow-x-auto relative"
+            [class.min-h-80]="
+              isLoadingRecommendations() && !recommendations().length
+            "
+            style="padding-left: 1px"
+          >
             @if (isLoadingRecommendations()) {
-              <div class="advisor-table__empty advisor-table__empty--loading">
-                <app-loading-spinner size="lg"></app-loading-spinner>
+              <div class="advisor-table__loading-overlay">
+                <div class="flex justify-center mt-16 opacity-100">
+                  <app-loading-spinner size="lg"></app-loading-spinner>
+                </div>
               </div>
-            } @else if (!recommendations().length) {
-              <div class="advisor-table__empty">
-                {{ recommendationEmptyStateMessage() }}
-              </div>
-            } @else {
-              <table class="items_table" id="advisor_results_table">
-                <thead>
-                  <tr>
-                    <th class="checkbox_column">
-                      <lucide-icon
-                        name="scale"
-                        class="h-4 w-4 text-white"
-                      ></lucide-icon>
+            }
+
+            <table class="items_table" id="advisor_results_table">
+              <thead>
+                <tr>
+                  <th class="checkbox_column">
+                    <div class="text-white">
+                      <lucide-icon class="h-4 w-4" name="scale"></lucide-icon>
+                    </div>
+                  </th>
+                  @for (column of tableColumns(); track column.name) {
+                    <th
+                      [ngClass]="{ 'cursor-pointer': column.orderField }"
+                      (click)="toggleOrdering(column)"
+                    >
+                      <div class="flex gap-1 whitespace-nowrap">
+                        {{ column.name }}
+                        @if (getOrderingIcon(column)) {
+                          <lucide-icon
+                            [name]="getOrderingIcon(column) || ''"
+                            class="h-4 w-4 text-white"
+                          ></lucide-icon>
+                        }
+                      </div>
                     </th>
-                    @for (column of advisorTableColumns; track column.key) {
-                      <th
-                        [ngClass]="{ 'cursor-pointer': column.orderField }"
-                        (click)="toggleOrdering(column)"
-                      >
-                        <div class="flex gap-1 whitespace-nowrap">
-                          {{ column.name }}
-                          @if (getOrderingIcon(column)) {
-                            <lucide-icon
-                              [name]="getOrderingIcon(column) || ''"
-                              class="h-4 w-4 text-white"
-                            ></lucide-icon>
-                          }
-                        </div>
-                      </th>
-                    }
-                  </tr>
-                </thead>
-                <tbody>
-                  @for (
-                    recommendation of recommendations();
-                    track recommendation.vendor_id +
-                      "_" +
-                      recommendation.server_id
-                  ) {
-                    <tr>
-                      <td class="checkbox_column">
+                  }
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (
+                  recommendation of recommendations();
+                  track recommendation.vendor_id +
+                    "_" +
+                    recommendation.server_id
+                ) {
+                  <tr (click)="openServerDetails(recommendation)">
+                    <td
+                      (click)="$event.stopPropagation()"
+                      class="checkbox_column"
+                    >
+                      <div class="flex items-center">
                         <input
                           type="checkbox"
                           class="advisor-compare-checkbox"
@@ -177,152 +249,504 @@
                             toggleCompareSelection($event, recommendation)
                           "
                         />
-                      </td>
-                      @for (column of advisorTableColumns; track column.key) {
-                        @if (column.key === "vendor_id") {
-                          <td>
-                            <div
-                              class="advisor-table__vendor-logo"
-                              [attr.title]="recommendation.vendor_id"
-                            >
-                              <img
-                                [src]="
-                                  '/assets/images/vendors/' +
-                                  recommendation.vendor_id +
-                                  '.svg'
-                                "
-                                [alt]="recommendation.vendor_id + ' logo'"
-                              />
-                            </div>
-                          </td>
-                        }
-                        @if (column.key === "api_reference") {
-                          <td>
-                            <div class="advisor-table__primary">
-                              {{ recommendation.api_reference }}
-                            </div>
-                            @if (showApiReference(recommendation)) {
-                              <div class="advisor-table__secondary">
-                                {{ recommendation.display_name }}
-                              </div>
-                            }
-                          </td>
-                        }
-                        @if (column.key === "status") {
-                          <td>{{ recommendation.status || "-" }}</td>
-                        }
-                        @if (column.key === "vcpus") {
-                          <td>{{ recommendation.vcpus || "-" }}</td>
-                        }
-                        @if (column.key === "memory_amount") {
-                          <td>
-                            {{ formatMemoryGiB(recommendation.memory_amount) }}
-                          </td>
-                        }
-                        @if (column.key === "gpu_memory_total") {
-                          <td>
-                            {{
-                              formatMemoryGiB(recommendation.gpu_memory_total)
-                            }}
-                          </td>
-                        }
-                        @if (column.key === "storage_size") {
-                          <td>
-                            {{ formatStorageGb(recommendation.storage_size) }}
-                          </td>
-                        }
-                        @if (column.key === "details") {
-                          <td>
+                      </div>
+                    </td>
+                    @for (column of tableColumns(); track column.name) {
+                      @if (column.type === "name") {
+                        <td>
+                          <div (click)="$event.stopPropagation()">
                             <a
-                              class="advisor-table__link advisor-table__link--icon"
                               [routerLink]="[
                                 '/server',
-                                recommendation.vendor_id,
+                                getVendorLinkId(recommendation),
                                 recommendation.api_reference,
                               ]"
                             >
-                              <lucide-icon
-                                name="chevron-right"
-                                class="h-6 w-6 text-emerald-400"
-                              ></lucide-icon>
+                              <div class="text-sm text-white flex gap-1">
+                                <span class="whitespace-nowrap">
+                                  {{
+                                    recommendation.display_name ||
+                                      recommendation.api_reference
+                                  }}
+                                </span>
+                                @if (showApiReference(recommendation)) {
+                                  <span class="text-emerald-400">|</span>
+                                  <span class="whitespace-nowrap">
+                                    {{ recommendation.api_reference }}
+                                  </span>
+                                }
+                              </div>
+                              <div class="text-xs text-white flex gap-1">
+                                <span>{{ recommendation.vendor_id }}</span>
+                              </div>
                             </a>
-                          </td>
-                        }
+                          </div>
+                        </td>
                       }
-                    </tr>
-                  }
-                </tbody>
-              </table>
-
-              <div class="advisor-table__footer">
-                <div class="advisor-page-size">
-                  <span class="text-white text-sm">Items per page</span>
-                  <div class="advisor-page-size__options">
-                    @for (pageLimit of pageLimits; track pageLimit) {
-                      <button
-                        type="button"
-                        class="advisor-page-size__option"
-                        [class.advisor-page-size__option--active]="
-                          pageLimit === limit()
-                        "
-                        (click)="selectPageSize(pageLimit)"
-                      >
-                        {{ pageLimit }}
-                      </button>
+                      @if (column.type === "vendor") {
+                        <td>
+                          @if (getVendorLogo(recommendation)) {
+                            <div class="advisor-table__vendor-logo">
+                              <img
+                                [src]="getVendorLogo(recommendation) || ''"
+                                [alt]="getVendorName(recommendation) + ' logo'"
+                              />
+                            </div>
+                          } @else {
+                            <div class="text-white text-sm">
+                              {{ getVendorName(recommendation) }}
+                            </div>
+                          }
+                        </td>
+                      }
+                      @if (column.type === "score") {
+                        <td>
+                          <div class="text-sm text-white whitespace-nowrap">
+                            {{ getScore(recommendation.score) }}
+                          </div>
+                          @if (recommendation.score_per_price) {
+                            <div class="text-xs text-white flex gap-1">
+                              <span class="whitespace-nowrap">
+                                {{ getScore(recommendation.score_per_price) }} /
+                                USD
+                              </span>
+                            </div>
+                          }
+                        </td>
+                      }
+                      @if (column.type === "score_per_price") {
+                        <td>
+                          @if (recommendation.score_per_price) {
+                            <span class="whitespace-nowrap">
+                              {{ getScore(recommendation.score_per_price) }} /
+                              USD
+                            </span>
+                          } @else {
+                            <span>-</span>
+                          }
+                        </td>
+                      }
+                      @if (column.type === "processor") {
+                        <td>
+                          <div class="text-sm text-white whitespace-nowrap">
+                            {{ recommendation.vcpus || 0 }} vCPUs
+                            @if (recommendation.cpu_architecture) {
+                              <span
+                                >({{ recommendation.cpu_architecture }})</span
+                              >
+                            }
+                          </div>
+                          <div class="flex gap-1">
+                            @if (
+                              recommendation.cpu_cores &&
+                              recommendation.cpu_speed
+                            ) {
+                              <div class="text-xs text-white flex gap-1">
+                                <span class="whitespace-nowrap">
+                                  {{ recommendation.cpu_cores }} cores &#64;
+                                  {{ recommendation.cpu_speed }} GHz
+                                </span>
+                              </div>
+                            }
+                            @if (
+                              recommendation.cpu_allocation &&
+                              recommendation.cpu_allocation !== "Dedicated"
+                            ) {
+                              <div class="text-xs text-white flex gap-1">
+                                <span
+                                  >({{ recommendation.cpu_allocation }})</span
+                                >
+                              </div>
+                            }
+                          </div>
+                        </td>
+                      }
+                      @if (column.type === "cpu_model") {
+                        <td>
+                          <div class="text-sm text-white flex gap-1">
+                            <span>{{
+                              getModelDetail(recommendation, "cpu_model")
+                            }}</span>
+                          </div>
+                          <div class="text-xs text-white">
+                            @if (recommendation.cpu_manufacturer) {
+                              <span
+                                >{{ recommendation.cpu_manufacturer }}
+                              </span>
+                            }
+                            @if (recommendation.cpu_family) {
+                              <span>{{ recommendation.cpu_family }} </span>
+                            }
+                          </div>
+                        </td>
+                      }
+                      @if (column.type === "cpu_cache") {
+                        <td>
+                          @if (
+                            recommendation.cpu_l1d_cache ||
+                            recommendation.cpu_l2_cache ||
+                            recommendation.cpu_l3_cache
+                          ) {
+                            <div class="text-xs text-white whitespace-nowrap">
+                              L1:
+                              {{ recommendation.cpu_l1d_cache | cpuCacheSize }}
+                            </div>
+                            <div class="text-xs text-white whitespace-nowrap">
+                              L2:
+                              {{ recommendation.cpu_l2_cache | cpuCacheSize }}
+                            </div>
+                            <div class="text-xs text-white whitespace-nowrap">
+                              L3:
+                              {{ recommendation.cpu_l3_cache | cpuCacheSize }}
+                            </div>
+                          } @else {
+                            <div class="text-sm text-white">-</div>
+                          }
+                        </td>
+                      }
+                      @if (column.type === "benchmark") {
+                        <td>
+                          <div class="text-sm text-white whitespace-nowrap">
+                            {{
+                              getScore(recommendation.selected_benchmark_score)
+                            }}
+                          </div>
+                          @if (
+                            selectedBenchmarkConfig()?.benchmarkTemplate?.unit
+                          ) {
+                            <div class="text-xs text-white flex gap-1">
+                              <span class="whitespace-nowrap">
+                                {{
+                                  selectedBenchmarkConfig()?.benchmarkTemplate
+                                    ?.unit
+                                }}
+                              </span>
+                            </div>
+                          }
+                        </td>
+                      }
+                      @if (column.type === "benchmark_score_per_price") {
+                        <td>
+                          @if (
+                            recommendation.selected_benchmark_score_per_price
+                          ) {
+                            <span class="whitespace-nowrap">
+                              {{
+                                getScore(
+                                  recommendation.selected_benchmark_score_per_price
+                                )
+                              }}
+                            </span>
+                            <div class="text-xs text-white flex gap-1">
+                              <span class="whitespace-nowrap">for $1/hour</span>
+                            </div>
+                          } @else {
+                            <span>-</span>
+                          }
+                        </td>
+                      }
+                      @if (column.type === "memory") {
+                        <td>
+                          <div class="text-sm text-white">
+                            {{ getMemory(recommendation) }}
+                          </div>
+                          @if (recommendation.memory_speed) {
+                            <div class="text-xs text-white flex gap-1">
+                              <span class="whitespace-nowrap">
+                                {{ recommendation.memory_speed }} MHz
+                                @if (recommendation.memory_generation) {
+                                  <span
+                                    >({{
+                                      recommendation.memory_generation
+                                    }})</span
+                                  >
+                                }
+                              </span>
+                            </div>
+                          }
+                        </td>
+                      }
+                      @if (column.type === "gpu") {
+                        <td>
+                          <div class="text-sm text-white">
+                            {{ recommendation.gpu_count | gpuCount }}
+                          </div>
+                          @if (recommendation.gpu_model) {
+                            <div class="text-xs text-white flex gap-1">
+                              <span>{{ recommendation.gpu_model }}</span>
+                            </div>
+                          }
+                        </td>
+                      }
+                      @if (column.type === "gpu_memory_min") {
+                        <td>
+                          {{ getGPUMemory(recommendation, "min") }}
+                        </td>
+                      }
+                      @if (column.type === "gpu_memory_total") {
+                        <td>
+                          {{ getGPUMemory(recommendation, "total") }}
+                        </td>
+                      }
+                      @if (column.type === "gpu_model") {
+                        <td>
+                          <div class="text-sm text-white flex gap-1">
+                            <span>{{
+                              getModelDetail(recommendation, "gpu_model")
+                            }}</span>
+                          </div>
+                          <div class="text-xs text-white">
+                            @if (recommendation.gpu_manufacturer) {
+                              <span
+                                >{{ recommendation.gpu_manufacturer }}
+                              </span>
+                            }
+                            @if (recommendation.gpu_family) {
+                              <span>{{ recommendation.gpu_family }} </span>
+                            }
+                          </div>
+                        </td>
+                      }
+                      @if (column.type === "storage") {
+                        <td>
+                          <div class="text-sm text-white">
+                            {{ getStorage(recommendation) }}
+                          </div>
+                          @if (recommendation.storage_type) {
+                            <div class="text-xs text-white">
+                              <span>{{ recommendation.storage_type }}</span>
+                            </div>
+                          }
+                        </td>
+                      }
+                      @if (column.type === "price") {
+                        <td>
+                          <div class="text-sm text-white whitespace-nowrap">
+                            {{ getPriceValue(recommendation, column.key) }}
+                          </div>
+                        </td>
+                      }
+                      @if (column.type === "network_speed") {
+                        <td>
+                          <span class="whitespace-nowrap">
+                            {{
+                              getNetworkSpeedValue(recommendation.network_speed)
+                            }}
+                          </span>
+                        </td>
+                      }
+                      @if (column.type === "inbound_traffic") {
+                        <td>
+                          <span class="whitespace-nowrap">
+                            {{
+                              getMonthlyTrafficValue(
+                                recommendation.inbound_traffic
+                              )
+                            }}
+                          </span>
+                        </td>
+                      }
+                      @if (column.type === "outbound_traffic") {
+                        <td>
+                          <span class="whitespace-nowrap">
+                            {{
+                              getMonthlyTrafficValue(
+                                recommendation.outbound_traffic
+                              )
+                            }}
+                          </span>
+                        </td>
+                      }
+                      @if (column.type === "ipv4") {
+                        <td>
+                          <span class="whitespace-nowrap">
+                            {{ getIpv4Value(recommendation.ipv4) }}
+                          </span>
+                        </td>
+                      }
+                      @if (column.type === "text") {
+                        <td>
+                          {{ getTextValue(recommendation, column.key) }}
+                        </td>
+                      }
                     }
-                  </div>
-                </div>
-
-                @if (totalPages() > 1) {
-                  <div class="advisor-pagination">
-                    <button
-                      type="button"
-                      class="advisor-pagination__button"
-                      [disabled]="page() === 1"
-                      (click)="goToPreviousPage()"
-                    >
-                      <lucide-icon
-                        name="chevron-left"
-                        class="h-4 w-4"
-                      ></lucide-icon>
-                    </button>
-
-                    @for (
-                      pageNumber of getVisiblePageNumbers();
-                      track pageNumber
-                    ) {
-                      <button
-                        type="button"
-                        class="advisor-pagination__button"
-                        [class.advisor-pagination__button--active]="
-                          pageNumber === page()
-                        "
-                        (click)="goToPage(pageNumber)"
-                      >
-                        {{ pageNumber }}
-                      </button>
-                    }
-
-                    <button
-                      type="button"
-                      class="advisor-pagination__button"
-                      [disabled]="page() === totalPages()"
-                      (click)="goToNextPage()"
-                    >
-                      <lucide-icon
-                        name="chevron-right"
-                        class="h-4 w-4"
-                      ></lucide-icon>
-                    </button>
-                  </div>
+                    <td>
+                      <div (click)="$event.stopPropagation()">
+                        <a
+                          class="advisor-table__link advisor-table__link--icon"
+                          [routerLink]="[
+                            '/server',
+                            getVendorLinkId(recommendation),
+                            recommendation.api_reference,
+                          ]"
+                        >
+                          <lucide-icon
+                            name="chevron-right"
+                            class="h-6 w-6 text-emerald-400"
+                          ></lucide-icon>
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
                 }
-              </div>
-            }
+
+                @if (!recommendations().length && !isLoadingRecommendations()) {
+                  <tr>
+                    <td
+                      [attr.colspan]="tableColumns().length + 2"
+                      class="px-5 py-6 text-center text-gray-400 text-sm"
+                    >
+                      {{ recommendationEmptyStateMessage() }}
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <div class="flex justify-between mt-4 flex-wrap gap-4">
+            <div>
+              <button
+                id="advisor_pagesize_button"
+                [appFlowbiteDropdown]="'advisor_pagesize_options'"
+                [dropdownFlip]="true"
+                [dropdownPlacement]="'bottom-start'"
+                #pageDropdown="appFlowbiteDropdown"
+                class="dropdown_button"
+                type="button"
+              >
+                <div class="px-4 py-2">
+                  {{ limit() }}
+                </div>
+                <div
+                  class="px-2 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
+                >
+                  <lucide-icon
+                    name="chevron-down"
+                    class="h-6 w-6 text-emerald-400"
+                  ></lucide-icon>
+                </div>
+              </button>
+              <span class="text-white"> items per page</span>
+            </div>
+
+            <div>
+              <app-pagination
+                baseURL="/advisor"
+                [currentPage]="page()"
+                [totalPages]="totalPages()"
+                [baseQueryParams]="getUrlStateQueryParams()"
+              >
+              </app-pagination>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
+</div>
+
+<div
+  id="advisor_pagesize_options"
+  class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid"
+>
+  <ul
+    class="py-2 px-1 text-sm text-gray-700"
+    aria-labelledby="advisor_pagesize_button"
+  >
+    @for (pageLimit of pageLimits; track $index) {
+      <li
+        class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+        (click)="selectPageSize(pageLimit)"
+        (keydown.enter)="selectPageSize(pageLimit)"
+        (keydown.space)="selectPageSize(pageLimit); $event.preventDefault()"
+        role="option"
+        [attr.aria-selected]="pageLimit === limit()"
+        tabindex="0"
+      >
+        <div class="text-white text-sm">{{ pageLimit }}</div>
+      </li>
+    }
+  </ul>
+</div>
+
+<div
+  id="advisor_allocation_options"
+  class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid"
+>
+  <ul
+    class="py-2 px-1 text-sm text-gray-700"
+    aria-labelledby="advisor_allocation_button"
+  >
+    @for (
+      allocationType of bestPriceAllocationTypes;
+      track allocationType.name
+    ) {
+      <li
+        class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+        (click)="selectAllocation(allocationType)"
+        (keydown.enter)="selectAllocation(allocationType)"
+        (keydown.space)="
+          selectAllocation(allocationType); $event.preventDefault()
+        "
+        role="option"
+        [attr.aria-selected]="allocationType === bestPriceAllocation()"
+        tabindex="0"
+      >
+        <div class="text-white text-sm">{{ allocationType.name }}</div>
+      </li>
+    }
+  </ul>
+</div>
+
+<div
+  id="advisor_currency_options"
+  class="z-10 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid"
+>
+  <ul
+    class="py-2 px-1 text-sm text-gray-700"
+    aria-labelledby="advisor_currency_button"
+  >
+    @for (currency of availableCurrencies; track currency.name) {
+      <li
+        class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+        (click)="selectCurrency(currency)"
+        (keydown.enter)="selectCurrency(currency); $event.preventDefault()"
+        (keydown.space)="selectCurrency(currency); $event.preventDefault()"
+        role="option"
+        [attr.aria-selected]="currency === selectedCurrency()"
+        tabindex="0"
+      >
+        <div class="text-white text-sm">
+          {{ currency.name }} ({{ currency.symbol }})
+        </div>
+      </li>
+    }
+  </ul>
+</div>
+
+<div
+  id="advisor_column_options"
+  class="z-10 hidden bg-secondary rounded-lg shadow w-56 border border-emerald-400 border-solid"
+>
+  <ul
+    class="py-2 px-3 text-sm text-gray-700"
+    aria-labelledby="advisor_column_button"
+  >
+    @for (column of possibleColumns(); track column.name) {
+      <li class="flex py-1 gap-2 items-center">
+        <input
+          type="checkbox"
+          [checked]="column.show"
+          (change)="
+            setColumnVisibility(column.name, $any($event.target).checked)
+          "
+          class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer"
+        />
+        <div class="text-white text-sm">{{ column.name }}</div>
+      </li>
+    }
+  </ul>
 </div>
 
 @if (compareCount() >= 2) {

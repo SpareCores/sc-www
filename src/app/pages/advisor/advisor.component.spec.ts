@@ -9,6 +9,8 @@ import { ActivatedRoute } from "@angular/router";
 import { BehaviorSubject, Subject } from "rxjs";
 import { OrderDir } from "../../../../sdk/data-contracts";
 import { AdvisorComponent } from "./advisor.component";
+import { ADVISOR_TABLE_COLUMNS } from "./advisor.constants";
+import { DropdownManagerService } from "../../services/dropdown-manager.service";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { ServerCompareService } from "../../services/server-compare.service";
@@ -29,6 +31,7 @@ describe("AdvisorComponent", () => {
   const getRegions = jasmine.createSpy("getRegions");
   const updateTitleAndMetaTags = jasmine.createSpy("updateTitleAndMetaTags");
   const showToast = jasmine.createSpy("show");
+  const initDropdown = jasmine.createSpy("initDropdown");
   const selectionChanged = new Subject();
   const compareService = {
     selectedForCompare: [] as Array<{
@@ -60,6 +63,7 @@ describe("AdvisorComponent", () => {
     getRegions.calls.reset();
     updateTitleAndMetaTags.calls.reset();
     showToast.calls.reset();
+    initDropdown.calls.reset();
     compareService.selectedForCompare = [];
     compareService.toggleCompare.calls.reset();
     compareService.clearCompare.calls.reset();
@@ -156,11 +160,21 @@ describe("AdvisorComponent", () => {
     getStorages.and.resolveTo({ body: [] });
     getCountries.and.resolveTo({ body: [] });
     getRegions.and.resolveTo({ body: [] });
+    initDropdown.and.resolveTo({
+      hide: jasmine.createSpy("hide"),
+      show: jasmine.createSpy("show"),
+    });
 
     await TestBed.configureTestingModule({
       imports: [AdvisorComponent],
       providers: [
         ...sharedTestingProviders,
+        {
+          provide: DropdownManagerService,
+          useValue: {
+            initDropdown,
+          },
+        },
         {
           provide: ActivatedRoute,
           useValue: {
@@ -233,6 +247,50 @@ describe("AdvisorComponent", () => {
     expect(component.filteredBaselineServers()[0].api_reference).toBe("large");
   });
 
+  it("uses the server listing default visible columns and page sizes", () => {
+    expect(component.tableColumns().map((column) => column.name)).toEqual([
+      "NAME & PROVIDER",
+      "PROCESSOR",
+      "BENCHMARK",
+      "$ EFFICIENCY",
+      "MEMORY",
+      "GPUs",
+      "STORAGE",
+      "BEST PRICE",
+    ]);
+    expect(component.pageLimits).toEqual([10, 25, 50, 100, 250]);
+  });
+
+  it("exposes the full advisor column selector inventory", () => {
+    expect(component.possibleColumns().map((column) => column.name)).toEqual(
+      ADVISOR_TABLE_COLUMNS.map((column) => column.name),
+    );
+    expect(
+      component.possibleColumns().map((column) => column.name),
+    ).not.toContain("API REFERENCE");
+    expect(
+      component.possibleColumns().map((column) => column.name),
+    ).not.toContain("VCPUs");
+  });
+
+  it("uses dropdown optimization goal control and GiB memory labels", () => {
+    const optimizationGoalControl = component
+      .customControls()
+      .find((control) => control.name === "optimization_goal");
+    const minimumMemoryControl = component
+      .customControls()
+      .find((control) => control.name === "minimum_memory");
+    const peakGpuMemoryControl = component
+      .customControls()
+      .find((control) => control.name === "peak_gpu_memory");
+
+    expect(optimizationGoalControl?.type).toBe("singleSelect");
+    expect(minimumMemoryControl?.unit).toBe("GiB");
+    expect(minimumMemoryControl?.description).toContain("GiB");
+    expect(peakGpuMemoryControl?.unit).toBe("GiB");
+    expect(peakGpuMemoryControl?.description).toContain("GiB");
+  });
+
   it("restores advisor state from the route query params", async () => {
     queryParams$.next({
       baseline_vendor: "aws",
@@ -240,6 +298,10 @@ describe("AdvisorComponent", () => {
       workload_id: "stress_ng:bestn",
       workload_config: "{}",
       optimization_goal: "performance",
+      currency: "EUR",
+      best_price_allocation: "SPOT_ONLY",
+      order_by: "status",
+      order_dir: "asc",
       avg_cpu_utilization: "60",
       minimum_memory: "1",
       peak_gpu_memory: "2",
@@ -255,6 +317,14 @@ describe("AdvisorComponent", () => {
       "stress_ng:bestn",
     );
     expect(component.optimizationGoal()).toBe("performance");
+    expect(component.selectedCurrency().slug).toBe("EUR");
+    expect(component.bestPriceAllocation().slug).toBe("SPOT_ONLY");
+    expect(component.manualOrderBy()).toBe("status");
+    expect(component.manualOrderDir()).toBe(OrderDir.Asc);
+    expect(
+      component.possibleColumns().find((column) => column.name === "STATUS")
+        ?.show,
+    ).toBeTrue();
     expect(component.averageCpuUtilization()).toBe(60);
     expect(component.minimumMemoryGiB()).toBe(1);
     expect(component.peakGpuMemoryGiB()).toBe(2);
@@ -285,10 +355,39 @@ describe("AdvisorComponent", () => {
     expect(searchServers).toHaveBeenCalled();
   }));
 
-  it("keeps the vendor column informational rather than orderable", () => {
-    const vendorColumn = component.advisorTableColumns.find(
-      (column) => column.key === "vendor_id",
+  it("passes currency and price allocation to recommendation queries", fakeAsync(() => {
+    const baselineServer = component.serverTableRows()[0];
+    component.selectedBaselineServer.set(baselineServer);
+    component.baselineServerInput.set("aws large");
+    component.selectCurrency(
+      component.availableCurrencies.find(
+        (currency) => currency.slug === "EUR",
+      )!,
     );
+    component.selectAllocation(
+      component.bestPriceAllocationTypes.find(
+        (allocation) => allocation.slug === "SPOT_ONLY",
+      )!,
+    );
+    fixture.detectChanges();
+    flushMicrotasks();
+    fixture.detectChanges();
+
+    component.averageCpuUtilization.set(50);
+    fixture.detectChanges();
+    tick(350);
+    flushMicrotasks();
+
+    expect(searchServers.calls.mostRecent().args[0].currency).toBe("EUR");
+    expect(searchServers.calls.mostRecent().args[0].best_price_allocation).toBe(
+      "SPOT_ONLY",
+    );
+  }));
+
+  it("keeps the vendor column informational rather than orderable", () => {
+    const vendorColumn = component
+      .possibleColumns()
+      .find((column) => column.name === "VENDOR");
 
     expect(vendorColumn?.name).toBe("VENDOR");
     expect(vendorColumn?.orderField).toBeUndefined();
@@ -464,6 +563,17 @@ describe("AdvisorComponent", () => {
     component.averageCpuUtilization.set(70);
     component.minimumMemoryGiB.set(4);
     component.peakGpuMemoryGiB.set(8);
+    component.selectCurrency(
+      component.availableCurrencies.find(
+        (currency) => currency.slug === "EUR",
+      )!,
+    );
+    component.selectAllocation(
+      component.bestPriceAllocationTypes.find(
+        (allocation) => allocation.slug === "SPOT_ONLY",
+      )!,
+    );
+    component.setColumnVisibility("VENDOR", true);
     component.page.set(3);
     component.limit.set(50);
     component.manualOrderBy.set("memory_amount");
@@ -481,6 +591,18 @@ describe("AdvisorComponent", () => {
     expect(component.averageCpuUtilization()).toBeNull();
     expect(component.minimumMemoryGiB()).toBe(0.5);
     expect(component.peakGpuMemoryGiB()).toBe(0);
+    expect(component.selectedCurrency().slug).toBe("USD");
+    expect(component.bestPriceAllocation().slug).toBe("ANY");
+    expect(component.tableColumns().map((column) => column.name)).toEqual([
+      "NAME & PROVIDER",
+      "PROCESSOR",
+      "BENCHMARK",
+      "$ EFFICIENCY",
+      "MEMORY",
+      "GPUs",
+      "STORAGE",
+      "BEST PRICE",
+    ]);
     expect(component.page()).toBe(1);
     expect(component.limit()).toBe(25);
     expect(component.manualOrderBy()).toBeUndefined();

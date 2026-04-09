@@ -3,8 +3,32 @@ import { SearchBarServerOption } from "../../components/search-bar/search-bar.co
 
 export type AdvisorTableColumn = {
   name: string;
-  key: keyof ServerPKs | "details";
+  type:
+    | "name"
+    | "vendor"
+    | "score"
+    | "score_per_price"
+    | "processor"
+    | "cpu_model"
+    | "cpu_cache"
+    | "benchmark"
+    | "benchmark_score_per_price"
+    | "memory"
+    | "gpu"
+    | "gpu_memory_min"
+    | "gpu_memory_total"
+    | "gpu_model"
+    | "storage"
+    | "price"
+    | "network_speed"
+    | "inbound_traffic"
+    | "outbound_traffic"
+    | "ipv4"
+    | "text";
+  key?: keyof ServerPKs | "vendor_id";
+  show: boolean;
   orderField?: string;
+  info?: string;
 };
 
 export type AdvisorBaselineServer = SearchBarServerOption &

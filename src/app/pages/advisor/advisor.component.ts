@@ -8,14 +8,16 @@ import {
   effect,
   inject,
   signal,
+  viewChild,
 } from "@angular/core";
-import { ActivatedRoute, Params, RouterLink } from "@angular/router";
+import { ActivatedRoute, Params, Router, RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 import { Subject, Subscription, debounceTime } from "rxjs";
 import {
   BreadcrumbSegment,
   BreadcrumbsComponent,
 } from "../../components/breadcrumbs/breadcrumbs.component";
+import { PaginationComponent } from "../../components/pagination/pagination.component";
 import {
   SearchBarComponent,
   SearchBarBenchmarkConfigGroup,
@@ -23,6 +25,7 @@ import {
   SearchBarCustomControl,
   SearchBarParameter,
 } from "../../components/search-bar/search-bar.component";
+import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
 import {
   BenchmarkScore,
   OrderDir,
@@ -35,8 +38,16 @@ import { SeoHandlerService } from "../../services/seo-handler.service";
 import { ServerCompareService } from "../../services/server-compare.service";
 import { ToastService } from "../../services/toast.service";
 import { encodeQueryParams } from "../../tools/queryParamFunctions";
+import {
+  availableCurrencies as AVAILABLE_CURRENCIES,
+  bestPriceAllocationTypes as BEST_PRICE_ALLOCATION_TYPES,
+  BestPriceAllocationType,
+  CurrencyOption,
+} from "../../tools/shared_data";
 import openApiSpec from "../../../../sdk/openapi.json";
 import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
+import { CpuCacheSizePipe } from "../../pipes/cpu-cache-size.pipe";
+import { GpuCountPipe } from "../../pipes/gpu-count.pipe";
 import {
   ADVISOR_BREADCRUMBS,
   ADVISOR_DEFAULT_SERVER_COLUMNS,
@@ -48,7 +59,6 @@ import {
 import {
   ADVISOR_PAGE_DESCRIPTION,
   ADVISOR_PAGE_TITLE,
-  ADVISOR_RESULTS_PANEL_DESCRIPTION,
   ADVISOR_SEO,
 } from "./advisor.copy";
 import { AdvisorUiService } from "./advisor-ui.service";
@@ -73,8 +83,12 @@ type RecommendationResult = {
   imports: [
     CommonModule,
     BreadcrumbsComponent,
+    FlowbiteDropdownDirective,
     LucideAngularModule,
     LoadingSpinnerComponent,
+    PaginationComponent,
+    GpuCountPipe,
+    CpuCacheSizePipe,
     RouterLink,
     SearchBarComponent,
   ],
@@ -86,9 +100,15 @@ export class AdvisorComponent implements OnInit, OnDestroy {
   private seoHandler = inject(SeoHandlerService);
   private keeperApi = inject(KeeperAPIService);
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private serverCompare = inject(ServerCompareService);
   private toastService = inject(ToastService);
   private advisorUi = inject(AdvisorUiService);
+  readonly allocationDropdown =
+    viewChild<FlowbiteDropdownDirective>("allocationDropdown");
+  readonly currencyDropdown =
+    viewChild<FlowbiteDropdownDirective>("currencyDropdown");
+  readonly pageDropdown = viewChild<FlowbiteDropdownDirective>("pageDropdown");
   private compareSubscription = new Subscription();
   private lastEncodedQuery: string | null = null;
   private clipboardResetTimeout: ReturnType<typeof setTimeout> | null = null;
@@ -98,7 +118,6 @@ export class AdvisorComponent implements OnInit, OnDestroy {
 
   readonly title = ADVISOR_PAGE_TITLE;
   readonly description = ADVISOR_PAGE_DESCRIPTION;
-  readonly resultsPanelDescription = ADVISOR_RESULTS_PANEL_DESCRIPTION;
 
   readonly breadcrumbs = signal<BreadcrumbSegment[]>(ADVISOR_BREADCRUMBS);
 
@@ -139,12 +158,31 @@ export class AdvisorComponent implements OnInit, OnDestroy {
   readonly manualOrderBy = signal<string | undefined>(undefined);
   readonly manualOrderDir = signal<OrderDir | undefined>(undefined);
   readonly pageLimits = ADVISOR_PAGE_LIMITS;
+  readonly availableCurrencies = AVAILABLE_CURRENCIES;
+  readonly selectedCurrency = signal<CurrencyOption>(
+    this.availableCurrencies[0],
+  );
+  readonly displayedCurrency = signal<CurrencyOption>(
+    this.availableCurrencies[0],
+  );
+  readonly bestPriceAllocationTypes = BEST_PRICE_ALLOCATION_TYPES;
+  readonly bestPriceAllocation = signal<BestPriceAllocationType>(
+    this.bestPriceAllocationTypes[0],
+  );
+  readonly possibleColumns = signal<AdvisorTableColumn[]>(
+    this.buildDefaultTableColumns(),
+  );
+  readonly tableColumns = computed(() =>
+    this.possibleColumns().filter((column) => column.show),
+  );
+  readonly hasCustomColumns = computed(
+    () => !this.matchesDefaultColumnSelection(this.possibleColumns()),
+  );
 
   readonly advisorFilterCategories = ADVISOR_FILTER_CATEGORIES;
 
   searchParameters: SearchBarParameter[] = [];
   readonly optimizationGoalOptions = ADVISOR_OPTIMIZATION_GOAL_OPTIONS;
-  readonly advisorTableColumns: AdvisorTableColumn[] = ADVISOR_TABLE_COLUMNS;
 
   readonly activeFilterCount = computed(() => Object.keys(this.query()).length);
   readonly filteredBaselineServers = computed(() => {
@@ -341,6 +379,14 @@ export class AdvisorComponent implements OnInit, OnDestroy {
         benchmark_config: selectedBenchmarkConfig.config,
         benchmark_score_min: benchmarkScoreMinimum,
         memory_min: minimumMemoryGiB,
+        currency:
+          this.selectedCurrency().slug !== "USD"
+            ? this.selectedCurrency().slug
+            : undefined,
+        best_price_allocation:
+          this.bestPriceAllocation().slug !== "ANY"
+            ? this.bestPriceAllocation().slug
+            : undefined,
         gpu_memory_total:
           this.peakGpuMemoryGiB() > 0 ? this.peakGpuMemoryGiB() : undefined,
         order_by: this.activeOrderBy(),
@@ -418,9 +464,9 @@ export class AdvisorComponent implements OnInit, OnDestroy {
       title: "Minimum memory",
       required: true,
       description:
-        "Memory requirement in GB. The stepper follows powers of two starting at 0.5 GB.",
+        "Memory requirement in GiB. The stepper follows powers of two starting at 0.5 GiB.",
       numericValue: this.minimumMemoryGiB(),
-      unit: "GB",
+      unit: "GiB",
       defaultNumericValue: 0.5,
     },
     {
@@ -429,9 +475,9 @@ export class AdvisorComponent implements OnInit, OnDestroy {
       type: "powerOfTwoStepper",
       title: "Peak GPU memory usage",
       description:
-        "Total GPU memory requirement in GB. Leave at 0 to avoid applying GPU filters.",
+        "Total GPU memory requirement in GiB. Leave at 0 to avoid applying GPU filters.",
       numericValue: this.peakGpuMemoryGiB(),
-      unit: "GB",
+      unit: "GiB",
       allowZero: true,
       defaultNumericValue: 0,
     },
@@ -630,6 +676,32 @@ export class AdvisorComponent implements OnInit, OnDestroy {
   selectPageSize(limit: number): void {
     this.limit.set(limit);
     this.page.set(1);
+
+    this.pageDropdown()?.hide();
+
+    if (isPlatformBrowser(this.platformId)) {
+      window.scrollTo(0, 0);
+    }
+  }
+
+  selectCurrency(currency: CurrencyOption): void {
+    this.selectedCurrency.set(currency);
+    this.page.set(1);
+    this.currencyDropdown()?.hide();
+  }
+
+  selectAllocation(allocation: BestPriceAllocationType): void {
+    this.bestPriceAllocation.set(allocation);
+    this.page.set(1);
+    this.allocationDropdown()?.hide();
+  }
+
+  setColumnVisibility(columnName: string, show: boolean): void {
+    this.possibleColumns.update((columns) => {
+      return columns.map((column) => {
+        return column.name === columnName ? { ...column, show } : column;
+      });
+    });
   }
 
   goToPreviousPage(): void {
@@ -660,36 +732,46 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     this.page.set(boundedPage);
   }
 
-  formatMemoryGiB(value: number | null | undefined): string {
+  getMemory(item: ServerPKs): string {
+    return `${((item.memory_amount || 0) / 1024).toFixed(1)} GiB`;
+  }
+
+  getGPUMemory(item: ServerPKs, stat: "min" | "total" = "total"): string {
+    const memory = stat === "min" ? item.gpu_memory_min : item.gpu_memory_total;
+
+    if (!memory) {
+      return "-";
+    }
+
+    return `${(memory / 1024).toFixed(1)} GiB`;
+  }
+
+  getStorage(item: ServerPKs): string {
+    if (!item.storage_size) {
+      return "-";
+    }
+
+    if (item.storage_size < 1000) {
+      return `${item.storage_size} GB`;
+    }
+
+    return `${(item.storage_size / 1000).toFixed(1)} TB`;
+  }
+
+  getScore(value: number | null | undefined): string {
     if (!value) {
       return "-";
     }
 
-    return `${(value / 1024).toFixed(1)} GiB`;
-  }
-
-  formatStorageGb(value: number | null | undefined): string {
-    if (!value) {
-      return "-";
+    if (value < 1) {
+      return value.toPrecision(1);
     }
 
-    return `${value} GB`;
-  }
-
-  formatPrice(value: number | null | undefined): string {
-    if (value === null || value === undefined) {
-      return "-";
+    if (value < 100) {
+      return Number.isInteger(value) ? value.toString() : value.toFixed(2);
     }
 
-    return `${value} USD/hr`;
-  }
-
-  formatScore(value: number | null | undefined): string {
-    if (value === null || value === undefined) {
-      return "-";
-    }
-
-    return Number.isInteger(value) ? String(value) : value.toFixed(2);
+    return Number.isInteger(value) ? value.toString() : value.toFixed(0);
   }
 
   showApiReference(item: ServerPKs): boolean {
@@ -697,6 +779,93 @@ export class AdvisorComponent implements OnInit, OnDestroy {
       item.display_name !== item.api_reference &&
       item.display_name !== item.api_reference.replace("Standard_", "")
     );
+  }
+
+  getTextValue(item: ServerPKs, key?: string): string {
+    if (!key) {
+      return "-";
+    }
+
+    const value = (item as unknown as Record<string, unknown>)[key];
+    return value === null || value === undefined || value === ""
+      ? "-"
+      : String(value);
+  }
+
+  getPriceValue(item: ServerPKs, key?: string): string {
+    if (!key) {
+      return "-";
+    }
+
+    const value = (item as unknown as Record<string, unknown>)[key];
+    if (value === null || value === undefined) {
+      return "-";
+    }
+
+    return `${value} ${this.displayedCurrency().slug}`;
+  }
+
+  getModelDetail(item: ServerPKs, modelKey: "cpu_model" | "gpu_model"): string {
+    const value = (item as unknown as Record<string, unknown>)[modelKey];
+    return value === null || value === undefined || value === ""
+      ? "-"
+      : String(value);
+  }
+
+  getNetworkSpeedValue(value: number | null | undefined): string {
+    if (!value || value <= 0) {
+      return "-";
+    }
+
+    if (value < 1) {
+      const mbps = value * 1000;
+      const formatted = Number.isInteger(mbps)
+        ? mbps.toString()
+        : mbps.toFixed(1);
+      return `${formatted} Mbps`;
+    }
+
+    const formatted = Number.isInteger(value)
+      ? value.toString()
+      : value.toFixed(1);
+    return `${formatted} Gbps`;
+  }
+
+  getMonthlyTrafficValue(value: number | null | undefined): string {
+    if (!value || value <= 0) {
+      return "-";
+    }
+
+    const isTiB = value >= 1024;
+    const transformedValue = isTiB ? value / 1024 : value;
+    const formatted = Number.isInteger(transformedValue)
+      ? transformedValue.toString()
+      : transformedValue.toFixed(1);
+    return `${formatted} ${isTiB ? "TiB/mo" : "GiB/mo"}`;
+  }
+
+  getIpv4Value(value: number | null | undefined): string {
+    return !value || value <= 0 ? "-" : String(value);
+  }
+
+  getVendorLinkId(server: ServerPKs): string {
+    const vendor = (server as { vendor?: { vendor_id?: string } }).vendor;
+    return vendor?.vendor_id || server.vendor_id;
+  }
+
+  getVendorLogo(server: ServerPKs): string | null {
+    const vendor = (server as { vendor?: { logo?: string | null } }).vendor;
+    return vendor?.logo || null;
+  }
+
+  getVendorName(server: ServerPKs): string {
+    const vendor = (server as { vendor?: { name?: string | null } }).vendor;
+    return vendor?.name || server.vendor_id;
+  }
+
+  openServerDetails(server: ServerPKs): void {
+    const vendorId = this.getVendorLinkId(server);
+    this.router.navigateByUrl(`/server/${vendorId}/${server.api_reference}`);
   }
 
   isSelectedForCompare(server: ServerPKs): boolean {
@@ -892,6 +1061,10 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     this.averageCpuUtilization.set(null);
     this.minimumMemoryGiB.set(0.5);
     this.peakGpuMemoryGiB.set(0);
+    this.selectedCurrency.set(this.availableCurrencies[0]);
+    this.displayedCurrency.set(this.availableCurrencies[0]);
+    this.bestPriceAllocation.set(this.bestPriceAllocationTypes[0]);
+    this.possibleColumns.set(this.buildDefaultTableColumns());
     this.page.set(1);
     this.limit.set(25);
     this.manualOrderBy.set(undefined);
@@ -1067,6 +1240,9 @@ export class AdvisorComponent implements OnInit, OnDestroy {
         const customParamNames = new Set([
           "page",
           "limit",
+          "columns",
+          "currency",
+          "best_price_allocation",
           "order_by",
           "order_dir",
           "baseline_vendor",
@@ -1094,6 +1270,24 @@ export class AdvisorComponent implements OnInit, OnDestroy {
             ? parseInt(String(queryParams.limit), 10) || 25
             : 25,
         );
+
+        this.selectedCurrency.set(
+          queryParams.currency
+            ? this.availableCurrencies.find(
+                (currency) => currency.slug === String(queryParams.currency),
+              ) || this.availableCurrencies[0]
+            : this.availableCurrencies[0],
+        );
+        this.displayedCurrency.set(this.selectedCurrency());
+        this.bestPriceAllocation.set(
+          queryParams.best_price_allocation
+            ? this.bestPriceAllocationTypes.find((allocation) => {
+                return (
+                  allocation.slug === String(queryParams.best_price_allocation)
+                );
+              }) || this.bestPriceAllocationTypes[0]
+            : this.bestPriceAllocationTypes[0],
+        );
         this.manualOrderBy.set(
           queryParams.order_by ? String(queryParams.order_by) : undefined,
         );
@@ -1103,6 +1297,12 @@ export class AdvisorComponent implements OnInit, OnDestroy {
           orderDir === OrderDir.Asc || orderDir === OrderDir.Desc
             ? orderDir
             : undefined,
+        );
+        this.possibleColumns.set(
+          this.restoreColumnsFromQuery(
+            queryParams.columns,
+            this.manualOrderBy(),
+          ),
         );
 
         this.pendingBaselineVendorId.set(
@@ -1170,7 +1370,7 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     );
   }
 
-  private getUrlStateQueryParams(): Record<string, unknown> {
+  getUrlStateQueryParams(): Record<string, unknown> {
     const queryParams: Record<string, unknown> = { ...this.query() };
     const selectedBaselineServer = this.selectedBaselineServer();
     const selectedBenchmarkConfig = this.selectedBenchmarkConfig();
@@ -1220,6 +1420,18 @@ export class AdvisorComponent implements OnInit, OnDestroy {
       queryParams.limit = this.limit();
     }
 
+    if (this.selectedCurrency().slug !== "USD") {
+      queryParams.currency = this.selectedCurrency().slug;
+    }
+
+    if (this.bestPriceAllocation().slug !== "ANY") {
+      queryParams.best_price_allocation = this.bestPriceAllocation().slug;
+    }
+
+    if (this.hasCustomColumns()) {
+      queryParams.columns = this.getColumnStateValue(this.possibleColumns());
+    }
+
     if (this.manualOrderBy() && this.manualOrderDir()) {
       queryParams.order_by = this.manualOrderBy();
       queryParams.order_dir = this.manualOrderDir();
@@ -1244,6 +1456,7 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     this.totalRecommendationCount.set(result.totalCount);
     this.totalPages.set(result.totalPages);
     this.recommendations.set(result.recommendations);
+    this.displayedCurrency.set(this.selectedCurrency());
     this.isLoadingRecommendations.set(false);
   }
 
@@ -1263,5 +1476,61 @@ export class AdvisorComponent implements OnInit, OnDestroy {
           option.benchmark_id === "stress_ng:bestn" && option.config === "{}",
       ) || null
     );
+  }
+
+  private buildDefaultTableColumns(): AdvisorTableColumn[] {
+    return ADVISOR_TABLE_COLUMNS.map((column) => ({ ...column }));
+  }
+
+  private matchesDefaultColumnSelection(
+    columns: AdvisorTableColumn[],
+  ): boolean {
+    return columns.every((column, index) => {
+      return column.show === ADVISOR_TABLE_COLUMNS[index]?.show;
+    });
+  }
+
+  private getColumnStateValue(columns: AdvisorTableColumn[]): number {
+    return columns
+      .map((column) => (column.show ? 1 : 0))
+      .reduce((accumulator: number, bit) => (accumulator << 1) | bit, 0);
+  }
+
+  private restoreColumnsFromQuery(
+    encodedColumns: unknown,
+    orderBy?: string,
+  ): AdvisorTableColumn[] {
+    let columns = this.buildDefaultTableColumns();
+
+    if (
+      encodedColumns !== undefined &&
+      encodedColumns !== null &&
+      String(encodedColumns).length
+    ) {
+      const parsedColumns = Number(encodedColumns);
+
+      if (Number.isInteger(parsedColumns) && parsedColumns >= 0) {
+        const bits = parsedColumns
+          .toString(2)
+          .padStart(columns.length, "0")
+          .slice(-columns.length)
+          .split("")
+          .map(Number);
+
+        columns = columns.map((column, index) => {
+          return { ...column, show: bits[index] === 1 };
+        });
+      }
+    }
+
+    if (orderBy) {
+      columns = columns.map((column) => {
+        return column.orderField === orderBy
+          ? { ...column, show: true }
+          : column;
+      });
+    }
+
+    return columns;
   }
 }
