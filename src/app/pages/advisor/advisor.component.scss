@@ -61,9 +61,10 @@
 }
 
 .top_buttons {
-  height: 4rem;
+  min-height: 4rem;
   display: flex;
   align-items: center;
+  align-content: flex-start;
   justify-content: flex-end;
   gap: 1rem;
   width: 100%;
@@ -108,6 +109,10 @@
 
 .limited-full {
   width: calc(100% - 20rem);
+}
+
+.list_holder {
+  min-width: 0;
 }
 
 .advisor-summary-grid {
@@ -175,6 +180,22 @@
 
 .advisor-table-wrap {
   @apply mt-4 overflow-x-auto;
+  overflow-y: visible;
+  scrollbar-width: thin;
+  scrollbar-color: #34d399 #374151;
+}
+
+.advisor-table-wrap::-webkit-scrollbar {
+  height: 2px;
+}
+
+.advisor-table-wrap::-webkit-scrollbar-track {
+  background: #374151;
+}
+
+.advisor-table-wrap::-webkit-scrollbar-thumb {
+  background-color: #34d399;
+  border-radius: 3px;
 }
 
 .items_table {
@@ -306,5 +327,17 @@
 @media (max-width: 1024px) {
   .advisor-summary-grid {
     grid-template-columns: 1fr;
+  }
+
+  .top_buttons {
+    width: 100%;
+  }
+
+  .placeholder-panel {
+    min-width: 0;
+  }
+
+  .advisor-table-wrap {
+    overflow-x: auto;
   }
 }
