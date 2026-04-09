@@ -31,18 +31,18 @@ export const ADVISOR_OPTIMIZATION_GOAL_OPTIONS: SearchBarCustomSelectOption[] =
   ];
 
 export const ADVISOR_TABLE_COLUMNS: AdvisorTableColumn[] = [
-  { name: "Vendor", key: "vendor_id", orderField: "vendor_id" },
-  { name: "API Reference", key: "api_reference", orderField: "api_reference" },
-  { name: "Status", key: "status", orderField: "status" },
-  { name: "vCPUs", key: "vcpus", orderField: "vcpus" },
-  { name: "Memory", key: "memory_amount", orderField: "memory_amount" },
+  { name: "VENDOR", key: "vendor_id" },
+  { name: "API REFERENCE", key: "api_reference", orderField: "api_reference" },
+  { name: "STATUS", key: "status", orderField: "status" },
+  { name: "VCPUs", key: "vcpus", orderField: "vcpus" },
+  { name: "MEMORY", key: "memory_amount", orderField: "memory_amount" },
   {
-    name: "GPU Memory",
+    name: "GPU MEMORY",
     key: "gpu_memory_total",
     orderField: "gpu_memory_total",
   },
-  { name: "Storage", key: "storage_size", orderField: "storage_size" },
-  { name: "Details", key: "details" },
+  { name: "STORAGE", key: "storage_size", orderField: "storage_size" },
+  { name: "", key: "details" },
 ];
 
 export const ADVISOR_PAGE_LIMITS = [10, 25, 50, 100];

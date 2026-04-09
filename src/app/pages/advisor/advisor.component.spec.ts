@@ -1,4 +1,10 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import {
+  ComponentFixture,
+  TestBed,
+  fakeAsync,
+  flushMicrotasks,
+  tick,
+} from "@angular/core/testing";
 import { ActivatedRoute } from "@angular/router";
 import { BehaviorSubject, Subject } from "rxjs";
 import { OrderDir } from "../../../../sdk/data-contracts";
@@ -24,9 +30,18 @@ describe("AdvisorComponent", () => {
   const updateTitleAndMetaTags = jasmine.createSpy("updateTitleAndMetaTags");
   const showToast = jasmine.createSpy("show");
   const selectionChanged = new Subject();
-  const toggleCompare = jasmine.createSpy("toggleCompare");
-  const clearCompare = jasmine.createSpy("clearCompare");
-  const openCompare = jasmine.createSpy("openCompare");
+  const compareService = {
+    selectedForCompare: [] as Array<{
+      display_name: string;
+      vendor: string;
+      server: string;
+      zonesRegions: unknown[];
+    }>,
+    selectionChanged,
+    toggleCompare: jasmine.createSpy("toggleCompare"),
+    clearCompare: jasmine.createSpy("clearCompare"),
+    openCompare: jasmine.createSpy("openCompare"),
+  };
 
   let component: AdvisorComponent;
   let fixture: ComponentFixture<AdvisorComponent>;
@@ -45,9 +60,43 @@ describe("AdvisorComponent", () => {
     getRegions.calls.reset();
     updateTitleAndMetaTags.calls.reset();
     showToast.calls.reset();
-    toggleCompare.calls.reset();
-    clearCompare.calls.reset();
-    openCompare.calls.reset();
+    compareService.selectedForCompare = [];
+    compareService.toggleCompare.calls.reset();
+    compareService.clearCompare.calls.reset();
+    compareService.openCompare.calls.reset();
+    compareService.toggleCompare.and.callFake(
+      (
+        shouldSelect: boolean,
+        server: { display_name: string; vendor: string; server: string },
+      ) => {
+        if (shouldSelect) {
+          compareService.selectedForCompare = [
+            ...compareService.selectedForCompare.filter(
+              (item) =>
+                item.vendor !== server.vendor || item.server !== server.server,
+            ),
+            {
+              display_name: server.display_name,
+              vendor: server.vendor,
+              server: server.server,
+              zonesRegions: [],
+            },
+          ];
+        } else {
+          compareService.selectedForCompare =
+            compareService.selectedForCompare.filter(
+              (item) =>
+                item.vendor !== server.vendor || item.server !== server.server,
+            );
+        }
+
+        selectionChanged.next(compareService.selectedForCompare);
+      },
+    );
+    compareService.clearCompare.and.callFake(() => {
+      compareService.selectedForCompare = [];
+      selectionChanged.next(compareService.selectedForCompare);
+    });
 
     getServersSelect.and.resolveTo({
       body: [
@@ -141,13 +190,7 @@ describe("AdvisorComponent", () => {
         },
         {
           provide: ServerCompareService,
-          useValue: {
-            selectedForCompare: [],
-            selectionChanged,
-            toggleCompare,
-            clearCompare,
-            openCompare,
-          },
+          useValue: compareService,
         },
         {
           provide: ToastService,
@@ -217,17 +260,22 @@ describe("AdvisorComponent", () => {
     expect(component.peakGpuMemoryGiB()).toBe(2);
   });
 
-  it("only requests recommendations once the required inputs are valid", async () => {
+  it("only requests recommendations once the required inputs are valid", fakeAsync(() => {
     expect(component.recommendationQuery()).toBeNull();
     expect(searchServers).not.toHaveBeenCalled();
 
     const baselineServer = component.serverTableRows()[0];
     component.selectedBaselineServer.set(baselineServer);
     component.baselineServerInput.set("aws large");
+    fixture.detectChanges();
+    flushMicrotasks();
+    fixture.detectChanges();
+
     component.averageCpuUtilization.set(50);
 
     fixture.detectChanges();
-    await fixture.whenStable();
+    tick(350);
+    flushMicrotasks();
     fixture.detectChanges();
 
     expect(component.recommendationQuery()).not.toBeNull();
@@ -235,7 +283,176 @@ describe("AdvisorComponent", () => {
     expect(component.recommendationQuery()?.memory_min).toBe(0.5);
     expect(component.recommendationQuery()?.order_by).toBe("min_price");
     expect(searchServers).toHaveBeenCalled();
+  }));
+
+  it("keeps the vendor column informational rather than orderable", () => {
+    const vendorColumn = component.advisorTableColumns.find(
+      (column) => column.key === "vendor_id",
+    );
+
+    expect(vendorColumn?.name).toBe("VENDOR");
+    expect(vendorColumn?.orderField).toBeUndefined();
+
+    component.manualOrderBy.set("memory_amount");
+    component.manualOrderDir.set(OrderDir.Desc);
+    component.toggleOrdering(vendorColumn!);
+
+    expect(component.manualOrderBy()).toBe("memory_amount");
+    expect(component.manualOrderDir()).toBe(OrderDir.Desc);
+    expect(component.getOrderingIcon(vendorColumn!)).toBeNull();
   });
+
+  it("toggles the selected baseline server in compare", () => {
+    const baselineServer = component.serverTableRows()[0];
+    component.selectedBaselineServer.set(baselineServer);
+
+    component.toggleBaselineCompare();
+
+    expect(compareService.toggleCompare).toHaveBeenCalledWith(true, {
+      server: "large",
+      vendor: "aws",
+      display_name: "large",
+    });
+    expect(component.isBaselineSelectedForCompare()).toBeTrue();
+    expect(component.baselineCompareButtonLabel()).toBe("Remove baseline");
+
+    component.toggleBaselineCompare();
+
+    expect(compareService.toggleCompare).toHaveBeenCalledWith(false, {
+      server: "large",
+      vendor: "aws",
+      display_name: "large",
+    });
+    expect(component.isBaselineSelectedForCompare()).toBeFalse();
+    expect(component.baselineCompareButtonLabel()).toBe("Compare baseline");
+  });
+
+  it("debounces rapid recommendation filter changes", fakeAsync(() => {
+    const baselineServer = component.serverTableRows()[0];
+    component.selectedBaselineServer.set(baselineServer);
+    component.baselineServerInput.set("aws large");
+    fixture.detectChanges();
+    flushMicrotasks();
+    fixture.detectChanges();
+
+    component.averageCpuUtilization.set(20);
+    fixture.detectChanges();
+    tick(100);
+
+    component.averageCpuUtilization.set(30);
+    fixture.detectChanges();
+    tick(100);
+
+    component.averageCpuUtilization.set(40);
+    fixture.detectChanges();
+    tick(349);
+
+    expect(searchServers).not.toHaveBeenCalled();
+
+    tick(1);
+    flushMicrotasks();
+
+    expect(searchServers).toHaveBeenCalledTimes(1);
+    expect(searchServers.calls.mostRecent().args[0].benchmark_score_min).toBe(
+      40,
+    );
+  }));
+
+  it("reuses cached recommendation results for a repeated query", fakeAsync(() => {
+    const baselineServer = component.serverTableRows()[0];
+    component.selectedBaselineServer.set(baselineServer);
+    component.baselineServerInput.set("aws large");
+    fixture.detectChanges();
+    flushMicrotasks();
+    fixture.detectChanges();
+
+    component.averageCpuUtilization.set(50);
+    fixture.detectChanges();
+    tick(350);
+    flushMicrotasks();
+
+    expect(searchServers).toHaveBeenCalledTimes(1);
+
+    component.averageCpuUtilization.set(60);
+    fixture.detectChanges();
+    tick(350);
+    flushMicrotasks();
+
+    expect(searchServers).toHaveBeenCalledTimes(2);
+
+    component.averageCpuUtilization.set(50);
+    fixture.detectChanges();
+    tick(350);
+    flushMicrotasks();
+
+    expect(searchServers).toHaveBeenCalledTimes(2);
+  }));
+
+  it("ignores stale recommendation responses", fakeAsync(() => {
+    let resolveSlow: ((value: unknown) => void) | undefined;
+    let resolveFast: ((value: unknown) => void) | undefined;
+
+    searchServers.and.callFake((query: { benchmark_score_min?: number }) => {
+      if (query.benchmark_score_min === 50) {
+        return new Promise((resolve) => {
+          resolveSlow = resolve;
+        });
+      }
+
+      return new Promise((resolve) => {
+        resolveFast = resolve;
+      });
+    });
+
+    const baselineServer = component.serverTableRows()[0];
+    component.selectedBaselineServer.set(baselineServer);
+    component.baselineServerInput.set("aws large");
+    fixture.detectChanges();
+    flushMicrotasks();
+    fixture.detectChanges();
+
+    component.averageCpuUtilization.set(50);
+    fixture.detectChanges();
+    tick(350);
+
+    component.averageCpuUtilization.set(60);
+    fixture.detectChanges();
+    tick(350);
+
+    resolveFast?.({
+      body: [
+        {
+          vendor_id: "aws",
+          api_reference: "newer",
+          display_name: "newer",
+          server_id: "srv-new",
+        },
+      ],
+      headers: {
+        get: (name: string) => (name === "x-total-count" ? "1" : null),
+      },
+    });
+    flushMicrotasks();
+
+    expect(component.recommendations()[0]?.api_reference).toBe("newer");
+
+    resolveSlow?.({
+      body: [
+        {
+          vendor_id: "aws",
+          api_reference: "older",
+          display_name: "older",
+          server_id: "srv-old",
+        },
+      ],
+      headers: {
+        get: (name: string) => (name === "x-total-count" ? "1" : null),
+      },
+    });
+    flushMicrotasks();
+
+    expect(component.recommendations()[0]?.api_reference).toBe("newer");
+  }));
 
   it("clears advisor filters back to their defaults", () => {
     const baselineServer = component.serverTableRows()[0];

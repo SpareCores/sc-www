@@ -54,9 +54,7 @@
           </app-search-bar>
 
           @if (!isCollapsed()) {
-            <div
-              class="advisor-filter-actions px-4 pb-4 bg-secondary flex flex-col gap-3 border-r border-emerald-400 border-solid"
-            >
+            <div class="px-4 pb-4 bg-secondary flex flex-col gap-3">
               <button
                 type="button"
                 class="text-white bg-emerald-400 hover:bg-emerald-500 rounded-lg px-3 py-2 relative flex gap-2 items-center justify-center"
@@ -96,9 +94,22 @@
           }
 
           <button
+            id="advisor_compare_baseline_button"
+            type="button"
+            class="advisor-top-action py-2 px-3 flex gap-1 items-center"
+            [class.btn-primary]="isBaselineSelectedForCompare()"
+            [class.btn-primary-outline]="!isBaselineSelectedForCompare()"
+            [disabled]="!selectedBaselineServer()"
+            (click)="toggleBaselineCompare()"
+          >
+            <lucide-icon name="scale" class="h-4 w-4"></lucide-icon>
+            {{ baselineCompareButtonLabel() }}
+          </button>
+
+          <button
             id="advisor_share_button"
             type="button"
-            class="btn-primary py-2 px-3 flex gap-1 items-center"
+            class="advisor-top-action btn-primary py-2 px-3 flex gap-1 items-center"
             (click)="clipboardURL()"
           >
             <lucide-icon [name]="clipboardIcon()" class="h-4 w-4"></lucide-icon>
@@ -129,7 +140,7 @@
                         class="h-4 w-4 text-white"
                       ></lucide-icon>
                     </th>
-                    @for (column of advisorTableColumns; track column.name) {
+                    @for (column of advisorTableColumns; track column.key) {
                       <th
                         [ngClass]="{ 'cursor-pointer': column.orderField }"
                         (click)="toggleOrdering(column)"
@@ -165,9 +176,23 @@
                           "
                         />
                       </td>
-                      @for (column of advisorTableColumns; track column.name) {
+                      @for (column of advisorTableColumns; track column.key) {
                         @if (column.key === "vendor_id") {
-                          <td>{{ recommendation.vendor_id }}</td>
+                          <td>
+                            <div
+                              class="advisor-table__vendor-logo"
+                              [attr.title]="recommendation.vendor_id"
+                            >
+                              <img
+                                [src]="
+                                  '/assets/images/vendors/' +
+                                  recommendation.vendor_id +
+                                  '.svg'
+                                "
+                                [alt]="recommendation.vendor_id + ' logo'"
+                              />
+                            </div>
+                          </td>
                         }
                         @if (column.key === "api_reference") {
                           <td>
@@ -207,14 +232,17 @@
                         @if (column.key === "details") {
                           <td>
                             <a
-                              class="advisor-table__link"
+                              class="advisor-table__link advisor-table__link--icon"
                               [routerLink]="[
                                 '/server',
                                 recommendation.vendor_id,
                                 recommendation.api_reference,
                               ]"
                             >
-                              View
+                              <lucide-icon
+                                name="chevron-right"
+                                class="h-6 w-6 text-emerald-400"
+                              ></lucide-icon>
                             </a>
                           </td>
                         }
