@@ -312,23 +312,53 @@
                 }
 
                 @if (control.type === "singleSelect") {
-                  <select
-                    class="custom-single-select mt-4"
-                    [value]="control.selectedValue || ''"
-                    (change)="
-                      onCustomSingleSelectChange(
-                        control,
-                        $any($event.target).value
-                      )
-                    "
+                  <div
+                    class="custom-autocomplete mt-4"
+                    (focusout)="handleSingleSelectFocusOut(control, $event)"
                   >
-                    @for (
-                      option of control.selectOptions || [];
-                      track option.value
-                    ) {
-                      <option [value]="option.value">{{ option.label }}</option>
+                    <div class="custom-autocomplete__input-wrap">
+                      <button
+                        type="button"
+                        class="custom-autocomplete__input custom-autocomplete__input--button"
+                        [attr.aria-expanded]="
+                          isSingleSelectDropdownOpen(control)
+                        "
+                        (click)="toggleSingleSelectDropdown(control)"
+                      >
+                        <span>{{ getCustomSingleSelectLabel(control) }}</span>
+                        <lucide-icon
+                          [name]="
+                            isSingleSelectDropdownOpen(control)
+                              ? 'chevron-up'
+                              : 'chevron-down'
+                          "
+                          class="custom-autocomplete__toggle-icon h-4 w-4"
+                        ></lucide-icon>
+                      </button>
+                    </div>
+
+                    @if (isSingleSelectDropdownOpen(control)) {
+                      <div class="custom-autocomplete__panel custom-scrollbar">
+                        @for (
+                          option of control.selectOptions || [];
+                          track option.value
+                        ) {
+                          <button
+                            type="button"
+                            class="custom-autocomplete__option"
+                            [class.custom-autocomplete__option--selected]="
+                              control.selectedValue === option.value
+                            "
+                            (click)="selectCustomControlOption(control, option)"
+                          >
+                            <span class="custom-autocomplete__label">
+                              {{ option.label }}
+                            </span>
+                          </button>
+                        }
+                      </div>
                     }
-                  </select>
+                  </div>
                 }
 
                 @if (control.type === "rangeSlider") {

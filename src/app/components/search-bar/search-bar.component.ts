@@ -227,6 +227,7 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   > = {};
 
   benchmarkConfigDropdownOpen: Record<string, boolean> = {};
+  singleSelectDropdownOpen: Record<string, boolean> = {};
 
   valueChangeDebouncer: Subject<number> = new Subject<number>();
   private subscription = new Subscription();
@@ -778,26 +779,54 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
     this.benchmarkConfigDropdownOpen[control.name] = false;
   }
 
+  isSingleSelectDropdownOpen(control: SearchBarCustomControl): boolean {
+    return this.singleSelectDropdownOpen[control.name] ?? false;
+  }
+
+  toggleSingleSelectDropdown(control: SearchBarCustomControl) {
+    this.singleSelectDropdownOpen[control.name] =
+      !this.isSingleSelectDropdownOpen(control);
+  }
+
+  closeSingleSelectDropdown(control: SearchBarCustomControl) {
+    this.singleSelectDropdownOpen[control.name] = false;
+  }
+
+  handleSingleSelectFocusOut(
+    control: SearchBarCustomControl,
+    event: FocusEvent,
+  ) {
+    const currentTarget = event.currentTarget as HTMLElement | null;
+    const relatedTarget = event.relatedTarget as Node | null;
+
+    if (
+      currentTarget &&
+      relatedTarget &&
+      currentTarget.contains(relatedTarget)
+    ) {
+      return;
+    }
+
+    this.closeSingleSelectDropdown(control);
+  }
+
+  getCustomSingleSelectLabel(control: SearchBarCustomControl): string {
+    const selectedOption = (control.selectOptions || []).find(
+      (option) => option.value === control.selectedValue,
+    );
+
+    return selectedOption?.label || control.placeholder || control.title;
+  }
+
   selectCustomControlOption(
     control: SearchBarCustomControl,
     option: SearchBarCustomSelectOption,
   ) {
+    this.closeSingleSelectDropdown(control);
     this.customControlChanged.emit({
       name: control.name,
       value: { selectedValue: option.value },
     });
-  }
-
-  onCustomSingleSelectChange(control: SearchBarCustomControl, value: string) {
-    const option = (control.selectOptions || []).find(
-      (selectOption) => selectOption.value === value,
-    );
-
-    if (!option) {
-      return;
-    }
-
-    this.selectCustomControlOption(control, option);
   }
 
   formatBenchmarkConfigDescription(
