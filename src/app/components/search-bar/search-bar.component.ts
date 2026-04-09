@@ -788,6 +788,18 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
     });
   }
 
+  onCustomSingleSelectChange(control: SearchBarCustomControl, value: string) {
+    const option = (control.selectOptions || []).find(
+      (selectOption) => selectOption.value === value,
+    );
+
+    if (!option) {
+      return;
+    }
+
+    this.selectCustomControlOption(control, option);
+  }
+
   formatBenchmarkConfigDescription(
     benchmarkOption: SearchBarBenchmarkConfigOption,
   ): string {

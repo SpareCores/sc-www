@@ -312,26 +312,23 @@
                 }
 
                 @if (control.type === "singleSelect") {
-                  <div
-                    class="flex items-center gap-4 text-sm text-white mb-4 mt-4"
+                  <select
+                    class="custom-single-select mt-4"
+                    [value]="control.selectedValue || ''"
+                    (change)="
+                      onCustomSingleSelectChange(
+                        control,
+                        $any($event.target).value
+                      )
+                    "
                   >
                     @for (
                       option of control.selectOptions || [];
                       track option.value
                     ) {
-                      <label class="flex items-center gap-1 cursor-pointer">
-                        <input
-                          type="radio"
-                          [name]="'custom_single_select_' + control.name"
-                          [value]="option.value"
-                          [checked]="control.selectedValue === option.value"
-                          (change)="selectCustomControlOption(control, option)"
-                          class="checkbox"
-                        />
-                        <span>{{ option.label }}</span>
-                      </label>
+                      <option [value]="option.value">{{ option.label }}</option>
                     }
-                  </div>
+                  </select>
                 }
 
                 @if (control.type === "rangeSlider") {
