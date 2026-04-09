@@ -56,18 +56,16 @@ import { AdvisorBaselineServer, AdvisorTableColumn } from "./advisor.types";
 import { normalizeBenchmarkConfig, stableStringify } from "./advisor.utils";
 
 const ADVISOR_RECOMMENDATION_DEBOUNCE_MS = 350;
-const ADVISOR_RECOMMENDATION_CACHE_TTL_MS = 60_000;
 
 type RecommendationRequest = {
   key: string;
   query: SearchServersServersGetParams;
 };
 
-type RecommendationCacheEntry = {
+type RecommendationResult = {
   recommendations: SearchServersServersGetData;
   totalCount: number;
   totalPages: number;
-  cachedAt: number;
 };
 
 @Component({
@@ -95,7 +93,6 @@ export class AdvisorComponent implements OnInit, OnDestroy {
   private lastEncodedQuery: string | null = null;
   private clipboardResetTimeout: ReturnType<typeof setTimeout> | null = null;
   private recommendationRequests = new Subject<RecommendationRequest | null>();
-  private recommendationCache = new Map<string, RecommendationCacheEntry>();
   private recommendationRequestVersion = 0;
   private activeRecommendationRequestKey: string | null = null;
 
@@ -995,13 +992,6 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     requestKey: string,
     recommendationQuery: SearchServersServersGetParams,
   ): Promise<void> {
-    const cachedResult = this.getCachedRecommendation(requestKey);
-
-    if (cachedResult) {
-      this.applyRecommendationResult(cachedResult);
-      return;
-    }
-
     if (
       this.isLoadingRecommendations() &&
       this.activeRecommendationRequestKey === requestKey
@@ -1028,11 +1018,10 @@ export class AdvisorComponent implements OnInit, OnDestroy {
       );
       const totalPages = Math.ceil(totalCount / this.limit());
 
-      const nextResult: RecommendationCacheEntry = {
+      const nextResult: RecommendationResult = {
         recommendations: response?.body || [],
         totalCount,
         totalPages,
-        cachedAt: Date.now(),
       };
 
       if (totalPages > 0 && this.page() > totalPages) {
@@ -1042,7 +1031,6 @@ export class AdvisorComponent implements OnInit, OnDestroy {
         return;
       }
 
-      this.recommendationCache.set(requestKey, nextResult);
       this.applyRecommendationResult(nextResult);
     } catch (error) {
       if (
@@ -1252,27 +1240,7 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     return stableStringify(recommendationQuery);
   }
 
-  private getCachedRecommendation(
-    requestKey: string,
-  ): RecommendationCacheEntry | null {
-    const cachedResult = this.recommendationCache.get(requestKey);
-
-    if (!cachedResult) {
-      return null;
-    }
-
-    if (
-      Date.now() - cachedResult.cachedAt >
-      ADVISOR_RECOMMENDATION_CACHE_TTL_MS
-    ) {
-      this.recommendationCache.delete(requestKey);
-      return null;
-    }
-
-    return cachedResult;
-  }
-
-  private applyRecommendationResult(result: RecommendationCacheEntry): void {
+  private applyRecommendationResult(result: RecommendationResult): void {
     this.totalRecommendationCount.set(result.totalCount);
     this.totalPages.set(result.totalPages);
     this.recommendations.set(result.recommendations);

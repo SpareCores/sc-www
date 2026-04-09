@@ -358,7 +358,7 @@ describe("AdvisorComponent", () => {
     );
   }));
 
-  it("reuses cached recommendation results for a repeated query", fakeAsync(() => {
+  it("requests recommendations again for a repeated query", fakeAsync(() => {
     const baselineServer = component.serverTableRows()[0];
     component.selectedBaselineServer.set(baselineServer);
     component.baselineServerInput.set("aws large");
@@ -385,7 +385,7 @@ describe("AdvisorComponent", () => {
     tick(350);
     flushMicrotasks();
 
-    expect(searchServers).toHaveBeenCalledTimes(2);
+    expect(searchServers).toHaveBeenCalledTimes(3);
   }));
 
   it("ignores stale recommendation responses", fakeAsync(() => {
