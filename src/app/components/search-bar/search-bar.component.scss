@@ -1,4 +1,24 @@
 .search_bar_content {
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #34d399 #374151;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: #374151;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #34d399;
+    border-radius: 20px;
+    border: 3px solid #34d399;
+  }
+
   width: 100%;
   height: calc(100% - 4rem);
 
