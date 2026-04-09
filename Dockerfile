@@ -28,12 +28,17 @@ ENV NG_APP_SENTRY_ENVIRONMENT=$SENTRY_ENVIRONMENT
 ARG SENTRY_RELEASE
 ENV NG_APP_SENTRY_RELEASE=$SENTRY_RELEASE
 
+ARG STATIC_ASSET_BASE_URL
+
 WORKDIR /usr/src/app
 COPY package*.json ./
 RUN npm install
 COPY . .
-RUN npm run build \
-  --mount=type=secret,id=aws-key-id,env=AWS_ACCESS_KEY_ID
+RUN if [ -n "${STATIC_ASSET_BASE_URL}" ]; then \
+      npm run build -- --deploy-url="${STATIC_ASSET_BASE_URL}"; \
+    else \
+      npm run build; \
+    fi
 
 FROM public.ecr.aws/docker/library/node:lts-jod
 COPY package*.json ./

@@ -4,6 +4,10 @@ on:
     branches:
       - main
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
@@ -17,6 +21,11 @@ jobs:
           LEGAL_TOKEN: ${{ secrets.LEGAL_TOKEN }}
           LEGAL_URL: ${{ secrets.LEGAL_URL }}
         run: 'curl -s -L -H "Authorization: token ${LEGAL_TOKEN}" ${LEGAL_URL} | tar xz --strip-components=1'
+      - name: Prepare CDN asset version
+        id: asset-version
+        run: |
+          VERSION="$(date -u +'%Y%m%d%H%M%S')-${GITHUB_RUN_ID}"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -32,6 +41,7 @@ jobs:
           file: Dockerfile
           context: .
           push: true
+          load: true
           tags: ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPO_NAME }}:latest
           build-args: |
             POSTHOG_KEY=${{ secrets.POSTHOG_KEY }}
@@ -44,6 +54,43 @@ jobs:
             SENTRY_RELEASE=${{ github.sha }}
             SENTRY_TRACE_SAMPLE_RATE=1
             SENTRY_PROFILE_SAMPLE_RATE=1
+            STATIC_ASSET_BASE_URL=https://${{ vars.CDN_HOST }}/${{ vars.CDN_PREFIX }}/${{ steps.asset-version.outputs.version }}/
+      - name: Extract static assets from built Docker image
+        env:
+          IMAGE_URI: ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPO_NAME }}:latest
+        run: |
+          CONTAINER_ID="$(docker create "${IMAGE_URI}")"
+          trap 'docker rm -f "${CONTAINER_ID}" >/dev/null 2>&1 || true' EXIT
+          mkdir -p ./dist/sc-www
+          docker cp "${CONTAINER_ID}:/usr/share/www/static" "./dist/sc-www/browser"
+      - name: Configure AWS credentials for CDN upload
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.SC_WWW_CDN_ROLE_ARN }}
+          role-session-name: sc-www-cdn-upload
+          aws-region: eu-central-1
+      - name: Upload static assets to versioned CDN prefix
+        env:
+          CDN_BUCKET: ${{ vars.CDN_BUCKET }}
+          CDN_PREFIX: ${{ vars.CDN_PREFIX }}
+          CDN_ASSET_VERSION: ${{ steps.asset-version.outputs.version }}
+        run: |
+          aws s3 sync ./dist/sc-www/browser "s3://${CDN_BUCKET}/${CDN_PREFIX}/${CDN_ASSET_VERSION}/" --delete
+      - name: Prune old CDN asset versions (keep latest 5)
+        env:
+          CDN_BUCKET: ${{ vars.CDN_BUCKET }}
+          CDN_PREFIX: ${{ vars.CDN_PREFIX }}
+        run: |
+          mapfile -t VERSIONS < <(aws s3 ls "s3://${CDN_BUCKET}/${CDN_PREFIX}/" | awk '/PRE / {print $2}' | sed 's:/$::' | sort -r)
+          COUNT=${#VERSIONS[@]}
+          if [ "$COUNT" -le 5 ]; then
+            echo "Found ${COUNT} version(s); nothing to prune."
+            exit 0
+          fi
+          for VERSION in "${VERSIONS[@]:5}"; do
+            echo "Pruning ${VERSION}"
+            aws s3 rm "s3://${CDN_BUCKET}/${CDN_PREFIX}/${VERSION}/" --recursive
+          done
 
       - name: Create Sentry release
         uses: getsentry/action-release@v1
