@@ -36,6 +36,7 @@ import { ServerCompareService } from "../../services/server-compare.service";
 import { ToastService } from "../../services/toast.service";
 import { encodeQueryParams } from "../../tools/queryParamFunctions";
 import openApiSpec from "../../../../sdk/openapi.json";
+import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
 import {
   ADVISOR_BREADCRUMBS,
   ADVISOR_DEFAULT_SERVER_COLUMNS,
@@ -75,6 +76,7 @@ type RecommendationCacheEntry = {
     CommonModule,
     BreadcrumbsComponent,
     LucideAngularModule,
+    LoadingSpinnerComponent,
     RouterLink,
     SearchBarComponent,
   ],

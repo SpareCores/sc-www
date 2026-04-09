@@ -238,6 +238,10 @@
   @apply mt-4 rounded-lg border border-dashed border-gray-500 px-4 py-6 text-sm text-gray-300;
 }
 
+.advisor-table__empty--loading {
+  @apply flex justify-center;
+}
+
 .advisor-compare-checkbox {
   @apply cursor-pointer accent-emerald-400 text-emerald-400 outline-none focus:ring-emerald-400;
 }

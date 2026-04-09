@@ -125,7 +125,9 @@
 
           <div class="advisor-table-wrap">
             @if (isLoadingRecommendations()) {
-              <div class="advisor-table__empty">Loading recommendations...</div>
+              <div class="advisor-table__empty advisor-table__empty--loading">
+                <app-loading-spinner size="lg"></app-loading-spinner>
+              </div>
             } @else if (!recommendations().length) {
               <div class="advisor-table__empty">
                 {{ recommendationEmptyStateMessage() }}
