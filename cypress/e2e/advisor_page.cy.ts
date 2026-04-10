@@ -6,14 +6,14 @@ describe("Advisor page", () => {
 
     E2EEvent.checkBreadcrumbs();
     E2EEvent.isVisible(`[id="serverSearchBar"]`);
-    E2EEvent.isVisibleAndNotEmpty(`[id="advisor_results_panel"]`);
+    E2EEvent.isVisibleAndNotEmpty(`[id="advisor_results_table"]`);
     E2EEvent.isVisible(`[id="advisor_share_button"]`);
+    E2EEvent.isVisible(`[id="advisor_compare_baseline_button"]`);
+    E2EEvent.isVisible(`[id="advisor_currency_button"]`);
+    E2EEvent.isVisible(`[id="advisor_column_button"]`);
 
     E2EEvent.doesNotExist(`[id="advisor_inputs_panel"]`);
-    cy.get(`[id="advisor_results_panel"]`).should(
-      "contain.text",
-      "Recommended Servers",
-    );
+    cy.get(`[id="advisor_results_table"]`).should("contain.text", "PRICE");
   });
 
   it("Filters baseline servers after three characters", () => {
@@ -47,6 +47,12 @@ describe("Advisor page", () => {
     E2EEvent.visitURL("/advisor", 4000);
 
     cy.contains("No matches yet").should("be.visible");
-    cy.contains("0.5 GB").should("be.visible");
+    cy.get('[id="custom_control_numeric_minimum_memory"]').should(
+      "have.value",
+      "0.5",
+    );
+    cy.get('[id="custom_control_numeric_minimum_memory"]')
+      .siblings(".custom-stepper__unit")
+      .should("contain.text", "GiB");
   });
 });
