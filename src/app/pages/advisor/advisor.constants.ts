@@ -1,6 +1,10 @@
 import { BreadcrumbSegment } from "../../components/breadcrumbs/breadcrumbs.component";
 import { SearchBarCustomSelectOption } from "../../components/search-bar/search-bar.component";
-import { AdvisorSeoMetadata, AdvisorTableColumn } from "./advisor.types";
+import {
+  AdvisorOptimizationGoal,
+  AdvisorSeoMetadata,
+  AdvisorTableColumn,
+} from "./advisor.types";
 
 export const ADVISOR_BREADCRUMBS: BreadcrumbSegment[] = [
   { name: "Home", url: "/" },
@@ -31,6 +35,43 @@ export const ADVISOR_OPTIMIZATION_GOAL_OPTIONS: SearchBarCustomSelectOption[] =
     { value: "cost", label: "Cost" },
     { value: "cost-efficiency", label: "Cost-efficiency" },
   ];
+
+export const ADVISOR_DEFAULT_OPTIMIZATION_GOAL: AdvisorOptimizationGoal =
+  "cost";
+
+export const ADVISOR_DEFAULT_MINIMUM_MEMORY_GIB = 0.5;
+
+export const ADVISOR_DEFAULT_PEAK_GPU_MEMORY_GIB = 0;
+
+export const ADVISOR_DEFAULT_PAGE_LIMIT = 25;
+
+export const ADVISOR_DEFAULT_CURRENCY = "USD";
+
+export const ADVISOR_DEFAULT_PRICE_ALLOCATION = "ANY";
+
+export const ADVISOR_DEFAULT_WORKLOAD_ID = "stress_ng:bestn";
+
+export const ADVISOR_DEFAULT_WORKLOAD_CONFIG = "{}";
+
+export const ADVISOR_CUSTOM_QUERY_PARAM_NAMES = [
+  "page",
+  "limit",
+  "columns",
+  "currency",
+  "best_price_allocation",
+  "order_by",
+  "order_dir",
+  "baseline_vendor",
+  "baseline_server",
+  "limit_architecture",
+  "limit_cpu_allocation",
+  "workload_id",
+  "workload_config",
+  "optimization_goal",
+  "avg_cpu_utilization",
+  "minimum_memory",
+  "peak_gpu_memory",
+] as const;
 
 export const ADVISOR_PAGE_TITLE = "Server Advisor";
 

@@ -29,11 +29,11 @@
 
     <div class="flex gap-8 mx-2 xl:mx-0">
       <div
-        class="filter_bar bg-primary"
-        [ngClass]="{ collapsed: isCollapsed() }"
+        class="advisor-filter-bar bg-primary"
+        [class.advisor-filter-bar-collapsed]="isCollapsed()"
       >
         <div
-          class="collapser bg-secondary"
+          class="advisor-filter-bar-collapser bg-secondary"
           (click)="toggleCollapse()"
           tabindex="0"
           role="button"
@@ -47,13 +47,13 @@
           ></lucide-icon>
         </div>
 
-        <div class="top overflow-hidden bg-secondary">
+        <div class="advisor-filter-bar-top overflow-hidden bg-secondary">
           <div class="text-emerald-400 text-sm font-semibold">
             Advisor Controls
           </div>
         </div>
 
-        <div class="filters overflow-hidden bg-secondary">
+        <div class="advisor-filter-bar-filters overflow-hidden bg-secondary">
           <app-search-bar
             [query]="query()"
             [filterCategories]="advisorFilterCategories"
@@ -82,13 +82,13 @@
       </div>
 
       <div
-        class="list_holder flex flex-col gap-4"
+        class="advisor-results flex flex-col gap-4"
         [ngClass]="{
-          'limited-full': !isCollapsed(),
+          'advisor-results-constrained': !isCollapsed(),
           'w-full': isCollapsed(),
         }"
       >
-        <div class="top_buttons">
+        <div class="advisor-toolbar">
           @if (recommendationSummary(); as summary) {
             <div
               class="advisor-summary-alert"
@@ -99,10 +99,10 @@
                 summary.tone === 'neutral'
               "
             >
-              <div class="advisor-summary-alert__title">
+              <div class="advisor-summary-alert-title">
                 {{ summary.title }}
               </div>
-              <div class="advisor-summary-alert__body">{{ summary.body }}</div>
+              <div class="advisor-summary-alert-body">{{ summary.body }}</div>
             </div>
           }
 
@@ -125,7 +125,7 @@
                 id="advisor_allocation_button"
                 [appFlowbiteDropdown]="'advisor_allocation_options'"
                 #allocationDropdown="appFlowbiteDropdown"
-                class="dropdown_button min-w-0 max-w-full"
+                class="advisor-dropdown-button min-w-0 max-w-full"
                 type="button"
               >
                 <div class="px-4 py-3 flex-1 min-w-0 truncate">
@@ -147,7 +147,7 @@
                 id="advisor_currency_button"
                 [appFlowbiteDropdown]="'advisor_currency_options'"
                 #currencyDropdown="appFlowbiteDropdown"
-                class="dropdown_button"
+                class="advisor-dropdown-button"
                 type="button"
               >
                 <div class="px-4 py-3">
@@ -168,7 +168,7 @@
               <button
                 id="advisor_column_button"
                 [appFlowbiteDropdown]="'advisor_column_options'"
-                class="dropdown_button"
+                class="advisor-dropdown-button"
                 type="button"
               >
                 <div class="px-4 py-3">Columns</div>
@@ -191,20 +191,19 @@
             [class.min-h-80]="
               isLoadingRecommendations() && !recommendations().length
             "
-            style="padding-left: 1px"
           >
             @if (isLoadingRecommendations()) {
-              <div class="advisor-table__loading-overlay">
+              <div class="advisor-table-loading-overlay">
                 <div class="flex justify-center mt-16 opacity-100">
                   <app-loading-spinner size="lg"></app-loading-spinner>
                 </div>
               </div>
             }
 
-            <table class="items_table" id="advisor_results_table">
+            <table class="advisor-results-table" id="advisor_results_table">
               <thead>
                 <tr>
-                  <th class="checkbox_column">
+                  <th class="advisor-checkbox-column">
                     <div class="text-white">
                       <lucide-icon class="h-4 w-4" name="scale"></lucide-icon>
                     </div>
@@ -216,9 +215,9 @@
                     >
                       <div class="flex gap-1 whitespace-nowrap">
                         {{ column.name }}
-                        @if (getOrderingIcon(column)) {
+                        @if (getOrderingIcon(column); as orderingIcon) {
                           <lucide-icon
-                            [name]="getOrderingIcon(column) || ''"
+                            [name]="orderingIcon"
                             class="h-4 w-4 text-white"
                           ></lucide-icon>
                         }
@@ -235,10 +234,15 @@
                     "_" +
                     recommendation.server_id
                 ) {
-                  <tr (click)="openServerDetails(recommendation)">
+                  <tr
+                    (click)="openServerDetails(recommendation)"
+                    [class.advisor-table-row-baseline]="
+                      isSelectedBaselineRecommendation(recommendation)
+                    "
+                  >
                     <td
                       (click)="$event.stopPropagation()"
-                      class="checkbox_column"
+                      class="advisor-checkbox-column"
                     >
                       <div class="flex items-center">
                         <input
@@ -258,7 +262,7 @@
                             <a
                               [routerLink]="[
                                 '/server',
-                                getVendorLinkId(recommendation),
+                                advisorUi.getVendorLinkId(recommendation),
                                 recommendation.api_reference,
                               ]"
                             >
@@ -269,7 +273,9 @@
                                       recommendation.api_reference
                                   }}
                                 </span>
-                                @if (showApiReference(recommendation)) {
+                                @if (
+                                  advisorUi.showApiReference(recommendation)
+                                ) {
                                   <span class="text-emerald-400">|</span>
                                   <span class="whitespace-nowrap">
                                     {{ recommendation.api_reference }}
@@ -285,16 +291,22 @@
                       }
                       @if (column.type === "vendor") {
                         <td>
-                          @if (getVendorLogo(recommendation)) {
-                            <div class="advisor-table__vendor-logo">
+                          @if (
+                            advisorUi.getVendorLogo(recommendation);
+                            as vendorLogo
+                          ) {
+                            <div class="advisor-table-vendor-logo">
                               <img
-                                [src]="getVendorLogo(recommendation) || ''"
-                                [alt]="getVendorName(recommendation) + ' logo'"
+                                [src]="vendorLogo"
+                                [alt]="
+                                  advisorUi.getVendorName(recommendation) +
+                                  ' logo'
+                                "
                               />
                             </div>
                           } @else {
                             <div class="text-white text-sm">
-                              {{ getVendorName(recommendation) }}
+                              {{ advisorUi.getVendorName(recommendation) }}
                             </div>
                           }
                         </td>
@@ -302,13 +314,17 @@
                       @if (column.type === "score") {
                         <td>
                           <div class="text-sm text-white whitespace-nowrap">
-                            {{ getScore(recommendation.score) }}
+                            {{ advisorUi.formatScore(recommendation.score) }}
                           </div>
                           @if (recommendation.score_per_price) {
                             <div class="text-xs text-white flex gap-1">
                               <span class="whitespace-nowrap">
-                                {{ getScore(recommendation.score_per_price) }} /
-                                USD
+                                {{
+                                  advisorUi.formatScore(
+                                    recommendation.score_per_price
+                                  )
+                                }}
+                                / USD
                               </span>
                             </div>
                           }
@@ -318,8 +334,12 @@
                         <td>
                           @if (recommendation.score_per_price) {
                             <span class="whitespace-nowrap">
-                              {{ getScore(recommendation.score_per_price) }} /
-                              USD
+                              {{
+                                advisorUi.formatScore(
+                                  recommendation.score_per_price
+                                )
+                              }}
+                              / USD
                             </span>
                           } @else {
                             <span>-</span>
@@ -365,7 +385,10 @@
                         <td>
                           <div class="text-sm text-white flex gap-1">
                             <span>{{
-                              getModelDetail(recommendation, "cpu_model")
+                              advisorUi.getModelDetail(
+                                recommendation,
+                                "cpu_model"
+                              )
                             }}</span>
                           </div>
                           <div class="text-xs text-white">
@@ -408,7 +431,9 @@
                         <td>
                           <div class="text-sm text-white whitespace-nowrap">
                             {{
-                              getScore(recommendation.selected_benchmark_score)
+                              advisorUi.formatScore(
+                                recommendation.selected_benchmark_score
+                              )
                             }}
                           </div>
                           @if (
@@ -432,7 +457,7 @@
                           ) {
                             <span class="whitespace-nowrap">
                               {{
-                                getScore(
+                                advisorUi.formatScore(
                                   recommendation.selected_benchmark_score_per_price
                                 )
                               }}
@@ -448,7 +473,7 @@
                       @if (column.type === "memory") {
                         <td>
                           <div class="text-sm text-white">
-                            {{ getMemory(recommendation) }}
+                            {{ advisorUi.formatMemory(recommendation) }}
                           </div>
                           @if (recommendation.memory_speed) {
                             <div class="text-xs text-white flex gap-1">
@@ -480,19 +505,24 @@
                       }
                       @if (column.type === "gpu_memory_min") {
                         <td>
-                          {{ getGPUMemory(recommendation, "min") }}
+                          {{ advisorUi.formatGpuMemory(recommendation, "min") }}
                         </td>
                       }
                       @if (column.type === "gpu_memory_total") {
                         <td>
-                          {{ getGPUMemory(recommendation, "total") }}
+                          {{
+                            advisorUi.formatGpuMemory(recommendation, "total")
+                          }}
                         </td>
                       }
                       @if (column.type === "gpu_model") {
                         <td>
                           <div class="text-sm text-white flex gap-1">
                             <span>{{
-                              getModelDetail(recommendation, "gpu_model")
+                              advisorUi.getModelDetail(
+                                recommendation,
+                                "gpu_model"
+                              )
                             }}</span>
                           </div>
                           <div class="text-xs text-white">
@@ -510,7 +540,7 @@
                       @if (column.type === "storage") {
                         <td>
                           <div class="text-sm text-white">
-                            {{ getStorage(recommendation) }}
+                            {{ advisorUi.formatStorage(recommendation) }}
                           </div>
                           @if (recommendation.storage_type) {
                             <div class="text-xs text-white">
@@ -522,7 +552,13 @@
                       @if (column.type === "price") {
                         <td>
                           <div class="text-sm text-white whitespace-nowrap">
-                            {{ getPriceValue(recommendation, column.key) }}
+                            {{
+                              advisorUi.formatPrice(
+                                recommendation,
+                                displayedCurrency().slug,
+                                column.key
+                              )
+                            }}
                           </div>
                         </td>
                       }
@@ -530,7 +566,9 @@
                         <td>
                           <span class="whitespace-nowrap">
                             {{
-                              getNetworkSpeedValue(recommendation.network_speed)
+                              advisorUi.formatNetworkSpeed(
+                                recommendation.network_speed
+                              )
                             }}
                           </span>
                         </td>
@@ -539,7 +577,7 @@
                         <td>
                           <span class="whitespace-nowrap">
                             {{
-                              getMonthlyTrafficValue(
+                              advisorUi.formatMonthlyTraffic(
                                 recommendation.inbound_traffic
                               )
                             }}
@@ -550,7 +588,7 @@
                         <td>
                           <span class="whitespace-nowrap">
                             {{
-                              getMonthlyTrafficValue(
+                              advisorUi.formatMonthlyTraffic(
                                 recommendation.outbound_traffic
                               )
                             }}
@@ -560,23 +598,25 @@
                       @if (column.type === "ipv4") {
                         <td>
                           <span class="whitespace-nowrap">
-                            {{ getIpv4Value(recommendation.ipv4) }}
+                            {{ advisorUi.formatIpv4(recommendation.ipv4) }}
                           </span>
                         </td>
                       }
                       @if (column.type === "text") {
                         <td>
-                          {{ getTextValue(recommendation, column.key) }}
+                          {{
+                            advisorUi.getTextValue(recommendation, column.key)
+                          }}
                         </td>
                       }
                     }
                     <td>
                       <div (click)="$event.stopPropagation()">
                         <a
-                          class="advisor-table__link advisor-table__link--icon"
+                          class="advisor-table-link advisor-table-link-icon"
                           [routerLink]="[
                             '/server',
-                            getVendorLinkId(recommendation),
+                            advisorUi.getVendorLinkId(recommendation),
                             recommendation.api_reference,
                           ]"
                         >
@@ -612,7 +652,7 @@
                 [dropdownFlip]="true"
                 [dropdownPlacement]="'bottom-start'"
                 #pageDropdown="appFlowbiteDropdown"
-                class="dropdown_button"
+                class="advisor-dropdown-button"
                 type="button"
               >
                 <div class="px-4 py-2">
@@ -646,17 +686,14 @@
   </div>
 </div>
 
-<div
-  id="advisor_pagesize_options"
-  class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid"
->
+<div id="advisor_pagesize_options" class="advisor-dropdown-menu hidden w-44">
   <ul
-    class="py-2 px-1 text-sm text-gray-700"
+    class="advisor-dropdown-menu-list px-1"
     aria-labelledby="advisor_pagesize_button"
   >
     @for (pageLimit of pageLimits; track $index) {
       <li
-        class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+        class="advisor-dropdown-menu-option"
         (click)="selectPageSize(pageLimit)"
         (keydown.enter)="selectPageSize(pageLimit)"
         (keydown.space)="selectPageSize(pageLimit); $event.preventDefault()"
@@ -664,18 +701,15 @@
         [attr.aria-selected]="pageLimit === limit()"
         tabindex="0"
       >
-        <div class="text-white text-sm">{{ pageLimit }}</div>
+        <div class="advisor-dropdown-menu-label">{{ pageLimit }}</div>
       </li>
     }
   </ul>
 </div>
 
-<div
-  id="advisor_allocation_options"
-  class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid"
->
+<div id="advisor_allocation_options" class="advisor-dropdown-menu hidden w-44">
   <ul
-    class="py-2 px-1 text-sm text-gray-700"
+    class="advisor-dropdown-menu-list px-1"
     aria-labelledby="advisor_allocation_button"
   >
     @for (
@@ -683,7 +717,7 @@
       track allocationType.name
     ) {
       <li
-        class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+        class="advisor-dropdown-menu-option"
         (click)="selectAllocation(allocationType)"
         (keydown.enter)="selectAllocation(allocationType)"
         (keydown.space)="
@@ -693,23 +727,20 @@
         [attr.aria-selected]="allocationType === bestPriceAllocation()"
         tabindex="0"
       >
-        <div class="text-white text-sm">{{ allocationType.name }}</div>
+        <div class="advisor-dropdown-menu-label">{{ allocationType.name }}</div>
       </li>
     }
   </ul>
 </div>
 
-<div
-  id="advisor_currency_options"
-  class="z-10 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid"
->
+<div id="advisor_currency_options" class="advisor-dropdown-menu hidden w-52">
   <ul
-    class="py-2 px-1 text-sm text-gray-700"
+    class="advisor-dropdown-menu-list px-1"
     aria-labelledby="advisor_currency_button"
   >
     @for (currency of availableCurrencies; track currency.name) {
       <li
-        class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+        class="advisor-dropdown-menu-option"
         (click)="selectCurrency(currency)"
         (keydown.enter)="selectCurrency(currency); $event.preventDefault()"
         (keydown.space)="selectCurrency(currency); $event.preventDefault()"
@@ -717,7 +748,7 @@
         [attr.aria-selected]="currency === selectedCurrency()"
         tabindex="0"
       >
-        <div class="text-white text-sm">
+        <div class="advisor-dropdown-menu-label">
           {{ currency.name }} ({{ currency.symbol }})
         </div>
       </li>
@@ -725,16 +756,13 @@
   </ul>
 </div>
 
-<div
-  id="advisor_column_options"
-  class="z-10 hidden bg-secondary rounded-lg shadow w-56 border border-emerald-400 border-solid"
->
+<div id="advisor_column_options" class="advisor-dropdown-menu hidden w-56">
   <ul
-    class="py-2 px-3 text-sm text-gray-700"
+    class="advisor-dropdown-menu-list px-3"
     aria-labelledby="advisor_column_button"
   >
     @for (column of possibleColumns(); track column.name) {
-      <li class="flex py-1 gap-2 items-center">
+      <li class="advisor-dropdown-menu-option px-0 hover:bg-transparent">
         <input
           type="checkbox"
           [checked]="column.show"
@@ -743,7 +771,7 @@
           "
           class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer"
         />
-        <div class="text-white text-sm">{{ column.name }}</div>
+        <div class="advisor-dropdown-menu-label">{{ column.name }}</div>
       </li>
     }
   </ul>
@@ -751,17 +779,17 @@
 
 @if (compareCount() >= 2) {
   <div class="advisor-compare-bar">
-    <div class="advisor-compare-bar__actions">
+    <div class="advisor-compare-bar-actions">
       <button
         type="button"
-        class="advisor-compare-bar__button advisor-compare-bar__button--secondary"
+        class="advisor-compare-bar-button advisor-compare-bar-button-secondary"
         (click)="clearCompareSelection()"
       >
         Clear
       </button>
       <button
         type="button"
-        class="advisor-compare-bar__button advisor-compare-bar__button--primary"
+        class="advisor-compare-bar-button advisor-compare-bar-button-primary"
         (click)="openCompare()"
       >
         Compare ({{ compareCount() }})

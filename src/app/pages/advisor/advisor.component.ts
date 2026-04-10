@@ -4,6 +4,7 @@ import {
   OnDestroy,
   OnInit,
   PLATFORM_ID,
+  WritableSignal,
   computed,
   effect,
   inject,
@@ -50,22 +51,55 @@ import { CpuCacheSizePipe } from "../../pipes/cpu-cache-size.pipe";
 import { GpuCountPipe } from "../../pipes/gpu-count.pipe";
 import {
   ADVISOR_BREADCRUMBS,
+  ADVISOR_CUSTOM_QUERY_PARAM_NAMES,
+  ADVISOR_DEFAULT_CURRENCY,
+  ADVISOR_DEFAULT_MINIMUM_MEMORY_GIB,
+  ADVISOR_DEFAULT_OPTIMIZATION_GOAL,
+  ADVISOR_DEFAULT_PAGE_LIMIT,
+  ADVISOR_DEFAULT_PEAK_GPU_MEMORY_GIB,
+  ADVISOR_DEFAULT_PRICE_ALLOCATION,
   ADVISOR_DEFAULT_SERVER_COLUMNS,
   ADVISOR_FILTER_CATEGORIES,
   ADVISOR_OPTIMIZATION_GOAL_OPTIONS,
+  ADVISOR_PAGE_DESCRIPTION,
   ADVISOR_PAGE_LIMITS,
+  ADVISOR_PAGE_TITLE,
+  ADVISOR_REQUIRED_INPUT_LABELS,
+  ADVISOR_SEO,
   ADVISOR_TABLE_COLUMNS,
 } from "./advisor.constants";
-import {
-  ADVISOR_PAGE_DESCRIPTION,
-  ADVISOR_PAGE_TITLE,
-  ADVISOR_SEO,
-} from "./advisor.copy";
 import { AdvisorUiService } from "./advisor-ui.service";
-import { AdvisorBaselineServer, AdvisorTableColumn } from "./advisor.types";
-import { normalizeBenchmarkConfig, stableStringify } from "./advisor.utils";
+import {
+  AdvisorBaselineServer,
+  AdvisorOptimizationGoal,
+  AdvisorTableColumn,
+} from "./advisor.types";
+import {
+  cloneAdvisorTableColumns,
+  encodeAdvisorColumnState,
+  findAdvisorBenchmarkConfigOption,
+  findAdvisorBenchmarkScore,
+  getAdvisorCompareKey,
+  getDefaultAdvisorBenchmarkConfig,
+  hasCustomAdvisorColumns,
+  isAdvisorOptimizationGoal,
+  restoreAdvisorColumnsFromQuery,
+  stableStringify,
+} from "./advisor.utils";
 
 const ADVISOR_RECOMMENDATION_DEBOUNCE_MS = 350;
+
+const [
+  ADVISOR_BASELINE_SERVER_LABEL,
+  ADVISOR_SERVER_WORKLOAD_LABEL,
+  ADVISOR_OPTIMIZATION_GOAL_LABEL,
+  ADVISOR_AVERAGE_UTILIZATION_LABEL,
+  ADVISOR_MINIMUM_MEMORY_LABEL,
+] = ADVISOR_REQUIRED_INPUT_LABELS;
+
+const ADVISOR_CUSTOM_QUERY_PARAM_NAMES_SET = new Set<string>(
+  ADVISOR_CUSTOM_QUERY_PARAM_NAMES,
+);
 
 type RecommendationRequest = {
   key: string;
@@ -103,7 +137,7 @@ export class AdvisorComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private serverCompare = inject(ServerCompareService);
   private toastService = inject(ToastService);
-  private advisorUi = inject(AdvisorUiService);
+  readonly advisorUi = inject(AdvisorUiService);
   readonly allocationDropdown =
     viewChild<FlowbiteDropdownDirective>("allocationDropdown");
   readonly currencyDropdown =
@@ -135,15 +169,18 @@ export class AdvisorComponent implements OnInit, OnDestroy {
   );
   readonly isLoadingBenchmarkConfigs = signal(false);
   readonly baselineBenchmarkScores = signal<BenchmarkScore[]>([]);
-  readonly isLoadingBaselineBenchmarkScores = signal(false);
-  readonly optimizationGoal = signal<
-    "performance" | "cost" | "cost-efficiency"
-  >("cost");
+  readonly optimizationGoal = signal<AdvisorOptimizationGoal>(
+    ADVISOR_DEFAULT_OPTIMIZATION_GOAL,
+  );
   readonly averageCpuUtilization = signal<number | null>(null);
   readonly limitToSameArchitecture = signal(false);
   readonly limitToSameCpuAllocation = signal(false);
-  readonly minimumMemoryGiB = signal<number | null>(0.5);
-  readonly peakGpuMemoryGiB = signal<number>(0);
+  readonly minimumMemoryGiB = signal<number | null>(
+    ADVISOR_DEFAULT_MINIMUM_MEMORY_GIB,
+  );
+  readonly peakGpuMemoryGiB = signal<number>(
+    ADVISOR_DEFAULT_PEAK_GPU_MEMORY_GIB,
+  );
   readonly recommendations = signal<SearchServersServersGetData>([]);
   readonly isLoadingRecommendations = signal(false);
   readonly totalRecommendationCount = signal(0);
@@ -155,30 +192,34 @@ export class AdvisorComponent implements OnInit, OnDestroy {
   readonly pendingWorkloadConfig = signal<string | null>(null);
   readonly hasRestoredRouteState = signal(false);
   readonly page = signal(1);
-  readonly limit = signal(25);
+  readonly limit = signal(ADVISOR_DEFAULT_PAGE_LIMIT);
   readonly totalPages = signal(0);
   readonly manualOrderBy = signal<string | undefined>(undefined);
   readonly manualOrderDir = signal<OrderDir | undefined>(undefined);
   readonly pageLimits = ADVISOR_PAGE_LIMITS;
   readonly availableCurrencies = AVAILABLE_CURRENCIES;
-  readonly selectedCurrency = signal<CurrencyOption>(
-    this.availableCurrencies[0],
-  );
-  readonly displayedCurrency = signal<CurrencyOption>(
-    this.availableCurrencies[0],
-  );
+  private readonly defaultCurrency =
+    this.availableCurrencies.find(
+      (currency) => currency.slug === ADVISOR_DEFAULT_CURRENCY,
+    ) || this.availableCurrencies[0];
+  readonly selectedCurrency = signal<CurrencyOption>(this.defaultCurrency);
+  readonly displayedCurrency = signal<CurrencyOption>(this.defaultCurrency);
   readonly bestPriceAllocationTypes = BEST_PRICE_ALLOCATION_TYPES;
+  private readonly defaultBestPriceAllocation =
+    this.bestPriceAllocationTypes.find(
+      (allocation) => allocation.slug === ADVISOR_DEFAULT_PRICE_ALLOCATION,
+    ) || this.bestPriceAllocationTypes[0];
   readonly bestPriceAllocation = signal<BestPriceAllocationType>(
-    this.bestPriceAllocationTypes[0],
+    this.defaultBestPriceAllocation,
   );
   readonly possibleColumns = signal<AdvisorTableColumn[]>(
-    this.buildDefaultTableColumns(),
+    cloneAdvisorTableColumns(),
   );
   readonly tableColumns = computed(() =>
     this.possibleColumns().filter((column) => column.show),
   );
-  readonly hasCustomColumns = computed(
-    () => !this.matchesDefaultColumnSelection(this.possibleColumns()),
+  readonly hasCustomColumns = computed(() =>
+    hasCustomAdvisorColumns(this.possibleColumns()),
   );
 
   readonly advisorFilterCategories = ADVISOR_FILTER_CATEGORIES;
@@ -186,7 +227,6 @@ export class AdvisorComponent implements OnInit, OnDestroy {
   searchParameters: SearchBarParameter[] = [];
   readonly optimizationGoalOptions = ADVISOR_OPTIMIZATION_GOAL_OPTIONS;
 
-  readonly activeFilterCount = computed(() => Object.keys(this.query()).length);
   readonly filteredBaselineServers = computed(() => {
     return this.advisorUi.filterBaselineServers(
       this.serverTableRows(),
@@ -258,25 +298,9 @@ export class AdvisorComponent implements OnInit, OnDestroy {
 
   readonly matchedBaselineBenchmarkScore = computed<BenchmarkScore | null>(
     () => {
-      const selectedBenchmarkConfig = this.selectedBenchmarkConfig();
-
-      if (!selectedBenchmarkConfig) {
-        return null;
-      }
-
-      const selectedConfigKey = normalizeBenchmarkConfig(
-        selectedBenchmarkConfig.config,
-      );
-
-      return (
-        this.baselineBenchmarkScores().find((benchmarkScore) => {
-          return (
-            benchmarkScore.benchmark_id ===
-              selectedBenchmarkConfig.benchmark_id &&
-            normalizeBenchmarkConfig(benchmarkScore.config) ===
-              selectedConfigKey
-          );
-        }) || null
+      return findAdvisorBenchmarkScore(
+        this.baselineBenchmarkScores(),
+        this.selectedBenchmarkConfig(),
       );
     },
   );
@@ -296,23 +320,23 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     const missing: string[] = [];
 
     if (!this.selectedBaselineServer()) {
-      missing.push("Baseline server");
+      missing.push(ADVISOR_BASELINE_SERVER_LABEL);
     }
 
     if (!this.selectedBenchmarkConfig()) {
-      missing.push("Server workload");
+      missing.push(ADVISOR_SERVER_WORKLOAD_LABEL);
     }
 
     if (!this.optimizationGoal()) {
-      missing.push("Optimization goal");
+      missing.push(ADVISOR_OPTIMIZATION_GOAL_LABEL);
     }
 
     if (this.averageCpuUtilization() === null) {
-      missing.push("Average utilization");
+      missing.push(ADVISOR_AVERAGE_UTILIZATION_LABEL);
     }
 
     if (this.minimumMemoryGiB() === null) {
-      missing.push("Minimum memory");
+      missing.push(ADVISOR_MINIMUM_MEMORY_LABEL);
     }
 
     return missing;
@@ -322,9 +346,6 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     () =>
       this.missingRequiredInputs().length === 0 &&
       this.matchedBaselineBenchmarkScore() !== null,
-  );
-  readonly topRecommendation = computed<ServerPKs | null>(
-    () => this.recommendations()[0] || null,
   );
   readonly recommendationSummary = computed(() =>
     this.advisorUi.buildRecommendationSummary(this.totalRecommendationCount()),
@@ -341,7 +362,7 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     }
 
     return this.compareSelectionKeys().includes(
-      this.getCompareKey(selectedBaselineServer),
+      getAdvisorCompareKey(selectedBaselineServer),
     );
   });
   readonly baselineCompareButtonLabel = computed(() =>
@@ -486,7 +507,7 @@ export class AdvisorComponent implements OnInit, OnDestroy {
       title: "Average utilization",
       required: true,
       description:
-        "The selected workload score threshold is derived from the baseline server score scaled by this expected Average utilization.",
+        "The selected workload score threshold is derived from the baseline server score scaled by this expected average utilization.",
       numericValue: this.averageCpuUtilization(),
       min: 0,
       max: 100,
@@ -565,16 +586,11 @@ export class AdvisorComponent implements OnInit, OnDestroy {
       const pendingWorkloadId = this.pendingWorkloadId();
       const pendingWorkloadConfig = this.pendingWorkloadConfig();
 
-      if (!pendingWorkloadId) {
-        return;
-      }
-
-      const matchedWorkload = this.benchmarkConfigOptions().find((option) => {
-        return (
-          option.benchmark_id === pendingWorkloadId &&
-          option.config === (pendingWorkloadConfig || "{}")
-        );
-      });
+      const matchedWorkload = findAdvisorBenchmarkConfigOption(
+        this.benchmarkConfigOptions(),
+        pendingWorkloadId,
+        pendingWorkloadConfig,
+      );
 
       if (!matchedWorkload) {
         return;
@@ -609,7 +625,7 @@ export class AdvisorComponent implements OnInit, OnDestroy {
       }
 
       this.recommendationRequests.next({
-        key: this.getRecommendationQueryKey(recommendationQuery),
+        key: stableStringify(recommendationQuery),
         query: recommendationQuery,
       });
     });
@@ -742,192 +758,33 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     });
   }
 
-  goToPreviousPage(): void {
-    if (this.page() > 1) {
-      this.page.update((page) => page - 1);
-    }
-  }
-
-  goToNextPage(): void {
-    if (this.page() < this.totalPages()) {
-      this.page.update((page) => page + 1);
-    }
-  }
-
-  getVisiblePageNumbers(): number[] {
-    const currentPage = this.page();
-    const totalPages = this.totalPages();
-    const min = Math.max(currentPage - 1, 1);
-    const max = Math.min(currentPage + 1, totalPages);
-
-    return Array.from({ length: Math.max(max - min + 1, 0) }, (_, index) => {
-      return min + index;
-    });
-  }
-
-  goToPage(pageTarget: number): void {
-    const boundedPage = Math.max(1, Math.min(pageTarget, this.totalPages()));
-    this.page.set(boundedPage);
-  }
-
-  getMemory(item: ServerPKs): string {
-    return `${((item.memory_amount || 0) / 1024).toFixed(1)} GiB`;
-  }
-
-  getGPUMemory(item: ServerPKs, stat: "min" | "total" = "total"): string {
-    const memory = stat === "min" ? item.gpu_memory_min : item.gpu_memory_total;
-
-    if (!memory) {
-      return "-";
-    }
-
-    return `${(memory / 1024).toFixed(1)} GiB`;
-  }
-
-  getStorage(item: ServerPKs): string {
-    if (!item.storage_size) {
-      return "-";
-    }
-
-    if (item.storage_size < 1000) {
-      return `${item.storage_size} GB`;
-    }
-
-    return `${(item.storage_size / 1000).toFixed(1)} TB`;
-  }
-
-  getScore(value: number | null | undefined): string {
-    if (!value) {
-      return "-";
-    }
-
-    if (value < 1) {
-      return value.toPrecision(1);
-    }
-
-    if (value < 100) {
-      return Number.isInteger(value) ? value.toString() : value.toFixed(2);
-    }
-
-    return Number.isInteger(value) ? value.toString() : value.toFixed(0);
-  }
-
-  showApiReference(item: ServerPKs): boolean {
-    return (
-      item.display_name !== item.api_reference &&
-      item.display_name !== item.api_reference.replace("Standard_", "")
-    );
-  }
-
-  getTextValue(item: ServerPKs, key?: string): string {
-    if (!key) {
-      return "-";
-    }
-
-    const value = (item as unknown as Record<string, unknown>)[key];
-    return value === null || value === undefined || value === ""
-      ? "-"
-      : String(value);
-  }
-
-  getPriceValue(item: ServerPKs, key?: string): string {
-    if (!key) {
-      return "-";
-    }
-
-    const value = (item as unknown as Record<string, unknown>)[key];
-    if (value === null || value === undefined) {
-      return "-";
-    }
-
-    return `${value} ${this.displayedCurrency().slug}`;
-  }
-
-  getModelDetail(item: ServerPKs, modelKey: "cpu_model" | "gpu_model"): string {
-    const value = (item as unknown as Record<string, unknown>)[modelKey];
-    return value === null || value === undefined || value === ""
-      ? "-"
-      : String(value);
-  }
-
-  getNetworkSpeedValue(value: number | null | undefined): string {
-    if (!value || value <= 0) {
-      return "-";
-    }
-
-    if (value < 1) {
-      const mbps = value * 1000;
-      const formatted = Number.isInteger(mbps)
-        ? mbps.toString()
-        : mbps.toFixed(1);
-      return `${formatted} Mbps`;
-    }
-
-    const formatted = Number.isInteger(value)
-      ? value.toString()
-      : value.toFixed(1);
-    return `${formatted} Gbps`;
-  }
-
-  getMonthlyTrafficValue(value: number | null | undefined): string {
-    if (!value || value <= 0) {
-      return "-";
-    }
-
-    const isTiB = value >= 1024;
-    const transformedValue = isTiB ? value / 1024 : value;
-    const formatted = Number.isInteger(transformedValue)
-      ? transformedValue.toString()
-      : transformedValue.toFixed(1);
-    return `${formatted} ${isTiB ? "TiB/mo" : "GiB/mo"}`;
-  }
-
-  getIpv4Value(value: number | null | undefined): string {
-    return !value || value <= 0 ? "-" : String(value);
-  }
-
-  getVendorLinkId(server: ServerPKs): string {
-    const vendor = (server as { vendor?: { vendor_id?: string } }).vendor;
-    return vendor?.vendor_id || server.vendor_id;
-  }
-
-  getVendorLogo(server: ServerPKs): string | null {
-    const vendor = (server as { vendor?: { logo?: string | null } }).vendor;
-    return vendor?.logo || null;
-  }
-
-  getVendorName(server: ServerPKs): string {
-    const vendor = (server as { vendor?: { name?: string | null } }).vendor;
-    return vendor?.name || server.vendor_id;
-  }
-
   openServerDetails(server: ServerPKs): void {
-    const vendorId = this.getVendorLinkId(server);
+    const vendorId = this.advisorUi.getVendorLinkId(server);
     this.router.navigateByUrl(`/server/${vendorId}/${server.api_reference}`);
   }
 
-  isSelectedForCompare(server: ServerPKs): boolean {
-    return this.compareSelectionKeys().includes(this.getCompareKey(server));
+  isSelectedForCompare(
+    server: Pick<ServerPKs, "vendor_id" | "api_reference">,
+  ): boolean {
+    return this.compareSelectionKeys().includes(getAdvisorCompareKey(server));
+  }
+
+  isSelectedBaselineRecommendation(server: ServerPKs): boolean {
+    const selectedBaselineServer = this.selectedBaselineServer();
+
+    if (!selectedBaselineServer) {
+      return false;
+    }
+
+    return (
+      getAdvisorCompareKey(selectedBaselineServer) ===
+      getAdvisorCompareKey(server)
+    );
   }
 
   toggleCompareSelection(event: Event, server: ServerPKs): void {
     event.stopPropagation();
-
-    const shouldSelect = !this.isSelectedForCompare(server);
-    this.serverCompare.toggleCompare(shouldSelect, {
-      server: server.api_reference,
-      vendor: server.vendor_id,
-      display_name: server.display_name,
-    });
-  }
-
-  toggleCompareRecommendation(server: ServerPKs): void {
-    const shouldSelect = !this.isSelectedForCompare(server);
-    this.serverCompare.toggleCompare(shouldSelect, {
-      server: server.api_reference,
-      vendor: server.vendor_id,
-      display_name: server.display_name,
-    });
+    this.toggleCompare(server);
   }
 
   toggleBaselineCompare(): void {
@@ -937,14 +794,10 @@ export class AdvisorComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const shouldSelect = !this.isBaselineSelectedForCompare();
-    this.serverCompare.toggleCompare(shouldSelect, {
-      server: selectedBaselineServer.api_reference,
-      vendor: selectedBaselineServer.vendor_id,
-      display_name:
-        selectedBaselineServer.display_name ||
-        selectedBaselineServer.api_reference,
-    });
+    this.serverCompare.toggleCompare(
+      !this.isBaselineSelectedForCompare(),
+      this.advisorUi.buildCompareTarget(selectedBaselineServer),
+    );
   }
 
   clearCompareSelection(): void {
@@ -994,127 +847,60 @@ export class AdvisorComponent implements OnInit, OnDestroy {
   }
 
   onCustomControlChanged(event: { name: string; value: unknown }): void {
-    if (event.name === "baseline_server") {
-      const nextValue =
-        event.value && typeof event.value === "object"
-          ? (event.value as {
-              inputValue?: string;
-              selectedServer?: AdvisorBaselineServer | null;
-            })
-          : {};
-
-      this.baselineServerInput.set(nextValue.inputValue || "");
-      this.selectedBaselineServer.set(nextValue.selectedServer || null);
-      this.pendingBaselineVendorId.set(null);
-      this.pendingBaselineApiReference.set(null);
-
-      if (!this.selectedBaselineServer()) {
-        this.limitToSameArchitecture.set(false);
-        this.limitToSameCpuAllocation.set(false);
-      }
-
-      this.page.set(1);
-      return;
+    switch (event.name) {
+      case "baseline_server":
+        this.applyBaselineServerControlValue(event.value);
+        break;
+      case "limit_architecture":
+        this.applyBooleanControlValue(
+          this.limitToSameArchitecture,
+          event.value,
+        );
+        break;
+      case "limit_cpu_allocation":
+        this.applyBooleanControlValue(
+          this.limitToSameCpuAllocation,
+          event.value,
+        );
+        break;
+      case "server_workload":
+        this.applyWorkloadControlValue(event.value);
+        break;
+      case "optimization_goal":
+        this.applyOptimizationGoalControlValue(event.value);
+        break;
+      case "average_cpu_utilization":
+        this.applyNumericControlValue(
+          this.averageCpuUtilization,
+          event.value,
+          null,
+        );
+        break;
+      case "minimum_memory":
+        this.applyNumericControlValue(
+          this.minimumMemoryGiB,
+          event.value,
+          ADVISOR_DEFAULT_MINIMUM_MEMORY_GIB,
+        );
+        break;
+      case "peak_gpu_memory":
+        this.applyNumericControlValue(
+          this.peakGpuMemoryGiB,
+          event.value,
+          ADVISOR_DEFAULT_PEAK_GPU_MEMORY_GIB,
+        );
+        break;
+      default:
+        return;
     }
 
-    if (event.name === "limit_architecture") {
-      const nextValue =
-        event.value && typeof event.value === "object"
-          ? (event.value as { checked?: boolean })
-          : {};
-
-      this.limitToSameArchitecture.set(nextValue.checked || false);
-      this.page.set(1);
-      return;
-    }
-
-    if (event.name === "limit_cpu_allocation") {
-      const nextValue =
-        event.value && typeof event.value === "object"
-          ? (event.value as { checked?: boolean })
-          : {};
-
-      this.limitToSameCpuAllocation.set(nextValue.checked || false);
-      this.page.set(1);
-      return;
-    }
-
-    if (event.name === "server_workload") {
-      const nextValue =
-        event.value && typeof event.value === "object"
-          ? (event.value as {
-              inputValue?: string;
-              selectedBenchmarkConfig?: SearchBarBenchmarkConfigOption | null;
-            })
-          : {};
-
-      this.benchmarkConfigInput.set(nextValue.inputValue || "");
-      this.selectedBenchmarkConfig.set(
-        nextValue.selectedBenchmarkConfig || null,
-      );
-      this.pendingWorkloadId.set(null);
-      this.pendingWorkloadConfig.set(null);
-      this.page.set(1);
-      return;
-    }
-
-    if (event.name === "optimization_goal") {
-      const nextValue =
-        event.value && typeof event.value === "object"
-          ? (event.value as { selectedValue?: string | null })
-          : {};
-
-      const selectedValue = nextValue.selectedValue;
-      if (
-        selectedValue === "performance" ||
-        selectedValue === "cost" ||
-        selectedValue === "cost-efficiency"
-      ) {
-        this.optimizationGoal.set(selectedValue);
-        this.manualOrderBy.set(undefined);
-        this.manualOrderDir.set(undefined);
-      }
-
-      this.page.set(1);
-
-      return;
-    }
-
-    if (event.name === "average_cpu_utilization") {
-      const nextValue =
-        event.value && typeof event.value === "object"
-          ? (event.value as { numericValue?: number | null })
-          : {};
-
-      this.averageCpuUtilization.set(nextValue.numericValue ?? null);
-      this.page.set(1);
-      return;
-    }
-
-    if (event.name === "minimum_memory") {
-      const nextValue =
-        event.value && typeof event.value === "object"
-          ? (event.value as { numericValue?: number | null })
-          : {};
-
-      this.minimumMemoryGiB.set(nextValue.numericValue ?? 0.5);
-      this.page.set(1);
-      return;
-    }
-
-    if (event.name === "peak_gpu_memory") {
-      const nextValue =
-        event.value && typeof event.value === "object"
-          ? (event.value as { numericValue?: number | null })
-          : {};
-
-      this.peakGpuMemoryGiB.set(nextValue.numericValue ?? 0);
-      this.page.set(1);
-    }
+    this.page.set(1);
   }
 
   clearFilters(): void {
-    const defaultBenchmarkConfig = this.getDefaultBenchmarkConfig();
+    const defaultBenchmarkConfig = getDefaultAdvisorBenchmarkConfig(
+      this.benchmarkConfigOptions(),
+    );
 
     this.query.set({});
     this.selectedBaselineServer.set(null);
@@ -1127,16 +913,16 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     this.benchmarkConfigInput.set(defaultBenchmarkConfig?.displayName || "");
     this.pendingWorkloadId.set(null);
     this.pendingWorkloadConfig.set(null);
-    this.optimizationGoal.set("cost");
+    this.optimizationGoal.set(ADVISOR_DEFAULT_OPTIMIZATION_GOAL);
     this.averageCpuUtilization.set(null);
-    this.minimumMemoryGiB.set(0.5);
-    this.peakGpuMemoryGiB.set(0);
-    this.selectedCurrency.set(this.availableCurrencies[0]);
-    this.displayedCurrency.set(this.availableCurrencies[0]);
-    this.bestPriceAllocation.set(this.bestPriceAllocationTypes[0]);
-    this.possibleColumns.set(this.buildDefaultTableColumns());
+    this.minimumMemoryGiB.set(ADVISOR_DEFAULT_MINIMUM_MEMORY_GIB);
+    this.peakGpuMemoryGiB.set(ADVISOR_DEFAULT_PEAK_GPU_MEMORY_GIB);
+    this.selectedCurrency.set(this.defaultCurrency);
+    this.displayedCurrency.set(this.defaultCurrency);
+    this.bestPriceAllocation.set(this.defaultBestPriceAllocation);
+    this.possibleColumns.set(cloneAdvisorTableColumns());
     this.page.set(1);
-    this.limit.set(25);
+    this.limit.set(ADVISOR_DEFAULT_PAGE_LIMIT);
     this.manualOrderBy.set(undefined);
     this.manualOrderDir.set(undefined);
   }
@@ -1195,7 +981,7 @@ export class AdvisorComponent implements OnInit, OnDestroy {
 
         this.benchmarkConfigOptions.set(options);
 
-        const defaultOption = this.getDefaultBenchmarkConfig(options);
+        const defaultOption = getDefaultAdvisorBenchmarkConfig(options);
 
         if (defaultOption && !this.selectedBenchmarkConfig()) {
           this.selectedBenchmarkConfig.set(defaultOption);
@@ -1214,8 +1000,6 @@ export class AdvisorComponent implements OnInit, OnDestroy {
   private async loadBaselineBenchmarkScores(
     server: AdvisorBaselineServer,
   ): Promise<void> {
-    this.isLoadingBaselineBenchmarkScores.set(true);
-
     try {
       const response = await this.keeperApi.getServerBenchmark(
         server.vendor_id,
@@ -1226,8 +1010,6 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     } catch (error) {
       console.error("Failed to load advisor baseline benchmark scores", error);
       this.baselineBenchmarkScores.set([]);
-    } finally {
-      this.isLoadingBaselineBenchmarkScores.set(false);
     }
   }
 
@@ -1307,29 +1089,10 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     this.compareSubscription.add(
       this.route.queryParams.subscribe((params: Params) => {
         const queryParams = JSON.parse(JSON.stringify(params || {}));
-        const customParamNames = new Set([
-          "page",
-          "limit",
-          "columns",
-          "currency",
-          "best_price_allocation",
-          "order_by",
-          "order_dir",
-          "baseline_vendor",
-          "baseline_server",
-          "limit_architecture",
-          "limit_cpu_allocation",
-          "workload_id",
-          "workload_config",
-          "optimization_goal",
-          "avg_cpu_utilization",
-          "minimum_memory",
-          "peak_gpu_memory",
-        ]);
 
         const baseQuery = Object.fromEntries(
           Object.entries(queryParams).filter(
-            ([key]) => !customParamNames.has(key),
+            ([key]) => !ADVISOR_CUSTOM_QUERY_PARAM_NAMES_SET.has(key),
           ),
         );
 
@@ -1339,16 +1102,17 @@ export class AdvisorComponent implements OnInit, OnDestroy {
         );
         this.limit.set(
           queryParams.limit
-            ? parseInt(String(queryParams.limit), 10) || 25
-            : 25,
+            ? parseInt(String(queryParams.limit), 10) ||
+                ADVISOR_DEFAULT_PAGE_LIMIT
+            : ADVISOR_DEFAULT_PAGE_LIMIT,
         );
 
         this.selectedCurrency.set(
           queryParams.currency
             ? this.availableCurrencies.find(
                 (currency) => currency.slug === String(queryParams.currency),
-              ) || this.availableCurrencies[0]
-            : this.availableCurrencies[0],
+              ) || this.defaultCurrency
+            : this.defaultCurrency,
         );
         this.displayedCurrency.set(this.selectedCurrency());
         this.bestPriceAllocation.set(
@@ -1357,8 +1121,8 @@ export class AdvisorComponent implements OnInit, OnDestroy {
                 return (
                   allocation.slug === String(queryParams.best_price_allocation)
                 );
-              }) || this.bestPriceAllocationTypes[0]
-            : this.bestPriceAllocationTypes[0],
+              }) || this.defaultBestPriceAllocation
+            : this.defaultBestPriceAllocation,
         );
         this.manualOrderBy.set(
           queryParams.order_by ? String(queryParams.order_by) : undefined,
@@ -1371,7 +1135,7 @@ export class AdvisorComponent implements OnInit, OnDestroy {
             : undefined,
         );
         this.possibleColumns.set(
-          this.restoreColumnsFromQuery(
+          restoreAdvisorColumnsFromQuery(
             queryParams.columns,
             this.manualOrderBy(),
           ),
@@ -1417,14 +1181,10 @@ export class AdvisorComponent implements OnInit, OnDestroy {
         }
 
         const optimizationGoal = queryParams.optimization_goal;
-        if (
-          optimizationGoal === "performance" ||
-          optimizationGoal === "cost" ||
-          optimizationGoal === "cost-efficiency"
-        ) {
+        if (isAdvisorOptimizationGoal(optimizationGoal)) {
           this.optimizationGoal.set(optimizationGoal);
         } else {
-          this.optimizationGoal.set("cost");
+          this.optimizationGoal.set(ADVISOR_DEFAULT_OPTIMIZATION_GOAL);
         }
 
         this.averageCpuUtilization.set(
@@ -1435,12 +1195,12 @@ export class AdvisorComponent implements OnInit, OnDestroy {
         this.minimumMemoryGiB.set(
           queryParams.minimum_memory !== undefined
             ? Number(queryParams.minimum_memory)
-            : 0.5,
+            : ADVISOR_DEFAULT_MINIMUM_MEMORY_GIB,
         );
         this.peakGpuMemoryGiB.set(
           queryParams.peak_gpu_memory !== undefined
             ? Number(queryParams.peak_gpu_memory)
-            : 0,
+            : ADVISOR_DEFAULT_PEAK_GPU_MEMORY_GIB,
         );
 
         this.lastEncodedQuery = encodeQueryParams(
@@ -1511,20 +1271,22 @@ export class AdvisorComponent implements OnInit, OnDestroy {
       queryParams.page = this.page();
     }
 
-    if (this.limit() !== 25) {
+    if (this.limit() !== ADVISOR_DEFAULT_PAGE_LIMIT) {
       queryParams.limit = this.limit();
     }
 
-    if (this.selectedCurrency().slug !== "USD") {
+    if (this.selectedCurrency().slug !== this.defaultCurrency.slug) {
       queryParams.currency = this.selectedCurrency().slug;
     }
 
-    if (this.bestPriceAllocation().slug !== "ANY") {
+    if (
+      this.bestPriceAllocation().slug !== this.defaultBestPriceAllocation.slug
+    ) {
       queryParams.best_price_allocation = this.bestPriceAllocation().slug;
     }
 
     if (this.hasCustomColumns()) {
-      queryParams.columns = this.getColumnStateValue(this.possibleColumns());
+      queryParams.columns = encodeAdvisorColumnState(this.possibleColumns());
     }
 
     if (this.manualOrderBy() && this.manualOrderDir()) {
@@ -1533,18 +1295,6 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     }
 
     return queryParams;
-  }
-
-  private getCompareKey(
-    server: Pick<ServerPKs, "vendor_id" | "api_reference">,
-  ): string {
-    return `${server.vendor_id}::${server.api_reference}`;
-  }
-
-  private getRecommendationQueryKey(
-    recommendationQuery: SearchServersServersGetParams,
-  ): string {
-    return stableStringify(recommendationQuery);
   }
 
   private applyRecommendationResult(result: RecommendationResult): void {
@@ -1562,70 +1312,87 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     this.isLoadingRecommendations.set(false);
   }
 
-  private getDefaultBenchmarkConfig(
-    options: SearchBarBenchmarkConfigOption[] = this.benchmarkConfigOptions(),
-  ): SearchBarBenchmarkConfigOption | null {
-    return (
-      options.find(
-        (option) =>
-          option.benchmark_id === "stress_ng:bestn" && option.config === "{}",
-      ) || null
+  private toggleCompare(server: {
+    api_reference: string;
+    vendor_id: string;
+    display_name?: string | null;
+  }): void {
+    this.serverCompare.toggleCompare(
+      !this.isSelectedForCompare(server),
+      this.advisorUi.buildCompareTarget(server),
     );
   }
 
-  private buildDefaultTableColumns(): AdvisorTableColumn[] {
-    return ADVISOR_TABLE_COLUMNS.map((column) => ({ ...column }));
+  private applyBaselineServerControlValue(value: unknown): void {
+    const nextValue =
+      value && typeof value === "object"
+        ? (value as {
+            inputValue?: string;
+            selectedServer?: AdvisorBaselineServer | null;
+          })
+        : {};
+
+    this.baselineServerInput.set(nextValue.inputValue || "");
+    this.selectedBaselineServer.set(nextValue.selectedServer || null);
+    this.pendingBaselineVendorId.set(null);
+    this.pendingBaselineApiReference.set(null);
+
+    if (!this.selectedBaselineServer()) {
+      this.limitToSameArchitecture.set(false);
+      this.limitToSameCpuAllocation.set(false);
+    }
   }
 
-  private matchesDefaultColumnSelection(
-    columns: AdvisorTableColumn[],
-  ): boolean {
-    return columns.every((column, index) => {
-      return column.show === ADVISOR_TABLE_COLUMNS[index]?.show;
-    });
+  private applyBooleanControlValue(
+    target: WritableSignal<boolean>,
+    value: unknown,
+  ): void {
+    const nextValue =
+      value && typeof value === "object"
+        ? (value as { checked?: boolean })
+        : {};
+
+    target.set(nextValue.checked || false);
   }
 
-  private getColumnStateValue(columns: AdvisorTableColumn[]): number {
-    return columns
-      .map((column) => (column.show ? 1 : 0))
-      .reduce((accumulator: number, bit) => (accumulator << 1) | bit, 0);
+  private applyWorkloadControlValue(value: unknown): void {
+    const nextValue =
+      value && typeof value === "object"
+        ? (value as {
+            inputValue?: string;
+            selectedBenchmarkConfig?: SearchBarBenchmarkConfigOption | null;
+          })
+        : {};
+
+    this.benchmarkConfigInput.set(nextValue.inputValue || "");
+    this.selectedBenchmarkConfig.set(nextValue.selectedBenchmarkConfig || null);
+    this.pendingWorkloadId.set(null);
+    this.pendingWorkloadConfig.set(null);
   }
 
-  private restoreColumnsFromQuery(
-    encodedColumns: unknown,
-    orderBy?: string,
-  ): AdvisorTableColumn[] {
-    let columns = this.buildDefaultTableColumns();
+  private applyOptimizationGoalControlValue(value: unknown): void {
+    const nextValue =
+      value && typeof value === "object"
+        ? (value as { selectedValue?: unknown })
+        : {};
 
-    if (
-      encodedColumns !== undefined &&
-      encodedColumns !== null &&
-      String(encodedColumns).length
-    ) {
-      const parsedColumns = Number(encodedColumns);
-
-      if (Number.isInteger(parsedColumns) && parsedColumns >= 0) {
-        const bits = parsedColumns
-          .toString(2)
-          .padStart(columns.length, "0")
-          .slice(-columns.length)
-          .split("")
-          .map(Number);
-
-        columns = columns.map((column, index) => {
-          return { ...column, show: bits[index] === 1 };
-        });
-      }
+    if (!isAdvisorOptimizationGoal(nextValue.selectedValue)) {
+      return;
     }
 
-    if (orderBy) {
-      columns = columns.map((column) => {
-        return column.orderField === orderBy
-          ? { ...column, show: true }
-          : column;
-      });
-    }
+    this.optimizationGoal.set(nextValue.selectedValue);
+    this.manualOrderBy.set(undefined);
+    this.manualOrderDir.set(undefined);
+  }
 
-    return columns;
+  private applyNumericControlValue<T extends number | null>(
+    target: WritableSignal<T>,
+    value: unknown,
+    fallback: T,
+  ): void {
+    const nextValue =
+      value && typeof value === "object" ? (value as { numericValue?: T }) : {};
+
+    target.set((nextValue.numericValue ?? fallback) as T);
   }
 }

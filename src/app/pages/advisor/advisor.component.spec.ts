@@ -9,7 +9,10 @@ import { ActivatedRoute } from "@angular/router";
 import { BehaviorSubject, Subject } from "rxjs";
 import { OrderDir } from "../../../../sdk/data-contracts";
 import { AdvisorComponent } from "./advisor.component";
-import { ADVISOR_TABLE_COLUMNS } from "./advisor.constants";
+import {
+  ADVISOR_DEFAULT_SERVER_COLUMNS,
+  ADVISOR_TABLE_COLUMNS,
+} from "./advisor.constants";
 import { DropdownManagerService } from "../../services/dropdown-manager.service";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
@@ -226,19 +229,9 @@ describe("AdvisorComponent", () => {
     queryParams$.next({});
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
-  });
-
   it("preloads baseline servers with the advisor default column set", () => {
     expect(getServersSelect).toHaveBeenCalledOnceWith([
-      "vendor_id",
-      "api_reference",
-      "status",
-      "vcpus",
-      "memory_amount",
-      "gpu_memory_total",
-      "storage_size",
+      ...ADVISOR_DEFAULT_SERVER_COLUMNS,
     ]);
 
     component.baselineServerInput.set("aws large");
@@ -457,6 +450,37 @@ describe("AdvisorComponent", () => {
     });
     expect(component.isBaselineSelectedForCompare()).toBeFalse();
     expect(component.baselineCompareButtonLabel()).toBe("Compare baseline");
+  });
+
+  it("highlights the matching recommendation row for the selected baseline server", () => {
+    const baselineServer = component.serverTableRows()[0];
+    component.selectedBaselineServer.set(baselineServer);
+    component.recommendations.set([
+      {
+        vendor_id: "aws",
+        api_reference: "large",
+        display_name: "large",
+        server_id: "srv-baseline",
+      },
+      {
+        vendor_id: "aws",
+        api_reference: "c7a.large",
+        display_name: "c7a.large",
+        server_id: "srv-1",
+      },
+    ] as never[]);
+
+    fixture.detectChanges();
+
+    const rows = Array.from(
+      fixture.nativeElement.querySelectorAll("#advisor_results_table tbody tr"),
+    ) as HTMLTableRowElement[];
+
+    expect(rows.length).toBe(2);
+    expect(rows[0].classList.contains("advisor-table-row-baseline")).toBeTrue();
+    expect(
+      rows[1].classList.contains("advisor-table-row-baseline"),
+    ).toBeFalse();
   });
 
   it("debounces rapid recommendation filter changes", fakeAsync(() => {

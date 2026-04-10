@@ -34,6 +34,17 @@ export type AdvisorTableColumn = {
 export type AdvisorBaselineServer = SearchBarServerOption &
   Partial<Pick<Server, "status">>;
 
+export type AdvisorOptimizationGoal =
+  | "performance"
+  | "cost"
+  | "cost-efficiency";
+
+export type AdvisorCompareTarget = {
+  display_name: string;
+  vendor: string;
+  server: string;
+};
+
 export type AdvisorSeoMetadata = {
   title: string;
   description: string;
