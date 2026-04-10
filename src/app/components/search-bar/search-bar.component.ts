@@ -77,6 +77,8 @@ export type SearchBarCustomControl = {
   placeholder?: string;
   required?: boolean;
   description?: string;
+  descriptionDisplay?: "inline" | "tooltip";
+  hideTitle?: boolean;
   minCharacters?: number;
   inputValue?: string;
   selectedServer?: SearchBarServerOption | null;
@@ -96,6 +98,7 @@ export type SearchBarCustomControl = {
   allowZero?: boolean;
   defaultNumericValue?: number | null;
   showUnitInTicks?: boolean;
+  nested?: boolean;
   checked?: boolean;
   disabled?: boolean;
   sectionHeader?: string;
@@ -312,20 +315,6 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
         this.loadCountries(this.selectedCountries);
         this.loadRegions();
 
-        const vendorRegionValues = this.query.vendor_regions;
-        if (vendorRegionValues) {
-          const values: string[] = Array.isArray(vendorRegionValues)
-            ? vendorRegionValues
-            : [vendorRegionValues];
-          [
-            ...new Set(
-              values.map((vr: string) => vr.split("~")[0]).filter(Boolean),
-            ),
-          ].forEach((vendorId) => {
-            this.vendorRegionCollapsedVendors[vendorId] = false;
-          });
-        }
-
         if (this.selectedCountries?.length) {
           if (
             this.filterCategories.find(
@@ -337,6 +326,10 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
             )!.collapsed = false;
           }
         }
+      }
+
+      if (change === "query" || change === "extraParameters") {
+        this.syncVendorRegionSelectionVisibility();
       }
     }
 
@@ -383,11 +376,15 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
       }
 
       const queryValue = this.query[item.name];
-      const hasQueryValue = Array.isArray(queryValue)
-        ? queryValue.length > 0
-        : Boolean(queryValue);
+      const effectiveValue =
+        this.extraParameters?.[item.name] != null
+          ? this.extraParameters[item.name]
+          : queryValue;
+      const hasEffectiveValue = Array.isArray(effectiveValue)
+        ? effectiveValue.length > 0
+        : Boolean(effectiveValue);
 
-      if (hasQueryValue) {
+      if (hasEffectiveValue) {
         if (
           this.filterCategories.find(
             (column) => column.category_id === item.schema.category_id,
@@ -442,6 +439,53 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
         this.syncCpuCacheRangeDraftValue(item);
       }
     });
+  }
+
+  private syncVendorRegionSelectionVisibility() {
+    const vendorRegionValues = this.getActiveVendorRegionValues();
+
+    if (!vendorRegionValues.length) {
+      return;
+    }
+
+    [
+      ...new Set(
+        vendorRegionValues.map((vr) => vr.split("~")[0]).filter(Boolean),
+      ),
+    ].forEach((vendorId) => {
+      this.vendorRegionCollapsedVendors[vendorId] = false;
+    });
+
+    const regionCategory = this.filterCategories.find(
+      (column) => column.category_id === "region",
+    );
+
+    if (regionCategory) {
+      regionCategory.collapsed = false;
+    }
+  }
+
+  private getActiveVendorRegionValues(): string[] {
+    const vendorRegionValues =
+      this.extraParameters?.vendor_regions != null
+        ? this.extraParameters.vendor_regions
+        : this.query.vendor_regions;
+
+    if (!vendorRegionValues) {
+      return [];
+    }
+
+    const values = Array.isArray(vendorRegionValues)
+      ? vendorRegionValues
+      : [vendorRegionValues];
+
+    return values
+      .flatMap((value) => {
+        return typeof value === "string"
+          ? value.split(",").map((part) => part.trim())
+          : [];
+      })
+      .filter(Boolean);
   }
 
   filterServers() {
@@ -812,6 +856,10 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   toggleSingleSelectDropdown(control: SearchBarCustomControl) {
+    if (control.disabled) {
+      return;
+    }
+
     this.singleSelectDropdownOpen[control.name] =
       !this.isSingleSelectDropdownOpen(control);
   }

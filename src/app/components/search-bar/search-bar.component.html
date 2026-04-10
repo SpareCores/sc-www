@@ -84,7 +84,7 @@
               control of getCustomControlsByCategory(filter.category_id);
               track control.name
             ) {
-              <div class="mb-4">
+              <div class="mb-4" [class.custom-control--nested]="control.nested">
                 @if (control.sectionHeader) {
                   <div class="font-bold text-emerald-400 text-sm mb-4 mt-2">
                     {{ control.sectionHeader }}
@@ -93,7 +93,8 @@
 
                 @if (
                   control.type !== "checkbox" &&
-                  control.type !== "checkboxGroup"
+                  control.type !== "checkboxGroup" &&
+                  !control.hideTitle
                 ) {
                   <div class="flex gap-2 items-center">
                     <div class="font-bold text-emerald-400 text-sm">
@@ -122,7 +123,17 @@
                 }
 
                 @if (control.type === "checkbox") {
-                  <div class="flex items-start gap-2 mb-2">
+                  <div
+                    class="flex gap-2 mb-2"
+                    [class.items-center]="
+                      !control.description ||
+                      control.descriptionDisplay === 'tooltip'
+                    "
+                    [class.items-start]="
+                      control.description &&
+                      control.descriptionDisplay !== 'tooltip'
+                    "
+                  >
                     <input
                       type="checkbox"
                       [id]="'custom_control_checkbox_' + control.name"
@@ -134,13 +145,39 @@
                           $any($event.target).checked
                         )
                       "
-                      class="checkbox mt-1"
+                      class="checkbox"
                     />
                     <div class="flex flex-col gap-1">
-                      <div class="text-white text-sm leading-tight">
-                        {{ control.title }}
+                      <div class="flex items-center gap-2">
+                        <div class="text-white text-sm leading-tight">
+                          {{ control.title }}
+                        </div>
+                        @if (
+                          control.description &&
+                          control.descriptionDisplay === "tooltip"
+                        ) {
+                          <button
+                            type="button"
+                            class="tooltip-trigger"
+                            aria-label="Show filter description"
+                            (mouseenter)="
+                              showTooltip($event, control.description)
+                            "
+                            (mouseleave)="hideTooltip()"
+                            (focus)="showTooltip($event, control.description)"
+                            (blur)="hideTooltip()"
+                          >
+                            <lucide-icon
+                              name="info"
+                              class="h-4 w-4 text-gray-200"
+                            ></lucide-icon>
+                          </button>
+                        }
                       </div>
-                      @if (control.description) {
+                      @if (
+                        control.description &&
+                        control.descriptionDisplay !== "tooltip"
+                      ) {
                         <div class="text-xs text-gray-400">
                           {{ control.description }}
                         </div>
@@ -387,13 +424,16 @@
 
                 @if (control.type === "singleSelect") {
                   <div
-                    class="custom-autocomplete mt-4"
+                    class="custom-autocomplete"
+                    [class.mt-4]="!control.hideTitle"
+                    [class.mt-2]="control.hideTitle"
                     (focusout)="handleSingleSelectFocusOut(control, $event)"
                   >
                     <div class="custom-autocomplete__input-wrap">
                       <button
                         type="button"
                         class="custom-autocomplete__input custom-autocomplete__input--button"
+                        [disabled]="control.disabled"
                         [attr.aria-expanded]="
                           isSingleSelectDropdownOpen(control)
                         "
@@ -411,7 +451,9 @@
                       </button>
                     </div>
 
-                    @if (isSingleSelectDropdownOpen(control)) {
+                    @if (
+                      isSingleSelectDropdownOpen(control) && !control.disabled
+                    ) {
                       <div class="custom-autocomplete__panel custom-scrollbar">
                         @for (
                           option of control.selectOptions || [];
