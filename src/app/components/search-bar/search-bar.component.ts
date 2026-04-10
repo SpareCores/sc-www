@@ -29,7 +29,11 @@ import {
 } from "../../pages/server-listing/server-listing.component";
 import { CountryIdtoNamePipe } from "../../pipes/country-idto-name.pipe";
 import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
-import { formatBinaryMemoryDisplay, formatNumberInputValue, parseBinaryMemoryInput } from "../../pipes/pipe-utils";
+import {
+  formatBinaryMemoryDisplay,
+  formatNumberInputValue,
+  parseBinaryMemoryInput,
+} from "../../pipes/pipe-utils";
 import {
   Benchmark,
   BenchmarkConfig,
@@ -942,7 +946,10 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
       nextValue = Math.min(nextValue, control.max);
     }
 
-    if (control.allowZero && Math.abs(nextValue) < POWER_OF_TWO_STEPPER_EPSILON) {
+    if (
+      control.allowZero &&
+      Math.abs(nextValue) < POWER_OF_TWO_STEPPER_EPSILON
+    ) {
       return 0;
     }
 

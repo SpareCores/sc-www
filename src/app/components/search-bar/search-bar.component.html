@@ -552,12 +552,21 @@
                         [value]="getPowerOfTwoStepperInputValue(control)"
                         (focus)="handlePowerOfTwoStepperFocus(control)"
                         (input)="onPowerOfTwoStepperInput(control, $event)"
-                        (blur)="commitPowerOfTwoStepperAfterFocusLoss(control, $event)"
-                        (keydown.enter)="commitPowerOfTwoStepperFromEnter($event)"
+                        (blur)="
+                          commitPowerOfTwoStepperAfterFocusLoss(control, $event)
+                        "
+                        (keydown.enter)="
+                          commitPowerOfTwoStepperFromEnter($event)
+                        "
                       />
 
-                      @if (getPowerOfTwoStepperInputUnit(control); as inputUnit) {
-                        <span class="custom-stepper__unit">{{ inputUnit }}</span>
+                      @if (
+                        getPowerOfTwoStepperInputUnit(control);
+                        as inputUnit
+                      ) {
+                        <span class="custom-stepper__unit">{{
+                          inputUnit
+                        }}</span>
                       }
                     </div>
 
