@@ -530,6 +530,7 @@
                     <button
                       type="button"
                       class="custom-stepper__button"
+                      (mousedown)="$event.preventDefault()"
                       [disabled]="!canDecrementPowerOfTwoValue(control)"
                       (click)="decrementPowerOfTwoValue(control)"
                       aria-label="Decrease value"
@@ -537,13 +538,33 @@
                       <lucide-icon name="minus" class="h-4 w-4"></lucide-icon>
                     </button>
 
-                    <div class="custom-stepper__value">
-                      {{ formatCustomNumericValue(control) }}
+                    <div class="custom-stepper__field">
+                      <input
+                        id="custom_control_numeric_{{ control.name }}"
+                        type="text"
+                        inputmode="decimal"
+                        autocomplete="off"
+                        spellcheck="false"
+                        class="custom-stepper__input"
+                        [attr.aria-label]="control.title"
+                        [attr.min]="control.min ?? null"
+                        [ngStyle]="getPowerOfTwoStepperInputStyle(control)"
+                        [value]="getPowerOfTwoStepperInputValue(control)"
+                        (focus)="handlePowerOfTwoStepperFocus(control)"
+                        (input)="onPowerOfTwoStepperInput(control, $event)"
+                        (blur)="commitPowerOfTwoStepperAfterFocusLoss(control, $event)"
+                        (keydown.enter)="commitPowerOfTwoStepperFromEnter($event)"
+                      />
+
+                      @if (getPowerOfTwoStepperInputUnit(control); as inputUnit) {
+                        <span class="custom-stepper__unit">{{ inputUnit }}</span>
+                      }
                     </div>
 
                     <button
                       type="button"
                       class="custom-stepper__button"
+                      (mousedown)="$event.preventDefault()"
                       (click)="incrementPowerOfTwoValue(control)"
                       aria-label="Increase value"
                     >

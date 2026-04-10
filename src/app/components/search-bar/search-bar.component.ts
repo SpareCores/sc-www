@@ -29,7 +29,7 @@ import {
 } from "../../pages/server-listing/server-listing.component";
 import { CountryIdtoNamePipe } from "../../pipes/country-idto-name.pipe";
 import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
-import { formatValue } from "../../pipes/pipe-utils";
+import { formatBinaryMemoryDisplay, formatNumberInputValue, parseBinaryMemoryInput } from "../../pipes/pipe-utils";
 import {
   Benchmark,
   BenchmarkConfig,
@@ -40,6 +40,10 @@ const optionsModal: ModalOptions = {
   backdropClasses: "bg-gray-900/50 fixed inset-0 z-40",
   closable: true,
 };
+
+const POWER_OF_TWO_STEPPER_INPUT_PATTERN = /^\d*\.?\d*$/;
+const POWER_OF_TWO_STEPPER_BASE_VALUE = 0.5;
+const POWER_OF_TWO_STEPPER_EPSILON = 1e-9;
 
 export type SearchBarParameter = {
   name: string;
@@ -94,6 +98,7 @@ export type SearchBarCustomControl = {
   max?: number;
   step?: number;
   unit?: string;
+  numericFormat?: "binaryMemory";
   tickValues?: number[];
   allowZero?: boolean;
   defaultNumericValue?: number | null;
@@ -242,6 +247,9 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
     string,
     CpuCacheRangeFocusLossSkip | undefined
   > = {};
+
+  powerOfTwoStepperDraftValues: Record<string, string> = {};
+  powerOfTwoStepperFocusedControls: Record<string, boolean> = {};
 
   benchmarkConfigDropdownOpen: Record<string, boolean> = {};
   singleSelectDropdownOpen: Record<string, boolean> = {};
@@ -659,17 +667,113 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
     });
   }
 
-  incrementPowerOfTwoValue(control: SearchBarCustomControl) {
-    const currentValue = control.numericValue;
-    let nextValue: number;
+  handlePowerOfTwoStepperFocus(control: SearchBarCustomControl) {
+    this.powerOfTwoStepperFocusedControls[control.name] = true;
+    delete this.powerOfTwoStepperDraftValues[control.name];
+  }
 
-    if (currentValue === null || currentValue === undefined) {
-      nextValue = control.allowZero ? 0 : 0.5;
-    } else if (currentValue === 0) {
-      nextValue = 0.5;
-    } else {
-      nextValue = currentValue * 2;
+  onPowerOfTwoStepperInput(control: SearchBarCustomControl, event: Event) {
+    const input = event.target as HTMLInputElement | null;
+
+    if (!input) {
+      return;
     }
+
+    const normalizedValue = input.value.replace(/\s+/g, "");
+    const previousValue =
+      this.powerOfTwoStepperDraftValues[control.name] ??
+      this.getPowerOfTwoStepperEditableValue(control);
+    const nextValue = POWER_OF_TWO_STEPPER_INPUT_PATTERN.test(normalizedValue)
+      ? normalizedValue
+      : previousValue;
+
+    this.powerOfTwoStepperDraftValues[control.name] = nextValue;
+    input.value = nextValue;
+  }
+
+  commitPowerOfTwoStepperFromEnter(event: Event) {
+    event.preventDefault();
+    (event.target as HTMLInputElement | null)?.blur();
+  }
+
+  commitPowerOfTwoStepperAfterFocusLoss(
+    control: SearchBarCustomControl,
+    event: Event,
+  ) {
+    this.powerOfTwoStepperFocusedControls[control.name] = false;
+    this.commitPowerOfTwoStepperValue(
+      control,
+      (event.target as HTMLInputElement | null)?.value,
+    );
+  }
+
+  isPowerOfTwoStepperFocused(control: SearchBarCustomControl): boolean {
+    return this.powerOfTwoStepperFocusedControls[control.name] === true;
+  }
+
+  getPowerOfTwoStepperInputValue(control: SearchBarCustomControl): string {
+    const draftValue = this.powerOfTwoStepperDraftValues[control.name];
+
+    if (draftValue !== undefined) {
+      return draftValue;
+    }
+
+    if (control.numericValue === null || control.numericValue === undefined) {
+      return "";
+    }
+
+    if (this.isPowerOfTwoStepperFocused(control)) {
+      return this.getPowerOfTwoStepperEditableValue(control);
+    }
+
+    return this.getPowerOfTwoStepperDisplay(control).value;
+  }
+
+  getPowerOfTwoStepperInputStyle(control: SearchBarCustomControl) {
+    const inputValue = this.getPowerOfTwoStepperInputValue(control);
+    const width = Math.max(inputValue.length, 1) + 0.5;
+
+    return {
+      width: `${width}ch`,
+    };
+  }
+
+  getPowerOfTwoStepperInputUnit(
+    control: SearchBarCustomControl,
+  ): string | null {
+    if (control.numericFormat === "binaryMemory") {
+      return this.isPowerOfTwoStepperFocused(control)
+        ? "GiB"
+        : this.getPowerOfTwoStepperDisplay(control).unit;
+    }
+
+    return control.unit || null;
+  }
+
+  getPowerOfTwoStepperCurrentValue(
+    control: SearchBarCustomControl,
+  ): number | null {
+    const draftValue = this.powerOfTwoStepperDraftValues[control.name];
+
+    if (draftValue !== undefined && draftValue !== "") {
+      const parsedDraftValue = this.parsePowerOfTwoStepperNumericValue(
+        control,
+        draftValue,
+      );
+
+      if (parsedDraftValue !== null) {
+        return parsedDraftValue;
+      }
+    }
+
+    return control.numericValue ?? null;
+  }
+
+  incrementPowerOfTwoValue(control: SearchBarCustomControl) {
+    const currentValue = this.getPowerOfTwoStepperCurrentValue(control);
+    const nextValue = this.getNextPowerOfTwoStepperValue(control, currentValue);
+
+    this.syncPowerOfTwoStepperDraftValue(control, nextValue);
 
     this.customControlChanged.emit({
       name: control.name,
@@ -678,20 +782,22 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   decrementPowerOfTwoValue(control: SearchBarCustomControl) {
-    const currentValue = control.numericValue;
+    const currentValue = this.getPowerOfTwoStepperCurrentValue(control);
+
     if (currentValue === null || currentValue === undefined) {
       return;
     }
 
-    let nextValue: number | null = currentValue;
+    const nextValue = this.getPreviousPowerOfTwoStepperValue(
+      control,
+      currentValue,
+    );
 
-    if (currentValue === 0) {
-      nextValue = control.allowZero ? 0 : null;
-    } else if (currentValue === 0.5) {
-      nextValue = control.allowZero ? 0 : 0.5;
-    } else {
-      nextValue = currentValue / 2;
+    if (nextValue === currentValue) {
+      return;
     }
+
+    this.syncPowerOfTwoStepperDraftValue(control, nextValue);
 
     this.customControlChanged.emit({
       name: control.name,
@@ -700,17 +806,18 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   canDecrementPowerOfTwoValue(control: SearchBarCustomControl): boolean {
-    const currentValue = control.numericValue;
+    const currentValue = this.getPowerOfTwoStepperCurrentValue(control);
+    const minimumValue = this.getPowerOfTwoStepperMinimum(control);
 
     if (currentValue === null || currentValue === undefined) {
       return false;
     }
 
-    if (currentValue === 0) {
+    if (currentValue <= 0) {
       return false;
     }
 
-    return true;
+    return currentValue > minimumValue || control.allowZero === true;
   }
 
   formatCustomNumericValue(control: SearchBarCustomControl): string {
@@ -720,13 +827,7 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
       return "Not set";
     }
 
-    if (control.type === "powerOfTwoStepper" && control.unit === "GB") {
-      return this.formatMemoryStepperValue(value);
-    }
-
-    const formattedValue = Number.isInteger(value)
-      ? String(value)
-      : value.toFixed(1);
+    const formattedValue = formatNumberInputValue(value);
     return control.unit ? `${formattedValue} ${control.unit}` : formattedValue;
   }
 
@@ -742,12 +843,187 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
     return 0;
   }
 
-  private formatMemoryStepperValue(value: number): string {
-    if (value >= 1024) {
-      return `${formatValue(value / 1024)} TB`;
+  private commitPowerOfTwoStepperValue(
+    control: SearchBarCustomControl,
+    rawValue?: unknown,
+  ) {
+    const nextValue = this.normalizeCommittedPowerOfTwoStepperValue(
+      control,
+      rawValue,
+    );
+
+    delete this.powerOfTwoStepperDraftValues[control.name];
+
+    if (nextValue === control.numericValue) {
+      return;
     }
 
-    return `${formatValue(value)} GB`;
+    this.customControlChanged.emit({
+      name: control.name,
+      value: { numericValue: nextValue },
+    });
+  }
+
+  private getPowerOfTwoStepperEditableValue(
+    control: SearchBarCustomControl,
+  ): string {
+    if (control.numericValue === null || control.numericValue === undefined) {
+      return "";
+    }
+
+    return formatNumberInputValue(control.numericValue);
+  }
+
+  private getPowerOfTwoStepperDisplay(control: SearchBarCustomControl): {
+    value: string;
+    unit: string | null;
+  } {
+    if (control.numericValue === null || control.numericValue === undefined) {
+      return { value: "", unit: control.unit || null };
+    }
+
+    if (control.numericFormat === "binaryMemory") {
+      return formatBinaryMemoryDisplay(control.numericValue);
+    }
+
+    return {
+      value: formatNumberInputValue(control.numericValue),
+      unit: control.unit || null,
+    };
+  }
+
+  private parsePowerOfTwoStepperNumericValue(
+    control: SearchBarCustomControl,
+    rawValue: string,
+  ): number | null {
+    const normalizedValue = rawValue.trim();
+
+    if (!normalizedValue.length || normalizedValue === ".") {
+      return null;
+    }
+
+    if (control.numericFormat === "binaryMemory") {
+      return parseBinaryMemoryInput(normalizedValue, "GiB");
+    }
+
+    if (!POWER_OF_TWO_STEPPER_INPUT_PATTERN.test(normalizedValue)) {
+      return null;
+    }
+
+    const parsedValue = Number(normalizedValue);
+    return Number.isFinite(parsedValue) ? parsedValue : null;
+  }
+
+  private normalizeCommittedPowerOfTwoStepperValue(
+    control: SearchBarCustomControl,
+    rawValue?: unknown,
+  ): number | null {
+    const normalizedValue =
+      rawValue === null || rawValue === undefined
+        ? ""
+        : String(rawValue).trim();
+
+    if (!normalizedValue.length) {
+      return control.defaultNumericValue ?? control.numericValue ?? null;
+    }
+
+    const parsedValue = this.parsePowerOfTwoStepperNumericValue(
+      control,
+      normalizedValue,
+    );
+
+    if (parsedValue === null) {
+      return control.numericValue ?? control.defaultNumericValue ?? null;
+    }
+
+    let nextValue = parsedValue;
+
+    if (control.max !== undefined) {
+      nextValue = Math.min(nextValue, control.max);
+    }
+
+    if (control.allowZero && Math.abs(nextValue) < POWER_OF_TWO_STEPPER_EPSILON) {
+      return 0;
+    }
+
+    const minimumValue = this.getPowerOfTwoStepperMinimum(control);
+
+    if (nextValue < minimumValue) {
+      nextValue = minimumValue;
+    }
+
+    return nextValue;
+  }
+
+  private getPowerOfTwoStepperMinimum(control: SearchBarCustomControl): number {
+    if (control.min !== undefined) {
+      return control.min;
+    }
+
+    return control.allowZero ? 0 : POWER_OF_TWO_STEPPER_BASE_VALUE;
+  }
+
+  private getNextPowerOfTwoStepperValue(
+    control: SearchBarCustomControl,
+    currentValue: number | null,
+  ): number {
+    if (currentValue === null || currentValue === undefined) {
+      return Math.max(
+        this.getPowerOfTwoStepperMinimum(control),
+        POWER_OF_TWO_STEPPER_BASE_VALUE,
+      );
+    }
+
+    if (currentValue < POWER_OF_TWO_STEPPER_BASE_VALUE) {
+      return POWER_OF_TWO_STEPPER_BASE_VALUE;
+    }
+
+    if (
+      Math.abs(currentValue - POWER_OF_TWO_STEPPER_BASE_VALUE) <
+      POWER_OF_TWO_STEPPER_EPSILON
+    ) {
+      return 1;
+    }
+
+    const nextPowerOfTwo = Math.pow(2, Math.ceil(Math.log2(currentValue)));
+
+    return Math.abs(nextPowerOfTwo - currentValue) <
+      POWER_OF_TWO_STEPPER_EPSILON
+      ? nextPowerOfTwo * 2
+      : nextPowerOfTwo;
+  }
+
+  private getPreviousPowerOfTwoStepperValue(
+    control: SearchBarCustomControl,
+    currentValue: number,
+  ): number {
+    if (currentValue <= 0) {
+      return 0;
+    }
+
+    if (currentValue <= POWER_OF_TWO_STEPPER_BASE_VALUE) {
+      return control.allowZero ? 0 : POWER_OF_TWO_STEPPER_BASE_VALUE;
+    }
+
+    const previousPowerOfTwo = Math.pow(2, Math.floor(Math.log2(currentValue)));
+
+    return Math.abs(previousPowerOfTwo - currentValue) <
+      POWER_OF_TWO_STEPPER_EPSILON
+      ? previousPowerOfTwo / 2
+      : previousPowerOfTwo;
+  }
+
+  private syncPowerOfTwoStepperDraftValue(
+    control: SearchBarCustomControl,
+    value: number,
+  ) {
+    if (this.isPowerOfTwoStepperFocused(control)) {
+      this.powerOfTwoStepperDraftValues[control.name] =
+        formatNumberInputValue(value);
+      return;
+    }
+
+    delete this.powerOfTwoStepperDraftValues[control.name];
   }
 
   isBenchmarkGroupExpanded(

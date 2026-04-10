@@ -500,12 +500,37 @@ describe("AdvisorComponent", () => {
     flushMicrotasks();
 
     expect(component.advisorSearchBarExtraParameters()).toEqual({
+      vendor: ["aws"],
       vendor_regions: ["aws~us-east-1"],
     });
     expect(searchServers.calls.mostRecent().args[0].vendor_regions).toBe(
       "aws~us-east-1",
     );
   }));
+
+  it("gives vendor filters precedence over the dedicated baseline region state", async () => {
+    queryParams$.next({
+      baseline_vendor: "aws",
+      baseline_server: "large",
+      vendor: "hcloud",
+      baseline_region_enabled: "true",
+      baseline_vendor_region: "aws~us-east-1",
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(component.query().vendor).toEqual(["hcloud"]);
+    expect(component.isBaselineRegionEnabled()).toBeFalse();
+    expect(component.selectedBaselineVendorRegion()).toBeNull();
+    expect(
+      component
+        .customControls()
+        .find((control) => control.name === "baseline_region_enabled")
+        ?.disabled,
+    ).toBeTrue();
+  });
 
   it("gives vendor and region id precedence over the dedicated baseline region state", async () => {
     queryParams$.next({

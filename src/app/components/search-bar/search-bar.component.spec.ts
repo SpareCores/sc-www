@@ -1,7 +1,10 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { SimpleChange } from "@angular/core";
 
-import { SearchBarComponent } from "./search-bar.component";
+import {
+  SearchBarComponent,
+  SearchBarCustomControl,
+} from "./search-bar.component";
 import { UiTooltipService } from "../../services/ui-tooltip.service";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
@@ -112,6 +115,101 @@ describe("SearchBarComponent", () => {
     expect(component.isSingleSelectDropdownOpen(control)).toBeFalse();
   });
 
+  it("formats binary memory steppers as TiB when blurred and GiB while editing", () => {
+    const control: SearchBarCustomControl = {
+      name: "minimum_memory",
+      category_id: "advisor",
+      type: "powerOfTwoStepper",
+      title: "Minimum memory",
+      numericValue: 1536,
+      numericFormat: "binaryMemory",
+      unit: "GiB",
+      defaultNumericValue: 0.5,
+      min: 0.5,
+    };
+
+    expect(component.getPowerOfTwoStepperInputValue(control)).toBe("1.5");
+    expect(component.getPowerOfTwoStepperInputUnit(control)).toBe("TiB");
+
+    component.handlePowerOfTwoStepperFocus(control);
+
+    expect(component.getPowerOfTwoStepperInputValue(control)).toBe("1536");
+    expect(component.getPowerOfTwoStepperInputUnit(control)).toBe("GiB");
+  });
+
+  it("commits typed power-of-two stepper values as canonical GiB numbers", () => {
+    const emitSpy = spyOn(component.customControlChanged, "emit");
+    const control: SearchBarCustomControl = {
+      name: "minimum_memory",
+      category_id: "advisor",
+      type: "powerOfTwoStepper",
+      title: "Minimum memory",
+      numericValue: 0.5,
+      numericFormat: "binaryMemory",
+      unit: "GiB",
+      defaultNumericValue: 0.5,
+      min: 0.5,
+    };
+    const input = document.createElement("input");
+
+    component.handlePowerOfTwoStepperFocus(control);
+    input.value = "1.25";
+
+    component.onPowerOfTwoStepperInput(control, {
+      target: input,
+    } as unknown as Event);
+    component.commitPowerOfTwoStepperAfterFocusLoss(control, {
+      target: input,
+    } as unknown as Event);
+
+    expect(emitSpy).toHaveBeenCalledOnceWith({
+      name: "minimum_memory",
+      value: { numericValue: 1.25 },
+    });
+  });
+
+  it("snaps power-of-two buttons from arbitrary typed values", () => {
+    const emitSpy = spyOn(component.customControlChanged, "emit");
+    const control: SearchBarCustomControl = {
+      name: "minimum_memory",
+      category_id: "advisor",
+      type: "powerOfTwoStepper",
+      title: "Minimum memory",
+      numericValue: 2,
+      numericFormat: "binaryMemory",
+      unit: "GiB",
+      defaultNumericValue: 0.5,
+      min: 0.5,
+    };
+    const input = document.createElement("input");
+
+    component.handlePowerOfTwoStepperFocus(control);
+    input.value = "3";
+    component.onPowerOfTwoStepperInput(control, {
+      target: input,
+    } as unknown as Event);
+
+    component.incrementPowerOfTwoValue(control);
+
+    expect(emitSpy).toHaveBeenCalledWith({
+      name: "minimum_memory",
+      value: { numericValue: 4 },
+    });
+
+    emitSpy.calls.reset();
+    input.value = "3";
+    component.onPowerOfTwoStepperInput(control, {
+      target: input,
+    } as unknown as Event);
+
+    component.decrementPowerOfTwoValue(control);
+
+    expect(emitSpy).toHaveBeenCalledWith({
+      name: "minimum_memory",
+      value: { numericValue: 2 },
+    });
+  });
+
   it("does not show the workload empty hint for a selected benchmark config", () => {
     component.filterCategories = [
       {
@@ -212,5 +310,45 @@ describe("SearchBarComponent", () => {
         "aws~us-east-1",
       ),
     ).toBeTrue();
+  });
+
+  it("shows extra-parameter vendors as checked while disabled", () => {
+    component.filterCategories = [
+      {
+        category_id: "vendor",
+        name: "Vendor",
+        icon: "bot",
+        collapsed: true,
+      },
+    ];
+    component.searchParameters = [
+      {
+        name: "vendor",
+        modelValue: [],
+        schema: {
+          category_id: "vendor",
+          title: "Vendor",
+          type: "array",
+          enum: ["aws", "gcp"],
+        },
+      },
+    ];
+    component.extraParameters = {
+      vendor: ["aws"],
+    };
+
+    component.ngOnChanges({
+      extraParameters: new SimpleChange({}, component.extraParameters, false),
+      searchParameters: new SimpleChange([], component.searchParameters, false),
+      filterCategories: new SimpleChange([], component.filterCategories, false),
+    });
+    fixture.detectChanges();
+
+    const vendorParameter = component.searchParameters[0];
+
+    expect(component.filterCategories[0].collapsed).toBeFalse();
+    expect(vendorParameter.modelValue).toEqual(["aws"]);
+    expect(component.isEnumSelected(vendorParameter, "aws")).toBeTrue();
+    expect(component.isParameterDisabled("vendor")).toBeTrue();
   });
 });

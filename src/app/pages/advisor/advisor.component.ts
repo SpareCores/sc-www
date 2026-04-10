@@ -397,6 +397,16 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     );
   });
 
+  readonly hasVendorQuerySelections = computed(() => {
+    return normalizeAdvisorQueryStringArray(this.query().vendor).length > 0;
+  });
+
+  readonly hasScopedVendorSelections = computed(() => {
+    return (
+      this.hasVendorQuerySelections() || this.hasVendorRegionQuerySelections()
+    );
+  });
+
   readonly baselineRegionOptions = computed(() => {
     return buildAdvisorRegionSelectOptions(
       this.selectedBaselineServer()?.vendor_id || null,
@@ -406,19 +416,22 @@ export class AdvisorComponent implements OnInit, OnDestroy {
   });
 
   readonly isBaselineRegionControlDisabled = computed(() => {
-    return (
-      !this.selectedBaselineServer() || this.hasVendorRegionQuerySelections()
-    );
+    return !this.selectedBaselineServer() || this.hasScopedVendorSelections();
   });
 
   readonly advisorSearchBarExtraParameters = computed(() => {
-    if (!this.isBaselineRegionEnabled()) {
+    if (!this.isBaselineRegionEnabled() || this.hasScopedVendorSelections()) {
       return {};
     }
 
+    const selectedBaselineVendorRegion = this.selectedBaselineVendorRegion();
+    const selectedVendorId =
+      selectedBaselineVendorRegion?.split("~")[0] || null;
+
     return {
-      vendor_regions: this.selectedBaselineVendorRegion()
-        ? [this.selectedBaselineVendorRegion()]
+      vendor: selectedVendorId ? [selectedVendorId] : [],
+      vendor_regions: selectedBaselineVendorRegion
+        ? [selectedBaselineVendorRegion]
         : [],
     };
   });
@@ -560,8 +573,10 @@ export class AdvisorComponent implements OnInit, OnDestroy {
         title: "Minimum memory",
         required: true,
         description:
-          "Memory requirement in GiB. The stepper follows powers of two starting at 0.5 GiB.",
+          "Memory requirement in GiB. You can type any value, or use the stepper to snap through powers of two starting at 0.5 GiB.",
         numericValue: this.minimumMemoryGiB(),
+        numericFormat: "binaryMemory",
+        min: 0.5,
         unit: "GiB",
         defaultNumericValue: 0.5,
       },
@@ -571,8 +586,10 @@ export class AdvisorComponent implements OnInit, OnDestroy {
         type: "powerOfTwoStepper",
         title: "Peak GPU memory usage",
         description:
-          "Total GPU memory requirement in GiB. Leave at 0 to avoid applying GPU filters.",
+          "Total GPU memory requirement in GiB. You can type any value, or use the stepper to snap through powers of two. Leave at 0 to avoid applying GPU filters.",
         numericValue: this.peakGpuMemoryGiB(),
+        numericFormat: "binaryMemory",
+        min: 0,
         unit: "GiB",
         allowZero: true,
         defaultNumericValue: 0,
@@ -993,7 +1010,10 @@ export class AdvisorComponent implements OnInit, OnDestroy {
   }
 
   onSearchChanged(query: Record<string, unknown>): void {
-    if (normalizeAdvisorQueryStringArray(query.vendor_regions).length > 0) {
+    if (
+      normalizeAdvisorQueryStringArray(query.vendor).length > 0 ||
+      normalizeAdvisorQueryStringArray(query.vendor_regions).length > 0
+    ) {
       this.isBaselineRegionEnabled.set(false);
       this.selectedBaselineVendorRegion.set(null);
     }
@@ -1320,11 +1340,18 @@ export class AdvisorComponent implements OnInit, OnDestroy {
         const vendorRegions = normalizeAdvisorQueryStringArray(
           baseQuery.vendor_regions,
         );
+        const vendors = normalizeAdvisorQueryStringArray(baseQuery.vendor);
 
         if (vendorRegions.length > 0) {
           baseQuery.vendor_regions = vendorRegions;
         } else {
           delete baseQuery.vendor_regions;
+        }
+
+        if (vendors.length > 0) {
+          baseQuery.vendor = vendors;
+        } else {
+          delete baseQuery.vendor;
         }
 
         this.query.set(baseQuery);
@@ -1439,11 +1466,14 @@ export class AdvisorComponent implements OnInit, OnDestroy {
         );
         this.isBaselineRegionEnabled.set(
           vendorRegions.length === 0 &&
+            vendors.length === 0 &&
             (queryParams.baseline_region_enabled === "true" ||
               Boolean(queryParams.baseline_vendor_region)),
         );
         this.selectedBaselineVendorRegion.set(
-          vendorRegions.length === 0 && queryParams.baseline_vendor_region
+          vendorRegions.length === 0 &&
+            vendors.length === 0 &&
+            queryParams.baseline_vendor_region
             ? String(queryParams.baseline_vendor_region)
             : null,
         );
