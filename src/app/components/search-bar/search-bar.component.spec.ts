@@ -112,6 +112,43 @@ describe("SearchBarComponent", () => {
     expect(component.isSingleSelectDropdownOpen(control)).toBeFalse();
   });
 
+  it("does not show the workload empty hint for a selected benchmark config", () => {
+    component.filterCategories = [
+      {
+        category_id: "advisor",
+        name: "Advisor",
+        icon: "bot",
+        collapsed: false,
+      },
+    ];
+    component.customControls = [
+      {
+        name: "benchmark_config",
+        category_id: "advisor",
+        type: "benchmarkConfigSelect",
+        title: "Workload",
+        inputValue: "Geekbench 6 / default",
+        selectedBenchmarkConfig: {
+          benchmark_id: "geekbench_6",
+          config: "default",
+          displayName: "Geekbench 6 / default",
+          configTitle: "Default",
+          framework: "Geekbench",
+        },
+        benchmarkGroups: [],
+      },
+    ];
+
+    fixture.detectChanges();
+
+    const hintElements = fixture.nativeElement.querySelectorAll(
+      ".custom-autocomplete__hint",
+    ) as NodeListOf<HTMLElement>;
+    const hints = Array.from(hintElements, (hint) => hint.textContent?.trim());
+
+    expect(hints).not.toContain("No matching workloads found.");
+  });
+
   it("shows extra-parameter vendor regions as checked while disabled", () => {
     component.filterCategories = [
       {

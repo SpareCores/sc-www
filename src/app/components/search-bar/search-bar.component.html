@@ -412,7 +412,7 @@
                           }}
                         </div>
                       }
-                    } @else {
+                    } @else if (!control.selectedBenchmarkConfig) {
                       <div class="custom-autocomplete__hint">
                         {{
                           control.emptyMessage || "No matching workloads found."
