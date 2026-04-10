@@ -252,6 +252,7 @@ export const ADVISOR_TABLE_COLUMNS: AdvisorTableColumn[] = [
     type: "price",
     key: "min_price_ondemand_monthly",
     show: false,
+    orderField: "min_price_ondemand_monthly",
   },
   {
     name: "BEST SPOT PRICE",
