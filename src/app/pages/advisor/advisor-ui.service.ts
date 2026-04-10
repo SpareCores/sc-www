@@ -17,7 +17,7 @@ export class AdvisorUiService {
   filterBaselineServers(
     servers: AdvisorBaselineServer[],
     searchValue: string,
-    minCharacters = 3,
+    minCharacters = 2,
     limit = 20,
   ): AdvisorBaselineServer[] {
     if (searchValue.trim().length < minCharacters) {

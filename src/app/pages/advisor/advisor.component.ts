@@ -515,7 +515,7 @@ export class AdvisorComponent implements OnInit, OnDestroy {
         title: "Baseline Server",
         placeholder: "Search for server...",
         required: true,
-        minCharacters: 3,
+        minCharacters: 2,
         inputValue: this.baselineServerInput(),
         selectedServer: this.selectedBaselineServer(),
         options: this.filteredBaselineServers(),

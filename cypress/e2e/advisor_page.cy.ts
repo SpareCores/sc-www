@@ -16,7 +16,7 @@ describe("Advisor page", () => {
     cy.get(`[id="advisor_results_table"]`).should("contain.text", "PRICE");
   });
 
-  it("Filters baseline servers after three characters", () => {
+  it("Filters baseline servers after two characters", () => {
     E2EEvent.visitURL("/advisor", 4000);
 
     cy.get('input[placeholder="Search for server..."]').as(
@@ -24,9 +24,6 @@ describe("Advisor page", () => {
     );
 
     cy.get("@baselineServerInput").type("gc");
-    cy.contains("Enter at least 3 characters to search.").should("be.visible");
-
-    cy.get("@baselineServerInput").type("p");
     cy.get(".custom-autocomplete__panel .custom-autocomplete__option").should(
       "have.length.greaterThan",
       0,
