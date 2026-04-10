@@ -26,6 +26,7 @@ describe("AdvisorComponent", () => {
   const getServerBenchmarkMeta = jasmine.createSpy("getServerBenchmarkMeta");
   const getBenchmarkConfigs = jasmine.createSpy("getBenchmarkConfigs");
   const getServerBenchmark = jasmine.createSpy("getServerBenchmark");
+  const getServerPrices = jasmine.createSpy("getServerPrices");
   const searchServers = jasmine.createSpy("searchServers");
   const getComplianceFrameworks = jasmine.createSpy("getComplianceFrameworks");
   const getVendors = jasmine.createSpy("getVendors");
@@ -58,6 +59,7 @@ describe("AdvisorComponent", () => {
     getServerBenchmarkMeta.calls.reset();
     getBenchmarkConfigs.calls.reset();
     getServerBenchmark.calls.reset();
+    getServerPrices.calls.reset();
     searchServers.calls.reset();
     getComplianceFrameworks.calls.reset();
     getVendors.calls.reset();
@@ -145,6 +147,22 @@ describe("AdvisorComponent", () => {
         },
       ],
     });
+    getServerPrices.and.resolveTo({
+      body: [
+        {
+          vendor_id: "aws",
+          region_id: "us-east-1",
+        },
+        {
+          vendor_id: "aws",
+          region_id: "eu-west-1",
+        },
+        {
+          vendor_id: "aws",
+          region_id: "us-east-1",
+        },
+      ],
+    });
     searchServers.and.resolveTo({
       body: [
         {
@@ -162,7 +180,20 @@ describe("AdvisorComponent", () => {
     getVendors.and.resolveTo({ body: [] });
     getStorages.and.resolveTo({ body: [] });
     getCountries.and.resolveTo({ body: [] });
-    getRegions.and.resolveTo({ body: [] });
+    getRegions.and.resolveTo({
+      body: [
+        {
+          vendor_id: "aws",
+          region_id: "us-east-1",
+          name: "US East 1",
+        },
+        {
+          vendor_id: "aws",
+          region_id: "eu-west-1",
+          name: "EU West 1",
+        },
+      ],
+    });
     initDropdown.and.resolveTo({
       hide: jasmine.createSpy("hide"),
       show: jasmine.createSpy("show"),
@@ -191,6 +222,7 @@ describe("AdvisorComponent", () => {
             getServerBenchmarkMeta,
             getBenchmarkConfigs,
             getServerBenchmark,
+            getServerPrices,
             searchServers,
             getComplianceFrameworks,
             getVendors,
@@ -266,7 +298,20 @@ describe("AdvisorComponent", () => {
     ).not.toContain("VCPUs");
   });
 
-  it("uses dropdown optimization goal control and GiB memory labels", () => {
+  it("orders matching-limit controls beneath peak GPU memory", () => {
+    expect(component.customControls().map((control) => control.name)).toEqual([
+      "baseline_server",
+      "server_workload",
+      "optimization_goal",
+      "average_cpu_utilization",
+      "minimum_memory",
+      "peak_gpu_memory",
+      "limit_cpu_allocation",
+      "limit_architecture",
+      "price_allocation_enabled",
+      "baseline_region_enabled",
+    ]);
+
     const optimizationGoalControl = component
       .customControls()
       .find((control) => control.name === "optimization_goal");
@@ -282,6 +327,18 @@ describe("AdvisorComponent", () => {
     expect(minimumMemoryControl?.description).toContain("GiB");
     expect(peakGpuMemoryControl?.unit).toBe("GiB");
     expect(peakGpuMemoryControl?.description).toContain("GiB");
+    expect(
+      component
+        .customControls()
+        .find((control) => control.name === "price_allocation_enabled")
+        ?.descriptionDisplay,
+    ).toBe("tooltip");
+    expect(
+      component
+        .customControls()
+        .find((control) => control.name === "baseline_region_enabled")
+        ?.descriptionDisplay,
+    ).toBe("tooltip");
   });
 
   it("restores advisor state from the route query params", async () => {
@@ -292,7 +349,10 @@ describe("AdvisorComponent", () => {
       workload_config: "{}",
       optimization_goal: "performance",
       currency: "EUR",
+      price_allocation_enabled: "true",
       best_price_allocation: "SPOT_ONLY",
+      baseline_region_enabled: "true",
+      baseline_vendor_region: "aws~us-east-1",
       order_by: "status",
       order_dir: "asc",
       avg_cpu_utilization: "60",
@@ -311,7 +371,10 @@ describe("AdvisorComponent", () => {
     );
     expect(component.optimizationGoal()).toBe("performance");
     expect(component.selectedCurrency().slug).toBe("EUR");
+    expect(component.isPriceAllocationEnabled()).toBeTrue();
     expect(component.bestPriceAllocation().slug).toBe("SPOT_ONLY");
+    expect(component.isBaselineRegionEnabled()).toBeTrue();
+    expect(component.selectedBaselineVendorRegion()).toBe("aws~us-east-1");
     expect(component.manualOrderBy()).toBe("status");
     expect(component.manualOrderDir()).toBe(OrderDir.Asc);
     expect(
@@ -348,7 +411,7 @@ describe("AdvisorComponent", () => {
     expect(searchServers).toHaveBeenCalled();
   }));
 
-  it("passes currency and price allocation to recommendation queries", fakeAsync(() => {
+  it("only applies price allocation to recommendation queries when enabled", fakeAsync(() => {
     const baselineServer = component.serverTableRows()[0];
     component.selectedBaselineServer.set(baselineServer);
     component.baselineServerInput.set("aws large");
@@ -357,11 +420,10 @@ describe("AdvisorComponent", () => {
         (currency) => currency.slug === "EUR",
       )!,
     );
-    component.selectAllocation(
-      component.bestPriceAllocationTypes.find(
-        (allocation) => allocation.slug === "SPOT_ONLY",
-      )!,
-    );
+    component.onCustomControlChanged({
+      name: "price_allocation",
+      value: { selectedValue: "SPOT_ONLY" },
+    });
     fixture.detectChanges();
     flushMicrotasks();
     fixture.detectChanges();
@@ -372,10 +434,105 @@ describe("AdvisorComponent", () => {
     flushMicrotasks();
 
     expect(searchServers.calls.mostRecent().args[0].currency).toBe("EUR");
+    expect(
+      searchServers.calls.mostRecent().args[0].best_price_allocation,
+    ).toBeUndefined();
+
+    component.onCustomControlChanged({
+      name: "price_allocation_enabled",
+      value: { checked: true },
+    });
+    fixture.detectChanges();
+    tick(350);
+    flushMicrotasks();
+
+    expect(searchServers.calls.mostRecent().args[0].currency).toBe("EUR");
     expect(searchServers.calls.mostRecent().args[0].best_price_allocation).toBe(
       "SPOT_ONLY",
     );
   }));
+
+  it("loads baseline region options and applies the dedicated region filter", fakeAsync(() => {
+    const baselineServer = component.serverTableRows()[0];
+    component.selectedBaselineServer.set(baselineServer);
+    component.baselineServerInput.set("aws large");
+    fixture.detectChanges();
+    flushMicrotasks();
+    fixture.detectChanges();
+
+    expect(getServerPrices).toHaveBeenCalledOnceWith("aws", "large");
+    expect(component.baselineRegionOptions()).toEqual([
+      { value: "aws~eu-west-1", label: "EU West 1" },
+      { value: "aws~us-east-1", label: "US East 1" },
+    ]);
+
+    component.onCustomControlChanged({
+      name: "price_allocation_enabled",
+      value: { checked: true },
+    });
+    fixture.detectChanges();
+
+    expect(
+      component
+        .customControls()
+        .find((control) => control.name === "price_allocation")?.hideTitle,
+    ).toBeTrue();
+
+    component.onCustomControlChanged({
+      name: "baseline_region_enabled",
+      value: { checked: true },
+    });
+    fixture.detectChanges();
+
+    expect(
+      component
+        .customControls()
+        .find((control) => control.name === "baseline_region")?.hideTitle,
+    ).toBeTrue();
+
+    component.onCustomControlChanged({
+      name: "baseline_region",
+      value: { selectedValue: "aws~us-east-1" },
+    });
+    component.averageCpuUtilization.set(50);
+    fixture.detectChanges();
+    tick(350);
+    flushMicrotasks();
+
+    expect(component.advisorSearchBarExtraParameters()).toEqual({
+      vendor_regions: ["aws~us-east-1"],
+    });
+    expect(searchServers.calls.mostRecent().args[0].vendor_regions).toBe(
+      "aws~us-east-1",
+    );
+  }));
+
+  it("gives vendor and region id precedence over the dedicated baseline region state", async () => {
+    queryParams$.next({
+      baseline_vendor: "aws",
+      baseline_server: "large",
+      vendor_regions: "aws~eu-west-1,aws~us-east-1",
+      baseline_region_enabled: "true",
+      baseline_vendor_region: "aws~us-east-1",
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(component.query().vendor_regions).toEqual([
+      "aws~eu-west-1",
+      "aws~us-east-1",
+    ]);
+    expect(component.isBaselineRegionEnabled()).toBeFalse();
+    expect(component.selectedBaselineVendorRegion()).toBeNull();
+    expect(
+      component
+        .customControls()
+        .find((control) => control.name === "baseline_region_enabled")
+        ?.disabled,
+    ).toBeTrue();
+  });
 
   it("resets to cost ordering when optimization goal changes", fakeAsync(() => {
     const baselineServer = component.serverTableRows()[0];
@@ -481,6 +638,12 @@ describe("AdvisorComponent", () => {
     expect(
       rows[1].classList.contains("advisor-table-row-baseline"),
     ).toBeFalse();
+  });
+
+  it("removes the top price allocation dropdown from the toolbar", () => {
+    expect(
+      fixture.nativeElement.querySelector("#advisor_allocation_button"),
+    ).toBeNull();
   });
 
   it("debounces rapid recommendation filter changes", fakeAsync(() => {
@@ -625,11 +788,13 @@ describe("AdvisorComponent", () => {
         (currency) => currency.slug === "EUR",
       )!,
     );
-    component.selectAllocation(
-      component.bestPriceAllocationTypes.find(
-        (allocation) => allocation.slug === "SPOT_ONLY",
-      )!,
-    );
+    component.isPriceAllocationEnabled.set(true);
+    component.onCustomControlChanged({
+      name: "price_allocation",
+      value: { selectedValue: "SPOT_ONLY" },
+    });
+    component.isBaselineRegionEnabled.set(true);
+    component.selectedBaselineVendorRegion.set("aws~us-east-1");
     component.setColumnVisibility("VENDOR", true);
     component.page.set(3);
     component.limit.set(50);
@@ -649,7 +814,10 @@ describe("AdvisorComponent", () => {
     expect(component.minimumMemoryGiB()).toBe(0.5);
     expect(component.peakGpuMemoryGiB()).toBe(0);
     expect(component.selectedCurrency().slug).toBe("USD");
+    expect(component.isPriceAllocationEnabled()).toBeFalse();
     expect(component.bestPriceAllocation().slug).toBe("ANY");
+    expect(component.isBaselineRegionEnabled()).toBeFalse();
+    expect(component.selectedBaselineVendorRegion()).toBeNull();
     expect(component.tableColumns().map((column) => column.name)).toEqual([
       "NAME & PROVIDER",
       "PROCESSOR",

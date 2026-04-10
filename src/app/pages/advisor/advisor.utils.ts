@@ -1,5 +1,12 @@
-import { BenchmarkScore, ServerPKs } from "../../../../sdk/data-contracts";
-import { SearchBarBenchmarkConfigOption } from "../../components/search-bar/search-bar.component";
+import {
+  BenchmarkScore,
+  ServerPKs,
+  ServerPrice,
+} from "../../../../sdk/data-contracts";
+import {
+  SearchBarBenchmarkConfigOption,
+  SearchBarCustomSelectOption,
+} from "../../components/search-bar/search-bar.component";
 import {
   ADVISOR_DEFAULT_WORKLOAD_CONFIG,
   ADVISOR_DEFAULT_WORKLOAD_ID,
@@ -8,6 +15,7 @@ import {
 import {
   AdvisorBaselineServer,
   AdvisorOptimizationGoal,
+  AdvisorRegionMetadata,
   AdvisorTableColumn,
 } from "./advisor.types";
 
@@ -195,4 +203,45 @@ export function getAdvisorCompareKey(
   server: Pick<ServerPKs, "vendor_id" | "api_reference">,
 ): string {
   return `${server.vendor_id}::${server.api_reference}`;
+}
+
+export function normalizeAdvisorQueryStringArray(value: unknown): string[] {
+  const values = Array.isArray(value) ? value : [value];
+
+  return values
+    .flatMap((item) => {
+      if (typeof item !== "string") {
+        return [];
+      }
+
+      return item
+        .split(",")
+        .map((part) => part.trim())
+        .filter(Boolean);
+    })
+    .filter((item, index, items) => items.indexOf(item) === index);
+}
+
+export function buildAdvisorRegionSelectOptions(
+  vendorId: string | null,
+  prices: ServerPrice[],
+  regionMetadata: AdvisorRegionMetadata[],
+): SearchBarCustomSelectOption[] {
+  if (!vendorId) {
+    return [];
+  }
+
+  const metadataByRegionId = new Map(
+    regionMetadata
+      .filter((region) => region.vendor_id === vendorId)
+      .map((region) => [region.region_id, region]),
+  );
+
+  return [...new Set(prices.map((price) => price.region_id))]
+    .filter(Boolean)
+    .map((regionId) => ({
+      value: `${vendorId}~${regionId}`,
+      label: metadataByRegionId.get(regionId)?.name || regionId,
+    }))
+    .sort((left, right) => left.label.localeCompare(right.label));
 }

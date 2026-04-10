@@ -49,6 +49,12 @@ export const ADVISOR_DEFAULT_CURRENCY = "USD";
 
 export const ADVISOR_DEFAULT_PRICE_ALLOCATION = "ANY";
 
+export const ADVISOR_PRICE_ALLOCATION_TOOLTIP =
+  "Choose which pricing model the advisor should compare against. Leave this disabled to rank recommendations by the overall best available price across ondemand, monthly, and spot offers.";
+
+export const ADVISOR_BASELINE_REGION_TOOLTIP =
+  "Uses the baseline server's known regional availability to narrow recommendations to a single region where that server is sold. This control is disabled when Vendor and region id filters are in use, because those filters support broader multi-region choices.";
+
 export const ADVISOR_DEFAULT_WORKLOAD_ID = "stress_ng:bestn";
 
 export const ADVISOR_DEFAULT_WORKLOAD_CONFIG = "{}";
@@ -71,6 +77,9 @@ export const ADVISOR_CUSTOM_QUERY_PARAM_NAMES = [
   "avg_cpu_utilization",
   "minimum_memory",
   "peak_gpu_memory",
+  "price_allocation_enabled",
+  "baseline_region_enabled",
+  "baseline_vendor_region",
 ] as const;
 
 export const ADVISOR_PAGE_TITLE = "Cloud Server Advisor";

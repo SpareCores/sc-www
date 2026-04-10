@@ -56,6 +56,7 @@
         <div class="advisor-filter-bar-filters overflow-hidden bg-secondary">
           <app-search-bar
             [query]="query()"
+            [extraParameters]="advisorSearchBarExtraParameters()"
             [filterCategories]="advisorFilterCategories"
             [searchParameters]="searchParameters"
             [customControls]="customControls()"
@@ -120,28 +121,6 @@
           </button>
 
           <div class="advisor-top-controls">
-            <div class="min-w-0">
-              <button
-                id="advisor_allocation_button"
-                [appFlowbiteDropdown]="'advisor_allocation_options'"
-                #allocationDropdown="appFlowbiteDropdown"
-                class="advisor-dropdown-button min-w-0 max-w-full"
-                type="button"
-              >
-                <div class="px-4 py-3 flex-1 min-w-0 truncate">
-                  {{ bestPriceAllocation().name }}
-                </div>
-                <div
-                  class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
-                >
-                  <lucide-icon
-                    name="calendar-search"
-                    class="h-6 w-6 text-emerald-400"
-                  ></lucide-icon>
-                </div>
-              </button>
-            </div>
-
             <div>
               <button
                 id="advisor_currency_button"
@@ -702,32 +681,6 @@
         tabindex="0"
       >
         <div class="advisor-dropdown-menu-label">{{ pageLimit }}</div>
-      </li>
-    }
-  </ul>
-</div>
-
-<div id="advisor_allocation_options" class="advisor-dropdown-menu hidden w-44">
-  <ul
-    class="advisor-dropdown-menu-list px-1"
-    aria-labelledby="advisor_allocation_button"
-  >
-    @for (
-      allocationType of bestPriceAllocationTypes;
-      track allocationType.name
-    ) {
-      <li
-        class="advisor-dropdown-menu-option"
-        (click)="selectAllocation(allocationType)"
-        (keydown.enter)="selectAllocation(allocationType)"
-        (keydown.space)="
-          selectAllocation(allocationType); $event.preventDefault()
-        "
-        role="option"
-        [attr.aria-selected]="allocationType === bestPriceAllocation()"
-        tabindex="0"
-      >
-        <div class="advisor-dropdown-menu-label">{{ allocationType.name }}</div>
       </li>
     }
   </ul>

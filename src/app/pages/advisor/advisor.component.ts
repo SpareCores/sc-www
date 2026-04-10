@@ -32,6 +32,7 @@ import {
   OrderDir,
   SearchServersServersGetData,
   SearchServersServersGetParams,
+  ServerPrice,
   ServerPKs,
 } from "../../../../sdk/data-contracts";
 import { KeeperAPIService } from "../../services/keeper-api.service";
@@ -51,6 +52,7 @@ import { CpuCacheSizePipe } from "../../pipes/cpu-cache-size.pipe";
 import { GpuCountPipe } from "../../pipes/gpu-count.pipe";
 import {
   ADVISOR_BREADCRUMBS,
+  ADVISOR_BASELINE_REGION_TOOLTIP,
   ADVISOR_CUSTOM_QUERY_PARAM_NAMES,
   ADVISOR_DEFAULT_CURRENCY,
   ADVISOR_DEFAULT_MINIMUM_MEMORY_GIB,
@@ -63,18 +65,20 @@ import {
   ADVISOR_OPTIMIZATION_GOAL_OPTIONS,
   ADVISOR_PAGE_DESCRIPTION,
   ADVISOR_PAGE_LIMITS,
+  ADVISOR_PRICE_ALLOCATION_TOOLTIP,
   ADVISOR_PAGE_TITLE,
   ADVISOR_REQUIRED_INPUT_LABELS,
   ADVISOR_SEO,
-  ADVISOR_TABLE_COLUMNS,
 } from "./advisor.constants";
 import { AdvisorUiService } from "./advisor-ui.service";
 import {
   AdvisorBaselineServer,
   AdvisorOptimizationGoal,
+  AdvisorRegionMetadata,
   AdvisorTableColumn,
 } from "./advisor.types";
 import {
+  buildAdvisorRegionSelectOptions,
   cloneAdvisorTableColumns,
   encodeAdvisorColumnState,
   findAdvisorBenchmarkConfigOption,
@@ -83,6 +87,7 @@ import {
   getDefaultAdvisorBenchmarkConfig,
   hasCustomAdvisorColumns,
   isAdvisorOptimizationGoal,
+  normalizeAdvisorQueryStringArray,
   restoreAdvisorColumnsFromQuery,
   stableStringify,
 } from "./advisor.utils";
@@ -138,8 +143,6 @@ export class AdvisorComponent implements OnInit, OnDestroy {
   private serverCompare = inject(ServerCompareService);
   private toastService = inject(ToastService);
   readonly advisorUi = inject(AdvisorUiService);
-  readonly allocationDropdown =
-    viewChild<FlowbiteDropdownDirective>("allocationDropdown");
   readonly currencyDropdown =
     viewChild<FlowbiteDropdownDirective>("currencyDropdown");
   readonly pageDropdown = viewChild<FlowbiteDropdownDirective>("pageDropdown");
@@ -149,6 +152,7 @@ export class AdvisorComponent implements OnInit, OnDestroy {
   private recommendationRequests = new Subject<RecommendationRequest | null>();
   private recommendationRequestVersion = 0;
   private activeRecommendationRequestKey: string | null = null;
+  private baselineRegionRequestVersion = 0;
 
   readonly title = ADVISOR_PAGE_TITLE;
   readonly description = ADVISOR_PAGE_DESCRIPTION;
@@ -212,6 +216,12 @@ export class AdvisorComponent implements OnInit, OnDestroy {
   readonly bestPriceAllocation = signal<BestPriceAllocationType>(
     this.defaultBestPriceAllocation,
   );
+  readonly isPriceAllocationEnabled = signal(false);
+  readonly isBaselineRegionEnabled = signal(false);
+  readonly selectedBaselineVendorRegion = signal<string | null>(null);
+  readonly baselineServerPrices = signal<ServerPrice[]>([]);
+  readonly regionMetadata = signal<AdvisorRegionMetadata[]>([]);
+  readonly isLoadingBaselineRegions = signal(false);
   readonly possibleColumns = signal<AdvisorTableColumn[]>(
     cloneAdvisorTableColumns(),
   );
@@ -381,6 +391,38 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     return this.optimizationGoal() === "cost" ? OrderDir.Asc : OrderDir.Desc;
   });
 
+  readonly hasVendorRegionQuerySelections = computed(() => {
+    return (
+      normalizeAdvisorQueryStringArray(this.query().vendor_regions).length > 0
+    );
+  });
+
+  readonly baselineRegionOptions = computed(() => {
+    return buildAdvisorRegionSelectOptions(
+      this.selectedBaselineServer()?.vendor_id || null,
+      this.baselineServerPrices(),
+      this.regionMetadata(),
+    );
+  });
+
+  readonly isBaselineRegionControlDisabled = computed(() => {
+    return (
+      !this.selectedBaselineServer() || this.hasVendorRegionQuerySelections()
+    );
+  });
+
+  readonly advisorSearchBarExtraParameters = computed(() => {
+    if (!this.isBaselineRegionEnabled()) {
+      return {};
+    }
+
+    return {
+      vendor_regions: this.selectedBaselineVendorRegion()
+        ? [this.selectedBaselineVendorRegion()]
+        : [],
+    };
+  });
+
   readonly recommendationQuery = computed<SearchServersServersGetParams | null>(
     () => {
       const selectedBenchmarkConfig = this.selectedBenchmarkConfig();
@@ -400,8 +442,15 @@ export class AdvisorComponent implements OnInit, OnDestroy {
         ...(this.query() as SearchServersServersGetParams),
       };
       const selectedBaselineServer = this.selectedBaselineServer();
+      const vendorRegions = normalizeAdvisorQueryStringArray(
+        sharedQuery.vendor_regions,
+      );
+      const dedicatedBaselineRegion =
+        this.isBaselineRegionEnabled() && !vendorRegions.length
+          ? this.selectedBaselineVendorRegion()
+          : null;
 
-      return {
+      const recommendationQuery: SearchServersServersGetParams = {
         ...sharedQuery,
         benchmark_id: selectedBenchmarkConfig.benchmark_id,
         benchmark_config: selectedBenchmarkConfig.config,
@@ -422,6 +471,7 @@ export class AdvisorComponent implements OnInit, OnDestroy {
             ? this.selectedCurrency().slug
             : undefined,
         best_price_allocation:
+          this.isPriceAllocationEnabled() &&
           this.bestPriceAllocation().slug !== "ANY"
             ? this.bestPriceAllocation().slug
             : undefined,
@@ -433,114 +483,178 @@ export class AdvisorComponent implements OnInit, OnDestroy {
         page: this.page(),
         add_total_count_header: true,
       };
+
+      if (dedicatedBaselineRegion) {
+        recommendationQuery.vendor_regions =
+          dedicatedBaselineRegion as SearchServersServersGetParams["vendor_regions"];
+      }
+
+      return recommendationQuery;
     },
   );
 
-  readonly customControls = computed<SearchBarCustomControl[]>(() => [
-    {
-      name: "baseline_server",
+  readonly customControls = computed<SearchBarCustomControl[]>(() => {
+    const controls: SearchBarCustomControl[] = [
+      {
+        name: "baseline_server",
+        category_id: "advisor",
+        type: "serverAutocomplete",
+        title: "Baseline Server",
+        placeholder: "Search for server...",
+        required: true,
+        minCharacters: 3,
+        inputValue: this.baselineServerInput(),
+        selectedServer: this.selectedBaselineServer(),
+        options: this.filteredBaselineServers(),
+        emptyMessage: this.isLoadingBaselineServers()
+          ? "Loading server catalog..."
+          : "No matching servers found.",
+      },
+      {
+        name: "server_workload",
+        category_id: "advisor",
+        type: "benchmarkConfigSelect",
+        title: "Server workload",
+        placeholder: "Search benchmark or browse categories...",
+        required: true,
+        minCharacters: 3,
+        inputValue: this.benchmarkConfigInput(),
+        selectedBenchmarkConfig: this.selectedBenchmarkConfig(),
+        benchmarkOptions: this.visibleBenchmarkConfigOptions(),
+        benchmarkGroups: this.benchmarkGroups(),
+        emptyMessage: this.isLoadingBenchmarkConfigs()
+          ? "Loading benchmark workloads..."
+          : "No matching workloads found.",
+      },
+      {
+        name: "optimization_goal",
+        category_id: "advisor",
+        type: "singleSelect",
+        title: "Optimization goal",
+        required: true,
+        description:
+          "Selecting performance will search for servers delivering higher performance for the same price, while selecting cost-efficiency will find the cheapest option of right-sized server types.",
+        selectedValue: this.optimizationGoal(),
+        selectOptions: this.optimizationGoalOptions,
+      },
+      {
+        name: "average_cpu_utilization",
+        category_id: "advisor",
+        type: "rangeSlider",
+        title: "Average utilization",
+        required: true,
+        description:
+          "The selected workload score threshold is derived from the baseline server score scaled by this expected average utilization.",
+        numericValue: this.averageCpuUtilization(),
+        min: 0,
+        max: 100,
+        step: 10,
+        unit: "%",
+        tickValues: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
+        showUnitInTicks: false,
+      },
+      {
+        name: "minimum_memory",
+        category_id: "advisor",
+        type: "powerOfTwoStepper",
+        title: "Minimum memory",
+        required: true,
+        description:
+          "Memory requirement in GiB. The stepper follows powers of two starting at 0.5 GiB.",
+        numericValue: this.minimumMemoryGiB(),
+        unit: "GiB",
+        defaultNumericValue: 0.5,
+      },
+      {
+        name: "peak_gpu_memory",
+        category_id: "advisor",
+        type: "powerOfTwoStepper",
+        title: "Peak GPU memory usage",
+        description:
+          "Total GPU memory requirement in GiB. Leave at 0 to avoid applying GPU filters.",
+        numericValue: this.peakGpuMemoryGiB(),
+        unit: "GiB",
+        allowZero: true,
+        defaultNumericValue: 0,
+      },
+      {
+        name: "limit_cpu_allocation",
+        category_id: "advisor",
+        type: "checkbox",
+        sectionHeader: "Limit search for matching:",
+        title: `CPU allocation (${this.selectedBaselineServer()?.cpu_allocation || "..."})`,
+        checked: this.limitToSameCpuAllocation(),
+        disabled: !this.selectedBaselineServer()?.cpu_allocation,
+      },
+      {
+        name: "limit_architecture",
+        category_id: "advisor",
+        type: "checkbox",
+        title: `CPU architecture (${this.selectedBaselineServer()?.cpu_architecture || "..."})`,
+        checked: this.limitToSameArchitecture(),
+        disabled: !this.selectedBaselineServer()?.cpu_architecture,
+      },
+      {
+        name: "price_allocation_enabled",
+        category_id: "advisor",
+        type: "checkbox",
+        title: "Price allocation",
+        checked: this.isPriceAllocationEnabled(),
+        description: ADVISOR_PRICE_ALLOCATION_TOOLTIP,
+        descriptionDisplay: "tooltip",
+      },
+    ];
+
+    if (this.isPriceAllocationEnabled()) {
+      controls.push({
+        name: "price_allocation",
+        category_id: "advisor",
+        type: "singleSelect",
+        title: "Price allocation type",
+        nested: true,
+        hideTitle: true,
+        selectedValue: this.bestPriceAllocation().slug,
+        selectOptions: this.bestPriceAllocationTypes.map((allocation) => ({
+          value: allocation.slug,
+          label: allocation.name,
+        })),
+      });
+    }
+
+    controls.push({
+      name: "baseline_region_enabled",
       category_id: "advisor",
-      type: "serverAutocomplete",
-      title: "Baseline Server",
-      placeholder: "Search for server...",
-      required: true,
-      minCharacters: 3,
-      inputValue: this.baselineServerInput(),
-      selectedServer: this.selectedBaselineServer(),
-      options: this.filteredBaselineServers(),
-      emptyMessage: this.isLoadingBaselineServers()
-        ? "Loading server catalog..."
-        : "No matching servers found.",
-    },
-    {
-      name: "limit_search_group",
-      category_id: "advisor",
-      type: "checkboxGroup",
-      sectionHeader: "Limit search for matching:",
-      title: "Limit search",
-      checkboxOptions: [
-        {
-          name: "limit_cpu_allocation",
-          title: `CPU allocation (${this.selectedBaselineServer()?.cpu_allocation || "..."})`,
-          checked: this.limitToSameCpuAllocation(),
-          disabled: !this.selectedBaselineServer()?.cpu_allocation,
-        },
-        {
-          name: "limit_architecture",
-          title: `CPU architecture (${this.selectedBaselineServer()?.cpu_architecture || "..."})`,
-          checked: this.limitToSameArchitecture(),
-          disabled: !this.selectedBaselineServer()?.cpu_architecture,
-        },
-      ],
-    },
-    {
-      name: "server_workload",
-      category_id: "advisor",
-      type: "benchmarkConfigSelect",
-      title: "Server workload",
-      placeholder: "Search benchmark or browse categories...",
-      required: true,
-      minCharacters: 3,
-      inputValue: this.benchmarkConfigInput(),
-      selectedBenchmarkConfig: this.selectedBenchmarkConfig(),
-      benchmarkOptions: this.visibleBenchmarkConfigOptions(),
-      benchmarkGroups: this.benchmarkGroups(),
-      emptyMessage: this.isLoadingBenchmarkConfigs()
-        ? "Loading benchmark workloads..."
-        : "No matching workloads found.",
-    },
-    {
-      name: "optimization_goal",
-      category_id: "advisor",
-      type: "singleSelect",
-      title: "Optimization goal",
-      required: true,
-      description:
-        "Selecting performance will search for servers delivering higher performance for the same price, while selecting cost-efficiency will find the cheapest option of right-sized server types.",
-      selectedValue: this.optimizationGoal(),
-      selectOptions: this.optimizationGoalOptions,
-    },
-    {
-      name: "average_cpu_utilization",
-      category_id: "advisor",
-      type: "rangeSlider",
-      title: "Average utilization",
-      required: true,
-      description:
-        "The selected workload score threshold is derived from the baseline server score scaled by this expected average utilization.",
-      numericValue: this.averageCpuUtilization(),
-      min: 0,
-      max: 100,
-      step: 10,
-      unit: "%",
-      tickValues: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
-      showUnitInTicks: false,
-    },
-    {
-      name: "minimum_memory",
-      category_id: "advisor",
-      type: "powerOfTwoStepper",
-      title: "Minimum memory",
-      required: true,
-      description:
-        "Memory requirement in GiB. The stepper follows powers of two starting at 0.5 GiB.",
-      numericValue: this.minimumMemoryGiB(),
-      unit: "GiB",
-      defaultNumericValue: 0.5,
-    },
-    {
-      name: "peak_gpu_memory",
-      category_id: "advisor",
-      type: "powerOfTwoStepper",
-      title: "Peak GPU memory usage",
-      description:
-        "Total GPU memory requirement in GiB. Leave at 0 to avoid applying GPU filters.",
-      numericValue: this.peakGpuMemoryGiB(),
-      unit: "GiB",
-      allowZero: true,
-      defaultNumericValue: 0,
-    },
-  ]);
+      type: "checkbox",
+      title: "Region",
+      checked: this.isBaselineRegionEnabled(),
+      disabled: this.isBaselineRegionControlDisabled(),
+      description: ADVISOR_BASELINE_REGION_TOOLTIP,
+      descriptionDisplay: "tooltip",
+    });
+
+    if (this.isBaselineRegionEnabled()) {
+      controls.push({
+        name: "baseline_region",
+        category_id: "advisor",
+        type: "singleSelect",
+        title: "Available region",
+        nested: true,
+        hideTitle: true,
+        placeholder: this.isLoadingBaselineRegions()
+          ? "Loading regions..."
+          : this.baselineRegionOptions().length > 0
+            ? "Select region"
+            : "No baseline regions available",
+        selectedValue: this.selectedBaselineVendorRegion(),
+        selectOptions: this.baselineRegionOptions(),
+        disabled:
+          this.isLoadingBaselineRegions() ||
+          this.baselineRegionOptions().length === 0,
+      });
+    }
+
+    return controls;
+  });
 
   constructor() {
     this.compareSubscription.add(
@@ -614,6 +728,48 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     });
 
     effect(() => {
+      const selectedBaselineServer = this.selectedBaselineServer();
+
+      if (!selectedBaselineServer) {
+        this.baselineServerPrices.set([]);
+        this.isLoadingBaselineRegions.set(false);
+        this.isBaselineRegionEnabled.set(false);
+        this.selectedBaselineVendorRegion.set(null);
+        return;
+      }
+
+      void this.loadBaselineRegionPrices(selectedBaselineServer);
+    });
+
+    effect(() => {
+      const selectedBaselineServer = this.selectedBaselineServer();
+
+      if (!selectedBaselineServer) {
+        return;
+      }
+
+      if (this.isBaselineRegionControlDisabled()) {
+        this.isBaselineRegionEnabled.set(false);
+        this.selectedBaselineVendorRegion.set(null);
+        return;
+      }
+
+      const selectedBaselineVendorRegion = this.selectedBaselineVendorRegion();
+
+      if (
+        !selectedBaselineVendorRegion ||
+        this.isLoadingBaselineRegions() ||
+        this.baselineRegionOptions().some((option) => {
+          return option.value === selectedBaselineVendorRegion;
+        })
+      ) {
+        return;
+      }
+
+      this.selectedBaselineVendorRegion.set(null);
+    });
+
+    effect(() => {
       const recommendationQuery = this.recommendationQuery();
 
       if (!recommendationQuery) {
@@ -675,6 +831,7 @@ export class AdvisorComponent implements OnInit, OnDestroy {
 
     this.loadBaselineServerRows();
     this.loadBenchmarkConfigs();
+    this.loadRegionMetadata();
     this.restoreStateFromRoute();
     this.syncCompareSelection();
     this.compareSubscription.add(
@@ -742,12 +899,6 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     this.selectedCurrency.set(currency);
     this.page.set(1);
     this.currencyDropdown()?.hide();
-  }
-
-  selectAllocation(allocation: BestPriceAllocationType): void {
-    this.bestPriceAllocation.set(allocation);
-    this.page.set(1);
-    this.allocationDropdown()?.hide();
   }
 
   setColumnVisibility(columnName: string, show: boolean): void {
@@ -842,6 +993,11 @@ export class AdvisorComponent implements OnInit, OnDestroy {
   }
 
   onSearchChanged(query: Record<string, unknown>): void {
+    if (normalizeAdvisorQueryStringArray(query.vendor_regions).length > 0) {
+      this.isBaselineRegionEnabled.set(false);
+      this.selectedBaselineVendorRegion.set(null);
+    }
+
     this.query.set(query);
     this.page.set(1);
   }
@@ -890,6 +1046,24 @@ export class AdvisorComponent implements OnInit, OnDestroy {
           ADVISOR_DEFAULT_PEAK_GPU_MEMORY_GIB,
         );
         break;
+      case "price_allocation_enabled":
+        this.applyBooleanControlValue(
+          this.isPriceAllocationEnabled,
+          event.value,
+        );
+        break;
+      case "price_allocation":
+        this.applyPriceAllocationControlValue(event.value);
+        break;
+      case "baseline_region_enabled":
+        this.applyBooleanControlValue(
+          this.isBaselineRegionEnabled,
+          event.value,
+        );
+        break;
+      case "baseline_region":
+        this.applyBaselineRegionControlValue(event.value);
+        break;
       default:
         return;
     }
@@ -920,6 +1094,10 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     this.selectedCurrency.set(this.defaultCurrency);
     this.displayedCurrency.set(this.defaultCurrency);
     this.bestPriceAllocation.set(this.defaultBestPriceAllocation);
+    this.isPriceAllocationEnabled.set(false);
+    this.isBaselineRegionEnabled.set(false);
+    this.selectedBaselineVendorRegion.set(null);
+    this.baselineServerPrices.set([]);
     this.possibleColumns.set(cloneAdvisorTableColumns());
     this.page.set(1);
     this.limit.set(ADVISOR_DEFAULT_PAGE_LIMIT);
@@ -1013,6 +1191,49 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     }
   }
 
+  private loadRegionMetadata(): void {
+    this.keeperApi
+      .getRegions()
+      .then((response) => {
+        this.regionMetadata.set(response?.body || []);
+      })
+      .catch((error) => {
+        console.error("Failed to preload advisor region metadata", error);
+        this.regionMetadata.set([]);
+      });
+  }
+
+  private async loadBaselineRegionPrices(
+    server: AdvisorBaselineServer,
+  ): Promise<void> {
+    const requestVersion = ++this.baselineRegionRequestVersion;
+    this.isLoadingBaselineRegions.set(true);
+
+    try {
+      const response = await this.keeperApi.getServerPrices(
+        server.vendor_id,
+        server.api_reference,
+      );
+
+      if (requestVersion !== this.baselineRegionRequestVersion) {
+        return;
+      }
+
+      this.baselineServerPrices.set(response?.body || []);
+    } catch (error) {
+      if (requestVersion !== this.baselineRegionRequestVersion) {
+        return;
+      }
+
+      console.error("Failed to load advisor baseline region options", error);
+      this.baselineServerPrices.set([]);
+    } finally {
+      if (requestVersion === this.baselineRegionRequestVersion) {
+        this.isLoadingBaselineRegions.set(false);
+      }
+    }
+  }
+
   private async requestRecommendations(
     requestKey: string,
     recommendationQuery: SearchServersServersGetParams,
@@ -1096,6 +1317,16 @@ export class AdvisorComponent implements OnInit, OnDestroy {
           ),
         );
 
+        const vendorRegions = normalizeAdvisorQueryStringArray(
+          baseQuery.vendor_regions,
+        );
+
+        if (vendorRegions.length > 0) {
+          baseQuery.vendor_regions = vendorRegions;
+        } else {
+          delete baseQuery.vendor_regions;
+        }
+
         this.query.set(baseQuery);
         this.page.set(
           queryParams.page ? parseInt(String(queryParams.page), 10) || 1 : 1,
@@ -1123,6 +1354,10 @@ export class AdvisorComponent implements OnInit, OnDestroy {
                 );
               }) || this.defaultBestPriceAllocation
             : this.defaultBestPriceAllocation,
+        );
+        this.isPriceAllocationEnabled.set(
+          queryParams.price_allocation_enabled === "true" ||
+            Boolean(queryParams.best_price_allocation),
         );
         this.manualOrderBy.set(
           queryParams.order_by ? String(queryParams.order_by) : undefined,
@@ -1202,6 +1437,16 @@ export class AdvisorComponent implements OnInit, OnDestroy {
             ? Number(queryParams.peak_gpu_memory)
             : ADVISOR_DEFAULT_PEAK_GPU_MEMORY_GIB,
         );
+        this.isBaselineRegionEnabled.set(
+          vendorRegions.length === 0 &&
+            (queryParams.baseline_region_enabled === "true" ||
+              Boolean(queryParams.baseline_vendor_region)),
+        );
+        this.selectedBaselineVendorRegion.set(
+          vendorRegions.length === 0 && queryParams.baseline_vendor_region
+            ? String(queryParams.baseline_vendor_region)
+            : null,
+        );
 
         this.lastEncodedQuery = encodeQueryParams(
           this.getUrlStateQueryParams(),
@@ -1279,10 +1524,26 @@ export class AdvisorComponent implements OnInit, OnDestroy {
       queryParams.currency = this.selectedCurrency().slug;
     }
 
+    if (this.isPriceAllocationEnabled()) {
+      queryParams.price_allocation_enabled = "true";
+
+      if (
+        this.bestPriceAllocation().slug !== this.defaultBestPriceAllocation.slug
+      ) {
+        queryParams.best_price_allocation = this.bestPriceAllocation().slug;
+      }
+    }
+
     if (
-      this.bestPriceAllocation().slug !== this.defaultBestPriceAllocation.slug
+      this.isBaselineRegionEnabled() &&
+      !this.hasVendorRegionQuerySelections()
     ) {
-      queryParams.best_price_allocation = this.bestPriceAllocation().slug;
+      queryParams.baseline_region_enabled = "true";
+
+      if (this.selectedBaselineVendorRegion()) {
+        queryParams.baseline_vendor_region =
+          this.selectedBaselineVendorRegion();
+      }
     }
 
     if (this.hasCustomColumns()) {
@@ -1370,6 +1631,25 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     this.pendingWorkloadConfig.set(null);
   }
 
+  private applyPriceAllocationControlValue(value: unknown): void {
+    const selectedValue = this.getSelectedControlValue(value);
+
+    if (!selectedValue) {
+      this.bestPriceAllocation.set(this.defaultBestPriceAllocation);
+      return;
+    }
+
+    this.bestPriceAllocation.set(
+      this.bestPriceAllocationTypes.find((allocation) => {
+        return allocation.slug === selectedValue;
+      }) || this.defaultBestPriceAllocation,
+    );
+  }
+
+  private applyBaselineRegionControlValue(value: unknown): void {
+    this.selectedBaselineVendorRegion.set(this.getSelectedControlValue(value));
+  }
+
   private applyOptimizationGoalControlValue(value: unknown): void {
     const nextValue =
       value && typeof value === "object"
@@ -1394,5 +1674,16 @@ export class AdvisorComponent implements OnInit, OnDestroy {
       value && typeof value === "object" ? (value as { numericValue?: T }) : {};
 
     target.set((nextValue.numericValue ?? fallback) as T);
+  }
+
+  private getSelectedControlValue(value: unknown): string | null {
+    const nextValue =
+      value && typeof value === "object"
+        ? (value as { selectedValue?: unknown })
+        : {};
+
+    return typeof nextValue.selectedValue === "string"
+      ? nextValue.selectedValue
+      : null;
   }
 }
