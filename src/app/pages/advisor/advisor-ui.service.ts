@@ -89,7 +89,7 @@ export class AdvisorUiService {
   }
 
   formatScore(value: number | null | undefined): string {
-    if (!value) {
+    if (value === null || value === undefined) {
       return ADVISOR_EMPTY_VALUE;
     }
 
