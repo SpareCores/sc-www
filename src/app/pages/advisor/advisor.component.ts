@@ -140,6 +140,8 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     "performance" | "cost" | "cost-efficiency"
   >("cost");
   readonly averageCpuUtilization = signal<number | null>(null);
+  readonly limitToSameArchitecture = signal(false);
+  readonly limitToSameCpuAllocation = signal(false);
   readonly minimumMemoryGiB = signal<number | null>(0.5);
   readonly peakGpuMemoryGiB = signal<number>(0);
   readonly recommendations = signal<SearchServersServersGetData>([]);
@@ -376,6 +378,7 @@ export class AdvisorComponent implements OnInit, OnDestroy {
       const sharedQuery = {
         ...(this.query() as SearchServersServersGetParams),
       };
+      const selectedBaselineServer = this.selectedBaselineServer();
 
       return {
         ...sharedQuery,
@@ -383,6 +386,16 @@ export class AdvisorComponent implements OnInit, OnDestroy {
         benchmark_config: selectedBenchmarkConfig.config,
         benchmark_score_min: benchmarkScoreMinimum,
         memory_min: minimumMemoryGiB,
+        architecture:
+          this.limitToSameArchitecture() &&
+          selectedBaselineServer?.cpu_architecture
+            ? selectedBaselineServer.cpu_architecture
+            : sharedQuery.architecture,
+        cpu_allocation:
+          this.limitToSameCpuAllocation() &&
+          selectedBaselineServer?.cpu_allocation
+            ? selectedBaselineServer.cpu_allocation
+            : sharedQuery.cpu_allocation,
         currency:
           this.selectedCurrency().slug !== "USD"
             ? this.selectedCurrency().slug
@@ -417,6 +430,27 @@ export class AdvisorComponent implements OnInit, OnDestroy {
       emptyMessage: this.isLoadingBaselineServers()
         ? "Loading server catalog..."
         : "No matching servers found.",
+    },
+    {
+      name: "limit_search_group",
+      category_id: "advisor",
+      type: "checkboxGroup",
+      sectionHeader: "Limit search for matching:",
+      title: "Limit search",
+      checkboxOptions: [
+        {
+          name: "limit_cpu_allocation",
+          title: `CPU allocation (${this.selectedBaselineServer()?.cpu_allocation || "..."})`,
+          checked: this.limitToSameCpuAllocation(),
+          disabled: !this.selectedBaselineServer()?.cpu_allocation,
+        },
+        {
+          name: "limit_architecture",
+          title: `CPU architecture (${this.selectedBaselineServer()?.cpu_architecture || "..."})`,
+          checked: this.limitToSameArchitecture(),
+          disabled: !this.selectedBaselineServer()?.cpu_architecture,
+        },
+      ],
     },
     {
       name: "server_workload",
@@ -973,6 +1007,34 @@ export class AdvisorComponent implements OnInit, OnDestroy {
       this.selectedBaselineServer.set(nextValue.selectedServer || null);
       this.pendingBaselineVendorId.set(null);
       this.pendingBaselineApiReference.set(null);
+
+      if (!this.selectedBaselineServer()) {
+        this.limitToSameArchitecture.set(false);
+        this.limitToSameCpuAllocation.set(false);
+      }
+
+      this.page.set(1);
+      return;
+    }
+
+    if (event.name === "limit_architecture") {
+      const nextValue =
+        event.value && typeof event.value === "object"
+          ? (event.value as { checked?: boolean })
+          : {};
+
+      this.limitToSameArchitecture.set(nextValue.checked || false);
+      this.page.set(1);
+      return;
+    }
+
+    if (event.name === "limit_cpu_allocation") {
+      const nextValue =
+        event.value && typeof event.value === "object"
+          ? (event.value as { checked?: boolean })
+          : {};
+
+      this.limitToSameCpuAllocation.set(nextValue.checked || false);
       this.page.set(1);
       return;
     }
@@ -1056,6 +1118,8 @@ export class AdvisorComponent implements OnInit, OnDestroy {
 
     this.query.set({});
     this.selectedBaselineServer.set(null);
+    this.limitToSameArchitecture.set(false);
+    this.limitToSameCpuAllocation.set(false);
     this.baselineServerInput.set("");
     this.pendingBaselineVendorId.set(null);
     this.pendingBaselineApiReference.set(null);
@@ -1253,6 +1317,8 @@ export class AdvisorComponent implements OnInit, OnDestroy {
           "order_dir",
           "baseline_vendor",
           "baseline_server",
+          "limit_architecture",
+          "limit_cpu_allocation",
           "workload_id",
           "workload_config",
           "optimization_goal",
@@ -1325,6 +1391,15 @@ export class AdvisorComponent implements OnInit, OnDestroy {
         if (!queryParams.baseline_vendor || !queryParams.baseline_server) {
           this.selectedBaselineServer.set(null);
           this.baselineServerInput.set("");
+          this.limitToSameArchitecture.set(false);
+          this.limitToSameCpuAllocation.set(false);
+        } else {
+          this.limitToSameArchitecture.set(
+            queryParams.limit_architecture === "true",
+          );
+          this.limitToSameCpuAllocation.set(
+            queryParams.limit_cpu_allocation === "true",
+          );
         }
 
         this.pendingWorkloadId.set(
@@ -1390,6 +1465,20 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     if (baselineVendorId && baselineApiReference) {
       queryParams.baseline_vendor = baselineVendorId;
       queryParams.baseline_server = baselineApiReference;
+
+      if (
+        this.limitToSameArchitecture() &&
+        selectedBaselineServer?.cpu_architecture
+      ) {
+        queryParams.limit_architecture = "true";
+      }
+
+      if (
+        this.limitToSameCpuAllocation() &&
+        selectedBaselineServer?.cpu_allocation
+      ) {
+        queryParams.limit_cpu_allocation = "true";
+      }
     }
 
     const workloadId =

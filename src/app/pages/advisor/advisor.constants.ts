@@ -15,6 +15,8 @@ export const ADVISOR_DEFAULT_SERVER_COLUMNS = [
   "memory_amount",
   "gpu_memory_total",
   "storage_size",
+  "cpu_architecture",
+  "cpu_allocation",
 ] as const;
 
 export const ADVISOR_FILTER_CATEGORIES = [

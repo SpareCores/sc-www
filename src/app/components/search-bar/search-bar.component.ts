@@ -70,7 +70,9 @@ export type SearchBarCustomControl = {
     | "benchmarkConfigSelect"
     | "singleSelect"
     | "rangeSlider"
-    | "powerOfTwoStepper";
+    | "powerOfTwoStepper"
+    | "checkbox"
+    | "checkboxGroup";
   title: string;
   placeholder?: string;
   required?: boolean;
@@ -94,6 +96,16 @@ export type SearchBarCustomControl = {
   allowZero?: boolean;
   defaultNumericValue?: number | null;
   showUnitInTicks?: boolean;
+  checked?: boolean;
+  disabled?: boolean;
+  sectionHeader?: string;
+  checkboxOptions?: {
+    name: string;
+    title: string;
+    checked?: boolean;
+    disabled?: boolean;
+    description?: string;
+  }[];
 };
 
 export type SearchBarCustomSelectOption = {
@@ -122,6 +134,8 @@ export type SearchBarServerOption = Pick<
       | "memory_amount"
       | "storage_size"
       | "gpu_memory_total"
+      | "cpu_architecture"
+      | "cpu_allocation"
     >
   >;
 
@@ -577,6 +591,20 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
     this.customControlChanged.emit({
       name: control.name,
       value: { numericValue: value },
+    });
+  }
+
+  onCustomCheckboxChange(control: SearchBarCustomControl, checked: boolean) {
+    this.customControlChanged.emit({
+      name: control.name,
+      value: { checked },
+    });
+  }
+
+  onCustomCheckboxGroupChange(optionName: string, checked: boolean) {
+    this.customControlChanged.emit({
+      name: optionName,
+      value: { checked },
     });
   }
 
