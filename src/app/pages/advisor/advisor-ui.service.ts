@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { ADVISOR_DEFAULT_EMPTY_RESULTS_MESSAGE } from "./advisor.copy";
+import { ADVISOR_DEFAULT_EMPTY_RESULTS_MESSAGE } from "./advisor.constants";
 import { AdvisorBaselineServer, AdvisorSummaryAlert } from "./advisor.types";
 import { matchesAdvisorBaselineServer } from "./advisor.utils";
 

@@ -1,6 +1,6 @@
 import { BreadcrumbSegment } from "../../components/breadcrumbs/breadcrumbs.component";
 import { SearchBarCustomSelectOption } from "../../components/search-bar/search-bar.component";
-import { AdvisorTableColumn } from "./advisor.types";
+import { AdvisorSeoMetadata, AdvisorTableColumn } from "./advisor.types";
 
 export const ADVISOR_BREADCRUMBS: BreadcrumbSegment[] = [
   { name: "Home", url: "/" },
@@ -31,6 +31,22 @@ export const ADVISOR_OPTIMIZATION_GOAL_OPTIONS: SearchBarCustomSelectOption[] =
     { value: "cost", label: "Cost" },
     { value: "cost-efficiency", label: "Cost-efficiency" },
   ];
+
+export const ADVISOR_PAGE_TITLE = "Server Advisor";
+
+export const ADVISOR_PAGE_DESCRIPTION =
+  "Compare a baseline server against workload-aware alternatives and surface the best cloud replacement options based on performance, cost efficiency, memory, and GPU constraints. Use the Spare Cores Server Advisor to explore recommendations, refine the workload inputs, and share the resulting query with your team.";
+
+export const ADVISOR_SEO: AdvisorSeoMetadata = {
+  title: "Server Advisor - Spare Cores",
+  description:
+    "Compare a baseline server against workload-aware alternatives with the Spare Cores Server Advisor. Explore recommendations based on performance, cost, memory, and GPU requirements, then share the advisor link with your team.",
+  keywords:
+    "server advisor, cloud servers, workload recommendations, cost efficiency, performance, spare cores",
+};
+
+export const ADVISOR_DEFAULT_EMPTY_RESULTS_MESSAGE =
+  "No recommended servers available.";
 
 export const ADVISOR_TABLE_COLUMNS: AdvisorTableColumn[] = [
   { name: "NAME & PROVIDER", type: "name", show: true },
