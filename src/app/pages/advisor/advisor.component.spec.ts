@@ -842,7 +842,7 @@ describe("AdvisorComponent", () => {
   it("clears advisor filters back to their defaults", () => {
     const baselineServer = component.serverTableRows()[0];
 
-    component.query.set({ vendor_ids: ["aws"] });
+    component.query.set({ vendor: ["aws"] });
     component.selectedBaselineServer.set(baselineServer);
     component.baselineServerInput.set("aws large");
     component.optimizationGoal.set("performance");
