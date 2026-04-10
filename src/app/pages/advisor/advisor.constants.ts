@@ -73,17 +73,17 @@ export const ADVISOR_CUSTOM_QUERY_PARAM_NAMES = [
   "peak_gpu_memory",
 ] as const;
 
-export const ADVISOR_PAGE_TITLE = "Server Advisor";
+export const ADVISOR_PAGE_TITLE = "Cloud Server Advisor";
 
 export const ADVISOR_PAGE_DESCRIPTION =
-  "Compare a baseline server against workload-aware alternatives and surface the best cloud replacement options based on performance, cost efficiency, memory, and GPU constraints. Use the Spare Cores Server Advisor to explore recommendations, refine the workload inputs, and share the resulting query with your team.";
+  "Transform your high-level server utilization telemetry data into ranked, explainable cloud resource allocation recommendations. Compare your baseline choice against workload-aware alternatives to reduce costs and improve performance or cost efficiency of your workloads.";
 
 export const ADVISOR_SEO: AdvisorSeoMetadata = {
-  title: "Server Advisor - Spare Cores",
+  title: "Cloud Server Advisor - Spare Cores",
   description:
-    "Compare a baseline server against workload-aware alternatives with the Spare Cores Server Advisor. Explore recommendations based on performance, cost, memory, and GPU requirements, then share the advisor link with your team.",
+    "Transform your high-level server utilization telemetry data into ranked, explainable cloud resource allocation recommendations. Compare your baseline choice against workload-aware alternatives to reduce costs and improve performance or cost efficiency of your workloads.",
   keywords:
-    "server advisor, cloud servers, workload recommendations, cost efficiency, performance, spare cores",
+    "cloud server advisor, cloud servers, workload recommendations, cost efficiency, performance, spare cores",
 };
 
 export const ADVISOR_DEFAULT_EMPTY_RESULTS_MESSAGE =
