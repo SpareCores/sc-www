@@ -7,7 +7,7 @@ import {
 } from "@angular/core/testing";
 import { ActivatedRoute } from "@angular/router";
 import { BehaviorSubject, Subject } from "rxjs";
-import { OrderDir } from "../../../../sdk/data-contracts";
+import { OrderDir, Status } from "../../../../sdk/data-contracts";
 import { AdvisorComponent } from "./advisor.component";
 import {
   ADVISOR_DEFAULT_SERVER_COLUMNS,
@@ -270,6 +270,47 @@ describe("AdvisorComponent", () => {
 
     expect(component.filteredBaselineServers().length).toBe(1);
     expect(component.filteredBaselineServers()[0].api_reference).toBe("large");
+  });
+
+  it("sorts filtered baseline servers by vcpus, memory, vendor, and api reference", () => {
+    component.serverTableRows.set([
+      {
+        vendor_id: "gcp",
+        api_reference: "sort-a",
+        status: Status.Active,
+        vcpus: 8,
+        memory_amount: 8192,
+      },
+      {
+        vendor_id: "aws",
+        api_reference: "sort-z",
+        status: Status.Active,
+        vcpus: 4,
+        memory_amount: 8192,
+      },
+      {
+        vendor_id: "aws",
+        api_reference: "sort-a",
+        status: Status.Active,
+        vcpus: 4,
+        memory_amount: 4096,
+      },
+      {
+        vendor_id: "azure",
+        api_reference: "sort-b",
+        status: Status.Active,
+        vcpus: 4,
+        memory_amount: 4096,
+      },
+    ]);
+    component.baselineServerInput.set("so");
+
+    expect(
+      component.filteredBaselineServers().map((server) => server.vendor_id),
+    ).toEqual(["aws", "azure", "aws", "gcp"]);
+    expect(
+      component.filteredBaselineServers().map((server) => server.api_reference),
+    ).toEqual(["sort-a", "sort-b", "sort-z", "sort-a"]);
   });
 
   it("uses the server listing default visible columns and page sizes", () => {

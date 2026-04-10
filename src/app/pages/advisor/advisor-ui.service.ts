@@ -26,7 +26,47 @@ export class AdvisorUiService {
 
     return servers
       .filter((server) => matchesAdvisorBaselineServer(server, searchValue))
+      .sort((left, right) => this.compareBaselineServers(left, right))
       .slice(0, limit);
+  }
+
+  private compareBaselineServers(
+    left: Pick<
+      AdvisorBaselineServer,
+      "vcpus" | "memory_amount" | "vendor_id" | "api_reference"
+    >,
+    right: Pick<
+      AdvisorBaselineServer,
+      "vcpus" | "memory_amount" | "vendor_id" | "api_reference"
+    >,
+  ): number {
+    const vcpuDifference =
+      this.getBaselineServerNumericSortValue(left.vcpus) -
+      this.getBaselineServerNumericSortValue(right.vcpus);
+
+    if (vcpuDifference !== 0) {
+      return vcpuDifference;
+    }
+
+    const memoryDifference =
+      this.getBaselineServerNumericSortValue(left.memory_amount) -
+      this.getBaselineServerNumericSortValue(right.memory_amount);
+
+    if (memoryDifference !== 0) {
+      return memoryDifference;
+    }
+
+    const vendorDifference = left.vendor_id.localeCompare(right.vendor_id);
+
+    if (vendorDifference !== 0) {
+      return vendorDifference;
+    }
+
+    return left.api_reference.localeCompare(right.api_reference);
+  }
+
+  private getBaselineServerNumericSortValue(value: number | null | undefined) {
+    return value ?? Number.POSITIVE_INFINITY;
   }
 
   buildMissingInputsMessage(missingInputs: string[]): string {
