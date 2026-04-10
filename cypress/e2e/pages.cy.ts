@@ -20,5 +20,8 @@ describe("Visit main pages", () => {
     E2EEvent.visitURL("/legal/privacy-policy");
     E2EEvent.visitURL("/navigator/benchmark-coverage");
     E2EEvent.visitURL("/navigator/benchmark-workloads");
+    E2EEvent.visitURL(
+      "/advisor?workload_id=stress_ng:bestn&workload_config={}&minimum_memory=0.5",
+    );
   });
 });
