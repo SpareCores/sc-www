@@ -97,13 +97,26 @@ export class DropdownManagerService {
     targetID: string,
   ): Promise<{ triggerEl: HTMLElement; targetEl: HTMLElement }> {
     return new Promise((resolve) => {
-      const observer = new MutationObserver(() => {
+      const resolveIfReady = () => {
         const targetEl: HTMLElement | null = document.getElementById(targetID);
         const triggerEl: HTMLElement | null =
           document.getElementById(triggerID);
+
         if (targetEl && triggerEl) {
-          observer.disconnect();
           resolve({ triggerEl, targetEl });
+          return true;
+        }
+
+        return false;
+      };
+
+      if (resolveIfReady()) {
+        return;
+      }
+
+      const observer = new MutationObserver(() => {
+        if (resolveIfReady()) {
+          observer.disconnect();
         }
       });
       observer.observe(document.body, { childList: true, subtree: true });
