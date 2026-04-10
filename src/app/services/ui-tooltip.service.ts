@@ -79,11 +79,10 @@ export class UiTooltipService {
     }
 
     if (this.activeTooltipElement === tooltipElement) {
+      this.cancelPendingFrame();
       this.activeTooltipElement = undefined;
       this.activeAnchorElement = undefined;
     }
-
-    this.cancelPendingFrame();
 
     tooltipElement.style.display = "none";
     tooltipElement.style.visibility = "hidden";

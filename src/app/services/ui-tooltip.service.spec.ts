@@ -52,4 +52,29 @@ describe("UiTooltipService", () => {
     expect(tooltip.style.left).toBe("0px");
     expect(tooltip.style.top).toBe("0px");
   });
+
+  it("does not cancel a pending frame when hiding a different tooltip", () => {
+    const activeTooltip = document.createElement("div");
+    const otherTooltip = document.createElement("div");
+    const target = document.createElement("button");
+
+    spyOn(target, "getBoundingClientRect").and.returnValue({
+      left: 80,
+      right: 100,
+      top: 50,
+      bottom: 70,
+    } as DOMRect);
+
+    (window.requestAnimationFrame as jasmine.Spy).and.returnValue(7);
+    (window.cancelAnimationFrame as jasmine.Spy).calls.reset();
+
+    service.show(activeTooltip, {
+      currentTarget: target,
+      target,
+    } as unknown as MouseEvent);
+
+    service.hide(otherTooltip);
+
+    expect(window.cancelAnimationFrame).not.toHaveBeenCalled();
+  });
 });
