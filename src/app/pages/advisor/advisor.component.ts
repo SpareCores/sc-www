@@ -549,7 +549,7 @@ export class AdvisorComponent implements OnInit, OnDestroy {
         title: "Optimization goal",
         required: true,
         description:
-          "Selecting performance will search for servers delivering higher performance for the same price, while selecting cost-efficiency will find the cheapest option of right-sized server types.",
+          "Optimizing for cost searches for the cheapest servers matching the minimum requested performance, performance-mode ranks servers with the highest measured speed for the selected workload, and cost-efficiency target will find the servers with the highest performance at a fixed unit cost.",
         selectedValue: this.optimizationGoal(),
         selectOptions: this.optimizationGoalOptions,
       },
