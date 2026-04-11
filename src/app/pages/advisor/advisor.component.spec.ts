@@ -10,7 +10,11 @@ import { BehaviorSubject, Subject } from "rxjs";
 import { OrderDir, Status } from "../../../../sdk/data-contracts";
 import { AdvisorComponent } from "./advisor.component";
 import {
+  ADVISOR_DEFAULT_MINIMUM_MEMORY_GIB,
+  ADVISOR_DEFAULT_PAGE_LIMIT,
+  ADVISOR_DEFAULT_PEAK_GPU_MEMORY_GIB,
   ADVISOR_DEFAULT_SERVER_COLUMNS,
+  ADVISOR_PAGE_LIMITS,
   ADVISOR_TABLE_COLUMNS,
 } from "./advisor.constants";
 import { DropdownManagerService } from "../../services/dropdown-manager.service";
@@ -427,6 +431,36 @@ describe("AdvisorComponent", () => {
     expect(component.peakGpuMemoryGiB()).toBe(2);
   });
 
+  it("sanitizes invalid numeric advisor query params from the route", async () => {
+    queryParams$.next({
+      page: "-3",
+      limit: "999",
+      avg_cpu_utilization: "120",
+      minimum_memory: "-8",
+      peak_gpu_memory: "oops",
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(component.page()).toBe(1);
+    expect(component.limit()).toBe(Math.max(...ADVISOR_PAGE_LIMITS));
+    expect(component.averageCpuUtilization()).toBe(100);
+    expect(component.minimumMemoryGiB()).toBe(
+      ADVISOR_DEFAULT_MINIMUM_MEMORY_GIB,
+    );
+    expect(component.peakGpuMemoryGiB()).toBe(
+      ADVISOR_DEFAULT_PEAK_GPU_MEMORY_GIB,
+    );
+    expect(component.getUrlStateQueryParams()).not.toEqual(
+      jasmine.objectContaining({
+        page: "-3",
+        limit: "999",
+      }),
+    );
+  });
+
   it("only requests recommendations once the required inputs are valid", fakeAsync(() => {
     expect(component.recommendationQuery()).toBeNull();
     expect(searchServers).not.toHaveBeenCalled();
@@ -839,6 +873,74 @@ describe("AdvisorComponent", () => {
     expect(component.recommendations()[0]?.api_reference).toBe("newer");
   }));
 
+  it("ignores stale baseline benchmark responses", fakeAsync(() => {
+    let resolveSlow: ((value: unknown) => void) | undefined;
+    let resolveFast: ((value: unknown) => void) | undefined;
+
+    getServerBenchmark.and.callFake(
+      (vendorId: string, apiReference: string) => {
+        if (vendorId === "aws" && apiReference === "large") {
+          return new Promise((resolve) => {
+            resolveSlow = resolve;
+          });
+        }
+
+        return new Promise((resolve) => {
+          resolveFast = resolve;
+        });
+      },
+    );
+
+    component.serverTableRows.set([
+      {
+        vendor_id: "aws",
+        api_reference: "large",
+        status: Status.Active,
+        vcpus: 4,
+        memory_amount: 4096,
+      },
+      {
+        vendor_id: "gcp",
+        api_reference: "n2-standard-4",
+        status: Status.Active,
+        vcpus: 4,
+        memory_amount: 4096,
+      },
+    ]);
+
+    component.selectedBaselineServer.set(component.serverTableRows()[0]);
+    fixture.detectChanges();
+
+    component.selectedBaselineServer.set(component.serverTableRows()[1]);
+    fixture.detectChanges();
+
+    resolveFast?.({
+      body: [
+        {
+          benchmark_id: "stress_ng:bestn",
+          config: "{}",
+          score: 200,
+        },
+      ],
+    });
+    flushMicrotasks();
+
+    expect(component.baselineBenchmarkScores()[0]?.score).toBe(200);
+
+    resolveSlow?.({
+      body: [
+        {
+          benchmark_id: "stress_ng:bestn",
+          config: "{}",
+          score: 100,
+        },
+      ],
+    });
+    flushMicrotasks();
+
+    expect(component.baselineBenchmarkScores()[0]?.score).toBe(200);
+  }));
+
   it("clears advisor filters back to their defaults", () => {
     const baselineServer = component.serverTableRows()[0];
 
@@ -895,7 +997,7 @@ describe("AdvisorComponent", () => {
       "BEST PRICE",
     ]);
     expect(component.page()).toBe(1);
-    expect(component.limit()).toBe(25);
+    expect(component.limit()).toBe(ADVISOR_DEFAULT_PAGE_LIMIT);
     expect(component.manualOrderBy()).toBeUndefined();
     expect(component.manualOrderDir()).toBeUndefined();
   });

@@ -102,6 +102,8 @@ const [
   ADVISOR_MINIMUM_MEMORY_LABEL,
 ] = ADVISOR_REQUIRED_INPUT_LABELS;
 
+const ADVISOR_MAX_PAGE_LIMIT = Math.max(...ADVISOR_PAGE_LIMITS);
+
 const ADVISOR_CUSTOM_QUERY_PARAM_NAMES_SET = new Set<string>(
   ADVISOR_CUSTOM_QUERY_PARAM_NAMES,
 );
@@ -152,6 +154,7 @@ export class AdvisorComponent implements OnInit, OnDestroy {
   private recommendationRequests = new Subject<RecommendationRequest | null>();
   private recommendationRequestVersion = 0;
   private activeRecommendationRequestKey: string | null = null;
+  private baselineBenchmarkRequestVersion = 0;
   private baselineRegionRequestVersion = 0;
 
   readonly title = ADVISOR_PAGE_TITLE;
@@ -1198,14 +1201,32 @@ export class AdvisorComponent implements OnInit, OnDestroy {
   private async loadBaselineBenchmarkScores(
     server: AdvisorBaselineServer,
   ): Promise<void> {
+    const requestVersion = ++this.baselineBenchmarkRequestVersion;
+
     try {
       const response = await this.keeperApi.getServerBenchmark(
         server.vendor_id,
         server.api_reference,
       );
 
+      if (
+        requestVersion !== this.baselineBenchmarkRequestVersion ||
+        this.selectedBaselineServer()?.vendor_id !== server.vendor_id ||
+        this.selectedBaselineServer()?.api_reference !== server.api_reference
+      ) {
+        return;
+      }
+
       this.baselineBenchmarkScores.set(response?.body || []);
     } catch (error) {
+      if (
+        requestVersion !== this.baselineBenchmarkRequestVersion ||
+        this.selectedBaselineServer()?.vendor_id !== server.vendor_id ||
+        this.selectedBaselineServer()?.api_reference !== server.api_reference
+      ) {
+        return;
+      }
+
       console.error("Failed to load advisor baseline benchmark scores", error);
       this.baselineBenchmarkScores.set([]);
     }
@@ -1330,6 +1351,30 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     this.compareSubscription.add(
       this.route.queryParams.subscribe((params: Params) => {
         const queryParams = JSON.parse(JSON.stringify(params || {}));
+        const restoredPage = this.parsePositiveIntParam(queryParams.page, 1);
+        const restoredLimit = this.parsePositiveIntParam(
+          queryParams.limit,
+          ADVISOR_DEFAULT_PAGE_LIMIT,
+          ADVISOR_MAX_PAGE_LIMIT,
+        );
+        const restoredAverageCpuUtilization = this.parseNumberInRange(
+          queryParams.avg_cpu_utilization,
+          null,
+          0,
+          100,
+        );
+        const restoredMinimumMemoryGiB =
+          this.parseNumberInRange(
+            queryParams.minimum_memory,
+            ADVISOR_DEFAULT_MINIMUM_MEMORY_GIB,
+            ADVISOR_DEFAULT_MINIMUM_MEMORY_GIB,
+          ) ?? ADVISOR_DEFAULT_MINIMUM_MEMORY_GIB;
+        const restoredPeakGpuMemoryGiB =
+          this.parseNumberInRange(
+            queryParams.peak_gpu_memory,
+            ADVISOR_DEFAULT_PEAK_GPU_MEMORY_GIB,
+            0,
+          ) ?? ADVISOR_DEFAULT_PEAK_GPU_MEMORY_GIB;
 
         const baseQuery = Object.fromEntries(
           Object.entries(queryParams).filter(
@@ -1355,15 +1400,8 @@ export class AdvisorComponent implements OnInit, OnDestroy {
         }
 
         this.query.set(baseQuery);
-        this.page.set(
-          queryParams.page ? parseInt(String(queryParams.page), 10) || 1 : 1,
-        );
-        this.limit.set(
-          queryParams.limit
-            ? parseInt(String(queryParams.limit), 10) ||
-                ADVISOR_DEFAULT_PAGE_LIMIT
-            : ADVISOR_DEFAULT_PAGE_LIMIT,
-        );
+        this.page.set(restoredPage);
+        this.limit.set(restoredLimit);
 
         this.selectedCurrency.set(
           queryParams.currency
@@ -1449,21 +1487,9 @@ export class AdvisorComponent implements OnInit, OnDestroy {
           this.optimizationGoal.set(ADVISOR_DEFAULT_OPTIMIZATION_GOAL);
         }
 
-        this.averageCpuUtilization.set(
-          queryParams.avg_cpu_utilization !== undefined
-            ? Number(queryParams.avg_cpu_utilization)
-            : null,
-        );
-        this.minimumMemoryGiB.set(
-          queryParams.minimum_memory !== undefined
-            ? Number(queryParams.minimum_memory)
-            : ADVISOR_DEFAULT_MINIMUM_MEMORY_GIB,
-        );
-        this.peakGpuMemoryGiB.set(
-          queryParams.peak_gpu_memory !== undefined
-            ? Number(queryParams.peak_gpu_memory)
-            : ADVISOR_DEFAULT_PEAK_GPU_MEMORY_GIB,
-        );
+        this.averageCpuUtilization.set(restoredAverageCpuUtilization);
+        this.minimumMemoryGiB.set(restoredMinimumMemoryGiB);
+        this.peakGpuMemoryGiB.set(restoredPeakGpuMemoryGiB);
         this.isBaselineRegionEnabled.set(
           vendorRegions.length === 0 &&
             vendors.length === 0 &&
@@ -1704,6 +1730,47 @@ export class AdvisorComponent implements OnInit, OnDestroy {
       value && typeof value === "object" ? (value as { numericValue?: T }) : {};
 
     target.set((nextValue.numericValue ?? fallback) as T);
+  }
+
+  private parsePositiveIntParam(
+    value: unknown,
+    fallback: number,
+    max?: number,
+  ): number {
+    if (value === undefined || value === null || value === "") {
+      return fallback;
+    }
+
+    const parsed = Number(value);
+
+    if (!Number.isInteger(parsed)) {
+      return fallback;
+    }
+
+    const clampedValue = Math.max(parsed, 1);
+
+    return max !== undefined ? Math.min(clampedValue, max) : clampedValue;
+  }
+
+  private parseNumberInRange(
+    value: unknown,
+    fallback: number | null,
+    min: number,
+    max?: number,
+  ): number | null {
+    if (value === undefined || value === null || value === "") {
+      return fallback;
+    }
+
+    const parsed = Number(value);
+
+    if (!Number.isFinite(parsed)) {
+      return fallback;
+    }
+
+    const clampedValue = Math.max(parsed, min);
+
+    return max !== undefined ? Math.min(clampedValue, max) : clampedValue;
   }
 
   private getSelectedControlValue(value: unknown): string | null {
