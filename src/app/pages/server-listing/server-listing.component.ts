@@ -37,6 +37,7 @@ import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.di
 import { AnalyticsService } from "../../services/analytics.service";
 import { Modal, ModalOptions } from "flowbite";
 import { ToastService } from "../../services/toast.service";
+import { UiTooltipService } from "../../services/ui-tooltip.service";
 import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
 import { Subscription } from "rxjs";
 import openApiSpec from "../../../../sdk/openapi.json";
@@ -121,6 +122,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   private analytics = inject(AnalyticsService);
   private serverCompare = inject(ServerCompareService);
   private toastService = inject(ToastService);
+  private uiTooltip = inject(UiTooltipService);
 
   isCollapsed = false;
 
@@ -288,6 +290,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       show: false,
       type: "price",
       key: "min_price_ondemand_monthly",
+      orderField: "min_price_ondemand_monthly",
     },
     {
       name: "BEST SPOT PRICE",
@@ -1097,12 +1100,10 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   showTooltip(el: any, content: string, autoHide = false) {
     this.tooltipContent = content;
     const tooltip = this.tooltip.nativeElement;
-    const scrollPosition =
-      window.pageYOffset || document.documentElement.scrollTop;
-    tooltip.style.left = `${el.target.getBoundingClientRect().right + 5}px`;
-    tooltip.style.top = `${el.target.getBoundingClientRect().top - 5 + scrollPosition}px`;
-    tooltip.style.display = "block";
-    tooltip.style.opacity = "1";
+    this.uiTooltip.show(tooltip, el, {
+      left: "anchor-right",
+      top: "anchor-above",
+    });
 
     if (autoHide) {
       setTimeout(() => {
@@ -1112,9 +1113,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   }
 
   hideTooltip() {
-    const tooltip = this.tooltip.nativeElement;
-    tooltip.style.display = "none";
-    tooltip.style.opacity = "0";
+    this.uiTooltip.hide(this.tooltip.nativeElement);
   }
 
   showAPIReference(item: ServerPKs) {

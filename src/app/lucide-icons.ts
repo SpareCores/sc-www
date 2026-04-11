@@ -85,6 +85,8 @@ import {
   Columns3Cog,
   MessageCircleQuestionMark,
   Maximize2,
+  Minus,
+  Plus,
 } from "lucide-angular";
 
 export const lucideIcons = {
@@ -174,4 +176,6 @@ export const lucideIcons = {
   Columns3Cog,
   MessageCircleQuestionMark,
   Maximize2,
+  Minus,
+  Plus,
 };

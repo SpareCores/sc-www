@@ -109,6 +109,18 @@ describe("Visual regression tests (medium screen - 1024px)", () => {
     cy.compareSnapshot("server-comparison-aws-a1-medium-c6gd-medium-medium");
   });
 
+  it("should compare screenshot of advisor page", () => {
+    E2EEvent.visitURL("/advisor", 4000);
+
+    // Prepare header position for a consistent visual regression snapshot
+    E2EEvent.prepareHeaderForScreenshot();
+
+    cy.contains("No matches yet").should("be.visible");
+    cy.get("#serverSearchBar").should("be.visible");
+
+    cy.compareSnapshot("advisor-page-medium");
+  });
+
   it("should compare screenshot of legal documents page", () => {
     E2EEvent.visitURL("/legal");
 

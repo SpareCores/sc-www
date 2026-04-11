@@ -20,6 +20,7 @@ import { Modal, ModalOptions } from "flowbite";
 import { LucideAngularModule } from "lucide-angular";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { ToastService } from "../../services/toast.service";
+import { UiTooltipService } from "../../services/ui-tooltip.service";
 import { Subject, Subscription, debounceTime } from "rxjs";
 import {
   CountryMetadata,
@@ -28,11 +29,25 @@ import {
 } from "../../pages/server-listing/server-listing.component";
 import { CountryIdtoNamePipe } from "../../pipes/country-idto-name.pipe";
 import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
+import {
+  formatBinaryMemoryDisplay,
+  formatNumberInputValue,
+  parseBinaryMemoryInput,
+} from "../../pipes/pipe-utils";
+import {
+  Benchmark,
+  BenchmarkConfig,
+  Server,
+} from "../../../../sdk/data-contracts";
 
 const optionsModal: ModalOptions = {
   backdropClasses: "bg-gray-900/50 fixed inset-0 z-40",
   closable: true,
 };
+
+const POWER_OF_TWO_STEPPER_INPUT_PATTERN = /^\d*\.?\d*$/;
+const POWER_OF_TWO_STEPPER_BASE_VALUE = 0.5;
+const POWER_OF_TWO_STEPPER_EPSILON = 1e-9;
 
 export type SearchBarParameter = {
   name: string;
@@ -53,6 +68,92 @@ export type SearchBarParameter = {
     range_max?: number;
     [key: string]: unknown;
   };
+};
+
+export type SearchBarCustomControl = {
+  name: string;
+  category_id: string;
+  type:
+    | "serverAutocomplete"
+    | "benchmarkConfigSelect"
+    | "singleSelect"
+    | "rangeSlider"
+    | "powerOfTwoStepper"
+    | "checkbox"
+    | "checkboxGroup";
+  title: string;
+  placeholder?: string;
+  required?: boolean;
+  description?: string;
+  descriptionDisplay?: "inline" | "tooltip";
+  hideTitle?: boolean;
+  minCharacters?: number;
+  inputValue?: string;
+  selectedServer?: SearchBarServerOption | null;
+  options?: SearchBarServerOption[];
+  emptyMessage?: string;
+  selectedBenchmarkConfig?: SearchBarBenchmarkConfigOption | null;
+  benchmarkOptions?: SearchBarBenchmarkConfigOption[];
+  benchmarkGroups?: SearchBarBenchmarkConfigGroup[];
+  selectedValue?: string | null;
+  selectOptions?: SearchBarCustomSelectOption[];
+  numericValue?: number | null;
+  min?: number;
+  max?: number;
+  step?: number;
+  unit?: string;
+  numericFormat?: "binaryMemory";
+  tickValues?: number[];
+  allowZero?: boolean;
+  defaultNumericValue?: number | null;
+  showUnitInTicks?: boolean;
+  nested?: boolean;
+  checked?: boolean;
+  disabled?: boolean;
+  sectionHeader?: string;
+  checkboxOptions?: {
+    name: string;
+    title: string;
+    checked?: boolean;
+    disabled?: boolean;
+    description?: string;
+  }[];
+};
+
+export type SearchBarCustomSelectOption = {
+  value: string;
+  label: string;
+};
+
+export type SearchBarBenchmarkConfigOption = BenchmarkConfig & {
+  benchmarkTemplate?: Benchmark | null;
+  configTitle: string;
+  displayName: string;
+  framework: string;
+};
+
+export type SearchBarServerOption = Pick<
+  Server,
+  "vendor_id" | "api_reference"
+> &
+  Partial<
+    Pick<
+      Server,
+      | "server_id"
+      | "display_name"
+      | "description"
+      | "vcpus"
+      | "memory_amount"
+      | "storage_size"
+      | "gpu_memory_total"
+      | "cpu_architecture"
+      | "cpu_allocation"
+    >
+  >;
+
+export type SearchBarBenchmarkConfigGroup = {
+  name: string;
+  options: SearchBarBenchmarkConfigOption[];
 };
 
 type SearchBarParameterType =
@@ -94,6 +195,7 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   private platformId = inject(PLATFORM_ID);
   private keeperAPI = inject(KeeperAPIService);
   private toastService = inject(ToastService);
+  private uiTooltip = inject(UiTooltipService);
 
   @Input() query: any = {};
   @Input() searchParameters: any[] = [];
@@ -104,10 +206,16 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   @Input() useTopSearchInput = false;
   @Input() topSearchParameterName = "search";
   @Input() topSearchPlaceholder = "Search vendor or API reference";
+  @Input() showTopSection = true;
   @Input() showParameterTitles = true;
   @Input() noTopPaddingCategoryIds: string[] = [];
+  @Input() customControls: SearchBarCustomControl[] = [];
 
   @Output() searchChanged = new EventEmitter<any>();
+  @Output() customControlChanged = new EventEmitter<{
+    name: string;
+    value: unknown;
+  }>();
 
   @ViewChild("tooltipDefault") tooltip!: ElementRef;
   clipboardIcon = "clipboard";
@@ -144,8 +252,15 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
     CpuCacheRangeFocusLossSkip | undefined
   > = {};
 
+  powerOfTwoStepperDraftValues: Record<string, string> = {};
+  powerOfTwoStepperFocusedControls: Record<string, boolean> = {};
+
+  benchmarkConfigDropdownOpen: Record<string, boolean> = {};
+  singleSelectDropdownOpen: Record<string, boolean> = {};
+
   valueChangeDebouncer: Subject<number> = new Subject<number>();
   private subscription = new Subscription();
+  benchmarkGroupExpansion: Record<string, Record<string, boolean>> = {};
 
   ngOnInit() {
     this.keeperAPI.getComplianceFrameworks().then((response: any) => {
@@ -212,20 +327,6 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
         this.loadCountries(this.selectedCountries);
         this.loadRegions();
 
-        const vendorRegionValues = this.query.vendor_regions;
-        if (vendorRegionValues) {
-          const values: string[] = Array.isArray(vendorRegionValues)
-            ? vendorRegionValues
-            : [vendorRegionValues];
-          [
-            ...new Set(
-              values.map((vr: string) => vr.split("~")[0]).filter(Boolean),
-            ),
-          ].forEach((vendorId) => {
-            this.vendorRegionCollapsedVendors[vendorId] = false;
-          });
-        }
-
         if (this.selectedCountries?.length) {
           if (
             this.filterCategories.find(
@@ -237,6 +338,10 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
             )!.collapsed = false;
           }
         }
+      }
+
+      if (change === "query" || change === "extraParameters") {
+        this.syncVendorRegionSelectionVisibility();
       }
     }
 
@@ -283,11 +388,15 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
       }
 
       const queryValue = this.query[item.name];
-      const hasQueryValue = Array.isArray(queryValue)
-        ? queryValue.length > 0
-        : Boolean(queryValue);
+      const effectiveValue =
+        this.extraParameters?.[item.name] != null
+          ? this.extraParameters[item.name]
+          : queryValue;
+      const hasEffectiveValue = Array.isArray(effectiveValue)
+        ? effectiveValue.length > 0
+        : Boolean(effectiveValue);
 
-      if (hasQueryValue) {
+      if (hasEffectiveValue) {
         if (
           this.filterCategories.find(
             (column) => column.category_id === item.schema.category_id,
@@ -342,6 +451,53 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
         this.syncCpuCacheRangeDraftValue(item);
       }
     });
+  }
+
+  private syncVendorRegionSelectionVisibility() {
+    const vendorRegionValues = this.getActiveVendorRegionValues();
+
+    if (!vendorRegionValues.length) {
+      return;
+    }
+
+    [
+      ...new Set(
+        vendorRegionValues.map((vr) => vr.split("~")[0]).filter(Boolean),
+      ),
+    ].forEach((vendorId) => {
+      this.vendorRegionCollapsedVendors[vendorId] = false;
+    });
+
+    const regionCategory = this.filterCategories.find(
+      (column) => column.category_id === "region",
+    );
+
+    if (regionCategory) {
+      regionCategory.collapsed = false;
+    }
+  }
+
+  private getActiveVendorRegionValues(): string[] {
+    const vendorRegionValues =
+      this.extraParameters?.vendor_regions != null
+        ? this.extraParameters.vendor_regions
+        : this.query.vendor_regions;
+
+    if (!vendorRegionValues) {
+      return [];
+    }
+
+    const values = Array.isArray(vendorRegionValues)
+      ? vendorRegionValues
+      : [vendorRegionValues];
+
+    return values
+      .flatMap((value) => {
+        return typeof value === "string"
+          ? value.split(",").map((part) => part.trim())
+          : [];
+      })
+      .filter(Boolean);
   }
 
   filterServers() {
@@ -453,6 +609,12 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
     });
   }
 
+  getCustomControlsByCategory(category: string) {
+    return (this.customControls || []).filter(
+      (control) => control.category_id === category,
+    );
+  }
+
   getTopSearchParameter() {
     return (this.searchParameters as SearchBarParameter[])?.find(
       (param) => param.name === this.topSearchParameterName,
@@ -461,6 +623,611 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
 
   isParameterDisabled(parameterName: string): boolean {
     return this.extraParameters?.[parameterName] != null;
+  }
+
+  getCustomControlMinCharacters(control: SearchBarCustomControl): number {
+    return control.minCharacters || 3;
+  }
+
+  customControlHasEnoughInput(control: SearchBarCustomControl): boolean {
+    return (
+      (control.inputValue || "").trim().length >=
+      this.getCustomControlMinCharacters(control)
+    );
+  }
+
+  onCustomControlInput(control: SearchBarCustomControl, value: string) {
+    this.customControlChanged.emit({
+      name: control.name,
+      value: { inputValue: value },
+    });
+  }
+
+  onCustomRangeSliderChange(control: SearchBarCustomControl, value: number) {
+    this.customControlChanged.emit({
+      name: control.name,
+      value: { numericValue: value },
+    });
+  }
+
+  onCustomCheckboxChange(control: SearchBarCustomControl, checked: boolean) {
+    this.customControlChanged.emit({
+      name: control.name,
+      value: { checked },
+    });
+  }
+
+  onCustomCheckboxGroupChange(optionName: string, checked: boolean) {
+    this.customControlChanged.emit({
+      name: optionName,
+      value: { checked },
+    });
+  }
+
+  clearCustomNumericControl(control: SearchBarCustomControl) {
+    this.customControlChanged.emit({
+      name: control.name,
+      value: { numericValue: control.defaultNumericValue ?? null },
+    });
+  }
+
+  handlePowerOfTwoStepperFocus(control: SearchBarCustomControl) {
+    this.powerOfTwoStepperFocusedControls[control.name] = true;
+    delete this.powerOfTwoStepperDraftValues[control.name];
+  }
+
+  onPowerOfTwoStepperInput(control: SearchBarCustomControl, event: Event) {
+    const input = event.target as HTMLInputElement | null;
+
+    if (!input) {
+      return;
+    }
+
+    const normalizedValue = input.value.replace(/\s+/g, "");
+    const previousValue =
+      this.powerOfTwoStepperDraftValues[control.name] ??
+      this.getPowerOfTwoStepperEditableValue(control);
+    const nextValue = POWER_OF_TWO_STEPPER_INPUT_PATTERN.test(normalizedValue)
+      ? normalizedValue
+      : previousValue;
+
+    this.powerOfTwoStepperDraftValues[control.name] = nextValue;
+    input.value = nextValue;
+  }
+
+  commitPowerOfTwoStepperFromEnter(event: Event) {
+    event.preventDefault();
+    (event.target as HTMLInputElement | null)?.blur();
+  }
+
+  commitPowerOfTwoStepperAfterFocusLoss(
+    control: SearchBarCustomControl,
+    event: Event,
+  ) {
+    this.powerOfTwoStepperFocusedControls[control.name] = false;
+    this.commitPowerOfTwoStepperValue(
+      control,
+      (event.target as HTMLInputElement | null)?.value,
+    );
+  }
+
+  isPowerOfTwoStepperFocused(control: SearchBarCustomControl): boolean {
+    return this.powerOfTwoStepperFocusedControls[control.name] === true;
+  }
+
+  getPowerOfTwoStepperInputValue(control: SearchBarCustomControl): string {
+    const draftValue = this.powerOfTwoStepperDraftValues[control.name];
+
+    if (draftValue !== undefined) {
+      return draftValue;
+    }
+
+    if (control.numericValue === null || control.numericValue === undefined) {
+      return "";
+    }
+
+    if (this.isPowerOfTwoStepperFocused(control)) {
+      return this.getPowerOfTwoStepperEditableValue(control);
+    }
+
+    return this.getPowerOfTwoStepperDisplay(control).value;
+  }
+
+  getPowerOfTwoStepperInputStyle(control: SearchBarCustomControl) {
+    const inputValue = this.getPowerOfTwoStepperInputValue(control);
+    const width = Math.max(inputValue.length, 1) + 0.5;
+
+    return {
+      width: `${width}ch`,
+    };
+  }
+
+  getPowerOfTwoStepperInputUnit(
+    control: SearchBarCustomControl,
+  ): string | null {
+    if (control.numericFormat === "binaryMemory") {
+      return this.isPowerOfTwoStepperFocused(control)
+        ? "GiB"
+        : this.getPowerOfTwoStepperDisplay(control).unit;
+    }
+
+    return control.unit || null;
+  }
+
+  getPowerOfTwoStepperCurrentValue(
+    control: SearchBarCustomControl,
+  ): number | null {
+    const draftValue = this.powerOfTwoStepperDraftValues[control.name];
+
+    if (draftValue !== undefined && draftValue !== "") {
+      const parsedDraftValue = this.parsePowerOfTwoStepperNumericValue(
+        control,
+        draftValue,
+      );
+
+      if (parsedDraftValue !== null) {
+        return parsedDraftValue;
+      }
+    }
+
+    return control.numericValue ?? null;
+  }
+
+  incrementPowerOfTwoValue(control: SearchBarCustomControl) {
+    const currentValue = this.getPowerOfTwoStepperCurrentValue(control);
+    const nextValue = this.getNextPowerOfTwoStepperValue(control, currentValue);
+
+    this.syncPowerOfTwoStepperDraftValue(control, nextValue);
+
+    this.customControlChanged.emit({
+      name: control.name,
+      value: { numericValue: nextValue },
+    });
+  }
+
+  decrementPowerOfTwoValue(control: SearchBarCustomControl) {
+    const currentValue = this.getPowerOfTwoStepperCurrentValue(control);
+
+    if (currentValue === null || currentValue === undefined) {
+      return;
+    }
+
+    const nextValue = this.getPreviousPowerOfTwoStepperValue(
+      control,
+      currentValue,
+    );
+
+    if (nextValue === currentValue) {
+      return;
+    }
+
+    this.syncPowerOfTwoStepperDraftValue(control, nextValue);
+
+    this.customControlChanged.emit({
+      name: control.name,
+      value: { numericValue: nextValue },
+    });
+  }
+
+  canDecrementPowerOfTwoValue(control: SearchBarCustomControl): boolean {
+    const currentValue = this.getPowerOfTwoStepperCurrentValue(control);
+    const minimumValue = this.getPowerOfTwoStepperMinimum(control);
+
+    if (currentValue === null || currentValue === undefined) {
+      return false;
+    }
+
+    if (currentValue <= 0) {
+      return false;
+    }
+
+    return currentValue > minimumValue || control.allowZero === true;
+  }
+
+  formatCustomNumericValue(control: SearchBarCustomControl): string {
+    const value = control.numericValue;
+
+    if (value === null || value === undefined) {
+      return "Not set";
+    }
+
+    const formattedValue = formatNumberInputValue(value);
+    return control.unit ? `${formattedValue} ${control.unit}` : formattedValue;
+  }
+
+  getRangeSliderValue(control: SearchBarCustomControl): number {
+    if (control.numericValue !== null && control.numericValue !== undefined) {
+      return control.numericValue;
+    }
+
+    if (control.min !== undefined) {
+      return control.min;
+    }
+
+    return 0;
+  }
+
+  private commitPowerOfTwoStepperValue(
+    control: SearchBarCustomControl,
+    rawValue?: unknown,
+  ) {
+    const nextValue = this.normalizeCommittedPowerOfTwoStepperValue(
+      control,
+      rawValue,
+    );
+
+    delete this.powerOfTwoStepperDraftValues[control.name];
+
+    if (nextValue === control.numericValue) {
+      return;
+    }
+
+    this.customControlChanged.emit({
+      name: control.name,
+      value: { numericValue: nextValue },
+    });
+  }
+
+  private getPowerOfTwoStepperEditableValue(
+    control: SearchBarCustomControl,
+  ): string {
+    if (control.numericValue === null || control.numericValue === undefined) {
+      return "";
+    }
+
+    return formatNumberInputValue(control.numericValue);
+  }
+
+  private getPowerOfTwoStepperDisplay(control: SearchBarCustomControl): {
+    value: string;
+    unit: string | null;
+  } {
+    if (control.numericValue === null || control.numericValue === undefined) {
+      return { value: "", unit: control.unit || null };
+    }
+
+    if (control.numericFormat === "binaryMemory") {
+      return formatBinaryMemoryDisplay(control.numericValue);
+    }
+
+    return {
+      value: formatNumberInputValue(control.numericValue),
+      unit: control.unit || null,
+    };
+  }
+
+  private parsePowerOfTwoStepperNumericValue(
+    control: SearchBarCustomControl,
+    rawValue: string,
+  ): number | null {
+    const normalizedValue = rawValue.trim();
+
+    if (!normalizedValue.length || normalizedValue === ".") {
+      return null;
+    }
+
+    if (control.numericFormat === "binaryMemory") {
+      return parseBinaryMemoryInput(normalizedValue, "GiB");
+    }
+
+    if (!POWER_OF_TWO_STEPPER_INPUT_PATTERN.test(normalizedValue)) {
+      return null;
+    }
+
+    const parsedValue = Number(normalizedValue);
+    return Number.isFinite(parsedValue) ? parsedValue : null;
+  }
+
+  private normalizeCommittedPowerOfTwoStepperValue(
+    control: SearchBarCustomControl,
+    rawValue?: unknown,
+  ): number | null {
+    const normalizedValue =
+      rawValue === null || rawValue === undefined
+        ? ""
+        : String(rawValue).trim();
+
+    if (!normalizedValue.length) {
+      return control.defaultNumericValue ?? control.numericValue ?? null;
+    }
+
+    const parsedValue = this.parsePowerOfTwoStepperNumericValue(
+      control,
+      normalizedValue,
+    );
+
+    if (parsedValue === null) {
+      return control.numericValue ?? control.defaultNumericValue ?? null;
+    }
+
+    let nextValue = parsedValue;
+
+    if (control.max !== undefined) {
+      nextValue = Math.min(nextValue, control.max);
+    }
+
+    if (
+      control.allowZero &&
+      Math.abs(nextValue) < POWER_OF_TWO_STEPPER_EPSILON
+    ) {
+      return 0;
+    }
+
+    const minimumValue = this.getPowerOfTwoStepperMinimum(control);
+
+    if (nextValue < minimumValue) {
+      nextValue = minimumValue;
+    }
+
+    return nextValue;
+  }
+
+  private getPowerOfTwoStepperMinimum(control: SearchBarCustomControl): number {
+    if (control.min !== undefined) {
+      return control.min;
+    }
+
+    return control.allowZero ? 0 : POWER_OF_TWO_STEPPER_BASE_VALUE;
+  }
+
+  private getNextPowerOfTwoStepperValue(
+    control: SearchBarCustomControl,
+    currentValue: number | null,
+  ): number {
+    if (currentValue === null || currentValue === undefined) {
+      return Math.max(
+        this.getPowerOfTwoStepperMinimum(control),
+        POWER_OF_TWO_STEPPER_BASE_VALUE,
+      );
+    }
+
+    if (currentValue < POWER_OF_TWO_STEPPER_BASE_VALUE) {
+      return POWER_OF_TWO_STEPPER_BASE_VALUE;
+    }
+
+    if (
+      Math.abs(currentValue - POWER_OF_TWO_STEPPER_BASE_VALUE) <
+      POWER_OF_TWO_STEPPER_EPSILON
+    ) {
+      return 1;
+    }
+
+    const nextPowerOfTwo = Math.pow(2, Math.ceil(Math.log2(currentValue)));
+
+    return Math.abs(nextPowerOfTwo - currentValue) <
+      POWER_OF_TWO_STEPPER_EPSILON
+      ? nextPowerOfTwo * 2
+      : nextPowerOfTwo;
+  }
+
+  private getPreviousPowerOfTwoStepperValue(
+    control: SearchBarCustomControl,
+    currentValue: number,
+  ): number {
+    if (currentValue <= 0) {
+      return 0;
+    }
+
+    if (currentValue <= POWER_OF_TWO_STEPPER_BASE_VALUE) {
+      return control.allowZero ? 0 : POWER_OF_TWO_STEPPER_BASE_VALUE;
+    }
+
+    const previousPowerOfTwo = Math.pow(2, Math.floor(Math.log2(currentValue)));
+
+    return Math.abs(previousPowerOfTwo - currentValue) <
+      POWER_OF_TWO_STEPPER_EPSILON
+      ? previousPowerOfTwo / 2
+      : previousPowerOfTwo;
+  }
+
+  private syncPowerOfTwoStepperDraftValue(
+    control: SearchBarCustomControl,
+    value: number,
+  ) {
+    if (this.isPowerOfTwoStepperFocused(control)) {
+      this.powerOfTwoStepperDraftValues[control.name] =
+        formatNumberInputValue(value);
+      return;
+    }
+
+    delete this.powerOfTwoStepperDraftValues[control.name];
+  }
+
+  isBenchmarkGroupExpanded(
+    control: SearchBarCustomControl,
+    groupName: string,
+  ): boolean {
+    const controlExpansion = this.benchmarkGroupExpansion[control.name] || {};
+    return controlExpansion[groupName] ?? true;
+  }
+
+  toggleBenchmarkGroup(control: SearchBarCustomControl, groupName: string) {
+    if (!this.benchmarkGroupExpansion[control.name]) {
+      this.benchmarkGroupExpansion[control.name] = {};
+    }
+
+    const current =
+      this.benchmarkGroupExpansion[control.name][groupName] ?? true;
+    this.benchmarkGroupExpansion[control.name][groupName] = !current;
+  }
+
+  selectServerAutocompleteOption(
+    control: SearchBarCustomControl,
+    server: SearchBarServerOption,
+  ) {
+    this.customControlChanged.emit({
+      name: control.name,
+      value: {
+        inputValue: `${server.vendor_id} ${server.api_reference}`,
+        selectedServer: server,
+      },
+    });
+  }
+
+  clearServerAutocompleteSelection(control: SearchBarCustomControl) {
+    this.customControlChanged.emit({
+      name: control.name,
+      value: { inputValue: "", selectedServer: null },
+    });
+  }
+
+  selectBenchmarkConfigOption(
+    control: SearchBarCustomControl,
+    benchmarkOption: SearchBarBenchmarkConfigOption,
+  ) {
+    this.customControlChanged.emit({
+      name: control.name,
+      value: {
+        inputValue: benchmarkOption.displayName,
+        selectedBenchmarkConfig: benchmarkOption,
+      },
+    });
+
+    this.closeBenchmarkConfigDropdown(control);
+  }
+
+  clearBenchmarkConfigSelection(control: SearchBarCustomControl) {
+    this.customControlChanged.emit({
+      name: control.name,
+      value: { inputValue: "", selectedBenchmarkConfig: null },
+    });
+  }
+
+  handleBenchmarkConfigInputFocus(control: SearchBarCustomControl) {
+    if (
+      control.selectedBenchmarkConfig &&
+      (control.inputValue || "").trim() ===
+        control.selectedBenchmarkConfig.displayName
+    ) {
+      this.customControlChanged.emit({
+        name: control.name,
+        value: { inputValue: "" },
+      });
+    }
+
+    this.openBenchmarkConfigDropdown(control);
+  }
+
+  restoreBenchmarkConfigInput(control: SearchBarCustomControl) {
+    if (
+      control.selectedBenchmarkConfig &&
+      !(control.inputValue || "").trim().length
+    ) {
+      this.customControlChanged.emit({
+        name: control.name,
+        value: { inputValue: control.selectedBenchmarkConfig.displayName },
+      });
+    }
+
+    this.closeBenchmarkConfigDropdown(control);
+  }
+
+  isBenchmarkConfigDropdownOpen(control: SearchBarCustomControl): boolean {
+    return this.benchmarkConfigDropdownOpen[control.name] ?? false;
+  }
+
+  openBenchmarkConfigDropdown(control: SearchBarCustomControl) {
+    this.benchmarkConfigDropdownOpen[control.name] = true;
+  }
+
+  closeBenchmarkConfigDropdown(control: SearchBarCustomControl) {
+    this.benchmarkConfigDropdownOpen[control.name] = false;
+  }
+
+  isSingleSelectDropdownOpen(control: SearchBarCustomControl): boolean {
+    return this.singleSelectDropdownOpen[control.name] ?? false;
+  }
+
+  toggleSingleSelectDropdown(control: SearchBarCustomControl) {
+    if (control.disabled) {
+      return;
+    }
+
+    this.singleSelectDropdownOpen[control.name] =
+      !this.isSingleSelectDropdownOpen(control);
+  }
+
+  closeSingleSelectDropdown(control: SearchBarCustomControl) {
+    this.singleSelectDropdownOpen[control.name] = false;
+  }
+
+  handleSingleSelectFocusOut(
+    control: SearchBarCustomControl,
+    event: FocusEvent,
+  ) {
+    const currentTarget = event.currentTarget as HTMLElement | null;
+    const relatedTarget = event.relatedTarget as Node | null;
+
+    if (
+      currentTarget &&
+      relatedTarget &&
+      currentTarget.contains(relatedTarget)
+    ) {
+      return;
+    }
+
+    this.closeSingleSelectDropdown(control);
+  }
+
+  getCustomSingleSelectLabel(control: SearchBarCustomControl): string {
+    const selectedOption = (control.selectOptions || []).find(
+      (option) => option.value === control.selectedValue,
+    );
+
+    return selectedOption?.label || control.placeholder || control.title;
+  }
+
+  selectCustomControlOption(
+    control: SearchBarCustomControl,
+    option: SearchBarCustomSelectOption,
+  ) {
+    this.closeSingleSelectDropdown(control);
+    this.customControlChanged.emit({
+      name: control.name,
+      value: { selectedValue: option.value },
+    });
+  }
+
+  formatBenchmarkConfigDescription(
+    benchmarkOption: SearchBarBenchmarkConfigOption,
+  ): string {
+    const descriptionParts = [benchmarkOption.framework];
+
+    if (benchmarkOption.configTitle) {
+      descriptionParts.push(benchmarkOption.configTitle);
+    }
+
+    if (benchmarkOption.benchmarkTemplate?.unit) {
+      descriptionParts.push(String(benchmarkOption.benchmarkTemplate.unit));
+    }
+
+    return descriptionParts.filter(Boolean).join(" | ");
+  }
+
+  formatServerAutocompleteDescription(server: SearchBarServerOption): string {
+    const secondaryParts: string[] = [];
+
+    if (server.vcpus) {
+      secondaryParts.push(`${server.vcpus} vCPU`);
+    }
+
+    if (server.memory_amount) {
+      secondaryParts.push(
+        `${(server.memory_amount / 1024).toFixed(1)} GiB RAM`,
+      );
+    }
+
+    if (server.storage_size) {
+      secondaryParts.push(`${server.storage_size} GB storage`);
+    }
+
+    if (server.gpu_memory_total) {
+      secondaryParts.push(
+        `${(server.gpu_memory_total / 1024).toFixed(1)} GiB GPU`,
+      );
+    }
+
+    return secondaryParts.join(" | ");
   }
 
   selectedCountriesCount = computed(
@@ -1145,14 +1912,17 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  showTooltip(el: any, content: string, autoHide = false) {
+  showTooltip(
+    event: MouseEvent | FocusEvent,
+    content: string,
+    autoHide = false,
+  ) {
     this.tooltipContent = content;
     const tooltip = this.tooltip.nativeElement;
-    tooltip.style.left = `${el.target.getBoundingClientRect().right + 5}px`;
-    tooltip.style.top = `${el.target.getBoundingClientRect().top - 5}px`;
-
-    tooltip.style.display = "block";
-    tooltip.style.opacity = "1";
+    this.uiTooltip.show(tooltip, event, {
+      left: "anchor-right",
+      top: "anchor-below",
+    });
 
     if (autoHide) {
       setTimeout(() => {
@@ -1162,9 +1932,7 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   hideTooltip() {
-    const tooltip = this.tooltip.nativeElement;
-    tooltip.style.display = "none";
-    tooltip.style.opacity = "0";
+    this.uiTooltip.hide(this.tooltip.nativeElement);
   }
 
   getInputStyle(parameter: SearchBarParameter) {

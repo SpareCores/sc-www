@@ -35,6 +35,7 @@ export enum VendorRegions {
   AlicloudCnFuzhou = "alicloud~cn-fuzhou",
   AlicloudCnGuangzhou = "alicloud~cn-guangzhou",
   AlicloudCnHangzhou = "alicloud~cn-hangzhou",
+  AlicloudCnHangzhouAcdrUt3 = "alicloud~cn-hangzhou-acdr-ut-3",
   AlicloudCnHeyuan = "alicloud~cn-heyuan",
   AlicloudCnHongkong = "alicloud~cn-hongkong",
   AlicloudCnHuhehaote = "alicloud~cn-huhehaote",
@@ -276,6 +277,56 @@ export enum Status {
   Inactive = "inactive",
 }
 
+/** ServerColumns */
+export enum ServerColumns {
+  VendorId = "vendor_id",
+  ServerId = "server_id",
+  Name = "name",
+  ApiReference = "api_reference",
+  DisplayName = "display_name",
+  Description = "description",
+  Family = "family",
+  Vcpus = "vcpus",
+  Hypervisor = "hypervisor",
+  CpuAllocation = "cpu_allocation",
+  CpuCores = "cpu_cores",
+  CpuSpeed = "cpu_speed",
+  CpuArchitecture = "cpu_architecture",
+  CpuManufacturer = "cpu_manufacturer",
+  CpuFamily = "cpu_family",
+  CpuModel = "cpu_model",
+  CpuL1DCache = "cpu_l1d_cache",
+  CpuL1DCacheTotal = "cpu_l1d_cache_total",
+  CpuL1ICache = "cpu_l1i_cache",
+  CpuL1ICacheTotal = "cpu_l1i_cache_total",
+  CpuL2Cache = "cpu_l2_cache",
+  CpuL2CacheTotal = "cpu_l2_cache_total",
+  CpuL3Cache = "cpu_l3_cache",
+  CpuL3CacheTotal = "cpu_l3_cache_total",
+  CpuFlags = "cpu_flags",
+  Cpus = "cpus",
+  MemoryAmount = "memory_amount",
+  MemoryGeneration = "memory_generation",
+  MemorySpeed = "memory_speed",
+  MemoryEcc = "memory_ecc",
+  GpuCount = "gpu_count",
+  GpuMemoryMin = "gpu_memory_min",
+  GpuMemoryTotal = "gpu_memory_total",
+  GpuManufacturer = "gpu_manufacturer",
+  GpuFamily = "gpu_family",
+  GpuModel = "gpu_model",
+  Gpus = "gpus",
+  StorageSize = "storage_size",
+  StorageType = "storage_type",
+  Storages = "storages",
+  NetworkSpeed = "network_speed",
+  InboundTraffic = "inbound_traffic",
+  OutboundTraffic = "outbound_traffic",
+  Ipv4 = "ipv4",
+  Status = "status",
+  ObservedAt = "observed_at",
+}
+
 /** Regions */
 export enum Regions {
   Value1000 = "1000",
@@ -372,6 +423,7 @@ export enum Regions {
   CnFuzhou = "cn-fuzhou",
   CnGuangzhou = "cn-guangzhou",
   CnHangzhou = "cn-hangzhou",
+  CnHangzhouAcdrUt3 = "cn-hangzhou-acdr-ut-3",
   CnHeyuan = "cn-heyuan",
   CnHongkong = "cn-hongkong",
   CnHuhehaote = "cn-huhehaote",
@@ -555,6 +607,7 @@ export enum GpuFamilies {
   Blackwell = "Blackwell",
   Gaudi = "Gaudi",
   Hopper = "Hopper",
+  Pascal = "Pascal",
   RadeonProNavi = "Radeon Pro Navi",
   Turing = "Turing",
   Volta = "Volta",
@@ -3356,6 +3409,63 @@ export type TableZoneTableZoneGetData = Zone[];
 /** Response Table Server Table Server Get */
 export type TableServerTableServerGetData = Server[];
 
+export interface TableServerSelectTableServerSelectGetParams {
+  /**
+   * Server columns
+   * Selected server columns.
+   */
+  columns?:
+    | "vendor_id"
+    | "server_id"
+    | "name"
+    | "api_reference"
+    | "display_name"
+    | "description"
+    | "family"
+    | "vcpus"
+    | "hypervisor"
+    | "cpu_allocation"
+    | "cpu_cores"
+    | "cpu_speed"
+    | "cpu_architecture"
+    | "cpu_manufacturer"
+    | "cpu_family"
+    | "cpu_model"
+    | "cpu_l1d_cache"
+    | "cpu_l1d_cache_total"
+    | "cpu_l1i_cache"
+    | "cpu_l1i_cache_total"
+    | "cpu_l2_cache"
+    | "cpu_l2_cache_total"
+    | "cpu_l3_cache"
+    | "cpu_l3_cache_total"
+    | "cpu_flags"
+    | "cpus"
+    | "memory_amount"
+    | "memory_generation"
+    | "memory_speed"
+    | "memory_ecc"
+    | "gpu_count"
+    | "gpu_memory_min"
+    | "gpu_memory_total"
+    | "gpu_manufacturer"
+    | "gpu_family"
+    | "gpu_model"
+    | "gpus"
+    | "storage_size"
+    | "storage_type"
+    | "storages"
+    | "network_speed"
+    | "inbound_traffic"
+    | "outbound_traffic"
+    | "ipv4"
+    | "status"
+    | "observed_at";
+}
+
+/** Response Table Server Select Table Server Select Get */
+export type TableServerSelectTableServerSelectGetData = object[];
+
 export interface TableServerPricesTableServerPricesGetParams {
   /**
    * Vendor id
@@ -3461,6 +3571,7 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "cn-fuzhou"
     | "cn-guangzhou"
     | "cn-hangzhou"
+    | "cn-hangzhou-acdr-ut-3"
     | "cn-heyuan"
     | "cn-hongkong"
     | "cn-huhehaote"
@@ -3594,6 +3705,7 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "alicloud~cn-fuzhou"
     | "alicloud~cn-guangzhou"
     | "alicloud~cn-hangzhou"
+    | "alicloud~cn-hangzhou-acdr-ut-3"
     | "alicloud~cn-heyuan"
     | "alicloud~cn-hongkong"
     | "alicloud~cn-huhehaote"
@@ -3945,6 +4057,7 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "cn-fuzhou"
     | "cn-guangzhou"
     | "cn-hangzhou"
+    | "cn-hangzhou-acdr-ut-3"
     | "cn-heyuan"
     | "cn-hongkong"
     | "cn-huhehaote"
@@ -4122,6 +4235,7 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "alicloud~cn-fuzhou"
     | "alicloud~cn-guangzhou"
     | "alicloud~cn-hangzhou"
+    | "alicloud~cn-hangzhou-acdr-ut-3"
     | "alicloud~cn-heyuan"
     | "alicloud~cn-hongkong"
     | "alicloud~cn-huhehaote"
@@ -4449,6 +4563,7 @@ export interface GetServerPricesServerVendorServerPricesGetParams {
     | "alicloud~cn-fuzhou"
     | "alicloud~cn-guangzhou"
     | "alicloud~cn-hangzhou"
+    | "alicloud~cn-hangzhou-acdr-ut-3"
     | "alicloud~cn-heyuan"
     | "alicloud~cn-hongkong"
     | "alicloud~cn-huhehaote"
@@ -5061,6 +5176,7 @@ export interface SearchServersServersGetParams {
     | "cn-fuzhou"
     | "cn-guangzhou"
     | "cn-hangzhou"
+    | "cn-hangzhou-acdr-ut-3"
     | "cn-heyuan"
     | "cn-hongkong"
     | "cn-huhehaote"
@@ -5194,6 +5310,7 @@ export interface SearchServersServersGetParams {
     | "alicloud~cn-fuzhou"
     | "alicloud~cn-guangzhou"
     | "alicloud~cn-hangzhou"
+    | "alicloud~cn-hangzhou-acdr-ut-3"
     | "alicloud~cn-heyuan"
     | "alicloud~cn-hongkong"
     | "alicloud~cn-huhehaote"
@@ -5482,6 +5599,7 @@ export interface SearchServersServersGetParams {
     | "Blackwell"
     | "Gaudi"
     | "Hopper"
+    | "Pascal"
     | "Radeon Pro Navi"
     | "Turing"
     | "Volta";
@@ -5747,6 +5865,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "cn-fuzhou"
     | "cn-guangzhou"
     | "cn-hangzhou"
+    | "cn-hangzhou-acdr-ut-3"
     | "cn-heyuan"
     | "cn-hongkong"
     | "cn-huhehaote"
@@ -5880,6 +5999,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "alicloud~cn-fuzhou"
     | "alicloud~cn-guangzhou"
     | "alicloud~cn-hangzhou"
+    | "alicloud~cn-hangzhou-acdr-ut-3"
     | "alicloud~cn-heyuan"
     | "alicloud~cn-hongkong"
     | "alicloud~cn-huhehaote"
@@ -6173,6 +6293,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "Blackwell"
     | "Gaudi"
     | "Hopper"
+    | "Pascal"
     | "Radeon Pro Navi"
     | "Turing"
     | "Volta";
@@ -6371,6 +6492,7 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "cn-fuzhou"
     | "cn-guangzhou"
     | "cn-hangzhou"
+    | "cn-hangzhou-acdr-ut-3"
     | "cn-heyuan"
     | "cn-hongkong"
     | "cn-huhehaote"
@@ -6504,6 +6626,7 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "alicloud~cn-fuzhou"
     | "alicloud~cn-guangzhou"
     | "alicloud~cn-hangzhou"
+    | "alicloud~cn-hangzhou-acdr-ut-3"
     | "alicloud~cn-heyuan"
     | "alicloud~cn-hongkong"
     | "alicloud~cn-huhehaote"
@@ -6912,6 +7035,7 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "cn-fuzhou"
     | "cn-guangzhou"
     | "cn-hangzhou"
+    | "cn-hangzhou-acdr-ut-3"
     | "cn-heyuan"
     | "cn-hongkong"
     | "cn-huhehaote"
@@ -7045,6 +7169,7 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "alicloud~cn-fuzhou"
     | "alicloud~cn-guangzhou"
     | "alicloud~cn-hangzhou"
+    | "alicloud~cn-hangzhou-acdr-ut-3"
     | "alicloud~cn-heyuan"
     | "alicloud~cn-hongkong"
     | "alicloud~cn-huhehaote"

@@ -1,4 +1,9 @@
-import { formatBytes, formatValue } from "./pipe-utils";
+import {
+  formatBinaryMemoryDisplay,
+  formatBytes,
+  formatValue,
+  parseBinaryMemoryInput,
+} from "./pipe-utils";
 
 describe("formatValue", () => {
   it("formats values below 10 with 2 decimals", () => {
@@ -37,5 +42,36 @@ describe("formatBytes", () => {
 
   it("formats fractional MiB values", () => {
     expect(formatBytes(1572864)).toBe("1.5 MiB");
+  });
+});
+
+describe("formatBinaryMemoryDisplay", () => {
+  it("keeps sub-TiB values in GiB", () => {
+    expect(formatBinaryMemoryDisplay(1.25)).toEqual({
+      value: "1.25",
+      unit: "GiB",
+    });
+  });
+
+  it("promotes 1024 GiB and above to TiB", () => {
+    expect(formatBinaryMemoryDisplay(1536)).toEqual({
+      value: "1.5",
+      unit: "TiB",
+    });
+  });
+});
+
+describe("parseBinaryMemoryInput", () => {
+  it("parses GiB values", () => {
+    expect(parseBinaryMemoryInput("1536", "GiB")).toBe(1536);
+  });
+
+  it("parses TiB values back into GiB", () => {
+    expect(parseBinaryMemoryInput("1.5", "TiB")).toBe(1536);
+  });
+
+  it("rejects invalid numeric strings", () => {
+    expect(parseBinaryMemoryInput(".", "GiB")).toBeNull();
+    expect(parseBinaryMemoryInput("1e3", "GiB")).toBeNull();
   });
 });

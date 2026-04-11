@@ -18,6 +18,7 @@ import { SeoHandlerService } from "../../services/seo-handler.service";
 import { isPlatformBrowser } from "@angular/common";
 import { RouterLink } from "@angular/router";
 import { NeetoCalService } from "../../services/neeto-cal.service";
+import { UiTooltipService } from "../../services/ui-tooltip.service";
 
 interface Quote {
   quote: string;
@@ -43,6 +44,7 @@ export class AboutNavigatorComponent implements OnInit, AfterViewInit {
   private platformId = inject(PLATFORM_ID);
   private SEOHandler = inject(SeoHandlerService);
   private neetoCalService = inject(NeetoCalService);
+  private uiTooltip = inject(UiTooltipService);
 
   vendors: any[] = [
     "✅ Amazon Web Services (Done)",
@@ -230,16 +232,12 @@ export class AboutNavigatorComponent implements OnInit, AfterViewInit {
 
   showTooltip(el: any) {
     const tooltip = this.tooltip.nativeElement;
-    const scrollPosition =
-      window.pageYOffset || document.documentElement.scrollTop;
-    tooltip.style.left = `${el.target.getBoundingClientRect().left - 25}px`;
-    tooltip.style.top = `${el.target.getBoundingClientRect().bottom + 5 + scrollPosition}px`;
-    tooltip.style.display = "block";
-    tooltip.style.opacity = "1";
+    this.uiTooltip.show(tooltip, el, {
+      left: "anchor-right",
+      top: "anchor-above",
+    });
   }
   hideTooltip() {
-    const tooltip = this.tooltip.nativeElement;
-    tooltip.style.display = "none";
-    tooltip.style.opacity = "0";
+    this.uiTooltip.hide(this.tooltip.nativeElement);
   }
 }

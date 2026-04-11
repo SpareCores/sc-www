@@ -4,6 +4,7 @@ describe("Visit main pages", () => {
   it("Visit pages", () => {
     E2EEvent.visitURL("");
     E2EEvent.visitURL("/servers");
+    E2EEvent.visitURL("/advisor");
     E2EEvent.visitURL("/server_prices");
     E2EEvent.visitURL("/vendors");
     E2EEvent.visitURL("/regions");
@@ -19,5 +20,8 @@ describe("Visit main pages", () => {
     E2EEvent.visitURL("/legal/privacy-policy");
     E2EEvent.visitURL("/navigator/benchmark-coverage");
     E2EEvent.visitURL("/navigator/benchmark-workloads");
+    E2EEvent.visitURL(
+      "/advisor?workload_id=stress_ng:bestn&workload_config={}&minimum_memory=0.5",
+    );
   });
 });

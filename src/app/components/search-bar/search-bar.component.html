@@ -1,42 +1,51 @@
-<div class="search_bar_content" id="serverSearchBar">
-  <div class="top overflow-hidden bg-secondary">
-    @if (useTopSearchInput && getTopSearchParameter(); as topSearchParameter) {
-      <div class="top_search_wrap">
-        <input
-          type="text"
-          class="top_search_input"
-          [placeholder]="topSearchPlaceholder"
-          [(ngModel)]="topSearchParameter.modelValue"
-          (ngModelChange)="valueChanged()"
-        />
+<div
+  class="search_bar_content"
+  id="serverSearchBar"
+  [class.search_bar_content--without-top]="!showTopSection"
+>
+  @if (showTopSection) {
+    <div class="top overflow-hidden bg-secondary">
+      @if (
+        useTopSearchInput && getTopSearchParameter();
+        as topSearchParameter
+      ) {
+        <div class="top_search_wrap">
+          <input
+            type="text"
+            class="top_search_input"
+            [placeholder]="topSearchPlaceholder"
+            [(ngModel)]="topSearchParameter.modelValue"
+            (ngModelChange)="valueChanged()"
+          />
+          <button
+            type="button"
+            class="top_search_button"
+            (click)="
+              topSearchHasValue(topSearchParameter)
+                ? clearTopSearch(topSearchParameter)
+                : triggerTopSearch()
+            "
+            [attr.aria-label]="
+              topSearchHasValue(topSearchParameter) ? 'Clear search' : 'Search'
+            "
+          >
+            <lucide-icon
+              [name]="topSearchHasValue(topSearchParameter) ? 'x' : 'search'"
+              class="h-4 w-4"
+            ></lucide-icon>
+          </button>
+        </div>
+      } @else {
         <button
-          type="button"
-          class="top_search_button"
-          (click)="
-            topSearchHasValue(topSearchParameter)
-              ? clearTopSearch(topSearchParameter)
-              : triggerTopSearch()
-          "
-          [attr.aria-label]="
-            topSearchHasValue(topSearchParameter) ? 'Clear search' : 'Search'
-          "
+          class="w-full bg-emerald-400 hover:bg-emerald-500 text-white py-3 rounded-lg font-bold"
+          data-ph-capture-attribute-server-listing-search-prompt-action="open"
+          (click)="openSearchPrompt()"
         >
-          <lucide-icon
-            [name]="topSearchHasValue(topSearchParameter) ? 'x' : 'search'"
-            class="h-4 w-4"
-          ></lucide-icon>
+          Search Prompt
         </button>
-      </div>
-    } @else {
-      <button
-        class="w-full bg-emerald-400 hover:bg-emerald-500 text-white py-3 rounded-lg font-bold"
-        data-ph-capture-attribute-server-listing-search-prompt-action="open"
-        (click)="openSearchPrompt()"
-      >
-        Search Prompt
-      </button>
-    }
-  </div>
+      }
+    </div>
+  }
 
   <div class="filters overflow-hidden bg-secondary">
     @for (filter of filterCategories; track filter.category_id) {
@@ -72,6 +81,510 @@
             [class.pt-4]="!noTopPaddingCategoryIds.includes(filter.category_id)"
           >
             @for (
+              control of getCustomControlsByCategory(filter.category_id);
+              track control.name
+            ) {
+              <div class="mb-4" [class.custom-control--nested]="control.nested">
+                @if (control.sectionHeader) {
+                  <div class="font-bold text-emerald-400 text-sm mb-4 mt-2">
+                    {{ control.sectionHeader }}
+                  </div>
+                }
+
+                @if (
+                  control.type !== "checkbox" &&
+                  control.type !== "checkboxGroup" &&
+                  !control.hideTitle
+                ) {
+                  <div class="flex gap-2 items-center">
+                    <div class="font-bold text-emerald-400 text-sm">
+                      {{ control.title }}
+                      @if (control.required) {
+                        <span class="text-red-300">*</span>
+                      }
+                    </div>
+                    @if (control.description) {
+                      <button
+                        type="button"
+                        class="tooltip-trigger"
+                        aria-label="Show filter description"
+                        (mouseenter)="showTooltip($event, control.description)"
+                        (mouseleave)="hideTooltip()"
+                        (focus)="showTooltip($event, control.description)"
+                        (blur)="hideTooltip()"
+                      >
+                        <lucide-icon
+                          name="info"
+                          class="h-4 w-4 text-gray-200"
+                        ></lucide-icon>
+                      </button>
+                    }
+                  </div>
+                }
+
+                @if (control.type === "checkbox") {
+                  <div
+                    class="flex gap-2 mb-2"
+                    [class.items-center]="
+                      !control.description ||
+                      control.descriptionDisplay === 'tooltip'
+                    "
+                    [class.items-start]="
+                      control.description &&
+                      control.descriptionDisplay !== 'tooltip'
+                    "
+                  >
+                    <input
+                      type="checkbox"
+                      [id]="'custom_control_checkbox_' + control.name"
+                      [checked]="control.checked"
+                      [disabled]="control.disabled"
+                      (change)="
+                        onCustomCheckboxChange(
+                          control,
+                          $any($event.target).checked
+                        )
+                      "
+                      class="checkbox"
+                    />
+                    <div class="flex flex-col gap-1">
+                      <div class="flex items-center gap-2">
+                        <div class="text-white text-sm leading-tight">
+                          {{ control.title }}
+                        </div>
+                        @if (
+                          control.description &&
+                          control.descriptionDisplay === "tooltip"
+                        ) {
+                          <button
+                            type="button"
+                            class="tooltip-trigger"
+                            aria-label="Show filter description"
+                            (mouseenter)="
+                              showTooltip($event, control.description)
+                            "
+                            (mouseleave)="hideTooltip()"
+                            (focus)="showTooltip($event, control.description)"
+                            (blur)="hideTooltip()"
+                          >
+                            <lucide-icon
+                              name="info"
+                              class="h-4 w-4 text-gray-200"
+                            ></lucide-icon>
+                          </button>
+                        }
+                      </div>
+                      @if (
+                        control.description &&
+                        control.descriptionDisplay !== "tooltip"
+                      ) {
+                        <div class="text-xs text-gray-400">
+                          {{ control.description }}
+                        </div>
+                      }
+                    </div>
+                  </div>
+                }
+
+                @if (control.type === "checkboxGroup") {
+                  <div class="flex flex-col gap-2 mb-4 mt-4">
+                    @for (
+                      option of control.checkboxOptions || [];
+                      track option.name
+                    ) {
+                      <div class="flex items-center gap-1">
+                        <input
+                          type="checkbox"
+                          [id]="'custom_control_group_checkbox_' + option.name"
+                          [checked]="option.checked"
+                          [disabled]="option.disabled"
+                          (change)="
+                            onCustomCheckboxGroupChange(
+                              option.name,
+                              $any($event.target).checked
+                            )
+                          "
+                          class="checkbox"
+                        />
+                        <div class="flex flex-col gap-1">
+                          <div class="text-white text-sm">
+                            {{ option.title }}
+                          </div>
+                          @if (option.description) {
+                            <div class="text-xs text-gray-400">
+                              {{ option.description }}
+                            </div>
+                          }
+                        </div>
+                      </div>
+                    }
+                  </div>
+                }
+
+                @if (control.type === "serverAutocomplete") {
+                  <div class="custom-autocomplete mt-4">
+                    <div class="custom-autocomplete__input-wrap">
+                      <input
+                        type="text"
+                        [value]="control.inputValue || ''"
+                        [placeholder]="control.placeholder || ''"
+                        (input)="
+                          onCustomControlInput(
+                            control,
+                            $any($event.target).value
+                          )
+                        "
+                        class="custom-autocomplete__input"
+                      />
+                      @if (control.inputValue || control.selectedServer) {
+                        <button
+                          type="button"
+                          class="custom-autocomplete__clear"
+                          (click)="clearServerAutocompleteSelection(control)"
+                          aria-label="Clear baseline server selection"
+                        >
+                          <lucide-icon name="x" class="h-4 w-4"></lucide-icon>
+                        </button>
+                      }
+                    </div>
+
+                    @if (!customControlHasEnoughInput(control)) {
+                      <div class="custom-autocomplete__hint">
+                        Enter at least
+                        {{ getCustomControlMinCharacters(control) }} characters
+                        to search.
+                      </div>
+                    } @else if ((control.options || []).length > 0) {
+                      <div class="custom-autocomplete__panel custom-scrollbar">
+                        @for (
+                          server of control.options || [];
+                          track server.vendor_id +
+                            "_" +
+                            (server.server_id || server.api_reference)
+                        ) {
+                          <button
+                            type="button"
+                            class="custom-autocomplete__option"
+                            (click)="
+                              selectServerAutocompleteOption(control, server)
+                            "
+                          >
+                            <span class="custom-autocomplete__label">
+                              {{ server.vendor_id }} /
+                              {{ server.api_reference }}
+                            </span>
+                            <span class="custom-autocomplete__meta">
+                              {{ formatServerAutocompleteDescription(server) }}
+                            </span>
+                          </button>
+                        }
+                      </div>
+                    } @else {
+                      <div class="custom-autocomplete__hint">
+                        {{
+                          control.emptyMessage || "No matching servers found."
+                        }}
+                      </div>
+                    }
+                  </div>
+                }
+
+                @if (control.type === "benchmarkConfigSelect") {
+                  <div class="custom-autocomplete mt-4">
+                    <div class="custom-autocomplete__input-wrap">
+                      <input
+                        type="text"
+                        [value]="control.inputValue || ''"
+                        [placeholder]="control.placeholder || ''"
+                        (input)="
+                          onCustomControlInput(
+                            control,
+                            $any($event.target).value
+                          )
+                        "
+                        (click)="handleBenchmarkConfigInputFocus(control)"
+                        (focus)="handleBenchmarkConfigInputFocus(control)"
+                        (blur)="restoreBenchmarkConfigInput(control)"
+                        class="custom-autocomplete__input"
+                      />
+                      @if (
+                        control.inputValue || control.selectedBenchmarkConfig
+                      ) {
+                        <button
+                          type="button"
+                          class="custom-autocomplete__clear"
+                          (click)="
+                            clearBenchmarkConfigSelection(control);
+                            openBenchmarkConfigDropdown(control)
+                          "
+                          aria-label="Clear workload selection"
+                        >
+                          <lucide-icon name="x" class="h-4 w-4"></lucide-icon>
+                        </button>
+                      }
+                    </div>
+
+                    @if (
+                      !customControlHasEnoughInput(control) &&
+                      (control.inputValue || "").trim().length > 0
+                    ) {
+                      <div class="custom-autocomplete__hint">
+                        Enter at least
+                        {{ getCustomControlMinCharacters(control) }} characters
+                        to search.
+                      </div>
+                    }
+
+                    @if (
+                      !control.selectedBenchmarkConfig ||
+                      isBenchmarkConfigDropdownOpen(control)
+                    ) {
+                      @if ((control.benchmarkGroups || []).length > 0) {
+                        <div
+                          class="custom-autocomplete__panel custom-scrollbar"
+                        >
+                          @for (
+                            group of control.benchmarkGroups || [];
+                            track group.name
+                          ) {
+                            <div class="benchmark-group">
+                              <button
+                                type="button"
+                                class="benchmark-group__header"
+                                (click)="
+                                  toggleBenchmarkGroup(control, group.name)
+                                "
+                              >
+                                <span>{{ group.name }}</span>
+                                <lucide-icon
+                                  [name]="
+                                    isBenchmarkGroupExpanded(
+                                      control,
+                                      group.name
+                                    )
+                                      ? 'chevron-up'
+                                      : 'chevron-down'
+                                  "
+                                  class="h-4 w-4"
+                                ></lucide-icon>
+                              </button>
+
+                              @if (
+                                isBenchmarkGroupExpanded(control, group.name)
+                              ) {
+                                @for (
+                                  benchmarkOption of group.options;
+                                  track benchmarkOption.benchmark_id +
+                                    "_" +
+                                    benchmarkOption.config
+                                ) {
+                                  <button
+                                    type="button"
+                                    class="custom-autocomplete__option"
+                                    (click)="
+                                      selectBenchmarkConfigOption(
+                                        control,
+                                        benchmarkOption
+                                      )
+                                    "
+                                  >
+                                    <span class="custom-autocomplete__label">
+                                      {{ benchmarkOption.displayName }}
+                                    </span>
+                                    <span class="custom-autocomplete__meta">
+                                      {{
+                                        formatBenchmarkConfigDescription(
+                                          benchmarkOption
+                                        )
+                                      }}
+                                    </span>
+                                  </button>
+                                }
+                              }
+                            </div>
+                          }
+                        </div>
+                      } @else {
+                        <div class="custom-autocomplete__hint">
+                          {{
+                            control.emptyMessage ||
+                              "No matching workloads found."
+                          }}
+                        </div>
+                      }
+                    } @else if (!control.selectedBenchmarkConfig) {
+                      <div class="custom-autocomplete__hint">
+                        {{
+                          control.emptyMessage || "No matching workloads found."
+                        }}
+                      </div>
+                    }
+                  </div>
+                }
+
+                @if (control.type === "singleSelect") {
+                  <div
+                    class="custom-autocomplete"
+                    [class.mt-4]="!control.hideTitle"
+                    [class.mt-2]="control.hideTitle"
+                    (focusout)="handleSingleSelectFocusOut(control, $event)"
+                  >
+                    <div class="custom-autocomplete__input-wrap">
+                      <button
+                        type="button"
+                        class="custom-autocomplete__input custom-autocomplete__input--button"
+                        [disabled]="control.disabled"
+                        [attr.aria-expanded]="
+                          isSingleSelectDropdownOpen(control)
+                        "
+                        (click)="toggleSingleSelectDropdown(control)"
+                      >
+                        <span>{{ getCustomSingleSelectLabel(control) }}</span>
+                        <lucide-icon
+                          [name]="
+                            isSingleSelectDropdownOpen(control)
+                              ? 'chevron-up'
+                              : 'chevron-down'
+                          "
+                          class="custom-autocomplete__toggle-icon h-4 w-4"
+                        ></lucide-icon>
+                      </button>
+                    </div>
+
+                    @if (
+                      isSingleSelectDropdownOpen(control) && !control.disabled
+                    ) {
+                      <div class="custom-autocomplete__panel custom-scrollbar">
+                        @for (
+                          option of control.selectOptions || [];
+                          track option.value
+                        ) {
+                          <button
+                            type="button"
+                            class="custom-autocomplete__option"
+                            [class.custom-autocomplete__option--selected]="
+                              control.selectedValue === option.value
+                            "
+                            (click)="selectCustomControlOption(control, option)"
+                          >
+                            <span class="custom-autocomplete__label">
+                              {{ option.label }}
+                            </span>
+                          </button>
+                        }
+                      </div>
+                    }
+                  </div>
+                }
+
+                @if (control.type === "rangeSlider") {
+                  <div class="custom-slider mt-4">
+                    <div class="custom-slider__header">
+                      <div class="custom-slider__value">
+                        {{ formatCustomNumericValue(control) }}
+                      </div>
+                      @if (control.numericValue !== null) {
+                        <button
+                          type="button"
+                          class="custom-slider__clear"
+                          (click)="clearCustomNumericControl(control)"
+                          aria-label="Clear slider value"
+                        >
+                          <lucide-icon name="x" class="h-4 w-4"></lucide-icon>
+                        </button>
+                      }
+                    </div>
+
+                    <input
+                      type="range"
+                      class="custom-slider__input"
+                      [min]="control.min ?? 0"
+                      [max]="control.max ?? 100"
+                      [step]="control.step ?? 1"
+                      [value]="getRangeSliderValue(control)"
+                      (input)="
+                        onCustomRangeSliderChange(
+                          control,
+                          +$any($event.target).value
+                        )
+                      "
+                    />
+
+                    @if ((control.tickValues || []).length > 0) {
+                      <div class="custom-slider__ticks">
+                        @for (tick of control.tickValues || []; track tick) {
+                          <span
+                            >{{ tick }}
+                            @if (control.showUnitInTicks && control.unit) {
+                              {{ control.unit }}
+                            }
+                          </span>
+                        }
+                      </div>
+                    }
+                  </div>
+                }
+
+                @if (control.type === "powerOfTwoStepper") {
+                  <div class="custom-stepper mt-4">
+                    <button
+                      type="button"
+                      class="custom-stepper__button"
+                      (mousedown)="$event.preventDefault()"
+                      [disabled]="!canDecrementPowerOfTwoValue(control)"
+                      (click)="decrementPowerOfTwoValue(control)"
+                      aria-label="Decrease value"
+                    >
+                      <lucide-icon name="minus" class="h-4 w-4"></lucide-icon>
+                    </button>
+
+                    <div class="custom-stepper__field">
+                      <input
+                        id="custom_control_numeric_{{ control.name }}"
+                        type="text"
+                        inputmode="decimal"
+                        autocomplete="off"
+                        spellcheck="false"
+                        class="custom-stepper__input"
+                        [attr.aria-label]="control.title"
+                        [attr.min]="control.min ?? null"
+                        [ngStyle]="getPowerOfTwoStepperInputStyle(control)"
+                        [value]="getPowerOfTwoStepperInputValue(control)"
+                        (focus)="handlePowerOfTwoStepperFocus(control)"
+                        (input)="onPowerOfTwoStepperInput(control, $event)"
+                        (blur)="
+                          commitPowerOfTwoStepperAfterFocusLoss(control, $event)
+                        "
+                        (keydown.enter)="
+                          commitPowerOfTwoStepperFromEnter($event)
+                        "
+                      />
+
+                      @if (
+                        getPowerOfTwoStepperInputUnit(control);
+                        as inputUnit
+                      ) {
+                        <span class="custom-stepper__unit">{{
+                          inputUnit
+                        }}</span>
+                      }
+                    </div>
+
+                    <button
+                      type="button"
+                      class="custom-stepper__button"
+                      (mousedown)="$event.preventDefault()"
+                      (click)="incrementPowerOfTwoValue(control)"
+                      aria-label="Increase value"
+                    >
+                      <lucide-icon name="plus" class="h-4 w-4"></lucide-icon>
+                    </button>
+                  </div>
+                }
+              </div>
+            }
+
+            @for (
               parameter of getParametersByCategory(filter.category_id);
               track parameter.schema.name + "_" + parameter.schema.title
             ) {
@@ -97,15 +610,24 @@
                       {{ parameter.schema.title }}
                     </div>
                     @if (parameter.schema.description) {
-                      <lucide-icon
-                        name="info"
-                        class="h-4 w-4 text-gray-200"
+                      <button
+                        type="button"
+                        class="tooltip-trigger"
+                        aria-label="Show filter description"
                         (mouseenter)="
                           showTooltip($event, parameter.schema.description)
                         "
                         (mouseleave)="hideTooltip()"
+                        (focus)="
+                          showTooltip($event, parameter.schema.description)
+                        "
+                        (blur)="hideTooltip()"
                       >
-                      </lucide-icon>
+                        <lucide-icon
+                          name="info"
+                          class="h-4 w-4 text-gray-200"
+                        ></lucide-icon>
+                      </button>
                     }
                   </div>
                 }
@@ -334,15 +856,24 @@
                         {{ parameter.schema.title }}
                       </div>
                       @if (parameter.schema.description) {
-                        <lucide-icon
-                          name="info"
-                          class="h-3 w-3 text-gray-200"
+                        <button
+                          type="button"
+                          class="tooltip-trigger"
+                          aria-label="Show filter description"
                           (mouseenter)="
                             showTooltip($event, parameter.schema.description)
                           "
                           (mouseleave)="hideTooltip()"
+                          (focus)="
+                            showTooltip($event, parameter.schema.description)
+                          "
+                          (blur)="hideTooltip()"
                         >
-                        </lucide-icon>
+                          <lucide-icon
+                            name="info"
+                            class="h-4 w-4 text-gray-200"
+                          ></lucide-icon>
+                        </button>
                       }
                     </div>
                   </div>
@@ -953,8 +1484,8 @@
 <div
   id="tooltipDefault"
   #tooltipDefault
-  style="opacity: 0"
-  class="tooltip-panel fixed z-10"
+  style="opacity: 0; display: none"
+  class="tooltip-panel fixed z-100 pointer-events-none"
 >
   {{ tooltipContent }}
 </div>

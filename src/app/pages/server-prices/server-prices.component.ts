@@ -37,6 +37,7 @@ import {
 } from "../../services/server-compare.service";
 import { encodeQueryParams } from "../../tools/queryParamFunctions";
 import { ToastService } from "../../services/toast.service";
+import { UiTooltipService } from "../../services/ui-tooltip.service";
 import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
 import { Subscription } from "rxjs";
 import openApiSpec from "../../../../sdk/openapi.json";
@@ -109,6 +110,7 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
   pageDropdown = viewChild<FlowbiteDropdownDirective>("pageDropdown");
   private serverCompare = inject(ServerCompareService);
   private toastService = inject(ToastService);
+  private uiTooltip = inject(UiTooltipService);
 
   private subscription = new Subscription();
 
@@ -751,12 +753,10 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
   showTooltip(el: any, content: string, autoHide = false) {
     this.tooltipContent = content;
     const tooltip = this.tooltip.nativeElement;
-    const scrollPosition =
-      window.pageYOffset || document.documentElement.scrollTop;
-    tooltip.style.left = `${el.target.getBoundingClientRect().right + 5}px`;
-    tooltip.style.top = `${el.target.getBoundingClientRect().top - 5 + scrollPosition}px`;
-    tooltip.style.display = "block";
-    tooltip.style.opacity = "1";
+    this.uiTooltip.show(tooltip, el, {
+      left: "anchor-right",
+      top: "anchor-above",
+    });
 
     if (autoHide) {
       setTimeout(() => {
@@ -766,9 +766,7 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
   }
 
   hideTooltip() {
-    const tooltip = this.tooltip.nativeElement;
-    tooltip.style.display = "none";
-    tooltip.style.opacity = "0";
+    this.uiTooltip.hide(this.tooltip.nativeElement);
   }
 
   toggleCompare2(event: any, server: ServerPriceWithPKs | any) {

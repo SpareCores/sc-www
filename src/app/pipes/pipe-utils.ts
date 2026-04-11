@@ -8,6 +8,58 @@ export function formatValue(value: number): string {
   return parseFloat(formatted).toString();
 }
 
+export type BinaryMemoryUnit = "GiB" | "TiB";
+
+export function formatNumberInputValue(
+  value: number,
+  maximumFractionDigits = 3,
+): string {
+  return value.toLocaleString("en-US", {
+    useGrouping: false,
+    maximumFractionDigits,
+  });
+}
+
+export function formatBinaryMemoryDisplay(valueInGiB: number): {
+  value: string;
+  unit: BinaryMemoryUnit;
+} {
+  if (valueInGiB >= 1024) {
+    return {
+      value: formatNumberInputValue(valueInGiB / 1024),
+      unit: "TiB",
+    };
+  }
+
+  return {
+    value: formatNumberInputValue(valueInGiB),
+    unit: "GiB",
+  };
+}
+
+export function parseBinaryMemoryInput(
+  rawValue: string,
+  unit: BinaryMemoryUnit,
+): number | null {
+  const normalizedValue = rawValue.trim();
+
+  if (
+    !normalizedValue.length ||
+    normalizedValue === "." ||
+    !/^\d*\.?\d*$/.test(normalizedValue)
+  ) {
+    return null;
+  }
+
+  const parsedValue = Number(normalizedValue);
+
+  if (!Number.isFinite(parsedValue)) {
+    return null;
+  }
+
+  return unit === "TiB" ? parsedValue * 1024 : parsedValue;
+}
+
 const IEC_UNITS = ["Bytes", "KiB", "MiB", "GiB", "TiB"];
 
 export function formatBytes(bytes: number): string {

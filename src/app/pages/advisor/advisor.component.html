@@ -1,0 +1,752 @@
+<div class="w-full bg-primary">
+  <div class="content pt-16 pb-16">
+    <app-breadcrumbs [segments]="breadcrumbs()"></app-breadcrumbs>
+
+    <div class="flex flex-col gap-4 my-8 mx-2 xl:mx-0">
+      <div class="flex gap-4 items-center w-full justify-between">
+        <h1 class="text-white font-bold text-3xl flex items-center">
+          <lucide-icon class="h-8 w-8 mr-2" name="bot"></lucide-icon>
+          {{ title }}
+        </h1>
+        <button
+          id="advisor_share_button"
+          type="button"
+          class="btn-primary py-2 px-3 flex gap-1 items-center"
+          (click)="clipboardURL()"
+        >
+          Share
+          <lucide-icon
+            [name]="clipboardIcon()"
+            size="16"
+            class="ml-2"
+          ></lucide-icon>
+        </button>
+      </div>
+      <div class="text-white text-xl pr-16">
+        {{ description }}
+      </div>
+    </div>
+
+    <div class="flex gap-8 mx-2 xl:mx-0">
+      <div
+        class="advisor-filter-bar bg-primary"
+        [class.advisor-filter-bar-collapsed]="isCollapsed()"
+      >
+        <div
+          class="advisor-filter-bar-collapser bg-secondary"
+          (click)="toggleCollapse()"
+          tabindex="0"
+          role="button"
+          [attr.aria-expanded]="!isCollapsed()"
+          (keydown.enter)="toggleCollapse()"
+          (keydown.space)="toggleCollapse(); $event.preventDefault()"
+        >
+          <lucide-icon
+            name="chevron-left"
+            class="h-6 w-6 text-emerald-400"
+          ></lucide-icon>
+        </div>
+
+        <div class="advisor-filter-bar-top overflow-hidden bg-secondary">
+          <div class="text-emerald-400 text-sm font-semibold">
+            Advisor Controls
+          </div>
+        </div>
+
+        <div class="advisor-filter-bar-filters overflow-hidden bg-secondary">
+          <app-search-bar
+            [query]="query()"
+            [extraParameters]="advisorSearchBarExtraParameters()"
+            [filterCategories]="advisorFilterCategories"
+            [searchParameters]="searchParameters"
+            [customControls]="customControls()"
+            [showTopSection]="false"
+            [isAuthenticated]="false"
+            (searchChanged)="onSearchChanged($event)"
+            (customControlChanged)="onCustomControlChanged($event)"
+          >
+          </app-search-bar>
+
+          @if (!isCollapsed()) {
+            <div class="px-4 pb-4 bg-secondary flex flex-col gap-3">
+              <button
+                type="button"
+                class="text-white bg-emerald-400 hover:bg-emerald-500 rounded-lg px-3 py-2 relative flex gap-2 items-center justify-center"
+                (click)="clearFilters()"
+              >
+                <lucide-icon class="h-4 w-4" name="funnel-x"></lucide-icon>
+                Clear filters
+              </button>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div
+        class="advisor-results flex flex-col gap-4"
+        [ngClass]="{
+          'advisor-results-constrained': !isCollapsed(),
+          'w-full': isCollapsed(),
+        }"
+      >
+        <div class="advisor-toolbar">
+          @if (recommendationSummary(); as summary) {
+            <div
+              class="advisor-summary-alert"
+              [class.advisor-summary-alert--positive]="
+                summary.tone === 'positive'
+              "
+              [class.advisor-summary-alert--neutral]="
+                summary.tone === 'neutral'
+              "
+            >
+              <div class="advisor-summary-alert-title">
+                {{ summary.title }}
+              </div>
+              <div class="advisor-summary-alert-body">{{ summary.body }}</div>
+            </div>
+          }
+
+          <button
+            id="advisor_compare_baseline_button"
+            type="button"
+            class="advisor-top-action py-2 px-3 flex gap-1 items-center"
+            [class.btn-primary]="isBaselineSelectedForCompare()"
+            [class.btn-primary-outline]="!isBaselineSelectedForCompare()"
+            [disabled]="!selectedBaselineServer()"
+            (click)="toggleBaselineCompare()"
+          >
+            <lucide-icon name="scale" class="h-4 w-4"></lucide-icon>
+            {{ baselineCompareButtonLabel() }}
+          </button>
+
+          <div class="advisor-top-controls">
+            <div>
+              <button
+                id="advisor_currency_button"
+                [appFlowbiteDropdown]="'advisor_currency_options'"
+                #currencyDropdown="appFlowbiteDropdown"
+                class="advisor-dropdown-button"
+                type="button"
+              >
+                <div class="px-4 py-3">
+                  {{ selectedCurrency().slug }}
+                </div>
+                <div
+                  class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
+                >
+                  <lucide-icon
+                    name="credit-card"
+                    class="h-6 w-6 text-emerald-400"
+                  ></lucide-icon>
+                </div>
+              </button>
+            </div>
+
+            <div>
+              <button
+                id="advisor_column_button"
+                [appFlowbiteDropdown]="'advisor_column_options'"
+                class="advisor-dropdown-button"
+                type="button"
+              >
+                <div class="px-4 py-3">Columns</div>
+                <div
+                  class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
+                >
+                  <lucide-icon
+                    name="columns-3-cog"
+                    class="h-6 w-6 text-emerald-400"
+                  ></lucide-icon>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div
+            class="advisor-table-wrap w-full overflow-x-auto relative"
+            [class.min-h-80]="
+              isLoadingRecommendations() && !recommendations().length
+            "
+          >
+            @if (isLoadingRecommendations()) {
+              <div class="advisor-table-loading-overlay">
+                <div class="flex justify-center mt-16 opacity-100">
+                  <app-loading-spinner size="lg"></app-loading-spinner>
+                </div>
+              </div>
+            }
+
+            <table class="advisor-results-table" id="advisor_results_table">
+              <thead>
+                <tr>
+                  <th class="advisor-checkbox-column">
+                    <div class="text-white">
+                      <lucide-icon class="h-4 w-4" name="scale"></lucide-icon>
+                    </div>
+                  </th>
+                  @for (column of tableColumns(); track column.name) {
+                    <th
+                      [ngClass]="{ 'cursor-pointer': column.orderField }"
+                      (click)="toggleOrdering(column)"
+                    >
+                      <div class="flex gap-1 whitespace-nowrap">
+                        {{ column.name }}
+                        @if (getOrderingIcon(column); as orderingIcon) {
+                          <lucide-icon
+                            [name]="orderingIcon"
+                            class="h-4 w-4 text-white"
+                          ></lucide-icon>
+                        }
+                      </div>
+                    </th>
+                  }
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (
+                  recommendation of recommendations();
+                  track recommendation.vendor_id +
+                    "_" +
+                    recommendation.server_id
+                ) {
+                  <tr
+                    (click)="openServerDetails(recommendation)"
+                    [class.advisor-table-row-baseline]="
+                      isSelectedBaselineRecommendation(recommendation)
+                    "
+                  >
+                    <td
+                      (click)="$event.stopPropagation()"
+                      class="advisor-checkbox-column"
+                    >
+                      <div class="flex items-center">
+                        <input
+                          type="checkbox"
+                          class="advisor-compare-checkbox"
+                          [checked]="isSelectedForCompare(recommendation)"
+                          (click)="
+                            toggleCompareSelection($event, recommendation)
+                          "
+                        />
+                      </div>
+                    </td>
+                    @for (column of tableColumns(); track column.name) {
+                      @if (column.type === "name") {
+                        <td>
+                          <div (click)="$event.stopPropagation()">
+                            <a
+                              [routerLink]="[
+                                '/server',
+                                advisorUi.getVendorLinkId(recommendation),
+                                recommendation.api_reference,
+                              ]"
+                            >
+                              <div class="text-sm text-white flex gap-1">
+                                <span class="whitespace-nowrap">
+                                  {{
+                                    recommendation.display_name ||
+                                      recommendation.api_reference
+                                  }}
+                                </span>
+                                @if (
+                                  advisorUi.showApiReference(recommendation)
+                                ) {
+                                  <span class="text-emerald-400">|</span>
+                                  <span class="whitespace-nowrap">
+                                    {{ recommendation.api_reference }}
+                                  </span>
+                                }
+                              </div>
+                              <div class="text-xs text-white flex gap-1">
+                                <span>{{ recommendation.vendor_id }}</span>
+                              </div>
+                            </a>
+                          </div>
+                        </td>
+                      }
+                      @if (column.type === "vendor") {
+                        <td>
+                          @if (
+                            advisorUi.getVendorLogo(recommendation);
+                            as vendorLogo
+                          ) {
+                            <div class="advisor-table-vendor-logo">
+                              <img
+                                [src]="vendorLogo"
+                                [alt]="
+                                  advisorUi.getVendorName(recommendation) +
+                                  ' logo'
+                                "
+                              />
+                            </div>
+                          } @else {
+                            <div class="text-white text-sm">
+                              {{ advisorUi.getVendorName(recommendation) }}
+                            </div>
+                          }
+                        </td>
+                      }
+                      @if (column.type === "score") {
+                        <td>
+                          <div class="text-sm text-white whitespace-nowrap">
+                            {{ advisorUi.formatScore(recommendation.score) }}
+                          </div>
+                          @if (recommendation.score_per_price) {
+                            <div class="text-xs text-white flex gap-1">
+                              <span class="whitespace-nowrap">
+                                {{
+                                  advisorUi.formatScore(
+                                    recommendation.score_per_price
+                                  )
+                                }}
+                                / USD
+                              </span>
+                            </div>
+                          }
+                        </td>
+                      }
+                      @if (column.type === "score_per_price") {
+                        <td>
+                          @if (recommendation.score_per_price) {
+                            <span class="whitespace-nowrap">
+                              {{
+                                advisorUi.formatScore(
+                                  recommendation.score_per_price
+                                )
+                              }}
+                              / USD
+                            </span>
+                          } @else {
+                            <span>-</span>
+                          }
+                        </td>
+                      }
+                      @if (column.type === "processor") {
+                        <td>
+                          <div class="text-sm text-white whitespace-nowrap">
+                            {{ recommendation.vcpus || 0 }} vCPUs
+                            @if (recommendation.cpu_architecture) {
+                              <span
+                                >({{ recommendation.cpu_architecture }})</span
+                              >
+                            }
+                          </div>
+                          <div class="flex gap-1">
+                            @if (
+                              recommendation.cpu_cores &&
+                              recommendation.cpu_speed
+                            ) {
+                              <div class="text-xs text-white flex gap-1">
+                                <span class="whitespace-nowrap">
+                                  {{ recommendation.cpu_cores }} cores &#64;
+                                  {{ recommendation.cpu_speed }} GHz
+                                </span>
+                              </div>
+                            }
+                            @if (
+                              recommendation.cpu_allocation &&
+                              recommendation.cpu_allocation !== "Dedicated"
+                            ) {
+                              <div class="text-xs text-white flex gap-1">
+                                <span
+                                  >({{ recommendation.cpu_allocation }})</span
+                                >
+                              </div>
+                            }
+                          </div>
+                        </td>
+                      }
+                      @if (column.type === "cpu_model") {
+                        <td>
+                          <div class="text-sm text-white flex gap-1">
+                            <span>{{
+                              advisorUi.getModelDetail(
+                                recommendation,
+                                "cpu_model"
+                              )
+                            }}</span>
+                          </div>
+                          <div class="text-xs text-white">
+                            @if (recommendation.cpu_manufacturer) {
+                              <span
+                                >{{ recommendation.cpu_manufacturer }}
+                              </span>
+                            }
+                            @if (recommendation.cpu_family) {
+                              <span>{{ recommendation.cpu_family }} </span>
+                            }
+                          </div>
+                        </td>
+                      }
+                      @if (column.type === "cpu_cache") {
+                        <td>
+                          @if (
+                            recommendation.cpu_l1d_cache ||
+                            recommendation.cpu_l2_cache ||
+                            recommendation.cpu_l3_cache
+                          ) {
+                            <div class="text-xs text-white whitespace-nowrap">
+                              L1:
+                              {{ recommendation.cpu_l1d_cache | cpuCacheSize }}
+                            </div>
+                            <div class="text-xs text-white whitespace-nowrap">
+                              L2:
+                              {{ recommendation.cpu_l2_cache | cpuCacheSize }}
+                            </div>
+                            <div class="text-xs text-white whitespace-nowrap">
+                              L3:
+                              {{ recommendation.cpu_l3_cache | cpuCacheSize }}
+                            </div>
+                          } @else {
+                            <div class="text-sm text-white">-</div>
+                          }
+                        </td>
+                      }
+                      @if (column.type === "benchmark") {
+                        <td>
+                          <div class="text-sm text-white whitespace-nowrap">
+                            {{
+                              advisorUi.formatScore(
+                                recommendation.selected_benchmark_score
+                              )
+                            }}
+                          </div>
+                          @if (
+                            selectedBenchmarkConfig()?.benchmarkTemplate?.unit
+                          ) {
+                            <div class="text-xs text-white flex gap-1">
+                              <span class="whitespace-nowrap">
+                                {{
+                                  selectedBenchmarkConfig()?.benchmarkTemplate
+                                    ?.unit
+                                }}
+                              </span>
+                            </div>
+                          }
+                        </td>
+                      }
+                      @if (column.type === "benchmark_score_per_price") {
+                        <td>
+                          @if (
+                            recommendation.selected_benchmark_score_per_price
+                          ) {
+                            <span class="whitespace-nowrap">
+                              {{
+                                advisorUi.formatScore(
+                                  recommendation.selected_benchmark_score_per_price
+                                )
+                              }}
+                            </span>
+                            <div class="text-xs text-white flex gap-1">
+                              <span class="whitespace-nowrap">for $1/hour</span>
+                            </div>
+                          } @else {
+                            <span>-</span>
+                          }
+                        </td>
+                      }
+                      @if (column.type === "memory") {
+                        <td>
+                          <div class="text-sm text-white">
+                            {{ advisorUi.formatMemory(recommendation) }}
+                          </div>
+                          @if (recommendation.memory_speed) {
+                            <div class="text-xs text-white flex gap-1">
+                              <span class="whitespace-nowrap">
+                                {{ recommendation.memory_speed }} MHz
+                                @if (recommendation.memory_generation) {
+                                  <span
+                                    >({{
+                                      recommendation.memory_generation
+                                    }})</span
+                                  >
+                                }
+                              </span>
+                            </div>
+                          }
+                        </td>
+                      }
+                      @if (column.type === "gpu") {
+                        <td>
+                          <div class="text-sm text-white">
+                            {{ recommendation.gpu_count | gpuCount }}
+                          </div>
+                          @if (recommendation.gpu_model) {
+                            <div class="text-xs text-white flex gap-1">
+                              <span>{{ recommendation.gpu_model }}</span>
+                            </div>
+                          }
+                        </td>
+                      }
+                      @if (column.type === "gpu_memory_min") {
+                        <td>
+                          {{ advisorUi.formatGpuMemory(recommendation, "min") }}
+                        </td>
+                      }
+                      @if (column.type === "gpu_memory_total") {
+                        <td>
+                          {{
+                            advisorUi.formatGpuMemory(recommendation, "total")
+                          }}
+                        </td>
+                      }
+                      @if (column.type === "gpu_model") {
+                        <td>
+                          <div class="text-sm text-white flex gap-1">
+                            <span>{{
+                              advisorUi.getModelDetail(
+                                recommendation,
+                                "gpu_model"
+                              )
+                            }}</span>
+                          </div>
+                          <div class="text-xs text-white">
+                            @if (recommendation.gpu_manufacturer) {
+                              <span
+                                >{{ recommendation.gpu_manufacturer }}
+                              </span>
+                            }
+                            @if (recommendation.gpu_family) {
+                              <span>{{ recommendation.gpu_family }} </span>
+                            }
+                          </div>
+                        </td>
+                      }
+                      @if (column.type === "storage") {
+                        <td>
+                          <div class="text-sm text-white">
+                            {{ advisorUi.formatStorage(recommendation) }}
+                          </div>
+                          @if (recommendation.storage_type) {
+                            <div class="text-xs text-white">
+                              <span>{{ recommendation.storage_type }}</span>
+                            </div>
+                          }
+                        </td>
+                      }
+                      @if (column.type === "price") {
+                        <td>
+                          <div class="text-sm text-white whitespace-nowrap">
+                            {{
+                              advisorUi.formatPrice(
+                                recommendation,
+                                displayedCurrency().slug,
+                                column.key
+                              )
+                            }}
+                          </div>
+                        </td>
+                      }
+                      @if (column.type === "network_speed") {
+                        <td>
+                          <span class="whitespace-nowrap">
+                            {{
+                              advisorUi.formatNetworkSpeed(
+                                recommendation.network_speed
+                              )
+                            }}
+                          </span>
+                        </td>
+                      }
+                      @if (column.type === "inbound_traffic") {
+                        <td>
+                          <span class="whitespace-nowrap">
+                            {{
+                              advisorUi.formatMonthlyTraffic(
+                                recommendation.inbound_traffic
+                              )
+                            }}
+                          </span>
+                        </td>
+                      }
+                      @if (column.type === "outbound_traffic") {
+                        <td>
+                          <span class="whitespace-nowrap">
+                            {{
+                              advisorUi.formatMonthlyTraffic(
+                                recommendation.outbound_traffic
+                              )
+                            }}
+                          </span>
+                        </td>
+                      }
+                      @if (column.type === "ipv4") {
+                        <td>
+                          <span class="whitespace-nowrap">
+                            {{ advisorUi.formatIpv4(recommendation.ipv4) }}
+                          </span>
+                        </td>
+                      }
+                      @if (column.type === "text") {
+                        <td>
+                          {{
+                            advisorUi.getTextValue(recommendation, column.key)
+                          }}
+                        </td>
+                      }
+                    }
+                    <td>
+                      <div (click)="$event.stopPropagation()">
+                        <a
+                          class="advisor-table-link advisor-table-link-icon"
+                          [routerLink]="[
+                            '/server',
+                            advisorUi.getVendorLinkId(recommendation),
+                            recommendation.api_reference,
+                          ]"
+                        >
+                          <lucide-icon
+                            name="chevron-right"
+                            class="h-6 w-6 text-emerald-400"
+                          ></lucide-icon>
+                        </a>
+                      </div>
+                    </td>
+                  </tr>
+                }
+
+                @if (!recommendations().length && !isLoadingRecommendations()) {
+                  <tr>
+                    <td
+                      [attr.colspan]="tableColumns().length + 2"
+                      class="px-5 py-6 text-center text-gray-400 text-sm"
+                    >
+                      {{ recommendationEmptyStateMessage() }}
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <div class="flex justify-between mt-4 flex-wrap gap-4">
+            <div>
+              <button
+                id="advisor_pagesize_button"
+                [appFlowbiteDropdown]="'advisor_pagesize_options'"
+                [dropdownFlip]="true"
+                [dropdownPlacement]="'bottom-start'"
+                #pageDropdown="appFlowbiteDropdown"
+                class="advisor-dropdown-button"
+                type="button"
+              >
+                <div class="px-4 py-2">
+                  {{ limit() }}
+                </div>
+                <div
+                  class="px-2 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
+                >
+                  <lucide-icon
+                    name="chevron-down"
+                    class="h-6 w-6 text-emerald-400"
+                  ></lucide-icon>
+                </div>
+              </button>
+              <span class="text-white"> items per page</span>
+            </div>
+
+            <div>
+              <app-pagination
+                baseURL="/advisor"
+                [currentPage]="page()"
+                [totalPages]="totalPages()"
+                [baseQueryParams]="getUrlStateQueryParams()"
+              >
+              </app-pagination>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="advisor_pagesize_options" class="advisor-dropdown-menu hidden w-44">
+  <ul
+    class="advisor-dropdown-menu-list px-1"
+    aria-labelledby="advisor_pagesize_button"
+  >
+    @for (pageLimit of pageLimits; track $index) {
+      <li
+        class="advisor-dropdown-menu-option"
+        (click)="selectPageSize(pageLimit)"
+        (keydown.enter)="selectPageSize(pageLimit)"
+        (keydown.space)="selectPageSize(pageLimit); $event.preventDefault()"
+        role="option"
+        [attr.aria-selected]="pageLimit === limit()"
+        tabindex="0"
+      >
+        <div class="advisor-dropdown-menu-label">{{ pageLimit }}</div>
+      </li>
+    }
+  </ul>
+</div>
+
+<div id="advisor_currency_options" class="advisor-dropdown-menu hidden w-52">
+  <ul
+    class="advisor-dropdown-menu-list px-1"
+    aria-labelledby="advisor_currency_button"
+  >
+    @for (currency of availableCurrencies; track currency.name) {
+      <li
+        class="advisor-dropdown-menu-option"
+        (click)="selectCurrency(currency)"
+        (keydown.enter)="selectCurrency(currency); $event.preventDefault()"
+        (keydown.space)="selectCurrency(currency); $event.preventDefault()"
+        role="option"
+        [attr.aria-selected]="currency === selectedCurrency()"
+        tabindex="0"
+      >
+        <div class="advisor-dropdown-menu-label">
+          {{ currency.name }} ({{ currency.symbol }})
+        </div>
+      </li>
+    }
+  </ul>
+</div>
+
+<div id="advisor_column_options" class="advisor-dropdown-menu hidden w-56">
+  <ul
+    class="advisor-dropdown-menu-list px-3"
+    aria-labelledby="advisor_column_button"
+  >
+    @for (column of possibleColumns(); track column.name) {
+      <li class="advisor-dropdown-menu-option px-0 hover:bg-transparent">
+        <input
+          type="checkbox"
+          [checked]="column.show"
+          (change)="
+            setColumnVisibility(column.name, $any($event.target).checked)
+          "
+          class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer"
+        />
+        <div class="advisor-dropdown-menu-label">{{ column.name }}</div>
+      </li>
+    }
+  </ul>
+</div>
+
+@if (compareCount() >= 2) {
+  <div class="advisor-compare-bar">
+    <div class="advisor-compare-bar-actions">
+      <button
+        type="button"
+        class="advisor-compare-bar-button advisor-compare-bar-button-secondary"
+        (click)="clearCompareSelection()"
+      >
+        Clear
+      </button>
+      <button
+        type="button"
+        class="advisor-compare-bar-button advisor-compare-bar-button-primary"
+        (click)="openCompare()"
+      >
+        Compare ({{ compareCount() }})
+      </button>
+    </div>
+  </div>
+}

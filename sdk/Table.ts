@@ -19,6 +19,8 @@ import {
   TableRegionTableRegionGetData,
   TableServerPricesTableServerPricesGetData,
   TableServerPricesTableServerPricesGetParams,
+  TableServerSelectTableServerSelectGetData,
+  TableServerSelectTableServerSelectGetParams,
   TableServerTableServerGetData,
   TableStorageTableStorageGetData,
   TableVendorTableVendorGetData,
@@ -140,6 +142,28 @@ export class Table<SecurityDataType = unknown> {
     this.http.request<TableServerTableServerGetData, any>({
       path: `/table/server`,
       method: "GET",
+      format: "json",
+      ...params,
+    });
+  /**
+   * @description Return the Server table with column selection.
+   *
+   * @tags Table dumps
+   * @name TableServerSelectTableServerSelectGet
+   * @summary Table Server Select
+   * @request GET:/table/server/select
+   */
+  tableServerSelectTableServerSelectGet = (
+    query: TableServerSelectTableServerSelectGetParams,
+    params: RequestParams = {},
+  ) =>
+    this.http.request<
+      TableServerSelectTableServerSelectGetData,
+      HTTPValidationError
+    >({
+      path: `/table/server/select`,
+      method: "GET",
+      query: query,
       format: "json",
       ...params,
     });

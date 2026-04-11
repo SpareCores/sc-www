@@ -5,10 +5,13 @@ import { Server } from "../../../sdk/Server";
 import { Servers } from "../../../sdk/Servers";
 import {
   AssistServerFiltersAiAssistServerFiltersGetParams,
+  HTTPValidationError,
   SearchServerPricesServerPricesGetParams,
   SearchServersServersGetParams,
   SearchStoragePricesStoragePricesGetParams,
   SearchTrafficPricesTrafficPricesGetParams,
+  TableServerSelectTableServerSelectGetData,
+  TableServerSelectTableServerSelectGetParams,
 } from "../../../sdk/data-contracts";
 import { Table } from "../../../sdk/Table";
 import { Ai } from "../../../sdk/Ai";
@@ -19,6 +22,12 @@ import { TrafficPrices } from "../../../sdk/TrafficPrices";
 import { BenchmarkConfigs } from "../../../sdk/BenchmarkConfigs";
 import { Debug } from "../../../sdk/Debug";
 import { BenchmarkScoreStats } from "../../../sdk/BenchmarkScoreStats";
+
+type ServerSelectColumn = NonNullable<
+  TableServerSelectTableServerSelectGetParams["columns"]
+>;
+
+type ServerSelectColumns = ServerSelectColumn[];
 
 @Injectable({
   providedIn: "root",
@@ -133,6 +142,18 @@ export class KeeperAPIService {
 
   public getServers(): Promise<any> {
     return this.TableController.tableServerTableServerGet();
+  }
+
+  public getServersSelect(columns: ServerSelectColumns): Promise<any> {
+    return this.TableController.http.request<
+      TableServerSelectTableServerSelectGetData,
+      HTTPValidationError
+    >({
+      path: `/table/server/select`,
+      method: "GET",
+      query: { columns },
+      format: "json",
+    });
   }
 
   public getServerMeta(): Promise<any> {

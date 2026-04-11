@@ -20,6 +20,7 @@ import { Modal, ModalOptions } from "flowbite";
 import { Subscription } from "rxjs";
 import { DragToPanDirective } from "../../directives/drag-to-pan.directive";
 import { LstopoSvgService } from "../../services/lstopo-svg.service";
+import { UiTooltipService } from "../../services/ui-tooltip.service";
 
 const LSTOPO_CDN_BASE =
   "https://cdn.jsdelivr.net/gh/SpareCores/sc-inspector-data@main/data";
@@ -53,6 +54,7 @@ export class ServerLstopoComponent implements OnChanges {
   constructor() {
     this.destroyRef.onDestroy(() => this.resetRenderedSvg());
   }
+  private uiTooltip = inject(UiTooltipService);
 
   lstopoUrl: string = "";
   inlineSvg: SafeHtml | null = null;
@@ -167,13 +169,14 @@ export class ServerLstopoComponent implements OnChanges {
     tooltip.style.opacity = "1";
     this.tooltipContent = content;
     this.cdr.detectChanges();
+    this.uiTooltip.show(tooltip, e);
   }
 
   hideTooltip(): void {
     const tooltip = this.tooltipRef?.nativeElement;
     if (!tooltip) return;
-    tooltip.style.display = "none";
-    tooltip.style.opacity = "0";
+
+    this.uiTooltip.hide(tooltip);
   }
 
   private addSvgTooltips(): void {
