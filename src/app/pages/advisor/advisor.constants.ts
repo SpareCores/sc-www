@@ -274,7 +274,7 @@ export const ADVISOR_PAGE_LIMITS = [10, 25, 50, 100, 250];
 
 export const ADVISOR_REQUIRED_INPUT_LABELS = [
   "Baseline server",
-  "Server workload",
+  "Baseline workload",
   "Optimization goal",
   "Average utilization",
   "Minimum memory",
