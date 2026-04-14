@@ -177,4 +177,23 @@ describe("ServerCompareComponent", () => {
     );
     expect(getServerMeta).not.toHaveBeenCalled();
   });
+
+  it("removes the invalid compare toast when a special compare id is unknown", () => {
+    routeSnapshot.paramMap = convertToParamMap({
+      id: "missing-special-compare",
+    });
+    component.breadcrumbs = [
+      { name: "Home", url: "/" },
+      { name: "Compare Servers", url: "/compare" },
+      { name: "Old Compare", url: "/compare/old" },
+    ];
+
+    component.setup();
+
+    expect(removeToast).toHaveBeenCalledWith("bad-compare-url-param");
+    expect(component.breadcrumbs).toEqual([
+      { name: "Home", url: "/" },
+      { name: "Compare Servers", url: "/compare" },
+    ]);
+  });
 });

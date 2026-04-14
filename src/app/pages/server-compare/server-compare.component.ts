@@ -376,6 +376,7 @@ export class ServerCompareComponent
           this.breadcrumbs[2] = breadcrumb;
         }
       } else if (this.breadcrumbs.length > 2) {
+        this.toastService.removeToast(INVALID_COMPARE_URL_TOAST_ID);
         this.breadcrumbs.pop();
       }
     } else if (param) {
