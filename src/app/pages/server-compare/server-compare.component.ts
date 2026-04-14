@@ -40,6 +40,10 @@ import { Subscription } from "rxjs";
 import specialComparesData from "./special-compares.js";
 import { ChartTooltipService } from "../../components/charts/shared/chart-tooltip.service";
 import {
+  decodeBase64JsonUrlState,
+  isServerCompareUrlState,
+} from "../../tools/encoded-url-state";
+import {
   getCompareMemoryChartOption,
   type CompareMemoryChartOption,
 } from "../../components/charts/shared/memory-chart.types";
@@ -52,6 +56,8 @@ const optionsModal: ModalOptions = {
   backdropClasses: "bg-gray-900/50 fixed inset-0 z-40",
   closable: true,
 };
+
+const INVALID_COMPARE_URL_TOAST_ID = "bad-compare-url-param";
 
 type CompareTableBenchmarkConfig = {
   config: MemoryBenchmarkConfig;
@@ -352,12 +358,14 @@ export class ServerCompareComponent
     const param = this.route.snapshot.queryParams["instances"];
 
     this.instances = [];
+    this.instancesRaw = "";
 
     if (id) {
       const specialCompare = this.specialCompares.find((x: any) => x.id === id);
       if (specialCompare) {
         this.instances = specialCompare.instances;
         this.instancesRaw = btoa(JSON.stringify(this.instances));
+        this.toastService.removeToast(INVALID_COMPARE_URL_TOAST_ID);
         let breadcrumb = {
           name: specialCompare.title,
           url: `/compare/${specialCompare.id}`,
@@ -367,10 +375,34 @@ export class ServerCompareComponent
         } else {
           this.breadcrumbs[2] = breadcrumb;
         }
+      } else if (this.breadcrumbs.length > 2) {
+        this.breadcrumbs.pop();
       }
     } else if (param) {
-      this.instancesRaw = param;
-      this.instances = JSON.parse(atob(this.instancesRaw));
+      const decodedInstances = decodeBase64JsonUrlState(
+        param,
+        isServerCompareUrlState,
+      );
+
+      if (!decodedInstances.value) {
+        console.warn("Invalid instances data in URL:", decodedInstances.error);
+        if (this.breadcrumbs.length > 2) {
+          this.breadcrumbs.pop();
+        }
+        if (isPlatformBrowser(this.platformId)) {
+          this.toastService.show({
+            title: "Invalid Compare URL",
+            body: "The instances data in the URL is invalid. Please use the compare form.",
+            type: "error",
+            id: INVALID_COMPARE_URL_TOAST_ID,
+          });
+        }
+        return;
+      }
+
+      this.instances = decodedInstances.value;
+      this.instancesRaw = this.instances.length > 0 ? param : "";
+      this.toastService.removeToast(INVALID_COMPARE_URL_TOAST_ID);
 
       if (this.instances?.length) {
         let breadcrumb = {
@@ -383,8 +415,11 @@ export class ServerCompareComponent
         } else {
           this.breadcrumbs[2] = breadcrumb;
         }
+      } else if (this.breadcrumbs.length > 2) {
+        this.breadcrumbs.pop();
       }
     } else {
+      this.toastService.removeToast(INVALID_COMPARE_URL_TOAST_ID);
       if (this.breadcrumbs.length > 2) {
         this.breadcrumbs.pop();
       }
