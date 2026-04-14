@@ -30,7 +30,7 @@ jobs:
           NG_APP_BACKEND_BASE_URI: https://keeper.sparecores.net
           NG_APP_BACKEND_BASE_URI_SSR: https://keeper.sparecores.net
           NG_APP_SENTRY_DSN: ""
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: unit-test-coverage
@@ -59,7 +59,7 @@ jobs:
           CYPRESS_BASE_URL: http://localhost:4200
           NG_APP_BACKEND_BASE_URI: https://keeper.sparecores.net
           NG_APP_BACKEND_BASE_URI_SSR: https://keeper.sparecores.net
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: cypress-screenshots
