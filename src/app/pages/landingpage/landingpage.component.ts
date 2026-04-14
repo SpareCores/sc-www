@@ -27,7 +27,6 @@ import {
   SlotMachineRegionItem,
   SlotMachineServerItem,
   SlotMachineServerListingQuery,
-  SlotMachineServerPrice,
   SlotMachineVendorItem,
 } from "./landingpage.types";
 
@@ -377,7 +376,10 @@ export class LandingpageComponent implements OnInit, AfterViewInit {
       }
 
       indices.forEach((index, i) => {
-        const serverPrice = top3server[i] as SlotMachineServerPrice;
+        const serverPrice = top3server[i];
+        if (!serverPrice) {
+          return;
+        }
 
         this.spinnerContents[0][index] = {
           name: serverPrice.vendor.vendor_id.toString().toUpperCase(),
