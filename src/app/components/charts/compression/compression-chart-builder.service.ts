@@ -180,11 +180,7 @@ export class CompressionChartBuilderService {
 
     data.datasets = [...seriesMap.values()]
       .sort((left, right) =>
-        this.compareDetailsSeries(
-          left.config,
-          right.config,
-          algoColorIndexes,
-        ),
+        this.compareDetailsSeries(left.config, right.config, algoColorIndexes),
       )
       .map((series) => {
         const colorIndex = algoColorIndexes.get(series.config.algo) ?? 0;
@@ -216,7 +212,9 @@ export class CompressionChartBuilderService {
         }
         if (item.ratio !== 0) {
           if (compressItem) {
-            item.ratio_compress = this.roundMetric(compressItem.score / item.ratio);
+            item.ratio_compress = this.roundMetric(
+              compressItem.score / item.ratio,
+            );
           }
           if (decompressItem) {
             item.ratio_decompress = this.roundMetric(
@@ -533,7 +531,8 @@ export class CompressionChartBuilderService {
     right: CompressionConfig,
     algoColorIndexes: Map<string, number>,
   ): number {
-    const leftColorIndex = algoColorIndexes.get(left.algo) ?? Number.MAX_SAFE_INTEGER;
+    const leftColorIndex =
+      algoColorIndexes.get(left.algo) ?? Number.MAX_SAFE_INTEGER;
     const rightColorIndex =
       algoColorIndexes.get(right.algo) ?? Number.MAX_SAFE_INTEGER;
 
@@ -541,10 +540,12 @@ export class CompressionChartBuilderService {
       return leftColorIndex - rightColorIndex;
     }
 
-    const keys = [...new Set([
-      ...this.getDetailsSeriesConfigKeys(left),
-      ...this.getDetailsSeriesConfigKeys(right),
-    ])].sort();
+    const keys = [
+      ...new Set([
+        ...this.getDetailsSeriesConfigKeys(left),
+        ...this.getDetailsSeriesConfigKeys(right),
+      ]),
+    ].sort();
 
     for (const key of keys) {
       const compare = this.compareDetailsSeriesConfigValue(left, right, key);
@@ -587,9 +588,13 @@ export class CompressionChartBuilderService {
       return normalizedLeft - normalizedRight;
     }
 
-    return String(leftValue ?? "").localeCompare(String(rightValue ?? ""), undefined, {
-      numeric: true,
-    });
+    return String(leftValue ?? "").localeCompare(
+      String(rightValue ?? ""),
+      undefined,
+      {
+        numeric: true,
+      },
+    );
   }
 
   private getCompressionLevelLabel(config: CompressionConfig): string {

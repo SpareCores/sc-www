@@ -157,18 +157,35 @@ describe("CompressionChartBuilderService", () => {
     ]);
 
     const bzip3Datasets =
-      result?.data.datasets.filter((dataset) => dataset.label.startsWith("bzip3")) ||
-      [];
+      result?.data.datasets.filter((dataset) =>
+        dataset.label.startsWith("bzip3"),
+      ) || [];
     const lz4Datasets =
-      result?.data.datasets.filter((dataset) => dataset.label.startsWith("lz4")) || [];
+      result?.data.datasets.filter((dataset) =>
+        dataset.label.startsWith("lz4"),
+      ) || [];
 
-    expect(new Set(bzip3Datasets.map((dataset) => dataset.borderColor)).size).toBe(1);
-    expect(new Set(lz4Datasets.map((dataset) => dataset.borderColor)).size).toBe(1);
+    expect(
+      new Set(bzip3Datasets.map((dataset) => dataset.borderColor)).size,
+    ).toBe(1);
+    expect(
+      new Set(lz4Datasets.map((dataset) => dataset.borderColor)).size,
+    ).toBe(1);
     expect(bzip3Datasets[0]?.borderColor).not.toBe(lz4Datasets[0]?.borderColor);
-    expect(bzip3Datasets[0]?.borderColor).toBe(radarDatasetColors[1].borderColor);
+    expect(bzip3Datasets[0]?.borderColor).toBe(
+      radarDatasetColors[1].borderColor,
+    );
     expect(lz4Datasets[0]?.borderColor).toBe(radarDatasetColors[2].borderColor);
-    expect(bzip3Datasets.every((dataset) => dataset.data[0]?.compression_level_label === "N/A")).toBeTrue();
-    expect(lz4Datasets.map((dataset) => dataset.data.map((item) => item.compression_level_label))).toEqual([
+    expect(
+      bzip3Datasets.every(
+        (dataset) => dataset.data[0]?.compression_level_label === "N/A",
+      ),
+    ).toBeTrue();
+    expect(
+      lz4Datasets.map((dataset) =>
+        dataset.data.map((item) => item.compression_level_label),
+      ),
+    ).toEqual([
       ["0", "1"],
       ["0", "1"],
       ["0", "1"],
