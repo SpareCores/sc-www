@@ -1,4 +1,6 @@
-export const spinner_initial_data = [
+import { SlotMachineContents } from "../pages/landingpage/landingpage.types";
+
+export const spinner_initial_data: SlotMachineContents = [
   [
     {
       name: "AWS",

@@ -84,6 +84,10 @@ export class RegionsComponent implements OnInit {
 
   bubble_map: any;
 
+  getVendorRegionFilter(item: TableRegionTableRegionGetData[number]) {
+    return `${item.vendor_id}~${item.region_id}`;
+  }
+
   ngOnInit() {
     this.SEOHandler.updateTitleAndMetaTags(
       "Regions - Spare Cores",
@@ -254,7 +258,9 @@ export class RegionsComponent implements OnInit {
   }
 
   openLink(item: any) {
-    this.router.navigateByUrl(`/server_prices?regions=${item.region_id}`);
+    this.router.navigate(["/servers"], {
+      queryParams: { vendor_regions: this.getVendorRegionFilter(item) },
+    });
   }
 
   toggleVendorSelected(vendorId: string) {
