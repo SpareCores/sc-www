@@ -70,6 +70,16 @@ describe("LandingpageComponent", () => {
       "#slot_region_link",
     ) as HTMLAnchorElement;
 
+    expect(vendorLink)
+      .withContext("Expected #slot_vendor_link to be rendered")
+      .not.toBeNull();
+    expect(serverLink)
+      .withContext("Expected #slot_server_link to be rendered")
+      .not.toBeNull();
+    expect(regionLink)
+      .withContext("Expected #slot_region_link to be rendered")
+      .not.toBeNull();
+
     expect(vendorLink.getAttribute("href")).toContain("/servers?vendor=aws");
     expect(vendorLink.getAttribute("href")).toContain("vcpus_min=8");
     expect(vendorLink.getAttribute("href")).toContain("memory_min=32");

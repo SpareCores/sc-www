@@ -185,8 +185,8 @@ describe("Landing page slot machine links", () => {
     cy.visit("http://localhost:4200/");
     cy.wait("@searchServerPrices");
 
-    cy.get("#cpuCount").clear().type("8");
-    cy.get("#ramCount").clear().type("32");
+    cy.get("#cpuCount").clear().type("8").should("have.value", "8");
+    cy.get("#ramCount").clear().type("32").should("have.value", "32");
 
     cy.get("#slot_vendor_link", { timeout: 10000 })
       .should("have.attr", "href")
