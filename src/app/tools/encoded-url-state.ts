@@ -58,12 +58,12 @@ export function isBenchmarkUrlState(
 
 export function decodeBase64JsonUrlState<T>(
   encoded: string,
-  isValid?: (value: unknown) => value is T,
+  isValid: (value: unknown) => value is T,
 ): DecodedBase64JsonUrlState<T> {
   try {
     const decodedValue: unknown = JSON.parse(atob(encoded));
 
-    if (isValid && !isValid(decodedValue)) {
+    if (!isValid(decodedValue)) {
       return {
         value: null,
         error: new Error("Decoded URL state has an unexpected shape."),
@@ -71,7 +71,7 @@ export function decodeBase64JsonUrlState<T>(
     }
 
     return {
-      value: decodedValue as T,
+      value: decodedValue,
       error: null,
     };
   } catch (error) {
