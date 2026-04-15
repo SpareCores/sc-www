@@ -1,0 +1,128 @@
+<div class="w-full bg-primary min-h-screen overflow-hidden">
+  <div class="content pt-16 pb-16 text-white">
+    <app-breadcrumbs [segments]="breadcrumbs()"></app-breadcrumbs>
+
+    <div class="content_gutter">
+      <div
+        class="py-12 px-12 mx-auto partners-content"
+        style="max-width: 750px"
+      >
+        <h1 class="text-emerald-400 text-3xl font-bold mb-2">
+          {{ pageTitle }}
+        </h1>
+
+        @for (paragraph of pageIntro; track paragraph) {
+          <p class="partners-paragraph">{{ paragraph }}</p>
+        }
+        <hr class="partners-divider" />
+
+        @for (category of categories(); track category.id) {
+          <div class="partners-anchor-target" [attr.id]="category.id"></div>
+          <h2 class="partners-heading partners-heading--section">
+            {{ category.heading }}
+            <a class="header-anchor" [href]="'/partners#' + category.id">#</a>
+          </h2>
+
+          @for (paragraph of category.intro; track paragraph) {
+            <p class="partners-paragraph">{{ paragraph }}</p>
+          }
+
+          @for (section of category.sections; track section.id) {
+            @if (section.heading) {
+              <div class="partners-anchor-target" [attr.id]="section.id"></div>
+              <h3 class="partners-heading partners-heading--subsection">
+                {{ section.heading }}
+                <a class="header-anchor" [href]="'/partners#' + section.id"
+                  >#</a
+                >
+              </h3>
+            }
+
+            @if (section.logos.length) {
+              <div
+                class="partner-logos"
+                [class.partner-logos--compact]="
+                  section.logoRowVariant === 'compact'
+                "
+                [class.partner-logos--two-rows-mobile]="
+                  section.logos.length > 2
+                "
+                [style.--partner-mobile-columns]="
+                  section.logos.length > 2
+                    ? getMobileLogoColumns(section.logos.length)
+                    : null
+                "
+              >
+                @for (logo of section.logos; track logo.name) {
+                  <a
+                    class="partner-logo-link"
+                    [href]="logo.href"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    [attr.aria-label]="logo.name"
+                  >
+                    <img
+                      class="partner-logo-image"
+                      [class.partner-logo-image--compact]="
+                        logo.styleVariant === 'compact'
+                      "
+                      [src]="logo.src"
+                      [alt]="logo.alt"
+                      loading="lazy"
+                    />
+                  </a>
+                }
+              </div>
+            }
+
+            @for (paragraph of section.description; track paragraph) {
+              <p class="partners-paragraph">{{ paragraph }}</p>
+            }
+
+            @if (section.bulletItems?.length) {
+              <ul class="partners-list">
+                @for (item of section.bulletItems; track item) {
+                  <li>{{ item }}</li>
+                }
+              </ul>
+            }
+
+            @if (section.dividerAfter) {
+              <hr class="partners-divider" />
+            }
+          }
+        }
+
+        <div
+          class="partners-anchor-target"
+          [attr.id]="interestSection().id"
+        ></div>
+        <h2 class="partners-heading partners-heading--section">
+          {{ interestSection().heading }}
+          <a class="header-anchor" [href]="'/partners#' + interestSection().id"
+            >#</a
+          >
+        </h2>
+
+        @for (paragraph of interestSection().intro; track paragraph) {
+          <p class="partners-paragraph">{{ paragraph }}</p>
+        }
+
+        <p class="partners-paragraph partners-paragraph--list-intro">
+          {{ interestSection().areasHeading }}
+        </p>
+        <ul class="partners-list">
+          @for (area of interestSection().areas; track area) {
+            <li>{{ area }}</li>
+          }
+        </ul>
+        <p class="partners-paragraph">
+          <a [href]="interestSection().outro.linkHref">
+            {{ interestSection().outro.linkLabel }}
+          </a>
+          {{ interestSection().outro.afterLink }}
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
