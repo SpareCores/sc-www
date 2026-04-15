@@ -185,6 +185,13 @@ export const routes: Routes = [
       ),
   },
   {
+    path: "partners",
+    loadComponent: () =>
+      import("./pages/partners/partners.component").then(
+        (c) => c.PartnersComponent,
+      ),
+  },
+  {
     path: "about/spare-cores",
     loadComponent: () =>
       import("./pages/about/spare-cores.component").then(
