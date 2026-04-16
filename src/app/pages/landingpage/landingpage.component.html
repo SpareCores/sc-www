@@ -121,21 +121,45 @@
                       class="slot flex flex-col align-center"
                       [style]="getStyle(i)"
                     >
-                      <div class="slot_inner" [style]="getInnerStyle(i)">
-                        @if (!spinnerItem.logo) {
-                          <div class="text-center font-bold text-3xl">
-                            {{ spinnerItem.name }}
-                          </div>
-                        }
-                        @if (spinnerItem.logo) {
-                          <img
-                            [src]="spinnerItem.logo"
-                            style="margin: 0.5rem"
-                            class="rounded-lg"
-                            alt="{{ spinnerItem.name }} logo"
-                          />
-                        }
-                      </div>
+                      @if (isSlotLinkActive(i) && hasVendorLink(spinnerItem)) {
+                        <a
+                          id="slot_vendor_link"
+                          class="slot_inner slot_link"
+                          [style]="getInnerStyle(i)"
+                          routerLink="/servers"
+                          [queryParams]="getVendorQueryParams(spinnerItem)"
+                        >
+                          @if (!spinnerItem.logo) {
+                            <div class="text-center font-bold text-3xl">
+                              {{ spinnerItem.name }}
+                            </div>
+                          }
+                          @if (spinnerItem.logo) {
+                            <img
+                              [src]="spinnerItem.logo"
+                              style="margin: 0.5rem"
+                              class="rounded-lg"
+                              alt="{{ spinnerItem.name }} logo"
+                            />
+                          }
+                        </a>
+                      } @else {
+                        <div class="slot_inner" [style]="getInnerStyle(i)">
+                          @if (!spinnerItem.logo) {
+                            <div class="text-center font-bold text-3xl">
+                              {{ spinnerItem.name }}
+                            </div>
+                          }
+                          @if (spinnerItem.logo) {
+                            <img
+                              [src]="spinnerItem.logo"
+                              style="margin: 0.5rem"
+                              class="rounded-lg"
+                              alt="{{ spinnerItem.name }} logo"
+                            />
+                          }
+                        </div>
+                      }
                     </div>
                   }
                 </div>
@@ -157,21 +181,44 @@
                       class="slot flex flex-col align-center"
                       [style]="getStyle(i)"
                     >
-                      <div class="slot_inner" [style]="getInnerStyle(i)">
-                        <div
-                          class="text-center font-bold overflow-hidden"
-                          style="text-overflow: ellipsis"
-                          [ngClass]="{
-                            'text-xl': spinnerItem.name.length < 13,
-                            'text-md': spinnerItem.name.length >= 13,
-                          }"
+                      @if (isSlotLinkActive(i) && hasServerLink(spinnerItem)) {
+                        <a
+                          id="slot_server_link"
+                          class="slot_inner slot_link"
+                          [style]="getInnerStyle(i)"
+                          [routerLink]="getServerRouteCommands(spinnerItem)"
                         >
-                          {{ spinnerItem.name }}
+                          <div
+                            class="text-center font-bold overflow-hidden"
+                            style="text-overflow: ellipsis"
+                            [ngClass]="{
+                              'text-xl': spinnerItem.name.length < 13,
+                              'text-md': spinnerItem.name.length >= 13,
+                            }"
+                          >
+                            {{ spinnerItem.name }}
+                          </div>
+                          <div class="text-center">
+                            {{ spinnerItem.architecture }}
+                          </div>
+                        </a>
+                      } @else {
+                        <div class="slot_inner" [style]="getInnerStyle(i)">
+                          <div
+                            class="text-center font-bold overflow-hidden"
+                            style="text-overflow: ellipsis"
+                            [ngClass]="{
+                              'text-xl': spinnerItem.name.length < 13,
+                              'text-md': spinnerItem.name.length >= 13,
+                            }"
+                          >
+                            {{ spinnerItem.name }}
+                          </div>
+                          <div class="text-center">
+                            {{ spinnerItem.architecture }}
+                          </div>
                         </div>
-                        <div class="text-center">
-                          {{ spinnerItem.architecture }}
-                        </div>
-                      </div>
+                      }
                     </div>
                   }
                 </div>
@@ -193,19 +240,41 @@
                       class="slot flex flex-col align-center"
                       [style]="getStyle(i)"
                     >
-                      <div class="slot_inner" [style]="getInnerStyle(i)">
-                        <div
-                          class="text-center font-bold overflow-hidden"
-                          style="text-overflow: ellipsis"
-                          [ngClass]="{
-                            'text-xl': spinnerItem.name.length < 13,
-                            'text-md': spinnerItem.name.length >= 13,
-                          }"
+                      @if (isSlotLinkActive(i) && hasRegionLink(spinnerItem)) {
+                        <a
+                          id="slot_region_link"
+                          class="slot_inner slot_link"
+                          [style]="getInnerStyle(i)"
+                          routerLink="/servers"
+                          [queryParams]="getRegionQueryParams(spinnerItem)"
                         >
-                          {{ spinnerItem.name }}
+                          <div
+                            class="text-center font-bold overflow-hidden"
+                            style="text-overflow: ellipsis"
+                            [ngClass]="{
+                              'text-xl': spinnerItem.name.length < 13,
+                              'text-md': spinnerItem.name.length >= 13,
+                            }"
+                          >
+                            {{ spinnerItem.name }}
+                          </div>
+                          <div class="text-center">{{ spinnerItem.city }}</div>
+                        </a>
+                      } @else {
+                        <div class="slot_inner" [style]="getInnerStyle(i)">
+                          <div
+                            class="text-center font-bold overflow-hidden"
+                            style="text-overflow: ellipsis"
+                            [ngClass]="{
+                              'text-xl': spinnerItem.name.length < 13,
+                              'text-md': spinnerItem.name.length >= 13,
+                            }"
+                          >
+                            {{ spinnerItem.name }}
+                          </div>
+                          <div class="text-center">{{ spinnerItem.city }}</div>
                         </div>
-                        <div class="text-center">{{ spinnerItem.city }}</div>
-                      </div>
+                      }
                     </div>
                   }
                 </div>
