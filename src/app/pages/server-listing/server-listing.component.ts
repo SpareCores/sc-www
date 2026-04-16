@@ -92,6 +92,10 @@ const optionsModal: ModalOptions = {
   closable: true,
 };
 
+const INVALID_URL_TOAST_TITLE = "Invalid URL";
+const INVALID_BENCHMARK_URL_TOAST_BODY =
+  "Visit the Server Navigator page to select a benchmark.";
+
 @Component({
   selector: "app-server-listing",
   imports: [
@@ -575,8 +579,8 @@ export class ServerListingComponent implements OnInit, OnDestroy {
             isPlatformBrowser(this.platformId)
           ) {
             this.toastService.show({
-              title: "Benchmark Not Found",
-              body: "The provided benchmark URL parameter is unknown in our database. Please select a benchmark manually.",
+              title: INVALID_URL_TOAST_TITLE,
+              body: INVALID_BENCHMARK_URL_TOAST_BODY,
               type: "error",
               id: "bad-benchmark-url-param",
             });
@@ -585,8 +589,8 @@ export class ServerListingComponent implements OnInit, OnDestroy {
           console.warn("Invalid benchmark data in URL:", benchmarkData.error);
           if (isPlatformBrowser(this.platformId)) {
             this.toastService.show({
-              title: "Invalid Benchmark",
-              body: "The benchmark data in the URL is invalid. Please select a benchmark manually.",
+              title: INVALID_URL_TOAST_TITLE,
+              body: INVALID_BENCHMARK_URL_TOAST_BODY,
               type: "error",
               id: "bad-benchmark-url-param",
             });
