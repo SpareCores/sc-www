@@ -210,18 +210,6 @@ export class CompressionChartBuilderService {
         if (decompressItem) {
           item.decompress = decompressItem.score;
         }
-        if (item.ratio !== 0) {
-          if (compressItem) {
-            item.ratio_compress = this.roundMetric(
-              compressItem.score / item.ratio,
-            );
-          }
-          if (decompressItem) {
-            item.ratio_decompress = this.roundMetric(
-              decompressItem.score / item.ratio,
-            );
-          }
-        }
       });
     });
 
@@ -425,9 +413,7 @@ export class CompressionChartBuilderService {
     switch (mode.key) {
       case "compress":
       case "decompress":
-      case "ratio":
-      case "ratio_compress":
-      case "ratio_decompress": {
+      case "ratio": {
         data.labels = this.collectCompressionLevelLabels(data);
         options.parsing = {
           yAxisKey: mode.key,
@@ -438,6 +424,26 @@ export class CompressionChartBuilderService {
           "Compression Level",
           mode.key === "ratio" ? "Percentage" : "byte/s",
         );
+        break;
+      }
+      case "ratio_compress":
+      case "ratio_decompress": {
+        const labels: number[] = [];
+        data.datasets.forEach((dataset) => {
+          dataset.data.forEach((item) => {
+            if (item.ratio && labels.indexOf(item.ratio) === -1) {
+              labels.push(item.ratio);
+            }
+          });
+          dataset.data = dataset.data.sort((a, b) => a.ratio - b.ratio);
+        });
+
+        data.labels = labels.sort((a, b) => a - b);
+        options.parsing = {
+          yAxisKey: mode.key === "ratio_compress" ? "compress" : "decompress",
+          xAxisKey: "ratio",
+        };
+        this.setAxisTitles(options, "Compression Ratio", "byte/s");
         break;
       }
     }
@@ -640,11 +646,6 @@ export class CompressionChartBuilderService {
   private roundRatio(value: number): number {
     return Math.floor(value * 100) / 100;
   }
-
-  private roundMetric(value: number): number {
-    return Math.floor(value * 100) / 100;
-  }
-
   private matchesConfig(
     source: CompressionConfig,
     target: CompressionConfig,

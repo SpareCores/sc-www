@@ -227,7 +227,7 @@ describe("CompressionChartBuilderService", () => {
     });
   });
 
-  it("uses compression level on the x-axis for ratio-based speed modes", () => {
+  it("keeps ratio-based speed modes on the compression ratio axis", () => {
     const benchmarksByCategory = createBenchmarkGroups([
       {
         config: { algo: "bzip3", block_size: 1024 * 1024 },
@@ -259,18 +259,19 @@ describe("CompressionChartBuilderService", () => {
       baseOptions,
     });
 
-    expect(result?.data.labels).toEqual(["N/A", "0", "1"]);
+    expect(result?.data.labels).toEqual([2, 4, 5]);
     expect(result?.options.parsing).toEqual({
-      xAxisKey: "compression_level_label",
-      yAxisKey: "ratio_compress",
+      xAxisKey: "ratio",
+      yAxisKey: "compress",
     });
-    expect(result?.options.scales?.x?.title?.text).toBe("Compression Level");
+    expect(result?.options.scales?.x?.title?.text).toBe("Compression Ratio");
 
     const lz4Dataset = result?.data.datasets.find(
       (dataset) => dataset.label === "lz4 (block_size: 64 KiB)",
     );
 
-    expect(lz4Dataset?.data.map((item) => item.ratio_compress)).toEqual([5, 5]);
+    expect(lz4Dataset?.data.map((item) => item.ratio)).toEqual([2, 4]);
+    expect(lz4Dataset?.data.map((item) => item.compress)).toEqual([10, 20]);
   });
 
   it("builds compare compression data", () => {

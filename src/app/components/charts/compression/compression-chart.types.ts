@@ -50,8 +50,6 @@ export type CompressionDataPoint = {
   tooltip: string;
   compress?: number;
   decompress?: number;
-  ratio_compress?: number;
-  ratio_decompress?: number;
   barLabel?: string;
 };
 
