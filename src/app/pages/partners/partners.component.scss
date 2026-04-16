@@ -1,11 +1,3 @@
-.partners-content a:not(.header-anchor) {
-  @apply underline decoration-dotted;
-}
-
-.partners-content a:not(.header-anchor):hover {
-  @apply text-gray-500;
-}
-
 .partners-paragraph {
   @apply my-10 text-lg text-white;
 
