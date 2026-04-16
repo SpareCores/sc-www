@@ -150,7 +150,8 @@ describe("ServerCompareComponent", () => {
     expect(component.instancesRaw).toBe("");
     expect(showToast).toHaveBeenCalledOnceWith(
       jasmine.objectContaining({
-        title: "Invalid Compare URL",
+        title: "Invalid URL",
+        body: "Visit the Server Navigator page to select servers to compare.",
         type: "error",
         id: "bad-compare-url-param",
       }),
@@ -170,7 +171,8 @@ describe("ServerCompareComponent", () => {
     expect(component.instancesRaw).toBe("");
     expect(showToast).toHaveBeenCalledOnceWith(
       jasmine.objectContaining({
-        title: "Invalid Compare URL",
+        title: "Invalid URL",
+        body: "Visit the Server Navigator page to select servers to compare.",
         type: "error",
         id: "bad-compare-url-param",
       }),
