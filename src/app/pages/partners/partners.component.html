@@ -86,13 +86,13 @@
             }
 
             @for (paragraph of section.description; track paragraph) {
-              <p class="partners-paragraph">{{ paragraph }}</p>
+              <p class="partners-paragraph" [innerHTML]="paragraph"></p>
             }
 
             @if (section.bulletItems?.length) {
               <ul class="partners-list">
                 @for (item of section.bulletItems; track item) {
-                  <li>{{ item }}</li>
+                  <li [innerHTML]="item"></li>
                 }
               </ul>
             }

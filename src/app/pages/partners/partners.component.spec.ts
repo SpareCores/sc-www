@@ -59,6 +59,17 @@ describe("PartnersComponent", () => {
     expect(compactLogo).not.toBeNull();
   });
 
+  it("renders the configured inline partner content links", () => {
+    const labLink = (fixture.nativeElement as HTMLElement).querySelector(
+      '.partners-paragraph a[href="https://gabors-data-analysis.com/lab"]',
+    );
+
+    expect(labLink?.textContent?.trim()).toBe(
+      "Gabors Data Analysis and AI Lab",
+    );
+    expect(labLink?.getAttribute("target")).toBe("_blank");
+  });
+
   it("marks multi-logo sections for the two-row mobile layout", () => {
     const multiLogoRows = Array.from(
       (fixture.nativeElement as HTMLElement).querySelectorAll(

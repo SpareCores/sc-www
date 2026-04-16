@@ -100,7 +100,7 @@ export const PARTNER_CATEGORIES: readonly PartnerCategory[] = [
             name: "Amazon Web Services",
             alt: "Amazon Web Services logo",
             href: "https://aws.amazon.com/",
-            src: "/assets/images/vendors/aws.svg",
+            src: "/assets/images/vendors/aws-white-text.svg",
           },
           {
             name: "Microsoft Azure",
@@ -146,7 +146,7 @@ export const PARTNER_CATEGORIES: readonly PartnerCategory[] = [
       {
         id: "research-academic-collaboration-content",
         description: [
-          "Beyond active research collaboration on cloud cost driving factors, Spare Cores provides a highly scalable dashboarding solution for the CEU Business Analytics curriculum. This live deployment allows students and researchers to interact with real-world data, proving the platform's utility in high-concurrency educational and analytical environments.",
+          'Beyond active research collaboration on cloud cost driving factors, Spare Cores provides a highly scalable dashboarding solution for the CEU Business Analytics curriculum as part of <a href="https://gabors-data-analysis.com/lab" target="_blank" rel="noopener noreferrer">Gabors Data Analysis and AI Lab</a>. This live deployment allows students and researchers to interact with real-world data, proving the platform\'s utility in high-concurrency educational and analytical environments.',
         ],
         dividerAfter: true,
         logos: [
@@ -171,8 +171,8 @@ export const PARTNER_CATEGORIES: readonly PartnerCategory[] = [
         id: "funding-innovation-programs-content",
         description: [],
         bulletItems: [
-          "Innovation Programs: We are proud to have been accepted into the NVIDIA Inception Program, which empowers us to expand our benchmarking data with cutting-edge GPU performance.",
-          "Public Innovation Funding: We were selected for the NGI (Next Generation Internet) Search initiative, a European Commission program, for building open, transparent, and sovereign infrastructure for the future of the internet and AI.",
+          'Innovation Programs: We are proud to have been accepted into the <a href="https://sparecores.com/article/nvidia-inception" target="_blank" rel="noopener noreferrer">NVIDIA Inception Program</a>, which empowers us to expand our benchmarking data with cutting-edge GPU performance.',
+          'Public Innovation Funding: We were selected for the <a href="https://sparecores.com/article/ngi-search-grant" target="_blank" rel="noopener noreferrer">NGI (Next Generation Internet) Search initiative</a>, a European Commission program, for building open, transparent, and sovereign infrastructure for the future of the internet and AI.',
           "Venture Supported: We are backed by a pre-seed investment round led by BNL Start Partners and First Principle Innovation (FPI).",
         ],
         dividerAfter: true,
@@ -180,13 +180,13 @@ export const PARTNER_CATEGORIES: readonly PartnerCategory[] = [
           {
             name: "NVIDIA Inception Program",
             alt: "NVIDIA Inception Program logo",
-            href: "https://www.nvidia.com/en-us/startups/",
+            href: "https://sparecores.com/article/nvidia-inception",
             src: "/assets/images/partners/nvidia_ip_logo.png",
           },
           {
             name: "NGI Search",
             alt: "NGI Search logo",
-            href: "https://ngi.eu/ngi-projects/ngi-search/",
+            href: "https://sparecores.com/article/ngi-search-grant",
             src: "/assets/images/partners/ngi_search_logo.png",
           },
           {
