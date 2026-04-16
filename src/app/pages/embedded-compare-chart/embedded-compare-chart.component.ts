@@ -15,6 +15,9 @@ import {
 } from "../../tools/encoded-url-state";
 
 const INVALID_COMPARE_URL_TOAST_ID = "bad-compare-url-param";
+const INVALID_URL_TOAST_TITLE = "Invalid URL";
+const INVALID_COMPARE_URL_TOAST_BODY =
+  "Visit the Server Navigator page to select servers to compare.";
 
 @Component({
   selector: "app-embedded-compare-chart",
@@ -220,8 +223,8 @@ export class EmbeddedCompareChartComponent implements OnInit {
       console.warn("Invalid instances data in URL:", decodedInstances.error);
       if (isPlatformBrowser(this.platformId)) {
         this.toastService.show({
-          title: "Invalid Compare URL",
-          body: "The instances data in the URL is invalid. Please use the compare form.",
+          title: INVALID_URL_TOAST_TITLE,
+          body: INVALID_COMPARE_URL_TOAST_BODY,
           type: "error",
           id: INVALID_COMPARE_URL_TOAST_ID,
         });
