@@ -8,6 +8,7 @@
 
 .partners-paragraph {
   @apply my-10 text-lg text-white;
+
   text-align: justify;
   text-align-last: left;
 }
@@ -31,6 +32,7 @@
 .partner-logos {
   --partner-mobile-gap: 2rem;
   @apply my-8 flex flex-nowrap items-center justify-center gap-8 overflow-x-auto pb-2;
+
   scrollbar-width: thin;
   scrollbar-color: #34d39933 transparent;
 }
@@ -38,6 +40,7 @@
 @media (max-width: 767px) {
   .partner-logos--two-rows-mobile {
     @apply flex-wrap justify-center pb-0;
+
     overflow-x: visible;
     gap: var(--partner-mobile-gap);
   }
@@ -94,12 +97,14 @@
 
 .partners-list li {
   @apply list-disc text-lg my-1 ml-8 text-white;
+
   text-align: justify;
   text-align-last: left;
 }
 
 .partners-divider {
   @apply my-10 border-0 border-t;
+
   border-color: rgb(52 211 153 / 0.4);
 }
 
@@ -125,6 +130,9 @@
   transition: opacity 0.2s;
 }
 
+.header-anchor:focus,
+.header-anchor:focus-visible,
+.partners-heading:focus-within .header-anchor,
 .partners-heading:hover .header-anchor {
   opacity: 1;
 }
