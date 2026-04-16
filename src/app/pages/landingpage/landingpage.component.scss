@@ -193,6 +193,22 @@
       display: flex;
       flex-direction: column;
       justify-content: center;
+
+      &.slot_link {
+        text-decoration: none;
+        color: inherit;
+        cursor: pointer;
+        transition:
+          box-shadow 150ms ease-in-out,
+          transform 150ms ease-in-out;
+
+        &:hover,
+        &:focus-visible {
+          box-shadow: 0 0 0 2px rgba(52, 211, 153, 0.55);
+          transform: scale(1.01);
+          outline: none;
+        }
+      }
     }
   }
 
