@@ -18,6 +18,14 @@ export class UiTooltipService {
   private activeTooltipElement?: HTMLElement;
   private activeAnchorElement?: Element;
   private animationFrameId?: number;
+  private dismissScrollListeners?: () => void;
+  private readonly hideActiveTooltip = () => {
+    if (!this.activeTooltipElement) {
+      return;
+    }
+
+    this.hide(this.activeTooltipElement);
+  };
 
   show(
     tooltipElement: HTMLElement,
@@ -30,8 +38,10 @@ export class UiTooltipService {
     }
 
     this.cancelPendingFrame();
+    this.unregisterDismissListeners();
     this.activeTooltipElement = tooltipElement;
     this.activeAnchorElement = anchorElement;
+    this.registerDismissListeners();
 
     tooltipElement.style.display = "block";
     tooltipElement.style.visibility = "hidden";
@@ -80,6 +90,7 @@ export class UiTooltipService {
 
     if (this.activeTooltipElement === tooltipElement) {
       this.cancelPendingFrame();
+      this.unregisterDismissListeners();
       this.activeTooltipElement = undefined;
       this.activeAnchorElement = undefined;
     }
@@ -191,5 +202,21 @@ export class UiTooltipService {
       window.cancelAnimationFrame(this.animationFrameId);
       this.animationFrameId = undefined;
     }
+  }
+
+  private registerDismissListeners(): void {
+    const options: AddEventListenerOptions = { capture: true };
+    document.addEventListener("scroll", this.hideActiveTooltip, options);
+    window.addEventListener("scroll", this.hideActiveTooltip, options);
+    this.dismissScrollListeners = () => {
+      document.removeEventListener("scroll", this.hideActiveTooltip, options);
+      window.removeEventListener("scroll", this.hideActiveTooltip, options);
+      this.dismissScrollListeners = undefined;
+    };
+  }
+
+  private unregisterDismissListeners(): void {
+    this.dismissScrollListeners?.();
+    this.dismissScrollListeners = undefined;
   }
 }
