@@ -20,7 +20,12 @@
           <div class="partners-anchor-target" [attr.id]="category.id"></div>
           <h2 class="partners-heading partners-heading--section">
             {{ category.heading }}
-            <a class="header-anchor" [href]="'/partners#' + category.id">#</a>
+            <a
+              class="header-anchor"
+              [href]="'/partners#' + category.id"
+              [attr.aria-label]="'Permalink to ' + category.heading"
+              >#</a
+            >
           </h2>
 
           @for (paragraph of category.intro; track paragraph) {
@@ -32,7 +37,12 @@
               <div class="partners-anchor-target" [attr.id]="section.id"></div>
               <h3 class="partners-heading partners-heading--subsection">
                 {{ section.heading }}
-                <a class="header-anchor" [href]="'/partners#' + section.id"
+                <a
+                  class="header-anchor"
+                  [href]="'/partners#' + section.id"
+                  [attr.aria-label]="
+                    'Permalink to ' + (section.heading || section.id)
+                  "
                   >#</a
                 >
               </h3>
@@ -99,7 +109,10 @@
         ></div>
         <h2 class="partners-heading partners-heading--section">
           {{ interestSection().heading }}
-          <a class="header-anchor" [href]="'/partners#' + interestSection().id"
+          <a
+            class="header-anchor"
+            [href]="'/partners#' + interestSection().id"
+            [attr.aria-label]="'Permalink to ' + interestSection().heading"
             >#</a
           >
         </h2>
