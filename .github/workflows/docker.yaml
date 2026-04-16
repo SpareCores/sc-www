@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - name: Inject legal docs
@@ -27,7 +27,7 @@ jobs:
           VERSION="$(date -u +'%Y%m%d%H%M%S')-${GITHUB_RUN_ID}"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: ${{ secrets.SC_WWW_GHA_ROLE_ARN }}
           role-session-name: sc-www-gha
@@ -36,7 +36,7 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
       - name: Build and push Docker image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v7
         with:
           file: Dockerfile
           context: .

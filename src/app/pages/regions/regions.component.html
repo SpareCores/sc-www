@@ -101,8 +101,10 @@
             <td>
               <div class="flex justify-end" (click)="$event.stopPropagation()">
                 <a
-                  routerLink="/server_prices"
-                  [queryParams]="{ regions: region.region_id }"
+                  routerLink="/servers"
+                  [queryParams]="{
+                    vendor_regions: getVendorRegionFilter(region),
+                  }"
                 >
                   <lucide-icon
                     name="chevron-right"
