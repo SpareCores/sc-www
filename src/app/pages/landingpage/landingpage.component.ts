@@ -22,6 +22,13 @@ import { SearchServerPricesServerPricesGetData } from "../../../../sdk/data-cont
 import { AnalyticsService } from "../../services/analytics.service";
 import { NeetoCalService } from "../../services/neeto-cal.service";
 import { PrismService } from "../../services/prism.service";
+import {
+  SlotMachineContents,
+  SlotMachineRegionItem,
+  SlotMachineServerItem,
+  SlotMachineServerListingQuery,
+  SlotMachineVendorItem,
+} from "./landingpage.types";
 
 @Component({
   selector: "app-landingpage",
@@ -52,7 +59,7 @@ export class LandingpageComponent implements OnInit, AfterViewInit {
   cpuCount = 2;
   ramCount = 4;
 
-  spinnerContents: any = spinner_initial_data;
+  spinnerContents = spinner_initial_data as SlotMachineContents;
   SPINNER_COUNT = 36;
   SPINNER_RADIUS = 780;
   MAX_CPU_COUNT = 128;
@@ -188,21 +195,88 @@ export class LandingpageComponent implements OnInit, AfterViewInit {
     return "background: rgba(255,255,255,1) !important; color: #000 !important;";
   }
 
+  isSlotLinkActive(index: number) {
+    return index === 0 && !this.isSpinning && this.hasRealValues;
+  }
+
+  hasVendorLink(item: SlotMachineVendorItem) {
+    return Boolean(item.vendorId);
+  }
+
+  hasServerLink(item: SlotMachineServerItem) {
+    return Boolean(item.vendorId && item.apiReference);
+  }
+
+  hasRegionLink(item: SlotMachineRegionItem) {
+    return Boolean(item.vendorId && item.regionId);
+  }
+
+  private getNormalizedCpuCount(value: number) {
+    if (Number.isNaN(value) || !value || value < 1) {
+      return 2;
+    }
+
+    return Math.min(value, this.MAX_CPU_COUNT);
+  }
+
+  private getNormalizedRamCount(value: number) {
+    if (Number.isNaN(value) || !value || value < 0.1) {
+      return 4;
+    }
+
+    return Math.min(value, this.MAX_RAM_COUNT);
+  }
+
+  private getServerListingFilters() {
+    return {
+      vcpus_min: this.getNormalizedCpuCount(this.cpuCount),
+      memory_min: this.getNormalizedRamCount(this.ramCount),
+    };
+  }
+
+  private getServerListingQuery(
+    query: Pick<SlotMachineServerListingQuery, "vendor" | "vendor_regions">,
+  ): SlotMachineServerListingQuery {
+    return {
+      ...query,
+      ...this.getServerListingFilters(),
+    };
+  }
+
+  getVendorQueryParams(item: SlotMachineVendorItem) {
+    return item.vendorId
+      ? this.getServerListingQuery({ vendor: item.vendorId })
+      : null;
+  }
+
+  getServerRouteCommands(item: SlotMachineServerItem) {
+    if (!item.vendorId || !item.apiReference) {
+      return null;
+    }
+
+    return ["/server", item.vendorId, item.apiReference];
+  }
+
+  getRegionQueryParams(item: SlotMachineRegionItem) {
+    if (!item.vendorId || !item.regionId) {
+      return null;
+    }
+
+    return this.getServerListingQuery({
+      vendor_regions: this.buildVendorRegionFilter(
+        item.vendorId,
+        item.regionId,
+      ),
+    });
+  }
+
+  private buildVendorRegionFilter(vendorId: string, regionId: string) {
+    return `${vendorId}~${regionId}`;
+  }
+
   spinClicked() {
-    if (Number.isNaN(this.cpuCount) || !this.cpuCount || this.cpuCount < 1) {
-      this.cpuCount = 2;
-    }
-
-    if (Number.isNaN(this.ramCount) || !this.ramCount || this.ramCount < 0.1) {
-      this.ramCount = 4;
-    }
-
-    if (this.cpuCount > this.MAX_CPU_COUNT) {
-      this.cpuCount = this.MAX_CPU_COUNT;
-    }
-    if (this.ramCount > this.MAX_RAM_COUNT) {
-      this.ramCount = this.MAX_RAM_COUNT;
-    }
+    this.cpuCount = this.getNormalizedCpuCount(this.cpuCount);
+    this.ramCount = this.getNormalizedRamCount(this.ramCount);
 
     const spinButton = document.getElementById("spin_button");
     if (spinButton) {
@@ -302,17 +376,28 @@ export class LandingpageComponent implements OnInit, AfterViewInit {
       }
 
       indices.forEach((index, i) => {
+        const serverPrice = top3server[i];
+        if (!serverPrice) {
+          return;
+        }
+
         this.spinnerContents[0][index] = {
-          name: top3server[i].vendor.vendor_id.toString().toUpperCase(),
-          logo: top3server[i].vendor.logo,
+          name: serverPrice.vendor.vendor_id.toString().toUpperCase(),
+          logo: serverPrice.vendor.logo,
+          vendorId: serverPrice.vendor.vendor_id,
         };
         this.spinnerContents[1][index] = {
-          name: top3server[i].server.display_name,
-          architecture: top3server[i].server.cpu_architecture,
+          name: serverPrice.server.display_name,
+          architecture: serverPrice.server.cpu_architecture,
+          vendorId: serverPrice.server.vendor_id,
+          apiReference: serverPrice.server.api_reference,
         };
         this.spinnerContents[2][index] = {
-          name: top3server[i].region?.display_name,
-          city: top3server[i].zone?.display_name,
+          name: serverPrice.region?.display_name || serverPrice.region_id,
+          city: serverPrice.zone?.display_name,
+          vendorId: serverPrice.region?.vendor_id || serverPrice.vendor_id,
+          regionId: serverPrice.region_id,
+          zoneId: serverPrice.zone_id,
         };
       });
     }, 200);
