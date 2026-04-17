@@ -29,7 +29,8 @@ export class PartnersComponent implements OnInit {
 
   readonly breadcrumbs = signal<BreadcrumbSegment[]>([
     { name: "Home", url: "/" },
-    { name: "Partners", url: "/partners" },
+    { name: "About" },
+    { name: "Partners", url: "/about/partners" },
   ]);
 
   readonly categories = signal<readonly PartnerCategory[]>(PARTNER_CATEGORIES);

@@ -131,7 +131,7 @@ describe("Visual regression tests", () => {
   });
 
   it("should compare screenshot of partners page", () => {
-    E2EEvent.visitURL("/partners");
+    E2EEvent.visitURL("/about/partners");
 
     // Prepare header position for a consistent visual regression snapshot
     E2EEvent.prepareHeaderForScreenshot();

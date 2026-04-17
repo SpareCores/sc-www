@@ -185,7 +185,7 @@ export const routes: Routes = [
       ),
   },
   {
-    path: "partners",
+    path: "about/partners",
     loadComponent: () =>
       import("./pages/partners/partners.component").then(
         (c) => c.PartnersComponent,

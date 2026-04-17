@@ -22,7 +22,7 @@
             {{ category.heading }}
             <a
               class="header-anchor"
-              [href]="'/partners#' + category.id"
+              [href]="'/about/partners#' + category.id"
               [attr.aria-label]="'Permalink to ' + category.heading"
               >#</a
             >
@@ -39,7 +39,7 @@
                 {{ section.heading }}
                 <a
                   class="header-anchor"
-                  [href]="'/partners#' + section.id"
+                  [href]="'/about/partners#' + section.id"
                   [attr.aria-label]="
                     'Permalink to ' + (section.heading || section.id)
                   "
@@ -111,7 +111,7 @@
           {{ interestSection().heading }}
           <a
             class="header-anchor"
-            [href]="'/partners#' + interestSection().id"
+            [href]="'/about/partners#' + interestSection().id"
             [attr.aria-label]="'Permalink to ' + interestSection().heading"
             >#</a
           >

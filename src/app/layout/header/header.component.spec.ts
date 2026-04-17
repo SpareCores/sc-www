@@ -39,12 +39,14 @@ describe("HeaderComponent", () => {
 
   it("shows Partners in the about navigation", () => {
     const hostElement = fixture.nativeElement as HTMLElement;
-    const aboutOptionsText =
-      hostElement.querySelector("#about_options")?.textContent ?? "";
-    const mobileMenuText =
-      hostElement.querySelector("#menu_options")?.textContent ?? "";
+    const aboutPartnersLink = hostElement.querySelector(
+      '#about_options a[routerLink="/about/partners"]',
+    );
+    const mobilePartnersLink = hostElement.querySelector(
+      '#menu_options a[routerLink="/about/partners"]',
+    );
 
-    expect(aboutOptionsText).toContain("Partners");
-    expect(mobileMenuText).toContain("Partners");
+    expect(aboutPartnersLink?.textContent).toContain("Partners");
+    expect(mobilePartnersLink?.textContent).toContain("Partners");
   });
 });
