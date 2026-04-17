@@ -138,12 +138,6 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
   availabilityRegions: any[] = [];
   availabilityZones: any[] = [];
-  pricesPerZone: any[] = [];
-
-  allocationFilters: any[] = [
-    { name: "Spot", selected: true },
-    { name: "Ondemand", selected: true },
-  ];
 
   regionFilters: any[] = [];
 
@@ -798,24 +792,19 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
       const series: ChartData<"bar"> = {
         labels: [],
-        datasets: [],
+        datasets: [
+          {
+            data: [],
+            label: "Spot",
+            backgroundColor: "#34D399",
+          },
+          {
+            data: [],
+            label: "Ondemand",
+            backgroundColor: "#E5E7EB",
+          },
+        ],
       };
-
-      if (this.allocationFilters[0].selected) {
-        series.datasets.push({
-          data: [],
-          label: "Spot",
-          backgroundColor: "#34D399",
-        });
-      }
-
-      if (this.allocationFilters[1].selected) {
-        series.datasets.push({
-          data: [],
-          label: "Ondemand",
-          backgroundColor: "#E5E7EB",
-        });
-      }
 
       const spotIdx = series.datasets.findIndex((s: any) => s.label === "Spot");
       const ondemandIdx = series.datasets.findIndex(
@@ -888,24 +877,19 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
       const series: ChartData<"bar"> = {
         labels: [],
-        datasets: [],
+        datasets: [
+          {
+            data: [],
+            label: "Spot",
+            backgroundColor: "#34D399",
+          },
+          {
+            data: [],
+            label: "Ondemand",
+            backgroundColor: "#E5E7EB",
+          },
+        ],
       };
-
-      if (this.allocationFilters[0].selected) {
-        series.datasets.push({
-          data: [],
-          label: "Spot",
-          backgroundColor: "#34D399",
-        });
-      }
-
-      if (this.allocationFilters[1].selected) {
-        series.datasets.push({
-          data: [],
-          label: "Ondemand",
-          backgroundColor: "#E5E7EB",
-        });
-      }
 
       const spotIdx = series.datasets.findIndex((s: any) => s.label === "Spot");
       const ondemandIdx = series.datasets.findIndex(
