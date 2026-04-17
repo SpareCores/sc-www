@@ -4,6 +4,14 @@ import { formatBytes } from "../../../pipes/pipe-utils";
 import { radarDatasetColors } from "../shared/chart-colors.constants";
 import { cloneChartOptions } from "../shared/chart-options.utils";
 import {
+  COMPRESSION_LEVEL_NOT_AVAILABLE_LABEL,
+  DETAILS_SERIES_IGNORED_KEYS,
+  DetailsCompressionMode,
+  LEGACY_LZ4_BLOCK_SIZE_BYTES,
+  compressionInfoTooltip,
+  detailsCompressionModes,
+} from "./compression-chart.constants";
+import {
   CompareCompressionOption,
   CompressionBenchmarkGroup,
   CompressionBenchmarkMeta,
@@ -19,57 +27,11 @@ import {
   CompressionServer,
 } from "./compression-chart.types";
 
-export type DetailsCompressionMode = {
-  name: string;
-  key:
-    | "compress"
-    | "decompress"
-    | "ratio"
-    | "ratio_compress"
-    | "ratio_decompress";
-  order: string;
-  icon: "circle-arrow-down" | "circle-arrow-up";
-};
-
-const detailsCompressionModes: DetailsCompressionMode[] = [
-  {
-    name: "Compression speed",
-    key: "compress",
-    order: "Higher is better.",
-    icon: "circle-arrow-up",
-  },
-  {
-    name: "Decompression speed",
-    key: "decompress",
-    order: "Higher is better.",
-    icon: "circle-arrow-up",
-  },
-  {
-    name: "Compression ratio",
-    key: "ratio",
-    order: "Lower is better.",
-    icon: "circle-arrow-down",
-  },
-  {
-    name: "Compression speed/ratio",
-    key: "ratio_compress",
-    order: "Higher is better.",
-    icon: "circle-arrow-up",
-  },
-  {
-    name: "Decompression speed/ratio",
-    key: "ratio_decompress",
-    order: "Higher is better.",
-    icon: "circle-arrow-up",
-  },
-];
-
 @Injectable({
   providedIn: "root",
 })
 export class CompressionChartBuilderService {
-  readonly infoTooltip =
-    "Measuring the compression ratio and speed while compressing and decompressing the dickens.txt of the Silesia corpus (10 MB uncompressed) using various algorithms, compressions levels and other extra arguments.";
+  readonly infoTooltip = compressionInfoTooltip;
 
   getDetailsModes(): DetailsCompressionMode[] {
     return detailsCompressionModes;
@@ -170,34 +132,69 @@ export class CompressionChartBuilderService {
       datasets: [],
     };
 
+    const algoColorIndexes = new Map<string, number>();
     ratioScores.forEach((item) => {
-      const found = data.datasets.find(
-        (dataset) => dataset.config.algo === item.config.algo,
-      );
+      if (!algoColorIndexes.has(item.config.algo)) {
+        algoColorIndexes.set(
+          item.config.algo,
+          algoColorIndexes.size % radarDatasetColors.length,
+        );
+      }
+    });
+
+    const seriesMap = new Map<
+      string,
+      {
+        config: CompressionConfig;
+        label: string;
+        data: CompressionDataPoint[];
+      }
+    >();
+
+    ratioScores.forEach((item) => {
+      const seriesKey = this.getDetailsSeriesKey(item.config);
+      const found = seriesMap.get(seriesKey);
 
       const entry: CompressionDataPoint = {
         config: item.config,
         ratio: this.roundRatio(item.score),
         algo: item.config.algo,
         compression_level: item.config.compression_level,
-        tooltip: this.buildConfigTooltip(item.config, (key) => key !== "algo"),
+        compression_level_label: this.getCompressionLevelLabel(item.config),
+        compression_level_sort_value: this.getCompressionLevelSortValue(
+          item.config,
+        ),
+        tooltip: this.buildDetailsConfigTooltip(item.config),
       };
 
       if (!found) {
-        const colors =
-          radarDatasetColors[data.datasets.length % radarDatasetColors.length];
-        data.datasets.push({
+        seriesMap.set(seriesKey, {
           data: [entry],
-          label: item.config.algo,
-          spanGaps: true,
           config: item.config,
-          borderColor: colors.borderColor,
-          backgroundColor: colors.backgroundColor,
+          label: this.buildDetailsSeriesLabel(item.config),
         });
       } else {
         found.data.push(entry);
       }
     });
+
+    data.datasets = [...seriesMap.values()]
+      .sort((left, right) =>
+        this.compareDetailsSeries(left.config, right.config, algoColorIndexes),
+      )
+      .map((series) => {
+        const colorIndex = algoColorIndexes.get(series.config.algo) ?? 0;
+        const colors = radarDatasetColors[colorIndex];
+
+        return {
+          data: series.data,
+          label: series.label,
+          spanGaps: true,
+          config: series.config,
+          borderColor: colors.borderColor,
+          backgroundColor: colors.backgroundColor,
+        };
+      });
 
     data.datasets.forEach((dataset) => {
       dataset.data.forEach((item) => {
@@ -207,8 +204,10 @@ export class CompressionChartBuilderService {
         const decompressItem = decompressScores.find((dataItem) =>
           this.matchesConfig(item.config, dataItem.config),
         );
-        if (compressItem && decompressItem) {
+        if (compressItem) {
           item.compress = compressItem.score;
+        }
+        if (decompressItem) {
           item.decompress = decompressItem.score;
         }
       });
@@ -415,25 +414,10 @@ export class CompressionChartBuilderService {
       case "compress":
       case "decompress":
       case "ratio": {
-        const labels: number[] = [];
-        data.datasets.forEach((dataset) => {
-          dataset.data = dataset.data.sort(
-            (a, b) => (a.compression_level ?? 0) - (b.compression_level ?? 0),
-          );
-          dataset.data.forEach((item) => {
-            if (
-              (item.compression_level || item.compression_level === 0) &&
-              labels.indexOf(item.compression_level) === -1
-            ) {
-              labels.push(item.compression_level);
-            }
-          });
-        });
-
-        data.labels = labels.sort((a, b) => a - b);
+        data.labels = this.collectCompressionLevelLabels(data);
         options.parsing = {
           yAxisKey: mode.key,
-          xAxisKey: "compression_level",
+          xAxisKey: "compression_level_label",
         };
         this.setAxisTitles(
           options,
@@ -465,18 +449,191 @@ export class CompressionChartBuilderService {
     }
   }
 
-  private buildConfigTooltip(
-    config: CompressionConfig,
-    includeKey: (key: string) => boolean,
-  ): string {
+  private collectCompressionLevelLabels(
+    data: CompressionDetailsChartData,
+  ): Array<number | string> {
+    const labels: number[] = [];
+    let hasNotAvailableLevel = false;
+
+    data.datasets.forEach((dataset) => {
+      dataset.data = dataset.data.sort(
+        (a, b) =>
+          (a.compression_level_sort_value ?? Number.NEGATIVE_INFINITY) -
+          (b.compression_level_sort_value ?? Number.NEGATIVE_INFINITY),
+      );
+      dataset.data.forEach((item) => {
+        if (item.compression_level == null) {
+          hasNotAvailableLevel = true;
+        } else if (labels.indexOf(item.compression_level) === -1) {
+          labels.push(item.compression_level);
+        }
+      });
+    });
+
+    return [
+      ...(hasNotAvailableLevel ? [COMPRESSION_LEVEL_NOT_AVAILABLE_LABEL] : []),
+      ...labels.sort((a, b) => a - b).map((value) => String(value)),
+    ];
+  }
+
+  private buildDetailsConfigTooltip(config: CompressionConfig): string {
     return Object.keys(config)
-      .filter(includeKey)
+      .filter((key) => key !== "algo")
       .filter((key) => config[key] != null)
       .map(
         (key) =>
-          `${key.replace(/_/g, " ")}: ${this.formatConfigValue(key, config[key])}`,
+          `${key.replace(/_/g, " ")}: ${this.formatDetailsConfigValue(
+            config,
+            key,
+            config[key],
+          )}`,
       )
       .join(", ");
+  }
+
+  private buildDetailsSeriesLabel(config: CompressionConfig): string {
+    const details = this.getDetailsSeriesConfigKeys(config)
+      .map(
+        (key) =>
+          `${key}: ${this.formatDetailsConfigValue(config, key, config[key])}`,
+      )
+      .join(", ");
+
+    return details ? `${config.algo} (${details})` : config.algo;
+  }
+
+  private getDetailsSeriesKey(config: CompressionConfig): string {
+    const suffix = this.getDetailsSeriesConfigKeys(config)
+      .map(
+        (key) => `${key}:${this.getDetailsSeriesComparableValue(config, key)}`,
+      )
+      .join("|");
+
+    return suffix ? `${config.algo}|${suffix}` : config.algo;
+  }
+
+  private getDetailsSeriesConfigKeys(config: CompressionConfig): string[] {
+    return Object.keys(config)
+      .filter((key) => !DETAILS_SERIES_IGNORED_KEYS.has(key))
+      .filter((key) => config[key] != null)
+      .sort();
+  }
+
+  private getDetailsSeriesComparableValue(
+    config: CompressionConfig,
+    key: string,
+  ): number | string {
+    const value = config[key];
+
+    if (key === "block_size" && typeof value === "number") {
+      return this.normalizeBlockSizeForDisplay(config, value);
+    }
+
+    return String(value ?? "");
+  }
+
+  private compareDetailsSeries(
+    left: CompressionConfig,
+    right: CompressionConfig,
+    algoColorIndexes: Map<string, number>,
+  ): number {
+    const leftColorIndex =
+      algoColorIndexes.get(left.algo) ?? Number.MAX_SAFE_INTEGER;
+    const rightColorIndex =
+      algoColorIndexes.get(right.algo) ?? Number.MAX_SAFE_INTEGER;
+
+    if (leftColorIndex !== rightColorIndex) {
+      return leftColorIndex - rightColorIndex;
+    }
+
+    const keys = [
+      ...new Set([
+        ...this.getDetailsSeriesConfigKeys(left),
+        ...this.getDetailsSeriesConfigKeys(right),
+      ]),
+    ].sort();
+
+    for (const key of keys) {
+      const compare = this.compareDetailsSeriesConfigValue(left, right, key);
+      if (compare !== 0) {
+        return compare;
+      }
+    }
+
+    return 0;
+  }
+
+  private compareDetailsSeriesConfigValue(
+    left: CompressionConfig,
+    right: CompressionConfig,
+    key: string,
+  ): number {
+    const leftValue = left[key];
+    const rightValue = right[key];
+
+    if (key === "block_size") {
+      const normalizedLeft =
+        typeof leftValue === "number"
+          ? this.normalizeBlockSizeForDisplay(left, leftValue)
+          : undefined;
+      const normalizedRight =
+        typeof rightValue === "number"
+          ? this.normalizeBlockSizeForDisplay(right, rightValue)
+          : undefined;
+
+      if (normalizedLeft == null && normalizedRight == null) {
+        return 0;
+      }
+      if (normalizedLeft == null) {
+        return -1;
+      }
+      if (normalizedRight == null) {
+        return 1;
+      }
+
+      return normalizedLeft - normalizedRight;
+    }
+
+    return String(leftValue ?? "").localeCompare(
+      String(rightValue ?? ""),
+      undefined,
+      {
+        numeric: true,
+      },
+    );
+  }
+
+  private getCompressionLevelLabel(config: CompressionConfig): string {
+    return config.compression_level == null
+      ? COMPRESSION_LEVEL_NOT_AVAILABLE_LABEL
+      : String(config.compression_level);
+  }
+
+  private getCompressionLevelSortValue(config: CompressionConfig): number {
+    return config.compression_level ?? Number.NEGATIVE_INFINITY;
+  }
+
+  private formatDetailsConfigValue(
+    config: CompressionConfig,
+    key: string,
+    value: unknown,
+  ): string {
+    if (key === "block_size" && typeof value === "number") {
+      return formatBytes(this.normalizeBlockSizeForDisplay(config, value));
+    }
+
+    return String(value);
+  }
+
+  private normalizeBlockSizeForDisplay(
+    config: CompressionConfig,
+    value: number,
+  ): number {
+    if (config.algo.toLowerCase() !== "lz4") {
+      return value;
+    }
+
+    return LEGACY_LZ4_BLOCK_SIZE_BYTES[value] ?? value;
   }
 
   private formatConfigValue(key: string, value: unknown): string {
@@ -489,7 +646,6 @@ export class CompressionChartBuilderService {
   private roundRatio(value: number): number {
     return Math.floor(value * 100) / 100;
   }
-
   private matchesConfig(
     source: CompressionConfig,
     target: CompressionConfig,
