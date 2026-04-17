@@ -9,6 +9,15 @@
 $content-max-width: 1400px;
 
 @layer components {
+  .partners-content a:not(.header-anchor) {
+    @apply underline decoration-dotted;
+  }
+
+  .partners-content a:not(.header-anchor):hover,
+  .partners-content a:not(.header-anchor):focus-visible {
+    @apply text-gray-500;
+  }
+
   .tooltip-panel {
     @apply inline-block max-w-xl whitespace-normal break-words rounded-lg border border-solid border-emerald-400 bg-secondary px-3 py-2 text-left text-sm font-medium text-white transition-opacity duration-300;
   }

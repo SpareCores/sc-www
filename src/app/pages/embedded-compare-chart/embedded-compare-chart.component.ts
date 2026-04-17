@@ -1,13 +1,23 @@
-import { Component, inject } from "@angular/core";
+import { Component, inject, OnInit, PLATFORM_ID } from "@angular/core";
+import { isPlatformBrowser } from "@angular/common";
 import { ServerCompareChartsComponent } from "../../components/server-compare-charts/server-compare-charts.component";
 import { LucideAngularModule } from "lucide-angular";
 import { ActivatedRoute } from "@angular/router";
 import { AnalyticsService } from "../../services/analytics.service";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
+import { ToastService } from "../../services/toast.service";
 import { ExtendedServerDetails } from "../server-details/server-details.component";
 import { Allocation } from "../../../../sdk/data-contracts";
-import { OnInit } from "@angular/core";
+import {
+  decodeBase64JsonUrlState,
+  isServerCompareUrlState,
+} from "../../tools/encoded-url-state";
+
+const INVALID_COMPARE_URL_TOAST_ID = "bad-compare-url-param";
+const INVALID_URL_TOAST_TITLE = "Invalid URL";
+const INVALID_COMPARE_URL_TOAST_BODY =
+  'Visit the <a href="/servers" class="underline font-semibold">Server Navigator page</a> to select servers to compare.';
 
 @Component({
   selector: "app-embedded-compare-chart",
@@ -20,10 +30,12 @@ export class EmbeddedCompareChartComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private analytics = inject(AnalyticsService);
   private keeperAPI = inject(KeeperAPIService);
+  private platformId = inject(PLATFORM_ID);
+  private toastService = inject(ToastService);
 
   showChart: string = "all";
 
-  instancesRaw: any;
+  instancesRaw = "";
   instances: any[] = [];
 
   zones: any[] = [];
@@ -185,11 +197,14 @@ export class EmbeddedCompareChartComponent implements OnInit {
 
   setup() {
     const chartname = this.route.snapshot.params["chartname"];
+    const encodedInstances = this.route.snapshot.queryParams["instances"];
 
     this.showChart = chartname;
-    this.instancesRaw = this.route.snapshot.queryParams["instances"];
+    this.instances = [];
+    this.instancesRaw = "";
 
-    if (!this.instancesRaw) {
+    if (!encodedInstances) {
+      this.toastService.removeToast(INVALID_COMPARE_URL_TOAST_ID);
       return;
     }
 
@@ -199,7 +214,27 @@ export class EmbeddedCompareChartComponent implements OnInit {
       );
     });
 
-    this.instances = JSON.parse(atob(this.instancesRaw));
+    const decodedInstances = decodeBase64JsonUrlState(
+      encodedInstances,
+      isServerCompareUrlState,
+    );
+
+    if (!decodedInstances.value) {
+      console.warn("Invalid instances data in URL:", decodedInstances.error);
+      if (isPlatformBrowser(this.platformId)) {
+        this.toastService.show({
+          title: INVALID_URL_TOAST_TITLE,
+          body: INVALID_COMPARE_URL_TOAST_BODY,
+          type: "error",
+          id: INVALID_COMPARE_URL_TOAST_ID,
+        });
+      }
+      return;
+    }
+
+    this.instances = decodedInstances.value;
+    this.instancesRaw = this.instances.length > 0 ? encodedInstances : "";
+    this.toastService.removeToast(INVALID_COMPARE_URL_TOAST_ID);
 
     if (this.instances?.length > 0) {
       let serverCount = this.instances?.length || 0;

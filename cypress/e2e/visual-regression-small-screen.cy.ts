@@ -133,4 +133,16 @@ describe("Visual regression tests (small screen - 800px)", () => {
     // Capture the visual snapshot
     cy.compareSnapshot("legal-documents-list-small");
   });
+
+  it("should compare screenshot of partners page", () => {
+    E2EEvent.visitURL("/about/partners");
+
+    // Prepare header position for a consistent visual regression snapshot
+    E2EEvent.prepareHeaderForScreenshot();
+
+    cy.contains("Strategic & Ecosystem Partners").should("be.visible");
+    cy.get(".partner-logos").should("have.length.at.least", 1);
+
+    cy.compareSnapshot("partners-page-small");
+  });
 });

@@ -287,25 +287,6 @@
         <div class="block_full price-sections-to-hide-for-test">
           <div class="flex justify-between items-center">
             <h3 class="text-2xl">Average Price per Region</h3>
-            <div>
-              <button
-                id="allocation_button"
-                data-ph-capture-attribute-sc-event="server details price allocation select"
-                [appFlowbiteDropdown]="'allocation_options'"
-                class="dropdown_button"
-                type="button"
-              >
-                <div class="px-3 py-2">Allocation</div>
-                <div
-                  class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
-                >
-                  <lucide-icon
-                    name="chevron-down"
-                    class="h-6 w-6 text-emerald-400"
-                  ></lucide-icon>
-                </div>
-              </button>
-            </div>
           </div>
           @if (isBrowser()) {
             <div>
@@ -326,23 +307,6 @@
           <div class="flex justify-between items-center">
             <h3 class="text-2xl">Prices per Zone</h3>
             <div class="flex gap-4">
-              <button
-                id="allocation_button2"
-                data-ph-capture-attribute-sc-event="server details price allocation select"
-                [appFlowbiteDropdown]="'allocation_options2'"
-                class="dropdown_button"
-                type="button"
-              >
-                <div class="px-3 py-2">Allocation</div>
-                <div
-                  class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
-                >
-                  <lucide-icon
-                    name="chevron-down"
-                    class="h-6 w-6 text-emerald-400"
-                  ></lucide-icon>
-                </div>
-              </button>
               <button
                 id="region_button"
                 data-ph-capture-attribute-sc-event="server details regions select"
@@ -554,53 +518,6 @@
       </div>
     }
   </div>
-</div>
-
-<!-- Dropdown menu -->
-<div
-  id="allocation_options"
-  class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid"
->
-  <ul
-    class="py-2 px-1 text-sm text-gray-700"
-    aria-labelledby="dropdownDefaultButton"
-  >
-    @for (filter of allocationFilters; track filter.name; let i = $index) {
-      <li class="flex py-1 gap-2 items-center">
-        <input
-          type="checkbox"
-          id="filter_allocation_{{ i }}"
-          [(ngModel)]="filter.selected"
-          (ngModelChange)="refreshPricesGraphs()"
-          class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer"
-        />
-        <div class="text-white text-sm">{{ filter.name }}</div>
-      </li>
-    }
-  </ul>
-</div>
-
-<div
-  id="allocation_options2"
-  class="z-10 hidden bg-secondary rounded-lg shadow w-44 border border-emerald-400 border-solid"
->
-  <ul
-    class="py-2 px-1 text-sm text-gray-700"
-    aria-labelledby="dropdownDefaultButton"
-  >
-    @for (filter of allocationFilters; track filter.name; let i = $index) {
-      <li class="flex py-1 gap-2 items-center">
-        <input
-          type="checkbox"
-          id="filter_allocation_2_{{ i }}"
-          [(ngModel)]="filter.selected"
-          (ngModelChange)="refreshPricesGraphs()"
-          class="focus:ring-emerald-400 accent-emerald-400 text-emerald-400 outline-none cursor-pointer"
-        />
-        <div class="text-white text-sm">{{ filter.name }}</div>
-      </li>
-    }
-  </ul>
 </div>
 
 <!-- Dropdown menu -->
