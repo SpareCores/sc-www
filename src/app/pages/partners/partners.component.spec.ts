@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-
 import { PartnersComponent } from "./partners.component";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
@@ -40,11 +39,12 @@ describe("PartnersComponent", () => {
   });
 
   it("renders the contact CTA from structured content data", () => {
-    const contactLink = (fixture.nativeElement as HTMLElement).querySelector(
-      'a[href="/contact"]',
-    );
+    const contactLink = Array.from(
+      (fixture.nativeElement as HTMLElement).querySelectorAll("a"),
+    ).find((link) => link.textContent?.trim() === "Contact us");
 
     expect(contactLink?.textContent?.trim()).toBe("Contact us");
+    expect(contactLink?.getAttribute("href")).toContain("/contact");
   });
 
   it("applies compact logo variants from the page data", () => {

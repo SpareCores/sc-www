@@ -1,4 +1,5 @@
 import { Component, OnInit, inject, signal } from "@angular/core";
+import { RouterLink } from "@angular/router";
 import {
   BreadcrumbSegment,
   BreadcrumbsComponent,
@@ -16,7 +17,7 @@ import { PartnerCategory, PartnerInterestSection } from "./partners.types";
 
 @Component({
   selector: "app-partners",
-  imports: [BreadcrumbsComponent],
+  imports: [BreadcrumbsComponent, RouterLink],
   templateUrl: "./partners.component.html",
   styleUrl: "./partners.component.scss",
 })
