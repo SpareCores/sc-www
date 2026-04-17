@@ -18,6 +18,10 @@ import {
   ServerPKs,
   ServerPriceWithPKs,
 } from "../../../../sdk/data-contracts";
+import {
+  decodeBase64JsonUrlState,
+  isBenchmarkUrlState,
+} from "../../tools/encoded-url-state";
 import { encodeQueryParams } from "../../tools/queryParamFunctions";
 import { ActivatedRoute, Params, Router, RouterModule } from "@angular/router";
 import { CommonModule, isPlatformBrowser } from "@angular/common";
@@ -87,6 +91,10 @@ const optionsModal: ModalOptions = {
   backdropClasses: "bg-gray-900/50 fixed inset-0 z-40",
   closable: true,
 };
+
+const INVALID_URL_TOAST_TITLE = "Invalid URL";
+const INVALID_BENCHMARK_URL_TOAST_BODY =
+  "Visit the Server Navigator page to select a benchmark.";
 
 @Component({
   selector: "app-server-listing",
@@ -555,30 +563,34 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       }
       // allow overriding preselected benchmark via URL parameters
       if (benchmarkDataEncoded) {
-        try {
-          const benchmarkData = JSON.parse(atob(benchmarkDataEncoded));
+        const benchmarkData = decodeBase64JsonUrlState(
+          benchmarkDataEncoded,
+          isBenchmarkUrlState,
+        );
+
+        if (benchmarkData.value) {
           this.selectedBenchmarkConfig = this.benchmarksConfigs.find(
             (config: any) =>
-              config.benchmark_id === benchmarkData.id &&
-              config.config === benchmarkData.config,
+              config.benchmark_id === benchmarkData.value?.id &&
+              config.config === benchmarkData.value?.config,
           );
           if (
             !this.selectedBenchmarkConfig &&
             isPlatformBrowser(this.platformId)
           ) {
             this.toastService.show({
-              title: "Benchmark Not Found",
-              body: "The provided benchmark URL parameter is unknown in our database. Please select a benchmark manually.",
+              title: INVALID_URL_TOAST_TITLE,
+              body: INVALID_BENCHMARK_URL_TOAST_BODY,
               type: "error",
               id: "bad-benchmark-url-param",
             });
           }
-        } catch (error) {
-          console.warn("Invalid benchmark data in URL:", error);
+        } else {
+          console.warn("Invalid benchmark data in URL:", benchmarkData.error);
           if (isPlatformBrowser(this.platformId)) {
             this.toastService.show({
-              title: "Invalid Benchmark",
-              body: "The benchmark data in the URL is invalid. Please select a benchmark manually.",
+              title: INVALID_URL_TOAST_TITLE,
+              body: INVALID_BENCHMARK_URL_TOAST_BODY,
               type: "error",
               id: "bad-benchmark-url-param",
             });
