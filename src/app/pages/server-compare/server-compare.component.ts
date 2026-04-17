@@ -60,7 +60,7 @@ const optionsModal: ModalOptions = {
 const INVALID_COMPARE_URL_TOAST_ID = "bad-compare-url-param";
 const INVALID_URL_TOAST_TITLE = "Invalid URL";
 const INVALID_COMPARE_URL_TOAST_BODY =
-  'Visit the <a href="https://sparecores.com/servers" class="underline font-semibold">Server Navigator page</a> to select servers to compare.';
+  'Visit the <a href="/servers" class="underline font-semibold">Server Navigator page</a> to select servers to compare.';
 
 type CompareTableBenchmarkConfig = {
   config: MemoryBenchmarkConfig;

@@ -118,7 +118,7 @@ describe("EmbeddedCompareChartComponent", () => {
     expect(showToast).toHaveBeenCalledOnceWith(
       jasmine.objectContaining({
         title: "Invalid URL",
-        body: 'Visit the <a href="https://sparecores.com/servers" class="underline font-semibold">Server Navigator page</a> to select servers to compare.',
+        body: 'Visit the <a href="/servers" class="underline font-semibold">Server Navigator page</a> to select servers to compare.',
         type: "error",
         id: "bad-compare-url-param",
       }),
@@ -138,7 +138,7 @@ describe("EmbeddedCompareChartComponent", () => {
     expect(showToast).toHaveBeenCalledOnceWith(
       jasmine.objectContaining({
         title: "Invalid URL",
-        body: 'Visit the <a href="https://sparecores.com/servers" class="underline font-semibold">Server Navigator page</a> to select servers to compare.',
+        body: 'Visit the <a href="/servers" class="underline font-semibold">Server Navigator page</a> to select servers to compare.',
         type: "error",
         id: "bad-compare-url-param",
       }),
