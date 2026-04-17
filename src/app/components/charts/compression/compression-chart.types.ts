@@ -45,6 +45,8 @@ export type CompressionDataPoint = {
   ratio: number;
   algo: string;
   compression_level?: number;
+  compression_level_label?: string;
+  compression_level_sort_value?: number;
   tooltip: string;
   compress?: number;
   decompress?: number;
@@ -75,7 +77,7 @@ type CompressionCompareDataset = ChartDataset<
 };
 
 export type CompressionDetailsChartData = {
-  labels: number[];
+  labels: Array<number | string>;
   datasets: CompressionDetailsDataset[];
 };
 
