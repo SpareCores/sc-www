@@ -1,0 +1,130 @@
+.partners-paragraph {
+  @apply my-10 text-lg text-white;
+
+  text-align: justify;
+  text-align-last: left;
+}
+
+.partners-paragraph--list-intro {
+  @apply mb-3;
+}
+
+.partners-heading {
+  @apply font-bold text-emerald-400 my-4;
+}
+
+.partners-heading--section {
+  @apply text-2xl my-10;
+}
+
+.partners-heading--subsection {
+  @apply text-xl;
+}
+
+.partner-logos {
+  --partner-mobile-gap: 2rem;
+  @apply my-8 flex flex-nowrap items-center justify-center gap-8 overflow-x-auto pb-2;
+
+  scrollbar-width: thin;
+  scrollbar-color: #34d39933 transparent;
+}
+
+@media (max-width: 767px) {
+  .partner-logos--two-rows-mobile {
+    @apply flex-wrap justify-center pb-0;
+
+    overflow-x: visible;
+    gap: var(--partner-mobile-gap);
+  }
+
+  .partner-logos--two-rows-mobile .partner-logo-link {
+    flex: 0 0
+      calc(
+        (
+            100% - (var(--partner-mobile-columns) - 1) *
+              var(--partner-mobile-gap)
+          ) /
+          var(--partner-mobile-columns)
+      );
+    max-width: calc(
+      (100% - (var(--partner-mobile-columns) - 1) * var(--partner-mobile-gap)) /
+        var(--partner-mobile-columns)
+    );
+    min-width: 0;
+  }
+
+  .partner-logos--two-rows-mobile .partner-logo-image {
+    max-width: min(100%, 8rem);
+  }
+}
+
+.partner-logos--compact {
+  --partner-mobile-gap: 1rem;
+  @apply gap-4;
+}
+
+.partner-logos--compact .partner-logo-image {
+  @apply h-7 md:h-8;
+}
+
+.partner-logos--compact .partner-logo-image--compact {
+  @apply h-6 md:h-7;
+}
+
+.partner-logo-link {
+  @apply inline-flex shrink-0 items-center justify-center;
+}
+
+.partner-logo-image {
+  @apply h-10 w-auto max-w-full object-contain md:h-12;
+}
+
+.partner-logo-image--compact {
+  @apply h-7 md:h-9;
+}
+
+.partners-list {
+  @apply mb-8;
+}
+
+.partners-list li {
+  @apply list-disc text-lg my-1 ml-8 text-white;
+
+  text-align: justify;
+  text-align-last: left;
+}
+
+.partners-divider {
+  @apply my-10 border-0 border-t;
+
+  border-color: rgb(52 211 153 / 0.4);
+}
+
+.partner-logos::-webkit-scrollbar {
+  height: 4px;
+  background: rgb(52 211 153 / 0.12);
+}
+
+.partner-logos::-webkit-scrollbar-thumb {
+  background: rgb(52 211 153 / 0.65);
+}
+
+.partners-anchor-target {
+  position: relative;
+  top: -80px;
+  visibility: hidden;
+}
+
+.header-anchor {
+  opacity: 0;
+  text-decoration: none;
+  margin-left: 0.5rem;
+  transition: opacity 0.2s;
+}
+
+.header-anchor:focus,
+.header-anchor:focus-visible,
+.partners-heading:focus-within .header-anchor,
+.partners-heading:hover .header-anchor {
+  opacity: 1;
+}

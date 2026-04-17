@@ -153,7 +153,7 @@
       </div>
     </div>
     <div class="flex justify-center">
-      <a href="/server_prices">
+      <a routerLink="/server_prices">
         <button class="btn-primary py-5 px-5">Check Out Server Prices</button>
       </a>
     </div>
@@ -554,7 +554,7 @@
               <lucide-icon name="github"></lucide-icon> Check us out on GitHub
             </button>
           </a>
-          <a href="/articles?tag=funding">
+          <a [routerLink]="'/articles'" [queryParams]="{ tag: 'funding' }">
             <button
               class="bg-transparend text-teal-500 py-4 px-4 font-bold hover:text-teal-600"
             >

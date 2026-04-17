@@ -36,4 +36,17 @@ describe("HeaderComponent", () => {
       menuOptions.indexOf("Resource Tracker"),
     );
   });
+
+  it("shows Partners in the about navigation", () => {
+    const hostElement = fixture.nativeElement as HTMLElement;
+    const aboutPartnersLink = hostElement.querySelector(
+      '#about_options a[routerLink="/about/partners"]',
+    );
+    const mobilePartnersLink = hostElement.querySelector(
+      '#menu_options a[routerLink="/about/partners"]',
+    );
+
+    expect(aboutPartnersLink?.textContent).toContain("Partners");
+    expect(mobilePartnersLink?.textContent).toContain("Partners");
+  });
 });
