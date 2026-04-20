@@ -123,6 +123,32 @@ describe("ScrollbarMirrorController", () => {
     controller.destroy();
   });
 
+  it("hides mirror state when the scrollable table region fits without visible overflow", () => {
+    Object.defineProperty(mainTable, "scrollWidth", {
+      configurable: true,
+      value: 501.4,
+    });
+
+    const fixedThead = document.createElement("div");
+    fixedThead.className = "fixed_thead";
+    document.body.appendChild(fixedThead);
+    appendedElements.push(fixedThead);
+    setRect(fixedThead, { left: 25, top: 68, width: 900, height: 44 });
+
+    const controller = new ScrollbarMirrorController(
+      () => new ElementRef(tableHolder),
+      signal(new ElementRef(topMirror)),
+      signal(new ElementRef(bottomMirror)),
+      mirrorState,
+    );
+
+    controller.update(true);
+
+    expect(mirrorState()).toEqual(INITIAL_SCROLLBAR_MIRROR_STATE);
+
+    controller.destroy();
+  });
+
   it("returns fixed mirror styles with the expected horizontal scrollbar height", () => {
     expect(
       ScrollbarMirrorController.toStyle({ left: 10, width: 20, top: 30 }),
