@@ -139,6 +139,59 @@ describe("ServerCompareComponent", () => {
     expect(component).toBeTruthy();
   });
 
+  it("updates mirror layout on viewport changes and removes those listeners on destroy", () => {
+    const mainTable = document.createElement("table");
+    mainTable.id = "main-table";
+    document.body.appendChild(mainTable);
+    spyOn(mainTable, "getBoundingClientRect").and.returnValue({
+      x: 0,
+      y: 120,
+      left: 0,
+      top: 120,
+      right: 800,
+      bottom: 160,
+      width: 800,
+      height: 40,
+      toJSON: () => ({}),
+    } as DOMRect);
+
+    const updateMirrorLayout = spyOn<any>(
+      component,
+      "updateMirrorLayout",
+    ).and.callThrough();
+    const removeEventListener = spyOn(
+      window,
+      "removeEventListener",
+    ).and.callThrough();
+
+    try {
+      component.ngAfterViewInit();
+      updateMirrorLayout.calls.reset();
+
+      window.dispatchEvent(new Event("resize"));
+      window.dispatchEvent(new Event("orientationchange"));
+
+      expect(updateMirrorLayout).toHaveBeenCalledTimes(2);
+
+      component.ngOnDestroy();
+
+      expect(removeEventListener).toHaveBeenCalledWith(
+        "scroll",
+        updateMirrorLayout,
+      );
+      expect(removeEventListener).toHaveBeenCalledWith(
+        "resize",
+        updateMirrorLayout,
+      );
+      expect(removeEventListener).toHaveBeenCalledWith(
+        "orientationchange",
+        updateMirrorLayout,
+      );
+    } finally {
+      mainTable.remove();
+    }
+  });
+
   it("shows a toast and skips loading for malformed instances data", () => {
     routeSnapshot.queryParams = {
       instances: "%not-base64%",
