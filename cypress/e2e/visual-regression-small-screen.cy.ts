@@ -106,6 +106,7 @@ describe("Visual regression tests (small screen - 800px)", () => {
 
     // Prepare header position for a consistent visual regression snapshot
     E2EEvent.prepareHeaderForScreenshot();
+    E2EEvent.hideCompareScrollbarsForScreenshot();
 
     // Hide price rows for screenshot consistency
     cy.get(".rows-to-hide-for-test").invoke("css", "display", "none");
