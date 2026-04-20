@@ -24,6 +24,7 @@ export class ScrollbarMirrorController {
   static readonly mirrorContainerHeight = 8;
   static readonly mirrorZIndex = 41;
   static readonly mirrorViewportInset = 0;
+  static readonly overflowVisibilityThreshold = 1;
 
   private isSyncing = false;
   private captureHandler: (e: Event) => void;
@@ -68,6 +69,15 @@ export class ScrollbarMirrorController {
       Math.floor(tableHolderRect.width - firstColWidth),
     );
     const innerWidth = Math.max(0, mainTable.scrollWidth - firstColWidth);
+    const hasVisibleHorizontalOverflow =
+      mirrorWidth > 0 &&
+      innerWidth - mirrorWidth >
+        ScrollbarMirrorController.overflowVisibilityThreshold;
+
+    if (!hasVisibleHorizontalOverflow) {
+      this.stateSignal.set({ ...INITIAL_SCROLLBAR_MIRROR_STATE });
+      return;
+    }
 
     let topPosition: ScrollbarMirrorPosition | null = null;
 
