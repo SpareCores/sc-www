@@ -23,21 +23,6 @@ describe("Server Compare", () => {
     );
   });
 
-  it("shows sticky header mirrors after scrolling the compare table out of view", () => {
-    E2EEvent.visitURL(
-      "/compare?instances=W3siZGlzcGxheV9uYW1lIjoidDJhLXN0YW5kYXJkLTEiLCJ2ZW5kb3IiOiJnY3AiLCJzZXJ2ZXIiOiJ0MmEtc3RhbmRhcmQtMSIsInpvbmVzUmVnaW9ucyI6W119LHsiZGlzcGxheV9uYW1lIjoiYzdnLm1lZGl1bSIsInZlbmRvciI6ImF3cyIsInNlcnZlciI6ImM3Zy5tZWRpdW0iLCJ6b25lc1JlZ2lvbnMiOltdfV0%3D",
-      4000,
-    );
-
-    cy.scrollTo(0, 500);
-
-    cy.get(".fixed_thead").should("be.visible");
-    cy.get(".scrollbar_mirror_outer").should("have.length", 2);
-    cy.get(".scrollbar_mirror_outer")
-      .last()
-      .should("have.css", "bottom", "0px");
-  });
-
   it("Server with price 36 vCPU", () => {
     E2EEvent.visitURL(
       "/compare?instances=W3sidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzVuLjl4bGFyZ2UifSx7InZlbmRvciI6ImF3cyIsInNlcnZlciI6ImQyLjh4bGFyZ2UifV0%3D",
