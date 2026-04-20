@@ -72,10 +72,13 @@ describe("Visual regression tests (medium screen - 1024px)", () => {
       cy.get("app-server-compare").then(($el) => {
         if (win.ng?.getComponent) {
           const component = win.ng.getComponent($el[0]);
-          component.isTableOutsideViewport = false;
+          const alwaysFalseSignal = Object.assign(() => false, {
+            set: () => {},
+            update: () => {},
+          });
 
           Object.defineProperty(component, "isTableOutsideViewport", {
-            get: () => false,
+            get: () => alwaysFalseSignal,
             set: () => {},
             configurable: true,
           });
