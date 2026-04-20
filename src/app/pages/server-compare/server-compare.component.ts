@@ -10,7 +10,13 @@ import {
   OnDestroy,
   DOCUMENT,
   inject,
+  signal,
 } from "@angular/core";
+import {
+  INITIAL_SCROLLBAR_MIRROR_STATE,
+  ScrollbarMirrorController,
+  ScrollbarMirrorState,
+} from "./scrollbar-mirror.controller";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { ActivatedRoute, RouterModule } from "@angular/router";
 import {
@@ -280,7 +286,21 @@ export class ServerCompareComponent
   ];
 
   @ViewChild("tableHolder") tableHolder!: ElementRef;
-  isTableOutsideViewport = false;
+  scrollbarMirrorEl = viewChild<ElementRef>("scrollbarMirrorRef");
+  scrollbarMirrorBottomEl = viewChild<ElementRef>("scrollbarMirrorBottomRef");
+  readonly scrollbarMirrorController = ScrollbarMirrorController;
+  readonly isTableOutsideViewport = signal(false);
+  readonly scrollbarMirror = signal<ScrollbarMirrorState>({
+    ...INITIAL_SCROLLBAR_MIRROR_STATE,
+  });
+  private mirrorCtrl?: ScrollbarMirrorController;
+  private readonly updateMirrorLayout = () => {
+    const isSticky =
+      (document.getElementById("main-table")?.getBoundingClientRect().top ??
+        0) < 70;
+    this.isTableOutsideViewport.set(isSticky);
+    this.mirrorCtrl?.update(isSticky);
+  };
 
   title = "Server Compare Guide";
   description =
@@ -354,6 +374,14 @@ export class ServerCompareComponent
     if (this.checkExistInterval) {
       clearInterval(this.checkExistInterval);
     }
+
+    if (isPlatformBrowser(this.platformId)) {
+      window.removeEventListener("scroll", this.updateMirrorLayout);
+      window.removeEventListener("resize", this.updateMirrorLayout);
+      window.removeEventListener("orientationchange", this.updateMirrorLayout);
+    }
+
+    this.mirrorCtrl?.destroy();
   }
 
   setup() {
@@ -691,6 +719,11 @@ export class ServerCompareComponent
         })
         .finally(() => {
           this.isLoading = false;
+          if (isPlatformBrowser(this.platformId)) {
+            setTimeout(() => {
+              this.updateMirrorLayout();
+            }, 150);
+          }
         });
     }
 
@@ -706,18 +739,17 @@ export class ServerCompareComponent
 
   ngAfterViewInit() {
     if (isPlatformBrowser(this.platformId)) {
-      window.addEventListener("scroll", () => {
-        // replace this with document getelementbyId()
-        //const rect = this.mainTable?.nativeElement.getBoundingClientRect();
-        const rect: any = document
-          .getElementById("main-table")
-          ?.getBoundingClientRect();
-        if (rect?.top < 70) {
-          this.isTableOutsideViewport = true;
-        } else {
-          this.isTableOutsideViewport = false;
-        }
-      });
+      this.mirrorCtrl = new ScrollbarMirrorController(
+        () => this.tableHolder,
+        this.scrollbarMirrorEl,
+        this.scrollbarMirrorBottomEl,
+        this.scrollbarMirror,
+      );
+
+      window.addEventListener("scroll", this.updateMirrorLayout);
+      window.addEventListener("resize", this.updateMirrorLayout);
+      window.addEventListener("orientationchange", this.updateMirrorLayout);
+      this.updateMirrorLayout();
 
       this.adjustScrollForFragment();
     }
@@ -947,6 +979,10 @@ export class ServerCompareComponent
   getFixedDivStyle() {
     const div = document?.getElementById("table_holder");
     return `width: ${div?.clientWidth}px; overflow: hidden;`;
+  }
+
+  onMirrorScroll(event: Event) {
+    this.mirrorCtrl?.syncFromMirror(event.target as HTMLElement);
   }
 
   getStickyHeaderFirstColStyle() {

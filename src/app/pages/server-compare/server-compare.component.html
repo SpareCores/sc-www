@@ -204,7 +204,7 @@
         class="overflow-x-auto overflow-y-hidden relative min-h-screen mx-2 xl:mx-0"
         style="padding-left: 1px"
       >
-        @if (isBrowser() && isTableOutsideViewport) {
+        @if (isBrowser() && isTableOutsideViewport()) {
           <div class="fixed_thead" [style]="getFixedDivStyle()">
             <table class="items_table" [style]="getMainTableWidth()">
               <thead>
@@ -247,6 +247,38 @@
           </app-server-compare-charts>
         </div>
       </div>
+      @if (isBrowser()) {
+        @if (scrollbarMirror(); as mirror) {
+          @if (mirror.topPosition) {
+            <div
+              #scrollbarMirrorRef
+              class="scrollbar_mirror_outer"
+              [ngStyle]="scrollbarMirrorController.toStyle(mirror.topPosition)"
+              (scroll)="onMirrorScroll($event)"
+            >
+              <div
+                class="scrollbar_mirror_inner"
+                [style.width.px]="mirror.innerWidth"
+              ></div>
+            </div>
+          }
+          @if (mirror.bottomPosition) {
+            <div
+              #scrollbarMirrorBottomRef
+              class="scrollbar_mirror_outer"
+              [ngStyle]="
+                scrollbarMirrorController.toStyle(mirror.bottomPosition)
+              "
+              (scroll)="onMirrorScroll($event)"
+            >
+              <div
+                class="scrollbar_mirror_inner"
+                [style.width.px]="mirror.innerWidth"
+              ></div>
+            </div>
+          }
+        }
+      }
     }
   </div>
 </div>

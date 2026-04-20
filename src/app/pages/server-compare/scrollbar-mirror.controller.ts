@@ -1,0 +1,181 @@
+import { ElementRef, Signal, WritableSignal } from "@angular/core";
+
+export interface ScrollbarMirrorPosition {
+  left: number;
+  width: number;
+  top?: number;
+  bottom?: number;
+}
+
+export interface ScrollbarMirrorState {
+  topPosition: ScrollbarMirrorPosition | null;
+  bottomPosition: ScrollbarMirrorPosition | null;
+  innerWidth: number;
+}
+
+export const INITIAL_SCROLLBAR_MIRROR_STATE: ScrollbarMirrorState = {
+  topPosition: null,
+  bottomPosition: null,
+  innerWidth: 0,
+};
+
+export class ScrollbarMirrorController {
+  static readonly scrollbarHeight = 6;
+  static readonly mirrorContainerHeight = 8;
+  static readonly mirrorZIndex = 41;
+  static readonly mirrorViewportInset = 0;
+
+  private isSyncing = false;
+  private captureHandler: (e: Event) => void;
+
+  constructor(
+    private tableHolderGetter: () => ElementRef | undefined,
+    private topMirrorSignal: Signal<ElementRef | undefined>,
+    private bottomMirrorSignal: Signal<ElementRef | undefined>,
+    private stateSignal: WritableSignal<ScrollbarMirrorState>,
+  ) {
+    this.captureHandler = (e: Event) => {
+      const el = this.tableHolderGetter()?.nativeElement;
+      if (el && e.target === el) {
+        this.syncFromTable();
+      }
+    };
+    document.addEventListener("scroll", this.captureHandler, true);
+  }
+
+  destroy(): void {
+    document.removeEventListener("scroll", this.captureHandler, true);
+  }
+
+  update(isSticky: boolean): void {
+    const tableHolder = this.tableHolderGetter()?.nativeElement as
+      | HTMLElement
+      | undefined;
+    const mainTable = document.getElementById(
+      "main-table",
+    ) as HTMLElement | null;
+    if (!tableHolder || !mainTable) {
+      this.stateSignal.set({ ...INITIAL_SCROLLBAR_MIRROR_STATE });
+      return;
+    }
+
+    const tableHolderRect = tableHolder.getBoundingClientRect();
+    const firstCol = document.getElementById("server-compare-table-first-col");
+    const firstColWidth = firstCol ? firstCol.getBoundingClientRect().width : 0;
+    const mirrorLeft = tableHolderRect.left + firstColWidth;
+    const mirrorWidth = Math.max(
+      0,
+      Math.floor(tableHolderRect.width - firstColWidth),
+    );
+    const innerWidth = Math.max(0, mainTable.scrollWidth - firstColWidth);
+
+    let topPosition: ScrollbarMirrorPosition | null = null;
+
+    if (isSticky) {
+      const fixedThead = document.querySelector(".fixed_thead") as HTMLElement;
+      const top = fixedThead ? fixedThead.getBoundingClientRect().bottom : 116;
+      topPosition = { left: mirrorLeft, width: mirrorWidth, top };
+    } else {
+      const theadEl = mainTable.querySelector("thead");
+      const theadRect = theadEl?.getBoundingClientRect();
+      if (
+        theadRect &&
+        theadRect.bottom >= 0 &&
+        theadRect.top <= window.innerHeight
+      ) {
+        topPosition = {
+          left: mirrorLeft,
+          width: mirrorWidth,
+          top: theadRect.bottom,
+        };
+      }
+    }
+
+    const bottomPosition: ScrollbarMirrorPosition | null = isSticky
+      ? {
+          left: mirrorLeft,
+          width: mirrorWidth,
+          bottom: ScrollbarMirrorController.mirrorViewportInset,
+        }
+      : null;
+
+    this.stateSignal.set({ topPosition, bottomPosition, innerWidth });
+  }
+
+  syncFromTable(): void {
+    if (this.isSyncing) return;
+    const tableHolder = this.tableHolderGetter()?.nativeElement as
+      | HTMLElement
+      | undefined;
+    if (!tableHolder) return;
+    this.isSyncing = true;
+    const tableMax = tableHolder.scrollWidth - tableHolder.clientWidth;
+    this._applyToMirror(
+      this.topMirrorSignal()?.nativeElement,
+      tableHolder.scrollLeft,
+      tableMax,
+    );
+    this._applyToMirror(
+      this.bottomMirrorSignal()?.nativeElement,
+      tableHolder.scrollLeft,
+      tableMax,
+    );
+    this.isSyncing = false;
+  }
+
+  syncFromMirror(mirrorEl: HTMLElement): void {
+    if (this.isSyncing) return;
+    const tableHolder = this.tableHolderGetter()?.nativeElement as
+      | HTMLElement
+      | undefined;
+    if (!tableHolder) return;
+    this.isSyncing = true;
+    const mirrorMax = mirrorEl.scrollWidth - mirrorEl.clientWidth;
+    const tableMax = tableHolder.scrollWidth - tableHolder.clientWidth;
+
+    if (mirrorMax > 0) {
+      tableHolder.scrollLeft = (mirrorEl.scrollLeft / mirrorMax) * tableMax;
+    }
+
+    const isTop =
+      mirrorEl === (this.topMirrorSignal()?.nativeElement as HTMLElement);
+    const otherEl = isTop
+      ? (this.bottomMirrorSignal()?.nativeElement as HTMLElement)
+      : (this.topMirrorSignal()?.nativeElement as HTMLElement);
+
+    if (otherEl) {
+      const otherMax = otherEl.scrollWidth - otherEl.clientWidth;
+      if (mirrorMax > 0) {
+        otherEl.scrollLeft = (mirrorEl.scrollLeft / mirrorMax) * otherMax;
+      }
+    }
+
+    this.isSyncing = false;
+  }
+
+  private _applyToMirror(
+    mirrorEl: HTMLElement | undefined,
+    sourceScrollLeft: number,
+    sourceMax: number,
+  ): void {
+    if (!mirrorEl) return;
+    const mirrorMax = mirrorEl.scrollWidth - mirrorEl.clientWidth;
+    if (sourceMax > 0) {
+      mirrorEl.scrollLeft = (sourceScrollLeft / sourceMax) * mirrorMax;
+    }
+  }
+
+  static toStyle(pos: ScrollbarMirrorPosition): Record<string, string> {
+    return {
+      position: "fixed",
+      left: `${pos.left}px`,
+      width: `${pos.width}px`,
+      ...(pos.top !== undefined ? { top: `${pos.top}px` } : {}),
+      ...(pos.bottom !== undefined ? { bottom: `${pos.bottom}px` } : {}),
+      "z-index": `${ScrollbarMirrorController.mirrorZIndex}`,
+      "overflow-x": "auto",
+      "overflow-y": "hidden",
+      height: `${ScrollbarMirrorController.mirrorContainerHeight}px`,
+    };
+  }
+}
