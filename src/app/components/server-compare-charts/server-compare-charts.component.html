@@ -827,35 +827,37 @@
             benchmarkCategory.benchmark_id
         ) {
           <tr>
-            <td [colSpan]="servers.length + 1">
-              <div class="pl-4 w-full flex justify-between">
-                <div class="flex gap-2 items-center">
-                  <lucide-icon
-                    [name]="benchmarkCategory.name | benchmarkIcon"
-                    class="h-6 w-6"
-                  ></lucide-icon>
-                  {{ benchmarkCategory.name }}
-                  @if (benchmarkCategory.description) {
-                    <lucide-icon
-                      name="info"
-                      class="h-4 w-4 text-gray-200"
-                      (mouseenter)="
-                        showTooltip($event, benchmarkCategory.description)
-                      "
-                      (mouseleave)="hideTooltip()"
-                    >
-                    </lucide-icon>
-                  }
-                </div>
+            <td>
+              <div class="pl-4 flex gap-2 items-center">
+                <lucide-icon
+                  [name]="benchmarkCategory.name | benchmarkIcon"
+                  class="h-6 w-6"
+                ></lucide-icon>
+                {{ benchmarkCategory.name }}
                 @if (benchmarkCategory.description) {
+                  <lucide-icon
+                    name="info"
+                    class="h-4 w-4 text-gray-200"
+                    (mouseenter)="
+                      showTooltip($event, benchmarkCategory.description)
+                    "
+                    (mouseleave)="hideTooltip()"
+                  >
+                  </lucide-icon>
+                }
+              </div>
+            </td>
+            <td [colSpan]="servers.length">
+              @if (benchmarkCategory.description) {
+                <div class="flex justify-end">
                   <lucide-icon
                     [name]="benchmarkIcon(benchmarkCategory)"
                     class="h-6 w-6 text-emerald-400 cursor-pointer"
                     (click)="toggleBenchmark(benchmarkCategory)"
                   >
                   </lucide-icon>
-                }
-              </div>
+                </div>
+              }
             </td>
           </tr>
           @if (!benchmarkCategory.collapsed) {

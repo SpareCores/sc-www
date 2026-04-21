@@ -27,4 +27,53 @@ describe("ServerCompareChartsComponent", () => {
   it("should create", () => {
     expect(component).toBeTruthy();
   });
+
+  it("renders Further Benchmarks labels in a dedicated first column cell", () => {
+    component.servers = [
+      {
+        vendor_id: "aws",
+        server_id: "server-a",
+        display_name: "Server A",
+      },
+      {
+        vendor_id: "gcp",
+        server_id: "server-b",
+        display_name: "Server B",
+      },
+    ] as unknown as typeof component.servers;
+    component.benchmarkMeta = [
+      {
+        benchmark_id: "workload:web-server",
+        benchmark_key: "workload:web-server",
+        name: "Workload profile: Web server",
+        description: "Web server workload profile",
+        collapsed: true,
+        configs: [
+          {
+            config: { profile: "web" },
+            values: [10, 20],
+          },
+        ],
+      },
+    ];
+
+    fixture.detectChanges();
+
+    const tableRows = Array.from(
+      (fixture.nativeElement as HTMLElement).querySelectorAll("tbody tr"),
+    ) as HTMLTableRowElement[];
+
+    const benchmarkRow = tableRows.find((row) =>
+      row.textContent?.includes("Workload profile: Web server"),
+    );
+
+    expect(benchmarkRow).toBeDefined();
+
+    const cells = benchmarkRow?.querySelectorAll("td");
+
+    expect(cells?.length).toBe(2);
+    expect(cells?.[0].textContent).toContain("Workload profile: Web server");
+    expect(cells?.[0].hasAttribute("colspan")).toBeFalse();
+    expect(cells?.[1].getAttribute("colspan")).toBe("2");
+  });
 });
