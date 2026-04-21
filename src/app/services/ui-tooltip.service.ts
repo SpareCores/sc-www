@@ -11,6 +11,9 @@ export type TooltipPlacement = {
 export class UiTooltipService {
   private readonly viewportPadding = 16;
   private readonly tooltipOffset = 5;
+  private readonly dismissListenerOptions: AddEventListenerOptions = {
+    capture: true,
+  };
   private readonly defaultPlacement: TooltipPlacement = {
     left: "anchor-right",
     top: "anchor-below",
@@ -18,6 +21,13 @@ export class UiTooltipService {
   private activeTooltipElement?: HTMLElement;
   private activeAnchorElement?: Element;
   private animationFrameId?: number;
+  private readonly hideActiveTooltip = () => {
+    if (!this.activeTooltipElement) {
+      return;
+    }
+
+    this.hide(this.activeTooltipElement);
+  };
 
   show(
     tooltipElement: HTMLElement,
@@ -30,14 +40,12 @@ export class UiTooltipService {
     }
 
     this.cancelPendingFrame();
+    this.unregisterDismissListeners();
     this.activeTooltipElement = tooltipElement;
     this.activeAnchorElement = anchorElement;
+    this.registerDismissListeners();
 
-    tooltipElement.style.display = "block";
-    tooltipElement.style.visibility = "hidden";
-    tooltipElement.style.opacity = "0";
-    tooltipElement.style.left = "0px";
-    tooltipElement.style.top = "0px";
+    this.prepareTooltipForPositioning(tooltipElement);
 
     this.animationFrameId = window.requestAnimationFrame(() => {
       this.animationFrameId = undefined;
@@ -80,15 +88,12 @@ export class UiTooltipService {
 
     if (this.activeTooltipElement === tooltipElement) {
       this.cancelPendingFrame();
+      this.unregisterDismissListeners();
       this.activeTooltipElement = undefined;
       this.activeAnchorElement = undefined;
     }
 
-    tooltipElement.style.display = "none";
-    tooltipElement.style.visibility = "hidden";
-    tooltipElement.style.opacity = "0";
-    tooltipElement.style.left = "0px";
-    tooltipElement.style.top = "0px";
+    this.resetTooltipStyles(tooltipElement);
   }
 
   private positionTooltip(
@@ -191,5 +196,47 @@ export class UiTooltipService {
       window.cancelAnimationFrame(this.animationFrameId);
       this.animationFrameId = undefined;
     }
+  }
+
+  private prepareTooltipForPositioning(tooltipElement: HTMLElement): void {
+    tooltipElement.style.display = "block";
+    tooltipElement.style.visibility = "hidden";
+    tooltipElement.style.opacity = "0";
+    tooltipElement.style.left = "0px";
+    tooltipElement.style.top = "0px";
+  }
+
+  private resetTooltipStyles(tooltipElement: HTMLElement): void {
+    tooltipElement.style.display = "none";
+    tooltipElement.style.visibility = "hidden";
+    tooltipElement.style.opacity = "0";
+    tooltipElement.style.left = "0px";
+    tooltipElement.style.top = "0px";
+  }
+
+  private registerDismissListeners(): void {
+    document.addEventListener(
+      "scroll",
+      this.hideActiveTooltip,
+      this.dismissListenerOptions,
+    );
+    window.addEventListener(
+      "scroll",
+      this.hideActiveTooltip,
+      this.dismissListenerOptions,
+    );
+  }
+
+  private unregisterDismissListeners(): void {
+    document.removeEventListener(
+      "scroll",
+      this.hideActiveTooltip,
+      this.dismissListenerOptions,
+    );
+    window.removeEventListener(
+      "scroll",
+      this.hideActiveTooltip,
+      this.dismissListenerOptions,
+    );
   }
 }
