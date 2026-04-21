@@ -21,7 +21,7 @@ export const INITIAL_SCROLLBAR_MIRROR_STATE: ScrollbarMirrorState = {
 
 export class ScrollbarMirrorController {
   static readonly bottomAnchorRowId = "server-compare-view-server-row";
-  static readonly mirrorContainerHeight = 8;
+  static readonly mirrorContainerHeight = 11;
   static readonly mirrorZIndex = 41;
   static readonly mirrorViewportInset = 0;
   static readonly overflowVisibilityThreshold = 1;

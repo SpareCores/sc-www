@@ -79,7 +79,7 @@
   scrollbar-color: #34d399 #374151;
 
   &::-webkit-scrollbar {
-    height: 6px;
+    height: 11px;
   }
 
   &::-webkit-scrollbar-track {
@@ -87,7 +87,7 @@
   }
 
   &::-webkit-scrollbar-thumb {
-    height: 6px;
+    height: 11px;
     background-color: #34d399;
     border-radius: 3px;
     border: 0;

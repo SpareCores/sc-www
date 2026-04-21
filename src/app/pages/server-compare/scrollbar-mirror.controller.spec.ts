@@ -201,7 +201,7 @@ describe("ScrollbarMirrorController", () => {
     expect(mirrorState().bottomPosition).toEqual({
       left: 126.4,
       width: 400,
-      bottom: 72,
+      bottom: 69,
     });
 
     controller.destroy();
