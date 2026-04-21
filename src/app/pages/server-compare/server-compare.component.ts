@@ -294,12 +294,27 @@ export class ServerCompareComponent
     ...INITIAL_SCROLLBAR_MIRROR_STATE,
   });
   private mirrorCtrl?: ScrollbarMirrorController;
-  private readonly updateMirrorLayout = () => {
+  private mirrorLayoutTimeoutId: ReturnType<typeof setTimeout> | null = null;
+  private mirrorLayoutFrameId: number | null = null;
+  private readonly flushMirrorLayout = () => {
+    this.mirrorLayoutFrameId = null;
     const isSticky =
-      (document.getElementById("main-table")?.getBoundingClientRect().top ??
-        0) < 70;
+      (this.document.getElementById("main-table")?.getBoundingClientRect()
+        .top ?? 0) < 70;
     this.isTableOutsideViewport.set(isSticky);
     this.mirrorCtrl?.update(isSticky);
+  };
+  private readonly updateMirrorLayout = () => {
+    if (
+      !isPlatformBrowser(this.platformId) ||
+      this.mirrorLayoutFrameId !== null
+    ) {
+      return;
+    }
+
+    this.mirrorLayoutFrameId = window.requestAnimationFrame(
+      this.flushMirrorLayout,
+    );
   };
 
   title = "Server Compare Guide";
@@ -332,7 +347,7 @@ export class ServerCompareComponent
   showZoneIds = false;
 
   private subscription = new Subscription();
-  private checkExistInterval: any;
+  private checkExistInterval: ReturnType<typeof setInterval> | null = null;
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get("id");
@@ -371,11 +386,22 @@ export class ServerCompareComponent
   ngOnDestroy() {
     this.subscription.unsubscribe();
 
-    if (this.checkExistInterval) {
+    if (this.checkExistInterval !== null) {
       clearInterval(this.checkExistInterval);
+      this.checkExistInterval = null;
     }
 
     if (isPlatformBrowser(this.platformId)) {
+      if (this.mirrorLayoutTimeoutId !== null) {
+        clearTimeout(this.mirrorLayoutTimeoutId);
+        this.mirrorLayoutTimeoutId = null;
+      }
+
+      if (this.mirrorLayoutFrameId !== null) {
+        cancelAnimationFrame(this.mirrorLayoutFrameId);
+        this.mirrorLayoutFrameId = null;
+      }
+
       window.removeEventListener("scroll", this.updateMirrorLayout);
       window.removeEventListener("resize", this.updateMirrorLayout);
       window.removeEventListener("orientationchange", this.updateMirrorLayout);
@@ -720,7 +746,12 @@ export class ServerCompareComponent
         .finally(() => {
           this.isLoading = false;
           if (isPlatformBrowser(this.platformId)) {
-            setTimeout(() => {
+            if (this.mirrorLayoutTimeoutId !== null) {
+              clearTimeout(this.mirrorLayoutTimeoutId);
+            }
+
+            this.mirrorLayoutTimeoutId = setTimeout(() => {
+              this.mirrorLayoutTimeoutId = null;
               this.updateMirrorLayout();
             }, 150);
           }
@@ -731,7 +762,10 @@ export class ServerCompareComponent
       this.checkExistInterval = setInterval(() => {
         if (this.comparesDiv) {
           this.prismService.highlightAll();
-          clearInterval(this.checkExistInterval);
+          if (this.checkExistInterval !== null) {
+            clearInterval(this.checkExistInterval);
+            this.checkExistInterval = null;
+          }
         }
       }, 100);
     }
@@ -759,7 +793,7 @@ export class ServerCompareComponent
     const fragment = window.location.hash;
     if (fragment) {
       const interval = setInterval(() => {
-        const element = document.querySelector(fragment);
+        const element = this.document.querySelector(fragment);
         if (element) {
           const headerOffset = 6.75 * 16;
           const elementPosition =
@@ -955,7 +989,7 @@ export class ServerCompareComponent
 
   getStyle(index: number) {
     // lookup the width of the corresponding column in the main table
-    const mainTable = document.getElementById("main-table");
+    const mainTable = this.document.getElementById("main-table");
     if (mainTable) {
       const headerCells = mainTable.querySelectorAll("thead th");
       // 1st cell (index 0) is the label column, so add 1 to get the correct col
@@ -969,15 +1003,17 @@ export class ServerCompareComponent
   }
 
   getMainTableWidth() {
-    const thead = document?.querySelector("#main-table thead");
-    const rect = document.getElementById("main-table")?.getBoundingClientRect();
+    const thead = this.document.querySelector("#main-table thead");
+    const rect = this.document
+      .getElementById("main-table")
+      ?.getBoundingClientRect();
     const rect2 = this.tableHolder?.nativeElement.getBoundingClientRect();
     const posLeft = rect && rect2 ? rect.x - rect2.x : 0;
     return `width: ${thead?.clientWidth}px; left: ${posLeft}px`;
   }
 
   getFixedDivStyle() {
-    const div = document?.getElementById("table_holder");
+    const div = this.document.getElementById("table_holder");
     return `width: ${div?.clientWidth}px; overflow: hidden;`;
   }
 

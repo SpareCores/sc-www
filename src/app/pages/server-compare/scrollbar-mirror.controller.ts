@@ -20,7 +20,6 @@ export const INITIAL_SCROLLBAR_MIRROR_STATE: ScrollbarMirrorState = {
 };
 
 export class ScrollbarMirrorController {
-  static readonly scrollbarHeight = 6;
   static readonly mirrorContainerHeight = 8;
   static readonly mirrorZIndex = 41;
   static readonly mirrorViewportInset = 0;
@@ -28,6 +27,7 @@ export class ScrollbarMirrorController {
 
   private isSyncing = false;
   private captureHandler: (e: Event) => void;
+  private syncResetFrameId: number | null = null;
 
   constructor(
     private tableHolderGetter: () => ElementRef | undefined,
@@ -46,6 +46,10 @@ export class ScrollbarMirrorController {
 
   destroy(): void {
     document.removeEventListener("scroll", this.captureHandler, true);
+    if (this.syncResetFrameId !== null) {
+      cancelAnimationFrame(this.syncResetFrameId);
+      this.syncResetFrameId = null;
+    }
   }
 
   update(isSticky: boolean): void {
@@ -82,8 +86,7 @@ export class ScrollbarMirrorController {
     let topPosition: ScrollbarMirrorPosition | null = null;
 
     if (isSticky) {
-      const fixedThead = document.querySelector(".fixed_thead") as HTMLElement;
-      const top = fixedThead ? fixedThead.getBoundingClientRect().bottom : 116;
+      const top = this.getStickyTopBoundary();
       topPosition = { left: mirrorLeft, width: mirrorWidth, top };
     } else {
       const theadEl = mainTable.querySelector("thead");
@@ -119,18 +122,21 @@ export class ScrollbarMirrorController {
       | undefined;
     if (!tableHolder) return;
     this.isSyncing = true;
-    const tableMax = tableHolder.scrollWidth - tableHolder.clientWidth;
-    this._applyToMirror(
-      this.topMirrorSignal()?.nativeElement,
-      tableHolder.scrollLeft,
-      tableMax,
-    );
-    this._applyToMirror(
-      this.bottomMirrorSignal()?.nativeElement,
-      tableHolder.scrollLeft,
-      tableMax,
-    );
-    this.isSyncing = false;
+    try {
+      const tableMax = tableHolder.scrollWidth - tableHolder.clientWidth;
+      this._applyToMirror(
+        this.topMirrorSignal()?.nativeElement,
+        tableHolder.scrollLeft,
+        tableMax,
+      );
+      this._applyToMirror(
+        this.bottomMirrorSignal()?.nativeElement,
+        tableHolder.scrollLeft,
+        tableMax,
+      );
+    } finally {
+      this.scheduleSyncReset();
+    }
   }
 
   syncFromMirror(mirrorEl: HTMLElement): void {
@@ -140,27 +146,59 @@ export class ScrollbarMirrorController {
       | undefined;
     if (!tableHolder) return;
     this.isSyncing = true;
-    const mirrorMax = mirrorEl.scrollWidth - mirrorEl.clientWidth;
-    const tableMax = tableHolder.scrollWidth - tableHolder.clientWidth;
+    try {
+      const mirrorMax = mirrorEl.scrollWidth - mirrorEl.clientWidth;
+      const tableMax = tableHolder.scrollWidth - tableHolder.clientWidth;
 
-    if (mirrorMax > 0) {
-      tableHolder.scrollLeft = (mirrorEl.scrollLeft / mirrorMax) * tableMax;
-    }
-
-    const isTop =
-      mirrorEl === (this.topMirrorSignal()?.nativeElement as HTMLElement);
-    const otherEl = isTop
-      ? (this.bottomMirrorSignal()?.nativeElement as HTMLElement)
-      : (this.topMirrorSignal()?.nativeElement as HTMLElement);
-
-    if (otherEl) {
-      const otherMax = otherEl.scrollWidth - otherEl.clientWidth;
       if (mirrorMax > 0) {
-        otherEl.scrollLeft = (mirrorEl.scrollLeft / mirrorMax) * otherMax;
+        tableHolder.scrollLeft = (mirrorEl.scrollLeft / mirrorMax) * tableMax;
       }
+
+      const isTop =
+        mirrorEl === (this.topMirrorSignal()?.nativeElement as HTMLElement);
+      const otherEl = isTop
+        ? (this.bottomMirrorSignal()?.nativeElement as HTMLElement)
+        : (this.topMirrorSignal()?.nativeElement as HTMLElement);
+
+      if (otherEl) {
+        const otherMax = otherEl.scrollWidth - otherEl.clientWidth;
+        if (mirrorMax > 0) {
+          otherEl.scrollLeft = (mirrorEl.scrollLeft / mirrorMax) * otherMax;
+        }
+      }
+    } finally {
+      this.scheduleSyncReset();
+    }
+  }
+
+  private getStickyTopBoundary(): number {
+    const fixedThead = document.querySelector<HTMLElement>(".fixed_thead");
+    if (fixedThead) {
+      return fixedThead.getBoundingClientRect().bottom;
     }
 
-    this.isSyncing = false;
+    const stickyHeader = document.querySelector<HTMLElement>("header.sticky");
+    if (stickyHeader) {
+      return stickyHeader.getBoundingClientRect().bottom;
+    }
+
+    const appHeader = document.querySelector<HTMLElement>("app-header");
+    if (appHeader) {
+      return appHeader.getBoundingClientRect().bottom;
+    }
+
+    return 0;
+  }
+
+  private scheduleSyncReset(): void {
+    if (this.syncResetFrameId !== null) {
+      return;
+    }
+
+    this.syncResetFrameId = window.requestAnimationFrame(() => {
+      this.syncResetFrameId = null;
+      this.isSyncing = false;
+    });
   }
 
   private _applyToMirror(
