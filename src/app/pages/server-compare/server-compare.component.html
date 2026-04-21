@@ -201,7 +201,7 @@
       <div
         id="table_holder"
         #tableHolder
-        class="overflow-x-auto overflow-y-hidden relative min-h-screen mx-2 xl:mx-0"
+        class="compare_table_holder overflow-x-auto overflow-y-hidden relative min-h-screen mx-2 xl:mx-0"
         style="padding-left: 1px"
       >
         @if (isBrowser() && isTableOutsideViewport()) {
@@ -243,6 +243,7 @@
             [benchmarkCategories]="benchmarkCategories"
             [instancePropertyCategories]="instancePropertyCategories"
             [showZone]="showZoneIds"
+            (layoutChanged)="onCompareTableLayoutChange()"
           >
           </app-server-compare-charts>
         </div>

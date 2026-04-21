@@ -1021,6 +1021,10 @@ export class ServerCompareComponent
     this.mirrorCtrl?.syncFromMirror(event.target as HTMLElement);
   }
 
+  onCompareTableLayoutChange(): void {
+    this.updateMirrorLayout();
+  }
+
   getStickyHeaderFirstColStyle() {
     if (this.tableFirstCol && this.tableFirstCol.nativeElement) {
       const width = this.tableFirstCol.nativeElement.offsetWidth;

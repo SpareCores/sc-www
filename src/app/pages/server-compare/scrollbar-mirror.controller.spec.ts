@@ -9,6 +9,7 @@ describe("ScrollbarMirrorController", () => {
   let tableHolder: HTMLElement;
   let mainTable: HTMLElement;
   let firstColumn: HTMLElement;
+  let viewServerRow: HTMLElement;
   let topMirror: HTMLElement;
   let bottomMirror: HTMLElement;
   let appendedElements: HTMLElement[];
@@ -18,7 +19,7 @@ describe("ScrollbarMirrorController", () => {
     element: HTMLElement,
     rect: Partial<DOMRect> & Pick<DOMRect, "width">,
   ): void {
-    spyOn(element, "getBoundingClientRect").and.returnValue({
+    const rectValue = {
       x: rect.left ?? 0,
       y: rect.top ?? 0,
       left: rect.left ?? 0,
@@ -28,7 +29,16 @@ describe("ScrollbarMirrorController", () => {
       width: rect.width,
       height: rect.height ?? 0,
       toJSON: () => ({}),
-    } as DOMRect);
+    } as DOMRect;
+
+    if (jasmine.isSpy(element.getBoundingClientRect)) {
+      (
+        element.getBoundingClientRect as jasmine.Spy<() => DOMRect>
+      ).and.returnValue(rectValue);
+      return;
+    }
+
+    spyOn(element, "getBoundingClientRect").and.returnValue(rectValue);
   }
 
   function setDimension(
@@ -60,7 +70,15 @@ describe("ScrollbarMirrorController", () => {
 
     mainTable.id = "main-table";
     firstColumn.id = "server-compare-table-first-col";
-    mainTable.innerHTML = "<thead></thead>";
+    mainTable.innerHTML = `
+      <thead></thead>
+      <tbody>
+        <tr id="${ScrollbarMirrorController.bottomAnchorRowId}"></tr>
+      </tbody>
+    `;
+    viewServerRow = mainTable.querySelector(
+      `#${ScrollbarMirrorController.bottomAnchorRowId}`,
+    ) as HTMLElement;
 
     appendedElements.push(tableHolder, mainTable, firstColumn);
     appendedElements.forEach((element) => {
@@ -74,6 +92,12 @@ describe("ScrollbarMirrorController", () => {
       top: 100,
       width: 900,
       height: 36,
+    });
+    setRect(viewServerRow, {
+      left: 25,
+      top: window.innerHeight + 24,
+      width: 900,
+      height: 40,
     });
 
     Object.defineProperty(mainTable, "scrollWidth", {
@@ -147,6 +171,72 @@ describe("ScrollbarMirrorController", () => {
       width: 400,
       bottom: 0,
     });
+
+    controller.destroy();
+  });
+
+  it("clamps the sticky bottom mirror to the row below the table once it enters view", () => {
+    const fixedThead = document.createElement("div");
+    fixedThead.className = "fixed_thead";
+    document.body.appendChild(fixedThead);
+    appendedElements.push(fixedThead);
+    setRect(fixedThead, { left: 25, top: 68, width: 900, height: 44 });
+
+    setRect(viewServerRow, {
+      left: 25,
+      top: window.innerHeight - 120,
+      width: 900,
+      height: 40,
+    });
+
+    const controller = new ScrollbarMirrorController(
+      () => new ElementRef(tableHolder),
+      signal(new ElementRef(topMirror)),
+      signal(new ElementRef(bottomMirror)),
+      mirrorState,
+    );
+
+    controller.update(true);
+
+    expect(mirrorState().bottomPosition).toEqual({
+      left: 126.4,
+      width: 400,
+      bottom: 72,
+    });
+
+    controller.destroy();
+  });
+
+  it("falls back to the last rendered row and hides the bottom mirror above the sticky header", () => {
+    const fixedThead = document.createElement("div");
+    fixedThead.className = "fixed_thead";
+    document.body.appendChild(fixedThead);
+    appendedElements.push(fixedThead);
+    setRect(fixedThead, { left: 25, top: 68, width: 900, height: 44 });
+
+    viewServerRow.removeAttribute("id");
+
+    const fallbackRow = document.createElement("tr");
+    (mainTable.querySelector("tbody") as HTMLTableSectionElement).appendChild(
+      fallbackRow,
+    );
+    setRect(fallbackRow, {
+      left: 25,
+      top: 40,
+      width: 900,
+      height: 40,
+    });
+
+    const controller = new ScrollbarMirrorController(
+      () => new ElementRef(tableHolder),
+      signal(new ElementRef(topMirror)),
+      signal(new ElementRef(bottomMirror)),
+      mirrorState,
+    );
+
+    controller.update(true);
+
+    expect(mirrorState().bottomPosition).toBeNull();
 
     controller.destroy();
   });

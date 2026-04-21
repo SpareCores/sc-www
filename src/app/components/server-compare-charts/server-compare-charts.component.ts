@@ -4,6 +4,7 @@ import {
   Component,
   ElementRef,
   Input,
+  output,
   PLATFORM_ID,
   ViewChild,
   OnChanges,
@@ -92,6 +93,8 @@ export class ServerCompareChartsComponent implements OnChanges {
   @Input() isEmbedded = false;
   @Input() showChart = "all";
   @Input() showZone = false;
+
+  readonly layoutChanged = output<void>();
 
   @ViewChild("tooltipcompareDefault") tooltip!: ElementRef<HTMLElement>;
 
@@ -357,6 +360,7 @@ export class ServerCompareChartsComponent implements OnChanges {
 
   toggleBenchmark(benchmark: any) {
     benchmark.collapsed = !benchmark.collapsed;
+    this.layoutChanged.emit();
   }
 
   benchmarkIcon(benchmark: any) {
@@ -435,6 +439,7 @@ export class ServerCompareChartsComponent implements OnChanges {
 
   setBenchmarkCategoryHidden(category: { hidden?: boolean }, hidden: boolean) {
     category.hidden = hidden;
+    this.layoutChanged.emit();
   }
 
   syncMultiBarHeaderOption(
@@ -532,6 +537,8 @@ export class ServerCompareChartsComponent implements OnChanges {
     if (category.data?.length === 1) {
       category.data[0].collapsed = !category.show_more;
     }
+
+    this.layoutChanged.emit();
   }
 
   getSectionColSpan() {

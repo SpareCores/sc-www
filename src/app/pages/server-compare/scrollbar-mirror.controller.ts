@@ -20,6 +20,7 @@ export const INITIAL_SCROLLBAR_MIRROR_STATE: ScrollbarMirrorState = {
 };
 
 export class ScrollbarMirrorController {
+  static readonly bottomAnchorRowId = "server-compare-view-server-row";
   static readonly mirrorContainerHeight = 8;
   static readonly mirrorZIndex = 41;
   static readonly mirrorViewportInset = 0;
@@ -104,12 +105,8 @@ export class ScrollbarMirrorController {
       }
     }
 
-    const bottomPosition: ScrollbarMirrorPosition | null = isSticky
-      ? {
-          left: mirrorLeft,
-          width: mirrorWidth,
-          bottom: ScrollbarMirrorController.mirrorViewportInset,
-        }
+    const bottomPosition = isSticky
+      ? this.getBottomMirrorPosition(mainTable, mirrorLeft, mirrorWidth)
       : null;
 
     this.stateSignal.set({ topPosition, bottomPosition, innerWidth });
@@ -188,6 +185,41 @@ export class ScrollbarMirrorController {
     }
 
     return 0;
+  }
+
+  private getBottomMirrorPosition(
+    mainTable: HTMLElement,
+    left: number,
+    width: number,
+  ): ScrollbarMirrorPosition | null {
+    const bottomAnchor = this.getBottomAnchorRow(mainTable);
+    const bottomAnchorRect = bottomAnchor?.getBoundingClientRect();
+    if (!bottomAnchorRect) {
+      return null;
+    }
+
+    if (bottomAnchorRect.bottom <= this.getStickyTopBoundary()) {
+      return null;
+    }
+
+    return {
+      left,
+      width,
+      bottom: Math.max(
+        ScrollbarMirrorController.mirrorViewportInset,
+        window.innerHeight -
+          bottomAnchorRect.bottom -
+          ScrollbarMirrorController.mirrorContainerHeight,
+      ),
+    };
+  }
+
+  private getBottomAnchorRow(mainTable: HTMLElement): HTMLElement | null {
+    return (
+      mainTable.querySelector<HTMLElement>(
+        `#${ScrollbarMirrorController.bottomAnchorRowId}`,
+      ) ?? mainTable.querySelector<HTMLElement>("tbody tr:last-of-type")
+    );
   }
 
   private scheduleSyncReset(): void {
