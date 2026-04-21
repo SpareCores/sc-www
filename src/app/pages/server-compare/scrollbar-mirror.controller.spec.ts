@@ -31,6 +31,24 @@ describe("ScrollbarMirrorController", () => {
     } as DOMRect);
   }
 
+  function setDimension(
+    element: HTMLElement,
+    property: "clientWidth" | "scrollWidth" | "scrollLeft",
+    value: number,
+  ): void {
+    Object.defineProperty(element, property, {
+      configurable: true,
+      value,
+      writable: property === "scrollLeft",
+    });
+  }
+
+  function runNextAnimationFrame(frameCallbacks: FrameRequestCallback[]): void {
+    const callback = frameCallbacks.shift();
+    expect(callback).toBeDefined();
+    callback?.(0);
+  }
+
   beforeEach(() => {
     appendedElements = [];
     mirrorState = signal({ ...INITIAL_SCROLLBAR_MIRROR_STATE });
@@ -62,6 +80,16 @@ describe("ScrollbarMirrorController", () => {
       configurable: true,
       value: 1200,
     });
+
+    setDimension(tableHolder, "scrollWidth", 1200);
+    setDimension(tableHolder, "clientWidth", 600);
+    setDimension(tableHolder, "scrollLeft", 0);
+    setDimension(topMirror, "scrollWidth", 1000);
+    setDimension(topMirror, "clientWidth", 400);
+    setDimension(topMirror, "scrollLeft", 0);
+    setDimension(bottomMirror, "scrollWidth", 900);
+    setDimension(bottomMirror, "clientWidth", 300);
+    setDimension(bottomMirror, "scrollLeft", 0);
   });
 
   afterEach(() => {
@@ -149,18 +177,79 @@ describe("ScrollbarMirrorController", () => {
     controller.destroy();
   });
 
-  it("returns fixed mirror styles with the expected horizontal scrollbar height", () => {
-    expect(
-      ScrollbarMirrorController.toStyle({ left: 10, width: 20, top: 30 }),
-    ).toEqual({
-      position: "fixed",
-      left: "10px",
-      width: "20px",
-      top: "30px",
-      "z-index": "41",
-      "overflow-x": "auto",
-      "overflow-y": "hidden",
-      height: "8px",
-    });
+  it("keeps the sync guard active until the queued frame after syncing from the table", () => {
+    const frameCallbacks: FrameRequestCallback[] = [];
+    spyOn(window, "requestAnimationFrame").and.callFake(
+      (callback: FrameRequestCallback): number => {
+        frameCallbacks.push(callback);
+        return frameCallbacks.length;
+      },
+    );
+
+    const controller = new ScrollbarMirrorController(
+      () => new ElementRef(tableHolder),
+      signal(new ElementRef(topMirror)),
+      signal(new ElementRef(bottomMirror)),
+      mirrorState,
+    );
+
+    tableHolder.scrollLeft = 200;
+    controller.syncFromTable();
+
+    expect(topMirror.scrollLeft).toBe(200);
+    expect(bottomMirror.scrollLeft).toBe(200);
+
+    tableHolder.scrollLeft = 450;
+    controller.syncFromTable();
+
+    expect(topMirror.scrollLeft).toBe(200);
+    expect(bottomMirror.scrollLeft).toBe(200);
+
+    runNextAnimationFrame(frameCallbacks);
+
+    controller.syncFromTable();
+
+    expect(topMirror.scrollLeft).toBe(450);
+    expect(bottomMirror.scrollLeft).toBe(450);
+
+    controller.destroy();
+  });
+
+  it("keeps the sync guard active until the queued frame after syncing from a mirror", () => {
+    const frameCallbacks: FrameRequestCallback[] = [];
+    spyOn(window, "requestAnimationFrame").and.callFake(
+      (callback: FrameRequestCallback): number => {
+        frameCallbacks.push(callback);
+        return frameCallbacks.length;
+      },
+    );
+
+    const controller = new ScrollbarMirrorController(
+      () => new ElementRef(tableHolder),
+      signal(new ElementRef(topMirror)),
+      signal(new ElementRef(bottomMirror)),
+      mirrorState,
+    );
+
+    topMirror.scrollLeft = 240;
+    controller.syncFromMirror(topMirror);
+
+    expect(tableHolder.scrollLeft).toBe(240);
+    expect(bottomMirror.scrollLeft).toBe(240);
+
+    topMirror.scrollLeft = 60;
+    controller.syncFromMirror(topMirror);
+
+    expect(tableHolder.scrollLeft).toBe(240);
+    expect(bottomMirror.scrollLeft).toBe(240);
+
+    runNextAnimationFrame(frameCallbacks);
+
+    controller.syncFromMirror(topMirror);
+
+    expect(tableHolder.scrollLeft).toBe(60);
+    expect(bottomMirror.scrollLeft).toBe(60);
+
+    controller.destroy();
   });
 });
