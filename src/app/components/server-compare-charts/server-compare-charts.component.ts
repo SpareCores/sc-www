@@ -178,6 +178,25 @@ export class ServerCompareChartsComponent implements OnChanges {
     return `width: ${100 / (this.servers.length + 1)}%; max-width: ${100 / (this.servers.length + 1)}%;`;
   }
 
+  getCompareChartContentStyle() {
+    if (!this.isBrowser()) {
+      return "width: 100%; max-width: 100%;";
+    }
+
+    const tableHolder = document.getElementById("table_holder");
+    const trailingGutterPx = 96;
+    const chartWidthPx = Math.max(
+      0,
+      (tableHolder?.clientWidth ?? 0) - trailingGutterPx,
+    );
+
+    if (!chartWidthPx) {
+      return "width: 100%; max-width: 100%;";
+    }
+
+    return `width: ${chartWidthPx}px; max-width: ${chartWidthPx}px;`;
+  }
+
   getBenchmark(server: ExtendedServerDetails, isMulti: boolean) {
     return (
       server.benchmark_scores
