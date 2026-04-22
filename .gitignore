@@ -84,3 +84,6 @@ cypress/screenshots
 
 # Unit test coverage output
 coverage/
+
+# Custom copilot instructions
+.github/copilot-instructions.md
