@@ -5,7 +5,7 @@ jobs:
   eslint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6.0.2
       - name: Install modules
         run: npm install --include=dev
       - name: Run ESLint
@@ -17,12 +17,12 @@ jobs:
     needs: eslint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6.0.2
       - name: Install modules
         run: npm install --include=dev
       - name: Set up Chrome
         id: setup-chrome
-        uses: browser-actions/setup-chrome@v2
+        uses: browser-actions/setup-chrome@v2.1.1
       - name: Run Jasmine Karma tests
         run: npm run test:ci
         env:
@@ -30,7 +30,7 @@ jobs:
           NG_APP_BACKEND_BASE_URI: https://keeper.sparecores.net
           NG_APP_BACKEND_BASE_URI_SSR: https://keeper.sparecores.net
           NG_APP_SENTRY_DSN: ""
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@v7.0.1
         if: failure()
         with:
           name: unit-test-coverage
@@ -42,14 +42,14 @@ jobs:
     needs: unit-tests
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6.0.2
       - name: Inject legal docs
         env:
           LEGAL_TOKEN: ${{ secrets.LEGAL_TOKEN }}
           LEGAL_URL: ${{ secrets.LEGAL_URL }}
         run: 'curl -s -L -H "Authorization: token ${LEGAL_TOKEN}" ${LEGAL_URL} | tar xz --strip-components=1'
       - name: Cypress run
-        uses: cypress-io/github-action@v7
+        uses: cypress-io/github-action@v7.1.9
         with:
           build: npm run prebuild
           start: npm start
@@ -59,7 +59,7 @@ jobs:
           CYPRESS_BASE_URL: http://localhost:4200
           NG_APP_BACKEND_BASE_URI: https://keeper.sparecores.net
           NG_APP_BACKEND_BASE_URI_SSR: https://keeper.sparecores.net
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@v7.0.1
         if: always()
         with:
           name: cypress-screenshots
