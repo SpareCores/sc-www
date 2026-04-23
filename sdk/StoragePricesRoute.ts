@@ -45,12 +45,12 @@ export namespace StoragePrices {
       green_energy?: boolean | null;
       /**
        * Storage Size
-       * Minimum amount of storage (GBs).
+       * Minimum amount of built-in local instance storage in GBs.
        */
       storage_min?: number | null;
       /**
        * Storage Type
-       * Type of the storage attached to the server.
+       * Storage type of the server's built-in local storage (e.g. hdd, ssd).
        */
       storage_type?: "hdd" | "ssd" | "nvme ssd" | "network";
       /**

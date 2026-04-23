@@ -571,12 +571,12 @@ export namespace ServerPrices {
       compliance_framework?: "hipaa" | "iso27001" | "soc2t2";
       /**
        * Storage Size
-       * Minimum amount of storage (GBs).
+       * Minimum amount of built-in local instance storage in GBs.
        */
       storage_size?: number | null;
       /**
        * Storage Type
-       * Type of the storage attached to the server.
+       * Storage type of the server's built-in local storage (e.g. hdd, ssd).
        */
       storage_type?: "hdd" | "ssd" | "nvme ssd" | "network";
       /**

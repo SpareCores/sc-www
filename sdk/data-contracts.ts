@@ -1231,6 +1231,34 @@ export interface NameAndDescription {
   description: string;
 }
 
+/** PriceBreakdown */
+export interface PriceBreakdown {
+  /** Compute Min Price */
+  compute_min_price?: number | null;
+  /** Compute Min Price Spot */
+  compute_min_price_spot?: number | null;
+  /** Compute Min Price Ondemand */
+  compute_min_price_ondemand?: number | null;
+  /** Compute Min Price Ondemand Monthly */
+  compute_min_price_ondemand_monthly?: number | null;
+  /** Traffic Inbound Hourly */
+  traffic_inbound_hourly?: number | null;
+  /** Traffic Inbound Monthly */
+  traffic_inbound_monthly?: number | null;
+  /** Traffic Outbound Hourly */
+  traffic_outbound_hourly?: number | null;
+  /** Traffic Outbound Monthly */
+  traffic_outbound_monthly?: number | null;
+  /** Traffic Hourly */
+  traffic_hourly?: number | null;
+  /** Traffic Monthly */
+  traffic_monthly?: number | null;
+  /** Extra Storage Hourly */
+  extra_storage_hourly?: number | null;
+  /** Extra Storage Monthly */
+  extra_storage_monthly?: number | null;
+}
+
 /**
  * PriceTier
  * Price tier definition.
@@ -2358,6 +2386,8 @@ export interface ServerPKs {
   /** Selected Benchmark Score Per Price */
   selected_benchmark_score_per_price?: number | null;
   vendor: VendorBase;
+  /** @default {} */
+  price_breakdown?: PriceBreakdown;
 }
 
 /**
@@ -5567,14 +5597,37 @@ export interface SearchServersServersGetParams {
     | "ZA";
   /**
    * Storage Size
-   * Minimum amount of storage (GBs).
+   * Minimum amount of built-in local instance storage in GBs.
    */
   storage_size?: number | null;
   /**
    * Storage Type
-   * Type of the storage attached to the server.
+   * Storage type of the server's built-in local storage (e.g. hdd, ssd).
    */
   storage_type?: "hdd" | "ssd" | "nvme ssd" | "network";
+  /**
+   * Monthly Inbound Traffic
+   * Monthly inbound traffic in GBs to add to the total price. The cheapest available inbound traffic price for the vendor is used.
+   * @default 0
+   */
+  monthly_inbound_traffic?: number | null;
+  /**
+   * Monthly Outbound Traffic
+   * Monthly outbound traffic in GBs to add to the total price. The cheapest available outbound traffic price for the vendor is used.
+   * @default 0
+   */
+  monthly_outbound_traffic?: number | null;
+  /**
+   * Extra Storage Size
+   * Total storage needed in GBs. The server's built-in storage is subtracted, and only the difference is priced as additional external storage. Servers whose built-in storage already meets or exceeds this value incur no extra storage cost.
+   * @default 0
+   */
+  extra_storage_size?: number | null;
+  /**
+   * Extra Storage Type
+   * Storage product type (e.g. hdd, ssd, network) for the extra storage price lookup. When omitted, the cheapest available type is used.
+   */
+  extra_storage_type?: "hdd" | "ssd" | "nvme ssd" | "network";
   /**
    * GPU count
    * Minimum number of GPUs.
@@ -6217,12 +6270,12 @@ export interface SearchServerPricesServerPricesGetParams {
   compliance_framework?: "hipaa" | "iso27001" | "soc2t2";
   /**
    * Storage Size
-   * Minimum amount of storage (GBs).
+   * Minimum amount of built-in local instance storage in GBs.
    */
   storage_size?: number | null;
   /**
    * Storage Type
-   * Type of the storage attached to the server.
+   * Storage type of the server's built-in local storage (e.g. hdd, ssd).
    */
   storage_type?: "hdd" | "ssd" | "nvme ssd" | "network";
   /**
@@ -6380,12 +6433,12 @@ export interface SearchStoragePricesStoragePricesGetParams {
   green_energy?: boolean | null;
   /**
    * Storage Size
-   * Minimum amount of storage (GBs).
+   * Minimum amount of built-in local instance storage in GBs.
    */
   storage_min?: number | null;
   /**
    * Storage Type
-   * Type of the storage attached to the server.
+   * Storage type of the server's built-in local storage (e.g. hdd, ssd).
    */
   storage_type?: "hdd" | "ssd" | "nvme ssd" | "network";
   /**

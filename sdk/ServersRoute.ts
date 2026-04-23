@@ -739,14 +739,37 @@ export namespace Servers {
         | "ZA";
       /**
        * Storage Size
-       * Minimum amount of storage (GBs).
+       * Minimum amount of built-in local instance storage in GBs.
        */
       storage_size?: number | null;
       /**
        * Storage Type
-       * Type of the storage attached to the server.
+       * Storage type of the server's built-in local storage (e.g. hdd, ssd).
        */
       storage_type?: "hdd" | "ssd" | "nvme ssd" | "network";
+      /**
+       * Monthly Inbound Traffic
+       * Monthly inbound traffic in GBs to add to the total price. The cheapest available inbound traffic price for the vendor is used.
+       * @default 0
+       */
+      monthly_inbound_traffic?: number | null;
+      /**
+       * Monthly Outbound Traffic
+       * Monthly outbound traffic in GBs to add to the total price. The cheapest available outbound traffic price for the vendor is used.
+       * @default 0
+       */
+      monthly_outbound_traffic?: number | null;
+      /**
+       * Extra Storage Size
+       * Total storage needed in GBs. The server's built-in storage is subtracted, and only the difference is priced as additional external storage. Servers whose built-in storage already meets or exceeds this value incur no extra storage cost.
+       * @default 0
+       */
+      extra_storage_size?: number | null;
+      /**
+       * Extra Storage Type
+       * Storage product type (e.g. hdd, ssd, network) for the extra storage price lookup. When omitted, the cheapest available type is used.
+       */
+      extra_storage_type?: "hdd" | "ssd" | "nvme ssd" | "network";
       /**
        * GPU count
        * Minimum number of GPUs.
