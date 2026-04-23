@@ -125,6 +125,12 @@ export type SearchBarCustomSelectOption = {
   label: string;
 };
 
+export type SearchBarParameterPlacement = {
+  parameterName: string;
+  categoryId?: string;
+  afterControlName?: string;
+};
+
 export type SearchBarBenchmarkConfigOption = BenchmarkConfig & {
   benchmarkTemplate?: Benchmark | null;
   configTitle: string;
@@ -210,6 +216,7 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   @Input() showParameterTitles = true;
   @Input() noTopPaddingCategoryIds: string[] = [];
   @Input() customControls: SearchBarCustomControl[] = [];
+  @Input() parameterPlacements: SearchBarParameterPlacement[] = [];
 
   @Output() searchChanged = new EventEmitter<any>();
   @Output() customControlChanged = new EventEmitter<{
@@ -590,11 +597,15 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
     category.collapsed = !category.collapsed;
   }
 
+  getParameterTrackId(parameter: SearchBarParameter): string {
+    return `${parameter.name}_${String(parameter.schema.title || "")}`;
+  }
+
   getParametersByCategory(category: string) {
     if (!this.searchParameters) return [];
 
     return (this.searchParameters as SearchBarParameter[])?.filter((param) => {
-      if (param.schema?.category_id !== category) {
+      if (this.getResolvedParameterCategory(param) !== category) {
         return false;
       }
 
@@ -607,6 +618,32 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
 
       return true;
     });
+  }
+
+  getParametersAfterControl(category: string, controlName: string) {
+    return this.sortParametersByPlacement(
+      this.getParametersByCategory(category).filter((parameter) => {
+        return (
+          this.getParameterPlacement(parameter.name)?.afterControlName ===
+          controlName
+        );
+      }),
+    );
+  }
+
+  getTrailingParametersByCategory(category: string) {
+    return this.sortParametersByPlacement(
+      this.getParametersByCategory(category).filter((parameter) => {
+        const afterControlName = this.getParameterPlacement(
+          parameter.name,
+        )?.afterControlName;
+
+        return (
+          !afterControlName ||
+          !this.hasCustomControlInCategory(category, afterControlName)
+        );
+      }),
+    );
   }
 
   getCustomControlsByCategory(category: string) {
@@ -627,6 +664,62 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
 
   getCustomControlMinCharacters(control: SearchBarCustomControl): number {
     return control.minCharacters || 3;
+  }
+
+  private getParameterPlacement(
+    parameterName: string,
+  ): SearchBarParameterPlacement | undefined {
+    return this.parameterPlacements.find((placement) => {
+      return placement.parameterName === parameterName;
+    });
+  }
+
+  private getResolvedParameterCategory(
+    parameter: SearchBarParameter,
+  ): string | undefined {
+    return (
+      this.getParameterPlacement(parameter.name)?.categoryId ||
+      parameter.schema?.category_id
+    );
+  }
+
+  private hasCustomControlInCategory(
+    category: string,
+    controlName: string,
+  ): boolean {
+    return this.getCustomControlsByCategory(category).some((control) => {
+      return control.name === controlName;
+    });
+  }
+
+  private sortParametersByPlacement(
+    parameters: SearchBarParameter[],
+  ): SearchBarParameter[] {
+    const placementOrder = new Map(
+      this.parameterPlacements.map((placement, index) => [
+        placement.parameterName,
+        index,
+      ]),
+    );
+
+    return [...parameters].sort((left, right) => {
+      const leftIndex = placementOrder.get(left.name);
+      const rightIndex = placementOrder.get(right.name);
+
+      if (leftIndex === undefined && rightIndex === undefined) {
+        return 0;
+      }
+
+      if (leftIndex === undefined) {
+        return 1;
+      }
+
+      if (rightIndex === undefined) {
+        return -1;
+      }
+
+      return leftIndex - rightIndex;
+    });
   }
 
   customControlHasEnoughInput(control: SearchBarCustomControl): boolean {
