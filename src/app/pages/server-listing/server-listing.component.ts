@@ -167,6 +167,12 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       icon: "database",
       collapsed: true,
     },
+    {
+      category_id: "traffic",
+      name: "Network",
+      icon: "arrow-up-down",
+      collapsed: false,
+    },
     { category_id: "vendor", name: "Vendor", icon: "home", collapsed: true },
     { category_id: "region", name: "Region", icon: "hotel", collapsed: true },
   ];
