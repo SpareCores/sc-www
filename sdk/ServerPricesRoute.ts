@@ -109,7 +109,7 @@ export namespace ServerPrices {
        */
       allocation?: "ondemand" | "reserved" | "spot";
       /**
-       * Vendor id
+       * Vendor
        * Identifier of the cloud provider vendor.
        */
       vendor?:
@@ -121,7 +121,7 @@ export namespace ServerPrices {
         | "ovh"
         | "upcloud";
       /**
-       * Region id
+       * Region
        * Identifier of the region. Note that region ids are not vendor-specific, so when you select a region, you might get results from multiple vendors. For more precise filtering, use vendor_regions instead.
        */
       regions?:
@@ -337,7 +337,7 @@ export namespace ServerPrices {
         | "westus2"
         | "westus3";
       /**
-       * Vendor and region id
+       * Vendor and region
        * Identifier of the vendor and region, separated by a tilde.
        */
       vendor_regions?:
@@ -565,18 +565,18 @@ export namespace ServerPrices {
         | "upcloud~us-nyc1"
         | "upcloud~us-sjo1";
       /**
-       * Compliance Framework id
+       * Compliance framework
        * Compliance framework implemented at the vendor.
        */
       compliance_framework?: "hipaa" | "iso27001" | "soc2t2";
       /**
-       * Storage Size
-       * Minimum amount of built-in local instance storage in GBs.
+       * Minimum local storage size
+       * Minimum amount of built-in local (SSD, HDD, NVMe) server storage in GBs.
        */
       storage_size?: number | null;
       /**
-       * Storage Type
-       * Storage type of the server's built-in local storage (e.g. hdd, ssd).
+       * Local storage type
+       * Storage type of the server's built-in local storage (e.g. HDD, SSD, NVMe).
        */
       storage_type?: "hdd" | "ssd" | "nvme ssd" | "network";
       /**

@@ -316,7 +316,7 @@ export namespace Server {
         | "US"
         | "ZA";
       /**
-       * Vendor and region id
+       * Vendor and region
        * Identifier of the vendor and region, separated by a tilde.
        */
       vendor_regions?:
@@ -638,7 +638,7 @@ export namespace Server {
         | "US"
         | "ZA";
       /**
-       * Vendor and region id
+       * Vendor and region
        * Identifier of the vendor and region, separated by a tilde.
        */
       vendor_regions?:
