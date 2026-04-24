@@ -188,6 +188,38 @@ export abstract class E2EEvent {
     cy.get("header").invoke("css", "position", "static");
   }
 
+  // Hide compare-page scrollbars and mirror bars for screenshot consistency
+  public static hideCompareScrollbarsForScreenshot() {
+    cy.document().then((doc) => {
+      doc.getElementById("e2e-hide-compare-scrollbars")?.remove();
+
+      const style = doc.createElement("style");
+      style.id = "e2e-hide-compare-scrollbars";
+      style.textContent = `
+        #table_holder,
+        #table_holder *,
+        .scrollbar_mirror_outer {
+          scrollbar-width: none !important;
+          -ms-overflow-style: none !important;
+        }
+
+        #table_holder::-webkit-scrollbar,
+        #table_holder *::-webkit-scrollbar,
+        .scrollbar_mirror_outer::-webkit-scrollbar {
+          display: none !important;
+          width: 0 !important;
+          height: 0 !important;
+        }
+
+        .scrollbar_mirror_outer {
+          display: none !important;
+        }
+      `;
+
+      doc.head.appendChild(style);
+    });
+  }
+
   // Hide comments section for screenshot consistency
   public static hideCommentsForScreenshot() {
     cy.get(".giscus").invoke("css", "display", "none");

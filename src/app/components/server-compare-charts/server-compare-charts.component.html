@@ -319,14 +319,16 @@
             id="benchmark_line_{{ benchmarkCategory.id }}"
             [class.compare-section-header]="benchmarkCategory.id === 'openssl'"
           >
-            <td [colSpan]="getSectionColSpan()">
-              <div class="flex justify-between">
-                <h3 class="text-xl font-semibold flex gap-2 items-center">
+            <td [colSpan]="getSectionColSpan() - 1">
+              <div>
+                <h3
+                  class="text-xl font-semibold flex flex-nowrap gap-2 items-center min-w-0"
+                >
                   <lucide-icon
                     [name]="benchmarkCategory.name | benchmarkIcon"
                     class="h-6 w-6"
                   ></lucide-icon>
-                  {{ benchmarkCategory.name }}
+                  <span class="truncate">{{ benchmarkCategory.name }}</span>
                   <lucide-icon
                     name="circle-arrow-up"
                     class="h-4 w-4 text-gray-200"
@@ -413,9 +415,13 @@
                     </lucide-icon>
                   }
                 </h3>
-                @if (!isEmbedded) {
+              </div>
+            </td>
+            <td [colSpan]="1" class="compare-section-header-action-cell">
+              @if (!isEmbedded) {
+                <div class="flex justify-end">
                   <button
-                    class="btn-primary py-2 px-3 flex gap-1 items-center sticky right-2"
+                    class="btn-primary py-2 px-3 flex gap-1 items-center shrink-0"
                     (click)="
                       clipboardURL(
                         $event,
@@ -428,119 +434,127 @@
                       size="16"
                     ></lucide-icon>
                   </button>
-                }
-              </div>
+                </div>
+              }
             </td>
           </tr>
           <tr
+            class="compare-fixed-chart-row"
             [class.compare-compression-row]="
               benchmarkCategory.id === 'compress'
             "
           >
-            <td [colSpan]="servers.length + 1">
-              @if (benchmarkCategory.id === "bw_mem") {
-                <div>
-                  <app-server-compare-memory-chart
-                    [servers]="memoryCompareServers"
-                    [benchmarkMeta]="memoryBenchmarkMeta"
-                  ></app-server-compare-memory-chart>
-                </div>
-              }
-              @if (benchmarkCategory.id === "openssl") {
-                <div>
-                  <app-benchmark-line-chart
-                    layout="compare"
-                    blockClass="block_full_inline"
-                    chartSource="compare-ssl"
-                    chartType="bar"
-                    [servers]="lineCompareServers"
-                    [benchmarkMeta]="lineBenchmarkMeta"
-                  ></app-benchmark-line-chart>
-                </div>
-              }
-              @if (benchmarkCategory.id === "stress_ng") {
-                <div>
-                  <app-benchmark-line-chart
-                    layout="compare"
-                    blockClass="block_full_inline"
-                    chartSource="compare-stress-raw"
-                    chartType="line"
-                    [servers]="lineCompareServers"
-                    [benchmarkMeta]="lineBenchmarkMeta"
-                    (chartAvailabilityChange)="
-                      setBenchmarkCategoryHidden(benchmarkCategory, !$event)
-                    "
-                  ></app-benchmark-line-chart>
-                </div>
-              }
-              @if (benchmarkCategory.id === "stress_ng_pct") {
-                <div>
-                  <app-benchmark-line-chart
-                    layout="compare"
-                    blockClass="block_full_inline"
-                    chartSource="compare-stress-percent"
-                    chartType="line"
-                    [servers]="lineCompareServers"
-                    [benchmarkMeta]="lineBenchmarkMeta"
-                    (chartAvailabilityChange)="
-                      setBenchmarkCategoryHidden(benchmarkCategory, !$event)
-                    "
-                  ></app-benchmark-line-chart>
-                </div>
-              }
-              @if (benchmarkCategory.id === "compress") {
-                <div>
-                  <app-compression-chart
-                    layout="compare"
-                    [servers]="compressionServers"
-                    [benchmarkMeta]="compressionBenchmarkMeta"
-                  ></app-compression-chart>
-                </div>
-              }
-              @if (
-                benchmarkCategory.id === "geekbench" ||
-                benchmarkCategory.id === "geekbench_single" ||
-                benchmarkCategory.id === "geekbench_multi"
-              ) {
-                <div>
-                  <app-geekbench-radar-chart
-                    layout="compare"
-                    [servers]="geekbenchCompareServers"
-                    [showSingle]="benchmarkCategory.id !== 'geekbench_multi'"
-                    [benchmarkMeta]="geekbenchBenchmarkMeta"
-                    [showMulti]="benchmarkCategory.id !== 'geekbench_single'"
-                  ></app-geekbench-radar-chart>
-                </div>
-              }
-              @if (benchmarkCategory.id === "llm_inference") {
-                <div>
-                  <app-llm-inference-chart
-                    layout="compare"
-                    [benchmarkMeta]="benchmarkMeta"
-                    [servers]="llmCompareServers"
-                  ></app-llm-inference-chart>
-                </div>
-              }
-              @if (
-                !isEmbedded &&
-                benchmarkCategory.id !== "passmark_cpu" &&
-                benchmarkCategory.id !== "passmark_other"
-              ) {
-                <div
-                  class="mt-4 mb-8 flex justify-center"
-                  [ngClass]="{
-                    'mb-8': !benchmarkCategory.show_more,
-                  }"
-                >
-                  <button
-                    class="btn-primary py-2 px-3"
-                    (click)="toggleBenchmarkCategory(benchmarkCategory)"
+            <td [colSpan]="getSectionColSpan() - 1">
+              <div
+                class="compare-chart-content"
+                [style]="getCompareChartContentStyle()"
+              >
+                @if (benchmarkCategory.id === "bw_mem") {
+                  <div>
+                    <app-server-compare-memory-chart
+                      [servers]="memoryCompareServers"
+                      [benchmarkMeta]="memoryBenchmarkMeta"
+                    ></app-server-compare-memory-chart>
+                  </div>
+                }
+                @if (benchmarkCategory.id === "openssl") {
+                  <div>
+                    <app-benchmark-line-chart
+                      layout="compare"
+                      blockClass="block_full_inline"
+                      chartSource="compare-ssl"
+                      chartType="bar"
+                      [servers]="lineCompareServers"
+                      [benchmarkMeta]="lineBenchmarkMeta"
+                    ></app-benchmark-line-chart>
+                  </div>
+                }
+                @if (benchmarkCategory.id === "stress_ng") {
+                  <div>
+                    <app-benchmark-line-chart
+                      layout="compare"
+                      blockClass="block_full_inline"
+                      chartSource="compare-stress-raw"
+                      chartType="line"
+                      [servers]="lineCompareServers"
+                      [benchmarkMeta]="lineBenchmarkMeta"
+                      (chartAvailabilityChange)="
+                        setBenchmarkCategoryHidden(benchmarkCategory, !$event)
+                      "
+                    ></app-benchmark-line-chart>
+                  </div>
+                }
+                @if (benchmarkCategory.id === "stress_ng_pct") {
+                  <div>
+                    <app-benchmark-line-chart
+                      layout="compare"
+                      blockClass="block_full_inline"
+                      chartSource="compare-stress-percent"
+                      chartType="line"
+                      [servers]="lineCompareServers"
+                      [benchmarkMeta]="lineBenchmarkMeta"
+                      (chartAvailabilityChange)="
+                        setBenchmarkCategoryHidden(benchmarkCategory, !$event)
+                      "
+                    ></app-benchmark-line-chart>
+                  </div>
+                }
+                @if (benchmarkCategory.id === "compress") {
+                  <div>
+                    <app-compression-chart
+                      layout="compare"
+                      [servers]="compressionServers"
+                      [benchmarkMeta]="compressionBenchmarkMeta"
+                    ></app-compression-chart>
+                  </div>
+                }
+                @if (
+                  benchmarkCategory.id === "geekbench" ||
+                  benchmarkCategory.id === "geekbench_single" ||
+                  benchmarkCategory.id === "geekbench_multi"
+                ) {
+                  <div>
+                    <app-geekbench-radar-chart
+                      layout="compare"
+                      [servers]="geekbenchCompareServers"
+                      [showSingle]="benchmarkCategory.id !== 'geekbench_multi'"
+                      [benchmarkMeta]="geekbenchBenchmarkMeta"
+                      [showMulti]="benchmarkCategory.id !== 'geekbench_single'"
+                    ></app-geekbench-radar-chart>
+                  </div>
+                }
+                @if (benchmarkCategory.id === "llm_inference") {
+                  <div>
+                    <app-llm-inference-chart
+                      layout="compare"
+                      [benchmarkMeta]="benchmarkMeta"
+                      [servers]="llmCompareServers"
+                    ></app-llm-inference-chart>
+                  </div>
+                }
+                @if (
+                  !isEmbedded &&
+                  benchmarkCategory.id !== "passmark_cpu" &&
+                  benchmarkCategory.id !== "passmark_other"
+                ) {
+                  <div
+                    class="mt-4 mb-8 flex justify-center"
+                    [ngClass]="{
+                      'mb-8': !benchmarkCategory.show_more,
+                    }"
                   >
-                    {{ benchmarkCategory.show_more ? "Hide" : "Show" }} Details
-                  </button>
-                </div>
-              }
+                    <button
+                      class="btn-primary py-2 px-3"
+                      (click)="toggleBenchmarkCategory(benchmarkCategory)"
+                    >
+                      {{ benchmarkCategory.show_more ? "Hide" : "Show" }}
+                      Details
+                    </button>
+                  </div>
+                }
+              </div>
             </td>
+            <td [colSpan]="1"></td>
           </tr>
           @if (
             benchmarkCategory.id === "passmark_cpu" ||
@@ -607,10 +621,10 @@
               track benchmarkData.benchmark_key ?? benchmarkData.benchmark_id
             ) {
               @if (benchmarkCategory.data.length > 1) {
-                <tr>
-                  <td [colSpan]="servers.length + 1">
-                    <div class="ml-4 flex justify-between">
-                      <div class="flex gap-2 items-center">
+                <tr class="compare-fixed-header-row">
+                  <td [colSpan]="getSectionColSpan() - 1">
+                    <div class="ml-4">
+                      <div class="flex gap-2 items-center min-w-0">
                         {{ benchmarkData.name }}
                         @if (benchmarkData.description) {
                           <lucide-icon
@@ -624,15 +638,19 @@
                           </lucide-icon>
                         }
                       </div>
-                      @if (benchmarkData.description) {
+                    </div>
+                  </td>
+                  <td [colSpan]="1" class="compare-section-header-action-cell">
+                    @if (benchmarkData.description) {
+                      <div class="flex justify-end">
                         <lucide-icon
                           [name]="benchmarkIcon(benchmarkData)"
                           class="h-6 w-6 text-emerald-400 cursor-pointer"
                           (click)="toggleBenchmark(benchmarkData)"
                         >
                         </lucide-icon>
-                      }
-                    </div>
+                      </div>
+                    }
                   </td>
                 </tr>
               }
@@ -681,15 +699,15 @@
             class="section_header"
             [id]="'benchmark_line_' + chartItem.chart.id"
           >
-            <td [colSpan]="2">
-              <h3 class="text-xl font-semibold flex gap-2 items-center">
+            <td [colSpan]="getSectionColSpan() - 1">
+              <h3
+                class="text-xl font-semibold flex flex-nowrap gap-2 items-center min-w-0"
+              >
                 <lucide-icon
                   [name]="chartItem.chart.name | benchmarkIcon"
                   class="h-6 w-6"
                 ></lucide-icon>
-                <span class="whitespace-nowrap">{{
-                  chartItem.chart.name
-                }}</span>
+                <span class="truncate">{{ chartItem.chart.name }}</span>
                 @if (
                   chartItem.chart.options[chartItem.chart.selectedOption].icon
                 ) {
@@ -725,11 +743,14 @@
                 </lucide-icon>
               </h3>
             </td>
-            <td [colSpan]="servers.length - 1"></td>
+            <td [colSpan]="1" class="compare-section-header-action-cell"></td>
           </tr>
-          <tr>
-            <td [colSpan]="servers.length + 1">
-              <div>
+          <tr class="compare-fixed-chart-row">
+            <td [colSpan]="getSectionColSpan() - 1">
+              <div
+                class="compare-chart-content"
+                [style]="getCompareChartContentStyle()"
+              >
                 <app-benchmark-multi-bar-chart
                   [chartItem]="chartItem"
                   [benchmarkMeta]="benchmarkMeta"
@@ -745,14 +766,15 @@
                 ></app-benchmark-multi-bar-chart>
               </div>
             </td>
+            <td [colSpan]="1"></td>
           </tr>
           @if (chartItem.show_more) {
             @for (chartData of chartItem.data ?? []; track chartData) {
               @if (hasMultipleChartData(chartItem)) {
-                <tr>
-                  <td [colSpan]="servers.length + 1">
-                    <div class="ml-4 flex justify-between">
-                      <div class="flex gap-2 items-center">
+                <tr class="compare-fixed-header-row">
+                  <td [colSpan]="getSectionColSpan() - 1">
+                    <div class="ml-4">
+                      <div class="flex gap-2 items-center min-w-0">
                         {{ chartData.name }}
                         @if (chartData.description) {
                           <lucide-icon
@@ -766,15 +788,19 @@
                           </lucide-icon>
                         }
                       </div>
-                      @if (chartData.description) {
+                    </div>
+                  </td>
+                  <td [colSpan]="1" class="compare-section-header-action-cell">
+                    @if (chartData.description) {
+                      <div class="flex justify-end">
                         <lucide-icon
                           [name]="benchmarkIcon(chartData)"
                           class="h-6 w-6 text-emerald-400 cursor-pointer"
                           (click)="toggleBenchmark(chartData)"
                         >
                         </lucide-icon>
-                      }
-                    </div>
+                      </div>
+                    }
                   </td>
                 </tr>
               }
@@ -826,15 +852,15 @@
           track benchmarkCategory.benchmark_key ??
             benchmarkCategory.benchmark_id
         ) {
-          <tr>
-            <td [colSpan]="servers.length + 1">
-              <div class="pl-4 w-full flex justify-between">
-                <div class="flex gap-2 items-center">
+          <tr class="compare-fixed-header-row">
+            <td [colSpan]="getSectionColSpan() - 1">
+              <div class="pl-4">
+                <div class="flex flex-nowrap gap-2 items-center min-w-0">
                   <lucide-icon
                     [name]="benchmarkCategory.name | benchmarkIcon"
                     class="h-6 w-6"
                   ></lucide-icon>
-                  {{ benchmarkCategory.name }}
+                  <span class="truncate">{{ benchmarkCategory.name }}</span>
                   @if (benchmarkCategory.description) {
                     <lucide-icon
                       name="info"
@@ -847,15 +873,19 @@
                     </lucide-icon>
                   }
                 </div>
-                @if (benchmarkCategory.description) {
+              </div>
+            </td>
+            <td [colSpan]="1" class="compare-section-header-action-cell">
+              @if (benchmarkCategory.description) {
+                <div class="flex justify-end">
                   <lucide-icon
                     [name]="benchmarkIcon(benchmarkCategory)"
-                    class="h-6 w-6 text-emerald-400 cursor-pointer"
+                    class="h-6 w-6 text-emerald-400 cursor-pointer shrink-0"
                     (click)="toggleBenchmark(benchmarkCategory)"
                   >
                   </lucide-icon>
-                }
-              </div>
+                </div>
+              }
             </td>
           </tr>
           @if (!benchmarkCategory.collapsed) {
@@ -889,7 +919,7 @@
         }
       }
       @if (!isEmbedded) {
-        <tr>
+        <tr id="server-compare-view-server-row">
           <td>View Server</td>
           @for (
             server of servers;

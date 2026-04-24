@@ -4,6 +4,7 @@ import {
   Component,
   ElementRef,
   Input,
+  output,
   PLATFORM_ID,
   ViewChild,
   OnChanges,
@@ -93,6 +94,8 @@ export class ServerCompareChartsComponent implements OnChanges {
   @Input() showChart = "all";
   @Input() showZone = false;
 
+  readonly layoutChanged = output<void>();
+
   @ViewChild("tooltipcompareDefault") tooltip!: ElementRef<HTMLElement>;
 
   tooltipContent = "";
@@ -173,6 +176,25 @@ export class ServerCompareChartsComponent implements OnChanges {
 
   getStyle() {
     return `width: ${100 / (this.servers.length + 1)}%; max-width: ${100 / (this.servers.length + 1)}%;`;
+  }
+
+  getCompareChartContentStyle() {
+    if (!this.isBrowser()) {
+      return "width: 100%; max-width: 100%;";
+    }
+
+    const tableHolder = document.getElementById("table_holder");
+    const trailingGutterPx = 96;
+    const chartWidthPx = Math.max(
+      0,
+      (tableHolder?.clientWidth ?? 0) - trailingGutterPx,
+    );
+
+    if (!chartWidthPx) {
+      return "width: 100%; max-width: 100%;";
+    }
+
+    return `width: ${chartWidthPx}px; max-width: ${chartWidthPx}px;`;
   }
 
   getBenchmark(server: ExtendedServerDetails, isMulti: boolean) {
@@ -357,6 +379,7 @@ export class ServerCompareChartsComponent implements OnChanges {
 
   toggleBenchmark(benchmark: any) {
     benchmark.collapsed = !benchmark.collapsed;
+    this.layoutChanged.emit();
   }
 
   benchmarkIcon(benchmark: any) {
@@ -435,6 +458,7 @@ export class ServerCompareChartsComponent implements OnChanges {
 
   setBenchmarkCategoryHidden(category: { hidden?: boolean }, hidden: boolean) {
     category.hidden = hidden;
+    this.layoutChanged.emit();
   }
 
   syncMultiBarHeaderOption(
@@ -532,6 +556,8 @@ export class ServerCompareChartsComponent implements OnChanges {
     if (category.data?.length === 1) {
       category.data[0].collapsed = !category.show_more;
     }
+
+    this.layoutChanged.emit();
   }
 
   getSectionColSpan() {
