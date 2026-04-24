@@ -17,7 +17,7 @@
     tr {
       th:nth-of-type(1) {
         position: sticky;
-        left: -1px;
+        left: 0;
         z-index: 21;
         @apply bg-secondary;
       }
@@ -48,7 +48,7 @@
 
       td:nth-of-type(1) {
         position: sticky;
-        left: -1px;
+        left: 0;
         z-index: 20;
       }
     }
