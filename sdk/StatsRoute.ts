@@ -24,7 +24,7 @@ export namespace Stats {
     export type RequestParams = {};
     export type RequestQuery = {
       /**
-       * Vendor id
+       * Vendor
        * Identifier of the cloud provider vendor.
        */
       vendor?:

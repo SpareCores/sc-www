@@ -101,6 +101,163 @@ describe("SearchBarComponent", () => {
     expect(nestedControl.textContent).toContain("US East 1");
   });
 
+  it("renders placed parameters after the targeted custom control", () => {
+    component.filterCategories = [
+      {
+        category_id: "advisor",
+        name: "Advisor",
+        icon: "bot",
+        collapsed: false,
+      },
+    ];
+    component.customControls = [
+      {
+        name: "peak_gpu_memory",
+        category_id: "advisor",
+        type: "powerOfTwoStepper",
+        title: "Peak GPU memory usage",
+        numericValue: 0,
+        unit: "GiB",
+        allowZero: true,
+        defaultNumericValue: 0,
+      },
+      {
+        name: "limit_cpu_allocation",
+        category_id: "advisor",
+        type: "checkbox",
+        title: "CPU allocation",
+        checked: false,
+      },
+    ];
+    component.searchParameters = [
+      {
+        name: "storage_size",
+        modelValue: null,
+        schema: {
+          category_id: "storage",
+          title: "Storage Size",
+          type: "number",
+          step: 1,
+          unit: "GB",
+        },
+      },
+      {
+        name: "monthly_inbound_traffic",
+        modelValue: null,
+        schema: {
+          category_id: "traffic",
+          title: "Monthly Inbound Traffic",
+          type: "integer",
+          step: 1,
+          unit: "GB",
+        },
+      },
+    ];
+    component.parameterPlacements = [
+      {
+        parameterName: "storage_size",
+        categoryId: "advisor",
+        afterControlName: "peak_gpu_memory",
+      },
+      {
+        parameterName: "monthly_inbound_traffic",
+        categoryId: "advisor",
+        afterControlName: "peak_gpu_memory",
+      },
+    ];
+
+    fixture.detectChanges();
+
+    const advisorCategory = fixture.nativeElement.querySelector(
+      '[data-category-id="advisor"]',
+    ) as HTMLElement;
+    const peakGpuMemory = advisorCategory.querySelector(
+      "#custom_control_numeric_peak_gpu_memory",
+    ) as HTMLElement;
+    const storageSize = advisorCategory.querySelector(
+      "#filter_number_storage_size",
+    ) as HTMLElement;
+    const inboundTraffic = advisorCategory.querySelector(
+      "#filter_number_monthly_inbound_traffic",
+    ) as HTMLElement;
+    const cpuAllocation = advisorCategory.querySelector(
+      "#custom_control_checkbox_limit_cpu_allocation",
+    ) as HTMLElement;
+
+    expect(storageSize).not.toBeNull();
+    expect(inboundTraffic).not.toBeNull();
+    expect(
+      peakGpuMemory.compareDocumentPosition(storageSize) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(
+      storageSize.compareDocumentPosition(inboundTraffic) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(
+      inboundTraffic.compareDocumentPosition(cpuAllocation) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+  });
+
+  it("keeps parameters in their original category without placement overrides", () => {
+    component.filterCategories = [
+      {
+        category_id: "advisor",
+        name: "Advisor",
+        icon: "bot",
+        collapsed: false,
+      },
+      {
+        category_id: "storage",
+        name: "Storage",
+        icon: "database",
+        collapsed: false,
+      },
+    ];
+    component.customControls = [
+      {
+        name: "peak_gpu_memory",
+        category_id: "advisor",
+        type: "powerOfTwoStepper",
+        title: "Peak GPU memory usage",
+        numericValue: 0,
+        unit: "GiB",
+        allowZero: true,
+        defaultNumericValue: 0,
+      },
+    ];
+    component.searchParameters = [
+      {
+        name: "storage_size",
+        modelValue: null,
+        schema: {
+          category_id: "storage",
+          title: "Storage Size",
+          type: "number",
+          step: 1,
+          unit: "GB",
+        },
+      },
+    ];
+
+    fixture.detectChanges();
+
+    const advisorCategory = fixture.nativeElement.querySelector(
+      '[data-category-id="advisor"]',
+    ) as HTMLElement;
+    const storageCategory = fixture.nativeElement.querySelector(
+      '[data-category-id="storage"]',
+    ) as HTMLElement;
+
+    expect(
+      advisorCategory.querySelector("#filter_number_storage_size"),
+    ).toBeNull();
+    expect(
+      storageCategory.querySelector("#filter_number_storage_size"),
+    ).not.toBeNull();
+  });
+
   it("does not open disabled single-select controls", () => {
     const control = {
       name: "baseline_region",

@@ -343,20 +343,7 @@ describe("AdvisorComponent", () => {
     ).not.toContain("VCPUs");
   });
 
-  it("orders matching-limit controls beneath peak GPU memory", () => {
-    expect(component.customControls().map((control) => control.name)).toEqual([
-      "baseline_server",
-      "server_workload",
-      "optimization_goal",
-      "average_cpu_utilization",
-      "minimum_memory",
-      "peak_gpu_memory",
-      "limit_cpu_allocation",
-      "limit_architecture",
-      "price_allocation_enabled",
-      "baseline_region_enabled",
-    ]);
-
+  it("renders only extra storage and traffic filters after peak GPU memory", () => {
     const optimizationGoalControl = component
       .customControls()
       .find((control) => control.name === "optimization_goal");
@@ -384,6 +371,64 @@ describe("AdvisorComponent", () => {
         .find((control) => control.name === "baseline_region_enabled")
         ?.descriptionDisplay,
     ).toBe("tooltip");
+
+    const advisorCategory = fixture.nativeElement.querySelector(
+      '[data-category-id="advisor"]',
+    ) as HTMLElement;
+    const peakGpuMemory = advisorCategory.querySelector(
+      "#custom_control_numeric_peak_gpu_memory",
+    ) as HTMLElement;
+    const extraStorageSize = advisorCategory.querySelector(
+      "#filter_number_extra_storage_size",
+    ) as HTMLElement;
+    const extraStorageType = advisorCategory.querySelector(
+      "#filter_enum_extra_storage_type_hdd",
+    ) as HTMLElement;
+    const inboundTraffic = advisorCategory.querySelector(
+      "#filter_number_monthly_inbound_traffic",
+    ) as HTMLElement;
+    const outboundTraffic = advisorCategory.querySelector(
+      "#filter_number_monthly_outbound_traffic",
+    ) as HTMLElement;
+    const cpuAllocation = advisorCategory.querySelector(
+      "#custom_control_checkbox_limit_cpu_allocation",
+    ) as HTMLElement;
+
+    expect(extraStorageSize).not.toBeNull();
+    expect(extraStorageType).not.toBeNull();
+    expect(inboundTraffic).not.toBeNull();
+    expect(outboundTraffic).not.toBeNull();
+    expect(
+      advisorCategory.querySelector("#filter_number_storage_size"),
+    ).toBeNull();
+    expect(
+      advisorCategory.querySelector("#filter_enum_storage_type_hdd"),
+    ).toBeNull();
+    expect(
+      advisorCategory.querySelector("#filter_number_network_speed_min"),
+    ).toBeNull();
+    expect(
+      peakGpuMemory.compareDocumentPosition(extraStorageSize) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(
+      extraStorageSize.compareDocumentPosition(extraStorageType) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(
+      extraStorageType.compareDocumentPosition(inboundTraffic) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(
+      outboundTraffic.compareDocumentPosition(cpuAllocation) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(
+      fixture.nativeElement.querySelector('[data-category-id="storage"]'),
+    ).toBeNull();
+    expect(
+      fixture.nativeElement.querySelector('[data-category-id="traffic"]'),
+    ).toBeNull();
   });
 
   it("restores advisor state from the route query params", async () => {

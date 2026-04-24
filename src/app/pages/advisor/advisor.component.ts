@@ -25,6 +25,7 @@ import {
   SearchBarBenchmarkConfigOption,
   SearchBarCustomControl,
   SearchBarParameter,
+  SearchBarParameterPlacement,
 } from "../../components/search-bar/search-bar.component";
 import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
 import {
@@ -63,6 +64,7 @@ import {
   ADVISOR_DEFAULT_SERVER_COLUMNS,
   ADVISOR_FILTER_CATEGORIES,
   ADVISOR_OPTIMIZATION_GOAL_OPTIONS,
+  ADVISOR_PARAMETER_PLACEMENTS,
   ADVISOR_PAGE_DESCRIPTION,
   ADVISOR_PAGE_LIMITS,
   ADVISOR_PRICE_ALLOCATION_TOOLTIP,
@@ -236,6 +238,8 @@ export class AdvisorComponent implements OnInit, OnDestroy {
   );
 
   readonly advisorFilterCategories = ADVISOR_FILTER_CATEGORIES;
+  readonly advisorParameterPlacements: SearchBarParameterPlacement[] =
+    ADVISOR_PARAMETER_PLACEMENTS;
 
   searchParameters: SearchBarParameter[] = [];
   readonly optimizationGoalOptions = ADVISOR_OPTIMIZATION_GOAL_OPTIONS;

@@ -1,5 +1,8 @@
 import { BreadcrumbSegment } from "../../components/breadcrumbs/breadcrumbs.component";
-import { SearchBarCustomSelectOption } from "../../components/search-bar/search-bar.component";
+import {
+  SearchBarCustomSelectOption,
+  SearchBarParameterPlacement,
+} from "../../components/search-bar/search-bar.component";
 import {
   AdvisorOptimizationGoal,
   AdvisorSeoMetadata,
@@ -27,6 +30,29 @@ export const ADVISOR_FILTER_CATEGORIES = [
   { category_id: "advisor", name: "Advisor", icon: "bot", collapsed: false },
   { category_id: "vendor", name: "Vendor", icon: "home", collapsed: true },
   { category_id: "region", name: "Region", icon: "hotel", collapsed: true },
+];
+
+export const ADVISOR_PARAMETER_PLACEMENTS: SearchBarParameterPlacement[] = [
+  {
+    parameterName: "extra_storage_size",
+    categoryId: "advisor",
+    afterControlName: "peak_gpu_memory",
+  },
+  {
+    parameterName: "extra_storage_type",
+    categoryId: "advisor",
+    afterControlName: "peak_gpu_memory",
+  },
+  {
+    parameterName: "monthly_inbound_traffic",
+    categoryId: "advisor",
+    afterControlName: "peak_gpu_memory",
+  },
+  {
+    parameterName: "monthly_outbound_traffic",
+    categoryId: "advisor",
+    afterControlName: "peak_gpu_memory",
+  },
 ];
 
 export const ADVISOR_OPTIMIZATION_GOAL_OPTIONS: SearchBarCustomSelectOption[] =
