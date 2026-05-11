@@ -249,19 +249,6 @@
       </div>
       @if (isBrowser()) {
         @if (scrollbarMirror(); as mirror) {
-          @if (mirror.topPosition) {
-            <div
-              #scrollbarMirrorRef
-              class="scrollbar_mirror_outer"
-              [ngStyle]="scrollbarMirrorController.toStyle(mirror.topPosition)"
-              (scroll)="onMirrorScroll($event)"
-            >
-              <div
-                class="scrollbar_mirror_inner"
-                [style.width.px]="mirror.innerWidth"
-              ></div>
-            </div>
-          }
           @if (mirror.bottomPosition) {
             <div
               #scrollbarMirrorBottomRef

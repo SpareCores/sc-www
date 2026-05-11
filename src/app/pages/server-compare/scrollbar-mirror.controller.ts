@@ -32,7 +32,6 @@ export class ScrollbarMirrorController {
 
   constructor(
     private tableHolderGetter: () => ElementRef | undefined,
-    private topMirrorSignal: Signal<ElementRef | undefined>,
     private bottomMirrorSignal: Signal<ElementRef | undefined>,
     private stateSignal: WritableSignal<ScrollbarMirrorState>,
   ) {
@@ -53,7 +52,7 @@ export class ScrollbarMirrorController {
     }
   }
 
-  update(isSticky: boolean): void {
+  update(): void {
     const tableHolder = this.tableHolderGetter()?.nativeElement as
       | HTMLElement
       | undefined;
@@ -84,32 +83,15 @@ export class ScrollbarMirrorController {
       return;
     }
 
-    let topPosition: ScrollbarMirrorPosition | null = null;
-
-    if (isSticky) {
-      const top = this.getStickyTopBoundary();
-      topPosition = { left: mirrorLeft, width: mirrorWidth, top };
-    } else {
-      const theadEl = mainTable.querySelector("thead");
-      const theadRect = theadEl?.getBoundingClientRect();
-      if (
-        theadRect &&
-        theadRect.bottom >= 0 &&
-        theadRect.top <= window.innerHeight
-      ) {
-        topPosition = {
-          left: mirrorLeft,
-          width: mirrorWidth,
-          top: theadRect.bottom,
-        };
-      }
-    }
-
-    const bottomPosition = isSticky
-      ? this.getBottomMirrorPosition(mainTable, mirrorLeft, mirrorWidth)
-      : null;
-
-    this.stateSignal.set({ topPosition, bottomPosition, innerWidth });
+    this.stateSignal.set({
+      topPosition: null,
+      bottomPosition: this.getBottomMirrorPosition(
+        mainTable,
+        mirrorLeft,
+        mirrorWidth,
+      ),
+      innerWidth,
+    });
   }
 
   syncFromTable(): void {
@@ -121,11 +103,6 @@ export class ScrollbarMirrorController {
     this.isSyncing = true;
     try {
       const tableMax = tableHolder.scrollWidth - tableHolder.clientWidth;
-      this._applyToMirror(
-        this.topMirrorSignal()?.nativeElement,
-        tableHolder.scrollLeft,
-        tableMax,
-      );
       this._applyToMirror(
         this.bottomMirrorSignal()?.nativeElement,
         tableHolder.scrollLeft,
@@ -149,19 +126,6 @@ export class ScrollbarMirrorController {
 
       if (mirrorMax > 0) {
         tableHolder.scrollLeft = (mirrorEl.scrollLeft / mirrorMax) * tableMax;
-      }
-
-      const isTop =
-        mirrorEl === (this.topMirrorSignal()?.nativeElement as HTMLElement);
-      const otherEl = isTop
-        ? (this.bottomMirrorSignal()?.nativeElement as HTMLElement)
-        : (this.topMirrorSignal()?.nativeElement as HTMLElement);
-
-      if (otherEl) {
-        const otherMax = otherEl.scrollWidth - otherEl.clientWidth;
-        if (mirrorMax > 0) {
-          otherEl.scrollLeft = (mirrorEl.scrollLeft / mirrorMax) * otherMax;
-        }
       }
     } finally {
       this.scheduleSyncReset();

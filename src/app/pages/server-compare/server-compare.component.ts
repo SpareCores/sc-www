@@ -286,7 +286,6 @@ export class ServerCompareComponent
   ];
 
   @ViewChild("tableHolder") tableHolder!: ElementRef;
-  scrollbarMirrorEl = viewChild<ElementRef>("scrollbarMirrorRef");
   scrollbarMirrorBottomEl = viewChild<ElementRef>("scrollbarMirrorBottomRef");
   readonly scrollbarMirrorController = ScrollbarMirrorController;
   readonly isTableOutsideViewport = signal(false);
@@ -302,7 +301,7 @@ export class ServerCompareComponent
       (this.document.getElementById("main-table")?.getBoundingClientRect()
         .top ?? 0) < 70;
     this.isTableOutsideViewport.set(isSticky);
-    this.mirrorCtrl?.update(isSticky);
+    this.mirrorCtrl?.update();
   };
   private readonly updateMirrorLayout = () => {
     if (
@@ -775,7 +774,6 @@ export class ServerCompareComponent
     if (isPlatformBrowser(this.platformId)) {
       this.mirrorCtrl = new ScrollbarMirrorController(
         () => this.tableHolder,
-        this.scrollbarMirrorEl,
         this.scrollbarMirrorBottomEl,
         this.scrollbarMirror,
       );
