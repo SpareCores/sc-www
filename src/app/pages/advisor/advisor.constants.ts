@@ -39,7 +39,9 @@ export const ADVISOR_OPTIMIZATION_GOAL_OPTIONS: SearchBarCustomSelectOption[] =
 export const ADVISOR_DEFAULT_OPTIMIZATION_GOAL: AdvisorOptimizationGoal =
   "cost";
 
-export const ADVISOR_DEFAULT_MINIMUM_MEMORY_GIB = 0.5;
+export const ADVISOR_DEFAULT_MINIMUM_MEMORY_GIB = null;
+
+export const ADVISOR_MINIMUM_MEMORY_MIN_GIB = 0.5;
 
 export const ADVISOR_DEFAULT_PEAK_GPU_MEMORY_GIB = 0;
 
@@ -277,5 +279,4 @@ export const ADVISOR_REQUIRED_INPUT_LABELS = [
   "Baseline workload",
   "Optimization goal",
   "Average utilization",
-  "Minimum memory",
 ] as const;
