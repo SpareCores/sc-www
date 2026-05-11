@@ -188,6 +188,14 @@ export abstract class E2EEvent {
     cy.get("header").invoke("css", "position", "static");
   }
 
+  public static openMobileMenuForScreenshot() {
+    cy.get("#menu_button").should("be.visible").click();
+    cy.get("#menu_options").should("be.visible");
+    cy.get("#menu_options .navbar_link").each(($item) => {
+      cy.wrap($item).should("be.visible");
+    });
+  }
+
   // Hide compare-page scrollbars and mirror bars for screenshot consistency
   public static hideCompareScrollbarsForScreenshot() {
     cy.document().then((doc) => {

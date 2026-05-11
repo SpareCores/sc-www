@@ -20,6 +20,20 @@ describe("Visual regression tests (medium screen - 1024px)", () => {
     cy.compareSnapshot("landing-page-medium");
   });
 
+  it("should compare screenshot of the landing page with the mobile menu open on tablet width", () => {
+    cy.viewport(960, 900);
+    E2EEvent.visitURL("/");
+
+    E2EEvent.prepareHeaderForScreenshot();
+
+    cy.get("#slot-machine").invoke("css", "display", "none");
+    cy.get("#resource-tracker-video").invoke("css", "display", "none");
+
+    E2EEvent.openMobileMenuForScreenshot();
+
+    cy.compareSnapshot("landing-page-mobile-menu-open-medium-tablet");
+  });
+
   it("should compare screenshot of servers list (Hetzner / GPU >=1)", () => {
     E2EEvent.visitURL("/servers?vendor=hcloud&gpu_min=1&gpu_memory_min=1");
 
