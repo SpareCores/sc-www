@@ -162,7 +162,12 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
 
   possibleColumns: TableColumn[] = [
     { name: "NAME & PROVIDER", show: true, type: "name" },
-    { name: "VENDOR", show: false, type: "vendor" },
+    {
+      name: "VENDOR",
+      show: false,
+      type: "vendor",
+      orderField: "vendor_id",
+    },
     { name: "REGION", show: false, type: "region" },
     { name: "ZONE", show: false, type: "text", key: "zone.name" },
     {

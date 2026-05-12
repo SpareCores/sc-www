@@ -13,6 +13,7 @@ import {
   ADVISOR_DEFAULT_MINIMUM_MEMORY_GIB,
   ADVISOR_DEFAULT_PAGE_LIMIT,
   ADVISOR_DEFAULT_PEAK_GPU_MEMORY_GIB,
+  ADVISOR_MINIMUM_MEMORY_MIN_GIB,
   ADVISOR_DEFAULT_SERVER_COLUMNS,
   ADVISOR_PAGE_LIMITS,
   ADVISOR_TABLE_COLUMNS,
@@ -368,6 +369,7 @@ describe("AdvisorComponent", () => {
       .find((control) => control.name === "peak_gpu_memory");
 
     expect(optimizationGoalControl?.type).toBe("singleSelect");
+    expect(minimumMemoryControl?.numericValue).toBeNull();
     expect(minimumMemoryControl?.unit).toBe("GiB");
     expect(minimumMemoryControl?.description).toContain("GiB");
     expect(peakGpuMemoryControl?.unit).toBe("GiB");
@@ -384,6 +386,23 @@ describe("AdvisorComponent", () => {
         .find((control) => control.name === "baseline_region_enabled")
         ?.descriptionDisplay,
     ).toBe("tooltip");
+  });
+
+  it("uses empty minimum memory and omits baseline placeholder parentheses by default", () => {
+    const minimumMemoryControl = component
+      .customControls()
+      .find((control) => control.name === "minimum_memory");
+    const cpuAllocationControl = component
+      .customControls()
+      .find((control) => control.name === "limit_cpu_allocation");
+    const cpuArchitectureControl = component
+      .customControls()
+      .find((control) => control.name === "limit_architecture");
+
+    expect(component.minimumMemoryGiB()).toBeNull();
+    expect(minimumMemoryControl?.required).toBeFalsy();
+    expect(cpuAllocationControl?.title).toBe("CPU allocation");
+    expect(cpuArchitectureControl?.title).toBe("CPU architecture");
   });
 
   it("restores advisor state from the route query params", async () => {
@@ -447,9 +466,7 @@ describe("AdvisorComponent", () => {
     expect(component.page()).toBe(1);
     expect(component.limit()).toBe(Math.max(...ADVISOR_PAGE_LIMITS));
     expect(component.averageCpuUtilization()).toBe(100);
-    expect(component.minimumMemoryGiB()).toBe(
-      ADVISOR_DEFAULT_MINIMUM_MEMORY_GIB,
-    );
+    expect(component.minimumMemoryGiB()).toBe(ADVISOR_MINIMUM_MEMORY_MIN_GIB);
     expect(component.peakGpuMemoryGiB()).toBe(
       ADVISOR_DEFAULT_PEAK_GPU_MEMORY_GIB,
     );
@@ -459,6 +476,40 @@ describe("AdvisorComponent", () => {
         limit: "999",
       }),
     );
+  });
+
+  it("derives minimum memory from the baseline server and utilization when empty", fakeAsync(() => {
+    const baselineServer = component.serverTableRows()[0];
+
+    component.selectedBaselineServer.set(baselineServer);
+    component.baselineServerInput.set("aws large");
+    fixture.detectChanges();
+    flushMicrotasks();
+
+    component.averageCpuUtilization.set(50);
+
+    fixture.detectChanges();
+    flushMicrotasks();
+
+    expect(component.minimumMemoryGiB()).toBe(2);
+    expect(component.recommendationQuery()?.memory_min).toBe(2);
+  }));
+
+  it("restores an empty minimum memory from the route and derives it from the baseline server", async () => {
+    queryParams$.next({
+      baseline_vendor: "aws",
+      baseline_server: "large",
+      workload_id: "stress_ng:bestn",
+      workload_config: "{}",
+      avg_cpu_utilization: "60",
+    });
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(component.selectedBaselineServer()?.api_reference).toBe("large");
+    expect(component.minimumMemoryGiB()).toBe(2.4);
   });
 
   it("only requests recommendations once the required inputs are valid", fakeAsync(() => {
@@ -481,9 +532,33 @@ describe("AdvisorComponent", () => {
 
     expect(component.recommendationQuery()).not.toBeNull();
     expect(component.recommendationQuery()?.benchmark_score_min).toBe(50);
-    expect(component.recommendationQuery()?.memory_min).toBe(0.5);
+    expect(component.recommendationQuery()?.memory_min).toBe(2);
     expect(component.recommendationQuery()?.order_by).toBe("min_price");
     expect(searchServers).toHaveBeenCalled();
+  }));
+
+  it("does not overwrite minimum memory after it has already been filled", fakeAsync(() => {
+    const baselineServer = component.serverTableRows()[0];
+    const nextBaselineServer = {
+      ...baselineServer,
+      api_reference: "xlarge",
+      memory_amount: 8192,
+    };
+
+    component.selectedBaselineServer.set(baselineServer);
+    component.baselineServerInput.set("aws large");
+    component.averageCpuUtilization.set(50);
+    fixture.detectChanges();
+    flushMicrotasks();
+
+    expect(component.minimumMemoryGiB()).toBe(2);
+
+    component.selectedBaselineServer.set(nextBaselineServer);
+    component.baselineServerInput.set("aws xlarge");
+    fixture.detectChanges();
+    flushMicrotasks();
+
+    expect(component.minimumMemoryGiB()).toBe(2);
   }));
 
   it("only applies price allocation to recommendation queries when enabled", fakeAsync(() => {
@@ -979,7 +1054,9 @@ describe("AdvisorComponent", () => {
     );
     expect(component.optimizationGoal()).toBe("cost");
     expect(component.averageCpuUtilization()).toBeNull();
-    expect(component.minimumMemoryGiB()).toBe(0.5);
+    expect(component.minimumMemoryGiB()).toBe(
+      ADVISOR_DEFAULT_MINIMUM_MEMORY_GIB,
+    );
     expect(component.peakGpuMemoryGiB()).toBe(0);
     expect(component.selectedCurrency().slug).toBe("USD");
     expect(component.isPriceAllocationEnabled()).toBeFalse();

@@ -1,0 +1,333 @@
+import { ElementRef, signal } from "@angular/core";
+
+import {
+  INITIAL_SCROLLBAR_MIRROR_STATE,
+  ScrollbarMirrorController,
+} from "./scrollbar-mirror.controller";
+
+describe("ScrollbarMirrorController", () => {
+  let tableHolder: HTMLElement;
+  let mainTable: HTMLElement;
+  let firstColumn: HTMLElement;
+  let viewServerRow: HTMLElement;
+  let bottomMirror: HTMLElement;
+  let appendedElements: HTMLElement[];
+  let mirrorState = signal({ ...INITIAL_SCROLLBAR_MIRROR_STATE });
+
+  function setRect(
+    element: HTMLElement,
+    rect: Partial<DOMRect> & Pick<DOMRect, "width">,
+  ): void {
+    const rectValue = {
+      x: rect.left ?? 0,
+      y: rect.top ?? 0,
+      left: rect.left ?? 0,
+      top: rect.top ?? 0,
+      right: (rect.left ?? 0) + rect.width,
+      bottom: (rect.top ?? 0) + (rect.height ?? 0),
+      width: rect.width,
+      height: rect.height ?? 0,
+      toJSON: () => ({}),
+    } as DOMRect;
+
+    if (jasmine.isSpy(element.getBoundingClientRect)) {
+      (
+        element.getBoundingClientRect as jasmine.Spy<() => DOMRect>
+      ).and.returnValue(rectValue);
+      return;
+    }
+
+    spyOn(element, "getBoundingClientRect").and.returnValue(rectValue);
+  }
+
+  function setDimension(
+    element: HTMLElement,
+    property: "clientWidth" | "scrollWidth" | "scrollLeft",
+    value: number,
+  ): void {
+    Object.defineProperty(element, property, {
+      configurable: true,
+      value,
+      writable: property === "scrollLeft",
+    });
+  }
+
+  function runNextAnimationFrame(frameCallbacks: FrameRequestCallback[]): void {
+    const callback = frameCallbacks.shift();
+    expect(callback).toBeDefined();
+    callback?.(0);
+  }
+
+  beforeEach(() => {
+    appendedElements = [];
+    mirrorState = signal({ ...INITIAL_SCROLLBAR_MIRROR_STATE });
+    tableHolder = document.createElement("div");
+    mainTable = document.createElement("table");
+    firstColumn = document.createElement("th");
+    bottomMirror = document.createElement("div");
+
+    mainTable.id = "main-table";
+    firstColumn.id = "server-compare-table-first-col";
+    mainTable.innerHTML = `
+      <thead></thead>
+      <tbody>
+        <tr id="${ScrollbarMirrorController.bottomAnchorRowId}"></tr>
+      </tbody>
+    `;
+    viewServerRow = mainTable.querySelector(
+      `#${ScrollbarMirrorController.bottomAnchorRowId}`,
+    ) as HTMLElement;
+
+    appendedElements.push(tableHolder, mainTable, firstColumn);
+    appendedElements.forEach((element) => {
+      document.body.appendChild(element);
+    });
+
+    setRect(tableHolder, { left: 25, top: 100, width: 501.8, height: 40 });
+    setRect(firstColumn, { left: 25, top: 100, width: 101.4, height: 40 });
+    setRect(mainTable.querySelector("thead") as HTMLElement, {
+      left: 25,
+      top: 100,
+      width: 900,
+      height: 36,
+    });
+    setRect(viewServerRow, {
+      left: 25,
+      top: window.innerHeight + 24,
+      width: 900,
+      height: 40,
+    });
+
+    Object.defineProperty(mainTable, "scrollWidth", {
+      configurable: true,
+      value: 1200,
+    });
+
+    setDimension(tableHolder, "scrollWidth", 1200);
+    setDimension(tableHolder, "clientWidth", 600);
+    setDimension(tableHolder, "scrollLeft", 0);
+    setDimension(bottomMirror, "scrollWidth", 900);
+    setDimension(bottomMirror, "clientWidth", 300);
+    setDimension(bottomMirror, "scrollLeft", 0);
+  });
+
+  afterEach(() => {
+    appendedElements.forEach((element) => {
+      element.remove();
+    });
+  });
+
+  it("uses floored mirror width and exact inner width offset from the fixed column", () => {
+    const controller = new ScrollbarMirrorController(
+      () => new ElementRef(tableHolder),
+      signal(new ElementRef(bottomMirror)),
+      mirrorState,
+    );
+
+    controller.update();
+
+    expect(mirrorState().bottomPosition).toEqual({
+      left: 126.4,
+      width: 400,
+      bottom: 0,
+    });
+    expect(mirrorState().innerWidth).toBeCloseTo(1098.6, 3);
+
+    controller.destroy();
+  });
+
+  it("keeps the bottom mirror aligned with the computed width when sticky header state changes", () => {
+    const fixedThead = document.createElement("div");
+    fixedThead.className = "fixed_thead";
+    document.body.appendChild(fixedThead);
+    appendedElements.push(fixedThead);
+    setRect(fixedThead, { left: 25, top: 68, width: 900, height: 44 });
+
+    const controller = new ScrollbarMirrorController(
+      () => new ElementRef(tableHolder),
+      signal(new ElementRef(bottomMirror)),
+      mirrorState,
+    );
+
+    controller.update();
+
+    expect(mirrorState().bottomPosition).toEqual({
+      left: 126.4,
+      width: 400,
+      bottom: 0,
+    });
+
+    controller.destroy();
+  });
+
+  it("clamps the bottom mirror to the table end when the anchor row enters view", () => {
+    const fixedThead = document.createElement("div");
+    fixedThead.className = "fixed_thead";
+    document.body.appendChild(fixedThead);
+    appendedElements.push(fixedThead);
+    setRect(fixedThead, { left: 25, top: 68, width: 900, height: 44 });
+
+    setRect(viewServerRow, {
+      left: 25,
+      top: window.innerHeight - 120,
+      width: 900,
+      height: 40,
+    });
+
+    const controller = new ScrollbarMirrorController(
+      () => new ElementRef(tableHolder),
+      signal(new ElementRef(bottomMirror)),
+      mirrorState,
+    );
+
+    controller.update();
+
+    expect(mirrorState().bottomPosition).toEqual({
+      left: 126.4,
+      width: 400,
+      bottom: 69,
+    });
+
+    controller.destroy();
+  });
+
+  it("falls back to the last rendered row and hides the bottom mirror above the sticky header", () => {
+    const fixedThead = document.createElement("div");
+    fixedThead.className = "fixed_thead";
+    document.body.appendChild(fixedThead);
+    appendedElements.push(fixedThead);
+    setRect(fixedThead, { left: 25, top: 68, width: 900, height: 44 });
+
+    viewServerRow.removeAttribute("id");
+
+    const fallbackRow = document.createElement("tr");
+    (mainTable.querySelector("tbody") as HTMLTableSectionElement).appendChild(
+      fallbackRow,
+    );
+    setRect(fallbackRow, {
+      left: 25,
+      top: 40,
+      width: 900,
+      height: 40,
+    });
+
+    const controller = new ScrollbarMirrorController(
+      () => new ElementRef(tableHolder),
+      signal(new ElementRef(bottomMirror)),
+      mirrorState,
+    );
+
+    controller.update();
+
+    expect(mirrorState().bottomPosition).toBeNull();
+
+    controller.destroy();
+  });
+
+  it("hides mirror state when the scrollable table region fits without visible overflow", () => {
+    Object.defineProperty(mainTable, "scrollWidth", {
+      configurable: true,
+      value: 501.4,
+    });
+
+    const fixedThead = document.createElement("div");
+    fixedThead.className = "fixed_thead";
+    document.body.appendChild(fixedThead);
+    appendedElements.push(fixedThead);
+    setRect(fixedThead, { left: 25, top: 68, width: 900, height: 44 });
+
+    const controller = new ScrollbarMirrorController(
+      () => new ElementRef(tableHolder),
+      signal(new ElementRef(bottomMirror)),
+      mirrorState,
+    );
+
+    controller.update();
+
+    expect(mirrorState()).toEqual(INITIAL_SCROLLBAR_MIRROR_STATE);
+
+    controller.destroy();
+  });
+
+  it("suppresses mirror-origin follow-ups while allowing repeated table syncs before the reset frame", () => {
+    const frameCallbacks: FrameRequestCallback[] = [];
+    spyOn(window, "requestAnimationFrame").and.callFake(
+      (callback: FrameRequestCallback): number => {
+        frameCallbacks.push(callback);
+        return frameCallbacks.length;
+      },
+    );
+
+    const controller = new ScrollbarMirrorController(
+      () => new ElementRef(tableHolder),
+      signal(new ElementRef(bottomMirror)),
+      mirrorState,
+    );
+
+    tableHolder.scrollLeft = 200;
+    controller.syncFromTable();
+
+    expect(bottomMirror.scrollLeft).toBe(200);
+
+    bottomMirror.scrollLeft = 60;
+    controller.syncFromMirror(bottomMirror);
+
+    expect(tableHolder.scrollLeft).toBe(200);
+    expect(bottomMirror.scrollLeft).toBe(60);
+
+    tableHolder.scrollLeft = 450;
+    controller.syncFromTable();
+
+    expect(bottomMirror.scrollLeft).toBe(450);
+
+    runNextAnimationFrame(frameCallbacks);
+
+    bottomMirror.scrollLeft = 120;
+    controller.syncFromMirror(bottomMirror);
+
+    expect(tableHolder.scrollLeft).toBe(120);
+
+    controller.destroy();
+  });
+
+  it("suppresses table-origin follow-ups while allowing repeated mirror syncs before the reset frame", () => {
+    const frameCallbacks: FrameRequestCallback[] = [];
+    spyOn(window, "requestAnimationFrame").and.callFake(
+      (callback: FrameRequestCallback): number => {
+        frameCallbacks.push(callback);
+        return frameCallbacks.length;
+      },
+    );
+
+    const controller = new ScrollbarMirrorController(
+      () => new ElementRef(tableHolder),
+      signal(new ElementRef(bottomMirror)),
+      mirrorState,
+    );
+
+    bottomMirror.scrollLeft = 240;
+    controller.syncFromMirror(bottomMirror);
+
+    expect(tableHolder.scrollLeft).toBe(240);
+
+    tableHolder.scrollLeft = 180;
+    controller.syncFromTable();
+
+    expect(bottomMirror.scrollLeft).toBe(240);
+    expect(tableHolder.scrollLeft).toBe(180);
+
+    bottomMirror.scrollLeft = 60;
+    controller.syncFromMirror(bottomMirror);
+
+    expect(tableHolder.scrollLeft).toBe(60);
+
+    runNextAnimationFrame(frameCallbacks);
+
+    tableHolder.scrollLeft = 300;
+    controller.syncFromTable();
+
+    expect(bottomMirror.scrollLeft).toBe(300);
+
+    controller.destroy();
+  });
+});

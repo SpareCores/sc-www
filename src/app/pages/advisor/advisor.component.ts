@@ -67,6 +67,7 @@ import {
   ADVISOR_PAGE_LIMITS,
   ADVISOR_PRICE_ALLOCATION_TOOLTIP,
   ADVISOR_PAGE_TITLE,
+  ADVISOR_MINIMUM_MEMORY_MIN_GIB,
   ADVISOR_REQUIRED_INPUT_LABELS,
   ADVISOR_SEO,
 } from "./advisor.constants";
@@ -99,7 +100,6 @@ const [
   ADVISOR_SERVER_WORKLOAD_LABEL,
   ADVISOR_OPTIMIZATION_GOAL_LABEL,
   ADVISOR_AVERAGE_UTILIZATION_LABEL,
-  ADVISOR_MINIMUM_MEMORY_LABEL,
 ] = ADVISOR_REQUIRED_INPUT_LABELS;
 
 const ADVISOR_MAX_PAGE_LIMIT = Math.max(...ADVISOR_PAGE_LIMITS);
@@ -329,6 +329,23 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     return Number(((benchmarkScore.score * cpuUtilization) / 100).toFixed(2));
   });
 
+  readonly derivedMinimumMemoryGiB = computed<number | null>(() => {
+    const selectedBaselineServer = this.selectedBaselineServer();
+    const cpuUtilization = this.averageCpuUtilization();
+
+    if (!selectedBaselineServer || cpuUtilization === null) {
+      return null;
+    }
+
+    if (!selectedBaselineServer.memory_amount) {
+      return null;
+    }
+
+    return this.normalizeMinimumMemoryGiB(
+      (selectedBaselineServer.memory_amount / 1024) * (cpuUtilization / 100),
+    );
+  });
+
   readonly missingRequiredInputs = computed(() => {
     const missing: string[] = [];
 
@@ -346,10 +363,6 @@ export class AdvisorComponent implements OnInit, OnDestroy {
 
     if (this.averageCpuUtilization() === null) {
       missing.push(ADVISOR_AVERAGE_UTILIZATION_LABEL);
-    }
-
-    if (this.minimumMemoryGiB() === null) {
-      missing.push(ADVISOR_MINIMUM_MEMORY_LABEL);
     }
 
     return missing;
@@ -443,7 +456,8 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     () => {
       const selectedBenchmarkConfig = this.selectedBenchmarkConfig();
       const benchmarkScoreMinimum = this.benchmarkScoreMinimum();
-      const minimumMemoryGiB = this.minimumMemoryGiB();
+      const minimumMemoryGiB =
+        this.minimumMemoryGiB() ?? this.derivedMinimumMemoryGiB();
 
       if (
         !this.canRequestRecommendations() ||
@@ -574,14 +588,12 @@ export class AdvisorComponent implements OnInit, OnDestroy {
         category_id: "advisor",
         type: "powerOfTwoStepper",
         title: "Minimum memory",
-        required: true,
         description:
-          "Memory requirement in GiB. You can type any value, or use the stepper to snap through powers of two starting at 0.5 GiB.",
+          "Memory requirement in GiB. Leave this empty to auto-fill from the selected baseline server memory and average utilization, or type any value and use the stepper to snap through powers of two starting at 0.5 GiB.",
         numericValue: this.minimumMemoryGiB(),
         numericFormat: "binaryMemory",
-        min: 0.5,
+        min: ADVISOR_MINIMUM_MEMORY_MIN_GIB,
         unit: "GiB",
-        defaultNumericValue: 0.5,
       },
       {
         name: "peak_gpu_memory",
@@ -602,7 +614,9 @@ export class AdvisorComponent implements OnInit, OnDestroy {
         category_id: "advisor",
         type: "checkbox",
         sectionHeader: "Limit search for matching:",
-        title: `CPU allocation (${this.selectedBaselineServer()?.cpu_allocation || "..."})`,
+        title: this.selectedBaselineServer()?.cpu_allocation
+          ? `CPU allocation (${this.selectedBaselineServer()?.cpu_allocation})`
+          : "CPU allocation",
         checked: this.limitToSameCpuAllocation(),
         disabled: !this.selectedBaselineServer()?.cpu_allocation,
       },
@@ -610,7 +624,9 @@ export class AdvisorComponent implements OnInit, OnDestroy {
         name: "limit_architecture",
         category_id: "advisor",
         type: "checkbox",
-        title: `CPU architecture (${this.selectedBaselineServer()?.cpu_architecture || "..."})`,
+        title: this.selectedBaselineServer()?.cpu_architecture
+          ? `CPU architecture (${this.selectedBaselineServer()?.cpu_architecture})`
+          : "CPU architecture",
         checked: this.limitToSameArchitecture(),
         disabled: !this.selectedBaselineServer()?.cpu_architecture,
       },
@@ -787,6 +803,20 @@ export class AdvisorComponent implements OnInit, OnDestroy {
       }
 
       this.selectedBaselineVendorRegion.set(null);
+    });
+
+    effect(() => {
+      if (this.minimumMemoryGiB() !== null) {
+        return;
+      }
+
+      const derivedMinimumMemoryGiB = this.derivedMinimumMemoryGiB();
+
+      if (derivedMinimumMemoryGiB === null) {
+        return;
+      }
+
+      this.minimumMemoryGiB.set(derivedMinimumMemoryGiB);
     });
 
     effect(() => {
@@ -1363,12 +1393,11 @@ export class AdvisorComponent implements OnInit, OnDestroy {
           0,
           100,
         );
-        const restoredMinimumMemoryGiB =
-          this.parseNumberInRange(
-            queryParams.minimum_memory,
-            ADVISOR_DEFAULT_MINIMUM_MEMORY_GIB,
-            ADVISOR_DEFAULT_MINIMUM_MEMORY_GIB,
-          ) ?? ADVISOR_DEFAULT_MINIMUM_MEMORY_GIB;
+        const restoredMinimumMemoryGiB = this.parseNumberInRange(
+          queryParams.minimum_memory,
+          ADVISOR_DEFAULT_MINIMUM_MEMORY_GIB,
+          ADVISOR_MINIMUM_MEMORY_MIN_GIB,
+        );
         const restoredPeakGpuMemoryGiB =
           this.parseNumberInRange(
             queryParams.peak_gpu_memory,
@@ -1771,6 +1800,10 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     const clampedValue = Math.max(parsed, min);
 
     return max !== undefined ? Math.min(clampedValue, max) : clampedValue;
+  }
+
+  private normalizeMinimumMemoryGiB(value: number): number {
+    return Number(Math.max(value, ADVISOR_MINIMUM_MEMORY_MIN_GIB).toFixed(2));
   }
 
   private getSelectedControlValue(value: unknown): string | null {

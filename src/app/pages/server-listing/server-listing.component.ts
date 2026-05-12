@@ -180,7 +180,12 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
   possibleColumns: TableColumn[] = [
     { name: "NAME & PROVIDER", show: true, type: "name" },
-    { name: "VENDOR", show: false, type: "vendor" },
+    {
+      name: "VENDOR",
+      show: false,
+      type: "vendor",
+      orderField: "vendor_id",
+    },
     {
       name: "ARCHITECTURE",
       show: false,
