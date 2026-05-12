@@ -1,5 +1,14 @@
 <div>
   <table id="main-table" #mainTable class="items_table">
+    <colgroup>
+      <col class="compare-first-column-col" />
+      @for (
+        server of servers;
+        track server.vendor_id + "_" + server.server_id
+      ) {
+        <col />
+      }
+    </colgroup>
     @if (isChartShown("generic")) {
       <thead id="server-compare-table-header">
         <tr>
@@ -9,8 +18,9 @@
             track server.vendor_id + "_" + server.server_id
           ) {
             <th
-              [style]="getStyle()"
               class="align-baseline compact-number-header-cell"
+              [style.width]="getServerColumnWidth(server)"
+              [style.minWidth]="getServerColumnWidth(server)"
               [id]="
                 'main-table-th-' + server.vendor_id + '_' + server.server_id
               "
@@ -20,7 +30,7 @@
                 style="width: fit-content"
               >
                 <a
-                  class="underline decoration-dotted"
+                  class="underline decoration-dotted whitespace-nowrap"
                   href="/server/{{ server.vendor_id }}/{{
                     server.api_reference
                   }}"

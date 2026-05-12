@@ -56,6 +56,45 @@ describe("Server Compare", () => {
     );
   });
 
+  it("shows both compared server headers in the initial viewport", () => {
+    cy.viewport(1280, 900);
+    E2EEvent.visitURL(COMPARE_PRICE_URL, 4000);
+
+    cy.get("#table_holder").then(($tableHolder) => {
+      const holderRect = $tableHolder[0].getBoundingClientRect();
+
+      cy.get('[id^="main-table-th-"]').each(($headerCell) => {
+        const headerRect = $headerCell[0].getBoundingClientRect();
+
+        expect(headerRect.left).to.be.greaterThan(holderRect.left);
+        expect(headerRect.right).to.be.lessThan(holderRect.right + 1);
+      });
+    });
+  });
+
+  it("keeps compare header server names on one line", () => {
+    cy.viewport(1280, 900);
+    E2EEvent.visitURL(COMPARE_PRICE_URL, 4000);
+
+    cy.get('#server-compare-table-header a[target="_blank"]').each(($link) => {
+      expect($link).to.have.css("white-space", "nowrap");
+      expect($link[0].getClientRects().length).to.equal(1);
+    });
+  });
+
+  it("keeps sticky compare header server names on one line", () => {
+    cy.viewport(1280, 900);
+    E2EEvent.visitURL(COMPARE_PRICE_URL, 4000);
+
+    cy.scrollTo(0, 500);
+
+    cy.get(".fixed_thead").should("be.visible");
+    cy.get('.fixed_thead a[target="_blank"]').each(($link) => {
+      expect($link).to.have.css("white-space", "nowrap");
+      expect($link[0].getClientRects().length).to.equal(1);
+    });
+  });
+
   it("dismisses the compare tooltip when the table scrolls on smaller screens", () => {
     cy.viewport(800, 900);
     E2EEvent.visitURL(COMPARE_PRICE_URL, 4000);

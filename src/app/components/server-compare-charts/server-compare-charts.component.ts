@@ -174,8 +174,9 @@ export class ServerCompareChartsComponent implements OnChanges {
     return isPlatformBrowser(this.platformId);
   }
 
-  getStyle() {
-    return `width: ${100 / (this.servers.length + 1)}%; max-width: ${100 / (this.servers.length + 1)}%;`;
+  getServerColumnWidth(server: ExtendedServerDetails) {
+    const displayNameLength = server.display_name?.length ?? 0;
+    return `max(12rem, ${displayNameLength + 4}ch)`;
   }
 
   getCompareChartContentStyle() {

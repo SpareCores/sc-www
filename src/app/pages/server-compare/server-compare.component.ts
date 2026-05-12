@@ -1024,8 +1024,12 @@ export class ServerCompareComponent
   }
 
   getStickyHeaderFirstColStyle() {
-    if (this.tableFirstCol && this.tableFirstCol.nativeElement) {
-      const width = this.tableFirstCol.nativeElement.offsetWidth;
+    const firstColumn = this.document.getElementById(
+      "server-compare-table-first-col",
+    );
+
+    if (firstColumn) {
+      const width = Math.ceil(firstColumn.getBoundingClientRect().width);
       return { width: `${width}px` };
     }
     return {};

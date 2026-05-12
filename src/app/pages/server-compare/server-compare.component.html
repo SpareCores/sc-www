@@ -218,15 +218,20 @@
                       [style]="getStyle(i)"
                       class="compact-number-header-cell"
                     >
-                      <a
-                        class="underline decoration-dotted"
-                        href="/server/{{ server.vendor_id }}/{{
-                          server.api_reference
-                        }}"
-                        target="_blank"
-                      >
-                        {{ server.display_name | uppercase }}
-                      </a>
+                      <div class="ml-auto" style="width: fit-content">
+                        <a
+                          class="underline decoration-dotted whitespace-nowrap"
+                          [href]="
+                            '/server/' +
+                            server.vendor_id +
+                            '/' +
+                            server.api_reference
+                          "
+                          target="_blank"
+                        >
+                          {{ server.display_name | uppercase }}
+                        </a>
+                      </div>
                     </th>
                   }
                 </tr>
