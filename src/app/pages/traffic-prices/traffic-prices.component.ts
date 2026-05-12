@@ -91,7 +91,7 @@ export class TrafficPricesComponent implements OnInit, OnDestroy {
   title = "Cloud Data Transfer Pricing";
 
   possibleColumns: TableColumn[] = [
-    { name: "VENDOR", show: true, type: "vendor" },
+    { name: "VENDOR", show: true, type: "vendor", orderField: "vendor_id" },
     { name: "REGION", show: true, type: "region" },
     { name: "DIRECTION", show: true, type: "text", key: "direction" },
     { name: "PRICE", show: true, type: "price", orderField: "price" },

@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { OrderDir } from "../../../../sdk/data-contracts";
 
 import { ServerPricesComponent } from "./server-prices.component";
 import { UiTooltipService } from "../../services/ui-tooltip.service";
@@ -47,5 +48,35 @@ describe("ServerPricesComponent", () => {
     component.hideTooltip();
 
     expect(hideSpy).toHaveBeenCalledOnceWith(component.tooltip.nativeElement);
+  });
+
+  it("cycles vendor ordering through desc, asc, and cleared state", () => {
+    const vendorColumn = component.possibleColumns.find(
+      (column) => column.name === "VENDOR",
+    );
+    const searchOptionsChangedSpy = spyOn(component, "searchOptionsChanged");
+
+    expect(vendorColumn).toEqual(
+      jasmine.objectContaining({
+        show: false,
+        orderField: "vendor_id",
+      }),
+    );
+
+    component.toggleOrdering(vendorColumn!);
+
+    expect(component.orderBy).toBe("vendor_id");
+    expect(component.orderDir).toBe(OrderDir.Desc);
+
+    component.toggleOrdering(vendorColumn!);
+
+    expect(component.orderBy).toBe("vendor_id");
+    expect(component.orderDir).toBe(OrderDir.Asc);
+
+    component.toggleOrdering(vendorColumn!);
+
+    expect(component.orderBy).toBeUndefined();
+    expect(component.orderDir).toBeUndefined();
+    expect(searchOptionsChangedSpy).toHaveBeenCalledTimes(3);
   });
 });

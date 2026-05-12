@@ -89,7 +89,7 @@ export class StoragesComponent implements OnInit, OnDestroy {
   tableColumns: TableColumn[] = [];
 
   possibleColumns: TableColumn[] = [
-    { name: "VENDOR", show: true, type: "vendor" },
+    { name: "VENDOR", show: true, type: "vendor", orderField: "vendor_id" },
     { name: "NAME", show: true, type: "name", key: "storage.name" },
     { name: "REGION", show: true, type: "region" },
     { name: "MIN", show: true, type: "storage", key: "storage.min_size" },
