@@ -126,7 +126,6 @@ describe("ScrollbarMirrorController", () => {
 
     controller.update();
 
-    expect(mirrorState().topPosition).toBeNull();
     expect(mirrorState().bottomPosition).toEqual({
       left: 126.4,
       width: 400,
@@ -152,7 +151,6 @@ describe("ScrollbarMirrorController", () => {
 
     controller.update();
 
-    expect(mirrorState().topPosition).toBeNull();
     expect(mirrorState().bottomPosition).toEqual({
       left: 126.4,
       width: 400,
@@ -251,7 +249,7 @@ describe("ScrollbarMirrorController", () => {
     controller.destroy();
   });
 
-  it("keeps the sync guard active until the queued frame after syncing from the table", () => {
+  it("suppresses mirror-origin follow-ups while allowing repeated table syncs before the reset frame", () => {
     const frameCallbacks: FrameRequestCallback[] = [];
     spyOn(window, "requestAnimationFrame").and.callFake(
       (callback: FrameRequestCallback): number => {
@@ -271,21 +269,28 @@ describe("ScrollbarMirrorController", () => {
 
     expect(bottomMirror.scrollLeft).toBe(200);
 
+    bottomMirror.scrollLeft = 60;
+    controller.syncFromMirror(bottomMirror);
+
+    expect(tableHolder.scrollLeft).toBe(200);
+    expect(bottomMirror.scrollLeft).toBe(60);
+
     tableHolder.scrollLeft = 450;
-    controller.syncFromTable();
-
-    expect(bottomMirror.scrollLeft).toBe(200);
-
-    runNextAnimationFrame(frameCallbacks);
-
     controller.syncFromTable();
 
     expect(bottomMirror.scrollLeft).toBe(450);
 
+    runNextAnimationFrame(frameCallbacks);
+
+    bottomMirror.scrollLeft = 120;
+    controller.syncFromMirror(bottomMirror);
+
+    expect(tableHolder.scrollLeft).toBe(120);
+
     controller.destroy();
   });
 
-  it("keeps the sync guard active until the queued frame after syncing from a mirror", () => {
+  it("suppresses table-origin follow-ups while allowing repeated mirror syncs before the reset frame", () => {
     const frameCallbacks: FrameRequestCallback[] = [];
     spyOn(window, "requestAnimationFrame").and.callFake(
       (callback: FrameRequestCallback): number => {
@@ -305,18 +310,23 @@ describe("ScrollbarMirrorController", () => {
 
     expect(tableHolder.scrollLeft).toBe(240);
 
+    tableHolder.scrollLeft = 180;
+    controller.syncFromTable();
+
+    expect(bottomMirror.scrollLeft).toBe(240);
+    expect(tableHolder.scrollLeft).toBe(180);
+
     bottomMirror.scrollLeft = 60;
     controller.syncFromMirror(bottomMirror);
 
-    expect(tableHolder.scrollLeft).toBe(240);
-    expect(bottomMirror.scrollLeft).toBe(60);
+    expect(tableHolder.scrollLeft).toBe(60);
 
     runNextAnimationFrame(frameCallbacks);
 
-    controller.syncFromMirror(bottomMirror);
+    tableHolder.scrollLeft = 300;
+    controller.syncFromTable();
 
-    expect(tableHolder.scrollLeft).toBe(60);
-    expect(bottomMirror.scrollLeft).toBe(60);
+    expect(bottomMirror.scrollLeft).toBe(300);
 
     controller.destroy();
   });

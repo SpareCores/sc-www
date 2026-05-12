@@ -3,18 +3,15 @@ import { ElementRef, Signal, WritableSignal } from "@angular/core";
 export interface ScrollbarMirrorPosition {
   left: number;
   width: number;
-  top?: number;
   bottom?: number;
 }
 
 export interface ScrollbarMirrorState {
-  topPosition: ScrollbarMirrorPosition | null;
   bottomPosition: ScrollbarMirrorPosition | null;
   innerWidth: number;
 }
 
 export const INITIAL_SCROLLBAR_MIRROR_STATE: ScrollbarMirrorState = {
-  topPosition: null,
   bottomPosition: null,
   innerWidth: 0,
 };
@@ -26,7 +23,7 @@ export class ScrollbarMirrorController {
   static readonly mirrorViewportInset = 0;
   static readonly overflowVisibilityThreshold = 1;
 
-  private isSyncing = false;
+  private syncingFrom: "table" | "mirror" | null = null;
   private captureHandler: (e: Event) => void;
   private syncResetFrameId: number | null = null;
 
@@ -84,7 +81,6 @@ export class ScrollbarMirrorController {
     }
 
     this.stateSignal.set({
-      topPosition: null,
       bottomPosition: this.getBottomMirrorPosition(
         mainTable,
         mirrorLeft,
@@ -95,12 +91,12 @@ export class ScrollbarMirrorController {
   }
 
   syncFromTable(): void {
-    if (this.isSyncing) return;
+    if (this.syncingFrom === "mirror") return;
     const tableHolder = this.tableHolderGetter()?.nativeElement as
       | HTMLElement
       | undefined;
     if (!tableHolder) return;
-    this.isSyncing = true;
+    this.syncingFrom = "table";
     try {
       const tableMax = tableHolder.scrollWidth - tableHolder.clientWidth;
       this._applyToMirror(
@@ -114,12 +110,12 @@ export class ScrollbarMirrorController {
   }
 
   syncFromMirror(mirrorEl: HTMLElement): void {
-    if (this.isSyncing) return;
+    if (this.syncingFrom === "table") return;
     const tableHolder = this.tableHolderGetter()?.nativeElement as
       | HTMLElement
       | undefined;
     if (!tableHolder) return;
-    this.isSyncing = true;
+    this.syncingFrom = "mirror";
     try {
       const mirrorMax = mirrorEl.scrollWidth - mirrorEl.clientWidth;
       const tableMax = tableHolder.scrollWidth - tableHolder.clientWidth;
@@ -193,7 +189,7 @@ export class ScrollbarMirrorController {
 
     this.syncResetFrameId = window.requestAnimationFrame(() => {
       this.syncResetFrameId = null;
-      this.isSyncing = false;
+      this.syncingFrom = null;
     });
   }
 
@@ -214,7 +210,6 @@ export class ScrollbarMirrorController {
       position: "fixed",
       left: `${pos.left}px`,
       width: `${pos.width}px`,
-      ...(pos.top !== undefined ? { top: `${pos.top}px` } : {}),
       ...(pos.bottom !== undefined ? { bottom: `${pos.bottom}px` } : {}),
       "z-index": `${ScrollbarMirrorController.mirrorZIndex}`,
       "overflow-x": "auto",
