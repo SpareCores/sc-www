@@ -329,7 +329,7 @@
             id="benchmark_line_{{ benchmarkCategory.id }}"
             [class.compare-section-header]="benchmarkCategory.id === 'openssl'"
           >
-            <td [colSpan]="getSectionColSpan() - 1">
+            <td [colSpan]="getCompareFixedWideContentColSpan()">
               <div>
                 <h3
                   class="text-xl font-semibold flex flex-nowrap gap-2 items-center min-w-0"
@@ -427,6 +427,9 @@
                 </h3>
               </div>
             </td>
+            @if (getCompareFixedWideActionSpacerColSpan()) {
+              <td [colSpan]="getCompareFixedWideActionSpacerColSpan()"></td>
+            }
             <td [colSpan]="1" class="compare-section-header-action-cell">
               @if (!isEmbedded) {
                 <div class="flex justify-end">
@@ -454,7 +457,7 @@
               benchmarkCategory.id === 'compress'
             "
           >
-            <td [colSpan]="getSectionColSpan() - 1">
+            <td [colSpan]="getCompareFixedWideContentColSpan()">
               <div
                 class="compare-chart-content"
                 [style]="getCompareChartContentStyle()"
@@ -564,7 +567,7 @@
                 }
               </div>
             </td>
-            <td [colSpan]="1"></td>
+            <td [colSpan]="getCompareFixedWideTrailingColSpan()"></td>
           </tr>
           @if (
             benchmarkCategory.id === "passmark_cpu" ||
@@ -632,7 +635,7 @@
             ) {
               @if (benchmarkCategory.data.length > 1) {
                 <tr class="compare-fixed-header-row">
-                  <td [colSpan]="getSectionColSpan() - 1">
+                  <td [colSpan]="1" class="compare-fixed-header-label-cell">
                     <div class="ml-4">
                       <div class="flex gap-2 items-center min-w-0">
                         {{ benchmarkData.name }}
@@ -650,6 +653,7 @@
                       </div>
                     </div>
                   </td>
+                  <td [colSpan]="getCompareFixedHeaderSpacerColSpan()"></td>
                   <td [colSpan]="1" class="compare-section-header-action-cell">
                     @if (benchmarkData.description) {
                       <div class="flex justify-end">
@@ -709,7 +713,7 @@
             class="section_header"
             [id]="'benchmark_line_' + chartItem.chart.id"
           >
-            <td [colSpan]="getSectionColSpan() - 1">
+            <td [colSpan]="getCompareFixedWideContentColSpan()">
               <h3
                 class="text-xl font-semibold flex flex-nowrap gap-2 items-center min-w-0"
               >
@@ -753,10 +757,13 @@
                 </lucide-icon>
               </h3>
             </td>
+            @if (getCompareFixedWideActionSpacerColSpan()) {
+              <td [colSpan]="getCompareFixedWideActionSpacerColSpan()"></td>
+            }
             <td [colSpan]="1" class="compare-section-header-action-cell"></td>
           </tr>
           <tr class="compare-fixed-chart-row">
-            <td [colSpan]="getSectionColSpan() - 1">
+            <td [colSpan]="getCompareFixedWideContentColSpan()">
               <div
                 class="compare-chart-content"
                 [style]="getCompareChartContentStyle()"
@@ -776,13 +783,13 @@
                 ></app-benchmark-multi-bar-chart>
               </div>
             </td>
-            <td [colSpan]="1"></td>
+            <td [colSpan]="getCompareFixedWideTrailingColSpan()"></td>
           </tr>
           @if (chartItem.show_more) {
             @for (chartData of chartItem.data ?? []; track chartData) {
               @if (hasMultipleChartData(chartItem)) {
                 <tr class="compare-fixed-header-row">
-                  <td [colSpan]="getSectionColSpan() - 1">
+                  <td [colSpan]="1" class="compare-fixed-header-label-cell">
                     <div class="ml-4">
                       <div class="flex gap-2 items-center min-w-0">
                         {{ chartData.name }}
@@ -800,6 +807,7 @@
                       </div>
                     </div>
                   </td>
+                  <td [colSpan]="getCompareFixedHeaderSpacerColSpan()"></td>
                   <td [colSpan]="1" class="compare-section-header-action-cell">
                     @if (chartData.description) {
                       <div class="flex justify-end">
@@ -863,7 +871,7 @@
             benchmarkCategory.benchmark_id
         ) {
           <tr class="compare-fixed-header-row">
-            <td [colSpan]="getSectionColSpan() - 1">
+            <td [colSpan]="1" class="compare-fixed-header-label-cell">
               <div class="pl-4">
                 <div class="flex flex-nowrap gap-2 items-center min-w-0">
                   <lucide-icon
@@ -885,6 +893,7 @@
                 </div>
               </div>
             </td>
+            <td [colSpan]="getCompareFixedHeaderSpacerColSpan()"></td>
             <td [colSpan]="1" class="compare-section-header-action-cell">
               @if (benchmarkCategory.description) {
                 <div class="flex justify-end">

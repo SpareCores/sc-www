@@ -565,6 +565,25 @@ export class ServerCompareChartsComponent implements OnChanges {
     return Math.max(this.servers.length + 1, 3);
   }
 
+  getCompareFixedWideContentColSpan() {
+    return Math.min(this.getSectionColSpan() - 1, 3);
+  }
+
+  getCompareFixedWideTrailingColSpan() {
+    return Math.max(
+      this.getSectionColSpan() - this.getCompareFixedWideContentColSpan(),
+      1,
+    );
+  }
+
+  getCompareFixedWideActionSpacerColSpan() {
+    return Math.max(this.getCompareFixedWideTrailingColSpan() - 1, 0);
+  }
+
+  getCompareFixedHeaderSpacerColSpan() {
+    return Math.max(this.getSectionColSpan() - 2, 1);
+  }
+
   clipboardURL(event: any, fragment?: string) {
     let url = window.location.href;
 
