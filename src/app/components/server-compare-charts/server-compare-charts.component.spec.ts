@@ -102,11 +102,28 @@ describe("ServerCompareChartsComponent", () => {
 
     const cells = benchmarkRow?.querySelectorAll("td");
 
-    expect(cells?.length).toBe(2);
-    expect(cells?.[0].getAttribute("colspan")).toBe("3");
+    expect(cells?.length).toBe(1);
+    expect(cells?.[0].getAttribute("colspan")).toBe("4");
     expect(cells?.[0].textContent).toContain("OpenSSL");
-    expect(cells?.[1].getAttribute("colspan")).toBe("1");
-    expect(cells?.[1].querySelector("button")).toBeTruthy();
+    expect(cells?.[0].querySelector("button")).toBeTruthy();
+
+    const title = benchmarkRow?.querySelector(
+      ".compare-section-header-title",
+    ) as HTMLElement | null;
+    const titleText = title?.querySelector(
+      ".compare-section-header-title__text",
+    ) as HTMLElement | null;
+    const titleIcons = title?.querySelector(
+      ".compare-section-header-title__icons",
+    ) as HTMLElement | null;
+
+    expect(title).toBeTruthy();
+    expect(titleText?.textContent).toContain("OpenSSL");
+    expect(titleIcons?.querySelectorAll("lucide-icon").length).toBe(2);
+    expect(getComputedStyle(title as HTMLElement).whiteSpace).toBe("nowrap");
+    expect(getComputedStyle(titleText as HTMLElement).whiteSpace).toBe(
+      "nowrap",
+    );
   });
 
   it("renders benchmark category chart rows as full-width rows", () => {
@@ -163,12 +180,11 @@ describe("ServerCompareChartsComponent", () => {
       ".compare-chart-content",
     ) as HTMLDivElement | null;
 
-    expect(cells?.length).toBe(2);
-    expect(cells?.[0].getAttribute("colspan")).toBe("3");
+    expect(cells?.length).toBe(1);
+    expect(cells?.[0].getAttribute("colspan")).toBe("4");
     expect(cells?.[0].querySelector("app-benchmark-line-chart")).toBeTruthy();
-    expect(cells?.[1].getAttribute("colspan")).toBe("1");
-    expect(chartContent?.style.width).toBe("1104px");
-    expect(chartContent?.style.maxWidth).toBe("1104px");
+    expect(chartContent?.style.width).toBe("100%");
+    expect(chartContent?.style.maxWidth).toBe("100%");
   });
 
   it("renders multi-bar chart titles fixed and chart rows full width", () => {
@@ -209,18 +225,16 @@ describe("ServerCompareChartsComponent", () => {
       ".compare-chart-content",
     ) as HTMLDivElement | null;
 
-    expect(titleCells?.length).toBe(2);
-    expect(titleCells?.[0].getAttribute("colspan")).toBe("3");
-    expect(titleCells?.[1].getAttribute("colspan")).toBe("1");
+    expect(titleCells?.length).toBe(1);
+    expect(titleCells?.[0].getAttribute("colspan")).toBe("4");
 
-    expect(chartCells?.length).toBe(2);
-    expect(chartCells?.[0].getAttribute("colspan")).toBe("3");
+    expect(chartCells?.length).toBe(1);
+    expect(chartCells?.[0].getAttribute("colspan")).toBe("4");
     expect(
       chartCells?.[0].querySelector("app-benchmark-multi-bar-chart"),
     ).toBeTruthy();
-    expect(chartCells?.[1].getAttribute("colspan")).toBe("1");
-    expect(chartContent?.style.width).toBe("1104px");
-    expect(chartContent?.style.maxWidth).toBe("1104px");
+    expect(chartContent?.style.width).toBe("100%");
+    expect(chartContent?.style.maxWidth).toBe("100%");
   });
 
   it("keeps benchmark category title and chart sticky spans capped for many servers", () => {

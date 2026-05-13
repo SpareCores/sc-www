@@ -47,6 +47,30 @@ $content-max-width: 1400px;
     transition-timing-function: ease-in;
   }
 
+  .chart-selector-button {
+    @apply min-w-0 justify-between overflow-hidden;
+  }
+
+  .chart-selector-button--responsive {
+    @apply self-stretch md:self-auto;
+  }
+
+  .chart-selector-button__label {
+    @apply min-w-0 flex-1 truncate whitespace-nowrap px-3 py-2 text-left;
+  }
+
+  .chart-selector-button__icon {
+    @apply flex h-full w-12 shrink-0 items-center justify-center rounded-r-lg bg-primary px-3 py-2;
+  }
+
+  .chart-selector-button--comfortable .chart-selector-button__label {
+    @apply px-4 py-3;
+  }
+
+  .chart-selector-button--comfortable .chart-selector-button__icon {
+    @apply px-4 py-3;
+  }
+
   .btn-normal {
     @apply py-3 px-4 rounded-lg;
   }

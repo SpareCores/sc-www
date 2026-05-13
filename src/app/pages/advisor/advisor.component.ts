@@ -54,7 +54,11 @@ import {
   ADVISOR_BREADCRUMBS,
   ADVISOR_BASELINE_REGION_TOOLTIP,
   ADVISOR_CUSTOM_QUERY_PARAM_NAMES,
+  ADVISOR_DISABLED_BASELINE_WORKLOAD_MESSAGE,
   ADVISOR_DEFAULT_CURRENCY,
+  ADVISOR_DEFAULT_WORKLOAD_CONFIG,
+  ADVISOR_EMPTY_BASELINE_WORKLOAD_MESSAGE,
+  ADVISOR_EMPTY_BASELINE_WORKLOAD_TOAST_ID,
   ADVISOR_DEFAULT_MINIMUM_MEMORY_GIB,
   ADVISOR_DEFAULT_OPTIMIZATION_GOAL,
   ADVISOR_DEFAULT_PAGE_LIMIT,
@@ -67,6 +71,7 @@ import {
   ADVISOR_PAGE_LIMITS,
   ADVISOR_PRICE_ALLOCATION_TOOLTIP,
   ADVISOR_PAGE_TITLE,
+  ADVISOR_LOADING_BASELINE_WORKLOAD_MESSAGE,
   ADVISOR_MINIMUM_MEMORY_MIN_GIB,
   ADVISOR_REQUIRED_INPUT_LABELS,
   ADVISOR_SEO,
@@ -84,8 +89,8 @@ import {
   encodeAdvisorColumnState,
   findAdvisorBenchmarkConfigOption,
   findAdvisorBenchmarkScore,
+  getAdvisorBenchmarkConfigKey,
   getAdvisorCompareKey,
-  getDefaultAdvisorBenchmarkConfig,
   hasCustomAdvisorColumns,
   isAdvisorOptimizationGoal,
   normalizeAdvisorQueryStringArray,
@@ -156,6 +161,7 @@ export class AdvisorComponent implements OnInit, OnDestroy {
   private activeRecommendationRequestKey: string | null = null;
   private baselineBenchmarkRequestVersion = 0;
   private baselineRegionRequestVersion = 0;
+  private emptyBaselineWorkloadToastKey: string | null = null;
 
   readonly title = ADVISOR_PAGE_TITLE;
   readonly description = ADVISOR_PAGE_DESCRIPTION;
@@ -175,6 +181,7 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     [],
   );
   readonly isLoadingBenchmarkConfigs = signal(false);
+  readonly isLoadingBaselineBenchmarkScores = signal(false);
   readonly baselineBenchmarkScores = signal<BenchmarkScore[]>([]);
   readonly optimizationGoal = signal<AdvisorOptimizationGoal>(
     ADVISOR_DEFAULT_OPTIMIZATION_GOAL,
@@ -247,9 +254,53 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     );
   });
 
+  readonly baselineBenchmarkConfigOptions = computed(() => {
+    if (!this.selectedBaselineServer()) {
+      return [];
+    }
+
+    const baselineBenchmarkConfigKeys = new Set(
+      this.baselineBenchmarkScores().map((score) =>
+        getAdvisorBenchmarkConfigKey(score),
+      ),
+    );
+
+    if (!baselineBenchmarkConfigKeys.size) {
+      return [];
+    }
+
+    return this.benchmarkConfigOptions().filter((option) =>
+      baselineBenchmarkConfigKeys.has(getAdvisorBenchmarkConfigKey(option)),
+    );
+  });
+
+  readonly isBaselineWorkloadControlDisabled = computed(() => {
+    return (
+      !this.selectedBaselineServer() ||
+      this.isLoadingBaselineBenchmarkScores() ||
+      this.baselineBenchmarkConfigOptions().length === 0
+    );
+  });
+
+  readonly baselineWorkloadEmptyMessage = computed(() => {
+    if (!this.selectedBaselineServer()) {
+      return ADVISOR_DISABLED_BASELINE_WORKLOAD_MESSAGE;
+    }
+
+    if (this.isLoadingBaselineBenchmarkScores()) {
+      return ADVISOR_LOADING_BASELINE_WORKLOAD_MESSAGE;
+    }
+
+    if (this.baselineBenchmarkConfigOptions().length === 0) {
+      return ADVISOR_EMPTY_BASELINE_WORKLOAD_MESSAGE;
+    }
+
+    return "No matching workloads found.";
+  });
+
   readonly visibleBenchmarkConfigOptions = computed(() => {
     const searchTerm = this.benchmarkConfigInput().trim().toLowerCase();
-    const options = this.benchmarkConfigOptions();
+    const options = this.baselineBenchmarkConfigOptions();
 
     if (searchTerm.length < 3) {
       return options;
@@ -552,9 +603,11 @@ export class AdvisorComponent implements OnInit, OnDestroy {
         selectedBenchmarkConfig: this.selectedBenchmarkConfig(),
         benchmarkOptions: this.visibleBenchmarkConfigOptions(),
         benchmarkGroups: this.benchmarkGroups(),
+        disabled: this.isBaselineWorkloadControlDisabled(),
+        loading: this.isLoadingBaselineBenchmarkScores(),
         emptyMessage: this.isLoadingBenchmarkConfigs()
           ? "Loading benchmark workloads..."
-          : "No matching workloads found.",
+          : this.baselineWorkloadEmptyMessage(),
       },
       {
         name: "optimization_goal",
@@ -757,10 +810,59 @@ export class AdvisorComponent implements OnInit, OnDestroy {
 
       if (!selectedBaselineServer) {
         this.baselineBenchmarkScores.set([]);
+        this.isLoadingBaselineBenchmarkScores.set(false);
         return;
       }
 
       void this.loadBaselineBenchmarkScores(selectedBaselineServer);
+    });
+
+    effect(() => {
+      const selectedBaselineServer = this.selectedBaselineServer();
+      const selectedBenchmarkConfig = this.selectedBenchmarkConfig();
+
+      if (!selectedBaselineServer) {
+        this.emptyBaselineWorkloadToastKey = null;
+
+        if (selectedBenchmarkConfig) {
+          this.selectedBenchmarkConfig.set(null);
+          this.benchmarkConfigInput.set("");
+        }
+
+        return;
+      }
+
+      if (this.isLoadingBaselineBenchmarkScores()) {
+        return;
+      }
+
+      const baselineBenchmarkConfigOptions =
+        this.baselineBenchmarkConfigOptions();
+
+      if (baselineBenchmarkConfigOptions.length === 0) {
+        this.showEmptyBaselineWorkloadToast(selectedBaselineServer);
+
+        if (selectedBenchmarkConfig) {
+          this.selectedBenchmarkConfig.set(null);
+          this.benchmarkConfigInput.set("");
+        }
+
+        return;
+      }
+
+      this.emptyBaselineWorkloadToastKey = null;
+
+      if (
+        selectedBenchmarkConfig &&
+        !baselineBenchmarkConfigOptions.some(
+          (option) =>
+            getAdvisorBenchmarkConfigKey(option) ===
+            getAdvisorBenchmarkConfigKey(selectedBenchmarkConfig),
+        )
+      ) {
+        this.selectedBenchmarkConfig.set(null);
+        this.benchmarkConfigInput.set("");
+      }
     });
 
     effect(() => {
@@ -1125,10 +1227,6 @@ export class AdvisorComponent implements OnInit, OnDestroy {
   }
 
   clearFilters(): void {
-    const defaultBenchmarkConfig = getDefaultAdvisorBenchmarkConfig(
-      this.benchmarkConfigOptions(),
-    );
-
     this.query.set({});
     this.selectedBaselineServer.set(null);
     this.limitToSameArchitecture.set(false);
@@ -1136,8 +1234,8 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     this.baselineServerInput.set("");
     this.pendingBaselineVendorId.set(null);
     this.pendingBaselineApiReference.set(null);
-    this.selectedBenchmarkConfig.set(defaultBenchmarkConfig);
-    this.benchmarkConfigInput.set(defaultBenchmarkConfig?.displayName || "");
+    this.selectedBenchmarkConfig.set(null);
+    this.benchmarkConfigInput.set("");
     this.pendingWorkloadId.set(null);
     this.pendingWorkloadConfig.set(null);
     this.optimizationGoal.set(ADVISOR_DEFAULT_OPTIMIZATION_GOAL);
@@ -1211,13 +1309,6 @@ export class AdvisorComponent implements OnInit, OnDestroy {
         );
 
         this.benchmarkConfigOptions.set(options);
-
-        const defaultOption = getDefaultAdvisorBenchmarkConfig(options);
-
-        if (defaultOption && !this.selectedBenchmarkConfig()) {
-          this.selectedBenchmarkConfig.set(defaultOption);
-          this.benchmarkConfigInput.set(defaultOption.displayName);
-        }
       })
       .catch((error) => {
         console.error("Failed to preload advisor benchmark configs", error);
@@ -1232,6 +1323,8 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     server: AdvisorBaselineServer,
   ): Promise<void> {
     const requestVersion = ++this.baselineBenchmarkRequestVersion;
+    this.isLoadingBaselineBenchmarkScores.set(true);
+    this.baselineBenchmarkScores.set([]);
 
     try {
       const response = await this.keeperApi.getServerBenchmark(
@@ -1259,6 +1352,10 @@ export class AdvisorComponent implements OnInit, OnDestroy {
 
       console.error("Failed to load advisor baseline benchmark scores", error);
       this.baselineBenchmarkScores.set([]);
+    } finally {
+      if (requestVersion === this.baselineBenchmarkRequestVersion) {
+        this.isLoadingBaselineBenchmarkScores.set(false);
+      }
     }
   }
 
@@ -1578,7 +1675,8 @@ export class AdvisorComponent implements OnInit, OnDestroy {
 
     if (workloadId) {
       queryParams.workload_id = workloadId;
-      queryParams.workload_config = workloadConfig || "{}";
+      queryParams.workload_config =
+        workloadConfig || ADVISOR_DEFAULT_WORKLOAD_CONFIG;
     }
 
     if (this.optimizationGoal() !== "cost") {
@@ -1656,6 +1754,23 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     this.totalRecommendationCount.set(0);
     this.totalPages.set(0);
     this.isLoadingRecommendations.set(false);
+  }
+
+  private showEmptyBaselineWorkloadToast(server: AdvisorBaselineServer): void {
+    const baselineKey = getAdvisorCompareKey(server);
+
+    if (this.emptyBaselineWorkloadToastKey === baselineKey) {
+      return;
+    }
+
+    this.emptyBaselineWorkloadToastKey = baselineKey;
+    this.toastService.show({
+      id: ADVISOR_EMPTY_BASELINE_WORKLOAD_TOAST_ID,
+      title: "No baseline workloads found",
+      body: `${ADVISOR_EMPTY_BASELINE_WORKLOAD_MESSAGE} Choose another baseline server.`,
+      type: "warning",
+      duration: 5000,
+    });
   }
 
   private toggleCompare(server: {

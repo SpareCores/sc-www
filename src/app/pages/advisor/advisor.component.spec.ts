@@ -10,11 +10,15 @@ import { BehaviorSubject, Subject } from "rxjs";
 import { OrderDir, Status } from "../../../../sdk/data-contracts";
 import { AdvisorComponent } from "./advisor.component";
 import {
+  ADVISOR_DISABLED_BASELINE_WORKLOAD_MESSAGE,
   ADVISOR_DEFAULT_MINIMUM_MEMORY_GIB,
   ADVISOR_DEFAULT_PAGE_LIMIT,
   ADVISOR_DEFAULT_PEAK_GPU_MEMORY_GIB,
   ADVISOR_MINIMUM_MEMORY_MIN_GIB,
   ADVISOR_DEFAULT_SERVER_COLUMNS,
+  ADVISOR_EMPTY_BASELINE_WORKLOAD_MESSAGE,
+  ADVISOR_EMPTY_BASELINE_WORKLOAD_TOAST_ID,
+  ADVISOR_LOADING_BASELINE_WORKLOAD_MESSAGE,
   ADVISOR_PAGE_LIMITS,
   ADVISOR_TABLE_COLUMNS,
 } from "./advisor.constants";
@@ -266,6 +270,33 @@ describe("AdvisorComponent", () => {
     queryParams$.next({});
   });
 
+  function selectBaselineServer(): void {
+    const baselineServer = component.serverTableRows()[0];
+    component.selectedBaselineServer.set(baselineServer);
+    component.baselineServerInput.set("aws large");
+    fixture.detectChanges();
+    flushMicrotasks();
+    fixture.detectChanges();
+  }
+
+  function selectFirstAvailableWorkload(): void {
+    const workload = component.baselineBenchmarkConfigOptions()[0];
+
+    if (!workload) {
+      fail("Expected an available baseline workload");
+      return;
+    }
+
+    component.onCustomControlChanged({
+      name: "server_workload",
+      value: {
+        inputValue: workload.displayName,
+        selectedBenchmarkConfig: workload,
+      },
+    });
+    fixture.detectChanges();
+  }
+
   it("preloads baseline servers with the advisor default column set", () => {
     expect(getServersSelect).toHaveBeenCalledOnceWith([
       ...ADVISOR_DEFAULT_SERVER_COLUMNS,
@@ -361,6 +392,9 @@ describe("AdvisorComponent", () => {
     const optimizationGoalControl = component
       .customControls()
       .find((control) => control.name === "optimization_goal");
+    const workloadControl = component
+      .customControls()
+      .find((control) => control.name === "server_workload");
     const minimumMemoryControl = component
       .customControls()
       .find((control) => control.name === "minimum_memory");
@@ -369,6 +403,10 @@ describe("AdvisorComponent", () => {
       .find((control) => control.name === "peak_gpu_memory");
 
     expect(optimizationGoalControl?.type).toBe("singleSelect");
+    expect(workloadControl?.disabled).toBeTrue();
+    expect(workloadControl?.emptyMessage).toBe(
+      ADVISOR_DISABLED_BASELINE_WORKLOAD_MESSAGE,
+    );
     expect(minimumMemoryControl?.numericValue).toBeNull();
     expect(minimumMemoryControl?.unit).toBe("GiB");
     expect(minimumMemoryControl?.description).toContain("GiB");
@@ -400,10 +438,130 @@ describe("AdvisorComponent", () => {
       .find((control) => control.name === "limit_architecture");
 
     expect(component.minimumMemoryGiB()).toBeNull();
+    expect(component.selectedBenchmarkConfig()).toBeNull();
     expect(minimumMemoryControl?.required).toBeFalsy();
     expect(cpuAllocationControl?.title).toBe("CPU allocation");
     expect(cpuArchitectureControl?.title).toBe("CPU architecture");
   });
+
+  it("enables and filters baseline workloads after baseline scores load", fakeAsync(() => {
+    component.benchmarkConfigOptions.set([
+      ...component.benchmarkConfigOptions(),
+      {
+        benchmark_id: "geekbench:score",
+        config: "{}",
+        category: "geekbench",
+        configTitle: "",
+        displayName: "Geekbench Score",
+        framework: "geekbench",
+      },
+    ]);
+
+    expect(
+      component
+        .customControls()
+        .find((control) => control.name === "server_workload")?.disabled,
+    ).toBeTrue();
+
+    selectBaselineServer();
+
+    const workloadControl = component
+      .customControls()
+      .find((control) => control.name === "server_workload");
+
+    expect(workloadControl?.disabled).toBeFalse();
+    expect(
+      workloadControl?.benchmarkOptions?.map((option) => option.benchmark_id),
+    ).toEqual(["stress_ng:bestn"]);
+    expect(
+      workloadControl?.benchmarkGroups?.flatMap((group) =>
+        group.options.map((option) => option.benchmark_id),
+      ),
+    ).toEqual(["stress_ng:bestn"]);
+  }));
+
+  it("marks baseline workload as loading while baseline scores load", fakeAsync(() => {
+    let resolveBenchmarkScores:
+      | ((value: {
+          body: Array<{ benchmark_id: string; config: string; score: number }>;
+        }) => void)
+      | undefined;
+
+    getServerBenchmark.and.returnValue(
+      new Promise((resolve) => {
+        resolveBenchmarkScores = resolve;
+      }),
+    );
+
+    const baselineServer = component.serverTableRows()[0];
+    component.selectedBaselineServer.set(baselineServer);
+    component.baselineServerInput.set("aws large");
+    fixture.detectChanges();
+
+    const loadingControl = component
+      .customControls()
+      .find((control) => control.name === "server_workload");
+
+    expect(loadingControl?.disabled).toBeTrue();
+    expect(loadingControl?.loading).toBeTrue();
+    expect(loadingControl?.emptyMessage).toBe(
+      ADVISOR_LOADING_BASELINE_WORKLOAD_MESSAGE,
+    );
+
+    const advisorPage = fixture.nativeElement.querySelector(
+      ".advisor-page",
+    ) as HTMLElement;
+
+    expect(advisorPage.classList).toContain(
+      "advisor-page--loading-baseline-workloads",
+    );
+    expect(getComputedStyle(advisorPage).cursor).toBe("wait");
+
+    resolveBenchmarkScores?.({
+      body: [
+        {
+          benchmark_id: "stress_ng:bestn",
+          config: "{}",
+          score: 100,
+        },
+      ],
+    });
+    flushMicrotasks();
+    fixture.detectChanges();
+
+    const loadedControl = component
+      .customControls()
+      .find((control) => control.name === "server_workload");
+
+    expect(loadedControl?.disabled).toBeFalse();
+    expect(loadedControl?.loading).toBeFalse();
+    expect(advisorPage.classList).not.toContain(
+      "advisor-page--loading-baseline-workloads",
+    );
+  }));
+
+  it("shows a warning toast when a baseline has no benchmark workloads", fakeAsync(() => {
+    getServerBenchmark.and.resolveTo({ body: [] });
+
+    selectBaselineServer();
+
+    const workloadControl = component
+      .customControls()
+      .find((control) => control.name === "server_workload");
+
+    expect(component.baselineBenchmarkConfigOptions()).toEqual([]);
+    expect(workloadControl?.disabled).toBeTrue();
+    expect(workloadControl?.emptyMessage).toBe(
+      ADVISOR_EMPTY_BASELINE_WORKLOAD_MESSAGE,
+    );
+    expect(showToast).toHaveBeenCalledWith(
+      jasmine.objectContaining({
+        id: ADVISOR_EMPTY_BASELINE_WORKLOAD_TOAST_ID,
+        title: "No baseline workloads found",
+        type: "warning",
+      }),
+    );
+  }));
 
   it("restores advisor state from the route query params", async () => {
     queryParams$.next({
@@ -479,12 +637,8 @@ describe("AdvisorComponent", () => {
   });
 
   it("derives minimum memory from the baseline server and utilization when empty", fakeAsync(() => {
-    const baselineServer = component.serverTableRows()[0];
-
-    component.selectedBaselineServer.set(baselineServer);
-    component.baselineServerInput.set("aws large");
-    fixture.detectChanges();
-    flushMicrotasks();
+    selectBaselineServer();
+    selectFirstAvailableWorkload();
 
     component.averageCpuUtilization.set(50);
 
@@ -516,12 +670,8 @@ describe("AdvisorComponent", () => {
     expect(component.recommendationQuery()).toBeNull();
     expect(searchServers).not.toHaveBeenCalled();
 
-    const baselineServer = component.serverTableRows()[0];
-    component.selectedBaselineServer.set(baselineServer);
-    component.baselineServerInput.set("aws large");
-    fixture.detectChanges();
-    flushMicrotasks();
-    fixture.detectChanges();
+    selectBaselineServer();
+    selectFirstAvailableWorkload();
 
     component.averageCpuUtilization.set(50);
 
@@ -562,9 +712,8 @@ describe("AdvisorComponent", () => {
   }));
 
   it("only applies price allocation to recommendation queries when enabled", fakeAsync(() => {
-    const baselineServer = component.serverTableRows()[0];
-    component.selectedBaselineServer.set(baselineServer);
-    component.baselineServerInput.set("aws large");
+    selectBaselineServer();
+    selectFirstAvailableWorkload();
     component.selectCurrency(
       component.availableCurrencies.find(
         (currency) => currency.slug === "EUR",
@@ -603,12 +752,8 @@ describe("AdvisorComponent", () => {
   }));
 
   it("loads baseline region options and applies the dedicated region filter", fakeAsync(() => {
-    const baselineServer = component.serverTableRows()[0];
-    component.selectedBaselineServer.set(baselineServer);
-    component.baselineServerInput.set("aws large");
-    fixture.detectChanges();
-    flushMicrotasks();
-    fixture.detectChanges();
+    selectBaselineServer();
+    selectFirstAvailableWorkload();
 
     expect(getServerPrices).toHaveBeenCalledOnceWith("aws", "large");
     expect(component.baselineRegionOptions()).toEqual([
@@ -710,12 +855,8 @@ describe("AdvisorComponent", () => {
   });
 
   it("resets to cost ordering when optimization goal changes", fakeAsync(() => {
-    const baselineServer = component.serverTableRows()[0];
-    component.selectedBaselineServer.set(baselineServer);
-    component.baselineServerInput.set("aws large");
-    fixture.detectChanges();
-    flushMicrotasks();
-    fixture.detectChanges();
+    selectBaselineServer();
+    selectFirstAvailableWorkload();
 
     component.manualOrderBy.set("status");
     component.manualOrderDir.set(OrderDir.Asc);
@@ -822,12 +963,8 @@ describe("AdvisorComponent", () => {
   });
 
   it("debounces rapid recommendation filter changes", fakeAsync(() => {
-    const baselineServer = component.serverTableRows()[0];
-    component.selectedBaselineServer.set(baselineServer);
-    component.baselineServerInput.set("aws large");
-    fixture.detectChanges();
-    flushMicrotasks();
-    fixture.detectChanges();
+    selectBaselineServer();
+    selectFirstAvailableWorkload();
 
     component.averageCpuUtilization.set(20);
     fixture.detectChanges();
@@ -853,12 +990,8 @@ describe("AdvisorComponent", () => {
   }));
 
   it("requests recommendations again for a repeated query", fakeAsync(() => {
-    const baselineServer = component.serverTableRows()[0];
-    component.selectedBaselineServer.set(baselineServer);
-    component.baselineServerInput.set("aws large");
-    fixture.detectChanges();
-    flushMicrotasks();
-    fixture.detectChanges();
+    selectBaselineServer();
+    selectFirstAvailableWorkload();
 
     component.averageCpuUtilization.set(50);
     fixture.detectChanges();
@@ -898,12 +1031,8 @@ describe("AdvisorComponent", () => {
       });
     });
 
-    const baselineServer = component.serverTableRows()[0];
-    component.selectedBaselineServer.set(baselineServer);
-    component.baselineServerInput.set("aws large");
-    fixture.detectChanges();
-    flushMicrotasks();
-    fixture.detectChanges();
+    selectBaselineServer();
+    selectFirstAvailableWorkload();
 
     component.averageCpuUtilization.set(50);
     fixture.detectChanges();
@@ -1049,9 +1178,7 @@ describe("AdvisorComponent", () => {
     expect(component.query()).toEqual({});
     expect(component.selectedBaselineServer()).toBeNull();
     expect(component.baselineServerInput()).toBe("");
-    expect(component.selectedBenchmarkConfig()?.benchmark_id).toBe(
-      "stress_ng:bestn",
-    );
+    expect(component.selectedBenchmarkConfig()).toBeNull();
     expect(component.optimizationGoal()).toBe("cost");
     expect(component.averageCpuUtilization()).toBeNull();
     expect(component.minimumMemoryGiB()).toBe(
