@@ -180,6 +180,10 @@ export class ServerCompareChartsComponent implements OnChanges {
   }
 
   getCompareChartContentStyle() {
+    if (!this.shouldUseSplitCompareRows()) {
+      return "width: 100%; max-width: 100%;";
+    }
+
     if (!this.isBrowser()) {
       return "width: 100%; max-width: 100%;";
     }
@@ -192,6 +196,23 @@ export class ServerCompareChartsComponent implements OnChanges {
     }
 
     return `width: ${chartWidthPx}px; max-width: ${chartWidthPx}px;`;
+  }
+
+  shouldUseSplitCompareRows() {
+    if (!this.isBrowser()) {
+      return this.servers.length > 4;
+    }
+
+    const tableHolder = document.getElementById("table_holder");
+    const tableHeader = document.querySelector("#main-table thead");
+    const tableHolderWidth = tableHolder?.clientWidth ?? 0;
+    const tableHeaderWidth = tableHeader?.scrollWidth ?? 0;
+
+    if (tableHolderWidth && tableHeaderWidth) {
+      return tableHeaderWidth - tableHolderWidth > 1;
+    }
+
+    return this.servers.length > 4;
   }
 
   getBenchmark(server: ExtendedServerDetails, isMulti: boolean) {
@@ -562,13 +583,17 @@ export class ServerCompareChartsComponent implements OnChanges {
   }
 
   getCompareFixedWideContentColSpan() {
+    if (!this.shouldUseSplitCompareRows()) {
+      return this.getSectionColSpan();
+    }
+
     return Math.min(this.getSectionColSpan() - 1, 3);
   }
 
   getCompareFixedWideTrailingColSpan() {
     return Math.max(
       this.getSectionColSpan() - this.getCompareFixedWideContentColSpan(),
-      1,
+      0,
     );
   }
 

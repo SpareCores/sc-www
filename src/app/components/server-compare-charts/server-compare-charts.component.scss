@@ -93,11 +93,36 @@
       td.compare-section-header-action-cell {
         position: sticky;
         right: 0;
-        z-index: 21;
+        z-index: 22;
+        white-space: nowrap;
         background-color: inherit;
+        display: flex;
+        justify-content: flex-end;
+      }
+    }
+
+    tr.section_header {
+      td.compare-section-header-action-cell {
+        @apply bg-secondary;
       }
     }
   }
+}
+
+.compare-section-header-title {
+  @apply inline-flex max-w-none flex-nowrap items-center gap-2 whitespace-nowrap;
+}
+
+.compare-section-header-row {
+  @apply flex items-center justify-between gap-4;
+}
+
+.compare-section-header-title__text {
+  @apply whitespace-nowrap leading-tight;
+}
+
+.compare-section-header-title__icons {
+  @apply inline-flex shrink-0 items-center gap-2;
 }
 
 .fixed_thead {
