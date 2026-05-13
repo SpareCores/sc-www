@@ -185,11 +185,7 @@ export class ServerCompareChartsComponent implements OnChanges {
     }
 
     const tableHolder = document.getElementById("table_holder");
-    const trailingGutterPx = 96;
-    const chartWidthPx = Math.max(
-      0,
-      (tableHolder?.clientWidth ?? 0) - trailingGutterPx,
-    );
+    const chartWidthPx = Math.max(0, tableHolder?.clientWidth ?? 0);
 
     if (!chartWidthPx) {
       return "width: 100%; max-width: 100%;";

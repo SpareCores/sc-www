@@ -167,8 +167,8 @@ describe("ServerCompareChartsComponent", () => {
     expect(cells?.[0].getAttribute("colspan")).toBe("3");
     expect(cells?.[0].querySelector("app-benchmark-line-chart")).toBeTruthy();
     expect(cells?.[1].getAttribute("colspan")).toBe("1");
-    expect(chartContent?.style.width).toBe("1104px");
-    expect(chartContent?.style.maxWidth).toBe("1104px");
+    expect(chartContent?.style.width).toBe("1200px");
+    expect(chartContent?.style.maxWidth).toBe("1200px");
   });
 
   it("renders multi-bar chart titles fixed and chart rows full width", () => {
@@ -219,8 +219,8 @@ describe("ServerCompareChartsComponent", () => {
       chartCells?.[0].querySelector("app-benchmark-multi-bar-chart"),
     ).toBeTruthy();
     expect(chartCells?.[1].getAttribute("colspan")).toBe("1");
-    expect(chartContent?.style.width).toBe("1104px");
-    expect(chartContent?.style.maxWidth).toBe("1104px");
+    expect(chartContent?.style.width).toBe("1200px");
+    expect(chartContent?.style.maxWidth).toBe("1200px");
   });
 
   it("keeps benchmark category title and chart sticky spans capped for many servers", () => {
