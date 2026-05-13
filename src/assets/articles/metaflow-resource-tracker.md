@@ -8,7 +8,7 @@ teaser: Seamlessly track the resource usage of e.g. Metaflow steps and find the 
 image: /assets/images/blog/thumbnails/metaflow-tracker.webp
 image_alt: Screenshot of a Metaflow card on resource usage of a GPU workflow step.
 author: Gergely Daroczi
-tags: [resource-tracker, metaflow, featured]
+tags: [resource-tracker, open-source, metaflow, featured]
 ---
 
 Over the past year, we focused on collecting, generating, and standardizing
