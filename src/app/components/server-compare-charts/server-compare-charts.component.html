@@ -336,16 +336,20 @@
             <td [colSpan]="getCompareFixedWideContentColSpan()">
               <div>
                 <h3
-                  class="text-xl font-semibold flex flex-nowrap gap-2 items-center min-w-0"
+                  class="text-xl font-semibold flex gap-2 items-start min-w-0"
                 >
                   <lucide-icon
                     [name]="benchmarkCategory.name | benchmarkIcon"
-                    class="h-6 w-6"
+                    class="h-6 w-6 shrink-0"
                   ></lucide-icon>
-                  <span class="truncate">{{ benchmarkCategory.name }}</span>
+                  <span
+                    class="flex-1 min-w-0 whitespace-normal break-words leading-tight"
+                  >
+                    {{ benchmarkCategory.name }}
+                  </span>
                   <lucide-icon
                     name="circle-arrow-up"
-                    class="h-4 w-4 text-gray-200"
+                    class="h-4 w-4 text-gray-200 shrink-0"
                     (mouseenter)="showTooltip($event, 'Higher is better.')"
                     (mouseleave)="hideTooltip()"
                   >
@@ -880,13 +884,15 @@
                 <div class="flex flex-nowrap gap-2 items-center min-w-0">
                   <lucide-icon
                     [name]="benchmarkCategory.name | benchmarkIcon"
-                    class="h-6 w-6"
+                    class="h-6 w-6 shrink-0"
                   ></lucide-icon>
-                  <span class="truncate">{{ benchmarkCategory.name }}</span>
+                  <span class="whitespace-nowrap">{{
+                    benchmarkCategory.name
+                  }}</span>
                   @if (benchmarkCategory.description) {
                     <lucide-icon
                       name="info"
-                      class="h-4 w-4 text-gray-200"
+                      class="h-4 w-4 text-gray-200 shrink-0"
                       (mouseenter)="
                         showTooltip($event, benchmarkCategory.description)
                       "
@@ -897,6 +903,7 @@
                 </div>
               </div>
             </td>
+
             <td [colSpan]="getCompareFixedHeaderSpacerColSpan()"></td>
             <td [colSpan]="1" class="compare-section-header-action-cell">
               @if (benchmarkCategory.description) {
