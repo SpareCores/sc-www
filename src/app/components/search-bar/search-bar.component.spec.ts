@@ -247,6 +247,40 @@ describe("SearchBarComponent", () => {
     expect(hints).not.toContain("No matching workloads found.");
   });
 
+  it("disables benchmark config inputs when the custom control is disabled", () => {
+    component.filterCategories = [
+      {
+        category_id: "advisor",
+        name: "Advisor",
+        icon: "bot",
+        collapsed: false,
+      },
+    ];
+    component.customControls = [
+      {
+        name: "benchmark_config",
+        category_id: "advisor",
+        type: "benchmarkConfigSelect",
+        title: "Workload",
+        placeholder: "Search workload",
+        disabled: true,
+        loading: true,
+        benchmarkGroups: [],
+      },
+    ];
+
+    fixture.detectChanges();
+
+    const input = fixture.nativeElement.querySelector(
+      'input[placeholder="Search workload"]',
+    ) as HTMLInputElement;
+
+    expect(input.disabled).toBeTrue();
+    expect(input.classList).toContain("custom-autocomplete__input--loading");
+    expect(input.getAttribute("aria-busy")).toBe("true");
+    expect(getComputedStyle(input).cursor).toBe("wait");
+  });
+
   it("shows extra-parameter vendor regions as checked while disabled", () => {
     component.filterCategories = [
       {
