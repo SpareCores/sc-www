@@ -176,7 +176,7 @@ export class ServerCompareChartsComponent implements OnChanges {
 
   getServerColumnWidth(server: ExtendedServerDetails) {
     const displayNameLength = server.display_name?.length ?? 0;
-    return `max(12rem, ${displayNameLength + 4}ch)`;
+    return `max(10.5rem, ${displayNameLength + 3}ch)`;
   }
 
   getCompareChartContentStyle() {

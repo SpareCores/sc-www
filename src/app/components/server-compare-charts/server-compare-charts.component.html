@@ -123,13 +123,17 @@
               <div [style]="getSScoreStyle(server)">
                 {{ getSScore(server) }}
               </div>
-              <div class="text-xs">
-                Best (ondemand):
-                {{ getSScoreCustom(server, server.bestOndemandPrice?.price) }}
+              <div class="text-xs flex flex-col">
+                <span>Best (ondemand):</span>
+                <span>{{
+                  getSScoreCustom(server, server.bestOndemandPrice?.price)
+                }}</span>
               </div>
-              <div class="text-xs">
-                Best (spot):
-                {{ getSScoreCustom(server, server.bestSpotPrice?.price) }}
+              <div class="text-xs flex flex-col">
+                <span>Best (spot):</span>
+                <span>{{
+                  getSScoreCustom(server, server.bestSpotPrice?.price)
+                }}</span>
               </div>
               @for (priceData of server.additionalSpotPrices; track priceData) {
                 <div class="flex flex-col">

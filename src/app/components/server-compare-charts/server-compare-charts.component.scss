@@ -1,7 +1,7 @@
 .items_table {
   @apply w-full text-white;
 
-  --compare-first-column-width: clamp(18rem, 22vw, 20rem);
+  --compare-first-column-width: clamp(8rem, 12vw, 12rem);
 
   position: relative;
   border-collapse: collapse;
