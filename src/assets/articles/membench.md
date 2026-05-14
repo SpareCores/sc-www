@@ -3,7 +3,7 @@
 title: "Modern Memory Bandwidth Benchmarks"
 date: 2026-01-26
 # ~100 character
-teaser: "We open-sourced sc-membench, an modern and flexible memory bandwidth and latency benchmarking tool."
+teaser: "We open-sourced sc-membench, a modern and flexible memory bandwidth and latency benchmarking tool."
 # 320x220
 image: /assets/images/blog/thumbnails/membench.webp
 image_alt: Screenshot of some sc-membench results on the sparecores.com website showing memory bandwidth for read, write, and copy operations along with the CPU cache hierarchy level markers.
