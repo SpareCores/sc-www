@@ -84,3 +84,7 @@ cypress/screenshots
 
 # Unit test coverage output
 coverage/
+
+# explicitly excluded content
+src/assets/legal/
+src/assets/surveys/
