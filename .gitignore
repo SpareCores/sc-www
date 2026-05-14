@@ -88,3 +88,4 @@ coverage/
 # explicitly excluded content
 src/assets/legal/
 src/assets/surveys/
+src/assets/articles/drafts/
