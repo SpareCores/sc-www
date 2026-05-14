@@ -35,6 +35,12 @@ We worked through several real enterprise workload categories during the worksho
 
 For each category, the group discussed which benchmarks matter most and what a sensible weighting looks like, then we tested the weights on real data for stability and consistency. The outcome is a methodology for workload-aware cloud recommendations, with transparent performance-per-cost insights and scoring that is straightforward to audit for bias.
 
+<div class="text-center m-2.5 mt-8 mb-6">
+  <img class="m-auto"
+    alt="Participants of the OVHcloud, SoftwareOne, and Spare Cores hackathon gathered around a table, with logos of the three companies."
+    src="/assets/images/blog/thumbnails/ovh-crayon-sparecores-hackathon.webp"/>
+</div>
+
 This is exactly the kind of work that is hard for any single company to do well on its own. OVHcloud brought deep cloud infrastructure expertise and real customer context. Crayon and SoftwareOne brought advisory experience from helping enterprises navigate cloud decisions every day. Spare Cores contributed the independent benchmarking data and the tooling to slice and combine it. The combination of those three perspectives is what made it possible to move from raw numbers to something production-ready in three days.
 
 ## Lessons Learned
