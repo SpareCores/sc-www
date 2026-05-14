@@ -22,11 +22,8 @@ the detected L1/L2/L3 cache sizes, and some of the observed numbers were just ha
 Debugging took a while. Part of the issue was cache detection: we heavily relied on `lscpu` output,
 which is sometimes wrong or incomplete. We are now investigating `lstopo` as an alternative, which provides more accurate cache information -- although the hypervisor might be still reporting incorrect cache sizes.
 
-But some of the inconsistencies traced back to `bw_mem` itself:
-
-- unexpected performance slowdowns on servers with 100+ vCPUs,
-- `rd` read mode only reading 25% of the buffer (strided), and
-- no support for huge pages.
+But some of the inconsistencies traced back to `bw_mem` itself with no support
+for huge pages and unexpected performance slowdowns on servers with 100+ vCPUs.
 
 ## Introducing `sc-membench`
 
@@ -61,23 +58,23 @@ If you are here for the quick start, feel free to jump ahead to [Running sc-memb
 Honestly, `bw_mem` has been a solid workhorse. It was written in 1996 and it still does
 what it says. But running it at scale on modern cloud hardware exposed a few friction points:
 
-**Strided reads.** The `rd` mode reads with a 32-byte stride, which means only 25% of the
-buffer is actually accessed. The reported bandwidth looks \~4x higher than actual throughput
-unless you switch to `frd`. Easy to miss, and easy to misinterpret.
+- **Strided reads.** The `rd` mode reads "every fourth word", which means only 25% of the
+  buffer is actually accessed. The reported bandwidth looks \~4x higher than actual throughput
+  unless you switch to `frd` -- we actually missed this in our first runs.
 
-**Process-based parallelism.** `bw_mem` forks separate processes per thread. This works fine
-for small CPU counts, but at 96 or 192 vCPUs we observed unexpected slowdowns that we could
-not easily reproduce or explain. `sc-membench` uses OpenMP threads instead, which avoids
-process-creation overhead and gives us direct control over thread placement.
+- **Process-based parallelism.** `bw_mem` forks separate processes per thread. This works fine
+  for small CPU counts, but at 96 or 192 vCPUs we observed unexpected slowdowns that we could
+  not easily reproduce or explain. `sc-membench` uses OpenMP threads instead, which avoids
+  process-creation overhead and gives us direct control over thread placement.
 
-**No huge page support.** `bw_mem` uses `valloc`, so large buffer latency tests pay TLB
-overhead on top of actual memory latency. On a 128 MB buffer with 4 KB pages, you need 32,768
-page table entries -- far beyond the TLB capacity on most CPUs. `sc-membench` handles this
-transparently with `-H`.
+- **No huge page support.** `bw_mem` uses `valloc`, so large buffer latency tests pay TLB
+  overhead on top of actual memory latency. On a 128 MB buffer with 4 KB pages, you need 32,768
+  page table entries -- far beyond the TLB capacity on most CPUs. `sc-membench` handles this
+  transparently with `-H`.
 
-**No statistical reporting for latency.** `bw_mem` reports a single latency number. `sc-membench`
-collects 7-21 independent samples per measurement, reports the median (robust to outliers),
-and continues sampling until the coefficient of variation drops below 5%.
+- **No statistical reporting for latency.** `bw_mem` reports a single latency number. `sc-membench`
+  collects 7-21 independent samples per measurement, reports the median (robust to outliers),
+  and continues sampling until the coefficient of variation drops below 5%.
 
 The full list of differences between `sc-membench` and `bw_mem` can be found in the
 <a href="https://github.com/spareCores/sc-membench#comparison-with-lmbench" target="_blank" rel="noopener">"Comparison to bw_mem" section of the README</a>.
