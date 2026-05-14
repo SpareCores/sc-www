@@ -8,7 +8,7 @@ teaser: "Meet the Spare Cores team at the upcoming conferences in Hungary, the U
 image: /assets/images/blog/thumbnails/conferences-2026.webp
 image_alt: Logos from the 2026 conferences where Spare Cores will present and exhibit.
 author: Gergely Daroczi
-tags: [conference, talk, slides]
+tags: [conference, talk, slides, featured]
 ---
 
 Conference season 2026 is very much here, and we have a full calendar of events coming up. We are presenting and sponsoring at five conferences over the next few months, spread across Budapest (Hungary), London (United Kingdom), Warsaw (Poland), Houston (Texas, USA), and Falkenstein (Germany). Hope to see you there!
@@ -23,7 +23,7 @@ We will be presenting a talk titled `SELECT instance FROM cloud WHERE workload =
 
 ## July 6-9: useR! 2026 in Warsaw (Poland)
 
-We are also heading to <a href="https://user2026.r-project.org/" target="_blank" rel="noopener">useR! 2026</a> in Warsaw, where we will present a similar talk with a stronger R focus: `cloud::servers[workload == R][order(cost_efficiency)][1, eval(task)]`. Building on our work presented at [useR! 2025](/article/upcoming-conferences-2025-Q3) and the [Resource Tracker](/article/resource-tracker-for-r) project, it should be a natural fit for the R community. We are sponsoring this one as well, so look out for the Spare Cores booth!
+We are also heading to <a href="https://user2026.r-project.org/" target="_blank" rel="noopener">useR! 2026</a> in Warsaw, where I will present a similar talk with a stronger R focus: `cloud::servers[workload == R][order(cost_efficiency)][1, eval(task)]`, building on our work presented at [useR! 2025](/article/upcoming-conferences-2025-Q3) and the [Resource Tracker](/article/resource-tracker-for-r) project. We are sponsoring this event as well, so look out for the Spare Cores booth!
 
 I'll also extend my stay for the <a href="https://contributor.r-project.org/events/r-dev-days/" target="_blank" rel="noopener">R Dev Day</a> on July 10, which is a full day workshop with R Core members and contributors from all over the world -- obviously focused on R. I'm supporting the Weblate server for the translation teams. 🌏
 
