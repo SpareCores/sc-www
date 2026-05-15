@@ -11,7 +11,7 @@ author: Gergely Daroczi
 tags: [conference, talk, slides, featured]
 ---
 
-Conference season 2026 is very much here, and we have a full calendar of events coming up. In mid-April, we spent three days at a [hackathon with OVHcloud and Crayon/SoftwareOne](/article/ovh-softwareone-hackathon-2026) in Paris, and next we are presenting and sponsoring at five conferences over the next few months, spread across Budapest (Hungary), London (United Kingdom), Warsaw (Poland), Houston (Texas, USA), and Falkenstein (Germany). Hope to see you there!
+Conference season 2026 is very much here, and we have a full calendar of events coming up. Earlier this year, we presented a talk on cloud cost efficiency metrics at a local DataScience meetup, then we spent three days at a [hackathon with OVHcloud and Crayon/SoftwareOne](/article/ovh-softwareone-hackathon-2026) in Paris, and next we are presenting and sponsoring at five conferences over the next few months, spread across Budapest (Hungary), London (United Kingdom), Warsaw (Poland), Houston (Texas, USA), and Falkenstein (Germany). Hope to see you there!
 
 ## May 18-20: Budapest Data+AI Forum (Hungary)
 
