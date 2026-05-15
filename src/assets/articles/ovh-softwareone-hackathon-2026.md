@@ -59,7 +59,7 @@ A few things that stood out to us from the workshop:
 
 We are excited about this partnership and the direction it points toward. Workload-aware recommendations and compound performance-per-cost scores are something we want to make available broadly on Spare Cores, not just in the context of this specific collaboration.
 
-The initial weights are currently being implemented in the Spare Cores platform, and we will soon publish the related dynamic charts for each workload category per cloud server, and a cloud server comparision tool to make it easier to compare instances across these different workload profiles. Stay tuned for future news from this collaboration!
+The initial weights are currently being implemented in the Spare Cores platform, and we will soon publish the related dynamic charts for each workload category per cloud server, and a cloud server comparison tool to make it easier to compare instances across these different workload profiles. Stay tuned for future news from this collaboration!
 
 ## Feedback
 

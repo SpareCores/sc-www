@@ -80,7 +80,7 @@ is not supported by `musl`.
 ## CLI Usage
 
 The most common pattern is the shell-wrapper mode: pass your command (preferably
-explicitely after `--` to avoid shell expansion) and the tracker monitors the
+explicitly after `--` to avoid shell expansion) and the tracker monitors the
 child process tree from start to finish, by default using a one-second interval,
 then exits with the same exit code as the child process so it is transparent to
 CI and job schedulers:

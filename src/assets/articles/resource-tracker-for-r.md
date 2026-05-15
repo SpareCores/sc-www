@@ -32,7 +32,7 @@ First, install the Python dependency from R:
 reticulate::py_install('resource-tracker')
 ```
 
-Note that on MacOS and Windows you also need `psutil` to be installed on the system,
+Note that on macOS and Windows you also need `psutil` to be installed on the system,
 as the Resource Tracker uses it to collect the resource usage data. On Linux with a modern
 kernel, it is optional -- as the Resource Tracker can fall back to reading `/proc` directly.
 
