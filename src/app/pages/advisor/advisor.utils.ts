@@ -9,7 +9,6 @@ import {
 } from "../../components/search-bar/search-bar.component";
 import {
   ADVISOR_DEFAULT_WORKLOAD_CONFIG,
-  ADVISOR_DEFAULT_WORKLOAD_ID,
   ADVISOR_TABLE_COLUMNS,
 } from "./advisor.constants";
 import {
@@ -108,16 +107,6 @@ export function findAdvisorBenchmarkConfigOption(
   );
 }
 
-export function getDefaultAdvisorBenchmarkConfig(
-  options: SearchBarBenchmarkConfigOption[],
-): SearchBarBenchmarkConfigOption | null {
-  return findAdvisorBenchmarkConfigOption(
-    options,
-    ADVISOR_DEFAULT_WORKLOAD_ID,
-    ADVISOR_DEFAULT_WORKLOAD_CONFIG,
-  );
-}
-
 export function findAdvisorBenchmarkScore(
   scores: BenchmarkScore[],
   selectedBenchmarkConfig: Pick<
@@ -141,6 +130,16 @@ export function findAdvisorBenchmarkScore(
       );
     }) || null
   );
+}
+
+export function getAdvisorBenchmarkConfigKey(
+  benchmarkConfig: Pick<SearchBarBenchmarkConfigOption, "benchmark_id"> & {
+    config?: unknown;
+  },
+): string {
+  return `${benchmarkConfig.benchmark_id}::${normalizeBenchmarkConfig(
+    benchmarkConfig.config,
+  )}`;
 }
 
 export function cloneAdvisorTableColumns(): AdvisorTableColumn[] {

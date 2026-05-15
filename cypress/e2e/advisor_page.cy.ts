@@ -40,16 +40,20 @@ describe("Advisor page", () => {
       .should("contain.text", "aws");
   });
 
-  it("Shows the summary alert and default minimum memory value", () => {
+  it("shows the summary alert with empty minimum memory and no baseline placeholders", () => {
     E2EEvent.visitURL("/advisor", 4000);
 
     cy.contains("No matches yet").should("be.visible");
     cy.get('[id="custom_control_numeric_minimum_memory"]').should(
       "have.value",
-      "0.5",
+      "",
     );
     cy.get('[id="custom_control_numeric_minimum_memory"]')
       .siblings(".custom-stepper__unit")
       .should("contain.text", "GiB");
+    cy.contains("CPU allocation (...)").should("not.exist");
+    cy.contains("CPU architecture (...)").should("not.exist");
+    cy.contains("CPU allocation").should("be.visible");
+    cy.contains("CPU architecture").should("be.visible");
   });
 });

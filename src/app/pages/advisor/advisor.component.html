@@ -1,4 +1,9 @@
-<div class="w-full bg-primary">
+<div
+  class="advisor-page w-full bg-primary"
+  [class.advisor-page--loading-baseline-workloads]="
+    isLoadingBaselineBenchmarkScores()
+  "
+>
   <div class="content pt-16 pb-16">
     <app-breadcrumbs [segments]="breadcrumbs()"></app-breadcrumbs>
 

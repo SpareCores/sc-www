@@ -1,5 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { By } from "@angular/platform-browser";
 
+import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
 import { HeaderComponent } from "./header.component";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
@@ -48,5 +50,14 @@ describe("HeaderComponent", () => {
 
     expect(aboutPartnersLink?.textContent).toContain("Partners");
     expect(mobilePartnersLink?.textContent).toContain("Partners");
+  });
+
+  it("configures the mobile menu dropdown to stay within the viewport", () => {
+    const menuDropdown = fixture.debugElement
+      .query(By.css("#menu_button"))
+      .injector.get(FlowbiteDropdownDirective);
+
+    expect(menuDropdown.dropdownPlacement()).toBe("bottom-end");
+    expect(menuDropdown.dropdownFlip()).toBeTrue();
   });
 });
