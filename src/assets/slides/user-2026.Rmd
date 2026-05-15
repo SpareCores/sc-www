@@ -1,0 +1,31 @@
+---
+title: "cloud::servers[workload == R][order(cost_efficiency)][1, eval(task)]"
+author: Gergely Daroczi
+date: "2026-07-08"
+conference: "useR! 2026"
+conference_url: "https://user2026.r-project.org/"
+location: "Warsaw, Poland"
+format:
+  revealjs:
+    theme: [black, css/custom-4.2.1.css]
+    controls: true
+    navigation-mode: vertical
+    controls-layout: bottom-right
+    controls-tutorial: true
+    menu: false
+    logo: images/sc-square-dark-300x300.jpg
+    margin: 0.1
+    height: 700
+    width: 1150
+    # width: 1244  # was used at revealjs 3.x
+    center-title-slide: false
+    slide-number: true
+    transition: slide
+    hash-type: title
+    code-copy: false
+    code-line-numbers: false
+    highlight-style: arrow-dark
+  gfm:
+    mermaid-format: svg
+    theme: neutral
+---
