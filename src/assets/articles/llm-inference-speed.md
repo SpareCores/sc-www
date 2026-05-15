@@ -447,5 +447,5 @@ We hope that these benchmarks help you make an informed decision when choosing
 the right server type(s) for your LLM serving use case! If you have any
 questions, concerns, or suggestions, please leave a message in the comment
 section below, or
-<a href="https://calendly.com/spare-cores/30min" target="_blank" rel="noopener">
+<a href="https://meet.sparecores.com/intro" target="_blank" rel="noopener">
 schedule a call with us</a> to discuss your needs.

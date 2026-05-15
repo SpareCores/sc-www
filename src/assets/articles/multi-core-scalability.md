@@ -8,7 +8,7 @@ teaser: "Analyzing empirical data to see if it is enough to choose a cloud insta
 image: /assets/images/blog/thumbnails/multi-core-scalability-cpu.webp
 image_alt: CPU close-up
 author: Attila Nagy
-tags: [benchmark, performance, scalability, vcpu, featured]
+tags: [benchmark, performance, scalability, vcpu]
 ---
 
 When you want to run something in the cloud, the question usually arises: exactly what kind of instances should you

@@ -12,6 +12,7 @@ import "prismjs/components/prism-javascript";
 import "prismjs/components/prism-typescript";
 import "prismjs/components/prism-bash";
 import "prismjs/components/prism-python";
+import "prismjs/components/prism-r";
 import "prismjs/components/prism-sql";
 // plugins
 import "prismjs/plugins/line-highlight/prism-line-highlight";

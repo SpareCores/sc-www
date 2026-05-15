@@ -171,8 +171,8 @@ export const PARTNER_CATEGORIES: readonly PartnerCategory[] = [
         id: "funding-innovation-programs-content",
         description: [],
         bulletItems: [
-          'Innovation Programs: We are proud to have been accepted into the <a href="https://sparecores.com/article/nvidia-inception" target="_blank" rel="noopener noreferrer">NVIDIA Inception Program</a>, which empowers us to expand our benchmarking data with cutting-edge GPU performance.',
-          'Public Innovation Funding: We were selected for the <a href="https://sparecores.com/article/ngi-search-grant" target="_blank" rel="noopener noreferrer">NGI (Next Generation Internet) Search initiative</a>, a European Commission program, for building open, transparent, and sovereign infrastructure for the future of the internet and AI; also received the <a href="/assets/images/funding/eic_seal_of_excellence-2026.pdf" target="_blank">Seal of Excellence</a> for our "high-quality project proposal" in the EIC (European Innovation Council) Pre-Acceleration program.',
+          'Innovation Programs: We are proud to have been accepted into the <a href="/article/nvidia-inception" target="_blank">NVIDIA Inception Program</a>, which empowers us to expand our benchmarking data with cutting-edge GPU performance.',
+          'Public Innovation Funding: We were selected for the <a href="/article/ngi-search-grant" target="_blank">NGI (Next Generation Internet) Search initiative</a>, a European Commission program, for building open, transparent, and sovereign infrastructure for the future of the internet and AI; also received the <a href="/article/eic-seal-of-excellence" target="_blank">Seal of Excellence</a> for our "high-quality project proposal" in the EIC (European Innovation Council) Pre-Acceleration program.',
           "Venture Supported: We are backed by a pre-seed investment round led by BNL Start Partners and FPI (First Principle Innovation).",
         ],
         dividerAfter: true,
@@ -180,13 +180,13 @@ export const PARTNER_CATEGORIES: readonly PartnerCategory[] = [
           {
             name: "NVIDIA Inception Program",
             alt: "NVIDIA Inception Program logo",
-            href: "https://sparecores.com/article/nvidia-inception",
+            href: "/article/nvidia-inception",
             src: "/assets/images/partners/nvidia_ip_logo.png",
           },
           {
             name: "NGI Search",
             alt: "NGI Search logo",
-            href: "https://sparecores.com/article/ngi-search-grant",
+            href: "/article/ngi-search-grant",
             src: "/assets/images/partners/ngi_search_logo.png",
           },
           {

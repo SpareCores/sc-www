@@ -1,0 +1,31 @@
+---
+title: "The Cloud Performance Map: How Hetzner Ranks Among 5,000 Instance Types"
+author: Gergely Daroczi
+date: "2026-09-17"
+conference: "Hetzner Summit"
+conference_url: "https://www.hetzner.com/hetzner-summit"
+location: "Falkenstein, Germany"
+format:
+  revealjs:
+    theme: [black, css/custom-4.2.1.css]
+    controls: true
+    navigation-mode: vertical
+    controls-layout: bottom-right
+    controls-tutorial: true
+    menu: false
+    logo: images/sc-square-dark-300x300.jpg
+    margin: 0.1
+    height: 700
+    width: 1150
+    # width: 1244  # was used at revealjs 3.x
+    center-title-slide: false
+    slide-number: true
+    transition: slide
+    hash-type: title
+    code-copy: false
+    code-line-numbers: false
+    highlight-style: arrow-dark
+  gfm:
+    mermaid-format: svg
+    theme: neutral
+---
