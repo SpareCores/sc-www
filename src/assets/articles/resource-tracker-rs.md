@@ -59,13 +59,12 @@ for both `x86_64` and `arm64`. Download, mark executable, and run:
 ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/aarch64/arm64/')"
 
 # find most recent release
-URL="$(curl -fsSL https://api.github.com/repos/SpareCores/resource-tracker-rs/releases/latest | sed -n "s#.*\"browser_download_url\": \"\\([^\"]*resource-tracker-[^\"]*-linux-${ARCH}-musl.tar.gz\\)\".*#\\1#p" | sed -n '1p')"
+URL="$(curl -fsSL https://api.github.com/repos/SpareCores/resource-tracker-rs/releases/latest | sed -n "s#.*\"browser_download_url\": \"\\([^\"]*resource-tracker-[^\"]*-linux-${ARCH}.tar.gz\\)\".*#\\1#p" | sed -n '1p')"
 
 # download and extract
 curl -fsSL "$URL" | tar -xvzf - resource-tracker
 
-# make executable and run
-chmod +x resource-tracker
+# run
 ./resource-tracker --help
 ```
 
