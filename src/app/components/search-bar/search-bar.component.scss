@@ -146,6 +146,10 @@
     padding-right: 2.5rem;
   }
 
+  .custom-autocomplete__input.custom-autocomplete__input--loading:disabled {
+    cursor: wait;
+  }
+
   .custom-autocomplete__input--button {
     display: flex;
     align-items: center;

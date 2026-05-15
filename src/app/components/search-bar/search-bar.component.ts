@@ -110,6 +110,7 @@ export type SearchBarCustomControl = {
   nested?: boolean;
   checked?: boolean;
   disabled?: boolean;
+  loading?: boolean;
   sectionHeader?: string;
   checkboxOptions?: {
     name: string;
@@ -1075,6 +1076,10 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
     control: SearchBarCustomControl,
     benchmarkOption: SearchBarBenchmarkConfigOption,
   ) {
+    if (control.disabled) {
+      return;
+    }
+
     this.customControlChanged.emit({
       name: control.name,
       value: {
@@ -1087,6 +1092,10 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   clearBenchmarkConfigSelection(control: SearchBarCustomControl) {
+    if (control.disabled) {
+      return;
+    }
+
     this.customControlChanged.emit({
       name: control.name,
       value: { inputValue: "", selectedBenchmarkConfig: null },
@@ -1094,6 +1103,10 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   handleBenchmarkConfigInputFocus(control: SearchBarCustomControl) {
+    if (control.disabled) {
+      return;
+    }
+
     if (
       control.selectedBenchmarkConfig &&
       (control.inputValue || "").trim() ===
@@ -1109,6 +1122,11 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   restoreBenchmarkConfigInput(control: SearchBarCustomControl) {
+    if (control.disabled) {
+      this.closeBenchmarkConfigDropdown(control);
+      return;
+    }
+
     if (
       control.selectedBenchmarkConfig &&
       !(control.inputValue || "").trim().length
@@ -1127,6 +1145,11 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   openBenchmarkConfigDropdown(control: SearchBarCustomControl) {
+    if (control.disabled) {
+      this.closeBenchmarkConfigDropdown(control);
+      return;
+    }
+
     this.benchmarkConfigDropdownOpen[control.name] = true;
   }
 

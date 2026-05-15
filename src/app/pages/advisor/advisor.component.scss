@@ -1,3 +1,8 @@
+.advisor-page--loading-baseline-workloads,
+:host ::ng-deep .advisor-page--loading-baseline-workloads * {
+  cursor: wait !important;
+}
+
 .advisor-filter-bar {
   position: relative;
   width: 20rem;

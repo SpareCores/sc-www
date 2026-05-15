@@ -4,19 +4,15 @@
       <button
         #memoryCompareDropdown="appFlowbiteDropdown"
         [id]="buttonId"
-        class="dropdown_button justify-between overflow-hidden"
+        class="dropdown_button chart-selector-button chart-selector-button--comfortable"
         type="button"
         [appFlowbiteDropdown]="optionsId"
         [dropdownEnabled]="isBrowser && availableOptions().length > 0"
       >
-        <div
-          class="min-w-0 flex-1 truncate whitespace-nowrap px-4 py-3 text-left"
-        >
+        <div class="chart-selector-button__label">
           {{ currentOptionName() }}
         </div>
-        <div
-          class="px-4 py-3 w-12 h-full shrink-0 bg-primary justify-center items-center flex rounded-r-lg"
-        >
+        <div class="chart-selector-button__icon">
           <lucide-icon
             name="chevron-down"
             class="h-6 w-6 text-emerald-400"

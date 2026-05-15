@@ -27,21 +27,17 @@
       <button
         #memoryDropdown="appFlowbiteDropdown"
         [id]="buttonId"
-        class="dropdown_button self-stretch justify-between overflow-hidden md:self-auto"
+        class="dropdown_button chart-selector-button chart-selector-button--responsive"
         type="button"
         [appFlowbiteDropdown]="optionsId"
         [dropdownEnabled]="
           isBrowser && availableMemoryChartOptions().length > 0
         "
       >
-        <div
-          class="min-w-0 flex-1 truncate whitespace-nowrap px-3 py-2 text-left"
-        >
+        <div class="chart-selector-button__label">
           {{ currentMemoryChartOption().name }}
         </div>
-        <div
-          class="px-3 py-2 w-12 h-full shrink-0 bg-primary justify-center items-center flex rounded-r-lg"
-        >
+        <div class="chart-selector-button__icon">
           <lucide-icon
             name="chevron-down"
             class="h-6 w-6 text-emerald-400"

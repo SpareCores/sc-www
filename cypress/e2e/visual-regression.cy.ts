@@ -68,10 +68,13 @@ describe("Visual regression tests", () => {
       cy.get("app-server-compare").then(($el) => {
         if (win.ng?.getComponent) {
           const component = win.ng.getComponent($el[0]);
-          component.isTableOutsideViewport = false;
+          const alwaysFalseSignal = Object.assign(() => false, {
+            set: () => {},
+            update: () => {},
+          });
 
           Object.defineProperty(component, "isTableOutsideViewport", {
-            get: () => false,
+            get: () => alwaysFalseSignal,
             set: () => {},
             configurable: true,
           });
@@ -99,6 +102,7 @@ describe("Visual regression tests", () => {
 
     // Prepare header position for a consistent visual regression snapshot
     E2EEvent.prepareHeaderForScreenshot();
+    E2EEvent.hideCompareScrollbarsForScreenshot();
 
     // Hide price rows for screenshot consistency
     cy.get(".rows-to-hide-for-test").invoke("css", "display", "none");

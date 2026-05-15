@@ -20,6 +20,19 @@ describe("Visual regression tests (small screen - 800px)", () => {
     cy.compareSnapshot("landing-page-small");
   });
 
+  it("should compare screenshot of the landing page with the mobile menu open", () => {
+    E2EEvent.visitURL("/");
+
+    E2EEvent.prepareHeaderForScreenshot();
+
+    cy.get("#slot-machine").invoke("css", "display", "none");
+    cy.get("#resource-tracker-video").invoke("css", "display", "none");
+
+    E2EEvent.openMobileMenuForScreenshot();
+
+    cy.compareSnapshot("landing-page-mobile-menu-open-small");
+  });
+
   it("should compare screenshot of servers list (Hetzner / GPU >=1)", () => {
     E2EEvent.visitURL("/servers?vendor=hcloud&gpu_min=1&gpu_memory_min=1");
 
@@ -72,10 +85,13 @@ describe("Visual regression tests (small screen - 800px)", () => {
       cy.get("app-server-compare").then(($el) => {
         if (win.ng?.getComponent) {
           const component = win.ng.getComponent($el[0]);
-          component.isTableOutsideViewport = false;
+          const alwaysFalseSignal = Object.assign(() => false, {
+            set: () => {},
+            update: () => {},
+          });
 
           Object.defineProperty(component, "isTableOutsideViewport", {
-            get: () => false,
+            get: () => alwaysFalseSignal,
             set: () => {},
             configurable: true,
           });
@@ -103,6 +119,7 @@ describe("Visual regression tests (small screen - 800px)", () => {
 
     // Prepare header position for a consistent visual regression snapshot
     E2EEvent.prepareHeaderForScreenshot();
+    E2EEvent.hideCompareScrollbarsForScreenshot();
 
     // Hide price rows for screenshot consistency
     cy.get(".rows-to-hide-for-test").invoke("css", "display", "none");
