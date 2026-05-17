@@ -41,7 +41,7 @@ For each category, the group discussed which benchmarks matter most and what a s
     src="/assets/images/blog/thumbnails/ovh-crayon-sparecores-hackathon.webp"/>
 </div>
 
-This is exactly the kind of work that is hard for any single company to do well on its own. OVHcloud brought deep cloud infrastructure expertise and real customer context. Crayon and SoftwareOne brought advisory experience from helping enterprises navigate cloud decisions every day. Spare Cores contributed the independent benchmarking data and the tooling to slice and combine it. The combination of those three perspectives is what made it possible to move from raw numbers to something production-ready in three days.
+This is exactly the kind of work that is hard for any single company to do well on its own. OVHcloud brought deep cloud infrastructure expertise and real customer context. Crayon and SoftwareOne brought advisory experience from helping enterprises navigate cloud decisions every day. Spare Cores contributed the independent benchmarking data and the tooling to slice and combine it. The combination of those three perspectives is what made it possible to move from raw numbers to something production-ready in three days. You can read more about our partnerships on our [Partners page](/about/partners).
 
 ## Lessons Learned
 
