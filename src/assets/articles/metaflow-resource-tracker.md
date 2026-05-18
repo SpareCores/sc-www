@@ -8,7 +8,7 @@ teaser: Seamlessly track the resource usage of e.g. Metaflow steps and find the 
 image: /assets/images/blog/thumbnails/metaflow-tracker.webp
 image_alt: Screenshot of a Metaflow card on resource usage of a GPU workflow step.
 author: Gergely Daroczi
-tags: [resource-tracker, metaflow, featured]
+tags: [resource-tracker, open-source, metaflow, featured]
 ---
 
 Over the past year, we focused on collecting, generating, and standardizing
@@ -63,7 +63,7 @@ advantage of a fully self-contained solution that does not require any
 additional software other than a modern Linux kernel. This was a good start,
 but soon became too limiting as many developers and data scientists work on
 non-Linux systems, and multiple workflow management tools used by them are well
-supported on MacOS, so it was clear that we needed to find a more universal
+supported on macOS, so it was clear that we needed to find a more universal
 solution.
 
 So we implemented an alternative `psutil` approach that works on all operating
@@ -104,7 +104,7 @@ pip install \
 </code></pre>
 
 Note that depending on your operating system, you might need to also install
-`psutil` (e.g. on MacOS and Windows).
+`psutil` (e.g. on macOS and Windows).
 
 ## Standalone Usage
 

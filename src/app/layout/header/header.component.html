@@ -82,7 +82,8 @@
           <lucide-icon
             id="menu_button"
             [appFlowbiteDropdown]="'menu_options'"
-            [dropdownPlacement]="'bottom'"
+            [dropdownPlacement]="'bottom-end'"
+            [dropdownFlip]="true"
             #menuDropdown="appFlowbiteDropdown"
             class="navbar_link cursor-pointer h-8 w-8"
             name="menu"
@@ -96,10 +97,10 @@
 
 <div
   id="menu_options"
-  class="z-10 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid"
+  class="mobile_menu_panel z-10 hidden bg-secondary rounded-lg shadow border border-emerald-400 border-solid"
 >
   <ul
-    class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
+    class="mobile_menu_panel__list py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
     aria-labelledby="dropdownDefaultButton"
     (click)="closeMenu()"
   >

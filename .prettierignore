@@ -1,5 +1,6 @@
 .angular/
 /dist/
 /node_modules
+/src/assets/articles/
 /src/assets/slides/
 /sdk/

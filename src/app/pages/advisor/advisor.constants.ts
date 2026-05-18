@@ -65,7 +65,9 @@ export const ADVISOR_OPTIMIZATION_GOAL_OPTIONS: SearchBarCustomSelectOption[] =
 export const ADVISOR_DEFAULT_OPTIMIZATION_GOAL: AdvisorOptimizationGoal =
   "cost";
 
-export const ADVISOR_DEFAULT_MINIMUM_MEMORY_GIB = 0.5;
+export const ADVISOR_DEFAULT_MINIMUM_MEMORY_GIB = null;
+
+export const ADVISOR_MINIMUM_MEMORY_MIN_GIB = 0.5;
 
 export const ADVISOR_DEFAULT_PEAK_GPU_MEMORY_GIB = 0;
 
@@ -80,8 +82,6 @@ export const ADVISOR_PRICE_ALLOCATION_TOOLTIP =
 
 export const ADVISOR_BASELINE_REGION_TOOLTIP =
   "Uses the baseline server's known regional availability to narrow recommendations to a single region where that server is sold. This control is disabled when Vendor and region id filters are in use, because those filters support broader multi-region choices.";
-
-export const ADVISOR_DEFAULT_WORKLOAD_ID = "stress_ng:bestn";
 
 export const ADVISOR_DEFAULT_WORKLOAD_CONFIG = "{}";
 
@@ -123,6 +123,18 @@ export const ADVISOR_SEO: AdvisorSeoMetadata = {
 
 export const ADVISOR_DEFAULT_EMPTY_RESULTS_MESSAGE =
   "No recommended servers available.";
+
+export const ADVISOR_EMPTY_BASELINE_WORKLOAD_TOAST_ID =
+  "advisor-empty-baseline-workloads";
+
+export const ADVISOR_EMPTY_BASELINE_WORKLOAD_MESSAGE =
+  "The selected baseline server has no benchmark workloads available.";
+
+export const ADVISOR_DISABLED_BASELINE_WORKLOAD_MESSAGE =
+  "Choose a baseline server first to load its available workloads.";
+
+export const ADVISOR_LOADING_BASELINE_WORKLOAD_MESSAGE =
+  "Loading workloads for the selected baseline server...";
 
 export const ADVISOR_TABLE_COLUMNS: AdvisorTableColumn[] = [
   { name: "NAME & PROVIDER", type: "name", show: true },
@@ -303,5 +315,4 @@ export const ADVISOR_REQUIRED_INPUT_LABELS = [
   "Baseline workload",
   "Optimization goal",
   "Average utilization",
-  "Minimum memory",
 ] as const;

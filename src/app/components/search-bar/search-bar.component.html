@@ -972,6 +972,7 @@
                         type="text"
                         [value]="control.inputValue || ''"
                         [placeholder]="control.placeholder || ''"
+                        [disabled]="control.disabled"
                         (input)="
                           onCustomControlInput(
                             control,
@@ -1040,6 +1041,11 @@
                         type="text"
                         [value]="control.inputValue || ''"
                         [placeholder]="control.placeholder || ''"
+                        [disabled]="control.disabled"
+                        [class.custom-autocomplete__input--loading]="
+                          control.loading
+                        "
+                        [attr.aria-busy]="control.loading ? 'true' : null"
                         (input)="
                           onCustomControlInput(
                             control,
@@ -1052,7 +1058,8 @@
                         class="custom-autocomplete__input"
                       />
                       @if (
-                        control.inputValue || control.selectedBenchmarkConfig
+                        !control.disabled &&
+                        (control.inputValue || control.selectedBenchmarkConfig)
                       ) {
                         <button
                           type="button"
@@ -1081,7 +1088,8 @@
 
                     @if (
                       !control.selectedBenchmarkConfig ||
-                      isBenchmarkConfigDropdownOpen(control)
+                      (isBenchmarkConfigDropdownOpen(control) &&
+                        !control.disabled)
                     ) {
                       @if ((control.benchmarkGroups || []).length > 0) {
                         <div

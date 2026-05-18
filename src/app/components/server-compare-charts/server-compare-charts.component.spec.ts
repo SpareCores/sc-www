@@ -7,6 +7,14 @@ describe("ServerCompareChartsComponent", () => {
   let component: ServerCompareChartsComponent;
   let fixture: ComponentFixture<ServerCompareChartsComponent>;
 
+  function buildServers(count: number) {
+    return Array.from({ length: count }, (_, index) => ({
+      vendor_id: `vendor-${index}`,
+      server_id: `server-${index}`,
+      display_name: `Server ${index}`,
+    }));
+  }
+
   function mountTableHolder(width: number): void {
     const existingTableHolder = document.getElementById("table_holder");
     existingTableHolder?.remove();
@@ -94,11 +102,28 @@ describe("ServerCompareChartsComponent", () => {
 
     const cells = benchmarkRow?.querySelectorAll("td");
 
-    expect(cells?.length).toBe(2);
-    expect(cells?.[0].getAttribute("colspan")).toBe("3");
+    expect(cells?.length).toBe(1);
+    expect(cells?.[0].getAttribute("colspan")).toBe("4");
     expect(cells?.[0].textContent).toContain("OpenSSL");
-    expect(cells?.[1].getAttribute("colspan")).toBe("1");
-    expect(cells?.[1].querySelector("button")).toBeTruthy();
+    expect(cells?.[0].querySelector("button")).toBeTruthy();
+
+    const title = benchmarkRow?.querySelector(
+      ".compare-section-header-title",
+    ) as HTMLElement | null;
+    const titleText = title?.querySelector(
+      ".compare-section-header-title__text",
+    ) as HTMLElement | null;
+    const titleIcons = title?.querySelector(
+      ".compare-section-header-title__icons",
+    ) as HTMLElement | null;
+
+    expect(title).toBeTruthy();
+    expect(titleText?.textContent).toContain("OpenSSL");
+    expect(titleIcons?.querySelectorAll("lucide-icon").length).toBe(2);
+    expect(getComputedStyle(title as HTMLElement).whiteSpace).toBe("nowrap");
+    expect(getComputedStyle(titleText as HTMLElement).whiteSpace).toBe(
+      "nowrap",
+    );
   });
 
   it("renders benchmark category chart rows as full-width rows", () => {
@@ -155,12 +180,11 @@ describe("ServerCompareChartsComponent", () => {
       ".compare-chart-content",
     ) as HTMLDivElement | null;
 
-    expect(cells?.length).toBe(2);
-    expect(cells?.[0].getAttribute("colspan")).toBe("3");
+    expect(cells?.length).toBe(1);
+    expect(cells?.[0].getAttribute("colspan")).toBe("4");
     expect(cells?.[0].querySelector("app-benchmark-line-chart")).toBeTruthy();
-    expect(cells?.[1].getAttribute("colspan")).toBe("1");
-    expect(chartContent?.style.width).toBe("1104px");
-    expect(chartContent?.style.maxWidth).toBe("1104px");
+    expect(chartContent?.style.width).toBe("100%");
+    expect(chartContent?.style.maxWidth).toBe("100%");
   });
 
   it("renders multi-bar chart titles fixed and chart rows full width", () => {
@@ -201,18 +225,93 @@ describe("ServerCompareChartsComponent", () => {
       ".compare-chart-content",
     ) as HTMLDivElement | null;
 
-    expect(titleCells?.length).toBe(2);
-    expect(titleCells?.[0].getAttribute("colspan")).toBe("3");
-    expect(titleCells?.[1].getAttribute("colspan")).toBe("1");
+    expect(titleCells?.length).toBe(1);
+    expect(titleCells?.[0].getAttribute("colspan")).toBe("4");
 
-    expect(chartCells?.length).toBe(2);
-    expect(chartCells?.[0].getAttribute("colspan")).toBe("3");
+    expect(chartCells?.length).toBe(1);
+    expect(chartCells?.[0].getAttribute("colspan")).toBe("4");
     expect(
       chartCells?.[0].querySelector("app-benchmark-multi-bar-chart"),
     ).toBeTruthy();
-    expect(chartCells?.[1].getAttribute("colspan")).toBe("1");
-    expect(chartContent?.style.width).toBe("1104px");
-    expect(chartContent?.style.maxWidth).toBe("1104px");
+    expect(chartContent?.style.width).toBe("100%");
+    expect(chartContent?.style.maxWidth).toBe("100%");
+  });
+
+  it("keeps benchmark category title and chart sticky spans capped for many servers", () => {
+    mountTableHolder(1200);
+
+    component.servers = buildServers(9) as unknown as typeof component.servers;
+    component.benchmarkMeta = [
+      {
+        benchmark_id: "openssl",
+        benchmark_key: "openssl",
+        name: "OpenSSL",
+        description: "OpenSSL benchmark",
+        collapsed: true,
+        configs: [],
+      },
+    ];
+    component.benchmarkCategories = [
+      {
+        id: "openssl",
+        name: "OpenSSL",
+        benchmarks: ["openssl"],
+        data: [{ benchmark_id: "openssl" }],
+        show_more: false,
+        hidden: false,
+      },
+    ];
+
+    fixture.detectChanges();
+
+    const titleRow = (fixture.nativeElement as HTMLElement).querySelector(
+      "#benchmark_line_openssl",
+    ) as HTMLTableRowElement | null;
+    const chartRow = titleRow?.nextElementSibling as HTMLTableRowElement | null;
+
+    expect(titleRow).toBeTruthy();
+    expect(chartRow).toBeTruthy();
+
+    const titleCells = titleRow?.querySelectorAll(":scope > td");
+    const chartCells = chartRow?.querySelectorAll(":scope > td");
+
+    expect(titleCells?.length).toBe(3);
+    expect(titleCells?.[0].getAttribute("colspan")).toBe("3");
+    expect(titleCells?.[1].getAttribute("colspan")).toBe("6");
+    expect(titleCells?.[2].getAttribute("colspan")).toBe("1");
+
+    expect(chartCells?.length).toBe(2);
+    expect(chartCells?.[0].getAttribute("colspan")).toBe("3");
+    expect(chartCells?.[1].getAttribute("colspan")).toBe("7");
+  });
+
+  it("keeps multi-bar title and chart sticky spans capped for many servers", () => {
+    mountTableHolder(1200);
+
+    component.showChart = "static_web";
+    component.servers = buildServers(9) as unknown as typeof component.servers;
+
+    fixture.detectChanges();
+
+    const titleRow = (fixture.nativeElement as HTMLElement).querySelector(
+      "#benchmark_line_static_web",
+    ) as HTMLTableRowElement | null;
+    const chartRow = titleRow?.nextElementSibling as HTMLTableRowElement | null;
+
+    expect(titleRow).toBeTruthy();
+    expect(chartRow).toBeTruthy();
+
+    const titleCells = titleRow?.querySelectorAll(":scope > td");
+    const chartCells = chartRow?.querySelectorAll(":scope > td");
+
+    expect(titleCells?.length).toBe(3);
+    expect(titleCells?.[0].getAttribute("colspan")).toBe("3");
+    expect(titleCells?.[1].getAttribute("colspan")).toBe("6");
+    expect(titleCells?.[2].getAttribute("colspan")).toBe("1");
+
+    expect(chartCells?.length).toBe(2);
+    expect(chartCells?.[0].getAttribute("colspan")).toBe("3");
+    expect(chartCells?.[1].getAttribute("colspan")).toBe("7");
   });
 
   it("renders expanded benchmark detail names in fixed split rows", () => {
@@ -296,13 +395,15 @@ describe("ServerCompareChartsComponent", () => {
 
     const cells = detailHeaderRow?.querySelectorAll(":scope > td");
 
-    expect(cells?.length).toBe(2);
-    expect(cells?.[0].getAttribute("colspan")).toBe("3");
-    expect(cells?.[1].getAttribute("colspan")).toBe("1");
-    expect(cells?.[1].querySelector("lucide-icon")).toBeTruthy();
+    expect(cells?.length).toBe(3);
+    expect(cells?.[0].getAttribute("colspan")).toBe("1");
+    expect(cells?.[0].textContent).toContain("sc-membench: Latency");
+    expect(cells?.[1].getAttribute("colspan")).toBe("2");
+    expect(cells?.[2].getAttribute("colspan")).toBe("1");
+    expect(cells?.[2].querySelector("lucide-icon")).toBeTruthy();
   });
 
-  it("renders Further Benchmarks labels in a merged header cell with filler cell", () => {
+  it("renders Further Benchmarks labels in a standalone sticky label cell", () => {
     component.servers = [
       {
         vendor_id: "aws",
@@ -350,10 +451,60 @@ describe("ServerCompareChartsComponent", () => {
 
     const cells = benchmarkRow?.querySelectorAll("td");
 
-    expect(cells?.length).toBe(2);
-    expect(cells?.[0].getAttribute("colspan")).toBe("3");
+    expect(cells?.length).toBe(3);
+    expect(cells?.[0].getAttribute("colspan")).toBe("1");
     expect(cells?.[0].textContent).toContain("Workload profile: Web server");
+    expect(cells?.[1].getAttribute("colspan")).toBe("2");
+    expect(cells?.[2].getAttribute("colspan")).toBe("1");
+    expect(cells?.[2].querySelector("lucide-icon")).toBeTruthy();
+  });
+
+  it("keeps the narrow sticky label spacer to one server column for two compared servers", () => {
+    component.servers = [
+      {
+        vendor_id: "aws",
+        server_id: "server-a",
+        display_name: "Server A",
+      },
+      {
+        vendor_id: "gcp",
+        server_id: "server-b",
+        display_name: "Server B",
+      },
+    ] as unknown as typeof component.servers;
+    component.benchmarkMeta = [
+      {
+        benchmark_id: "workload:web-server",
+        benchmark_key: "workload:web-server",
+        name: "Workload profile: Web server",
+        description: "Web server workload profile",
+        collapsed: true,
+        configs: [
+          {
+            config: { profile: "web" },
+            values: [10, 20],
+          },
+        ],
+      },
+    ];
+
+    fixture.detectChanges();
+
+    const tableRows = Array.from(
+      (fixture.nativeElement as HTMLElement).querySelectorAll("tbody tr"),
+    ) as HTMLTableRowElement[];
+
+    const benchmarkRow = tableRows.find((row) =>
+      row.textContent?.includes("Workload profile: Web server"),
+    );
+
+    expect(benchmarkRow).toBeDefined();
+
+    const cells = benchmarkRow?.querySelectorAll(":scope > td");
+
+    expect(cells?.length).toBe(3);
+    expect(cells?.[0].getAttribute("colspan")).toBe("1");
     expect(cells?.[1].getAttribute("colspan")).toBe("1");
-    expect(cells?.[1].querySelector("lucide-icon")).toBeTruthy();
+    expect(cells?.[2].getAttribute("colspan")).toBe("1");
   });
 });

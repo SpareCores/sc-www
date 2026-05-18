@@ -202,7 +202,6 @@
         id="table_holder"
         #tableHolder
         class="compare_table_holder overflow-x-auto overflow-y-hidden relative min-h-screen mx-2 xl:mx-0"
-        style="padding-left: 1px"
       >
         @if (isBrowser() && isTableOutsideViewport()) {
           <div class="fixed_thead" [style]="getFixedDivStyle()">
@@ -219,15 +218,20 @@
                       [style]="getStyle(i)"
                       class="compact-number-header-cell"
                     >
-                      <a
-                        class="underline decoration-dotted"
-                        href="/server/{{ server.vendor_id }}/{{
-                          server.api_reference
-                        }}"
-                        target="_blank"
-                      >
-                        {{ server.display_name | uppercase }}
-                      </a>
+                      <div class="ml-auto" style="width: fit-content">
+                        <a
+                          class="underline decoration-dotted whitespace-nowrap"
+                          [href]="
+                            '/server/' +
+                            server.vendor_id +
+                            '/' +
+                            server.api_reference
+                          "
+                          target="_blank"
+                        >
+                          {{ server.display_name | uppercase }}
+                        </a>
+                      </div>
                     </th>
                   }
                 </tr>
@@ -250,19 +254,6 @@
       </div>
       @if (isBrowser()) {
         @if (scrollbarMirror(); as mirror) {
-          @if (mirror.topPosition) {
-            <div
-              #scrollbarMirrorRef
-              class="scrollbar_mirror_outer"
-              [ngStyle]="scrollbarMirrorController.toStyle(mirror.topPosition)"
-              (scroll)="onMirrorScroll($event)"
-            >
-              <div
-                class="scrollbar_mirror_inner"
-                [style.width.px]="mirror.innerWidth"
-              ></div>
-            </div>
-          }
           @if (mirror.bottomPosition) {
             <div
               #scrollbarMirrorBottomRef

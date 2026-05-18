@@ -1,8 +1,15 @@
 .items_table {
   @apply w-full text-white;
 
+  --compare-first-column-width: clamp(8rem, 12vw, 12rem);
+
   position: relative;
   border-collapse: collapse;
+  table-layout: fixed;
+
+  col.compare-first-column-col {
+    width: var(--compare-first-column-width);
+  }
 
   thead {
     @apply border-b border-gray-200 border-solid bg-secondary;
@@ -13,8 +20,12 @@
     tr {
       th:nth-of-type(1) {
         position: sticky;
-        left: -1px;
+        left: 0;
         z-index: 21;
+        width: var(--compare-first-column-width);
+        min-width: var(--compare-first-column-width);
+        max-width: var(--compare-first-column-width);
+        white-space: nowrap;
         @apply bg-secondary;
       }
     }
@@ -71,18 +82,47 @@
 
       td:nth-of-type(1) {
         position: sticky;
-        left: -1px;
+        left: 0;
         z-index: 20;
+        width: var(--compare-first-column-width);
+        min-width: var(--compare-first-column-width);
+        max-width: var(--compare-first-column-width);
+        white-space: nowrap;
       }
 
       td.compare-section-header-action-cell {
         position: sticky;
         right: 0;
-        z-index: 21;
+        z-index: 22;
+        white-space: nowrap;
         background-color: inherit;
+        display: flex;
+        justify-content: flex-end;
+      }
+    }
+
+    tr.section_header {
+      td.compare-section-header-action-cell {
+        @apply bg-secondary;
       }
     }
   }
+}
+
+.compare-section-header-title {
+  @apply inline-flex max-w-none flex-nowrap items-center gap-2 whitespace-nowrap;
+}
+
+.compare-section-header-row {
+  @apply flex items-center justify-between gap-4;
+}
+
+.compare-section-header-title__text {
+  @apply whitespace-nowrap leading-tight;
+}
+
+.compare-section-header-title__icons {
+  @apply inline-flex shrink-0 items-center gap-2;
 }
 
 .fixed_thead {
@@ -112,4 +152,9 @@
 
 .compact-number-header-cell {
   text-align: right !important;
+}
+
+.compare-chart-content {
+  box-sizing: border-box;
+  padding-right: 1rem;
 }

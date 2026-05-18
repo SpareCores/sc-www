@@ -23,7 +23,7 @@
 
 .partner-logos {
   --partner-mobile-gap: 2rem;
-  @apply my-8 flex flex-nowrap items-center justify-center gap-8 overflow-x-auto pb-2;
+  @apply my-8 flex flex-wrap items-center justify-center gap-8 overflow-x-auto pb-2;
 
   scrollbar-width: thin;
   scrollbar-color: #34d39933 transparent;
