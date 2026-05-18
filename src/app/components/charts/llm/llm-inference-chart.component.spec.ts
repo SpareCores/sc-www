@@ -125,4 +125,45 @@ describe("LlmInferenceChartComponent", () => {
     expect(component.availableModels().length).toBe(1);
     expect(component.comparePromptData()?.labels).toEqual([128]);
   });
+
+  it("keeps details tooltips empty while metadata is temporarily unavailable", () => {
+    fixture.componentRef.setInput("promptData", undefined);
+    fixture.componentRef.setInput("promptOptions", undefined);
+    fixture.componentRef.setInput("generationData", undefined);
+    fixture.componentRef.setInput("generationOptions", undefined);
+    fixture.componentRef.setInput(
+      "benchmarkMeta",
+      undefined as unknown as LlmBenchmarkMeta[],
+    );
+    fixture.componentRef.setInput("benchmarksByCategory", [
+      {
+        benchmark_id: "llm_speed:prompt_processing",
+        benchmarks: [
+          {
+            vendor_id: "vendor-a",
+            server_id: "server-a",
+            benchmark_id: "llm_speed:prompt_processing",
+            config: { model: "phi-4-q4.gguf", tokens: 128 },
+            score: 10,
+          },
+        ],
+      },
+      {
+        benchmark_id: "llm_speed:text_generation",
+        benchmarks: [
+          {
+            vendor_id: "vendor-a",
+            server_id: "server-a",
+            benchmark_id: "llm_speed:text_generation",
+            config: { model: "phi-4-q4.gguf", tokens: 128 },
+            score: 8,
+          },
+        ],
+      },
+    ]);
+
+    expect(() => fixture.detectChanges()).not.toThrow();
+    expect(component.promptInfoTooltip()).toBe("");
+    expect(component.generationInfoTooltip()).toBe("");
+  });
 });
