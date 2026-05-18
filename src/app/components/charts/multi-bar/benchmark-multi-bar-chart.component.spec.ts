@@ -149,17 +149,6 @@ describe("BenchmarkMultiBarChartComponent", () => {
     expect(component.currentBenchmarkDescription()).toBe("");
   });
 
-  it("renders a content-sized primary dropdown with full-width left-aligned options", () => {
-    const hostElement = fixture.nativeElement as HTMLElement;
-    const optionsPanel = hostElement.querySelector(`#${component.optionsId}`);
-    const firstOptionButton = optionsPanel?.querySelector("button");
-
-    expect(optionsPanel?.classList.contains("w-max")).toBeTrue();
-    expect(optionsPanel?.classList.contains("min-w-64")).toBeTrue();
-    expect(firstOptionButton?.classList.contains("w-full")).toBeTrue();
-    expect(firstOptionButton?.classList.contains("text-left")).toBeTrue();
-  });
-
   it("updates the compare secondary option locally", () => {
     const chartItem: BenchmarkMultiBarChartItem = {
       chart: {
@@ -229,7 +218,7 @@ describe("BenchmarkMultiBarChartComponent", () => {
     expect(component.currentSecondaryOption()?.name).toBe("GET");
   });
 
-  it("renders a content-sized secondary dropdown with full-width left-aligned options", () => {
+  it("keeps compare selector triggers on one line and lets buttons shrink", () => {
     const chartItem: BenchmarkMultiBarChartItem = {
       chart: {
         id: "redis",
@@ -244,8 +233,8 @@ describe("BenchmarkMultiBarChartComponent", () => {
           },
         ],
         secondaryOptions: [
-          { name: "SET", value: "SET" },
-          { name: "GET", value: "GET" },
+          { name: "Connection per vCPU(s): 1", value: "SET" },
+          { name: "Connection per vCPU(s): 32", value: "GET" },
         ],
         chartOptions: {
           scales: { x: { title: { text: "" } }, y: { title: { text: "" } } },
@@ -258,7 +247,7 @@ describe("BenchmarkMultiBarChartComponent", () => {
     const benchmarkMeta: MultiBarBenchmarkMeta[] = [
       {
         benchmark_id: "redis:rps",
-        name: "Redis server+client speed",
+        name: "Static web server (extrapolated) throughput",
         unit: "ops/s",
         higher_is_better: true,
         config_fields: { operation: "Operation", pipeline: "Pipeline" },
@@ -293,14 +282,17 @@ describe("BenchmarkMultiBarChartComponent", () => {
     fixture.detectChanges();
 
     const hostElement = fixture.nativeElement as HTMLElement;
-    const optionsPanel = hostElement.querySelector(
-      `#${component.secondaryOptionsId}`,
-    );
-    const firstOptionButton = optionsPanel?.querySelector("button");
+    const primaryButton = hostElement.querySelector(
+      `#${component.buttonId}`,
+    ) as HTMLElement | null;
+    const secondaryButton = hostElement.querySelector(
+      `#${component.secondaryButtonId}`,
+    ) as HTMLElement | null;
+    const compareSelectorRow = primaryButton?.parentElement;
 
-    expect(optionsPanel?.classList.contains("w-max")).toBeTrue();
-    expect(optionsPanel?.classList.contains("min-w-64")).toBeTrue();
-    expect(firstOptionButton?.classList.contains("w-full")).toBeTrue();
-    expect(firstOptionButton?.classList.contains("text-left")).toBeTrue();
+    expect(compareSelectorRow?.classList.contains("flex-nowrap")).toBeTrue();
+    expect(compareSelectorRow?.classList.contains("min-w-0")).toBeTrue();
+    expect(primaryButton?.classList.contains("max-w-full")).toBeTrue();
+    expect(secondaryButton?.classList.contains("max-w-full")).toBeTrue();
   });
 });
