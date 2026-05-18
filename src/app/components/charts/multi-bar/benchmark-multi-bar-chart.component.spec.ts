@@ -139,6 +139,16 @@ describe("BenchmarkMultiBarChartComponent", () => {
     );
   });
 
+  it("keeps the benchmark description empty while metadata is unavailable", () => {
+    fixture.componentRef.setInput(
+      "benchmarkMeta",
+      undefined as unknown as MultiBarBenchmarkMeta[],
+    );
+
+    expect(() => fixture.detectChanges()).not.toThrow();
+    expect(component.currentBenchmarkDescription()).toBe("");
+  });
+
   it("updates the compare secondary option locally", () => {
     const chartItem: BenchmarkMultiBarChartItem = {
       chart: {
