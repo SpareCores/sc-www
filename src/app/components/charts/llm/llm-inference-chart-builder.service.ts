@@ -44,23 +44,26 @@ export class LlmInferenceChartBuilderService {
   }
 
   buildDetailsBarChart(params: {
-    benchmarksByCategory: LlmBenchmarkGroup[];
+    benchmarksByCategory: LlmBenchmarkGroup[] | undefined;
     benchmarkId: string;
     labelsField: "tokens";
     scaleField: "model";
   }): LlmBarChartData | undefined {
-    const dataSet = params.benchmarksByCategory.find(
+    const benchmarksByCategory = params.benchmarksByCategory ?? [];
+    const dataSet = benchmarksByCategory.find(
       (category) => category.benchmark_id === params.benchmarkId,
     );
 
-    if (!dataSet?.benchmarks?.length) {
+    const benchmarks = dataSet?.benchmarks ?? [];
+
+    if (!benchmarks.length) {
       return undefined;
     }
 
     const tokenLabels: number[] = [];
     const modelScales: string[] = [];
 
-    dataSet.benchmarks.forEach((item) => {
+    benchmarks.forEach((item) => {
       const tokenValue = item.config[params.labelsField];
       if (typeof tokenValue === "number" && !tokenLabels.includes(tokenValue)) {
         tokenLabels.push(tokenValue);
@@ -83,7 +86,7 @@ export class LlmInferenceChartBuilderService {
       labels: tokenLabels,
       datasets: sortedModels.map((model, index) => ({
         data: tokenLabels.map((token) => {
-          const item = dataSet.benchmarks?.find(
+          const item = benchmarks.find(
             (benchmark) =>
               benchmark.config[params.scaleField] === model &&
               benchmark.config[params.labelsField] === token,
@@ -100,7 +103,7 @@ export class LlmInferenceChartBuilderService {
   }
 
   buildCompareCharts(params: {
-    servers: LlmChartServer[];
+    servers: LlmChartServer[] | undefined;
     selectedModel: LlmModelOption | undefined;
     promptOptionsBase: LlmBarChartOptions;
     generationOptionsBase: LlmBarChartOptions;
@@ -109,13 +112,15 @@ export class LlmInferenceChartBuilderService {
       return undefined;
     }
 
+    const servers = params.servers ?? [];
+
     const promptData = this.buildCompareBarChart(
-      params.servers,
+      servers,
       params.selectedModel.value,
       "llm_speed:prompt_processing",
     );
     const generationData = this.buildCompareBarChart(
-      params.servers,
+      servers,
       params.selectedModel.value,
       "llm_speed:text_generation",
     );
@@ -183,15 +188,18 @@ export class LlmInferenceChartBuilderService {
   }
 
   private buildCompareBarChart(
-    servers: LlmChartServer[],
+    servers: LlmChartServer[] | undefined,
     selectedModelValue: string,
     benchmarkId: string,
   ): LlmBarChartData | undefined {
+    const availableServers = servers ?? [];
     const scaleField = "tokens";
     const scales: number[] = [];
 
-    servers.forEach((server) => {
-      server.benchmark_scores
+    availableServers.forEach((server) => {
+      const benchmarkScores = server.benchmark_scores ?? [];
+
+      benchmarkScores
         .filter(
           (score) =>
             score.benchmark_id === benchmarkId &&
@@ -214,22 +222,26 @@ export class LlmInferenceChartBuilderService {
 
     return {
       labels: scales,
-      datasets: servers.map((server, index) => ({
-        data: scales.map((tokenCount) => {
-          const item = server.benchmark_scores.find(
-            (score) =>
-              score.benchmark_id === benchmarkId &&
-              score.config?.model === selectedModelValue &&
-              score.config?.[scaleField] === tokenCount,
-          );
-          return item ? item.score : null;
-        }),
-        label: server.display_name,
-        borderColor:
-          radarDatasetColors[index % radarDatasetColors.length].borderColor,
-        backgroundColor:
-          radarDatasetColors[index % radarDatasetColors.length].borderColor,
-      })),
+      datasets: availableServers.map((server, index) => {
+        const benchmarkScores = server.benchmark_scores ?? [];
+
+        return {
+          data: scales.map((tokenCount) => {
+            const item = benchmarkScores.find(
+              (score) =>
+                score.benchmark_id === benchmarkId &&
+                score.config?.model === selectedModelValue &&
+                score.config?.[scaleField] === tokenCount,
+            );
+            return item ? item.score : null;
+          }),
+          label: server.display_name,
+          borderColor:
+            radarDatasetColors[index % radarDatasetColors.length].borderColor,
+          backgroundColor:
+            radarDatasetColors[index % radarDatasetColors.length].borderColor,
+        };
+      }),
     };
   }
 
