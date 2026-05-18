@@ -62,12 +62,12 @@
     </div>
   } @else {
     <div class="block_full_inline">
-      <div class="flex justify-end items-center gap-4 flex-wrap">
+      <div class="flex min-w-0 flex-nowrap items-center justify-end gap-4">
         @if (hasSecondaryOptions()) {
           <button
             #secondaryDropdown="appFlowbiteDropdown"
             [id]="secondaryButtonId"
-            class="dropdown_button chart-selector-button"
+            class="dropdown_button chart-selector-button max-w-full"
             type="button"
             [appFlowbiteDropdown]="secondaryOptionsId"
             [dropdownEnabled]="
@@ -91,7 +91,7 @@
         <button
           #primaryDropdown="appFlowbiteDropdown"
           [id]="buttonId"
-          class="dropdown_button chart-selector-button"
+          class="dropdown_button chart-selector-button max-w-full"
           type="button"
           [appFlowbiteDropdown]="optionsId"
           [dropdownEnabled]="isBrowserEnvironment() && !!chartData()"
