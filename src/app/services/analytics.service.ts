@@ -52,7 +52,15 @@ export class AnalyticsService {
   }
 
   public getId(): string {
-    return this.ngZone.runOutsideAngular(() => posthog.get_distinct_id());
+    if (!this.trackingInitialized) {
+      return "";
+    }
+
+    const distinctId = this.ngZone.runOutsideAngular(() =>
+      posthog.get_distinct_id(),
+    );
+
+    return typeof distinctId === "string" ? distinctId : "";
   }
 
   public SentryException(
