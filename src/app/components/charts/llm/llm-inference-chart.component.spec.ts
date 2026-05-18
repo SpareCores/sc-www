@@ -126,6 +126,37 @@ describe("LlmInferenceChartComponent", () => {
     expect(component.comparePromptData()?.labels).toEqual([128]);
   });
 
+  it("closes the compare dropdown after selecting a model", () => {
+    const benchmarkMeta: LlmBenchmarkMeta[] = [
+      {
+        benchmark_id: "llm_speed:prompt_processing",
+        name: "Prompt processing",
+        description: null,
+        framework: "llama.cpp",
+        configs: [
+          { config: { model: "phi-4-q4.gguf" } },
+          { config: { model: "gemma-2b.Q4_K_M.gguf" } },
+        ],
+      },
+    ];
+
+    fixture.componentRef.setInput("layout", "compare");
+    fixture.componentRef.setInput("benchmarkMeta", benchmarkMeta);
+    fixture.detectChanges();
+
+    const dropdownDirective = component.modelDropdown();
+
+    expect(dropdownDirective).toBeDefined();
+
+    const expectedModel = component.availableModels()[1];
+    spyOn(dropdownDirective!, "hide");
+
+    component.selectModel(1);
+
+    expect(component.currentModel()?.value).toBe(expectedModel.value);
+    expect(dropdownDirective?.hide).toHaveBeenCalled();
+  });
+
   it("keeps details tooltips empty while metadata is temporarily unavailable", () => {
     fixture.componentRef.setInput("promptData", undefined);
     fixture.componentRef.setInput("promptOptions", undefined);
