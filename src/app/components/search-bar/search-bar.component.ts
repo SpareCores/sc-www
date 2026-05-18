@@ -400,20 +400,18 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
         this.extraParameters?.[item.name] != null
           ? this.extraParameters[item.name]
           : queryValue;
+      const resolvedCategory = this.getResolvedParameterCategory(item);
+      const filterCategory = resolvedCategory
+        ? this.filterCategories.find(
+            (column) => column.category_id === resolvedCategory,
+          )
+        : undefined;
       const hasEffectiveValue = Array.isArray(effectiveValue)
         ? effectiveValue.length > 0
         : Boolean(effectiveValue);
 
-      if (hasEffectiveValue) {
-        if (
-          this.filterCategories.find(
-            (column) => column.category_id === item.schema.category_id,
-          )
-        ) {
-          this.filterCategories.find(
-            (column) => column.category_id === item.schema.category_id,
-          )!.collapsed = false;
-        }
+      if (hasEffectiveValue && filterCategory) {
+        filterCategory.collapsed = false;
       }
 
       if (this.extraParameters[item.name]) {
@@ -670,9 +668,15 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   private getParameterPlacement(
     parameterName: string,
   ): SearchBarParameterPlacement | undefined {
-    return this.parameterPlacements.find((placement) => {
-      return placement.parameterName === parameterName;
-    });
+    for (let index = this.parameterPlacements.length - 1; index >= 0; index--) {
+      const placement = this.parameterPlacements[index];
+
+      if (placement.parameterName === parameterName) {
+        return placement;
+      }
+    }
+
+    return undefined;
   }
 
   private getResolvedParameterCategory(
@@ -696,11 +700,13 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   private sortParametersByPlacement(
     parameters: SearchBarParameter[],
   ): SearchBarParameter[] {
-    const placementOrder = new Map(
-      this.parameterPlacements.map((placement, index) => [
-        placement.parameterName,
-        index,
-      ]),
+    const placementOrder = this.parameterPlacements.reduce(
+      (order, placement, index) => {
+        order.set(placement.parameterName, index);
+
+        return order;
+      },
+      new Map<string, number>(),
     );
 
     return [...parameters].sort((left, right) => {

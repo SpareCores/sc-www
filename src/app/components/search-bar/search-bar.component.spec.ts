@@ -258,6 +258,90 @@ describe("SearchBarComponent", () => {
     ).not.toBeNull();
   });
 
+  it("expands the overridden category when a placed parameter has an active value", () => {
+    component.filterCategories = [
+      {
+        category_id: "advisor",
+        name: "Advisor",
+        icon: "bot",
+        collapsed: true,
+      },
+      {
+        category_id: "storage",
+        name: "Storage",
+        icon: "database",
+        collapsed: true,
+      },
+    ];
+    component.searchParameters = [
+      {
+        name: "storage_size",
+        modelValue: null,
+        schema: {
+          category_id: "storage",
+          title: "Storage Size",
+          type: "number",
+          step: 1,
+          unit: "GB",
+        },
+      },
+    ];
+    component.parameterPlacements = [
+      {
+        parameterName: "storage_size",
+        categoryId: "advisor",
+      },
+    ];
+    component.extraParameters = {
+      storage_size: 100,
+    };
+
+    component.ngOnChanges({
+      extraParameters: new SimpleChange({}, component.extraParameters, false),
+      searchParameters: new SimpleChange([], component.searchParameters, false),
+      filterCategories: new SimpleChange([], component.filterCategories, false),
+      parameterPlacements: new SimpleChange(
+        [],
+        component.parameterPlacements,
+        false,
+      ),
+    });
+
+    expect(component.filterCategories[0].collapsed).toBeFalse();
+    expect(component.filterCategories[1].collapsed).toBeTrue();
+  });
+
+  it("uses the last duplicate placement override for category resolution", () => {
+    component.searchParameters = [
+      {
+        name: "storage_size",
+        modelValue: null,
+        schema: {
+          category_id: "storage",
+          title: "Storage Size",
+          type: "number",
+          step: 1,
+          unit: "GB",
+        },
+      },
+    ];
+    component.parameterPlacements = [
+      {
+        parameterName: "storage_size",
+        categoryId: "advisor",
+      },
+      {
+        parameterName: "storage_size",
+        categoryId: "storage",
+      },
+    ];
+
+    expect(component.getParametersByCategory("advisor")).toEqual([]);
+    expect(component.getParametersByCategory("storage")).toEqual(
+      component.searchParameters,
+    );
+  });
+
   it("does not open disabled single-select controls", () => {
     const control = {
       name: "baseline_region",
