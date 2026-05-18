@@ -56,6 +56,7 @@ export class LlmInferenceChartComponent {
   private builder = inject(LlmInferenceChartBuilderService);
   private tooltipService = inject(ChartTooltipService);
 
+  modelDropdown = viewChild<FlowbiteDropdownDirective>("modelDropdown");
   tooltip = viewChild<ElementRef<HTMLElement>>("tooltipDefault");
 
   layout = input<"details" | "compare">("details");
@@ -207,6 +208,7 @@ export class LlmInferenceChartComponent {
     }
 
     this.selectedModelIndex.set(index);
+    this.modelDropdown()?.hide();
   }
 
   showTooltip(el: MouseEvent, content?: string): void {
