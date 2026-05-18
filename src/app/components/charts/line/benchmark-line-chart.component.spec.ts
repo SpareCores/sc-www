@@ -87,4 +87,17 @@ describe("BenchmarkLineChartComponent", () => {
     expect(component.hasSelector()).toBeTrue();
     expect(component.resolvedSelectedOptionName()).toBe("sha256");
   });
+
+  it("renders a content-sized selector with compression-style option buttons", () => {
+    const hostElement = fixture.nativeElement as HTMLElement;
+    const optionsPanel = hostElement.querySelector(`#${component.optionsId}`);
+    const firstOptionButton = optionsPanel?.querySelector("button");
+    const firstOptionLabel = firstOptionButton?.querySelector("div");
+
+    expect(optionsPanel?.classList.contains("w-max")).toBeTrue();
+    expect(optionsPanel?.classList.contains("min-w-64")).toBeTrue();
+    expect(firstOptionButton?.classList.contains("w-full")).toBeTrue();
+    expect(firstOptionButton?.classList.contains("text-left")).toBeTrue();
+    expect(firstOptionLabel?.classList.contains("text-white")).toBeTrue();
+  });
 });

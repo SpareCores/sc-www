@@ -149,6 +149,17 @@ describe("BenchmarkMultiBarChartComponent", () => {
     expect(component.currentBenchmarkDescription()).toBe("");
   });
 
+  it("renders a content-sized primary dropdown with full-width left-aligned options", () => {
+    const hostElement = fixture.nativeElement as HTMLElement;
+    const optionsPanel = hostElement.querySelector(`#${component.optionsId}`);
+    const firstOptionButton = optionsPanel?.querySelector("button");
+
+    expect(optionsPanel?.classList.contains("w-max")).toBeTrue();
+    expect(optionsPanel?.classList.contains("min-w-64")).toBeTrue();
+    expect(firstOptionButton?.classList.contains("w-full")).toBeTrue();
+    expect(firstOptionButton?.classList.contains("text-left")).toBeTrue();
+  });
+
   it("updates the compare secondary option locally", () => {
     const chartItem: BenchmarkMultiBarChartItem = {
       chart: {
@@ -216,5 +227,80 @@ describe("BenchmarkMultiBarChartComponent", () => {
     fixture.detectChanges();
 
     expect(component.currentSecondaryOption()?.name).toBe("GET");
+  });
+
+  it("renders a content-sized secondary dropdown with full-width left-aligned options", () => {
+    const chartItem: BenchmarkMultiBarChartItem = {
+      chart: {
+        id: "redis",
+        name: "Redis",
+        selectedOption: 0,
+        selectedSecondaryOption: 0,
+        options: [
+          {
+            benchmark_id: "redis:rps",
+            labelsField: "operation",
+            scaleField: "pipeline",
+          },
+        ],
+        secondaryOptions: [
+          { name: "SET", value: "SET" },
+          { name: "GET", value: "GET" },
+        ],
+        chartOptions: {
+          scales: { x: { title: { text: "" } }, y: { title: { text: "" } } },
+          plugins: { title: { text: "" }, tooltip: { callbacks: {} } },
+        },
+        chartType: "bar",
+      },
+      show_more: false,
+    };
+    const benchmarkMeta: MultiBarBenchmarkMeta[] = [
+      {
+        benchmark_id: "redis:rps",
+        name: "Redis server+client speed",
+        unit: "ops/s",
+        higher_is_better: true,
+        config_fields: { operation: "Operation", pipeline: "Pipeline" },
+        configs: [
+          { config: { operation: "SET", pipeline: 1 } },
+          { config: { operation: "GET", pipeline: 1 } },
+        ],
+      },
+    ];
+    const servers: MultiBarServer[] = [
+      {
+        display_name: "Server A",
+        benchmark_scores: [
+          {
+            benchmark_id: "redis:rps",
+            config: { operation: "SET", pipeline: 1 },
+            score: 100,
+          },
+          {
+            benchmark_id: "redis:rps",
+            config: { operation: "GET", pipeline: 1 },
+            score: 120,
+          },
+        ],
+      },
+    ];
+
+    fixture.componentRef.setInput("chartItem", chartItem);
+    fixture.componentRef.setInput("benchmarkMeta", benchmarkMeta);
+    fixture.componentRef.setInput("servers", servers);
+    fixture.componentRef.setInput("layout", "compare");
+    fixture.detectChanges();
+
+    const hostElement = fixture.nativeElement as HTMLElement;
+    const optionsPanel = hostElement.querySelector(
+      `#${component.secondaryOptionsId}`,
+    );
+    const firstOptionButton = optionsPanel?.querySelector("button");
+
+    expect(optionsPanel?.classList.contains("w-max")).toBeTrue();
+    expect(optionsPanel?.classList.contains("min-w-64")).toBeTrue();
+    expect(firstOptionButton?.classList.contains("w-full")).toBeTrue();
+    expect(firstOptionButton?.classList.contains("text-left")).toBeTrue();
   });
 });
