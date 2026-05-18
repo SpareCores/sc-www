@@ -1,5 +1,5 @@
 import { isPlatformBrowser } from "@angular/common";
-import { Injectable, PLATFORM_ID, inject } from "@angular/core";
+import { Injectable, NgZone, PLATFORM_ID, inject } from "@angular/core";
 import * as Sentry from "@sentry/angular";
 import posthog from "posthog-js";
 
@@ -13,6 +13,7 @@ const SENTRY_DSN = import.meta.env.NG_APP_SENTRY_DSN;
 })
 export class AnalyticsService {
   private platformId = inject(PLATFORM_ID);
+  private ngZone = inject(NgZone);
 
   trackingInitialized = false;
 
@@ -28,9 +29,12 @@ export class AnalyticsService {
       typeof window !== "undefined" &&
       typeof document !== "undefined"
     ) {
-      posthog.init(POSTHOG_KEY, {
-        api_host: POSTHOG_HOST,
-        persistence: "sessionStorage",
+      // PostHog installs timers and global listeners that should not block hydration.
+      this.ngZone.runOutsideAngular(() => {
+        posthog.init(POSTHOG_KEY, {
+          api_host: POSTHOG_HOST,
+          persistence: "sessionStorage",
+        });
       });
       this.trackingInitialized = true;
     }
@@ -38,18 +42,23 @@ export class AnalyticsService {
 
   public trackEvent(
     eventName: string,
-    properties: { [key: string]: any },
+    properties: Record<string, unknown>,
   ): void {
     if (this.trackingInitialized) {
-      posthog.capture(eventName, properties);
+      this.ngZone.runOutsideAngular(() => {
+        posthog.capture(eventName, properties);
+      });
     }
   }
 
-  public getId() {
-    return posthog.get_distinct_id();
+  public getId(): string {
+    return this.ngZone.runOutsideAngular(() => posthog.get_distinct_id());
   }
 
-  public SentryException(exception: any, hint?: any) {
+  public SentryException(
+    exception: unknown,
+    hint?: Parameters<typeof Sentry.captureException>[1],
+  ): void {
     if (SENTRY_DSN && SENTRY_DSN !== "") {
       Sentry.captureException(exception, hint);
 
