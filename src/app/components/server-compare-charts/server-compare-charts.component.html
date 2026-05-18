@@ -325,7 +325,7 @@
       }
       @for (
         benchmarkCategory of benchmarkCategories;
-        track benchmarkCategory.name
+        track benchmarkCategory.id
       ) {
         @if (benchmarkCategory.data.length && !benchmarkCategory.hidden) {
           <tr
