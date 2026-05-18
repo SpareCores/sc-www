@@ -169,13 +169,13 @@ export class LlmInferenceChartComponent {
   );
   readonly promptInfoTooltip = computed(
     () =>
-      this.benchmarkMeta().find(
+      (this.benchmarkMeta() ?? []).find(
         (benchmark) => benchmark.benchmark_id === "llm_speed:prompt_processing",
       )?.description || "",
   );
   readonly generationInfoTooltip = computed(
     () =>
-      this.benchmarkMeta().find(
+      (this.benchmarkMeta() ?? []).find(
         (benchmark) => benchmark.benchmark_id === "llm_speed:text_generation",
       )?.description || "",
   );
