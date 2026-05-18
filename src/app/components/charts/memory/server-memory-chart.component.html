@@ -73,13 +73,14 @@
         memoryOption of availableMemoryChartOptions();
         track memoryOption.id
       ) {
-        <li class="flex py-1 gap-2 items-center">
+        <li>
           <button
-            class="ml-2 block max-w-full cursor-pointer whitespace-nowrap font-bold text-emerald-400 hover:text-emerald-500"
+            type="button"
+            class="w-full flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm border-0 bg-transparent text-left"
             (click)="selectMemoryChartOption(memoryOption)"
             [title]="memoryOption.name"
           >
-            {{ memoryOption.name }}
+            <div class="text-white text-sm">{{ memoryOption.name }}</div>
           </button>
         </li>
       }
