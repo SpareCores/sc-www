@@ -18,11 +18,13 @@ import {
 export class BenchmarkMultiBarChartBuilderService {
   initializeDetailsTemplate(
     chartTemplate: ChartFromBenchmarkTemplate,
-    benchmarkMeta: MultiBarBenchmarkMeta[],
+    benchmarkMeta: MultiBarBenchmarkMeta[] | undefined,
   ): void {
+    const availableBenchmarkMeta = benchmarkMeta ?? [];
+
     chartTemplate.options.forEach(
       (option: ChartFromBenchmarkTemplateOptions) => {
-        const benchmark = benchmarkMeta.find(
+        const benchmark = availableBenchmarkMeta.find(
           (b) => b.benchmark_id === option.benchmark_id,
         );
         if (!benchmark) {
@@ -55,11 +57,13 @@ export class BenchmarkMultiBarChartBuilderService {
 
   initializeCompareTemplate(
     chartTemplate: ChartFromBenchmarkTemplate,
-    benchmarkMeta: MultiBarBenchmarkMeta[],
+    benchmarkMeta: MultiBarBenchmarkMeta[] | undefined,
   ): void {
+    const availableBenchmarkMeta = benchmarkMeta ?? [];
+
     chartTemplate.options.forEach(
       (option: ChartFromBenchmarkTemplateOptions) => {
-        const benchmark = benchmarkMeta.find(
+        const benchmark = availableBenchmarkMeta.find(
           (b) => b.benchmark_id === option.benchmark_id,
         );
         if (!benchmark) {
@@ -88,7 +92,7 @@ export class BenchmarkMultiBarChartBuilderService {
 
   syncDetailsChart(
     chartTemplate: ChartFromBenchmarkTemplate,
-    benchmarksByCategory: MultiBarBenchmarkGroup[],
+    benchmarksByCategory: MultiBarBenchmarkGroup[] | undefined,
   ): void {
     this.applyChartState(
       chartTemplate,
@@ -98,8 +102,8 @@ export class BenchmarkMultiBarChartBuilderService {
 
   syncCompareChart(
     chartTemplate: ChartFromBenchmarkTemplate,
-    benchmarkMeta: MultiBarBenchmarkMeta[],
-    servers: MultiBarServer[],
+    benchmarkMeta: MultiBarBenchmarkMeta[] | undefined,
+    servers: MultiBarServer[] | undefined,
   ): void {
     this.applyChartState(
       chartTemplate,
@@ -109,20 +113,21 @@ export class BenchmarkMultiBarChartBuilderService {
 
   buildDetailsChart(
     chartTemplate: ChartFromBenchmarkTemplate,
-    benchmarksByCategory: MultiBarBenchmarkGroup[],
+    benchmarksByCategory: MultiBarBenchmarkGroup[] | undefined,
   ): MultiBarChartData | undefined {
     const chartConf = chartTemplate.options[chartTemplate.selectedOption];
     const labelsField = chartConf.labelsField;
     const scaleField = chartConf.scaleField;
-    const dataSet = benchmarksByCategory?.find(
+    const availableBenchmarkGroups = benchmarksByCategory ?? [];
+    const dataSet = availableBenchmarkGroups.find(
       (x) => x.benchmark_id === chartConf.benchmark_id,
     );
 
-    if (!dataSet?.benchmarks?.length) {
+    const benchmarks = dataSet?.benchmarks ?? [];
+
+    if (!benchmarks.length) {
       return undefined;
     }
-
-    const benchmarks = dataSet.benchmarks;
 
     const labels: MultiBarScaleValue[] = [];
     const scales: MultiBarScaleValue[] = [];
@@ -177,11 +182,13 @@ export class BenchmarkMultiBarChartBuilderService {
 
   buildCompareChart(
     chartTemplate: ChartFromBenchmarkTemplate,
-    benchmarkMeta: MultiBarBenchmarkMeta[],
-    servers: MultiBarServer[],
+    benchmarkMeta: MultiBarBenchmarkMeta[] | undefined,
+    servers: MultiBarServer[] | undefined,
   ): MultiBarChartData | undefined {
     const option: ChartFromBenchmarkTemplateOptions =
       chartTemplate.options[chartTemplate.selectedOption];
+    const availableBenchmarkMeta = benchmarkMeta ?? [];
+    const availableServers = servers ?? [];
 
     if (
       !chartTemplate.secondaryOptions ||
@@ -192,7 +199,7 @@ export class BenchmarkMultiBarChartBuilderService {
 
     const secondaryOption =
       chartTemplate.secondaryOptions[chartTemplate.selectedSecondaryOption];
-    const dataSet = benchmarkMeta?.find(
+    const dataSet = availableBenchmarkMeta.find(
       (x) => x.benchmark_id === option.benchmark_id,
     );
 
@@ -222,31 +229,35 @@ export class BenchmarkMultiBarChartBuilderService {
 
     return {
       labels: scales,
-      datasets: servers.map((server, index: number) => ({
-        data: scales.map((size) => {
-          const item = server.benchmark_scores.find(
-            (b) =>
-              b.benchmark_id === option.benchmark_id &&
-              b.config[option.labelsField] === secondaryOption.value &&
-              b.config[option.scaleField] === size,
-          );
-          if (!item) {
-            return null;
-          }
-          return {
-            data: item.score,
-            label: size,
-            unit: option.YLabel,
-            note: item.note,
-          };
-        }),
-        label: server.display_name,
-        spanGaps: true,
-        borderColor:
-          radarDatasetColors[index % radarDatasetColors.length].borderColor,
-        backgroundColor:
-          radarDatasetColors[index % radarDatasetColors.length].borderColor,
-      })),
+      datasets: availableServers.map((server, index: number) => {
+        const benchmarkScores = server.benchmark_scores ?? [];
+
+        return {
+          data: scales.map((size) => {
+            const item = benchmarkScores.find(
+              (b) =>
+                b.benchmark_id === option.benchmark_id &&
+                b.config[option.labelsField] === secondaryOption.value &&
+                b.config[option.scaleField] === size,
+            );
+            if (!item) {
+              return null;
+            }
+            return {
+              data: item.score,
+              label: size,
+              unit: option.YLabel,
+              note: item.note,
+            };
+          }),
+          label: server.display_name,
+          spanGaps: true,
+          borderColor:
+            radarDatasetColors[index % radarDatasetColors.length].borderColor,
+          backgroundColor:
+            radarDatasetColors[index % radarDatasetColors.length].borderColor,
+        };
+      }),
     };
   }
 
