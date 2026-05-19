@@ -27,6 +27,7 @@ import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { ServerCompareService } from "../../services/server-compare.service";
 import { ToastService } from "../../services/toast.service";
+import { NeetoCalService } from "../../services/neeto-cal.service";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
 describe("AdvisorComponent", () => {
@@ -45,6 +46,7 @@ describe("AdvisorComponent", () => {
   const updateTitleAndMetaTags = jasmine.createSpy("updateTitleAndMetaTags");
   const showToast = jasmine.createSpy("show");
   const initDropdown = jasmine.createSpy("initDropdown");
+  const initializeNeetoCal = jasmine.createSpy("initialize");
   const selectionChanged = new Subject();
   const compareService = {
     selectedForCompare: [] as Array<{
@@ -78,6 +80,7 @@ describe("AdvisorComponent", () => {
     updateTitleAndMetaTags.calls.reset();
     showToast.calls.reset();
     initDropdown.calls.reset();
+    initializeNeetoCal.calls.reset();
     compareService.selectedForCompare = [];
     compareService.toggleCompare.calls.reset();
     compareService.clearCompare.calls.reset();
@@ -256,6 +259,12 @@ describe("AdvisorComponent", () => {
             show: showToast,
           },
         },
+        {
+          provide: NeetoCalService,
+          useValue: {
+            initialize: initializeNeetoCal,
+          },
+        },
       ],
     }).compileComponents();
 
@@ -298,6 +307,8 @@ describe("AdvisorComponent", () => {
   }
 
   it("preloads baseline servers with the advisor default column set", () => {
+    expect(initializeNeetoCal).toHaveBeenCalled();
+
     expect(getServersSelect).toHaveBeenCalledOnceWith([
       ...ADVISOR_DEFAULT_SERVER_COLUMNS,
     ]);
@@ -306,6 +317,37 @@ describe("AdvisorComponent", () => {
 
     expect(component.filteredBaselineServers().length).toBe(1);
     expect(component.filteredBaselineServers()[0].api_reference).toBe("large");
+  });
+
+  it("renders the advisor hero actions and exact example preset", () => {
+    const host = fixture.nativeElement as HTMLElement;
+    const exampleButton = host.querySelector("#advisor_example_button");
+    const introductionButton = host.querySelector(
+      "#advisor_introduction_button",
+    );
+    const shareButton = host.querySelector("#advisor_share_button");
+    const schedulerCta = host.querySelector("#meeting-advisor-advanced");
+    const introductionFrame = host.querySelector(
+      "#advisor-introduction-modal iframe",
+    ) as HTMLIFrameElement | null;
+
+    expect(exampleButton?.textContent).toContain("Example");
+    expect(introductionButton?.textContent).toContain("Introduction");
+    expect(shareButton?.textContent).toContain("Share");
+    expect(schedulerCta?.textContent).toContain(
+      "Ready to scale? Unlock multi-server optimization, programmatic API access, and workflow automations for advanced cloud management.",
+    );
+    expect(component.advisorExampleQueryParams).toEqual({
+      baseline_vendor: "aws",
+      baseline_server: "m5ad.large",
+      limit_architecture: "true",
+      workload_id: "workload_profile:web",
+      workload_config: "{}",
+      avg_cpu_utilization: "60",
+      minimum_memory: "6",
+    });
+    expect(introductionFrame?.src).toContain("obkavneTmwU");
+    expect(introductionFrame?.title).toBe("Spare Cores advisor introduction");
   });
 
   it("sorts filtered baseline servers by vcpus, memory, vendor, and api reference", () => {
