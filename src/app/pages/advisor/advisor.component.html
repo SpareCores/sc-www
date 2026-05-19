@@ -124,7 +124,7 @@
       </div>
     </div>
 
-    <div class="flex gap-8 mx-2 xl:mx-0">
+    <div class="advisor-page-body mx-2 xl:mx-0">
       <div
         class="advisor-filter-bar bg-primary"
         [class.advisor-filter-bar-collapsed]="isCollapsed()"
@@ -139,15 +139,9 @@
           (keydown.space)="toggleCollapse(); $event.preventDefault()"
         >
           <lucide-icon
-            name="chevron-left"
+            [name]="isCollapsed() ? 'chevron-right' : 'chevron-left'"
             class="h-6 w-6 text-emerald-400"
           ></lucide-icon>
-        </div>
-
-        <div class="advisor-filter-bar-top overflow-hidden bg-secondary">
-          <div class="text-emerald-400 text-sm font-semibold">
-            Advisor Controls
-          </div>
         </div>
 
         <div class="advisor-filter-bar-filters overflow-hidden bg-secondary">
@@ -180,13 +174,7 @@
         </div>
       </div>
 
-      <div
-        class="advisor-results flex flex-col gap-4"
-        [ngClass]="{
-          'advisor-results-constrained': !isCollapsed(),
-          'w-full': isCollapsed(),
-        }"
-      >
+      <div class="advisor-results flex flex-col gap-4">
         <div class="advisor-toolbar">
           @if (recommendationSummary(); as summary) {
             <div

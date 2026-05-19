@@ -531,6 +531,28 @@ describe("AdvisorComponent", () => {
     expect(cpuArchitectureControl?.title).toBe("CPU architecture");
   });
 
+  it("keeps the outer sidebar collapser while removing advisor section chrome", () => {
+    const host = fixture.nativeElement as HTMLElement;
+    const advisorCategory = host.querySelector(
+      '[data-category-id="advisor"]',
+    ) as HTMLElement | null;
+
+    expect(host.querySelector(".advisor-filter-bar-collapser")).not.toBeNull();
+    expect(host.querySelector(".advisor-filter-bar-top")).toBeNull();
+    expect(advisorCategory).not.toBeNull();
+    expect(advisorCategory?.querySelector('[role="button"]')).toBeNull();
+    expect(advisorCategory?.textContent).toContain("Baseline server");
+
+    component.toggleCollapse();
+    fixture.detectChanges();
+
+    expect(
+      host
+        .querySelector(".advisor-filter-bar")
+        ?.classList.contains("advisor-filter-bar-collapsed"),
+    ).toBeTrue();
+  });
+
   it("enables and filters baseline workloads after baseline scores load", fakeAsync(() => {
     component.benchmarkConfigOptions.set([
       ...component.benchmarkConfigOptions(),

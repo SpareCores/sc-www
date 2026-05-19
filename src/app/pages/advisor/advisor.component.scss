@@ -3,19 +3,19 @@
   cursor: wait !important;
 }
 
+.advisor-page-body {
+  @apply flex gap-8;
+}
+
 .advisor-filter-bar {
   position: relative;
   width: 20rem;
-  transition: width 0.2s ease-in-out;
-}
-
-.advisor-filter-bar-top {
-  height: 4rem;
-  align-items: center;
-  justify-content: center;
-  display: flex;
-  padding: 0.5rem;
-  border-top: 1px solid #34d399;
+  min-width: 20rem;
+  flex: 0 0 20rem;
+  transition:
+    width 0.2s ease-in-out,
+    min-width 0.2s ease-in-out,
+    flex-basis 0.2s ease-in-out;
 }
 
 .advisor-filter-bar-collapser {
@@ -38,10 +38,33 @@
 }
 
 .advisor-filter-bar-filters {
-  border-right: 1px solid #34d399;
+  border-top: 1px solid #34d399;
   display: flex;
   flex-direction: column;
-  height: calc(100% - 4rem);
+  height: 100%;
+  position: relative;
+}
+
+.advisor-filter-bar:not(.advisor-filter-bar-collapsed)
+  .advisor-filter-bar-filters::after {
+  content: "";
+  position: absolute;
+  top: calc(4rem - 1px);
+  right: 0;
+  width: 1px;
+  height: calc(100% - 4rem + 1px);
+  background: #34d399;
+}
+
+.advisor-filter-bar.advisor-filter-bar-collapsed::after {
+  content: "";
+  position: absolute;
+  top: calc(4rem - 1px);
+  bottom: 0;
+  right: 0;
+  width: 1px;
+  background: #34d399;
+  pointer-events: none;
 }
 
 .advisor-filter-bar app-search-bar {
@@ -61,8 +84,9 @@
 }
 
 .advisor-filter-bar.advisor-filter-bar-collapsed {
-  width: 0rem;
-  min-width: unset;
+  width: 0;
+  min-width: 0;
+  flex-basis: 0;
 }
 
 .advisor-hero-header {
@@ -154,11 +178,8 @@
   @apply hidden;
 }
 
-.advisor-results-constrained {
-  width: calc(100% - 20rem);
-}
-
 .advisor-results {
+  flex: 1 1 0%;
   min-width: 0;
 }
 
@@ -298,6 +319,16 @@
 }
 
 @media (max-width: 1024px) {
+  .advisor-page-body {
+    @apply flex-col;
+  }
+
+  .advisor-filter-bar {
+    width: 100%;
+    min-width: 0;
+    flex-basis: auto;
+  }
+
   .advisor-toolbar {
     width: 100%;
   }

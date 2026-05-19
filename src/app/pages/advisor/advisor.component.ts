@@ -1034,10 +1034,6 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
     this.introductionModal = null;
   }
 
-  toggleCollapse(): void {
-    this.isCollapsed.update((value) => !value);
-  }
-
   toggleOrdering(column: AdvisorTableColumn): void {
     if (!column.orderField) {
       return;
@@ -1193,6 +1189,10 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
 
   closeIntroductionModal(): void {
     this.introductionModal?.hide();
+  }
+
+  toggleCollapse(): void {
+    this.isCollapsed.update((value) => !value);
   }
 
   openCompare(): void {
