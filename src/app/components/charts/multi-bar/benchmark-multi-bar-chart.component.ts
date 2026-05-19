@@ -102,7 +102,7 @@ export class BenchmarkMultiBarChartComponent {
   });
   readonly currentBenchmarkDescription = computed(
     () =>
-      this.benchmarkMeta().find(
+      (this.benchmarkMeta() ?? []).find(
         (benchmark) =>
           benchmark.benchmark_id === this.currentOption()?.benchmark_id,
       )?.description || "",

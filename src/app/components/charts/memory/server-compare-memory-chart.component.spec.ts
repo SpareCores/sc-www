@@ -67,4 +67,17 @@ describe("ServerCompareMemoryChartComponent", () => {
 
     expect(component.selectedOption()?.id).toBe("membench-latency");
   });
+
+  it("renders a content-sized dropdown with full-width left-aligned options", () => {
+    const hostElement = fixture.nativeElement as HTMLElement;
+    const optionsPanel = hostElement.querySelector(`#${component.optionsId}`);
+    const firstOptionButton = optionsPanel?.querySelector("button");
+    const firstOptionLabel = firstOptionButton?.querySelector("div");
+
+    expect(optionsPanel?.classList.contains("w-max")).toBeTrue();
+    expect(optionsPanel?.classList.contains("min-w-64")).toBeTrue();
+    expect(firstOptionButton?.classList.contains("w-full")).toBeTrue();
+    expect(firstOptionButton?.classList.contains("text-left")).toBeTrue();
+    expect(firstOptionLabel?.classList.contains("text-white")).toBeTrue();
+  });
 });

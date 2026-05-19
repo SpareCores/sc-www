@@ -139,6 +139,16 @@ describe("BenchmarkMultiBarChartComponent", () => {
     );
   });
 
+  it("keeps the benchmark description empty while metadata is unavailable", () => {
+    fixture.componentRef.setInput(
+      "benchmarkMeta",
+      undefined as unknown as MultiBarBenchmarkMeta[],
+    );
+
+    expect(() => fixture.detectChanges()).not.toThrow();
+    expect(component.currentBenchmarkDescription()).toBe("");
+  });
+
   it("updates the compare secondary option locally", () => {
     const chartItem: BenchmarkMultiBarChartItem = {
       chart: {
@@ -206,5 +216,83 @@ describe("BenchmarkMultiBarChartComponent", () => {
     fixture.detectChanges();
 
     expect(component.currentSecondaryOption()?.name).toBe("GET");
+  });
+
+  it("keeps compare selector triggers on one line and lets buttons shrink", () => {
+    const chartItem: BenchmarkMultiBarChartItem = {
+      chart: {
+        id: "redis",
+        name: "Redis",
+        selectedOption: 0,
+        selectedSecondaryOption: 0,
+        options: [
+          {
+            benchmark_id: "redis:rps",
+            labelsField: "operation",
+            scaleField: "pipeline",
+          },
+        ],
+        secondaryOptions: [
+          { name: "Connection per vCPU(s): 1", value: "SET" },
+          { name: "Connection per vCPU(s): 32", value: "GET" },
+        ],
+        chartOptions: {
+          scales: { x: { title: { text: "" } }, y: { title: { text: "" } } },
+          plugins: { title: { text: "" }, tooltip: { callbacks: {} } },
+        },
+        chartType: "bar",
+      },
+      show_more: false,
+    };
+    const benchmarkMeta: MultiBarBenchmarkMeta[] = [
+      {
+        benchmark_id: "redis:rps",
+        name: "Static web server (extrapolated) throughput",
+        unit: "ops/s",
+        higher_is_better: true,
+        config_fields: { operation: "Operation", pipeline: "Pipeline" },
+        configs: [
+          { config: { operation: "SET", pipeline: 1 } },
+          { config: { operation: "GET", pipeline: 1 } },
+        ],
+      },
+    ];
+    const servers: MultiBarServer[] = [
+      {
+        display_name: "Server A",
+        benchmark_scores: [
+          {
+            benchmark_id: "redis:rps",
+            config: { operation: "SET", pipeline: 1 },
+            score: 100,
+          },
+          {
+            benchmark_id: "redis:rps",
+            config: { operation: "GET", pipeline: 1 },
+            score: 120,
+          },
+        ],
+      },
+    ];
+
+    fixture.componentRef.setInput("chartItem", chartItem);
+    fixture.componentRef.setInput("benchmarkMeta", benchmarkMeta);
+    fixture.componentRef.setInput("servers", servers);
+    fixture.componentRef.setInput("layout", "compare");
+    fixture.detectChanges();
+
+    const hostElement = fixture.nativeElement as HTMLElement;
+    const primaryButton = hostElement.querySelector(
+      `#${component.buttonId}`,
+    ) as HTMLElement | null;
+    const secondaryButton = hostElement.querySelector(
+      `#${component.secondaryButtonId}`,
+    ) as HTMLElement | null;
+    const compareSelectorRow = primaryButton?.parentElement;
+
+    expect(compareSelectorRow?.classList.contains("flex-nowrap")).toBeTrue();
+    expect(compareSelectorRow?.classList.contains("min-w-0")).toBeTrue();
+    expect(primaryButton?.classList.contains("max-w-full")).toBeTrue();
+    expect(secondaryButton?.classList.contains("max-w-full")).toBeTrue();
   });
 });

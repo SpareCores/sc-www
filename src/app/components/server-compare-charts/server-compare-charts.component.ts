@@ -199,6 +199,10 @@ export class ServerCompareChartsComponent implements OnChanges {
   }
 
   shouldUseSplitCompareRows() {
+    if (this.isEmbedded) {
+      return false;
+    }
+
     if (!this.isBrowser()) {
       return this.servers.length > 4;
     }
@@ -583,6 +587,10 @@ export class ServerCompareChartsComponent implements OnChanges {
   }
 
   getCompareFixedWideContentColSpan() {
+    if (this.isEmbedded) {
+      return this.getSectionColSpan();
+    }
+
     if (!this.shouldUseSplitCompareRows()) {
       return this.getSectionColSpan();
     }
@@ -591,6 +599,10 @@ export class ServerCompareChartsComponent implements OnChanges {
   }
 
   getCompareFixedWideTrailingColSpan() {
+    if (this.isEmbedded) {
+      return 0;
+    }
+
     return Math.max(
       this.getSectionColSpan() - this.getCompareFixedWideContentColSpan(),
       0,
@@ -598,6 +610,10 @@ export class ServerCompareChartsComponent implements OnChanges {
   }
 
   getCompareFixedWideActionSpacerColSpan() {
+    if (this.isEmbedded) {
+      return 0;
+    }
+
     return Math.max(this.getCompareFixedWideTrailingColSpan() - 1, 0);
   }
 

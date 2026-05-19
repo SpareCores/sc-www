@@ -65,6 +65,17 @@ describe("LlmInferenceChartBuilderService", () => {
     expect(result?.datasets[0].label).toBe("gemma-2b.Q4_K_M");
   });
 
+  it("returns undefined details data while benchmark groups are unavailable", () => {
+    const result = service.buildDetailsBarChart({
+      benchmarksByCategory: undefined,
+      benchmarkId: "llm_speed:prompt_processing",
+      labelsField: "tokens",
+      scaleField: "model",
+    });
+
+    expect(result).toBeUndefined();
+  });
+
   it("builds compare charts for the selected model", () => {
     const servers: LlmChartServer[] = [
       {
@@ -101,5 +112,40 @@ describe("LlmInferenceChartBuilderService", () => {
 
     expect(result?.promptData.labels).toEqual([128]);
     expect(result?.generationData.datasets[0].data).toEqual([8]);
+  });
+
+  it("ignores servers that do not have compare benchmark scores yet", () => {
+    const servers = [
+      {
+        display_name: "Server A",
+      },
+      {
+        display_name: "Server B",
+        benchmark_scores: [
+          {
+            vendor_id: "vendor-b",
+            server_id: "server-b",
+            benchmark_id: "llm_speed:prompt_processing",
+            config: { model: "phi-4-q4.gguf", tokens: 128 },
+            score: 12,
+          },
+        ],
+      },
+    ] as LlmChartServer[];
+    const selectedModel: LlmModelOption = {
+      name: "phi-4-q4",
+      value: "phi-4-q4.gguf",
+    };
+
+    const result = service.buildCompareCharts({
+      servers,
+      selectedModel,
+      promptOptionsBase: {},
+      generationOptionsBase: {},
+    });
+
+    expect(result?.promptData.labels).toEqual([128]);
+    expect(result?.promptData.datasets[0].data).toEqual([null]);
+    expect(result?.promptData.datasets[1].data).toEqual([12]);
   });
 });

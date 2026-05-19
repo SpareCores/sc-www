@@ -377,12 +377,12 @@ LLM inference speed results that are also embedded below for the above-mentioned
 `g2-standard-4` server as interactive charts:
 
 <iframe
- src="https://sparecores.com/embed/server/gcp/g2-standard-4/llm_prompt"
+ src="/embed/server/gcp/g2-standard-4/llm_prompt"
  style="height: 510px; width: 100%; border: 1px solid #34d399; border-radius: 8px; min-height: 400px;">
 </iframe>
 
 <iframe
- src="https://sparecores.com/embed/server/gcp/g2-standard-4/llm_generation"
+ src="/embed/server/gcp/g2-standard-4/llm_generation"
  style="height: 510px; width: 100%; border: 1px solid #34d399; border-radius: 8px; min-height: 400px; margin-top: 20px;">
 </iframe>
 
@@ -434,7 +434,7 @@ Finally, let's compare the winners of this last listing as an example of
 our <a href="/compare" target="_blank">Compare Guide</a>:
 
 <iframe
- src="https://sparecores.com/embed/compare/llm_inference?instances=W3siZGlzcGxheV9uYW1lIjoidDJkLXN0YW5kYXJkLTEiLCJ2ZW5kb3IiOiJnY3AiLCJzZXJ2ZXIiOiJ0MmQtc3RhbmRhcmQtMSIsInpvbmVzUmVnaW9ucyI6W119LHsiZGlzcGxheV9uYW1lIjoidDJkLXN0YW5kYXJkLTIiLCJ2ZW5kb3IiOiJnY3AiLCJzZXJ2ZXIiOiJ0MmQtc3RhbmRhcmQtMiIsInpvbmVzUmVnaW9ucyI6W119LHsiZGlzcGxheV9uYW1lIjoiYzhnLm1lZGl1bSIsInZlbmRvciI6ImF3cyIsInNlcnZlciI6ImM4Zy5tZWRpdW0iLCJ6b25lc1JlZ2lvbnMiOltdfSx7ImRpc3BsYXlfbmFtZSI6InQyLnNtYWxsIiwidmVuZG9yIjoiYXdzIiwic2VydmVyIjoidDIuc21hbGwiLCJ6b25lc1JlZ2lvbnMiOltdfSx7ImRpc3BsYXlfbmFtZSI6ImNweDExIiwidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY3B4MTEiLCJ6b25lc1JlZ2lvbnMiOltdfV0="
+ src="/embed/compare/llm_inference?instances=W3siZGlzcGxheV9uYW1lIjoidDJkLXN0YW5kYXJkLTEiLCJ2ZW5kb3IiOiJnY3AiLCJzZXJ2ZXIiOiJ0MmQtc3RhbmRhcmQtMSIsInpvbmVzUmVnaW9ucyI6W119LHsiZGlzcGxheV9uYW1lIjoidDJkLXN0YW5kYXJkLTIiLCJ2ZW5kb3IiOiJnY3AiLCJzZXJ2ZXIiOiJ0MmQtc3RhbmRhcmQtMiIsInpvbmVzUmVnaW9ucyI6W119LHsiZGlzcGxheV9uYW1lIjoiYzhnLm1lZGl1bSIsInZlbmRvciI6ImF3cyIsInNlcnZlciI6ImM4Zy5tZWRpdW0iLCJ6b25lc1JlZ2lvbnMiOltdfSx7ImRpc3BsYXlfbmFtZSI6InQyLnNtYWxsIiwidmVuZG9yIjoiYXdzIiwic2VydmVyIjoidDIuc21hbGwiLCJ6b25lc1JlZ2lvbnMiOltdfSx7ImRpc3BsYXlfbmFtZSI6ImNweDExIiwidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY3B4MTEiLCJ6b25lc1JlZ2lvbnMiOltdfV0="
  style="height: 900px; width: 100%; border: 1px solid #34d399; border-radius: 8px; min-height: 600px">
 </iframe>
 

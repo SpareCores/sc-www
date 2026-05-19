@@ -37,7 +37,7 @@
 
   <div
     [id]="optionsId"
-    class="z-100 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid"
+    class="z-100 hidden w-max min-w-64 max-w-[calc(100vw-2rem)] bg-secondary rounded-lg border border-emerald-400 border-solid shadow"
   >
     <ul
       class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
@@ -48,11 +48,15 @@
         track bwMemOperation.id;
         let i = $index
       ) {
-        <li
-          class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-          (click)="selectMemoryChartOption(i)"
-        >
-          <div class="text-white text-sm">{{ bwMemOperation.name }}</div>
+        <li>
+          <button
+            type="button"
+            class="w-full flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm border-0 bg-transparent text-left"
+            (click)="selectMemoryChartOption(i)"
+            [title]="bwMemOperation.name"
+          >
+            <div class="text-white text-sm">{{ bwMemOperation.name }}</div>
+          </button>
         </li>
       }
     </ul>
