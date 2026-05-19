@@ -385,7 +385,7 @@
     </div>
   </div>
 </div>
-<div class="content_section odd">
+<div class="content_section odd" id="project-components">
   <div class="content flex justify-center">
     <div class="w-full lg:w-3/5 flex flex-col gap-12">
       <app-theme-text
@@ -394,16 +394,15 @@
       ></app-theme-text>
       <div class="flex gap-4 justify-center">
         <div class="font-mono text-2xl text-center">
-          The status and brief descriptions of all the existing open-source
-          Spare Cores components:
+          The status and brief descriptions of the<br />Spare Cores Navigator components:
         </div>
       </div>
       <table class="repo_table mb-8">
         <thead>
           <tr>
             <th>COMPONENT</th>
-            <th>STATUS</th>
-            <th>REPOSITORY</th>
+            <th>LICENSE</th>
+            <th>REFERENCES</th>
             <th>DESCRIPTION</th>
           </tr>
         </thead>
@@ -413,8 +412,8 @@
             track githubComponent.component
           ) {
             <tr>
-              <td>{{ githubComponent.component }}</td>
-              <td>{{ githubComponent.status }}</td>
+              <td class="text-nowrap">{{ githubComponent.component }}</td>
+              <td class="text-nowrap">{{ githubComponent.license }}</td>
               <td class="flex gap-1">
                 @if (githubComponent.github) {
                   <a
@@ -500,9 +499,9 @@
                     href="{{ githubComponent.data }}"
                     target="_blank"
                     rel="noopener"
-                    [title]="'Database of ' + githubComponent.component"
+                    [title]="'Download ' + githubComponent.component"
                     [attr.aria-label]="
-                      'Database of ' + githubComponent.component
+                      'Download ' + githubComponent.component
                     "
                   >
                     <lucide-icon name="database"></lucide-icon>
