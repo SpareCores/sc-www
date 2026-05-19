@@ -65,6 +65,34 @@
   min-width: unset;
 }
 
+.advisor-hero-header {
+  @apply flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between;
+}
+
+.advisor-hero-actions {
+  @apply flex flex-wrap items-center gap-3 lg:justify-end;
+}
+
+.advisor-header-action {
+  @apply inline-flex items-center gap-2 px-3 py-2;
+  min-height: 50px;
+  white-space: nowrap;
+}
+
+.advisor-hero-cta {
+  @apply cursor-pointer text-left text-sm text-emerald-400 underline decoration-dotted underline-offset-4 hover:text-emerald-300 sm:text-base lg:text-lg focus:outline-none focus:ring focus:ring-emerald-400 focus:ring-opacity-75;
+  background: transparent;
+  border: 0;
+  padding: 0;
+}
+
+.advisor-video-frame {
+  border: 2px solid #34d399;
+  border-radius: 0.5rem;
+  margin: 0 auto;
+  aspect-ratio: 16 / 9;
+}
+
 .advisor-toolbar {
   min-height: 4rem;
   display: flex;
