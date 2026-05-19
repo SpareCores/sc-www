@@ -206,7 +206,7 @@ export class AboutNavigatorComponent implements OnInit, AfterViewInit {
     {
       component: "Web UI",
       status: "Stable",
-      github: "https://github.com/SpareCores/sc-www",
+      github: "sc-www",
       license: "MPL 2.0",
       description: "Web frontend for human access to the Database.",
       www: "https://sparecores.com/servers",
