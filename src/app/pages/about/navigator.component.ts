@@ -184,7 +184,8 @@ export class AboutNavigatorComponent implements OnInit, AfterViewInit {
       status: "Stable",
       data: "https://cdn.sparecores.net/sc-data/sc-data-all.sql.xz",
       license: "BSL 1.1",
-      description: "SQLite database dump of current cloud resource information.",
+      description:
+        "SQLite database dump of current cloud resource information.",
     },
     {
       component: "Data Wrapper",
