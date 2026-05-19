@@ -86,4 +86,17 @@ describe("ServerMemoryChartComponent", () => {
 
     expect(annotations?.line1?.value).toBe(32 / 1024);
   });
+
+  it("renders full-width left-aligned details options", () => {
+    const hostElement = fixture.nativeElement as HTMLElement;
+    const optionsPanel = hostElement.querySelector(`#${component.optionsId}`);
+    const firstOptionButton = optionsPanel?.querySelector("button");
+    const firstOptionLabel = firstOptionButton?.querySelector("div");
+
+    expect(optionsPanel?.classList.contains("w-max")).toBeTrue();
+    expect(optionsPanel?.classList.contains("min-w-64")).toBeTrue();
+    expect(firstOptionButton?.classList.contains("w-full")).toBeTrue();
+    expect(firstOptionButton?.classList.contains("text-left")).toBeTrue();
+    expect(firstOptionLabel?.classList.contains("text-white")).toBeTrue();
+  });
 });

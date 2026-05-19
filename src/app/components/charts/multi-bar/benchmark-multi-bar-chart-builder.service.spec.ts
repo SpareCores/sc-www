@@ -33,6 +33,14 @@ describe("BenchmarkMultiBarChartBuilderService", () => {
     expect(chartTemplate.options[0].XLabel).toBe("Pipeline");
   });
 
+  it("does not throw while compare metadata is temporarily unavailable", () => {
+    const chartTemplate = JSON.parse(JSON.stringify(redisChartTemplate));
+
+    expect(() => {
+      service.initializeCompareTemplate(chartTemplate, undefined);
+    }).not.toThrow();
+  });
+
   it("builds compare datasets from selected secondary option", () => {
     const chartTemplate = JSON.parse(JSON.stringify(redisChartTemplate));
     chartTemplate.selectedOption = 0;
@@ -75,6 +83,16 @@ describe("BenchmarkMultiBarChartBuilderService", () => {
 
     expect(result?.labels).toEqual([1, 4]);
     expect(result?.datasets[0].data.length).toBe(2);
+  });
+
+  it("returns undefined while compare metadata is unavailable", () => {
+    const chartTemplate = JSON.parse(JSON.stringify(redisChartTemplate));
+    chartTemplate.selectedOption = 0;
+    chartTemplate.selectedSecondaryOption = 0;
+
+    const result = service.buildCompareChart(chartTemplate, undefined, []);
+
+    expect(result).toBeUndefined();
   });
 
   it("syncs chart titles even when no compare data exists", () => {

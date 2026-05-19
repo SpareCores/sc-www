@@ -106,7 +106,7 @@ The infrastructure challenge was real -- a single Docker image that works across
 Honestly, we spent well over $10k on this project. Unexpected Azure termination issues pushed the Azure bill to over $8k alone, though vendor cloud credits covered it. The results are available on the [Server Navigator](/servers), or embedded in any HTML page, see e.g. the below LLM inference speed chart for the prompt processing of the `g2-standard-4` server:
 
 <iframe
- src="https://sparecores.com/embed/server/gcp/g2-standard-4/llm_prompt"
+ src="/embed/server/gcp/g2-standard-4/llm_prompt"
  style="height: 510px; width: 100%; border: 1px solid #34d399; border-radius: 8px; min-height: 400px;">
 </iframe>
 

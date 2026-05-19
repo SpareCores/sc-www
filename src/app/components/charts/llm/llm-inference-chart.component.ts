@@ -56,6 +56,7 @@ export class LlmInferenceChartComponent {
   private builder = inject(LlmInferenceChartBuilderService);
   private tooltipService = inject(ChartTooltipService);
 
+  modelDropdown = viewChild<FlowbiteDropdownDirective>("modelDropdown");
   tooltip = viewChild<ElementRef<HTMLElement>>("tooltipDefault");
 
   layout = input<"details" | "compare">("details");
@@ -169,13 +170,13 @@ export class LlmInferenceChartComponent {
   );
   readonly promptInfoTooltip = computed(
     () =>
-      this.benchmarkMeta().find(
+      (this.benchmarkMeta() ?? []).find(
         (benchmark) => benchmark.benchmark_id === "llm_speed:prompt_processing",
       )?.description || "",
   );
   readonly generationInfoTooltip = computed(
     () =>
-      this.benchmarkMeta().find(
+      (this.benchmarkMeta() ?? []).find(
         (benchmark) => benchmark.benchmark_id === "llm_speed:text_generation",
       )?.description || "",
   );
@@ -207,6 +208,7 @@ export class LlmInferenceChartComponent {
     }
 
     this.selectedModelIndex.set(index);
+    this.modelDropdown()?.hide();
   }
 
   showTooltip(el: MouseEvent, content?: string): void {

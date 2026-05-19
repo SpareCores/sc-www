@@ -210,7 +210,7 @@ export namespace Table {
     export type RequestParams = {};
     export type RequestQuery = {
       /**
-       * Vendor id
+       * Vendor
        * Identifier of the cloud provider vendor.
        */
       vendor?:
@@ -222,7 +222,7 @@ export namespace Table {
         | "ovh"
         | "upcloud";
       /**
-       * Region id
+       * Region
        * Identifier of the region. Note that region ids are not vendor-specific, so when you select a region, you might get results from multiple vendors. For more precise filtering, use vendor_regions instead.
        */
       region?:
@@ -438,7 +438,7 @@ export namespace Table {
         | "westus2"
         | "westus3";
       /**
-       * Vendor and region id
+       * Vendor and region
        * Identifier of the vendor and region, separated by a tilde.
        */
       vendor_regions?:

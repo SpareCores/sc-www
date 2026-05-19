@@ -285,6 +285,53 @@ describe("ServerCompareChartsComponent", () => {
     expect(chartCells?.[1].getAttribute("colspan")).toBe("7");
   });
 
+  it("renders embedded benchmark rows full width without trailing filler cells", () => {
+    component.isEmbedded = true;
+    component.servers = buildServers(5) as unknown as typeof component.servers;
+    component.benchmarkMeta = [
+      {
+        benchmark_id: "llm_inference",
+        benchmark_key: "llm_inference",
+        name: "LLM Inference Speed",
+        description: "LLM inference benchmark",
+        collapsed: true,
+        configs: [],
+      },
+    ];
+    component.benchmarkCategories = [
+      {
+        id: "llm_inference",
+        name: "LLM Inference Speed",
+        benchmarks: ["llm_inference"],
+        data: [{ benchmark_id: "llm_inference" }],
+        show_more: false,
+        hidden: false,
+      },
+    ];
+
+    fixture.detectChanges();
+
+    const titleRow = (fixture.nativeElement as HTMLElement).querySelector(
+      "#benchmark_line_llm_inference",
+    ) as HTMLTableRowElement | null;
+    const chartRow = titleRow?.nextElementSibling as HTMLTableRowElement | null;
+
+    expect(titleRow).toBeTruthy();
+    expect(chartRow).toBeTruthy();
+
+    const titleCells = titleRow?.querySelectorAll(":scope > td");
+    const chartCells = chartRow?.querySelectorAll(":scope > td");
+
+    expect(titleCells?.length).toBe(1);
+    expect(titleCells?.[0].getAttribute("colspan")).toBe("6");
+
+    expect(chartCells?.length).toBe(1);
+    expect(chartCells?.[0].getAttribute("colspan")).toBe("6");
+    expect(
+      chartCells?.[0].querySelector("app-llm-inference-chart"),
+    ).toBeTruthy();
+  });
+
   it("keeps multi-bar title and chart sticky spans capped for many servers", () => {
     mountTableHolder(1200);
 

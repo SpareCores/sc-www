@@ -131,28 +131,25 @@
   @if (hasSelector()) {
     <div
       [id]="optionsId"
-      class="z-100 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid"
+      class="z-100 hidden w-max min-w-64 max-w-[calc(100vw-2rem)] bg-secondary rounded-lg border border-emerald-400 border-solid shadow"
     >
       <ul
         class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
         [attr.aria-labelledby]="buttonId"
-        role="listbox"
       >
         @for (
           option of resolvedSelectorOptions();
           track option.name;
           let i = $index
         ) {
-          <li
-            class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
-            (click)="selectOption(i)"
-            (keydown.enter)="selectOption(i)"
-            (keydown.space)="selectOption(i); $event.preventDefault()"
-            role="option"
-            [attr.aria-selected]="resolvedSelectedOptionName() === option.name"
-            tabindex="0"
-          >
-            <div class="text-white text-sm">{{ option.name }}</div>
+          <li>
+            <button
+              type="button"
+              class="w-full flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm border-0 bg-transparent text-left"
+              (click)="selectOption(i)"
+            >
+              <div class="text-white text-sm">{{ option.name }}</div>
+            </button>
           </li>
         }
       </ul>
