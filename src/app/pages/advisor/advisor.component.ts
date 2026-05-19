@@ -1,6 +1,8 @@
 import { CommonModule, isPlatformBrowser } from "@angular/common";
 import {
+  AfterViewInit,
   Component,
+  ElementRef,
   OnDestroy,
   OnInit,
   PLATFORM_ID,
@@ -11,6 +13,7 @@ import {
   signal,
   viewChild,
 } from "@angular/core";
+import { Modal, ModalOptions } from "flowbite";
 import { ActivatedRoute, Params, Router, RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 import { Subject, Subscription, debounceTime } from "rxjs";
@@ -40,6 +43,7 @@ import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { ServerCompareService } from "../../services/server-compare.service";
 import { ToastService } from "../../services/toast.service";
+import { NeetoCalService } from "../../services/neeto-cal.service";
 import { encodeQueryParams } from "../../tools/queryParamFunctions";
 import {
   availableCurrencies as AVAILABLE_CURRENCIES,
@@ -52,6 +56,7 @@ import { LoadingSpinnerComponent } from "../../components/loading-spinner/loadin
 import { CpuCacheSizePipe } from "../../pipes/cpu-cache-size.pipe";
 import { GpuCountPipe } from "../../pipes/gpu-count.pipe";
 import {
+  ADVISOR_ADVANCED_CTA_LABEL,
   ADVISOR_BREADCRUMBS,
   ADVISOR_BASELINE_REGION_TOOLTIP,
   ADVISOR_CUSTOM_QUERY_PARAM_NAMES,
@@ -66,6 +71,7 @@ import {
   ADVISOR_DEFAULT_PEAK_GPU_MEMORY_GIB,
   ADVISOR_DEFAULT_PRICE_ALLOCATION,
   ADVISOR_DEFAULT_SERVER_COLUMNS,
+  ADVISOR_EXAMPLE_QUERY_PARAMS,
   ADVISOR_FILTER_CATEGORIES,
   ADVISOR_OPTIMIZATION_GOAL_OPTIONS,
   ADVISOR_PARAMETER_PLACEMENTS,
@@ -126,6 +132,11 @@ type RecommendationResult = {
   totalPages: number;
 };
 
+const advisorIntroductionModalOptions: ModalOptions = {
+  backdropClasses: "bg-gray-900/50 fixed inset-0 z-40",
+  closable: true,
+};
+
 @Component({
   selector: "app-advisor",
   imports: [
@@ -143,7 +154,7 @@ type RecommendationResult = {
   templateUrl: "./advisor.component.html",
   styleUrl: "./advisor.component.scss",
 })
-export class AdvisorComponent implements OnInit, OnDestroy {
+export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
   private platformId = inject(PLATFORM_ID);
   private seoHandler = inject(SeoHandlerService);
   private keeperApi = inject(KeeperAPIService);
@@ -151,10 +162,13 @@ export class AdvisorComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private serverCompare = inject(ServerCompareService);
   private toastService = inject(ToastService);
+  private neetoCalService = inject(NeetoCalService);
   readonly advisorUi = inject(AdvisorUiService);
   readonly currencyDropdown =
     viewChild<FlowbiteDropdownDirective>("currencyDropdown");
   readonly pageDropdown = viewChild<FlowbiteDropdownDirective>("pageDropdown");
+  readonly introductionModalRef =
+    viewChild<ElementRef<HTMLElement>>("introductionModal");
   private compareSubscription = new Subscription();
   private lastEncodedQuery: string | null = null;
   private clipboardResetTimeout: ReturnType<typeof setTimeout> | null = null;
@@ -164,9 +178,12 @@ export class AdvisorComponent implements OnInit, OnDestroy {
   private baselineBenchmarkRequestVersion = 0;
   private baselineRegionRequestVersion = 0;
   private emptyBaselineWorkloadToastKey: string | null = null;
+  private introductionModal: Modal | null = null;
 
   readonly title = ADVISOR_PAGE_TITLE;
   readonly description = ADVISOR_PAGE_DESCRIPTION;
+  readonly advancedCtaLabel = ADVISOR_ADVANCED_CTA_LABEL;
+  readonly advisorExampleQueryParams = ADVISOR_EXAMPLE_QUERY_PARAMS;
 
   readonly breadcrumbs = signal<BreadcrumbSegment[]>(ADVISOR_BREADCRUMBS);
 
@@ -997,6 +1014,14 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     );
   }
 
+  ngAfterViewInit(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
+    this.neetoCalService.initialize();
+  }
+
   ngOnDestroy(): void {
     this.compareSubscription.unsubscribe();
 
@@ -1004,6 +1029,9 @@ export class AdvisorComponent implements OnInit, OnDestroy {
       clearTimeout(this.clipboardResetTimeout);
       this.clipboardResetTimeout = null;
     }
+
+    this.introductionModal?.hide();
+    this.introductionModal = null;
   }
 
   toggleCollapse(): void {
@@ -1142,6 +1170,29 @@ export class AdvisorComponent implements OnInit, OnDestroy {
         duration: 3000,
       });
     }
+  }
+
+  openIntroductionModal(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
+    if (!this.introductionModal) {
+      const modalElement = this.introductionModalRef()?.nativeElement;
+
+      if (modalElement) {
+        this.introductionModal = new Modal(
+          modalElement,
+          advisorIntroductionModalOptions,
+        );
+      }
+    }
+
+    this.introductionModal?.show();
+  }
+
+  closeIntroductionModal(): void {
+    this.introductionModal?.hide();
   }
 
   openCompare(): void {
