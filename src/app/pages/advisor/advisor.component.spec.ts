@@ -288,6 +288,18 @@ describe("AdvisorComponent", () => {
     fixture.detectChanges();
   }
 
+  function getBaselineServerInput(): HTMLInputElement | null {
+    return fixture.nativeElement.querySelector(
+      "#custom_control_input_baseline_server",
+    ) as HTMLInputElement | null;
+  }
+
+  function getBaselineWorkloadInput(): HTMLInputElement | null {
+    return fixture.nativeElement.querySelector(
+      "#custom_control_input_server_workload",
+    ) as HTMLInputElement | null;
+  }
+
   function selectFirstAvailableWorkload(): void {
     const workload = component.baselineBenchmarkConfigOptions()[0];
 
@@ -349,6 +361,37 @@ describe("AdvisorComponent", () => {
     expect(introductionFrame?.src).toContain("obkavneTmwU");
     expect(introductionFrame?.title).toBe("Spare Cores advisor introduction");
   });
+
+  it("focuses the baseline server input when route state has no baseline", fakeAsync(() => {
+    queryParams$.next({});
+    fixture.detectChanges();
+    flushMicrotasks();
+    tick(16);
+    fixture.detectChanges();
+
+    expect(document.activeElement).toBe(getBaselineServerInput());
+  }));
+
+  it("focuses the baseline workload input after selecting a baseline server", fakeAsync(() => {
+    const baselineServer = component.serverTableRows()[0];
+
+    component.onCustomControlChanged({
+      name: "baseline_server",
+      value: {
+        inputValue: `${baselineServer.vendor_id} ${baselineServer.api_reference}`,
+        selectedServer: baselineServer,
+      },
+    });
+    fixture.detectChanges();
+    flushMicrotasks();
+    tick(16);
+    fixture.detectChanges();
+    flushMicrotasks();
+    tick(16);
+    fixture.detectChanges();
+
+    expect(document.activeElement).toBe(getBaselineWorkloadInput());
+  }));
 
   it("sorts filtered baseline servers by vcpus, memory, vendor, and api reference", () => {
     component.serverTableRows.set([

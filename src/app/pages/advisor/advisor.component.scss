@@ -56,17 +56,6 @@
   background: #34d399;
 }
 
-.advisor-filter-bar.advisor-filter-bar-collapsed::after {
-  content: "";
-  position: absolute;
-  top: calc(4rem - 1px);
-  bottom: 0;
-  right: 0;
-  width: 1px;
-  background: #34d399;
-  pointer-events: none;
-}
-
 .advisor-filter-bar app-search-bar {
   display: block;
   flex: 1;
@@ -87,6 +76,7 @@
   width: 0;
   min-width: 0;
   flex-basis: 0;
+  align-self: flex-start;
 }
 
 .advisor-hero-header {
@@ -181,6 +171,22 @@
 .advisor-results {
   flex: 1 1 0%;
   min-width: 0;
+  position: relative;
+}
+
+.advisor-filter-bar.advisor-filter-bar-collapsed + .advisor-results {
+  align-self: flex-start;
+}
+
+.advisor-filter-bar.advisor-filter-bar-collapsed + .advisor-results::before {
+  content: "";
+  position: absolute;
+  top: calc(4rem - 1px);
+  bottom: 0;
+  left: -2rem;
+  width: 1px;
+  background: #34d399;
+  pointer-events: none;
 }
 
 .advisor-table-wrap {

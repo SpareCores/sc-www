@@ -137,6 +137,10 @@ const advisorIntroductionModalOptions: ModalOptions = {
   closable: true,
 };
 
+const ADVISOR_BASELINE_SERVER_CONTROL_NAME = "baseline_server";
+const ADVISOR_BASELINE_WORKLOAD_CONTROL_NAME = "server_workload";
+const ADVISOR_CUSTOM_CONTROL_FOCUS_ATTEMPT_LIMIT = 20;
+
 @Component({
   selector: "app-advisor",
   imports: [
@@ -167,6 +171,7 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly currencyDropdown =
     viewChild<FlowbiteDropdownDirective>("currencyDropdown");
   readonly pageDropdown = viewChild<FlowbiteDropdownDirective>("pageDropdown");
+  readonly searchBar = viewChild(SearchBarComponent);
   readonly introductionModalRef =
     viewChild<ElementRef<HTMLElement>>("introductionModal");
   private compareSubscription = new Subscription();
@@ -179,6 +184,10 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
   private baselineRegionRequestVersion = 0;
   private emptyBaselineWorkloadToastKey: string | null = null;
   private introductionModal: Modal | null = null;
+  private hasViewInitialized = signal(false);
+  private pendingCustomControlFocus = signal<string | null>(null);
+  private customControlFocusFrame: number | null = null;
+  private customControlFocusAttemptCount = 0;
 
   readonly title = ADVISOR_PAGE_TITLE;
   readonly description = ADVISOR_PAGE_DESCRIPTION;
@@ -982,6 +991,30 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
         window.history.pushState({}, "", path);
       }
     });
+
+    effect(() => {
+      const focusTarget = this.pendingCustomControlFocus();
+      const searchBar = this.searchBar();
+      const hasViewInitialized = this.hasViewInitialized();
+
+      if (
+        !focusTarget ||
+        !searchBar ||
+        !hasViewInitialized ||
+        !isPlatformBrowser(this.platformId)
+      ) {
+        return;
+      }
+
+      if (focusTarget === ADVISOR_BASELINE_WORKLOAD_CONTROL_NAME) {
+        this.selectedBaselineServer();
+        this.isLoadingBaselineBenchmarkScores();
+        this.baselineBenchmarkConfigOptions();
+        this.isBaselineWorkloadControlDisabled();
+      }
+
+      this.queuePendingCustomControlFocusAttempt();
+    });
   }
 
   ngOnInit(): void {
@@ -1020,10 +1053,19 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.neetoCalService.initialize();
+    this.hasViewInitialized.set(true);
   }
 
   ngOnDestroy(): void {
     this.compareSubscription.unsubscribe();
+
+    if (
+      this.customControlFocusFrame !== null &&
+      isPlatformBrowser(this.platformId)
+    ) {
+      cancelAnimationFrame(this.customControlFocusFrame);
+      this.customControlFocusFrame = null;
+    }
 
     if (this.clipboardResetTimeout) {
       clearTimeout(this.clipboardResetTimeout);
@@ -1215,7 +1257,11 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
   onCustomControlChanged(event: { name: string; value: unknown }): void {
     switch (event.name) {
       case "baseline_server":
-        this.applyBaselineServerControlValue(event.value);
+        if (this.applyBaselineServerControlValue(event.value)) {
+          this.pendingCustomControlFocus.set(
+            ADVISOR_BASELINE_WORKLOAD_CONTROL_NAME,
+          );
+        }
         break;
       case "limit_architecture":
         this.applyBooleanControlValue(
@@ -1638,12 +1684,20 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
           this.baselineServerInput.set("");
           this.limitToSameArchitecture.set(false);
           this.limitToSameCpuAllocation.set(false);
+          this.pendingCustomControlFocus.set(
+            ADVISOR_BASELINE_SERVER_CONTROL_NAME,
+          );
         } else {
           this.limitToSameArchitecture.set(
             queryParams.limit_architecture === "true",
           );
           this.limitToSameCpuAllocation.set(
             queryParams.limit_cpu_allocation === "true",
+          );
+          this.pendingCustomControlFocus.set(
+            queryParams.workload_id
+              ? null
+              : ADVISOR_BASELINE_WORKLOAD_CONTROL_NAME,
           );
         }
 
@@ -1839,7 +1893,7 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
-  private applyBaselineServerControlValue(value: unknown): void {
+  private applyBaselineServerControlValue(value: unknown): boolean {
     const nextValue =
       value && typeof value === "object"
         ? (value as {
@@ -1856,6 +1910,46 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!this.selectedBaselineServer()) {
       this.limitToSameArchitecture.set(false);
       this.limitToSameCpuAllocation.set(false);
+    }
+
+    return Boolean(nextValue.selectedServer);
+  }
+
+  private queuePendingCustomControlFocusAttempt(): void {
+    if (
+      this.customControlFocusFrame !== null ||
+      !isPlatformBrowser(this.platformId)
+    ) {
+      return;
+    }
+
+    this.customControlFocusFrame = requestAnimationFrame(() => {
+      this.customControlFocusFrame = null;
+      this.focusPendingCustomControl();
+    });
+  }
+
+  private focusPendingCustomControl(): void {
+    const focusTarget = this.pendingCustomControlFocus();
+
+    if (!focusTarget) {
+      this.customControlFocusAttemptCount = 0;
+      return;
+    }
+
+    if (this.searchBar()?.focusCustomControl(focusTarget)) {
+      this.customControlFocusAttemptCount = 0;
+      this.pendingCustomControlFocus.set(null);
+      return;
+    }
+
+    this.customControlFocusAttemptCount += 1;
+
+    if (
+      this.customControlFocusAttemptCount <
+      ADVISOR_CUSTOM_CONTROL_FOCUS_ATTEMPT_LIMIT
+    ) {
+      this.queuePendingCustomControlFocusAttempt();
     }
   }
 
