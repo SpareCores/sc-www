@@ -974,6 +974,7 @@
                   <div class="custom-autocomplete mt-4">
                     <div class="custom-autocomplete__input-wrap">
                       <input
+                        [id]="'custom_control_input_' + control.name"
                         type="text"
                         [value]="control.inputValue || ''"
                         [placeholder]="control.placeholder || ''"
@@ -1043,6 +1044,7 @@
                   <div class="custom-autocomplete mt-4">
                     <div class="custom-autocomplete__input-wrap">
                       <input
+                        [id]="'custom_control_input_' + control.name"
                         type="text"
                         [value]="control.inputValue || ''"
                         [placeholder]="control.placeholder || ''"

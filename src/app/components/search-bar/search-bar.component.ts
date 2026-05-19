@@ -1273,6 +1273,30 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
     this.benchmarkConfigDropdownOpen[control.name] = false;
   }
 
+  focusCustomControl(name: string): boolean {
+    if (!isPlatformBrowser(this.platformId)) {
+      return false;
+    }
+
+    const element = document.getElementById(
+      `custom_control_input_${name}`,
+    ) as HTMLInputElement | null;
+
+    if (!element || element.disabled) {
+      return false;
+    }
+
+    element.focus({ preventScroll: true });
+
+    const control = this.customControls.find((item) => item.name === name);
+
+    if (control?.type === "benchmarkConfigSelect") {
+      this.handleBenchmarkConfigInputFocus(control);
+    }
+
+    return document.activeElement === element;
+  }
+
   isSingleSelectDropdownOpen(control: SearchBarCustomControl): boolean {
     return this.singleSelectDropdownOpen[control.name] ?? false;
   }
