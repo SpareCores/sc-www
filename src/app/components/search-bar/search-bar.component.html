@@ -1242,16 +1242,6 @@
                       <div class="custom-slider__value">
                         {{ formatCustomNumericValue(control) }}
                       </div>
-                      @if (control.numericValue !== null) {
-                        <button
-                          type="button"
-                          class="custom-slider__clear"
-                          (click)="clearCustomNumericControl(control)"
-                          aria-label="Clear slider value"
-                        >
-                          <lucide-icon name="x" class="h-4 w-4"></lucide-icon>
-                        </button>
-                      }
                     </div>
 
                     <input

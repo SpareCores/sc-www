@@ -781,13 +781,6 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
     });
   }
 
-  clearCustomNumericControl(control: SearchBarCustomControl) {
-    this.customControlChanged.emit({
-      name: control.name,
-      value: { numericValue: control.defaultNumericValue ?? null },
-    });
-  }
-
   handlePowerOfTwoStepperFocus(control: SearchBarCustomControl) {
     this.powerOfTwoStepperFocusedControls[control.name] = true;
     delete this.powerOfTwoStepperDraftValues[control.name];
