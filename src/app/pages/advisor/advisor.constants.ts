@@ -1,6 +1,7 @@
 import { BreadcrumbSegment } from "../../components/breadcrumbs/breadcrumbs.component";
 import {
   SearchBarCustomSelectOption,
+  SearchBarFilterCategory,
   SearchBarParameterPlacement,
 } from "../../components/search-bar/search-bar.component";
 import {
@@ -26,8 +27,15 @@ export const ADVISOR_DEFAULT_SERVER_COLUMNS = [
   "cpu_allocation",
 ] as const;
 
-export const ADVISOR_FILTER_CATEGORIES = [
-  { category_id: "advisor", name: "Advisor", icon: "bot", collapsed: false },
+export const ADVISOR_FILTER_CATEGORIES: SearchBarFilterCategory[] = [
+  {
+    category_id: "advisor",
+    name: "Advisor",
+    icon: "bot",
+    collapsed: false,
+    alwaysExpanded: true,
+    hideHeader: true,
+  },
   { category_id: "vendor", name: "Vendor", icon: "home", collapsed: true },
   { category_id: "region", name: "Region", icon: "hotel", collapsed: true },
 ];
