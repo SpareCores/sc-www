@@ -126,6 +126,15 @@ export type SearchBarCustomSelectOption = {
   label: string;
 };
 
+export type SearchBarFilterCategory = {
+  category_id: string;
+  name: string;
+  icon: string;
+  collapsed: boolean;
+  alwaysExpanded?: boolean;
+  hideHeader?: boolean;
+};
+
 export type SearchBarParameterPlacement = {
   parameterName: string;
   categoryId?: string;
@@ -207,7 +216,7 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   @Input() query: any = {};
   @Input() searchParameters: any[] = [];
   @Input() extraParameters: any = {};
-  @Input() filterCategories: any[] = [];
+  @Input() filterCategories: SearchBarFilterCategory[] = [];
   @Input() selectedCurrency: any | null = null;
   @Input() AIAssistantType = "servers";
   @Input() useTopSearchInput = false;
@@ -592,7 +601,15 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
     return parameter.schema.step || 1;
   }
 
-  toggleCategory(category: any) {
+  isCategoryExpanded(category: SearchBarFilterCategory): boolean {
+    return category.alwaysExpanded === true || !category.collapsed;
+  }
+
+  toggleCategory(category: SearchBarFilterCategory) {
+    if (category.alwaysExpanded || category.hideHeader) {
+      return;
+    }
+
     category.collapsed = !category.collapsed;
   }
 

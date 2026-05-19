@@ -797,32 +797,37 @@
         class="mx-2 p-3 border-b border-gray-200"
         [attr.data-category-id]="filter.category_id"
       >
-        <div
-          class="flex justify-between cursor-pointer"
-          (click)="toggleCategory(filter)"
-          tabindex="0"
-          role="button"
-          [attr.aria-expanded]="!filter.collapsed"
-          (keydown.enter)="toggleCategory(filter)"
-          (keydown.space)="toggleCategory(filter); $event.preventDefault()"
-        >
-          <div class="text-white flex gap-2 items-center">
-            <lucide-icon
-              name="{{ filter.icon }}"
-              class="h-4 w-4 text-white"
-            ></lucide-icon>
-            <div class="text-sm">{{ filter.name }}</div>
-          </div>
-          <div>
-            <lucide-icon
-              name="chevron-down"
-              class="h-4 w-4 text-white"
-            ></lucide-icon>
-          </div>
-        </div>
-        @if (!filter.collapsed) {
+        @if (!filter.hideHeader) {
           <div
-            [class.pt-4]="!noTopPaddingCategoryIds.includes(filter.category_id)"
+            class="flex justify-between cursor-pointer"
+            (click)="toggleCategory(filter)"
+            tabindex="0"
+            role="button"
+            [attr.aria-expanded]="isCategoryExpanded(filter)"
+            (keydown.enter)="toggleCategory(filter)"
+            (keydown.space)="toggleCategory(filter); $event.preventDefault()"
+          >
+            <div class="text-white flex gap-2 items-center">
+              <lucide-icon
+                name="{{ filter.icon }}"
+                class="h-4 w-4 text-white"
+              ></lucide-icon>
+              <div class="text-sm">{{ filter.name }}</div>
+            </div>
+            <div>
+              <lucide-icon
+                name="chevron-down"
+                class="h-4 w-4 text-white"
+              ></lucide-icon>
+            </div>
+          </div>
+        }
+        @if (isCategoryExpanded(filter)) {
+          <div
+            [class.pt-4]="
+              !filter.hideHeader &&
+              !noTopPaddingCategoryIds.includes(filter.category_id)
+            "
           >
             @for (
               control of getCustomControlsByCategory(filter.category_id);

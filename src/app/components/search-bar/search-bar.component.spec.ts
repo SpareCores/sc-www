@@ -311,6 +311,38 @@ describe("SearchBarComponent", () => {
     expect(component.filterCategories[1].collapsed).toBeTrue();
   });
 
+  it("renders a fixed-open category without its collapsible header", () => {
+    component.filterCategories = [
+      {
+        category_id: "advisor",
+        name: "Advisor",
+        icon: "bot",
+        collapsed: true,
+        alwaysExpanded: true,
+        hideHeader: true,
+      },
+    ];
+    component.customControls = [
+      {
+        name: "baseline_server",
+        category_id: "advisor",
+        type: "serverAutocomplete",
+        title: "Baseline server",
+        inputValue: "",
+        options: [],
+      },
+    ];
+
+    fixture.detectChanges();
+
+    const advisorCategory = fixture.nativeElement.querySelector(
+      '[data-category-id="advisor"]',
+    ) as HTMLElement;
+
+    expect(advisorCategory.textContent).toContain("Baseline server");
+    expect(advisorCategory.querySelector('[role="button"]')).toBeNull();
+  });
+
   it("uses the last duplicate placement override for category resolution", () => {
     component.searchParameters = [
       {
