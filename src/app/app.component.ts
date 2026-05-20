@@ -11,8 +11,6 @@ import {
 import { Meta } from "@angular/platform-browser";
 import {
   NavigationEnd,
-  NavigationError,
-  NavigationStart,
   Router,
   Event,
   RouterModule,
@@ -21,13 +19,15 @@ import {
 import { register } from "swiper/element/bundle";
 import { HeaderComponent } from "./layout/header/header.component";
 import { FooterComponent } from "./layout/footer/footer.component";
+import { AnnouncementTicker } from "./components/announcement-ticker/announcement-ticker";
+import { HOME_HEADER_ANNOUNCEMENT } from "./components/announcement-ticker/announcement-ticker.constants";
 import { AnalyticsService } from "./services/analytics.service";
 import { Subscription } from "rxjs";
 import { NeetoCalService } from "./services/neeto-cal.service";
 
 @Component({
   selector: "app-root",
-  imports: [HeaderComponent, FooterComponent, RouterModule],
+  imports: [AnnouncementTicker, HeaderComponent, FooterComponent, RouterModule],
   templateUrl: "./app.component.html",
   styleUrl: "./app.component.scss",
 })
@@ -40,60 +40,37 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   private neetoCalService = inject(NeetoCalService);
 
   title = "sc-www";
+  readonly homeAnnouncement = HOME_HEADER_ANNOUNCEMENT;
 
   showHeader = true;
   showFooter = true;
+  showHomeAnnouncement = false;
+  private isHomeAnnouncementDismissed = false;
   private subscription = new Subscription();
 
   constructor() {
-    const router = this.router;
+    this.updateShellChrome(this.router.url);
 
     this.subscription.add(
-      router.events.subscribe((event: Event) => {
-        if (event instanceof NavigationStart) {
-          // Show loading indicator
+      this.router.events.subscribe((event: Event) => {
+        if (
+          event instanceof RoutesRecognized ||
+          event instanceof NavigationEnd
+        ) {
+          this.updateShellChrome(event.urlAfterRedirects);
         }
 
-        if (event instanceof NavigationEnd) {
-          let url = "https://sparecores.com";
-          if (event?.urlAfterRedirects?.length > 1) {
-            url += event?.urlAfterRedirects;
-            if (
-              event?.urlAfterRedirects?.startsWith("/og/") ||
-              event?.urlAfterRedirects?.startsWith("/embed/") ||
-              event.urlAfterRedirects?.startsWith("/hu/")
-            ) {
-              this.showHeader = false;
-              this.showFooter = false;
-            } else {
-              this.showHeader = true;
-              this.showFooter = true;
-            }
-          }
-          this.analytics.trackEvent("pageView", {});
-          // update canonical url with query params as well
-
-          this.updateCanonical(url.toLowerCase());
+        if (!(event instanceof NavigationEnd)) {
+          return;
         }
 
-        if (event instanceof RoutesRecognized) {
-          if (
-            event?.urlAfterRedirects?.startsWith("/og/") ||
-            event?.urlAfterRedirects?.startsWith("/embed/") ||
-            event.urlAfterRedirects?.startsWith("/hu/")
-          ) {
-            this.showHeader = false;
-            this.showFooter = false;
-          } else {
-            this.showHeader = true;
-            this.showFooter = true;
-          }
-        }
+        const canonicalUrl =
+          event.urlAfterRedirects.length > 1
+            ? `https://sparecores.com${event.urlAfterRedirects}`
+            : "https://sparecores.com";
 
-        if (event instanceof NavigationError) {
-          // Hide loading indicator
-          // Present error to user
-        }
+        this.analytics.trackEvent("pageView", {});
+        this.updateCanonical(canonicalUrl.toLowerCase());
       }),
     );
   }
@@ -129,5 +106,39 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       { property: "og:url", content: canonicalUrl },
       "property='og:url'",
     );
+  }
+
+  dismissHomeAnnouncement(): void {
+    this.isHomeAnnouncementDismissed = true;
+    this.showHomeAnnouncement = false;
+  }
+
+  private updateShellChrome(url: string | undefined): void {
+    const path = this.normalizePath(url);
+    const shouldHideChrome = this.isChromeHiddenRoute(path);
+
+    this.showHeader = !shouldHideChrome;
+    this.showFooter = !shouldHideChrome;
+    this.showHomeAnnouncement =
+      !shouldHideChrome &&
+      this.isHomeRoute(path) &&
+      !this.isHomeAnnouncementDismissed;
+  }
+
+  private normalizePath(url: string | undefined): string {
+    const path = (url || "/").split(/[?#]/)[0];
+    return path || "/";
+  }
+
+  private isChromeHiddenRoute(path: string): boolean {
+    return (
+      path.startsWith("/og/") ||
+      path.startsWith("/embed/") ||
+      path.startsWith("/hu/")
+    );
+  }
+
+  private isHomeRoute(path: string): boolean {
+    return path === "/";
   }
 }

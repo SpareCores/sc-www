@@ -1,8 +1,19 @@
 <div class="app-shell">
-  @if (showHeader) {
-    <header class="sticky">
-      <app-header></app-header>
-    </header>
+  @if (showHomeAnnouncement || showHeader) {
+    <div class="app-shell-chrome">
+      @if (showHomeAnnouncement) {
+        <app-announcement-ticker
+          [message]="homeAnnouncement"
+          [dismissible]="true"
+          (dismissed)="dismissHomeAnnouncement()"
+        ></app-announcement-ticker>
+      }
+      @if (showHeader) {
+        <header>
+          <app-header></app-header>
+        </header>
+      }
+    </div>
   }
   <main class="app-main">
     <router-outlet></router-outlet>
