@@ -364,7 +364,7 @@ export class AdvisorUiService {
       return false;
     }
 
-    if (currency && price.currency && price.currency !== currency) {
+    if (currency && price.currency !== currency) {
       return false;
     }
 

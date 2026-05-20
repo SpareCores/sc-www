@@ -179,6 +179,44 @@ describe("AdvisorUiService", () => {
     ).toBe(60);
   });
 
+  it("excludes prices with missing currency metadata when a currency filter is requested", () => {
+    const prices: ServerPrice[] = [
+      {
+        vendor_id: "aws",
+        region_id: "us-east-1",
+        zone_id: "us-east-1a",
+        server_id: "srv-1",
+        operating_system: "Linux",
+        allocation: Allocation.Ondemand,
+        unit: PriceUnit.Hour,
+        price: 0.05,
+      },
+      {
+        vendor_id: "aws",
+        region_id: "us-east-1",
+        zone_id: "us-east-1a",
+        server_id: "srv-1",
+        operating_system: "Linux",
+        allocation: Allocation.Ondemand,
+        unit: PriceUnit.Hour,
+        price: 0.12,
+        currency: "USD",
+      },
+    ];
+
+    expect(
+      service.buildBaselinePriceAggregate(prices, {
+        bestPriceAllocation: "ONDEMAND_ONLY",
+        currency: "USD",
+      }),
+    ).toEqual({
+      min_price: 0.12,
+      min_price_spot: null,
+      min_price_ondemand: 0.12,
+      min_price_ondemand_monthly: null,
+    });
+  });
+
   it("builds benchmark and price deltas with the correct polarity", () => {
     expect(service.buildBenchmarkScoreDelta(120, 100)).toEqual({
       baselineValue: 100,
