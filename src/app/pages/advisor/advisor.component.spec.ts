@@ -7,14 +7,24 @@ import {
 } from "@angular/core/testing";
 import { ActivatedRoute } from "@angular/router";
 import { BehaviorSubject, Subject } from "rxjs";
-import { OrderDir, Status } from "../../../../sdk/data-contracts";
+import {
+  Allocation,
+  OrderDir,
+  PriceUnit,
+  Status,
+} from "../../../../sdk/data-contracts";
 import { AdvisorComponent } from "./advisor.component";
 import {
+  ADVISOR_AVERAGE_UTILIZATION_TOOLTIP,
+  ADVISOR_BASELINE_SERVER_TOOLTIP,
+  ADVISOR_BASELINE_WORKLOAD_TOOLTIP,
   ADVISOR_DISABLED_BASELINE_WORKLOAD_MESSAGE,
   ADVISOR_DEFAULT_MINIMUM_MEMORY_GIB,
   ADVISOR_DEFAULT_PAGE_LIMIT,
   ADVISOR_DEFAULT_PEAK_GPU_MEMORY_GIB,
   ADVISOR_MINIMUM_MEMORY_MIN_GIB,
+  ADVISOR_REQUIRED_GPU_MEMORY_TITLE,
+  ADVISOR_REQUIRED_MEMORY_TITLE,
   ADVISOR_DEFAULT_SERVER_COLUMNS,
   ADVISOR_EMPTY_BASELINE_WORKLOAD_MESSAGE,
   ADVISOR_EMPTY_BASELINE_WORKLOAD_TOAST_ID,
@@ -35,6 +45,7 @@ describe("AdvisorComponent", () => {
   const getServersSelect = jasmine.createSpy("getServersSelect");
   const getServerBenchmarkMeta = jasmine.createSpy("getServerBenchmarkMeta");
   const getBenchmarkConfigs = jasmine.createSpy("getBenchmarkConfigs");
+  const getBenchmarkWorkloads = jasmine.createSpy("getBenchmarkWorkloads");
   const getServerBenchmark = jasmine.createSpy("getServerBenchmark");
   const getServerPrices = jasmine.createSpy("getServerPrices");
   const searchServers = jasmine.createSpy("searchServers");
@@ -69,6 +80,7 @@ describe("AdvisorComponent", () => {
     getServersSelect.calls.reset();
     getServerBenchmarkMeta.calls.reset();
     getBenchmarkConfigs.calls.reset();
+    getBenchmarkWorkloads.calls.reset();
     getServerBenchmark.calls.reset();
     getServerPrices.calls.reset();
     searchServers.calls.reset();
@@ -150,6 +162,14 @@ describe("AdvisorComponent", () => {
         },
       ],
     });
+    getBenchmarkWorkloads.and.resolveTo({
+      body: [
+        {
+          benchmark_id: "stress_ng:bestn",
+          higher_is_better: true,
+        },
+      ],
+    });
     getServerBenchmark.and.resolveTo({
       body: [
         {
@@ -164,14 +184,35 @@ describe("AdvisorComponent", () => {
         {
           vendor_id: "aws",
           region_id: "us-east-1",
+          zone_id: "us-east-1a",
+          server_id: "srv-1",
+          operating_system: "Linux",
+          allocation: Allocation.Ondemand,
+          unit: PriceUnit.Hour,
+          price: 0.12,
+          currency: "USD",
         },
         {
           vendor_id: "aws",
           region_id: "eu-west-1",
+          zone_id: "eu-west-1a",
+          server_id: "srv-1",
+          operating_system: "Linux",
+          allocation: Allocation.Spot,
+          unit: PriceUnit.Hour,
+          price: 0.07,
+          currency: "USD",
         },
         {
           vendor_id: "aws",
           region_id: "us-east-1",
+          zone_id: "us-east-1a",
+          server_id: "srv-1",
+          operating_system: "Linux",
+          allocation: Allocation.Ondemand,
+          unit: PriceUnit.Month,
+          price: 60,
+          currency: "USD",
         },
       ],
     });
@@ -233,6 +274,7 @@ describe("AdvisorComponent", () => {
             getServersSelect,
             getServerBenchmarkMeta,
             getBenchmarkConfigs,
+            getBenchmarkWorkloads,
             getServerBenchmark,
             getServerPrices,
             searchServers,
@@ -574,6 +616,56 @@ describe("AdvisorComponent", () => {
     expect(cpuArchitectureControl?.title).toBe("CPU architecture");
   });
 
+  it("uses the updated advisor control copy for labels and tooltips", () => {
+    const baselineServerControl = component
+      .customControls()
+      .find((control) => control.name === "baseline_server");
+    const baselineWorkloadControl = component
+      .customControls()
+      .find((control) => control.name === "server_workload");
+    const averageUtilizationControl = component
+      .customControls()
+      .find((control) => control.name === "average_cpu_utilization");
+    const minimumMemoryControl = component
+      .customControls()
+      .find((control) => control.name === "minimum_memory");
+    const peakGpuMemoryControl = component
+      .customControls()
+      .find((control) => control.name === "peak_gpu_memory");
+
+    expect(baselineServerControl?.description).toBe(
+      ADVISOR_BASELINE_SERVER_TOOLTIP,
+    );
+    expect(baselineServerControl?.descriptionDisplay).toBe("tooltip");
+    expect(baselineWorkloadControl?.description).toBe(
+      ADVISOR_BASELINE_WORKLOAD_TOOLTIP,
+    );
+    expect(baselineWorkloadControl?.descriptionDisplay).toBe("tooltip");
+    expect(averageUtilizationControl?.description).toBe(
+      ADVISOR_AVERAGE_UTILIZATION_TOOLTIP,
+    );
+    expect(averageUtilizationControl?.descriptionDisplay).toBe("tooltip");
+    expect(minimumMemoryControl?.title).toBe(ADVISOR_REQUIRED_MEMORY_TITLE);
+    expect(peakGpuMemoryControl?.title).toBe(ADVISOR_REQUIRED_GPU_MEMORY_TITLE);
+  });
+
+  it("adds utilization summary context once the baseline workload is selected", fakeAsync(() => {
+    selectBaselineServer();
+    selectFirstAvailableWorkload();
+
+    component.averageCpuUtilization.set(30);
+    fixture.detectChanges();
+    flushMicrotasks();
+
+    const averageUtilizationControl = component
+      .customControls()
+      .find((control) => control.name === "average_cpu_utilization");
+
+    expect(averageUtilizationControl?.valueSummary).toBe(
+      "of 100; target score: 30",
+    );
+  }));
+
   it("keeps the outer sidebar collapser while removing advisor section chrome", () => {
     const host = fixture.nativeElement as HTMLElement;
     const advisorCategory = host.querySelector(
@@ -630,6 +722,75 @@ describe("AdvisorComponent", () => {
         group.options.map((option) => option.benchmark_id),
       ),
     ).toEqual(["stress_ng:bestn"]);
+  }));
+
+  it("sorts workload profile groups first and prefers friendly workload labels", fakeAsync(() => {
+    getServerBenchmarkMeta.and.resolveTo({
+      body: [
+        {
+          benchmark_id: "fio:randread",
+          name: "Fio Random Read",
+          framework: "fio",
+        },
+        {
+          benchmark_id: "workload_profile:web",
+          name: "Workload profile: Web server",
+          framework: "workload-profile",
+        },
+      ],
+    });
+    getBenchmarkConfigs.and.resolveTo({
+      body: [
+        {
+          benchmark_id: "fio:randread",
+          config: "{}",
+          category: "fio",
+        },
+        {
+          benchmark_id: "workload_profile:web",
+          config: "{}",
+          category: "workload_profile",
+        },
+      ],
+    });
+
+    (
+      component as unknown as {
+        loadBenchmarkConfigs(): void;
+      }
+    ).loadBenchmarkConfigs();
+    flushMicrotasks();
+    component.selectedBaselineServer.set(component.serverTableRows()[0]);
+    fixture.detectChanges();
+    flushMicrotasks();
+    component.baselineBenchmarkScores.set([
+      {
+        vendor_id: "aws",
+        server_id: "srv-1",
+        benchmark_id: "fio:randread",
+        config: {},
+        score: 200,
+      },
+      {
+        vendor_id: "aws",
+        server_id: "srv-1",
+        benchmark_id: "workload_profile:web",
+        config: {},
+        score: 100,
+      },
+    ]);
+    fixture.detectChanges();
+
+    expect(component.benchmarkGroups().map((group) => group.name)).toEqual([
+      "Workload profile",
+      "Fio",
+    ]);
+    expect(component.benchmarkGroups()[0]?.options[0]?.displayName).toBe(
+      "Workload profile: Web server",
+    );
+    expect(component.benchmarkGroups()[1]?.options[0]?.displayName).toBe(
+      "Fio Random Read",
+    );
   }));
 
   it("marks baseline workload as loading while baseline scores load", fakeAsync(() => {
@@ -907,7 +1068,7 @@ describe("AdvisorComponent", () => {
     selectBaselineServer();
     selectFirstAvailableWorkload();
 
-    expect(getServerPrices).toHaveBeenCalledOnceWith("aws", "large");
+    expect(getServerPrices).toHaveBeenCalledOnceWith("aws", "large", "USD");
     expect(component.baselineRegionOptions()).toEqual([
       { value: "aws~eu-west-1", label: "EU West 1" },
       { value: "aws~us-east-1", label: "US East 1" },
@@ -953,6 +1114,24 @@ describe("AdvisorComponent", () => {
     expect(searchServers.calls.mostRecent().args[0].vendor_regions).toBe(
       "aws~us-east-1",
     );
+  }));
+
+  it("reloads baseline prices when the selected currency changes", fakeAsync(() => {
+    selectBaselineServer();
+
+    component.selectCurrency(
+      component.availableCurrencies.find(
+        (currency) => currency.slug === "EUR",
+      )!,
+    );
+    fixture.detectChanges();
+    flushMicrotasks();
+
+    expect(getServerPrices.calls.mostRecent().args).toEqual([
+      "aws",
+      "large",
+      "EUR",
+    ]);
   }));
 
   it("gives vendor filters precedence over the dedicated baseline region state", async () => {
@@ -1103,10 +1282,216 @@ describe("AdvisorComponent", () => {
 
     expect(rows.length).toBe(2);
     expect(rows[0].classList.contains("advisor-table-row-baseline")).toBeTrue();
+    expect(rows[0].querySelectorAll(".advisor-table-delta").length).toBe(0);
     expect(
       rows[1].classList.contains("advisor-table-row-baseline"),
     ).toBeFalse();
   });
+
+  it("shows the baseline benchmark score when the baseline recommendation row has no benchmark field", fakeAsync(() => {
+    selectBaselineServer();
+    selectFirstAvailableWorkload();
+
+    component.recommendations.set([
+      {
+        vendor_id: "aws",
+        api_reference: "large",
+        display_name: "large",
+        server_id: "srv-baseline",
+        selected_benchmark_score: null,
+      },
+    ] as never[]);
+    component.totalRecommendationCount.set(1);
+    fixture.detectChanges();
+    flushMicrotasks();
+    fixture.detectChanges();
+
+    const row = fixture.nativeElement.querySelector(
+      "#advisor_results_table tbody tr",
+    ) as HTMLTableRowElement;
+    const benchmarkCell = row.querySelectorAll("td")[3] as HTMLTableCellElement;
+
+    expect(benchmarkCell.textContent).toContain("100");
+  }));
+
+  it("renders positive benchmark, efficiency, and price deltas against the baseline", fakeAsync(() => {
+    selectBaselineServer();
+    selectFirstAvailableWorkload();
+
+    component.recommendations.set([
+      {
+        vendor_id: "aws",
+        api_reference: "c7a.large",
+        display_name: "c7a.large",
+        server_id: "srv-1",
+        selected_benchmark_score: 120,
+        selected_benchmark_score_per_price: 2142.86,
+        min_price: 0.05,
+      },
+    ] as never[]);
+    component.totalRecommendationCount.set(1);
+    fixture.detectChanges();
+    flushMicrotasks();
+    fixture.detectChanges();
+
+    const row = fixture.nativeElement.querySelector(
+      "#advisor_results_table tbody tr",
+    ) as HTMLTableRowElement;
+    const cells = row.querySelectorAll("td");
+    const benchmarkDelta = cells[3].querySelector(
+      ".advisor-table-delta",
+    ) as HTMLElement;
+    const efficiencyDelta = cells[4].querySelector(
+      ".advisor-table-delta",
+    ) as HTMLElement;
+    const priceDelta = cells[8].querySelector(
+      ".advisor-table-delta",
+    ) as HTMLElement;
+
+    expect(benchmarkDelta.textContent?.trim()).toBe("20%");
+    expect(benchmarkDelta.classList).toContain("advisor-table-delta--positive");
+    expect(efficiencyDelta.textContent?.trim()).toBe("(50%)");
+    expect(efficiencyDelta.classList).toContain(
+      "advisor-table-delta--positive",
+    );
+    expect(priceDelta.textContent?.trim()).toBe("-29%");
+    expect(priceDelta.classList).toContain("advisor-table-delta--positive");
+  }));
+
+  it("renders benchmark improvements in red when higher_is_better is false", fakeAsync(() => {
+    selectBaselineServer();
+    selectFirstAvailableWorkload();
+
+    const selectedBenchmark = component.selectedBenchmarkConfig();
+    expect(selectedBenchmark?.benchmarkTemplate).toBeTruthy();
+
+    component.selectedBenchmarkConfig.set({
+      ...(selectedBenchmark as NonNullable<typeof selectedBenchmark>),
+      benchmarkTemplate: {
+        ...selectedBenchmark!.benchmarkTemplate!,
+        higher_is_better: false,
+      },
+    });
+
+    component.recommendations.set([
+      {
+        vendor_id: "aws",
+        api_reference: "c7a.large",
+        display_name: "c7a.large",
+        server_id: "srv-1",
+        selected_benchmark_score: 120,
+      },
+    ] as never[]);
+    component.totalRecommendationCount.set(1);
+    fixture.detectChanges();
+    flushMicrotasks();
+    fixture.detectChanges();
+
+    const row = fixture.nativeElement.querySelector(
+      "#advisor_results_table tbody tr",
+    ) as HTMLTableRowElement;
+    const benchmarkDelta = row
+      .querySelectorAll("td")[3]
+      .querySelector(".advisor-table-delta") as HTMLElement;
+
+    expect(benchmarkDelta.textContent?.trim()).toBe("20%");
+    expect(benchmarkDelta.classList).toContain("advisor-table-delta--negative");
+  }));
+
+  it("shows neutral baseline n/a deltas when the baseline price is unavailable", fakeAsync(() => {
+    selectBaselineServer();
+    selectFirstAvailableWorkload();
+
+    const eurCurrency = component.availableCurrencies.find(
+      (currency) => currency.slug === "EUR",
+    );
+
+    expect(eurCurrency).toBeDefined();
+
+    component.selectedCurrency.set(eurCurrency!);
+    component.recommendations.set([
+      {
+        vendor_id: "aws",
+        api_reference: "c7a.large",
+        display_name: "c7a.large",
+        server_id: "srv-1",
+        selected_benchmark_score_per_price: 1500,
+        min_price: 0.05,
+      },
+    ] as never[]);
+    component.totalRecommendationCount.set(1);
+    fixture.detectChanges();
+    flushMicrotasks();
+    fixture.detectChanges();
+
+    const row = fixture.nativeElement.querySelector(
+      "#advisor_results_table tbody tr",
+    ) as HTMLTableRowElement;
+    const cells = row.querySelectorAll("td");
+    const efficiencyDelta = cells[4].querySelector(
+      ".advisor-table-delta",
+    ) as HTMLElement;
+    const priceDelta = cells[8].querySelector(
+      ".advisor-table-delta",
+    ) as HTMLElement;
+
+    expect(efficiencyDelta.textContent?.trim()).toBe("(Baseline n/a)");
+    expect(efficiencyDelta.classList).toContain("advisor-table-delta--neutral");
+    expect(priceDelta.textContent?.trim()).toBe("Baseline n/a");
+    expect(priceDelta.classList).toContain("advisor-table-delta--neutral");
+  }));
+
+  it("uses selected baseline recommendation monthly price when baseline monthly records are missing", fakeAsync(() => {
+    selectBaselineServer();
+    selectFirstAvailableWorkload();
+
+    component.baselineServerPrices.set([
+      {
+        vendor_id: "aws",
+        region_id: "us-east-1",
+        zone_id: "us-east-1a",
+        server_id: "srv-baseline",
+        operating_system: "Linux",
+        allocation: Allocation.Ondemand,
+        unit: PriceUnit.Hour,
+        price: 0.0245,
+        currency: "USD",
+      },
+    ] as never[]);
+
+    component.recommendations.set([
+      {
+        vendor_id: "aws",
+        api_reference: "large",
+        display_name: "large",
+        server_id: "srv-baseline",
+        min_price_ondemand_monthly: 17.89,
+      },
+      {
+        vendor_id: "aws",
+        api_reference: "c7a.large",
+        display_name: "c7a.large",
+        server_id: "srv-1",
+        min_price_ondemand_monthly: 39.35,
+      },
+    ] as never[]);
+
+    fixture.detectChanges();
+    flushMicrotasks();
+    fixture.detectChanges();
+
+    expect(component.baselinePriceAggregate().min_price_ondemand_monthly).toBe(
+      17.89,
+    );
+
+    const monthlyDelta = component.getPriceDelta(
+      component.recommendations()[1] as never,
+      "min_price_ondemand_monthly",
+    );
+
+    expect(monthlyDelta).not.toBeNull();
+    expect(component.getDeltaLabel(monthlyDelta!)).not.toBe("Baseline n/a");
+  }));
 
   it("removes the top price allocation dropdown from the toolbar", () => {
     expect(

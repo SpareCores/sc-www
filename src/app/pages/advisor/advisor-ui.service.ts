@@ -1,9 +1,17 @@
 import { Injectable } from "@angular/core";
-import { ServerPKs } from "../../../../sdk/data-contracts";
+import {
+  Allocation,
+  PriceUnit,
+  ServerPKs,
+  ServerPrice,
+} from "../../../../sdk/data-contracts";
+import { BestPriceAllocationType } from "../../tools/shared_data";
 import { ADVISOR_DEFAULT_EMPTY_RESULTS_MESSAGE } from "./advisor.constants";
 import {
+  AdvisorBaselinePriceAggregate,
   AdvisorBaselineServer,
   AdvisorCompareTarget,
+  AdvisorMetricDelta,
   AdvisorSummaryAlert,
 } from "./advisor.types";
 import { matchesAdvisorBaselineServer } from "./advisor.utils";
@@ -14,6 +22,111 @@ const ADVISOR_EMPTY_VALUE = "-";
   providedIn: "root",
 })
 export class AdvisorUiService {
+  buildUtilizationSummaryContext(
+    baselineScore: number | null | undefined,
+    targetScore: number | null | undefined,
+  ): string | null {
+    const normalizedBaselineScore = this.normalizeFiniteNumber(baselineScore);
+    const normalizedTargetScore = this.normalizeFiniteNumber(targetScore);
+
+    if (normalizedBaselineScore === null || normalizedTargetScore === null) {
+      return null;
+    }
+
+    return `of ${this.formatScore(normalizedBaselineScore)}; target score: ${this.formatScore(normalizedTargetScore)}`;
+  }
+
+  buildBaselinePriceAggregate(
+    prices: ServerPrice[],
+    options?: {
+      bestPriceAllocation?: BestPriceAllocationType["slug"];
+      currency?: string | null;
+      regionId?: string | null;
+    },
+  ): AdvisorBaselinePriceAggregate {
+    const scopedPrices = prices.filter((price) => {
+      return this.matchesBaselinePriceScope(
+        price,
+        options?.regionId || null,
+        options?.currency || null,
+      );
+    });
+
+    const minSpotPrice = this.getMinimumPrice(
+      scopedPrices.filter((price) => price.allocation === Allocation.Spot),
+    );
+    const minOndemandPrice = this.getMinimumPrice(
+      scopedPrices.filter(
+        (price) =>
+          price.allocation === Allocation.Ondemand &&
+          price.unit === PriceUnit.Hour,
+      ),
+    );
+    const minOndemandMonthlyPrice = this.getMinimumPrice(
+      scopedPrices.filter(
+        (price) =>
+          price.allocation === Allocation.Ondemand &&
+          price.unit === PriceUnit.Month,
+      ),
+    );
+
+    return {
+      min_price: this.resolveBestPrice(
+        options?.bestPriceAllocation || "ANY",
+        minSpotPrice,
+        minOndemandPrice,
+        minOndemandMonthlyPrice,
+      ),
+      min_price_spot: minSpotPrice,
+      min_price_ondemand: minOndemandPrice,
+      min_price_ondemand_monthly: minOndemandMonthlyPrice,
+    };
+  }
+
+  buildBenchmarkScoreDelta(
+    candidateScore: number | null | undefined,
+    baselineScore: number | null | undefined,
+  ): AdvisorMetricDelta {
+    return this.buildRelativeDelta(candidateScore, baselineScore, false);
+  }
+
+  buildBenchmarkScorePerPrice(
+    baselineScore: number | null | undefined,
+    baselinePrice: number | null | undefined,
+  ): number | null {
+    const normalizedBaselineScore = this.normalizeFiniteNumber(baselineScore);
+    const normalizedBaselinePrice = this.normalizeFiniteNumber(baselinePrice);
+
+    if (
+      normalizedBaselineScore === null ||
+      normalizedBaselinePrice === null ||
+      normalizedBaselinePrice <= 0
+    ) {
+      return null;
+    }
+
+    return normalizedBaselineScore / normalizedBaselinePrice;
+  }
+
+  buildBenchmarkScorePerPriceDelta(
+    candidateScorePerPrice: number | null | undefined,
+    baselineScore: number | null | undefined,
+    baselinePrice: number | null | undefined,
+  ): AdvisorMetricDelta {
+    return this.buildRelativeDelta(
+      candidateScorePerPrice,
+      this.buildBenchmarkScorePerPrice(baselineScore, baselinePrice),
+      false,
+    );
+  }
+
+  buildPriceDelta(
+    candidatePrice: number | null | undefined,
+    baselinePrice: number | null | undefined,
+  ): AdvisorMetricDelta {
+    return this.buildRelativeDelta(candidatePrice, baselinePrice, true);
+  }
+
   filterBaselineServers(
     servers: AdvisorBaselineServer[],
     searchValue: string,
@@ -242,9 +355,117 @@ export class AdvisorUiService {
     return (item as unknown as Record<string, unknown>)[key];
   }
 
+  private matchesBaselinePriceScope(
+    price: ServerPrice,
+    regionId: string | null,
+    currency: string | null,
+  ): boolean {
+    if (regionId && price.region_id !== regionId) {
+      return false;
+    }
+
+    if (currency && price.currency && price.currency !== currency) {
+      return false;
+    }
+
+    return this.normalizeFiniteNumber(price.price) !== null;
+  }
+
+  private getMinimumPrice(prices: ServerPrice[]): number | null {
+    return prices.reduce<number | null>((lowestPrice, price) => {
+      const normalizedPrice = this.normalizeFiniteNumber(price.price);
+
+      if (normalizedPrice === null) {
+        return lowestPrice;
+      }
+
+      if (lowestPrice === null || normalizedPrice < lowestPrice) {
+        return normalizedPrice;
+      }
+
+      return lowestPrice;
+    }, null);
+  }
+
+  private resolveBestPrice(
+    bestPriceAllocation: BestPriceAllocationType["slug"],
+    minSpotPrice: number | null,
+    minOndemandPrice: number | null,
+    minOndemandMonthlyPrice: number | null,
+  ): number | null {
+    switch (bestPriceAllocation) {
+      case "SPOT_ONLY":
+        return minSpotPrice;
+      case "ONDEMAND_ONLY":
+        return minOndemandPrice;
+      case "MONTHLY":
+        return minOndemandMonthlyPrice;
+      case "ANY":
+      default:
+        return (
+          [minSpotPrice, minOndemandPrice, minOndemandMonthlyPrice]
+            .filter((value): value is number => value !== null)
+            .sort((left, right) => left - right)[0] ?? null
+        );
+    }
+  }
+
+  private buildRelativeDelta(
+    candidateValue: number | null | undefined,
+    baselineValue: number | null | undefined,
+    preferLower: boolean,
+  ): AdvisorMetricDelta {
+    const normalizedCandidateValue = this.normalizeFiniteNumber(candidateValue);
+    const normalizedBaselineValue = this.normalizeFiniteNumber(baselineValue);
+
+    if (
+      normalizedCandidateValue === null ||
+      normalizedBaselineValue === null ||
+      normalizedBaselineValue <= 0
+    ) {
+      return {
+        baselineValue: normalizedBaselineValue,
+        candidateValue: normalizedCandidateValue,
+        percentageDelta: null,
+        tone: "neutral",
+      };
+    }
+
+    const percentageDelta =
+      ((normalizedCandidateValue - normalizedBaselineValue) /
+        normalizedBaselineValue) *
+      100;
+
+    if (percentageDelta === 0) {
+      return {
+        baselineValue: normalizedBaselineValue,
+        candidateValue: normalizedCandidateValue,
+        percentageDelta: 0,
+        tone: "neutral",
+      };
+    }
+
+    return {
+      baselineValue: normalizedBaselineValue,
+      candidateValue: normalizedCandidateValue,
+      percentageDelta,
+      tone: preferLower
+        ? percentageDelta < 0
+          ? "positive"
+          : "negative"
+        : percentageDelta > 0
+          ? "positive"
+          : "negative",
+    };
+  }
+
   private formatPresentValue(value: unknown): string {
     return value === null || value === undefined || value === ""
       ? ADVISOR_EMPTY_VALUE
       : String(value);
+  }
+
+  private normalizeFiniteNumber(value: unknown): number | null {
+    return typeof value === "number" && Number.isFinite(value) ? value : null;
   }
 }

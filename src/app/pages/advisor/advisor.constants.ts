@@ -157,6 +157,27 @@ export const ADVISOR_DISABLED_BASELINE_WORKLOAD_MESSAGE =
 export const ADVISOR_LOADING_BASELINE_WORKLOAD_MESSAGE =
   "Loading workloads for the selected baseline server...";
 
+export const ADVISOR_BASELINE_SERVER_TITLE = "Baseline server";
+
+export const ADVISOR_BASELINE_SERVER_TOOLTIP =
+  "Select the instance type of the cloud server you consider right-sizing. We will look up this server's specs, performance and pricing data, and use all that as the baseline when comparing to other cloud server options.";
+
+export const ADVISOR_BASELINE_WORKLOAD_TITLE = "Baseline workload";
+
+export const ADVISOR_BASELINE_WORKLOAD_TOOLTIP =
+  "Select a workload that matches (or closest to) what your existing server is doing. We will look up the related benchmark score(s) we measured on that exact instance type, and find candidates matching the threshold based on your optimization goal.";
+
+export const ADVISOR_AVERAGE_UTILIZATION_TITLE = "Average utilization";
+
+export const ADVISOR_AVERAGE_UTILIZATION_TOOLTIP =
+  "Provide a high-level utilization percentage of your server, e.g. the average CPU or GPU usage. You will be able to fine-tune this setting below with the peak memory utilization as well if needed. We will use this number to see how low we can scale the candidate servers' performance for cost savings.";
+
+export const ADVISOR_REQUIRED_MEMORY_TITLE = "Required memory (RAM)";
+
+export const ADVISOR_REQUIRED_GPU_MEMORY_TITLE = "Required GPU memory (VRAM)";
+
+export const ADVISOR_OPTIMIZATION_GOAL_TITLE = "Optimization goal";
+
 export const ADVISOR_TABLE_COLUMNS: AdvisorTableColumn[] = [
   { name: "NAME & PROVIDER", type: "name", show: true },
   { name: "VENDOR", type: "vendor", key: "vendor_id", show: false },
@@ -332,8 +353,8 @@ export const ADVISOR_TABLE_COLUMNS: AdvisorTableColumn[] = [
 export const ADVISOR_PAGE_LIMITS = [10, 25, 50, 100, 250];
 
 export const ADVISOR_REQUIRED_INPUT_LABELS = [
-  "Baseline server",
-  "Baseline workload",
-  "Optimization goal",
-  "Average utilization",
+  ADVISOR_BASELINE_SERVER_TITLE,
+  ADVISOR_BASELINE_WORKLOAD_TITLE,
+  ADVISOR_OPTIMIZATION_GOAL_TITLE,
+  ADVISOR_AVERAGE_UTILIZATION_TITLE,
 ] as const;

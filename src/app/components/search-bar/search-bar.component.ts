@@ -106,6 +106,7 @@ export type SearchBarCustomControl = {
   tickValues?: number[];
   allowZero?: boolean;
   defaultNumericValue?: number | null;
+  valueSummary?: string | null;
   showUnitInTicks?: boolean;
   nested?: boolean;
   checked?: boolean;
@@ -143,6 +144,7 @@ export type SearchBarParameterPlacement = {
 
 export type SearchBarBenchmarkConfigOption = BenchmarkConfig & {
   benchmarkTemplate?: Benchmark | null;
+  groupLabel?: string;
   configTitle: string;
   displayName: string;
   framework: string;
@@ -942,7 +944,22 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     const formattedValue = formatNumberInputValue(value);
-    return control.unit ? `${formattedValue} ${control.unit}` : formattedValue;
+
+    if (!control.unit) {
+      return formattedValue;
+    }
+
+    return control.unit === "%"
+      ? `${formattedValue}%`
+      : `${formattedValue} ${control.unit}`;
+  }
+
+  formatRangeSliderValue(control: SearchBarCustomControl): string {
+    const formattedValue = this.formatCustomNumericValue(control);
+
+    return control.valueSummary
+      ? `${formattedValue} ${control.valueSummary}`
+      : formattedValue;
   }
 
   getRangeSliderValue(control: SearchBarCustomControl): number {
@@ -1347,6 +1364,23 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   formatBenchmarkConfigDescription(
     benchmarkOption: SearchBarBenchmarkConfigOption,
   ): string {
+    if (benchmarkOption.groupLabel) {
+      const descriptionParts: string[] = [];
+
+      if (
+        benchmarkOption.configTitle &&
+        benchmarkOption.configTitle !== benchmarkOption.framework
+      ) {
+        descriptionParts.push(benchmarkOption.configTitle);
+      }
+
+      if (benchmarkOption.benchmarkTemplate?.unit) {
+        descriptionParts.push(String(benchmarkOption.benchmarkTemplate.unit));
+      }
+
+      return descriptionParts.filter(Boolean).join(" | ");
+    }
+
     const descriptionParts = [benchmarkOption.framework];
 
     if (benchmarkOption.configTitle) {

@@ -287,6 +287,26 @@
   max-height: 100%;
 }
 
+.advisor-table-cell-secondary {
+  @apply mt-1 flex flex-wrap gap-x-2 gap-y-1 text-xs text-slate-300;
+}
+
+.advisor-table-delta {
+  @apply whitespace-nowrap font-medium;
+}
+
+.advisor-table-delta--positive {
+  color: #34d399;
+}
+
+.advisor-table-delta--negative {
+  color: #ef4444;
+}
+
+.advisor-table-delta--neutral {
+  @apply text-slate-300;
+}
+
 .advisor-table-link {
   @apply whitespace-nowrap text-emerald-400 underline-offset-2 hover:underline;
 }

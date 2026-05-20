@@ -520,6 +520,26 @@ describe("SearchBarComponent", () => {
     expect(hints).not.toContain("No matching workloads found.");
   });
 
+  it("drops only the framework from advisor workload option descriptions", () => {
+    expect(
+      component.formatBenchmarkConfigDescription({
+        benchmark_id: "passmark:cpu_integer_maths",
+        config: "{}",
+        displayName: "PassMark: CPU Integer Maths Test",
+        configTitle: "Single thread",
+        framework: "passmark",
+        groupLabel: "Passmark",
+        benchmarkTemplate: {
+          benchmark_id: "passmark:cpu_integer_maths",
+          name: "PassMark: CPU Integer Maths Test",
+          unit: "Millions of operations per second (Mops/s)",
+          framework: "passmark",
+          description: null,
+        },
+      }),
+    ).toBe("Single thread | Millions of operations per second (Mops/s)");
+  });
+
   it("disables benchmark config inputs when the custom control is disabled", () => {
     component.filterCategories = [
       {
@@ -657,5 +677,40 @@ describe("SearchBarComponent", () => {
     expect(vendorParameter.modelValue).toEqual(["aws"]);
     expect(component.isEnumSelected(vendorParameter, "aws")).toBeTrue();
     expect(component.isParameterDisabled("vendor")).toBeTrue();
+  });
+
+  it("renders range slider summary text inline with the primary value", () => {
+    component.filterCategories = [
+      {
+        category_id: "advisor",
+        name: "Advisor",
+        icon: "bot",
+        collapsed: false,
+      },
+    ];
+    component.customControls = [
+      {
+        name: "average_cpu_utilization",
+        category_id: "advisor",
+        type: "rangeSlider",
+        title: "Average utilization",
+        numericValue: 30,
+        min: 0,
+        max: 100,
+        step: 10,
+        unit: "%",
+        valueSummary: "of 100; target score: 30",
+      },
+    ];
+
+    fixture.detectChanges();
+
+    const sliderValue = fixture.nativeElement.querySelector(
+      ".custom-slider__value",
+    ) as HTMLElement;
+
+    expect(sliderValue.textContent?.trim()).toBe(
+      "30% of 100; target score: 30",
+    );
   });
 });

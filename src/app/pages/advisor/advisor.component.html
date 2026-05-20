@@ -1,4 +1,4 @@
-<div
+﻿<div
   class="advisor-page w-full bg-primary"
   [class.advisor-page--loading-baseline-workloads]="
     isLoadingBaselineBenchmarkScores()
@@ -27,8 +27,6 @@
             id="advisor_introduction_button"
             type="button"
             class="advisor-header-action btn-primary-outline"
-            aria-haspopup="dialog"
-            aria-controls="advisor-introduction-modal"
             (click)="openIntroductionModal()"
           >
             <lucide-icon name="tv-minimal-play" class="h-4 w-4"></lucide-icon>
@@ -37,7 +35,7 @@
           <button
             id="advisor_share_button"
             type="button"
-            class="advisor-header-action btn-primary"
+            class="advisor-header-action btn-primary-outline"
             (click)="clipboardURL()"
           >
             Share
@@ -497,36 +495,120 @@
                           <div class="text-sm text-white whitespace-nowrap">
                             {{
                               advisorUi.formatScore(
-                                recommendation.selected_benchmark_score
+                                getBenchmarkDisplayScore(recommendation)
                               )
                             }}
+                            @if (
+                              !isSelectedBaselineRecommendation(
+                                recommendation
+                              ) &&
+                                selectedBenchmarkConfig()?.benchmarkTemplate
+                                  ?.unit &&
+                                getBenchmarkDelta(recommendation);
+                              as benchmarkDelta
+                            ) {
+                              @if (
+                                getDeltaLabel(benchmarkDelta);
+                                as benchmarkDeltaLabel
+                              ) {
+                                <span
+                                  class="advisor-table-delta whitespace-nowrap"
+                                  [class.advisor-table-delta--positive]="
+                                    benchmarkDelta.tone === 'positive'
+                                  "
+                                  [class.advisor-table-delta--negative]="
+                                    benchmarkDelta.tone === 'negative'
+                                  "
+                                  [class.advisor-table-delta--neutral]="
+                                    benchmarkDelta.tone === 'neutral'
+                                  "
+                                >
+                                  ({{ benchmarkDeltaLabel }})
+                                </span>
+                              }
+                            }
                           </div>
                           @if (
-                            selectedBenchmarkConfig()?.benchmarkTemplate?.unit
+                            selectedBenchmarkConfig()?.benchmarkTemplate?.unit;
+                            as benchmarkUnit
                           ) {
                             <div class="text-xs text-white flex gap-1">
                               <span class="whitespace-nowrap">
-                                {{
-                                  selectedBenchmarkConfig()?.benchmarkTemplate
-                                    ?.unit
-                                }}
+                                {{ benchmarkUnit }}
                               </span>
                             </div>
+                          } @else if (
+                            !isSelectedBaselineRecommendation(recommendation)
+                          ) {
+                            @if (
+                              getBenchmarkDelta(recommendation);
+                              as benchmarkDelta
+                            ) {
+                              @if (
+                                getDeltaLabel(benchmarkDelta);
+                                as benchmarkDeltaLabel
+                              ) {
+                                <div class="text-xs text-white flex gap-1">
+                                  <span
+                                    class="advisor-table-delta whitespace-nowrap"
+                                    [class.advisor-table-delta--positive]="
+                                      benchmarkDelta.tone === 'positive'
+                                    "
+                                    [class.advisor-table-delta--negative]="
+                                      benchmarkDelta.tone === 'negative'
+                                    "
+                                    [class.advisor-table-delta--neutral]="
+                                      benchmarkDelta.tone === 'neutral'
+                                    "
+                                  >
+                                    {{ benchmarkDeltaLabel }}
+                                  </span>
+                                </div>
+                              }
+                            }
                           }
                         </td>
                       }
                       @if (column.type === "benchmark_score_per_price") {
                         <td>
                           @if (
-                            recommendation.selected_benchmark_score_per_price
+                            getBenchmarkScorePerPriceDisplayValue(
+                              recommendation
+                            );
+                            as efficiencyValue
                           ) {
-                            <span class="whitespace-nowrap">
-                              {{
-                                advisorUi.formatScore(
-                                  recommendation.selected_benchmark_score_per_price
-                                )
-                              }}
-                            </span>
+                            <div class="text-sm text-white whitespace-nowrap">
+                              {{ advisorUi.formatScore(efficiencyValue) }}
+                              @if (
+                                !isSelectedBaselineRecommendation(
+                                  recommendation
+                                ) &&
+                                  getBenchmarkScorePerPriceDelta(
+                                    recommendation
+                                  );
+                                as efficiencyDelta
+                              ) {
+                                @if (
+                                  getDeltaLabel(efficiencyDelta);
+                                  as efficiencyDeltaLabel
+                                ) {
+                                  <span
+                                    class="advisor-table-delta whitespace-nowrap"
+                                    [class.advisor-table-delta--positive]="
+                                      efficiencyDelta.tone === 'positive'
+                                    "
+                                    [class.advisor-table-delta--negative]="
+                                      efficiencyDelta.tone === 'negative'
+                                    "
+                                    [class.advisor-table-delta--neutral]="
+                                      efficiencyDelta.tone === 'neutral'
+                                    "
+                                  >
+                                    ({{ efficiencyDeltaLabel }})
+                                  </span>
+                                }
+                              }
+                            </div>
                             <div class="text-xs text-white flex gap-1">
                               <span class="whitespace-nowrap">for $1/hour</span>
                             </div>
@@ -625,6 +707,36 @@
                               )
                             }}
                           </div>
+                          @if (
+                            !isSelectedBaselineRecommendation(recommendation)
+                          ) {
+                            @if (
+                              getPriceDelta(recommendation, column.key);
+                              as priceDelta
+                            ) {
+                              @if (
+                                getDeltaLabel(priceDelta);
+                                as priceDeltaLabel
+                              ) {
+                                <div class="advisor-table-cell-secondary">
+                                  <span
+                                    class="advisor-table-delta"
+                                    [class.advisor-table-delta--positive]="
+                                      priceDelta.tone === 'positive'
+                                    "
+                                    [class.advisor-table-delta--negative]="
+                                      priceDelta.tone === 'negative'
+                                    "
+                                    [class.advisor-table-delta--neutral]="
+                                      priceDelta.tone === 'neutral'
+                                    "
+                                  >
+                                    {{ priceDeltaLabel }}
+                                  </span>
+                                </div>
+                              }
+                            }
+                          }
                         </td>
                       }
                       @if (column.type === "network_speed") {
