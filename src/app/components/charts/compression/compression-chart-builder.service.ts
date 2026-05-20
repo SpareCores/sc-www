@@ -681,15 +681,25 @@ export class CompressionChartBuilderService {
     selectedName: string,
     hasCompressionLevel: boolean,
   ): void {
-    const callbacks = options.plugins?.tooltip?.callbacks;
+    // Cast to a dual-chart callback type: the options are typed as "line" but
+    // buildCompareCharts applies these options to bar charts when hasCompressionLevel is false.
+    type DualChartCallbacks = {
+      title?: (
+        this: TooltipModel<"line" | "bar">,
+        tooltipItems: TooltipItem<"line" | "bar">[],
+      ) => string | void | string[];
+    };
+    const callbacks = options.plugins?.tooltip?.callbacks as
+      | DualChartCallbacks
+      | undefined;
 
     if (!callbacks) {
       return;
     }
 
     callbacks.title = function (
-      this: TooltipModel<"line">,
-      tooltipItems: TooltipItem<"line">[],
+      this: TooltipModel<"line" | "bar">,
+      tooltipItems: TooltipItem<"line" | "bar">[],
     ) {
       if (hasCompressionLevel) {
         return (
