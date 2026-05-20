@@ -688,8 +688,8 @@ export class CompressionChartBuilderService {
     }
 
     callbacks.title = function (
-      this: TooltipModel<"line" | "bar">,
-      tooltipItems: TooltipItem<"line" | "bar">[],
+      this: TooltipModel<"line">,
+      tooltipItems: TooltipItem<"line">[],
     ) {
       if (hasCompressionLevel) {
         return (
