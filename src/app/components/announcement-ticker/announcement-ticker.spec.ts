@@ -48,7 +48,7 @@ describe("AnnouncementTicker", () => {
 
     const ticker = fixture.nativeElement.querySelector(
       ".announcement-ticker",
-    ) as HTMLAnchorElement;
+    ) as HTMLElement;
 
     expect(ticker.style.getPropertyValue("--announcement-accent").trim()).toBe(
       "#14B8A6",
@@ -69,7 +69,7 @@ describe("AnnouncementTicker", () => {
 
     const ticker = fixture.nativeElement.querySelector(
       ".announcement-ticker",
-    ) as HTMLAnchorElement;
+    ) as HTMLElement;
 
     expect(DEFAULT_ANNOUNCEMENT_TICKER_TONE).toBe("feature");
     expect(ticker.style.getPropertyValue("--announcement-accent").trim()).toBe(

@@ -52,13 +52,19 @@ describe("AppComponent", () => {
     const shell = compiled.querySelector(".app-shell");
     const chrome = compiled.querySelector(".app-shell-chrome");
     const tickerHost = compiled.querySelector("app-announcement-ticker");
+    const highlightedSegment = HOME_HEADER_ANNOUNCEMENT.bodySegments[1];
+
+    if (!highlightedSegment) {
+      fail(
+        "Expected the home header announcement to include a highlighted body segment.",
+      );
+      return;
+    }
 
     expect(tickerHost?.textContent).toContain(
       HOME_HEADER_ANNOUNCEMENT.question,
     );
-    expect(tickerHost?.textContent).toContain(
-      HOME_HEADER_ANNOUNCEMENT.bodySegments[1].text,
-    );
+    expect(tickerHost?.textContent).toContain(highlightedSegment.text);
     expect(tickerHost?.textContent).toContain(
       HOME_HEADER_ANNOUNCEMENT.ctaLabel,
     );
