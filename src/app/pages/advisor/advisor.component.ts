@@ -37,9 +37,11 @@ import {
   BenchmarkScore,
   BenchmarkScoreStatsItem,
   OrderDir,
+  SearchServerPricesServerPricesGetParams,
   SearchServersServersGetData,
   SearchServersServersGetParams,
   ServerPrice,
+  ServerPriceWithPKs,
   ServerPKs,
 } from "../../../../sdk/data-contracts";
 import { KeeperAPIService } from "../../services/keeper-api.service";
@@ -370,6 +372,7 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
   private activeRecommendationRequestKey: string | null = null;
   private baselineBenchmarkRequestVersion = 0;
   private baselineRegionRequestVersion = 0;
+  private baselinePriceComparisonRequestVersion = 0;
   private emptyBaselineWorkloadToastKey: string | null = null;
   private introductionModal: Modal | null = null;
   private hasViewInitialized = signal(false);
@@ -447,6 +450,7 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly isBaselineRegionEnabled = signal(false);
   readonly selectedBaselineVendorRegion = signal<string | null>(null);
   readonly baselineServerPrices = signal<ServerPrice[]>([]);
+  readonly baselinePriceComparisonRows = signal<ServerPriceWithPKs[]>([]);
   readonly regionMetadata = signal<AdvisorRegionMetadata[]>([]);
   readonly isLoadingBaselineRegions = signal(false);
   readonly possibleColumns = signal<AdvisorTableColumn[]>(
@@ -633,12 +637,11 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
         return baselinePriceAggregate;
       }
 
-      const baselineRecommendation = this.recommendations().find(
-        (recommendation) =>
-          this.isSelectedBaselineRecommendation(recommendation),
-      );
       const fallbackMonthlyPrice =
-        baselineRecommendation?.min_price_ondemand_monthly;
+        this.getBaselineMonthlyPriceFallback() ??
+        this.recommendations().find((recommendation) =>
+          this.isSelectedBaselineRecommendation(recommendation),
+        )?.min_price_ondemand_monthly;
 
       if (
         typeof fallbackMonthlyPrice !== "number" ||
@@ -650,6 +653,12 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
 
       return {
         ...baselinePriceAggregate,
+        min_price:
+          this.isPriceAllocationEnabled() &&
+          this.bestPriceAllocation().slug === "MONTHLY" &&
+          baselinePriceAggregate.min_price === null
+            ? fallbackMonthlyPrice
+            : baselinePriceAggregate.min_price,
         min_price_ondemand_monthly: fallbackMonthlyPrice,
       };
     },
@@ -1151,6 +1160,7 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
 
       if (!selectedBaselineServer) {
         this.baselineServerPrices.set([]);
+        this.baselinePriceComparisonRows.set([]);
         this.isLoadingBaselineRegions.set(false);
         this.isBaselineRegionEnabled.set(false);
         this.selectedBaselineVendorRegion.set(null);
@@ -1158,6 +1168,10 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
       }
 
       void this.loadBaselineRegionPrices(
+        selectedBaselineServer,
+        selectedCurrency,
+      );
+      void this.loadBaselinePriceComparisonRows(
         selectedBaselineServer,
         selectedCurrency,
       );
@@ -1893,6 +1907,83 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
         this.isLoadingBaselineRegions.set(false);
       }
     }
+  }
+
+  private async loadBaselinePriceComparisonRows(
+    server: AdvisorBaselineServer,
+    currency: string,
+  ): Promise<void> {
+    const requestVersion = ++this.baselinePriceComparisonRequestVersion;
+    const query: SearchServerPricesServerPricesGetParams = {
+      partial_name_or_id: server.api_reference,
+      vendor:
+        server.vendor_id as SearchServerPricesServerPricesGetParams["vendor"],
+      currency,
+    };
+
+    try {
+      const response = await this.keeperApi.searchServerPrices(query);
+
+      if (
+        requestVersion !== this.baselinePriceComparisonRequestVersion ||
+        this.selectedBaselineServer()?.vendor_id !== server.vendor_id ||
+        this.selectedBaselineServer()?.api_reference !== server.api_reference ||
+        this.selectedCurrency().slug !== currency
+      ) {
+        return;
+      }
+
+      this.baselinePriceComparisonRows.set(
+        (response?.body || []).filter((price: ServerPriceWithPKs) => {
+          return (
+            price.vendor_id === server.vendor_id &&
+            (price.server?.api_reference === server.api_reference ||
+              price.server_id === server.api_reference)
+          );
+        }),
+      );
+    } catch (error) {
+      if (
+        requestVersion !== this.baselinePriceComparisonRequestVersion ||
+        this.selectedBaselineServer()?.vendor_id !== server.vendor_id ||
+        this.selectedBaselineServer()?.api_reference !== server.api_reference ||
+        this.selectedCurrency().slug !== currency
+      ) {
+        return;
+      }
+
+      console.error("Failed to load advisor baseline comparison prices", error);
+      this.baselinePriceComparisonRows.set([]);
+    }
+  }
+
+  private getBaselineMonthlyPriceFallback(): number | null {
+    const selectedBaselineVendorRegion = this.selectedBaselineVendorRegion();
+    const scopedRegionId =
+      this.isBaselineRegionEnabled() && selectedBaselineVendorRegion
+        ? selectedBaselineVendorRegion.split("~")[1] || null
+        : null;
+
+    return (
+      this.baselinePriceComparisonRows()
+        .filter((price) => {
+          if (price.allocation !== "ondemand") {
+            return false;
+          }
+
+          if (scopedRegionId && price.region_id !== scopedRegionId) {
+            return false;
+          }
+
+          return (
+            typeof price.price_monthly === "number" &&
+            Number.isFinite(price.price_monthly) &&
+            price.price_monthly > 0
+          );
+        })
+        .map((price) => price.price_monthly as number)
+        .sort((left, right) => left - right)[0] ?? null
+    );
   }
 
   private async requestRecommendations(

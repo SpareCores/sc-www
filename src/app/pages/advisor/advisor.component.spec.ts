@@ -48,6 +48,7 @@ describe("AdvisorComponent", () => {
   const getBenchmarkWorkloads = jasmine.createSpy("getBenchmarkWorkloads");
   const getServerBenchmark = jasmine.createSpy("getServerBenchmark");
   const getServerPrices = jasmine.createSpy("getServerPrices");
+  const searchServerPrices = jasmine.createSpy("searchServerPrices");
   const searchServers = jasmine.createSpy("searchServers");
   const getComplianceFrameworks = jasmine.createSpy("getComplianceFrameworks");
   const getVendors = jasmine.createSpy("getVendors");
@@ -83,6 +84,7 @@ describe("AdvisorComponent", () => {
     getBenchmarkWorkloads.calls.reset();
     getServerBenchmark.calls.reset();
     getServerPrices.calls.reset();
+    searchServerPrices.calls.reset();
     searchServers.calls.reset();
     getComplianceFrameworks.calls.reset();
     getVendors.calls.reset();
@@ -216,6 +218,7 @@ describe("AdvisorComponent", () => {
         },
       ],
     });
+    searchServerPrices.and.resolveTo({ body: [] });
     searchServers.and.resolveTo({
       body: [
         {
@@ -277,6 +280,7 @@ describe("AdvisorComponent", () => {
             getBenchmarkWorkloads,
             getServerBenchmark,
             getServerPrices,
+            searchServerPrices,
             searchServers,
             getComplianceFrameworks,
             getVendors,
@@ -1475,9 +1479,16 @@ describe("AdvisorComponent", () => {
     expect(priceDelta).toBeNull();
   }));
 
-  it("uses selected baseline recommendation monthly price when baseline monthly records are missing", fakeAsync(() => {
+  it("uses selected baseline recommendation monthly price for monthly deltas when baseline monthly records are missing", fakeAsync(() => {
     selectBaselineServer();
     selectFirstAvailableWorkload();
+
+    component.isPriceAllocationEnabled.set(true);
+    component.bestPriceAllocation.set(
+      component.bestPriceAllocationTypes.find(
+        (allocation) => allocation.slug === "MONTHLY",
+      )!,
+    );
 
     component.baselineServerPrices.set([
       {
@@ -1499,6 +1510,7 @@ describe("AdvisorComponent", () => {
         api_reference: "large",
         display_name: "large",
         server_id: "srv-baseline",
+        min_price: 17.89,
         min_price_ondemand_monthly: 17.89,
       },
       {
@@ -1506,6 +1518,7 @@ describe("AdvisorComponent", () => {
         api_reference: "c7a.large",
         display_name: "c7a.large",
         server_id: "srv-1",
+        min_price: 39.35,
         min_price_ondemand_monthly: 39.35,
       },
     ] as never[]);
@@ -1517,14 +1530,105 @@ describe("AdvisorComponent", () => {
     expect(component.baselinePriceAggregate().min_price_ondemand_monthly).toBe(
       17.89,
     );
+    expect(component.baselinePriceAggregate().min_price).toBe(17.89);
+
+    const bestPriceDelta = component.getPriceDelta(
+      component.recommendations()[1] as never,
+      "min_price",
+    );
 
     const monthlyDelta = component.getPriceDelta(
       component.recommendations()[1] as never,
       "min_price_ondemand_monthly",
     );
 
+    expect(bestPriceDelta).not.toBeNull();
+    expect(component.getDeltaLabel(bestPriceDelta!)).toBe("120%");
     expect(monthlyDelta).not.toBeNull();
-    expect(component.getDeltaLabel(monthlyDelta!)).not.toBe("Baseline n/a");
+    expect(component.getDeltaLabel(monthlyDelta!)).toBe("120%");
+  }));
+
+  it("uses searched baseline monthly prices for monthly deltas when the baseline server is not in the recommendations", fakeAsync(() => {
+    getServerPrices.and.resolveTo({
+      body: [
+        {
+          vendor_id: "aws",
+          region_id: "us-east-1",
+          zone_id: "us-east-1a",
+          server_id: "srv-baseline",
+          operating_system: "Linux",
+          allocation: Allocation.Ondemand,
+          unit: PriceUnit.Hour,
+          price: 0.0245,
+          currency: "USD",
+        },
+      ],
+    });
+    searchServerPrices.and.resolveTo({
+      body: [
+        {
+          vendor_id: "aws",
+          region_id: "us-east-1",
+          zone_id: "us-east-1a",
+          server_id: "srv-baseline",
+          operating_system: "Linux",
+          allocation: Allocation.Ondemand,
+          unit: PriceUnit.Hour,
+          price: 0.0245,
+          price_monthly: 17.89,
+          currency: "USD",
+          server: {
+            vendor_id: "aws",
+            server_id: "srv-baseline",
+            api_reference: "large",
+          },
+        },
+      ],
+    });
+
+    selectBaselineServer();
+    selectFirstAvailableWorkload();
+
+    component.isPriceAllocationEnabled.set(true);
+    component.bestPriceAllocation.set(
+      component.bestPriceAllocationTypes.find(
+        (allocation) => allocation.slug === "MONTHLY",
+      )!,
+    );
+
+    component.recommendations.set([
+      {
+        vendor_id: "aws",
+        api_reference: "c7a.large",
+        display_name: "c7a.large",
+        server_id: "srv-1",
+        min_price: 39.35,
+        min_price_ondemand_monthly: 39.35,
+      },
+    ] as never[]);
+
+    fixture.detectChanges();
+    flushMicrotasks();
+    fixture.detectChanges();
+
+    expect(component.baselinePriceAggregate().min_price_ondemand_monthly).toBe(
+      17.89,
+    );
+    expect(component.baselinePriceAggregate().min_price).toBe(17.89);
+
+    const bestPriceDelta = component.getPriceDelta(
+      component.recommendations()[0] as never,
+      "min_price",
+    );
+    const monthlyDelta = component.getPriceDelta(
+      component.recommendations()[0] as never,
+      "min_price_ondemand_monthly",
+    );
+
+    expect(bestPriceDelta).not.toBeNull();
+    expect(component.getDeltaLabel(bestPriceDelta!)).toBe("120%");
+    expect(monthlyDelta).not.toBeNull();
+    expect(component.getDeltaLabel(monthlyDelta!)).toBe("120%");
   }));
 
   it("removes the top price allocation dropdown from the toolbar", () => {
