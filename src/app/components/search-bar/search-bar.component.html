@@ -1150,13 +1150,16 @@
                                     <span class="custom-autocomplete__label">
                                       {{ benchmarkOption.displayName }}
                                     </span>
-                                    <span class="custom-autocomplete__meta">
-                                      {{
-                                        formatBenchmarkConfigDescription(
-                                          benchmarkOption
-                                        )
-                                      }}
-                                    </span>
+                                    @if (
+                                      formatBenchmarkConfigDescription(
+                                        benchmarkOption
+                                      );
+                                      as benchmarkDescription
+                                    ) {
+                                      <span class="custom-autocomplete__meta">
+                                        {{ benchmarkDescription }}
+                                      </span>
+                                    }
                                   </button>
                                 }
                               }

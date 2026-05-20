@@ -540,6 +540,56 @@ describe("SearchBarComponent", () => {
     ).toBe("Single thread | Millions of operations per second (Mops/s)");
   });
 
+  it("does not render an empty workload metadata row when a grouped option has no secondary description", () => {
+    component.filterCategories = [
+      {
+        category_id: "advisor",
+        name: "Advisor",
+        icon: "bot",
+        collapsed: false,
+      },
+    ];
+    component.customControls = [
+      {
+        name: "benchmark_config",
+        category_id: "advisor",
+        type: "benchmarkConfigSelect",
+        title: "Workload",
+        inputValue: "fio",
+        benchmarkGroups: [
+          {
+            name: "Fio",
+            options: [
+              {
+                benchmark_id: "fio:randread",
+                config: "{}",
+                displayName: "Fio Random Read",
+                configTitle: "",
+                framework: "fio",
+                groupLabel: "Fio",
+                benchmarkTemplate: {
+                  benchmark_id: "fio:randread",
+                  name: "Fio Random Read",
+                  framework: "fio",
+                  description: null,
+                },
+              },
+            ],
+          },
+        ],
+      },
+    ];
+
+    fixture.detectChanges();
+
+    const option = fixture.nativeElement.querySelector(
+      ".custom-autocomplete__option",
+    ) as HTMLElement | null;
+
+    expect(option).not.toBeNull();
+    expect(option?.querySelector(".custom-autocomplete__meta")).toBeNull();
+  });
+
   it("disables benchmark config inputs when the custom control is disabled", () => {
     component.filterCategories = [
       {
