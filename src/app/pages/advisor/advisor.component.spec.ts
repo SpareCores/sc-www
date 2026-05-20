@@ -435,6 +435,46 @@ describe("AdvisorComponent", () => {
     expect(document.activeElement).toBe(getBaselineWorkloadInput());
   }));
 
+  it("restarts focus retries when the pending custom control target changes", () => {
+    const searchBar = component.searchBar();
+
+    if (!searchBar) {
+      fail("Expected the advisor search bar to be available.");
+      return;
+    }
+
+    const focusSpy = spyOn(searchBar, "focusCustomControl").and.returnValue(
+      false,
+    );
+    const queueSpy = spyOn(
+      component as unknown as {
+        queuePendingCustomControlFocusAttempt(): void;
+      },
+      "queuePendingCustomControlFocusAttempt",
+    ).and.stub();
+    const advisorComponent = component as unknown as {
+      customControlFocusAttemptCount: number;
+      lastPendingCustomControlFocus: string | null;
+      pendingCustomControlFocus: {
+        set(value: string | null): void;
+      };
+      focusPendingCustomControl(): void;
+    };
+
+    advisorComponent.customControlFocusAttemptCount = 999;
+    advisorComponent.lastPendingCustomControlFocus = "baseline_server";
+    advisorComponent.pendingCustomControlFocus.set("server_workload");
+
+    advisorComponent.focusPendingCustomControl();
+
+    expect(focusSpy).toHaveBeenCalledOnceWith("server_workload");
+    expect(advisorComponent.customControlFocusAttemptCount).toBe(1);
+    expect(advisorComponent.lastPendingCustomControlFocus).toBe(
+      "server_workload",
+    );
+    expect(queueSpy).toHaveBeenCalledOnceWith();
+  });
+
   it("sorts filtered baseline servers by vcpus, memory, vendor, and api reference", () => {
     component.serverTableRows.set([
       {
@@ -1398,7 +1438,7 @@ describe("AdvisorComponent", () => {
     expect(benchmarkDelta.classList).toContain("advisor-table-delta--negative");
   }));
 
-  it("shows neutral baseline n/a deltas when the baseline price is unavailable", fakeAsync(() => {
+  it("does not render efficiency or price deltas when the baseline price is unavailable", fakeAsync(() => {
     selectBaselineServer();
     selectFirstAvailableWorkload();
 
@@ -1428,17 +1468,11 @@ describe("AdvisorComponent", () => {
       "#advisor_results_table tbody tr",
     ) as HTMLTableRowElement;
     const cells = row.querySelectorAll("td");
-    const efficiencyDelta = cells[4].querySelector(
-      ".advisor-table-delta",
-    ) as HTMLElement;
-    const priceDelta = cells[8].querySelector(
-      ".advisor-table-delta",
-    ) as HTMLElement;
+    const efficiencyDelta = cells[4].querySelector(".advisor-table-delta");
+    const priceDelta = cells[8].querySelector(".advisor-table-delta");
 
-    expect(efficiencyDelta.textContent?.trim()).toBe("(Baseline n/a)");
-    expect(efficiencyDelta.classList).toContain("advisor-table-delta--neutral");
-    expect(priceDelta.textContent?.trim()).toBe("Baseline n/a");
-    expect(priceDelta.classList).toContain("advisor-table-delta--neutral");
+    expect(efficiencyDelta).toBeNull();
+    expect(priceDelta).toBeNull();
   }));
 
   it("uses selected baseline recommendation monthly price when baseline monthly records are missing", fakeAsync(() => {

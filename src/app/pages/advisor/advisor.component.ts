@@ -376,6 +376,7 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
   private pendingCustomControlFocus = signal<string | null>(null);
   private customControlFocusFrame: number | null = null;
   private customControlFocusAttemptCount = 0;
+  private lastPendingCustomControlFocus: string | null = null;
 
   readonly title = ADVISOR_PAGE_TITLE;
   readonly description = ADVISOR_PAGE_DESCRIPTION;
@@ -2325,11 +2326,18 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (!focusTarget) {
       this.customControlFocusAttemptCount = 0;
+      this.lastPendingCustomControlFocus = null;
       return;
+    }
+
+    if (this.lastPendingCustomControlFocus !== focusTarget) {
+      this.customControlFocusAttemptCount = 0;
+      this.lastPendingCustomControlFocus = focusTarget;
     }
 
     if (this.searchBar()?.focusCustomControl(focusTarget)) {
       this.customControlFocusAttemptCount = 0;
+      this.lastPendingCustomControlFocus = null;
       this.pendingCustomControlFocus.set(null);
       return;
     }
