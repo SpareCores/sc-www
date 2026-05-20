@@ -1,0 +1,59 @@
+<div
+  class="announcement-ticker"
+  [style.--announcement-accent]="palette().accent"
+  [style.--announcement-background-start]="palette().backgroundStart"
+  [style.--announcement-background-mid]="palette().backgroundMid"
+  [style.--announcement-background-end]="palette().backgroundEnd"
+  [style.--announcement-border]="palette().border"
+  [style.--announcement-glow]="palette().glow"
+  [style.--announcement-glow-alt]="palette().glowAlt"
+  [style.--announcement-focus]="palette().focus"
+>
+  <a
+    class="announcement-ticker__link"
+    [routerLink]="message().href"
+    [attr.aria-label]="message().ariaLabel"
+  >
+    <div class="announcement-ticker__viewport">
+      <div class="announcement-ticker__track">
+        @for (copy of copies; track copy) {
+        <div
+          class="announcement-ticker__content"
+          [attr.aria-hidden]="copy === 1 ? 'true' : null"
+        >
+          @if (message().icon) {
+          <span class="announcement-ticker__icon" aria-hidden="true">
+            {{ message().icon }}
+          </span>
+          }
+          <span class="announcement-ticker__message">
+            <strong class="announcement-ticker__question">
+              {{ message().question }}
+            </strong>
+            @for (segment of message().bodySegments; track $index) {
+            <span [class.announcement-ticker__highlight]="segment.highlight">
+              {{ segment.text }}
+            </span>
+            }
+            <span class="announcement-ticker__highlight">
+              {{ message().ctaLabel }}
+            </span>
+            <span aria-hidden="true">&rarr;</span>
+          </span>
+        </div>
+        }
+      </div>
+    </div>
+  </a>
+
+  @if (dismissible()) {
+  <button
+    type="button"
+    class="announcement-ticker__close"
+    [attr.aria-label]="dismissLabel()"
+    (click)="dismiss()"
+  >
+    X
+  </button>
+  }
+</div>
