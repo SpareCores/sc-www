@@ -131,7 +131,7 @@
         >
           <lucide-icon
             [name]="isCollapsed() ? 'chevron-right' : 'chevron-left'"
-            class="h-6 w-6 text-emerald-400"
+            class="advisor-filter-bar-collapser-icon h-6 w-6 text-emerald-400"
           ></lucide-icon>
         </div>
 
@@ -165,7 +165,10 @@
         </div>
       </div>
 
-      <div class="advisor-results flex flex-col gap-4">
+      <div
+        class="advisor-results flex flex-col gap-4"
+        [class.advisor-results--compare-active]="compareCount() >= 2"
+      >
         <div class="advisor-toolbar">
           @if (recommendationSummary(); as summary) {
             <div
@@ -371,6 +374,27 @@
                         <td>
                           <div class="text-sm text-white whitespace-nowrap">
                             {{ advisorUi.formatScore(recommendation.score) }}
+                            @if (getScoreDelta(recommendation); as scoreDelta) {
+                              @if (
+                                getDeltaLabel(scoreDelta);
+                                as scoreDeltaLabel
+                              ) {
+                                <span
+                                  class="advisor-table-delta whitespace-nowrap"
+                                  [class.advisor-table-delta--positive]="
+                                    scoreDelta.tone === 'positive'
+                                  "
+                                  [class.advisor-table-delta--negative]="
+                                    scoreDelta.tone === 'negative'
+                                  "
+                                  [class.advisor-table-delta--neutral]="
+                                    scoreDelta.tone === 'neutral'
+                                  "
+                                >
+                                  ({{ scoreDeltaLabel }})
+                                </span>
+                              }
+                            }
                           </div>
                           @if (recommendation.score_per_price) {
                             <div class="text-xs text-white flex gap-1">
@@ -389,14 +413,40 @@
                       @if (column.type === "score_per_price") {
                         <td>
                           @if (recommendation.score_per_price) {
-                            <span class="whitespace-nowrap">
+                            <div class="text-sm text-white whitespace-nowrap">
                               {{
                                 advisorUi.formatScore(
                                   recommendation.score_per_price
                                 )
                               }}
-                              / USD
-                            </span>
+                              @if (
+                                getScorePerPriceDelta(recommendation);
+                                as scorePerPriceDelta
+                              ) {
+                                @if (
+                                  getDeltaLabel(scorePerPriceDelta);
+                                  as scorePerPriceDeltaLabel
+                                ) {
+                                  <span
+                                    class="advisor-table-delta whitespace-nowrap"
+                                    [class.advisor-table-delta--positive]="
+                                      scorePerPriceDelta.tone === 'positive'
+                                    "
+                                    [class.advisor-table-delta--negative]="
+                                      scorePerPriceDelta.tone === 'negative'
+                                    "
+                                    [class.advisor-table-delta--neutral]="
+                                      scorePerPriceDelta.tone === 'neutral'
+                                    "
+                                  >
+                                    ({{ scorePerPriceDeltaLabel }})
+                                  </span>
+                                }
+                              }
+                            </div>
+                            <div class="text-xs text-white flex gap-1">
+                              <span class="whitespace-nowrap">/ USD</span>
+                            </div>
                           } @else {
                             <span>-</span>
                           }
@@ -612,8 +662,35 @@
                       }
                       @if (column.type === "memory") {
                         <td>
-                          <div class="text-sm text-white">
+                          <div class="text-sm text-white whitespace-nowrap">
                             {{ advisorUi.formatMemory(recommendation) }}
+                            @if (
+                              getComparableResourceDelta(
+                                recommendation,
+                                "memory_amount"
+                              );
+                              as memoryDelta
+                            ) {
+                              @if (
+                                getMemoryDeltaLabel(memoryDelta);
+                                as memoryDeltaLabel
+                              ) {
+                                <span
+                                  class="advisor-table-delta whitespace-nowrap"
+                                  [class.advisor-table-delta--positive]="
+                                    memoryDelta.tone === 'positive'
+                                  "
+                                  [class.advisor-table-delta--negative]="
+                                    memoryDelta.tone === 'negative'
+                                  "
+                                  [class.advisor-table-delta--neutral]="
+                                    memoryDelta.tone === 'neutral'
+                                  "
+                                >
+                                  {{ memoryDeltaLabel }}
+                                </span>
+                              }
+                            }
                           </div>
                           @if (recommendation.memory_speed) {
                             <div class="text-xs text-white flex gap-1">
@@ -636,6 +713,32 @@
                           <div class="text-sm text-white">
                             {{ recommendation.gpu_count | gpuCount }}
                           </div>
+                          @if (
+                            getComparableResourceDelta(
+                              recommendation,
+                              "gpu_count"
+                            );
+                            as gpuDelta
+                          ) {
+                            @if (getDeltaLabel(gpuDelta); as gpuDeltaLabel) {
+                              <div class="advisor-table-cell-secondary">
+                                <span
+                                  class="advisor-table-delta"
+                                  [class.advisor-table-delta--positive]="
+                                    gpuDelta.tone === 'positive'
+                                  "
+                                  [class.advisor-table-delta--negative]="
+                                    gpuDelta.tone === 'negative'
+                                  "
+                                  [class.advisor-table-delta--neutral]="
+                                    gpuDelta.tone === 'neutral'
+                                  "
+                                >
+                                  {{ gpuDeltaLabel }}
+                                </span>
+                              </div>
+                            }
+                          }
                           @if (recommendation.gpu_model) {
                             <div class="text-xs text-white flex gap-1">
                               <span>{{ recommendation.gpu_model }}</span>
@@ -645,14 +748,78 @@
                       }
                       @if (column.type === "gpu_memory_min") {
                         <td>
-                          {{ advisorUi.formatGpuMemory(recommendation, "min") }}
+                          <div class="text-sm text-white">
+                            {{
+                              advisorUi.formatGpuMemory(recommendation, "min")
+                            }}
+                          </div>
+                          @if (
+                            getComparableResourceDelta(
+                              recommendation,
+                              "gpu_memory_min"
+                            );
+                            as gpuMemoryMinDelta
+                          ) {
+                            @if (
+                              getDeltaLabel(gpuMemoryMinDelta);
+                              as gpuMemoryMinDeltaLabel
+                            ) {
+                              <div class="advisor-table-cell-secondary">
+                                <span
+                                  class="advisor-table-delta"
+                                  [class.advisor-table-delta--positive]="
+                                    gpuMemoryMinDelta.tone === 'positive'
+                                  "
+                                  [class.advisor-table-delta--negative]="
+                                    gpuMemoryMinDelta.tone === 'negative'
+                                  "
+                                  [class.advisor-table-delta--neutral]="
+                                    gpuMemoryMinDelta.tone === 'neutral'
+                                  "
+                                >
+                                  {{ gpuMemoryMinDeltaLabel }}
+                                </span>
+                              </div>
+                            }
+                          }
                         </td>
                       }
                       @if (column.type === "gpu_memory_total") {
                         <td>
-                          {{
-                            advisorUi.formatGpuMemory(recommendation, "total")
-                          }}
+                          <div class="text-sm text-white">
+                            {{
+                              advisorUi.formatGpuMemory(recommendation, "total")
+                            }}
+                          </div>
+                          @if (
+                            getComparableResourceDelta(
+                              recommendation,
+                              "gpu_memory_total"
+                            );
+                            as gpuMemoryTotalDelta
+                          ) {
+                            @if (
+                              getDeltaLabel(gpuMemoryTotalDelta);
+                              as gpuMemoryTotalDeltaLabel
+                            ) {
+                              <div class="advisor-table-cell-secondary">
+                                <span
+                                  class="advisor-table-delta"
+                                  [class.advisor-table-delta--positive]="
+                                    gpuMemoryTotalDelta.tone === 'positive'
+                                  "
+                                  [class.advisor-table-delta--negative]="
+                                    gpuMemoryTotalDelta.tone === 'negative'
+                                  "
+                                  [class.advisor-table-delta--neutral]="
+                                    gpuMemoryTotalDelta.tone === 'neutral'
+                                  "
+                                >
+                                  {{ gpuMemoryTotalDeltaLabel }}
+                                </span>
+                              </div>
+                            }
+                          }
                         </td>
                       }
                       @if (column.type === "gpu_model") {
@@ -682,6 +849,35 @@
                           <div class="text-sm text-white">
                             {{ advisorUi.formatStorage(recommendation) }}
                           </div>
+                          @if (
+                            getComparableResourceDelta(
+                              recommendation,
+                              "storage_size"
+                            );
+                            as storageDelta
+                          ) {
+                            @if (
+                              getDeltaLabel(storageDelta);
+                              as storageDeltaLabel
+                            ) {
+                              <div class="advisor-table-cell-secondary">
+                                <span
+                                  class="advisor-table-delta"
+                                  [class.advisor-table-delta--positive]="
+                                    storageDelta.tone === 'positive'
+                                  "
+                                  [class.advisor-table-delta--negative]="
+                                    storageDelta.tone === 'negative'
+                                  "
+                                  [class.advisor-table-delta--neutral]="
+                                    storageDelta.tone === 'neutral'
+                                  "
+                                >
+                                  {{ storageDeltaLabel }}
+                                </span>
+                              </div>
+                            }
+                          }
                           @if (recommendation.storage_type) {
                             <div class="text-xs text-white">
                               <span>{{ recommendation.storage_type }}</span>
@@ -708,7 +904,7 @@
                               as priceDelta
                             ) {
                               @if (
-                                getDeltaLabel(priceDelta);
+                                getPriceDeltaLabel(priceDelta);
                                 as priceDeltaLabel
                               ) {
                                 <div class="advisor-table-cell-secondary">

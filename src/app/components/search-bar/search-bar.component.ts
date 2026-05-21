@@ -162,6 +162,8 @@ export type SearchBarServerOption = Pick<
       | "description"
       | "vcpus"
       | "memory_amount"
+      | "gpu_count"
+      | "gpu_memory_min"
       | "storage_size"
       | "gpu_memory_total"
       | "cpu_architecture"

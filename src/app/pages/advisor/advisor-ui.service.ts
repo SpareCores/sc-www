@@ -17,6 +17,14 @@ import {
 import { matchesAdvisorBaselineServer } from "./advisor.utils";
 
 const ADVISOR_EMPTY_VALUE = "-";
+const ADVISOR_MONTHLY_HOURS = 730;
+
+type AdvisorMonthlyPriceSource = Pick<
+  ServerPrice,
+  "allocation" | "unit" | "price"
+> & {
+  price_monthly?: number | null;
+};
 
 @Injectable({
   providedIn: "root",
@@ -62,13 +70,11 @@ export class AdvisorUiService {
           price.unit === PriceUnit.Hour,
       ),
     );
-    const minOndemandMonthlyPrice = this.getMinimumPrice(
-      scopedPrices.filter(
-        (price) =>
-          price.allocation === Allocation.Ondemand &&
-          price.unit === PriceUnit.Month,
-      ),
-    );
+    const minOndemandMonthlyPrice =
+      scopedPrices
+        .map((price) => this.getOndemandMonthlyPrice(price))
+        .filter((price): price is number => price !== null)
+        .sort((left, right) => left - right)[0] ?? null;
 
     return {
       min_price: this.resolveBestPrice(
@@ -125,6 +131,43 @@ export class AdvisorUiService {
     baselinePrice: number | null | undefined,
   ): AdvisorMetricDelta {
     return this.buildRelativeDelta(candidatePrice, baselinePrice, true);
+  }
+
+  getOndemandMonthlyPrice(price: AdvisorMonthlyPriceSource): number | null {
+    if (price.allocation !== Allocation.Ondemand) {
+      return null;
+    }
+
+    const explicitMonthlyPrice = this.normalizeFiniteNumber(
+      price.price_monthly,
+    );
+
+    if (explicitMonthlyPrice !== null) {
+      return explicitMonthlyPrice;
+    }
+
+    const normalizedPrice = this.normalizeFiniteNumber(price.price);
+
+    if (normalizedPrice === null) {
+      return null;
+    }
+
+    if (price.unit === PriceUnit.Month) {
+      return normalizedPrice;
+    }
+
+    if (price.unit === PriceUnit.Hour) {
+      return normalizedPrice * ADVISOR_MONTHLY_HOURS;
+    }
+
+    return null;
+  }
+
+  buildComparableResourceDelta(
+    candidateValue: number | null | undefined,
+    baselineValue: number | null | undefined,
+  ): AdvisorMetricDelta {
+    return this.buildRelativeDelta(candidateValue, baselineValue, false);
   }
 
   filterBaselineServers(
@@ -247,7 +290,7 @@ export class AdvisorUiService {
     }
 
     if (value < 1) {
-      return value.toPrecision(1);
+      return Number.parseFloat(value.toPrecision(2)).toString();
     }
 
     if (value < 100) {
@@ -402,12 +445,50 @@ export class AdvisorUiService {
         return minOndemandMonthlyPrice;
       case "ANY":
       default:
-        return (
-          [minSpotPrice, minOndemandPrice, minOndemandMonthlyPrice]
-            .filter((value): value is number => value !== null)
-            .sort((left, right) => left - right)[0] ?? null
+        return this.resolveNormalizedBestPrice(
+          minSpotPrice,
+          minOndemandPrice,
+          minOndemandMonthlyPrice,
         );
     }
+  }
+
+  private resolveNormalizedBestPrice(
+    minSpotPrice: number | null,
+    minOndemandPrice: number | null,
+    minOndemandMonthlyPrice: number | null,
+  ): number | null {
+    const comparablePrices = [
+      {
+        actualPrice: minSpotPrice,
+        comparableHourlyPrice: minSpotPrice,
+      },
+      {
+        actualPrice: minOndemandPrice,
+        comparableHourlyPrice: minOndemandPrice,
+      },
+      {
+        actualPrice: minOndemandMonthlyPrice,
+        comparableHourlyPrice:
+          minOndemandMonthlyPrice === null
+            ? null
+            : minOndemandMonthlyPrice / ADVISOR_MONTHLY_HOURS,
+      },
+    ].filter(
+      (
+        price,
+      ): price is { actualPrice: number; comparableHourlyPrice: number } => {
+        return (
+          price.actualPrice !== null && price.comparableHourlyPrice !== null
+        );
+      },
+    );
+
+    return (
+      comparablePrices.sort((left, right) => {
+        return left.comparableHourlyPrice - right.comparableHourlyPrice;
+      })[0]?.actualPrice ?? null
+    );
   }
 
   private buildRelativeDelta(

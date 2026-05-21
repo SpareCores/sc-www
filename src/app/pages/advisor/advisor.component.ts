@@ -330,6 +330,13 @@ function invertAdvisorDeltaTone(
   return "neutral";
 }
 
+type AdvisorComparableResourceKey =
+  | "memory_amount"
+  | "gpu_count"
+  | "gpu_memory_min"
+  | "gpu_memory_total"
+  | "storage_size";
+
 @Component({
   selector: "app-advisor",
   imports: [
@@ -372,6 +379,7 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
   private baselineBenchmarkRequestVersion = 0;
   private baselineRegionRequestVersion = 0;
   private baselinePriceComparisonRequestVersion = 0;
+  private baselineScoreComparisonRequestVersion = 0;
   private introductionModal: Modal | null = null;
   private hasViewInitialized = signal(false);
   private pendingCustomControlFocus = signal<string | null>(null);
@@ -448,6 +456,10 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly selectedBaselineVendorRegion = signal<string | null>(null);
   readonly baselineServerPrices = signal<ServerPrice[]>([]);
   readonly baselinePriceComparisonRows = signal<ServerPriceWithPKs[]>([]);
+  readonly baselineScoreComparisonRow = signal<Pick<
+    ServerPKs,
+    "score" | "score_per_price"
+  > | null>(null);
   readonly regionMetadata = signal<AdvisorRegionMetadata[]>([]);
   readonly isLoadingBaselineRegions = signal(false);
   readonly possibleColumns = signal<AdvisorTableColumn[]>(
@@ -456,6 +468,11 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly tableColumns = computed(() =>
     this.possibleColumns().filter((column) => column.show),
   );
+  readonly hasBaselineScoreComparisonColumns = computed(() => {
+    return this.tableColumns().some((column) => {
+      return column.type === "score" || column.type === "score_per_price";
+    });
+  });
   readonly hasCustomColumns = computed(() =>
     hasCustomAdvisorColumns(this.possibleColumns()),
   );
@@ -1166,6 +1183,7 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
       if (!selectedBaselineServer) {
         this.baselineServerPrices.set([]);
         this.baselinePriceComparisonRows.set([]);
+        this.baselineScoreComparisonRow.set(null);
         this.isLoadingBaselineRegions.set(false);
         this.isBaselineRegionEnabled.set(false);
         this.selectedBaselineVendorRegion.set(null);
@@ -1180,6 +1198,32 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
         selectedBaselineServer,
         selectedCurrency,
       );
+    });
+
+    effect(() => {
+      const selectedBaselineServer = this.selectedBaselineServer();
+      const hasBaselineScoreComparisonColumns =
+        this.hasBaselineScoreComparisonColumns();
+      const baselineRecommendation = selectedBaselineServer
+        ? this.recommendations().find((recommendation) => {
+            return this.isSelectedBaselineRecommendation(recommendation);
+          })
+        : null;
+
+      if (!selectedBaselineServer || !hasBaselineScoreComparisonColumns) {
+        this.baselineScoreComparisonRow.set(null);
+        return;
+      }
+
+      if (
+        baselineRecommendation?.score != null &&
+        baselineRecommendation?.score_per_price != null
+      ) {
+        this.baselineScoreComparisonRow.set(null);
+        return;
+      }
+
+      void this.loadBaselineScoreComparisonRow(selectedBaselineServer);
     });
 
     effect(() => {
@@ -1446,6 +1490,28 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
+  getScoreDelta(recommendation: ServerPKs): AdvisorMetricDelta | null {
+    if (this.isSelectedBaselineRecommendation(recommendation)) {
+      return null;
+    }
+
+    return this.advisorUi.buildComparableResourceDelta(
+      recommendation.score,
+      this.getBaselineScoreComparisonValue("score"),
+    );
+  }
+
+  getScorePerPriceDelta(recommendation: ServerPKs): AdvisorMetricDelta | null {
+    if (this.isSelectedBaselineRecommendation(recommendation)) {
+      return null;
+    }
+
+    return this.advisorUi.buildComparableResourceDelta(
+      recommendation.score_per_price,
+      this.getBaselineScoreComparisonValue("score_per_price"),
+    );
+  }
+
   getPriceDelta(
     recommendation: ServerPKs,
     columnKey: AdvisorTableColumn["key"] | undefined,
@@ -1469,6 +1535,26 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
+  getComparableResourceDelta(
+    recommendation: ServerPKs,
+    resourceKey: AdvisorComparableResourceKey,
+  ): AdvisorMetricDelta | null {
+    if (this.isSelectedBaselineRecommendation(recommendation)) {
+      return null;
+    }
+
+    const baselineServer = this.selectedBaselineServer();
+
+    if (!baselineServer) {
+      return null;
+    }
+
+    return this.advisorUi.buildComparableResourceDelta(
+      recommendation[resourceKey],
+      baselineServer[resourceKey],
+    );
+  }
+
   getDeltaLabel(delta: AdvisorMetricDelta): string | null {
     if (delta.candidateValue === null) {
       return null;
@@ -1479,9 +1565,59 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     const roundedPercentage = Math.round(Math.abs(delta.percentageDelta));
+    if (roundedPercentage === 0) {
+      return "0%";
+    }
+
+    return delta.tone === "negative"
+      ? `-${roundedPercentage}%`
+      : `+${roundedPercentage}%`;
+  }
+
+  getMemoryDeltaLabel(delta: AdvisorMetricDelta): string | null {
+    const deltaLabel = this.getDeltaLabel(delta);
+
+    if (!deltaLabel || deltaLabel === "0%") {
+      return deltaLabel === "0%" ? null : deltaLabel;
+    }
+
+    return `(${deltaLabel})`;
+  }
+
+  getPriceDeltaLabel(delta: AdvisorMetricDelta): string | null {
+    if (delta.candidateValue === null) {
+      return null;
+    }
+
+    if (delta.percentageDelta === null) {
+      return "";
+    }
+
+    const roundedPercentage = Math.round(Math.abs(delta.percentageDelta));
+
+    if (roundedPercentage === 0) {
+      return "0%";
+    }
+
     return delta.percentageDelta < 0
       ? `-${roundedPercentage}%`
-      : `${roundedPercentage}%`;
+      : `+${roundedPercentage}%`;
+  }
+
+  private getBaselineScoreComparisonValue(
+    key: "score" | "score_per_price",
+  ): number | null | undefined {
+    const baselineRecommendation = this.recommendations().find(
+      (recommendation) => {
+        return this.isSelectedBaselineRecommendation(recommendation);
+      },
+    );
+
+    if (baselineRecommendation?.[key] != null) {
+      return baselineRecommendation[key];
+    }
+
+    return this.baselineScoreComparisonRow()?.[key] ?? null;
   }
 
   selectPageSize(limit: number): void {
@@ -1962,6 +2098,58 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  private async loadBaselineScoreComparisonRow(
+    server: AdvisorBaselineServer,
+  ): Promise<void> {
+    const requestVersion = ++this.baselineScoreComparisonRequestVersion;
+    const query: SearchServersServersGetParams = {
+      partial_name_or_id: server.api_reference,
+      vendor: server.vendor_id as SearchServersServersGetParams["vendor"],
+      only_active: true,
+    };
+
+    try {
+      const response = await this.keeperApi.searchServers(query);
+
+      if (
+        requestVersion !== this.baselineScoreComparisonRequestVersion ||
+        this.selectedBaselineServer()?.vendor_id !== server.vendor_id ||
+        this.selectedBaselineServer()?.api_reference !== server.api_reference ||
+        !this.hasBaselineScoreComparisonColumns()
+      ) {
+        return;
+      }
+
+      const baselineComparisonRow = (response?.body || []).find(
+        (candidate: ServerPKs) => {
+          return (
+            candidate.vendor_id === server.vendor_id &&
+            candidate.api_reference === server.api_reference
+          );
+        },
+      );
+
+      this.baselineScoreComparisonRow.set(
+        baselineComparisonRow
+          ? {
+              score: baselineComparisonRow.score ?? null,
+              score_per_price: baselineComparisonRow.score_per_price ?? null,
+            }
+          : null,
+      );
+    } catch (error) {
+      if (requestVersion !== this.baselineScoreComparisonRequestVersion) {
+        return;
+      }
+
+      console.error(
+        "Failed to load advisor baseline score comparison row",
+        error,
+      );
+      this.baselineScoreComparisonRow.set(null);
+    }
+  }
+
   private getBaselineMonthlyPriceFallback(): number | null {
     const selectedBaselineVendorRegion = this.selectedBaselineVendorRegion();
     const scopedRegionId =
@@ -1972,21 +2160,10 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
     return (
       this.baselinePriceComparisonRows()
         .filter((price) => {
-          if (price.allocation !== "ondemand") {
-            return false;
-          }
-
-          if (scopedRegionId && price.region_id !== scopedRegionId) {
-            return false;
-          }
-
-          return (
-            typeof price.price_monthly === "number" &&
-            Number.isFinite(price.price_monthly) &&
-            price.price_monthly > 0
-          );
+          return !scopedRegionId || price.region_id === scopedRegionId;
         })
-        .map((price) => price.price_monthly as number)
+        .map((price) => this.advisorUi.getOndemandMonthlyPrice(price))
+        .filter((price): price is number => price !== null)
         .sort((left, right) => left - right)[0] ?? null
     );
   }

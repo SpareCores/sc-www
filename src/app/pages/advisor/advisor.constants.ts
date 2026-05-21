@@ -21,6 +21,8 @@ export const ADVISOR_DEFAULT_SERVER_COLUMNS = [
   "status",
   "vcpus",
   "memory_amount",
+  "gpu_count",
+  "gpu_memory_min",
   "gpu_memory_total",
   "storage_size",
   "cpu_architecture",
