@@ -28,6 +28,6 @@ export const ADVISOR_PROMO_BANNER: PromoBannerMessage = {
   lead: PROMO_BANNER_LEAD,
   body: PROMO_BANNER_BODY,
   ariaLabel: "Open the Spare Cores advisor meeting scheduler",
-  ctaLabel: "Let's chat",
+  ctaLabel: "Try it now",
   ctaId: "meeting-advisor-promo-banner",
 };
