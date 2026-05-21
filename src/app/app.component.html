@@ -1,17 +1,21 @@
 <div class="app-shell">
-  @if (showHomeAnnouncement || showHeader) {
+  @if (showHeader || promoBannerMessage) {
     <div class="app-shell-chrome">
-      @if (showHomeAnnouncement) {
-        <app-announcement-ticker
-          [message]="homeAnnouncement"
-          [dismissible]="true"
-          (dismissed)="dismissHomeAnnouncement()"
-        ></app-announcement-ticker>
-      }
       @if (showHeader) {
         <header>
           <app-header></app-header>
         </header>
+      }
+      @if (promoBannerMessage; as bannerMessage) {
+        <div class="app-shell-banner">
+          <div class="content">
+            <app-promo-banner
+              [message]="bannerMessage"
+              [dismissible]="true"
+              (dismissed)="dismissPromoBanner()"
+            ></app-promo-banner>
+          </div>
+        </div>
       }
     </div>
   }

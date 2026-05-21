@@ -41,11 +41,14 @@ export class NeetoCalService {
   }
 
   private initializeButtons(): void {
+    const advisorMeetingContext =
+      "I am interested in multi-server optimization, programmatic API access, or workflow automations for advanced cloud management.";
+
     const buttonContextMap = {
       "#meeting-header-demo": "",
       "#meeting-general-demo": "",
-      "#meeting-advisor-advanced":
-        "I am interested in multi-server optimization, programmatic API access, or workflow automations for advanced cloud management.",
+      "#meeting-advisor-advanced": advisorMeetingContext,
+      "#meeting-advisor-promo-banner": advisorMeetingContext,
       "#meeting-navigator-caas":
         "I am interested in the managed Container-as-a-Service platform.",
       "#meeting-painpoints":

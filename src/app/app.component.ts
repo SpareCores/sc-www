@@ -19,15 +19,19 @@ import {
 import { register } from "swiper/element/bundle";
 import { HeaderComponent } from "./layout/header/header.component";
 import { FooterComponent } from "./layout/footer/footer.component";
-import { AnnouncementTicker } from "./components/announcement-ticker/announcement-ticker";
-import { HOME_HEADER_ANNOUNCEMENT } from "./components/announcement-ticker/announcement-ticker.constants";
+import { PromoBanner } from "./components/promo-banner/promo-banner";
+import {
+  ADVISOR_PROMO_BANNER,
+  SITE_PROMO_BANNER,
+  type PromoBannerMessage,
+} from "./components/promo-banner/promo-banner.constants";
 import { AnalyticsService } from "./services/analytics.service";
 import { Subscription } from "rxjs";
 import { NeetoCalService } from "./services/neeto-cal.service";
 
 @Component({
   selector: "app-root",
-  imports: [AnnouncementTicker, HeaderComponent, FooterComponent, RouterModule],
+  imports: [PromoBanner, HeaderComponent, FooterComponent, RouterModule],
   templateUrl: "./app.component.html",
   styleUrl: "./app.component.scss",
 })
@@ -40,12 +44,11 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   private neetoCalService = inject(NeetoCalService);
 
   title = "sc-www";
-  readonly homeAnnouncement = HOME_HEADER_ANNOUNCEMENT;
 
   showHeader = true;
   showFooter = true;
-  showHomeAnnouncement = false;
-  private isHomeAnnouncementDismissed = false;
+  promoBannerMessage: PromoBannerMessage | null = null;
+  private isPromoBannerDismissed = false;
   private subscription = new Subscription();
 
   constructor() {
@@ -108,9 +111,9 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
-  dismissHomeAnnouncement(): void {
-    this.isHomeAnnouncementDismissed = true;
-    this.showHomeAnnouncement = false;
+  dismissPromoBanner(): void {
+    this.isPromoBannerDismissed = true;
+    this.promoBannerMessage = null;
   }
 
   private updateShellChrome(url: string | undefined): void {
@@ -119,10 +122,12 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.showHeader = !shouldHideChrome;
     this.showFooter = !shouldHideChrome;
-    this.showHomeAnnouncement =
-      !shouldHideChrome &&
-      this.isHomeRoute(path) &&
-      !this.isHomeAnnouncementDismissed;
+    this.promoBannerMessage =
+      !shouldHideChrome && !this.isPromoBannerDismissed
+        ? this.isAdvisorRoute(path)
+          ? ADVISOR_PROMO_BANNER
+          : SITE_PROMO_BANNER
+        : null;
   }
 
   private normalizePath(url: string | undefined): string {
@@ -138,7 +143,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
-  private isHomeRoute(path: string): boolean {
-    return path === "/";
+  private isAdvisorRoute(path: string): boolean {
+    return path === "/advisor" || path.startsWith("/advisor/");
   }
 }

@@ -3,7 +3,10 @@ import { TestBed } from "@angular/core/testing";
 import { provideRouter, Router } from "@angular/router";
 import { AppComponent } from "./app.component";
 import { sharedTestingProviders } from "../testing/testbed.providers";
-import { HOME_HEADER_ANNOUNCEMENT } from "./components/announcement-ticker/announcement-ticker.constants";
+import {
+  ADVISOR_PROMO_BANNER,
+  SITE_PROMO_BANNER,
+} from "./components/promo-banner/promo-banner.constants";
 
 @Component({
   template: "",
@@ -20,6 +23,7 @@ describe("AppComponent", () => {
         ...nonRouterTestingProviders,
         provideRouter([
           { path: "", component: TestRouteComponent },
+          { path: "advisor", component: TestRouteComponent },
           { path: "other", component: TestRouteComponent },
         ]),
       ],
@@ -45,34 +49,43 @@ describe("AppComponent", () => {
     expect(compiled.querySelector(".app-shell")).not.toBeNull();
   });
 
-  it("should render the home announcement ticker before the header", () => {
+  it("should render the site promo banner below the header", () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    const shell = compiled.querySelector(".app-shell");
     const chrome = compiled.querySelector(".app-shell-chrome");
-    const tickerHost = compiled.querySelector("app-announcement-ticker");
-    const highlightedSegment = HOME_HEADER_ANNOUNCEMENT.bodySegments[1];
+    const bannerHost = compiled.querySelector("app-promo-banner");
+    const anchor = bannerHost?.querySelector("a") as HTMLAnchorElement | null;
 
-    if (!highlightedSegment) {
-      fail(
-        "Expected the home header announcement to include a highlighted body segment.",
-      );
-      return;
-    }
-
-    expect(tickerHost?.textContent).toContain(
-      HOME_HEADER_ANNOUNCEMENT.question,
-    );
-    expect(tickerHost?.textContent).toContain(highlightedSegment.text);
-    expect(tickerHost?.textContent).toContain(
-      HOME_HEADER_ANNOUNCEMENT.ctaLabel,
-    );
-    expect(shell?.firstElementChild).toBe(chrome);
-    expect(chrome?.firstElementChild?.tagName).toBe("APP-ANNOUNCEMENT-TICKER");
+    expect(bannerHost?.textContent).toContain(SITE_PROMO_BANNER.lead);
+    expect(bannerHost?.textContent).toContain(SITE_PROMO_BANNER.body);
+    expect(anchor?.getAttribute("href")).toContain("/advisor");
+    expect(chrome?.firstElementChild?.tagName).toBe("HEADER");
+    expect(
+      chrome?.querySelector("header + .app-shell-banner app-promo-banner"),
+    ).toBe(bannerHost);
   });
 
-  it("should hide the home announcement after dismissal until refresh", async () => {
+  it("should render the advisor promo banner with the scheduler CTA", async () => {
+    const router = TestBed.inject(Router);
+    const fixture = TestBed.createComponent(AppComponent);
+
+    await router.navigateByUrl("/advisor");
+    fixture.detectChanges();
+
+    const bannerHost = fixture.nativeElement.querySelector(
+      "app-promo-banner",
+    ) as HTMLElement | null;
+
+    expect(bannerHost?.textContent).toContain(ADVISOR_PROMO_BANNER.lead);
+    expect(bannerHost?.textContent).toContain(ADVISOR_PROMO_BANNER.body);
+    expect(
+      bannerHost?.querySelector("#meeting-advisor-promo-banner")?.textContent,
+    ).toContain(ADVISOR_PROMO_BANNER.ctaLabel!);
+    expect(bannerHost?.querySelector("a")).toBeNull();
+  });
+
+  it("should hide the promo banner after dismissal until refresh", async () => {
     const router = TestBed.inject(Router);
     const fixture = TestBed.createComponent(AppComponent);
 
@@ -80,7 +93,7 @@ describe("AppComponent", () => {
     fixture.detectChanges();
 
     const closeButton = fixture.nativeElement.querySelector(
-      ".announcement-ticker__close",
+      ".promo-banner__close",
     ) as HTMLButtonElement;
 
     expect(closeButton).not.toBeNull();
@@ -88,18 +101,17 @@ describe("AppComponent", () => {
     closeButton.click();
     fixture.detectChanges();
 
-    expect(
-      fixture.nativeElement.querySelector("app-announcement-ticker"),
-    ).toBeNull();
+    expect(fixture.nativeElement.querySelector("app-promo-banner")).toBeNull();
 
     await router.navigateByUrl("/other");
+    fixture.detectChanges();
+
+    await router.navigateByUrl("/advisor");
     fixture.detectChanges();
 
     await router.navigateByUrl("/");
     fixture.detectChanges();
 
-    expect(
-      fixture.nativeElement.querySelector("app-announcement-ticker"),
-    ).toBeNull();
+    expect(fixture.nativeElement.querySelector("app-promo-banner")).toBeNull();
   });
 });
