@@ -142,11 +142,11 @@ export const ADVISOR_SEO: AdvisorSeoMetadata = {
 export const ADVISOR_DEFAULT_EMPTY_RESULTS_MESSAGE =
   "No recommended servers available.";
 
-export const ADVISOR_EMPTY_BASELINE_WORKLOAD_TOAST_ID =
-  "advisor-empty-baseline-workloads";
-
 export const ADVISOR_EMPTY_BASELINE_WORKLOAD_MESSAGE =
   "The selected baseline server has no benchmark workloads available.";
+
+export const ADVISOR_EMPTY_BASELINE_WORKLOAD_RESULTS_MESSAGE =
+  "The selected baseline server has no benchmark workloads available. Choose another baseline server to get started.";
 
 export const ADVISOR_DISABLED_BASELINE_WORKLOAD_MESSAGE =
   "Choose a baseline server first to load its available workloads.";

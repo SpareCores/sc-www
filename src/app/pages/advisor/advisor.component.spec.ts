@@ -27,7 +27,7 @@ import {
   ADVISOR_REQUIRED_MEMORY_TITLE,
   ADVISOR_DEFAULT_SERVER_COLUMNS,
   ADVISOR_EMPTY_BASELINE_WORKLOAD_MESSAGE,
-  ADVISOR_EMPTY_BASELINE_WORKLOAD_TOAST_ID,
+  ADVISOR_EMPTY_BASELINE_WORKLOAD_RESULTS_MESSAGE,
   ADVISOR_LOADING_BASELINE_WORKLOAD_MESSAGE,
   ADVISOR_PAGE_LIMITS,
   ADVISOR_TABLE_COLUMNS,
@@ -894,7 +894,7 @@ describe("AdvisorComponent", () => {
     );
   }));
 
-  it("shows a warning toast when a baseline has no benchmark workloads", fakeAsync(() => {
+  it("shows a warning empty state when a baseline has no benchmark workloads", fakeAsync(() => {
     getServerBenchmark.and.resolveTo({ body: [] });
 
     selectBaselineServer();
@@ -902,19 +902,23 @@ describe("AdvisorComponent", () => {
     const workloadControl = component
       .customControls()
       .find((control) => control.name === "server_workload");
+    const emptyStateCell = fixture.nativeElement.querySelector(
+      "#advisor_results_table tbody td",
+    ) as HTMLTableCellElement | null;
 
     expect(component.baselineBenchmarkConfigOptions()).toEqual([]);
     expect(workloadControl?.disabled).toBeTrue();
     expect(workloadControl?.emptyMessage).toBe(
       ADVISOR_EMPTY_BASELINE_WORKLOAD_MESSAGE,
     );
-    expect(showToast).toHaveBeenCalledWith(
-      jasmine.objectContaining({
-        id: ADVISOR_EMPTY_BASELINE_WORKLOAD_TOAST_ID,
-        title: "No baseline workloads found",
-        type: "warning",
-      }),
+    expect(component.recommendationEmptyStateMessage()).toBe(
+      ADVISOR_EMPTY_BASELINE_WORKLOAD_RESULTS_MESSAGE,
     );
+    expect(emptyStateCell?.textContent).toContain(
+      ADVISOR_EMPTY_BASELINE_WORKLOAD_RESULTS_MESSAGE,
+    );
+    expect(emptyStateCell?.classList).toContain("advisor-empty-state-cell");
+    expect(showToast).not.toHaveBeenCalled();
   }));
 
   it("restores advisor state from the route query params", async () => {

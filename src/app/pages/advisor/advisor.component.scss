@@ -161,6 +161,10 @@
   @apply hidden;
 }
 
+.advisor-empty-state-cell {
+  @apply text-gray-400;
+}
+
 .advisor-results {
   flex: 1 1 0%;
   min-width: 0;

@@ -188,12 +188,12 @@ export class AdvisorUiService {
     }
 
     if (missingInputs.length === 1) {
-      return `Please choose ${missingInputs[0]} as it is required for your advice.`;
+      return `Please select ${missingInputs[0]} to get started.`;
     }
 
     const leading = missingInputs.slice(0, -1).join(", ");
     const trailing = missingInputs[missingInputs.length - 1];
-    return `Please choose ${leading} and ${trailing} as they are required for your advice.`;
+    return `Please select ${leading} and ${trailing} to get started.`;
   }
 
   buildRecommendationSummary(totalResults: number): AdvisorSummaryAlert {

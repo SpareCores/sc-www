@@ -74,7 +74,7 @@ import {
   ADVISOR_DEFAULT_CURRENCY,
   ADVISOR_DEFAULT_WORKLOAD_CONFIG,
   ADVISOR_EMPTY_BASELINE_WORKLOAD_MESSAGE,
-  ADVISOR_EMPTY_BASELINE_WORKLOAD_TOAST_ID,
+  ADVISOR_EMPTY_BASELINE_WORKLOAD_RESULTS_MESSAGE,
   ADVISOR_DEFAULT_MINIMUM_MEMORY_GIB,
   ADVISOR_DEFAULT_OPTIMIZATION_GOAL,
   ADVISOR_DEFAULT_PAGE_LIMIT,
@@ -372,7 +372,6 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
   private baselineBenchmarkRequestVersion = 0;
   private baselineRegionRequestVersion = 0;
   private baselinePriceComparisonRequestVersion = 0;
-  private emptyBaselineWorkloadToastKey: string | null = null;
   private introductionModal: Modal | null = null;
   private hasViewInitialized = signal(false);
   private pendingCustomControlFocus = signal<string | null>(null);
@@ -517,6 +516,14 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     return "No matching workloads found.";
+  });
+
+  readonly hasEmptyBaselineWorkloadWarning = computed(() => {
+    return (
+      !!this.selectedBaselineServer() &&
+      !this.isLoadingBaselineBenchmarkScores() &&
+      this.baselineBenchmarkConfigOptions().length === 0
+    );
   });
 
   readonly visibleBenchmarkConfigOptions = computed(() => {
@@ -709,9 +716,15 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly recommendationSummary = computed(() =>
     this.advisorUi.buildRecommendationSummary(this.totalRecommendationCount()),
   );
-  readonly recommendationEmptyStateMessage = computed(() =>
-    this.advisorUi.buildMissingInputsMessage(this.missingRequiredInputs()),
-  );
+  readonly recommendationEmptyStateMessage = computed(() => {
+    if (this.hasEmptyBaselineWorkloadWarning()) {
+      return ADVISOR_EMPTY_BASELINE_WORKLOAD_RESULTS_MESSAGE;
+    }
+
+    return this.advisorUi.buildMissingInputsMessage(
+      this.missingRequiredInputs(),
+    );
+  });
   readonly compareCount = computed(() => this.compareSelectionKeys().length);
   readonly isBaselineSelectedForCompare = computed(() => {
     const selectedBaselineServer = this.selectedBaselineServer();
@@ -1109,8 +1122,6 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
       const selectedBenchmarkConfig = this.selectedBenchmarkConfig();
 
       if (!selectedBaselineServer) {
-        this.emptyBaselineWorkloadToastKey = null;
-
         if (selectedBenchmarkConfig) {
           this.selectedBenchmarkConfig.set(null);
           this.benchmarkConfigInput.set("");
@@ -1127,8 +1138,6 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
         this.baselineBenchmarkConfigOptions();
 
       if (baselineBenchmarkConfigOptions.length === 0) {
-        this.showEmptyBaselineWorkloadToast(selectedBaselineServer);
-
         if (selectedBenchmarkConfig) {
           this.selectedBenchmarkConfig.set(null);
           this.benchmarkConfigInput.set("");
@@ -1136,8 +1145,6 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
 
         return;
       }
-
-      this.emptyBaselineWorkloadToastKey = null;
 
       if (
         selectedBenchmarkConfig &&
@@ -2344,23 +2351,6 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
     this.totalRecommendationCount.set(0);
     this.totalPages.set(0);
     this.isLoadingRecommendations.set(false);
-  }
-
-  private showEmptyBaselineWorkloadToast(server: AdvisorBaselineServer): void {
-    const baselineKey = getAdvisorCompareKey(server);
-
-    if (this.emptyBaselineWorkloadToastKey === baselineKey) {
-      return;
-    }
-
-    this.emptyBaselineWorkloadToastKey = baselineKey;
-    this.toastService.show({
-      id: ADVISOR_EMPTY_BASELINE_WORKLOAD_TOAST_ID,
-      title: "No baseline workloads found",
-      body: `${ADVISOR_EMPTY_BASELINE_WORKLOAD_MESSAGE} Choose another baseline server.`,
-      type: "warning",
-      duration: 5000,
-    });
   }
 
   private toggleCompare(server: {
