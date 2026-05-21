@@ -63,7 +63,6 @@ import { GpuCountPipe } from "../../pipes/gpu-count.pipe";
 import {
   ADVISOR_AVERAGE_UTILIZATION_TITLE,
   ADVISOR_AVERAGE_UTILIZATION_TOOLTIP,
-  ADVISOR_ADVANCED_CTA_LABEL,
   ADVISOR_BASELINE_SERVER_TITLE,
   ADVISOR_BASELINE_SERVER_TOOLTIP,
   ADVISOR_BREADCRUMBS,
@@ -383,7 +382,6 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
 
   readonly title = ADVISOR_PAGE_TITLE;
   readonly description = ADVISOR_PAGE_DESCRIPTION;
-  readonly advancedCtaLabel = ADVISOR_ADVANCED_CTA_LABEL;
   readonly advisorExampleQueryParams = ADVISOR_EXAMPLE_QUERY_PARAMS;
 
   readonly breadcrumbs = signal<BreadcrumbSegment[]>(ADVISOR_BREADCRUMBS);

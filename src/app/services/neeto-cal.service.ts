@@ -47,7 +47,6 @@ export class NeetoCalService {
     const buttonContextMap = {
       "#meeting-header-demo": "",
       "#meeting-general-demo": "",
-      "#meeting-advisor-advanced": advisorMeetingContext,
       "#meeting-advisor-promo-banner": advisorMeetingContext,
       "#meeting-navigator-caas":
         "I am interested in the managed Container-as-a-Service platform.",

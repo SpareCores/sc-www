@@ -121,9 +121,6 @@ export const ADVISOR_PAGE_TITLE = "Cloud Server Advisor";
 export const ADVISOR_PAGE_DESCRIPTION =
   "Transform your high-level server utilization telemetry data into ranked, explainable cloud resource allocation recommendations. Compare your baseline choice against workload-aware alternatives to reduce costs and improve performance or cost efficiency of your workloads.";
 
-export const ADVISOR_ADVANCED_CTA_LABEL =
-  "Ready to scale? Unlock multi-server optimization, programmatic API access, and workflow automations for advanced cloud management.";
-
 export const ADVISOR_EXAMPLE_QUERY_PARAMS = {
   baseline_vendor: "aws",
   baseline_server: "m5ad.large",

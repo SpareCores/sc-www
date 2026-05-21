@@ -384,7 +384,6 @@ describe("AdvisorComponent", () => {
       "#advisor_introduction_button",
     );
     const shareButton = host.querySelector("#advisor_share_button");
-    const schedulerCta = host.querySelector("#meeting-advisor-advanced");
     const introductionFrame = host.querySelector(
       "#advisor-introduction-modal iframe",
     ) as HTMLIFrameElement | null;
@@ -392,9 +391,6 @@ describe("AdvisorComponent", () => {
     expect(exampleButton?.textContent).toContain("Example");
     expect(introductionButton?.textContent).toContain("Introduction");
     expect(shareButton?.textContent).toContain("Share");
-    expect(schedulerCta?.textContent).toContain(
-      "Ready to scale? Unlock multi-server optimization, programmatic API access, and workflow automations for advanced cloud management.",
-    );
     expect(component.advisorExampleQueryParams).toEqual({
       baseline_vendor: "aws",
       baseline_server: "m5ad.large",
@@ -406,6 +402,7 @@ describe("AdvisorComponent", () => {
     });
     expect(introductionFrame?.src).toContain("obkavneTmwU");
     expect(introductionFrame?.title).toBe("Spare Cores advisor introduction");
+    expect(host.querySelector("#meeting-advisor-advanced")).toBeNull();
   });
 
   it("focuses the baseline server input when route state has no baseline", fakeAsync(() => {
