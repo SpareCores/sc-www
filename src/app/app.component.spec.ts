@@ -49,7 +49,7 @@ describe("AppComponent", () => {
     expect(compiled.querySelector(".app-shell")).not.toBeNull();
   });
 
-  it("should render the site promo banner below the header", () => {
+  it("should render the site promo banner below the navbar", () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
@@ -62,7 +62,9 @@ describe("AppComponent", () => {
     expect(anchor?.getAttribute("href")).toContain("/advisor");
     expect(chrome?.firstElementChild?.tagName).toBe("HEADER");
     expect(
-      chrome?.querySelector("header + .app-shell-banner app-promo-banner"),
+      compiled.querySelector(
+        ".app-shell-chrome + .app-shell-banner app-promo-banner",
+      ),
     ).toBe(bannerHost);
   });
 

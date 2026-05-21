@@ -1,22 +1,20 @@
 <div class="app-shell">
-  @if (showHeader || promoBannerMessage) {
+  @if (showHeader) {
     <div class="app-shell-chrome">
-      @if (showHeader) {
-        <header>
-          <app-header></app-header>
-        </header>
-      }
-      @if (promoBannerMessage; as bannerMessage) {
-        <div class="app-shell-banner">
-          <div class="content">
-            <app-promo-banner
-              [message]="bannerMessage"
-              [dismissible]="true"
-              (dismissed)="dismissPromoBanner()"
-            ></app-promo-banner>
-          </div>
-        </div>
-      }
+      <header>
+        <app-header></app-header>
+      </header>
+    </div>
+  }
+  @if (promoBannerMessage; as bannerMessage) {
+    <div class="app-shell-banner">
+      <div class="content">
+        <app-promo-banner
+          [message]="bannerMessage"
+          [dismissible]="true"
+          (dismissed)="dismissPromoBanner()"
+        ></app-promo-banner>
+      </div>
     </div>
   }
   <main class="app-main">
