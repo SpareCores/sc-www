@@ -19,7 +19,7 @@ import {
   provideHttpClient,
   withFetch,
 } from "@angular/common/http";
-import { LucideAngularModule } from "lucide-angular";
+import { provideLucideIcons } from "@lucide/angular";
 import { lucideIcons } from "./lucide-icons";
 import { MarkdownModule } from "ngx-markdown";
 import { provideCharts, withDefaultRegisterables } from "ng2-charts";
@@ -68,7 +68,7 @@ export const appConfig: ApplicationConfig = {
     ),
     provideHttpClient(withFetch()),
     provideCharts(withDefaultRegisterables()),
-    importProvidersFrom(LucideAngularModule.pick(lucideIcons)),
+    provideLucideIcons(...lucideIcons),
     importProvidersFrom(MarkdownModule.forRoot()),
     {
       provide: Sentry.TraceService,
