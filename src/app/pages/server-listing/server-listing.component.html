@@ -5,7 +5,7 @@
     <div class="flex flex-col gap-4 my-8 mx-2 xl:mx-0">
       <div class="flex gap-4 items-center w-full justify-between">
         <h1 class="text-white font-bold text-3xl flex items-center">
-          <lucide-icon class="h-8 w-8 mr-2" name="ship-wheel"></lucide-icon>
+          <svg lucideShipWheel class="h-8 w-8 mr-2"></svg>
           {{ title }}
         </h1>
         <button
@@ -13,11 +13,7 @@
           (click)="clipboardURL()"
         >
           Share
-          <lucide-icon
-            name="{{ clipboardIcon }}"
-            size="16"
-            class="ml-2"
-          ></lucide-icon>
+          <svg [lucideIcon]="clipboardIcon" size="16" class="ml-2"></svg>
         </button>
       </div>
       <div class="text-white text-xl pr-16">
@@ -38,10 +34,7 @@
           tabindex="0"
           data-ph-capture-attribute-sc-event="server listing toggle sidebar"
         >
-          <lucide-icon
-            name="chevron-left"
-            class="h-6 w-6 text-emerald-400"
-          ></lucide-icon>
+          <svg lucideChevronLeft class="h-6 w-6 text-emerald-400"></svg>
         </div>
 
         <!--
@@ -98,10 +91,7 @@
               <div
                 class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
               >
-                <lucide-icon
-                  name="gauge"
-                  class="h-6 w-6 text-emerald-400"
-                ></lucide-icon>
+                <svg lucideGauge class="h-6 w-6 text-emerald-400"></svg>
               </div>
             </button>
           </div>
@@ -120,10 +110,10 @@
               <div
                 class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
               >
-                <lucide-icon
-                  name="calendar-search"
+                <svg
+                  lucideCalendarSearch
                   class="h-6 w-6 text-emerald-400"
-                ></lucide-icon>
+                ></svg>
               </div>
             </button>
           </div>
@@ -142,10 +132,7 @@
               <div
                 class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
               >
-                <lucide-icon
-                  name="credit-card"
-                  class="h-6 w-6 text-emerald-400"
-                ></lucide-icon>
+                <svg lucideCreditCard class="h-6 w-6 text-emerald-400"></svg>
               </div>
             </button>
           </div>
@@ -161,10 +148,7 @@
               <div
                 class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
               >
-                <lucide-icon
-                  name="columns-3-cog"
-                  class="h-6 w-6 text-emerald-400"
-                ></lucide-icon>
+                <svg lucideColumns3Cog class="h-6 w-6 text-emerald-400"></svg>
               </div>
             </button>
           </div>
@@ -190,7 +174,7 @@
                 <tr>
                   <th class="checkbox_column">
                     <div class="text-white">
-                      <lucide-icon class="h-4 w-4" name="scale"></lucide-icon>
+                      <svg lucideScale class="h-4 w-4"></svg>
                     </div>
                   </th>
                   @for (column of tableColumns; track column.name) {
@@ -203,19 +187,18 @@
                       <div class="flex gap-1 whitespace-nowrap">
                         {{ column.name }}
                         @if (column.info) {
-                          <lucide-icon
-                            name="info"
+                          <svg
+                            lucideInfo
                             (mouseenter)="showTooltip($event, column.info)"
                             (mouseleave)="hideTooltip()"
                             class="h-4 w-4 text-gray-200"
-                          >
-                          </lucide-icon>
+                          ></svg>
                         }
                         @if (getOrderingIcon(column)) {
-                          <lucide-icon
-                            name="{{ getOrderingIcon(column) }}"
+                          <svg
+                            [lucideIcon]="getOrderingIcon(column)"
                             class="h-4 w-4 text-white"
-                          ></lucide-icon>
+                          ></svg>
                         }
                       </div>
                     </th>
@@ -590,10 +573,10 @@
                             limit
                           "
                         >
-                          <lucide-icon
-                            name="chevron-right"
+                          <svg
+                            lucideChevronRight
                             class="h-6 w-6 text-emerald-400"
-                          ></lucide-icon>
+                          ></svg>
                         </a>
                       </div>
                     </td>
@@ -631,10 +614,10 @@
                   <div
                     class="px-2 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
                   >
-                    <lucide-icon
-                      name="chevron-down"
+                    <svg
+                      lucideChevronDown
                       class="h-6 w-6 text-emerald-400"
-                    ></lucide-icon>
+                    ></svg>
                   </div>
                 </button>
                 <span class="text-white"> items per page</span>
@@ -854,10 +837,7 @@
               <div
                 class="border border-emerald-400 absolute inset-x-0 start-0 flex items-center pointer-events-none z-20 px-3 bg-secondary rounded-l-lg w-12 h-full"
               >
-                <lucide-icon
-                  class="text-emerald-400 w-5 h-5"
-                  name="search"
-                ></lucide-icon>
+                <svg lucideSearch class="text-emerald-400 w-5 h-5"></svg>
               </div>
               <input
                 placeholder="Filter"
@@ -902,7 +882,7 @@
             class="flex justify-center border border-emerald-400 text-emerald-400 py-2 px-4 rounded-lg hover:bg-emerald-400 hover:text-white items-center"
             (click)="selectBenchmarkCategory(null)"
           >
-            <lucide-icon name="chevron-left" class="h-5 w-5"></lucide-icon>
+            <svg lucideChevronLeft class="h-5 w-5"></svg>
             Back to benchmark categories
           </button>
         </div>

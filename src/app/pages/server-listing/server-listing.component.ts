@@ -27,7 +27,20 @@ import { ActivatedRoute, Params, Router, RouterModule } from "@angular/router";
 import { CommonModule, isPlatformBrowser } from "@angular/common";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { FormsModule } from "@angular/forms";
-import { LucideAngularModule } from "lucide-angular";
+import {
+  LucideDynamicIcon,
+  LucideCalendarSearch,
+  LucideChevronDown,
+  LucideChevronLeft,
+  LucideChevronRight,
+  LucideColumns3Cog,
+  LucideCreditCard,
+  LucideGauge,
+  LucideInfo,
+  LucideScale,
+  LucideSearch,
+  LucideShipWheel,
+} from "@lucide/angular";
 import {
   SearchBarComponent,
   SearchBarParameter,
@@ -108,7 +121,18 @@ const INVALID_BENCHMARK_URL_TOAST_BODY =
     CommonModule,
     FormsModule,
     BreadcrumbsComponent,
-    LucideAngularModule,
+    LucideDynamicIcon,
+    LucideCalendarSearch,
+    LucideChevronDown,
+    LucideChevronLeft,
+    LucideChevronRight,
+    LucideColumns3Cog,
+    LucideCreditCard,
+    LucideGauge,
+    LucideInfo,
+    LucideScale,
+    LucideSearch,
+    LucideShipWheel,
     RouterModule,
     SearchBarComponent,
     PaginationComponent,

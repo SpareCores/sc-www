@@ -23,7 +23,12 @@ import {
   BreadcrumbSegment,
   BreadcrumbsComponent,
 } from "../../components/breadcrumbs/breadcrumbs.component";
-import { LucideAngularModule } from "lucide-angular";
+import {
+  LucideDynamicIcon,
+  LucideChevronDown,
+  LucideCopy,
+  LucideScale,
+} from "@lucide/angular";
 import { CommonModule, isPlatformBrowser } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { SeoHandlerService } from "../../services/seo-handler.service";
@@ -88,7 +93,10 @@ type CompareTableBenchmarkMeta = Omit<
   selector: "app-server-compare",
   imports: [
     BreadcrumbsComponent,
-    LucideAngularModule,
+    LucideDynamicIcon,
+    LucideChevronDown,
+    LucideCopy,
+    LucideScale,
     CommonModule,
     FormsModule,
     RouterModule,

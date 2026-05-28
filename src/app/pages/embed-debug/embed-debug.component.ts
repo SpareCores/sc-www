@@ -15,11 +15,10 @@ import { FormsModule } from "@angular/forms";
 import { DomSanitizer } from "@angular/platform-browser";
 import { ActivatedRoute } from "@angular/router";
 import { SeoHandlerService } from "../../services/seo-handler.service";
-import { LucideAngularModule } from "lucide-angular";
 import { PrismService } from "../../services/prism.service";
 @Component({
   selector: "app-embed-debug",
-  imports: [FormsModule, LucideAngularModule],
+  imports: [FormsModule],
   templateUrl: "./embed-debug.component.html",
   styleUrl: "./embed-debug.component.scss",
 })

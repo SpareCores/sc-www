@@ -9,7 +9,7 @@ import {
   OrderDir,
   TableRegionTableRegionGetData,
 } from "../../../../sdk/data-contracts";
-import { LucideAngularModule } from "lucide-angular";
+import { LucideChevronRight } from "@lucide/angular";
 import { CountryIdtoNamePipe } from "../../pipes/country-idto-name.pipe";
 import { Router, RouterModule } from "@angular/router";
 
@@ -17,7 +17,7 @@ import { Router, RouterModule } from "@angular/router";
   selector: "app-vendors",
   imports: [
     BreadcrumbsComponent,
-    LucideAngularModule,
+    LucideChevronRight,
     CountryIdtoNamePipe,
     RouterModule,
   ],

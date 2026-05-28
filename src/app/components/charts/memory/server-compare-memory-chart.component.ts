@@ -10,7 +10,7 @@ import {
   signal,
   viewChild,
 } from "@angular/core";
-import { LucideAngularModule } from "lucide-angular";
+import { LucideChevronDown } from "@lucide/angular";
 import { BaseChartDirective } from "ng2-charts";
 import { CompareMemoryChartOption } from "../shared/memory-chart.types";
 import { MemoryChartBuilderService } from "./memory-chart-builder.service";
@@ -22,7 +22,7 @@ import { MemoryBenchmarkMeta, MemoryChartServer } from "./memory-chart.types";
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    LucideAngularModule,
+    LucideChevronDown,
     BaseChartDirective,
     FlowbiteDropdownDirective,
   ],

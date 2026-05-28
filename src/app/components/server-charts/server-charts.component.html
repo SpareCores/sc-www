@@ -52,10 +52,7 @@
   <div class="block_half" id="passmark_cpu">
     <div class="flex items-center" style="min-height: 42px">
       <h3 class="text-2xl flex items-center gap-2">
-        <lucide-icon
-          [name]="'passmark' | benchmarkIcon"
-          class="h-6 w-6"
-        ></lucide-icon>
+        <svg [lucideIcon]="'passmark' | benchmarkIcon" class="h-6 w-6"></svg>
         Passmark CPU Scores
       </h3>
     </div>
@@ -75,15 +72,14 @@
             <td>
               <div class="flex gap-1 items-center">
                 {{ cpuBenchmark.name }}
-                <lucide-icon
-                  name="info"
+                <svg
+                  lucideInfo
                   class="h-4 w-4 text-gray-200"
                   (mouseenter)="
                     showTooltipChart($event, cpuBenchmark.benchmark_id)
                   "
                   (mouseleave)="hideTooltip()"
-                >
-                </lucide-icon>
+                ></svg>
               </div>
             </td>
             <td>
@@ -131,10 +127,7 @@
   <div class="block_half" id="passmark_other">
     <div class="flex items-center" style="min-height: 42px">
       <h3 class="text-2xl flex items-center gap-2">
-        <lucide-icon
-          [name]="'passmark' | benchmarkIcon"
-          class="h-6 w-6"
-        ></lucide-icon>
+        <svg [lucideIcon]="'passmark' | benchmarkIcon" class="h-6 w-6"></svg>
         Passmark Memory Scores
       </h3>
     </div>
@@ -154,15 +147,14 @@
             <td>
               <div class="flex gap-1 items-center">
                 {{ otherBenchmark.name }}
-                <lucide-icon
-                  name="info"
+                <svg
+                  lucideInfo
                   class="h-4 w-4 text-gray-200"
                   (mouseenter)="
                     showTooltipChart($event, otherBenchmark.benchmark_id)
                   "
                   (mouseleave)="hideTooltip()"
-                >
-                </lucide-icon>
+                ></svg>
               </div>
             </td>
             <td>

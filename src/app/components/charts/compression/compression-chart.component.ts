@@ -11,7 +11,11 @@ import {
   signal,
   viewChild,
 } from "@angular/core";
-import { LucideAngularModule } from "lucide-angular";
+import {
+  LucideDynamicIcon,
+  LucideChevronDown,
+  LucideInfo,
+} from "@lucide/angular";
 import { BaseChartDirective } from "ng2-charts";
 import { ChartData, ChartOptions } from "chart.js";
 import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon.pipe";
@@ -38,7 +42,9 @@ import { FlowbiteDropdownDirective } from "../../../directives/flowbite-dropdown
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    LucideAngularModule,
+    LucideDynamicIcon,
+    LucideChevronDown,
+    LucideInfo,
     BaseChartDirective,
     FlowbiteDropdownDirective,
     BenchmarkIconPipe,

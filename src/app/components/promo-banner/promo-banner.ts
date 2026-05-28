@@ -6,13 +6,13 @@ import {
   output,
 } from "@angular/core";
 import { RouterLink } from "@angular/router";
-import { LucideAngularModule } from "lucide-angular";
+import { LucideChevronRight, LucideX } from "@lucide/angular";
 
 import type { PromoBannerMessage } from "./promo-banner.constants";
 
 @Component({
   selector: "app-promo-banner",
-  imports: [RouterLink, LucideAngularModule],
+  imports: [RouterLink, LucideChevronRight, LucideX],
   templateUrl: "./promo-banner.html",
   styleUrl: "./promo-banner.scss",
   changeDetection: ChangeDetectionStrategy.OnPush,

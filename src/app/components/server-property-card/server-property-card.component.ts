@@ -12,7 +12,7 @@ import {
   inject,
   DestroyRef,
 } from "@angular/core";
-import { LucideAngularModule } from "lucide-angular";
+import { LucideInfo } from "@lucide/angular";
 import { ChartTooltipService } from "../charts/shared/chart-tooltip.service";
 
 export interface ServerPropertyTooltip {
@@ -34,7 +34,7 @@ export interface ServerPropertySection {
 
 @Component({
   selector: "app-server-property-card",
-  imports: [LucideAngularModule],
+  imports: [LucideInfo],
   templateUrl: "./server-property-card.component.html",
   styleUrl: "./server-property-card.component.scss",
 })

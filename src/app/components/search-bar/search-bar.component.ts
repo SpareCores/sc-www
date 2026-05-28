@@ -17,7 +17,15 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Modal, ModalOptions } from "flowbite";
-import { LucideAngularModule } from "lucide-angular";
+import {
+  LucideDynamicIcon,
+  LucideChevronDown,
+  LucideInfo,
+  LucideLeaf,
+  LucideMinus,
+  LucidePlus,
+  LucideX,
+} from "@lucide/angular";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { ToastService } from "../../services/toast.service";
 import { UiTooltipService } from "../../services/ui-tooltip.service";
@@ -207,7 +215,13 @@ type CpuCacheRangeFocusLossSkip = {
   imports: [
     CommonModule,
     FormsModule,
-    LucideAngularModule,
+    LucideDynamicIcon,
+    LucideChevronDown,
+    LucideInfo,
+    LucideLeaf,
+    LucideMinus,
+    LucidePlus,
+    LucideX,
     CountryIdtoNamePipe,
     BenchmarkIconPipe,
   ],

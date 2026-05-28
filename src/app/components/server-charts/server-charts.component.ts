@@ -11,7 +11,7 @@ import {
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
-import { LucideAngularModule } from "lucide-angular";
+import { LucideDynamicIcon, LucideInfo } from "@lucide/angular";
 import { Benchmark } from "../../../../sdk/data-contracts";
 import {
   staticWebChartTemplate,
@@ -37,7 +37,8 @@ import { ChartTooltipService } from "../charts/shared/chart-tooltip.service";
 @Component({
   selector: "app-server-charts",
   imports: [
-    LucideAngularModule,
+    LucideDynamicIcon,
+    LucideInfo,
     FormsModule,
     RouterModule,
     BenchmarkIconPipe,

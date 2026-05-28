@@ -15,7 +15,7 @@ import {
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { isPlatformBrowser } from "@angular/common";
 import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
-import { LucideAngularModule } from "lucide-angular";
+import { LucideMaximize2 } from "@lucide/angular";
 import { Modal, ModalOptions } from "flowbite";
 import { Subscription } from "rxjs";
 import { DragToPanDirective } from "../../directives/drag-to-pan.directive";
@@ -33,7 +33,7 @@ const lstopoModalOptions: ModalOptions = {
 
 @Component({
   selector: "app-server-lstopo",
-  imports: [LucideAngularModule, DragToPanDirective],
+  imports: [LucideMaximize2, DragToPanDirective],
   templateUrl: "./server-lstopo.component.html",
   styleUrl: "./server-lstopo.component.scss",
   encapsulation: ViewEncapsulation.None,

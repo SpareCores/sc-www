@@ -15,7 +15,19 @@ import {
 } from "@angular/core";
 import { Modal, ModalOptions } from "flowbite";
 import { ActivatedRoute, Params, Router, RouterLink } from "@angular/router";
-import { LucideAngularModule } from "lucide-angular";
+import {
+  LucideDynamicIcon,
+  LucideBot,
+  LucideChevronDown,
+  LucideChevronRight,
+  LucideColumns3Cog,
+  LucideCreditCard,
+  LucideDices,
+  LucideFunnelX,
+  LucideInfo,
+  LucideScale,
+  LucideTvMinimalPlay,
+} from "@lucide/angular";
 import { Subject, Subscription, debounceTime } from "rxjs";
 import {
   BreadcrumbSegment,
@@ -348,7 +360,17 @@ type AdvisorComparableResourceKey =
     CommonModule,
     BreadcrumbsComponent,
     FlowbiteDropdownDirective,
-    LucideAngularModule,
+    LucideDynamicIcon,
+    LucideBot,
+    LucideChevronDown,
+    LucideChevronRight,
+    LucideColumns3Cog,
+    LucideCreditCard,
+    LucideDices,
+    LucideFunnelX,
+    LucideInfo,
+    LucideScale,
+    LucideTvMinimalPlay,
     LoadingSpinnerComponent,
     PaginationComponent,
     GpuCountPipe,

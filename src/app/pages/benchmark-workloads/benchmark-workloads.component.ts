@@ -14,7 +14,7 @@ import {
   BreadcrumbsComponent,
   BreadcrumbSegment,
 } from "../../components/breadcrumbs/breadcrumbs.component";
-import { LucideAngularModule } from "lucide-angular";
+import { LucideDynamicIcon, LucideNotebookText } from "@lucide/angular";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import {
@@ -43,7 +43,8 @@ type RawBenchmarkWorkloadConfig = {
   selector: "app-benchmark-workloads",
   imports: [
     BreadcrumbsComponent,
-    LucideAngularModule,
+    LucideDynamicIcon,
+    LucideNotebookText,
     BenchmarkWorkloadComponent,
     LoadingSpinnerComponent,
     ScrollSpyDirective,

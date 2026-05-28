@@ -43,10 +43,10 @@
             <div class="flex gap-1">
               REGION
               @if (getOrderingIcon("region")) {
-                <lucide-icon
-                  name="{{ getOrderingIcon('region') }}"
+                <svg
+                  [lucideIcon]="getOrderingIcon('region')"
                   class="h-4 w-4 text-white"
-                ></lucide-icon>
+                ></svg>
               }
             </div>
           </th>
@@ -54,10 +54,10 @@
             <div class="flex gap-1">
               VENDOR
               @if (getOrderingIcon("vendor")) {
-                <lucide-icon
-                  name="{{ getOrderingIcon('vendor') }}"
+                <svg
+                  [lucideIcon]="getOrderingIcon('vendor')"
                   class="h-4 w-4 text-white"
-                ></lucide-icon>
+                ></svg>
               }
             </div>
           </th>
@@ -65,10 +65,10 @@
             <div class="flex gap-1">
               COUNTRY
               @if (getOrderingIcon("country")) {
-                <lucide-icon
-                  name="{{ getOrderingIcon('country') }}"
+                <svg
+                  [lucideIcon]="getOrderingIcon('country')"
                   class="h-4 w-4 text-white"
-                ></lucide-icon>
+                ></svg>
               }
             </div>
           </th>
@@ -88,10 +88,7 @@
               <div class="flex gap-1">
                 {{ region.display_name }}
                 @if (region.green_energy) {
-                  <lucide-icon
-                    name="leaf"
-                    class="h-4 w-4 text-emerald-400"
-                  ></lucide-icon>
+                  <svg lucideLeaf class="h-4 w-4 text-emerald-400"></svg>
                 }
               </div>
             </td>
@@ -106,10 +103,10 @@
                     vendor_regions: getVendorRegionFilter(region),
                   }"
                 >
-                  <lucide-icon
-                    name="chevron-right"
+                  <svg
+                    lucideChevronRight
                     class="h-6 w-6 text-emerald-400"
-                  ></lucide-icon>
+                  ></svg>
                 </a>
               </div>
             </td>

@@ -16,10 +16,10 @@
             : 'Collapse benchmark sidebar'
         "
       >
-        <lucide-icon
-          [name]="isCollapsed() ? 'chevron-right' : 'chevron-left'"
+        <svg
+          [lucideIcon]="isCollapsed() ? 'chevron-right' : 'chevron-left'"
           class="h-5 w-5 text-emerald-400"
-        ></lucide-icon>
+        ></svg>
       </button>
     </div>
 
@@ -50,21 +50,23 @@
                 class="toc_family_info"
                 [class.toc_family_info_mini]="isCollapsed()"
               >
-                <lucide-icon
-                  [name]="family.framework | benchmarkIcon"
+                <svg
+                  [lucideIcon]="family.framework | benchmarkIcon"
                   class="h-4 w-4"
-                ></lucide-icon>
+                ></svg>
                 <span
                   class="toc_family_name"
                   [class.toc_family_name_hidden]="isCollapsed()"
                   >{{ family.framework }}</span
                 >
               </span>
-              <lucide-icon
-                [name]="family.isExpanded ? 'chevron-down' : 'chevron-right'"
+              <svg
+                [lucideIcon]="
+                  family.isExpanded ? 'chevron-down' : 'chevron-right'
+                "
                 class="toc_family_chevron h-4 w-4 shrink-0"
                 [class.toc_family_chevron_hidden]="isCollapsed()"
-              ></lucide-icon>
+              ></svg>
             </button>
 
             <!-- Family sub-items -->
