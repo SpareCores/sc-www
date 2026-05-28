@@ -626,9 +626,8 @@ describe("AdvisorComponent", () => {
     fixture.detectChanges();
 
     expect(
-      fixture.nativeElement.querySelectorAll(
-        '#advisor_results_table thead lucide-icon[name="info"]',
-      ).length,
+      fixture.nativeElement.querySelectorAll("#advisor_results_table thead svg")
+        .length,
     ).toBeGreaterThanOrEqual(4);
   });
 

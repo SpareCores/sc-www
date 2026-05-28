@@ -8,7 +8,7 @@ const COMPARE_36_VCPU_URL =
   "/compare?instances=W3sidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzVuLjl4bGFyZ2UifSx7InZlbmRvciI6ImF3cyIsInNlcnZlciI6ImQyLjh4bGFyZ2UifV0%3D";
 
 function showCompareTooltip() {
-  cy.get('#main-table tr.rows-to-hide-for-test lucide-icon[name="info"]')
+  cy.get("#main-table tr.rows-to-hide-for-test svg")
     .first()
     .then(($icon) => {
       cy.window().then((win) => {

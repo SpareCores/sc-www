@@ -1,7 +1,6 @@
-import { importProvidersFrom } from "@angular/core";
 import { TestBed } from "@angular/core/testing";
 import { provideRouter } from "@angular/router";
-import { LucideAngularModule } from "lucide-angular";
+import { provideLucideIcons } from "@lucide/angular";
 
 import {
   ADVISOR_PROMO_BANNER,
@@ -14,10 +13,7 @@ describe("PromoBanner", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [PromoBanner],
-      providers: [
-        provideRouter([]),
-        importProvidersFrom(LucideAngularModule.pick(lucideIcons)),
-      ],
+      providers: [provideRouter([]), provideLucideIcons(...lucideIcons)],
     }).compileComponents();
   });
 
@@ -40,7 +36,7 @@ describe("PromoBanner", () => {
     );
     expect(ctaLink?.textContent).toContain(SITE_PROMO_BANNER.ctaLabel!);
     expect(ctaLink?.getAttribute("href")).toContain(SITE_PROMO_BANNER.ctaHref!);
-    expect(ctaLink?.querySelector("lucide-icon")).not.toBeNull();
+    expect(ctaLink?.querySelector("svg")).not.toBeNull();
     expect(host.querySelector("#meeting-advisor-promo-banner")).toBeNull();
     expect(host.querySelector(".promo-banner__close")).not.toBeNull();
   });
@@ -58,6 +54,6 @@ describe("PromoBanner", () => {
 
     expect(host.querySelector("a")).toBeNull();
     expect(ctaButton?.textContent).toContain(ADVISOR_PROMO_BANNER.ctaLabel!);
-    expect(ctaButton?.querySelector("lucide-icon")).not.toBeNull();
+    expect(ctaButton?.querySelector("svg")).not.toBeNull();
   });
 });

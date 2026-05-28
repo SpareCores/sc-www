@@ -119,7 +119,7 @@ describe("ServerCompareChartsComponent", () => {
 
     expect(title).toBeTruthy();
     expect(titleText?.textContent).toContain("OpenSSL");
-    expect(titleIcons?.querySelectorAll("lucide-icon").length).toBe(2);
+    expect(titleIcons?.querySelectorAll("svg").length).toBe(2);
     expect(getComputedStyle(title as HTMLElement).whiteSpace).toBe("nowrap");
     expect(getComputedStyle(titleText as HTMLElement).whiteSpace).toBe(
       "nowrap",
@@ -447,7 +447,7 @@ describe("ServerCompareChartsComponent", () => {
     expect(cells?.[0].textContent).toContain("sc-membench: Latency");
     expect(cells?.[1].getAttribute("colspan")).toBe("2");
     expect(cells?.[2].getAttribute("colspan")).toBe("1");
-    expect(cells?.[2].querySelector("lucide-icon")).toBeTruthy();
+    expect(cells?.[2].querySelector("svg")).toBeTruthy();
   });
 
   it("renders Further Benchmarks labels in a standalone sticky label cell", () => {
@@ -503,7 +503,7 @@ describe("ServerCompareChartsComponent", () => {
     expect(cells?.[0].textContent).toContain("Workload profile: Web server");
     expect(cells?.[1].getAttribute("colspan")).toBe("2");
     expect(cells?.[2].getAttribute("colspan")).toBe("1");
-    expect(cells?.[2].querySelector("lucide-icon")).toBeTruthy();
+    expect(cells?.[2].querySelector("svg")).toBeTruthy();
   });
 
   it("keeps the narrow sticky label spacer to one server column for two compared servers", () => {
