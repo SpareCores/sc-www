@@ -190,10 +190,11 @@
           role="button"
           [attr.aria-expanded]="!isCollapsed"
         >
-          <svg
-            [lucideIcon]="isCollapsed ? 'chevron-right' : 'chevron-left'"
-            class="h-6 w-6 text-emerald-400"
-          ></svg>
+          @if (isCollapsed) {
+            <svg lucideChevronRight class="h-6 w-6 text-emerald-400"></svg>
+          } @else {
+            <svg lucideChevronLeft class="h-6 w-6 text-emerald-400"></svg>
+          }
         </div>
         <app-search-bar
           [query]="searchQuery"
@@ -382,22 +383,21 @@
                       <div [attr.title]="row.assessment.tooltip">
                         @if (row.assessment.kind === "fully_evaluated") {
                           <svg
-                            [lucideIcon]="row.assessment.icon"
+                            lucideCircleCheckBig
                             class="h-4 w-4 text-emerald-400"
                           ></svg>
-                        } @else if (
-                          row.assessment.kind === "in_progress" ||
-                          row.assessment.kind === "cannot_evaluate"
-                        ) {
+                        } @else if (row.assessment.kind === "cannot_evaluate") {
                           <svg
-                            [lucideIcon]="row.assessment.icon"
+                            lucideCircleAlert
+                            class="h-4 w-4 text-yellow-500"
+                          ></svg>
+                        } @else if (row.assessment.kind === "in_progress") {
+                          <svg
+                            lucideClock
                             class="h-4 w-4 text-yellow-500"
                           ></svg>
                         } @else {
-                          <svg
-                            [lucideIcon]="row.assessment.icon"
-                            class="h-4 w-4 text-red-500"
-                          ></svg>
+                          <svg lucideCircleX class="h-4 w-4 text-red-500"></svg>
                         }
                       </div>
                     </td>

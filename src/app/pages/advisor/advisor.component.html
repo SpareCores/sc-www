@@ -39,7 +39,11 @@
             (click)="clipboardURL()"
           >
             Share
-            <svg [lucideIcon]="clipboardIcon()" size="16" class="ml-2"></svg>
+            @if (clipboardIcon() === "check") {
+              <svg lucideCheck class="ml-2 h-4 w-4"></svg>
+            } @else {
+              <svg lucideClipboard class="ml-2 h-4 w-4"></svg>
+            }
           </button>
         </div>
       </div>
@@ -125,10 +129,17 @@
           (keydown.enter)="toggleCollapse()"
           (keydown.space)="toggleCollapse(); $event.preventDefault()"
         >
-          <svg
-            [lucideIcon]="isCollapsed() ? 'chevron-right' : 'chevron-left'"
-            class="advisor-filter-bar-collapser-icon h-6 w-6 text-emerald-400"
-          ></svg>
+          @if (isCollapsed()) {
+            <svg
+              lucideChevronRight
+              class="advisor-filter-bar-collapser-icon h-6 w-6 text-emerald-400"
+            ></svg>
+          } @else {
+            <svg
+              lucideChevronLeft
+              class="advisor-filter-bar-collapser-icon h-6 w-6 text-emerald-400"
+            ></svg>
+          }
         </div>
 
         <div class="advisor-filter-bar-filters overflow-hidden bg-secondary">
@@ -273,10 +284,17 @@
                           ></svg>
                         }
                         @if (getOrderingIcon(column); as orderingIcon) {
-                          <svg
-                            [lucideIcon]="orderingIcon"
-                            class="h-4 w-4 text-white"
-                          ></svg>
+                          @if (orderingIcon === "arrow-down-wide-narrow") {
+                            <svg
+                              lucideArrowDownWideNarrow
+                              class="h-4 w-4 text-white"
+                            ></svg>
+                          } @else {
+                            <svg
+                              lucideArrowDownNarrowWide
+                              class="h-4 w-4 text-white"
+                            ></svg>
+                          }
                         }
                       </div>
                     </th>

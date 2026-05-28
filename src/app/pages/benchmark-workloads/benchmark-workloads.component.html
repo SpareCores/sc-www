@@ -63,10 +63,68 @@
               class="flex items-center gap-3 mb-6 pb-3 border-b border-emerald-400/30"
               [id]="'family-' + family.framework"
             >
-              <svg
-                [lucideIcon]="family.framework | benchmarkIcon"
-                class="h-6 w-6 text-emerald-400 shrink-0"
-              ></svg>
+              @switch (family.framework | benchmarkIcon) {
+                @case ("refresh-ccw-dot") {
+                  <svg
+                    lucideRefreshCcwDot
+                    class="h-6 w-6 text-emerald-400 shrink-0"
+                  ></svg>
+                }
+                @case ("memory-stick") {
+                  <svg
+                    lucideMemoryStick
+                    class="h-6 w-6 text-emerald-400 shrink-0"
+                  ></svg>
+                }
+                @case ("package-open") {
+                  <svg
+                    lucidePackageOpen
+                    class="h-6 w-6 text-emerald-400 shrink-0"
+                  ></svg>
+                }
+                @case ("bot") {
+                  <svg
+                    lucideBot
+                    class="h-6 w-6 text-emerald-400 shrink-0"
+                  ></svg>
+                }
+                @case ("boxes") {
+                  <svg
+                    lucideBoxes
+                    class="h-6 w-6 text-emerald-400 shrink-0"
+                  ></svg>
+                }
+                @case ("earth-lock") {
+                  <svg
+                    lucideEarthLock
+                    class="h-6 w-6 text-emerald-400 shrink-0"
+                  ></svg>
+                }
+                @case ("database-zap") {
+                  <svg
+                    lucideDatabaseZap
+                    class="h-6 w-6 text-emerald-400 shrink-0"
+                  ></svg>
+                }
+                @case ("image-up") {
+                  <svg
+                    lucideImageUp
+                    class="h-6 w-6 text-emerald-400 shrink-0"
+                  ></svg>
+                }
+                @case ("cpu") {
+                  <svg
+                    lucideCpu
+                    class="h-6 w-6 text-emerald-400 shrink-0"
+                  ></svg>
+                }
+                @default {
+                  <svg
+                    lucideGauge
+                    class="h-6 w-6 text-emerald-400 shrink-0"
+                  ></svg>
+                }
+              }
               <h2 class="text-white text-2xl font-bold font-mono">
                 {{ family.framework }}
               </h2>
