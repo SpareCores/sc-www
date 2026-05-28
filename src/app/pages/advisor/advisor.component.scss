@@ -267,8 +267,21 @@
         box-shadow: inset 0.3rem 0 0 #34d399;
       }
 
+      &.advisor-empty-state-row {
+        background: #eab308;
+        cursor: default;
+      }
+
+      &.advisor-empty-state-row:hover {
+        outline: none;
+      }
+
       td {
         @apply pl-3 pr-2 py-3 text-left text-sm;
+      }
+
+      &.advisor-empty-state-row td.advisor-empty-state-cell {
+        color: #000000;
       }
     }
   }

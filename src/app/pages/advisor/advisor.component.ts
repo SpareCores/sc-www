@@ -49,6 +49,7 @@ import { SeoHandlerService } from "../../services/seo-handler.service";
 import { ServerCompareService } from "../../services/server-compare.service";
 import { ToastService } from "../../services/toast.service";
 import { NeetoCalService } from "../../services/neeto-cal.service";
+import { UiTooltipService } from "../../services/ui-tooltip.service";
 import { encodeQueryParams } from "../../tools/queryParamFunctions";
 import {
   availableCurrencies as AVAILABLE_CURRENCIES,
@@ -71,6 +72,7 @@ import {
   ADVISOR_BASELINE_WORKLOAD_TOOLTIP,
   ADVISOR_CUSTOM_QUERY_PARAM_NAMES,
   ADVISOR_DISABLED_BASELINE_WORKLOAD_MESSAGE,
+  ADVISOR_EMPTY_BASELINE_WORKLOAD_ACTION_MESSAGE,
   ADVISOR_DEFAULT_CURRENCY,
   ADVISOR_DEFAULT_WORKLOAD_CONFIG,
   ADVISOR_EMPTY_BASELINE_WORKLOAD_MESSAGE,
@@ -335,7 +337,10 @@ type AdvisorComparableResourceKey =
   | "gpu_count"
   | "gpu_memory_min"
   | "gpu_memory_total"
-  | "storage_size";
+  | "storage_size"
+  | "cpu_l1d_cache"
+  | "cpu_l2_cache"
+  | "cpu_l3_cache";
 
 @Component({
   selector: "app-advisor",
@@ -363,6 +368,7 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
   private serverCompare = inject(ServerCompareService);
   private toastService = inject(ToastService);
   private neetoCalService = inject(NeetoCalService);
+  private uiTooltip = inject(UiTooltipService);
   readonly advisorUi = inject(AdvisorUiService);
   readonly currencyDropdown =
     viewChild<FlowbiteDropdownDirective>("currencyDropdown");
@@ -370,6 +376,8 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly searchBar = viewChild(SearchBarComponent);
   readonly introductionModalRef =
     viewChild<ElementRef<HTMLElement>>("introductionModal");
+  readonly tooltipDefault =
+    viewChild<ElementRef<HTMLElement>>("tooltipDefault");
   private compareSubscription = new Subscription();
   private lastEncodedQuery: string | null = null;
   private clipboardResetTimeout: ReturnType<typeof setTimeout> | null = null;
@@ -390,6 +398,10 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly title = ADVISOR_PAGE_TITLE;
   readonly description = ADVISOR_PAGE_DESCRIPTION;
   readonly advisorExampleQueryParams = ADVISOR_EXAMPLE_QUERY_PARAMS;
+  readonly emptyBaselineWorkloadMessage =
+    ADVISOR_EMPTY_BASELINE_WORKLOAD_MESSAGE;
+  readonly emptyBaselineWorkloadActionMessage =
+    ADVISOR_EMPTY_BASELINE_WORKLOAD_ACTION_MESSAGE;
 
   readonly breadcrumbs = signal<BreadcrumbSegment[]>(ADVISOR_BREADCRUMBS);
 
@@ -425,6 +437,7 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly totalRecommendationCount = signal(0);
   readonly compareSelectionKeys = signal<string[]>([]);
   readonly clipboardIcon = signal("clipboard");
+  readonly tooltipContent = signal("");
   readonly pendingBaselineVendorId = signal<string | null>(null);
   readonly pendingBaselineApiReference = signal<string | null>(null);
   readonly pendingWorkloadId = signal<string | null>(null);
@@ -1423,6 +1436,24 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
       : "arrow-down-narrow-wide";
   }
 
+  showTooltip(event: Event, content: string): void {
+    const tooltipElement = this.tooltipDefault()?.nativeElement;
+
+    if (!tooltipElement) {
+      return;
+    }
+
+    this.tooltipContent.set(content);
+    this.uiTooltip.show(tooltipElement, event, {
+      left: "anchor-right",
+      top: "anchor-above",
+    });
+  }
+
+  hideTooltip(): void {
+    this.uiTooltip.hide(this.tooltipDefault()?.nativeElement);
+  }
+
   getBenchmarkDelta(recommendation: ServerPKs): AdvisorMetricDelta | null {
     if (this.isSelectedBaselineRecommendation(recommendation)) {
       return null;
@@ -1574,7 +1605,7 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
       : `+${roundedPercentage}%`;
   }
 
-  getMemoryDeltaLabel(delta: AdvisorMetricDelta): string | null {
+  getParenthesizedDeltaLabel(delta: AdvisorMetricDelta): string | null {
     const deltaLabel = this.getDeltaLabel(delta);
 
     if (!deltaLabel || deltaLabel === "0%") {

@@ -168,6 +168,9 @@ export type SearchBarServerOption = Pick<
       | "gpu_memory_total"
       | "cpu_architecture"
       | "cpu_allocation"
+      | "cpu_l1d_cache"
+      | "cpu_l2_cache"
+      | "cpu_l3_cache"
     >
   >;
 

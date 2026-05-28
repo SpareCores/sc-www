@@ -274,6 +274,14 @@
                     >
                       <div class="flex gap-1 whitespace-nowrap">
                         {{ column.name }}
+                        @if (column.info) {
+                          <lucide-icon
+                            name="info"
+                            (mouseenter)="showTooltip($event, column.info)"
+                            (mouseleave)="hideTooltip()"
+                            class="h-4 w-4 text-gray-200"
+                          ></lucide-icon>
+                        }
                         @if (getOrderingIcon(column); as orderingIcon) {
                           <lucide-icon
                             [name]="orderingIcon"
@@ -519,14 +527,95 @@
                             <div class="text-xs text-white whitespace-nowrap">
                               L1:
                               {{ recommendation.cpu_l1d_cache | cpuCacheSize }}
+                              @if (
+                                getComparableResourceDelta(
+                                  recommendation,
+                                  "cpu_l1d_cache"
+                                );
+                                as cpuL1Delta
+                              ) {
+                                @if (
+                                  getParenthesizedDeltaLabel(cpuL1Delta);
+                                  as cpuL1DeltaLabel
+                                ) {
+                                  <span
+                                    class="advisor-table-delta whitespace-nowrap"
+                                    [class.advisor-table-delta--positive]="
+                                      cpuL1Delta.tone === 'positive'
+                                    "
+                                    [class.advisor-table-delta--negative]="
+                                      cpuL1Delta.tone === 'negative'
+                                    "
+                                    [class.advisor-table-delta--neutral]="
+                                      cpuL1Delta.tone === 'neutral'
+                                    "
+                                  >
+                                    {{ cpuL1DeltaLabel }}
+                                  </span>
+                                }
+                              }
                             </div>
                             <div class="text-xs text-white whitespace-nowrap">
                               L2:
                               {{ recommendation.cpu_l2_cache | cpuCacheSize }}
+                              @if (
+                                getComparableResourceDelta(
+                                  recommendation,
+                                  "cpu_l2_cache"
+                                );
+                                as cpuL2Delta
+                              ) {
+                                @if (
+                                  getParenthesizedDeltaLabel(cpuL2Delta);
+                                  as cpuL2DeltaLabel
+                                ) {
+                                  <span
+                                    class="advisor-table-delta whitespace-nowrap"
+                                    [class.advisor-table-delta--positive]="
+                                      cpuL2Delta.tone === 'positive'
+                                    "
+                                    [class.advisor-table-delta--negative]="
+                                      cpuL2Delta.tone === 'negative'
+                                    "
+                                    [class.advisor-table-delta--neutral]="
+                                      cpuL2Delta.tone === 'neutral'
+                                    "
+                                  >
+                                    {{ cpuL2DeltaLabel }}
+                                  </span>
+                                }
+                              }
                             </div>
                             <div class="text-xs text-white whitespace-nowrap">
                               L3:
                               {{ recommendation.cpu_l3_cache | cpuCacheSize }}
+                              @if (
+                                getComparableResourceDelta(
+                                  recommendation,
+                                  "cpu_l3_cache"
+                                );
+                                as cpuL3Delta
+                              ) {
+                                @if (
+                                  getParenthesizedDeltaLabel(cpuL3Delta);
+                                  as cpuL3DeltaLabel
+                                ) {
+                                  <span
+                                    class="advisor-table-delta whitespace-nowrap"
+                                    [class.advisor-table-delta--positive]="
+                                      cpuL3Delta.tone === 'positive'
+                                    "
+                                    [class.advisor-table-delta--negative]="
+                                      cpuL3Delta.tone === 'negative'
+                                    "
+                                    [class.advisor-table-delta--neutral]="
+                                      cpuL3Delta.tone === 'neutral'
+                                    "
+                                  >
+                                    {{ cpuL3DeltaLabel }}
+                                  </span>
+                                }
+                              }
                             </div>
                           } @else {
                             <div class="text-sm text-white">-</div>
@@ -672,7 +761,7 @@
                               as memoryDelta
                             ) {
                               @if (
-                                getMemoryDeltaLabel(memoryDelta);
+                                getParenthesizedDeltaLabel(memoryDelta);
                                 as memoryDeltaLabel
                               ) {
                                 <span
@@ -710,20 +799,21 @@
                       }
                       @if (column.type === "gpu") {
                         <td>
-                          <div class="text-sm text-white">
+                          <div class="text-sm text-white whitespace-nowrap">
                             {{ recommendation.gpu_count | gpuCount }}
-                          </div>
-                          @if (
-                            getComparableResourceDelta(
-                              recommendation,
-                              "gpu_count"
-                            );
-                            as gpuDelta
-                          ) {
-                            @if (getDeltaLabel(gpuDelta); as gpuDeltaLabel) {
-                              <div class="advisor-table-cell-secondary">
+                            @if (
+                              getComparableResourceDelta(
+                                recommendation,
+                                "gpu_count"
+                              );
+                              as gpuDelta
+                            ) {
+                              @if (
+                                getParenthesizedDeltaLabel(gpuDelta);
+                                as gpuDeltaLabel
+                              ) {
                                 <span
-                                  class="advisor-table-delta"
+                                  class="advisor-table-delta whitespace-nowrap"
                                   [class.advisor-table-delta--positive]="
                                     gpuDelta.tone === 'positive'
                                   "
@@ -736,9 +826,9 @@
                                 >
                                   {{ gpuDeltaLabel }}
                                 </span>
-                              </div>
+                              }
                             }
-                          }
+                          </div>
                           @if (recommendation.gpu_model) {
                             <div class="text-xs text-white flex gap-1">
                               <span>{{ recommendation.gpu_model }}</span>
@@ -846,23 +936,21 @@
                       }
                       @if (column.type === "storage") {
                         <td>
-                          <div class="text-sm text-white">
+                          <div class="text-sm text-white whitespace-nowrap">
                             {{ advisorUi.formatStorage(recommendation) }}
-                          </div>
-                          @if (
-                            getComparableResourceDelta(
-                              recommendation,
-                              "storage_size"
-                            );
-                            as storageDelta
-                          ) {
                             @if (
-                              getDeltaLabel(storageDelta);
-                              as storageDeltaLabel
+                              getComparableResourceDelta(
+                                recommendation,
+                                "storage_size"
+                              );
+                              as storageDelta
                             ) {
-                              <div class="advisor-table-cell-secondary">
+                              @if (
+                                getParenthesizedDeltaLabel(storageDelta);
+                                as storageDeltaLabel
+                              ) {
                                 <span
-                                  class="advisor-table-delta"
+                                  class="advisor-table-delta whitespace-nowrap"
                                   [class.advisor-table-delta--positive]="
                                     storageDelta.tone === 'positive'
                                   "
@@ -875,9 +963,9 @@
                                 >
                                   {{ storageDeltaLabel }}
                                 </span>
-                              </div>
+                              }
                             }
-                          }
+                          </div>
                           @if (recommendation.storage_type) {
                             <div class="text-xs text-white">
                               <span>{{ recommendation.storage_type }}</span>
@@ -997,17 +1085,51 @@
                 }
 
                 @if (!recommendations().length && !isLoadingRecommendations()) {
-                  <tr>
+                  <tr class="advisor-empty-state-row">
                     <td
                       [attr.colspan]="tableColumns().length + 2"
                       class="advisor-empty-state-cell"
                     >
-                      {{ recommendationEmptyStateMessage() }}
+                      @let missingInputs = missingRequiredInputs();
+
+                      @if (hasEmptyBaselineWorkloadWarning()) {
+                        <strong>{{ emptyBaselineWorkloadMessage }}</strong>
+                        {{ emptyBaselineWorkloadActionMessage }}
+                      } @else if (missingInputs.length) {
+                        Please select
+                        @for (
+                          missingInput of missingInputs;
+                          track missingInput;
+                          let isFirst = $first;
+                          let isLast = $last
+                        ) {
+                          @if (!isFirst) {
+                            @if (isLast) {
+                              <span> and </span>
+                            } @else {
+                              <span>, </span>
+                            }
+                          }
+                          <strong>{{ missingInput }}</strong>
+                        }
+                        to get started.
+                      } @else {
+                        {{ recommendationEmptyStateMessage() }}
+                      }
                     </td>
                   </tr>
                 }
               </tbody>
             </table>
+          </div>
+
+          <div
+            id="tooltipDefault"
+            #tooltipDefault
+            style="opacity: 0; display: none"
+            class="tooltip-panel fixed z-100 pointer-events-none"
+          >
+            {{ tooltipContent() }}
           </div>
 
           <div class="flex justify-between mt-4 flex-wrap gap-4">

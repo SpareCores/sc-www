@@ -9,6 +9,12 @@ import {
   AdvisorSeoMetadata,
   AdvisorTableColumn,
 } from "./advisor.types";
+import {
+  SERVER_TABLE_BENCHMARK_EFFICIENCY_TOOLTIP,
+  SERVER_TABLE_BENCHMARK_TOOLTIP,
+  SERVER_TABLE_SCORE_PER_PRICE_TOOLTIP,
+  SERVER_TABLE_SCORE_TOOLTIP,
+} from "../../tools/server-table-tooltips";
 
 export const ADVISOR_BREADCRUMBS: BreadcrumbSegment[] = [
   { name: "Home", url: "/" },
@@ -25,6 +31,9 @@ export const ADVISOR_DEFAULT_SERVER_COLUMNS = [
   "gpu_memory_min",
   "gpu_memory_total",
   "storage_size",
+  "cpu_l1d_cache",
+  "cpu_l2_cache",
+  "cpu_l3_cache",
   "cpu_architecture",
   "cpu_allocation",
 ] as const;
@@ -147,8 +156,10 @@ export const ADVISOR_DEFAULT_EMPTY_RESULTS_MESSAGE =
 export const ADVISOR_EMPTY_BASELINE_WORKLOAD_MESSAGE =
   "The selected baseline server has no benchmark workloads available.";
 
-export const ADVISOR_EMPTY_BASELINE_WORKLOAD_RESULTS_MESSAGE =
-  "The selected baseline server has no benchmark workloads available. Choose another baseline server to get started.";
+export const ADVISOR_EMPTY_BASELINE_WORKLOAD_ACTION_MESSAGE =
+  "Choose another baseline server to get started.";
+
+export const ADVISOR_EMPTY_BASELINE_WORKLOAD_RESULTS_MESSAGE = `${ADVISOR_EMPTY_BASELINE_WORKLOAD_MESSAGE} ${ADVISOR_EMPTY_BASELINE_WORKLOAD_ACTION_MESSAGE}`;
 
 export const ADVISOR_DISABLED_BASELINE_WORKLOAD_MESSAGE =
   "Choose a baseline server first to load its available workloads.";
@@ -215,6 +226,7 @@ export const ADVISOR_TABLE_COLUMNS: AdvisorTableColumn[] = [
     key: "score",
     show: false,
     orderField: "score",
+    info: SERVER_TABLE_SCORE_TOOLTIP,
   },
   {
     name: "$CORE",
@@ -222,6 +234,7 @@ export const ADVISOR_TABLE_COLUMNS: AdvisorTableColumn[] = [
     key: "score_per_price",
     show: false,
     orderField: "score_per_price",
+    info: SERVER_TABLE_SCORE_PER_PRICE_TOOLTIP,
   },
   {
     name: "BENCHMARK",
@@ -229,6 +242,7 @@ export const ADVISOR_TABLE_COLUMNS: AdvisorTableColumn[] = [
     key: "selected_benchmark_score",
     show: true,
     orderField: "selected_benchmark_score",
+    info: SERVER_TABLE_BENCHMARK_TOOLTIP,
   },
   {
     name: "$ EFFICIENCY",
@@ -236,6 +250,7 @@ export const ADVISOR_TABLE_COLUMNS: AdvisorTableColumn[] = [
     key: "selected_benchmark_score_per_price",
     show: true,
     orderField: "selected_benchmark_score_per_price",
+    info: SERVER_TABLE_BENCHMARK_EFFICIENCY_TOOLTIP,
   },
   {
     name: "MEMORY",

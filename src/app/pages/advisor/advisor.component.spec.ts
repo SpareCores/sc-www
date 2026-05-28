@@ -39,6 +39,12 @@ import { ServerCompareService } from "../../services/server-compare.service";
 import { ToastService } from "../../services/toast.service";
 import { NeetoCalService } from "../../services/neeto-cal.service";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
+import {
+  SERVER_TABLE_BENCHMARK_EFFICIENCY_TOOLTIP,
+  SERVER_TABLE_BENCHMARK_TOOLTIP,
+  SERVER_TABLE_SCORE_PER_PRICE_TOOLTIP,
+  SERVER_TABLE_SCORE_TOOLTIP,
+} from "../../tools/server-table-tooltips";
 
 describe("AdvisorComponent", () => {
   const queryParams$ = new BehaviorSubject({});
@@ -145,6 +151,9 @@ describe("AdvisorComponent", () => {
           gpu_memory_min: 8,
           gpu_memory_total: 0,
           storage_size: 80,
+          cpu_l1d_cache: 64,
+          cpu_l2_cache: 1024,
+          cpu_l3_cache: 8192,
         },
       ],
     });
@@ -562,6 +571,26 @@ describe("AdvisorComponent", () => {
     expect(component.pageLimits).toEqual([10, 25, 50, 100, 250]);
   });
 
+  it("emphasizes missing input names in the empty recommendation message", () => {
+    fixture.detectChanges();
+
+    const emptyStateCell = fixture.nativeElement.querySelector(
+      "#advisor_results_table tbody td",
+    ) as HTMLTableCellElement | null;
+    const emphasizedLabels = Array.from(
+      emptyStateCell?.querySelectorAll("strong") || [],
+    ).map((element) => element.textContent?.trim());
+
+    expect(normalizeText(emptyStateCell?.textContent)).toBe(
+      "Please select Baseline server, Baseline workload and Average utilization to get started.",
+    );
+    expect(emphasizedLabels).toEqual([
+      "Baseline server",
+      "Baseline workload",
+      "Average utilization",
+    ]);
+  });
+
   it("exposes the full advisor column selector inventory", () => {
     expect(component.possibleColumns().map((column) => column.name)).toEqual(
       ADVISOR_TABLE_COLUMNS.map((column) => column.name),
@@ -572,6 +601,35 @@ describe("AdvisorComponent", () => {
     expect(
       component.possibleColumns().map((column) => column.name),
     ).not.toContain("VCPUs");
+  });
+
+  it("uses the server table tooltip copy for advisor metric columns", () => {
+    const columnByName = new Map(
+      component
+        .possibleColumns()
+        .map((column) => [column.name, column] as const),
+    );
+
+    expect(columnByName.get("SCORE")?.info).toBe(SERVER_TABLE_SCORE_TOOLTIP);
+    expect(columnByName.get("$CORE")?.info).toBe(
+      SERVER_TABLE_SCORE_PER_PRICE_TOOLTIP,
+    );
+    expect(columnByName.get("BENCHMARK")?.info).toBe(
+      SERVER_TABLE_BENCHMARK_TOOLTIP,
+    );
+    expect(columnByName.get("$ EFFICIENCY")?.info).toBe(
+      SERVER_TABLE_BENCHMARK_EFFICIENCY_TOOLTIP,
+    );
+
+    component.setColumnVisibility("SCORE", true);
+    component.setColumnVisibility("$CORE", true);
+    fixture.detectChanges();
+
+    expect(
+      fixture.nativeElement.querySelectorAll(
+        '#advisor_results_table thead lucide-icon[name="info"]',
+      ).length,
+    ).toBeGreaterThanOrEqual(4);
   });
 
   it("renders only extra storage and traffic filters after peak GPU memory", () => {
@@ -936,6 +994,7 @@ describe("AdvisorComponent", () => {
     const emptyStateCell = fixture.nativeElement.querySelector(
       "#advisor_results_table tbody td",
     ) as HTMLTableCellElement | null;
+    const emptyStateRow = emptyStateCell?.parentElement;
 
     expect(component.baselineBenchmarkConfigOptions()).toEqual([]);
     expect(workloadControl?.disabled).toBeTrue();
@@ -948,7 +1007,11 @@ describe("AdvisorComponent", () => {
     expect(emptyStateCell?.textContent).toContain(
       ADVISOR_EMPTY_BASELINE_WORKLOAD_RESULTS_MESSAGE,
     );
+    expect(emptyStateCell?.querySelector("strong")?.textContent?.trim()).toBe(
+      ADVISOR_EMPTY_BASELINE_WORKLOAD_MESSAGE,
+    );
     expect(emptyStateCell?.classList).toContain("advisor-empty-state-cell");
+    expect(emptyStateRow?.classList).toContain("advisor-empty-state-row");
     expect(showToast).not.toHaveBeenCalled();
   }));
 
@@ -1558,6 +1621,7 @@ describe("AdvisorComponent", () => {
   it("renders comparable non-processor resource deltas against the baseline", fakeAsync(() => {
     selectBaselineServer();
     selectFirstAvailableWorkload();
+    component.setColumnVisibility("CPU CACHE", true);
 
     component.recommendations.set([
       {
@@ -1571,6 +1635,9 @@ describe("AdvisorComponent", () => {
         memory_generation: "DDR5",
         gpu_count: 2,
         storage_size: 160,
+        cpu_l1d_cache: 128,
+        cpu_l2_cache: 2048,
+        cpu_l3_cache: 16384,
       },
     ] as never[]);
     component.totalRecommendationCount.set(1);
@@ -1582,24 +1649,41 @@ describe("AdvisorComponent", () => {
       "#advisor_results_table tbody tr",
     ) as HTMLTableRowElement;
     const cells = row.querySelectorAll("td");
-    const processorDelta = cells[2].querySelector(".advisor-table-delta");
-    const memoryPrimaryLine = cells[5].querySelector(
+    const visibleColumnIndex = (columnName: string) =>
+      component
+        .tableColumns()
+        .findIndex((column) => column.name === columnName) + 1;
+    const processorDelta = cells[visibleColumnIndex("PROCESSOR")].querySelector(
+      ".advisor-table-delta",
+    );
+    const cpuCacheLines =
+      cells[visibleColumnIndex("CPU CACHE")].querySelectorAll("div");
+    const memoryPrimaryLine = cells[visibleColumnIndex("MEMORY")].querySelector(
       "div.text-sm",
     ) as HTMLElement;
-    const memorySecondaryLine = cells[5].querySelector(
-      "div.text-xs",
-    ) as HTMLElement;
+    const memorySecondaryLine = cells[
+      visibleColumnIndex("MEMORY")
+    ].querySelector("div.text-xs") as HTMLElement;
     const memoryDelta = memoryPrimaryLine.querySelector(
       ".advisor-table-delta",
     ) as HTMLElement;
-    const gpuDelta = cells[6].querySelector(
+    const gpuDelta = cells[visibleColumnIndex("GPUs")].querySelector(
       ".advisor-table-delta",
     ) as HTMLElement;
-    const storageDelta = cells[7].querySelector(
+    const storageDelta = cells[visibleColumnIndex("STORAGE")].querySelector(
       ".advisor-table-delta",
     ) as HTMLElement;
 
     expect(processorDelta).toBeNull();
+    expect(normalizeText(cpuCacheLines[0]?.textContent)).toBe(
+      "L1: 128 KiB (+100%)",
+    );
+    expect(normalizeText(cpuCacheLines[1]?.textContent)).toBe(
+      "L2: 2 MiB (+100%)",
+    );
+    expect(normalizeText(cpuCacheLines[2]?.textContent)).toBe(
+      "L3: 16 MiB (+100%)",
+    );
     expect(normalizeText(memoryPrimaryLine.textContent)).toBe(
       "8.0 GiB (+100%)",
     );
@@ -1607,13 +1691,14 @@ describe("AdvisorComponent", () => {
       "4800 MHz (DDR5)",
     );
     expect(memoryDelta.textContent?.trim()).toBe("(+100%)");
-    expect(gpuDelta.textContent?.trim()).toBe("+100%");
-    expect(storageDelta.textContent?.trim()).toBe("+100%");
+    expect(gpuDelta.textContent?.trim()).toBe("(+100%)");
+    expect(storageDelta.textContent?.trim()).toBe("(+100%)");
   }));
 
-  it("does not render a 0% memory delta when the recommendation matches the baseline", fakeAsync(() => {
+  it("does not render 0% comparable resource deltas", fakeAsync(() => {
     selectBaselineServer();
     selectFirstAvailableWorkload();
+    component.setColumnVisibility("CPU CACHE", true);
 
     component.recommendations.set([
       {
@@ -1623,6 +1708,11 @@ describe("AdvisorComponent", () => {
         server_id: "srv-1",
         memory_amount: 4096,
         memory_speed: 4800,
+        gpu_count: 1,
+        storage_size: 80,
+        cpu_l1d_cache: 64,
+        cpu_l2_cache: 1024,
+        cpu_l3_cache: 8192,
       },
     ] as never[]);
     component.totalRecommendationCount.set(1);
@@ -1633,7 +1723,18 @@ describe("AdvisorComponent", () => {
     const row = fixture.nativeElement.querySelector(
       "#advisor_results_table tbody tr",
     ) as HTMLTableRowElement;
-    const memoryCell = row.querySelectorAll("td")[5] as HTMLTableCellElement;
+    const cells = row.querySelectorAll("td");
+    const visibleColumnIndex = (columnName: string) =>
+      component
+        .tableColumns()
+        .findIndex((column) => column.name === columnName) + 1;
+    const cpuCacheCell = cells[
+      visibleColumnIndex("CPU CACHE")
+    ] as HTMLTableCellElement;
+    const memoryCell = cells[
+      visibleColumnIndex("MEMORY")
+    ] as HTMLTableCellElement;
+    const gpuCell = cells[visibleColumnIndex("GPUs")] as HTMLTableCellElement;
     const memoryPrimaryLine = memoryCell.querySelector(
       "div.text-sm",
     ) as HTMLElement;
@@ -1641,10 +1742,18 @@ describe("AdvisorComponent", () => {
       "div.text-xs",
     ) as HTMLElement;
     const memoryDelta = memoryPrimaryLine.querySelector(".advisor-table-delta");
+    const gpuDelta = gpuCell.querySelector(".advisor-table-delta");
+    const cpuCacheDelta = cpuCacheCell.querySelector(".advisor-table-delta");
 
+    expect(normalizeText(cpuCacheCell.textContent)).toContain("L1: 64 KiB");
     expect(normalizeText(memoryPrimaryLine.textContent)).toBe("4.0 GiB");
     expect(normalizeText(memorySecondaryLine.textContent)).toBe("4800 MHz");
+    expect(normalizeText(gpuCell.textContent)).toContain("1");
+    expect(normalizeText(cpuCacheCell.textContent)).not.toContain("0%");
+    expect(normalizeText(gpuCell.textContent)).not.toContain("0%");
     expect(memoryDelta).toBeNull();
+    expect(gpuDelta).toBeNull();
+    expect(cpuCacheDelta).toBeNull();
   }));
 
   it("renders benchmark improvements in red when higher_is_better is false", fakeAsync(() => {
