@@ -34,6 +34,10 @@ export class NeetoCalService {
         this.isScriptLoading = false;
         this.initializeButtons();
       };
+      script.onerror = () => {
+        this.isScriptLoaded = false;
+        this.isScriptLoading = false;
+      };
       document.head.appendChild(script);
     } else if (this.isScriptLoaded) {
       this.initializeButtons();
