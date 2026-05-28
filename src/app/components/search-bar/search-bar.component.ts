@@ -609,7 +609,11 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   isCategoryExpanded(category: SearchBarFilterCategory): boolean {
-    return category.alwaysExpanded === true || !category.collapsed;
+    return (
+      category.alwaysExpanded === true ||
+      category.hideHeader === true ||
+      !category.collapsed
+    );
   }
 
   toggleCategory(category: SearchBarFilterCategory) {

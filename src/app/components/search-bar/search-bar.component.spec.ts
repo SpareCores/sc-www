@@ -311,14 +311,13 @@ describe("SearchBarComponent", () => {
     expect(component.filterCategories[1].collapsed).toBeTrue();
   });
 
-  it("renders a fixed-open category without its collapsible header", () => {
+  it("renders a hidden-header category as expanded without its collapsible header", () => {
     component.filterCategories = [
       {
         category_id: "advisor",
         name: "Advisor",
         icon: "bot",
         collapsed: true,
-        alwaysExpanded: true,
         hideHeader: true,
       },
     ];
@@ -339,6 +338,9 @@ describe("SearchBarComponent", () => {
       '[data-category-id="advisor"]',
     ) as HTMLElement;
 
+    expect(
+      component.isCategoryExpanded(component.filterCategories[0]),
+    ).toBeTrue();
     expect(advisorCategory.textContent).toContain("Baseline server");
     expect(advisorCategory.querySelector('[role="button"]')).toBeNull();
   });
