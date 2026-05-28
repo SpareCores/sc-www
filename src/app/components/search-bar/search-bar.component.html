@@ -797,32 +797,37 @@
         class="mx-2 p-3 border-b border-gray-200"
         [attr.data-category-id]="filter.category_id"
       >
-        <div
-          class="flex justify-between cursor-pointer"
-          (click)="toggleCategory(filter)"
-          tabindex="0"
-          role="button"
-          [attr.aria-expanded]="!filter.collapsed"
-          (keydown.enter)="toggleCategory(filter)"
-          (keydown.space)="toggleCategory(filter); $event.preventDefault()"
-        >
-          <div class="text-white flex gap-2 items-center">
-            <lucide-icon
-              name="{{ filter.icon }}"
-              class="h-4 w-4 text-white"
-            ></lucide-icon>
-            <div class="text-sm">{{ filter.name }}</div>
-          </div>
-          <div>
-            <lucide-icon
-              name="chevron-down"
-              class="h-4 w-4 text-white"
-            ></lucide-icon>
-          </div>
-        </div>
-        @if (!filter.collapsed) {
+        @if (!filter.hideHeader) {
           <div
-            [class.pt-4]="!noTopPaddingCategoryIds.includes(filter.category_id)"
+            class="flex justify-between cursor-pointer"
+            (click)="toggleCategory(filter)"
+            tabindex="0"
+            role="button"
+            [attr.aria-expanded]="isCategoryExpanded(filter)"
+            (keydown.enter)="toggleCategory(filter)"
+            (keydown.space)="toggleCategory(filter); $event.preventDefault()"
+          >
+            <div class="text-white flex gap-2 items-center">
+              <lucide-icon
+                name="{{ filter.icon }}"
+                class="h-4 w-4 text-white"
+              ></lucide-icon>
+              <div class="text-sm">{{ filter.name }}</div>
+            </div>
+            <div>
+              <lucide-icon
+                name="chevron-down"
+                class="h-4 w-4 text-white"
+              ></lucide-icon>
+            </div>
+          </div>
+        }
+        @if (isCategoryExpanded(filter)) {
+          <div
+            [class.pt-4]="
+              !filter.hideHeader &&
+              !noTopPaddingCategoryIds.includes(filter.category_id)
+            "
           >
             @for (
               control of getCustomControlsByCategory(filter.category_id);
@@ -969,6 +974,7 @@
                   <div class="custom-autocomplete mt-4">
                     <div class="custom-autocomplete__input-wrap">
                       <input
+                        [id]="'custom_control_input_' + control.name"
                         type="text"
                         [value]="control.inputValue || ''"
                         [placeholder]="control.placeholder || ''"
@@ -1038,6 +1044,7 @@
                   <div class="custom-autocomplete mt-4">
                     <div class="custom-autocomplete__input-wrap">
                       <input
+                        [id]="'custom_control_input_' + control.name"
                         type="text"
                         [value]="control.inputValue || ''"
                         [placeholder]="control.placeholder || ''"
@@ -1143,13 +1150,16 @@
                                     <span class="custom-autocomplete__label">
                                       {{ benchmarkOption.displayName }}
                                     </span>
-                                    <span class="custom-autocomplete__meta">
-                                      {{
-                                        formatBenchmarkConfigDescription(
-                                          benchmarkOption
-                                        )
-                                      }}
-                                    </span>
+                                    @if (
+                                      formatBenchmarkConfigDescription(
+                                        benchmarkOption
+                                      );
+                                      as benchmarkDescription
+                                    ) {
+                                      <span class="custom-autocomplete__meta">
+                                        {{ benchmarkDescription }}
+                                      </span>
+                                    }
                                   </button>
                                 }
                               }
@@ -1233,18 +1243,8 @@
                   <div class="custom-slider mt-4">
                     <div class="custom-slider__header">
                       <div class="custom-slider__value">
-                        {{ formatCustomNumericValue(control) }}
+                        {{ formatRangeSliderValue(control) }}
                       </div>
-                      @if (control.numericValue !== null) {
-                        <button
-                          type="button"
-                          class="custom-slider__clear"
-                          (click)="clearCustomNumericControl(control)"
-                          aria-label="Clear slider value"
-                        >
-                          <lucide-icon name="x" class="h-4 w-4"></lucide-icon>
-                        </button>
-                      }
                     </div>
 
                     <input

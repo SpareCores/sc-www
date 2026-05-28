@@ -1,6 +1,7 @@
 import { BreadcrumbSegment } from "../../components/breadcrumbs/breadcrumbs.component";
 import {
   SearchBarCustomSelectOption,
+  SearchBarFilterCategory,
   SearchBarParameterPlacement,
 } from "../../components/search-bar/search-bar.component";
 import {
@@ -8,6 +9,12 @@ import {
   AdvisorSeoMetadata,
   AdvisorTableColumn,
 } from "./advisor.types";
+import {
+  SERVER_TABLE_BENCHMARK_EFFICIENCY_TOOLTIP,
+  SERVER_TABLE_BENCHMARK_TOOLTIP,
+  SERVER_TABLE_SCORE_PER_PRICE_TOOLTIP,
+  SERVER_TABLE_SCORE_TOOLTIP,
+} from "../../tools/server-table-tooltips";
 
 export const ADVISOR_BREADCRUMBS: BreadcrumbSegment[] = [
   { name: "Home", url: "/" },
@@ -20,14 +27,26 @@ export const ADVISOR_DEFAULT_SERVER_COLUMNS = [
   "status",
   "vcpus",
   "memory_amount",
+  "gpu_count",
+  "gpu_memory_min",
   "gpu_memory_total",
   "storage_size",
+  "cpu_l1d_cache",
+  "cpu_l2_cache",
+  "cpu_l3_cache",
   "cpu_architecture",
   "cpu_allocation",
 ] as const;
 
-export const ADVISOR_FILTER_CATEGORIES = [
-  { category_id: "advisor", name: "Advisor", icon: "bot", collapsed: false },
+export const ADVISOR_FILTER_CATEGORIES: SearchBarFilterCategory[] = [
+  {
+    category_id: "advisor",
+    name: "Advisor",
+    icon: "bot",
+    collapsed: false,
+    alwaysExpanded: true,
+    hideHeader: true,
+  },
   { category_id: "vendor", name: "Vendor", icon: "home", collapsed: true },
   { category_id: "region", name: "Region", icon: "hotel", collapsed: true },
 ];
@@ -113,6 +132,16 @@ export const ADVISOR_PAGE_TITLE = "Cloud Server Advisor";
 export const ADVISOR_PAGE_DESCRIPTION =
   "Transform your high-level server utilization telemetry data into ranked, explainable cloud resource allocation recommendations. Compare your baseline choice against workload-aware alternatives to reduce costs and improve performance or cost efficiency of your workloads.";
 
+export const ADVISOR_EXAMPLE_QUERY_PARAMS = {
+  baseline_vendor: "aws",
+  baseline_server: "m5ad.large",
+  limit_architecture: "true",
+  workload_id: "workload_profile:web",
+  workload_config: "{}",
+  avg_cpu_utilization: "60",
+  minimum_memory: "6",
+} as const;
+
 export const ADVISOR_SEO: AdvisorSeoMetadata = {
   title: "Cloud Server Advisor - Spare Cores",
   description:
@@ -124,17 +153,40 @@ export const ADVISOR_SEO: AdvisorSeoMetadata = {
 export const ADVISOR_DEFAULT_EMPTY_RESULTS_MESSAGE =
   "No recommended servers available.";
 
-export const ADVISOR_EMPTY_BASELINE_WORKLOAD_TOAST_ID =
-  "advisor-empty-baseline-workloads";
-
 export const ADVISOR_EMPTY_BASELINE_WORKLOAD_MESSAGE =
   "The selected baseline server has no benchmark workloads available.";
+
+export const ADVISOR_EMPTY_BASELINE_WORKLOAD_ACTION_MESSAGE =
+  "Choose another baseline server to get started.";
+
+export const ADVISOR_EMPTY_BASELINE_WORKLOAD_RESULTS_MESSAGE = `${ADVISOR_EMPTY_BASELINE_WORKLOAD_MESSAGE} ${ADVISOR_EMPTY_BASELINE_WORKLOAD_ACTION_MESSAGE}`;
 
 export const ADVISOR_DISABLED_BASELINE_WORKLOAD_MESSAGE =
   "Choose a baseline server first to load its available workloads.";
 
 export const ADVISOR_LOADING_BASELINE_WORKLOAD_MESSAGE =
   "Loading workloads for the selected baseline server...";
+
+export const ADVISOR_BASELINE_SERVER_TITLE = "Baseline server";
+
+export const ADVISOR_BASELINE_SERVER_TOOLTIP =
+  "Select the instance type of the cloud server you consider right-sizing. We will look up this server's specs, performance and pricing data, and use all that as the baseline when comparing to other cloud server options.";
+
+export const ADVISOR_BASELINE_WORKLOAD_TITLE = "Baseline workload";
+
+export const ADVISOR_BASELINE_WORKLOAD_TOOLTIP =
+  "Select a workload that matches (or closest to) what your existing server is doing. We will look up the related benchmark score(s) we measured on that exact instance type, and find candidates matching the threshold based on your optimization goal.";
+
+export const ADVISOR_AVERAGE_UTILIZATION_TITLE = "Average utilization";
+
+export const ADVISOR_AVERAGE_UTILIZATION_TOOLTIP =
+  "Provide a high-level utilization percentage of your server, e.g. the average CPU or GPU usage. You will be able to fine-tune this setting below with the peak memory utilization as well if needed. We will use this number to see how low we can scale the candidate servers' performance for cost savings.";
+
+export const ADVISOR_REQUIRED_MEMORY_TITLE = "Required memory (RAM)";
+
+export const ADVISOR_REQUIRED_GPU_MEMORY_TITLE = "Required GPU memory (VRAM)";
+
+export const ADVISOR_OPTIMIZATION_GOAL_TITLE = "Optimization goal";
 
 export const ADVISOR_TABLE_COLUMNS: AdvisorTableColumn[] = [
   { name: "NAME & PROVIDER", type: "name", show: true },
@@ -174,6 +226,7 @@ export const ADVISOR_TABLE_COLUMNS: AdvisorTableColumn[] = [
     key: "score",
     show: false,
     orderField: "score",
+    info: SERVER_TABLE_SCORE_TOOLTIP,
   },
   {
     name: "$CORE",
@@ -181,6 +234,7 @@ export const ADVISOR_TABLE_COLUMNS: AdvisorTableColumn[] = [
     key: "score_per_price",
     show: false,
     orderField: "score_per_price",
+    info: SERVER_TABLE_SCORE_PER_PRICE_TOOLTIP,
   },
   {
     name: "BENCHMARK",
@@ -188,6 +242,7 @@ export const ADVISOR_TABLE_COLUMNS: AdvisorTableColumn[] = [
     key: "selected_benchmark_score",
     show: true,
     orderField: "selected_benchmark_score",
+    info: SERVER_TABLE_BENCHMARK_TOOLTIP,
   },
   {
     name: "$ EFFICIENCY",
@@ -195,6 +250,7 @@ export const ADVISOR_TABLE_COLUMNS: AdvisorTableColumn[] = [
     key: "selected_benchmark_score_per_price",
     show: true,
     orderField: "selected_benchmark_score_per_price",
+    info: SERVER_TABLE_BENCHMARK_EFFICIENCY_TOOLTIP,
   },
   {
     name: "MEMORY",
@@ -311,8 +367,8 @@ export const ADVISOR_TABLE_COLUMNS: AdvisorTableColumn[] = [
 export const ADVISOR_PAGE_LIMITS = [10, 25, 50, 100, 250];
 
 export const ADVISOR_REQUIRED_INPUT_LABELS = [
-  "Baseline server",
-  "Baseline workload",
-  "Optimization goal",
-  "Average utilization",
+  ADVISOR_BASELINE_SERVER_TITLE,
+  ADVISOR_BASELINE_WORKLOAD_TITLE,
+  ADVISOR_OPTIMIZATION_GOAL_TITLE,
+  ADVISOR_AVERAGE_UTILIZATION_TITLE,
 ] as const;

@@ -1,8 +1,21 @@
 <div class="app-shell">
   @if (showHeader) {
-    <header class="sticky">
-      <app-header></app-header>
-    </header>
+    <div class="app-shell-chrome">
+      <header>
+        <app-header></app-header>
+      </header>
+    </div>
+  }
+  @if (promoBannerMessage; as bannerMessage) {
+    <div class="app-shell-banner">
+      <div class="content">
+        <app-promo-banner
+          [message]="bannerMessage"
+          [dismissible]="true"
+          (dismissed)="dismissPromoBanner()"
+        ></app-promo-banner>
+      </div>
+    </div>
   }
   <main class="app-main">
     <router-outlet></router-outlet>

@@ -19,7 +19,24 @@ export abstract class E2EEvent {
 
   public static visitURL(url: string, wait: number = 2000) {
     cy.visit(this.buildAbsoluteURL(url));
+    this.hideAnnouncementForTests();
     cy.wait(wait);
+  }
+
+  public static hideAnnouncementForTests() {
+    cy.document().then((doc) => {
+      doc.getElementById("e2e-hide-announcement")?.remove();
+
+      const style = doc.createElement("style");
+      style.id = "e2e-hide-announcement";
+      style.textContent = `
+        app-announcement-ticker {
+          display: none !important;
+        }
+      `;
+
+      doc.head.appendChild(style);
+    });
   }
 
   public static screenshot(filename: string | undefined = undefined) {
@@ -185,6 +202,7 @@ export abstract class E2EEvent {
 
   // Prepare header position for a consistent visual regression snapshot
   public static prepareHeaderForScreenshot() {
+    cy.get(".app-shell-chrome").invoke("css", "position", "static");
     cy.get("header").invoke("css", "position", "static");
   }
 

@@ -11,8 +11,6 @@ import {
 import { Meta } from "@angular/platform-browser";
 import {
   NavigationEnd,
-  NavigationError,
-  NavigationStart,
   Router,
   Event,
   RouterModule,
@@ -21,13 +19,21 @@ import {
 import { register } from "swiper/element/bundle";
 import { HeaderComponent } from "./layout/header/header.component";
 import { FooterComponent } from "./layout/footer/footer.component";
+import { PromoBanner } from "./components/promo-banner/promo-banner";
+import {
+  PROMO_BANNER_BY_PATH,
+  type PromoBannerDismissalGroup,
+  type PromoBannerMessage,
+} from "./components/promo-banner/promo-banner.constants";
 import { AnalyticsService } from "./services/analytics.service";
 import { Subscription } from "rxjs";
 import { NeetoCalService } from "./services/neeto-cal.service";
 
+const PROMO_BANNER_DISMISSAL_STORAGE_PREFIX = "sc-promo-banner-dismissed-v1";
+
 @Component({
   selector: "app-root",
-  imports: [HeaderComponent, FooterComponent, RouterModule],
+  imports: [PromoBanner, HeaderComponent, FooterComponent, RouterModule],
   templateUrl: "./app.component.html",
   styleUrl: "./app.component.scss",
 })
@@ -43,57 +49,33 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
   showHeader = true;
   showFooter = true;
+  promoBannerMessage: PromoBannerMessage | null = null;
+  private dismissedPromoBannerGroups = new Set<PromoBannerDismissalGroup>();
   private subscription = new Subscription();
 
   constructor() {
-    const router = this.router;
+    this.updateShellChrome(this.router.url);
 
     this.subscription.add(
-      router.events.subscribe((event: Event) => {
-        if (event instanceof NavigationStart) {
-          // Show loading indicator
+      this.router.events.subscribe((event: Event) => {
+        if (
+          event instanceof RoutesRecognized ||
+          event instanceof NavigationEnd
+        ) {
+          this.updateShellChrome(event.urlAfterRedirects);
         }
 
-        if (event instanceof NavigationEnd) {
-          let url = "https://sparecores.com";
-          if (event?.urlAfterRedirects?.length > 1) {
-            url += event?.urlAfterRedirects;
-            if (
-              event?.urlAfterRedirects?.startsWith("/og/") ||
-              event?.urlAfterRedirects?.startsWith("/embed/") ||
-              event.urlAfterRedirects?.startsWith("/hu/")
-            ) {
-              this.showHeader = false;
-              this.showFooter = false;
-            } else {
-              this.showHeader = true;
-              this.showFooter = true;
-            }
-          }
-          this.analytics.trackEvent("pageView", {});
-          // update canonical url with query params as well
-
-          this.updateCanonical(url.toLowerCase());
+        if (!(event instanceof NavigationEnd)) {
+          return;
         }
 
-        if (event instanceof RoutesRecognized) {
-          if (
-            event?.urlAfterRedirects?.startsWith("/og/") ||
-            event?.urlAfterRedirects?.startsWith("/embed/") ||
-            event.urlAfterRedirects?.startsWith("/hu/")
-          ) {
-            this.showHeader = false;
-            this.showFooter = false;
-          } else {
-            this.showHeader = true;
-            this.showFooter = true;
-          }
-        }
+        const canonicalUrl =
+          event.urlAfterRedirects.length > 1
+            ? `https://sparecores.com${event.urlAfterRedirects}`
+            : "https://sparecores.com";
 
-        if (event instanceof NavigationError) {
-          // Hide loading indicator
-          // Present error to user
-        }
+        this.analytics.trackEvent("pageView", {});
+        this.updateCanonical(canonicalUrl.toLowerCase());
       }),
     );
   }
@@ -129,5 +111,96 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       { property: "og:url", content: canonicalUrl },
       "property='og:url'",
     );
+  }
+
+  dismissPromoBanner(): void {
+    const group = this.promoBannerMessage?.dismissalGroup;
+    if (group) {
+      this.dismissedPromoBannerGroups.add(group);
+      this.storePromoBannerDismissal(group);
+    }
+
+    this.promoBannerMessage = null;
+  }
+
+  private updateShellChrome(url: string | undefined): void {
+    const path = this.normalizePath(url);
+    const shouldHideChrome = this.isChromeHiddenRoute(path);
+
+    this.showHeader = !shouldHideChrome;
+    this.showFooter = !shouldHideChrome;
+    this.promoBannerMessage = shouldHideChrome
+      ? null
+      : this.getPromoBannerMessage(path);
+  }
+
+  private normalizePath(url: string | undefined): string {
+    const path = (url || "/").split(/[?#]/)[0];
+    return path.length > 1 ? path.replace(/\/+$/, "") || "/" : path || "/";
+  }
+
+  private isChromeHiddenRoute(path: string): boolean {
+    return (
+      path.startsWith("/og/") ||
+      path.startsWith("/embed/") ||
+      path.startsWith("/hu/")
+    );
+  }
+
+  private getPromoBannerMessage(path: string): PromoBannerMessage | null {
+    const promoBannerMessage = PROMO_BANNER_BY_PATH[path];
+
+    if (!promoBannerMessage) {
+      return null;
+    }
+
+    return this.isPromoBannerGroupDismissed(promoBannerMessage.dismissalGroup)
+      ? null
+      : promoBannerMessage;
+  }
+
+  private isPromoBannerGroupDismissed(
+    group: PromoBannerDismissalGroup,
+  ): boolean {
+    if (this.dismissedPromoBannerGroups.has(group)) {
+      return true;
+    }
+
+    if (!isPlatformBrowser(this.platformId)) {
+      return false;
+    }
+
+    try {
+      const isDismissed =
+        window.sessionStorage.getItem(this.getPromoBannerStorageKey(group)) ===
+        "true";
+
+      if (isDismissed) {
+        this.dismissedPromoBannerGroups.add(group);
+      }
+
+      return isDismissed;
+    } catch {
+      return false;
+    }
+  }
+
+  private storePromoBannerDismissal(group: PromoBannerDismissalGroup): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
+    try {
+      window.sessionStorage.setItem(
+        this.getPromoBannerStorageKey(group),
+        "true",
+      );
+    } catch {
+      return;
+    }
+  }
+
+  private getPromoBannerStorageKey(group: PromoBannerDismissalGroup): string {
+    return `${PROMO_BANNER_DISMISSAL_STORAGE_PREFIX}:${group}`;
   }
 }

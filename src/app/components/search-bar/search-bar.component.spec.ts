@@ -311,6 +311,40 @@ describe("SearchBarComponent", () => {
     expect(component.filterCategories[1].collapsed).toBeTrue();
   });
 
+  it("renders a hidden-header category as expanded without its collapsible header", () => {
+    component.filterCategories = [
+      {
+        category_id: "advisor",
+        name: "Advisor",
+        icon: "bot",
+        collapsed: true,
+        hideHeader: true,
+      },
+    ];
+    component.customControls = [
+      {
+        name: "baseline_server",
+        category_id: "advisor",
+        type: "serverAutocomplete",
+        title: "Baseline server",
+        inputValue: "",
+        options: [],
+      },
+    ];
+
+    fixture.detectChanges();
+
+    const advisorCategory = fixture.nativeElement.querySelector(
+      '[data-category-id="advisor"]',
+    ) as HTMLElement;
+
+    expect(
+      component.isCategoryExpanded(component.filterCategories[0]),
+    ).toBeTrue();
+    expect(advisorCategory.textContent).toContain("Baseline server");
+    expect(advisorCategory.querySelector('[role="button"]')).toBeNull();
+  });
+
   it("uses the last duplicate placement override for category resolution", () => {
     component.searchParameters = [
       {
@@ -488,6 +522,76 @@ describe("SearchBarComponent", () => {
     expect(hints).not.toContain("No matching workloads found.");
   });
 
+  it("drops only the framework from advisor workload option descriptions", () => {
+    expect(
+      component.formatBenchmarkConfigDescription({
+        benchmark_id: "passmark:cpu_integer_maths",
+        config: "{}",
+        displayName: "PassMark: CPU Integer Maths Test",
+        configTitle: "Single thread",
+        framework: "passmark",
+        groupLabel: "Passmark",
+        benchmarkTemplate: {
+          benchmark_id: "passmark:cpu_integer_maths",
+          name: "PassMark: CPU Integer Maths Test",
+          unit: "Millions of operations per second (Mops/s)",
+          framework: "passmark",
+          description: null,
+        },
+      }),
+    ).toBe("Single thread | Millions of operations per second (Mops/s)");
+  });
+
+  it("does not render an empty workload metadata row when a grouped option has no secondary description", () => {
+    component.filterCategories = [
+      {
+        category_id: "advisor",
+        name: "Advisor",
+        icon: "bot",
+        collapsed: false,
+      },
+    ];
+    component.customControls = [
+      {
+        name: "benchmark_config",
+        category_id: "advisor",
+        type: "benchmarkConfigSelect",
+        title: "Workload",
+        inputValue: "fio",
+        benchmarkGroups: [
+          {
+            name: "Fio",
+            options: [
+              {
+                benchmark_id: "fio:randread",
+                config: "{}",
+                displayName: "Fio Random Read",
+                configTitle: "",
+                framework: "fio",
+                groupLabel: "Fio",
+                benchmarkTemplate: {
+                  benchmark_id: "fio:randread",
+                  name: "Fio Random Read",
+                  framework: "fio",
+                  description: null,
+                },
+              },
+            ],
+          },
+        ],
+      },
+    ];
+
+    fixture.detectChanges();
+
+    const option = fixture.nativeElement.querySelector(
+      ".custom-autocomplete__option",
+    ) as HTMLElement | null;
+
+    expect(option).not.toBeNull();
+    expect(option?.querySelector(".custom-autocomplete__meta")).toBeNull();
+  });
+
   it("disables benchmark config inputs when the custom control is disabled", () => {
     component.filterCategories = [
       {
@@ -625,5 +729,40 @@ describe("SearchBarComponent", () => {
     expect(vendorParameter.modelValue).toEqual(["aws"]);
     expect(component.isEnumSelected(vendorParameter, "aws")).toBeTrue();
     expect(component.isParameterDisabled("vendor")).toBeTrue();
+  });
+
+  it("renders range slider summary text inline with the primary value", () => {
+    component.filterCategories = [
+      {
+        category_id: "advisor",
+        name: "Advisor",
+        icon: "bot",
+        collapsed: false,
+      },
+    ];
+    component.customControls = [
+      {
+        name: "average_cpu_utilization",
+        category_id: "advisor",
+        type: "rangeSlider",
+        title: "Average utilization",
+        numericValue: 30,
+        min: 0,
+        max: 100,
+        step: 10,
+        unit: "%",
+        valueSummary: "of 100; target score: 30",
+      },
+    ];
+
+    fixture.detectChanges();
+
+    const sliderValue = fixture.nativeElement.querySelector(
+      ".custom-slider__value",
+    ) as HTMLElement;
+
+    expect(sliderValue.textContent?.trim()).toBe(
+      "30% of 100; target score: 30",
+    );
   });
 });

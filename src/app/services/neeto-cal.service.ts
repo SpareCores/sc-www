@@ -10,6 +10,8 @@ export class NeetoCalService {
   private analyticsService = inject(AnalyticsService);
 
   private isScriptLoaded = false;
+  private isScriptLoading = false;
+  private initializedElements = new WeakSet<Element>();
 
   initialize(): void {
     if (!isPlatformBrowser(this.platformId)) {
@@ -22,24 +24,34 @@ export class NeetoCalService {
         );
       },
     };
-    if (!this.isScriptLoaded) {
+    if (!this.isScriptLoaded && !this.isScriptLoading) {
+      this.isScriptLoading = true;
       const script = document.createElement("script");
       script.async = true;
       script.src = "https://cdn.neetocal.com/javascript/embed.js";
       script.onload = () => {
         this.isScriptLoaded = true;
+        this.isScriptLoading = false;
         this.initializeButtons();
       };
+      script.onerror = () => {
+        this.isScriptLoaded = false;
+        this.isScriptLoading = false;
+      };
       document.head.appendChild(script);
-    } else {
+    } else if (this.isScriptLoaded) {
       this.initializeButtons();
     }
   }
 
   private initializeButtons(): void {
+    const advisorMeetingContext =
+      "I am interested in multi-server optimization, programmatic API access, or workflow automations for advanced cloud management.";
+
     const buttonContextMap = {
       "#meeting-header-demo": "",
       "#meeting-general-demo": "",
+      "#meeting-advisor-promo-banner": advisorMeetingContext,
       "#meeting-navigator-caas":
         "I am interested in the managed Container-as-a-Service platform.",
       "#meeting-painpoints":
@@ -54,7 +66,8 @@ export class NeetoCalService {
 
     buttonSelectors.forEach((selector) => {
       const element = document.querySelector(selector);
-      if (element) {
+      if (element && !this.initializedElements.has(element)) {
+        this.initializedElements.add(element);
         element.addEventListener("click", () => {
           this.analyticsService.trackEvent("meeting scheduler open", {
             button_selector: selector.replace("#", ""),

@@ -62,3 +62,23 @@ export type AdvisorSummaryAlert = {
   title: string;
   body: string;
 };
+
+export type AdvisorDeltaTone = "positive" | "negative" | "neutral";
+
+export type AdvisorMetricDelta = {
+  baselineValue: number | null;
+  candidateValue: number | null;
+  percentageDelta: number | null;
+  tone: AdvisorDeltaTone;
+};
+
+export type AdvisorPriceColumnKey =
+  | "min_price"
+  | "min_price_spot"
+  | "min_price_ondemand"
+  | "min_price_ondemand_monthly";
+
+export type AdvisorBaselinePriceAggregate = Record<
+  AdvisorPriceColumnKey,
+  number | null
+>;

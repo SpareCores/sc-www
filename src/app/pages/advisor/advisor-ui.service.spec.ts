@@ -1,4 +1,9 @@
 import { TestBed } from "@angular/core/testing";
+import {
+  Allocation,
+  PriceUnit,
+  ServerPrice,
+} from "../../../../sdk/data-contracts";
 import { AdvisorUiService } from "./advisor-ui.service";
 import { AdvisorBaselineServer } from "./advisor.types";
 
@@ -17,6 +22,12 @@ describe("AdvisorUiService", () => {
   it("returns the empty value for nullish scores", () => {
     expect(service.formatScore(null)).toBe("-");
     expect(service.formatScore(undefined)).toBe("-");
+  });
+
+  it("keeps more precision for sub-1 scores", () => {
+    expect(service.formatScore(0.5)).toBe("0.5");
+    expect(service.formatScore(0.12)).toBe("0.12");
+    expect(service.formatScore(0.045)).toBe("0.045");
   });
 
   it("filters baseline servers after two characters by default", () => {
@@ -90,5 +101,247 @@ describe("AdvisorUiService", () => {
       servers[1],
       servers[2],
     ]);
+  });
+
+  it("builds average utilization summary context from baseline and target scores", () => {
+    expect(service.buildUtilizationSummaryContext(100, 30)).toBe(
+      "of 100; target score: 30",
+    );
+    expect(service.buildUtilizationSummaryContext(null, 30)).toBeNull();
+  });
+
+  it("aggregates baseline prices by region, currency, and allocation rule", () => {
+    const prices: ServerPrice[] = [
+      {
+        vendor_id: "aws",
+        region_id: "us-east-1",
+        zone_id: "us-east-1a",
+        server_id: "srv-1",
+        operating_system: "Linux",
+        allocation: Allocation.Ondemand,
+        unit: PriceUnit.Hour,
+        price: 0.12,
+        currency: "USD",
+      },
+      {
+        vendor_id: "aws",
+        region_id: "eu-west-1",
+        zone_id: "eu-west-1a",
+        server_id: "srv-1",
+        operating_system: "Linux",
+        allocation: Allocation.Spot,
+        unit: PriceUnit.Hour,
+        price: 0.07,
+        currency: "USD",
+      },
+      {
+        vendor_id: "aws",
+        region_id: "us-east-1",
+        zone_id: "us-east-1a",
+        server_id: "srv-1",
+        operating_system: "Linux",
+        allocation: Allocation.Ondemand,
+        unit: PriceUnit.Month,
+        price: 60,
+        currency: "USD",
+      },
+      {
+        vendor_id: "aws",
+        region_id: "us-east-1",
+        zone_id: "us-east-1a",
+        server_id: "srv-1",
+        operating_system: "Linux",
+        allocation: Allocation.Ondemand,
+        unit: PriceUnit.Hour,
+        price: 0.2,
+        currency: "EUR",
+      },
+    ];
+
+    expect(
+      service.buildBaselinePriceAggregate(prices, {
+        bestPriceAllocation: "ANY",
+        currency: "USD",
+      }),
+    ).toEqual({
+      min_price: 0.07,
+      min_price_spot: 0.07,
+      min_price_ondemand: 0.12,
+      min_price_ondemand_monthly: 60,
+    });
+    expect(
+      service.buildBaselinePriceAggregate(prices, {
+        bestPriceAllocation: "ONDEMAND_ONLY",
+        currency: "USD",
+        regionId: "us-east-1",
+      }).min_price,
+    ).toBe(0.12);
+    expect(
+      service.buildBaselinePriceAggregate(prices, {
+        bestPriceAllocation: "MONTHLY",
+        currency: "USD",
+        regionId: "us-east-1",
+      }).min_price,
+    ).toBe(60);
+  });
+
+  it("excludes prices with missing currency metadata when a currency filter is requested", () => {
+    const prices: ServerPrice[] = [
+      {
+        vendor_id: "aws",
+        region_id: "us-east-1",
+        zone_id: "us-east-1a",
+        server_id: "srv-1",
+        operating_system: "Linux",
+        allocation: Allocation.Ondemand,
+        unit: PriceUnit.Hour,
+        price: 0.05,
+      },
+      {
+        vendor_id: "aws",
+        region_id: "us-east-1",
+        zone_id: "us-east-1a",
+        server_id: "srv-1",
+        operating_system: "Linux",
+        allocation: Allocation.Ondemand,
+        unit: PriceUnit.Hour,
+        price: 0.12,
+        currency: "USD",
+      },
+    ];
+
+    expect(
+      service.buildBaselinePriceAggregate(prices, {
+        bestPriceAllocation: "ONDEMAND_ONLY",
+        currency: "USD",
+      }),
+    ).toEqual({
+      min_price: 0.12,
+      min_price_spot: null,
+      min_price_ondemand: 0.12,
+      min_price_ondemand_monthly: 87.6,
+    });
+  });
+
+  it("derives monthly ondemand aggregates from hourly prices when monthly rows are absent", () => {
+    const prices: ServerPrice[] = [
+      {
+        vendor_id: "aws",
+        region_id: "us-east-1",
+        zone_id: "us-east-1a",
+        server_id: "srv-1",
+        operating_system: "Linux",
+        allocation: Allocation.Ondemand,
+        unit: PriceUnit.Hour,
+        price: 0.05,
+        currency: "USD",
+      },
+      {
+        vendor_id: "aws",
+        region_id: "us-east-1",
+        zone_id: "us-east-1b",
+        server_id: "srv-1",
+        operating_system: "Linux",
+        allocation: Allocation.Ondemand,
+        unit: PriceUnit.Hour,
+        price: 0.12,
+        currency: "USD",
+      },
+    ];
+
+    expect(
+      service.buildBaselinePriceAggregate(prices, {
+        bestPriceAllocation: "MONTHLY",
+        currency: "USD",
+      }),
+    ).toEqual({
+      min_price: 36.5,
+      min_price_spot: null,
+      min_price_ondemand: 0.05,
+      min_price_ondemand_monthly: 36.5,
+    });
+  });
+
+  it("prefers the monthly offer for ANY when its hourly equivalent is cheapest", () => {
+    const prices: ServerPrice[] = [
+      {
+        vendor_id: "aws",
+        region_id: "us-east-1",
+        zone_id: "us-east-1a",
+        server_id: "srv-1",
+        operating_system: "Linux",
+        allocation: Allocation.Spot,
+        unit: PriceUnit.Hour,
+        price: 0.07,
+        currency: "USD",
+      },
+      {
+        vendor_id: "aws",
+        region_id: "us-east-1",
+        zone_id: "us-east-1a",
+        server_id: "srv-1",
+        operating_system: "Linux",
+        allocation: Allocation.Ondemand,
+        unit: PriceUnit.Hour,
+        price: 0.12,
+        currency: "USD",
+      },
+      {
+        vendor_id: "aws",
+        region_id: "us-east-1",
+        zone_id: "us-east-1a",
+        server_id: "srv-1",
+        operating_system: "Linux",
+        allocation: Allocation.Ondemand,
+        unit: PriceUnit.Month,
+        price: 36.5,
+        currency: "USD",
+      },
+    ];
+
+    expect(
+      service.buildBaselinePriceAggregate(prices, {
+        bestPriceAllocation: "ANY",
+        currency: "USD",
+      }),
+    ).toEqual({
+      min_price: 36.5,
+      min_price_spot: 0.07,
+      min_price_ondemand: 0.12,
+      min_price_ondemand_monthly: 36.5,
+    });
+  });
+
+  it("builds benchmark and price deltas with the correct polarity", () => {
+    expect(service.buildBenchmarkScoreDelta(120, 100)).toEqual({
+      baselineValue: 100,
+      candidateValue: 120,
+      percentageDelta: 20,
+      tone: "positive",
+    });
+    expect(service.buildBenchmarkScorePerPriceDelta(7.5, 100, 20)).toEqual({
+      baselineValue: 5,
+      candidateValue: 7.5,
+      percentageDelta: 50,
+      tone: "positive",
+    });
+    expect(service.buildPriceDelta(5, 10)).toEqual({
+      baselineValue: 10,
+      candidateValue: 5,
+      percentageDelta: -50,
+      tone: "positive",
+    });
+    expect(service.buildPriceDelta(null, 12)).toEqual({
+      baselineValue: 12,
+      candidateValue: null,
+      percentageDelta: null,
+      tone: "neutral",
+    });
+    expect(service.buildComparableResourceDelta(8, 4)).toEqual({
+      baselineValue: 4,
+      candidateValue: 8,
+      percentageDelta: 100,
+      tone: "positive",
+    });
   });
 });

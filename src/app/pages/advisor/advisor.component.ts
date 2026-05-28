@@ -1,6 +1,8 @@
 import { CommonModule, isPlatformBrowser } from "@angular/common";
 import {
+  AfterViewInit,
   Component,
+  ElementRef,
   OnDestroy,
   OnInit,
   PLATFORM_ID,
@@ -11,6 +13,7 @@ import {
   signal,
   viewChild,
 } from "@angular/core";
+import { Modal, ModalOptions } from "flowbite";
 import { ActivatedRoute, Params, Router, RouterLink } from "@angular/router";
 import { LucideAngularModule } from "lucide-angular";
 import { Subject, Subscription, debounceTime } from "rxjs";
@@ -29,17 +32,24 @@ import {
 } from "../../components/search-bar/search-bar.component";
 import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
 import {
+  Benchmark,
+  BenchmarkConfig,
   BenchmarkScore,
+  BenchmarkScoreStatsItem,
   OrderDir,
+  SearchServerPricesServerPricesGetParams,
   SearchServersServersGetData,
   SearchServersServersGetParams,
   ServerPrice,
+  ServerPriceWithPKs,
   ServerPKs,
 } from "../../../../sdk/data-contracts";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { ServerCompareService } from "../../services/server-compare.service";
 import { ToastService } from "../../services/toast.service";
+import { NeetoCalService } from "../../services/neeto-cal.service";
+import { UiTooltipService } from "../../services/ui-tooltip.service";
 import { encodeQueryParams } from "../../tools/queryParamFunctions";
 import {
   availableCurrencies as AVAILABLE_CURRENCIES,
@@ -52,20 +62,28 @@ import { LoadingSpinnerComponent } from "../../components/loading-spinner/loadin
 import { CpuCacheSizePipe } from "../../pipes/cpu-cache-size.pipe";
 import { GpuCountPipe } from "../../pipes/gpu-count.pipe";
 import {
+  ADVISOR_AVERAGE_UTILIZATION_TITLE,
+  ADVISOR_AVERAGE_UTILIZATION_TOOLTIP,
+  ADVISOR_BASELINE_SERVER_TITLE,
+  ADVISOR_BASELINE_SERVER_TOOLTIP,
   ADVISOR_BREADCRUMBS,
   ADVISOR_BASELINE_REGION_TOOLTIP,
+  ADVISOR_BASELINE_WORKLOAD_TITLE,
+  ADVISOR_BASELINE_WORKLOAD_TOOLTIP,
   ADVISOR_CUSTOM_QUERY_PARAM_NAMES,
   ADVISOR_DISABLED_BASELINE_WORKLOAD_MESSAGE,
+  ADVISOR_EMPTY_BASELINE_WORKLOAD_ACTION_MESSAGE,
   ADVISOR_DEFAULT_CURRENCY,
   ADVISOR_DEFAULT_WORKLOAD_CONFIG,
   ADVISOR_EMPTY_BASELINE_WORKLOAD_MESSAGE,
-  ADVISOR_EMPTY_BASELINE_WORKLOAD_TOAST_ID,
+  ADVISOR_EMPTY_BASELINE_WORKLOAD_RESULTS_MESSAGE,
   ADVISOR_DEFAULT_MINIMUM_MEMORY_GIB,
   ADVISOR_DEFAULT_OPTIMIZATION_GOAL,
   ADVISOR_DEFAULT_PAGE_LIMIT,
   ADVISOR_DEFAULT_PEAK_GPU_MEMORY_GIB,
   ADVISOR_DEFAULT_PRICE_ALLOCATION,
   ADVISOR_DEFAULT_SERVER_COLUMNS,
+  ADVISOR_EXAMPLE_QUERY_PARAMS,
   ADVISOR_FILTER_CATEGORIES,
   ADVISOR_OPTIMIZATION_GOAL_OPTIONS,
   ADVISOR_PARAMETER_PLACEMENTS,
@@ -75,13 +93,19 @@ import {
   ADVISOR_PAGE_TITLE,
   ADVISOR_LOADING_BASELINE_WORKLOAD_MESSAGE,
   ADVISOR_MINIMUM_MEMORY_MIN_GIB,
+  ADVISOR_OPTIMIZATION_GOAL_TITLE,
+  ADVISOR_REQUIRED_GPU_MEMORY_TITLE,
   ADVISOR_REQUIRED_INPUT_LABELS,
+  ADVISOR_REQUIRED_MEMORY_TITLE,
   ADVISOR_SEO,
 } from "./advisor.constants";
 import { AdvisorUiService } from "./advisor-ui.service";
 import {
   AdvisorBaselineServer,
+  AdvisorBaselinePriceAggregate,
+  AdvisorMetricDelta,
   AdvisorOptimizationGoal,
+  AdvisorPriceColumnKey,
   AdvisorRegionMetadata,
   AdvisorTableColumn,
 } from "./advisor.types";
@@ -126,6 +150,198 @@ type RecommendationResult = {
   totalPages: number;
 };
 
+const advisorIntroductionModalOptions: ModalOptions = {
+  backdropClasses: "bg-gray-900/50 fixed inset-0 z-40",
+  closable: true,
+};
+
+const ADVISOR_BASELINE_SERVER_CONTROL_NAME = "baseline_server";
+const ADVISOR_BASELINE_WORKLOAD_CONTROL_NAME = "server_workload";
+const ADVISOR_CUSTOM_CONTROL_FOCUS_ATTEMPT_LIMIT = 20;
+const ADVISOR_WORKLOAD_PROFILE_GROUP_PREFIX = "Workload profile";
+
+function toAdvisorTitleCase(value: string): string {
+  return value
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((word) => {
+      if (/^[A-Z0-9]{2,}$/.test(word)) {
+        return word;
+      }
+
+      return `${word.charAt(0).toUpperCase()}${word.slice(1).toLowerCase()}`;
+    })
+    .join(" ");
+}
+
+function formatAdvisorWorkloadProfileLabel(
+  value: string | null | undefined,
+): string | null {
+  const normalizedValue = value?.trim();
+
+  if (!normalizedValue) {
+    return null;
+  }
+
+  if (!normalizedValue.toLowerCase().startsWith("workload_profile")) {
+    return null;
+  }
+
+  const [, ...segments] = normalizedValue.split(":");
+
+  if (!segments.length) {
+    return ADVISOR_WORKLOAD_PROFILE_GROUP_PREFIX;
+  }
+
+  return `${ADVISOR_WORKLOAD_PROFILE_GROUP_PREFIX}: ${segments
+    .map((segment) => {
+      return toAdvisorTitleCase(segment.replace(/[_-]+/g, " ").trim());
+    })
+    .filter(Boolean)
+    .join(": ")}`;
+}
+
+function humanizeAdvisorIdentifier(value: string | null | undefined): string {
+  const normalizedValue = value?.trim();
+
+  if (!normalizedValue) {
+    return "";
+  }
+
+  return normalizedValue
+    .split(":")
+    .map((segment) => {
+      return toAdvisorTitleCase(segment.replace(/[_-]+/g, " ").trim());
+    })
+    .filter(Boolean)
+    .join(": ");
+}
+
+function formatAdvisorBenchmarkConfigValue(value: unknown): string {
+  if (Array.isArray(value)) {
+    return value.join(", ");
+  }
+
+  if (value && typeof value === "object") {
+    return JSON.stringify(value);
+  }
+
+  return String(value ?? "");
+}
+
+function buildAdvisorConfigTitle(config: unknown): string {
+  if (typeof config !== "string") {
+    return "";
+  }
+
+  const trimmedConfig = config.trim();
+
+  if (!trimmedConfig.length || trimmedConfig === "{}") {
+    return "";
+  }
+
+  try {
+    const parsedConfig = JSON.parse(trimmedConfig) as unknown;
+
+    if (
+      !parsedConfig ||
+      typeof parsedConfig !== "object" ||
+      Array.isArray(parsedConfig)
+    ) {
+      return formatAdvisorBenchmarkConfigValue(parsedConfig);
+    }
+
+    return Object.entries(parsedConfig as Record<string, unknown>)
+      .map(([key, value]) => {
+        return `${humanizeAdvisorIdentifier(key)}: ${formatAdvisorBenchmarkConfigValue(value)}`;
+      })
+      .join(", ");
+  } catch {
+    return trimmedConfig.replaceAll(/[{}"]/g, "");
+  }
+}
+
+function buildAdvisorBenchmarkGroupLabel(
+  config: Pick<BenchmarkConfig, "benchmark_id" | "category">,
+  benchmarkTemplate: Benchmark | null,
+): string {
+  return (
+    formatAdvisorWorkloadProfileLabel(config.category) ||
+    humanizeAdvisorIdentifier(config.category) ||
+    humanizeAdvisorIdentifier(benchmarkTemplate?.framework) ||
+    formatAdvisorWorkloadProfileLabel(config.benchmark_id) ||
+    humanizeAdvisorIdentifier(config.benchmark_id) ||
+    "Other"
+  );
+}
+
+function buildAdvisorBenchmarkDisplayName(
+  config: Pick<BenchmarkConfig, "benchmark_id" | "category">,
+  benchmarkTemplate: Benchmark | null,
+): string {
+  const benchmarkName = benchmarkTemplate?.name?.trim();
+
+  if (benchmarkName && benchmarkName !== config.benchmark_id) {
+    return benchmarkName;
+  }
+
+  return (
+    formatAdvisorWorkloadProfileLabel(config.benchmark_id) ||
+    humanizeAdvisorIdentifier(config.benchmark_id) ||
+    buildAdvisorBenchmarkGroupLabel(config, benchmarkTemplate)
+  );
+}
+
+function compareAdvisorBenchmarkGroups(left: string, right: string): number {
+  const leftIsWorkloadProfile = left
+    .toLowerCase()
+    .startsWith(ADVISOR_WORKLOAD_PROFILE_GROUP_PREFIX.toLowerCase());
+  const rightIsWorkloadProfile = right
+    .toLowerCase()
+    .startsWith(ADVISOR_WORKLOAD_PROFILE_GROUP_PREFIX.toLowerCase());
+
+  if (leftIsWorkloadProfile !== rightIsWorkloadProfile) {
+    return leftIsWorkloadProfile ? -1 : 1;
+  }
+
+  return left.localeCompare(right);
+}
+
+function isAdvisorPriceColumnKey(
+  value: AdvisorTableColumn["key"] | undefined,
+): value is AdvisorPriceColumnKey {
+  return (
+    value === "min_price" ||
+    value === "min_price_spot" ||
+    value === "min_price_ondemand" ||
+    value === "min_price_ondemand_monthly"
+  );
+}
+
+function invertAdvisorDeltaTone(
+  tone: AdvisorMetricDelta["tone"],
+): AdvisorMetricDelta["tone"] {
+  if (tone === "positive") {
+    return "negative";
+  }
+
+  if (tone === "negative") {
+    return "positive";
+  }
+
+  return "neutral";
+}
+
+type AdvisorComparableResourceKey =
+  | "memory_amount"
+  | "gpu_count"
+  | "gpu_memory_min"
+  | "gpu_memory_total"
+  | "storage_size"
+  | "cpu_l1d_cache"
+  | "cpu_l2_cache"
+  | "cpu_l3_cache";
+
 @Component({
   selector: "app-advisor",
   imports: [
@@ -143,7 +359,7 @@ type RecommendationResult = {
   templateUrl: "./advisor.component.html",
   styleUrl: "./advisor.component.scss",
 })
-export class AdvisorComponent implements OnInit, OnDestroy {
+export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
   private platformId = inject(PLATFORM_ID);
   private seoHandler = inject(SeoHandlerService);
   private keeperApi = inject(KeeperAPIService);
@@ -151,10 +367,17 @@ export class AdvisorComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private serverCompare = inject(ServerCompareService);
   private toastService = inject(ToastService);
+  private neetoCalService = inject(NeetoCalService);
+  private uiTooltip = inject(UiTooltipService);
   readonly advisorUi = inject(AdvisorUiService);
   readonly currencyDropdown =
     viewChild<FlowbiteDropdownDirective>("currencyDropdown");
   readonly pageDropdown = viewChild<FlowbiteDropdownDirective>("pageDropdown");
+  readonly searchBar = viewChild(SearchBarComponent);
+  readonly introductionModalRef =
+    viewChild<ElementRef<HTMLElement>>("introductionModal");
+  readonly tooltipDefault =
+    viewChild<ElementRef<HTMLElement>>("tooltipDefault");
   private compareSubscription = new Subscription();
   private lastEncodedQuery: string | null = null;
   private clipboardResetTimeout: ReturnType<typeof setTimeout> | null = null;
@@ -163,10 +386,22 @@ export class AdvisorComponent implements OnInit, OnDestroy {
   private activeRecommendationRequestKey: string | null = null;
   private baselineBenchmarkRequestVersion = 0;
   private baselineRegionRequestVersion = 0;
-  private emptyBaselineWorkloadToastKey: string | null = null;
+  private baselinePriceComparisonRequestVersion = 0;
+  private baselineScoreComparisonRequestVersion = 0;
+  private introductionModal: Modal | null = null;
+  private hasViewInitialized = signal(false);
+  private pendingCustomControlFocus = signal<string | null>(null);
+  private customControlFocusFrame: number | null = null;
+  private customControlFocusAttemptCount = 0;
+  private lastPendingCustomControlFocus: string | null = null;
 
   readonly title = ADVISOR_PAGE_TITLE;
   readonly description = ADVISOR_PAGE_DESCRIPTION;
+  readonly advisorExampleQueryParams = ADVISOR_EXAMPLE_QUERY_PARAMS;
+  readonly emptyBaselineWorkloadMessage =
+    ADVISOR_EMPTY_BASELINE_WORKLOAD_MESSAGE;
+  readonly emptyBaselineWorkloadActionMessage =
+    ADVISOR_EMPTY_BASELINE_WORKLOAD_ACTION_MESSAGE;
 
   readonly breadcrumbs = signal<BreadcrumbSegment[]>(ADVISOR_BREADCRUMBS);
 
@@ -202,6 +437,7 @@ export class AdvisorComponent implements OnInit, OnDestroy {
   readonly totalRecommendationCount = signal(0);
   readonly compareSelectionKeys = signal<string[]>([]);
   readonly clipboardIcon = signal("clipboard");
+  readonly tooltipContent = signal("");
   readonly pendingBaselineVendorId = signal<string | null>(null);
   readonly pendingBaselineApiReference = signal<string | null>(null);
   readonly pendingWorkloadId = signal<string | null>(null);
@@ -232,6 +468,11 @@ export class AdvisorComponent implements OnInit, OnDestroy {
   readonly isBaselineRegionEnabled = signal(false);
   readonly selectedBaselineVendorRegion = signal<string | null>(null);
   readonly baselineServerPrices = signal<ServerPrice[]>([]);
+  readonly baselinePriceComparisonRows = signal<ServerPriceWithPKs[]>([]);
+  readonly baselineScoreComparisonRow = signal<Pick<
+    ServerPKs,
+    "score" | "score_per_price"
+  > | null>(null);
   readonly regionMetadata = signal<AdvisorRegionMetadata[]>([]);
   readonly isLoadingBaselineRegions = signal(false);
   readonly possibleColumns = signal<AdvisorTableColumn[]>(
@@ -240,6 +481,11 @@ export class AdvisorComponent implements OnInit, OnDestroy {
   readonly tableColumns = computed(() =>
     this.possibleColumns().filter((column) => column.show),
   );
+  readonly hasBaselineScoreComparisonColumns = computed(() => {
+    return this.tableColumns().some((column) => {
+      return column.type === "score" || column.type === "score_per_price";
+    });
+  });
   readonly hasCustomColumns = computed(() =>
     hasCustomAdvisorColumns(this.possibleColumns()),
   );
@@ -302,6 +548,14 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     return "No matching workloads found.";
   });
 
+  readonly hasEmptyBaselineWorkloadWarning = computed(() => {
+    return (
+      !!this.selectedBaselineServer() &&
+      !this.isLoadingBaselineBenchmarkScores() &&
+      this.baselineBenchmarkConfigOptions().length === 0
+    );
+  });
+
   readonly visibleBenchmarkConfigOptions = computed(() => {
     const searchTerm = this.benchmarkConfigInput().trim().toLowerCase();
     const options = this.baselineBenchmarkConfigOptions();
@@ -311,23 +565,21 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     }
 
     return options.filter((option) => {
-      const category = (
-        option.category ||
-        option.framework ||
-        ""
-      ).toLowerCase();
-      const displayName = option.displayName.toLowerCase();
-      const config = option.config.toLowerCase();
-      const description = (
-        option.benchmarkTemplate?.description || ""
-      ).toLowerCase();
+      const searchableText = [
+        option.groupLabel,
+        option.category,
+        option.framework,
+        option.displayName,
+        option.configTitle,
+        option.config,
+        option.benchmark_id,
+        option.benchmarkTemplate?.description || "",
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
 
-      return (
-        category.includes(searchTerm) ||
-        displayName.includes(searchTerm) ||
-        config.includes(searchTerm) ||
-        description.includes(searchTerm)
-      );
+      return searchableText.includes(searchTerm);
     });
   });
 
@@ -335,7 +587,7 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     const grouped = new Map<string, SearchBarBenchmarkConfigOption[]>();
 
     for (const option of this.visibleBenchmarkConfigOptions()) {
-      const groupName = option.category || option.framework || "Other";
+      const groupName = option.groupLabel || option.framework || "Other";
       if (!grouped.has(groupName)) {
         grouped.set(groupName, []);
       }
@@ -343,12 +595,20 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     }
 
     return Array.from(grouped.entries())
-      .sort(([left], [right]) => left.localeCompare(right))
+      .sort(([left], [right]) => compareAdvisorBenchmarkGroups(left, right))
       .map(([name, options]) => ({
         name,
-        options: options.sort((left, right) =>
-          left.displayName.localeCompare(right.displayName),
-        ),
+        options: options.sort((left, right) => {
+          const displayNameComparison = left.displayName.localeCompare(
+            right.displayName,
+          );
+
+          if (displayNameComparison !== 0) {
+            return displayNameComparison;
+          }
+
+          return left.configTitle.localeCompare(right.configTitle);
+        }),
       }));
   });
 
@@ -383,6 +643,61 @@ export class AdvisorComponent implements OnInit, OnDestroy {
 
     return Number(((benchmarkScore.score * cpuUtilization) / 100).toFixed(2));
   });
+
+  readonly averageCpuUtilizationSummary = computed(() => {
+    return this.advisorUi.buildUtilizationSummaryContext(
+      this.matchedBaselineBenchmarkScore()?.score,
+      this.benchmarkScoreMinimum(),
+    );
+  });
+
+  readonly baselinePriceAggregate = computed<AdvisorBaselinePriceAggregate>(
+    () => {
+      const selectedBaselineVendorRegion = this.selectedBaselineVendorRegion();
+      const baselinePriceAggregate = this.advisorUi.buildBaselinePriceAggregate(
+        this.baselineServerPrices(),
+        {
+          bestPriceAllocation: this.isPriceAllocationEnabled()
+            ? this.bestPriceAllocation().slug
+            : "ANY",
+          currency: this.selectedCurrency().slug,
+          regionId:
+            this.isBaselineRegionEnabled() && selectedBaselineVendorRegion
+              ? selectedBaselineVendorRegion.split("~")[1] || null
+              : null,
+        },
+      );
+
+      if (baselinePriceAggregate.min_price_ondemand_monthly !== null) {
+        return baselinePriceAggregate;
+      }
+
+      const fallbackMonthlyPrice =
+        this.getBaselineMonthlyPriceFallback() ??
+        this.recommendations().find((recommendation) =>
+          this.isSelectedBaselineRecommendation(recommendation),
+        )?.min_price_ondemand_monthly;
+
+      if (
+        typeof fallbackMonthlyPrice !== "number" ||
+        !Number.isFinite(fallbackMonthlyPrice) ||
+        fallbackMonthlyPrice <= 0
+      ) {
+        return baselinePriceAggregate;
+      }
+
+      return {
+        ...baselinePriceAggregate,
+        min_price:
+          this.isPriceAllocationEnabled() &&
+          this.bestPriceAllocation().slug === "MONTHLY" &&
+          baselinePriceAggregate.min_price === null
+            ? fallbackMonthlyPrice
+            : baselinePriceAggregate.min_price,
+        min_price_ondemand_monthly: fallbackMonthlyPrice,
+      };
+    },
+  );
 
   readonly derivedMinimumMemoryGiB = computed<number | null>(() => {
     const selectedBaselineServer = this.selectedBaselineServer();
@@ -431,9 +746,15 @@ export class AdvisorComponent implements OnInit, OnDestroy {
   readonly recommendationSummary = computed(() =>
     this.advisorUi.buildRecommendationSummary(this.totalRecommendationCount()),
   );
-  readonly recommendationEmptyStateMessage = computed(() =>
-    this.advisorUi.buildMissingInputsMessage(this.missingRequiredInputs()),
-  );
+  readonly recommendationEmptyStateMessage = computed(() => {
+    if (this.hasEmptyBaselineWorkloadWarning()) {
+      return ADVISOR_EMPTY_BASELINE_WORKLOAD_RESULTS_MESSAGE;
+    }
+
+    return this.advisorUi.buildMissingInputsMessage(
+      this.missingRequiredInputs(),
+    );
+  });
   readonly compareCount = computed(() => this.compareSelectionKeys().length);
   readonly isBaselineSelectedForCompare = computed(() => {
     const selectedBaselineServer = this.selectedBaselineServer();
@@ -584,9 +905,11 @@ export class AdvisorComponent implements OnInit, OnDestroy {
         name: "baseline_server",
         category_id: "advisor",
         type: "serverAutocomplete",
-        title: "Baseline server",
+        title: ADVISOR_BASELINE_SERVER_TITLE,
         placeholder: "Search for server...",
         required: true,
+        description: ADVISOR_BASELINE_SERVER_TOOLTIP,
+        descriptionDisplay: "tooltip",
         minCharacters: 2,
         inputValue: this.baselineServerInput(),
         selectedServer: this.selectedBaselineServer(),
@@ -599,9 +922,11 @@ export class AdvisorComponent implements OnInit, OnDestroy {
         name: "server_workload",
         category_id: "advisor",
         type: "benchmarkConfigSelect",
-        title: "Baseline workload",
+        title: ADVISOR_BASELINE_WORKLOAD_TITLE,
         placeholder: "Search benchmark or browse categories...",
         required: true,
+        description: ADVISOR_BASELINE_WORKLOAD_TOOLTIP,
+        descriptionDisplay: "tooltip",
         minCharacters: 3,
         inputValue: this.benchmarkConfigInput(),
         selectedBenchmarkConfig: this.selectedBenchmarkConfig(),
@@ -617,7 +942,7 @@ export class AdvisorComponent implements OnInit, OnDestroy {
         name: "optimization_goal",
         category_id: "advisor",
         type: "singleSelect",
-        title: "Optimization goal",
+        title: ADVISOR_OPTIMIZATION_GOAL_TITLE,
         required: true,
         description:
           "Optimizing for cost searches for the cheapest servers matching the minimum requested performance, performance-mode ranks servers with the highest measured speed for the selected workload, and cost-efficiency target will find the servers with the highest performance at a fixed unit cost.",
@@ -628,11 +953,12 @@ export class AdvisorComponent implements OnInit, OnDestroy {
         name: "average_cpu_utilization",
         category_id: "advisor",
         type: "rangeSlider",
-        title: "Average utilization",
+        title: ADVISOR_AVERAGE_UTILIZATION_TITLE,
         required: true,
-        description:
-          "The selected workload score threshold is derived from the baseline server score scaled by this expected average utilization.",
+        description: ADVISOR_AVERAGE_UTILIZATION_TOOLTIP,
+        descriptionDisplay: "tooltip",
         numericValue: this.averageCpuUtilization(),
+        valueSummary: this.averageCpuUtilizationSummary(),
         min: 0,
         max: 100,
         step: 10,
@@ -644,7 +970,7 @@ export class AdvisorComponent implements OnInit, OnDestroy {
         name: "minimum_memory",
         category_id: "advisor",
         type: "powerOfTwoStepper",
-        title: "Minimum memory",
+        title: ADVISOR_REQUIRED_MEMORY_TITLE,
         description:
           "Memory requirement in GiB. Leave this empty to auto-fill from the selected baseline server memory and average utilization, or type any value and use the stepper to snap through powers of two starting at 0.5 GiB.",
         numericValue: this.minimumMemoryGiB(),
@@ -656,7 +982,7 @@ export class AdvisorComponent implements OnInit, OnDestroy {
         name: "peak_gpu_memory",
         category_id: "advisor",
         type: "powerOfTwoStepper",
-        title: "Peak GPU memory usage",
+        title: ADVISOR_REQUIRED_GPU_MEMORY_TITLE,
         description:
           "Total GPU memory requirement in GiB. You can type any value, or use the stepper to snap through powers of two. Leave at 0 to avoid applying GPU filters.",
         numericValue: this.peakGpuMemoryGiB(),
@@ -826,8 +1152,6 @@ export class AdvisorComponent implements OnInit, OnDestroy {
       const selectedBenchmarkConfig = this.selectedBenchmarkConfig();
 
       if (!selectedBaselineServer) {
-        this.emptyBaselineWorkloadToastKey = null;
-
         if (selectedBenchmarkConfig) {
           this.selectedBenchmarkConfig.set(null);
           this.benchmarkConfigInput.set("");
@@ -844,8 +1168,6 @@ export class AdvisorComponent implements OnInit, OnDestroy {
         this.baselineBenchmarkConfigOptions();
 
       if (baselineBenchmarkConfigOptions.length === 0) {
-        this.showEmptyBaselineWorkloadToast(selectedBaselineServer);
-
         if (selectedBenchmarkConfig) {
           this.selectedBenchmarkConfig.set(null);
           this.benchmarkConfigInput.set("");
@@ -853,8 +1175,6 @@ export class AdvisorComponent implements OnInit, OnDestroy {
 
         return;
       }
-
-      this.emptyBaselineWorkloadToastKey = null;
 
       if (
         selectedBenchmarkConfig &&
@@ -871,16 +1191,52 @@ export class AdvisorComponent implements OnInit, OnDestroy {
 
     effect(() => {
       const selectedBaselineServer = this.selectedBaselineServer();
+      const selectedCurrency = this.selectedCurrency().slug;
 
       if (!selectedBaselineServer) {
         this.baselineServerPrices.set([]);
+        this.baselinePriceComparisonRows.set([]);
+        this.baselineScoreComparisonRow.set(null);
         this.isLoadingBaselineRegions.set(false);
         this.isBaselineRegionEnabled.set(false);
         this.selectedBaselineVendorRegion.set(null);
         return;
       }
 
-      void this.loadBaselineRegionPrices(selectedBaselineServer);
+      void this.loadBaselineRegionPrices(
+        selectedBaselineServer,
+        selectedCurrency,
+      );
+      void this.loadBaselinePriceComparisonRows(
+        selectedBaselineServer,
+        selectedCurrency,
+      );
+    });
+
+    effect(() => {
+      const selectedBaselineServer = this.selectedBaselineServer();
+      const hasBaselineScoreComparisonColumns =
+        this.hasBaselineScoreComparisonColumns();
+      const baselineRecommendation = selectedBaselineServer
+        ? this.recommendations().find((recommendation) => {
+            return this.isSelectedBaselineRecommendation(recommendation);
+          })
+        : null;
+
+      if (!selectedBaselineServer || !hasBaselineScoreComparisonColumns) {
+        this.baselineScoreComparisonRow.set(null);
+        return;
+      }
+
+      if (
+        baselineRecommendation?.score != null &&
+        baselineRecommendation?.score_per_price != null
+      ) {
+        this.baselineScoreComparisonRow.set(null);
+        return;
+      }
+
+      void this.loadBaselineScoreComparisonRow(selectedBaselineServer);
     });
 
     effect(() => {
@@ -965,6 +1321,30 @@ export class AdvisorComponent implements OnInit, OnDestroy {
         window.history.pushState({}, "", path);
       }
     });
+
+    effect(() => {
+      const focusTarget = this.pendingCustomControlFocus();
+      const searchBar = this.searchBar();
+      const hasViewInitialized = this.hasViewInitialized();
+
+      if (
+        !focusTarget ||
+        !searchBar ||
+        !hasViewInitialized ||
+        !isPlatformBrowser(this.platformId)
+      ) {
+        return;
+      }
+
+      if (focusTarget === ADVISOR_BASELINE_WORKLOAD_CONTROL_NAME) {
+        this.selectedBaselineServer();
+        this.isLoadingBaselineBenchmarkScores();
+        this.baselineBenchmarkConfigOptions();
+        this.isBaselineWorkloadControlDisabled();
+      }
+
+      this.queuePendingCustomControlFocusAttempt();
+    });
   }
 
   ngOnInit(): void {
@@ -997,17 +1377,33 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     );
   }
 
+  ngAfterViewInit(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
+    this.neetoCalService.initialize();
+    this.hasViewInitialized.set(true);
+  }
+
   ngOnDestroy(): void {
     this.compareSubscription.unsubscribe();
+
+    if (
+      this.customControlFocusFrame !== null &&
+      isPlatformBrowser(this.platformId)
+    ) {
+      cancelAnimationFrame(this.customControlFocusFrame);
+      this.customControlFocusFrame = null;
+    }
 
     if (this.clipboardResetTimeout) {
       clearTimeout(this.clipboardResetTimeout);
       this.clipboardResetTimeout = null;
     }
-  }
 
-  toggleCollapse(): void {
-    this.isCollapsed.update((value) => !value);
+    this.introductionModal?.hide();
+    this.introductionModal = null;
   }
 
   toggleOrdering(column: AdvisorTableColumn): void {
@@ -1038,6 +1434,221 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     return this.activeOrderDir() === OrderDir.Desc
       ? "arrow-down-wide-narrow"
       : "arrow-down-narrow-wide";
+  }
+
+  showTooltip(event: Event, content: string): void {
+    const tooltipElement = this.tooltipDefault()?.nativeElement;
+
+    if (!tooltipElement) {
+      return;
+    }
+
+    this.tooltipContent.set(content);
+    this.uiTooltip.show(tooltipElement, event, {
+      left: "anchor-right",
+      top: "anchor-above",
+    });
+  }
+
+  hideTooltip(): void {
+    this.uiTooltip.hide(this.tooltipDefault()?.nativeElement);
+  }
+
+  getBenchmarkDelta(recommendation: ServerPKs): AdvisorMetricDelta | null {
+    if (this.isSelectedBaselineRecommendation(recommendation)) {
+      return null;
+    }
+
+    const delta = this.advisorUi.buildBenchmarkScoreDelta(
+      recommendation.selected_benchmark_score,
+      this.matchedBaselineBenchmarkScore()?.score,
+    );
+
+    if (this.selectedBenchmarkConfig()?.benchmarkTemplate?.higher_is_better) {
+      return delta;
+    }
+
+    return {
+      ...delta,
+      tone: invertAdvisorDeltaTone(delta.tone),
+    };
+  }
+
+  getBenchmarkDisplayScore(recommendation: ServerPKs): number | null {
+    if (recommendation.selected_benchmark_score != null) {
+      return recommendation.selected_benchmark_score ?? null;
+    }
+
+    return this.matchedBaselineBenchmarkScore()?.score ?? null;
+  }
+
+  getBenchmarkScorePerPriceDisplayValue(
+    recommendation: ServerPKs,
+  ): number | null {
+    if (recommendation.selected_benchmark_score_per_price != null) {
+      return recommendation.selected_benchmark_score_per_price ?? null;
+    }
+
+    const baselineScore = this.matchedBaselineBenchmarkScore()?.score;
+    const baselinePrice = this.baselinePriceAggregate().min_price;
+
+    if (
+      baselineScore === null ||
+      baselineScore === undefined ||
+      baselinePrice === null ||
+      baselinePrice <= 0
+    ) {
+      return null;
+    }
+
+    return this.advisorUi.buildBenchmarkScorePerPrice(
+      baselineScore,
+      baselinePrice,
+    );
+  }
+
+  getBenchmarkScorePerPriceDelta(
+    recommendation: ServerPKs,
+  ): AdvisorMetricDelta | null {
+    if (this.isSelectedBaselineRecommendation(recommendation)) {
+      return null;
+    }
+
+    return this.advisorUi.buildBenchmarkScorePerPriceDelta(
+      recommendation.selected_benchmark_score_per_price,
+      this.matchedBaselineBenchmarkScore()?.score,
+      this.baselinePriceAggregate().min_price,
+    );
+  }
+
+  getScoreDelta(recommendation: ServerPKs): AdvisorMetricDelta | null {
+    if (this.isSelectedBaselineRecommendation(recommendation)) {
+      return null;
+    }
+
+    return this.advisorUi.buildComparableResourceDelta(
+      recommendation.score,
+      this.getBaselineScoreComparisonValue("score"),
+    );
+  }
+
+  getScorePerPriceDelta(recommendation: ServerPKs): AdvisorMetricDelta | null {
+    if (this.isSelectedBaselineRecommendation(recommendation)) {
+      return null;
+    }
+
+    return this.advisorUi.buildComparableResourceDelta(
+      recommendation.score_per_price,
+      this.getBaselineScoreComparisonValue("score_per_price"),
+    );
+  }
+
+  getPriceDelta(
+    recommendation: ServerPKs,
+    columnKey: AdvisorTableColumn["key"] | undefined,
+  ): AdvisorMetricDelta | null {
+    if (this.isSelectedBaselineRecommendation(recommendation)) {
+      return null;
+    }
+
+    if (!isAdvisorPriceColumnKey(columnKey)) {
+      return {
+        baselineValue: null,
+        candidateValue: null,
+        percentageDelta: null,
+        tone: "neutral",
+      };
+    }
+
+    return this.advisorUi.buildPriceDelta(
+      recommendation[columnKey],
+      this.baselinePriceAggregate()[columnKey],
+    );
+  }
+
+  getComparableResourceDelta(
+    recommendation: ServerPKs,
+    resourceKey: AdvisorComparableResourceKey,
+  ): AdvisorMetricDelta | null {
+    if (this.isSelectedBaselineRecommendation(recommendation)) {
+      return null;
+    }
+
+    const baselineServer = this.selectedBaselineServer();
+
+    if (!baselineServer) {
+      return null;
+    }
+
+    return this.advisorUi.buildComparableResourceDelta(
+      recommendation[resourceKey],
+      baselineServer[resourceKey],
+    );
+  }
+
+  getDeltaLabel(delta: AdvisorMetricDelta): string | null {
+    if (delta.candidateValue === null) {
+      return null;
+    }
+
+    if (delta.percentageDelta === null) {
+      return "";
+    }
+
+    const roundedPercentage = Math.round(Math.abs(delta.percentageDelta));
+    if (roundedPercentage === 0) {
+      return "0%";
+    }
+
+    return delta.tone === "negative"
+      ? `-${roundedPercentage}%`
+      : `+${roundedPercentage}%`;
+  }
+
+  getParenthesizedDeltaLabel(delta: AdvisorMetricDelta): string | null {
+    const deltaLabel = this.getDeltaLabel(delta);
+
+    if (!deltaLabel || deltaLabel === "0%") {
+      return deltaLabel === "0%" ? null : deltaLabel;
+    }
+
+    return `(${deltaLabel})`;
+  }
+
+  getPriceDeltaLabel(delta: AdvisorMetricDelta): string | null {
+    if (delta.candidateValue === null) {
+      return null;
+    }
+
+    if (delta.percentageDelta === null) {
+      return "";
+    }
+
+    const roundedPercentage = Math.round(Math.abs(delta.percentageDelta));
+
+    if (roundedPercentage === 0) {
+      return "0%";
+    }
+
+    return delta.percentageDelta < 0
+      ? `-${roundedPercentage}%`
+      : `+${roundedPercentage}%`;
+  }
+
+  private getBaselineScoreComparisonValue(
+    key: "score" | "score_per_price",
+  ): number | null | undefined {
+    const baselineRecommendation = this.recommendations().find(
+      (recommendation) => {
+        return this.isSelectedBaselineRecommendation(recommendation);
+      },
+    );
+
+    if (baselineRecommendation?.[key] != null) {
+      return baselineRecommendation[key];
+    }
+
+    return this.baselineScoreComparisonRow()?.[key] ?? null;
   }
 
   selectPageSize(limit: number): void {
@@ -1144,6 +1755,33 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     }
   }
 
+  openIntroductionModal(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
+    if (!this.introductionModal) {
+      const modalElement = this.introductionModalRef()?.nativeElement;
+
+      if (modalElement) {
+        this.introductionModal = new Modal(
+          modalElement,
+          advisorIntroductionModalOptions,
+        );
+      }
+    }
+
+    this.introductionModal?.show();
+  }
+
+  closeIntroductionModal(): void {
+    this.introductionModal?.hide();
+  }
+
+  toggleCollapse(): void {
+    this.isCollapsed.update((value) => !value);
+  }
+
   openCompare(): void {
     this.serverCompare.openCompare();
   }
@@ -1164,7 +1802,11 @@ export class AdvisorComponent implements OnInit, OnDestroy {
   onCustomControlChanged(event: { name: string; value: unknown }): void {
     switch (event.name) {
       case "baseline_server":
-        this.applyBaselineServerControlValue(event.value);
+        if (this.applyBaselineServerControlValue(event.value)) {
+          this.pendingCustomControlFocus.set(
+            ADVISOR_BASELINE_WORKLOAD_CONTROL_NAME,
+          );
+        }
         break;
       case "limit_architecture":
         this.applyBooleanControlValue(
@@ -1283,37 +1925,68 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     Promise.all([
       this.keeperApi.getServerBenchmarkMeta(),
       this.keeperApi.getBenchmarkConfigs(),
+      this.keeperApi.getBenchmarkWorkloads(),
     ])
-      .then(([benchmarkMetaResponse, benchmarkConfigResponse]) => {
-        const benchmarkMeta = benchmarkMetaResponse?.body || [];
-        const benchmarkConfigs = benchmarkConfigResponse?.body || [];
+      .then(
+        ([
+          benchmarkMetaResponse,
+          benchmarkConfigResponse,
+          benchmarkWorkloadsResponse,
+        ]) => {
+          const benchmarkMeta = (benchmarkMetaResponse?.body ||
+            []) as Benchmark[];
+          const benchmarkConfigs = (benchmarkConfigResponse?.body ||
+            []) as BenchmarkConfig[];
+          const benchmarkWorkloads = (benchmarkWorkloadsResponse?.body ||
+            []) as BenchmarkScoreStatsItem[];
+          const benchmarkPolarityById = new Map<string, boolean>(
+            benchmarkWorkloads.map((workload) => [
+              workload.benchmark_id,
+              workload.higher_is_better,
+            ]),
+          );
 
-        const options = benchmarkConfigs.map(
-          (config: any): SearchBarBenchmarkConfigOption => {
-            const benchmarkTemplate =
-              benchmarkMeta.find(
-                (benchmark: any) =>
-                  benchmark.benchmark_id === config.benchmark_id,
-              ) || null;
+          const options = benchmarkConfigs.map(
+            (config): SearchBarBenchmarkConfigOption => {
+              const benchmarkTemplateFromMeta =
+                benchmarkMeta.find(
+                  (benchmark) => benchmark.benchmark_id === config.benchmark_id,
+                ) || null;
+              const benchmarkTemplate = benchmarkTemplateFromMeta
+                ? {
+                    ...benchmarkTemplateFromMeta,
+                    higher_is_better:
+                      benchmarkPolarityById.get(config.benchmark_id) ??
+                      benchmarkTemplateFromMeta.higher_is_better,
+                  }
+                : null;
+              const groupLabel = buildAdvisorBenchmarkGroupLabel(
+                config,
+                benchmarkTemplate,
+              );
+              const configTitle = buildAdvisorConfigTitle(config.config);
+              const displayName = buildAdvisorBenchmarkDisplayName(
+                config,
+                benchmarkTemplate,
+              );
 
-            const configTitle = (config.config || "").replaceAll(/[{}"]/g, "");
-            const displayName = benchmarkTemplate?.name || config.benchmark_id;
+              return {
+                ...config,
+                benchmarkTemplate,
+                groupLabel,
+                configTitle,
+                displayName,
+                framework:
+                  benchmarkTemplate?.framework ||
+                  groupLabel ||
+                  config.benchmark_id,
+              };
+            },
+          );
 
-            return {
-              ...config,
-              benchmarkTemplate,
-              configTitle,
-              displayName,
-              framework:
-                benchmarkTemplate?.framework ||
-                config.category ||
-                config.benchmark_id,
-            };
-          },
-        );
-
-        this.benchmarkConfigOptions.set(options);
-      })
+          this.benchmarkConfigOptions.set(options);
+        },
+      )
       .catch((error) => {
         console.error("Failed to preload advisor benchmark configs", error);
         this.benchmarkConfigOptions.set([]);
@@ -1377,6 +2050,7 @@ export class AdvisorComponent implements OnInit, OnDestroy {
 
   private async loadBaselineRegionPrices(
     server: AdvisorBaselineServer,
+    currency: string,
   ): Promise<void> {
     const requestVersion = ++this.baselineRegionRequestVersion;
     this.isLoadingBaselineRegions.set(true);
@@ -1385,6 +2059,7 @@ export class AdvisorComponent implements OnInit, OnDestroy {
       const response = await this.keeperApi.getServerPrices(
         server.vendor_id,
         server.api_reference,
+        currency,
       );
 
       if (requestVersion !== this.baselineRegionRequestVersion) {
@@ -1404,6 +2079,124 @@ export class AdvisorComponent implements OnInit, OnDestroy {
         this.isLoadingBaselineRegions.set(false);
       }
     }
+  }
+
+  private async loadBaselinePriceComparisonRows(
+    server: AdvisorBaselineServer,
+    currency: string,
+  ): Promise<void> {
+    const requestVersion = ++this.baselinePriceComparisonRequestVersion;
+    const query: SearchServerPricesServerPricesGetParams = {
+      partial_name_or_id: server.api_reference,
+      vendor:
+        server.vendor_id as SearchServerPricesServerPricesGetParams["vendor"],
+      currency,
+    };
+
+    try {
+      const response = await this.keeperApi.searchServerPrices(query);
+
+      if (
+        requestVersion !== this.baselinePriceComparisonRequestVersion ||
+        this.selectedBaselineServer()?.vendor_id !== server.vendor_id ||
+        this.selectedBaselineServer()?.api_reference !== server.api_reference ||
+        this.selectedCurrency().slug !== currency
+      ) {
+        return;
+      }
+
+      this.baselinePriceComparisonRows.set(
+        (response?.body || []).filter((price: ServerPriceWithPKs) => {
+          return (
+            price.vendor_id === server.vendor_id &&
+            (price.server?.api_reference === server.api_reference ||
+              price.server_id === server.api_reference)
+          );
+        }),
+      );
+    } catch (error) {
+      if (
+        requestVersion !== this.baselinePriceComparisonRequestVersion ||
+        this.selectedBaselineServer()?.vendor_id !== server.vendor_id ||
+        this.selectedBaselineServer()?.api_reference !== server.api_reference ||
+        this.selectedCurrency().slug !== currency
+      ) {
+        return;
+      }
+
+      console.error("Failed to load advisor baseline comparison prices", error);
+      this.baselinePriceComparisonRows.set([]);
+    }
+  }
+
+  private async loadBaselineScoreComparisonRow(
+    server: AdvisorBaselineServer,
+  ): Promise<void> {
+    const requestVersion = ++this.baselineScoreComparisonRequestVersion;
+    const query: SearchServersServersGetParams = {
+      partial_name_or_id: server.api_reference,
+      vendor: server.vendor_id as SearchServersServersGetParams["vendor"],
+      only_active: true,
+    };
+
+    try {
+      const response = await this.keeperApi.searchServers(query);
+
+      if (
+        requestVersion !== this.baselineScoreComparisonRequestVersion ||
+        this.selectedBaselineServer()?.vendor_id !== server.vendor_id ||
+        this.selectedBaselineServer()?.api_reference !== server.api_reference ||
+        !this.hasBaselineScoreComparisonColumns()
+      ) {
+        return;
+      }
+
+      const baselineComparisonRow = (response?.body || []).find(
+        (candidate: ServerPKs) => {
+          return (
+            candidate.vendor_id === server.vendor_id &&
+            candidate.api_reference === server.api_reference
+          );
+        },
+      );
+
+      this.baselineScoreComparisonRow.set(
+        baselineComparisonRow
+          ? {
+              score: baselineComparisonRow.score ?? null,
+              score_per_price: baselineComparisonRow.score_per_price ?? null,
+            }
+          : null,
+      );
+    } catch (error) {
+      if (requestVersion !== this.baselineScoreComparisonRequestVersion) {
+        return;
+      }
+
+      console.error(
+        "Failed to load advisor baseline score comparison row",
+        error,
+      );
+      this.baselineScoreComparisonRow.set(null);
+    }
+  }
+
+  private getBaselineMonthlyPriceFallback(): number | null {
+    const selectedBaselineVendorRegion = this.selectedBaselineVendorRegion();
+    const scopedRegionId =
+      this.isBaselineRegionEnabled() && selectedBaselineVendorRegion
+        ? selectedBaselineVendorRegion.split("~")[1] || null
+        : null;
+
+    return (
+      this.baselinePriceComparisonRows()
+        .filter((price) => {
+          return !scopedRegionId || price.region_id === scopedRegionId;
+        })
+        .map((price) => this.advisorUi.getOndemandMonthlyPrice(price))
+        .filter((price): price is number => price !== null)
+        .sort((left, right) => left - right)[0] ?? null
+    );
   }
 
   private async requestRecommendations(
@@ -1587,12 +2380,20 @@ export class AdvisorComponent implements OnInit, OnDestroy {
           this.baselineServerInput.set("");
           this.limitToSameArchitecture.set(false);
           this.limitToSameCpuAllocation.set(false);
+          this.pendingCustomControlFocus.set(
+            ADVISOR_BASELINE_SERVER_CONTROL_NAME,
+          );
         } else {
           this.limitToSameArchitecture.set(
             queryParams.limit_architecture === "true",
           );
           this.limitToSameCpuAllocation.set(
             queryParams.limit_cpu_allocation === "true",
+          );
+          this.pendingCustomControlFocus.set(
+            queryParams.workload_id
+              ? null
+              : ADVISOR_BASELINE_WORKLOAD_CONTROL_NAME,
           );
         }
 
@@ -1760,23 +2561,6 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     this.isLoadingRecommendations.set(false);
   }
 
-  private showEmptyBaselineWorkloadToast(server: AdvisorBaselineServer): void {
-    const baselineKey = getAdvisorCompareKey(server);
-
-    if (this.emptyBaselineWorkloadToastKey === baselineKey) {
-      return;
-    }
-
-    this.emptyBaselineWorkloadToastKey = baselineKey;
-    this.toastService.show({
-      id: ADVISOR_EMPTY_BASELINE_WORKLOAD_TOAST_ID,
-      title: "No baseline workloads found",
-      body: `${ADVISOR_EMPTY_BASELINE_WORKLOAD_MESSAGE} Choose another baseline server.`,
-      type: "warning",
-      duration: 5000,
-    });
-  }
-
   private toggleCompare(server: {
     api_reference: string;
     vendor_id: string;
@@ -1788,7 +2572,7 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     );
   }
 
-  private applyBaselineServerControlValue(value: unknown): void {
+  private applyBaselineServerControlValue(value: unknown): boolean {
     const nextValue =
       value && typeof value === "object"
         ? (value as {
@@ -1805,6 +2589,53 @@ export class AdvisorComponent implements OnInit, OnDestroy {
     if (!this.selectedBaselineServer()) {
       this.limitToSameArchitecture.set(false);
       this.limitToSameCpuAllocation.set(false);
+    }
+
+    return Boolean(nextValue.selectedServer);
+  }
+
+  private queuePendingCustomControlFocusAttempt(): void {
+    if (
+      this.customControlFocusFrame !== null ||
+      !isPlatformBrowser(this.platformId)
+    ) {
+      return;
+    }
+
+    this.customControlFocusFrame = requestAnimationFrame(() => {
+      this.customControlFocusFrame = null;
+      this.focusPendingCustomControl();
+    });
+  }
+
+  private focusPendingCustomControl(): void {
+    const focusTarget = this.pendingCustomControlFocus();
+
+    if (!focusTarget) {
+      this.customControlFocusAttemptCount = 0;
+      this.lastPendingCustomControlFocus = null;
+      return;
+    }
+
+    if (this.lastPendingCustomControlFocus !== focusTarget) {
+      this.customControlFocusAttemptCount = 0;
+      this.lastPendingCustomControlFocus = focusTarget;
+    }
+
+    if (this.searchBar()?.focusCustomControl(focusTarget)) {
+      this.customControlFocusAttemptCount = 0;
+      this.lastPendingCustomControlFocus = null;
+      this.pendingCustomControlFocus.set(null);
+      return;
+    }
+
+    this.customControlFocusAttemptCount += 1;
+
+    if (
+      this.customControlFocusAttemptCount <
+      ADVISOR_CUSTOM_CONTROL_FOCUS_ATTEMPT_LIMIT
+    ) {
+      this.queuePendingCustomControlFocusAttempt();
     }
   }
 

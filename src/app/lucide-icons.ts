@@ -87,6 +87,8 @@ import {
   Maximize2,
   Minus,
   Plus,
+  Dices,
+  TvMinimalPlay,
 } from "lucide-angular";
 
 export const lucideIcons = {
@@ -178,4 +180,6 @@ export const lucideIcons = {
   Maximize2,
   Minus,
   Plus,
+  Dices,
+  TvMinimalPlay,
 };

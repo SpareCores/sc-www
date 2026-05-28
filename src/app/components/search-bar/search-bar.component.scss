@@ -237,14 +237,6 @@
     @apply text-sm font-semibold text-white;
   }
 
-  .custom-slider__clear {
-    @apply text-sky-100;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
   .custom-slider__input {
     width: 100%;
     accent-color: #34d399;

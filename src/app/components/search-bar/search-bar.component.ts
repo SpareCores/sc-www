@@ -106,6 +106,7 @@ export type SearchBarCustomControl = {
   tickValues?: number[];
   allowZero?: boolean;
   defaultNumericValue?: number | null;
+  valueSummary?: string | null;
   showUnitInTicks?: boolean;
   nested?: boolean;
   checked?: boolean;
@@ -126,6 +127,15 @@ export type SearchBarCustomSelectOption = {
   label: string;
 };
 
+export type SearchBarFilterCategory = {
+  category_id: string;
+  name: string;
+  icon: string;
+  collapsed: boolean;
+  alwaysExpanded?: boolean;
+  hideHeader?: boolean;
+};
+
 export type SearchBarParameterPlacement = {
   parameterName: string;
   categoryId?: string;
@@ -134,6 +144,7 @@ export type SearchBarParameterPlacement = {
 
 export type SearchBarBenchmarkConfigOption = BenchmarkConfig & {
   benchmarkTemplate?: Benchmark | null;
+  groupLabel?: string;
   configTitle: string;
   displayName: string;
   framework: string;
@@ -151,10 +162,15 @@ export type SearchBarServerOption = Pick<
       | "description"
       | "vcpus"
       | "memory_amount"
+      | "gpu_count"
+      | "gpu_memory_min"
       | "storage_size"
       | "gpu_memory_total"
       | "cpu_architecture"
       | "cpu_allocation"
+      | "cpu_l1d_cache"
+      | "cpu_l2_cache"
+      | "cpu_l3_cache"
     >
   >;
 
@@ -207,7 +223,7 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   @Input() query: any = {};
   @Input() searchParameters: any[] = [];
   @Input() extraParameters: any = {};
-  @Input() filterCategories: any[] = [];
+  @Input() filterCategories: SearchBarFilterCategory[] = [];
   @Input() selectedCurrency: any | null = null;
   @Input() AIAssistantType = "servers";
   @Input() useTopSearchInput = false;
@@ -592,7 +608,19 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
     return parameter.schema.step || 1;
   }
 
-  toggleCategory(category: any) {
+  isCategoryExpanded(category: SearchBarFilterCategory): boolean {
+    return (
+      category.alwaysExpanded === true ||
+      category.hideHeader === true ||
+      !category.collapsed
+    );
+  }
+
+  toggleCategory(category: SearchBarFilterCategory) {
+    if (category.alwaysExpanded || category.hideHeader) {
+      return;
+    }
+
     category.collapsed = !category.collapsed;
   }
 
@@ -764,13 +792,6 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
     });
   }
 
-  clearCustomNumericControl(control: SearchBarCustomControl) {
-    this.customControlChanged.emit({
-      name: control.name,
-      value: { numericValue: control.defaultNumericValue ?? null },
-    });
-  }
-
   handlePowerOfTwoStepperFocus(control: SearchBarCustomControl) {
     this.powerOfTwoStepperFocusedControls[control.name] = true;
     delete this.powerOfTwoStepperDraftValues[control.name];
@@ -932,7 +953,22 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     const formattedValue = formatNumberInputValue(value);
-    return control.unit ? `${formattedValue} ${control.unit}` : formattedValue;
+
+    if (!control.unit) {
+      return formattedValue;
+    }
+
+    return control.unit === "%"
+      ? `${formattedValue}%`
+      : `${formattedValue} ${control.unit}`;
+  }
+
+  formatRangeSliderValue(control: SearchBarCustomControl): string {
+    const formattedValue = this.formatCustomNumericValue(control);
+
+    return control.valueSummary
+      ? `${formattedValue} ${control.valueSummary}`
+      : formattedValue;
   }
 
   getRangeSliderValue(control: SearchBarCustomControl): number {
@@ -1256,6 +1292,30 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
     this.benchmarkConfigDropdownOpen[control.name] = false;
   }
 
+  focusCustomControl(name: string): boolean {
+    if (!isPlatformBrowser(this.platformId)) {
+      return false;
+    }
+
+    const element = document.getElementById(
+      `custom_control_input_${name}`,
+    ) as HTMLInputElement | null;
+
+    if (!element || element.disabled) {
+      return false;
+    }
+
+    element.focus({ preventScroll: true });
+
+    const control = this.customControls.find((item) => item.name === name);
+
+    if (control?.type === "benchmarkConfigSelect") {
+      this.handleBenchmarkConfigInputFocus(control);
+    }
+
+    return document.activeElement === element;
+  }
+
   isSingleSelectDropdownOpen(control: SearchBarCustomControl): boolean {
     return this.singleSelectDropdownOpen[control.name] ?? false;
   }
@@ -1313,6 +1373,23 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
   formatBenchmarkConfigDescription(
     benchmarkOption: SearchBarBenchmarkConfigOption,
   ): string {
+    if (benchmarkOption.groupLabel) {
+      const descriptionParts: string[] = [];
+
+      if (
+        benchmarkOption.configTitle &&
+        benchmarkOption.configTitle !== benchmarkOption.framework
+      ) {
+        descriptionParts.push(benchmarkOption.configTitle);
+      }
+
+      if (benchmarkOption.benchmarkTemplate?.unit) {
+        descriptionParts.push(String(benchmarkOption.benchmarkTemplate.unit));
+      }
+
+      return descriptionParts.filter(Boolean).join(" | ");
+    }
+
     const descriptionParts = [benchmarkOption.framework];
 
     if (benchmarkOption.configTitle) {
