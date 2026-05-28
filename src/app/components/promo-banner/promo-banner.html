@@ -5,25 +5,24 @@
   [class.promo-banner--advisor]="isAdvisorBanner()"
   [class.promo-banner--site]="!isAdvisorBanner()"
 >
-  @if (bannerMessage.variant === "site" && bannerMessage.href) {
-  <a
-    class="promo-banner__body promo-banner__body--link"
-    [routerLink]="bannerMessage.href"
-    [attr.aria-label]="bannerMessage.ariaLabel"
-  >
+  <div class="promo-banner__body">
+    @if (bannerMessage.lead) {
     <span class="promo-banner__lead">{{ bannerMessage.lead }}</span>
-    <span class="promo-banner__copy">{{ bannerMessage.body }}</span>
-  </a>
-  } @else {
-  <div class="promo-banner__body" [attr.aria-label]="bannerMessage.ariaLabel">
-    <span class="promo-banner__lead">{{ bannerMessage.lead }}</span>
+    }
     <span class="promo-banner__copy">{{ bannerMessage.body }}</span>
   </div>
-  }
 
   <div class="promo-banner__actions">
-    @if ( bannerMessage.variant === "advisor" && bannerMessage.ctaLabel &&
-    bannerMessage.ctaId ) {
+    @if (bannerMessage.ctaHref && bannerMessage.ctaLabel) {
+    <a
+      class="promo-banner__cta"
+      [routerLink]="bannerMessage.ctaHref"
+      [attr.aria-label]="bannerMessage.ariaLabel"
+    >
+      {{ bannerMessage.ctaLabel }}
+      <lucide-icon name="chevron-right" class="h-4 w-4"></lucide-icon>
+    </a>
+    } @else if (bannerMessage.ctaLabel && bannerMessage.ctaId) {
     <button [id]="bannerMessage.ctaId" type="button" class="promo-banner__cta">
       {{ bannerMessage.ctaLabel }}
       <lucide-icon name="chevron-right" class="h-4 w-4"></lucide-icon>

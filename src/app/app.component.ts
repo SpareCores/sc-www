@@ -21,13 +21,15 @@ import { HeaderComponent } from "./layout/header/header.component";
 import { FooterComponent } from "./layout/footer/footer.component";
 import { PromoBanner } from "./components/promo-banner/promo-banner";
 import {
-  ADVISOR_PROMO_BANNER,
-  SITE_PROMO_BANNER,
+  PROMO_BANNER_BY_PATH,
+  type PromoBannerDismissalGroup,
   type PromoBannerMessage,
 } from "./components/promo-banner/promo-banner.constants";
 import { AnalyticsService } from "./services/analytics.service";
 import { Subscription } from "rxjs";
 import { NeetoCalService } from "./services/neeto-cal.service";
+
+const PROMO_BANNER_DISMISSAL_STORAGE_PREFIX = "sc-promo-banner-dismissed-v1";
 
 @Component({
   selector: "app-root",
@@ -48,7 +50,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   showHeader = true;
   showFooter = true;
   promoBannerMessage: PromoBannerMessage | null = null;
-  private isPromoBannerDismissed = false;
+  private dismissedPromoBannerGroups = new Set<PromoBannerDismissalGroup>();
   private subscription = new Subscription();
 
   constructor() {
@@ -112,7 +114,12 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   dismissPromoBanner(): void {
-    this.isPromoBannerDismissed = true;
+    const group = this.promoBannerMessage?.dismissalGroup;
+    if (group) {
+      this.dismissedPromoBannerGroups.add(group);
+      this.storePromoBannerDismissal(group);
+    }
+
     this.promoBannerMessage = null;
   }
 
@@ -122,17 +129,14 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.showHeader = !shouldHideChrome;
     this.showFooter = !shouldHideChrome;
-    this.promoBannerMessage =
-      !shouldHideChrome && !this.isPromoBannerDismissed
-        ? this.isAdvisorRoute(path)
-          ? ADVISOR_PROMO_BANNER
-          : SITE_PROMO_BANNER
-        : null;
+    this.promoBannerMessage = shouldHideChrome
+      ? null
+      : this.getPromoBannerMessage(path);
   }
 
   private normalizePath(url: string | undefined): string {
     const path = (url || "/").split(/[?#]/)[0];
-    return path || "/";
+    return path.length > 1 ? path.replace(/\/+$/, "") || "/" : path || "/";
   }
 
   private isChromeHiddenRoute(path: string): boolean {
@@ -143,7 +147,60 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
-  private isAdvisorRoute(path: string): boolean {
-    return path === "/advisor" || path.startsWith("/advisor/");
+  private getPromoBannerMessage(path: string): PromoBannerMessage | null {
+    const promoBannerMessage = PROMO_BANNER_BY_PATH[path];
+
+    if (!promoBannerMessage) {
+      return null;
+    }
+
+    return this.isPromoBannerGroupDismissed(promoBannerMessage.dismissalGroup)
+      ? null
+      : promoBannerMessage;
+  }
+
+  private isPromoBannerGroupDismissed(
+    group: PromoBannerDismissalGroup,
+  ): boolean {
+    if (this.dismissedPromoBannerGroups.has(group)) {
+      return true;
+    }
+
+    if (!isPlatformBrowser(this.platformId)) {
+      return false;
+    }
+
+    try {
+      const isDismissed =
+        window.sessionStorage.getItem(this.getPromoBannerStorageKey(group)) ===
+        "true";
+
+      if (isDismissed) {
+        this.dismissedPromoBannerGroups.add(group);
+      }
+
+      return isDismissed;
+    } catch {
+      return false;
+    }
+  }
+
+  private storePromoBannerDismissal(group: PromoBannerDismissalGroup): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
+    try {
+      window.sessionStorage.setItem(
+        this.getPromoBannerStorageKey(group),
+        "true",
+      );
+    } catch {
+      return;
+    }
+  }
+
+  private getPromoBannerStorageKey(group: PromoBannerDismissalGroup): string {
+    return `${PROMO_BANNER_DISMISSAL_STORAGE_PREFIX}:${group}`;
   }
 }
