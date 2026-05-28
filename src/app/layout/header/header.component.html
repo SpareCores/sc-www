@@ -9,7 +9,7 @@
       />
     </a>
     <div
-      class="justify-end items-center w-full flex w-auto order-1"
+      class="justify-end items-center w-auto flex order-1"
       id="mobile-menu-2"
     >
       <ul
@@ -46,9 +46,25 @@
           </a>
         </li>
         <li class="hidden lg:flex">
-          <a routerLink="/about/resource-tracker" class="navbar_link">
+          <a
+            href="https://sparecores.github.io/resource-tracker/"
+            target="_blank"
+            rel="noopener"
+            class="navbar_link"
+          >
             <svg lucideGauge class="cursor-pointer h-4 w-4"></svg>
             Resource Tracker
+          </a>
+        </li>
+        <li class="hidden lg:flex">
+          <a
+            href="https://sentinel.sparecores.com/"
+            target="_blank"
+            rel="noopener"
+            class="navbar_link"
+          >
+            <svg lucideShieldCog class="cursor-pointer h-4 w-4"></svg>
+            Sentinel
           </a>
         </li>
         <li class="py-1">
@@ -77,7 +93,15 @@
           </button>
         </li>
         <li class="lg:hidden">
-          <svg lucideMenu id="menu_button" [appFlowbiteDropdown]="'menu_options'" [dropdownPlacement]="'bottom-end'" [dropdownFlip]="true" #menuDropdown="appFlowbiteDropdown" class="navbar_link cursor-pointer h-8 w-8"></svg>
+          <svg
+            lucideMenu
+            id="menu_button"
+            [appFlowbiteDropdown]="'menu_options'"
+            [dropdownPlacement]="'bottom-end'"
+            [dropdownFlip]="true"
+            #menuDropdown="appFlowbiteDropdown"
+            class="navbar_link cursor-pointer h-8 w-8"
+          ></svg>
         </li>
       </ul>
     </div>
@@ -202,9 +226,25 @@
       </a>
     </li>
     <li class="py-2">
-      <a routerLink="/about/resource-tracker" class="navbar_link">
+      <a
+        href="https://sparecores.github.io/resource-tracker/"
+        target="_blank"
+        rel="noopener"
+        class="navbar_link"
+      >
         <svg lucideGauge class="h-4 w-4"></svg>
         Resource Tracker
+      </a>
+    </li>
+    <li class="py-2">
+      <a
+        href="https://sentinel.sparecores.com/"
+        target="_blank"
+        rel="noopener"
+        class="navbar_link"
+      >
+        <svg lucideShieldCog class="h-4 w-4"></svg>
+        Sentinel
       </a>
     </li>
   </ul>
