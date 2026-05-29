@@ -18,24 +18,28 @@
             </p>
           </div>
           <div class="pb-12 lg:pb-0">
-            <div class="mx-auto grid max-w-xl grid-cols-2 gap-4 lg:mx-0">
+            <div
+              class="mx-auto grid max-w-xl grid-cols-2 grid-rows-2 gap-x-4 gap-y-3 lg:mx-0"
+            >
               <a
                 routerLink="/servers"
-                class="btn-primary inline-flex min-h-[5.75rem] w-full items-center justify-center px-5 py-5 text-center leading-snug"
+                class="btn-primary row-span-2 inline-flex min-h-[5.75rem] w-full items-center justify-center self-center px-5 py-5 text-center leading-snug"
               >
-                Compare cloud servers for free
+                <span>
+                  Compare cloud servers
+                  <span class="whitespace-nowrap">for free</span>
+                </span>
               </a>
               <button
                 type="button"
-                class="inline-flex min-h-[5.75rem] w-full items-center justify-center bg-transparent px-5 py-5 text-center font-bold leading-snug text-teal-500 hover:text-teal-600"
+                class="inline-flex min-h-[2.5rem] w-full items-center justify-center bg-transparent px-5 py-2 text-center font-bold leading-snug text-teal-500 hover:text-teal-600"
                 (click)="scrollTo('resource-tracker')"
               >
                 Measure AI/ML jobs >
               </button>
-              <div aria-hidden="true"></div>
               <button
                 type="button"
-                class="inline-flex min-h-[5.75rem] w-full items-center justify-center bg-transparent px-5 py-5 text-center font-bold leading-snug text-teal-500 hover:text-teal-600"
+                class="inline-flex min-h-[2.5rem] w-full items-center justify-center bg-transparent px-5 py-2 text-center font-bold leading-snug text-teal-500 hover:text-teal-600"
                 (click)="scrollTo('sentinel')"
               >
                 Explore Sentinel >
