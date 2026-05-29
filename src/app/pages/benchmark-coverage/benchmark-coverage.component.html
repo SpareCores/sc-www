@@ -191,9 +191,15 @@
           [attr.aria-expanded]="!isCollapsed"
         >
           @if (isCollapsed) {
-            <svg lucideChevronRight class="h-6 w-6 text-emerald-400"></svg>
+            <svg
+              lucideChevronRight
+              class="h-6 w-6 shrink-0 text-emerald-400"
+            ></svg>
           } @else {
-            <svg lucideChevronLeft class="h-6 w-6 text-emerald-400"></svg>
+            <svg
+              lucideChevronLeft
+              class="h-6 w-6 shrink-0 text-emerald-400"
+            ></svg>
           }
         </div>
         <app-search-bar
@@ -269,7 +275,7 @@
                 </th>
                 <th class="left-bordered-cell">
                   <div class="flex justify-center">
-                    <svg lucideLink class="h-4 w-4"></svg>
+                    <svg lucideLink class="h-4 w-4 shrink-0"></svg>
                   </div>
                 </th>
               </tr>
@@ -302,22 +308,22 @@
                       @if (row.has_price) {
                         <svg
                           lucideCheck
-                          class="h-4 w-4 text-emerald-400 justify-self-center"
+                          class="h-4 w-4 shrink-0 text-emerald-400 justify-self-center"
                         ></svg>
                       } @else {
-                        <svg lucideX class="h-4 w-4 text-white"></svg>
+                        <svg lucideX class="h-4 w-4 shrink-0 text-white"></svg>
                       }
                     </td>
                     <td class="text-center icon-cell">
                       @if (row.is_active) {
                         <svg
                           lucideCheck
-                          class="h-4 w-4 text-emerald-400 justify-self-center"
+                          class="h-4 w-4 shrink-0 text-emerald-400 justify-self-center"
                         ></svg>
                       } @else {
                         <svg
                           lucideX
-                          class="h-4 w-4 text-white justify-self-center"
+                          class="h-4 w-4 shrink-0 text-white justify-self-center"
                         ></svg>
                       }
                     </td>
@@ -325,12 +331,12 @@
                       @if (row.has_hw_info) {
                         <svg
                           lucideCheck
-                          class="h-4 w-4 text-emerald-400 justify-self-center"
+                          class="h-4 w-4 shrink-0 text-emerald-400 justify-self-center"
                         ></svg>
                       } @else {
                         <svg
                           lucideX
-                          class="h-4 w-4 text-white justify-self-center"
+                          class="h-4 w-4 shrink-0 text-white justify-self-center"
                         ></svg>
                       }
                     </td>
@@ -338,12 +344,12 @@
                       @if (row.has_any_benchmark) {
                         <svg
                           lucideCheck
-                          class="h-4 w-4 text-emerald-400 justify-self-center"
+                          class="h-4 w-4 shrink-0 text-emerald-400 justify-self-center"
                         ></svg>
                       } @else {
                         <svg
                           lucideX
-                          class="h-4 w-4 text-white justify-self-center"
+                          class="h-4 w-4 shrink-0 text-white justify-self-center"
                         ></svg>
                       }
                     </td>
@@ -359,7 +365,7 @@
                         @if (row.benchmarkFlags[benchmarkFamily]) {
                           <svg
                             lucideCheck
-                            class="h-4 w-4 text-emerald-400 block"
+                            class="h-4 w-4 shrink-0 text-emerald-400 block"
                           ></svg>
                         } @else {
                           <a
@@ -374,7 +380,10 @@
                             rel="noopener noreferrer"
                             class="flex cursor-pointer"
                           >
-                            <svg lucideX class="h-4 w-4 text-white"></svg>
+                            <svg
+                              lucideX
+                              class="h-4 w-4 shrink-0 text-white"
+                            ></svg>
                           </a>
                         }
                       </td>
@@ -409,7 +418,7 @@
                       >
                         <svg
                           lucideChevronRight
-                          class="h-6 w-6 text-emerald-400"
+                          class="h-6 w-6 shrink-0 text-emerald-400"
                         ></svg>
                       </a>
                     </td>
@@ -444,7 +453,10 @@
               <div
                 class="px-2 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
               >
-                <svg lucideChevronDown class="h-6 w-6 text-emerald-400"></svg>
+                <svg
+                  lucideChevronDown
+                  class="h-6 w-6 shrink-0 text-emerald-400"
+                ></svg>
               </div>
             </button>
             <span class="text-white hidden md:inline"> items per page</span>
@@ -483,7 +495,7 @@
                 class="flex justify-center bg-transparent text-white py-2 px-4 w-10 rounded-lg font-bold hover:bg-emerald-400"
                 (click)="goToPage(page() - 1)"
               >
-                <svg lucideChevronLeft class="h-4 w-4"></svg>
+                <svg lucideChevronLeft class="h-6 w-6 shrink-0"></svg>
               </button>
             }
             @if (page() > 2) {
@@ -540,7 +552,7 @@
                 class="pagination_button pagination_arrow"
                 (click)="goToPage(page() + 1)"
               >
-                <svg lucideChevronRight class="h-4 w-4"></svg>
+                <svg lucideChevronRight class="h-6 w-6 shrink-0"></svg>
               </button>
             }
           </div>
