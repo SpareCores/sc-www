@@ -11,7 +11,6 @@ import {
 } from "./advisor.types";
 import {
   SERVER_TABLE_BENCHMARK_EFFICIENCY_TOOLTIP,
-  SERVER_TABLE_BENCHMARK_TOOLTIP,
   SERVER_TABLE_SCORE_PER_PRICE_TOOLTIP,
   SERVER_TABLE_SCORE_TOOLTIP,
 } from "../../tools/server-table-tooltips";
@@ -188,6 +187,8 @@ export const ADVISOR_REQUIRED_GPU_MEMORY_TITLE = "Required GPU memory (VRAM)";
 
 export const ADVISOR_OPTIMIZATION_GOAL_TITLE = "Optimization goal";
 
+export const ADVISOR_WORKLOAD_SCORE_TOOLTIP = "Selected workload score.";
+
 export const ADVISOR_TABLE_COLUMNS: AdvisorTableColumn[] = [
   { name: "NAME & PROVIDER", type: "name", show: true },
   { name: "VENDOR", type: "vendor", key: "vendor_id", show: false },
@@ -237,12 +238,12 @@ export const ADVISOR_TABLE_COLUMNS: AdvisorTableColumn[] = [
     info: SERVER_TABLE_SCORE_PER_PRICE_TOOLTIP,
   },
   {
-    name: "BENCHMARK",
+    name: "WORKLOAD",
     type: "benchmark",
     key: "selected_benchmark_score",
     show: true,
     orderField: "selected_benchmark_score",
-    info: SERVER_TABLE_BENCHMARK_TOOLTIP,
+    info: ADVISOR_WORKLOAD_SCORE_TOOLTIP,
   },
   {
     name: "$ EFFICIENCY",
