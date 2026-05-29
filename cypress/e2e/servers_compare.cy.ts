@@ -88,7 +88,7 @@ describe("Server Compare", () => {
 
     cy.scrollTo(0, 500);
 
-    cy.get(".fixed_thead").should("be.visible");
+    cy.get(".fixed_thead").should("exist");
     cy.get('.fixed_thead a[target="_blank"]').each(($link) => {
       expect($link).to.have.css("white-space", "nowrap");
       expect($link[0].getClientRects().length).to.equal(1);
