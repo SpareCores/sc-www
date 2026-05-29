@@ -4,11 +4,12 @@
       [routerLink]="baseURL"
       [queryParams]="getQueryObjectForPage(this.currentPage - 1)"
       id="pagination_prev_arrow"
+      aria-label="Previous page"
       class="flex h-10 w-10 items-center justify-center rounded-lg bg-transparent text-white font-bold hover:bg-emerald-400"
       data-ph-capture-attribute-sc-event="server listing paginate"
       data-ph-capture-attribute-pagination-target="prev"
     >
-      <svg lucideChevronLeft class="h-6 w-6 shrink-0"></svg>
+      <svg lucideChevronLeft class="h-6 w-6 shrink-0" aria-hidden="true"></svg>
     </a>
   }
   @if (currentPage > 2) {
@@ -61,11 +62,12 @@
       [routerLink]="baseURL"
       [queryParams]="getQueryObjectForPage(this.currentPage + 1)"
       id="pagination_next_arrow"
+      aria-label="Next page"
       class="flex h-10 w-10 items-center justify-center rounded-lg bg-transparent text-white font-bold hover:bg-emerald-400"
       data-ph-capture-attribute-sc-event="server listing paginate"
       data-ph-capture-attribute-pagination-target="next"
     >
-      <svg lucideChevronRight class="h-6 w-6 shrink-0"></svg>
+      <svg lucideChevronRight class="h-6 w-6 shrink-0" aria-hidden="true"></svg>
     </a>
   }
 </div>

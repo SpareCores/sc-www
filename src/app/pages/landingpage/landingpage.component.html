@@ -35,14 +35,14 @@
                 class="inline-flex min-h-[2.5rem] w-full items-center justify-center bg-transparent px-5 py-2 text-center font-bold leading-snug text-teal-500 hover:text-teal-600"
                 (click)="scrollTo('resource-tracker')"
               >
-                Measure AI/ML jobs >
+                Measure AI/ML jobs &gt;
               </button>
               <button
                 type="button"
                 class="inline-flex min-h-[2.5rem] w-full items-center justify-center bg-transparent px-5 py-2 text-center font-bold leading-snug text-teal-500 hover:text-teal-600"
                 (click)="scrollTo('sentinel')"
               >
-                Explore Sentinel >
+                Explore Sentinel &gt;
               </button>
             </div>
           </div>
@@ -367,8 +367,16 @@
               cost efficiency.
             </div>
             <div class="absolute bottom-4 right-4">
-              <a routerLink="/servers" class="text-emerald-400">
-                <svg lucideSquareArrowUpRight class="h-[30px] w-[30px]"></svg>
+              <a
+                routerLink="/servers"
+                class="text-emerald-400"
+                aria-label="Explore Navigator"
+              >
+                <svg
+                  lucideSquareArrowUpRight
+                  class="h-[30px] w-[30px]"
+                  aria-hidden="true"
+                ></svg>
               </a>
             </div>
           </div>
@@ -394,12 +402,18 @@
               with open-source tooling.
             </div>
             <div class="absolute bottom-4 right-4">
-              <a
+              <button
+                type="button"
                 (click)="scrollTo('resource-tracker')"
                 class="text-emerald-400 cursor-pointer"
+                aria-label="Explore Resource Tracker"
               >
-                <svg lucideSquareArrowDown class="h-[30px] w-[30px]"></svg>
-              </a>
+                <svg
+                  lucideSquareArrowDown
+                  class="h-[30px] w-[30px]"
+                  aria-hidden="true"
+                ></svg>
+              </button>
             </div>
           </div>
           <div
@@ -424,8 +438,16 @@
               instance recommendations.
             </div>
             <div class="absolute bottom-4 right-4">
-              <a routerLink="/advisor" class="text-emerald-400">
-                <svg lucideSquareArrowUpRight class="h-[30px] w-[30px]"></svg>
+              <a
+                routerLink="/advisor"
+                class="text-emerald-400"
+                aria-label="Explore Advisor"
+              >
+                <svg
+                  lucideSquareArrowUpRight
+                  class="h-[30px] w-[30px]"
+                  aria-hidden="true"
+                ></svg>
               </a>
             </div>
           </div>
@@ -451,12 +473,18 @@
               over-provisioning and track savings.
             </div>
             <div class="absolute bottom-4 right-4">
-              <a
+              <button
+                type="button"
                 (click)="scrollTo('sentinel')"
                 class="text-emerald-400 cursor-pointer"
+                aria-label="Explore Sentinel"
               >
-                <svg lucideSquareArrowDown class="h-[30px] w-[30px]"></svg>
-              </a>
+                <svg
+                  lucideSquareArrowDown
+                  class="h-[30px] w-[30px]"
+                  aria-hidden="true"
+                ></svg>
+              </button>
             </div>
           </div>
         </div>
@@ -960,8 +988,16 @@
               benchmarks.
             </div>
             <div class="absolute bottom-4 right-4">
-              <a routerLink="/about/navigator" class="text-emerald-400">
-                <svg lucideSquareArrowUpRight class="h-[30px] w-[30px]"></svg>
+              <a
+                routerLink="/about/navigator"
+                class="text-emerald-400"
+                aria-label="Learn about Navigator"
+              >
+                <svg
+                  lucideSquareArrowUpRight
+                  class="h-[30px] w-[30px]"
+                  aria-hidden="true"
+                ></svg>
               </a>
             </div>
           </div>
@@ -976,12 +1012,18 @@
               inefficiencies, recommend and prioritize right-sizing actions.
             </div>
             <div class="absolute bottom-4 right-4">
-              <a
+              <button
+                type="button"
                 id="meeting-services-consulting"
                 class="text-emerald-400 cursor-pointer"
+                aria-label="Contact sales about Cloud Optimization Assessment"
               >
-                <svg lucideMessageSquareMore class="h-[30px] w-[30px]"></svg>
-              </a>
+                <svg
+                  lucideMessageSquareMore
+                  class="h-[30px] w-[30px]"
+                  aria-hidden="true"
+                ></svg>
+              </button>
             </div>
           </div>
           <div
@@ -995,12 +1037,18 @@
               thousands of users on your cloud—or ours.
             </div>
             <div class="absolute bottom-4 right-4">
-              <a
+              <button
+                type="button"
                 id="meeting-services-shiny"
                 class="text-emerald-400 cursor-pointer"
+                aria-label="Contact sales about Shiny and Streamlit hosting"
               >
-                <svg lucideMessageSquareMore class="h-[30px] w-[30px]"></svg>
-              </a>
+                <svg
+                  lucideMessageSquareMore
+                  class="h-[30px] w-[30px]"
+                  aria-hidden="true"
+                ></svg>
+              </button>
             </div>
           </div>
           <div
@@ -1014,12 +1062,18 @@
               tasks—like labeling 10 k PDFs with an LLM.
             </div>
             <div class="absolute bottom-4 right-4">
-              <a
+              <button
+                type="button"
                 id="meeting-services-llms"
                 class="text-emerald-400 cursor-pointer"
+                aria-label="Contact sales about AI workload sizing"
               >
-                <svg lucideMessageSquareMore class="h-[30px] w-[30px]"></svg>
-              </a>
+                <svg
+                  lucideMessageSquareMore
+                  class="h-[30px] w-[30px]"
+                  aria-hidden="true"
+                ></svg>
+              </button>
             </div>
           </div>
         </div>
