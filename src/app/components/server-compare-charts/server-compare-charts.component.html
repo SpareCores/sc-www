@@ -109,6 +109,7 @@
               <svg
                 lucideInfo
                 class="h-4 w-4 text-gray-200"
+                data-cy="compare-score-tooltip-trigger"
                 (mouseenter)="showTooltip($event, SSCoreTooltip)"
                 (mouseleave)="hideTooltip()"
               ></svg>
@@ -428,6 +429,8 @@
                 </h3>
                 @if (!isEmbedded && !getCompareFixedWideTrailingColSpan()) {
                   <button
+                    type="button"
+                    aria-label="Copy benchmark section link"
                     class="btn-primary py-2 px-3 flex gap-1 items-center shrink-0"
                     (click)="
                       clipboardURL(
@@ -436,7 +439,11 @@
                       )
                     "
                   >
-                    <svg [lucideIcon]="clipboardIcon" size="16"></svg>
+                    <svg
+                      [lucideIcon]="clipboardIcon"
+                      size="16"
+                      aria-hidden="true"
+                    ></svg>
                   </button>
                 }
               </div>
@@ -449,6 +456,8 @@
                 @if (!isEmbedded) {
                   <div class="flex justify-end">
                     <button
+                      type="button"
+                      aria-label="Copy benchmark section link"
                       class="btn-primary py-2 px-3 flex gap-1 items-center shrink-0"
                       (click)="
                         clipboardURL(
@@ -457,7 +466,11 @@
                         )
                       "
                     >
-                      <svg [lucideIcon]="clipboardIcon" size="16"></svg>
+                      <svg
+                        [lucideIcon]="clipboardIcon"
+                        size="16"
+                        aria-hidden="true"
+                      ></svg>
                     </button>
                   </div>
                 }
@@ -669,13 +682,23 @@
                   <td [colSpan]="getCompareFixedHeaderSpacerColSpan()"></td>
                   <td [colSpan]="1" class="compare-section-header-action-cell">
                     @if (benchmarkData.description) {
-                      <div class="compare-section-header-action-content">
+                      <button
+                        type="button"
+                        class="compare-section-header-action-content inline-flex cursor-pointer items-center justify-center rounded border-0 bg-transparent p-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400"
+                        [attr.aria-expanded]="!benchmarkData.collapsed"
+                        [attr.aria-label]="
+                          benchmarkData.collapsed
+                            ? 'Expand benchmark details'
+                            : 'Collapse benchmark details'
+                        "
+                        (click)="toggleBenchmark(benchmarkData)"
+                      >
                         <svg
                           [lucideIcon]="benchmarkIcon(benchmarkData)"
-                          class="h-6 w-6 text-emerald-400 cursor-pointer"
-                          (click)="toggleBenchmark(benchmarkData)"
+                          class="h-6 w-6 text-emerald-400"
+                          aria-hidden="true"
                         ></svg>
-                      </div>
+                      </button>
                     }
                   </td>
                 </tr>
@@ -823,13 +846,23 @@
                   <td [colSpan]="getCompareFixedHeaderSpacerColSpan()"></td>
                   <td [colSpan]="1" class="compare-section-header-action-cell">
                     @if (chartData.description) {
-                      <div class="compare-section-header-action-content">
+                      <button
+                        type="button"
+                        class="compare-section-header-action-content inline-flex cursor-pointer items-center justify-center rounded border-0 bg-transparent p-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400"
+                        [attr.aria-expanded]="!chartData.collapsed"
+                        [attr.aria-label]="
+                          chartData.collapsed
+                            ? 'Expand benchmark details'
+                            : 'Collapse benchmark details'
+                        "
+                        (click)="toggleBenchmark(chartData)"
+                      >
                         <svg
                           [lucideIcon]="benchmarkIcon(chartData)"
-                          class="h-6 w-6 text-emerald-400 cursor-pointer"
-                          (click)="toggleBenchmark(chartData)"
+                          class="h-6 w-6 text-emerald-400"
+                          aria-hidden="true"
                         ></svg>
-                      </div>
+                      </button>
                     }
                   </td>
                 </tr>
@@ -910,13 +943,23 @@
             <td [colSpan]="getCompareFixedHeaderSpacerColSpan()"></td>
             <td [colSpan]="1" class="compare-section-header-action-cell">
               @if (benchmarkCategory.description) {
-                <div class="compare-section-header-action-content">
+                <button
+                  type="button"
+                  class="compare-section-header-action-content inline-flex cursor-pointer items-center justify-center rounded border-0 bg-transparent p-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400"
+                  [attr.aria-expanded]="!benchmarkCategory.collapsed"
+                  [attr.aria-label]="
+                    benchmarkCategory.collapsed
+                      ? 'Expand benchmark details'
+                      : 'Collapse benchmark details'
+                  "
+                  (click)="toggleBenchmark(benchmarkCategory)"
+                >
                   <svg
                     [lucideIcon]="benchmarkIcon(benchmarkCategory)"
-                    class="h-6 w-6 text-emerald-400 cursor-pointer shrink-0"
-                    (click)="toggleBenchmark(benchmarkCategory)"
+                    class="h-6 w-6 text-emerald-400 shrink-0"
+                    aria-hidden="true"
                   ></svg>
-                </div>
+                </button>
               }
             </td>
           </tr>

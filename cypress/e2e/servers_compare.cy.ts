@@ -8,19 +8,19 @@ const COMPARE_36_VCPU_URL =
   "/compare?instances=W3sidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzVuLjl4bGFyZ2UifSx7InZlbmRvciI6ImF3cyIsInNlcnZlciI6ImQyLjh4bGFyZ2UifV0%3D";
 
 function showCompareTooltip() {
-  cy.get("#main-table tr.rows-to-hide-for-test svg")
-    .first()
-    .then(($icon) => {
-      cy.window().then((win) => {
-        $icon[0].dispatchEvent(
-          new win.MouseEvent("mouseenter", {
-            bubbles: false,
-            cancelable: true,
-            view: win,
-          }),
-        );
-      });
+  cy.get(
+    '#main-table tr.rows-to-hide-for-test [data-cy="compare-score-tooltip-trigger"]',
+  ).then(($icon) => {
+    cy.window().then((win) => {
+      $icon[0].dispatchEvent(
+        new win.MouseEvent("mouseenter", {
+          bubbles: false,
+          cancelable: true,
+          view: win,
+        }),
+      );
     });
+  });
 }
 
 describe("Server Compare", () => {
@@ -88,7 +88,7 @@ describe("Server Compare", () => {
 
     cy.scrollTo(0, 500);
 
-    cy.get(".fixed_thead").should("exist");
+    cy.get(".fixed_thead").should("be.visible");
     cy.get('.fixed_thead a[target="_blank"]').each(($link) => {
       expect($link).to.have.css("white-space", "nowrap");
       expect($link[0].getClientRects().length).to.equal(1);
