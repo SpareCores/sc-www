@@ -80,8 +80,8 @@ export class AboutNavigatorComponent implements OnInit, AfterViewInit {
     "✅ UpCloud (Done)",
     "✅ OVH Cloud (Done)",
     "✅ Alibaba Cloud (Done)",
-    "⚙️ Oracle Cloud Infrastructure (In Progress)",
-    "🗓️ Vultr (Planned)",
+    "⚙️ Vultr (In Progress)",
+    "🗓️ Oracle Cloud Infrastructure (Planned)",
     "🗓️ Scaleway (Planned)",
   ];
 
