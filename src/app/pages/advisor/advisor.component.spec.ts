@@ -1564,6 +1564,95 @@ describe("AdvisorComponent", () => {
     expect(priceDelta.classList).toContain("advisor-table-delta--positive");
   }));
 
+  it("uses addon-inclusive baseline pricing for price deltas when traffic or storage requirements are set", fakeAsync(() => {
+    searchServers.and.callFake(
+      (query: {
+        partial_name_or_id?: string | null;
+        vendor?: string | null;
+        extra_storage_size?: number | null;
+      }) => {
+        if (
+          query.partial_name_or_id === "large" &&
+          query.vendor === "aws" &&
+          query.extra_storage_size === 100
+        ) {
+          return Promise.resolve({
+            body: [
+              {
+                vendor_id: "aws",
+                api_reference: "large",
+                display_name: "large",
+                server_id: "srv-baseline",
+                min_price: 0.1,
+                min_price_ondemand: 0.1,
+              },
+            ],
+            headers: {
+              get: (name: string) => (name === "x-total-count" ? "1" : null),
+            },
+          });
+        }
+
+        if (query.partial_name_or_id === "large" && query.vendor === "aws") {
+          return Promise.resolve({
+            body: [
+              {
+                vendor_id: "aws",
+                api_reference: "large",
+                display_name: "large",
+                server_id: "srv-baseline",
+                score: 100,
+                score_per_price: 50,
+              },
+            ],
+            headers: {
+              get: (name: string) => (name === "x-total-count" ? "1" : null),
+            },
+          });
+        }
+
+        return Promise.resolve({
+          body: [
+            {
+              vendor_id: "aws",
+              api_reference: "c7a.large",
+              display_name: "c7a.large",
+              server_id: "srv-1",
+            },
+          ],
+          headers: {
+            get: (name: string) => (name === "x-total-count" ? "1" : null),
+          },
+        });
+      },
+    );
+
+    selectBaselineServer();
+    flushMicrotasks();
+    fixture.detectChanges();
+
+    component.query.set({ extra_storage_size: "100" });
+    fixture.detectChanges();
+    flushMicrotasks();
+    fixture.detectChanges();
+
+    expect(component.baselinePriceAggregate().min_price).toBe(0.1);
+
+    const priceDelta = component.getPriceDelta(
+      {
+        vendor_id: "aws",
+        api_reference: "c7a.large",
+        display_name: "c7a.large",
+        server_id: "srv-1",
+        min_price: 0.12,
+      } as never,
+      "min_price",
+    );
+
+    expect(priceDelta).not.toBeNull();
+    expect(component.getPriceDeltaLabel(priceDelta!)).toBe("+20%");
+  }));
+
   it("renders score, $CORE, and monthly ondemand deltas against the baseline", fakeAsync(() => {
     selectBaselineServer();
     selectFirstAvailableWorkload();
