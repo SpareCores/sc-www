@@ -6,6 +6,14 @@
   @apply text-sm items-center hover:text-emerald-400;
 }
 
+.navbar_icon {
+  @apply inline-block shrink-0;
+}
+
+.navbar_icon > svg {
+  @apply block;
+}
+
 li {
   @apply px-3;
 }

@@ -23,7 +23,9 @@
             [dropdownPlacement]="'bottom'"
             #aboutDropdown="appFlowbiteDropdown"
           >
-            <svg lucideInfo class="h-4 w-4"></svg>
+            <span class="navbar_icon">
+              <svg lucideInfo class="h-4 w-4"></svg>
+            </span>
             About
           </div>
         </li>
@@ -35,13 +37,17 @@
             [dropdownPlacement]="'bottom'"
             #navigatorDropdown="appFlowbiteDropdown"
           >
-            <svg lucideShipWheel class="h-4 w-4"></svg>
+            <span class="navbar_icon">
+              <svg lucideShipWheel class="h-4 w-4"></svg>
+            </span>
             Navigator
           </div>
         </li>
         <li class="hidden lg:flex">
           <a routerLink="/advisor" class="navbar_link">
-            <svg lucideBot class="cursor-pointer h-4 w-4"></svg>
+            <span class="navbar_icon">
+              <svg lucideBot class="cursor-pointer h-4 w-4"></svg>
+            </span>
             Advisor
           </a>
         </li>
@@ -52,7 +58,9 @@
             rel="noopener"
             class="navbar_link whitespace-nowrap"
           >
-            <svg lucideGauge class="cursor-pointer h-4 w-4"></svg>
+            <span class="navbar_icon">
+              <svg lucideGauge class="cursor-pointer h-4 w-4"></svg>
+            </span>
             Resource Tracker
           </a>
         </li>
@@ -63,7 +71,9 @@
             rel="noopener"
             class="navbar_link"
           >
-            <svg lucideShieldCog class="cursor-pointer h-4 w-4"></svg>
+            <span class="navbar_icon">
+              <svg lucideShieldCog class="cursor-pointer h-4 w-4"></svg>
+            </span>
             Sentinel
           </a>
         </li>
@@ -72,7 +82,9 @@
             id="meeting-header-demo"
             class="text-white bg-emerald-400 hover:bg-emerald-500 rounded-lg px-3 py-2 relative flex gap-2 items-center"
           >
-            <svg lucideCalendarDays class="h-4 w-4"></svg>
+            <span class="navbar_icon">
+              <svg lucideCalendarDays class="h-4 w-4"></svg>
+            </span>
             Book a Call
           </button>
         </li>
@@ -89,19 +101,24 @@
               style="top: 2px; font-size: 0.625rem; right: 2px"
               >{{ compareCount() }}
             </span>
-            <svg lucideScale class="h-4 w-4"></svg>
+            <span class="navbar_icon">
+              <svg lucideScale class="h-4 w-4"></svg>
+            </span>
           </button>
         </li>
         <li class="lg:hidden">
-          <svg
-            lucideMenu
+          <span
             id="menu_button"
             [appFlowbiteDropdown]="'menu_options'"
             [dropdownPlacement]="'bottom-end'"
             [dropdownFlip]="true"
             #menuDropdown="appFlowbiteDropdown"
-            class="navbar_link cursor-pointer h-8 w-8"
-          ></svg>
+            class="navbar_link cursor-pointer"
+          >
+            <span class="navbar_icon">
+              <svg lucideMenu class="h-8 w-8"></svg>
+            </span>
+          </span>
         </li>
       </ul>
     </div>
@@ -119,109 +136,145 @@
   >
     <li class="py-2">
       <span class="navbar_link hover:!text-white">
-        <svg lucideInfo class="h-4 w-4"></svg>
+        <span class="navbar_icon">
+          <svg lucideInfo class="h-4 w-4"></svg>
+        </span>
         About
       </span>
     </li>
     <li class="py-2 ml-6">
       <a class="navbar_link" routerLink="/about/spare-cores">
-        <svg lucideHeartHandshake class="h-4 w-4"></svg>
+        <span class="navbar_icon">
+          <svg lucideHeartHandshake class="h-4 w-4"></svg>
+        </span>
         Our Mission
       </a>
     </li>
     <li class="py-2 ml-6">
       <a class="navbar_link" routerLink="/about/partners">
-        <svg lucideHandshake class="h-4 w-4"></svg>
+        <span class="navbar_icon">
+          <svg lucideHandshake class="h-4 w-4"></svg>
+        </span>
         Partners
       </a>
     </li>
     <li class="py-2 ml-6">
       <a class="navbar_link" routerLink="/articles">
-        <svg lucideNotebookText class="h-4 w-4"></svg>
+        <span class="navbar_icon">
+          <svg lucideNotebookText class="h-4 w-4"></svg>
+        </span>
         Blog
       </a>
     </li>
     <li class="py-2 ml-6">
       <a class="navbar_link" routerLink="/talks">
-        <svg lucideProjector class="h-4 w-4"></svg>
+        <span class="navbar_icon">
+          <svg lucideProjector class="h-4 w-4"></svg>
+        </span>
         Talks & Slides
       </a>
     </li>
     <li class="py-2 ml-6">
       <a class="navbar_link" routerLink="/design">
-        <svg lucidePalette class="h-4 w-4"></svg>
+        <span class="navbar_icon">
+          <svg lucidePalette class="h-4 w-4"></svg>
+        </span>
         Design
       </a>
     </li>
     <li class="py-2">
       <span class="navbar_link hover:!text-white">
-        <svg lucideShipWheel class="h-4 w-4"></svg>
+        <span class="navbar_icon">
+          <svg lucideShipWheel class="h-4 w-4"></svg>
+        </span>
         Navigator
       </span>
     </li>
     <li class="py-2 ml-6">
       <a class="navbar_link" routerLink="/about/navigator">
-        <svg lucideBookText class="h-4 w-4"></svg>
+        <span class="navbar_icon">
+          <svg lucideBookText class="h-4 w-4"></svg>
+        </span>
         Product Info
       </a>
     </li>
     <li class="py-2 ml-6">
       <a class="navbar_link" routerLink="/servers">
-        <svg lucidePcCase class="h-4 w-4"></svg>
+        <span class="navbar_icon">
+          <svg lucidePcCase class="h-4 w-4"></svg>
+        </span>
         Servers
       </a>
     </li>
     <li class="py-2 ml-6">
       <a class="navbar_link" routerLink="/compare">
-        <svg lucideScale class="h-4 w-4"></svg>
+        <span class="navbar_icon">
+          <svg lucideScale class="h-4 w-4"></svg>
+        </span>
         Compare Guide
       </a>
     </li>
     <li class="py-2 ml-6">
       <a class="navbar_link" routerLink="/server_prices">
-        <svg lucideDollarSign class="h-4 w-4"></svg>
+        <span class="navbar_icon">
+          <svg lucideDollarSign class="h-4 w-4"></svg>
+        </span>
         Server Prices
       </a>
     </li>
     <li class="py-2 ml-6">
       <a class="navbar_link" routerLink="/storages">
-        <svg lucideDatabase class="h-4 w-4"></svg>
+        <span class="navbar_icon">
+          <svg lucideDatabase class="h-4 w-4"></svg>
+        </span>
         Storage Prices
       </a>
     </li>
     <li class="py-2 ml-6">
       <a class="navbar_link" routerLink="/traffic-prices">
-        <svg lucideArrowUpDown class="h-4 w-4"></svg>
+        <span class="navbar_icon">
+          <svg lucideArrowUpDown class="h-4 w-4"></svg>
+        </span>
         Traffic Prices
       </a>
     </li>
     <li class="py-2 ml-6">
       <a class="navbar_link" routerLink="/regions">
-        <svg lucideHotel class="h-4 w-4"></svg>
+        <span class="navbar_icon">
+          <svg lucideHotel class="h-4 w-4"></svg>
+        </span>
         Regions
       </a>
     </li>
     <li class="py-2 ml-6">
       <a class="navbar_link" routerLink="/vendors">
-        <svg lucideHouse class="h-4 w-4"></svg>
+        <span class="navbar_icon">
+          <svg lucideHouse class="h-4 w-4"></svg>
+        </span>
         Vendors
       </a>
     </li>
     <li class="py-2 ml-6">
       <a class="navbar_link" routerLink="/navigator/benchmark-workloads">
-        <svg lucideNotebookText class="h-4 w-4"></svg>
+        <span class="navbar_icon">
+          <svg lucideNotebookText class="h-4 w-4"></svg>
+        </span>
         Workloads
       </a>
     </li>
     <li class="py-2 ml-6">
       <a class="navbar_link" routerLink="/navigator/benchmark-coverage">
-        <svg lucideActivity class="h-4 w-4"></svg>
+        <span class="navbar_icon">
+          <svg lucideActivity class="h-4 w-4"></svg>
+        </span>
         Coverage
       </a>
     </li>
     <li class="py-2">
       <a class="navbar_link" routerLink="/advisor">
-        <svg lucideBot class="h-4 w-4"></svg>
+        <span class="navbar_icon">
+          <svg lucideBot class="h-4 w-4"></svg>
+        </span>
         Advisor
       </a>
     </li>
@@ -232,7 +285,9 @@
         rel="noopener"
         class="navbar_link"
       >
-        <svg lucideGauge class="h-4 w-4"></svg>
+        <span class="navbar_icon">
+          <svg lucideGauge class="h-4 w-4"></svg>
+        </span>
         Resource Tracker
       </a>
     </li>
@@ -243,7 +298,9 @@
         rel="noopener"
         class="navbar_link"
       >
-        <svg lucideShieldCog class="h-4 w-4"></svg>
+        <span class="navbar_icon">
+          <svg lucideShieldCog class="h-4 w-4"></svg>
+        </span>
         Sentinel
       </a>
     </li>
@@ -262,31 +319,41 @@
   >
     <li class="py-2">
       <a class="navbar_link" routerLink="/about/spare-cores">
-        <svg lucideHeartHandshake class="h-4 w-4"></svg>
+        <span class="navbar_icon">
+          <svg lucideHeartHandshake class="h-4 w-4"></svg>
+        </span>
         Our Mission
       </a>
     </li>
     <li class="py-2">
       <a class="navbar_link" routerLink="/about/partners">
-        <svg lucideHandshake class="h-4 w-4"></svg>
+        <span class="navbar_icon">
+          <svg lucideHandshake class="h-4 w-4"></svg>
+        </span>
         Partners
       </a>
     </li>
     <li class="py-2">
       <a class="navbar_link" routerLink="/articles">
-        <svg lucideNotebookText class="h-4 w-4"></svg>
+        <span class="navbar_icon">
+          <svg lucideNotebookText class="h-4 w-4"></svg>
+        </span>
         Blog
       </a>
     </li>
     <li class="py-2">
       <a class="navbar_link" routerLink="/talks">
-        <svg lucideProjector class="h-4 w-4"></svg>
+        <span class="navbar_icon">
+          <svg lucideProjector class="h-4 w-4"></svg>
+        </span>
         Talks & Slides
       </a>
     </li>
     <li class="py-2">
       <a class="navbar_link" routerLink="/design">
-        <svg lucidePalette class="h-4 w-4"></svg>
+        <span class="navbar_icon">
+          <svg lucidePalette class="h-4 w-4"></svg>
+        </span>
         Design
       </a>
     </li>
@@ -305,66 +372,86 @@
   >
     <li class="py-2">
       <a class="navbar_link" routerLink="/about/navigator">
-        <svg lucideBookText class="h-4 w-4"></svg>
+        <span class="navbar_icon">
+          <svg lucideBookText class="h-4 w-4"></svg>
+        </span>
         Product Info
       </a>
     </li>
     <hr class="mx-3 border-gray-500 mt-3 mb-3" />
     <li class="py-2">
       <a class="navbar_link" routerLink="/servers">
-        <svg lucidePcCase class="h-4 w-4"></svg>
+        <span class="navbar_icon">
+          <svg lucidePcCase class="h-4 w-4"></svg>
+        </span>
         Servers
       </a>
     </li>
     <li class="py-2">
       <a class="navbar_link" routerLink="/compare">
-        <svg lucideScale class="h-4 w-4"></svg>
+        <span class="navbar_icon">
+          <svg lucideScale class="h-4 w-4"></svg>
+        </span>
         Compare Guide
       </a>
     </li>
     <hr class="mx-3 border-gray-500 mt-3 mb-3" />
     <li class="py-2">
       <a class="navbar_link" routerLink="/server_prices">
-        <svg lucideDollarSign class="h-4 w-4"></svg>
+        <span class="navbar_icon">
+          <svg lucideDollarSign class="h-4 w-4"></svg>
+        </span>
         Server Prices
       </a>
     </li>
     <ul>
       <li class="py-2 ml-6">
         <a class="navbar_link" routerLink="/vendors">
-          <svg lucideHouse class="h-4 w-4"></svg>
+          <span class="navbar_icon">
+            <svg lucideHouse class="h-4 w-4"></svg>
+          </span>
           By Vendor
         </a>
       </li>
       <li class="py-2 ml-6">
         <a class="navbar_link" routerLink="/regions">
-          <svg lucideHotel class="h-4 w-4"></svg>
+          <span class="navbar_icon">
+            <svg lucideHotel class="h-4 w-4"></svg>
+          </span>
           By Region
         </a>
       </li>
     </ul>
     <li class="py-2">
       <a class="navbar_link" routerLink="/storages">
-        <svg lucideDatabase class="h-4 w-4"></svg>
+        <span class="navbar_icon">
+          <svg lucideDatabase class="h-4 w-4"></svg>
+        </span>
         Storage Prices
       </a>
     </li>
     <li class="py-2">
       <a class="navbar_link" routerLink="/traffic-prices">
-        <svg lucideArrowUpDown class="h-4 w-4"></svg>
+        <span class="navbar_icon">
+          <svg lucideArrowUpDown class="h-4 w-4"></svg>
+        </span>
         Traffic Prices
       </a>
     </li>
     <hr class="mx-3 border-gray-500 mt-3 mb-3" />
     <li class="py-2">
       <a class="navbar_link" routerLink="/navigator/benchmark-workloads">
-        <svg lucideNotebookText class="h-4 w-4"></svg>
+        <span class="navbar_icon">
+          <svg lucideNotebookText class="h-4 w-4"></svg>
+        </span>
         Workloads
       </a>
     </li>
     <li class="py-2">
       <a class="navbar_link" routerLink="/navigator/benchmark-coverage">
-        <svg lucideActivity class="h-4 w-4"></svg>
+        <span class="navbar_icon">
+          <svg lucideActivity class="h-4 w-4"></svg>
+        </span>
         Coverage
       </a>
     </li>
@@ -389,7 +476,9 @@
           class="navbar_link"
           routerLink="/server/{{ server.vendor }}/{{ server.server }}"
         >
-          <svg lucidePcCase class="h-4 w-4"></svg>
+          <span class="navbar_icon">
+            <svg lucidePcCase class="h-4 w-4"></svg>
+          </span>
           {{ server.vendor }}: {{ server.display_name }}
         </a>
         <div (click)="$event.stopPropagation()">
@@ -397,7 +486,9 @@
             class="text-red-500 px-2 py-2"
             (click)="removeFromCompare($event, server)"
           >
-            <svg lucideTrash class="h-4 w-4"></svg>
+            <span class="navbar_icon">
+              <svg lucideTrash class="h-4 w-4"></svg>
+            </span>
           </button>
         </div>
       </li>
