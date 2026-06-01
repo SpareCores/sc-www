@@ -2199,7 +2199,7 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
 
       this.baselineAddonPricingRow.set(
         (response?.body ?? []).find(
-          (row) =>
+          (row: ServerPKs) =>
             row.vendor_id === server.vendor_id &&
             row.api_reference === server.api_reference,
         ) ?? null,
