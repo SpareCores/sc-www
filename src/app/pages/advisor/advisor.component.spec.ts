@@ -1923,6 +1923,9 @@ describe("AdvisorComponent", () => {
   }));
 
   it("uses selected baseline recommendation monthly price for monthly deltas when baseline monthly records are missing", fakeAsync(() => {
+    getServerPrices.and.resolveTo({ body: [] });
+    searchServerPrices.and.resolveTo({ body: [] });
+
     selectBaselineServer();
     selectFirstAvailableWorkload();
 
@@ -1932,8 +1935,6 @@ describe("AdvisorComponent", () => {
         (allocation) => allocation.slug === "MONTHLY",
       )!,
     );
-
-    component.baselineServerPrices.set([] as never[]);
 
     component.recommendations.set([
       {

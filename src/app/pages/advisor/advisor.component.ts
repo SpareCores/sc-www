@@ -656,7 +656,7 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly baselinePriceAggregate = computed<AdvisorBaselinePriceAggregate>(
     () => {
       const addonRow = this.baselineAddonPricingRow();
-      if (addonRow) {
+      if (this.hasTrafficStorageRequirements() && addonRow) {
         return {
           min_price: addonRow.min_price ?? null,
           min_price_spot: addonRow.min_price_spot ?? null,
