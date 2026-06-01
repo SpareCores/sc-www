@@ -15,7 +15,7 @@
       <ul
         class="flex font-medium flex-row space-x-3 xl:space-x-8 mt-0 items-center"
       >
-        <li class="hidden lg:flex">
+        <li class="hidden xl:flex">
           <div
             class="navbar_link cursor-pointer"
             id="about_button"
@@ -29,7 +29,7 @@
             About
           </div>
         </li>
-        <li class="hidden lg:flex">
+        <li class="hidden xl:flex">
           <div
             class="navbar_link cursor-pointer"
             id="navigator_button"
@@ -43,7 +43,7 @@
             Navigator
           </div>
         </li>
-        <li class="hidden lg:flex">
+        <li class="hidden xl:flex">
           <a routerLink="/advisor" class="navbar_link">
             <span class="navbar_icon">
               <svg lucideBot class="cursor-pointer h-4 w-4"></svg>
@@ -51,7 +51,7 @@
             Advisor
           </a>
         </li>
-        <li class="hidden lg:flex">
+        <li class="hidden xl:flex">
           <a
             href="https://sparecores.github.io/resource-tracker/"
             target="_blank"
@@ -64,7 +64,7 @@
             Resource Tracker
           </a>
         </li>
-        <li class="hidden lg:flex">
+        <li class="hidden xl:flex">
           <a
             href="https://sentinel.sparecores.com/"
             target="_blank"
@@ -77,36 +77,38 @@
             Sentinel
           </a>
         </li>
-        <li class="py-1">
-          <button
-            id="meeting-header-demo"
-            class="text-white bg-emerald-400 hover:bg-emerald-500 rounded-lg px-3 py-2 relative flex gap-2 items-center"
-          >
-            <span class="navbar_icon">
-              <svg lucideCalendarDays class="h-4 w-4"></svg>
-            </span>
-            Book a Call
-          </button>
+        <li class="!px-0 py-1">
+          <div class="flex items-center gap-4">
+            <button
+              id="meeting-header-demo"
+              aria-label="Book a Call"
+              class="hidden sm:flex text-white bg-emerald-400 hover:bg-emerald-500 rounded-lg px-3 py-2 relative gap-2 items-center whitespace-nowrap"
+            >
+              <span class="navbar_icon">
+                <svg lucideCalendarDays class="h-4 w-4"></svg>
+              </span>
+              Book a Call
+            </button>
+            <button
+              id="compare_button"
+              [appFlowbiteDropdown]="'compare_options'"
+              [dropdownPlacement]="'bottom'"
+              #compareDropdown="appFlowbiteDropdown"
+              class="inline-flex items-center justify-center text-white bg-emerald-400 hover:bg-emerald-500 rounded-lg px-3 py-3 relative"
+              [class.hidden]="compareCount() === 0"
+            >
+              <span
+                class="h-4 w-4 absolute text-white bg-red-500 z-10 top-2 right-2 rounded-full"
+                style="top: 2px; font-size: 0.625rem; right: 2px"
+                >{{ compareCount() }}
+              </span>
+              <span class="navbar_icon">
+                <svg lucideScale class="h-4 w-4"></svg>
+              </span>
+            </button>
+          </div>
         </li>
-        <li [ngClass]="{ hidden: compareCount() === 0 }">
-          <button
-            id="compare_button"
-            [appFlowbiteDropdown]="'compare_options'"
-            [dropdownPlacement]="'bottom'"
-            #compareDropdown="appFlowbiteDropdown"
-            class="text-white bg-emerald-400 hover:bg-emerald-500 rounded-lg px-3 py-3 relative"
-          >
-            <span
-              class="h-4 w-4 absolute text-white bg-red-500 z-10 top-2 right-2 rounded-full"
-              style="top: 2px; font-size: 0.625rem; right: 2px"
-              >{{ compareCount() }}
-            </span>
-            <span class="navbar_icon">
-              <svg lucideScale class="h-4 w-4"></svg>
-            </span>
-          </button>
-        </li>
-        <li class="lg:hidden">
+        <li class="xl:hidden">
           <span
             id="menu_button"
             [appFlowbiteDropdown]="'menu_options'"
