@@ -661,7 +661,8 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
           min_price: addonRow.min_price ?? null,
           min_price_spot: addonRow.min_price_spot ?? null,
           min_price_ondemand: addonRow.min_price_ondemand ?? null,
-          min_price_ondemand_monthly: addonRow.min_price_ondemand_monthly ?? null,
+          min_price_ondemand_monthly:
+            addonRow.min_price_ondemand_monthly ?? null,
         };
       }
 
