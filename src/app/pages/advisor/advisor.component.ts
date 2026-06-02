@@ -417,6 +417,7 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
   private baselineBenchmarkRequestVersion = 0;
   private baselineRegionRequestVersion = 0;
   private baselinePriceComparisonRequestVersion = 0;
+  private baselineAddonPricingRequestVersion = 0;
   private baselineScoreComparisonRequestVersion = 0;
   private introductionModal: Modal | null = null;
   private hasViewInitialized = signal(false);
@@ -498,6 +499,7 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly isBaselineRegionEnabled = signal(false);
   readonly selectedBaselineVendorRegion = signal<string | null>(null);
   readonly baselineServerPrices = signal<ServerPrice[]>([]);
+  readonly baselineAddonPricingRow = signal<ServerPKs | null>(null);
   readonly baselinePriceComparisonRows = signal<ServerPriceWithPKs[]>([]);
   readonly baselineScoreComparisonRow = signal<Pick<
     ServerPKs,
@@ -683,6 +685,17 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
 
   readonly baselinePriceAggregate = computed<AdvisorBaselinePriceAggregate>(
     () => {
+      const addonRow = this.baselineAddonPricingRow();
+      if (this.hasTrafficStorageRequirements() && addonRow) {
+        return {
+          min_price: addonRow.min_price ?? null,
+          min_price_spot: addonRow.min_price_spot ?? null,
+          min_price_ondemand: addonRow.min_price_ondemand ?? null,
+          min_price_ondemand_monthly:
+            addonRow.min_price_ondemand_monthly ?? null,
+        };
+      }
+
       const selectedBaselineVendorRegion = this.selectedBaselineVendorRegion();
       const baselinePriceAggregate = this.advisorUi.buildBaselinePriceAggregate(
         this.baselineServerPrices(),
@@ -1222,16 +1235,31 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
     effect(() => {
       const selectedBaselineServer = this.selectedBaselineServer();
       const selectedCurrency = this.selectedCurrency().slug;
+      const query = this.query();
+      const extraStorageSize = query["extra_storage_size"];
+      const extraStorageType = query["extra_storage_type"];
+      const monthlyInboundTraffic = query["monthly_inbound_traffic"];
+      const monthlyOutboundTraffic = query["monthly_outbound_traffic"];
+      void this.isPriceAllocationEnabled();
+      void this.bestPriceAllocation();
+      void this.isBaselineRegionEnabled();
+      void this.selectedBaselineVendorRegion();
 
       if (!selectedBaselineServer) {
         this.baselineServerPrices.set([]);
         this.baselinePriceComparisonRows.set([]);
         this.baselineScoreComparisonRow.set(null);
+        this.baselineAddonPricingRow.set(null);
         this.isLoadingBaselineRegions.set(false);
         this.isBaselineRegionEnabled.set(false);
         this.selectedBaselineVendorRegion.set(null);
         return;
       }
+
+      void extraStorageSize;
+      void extraStorageType;
+      void monthlyInboundTraffic;
+      void monthlyOutboundTraffic;
 
       void this.loadBaselineRegionPrices(
         selectedBaselineServer,
@@ -1241,6 +1269,15 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
         selectedBaselineServer,
         selectedCurrency,
       );
+
+      if (this.hasTrafficStorageRequirements()) {
+        void this.loadBaselineAddonPricing(
+          selectedBaselineServer,
+          selectedCurrency,
+        );
+      } else {
+        this.baselineAddonPricingRow.set(null);
+      }
     });
 
     effect(() => {
@@ -2108,6 +2145,102 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
       if (requestVersion === this.baselineRegionRequestVersion) {
         this.isLoadingBaselineRegions.set(false);
       }
+    }
+  }
+
+  private getPositiveQueryNumber(value: unknown): number | null {
+    if (typeof value === "number" && Number.isFinite(value) && value > 0) {
+      return value;
+    }
+
+    if (typeof value === "string" && value.trim() !== "") {
+      const parsed = Number(value);
+
+      if (Number.isFinite(parsed) && parsed > 0) {
+        return parsed;
+      }
+    }
+
+    return null;
+  }
+
+  private hasTrafficStorageRequirements(): boolean {
+    const query = this.query() as Record<string, unknown>;
+
+    return [
+      query["extra_storage_size"],
+      query["monthly_inbound_traffic"],
+      query["monthly_outbound_traffic"],
+    ].some((value) => this.getPositiveQueryNumber(value) !== null);
+  }
+
+  private async loadBaselineAddonPricing(
+    server: AdvisorBaselineServer,
+    currency: string,
+  ): Promise<void> {
+    const requestVersion = ++this.baselineAddonPricingRequestVersion;
+    const sharedQuery = this.query() as SearchServersServersGetParams;
+    const query: SearchServersServersGetParams = {
+      partial_name_or_id: server.api_reference,
+      vendor: server.vendor_id as SearchServersServersGetParams["vendor"],
+      only_active: true,
+      limit: 100,
+    };
+
+    for (const key of [
+      "extra_storage_size",
+      "monthly_inbound_traffic",
+      "monthly_outbound_traffic",
+    ] as const) {
+      const value = this.getPositiveQueryNumber(sharedQuery[key]);
+
+      if (value !== null) {
+        query[key] = value;
+      }
+    }
+
+    if (sharedQuery.extra_storage_type) {
+      query.extra_storage_type = sharedQuery.extra_storage_type;
+    }
+
+    if (currency !== "USD") {
+      query.currency = currency;
+    }
+
+    if (
+      this.isPriceAllocationEnabled() &&
+      this.bestPriceAllocation().slug !== "ANY"
+    ) {
+      query.best_price_allocation = this.bestPriceAllocation().slug;
+    }
+
+    const baselineRegion = this.selectedBaselineVendorRegion();
+
+    if (this.isBaselineRegionEnabled() && baselineRegion) {
+      query.vendor_regions =
+        baselineRegion as SearchServersServersGetParams["vendor_regions"];
+    }
+
+    try {
+      const response = await this.keeperApi.searchServers(query);
+
+      if (requestVersion !== this.baselineAddonPricingRequestVersion) {
+        return;
+      }
+
+      this.baselineAddonPricingRow.set(
+        (response?.body ?? []).find(
+          (row: ServerPKs) =>
+            row.vendor_id === server.vendor_id &&
+            row.api_reference === server.api_reference,
+        ) ?? null,
+      );
+    } catch {
+      if (requestVersion !== this.baselineAddonPricingRequestVersion) {
+        return;
+      }
+
+      this.baselineAddonPricingRow.set(null);
     }
   }
 
