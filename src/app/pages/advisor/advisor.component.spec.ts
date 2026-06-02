@@ -440,7 +440,7 @@ describe("AdvisorComponent", () => {
       avg_cpu_utilization: "60",
       minimum_memory: "6",
     });
-    expect(introductionFrame?.src).toContain("obkavneTmwU");
+    expect(introductionFrame?.src).toContain("DscMyVQAp6J0fElp");
     expect(introductionFrame?.title).toBe("Spare Cores advisor introduction");
     expect(host.querySelector("#meeting-advisor-advanced")).toBeNull();
   });
