@@ -4,29 +4,27 @@
       <div class="flex justify-between items-center">
         <h3 class="text-2xl flex items-center gap-2">
           @if (benchmarkKey()) {
-            <lucide-icon
-              [name]="benchmarkKey() | benchmarkIcon"
+            <svg
+              [lucideIcon]="benchmarkKey() | benchmarkIcon"
               class="h-6 w-6"
-            ></lucide-icon>
+            ></svg>
           }
           {{ title() }}
           @if (orderTooltip()) {
-            <lucide-icon
-              name="circle-arrow-up"
+            <svg
+              lucideCircleArrowUp
               class="h-4 w-4 text-gray-200"
               (mouseenter)="showTooltip($event, orderTooltip())"
               (mouseleave)="hideTooltip()"
-            >
-            </lucide-icon>
+            ></svg>
           }
           @if (infoTooltip()) {
-            <lucide-icon
-              name="info"
+            <svg
+              lucideInfo
               class="h-4 w-4 text-gray-200"
               (mouseenter)="showTooltip($event, infoTooltip())"
               (mouseleave)="hideTooltip()"
-            >
-            </lucide-icon>
+            ></svg>
           }
         </h3>
         @if (hasSelector()) {
@@ -42,10 +40,10 @@
               {{ resolvedSelectedOptionName() }}
             </div>
             <div class="chart-selector-button__icon">
-              <lucide-icon
-                name="chevron-down"
-                class="h-6 w-6 text-emerald-400"
-              ></lucide-icon>
+              <svg
+                lucideChevronDown
+                class="h-6 w-6 shrink-0 text-emerald-400"
+              ></svg>
             </div>
           </button>
         }
@@ -92,10 +90,10 @@
               {{ resolvedSelectedOptionName() }}
             </div>
             <div class="chart-selector-button__icon">
-              <lucide-icon
-                name="chevron-down"
-                class="h-6 w-6 text-emerald-400"
-              ></lucide-icon>
+              <svg
+                lucideChevronDown
+                class="h-6 w-6 shrink-0 text-emerald-400"
+              ></svg>
             </div>
           </button>
         </div>

@@ -27,7 +27,14 @@ import {
   BreadcrumbsComponent,
 } from "../../components/breadcrumbs/breadcrumbs.component";
 import { isPlatformBrowser } from "@angular/common";
-import { LucideAngularModule } from "lucide-angular";
+import {
+  LucideCheck,
+  LucideChevronDown,
+  LucideCopy,
+  LucideExternalLink,
+  LucideScale,
+  LucideTriangleAlert,
+} from "@lucide/angular";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { FaqComponent } from "../../components/faq/faq.component";
 import { FormsModule } from "@angular/forms";
@@ -87,7 +94,12 @@ interface PropertyCategoryDefinition {
   selector: "app-server-details",
   imports: [
     BreadcrumbsComponent,
-    LucideAngularModule,
+    LucideCheck,
+    LucideChevronDown,
+    LucideCopy,
+    LucideExternalLink,
+    LucideScale,
+    LucideTriangleAlert,
     FaqComponent,
     FormsModule,
     RouterModule,

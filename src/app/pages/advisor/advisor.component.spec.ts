@@ -31,6 +31,7 @@ import {
   ADVISOR_LOADING_BASELINE_WORKLOAD_MESSAGE,
   ADVISOR_PAGE_LIMITS,
   ADVISOR_TABLE_COLUMNS,
+  ADVISOR_WORKLOAD_SCORE_TOOLTIP,
 } from "./advisor.constants";
 import { DropdownManagerService } from "../../services/dropdown-manager.service";
 import { KeeperAPIService } from "../../services/keeper-api.service";
@@ -41,7 +42,6 @@ import { NeetoCalService } from "../../services/neeto-cal.service";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 import {
   SERVER_TABLE_BENCHMARK_EFFICIENCY_TOOLTIP,
-  SERVER_TABLE_BENCHMARK_TOOLTIP,
   SERVER_TABLE_SCORE_PER_PRICE_TOOLTIP,
   SERVER_TABLE_SCORE_TOOLTIP,
 } from "../../tools/server-table-tooltips";
@@ -440,7 +440,7 @@ describe("AdvisorComponent", () => {
       avg_cpu_utilization: "60",
       minimum_memory: "6",
     });
-    expect(introductionFrame?.src).toContain("obkavneTmwU");
+    expect(introductionFrame?.src).toContain("4QwvxaLTW2k");
     expect(introductionFrame?.title).toBe("Spare Cores advisor introduction");
     expect(host.querySelector("#meeting-advisor-advanced")).toBeNull();
   });
@@ -561,7 +561,7 @@ describe("AdvisorComponent", () => {
     expect(component.tableColumns().map((column) => column.name)).toEqual([
       "NAME & PROVIDER",
       "PROCESSOR",
-      "BENCHMARK",
+      "WORKLOAD",
       "$ EFFICIENCY",
       "MEMORY",
       "GPUs",
@@ -603,7 +603,7 @@ describe("AdvisorComponent", () => {
     ).not.toContain("VCPUs");
   });
 
-  it("uses the server table tooltip copy for advisor metric columns", () => {
+  it("uses the expected tooltip copy for advisor metric columns", () => {
     const columnByName = new Map(
       component
         .possibleColumns()
@@ -614,8 +614,8 @@ describe("AdvisorComponent", () => {
     expect(columnByName.get("$CORE")?.info).toBe(
       SERVER_TABLE_SCORE_PER_PRICE_TOOLTIP,
     );
-    expect(columnByName.get("BENCHMARK")?.info).toBe(
-      SERVER_TABLE_BENCHMARK_TOOLTIP,
+    expect(columnByName.get("WORKLOAD")?.info).toBe(
+      ADVISOR_WORKLOAD_SCORE_TOOLTIP,
     );
     expect(columnByName.get("$ EFFICIENCY")?.info).toBe(
       SERVER_TABLE_BENCHMARK_EFFICIENCY_TOOLTIP,
@@ -626,9 +626,8 @@ describe("AdvisorComponent", () => {
     fixture.detectChanges();
 
     expect(
-      fixture.nativeElement.querySelectorAll(
-        '#advisor_results_table thead lucide-icon[name="info"]',
-      ).length,
+      fixture.nativeElement.querySelectorAll("#advisor_results_table thead svg")
+        .length,
     ).toBeGreaterThanOrEqual(4);
   });
 
@@ -2355,7 +2354,7 @@ describe("AdvisorComponent", () => {
     expect(component.tableColumns().map((column) => column.name)).toEqual([
       "NAME & PROVIDER",
       "PROCESSOR",
-      "BENCHMARK",
+      "WORKLOAD",
       "$ EFFICIENCY",
       "MEMORY",
       "GPUs",

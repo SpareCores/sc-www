@@ -27,13 +27,12 @@
                 <div class="flex gap-2 items-center">
                   <b>{{ property.name }}</b>
                   @for (tooltip of property.tooltips || []; track tooltip.key) {
-                    <lucide-icon
-                      name="info"
+                    <svg
+                      lucideInfo
                       class="h-4 w-4 text-gray-200 property_info_icon"
                       (mouseenter)="showTooltip($event, tooltip.content)"
                       (mouseleave)="hideTooltip()"
-                    >
-                    </lucide-icon>
+                    ></svg>
                   }
                 </div>
               </td>

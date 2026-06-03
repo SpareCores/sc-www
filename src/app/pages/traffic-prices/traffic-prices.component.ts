@@ -9,7 +9,13 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule, ActivatedRoute, Params, Router } from "@angular/router";
-import { LucideAngularModule } from "lucide-angular";
+import {
+  LucideDynamicIcon,
+  LucideChevronDown,
+  LucideChevronLeft,
+  LucideDollarSign,
+  LucideInfo,
+} from "@lucide/angular";
 import { OrderDir } from "../../../../sdk/data-contracts";
 import {
   BreadcrumbsComponent,
@@ -32,7 +38,11 @@ import openApiSpec from "../../../../sdk/openapi.json";
     CommonModule,
     FormsModule,
     BreadcrumbsComponent,
-    LucideAngularModule,
+    LucideDynamicIcon,
+    LucideChevronDown,
+    LucideChevronLeft,
+    LucideDollarSign,
+    LucideInfo,
     RouterModule,
     SearchBarComponent,
     PaginationComponent,

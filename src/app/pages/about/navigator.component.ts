@@ -12,7 +12,21 @@ import {
   BreadcrumbSegment,
   BreadcrumbsComponent,
 } from "../../components/breadcrumbs/breadcrumbs.component";
-import { LucideAngularModule } from "lucide-angular";
+import {
+  LucideBookText,
+  LucideBuilding2,
+  LucideChartCandlestick,
+  LucideCheck,
+  LucideDatabase,
+  LucideDollarSign,
+  LucideDynamicIcon,
+  LucideHeater,
+  LucideMapPinned,
+  LucidePackageOpen,
+  LucideQuote,
+  LucideScale,
+  LucideSquareKanban,
+} from "@lucide/angular";
 import { ThemeTextComponent } from "../../components/theme-text/theme-text.component";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { isPlatformBrowser } from "@angular/common";
@@ -32,7 +46,19 @@ interface Quote {
   selector: "app-about-navigator",
   imports: [
     BreadcrumbsComponent,
-    LucideAngularModule,
+    LucideBookText,
+    LucideBuilding2,
+    LucideChartCandlestick,
+    LucideCheck,
+    LucideDatabase,
+    LucideDollarSign,
+    LucideDynamicIcon,
+    LucideHeater,
+    LucideMapPinned,
+    LucidePackageOpen,
+    LucideQuote,
+    LucideScale,
+    LucideSquareKanban,
     ThemeTextComponent,
     RouterLink,
   ],
@@ -54,8 +80,8 @@ export class AboutNavigatorComponent implements OnInit, AfterViewInit {
     "✅ UpCloud (Done)",
     "✅ OVH Cloud (Done)",
     "✅ Alibaba Cloud (Done)",
-    "⚙️ Oracle Cloud Infrastructure (In Progress)",
-    "🗓️ Vultr (Planned)",
+    "⚙️ Vultr (In Progress)",
+    "🗓️ Oracle Cloud Infrastructure (Planned)",
     "🗓️ Scaleway (Planned)",
   ];
 

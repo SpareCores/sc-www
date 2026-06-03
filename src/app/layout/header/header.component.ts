@@ -1,14 +1,58 @@
 import { CommonModule } from "@angular/common";
 import { Component, inject, viewChild } from "@angular/core";
 import { RouterLink } from "@angular/router";
-import { LucideAngularModule } from "lucide-angular";
+import {
+  LucideActivity,
+  LucideArrowUpDown,
+  LucideBookText,
+  LucideBot,
+  LucideCalendarDays,
+  LucideDatabase,
+  LucideDollarSign,
+  LucideGauge,
+  LucideHandshake,
+  LucideHeartHandshake,
+  LucideHouse,
+  LucideHotel,
+  LucideInfo,
+  LucideMenu,
+  LucideNotebookText,
+  LucidePalette,
+  LucidePcCase,
+  LucideProjector,
+  LucideScale,
+  LucideShieldCog,
+  LucideShipWheel,
+  LucideTrash,
+} from "@lucide/angular";
 import { ServerCompareService } from "../../services/server-compare.service";
 import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
 
 @Component({
   selector: "app-header",
   imports: [
-    LucideAngularModule,
+    LucideActivity,
+    LucideArrowUpDown,
+    LucideBookText,
+    LucideBot,
+    LucideCalendarDays,
+    LucideDatabase,
+    LucideDollarSign,
+    LucideGauge,
+    LucideHandshake,
+    LucideHeartHandshake,
+    LucideHouse,
+    LucideHotel,
+    LucideInfo,
+    LucideMenu,
+    LucideNotebookText,
+    LucidePalette,
+    LucidePcCase,
+    LucideProjector,
+    LucideScale,
+    LucideShieldCog,
+    LucideShipWheel,
+    LucideTrash,
     RouterLink,
     CommonModule,
     FlowbiteDropdownDirective,

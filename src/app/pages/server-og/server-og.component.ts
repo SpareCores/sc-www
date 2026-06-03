@@ -1,5 +1,4 @@
 import { Component, OnInit, OnDestroy, inject } from "@angular/core";
-import { LucideAngularModule } from "lucide-angular";
 import { ActivatedRoute } from "@angular/router";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
@@ -8,7 +7,7 @@ import { Subscription } from "rxjs";
 
 @Component({
   selector: "app-server-og",
-  imports: [LucideAngularModule],
+  imports: [],
   templateUrl: "./server-og.component.html",
   styleUrl: "./server-og.component.scss",
 })

@@ -47,6 +47,8 @@ export class NeetoCalService {
   private initializeButtons(): void {
     const advisorMeetingContext =
       "I am interested in multi-server optimization, programmatic API access, or workflow automations for advanced cloud management.";
+    const sentinelTeamPlansContext =
+      "I am interested in Sentinel team plans for my organization.";
 
     const buttonContextMap = {
       "#meeting-header-demo": "",
@@ -57,7 +59,8 @@ export class NeetoCalService {
       "#meeting-painpoints":
         "Discuss use-cases and painpoints, and get a demo of the Spare Cores Resource Tracker and Sentinel products.",
       "#meeting-services-consulting":
-        "I am interested in Cloud-Optimization Consulting services.",
+        "I am interested in an AI/ML Cloud Optimization Assessment.",
+      "#meeting-sentinel-team-plans": sentinelTeamPlansContext,
       "#meeting-services-shiny":
         "I would like to discuss Scalable Shiny/Streamlit Hosting.",
       "#meeting-services-llms": "I need help with AI Workload Sizing.",

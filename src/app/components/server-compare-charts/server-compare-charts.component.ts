@@ -11,7 +11,11 @@ import {
   inject,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import { LucideAngularModule } from "lucide-angular";
+import {
+  LucideDynamicIcon,
+  LucideCircleArrowUp,
+  LucideInfo,
+} from "@lucide/angular";
 import { ExtendedServerDetails } from "../../pages/server-details/server-details.component";
 import { Allocation } from "../../../../sdk/data-contracts";
 import {
@@ -64,7 +68,9 @@ import {
   selector: "app-server-compare-charts",
   imports: [
     CommonModule,
-    LucideAngularModule,
+    LucideDynamicIcon,
+    LucideCircleArrowUp,
+    LucideInfo,
     RouterModule,
     CompactNumberPipe,
     BenchmarkIconPipe,

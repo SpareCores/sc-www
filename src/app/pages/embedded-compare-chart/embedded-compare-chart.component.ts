@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, PLATFORM_ID } from "@angular/core";
 import { isPlatformBrowser } from "@angular/common";
 import { ServerCompareChartsComponent } from "../../components/server-compare-charts/server-compare-charts.component";
-import { LucideAngularModule } from "lucide-angular";
+import { LucideExternalLink } from "@lucide/angular";
 import { ActivatedRoute } from "@angular/router";
 import { AnalyticsService } from "../../services/analytics.service";
 import { KeeperAPIService } from "../../services/keeper-api.service";
@@ -21,7 +21,7 @@ const INVALID_COMPARE_URL_TOAST_BODY =
 
 @Component({
   selector: "app-embedded-compare-chart",
-  imports: [ServerCompareChartsComponent, LucideAngularModule],
+  imports: [ServerCompareChartsComponent, LucideExternalLink],
   templateUrl: "./embedded-compare-chart.component.html",
   styleUrl: "./embedded-compare-chart.component.scss",
 })

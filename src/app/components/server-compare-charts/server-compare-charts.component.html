@@ -106,13 +106,13 @@
           <td>
             <div class="flex gap-1 items-center">
               $Core
-              <lucide-icon
-                name="info"
+              <svg
+                lucideInfo
                 class="h-4 w-4 text-gray-200"
+                data-cy="compare-score-tooltip-trigger"
                 (mouseenter)="showTooltip($event, SSCoreTooltip)"
                 (mouseleave)="hideTooltip()"
-              >
-              </lucide-icon>
+              ></svg>
             </div>
           </td>
           @for (
@@ -299,13 +299,12 @@
                 <div class="flex gap-2 items-center">
                   {{ category.name }}
                   @if (category.description) {
-                    <lucide-icon
-                      name="info"
+                    <svg
+                      lucideInfo
                       class="h-4 w-4 text-gray-200"
                       (mouseenter)="showTooltip($event, category.description)"
                       (mouseleave)="hideTooltip()"
-                    >
-                    </lucide-icon>
+                    ></svg>
                   }
                 </div>
               </td>
@@ -337,49 +336,46 @@
               <div class="compare-section-header-row">
                 <h3 class="text-xl font-semibold">
                   <span class="compare-section-header-title">
-                    <lucide-icon
-                      [name]="benchmarkCategory.name | benchmarkIcon"
+                    <svg
+                      [lucideIcon]="benchmarkCategory.name | benchmarkIcon"
                       class="h-6 w-6 shrink-0"
-                    ></lucide-icon>
+                    ></svg>
                     <span class="compare-section-header-title__text">
                       {{ benchmarkCategory.name }}
                     </span>
                     <span class="compare-section-header-title__icons">
-                      <lucide-icon
-                        name="circle-arrow-up"
+                      <svg
+                        lucideCircleArrowUp
                         class="h-4 w-4 text-gray-200 shrink-0"
                         (mouseenter)="showTooltip($event, 'Higher is better.')"
                         (mouseleave)="hideTooltip()"
-                      >
-                      </lucide-icon>
+                      ></svg>
                       @if (
                         benchmarkCategory.id === "bw_mem" ||
                         benchmarkCategory.id === "openssl"
                       ) {
-                        <lucide-icon
-                          name="info"
+                        <svg
+                          lucideInfo
                           class="h-4 w-4 text-gray-200 shrink-0"
                           (mouseenter)="
                             showTooltipChart($event, benchmarkCategory.id)
                           "
                           (mouseleave)="hideTooltip()"
-                        >
-                        </lucide-icon>
+                        ></svg>
                       }
                       @if (benchmarkCategory.id === "stress_ng") {
-                        <lucide-icon
-                          name="info"
+                        <svg
+                          lucideInfo
                           class="h-4 w-4 text-gray-200 shrink-0"
                           (mouseenter)="
                             showTooltipChart($event, 'stress_ng:div16')
                           "
                           (mouseleave)="hideTooltip()"
-                        >
-                        </lucide-icon>
+                        ></svg>
                       }
                       @if (benchmarkCategory.id === "stress_ng_pct") {
-                        <lucide-icon
-                          name="info"
+                        <svg
+                          lucideInfo
                           class="h-4 w-4 text-gray-200 shrink-0"
                           (mouseenter)="
                             showTooltip(
@@ -388,12 +384,11 @@
                             )
                           "
                           (mouseleave)="hideTooltip()"
-                        >
-                        </lucide-icon>
+                        ></svg>
                       }
                       @if (benchmarkCategory.id === "compress") {
-                        <lucide-icon
-                          name="info"
+                        <svg
+                          lucideInfo
                           class="h-4 w-4 text-gray-200 shrink-0"
                           (mouseenter)="
                             showTooltip(
@@ -402,25 +397,23 @@
                             )
                           "
                           (mouseleave)="hideTooltip()"
-                        >
-                        </lucide-icon>
+                        ></svg>
                       }
                       @if (
                         benchmarkCategory.id === "geekbench" ||
                         benchmarkCategory.id === "geekbench_single" ||
                         benchmarkCategory.id === "geekbench_multi"
                       ) {
-                        <lucide-icon
-                          name="info"
+                        <svg
+                          lucideInfo
                           class="h-4 w-4 text-gray-200 shrink-0"
                           (mouseenter)="showGeekbenchInfoTooltip($event)"
                           (mouseleave)="hideTooltip()"
-                        >
-                        </lucide-icon>
+                        ></svg>
                       }
                       @if (benchmarkCategory.id === "llm_inference") {
-                        <lucide-icon
-                          name="info"
+                        <svg
+                          lucideInfo
                           class="h-4 w-4 text-gray-200 shrink-0"
                           (mouseenter)="
                             showTooltip(
@@ -429,14 +422,15 @@
                             )
                           "
                           (mouseleave)="hideTooltip()"
-                        >
-                        </lucide-icon>
+                        ></svg>
                       }
                     </span>
                   </span>
                 </h3>
                 @if (!isEmbedded && !getCompareFixedWideTrailingColSpan()) {
                   <button
+                    type="button"
+                    aria-label="Copy benchmark section link"
                     class="btn-primary py-2 px-3 flex gap-1 items-center shrink-0"
                     (click)="
                       clipboardURL(
@@ -445,10 +439,11 @@
                       )
                     "
                   >
-                    <lucide-icon
-                      name="{{ clipboardIcon }}"
+                    <svg
+                      [lucideIcon]="clipboardIcon"
                       size="16"
-                    ></lucide-icon>
+                      aria-hidden="true"
+                    ></svg>
                   </button>
                 }
               </div>
@@ -461,6 +456,8 @@
                 @if (!isEmbedded) {
                   <div class="flex justify-end">
                     <button
+                      type="button"
+                      aria-label="Copy benchmark section link"
                       class="btn-primary py-2 px-3 flex gap-1 items-center shrink-0"
                       (click)="
                         clipboardURL(
@@ -469,10 +466,11 @@
                         )
                       "
                     >
-                      <lucide-icon
-                        name="{{ clipboardIcon }}"
+                      <svg
+                        [lucideIcon]="clipboardIcon"
                         size="16"
-                      ></lucide-icon>
+                        aria-hidden="true"
+                      ></svg>
                     </button>
                   </div>
                 }
@@ -613,15 +611,14 @@
                     <div class="inline-block gap-2 items-center">
                       <span class="inline">{{ benchmarkData.name }}</span>
                       @if (benchmarkData.description) {
-                        <lucide-icon
-                          name="info"
+                        <svg
+                          lucideInfo
                           class="inline-block h-4 w-4 text-gray-200 ml-1"
                           (mouseenter)="
                             showTooltip($event, benchmarkData.description)
                           "
                           (mouseleave)="hideTooltip()"
-                        >
-                        </lucide-icon>
+                        ></svg>
                       }
                     </div>
                   </div>
@@ -670,15 +667,14 @@
                       <div class="flex gap-2 items-center min-w-0">
                         {{ benchmarkData.name }}
                         @if (benchmarkData.description) {
-                          <lucide-icon
-                            name="info"
+                          <svg
+                            lucideInfo
                             class="h-4 w-4 text-gray-200"
                             (mouseenter)="
                               showTooltip($event, benchmarkData.description)
                             "
                             (mouseleave)="hideTooltip()"
-                          >
-                          </lucide-icon>
+                          ></svg>
                         }
                       </div>
                     </div>
@@ -686,14 +682,23 @@
                   <td [colSpan]="getCompareFixedHeaderSpacerColSpan()"></td>
                   <td [colSpan]="1" class="compare-section-header-action-cell">
                     @if (benchmarkData.description) {
-                      <div class="compare-section-header-action-content">
-                        <lucide-icon
-                          [name]="benchmarkIcon(benchmarkData)"
-                          class="h-6 w-6 text-emerald-400 cursor-pointer"
-                          (click)="toggleBenchmark(benchmarkData)"
-                        >
-                        </lucide-icon>
-                      </div>
+                      <button
+                        type="button"
+                        class="compare-section-header-action-content inline-flex cursor-pointer items-center justify-center rounded border-0 bg-transparent p-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400"
+                        [attr.aria-expanded]="!benchmarkData.collapsed"
+                        [attr.aria-label]="
+                          benchmarkData.collapsed
+                            ? 'Expand benchmark details'
+                            : 'Collapse benchmark details'
+                        "
+                        (click)="toggleBenchmark(benchmarkData)"
+                      >
+                        <svg
+                          [lucideIcon]="benchmarkIcon(benchmarkData)"
+                          class="h-6 w-6 text-emerald-400"
+                          aria-hidden="true"
+                        ></svg>
+                      </button>
                     }
                   </td>
                 </tr>
@@ -747,16 +752,16 @@
               <h3
                 class="text-xl font-semibold flex flex-nowrap gap-2 items-center min-w-0"
               >
-                <lucide-icon
-                  [name]="chartItem.chart.name | benchmarkIcon"
+                <svg
+                  [lucideIcon]="chartItem.chart.name | benchmarkIcon"
                   class="h-6 w-6"
-                ></lucide-icon>
+                ></svg>
                 <span class="truncate">{{ chartItem.chart.name }}</span>
                 @if (
                   chartItem.chart.options[chartItem.chart.selectedOption].icon
                 ) {
-                  <lucide-icon
-                    [name]="
+                  <svg
+                    [lucideIcon]="
                       chartItem.chart.options[chartItem.chart.selectedOption]
                         .icon || ''
                     "
@@ -769,11 +774,10 @@
                       )
                     "
                     (mouseleave)="hideTooltip()"
-                  >
-                  </lucide-icon>
+                  ></svg>
                 }
-                <lucide-icon
-                  name="info"
+                <svg
+                  lucideInfo
                   class="h-4 w-4 text-gray-200"
                   (mouseenter)="
                     showTooltipChart(
@@ -783,8 +787,7 @@
                     )
                   "
                   (mouseleave)="hideTooltip()"
-                >
-                </lucide-icon>
+                ></svg>
               </h3>
             </td>
             @if (getCompareFixedWideActionSpacerColSpan()) {
@@ -828,15 +831,14 @@
                       <div class="flex gap-2 items-center min-w-0">
                         {{ chartData.name }}
                         @if (chartData.description) {
-                          <lucide-icon
-                            name="info"
+                          <svg
+                            lucideInfo
                             class="h-4 w-4 text-gray-200"
                             (mouseenter)="
                               showTooltip($event, chartData.description)
                             "
                             (mouseleave)="hideTooltip()"
-                          >
-                          </lucide-icon>
+                          ></svg>
                         }
                       </div>
                     </div>
@@ -844,14 +846,23 @@
                   <td [colSpan]="getCompareFixedHeaderSpacerColSpan()"></td>
                   <td [colSpan]="1" class="compare-section-header-action-cell">
                     @if (chartData.description) {
-                      <div class="compare-section-header-action-content">
-                        <lucide-icon
-                          [name]="benchmarkIcon(chartData)"
-                          class="h-6 w-6 text-emerald-400 cursor-pointer"
-                          (click)="toggleBenchmark(chartData)"
-                        >
-                        </lucide-icon>
-                      </div>
+                      <button
+                        type="button"
+                        class="compare-section-header-action-content inline-flex cursor-pointer items-center justify-center rounded border-0 bg-transparent p-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400"
+                        [attr.aria-expanded]="!chartData.collapsed"
+                        [attr.aria-label]="
+                          chartData.collapsed
+                            ? 'Expand benchmark details'
+                            : 'Collapse benchmark details'
+                        "
+                        (click)="toggleBenchmark(chartData)"
+                      >
+                        <svg
+                          [lucideIcon]="benchmarkIcon(chartData)"
+                          class="h-6 w-6 text-emerald-400"
+                          aria-hidden="true"
+                        ></svg>
+                      </button>
                     }
                   </td>
                 </tr>
@@ -908,23 +919,22 @@
             <td [colSpan]="1" class="compare-fixed-header-label-cell">
               <div class="pl-4">
                 <div class="flex flex-nowrap gap-2 items-center min-w-0">
-                  <lucide-icon
-                    [name]="benchmarkCategory.name | benchmarkIcon"
+                  <svg
+                    [lucideIcon]="benchmarkCategory.name | benchmarkIcon"
                     class="h-6 w-6 shrink-0"
-                  ></lucide-icon>
+                  ></svg>
                   <span class="whitespace-nowrap">{{
                     benchmarkCategory.name
                   }}</span>
                   @if (benchmarkCategory.description) {
-                    <lucide-icon
-                      name="info"
+                    <svg
+                      lucideInfo
                       class="h-4 w-4 text-gray-200 shrink-0"
                       (mouseenter)="
                         showTooltip($event, benchmarkCategory.description)
                       "
                       (mouseleave)="hideTooltip()"
-                    >
-                    </lucide-icon>
+                    ></svg>
                   }
                 </div>
               </div>
@@ -933,14 +943,23 @@
             <td [colSpan]="getCompareFixedHeaderSpacerColSpan()"></td>
             <td [colSpan]="1" class="compare-section-header-action-cell">
               @if (benchmarkCategory.description) {
-                <div class="compare-section-header-action-content">
-                  <lucide-icon
-                    [name]="benchmarkIcon(benchmarkCategory)"
-                    class="h-6 w-6 text-emerald-400 cursor-pointer shrink-0"
-                    (click)="toggleBenchmark(benchmarkCategory)"
-                  >
-                  </lucide-icon>
-                </div>
+                <button
+                  type="button"
+                  class="compare-section-header-action-content inline-flex cursor-pointer items-center justify-center rounded border-0 bg-transparent p-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400"
+                  [attr.aria-expanded]="!benchmarkCategory.collapsed"
+                  [attr.aria-label]="
+                    benchmarkCategory.collapsed
+                      ? 'Expand benchmark details'
+                      : 'Collapse benchmark details'
+                  "
+                  (click)="toggleBenchmark(benchmarkCategory)"
+                >
+                  <svg
+                    [lucideIcon]="benchmarkIcon(benchmarkCategory)"
+                    class="h-6 w-6 text-emerald-400 shrink-0"
+                    aria-hidden="true"
+                  ></svg>
+                </button>
               }
             </td>
           </tr>

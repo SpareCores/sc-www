@@ -9,7 +9,11 @@ import {
   input,
   viewChild,
 } from "@angular/core";
-import { LucideAngularModule } from "lucide-angular";
+import {
+  LucideDynamicIcon,
+  LucideCircleArrowUp,
+  LucideInfo,
+} from "@lucide/angular";
 import { BaseChartDirective } from "ng2-charts";
 import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon.pipe";
 import { ChartTooltipService } from "../shared/chart-tooltip.service";
@@ -28,7 +32,9 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    LucideAngularModule,
+    LucideDynamicIcon,
+    LucideCircleArrowUp,
+    LucideInfo,
     BaseChartDirective,
     BenchmarkIconPipe,
   ],

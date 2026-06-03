@@ -7,7 +7,11 @@ import {
 import { ArticlesService, SlidesMeta } from "../../services/articles.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { TimeToShortDatePipe } from "../../pipes/time-to-short-date.pipe";
-import { LucideAngularModule } from "lucide-angular";
+import {
+  LucideDynamicIcon,
+  LucideHourglass,
+  LucideScrollText,
+} from "@lucide/angular";
 
 @Component({
   selector: "app-talks",
@@ -15,7 +19,9 @@ import { LucideAngularModule } from "lucide-angular";
     BreadcrumbsComponent,
     RouterModule,
     TimeToShortDatePipe,
-    LucideAngularModule,
+    LucideDynamicIcon,
+    LucideHourglass,
+    LucideScrollText,
   ],
   templateUrl: "./talks.component.html",
   styleUrl: "./talks.component.scss",

@@ -3,7 +3,16 @@
   text-decoration: none;
   display: flex;
   gap: 0.5rem;
+  white-space: nowrap;
   @apply text-sm items-center hover:text-emerald-400;
+}
+
+.navbar_icon {
+  @apply inline-block shrink-0;
+}
+
+.navbar_icon > svg {
+  @apply block;
 }
 
 li {

@@ -5,25 +5,23 @@
         class="flex flex-col items-start gap-4 md:flex-row md:items-center md:justify-between"
       >
         <h3 class="text-2xl flex items-center gap-2">
-          <lucide-icon
-            [name]="'compression' | benchmarkIcon"
+          <svg
+            [lucideIcon]="'compression' | benchmarkIcon"
             class="h-6 w-6"
-          ></lucide-icon>
+          ></svg>
           Compression
-          <lucide-icon
-            [name]="currentDetailsMode().icon"
+          <svg
+            [lucideIcon]="currentDetailsMode().icon"
             class="h-4 w-4 text-gray-200"
             (mouseenter)="showTooltip($event, currentDetailsMode().order)"
             (mouseleave)="hideTooltip()"
-          >
-          </lucide-icon>
-          <lucide-icon
-            name="info"
+          ></svg>
+          <svg
+            lucideInfo
             class="h-4 w-4 text-gray-200"
             (mouseenter)="showTooltip($event, infoTooltip)"
             (mouseleave)="hideTooltip()"
-          >
-          </lucide-icon>
+          ></svg>
         </h3>
         <div class="flex min-w-0 gap-4">
           @if (hasCoresSelector()) {
@@ -39,10 +37,10 @@
                 {{ coresLabel() }}
               </div>
               <div class="chart-selector-button__icon">
-                <lucide-icon
-                  name="chevron-down"
-                  class="h-6 w-6 text-emerald-400"
-                ></lucide-icon>
+                <svg
+                  lucideChevronDown
+                  class="h-6 w-6 shrink-0 text-emerald-400"
+                ></svg>
               </div>
             </button>
           }
@@ -58,10 +56,10 @@
               {{ currentDetailsMode().name }}
             </div>
             <div class="chart-selector-button__icon">
-              <lucide-icon
-                name="chevron-down"
-                class="h-6 w-6 text-emerald-400"
-              ></lucide-icon>
+              <svg
+                lucideChevronDown
+                class="h-6 w-6 shrink-0 text-emerald-400"
+              ></svg>
             </div>
           </button>
         </div>
@@ -100,10 +98,10 @@
                 {{ currentCompareOptionName() }}
               </div>
               <div class="chart-selector-button__icon">
-                <lucide-icon
-                  name="chevron-down"
-                  class="h-6 w-6 text-emerald-400"
-                ></lucide-icon>
+                <svg
+                  lucideChevronDown
+                  class="h-6 w-6 shrink-0 text-emerald-400"
+                ></svg>
               </div>
             </button>
           </div>

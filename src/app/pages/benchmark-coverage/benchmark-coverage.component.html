@@ -5,7 +5,7 @@
     <div class="flex flex-col gap-4 my-8 mx-2 xl:mx-0">
       <div class="flex gap-4 items-center w-full justify-between">
         <h1 class="text-white font-bold text-3xl flex items-center">
-          <lucide-icon class="h-8 w-8 mr-2" name="activity"></lucide-icon>
+          <svg lucideActivity class="h-8 w-8 mr-2"></svg>
           {{ pageTitle }}
         </h1>
       </div>
@@ -190,10 +190,17 @@
           role="button"
           [attr.aria-expanded]="!isCollapsed"
         >
-          <lucide-icon
-            [name]="isCollapsed ? 'chevron-right' : 'chevron-left'"
-            class="h-6 w-6 text-emerald-400"
-          ></lucide-icon>
+          @if (isCollapsed) {
+            <svg
+              lucideChevronRight
+              class="h-6 w-6 shrink-0 text-emerald-400"
+            ></svg>
+          } @else {
+            <svg
+              lucideChevronLeft
+              class="h-6 w-6 shrink-0 text-emerald-400"
+            ></svg>
+          }
         </div>
         <app-search-bar
           [query]="searchQuery"
@@ -221,7 +228,7 @@
               class="text-white bg-emerald-400 hover:bg-emerald-500 rounded-lg px-3 py-2 relative flex gap-2 items-center justify-center"
               (click)="clearFilters()"
             >
-              <lucide-icon class="h-4 w-4" name="funnel-x"></lucide-icon>
+              <svg lucideFunnelX class="h-4 w-4"></svg>
               Clear filters
             </button>
           </div>
@@ -268,7 +275,7 @@
                 </th>
                 <th class="left-bordered-cell">
                   <div class="flex justify-center">
-                    <lucide-icon name="link" class="h-4 w-4"></lucide-icon>
+                    <svg lucideLink class="h-4 w-4 shrink-0"></svg>
                   </div>
                 </th>
               </tr>
@@ -299,54 +306,51 @@
                     <td class="text-sm">{{ row.api_reference }}</td>
                     <td class="text-center border-l border-gray-600 icon-cell">
                       @if (row.has_price) {
-                        <lucide-icon
-                          name="check"
-                          class="h-4 w-4 text-emerald-400 justify-self-center"
-                        ></lucide-icon>
+                        <svg
+                          lucideCheck
+                          class="h-4 w-4 shrink-0 text-emerald-400 justify-self-center"
+                        ></svg>
                       } @else {
-                        <lucide-icon
-                          name="x"
-                          class="h-4 w-4 text-white"
-                        ></lucide-icon>
+                        <svg lucideX class="h-4 w-4 shrink-0 text-white"></svg>
                       }
                     </td>
                     <td class="text-center icon-cell">
                       @if (row.is_active) {
-                        <lucide-icon
-                          name="check"
-                          class="h-4 w-4 text-emerald-400 justify-self-center"
-                        ></lucide-icon>
+                        <svg
+                          lucideCheck
+                          class="h-4 w-4 shrink-0 text-emerald-400 justify-self-center"
+                        ></svg>
                       } @else {
-                        <lucide-icon
-                          name="x"
-                          class="h-4 w-4 text-white justify-self-center"
-                        ></lucide-icon>
+                        <svg
+                          lucideX
+                          class="h-4 w-4 shrink-0 text-white justify-self-center"
+                        ></svg>
                       }
                     </td>
                     <td class="text-center icon-cell">
                       @if (row.has_hw_info) {
-                        <lucide-icon
-                          name="check"
-                          class="h-4 w-4 text-emerald-400 justify-self-center"
-                        ></lucide-icon>
+                        <svg
+                          lucideCheck
+                          class="h-4 w-4 shrink-0 text-emerald-400 justify-self-center"
+                        ></svg>
                       } @else {
-                        <lucide-icon
-                          name="x"
-                          class="h-4 w-4 text-white justify-self-center"
-                        ></lucide-icon>
+                        <svg
+                          lucideX
+                          class="h-4 w-4 shrink-0 text-white justify-self-center"
+                        ></svg>
                       }
                     </td>
                     <td class="text-center icon-cell">
                       @if (row.has_any_benchmark) {
-                        <lucide-icon
-                          name="check"
-                          class="h-4 w-4 text-emerald-400 justify-self-center"
-                        ></lucide-icon>
+                        <svg
+                          lucideCheck
+                          class="h-4 w-4 shrink-0 text-emerald-400 justify-self-center"
+                        ></svg>
                       } @else {
-                        <lucide-icon
-                          name="x"
-                          class="h-4 w-4 text-white justify-self-center"
-                        ></lucide-icon>
+                        <svg
+                          lucideX
+                          class="h-4 w-4 shrink-0 text-white justify-self-center"
+                        ></svg>
                       }
                     </td>
                     @for (
@@ -359,10 +363,10 @@
                         [class.border-l]="isFirst"
                       >
                         @if (row.benchmarkFlags[benchmarkFamily]) {
-                          <lucide-icon
-                            name="check"
-                            class="h-4 w-4 text-emerald-400 block"
-                          ></lucide-icon>
+                          <svg
+                            lucideCheck
+                            class="h-4 w-4 shrink-0 text-emerald-400 block"
+                          ></svg>
                         } @else {
                           <a
                             [href]="
@@ -376,10 +380,10 @@
                             rel="noopener noreferrer"
                             class="flex cursor-pointer"
                           >
-                            <lucide-icon
-                              name="x"
-                              class="h-4 w-4 text-white"
-                            ></lucide-icon>
+                            <svg
+                              lucideX
+                              class="h-4 w-4 shrink-0 text-white"
+                            ></svg>
                           </a>
                         }
                       </td>
@@ -387,23 +391,22 @@
                     <td class="icon-cell border-l">
                       <div [attr.title]="row.assessment.tooltip">
                         @if (row.assessment.kind === "fully_evaluated") {
-                          <lucide-icon
-                            [name]="row.assessment.icon"
+                          <svg
+                            lucideCircleCheckBig
                             class="h-4 w-4 text-emerald-400"
-                          ></lucide-icon>
-                        } @else if (
-                          row.assessment.kind === "in_progress" ||
-                          row.assessment.kind === "cannot_evaluate"
-                        ) {
-                          <lucide-icon
-                            [name]="row.assessment.icon"
+                          ></svg>
+                        } @else if (row.assessment.kind === "cannot_evaluate") {
+                          <svg
+                            lucideCircleAlert
                             class="h-4 w-4 text-yellow-500"
-                          ></lucide-icon>
+                          ></svg>
+                        } @else if (row.assessment.kind === "in_progress") {
+                          <svg
+                            lucideClock
+                            class="h-4 w-4 text-yellow-500"
+                          ></svg>
                         } @else {
-                          <lucide-icon
-                            [name]="row.assessment.icon"
-                            class="h-4 w-4 text-red-500"
-                          ></lucide-icon>
+                          <svg lucideCircleX class="h-4 w-4 text-red-500"></svg>
                         }
                       </div>
                     </td>
@@ -413,10 +416,10 @@
                           row.api_reference
                         }}"
                       >
-                        <lucide-icon
-                          name="chevron-right"
-                          class="h-6 w-6 text-emerald-400"
-                        ></lucide-icon>
+                        <svg
+                          lucideChevronRight
+                          class="h-6 w-6 shrink-0 text-emerald-400"
+                        ></svg>
                       </a>
                     </td>
                   </tr>
@@ -450,10 +453,10 @@
               <div
                 class="px-2 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
               >
-                <lucide-icon
-                  name="chevron-down"
-                  class="h-6 w-6 text-emerald-400"
-                ></lucide-icon>
+                <svg
+                  lucideChevronDown
+                  class="h-6 w-6 shrink-0 text-emerald-400"
+                ></svg>
               </div>
             </button>
             <span class="text-white hidden md:inline"> items per page</span>
@@ -492,7 +495,7 @@
                 class="flex justify-center bg-transparent text-white py-2 px-4 w-10 rounded-lg font-bold hover:bg-emerald-400"
                 (click)="goToPage(page() - 1)"
               >
-                <lucide-icon name="chevron-left" class="h-4 w-4"></lucide-icon>
+                <svg lucideChevronLeft class="h-6 w-6 shrink-0"></svg>
               </button>
             }
             @if (page() > 2) {
@@ -549,7 +552,7 @@
                 class="pagination_button pagination_arrow"
                 (click)="goToPage(page() + 1)"
               >
-                <lucide-icon name="chevron-right" class="h-4 w-4"></lucide-icon>
+                <svg lucideChevronRight class="h-6 w-6 shrink-0"></svg>
               </button>
             }
           </div>

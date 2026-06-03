@@ -18,7 +18,15 @@ import { ActivatedRoute, Params, Router, RouterModule } from "@angular/router";
 import { CommonModule, isPlatformBrowser } from "@angular/common";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { FormsModule } from "@angular/forms";
-import { LucideAngularModule } from "lucide-angular";
+import {
+  LucideDynamicIcon,
+  LucideChevronDown,
+  LucideChevronLeft,
+  LucideChevronRight,
+  LucideDollarSign,
+  LucideInfo,
+  LucideScale,
+} from "@lucide/angular";
 import { CountryIdtoNamePipe } from "../../pipes/country-idto-name.pipe";
 import { GpuCountPipe } from "../../pipes/gpu-count.pipe";
 import { SearchBarComponent } from "../../components/search-bar/search-bar.component";
@@ -85,7 +93,13 @@ export type RegionVendorMetadata = {
     CommonModule,
     FormsModule,
     BreadcrumbsComponent,
-    LucideAngularModule,
+    LucideDynamicIcon,
+    LucideChevronDown,
+    LucideChevronLeft,
+    LucideChevronRight,
+    LucideDollarSign,
+    LucideInfo,
+    LucideScale,
     CountryIdtoNamePipe,
     GpuCountPipe,
     RouterModule,
