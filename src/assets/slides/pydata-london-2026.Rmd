@@ -5,6 +5,14 @@ date: "2026-06-06"
 conference: "PyData London 2026"
 conference_url: "https://pydata.org/london2026"
 conference_talk_url: "https://pretalx.com/pydata-london-2026/talk/ABYV3J/"
+abstract: |
+  Choosing a cloud instance type for a DS/ML/AI workload is still largely a heuristic exercise. While public pricing and hardware specifications are available, they are fragmented, inconsistently structured, and challenging to compare across cloud providers -- especially once real workload performance is taken into account.
+  In this talk, we present Spare Cores Navigator, a Python-queryable benchmark dataset that covers thousands of cloud server types from multiple vendors, with standardized performance and cost-efficiency metrics. We demonstrate how instance selection can be expressed as a simple data query, e.g. filtering by workload characteristics, hardware or compliance constraints, and budget, then ranking candidates by price-performance.
+description: |
+  Selecting a cloud instance for DS/ML/AI workloads is typically done using heuristics, vendor guidance, or trial-and-error. While cloud providers publish pricing tables and hardware specifications, this information is fragmented, inconsistently structured, and challenging to compare across vendors – especially once real workload performance is considered.
+  This talk introduces Spare Cores Navigator, a vendor-independent, open-source, Python-based ecosystem that treats cloud instance selection as a data problem. The project maintains a continuously updated benchmark dataset covering thousands of server types across multiple cloud providers, with standardized hardware metadata, performance measurements, and cost-efficiency metrics across over 500 workloads.
+  We describe how the dataset is built by automatically discovering and provisioning cloud instances at scale using public GitHub Actions to run hardware inspection tools and a diverse benchmark suite. This includes general CPU performance, memory bandwidth, compression algorithms, cryptographic workloads, web serving, and data store performance, as well as DS/ML-specific benchmarks such as gradient-boosted model training and LLM inference on CPUs and GPUs.
+  The main focus of the talk is demonstrating practical use cases for server type selection by querying the dataset under different workload characteristics, compliance and budget constraints, and optimization goals – such as minimizing cost-efficiency trade-offs or reducing environmental impact.
 location: "London, UK"
 format:
   revealjs:
@@ -30,3 +38,199 @@ format:
     mermaid-format: svg
     theme: neutral
 ---
+
+# {#cover-slide}
+
+<script>
+  // add custom CSS for the speaker view
+  if (window.self !== window.top) {
+    document.body.className += " speakerview";
+  }
+  // remove dummy slide
+  document.getElementById("title-slide").remove();
+</script>
+
+::: {.centered}
+<img src="images/pydata.webp"
+     class="toplogo" style="height: 209px; width: 500px; margin-left: -250px; margin-right: 250px; background-color:transparent; margin-top: 0px;" />
+:::
+
+<h1 class="subtitle" style="color:#eee;font-size:1.25em;text-align: center; margin-top:300px; color:#34d399;">
+  SELECT instance FROM cloud<br />WHERE workload = ?<br />ORDER BY cost_efficiency
+</h1>
+
+<h2 class="author" style="color:#eee;padding-top:65px;font-size:1.1em;text-align: center !important;margin-bottom: 0px;">
+  Gergely Daroczi, Spare Cores
+</h2>
+
+<h3 class="author" style="color:#eee;font-size:1em;text-align: center !important; font-weight: normal;">
+  Jun 6, 2026 @ PyData London 2026
+</h3>
+
+<h3 class="author onlineMode" style="color:#eee;padding-top:65px;font-size:1em;text-align: center !important; padding-top: 10px;font-weight: normal; ">
+  Slides: <a href="https://sparecores.com/talks" target="_blank">sparecores.com/talks</a>
+</h3>
+
+<p class="author offlineMode" style="color:#eee;font-size:0.75em;text-align: right !important; padding-top: 0px;font-weight: normal;margin-top:30px; ">
+  Press Space or click the green arrow icons to navigate the slides ->
+</p>
+
+::: {.notes}
+TODO
+:::
+
+# >>> from spare_cores import navigator
+
+```sh {code-line-numbers="1|6-24|26-54|56-74|62|76-104|109-110" style="font-size:24px; margin-top: 20px !important; height: 640px;"}
+$ sqlite3 spare-cores-navigator.db
+SQLite version 3.46.1
+Enter ".help" for usage hints.
+
+sqlite> .mode table
+sqlite> WITH prices AS (
+  SELECT vendor_id, server_id, ROUND(AVG(price), 2) AS price FROM server_price
+  WHERE allocation = 'ONDEMAND' GROUP BY vendor_id, server_id
+),
+llm AS (
+  SELECT DISTINCT vendor_id, server_id, score FROM benchmark_score
+  WHERE benchmark_id = 'llm_speed:text_generation' AND config = '{"model": "Llama-3.3-70B-Instruct-Q4_K_M.gguf", "tokens": 128}'
+)
+SELECT
+  vendor_id, api_reference,
+  vcpus, memory_amount/1024 AS memory, gpu_count, gpu_model, gpu_memory_total/1024 AS VRAM,
+  ROUND(score, 2) AS score, price, ROUND(score / price, 4) AS "$ efficiency",
+  ROUND(price / (score * 60 * 60 / 1_000_000 ), 4) AS "$ per 1M token"
+FROM server
+LEFT JOIN prices USING (vendor_id, server_id)
+LEFT JOIN llm USING (vendor_id, server_id)
+WHERE score IS NOT NULL
+ORDER BY 11 ASC
+LIMIT 25;
+
++-----------+--------------------------+-------+--------+-----------+--------------+------+-------+-------+--------------+----------------+
+| vendor_id |      api_reference       | vcpus | memory | gpu_count |  gpu_model   | VRAM | score | price | $ efficiency | $ per 1M token |
++-----------+--------------------------+-------+--------+-----------+--------------+------+-------+-------+--------------+----------------+
+| gcp       | a2-ultragpu-1g           | 12    | 170    | 1.0       | A100         | 80   | 24.47 | 1.36  | 17.9959      | 15.4356        |
+| gcp       | a2-highgpu-2g            | 24    | 170    | 2.0       | A100         | 80   | 22.39 | 1.82  | 12.3027      | 22.5786        |
+| ovh       | t2-le-90                 | 30    | 90     | 2.0       | V100S        | 64   | 18.65 | 1.6   | 11.6566      | 23.8301        |
+| ovh       | t2-90                    | 30    | 90     | 2.0       | V100S        | 64   | 18.63 | 1.6   | 11.6414      | 23.8612        |
+| ovh       | l40s-90                  | 15    | 90     | 1.0       | L40S         | 48   | 15.72 | 1.4   | 11.2273      | 24.7414        |
+| ovh       | h100-380                 | 30    | 380    | 1.0       | H100         | 80   | 29.12 | 2.8   | 10.4015      | 26.7055        |
+| gcp       | a2-ultragpu-2g           | 24    | 340    | 2.0       | A100         | 160  | 24.17 | 2.71  | 8.9172       | 31.1507        |
+| ovh       | a10-90                   | 60    | 85     | 2.0       | A10          | 48   | 10.67 | 1.52  | 7.018        | 39.581         |
+| ovh       | rtx5000-84               | 16    | 84     | 3.0       | RTX 5000     | 48   | 7.46  | 1.08  | 6.9072       | 40.2154        |
+| aws       | g7e.4xlarge              | 16    | 128    | 1.0       | RTX Pro 6000 | 96   | 31.01 | 4.73  | 6.5553       | 42.3744        |
+| hcloud    | ccx53                    | 32    | 128    | 0.0       |              |      | 2.36  | 0.38  | 6.2082       | 44.744         |
+| ovh       | t1-le-180                | 32    | 180    | 4.0       | V100         | 64   | 16.77 | 2.8   | 5.9908       | 46.3677        |
+| ovh       | t2-le-180                | 60    | 180    | 4.0       | V100S        | 128  | 18.53 | 3.2   | 5.792        | 47.9588        |
+| ovh       | l40s-180                 | 30    | 180    | 2.0       | L40S         | 96   | 15.56 | 2.8   | 5.5579       | 49.9788        |
+| hcloud    | ccx63                    | 48    | 192    | 0.0       |              |      | 3.19  | 0.58  | 5.4999       | 50.5062        |
+| gcp       | a2-highgpu-4g            | 48    | 340    | 4.0       | A100         | 160  | 19.59 | 3.65  | 5.3683       | 51.7444        |
+| gcp       | g2-standard-24           | 24    | 96     | 2.0       | L4           | 44   | 5.73  | 1.07  | 5.3593       | 51.8306        |
+| ovh       | h100-760                 | 60    | 760    | 2.0       | H100         | 160  | 29.48 | 5.6   | 5.2637       | 52.7723        |
+| aws       | g7e.8xlarge              | 32    | 256    | 1.0       | RTX Pro 6000 | 96   | 31.02 | 6.24  | 4.9709       | 55.8813        |
+| azure     | Standard_NC24ads_A100_v4 | 24    | 220    | 1.0       | A100         | 80   | 23.05 | 4.71  | 4.8934       | 56.7656        |
+| aws       | g6e.4xlarge              | 16    | 128    | 1.0       | L40S         | 44   | 15.91 | 3.44  | 4.6237       | 60.0765        |
+| ovh       | l4-180                   | 45    | 180    | 2.0       | L4           | 48   | 5.78  | 1.5   | 3.8532       | 72.0904        |
+| gcp       | a2-ultragpu-4g           | 48    | 680    | 4.0       | A100         | 320  | 20.78 | 5.42  | 3.8343       | 72.4462        |
+| ovh       | a10-180                  | 120   | 170    | 4.0       | A10          | 96   | 10.73 | 3.04  | 3.528        | 78.7359        |
+| ovh       | a10-45                   | 30    | 42     | 1.0       | A10          | 24   | 2.39  | 0.76  | 3.1439       | 88.3539        |
++-----------+--------------------------+-------+--------+-----------+--------------+------+-------+-------+--------------+----------------+
+
+sqlite> WITH prices AS (
+  SELECT vendor_id, server_id, ROUND(AVG(price), 2) AS price FROM server_price
+  WHERE allocation = 'ONDEMAND' GROUP BY vendor_id, server_id
+),
+llm AS (
+  SELECT DISTINCT vendor_id, server_id, score FROM benchmark_score
+  WHERE benchmark_id = 'llm_speed:text_generation' AND config = '{"model": "gemma-2b.Q4_K_M.gguf", "tokens": 128}'
+)
+SELECT
+  vendor_id, api_reference,
+  vcpus, memory_amount/1024 AS memory, gpu_count, gpu_model, gpu_memory_total/1024 AS VRAM,
+  ROUND(score, 2) AS score, price, ROUND(score / price, 4) AS "$ efficiency",
+  ROUND(price / (score * 60 * 60 / 1_000_000 ), 4) AS "$ per 1M token"
+FROM server
+LEFT JOIN prices USING (vendor_id, server_id)
+LEFT JOIN llm USING (vendor_id, server_id)
+WHERE score IS NOT NULL
+ORDER BY 11 ASC
+LIMIT 25;
+
++-----------+-----------------------+-------+--------+-----------+-----------+------+--------+-------+--------------+----------------+
+| vendor_id |     api_reference     | vcpus | memory | gpu_count | gpu_model | VRAM | score  | price | $ efficiency | $ per 1M token |
++-----------+-----------------------+-------+--------+-----------+-----------+------+--------+-------+--------------+----------------+
+| hcloud    | cx33                  | 4     | 8      | 0.0       |           |      | 26.83  | 0.01  | 2682.7252    | 0.1035         |
+| hcloud    | cx43                  | 8     | 16     | 0.0       |           |      | 45.35  | 0.02  | 2267.7165    | 0.1225         |
+| hcloud    | cx53                  | 16    | 32     | 0.0       |           |      | 60.02  | 0.04  | 1500.5479    | 0.1851         |
+| hcloud    | cx32                  | 4     | 8      | 0.0       |           |      | 12.32  | 0.01  | 1231.8573    | 0.2255         |
+| hcloud    | cpx42                 | 8     | 16     | 0.0       |           |      | 53.83  | 0.05  | 1076.5084    | 0.258          |
+| hcloud    | cax21                 | 4     | 8      | 0.0       |           |      | 10.31  | 0.01  | 1030.5204    | 0.2696         |
+| hcloud    | cpx32                 | 4     | 8      | 0.0       |           |      | 30.75  | 0.03  | 1024.8748    | 0.271          |
+| hcloud    | cpx21                 | 3     | 4      | 0.0       |           |      | 19.94  | 0.02  | 996.9937     | 0.2786         |
+| hcloud    | cax31                 | 8     | 16     | 0.0       |           |      | 18.74  | 0.02  | 936.8434     | 0.2965         |
+| hcloud    | cpx52                 | 12    | 24     | 0.0       |           |      | 73.21  | 0.08  | 915.1476     | 0.3035         |
+| hcloud    | cpx62                 | 16    | 32     | 0.0       |           |      | 87.79  | 0.1   | 877.9221     | 0.3164         |
+| hcloud    | cpx31                 | 4     | 8      | 0.0       |           |      | 26.01  | 0.03  | 866.9372     | 0.3204         |
+| hcloud    | cpx22                 | 2     | 4      | 0.0       |           |      | 17.19  | 0.02  | 859.4776     | 0.3232         |
+| hcloud    | cpx41                 | 8     | 16     | 0.0       |           |      | 38.09  | 0.05  | 761.7758     | 0.3646         |
+| gcp       | g2-standard-4         | 4     | 16     | 1.0       | L4        | 22   | 129.61 | 0.18  | 720.0422     | 0.3858         |
+| hcloud    | cx23                  | 2     | 4      | 0.0       |           |      | 6.87   | 0.01  | 686.9441     | 0.4044         |
+| hcloud    | cx22                  | 2     | 4      | 0.0       |           |      | 6.24   | 0.01  | 624.3952     | 0.4449         |
+| upcloud   | CLOUDNATIVE-2xCPU-4GB | 2     | 4      | 0.0       |           |      | 11.71  | 0.02  | 585.7258     | 0.4742         |
+| hcloud    | cax41                 | 16    | 32     | 0.0       |           |      | 22.75  | 0.04  | 568.7028     | 0.4884         |
+| hcloud    | cx42                  | 8     | 16     | 0.0       |           |      | 16.74  | 0.03  | 558.1032     | 0.4977         |
+| hcloud    | cax11                 | 2     | 4      | 0.0       |           |      | 5.47   | 0.01  | 547.0548     | 0.5078         |
+| hcloud    | cpx11                 | 2     | 2      | 0.0       |           |      | 4.91   | 0.01  | 490.7897     | 0.566          |
+| hcloud    | ccx13                 | 2     | 8      | 0.0       |           |      | 9.69   | 0.02  | 484.6809     | 0.5731         |
+| ovh       | rtx5000-28            | 4     | 28     | 1.0       | RTX 5000  | 16   | 158.95 | 0.36  | 441.5258     | 0.6291         |
+| hcloud    | cpx51                 | 16    | 32     | 0.0       |           |      | 45.26  | 0.11  | 411.4147     | 0.6752         |
++-----------+-----------------------+-------+--------+-----------+-----------+------+--------+-------+--------------+----------------+
+
+
+
+
+sqlite> -- Thank you, enjoy the buffet! *drops mic*
+sqlite> .exit
+```
+
+## >>> assert dragons.location == "here"
+
+Pricing details:
+
+<ul>
+  <li>spot prices (filtered for on-demand)</li>
+  <li class="fragment">regional differences</li>
+  <li class="fragment">monthly price caps (discounts) and reserved capacity</li>
+  <li class="fragment">currency conversion (e.g. EUR pricing of Hetzner)</li>
+  <li class="fragment">not taking into account egress cost (e.g. 1,000 tokens/sec easily bypasses 10 GB/month egress cost)</li>
+</ul>
+
+## >>> assert dragons.location == "here"
+
+Missing data, e.g. due to:
+
+<ul>
+  <li>benchmarking failed (e.g. segfaulted)</li>
+  <li class="fragment">we don't have money to start an instance</li>
+  <li class="fragment">we don't have quota to start an instance</li>
+  <li class="fragment">the vendor doesn't have capacity to start an instance</li>
+  <li class="fragment">`pulumi` reported that the instance creation failed, but it silently ran for 3 days doing nothing and consumed 1000s of dollars</li>
+</ul>
+
+## >>> assert dragons.location == "here"
+
+Benchmark methodology:
+
+<ul>
+  <li class="fragment">LLM inference speed via `llama.cpp` vs `vLLM`</li>
+  <li class="fragment">single-user with batch size=1 vs parallel users</li>
+  <li class="fragment">memory bandwidth effects vs GPU compute power</li>
+</ul>
+
+. . .
+
+> We don't have answers to all questions,<br/>
+> but we transparently report what we measure<br />
+> and how we measure it,<br />
+> so that you can trust, build on, or reproduce and extend our work.
