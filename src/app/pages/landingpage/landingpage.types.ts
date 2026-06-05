@@ -1,5 +1,3 @@
-import { SearchServerPricesServerPricesGetData } from "../../../../sdk/data-contracts";
-
 export type SlotMachineVendorItem = {
   name: string;
   logo?: string | null;
@@ -18,7 +16,6 @@ export type SlotMachineRegionItem = {
   city?: string;
   vendorId?: string;
   regionId?: string;
-  zoneId?: string;
 };
 
 export type SlotMachineContents = [
@@ -26,9 +23,6 @@ export type SlotMachineContents = [
   SlotMachineServerItem[],
   SlotMachineRegionItem[],
 ];
-
-export type SlotMachineServerPrice =
-  SearchServerPricesServerPricesGetData[number];
 
 export type SlotMachineServerListingQuery = {
   vendor?: string;
