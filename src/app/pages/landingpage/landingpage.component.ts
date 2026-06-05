@@ -26,7 +26,10 @@ import {
   LucideSquareArrowUpRight,
 } from "@lucide/angular";
 import { ArticleCardComponent } from "../../components/article-card/article-card.component";
-import { SearchServerPricesServerPricesGetData } from "../../../../sdk/data-contracts";
+import {
+  SearchServersServersGetData,
+  TableRegionTableRegionGetData,
+} from "../../../../sdk/data-contracts";
 import { AnalyticsService } from "../../services/analytics.service";
 import { NeetoCalService } from "../../services/neeto-cal.service";
 import { PrismService } from "../../services/prism.service";
@@ -83,6 +86,9 @@ export class LandingpageComponent implements OnInit, AfterViewInit {
   spinnerClicked = false;
   hasRealValues = false;
   spinStart: number = 0;
+  private regionLookupPromise?: Promise<
+    Map<string, TableRegionTableRegionGetData[number]>
+  >;
 
   @ViewChild("tooltipVendors") tooltip!: ElementRef;
 
@@ -140,10 +146,10 @@ export class LandingpageComponent implements OnInit, AfterViewInit {
   welcomeAnim(startingDelay: number = 1000) {
     // get the cheapest machine
     this.keeperAPI
-      .searchServerPrices({
+      .searchServers({
         vcpus_min: this.cpuCount,
         memory_min: this.ramCount,
-        limit: 100,
+        limit: 25,
       })
       .then((servers) => {
         if (!this.spinnerClicked) {
@@ -288,6 +294,173 @@ export class LandingpageComponent implements OnInit, AfterViewInit {
     return `${vendorId}~${regionId}`;
   }
 
+  private getTopSpinnerServers(servers: SearchServersServersGetData) {
+    const topServers: SearchServersServersGetData = [];
+    const seenVendorIds = new Set<string>();
+    const selectedServerIds = new Set<string>();
+
+    for (const server of servers) {
+      if (seenVendorIds.has(server.vendor_id)) {
+        continue;
+      }
+
+      topServers.push(server);
+      seenVendorIds.add(server.vendor_id);
+      selectedServerIds.add(server.server_id);
+
+      if (topServers.length === 3) {
+        return topServers;
+      }
+    }
+
+    for (const server of servers) {
+      if (selectedServerIds.has(server.server_id)) {
+        continue;
+      }
+
+      topServers.push(server);
+      selectedServerIds.add(server.server_id);
+
+      if (topServers.length === 3) {
+        return topServers;
+      }
+    }
+
+    return topServers;
+  }
+
+  private getRegionLookup(): Promise<
+    Map<string, TableRegionTableRegionGetData[number]>
+  > {
+    if (!this.regionLookupPromise) {
+      this.regionLookupPromise = this.keeperAPI
+        .getRegions()
+        .then(
+          (response): Map<string, TableRegionTableRegionGetData[number]> => {
+            return new Map<string, TableRegionTableRegionGetData[number]>(
+              response.body.map(
+                (region: TableRegionTableRegionGetData[number]) =>
+                  [
+                    this.buildVendorRegionFilter(
+                      region.vendor_id,
+                      region.region_id,
+                    ),
+                    region,
+                  ] as const,
+              ),
+            );
+          },
+        )
+        .catch((error) => {
+          this.regionLookupPromise = undefined;
+          throw error;
+        });
+    }
+
+    return this.regionLookupPromise;
+  }
+
+  private getPendingRegionItem(): SlotMachineRegionItem {
+    return {
+      name: "Loading...",
+    };
+  }
+
+  private getUnavailableRegionItem(): SlotMachineRegionItem {
+    return {
+      name: "Region unavailable",
+    };
+  }
+
+  private async getSpinnerRegionItem(
+    server: SearchServersServersGetData[number],
+  ): Promise<SlotMachineRegionItem> {
+    const serverPricesResponse = await this.keeperAPI.getServerPrices(
+      server.vendor_id,
+      server.api_reference || server.server_id,
+    );
+    const serverPrices = serverPricesResponse.body;
+
+    if (!serverPrices.length) {
+      return this.getUnavailableRegionItem();
+    }
+
+    let cheapestServerPrice = serverPrices[0];
+
+    for (const serverPrice of serverPrices.slice(1)) {
+      if (serverPrice.price < cheapestServerPrice.price) {
+        cheapestServerPrice = serverPrice;
+      }
+    }
+
+    const regionLookup = await this.getRegionLookup();
+    const region = regionLookup.get(
+      this.buildVendorRegionFilter(
+        server.vendor_id,
+        cheapestServerPrice.region_id,
+      ),
+    );
+
+    return {
+      name: region?.display_name || cheapestServerPrice.region_id,
+      city: region?.city || undefined,
+      vendorId: server.vendor_id,
+      regionId: cheapestServerPrice.region_id,
+    };
+  }
+
+  private async populateSpinnerContents(servers: SearchServersServersGetData) {
+    const indices = [0, 1, 35];
+    const top3server = this.getTopSpinnerServers(servers);
+
+    indices.forEach((index, i) => {
+      const server = top3server[i];
+
+      if (!server) {
+        return;
+      }
+
+      this.spinnerContents[0][index] = {
+        name: server.vendor.vendor_id.toString().toUpperCase(),
+        logo: server.vendor.logo,
+        vendorId: server.vendor.vendor_id,
+      };
+      this.spinnerContents[1][index] = {
+        name: server.display_name,
+        architecture: server.cpu_architecture,
+        vendorId: server.vendor_id,
+        apiReference: server.api_reference,
+      };
+      this.spinnerContents[2][index] = this.getPendingRegionItem();
+    });
+
+    const regionItems = await Promise.allSettled(
+      top3server.map((server) => this.getSpinnerRegionItem(server)),
+    );
+
+    regionItems.forEach((result, i) => {
+      const index = indices[i];
+
+      if (typeof index === "undefined") {
+        return;
+      }
+
+      if (result.status === "fulfilled") {
+        this.spinnerContents[2][index] = result.value;
+        return;
+      }
+
+      this.analyticsService.SentryException(result.reason, {
+        tags: {
+          location: this.constructor.name,
+          function: "populateSpinnerContents",
+        },
+      });
+      console.error(result.reason);
+      this.spinnerContents[2][index] = this.getUnavailableRegionItem();
+    });
+  }
+
   spinClicked() {
     this.cpuCount = this.getNormalizedCpuCount(this.cpuCount);
     this.ramCount = this.getNormalizedRamCount(this.ramCount);
@@ -308,10 +481,10 @@ export class LandingpageComponent implements OnInit, AfterViewInit {
     this.spinStart = Date.now();
 
     this.keeperAPI
-      .searchServerPrices({
+      .searchServers({
         vcpus_min: this.cpuCount,
         memory_min: this.ramCount,
-        limit: 100,
+        limit: 25,
       })
       .then((servers) => {
         this.spinAnim(servers.body);
@@ -324,7 +497,7 @@ export class LandingpageComponent implements OnInit, AfterViewInit {
       });
   }
 
-  spinAnim(servers: SearchServerPricesServerPricesGetData, isFake = false) {
+  spinAnim(servers: SearchServersServersGetData, isFake = false) {
     this.analyticsService.trackEvent("slot machine started", {
       autostarted: isFake,
     });
@@ -342,8 +515,8 @@ export class LandingpageComponent implements OnInit, AfterViewInit {
     const spinAnimEnd = Math.max(0, 4200 - spinAnimDiff);
     const spinAnimFraction = Math.max(0, 50 - spinAnimDiff / 50);
 
-    const animPriceStart = servers[servers.length - 1].price;
-    const animPriceEnd = servers[0].price;
+    const animPriceStart = servers[servers.length - 1]?.price ?? 0;
+    const animPriceEnd = servers[0]?.price ?? 0;
 
     let price = animPriceStart;
     let fraction = (animPriceStart - animPriceEnd) / 50;
@@ -360,60 +533,7 @@ export class LandingpageComponent implements OnInit, AfterViewInit {
     }, spinAnimFraction);
 
     setTimeout(() => {
-      const indices = [0, 1, 35];
-      let top3server = servers.slice(0, 3);
-
-      // try to find 3 different machines from servers
-      for (let i = 1; i < 3; i++) {
-        let server = servers.find(
-          (s) =>
-            top3server.findIndex(
-              (t) => t.server.server_id === s.server.server_id,
-            ) === -1,
-        );
-        if (server) {
-          top3server[i] = server;
-        }
-      }
-
-      // try to find 3 different vendors from servers
-      for (let i = 1; i < 3; i++) {
-        let server = servers.find(
-          (s) =>
-            top3server.findIndex(
-              (t) => t.server.vendor_id === s.server.vendor_id,
-            ) === -1,
-        );
-        if (server) {
-          top3server[i] = server;
-        }
-      }
-
-      indices.forEach((index, i) => {
-        const serverPrice = top3server[i];
-        if (!serverPrice) {
-          return;
-        }
-
-        this.spinnerContents[0][index] = {
-          name: serverPrice.vendor.vendor_id.toString().toUpperCase(),
-          logo: serverPrice.vendor.logo,
-          vendorId: serverPrice.vendor.vendor_id,
-        };
-        this.spinnerContents[1][index] = {
-          name: serverPrice.server.display_name,
-          architecture: serverPrice.server.cpu_architecture,
-          vendorId: serverPrice.server.vendor_id,
-          apiReference: serverPrice.server.api_reference,
-        };
-        this.spinnerContents[2][index] = {
-          name: serverPrice.region?.display_name || serverPrice.region_id,
-          city: serverPrice.zone?.display_name,
-          vendorId: serverPrice.region?.vendor_id || serverPrice.vendor_id,
-          regionId: serverPrice.region_id,
-          zoneId: serverPrice.zone_id,
-        };
-      });
+      void this.populateSpinnerContents(servers);
     }, 200);
 
     setTimeout(() => {
