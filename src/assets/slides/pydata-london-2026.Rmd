@@ -79,9 +79,9 @@ format:
 TODO
 :::
 
-# >>> from spare_cores import navigator
+# >>> import sqlite3
 
-```sh {code-line-numbers="1|6-24|26-54|56-74|62|76-104|109-110" style="font-size:24px; margin-top: 20px !important; height: 640px;"}
+```sh {code-line-numbers="1|6-24|26-54|29,31,38,39,48|26-38,40-42,44-54|26-28,39,43,54|56-74|62|76-104|109-110" style="font-size:24px; margin-top: 20px !important; height: 640px;"}
 $ sqlite3 spare-cores-navigator.db
 SQLite version 3.46.1
 Enter ".help" for usage hints.
@@ -200,7 +200,7 @@ Pricing details:
 
 <ul>
   <li>spot prices (filtered for on-demand)</li>
-  <li class="fragment">regional differences</li>
+  <li class="fragment">regional differences (calculated average of all regions)</li>
   <li class="fragment">monthly price caps (discounts) and reserved capacity</li>
   <li class="fragment">currency conversion (e.g. EUR pricing of Hetzner)</li>
   <li class="fragment">not taking into account egress cost (e.g. 1,000 tokens/sec easily bypasses 10 GB/month egress cost)</li>
@@ -234,3 +234,68 @@ Benchmark methodology:
 > but we transparently report what we measure<br />
 > and how we measure it,<br />
 > so that you can trust, build on, or reproduce and extend our work.
+
+# >>> getpass.getuser()
+
+```{=html}
+<div class="browser-frame">
+  <div class="browser-toolbar">
+    <span class="browser-nav">&#8249; &#8250; &#8635;</span>
+    <div class="browser-url">https://daroczig.github.io/</div>
+    <div class="browser-controls">
+      <span class="browser-dot close"></span>
+      <span class="browser-dot minimize"></span>
+      <span class="browser-dot maximize"></span>
+    </div>
+  </div>
+  <div class="browser-content">
+    <iframe src="https://daroczig.github.io/"></iframe>
+  </div>
+</div>
+<script>
+(function () {
+  const SLIDE_ID = 'getpass.getuser';
+
+  function reloadHomepageIframe(slide) {
+    const iframe = slide.querySelector('.browser-content iframe');
+    if (!iframe) return;
+    const baseUrl = iframe.src.split('?')[0];
+    // Cache-bust to restart the animation; keep current content visible if reload fails.
+    iframe.src = baseUrl + '?_=' + Date.now();
+  }
+
+  function onSlideShown(slide) {
+    if (slide && slide.id === SLIDE_ID) {
+      reloadHomepageIframe(slide);
+    }
+  }
+
+  function registerRevealHooks() {
+    if (typeof Reveal === 'undefined') {
+      window.setTimeout(registerRevealHooks, 50);
+      return;
+    }
+    Reveal.on('ready', function (event) {
+      onSlideShown(event.currentSlide);
+    });
+    Reveal.on('slidechanged', function (event) {
+      onSlideShown(event.currentSlide);
+    });
+  }
+
+  registerRevealHooks();
+})();
+</script>
+```
+
+::: {.notes}
+I'm personally very interested in optimizing cloud cost and resource utilization,
+  which is important for business success and a greener future as well.
+:::
+
+## >>> while current != destination:
+
+::: {.centered}
+<img style="width:60%;" src="https://sparecores.com/assets/images/blog/xkcd-1205-is_it_worth_the_time.png" />
+<p style="font-size: 1rem; margin-top: 10px;">Source: <a href="https://xkcd.com/1205/">xkcd [1025] Is It Worth the Time?</a></p>
+:::
