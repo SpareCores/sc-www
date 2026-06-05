@@ -1,8 +1,12 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { PLATFORM_ID } from "@angular/core";
-import { SearchServersServersGetData } from "../../../../sdk/data-contracts";
+import {
+  SearchServersServersGetData,
+  TableRegionTableRegionGetData,
+} from "../../../../sdk/data-contracts";
 
 import { LandingpageComponent } from "./landingpage.component";
+import { KeeperAPIService } from "../../services/keeper-api.service";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
 describe("LandingpageComponent", () => {
@@ -139,5 +143,37 @@ describe("LandingpageComponent", () => {
       "azure",
       "aws",
     ]);
+  });
+
+  it("should retry region lookup after a failed regions request", async () => {
+    const regionLookup = component as unknown as {
+      getRegionLookup(): Promise<
+        Map<string, TableRegionTableRegionGetData[number]>
+      >;
+    };
+    const keeperApi = TestBed.inject(KeeperAPIService);
+    const getRegionsSpy = spyOn(keeperApi, "getRegions").and.returnValues(
+      Promise.reject(new Error("region lookup failed")),
+      Promise.resolve({
+        body: [
+          {
+            vendor_id: "aws",
+            region_id: "us-east-1",
+            display_name: "US East (N. Virginia)",
+          },
+        ] as unknown as TableRegionTableRegionGetData,
+      }),
+    );
+
+    await expectAsync(regionLookup.getRegionLookup()).toBeRejectedWithError(
+      "region lookup failed",
+    );
+
+    const lookup = await regionLookup.getRegionLookup();
+
+    expect(getRegionsSpy).toHaveBeenCalledTimes(2);
+    expect(lookup.get("aws~us-east-1")?.display_name).toBe(
+      "US East (N. Virginia)",
+    );
   });
 });

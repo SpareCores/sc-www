@@ -329,23 +329,31 @@ export class LandingpageComponent implements OnInit, AfterViewInit {
     return topServers;
   }
 
-  private getRegionLookup() {
+  private getRegionLookup(): Promise<
+    Map<string, TableRegionTableRegionGetData[number]>
+  > {
     if (!this.regionLookupPromise) {
       this.regionLookupPromise = this.keeperAPI
         .getRegions()
-        .then((response) => {
-          return new Map(
-            response.body.map(
-              (region: TableRegionTableRegionGetData[number]) =>
-                [
-                  this.buildVendorRegionFilter(
-                    region.vendor_id,
-                    region.region_id,
-                  ),
-                  region,
-                ] as const,
-            ),
-          );
+        .then(
+          (response): Map<string, TableRegionTableRegionGetData[number]> => {
+            return new Map<string, TableRegionTableRegionGetData[number]>(
+              response.body.map(
+                (region: TableRegionTableRegionGetData[number]) =>
+                  [
+                    this.buildVendorRegionFilter(
+                      region.vendor_id,
+                      region.region_id,
+                    ),
+                    region,
+                  ] as const,
+              ),
+            );
+          },
+        )
+        .catch((error) => {
+          this.regionLookupPromise = undefined;
+          throw error;
         });
     }
 
