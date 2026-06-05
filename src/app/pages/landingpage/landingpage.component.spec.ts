@@ -1,7 +1,12 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { PLATFORM_ID } from "@angular/core";
+import {
+  SearchServersServersGetData,
+  TableRegionTableRegionGetData,
+} from "../../../../sdk/data-contracts";
 
 import { LandingpageComponent } from "./landingpage.component";
+import { KeeperAPIService } from "../../services/keeper-api.service";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
 describe("LandingpageComponent", () => {
@@ -52,7 +57,6 @@ describe("LandingpageComponent", () => {
       city: "us-east-1a",
       vendorId: "aws",
       regionId: "us-east-1",
-      zoneId: "use1-az1",
     };
 
     fixture.detectChanges();
@@ -114,5 +118,62 @@ describe("LandingpageComponent", () => {
 
     expect(component.isSlotLinkActive(1)).toBeFalse();
     expect(component.isSlotLinkActive(0)).toBeTrue();
+  });
+
+  it("should prefer distinct vendors for spinner picks when available", () => {
+    const spinnerPicker = component as unknown as {
+      getTopSpinnerServers(
+        servers: SearchServersServersGetData,
+      ): SearchServersServersGetData;
+    };
+    const servers = [
+      { vendor_id: "alicloud", server_id: "ecs.e-c1m2.large" },
+      { vendor_id: "alicloud", server_id: "ecs.t6-c1m2.large" },
+      { vendor_id: "alicloud", server_id: "ecs.t5-lc1m2.large" },
+      { vendor_id: "azure", server_id: "Standard_F2ams_v6" },
+      { vendor_id: "alicloud", server_id: "ecs.e-c1m4.large" },
+      { vendor_id: "aws", server_id: "t4g.medium" },
+      { vendor_id: "gcp", server_id: "334004" },
+    ] as SearchServersServersGetData;
+
+    const selectedServers = spinnerPicker.getTopSpinnerServers(servers);
+
+    expect(selectedServers.map((server) => server.vendor_id)).toEqual([
+      "alicloud",
+      "azure",
+      "aws",
+    ]);
+  });
+
+  it("should retry region lookup after a failed regions request", async () => {
+    const regionLookup = component as unknown as {
+      getRegionLookup(): Promise<
+        Map<string, TableRegionTableRegionGetData[number]>
+      >;
+    };
+    const keeperApi = TestBed.inject(KeeperAPIService);
+    const getRegionsSpy = spyOn(keeperApi, "getRegions").and.returnValues(
+      Promise.reject(new Error("region lookup failed")),
+      Promise.resolve({
+        body: [
+          {
+            vendor_id: "aws",
+            region_id: "us-east-1",
+            display_name: "US East (N. Virginia)",
+          },
+        ] as unknown as TableRegionTableRegionGetData,
+      }),
+    );
+
+    await expectAsync(regionLookup.getRegionLookup()).toBeRejectedWithError(
+      "region lookup failed",
+    );
+
+    const lookup = await regionLookup.getRegionLookup();
+
+    expect(getRegionsSpy).toHaveBeenCalledTimes(2);
+    expect(lookup.get("aws~us-east-1")?.display_name).toBe(
+      "US East (N. Virginia)",
+    );
   });
 });
