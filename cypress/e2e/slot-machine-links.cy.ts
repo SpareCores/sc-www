@@ -176,17 +176,74 @@ describe("Landing page slot machine links", () => {
     },
   ];
 
+  const searchServersResponse = serverPricesResponse.map((serverPrice) => ({
+    vendor_id: serverPrice.vendor_id,
+    server_id: serverPrice.server_id,
+    name: serverPrice.server.name,
+    api_reference: serverPrice.server.api_reference,
+    display_name: serverPrice.server.display_name,
+    description: serverPrice.server.description,
+    cpu_architecture: serverPrice.server.cpu_architecture,
+    price: serverPrice.price,
+    vendor: {
+      vendor_id: serverPrice.vendor.vendor_id,
+      name: serverPrice.vendor.name,
+      logo: serverPrice.vendor.logo,
+      homepage: serverPrice.vendor.homepage,
+    },
+  }));
+
+  const regionsResponse = serverPricesResponse.map(
+    (serverPrice) => serverPrice.region,
+  );
+
   it("makes the settled vendor, server, and region entries clickable", () => {
-    cy.intercept("GET", "**/server_prices*", {
+    cy.intercept("GET", "**/servers*", {
       statusCode: 200,
-      body: serverPricesResponse,
-    }).as("searchServerPrices");
+      delay: 2500,
+      body: searchServersResponse,
+    }).as("searchServers");
+
+    cy.intercept("GET", "**/table/region*", {
+      statusCode: 200,
+      body: regionsResponse,
+    }).as("getRegions");
+
+    cy.intercept("GET", "**/server/*/*/prices*", (req) => {
+      const matchingServerPrices = serverPricesResponse.filter(
+        (serverPrice) =>
+          req.url.includes(
+            `/server/${serverPrice.vendor_id}/${serverPrice.server.api_reference}/prices`,
+          ) ||
+          req.url.includes(
+            `/server/${serverPrice.vendor_id}/${serverPrice.server_id}/prices`,
+          ),
+      );
+
+      req.reply({
+        statusCode: 200,
+        body: matchingServerPrices,
+      });
+    }).as("getServerPrices");
 
     cy.visit("http://localhost:4200/");
-    cy.wait("@searchServerPrices");
 
-    cy.get("#cpuCount").clear().type("8").should("have.value", "8");
-    cy.get("#ramCount").clear().type("32").should("have.value", "32");
+    cy.get("#cpuCount")
+      .should("not.be.disabled")
+      .clear()
+      .type("8")
+      .should("have.value", "8");
+    cy.get("#ramCount")
+      .should("not.be.disabled")
+      .clear()
+      .type("32")
+      .should("have.value", "32");
+
+    cy.wait("@searchServers");
+    cy.wait("@getRegions");
+    cy.wait("@getServerPrices");
+    cy.wait("@getServerPrices");
+    cy.wait("@getServerPrices");
 
     cy.get("#slot_vendor_link", { timeout: 10000 })
       .should("have.attr", "href")
