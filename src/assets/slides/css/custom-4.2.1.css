@@ -471,3 +471,98 @@ code span.dv, code span.fl {
 .smaller-font-header h1 {
   font-size: 47px !important;
 }
+
+/* browser chrome frame for embedded websites */
+.browser-frame {
+  width: 92%;
+  margin: 0 auto;
+  border: 2px solid #34d399;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+  background: #1e293b;
+}
+
+.browser-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  background: linear-gradient(180deg, #334155 0%, #1e293b 100%);
+  border-bottom: 1px solid #475569;
+}
+
+.browser-controls {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.browser-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+}
+
+.browser-dot.close {
+  background: #ff5f57;
+  border-color: #e0443e;
+}
+.browser-dot.minimize {
+  background: #febc2e;
+  border-color: #d89e24;
+}
+.browser-dot.maximize {
+  background: #28c840;
+  border-color: #1aab29;
+}
+
+.browser-nav {
+  color: #94a3b8;
+  font-size: 0.85em;
+  letter-spacing: 3px;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.browser-url {
+  flex: 1;
+  padding: 6px 14px;
+  background: #06263a;
+  border: 1px solid #34d39944;
+  border-radius: 20px;
+  font-size: 0.6em;
+  color: #34d399;
+  font-family: "Roboto Mono", monospace;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.browser-content {
+  height: 520px;
+  background: #000;
+  line-height: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.browser-content iframe,
+.reveal .browser-content iframe {
+  position: absolute;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+  border: none;
+  display: block;
+  margin: 0;
+  padding: 0;
+}
+
+.reveal .browser-frame {
+  margin-top: 40px !important;
+}
