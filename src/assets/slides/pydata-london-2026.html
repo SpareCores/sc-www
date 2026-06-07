@@ -218,7 +218,7 @@ Gergely Daroczi
 <div class="centered">
 <p><img src="images/pydata.webp" class="toplogo" style="height: 209px; width: 500px; margin-left: -250px; margin-right: 250px; background-color:transparent; margin-top: 0px;"></p>
 </div>
-<h1 class="subtitle" style="color:#eee;font-size:1.25em;text-align: center; margin-top:300px; color:#34d399;">
+<h1 class="subtitle" style="font-family: 'Roboto Mono', monospace !important; color:#eee;font-size:1.25em;text-align: center; margin-top:300px; color:#34d399;">
 SELECT instance FROM cloud<br>WHERE workload = ?<br>ORDER BY cost_efficiency
 </h1>
 <h2 class="author" style="color:#eee;padding-top:65px;font-size:1.1em;text-align: center !important;margin-bottom: 0px;">
@@ -234,7 +234,13 @@ Slides: <a href="https://sparecores.com/talks" target="_blank">sparecores.com/ta
 Press Space or click the green arrow icons to navigate the slides -&gt;
 </p>
 <aside class="notes">
-<p>TODO</p>
+<p>hello everyone, thanks for joining this session, it’s good to see such a good crowd here!</p>
+<p>… apologies, English is not my first language. And actually, not even the second one .. I used to call R and recently more and more Python as second language, and just then comes English.</p>
+<p>So when I was trying to figure out how to write a title that everyone in this room would perfectly understand… especially given my heavy accent in English, despite the fact that I lived in London and Los Angeles as well for some time, I decided to use a language we all have in common, which is probably still SQL.</p>
+<p>I hope that works for all the Python, R, Rust and other folks in the room!</p>
+<p>I also wanted to keep this talk up-to-the point, transparent and direct as much as possible, so why don’t we run this query and see what we get?</p>
+<p>well, to do so, we need a database .. and fortunately, we have one: Spare Cores curates a standardized dataset including cloud server types from multiple vendors, pricing information, and performance metrics across over 500 workloads – with open-licenses.</p>
+<p>to answer the question: which is the most cost-efficient instance for a given workload, such as running LLM inference using a 70B model, we need supporting data.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -251,7 +257,7 @@ Press Space or click the green arrow icons to navigate the slides -&gt;
 <section>
 <section id="import-sqlite3" class="title-slide slide level1">
 <h1>&gt;&gt;&gt; import sqlite3</h1>
-<div class="sourceCode" id="cb1" style="font-size:24px; margin-top: 20px !important; height: 640px;" data-code-line-numbers="1|6-24|26-54|29,31,38,39,48|26-38,40-42,44-54|26-28,39,43,54|56-74|62|76-104|109-110"><pre class="sourceCode numberSource sh number-lines"><code class="sourceCode bash"><span id="cb1-1"><a href=""></a><span class="ex">$</span> sqlite3 spare-cores-navigator.db</span>
+<div class="sourceCode" id="cb1" style="font-size:24px; margin-top: 20px !important; height: 640px;" data-code-line-numbers="1|6-24|7-8|11-12|14-21|23-24|26-54|29,31,38,39,48|26-38,40-42,44-54|26-28,39,43,54|56-74|62|76-104|109-110"><pre class="sourceCode numberSource sh number-lines"><code class="sourceCode bash"><span id="cb1-1"><a href=""></a><span class="ex">$</span> sqlite3 spare-cores-navigator.db</span>
 <span id="cb1-2"><a href=""></a><span class="ex">SQLite</span> version 3.46.1</span>
 <span id="cb1-3"><a href=""></a><span class="ex">Enter</span> <span class="st">".help"</span> for usage hints.</span>
 <span id="cb1-4"><a href=""></a></span>
@@ -260,7 +266,7 @@ Press Space or click the green arrow icons to navigate the slides -&gt;
 <span id="cb1-7"><a href=""></a>  <span class="ex">SELECT</span> vendor_id, server_id, ROUND<span class="er">(</span><span class="ex">AVG</span><span class="er">(</span><span class="ex">price</span><span class="kw">)</span><span class="ex">,</span> 2<span class="kw">)</span> <span class="ex">AS</span> price FROM server_price</span>
 <span id="cb1-8"><a href=""></a>  <span class="ex">WHERE</span> allocation = <span class="st">'ONDEMAND'</span> GROUP BY vendor_id, server_id</span>
 <span id="cb1-9"><a href=""></a><span class="kw">)</span><span class="ex">,</span></span>
-<span id="cb1-10"><a href=""></a><span class="ex">llm</span> AS <span class="er">(</span></span>
+<span id="cb1-10"><a href=""></a><span class="ex">workload</span> AS <span class="er">(</span></span>
 <span id="cb1-11"><a href=""></a>  <span class="ex">SELECT</span> DISTINCT vendor_id, server_id, score FROM benchmark_score</span>
 <span id="cb1-12"><a href=""></a>  <span class="ex">WHERE</span> benchmark_id = <span class="st">'llm_speed:text_generation'</span> AND config = <span class="st">'{"model": "Llama-3.3-70B-Instruct-Q4_K_M.gguf", "tokens": 128}'</span></span>
 <span id="cb1-13"><a href=""></a><span class="kw">)</span></span>
@@ -271,7 +277,7 @@ Press Space or click the green arrow icons to navigate the slides -&gt;
 <span id="cb1-18"><a href=""></a>  <span class="ex">ROUND</span><span class="er">(</span><span class="ex">price</span> / <span class="er">(</span><span class="ex">score</span> <span class="pp">*</span> 60 <span class="pp">*</span> 60 / 1_000_000 <span class="kw">)</span><span class="ex">,</span> 4<span class="kw">)</span> <span class="ex">AS</span> <span class="st">"$ per 1M token"</span></span>
 <span id="cb1-19"><a href=""></a><span class="ex">FROM</span> server</span>
 <span id="cb1-20"><a href=""></a><span class="ex">LEFT</span> JOIN prices USING <span class="er">(</span><span class="ex">vendor_id,</span> server_id<span class="kw">)</span></span>
-<span id="cb1-21"><a href=""></a><span class="ex">LEFT</span> JOIN llm USING <span class="er">(</span><span class="ex">vendor_id,</span> server_id<span class="kw">)</span></span>
+<span id="cb1-21"><a href=""></a><span class="ex">LEFT</span> JOIN workload USING <span class="er">(</span><span class="ex">vendor_id,</span> server_id<span class="kw">)</span></span>
 <span id="cb1-22"><a href=""></a><span class="ex">WHERE</span> score IS NOT NULL</span>
 <span id="cb1-23"><a href=""></a><span class="ex">ORDER</span> BY 11 ASC</span>
 <span id="cb1-24"><a href=""></a><span class="ex">LIMIT</span> 25<span class="kw">;</span></span>
@@ -310,7 +316,7 @@ Press Space or click the green arrow icons to navigate the slides -&gt;
 <span id="cb1-57"><a href=""></a>  <span class="ex">SELECT</span> vendor_id, server_id, ROUND<span class="er">(</span><span class="ex">AVG</span><span class="er">(</span><span class="ex">price</span><span class="kw">)</span><span class="ex">,</span> 2<span class="kw">)</span> <span class="ex">AS</span> price FROM server_price</span>
 <span id="cb1-58"><a href=""></a>  <span class="ex">WHERE</span> allocation = <span class="st">'ONDEMAND'</span> GROUP BY vendor_id, server_id</span>
 <span id="cb1-59"><a href=""></a><span class="kw">)</span><span class="ex">,</span></span>
-<span id="cb1-60"><a href=""></a><span class="ex">llm</span> AS <span class="er">(</span></span>
+<span id="cb1-60"><a href=""></a><span class="ex">workload</span> AS <span class="er">(</span></span>
 <span id="cb1-61"><a href=""></a>  <span class="ex">SELECT</span> DISTINCT vendor_id, server_id, score FROM benchmark_score</span>
 <span id="cb1-62"><a href=""></a>  <span class="ex">WHERE</span> benchmark_id = <span class="st">'llm_speed:text_generation'</span> AND config = <span class="st">'{"model": "gemma-2b.Q4_K_M.gguf", "tokens": 128}'</span></span>
 <span id="cb1-63"><a href=""></a><span class="kw">)</span></span>
@@ -321,7 +327,7 @@ Press Space or click the green arrow icons to navigate the slides -&gt;
 <span id="cb1-68"><a href=""></a>  <span class="ex">ROUND</span><span class="er">(</span><span class="ex">price</span> / <span class="er">(</span><span class="ex">score</span> <span class="pp">*</span> 60 <span class="pp">*</span> 60 / 1_000_000 <span class="kw">)</span><span class="ex">,</span> 4<span class="kw">)</span> <span class="ex">AS</span> <span class="st">"$ per 1M token"</span></span>
 <span id="cb1-69"><a href=""></a><span class="ex">FROM</span> server</span>
 <span id="cb1-70"><a href=""></a><span class="ex">LEFT</span> JOIN prices USING <span class="er">(</span><span class="ex">vendor_id,</span> server_id<span class="kw">)</span></span>
-<span id="cb1-71"><a href=""></a><span class="ex">LEFT</span> JOIN llm USING <span class="er">(</span><span class="ex">vendor_id,</span> server_id<span class="kw">)</span></span>
+<span id="cb1-71"><a href=""></a><span class="ex">LEFT</span> JOIN workload USING <span class="er">(</span><span class="ex">vendor_id,</span> server_id<span class="kw">)</span></span>
 <span id="cb1-72"><a href=""></a><span class="ex">WHERE</span> score IS NOT NULL</span>
 <span id="cb1-73"><a href=""></a><span class="ex">ORDER</span> BY 11 ASC</span>
 <span id="cb1-74"><a href=""></a><span class="ex">LIMIT</span> 25<span class="kw">;</span></span>
@@ -363,7 +369,7 @@ Press Space or click the green arrow icons to navigate the slides -&gt;
 <span id="cb1-110"><a href=""></a><span class="ex">sqlite</span><span class="op">&gt;</span> .exit</span></code></pre></div>
 </section>
 <section id="assert-dragons.location-here" class="slide level2">
-<h2>&gt;&gt;&gt; assert dragons.location == “here”</h2>
+<h2>&gt;&gt;&gt; assert dragons.location != “here”</h2>
 <p>Pricing details:</p>
 <ul>
 <li>
@@ -379,12 +385,15 @@ monthly price caps (discounts) and reserved capacity
 currency conversion (e.g.&nbsp;EUR pricing of Hetzner)
 </li>
 <li class="fragment">
+not taking into account storage cost (e.g.&nbsp;70+ GB for <code>Llama-3.3-70B-Instruct-Q4_K_M.gguf</code>)
+</li>
+<li class="fragment">
 not taking into account egress cost (e.g.&nbsp;1,000 tokens/sec easily bypasses 10 GB/month egress cost)
 </li>
 </ul>
 </section>
 <section id="assert-dragons.location-here-1" class="slide level2">
-<h2>&gt;&gt;&gt; assert dragons.location == “here”</h2>
+<h2>&gt;&gt;&gt; assert dragons.location != “here”</h2>
 <p>Missing data, e.g.&nbsp;due to:</p>
 <ul>
 <li>
@@ -405,7 +414,7 @@ the vendor doesn’t have capacity to start an instance
 </ul>
 </section>
 <section id="assert-dragons.location-here-2" class="slide level2">
-<h2>&gt;&gt;&gt; assert dragons.location == “here”</h2>
+<h2>&gt;&gt;&gt; assert dragons.location != “here”</h2>
 <p>Benchmark methodology:</p>
 <ul>
 <li class="fragment">
@@ -1030,27 +1039,8 @@ Hardware discovery to pick the correct binary, <code>$PATH</code> overrides.
 <li class="fragment">
 Download models in a background thread, sequentially from Hugging Face with sane timeouts.
 </li>
-<li class="fragment">
-Find optimal <code>ngl</code> setting for each model when GPU is available.
-</li>
-<li class="fragment">
-Run the benchmarks in sequence with sane timeouts.
-</li>
 </ul>
 </ul>
-<aside class="notes">
-Describe how <code>ngl</code> was found!
-<style type="text/css">
-        span.MJX_Assistive_MathML {
-          position:absolute!important;
-          clip: rect(1px, 1px, 1px, 1px);
-          padding: 1px 0 0 0!important;
-          border: 0!important;
-          height: 1px!important;
-          width: 1px!important;
-          overflow: hidden!important;
-          display:block!important;
-      }</style></aside>
 </section>
 <section id="from-benchmark-llm-import-models" class="slide level2">
 <h2>&gt;&gt;&gt; from benchmark-llm import models</h2>
@@ -1168,6 +1158,52 @@ Llama-3.3-70B-Instruct-Q4_K_M.gguf
 </tr>
 </tbody>
 </table>
+</section>
+<section id="docker-build--t-llm-benchmark-.-1" class="slide level2">
+<h2>$ docker build -t llm-benchmark .</h2>
+<ul>
+<li>
+Multi-arch Docker build with x86 and ARM support.
+</li>
+<li>
+Bundles <code>llama.cpp</code> binaries built for various CPU architectures and CUDA as well.
+</li>
+<ul style="font-size: 0.9em;">
+<li>
+Recursive lookup of linked libraries from multiple parent images and mixing them in a single image under different paths 🫣
+</li>
+</ul>
+<li>
+Python script to run the benchmark:
+</li>
+<ul style="font-size: 0.9em;">
+<li>
+Hardware discovery to pick the correct binary, <code>$PATH</code> overrides.
+</li>
+<li>
+Download models in a background thread, sequentially from Hugging Face with sane timeouts.
+</li>
+<li class="fragment">
+Find optimal <code>ngl</code> setting for each model when GPU is available.
+</li>
+<li class="fragment">
+Run the benchmarks in sequence with sane timeouts.
+</li>
+</ul>
+</ul>
+<aside class="notes">
+Describe how <code>ngl</code> was found!
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section>
 <section id="from-benchmark-llm-import-workloads" class="slide level2">
 <h2>&gt;&gt;&gt; from benchmark-llm import workloads</h2>
