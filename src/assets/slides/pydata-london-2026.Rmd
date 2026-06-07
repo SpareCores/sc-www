@@ -56,7 +56,7 @@ format:
      class="toplogo" style="height: 209px; width: 500px; margin-left: -250px; margin-right: 250px; background-color:transparent; margin-top: 0px;" />
 :::
 
-<h1 class="subtitle" style="color:#eee;font-size:1.25em;text-align: center; margin-top:300px; color:#34d399;">
+<h1 class="subtitle" style="font-family: 'Roboto Mono', monospace !important; color:#eee;font-size:1.25em;text-align: center; margin-top:300px; color:#34d399;">
   SELECT instance FROM cloud<br />WHERE workload = ?<br />ORDER BY cost_efficiency
 </h1>
 
@@ -77,12 +77,32 @@ format:
 </p>
 
 ::: {.notes}
-TODO
+hello everyone,
+thanks for joining this session, it's good to see such a good crowd here!
+
+... apologies, English is not my first language.
+And actually, not even the second one .. I used to call R and recently more and more Python as second language, and just then comes English.
+
+So when I was trying to figure out how to write a title that everyone in this room would perfectly understand...
+especially given my heavy accent in English, despite the fact that I lived in London and Los Angeles as well for some time,
+I decided to use a language we all have in common, which is probably still SQL.
+
+I hope that works for all the Python, R, Rust and other folks in the room!
+
+I also wanted to keep this talk up-to-the point, transparent and direct as much as possible,
+so why don't we run this query and see what we get?
+
+well, to do so, we need a database .. and fortunately, we have one:
+Spare Cores curates a standardized dataset including cloud server types from multiple vendors,
+pricing information, and performance metrics across over 500 workloads -- with open-licenses.
+
+to answer the question: which is the most cost-efficient instance for a given workload,
+such as running LLM inference using a 70B model, we need supporting data.
 :::
 
 # >>> import sqlite3
 
-```sh {code-line-numbers="1|6-24|26-54|29,31,38,39,48|26-38,40-42,44-54|26-28,39,43,54|56-74|62|76-104|109-110" style="font-size:24px; margin-top: 20px !important; height: 640px;"}
+```sh {code-line-numbers="1|6-24|7-8|11-12|14-21|23-24|26-54|29,31,38,39,48|26-38,40-42,44-54|26-28,39,43,54|56-74|62|76-104|109-110" style="font-size:24px; margin-top: 20px !important; height: 640px;"}
 $ sqlite3 spare-cores-navigator.db
 SQLite version 3.46.1
 Enter ".help" for usage hints.
@@ -92,7 +112,7 @@ sqlite> WITH prices AS (
   SELECT vendor_id, server_id, ROUND(AVG(price), 2) AS price FROM server_price
   WHERE allocation = 'ONDEMAND' GROUP BY vendor_id, server_id
 ),
-llm AS (
+workload AS (
   SELECT DISTINCT vendor_id, server_id, score FROM benchmark_score
   WHERE benchmark_id = 'llm_speed:text_generation' AND config = '{"model": "Llama-3.3-70B-Instruct-Q4_K_M.gguf", "tokens": 128}'
 )
@@ -103,7 +123,7 @@ SELECT
   ROUND(price / (score * 60 * 60 / 1_000_000 ), 4) AS "$ per 1M token"
 FROM server
 LEFT JOIN prices USING (vendor_id, server_id)
-LEFT JOIN llm USING (vendor_id, server_id)
+LEFT JOIN workload USING (vendor_id, server_id)
 WHERE score IS NOT NULL
 ORDER BY 11 ASC
 LIMIT 25;
@@ -142,7 +162,7 @@ sqlite> WITH prices AS (
   SELECT vendor_id, server_id, ROUND(AVG(price), 2) AS price FROM server_price
   WHERE allocation = 'ONDEMAND' GROUP BY vendor_id, server_id
 ),
-llm AS (
+workload AS (
   SELECT DISTINCT vendor_id, server_id, score FROM benchmark_score
   WHERE benchmark_id = 'llm_speed:text_generation' AND config = '{"model": "gemma-2b.Q4_K_M.gguf", "tokens": 128}'
 )
@@ -153,7 +173,7 @@ SELECT
   ROUND(price / (score * 60 * 60 / 1_000_000 ), 4) AS "$ per 1M token"
 FROM server
 LEFT JOIN prices USING (vendor_id, server_id)
-LEFT JOIN llm USING (vendor_id, server_id)
+LEFT JOIN workload USING (vendor_id, server_id)
 WHERE score IS NOT NULL
 ORDER BY 11 ASC
 LIMIT 25;
@@ -195,7 +215,7 @@ sqlite> -- Thank you, enjoy the buffet! *drops mic*
 sqlite> .exit
 ```
 
-## >>> assert dragons.location == "here"
+## >>> assert dragons.location != "here"
 
 Pricing details:
 
@@ -204,10 +224,11 @@ Pricing details:
   <li class="fragment">regional differences (calculated average of all regions)</li>
   <li class="fragment">monthly price caps (discounts) and reserved capacity</li>
   <li class="fragment">currency conversion (e.g. EUR pricing of Hetzner)</li>
+  <li class="fragment">not taking into account storage cost (e.g. 70+ GB for `Llama-3.3-70B-Instruct-Q4_K_M.gguf`)</li>
   <li class="fragment">not taking into account egress cost (e.g. 1,000 tokens/sec easily bypasses 10 GB/month egress cost)</li>
 </ul>
 
-## >>> assert dragons.location == "here"
+## >>> assert dragons.location != "here"
 
 Missing data, e.g. due to:
 
@@ -219,7 +240,7 @@ Missing data, e.g. due to:
   <li class="fragment">`pulumi` reported that the instance creation failed, but it silently ran for 3 days doing nothing and consumed 1000s of dollars</li>
 </ul>
 
-## >>> assert dragons.location == "here"
+## >>> assert dragons.location != "here"
 
 Benchmark methodology:
 
@@ -652,14 +673,8 @@ We have created a Docker image that includes llama.ccp build for various CPU arc
   <ul style="font-size: 0.9em;">
     <li class="fragment">Hardware discovery to pick the correct binary, `$PATH` overrides.</li>
     <li class="fragment">Download models in a background thread, sequentially from Hugging Face with sane timeouts.</li>
-    <li class="fragment">Find optimal `ngl` setting for each model when GPU is available.</li>
-    <li class="fragment">Run the benchmarks in sequence with sane timeouts.</li>
   </ul>
 </ul>
-
-<aside class="notes">
-Describe how `ngl` was found!
-</aside>
 
 ## >>> from benchmark-llm import models
 
@@ -737,6 +752,28 @@ td.param-size span.unit {
     </tr>
   </tbody>
 </table>
+
+## $ docker build -t llm-benchmark .
+
+<ul>
+  <li>Multi-arch Docker build with x86 and ARM support.</li>
+  <li>Bundles `llama.cpp` binaries built for various CPU architectures and CUDA as well.</li>
+  <ul style="font-size: 0.9em;">
+    <li>Recursive lookup of linked libraries from multiple parent images and mixing them in a single image under different paths 🫣</li>
+  </ul>
+  <li>Python script to run the benchmark:</li>
+  <ul style="font-size: 0.9em;">
+    <li>Hardware discovery to pick the correct binary, `$PATH` overrides.</li>
+    <li>Download models in a background thread, sequentially from Hugging Face with sane timeouts.</li>
+    <li class="fragment">Find optimal `ngl` setting for each model when GPU is available.</li>
+    <li class="fragment">Run the benchmarks in sequence with sane timeouts.</li>
+  </ul>
+</ul>
+
+<aside class="notes">
+Describe how `ngl` was found!
+</aside>
+
 
 ## >>> from benchmark-llm import workloads
 
