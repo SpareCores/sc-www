@@ -1,5 +1,5 @@
 <div class="block_half" [class.open]="isOpen()" [attr.id]="cardId()" #cardRoot>
-  <h3 class="text-2xl">{{ title() }}</h3>
+  <h3 class="text-2xl">{{ cardTitle() }}</h3>
   <div class="card_sections">
     @for (section of visibleSections(); track section.name; let i = $index) {
       @if (showSectionHeaders() && i > 0) {
