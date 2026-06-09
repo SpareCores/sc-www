@@ -28,7 +28,7 @@ And we completely agree! In fact, we never advocated for comparing
 servers purely based on their specs. Actually, that's why we have already
 covered [50+ benchmark scores](/article/cloud-compute-performance-benchmarks)
 for the monitored ~2000 servers, including a highlighted CPU burning score that
-is presented in our all our comparison tables, even in the screenshot above.
+is presented in all our comparison tables, even in the screenshot above.
 However, the examples shared in the tweet inspired us to dig deeper:
 
 <blockquote>
@@ -61,15 +61,15 @@ the raw data directly at the related
 
 Probably the most popular webserver and reverse proxy nowadays is
 `nginx`, which is a fantastic tool with a lot of fancy features, but
-provides mediocore performance with the default config, and
+provides mediocre performance with the default config, and
 measurements highly depend on the actual configuration and
 fine-tuning.
 
 To simplify benchmarking, we chose
 <a href="https://github.com/mufeedvh/binserve" target="_blank" rel="noopener"><code>binserve</code></a>,
 a single-binary, very fast static web server written in Rust.
-It scales surprisingly well without any tuning at all, so can probably
-much better measure general static web serving capabilities of a
+It scales surprisingly well without any tuning at all, so it can probably
+measure much better the general static web serving capabilities of a
 server compared to any much more complex `nginx` (or other)
 configuration. It also stores the static files in memory, so the
 overhead of filesystem/storage operations can be neglected.
@@ -80,8 +80,8 @@ To measure the performance of the web server, we decided to use
 <a href="https://github.com/wg/wrk" target="_blank" rel="noopener"><code>wrk</code></a>,
 which is a modern, multi-threaded HTTP benchmarking tool written in C.
 
-We started `wrk` on the same server with `binserve`, and run it for
-10-10 seconds using a matrix of different number of client threads (1,
+We started `wrk` on the same server with `binserve`, and ran it for
+10 seconds using a matrix of different number of client threads (1,
 2, 4) and open connections (1, 2, 4, 8, 16, 32) to query small (1 kb,
 16 kb, 64 kb) to large files (256 kb, 512 kb) — as smaller file sizes
 are likely to need more connections to saturate the machine.
@@ -116,7 +116,7 @@ combinations.
 If you are interested in more details, I'd recommend checking the
 actual benchmark script hosted in our `benchmark-web` Docker image
 (<a href="https://github.com/SpareCores/sc-images/blob/main/images/benchmark-web/benchmark.py" target="_blank" rel="noopener">`benchmark.py`</a>) and the related ETL script
-(<a href="https://github.com/SpareCores/sc-crawler/blob/9a49d76ff8379cbcddfbe5b348187c9809f24ecf/src/sc_crawler/inspector.py#L315-L376" target="_blank" rel="noopener">`inspect.py`</a>).
+(<a href="https://github.com/SpareCores/sc-crawler/blob/9a49d76ff8379cbcddfbe5b348187c9809f24ecf/src/sc_crawler/inspector.py#L315-L376" target="_blank" rel="noopener">`inspector.py`</a>).
 
 ## Results
 
@@ -129,14 +129,14 @@ have similar results:
     title="Requests per second when querying binserve on a single connection per vCPU using wrk."
     alt="Grouped bar chart showing the Requests per second when querying binserver on a single connection per vCPU using wrk on a c6g.large, c7g.large, c5.large, and c7i.large servers at AWS."
     src="/assets/images/blog/binserve-compare-plot.webp"/>
-  <p>Performance of querying binserve on a single connection per vCPU<br />(data collected an visualized by Spare Cores)</p>
+  <p>Performance of querying binserve on a single connection per vCPU<br />(data collected and visualized by Spare Cores)</p>
 </div>
 
 Overall, `c7g.large` is definitely more powerful than `c6g.large`, but
 the extra performance varies by a number of factors: for example, the
 advantage is only around 12% (45.7k VS 40.9k RPS) when querying 1k
 small files, while it's almost 40% (6.7k VS 4.8k) when serving much
-larger, 512k files. Similarly, more open connections shows an ever
+larger, 512k files. Similarly, more open connections show an ever
 more drastic picture:
 
 <div class="text-center m-2.5 mt-8 mb-6">
@@ -144,7 +144,7 @@ more drastic picture:
     title="Requests per second when querying binserve on 16 connections per vCPU using wrk."
     alt="Grouped bar chart showing the Requests per second when querying binserver on 16 connections per vCPU using wrk on a c6g.large, c7g.large, c5.large, and c7i.large servers at AWS."
     src="/assets/images/blog/binserve-compare-plot-16.webp"/>
-  <p>Performance of querying binserve on 16 connections per vCPU<br />(data collected an visualized by Spare Cores)</p>
+  <p>Performance of querying binserve on 16 connections per vCPU<br />(data collected and visualized by Spare Cores)</p>
 </div>
 
 With small files and 16 open connections, `c7g.large` peaks at over
@@ -162,7 +162,7 @@ Again, the above RPS is **not** what you should expect from `binserve`
 when running on the referenced server, since `wrk` consumed some of
 the server's resources during the tests.
 
-For this end, we estimated an expected server RPS by extrapolating the
+To this end, we estimated an expected server RPS by extrapolating the
 measured RPS by multiplying it with the ratio of the client's and
 server's time spent executing in user/system mode. In other (stats)
 terms, trying to control for the client resource usage:
@@ -172,7 +172,7 @@ terms, trying to control for the client resource usage:
     title="Extrapolated requests per second when querying binserve on 16 connections per vCPU using wrk."
     alt="Grouped bar chart showing the Extrapolated RPS when querying binserver on 16 connections per vCPU using wrk on a c6g.large, c7g.large, c5.large, and c7i.large servers at AWS."
     src="/assets/images/blog/binserve-compare-plot-16-extrapolated.webp"/>
-  <p>Extrapolated server performance on 16 connections per vCPU<br />(data collected an visualized by Spare Cores)</p>
+  <p>Extrapolated server performance on 16 connections per vCPU<br />(data collected and visualized by Spare Cores)</p>
 </div>
 
 ## Further Metrics
@@ -183,7 +183,7 @@ in our server details and server comparison pages. We have also
 recorded the average latency as reported by `wrk`, which might be
 useful depending on your use case.
 
-As always, you all the data we've collected is available in our
+As always, all the data we've collected is available in our
 <a href="https://github.com/SpareCores/sc-data" target="_blank" rel="noopener">SQLite dumps and through `sparecores-data` Python package</a>.
 You can also browse the results directly on our homepage, e.g. by following
 [this direct link](/compare?instances=W3sidmVuZG9yIjoiYXdzIiwic2VydmVyIjoiYzZnLmxhcmdlIn0seyJ2ZW5kb3IiOiJhd3MiLCJzZXJ2ZXIiOiJjN2cubGFyZ2UifSx7InZlbmRvciI6ImF3cyIsInNlcnZlciI6ImM1LmxhcmdlIn0seyJ2ZW5kb3IiOiJhd3MiLCJzZXJ2ZXIiOiJjN2kubGFyZ2UifV0%3D)

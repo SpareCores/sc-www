@@ -26,7 +26,7 @@ their cloud use cases for containerized batch jobs and microservices.
 
 The survey should take no more than 5 minutes to complete. All
 questions are optional, and some are automatically skipped based on
-your previous answers. You can keep your reposes totally anonymous.
+your previous answers. You can keep your responses totally anonymous.
 By participating, you will help us immensely by providing valuable insights.
 Optionally, you can also choose to be notified about the results, either
 directly via email or indirectly through our blog or social media posts.

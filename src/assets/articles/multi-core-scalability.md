@@ -273,7 +273,7 @@ control over the machine. However, with smaller instances, we won’t be as luck
   <p>Scalability of multiple GCP <code>c4</code> instance sizes<br />(data collected and visualized by Spare Cores)</p>
 </div>
 
-A very interesting graph, reveals the following observations (red vertical lines indicate the physical core count of
+A very interesting graph reveals the following observations (red vertical lines indicate the physical core count of
 each instance):
 
 - For the 192/96 vCPU instances, when the machine is loaded up to the number of physical cores (96/48), we get similar

@@ -26,17 +26,17 @@ For more details, see the
 <a href="https://www.ngi.eu/news/2024/07/11/ngi-impact-study/"
 target="_blank" rel="noopener">NGI Impact Report</a>.
 
-We find this transformation incomprehensible, moreover when NGI has
-proven efficient and ecomomical to support free software as a whole,
+We find this transformation incomprehensible, especially when NGI has
+proven efficient and economical to support free software as a whole,
 from the smallest to the most established initiatives. This ecosystem
 diversity backs the strength of European technological innovation, and
 maintaining the NGI initiative to provide structural support to
 software projects at the heart of worldwide innovation is key to
 enforce the sovereignty of a European infrastructure. Contrary to
 common perception, technical innovations often originate from Europe,
-and mostly initiated by small-scaled organizations.
+and mostly initiated by small-scale organizations.
 
-Previous Cluster 4 allocated 27 millions euros to:
+Previous Cluster 4 allocated 27 million euros to:
 
 - Human centric Internet aligned with values and principles commonly
   shared in Europe;
@@ -61,7 +61,7 @@ innovation in Europe.
 
 Moreover, NGI allows exchanges and collaborations across all the Euro
 zone countries as well as "widening countries"¹, currently both a
-success and and an ongoing progress, likewise the Erasmus programme
+success and an ongoing progress, likewise the Erasmus programme
 before us. NGI also contributes to opening and supporting longer
 relationships than strict project funding does. It encourages to
 implement projects funded as pilots, backing collaboration,

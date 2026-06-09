@@ -6,7 +6,7 @@ date: 2024-10-26
 teaser: Gergely Orosz interviewed us and shared our story in The Pulse and on his blog to 750k subscribers.
 # 320x220
 image: /assets/images/blog/thumbnails/pe-likes.webp
-image_alt: Screenshot on the number oflikes on the Pragmatic Engineer post shared on social media.
+image_alt: Screenshot on the number of likes on the Pragmatic Engineer post shared on social media.
 author: Gergely Daroczi
 tags: [interview, media]
 ---
@@ -15,7 +15,7 @@ A couple of days ago, Spare Cores had the incredible honor of being featured on 
 
 ## How it happened?
 
-It might surprise you to learn that this all started with a cold email. I reached out to Gergely Orosz using the email address shared on his blog for the purpose of suggesting topics for The Pulse newsletter, and I shamelessly recommended that Spare Cores might resonate with his audience, along with a short blob on what we do.
+It might surprise you to learn that this all started with a cold email. I reached out to Gergely Orosz using the email address shared on his blog for the purpose of suggesting topics for The Pulse newsletter, and I shamelessly recommended that Spare Cores might resonate with his audience, along with a short blurb on what we do.
 
 To my delight, Gergely found our project interesting enough to cover! After a couple of email exchanges and a few weeks later, our story went live.
 
@@ -28,7 +28,7 @@ The response was overwhelming! Here's a glimpse of the incredible engagement we 
 
 <div class="text-center m-2.5 mt-8 mb-6">
     <a href="https://twitter.com/GergelyOrosz/status/1847646053492748453" target="_blank" rel="noopener" class="text-center">
-        <img src="/assets/images/blog/gergely-orosz-twitter.webp" alt="Screenshot of a tweet from Gergey Orosz announcing the Spare Cores article." class="rounded-lg" />
+        <img src="/assets/images/blog/gergely-orosz-twitter.webp" alt="Screenshot of a tweet from Gergely Orosz announcing the Spare Cores article." class="rounded-lg" />
     </a>
 </div>
 

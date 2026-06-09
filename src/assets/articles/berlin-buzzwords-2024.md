@@ -45,7 +45,7 @@ such a great company — and turned out to be a fantastic speaker as well,
 with interesting ideas to share.
 
 Since I run Home Assistant with a bunch of IoT devices at home,
-I also listened into
+I also listened in on
 <a href="https://program.berlinbuzzwords.de/bbuzz24/talk/BQTZHK/" target="_blank" rel="noopener">
 Nick Burch's "Monitoring your home" talk</a>,
 and was excited to watch

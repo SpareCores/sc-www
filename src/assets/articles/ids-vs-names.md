@@ -38,7 +38,7 @@ rel="noopener">SC Crawler</a> schemas require the presence of
 `zone_id` e.g. for server prices, so we decided to create "pseudo
 zones": one zone for each datacenter, using the same id and name.
 
-Anyway, what we have learned about their ids and names? The resource
+Anyway, what did we learn about their ids and names? The resource
 ids are integers, e.g. the CX family using up single-digit odd numbers,
 and the CCX family the range from 96 to 101:
 
@@ -63,7 +63,7 @@ ORDER BY CAST(server_id as INTEGER);
 |       100 | ccx53 |    32 | 131072 |
 |       101 | ccx63 |    48 | 196608 |
 
-Honestly, you better rely on the server names to identify what
+Honestly, you'd better rely on the server names to identify what
 hardware is covered. Fortunately, this is very well supported by their
 API SDKs, e.g. the Python client provides an `id_or_name` helper so
 that the user or program can use whatever they wish.
@@ -71,7 +71,7 @@ that the user or program can use whatever they wish.
 ## Amazon Web Services
 
 AWS uses human-friendly strings as the resource identifiers that are
-easy to remember and identify, and those are actually matching the
+easy to remember and identify, and those actually match the
 name in some cases, e.g. for the servers.
 
 Unfortunately, it's not that straightforward when it comes to other
@@ -79,10 +79,10 @@ resource types.
 
 The `region_id` is an all lowercase text starting with a 2-letter
 continent reference, then location reference and a number; while the
-name is a title-case string with the a city or state name in
+name is a title-case string with a city or state name in
 parenthesis after the continent. Unfortunately, the region names
 are not always used consistently throughout all the AWS API endpoints,
-e.g. "Europe" often get abbreviated as "EU", so we recorded these as
+e.g. "Europe" is often abbreviated as "EU", so we recorded these as
 aliases for the region names that we can look up:
 
 ```sql
@@ -106,7 +106,7 @@ LIMIT 10;
 | eu-west-1      | Europe (Ireland)         | ["EU (Ireland)"]   |
 | eu-central-1   | Europe (Frankfurt)       | ["EU (Frankfurt)"] |
 
-This is a bit painful, but manageable problem: we have been
+This is a bit painful, but a manageable problem: we have been
 maintaining the list of aliases manually in the SC Crawler package,
 and we keep our fingers crossed for no breaking changes.
 
@@ -143,14 +143,14 @@ aws ec2 \
 
 ## Google Cloud Platform
 
-To keep it short, GCP is a mix of the above-described words:
+To keep it short, GCP is a mix of the above-described approaches:
 
 - Using integers for the ids (e.g. `region_id`s are between 1000 and 2000,
   `zone_id`s are between 2000 and 3000 etc),
 - Human-friendly zone names are not interchangeable between GCP accounts.
 
 What might be surprising is that there is no way to map an actual
-availability zone with another GCP accounts' zone (except for a few
+availability zone with another GCP account's zone (except for a few
 special cases):
 
 <blockquote>
@@ -169,7 +169,7 @@ special cases):
   </cite></footer>
 </blockquote>
 
-This was highly confusing first, as we were trained using AWS with
+This was highly confusing at first, as we were trained using AWS with
 very different prices even between the availability zones of a single
 region, but as GCP has uniform prices within a region, it did not
 raise any issues after all (except for storing redundant data in our

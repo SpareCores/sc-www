@@ -84,7 +84,7 @@ the performance of many use cases:
 - Object Detection: Detects and classifies objects in 300x300 pixel
   photos (16 in single-core mode, 64 in multi-core mode) using the
   MobileNet v1 SSD convolutional neural network.
-- Background Blur: Separates and nlurs the background of 10 frames in
+- Background Blur: Separates and blurs the background of 10 frames in
   a 1080p video, using DeepLabV3+.
 - Horizon Detection: Detects and straightens uneven or crooked horizon
   lines in a 48MP photo to make it look more realistic, using the
@@ -96,7 +96,7 @@ the performance of many use cases:
   a recovery process and radiance map construction (Debevec and Malik
   1997), and a tone mapping algorithm (Reinhard and Devlin 2005).
 - Photo Filter: Applies color and blur filters, level adjustments,
-  cropping, scaling, and image compositing filters to 10 photos range
+  cropping, scaling, and image compositing filters to 10 photos ranging
   in size from 3 MP to 15 MP.
 - Ray Tracer: Renders the Blender BMW scene using a custom ray tracer
   built with the Intel Embree ray tracing library.
@@ -122,7 +122,7 @@ server details pages, which is also available in our public datasets:
     title="GeekBench 6 scores of a t4g.large server at AWS"
     alt="A radar chart showing the GeekBench 6 scores of a t4g.large server at AWS."
     src="/assets/images/blog/benchmarks-geekbench.webp"/>
-  <p>GeekBench 6 scores of a <code>t4g.large</code> server at AWS<br />(data collected an visualized by Spare Cores)</p>
+  <p>GeekBench 6 scores of a <code>t4g.large</code> server at AWS<br />(data collected and visualized by Spare Cores)</p>
 </div>
 
 ## Compression Algorithms
@@ -144,10 +144,10 @@ All these values visualized on a joint line chart on our homepage:
 
 <div class="text-center m-2.5 mt-8 mb-6">
   <img class="zoomin w-full"
-    title="The compressions speed as a function of the compression ratio using multiple compression algos on a t4g.large"
-    alt="Line chart showing the compressions speed as a function of the compression ratio using multiple compression algos on a t4g.large server at AWS."
+    title="The compression speed as a function of the compression ratio using multiple compression algos on a t4g.large"
+    alt="Line chart showing the compression speed as a function of the compression ratio using multiple compression algos on a t4g.large server at AWS."
     src="/assets/images/blog/benchmarks-compression.webp"/>
-  <p>The compressions speed as a function of the compression ratio using multiple compression algos on a <code>t4g.large</code> server at AWS<br />(data collected an visualized by Spare Cores)</p>
+  <p>The compression speed as a function of the compression ratio using multiple compression algos on a <code>t4g.large</code> server at AWS<br />(data collected and visualized by Spare Cores)</p>
 </div>
 
 ## Memory Bandwidth
@@ -158,10 +158,10 @@ iteratively run `bw_mem` from the LMBench suite:
 
 <div class="text-center m-2.5 mt-8 mb-6">
   <img class="zoomin w-full"
-    title=" compressions speed as a function of the compression ratio using multiple compression algos on a t4g.large"
-    alt="Line chart showing the compressions speed as a function of the compression ratio using multiple compression algos on a t4g.large server at AWS."
+    title="Memory bandwidth as a function of block size on a t4g.large"
+    alt="Line chart showing memory bandwidth as a function of block size using bw_mem on a t4g.large server at AWS."
     src="/assets/images/blog/benchmarks-bw_mem.webp"/>
-  <p>The compressions speed as a function of the compression ratio using multiple compression algos on a <code>t4g.large</code> server at AWS<br />(data collected an visualized by Spare Cores)</p>
+  <p>Memory bandwidth as a function of block size on a <code>t4g.large</code> server at AWS<br />(data collected and visualized by Spare Cores)</p>
 </div>
 
 As you can see, we also added the L1/L2/L3 cache amounts to the chart,
@@ -180,9 +180,9 @@ different block sizes of data:
 <div class="text-center m-2.5 mt-8 mb-6">
   <img class="zoomin w-full"
     title="The speed of hash functions and block ciphers on t4g.large"
-    alt="Grouped bar chart showing the the speed of OpenSSL hash functions and block ciphers on a t4g.large server at AWS."
+    alt="Grouped bar chart showing the speed of OpenSSL hash functions and block ciphers on a t4g.large server at AWS."
     src="/assets/images/blog/benchmarks-openssl.webp"/>
-  <p>The speed of hash functions and block ciphers on <code>t4g.large</code><br />(data collected an visualized by Spare Cores)</p>
+  <p>The speed of hash functions and block ciphers on <code>t4g.large</code><br />(data collected and visualized by Spare Cores)</p>
 </div>
 
 ## One SCore to Rule Them All
@@ -201,13 +201,13 @@ the general performance of the CPU?
 
 We have found `stress-ng` a fantastic tool to put full load on a
 system, and although it's explicitly stated not to be a benchmarking
-tool, it does results in meaningful and useful metrics with the right
+tool, it does result in meaningful and useful metrics with the right
 selection of the CPU stress method.
 
 After evaluating approximately 50 CPU stress methods, we have found
-that many returns diluted scores when running on hyper-threaded (HT)
+that many return diluted scores when running on hyper-threaded (HT)
 cores, so we looked for methods that measure the actual raw multi-core
-performance of the CPU, and identified the two finalists below.:
+performance of the CPU, and identified the two finalists below:
 
 - `jmp`: Simple unoptimised compare >, <, == and jmp branching.
 - `div16`: 50,000 16 bit unsigned integer divisions.

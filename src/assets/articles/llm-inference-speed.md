@@ -354,8 +354,8 @@ USD/hour, providing 8164+ tokens/second overall inference speed, which
 translates to \~3.4 US cents per 1M tokens when fully utilized.
 
 The next best option (`g2-standard-8`) provides the same performance as equipped
-with the same GPU, which is doing all the work independent of the extra CPU
-cores or memory amount, so the cost efficiency is around the half of the first
+with the same GPU, which is doing all the work independently of the extra CPU
+cores or memory amount, so the cost efficiency is about half of the first
 one due to the doubled costs, with identical throughput.
 
 ## Visual Exploration
@@ -363,7 +363,7 @@ one due to the doubled costs, with identical throughput.
 If you might prefer a more intuitive way of getting access to this data, look no
 further: this is easily accessible from our <a href="/servers" target="_blank">Server Navigator</a>!
 Just select the preferred LLM inference speed benchmark instead of the default
-`stress-ng` on the top of the table, as e.g. in the below screenshot:
+`stress-ng` at the top of the table, as e.g. in the below screenshot:
 
 <div class="text-center m-2.5 mt-8 mb-6">
   <img class="zoomin w-full"
@@ -411,7 +411,7 @@ so the most cost-efficient options are the cheapest instances with an A100 GPU.
 
 Although the CPU-only options are much less performant (a single A100 delivers
 20+ tokens/second, while 32 vCPUs provide overall 3-4 tokens/second), there are
-many much cheaper servers available providing a good cost efficiency as well —
+many much cheaper servers are still available, providing a good cost efficiency as well —
 as you can see in the above table.
 
 Looking at the smallest LLM model:

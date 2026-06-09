@@ -18,7 +18,7 @@ It's a great pleasure to return to the useR! conference series again! [Last year
 
 Spare Cores is proud to sponsor the event this year, so if you are around, please stop by our booth to say hi and grab a hex sticker!
 
-If you are rather a Pythonista, we are happy to share we will also be attending PyData both in <a href="https://pydata.org/berlin2025" target="_blank" rel="noopener">Berlin</a> and <a href="https://amsterdam.pydata.org" target="_blank" rel="noopener">Amsterdam</a> this year, presenting about:
+If you are more of a Pythonista, we are happy to share we will also be attending PyData both in <a href="https://pydata.org/berlin2025" target="_blank" rel="noopener">Berlin</a> and <a href="https://amsterdam.pydata.org" target="_blank" rel="noopener">Amsterdam</a> this year, presenting about:
 
 - The Resource Tracker package,
 - [How we benchmarked 2,000+ cloud servers for LLM inference speed](/article/llm-inference-speed).
