@@ -10,7 +10,7 @@ image_alt: Gergely Daróczi and Tamás Hidvégi at PyData London 2026
 author: Tamas Hidvegi
 tags: [conference, talk]
 ---
-First of all, thanks a lot [@Gergely Daróczi](https://www.linkedin.com/in/daroczig/) for inviting me to join the [Spare Cores](https://www.linkedin.com/company/sparecores/) team at the conference (thx for the talk `SELECT instance FROM cloud WHERE workload = ? ORDER BY cost_efficiency` too, the topic was very close to me :)!) It was an exciting opportunity to attend such a great event. I gathered a lot of ideas, cloned a lot of repos, and as an extra I learned couple of things about myself, which I don’t think is a common experience from an IT conference :).
+First of all, thanks a lot [@Gergely Daróczi](https://www.linkedin.com/in/daroczig/) for inviting me to join the [Spare Cores](https://www.linkedin.com/company/sparecores/) team at the conference (thx for the talk `SELECT instance FROM cloud WHERE workload = ? ORDER BY cost_efficiency` too, the topic was very close to me :) )! It was an exciting opportunity to attend such a great event. I gathered a lot of ideas, cloned a lot of repos, and as an extra I learned couple of things about myself, which I don’t think is a common experience from an IT conference :).
 
 After a career change I’ve been a developer for about 3 years. PyData was my second conference in my life, so there were a lot of common libraries in the tech stacks whose purpose I didn’t really know (for example Jupyter; I’d never used notebook frameworks before, just mentioning the most trivial example). So many thanks to all the presenters, I could learn something from every talk and workshop I attended.
 
