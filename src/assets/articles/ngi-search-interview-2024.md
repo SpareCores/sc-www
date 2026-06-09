@@ -47,7 +47,7 @@ Our homepage also gets a pretty good number of visitors, e.g., from Google (~2k/
 
 All this was possible thanks to the NGI Search funding, which allowed us to dedicate time and resources to writing software, burning compute resources, and being active in online and offline communities!
 
-✅ What are your goals for the middle/long-time future?
+✅ What are your goals for the middle/long-term future?
 
 In the long term, we aim to offer a service on top of our curated data that lets users effortlessly start machines at any supported vendor to run containerized batch jobs without direct vendor engagement or managing any infrastructure. Consider this a Container-as-a-Service like AWS Fargate or Google Cloud Run – but in a much more accessible, affordable, and vendor-independent way.
 

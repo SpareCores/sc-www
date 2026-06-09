@@ -34,7 +34,7 @@ the CX22 costs only €0.0052, while the CX21 used to cost €0.0079 per hour
 <div class="text-center m-2.5 mt-8 mb-6">
   <img class="zoomin w-full"
     title="Pricing and CPU features comparison"
-    alt="Pricing and CPU features of Hetzner servers compared in a table (data collected an visualized by Spare Cores)"
+    alt="Pricing and CPU features of Hetzner servers compared in a table (data collected and visualized by Spare Cores)"
     src="/assets/images/blog/hcloud-cx-cpu.webp"/>
   <p>Pricing and CPU features comparison</p>
 </div>
@@ -72,7 +72,7 @@ servers.
 <div class="text-center m-2.5 mt-8 mb-6">
   <img class="zoomin w-full"
     title="Memory, storage and network features comparison"
-    alt="Memory, storage and network features of Hetzner servers compared in a table (data collected an visualized by Spare Cores)"
+    alt="Memory, storage and network features of Hetzner servers compared in a table (data collected and visualized by Spare Cores)"
     src="/assets/images/blog/hcloud-cx-memory-storage.webp"/>
   <p>Memory, storage and network features comparison</p>
 </div>
@@ -98,7 +98,7 @@ benchmarking workloads, both on a single core and all (two) available cores:
 <div class="text-center m-2.5 mt-8 mb-6">
   <img class="zoomin w-full"
     title="Geekbench benchmarks"
-    alt="Geekbench benchmark scores of Hetzner servers compared in a radar chart (data collected an visualized by Spare Cores)"
+    alt="Geekbench benchmark scores of Hetzner servers compared in a radar chart (data collected and visualized by Spare Cores)"
     src="/assets/images/blog/hcloud-cx-geekbench.webp"/>
 </div>
 
@@ -118,7 +118,7 @@ especially with larger block sizes:
 <div class="text-center m-2.5 mt-8 mb-6">
   <img class="zoomin w-full"
     title="Memory bandwidth benchmarks"
-    alt="Memory bandwidth benchmark scores of Hetzner servers compared in a line chart (data collected an visualized by Spare Cores)"
+    alt="Memory bandwidth benchmark scores of Hetzner servers compared in a line chart (data collected and visualized by Spare Cores)"
     src="/assets/images/blog/hcloud-cx-memory-bandwidth.webp"/>
 </div>
 
@@ -128,7 +128,7 @@ OpenSSL hash functions and block ciphers:
 <div class="text-center m-2.5 mt-8 mb-6">
   <img class="zoomin w-full"
     title="OpenSSL benchmarks"
-    alt="OpenSSL benchmark scores of Hetzner servers compared in a barchart (data collected an visualized by Spare Cores)"
+    alt="OpenSSL benchmark scores of Hetzner servers compared in a barchart (data collected and visualized by Spare Cores)"
     src="/assets/images/blog/hcloud-cx-openssl.webp"/>
 </div>
 
@@ -138,7 +138,7 @@ to expand the benchmark scores in a table:
 <div class="text-center m-2.5 mt-8 mb-6">
   <img class="zoomin w-full"
     title="OpenSSL benchmarks"
-    alt="OpenSSL benchmark scores of Hetzner servers compared in a table (data collected an visualized by Spare Cores)"
+    alt="OpenSSL benchmark scores of Hetzner servers compared in a table (data collected and visualized by Spare Cores)"
     src="/assets/images/blog/hcloud-cx-openssl-table.webp"/>
 </div>
 
@@ -148,7 +148,7 @@ compression algorithms between the listed servers:
 <div class="text-center m-2.5 mt-8 mb-6">
   <img class="zoomin w-full"
     title="Compression algo benchmarks"
-    alt="Compression algo benchmark scores of Hetzner servers compared in a line chart (data collected an visualized by Spare Cores)"
+    alt="Compression algo benchmark scores of Hetzner servers compared in a line chart (data collected and visualized by Spare Cores)"
     src="/assets/images/blog/hcloud-cx-compression.webp"/>
 </div>
 

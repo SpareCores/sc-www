@@ -27,7 +27,7 @@ To embed a chart of a server's specific benchmarks, go to the server details pag
  style="height: 440px; width: 640px; border: 1px solid #34d399; border-radius: 8px; min-height: 400px">
 </iframe>
 
-Embedding a chart for a comparison of servers is similar: go to the server comparison page, and click on the `Embed chart` button on the top of the page. A quick example:
+Embedding a chart for a comparison of servers is similar: go to the server comparison page, and click on the `Embed chart` button at the top of the page. A quick example:
 
 <iframe 
  src="/embed/compare/geekbench_multi?instances=W3sidmVuZG9yIjoiYXdzIiwic2VydmVyIjoibTdhLjR4bGFyZ2UifSx7InZlbmRvciI6ImdjcCIsInNlcnZlciI6InQyZC1zdGFuZGFyZC0xNiJ9LHsidmVuZG9yIjoiYXp1cmUiLCJzZXJ2ZXIiOiJTdGFuZGFyZF9EMTZwc192NiJ9LHsidmVuZG9yIjoiYXp1cmUiLCJzZXJ2ZXIiOiJTdGFuZGFyZF9EQzE2c192MyJ9LHsidmVuZG9yIjoiaGNsb3VkIiwic2VydmVyIjoiY2F4NDEifSx7InZlbmRvciI6ImdjcCIsInNlcnZlciI6InQyYS1zdGFuZGFyZC0xNiJ9LHsidmVuZG9yIjoiYXdzIiwic2VydmVyIjoibThnLjR4bGFyZ2UifV0=" 

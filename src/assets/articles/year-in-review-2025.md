@@ -11,7 +11,7 @@ author: Gergely Daroczi
 tags: [benchmark, performance, conference, talk, open-source, resource-tracker, llm]
 ---
 
-It has been a busy year so far, and I realized never sitting down to write a proper update on everything that has been happening at Spare Cores. Consider this a catch-up post: new vendor integrations, a large benchmarking effort, two new open-source packages, and more conference talks than we originally planned. Here is a summary of what we have been building and doing since the start of 2025.
+It has been a busy year so far, and I realized I had never sat down to write a proper update on everything that has been happening at Spare Cores. Consider this a catch-up post: new vendor integrations, a large benchmarking effort, two new open-source packages, and more conference talks than we originally planned. Here is a summary of what we have been building and doing since the start of 2025.
 
 ## February: UpCloud Joins the Family
 
@@ -35,9 +35,9 @@ The [new benchmark selector](/article/search-benchmarks) lets you pick from over
 
 ## April: The Resource Tracker
 
-This was probably the most significant release of the year. We shipped the [`resource-tracker` Python package](/article/metaflow-resource-tracker) -- a tool that monitors the CPU, memory, GPU, disk, and network usage of a process and its descendants, then recommends the cheapest cloud server that meets those requirements using the Spare Cores Navigator  data.
+This was probably the most significant release of the year. We shipped the [`resource-tracker` Python package](/article/metaflow-resource-tracker) -- a tool that monitors the CPU, memory, GPU, disk, and network usage of a process and its descendants, then recommends the cheapest cloud server that meets those requirements using the Spare Cores Navigator data.
 
-The initial `procfs` implementation was quick to put together, but only worked on Linux. Thanks to inbound requests, we added a `psutil` fallback that made it work on MacOS and Windows as well, which matters because data scientists often develop locally and deploy to cloud.
+The initial `procfs` implementation was quick to put together, but only worked on Linux. Thanks to inbound requests, we added a `psutil` fallback that made it work on macOS and Windows as well, which matters because data scientists often develop locally and deploy to cloud.
 
 <img src="/assets/images/resource_tracker/resource-usage-cpu.webp" style="padding: 30px 0px 30px 30px;">
 

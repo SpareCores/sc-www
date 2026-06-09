@@ -158,7 +158,7 @@ servers for your workload.
 This more complex scenario works best with a framework that can handle both the
 data collection and the analytics etc. in an automated way, but we did not want
 to come up with a new `n+1th` standard for that ... instead we decided to look
-at the existing solutions and how we can integrate with them without much
+at the existing solutions and how we can integrate with them without many
 compromises.
 
 ## Metaflow Integration

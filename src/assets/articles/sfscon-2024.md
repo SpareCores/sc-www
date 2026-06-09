@@ -3,7 +3,7 @@
 title: Spare Cores at SFSCon 2024 in Bolzano
 date: 2024-11-25
 # ~100 character
-teaser: Spare Cores presented a talk and run a booth at SFSCon. Slides, video recording & hex stickers are available :)
+teaser: Spare Cores presented a talk and ran a booth at SFSCon. Slides, video recording & hex stickers are available :)
 # 320x220
 image: /assets/images/blog/thumbnails/sfscon-2024-booth.webp
 image_alt: Photo of Gergely Daroczi sitting at the Spare Cores booth (table) at SFSCon 2024 in Bolzano, Italy.
@@ -24,7 +24,7 @@ conference in Bolzano. The trip to Italy was a blast -- my first time on a night
 
 SFSCon is a conference with a focus on free software and the open source community, with a strong history of 20 years. It was a great pleasure to be part of it!
 
-My talk was about <a href="https://www.sfscon.it/talks/optimizing-cloud-compute-resources-with-spare-cores/" target="_blank" rel="noopener">Optimizing Cloud Compute Resources with Spare Cores</a>, and as all standard talks, it was limited to 15 minutes .. for which I prepared over 100 slides, so it was a bit of a challenge, but managed to deliver on time — inlcuding a few minutes for questions at the end. If you are interested in a quick intro on what are the Spare Cores components, this might be a good starting point:
+My talk was about <a href="https://www.sfscon.it/talks/optimizing-cloud-compute-resources-with-spare-cores/" target="_blank" rel="noopener">Optimizing Cloud Compute Resources with Spare Cores</a>, and as with all standard talks, it was limited to 15 minutes .. for which I prepared over 100 slides, so it was a bit of a challenge, but I managed to deliver on time — including a few minutes for questions at the end. If you are interested in a quick intro on what the Spare Cores components are, this might be a good starting point:
 
 <div style="padding:56.25% 0 0 0;position:relative;"><iframe src="https://player.vimeo.com/video/1030650515?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="SFSCON24 - Gergely Daroczi - Optimizing Cloud Compute Resources with Spare Cores"></iframe></div><script src="https://player.vimeo.com/api/player.js"></script>
 

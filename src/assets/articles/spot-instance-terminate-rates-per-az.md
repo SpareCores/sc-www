@@ -107,7 +107,7 @@ an infinite loop as per below:
   termination notice.
 - Terminate either on the notice or after 1 hour.
 
-We started with the `r7i.2xlarge` instance as previously experienced a
+We started with the `r7i.2xlarge` instance as we previously experienced a
 very high (much higher than >20% as reported by the Spot Instance
 advisor) termination rate in the `us-west-2b` availability zone (or <a
 href="/article/ids-vs-names">whatever it is called in your
@@ -115,9 +115,9 @@ AWS account</a>):
 
 <div class="text-center m-2.5 mt-8 mb-6">
   <img class="zoomin w-full"
-    title="r7i.2xlarge spot instances started in us-west-2 (data collected an visualized by Spare Cores)"
+    title="r7i.2xlarge spot instances started in us-west-2 (data collected and visualized by Spare Cores)"
     src="/assets/images/blog/termination-rates-r7i.2xlarge.png"/>
-  <p>The status of r7i.2xlarge spot instances started in us-west-2<br />(data collected an visualized by Spare Cores)</p>
+  <p>The status of r7i.2xlarge spot instances started in us-west-2<br />(data collected and visualized by Spare Cores)</p>
 </div>
 
 The data collection started midday on April 10, and although we had a
@@ -148,15 +148,15 @@ ORDER BY 1, 2;
 
 <div class="text-center m-2.5 mt-8 mb-6">
   <img class="zoomin w-full"
-    title="The spot prices of r7i.2xlarge per AZ in us-west-2 (data collected an visualized by Spare Cores)"
+    title="The spot prices of r7i.2xlarge per AZ in us-west-2 (data collected and visualized by Spare Cores)"
     src="/assets/images/blog/termination-rates-prices.png"/>
-  <p>The spot prices of r7i.2xlarge per AZ in us-west-2<br />(data collected an visualized by Spare Cores)</p>
+  <p>The spot prices of r7i.2xlarge per AZ in us-west-2<br />(data collected and visualized by Spare Cores)</p>
 </div>
 
 So although spot `r7i.2xlarge` instances are the cheapest by far in
 the `us-west-2b` availability zones, it doesn't make any sense to try
 to run it there, as either capacity will not be available, or your
-instance will likely be killed withing a few minutes or hours.
+instance will likely be killed within a few minutes or hours.
 
 Honestly, we don't understand why it makes sense for either AWS or the
 customers.
@@ -170,16 +170,16 @@ results:
 
 <div class="text-center m-2.5 mt-8 mb-6">
   <img class="zoomin w-full"
-    title="m5.large spot instances started in us-west-2 (data collected an visualized by Spare Cores)"
+    title="m5.large spot instances started in us-west-2 (data collected and visualized by Spare Cores)"
     src="/assets/images/blog/termination-rates-m5.large.png"/>
-  <p>The status of m5.large spot instances started in us-west-2<br />(data collected an visualized by Spare Cores)</p>
+  <p>The status of m5.large spot instances started in us-west-2<br />(data collected and visualized by Spare Cores)</p>
 </div>
 
 <div class="text-center m-2.5 mt-8 mb-6">
   <img class="zoomin w-full"
-    title="m5.2xlarge spot instances started in us-west-2 (data collected an visualized by Spare Cores)"
+    title="m5.2xlarge spot instances started in us-west-2 (data collected and visualized by Spare Cores)"
     src="/assets/images/blog/termination-rates-m5.2xlarge.png"/>
-  <p>The status of <code>m5.2xlarge</code> spot instances started in <code>us-west-2</code><br />(data collected an visualized by Spare Cores)</p>
+  <p>The status of <code>m5.2xlarge</code> spot instances started in <code>us-west-2</code><br />(data collected and visualized by Spare Cores)</p>
 </div>
 
 The 15-20% rate appears to be indeed correct for these instance types,

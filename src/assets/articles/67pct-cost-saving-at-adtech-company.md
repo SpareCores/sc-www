@@ -16,7 +16,7 @@ company, with the need to run data science batch jobs requiring
 varying resources, e.g.
 
 - Training hierarchical models on a large dataset using R required
-  several hundreds GBs of RAM,
+  several hundred GB of RAM,
 - NLP models in Python required GPUs,
 - Parallelized time-series forecasting models required many CPUs,
 - Many small jobs mostly waiting for SQL results running on a shared
@@ -69,7 +69,7 @@ to below $2k!
 ## Reasoning
 
 Proper resource usage monitoring was obviously an important factor in
-succeeding the project, but we considered avoiding bin packing as the
+the project's success, but we considered avoiding bin packing as the
 key ingredient: AWS offers almost 800 instance types with the price
 being based on the included and attached resources, so it doesn't make
 much sense to run a larger node with multiple jobs, instead each job
@@ -81,7 +81,7 @@ To achieve this, we started with a wrapper script to monitor Docker
 stats every few seconds to identify:
 
 - If the script can scale to multiple CPU cores (~max CPU percentage).
-- How consistently the script requires high amount of compute power
+- How consistently the script requires a high amount of compute power
   (~average CPU percentage).
 - The required memory (~max memory usage).
 
@@ -95,7 +95,7 @@ querying:
   <p>CPU and memory usage of job monitored every few seconds</p>
 </div>
 
-Once the required/optimal vCPUs and memory was defined, we listed the
+Once the required/optimal vCPUs and memory were defined, we listed the
 matching instance types, ordered by cost per performance using the <a
 href="https://github.com/bra-fsn/cloudperf" target="_blank"
 rel="noopener"> `cloudperf` Python package</a> that we developed for
@@ -123,7 +123,7 @@ the summary printed by the wrapper script:
 
 Then we could use the newly collected data to fine-tune the
 server-selection algorithm by finding new patterns (e.g. a model
-training job running every hour requires high amount of memory only
+training job running every hour requires a high amount of memory only
 from time-to-time).
 
 Overall, this solution managed around 4000 batch jobs every single

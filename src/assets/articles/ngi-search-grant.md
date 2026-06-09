@@ -54,7 +54,7 @@ target="_blank" rel="noopener">OC3 winners announcement</a>, and the
 <a
 href="https://www.ngisearch.eu/download/Main/NGI_Searchers_booklet/NGI%20Searchers%20booklet.pdf?rev=1.2"
 target="_blank" rel="noopener">NGI Search booklet</a> on all NGI
-Search projects (from overall 5 open calls).
+Search projects (across 5 open calls).
 
 <div class="flex justify-center items-center mt-8 mb-6">
   <a href="https://www.ngisearch.eu/download/Main/NGI_Searchers_booklet/NGI%20Searchers%20booklet.pdf?rev=1.2"
