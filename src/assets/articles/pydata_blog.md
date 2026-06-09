@@ -7,7 +7,7 @@ teaser: "From green energy maps to MCP and beating AI agent burnout: my personal
 # 320x220
 image: /assets/images/blog/thumbnails/pydata_blog.webp
 image_alt: Gergely Daróczi and Tamás Hidvégi at PyData London 2026
-author: Tamás Hidvégi
+author: Tamas Hidvegi
 tags: [conference, talk]
 ---
 First of all, thanks a lot [@Gergely Daróczi](https://www.linkedin.com/in/daroczig/) for inviting me to join the [Spare Cores](https://www.linkedin.com/company/sparecores/) team at the conference (thx for the talk `SELECT instance FROM cloud WHERE workload = ? ORDER BY cost_efficiency` too, the topic was very close to me :)!) It was an exciting opportunity to attend such a great event. I gathered a lot of ideas, cloned a lot of repos, and as an extra I learned couple of things about myself, which I don’t think is a common experience from an IT conference :).
