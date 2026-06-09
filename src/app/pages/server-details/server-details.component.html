@@ -147,7 +147,7 @@
           <h2 class="text-3xl font-bold">Specifications</h2>
         </div>
         <app-server-property-card
-          title="Server Metadata"
+          cardTitle="Server Metadata"
           cardId="details"
           [sections]="metadataSections"
           [showSectionHeaders]="false"
@@ -243,7 +243,7 @@
           }
         </div>
         <app-server-property-card
-          title="Processor"
+          cardTitle="Processor"
           cardId="processor"
           [sections]="processorSections"
           [showSectionHeaders]="false"
@@ -251,7 +251,7 @@
           (toggleRequested)="toggleCard('processor', false)"
         ></app-server-property-card>
         <app-server-property-card
-          title="System Resources and Accelerators"
+          cardTitle="System Resources and Accelerators"
           cardId="system_resources"
           [sections]="resourceSections"
           [showSectionHeaders]="true"

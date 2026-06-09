@@ -41,7 +41,7 @@ export interface ServerPropertySection {
 export class ServerPropertyCardComponent {
   private tooltipService = inject(ChartTooltipService);
 
-  title = input.required<string>();
+  cardTitle = input.required<string>();
   cardId = input.required<string>();
   sections = input<ServerPropertySection[]>([]);
   showSectionHeaders = input(true);
