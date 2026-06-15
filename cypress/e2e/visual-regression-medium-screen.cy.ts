@@ -132,6 +132,7 @@ describe("Visual regression tests (medium screen - 1024px)", () => {
 
     // Prepare header position for a consistent visual regression snapshot
     E2EEvent.prepareHeaderForScreenshot();
+    E2EEvent.hideBaselineServerCaretForScreenshot();
 
     cy.contains("No matches yet").should("be.visible");
     cy.get("#serverSearchBar").should("be.visible");
