@@ -154,7 +154,7 @@ export class Table<SecurityDataType = unknown> {
    * @request GET:/table/server/select
    */
   tableServerSelectTableServerSelectGet = (
-    query: TableServerSelectTableServerSelectGetParams,
+    query: TableServerSelectTableServerSelectGetParams = {},
     params: RequestParams = {},
   ) =>
     this.http.request<
@@ -177,7 +177,7 @@ export class Table<SecurityDataType = unknown> {
    * @secure
    */
   tableServerPricesTableServerPricesGet = (
-    query: TableServerPricesTableServerPricesGetParams,
+    query: TableServerPricesTableServerPricesGetParams = {},
     params: RequestParams = {},
   ) =>
     this.http.request<

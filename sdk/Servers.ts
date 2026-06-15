@@ -33,7 +33,7 @@ export class Servers<SecurityDataType = unknown> {
    * @request GET:/servers
    */
   searchServersServersGet = (
-    query: SearchServersServersGetParams,
+    query: SearchServersServersGetParams = {},
     params: RequestParams = {},
   ) =>
     this.http.request<SearchServersServersGetData, HTTPValidationError>({

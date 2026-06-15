@@ -33,7 +33,7 @@ export class Stats<SecurityDataType = unknown> {
    * @request GET:/stats
    */
   getStatsStatsGet = (
-    query: GetStatsStatsGetParams,
+    query: GetStatsStatsGetParams = {},
     params: RequestParams = {},
   ) =>
     this.http.request<GetStatsStatsGetData, HTTPValidationError>({
