@@ -75,18 +75,23 @@ export namespace ServerPrices {
        */
       cpu_allocation?: "Shared" | "Burstable" | "Dedicated";
       /**
-       * Minimum SCore
-       * Minimum stress-ng div16 CPU workload score.
+       * Hardware virtualization
+       * Filter for servers with hardware virtualization.
+       */
+      hw_virt?: boolean | null;
+      /**
+       * Required SCore
+       * Required stress-ng div16 CPU workload score.
        */
       benchmark_score_stressng_cpu_min?: number | null;
       /**
-       * Minimum $Core
-       * Minimum stress-ng div16 CPU workload score per USD/hr (using the best ondemand or spot price of all zones).
+       * Required $Core
+       * Required stress-ng div16 CPU workload score per USD/hr (using the best ondemand or spot price of all zones).
        */
       benchmark_score_per_price_stressng_cpu_min?: number | null;
       /**
-       * Minimum memory
-       * Minimum amount of memory in GBs.
+       * Required memory
+       * Required amount of memory in GBs.
        */
       memory_min?: number | null;
       /**
@@ -642,8 +647,8 @@ export namespace ServerPrices {
        */
       compliance_framework?: "hipaa" | "iso27001" | "soc2t2";
       /**
-       * Minimum local storage size
-       * Minimum amount of built-in local (SSD, HDD, NVMe) server storage in GBs.
+       * Required local storage size
+       * Required amount of built-in local (SSD, HDD, NVMe) server storage in GBs.
        */
       storage_size?: number | null;
       /**
@@ -697,17 +702,17 @@ export namespace ServerPrices {
         | "ZA";
       /**
        * GPU count
-       * Minimum number of GPUs.
+       * Required number of GPUs.
        */
       gpu_min?: number | null;
       /**
-       * Minimum GPU memory
-       * Minimum amount of GPU memory (GB) in each GPU.
+       * Required GPU memory
+       * Required amount of GPU memory (GB) in each GPU.
        */
       gpu_memory_min?: number | null;
       /**
        * Total GPU memory
-       * Minimum amount of total GPU memory (GBs) in all GPUs.
+       * Required amount of total GPU memory (GBs) in all GPUs.
        */
       gpu_memory_total?: number | null;
       /** GPU manufacturer */
@@ -729,6 +734,7 @@ export namespace ServerPrices {
       gpu_model?:
         | "A10"
         | "A100"
+        | "A100 PCIE"
         | "A100 SXM"
         | "A10G"
         | "A16"
@@ -737,13 +743,13 @@ export namespace ServerPrices {
         | "B300"
         | "G49"
         | "G49E"
-        | "G59"
         | "GH200"
         | "GPU H"
         | "H100"
         | "H200"
         | "HL-205"
         | "L20"
+        | "L20N"
         | "L4"
         | "L40S"
         | "MI300X"

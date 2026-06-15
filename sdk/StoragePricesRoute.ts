@@ -45,8 +45,8 @@ export namespace StoragePrices {
        */
       green_energy?: boolean | null;
       /**
-       * Minimum local storage size
-       * Minimum amount of built-in local (SSD, HDD, NVMe) server storage in GBs.
+       * Required local storage size
+       * Required amount of built-in local (SSD, HDD, NVMe) server storage in GBs.
        */
       storage_min?: number | null;
       /**

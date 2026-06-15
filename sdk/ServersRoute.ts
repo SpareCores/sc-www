@@ -72,18 +72,18 @@ export namespace Servers {
        */
       cpu_allocation?: "Shared" | "Burstable" | "Dedicated";
       /**
-       * Minimum CPU speed
-       * Minimum CPU speed in GHz.
+       * Required CPU speed
+       * Required CPU speed in GHz.
        */
       cpu_speed_min?: 1 | 1.5 | 2 | 2.5 | 3 | 3.5 | 4 | 4.5 | 5;
       /**
-       * Minimum L1 data cache size
-       * Minimum L1 data cache size in KiBs.
+       * Required L1 data cache size
+       * Required L1 data cache size in KiBs.
        */
       cpu_l1d_cache_min?: 32 | 48 | 64 | 128;
       /**
-       * Minimum L1 data cache size across all cores
-       * Minimum L1 data cache size across all cores in KiBs.
+       * Required L1 data cache size across all cores
+       * Required L1 data cache size across all cores in KiBs.
        */
       cpu_l1d_cache_total_min?:
         | 32
@@ -102,13 +102,13 @@ export namespace Servers {
         | 6144
         | 12288;
       /**
-       * Minimum L1 instruction cache size
-       * Minimum L1 instruction cache size in KiBs.
+       * Required L1 instruction cache size
+       * Required L1 instruction cache size in KiBs.
        */
       cpu_l1i_cache_min?: 32 | 48 | 64 | 128;
       /**
-       * Minimum L1 instruction cache size across all cores
-       * Minimum L1 instruction cache size across all cores in KiBs.
+       * Required L1 instruction cache size across all cores
+       * Required L1 instruction cache size across all cores in KiBs.
        */
       cpu_l1i_cache_total_min?:
         | 32
@@ -127,13 +127,13 @@ export namespace Servers {
         | 6144
         | 12288;
       /**
-       * Minimum L2 cache size
-       * Minimum L2 cache size in KiBs.
+       * Required L2 cache size
+       * Required L2 cache size in KiBs.
        */
       cpu_l2_cache_min?: 256 | 512 | 1024 | 2048 | 4096;
       /**
-       * Minimum L2 cache size across all cores
-       * Minimum L2 cache size across all cores in KiBs.
+       * Required L2 cache size across all cores
+       * Required L2 cache size across all cores in KiBs.
        */
       cpu_l2_cache_total_min?:
         | 256
@@ -152,13 +152,13 @@ export namespace Servers {
         | 196608
         | 393216;
       /**
-       * Minimum L3 cache size
-       * Minimum L3 cache size in MiBs.
+       * Required L3 cache size
+       * Required L3 cache size in MiBs.
        */
       cpu_l3_cache_min?: 4 | 8 | 16 | 32 | 48 | 64 | 128 | 256 | 480;
       /**
-       * Minimum L3 cache size across all cores
-       * Minimum L3 cache size across all cores in MiBs.
+       * Required L3 cache size across all cores
+       * Required L3 cache size across all cores in MiBs.
        */
       cpu_l3_cache_total_min?:
         | 8
@@ -175,13 +175,18 @@ export namespace Servers {
         | 2048
         | 4096;
       /**
-       * Minimum SCore
-       * Minimum stress-ng div16 CPU workload score.
+       * Hardware virtualization
+       * Filter for servers with hardware virtualization.
+       */
+      hw_virt?: boolean | null;
+      /**
+       * Required SCore
+       * Required stress-ng div16 CPU workload score.
        */
       benchmark_score_stressng_cpu_min?: number | null;
       /**
-       * Minimum $Core
-       * Minimum stress-ng div16 CPU workload score per USD/hr (using the best ondemand or spot price of all zones).
+       * Required $Core
+       * Required stress-ng div16 CPU workload score per USD/hr (using the best ondemand or spot price of all zones).
        */
       benchmark_score_per_price_stressng_cpu_min?: number | null;
       /**
@@ -195,25 +200,44 @@ export namespace Servers {
        */
       benchmark_config?: string | null;
       /**
-       * Minimum benchmark score
-       * Minimum value of the selected benchmark score.
+       * Required benchmark score
+       * Required value of the selected benchmark score.
        */
       benchmark_score_min?: number | null;
       /**
-       * Minimum benchmark score/price
-       * Minimum value of the selected benchmark score per USD/hr (using the best ondemand or spot price of all zones).
+       * Required benchmark score/price
+       * Required value of the selected benchmark score per USD/hr (using the best ondemand or spot price of all zones).
        */
       benchmark_score_per_price_min?: number | null;
       /**
-       * Minimum memory
-       * Minimum amount of memory in GBs.
+       * Required memory
+       * Required amount of memory in GBs.
        */
       memory_min?: number | null;
       /**
-       * Minimum network speed
-       * Minimum network speed in Gbps.
+       * Required baseline network speed
+       * Required baseline network speed in Gbps.
        */
-      network_speed_min?:
+      network_speed_baseline_min?:
+        | 0.01
+        | 0.05
+        | 0.1
+        | 0.5
+        | 1
+        | 5
+        | 10
+        | 25
+        | 50
+        | 100
+        | 500
+        | 1000
+        | 10000
+        | 25000;
+      /**
+       * Required maximum network speed
+       * Required maximum network speed in Gbps.
+       */
+      network_speed_max_min?:
         | 0.01
         | 0.05
         | 0.1
@@ -810,8 +834,8 @@ export namespace Servers {
         | "US"
         | "ZA";
       /**
-       * Minimum local storage size
-       * Minimum amount of built-in local (SSD, HDD, NVMe) server storage in GBs.
+       * Required local storage size
+       * Required amount of built-in local (SSD, HDD, NVMe) server storage in GBs.
        */
       storage_size?: number | null;
       /**
@@ -819,6 +843,52 @@ export namespace Servers {
        * Storage type of the server's built-in local storage (e.g. HDD, SSD, NVMe).
        */
       storage_type?: "hdd" | "ssd" | "nvme ssd" | "network";
+      /**
+       * Required baseline network storage speed
+       * Required baseline network storage speed in Gbps.
+       */
+      network_storage_speed_baseline_min?:
+        | 0.01
+        | 0.05
+        | 0.1
+        | 0.2
+        | 0.5
+        | 0.75
+        | 1
+        | 2
+        | 5
+        | 10
+        | 15
+        | 20
+        | 25
+        | 50
+        | 75
+        | 100
+        | 150
+        | 300;
+      /**
+       * Required maximum network storage speed
+       * Required maximum network storage speed in Gbps.
+       */
+      network_storage_speed_max_min?:
+        | 0.01
+        | 0.05
+        | 0.1
+        | 0.2
+        | 0.5
+        | 0.75
+        | 1
+        | 2
+        | 5
+        | 10
+        | 15
+        | 20
+        | 25
+        | 50
+        | 75
+        | 100
+        | 150
+        | 300;
       /**
        * Monthly inbound traffic
        * Monthly inbound traffic in GBs to add to the total price. The cheapest available inbound traffic price for the vendor is used.
@@ -844,17 +914,17 @@ export namespace Servers {
       extra_storage_type?: "hdd" | "ssd" | "nvme ssd" | "network";
       /**
        * GPU count
-       * Minimum number of GPUs.
+       * Required number of GPUs.
        */
       gpu_min?: number | null;
       /**
-       * Minimum GPU memory
-       * Minimum amount of GPU memory (GB) in each GPU.
+       * Required GPU memory
+       * Required amount of GPU memory (GB) in each GPU.
        */
       gpu_memory_min?: number | null;
       /**
        * Total GPU memory
-       * Minimum amount of total GPU memory (GBs) in all GPUs.
+       * Required amount of total GPU memory (GBs) in all GPUs.
        */
       gpu_memory_total?: number | null;
       /** GPU manufacturer */
@@ -876,6 +946,7 @@ export namespace Servers {
       gpu_model?:
         | "A10"
         | "A100"
+        | "A100 PCIE"
         | "A100 SXM"
         | "A10G"
         | "A16"
@@ -884,13 +955,13 @@ export namespace Servers {
         | "B300"
         | "G49"
         | "G49E"
-        | "G59"
         | "GH200"
         | "GPU H"
         | "H100"
         | "H200"
         | "HL-205"
         | "L20"
+        | "L20N"
         | "L4"
         | "L40S"
         | "MI300X"
