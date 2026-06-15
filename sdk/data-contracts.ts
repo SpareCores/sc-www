@@ -19,6 +19,7 @@ export enum Vendors {
   Hcloud = "hcloud",
   Ovh = "ovh",
   Upcloud = "upcloud",
+  Vultr = "vultr",
 }
 
 /** VendorRegions */
@@ -30,6 +31,7 @@ export enum VendorRegions {
   AlicloudApSoutheast5 = "alicloud~ap-southeast-5",
   AlicloudApSoutheast6 = "alicloud~ap-southeast-6",
   AlicloudApSoutheast7 = "alicloud~ap-southeast-7",
+  AlicloudApSoutheast8 = "alicloud~ap-southeast-8",
   AlicloudCnBeijing = "alicloud~cn-beijing",
   AlicloudCnChengdu = "alicloud~cn-chengdu",
   AlicloudCnFuzhou = "alicloud~cn-fuzhou",
@@ -49,6 +51,7 @@ export enum VendorRegions {
   AlicloudCnZhongwei = "alicloud~cn-zhongwei",
   AlicloudEuCentral1 = "alicloud~eu-central-1",
   AlicloudEuWest1 = "alicloud~eu-west-1",
+  AlicloudEuWest2 = "alicloud~eu-west-2",
   AlicloudMeCentral1 = "alicloud~me-central-1",
   AlicloudMeEast1 = "alicloud~me-east-1",
   AlicloudNaSouth1 = "alicloud~na-south-1",
@@ -246,6 +249,39 @@ export enum VendorRegions {
   UpcloudUsChi1 = "upcloud~us-chi1",
   UpcloudUsNyc1 = "upcloud~us-nyc1",
   UpcloudUsSjo1 = "upcloud~us-sjo1",
+  VultrAms = "vultr~ams",
+  VultrAtl = "vultr~atl",
+  VultrBlr = "vultr~blr",
+  VultrBom = "vultr~bom",
+  VultrCdg = "vultr~cdg",
+  VultrDel = "vultr~del",
+  VultrDfw = "vultr~dfw",
+  VultrEwr = "vultr~ewr",
+  VultrFra = "vultr~fra",
+  VultrHnl = "vultr~hnl",
+  VultrIcn = "vultr~icn",
+  VultrItm = "vultr~itm",
+  VultrJnb = "vultr~jnb",
+  VultrLax = "vultr~lax",
+  VultrLhr = "vultr~lhr",
+  VultrMad = "vultr~mad",
+  VultrMan = "vultr~man",
+  VultrMel = "vultr~mel",
+  VultrMex = "vultr~mex",
+  VultrMia = "vultr~mia",
+  VultrMxp = "vultr~mxp",
+  VultrNrt = "vultr~nrt",
+  VultrOrd = "vultr~ord",
+  VultrSao = "vultr~sao",
+  VultrScl = "vultr~scl",
+  VultrSea = "vultr~sea",
+  VultrSgp = "vultr~sgp",
+  VultrSjc = "vultr~sjc",
+  VultrSto = "vultr~sto",
+  VultrSyd = "vultr~syd",
+  VultrTlv = "vultr~tlv",
+  VultrWaw = "vultr~waw",
+  VultrYto = "vultr~yto",
 }
 
 /**
@@ -305,7 +341,11 @@ export enum ServerColumns {
   CpuL3CacheTotal = "cpu_l3_cache_total",
   CpuFlags = "cpu_flags",
   Cpus = "cpus",
+  Ecpus = "ecpus",
+  Scalability = "scalability",
+  HwVirt = "hw_virt",
   MemoryAmount = "memory_amount",
+  MemoryAmountActual = "memory_amount_actual",
   MemoryGeneration = "memory_generation",
   MemorySpeed = "memory_speed",
   MemoryEcc = "memory_ecc",
@@ -319,10 +359,14 @@ export enum ServerColumns {
   StorageSize = "storage_size",
   StorageType = "storage_type",
   Storages = "storages",
-  NetworkSpeed = "network_speed",
+  NetworkSpeedBaseline = "network_speed_baseline",
+  NetworkSpeedMax = "network_speed_max",
+  NetworkStorageSpeedBaseline = "network_storage_speed_baseline",
+  NetworkStorageSpeedMax = "network_storage_speed_max",
   InboundTraffic = "inbound_traffic",
   OutboundTraffic = "outbound_traffic",
   Ipv4 = "ipv4",
+  AverageTimeToStart = "average_time_to_start",
   Status = "status",
   ObservedAt = "observed_at",
 }
@@ -379,6 +423,7 @@ export enum Regions {
   Value6 = "6",
   Value7 = "7",
   AfSouth1 = "af-south-1",
+  Ams = "ams",
   ApEast1 = "ap-east-1",
   ApEast2 = "ap-east-2",
   ApNortheast1 = "ap-northeast-1",
@@ -393,10 +438,12 @@ export enum Regions {
   ApSoutheast5 = "ap-southeast-5",
   ApSoutheast6 = "ap-southeast-6",
   ApSoutheast7 = "ap-southeast-7",
+  ApSoutheast8 = "ap-southeast-8",
   APSOUTHEASTSYD = "AP-SOUTHEAST-SYD",
   APSOUTHEASTSYD2 = "AP-SOUTHEAST-SYD-2",
   APSOUTHMUM = "AP-SOUTH-MUM",
   APSOUTHMUM1 = "AP-SOUTH-MUM-1",
+  Atl = "atl",
   Australiacentral = "australiacentral",
   Australiacentral2 = "australiacentral2",
   Australiaeast = "australiaeast",
@@ -406,6 +453,8 @@ export enum Regions {
   Belgiumcentral = "belgiumcentral",
   BHS = "BHS",
   BHS5 = "BHS5",
+  Blr = "blr",
+  Bom = "bom",
   Brazilsouth = "brazilsouth",
   Brazilsoutheast = "brazilsoutheast",
   Brazilus = "brazilus",
@@ -414,6 +463,7 @@ export enum Regions {
   Canadacentral = "canadacentral",
   Canadaeast = "canadaeast",
   CaWest1 = "ca-west-1",
+  Cdg = "cdg",
   Centralindia = "centralindia",
   Centralus = "centralus",
   Centraluseuap = "centraluseuap",
@@ -440,7 +490,9 @@ export enum Regions {
   DE = "DE",
   DE1 = "DE1",
   DeFra1 = "de-fra1",
+  Del = "del",
   Denmarkeast = "denmarkeast",
+  Dfw = "dfw",
   DkCph1 = "dk-cph1",
   Eastasia = "eastasia",
   Eastus = "eastus",
@@ -458,8 +510,10 @@ export enum Regions {
   EuWest2 = "eu-west-2",
   EuWest3 = "eu-west-3",
   EUWESTPAR = "EU-WEST-PAR",
+  Ewr = "ewr",
   FiHel1 = "fi-hel1",
   FiHel2 = "fi-hel2",
+  Fra = "fra",
   Francecentral = "francecentral",
   Francesouth = "francesouth",
   Germanynorth = "germanynorth",
@@ -468,22 +522,34 @@ export enum Regions {
   GRA11 = "GRA11",
   GRA7 = "GRA7",
   GRA9 = "GRA9",
+  Hnl = "hnl",
+  Icn = "icn",
   IlCentral1 = "il-central-1",
   Indonesiacentral = "indonesiacentral",
   Israelcentral = "israelcentral",
   Italynorth = "italynorth",
+  Itm = "itm",
   Japaneast = "japaneast",
   Japanwest = "japanwest",
   Jioindiacentral = "jioindiacentral",
   Jioindiawest = "jioindiawest",
+  Jnb = "jnb",
   Koreacentral = "koreacentral",
   Koreasouth = "koreasouth",
+  Lax = "lax",
+  Lhr = "lhr",
+  Mad = "mad",
   Malaysiawest = "malaysiawest",
+  Man = "man",
   MeCentral1 = "me-central-1",
   MeEast1 = "me-east-1",
+  Mel = "mel",
   MeSouth1 = "me-south-1",
+  Mex = "mex",
   Mexicocentral = "mexicocentral",
+  Mia = "mia",
   MxCentral1 = "mx-central-1",
+  Mxp = "mxp",
   NaSouth1 = "na-south-1",
   Newzealandnorth = "newzealandnorth",
   NlAms1 = "nl-ams1",
@@ -492,6 +558,8 @@ export enum Regions {
   Norwayeast = "norwayeast",
   Norwaywest = "norwaywest",
   NoSvg1 = "no-svg1",
+  Nrt = "nrt",
+  Ord = "ord",
   PlWaw1 = "pl-waw1",
   Polandcentral = "polandcentral",
   Qatarcentral = "qatarcentral",
@@ -499,13 +567,18 @@ export enum Regions {
   RBXA = "RBX-A",
   RBXARCHIVE = "RBX-ARCHIVE",
   SaEast1 = "sa-east-1",
+  Sao = "sao",
   SBG = "SBG",
   SBG5 = "SBG5",
   SBG7 = "SBG7",
+  Scl = "scl",
+  Sea = "sea",
   SeSto1 = "se-sto1",
+  Sgp = "sgp",
   SGP = "SGP",
   SGP1 = "SGP1",
   SgSin1 = "sg-sin1",
+  Sjc = "sjc",
   Southafricanorth = "southafricanorth",
   Southafricawest = "southafricawest",
   Southcentralus = "southcentralus",
@@ -513,11 +586,14 @@ export enum Regions {
   Southeastasia = "southeastasia",
   Southindia = "southindia",
   Spaincentral = "spaincentral",
+  Sto = "sto",
   Swedencentral = "swedencentral",
   Switzerlandnorth = "switzerlandnorth",
   Switzerlandwest = "switzerlandwest",
+  Syd = "syd",
   SYD = "SYD",
   SYD1 = "SYD1",
+  Tlv = "tlv",
   Uaecentral = "uaecentral",
   Uaenorth = "uaenorth",
   UK = "UK",
@@ -532,6 +608,7 @@ export enum Regions {
   UsSjo1 = "us-sjo1",
   UsWest1 = "us-west-1",
   UsWest2 = "us-west-2",
+  Waw = "waw",
   WAW = "WAW",
   WAW1 = "WAW1",
   Westcentralus = "westcentralus",
@@ -540,6 +617,7 @@ export enum Regions {
   Westus = "westus",
   Westus2 = "westus2",
   Westus3 = "westus3",
+  Yto = "yto",
 }
 
 /**
@@ -565,12 +643,16 @@ export enum OrderDir {
 export enum GpuModels {
   A10 = "A10",
   A100 = "A100",
+  A100SXM = "A100 SXM",
   A10G = "A10G",
+  A16 = "A16",
+  A40 = "A40",
   B200 = "B200",
   B300 = "B300",
   G49 = "G49",
   G49E = "G49E",
   G59 = "G59",
+  GH200 = "GH200",
   GPUH = "GPU H",
   H100 = "H100",
   H200 = "H200",
@@ -578,6 +660,9 @@ export enum GpuModels {
   L20 = "L20",
   L4 = "L4",
   L40S = "L40S",
+  MI300X = "MI300X",
+  MI325X = "MI325X",
+  MI355X = "MI355X",
   P100 = "P100",
   P4 = "P4",
   RTX5000 = "RTX 5000",
@@ -605,6 +690,8 @@ export enum GpuFamilies {
   AdaLovelace = "Ada Lovelace",
   Ampere = "Ampere",
   Blackwell = "Blackwell",
+  CDNA3 = "CDNA3",
+  CDNA4 = "CDNA4",
   Gaudi = "Gaudi",
   Hopper = "Hopper",
   Pascal = "Pascal",
@@ -632,6 +719,7 @@ export enum CpuManufacturers {
   Apple = "Apple",
   Intel = "Intel",
   Microsoft = "Microsoft",
+  NVIDIA = "NVIDIA",
 }
 
 /** CpuFamilies */
@@ -641,6 +729,7 @@ export enum CpuFamilies {
   ARMv9 = "ARMv9",
   AmpereAltra = "Ampere Altra",
   EPYC = "EPYC",
+  Grace = "Grace",
   Xeon = "Xeon",
   Yitian = "Yitian",
 }
@@ -744,6 +833,7 @@ export enum Allocation {
  *
  * Attributes:
  *     benchmark_id (str): Unique identifier of a specific Benchmark.
+ *     category (typing.Optional[str]): Category of the resource.
  *     name (str): Human-friendly name.
  *     description (typing.Optional[str]): Short description.
  *     framework (str): The name of the benchmark framework/software/tool used.
@@ -760,6 +850,11 @@ export interface Benchmark {
    * Unique identifier of a specific Benchmark.
    */
   benchmark_id: string;
+  /**
+   * Category
+   * Category of the resource.
+   */
+  category: string | null;
   /**
    * Name
    * Human-friendly name.
@@ -780,7 +875,7 @@ export interface Benchmark {
    * A dictionary of descriptions on the framework-specific config options, e.g. {"bandwidth": "Memory amount to use for compression in MB."}.
    * @default {}
    */
-  config_fields?: object;
+  config_fields?: Record<string, any>;
   /**
    * Measurement
    * The name of measurement recorded in the benchmark.
@@ -874,7 +969,7 @@ export interface BenchmarkScore {
    * Dictionary of config parameters of the specific benchmark, e.g. {"bandwidth": 4096}
    * @default {}
    */
-  config?: object;
+  config?: Record<string, any>;
   /**
    * Framework Version
    * The version of the benchmark tool used.
@@ -957,7 +1052,7 @@ export interface BenchmarkScoreStatsItem {
    * Configs
    * Benchmark config fields enriched with example values. Keys come from Benchmark.config_fields; each value includes the original description plus an 'examples' list of unique observed config values.
    */
-  configs?: object;
+  configs?: Record<string, any>;
   /**
    * Count
    * Total number of active, non-null benchmark score records
@@ -1200,7 +1295,7 @@ export interface HTTPValidationError {
 /** HealthcheckResponse */
 export interface HealthcheckResponse {
   /** Packages */
-  packages: object;
+  packages: Record<string, any>;
   /** Database Last Updated */
   database_last_updated: number;
   /** Database Hash */
@@ -1606,7 +1701,11 @@ export interface RegionPKs {
  *     cpu_l3_cache_total (typing.Optional[int]): Total L3 cache size (KiB) across all cores.
  *     cpu_flags (typing.List[str]): CPU features/flags.
  *     cpus (typing.List[sc_crawler.table_fields.Cpu]): JSON array of known CPU details, e.g. the manufacturer, family, model; L1/L2/L3 cache size; microcode version; feature flags; bugs etc.
- *     memory_amount (int): RAM amount (MiB).
+ *     ecpus (typing.Optional[float]): The effective "real-world" core count, calculated by dividing the maximum multi-core SCore by the single-core SCore.
+ *     scalability (typing.Optional[float]): Measures how efficiently the server scales from a single core performance to using multiple cores. A score of 100% means perfect linear scaling with zero performance loss.
+ *     hw_virt (typing.Optional[bool]): If hardware virtualization (e.g. KVM) is supported.
+ *     memory_amount (int): RAM amount (MiB) reported by the vendor.
+ *     memory_amount_actual (typing.Optional[int]): Actual RAM amount (MiB) measured on the instance via lstopo or other tool. This amount might not match the vendor-reported memory due to the BIOS or the hypervisor reserving a small percentage.
  *     memory_generation (typing.Optional[sc_crawler.table_fields.DdrGeneration]): Generation of the DDR SDRAM, e.g. DDR4 or DDR5.
  *     memory_speed (typing.Optional[int]): DDR SDRAM clock rate (Mhz).
  *     memory_ecc (typing.Optional[bool]): If the DDR SDRAM uses error correction code to detect and correct n-bit data corruption.
@@ -1620,10 +1719,14 @@ export interface RegionPKs {
  *     storage_size (int): Overall size (GB) of the disk(s).
  *     storage_type (typing.Optional[sc_crawler.table_fields.StorageType]): Primary disk type, e.g. HDD, SSD, NVMe SSD, or network).
  *     storages (typing.List[sc_crawler.table_fields.Disk]): JSON array of disks attached to the server, including the size (GB) and type of each disk.
- *     network_speed (typing.Optional[float]): The baseline network performance (Gbps) of the network card.
+ *     network_speed_baseline (typing.Optional[float]): The baseline network performance (Gbps) of the network card.
+ *     network_speed_max (typing.Optional[float]): The maximum network performance (Gbps) of the network card.
+ *     network_storage_speed_baseline (typing.Optional[float]): The baseline bandwidth performance of network-attached storage (Gbps).
+ *     network_storage_speed_max (typing.Optional[float]): The maximum bandwidth performance of network-attached storage (Gbps).
  *     inbound_traffic (float): Amount of complimentary inbound traffic (GB) per month.
  *     outbound_traffic (float): Amount of complimentary outbound traffic (GB) per month.
  *     ipv4 (int): Number of complimentary IPv4 address(es).
+ *     average_time_to_start (typing.Optional[float]): Average time to start the server (seconds).
  *     status (Status): Status of the resource (active or inactive).
  *     observed_at (datetime): Timestamp of the last observation.
  */
@@ -1755,10 +1858,30 @@ export interface Server {
    */
   cpus?: Cpu[];
   /**
+   * Ecpus
+   * The effective "real-world" core count, calculated by dividing the maximum multi-core SCore by the single-core SCore.
+   */
+  ecpus?: number | null;
+  /**
+   * Scalability
+   * Measures how efficiently the server scales from a single core performance to using multiple cores. A score of 100% means perfect linear scaling with zero performance loss.
+   */
+  scalability?: number | null;
+  /**
+   * Hw Virt
+   * If hardware virtualization (e.g. KVM) is supported.
+   */
+  hw_virt?: boolean | null;
+  /**
    * Memory Amount
-   * RAM amount (MiB).
+   * RAM amount (MiB) reported by the vendor.
    */
   memory_amount?: number;
+  /**
+   * Memory Amount Actual
+   * Actual RAM amount (MiB) measured on the instance via lstopo or other tool. This amount might not match the vendor-reported memory due to the BIOS or the hypervisor reserving a small percentage.
+   */
+  memory_amount_actual?: number | null;
   /** Generation of the DDR SDRAM, e.g. DDR4 or DDR5. */
   memory_generation?: DdrGeneration | null;
   /**
@@ -1823,10 +1946,25 @@ export interface Server {
    */
   storages?: Disk[];
   /**
-   * Network Speed
+   * Network Speed Baseline
    * The baseline network performance (Gbps) of the network card.
    */
-  network_speed?: number | null;
+  network_speed_baseline?: number | null;
+  /**
+   * Network Speed Max
+   * The maximum network performance (Gbps) of the network card.
+   */
+  network_speed_max?: number | null;
+  /**
+   * Network Storage Speed Baseline
+   * The baseline bandwidth performance of network-attached storage (Gbps).
+   */
+  network_storage_speed_baseline?: number | null;
+  /**
+   * Network Storage Speed Max
+   * The maximum bandwidth performance of network-attached storage (Gbps).
+   */
+  network_storage_speed_max?: number | null;
   /**
    * Inbound Traffic
    * Amount of complimentary inbound traffic (GB) per month.
@@ -1845,6 +1983,11 @@ export interface Server {
    * @default 0
    */
   ipv4?: number;
+  /**
+   * Average Time To Start
+   * Average time to start the server (seconds).
+   */
+  average_time_to_start?: number | null;
   /**
    * Status of the resource (active or inactive).
    * @default "active"
@@ -1987,10 +2130,30 @@ export interface ServerBase {
    */
   cpus?: Cpu[];
   /**
+   * Ecpus
+   * The effective "real-world" core count, calculated by dividing the maximum multi-core SCore by the single-core SCore.
+   */
+  ecpus?: number | null;
+  /**
+   * Scalability
+   * Measures how efficiently the server scales from a single core performance to using multiple cores. A score of 100% means perfect linear scaling with zero performance loss.
+   */
+  scalability?: number | null;
+  /**
+   * Hw Virt
+   * If hardware virtualization (e.g. KVM) is supported.
+   */
+  hw_virt?: boolean | null;
+  /**
    * Memory Amount
-   * RAM amount (MiB).
+   * RAM amount (MiB) reported by the vendor.
    */
   memory_amount?: number;
+  /**
+   * Memory Amount Actual
+   * Actual RAM amount (MiB) measured on the instance via lstopo or other tool. This amount might not match the vendor-reported memory due to the BIOS or the hypervisor reserving a small percentage.
+   */
+  memory_amount_actual?: number | null;
   /** Generation of the DDR SDRAM, e.g. DDR4 or DDR5. */
   memory_generation?: DdrGeneration | null;
   /**
@@ -2055,10 +2218,25 @@ export interface ServerBase {
    */
   storages?: Disk[];
   /**
-   * Network Speed
+   * Network Speed Baseline
    * The baseline network performance (Gbps) of the network card.
    */
-  network_speed?: number | null;
+  network_speed_baseline?: number | null;
+  /**
+   * Network Speed Max
+   * The maximum network performance (Gbps) of the network card.
+   */
+  network_speed_max?: number | null;
+  /**
+   * Network Storage Speed Baseline
+   * The baseline bandwidth performance of network-attached storage (Gbps).
+   */
+  network_storage_speed_baseline?: number | null;
+  /**
+   * Network Storage Speed Max
+   * The maximum bandwidth performance of network-attached storage (Gbps).
+   */
+  network_storage_speed_max?: number | null;
   /**
    * Inbound Traffic
    * Amount of complimentary inbound traffic (GB) per month.
@@ -2077,6 +2255,11 @@ export interface ServerBase {
    * @default 0
    */
   ipv4?: number;
+  /**
+   * Average Time To Start
+   * Average time to start the server (seconds).
+   */
+  average_time_to_start?: number | null;
   /**
    * Status of the resource (active or inactive).
    * @default "active"
@@ -2266,10 +2449,30 @@ export interface ServerPKs {
    */
   cpus?: Cpu[];
   /**
+   * Ecpus
+   * The effective "real-world" core count, calculated by dividing the maximum multi-core SCore by the single-core SCore.
+   */
+  ecpus?: number | null;
+  /**
+   * Scalability
+   * Measures how efficiently the server scales from a single core performance to using multiple cores. A score of 100% means perfect linear scaling with zero performance loss.
+   */
+  scalability?: number | null;
+  /**
+   * Hw Virt
+   * If hardware virtualization (e.g. KVM) is supported.
+   */
+  hw_virt?: boolean | null;
+  /**
    * Memory Amount
-   * RAM amount (MiB).
+   * RAM amount (MiB) reported by the vendor.
    */
   memory_amount?: number;
+  /**
+   * Memory Amount Actual
+   * Actual RAM amount (MiB) measured on the instance via lstopo or other tool. This amount might not match the vendor-reported memory due to the BIOS or the hypervisor reserving a small percentage.
+   */
+  memory_amount_actual?: number | null;
   /** Generation of the DDR SDRAM, e.g. DDR4 or DDR5. */
   memory_generation?: DdrGeneration | null;
   /**
@@ -2334,10 +2537,25 @@ export interface ServerPKs {
    */
   storages?: Disk[];
   /**
-   * Network Speed
+   * Network Speed Baseline
    * The baseline network performance (Gbps) of the network card.
    */
-  network_speed?: number | null;
+  network_speed_baseline?: number | null;
+  /**
+   * Network Speed Max
+   * The maximum network performance (Gbps) of the network card.
+   */
+  network_speed_max?: number | null;
+  /**
+   * Network Storage Speed Baseline
+   * The baseline bandwidth performance of network-attached storage (Gbps).
+   */
+  network_storage_speed_baseline?: number | null;
+  /**
+   * Network Storage Speed Max
+   * The maximum bandwidth performance of network-attached storage (Gbps).
+   */
+  network_storage_speed_max?: number | null;
   /**
    * Inbound Traffic
    * Amount of complimentary inbound traffic (GB) per month.
@@ -2356,6 +2574,11 @@ export interface ServerPKs {
    * @default 0
    */
   ipv4?: number;
+  /**
+   * Average Time To Start
+   * Average time to start the server (seconds).
+   */
+  average_time_to_start?: number | null;
   /**
    * Status of the resource (active or inactive).
    * @default "active"
@@ -2690,10 +2913,30 @@ export interface ServerWithScore {
    */
   cpus?: Cpu[];
   /**
+   * Ecpus
+   * The effective "real-world" core count, calculated by dividing the maximum multi-core SCore by the single-core SCore.
+   */
+  ecpus?: number | null;
+  /**
+   * Scalability
+   * Measures how efficiently the server scales from a single core performance to using multiple cores. A score of 100% means perfect linear scaling with zero performance loss.
+   */
+  scalability?: number | null;
+  /**
+   * Hw Virt
+   * If hardware virtualization (e.g. KVM) is supported.
+   */
+  hw_virt?: boolean | null;
+  /**
    * Memory Amount
-   * RAM amount (MiB).
+   * RAM amount (MiB) reported by the vendor.
    */
   memory_amount?: number;
+  /**
+   * Memory Amount Actual
+   * Actual RAM amount (MiB) measured on the instance via lstopo or other tool. This amount might not match the vendor-reported memory due to the BIOS or the hypervisor reserving a small percentage.
+   */
+  memory_amount_actual?: number | null;
   /** Generation of the DDR SDRAM, e.g. DDR4 or DDR5. */
   memory_generation?: DdrGeneration | null;
   /**
@@ -2758,10 +3001,25 @@ export interface ServerWithScore {
    */
   storages?: Disk[];
   /**
-   * Network Speed
+   * Network Speed Baseline
    * The baseline network performance (Gbps) of the network card.
    */
-  network_speed?: number | null;
+  network_speed_baseline?: number | null;
+  /**
+   * Network Speed Max
+   * The maximum network performance (Gbps) of the network card.
+   */
+  network_speed_max?: number | null;
+  /**
+   * Network Storage Speed Baseline
+   * The baseline bandwidth performance of network-attached storage (Gbps).
+   */
+  network_storage_speed_baseline?: number | null;
+  /**
+   * Network Storage Speed Max
+   * The maximum bandwidth performance of network-attached storage (Gbps).
+   */
+  network_storage_speed_max?: number | null;
   /**
    * Inbound Traffic
    * Amount of complimentary inbound traffic (GB) per month.
@@ -2780,6 +3038,11 @@ export interface ServerWithScore {
    * @default 0
    */
   ipv4?: number;
+  /**
+   * Average Time To Start
+   * Average time to start the server (seconds).
+   */
+  average_time_to_start?: number | null;
   /**
    * Status of the resource (active or inactive).
    * @default "active"
@@ -2822,9 +3085,9 @@ export interface ServerWithScore {
  *     description (typing.Optional[str]): Short description.
  *     storage_type (StorageType): High-level category of the storage, e.g. HDD or SDD.
  *     max_iops (typing.Optional[int]): Maximum Input/Output Operations Per Second.
- *     max_throughput (typing.Optional[int]): Maximum Throughput (MiB/s).
- *     min_size (typing.Optional[int]): Minimum required size (GiB).
- *     max_size (typing.Optional[int]): Maximum possible size (GiB).
+ *     max_throughput (typing.Optional[int]): Maximum Throughput (MB/s).
+ *     min_size (typing.Optional[int]): Minimum required size (GB).
+ *     max_size (typing.Optional[int]): Maximum possible size (GB).
  *     status (Status): Status of the resource (active or inactive).
  *     observed_at (datetime): Timestamp of the last observation.
  */
@@ -2858,17 +3121,17 @@ export interface Storage {
   max_iops?: number | null;
   /**
    * Max Throughput
-   * Maximum Throughput (MiB/s).
+   * Maximum Throughput (MB/s).
    */
   max_throughput?: number | null;
   /**
    * Min Size
-   * Minimum required size (GiB).
+   * Minimum required size (GB).
    */
   min_size?: number | null;
   /**
    * Max Size
-   * Maximum possible size (GiB).
+   * Maximum possible size (GB).
    */
   max_size?: number | null;
   /**
@@ -2915,17 +3178,17 @@ export interface StorageBase {
   max_iops?: number | null;
   /**
    * Max Throughput
-   * Maximum Throughput (MiB/s).
+   * Maximum Throughput (MB/s).
    */
   max_throughput?: number | null;
   /**
    * Min Size
-   * Minimum required size (GiB).
+   * Minimum required size (GB).
    */
   min_size?: number | null;
   /**
    * Max Size
-   * Maximum possible size (GiB).
+   * Maximum possible size (GB).
    */
   max_size?: number | null;
   /**
@@ -3108,6 +3371,10 @@ export interface ValidationError {
  *     zip_code (typing.Optional[str]): Optional ZIP code of the Vendor's main location.
  *     founding_year (int): 4-digit year when the public cloud service of the Vendor was launched.
  *     status_page (typing.Optional[str]): Public status page of the Vendor.
+ *     stopped_server_charged (typing.Optional[bool]): If the Vendor charges for stopped servers. In case it depends on the instance type or different versions of stopped states, this field reports the worst case.
+ *     billing_increment_seconds (typing.Optional[int]): The smallest increment of time for which the Vendor bills for.
+ *     minimum_billing_seconds (typing.Optional[int]): The minimum amount of time for which the Vendor bills for. In case it depends on the instance type or other context, this field reports the worst case.
+ *     billing_comment (typing.Optional[str]): Comment on the Vendor's billing.
  *     status (Status): Status of the resource (active or inactive).
  *     observed_at (datetime): Timestamp of the last observation.
  */
@@ -3167,6 +3434,26 @@ export interface Vendor {
    * Public status page of the Vendor.
    */
   status_page?: string | null;
+  /**
+   * Stopped Server Charged
+   * If the Vendor charges for stopped servers. In case it depends on the instance type or different versions of stopped states, this field reports the worst case.
+   */
+  stopped_server_charged?: boolean | null;
+  /**
+   * Billing Increment Seconds
+   * The smallest increment of time for which the Vendor bills for.
+   */
+  billing_increment_seconds?: number | null;
+  /**
+   * Minimum Billing Seconds
+   * The minimum amount of time for which the Vendor bills for. In case it depends on the instance type or other context, this field reports the worst case.
+   */
+  minimum_billing_seconds?: number | null;
+  /**
+   * Billing Comment
+   * Comment on the Vendor's billing.
+   */
+  billing_comment?: string | null;
   /**
    * Status of the resource (active or inactive).
    * @default "active"
@@ -3237,6 +3524,26 @@ export interface VendorBase {
    * Public status page of the Vendor.
    */
   status_page?: string | null;
+  /**
+   * Stopped Server Charged
+   * If the Vendor charges for stopped servers. In case it depends on the instance type or different versions of stopped states, this field reports the worst case.
+   */
+  stopped_server_charged?: boolean | null;
+  /**
+   * Billing Increment Seconds
+   * The smallest increment of time for which the Vendor bills for.
+   */
+  billing_increment_seconds?: number | null;
+  /**
+   * Minimum Billing Seconds
+   * The minimum amount of time for which the Vendor bills for. In case it depends on the instance type or other context, this field reports the worst case.
+   */
+  minimum_billing_seconds?: number | null;
+  /**
+   * Billing Comment
+   * Comment on the Vendor's billing.
+   */
+  billing_comment?: string | null;
   /**
    * Status of the resource (active or inactive).
    * @default "active"
@@ -3399,7 +3706,15 @@ export interface GetStatsStatsGetParams {
    * Vendor
    * Identifier of the cloud provider vendor.
    */
-  vendor?: "alicloud" | "aws" | "azure" | "gcp" | "hcloud" | "ovh" | "upcloud";
+  vendor?:
+    | "alicloud"
+    | "aws"
+    | "azure"
+    | "gcp"
+    | "hcloud"
+    | "ovh"
+    | "upcloud"
+    | "vultr";
   /**
    * Active only
    * Filter for active servers only.
@@ -3409,7 +3724,7 @@ export interface GetStatsStatsGetParams {
 }
 
 /** Response Get Stats Stats Get */
-export type GetStatsStatsGetData = object;
+export type GetStatsStatsGetData = Record<string, any>;
 
 export type GetDebugInfoDebugGetData = DebugInfoResponse;
 
@@ -3471,7 +3786,11 @@ export interface TableServerSelectTableServerSelectGetParams {
     | "cpu_l3_cache_total"
     | "cpu_flags"
     | "cpus"
+    | "ecpus"
+    | "scalability"
+    | "hw_virt"
     | "memory_amount"
+    | "memory_amount_actual"
     | "memory_generation"
     | "memory_speed"
     | "memory_ecc"
@@ -3485,23 +3804,35 @@ export interface TableServerSelectTableServerSelectGetParams {
     | "storage_size"
     | "storage_type"
     | "storages"
-    | "network_speed"
+    | "network_speed_baseline"
+    | "network_speed_max"
+    | "network_storage_speed_baseline"
+    | "network_storage_speed_max"
     | "inbound_traffic"
     | "outbound_traffic"
     | "ipv4"
+    | "average_time_to_start"
     | "status"
     | "observed_at";
 }
 
 /** Response Table Server Select Table Server Select Get */
-export type TableServerSelectTableServerSelectGetData = object[];
+export type TableServerSelectTableServerSelectGetData = Record<string, any>[];
 
 export interface TableServerPricesTableServerPricesGetParams {
   /**
    * Vendor
    * Identifier of the cloud provider vendor.
    */
-  vendor?: "alicloud" | "aws" | "azure" | "gcp" | "hcloud" | "ovh" | "upcloud";
+  vendor?:
+    | "alicloud"
+    | "aws"
+    | "azure"
+    | "gcp"
+    | "hcloud"
+    | "ovh"
+    | "upcloud"
+    | "vultr";
   /**
    * Region
    * Identifier of the region. Note that region ids are not vendor-specific, so when you select a region, you might get results from multiple vendors. For more precise filtering, use vendor_regions instead.
@@ -3557,6 +3888,7 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "6"
     | "7"
     | "af-south-1"
+    | "ams"
     | "ap-east-1"
     | "ap-east-2"
     | "ap-northeast-1"
@@ -3571,10 +3903,12 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "ap-southeast-5"
     | "ap-southeast-6"
     | "ap-southeast-7"
+    | "ap-southeast-8"
     | "AP-SOUTHEAST-SYD"
     | "AP-SOUTHEAST-SYD-2"
     | "AP-SOUTH-MUM"
     | "AP-SOUTH-MUM-1"
+    | "atl"
     | "australiacentral"
     | "australiacentral2"
     | "australiaeast"
@@ -3584,6 +3918,8 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "belgiumcentral"
     | "BHS"
     | "BHS5"
+    | "blr"
+    | "bom"
     | "brazilsouth"
     | "brazilsoutheast"
     | "brazilus"
@@ -3592,6 +3928,7 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "canadacentral"
     | "canadaeast"
     | "ca-west-1"
+    | "cdg"
     | "centralindia"
     | "centralus"
     | "centraluseuap"
@@ -3618,7 +3955,9 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "DE"
     | "DE1"
     | "de-fra1"
+    | "del"
     | "denmarkeast"
+    | "dfw"
     | "dk-cph1"
     | "eastasia"
     | "eastus"
@@ -3636,8 +3975,10 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "eu-west-2"
     | "eu-west-3"
     | "EU-WEST-PAR"
+    | "ewr"
     | "fi-hel1"
     | "fi-hel2"
+    | "fra"
     | "francecentral"
     | "francesouth"
     | "germanynorth"
@@ -3646,22 +3987,34 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "GRA11"
     | "GRA7"
     | "GRA9"
+    | "hnl"
+    | "icn"
     | "il-central-1"
     | "indonesiacentral"
     | "israelcentral"
     | "italynorth"
+    | "itm"
     | "japaneast"
     | "japanwest"
     | "jioindiacentral"
     | "jioindiawest"
+    | "jnb"
     | "koreacentral"
     | "koreasouth"
+    | "lax"
+    | "lhr"
+    | "mad"
     | "malaysiawest"
+    | "man"
     | "me-central-1"
     | "me-east-1"
+    | "mel"
     | "me-south-1"
+    | "mex"
     | "mexicocentral"
+    | "mia"
     | "mx-central-1"
+    | "mxp"
     | "na-south-1"
     | "newzealandnorth"
     | "nl-ams1"
@@ -3670,6 +4023,8 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "norwayeast"
     | "norwaywest"
     | "no-svg1"
+    | "nrt"
+    | "ord"
     | "pl-waw1"
     | "polandcentral"
     | "qatarcentral"
@@ -3677,13 +4032,18 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "RBX-A"
     | "RBX-ARCHIVE"
     | "sa-east-1"
+    | "sao"
     | "SBG"
     | "SBG5"
     | "SBG7"
+    | "scl"
+    | "sea"
     | "se-sto1"
+    | "sgp"
     | "SGP"
     | "SGP1"
     | "sg-sin1"
+    | "sjc"
     | "southafricanorth"
     | "southafricawest"
     | "southcentralus"
@@ -3691,11 +4051,14 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "southeastasia"
     | "southindia"
     | "spaincentral"
+    | "sto"
     | "swedencentral"
     | "switzerlandnorth"
     | "switzerlandwest"
+    | "syd"
     | "SYD"
     | "SYD1"
+    | "tlv"
     | "uaecentral"
     | "uaenorth"
     | "UK"
@@ -3710,6 +4073,7 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "us-sjo1"
     | "us-west-1"
     | "us-west-2"
+    | "waw"
     | "WAW"
     | "WAW1"
     | "westcentralus"
@@ -3717,7 +4081,8 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "westindia"
     | "westus"
     | "westus2"
-    | "westus3";
+    | "westus3"
+    | "yto";
   /**
    * Vendor and region
    * Identifier of the vendor and region, separated by a tilde.
@@ -3730,6 +4095,7 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "alicloud~ap-southeast-5"
     | "alicloud~ap-southeast-6"
     | "alicloud~ap-southeast-7"
+    | "alicloud~ap-southeast-8"
     | "alicloud~cn-beijing"
     | "alicloud~cn-chengdu"
     | "alicloud~cn-fuzhou"
@@ -3749,6 +4115,7 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "alicloud~cn-zhongwei"
     | "alicloud~eu-central-1"
     | "alicloud~eu-west-1"
+    | "alicloud~eu-west-2"
     | "alicloud~me-central-1"
     | "alicloud~me-east-1"
     | "alicloud~na-south-1"
@@ -3945,7 +4312,40 @@ export interface TableServerPricesTableServerPricesGetParams {
     | "upcloud~uk-lon1"
     | "upcloud~us-chi1"
     | "upcloud~us-nyc1"
-    | "upcloud~us-sjo1";
+    | "upcloud~us-sjo1"
+    | "vultr~ams"
+    | "vultr~atl"
+    | "vultr~blr"
+    | "vultr~bom"
+    | "vultr~cdg"
+    | "vultr~del"
+    | "vultr~dfw"
+    | "vultr~ewr"
+    | "vultr~fra"
+    | "vultr~hnl"
+    | "vultr~icn"
+    | "vultr~itm"
+    | "vultr~jnb"
+    | "vultr~lax"
+    | "vultr~lhr"
+    | "vultr~mad"
+    | "vultr~man"
+    | "vultr~mel"
+    | "vultr~mex"
+    | "vultr~mia"
+    | "vultr~mxp"
+    | "vultr~nrt"
+    | "vultr~ord"
+    | "vultr~sao"
+    | "vultr~scl"
+    | "vultr~sea"
+    | "vultr~sgp"
+    | "vultr~sjc"
+    | "vultr~sto"
+    | "vultr~syd"
+    | "vultr~tlv"
+    | "vultr~waw"
+    | "vultr~yto";
   /**
    * Allocation
    * Server allocation method.
@@ -4043,6 +4443,7 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "6"
     | "7"
     | "af-south-1"
+    | "ams"
     | "ap-east-1"
     | "ap-east-2"
     | "ap-northeast-1"
@@ -4057,10 +4458,12 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "ap-southeast-5"
     | "ap-southeast-6"
     | "ap-southeast-7"
+    | "ap-southeast-8"
     | "AP-SOUTHEAST-SYD"
     | "AP-SOUTHEAST-SYD-2"
     | "AP-SOUTH-MUM"
     | "AP-SOUTH-MUM-1"
+    | "atl"
     | "australiacentral"
     | "australiacentral2"
     | "australiaeast"
@@ -4070,6 +4473,8 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "belgiumcentral"
     | "BHS"
     | "BHS5"
+    | "blr"
+    | "bom"
     | "brazilsouth"
     | "brazilsoutheast"
     | "brazilus"
@@ -4078,6 +4483,7 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "canadacentral"
     | "canadaeast"
     | "ca-west-1"
+    | "cdg"
     | "centralindia"
     | "centralus"
     | "centraluseuap"
@@ -4104,7 +4510,9 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "DE"
     | "DE1"
     | "de-fra1"
+    | "del"
     | "denmarkeast"
+    | "dfw"
     | "dk-cph1"
     | "eastasia"
     | "eastus"
@@ -4122,8 +4530,10 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "eu-west-2"
     | "eu-west-3"
     | "EU-WEST-PAR"
+    | "ewr"
     | "fi-hel1"
     | "fi-hel2"
+    | "fra"
     | "francecentral"
     | "francesouth"
     | "germanynorth"
@@ -4132,22 +4542,34 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "GRA11"
     | "GRA7"
     | "GRA9"
+    | "hnl"
+    | "icn"
     | "il-central-1"
     | "indonesiacentral"
     | "israelcentral"
     | "italynorth"
+    | "itm"
     | "japaneast"
     | "japanwest"
     | "jioindiacentral"
     | "jioindiawest"
+    | "jnb"
     | "koreacentral"
     | "koreasouth"
+    | "lax"
+    | "lhr"
+    | "mad"
     | "malaysiawest"
+    | "man"
     | "me-central-1"
     | "me-east-1"
+    | "mel"
     | "me-south-1"
+    | "mex"
     | "mexicocentral"
+    | "mia"
     | "mx-central-1"
+    | "mxp"
     | "na-south-1"
     | "newzealandnorth"
     | "nl-ams1"
@@ -4156,6 +4578,8 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "norwayeast"
     | "norwaywest"
     | "no-svg1"
+    | "nrt"
+    | "ord"
     | "pl-waw1"
     | "polandcentral"
     | "qatarcentral"
@@ -4163,13 +4587,18 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "RBX-A"
     | "RBX-ARCHIVE"
     | "sa-east-1"
+    | "sao"
     | "SBG"
     | "SBG5"
     | "SBG7"
+    | "scl"
+    | "sea"
     | "se-sto1"
+    | "sgp"
     | "SGP"
     | "SGP1"
     | "sg-sin1"
+    | "sjc"
     | "southafricanorth"
     | "southafricawest"
     | "southcentralus"
@@ -4177,11 +4606,14 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "southeastasia"
     | "southindia"
     | "spaincentral"
+    | "sto"
     | "swedencentral"
     | "switzerlandnorth"
     | "switzerlandwest"
+    | "syd"
     | "SYD"
     | "SYD1"
+    | "tlv"
     | "uaecentral"
     | "uaenorth"
     | "UK"
@@ -4196,6 +4628,7 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "us-sjo1"
     | "us-west-1"
     | "us-west-2"
+    | "waw"
     | "WAW"
     | "WAW1"
     | "westcentralus"
@@ -4203,7 +4636,8 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "westindia"
     | "westus"
     | "westus2"
-    | "westus3";
+    | "westus3"
+    | "yto";
   /**
    * Countries
    * Filter for regions in the provided list of countries.
@@ -4260,6 +4694,7 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "alicloud~ap-southeast-5"
     | "alicloud~ap-southeast-6"
     | "alicloud~ap-southeast-7"
+    | "alicloud~ap-southeast-8"
     | "alicloud~cn-beijing"
     | "alicloud~cn-chengdu"
     | "alicloud~cn-fuzhou"
@@ -4279,6 +4714,7 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "alicloud~cn-zhongwei"
     | "alicloud~eu-central-1"
     | "alicloud~eu-west-1"
+    | "alicloud~eu-west-2"
     | "alicloud~me-central-1"
     | "alicloud~me-east-1"
     | "alicloud~na-south-1"
@@ -4475,7 +4911,40 @@ export interface GetSimilarServersServerVendorServerSimilarServersByNumGetParams
     | "upcloud~uk-lon1"
     | "upcloud~us-chi1"
     | "upcloud~us-nyc1"
-    | "upcloud~us-sjo1";
+    | "upcloud~us-sjo1"
+    | "vultr~ams"
+    | "vultr~atl"
+    | "vultr~blr"
+    | "vultr~bom"
+    | "vultr~cdg"
+    | "vultr~del"
+    | "vultr~dfw"
+    | "vultr~ewr"
+    | "vultr~fra"
+    | "vultr~hnl"
+    | "vultr~icn"
+    | "vultr~itm"
+    | "vultr~jnb"
+    | "vultr~lax"
+    | "vultr~lhr"
+    | "vultr~mad"
+    | "vultr~man"
+    | "vultr~mel"
+    | "vultr~mex"
+    | "vultr~mia"
+    | "vultr~mxp"
+    | "vultr~nrt"
+    | "vultr~ord"
+    | "vultr~sao"
+    | "vultr~scl"
+    | "vultr~sea"
+    | "vultr~sgp"
+    | "vultr~sjc"
+    | "vultr~sto"
+    | "vultr~syd"
+    | "vultr~tlv"
+    | "vultr~waw"
+    | "vultr~yto";
   /**
    * Best price allocation strategy
    * Controls how the server's "best price" is computed: use only spot prices, only on-demand prices, or the lowest available price from any allocation type.
@@ -4588,6 +5057,7 @@ export interface GetServerPricesServerVendorServerPricesGetParams {
     | "alicloud~ap-southeast-5"
     | "alicloud~ap-southeast-6"
     | "alicloud~ap-southeast-7"
+    | "alicloud~ap-southeast-8"
     | "alicloud~cn-beijing"
     | "alicloud~cn-chengdu"
     | "alicloud~cn-fuzhou"
@@ -4607,6 +5077,7 @@ export interface GetServerPricesServerVendorServerPricesGetParams {
     | "alicloud~cn-zhongwei"
     | "alicloud~eu-central-1"
     | "alicloud~eu-west-1"
+    | "alicloud~eu-west-2"
     | "alicloud~me-central-1"
     | "alicloud~me-east-1"
     | "alicloud~na-south-1"
@@ -4803,7 +5274,40 @@ export interface GetServerPricesServerVendorServerPricesGetParams {
     | "upcloud~uk-lon1"
     | "upcloud~us-chi1"
     | "upcloud~us-nyc1"
-    | "upcloud~us-sjo1";
+    | "upcloud~us-sjo1"
+    | "vultr~ams"
+    | "vultr~atl"
+    | "vultr~blr"
+    | "vultr~bom"
+    | "vultr~cdg"
+    | "vultr~del"
+    | "vultr~dfw"
+    | "vultr~ewr"
+    | "vultr~fra"
+    | "vultr~hnl"
+    | "vultr~icn"
+    | "vultr~itm"
+    | "vultr~jnb"
+    | "vultr~lax"
+    | "vultr~lhr"
+    | "vultr~mad"
+    | "vultr~man"
+    | "vultr~mel"
+    | "vultr~mex"
+    | "vultr~mia"
+    | "vultr~mxp"
+    | "vultr~nrt"
+    | "vultr~ord"
+    | "vultr~sao"
+    | "vultr~scl"
+    | "vultr~sea"
+    | "vultr~sgp"
+    | "vultr~sjc"
+    | "vultr~sto"
+    | "vultr~syd"
+    | "vultr~tlv"
+    | "vultr~waw"
+    | "vultr~yto";
   /**
    * Currency
    * Currency used for prices.
@@ -4848,7 +5352,10 @@ export interface AssistServerFiltersAiAssistServerFiltersGetParams {
 }
 
 /** Response Assist Server Filters Ai Assist Server Filters Get */
-export type AssistServerFiltersAiAssistServerFiltersGetData = object;
+export type AssistServerFiltersAiAssistServerFiltersGetData = Record<
+  string,
+  any
+>;
 
 export interface AssistServerPriceFiltersAiAssistServerPriceFiltersGetParams {
   /** Text */
@@ -4856,7 +5363,10 @@ export interface AssistServerPriceFiltersAiAssistServerPriceFiltersGetParams {
 }
 
 /** Response Assist Server Price Filters Ai Assist Server Price Filters Get */
-export type AssistServerPriceFiltersAiAssistServerPriceFiltersGetData = object;
+export type AssistServerPriceFiltersAiAssistServerPriceFiltersGetData = Record<
+  string,
+  any
+>;
 
 export interface AssistStoragePriceFiltersAiAssistStoragePriceFiltersGetParams {
   /** Text */
@@ -4865,7 +5375,7 @@ export interface AssistStoragePriceFiltersAiAssistStoragePriceFiltersGetParams {
 
 /** Response Assist Storage Price Filters Ai Assist Storage Price Filters Get */
 export type AssistStoragePriceFiltersAiAssistStoragePriceFiltersGetData =
-  object;
+  Record<string, any>;
 
 export interface AssistTrafficPriceFiltersAiAssistTrafficPriceFiltersGetParams {
   /** Text */
@@ -4874,14 +5384,22 @@ export interface AssistTrafficPriceFiltersAiAssistTrafficPriceFiltersGetParams {
 
 /** Response Assist Traffic Price Filters Ai Assist Traffic Price Filters Get */
 export type AssistTrafficPriceFiltersAiAssistTrafficPriceFiltersGetData =
-  object;
+  Record<string, any>;
 
 export interface SearchRegionsRegionsGetParams {
   /**
    * Vendor
    * Identifier of the cloud provider vendor.
    */
-  vendor?: "alicloud" | "aws" | "azure" | "gcp" | "hcloud" | "ovh" | "upcloud";
+  vendor?:
+    | "alicloud"
+    | "aws"
+    | "azure"
+    | "gcp"
+    | "hcloud"
+    | "ovh"
+    | "upcloud"
+    | "vultr";
 }
 
 /** Response Search Regions Regions Get */
@@ -4919,7 +5437,8 @@ export interface SearchServersServersGetParams {
     | "Ampere"
     | "Apple"
     | "Intel"
-    | "Microsoft";
+    | "Microsoft"
+    | "NVIDIA";
   /** Processor family */
   cpu_family?:
     | "ARM"
@@ -4927,6 +5446,7 @@ export interface SearchServersServersGetParams {
     | "ARMv9"
     | "Ampere Altra"
     | "EPYC"
+    | "Grace"
     | "Xeon"
     | "Yitian";
   /**
@@ -5101,7 +5621,15 @@ export interface SearchServersServersGetParams {
    * Vendor
    * Identifier of the cloud provider vendor.
    */
-  vendor?: "alicloud" | "aws" | "azure" | "gcp" | "hcloud" | "ovh" | "upcloud";
+  vendor?:
+    | "alicloud"
+    | "aws"
+    | "azure"
+    | "gcp"
+    | "hcloud"
+    | "ovh"
+    | "upcloud"
+    | "vultr";
   /**
    * Compliance framework
    * Compliance framework implemented at the vendor.
@@ -5162,6 +5690,7 @@ export interface SearchServersServersGetParams {
     | "6"
     | "7"
     | "af-south-1"
+    | "ams"
     | "ap-east-1"
     | "ap-east-2"
     | "ap-northeast-1"
@@ -5176,10 +5705,12 @@ export interface SearchServersServersGetParams {
     | "ap-southeast-5"
     | "ap-southeast-6"
     | "ap-southeast-7"
+    | "ap-southeast-8"
     | "AP-SOUTHEAST-SYD"
     | "AP-SOUTHEAST-SYD-2"
     | "AP-SOUTH-MUM"
     | "AP-SOUTH-MUM-1"
+    | "atl"
     | "australiacentral"
     | "australiacentral2"
     | "australiaeast"
@@ -5189,6 +5720,8 @@ export interface SearchServersServersGetParams {
     | "belgiumcentral"
     | "BHS"
     | "BHS5"
+    | "blr"
+    | "bom"
     | "brazilsouth"
     | "brazilsoutheast"
     | "brazilus"
@@ -5197,6 +5730,7 @@ export interface SearchServersServersGetParams {
     | "canadacentral"
     | "canadaeast"
     | "ca-west-1"
+    | "cdg"
     | "centralindia"
     | "centralus"
     | "centraluseuap"
@@ -5223,7 +5757,9 @@ export interface SearchServersServersGetParams {
     | "DE"
     | "DE1"
     | "de-fra1"
+    | "del"
     | "denmarkeast"
+    | "dfw"
     | "dk-cph1"
     | "eastasia"
     | "eastus"
@@ -5241,8 +5777,10 @@ export interface SearchServersServersGetParams {
     | "eu-west-2"
     | "eu-west-3"
     | "EU-WEST-PAR"
+    | "ewr"
     | "fi-hel1"
     | "fi-hel2"
+    | "fra"
     | "francecentral"
     | "francesouth"
     | "germanynorth"
@@ -5251,22 +5789,34 @@ export interface SearchServersServersGetParams {
     | "GRA11"
     | "GRA7"
     | "GRA9"
+    | "hnl"
+    | "icn"
     | "il-central-1"
     | "indonesiacentral"
     | "israelcentral"
     | "italynorth"
+    | "itm"
     | "japaneast"
     | "japanwest"
     | "jioindiacentral"
     | "jioindiawest"
+    | "jnb"
     | "koreacentral"
     | "koreasouth"
+    | "lax"
+    | "lhr"
+    | "mad"
     | "malaysiawest"
+    | "man"
     | "me-central-1"
     | "me-east-1"
+    | "mel"
     | "me-south-1"
+    | "mex"
     | "mexicocentral"
+    | "mia"
     | "mx-central-1"
+    | "mxp"
     | "na-south-1"
     | "newzealandnorth"
     | "nl-ams1"
@@ -5275,6 +5825,8 @@ export interface SearchServersServersGetParams {
     | "norwayeast"
     | "norwaywest"
     | "no-svg1"
+    | "nrt"
+    | "ord"
     | "pl-waw1"
     | "polandcentral"
     | "qatarcentral"
@@ -5282,13 +5834,18 @@ export interface SearchServersServersGetParams {
     | "RBX-A"
     | "RBX-ARCHIVE"
     | "sa-east-1"
+    | "sao"
     | "SBG"
     | "SBG5"
     | "SBG7"
+    | "scl"
+    | "sea"
     | "se-sto1"
+    | "sgp"
     | "SGP"
     | "SGP1"
     | "sg-sin1"
+    | "sjc"
     | "southafricanorth"
     | "southafricawest"
     | "southcentralus"
@@ -5296,11 +5853,14 @@ export interface SearchServersServersGetParams {
     | "southeastasia"
     | "southindia"
     | "spaincentral"
+    | "sto"
     | "swedencentral"
     | "switzerlandnorth"
     | "switzerlandwest"
+    | "syd"
     | "SYD"
     | "SYD1"
+    | "tlv"
     | "uaecentral"
     | "uaenorth"
     | "UK"
@@ -5315,6 +5875,7 @@ export interface SearchServersServersGetParams {
     | "us-sjo1"
     | "us-west-1"
     | "us-west-2"
+    | "waw"
     | "WAW"
     | "WAW1"
     | "westcentralus"
@@ -5322,7 +5883,8 @@ export interface SearchServersServersGetParams {
     | "westindia"
     | "westus"
     | "westus2"
-    | "westus3";
+    | "westus3"
+    | "yto";
   /**
    * Vendor and region
    * Identifier of the vendor and region, separated by a tilde.
@@ -5335,6 +5897,7 @@ export interface SearchServersServersGetParams {
     | "alicloud~ap-southeast-5"
     | "alicloud~ap-southeast-6"
     | "alicloud~ap-southeast-7"
+    | "alicloud~ap-southeast-8"
     | "alicloud~cn-beijing"
     | "alicloud~cn-chengdu"
     | "alicloud~cn-fuzhou"
@@ -5354,6 +5917,7 @@ export interface SearchServersServersGetParams {
     | "alicloud~cn-zhongwei"
     | "alicloud~eu-central-1"
     | "alicloud~eu-west-1"
+    | "alicloud~eu-west-2"
     | "alicloud~me-central-1"
     | "alicloud~me-east-1"
     | "alicloud~na-south-1"
@@ -5550,7 +6114,40 @@ export interface SearchServersServersGetParams {
     | "upcloud~uk-lon1"
     | "upcloud~us-chi1"
     | "upcloud~us-nyc1"
-    | "upcloud~us-sjo1";
+    | "upcloud~us-sjo1"
+    | "vultr~ams"
+    | "vultr~atl"
+    | "vultr~blr"
+    | "vultr~bom"
+    | "vultr~cdg"
+    | "vultr~del"
+    | "vultr~dfw"
+    | "vultr~ewr"
+    | "vultr~fra"
+    | "vultr~hnl"
+    | "vultr~icn"
+    | "vultr~itm"
+    | "vultr~jnb"
+    | "vultr~lax"
+    | "vultr~lhr"
+    | "vultr~mad"
+    | "vultr~man"
+    | "vultr~mel"
+    | "vultr~mex"
+    | "vultr~mia"
+    | "vultr~mxp"
+    | "vultr~nrt"
+    | "vultr~ord"
+    | "vultr~sao"
+    | "vultr~scl"
+    | "vultr~sea"
+    | "vultr~sgp"
+    | "vultr~sjc"
+    | "vultr~sto"
+    | "vultr~syd"
+    | "vultr~tlv"
+    | "vultr~waw"
+    | "vultr~yto";
   /**
    * Countries
    * Filter for regions in the provided list of countries.
@@ -5650,6 +6247,8 @@ export interface SearchServersServersGetParams {
     | "Ada Lovelace"
     | "Ampere"
     | "Blackwell"
+    | "CDNA3"
+    | "CDNA4"
     | "Gaudi"
     | "Hopper"
     | "Pascal"
@@ -5660,12 +6259,16 @@ export interface SearchServersServersGetParams {
   gpu_model?:
     | "A10"
     | "A100"
+    | "A100 SXM"
     | "A10G"
+    | "A16"
+    | "A40"
     | "B200"
     | "B300"
     | "G49"
     | "G49E"
     | "G59"
+    | "GH200"
     | "GPU H"
     | "H100"
     | "H200"
@@ -5673,6 +6276,9 @@ export interface SearchServersServersGetParams {
     | "L20"
     | "L4"
     | "L40S"
+    | "MI300X"
+    | "MI325X"
+    | "MI355X"
     | "P100"
     | "P4"
     | "RTX 5000"
@@ -5763,7 +6369,8 @@ export interface SearchServerPricesServerPricesGetParams {
     | "Ampere"
     | "Apple"
     | "Intel"
-    | "Microsoft";
+    | "Microsoft"
+    | "NVIDIA";
   /** Processor family */
   cpu_family?:
     | "ARM"
@@ -5771,6 +6378,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "ARMv9"
     | "Ampere Altra"
     | "EPYC"
+    | "Grace"
     | "Xeon"
     | "Yitian";
   /**
@@ -5818,7 +6426,15 @@ export interface SearchServerPricesServerPricesGetParams {
    * Vendor
    * Identifier of the cloud provider vendor.
    */
-  vendor?: "alicloud" | "aws" | "azure" | "gcp" | "hcloud" | "ovh" | "upcloud";
+  vendor?:
+    | "alicloud"
+    | "aws"
+    | "azure"
+    | "gcp"
+    | "hcloud"
+    | "ovh"
+    | "upcloud"
+    | "vultr";
   /**
    * Region
    * Identifier of the region. Note that region ids are not vendor-specific, so when you select a region, you might get results from multiple vendors. For more precise filtering, use vendor_regions instead.
@@ -5874,6 +6490,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "6"
     | "7"
     | "af-south-1"
+    | "ams"
     | "ap-east-1"
     | "ap-east-2"
     | "ap-northeast-1"
@@ -5888,10 +6505,12 @@ export interface SearchServerPricesServerPricesGetParams {
     | "ap-southeast-5"
     | "ap-southeast-6"
     | "ap-southeast-7"
+    | "ap-southeast-8"
     | "AP-SOUTHEAST-SYD"
     | "AP-SOUTHEAST-SYD-2"
     | "AP-SOUTH-MUM"
     | "AP-SOUTH-MUM-1"
+    | "atl"
     | "australiacentral"
     | "australiacentral2"
     | "australiaeast"
@@ -5901,6 +6520,8 @@ export interface SearchServerPricesServerPricesGetParams {
     | "belgiumcentral"
     | "BHS"
     | "BHS5"
+    | "blr"
+    | "bom"
     | "brazilsouth"
     | "brazilsoutheast"
     | "brazilus"
@@ -5909,6 +6530,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "canadacentral"
     | "canadaeast"
     | "ca-west-1"
+    | "cdg"
     | "centralindia"
     | "centralus"
     | "centraluseuap"
@@ -5935,7 +6557,9 @@ export interface SearchServerPricesServerPricesGetParams {
     | "DE"
     | "DE1"
     | "de-fra1"
+    | "del"
     | "denmarkeast"
+    | "dfw"
     | "dk-cph1"
     | "eastasia"
     | "eastus"
@@ -5953,8 +6577,10 @@ export interface SearchServerPricesServerPricesGetParams {
     | "eu-west-2"
     | "eu-west-3"
     | "EU-WEST-PAR"
+    | "ewr"
     | "fi-hel1"
     | "fi-hel2"
+    | "fra"
     | "francecentral"
     | "francesouth"
     | "germanynorth"
@@ -5963,22 +6589,34 @@ export interface SearchServerPricesServerPricesGetParams {
     | "GRA11"
     | "GRA7"
     | "GRA9"
+    | "hnl"
+    | "icn"
     | "il-central-1"
     | "indonesiacentral"
     | "israelcentral"
     | "italynorth"
+    | "itm"
     | "japaneast"
     | "japanwest"
     | "jioindiacentral"
     | "jioindiawest"
+    | "jnb"
     | "koreacentral"
     | "koreasouth"
+    | "lax"
+    | "lhr"
+    | "mad"
     | "malaysiawest"
+    | "man"
     | "me-central-1"
     | "me-east-1"
+    | "mel"
     | "me-south-1"
+    | "mex"
     | "mexicocentral"
+    | "mia"
     | "mx-central-1"
+    | "mxp"
     | "na-south-1"
     | "newzealandnorth"
     | "nl-ams1"
@@ -5987,6 +6625,8 @@ export interface SearchServerPricesServerPricesGetParams {
     | "norwayeast"
     | "norwaywest"
     | "no-svg1"
+    | "nrt"
+    | "ord"
     | "pl-waw1"
     | "polandcentral"
     | "qatarcentral"
@@ -5994,13 +6634,18 @@ export interface SearchServerPricesServerPricesGetParams {
     | "RBX-A"
     | "RBX-ARCHIVE"
     | "sa-east-1"
+    | "sao"
     | "SBG"
     | "SBG5"
     | "SBG7"
+    | "scl"
+    | "sea"
     | "se-sto1"
+    | "sgp"
     | "SGP"
     | "SGP1"
     | "sg-sin1"
+    | "sjc"
     | "southafricanorth"
     | "southafricawest"
     | "southcentralus"
@@ -6008,11 +6653,14 @@ export interface SearchServerPricesServerPricesGetParams {
     | "southeastasia"
     | "southindia"
     | "spaincentral"
+    | "sto"
     | "swedencentral"
     | "switzerlandnorth"
     | "switzerlandwest"
+    | "syd"
     | "SYD"
     | "SYD1"
+    | "tlv"
     | "uaecentral"
     | "uaenorth"
     | "UK"
@@ -6027,6 +6675,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "us-sjo1"
     | "us-west-1"
     | "us-west-2"
+    | "waw"
     | "WAW"
     | "WAW1"
     | "westcentralus"
@@ -6034,7 +6683,8 @@ export interface SearchServerPricesServerPricesGetParams {
     | "westindia"
     | "westus"
     | "westus2"
-    | "westus3";
+    | "westus3"
+    | "yto";
   /**
    * Vendor and region
    * Identifier of the vendor and region, separated by a tilde.
@@ -6047,6 +6697,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "alicloud~ap-southeast-5"
     | "alicloud~ap-southeast-6"
     | "alicloud~ap-southeast-7"
+    | "alicloud~ap-southeast-8"
     | "alicloud~cn-beijing"
     | "alicloud~cn-chengdu"
     | "alicloud~cn-fuzhou"
@@ -6066,6 +6717,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "alicloud~cn-zhongwei"
     | "alicloud~eu-central-1"
     | "alicloud~eu-west-1"
+    | "alicloud~eu-west-2"
     | "alicloud~me-central-1"
     | "alicloud~me-east-1"
     | "alicloud~na-south-1"
@@ -6262,7 +6914,40 @@ export interface SearchServerPricesServerPricesGetParams {
     | "upcloud~uk-lon1"
     | "upcloud~us-chi1"
     | "upcloud~us-nyc1"
-    | "upcloud~us-sjo1";
+    | "upcloud~us-sjo1"
+    | "vultr~ams"
+    | "vultr~atl"
+    | "vultr~blr"
+    | "vultr~bom"
+    | "vultr~cdg"
+    | "vultr~del"
+    | "vultr~dfw"
+    | "vultr~ewr"
+    | "vultr~fra"
+    | "vultr~hnl"
+    | "vultr~icn"
+    | "vultr~itm"
+    | "vultr~jnb"
+    | "vultr~lax"
+    | "vultr~lhr"
+    | "vultr~mad"
+    | "vultr~man"
+    | "vultr~mel"
+    | "vultr~mex"
+    | "vultr~mia"
+    | "vultr~mxp"
+    | "vultr~nrt"
+    | "vultr~ord"
+    | "vultr~sao"
+    | "vultr~scl"
+    | "vultr~sea"
+    | "vultr~sgp"
+    | "vultr~sjc"
+    | "vultr~sto"
+    | "vultr~syd"
+    | "vultr~tlv"
+    | "vultr~waw"
+    | "vultr~yto";
   /**
    * Compliance framework
    * Compliance framework implemented at the vendor.
@@ -6344,6 +7029,8 @@ export interface SearchServerPricesServerPricesGetParams {
     | "Ada Lovelace"
     | "Ampere"
     | "Blackwell"
+    | "CDNA3"
+    | "CDNA4"
     | "Gaudi"
     | "Hopper"
     | "Pascal"
@@ -6354,12 +7041,16 @@ export interface SearchServerPricesServerPricesGetParams {
   gpu_model?:
     | "A10"
     | "A100"
+    | "A100 SXM"
     | "A10G"
+    | "A16"
+    | "A40"
     | "B200"
     | "B300"
     | "G49"
     | "G49E"
     | "G59"
+    | "GH200"
     | "GPU H"
     | "H100"
     | "H200"
@@ -6367,6 +7058,9 @@ export interface SearchServerPricesServerPricesGetParams {
     | "L20"
     | "L4"
     | "L40S"
+    | "MI300X"
+    | "MI325X"
+    | "MI355X"
     | "P100"
     | "P4"
     | "RTX 5000"
@@ -6425,7 +7119,15 @@ export interface SearchStoragePricesStoragePricesGetParams {
    * Vendor
    * Identifier of the cloud provider vendor.
    */
-  vendor?: "alicloud" | "aws" | "azure" | "gcp" | "hcloud" | "ovh" | "upcloud";
+  vendor?:
+    | "alicloud"
+    | "aws"
+    | "azure"
+    | "gcp"
+    | "hcloud"
+    | "ovh"
+    | "upcloud"
+    | "vultr";
   /**
    * Green energy
    * Filter for regions that are 100% powered by renewable energy.
@@ -6501,6 +7203,7 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "6"
     | "7"
     | "af-south-1"
+    | "ams"
     | "ap-east-1"
     | "ap-east-2"
     | "ap-northeast-1"
@@ -6515,10 +7218,12 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "ap-southeast-5"
     | "ap-southeast-6"
     | "ap-southeast-7"
+    | "ap-southeast-8"
     | "AP-SOUTHEAST-SYD"
     | "AP-SOUTHEAST-SYD-2"
     | "AP-SOUTH-MUM"
     | "AP-SOUTH-MUM-1"
+    | "atl"
     | "australiacentral"
     | "australiacentral2"
     | "australiaeast"
@@ -6528,6 +7233,8 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "belgiumcentral"
     | "BHS"
     | "BHS5"
+    | "blr"
+    | "bom"
     | "brazilsouth"
     | "brazilsoutheast"
     | "brazilus"
@@ -6536,6 +7243,7 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "canadacentral"
     | "canadaeast"
     | "ca-west-1"
+    | "cdg"
     | "centralindia"
     | "centralus"
     | "centraluseuap"
@@ -6562,7 +7270,9 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "DE"
     | "DE1"
     | "de-fra1"
+    | "del"
     | "denmarkeast"
+    | "dfw"
     | "dk-cph1"
     | "eastasia"
     | "eastus"
@@ -6580,8 +7290,10 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "eu-west-2"
     | "eu-west-3"
     | "EU-WEST-PAR"
+    | "ewr"
     | "fi-hel1"
     | "fi-hel2"
+    | "fra"
     | "francecentral"
     | "francesouth"
     | "germanynorth"
@@ -6590,22 +7302,34 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "GRA11"
     | "GRA7"
     | "GRA9"
+    | "hnl"
+    | "icn"
     | "il-central-1"
     | "indonesiacentral"
     | "israelcentral"
     | "italynorth"
+    | "itm"
     | "japaneast"
     | "japanwest"
     | "jioindiacentral"
     | "jioindiawest"
+    | "jnb"
     | "koreacentral"
     | "koreasouth"
+    | "lax"
+    | "lhr"
+    | "mad"
     | "malaysiawest"
+    | "man"
     | "me-central-1"
     | "me-east-1"
+    | "mel"
     | "me-south-1"
+    | "mex"
     | "mexicocentral"
+    | "mia"
     | "mx-central-1"
+    | "mxp"
     | "na-south-1"
     | "newzealandnorth"
     | "nl-ams1"
@@ -6614,6 +7338,8 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "norwayeast"
     | "norwaywest"
     | "no-svg1"
+    | "nrt"
+    | "ord"
     | "pl-waw1"
     | "polandcentral"
     | "qatarcentral"
@@ -6621,13 +7347,18 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "RBX-A"
     | "RBX-ARCHIVE"
     | "sa-east-1"
+    | "sao"
     | "SBG"
     | "SBG5"
     | "SBG7"
+    | "scl"
+    | "sea"
     | "se-sto1"
+    | "sgp"
     | "SGP"
     | "SGP1"
     | "sg-sin1"
+    | "sjc"
     | "southafricanorth"
     | "southafricawest"
     | "southcentralus"
@@ -6635,11 +7366,14 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "southeastasia"
     | "southindia"
     | "spaincentral"
+    | "sto"
     | "swedencentral"
     | "switzerlandnorth"
     | "switzerlandwest"
+    | "syd"
     | "SYD"
     | "SYD1"
+    | "tlv"
     | "uaecentral"
     | "uaenorth"
     | "UK"
@@ -6654,6 +7388,7 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "us-sjo1"
     | "us-west-1"
     | "us-west-2"
+    | "waw"
     | "WAW"
     | "WAW1"
     | "westcentralus"
@@ -6661,7 +7396,8 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "westindia"
     | "westus"
     | "westus2"
-    | "westus3";
+    | "westus3"
+    | "yto";
   /**
    * Vendor and region
    * Identifier of the vendor and region, separated by a tilde.
@@ -6674,6 +7410,7 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "alicloud~ap-southeast-5"
     | "alicloud~ap-southeast-6"
     | "alicloud~ap-southeast-7"
+    | "alicloud~ap-southeast-8"
     | "alicloud~cn-beijing"
     | "alicloud~cn-chengdu"
     | "alicloud~cn-fuzhou"
@@ -6693,6 +7430,7 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "alicloud~cn-zhongwei"
     | "alicloud~eu-central-1"
     | "alicloud~eu-west-1"
+    | "alicloud~eu-west-2"
     | "alicloud~me-central-1"
     | "alicloud~me-east-1"
     | "alicloud~na-south-1"
@@ -6889,7 +7627,40 @@ export interface SearchStoragePricesStoragePricesGetParams {
     | "upcloud~uk-lon1"
     | "upcloud~us-chi1"
     | "upcloud~us-nyc1"
-    | "upcloud~us-sjo1";
+    | "upcloud~us-sjo1"
+    | "vultr~ams"
+    | "vultr~atl"
+    | "vultr~blr"
+    | "vultr~bom"
+    | "vultr~cdg"
+    | "vultr~del"
+    | "vultr~dfw"
+    | "vultr~ewr"
+    | "vultr~fra"
+    | "vultr~hnl"
+    | "vultr~icn"
+    | "vultr~itm"
+    | "vultr~jnb"
+    | "vultr~lax"
+    | "vultr~lhr"
+    | "vultr~mad"
+    | "vultr~man"
+    | "vultr~mel"
+    | "vultr~mex"
+    | "vultr~mia"
+    | "vultr~mxp"
+    | "vultr~nrt"
+    | "vultr~ord"
+    | "vultr~sao"
+    | "vultr~scl"
+    | "vultr~sea"
+    | "vultr~sgp"
+    | "vultr~sjc"
+    | "vultr~sto"
+    | "vultr~syd"
+    | "vultr~tlv"
+    | "vultr~waw"
+    | "vultr~yto";
   /**
    * Countries
    * Filter for regions in the provided list of countries.
@@ -6978,7 +7749,15 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
    * Vendor
    * Identifier of the cloud provider vendor.
    */
-  vendor?: "alicloud" | "aws" | "azure" | "gcp" | "hcloud" | "ovh" | "upcloud";
+  vendor?:
+    | "alicloud"
+    | "aws"
+    | "azure"
+    | "gcp"
+    | "hcloud"
+    | "ovh"
+    | "upcloud"
+    | "vultr";
   /**
    * Green energy
    * Filter for regions that are 100% powered by renewable energy.
@@ -7044,6 +7823,7 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "6"
     | "7"
     | "af-south-1"
+    | "ams"
     | "ap-east-1"
     | "ap-east-2"
     | "ap-northeast-1"
@@ -7058,10 +7838,12 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "ap-southeast-5"
     | "ap-southeast-6"
     | "ap-southeast-7"
+    | "ap-southeast-8"
     | "AP-SOUTHEAST-SYD"
     | "AP-SOUTHEAST-SYD-2"
     | "AP-SOUTH-MUM"
     | "AP-SOUTH-MUM-1"
+    | "atl"
     | "australiacentral"
     | "australiacentral2"
     | "australiaeast"
@@ -7071,6 +7853,8 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "belgiumcentral"
     | "BHS"
     | "BHS5"
+    | "blr"
+    | "bom"
     | "brazilsouth"
     | "brazilsoutheast"
     | "brazilus"
@@ -7079,6 +7863,7 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "canadacentral"
     | "canadaeast"
     | "ca-west-1"
+    | "cdg"
     | "centralindia"
     | "centralus"
     | "centraluseuap"
@@ -7105,7 +7890,9 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "DE"
     | "DE1"
     | "de-fra1"
+    | "del"
     | "denmarkeast"
+    | "dfw"
     | "dk-cph1"
     | "eastasia"
     | "eastus"
@@ -7123,8 +7910,10 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "eu-west-2"
     | "eu-west-3"
     | "EU-WEST-PAR"
+    | "ewr"
     | "fi-hel1"
     | "fi-hel2"
+    | "fra"
     | "francecentral"
     | "francesouth"
     | "germanynorth"
@@ -7133,22 +7922,34 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "GRA11"
     | "GRA7"
     | "GRA9"
+    | "hnl"
+    | "icn"
     | "il-central-1"
     | "indonesiacentral"
     | "israelcentral"
     | "italynorth"
+    | "itm"
     | "japaneast"
     | "japanwest"
     | "jioindiacentral"
     | "jioindiawest"
+    | "jnb"
     | "koreacentral"
     | "koreasouth"
+    | "lax"
+    | "lhr"
+    | "mad"
     | "malaysiawest"
+    | "man"
     | "me-central-1"
     | "me-east-1"
+    | "mel"
     | "me-south-1"
+    | "mex"
     | "mexicocentral"
+    | "mia"
     | "mx-central-1"
+    | "mxp"
     | "na-south-1"
     | "newzealandnorth"
     | "nl-ams1"
@@ -7157,6 +7958,8 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "norwayeast"
     | "norwaywest"
     | "no-svg1"
+    | "nrt"
+    | "ord"
     | "pl-waw1"
     | "polandcentral"
     | "qatarcentral"
@@ -7164,13 +7967,18 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "RBX-A"
     | "RBX-ARCHIVE"
     | "sa-east-1"
+    | "sao"
     | "SBG"
     | "SBG5"
     | "SBG7"
+    | "scl"
+    | "sea"
     | "se-sto1"
+    | "sgp"
     | "SGP"
     | "SGP1"
     | "sg-sin1"
+    | "sjc"
     | "southafricanorth"
     | "southafricawest"
     | "southcentralus"
@@ -7178,11 +7986,14 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "southeastasia"
     | "southindia"
     | "spaincentral"
+    | "sto"
     | "swedencentral"
     | "switzerlandnorth"
     | "switzerlandwest"
+    | "syd"
     | "SYD"
     | "SYD1"
+    | "tlv"
     | "uaecentral"
     | "uaenorth"
     | "UK"
@@ -7197,6 +8008,7 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "us-sjo1"
     | "us-west-1"
     | "us-west-2"
+    | "waw"
     | "WAW"
     | "WAW1"
     | "westcentralus"
@@ -7204,7 +8016,8 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "westindia"
     | "westus"
     | "westus2"
-    | "westus3";
+    | "westus3"
+    | "yto";
   /**
    * Vendor and region
    * Identifier of the vendor and region, separated by a tilde.
@@ -7217,6 +8030,7 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "alicloud~ap-southeast-5"
     | "alicloud~ap-southeast-6"
     | "alicloud~ap-southeast-7"
+    | "alicloud~ap-southeast-8"
     | "alicloud~cn-beijing"
     | "alicloud~cn-chengdu"
     | "alicloud~cn-fuzhou"
@@ -7236,6 +8050,7 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "alicloud~cn-zhongwei"
     | "alicloud~eu-central-1"
     | "alicloud~eu-west-1"
+    | "alicloud~eu-west-2"
     | "alicloud~me-central-1"
     | "alicloud~me-east-1"
     | "alicloud~na-south-1"
@@ -7432,7 +8247,40 @@ export interface SearchTrafficPricesTrafficPricesGetParams {
     | "upcloud~uk-lon1"
     | "upcloud~us-chi1"
     | "upcloud~us-nyc1"
-    | "upcloud~us-sjo1";
+    | "upcloud~us-sjo1"
+    | "vultr~ams"
+    | "vultr~atl"
+    | "vultr~blr"
+    | "vultr~bom"
+    | "vultr~cdg"
+    | "vultr~del"
+    | "vultr~dfw"
+    | "vultr~ewr"
+    | "vultr~fra"
+    | "vultr~hnl"
+    | "vultr~icn"
+    | "vultr~itm"
+    | "vultr~jnb"
+    | "vultr~lax"
+    | "vultr~lhr"
+    | "vultr~mad"
+    | "vultr~man"
+    | "vultr~mel"
+    | "vultr~mex"
+    | "vultr~mia"
+    | "vultr~mxp"
+    | "vultr~nrt"
+    | "vultr~ord"
+    | "vultr~sao"
+    | "vultr~scl"
+    | "vultr~sea"
+    | "vultr~sgp"
+    | "vultr~sjc"
+    | "vultr~sto"
+    | "vultr~syd"
+    | "vultr~tlv"
+    | "vultr~waw"
+    | "vultr~yto";
   /**
    * Countries
    * Filter for regions in the provided list of countries.

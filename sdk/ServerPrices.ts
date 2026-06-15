@@ -33,7 +33,7 @@ export class ServerPrices<SecurityDataType = unknown> {
    * @request GET:/server_prices
    */
   searchServerPricesServerPricesGet = (
-    query: SearchServerPricesServerPricesGetParams,
+    query: SearchServerPricesServerPricesGetParams = {},
     params: RequestParams = {},
   ) =>
     this.http.request<

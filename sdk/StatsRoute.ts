@@ -34,7 +34,8 @@ export namespace Stats {
         | "gcp"
         | "hcloud"
         | "ovh"
-        | "upcloud";
+        | "upcloud"
+        | "vultr";
       /**
        * Active only
        * Filter for active servers only.

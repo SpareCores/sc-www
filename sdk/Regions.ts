@@ -33,7 +33,7 @@ export class Regions<SecurityDataType = unknown> {
    * @request GET:/regions
    */
   searchRegionsRegionsGet = (
-    query: SearchRegionsRegionsGetParams,
+    query: SearchRegionsRegionsGetParams = {},
     params: RequestParams = {},
   ) =>
     this.http.request<SearchRegionsRegionsGetData, HTTPValidationError>({
