@@ -61,9 +61,9 @@ import openApiSpec from "../../../../sdk/openapi.json";
 import specialServerListsData from "./special-lists.js";
 import { GpuCountPipe } from "../../pipes/gpu-count.pipe";
 import { CpuCacheSizePipe } from "../../pipes/cpu-cache-size.pipe";
-import { NetworkSpeedPipe } from "../../pipes/network-speed.pipe";
 import { MonthlyTrafficPipe } from "../../pipes/monthly-traffic.pipe";
 import { Ipv4CountPipe } from "../../pipes/ipv4-count.pipe";
+import { formatNumberInputValue } from "../../pipes/pipe-utils";
 import {
   BestPriceAllocationType,
   bestPriceAllocationTypes,
@@ -139,7 +139,6 @@ const INVALID_BENCHMARK_URL_TOAST_BODY =
     LoadingSpinnerComponent,
     GpuCountPipe,
     CpuCacheSizePipe,
-    NetworkSpeedPipe,
     MonthlyTrafficPipe,
     Ipv4CountPipe,
     FlowbiteDropdownDirective,
@@ -242,6 +241,20 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       key: "cpu_allocation",
     },
     {
+      name: "HW VIRT",
+      show: false,
+      type: "text",
+      key: "hw_virt",
+      orderField: "hw_virt",
+    },
+    {
+      name: "START TIME",
+      show: false,
+      type: "text",
+      key: "average_time_to_start",
+      orderField: "average_time_to_start",
+    },
+    {
       name: "SCORE",
       // benchmark (set to SCore by default) is the new default
       show: false,
@@ -293,32 +306,16 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     },
     { name: "STORAGE TYPE", show: false, type: "text", key: "storage_type" },
     {
-      name: "NETWORK SPEED BASELINE",
+      name: "NETWORK SPEED",
       show: false,
-      type: "text",
-      key: "network_speed_baseline",
+      type: "network_speed",
       orderField: "network_speed_baseline",
     },
     {
-      name: "NETWORK SPEED MAX",
+      name: "STORAGE SPEED",
       show: false,
-      type: "text",
-      key: "network_speed_max",
-      orderField: "network_speed_max",
-    },
-    {
-      name: "NETWORK STORAGE SPEED BASELINE",
-      show: false,
-      type: "text",
-      key: "network_storage_speed_baseline",
+      type: "storage_speed",
       orderField: "network_storage_speed_baseline",
-    },
-    {
-      name: "NETWORK STORAGE SPEED MAX",
-      show: false,
-      type: "text",
-      key: "network_storage_speed_max",
-      orderField: "network_storage_speed_max",
     },
     {
       name: "INBOUND TRAFFIC",
@@ -1113,6 +1110,12 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     this.pageDropdown()?.hide();
     // scroll to top
     window.scrollTo(0, 0);
+  }
+
+  formatGbps(value: number | null | undefined) {
+    if (value === null || value === undefined || value <= 0) return "-";
+
+    return `${formatNumberInputValue(value)} Gbps`;
   }
 
   getField(item: ServerPriceWithPKs, field: string) {
