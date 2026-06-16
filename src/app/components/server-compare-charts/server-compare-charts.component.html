@@ -313,8 +313,18 @@
                 track server.vendor_id + "_" + server.server_id
               ) {
                 <td>
+                  @let propertyValue = getProperty(category, server);
                   <div [style]="getBestCellStyle(category.id, server)">
-                    {{ getProperty(category, server) }}
+                    @if (propertyValue === "check" || propertyValue === "x") {
+                      <svg
+                        [lucideIcon]="propertyValue"
+                        class="h-4 w-4 shrink-0"
+                        [class.text-emerald-400]="propertyValue === 'check'"
+                        [class.text-white]="propertyValue === 'x'"
+                      ></svg>
+                    } @else {
+                      <span [innerHTML]="propertyValue"></span>
+                    }
                   </div>
                 </td>
               }

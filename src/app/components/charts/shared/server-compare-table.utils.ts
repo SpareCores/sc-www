@@ -83,7 +83,29 @@ export function getServerPropertyValue(
   const name = column.id;
   const prop = getServerFieldValue(server, name);
 
-  if (prop === undefined || prop === null) {
+  if (name === "hw_virt") {
+    if (prop === true) {
+      return formatBooleanIconHtml(true);
+    }
+
+    if (prop === false) {
+      return formatBooleanIconHtml(false);
+    }
+
+    if (prop === undefined || prop === null) {
+      return "-";
+    }
+
+    if (typeof prop === "string" && prop.trim().toLowerCase() === "none") {
+      return "-";
+    }
+  }
+
+  if (prop === undefined || prop === null || typeof prop === "boolean") {
+    return undefined;
+  }
+
+  if (typeof prop === "string" && prop.trim().toLowerCase() === "none") {
     return undefined;
   }
 
@@ -157,4 +179,8 @@ function formatBytesToSize(bytes: number) {
   if (bytes === 0) return "0 Bytes";
   const index = Math.floor(Math.log(bytes) / Math.log(1024));
   return `${(bytes / Math.pow(1024, index)).toFixed(0)} ${sizes[index]}`;
+}
+
+export function formatBooleanIconHtml(value: boolean): string {
+  return value ? "check" : "x";
 }
