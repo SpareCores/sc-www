@@ -725,6 +725,162 @@ LIMIT 25;`,
   },
   {
     type: "section",
+    title: "AWS Graviton generation comparisons (between m6g and m9g)",
+    description: `<p>Compare four generations of AWS Graviton-powered <code>m6g</code>, <code>m7g</code>, <code>m8g</code>, and <code>m9g</code> instances at matching sizes. Larger <code>24xlarge</code> and <code>48xlarge</code> sizes are only available on <code>m8g</code> and <code>m9g</code> as older generations top out at <code>16xlarge</code>. Metal instances use <code>m6g.metal</code> / <code>m7g.metal</code> (64 vCPU) and <code>m8g.metal-48xl</code> / <code>m9g.metal-48xl</code> (192 vCPU).</p>
+    <p>See our <a href="/article/aws-graviton5-benchmarks">Graviton5 benchmarks blog post</a> for the full analysis.</p>`,
+  },
+  {
+    type: "card",
+    id: "aws-graviton-medium",
+    title: "m6g / m7g / m8g / m9g medium (1 vCPU & 4 GiB RAM)",
+    description:
+      "Four Graviton generations compared at the medium size (1 vCPU, 4 GiB RAM).",
+    hide_description_in_index: true,
+    instances: [
+      { vendor: "aws", server: "m6g.medium" },
+      { vendor: "aws", server: "m7g.medium" },
+      { vendor: "aws", server: "m8g.medium" },
+      { vendor: "aws", server: "m9g.medium" },
+    ],
+  },
+  {
+    type: "card",
+    id: "aws-graviton-large",
+    title: "m6g / m7g / m8g / m9g large (2 vCPU & 8 GiB RAM)",
+    description:
+      "Four Graviton generations compared at the large size (2 vCPU, 8 GiB RAM).",
+    hide_description_in_index: true,
+    instances: [
+      { vendor: "aws", server: "m6g.large" },
+      { vendor: "aws", server: "m7g.large" },
+      { vendor: "aws", server: "m8g.large" },
+      { vendor: "aws", server: "m9g.large" },
+    ],
+  },
+  {
+    type: "card",
+    id: "aws-graviton-xlarge",
+    title: "m6g / m7g / m8g / m9g xlarge (4 vCPU & 16 GiB RAM)",
+    description:
+      "Four Graviton generations compared at the xlarge size (4 vCPU, 16 GiB RAM).",
+    hide_description_in_index: true,
+    instances: [
+      { vendor: "aws", server: "m6g.xlarge" },
+      { vendor: "aws", server: "m7g.xlarge" },
+      { vendor: "aws", server: "m8g.xlarge" },
+      { vendor: "aws", server: "m9g.xlarge" },
+    ],
+  },
+  {
+    type: "card",
+    id: "aws-graviton-2xlarge",
+    title: "m6g / m7g / m8g / m9g 2xlarge (8 vCPU & 32 GiB RAM)",
+    description:
+      "Four Graviton generations compared at the 2xlarge size (8 vCPU, 32 GiB RAM).",
+    hide_description_in_index: true,
+    instances: [
+      { vendor: "aws", server: "m6g.2xlarge" },
+      { vendor: "aws", server: "m7g.2xlarge" },
+      { vendor: "aws", server: "m8g.2xlarge" },
+      { vendor: "aws", server: "m9g.2xlarge" },
+    ],
+  },
+  {
+    type: "card",
+    id: "aws-graviton-4xlarge",
+    title: "m6g / m7g / m8g / m9g 4xlarge (16 vCPU & 64 GiB RAM)",
+    description:
+      "Four Graviton generations compared at the 4xlarge size (16 vCPU, 64 GiB RAM).",
+    hide_description_in_index: true,
+    instances: [
+      { vendor: "aws", server: "m6g.4xlarge" },
+      { vendor: "aws", server: "m7g.4xlarge" },
+      { vendor: "aws", server: "m8g.4xlarge" },
+      { vendor: "aws", server: "m9g.4xlarge" },
+    ],
+  },
+  {
+    type: "card",
+    id: "aws-graviton-8xlarge",
+    title: "m6g / m7g / m8g / m9g 8xlarge (32 vCPU & 128 GiB RAM)",
+    description:
+      "Four Graviton generations compared at the 8xlarge size (32 vCPU, 128 GiB RAM).",
+    hide_description_in_index: true,
+    instances: [
+      { vendor: "aws", server: "m6g.8xlarge" },
+      { vendor: "aws", server: "m7g.8xlarge" },
+      { vendor: "aws", server: "m8g.8xlarge" },
+      { vendor: "aws", server: "m9g.8xlarge" },
+    ],
+  },
+  {
+    type: "card",
+    id: "aws-graviton-12xlarge",
+    title: "m6g / m7g / m8g / m9g 12xlarge (48 vCPU & 192 GiB RAM)",
+    description:
+      "Four Graviton generations compared at the 12xlarge size (48 vCPU, 192 GiB RAM).",
+    hide_description_in_index: true,
+    instances: [
+      { vendor: "aws", server: "m6g.12xlarge" },
+      { vendor: "aws", server: "m7g.12xlarge" },
+      { vendor: "aws", server: "m8g.12xlarge" },
+      { vendor: "aws", server: "m9g.12xlarge" },
+    ],
+  },
+  {
+    type: "card",
+    id: "aws-graviton-16xlarge",
+    title: "m6g / m7g / m8g / m9g 16xlarge (64 vCPU & 256 GiB RAM)",
+    description:
+      "Four Graviton generations compared at the 16xlarge size (64 vCPU, 256 GiB RAM).",
+    hide_description_in_index: true,
+    instances: [
+      { vendor: "aws", server: "m6g.16xlarge" },
+      { vendor: "aws", server: "m7g.16xlarge" },
+      { vendor: "aws", server: "m8g.16xlarge" },
+      { vendor: "aws", server: "m9g.16xlarge" },
+    ],
+  },
+  {
+    type: "card",
+    id: "aws-graviton-24xlarge",
+    title: "m8g / m9g 24xlarge (96 vCPU & 384 GiB RAM)",
+    description:
+      "m8g and m9g compared at the 24xlarge size (96 vCPU, 384 GiB RAM). Previous generations do not offer this size.",
+    hide_description_in_index: true,
+    instances: [
+      { vendor: "aws", server: "m8g.24xlarge" },
+      { vendor: "aws", server: "m9g.24xlarge" },
+    ],
+  },
+  {
+    type: "card",
+    id: "aws-graviton-48xlarge",
+    title: "m8g / m9g 48xlarge (192 vCPU & 768 GiB RAM)",
+    description:
+      "m8g and m9g compared at the 48xlarge size (192 vCPU, 768 GiB RAM). Previous generations do not offer this size.",
+    hide_description_in_index: true,
+    instances: [
+      { vendor: "aws", server: "m8g.48xlarge" },
+      { vendor: "aws", server: "m9g.48xlarge" },
+    ],
+  },
+  {
+    type: "card",
+    id: "aws-graviton-metal",
+    title: "m6g / m7g / m8g / m9g metal",
+    description:
+      "Metal instances across four Graviton generations: m6g.metal and m7g.metal (64 vCPU, 256 GiB RAM); m8g.metal-48xl and m9g.metal-48xl (192 vCPU, 768 GiB RAM).",
+    hide_description_in_index: true,
+    instances: [
+      { vendor: "aws", server: "m6g.metal" },
+      { vendor: "aws", server: "m7g.metal" },
+      { vendor: "aws", server: "m8g.metal-48xl" },
+      { vendor: "aws", server: "m9g.metal-48xl" },
+    ],
+  },
+  {
+    type: "section",
     title: "Further interesting lists of servers",
     description: `Curated lists of servers from various vendors that we used to publish blog posts or in social media.`,
   },
