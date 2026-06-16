@@ -77,6 +77,9 @@ import openApiSpec from "../../../../sdk/openapi.json";
 import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
 import { CpuCacheSizePipe } from "../../pipes/cpu-cache-size.pipe";
 import { GpuCountPipe } from "../../pipes/gpu-count.pipe";
+import { Ipv4CountPipe } from "../../pipes/ipv4-count.pipe";
+import { MonthlyTrafficPipe } from "../../pipes/monthly-traffic.pipe";
+import { NetworkSpeedPipe } from "../../pipes/network-speed.pipe";
 import {
   ADVISOR_AVERAGE_UTILIZATION_TITLE,
   ADVISOR_AVERAGE_UTILIZATION_TOOLTIP,
@@ -383,6 +386,9 @@ type AdvisorComparableResourceKey =
     PaginationComponent,
     GpuCountPipe,
     CpuCacheSizePipe,
+    Ipv4CountPipe,
+    MonthlyTrafficPipe,
+    NetworkSpeedPipe,
     RouterLink,
     SearchBarComponent,
   ],

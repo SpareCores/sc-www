@@ -1030,24 +1030,56 @@
                           }
                         </td>
                       }
-                      @if (column.type === "network_speed") {
+                      @if (
+                        column.type === "network_speed" &&
+                        column.key === "network_speed_baseline"
+                      ) {
                         <td>
-                          <span class="whitespace-nowrap">
-                            {{
-                              advisorUi.formatNetworkSpeed(
+                          <div class="flex flex-col gap-1 whitespace-nowrap">
+                            <span>
+                              Base
+                              {{
                                 recommendation.network_speed_baseline
-                              )
-                            }}
-                          </span>
+                                  | networkSpeed
+                              }}
+                            </span>
+                            <span>
+                              Max
+                              {{
+                                recommendation.network_speed_max | networkSpeed
+                              }}
+                            </span>
+                          </div>
+                        </td>
+                      }
+                      @if (
+                        column.type === "network_speed" &&
+                        column.key === "network_storage_speed_baseline"
+                      ) {
+                        <td>
+                          <div class="flex flex-col gap-1 whitespace-nowrap">
+                            <span>
+                              Base
+                              {{
+                                recommendation.network_storage_speed_baseline
+                                  | networkSpeed
+                              }}
+                            </span>
+                            <span>
+                              Max
+                              {{
+                                recommendation.network_storage_speed_max
+                                  | networkSpeed
+                              }}
+                            </span>
+                          </div>
                         </td>
                       }
                       @if (column.type === "inbound_traffic") {
                         <td>
                           <span class="whitespace-nowrap">
                             {{
-                              advisorUi.formatMonthlyTraffic(
-                                recommendation.inbound_traffic
-                              )
+                              recommendation.inbound_traffic | monthlyTraffic
                             }}
                           </span>
                         </td>
@@ -1056,9 +1088,7 @@
                         <td>
                           <span class="whitespace-nowrap">
                             {{
-                              advisorUi.formatMonthlyTraffic(
-                                recommendation.outbound_traffic
-                              )
+                              recommendation.outbound_traffic | monthlyTraffic
                             }}
                           </span>
                         </td>
@@ -1066,7 +1096,7 @@
                       @if (column.type === "ipv4") {
                         <td>
                           <span class="whitespace-nowrap">
-                            {{ advisorUi.formatIpv4(recommendation.ipv4) }}
+                            {{ recommendation.ipv4 | ipv4Count }}
                           </span>
                         </td>
                       }
