@@ -726,8 +726,7 @@ LIMIT 25;`,
   {
     type: "section",
     title: "AWS Graviton generation comparisons (between m6g and m9g)",
-    description: `<p>Compare four generations of AWS Graviton-powered <code>m6g</code>, <code>m7g</code>, <code>m8g</code>, and <code>m9g</code> instances at matching sizes. Larger <code>24xlarge</code> and <code>48xlarge</code> sizes are only available on <code>m8g</code> and <code>m9g</code> as older generations top out at <code>16xlarge</code>. Metal instances use <code>m6g.metal</code> / <code>m7g.metal</code> (64 vCPU) and <code>m8g.metal-48xl</code> / <code>m9g.metal-48xl</code> (192 vCPU).</p>
-    <p>See our <a href="/article/aws-graviton5-benchmarks">Graviton5 benchmarks blog post</a> for the full analysis.</p>`,
+    description: `Compare four generations of AWS Graviton-powered <code>m6g</code>, <code>m7g</code>, <code>m8g</code>, and <code>m9g</code> instances at matching sizes. Larger <code>24xlarge</code> and <code>48xlarge</code> sizes are only available on <code>m8g</code> and <code>m9g</code> as older generations top out at <code>16xlarge</code>. Metal instances use <code>m6g.metal</code> / <code>m7g.metal</code> (64 vCPU) and <code>m8g.metal-48xl</code> / <code>m9g.metal-48xl</code> (192 vCPU). See our Graviton5 benchmarks blog post for the full analysis: <a href="/article/aws-graviton5-benchmarks" target="_blank" rel="noopener" style="text-decoration-line: underline; text-decoration-style: dotted;">/article/aws-graviton5-benchmarks</a>.`,
   },
   {
     type: "card",
