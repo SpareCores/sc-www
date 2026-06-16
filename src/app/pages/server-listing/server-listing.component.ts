@@ -30,6 +30,7 @@ import { FormsModule } from "@angular/forms";
 import {
   LucideDynamicIcon,
   LucideCalendarSearch,
+  LucideCheck,
   LucideChevronDown,
   LucideChevronLeft,
   LucideChevronRight,
@@ -40,6 +41,7 @@ import {
   LucideScale,
   LucideSearch,
   LucideShipWheel,
+  LucideX,
 } from "@lucide/angular";
 import {
   SearchBarComponent,
@@ -122,6 +124,7 @@ const INVALID_BENCHMARK_URL_TOAST_BODY =
     FormsModule,
     BreadcrumbsComponent,
     LucideDynamicIcon,
+    LucideCheck,
     LucideCalendarSearch,
     LucideChevronDown,
     LucideChevronLeft,
@@ -133,6 +136,7 @@ const INVALID_BENCHMARK_URL_TOAST_BODY =
     LucideScale,
     LucideSearch,
     LucideShipWheel,
+    LucideX,
     RouterModule,
     SearchBarComponent,
     PaginationComponent,
@@ -777,16 +781,22 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   }
 
   getMemory(item: ServerPKs) {
-    return ((item.memory_amount || 0) / 1024).toFixed(1) + " GiB";
+    return item.memory_amount === null || item.memory_amount === undefined
+      ? "-"
+      : `${(item.memory_amount / 1024).toFixed(1)} GiB`;
   }
 
   getGPUMemory(item: ServerPKs, stat: "min" | "total" = "min"): string {
     const memory = stat === "min" ? item.gpu_memory_min : item.gpu_memory_total;
-    return ((memory || 0) / 1024).toFixed(1) + " GiB";
+    return memory === null || memory === undefined
+      ? "-"
+      : `${(memory / 1024).toFixed(1)} GiB`;
   }
 
   getStorage(item: ServerPKs) {
-    if (!item.storage_size) return "-";
+    if (item.storage_size === null || item.storage_size === undefined) {
+      return "-";
+    }
 
     if (item.storage_size < 1000) return `${item.storage_size} GB`;
 
@@ -794,7 +804,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   }
 
   getScore(value: number | null): string {
-    if (!value) return "-";
+    if (value === null || value === undefined) return "-";
     // make sure to show small numbers
     if (value < 1) {
       return value.toPrecision(1);
@@ -1113,17 +1123,19 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   }
 
   formatGbps(value: number | null | undefined) {
-    if (value === null || value === undefined || value <= 0) return "-";
+    if (value === null || value === undefined) return "-";
+
+    if (value === 0) return "0 Gbps";
 
     return `${formatNumberInputValue(value)} Gbps`;
   }
 
-  getField(item: ServerPriceWithPKs, field: string) {
+  getField(item: ServerPriceWithPKs, field: string): unknown {
     return field
       .split(".")
       .reduce(
         (obj, key) =>
-          obj && (obj as any)[key] ? (obj as any)[key] : undefined,
+          obj !== null && obj !== undefined ? (obj as any)[key] : undefined,
         item,
       );
   }
