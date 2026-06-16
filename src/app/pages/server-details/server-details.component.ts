@@ -53,6 +53,7 @@ import { AnalyticsService } from "../../services/analytics.service";
 import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
 import { ServerChartsComponent } from "../../components/server-charts/server-charts.component";
 import { ServerLstopoComponent } from "../../components/server-lstopo/server-lstopo.component";
+import { formatBooleanIconHtml } from "../../components/charts/shared/server-compare-table.utils";
 import {
   ServerPropertyCardComponent,
   ServerPropertyRow,
@@ -1008,7 +1009,29 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     const name = column.id;
     const prop = (this.serverDetails as any)[name];
 
-    if (prop === undefined || prop === null) {
+    if (name === "hw_virt") {
+      if (prop === true) {
+        return formatBooleanIconHtml(true);
+      }
+
+      if (prop === false) {
+        return formatBooleanIconHtml(false);
+      }
+
+      if (prop === undefined || prop === null) {
+        return "-";
+      }
+
+      if (typeof prop === "string" && prop.trim().toLowerCase() === "none") {
+        return "-";
+      }
+    }
+
+    if (prop === undefined || prop === null || typeof prop === "boolean") {
+      return undefined;
+    }
+
+    if (typeof prop === "string" && prop.trim().toLowerCase() === "none") {
       return undefined;
     }
 
