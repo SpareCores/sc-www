@@ -33,7 +33,7 @@ export class StoragePrices<SecurityDataType = unknown> {
    * @request GET:/storage_prices
    */
   searchStoragePricesStoragePricesGet = (
-    query: SearchStoragePricesStoragePricesGetParams,
+    query: SearchStoragePricesStoragePricesGetParams = {},
     params: RequestParams = {},
   ) =>
     this.http.request<

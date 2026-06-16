@@ -33,7 +33,7 @@ export class TrafficPrices<SecurityDataType = unknown> {
    * @request GET:/traffic_prices
    */
   searchTrafficPricesTrafficPricesGet = (
-    query: SearchTrafficPricesTrafficPricesGetParams,
+    query: SearchTrafficPricesTrafficPricesGetParams = {},
     params: RequestParams = {},
   ) =>
     this.http.request<

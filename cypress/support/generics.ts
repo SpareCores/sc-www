@@ -39,6 +39,22 @@ export abstract class E2EEvent {
     });
   }
 
+  public static hideBaselineServerCaretForScreenshot() {
+    cy.document().then((doc) => {
+      doc.getElementById("e2e-hide-baseline-server-caret")?.remove();
+
+      const style = doc.createElement("style");
+      style.id = "e2e-hide-baseline-server-caret";
+      style.textContent = `
+        #custom_control_input_baseline_server {
+          caret-color: transparent !important;
+        }
+      `;
+
+      doc.head.appendChild(style);
+    });
+  }
+
   public static screenshot(filename: string | undefined = undefined) {
     if (filename) {
       cy.screenshot(filename, { capture: "runner" });

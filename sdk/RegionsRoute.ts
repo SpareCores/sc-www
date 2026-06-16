@@ -34,7 +34,8 @@ export namespace Regions {
         | "gcp"
         | "hcloud"
         | "ovh"
-        | "upcloud";
+        | "upcloud"
+        | "vultr";
     };
     export type RequestBody = never;
     export type RequestHeaders = {};

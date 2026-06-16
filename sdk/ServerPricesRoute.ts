@@ -57,7 +57,8 @@ export namespace ServerPrices {
         | "Ampere"
         | "Apple"
         | "Intel"
-        | "Microsoft";
+        | "Microsoft"
+        | "NVIDIA";
       /** Processor family */
       cpu_family?:
         | "ARM"
@@ -65,6 +66,7 @@ export namespace ServerPrices {
         | "ARMv9"
         | "Ampere Altra"
         | "EPYC"
+        | "Grace"
         | "Xeon"
         | "Yitian";
       /**
@@ -73,18 +75,23 @@ export namespace ServerPrices {
        */
       cpu_allocation?: "Shared" | "Burstable" | "Dedicated";
       /**
-       * Minimum SCore
-       * Minimum stress-ng div16 CPU workload score.
+       * Hardware virtualization
+       * Filter for servers with hardware virtualization.
+       */
+      hw_virt?: boolean | null;
+      /**
+       * Required SCore
+       * Required stress-ng div16 CPU workload score.
        */
       benchmark_score_stressng_cpu_min?: number | null;
       /**
-       * Minimum $Core
-       * Minimum stress-ng div16 CPU workload score per USD/hr (using the best ondemand or spot price of all zones).
+       * Required $Core
+       * Required stress-ng div16 CPU workload score per USD/hr (using the best ondemand or spot price of all zones).
        */
       benchmark_score_per_price_stressng_cpu_min?: number | null;
       /**
-       * Minimum memory
-       * Minimum amount of memory in GBs.
+       * Required memory
+       * Required amount of memory in GBs.
        */
       memory_min?: number | null;
       /**
@@ -119,7 +126,8 @@ export namespace ServerPrices {
         | "gcp"
         | "hcloud"
         | "ovh"
-        | "upcloud";
+        | "upcloud"
+        | "vultr";
       /**
        * Region
        * Identifier of the region. Note that region ids are not vendor-specific, so when you select a region, you might get results from multiple vendors. For more precise filtering, use vendor_regions instead.
@@ -175,6 +183,7 @@ export namespace ServerPrices {
         | "6"
         | "7"
         | "af-south-1"
+        | "ams"
         | "ap-east-1"
         | "ap-east-2"
         | "ap-northeast-1"
@@ -189,10 +198,12 @@ export namespace ServerPrices {
         | "ap-southeast-5"
         | "ap-southeast-6"
         | "ap-southeast-7"
+        | "ap-southeast-8"
         | "AP-SOUTHEAST-SYD"
         | "AP-SOUTHEAST-SYD-2"
         | "AP-SOUTH-MUM"
         | "AP-SOUTH-MUM-1"
+        | "atl"
         | "australiacentral"
         | "australiacentral2"
         | "australiaeast"
@@ -202,6 +213,8 @@ export namespace ServerPrices {
         | "belgiumcentral"
         | "BHS"
         | "BHS5"
+        | "blr"
+        | "bom"
         | "brazilsouth"
         | "brazilsoutheast"
         | "brazilus"
@@ -210,6 +223,7 @@ export namespace ServerPrices {
         | "canadacentral"
         | "canadaeast"
         | "ca-west-1"
+        | "cdg"
         | "centralindia"
         | "centralus"
         | "centraluseuap"
@@ -236,7 +250,9 @@ export namespace ServerPrices {
         | "DE"
         | "DE1"
         | "de-fra1"
+        | "del"
         | "denmarkeast"
+        | "dfw"
         | "dk-cph1"
         | "eastasia"
         | "eastus"
@@ -254,8 +270,10 @@ export namespace ServerPrices {
         | "eu-west-2"
         | "eu-west-3"
         | "EU-WEST-PAR"
+        | "ewr"
         | "fi-hel1"
         | "fi-hel2"
+        | "fra"
         | "francecentral"
         | "francesouth"
         | "germanynorth"
@@ -264,22 +282,34 @@ export namespace ServerPrices {
         | "GRA11"
         | "GRA7"
         | "GRA9"
+        | "hnl"
+        | "icn"
         | "il-central-1"
         | "indonesiacentral"
         | "israelcentral"
         | "italynorth"
+        | "itm"
         | "japaneast"
         | "japanwest"
         | "jioindiacentral"
         | "jioindiawest"
+        | "jnb"
         | "koreacentral"
         | "koreasouth"
+        | "lax"
+        | "lhr"
+        | "mad"
         | "malaysiawest"
+        | "man"
         | "me-central-1"
         | "me-east-1"
+        | "mel"
         | "me-south-1"
+        | "mex"
         | "mexicocentral"
+        | "mia"
         | "mx-central-1"
+        | "mxp"
         | "na-south-1"
         | "newzealandnorth"
         | "nl-ams1"
@@ -288,6 +318,8 @@ export namespace ServerPrices {
         | "norwayeast"
         | "norwaywest"
         | "no-svg1"
+        | "nrt"
+        | "ord"
         | "pl-waw1"
         | "polandcentral"
         | "qatarcentral"
@@ -295,13 +327,18 @@ export namespace ServerPrices {
         | "RBX-A"
         | "RBX-ARCHIVE"
         | "sa-east-1"
+        | "sao"
         | "SBG"
         | "SBG5"
         | "SBG7"
+        | "scl"
+        | "sea"
         | "se-sto1"
+        | "sgp"
         | "SGP"
         | "SGP1"
         | "sg-sin1"
+        | "sjc"
         | "southafricanorth"
         | "southafricawest"
         | "southcentralus"
@@ -309,11 +346,14 @@ export namespace ServerPrices {
         | "southeastasia"
         | "southindia"
         | "spaincentral"
+        | "sto"
         | "swedencentral"
         | "switzerlandnorth"
         | "switzerlandwest"
+        | "syd"
         | "SYD"
         | "SYD1"
+        | "tlv"
         | "uaecentral"
         | "uaenorth"
         | "UK"
@@ -328,6 +368,7 @@ export namespace ServerPrices {
         | "us-sjo1"
         | "us-west-1"
         | "us-west-2"
+        | "waw"
         | "WAW"
         | "WAW1"
         | "westcentralus"
@@ -335,7 +376,8 @@ export namespace ServerPrices {
         | "westindia"
         | "westus"
         | "westus2"
-        | "westus3";
+        | "westus3"
+        | "yto";
       /**
        * Vendor and region
        * Identifier of the vendor and region, separated by a tilde.
@@ -348,6 +390,7 @@ export namespace ServerPrices {
         | "alicloud~ap-southeast-5"
         | "alicloud~ap-southeast-6"
         | "alicloud~ap-southeast-7"
+        | "alicloud~ap-southeast-8"
         | "alicloud~cn-beijing"
         | "alicloud~cn-chengdu"
         | "alicloud~cn-fuzhou"
@@ -367,6 +410,7 @@ export namespace ServerPrices {
         | "alicloud~cn-zhongwei"
         | "alicloud~eu-central-1"
         | "alicloud~eu-west-1"
+        | "alicloud~eu-west-2"
         | "alicloud~me-central-1"
         | "alicloud~me-east-1"
         | "alicloud~na-south-1"
@@ -563,15 +607,48 @@ export namespace ServerPrices {
         | "upcloud~uk-lon1"
         | "upcloud~us-chi1"
         | "upcloud~us-nyc1"
-        | "upcloud~us-sjo1";
+        | "upcloud~us-sjo1"
+        | "vultr~ams"
+        | "vultr~atl"
+        | "vultr~blr"
+        | "vultr~bom"
+        | "vultr~cdg"
+        | "vultr~del"
+        | "vultr~dfw"
+        | "vultr~ewr"
+        | "vultr~fra"
+        | "vultr~hnl"
+        | "vultr~icn"
+        | "vultr~itm"
+        | "vultr~jnb"
+        | "vultr~lax"
+        | "vultr~lhr"
+        | "vultr~mad"
+        | "vultr~man"
+        | "vultr~mel"
+        | "vultr~mex"
+        | "vultr~mia"
+        | "vultr~mxp"
+        | "vultr~nrt"
+        | "vultr~ord"
+        | "vultr~sao"
+        | "vultr~scl"
+        | "vultr~sea"
+        | "vultr~sgp"
+        | "vultr~sjc"
+        | "vultr~sto"
+        | "vultr~syd"
+        | "vultr~tlv"
+        | "vultr~waw"
+        | "vultr~yto";
       /**
        * Compliance framework
        * Compliance framework implemented at the vendor.
        */
       compliance_framework?: "hipaa" | "iso27001" | "soc2t2";
       /**
-       * Minimum local storage size
-       * Minimum amount of built-in local (SSD, HDD, NVMe) server storage in GBs.
+       * Required local storage size
+       * Required amount of built-in local (SSD, HDD, NVMe) server storage in GBs.
        */
       storage_size?: number | null;
       /**
@@ -625,17 +702,17 @@ export namespace ServerPrices {
         | "ZA";
       /**
        * GPU count
-       * Minimum number of GPUs.
+       * Required number of GPUs.
        */
       gpu_min?: number | null;
       /**
-       * Minimum GPU memory
-       * Minimum amount of GPU memory (GB) in each GPU.
+       * Required GPU memory
+       * Required amount of GPU memory (GB) in each GPU.
        */
       gpu_memory_min?: number | null;
       /**
        * Total GPU memory
-       * Minimum amount of total GPU memory (GBs) in all GPUs.
+       * Required amount of total GPU memory (GBs) in all GPUs.
        */
       gpu_memory_total?: number | null;
       /** GPU manufacturer */
@@ -645,6 +722,8 @@ export namespace ServerPrices {
         | "Ada Lovelace"
         | "Ampere"
         | "Blackwell"
+        | "CDNA3"
+        | "CDNA4"
         | "Gaudi"
         | "Hopper"
         | "Pascal"
@@ -655,19 +734,27 @@ export namespace ServerPrices {
       gpu_model?:
         | "A10"
         | "A100"
+        | "A100 PCIE"
+        | "A100 SXM"
         | "A10G"
+        | "A16"
+        | "A40"
         | "B200"
         | "B300"
         | "G49"
         | "G49E"
-        | "G59"
+        | "GH200"
         | "GPU H"
         | "H100"
         | "H200"
         | "HL-205"
         | "L20"
+        | "L20N"
         | "L4"
         | "L40S"
+        | "MI300X"
+        | "MI325X"
+        | "MI355X"
         | "P100"
         | "P4"
         | "RTX 5000"

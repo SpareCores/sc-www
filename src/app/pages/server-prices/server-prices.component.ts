@@ -206,6 +206,20 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
       key: "server.cpu_allocation",
     },
     {
+      name: "HW VIRT",
+      show: false,
+      type: "text",
+      key: "server.hw_virt",
+      orderField: "server.hw_virt",
+    },
+    {
+      name: "START TIME",
+      show: false,
+      type: "text",
+      key: "server.average_time_to_start",
+      orderField: "server.average_time_to_start",
+    },
+    {
       name: "SCORE",
       show: true,
       type: "score",

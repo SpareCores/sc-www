@@ -499,13 +499,32 @@
                           </div>
                         </td>
                       }
-                      @if (
-                        column.type === "text" && column.key === "network_speed"
-                      ) {
+                      @if (column.type === "network_speed") {
                         <td>
-                          <span class="whitespace-nowrap">
-                            {{ item.network_speed | networkSpeed }}
-                          </span>
+                          <div class="flex flex-col gap-1 text-white">
+                            <span class="whitespace-nowrap">
+                              Base {{ formatGbps(item.network_speed_baseline) }}
+                            </span>
+                            <span class="whitespace-nowrap">
+                              Max {{ formatGbps(item.network_speed_max) }}
+                            </span>
+                          </div>
+                        </td>
+                      }
+                      @if (column.type === "storage_speed") {
+                        <td>
+                          <div class="flex flex-col gap-1 text-white">
+                            <span class="whitespace-nowrap">
+                              Base
+                              {{
+                                formatGbps(item.network_storage_speed_baseline)
+                              }}
+                            </span>
+                            <span class="whitespace-nowrap">
+                              Max
+                              {{ formatGbps(item.network_storage_speed_max) }}
+                            </span>
+                          </div>
                         </td>
                       }
                       @if (
@@ -538,7 +557,6 @@
                       @if (
                         column.type === "text" &&
                         column.key &&
-                        column.key !== "network_speed" &&
                         column.key !== "inbound_traffic" &&
                         column.key !== "outbound_traffic" &&
                         column.key !== "ipv4"

@@ -537,6 +537,7 @@ describe("SearchBarComponent", () => {
           unit: "Millions of operations per second (Mops/s)",
           framework: "passmark",
           description: null,
+          category: null,
         },
       }),
     ).toBe("Single thread | Millions of operations per second (Mops/s)");
@@ -574,6 +575,7 @@ describe("SearchBarComponent", () => {
                   name: "Fio Random Read",
                   framework: "fio",
                   description: null,
+                  category: null,
                 },
               },
             ],
