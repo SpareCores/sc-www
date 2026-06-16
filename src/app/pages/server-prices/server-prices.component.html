@@ -396,7 +396,27 @@
                       }
                       @if (column.type === "text" && column.key) {
                         <td>
-                          {{ getField(server, column.key) }}
+                          @let fieldValue = getField(server, column.key);
+                          @if (fieldValue === true) {
+                            <svg
+                              lucideCheck
+                              class="h-4 w-4 shrink-0 text-emerald-400"
+                            ></svg>
+                          } @else if (fieldValue === false) {
+                            <svg
+                              lucideX
+                              class="h-4 w-4 shrink-0 text-white"
+                            ></svg>
+                          } @else if (
+                            fieldValue === null ||
+                            fieldValue === undefined ||
+                            (typeof fieldValue === "string" &&
+                              fieldValue.toLowerCase() === "none")
+                          ) {
+                            -
+                          } @else {
+                            {{ fieldValue }}
+                          }
                         </td>
                       }
                       @if (column.type === "country") {

@@ -26,6 +26,8 @@ import {
   LucideDollarSign,
   LucideInfo,
   LucideScale,
+  LucideCheck,
+  LucideX,
 } from "@lucide/angular";
 import { CountryIdtoNamePipe } from "../../pipes/country-idto-name.pipe";
 import { GpuCountPipe } from "../../pipes/gpu-count.pipe";
@@ -102,6 +104,8 @@ export type RegionVendorMetadata = {
     LucideScale,
     CountryIdtoNamePipe,
     GpuCountPipe,
+    LucideCheck,
+    LucideX,
     RouterModule,
     SearchBarComponent,
     PaginationComponent,
@@ -415,15 +419,25 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
   }
 
   getMemory(item: ServerPriceWithPKs) {
-    return ((item.server.memory_amount || 0) / 1024).toFixed(1) + " GiB";
+    return item.server.memory_amount === null ||
+      item.server.memory_amount === undefined
+      ? "-"
+      : `${(item.server.memory_amount / 1024).toFixed(1)} GiB`;
   }
 
   getGPUMemory(item: ServerPriceWithPKs) {
-    return ((item.server.gpu_memory_min || 0) / 1024).toFixed(1) + " GiB";
+    return item.server.gpu_memory_min === null ||
+      item.server.gpu_memory_min === undefined
+      ? "-"
+      : `${(item.server.gpu_memory_min / 1024).toFixed(1)} GiB`;
   }
 
   getStorage(item: ServerPriceWithPKs) {
-    if (!item.server.storage_size) return "-";
+    if (
+      item.server.storage_size === null ||
+      item.server.storage_size === undefined
+    )
+      return "-";
 
     if (item.server.storage_size < 1000)
       return `${item.server.storage_size} GB`;
@@ -432,7 +446,7 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
   }
 
   getScore(value: number | null): string {
-    return value ? value.toFixed(0) : "-";
+    return value === null || value === undefined ? "-" : value.toFixed(0);
   }
 
   getAllocationName(allocation: string | null) {
@@ -700,12 +714,12 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
     window.scrollTo(0, 0);
   }
 
-  getField(item: ServerPriceWithPKs, field: string) {
+  getField(item: ServerPriceWithPKs, field: string): unknown {
     return field
       .split(".")
       .reduce(
         (obj, key) =>
-          obj && (obj as any)[key] ? (obj as any)[key] : undefined,
+          obj !== null && obj !== undefined ? (obj as any)[key] : undefined,
         item,
       );
   }
