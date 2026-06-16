@@ -6,6 +6,7 @@ import {
   ServerPrice,
 } from "../../../../sdk/data-contracts";
 import { BestPriceAllocationType } from "../../tools/shared_data";
+import { formatNumberInputValue } from "../../pipes/pipe-utils";
 import { ADVISOR_DEFAULT_EMPTY_RESULTS_MESSAGE } from "./advisor.constants";
 import {
   AdvisorBaselinePriceAggregate,
@@ -256,7 +257,7 @@ export class AdvisorUiService {
   }
 
   formatMemory(item: Pick<ServerPKs, "memory_amount">): string {
-    return `${((item.memory_amount || 0) / 1024).toFixed(1)} GiB`;
+    return this.formatGiBValue(item.memory_amount);
   }
 
   formatGpuMemory(
@@ -265,15 +266,15 @@ export class AdvisorUiService {
   ): string {
     const memory = stat === "min" ? item.gpu_memory_min : item.gpu_memory_total;
 
-    if (!memory) {
+    if (memory === null || memory === undefined) {
       return ADVISOR_EMPTY_VALUE;
     }
 
-    return `${(memory / 1024).toFixed(1)} GiB`;
+    return this.formatGiBValue(memory);
   }
 
   formatStorage(item: Pick<ServerPKs, "storage_size">): string {
-    if (!item.storage_size) {
+    if (item.storage_size === null || item.storage_size === undefined) {
       return ADVISOR_EMPTY_VALUE;
     }
 
@@ -325,42 +326,6 @@ export class AdvisorUiService {
 
   getModelDetail(item: ServerPKs, modelKey: "cpu_model" | "gpu_model"): string {
     return this.formatPresentValue(this.getRecordValue(item, modelKey));
-  }
-
-  formatNetworkSpeed(value: number | null | undefined): string {
-    if (!value || value <= 0) {
-      return ADVISOR_EMPTY_VALUE;
-    }
-
-    if (value < 1) {
-      const mbps = value * 1000;
-      const formatted = Number.isInteger(mbps)
-        ? mbps.toString()
-        : mbps.toFixed(1);
-      return `${formatted} Mbps`;
-    }
-
-    const formatted = Number.isInteger(value)
-      ? value.toString()
-      : value.toFixed(1);
-    return `${formatted} Gbps`;
-  }
-
-  formatMonthlyTraffic(value: number | null | undefined): string {
-    if (!value || value <= 0) {
-      return ADVISOR_EMPTY_VALUE;
-    }
-
-    const isTiB = value >= 1024;
-    const transformedValue = isTiB ? value / 1024 : value;
-    const formatted = Number.isInteger(transformedValue)
-      ? transformedValue.toString()
-      : transformedValue.toFixed(1);
-    return `${formatted} ${isTiB ? "TiB/mo" : "GiB/mo"}`;
-  }
-
-  formatIpv4(value: number | null | undefined): string {
-    return !value || value <= 0 ? ADVISOR_EMPTY_VALUE : String(value);
   }
 
   getVendorLinkId(server: ServerPKs): string {
@@ -544,6 +509,19 @@ export class AdvisorUiService {
     return value === null || value === undefined || value === ""
       ? ADVISOR_EMPTY_VALUE
       : String(value);
+  }
+
+  private formatGiBValue(valueInMiB: number | null | undefined): string {
+    if (valueInMiB === null || valueInMiB === undefined) {
+      return ADVISOR_EMPTY_VALUE;
+    }
+
+    const valueInGiB = valueInMiB / 1024;
+    const formattedValue = Number.isInteger(valueInGiB)
+      ? `${formatNumberInputValue(valueInGiB, 0)}.0`
+      : formatNumberInputValue(valueInGiB, 1);
+
+    return `${formattedValue} GiB`;
   }
 
   private normalizeFiniteNumber(value: unknown): number | null {
