@@ -37,7 +37,21 @@
                 </div>
               </td>
               <td>
-                <div class="property_value" [innerHTML]="property.value"></div>
+                @if (property.value === "check" || property.value === "x") {
+                  <div class="property_value">
+                    <svg
+                      [lucideIcon]="property.value"
+                      class="h-4 w-4 shrink-0"
+                      [class.text-emerald-400]="property.value === 'check'"
+                      [class.text-white]="property.value === 'x'"
+                    ></svg>
+                  </div>
+                } @else {
+                  <div
+                    class="property_value"
+                    [innerHTML]="property.value"
+                  ></div>
+                }
               </td>
             </tr>
           }
