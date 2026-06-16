@@ -561,30 +561,32 @@
                         column.key !== "outbound_traffic" &&
                         column.key !== "ipv4"
                       ) {
-                        <td
-                          class="flex items-center justify-center min-h-[60px]"
-                        >
-                          @let fieldValue = getField(item, column.key);
-                          @if (fieldValue === true) {
-                            <svg
-                              lucideCheck
-                              class="h-4 w-4 shrink-0 text-emerald-400"
-                            ></svg>
-                          } @else if (fieldValue === false) {
-                            <svg
-                              lucideX
-                              class="h-4 w-4 shrink-0 text-white"
-                            ></svg>
-                          } @else if (
-                            fieldValue === null ||
-                            fieldValue === undefined ||
-                            (typeof fieldValue === "string" &&
-                              fieldValue.trim().toLowerCase() === "none")
-                          ) {
-                            -
-                          } @else {
-                            {{ fieldValue }}
-                          }
+                        <td>
+                          <div
+                            class="flex items-center justify-center min-h-[60px]"
+                          >
+                            @let fieldValue = getField(item, column.key);
+                            @if (fieldValue === true) {
+                              <svg
+                                lucideCheck
+                                class="h-4 w-4 shrink-0 text-emerald-400"
+                              ></svg>
+                            } @else if (fieldValue === false) {
+                              <svg
+                                lucideX
+                                class="h-4 w-4 shrink-0 text-white"
+                              ></svg>
+                            } @else if (
+                              fieldValue === null ||
+                              fieldValue === undefined ||
+                              (typeof fieldValue === "string" &&
+                                fieldValue.trim().toLowerCase() === "none")
+                            ) {
+                              -
+                            } @else {
+                              {{ fieldValue }}
+                            }
+                          </div>
                         </td>
                       }
                       @if (column.type === "vendor") {
