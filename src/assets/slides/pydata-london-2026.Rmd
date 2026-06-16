@@ -6,6 +6,7 @@ conference: "PyData London 2026"
 conference_url: "https://pydata.org/london2026"
 conference_talk_url: "https://pretalx.com/pydata-london-2026/talk/ABYV3J/"
 conference_talk_slides: "/assets/slides/pydata-london-2026.html#/coverslide"
+conference_talk_video: "https://youtu.be/eY00nFhlswk"
 abstract: |
   Choosing a cloud instance type for a DS/ML/AI workload is still largely a heuristic exercise. While public pricing and hardware specifications are available, they are fragmented, inconsistently structured, and challenging to compare across cloud providers -- especially once real workload performance is taken into account.
   In this talk, we present Spare Cores Navigator, a Python-queryable benchmark dataset that covers thousands of cloud server types from multiple vendors, with standardized performance and cost-efficiency metrics. We demonstrate how instance selection can be expressed as a simple data query, e.g. filtering by workload characteristics, hardware or compliance constraints, and budget, then ranking candidates by price-performance.
