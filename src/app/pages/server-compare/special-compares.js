@@ -1,6 +1,7 @@
 const specialCompares = [
   {
     type: "section",
+    id: "best-multicore-performance-servers",
     title: "Best multi-core performance servers",
     description: `<p>Manually curated lists of servers with the best multi-core performance as per stress-ng's <code>div16</code> CPU burning method. This benchmark is a good indicator of how well a server can handle CPU-bound workloads that can perfectly scale to all available processor cores.</p>
     <p>Servers using the same CPU model at the same vendor were deduplicated, and only the most general options were kept with similar memory amounts (e.g. from AWS's <code>r6a.large</code>, <code>m6a.large</code>, and <code>c6a.large</code> showing only <code>m6a.large</code> with 8 GiB of memory; similarly GCP's <code>c2d-highmem-2</code>, <code>c2d-standard-2</code>, and <code>c2d-highcpu-2</code> showing only <code>c2d-standard-2</code> with 8 GiB of memory).</p>`,
@@ -200,6 +201,7 @@ LIMIT 25;`,
   },
   {
     type: "section",
+    id: "best-single-core-performance-servers",
     title: "Best single-core performance servers",
     description: `<p>Manually curated lists of servers with the best single-core performance as per stress-ng's <code>div16</code> CPU burning method.</p>
     <p>Servers using the same CPU model at the same vendor were deduplicated, and only the cheaper options were kept, usually with lower number of physical cores (e.g. from AWS's <code>m7a.medium</code> and <code>c7a.large</code> showing only <code>m7a.medium</code> with a single core; or from <code>c6i.large</code>, <code>c6in.large</code>, and <code>c6id.large</code> only the first).</p>`,
@@ -390,6 +392,7 @@ LIMIT 25;`,
   },
   {
     type: "section",
+    id: "best-performance-servers-for-static-web-serving",
     title: "Best performance servers for static web serving",
     description: `Manually curated list of servers with the highest performance for serving static websites as per our extrapolated RPS based on the <code>binserve</code> + <code>wrk</code> benchmarks.`,
     query: `WITH minprice AS (
@@ -497,6 +500,7 @@ LIMIT 25;`,
   },
   {
     type: "section",
+    id: "best-performance-servers-for-redis",
     title: "Best performance servers for Redis",
     description: `Manually curated list of servers with the highest performance for Redis as per our extrapolated RPS based on <code>memetier_benchmark</code>.`,
     query: `WITH minprice AS (
@@ -604,6 +608,7 @@ LIMIT 25;`,
   },
   {
     type: "section",
+    id: "hetzner-cloud-offerings",
     title: "Hetzner Cloud offerings",
     description: `List of all Hetzner Cloud server types with 2, 4, 8, and 16 vCPUs for easy comparison.`,
   },
@@ -725,8 +730,9 @@ LIMIT 25;`,
   },
   {
     type: "section",
+    id: "aws-graviton-medium",
     title: "AWS Graviton generation comparisons (between m6g and m9g)",
-    description: `Compare four generations of AWS Graviton-powered <code>m6g</code>, <code>m7g</code>, <code>m8g</code>, and <code>m9g</code> instances at matching sizes. Larger <code>24xlarge</code> and <code>48xlarge</code> sizes are only available on <code>m8g</code> and <code>m9g</code> as older generations top out at <code>16xlarge</code>. Metal instances use <code>m6g.metal</code> / <code>m7g.metal</code> (64 vCPU) and <code>m8g.metal-48xl</code> / <code>m9g.metal-48xl</code> (192 vCPU). See our Graviton5 benchmarks blog post for the full analysis: <a href="/article/aws-graviton5-benchmarks" target="_blank" rel="noopener" style="text-decoration-line: underline; text-decoration-style: dotted;">/article/aws-graviton5-benchmarks</a>.`,
+    description: `Compare four generations of AWS Graviton-powered <code>m6g</code>, <code>m7g</code>, <code>m8g</code>, and <code>m9g</code> instances at matching sizes. Larger <code>24xlarge</code> and <code>48xlarge</code> sizes are only available on <code>m8g</code> and <code>m9g</code> as older generations top out at <code>16xlarge</code>. Metal instances use <code>m6g.metal</code> / <code>m7g.metal</code> (64 vCPU) and <code>m8g.metal-48xl</code> / <code>m9g.metal-48xl</code> (192 vCPU). See our <a href="/article/aws-graviton5-benchmarks" target="_blank" rel="noopener"><span class="text-emerald-400">Graviton5 benchmarks blog post</span></a> for the full analysis.`,
   },
   {
     type: "card",
@@ -880,6 +886,7 @@ LIMIT 25;`,
   },
   {
     type: "section",
+    id: "further-interesting-lists-of-servers",
     title: "Further interesting lists of servers",
     description: `Curated lists of servers from various vendors that we used to publish blog posts or in social media.`,
   },
