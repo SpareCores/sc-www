@@ -579,7 +579,7 @@
                             fieldValue === null ||
                             fieldValue === undefined ||
                             (typeof fieldValue === "string" &&
-                              fieldValue.toLowerCase() === "none")
+                              fieldValue.trim().toLowerCase() === "none")
                           ) {
                             -
                           } @else {
