@@ -1352,20 +1352,38 @@ describe("AdvisorComponent", () => {
     );
   }));
 
-  it("keeps the vendor column informational rather than orderable", () => {
+  it("cycles vendor ordering through desc, asc, and cleared state", () => {
     const vendorColumn = component
       .possibleColumns()
       .find((column) => column.name === "VENDOR");
 
-    expect(vendorColumn?.name).toBe("VENDOR");
-    expect(vendorColumn?.orderField).toBeUndefined();
+    expect(vendorColumn).toEqual(
+      jasmine.objectContaining({
+        show: false,
+        orderField: "vendor_id",
+      }),
+    );
 
-    component.manualOrderBy.set("memory_amount");
-    component.manualOrderDir.set(OrderDir.Desc);
     component.toggleOrdering(vendorColumn!);
 
-    expect(component.manualOrderBy()).toBe("memory_amount");
+    expect(component.manualOrderBy()).toBe("vendor_id");
     expect(component.manualOrderDir()).toBe(OrderDir.Desc);
+    expect(component.getOrderingIcon(vendorColumn!)).toBe(
+      "arrow-down-wide-narrow",
+    );
+
+    component.toggleOrdering(vendorColumn!);
+
+    expect(component.manualOrderBy()).toBe("vendor_id");
+    expect(component.manualOrderDir()).toBe(OrderDir.Asc);
+    expect(component.getOrderingIcon(vendorColumn!)).toBe(
+      "arrow-down-narrow-wide",
+    );
+
+    component.toggleOrdering(vendorColumn!);
+
+    expect(component.manualOrderBy()).toBeUndefined();
+    expect(component.manualOrderDir()).toBeUndefined();
     expect(component.getOrderingIcon(vendorColumn!)).toBeNull();
   });
 
