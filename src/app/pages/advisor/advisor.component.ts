@@ -359,7 +359,13 @@ type AdvisorComparableResourceKey =
   | "storage_size"
   | "cpu_l1d_cache"
   | "cpu_l2_cache"
-  | "cpu_l3_cache";
+  | "cpu_l3_cache"
+  | "network_speed_baseline"
+  | "network_speed_max"
+  | "network_storage_speed_baseline"
+  | "network_storage_speed_max"
+  | "inbound_traffic"
+  | "outbound_traffic";
 
 @Component({
   selector: "app-advisor",
@@ -1647,16 +1653,30 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
       return null;
     }
 
-    const baselineServer = this.selectedBaselineServer();
-
-    if (!baselineServer) {
+    if (!this.selectedBaselineServer()) {
       return null;
     }
 
     return this.advisorUi.buildComparableResourceDelta(
       recommendation[resourceKey],
-      baselineServer[resourceKey],
+      this.getBaselineComparisonValue(resourceKey),
     );
+  }
+
+  private getBaselineComparisonValue(
+    resourceKey: AdvisorComparableResourceKey,
+  ): number | null | undefined {
+    const baselineRecommendation = this.recommendations().find(
+      (recommendation) => {
+        return this.isSelectedBaselineRecommendation(recommendation);
+      },
+    );
+
+    if (baselineRecommendation) {
+      return baselineRecommendation[resourceKey] ?? null;
+    }
+
+    return this.selectedBaselineServer()?.[resourceKey];
   }
 
   getDeltaLabel(delta: AdvisorMetricDelta): string | null {
