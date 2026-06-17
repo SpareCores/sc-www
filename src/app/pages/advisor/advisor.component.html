@@ -853,9 +853,7 @@
                       @if (column.type === "gpu_memory_min") {
                         <td>
                           <div class="text-sm text-white">
-                            {{
-                              advisorUi.formatGpuMemory(recommendation, "min")
-                            }}
+                            {{ recommendation.gpu_memory_min | gpuMemory }}
                           </div>
                           @if (
                             getComparableResourceDelta(
@@ -891,9 +889,7 @@
                       @if (column.type === "gpu_memory_total") {
                         <td>
                           <div class="text-sm text-white">
-                            {{
-                              advisorUi.formatGpuMemory(recommendation, "total")
-                            }}
+                            {{ recommendation.gpu_memory_total | gpuMemory }}
                           </div>
                           @if (
                             getComparableResourceDelta(
@@ -951,7 +947,7 @@
                       @if (column.type === "storage") {
                         <td>
                           <div class="text-sm text-white whitespace-nowrap">
-                            {{ advisorUi.formatStorage(recommendation) }}
+                            {{ recommendation.storage_size | storage }}
                             @if (
                               getComparableResourceDelta(
                                 recommendation,

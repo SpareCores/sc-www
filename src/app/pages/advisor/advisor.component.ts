@@ -67,6 +67,8 @@ import { GpuCountPipe } from "../../pipes/gpu-count.pipe";
 import { Ipv4CountPipe } from "../../pipes/ipv4-count.pipe";
 import { MonthlyTrafficPipe } from "../../pipes/monthly-traffic.pipe";
 import { NetworkSpeedPipe } from "../../pipes/network-speed.pipe";
+import { StoragePipe } from "../../pipes/storage.pipe";
+import { GpuMemoryPipe } from "../../pipes/gpu-memory.pipe";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { NeetoCalService } from "../../services/neeto-cal.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
@@ -395,6 +397,8 @@ type AdvisorComparableResourceKey =
     Ipv4CountPipe,
     MonthlyTrafficPipe,
     NetworkSpeedPipe,
+    StoragePipe,
+    GpuMemoryPipe,
     RouterLink,
     SearchBarComponent,
   ],
@@ -1658,7 +1662,9 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     return this.advisorUi.buildComparableResourceDelta(
-      recommendation[resourceKey],
+      resourceKey === "storage_size"
+        ? (recommendation[resourceKey] ?? 0)
+        : recommendation[resourceKey],
       this.getBaselineComparisonValue(resourceKey),
     );
   }
@@ -1672,11 +1678,22 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
       },
     );
 
-    if (baselineRecommendation?.[resourceKey] != null) {
-      return baselineRecommendation[resourceKey];
+    if (baselineRecommendation) {
+      const value = baselineRecommendation[resourceKey];
+      if (typeof value === "number" && Number.isFinite(value)) {
+        return value;
+      }
     }
 
-    return this.selectedBaselineServer()?.[resourceKey];
+    const baselineServerValue = this.selectedBaselineServer()?.[resourceKey];
+    if (
+      typeof baselineServerValue === "number" &&
+      Number.isFinite(baselineServerValue)
+    ) {
+      return baselineServerValue;
+    }
+
+    return resourceKey === "storage_size" ? 0 : undefined;
   }
 
   getDeltaLabel(delta: AdvisorMetricDelta): string | null {
