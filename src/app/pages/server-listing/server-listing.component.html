@@ -412,18 +412,18 @@
                       }
                       @if (column.type === "gpu_memory_min") {
                         <td>
-                          {{ getGPUMemory(item, "min") }}
+                          {{ item.gpu_memory_min | gpuMemory }}
                         </td>
                       }
                       @if (column.type === "gpu_memory_total") {
                         <td>
-                          {{ getGPUMemory(item, "total") }}
+                          {{ item.gpu_memory_total | gpuMemory }}
                         </td>
                       }
                       @if (column.type === "storage") {
                         <td>
                           <div class="text-sm text-white">
-                            {{ getStorage(item) }}
+                            {{ item.storage_size | storage }}
                           </div>
                           @if (item.storage_type) {
                             <div class="text-xs text-white">
