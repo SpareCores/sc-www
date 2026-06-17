@@ -1042,12 +1042,71 @@
                                 recommendation.network_speed_baseline
                                   | networkSpeed
                               }}
+                              @if (
+                                getComparableResourceDelta(
+                                  recommendation,
+                                  "network_speed_baseline"
+                                );
+                                as networkSpeedBaselineDelta
+                              ) {
+                                @if (
+                                  getParenthesizedDeltaLabel(
+                                    networkSpeedBaselineDelta
+                                  );
+                                  as networkSpeedBaselineDeltaLabel
+                                ) {
+                                  <span
+                                    class="advisor-table-delta whitespace-nowrap"
+                                    [class.advisor-table-delta--positive]="
+                                      networkSpeedBaselineDelta.tone ===
+                                      'positive'
+                                    "
+                                    [class.advisor-table-delta--negative]="
+                                      networkSpeedBaselineDelta.tone ===
+                                      'negative'
+                                    "
+                                    [class.advisor-table-delta--neutral]="
+                                      networkSpeedBaselineDelta.tone ===
+                                      'neutral'
+                                    "
+                                  >
+                                    {{ networkSpeedBaselineDeltaLabel }}
+                                  </span>
+                                }
+                              }
                             </span>
                             <span>
                               Max
                               {{
                                 recommendation.network_speed_max | networkSpeed
                               }}
+                              @if (
+                                getComparableResourceDelta(
+                                  recommendation,
+                                  "network_speed_max"
+                                );
+                                as networkSpeedMaxDelta
+                              ) {
+                                @if (
+                                  getParenthesizedDeltaLabel(networkSpeedMaxDelta);
+                                  as networkSpeedMaxDeltaLabel
+                                ) {
+                                  <span
+                                    class="advisor-table-delta whitespace-nowrap"
+                                    [class.advisor-table-delta--positive]="
+                                      networkSpeedMaxDelta.tone === 'positive'
+                                    "
+                                    [class.advisor-table-delta--negative]="
+                                      networkSpeedMaxDelta.tone === 'negative'
+                                    "
+                                    [class.advisor-table-delta--neutral]="
+                                      networkSpeedMaxDelta.tone === 'neutral'
+                                    "
+                                  >
+                                    {{ networkSpeedMaxDeltaLabel }}
+                                  </span>
+                                }
+                              }
                             </span>
                           </div>
                         </td>
@@ -1064,6 +1123,38 @@
                                 recommendation.network_storage_speed_baseline
                                   | networkSpeed
                               }}
+                              @if (
+                                getComparableResourceDelta(
+                                  recommendation,
+                                  "network_storage_speed_baseline"
+                                );
+                                as networkStorageSpeedBaselineDelta
+                              ) {
+                                @if (
+                                  getParenthesizedDeltaLabel(
+                                    networkStorageSpeedBaselineDelta
+                                  );
+                                  as networkStorageSpeedBaselineDeltaLabel
+                                ) {
+                                  <span
+                                    class="advisor-table-delta whitespace-nowrap"
+                                    [class.advisor-table-delta--positive]="
+                                      networkStorageSpeedBaselineDelta.tone ===
+                                      'positive'
+                                    "
+                                    [class.advisor-table-delta--negative]="
+                                      networkStorageSpeedBaselineDelta.tone ===
+                                      'negative'
+                                    "
+                                    [class.advisor-table-delta--neutral]="
+                                      networkStorageSpeedBaselineDelta.tone ===
+                                      'neutral'
+                                    "
+                                  >
+                                    {{ networkStorageSpeedBaselineDeltaLabel }}
+                                  </span>
+                                }
+                              }
                             </span>
                             <span>
                               Max
@@ -1071,6 +1162,38 @@
                                 recommendation.network_storage_speed_max
                                   | networkSpeed
                               }}
+                              @if (
+                                getComparableResourceDelta(
+                                  recommendation,
+                                  "network_storage_speed_max"
+                                );
+                                as networkStorageSpeedMaxDelta
+                              ) {
+                                @if (
+                                  getParenthesizedDeltaLabel(
+                                    networkStorageSpeedMaxDelta
+                                  );
+                                  as networkStorageSpeedMaxDeltaLabel
+                                ) {
+                                  <span
+                                    class="advisor-table-delta whitespace-nowrap"
+                                    [class.advisor-table-delta--positive]="
+                                      networkStorageSpeedMaxDelta.tone ===
+                                      'positive'
+                                    "
+                                    [class.advisor-table-delta--negative]="
+                                      networkStorageSpeedMaxDelta.tone ===
+                                      'negative'
+                                    "
+                                    [class.advisor-table-delta--neutral]="
+                                      networkStorageSpeedMaxDelta.tone ===
+                                      'neutral'
+                                    "
+                                  >
+                                    {{ networkStorageSpeedMaxDeltaLabel }}
+                                  </span>
+                                }
+                              }
                             </span>
                           </div>
                         </td>
@@ -1081,6 +1204,33 @@
                             {{
                               recommendation.inbound_traffic | monthlyTraffic
                             }}
+                            @if (
+                              getComparableResourceDelta(
+                                recommendation,
+                                "inbound_traffic"
+                              );
+                              as inboundTrafficDelta
+                            ) {
+                              @if (
+                                getParenthesizedDeltaLabel(inboundTrafficDelta);
+                                as inboundTrafficDeltaLabel
+                              ) {
+                                <span
+                                  class="advisor-table-delta whitespace-nowrap"
+                                  [class.advisor-table-delta--positive]="
+                                    inboundTrafficDelta.tone === 'positive'
+                                  "
+                                  [class.advisor-table-delta--negative]="
+                                    inboundTrafficDelta.tone === 'negative'
+                                  "
+                                  [class.advisor-table-delta--neutral]="
+                                    inboundTrafficDelta.tone === 'neutral'
+                                  "
+                                >
+                                  {{ inboundTrafficDeltaLabel }}
+                                </span>
+                              }
+                            }
                           </span>
                         </td>
                       }
@@ -1090,6 +1240,33 @@
                             {{
                               recommendation.outbound_traffic | monthlyTraffic
                             }}
+                            @if (
+                              getComparableResourceDelta(
+                                recommendation,
+                                "outbound_traffic"
+                              );
+                              as outboundTrafficDelta
+                            ) {
+                              @if (
+                                getParenthesizedDeltaLabel(outboundTrafficDelta);
+                                as outboundTrafficDeltaLabel
+                              ) {
+                                <span
+                                  class="advisor-table-delta whitespace-nowrap"
+                                  [class.advisor-table-delta--positive]="
+                                    outboundTrafficDelta.tone === 'positive'
+                                  "
+                                  [class.advisor-table-delta--negative]="
+                                    outboundTrafficDelta.tone === 'negative'
+                                  "
+                                  [class.advisor-table-delta--neutral]="
+                                    outboundTrafficDelta.tone === 'neutral'
+                                  "
+                                >
+                                  {{ outboundTrafficDeltaLabel }}
+                                </span>
+                              }
+                            }
                           </span>
                         </td>
                       }
