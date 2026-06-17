@@ -93,3 +93,6 @@ src/assets/articles/drafts/
 
 # custom copilot instructions (dev)
 .github/copilot-instructions.md
+
+# cursor rules
+.cursor/rules/
