@@ -501,11 +501,11 @@
                       }
                       @if (column.type === "network_speed") {
                         <td>
-                          <div class="flex flex-col gap-1 text-white">
+                          <div class="flex flex-col text-white">
                             <span class="whitespace-nowrap">
                               Base {{ formatGbps(item.network_speed_baseline) }}
                             </span>
-                            <span class="whitespace-nowrap">
+                            <span class="whitespace-nowrap text-xs">
                               Max {{ formatGbps(item.network_speed_max) }}
                             </span>
                           </div>
@@ -513,14 +513,14 @@
                       }
                       @if (column.type === "storage_speed") {
                         <td>
-                          <div class="flex flex-col gap-1 text-white">
+                          <div class="flex flex-col text-white">
                             <span class="whitespace-nowrap">
                               Base
                               {{
                                 formatGbps(item.network_storage_speed_baseline)
                               }}
                             </span>
-                            <span class="whitespace-nowrap">
+                            <span class="whitespace-nowrap text-xs">
                               Max
                               {{ formatGbps(item.network_storage_speed_max) }}
                             </span>
@@ -562,9 +562,7 @@
                         column.key !== "ipv4"
                       ) {
                         <td>
-                          <div
-                            class="flex items-center justify-center min-h-[60px]"
-                          >
+                          <div class="flex items-center justify-center">
                             @let fieldValue = getField(item, column.key);
                             @if (fieldValue === true) {
                               <svg
