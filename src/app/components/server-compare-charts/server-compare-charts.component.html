@@ -294,41 +294,48 @@
             track category.id;
             let i = $index
           ) {
-            <tr>
-              <td class="whitespace-nowrap">
-                <div class="flex gap-2 items-center">
-                  {{ category.name }}
-                  @if (category.description) {
-                    <svg
-                      lucideInfo
-                      class="h-4 w-4 text-gray-200"
-                      (mouseenter)="showTooltip($event, category.description)"
-                      (mouseleave)="hideTooltip()"
-                    ></svg>
-                  }
-                </div>
-              </td>
-              @for (
-                server of servers;
-                track server.vendor_id + "_" + server.server_id
-              ) {
-                <td>
-                  @let propertyValue = getProperty(category, server);
-                  <div [style]="getBestCellStyle(category.id, server)">
-                    @if (propertyValue === "check" || propertyValue === "x") {
+            @if (
+              !isCompareMetadataPropertyHidden(
+                propertyCategory.category,
+                category.id
+              )
+            ) {
+              <tr>
+                <td class="whitespace-nowrap">
+                  <div class="flex gap-2 items-center">
+                    {{ category.name }}
+                    @if (category.description) {
                       <svg
-                        [lucideIcon]="propertyValue"
-                        class="h-4 w-4 shrink-0"
-                        [class.text-emerald-400]="propertyValue === 'check'"
-                        [class.text-white]="propertyValue === 'x'"
+                        lucideInfo
+                        class="h-4 w-4 text-gray-200"
+                        (mouseenter)="showTooltip($event, category.description)"
+                        (mouseleave)="hideTooltip()"
                       ></svg>
-                    } @else {
-                      <span [innerHTML]="propertyValue"></span>
                     }
                   </div>
                 </td>
-              }
-            </tr>
+                @for (
+                  server of servers;
+                  track server.vendor_id + "_" + server.server_id
+                ) {
+                  <td>
+                    @let propertyValue = getProperty(category, server);
+                    <div [style]="getBestCellStyle(category.id, server)">
+                      @if (propertyValue === "check" || propertyValue === "x") {
+                        <svg
+                          [lucideIcon]="propertyValue"
+                          class="h-4 w-4 shrink-0 justify-self-end"
+                          [class.text-emerald-400]="propertyValue === 'check'"
+                          [class.text-white]="propertyValue === 'x'"
+                        ></svg>
+                      } @else {
+                        <span [innerHTML]="propertyValue"></span>
+                      }
+                    </div>
+                  </td>
+                }
+              </tr>
+            }
           }
         }
       }

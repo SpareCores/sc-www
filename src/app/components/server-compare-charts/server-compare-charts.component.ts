@@ -62,6 +62,7 @@ import {
   getBestBenchmarkCellStyle,
   getBestPropertyCellStyle,
   getServerPropertyValue,
+  isCompareMetadataPropertyHidden,
 } from "../charts/shared/server-compare-table.utils";
 
 @Component({
@@ -101,6 +102,7 @@ export class ServerCompareChartsComponent implements OnChanges {
   @Input() showZone = false;
 
   readonly layoutChanged = output<void>();
+  readonly isCompareMetadataPropertyHidden = isCompareMetadataPropertyHidden;
 
   @ViewChild("tooltipcompareDefault") tooltip!: ElementRef<HTMLElement>;
 
