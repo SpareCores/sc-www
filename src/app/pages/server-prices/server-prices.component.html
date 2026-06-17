@@ -321,7 +321,10 @@
                           }
                         </td>
                       }
-                      @if (column.type === "gpu_memory") {
+                      @if (
+                        column.type === "gpu_memory_min" ||
+                        column.type === "gpu_memory_total"
+                      ) {
                         <td>
                           {{ getGPUMemory(server) }}
                         </td>
