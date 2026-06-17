@@ -16,6 +16,25 @@ type TableServerLike = {
   storage_size?: number | null;
 };
 
+const HIDDEN_COMPARE_METADATA_PROPERTY_IDS = new Set([
+  "vendor_id",
+  "server_id",
+  "name",
+  "api_reference",
+  "display_name",
+  "description",
+  "observed_at",
+]);
+
+export function isCompareMetadataPropertyHidden(
+  category: string,
+  propertyId: string,
+): boolean {
+  return (
+    category === "meta" && HIDDEN_COMPARE_METADATA_PROPERTY_IDS.has(propertyId)
+  );
+}
+
 export function formatNumberWithCommas(value: number) {
   return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
