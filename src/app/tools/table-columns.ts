@@ -26,7 +26,6 @@ export type TableColumnType =
   | "gpu_model"
   | "storage"
   | "price"
-  | "price2"
   | "priceMonthly"
   | "price_tiers"
   | "network_speed"
@@ -40,7 +39,7 @@ export type TableColumn = {
   type: TableColumnType;
   key?: string;
   show: boolean;
-  orderField?: string;
+  orderField?: string | null;
   info?: string;
 };
 
@@ -358,7 +357,7 @@ export function buildStoragePricesColumns(): TableColumn[] {
 
 export function buildTrafficPricesColumns(): TableColumn[] {
   return [
-    { ...COLUMNS.vendor, show: true },
+    { ...COLUMNS.vendor, show: true, orderField: null },
     { ...COLUMNS.region, show: true },
     { ...COLUMNS.direction, show: true },
     { ...COLUMNS.price, show: true },
