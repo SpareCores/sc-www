@@ -27,6 +27,7 @@ import { LoadingSpinnerComponent } from "../../components/loading-spinner/loadin
 import { PaginationComponent } from "../../components/pagination/pagination.component";
 import { SearchBarComponent } from "../../components/search-bar/search-bar.component";
 import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
+import { StoragePipe } from "../../pipes/storage.pipe";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { CurrencyOption, availableCurrencies } from "../../tools/shared_data";
@@ -51,6 +52,7 @@ import {
     PaginationComponent,
     LoadingSpinnerComponent,
     FlowbiteDropdownDirective,
+    StoragePipe,
   ],
   templateUrl: "./storages.component.html",
   styleUrl: "./storages.component.scss",
@@ -294,24 +296,14 @@ export class StoragesComponent implements OnInit, OnDestroy {
   }
 
   getField(item: any, field: string) {
-    return field
-      .split(".")
-      .reduce(
-        (obj, key) =>
-          obj && (obj as any)[key] ? (obj as any)[key] : undefined,
-        item,
-      );
+    return field.split(".").reduce((obj, key) => {
+      if (obj == null) return undefined;
+      const value = (obj as Record<string, unknown>)[key];
+      return value !== undefined && value !== null ? value : undefined;
+    }, item);
   }
 
   refreshColumns() {
     this.tableColumns = this.possibleColumns.filter((column) => column.show);
-  }
-
-  getStorage(value: number | undefined) {
-    if (!value) return "-";
-
-    if (value < 1000) return `${value} GB`;
-
-    return `${(value / 1000).toFixed(1)} TB`;
   }
 }
