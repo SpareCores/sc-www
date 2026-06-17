@@ -260,31 +260,6 @@ export class AdvisorUiService {
     return this.formatGiBValue(item.memory_amount);
   }
 
-  formatGpuMemory(
-    item: Pick<ServerPKs, "gpu_memory_min" | "gpu_memory_total">,
-    stat: "min" | "total" = "total",
-  ): string {
-    const memory = stat === "min" ? item.gpu_memory_min : item.gpu_memory_total;
-
-    if (memory === null || memory === undefined) {
-      return ADVISOR_EMPTY_VALUE;
-    }
-
-    return this.formatGiBValue(memory);
-  }
-
-  formatStorage(item: Pick<ServerPKs, "storage_size">): string {
-    if (item.storage_size === null || item.storage_size === undefined) {
-      return ADVISOR_EMPTY_VALUE;
-    }
-
-    if (item.storage_size < 1000) {
-      return `${item.storage_size} GB`;
-    }
-
-    return `${(item.storage_size / 1000).toFixed(1)} TB`;
-  }
-
   formatScore(value: number | null | undefined): string {
     if (value === null || value === undefined) {
       return ADVISOR_EMPTY_VALUE;
