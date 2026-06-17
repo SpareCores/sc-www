@@ -31,6 +31,8 @@ import {
 } from "@lucide/angular";
 import { CountryIdtoNamePipe } from "../../pipes/country-idto-name.pipe";
 import { GpuCountPipe } from "../../pipes/gpu-count.pipe";
+import { StoragePipe } from "../../pipes/storage.pipe";
+import { GpuMemoryPipe } from "../../pipes/gpu-memory.pipe";
 import { SearchBarComponent } from "../../components/search-bar/search-bar.component";
 import { PaginationComponent } from "../../components/pagination/pagination.component";
 import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
@@ -100,6 +102,8 @@ export type RegionVendorMetadata = {
     LucideScale,
     CountryIdtoNamePipe,
     GpuCountPipe,
+    StoragePipe,
+    GpuMemoryPipe,
     LucideCheck,
     LucideX,
     RouterModule,
@@ -331,26 +335,6 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
       item.server.memory_amount === undefined
       ? "-"
       : `${(item.server.memory_amount / 1024).toFixed(1)} GiB`;
-  }
-
-  getGPUMemory(item: ServerPriceWithPKs) {
-    return item.server.gpu_memory_min === null ||
-      item.server.gpu_memory_min === undefined
-      ? "-"
-      : `${(item.server.gpu_memory_min / 1024).toFixed(1)} GiB`;
-  }
-
-  getStorage(item: ServerPriceWithPKs) {
-    if (
-      item.server.storage_size === null ||
-      item.server.storage_size === undefined
-    )
-      return "-";
-
-    if (item.server.storage_size < 1000)
-      return `${item.server.storage_size} GB`;
-
-    return `${(item.server.storage_size / 1000).toFixed(1)} TB`;
   }
 
   getScore(value: number | null): string {

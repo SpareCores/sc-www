@@ -321,18 +321,20 @@
                           }
                         </td>
                       }
-                      @if (
-                        column.type === "gpu_memory_min" ||
-                        column.type === "gpu_memory_total"
-                      ) {
+                      @if (column.type === "gpu_memory_min") {
                         <td>
-                          {{ getGPUMemory(server) }}
+                          {{ server.server.gpu_memory_min | gpuMemory }}
+                        </td>
+                      }
+                      @if (column.type === "gpu_memory_total") {
+                        <td>
+                          {{ server.server.gpu_memory_total | gpuMemory }}
                         </td>
                       }
                       @if (column.type === "storage") {
                         <td>
                           <div class="text-sm text-white">
-                            {{ getStorage(server) }}
+                            {{ server.server.storage_size | storage }}
                           </div>
                           @if (server.server.storage_type) {
                             <div class="text-xs text-white">
