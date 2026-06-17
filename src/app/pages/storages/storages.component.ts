@@ -1,36 +1,39 @@
 import { CommonModule } from "@angular/common";
 import {
   Component,
+  OnDestroy,
   OnInit,
   PLATFORM_ID,
-  OnDestroy,
-  viewChild,
   inject,
+  viewChild,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ActivatedRoute, Params, Router, RouterModule } from "@angular/router";
 import {
-  LucideDynamicIcon,
   LucideChevronDown,
   LucideChevronLeft,
   LucideDollarSign,
+  LucideDynamicIcon,
   LucideInfo,
 } from "@lucide/angular";
+import { Subscription } from "rxjs";
+import { OrderDir } from "../../../../sdk/data-contracts";
+import openApiSpec from "../../../../sdk/openapi.json";
 import {
   BreadcrumbSegment,
   BreadcrumbsComponent,
 } from "../../components/breadcrumbs/breadcrumbs.component";
+import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
 import { PaginationComponent } from "../../components/pagination/pagination.component";
 import { SearchBarComponent } from "../../components/search-bar/search-bar.component";
-import { OrderDir } from "../../../../sdk/data-contracts";
+import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
-import { TableColumn } from "../server-listing/server-listing.component";
 import { CurrencyOption, availableCurrencies } from "../../tools/shared_data";
-import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
-import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
-import { Subscription } from "rxjs";
-import openApiSpec from "../../../../sdk/openapi.json";
+import {
+  TableColumn,
+  buildStoragePricesColumns,
+} from "../../tools/table-columns";
 
 @Component({
   selector: "app-storages",
@@ -98,29 +101,7 @@ export class StoragesComponent implements OnInit, OnDestroy {
 
   tableColumns: TableColumn[] = [];
 
-  possibleColumns: TableColumn[] = [
-    { name: "VENDOR", show: true, type: "vendor", orderField: "vendor_id" },
-    { name: "NAME", show: true, type: "name", key: "storage.name" },
-    { name: "REGION", show: true, type: "region" },
-    { name: "MIN", show: true, type: "storage", key: "storage.min_size" },
-    { name: "MAX", show: true, type: "storage", key: "storage.max_size" },
-    { name: "TYPE", show: true, type: "text", key: "storage.storage_type" },
-    {
-      name: "MAX IOPS",
-      show: true,
-      type: "text",
-      key: "storage.max_iops",
-      orderField: "max_iops",
-    },
-    {
-      name: "MAX THROUGHPUT",
-      show: true,
-      type: "text",
-      key: "storage.max_throughput",
-      orderField: "max_throughput",
-    },
-    { name: "PRICE", show: true, type: "price", orderField: "price" },
-  ];
+  possibleColumns: TableColumn[] = buildStoragePricesColumns();
 
   availableCurrencies: CurrencyOption[] = availableCurrencies;
 
