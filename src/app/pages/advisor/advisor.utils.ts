@@ -7,15 +7,16 @@ import {
   SearchBarBenchmarkConfigOption,
   SearchBarCustomSelectOption,
 } from "../../components/search-bar/search-bar.component";
+import { buildAdvisorColumns, TableColumn } from "../../tools/table-columns";
 import {
   ADVISOR_DEFAULT_WORKLOAD_CONFIG,
   ADVISOR_TABLE_COLUMNS,
+  ADVISOR_WORKLOAD_SCORE_TOOLTIP,
 } from "./advisor.constants";
 import {
   AdvisorBaselineServer,
   AdvisorOptimizationGoal,
   AdvisorRegionMetadata,
-  AdvisorTableColumn,
 } from "./advisor.types";
 
 export function stableStringify(value: unknown): string {
@@ -142,21 +143,13 @@ export function getAdvisorBenchmarkConfigKey(
   )}`;
 }
 
-export function cloneAdvisorTableColumns(): AdvisorTableColumn[] {
-  return ADVISOR_TABLE_COLUMNS.map((column) => ({ ...column }));
-}
-
-export function hasCustomAdvisorColumns(
-  columns: AdvisorTableColumn[],
-): boolean {
+export function hasCustomAdvisorColumns(columns: TableColumn[]): boolean {
   return !columns.every((column, index) => {
     return column.show === ADVISOR_TABLE_COLUMNS[index]?.show;
   });
 }
 
-export function encodeAdvisorColumnState(
-  columns: AdvisorTableColumn[],
-): number {
+export function encodeAdvisorColumnState(columns: TableColumn[]): number {
   return columns
     .map((column) => (column.show ? 1 : 0))
     .reduce<number>((accumulator, bit) => (accumulator << 1) | bit, 0);
@@ -165,8 +158,8 @@ export function encodeAdvisorColumnState(
 export function restoreAdvisorColumnsFromQuery(
   encodedColumns: unknown,
   orderBy?: string,
-): AdvisorTableColumn[] {
-  let columns = cloneAdvisorTableColumns();
+): TableColumn[] {
+  let columns = buildAdvisorColumns(ADVISOR_WORKLOAD_SCORE_TOOLTIP);
 
   if (
     encodedColumns !== undefined &&
