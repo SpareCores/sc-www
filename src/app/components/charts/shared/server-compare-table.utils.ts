@@ -1,3 +1,5 @@
+import { formatGpuMemory, formatStorageSize } from "../../../pipes/pipe-utils";
+
 type BenchmarkValue = number | string | null | undefined;
 
 type TableBenchmarkLike = {
@@ -133,17 +135,15 @@ export function getServerPropertyValue(
   }
 
   if (name === "gpu_memory_min") {
-    return `${((server.gpu_memory_min || 0) / 1024).toFixed(1)} GB`;
+    return formatGpuMemory(server.gpu_memory_min ?? 0);
   }
 
   if (name === "gpu_memory_total") {
-    return `${((server.gpu_memory_total || 0) / 1024).toFixed(1)} GB`;
+    return formatGpuMemory(server.gpu_memory_total ?? 0);
   }
 
   if (name === "storage_size") {
-    if (!server.storage_size) return "-";
-    if (server.storage_size < 1000) return `${server.storage_size} GB`;
-    return `${(server.storage_size / 1000).toFixed(1)} TB`;
+    return formatStorageSize(server.storage_size ?? 0);
   }
 
   if (typeof prop === "number") {
