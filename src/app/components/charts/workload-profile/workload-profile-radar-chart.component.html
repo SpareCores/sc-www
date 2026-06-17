@@ -1,0 +1,20 @@
+@if (hasChart()) {
+  @if (isBrowser) {
+    <div
+      class="chart_div workload-profile-radar-chart__canvas w-full h-full flex min-h-0 max-w-full"
+      [ngClass]="{
+        'h-[460px] justify-center max-lg:w-full': layout() === 'compare',
+        'h-[530px] max-h-[530px] justify-center': layout() === 'details',
+      }"
+    >
+      <canvas
+        class="workload-profile-radar-chart__canvas-element"
+        baseChart
+        [data]="resolvedChartData()"
+        [options]="resolvedChartOptions()"
+        [type]="chartType()"
+      >
+      </canvas>
+    </div>
+  }
+}

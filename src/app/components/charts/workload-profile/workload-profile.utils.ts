@@ -1,0 +1,35 @@
+export type WorkloadProfileBenchmarkRef = {
+  benchmark_id?: string;
+  name?: string;
+};
+
+const WORKLOAD_PROFILE_NAME_PREFIX = "workload profile";
+
+export function isWorkloadProfileBenchmark(
+  benchmark: WorkloadProfileBenchmarkRef,
+): boolean {
+  const benchmarkId = benchmark.benchmark_id?.toLowerCase() ?? "";
+
+  if (
+    benchmarkId.startsWith("workload_profile:") ||
+    benchmarkId.startsWith("workload:")
+  ) {
+    return true;
+  }
+
+  return (benchmark.name ?? "")
+    .toLowerCase()
+    .startsWith(WORKLOAD_PROFILE_NAME_PREFIX);
+}
+
+export function filterWorkloadProfileBenchmarks<
+  T extends WorkloadProfileBenchmarkRef,
+>(benchmarkMeta: T[]): T[] {
+  return benchmarkMeta
+    .filter((benchmark) => isWorkloadProfileBenchmark(benchmark))
+    .sort((left, right) => (left.name ?? "").localeCompare(right.name ?? ""));
+}
+
+export function formatWorkloadProfileLabel(name: string): string {
+  return name.replace(/^Workload profile:\s*/i, "").trim();
+}

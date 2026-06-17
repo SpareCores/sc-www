@@ -1,0 +1,86 @@
+@if (hasWorkloadProfiles()) {
+  <div
+    class="w-full h-auto overflow-visible relative flex flex-col gap-4"
+    [ngClass]="{
+      'px-4 py-4 bg-transparent min-h-[500px] max-lg:min-h-[520px]':
+        layout() === 'compare',
+      'px-6 py-6 bg-secondary border border-solid border-emerald-400 rounded-lg min-h-[615px]':
+        layout() === 'details',
+    }"
+  >
+    @if (showHeader()) {
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-2xl flex items-center gap-2">
+          <svg
+            [lucideIcon]="'workload_profile' | benchmarkIcon"
+            class="h-6 w-6"
+          ></svg>
+          Workload Profiles
+          <svg
+            lucideCircleArrowUp
+            class="h-4 w-4 text-gray-200"
+            (mouseenter)="showTooltip($event, 'Higher is better.')"
+            (mouseleave)="hideTooltip()"
+          ></svg>
+          <svg
+            lucideInfo
+            class="h-4 w-4 text-gray-200"
+            (mouseenter)="
+              showTooltip(
+                $event,
+                'Synthetic workload profiles estimate how well a server may perform for common application patterns.'
+              )
+            "
+            (mouseleave)="hideTooltip()"
+          ></svg>
+        </h3>
+      </div>
+    }
+    <div
+      class="workload-profile-panel-grid grid grid-cols-1 lg:grid-cols-2 gap-8 items-start"
+    >
+      <div
+        class="workload-profile-radar-chart min-h-0 flex flex-1 h-full"
+        [ngClass]="{
+          'h-[460px]': layout() === 'compare',
+          'h-[530px]': layout() === 'details',
+        }"
+      >
+        <app-workload-profile-radar-chart
+          [layout]="layout()"
+          [benchmarkMeta]="benchmarkMeta()"
+          [servers]="servers()"
+          [serverDetails]="serverDetails()"
+        ></app-workload-profile-radar-chart>
+      </div>
+      @if (faqQuestions().length) {
+        <div
+          class="workload-profile-faq-column w-full text-base [&_[itemprop=name]]:text-wrap [&_[itemprop=name]]:pr-3 [&_[itemprop=text]]:text-wrap"
+          [ngClass]="{
+            'pr-[4rem] lg:min-h-[460px] lg:pt-[3.75rem]':
+              layout() === 'compare',
+            'pr-8 lg:min-h-[530px] lg:pt-7': layout() === 'details',
+          }"
+        >
+          <app-faq
+            class="workload-profile-faq"
+            [item]="'Workload Profiles'"
+            [showHeading]="false"
+            [FAQQuestions]="faqQuestions()"
+            [activeFAQ]="activeFaq()"
+            (activeFAQChanged)="onFaqChanged($event)"
+          ></app-faq>
+        </div>
+      }
+    </div>
+  </div>
+}
+
+@if (showHeader()) {
+  <div
+    #tooltipDefault
+    class="tooltip-panel fixed z-100 pointer-events-none opacity-0 hidden"
+  >
+    {{ tooltipContent }}
+  </div>
+}
