@@ -1,4 +1,3 @@
-import { ADVISOR_TABLE_COLUMNS } from "../pages/advisor/advisor.constants";
 import {
   COLUMN_BENCHMARK_EFFICIENCY_TOOLTIP,
   COLUMN_BENCHMARK_TOOLTIP,
@@ -304,10 +303,175 @@ const EXPECTED_TRAFFIC_PRICES_COLUMNS: TableColumn[] = [
   { name: "PRICE TOTAL", show: true, type: "priceMonthly" },
 ];
 
+const EXPECTED_ADVISOR_COLUMNS: TableColumn[] = [
+  { name: "NAME & PROVIDER", show: true, type: "name" },
+  {
+    name: "VENDOR",
+    show: false,
+    type: "vendor",
+    key: "vendor_id",
+    orderField: "vendor_id",
+  },
+  {
+    name: "ARCHITECTURE",
+    show: false,
+    type: "text",
+    key: "cpu_architecture",
+  },
+  { name: "PROCESSOR", show: true, type: "processor", orderField: "vcpus" },
+  { name: "CPU MODEL", show: false, type: "cpu_model", key: "cpu_model" },
+  { name: "CPU CACHE", show: false, type: "cpu_cache" },
+  {
+    name: "CPU ALLOCATION",
+    show: false,
+    type: "text",
+    key: "cpu_allocation",
+  },
+  {
+    name: "SCORE",
+    show: false,
+    type: "score",
+    key: "score",
+    orderField: "score",
+    info: COLUMN_SCORE_TOOLTIP,
+  },
+  {
+    name: "$CORE",
+    show: false,
+    type: "score_per_price",
+    key: "score_per_price",
+    orderField: "score_per_price",
+    info: COLUMN_SCORE_PER_PRICE_TOOLTIP,
+  },
+  {
+    name: "WORKLOAD",
+    show: true,
+    type: "benchmark",
+    key: "selected_benchmark_score",
+    orderField: "selected_benchmark_score",
+    info: ADVISOR_WORKLOAD_SCORE_TOOLTIP,
+  },
+  {
+    name: "$ EFFICIENCY",
+    show: true,
+    type: "benchmark_score_per_price",
+    key: "selected_benchmark_score_per_price",
+    orderField: "selected_benchmark_score_per_price",
+    info: COLUMN_BENCHMARK_EFFICIENCY_TOOLTIP,
+  },
+  {
+    name: "MEMORY",
+    show: true,
+    type: "memory",
+    key: "memory_amount",
+    orderField: "memory_amount",
+  },
+  {
+    name: "GPUs",
+    show: true,
+    type: "gpu",
+    key: "gpu_count",
+    orderField: "gpu_count",
+  },
+  {
+    name: "GPU MIN MEMORY",
+    show: false,
+    type: "gpu_memory_min",
+    key: "gpu_memory_min",
+    orderField: "gpu_memory_min",
+  },
+  {
+    name: "GPU TOTAL MEMORY",
+    show: false,
+    type: "gpu_memory_total",
+    key: "gpu_memory_total",
+    orderField: "gpu_memory_total",
+  },
+  { name: "GPU MODEL", show: false, type: "gpu_model", key: "gpu_model" },
+  {
+    name: "STORAGE",
+    show: true,
+    type: "storage",
+    key: "storage_size",
+    orderField: "storage_size",
+  },
+  { name: "STORAGE TYPE", show: false, type: "text", key: "storage_type" },
+  {
+    name: "NETWORK SPEED",
+    show: false,
+    type: "network_speed",
+    key: "network_speed_baseline",
+    orderField: "network_speed_baseline",
+  },
+  {
+    name: "STORAGE SPEED",
+    show: false,
+    type: "network_speed",
+    key: "network_storage_speed_baseline",
+    orderField: "network_storage_speed_baseline",
+  },
+  {
+    name: "INBOUND TRAFFIC",
+    show: false,
+    type: "inbound_traffic",
+    key: "inbound_traffic",
+    orderField: "inbound_traffic",
+  },
+  {
+    name: "OUTBOUND TRAFFIC",
+    show: false,
+    type: "outbound_traffic",
+    key: "outbound_traffic",
+    orderField: "outbound_traffic",
+  },
+  {
+    name: "IPV4",
+    show: false,
+    type: "ipv4",
+    key: "ipv4",
+    orderField: "ipv4",
+  },
+  {
+    name: "BEST PRICE",
+    show: true,
+    type: "price",
+    key: "min_price",
+    orderField: "min_price",
+  },
+  {
+    name: "BEST ONDEMAND PRICE",
+    show: false,
+    type: "price",
+    key: "min_price_ondemand",
+    orderField: "min_price_ondemand",
+  },
+  {
+    name: "BEST ONDEMAND MONTHLY PRICE",
+    show: false,
+    type: "price",
+    key: "min_price_ondemand_monthly",
+    orderField: "min_price_ondemand_monthly",
+  },
+  {
+    name: "BEST SPOT PRICE",
+    show: false,
+    type: "price",
+    key: "min_price_spot",
+    orderField: "min_price_spot",
+  },
+  {
+    name: "STATUS",
+    show: false,
+    type: "text",
+    key: "status",
+    orderField: "status",
+  },
+];
+
 describe("table-columns", () => {
-  it("builds advisor table columns matching the exported constant", () => {
+  it("builds advisor table columns with preserved order and fields", () => {
     expect(buildAdvisorColumns(ADVISOR_WORKLOAD_SCORE_TOOLTIP)).toEqual(
-      ADVISOR_TABLE_COLUMNS,
+      EXPECTED_ADVISOR_COLUMNS,
     );
   });
 
