@@ -339,6 +339,198 @@
           }
         }
       }
+      @if (getWorkloadProfileBenchmarks().length && !isEmbedded) {
+        <tr class="section_header" id="benchmark_line_workload_profile">
+          <td [colSpan]="getCompareFixedWideContentColSpan()">
+            <div class="compare-section-header-row">
+              <h3 class="text-xl font-semibold">
+                <span class="compare-section-header-title">
+                  <svg
+                    [lucideIcon]="'workload_profile' | benchmarkIcon"
+                    class="h-6 w-6 shrink-0"
+                  ></svg>
+                  <span class="compare-section-header-title__text">
+                    Workload Profiles
+                  </span>
+                  <span class="compare-section-header-title__icons">
+                    <svg
+                      lucideCircleArrowUp
+                      class="h-4 w-4 text-gray-200 shrink-0"
+                      (mouseenter)="showTooltip($event, 'Higher is better.')"
+                      (mouseleave)="hideTooltip()"
+                    ></svg>
+                    <svg
+                      lucideInfo
+                      class="h-4 w-4 text-gray-200 shrink-0"
+                      (mouseenter)="
+                        showTooltip(
+                          $event,
+                          'Synthetic workload profiles estimate how well a server may perform for common application patterns.'
+                        )
+                      "
+                      (mouseleave)="hideTooltip()"
+                    ></svg>
+                  </span>
+                </span>
+              </h3>
+              @if (!isEmbedded && !getCompareFixedWideTrailingColSpan()) {
+                <button
+                  type="button"
+                  aria-label="Copy benchmark section link"
+                  class="btn-primary py-2 px-3 flex gap-1 items-center shrink-0"
+                  (click)="
+                    clipboardURL($event, 'benchmark_line_workload_profile')
+                  "
+                >
+                  <svg
+                    [lucideIcon]="clipboardIcon"
+                    size="16"
+                    aria-hidden="true"
+                  ></svg>
+                </button>
+              }
+            </div>
+          </td>
+          @if (getCompareFixedWideActionSpacerColSpan()) {
+            <td [colSpan]="getCompareFixedWideActionSpacerColSpan()"></td>
+          }
+          @if (getCompareFixedWideTrailingColSpan()) {
+            <td [colSpan]="1" class="compare-section-header-action-cell">
+              @if (!isEmbedded) {
+                <div class="flex justify-end">
+                  <button
+                    type="button"
+                    aria-label="Copy benchmark section link"
+                    class="btn-primary py-2 px-3 flex gap-1 items-center shrink-0"
+                    (click)="
+                      clipboardURL($event, 'benchmark_line_workload_profile')
+                    "
+                  >
+                    <svg
+                      [lucideIcon]="clipboardIcon"
+                      size="16"
+                      aria-hidden="true"
+                    ></svg>
+                  </button>
+                </div>
+              }
+            </td>
+          }
+        </tr>
+        <tr class="compare-fixed-chart-row">
+          <td [colSpan]="getCompareFixedWideContentColSpan()">
+            <div
+              class="compare-chart-content"
+              [style]="getCompareChartContentStyle()"
+            >
+              <app-workload-profile-panel
+                layout="compare"
+                [showHeader]="false"
+                [servers]="workloadProfileCompareServers"
+                [benchmarkMeta]="workloadProfileBenchmarkMeta"
+                (layoutChanged)="layoutChanged.emit()"
+              ></app-workload-profile-panel>
+              <div class="mt-4 mb-8 flex justify-center">
+                <button
+                  class="btn-primary py-2 px-3"
+                  (click)="toggleWorkloadProfileDetails()"
+                >
+                  {{ workloadProfileShowMore ? "Hide" : "Show" }} Details
+                </button>
+              </div>
+            </div>
+          </td>
+          @if (getCompareFixedWideTrailingColSpan()) {
+            <td [colSpan]="getCompareFixedWideTrailingColSpan()"></td>
+          }
+        </tr>
+        @if (workloadProfileShowMore) {
+          @for (
+            benchmarkCategory of getWorkloadProfileBenchmarks();
+            track benchmarkCategory.benchmark_key ??
+              benchmarkCategory.benchmark_id
+          ) {
+            <tr class="compare-fixed-header-row">
+              <td [colSpan]="1" class="compare-fixed-header-label-cell">
+                <div class="pl-4">
+                  <div class="flex flex-nowrap gap-2 items-center min-w-0">
+                    <svg
+                      [lucideIcon]="benchmarkCategory.name | benchmarkIcon"
+                      class="h-6 w-6 shrink-0"
+                    ></svg>
+                    <span class="whitespace-nowrap">{{
+                      benchmarkCategory.name
+                    }}</span>
+                    @if (benchmarkCategory.description) {
+                      <svg
+                        lucideInfo
+                        class="h-4 w-4 text-gray-200 shrink-0"
+                        (mouseenter)="
+                          showTooltip($event, benchmarkCategory.description)
+                        "
+                        (mouseleave)="hideTooltip()"
+                      ></svg>
+                    }
+                  </div>
+                </div>
+              </td>
+              <td [colSpan]="getCompareFixedHeaderSpacerColSpan()"></td>
+              <td [colSpan]="1" class="compare-section-header-action-cell">
+                @if (benchmarkCategory.description) {
+                  <button
+                    type="button"
+                    class="compare-section-header-action-content inline-flex cursor-pointer items-center justify-center rounded border-0 bg-transparent p-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400"
+                    [attr.aria-expanded]="!benchmarkCategory.collapsed"
+                    [attr.aria-label]="
+                      benchmarkCategory.collapsed
+                        ? 'Expand benchmark details'
+                        : 'Collapse benchmark details'
+                    "
+                    (click)="toggleBenchmark(benchmarkCategory)"
+                  >
+                    <svg
+                      [lucideIcon]="benchmarkIcon(benchmarkCategory)"
+                      class="h-6 w-6 text-emerald-400 shrink-0"
+                      aria-hidden="true"
+                    ></svg>
+                  </button>
+                }
+              </td>
+            </tr>
+            @if (!benchmarkCategory.collapsed) {
+              @for (config of benchmarkCategory.configs; track config) {
+                <tr>
+                  <td>
+                    <div
+                      class="ml-6"
+                      [innerHTML]="serializeConfig(config.config)"
+                    ></div>
+                  </td>
+                  @for (value of config.values; track $index) {
+                    <td
+                      class="compact-number"
+                      [style]="
+                        isBestStyle(value, config.values, benchmarkCategory)
+                      "
+                    >
+                      <span
+                        (mouseenter)="
+                          value !== null &&
+                            showTooltip($event, value.toString())
+                        "
+                        (mouseleave)="hideTooltip()"
+                        >{{
+                          value === null ? "-" : (value | compactNumber)
+                        }}</span
+                      >
+                    </td>
+                  }
+                </tr>
+              }
+            }
+          }
+        }
+      }
       @for (
         benchmarkCategory of benchmarkCategories;
         track benchmarkCategory.id
