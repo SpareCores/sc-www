@@ -17,6 +17,7 @@ export class FaqComponent {
   @Input() item!: string;
   @Input() FAQQuestions!: any[];
   @Input() activeFAQ: number = -1;
+  @Input() showHeading = true;
 
   @Output() activeFAQChanged: EventEmitter<number> = new EventEmitter<number>();
 
