@@ -159,6 +159,7 @@ export class ServerCompareComponent
   tooltipContent = "";
 
   instancePropertyCategories: any[] = [
+    { name: "Metadata", category: "meta", properties: [] },
     { name: "CPU", category: "cpu", properties: [] },
     { name: "Memory", category: "memory", properties: [] },
     { name: "GPU", category: "gpu", properties: [] },
