@@ -81,8 +81,17 @@
               }"
             >
               @if (compare.type === "section") {
-                <h2 class="text-2xl font-semibold">
-                  {{ compare.title }}
+                <div class="section-anchor-target" [attr.id]="compare.id"></div>
+                <h2 class="section_heading text-2xl font-semibold">
+                  <span>{{ compare.title }}</span>
+                  <a
+                    class="header-anchor"
+                    [href]="'/compare#' + compare.id"
+                    [attr.aria-label]="'Link to ' + compare.title"
+                    [attr.title]="'Link to ' + compare.title"
+                  >
+                    #
+                  </a>
                 </h2>
               }
               @if (compare.type === "card") {
