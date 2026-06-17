@@ -27,7 +27,10 @@ import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.di
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { CurrencyOption, availableCurrencies } from "../../tools/shared_data";
-import { TableColumn } from "../server-listing/server-listing.component";
+import {
+  buildTrafficPricesColumns,
+  TableColumn,
+} from "../../tools/table-columns";
 import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
 import { Subscription } from "rxjs";
 import openApiSpec from "../../../../sdk/openapi.json";
@@ -100,14 +103,7 @@ export class TrafficPricesComponent implements OnInit, OnDestroy {
 
   title = "Cloud Data Transfer Pricing";
 
-  possibleColumns: TableColumn[] = [
-    { name: "VENDOR", show: true, type: "vendor", orderField: "vendor_id" },
-    { name: "REGION", show: true, type: "region" },
-    { name: "DIRECTION", show: true, type: "text", key: "direction" },
-    { name: "PRICE", show: true, type: "price", orderField: "price" },
-    { name: "PRICE TIERS", show: true, type: "price_tiers" },
-    { name: "PRICE TOTAL", show: true, type: "priceMonthly" },
-  ];
+  possibleColumns: TableColumn[] = buildTrafficPricesColumns();
 
   availableCurrencies: CurrencyOption[] = availableCurrencies;
 
