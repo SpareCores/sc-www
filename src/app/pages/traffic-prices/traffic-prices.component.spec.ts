@@ -34,12 +34,14 @@ describe("TrafficPricesComponent", () => {
         key: "vendor_id",
       }),
     );
-    expect(vendorColumn?.orderField).toBeUndefined();
+    expect(vendorColumn?.orderField).toBeNull();
 
+    const orderByBefore = component.orderBy;
+    const orderDirBefore = component.orderDir;
     component.toggleOrdering(vendorColumn!);
 
-    expect(component.orderBy).toBeUndefined();
-    expect(component.orderDir).toBeUndefined();
+    expect(component.orderBy).toBe(orderByBefore);
+    expect(component.orderDir).toBe(orderDirBefore);
     expect(searchOptionsChangedSpy).not.toHaveBeenCalled();
   });
 });

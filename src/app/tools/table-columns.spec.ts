@@ -294,6 +294,7 @@ const EXPECTED_TRAFFIC_PRICES_COLUMNS: TableColumn[] = [
     show: true,
     type: "vendor",
     key: "vendor_id",
+    orderField: null,
   },
   { name: "REGION", show: true, type: "region" },
   { name: "DIRECTION", show: true, type: "text", key: "direction" },
