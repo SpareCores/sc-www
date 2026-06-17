@@ -35,6 +35,12 @@ export const ADVISOR_DEFAULT_SERVER_COLUMNS = [
   "cpu_l3_cache",
   "cpu_architecture",
   "cpu_allocation",
+  "network_speed_baseline",
+  "network_speed_max",
+  "network_storage_speed_baseline",
+  "network_storage_speed_max",
+  "inbound_traffic",
+  "outbound_traffic",
 ] as const;
 
 export const ADVISOR_FILTER_CATEGORIES: SearchBarFilterCategory[] = [
