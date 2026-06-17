@@ -1,6 +1,8 @@
 import {
   formatBinaryMemoryDisplay,
   formatBytes,
+  formatGpuMemory,
+  formatStorageSize,
   formatValue,
   parseBinaryMemoryInput,
 } from "./pipe-utils";
@@ -58,6 +60,37 @@ describe("formatBinaryMemoryDisplay", () => {
       value: "1.5",
       unit: "TiB",
     });
+  });
+});
+
+describe("formatStorageSize", () => {
+  it("returns empty value for null and undefined", () => {
+    expect(formatStorageSize(null)).toBe("-");
+    expect(formatStorageSize(undefined)).toBe("-");
+    expect(formatStorageSize(null, "0 GB")).toBe("0 GB");
+  });
+
+  it("formats zero and sub-threshold values as GB", () => {
+    expect(formatStorageSize(0)).toBe("0 GB");
+    expect(formatStorageSize(500)).toBe("500 GB");
+  });
+
+  it("promotes values at or above 1000 GB to TB via formatValue", () => {
+    expect(formatStorageSize(1500)).toBe("1.5 TB");
+    expect(formatStorageSize(1536)).toBe("1.54 TB");
+  });
+});
+
+describe("formatGpuMemory", () => {
+  it("returns empty value for null and undefined", () => {
+    expect(formatGpuMemory(null)).toBe("-");
+    expect(formatGpuMemory(undefined)).toBe("-");
+  });
+
+  it("converts MiB to GiB via formatValue", () => {
+    expect(formatGpuMemory(512)).toBe("0.5 GiB");
+    expect(formatGpuMemory(16384)).toBe("16 GiB");
+    expect(formatGpuMemory(0)).toBe("0 GiB");
   });
 });
 
