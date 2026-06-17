@@ -10,8 +10,10 @@
         "plugin:@angular-eslint/recommended",
         "plugin:@angular-eslint/template/process-inline-templates"
       ],
+      "plugins": ["unused-imports"],
       "rules": {
-        "@typescript-eslint/no-explicit-any": ["off"],
+        "@typescript-eslint/no-explicit-any": "warn",
+        "prefer-const": "error",
         "@angular-eslint/directive-selector": [
           "error",
           {
@@ -28,7 +30,9 @@
             "style": "kebab-case"
           }
         ],
-        "prefer-const": "off"
+        "@typescript-eslint/no-unused-vars": "warn",
+        "unused-imports/no-unused-imports": "error",
+        "unused-imports/no-unused-vars": "warn"
       }
     },
     {
