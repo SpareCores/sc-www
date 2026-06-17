@@ -32,7 +32,18 @@ export type AdvisorTableColumn = {
 };
 
 export type AdvisorBaselineServer = SearchBarServerOption &
-  Partial<Pick<Server, "status">>;
+  Partial<
+    Pick<
+      Server,
+      | "status"
+      | "network_speed_baseline"
+      | "network_speed_max"
+      | "network_storage_speed_baseline"
+      | "network_storage_speed_max"
+      | "inbound_traffic"
+      | "outbound_traffic"
+    >
+  >;
 
 export type AdvisorRegionMetadata = {
   region_id: string;
