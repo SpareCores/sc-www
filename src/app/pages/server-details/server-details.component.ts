@@ -216,6 +216,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   modalEmbed: any;
 
   embeddableCharts = [
+    { id: "workload_profile", name: "Workload Profiles" },
     { id: "bw_mem", name: "Memory Bandwidth" },
     { id: "compress", name: "Compression" },
     { id: "geek_single", name: "Geekbench Single-core" },
