@@ -1,38 +1,19 @@
-import { Server, ServerPKs } from "../../../../sdk/data-contracts";
+import { Server } from "../../../../sdk/data-contracts";
 import { SearchBarServerOption } from "../../components/search-bar/search-bar.component";
 
-export type AdvisorTableColumn = {
-  name: string;
-  type:
-    | "name"
-    | "vendor"
-    | "score"
-    | "score_per_price"
-    | "processor"
-    | "cpu_model"
-    | "cpu_cache"
-    | "benchmark"
-    | "benchmark_score_per_price"
-    | "memory"
-    | "gpu"
-    | "gpu_memory_min"
-    | "gpu_memory_total"
-    | "gpu_model"
-    | "storage"
-    | "price"
-    | "network_speed"
-    | "inbound_traffic"
-    | "outbound_traffic"
-    | "ipv4"
-    | "text";
-  key?: keyof ServerPKs | "vendor_id";
-  show: boolean;
-  orderField?: string;
-  info?: string;
-};
-
 export type AdvisorBaselineServer = SearchBarServerOption &
-  Partial<Pick<Server, "status">>;
+  Partial<
+    Pick<
+      Server,
+      | "status"
+      | "network_speed_baseline"
+      | "network_speed_max"
+      | "network_storage_speed_baseline"
+      | "network_storage_speed_max"
+      | "inbound_traffic"
+      | "outbound_traffic"
+    >
+  >;
 
 export type AdvisorRegionMetadata = {
   region_id: string;

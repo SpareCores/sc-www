@@ -26,9 +26,13 @@ import {
   LucideDollarSign,
   LucideInfo,
   LucideScale,
+  LucideCheck,
+  LucideX,
 } from "@lucide/angular";
 import { CountryIdtoNamePipe } from "../../pipes/country-idto-name.pipe";
 import { GpuCountPipe } from "../../pipes/gpu-count.pipe";
+import { StoragePipe } from "../../pipes/storage.pipe";
+import { GpuMemoryPipe } from "../../pipes/gpu-memory.pipe";
 import { SearchBarComponent } from "../../components/search-bar/search-bar.component";
 import { PaginationComponent } from "../../components/pagination/pagination.component";
 import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
@@ -50,14 +54,10 @@ import { LoadingSpinnerComponent } from "../../components/loading-spinner/loadin
 import { Subscription } from "rxjs";
 import openApiSpec from "../../../../sdk/openapi.json";
 
-export type TableColumn = {
-  name: string;
-  type: string;
-  key?: string;
-  show?: boolean;
-  orderField?: string;
-  info?: string;
-};
+import {
+  buildServerPricesColumns,
+  TableColumn,
+} from "../../tools/table-columns";
 
 export type CountryMetadata = {
   continent: string;
@@ -102,6 +102,10 @@ export type RegionVendorMetadata = {
     LucideScale,
     CountryIdtoNamePipe,
     GpuCountPipe,
+    StoragePipe,
+    GpuMemoryPipe,
+    LucideCheck,
+    LucideX,
     RouterModule,
     SearchBarComponent,
     PaginationComponent,
@@ -174,95 +178,7 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
 
   tableColumns: TableColumn[] = [];
 
-  possibleColumns: TableColumn[] = [
-    { name: "NAME & PROVIDER", show: true, type: "name" },
-    {
-      name: "VENDOR",
-      show: false,
-      type: "vendor",
-      orderField: "vendor_id",
-    },
-    { name: "REGION", show: false, type: "region" },
-    { name: "ZONE", show: false, type: "text", key: "zone.name" },
-    {
-      name: "CONTINENT",
-      show: false,
-      type: "text",
-      key: "region.country.continent",
-    },
-    { name: "COUNTRY", show: false, type: "country" },
-    {
-      name: "ARCHITECTURE",
-      show: false,
-      type: "text",
-      key: "server.cpu_architecture",
-    },
-    { name: "PROCESSOR", show: true, type: "processor", orderField: "vcpus" },
-    { name: "CPU MODEL", show: false, type: "cpu_model" },
-    {
-      name: "CPU ALLOCATION",
-      show: false,
-      type: "text",
-      key: "server.cpu_allocation",
-    },
-    {
-      name: "HW VIRT",
-      show: false,
-      type: "text",
-      key: "server.hw_virt",
-      orderField: "server.hw_virt",
-    },
-    {
-      name: "START TIME",
-      show: false,
-      type: "text",
-      key: "server.average_time_to_start",
-      orderField: "server.average_time_to_start",
-    },
-    {
-      name: "SCORE",
-      show: true,
-      type: "score",
-      orderField: "score",
-      info: "Performance benchmark score using stress-ng's div16 method (doing 16 bit unsigned integer divisions for 20 seconds): simulating CPU heavy workload that scales well on any number of (v)CPUs. The SCore/price value in the second line shows the div16 performance measured for 1 USD/hour, using the best (usually spot) price of all zones. To order by the latter, enable the $Core column.",
-    },
-    {
-      name: "$CORE",
-      show: false,
-      type: "score_per_price",
-      orderField: "score_per_price",
-      info: "SCore/price showing stress-ng's div16 performance measured for one price unit (usually hourly or monthly server price) standardized to USD, using the best price across all selected zones. By default, this equals to the SCore you can get for 1 USD/hour by using the cheapest spot (or ondemand) hourly price in all supported regions and availability zones, but can be filtered down to countries, regions, and price allocation strategies (e.g. using only ondemand pricing).",
-    },
-    { name: "MEMORY", show: true, type: "memory", orderField: "memory_amount" },
-    {
-      name: "STORAGE",
-      show: true,
-      type: "storage",
-      orderField: "storage_size",
-    },
-    {
-      name: "STORAGE TYPE",
-      show: false,
-      type: "text",
-      key: "server.storage_type",
-    },
-    { name: "GPUs", show: true, type: "gpu", orderField: "server.gpu_count" },
-    {
-      name: "GPU MIN MEMORY",
-      show: false,
-      type: "gpu_memory",
-      key: "server.gpu_memory_min",
-    },
-    {
-      name: "GPU TOTAL MEMORY",
-      show: false,
-      type: "gpu_memory",
-      key: "server.gpu_memory_total",
-    },
-    { name: "GPU MODEL", show: false, type: "gpu_model" },
-    { name: "PRICE", show: true, type: "price", orderField: "price" },
-    { name: "STATUS", show: false, type: "text", key: "server.status" },
-  ];
+  possibleColumns: TableColumn[] = buildServerPricesColumns();
 
   hasCustomColumns = false;
 
@@ -415,24 +331,14 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
   }
 
   getMemory(item: ServerPriceWithPKs) {
-    return ((item.server.memory_amount || 0) / 1024).toFixed(1) + " GiB";
-  }
-
-  getGPUMemory(item: ServerPriceWithPKs) {
-    return ((item.server.gpu_memory_min || 0) / 1024).toFixed(1) + " GiB";
-  }
-
-  getStorage(item: ServerPriceWithPKs) {
-    if (!item.server.storage_size) return "-";
-
-    if (item.server.storage_size < 1000)
-      return `${item.server.storage_size} GB`;
-
-    return `${(item.server.storage_size / 1000).toFixed(1)} TB`;
+    return item.server.memory_amount === null ||
+      item.server.memory_amount === undefined
+      ? "-"
+      : `${(item.server.memory_amount / 1024).toFixed(1)} GiB`;
   }
 
   getScore(value: number | null): string {
-    return value ? value.toFixed(0) : "-";
+    return value === null || value === undefined ? "-" : value.toFixed(0);
   }
 
   getAllocationName(allocation: string | null) {
@@ -700,12 +606,12 @@ export class ServerPricesComponent implements OnInit, OnDestroy {
     window.scrollTo(0, 0);
   }
 
-  getField(item: ServerPriceWithPKs, field: string) {
+  getField(item: ServerPriceWithPKs, field: string): unknown {
     return field
       .split(".")
       .reduce(
         (obj, key) =>
-          obj && (obj as any)[key] ? (obj as any)[key] : undefined,
+          obj !== null && obj !== undefined ? (obj as any)[key] : undefined,
         item,
       );
   }

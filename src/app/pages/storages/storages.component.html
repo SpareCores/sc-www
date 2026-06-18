@@ -111,7 +111,7 @@
                       }"
                       (click)="toggleOrdering(column)"
                     >
-                      <div class="flex gap-1">
+                      <div class="flex gap-1 text-nowrap">
                         {{ column.name }}
                         @if (column.info) {
                           <svg lucideInfo class="h-4 w-4 text-gray-200"></svg>
@@ -158,25 +158,17 @@
                       }
                       @if (column.type === "price") {
                         <td>
-                          <div class="text-sm text-white">
+                          <div class="text-sm text-white text-nowrap">
                             {{ storage.price }} {{ storage.currency }}/{{
                               storage.unit
                             }}
                           </div>
                         </td>
                       }
-                      @if (column.type === "price2" && column.key) {
-                        <td>
-                          <div class="text-sm text-white">
-                            {{ getField(storage, column.key) || "0" }}
-                            {{ storage.currency }}
-                          </div>
-                        </td>
-                      }
                       @if (column.type === "storage" && column.key) {
                         <td>
-                          <div class="text-sm text-white">
-                            {{ getStorage(getField(storage, column.key)) }}
+                          <div class="text-sm text-white text-nowrap">
+                            {{ getField(storage, column.key) | storage }}
                           </div>
                         </td>
                       }

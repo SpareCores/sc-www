@@ -30,6 +30,7 @@ import { FormsModule } from "@angular/forms";
 import {
   LucideDynamicIcon,
   LucideCalendarSearch,
+  LucideCheck,
   LucideChevronDown,
   LucideChevronLeft,
   LucideChevronRight,
@@ -40,6 +41,7 @@ import {
   LucideScale,
   LucideSearch,
   LucideShipWheel,
+  LucideX,
 } from "@lucide/angular";
 import {
   SearchBarComponent,
@@ -62,6 +64,8 @@ import specialServerListsData from "./special-lists.js";
 import { GpuCountPipe } from "../../pipes/gpu-count.pipe";
 import { CpuCacheSizePipe } from "../../pipes/cpu-cache-size.pipe";
 import { MonthlyTrafficPipe } from "../../pipes/monthly-traffic.pipe";
+import { StoragePipe } from "../../pipes/storage.pipe";
+import { GpuMemoryPipe } from "../../pipes/gpu-memory.pipe";
 import { Ipv4CountPipe } from "../../pipes/ipv4-count.pipe";
 import { formatNumberInputValue } from "../../pipes/pipe-utils";
 import {
@@ -71,20 +75,9 @@ import {
   availableCurrencies,
 } from "../../tools/shared_data";
 import {
-  SERVER_TABLE_BENCHMARK_EFFICIENCY_TOOLTIP,
-  SERVER_TABLE_BENCHMARK_TOOLTIP,
-  SERVER_TABLE_SCORE_PER_PRICE_TOOLTIP,
-  SERVER_TABLE_SCORE_TOOLTIP,
-} from "../../tools/server-table-tooltips";
-
-export type TableColumn = {
-  name: string;
-  type: string;
-  key?: string;
-  show?: boolean;
-  orderField?: string;
-  info?: string;
-};
+  buildServerListingColumns,
+  TableColumn,
+} from "../../tools/table-columns";
 
 export type CountryMetadata = {
   continent: string;
@@ -122,6 +115,7 @@ const INVALID_BENCHMARK_URL_TOAST_BODY =
     FormsModule,
     BreadcrumbsComponent,
     LucideDynamicIcon,
+    LucideCheck,
     LucideCalendarSearch,
     LucideChevronDown,
     LucideChevronLeft,
@@ -133,6 +127,7 @@ const INVALID_BENCHMARK_URL_TOAST_BODY =
     LucideScale,
     LucideSearch,
     LucideShipWheel,
+    LucideX,
     RouterModule,
     SearchBarComponent,
     PaginationComponent,
@@ -140,6 +135,8 @@ const INVALID_BENCHMARK_URL_TOAST_BODY =
     GpuCountPipe,
     CpuCacheSizePipe,
     MonthlyTrafficPipe,
+    StoragePipe,
+    GpuMemoryPipe,
     Ipv4CountPipe,
     FlowbiteDropdownDirective,
   ],
@@ -213,161 +210,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
 
   tableColumns: TableColumn[] = [];
 
-  possibleColumns: TableColumn[] = [
-    { name: "NAME & PROVIDER", show: true, type: "name" },
-    {
-      name: "VENDOR",
-      show: false,
-      type: "vendor",
-      orderField: "vendor_id",
-    },
-    {
-      name: "ARCHITECTURE",
-      show: false,
-      type: "text",
-      key: "cpu_architecture",
-    },
-    { name: "PROCESSOR", show: true, type: "processor", orderField: "vcpus" },
-    { name: "CPU MODEL", show: false, type: "cpu_model" },
-    {
-      name: "CPU CACHE",
-      show: false,
-      type: "cpu_cache",
-    },
-    {
-      name: "CPU ALLOCATION",
-      show: false,
-      type: "text",
-      key: "cpu_allocation",
-    },
-    {
-      name: "HW VIRT",
-      show: false,
-      type: "text",
-      key: "hw_virt",
-      orderField: "hw_virt",
-    },
-    {
-      name: "START TIME",
-      show: false,
-      type: "text",
-      key: "average_time_to_start",
-      orderField: "average_time_to_start",
-    },
-    {
-      name: "SCORE",
-      // benchmark (set to SCore by default) is the new default
-      show: false,
-      type: "score",
-      orderField: "score",
-      info: SERVER_TABLE_SCORE_TOOLTIP,
-    },
-    {
-      name: "$CORE",
-      show: false,
-      type: "score_per_price",
-      orderField: "score_per_price",
-      info: SERVER_TABLE_SCORE_PER_PRICE_TOOLTIP,
-    },
-    {
-      name: "BENCHMARK",
-      show: true,
-      type: "benchmark",
-      orderField: "selected_benchmark_score",
-      info: SERVER_TABLE_BENCHMARK_TOOLTIP,
-    },
-    {
-      name: "$ EFFICIENCY",
-      show: true,
-      type: "benchmark_score_per_price",
-      orderField: "selected_benchmark_score_per_price",
-      info: SERVER_TABLE_BENCHMARK_EFFICIENCY_TOOLTIP,
-    },
-    { name: "MEMORY", show: true, type: "memory", orderField: "memory_amount" },
-    { name: "GPUs", show: true, type: "gpu", orderField: "gpu_count" },
-    {
-      name: "GPU MIN MEMORY",
-      show: false,
-      type: "gpu_memory_min",
-      orderField: "gpu_memory_min",
-    },
-    {
-      name: "GPU TOTAL MEMORY",
-      show: false,
-      type: "gpu_memory_total",
-      orderField: "gpu_memory_total",
-    },
-    { name: "GPU MODEL", show: false, type: "gpu_model" },
-    {
-      name: "STORAGE",
-      show: true,
-      type: "storage",
-      orderField: "storage_size",
-    },
-    { name: "STORAGE TYPE", show: false, type: "text", key: "storage_type" },
-    {
-      name: "NETWORK SPEED",
-      show: false,
-      type: "network_speed",
-      orderField: "network_speed_baseline",
-    },
-    {
-      name: "STORAGE SPEED",
-      show: false,
-      type: "storage_speed",
-      orderField: "network_storage_speed_baseline",
-    },
-    {
-      name: "INBOUND TRAFFIC",
-      show: false,
-      type: "text",
-      key: "inbound_traffic",
-      orderField: "inbound_traffic",
-    },
-    {
-      name: "OUTBOUND TRAFFIC",
-      show: false,
-      type: "text",
-      key: "outbound_traffic",
-      orderField: "outbound_traffic",
-    },
-    {
-      name: "IPV4",
-      show: false,
-      type: "text",
-      key: "ipv4",
-      orderField: "ipv4",
-    },
-    {
-      name: "BEST PRICE",
-      show: true,
-      type: "price",
-      key: "min_price",
-      orderField: "min_price",
-    },
-    {
-      name: "BEST ONDEMAND PRICE",
-      show: false,
-      type: "price",
-      key: "min_price_ondemand",
-      orderField: "min_price_ondemand",
-    },
-    {
-      name: "BEST ONDEMAND MONTHLY PRICE",
-      show: false,
-      type: "price",
-      key: "min_price_ondemand_monthly",
-      orderField: "min_price_ondemand_monthly",
-    },
-    {
-      name: "BEST SPOT PRICE",
-      show: false,
-      type: "price",
-      key: "min_price_spot",
-      orderField: "min_price_spot",
-    },
-    { name: "STATUS", show: false, type: "text", key: "status" },
-  ];
+  possibleColumns: TableColumn[] = buildServerListingColumns();
 
   hasCustomColumns = false;
 
@@ -777,24 +620,13 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   }
 
   getMemory(item: ServerPKs) {
-    return ((item.memory_amount || 0) / 1024).toFixed(1) + " GiB";
-  }
-
-  getGPUMemory(item: ServerPKs, stat: "min" | "total" = "min"): string {
-    const memory = stat === "min" ? item.gpu_memory_min : item.gpu_memory_total;
-    return ((memory || 0) / 1024).toFixed(1) + " GiB";
-  }
-
-  getStorage(item: ServerPKs) {
-    if (!item.storage_size) return "-";
-
-    if (item.storage_size < 1000) return `${item.storage_size} GB`;
-
-    return `${(item.storage_size / 1000).toFixed(1)} TB`;
+    return item.memory_amount === null || item.memory_amount === undefined
+      ? "-"
+      : `${(item.memory_amount / 1024).toFixed(1)} GiB`;
   }
 
   getScore(value: number | null): string {
-    if (!value) return "-";
+    if (value === null || value === undefined) return "-";
     // make sure to show small numbers
     if (value < 1) {
       return value.toPrecision(1);
@@ -1113,17 +945,19 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   }
 
   formatGbps(value: number | null | undefined) {
-    if (value === null || value === undefined || value <= 0) return "-";
+    if (value === null || value === undefined) return "-";
+
+    if (value === 0) return "0 Gbps";
 
     return `${formatNumberInputValue(value)} Gbps`;
   }
 
-  getField(item: ServerPriceWithPKs, field: string) {
+  getField(item: ServerPriceWithPKs, field: string): unknown {
     return field
       .split(".")
       .reduce(
         (obj, key) =>
-          obj && (obj as any)[key] ? (obj as any)[key] : undefined,
+          obj !== null && obj !== undefined ? (obj as any)[key] : undefined,
         item,
       );
   }

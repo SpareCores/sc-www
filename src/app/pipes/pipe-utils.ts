@@ -68,3 +68,32 @@ export function formatBytes(bytes: number): string {
   const scaled = bytes / Math.pow(1024, index);
   return `${formatValue(scaled)} ${IEC_UNITS[index]}`;
 }
+
+export function formatStorageSize(
+  sizeGb: number | null | undefined,
+  emptyValue = "-",
+): string {
+  if (sizeGb === null || sizeGb === undefined || Number.isNaN(Number(sizeGb))) {
+    return emptyValue;
+  }
+
+  const numericSize = Number(sizeGb);
+
+  if (numericSize === 0) return "0 GB";
+  if (numericSize < 1000) return `${numericSize} GB`;
+  return `${formatValue(numericSize / 1000)} TB`;
+}
+
+export function formatGpuMemory(
+  memoryMib: number | null | undefined,
+  emptyValue = "-",
+): string {
+  if (
+    memoryMib === null ||
+    memoryMib === undefined ||
+    Number.isNaN(Number(memoryMib))
+  ) {
+    return emptyValue;
+  }
+  return `${formatValue(memoryMib / 1024)} GiB`;
+}

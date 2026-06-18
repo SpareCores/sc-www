@@ -34,6 +34,8 @@
             ],
             "styles": [
               "src/styles.scss",
+              "src/assets/fonts/font_roboto_mono_main.css",
+              "src/assets/fonts/font_inter_main.css",
               "./node_modules/ngx-lightbox/lightbox.css",
               "node_modules/survey-core/defaultV2.min.css",
               "node_modules/prismjs/themes/prism-tomorrow.min.css",

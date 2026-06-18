@@ -152,7 +152,7 @@
                       }"
                       (click)="toggleOrdering(column)"
                     >
-                      <div class="flex gap-1">
+                      <div class="flex gap-1 whitespace-nowrap">
                         {{ column.name }}
                         @if (column.info) {
                           <svg
@@ -321,15 +321,20 @@
                           }
                         </td>
                       }
-                      @if (column.type === "gpu_memory") {
+                      @if (column.type === "gpu_memory_min") {
                         <td>
-                          {{ getGPUMemory(server) }}
+                          {{ server.server.gpu_memory_min | gpuMemory }}
+                        </td>
+                      }
+                      @if (column.type === "gpu_memory_total") {
+                        <td>
+                          {{ server.server.gpu_memory_total | gpuMemory }}
                         </td>
                       }
                       @if (column.type === "storage") {
                         <td>
                           <div class="text-sm text-white">
-                            {{ getStorage(server) }}
+                            {{ server.server.storage_size | storage }}
                           </div>
                           @if (server.server.storage_type) {
                             <div class="text-xs text-white">
@@ -394,9 +399,63 @@
                           </div>
                         </td>
                       }
-                      @if (column.type === "text" && column.key) {
+                      @if (
+                        column.type === "text" &&
+                        column.key === "server.hw_virt"
+                      ) {
                         <td>
-                          {{ getField(server, column.key) }}
+                          <div class="flex items-center justify-center">
+                            @let fieldValue = getField(server, column.key);
+                            @if (fieldValue === true) {
+                              <svg
+                                lucideCheck
+                                class="h-4 w-4 shrink-0 text-emerald-400"
+                              ></svg>
+                            } @else if (fieldValue === false) {
+                              <svg
+                                lucideX
+                                class="h-4 w-4 shrink-0 text-white"
+                              ></svg>
+                            } @else if (
+                              fieldValue === null ||
+                              fieldValue === undefined ||
+                              (typeof fieldValue === "string" &&
+                                fieldValue.trim().toLowerCase() === "none")
+                            ) {
+                              -
+                            } @else {
+                              {{ fieldValue }}
+                            }
+                          </div>
+                        </td>
+                      }
+                      @if (
+                        column.type === "text" &&
+                        column.key &&
+                        column.key !== "server.hw_virt"
+                      ) {
+                        <td>
+                          @let fieldValue = getField(server, column.key);
+                          @if (fieldValue === true) {
+                            <svg
+                              lucideCheck
+                              class="h-4 w-4 shrink-0 text-emerald-400"
+                            ></svg>
+                          } @else if (fieldValue === false) {
+                            <svg
+                              lucideX
+                              class="h-4 w-4 shrink-0 text-white"
+                            ></svg>
+                          } @else if (
+                            fieldValue === null ||
+                            fieldValue === undefined ||
+                            (typeof fieldValue === "string" &&
+                              fieldValue.trim().toLowerCase() === "none")
+                          ) {
+                            -
+                          } @else {
+                            {{ fieldValue }}
+                          }
                         </td>
                       }
                       @if (column.type === "country") {

@@ -4,16 +4,8 @@ import {
   SearchBarFilterCategory,
   SearchBarParameterPlacement,
 } from "../../components/search-bar/search-bar.component";
-import {
-  AdvisorOptimizationGoal,
-  AdvisorSeoMetadata,
-  AdvisorTableColumn,
-} from "./advisor.types";
-import {
-  SERVER_TABLE_BENCHMARK_EFFICIENCY_TOOLTIP,
-  SERVER_TABLE_SCORE_PER_PRICE_TOOLTIP,
-  SERVER_TABLE_SCORE_TOOLTIP,
-} from "../../tools/server-table-tooltips";
+import { buildAdvisorColumns, TableColumn } from "../../tools/table-columns";
+import { AdvisorOptimizationGoal, AdvisorSeoMetadata } from "./advisor.types";
 
 export const ADVISOR_BREADCRUMBS: BreadcrumbSegment[] = [
   { name: "Home", url: "/" },
@@ -35,6 +27,12 @@ export const ADVISOR_DEFAULT_SERVER_COLUMNS = [
   "cpu_l3_cache",
   "cpu_architecture",
   "cpu_allocation",
+  "network_speed_baseline",
+  "network_speed_max",
+  "network_storage_speed_baseline",
+  "network_storage_speed_max",
+  "inbound_traffic",
+  "outbound_traffic",
 ] as const;
 
 export const ADVISOR_FILTER_CATEGORIES: SearchBarFilterCategory[] = [
@@ -189,202 +187,9 @@ export const ADVISOR_OPTIMIZATION_GOAL_TITLE = "Optimization goal";
 
 export const ADVISOR_WORKLOAD_SCORE_TOOLTIP = "Selected workload score.";
 
-export const ADVISOR_TABLE_COLUMNS: AdvisorTableColumn[] = [
-  { name: "NAME & PROVIDER", type: "name", show: true },
-  { name: "VENDOR", type: "vendor", key: "vendor_id", show: false },
-  {
-    name: "ARCHITECTURE",
-    type: "text",
-    key: "cpu_architecture",
-    show: false,
-  },
-  {
-    name: "PROCESSOR",
-    type: "processor",
-    show: true,
-    orderField: "vcpus",
-  },
-  {
-    name: "CPU MODEL",
-    type: "cpu_model",
-    key: "cpu_model",
-    show: false,
-  },
-  {
-    name: "CPU CACHE",
-    type: "cpu_cache",
-    show: false,
-  },
-  {
-    name: "CPU ALLOCATION",
-    type: "text",
-    key: "cpu_allocation",
-    show: false,
-  },
-  {
-    name: "SCORE",
-    type: "score",
-    key: "score",
-    show: false,
-    orderField: "score",
-    info: SERVER_TABLE_SCORE_TOOLTIP,
-  },
-  {
-    name: "$CORE",
-    type: "score_per_price",
-    key: "score_per_price",
-    show: false,
-    orderField: "score_per_price",
-    info: SERVER_TABLE_SCORE_PER_PRICE_TOOLTIP,
-  },
-  {
-    name: "WORKLOAD",
-    type: "benchmark",
-    key: "selected_benchmark_score",
-    show: true,
-    orderField: "selected_benchmark_score",
-    info: ADVISOR_WORKLOAD_SCORE_TOOLTIP,
-  },
-  {
-    name: "$ EFFICIENCY",
-    type: "benchmark_score_per_price",
-    key: "selected_benchmark_score_per_price",
-    show: true,
-    orderField: "selected_benchmark_score_per_price",
-    info: SERVER_TABLE_BENCHMARK_EFFICIENCY_TOOLTIP,
-  },
-  {
-    name: "MEMORY",
-    type: "memory",
-    key: "memory_amount",
-    show: true,
-    orderField: "memory_amount",
-  },
-  {
-    name: "GPUs",
-    type: "gpu",
-    key: "gpu_count",
-    show: true,
-    orderField: "gpu_count",
-  },
-  {
-    name: "GPU MIN MEMORY",
-    type: "gpu_memory_min",
-    key: "gpu_memory_min",
-    show: false,
-    orderField: "gpu_memory_min",
-  },
-  {
-    name: "GPU TOTAL MEMORY",
-    type: "gpu_memory_total",
-    key: "gpu_memory_total",
-    show: false,
-    orderField: "gpu_memory_total",
-  },
-  {
-    name: "GPU MODEL",
-    type: "gpu_model",
-    key: "gpu_model",
-    show: false,
-  },
-  {
-    name: "STORAGE",
-    type: "storage",
-    key: "storage_size",
-    show: true,
-    orderField: "storage_size",
-  },
-  {
-    name: "STORAGE TYPE",
-    type: "text",
-    key: "storage_type",
-    show: false,
-  },
-  {
-    name: "NETWORK SPEED BASELINE",
-    type: "network_speed",
-    key: "network_speed_baseline",
-    show: false,
-    orderField: "network_speed_baseline",
-  },
-  {
-    name: "NETWORK SPEED MAX",
-    type: "network_speed",
-    key: "network_speed_max",
-    show: false,
-    orderField: "network_speed_max",
-  },
-  {
-    name: "NETWORK STORAGE SPEED BASELINE",
-    type: "network_speed",
-    key: "network_storage_speed_baseline",
-    show: false,
-    orderField: "network_storage_speed_baseline",
-  },
-  {
-    name: "NETWORK STORAGE SPEED MAX",
-    type: "network_speed",
-    key: "network_storage_speed_max",
-    show: false,
-    orderField: "network_storage_speed_max",
-  },
-  {
-    name: "INBOUND TRAFFIC",
-    type: "inbound_traffic",
-    key: "inbound_traffic",
-    show: false,
-    orderField: "inbound_traffic",
-  },
-  {
-    name: "OUTBOUND TRAFFIC",
-    type: "outbound_traffic",
-    key: "outbound_traffic",
-    show: false,
-    orderField: "outbound_traffic",
-  },
-  {
-    name: "IPV4",
-    type: "ipv4",
-    key: "ipv4",
-    show: false,
-    orderField: "ipv4",
-  },
-  {
-    name: "BEST PRICE",
-    type: "price",
-    key: "min_price",
-    show: true,
-    orderField: "min_price",
-  },
-  {
-    name: "BEST ONDEMAND PRICE",
-    type: "price",
-    key: "min_price_ondemand",
-    show: false,
-    orderField: "min_price_ondemand",
-  },
-  {
-    name: "BEST ONDEMAND MONTHLY PRICE",
-    type: "price",
-    key: "min_price_ondemand_monthly",
-    show: false,
-    orderField: "min_price_ondemand_monthly",
-  },
-  {
-    name: "BEST SPOT PRICE",
-    type: "price",
-    key: "min_price_spot",
-    show: false,
-    orderField: "min_price_spot",
-  },
-  {
-    name: "STATUS",
-    type: "text",
-    key: "status",
-    show: false,
-    orderField: "status",
-  },
-];
+export const ADVISOR_TABLE_COLUMNS: TableColumn[] = buildAdvisorColumns(
+  ADVISOR_WORKLOAD_SCORE_TOOLTIP,
+);
 
 export const ADVISOR_PAGE_LIMITS = [10, 25, 50, 100, 250];
 

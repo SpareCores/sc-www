@@ -44,6 +44,7 @@ import { barChartDataEmpty, barChartOptions } from "./chartOptions";
 import { Chart } from "chart.js";
 import annotationPlugin from "chartjs-plugin-annotation";
 import { ReduceUnitNamePipe } from "../../pipes/reduce-unit-name.pipe";
+import { formatStorageSize } from "../../pipes/pipe-utils";
 import { CountryIdtoNamePipe } from "../../pipes/country-idto-name.pipe";
 import { GpuCountPipe } from "../../pipes/gpu-count.pipe";
 import { ServerCompareService } from "../../services/server-compare.service";
@@ -53,6 +54,7 @@ import { AnalyticsService } from "../../services/analytics.service";
 import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
 import { ServerChartsComponent } from "../../components/server-charts/server-charts.component";
 import { ServerLstopoComponent } from "../../components/server-lstopo/server-lstopo.component";
+import { formatBooleanIconHtml } from "../../components/charts/shared/server-compare-table.utils";
 import {
   ServerPropertyCardComponent,
   ServerPropertyRow,
@@ -370,7 +372,9 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
               if (this.serverDetails.storage_size) {
                 this.features.push({
                   name: "Storage",
-                  value: this.getStorage(),
+                  value: formatStorageSize(
+                    this.serverDetails.storage_size ?? 0,
+                  ),
                 });
               }
               if (this.serverDetails.gpu_count) {
@@ -452,7 +456,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
               } else if (this.serverDetails.cpu_cores) {
                 this.description += ` ${this.serverDetails.cpu_cores} CPUs`;
               }
-              this.description += `, ${this.getMemory()} of memory and ${this.getStorage()} of storage.`;
+              this.description += `, ${this.getMemory()} of memory and ${formatStorageSize(this.serverDetails.storage_size ?? 0)} of storage.`;
 
               if (this.serverDetails.prices[0]) {
                 const roundedPrice =
@@ -468,7 +472,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
                 },
                 {
                   question: `What are the specs of the ${this.serverDetails.display_name} server?`,
-                  answer: `The ${this.serverDetails.display_name} server is equipped with ${this.serverDetails.vcpus} logical CPU core${this.serverDetails.vcpus! > 1 ? "s" : ""} on ${this.serverDetails.cpu_cores || "unknown number of"} ${this.serverDetails.cpu_manufacturer || ""} ${this.serverDetails.cpu_family || ""} ${this.serverDetails.cpu_model || ""} physical CPU core${this.serverDetails.cpu_cores ? (this.serverDetails.cpu_cores! > 1 ? "s" : "") : "(s)"}${this.serverDetails.memory_speed ? " running at max. " + this.serverDetails.cpu_speed + " Ghz" : ""}, ${this.getMemory()} of ${this.serverDetails.memory_generation || ""} memory${this.serverDetails.memory_speed ? " with " + this.serverDetails.memory_speed + " Mhz clock rate" : ""}, ${this.getStorage()} of ${this.serverDetails.storage_type || ""} storage, and ${this.serverDetails.gpu_count! > 0 ? this.serverDetails.gpu_count : "no"} ${this.serverDetails.gpu_manufacturer || ""} ${this.serverDetails.gpu_family || ""} ${this.serverDetails.gpu_model || ""} GPU${this.serverDetails.gpu_count! > 1 ? "s" : ""}. Additional block storage can be attached as needed.`,
+                  answer: `The ${this.serverDetails.display_name} server is equipped with ${this.serverDetails.vcpus} logical CPU core${this.serverDetails.vcpus! > 1 ? "s" : ""} on ${this.serverDetails.cpu_cores || "unknown number of"} ${this.serverDetails.cpu_manufacturer || ""} ${this.serverDetails.cpu_family || ""} ${this.serverDetails.cpu_model || ""} physical CPU core${this.serverDetails.cpu_cores ? (this.serverDetails.cpu_cores! > 1 ? "s" : "") : "(s)"}${this.serverDetails.memory_speed ? " running at max. " + this.serverDetails.cpu_speed + " Ghz" : ""}, ${this.getMemory()} of ${this.serverDetails.memory_generation || ""} memory${this.serverDetails.memory_speed ? " with " + this.serverDetails.memory_speed + " Mhz clock rate" : ""}, ${formatStorageSize(this.serverDetails.storage_size ?? 0)} of ${this.serverDetails.storage_type || ""} storage, and ${this.serverDetails.gpu_count! > 0 ? this.serverDetails.gpu_count : "no"} ${this.serverDetails.gpu_manufacturer || ""} ${this.serverDetails.gpu_family || ""} ${this.serverDetails.gpu_model || ""} GPU${this.serverDetails.gpu_count! > 1 ? "s" : ""}. Additional block storage can be attached as needed.`,
                 },
               ];
 
@@ -705,15 +709,6 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   getMemory(memory: number | undefined = undefined) {
     const memoryAmount = memory || this.serverDetails.memory_amount || 0;
     return (memoryAmount / 1024).toFixed(memoryAmount >= 1024 ? 0 : 1) + " GiB";
-  }
-
-  getStorage() {
-    if (!this.serverDetails.storage_size) return "0 GB";
-
-    if (this.serverDetails.storage_size < 1000)
-      return `${this.serverDetails.storage_size} GB`;
-
-    return `${(this.serverDetails.storage_size / 1000).toFixed(1)} TB`;
   }
 
   serverUrl(server: Server, appendVendor: boolean = false): string {
@@ -1008,7 +1003,29 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     const name = column.id;
     const prop = (this.serverDetails as any)[name];
 
-    if (prop === undefined || prop === null) {
+    if (name === "hw_virt") {
+      if (prop === true) {
+        return formatBooleanIconHtml(true);
+      }
+
+      if (prop === false) {
+        return formatBooleanIconHtml(false);
+      }
+
+      if (prop === undefined || prop === null) {
+        return "-";
+      }
+
+      if (typeof prop === "string" && prop.trim().toLowerCase() === "none") {
+        return "-";
+      }
+    }
+
+    if (prop === undefined || prop === null || typeof prop === "boolean") {
+      return undefined;
+    }
+
+    if (typeof prop === "string" && prop.trim().toLowerCase() === "none") {
       return undefined;
     }
 

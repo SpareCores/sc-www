@@ -79,4 +79,20 @@ describe("ServerPricesComponent", () => {
     expect(component.orderDir).toBeUndefined();
     expect(searchOptionsChangedSpy).toHaveBeenCalledTimes(3);
   });
+
+  it("preserves falsy nested values and zero scores in field helpers", () => {
+    expect(
+      component.getField(
+        { server: { hw_virt: false } } as never,
+        "server.hw_virt",
+      ),
+    ).toBeFalse();
+    expect(
+      component.getField(
+        { server: { gpu_count: 0 } } as never,
+        "server.gpu_count",
+      ),
+    ).toBe(0);
+    expect(component.getScore(0)).toBe("0");
+  });
 });

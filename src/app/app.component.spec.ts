@@ -2,6 +2,7 @@ import { Component } from "@angular/core";
 import { TestBed } from "@angular/core/testing";
 import { provideRouter, Router } from "@angular/router";
 import { AppComponent } from "./app.component";
+import { AnalyticsService } from "./services/analytics.service";
 import { sharedTestingProviders } from "../testing/testbed.providers";
 import {
   ADVISOR_PROMO_BANNER,
@@ -17,8 +18,13 @@ import {
 class TestRouteComponent {}
 
 describe("AppComponent", () => {
+  const initializeTracking = jasmine.createSpy("initializeTracking");
+  const trackEvent = jasmine.createSpy("trackEvent");
+
   beforeEach(async () => {
     window.sessionStorage.clear();
+    initializeTracking.calls.reset();
+    trackEvent.calls.reset();
 
     const [, ...nonRouterTestingProviders] = sharedTestingProviders;
 
@@ -26,6 +32,13 @@ describe("AppComponent", () => {
       imports: [AppComponent, TestRouteComponent],
       providers: [
         ...nonRouterTestingProviders,
+        {
+          provide: AnalyticsService,
+          useValue: {
+            initializeTracking,
+            trackEvent,
+          },
+        },
         provideRouter([
           { path: "", component: TestRouteComponent },
           { path: "advisor", component: TestRouteComponent },

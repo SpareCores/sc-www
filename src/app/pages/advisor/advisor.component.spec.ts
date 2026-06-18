@@ -41,10 +41,10 @@ import { ToastService } from "../../services/toast.service";
 import { NeetoCalService } from "../../services/neeto-cal.service";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 import {
-  SERVER_TABLE_BENCHMARK_EFFICIENCY_TOOLTIP,
-  SERVER_TABLE_SCORE_PER_PRICE_TOOLTIP,
-  SERVER_TABLE_SCORE_TOOLTIP,
-} from "../../tools/server-table-tooltips";
+  COLUMN_BENCHMARK_EFFICIENCY_TOOLTIP,
+  COLUMN_SCORE_PER_PRICE_TOOLTIP,
+  COLUMN_SCORE_TOOLTIP,
+} from "../../tools/column-tooltips";
 
 describe("AdvisorComponent", () => {
   const queryParams$ = new BehaviorSubject({});
@@ -610,15 +610,15 @@ describe("AdvisorComponent", () => {
         .map((column) => [column.name, column] as const),
     );
 
-    expect(columnByName.get("SCORE")?.info).toBe(SERVER_TABLE_SCORE_TOOLTIP);
+    expect(columnByName.get("SCORE")?.info).toBe(COLUMN_SCORE_TOOLTIP);
     expect(columnByName.get("$CORE")?.info).toBe(
-      SERVER_TABLE_SCORE_PER_PRICE_TOOLTIP,
+      COLUMN_SCORE_PER_PRICE_TOOLTIP,
     );
     expect(columnByName.get("WORKLOAD")?.info).toBe(
       ADVISOR_WORKLOAD_SCORE_TOOLTIP,
     );
     expect(columnByName.get("$ EFFICIENCY")?.info).toBe(
-      SERVER_TABLE_BENCHMARK_EFFICIENCY_TOOLTIP,
+      COLUMN_BENCHMARK_EFFICIENCY_TOOLTIP,
     );
 
     component.setColumnVisibility("SCORE", true);
@@ -1352,20 +1352,38 @@ describe("AdvisorComponent", () => {
     );
   }));
 
-  it("keeps the vendor column informational rather than orderable", () => {
+  it("cycles vendor ordering through desc, asc, and cleared state", () => {
     const vendorColumn = component
       .possibleColumns()
       .find((column) => column.name === "VENDOR");
 
-    expect(vendorColumn?.name).toBe("VENDOR");
-    expect(vendorColumn?.orderField).toBeUndefined();
+    expect(vendorColumn).toEqual(
+      jasmine.objectContaining({
+        show: false,
+        orderField: "vendor_id",
+      }),
+    );
 
-    component.manualOrderBy.set("memory_amount");
-    component.manualOrderDir.set(OrderDir.Desc);
     component.toggleOrdering(vendorColumn!);
 
-    expect(component.manualOrderBy()).toBe("memory_amount");
+    expect(component.manualOrderBy()).toBe("vendor_id");
     expect(component.manualOrderDir()).toBe(OrderDir.Desc);
+    expect(component.getOrderingIcon(vendorColumn!)).toBe(
+      "arrow-down-wide-narrow",
+    );
+
+    component.toggleOrdering(vendorColumn!);
+
+    expect(component.manualOrderBy()).toBe("vendor_id");
+    expect(component.manualOrderDir()).toBe(OrderDir.Asc);
+    expect(component.getOrderingIcon(vendorColumn!)).toBe(
+      "arrow-down-narrow-wide",
+    );
+
+    component.toggleOrdering(vendorColumn!);
+
+    expect(component.manualOrderBy()).toBeUndefined();
+    expect(component.manualOrderDir()).toBeUndefined();
     expect(component.getOrderingIcon(vendorColumn!)).toBeNull();
   });
 
@@ -1782,6 +1800,32 @@ describe("AdvisorComponent", () => {
     expect(gpuDelta.textContent?.trim()).toBe("(+100%)");
     expect(storageDelta.textContent?.trim()).toBe("(+100%)");
   }));
+
+  it("falls back to selectedBaselineServer when the baseline recommendation lacks a resource value", () => {
+    component.selectedBaselineServer.set({
+      vendor_id: "aws",
+      api_reference: "large",
+      gpu_count: 1,
+    });
+    component.recommendations.set([
+      {
+        vendor_id: "aws",
+        api_reference: "large",
+        gpu_count: null,
+      },
+      {
+        vendor_id: "aws",
+        api_reference: "c7a.large",
+        gpu_count: 2,
+      },
+    ] as never[]);
+
+    const candidate = component.recommendations()[1];
+    const delta = component.getComparableResourceDelta(candidate, "gpu_count");
+
+    expect(delta?.baselineValue).toBe(1);
+    expect(delta?.percentageDelta).toBe(100);
+  });
 
   it("does not render 0% comparable resource deltas", fakeAsync(() => {
     selectBaselineServer();

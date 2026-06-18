@@ -3,6 +3,7 @@ import { ActivatedRoute } from "@angular/router";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { AnalyticsService } from "../../services/analytics.service";
+import { formatStorageSize } from "../../pipes/pipe-utils";
 import { Subscription } from "rxjs";
 
 @Component({
@@ -79,7 +80,9 @@ export class ServerOGComponent implements OnInit, OnDestroy {
               if (this.serverDetails.storage_size) {
                 this.features.push({
                   name: "Storage",
-                  value: this.getStorage(),
+                  value: formatStorageSize(
+                    this.serverDetails.storage_size ?? 0,
+                  ),
                 });
               }
               if (this.serverDetails.gpu_count) {
@@ -89,7 +92,7 @@ export class ServerOGComponent implements OnInit, OnDestroy {
                 });
               }
 
-              this.description = `The ${this.serverDetails.display_name} server is equipped with ${this.serverDetails.vcpus} logical CPU core${this.serverDetails.vcpus! > 1 ? "s" : ""} on ${this.serverDetails.cpu_cores || "unknown number of"} ${this.serverDetails.cpu_manufacturer || ""} ${this.serverDetails.cpu_family || ""} ${this.serverDetails.cpu_model || ""} physical CPU core${this.serverDetails.cpu_cores ? (this.serverDetails.cpu_cores! > 1 ? "s" : "") : "(s)"}${this.serverDetails.memory_speed ? " running at max. " + this.serverDetails.cpu_speed + " Ghz" : ""}, ${this.getMemory()} of ${this.serverDetails.memory_generation || ""} memory${this.serverDetails.memory_speed ? " with " + this.serverDetails.memory_speed + " Mhz clock rate" : ""}, ${this.getStorage()} of ${this.serverDetails.storage_type || ""} storage, and ${this.serverDetails.gpu_count! > 0 ? this.serverDetails.gpu_count : "no"} ${this.serverDetails.gpu_manufacturer || ""} ${this.serverDetails.gpu_family || ""} ${this.serverDetails.gpu_model || ""} GPU${this.serverDetails.gpu_count! > 1 ? "s" : ""}.`;
+              this.description = `The ${this.serverDetails.display_name} server is equipped with ${this.serverDetails.vcpus} logical CPU core${this.serverDetails.vcpus! > 1 ? "s" : ""} on ${this.serverDetails.cpu_cores || "unknown number of"} ${this.serverDetails.cpu_manufacturer || ""} ${this.serverDetails.cpu_family || ""} ${this.serverDetails.cpu_model || ""} physical CPU core${this.serverDetails.cpu_cores ? (this.serverDetails.cpu_cores! > 1 ? "s" : "") : "(s)"}${this.serverDetails.memory_speed ? " running at max. " + this.serverDetails.cpu_speed + " Ghz" : ""}, ${this.getMemory()} of ${this.serverDetails.memory_generation || ""} memory${this.serverDetails.memory_speed ? " with " + this.serverDetails.memory_speed + " Mhz clock rate" : ""}, ${formatStorageSize(this.serverDetails.storage_size ?? 0)} of ${this.serverDetails.storage_type || ""} storage, and ${this.serverDetails.gpu_count! > 0 ? this.serverDetails.gpu_count : "no"} ${this.serverDetails.gpu_manufacturer || ""} ${this.serverDetails.gpu_family || ""} ${this.serverDetails.gpu_model || ""} GPU${this.serverDetails.gpu_count! > 1 ? "s" : ""}.`;
               if (this.serverDetails.prices[0]) {
                 this.description += ` The pricing starts at ${this.serverDetails.prices[0].price} ${this.serverDetails.prices[0].currency} per hour.`;
               }
@@ -114,15 +117,6 @@ export class ServerOGComponent implements OnInit, OnDestroy {
   getMemory(memory: number | undefined = undefined) {
     const memoryAmount = memory || this.serverDetails.memory_amount || 0;
     return (memoryAmount / 1024).toFixed(memoryAmount >= 1024 ? 0 : 1) + " GiB";
-  }
-
-  getStorage() {
-    if (!this.serverDetails.storage_size) return "0 GB";
-
-    if (this.serverDetails.storage_size < 1000)
-      return `${this.serverDetails.storage_size} GB`;
-
-    return `${(this.serverDetails.storage_size / 1000).toFixed(1)} TB`;
   }
 
   getBenchmark(isMulti: boolean) {

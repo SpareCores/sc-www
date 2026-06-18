@@ -412,18 +412,18 @@
                       }
                       @if (column.type === "gpu_memory_min") {
                         <td>
-                          {{ getGPUMemory(item, "min") }}
+                          {{ item.gpu_memory_min | gpuMemory }}
                         </td>
                       }
                       @if (column.type === "gpu_memory_total") {
                         <td>
-                          {{ getGPUMemory(item, "total") }}
+                          {{ item.gpu_memory_total | gpuMemory }}
                         </td>
                       }
                       @if (column.type === "storage") {
                         <td>
                           <div class="text-sm text-white">
-                            {{ getStorage(item) }}
+                            {{ item.storage_size | storage }}
                           </div>
                           @if (item.storage_type) {
                             <div class="text-xs text-white">
@@ -501,11 +501,11 @@
                       }
                       @if (column.type === "network_speed") {
                         <td>
-                          <div class="flex flex-col gap-1 text-white">
+                          <div class="flex flex-col text-white">
                             <span class="whitespace-nowrap">
                               Base {{ formatGbps(item.network_speed_baseline) }}
                             </span>
-                            <span class="whitespace-nowrap">
+                            <span class="whitespace-nowrap text-xs">
                               Max {{ formatGbps(item.network_speed_max) }}
                             </span>
                           </div>
@@ -513,14 +513,14 @@
                       }
                       @if (column.type === "storage_speed") {
                         <td>
-                          <div class="flex flex-col gap-1 text-white">
+                          <div class="flex flex-col text-white">
                             <span class="whitespace-nowrap">
                               Base
                               {{
                                 formatGbps(item.network_storage_speed_baseline)
                               }}
                             </span>
-                            <span class="whitespace-nowrap">
+                            <span class="whitespace-nowrap text-xs">
                               Max
                               {{ formatGbps(item.network_storage_speed_max) }}
                             </span>
@@ -562,7 +562,29 @@
                         column.key !== "ipv4"
                       ) {
                         <td>
-                          {{ getField(item, column.key) }}
+                          <div class="flex items-center justify-center">
+                            @let fieldValue = getField(item, column.key);
+                            @if (fieldValue === true) {
+                              <svg
+                                lucideCheck
+                                class="h-4 w-4 shrink-0 text-emerald-400"
+                              ></svg>
+                            } @else if (fieldValue === false) {
+                              <svg
+                                lucideX
+                                class="h-4 w-4 shrink-0 text-white"
+                              ></svg>
+                            } @else if (
+                              fieldValue === null ||
+                              fieldValue === undefined ||
+                              (typeof fieldValue === "string" &&
+                                fieldValue.trim().toLowerCase() === "none")
+                            ) {
+                              -
+                            } @else {
+                              {{ fieldValue }}
+                            }
+                          </div>
                         </td>
                       }
                       @if (column.type === "vendor") {

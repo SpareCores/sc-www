@@ -7,7 +7,7 @@ import { formatValue } from "./pipe-utils";
 })
 export class MonthlyTrafficPipe implements PipeTransform {
   transform(value: number | null | undefined): string {
-    if (!value || value <= 0) return "-";
+    if (value === null || value === undefined) return "-";
 
     const isTiB = value >= 1024;
     const transformedValue = isTiB ? value / 1024 : value;

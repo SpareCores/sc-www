@@ -1,3 +1,5 @@
+import { formatGpuMemory, formatStorageSize } from "../../../pipes/pipe-utils";
+
 type BenchmarkValue = number | string | null | undefined;
 
 type TableBenchmarkLike = {
@@ -15,6 +17,25 @@ type TableServerLike = {
   gpu_memory_total?: number | null;
   storage_size?: number | null;
 };
+
+const HIDDEN_COMPARE_METADATA_PROPERTY_IDS = new Set([
+  "vendor_id",
+  "server_id",
+  "name",
+  "api_reference",
+  "display_name",
+  "description",
+  "observed_at",
+]);
+
+export function isCompareMetadataPropertyHidden(
+  category: string,
+  propertyId: string,
+): boolean {
+  return (
+    category === "meta" && HIDDEN_COMPARE_METADATA_PROPERTY_IDS.has(propertyId)
+  );
+}
 
 export function formatNumberWithCommas(value: number) {
   return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -83,7 +104,29 @@ export function getServerPropertyValue(
   const name = column.id;
   const prop = getServerFieldValue(server, name);
 
-  if (prop === undefined || prop === null) {
+  if (name === "hw_virt") {
+    if (prop === true) {
+      return formatBooleanIconHtml(true);
+    }
+
+    if (prop === false) {
+      return formatBooleanIconHtml(false);
+    }
+
+    if (prop === undefined || prop === null) {
+      return "-";
+    }
+
+    if (typeof prop === "string" && prop.trim().toLowerCase() === "none") {
+      return "-";
+    }
+  }
+
+  if (prop === undefined || prop === null || typeof prop === "boolean") {
+    return undefined;
+  }
+
+  if (typeof prop === "string" && prop.trim().toLowerCase() === "none") {
     return undefined;
   }
 
@@ -92,17 +135,15 @@ export function getServerPropertyValue(
   }
 
   if (name === "gpu_memory_min") {
-    return `${((server.gpu_memory_min || 0) / 1024).toFixed(1)} GB`;
+    return formatGpuMemory(server.gpu_memory_min ?? 0);
   }
 
   if (name === "gpu_memory_total") {
-    return `${((server.gpu_memory_total || 0) / 1024).toFixed(1)} GB`;
+    return formatGpuMemory(server.gpu_memory_total ?? 0);
   }
 
   if (name === "storage_size") {
-    if (!server.storage_size) return "-";
-    if (server.storage_size < 1000) return `${server.storage_size} GB`;
-    return `${(server.storage_size / 1000).toFixed(1)} TB`;
+    return formatStorageSize(server.storage_size ?? 0);
   }
 
   if (typeof prop === "number") {
@@ -157,4 +198,8 @@ function formatBytesToSize(bytes: number) {
   if (bytes === 0) return "0 Bytes";
   const index = Math.floor(Math.log(bytes) / Math.log(1024));
   return `${(bytes / Math.pow(1024, index)).toFixed(0)} ${sizes[index]}`;
+}
+
+export function formatBooleanIconHtml(value: boolean): string {
+  return value ? "check" : "x";
 }

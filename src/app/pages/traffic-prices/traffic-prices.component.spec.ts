@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { OrderDir } from "../../../../sdk/data-contracts";
 
 import { TrafficPricesComponent } from "./traffic-prices.component";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
@@ -23,7 +22,7 @@ describe("TrafficPricesComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("cycles vendor ordering through desc, asc, and cleared state", () => {
+  it("does not allow ordering by vendor column", () => {
     const vendorColumn = component.possibleColumns.find(
       (column) => column.name === "VENDOR",
     );
@@ -32,24 +31,17 @@ describe("TrafficPricesComponent", () => {
     expect(vendorColumn).toEqual(
       jasmine.objectContaining({
         show: true,
-        orderField: "vendor_id",
+        key: "vendor_id",
       }),
     );
+    expect(vendorColumn?.orderField).toBeNull();
 
+    const orderByBefore = component.orderBy;
+    const orderDirBefore = component.orderDir;
     component.toggleOrdering(vendorColumn!);
 
-    expect(component.orderBy).toBe("vendor_id");
-    expect(component.orderDir).toBe(OrderDir.Desc);
-
-    component.toggleOrdering(vendorColumn!);
-
-    expect(component.orderBy).toBe("vendor_id");
-    expect(component.orderDir).toBe(OrderDir.Asc);
-
-    component.toggleOrdering(vendorColumn!);
-
-    expect(component.orderBy).toBeUndefined();
-    expect(component.orderDir).toBeUndefined();
-    expect(searchOptionsChangedSpy).toHaveBeenCalledTimes(3);
+    expect(component.orderBy).toBe(orderByBefore);
+    expect(component.orderDir).toBe(orderDirBefore);
+    expect(searchOptionsChangedSpy).not.toHaveBeenCalled();
   });
 });

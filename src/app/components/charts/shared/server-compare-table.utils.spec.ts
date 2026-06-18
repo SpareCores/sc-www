@@ -59,6 +59,35 @@ describe("server compare table utils", () => {
     expect(getServerPropertyValue({ id: "gpus" }, server)).toBeUndefined();
   });
 
+  it("renders boolean values with inline lucide svg markup", () => {
+    expect(
+      getServerPropertyValue({ id: "hw_virt" }, { hw_virt: true } as never),
+    ).toBe("check");
+    expect(
+      getServerPropertyValue({ id: "hw_virt" }, { hw_virt: false } as never),
+    ).toBe("x");
+  });
+
+  it("keeps other boolean properties hidden", () => {
+    expect(
+      getServerPropertyValue({ id: "virtualization" }, {
+        virtualization: true,
+      } as never),
+    ).toBeUndefined();
+    expect(
+      getServerPropertyValue({ id: "virtualization" }, {
+        virtualization: false,
+      } as never),
+    ).toBeUndefined();
+  });
+
+  it("renders none-like values as dashes", () => {
+    expect(
+      getServerPropertyValue({ id: "hw_virt" }, { hw_virt: "none" } as never),
+    ).toBe("-");
+    expect(getServerPropertyValue({ id: "hw_virt" }, {} as never)).toBe("-");
+  });
+
   it("flags the best numeric property", () => {
     const server: BestPropertyServer & { vcpu_count: number } = {
       vcpu_count: 8,

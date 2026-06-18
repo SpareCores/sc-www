@@ -7,7 +7,9 @@ import { formatValue } from "./pipe-utils";
 })
 export class NetworkSpeedPipe implements PipeTransform {
   transform(value: number | null | undefined): string {
-    if (!value || value <= 0) return "-";
+    if (value === null || value === undefined) return "-";
+
+    if (value === 0) return "0 Gbps";
 
     if (value < 1) {
       const mbps = value * 1000;

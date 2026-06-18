@@ -13,7 +13,6 @@ import {
   signal,
   viewChild,
 } from "@angular/core";
-import { Modal, ModalOptions } from "flowbite";
 import { ActivatedRoute, Params, Router, RouterLink } from "@angular/router";
 import {
   LucideArrowDownNarrowWide,
@@ -32,21 +31,8 @@ import {
   LucideScale,
   LucideTvMinimalPlay,
 } from "@lucide/angular";
+import { Modal, ModalOptions } from "flowbite";
 import { Subject, Subscription, debounceTime } from "rxjs";
-import {
-  BreadcrumbSegment,
-  BreadcrumbsComponent,
-} from "../../components/breadcrumbs/breadcrumbs.component";
-import { PaginationComponent } from "../../components/pagination/pagination.component";
-import {
-  SearchBarComponent,
-  SearchBarBenchmarkConfigGroup,
-  SearchBarBenchmarkConfigOption,
-  SearchBarCustomControl,
-  SearchBarParameter,
-  SearchBarParameterPlacement,
-} from "../../components/search-bar/search-bar.component";
-import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
 import {
   Benchmark,
   BenchmarkConfig,
@@ -56,15 +42,38 @@ import {
   SearchServerPricesServerPricesGetParams,
   SearchServersServersGetData,
   SearchServersServersGetParams,
+  ServerPKs,
   ServerPrice,
   ServerPriceWithPKs,
-  ServerPKs,
 } from "../../../../sdk/data-contracts";
+import openApiSpec from "../../../../sdk/openapi.json";
+import {
+  BreadcrumbSegment,
+  BreadcrumbsComponent,
+} from "../../components/breadcrumbs/breadcrumbs.component";
+import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
+import { PaginationComponent } from "../../components/pagination/pagination.component";
+import {
+  SearchBarBenchmarkConfigGroup,
+  SearchBarBenchmarkConfigOption,
+  SearchBarComponent,
+  SearchBarCustomControl,
+  SearchBarParameter,
+  SearchBarParameterPlacement,
+} from "../../components/search-bar/search-bar.component";
+import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
+import { CpuCacheSizePipe } from "../../pipes/cpu-cache-size.pipe";
+import { GpuCountPipe } from "../../pipes/gpu-count.pipe";
+import { Ipv4CountPipe } from "../../pipes/ipv4-count.pipe";
+import { MonthlyTrafficPipe } from "../../pipes/monthly-traffic.pipe";
+import { NetworkSpeedPipe } from "../../pipes/network-speed.pipe";
+import { StoragePipe } from "../../pipes/storage.pipe";
+import { GpuMemoryPipe } from "../../pipes/gpu-memory.pipe";
 import { KeeperAPIService } from "../../services/keeper-api.service";
+import { NeetoCalService } from "../../services/neeto-cal.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { ServerCompareService } from "../../services/server-compare.service";
 import { ToastService } from "../../services/toast.service";
-import { NeetoCalService } from "../../services/neeto-cal.service";
 import { UiTooltipService } from "../../services/ui-tooltip.service";
 import { encodeQueryParams } from "../../tools/queryParamFunctions";
 import {
@@ -73,61 +82,57 @@ import {
   BestPriceAllocationType,
   CurrencyOption,
 } from "../../tools/shared_data";
-import openApiSpec from "../../../../sdk/openapi.json";
-import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
-import { CpuCacheSizePipe } from "../../pipes/cpu-cache-size.pipe";
-import { GpuCountPipe } from "../../pipes/gpu-count.pipe";
+import { TableColumn, buildAdvisorColumns } from "../../tools/table-columns";
+import { AdvisorUiService } from "./advisor-ui.service";
 import {
   ADVISOR_AVERAGE_UTILIZATION_TITLE,
   ADVISOR_AVERAGE_UTILIZATION_TOOLTIP,
+  ADVISOR_BASELINE_REGION_TOOLTIP,
   ADVISOR_BASELINE_SERVER_TITLE,
   ADVISOR_BASELINE_SERVER_TOOLTIP,
-  ADVISOR_BREADCRUMBS,
-  ADVISOR_BASELINE_REGION_TOOLTIP,
   ADVISOR_BASELINE_WORKLOAD_TITLE,
   ADVISOR_BASELINE_WORKLOAD_TOOLTIP,
+  ADVISOR_BREADCRUMBS,
   ADVISOR_CUSTOM_QUERY_PARAM_NAMES,
-  ADVISOR_DISABLED_BASELINE_WORKLOAD_MESSAGE,
-  ADVISOR_EMPTY_BASELINE_WORKLOAD_ACTION_MESSAGE,
   ADVISOR_DEFAULT_CURRENCY,
-  ADVISOR_DEFAULT_WORKLOAD_CONFIG,
-  ADVISOR_EMPTY_BASELINE_WORKLOAD_MESSAGE,
-  ADVISOR_EMPTY_BASELINE_WORKLOAD_RESULTS_MESSAGE,
   ADVISOR_DEFAULT_MINIMUM_MEMORY_GIB,
   ADVISOR_DEFAULT_OPTIMIZATION_GOAL,
   ADVISOR_DEFAULT_PAGE_LIMIT,
   ADVISOR_DEFAULT_PEAK_GPU_MEMORY_GIB,
   ADVISOR_DEFAULT_PRICE_ALLOCATION,
   ADVISOR_DEFAULT_SERVER_COLUMNS,
+  ADVISOR_DEFAULT_WORKLOAD_CONFIG,
+  ADVISOR_DISABLED_BASELINE_WORKLOAD_MESSAGE,
+  ADVISOR_EMPTY_BASELINE_WORKLOAD_ACTION_MESSAGE,
+  ADVISOR_EMPTY_BASELINE_WORKLOAD_MESSAGE,
+  ADVISOR_EMPTY_BASELINE_WORKLOAD_RESULTS_MESSAGE,
   ADVISOR_EXAMPLE_QUERY_PARAMS,
   ADVISOR_FILTER_CATEGORIES,
-  ADVISOR_OPTIMIZATION_GOAL_OPTIONS,
-  ADVISOR_PARAMETER_PLACEMENTS,
-  ADVISOR_PAGE_DESCRIPTION,
-  ADVISOR_PAGE_LIMITS,
-  ADVISOR_PRICE_ALLOCATION_TOOLTIP,
-  ADVISOR_PAGE_TITLE,
   ADVISOR_LOADING_BASELINE_WORKLOAD_MESSAGE,
   ADVISOR_MINIMUM_MEMORY_MIN_GIB,
+  ADVISOR_OPTIMIZATION_GOAL_OPTIONS,
   ADVISOR_OPTIMIZATION_GOAL_TITLE,
+  ADVISOR_PAGE_DESCRIPTION,
+  ADVISOR_PAGE_LIMITS,
+  ADVISOR_PAGE_TITLE,
+  ADVISOR_PARAMETER_PLACEMENTS,
+  ADVISOR_PRICE_ALLOCATION_TOOLTIP,
   ADVISOR_REQUIRED_GPU_MEMORY_TITLE,
   ADVISOR_REQUIRED_INPUT_LABELS,
   ADVISOR_REQUIRED_MEMORY_TITLE,
   ADVISOR_SEO,
+  ADVISOR_WORKLOAD_SCORE_TOOLTIP,
 } from "./advisor.constants";
-import { AdvisorUiService } from "./advisor-ui.service";
 import {
-  AdvisorBaselineServer,
   AdvisorBaselinePriceAggregate,
+  AdvisorBaselineServer,
   AdvisorMetricDelta,
   AdvisorOptimizationGoal,
   AdvisorPriceColumnKey,
   AdvisorRegionMetadata,
-  AdvisorTableColumn,
 } from "./advisor.types";
 import {
   buildAdvisorRegionSelectOptions,
-  cloneAdvisorTableColumns,
   encodeAdvisorColumnState,
   findAdvisorBenchmarkConfigOption,
   findAdvisorBenchmarkScore,
@@ -324,7 +329,7 @@ function compareAdvisorBenchmarkGroups(left: string, right: string): number {
 }
 
 function isAdvisorPriceColumnKey(
-  value: AdvisorTableColumn["key"] | undefined,
+  value: TableColumn["key"] | undefined,
 ): value is AdvisorPriceColumnKey {
   return (
     value === "min_price" ||
@@ -356,7 +361,13 @@ type AdvisorComparableResourceKey =
   | "storage_size"
   | "cpu_l1d_cache"
   | "cpu_l2_cache"
-  | "cpu_l3_cache";
+  | "cpu_l3_cache"
+  | "network_speed_baseline"
+  | "network_speed_max"
+  | "network_storage_speed_baseline"
+  | "network_storage_speed_max"
+  | "inbound_traffic"
+  | "outbound_traffic";
 
 @Component({
   selector: "app-advisor",
@@ -383,6 +394,11 @@ type AdvisorComparableResourceKey =
     PaginationComponent,
     GpuCountPipe,
     CpuCacheSizePipe,
+    Ipv4CountPipe,
+    MonthlyTrafficPipe,
+    NetworkSpeedPipe,
+    StoragePipe,
+    GpuMemoryPipe,
     RouterLink,
     SearchBarComponent,
   ],
@@ -507,8 +523,8 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
   > | null>(null);
   readonly regionMetadata = signal<AdvisorRegionMetadata[]>([]);
   readonly isLoadingBaselineRegions = signal(false);
-  readonly possibleColumns = signal<AdvisorTableColumn[]>(
-    cloneAdvisorTableColumns(),
+  readonly possibleColumns = signal<TableColumn[]>(
+    buildAdvisorColumns(ADVISOR_WORKLOAD_SCORE_TOOLTIP),
   );
   readonly tableColumns = computed(() =>
     this.possibleColumns().filter((column) => column.show),
@@ -1473,7 +1489,7 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
     this.introductionModal = null;
   }
 
-  toggleOrdering(column: AdvisorTableColumn): void {
+  toggleOrdering(column: TableColumn): void {
     if (!column.orderField) {
       return;
     }
@@ -1493,7 +1509,7 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
     this.page.set(1);
   }
 
-  getOrderingIcon(column: AdvisorTableColumn): string | null {
+  getOrderingIcon(column: TableColumn): string | null {
     if (!column.orderField || this.activeOrderBy() !== column.orderField) {
       return null;
     }
@@ -1612,7 +1628,7 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
 
   getPriceDelta(
     recommendation: ServerPKs,
-    columnKey: AdvisorTableColumn["key"] | undefined,
+    columnKey: TableColumn["key"] | undefined,
   ): AdvisorMetricDelta | null {
     if (this.isSelectedBaselineRecommendation(recommendation)) {
       return null;
@@ -1641,16 +1657,43 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
       return null;
     }
 
-    const baselineServer = this.selectedBaselineServer();
-
-    if (!baselineServer) {
+    if (!this.selectedBaselineServer()) {
       return null;
     }
 
     return this.advisorUi.buildComparableResourceDelta(
-      recommendation[resourceKey],
-      baselineServer[resourceKey],
+      resourceKey === "storage_size"
+        ? (recommendation[resourceKey] ?? 0)
+        : recommendation[resourceKey],
+      this.getBaselineComparisonValue(resourceKey),
     );
+  }
+
+  private getBaselineComparisonValue(
+    resourceKey: AdvisorComparableResourceKey,
+  ): number | null | undefined {
+    const baselineRecommendation = this.recommendations().find(
+      (recommendation) => {
+        return this.isSelectedBaselineRecommendation(recommendation);
+      },
+    );
+
+    if (baselineRecommendation) {
+      const value = baselineRecommendation[resourceKey];
+      if (typeof value === "number" && Number.isFinite(value)) {
+        return value;
+      }
+    }
+
+    const baselineServerValue = this.selectedBaselineServer()?.[resourceKey];
+    if (
+      typeof baselineServerValue === "number" &&
+      Number.isFinite(baselineServerValue)
+    ) {
+      return baselineServerValue;
+    }
+
+    return resourceKey === "storage_size" ? 0 : undefined;
   }
 
   getDeltaLabel(delta: AdvisorMetricDelta): string | null {
@@ -1962,7 +2005,9 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
     this.isBaselineRegionEnabled.set(false);
     this.selectedBaselineVendorRegion.set(null);
     this.baselineServerPrices.set([]);
-    this.possibleColumns.set(cloneAdvisorTableColumns());
+    this.possibleColumns.set(
+      buildAdvisorColumns(ADVISOR_WORKLOAD_SCORE_TOOLTIP),
+    );
     this.page.set(1);
     this.limit.set(ADVISOR_DEFAULT_PAGE_LIMIT);
     this.manualOrderBy.set(undefined);
