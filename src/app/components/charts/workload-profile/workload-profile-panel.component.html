@@ -2,7 +2,7 @@
   <div
     class="w-full h-auto overflow-visible relative flex flex-col gap-4"
     [ngClass]="{
-      'px-4 py-4 bg-transparent min-h-[500px] max-lg:min-h-[520px]':
+      'px-4 py-4 bg-transparent min-h-[500px] h-auto max-lg:min-h-[520px]':
         layout() === 'compare',
       'px-6 py-6 bg-secondary border border-solid border-emerald-400 rounded-lg min-h-[615px]':
         layout() === 'details',
@@ -40,11 +40,9 @@
       class="workload-profile-panel-grid grid grid-cols-1 lg:grid-cols-2 gap-8 items-start"
     >
       <div
-        class="workload-profile-radar-chart min-h-0 flex flex-1 h-full"
-        [ngClass]="{
-          'h-[460px]': layout() === 'compare',
-          'h-[530px]': layout() === 'details',
-        }"
+        class="workload-profile-radar-chart"
+        [class.workload-profile-radar-chart--compare]="layout() === 'compare'"
+        [class.workload-profile-radar-chart--details]="layout() === 'details'"
       >
         <app-workload-profile-radar-chart
           [layout]="layout()"
