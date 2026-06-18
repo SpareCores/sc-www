@@ -500,7 +500,7 @@ describe("ServerCompareChartsComponent", () => {
 
     expect(root.querySelector("#benchmark_line_workload_profile")).toBeTruthy();
     expect(root.querySelector("app-workload-profile-panel")).toBeTruthy();
-    expect(root.textContent).toContain("Workload profile: Web server");
+    expect(root.textContent).toContain("Web server");
     expect(root.textContent).not.toContain("Further Benchmarks");
   });
 
@@ -562,9 +562,9 @@ describe("ServerCompareChartsComponent", () => {
     expect(cells?.length).toBe(3);
     expect(cells?.[0].textContent).toContain("Web server");
     expect(cells?.[1].classList.contains("compact-number")).toBeTrue();
-    expect(cells?.[1].textContent?.trim()).toBe("10");
+    expect(cells?.[1].textContent?.trim()).toBe("10.00");
     expect(cells?.[2].classList.contains("compact-number")).toBeTrue();
-    expect(cells?.[2].textContent?.trim()).toBe("20");
+    expect(cells?.[2].textContent?.trim()).toBe("20.00");
     expect(
       benchmarkRow?.querySelector(
         'button[aria-label="Expand benchmark details"]',

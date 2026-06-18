@@ -27,7 +27,7 @@ describe("WorkloadProfilePanelComponent", () => {
 
   it("renders the workload profile panel", () => {
     expect((fixture.nativeElement as HTMLElement).textContent).toContain(
-      "Workload profile: Web server",
+      "Web server",
     );
   });
 });

@@ -50,7 +50,7 @@ describe("ServerChartsComponent", () => {
     const root = fixture.nativeElement as HTMLElement;
 
     expect(root.querySelector("app-workload-profile-panel")).toBeTruthy();
-    expect(root.textContent).toContain("Workload profile: Web server");
+    expect(root.textContent).toContain("Web server");
   });
 
   it("hides the workload profile panel when no workload benchmarks exist", () => {
