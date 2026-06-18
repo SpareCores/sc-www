@@ -443,27 +443,22 @@
         </tr>
         @if (workloadProfileShowMore) {
           @for (
-            benchmarkCategory of getWorkloadProfileBenchmarks();
-            track benchmarkCategory.benchmark_key ??
-              benchmarkCategory.benchmark_id
+            benchmark of getWorkloadProfileBenchmarks();
+            track benchmark.benchmark_key ?? benchmark.benchmark_id
           ) {
-            <tr class="compare-fixed-header-row">
-              <td [colSpan]="1" class="compare-fixed-header-label-cell">
-                <div class="pl-4">
-                  <div class="flex flex-nowrap gap-2 items-center min-w-0">
-                    <svg
-                      [lucideIcon]="benchmarkCategory.name | benchmarkIcon"
-                      class="h-6 w-6 shrink-0"
-                    ></svg>
-                    <span class="whitespace-nowrap">{{
-                      benchmarkCategory.name
+            <tr class="compare-workload-profile-detail-row">
+              <td>
+                <div class="ml-4 flex justify-between">
+                  <div class="inline-block gap-2 items-center bg-primary">
+                    <span class="inline">{{
+                      formatWorkloadProfileLabel(benchmark.name)
                     }}</span>
-                    @if (benchmarkCategory.description) {
+                    @if (benchmark.description) {
                       <svg
                         lucideInfo
-                        class="h-4 w-4 text-gray-200 shrink-0"
+                        class="inline-block h-4 w-4 text-gray-200 ml-1"
                         (mouseenter)="
-                          showTooltip($event, benchmarkCategory.description)
+                          showTooltip($event, benchmark.description)
                         "
                         (mouseleave)="hideTooltip()"
                       ></svg>
@@ -471,61 +466,32 @@
                   </div>
                 </div>
               </td>
-              <td [colSpan]="getCompareFixedHeaderSpacerColSpan()"></td>
-              <td [colSpan]="1" class="compare-section-header-action-cell">
-                @if (benchmarkCategory.description) {
-                  <button
-                    type="button"
-                    class="compare-section-header-action-content inline-flex cursor-pointer items-center justify-center rounded border-0 bg-transparent p-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400"
-                    [attr.aria-expanded]="!benchmarkCategory.collapsed"
-                    [attr.aria-label]="
-                      benchmarkCategory.collapsed
-                        ? 'Expand benchmark details'
-                        : 'Collapse benchmark details'
+              @let primaryConfig = benchmark.configs?.[0];
+              @if (primaryConfig) {
+                @for (value of primaryConfig.values; track $index) {
+                  <td
+                    class="compact-number"
+                    [style]="
+                      isBestStyle(value, primaryConfig.values, benchmark)
                     "
-                    (click)="toggleBenchmark(benchmarkCategory)"
                   >
-                    <svg
-                      [lucideIcon]="benchmarkIcon(benchmarkCategory)"
-                      class="h-6 w-6 text-emerald-400 shrink-0"
-                      aria-hidden="true"
-                    ></svg>
-                  </button>
-                }
-              </td>
-            </tr>
-            @if (!benchmarkCategory.collapsed) {
-              @for (config of benchmarkCategory.configs; track config) {
-                <tr>
-                  <td>
-                    <div
-                      class="ml-6"
-                      [innerHTML]="serializeConfig(config.config)"
-                    ></div>
-                  </td>
-                  @for (value of config.values; track $index) {
-                    <td
-                      class="compact-number"
-                      [style]="
-                        isBestStyle(value, config.values, benchmarkCategory)
+                    <span
+                      (mouseenter)="
+                        value !== null && showTooltip($event, value.toString())
                       "
+                      (mouseleave)="hideTooltip()"
+                      >{{
+                        value === null ? "-" : (value | compactNumber)
+                      }}</span
                     >
-                      <span
-                        (mouseenter)="
-                          value !== null &&
-                            showTooltip($event, value.toString())
-                        "
-                        (mouseleave)="hideTooltip()"
-                        >{{
-                          value === null ? "-" : (value | compactNumber)
-                        }}</span
-                      >
-                    </td>
-                  }
-                </tr>
+                  </td>
+                }
               }
-            }
+            </tr>
           }
+          <tr class="h-[1rem]">
+            <!-- spacer -->
+          </tr>
         }
       }
       @for (
@@ -814,7 +780,7 @@
               <tr>
                 <td>
                   <div class="ml-4 flex justify-between">
-                    <div class="inline-block gap-2 items-center">
+                    <div class="inline-block gap-2 items-center bg-primary">
                       <span class="inline">{{ benchmarkData.name }}</span>
                       @if (benchmarkData.description) {
                         <svg

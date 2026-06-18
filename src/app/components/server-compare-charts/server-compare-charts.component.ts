@@ -59,6 +59,7 @@ import {
 import { ChartTooltipService } from "../charts/shared/chart-tooltip.service";
 import {
   WORKLOAD_PROFILE_INFO_TOOLTIP,
+  formatWorkloadProfileLabel,
   isWorkloadProfileBenchmark,
   filterWorkloadProfileBenchmarks,
 } from "../charts/workload-profile/workload-profile.utils";
@@ -434,6 +435,7 @@ export class ServerCompareChartsComponent implements OnChanges {
   }
 
   readonly workloadProfileInfoTooltip = WORKLOAD_PROFILE_INFO_TOOLTIP;
+  readonly formatWorkloadProfileLabel = formatWorkloadProfileLabel;
 
   showTooltip(el: MouseEvent, content?: string, autoHide = false) {
     this.tooltipHtml = "";

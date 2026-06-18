@@ -504,7 +504,7 @@ describe("ServerCompareChartsComponent", () => {
     expect(root.textContent).not.toContain("Further Benchmarks");
   });
 
-  it("renders expandable workload profile detail rows for compared servers", () => {
+  it("renders flat workload profile detail rows for compared servers", () => {
     component.servers = [
       {
         vendor_id: "aws",
@@ -543,22 +543,32 @@ describe("ServerCompareChartsComponent", () => {
       (fixture.nativeElement as HTMLElement).querySelectorAll("tbody tr"),
     ) as HTMLTableRowElement[];
 
-    const benchmarkRow = tableRows.find(
-      (row) =>
-        row.classList.contains("compare-fixed-header-row") &&
-        row.textContent?.includes("Workload profile: Web server"),
-    );
+    const benchmarkRow = tableRows.find((row) => {
+      const cells = row.querySelectorAll(":scope > td");
+      return (
+        cells.length === 3 &&
+        cells[0].textContent?.includes("Web server") &&
+        !cells[0].textContent?.includes("Workload profile:")
+      );
+    });
 
     expect(benchmarkRow).toBeDefined();
     expect(
       benchmarkRow?.classList.contains("compare-fixed-header-row"),
-    ).toBeTrue();
+    ).toBeFalse();
 
     const cells = benchmarkRow?.querySelectorAll(":scope > td");
 
     expect(cells?.length).toBe(3);
-    expect(cells?.[0].getAttribute("colspan")).toBe("1");
-    expect(cells?.[1].getAttribute("colspan")).toBe("1");
-    expect(cells?.[2].getAttribute("colspan")).toBe("1");
+    expect(cells?.[0].textContent).toContain("Web server");
+    expect(cells?.[1].classList.contains("compact-number")).toBeTrue();
+    expect(cells?.[1].textContent?.trim()).toBe("10");
+    expect(cells?.[2].classList.contains("compact-number")).toBeTrue();
+    expect(cells?.[2].textContent?.trim()).toBe("20");
+    expect(
+      benchmarkRow?.querySelector(
+        'button[aria-label="Expand benchmark details"]',
+      ),
+    ).toBeNull();
   });
 });
