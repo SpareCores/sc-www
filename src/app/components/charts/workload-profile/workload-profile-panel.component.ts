@@ -42,27 +42,7 @@ import {
     WorkloadProfileRadarChartComponent,
   ],
   templateUrl: "./workload-profile-panel.component.html",
-  styles: [
-    `
-      :host {
-        display: contents;
-      }
-
-      .workload-profile-radar-chart--compare {
-        display: flex;
-        height: 460px;
-        min-height: 460px;
-        min-width: 0;
-      }
-
-      .workload-profile-radar-chart--details {
-        display: flex;
-        height: 530px;
-        min-height: 530px;
-        min-width: 0;
-      }
-    `,
-  ],
+  styleUrls: ["./workload-profile-panel.component.scss"],
 })
 export class WorkloadProfilePanelComponent {
   private tooltipService = inject(ChartTooltipService);
@@ -90,7 +70,7 @@ export class WorkloadProfilePanelComponent {
     this.workloadProfileBenchmarks()
       .filter((benchmark) => benchmark.description?.trim())
       .map((benchmark) => ({
-        question: benchmark.name,
+        question: benchmark.name.split(": ").pop(),
         answer: benchmark.description ?? "",
       })),
   );
