@@ -24,43 +24,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, BaseChartDirective],
   templateUrl: "./workload-profile-radar-chart.component.html",
-  styles: [
-    `
-      :host {
-        display: contents;
-      }
-
-      .workload-profile-radar-chart__canvas {
-        min-height: 0;
-        width: 100%;
-        max-width: 100%;
-        display: flex;
-        justify-content: center;
-      }
-
-      .workload-profile-radar-chart__canvas--compare {
-        height: 460px;
-      }
-
-      .workload-profile-radar-chart__canvas--details {
-        height: 530px;
-        max-height: 530px;
-      }
-
-      @media screen and (max-width: 1024px) {
-        .workload-profile-radar-chart__canvas--compare {
-          width: 100%;
-        }
-      }
-
-      .workload-profile-radar-chart__canvas-element {
-        display: block;
-        width: 100% !important;
-        max-width: 100%;
-        height: 100% !important;
-      }
-    `,
-  ],
+  styleUrls: ["./workload-profile-radar-chart.component.scss"],
 })
 export class WorkloadProfileRadarChartComponent {
   private platformId = inject(PLATFORM_ID);
