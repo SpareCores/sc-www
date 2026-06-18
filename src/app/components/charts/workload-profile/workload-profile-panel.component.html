@@ -25,12 +25,7 @@
           <svg
             lucideInfo
             class="h-4 w-4 text-gray-200"
-            (mouseenter)="
-              showTooltip(
-                $event,
-                'Augmentic workload profiles combine raw benchmark measurements into compound scores to describe the expected performance of common server workloads with a few easy-to-interpret numbers, using expert-weighted aggregation algorithms.'
-              )
-            "
+            (mouseenter)="showTooltip($event, workloadProfileInfoTooltip)"
             (mouseleave)="hideTooltip()"
           ></svg>
         </h3>

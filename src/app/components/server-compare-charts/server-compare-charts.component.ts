@@ -58,6 +58,7 @@ import {
 } from "../charts/multi-bar/benchmark-multi-bar-chart.types";
 import { ChartTooltipService } from "../charts/shared/chart-tooltip.service";
 import {
+  WORKLOAD_PROFILE_INFO_TOOLTIP,
   isWorkloadProfileBenchmark,
   filterWorkloadProfileBenchmarks,
 } from "../charts/workload-profile/workload-profile.utils";
@@ -431,6 +432,8 @@ export class ServerCompareChartsComponent implements OnChanges {
   public numberWithCommas(x: number) {
     return formatNumberWithCommas(x);
   }
+
+  readonly workloadProfileInfoTooltip = WORKLOAD_PROFILE_INFO_TOOLTIP;
 
   showTooltip(el: MouseEvent, content?: string, autoHide = false) {
     this.tooltipHtml = "";

@@ -8,6 +8,9 @@ export type WorkloadProfileBenchmarkRef = {
 
 const WORKLOAD_PROFILE_NAME_PREFIX = "workload profile";
 
+export const WORKLOAD_PROFILE_INFO_TOOLTIP =
+  "Augmentic workload profiles combine raw benchmark measurements into compound scores to describe the expected performance of common server workloads with a few easy-to-interpret numbers, using expert-weighted aggregation algorithms.";
+
 export function isWorkloadProfileBenchmark(
   benchmark: WorkloadProfileBenchmarkRef,
 ): boolean {

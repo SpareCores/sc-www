@@ -363,10 +363,7 @@
                       lucideInfo
                       class="h-4 w-4 text-gray-200 shrink-0"
                       (mouseenter)="
-                        showTooltip(
-                          $event,
-                          'Synthetic workload profiles estimate how well a server may perform for common application patterns.'
-                        )
+                        showTooltip($event, workloadProfileInfoTooltip)
                       "
                       (mouseleave)="hideTooltip()"
                     ></svg>

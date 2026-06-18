@@ -24,7 +24,10 @@ import {
   WorkloadProfileCompareServer,
   WorkloadProfileDetailsServer,
 } from "./workload-profile-radar-chart.types";
-import { filterWorkloadProfileBenchmarks } from "./workload-profile.utils";
+import {
+  WORKLOAD_PROFILE_INFO_TOOLTIP,
+  filterWorkloadProfileBenchmarks,
+} from "./workload-profile.utils";
 
 @Component({
   selector: "app-workload-profile-panel",
@@ -91,6 +94,8 @@ export class WorkloadProfilePanelComponent {
         answer: benchmark.description ?? "",
       })),
   );
+
+  readonly workloadProfileInfoTooltip = WORKLOAD_PROFILE_INFO_TOOLTIP;
 
   tooltipContent = "";
 
