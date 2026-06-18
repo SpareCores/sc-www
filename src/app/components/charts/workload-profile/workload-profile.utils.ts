@@ -1,6 +1,9 @@
+import { Status } from "../../../../../sdk/data-contracts";
+
 export type WorkloadProfileBenchmarkRef = {
   benchmark_id?: string;
   name?: string;
+  status?: Status;
 };
 
 const WORKLOAD_PROFILE_NAME_PREFIX = "workload profile";
@@ -26,7 +29,11 @@ export function filterWorkloadProfileBenchmarks<
   T extends WorkloadProfileBenchmarkRef,
 >(benchmarkMeta: T[]): T[] {
   return benchmarkMeta
-    .filter((benchmark) => isWorkloadProfileBenchmark(benchmark))
+    .filter(
+      (benchmark) =>
+        isWorkloadProfileBenchmark(benchmark) &&
+        benchmark.status === Status.Active,
+    )
     .sort((left, right) => (left.name ?? "").localeCompare(right.name ?? ""));
 }
 

@@ -1,3 +1,4 @@
+import { Status } from "./../../../../../sdk/data-contracts";
 import { ChartConfiguration, ChartData } from "chart.js";
 
 export type WorkloadProfileRadarPoint = {
@@ -25,6 +26,7 @@ export type WorkloadProfileBenchmarkMeta = {
   benchmark_id: string;
   name: string;
   description?: string | null;
+  status?: Status;
 };
 
 export type WorkloadProfileCompareBenchmark = WorkloadProfileBenchmarkMeta & {
