@@ -86,14 +86,6 @@ export class WorkloadProfileRadarChartBuilderService {
             : {}),
           display: true,
         },
-        title: {
-          ...(typeof baseOptions.plugins?.title === "object"
-            ? baseOptions.plugins.title
-            : {}),
-          display: true,
-          text: "Workload profiles",
-          color: "#FFF",
-        },
       },
     });
   }
