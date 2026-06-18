@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { ServerCompareChartsComponent } from "./server-compare-charts.component";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
+import { Status } from "../../../../sdk/data-contracts";
 
 describe("ServerCompareChartsComponent", () => {
   let component: ServerCompareChartsComponent;
@@ -79,6 +80,7 @@ describe("ServerCompareChartsComponent", () => {
         description: "OpenSSL benchmark",
         collapsed: true,
         configs: [],
+        status: Status.Active,
       },
     ];
     component.benchmarkCategories = [
@@ -154,6 +156,7 @@ describe("ServerCompareChartsComponent", () => {
         description: "OpenSSL benchmark",
         collapsed: true,
         configs: [],
+        status: Status.Active,
       },
     ];
     component.benchmarkCategories = [
@@ -249,6 +252,7 @@ describe("ServerCompareChartsComponent", () => {
         description: "OpenSSL benchmark",
         collapsed: true,
         configs: [],
+        status: Status.Active,
       },
     ];
     component.benchmarkCategories = [
@@ -296,6 +300,7 @@ describe("ServerCompareChartsComponent", () => {
         description: "LLM inference benchmark",
         collapsed: true,
         configs: [],
+        status: Status.Active,
       },
     ];
     component.benchmarkCategories = [
@@ -387,6 +392,7 @@ describe("ServerCompareChartsComponent", () => {
         description: "Latency benchmark",
         collapsed: true,
         configs: [{ config: { size_kb: 16 }, values: [1, 2, 3] }],
+        status: Status.Active,
       },
       {
         benchmark_id: "sc-membench:write",
@@ -395,6 +401,7 @@ describe("ServerCompareChartsComponent", () => {
         description: "Write benchmark",
         collapsed: true,
         configs: [{ config: { size_kb: 16 }, values: [4, 5, 6] }],
+        status: Status.Active,
       },
     ];
     component.benchmarkCategories = [
@@ -410,6 +417,7 @@ describe("ServerCompareChartsComponent", () => {
             description: "Latency benchmark",
             collapsed: true,
             configs: [{ config: { size_kb: 16 }, values: [1, 2, 3] }],
+            status: Status.Active,
           },
           {
             benchmark_id: "sc-membench:write",
@@ -418,6 +426,7 @@ describe("ServerCompareChartsComponent", () => {
             description: "Write benchmark",
             collapsed: true,
             configs: [{ config: { size_kb: 16 }, values: [4, 5, 6] }],
+            status: Status.Active,
           },
         ],
         show_more: true,
@@ -481,6 +490,7 @@ describe("ServerCompareChartsComponent", () => {
             values: [10, 20, 30],
           },
         ],
+        status: Status.Active,
       },
     ];
 
@@ -520,6 +530,7 @@ describe("ServerCompareChartsComponent", () => {
             values: [10, 20],
           },
         ],
+        status: Status.Active,
       },
     ];
 

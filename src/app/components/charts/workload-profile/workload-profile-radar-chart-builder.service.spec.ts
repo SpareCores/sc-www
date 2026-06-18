@@ -2,6 +2,7 @@ import { TestBed } from "@angular/core/testing";
 import { TooltipItem, TooltipModel } from "chart.js";
 
 import { WorkloadProfileRadarChartBuilderService } from "./workload-profile-radar-chart-builder.service";
+import { Status } from "../../../../../sdk/data-contracts";
 
 describe("WorkloadProfileRadarChartBuilderService", () => {
   let service: WorkloadProfileRadarChartBuilderService;
@@ -27,6 +28,7 @@ describe("WorkloadProfileRadarChartBuilderService", () => {
           benchmark_id: "workload_profile:web",
           name: "Workload profile: Web server",
           description: "Web server workload profile",
+          status: Status.Active,
         },
       ],
     });
@@ -77,6 +79,7 @@ describe("WorkloadProfileRadarChartBuilderService", () => {
         {
           benchmark_id: "workload_profile:web",
           name: "Workload profile: Web server",
+          status: Status.Active,
         },
       ],
     });

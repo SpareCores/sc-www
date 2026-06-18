@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { WorkloadProfilePanelComponent } from "./workload-profile-panel.component";
 import { sharedTestingProviders } from "../../../../testing/testbed.providers";
+import { Status } from "../../../../../sdk/data-contracts";
 
 describe("WorkloadProfilePanelComponent", () => {
   let fixture: ComponentFixture<WorkloadProfilePanelComponent>;
@@ -18,6 +19,7 @@ describe("WorkloadProfilePanelComponent", () => {
         benchmark_id: "workload_profile:web",
         name: "Workload profile: Web server",
         description: "Web server workload profile",
+        status: Status.Active,
       },
     ]);
     fixture.detectChanges();
