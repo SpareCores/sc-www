@@ -75,7 +75,11 @@
     }
     <tbody>
       @if (isChartShown("generic")) {
-        <tr>
+        <tr class="compare-instance-section-gap" aria-hidden="true">
+          <td></td>
+          <td [colSpan]="servers.length"></td>
+        </tr>
+        <tr class="compare-instance-section-first-row">
           <td>Vendor</td>
           @for (
             server of servers;
@@ -108,7 +112,7 @@
               $Core
               <svg
                 lucideInfo
-                class="h-4 w-4 text-gray-200"
+                class="h-4 w-4 shrink-0 text-gray-200"
                 data-cy="compare-score-tooltip-trigger"
                 (mouseenter)="showTooltip($event, SSCoreTooltip)"
                 (mouseleave)="hideTooltip()"
@@ -209,7 +213,7 @@
         </tr>
       }
       @if (isChartShown("generic")) {
-        <tr class="rows-to-hide-for-test">
+        <tr class="compare-instance-section-last-row rows-to-hide-for-test">
           <td>Best ondemand price</td>
           @for (
             server of servers;
@@ -226,6 +230,10 @@
               </div>
             </td>
           }
+        </tr>
+        <tr class="compare-instance-section-gap" aria-hidden="true">
+          <td></td>
+          <td [colSpan]="servers.length"></td>
         </tr>
       }
       @if (isChartShown("generic") && showZone) {
@@ -283,31 +291,36 @@
           propertyCategory of instancePropertyCategories;
           track propertyCategory.name
         ) {
-          <tr class="section_header">
-            <td>
-              <h2 class="text-xl font-semibold">{{ propertyCategory.name }}</h2>
-            </td>
-            <td [colSpan]="servers.length"></td>
-          </tr>
-          @for (
-            category of propertyCategory.properties;
-            track category.id;
-            let i = $index
-          ) {
-            @if (
-              !isCompareMetadataPropertyHidden(
-                propertyCategory.category,
-                category.id
-              )
+          @let visibleProperties =
+            getVisibleInstanceProperties(propertyCategory);
+          @if (visibleProperties.length) {
+            <tr class="section_header">
+              <td>
+                <h2 class="text-xl font-semibold">{{ propertyCategory.name }}</h2>
+              </td>
+              <td [colSpan]="servers.length"></td>
+            </tr>
+            <tr class="compare-instance-section-gap" aria-hidden="true">
+              <td></td>
+              <td [colSpan]="servers.length"></td>
+            </tr>
+            @for (
+              category of visibleProperties;
+              track category.id;
+              let first = $first;
+              let last = $last
             ) {
-              <tr>
+              <tr
+                [class.compare-instance-section-first-row]="first"
+                [class.compare-instance-section-last-row]="last"
+              >
                 <td class="whitespace-nowrap">
                   <div class="flex gap-2 items-center">
                     {{ category.name }}
                     @if (category.description) {
                       <svg
                         lucideInfo
-                        class="h-4 w-4 text-gray-200"
+                        class="h-4 w-4 shrink-0 text-gray-200"
                         (mouseenter)="showTooltip($event, category.description)"
                         (mouseleave)="hideTooltip()"
                       ></svg>
@@ -336,6 +349,10 @@
                 }
               </tr>
             }
+            <tr class="compare-instance-section-gap" aria-hidden="true">
+              <td></td>
+              <td [colSpan]="servers.length"></td>
+            </tr>
           }
         }
       }
@@ -343,7 +360,7 @@
         <tr class="section_header" id="benchmark_line_workload_profile">
           <td [colSpan]="getCompareFixedWideContentColSpan()">
             <div class="compare-section-header-row">
-              <h3 class="text-xl font-semibold">
+              <h3 class="text-xl font-semibold m-0 flex items-center">
                 <span class="compare-section-header-title">
                   <svg
                     [lucideIcon]="'workload_profile' | benchmarkIcon"
@@ -506,7 +523,7 @@
           >
             <td [colSpan]="getCompareFixedWideContentColSpan()">
               <div class="compare-section-header-row">
-                <h3 class="text-xl font-semibold">
+                <h3 class="text-xl font-semibold m-0 flex items-center">
                   <span class="compare-section-header-title">
                     <svg
                       [lucideIcon]="benchmarkCategory.name | benchmarkIcon"

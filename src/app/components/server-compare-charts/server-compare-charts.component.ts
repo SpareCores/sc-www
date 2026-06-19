@@ -580,6 +580,23 @@ export class ServerCompareChartsComponent implements OnChanges {
     );
   }
 
+  getVisibleInstanceProperties(propertyCategory: {
+    category: string;
+    properties: Array<{
+      id: string;
+      name: string;
+      description?: string;
+    }>;
+  }) {
+    return propertyCategory.properties.filter(
+      (property) =>
+        !isCompareMetadataPropertyHidden(
+          propertyCategory.category,
+          property.id,
+        ),
+    );
+  }
+
   get workloadProfileCompareServers(): WorkloadProfileCompareServer[] {
     return this.servers as unknown as WorkloadProfileCompareServer[];
   }
