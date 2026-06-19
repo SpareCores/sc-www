@@ -4,7 +4,7 @@
     [ngClass]="{
       'px-4 py-4 bg-transparent min-h-[500px] h-auto max-lg:min-h-[520px]':
         layout() === 'compare',
-      'px-6 py-6 bg-secondary border border-solid border-emerald-400 rounded-lg min-h-[615px]':
+      'px-6 py-6 bg-secondary border border-solid border-emerald-400 rounded-lg min-h-[560px]':
         layout() === 'details',
     }"
   >
@@ -32,7 +32,7 @@
       </div>
     }
     <div
-      class="workload-profile-panel-grid grid grid-cols-1 lg:grid-cols-2 gap-8 items-start"
+      class="workload-profile-panel-grid grid min-w-0 grid-cols-1 lg:grid-cols-2 gap-8 items-start"
     >
       <div
         class="workload-profile-radar-chart"
@@ -46,23 +46,23 @@
           [serverDetails]="serverDetails()"
         ></app-workload-profile-radar-chart>
       </div>
-      @if (faqQuestions().length) {
+      @if (accordionItems().length) {
         <div
-          class="workload-profile-faq-column w-full text-base [&_[itemprop=name]]:text-wrap [&_[itemprop=name]]:pr-3 [&_[itemprop=text]]:text-wrap"
+          class="workload-profile-accordion-column w-full min-w-0 text-base"
           [ngClass]="{
-            'pr-[4rem] lg:min-h-[460px] lg:pt-[3.75rem]':
+            'pr-4 lg:min-h-[460px] lg:pt-[4.5rem]':
               layout() === 'compare',
-            'pr-8 lg:min-h-[530px] lg:pt-7': layout() === 'details',
+            'pr-8 lg:min-h-[420px] lg:pt-2': layout() === 'details',
           }"
         >
-          <app-faq
-            class="workload-profile-faq"
-            [item]="'Workload Profiles'"
+          <app-accordion
+            class="workload-profile-accordion"
+            [useFaqSchema]="false"
             [showHeading]="false"
-            [FAQQuestions]="faqQuestions()"
-            [activeFAQ]="activeFaq()"
-            (activeFAQChanged)="onFaqChanged($event)"
-          ></app-faq>
+            [items]="accordionItems()"
+            [activeIndex]="activeAccordionIndex()"
+            (activeIndexChange)="onAccordionChanged($event)"
+          ></app-accordion>
         </div>
       }
     </div>

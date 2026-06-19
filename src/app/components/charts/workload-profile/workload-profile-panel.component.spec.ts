@@ -30,4 +30,22 @@ describe("WorkloadProfilePanelComponent", () => {
       "Web server",
     );
   });
+
+  it("includes benchmark score notes in accordion items", () => {
+    fixture.componentRef.setInput("layout", "details");
+    fixture.componentRef.setInput("serverDetails", {
+      benchmark_scores: [
+        {
+          benchmark_id: "workload_profile:web",
+          score: 120,
+          note: "Partial coverage: missing component benchmark(s)",
+        },
+      ],
+    });
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.accordionItems()[0]?.note).toBe(
+      "Partial coverage: missing component benchmark(s)",
+    );
+  });
 });

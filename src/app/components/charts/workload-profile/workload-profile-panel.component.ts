@@ -16,7 +16,7 @@ import {
   LucideInfo,
 } from "@lucide/angular";
 import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon.pipe";
-import { FaqComponent } from "../../faq/faq.component";
+import { AccordionComponent } from "../../accordion/accordion.component";
 import { ChartTooltipService } from "../shared/chart-tooltip.service";
 import { WorkloadProfileRadarChartComponent } from "./workload-profile-radar-chart.component";
 import {
@@ -38,7 +38,7 @@ import {
     LucideCircleArrowUp,
     LucideInfo,
     BenchmarkIconPipe,
-    FaqComponent,
+    AccordionComponent,
     WorkloadProfileRadarChartComponent,
   ],
   templateUrl: "./workload-profile-panel.component.html",
@@ -56,7 +56,7 @@ export class WorkloadProfilePanelComponent {
   showHeader = input(true);
 
   readonly layoutChanged = output<void>();
-  readonly activeFaq = signal(-1);
+  readonly activeAccordionIndex = signal(-1);
 
   readonly workloadProfileBenchmarks = computed(() =>
     filterWorkloadProfileBenchmarks(this.benchmarkMeta()),
@@ -66,12 +66,13 @@ export class WorkloadProfilePanelComponent {
     () => this.workloadProfileBenchmarks().length > 0,
   );
 
-  readonly faqQuestions = computed(() =>
+  readonly accordionItems = computed(() =>
     this.workloadProfileBenchmarks()
       .filter((benchmark) => benchmark.description?.trim())
       .map((benchmark) => ({
-        question: benchmark.name.split(": ").pop(),
-        answer: benchmark.description ?? "",
+        title: benchmark.name.split(": ").pop() ?? benchmark.name,
+        content: benchmark.description ?? "",
+        note: this.getBenchmarkNote(benchmark.benchmark_id),
       })),
   );
 
@@ -95,8 +96,34 @@ export class WorkloadProfilePanelComponent {
     this.tooltipContent = "";
   }
 
-  onFaqChanged(index: number): void {
-    this.activeFaq.set(index);
+  onAccordionChanged(index: number): void {
+    this.activeAccordionIndex.set(index);
     this.layoutChanged.emit();
+  }
+
+  private getBenchmarkNote(benchmarkId: string): string | undefined {
+    if (this.layout() === "details") {
+      const note = this.serverDetails()
+        ?.benchmark_scores?.find(
+          (score) => score.benchmark_id === benchmarkId,
+        )
+        ?.note?.trim();
+
+      return note || undefined;
+    }
+
+    const notes = new Set<string>();
+
+    for (const server of this.servers()) {
+      const note = server.benchmark_scores
+        ?.find((score) => score.benchmark_id === benchmarkId)
+        ?.note?.trim();
+
+      if (note) {
+        notes.add(note);
+      }
+    }
+
+    return notes.size ? [...notes].join("\n") : undefined;
   }
 }
