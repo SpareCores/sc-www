@@ -78,7 +78,7 @@ function buildSpecsAnswer(
   serverDetails: ServerDetailsForFaqs,
   formattedMemory: string,
 ): string {
-  return `The ${serverDetails.display_name} server is equipped with ${serverDetails.vcpus} logical CPU core${serverDetails.vcpus! > 1 ? "s" : ""} on ${serverDetails.cpu_cores || "unknown number of"} ${serverDetails.cpu_manufacturer || ""} ${serverDetails.cpu_family || ""} ${serverDetails.cpu_model || ""} physical CPU core${serverDetails.cpu_cores ? (serverDetails.cpu_cores! > 1 ? "s" : "") : "(s)"}${serverDetails.memory_speed ? " running at max. " + serverDetails.cpu_speed + " Ghz" : ""}, ${formattedMemory} of ${serverDetails.memory_generation || ""} memory${serverDetails.memory_speed ? " with " + serverDetails.memory_speed + " Mhz clock rate" : ""}, ${formatStorageSize(serverDetails.storage_size ?? 0)} of ${serverDetails.storage_type || ""} storage, and ${serverDetails.gpu_count! > 0 ? serverDetails.gpu_count : "no"} ${serverDetails.gpu_manufacturer || ""} ${serverDetails.gpu_family || ""} ${serverDetails.gpu_model || ""} GPU${serverDetails.gpu_count! > 1 ? "s" : ""}. Additional block storage can be attached as needed.`;
+  return `The ${serverDetails.display_name} server is equipped with ${serverDetails.vcpus} logical CPU core${serverDetails.vcpus! > 1 ? "s" : ""} on ${serverDetails.cpu_cores || "unknown number of"} ${serverDetails.cpu_manufacturer || ""} ${serverDetails.cpu_family || ""} ${serverDetails.cpu_model || ""} physical CPU core${serverDetails.cpu_cores ? (serverDetails.cpu_cores! > 1 ? "s" : "") : "(s)"}${serverDetails.cpu_speed ? " running at max. " + serverDetails.cpu_speed + " Ghz" : ""}, ${formattedMemory} of ${serverDetails.memory_generation || ""} memory${serverDetails.memory_speed ? " with " + serverDetails.memory_speed + " Mhz clock rate" : ""}, ${formatStorageSize(serverDetails.storage_size)} of ${serverDetails.storage_type || ""} storage, and ${serverDetails.gpu_count! > 0 ? serverDetails.gpu_count : "no"} ${serverDetails.gpu_manufacturer || ""} ${serverDetails.gpu_family || ""} ${serverDetails.gpu_model || ""} GPU${serverDetails.gpu_count! > 1 ? "s" : ""}. Additional block storage can be attached as needed.`;
 }
 
 export function buildServerFaqs(input: BuildServerFaqsInput): AccordionItem[] {
@@ -128,7 +128,7 @@ export function buildServerFaqs(input: BuildServerFaqsInput): AccordionItem[] {
     html: `The ${displayName} server is offered by ${serverDetails.vendor.name}, founded in ${serverDetails.vendor.founding_year}, headquartered in ${serverDetails.vendor.state}, ${countryName}. For more information, visit the <a href="${serverDetails.vendor.homepage}" target="_blank" rel="noopener" class="underline decoration-dotted hover:text-gray-500">${serverDetails.vendor.name} homepage</a>.`,
   });
 
-  if (serverRegions) {
+  if (serverRegions && serverRegions.length > 0) {
     faqs.push({
       title: `Where is the ${displayName} server available?`,
       content: "",
