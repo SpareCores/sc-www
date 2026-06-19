@@ -104,9 +104,7 @@ export class WorkloadProfilePanelComponent {
   private getBenchmarkNote(benchmarkId: string): string | undefined {
     if (this.layout() === "details") {
       const note = this.serverDetails()
-        ?.benchmark_scores?.find(
-          (score) => score.benchmark_id === benchmarkId,
-        )
+        ?.benchmark_scores?.find((score) => score.benchmark_id === benchmarkId)
         ?.note?.trim();
 
       return note || undefined;
