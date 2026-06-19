@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Component,
   ElementRef,
@@ -18,7 +17,6 @@ import {
   Benchmark,
   BenchmarkScore,
   GetSimilarServersServerVendorServerSimilarServersByNumGetData,
-  Server,
   ServerPKs,
   ServerPrice,
 } from "../../../../sdk/data-contracts";
@@ -36,7 +34,11 @@ import {
   LucideTriangleAlert,
 } from "@lucide/angular";
 import { SeoHandlerService } from "../../services/seo-handler.service";
-import { FaqComponent } from "../../components/faq/faq.component";
+import {
+  AccordionComponent,
+  AccordionItem,
+} from "../../components/accordion/accordion.component";
+import { buildServerFaqs } from "./server-details-faqs";
 import { FormsModule } from "@angular/forms";
 import { BaseChartDirective } from "ng2-charts";
 import { ChartConfiguration, ChartData } from "chart.js";
@@ -102,7 +104,7 @@ interface PropertyCategoryDefinition {
     LucideExternalLink,
     LucideScale,
     LucideTriangleAlert,
-    FaqComponent,
+    AccordionComponent,
     FormsModule,
     RouterModule,
     BaseChartDirective,
@@ -148,7 +150,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   description = "";
   title = "";
 
-  faqs: any[] = [];
+  faqs: AccordionItem[] = [];
 
   availabilityRegions: any[] = [];
   availabilityZones: any[] = [];
@@ -466,56 +468,18 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
                 this.description += ` The pricing starts at ${roundedPrice} ${this.serverDetails.prices[0].currency} per hour.`;
               }
 
-              this.faqs = [
-                {
-                  question: `What is ${this.serverDetails.display_name}?`,
-                  answer: this.description,
-                },
-                {
-                  question: `What are the specs of the ${this.serverDetails.display_name} server?`,
-                  answer: `The ${this.serverDetails.display_name} server is equipped with ${this.serverDetails.vcpus} logical CPU core${this.serverDetails.vcpus! > 1 ? "s" : ""} on ${this.serverDetails.cpu_cores || "unknown number of"} ${this.serverDetails.cpu_manufacturer || ""} ${this.serverDetails.cpu_family || ""} ${this.serverDetails.cpu_model || ""} physical CPU core${this.serverDetails.cpu_cores ? (this.serverDetails.cpu_cores! > 1 ? "s" : "") : "(s)"}${this.serverDetails.memory_speed ? " running at max. " + this.serverDetails.cpu_speed + " Ghz" : ""}, ${this.getMemory()} of ${this.serverDetails.memory_generation || ""} memory${this.serverDetails.memory_speed ? " with " + this.serverDetails.memory_speed + " Mhz clock rate" : ""}, ${formatStorageSize(this.serverDetails.storage_size ?? 0)} of ${this.serverDetails.storage_type || ""} storage, and ${this.serverDetails.gpu_count! > 0 ? this.serverDetails.gpu_count : "no"} ${this.serverDetails.gpu_manufacturer || ""} ${this.serverDetails.gpu_family || ""} ${this.serverDetails.gpu_model || ""} GPU${this.serverDetails.gpu_count! > 1 ? "s" : ""}. Additional block storage can be attached as needed.`,
-                },
-              ];
-
-              if (this.serverDetails.benchmark_scores.length > 0) {
-                const benchmarkFrameworks = new Set<string>();
-                for (const item of this.serverDetails.benchmark_scores) {
-                  benchmarkFrameworks.add(item["benchmark_id"]);
-                }
-                let answer = `We have run ${benchmarkFrameworks.size} frameworks on the ${this.serverDetails.display_name} server, and collected ${this.serverDetails.benchmark_scores.length} performance metrics. Depending on your use case, you might want to look at our Memory bandwidth, Compression algo, or OpenSSL speed benchmarks, among others.`;
-                for (const item of this.serverDetails.benchmark_scores) {
-                  if (
-                    item.benchmark_id === "geekbench:score" &&
-                    (item.config as any)?.cores === "Multi-Core Performance"
-                  ) {
-                    answer += ` As a baseline example, the multi-core Geekbench6 compound score suggests that the ${this.serverDetails.display_name} server is ${item.score / 2500}x ${item.score > 2500 ? "faster" : "slower"} than the baseline Dell Precision 3460 with a Core i7-12700 processor.`;
-                  }
-                }
-                this.faqs.push({
-                  question: `How fast is the ${this.serverDetails.display_name} server?`,
-                  answer: answer,
-                });
-              }
-
-              if (this.serverDetails.prices[0]) {
-                this.faqs.push({
-                  question: `How much does the ${this.serverDetails.display_name} server cost?`,
-                  answer: `The pricing for ${this.serverDetails.display_name} servers starts at ${this.serverDetails.prices[0].price} ${this.serverDetails.prices[0].currency} per hour, but the actual price depends on the selected region, zone and server allocation method (e.g. on-demand versus spot pricing options): currently, we track the prices in ${this.serverDetails.prices.length} regions and zones every 5 minutes, and the maximum price stands at ${this.serverDetails.prices.slice(-1)[0].price} ${this.serverDetails.prices.slice(-1)[0].currency}.`,
-                });
-              }
-
-              this.faqs.push({
-                question: `Who is the provider of the ${this.serverDetails.display_name} server?`,
-                html: `The ${this.serverDetails.display_name} server is offered by ${this.serverDetails.vendor.name}, founded in ${this.serverDetails.vendor.founding_year}, headquartered in ${this.serverDetails.vendor.state}, ${countryIdtoNamePipe.transform(this.serverDetails.vendor.country_id)}. For more information, visit the <a href="${this.serverDetails.vendor.homepage}" target="_blank" rel="noopener" class="underline decoration-dotted hover:text-gray-500">${this.serverDetails.vendor.name} homepage</a>.`,
-                // TODO add compliance frameworks implemented
+              this.faqs = buildServerFaqs({
+                serverDetails: this.serverDetails,
+                description: this.description,
+                formattedMemory: this.getMemory(),
+                countryName: countryIdtoNamePipe.transform(
+                  this.serverDetails.vendor.country_id,
+                ) as string,
+                serverRegions: this.serverRegions,
+                serverZoneCount: this.serverZones.length,
+                similarByFamily: this.similarByFamily,
+                similarBySpecs: this.similarBySpecs,
               });
-
-              if (this.serverRegions) {
-                this.faqs.push({
-                  question: `Where is the ${this.serverDetails.display_name} server available?`,
-                  html: `The ${this.serverDetails.display_name} server is available in ${this.serverZones.length} availability zones of the following ${this.serverRegions.length} regions: ${this.serverRegions.join(", ")}.`,
-                });
-              }
               const keywords =
                 this.title +
                 ", " +
@@ -531,20 +495,6 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
               this.SEOHandler.updateThumbnail(
                 `https://og.sparecores.com/images/${this.serverDetails.vendor_id}/${this.serverDetails.api_reference}.png`,
               );
-
-              if (this.similarByFamily?.length > 0) {
-                this.faqs.push({
-                  question: `Are there any other sized servers in the ${this.serverDetails.family} server family?`,
-                  html: `Yes! In addition to the ${this.serverDetails.display_name} server, the ${this.serverDetails.family} server family includes ${this.similarByFamily.length} other sizes: ${this.similarByFamily.map((s: any) => this.serverUrl(s, true)).join(", ")}.`,
-                });
-              }
-
-              if (this.similarBySpecs?.length > 0) {
-                this.faqs.push({
-                  question: `What other servers offer similar performance to ${this.serverDetails.display_name}?`,
-                  html: `Looking at the number of GPU, vCPUs, and memory amount, the following top 10 servers come with similar specs: ${this.similarBySpecs.map((s: any) => this.serverUrl(s, true)).join(", ")}.`,
-                });
-              }
 
               this.generateSchemaJSON();
 
@@ -710,12 +660,6 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   getMemory(memory: number | undefined = undefined) {
     const memoryAmount = memory || this.serverDetails.memory_amount || 0;
     return (memoryAmount / 1024).toFixed(memoryAmount >= 1024 ? 0 : 1) + " GiB";
-  }
-
-  serverUrl(server: Server, appendVendor: boolean = false): string {
-    return `<a class="underline decoration-dotted hover:text-gray-500"
-      href="/server/${server.vendor_id}/${server.api_reference}">
-      ${server.display_name}${appendVendor ? " (" + server.vendor_id + ")" : ""}</a>`;
   }
 
   toggleCard(cardId: string, updateURL: boolean = true) {
@@ -1032,7 +976,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
     if (name === "storages") {
       let html = "<ul>";
-      (prop as any[]).forEach((s: any, index: number) => {
+      (prop as any[]).forEach((s: any) => {
         html += `<li>${s.size} GB ${s.storage_type ? s.storage_type : ""}${s.description ? " (" + s.description + ")" : ""}</li>`;
       });
       html += "</ul>";
@@ -1041,7 +985,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
     if (name === "gpus") {
       let html = "<ul>";
-      (prop as any[]).forEach((s: any, index: number) => {
+      (prop as any[]).forEach((s: any) => {
         html += `<li>${s.manufacturer || ""} ${s.family || ""} ${s.model || ""} `;
         const fields = [
           "memory",
@@ -1440,7 +1384,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     this.modalEmbed?.show();
   }
 
-  closeModal(confirm: boolean) {
+  closeModal() {
     this.modalEmbed?.hide();
     setTimeout(() => {
       this.isModalOpen = false;
