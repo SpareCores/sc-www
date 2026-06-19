@@ -505,12 +505,14 @@
 
     @if (serverDetails) {
       <div #giscusParent class="my-8 w-1/2 m-auto">
-        <app-faq
-          [activeFAQ]="activeFAQ"
-          [FAQQuestions]="faqs"
-          [item]="serverDetails.display_name"
-          (activeFAQChanged)="activeFAQChanged($event)"
-        ></app-faq>
+        <app-accordion
+          [useFaqSchema]="true"
+          [showHeading]="true"
+          [heading]="serverDetails.display_name"
+          [items]="faqs"
+          [activeIndex]="activeFAQ"
+          (activeIndexChange)="activeFAQChanged($event)"
+        ></app-accordion>
         <div class="giscus"></div>
       </div>
     }
@@ -582,7 +584,7 @@
           data-ph-capture-attribute-sc-event="embed chart modal close"
           data-ph-capture-attribute-server-listing-search-prompt-action="close"
           class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
-          (click)="closeModal(false)"
+          (click)="closeModal()"
         >
           <svg
             class="w-3 h-3"
