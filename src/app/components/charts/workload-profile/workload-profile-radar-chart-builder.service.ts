@@ -4,6 +4,10 @@ import { radarChartOptions } from "../../../pages/server-details/chartOptions";
 import { radarDatasetColors } from "../shared/chart-colors.constants";
 import { cloneChartOptions } from "../shared/chart-options.utils";
 import {
+  wrapTextAtWordBoundaries,
+  CHART_TOOLTIP_MAX_LINE_LENGTH,
+} from "../shared/chart-tooltip.utils";
+import {
   formatWorkloadProfileLabel,
   filterWorkloadProfileBenchmarks,
 } from "./workload-profile.utils";
@@ -42,7 +46,7 @@ export class WorkloadProfileRadarChartBuilderService {
         benchmarkIds,
         labels,
       ),
-      options: this.createDetailsOptions(),
+      options: this.createDetailsOptions(workloadMeta),
     };
   }
 
@@ -63,35 +67,44 @@ export class WorkloadProfileRadarChartBuilderService {
 
     return {
       chartData: this.createCompareData(params.servers, benchmarkIds, labels),
-      options: this.createCompareOptions(),
+      options: this.createCompareOptions(workloadMeta),
     };
   }
 
-  private createDetailsOptions(): WorkloadProfileRadarChartOptions {
+  private createDetailsOptions(
+    workloadMeta: WorkloadProfileBenchmarkMeta[],
+  ): WorkloadProfileRadarChartOptions {
     return this.withWorkloadRadarLayout(
       cloneChartOptions(radarChartOptions ?? {}),
+      workloadMeta,
     );
   }
 
-  private createCompareOptions(): WorkloadProfileRadarChartOptions {
+  private createCompareOptions(
+    workloadMeta: WorkloadProfileBenchmarkMeta[],
+  ): WorkloadProfileRadarChartOptions {
     const baseOptions = cloneChartOptions(radarChartOptions ?? {});
 
-    return this.withWorkloadRadarLayout({
-      ...baseOptions,
-      plugins: {
-        ...baseOptions.plugins,
-        legend: {
-          ...(typeof baseOptions.plugins?.legend === "object"
-            ? baseOptions.plugins.legend
-            : {}),
-          display: true,
+    return this.withWorkloadRadarLayout(
+      {
+        ...baseOptions,
+        plugins: {
+          ...baseOptions.plugins,
+          legend: {
+            ...(typeof baseOptions.plugins?.legend === "object"
+              ? baseOptions.plugins.legend
+              : {}),
+            display: true,
+          },
         },
       },
-    });
+      workloadMeta,
+    );
   }
 
   private withWorkloadRadarLayout(
     options: WorkloadProfileRadarChartOptions,
+    workloadMeta: WorkloadProfileBenchmarkMeta[],
   ): WorkloadProfileRadarChartOptions {
     const resolvedOptions = options ?? {};
     const baseLayout =
@@ -128,6 +141,12 @@ export class WorkloadProfileRadarChartBuilderService {
           ...baseTooltip,
           callbacks: {
             ...baseCallbacks,
+            title: (items: TooltipItem<"radar">[]) => {
+              const index = items[0]?.dataIndex;
+              const benchmark = index == null ? undefined : workloadMeta[index];
+
+              return benchmark?.name ?? items[0]?.label ?? "";
+            },
             label: (tooltipItem: TooltipItem<"radar">) =>
               this.formatRadarTooltipLabel(
                 tooltipItem.raw as WorkloadProfileRadarPoint,
@@ -138,15 +157,22 @@ export class WorkloadProfileRadarChartBuilderService {
     };
   }
 
-  private formatRadarTooltipLabel(point: WorkloadProfileRadarPoint): string {
+  private formatRadarTooltipLabel(point: WorkloadProfileRadarPoint): string[] {
     const note = point.tooltip?.trim();
     const value = point.value;
+    const lines: string[] = [];
 
-    if (value == null) {
-      return note ?? "";
+    if (value != null) {
+      lines.push(String(value));
     }
 
-    return note ? `${value}; ${note}` : String(value);
+    if (note) {
+      lines.push(
+        ...wrapTextAtWordBoundaries(note, CHART_TOOLTIP_MAX_LINE_LENGTH),
+      );
+    }
+
+    return lines;
   }
 
   private createDetailsData(

@@ -40,17 +40,26 @@ describe("WorkloadProfileRadarChartBuilderService", () => {
     });
     expect(charts?.options?.maintainAspectRatio).toBeFalse();
     const label = charts?.options?.plugins?.tooltip?.callbacks?.label;
+    const title = charts?.options?.plugins?.tooltip?.callbacks?.title;
     const tooltipContext = {} as TooltipModel<"radar">;
     expect(
       label?.call(tooltipContext, {
         raw: { value: 0.169 },
       } as TooltipItem<"radar">),
-    ).toBe("0.169");
+    ).toEqual(["0.169"]);
     expect(
       label?.call(tooltipContext, {
         raw: { value: 120, tooltip: "Web server" },
       } as TooltipItem<"radar">),
-    ).toBe("120; Web server");
+    ).toEqual(["120", "Web server"]);
+    expect(
+      title?.call(tooltipContext, [
+        {
+          dataIndex: 0,
+          label: "Web server",
+        } as TooltipItem<"radar">,
+      ]),
+    ).toBe("Workload profile: Web server");
   });
 
   it("builds a compare radar chart with one dataset per server", () => {
