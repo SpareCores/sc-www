@@ -91,25 +91,27 @@
             </button>
           </div>
           <div class="p-4">
-            <iframe
-              width="100%"
-              height="auto"
-              src="https://www.youtube.com/embed/4QwvxaLTW2k"
-              title="Spare Cores advisor introduction"
-              frameborder="0"
-              allow="
-                accelerometer;
-                autoplay;
-                clipboard-write;
-                encrypted-media;
-                gyroscope;
-                picture-in-picture;
-                web-share;
-              "
-              referrerpolicy="strict-origin-when-cross-origin"
-              allowfullscreen
-              class="advisor-video-frame"
-            ></iframe>
+            @if (showIntroductionVideo) {
+              <iframe
+                width="100%"
+                height="auto"
+                src="https://www.youtube.com/embed/4QwvxaLTW2k"
+                title="Spare Cores advisor introduction"
+                frameborder="0"
+                allow="
+                  accelerometer;
+                  autoplay;
+                  clipboard-write;
+                  encrypted-media;
+                  gyroscope;
+                  picture-in-picture;
+                  web-share;
+                "
+                referrerpolicy="strict-origin-when-cross-origin"
+                allowfullscreen
+                class="advisor-video-frame"
+              ></iframe>
+            }
           </div>
         </div>
       </div>
