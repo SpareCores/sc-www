@@ -40,7 +40,9 @@ import {
   LucideInfo,
   LucideScale,
   LucideSearch,
+  LucideClipboard,
   LucideShipWheel,
+  LucideTvMinimalPlay,
   LucideX,
 } from "@lucide/angular";
 import {
@@ -104,6 +106,11 @@ const optionsModal: ModalOptions = {
   closable: true,
 };
 
+const serverListingIntroductionModalOptions: ModalOptions = {
+  backdropClasses: "bg-gray-900/50 fixed inset-0 z-40",
+  closable: true,
+};
+
 const INVALID_URL_TOAST_TITLE = "Invalid URL";
 const INVALID_BENCHMARK_URL_TOAST_BODY =
   "Visit the Server Navigator page to select a benchmark.";
@@ -126,7 +133,9 @@ const INVALID_BENCHMARK_URL_TOAST_BODY =
     LucideInfo,
     LucideScale,
     LucideSearch,
+    LucideClipboard,
     LucideShipWheel,
+    LucideTvMinimalPlay,
     LucideX,
     RouterModule,
     SearchBarComponent,
@@ -269,6 +278,9 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   modalFilterTerm: string | null = null;
 
   @ViewChild("tooltipDefault") tooltip!: ElementRef;
+  introductionModalRef =
+    viewChild<ElementRef<HTMLElement>>("introductionModal");
+  private introductionModal: Modal | null = null;
   clipboardIcon = "clipboard";
   tooltipContent = "";
 
@@ -597,6 +609,8 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.sub?.unsubscribe();
     this.subscription.unsubscribe();
+    this.introductionModal?.hide();
+    this.introductionModal = null;
   }
 
   setSpecialList() {
@@ -1006,6 +1020,29 @@ export class ServerListingComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.clipboardIcon = "clipboard";
     }, 3000);
+  }
+
+  openIntroductionModal(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
+    if (!this.introductionModal) {
+      const modalElement = this.introductionModalRef()?.nativeElement;
+
+      if (modalElement) {
+        this.introductionModal = new Modal(
+          modalElement,
+          serverListingIntroductionModalOptions,
+        );
+      }
+    }
+
+    this.introductionModal?.show();
+  }
+
+  closeIntroductionModal(): void {
+    this.introductionModal?.hide();
   }
 
   showTooltip(el: any, content: string, autoHide = false) {

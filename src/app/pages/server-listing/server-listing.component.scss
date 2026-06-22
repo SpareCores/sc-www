@@ -1,3 +1,24 @@
+.server-listing-hero-header {
+  @apply flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between;
+}
+
+.server-listing-hero-actions {
+  @apply flex flex-wrap items-center gap-3 lg:justify-end;
+}
+
+.server-listing-header-action {
+  @apply inline-flex items-center gap-2 px-3 py-2;
+  min-height: 50px;
+  white-space: nowrap;
+}
+
+.server-listing-video-frame {
+  border: 2px solid #34d399;
+  border-radius: 0.5rem;
+  margin: 0 auto;
+  aspect-ratio: 16 / 9;
+}
+
 .filter_bar {
   position: relative;
   width: 20rem;

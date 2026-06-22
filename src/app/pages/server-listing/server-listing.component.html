@@ -3,21 +3,103 @@
     <app-breadcrumbs [segments]="breadcrumbs"></app-breadcrumbs>
 
     <div class="flex flex-col gap-4 my-8 mx-2 xl:mx-0">
-      <div class="flex gap-4 items-center w-full justify-between">
+      <div class="server-listing-hero-header">
         <h1 class="text-white font-bold text-3xl flex items-center">
           <svg lucideShipWheel class="h-8 w-8 mr-2"></svg>
           {{ title }}
         </h1>
-        <button
-          class="btn-primary py-2 px-3 flex gap-1 items-center"
-          (click)="clipboardURL()"
-        >
-          Share
-          <svg [lucideIcon]="clipboardIcon" size="16"></svg>
-        </button>
+        <div class="server-listing-hero-actions">
+          <button
+            id="server_listing_introduction_button"
+            type="button"
+            class="server-listing-header-action btn-primary-outline"
+            (click)="openIntroductionModal()"
+          >
+            <svg lucideTvMinimalPlay class="h-4 w-4"></svg>
+            Introduction
+          </button>
+          <button
+            id="server_listing_share_button"
+            type="button"
+            class="server-listing-header-action btn-primary-outline"
+            (click)="clipboardURL()"
+          >
+            Share
+            @if (clipboardIcon === "check") {
+              <svg lucideCheck class="h-4 w-4"></svg>
+            } @else {
+              <svg lucideClipboard class="h-4 w-4"></svg>
+            }
+          </button>
+        </div>
       </div>
       <div class="text-white text-xl pr-16">
         {{ description }}
+      </div>
+    </div>
+
+    <div
+      #introductionModal
+      id="server-listing-introduction-modal"
+      tabindex="-1"
+      class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full"
+    >
+      <div class="relative w-full max-w-4xl mx-auto my-auto">
+        <div
+          class="relative bg-secondary rounded-lg shadow border border-solid border-emerald-400"
+        >
+          <div
+            class="flex items-center justify-between p-4 border-b border-gray-600"
+          >
+            <h2 class="text-xl font-medium text-white">
+              Cloud Servers Navigator introduction
+            </h2>
+            <button
+              type="button"
+              class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
+              (click)="closeIntroductionModal()"
+            >
+              <svg
+                class="w-3 h-3"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 14 14"
+              >
+                <path
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+                />
+              </svg>
+
+              <span class="sr-only">Close modal</span>
+            </button>
+          </div>
+          <div class="p-4">
+            <iframe
+              width="100%"
+              height="auto"
+              src="https://www.youtube.com/embed/hO0KQoxk1SM"
+              title="Spare Cores server navigator introduction"
+              frameborder="0"
+              allow="
+                accelerometer;
+                autoplay;
+                clipboard-write;
+                encrypted-media;
+                gyroscope;
+                picture-in-picture;
+                web-share;
+              "
+              referrerpolicy="strict-origin-when-cross-origin"
+              allowfullscreen
+              class="server-listing-video-frame"
+            ></iframe>
+          </div>
+        </div>
       </div>
     </div>
 
