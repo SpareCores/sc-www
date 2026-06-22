@@ -19,6 +19,7 @@ import {
   BenchmarkScore,
   GetSimilarServersServerVendorServerSimilarServersByNumGetData,
   Server,
+  ServerDescription,
   ServerPKs,
   ServerPrice,
 } from "../../../../sdk/data-contracts";
@@ -31,8 +32,9 @@ import {
   LucideCheck,
   LucideChevronDown,
   LucideCopy,
-  LucideExternalLink,
+  LucideMaximize2,
   LucideScale,
+  LucideSparkles,
   LucideTriangleAlert,
 } from "@lucide/angular";
 import { SeoHandlerService } from "../../services/seo-handler.service";
@@ -73,6 +75,11 @@ const optionsModal: ModalOptions = {
   closable: true,
 };
 
+const summarizeModalOptions: ModalOptions = {
+  backdropClasses: "bg-gray-900/50 fixed inset-0 z-40",
+  closable: true,
+};
+
 export interface ExtendedServerPrice extends ServerPrice {
   region: any;
   zone: any;
@@ -99,8 +106,9 @@ interface PropertyCategoryDefinition {
     LucideCheck,
     LucideChevronDown,
     LucideCopy,
-    LucideExternalLink,
+    LucideMaximize2,
     LucideScale,
+    LucideSparkles,
     LucideTriangleAlert,
     FaqComponent,
     FormsModule,
@@ -147,6 +155,11 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
   description = "";
   title = "";
+  seoKeywords = "";
+
+  serverDescription: ServerDescription | null = null;
+  descriptionsAvailable = false;
+  isSummarizeModalOpen = false;
 
   faqs: any[] = [];
 
@@ -214,6 +227,8 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   activeFAQ: number = -1;
 
   modalEmbed: any;
+  private summarizeModal: Modal | null = null;
+  summarizeModalRef = viewChild<ElementRef<HTMLElement>>("summarizeModal");
 
   embeddableCharts = [
     { id: "bw_mem", name: "Memory Bandwidth" },
@@ -521,6 +536,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
                 this.serverDetails.server_id +
                 ", " +
                 this.serverDetails.vendor.vendor_id;
+              this.seoKeywords = keywords;
 
               this.SEOHandler.updateTitleAndMetaTags(
                 this.title,
@@ -650,6 +666,8 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
                   false,
                 );
               }
+
+              this.loadServerDescriptions(vendor, id);
             }
           })
           .catch((error) => {
@@ -697,6 +715,9 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
       clearInterval(this.giscusInterval);
       this.giscusInterval = null;
     }
+
+    this.summarizeModal?.hide();
+    this.summarizeModal = null;
 
     this.SEOHandler.cleanupStructuredData(this.document);
     this.subscription.unsubscribe();
@@ -1290,7 +1311,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
       "@context": "https://schema.org/",
       "@type": "Product",
       name: this.serverDetails.display_name,
-      description: this.description,
+      description: this.serverDescription?.description ?? this.description,
       category: `Servers > Cloud servers > ${this.serverDetails.vendor.name}`,
       brand: {
         "@type": "Organization",
@@ -1443,6 +1464,74 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
     this.modalEmbed?.hide();
     setTimeout(() => {
       this.isModalOpen = false;
+    }, 300);
+  }
+
+  loadServerDescriptions(vendor: string, id: string) {
+    this.keeperAPI
+      .getServerDescriptions(vendor, id)
+      .then((response) => {
+        if (response?.body) {
+          this.serverDescription = response.body as ServerDescription;
+          this.descriptionsAvailable = true;
+          this.applyServerDescriptionSeo();
+          this.generateSchemaJSON();
+        } else {
+          this.descriptionsAvailable = false;
+        }
+      })
+      .catch(() => {
+        this.descriptionsAvailable = false;
+      });
+  }
+
+  applyServerDescriptionSeo() {
+    if (!this.serverDescription || !this.seoKeywords) {
+      return;
+    }
+
+    this.SEOHandler.updateTitleAndMetaTags(
+      this.title,
+      this.serverDescription.meta_description,
+      this.seoKeywords,
+    );
+    this.SEOHandler.updateOgDescription(this.serverDescription.og_description);
+  }
+
+  descriptionCardIsFullWidth(): boolean {
+    return (
+      this.lstopoSvgExists === false ||
+      this.isSmallScreen ||
+      this.lstopoSvgWidth > 600
+    );
+  }
+
+  openSummarizeModal(): void {
+    if (!this.descriptionsAvailable || !this.serverDescription) {
+      return;
+    }
+
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
+    this.isSummarizeModalOpen = true;
+
+    if (!this.summarizeModal) {
+      const modalElement = this.summarizeModalRef()?.nativeElement;
+
+      if (modalElement) {
+        this.summarizeModal = new Modal(modalElement, summarizeModalOptions);
+      }
+    }
+
+    this.summarizeModal?.show();
+  }
+
+  closeSummarizeModal(): void {
+    this.summarizeModal?.hide();
+    setTimeout(() => {
+      this.isSummarizeModalOpen = false;
     }, 300);
   }
 }
