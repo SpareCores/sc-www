@@ -22,6 +22,8 @@ export class GpuCountPipe implements PipeTransform {
         return "⅛";
       case 0.0833:
         return "1⁄12";
+      case 0.0417:
+        return "1⁄24";
       default:
         return gpuCount;
     }
