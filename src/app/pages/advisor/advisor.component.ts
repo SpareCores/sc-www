@@ -436,6 +436,7 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
   private baselineAddonPricingRequestVersion = 0;
   private baselineScoreComparisonRequestVersion = 0;
   private introductionModal: Modal | null = null;
+  showIntroductionVideo = false;
   private hasViewInitialized = signal(false);
   private pendingCustomControlFocus = signal<string | null>(null);
   private customControlFocusFrame: number | null = null;
@@ -1874,13 +1875,16 @@ export class AdvisorComponent implements OnInit, AfterViewInit, OnDestroy {
       const modalElement = this.introductionModalRef()?.nativeElement;
 
       if (modalElement) {
-        this.introductionModal = new Modal(
-          modalElement,
-          advisorIntroductionModalOptions,
-        );
+        this.introductionModal = new Modal(modalElement, {
+          ...advisorIntroductionModalOptions,
+          onHide: () => {
+            this.showIntroductionVideo = false;
+          },
+        });
       }
     }
 
+    this.showIntroductionVideo = true;
     this.introductionModal?.show();
   }
 
