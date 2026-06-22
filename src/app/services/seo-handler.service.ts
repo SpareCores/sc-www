@@ -77,6 +77,13 @@ export class SeoHandlerService {
     this.setFollow();
   }
 
+  public updateOgDescription(description: string): void {
+    this.metaTagService.updateTag(
+      { property: "og:description", content: description },
+      "property='og:description'",
+    );
+  }
+
   public updateThumbnail(content: string) {
     if (content) {
       this.metaTagService.updateTag(
