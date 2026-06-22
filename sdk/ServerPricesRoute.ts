@@ -68,7 +68,8 @@ export namespace ServerPrices {
         | "EPYC"
         | "Grace"
         | "Xeon"
-        | "Yitian";
+        | "Yitian"
+        | "Zen";
       /**
        * CPU allocation
        * Allocation of the CPU(s) to the server, e.g. shared, burstable or dedicated.
@@ -734,22 +735,17 @@ export namespace ServerPrices {
       gpu_model?:
         | "A10"
         | "A100"
-        | "A100 PCIE"
-        | "A100 SXM"
         | "A10G"
         | "A16"
         | "A40"
         | "B200"
         | "B300"
-        | "G49"
-        | "G49E"
+        | "GB200"
         | "GH200"
-        | "GPU H"
         | "H100"
         | "H200"
         | "HL-205"
         | "L20"
-        | "L20N"
         | "L4"
         | "L40S"
         | "MI300X"
@@ -758,6 +754,7 @@ export namespace ServerPrices {
         | "P100"
         | "P4"
         | "RTX 5000"
+        | "RTX PRO 4500"
         | "RTX Pro 6000"
         | "T4"
         | "T4G"
@@ -765,9 +762,7 @@ export namespace ServerPrices {
         | "V100S"
         | "V520"
         | "V620"
-        | "V710"
-        | "nvidia-gb200"
-        | "vGPU8";
+        | "V710";
       /**
        * Limit
        * Maximum number of results.
