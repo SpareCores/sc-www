@@ -424,9 +424,6 @@ describe("AdvisorComponent", () => {
       "#advisor_introduction_button",
     );
     const shareButton = host.querySelector("#advisor_share_button");
-    const introductionFrame = host.querySelector(
-      "#advisor-introduction-modal iframe",
-    ) as HTMLIFrameElement | null;
 
     expect(exampleButton?.textContent).toContain("Example");
     expect(introductionButton?.textContent).toContain("Introduction");
@@ -440,6 +437,11 @@ describe("AdvisorComponent", () => {
       avg_cpu_utilization: "60",
       minimum_memory: "6",
     });
+    component.openIntroductionModal();
+    fixture.detectChanges();
+    const introductionFrame = host.querySelector(
+      "#advisor-introduction-modal iframe",
+    ) as HTMLIFrameElement | null;
     expect(introductionFrame?.src).toContain("4QwvxaLTW2k");
     expect(introductionFrame?.title).toBe("Spare Cores advisor introduction");
     expect(host.querySelector("#meeting-advisor-advanced")).toBeNull();
