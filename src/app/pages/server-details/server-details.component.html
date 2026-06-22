@@ -658,7 +658,7 @@
 @if (serverDetails && !isLoading) {
   <button
     type="button"
-    class="summarize-fab btn-primary disabled:bg-gray-500 disabled:cursor-not-allowed disabled:hover:bg-gray-500"
+    class="summarize-fab summarize-fab-to-hide-for-test btn-primary disabled:bg-gray-500 disabled:cursor-not-allowed disabled:hover:bg-gray-500"
     [disabled]="!descriptionsAvailable"
     [title]="
       descriptionsAvailable
