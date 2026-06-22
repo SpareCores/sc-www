@@ -281,6 +281,7 @@ export class ServerListingComponent implements OnInit, OnDestroy {
   introductionModalRef =
     viewChild<ElementRef<HTMLElement>>("introductionModal");
   private introductionModal: Modal | null = null;
+  showIntroductionVideo = false;
   clipboardIcon = "clipboard";
   tooltipContent = "";
 
@@ -1031,13 +1032,16 @@ export class ServerListingComponent implements OnInit, OnDestroy {
       const modalElement = this.introductionModalRef()?.nativeElement;
 
       if (modalElement) {
-        this.introductionModal = new Modal(
-          modalElement,
-          serverListingIntroductionModalOptions,
-        );
+        this.introductionModal = new Modal(modalElement, {
+          ...serverListingIntroductionModalOptions,
+          onHide: () => {
+            this.showIntroductionVideo = false;
+          },
+        });
       }
     }
 
+    this.showIntroductionVideo = true;
     this.introductionModal?.show();
   }
 

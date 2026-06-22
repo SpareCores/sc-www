@@ -79,25 +79,27 @@
             </button>
           </div>
           <div class="p-4">
-            <iframe
-              width="100%"
-              height="auto"
-              src="https://www.youtube.com/embed/hO0KQoxk1SM"
-              title="Spare Cores server navigator introduction"
-              frameborder="0"
-              allow="
-                accelerometer;
-                autoplay;
-                clipboard-write;
-                encrypted-media;
-                gyroscope;
-                picture-in-picture;
-                web-share;
-              "
-              referrerpolicy="strict-origin-when-cross-origin"
-              allowfullscreen
-              class="server-listing-video-frame"
-            ></iframe>
+            @if (showIntroductionVideo) {
+              <iframe
+                width="100%"
+                height="auto"
+                src="https://www.youtube.com/embed/hO0KQoxk1SM"
+                title="Spare Cores server navigator introduction"
+                frameborder="0"
+                allow="
+                  accelerometer;
+                  autoplay;
+                  clipboard-write;
+                  encrypted-media;
+                  gyroscope;
+                  picture-in-picture;
+                  web-share;
+                "
+                referrerpolicy="strict-origin-when-cross-origin"
+                allowfullscreen
+                class="server-listing-video-frame"
+              ></iframe>
+            }
           </div>
         </div>
       </div>
