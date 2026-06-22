@@ -89,6 +89,12 @@ export class KeeperAPIService {
     );
   }
 
+  public getServerDescriptions(vendor: string, id: string): Promise<any> {
+    return this.ServerController.getServerDescriptionsServerVendorServerDescriptionsGet(
+      { vendor, server: id },
+    );
+  }
+
   public searchServers(query: SearchServersServersGetParams): Promise<any> {
     return this.SearchController.searchServersServersGet(query);
   }
