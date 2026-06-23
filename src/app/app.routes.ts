@@ -2,6 +2,7 @@ import { Routes } from "@angular/router";
 import { LandingpageComponent } from "./pages/landingpage/landingpage.component";
 import { ServerListingComponent } from "./pages/server-listing/server-listing.component";
 import { ServerPricesComponent } from "./pages/server-prices/server-prices.component";
+import { serverOgDescriptionResolver } from "./pages/server-og/server-og-description.resolver";
 
 export const routes: Routes = [
   { path: "", component: LandingpageComponent },
@@ -43,6 +44,7 @@ export const routes: Routes = [
       import("./pages/server-og/server-og.component").then(
         (m) => m.ServerOGComponent,
       ),
+    resolve: { serverDescription: serverOgDescriptionResolver },
   },
 
   {
