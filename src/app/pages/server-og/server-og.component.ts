@@ -1,10 +1,11 @@
-import { Component, OnDestroy, OnInit, inject } from "@angular/core";
+import { Component, OnInit, OnDestroy, inject } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { Subscription } from "rxjs";
-import { formatStorageSize } from "../../pipes/pipe-utils";
-import { AnalyticsService } from "../../services/analytics.service";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
+import { AnalyticsService } from "../../services/analytics.service";
+import { formatStorageSize } from "../../pipes/pipe-utils";
+import { ServerDescription } from "../../../../sdk/data-contracts";
+import { Subscription } from "rxjs";
 
 @Component({
   selector: "app-server-og",
@@ -31,15 +32,6 @@ export class ServerOGComponent implements OnInit, OnDestroy {
   private subscription = new Subscription();
 
   ngOnInit() {
-    const serverDescription = this.route.snapshot.data["serverDescription"];
-    if (serverDescription?.og_description) {
-      this.description = serverDescription.og_description;
-      this.SEOHandler.updateDescriptions(
-        serverDescription.meta_description,
-        serverDescription.og_description,
-      );
-    }
-
     this.subscription.add(
       this.route.params.subscribe((params) => {
         const vendor = params["vendor"];
@@ -101,18 +93,13 @@ export class ServerOGComponent implements OnInit, OnDestroy {
                 });
               }
 
-              if (!this.description) {
-                this.description = `The ${this.serverDetails.display_name} server is equipped with ${this.serverDetails.vcpus} logical CPU core${this.serverDetails.vcpus! > 1 ? "s" : ""} on ${this.serverDetails.cpu_cores || "unknown number of"} ${this.serverDetails.cpu_manufacturer || ""} ${this.serverDetails.cpu_family || ""} ${this.serverDetails.cpu_model || ""} physical CPU core${this.serverDetails.cpu_cores ? (this.serverDetails.cpu_cores! > 1 ? "s" : "") : "(s)"}${this.serverDetails.memory_speed ? " running at max. " + this.serverDetails.cpu_speed + " Ghz" : ""}, ${this.getMemory()} of ${this.serverDetails.memory_generation || ""} memory${this.serverDetails.memory_speed ? " with " + this.serverDetails.memory_speed + " Mhz clock rate" : ""}, ${formatStorageSize(this.serverDetails.storage_size ?? 0)} of ${this.serverDetails.storage_type || ""} storage, and ${this.serverDetails.gpu_count! > 0 ? this.serverDetails.gpu_count : "no"} ${this.serverDetails.gpu_manufacturer || ""} ${this.serverDetails.gpu_family || ""} ${this.serverDetails.gpu_model || ""} GPU${this.serverDetails.gpu_count! > 1 ? "s" : ""}.`;
-                if (this.serverDetails.prices[0]) {
-                  this.description += ` The pricing starts at ${this.serverDetails.prices[0].price} ${this.serverDetails.prices[0].currency} per hour.`;
-                }
-                this.SEOHandler.updateDescriptions(
-                  this.description,
-                  this.description,
-                );
+              this.description = `The ${this.serverDetails.display_name} server is equipped with ${this.serverDetails.vcpus} logical CPU core${this.serverDetails.vcpus! > 1 ? "s" : ""} on ${this.serverDetails.cpu_cores || "unknown number of"} ${this.serverDetails.cpu_manufacturer || ""} ${this.serverDetails.cpu_family || ""} ${this.serverDetails.cpu_model || ""} physical CPU core${this.serverDetails.cpu_cores ? (this.serverDetails.cpu_cores! > 1 ? "s" : "") : "(s)"}${this.serverDetails.memory_speed ? " running at max. " + this.serverDetails.cpu_speed + " Ghz" : ""}, ${this.getMemory()} of ${this.serverDetails.memory_generation || ""} memory${this.serverDetails.memory_speed ? " with " + this.serverDetails.memory_speed + " Mhz clock rate" : ""}, ${formatStorageSize(this.serverDetails.storage_size ?? 0)} of ${this.serverDetails.storage_type || ""} storage, and ${this.serverDetails.gpu_count! > 0 ? this.serverDetails.gpu_count : "no"} ${this.serverDetails.gpu_manufacturer || ""} ${this.serverDetails.gpu_family || ""} ${this.serverDetails.gpu_model || ""} GPU${this.serverDetails.gpu_count! > 1 ? "s" : ""}.`;
+              if (this.serverDetails.prices[0]) {
+                this.description += ` The pricing starts at ${this.serverDetails.prices[0].price} ${this.serverDetails.prices[0].currency} per hour.`;
               }
 
               this.SEOHandler.setNoFollow();
+              this.loadServerDescriptions(vendor, id);
             }
           })
           .catch((error) => {
@@ -144,5 +131,17 @@ export class ServerOGComponent implements OnInit, OnDestroy {
         )
         ?.score?.toFixed(0) || "-"
     );
+  }
+
+  loadServerDescriptions(vendor: string, id: string) {
+    this.keeperAPI
+      .getServerDescriptions(vendor, id)
+      .then((response) => {
+        if (response?.body) {
+          const serverDescription = response.body as ServerDescription;
+          this.description = serverDescription.og_description;
+        }
+      })
+      .catch(() => {});
   }
 }
