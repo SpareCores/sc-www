@@ -1,8 +1,8 @@
+import { isPlatformBrowser } from "@angular/common";
 import { Injectable, PLATFORM_ID, inject } from "@angular/core";
 import { Meta, Title } from "@angular/platform-browser";
-import { REQUEST } from "../../express.tokens";
-import { isPlatformBrowser } from "@angular/common";
 import { Request } from "express";
+import { REQUEST } from "../../express.tokens";
 
 @Injectable({
   providedIn: "root",
@@ -48,10 +48,10 @@ export class SeoHandlerService {
   ): void {
     this.titleService.setTitle(title);
 
-    this.metaTagService.updateTag({
-      name: "description",
-      content: description,
-    });
+    this.metaTagService.updateTag(
+      { name: "description", content: description },
+      "name='description'",
+    );
     this.metaTagService.updateTag({
       name: "keywords",
       content: keywords,
@@ -77,9 +77,20 @@ export class SeoHandlerService {
     this.setFollow();
   }
 
-  public updateOgDescription(description: string): void {
+  public updateDescriptions(
+    metaDescription: string,
+    ogDescription: string,
+  ): void {
     this.metaTagService.updateTag(
-      { property: "og:description", content: description },
+      { name: "description", content: metaDescription },
+      "name='description'",
+    );
+    this.metaTagService.updateTag(
+      { name: "twitter:description", content: ogDescription },
+      "name='twitter:description'",
+    );
+    this.metaTagService.updateTag(
+      { property: "og:description", content: ogDescription },
       "property='og:description'",
     );
   }
