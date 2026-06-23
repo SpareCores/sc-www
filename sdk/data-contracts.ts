@@ -643,22 +643,17 @@ export enum OrderDir {
 export enum GpuModels {
   A10 = "A10",
   A100 = "A100",
-  A100PCIE = "A100 PCIE",
-  A100SXM = "A100 SXM",
   A10G = "A10G",
   A16 = "A16",
   A40 = "A40",
   B200 = "B200",
   B300 = "B300",
-  G49 = "G49",
-  G49E = "G49E",
+  GB200 = "GB200",
   GH200 = "GH200",
-  GPUH = "GPU H",
   H100 = "H100",
   H200 = "H200",
   HL205 = "HL-205",
   L20 = "L20",
-  L20N = "L20N",
   L4 = "L4",
   L40S = "L40S",
   MI300X = "MI300X",
@@ -667,6 +662,7 @@ export enum GpuModels {
   P100 = "P100",
   P4 = "P4",
   RTX5000 = "RTX 5000",
+  RTXPRO4500 = "RTX PRO 4500",
   RTXPro6000 = "RTX Pro 6000",
   T4 = "T4",
   T4G = "T4G",
@@ -675,8 +671,6 @@ export enum GpuModels {
   V520 = "V520",
   V620 = "V620",
   V710 = "V710",
-  NvidiaGb200 = "nvidia-gb200",
-  VGPU8 = "vGPU8",
 }
 
 /** GpuManufacturers */
@@ -733,6 +727,7 @@ export enum CpuFamilies {
   Grace = "Grace",
   Xeon = "Xeon",
   Yitian = "Yitian",
+  Zen = "Zen",
 }
 
 /**
@@ -805,6 +800,19 @@ export enum ComplianceFrameworks {
   Hipaa = "hipaa",
   Iso27001 = "iso27001",
   Soc2T2 = "soc2t2",
+}
+
+/**
+ * Category
+ * Workload category for a cloud server type.
+ */
+export enum Category {
+  GeneralPurpose = "General Purpose",
+  ComputeOptimized = "Compute Optimized",
+  MemoryOptimized = "Memory Optimized",
+  StorageDatabase = "Storage & Database",
+  GPUAccelerated = "GPU Accelerated",
+  BurstableBudget = "Burstable & Budget",
 }
 
 /**
@@ -2319,6 +2327,82 @@ export interface ServerDebugInfo {
    * Map of benchmark family names to availability (true if at least one score exists)
    */
   benchmarks: Record<string, boolean>;
+}
+
+/**
+ * ServerDescription
+ * Variable length, plain English descriptions of Server hardware specs, performance, cost-efficiency, and workflow fit.
+ *
+ * Attributes:
+ *     page (typing.List[str]): Detailed server description with up to 500 words total across multiple paragraphs on hardware specs, benchmark-relative performance, qualitative cost efficiency, tradeoffs, and workload fit.
+ *     description (str): Dense and technical server description using around 150 words in a single paragraph.
+ *     og_description (str): 200 character server description explicitly including vendor and server name.
+ *     meta_description (str): 150 character server description explicitly including vendor and server name.
+ *     tagline (str): 20-word tagline on server positioning and key differentiators without the vendor or server name.
+ *     bullet_points (typing.List[str]): 4-6 concise bullet points highlighting key features and best-fit workloads.
+ *     categories (typing.List[sc_crawler.table_fields.Category]): One or more workload categories best fitting the server.
+ *     status (Status): Status of the resource (active or inactive).
+ *     observed_at (datetime): Timestamp of the last observation.
+ *     vendor_id (str): Reference to the Vendor.
+ *     server_id (str): Unique identifier, as called at the Vendor.
+ */
+export interface ServerDescription {
+  /**
+   * Page
+   * Detailed server description with up to 500 words total across multiple paragraphs on hardware specs, benchmark-relative performance, qualitative cost efficiency, tradeoffs, and workload fit.
+   */
+  page: string[];
+  /**
+   * Description
+   * Dense and technical server description using around 150 words in a single paragraph.
+   */
+  description: string;
+  /**
+   * Og Description
+   * 200 character server description explicitly including vendor and server name.
+   */
+  og_description: string;
+  /**
+   * Meta Description
+   * 150 character server description explicitly including vendor and server name.
+   */
+  meta_description: string;
+  /**
+   * Tagline
+   * 20-word tagline on server positioning and key differentiators without the vendor or server name.
+   */
+  tagline: string;
+  /**
+   * Bullet Points
+   * 4-6 concise bullet points highlighting key features and best-fit workloads.
+   */
+  bullet_points: string[];
+  /**
+   * Categories
+   * One or more workload categories best fitting the server.
+   */
+  categories: Category[];
+  /**
+   * Status of the resource (active or inactive).
+   * @default "active"
+   */
+  status?: Status;
+  /**
+   * Observed At
+   * Timestamp of the last observation.
+   * @format date-time
+   */
+  observed_at?: string;
+  /**
+   * Vendor Id
+   * Reference to the Vendor.
+   */
+  vendor_id: string;
+  /**
+   * Server Id
+   * Unique identifier, as called at the Vendor.
+   */
+  server_id: string;
 }
 
 /** ServerPKs */
@@ -5347,6 +5431,22 @@ export interface GetServerBenchmarksServerVendorServerBenchmarksGetParams {
 export type GetServerBenchmarksServerVendorServerBenchmarksGetData =
   BenchmarkScore[];
 
+export interface GetServerDescriptionsServerVendorServerDescriptionsGetParams {
+  /**
+   * Vendor
+   * A Vendor's ID.
+   */
+  vendor: string;
+  /**
+   * Server
+   * A Server's ID or API reference.
+   */
+  server: string;
+}
+
+export type GetServerDescriptionsServerVendorServerDescriptionsGetData =
+  ServerDescription;
+
 export interface AssistServerFiltersAiAssistServerFiltersGetParams {
   /** Text */
   text: string;
@@ -5449,7 +5549,8 @@ export interface SearchServersServersGetParams {
     | "EPYC"
     | "Grace"
     | "Xeon"
-    | "Yitian";
+    | "Yitian"
+    | "Zen";
   /**
    * CPU allocation
    * Allocation of the CPU(s) to the server, e.g. shared, burstable or dedicated.
@@ -6330,22 +6431,17 @@ export interface SearchServersServersGetParams {
   gpu_model?:
     | "A10"
     | "A100"
-    | "A100 PCIE"
-    | "A100 SXM"
     | "A10G"
     | "A16"
     | "A40"
     | "B200"
     | "B300"
-    | "G49"
-    | "G49E"
+    | "GB200"
     | "GH200"
-    | "GPU H"
     | "H100"
     | "H200"
     | "HL-205"
     | "L20"
-    | "L20N"
     | "L4"
     | "L40S"
     | "MI300X"
@@ -6354,6 +6450,7 @@ export interface SearchServersServersGetParams {
     | "P100"
     | "P4"
     | "RTX 5000"
+    | "RTX PRO 4500"
     | "RTX Pro 6000"
     | "T4"
     | "T4G"
@@ -6361,9 +6458,7 @@ export interface SearchServersServersGetParams {
     | "V100S"
     | "V520"
     | "V620"
-    | "V710"
-    | "nvidia-gb200"
-    | "vGPU8";
+    | "V710";
   /**
    * Currency
    * Currency used for prices.
@@ -6452,7 +6547,8 @@ export interface SearchServerPricesServerPricesGetParams {
     | "EPYC"
     | "Grace"
     | "Xeon"
-    | "Yitian";
+    | "Yitian"
+    | "Zen";
   /**
    * CPU allocation
    * Allocation of the CPU(s) to the server, e.g. shared, burstable or dedicated.
@@ -7118,22 +7214,17 @@ export interface SearchServerPricesServerPricesGetParams {
   gpu_model?:
     | "A10"
     | "A100"
-    | "A100 PCIE"
-    | "A100 SXM"
     | "A10G"
     | "A16"
     | "A40"
     | "B200"
     | "B300"
-    | "G49"
-    | "G49E"
+    | "GB200"
     | "GH200"
-    | "GPU H"
     | "H100"
     | "H200"
     | "HL-205"
     | "L20"
-    | "L20N"
     | "L4"
     | "L40S"
     | "MI300X"
@@ -7142,6 +7233,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "P100"
     | "P4"
     | "RTX 5000"
+    | "RTX PRO 4500"
     | "RTX Pro 6000"
     | "T4"
     | "T4G"
@@ -7149,9 +7241,7 @@ export interface SearchServerPricesServerPricesGetParams {
     | "V100S"
     | "V520"
     | "V620"
-    | "V710"
-    | "nvidia-gb200"
-    | "vGPU8";
+    | "V710";
   /**
    * Limit
    * Maximum number of results.

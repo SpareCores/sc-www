@@ -68,6 +68,62 @@
   max-width: 100% !important;
 }
 
+:host ::ng-deep .server-description-card {
+  height: auto !important;
+  min-height: unset !important;
+}
+
+.server-description-tagline {
+  @apply text-emerald-400 text-lg;
+}
+
+.server-description-categories {
+  @apply flex flex-wrap gap-2;
+}
+
+.server-description-category-pill {
+  @apply border border-solid border-emerald-400 text-emerald-400 rounded-full px-3 py-1 text-sm;
+}
+
+.server-description-text {
+  @apply text-gray-200 leading-relaxed;
+}
+
+.server-description-read-more {
+  @apply text-emerald-400 hover:text-emerald-500 font-semibold text-left mt-auto;
+}
+
+.summarize-fab {
+  @apply fixed bottom-6 right-6 z-40 rounded-full p-4 shadow-lg;
+}
+
+.summarize-modal-paragraph {
+  @apply text-gray-200 leading-relaxed mb-4 last:mb-0;
+}
+
+.summarize-modal-highlights {
+  @apply mb-6 pb-6 border-b border-gray-600;
+}
+
+.summarize-modal-bullets {
+  @apply text-gray-200 space-y-2 list-disc list-inside;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  @apply bg-secondary;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #374151;
+  border-radius: 20px;
+  border: 4px solid #34d399;
+}
+
 .dropdown_button {
   @apply text-white bg-emerald-400 hover:bg-emerald-500 focus:outline-none font-medium rounded-lg text-sm text-center inline-flex items-center border-emerald-400 border-solid border;
   transition-duration: 0.15s;
@@ -144,7 +200,6 @@ div.giscus {
   transform: translateX(0);
   display: flex;
 }
-
 ::ng-deep .property_value {
   ul {
     list-style-type: disc;
