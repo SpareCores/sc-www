@@ -1,6 +1,7 @@
 import { TestBed } from "@angular/core/testing";
 
 import { MemoryChartBuilderService } from "./memory-chart-builder.service";
+import { radarDatasetColors } from "../shared/chart-colors.constants";
 import {
   MemoryBenchmarkGroup,
   MemoryBenchmarkMeta,
@@ -22,6 +23,15 @@ describe("MemoryChartBuilderService", () => {
       unit: "MB/s",
       higher_is_better: true,
     },
+  ];
+  const membenchCopyCompareOption = {
+    id: "membench-copy",
+    name: "sc-membench: Copy (Read/Write)",
+    benchmarkId: "membench:bandwidth_copy",
+    infoBenchmarkId: "membench:bandwidth_copy",
+  };
+  const membenchCopyBenchmarkMeta: MemoryBenchmarkMeta[] = [
+    { benchmark_id: "membench:bandwidth_copy", unit: "MB/s" },
   ];
 
   it("builds details membench charts from size_kb scales", () => {
@@ -208,15 +218,8 @@ describe("MemoryChartBuilderService", () => {
 
   it("starts compare legend entries hidden for servers without matching memory data", () => {
     const chart = service.buildServerCompareChart({
-      option: {
-        id: "membench-copy",
-        name: "sc-membench: Copy (Read/Write)",
-        benchmarkId: "membench:bandwidth_copy",
-        infoBenchmarkId: "membench:bandwidth_copy",
-      },
-      benchmarkMeta: [
-        { benchmark_id: "membench:bandwidth_copy", unit: "MB/s" },
-      ],
+      option: membenchCopyCompareOption,
+      benchmarkMeta: membenchCopyBenchmarkMeta,
       servers: [
         {
           display_name: "Has data",
@@ -244,6 +247,151 @@ describe("MemoryChartBuilderService", () => {
     expect(chart?.data.datasets[0].hidden).toBeFalse();
     expect(chart?.data.datasets[1].data).toEqual([null]);
     expect(chart?.data.datasets[1].hidden).toBeTrue();
+  });
+
+  it("places compare cache point annotations using KiB cache sizes", () => {
+    const chart = service.buildServerCompareChart({
+      option: membenchCopyCompareOption,
+      benchmarkMeta: membenchCopyBenchmarkMeta,
+      servers: [
+        {
+          display_name: "Server A",
+          cpu_l1d_cache: 32,
+          cpu_l2_cache: 2048,
+          cpu_l3_cache: 32768,
+          benchmark_scores: [
+            {
+              benchmark_id: "membench:bandwidth_copy",
+              config: { size_kb: 1024 },
+              score: 100,
+            },
+          ],
+        },
+      ],
+    });
+
+    const annotations = (chart?.options as any).plugins.annotation.annotations;
+
+    expect(annotations["server0-l1"].type).toBe("point");
+    expect(annotations["server0-l1"].xValue).toBe(32 / 1024);
+    expect(annotations["server0-l2"].xValue).toBe(2048 / 1024);
+    expect(annotations["server0-l3"].xValue).toBe(32768 / 1024);
+    expect(annotations["server0-l1"].backgroundColor).toBe(
+      `${radarDatasetColors[0].borderColor}20`,
+    );
+    expect(annotations["server0-l1"].borderColor).toBe(
+      radarDatasetColors[0].borderColor,
+    );
+    expect((chart?.options as any).plugins.annotation.clip).toBeFalse();
+    expect((chart?.options as any).scales.x.ticks.padding).toBe(20);
+  });
+
+  it("skips compare cache annotations for missing cache levels", () => {
+    const chart = service.buildServerCompareChart({
+      option: membenchCopyCompareOption,
+      benchmarkMeta: membenchCopyBenchmarkMeta,
+      servers: [
+        {
+          display_name: "Server A",
+          cpu_l2_cache: 2048,
+          benchmark_scores: [
+            {
+              benchmark_id: "membench:bandwidth_copy",
+              config: { size_kb: 1024 },
+              score: 100,
+            },
+          ],
+        },
+      ],
+    });
+
+    const annotations = (chart?.options as any).plugins.annotation.annotations;
+
+    expect(annotations["server0-l1"]).toBeUndefined();
+    expect(annotations["server0-l2"].xValue).toBe(2);
+    expect(annotations["server0-l3"]).toBeUndefined();
+  });
+
+  it("hides compare cache annotations when the server dataset is hidden", () => {
+    const chart = service.buildServerCompareChart({
+      option: membenchCopyCompareOption,
+      benchmarkMeta: membenchCopyBenchmarkMeta,
+      servers: [
+        {
+          display_name: "Visible",
+          cpu_l1d_cache: 32,
+          benchmark_scores: [
+            {
+              benchmark_id: "membench:bandwidth_copy",
+              config: { size_kb: 1024 },
+              score: 100,
+            },
+          ],
+        },
+        {
+          display_name: "Hidden",
+          cpu_l1d_cache: 64,
+          benchmark_scores: [
+            {
+              benchmark_id: "membench:latency",
+              config: { size_kb: 1024 },
+              score: 4,
+            },
+          ],
+        },
+      ],
+    });
+
+    const annotations = (chart?.options as any).plugins.annotation.annotations;
+    const visibleDisplay = annotations["server0-l1"].display({
+      chart: { data: { datasets: chart?.data.datasets } },
+    });
+    const hiddenDisplay = annotations["server1-l1"].display({
+      chart: { data: { datasets: chart?.data.datasets } },
+    });
+
+    expect(visibleDisplay).toBeTrue();
+    expect(hiddenDisplay).toBeFalse();
+  });
+
+  it("uses distinct compare cache annotation colors per server", () => {
+    const chart = service.buildServerCompareChart({
+      option: membenchCopyCompareOption,
+      benchmarkMeta: membenchCopyBenchmarkMeta,
+      servers: [
+        {
+          display_name: "Server A",
+          cpu_l1d_cache: 32,
+          benchmark_scores: [
+            {
+              benchmark_id: "membench:bandwidth_copy",
+              config: { size_kb: 1024 },
+              score: 100,
+            },
+          ],
+        },
+        {
+          display_name: "Server B",
+          cpu_l1d_cache: 32,
+          benchmark_scores: [
+            {
+              benchmark_id: "membench:bandwidth_copy",
+              config: { size_kb: 1024 },
+              score: 90,
+            },
+          ],
+        },
+      ],
+    });
+
+    const annotations = (chart?.options as any).plugins.annotation.annotations;
+
+    expect(annotations["server0-l1"].borderColor).toBe(
+      radarDatasetColors[0].borderColor,
+    );
+    expect(annotations["server1-l1"].borderColor).toBe(
+      radarDatasetColors[1].borderColor,
+    );
   });
 
   it("returns sc-membench compare options when membench scores exist", () => {

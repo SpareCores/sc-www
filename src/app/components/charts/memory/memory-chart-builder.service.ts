@@ -34,6 +34,26 @@ import {
 import { lineChartOptionsBWM } from "../../../pages/server-details/chartOptions";
 import { cloneChartOptions } from "../shared/chart-options.utils";
 
+const COMPARE_CACHE_TICK_PADDING = 20;
+
+const COMPARE_CACHE_LEVELS = [
+  { key: "l1", label: "L1D", cacheKey: "cpu_l1d_cache" },
+  { key: "l2", label: "L2", cacheKey: "cpu_l2_cache" },
+  { key: "l3", label: "L3", cacheKey: "cpu_l3_cache" },
+] as const;
+
+const COMPARE_CACHE_TOOLTIP_STYLE = {
+  backgroundColor: "rgba(0, 0, 0, 0.8)",
+  borderWidth: 0,
+  borderRadius: { topLeft: 6, topRight: 6, bottomLeft: 0, bottomRight: 0 },
+  padding: 6,
+  color: "#fff",
+  titleFont: { weight: "bold" as const, size: 12 },
+  bodyFont: { size: 12 },
+  labelYAdjust: -8,
+  caretRadius: 5,
+};
+
 @Injectable({
   providedIn: "root",
 })
@@ -180,7 +200,13 @@ export class MemoryChartBuilderService {
     };
 
     const options = this.createLineChartOptions();
-    this.configureCompareOptions(options, scales, option, benchmarkMeta);
+    this.configureCompareOptions(
+      options,
+      scales,
+      option,
+      benchmarkMeta,
+      servers,
+    );
 
     return { data, options };
   }
@@ -389,6 +415,7 @@ export class MemoryChartBuilderService {
     scales: number[],
     option: CompareMemoryChartOption,
     benchmarkMeta: MemoryBenchmarkMeta[],
+    servers: MemoryChartServer[],
   ) {
     const benchmark = this.getOptionBenchmarkMeta(option, benchmarkMeta);
     const unit = benchmark?.unit || "MB/s";
@@ -400,7 +427,7 @@ export class MemoryChartBuilderService {
 
     const scaleUnit = option.benchmarkId.startsWith("membench:") ? "MiB" : "MB";
     this.configureXAxis(optionView, scales, scaleUnit);
-    optionView.plugins.annotation = {};
+    this.configureCompareCacheAnnotations(optionView, servers);
 
     optionView.plugins.tooltip.callbacks.title = function (
       this: TooltipModel<"line">,
@@ -414,6 +441,159 @@ export class MemoryChartBuilderService {
       tooltipItem: TooltipItem<"line">,
     ) {
       return `${tooltipItem.formattedValue} ${unit}`;
+    };
+  }
+
+  private configureCompareCacheAnnotations(
+    optionView: MemoryLineChartOptionsView,
+    servers: MemoryChartServer[],
+  ) {
+    const annotations: Record<string, CompareCacheMarkerAnnotation> = {};
+
+    servers.forEach((server, datasetIndex) => {
+      const serverColor =
+        radarDatasetColors[datasetIndex % radarDatasetColors.length]
+          .borderColor;
+      for (const {
+        key,
+        label: cacheTypeLabel,
+        cacheKey,
+      } of COMPARE_CACHE_LEVELS) {
+        const value = server[cacheKey];
+        if (!value) {
+          continue;
+        }
+
+        const markerKey = `server${datasetIndex}-${key}`;
+        const { point, label, caret } = this.createCompareCacheMarkers({
+          cacheKiB: value,
+          serverColor,
+          datasetIndex,
+          markerKey,
+          serverName: server.display_name || "Server",
+          cacheLabel: `${cacheTypeLabel} Cache: ${value} KiB`,
+        });
+
+        annotations[markerKey] = point;
+        annotations[`${markerKey}-label`] = label;
+        annotations[`${markerKey}-caret`] = caret;
+      }
+    });
+
+    if (!Object.keys(annotations).length) {
+      optionView.plugins.annotation = {};
+      return;
+    }
+
+    optionView.scales!.x!.ticks!.padding = COMPARE_CACHE_TICK_PADDING;
+    optionView.plugins.annotation = {
+      clip: false,
+      common: { drawTime: "afterDraw" },
+      annotations,
+    };
+  }
+
+  private createCompareCacheMarkers(params: {
+    cacheKiB: number;
+    serverColor: string;
+    datasetIndex: number;
+    markerKey: string;
+    serverName: string;
+    cacheLabel: string;
+  }): {
+    point: CompareCachePointAnnotation;
+    label: CompareCacheLabelAnnotation;
+    caret: CompareCacheCaretAnnotation;
+  } {
+    const {
+      cacheKiB,
+      serverColor,
+      datasetIndex,
+      markerKey,
+      serverName,
+      cacheLabel,
+    } = params;
+    const labelKey = `${markerKey}-label`;
+    const caretKey = `${markerKey}-caret`;
+    const xValue = cacheKiB / 1024;
+    const yAtAxisMin = (ctx: { chart: CompareCacheChartContext }) =>
+      ctx.chart.scales.y.min;
+    const toggleTooltip =
+      (visible: boolean) => (ctx: { chart: CompareCacheChartContext }) => {
+        const annotationOptions =
+          ctx.chart.options?.plugins?.annotation?.annotations;
+        if (!annotationOptions) {
+          return;
+        }
+
+        for (const key of [labelKey, caretKey]) {
+          const annotation = annotationOptions[key];
+          if (annotation) {
+            annotation.display = visible;
+          }
+        }
+
+        ctx.chart.update();
+      };
+
+    return {
+      point: {
+        type: "point",
+        xValue,
+        xScaleID: "x",
+        yScaleID: "y",
+        yValue: yAtAxisMin,
+        yAdjust: 8,
+        pointStyle: "triangle",
+        radius: 8,
+        backgroundColor: `${serverColor}20`,
+        borderColor: serverColor,
+        borderWidth: 2.5,
+        enter: toggleTooltip(true),
+        leave: toggleTooltip(false),
+        display: (ctx) =>
+          ctx.chart.isDatasetVisible?.(datasetIndex) ??
+          !ctx.chart.data.datasets[datasetIndex]?.hidden,
+      },
+      label: {
+        type: "label",
+        display: false,
+        adjustScaleRange: false,
+        xScaleID: "x",
+        yScaleID: "y",
+        xValue,
+        yValue: yAtAxisMin,
+        yAdjust: COMPARE_CACHE_TOOLTIP_STYLE.labelYAdjust,
+        position: { x: "center", y: "end" },
+        content: [serverName, cacheLabel],
+        color: COMPARE_CACHE_TOOLTIP_STYLE.color,
+        backgroundColor: COMPARE_CACHE_TOOLTIP_STYLE.backgroundColor,
+        borderWidth: COMPARE_CACHE_TOOLTIP_STYLE.borderWidth,
+        borderRadius: COMPARE_CACHE_TOOLTIP_STYLE.borderRadius,
+        padding: COMPARE_CACHE_TOOLTIP_STYLE.padding,
+        font: [
+          COMPARE_CACHE_TOOLTIP_STYLE.titleFont,
+          COMPARE_CACHE_TOOLTIP_STYLE.bodyFont,
+        ],
+        textAlign: "left",
+        drawTime: "afterDraw",
+      },
+      caret: {
+        type: "point",
+        display: false,
+        adjustScaleRange: false,
+        xScaleID: "x",
+        yScaleID: "y",
+        xValue,
+        yValue: yAtAxisMin,
+        yAdjust: COMPARE_CACHE_TOOLTIP_STYLE.labelYAdjust,
+        pointStyle: "triangle",
+        rotation: 180,
+        radius: COMPARE_CACHE_TOOLTIP_STYLE.caretRadius,
+        backgroundColor: COMPARE_CACHE_TOOLTIP_STYLE.backgroundColor,
+        borderWidth: 0,
+        drawTime: "afterDraw",
+      },
     };
   }
 
@@ -595,6 +775,9 @@ type MemoryTickScale = {
 type MemoryLineChartOptionsView = {
   scales?: {
     x?: {
+      ticks?: {
+        padding?: number;
+      };
       min?: number;
       title?: {
         text?: string;
@@ -623,10 +806,96 @@ type MemoryLineChartOptionsView = {
     };
     annotation?:
       | {
-          annotations?: Record<string, MemoryCacheAnnotation>;
+          clip?: boolean;
+          common?: { drawTime?: string };
+          annotations?: Record<
+            string,
+            MemoryCacheAnnotation | CompareCacheMarkerAnnotation
+          >;
         }
       | undefined;
   };
+};
+
+type CompareCacheMarkerAnnotation =
+  | CompareCachePointAnnotation
+  | CompareCacheLabelAnnotation
+  | CompareCacheCaretAnnotation;
+
+type CompareCacheChartContext = {
+  options?: {
+    plugins?: {
+      annotation?: {
+        annotations?: Record<string, { display?: boolean }>;
+      };
+    };
+  };
+  scales: { y: { min: number } };
+  isDatasetVisible?: (index: number) => boolean;
+  data: { datasets: Array<{ hidden?: boolean }> };
+  update: () => void;
+};
+
+type CompareCacheLabelAnnotation = {
+  type: "label";
+  display: boolean;
+  adjustScaleRange: false;
+  xScaleID: "x";
+  yScaleID: "y";
+  xValue: number;
+  yValue: (ctx: { chart: CompareCacheChartContext }) => number;
+  yAdjust: number;
+  position: { x: "center"; y: "end" };
+  content: [string, string];
+  color: string;
+  backgroundColor: string;
+  borderWidth: number;
+  borderRadius:
+    | number
+    | {
+        topLeft: number;
+        topRight: number;
+        bottomLeft: number;
+        bottomRight: number;
+      };
+  padding: number;
+  font: [{ weight: "bold"; size: number }, { size: number }];
+  textAlign: "left";
+  drawTime: "afterDraw";
+};
+
+type CompareCacheCaretAnnotation = {
+  type: "point";
+  display: boolean;
+  adjustScaleRange: false;
+  xScaleID: "x";
+  yScaleID: "y";
+  xValue: number;
+  yValue: (ctx: { chart: CompareCacheChartContext }) => number;
+  yAdjust: number;
+  pointStyle: "triangle";
+  rotation: number;
+  radius: number;
+  backgroundColor: string;
+  borderWidth: number;
+  drawTime: "afterDraw";
+};
+
+type CompareCachePointAnnotation = {
+  type: "point";
+  xValue: number;
+  xScaleID: "x";
+  yScaleID: "y";
+  yValue: (ctx: { chart: CompareCacheChartContext }) => number;
+  yAdjust: number;
+  pointStyle: "triangle";
+  radius: number;
+  backgroundColor: string;
+  borderColor: string;
+  borderWidth: number;
+  display: (ctx: { chart: CompareCacheChartContext }) => boolean;
+  enter: (ctx: { chart: CompareCacheChartContext }) => void;
+  leave: (ctx: { chart: CompareCacheChartContext }) => void;
 };
 
 type MemoryCacheAnnotation = {
