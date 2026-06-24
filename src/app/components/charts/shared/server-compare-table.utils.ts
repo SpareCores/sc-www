@@ -146,7 +146,7 @@ export function getServerPropertyValue(
   }
 
   if (typeof prop === "boolean") {
-    return undefined;
+    return "-";
   }
 
   if (prop === undefined || prop === null) {

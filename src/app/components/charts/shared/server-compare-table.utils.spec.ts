@@ -68,17 +68,17 @@ describe("server compare table utils", () => {
     ).toBe("x");
   });
 
-  it("keeps other boolean properties hidden", () => {
+  it("renders non-hw_virt boolean properties as dashes", () => {
     expect(
       getServerPropertyValue({ id: "virtualization" }, {
         virtualization: true,
       } as never),
-    ).toBeUndefined();
+    ).toBe("-");
     expect(
       getServerPropertyValue({ id: "virtualization" }, {
         virtualization: false,
       } as never),
-    ).toBeUndefined();
+    ).toBe("-");
   });
 
   it("renders none-like values as dashes", () => {
