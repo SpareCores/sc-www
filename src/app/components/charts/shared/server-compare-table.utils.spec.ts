@@ -38,7 +38,7 @@ describe("server compare table utils", () => {
   it("formats instance property values", () => {
     expect(
       getServerPropertyValue({ id: "memory_amount" }, { memory_amount: 2048 }),
-    ).toBe("2 GiB");
+    ).toBe("2.0 GiB");
   });
 
   it("formats byte-valued columns with binary units", () => {
@@ -51,12 +51,12 @@ describe("server compare table utils", () => {
     ).toBe("2 KiB");
   });
 
-  it("returns undefined for array properties containing nested objects", () => {
+  it("returns a dash for array properties containing nested objects", () => {
     const server: PropertyValueServer & { gpus: Array<{ name: string }> } = {
       gpus: [{ name: "A100" }],
     };
 
-    expect(getServerPropertyValue({ id: "gpus" }, server)).toBeUndefined();
+    expect(getServerPropertyValue({ id: "gpus" }, server)).toBe("-");
   });
 
   it("renders boolean values with inline lucide svg markup", () => {
@@ -86,6 +86,100 @@ describe("server compare table utils", () => {
       getServerPropertyValue({ id: "hw_virt" }, { hw_virt: "none" } as never),
     ).toBe("-");
     expect(getServerPropertyValue({ id: "hw_virt" }, {} as never)).toBe("-");
+    expect(
+      getServerPropertyValue({ id: "vcpu_count", unit: "vCPU" }, {} as never),
+    ).toBe("-");
+    expect(
+      getServerPropertyValue({ id: "memory_amount" }, {
+        memory_amount: null,
+      } as never),
+    ).toBe("-");
+    expect(
+      getServerPropertyValue({ id: "storage_size" }, {
+        storage_size: undefined,
+      } as never),
+    ).toBe("-");
+    expect(
+      getServerPropertyValue({ id: "region" }, { region: "" } as never),
+    ).toBe("-");
+    expect(
+      getServerPropertyValue({ id: "region" }, { region: "none" } as never),
+    ).toBe("-");
+  });
+
+  it("renders zero values with units", () => {
+    expect(
+      getServerPropertyValue({ id: "memory_amount" }, { memory_amount: 0 }),
+    ).toBe("0.0 GiB");
+    expect(
+      getServerPropertyValue({ id: "storage_size" }, { storage_size: 0 }),
+    ).toBe("0 GB");
+    expect(
+      getServerPropertyValue({ id: "gpu_memory_min" }, { gpu_memory_min: 0 }),
+    ).toBe("0 GiB");
+    expect(
+      getServerPropertyValue({ id: "network_speed_max" }, {
+        network_speed_max: 0,
+      } as never),
+    ).toBe("0 Gbps");
+    expect(
+      getServerPropertyValue({ id: "cpu_l3_cache" }, {
+        cpu_l3_cache: 0,
+      } as never),
+    ).toBe("0 KiB");
+    expect(
+      getServerPropertyValue({ id: "inbound_traffic" }, {
+        inbound_traffic: 0,
+      } as never),
+    ).toBe("0 GiB/mo");
+    expect(getServerPropertyValue({ id: "ipv4" }, { ipv4: 0 } as never)).toBe(
+      0,
+    );
+    expect(
+      getServerPropertyValue({ id: "gpu_count" }, { gpu_count: 0 } as never),
+    ).toBe(0);
+    expect(
+      getServerPropertyValue({ id: "vcpu_count", unit: "vCPU" }, {
+        vcpu_count: 0,
+      } as never),
+    ).toBe("0 vCPU");
+    expect(
+      getServerPropertyValue({ id: "disk_bytes", unit: "byte" }, {
+        disk_bytes: 0,
+      } as never),
+    ).toBe("0 Bytes");
+  });
+
+  it("formats known property types with existing helpers", () => {
+    expect(
+      getServerPropertyValue({ id: "storage_size" }, { storage_size: 500 }),
+    ).toBe("500 GB");
+    expect(
+      getServerPropertyValue(
+        { id: "gpu_memory_total" },
+        {
+          gpu_memory_total: 16384,
+        },
+      ),
+    ).toBe("16 GiB");
+    expect(
+      getServerPropertyValue({ id: "network_speed_baseline" }, {
+        network_speed_baseline: 25,
+      } as never),
+    ).toBe("25 Gbps");
+    expect(
+      getServerPropertyValue({ id: "cpu_l2_cache" }, {
+        cpu_l2_cache: 256,
+      } as never),
+    ).toBe("256 KiB");
+    expect(
+      getServerPropertyValue({ id: "outbound_traffic" }, {
+        outbound_traffic: 2048,
+      } as never),
+    ).toBe("2 TiB/mo");
+    expect(
+      getServerPropertyValue({ id: "gpu_count" }, { gpu_count: 0.5 } as never),
+    ).toBe("½");
   });
 
   it("flags the best numeric property", () => {
