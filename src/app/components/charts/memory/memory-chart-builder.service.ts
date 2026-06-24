@@ -1,21 +1,28 @@
 import { Injectable } from "@angular/core";
 import { TooltipItem, TooltipModel } from "chart.js";
+import { lineChartOptionsBWM } from "../../../pages/server-details/chartOptions";
 import {
   legacyBWMemOperationLabels,
   membenchSeriesLabels,
 } from "../shared/benchmark-labels.constants";
-import { radarDatasetColors } from "../shared/chart-colors.constants";
 import {
   buildMajorTicks,
   legacyMemoryBlockSizeTicks,
 } from "../shared/benchmark-scale.utils";
+import { radarDatasetColors } from "../shared/chart-colors.constants";
+import { cloneChartOptions } from "../shared/chart-options.utils";
 import {
-  MemoryChartOption,
   CompareMemoryChartOption,
+  MemoryChartOption,
   ServerDetailsMemoryChartOption,
   compareMemoryChartOptions,
   serverDetailsMemoryChartOptions,
 } from "../shared/memory-chart.types";
+import {
+  collectMemoryBenchmarkScales,
+  getMemoryBenchmarkScaleValue,
+  normalizeMemoryBenchmarkScore,
+} from "../shared/memory-scale.utils";
 import {
   MemoryBenchmarkGroup,
   MemoryBenchmarkMeta,
@@ -26,13 +33,6 @@ import {
   MemoryLineChartData,
   MemoryLineChartOptions,
 } from "./memory-chart.types";
-import {
-  collectMemoryBenchmarkScales,
-  getMemoryBenchmarkScaleValue,
-  normalizeMemoryBenchmarkScore,
-} from "../shared/memory-scale.utils";
-import { lineChartOptionsBWM } from "../../../pages/server-details/chartOptions";
-import { cloneChartOptions } from "../shared/chart-options.utils";
 
 const COMPARE_CACHE_TICK_PADDING = 20;
 
@@ -505,36 +505,22 @@ export class MemoryChartBuilderService {
     label: CompareCacheLabelAnnotation;
     caret: CompareCacheCaretAnnotation;
   } {
-    const {
-      cacheKiB,
-      serverColor,
-      datasetIndex,
-      markerKey,
-      serverName,
-      cacheLabel,
-    } = params;
-    const labelKey = `${markerKey}-label`;
-    const caretKey = `${markerKey}-caret`;
+    const { cacheKiB, serverColor, datasetIndex, serverName, cacheLabel } =
+      params;
     const xValue = cacheKiB / 1024;
     const yAtAxisMin = (ctx: { chart: CompareCacheChartContext }) =>
       ctx.chart.scales.y.min;
+    const isDatasetVisible = (ctx: { chart: CompareCacheChartContext }) =>
+      ctx.chart.isDatasetVisible?.(datasetIndex) ??
+      !ctx.chart.data.datasets[datasetIndex]?.hidden;
+    let tooltipHovered = false;
     const toggleTooltip =
       (visible: boolean) => (ctx: { chart: CompareCacheChartContext }) => {
-        const annotationOptions =
-          ctx.chart.options?.plugins?.annotation?.annotations;
-        if (!annotationOptions) {
-          return;
-        }
-
-        for (const key of [labelKey, caretKey]) {
-          const annotation = annotationOptions[key];
-          if (annotation) {
-            annotation.display = visible;
-          }
-        }
-
+        tooltipHovered = visible;
         ctx.chart.update();
       };
+    const isTooltipVisible = (ctx: { chart: CompareCacheChartContext }) =>
+      tooltipHovered && isDatasetVisible(ctx);
 
     return {
       point: {
@@ -551,13 +537,11 @@ export class MemoryChartBuilderService {
         borderWidth: 2.5,
         enter: toggleTooltip(true),
         leave: toggleTooltip(false),
-        display: (ctx) =>
-          ctx.chart.isDatasetVisible?.(datasetIndex) ??
-          !ctx.chart.data.datasets[datasetIndex]?.hidden,
+        display: isDatasetVisible,
       },
       label: {
         type: "label",
-        display: false,
+        display: isTooltipVisible,
         adjustScaleRange: false,
         xScaleID: "x",
         yScaleID: "y",
@@ -580,7 +564,7 @@ export class MemoryChartBuilderService {
       },
       caret: {
         type: "point",
-        display: false,
+        display: isTooltipVisible,
         adjustScaleRange: false,
         xScaleID: "x",
         yScaleID: "y",
@@ -838,7 +822,7 @@ type CompareCacheChartContext = {
 
 type CompareCacheLabelAnnotation = {
   type: "label";
-  display: boolean;
+  display: (ctx: { chart: CompareCacheChartContext }) => boolean;
   adjustScaleRange: false;
   xScaleID: "x";
   yScaleID: "y";
@@ -866,7 +850,7 @@ type CompareCacheLabelAnnotation = {
 
 type CompareCacheCaretAnnotation = {
   type: "point";
-  display: boolean;
+  display: (ctx: { chart: CompareCacheChartContext }) => boolean;
   adjustScaleRange: false;
   xScaleID: "x";
   yScaleID: "y";
