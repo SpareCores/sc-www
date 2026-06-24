@@ -307,7 +307,7 @@
                     @if (category.description) {
                       <svg
                         lucideInfo
-                        class="h-4 w-4 text-gray-200"
+                        class="h-4 w-4 text-gray-200 shrink-0"
                         (mouseenter)="showTooltip($event, category.description)"
                         (mouseleave)="hideTooltip()"
                       ></svg>
@@ -771,7 +771,7 @@
               >
                 <svg
                   [lucideIcon]="chartItem.chart.name | benchmarkIcon"
-                  class="h-6 w-6"
+                  class="h-6 w-6 shrink-0"
                 ></svg>
                 <span class="truncate">{{ chartItem.chart.name }}</span>
                 @if (
@@ -782,7 +782,7 @@
                       chartItem.chart.options[chartItem.chart.selectedOption]
                         .icon || ''
                     "
-                    class="h-4 w-4 text-gray-200"
+                    class="h-4 w-4 text-gray-200 shrink-0"
                     (mouseenter)="
                       showTooltip(
                         $event,
@@ -795,7 +795,7 @@
                 }
                 <svg
                   lucideInfo
-                  class="h-4 w-4 text-gray-200"
+                  class="h-4 w-4 text-gray-200 shrink-0"
                   (mouseenter)="
                     showTooltipChart(
                       $event,
@@ -850,7 +850,7 @@
                         @if (chartData.description) {
                           <svg
                             lucideInfo
-                            class="h-4 w-4 text-gray-200"
+                            class="h-4 w-4 text-gray-200 shrink-0"
                             (mouseenter)="
                               showTooltip($event, chartData.description)
                             "
