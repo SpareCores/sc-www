@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from "@angular/core";
-import { formatValue } from "./pipe-utils";
+import { formatMonthlyTraffic } from "./pipe-utils";
 
 @Pipe({
   name: "monthlyTraffic",
@@ -7,12 +7,6 @@ import { formatValue } from "./pipe-utils";
 })
 export class MonthlyTrafficPipe implements PipeTransform {
   transform(value: number | null | undefined): string {
-    if (value === null || value === undefined) return "-";
-
-    const isTiB = value >= 1024;
-    const transformedValue = isTiB ? value / 1024 : value;
-    const unit = isTiB ? "TiB/mo" : "GiB/mo";
-
-    return `${formatValue(transformedValue)} ${unit}`;
+    return formatMonthlyTraffic(value);
   }
 }
