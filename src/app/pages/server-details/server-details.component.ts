@@ -25,7 +25,6 @@ import {
   LucideTriangleAlert,
 } from "@lucide/angular";
 import { Chart, ChartConfiguration, ChartData } from "chart.js";
-import annotationPlugin from "chartjs-plugin-annotation";
 import { Modal, ModalOptions } from "flowbite";
 import { BaseChartDirective } from "ng2-charts";
 import { Subscription } from "rxjs";
@@ -65,8 +64,6 @@ import { ServerCompareService } from "../../services/server-compare.service";
 import { initGiscus } from "../../tools/initGiscus";
 import { EmbedDebugComponent } from "../embed-debug/embed-debug.component";
 import { barChartDataEmpty, barChartOptions } from "./chartOptions";
-
-Chart.register(annotationPlugin);
 
 const optionsModal: ModalOptions = {
   backdropClasses: "bg-gray-900/50 fixed inset-0 z-40",
