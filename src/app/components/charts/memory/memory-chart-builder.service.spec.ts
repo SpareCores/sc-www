@@ -74,7 +74,65 @@ describe("MemoryChartBuilderService", () => {
 
     expect(chart?.data.labels).toEqual([1]);
     expect(chart?.data.datasets.length).toBe(2);
-    expect((chart?.options as any).scales.x.title.text).toBe("MiB");
+    expect((chart?.options as any).scales.x.title.text).toBe(
+      "Block sizes and CPU cache amounts",
+    );
+  });
+
+  it("formats membench details x-axis labels as k and M", () => {
+    const chart = service.buildServerDetailsChart({
+      option: {
+        id: "membench-bandwidth",
+        name: "sc-membench: Bandwidth",
+        benchmarkIds: ["membench:bandwidth_read"],
+        infoBenchmarkId: "membench:bandwidth_read",
+        showCacheAnnotations: false,
+      },
+      serverDetails: { cpu_cores: 4 },
+      benchmarkMeta,
+      benchmarksByCategory: [
+        {
+          benchmark_id: "membench:bandwidth_read",
+          benchmarks: [
+            {
+              benchmark_id: "membench:bandwidth_read",
+              config: { size_kb: 16 },
+              score: 10,
+            },
+            {
+              benchmark_id: "membench:bandwidth_read",
+              config: { size_kb: 256 },
+              score: 11,
+            },
+            {
+              benchmark_id: "membench:bandwidth_read",
+              config: { size_kb: 1024 },
+              score: 12,
+            },
+          ],
+        },
+      ],
+    });
+
+    const xAxis = (chart?.options as any).scales.x;
+    const scale = { ticks: [] as { value: number; label: string }[] };
+    xAxis.afterBuildTicks(scale);
+
+    expect(scale.ticks.map((tick) => tick.label)).toEqual([
+      "16k",
+      "256k",
+      "1M",
+    ]);
+
+    const tooltipTitle = (chart?.options as any).plugins.tooltip.callbacks
+      .title;
+    expect(tooltipTitle([{ parsed: { x: 16 / 1024 } }])).toBe(
+      "16 KiB block size",
+    );
+    expect(tooltipTitle([{ parsed: { x: 256 / 1024 } }])).toBe(
+      "256 KiB block size",
+    );
+    expect(tooltipTitle([{ parsed: { x: 1 } }])).toBe("1 MiB block size");
   });
 
   it("places cache annotations on the memory chart using KiB cache sizes", () => {
@@ -216,6 +274,58 @@ describe("MemoryChartBuilderService", () => {
     expect((chart?.options as any).scales.x.title.text).toBe("MB");
   });
 
+  it("formats membench compare block sizes as KiB and MiB labels", () => {
+    const chart = service.buildServerCompareChart({
+      option: membenchCopyCompareOption,
+      benchmarkMeta: membenchCopyBenchmarkMeta,
+      servers: [
+        {
+          display_name: "Server A",
+          benchmark_scores: [
+            {
+              benchmark_id: "membench:bandwidth_copy",
+              config: { size_kb: 16 },
+              score: 10,
+            },
+            {
+              benchmark_id: "membench:bandwidth_copy",
+              config: { size_kb: 256 },
+              score: 11,
+            },
+            {
+              benchmark_id: "membench:bandwidth_copy",
+              config: { size_kb: 1024 },
+              score: 12,
+            },
+          ],
+        },
+      ],
+    });
+
+    const xAxis = (chart?.options as any).scales.x;
+    expect(xAxis.title.text).toBe("Block sizes and CPU cache amounts");
+
+    const scale = { ticks: [] as { value: number; label: string }[] };
+    xAxis.afterBuildTicks(scale);
+    expect(scale.ticks.map((tick) => tick.label)).toEqual([
+      "16 KiB",
+      "256 KiB",
+      "1 MiB",
+    ]);
+
+    const tooltipTitle = (chart?.options as any).plugins.tooltip.callbacks
+      .title;
+    expect(tooltipTitle([{ parsed: { x: 16 / 1024 } }])).toBe(
+      "sc-membench: Copy (Read/Write) with 16 KiB block size",
+    );
+    expect(tooltipTitle([{ parsed: { x: 256 / 1024 } }])).toBe(
+      "sc-membench: Copy (Read/Write) with 256 KiB block size",
+    );
+    expect(tooltipTitle([{ parsed: { x: 1 } }])).toBe(
+      "sc-membench: Copy (Read/Write) with 1 MiB block size",
+    );
+  });
+
   it("starts compare legend entries hidden for servers without matching memory data", () => {
     const chart = service.buildServerCompareChart({
       option: membenchCopyCompareOption,
@@ -287,6 +397,22 @@ describe("MemoryChartBuilderService", () => {
     );
     expect((chart?.options as any).plugins.annotation.clip).toBeFalse();
     expect((chart?.options as any).scales.x.ticks.padding).toBe(10);
+
+    const l1Label = annotations["cache-32-label"];
+    const l2Label = annotations["cache-2048-label"];
+    const l3Label = annotations["cache-32768-label"];
+    expect(l1Label.content({ chart: chartContext })).toEqual([
+      "Server A",
+      "L1D Cache: 32 KiB",
+    ]);
+    expect(l2Label.content({ chart: chartContext })).toEqual([
+      "Server A",
+      "L2 Cache: 2 MiB",
+    ]);
+    expect(l3Label.content({ chart: chartContext })).toEqual([
+      "Server A",
+      "L3 Cache: 32 MiB",
+    ]);
   });
 
   it("skips compare cache annotations for missing cache levels", () => {
