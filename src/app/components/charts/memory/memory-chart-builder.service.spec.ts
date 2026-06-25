@@ -1,7 +1,7 @@
 import { TestBed } from "@angular/core/testing";
 
-import { MemoryChartBuilderService } from "./memory-chart-builder.service";
 import { radarDatasetColors } from "../shared/chart-colors.constants";
+import { MemoryChartBuilderService } from "./memory-chart-builder.service";
 import {
   MemoryBenchmarkGroup,
   MemoryBenchmarkMeta,
@@ -271,19 +271,22 @@ describe("MemoryChartBuilderService", () => {
     });
 
     const annotations = (chart?.options as any).plugins.annotation.annotations;
+    const chartContext = {
+      data: { datasets: chart?.data.datasets },
+    };
 
-    expect(annotations["server0-l1"].type).toBe("point");
-    expect(annotations["server0-l1"].xValue).toBe(32 / 1024);
-    expect(annotations["server0-l2"].xValue).toBe(2048 / 1024);
-    expect(annotations["server0-l3"].xValue).toBe(32768 / 1024);
-    expect(annotations["server0-l1"].backgroundColor).toBe(
-      `${radarDatasetColors[0].borderColor}20`,
-    );
-    expect(annotations["server0-l1"].borderColor).toBe(
+    expect(annotations["cache-32"].type).toBe("point");
+    expect(annotations["cache-32"].xValue).toBe(32 / 1024);
+    expect(annotations["cache-2048"].xValue).toBe(2048 / 1024);
+    expect(annotations["cache-32768"].xValue).toBe(32768 / 1024);
+    expect(
+      annotations["cache-32"].backgroundColor({ chart: chartContext }),
+    ).toBe(`${radarDatasetColors[0].borderColor}20`);
+    expect(annotations["cache-32"].borderColor({ chart: chartContext })).toBe(
       radarDatasetColors[0].borderColor,
     );
     expect((chart?.options as any).plugins.annotation.clip).toBeFalse();
-    expect((chart?.options as any).scales.x.ticks.padding).toBe(20);
+    expect((chart?.options as any).scales.x.ticks.padding).toBe(10);
   });
 
   it("skips compare cache annotations for missing cache levels", () => {
@@ -307,9 +310,9 @@ describe("MemoryChartBuilderService", () => {
 
     const annotations = (chart?.options as any).plugins.annotation.annotations;
 
-    expect(annotations["server0-l1"]).toBeUndefined();
-    expect(annotations["server0-l2"].xValue).toBe(2);
-    expect(annotations["server0-l3"]).toBeUndefined();
+    expect(annotations["cache-32"]).toBeUndefined();
+    expect(annotations["cache-2048"].xValue).toBe(2);
+    expect(annotations["cache-32768"]).toBeUndefined();
   });
 
   it("hides compare cache annotations when the server dataset is hidden", () => {
@@ -343,10 +346,10 @@ describe("MemoryChartBuilderService", () => {
     });
 
     const annotations = (chart?.options as any).plugins.annotation.annotations;
-    const visibleDisplay = annotations["server0-l1"].display({
+    const visibleDisplay = annotations["cache-32"].display({
       chart: { data: { datasets: chart?.data.datasets } },
     });
-    const hiddenDisplay = annotations["server1-l1"].display({
+    const hiddenDisplay = annotations["cache-64"].display({
       chart: { data: { datasets: chart?.data.datasets } },
     });
 
@@ -354,7 +357,7 @@ describe("MemoryChartBuilderService", () => {
     expect(hiddenDisplay).toBeFalse();
   });
 
-  it("uses distinct compare cache annotation colors per server", () => {
+  it("merges compare cache markers with the same cache size", () => {
     const chart = service.buildServerCompareChart({
       option: membenchCopyCompareOption,
       benchmarkMeta: membenchCopyBenchmarkMeta,
@@ -385,13 +388,86 @@ describe("MemoryChartBuilderService", () => {
     });
 
     const annotations = (chart?.options as any).plugins.annotation.annotations;
+    const marker = annotations["cache-32"];
+    const label = annotations["cache-32-label"];
+    const chartContext = {
+      ctx: {
+        createLinearGradient: () => ({
+          addColorStop: jasmine.createSpy("addColorStop"),
+        }),
+      },
+      scales: {
+        x: { getPixelForValue: () => 100 },
+        y: { min: 0 },
+      },
+      data: { datasets: chart?.data.datasets },
+    };
 
-    expect(annotations["server0-l1"].borderColor).toBe(
+    expect(marker.borderWidth({ chart: chartContext })).toBe(0);
+    expect(marker.borderColor({ chart: chartContext })).toBeUndefined();
+    expect(marker.radius({ chart: chartContext })).toBe(10.5);
+    expect(typeof marker.backgroundColor).toBe("function");
+    expect(marker.backgroundColor({ chart: chartContext })).toBeDefined();
+    expect(label.content({ chart: chartContext })).toEqual([
+      "Server A",
+      "L1D Cache: 32 KiB",
+      "",
+      "Server B",
+      "L1D Cache: 32 KiB",
+    ]);
+  });
+
+  it("excludes hidden servers from merged compare cache tooltips", () => {
+    const chart = service.buildServerCompareChart({
+      option: membenchCopyCompareOption,
+      benchmarkMeta: membenchCopyBenchmarkMeta,
+      servers: [
+        {
+          display_name: "Visible",
+          cpu_l1d_cache: 32,
+          benchmark_scores: [
+            {
+              benchmark_id: "membench:bandwidth_copy",
+              config: { size_kb: 1024 },
+              score: 100,
+            },
+          ],
+        },
+        {
+          display_name: "Hidden",
+          cpu_l1d_cache: 32,
+          benchmark_scores: [
+            {
+              benchmark_id: "membench:latency",
+              config: { size_kb: 1024 },
+              score: 4,
+            },
+          ],
+        },
+      ],
+    });
+
+    const annotations = (chart?.options as any).plugins.annotation.annotations;
+    const label = annotations["cache-32-label"];
+    const chartContext = {
+      data: { datasets: chart?.data.datasets },
+    };
+
+    expect(label.content({ chart: chartContext })).toEqual([
+      "Visible",
+      "L1D Cache: 32 KiB",
+    ]);
+    expect(annotations["cache-32"].display({ chart: chartContext })).toBeTrue();
+    expect(annotations["cache-32"].borderWidth({ chart: chartContext })).toBe(
+      2.5,
+    );
+    expect(annotations["cache-32"].radius({ chart: chartContext })).toBe(8);
+    expect(annotations["cache-32"].borderColor({ chart: chartContext })).toBe(
       radarDatasetColors[0].borderColor,
     );
-    expect(annotations["server1-l1"].borderColor).toBe(
-      radarDatasetColors[1].borderColor,
-    );
+    expect(
+      annotations["cache-32"].backgroundColor({ chart: chartContext }),
+    ).toBe(`${radarDatasetColors[0].borderColor}20`);
   });
 
   it("returns sc-membench compare options when membench scores exist", () => {
