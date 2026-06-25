@@ -5,10 +5,6 @@ import {
   legacyBWMemOperationLabels,
   membenchSeriesLabels,
 } from "../shared/benchmark-labels.constants";
-import {
-  buildMajorTicks,
-  legacyMemoryBlockSizeTicks,
-} from "../shared/benchmark-scale.utils";
 import { radarDatasetColors } from "../shared/chart-colors.constants";
 import { cloneChartOptions } from "../shared/chart-options.utils";
 import {
@@ -35,7 +31,11 @@ import {
 } from "./memory-chart.types";
 
 const COMPARE_CACHE_TICK_PADDING = 10;
-const MEMBENCH_BLOCK_SIZE_AXIS_TITLE = "Block sizes and CPU cache amounts";
+const MEMORY_BLOCK_SIZE_AXIS_TITLE = "Block sizes and CPU cache amounts";
+const BYTES_PER_MB = 1_000_000;
+const BYTES_PER_KIB = 1024;
+const MB_TO_KIB = BYTES_PER_MB / BYTES_PER_KIB;
+const MB_TO_MIB = BYTES_PER_MB / BYTES_PER_KIB / BYTES_PER_KIB;
 const COMPARE_CACHE_MARKER_RADIUS = 8;
 const COMPARE_CACHE_MARKER_BORDER_WIDTH = 2.5;
 
@@ -384,17 +384,12 @@ export class MemoryChartBuilderService {
       optionView.scales.y.title.text = yAxisLabel;
     }
 
-    const scaleUnit = option.benchmarkIds.some((benchmarkId) =>
-      benchmarkId.startsWith("membench:"),
-    )
-      ? "MiB"
-      : "MB";
-
-    this.configureXAxis(optionView, labels, scaleUnit, true);
+    const bwMemScale = this.isBwMemChart(option);
+    this.configureXAxis(optionView, labels, true, bwMemScale);
     this.setBlockSizeTooltipTitle(
       optionView,
-      scaleUnit,
       (blockSizeLabel) => `${blockSizeLabel} block size`,
+      bwMemScale,
     );
 
     optionView.plugins.tooltip.callbacks.label = function (
@@ -426,13 +421,13 @@ export class MemoryChartBuilderService {
       optionView.scales.y.title.text = unit;
     }
 
-    const scaleUnit = option.benchmarkId.startsWith("membench:") ? "MiB" : "MB";
-    this.configureXAxis(optionView, scales, scaleUnit);
+    const bwMemScale = this.isBwMemChart(option);
+    this.configureXAxis(optionView, scales, false, bwMemScale);
     this.configureCompareCacheAnnotations(optionView, servers);
     this.setBlockSizeTooltipTitle(
       optionView,
-      scaleUnit,
       (blockSizeLabel) => `${option.name} with ${blockSizeLabel} block size`,
+      bwMemScale,
     );
 
     optionView.plugins.tooltip.callbacks.label = function (
@@ -524,7 +519,7 @@ export class MemoryChartBuilderService {
       content.push(entry.serverName);
       font.push(COMPARE_CACHE_TOOLTIP_STYLE.titleFont);
       content.push(
-        `${entry.cacheTypeLabel} Cache: ${this.formatMembenchBlockSize(entry.cacheKiB / 1024)}`,
+        `${entry.cacheTypeLabel} Cache: ${this.formatBlockSize(entry.cacheKiB / 1024)}`,
       );
       font.push(COMPARE_CACHE_TOOLTIP_STYLE.bodyFont);
     });
@@ -682,35 +677,66 @@ export class MemoryChartBuilderService {
     };
   }
 
+  private isBwMemChart(
+    option: ServerDetailsMemoryChartOption | CompareMemoryChartOption,
+  ): boolean {
+    if ("benchmarkIds" in option) {
+      return option.benchmarkIds.includes("bw_mem");
+    }
+    return option.benchmarkId === "bw_mem";
+  }
+
+  private formatBwMemBlockSize(value: number, compact = false): string {
+    if (value < 1) {
+      const rounded = Math.round(value * MB_TO_KIB);
+      return compact ? `${rounded}k` : `${rounded} KiB`;
+    }
+    const mib = value * MB_TO_MIB;
+    const label = Number.isInteger(value) ? value : mib;
+    return compact ? `${label}M` : `${label} MiB`;
+  }
+
   private setBlockSizeTooltipTitle(
     optionView: MemoryLineChartOptionsView,
-    scaleUnit: "MB" | "MiB",
     getTitle: (blockSizeLabel: string) => string,
+    bwMemScale = false,
   ) {
     optionView.plugins.tooltip.callbacks.title = (
       tooltipItems: TooltipItem<"line">[],
     ) => {
-      const item = tooltipItems[0];
-      const blockSizeLabel =
-        scaleUnit === "MiB"
-          ? this.formatMembenchBlockSize(item.parsed.x as number)
-          : `${item.label} ${scaleUnit}`;
+      const blockSizeLabel = this.formatBlockSize(
+        tooltipItems[0].parsed.x as number,
+        false,
+        bwMemScale,
+      );
       return getTitle(blockSizeLabel);
     };
   }
 
-  private formatMembenchBlockSize(valueMiB: number, compact = false): string {
-    if (valueMiB < 1) {
-      const value = Math.round(valueMiB * 1024);
-      return compact ? `${value}k` : `${value} KiB`;
+  private formatBlockSize(
+    value: number,
+    compact = false,
+    bwMemScale = false,
+  ): string {
+    if (bwMemScale) {
+      return this.formatBwMemBlockSize(value, compact);
     }
-    return compact ? `${valueMiB}M` : `${valueMiB} MiB`;
+
+    if (value < 1) {
+      const rounded = Math.round(value * BYTES_PER_KIB);
+      return compact ? `${rounded}k` : `${rounded} KiB`;
+    }
+    return compact ? `${value}M` : `${value} MiB`;
   }
 
-  private buildMembenchBlockSizeTicks(labels: number[], compactLabels = false) {
+  private buildBlockSizeTicks(
+    labels: number[],
+    compactLabels = false,
+    bwMemScale = false,
+  ) {
     return labels.map((value) => ({
       value,
-      label: this.formatMembenchBlockSize(value, compactLabels),
+      label: this.formatBlockSize(value, compactLabels, bwMemScale),
       major: true,
     }));
   }
@@ -718,8 +744,8 @@ export class MemoryChartBuilderService {
   private configureXAxis(
     options: MemoryLineChartOptionsView,
     labels: number[],
-    scaleUnit: "MB" | "MiB",
     compactBlockSizeLabels = false,
+    bwMemScale = false,
   ) {
     const xAxis = options.scales?.x;
 
@@ -728,30 +754,17 @@ export class MemoryChartBuilderService {
     }
 
     xAxis.title ??= {};
-
-    if (scaleUnit === "MiB") {
-      xAxis.title.text = MEMBENCH_BLOCK_SIZE_AXIS_TITLE;
-      xAxis.min = labels[0];
-      const buildTicks = (scale: MemoryTickScale) => {
-        scale.ticks = this.buildMembenchBlockSizeTicks(
-          labels,
-          compactBlockSizeLabels,
-        );
-      };
-      xAxis.afterBuildTicks = buildTicks;
-      xAxis.afterTickToLabelConversion = buildTicks;
-      return;
-    }
-
-    xAxis.title.text = scaleUnit;
-
-    xAxis.min = 0;
-    xAxis.afterBuildTicks = function (scale: MemoryTickScale) {
-      scale.ticks = buildMajorTicks(legacyMemoryBlockSizeTicks);
+    xAxis.title.text = MEMORY_BLOCK_SIZE_AXIS_TITLE;
+    xAxis.min = labels[0];
+    const buildTicks = (scale: MemoryTickScale) => {
+      scale.ticks = this.buildBlockSizeTicks(
+        labels,
+        compactBlockSizeLabels,
+        bwMemScale,
+      );
     };
-    xAxis.afterTickToLabelConversion = function (scale: MemoryTickScale) {
-      scale.ticks = buildMajorTicks(legacyMemoryBlockSizeTicks);
-    };
+    xAxis.afterBuildTicks = buildTicks;
+    xAxis.afterTickToLabelConversion = buildTicks;
   }
 
   private configureAnnotations(
@@ -889,7 +902,9 @@ export class MemoryChartBuilderService {
   }
 }
 
-type MemoryTick = ReturnType<typeof buildMajorTicks>[number];
+type MemoryTick = ReturnType<
+  MemoryChartBuilderService["buildBlockSizeTicks"]
+>[number];
 
 type MemoryTickScale = {
   ticks: MemoryTick[];

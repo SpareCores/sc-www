@@ -245,7 +245,7 @@ describe("MemoryChartBuilderService", () => {
     ).toBe("L3 Cache");
   });
 
-  it("builds compare bw_mem charts with legacy MB scale", () => {
+  it("builds compare bw_mem charts with formatted block size axis", () => {
     const chart = service.buildServerCompareChart({
       option: {
         id: "bw-mem-rdwr",
@@ -261,17 +261,67 @@ describe("MemoryChartBuilderService", () => {
           benchmark_scores: [
             {
               benchmark_id: "bw_mem",
+              config: { operation: "rdwr", size: 0.016384 },
+              score: 50,
+            },
+            {
+              benchmark_id: "bw_mem",
+              config: { operation: "rdwr", size: 0.262144 },
+              score: 75,
+            },
+            {
+              benchmark_id: "bw_mem",
               config: { operation: "rdwr", size: 1 },
               score: 100,
+            },
+            {
+              benchmark_id: "bw_mem",
+              config: { operation: "rdwr", size: 2 },
+              score: 110,
+            },
+            {
+              benchmark_id: "bw_mem",
+              config: { operation: "rdwr", size: 16 },
+              score: 120,
             },
           ],
         },
       ],
     });
 
-    expect(chart?.data.labels).toEqual([1]);
-    expect(chart?.data.datasets[0].data).toEqual([100]);
-    expect((chart?.options as any).scales.x.title.text).toBe("MB");
+    expect(chart?.data.labels).toEqual([0.016384, 0.262144, 1, 2, 16]);
+    expect(chart?.data.datasets[0].data).toEqual([50, 75, 100, 110, 120]);
+    expect((chart?.options as any).scales.x.title.text).toBe(
+      "Block sizes and CPU cache amounts",
+    );
+
+    const scale = { ticks: [] as { value: number; label: string }[] };
+    (chart?.options as any).scales.x.afterBuildTicks(scale);
+    expect(scale.ticks.map((tick) => tick.label)).toEqual([
+      "16 KiB",
+      "256 KiB",
+      "1 MiB",
+      "2 MiB",
+      "16 MiB",
+    ]);
+
+    const tooltipTitle = (chart?.options as any).plugins.tooltip.callbacks
+      .title;
+    expect(tooltipTitle([{ parsed: { x: 0.016384 } }])).toBe(
+      "bw_mem: Read/Write with 16 KiB block size",
+    );
+    expect(tooltipTitle([{ parsed: { x: 0.262144 } }])).toBe(
+      "bw_mem: Read/Write with 256 KiB block size",
+    );
+    expect(tooltipTitle([{ parsed: { x: 1 } }])).toBe(
+      "bw_mem: Read/Write with 1 MiB block size",
+    );
+    expect(tooltipTitle([{ parsed: { x: 2 } }])).toBe(
+      "bw_mem: Read/Write with 2 MiB block size",
+    );
+    expect(tooltipTitle([{ parsed: { x: 16 } }])).toBe(
+      "bw_mem: Read/Write with 16 MiB block size",
+    );
   });
 
   it("formats membench compare block sizes as KiB and MiB labels", () => {
