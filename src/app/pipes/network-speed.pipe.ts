@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from "@angular/core";
-import { formatValue } from "./pipe-utils";
+import { formatNetworkSpeed } from "./pipe-utils";
 
 @Pipe({
   name: "networkSpeed",
@@ -7,15 +7,6 @@ import { formatValue } from "./pipe-utils";
 })
 export class NetworkSpeedPipe implements PipeTransform {
   transform(value: number | null | undefined): string {
-    if (value === null || value === undefined) return "-";
-
-    if (value === 0) return "0 Gbps";
-
-    if (value < 1) {
-      const mbps = value * 1000;
-      return `${formatValue(mbps)} Mbps`;
-    }
-
-    return `${formatValue(value)} Gbps`;
+    return formatNetworkSpeed(value);
   }
 }

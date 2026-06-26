@@ -24,7 +24,11 @@ export type MemoryBenchmarkMeta =
 export type MemoryBenchmarkGroup = BenchmarkGroup<MemoryBenchmarkScore>;
 
 export type MemoryChartServer =
-  OptionalBenchmarkChartServer<MemoryBenchmarkScore>;
+  OptionalBenchmarkChartServer<MemoryBenchmarkScore> & {
+    cpu_l1d_cache?: number | null;
+    cpu_l2_cache?: number | null;
+    cpu_l3_cache?: number | null;
+  };
 
 export type MemoryDetailsServer = {
   cores?: number | string | null;

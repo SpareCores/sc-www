@@ -76,6 +76,15 @@ export class ServerCompareMemoryChartComponent {
   });
   readonly chartData = computed(() => this.chart()?.data);
   readonly chartOptions = computed(() => this.chart()?.options);
+  readonly hasCacheAnnotations = computed(() => {
+    const annotations = (
+      this.chartOptions() as
+        | { plugins?: { annotation?: { annotations?: object } } }
+        | undefined
+    )?.plugins?.annotation?.annotations;
+
+    return !!annotations && Object.keys(annotations).length > 0;
+  });
   readonly currentOptionName = computed(
     () => this.selectedOption()?.name || "",
   );

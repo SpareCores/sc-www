@@ -1,4 +1,13 @@
-import { formatGpuMemory, formatStorageSize } from "../../../pipes/pipe-utils";
+import {
+  formatCpuCacheSize,
+  formatGpuCount,
+  formatGpuMemory,
+  formatIpv4Count,
+  formatMemoryAmount,
+  formatMonthlyTraffic,
+  formatNetworkSpeed,
+  formatStorageSize,
+} from "../../../pipes/pipe-utils";
 
 type BenchmarkValue = number | string | null | undefined;
 
@@ -17,6 +26,20 @@ type TableServerLike = {
   gpu_memory_total?: number | null;
   storage_size?: number | null;
 };
+
+const NETWORK_SPEED_PROPERTY_IDS = new Set([
+  "network_speed_baseline",
+  "network_speed_max",
+  "network_speed_min",
+]);
+
+const CPU_CACHE_PROPERTY_IDS = new Set([
+  "cpu_l1d_cache",
+  "cpu_l2_cache",
+  "cpu_l3_cache",
+]);
+
+const TRAFFIC_PROPERTY_IDS = new Set(["inbound_traffic", "outbound_traffic"]);
 
 const HIDDEN_COMPARE_METADATA_PROPERTY_IDS = new Set([
   "vendor_id",
@@ -122,35 +145,63 @@ export function getServerPropertyValue(
     }
   }
 
-  if (prop === undefined || prop === null || typeof prop === "boolean") {
-    return undefined;
+  if (typeof prop === "boolean") {
+    return "-";
   }
 
-  if (typeof prop === "string" && prop.trim().toLowerCase() === "none") {
-    return undefined;
+  if (prop === undefined || prop === null) {
+    return "-";
+  }
+
+  if (
+    typeof prop === "string" &&
+    (prop.trim() === "" || prop.trim().toLowerCase() === "none")
+  ) {
+    return "-";
   }
 
   if (name === "memory_amount") {
-    return `${((server.memory_amount || 0) / 1024).toFixed((server.memory_amount || 0) >= 1024 ? 0 : 1)} GiB`;
-  }
-
-  if (name === "gpu_memory_min") {
-    return formatGpuMemory(server.gpu_memory_min ?? 0);
-  }
-
-  if (name === "gpu_memory_total") {
-    return formatGpuMemory(server.gpu_memory_total ?? 0);
+    return formatMemoryAmount(server.memory_amount);
   }
 
   if (name === "storage_size") {
-    return formatStorageSize(server.storage_size ?? 0);
+    return formatStorageSize(server.storage_size);
+  }
+
+  if (name === "gpu_memory_min") {
+    return formatGpuMemory(server.gpu_memory_min);
+  }
+
+  if (name === "gpu_memory_total") {
+    return formatGpuMemory(server.gpu_memory_total);
+  }
+
+  if (NETWORK_SPEED_PROPERTY_IDS.has(name)) {
+    return formatNetworkSpeed(prop as number);
+  }
+
+  if (CPU_CACHE_PROPERTY_IDS.has(name)) {
+    return formatCpuCacheSize(prop as number);
+  }
+
+  if (TRAFFIC_PROPERTY_IDS.has(name)) {
+    return formatMonthlyTraffic(prop as number);
+  }
+
+  if (name === "ipv4") {
+    return formatIpv4Count(prop as number);
+  }
+
+  if (name === "gpu_count") {
+    return formatGpuCount(prop as number, "-") ?? "-";
   }
 
   if (typeof prop === "number") {
     if (column.unit === "byte") {
       return formatBytesToSize(prop);
     }
-    return `${prop} ${column.unit || ""}`;
+
+    return column.unit ? `${prop} ${column.unit}` : `${prop}`;
   }
 
   if (typeof prop === "string") {
@@ -159,14 +210,16 @@ export function getServerPropertyValue(
 
   if (Array.isArray(prop)) {
     if (prop.some((value) => value !== null && typeof value === "object")) {
-      return undefined;
+      return "-";
     }
 
-    return prop
+    const joined = prop
       .filter((value): value is string | number | boolean =>
         ["string", "number", "boolean"].includes(typeof value),
       )
       .join(", ");
+
+    return joined || "-";
   }
 
   return "-";
