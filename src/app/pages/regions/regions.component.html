@@ -42,33 +42,36 @@
           <th class="cursor-pointer" (click)="toggleOrdering('region')">
             <div class="flex gap-1">
               REGION
-              @if (getOrderingIcon("region")) {
-                <svg
-                  [lucideIcon]="getOrderingIcon('region')"
-                  class="h-4 w-4 text-white"
-                ></svg>
+              @if (getOrderingIcon("region"); as orderingIcon) {
+                <app-icon
+                  [name]="orderingIcon"
+                  iconClass="h-4 w-4"
+                  class="text-white"
+                />
               }
             </div>
           </th>
           <th class="cursor-pointer" (click)="toggleOrdering('vendor')">
             <div class="flex gap-1">
               VENDOR
-              @if (getOrderingIcon("vendor")) {
-                <svg
-                  [lucideIcon]="getOrderingIcon('vendor')"
-                  class="h-4 w-4 text-white"
-                ></svg>
+              @if (getOrderingIcon("vendor"); as orderingIcon) {
+                <app-icon
+                  [name]="orderingIcon"
+                  iconClass="h-4 w-4"
+                  class="text-white"
+                />
               }
             </div>
           </th>
           <th class="cursor-pointer" (click)="toggleOrdering('country')">
             <div class="flex gap-1">
               COUNTRY
-              @if (getOrderingIcon("country")) {
-                <svg
-                  [lucideIcon]="getOrderingIcon('country')"
-                  class="h-4 w-4 text-white"
-                ></svg>
+              @if (getOrderingIcon("country"); as orderingIcon) {
+                <app-icon
+                  [name]="orderingIcon"
+                  iconClass="h-4 w-4"
+                  class="text-white"
+                />
               }
             </div>
           </th>
@@ -88,7 +91,11 @@
               <div class="flex gap-1">
                 {{ region.display_name }}
                 @if (region.green_energy) {
-                  <svg lucideLeaf class="h-4 w-4 text-emerald-400"></svg>
+                  <app-icon
+                    name="leaf"
+                    iconClass="h-4 w-4"
+                    class="text-emerald-400"
+                  />
                 }
               </div>
             </td>
@@ -103,10 +110,11 @@
                     vendor_regions: getVendorRegionFilter(region),
                   }"
                 >
-                  <svg
-                    lucideChevronRight
-                    class="h-6 w-6 text-emerald-400"
-                  ></svg>
+                  <app-icon
+                    name="chevron-right"
+                    iconClass="h-6 w-6"
+                    class="text-emerald-400"
+                  />
                 </a>
               </div>
             </td>
