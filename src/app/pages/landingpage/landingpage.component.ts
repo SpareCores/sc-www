@@ -16,15 +16,7 @@ import { SeoHandlerService } from "../../services/seo-handler.service";
 import { FormsModule } from "@angular/forms";
 import { ThemeTextComponent } from "../../components/theme-text/theme-text.component";
 import { RouterLink } from "@angular/router";
-import {
-  LucideCheck,
-  LucideMessageSquareMore,
-  LucideQuote,
-  LucideRocket,
-  LucideScanEye,
-  LucideSquareArrowDown,
-  LucideSquareArrowUpRight,
-} from "@lucide/angular";
+
 import { ArticleCardComponent } from "../../components/article-card/article-card.component";
 import {
   SearchServersServersGetData,
@@ -33,6 +25,7 @@ import {
 import { AnalyticsService } from "../../services/analytics.service";
 import { NeetoCalService } from "../../services/neeto-cal.service";
 import { PrismService } from "../../services/prism.service";
+import { Icon } from "../../components/icon/icon.js";
 import {
   SlotMachineContents,
   SlotMachineRegionItem,
@@ -48,14 +41,8 @@ import {
     FormsModule,
     ThemeTextComponent,
     RouterLink,
-    LucideCheck,
-    LucideMessageSquareMore,
-    LucideQuote,
-    LucideRocket,
-    LucideScanEye,
-    LucideSquareArrowDown,
-    LucideSquareArrowUpRight,
     ArticleCardComponent,
+    Icon,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: "./landingpage.component.html",
