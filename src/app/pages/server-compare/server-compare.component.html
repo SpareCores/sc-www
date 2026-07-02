@@ -5,7 +5,7 @@
     <div class="flex flex-col gap-4 my-8 mx-2 xl:mx-0">
       <div class="flex gap-4 items-center w-full justify-between">
         <h1 class="text-white font-bold text-3xl flex items-center">
-          <svg lucideScale class="h-8 w-8 mr-2"></svg>
+          <app-icon name="scale" iconClass="h-8 w-8" class="mr-2" />
           {{ title }}
         </h1>
         @if (instances.length) {
@@ -23,10 +23,11 @@
               <div
                 class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
               >
-                <svg
-                  lucideChevronDown
-                  class="h-6 w-6 shrink-0 text-emerald-400"
-                ></svg>
+                <app-icon
+                  name="chevron-down"
+                  iconClass="h-6 w-6"
+                  class="shrink-0 text-emerald-400"
+                />
               </div>
             </button>
             <button
@@ -34,14 +35,14 @@
               (click)="clipboardURL($event)"
             >
               Share
-              <svg [lucideIcon]="clipboardIcon" size="16"></svg>
+              <app-icon [name]="clipboardIcon" iconClass="h-4 w-4" />
             </button>
             <button
               class="btn-primary py-2 px-3 flex gap-1 items-center"
               (click)="openModal()"
             >
               Embed chart
-              <svg lucideCopy size="16"></svg>
+              <app-icon name="copy" iconClass="h-4 w-4" />
             </button>
           </div>
         }
