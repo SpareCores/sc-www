@@ -193,13 +193,21 @@ function formatAdvisorWorkloadProfileLabel(
     return null;
   }
 
-  const [...segments] = normalizedValue.split(":");
+  const segments = normalizedValue
+    .split(":")
+    .map((segment) => segment.trim())
+    .filter(Boolean);
+  const labelSegments =
+    segments[0]?.toLowerCase().replace(/[_-]+/g, " ").trim() ===
+    "workload profile"
+      ? segments.slice(1)
+      : segments;
 
-  if (!segments.length) {
+  if (!labelSegments.length) {
     return ADVISOR_WORKLOAD_PROFILE_GROUP_PREFIX;
   }
 
-  return `${ADVISOR_WORKLOAD_PROFILE_GROUP_PREFIX}: ${segments
+  return `${ADVISOR_WORKLOAD_PROFILE_GROUP_PREFIX}: ${labelSegments
     .map((segment) => {
       return toAdvisorTitleCase(segment.replace(/[_-]+/g, " ").trim());
     })
