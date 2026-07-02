@@ -9,13 +9,7 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ActivatedRoute, Params, Router, RouterModule } from "@angular/router";
-import {
-  LucideChevronDown,
-  LucideChevronLeft,
-  LucideDollarSign,
-  LucideDynamicIcon,
-  LucideInfo,
-} from "@lucide/angular";
+
 import { Subscription } from "rxjs";
 import { OrderDir } from "../../../../sdk/data-contracts";
 import openApiSpec from "../../../../sdk/openapi.json";
@@ -31,6 +25,7 @@ import { StoragePipe } from "../../pipes/storage.pipe";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { CurrencyOption, availableCurrencies } from "../../tools/shared_data";
+import { Icon } from "../../components/icon/icon.js";
 import {
   TableColumn,
   buildStoragePricesColumns,
@@ -42,17 +37,13 @@ import {
     CommonModule,
     FormsModule,
     BreadcrumbsComponent,
-    LucideDynamicIcon,
-    LucideChevronDown,
-    LucideChevronLeft,
-    LucideDollarSign,
-    LucideInfo,
     RouterModule,
     SearchBarComponent,
     PaginationComponent,
     LoadingSpinnerComponent,
     FlowbiteDropdownDirective,
     StoragePipe,
+    Icon,
   ],
   templateUrl: "./storages.component.html",
   styleUrl: "./storages.component.scss",

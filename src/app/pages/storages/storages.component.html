@@ -5,7 +5,7 @@
     <div class="flex flex-col gap-4 my-8 mx-2 xl:mx-0">
       <div class="flex gap-4 items-center w-full justify-between">
         <h1 class="text-white font-bold text-3xl flex items-center">
-          <svg lucideDollarSign class="h-8 w-8 mr-2"></svg>
+          <app-icon name="dollar-sign" iconClass="h-8 w-8" class="mr-2" />
           Cloud Block Storage Prices
         </h1>
       </div>
@@ -30,7 +30,11 @@
           tabindex="0"
           data-ph-capture-attribute-sc-event="server listing toggle sidebar"
         >
-          <svg lucideChevronLeft class="h-6 w-6 text-emerald-400"></svg>
+          <app-icon
+            name="chevron-left"
+            iconClass="h-6 w-6"
+            class="text-emerald-400"
+          />
         </div>
 
         <app-search-bar
@@ -64,10 +68,11 @@
             <div
               class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
             >
-              <svg
-                lucideChevronDown
-                class="h-6 w-6 shrink-0 text-emerald-400"
-              ></svg>
+              <app-icon
+                name="chevron-down"
+                iconClass="h-6 w-6"
+                class="shrink-0 text-emerald-400"
+              />
             </div>
           </button>
           <button
@@ -81,10 +86,11 @@
             <div
               class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
             >
-              <svg
-                lucideChevronDown
-                class="h-6 w-6 shrink-0 text-emerald-400"
-              ></svg>
+              <app-icon
+                name="chevron-down"
+                iconClass="h-6 w-6"
+                class="shrink-0 text-emerald-400"
+              />
             </div>
           </button>
         </div>
@@ -114,13 +120,18 @@
                       <div class="flex gap-1 text-nowrap">
                         {{ column.name }}
                         @if (column.info) {
-                          <svg lucideInfo class="h-4 w-4 text-gray-200"></svg>
+                          <app-icon
+                            name="info"
+                            iconClass="h-4 w-4"
+                            class="text-gray-200"
+                          />
                         }
-                        @if (getOrderingIcon(column)) {
-                          <svg
-                            [lucideIcon]="getOrderingIcon(column)"
-                            class="h-4 w-4 text-white"
-                          ></svg>
+                        @if (getOrderingIcon(column); as orderingIcon) {
+                          <app-icon
+                            [name]="orderingIcon"
+                            iconClass="h-4 w-4"
+                            class="text-white"
+                          />
                         }
                       </div>
                     </th>
@@ -229,10 +240,11 @@
                   <div
                     class="px-2 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
                   >
-                    <svg
-                      lucideChevronDown
-                      class="h-6 w-6 shrink-0 text-emerald-400"
-                    ></svg>
+                    <app-icon
+                      name="chevron-down"
+                      iconClass="h-6 w-6"
+                      class="shrink-0 text-emerald-400"
+                    />
                   </div>
                 </button>
                 <span class="text-white"> items per page</span>
