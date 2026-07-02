@@ -10,14 +10,15 @@ import {
   viewChild,
 } from "@angular/core";
 import { CommonModule, isPlatformBrowser } from "@angular/common";
-import { LucideDynamicIcon } from "@lucide/angular";
+
 import { BenchmarkFamily } from "../../pages/benchmark-workloads/benchmark-workloads.models";
 import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
 import { UiTooltipService } from "../../services/ui-tooltip.service";
+import { Icon } from "../icon/icon.js";
 
 @Component({
   selector: "app-benchmark-workloads-sidebar",
-  imports: [CommonModule, LucideDynamicIcon, BenchmarkIconPipe],
+  imports: [CommonModule, BenchmarkIconPipe, Icon],
   templateUrl: "./benchmark-workloads-sidebar.component.html",
   styleUrl: "./benchmark-workloads-sidebar.component.scss",
 })
