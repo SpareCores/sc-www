@@ -11,12 +11,7 @@ import {
   signal,
   viewChild,
 } from "@angular/core";
-import {
-  LucideDynamicIcon,
-  LucideChevronDown,
-  LucideCircleArrowUp,
-  LucideInfo,
-} from "@lucide/angular";
+
 import { BaseChartDirective } from "ng2-charts";
 import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon.pipe";
 import {
@@ -34,19 +29,17 @@ import {
   LlmCompareChartsResult,
 } from "./llm-inference-chart.types";
 import { ChartTooltipService } from "../shared/chart-tooltip.service";
+import { Icon } from "../../icon/icon.js";
 
 @Component({
   selector: "app-llm-inference-chart",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    LucideDynamicIcon,
-    LucideChevronDown,
-    LucideCircleArrowUp,
-    LucideInfo,
     BaseChartDirective,
     FlowbiteDropdownDirective,
     BenchmarkIconPipe,
+    Icon,
   ],
   templateUrl: "./llm-inference-chart.component.html",
   styles: [
