@@ -30,6 +30,7 @@ import {
   Benchmark,
   BenchmarkScore,
   GetSimilarServersServerVendorServerSimilarServersByNumGetData,
+  ServerDescription,
   ServerPKs,
   ServerPrice,
 } from "../../../../sdk/data-contracts";
@@ -39,34 +40,11 @@ import {
 } from "../../components/breadcrumbs/breadcrumbs.component";
 import { isPlatformBrowser } from "@angular/common";
 import {
-  LucideCheck,
-  LucideChevronDown,
-  LucideCopy,
-  LucideExternalLink,
-  LucideScale,
-  LucideTriangleAlert,
-} from "@lucide/angular";
-import { SeoHandlerService } from "../../services/seo-handler.service";
-import {
   AccordionComponent,
   AccordionItem,
 } from "../../components/accordion/accordion.component";
 import { buildServerFaqs } from "./server-details-faqs";
-import { FormsModule } from "@angular/forms";
-import { BaseChartDirective } from "ng2-charts";
-import { ChartConfiguration, ChartData } from "chart.js";
-import { barChartDataEmpty, barChartOptions } from "./chartOptions";
-import { Chart } from "chart.js";
-import annotationPlugin from "chartjs-plugin-annotation";
-import { ReduceUnitNamePipe } from "../../pipes/reduce-unit-name.pipe";
-import { formatStorageSize } from "../../pipes/pipe-utils";
-import { CountryIdtoNamePipe } from "../../pipes/country-idto-name.pipe";
-import { GpuCountPipe } from "../../pipes/gpu-count.pipe";
-import { ServerCompareService } from "../../services/server-compare.service";
-import { initGiscus } from "../../tools/initGiscus";
 import { Location } from "@angular/common";
-import { AnalyticsService } from "../../services/analytics.service";
-import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
 import { ServerChartsComponent } from "../../components/server-charts/server-charts.component";
 import { ServerLstopoComponent } from "../../components/server-lstopo/server-lstopo.component";
 import {
@@ -87,6 +65,8 @@ import { ServerCompareService } from "../../services/server-compare.service";
 import { initGiscus } from "../../tools/initGiscus";
 import { EmbedDebugComponent } from "../embed-debug/embed-debug.component";
 import { barChartDataEmpty, barChartOptions } from "./chartOptions";
+import { formatBooleanIconHtml } from "../../components/charts/shared/server-compare-table.utils";
+import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
 
 const optionsModal: ModalOptions = {
   backdropClasses: "bg-gray-900/50 fixed inset-0 z-40",
