@@ -15,15 +15,7 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ActivatedRoute, RouterModule } from "@angular/router";
-import {
-  LucideCheck,
-  LucideChevronDown,
-  LucideCopy,
-  LucideMaximize2,
-  LucideScale,
-  LucideSparkles,
-  LucideTriangleAlert,
-} from "@lucide/angular";
+
 import { Chart, ChartConfiguration, ChartData } from "chart.js";
 import { Modal, ModalOptions } from "flowbite";
 import { BaseChartDirective } from "ng2-charts";
@@ -64,6 +56,7 @@ import { ServerCompareService } from "../../services/server-compare.service";
 import { initGiscus } from "../../tools/initGiscus";
 import { EmbedDebugComponent } from "../embed-debug/embed-debug.component";
 import { barChartDataEmpty, barChartOptions } from "./chartOptions";
+import { Icon } from "../../components/icon/icon.js";
 
 const optionsModal: ModalOptions = {
   backdropClasses: "bg-gray-900/50 fixed inset-0 z-40",
@@ -98,13 +91,6 @@ interface PropertyCategoryDefinition {
   selector: "app-server-details",
   imports: [
     BreadcrumbsComponent,
-    LucideCheck,
-    LucideChevronDown,
-    LucideCopy,
-    LucideMaximize2,
-    LucideScale,
-    LucideSparkles,
-    LucideTriangleAlert,
     FaqComponent,
     FormsModule,
     RouterModule,
@@ -117,6 +103,7 @@ interface PropertyCategoryDefinition {
     EmbedDebugComponent,
     LoadingSpinnerComponent,
     FlowbiteDropdownDirective,
+    Icon,
   ],
   templateUrl: "./server-details.component.html",
   styleUrl: "./server-details.component.scss",
