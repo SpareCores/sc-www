@@ -14,23 +14,7 @@ import {
   viewChild,
 } from "@angular/core";
 import { ActivatedRoute, Params, Router, RouterLink } from "@angular/router";
-import {
-  LucideArrowDownNarrowWide,
-  LucideArrowDownWideNarrow,
-  LucideBot,
-  LucideCheck,
-  LucideChevronDown,
-  LucideChevronLeft,
-  LucideChevronRight,
-  LucideClipboard,
-  LucideColumns3Cog,
-  LucideCreditCard,
-  LucideDices,
-  LucideFunnelX,
-  LucideInfo,
-  LucideScale,
-  LucideTvMinimalPlay,
-} from "@lucide/angular";
+
 import { Modal, ModalOptions } from "flowbite";
 import { Subject, Subscription, debounceTime } from "rxjs";
 import {
@@ -131,6 +115,7 @@ import {
   AdvisorPriceColumnKey,
   AdvisorRegionMetadata,
 } from "./advisor.types";
+import { Icon } from "../../components/icon/icon.js";
 import {
   buildAdvisorRegionSelectOptions,
   encodeAdvisorColumnState,
@@ -208,7 +193,7 @@ function formatAdvisorWorkloadProfileLabel(
     return null;
   }
 
-  const [, ...segments] = normalizedValue.split(":");
+  const [...segments] = normalizedValue.split(":");
 
   if (!segments.length) {
     return ADVISOR_WORKLOAD_PROFILE_GROUP_PREFIX;
@@ -375,21 +360,6 @@ type AdvisorComparableResourceKey =
     CommonModule,
     BreadcrumbsComponent,
     FlowbiteDropdownDirective,
-    LucideArrowDownNarrowWide,
-    LucideArrowDownWideNarrow,
-    LucideBot,
-    LucideCheck,
-    LucideChevronDown,
-    LucideChevronLeft,
-    LucideChevronRight,
-    LucideClipboard,
-    LucideColumns3Cog,
-    LucideCreditCard,
-    LucideDices,
-    LucideFunnelX,
-    LucideInfo,
-    LucideScale,
-    LucideTvMinimalPlay,
     LoadingSpinnerComponent,
     PaginationComponent,
     GpuCountPipe,
@@ -401,6 +371,7 @@ type AdvisorComparableResourceKey =
     GpuMemoryPipe,
     RouterLink,
     SearchBarComponent,
+    Icon,
   ],
   templateUrl: "./advisor.component.html",
   styleUrl: "./advisor.component.scss",
