@@ -18,17 +18,7 @@ import { ActivatedRoute, Params, Router, RouterModule } from "@angular/router";
 import { CommonModule, isPlatformBrowser } from "@angular/common";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { FormsModule } from "@angular/forms";
-import {
-  LucideDynamicIcon,
-  LucideChevronDown,
-  LucideChevronLeft,
-  LucideChevronRight,
-  LucideDollarSign,
-  LucideInfo,
-  LucideScale,
-  LucideCheck,
-  LucideX,
-} from "@lucide/angular";
+
 import { CountryIdtoNamePipe } from "../../pipes/country-idto-name.pipe";
 import { GpuCountPipe } from "../../pipes/gpu-count.pipe";
 import { StoragePipe } from "../../pipes/storage.pipe";
@@ -54,6 +44,7 @@ import { LoadingSpinnerComponent } from "../../components/loading-spinner/loadin
 import { Subscription } from "rxjs";
 import openApiSpec from "../../../../sdk/openapi.json";
 
+import { Icon } from "../../components/icon/icon.js";
 import {
   buildServerPricesColumns,
   TableColumn,
@@ -93,24 +84,16 @@ export type RegionVendorMetadata = {
     CommonModule,
     FormsModule,
     BreadcrumbsComponent,
-    LucideDynamicIcon,
-    LucideChevronDown,
-    LucideChevronLeft,
-    LucideChevronRight,
-    LucideDollarSign,
-    LucideInfo,
-    LucideScale,
     CountryIdtoNamePipe,
     GpuCountPipe,
     StoragePipe,
     GpuMemoryPipe,
-    LucideCheck,
-    LucideX,
     RouterModule,
     SearchBarComponent,
     PaginationComponent,
     LoadingSpinnerComponent,
     FlowbiteDropdownDirective,
+    Icon,
   ],
   templateUrl: "./server-prices.component.html",
   styleUrl: "./server-prices.component.scss",
