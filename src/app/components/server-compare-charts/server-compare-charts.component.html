@@ -111,13 +111,14 @@
             <div class="flex gap-1 items-center">
               $Core
               <app-icon name="info" iconClass="h-4 w-4" class="text-gray-200" />
-              <svg
-                lucideInfo
-                class="h-4 w-4 shrink-0 text-gray-200"
+              <app-icon
+                name="info"
+                iconClass="h-4 w-4"
+                class="text-gray-200 shrink-0"
                 data-cy="compare-score-tooltip-trigger"
                 (mouseenter)="showTooltip($event, SSCoreTooltip)"
                 (mouseleave)="hideTooltip()"
-              ></svg>
+              />
             </div>
           </td>
           @for (
@@ -326,12 +327,13 @@
                         iconClass="h-4 w-4"
                         class="text-gray-200 shrink-0"
                       />
-                      <svg
-                        lucideInfo
-                        class="h-4 w-4 shrink-0 text-gray-200"
+                      <app-icon
+                        name="info"
+                        iconClass="h-4 w-4"
+                        class="text-gray-200 shrink-0"
                         (mouseenter)="showTooltip($event, category.description)"
                         (mouseleave)="hideTooltip()"
-                      ></svg>
+                      />
                     }
                   </div>
                 </td>
@@ -369,28 +371,31 @@
             <div class="compare-section-header-row">
               <h3 class="text-xl font-semibold m-0 flex items-center">
                 <span class="compare-section-header-title">
-                  <svg
-                    [lucideIcon]="'workload_profile' | benchmarkIcon"
-                    class="h-6 w-6 shrink-0"
-                  ></svg>
+                  <app-icon
+                    [name]="'workload_profile' | benchmarkIcon"
+                    iconClass="h-6 w-6"
+                    class="shrink-0"
+                  />
                   <span class="compare-section-header-title__text">
                     Workload Profiles
                   </span>
                   <span class="compare-section-header-title__icons">
-                    <svg
-                      lucideCircleArrowUp
-                      class="h-4 w-4 text-gray-200 shrink-0"
+                    <app-icon
+                      name="circle-arrow-up"
+                      iconClass="h-4 w-4"
+                      class="text-gray-200 shrink-0"
                       (mouseenter)="showTooltip($event, 'Higher is better.')"
                       (mouseleave)="hideTooltip()"
-                    ></svg>
-                    <svg
-                      lucideInfo
-                      class="h-4 w-4 text-gray-200 shrink-0"
+                    />
+                    <app-icon
+                      name="info"
+                      iconClass="h-4 w-4"
+                      class="text-gray-200 shrink-0"
                       (mouseenter)="
                         showTooltip($event, workloadProfileInfoTooltip)
                       "
                       (mouseleave)="hideTooltip()"
-                    ></svg>
+                    />
                   </span>
                 </span>
               </h3>
@@ -403,11 +408,11 @@
                     clipboardURL($event, 'benchmark_line_workload_profile')
                   "
                 >
-                  <svg
-                    [lucideIcon]="clipboardIcon"
-                    size="16"
+                  <app-icon
+                    [name]="clipboardIcon"
+                    iconClass="h-4 w-4"
                     aria-hidden="true"
-                  ></svg>
+                  />
                 </button>
               }
             </div>
@@ -427,11 +432,11 @@
                       clipboardURL($event, 'benchmark_line_workload_profile')
                     "
                   >
-                    <svg
-                      [lucideIcon]="clipboardIcon"
-                      size="16"
+                    <app-icon
+                      [name]="clipboardIcon"
+                      iconClass="h-4 w-4"
                       aria-hidden="true"
-                    ></svg>
+                    />
                   </button>
                 </div>
               }
@@ -478,14 +483,15 @@
                       formatWorkloadProfileLabel(benchmark.name)
                     }}</span>
                     @if (benchmark.description) {
-                      <svg
-                        lucideInfo
-                        class="inline-block h-4 w-4 text-gray-200 ml-1"
+                      <app-icon
+                        name="info"
+                        iconClass="h-4 w-4"
+                        class="inline-block text-gray-200 ml-1"
                         (mouseenter)="
                           showTooltip($event, benchmark.description)
                         "
                         (mouseleave)="hideTooltip()"
-                      ></svg>
+                      />
                     }
                   </div>
                 </div>
