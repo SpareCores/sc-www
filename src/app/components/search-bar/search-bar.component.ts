@@ -17,15 +17,7 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Modal, ModalOptions } from "flowbite";
-import {
-  LucideDynamicIcon,
-  LucideChevronDown,
-  LucideInfo,
-  LucideLeaf,
-  LucideMinus,
-  LucidePlus,
-  LucideX,
-} from "@lucide/angular";
+
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { ToastService } from "../../services/toast.service";
 import { UiTooltipService } from "../../services/ui-tooltip.service";
@@ -42,6 +34,7 @@ import {
   formatNumberInputValue,
   parseBinaryMemoryInput,
 } from "../../pipes/pipe-utils";
+import { Icon } from "../icon/icon.js";
 import {
   Benchmark,
   BenchmarkConfig,
@@ -215,15 +208,9 @@ type CpuCacheRangeFocusLossSkip = {
   imports: [
     CommonModule,
     FormsModule,
-    LucideDynamicIcon,
-    LucideChevronDown,
-    LucideInfo,
-    LucideLeaf,
-    LucideMinus,
-    LucidePlus,
-    LucideX,
     CountryIdtoNamePipe,
     BenchmarkIconPipe,
+    Icon,
   ],
   templateUrl: "./search-bar.component.html",
   styleUrl: "./search-bar.component.scss",
@@ -566,7 +553,7 @@ export class SearchBarComponent implements OnInit, OnChanges, OnDestroy {
             param.modelValue,
           );
           const activeEntries = Object.entries(benchmarkTriStateValue).filter(
-            ([, value]) => value === "yes" || value === "no",
+            ([value]) => value === "yes" || value === "no",
           );
 
           return activeEntries.length > 0
