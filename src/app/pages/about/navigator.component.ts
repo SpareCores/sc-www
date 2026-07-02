@@ -12,27 +12,14 @@ import {
   BreadcrumbSegment,
   BreadcrumbsComponent,
 } from "../../components/breadcrumbs/breadcrumbs.component";
-import {
-  LucideBookText,
-  LucideBuilding2,
-  LucideChartCandlestick,
-  LucideCheck,
-  LucideDatabase,
-  LucideDollarSign,
-  LucideDynamicIcon,
-  LucideHeater,
-  LucideMapPinned,
-  LucidePackageOpen,
-  LucideQuote,
-  LucideScale,
-  LucideSquareKanban,
-} from "@lucide/angular";
+
 import { ThemeTextComponent } from "../../components/theme-text/theme-text.component";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { isPlatformBrowser } from "@angular/common";
 import { RouterLink } from "@angular/router";
 import { NeetoCalService } from "../../services/neeto-cal.service";
 import { UiTooltipService } from "../../services/ui-tooltip.service";
+import { Icon } from "../../components/icon/icon.js";
 
 interface Quote {
   quote: string;
@@ -44,24 +31,7 @@ interface Quote {
 
 @Component({
   selector: "app-about-navigator",
-  imports: [
-    BreadcrumbsComponent,
-    LucideBookText,
-    LucideBuilding2,
-    LucideChartCandlestick,
-    LucideCheck,
-    LucideDatabase,
-    LucideDollarSign,
-    LucideDynamicIcon,
-    LucideHeater,
-    LucideMapPinned,
-    LucidePackageOpen,
-    LucideQuote,
-    LucideScale,
-    LucideSquareKanban,
-    ThemeTextComponent,
-    RouterLink,
-  ],
+  imports: [BreadcrumbsComponent, ThemeTextComponent, RouterLink, Icon],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: "./navigator.component.html",
   styleUrl: "./navigator.component.scss",

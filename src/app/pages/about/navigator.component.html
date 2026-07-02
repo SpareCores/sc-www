@@ -18,25 +18,25 @@
         <div class="grid grid-cols-2 gap-4 mx-auto lg:ml-0">
           <div class="flex gap-4 items-center">
             <div class="bg-white text-emerald-400 py-3 px-3 rounded-lg">
-              <svg lucideDatabase class="h-5 w-5"></svg>
+              <app-icon name="database" iconClass="h-5 w-5" />
             </div>
             <div class="text-white font-bold text-lg">Open Data</div>
           </div>
           <div class="flex gap-4 items-center">
             <div class="bg-white text-emerald-400 py-3 px-3 rounded-lg">
-              <svg lucidePackageOpen class="h-5 w-5"></svg>
+              <app-icon name="package-open" iconClass="h-5 w-5" />
             </div>
             <div class="text-white font-bold text-lg">Python</div>
           </div>
           <div class="flex gap-4 items-center">
             <div class="bg-white text-emerald-400 py-3 px-3 rounded-lg">
-              <svg lucideSquareKanban class="h-5 w-5"></svg>
+              <app-icon name="square-kanban" iconClass="h-5 w-5" />
             </div>
             <div class="text-white font-bold text-lg">Benchmarks</div>
           </div>
           <div class="flex gap-4 items-center">
             <div class="bg-white text-emerald-400 py-3 px-3 rounded-lg">
-              <svg lucideDollarSign class="h-5 w-5"></svg>
+              <app-icon name="dollar-sign" iconClass="h-5 w-5" />
             </div>
             <div class="text-white font-bold text-lg">Real-time pricing</div>
           </div>
@@ -120,7 +120,7 @@
           <div>
             <div class="flex gap-2 text-2xl items-center text-gray-200">
               <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6">
-                <svg lucideCheck class="h-4 w-4"></svg>
+                <app-icon name="check" iconClass="h-4 w-4" />
               </div>
               <b> 7 </b>
               <span>
@@ -140,7 +140,7 @@
                 ></div>
                 <div class="flex gap-2 text-2xl items-center text-gray-200">
                   <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6">
-                    <svg lucideCheck class="h-4 w-4"></svg>
+                    <app-icon name="check" iconClass="h-4 w-4" />
                   </div>
                   <b> {{ feature.count }} </b>
                   <span> {{ feature.text }} </span>
@@ -176,7 +176,11 @@
               <span
                 class="inline-flex justify-center items-center size-[90px] rounded-full border border-emerald-400 text-emerald-400"
               >
-                <svg lucideHeater class="flex-shrink-0 size-[50px]"></svg>
+                <app-icon
+                  name="heater"
+                  iconClass="h-[50px] w-[50px]"
+                  class="flex-shrink-0"
+                />
               </span>
             </div>
             <div class="text-2xl">
@@ -191,7 +195,11 @@
               <span
                 class="inline-flex justify-center items-center size-[90px] rounded-full border border-emerald-400 text-emerald-400"
               >
-                <svg lucideBuilding2 class="flex-shrink-0 size-[50px]"></svg>
+                <app-icon
+                  name="building-2"
+                  iconClass="h-[50px] w-[50px]"
+                  class="flex-shrink-0"
+                />
               </span>
             </div>
             <div class="text-2xl">
@@ -206,10 +214,11 @@
               <span
                 class="inline-flex justify-center items-center size-[90px] rounded-full border border-emerald-400 text-emerald-400"
               >
-                <svg
-                  lucideChartCandlestick
-                  class="flex-shrink-0 size-[50px]"
-                ></svg>
+                <app-icon
+                  name="chart-candlestick"
+                  iconClass="h-[50px] w-[50px]"
+                  class="flex-shrink-0"
+                />
               </span>
             </div>
             <div class="text-2xl">
@@ -224,7 +233,11 @@
               <span
                 class="inline-flex justify-center items-center size-[90px] rounded-full border border-emerald-400 text-emerald-400"
               >
-                <svg lucideScale class="flex-shrink-0 size-[50px]"></svg>
+                <app-icon
+                  name="scale"
+                  iconClass="h-[50px] w-[50px]"
+                  class="flex-shrink-0"
+                />
               </span>
             </div>
             <!-- u-24tb1.112xlarge VS m1.small as per cloudperf/crc16 -->
@@ -240,7 +253,11 @@
               <span
                 class="inline-flex justify-center items-center size-[90px] rounded-full border border-emerald-400 text-emerald-400"
               >
-                <svg lucideMapPinned class="flex-shrink-0 size-[50px]"></svg>
+                <app-icon
+                  name="map-pinned"
+                  iconClass="h-[50px] w-[50px]"
+                  class="flex-shrink-0"
+                />
               </span>
             </div>
             <div class="text-2xl">
@@ -400,7 +417,7 @@
                       'GitHub repository of ' + githubComponent.github
                     "
                   >
-                    <svg lucideIcon="github"></svg>
+                    <app-icon name="github" />
                   </a>
                 }
                 @if (githubComponent.pypi) {
@@ -430,7 +447,7 @@
                       'Documentation site of ' + githubComponent.component
                     "
                   >
-                    <svg lucideBookText></svg>
+                    <app-icon name="book-text" />
                   </a>
                 }
                 @if (githubComponent.www) {
@@ -475,7 +492,7 @@
                     [title]="'Download ' + githubComponent.component"
                     [attr.aria-label]="'Download ' + githubComponent.component"
                   >
-                    <svg lucideDatabase></svg>
+                    <app-icon name="database" />
                   </a>
                 }
               </td>
@@ -530,7 +547,7 @@
             rel="noopener"
           >
             <button class="btn-primary py-4 px-4 flex gap-2">
-              <svg lucideIcon="github"></svg> Check us out on GitHub
+              <app-icon name="github" /> Check us out on GitHub
             </button>
           </a>
           <a [routerLink]="'/articles'" [queryParams]="{ tag: 'funding' }">
@@ -582,7 +599,11 @@
                 <span
                   class="inline-flex justify-center items-center size-[90px] text-emerald-400"
                 >
-                  <svg lucideQuote class="flex-shrink-0 size-[50px]"></svg>
+                  <app-icon
+                    name="quote"
+                    iconClass="h-[50px] w-[50px]"
+                    class="flex-shrink-0"
+                  />
                 </span>
               </div>
               <div class="text-2xl">
