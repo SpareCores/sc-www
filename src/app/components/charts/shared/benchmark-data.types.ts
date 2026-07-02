@@ -42,6 +42,7 @@ export type BenchmarkMetaBase = Pick<Benchmark, "benchmark_id"> &
       | "measurement"
       | "unit"
       | "higher_is_better"
+      | "status"
     >
   >;
 

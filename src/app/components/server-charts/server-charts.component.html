@@ -1,3 +1,10 @@
+@if (isChartShown("workload_profile") && hasWorkloadProfileBenchmarks()) {
+  <app-workload-profile-panel
+    layout="details"
+    [serverDetails]="serverDetails"
+    [benchmarkMeta]="benchmarkMeta"
+  ></app-workload-profile-panel>
+}
 @if (isChartShown("bw_mem")) {
   <app-server-memory-chart
     [serverDetails]="serverDetails"

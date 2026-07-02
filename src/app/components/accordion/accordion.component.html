@@ -1,0 +1,77 @@
+<div class="w-full min-w-0">
+  @if (showHeading()) {
+    <h3 class="font-bold text-3xl">
+      @if (useFaqSchema()) {
+        {{ heading() }} FAQs
+      } @else {
+        {{ heading() }}
+      }
+    </h3>
+  }
+  <div
+    class="pl-2 min-w-0"
+    [class.mt-2]="showHeading()"
+    [attr.itemscope]="useFaqSchema() ? '' : null"
+    [attr.itemtype]="useFaqSchema() ? 'https://schema.org/FAQPage' : null"
+  >
+    @for (
+      item of items();
+      track item.title + "_" + item.content;
+      let i = $index
+    ) {
+      <div
+        [attr.itemscope]="useFaqSchema() ? '' : null"
+        [attr.itemprop]="useFaqSchema() ? 'mainEntity' : null"
+        [attr.itemtype]="useFaqSchema() ? 'https://schema.org/Question' : null"
+        [ngClass]="{
+          'border-b border-solid border-gray-200': i < items().length - 1,
+        }"
+      >
+        <button
+          type="button"
+          class="flex items-center justify-between gap-2 cursor-pointer py-4 w-full min-w-0 text-left bg-transparent"
+          (click)="toggleItem(i)"
+          [attr.aria-expanded]="activeIndex() === i"
+        >
+          <h4
+            class="min-w-0 flex-1 text-wrap font-semibold"
+            [attr.itemprop]="useFaqSchema() ? 'name' : null"
+          >
+            {{ item.title }}
+          </h4>
+          @if (activeIndex() === i) {
+            <svg lucideChevronUp class="h-4 w-4 shrink-0"></svg>
+          } @else {
+            <svg lucideChevronDown class="h-4 w-4 shrink-0"></svg>
+          }
+        </button>
+        <p
+          class="min-w-0 pl-2 text-wrap break-words font-light"
+          [class.mb-6]="i < items().length - 1"
+          [attr.itemscope]="useFaqSchema() ? '' : null"
+          [attr.itemprop]="useFaqSchema() ? 'acceptedAnswer' : null"
+          [attr.itemtype]="useFaqSchema() ? 'https://schema.org/Answer' : null"
+          [ngClass]="{
+            block: activeIndex() === i,
+            hidden: activeIndex() !== i,
+          }"
+        >
+          @if (!item.html) {
+            <span [attr.itemprop]="useFaqSchema() ? 'text' : null">{{
+              item.content
+            }}</span>
+          }
+          @if (item.html) {
+            <span
+              [attr.itemprop]="useFaqSchema() ? 'text' : null"
+              [innerHTML]="item.html"
+            ></span>
+          }
+          @if (item.note) {
+            <span class="block mt-2 text-[#EAB308]">{{ item.note }}</span>
+          }
+        </p>
+      </div>
+    }
+  </div>
+</div>

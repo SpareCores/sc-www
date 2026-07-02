@@ -33,6 +33,8 @@ import {
 import { BenchmarkMultiBarChartComponent } from "../charts/multi-bar/benchmark-multi-bar-chart.component";
 import { BenchmarkMultiBarChartItem } from "../charts/multi-bar/benchmark-multi-bar-chart.types";
 import { ChartTooltipService } from "../charts/shared/chart-tooltip.service";
+import { WorkloadProfilePanelComponent } from "../charts/workload-profile/workload-profile-panel.component";
+import { filterWorkloadProfileBenchmarks } from "../charts/workload-profile/workload-profile.utils";
 
 @Component({
   selector: "app-server-charts",
@@ -48,6 +50,7 @@ import { ChartTooltipService } from "../charts/shared/chart-tooltip.service";
     LlmInferenceChartComponent,
     ServerMemoryChartComponent,
     BenchmarkMultiBarChartComponent,
+    WorkloadProfilePanelComponent,
   ],
   templateUrl: "./server-charts.component.html",
   styleUrl: "./server-charts.component.scss",
@@ -96,6 +99,10 @@ export class ServerChartsComponent implements OnChanges {
       return true;
     }
     return this.showChart === id;
+  }
+
+  hasWorkloadProfileBenchmarks(): boolean {
+    return filterWorkloadProfileBenchmarks(this.benchmarkMeta ?? []).length > 0;
   }
 
   initializeBenchmarkCharts() {
