@@ -1,5 +1,8 @@
 @if (chartData() && selectedOption()) {
-  <div class="block_full_inline">
+  <div
+    class="block_full_inline"
+    [class.memory-compare-chart--cache-markers]="hasCacheAnnotations()"
+  >
     <div class="flex justify-end items-center">
       <button
         #memoryCompareDropdown="appFlowbiteDropdown"

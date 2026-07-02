@@ -13,6 +13,8 @@
 import {
   GetServerBenchmarksServerVendorServerBenchmarksGetData,
   GetServerBenchmarksServerVendorServerBenchmarksGetParams,
+  GetServerDescriptionsServerVendorServerDescriptionsGetData,
+  GetServerDescriptionsServerVendorServerDescriptionsGetParams,
   GetServerPricesServerVendorServerPricesGetData,
   GetServerPricesServerVendorServerPricesGetParams,
   GetSimilarServersServerVendorServerSimilarServersByNumGetData,
@@ -102,6 +104,30 @@ export class Server<SecurityDataType = unknown> {
       HTTPValidationError
     >({
       path: `/server/${vendor}/${server}/benchmarks`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+  /**
+   * @description Query the descriptions of a single server.
+   *
+   * @tags Server Details
+   * @name GetServerDescriptionsServerVendorServerDescriptionsGet
+   * @summary Get Server Descriptions
+   * @request GET:/server/{vendor}/{server}/descriptions
+   */
+  getServerDescriptionsServerVendorServerDescriptionsGet = (
+    {
+      vendor,
+      server,
+    }: GetServerDescriptionsServerVendorServerDescriptionsGetParams,
+    params: RequestParams = {},
+  ) =>
+    this.http.request<
+      GetServerDescriptionsServerVendorServerDescriptionsGetData,
+      HTTPValidationError
+    >({
+      path: `/server/${vendor}/${server}/descriptions`,
       method: "GET",
       format: "json",
       ...params,

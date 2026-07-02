@@ -66,6 +66,7 @@ describe("Visual regression tests (medium screen - 1024px)", () => {
 
     // Hide price related sections for screenshot consistency
     cy.get(".price-sections-to-hide-for-test").invoke("css", "display", "none");
+    cy.get(".summarize-fab-to-hide-for-test").invoke("css", "display", "none");
 
     // Hide similar servers section for screenshot consistency
     cy.get("#similar_servers").invoke("css", "display", "none");

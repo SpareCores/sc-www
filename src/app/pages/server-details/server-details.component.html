@@ -36,32 +36,29 @@
               by {{ serverDetails.vendor.name }}
             </h1>
             <div>{{ description }}</div>
-            <div class="flex gap-4">
+            <div class="flex gap-4 flex-wrap">
+              <button
+                class="btn-primary py-3 px-5 flex gap-2 disabled:bg-gray-500 disabled:cursor-not-allowed disabled:hover:bg-gray-500"
+                [disabled]="!descriptionsAvailable"
+                [title]="
+                  descriptionsAvailable
+                    ? 'Open AI-generated server summary'
+                    : 'AI summary not available for this server'
+                "
+                data-ph-capture-attribute-sc-event="server details summarize open"
+                (click)="openSummarizeModal()"
+              >
+                <span>Summarize</span>
+                <svg lucideSparkles class="h-6 w-6"></svg>
+              </button>
               <button
                 class="btn-primary py-3 px-5 flex gap-2"
+                data-ph-capture-attribute-sc-event="server details compare"
                 (click)="addToCompare()"
               >
                 <span> {{ compareText() }} </span>
                 <svg lucideScale class="h-6 w-6"></svg>
               </button>
-              <a
-                class="btn-primary-outline py-3 px-5 flex gap-2"
-                [href]="serverDetails.vendor.homepage"
-                target="_blank"
-                rel="nofollow noopener"
-              >
-                <span> Visit Vendor </span>
-                <svg lucideExternalLink class="h-6 w-6"></svg>
-              </a>
-              <a
-                class="btn-primary-outline py-3 px-5 flex gap-2"
-                [href]="serverDetails.vendor.status_page"
-                target="_blank"
-                rel="nofollow noopener"
-              >
-                <span> Status Page </span>
-                <svg lucideExternalLink class="h-6 w-6"></svg>
-              </a>
             </div>
           </div>
         </div>
@@ -276,6 +273,47 @@
               (svgExists)="lstopoSvgExists = $event"
               (svgWidth)="lstopoSvgWidth = $event"
             ></app-server-lstopo>
+          </div>
+        }
+        @if (descriptionsAvailable && serverDescription) {
+          <div
+            class="block_half server-description-card"
+            [class.block_full]="descriptionCardIsFullWidth()"
+            [class.open]="true"
+          >
+            <div class="flex justify-between items-center gap-4">
+              <h3 class="text-2xl">Server Description</h3>
+              <button
+                type="button"
+                class="btn-primary py-2 px-3 flex gap-2 h-[42px]"
+                data-ph-capture-attribute-sc-event="server details summarize open"
+                (click)="openSummarizeModal()"
+                aria-label="Open full summary"
+              >
+                <span>More details</span>
+                <svg lucideMaximize2 class="h-5 w-5"></svg>
+              </button>
+            </div>
+            @if (serverDescription.tagline) {
+              <p class="server-description-tagline">
+                {{ serverDescription.tagline }}
+              </p>
+            }
+            @if (serverDescription.categories.length) {
+              <div class="server-description-categories">
+                @for (
+                  category of serverDescription.categories;
+                  track category
+                ) {
+                  <span class="server-description-category-pill">{{
+                    category
+                  }}</span>
+                }
+              </div>
+            }
+            <p class="server-description-text">
+              {{ serverDescription.description }}
+            </p>
           </div>
         }
         <div class="my-2 w-full">
@@ -615,6 +653,107 @@
           </app-embed-debug>
         }
       </div>
+    </div>
+  </div>
+</div>
+
+@if (serverDetails && !isLoading) {
+  <button
+    type="button"
+    class="summarize-fab summarize-fab-to-hide-for-test btn-primary disabled:bg-gray-500 disabled:cursor-not-allowed disabled:hover:bg-gray-500"
+    [disabled]="!descriptionsAvailable"
+    [title]="
+      descriptionsAvailable
+        ? 'Open AI-generated server summary'
+        : 'AI summary not available for this server'
+    "
+    data-ph-capture-attribute-sc-event="server details summarize fab open"
+    (click)="openSummarizeModal()"
+    aria-label="Summarize server"
+  >
+    <svg lucideSparkles class="h-6 w-6"></svg>
+  </button>
+}
+
+<div
+  #summarizeModal
+  id="server-summarize-modal"
+  tabindex="-1"
+  class="summarize-modal-wrapper fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full"
+>
+  <div class="relative w-full max-w-3xl mx-auto my-auto">
+    <div
+      class="relative bg-secondary rounded-lg shadow border border-solid border-emerald-400"
+    >
+      <div
+        class="flex items-start justify-between gap-4 p-4 md:p-6 border-b border-gray-600"
+      >
+        <div class="flex flex-col gap-2 min-w-0">
+          @if (serverDetails) {
+            <h2 class="text-xl md:text-2xl font-semibold text-white">
+              {{ serverDetails.display_name }}
+            </h2>
+          }
+          @if (serverDescription?.tagline) {
+            <p class="text-emerald-400 text-sm md:text-base">
+              {{ serverDescription!.tagline }}
+            </p>
+          }
+          @if (serverDescription?.categories?.length) {
+            <div class="server-description-categories mt-4">
+              @for (category of serverDescription!.categories; track category) {
+                <span class="server-description-category-pill">{{
+                  category
+                }}</span>
+              }
+            </div>
+          }
+        </div>
+        <button
+          type="button"
+          class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 shrink-0 inline-flex justify-center items-center"
+          data-ph-capture-attribute-sc-event="server details summarize close"
+          (click)="closeSummarizeModal()"
+        >
+          <svg
+            class="w-3 h-3"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 14 14"
+          >
+            <path
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+            />
+          </svg>
+          <span class="sr-only">Close modal</span>
+        </button>
+      </div>
+      @if (serverDescription && isSummarizeModalOpen) {
+        <div
+          class="summarize-modal-body custom-scrollbar p-4 md:p-6 max-h-[70vh] overflow-y-auto"
+        >
+          @if (serverDescription.bullet_points.length) {
+            <div class="summarize-modal-highlights">
+              <h3 class="text-lg font-semibold text-white mb-3">
+                Key highlights
+              </h3>
+              <ul class="summarize-modal-bullets">
+                @for (point of serverDescription.bullet_points; track point) {
+                  <li>{{ point }}</li>
+                }
+              </ul>
+            </div>
+          }
+          @for (paragraph of serverDescription.page; track $index) {
+            <p class="summarize-modal-paragraph">{{ paragraph }}</p>
+          }
+        </div>
+      }
     </div>
   </div>
 </div>

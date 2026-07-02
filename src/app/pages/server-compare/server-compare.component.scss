@@ -150,6 +150,11 @@
   }
 }
 
+:host ::ng-deep .block_full_inline.memory-compare-chart--cache-markers {
+  min-height: 508px;
+  height: 508px;
+}
+
 :host ::ng-deep .block_full_short_inline {
   @apply px-6 py-4 bg-transparent flex flex-col gap-4 relative overflow-visible;
   width: calc(100%);

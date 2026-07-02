@@ -12,6 +12,7 @@
 
 import {
   GetServerBenchmarksServerVendorServerBenchmarksGetData,
+  GetServerDescriptionsServerVendorServerDescriptionsGetData,
   GetServerPricesServerVendorServerPricesGetData,
   GetSimilarServersServerVendorServerSimilarServersByNumGetData,
 } from "./data-contracts";
@@ -1006,5 +1007,32 @@ export namespace Server {
     export type RequestHeaders = {};
     export type ResponseBody =
       GetServerBenchmarksServerVendorServerBenchmarksGetData;
+  }
+
+  /**
+   * @description Query the descriptions of a single server.
+   * @tags Server Details
+   * @name GetServerDescriptionsServerVendorServerDescriptionsGet
+   * @summary Get Server Descriptions
+   * @request GET:/server/{vendor}/{server}/descriptions
+   */
+  export namespace GetServerDescriptionsServerVendorServerDescriptionsGet {
+    export type RequestParams = {
+      /**
+       * Vendor
+       * A Vendor's ID.
+       */
+      vendor: string;
+      /**
+       * Server
+       * A Server's ID or API reference.
+       */
+      server: string;
+    };
+    export type RequestQuery = {};
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody =
+      GetServerDescriptionsServerVendorServerDescriptionsGetData;
   }
 }

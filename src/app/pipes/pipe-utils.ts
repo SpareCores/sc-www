@@ -97,3 +97,118 @@ export function formatGpuMemory(
   }
   return `${formatValue(memoryMib / 1024)} GiB`;
 }
+
+export function formatMemoryAmount(
+  valueInMiB: number | null | undefined,
+  emptyValue = "-",
+): string {
+  if (valueInMiB === null || valueInMiB === undefined) {
+    return emptyValue;
+  }
+
+  const valueInGiB = valueInMiB / 1024;
+  const formattedValue = Number.isInteger(valueInGiB)
+    ? `${formatNumberInputValue(valueInGiB, 0)}.0`
+    : formatNumberInputValue(valueInGiB, 1);
+
+  return `${formattedValue} GiB`;
+}
+
+export function formatNetworkSpeed(
+  value: number | null | undefined,
+  emptyValue = "-",
+): string {
+  if (value === null || value === undefined) {
+    return emptyValue;
+  }
+
+  if (value === 0) {
+    return "0 Gbps";
+  }
+
+  if (value < 1) {
+    const mbps = value * 1000;
+    return `${formatValue(mbps)} Mbps`;
+  }
+
+  return `${formatValue(value)} Gbps`;
+}
+
+export function formatCpuCacheSize(
+  kibibytes: number | null | undefined,
+  emptyValue = "-",
+): string {
+  if (
+    kibibytes === null ||
+    kibibytes === undefined ||
+    Number.isNaN(Number(kibibytes))
+  ) {
+    return emptyValue;
+  }
+
+  if (kibibytes === 0) {
+    return "0 KiB";
+  }
+
+  const mibThreshold = 1024 * 1024;
+  if (kibibytes * 1024 < mibThreshold) {
+    return `${kibibytes} KiB`;
+  }
+
+  const mib = kibibytes / 1024;
+  return `${formatValue(mib)} MiB`;
+}
+
+export function formatMonthlyTraffic(
+  value: number | null | undefined,
+  emptyValue = "-",
+): string {
+  if (value === null || value === undefined) {
+    return emptyValue;
+  }
+
+  const isTiB = value >= 1024;
+  const transformedValue = isTiB ? value / 1024 : value;
+  const unit = isTiB ? "TiB/mo" : "GiB/mo";
+
+  return `${formatValue(transformedValue)} ${unit}`;
+}
+
+export function formatGpuCount(
+  gpuCount: number | null | undefined,
+  emptyValue: string | null = null,
+): number | string | null {
+  if (gpuCount === null || gpuCount === undefined) {
+    return emptyValue;
+  }
+
+  if (gpuCount >= 1) {
+    return gpuCount;
+  }
+
+  switch (gpuCount) {
+    case 0.5:
+      return "½";
+    case 0.3333:
+      return "⅓";
+    case 0.25:
+      return "¼";
+    case 0.1667:
+      return "⅙";
+    case 0.125:
+      return "⅛";
+    case 0.0833:
+      return "1⁄12";
+    case 0.0417:
+      return "1⁄24";
+    default:
+      return gpuCount;
+  }
+}
+
+export function formatIpv4Count(
+  value: number | null | undefined,
+  emptyValue = "-",
+): number | string {
+  return value === null || value === undefined ? emptyValue : value;
+}

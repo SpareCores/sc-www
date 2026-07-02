@@ -1,4 +1,5 @@
 import { Pipe, PipeTransform } from "@angular/core";
+import { formatIpv4Count } from "./pipe-utils";
 
 @Pipe({
   name: "ipv4Count",
@@ -6,6 +7,6 @@ import { Pipe, PipeTransform } from "@angular/core";
 })
 export class Ipv4CountPipe implements PipeTransform {
   transform(value: number | null | undefined): number | string {
-    return value === null || value === undefined ? "-" : value;
+    return formatIpv4Count(value);
   }
 }

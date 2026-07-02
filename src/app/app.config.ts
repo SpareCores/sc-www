@@ -22,6 +22,7 @@ import {
 import { provideLucideIcons } from "@lucide/angular";
 import { lucideIcons } from "./lucide-icons";
 import { MarkdownModule } from "ngx-markdown";
+import annotationPlugin from "chartjs-plugin-annotation";
 import { provideCharts, withDefaultRegisterables } from "ng2-charts";
 import * as Sentry from "@sentry/angular";
 
@@ -67,7 +68,7 @@ export const appConfig: ApplicationConfig = {
       withEventReplay(),
     ),
     provideHttpClient(withFetch()),
-    provideCharts(withDefaultRegisterables()),
+    provideCharts(withDefaultRegisterables(annotationPlugin)),
     provideLucideIcons(...lucideIcons),
     importProvidersFrom(MarkdownModule.forRoot()),
     {

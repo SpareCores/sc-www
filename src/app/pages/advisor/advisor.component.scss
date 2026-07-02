@@ -84,7 +84,7 @@
 }
 
 .advisor-hero-header {
-  @apply flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between;
+  @apply flex gap-4 justify-between items-center;
 }
 
 .advisor-hero-actions {

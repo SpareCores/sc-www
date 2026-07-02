@@ -4,6 +4,7 @@ import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { AnalyticsService } from "../../services/analytics.service";
 import { formatStorageSize } from "../../pipes/pipe-utils";
+import { ServerDescription } from "../../../../sdk/data-contracts";
 import { Subscription } from "rxjs";
 
 @Component({
@@ -98,6 +99,7 @@ export class ServerOGComponent implements OnInit, OnDestroy {
               }
 
               this.SEOHandler.setNoFollow();
+              this.loadServerDescriptions(vendor, id);
             }
           })
           .catch((error) => {
@@ -129,5 +131,17 @@ export class ServerOGComponent implements OnInit, OnDestroy {
         )
         ?.score?.toFixed(0) || "-"
     );
+  }
+
+  loadServerDescriptions(vendor: string, id: string) {
+    this.keeperAPI
+      .getServerDescriptions(vendor, id)
+      .then((response) => {
+        if (response?.body) {
+          const serverDescription = response.body as ServerDescription;
+          this.description = serverDescription.og_description;
+        }
+      })
+      .catch(() => {});
   }
 }
