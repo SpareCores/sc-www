@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, PLATFORM_ID } from "@angular/core";
 import { isPlatformBrowser } from "@angular/common";
 import { ServerCompareChartsComponent } from "../../components/server-compare-charts/server-compare-charts.component";
-import { LucideExternalLink } from "@lucide/angular";
+
 import { ActivatedRoute } from "@angular/router";
 import { AnalyticsService } from "../../services/analytics.service";
 import { KeeperAPIService } from "../../services/keeper-api.service";
@@ -13,6 +13,7 @@ import {
   decodeBase64JsonUrlState,
   isServerCompareUrlState,
 } from "../../tools/encoded-url-state";
+import { Icon } from "../../components/icon/icon.js";
 
 const INVALID_COMPARE_URL_TOAST_ID = "bad-compare-url-param";
 const INVALID_URL_TOAST_TITLE = "Invalid URL";
@@ -21,7 +22,7 @@ const INVALID_COMPARE_URL_TOAST_BODY =
 
 @Component({
   selector: "app-embedded-compare-chart",
-  imports: [ServerCompareChartsComponent, LucideExternalLink],
+  imports: [ServerCompareChartsComponent, Icon],
   templateUrl: "./embedded-compare-chart.component.html",
   styleUrl: "./embedded-compare-chart.component.scss",
 })
