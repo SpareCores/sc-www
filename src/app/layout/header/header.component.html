@@ -92,7 +92,8 @@
             <button
               id="compare_button"
               [appFlowbiteDropdown]="'compare_options'"
-              [dropdownPlacement]="'bottom'"
+              [dropdownPlacement]="'bottom-end'"
+              [dropdownFlip]="true"
               #compareDropdown="appFlowbiteDropdown"
               class="inline-flex items-center justify-center text-white bg-emerald-400 hover:bg-emerald-500 rounded-lg px-3 py-3 relative"
               [class.hidden]="compareCount() === 0"
@@ -462,31 +463,48 @@
 
 <div
   id="compare_options"
-  class="z-10 hidden bg-secondary rounded-lg shadow w-250 border border-emerald-400 border-solid"
+  class="compare_dropdown_panel z-10 hidden bg-secondary rounded-lg shadow border border-emerald-400 border-solid"
 >
   <ul
     class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
     aria-labelledby="dropdownDefaultButton"
-    (click)="closeCompare()"
+    cdkDropList
+    (cdkDropListDropped)="dropComparedServer($event)"
   >
     @for (
       server of getServersForCompare();
       track server.server + "_" + server.vendor
     ) {
-      <li class="py-2 flex justify-between">
-        <a
-          class="navbar_link"
-          routerLink="/server/{{ server.vendor }}/{{ server.server }}"
+      <li
+        class="compare_dropdown_row py-2 flex w-full items-center gap-1"
+        cdkDrag
+        (cdkDragStarted)="setCompareDragCursor(true)"
+        (cdkDragEnded)="setCompareDragCursor(false)"
+      >
+        <div
+          class="compare_dropdown_actions ml-auto flex items-center gap-1"
+          (click)="$event.stopPropagation()"
         >
-          <span class="navbar_icon">
-            <svg lucidePcCase class="h-4 w-4"></svg>
-          </span>
-          {{ server.vendor }}: {{ server.display_name }}
-        </a>
-        <div (click)="$event.stopPropagation()">
           <button
-            class="text-red-500 px-2 py-2"
-            (click)="removeFromCompare($event, server)"
+            type="button"
+            class="compare_dropdown_handle shrink-0 px-1 py-2 text-gray-400 hover:text-emerald-400"
+            cdkDragHandle
+            aria-label="Reorder"
+          >
+            <span class="navbar_icon">
+              <svg lucideArrowUpDown class="h-4 w-4"></svg>
+            </span>
+          </button>
+          <a
+            class="navbar_link"
+            routerLink="/server/{{ server.vendor }}/{{ server.server }}"
+            (click)="closeCompare()"
+          >
+            <span>{{ server.vendor }}: {{ server.display_name }}</span>
+          </a>
+          <button
+            class="text-red-500 px-2 py-2 shrink-0"
+            (click)="removeFromCompare(server)"
           >
             <span class="navbar_icon">
               <svg lucideTrash class="h-4 w-4"></svg>
@@ -498,7 +516,7 @@
     <li class="py-2">
       <button
         class="w-full font-bold text-white bg-emerald-400 hover:bg-emerald-500 rounded-sm py-2"
-        (click)="compareServers()"
+        (click)="compareServers(); closeCompare()"
       >
         Compare
       </button>
