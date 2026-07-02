@@ -14,19 +14,7 @@ import {
   BreadcrumbsComponent,
   BreadcrumbSegment,
 } from "../../components/breadcrumbs/breadcrumbs.component";
-import {
-  LucideBot,
-  LucideBoxes,
-  LucideCpu,
-  LucideDatabaseZap,
-  LucideEarthLock,
-  LucideGauge,
-  LucideImageUp,
-  LucideMemoryStick,
-  LucideNotebookText,
-  LucidePackageOpen,
-  LucideRefreshCcwDot,
-} from "@lucide/angular";
+
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import {
@@ -45,6 +33,7 @@ import {
   BenchmarkWorkloadItem,
 } from "./benchmark-workloads.models";
 import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
+import { Icon } from "../../components/icon/icon.js";
 
 type RawBenchmarkWorkloadConfig = {
   description?: unknown;
@@ -55,22 +44,12 @@ type RawBenchmarkWorkloadConfig = {
   selector: "app-benchmark-workloads",
   imports: [
     BreadcrumbsComponent,
-    LucideBot,
-    LucideBoxes,
-    LucideCpu,
-    LucideDatabaseZap,
-    LucideEarthLock,
-    LucideGauge,
-    LucideImageUp,
-    LucideMemoryStick,
-    LucideNotebookText,
-    LucidePackageOpen,
-    LucideRefreshCcwDot,
     BenchmarkWorkloadComponent,
     LoadingSpinnerComponent,
     ScrollSpyDirective,
     BenchmarkWorkloadsSidebarComponent,
     BenchmarkIconPipe,
+    Icon,
   ],
   templateUrl: "./benchmark-workloads.component.html",
   styleUrl: "./benchmark-workloads.component.scss",

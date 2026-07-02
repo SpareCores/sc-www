@@ -5,7 +5,7 @@
     <div class="flex flex-col gap-4 my-8 mx-2 xl:mx-0">
       <div class="flex gap-4 items-center w-full justify-between">
         <h1 class="text-white font-bold text-3xl flex items-center">
-          <svg lucideNotebookText class="h-8 w-8 mr-2"></svg>
+          <app-icon name="notebook-text" iconClass="h-8 w-8" class="mr-2" />
           {{ pageTitle }}
         </h1>
       </div>
@@ -63,68 +63,11 @@
               class="flex items-center gap-3 mb-6 pb-3 border-b border-emerald-400/30"
               [id]="'family-' + family.framework"
             >
-              @switch (family.framework | benchmarkIcon) {
-                @case ("refresh-ccw-dot") {
-                  <svg
-                    lucideRefreshCcwDot
-                    class="h-6 w-6 text-emerald-400 shrink-0"
-                  ></svg>
-                }
-                @case ("memory-stick") {
-                  <svg
-                    lucideMemoryStick
-                    class="h-6 w-6 text-emerald-400 shrink-0"
-                  ></svg>
-                }
-                @case ("package-open") {
-                  <svg
-                    lucidePackageOpen
-                    class="h-6 w-6 text-emerald-400 shrink-0"
-                  ></svg>
-                }
-                @case ("bot") {
-                  <svg
-                    lucideBot
-                    class="h-6 w-6 text-emerald-400 shrink-0"
-                  ></svg>
-                }
-                @case ("boxes") {
-                  <svg
-                    lucideBoxes
-                    class="h-6 w-6 text-emerald-400 shrink-0"
-                  ></svg>
-                }
-                @case ("earth-lock") {
-                  <svg
-                    lucideEarthLock
-                    class="h-6 w-6 text-emerald-400 shrink-0"
-                  ></svg>
-                }
-                @case ("database-zap") {
-                  <svg
-                    lucideDatabaseZap
-                    class="h-6 w-6 text-emerald-400 shrink-0"
-                  ></svg>
-                }
-                @case ("image-up") {
-                  <svg
-                    lucideImageUp
-                    class="h-6 w-6 text-emerald-400 shrink-0"
-                  ></svg>
-                }
-                @case ("cpu") {
-                  <svg
-                    lucideCpu
-                    class="h-6 w-6 text-emerald-400 shrink-0"
-                  ></svg>
-                }
-                @default {
-                  <svg
-                    lucideGauge
-                    class="h-6 w-6 text-emerald-400 shrink-0"
-                  ></svg>
-                }
-              }
+              <app-icon
+                [name]="family.framework | benchmarkIcon"
+                iconClass="h-6 w-6"
+                class="text-emerald-400 shrink-0"
+              />
               <h2 class="text-white text-2xl font-bold font-mono">
                 {{ family.framework }}
               </h2>
