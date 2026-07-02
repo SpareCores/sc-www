@@ -73,7 +73,7 @@
                         target="_blank"
                         rel="noopener"
                       >
-                        <svg lucideScrollText></svg>
+                        <app-icon name="scroll-text" />
                       </a>
                     }
                     @if (talk.conference_talk_video) {
@@ -83,7 +83,7 @@
                         target="_blank"
                         rel="noopener"
                       >
-                        <svg lucideIcon="youtube"></svg>
+                        <app-icon name="youtube" />
                       </a>
                     }
                     @if (
@@ -91,7 +91,7 @@
                       !talk.conference_talk_video
                     ) {
                       <span class="flex items-center gap-2">
-                        <svg lucideHourglass></svg>
+                        <app-icon name="hourglass" />
                         <span class="text-sm">TBA</span>
                       </span>
                     }

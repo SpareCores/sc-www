@@ -7,22 +7,11 @@ import {
 import { ArticlesService, SlidesMeta } from "../../services/articles.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { TimeToShortDatePipe } from "../../pipes/time-to-short-date.pipe";
-import {
-  LucideDynamicIcon,
-  LucideHourglass,
-  LucideScrollText,
-} from "@lucide/angular";
+import { Icon } from "../../components/icon/icon.js";
 
 @Component({
   selector: "app-talks",
-  imports: [
-    BreadcrumbsComponent,
-    RouterModule,
-    TimeToShortDatePipe,
-    LucideDynamicIcon,
-    LucideHourglass,
-    LucideScrollText,
-  ],
+  imports: [BreadcrumbsComponent, RouterModule, TimeToShortDatePipe, Icon],
   templateUrl: "./talks.component.html",
   styleUrl: "./talks.component.scss",
 })
