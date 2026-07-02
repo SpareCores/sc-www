@@ -11,11 +11,7 @@ import {
   inject,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import {
-  LucideDynamicIcon,
-  LucideCircleArrowUp,
-  LucideInfo,
-} from "@lucide/angular";
+
 import { ExtendedServerDetails } from "../../pages/server-details/server-details.component";
 import { Allocation } from "../../../../sdk/data-contracts";
 import {
@@ -57,6 +53,7 @@ import {
   MultiBarServer,
 } from "../charts/multi-bar/benchmark-multi-bar-chart.types";
 import { ChartTooltipService } from "../charts/shared/chart-tooltip.service";
+import { Icon } from "../icon/icon.js";
 import {
   formatNumberWithCommas,
   getBestBenchmarkCellStyle,
@@ -69,9 +66,6 @@ import {
   selector: "app-server-compare-charts",
   imports: [
     CommonModule,
-    LucideDynamicIcon,
-    LucideCircleArrowUp,
-    LucideInfo,
     RouterModule,
     CompactNumberPipe,
     BenchmarkIconPipe,
@@ -81,6 +75,7 @@ import {
     LlmInferenceChartComponent,
     ServerCompareMemoryChartComponent,
     BenchmarkMultiBarChartComponent,
+    Icon,
   ],
   templateUrl: "./server-compare-charts.component.html",
   styleUrl: "./server-compare-charts.component.scss",
