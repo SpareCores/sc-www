@@ -12,11 +12,7 @@ import {
   signal,
   viewChild,
 } from "@angular/core";
-import {
-  LucideDynamicIcon,
-  LucideChevronDown,
-  LucideInfo,
-} from "@lucide/angular";
+
 import { BaseChartDirective } from "ng2-charts";
 import {
   ChartFromBenchmarkSecondaryOptions,
@@ -28,6 +24,7 @@ import { cloneChartOptions } from "../shared/chart-options.utils";
 import { ChartTooltipService } from "../shared/chart-tooltip.service";
 import { FlowbiteDropdownDirective } from "../../../directives/flowbite-dropdown.directive";
 import { BenchmarkMultiBarChartBuilderService } from "./benchmark-multi-bar-chart-builder.service";
+import { Icon } from "../../icon/icon.js";
 import {
   BenchmarkMultiBarChartItem,
   MultiBarBenchmarkGroup,
@@ -40,12 +37,10 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    LucideDynamicIcon,
-    LucideChevronDown,
-    LucideInfo,
     BaseChartDirective,
     FlowbiteDropdownDirective,
     BenchmarkIconPipe,
+    Icon,
   ],
   templateUrl: "./benchmark-multi-bar-chart.component.html",
   styles: [
