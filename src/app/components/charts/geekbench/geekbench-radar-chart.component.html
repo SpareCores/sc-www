@@ -3,20 +3,14 @@
     <div [class]="blockClass()" [id]="elementId()">
       <div class="flex justify-between items-center">
         <h3 class="text-2xl flex items-center gap-2">
-          <svg [lucideIcon]="'geekbench' | benchmarkIcon" class="h-6 w-6"></svg>
+          <app-icon [name]="'geekbench' | benchmarkIcon" iconClass="h-6 w-6" />
           {{ title() }}
-          <svg
-            lucideCircleArrowUp
-            class="h-4 w-4 text-gray-200"
-            (mouseenter)="showTextTooltip($event, orderTooltip())"
-            (mouseleave)="hideTooltip()"
-          ></svg>
-          <svg
-            lucideInfo
-            class="h-4 w-4 text-gray-200"
-            (mouseenter)="showHtmlTooltip($event, resolvedInfoTooltipHtml())"
-            (mouseleave)="hideTooltip()"
-          ></svg>
+          <app-icon
+            name="circle-arrow-up"
+            iconClass="h-4 w-4"
+            class="text-gray-200"
+          />
+          <app-icon name="info" iconClass="h-4 w-4" class="text-gray-200" />
         </h3>
         <div
           class="py-2 px-2 border-emerald-400 border-solid rounded-lg border"
