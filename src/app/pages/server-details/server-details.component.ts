@@ -59,7 +59,7 @@ import { EmbedDebugComponent } from "../embed-debug/embed-debug.component";
 import { barChartDataEmpty, barChartOptions } from "./chartOptions";
 import { formatBooleanIconHtml } from "../../components/charts/shared/server-compare-table.utils";
 import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
-import { Icon } from "../../components/icon/icon.js";
+import { Icon } from "../../components/icon/icon";
 
 const optionsModal: ModalOptions = {
   backdropClasses: "bg-gray-900/50 fixed inset-0 z-40",
@@ -94,13 +94,6 @@ interface PropertyCategoryDefinition {
   selector: "app-server-details",
   imports: [
     BreadcrumbsComponent,
-    LucideCheck,
-    LucideChevronDown,
-    LucideCopy,
-    LucideMaximize2,
-    LucideScale,
-    LucideSparkles,
-    LucideTriangleAlert,
     AccordionComponent,
     FormsModule,
     RouterModule,
