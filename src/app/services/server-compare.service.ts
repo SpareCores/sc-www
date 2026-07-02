@@ -97,6 +97,25 @@ export class ServerCompareService implements OnDestroy {
     this.selectionChanged.next(this.selectedForCompare);
   }
 
+  reorderSelectedForCompare(previousIndex: number, currentIndex: number) {
+    if (previousIndex === currentIndex) {
+      return;
+    }
+
+    if (
+      previousIndex < 0 ||
+      currentIndex < 0 ||
+      previousIndex >= this.selectedForCompare.length ||
+      currentIndex >= this.selectedForCompare.length
+    ) {
+      return;
+    }
+
+    const [server] = this.selectedForCompare.splice(previousIndex, 1);
+    this.selectedForCompare.splice(currentIndex, 0, server);
+    this.selectionChanged.next(this.selectedForCompare);
+  }
+
   isSelected(server: ServerPKs) {
     return (
       this.selectedForCompare.findIndex(
