@@ -1,8 +1,10 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { By } from "@angular/platform-browser";
+import { CdkDragDrop } from "@angular/cdk/drag-drop";
 
 import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
 import { HeaderComponent } from "./header.component";
+import { ServerCompareService } from "../../services/server-compare.service";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
 describe("HeaderComponent", () => {
@@ -59,5 +61,29 @@ describe("HeaderComponent", () => {
 
     expect(menuDropdown.dropdownPlacement()).toBe("bottom-end");
     expect(menuDropdown.dropdownFlip()).toBeTrue();
+  });
+
+  it("configures the compare dropdown to stay within the viewport", () => {
+    const compareDropdown = fixture.debugElement
+      .query(By.css("#compare_button"))
+      .injector.get(FlowbiteDropdownDirective);
+
+    expect(compareDropdown.dropdownPlacement()).toBe("bottom-end");
+    expect(compareDropdown.dropdownFlip()).toBeTrue();
+  });
+
+  it("delegates compare reordering to the compare service", () => {
+    const serverCompare = TestBed.inject(ServerCompareService);
+    const reorderSelectedForCompare = spyOn(
+      serverCompare,
+      "reorderSelectedForCompare",
+    );
+
+    component.dropComparedServer({
+      previousIndex: 0,
+      currentIndex: 2,
+    } as CdkDragDrop<unknown>);
+
+    expect(reorderSelectedForCompare).toHaveBeenCalledWith(0, 2);
   });
 });

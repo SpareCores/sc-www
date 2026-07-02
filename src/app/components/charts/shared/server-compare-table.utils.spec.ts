@@ -195,4 +195,40 @@ describe("server compare table utils", () => {
       getBestPropertyCellStyle("vcpu_count", server, servers, "best"),
     ).toBe("best");
   });
+
+  it("flags the lowest average time to start including ties", () => {
+    const servers: Array<
+      BestPropertyServer & { average_time_to_start: number }
+    > = [
+      { average_time_to_start: 30 },
+      { average_time_to_start: 11 },
+      { average_time_to_start: 11 },
+      { average_time_to_start: 28 },
+    ];
+
+    expect(
+      getBestPropertyCellStyle(
+        "average_time_to_start",
+        servers[0],
+        servers,
+        "best",
+      ),
+    ).toBe("");
+    expect(
+      getBestPropertyCellStyle(
+        "average_time_to_start",
+        servers[1],
+        servers,
+        "best",
+      ),
+    ).toBe("best");
+    expect(
+      getBestPropertyCellStyle(
+        "average_time_to_start",
+        servers[2],
+        servers,
+        "best",
+      ),
+    ).toBe("best");
+  });
 });

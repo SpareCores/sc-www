@@ -41,6 +41,8 @@ const CPU_CACHE_PROPERTY_IDS = new Set([
 
 const TRAFFIC_PROPERTY_IDS = new Set(["inbound_traffic", "outbound_traffic"]);
 
+const LOWER_IS_BETTER_PROPERTY_IDS = new Set(["average_time_to_start"]);
+
 const HIDDEN_COMPARE_METADATA_PROPERTY_IDS = new Set([
   "vendor_id",
   "server_id",
@@ -117,7 +119,8 @@ export function getBestPropertyCellStyle(
 
   const max = Math.max(...values);
   const min = Math.min(...values);
-  return prop === max && max > min ? bestCellStyle : "";
+  const best = LOWER_IS_BETTER_PROPERTY_IDS.has(name) ? min : max;
+  return prop === best && max > min ? bestCellStyle : "";
 }
 
 export function getServerPropertyValue(

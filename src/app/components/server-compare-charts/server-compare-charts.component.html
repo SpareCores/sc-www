@@ -319,6 +319,14 @@
                 <td class="whitespace-nowrap">
                   <div class="flex gap-2 items-center">
                     {{ category.name }}
+                    @if (category.id === "average_time_to_start") {
+                      <svg
+                        [lucideIcon]="'circle-arrow-down'"
+                        class="h-4 w-4 shrink-0 text-gray-200"
+                        (mouseenter)="showTooltip($event, 'Lower is better.')"
+                        (mouseleave)="hideTooltip()"
+                      ></svg>
+                    }
                     @if (category.description) {
                       <svg
                         lucideInfo

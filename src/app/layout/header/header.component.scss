@@ -24,6 +24,29 @@ li {
   max-width: calc(100vw - 2rem);
 }
 
+.compare_dropdown_panel {
+  width: max-content;
+  max-width: calc(100vw - 2rem);
+}
+
+.compare_dropdown_row.cdk-drag-preview {
+  @apply bg-secondary rounded-lg shadow border border-emerald-400;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.cdk-drag-placeholder {
+  opacity: 0;
+}
+
+.compare_dropdown_handle {
+  cursor: grab;
+}
+
+.compare_dropdown_row.cdk-drag-preview {
+  cursor: grabbing;
+}
+
 .mobile_menu_panel__list {
   max-height: calc(100vh - 4rem);
   overflow-y: auto;

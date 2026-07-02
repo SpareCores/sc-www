@@ -1,3 +1,9 @@
+import {
+  CdkDrag,
+  CdkDragDrop,
+  CdkDragHandle,
+  CdkDropList,
+} from "@angular/cdk/drag-drop";
 import { CommonModule } from "@angular/common";
 import { Component, inject, viewChild } from "@angular/core";
 import { RouterLink } from "@angular/router";
@@ -56,6 +62,9 @@ import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.di
     RouterLink,
     CommonModule,
     FlowbiteDropdownDirective,
+    CdkDropList,
+    CdkDrag,
+    CdkDragHandle,
   ],
   templateUrl: "./header.component.html",
   styleUrl: "./header.component.scss",
@@ -96,8 +105,18 @@ export class HeaderComponent {
     return this.serverCompare.selectedForCompare;
   }
 
-  removeFromCompare(event: any, server: any) {
-    event.stopPropagation();
+  removeFromCompare(server: any) {
     this.serverCompare.toggleCompare(false, server);
+  }
+
+  dropComparedServer(event: CdkDragDrop<unknown>) {
+    this.serverCompare.reorderSelectedForCompare(
+      event.previousIndex,
+      event.currentIndex,
+    );
+  }
+
+  setCompareDragCursor(isDragging: boolean) {
+    document.body.style.cursor = isDragging ? "grabbing" : "";
   }
 }
