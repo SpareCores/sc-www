@@ -11,17 +11,14 @@ import {
   signal,
   viewChild,
 } from "@angular/core";
-import {
-  LucideDynamicIcon,
-  LucideChevronDown,
-  LucideInfo,
-} from "@lucide/angular";
+
 import { BaseChartDirective } from "ng2-charts";
 import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon.pipe";
 import { ChartTooltipService } from "../shared/chart-tooltip.service";
 import { MemoryChartBuilderService } from "./memory-chart-builder.service";
 import { ServerDetailsMemoryChartOption } from "../shared/memory-chart.types";
 import { FlowbiteDropdownDirective } from "../../../directives/flowbite-dropdown.directive";
+import { Icon } from "../../icon/icon.js";
 import {
   MemoryBenchmarkGroup,
   MemoryBenchmarkMeta,
@@ -33,12 +30,10 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    LucideDynamicIcon,
-    LucideChevronDown,
-    LucideInfo,
     BaseChartDirective,
     FlowbiteDropdownDirective,
     BenchmarkIconPipe,
+    Icon,
   ],
   templateUrl: "./server-memory-chart.component.html",
   styles: [

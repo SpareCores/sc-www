@@ -5,12 +5,13 @@ import { KeeperAPIService } from "../../services/keeper-api.service";
 import { Benchmark } from "../../../../sdk/data-contracts";
 import { ServerChartsComponent } from "../../components/server-charts/server-charts.component";
 import { SeoHandlerService } from "../../services/seo-handler.service";
-import { LucideExternalLink } from "@lucide/angular";
+
 import { Subscription } from "rxjs";
+import { Icon } from "../../components/icon/icon.js";
 
 @Component({
   selector: "app-embedded-server-chart",
-  imports: [ServerChartsComponent, LucideExternalLink],
+  imports: [ServerChartsComponent, Icon],
   templateUrl: "./embedded-server-chart.component.html",
   styleUrl: "./embedded-server-chart.component.scss",
 })

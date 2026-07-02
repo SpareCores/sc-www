@@ -1,62 +1,14 @@
 import { CommonModule } from "@angular/common";
 import { Component, inject, viewChild } from "@angular/core";
 import { RouterLink } from "@angular/router";
-import {
-  LucideActivity,
-  LucideArrowUpDown,
-  LucideBookText,
-  LucideBot,
-  LucideCalendarDays,
-  LucideDatabase,
-  LucideDollarSign,
-  LucideGauge,
-  LucideHandshake,
-  LucideHeartHandshake,
-  LucideHouse,
-  LucideHotel,
-  LucideInfo,
-  LucideMenu,
-  LucideNotebookText,
-  LucidePalette,
-  LucidePcCase,
-  LucideProjector,
-  LucideScale,
-  LucideShieldCog,
-  LucideShipWheel,
-  LucideTrash,
-} from "@lucide/angular";
+
 import { ServerCompareService } from "../../services/server-compare.service";
 import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
+import { Icon } from "../../components/icon/icon.js";
 
 @Component({
   selector: "app-header",
-  imports: [
-    LucideActivity,
-    LucideArrowUpDown,
-    LucideBookText,
-    LucideBot,
-    LucideCalendarDays,
-    LucideDatabase,
-    LucideDollarSign,
-    LucideGauge,
-    LucideHandshake,
-    LucideHeartHandshake,
-    LucideHouse,
-    LucideHotel,
-    LucideInfo,
-    LucideMenu,
-    LucideNotebookText,
-    LucidePalette,
-    LucidePcCase,
-    LucideProjector,
-    LucideScale,
-    LucideShieldCog,
-    LucideShipWheel,
-    LucideTrash,
-    RouterLink,
-    CommonModule,
-    FlowbiteDropdownDirective,
-  ],
+  imports: [RouterLink, CommonModule, FlowbiteDropdownDirective, Icon],
   templateUrl: "./header.component.html",
   styleUrl: "./header.component.scss",
 })

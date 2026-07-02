@@ -28,24 +28,6 @@ import { CommonModule, isPlatformBrowser } from "@angular/common";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { FormsModule } from "@angular/forms";
 import {
-  LucideDynamicIcon,
-  LucideCalendarSearch,
-  LucideCheck,
-  LucideChevronDown,
-  LucideChevronLeft,
-  LucideChevronRight,
-  LucideColumns3Cog,
-  LucideCreditCard,
-  LucideGauge,
-  LucideInfo,
-  LucideScale,
-  LucideSearch,
-  LucideClipboard,
-  LucideShipWheel,
-  LucideTvMinimalPlay,
-  LucideX,
-} from "@lucide/angular";
-import {
   SearchBarComponent,
   SearchBarParameter,
 } from "../../components/search-bar/search-bar.component";
@@ -80,6 +62,7 @@ import {
   buildServerListingColumns,
   TableColumn,
 } from "../../tools/table-columns";
+import { Icon } from "../../components/icon/icon.js";
 
 export type CountryMetadata = {
   continent: string;
@@ -121,22 +104,6 @@ const INVALID_BENCHMARK_URL_TOAST_BODY =
     CommonModule,
     FormsModule,
     BreadcrumbsComponent,
-    LucideDynamicIcon,
-    LucideCheck,
-    LucideCalendarSearch,
-    LucideChevronDown,
-    LucideChevronLeft,
-    LucideChevronRight,
-    LucideColumns3Cog,
-    LucideCreditCard,
-    LucideGauge,
-    LucideInfo,
-    LucideScale,
-    LucideSearch,
-    LucideClipboard,
-    LucideShipWheel,
-    LucideTvMinimalPlay,
-    LucideX,
     RouterModule,
     SearchBarComponent,
     PaginationComponent,
@@ -148,6 +115,7 @@ const INVALID_BENCHMARK_URL_TOAST_BODY =
     GpuMemoryPipe,
     Ipv4CountPipe,
     FlowbiteDropdownDirective,
+    Icon,
   ],
   templateUrl: "./server-listing.component.html",
   styleUrl: "./server-listing.component.scss",

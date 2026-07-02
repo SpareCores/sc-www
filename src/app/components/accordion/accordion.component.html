@@ -40,9 +40,9 @@
             {{ item.title }}
           </h4>
           @if (activeIndex() === i) {
-            <svg lucideChevronUp class="h-4 w-4 shrink-0"></svg>
+            <app-icon name="chevron-up" iconClass="h-4 w-4 shrink-0" />
           } @else {
-            <svg lucideChevronDown class="h-4 w-4 shrink-0"></svg>
+            <app-icon name="chevron-down" iconClass="h-4 w-4 shrink-0" />
           }
         </button>
         <p

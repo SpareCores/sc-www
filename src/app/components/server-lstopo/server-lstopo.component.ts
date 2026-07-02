@@ -1,3 +1,4 @@
+import { DragToPanDirective } from "./../../directives/drag-to-pan.directive";
 import {
   ChangeDetectorRef,
   Component,
@@ -15,12 +16,12 @@ import {
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { isPlatformBrowser } from "@angular/common";
 import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
-import { LucideMaximize2 } from "@lucide/angular";
+
 import { Modal, ModalOptions } from "flowbite";
 import { Subscription } from "rxjs";
-import { DragToPanDirective } from "../../directives/drag-to-pan.directive";
 import { LstopoSvgService } from "../../services/lstopo-svg.service";
 import { UiTooltipService } from "../../services/ui-tooltip.service";
+import { Icon } from "../icon/icon.js";
 
 const LSTOPO_CDN_BASE =
   "https://cdn.jsdelivr.net/gh/SpareCores/sc-inspector-data@main/data";
@@ -33,7 +34,7 @@ const lstopoModalOptions: ModalOptions = {
 
 @Component({
   selector: "app-server-lstopo",
-  imports: [LucideMaximize2, DragToPanDirective],
+  imports: [Icon, DragToPanDirective],
   templateUrl: "./server-lstopo.component.html",
   styleUrl: "./server-lstopo.component.scss",
   encapsulation: ViewEncapsulation.None,

@@ -48,19 +48,17 @@
     </h3>
 
     @if (workload().higher_is_better !== false) {
-      <svg
-        lucideCircleArrowUp
-        class="h-4 w-4 text-gray-200 cursor-help"
-        (mouseenter)="showTooltip($event, 'Higher is better.')"
-        (mouseleave)="hideTooltip()"
-      ></svg>
+      <app-icon
+        name="circle-arrow-up"
+        iconClass="h-4 w-4"
+        class="text-gray-200 cursor-help"
+      />
     } @else {
-      <svg
-        lucideCircleArrowDown
-        class="h-4 w-4 text-gray-200 cursor-help"
-        (mouseenter)="showTooltip($event, 'Lower is better.')"
-        (mouseleave)="hideTooltip()"
-      ></svg>
+      <app-icon
+        name="circle-arrow-down"
+        iconClass="h-4 w-4"
+        class="text-gray-200 cursor-help"
+      />
     }
   </div>
 

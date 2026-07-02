@@ -29,12 +29,10 @@
               topSearchHasValue(topSearchParameter) ? 'Clear search' : 'Search'
             "
           >
-            <svg
-              [lucideIcon]="
-                topSearchHasValue(topSearchParameter) ? 'x' : 'search'
-              "
-              class="h-4 w-4"
-            ></svg>
+            <app-icon
+              [name]="topSearchHasValue(topSearchParameter) ? 'x' : 'search'"
+              iconClass="h-4 w-4"
+            />
           </button>
         </div>
       } @else {
@@ -64,10 +62,11 @@
               filterCategoryId === "benchmark" &&
               (parameter.name | benchmarkIcon: "") !== ""
             ) {
-              <svg
-                [lucideIcon]="parameter.name | benchmarkIcon: ''"
-                class="h-4 w-4 text-emerald-400"
-              ></svg>
+              <app-icon
+                [name]="parameter.name | benchmarkIcon: ''"
+                iconClass="h-4 w-4"
+                class="text-emerald-400"
+              />
             }
             <div
               class="font-bold text-emerald-400 text-sm"
@@ -85,7 +84,11 @@
                 (focus)="showTooltip($event, parameter.schema.description)"
                 (blur)="hideTooltip()"
               >
-                <svg lucideInfo class="h-4 w-4 text-gray-200"></svg>
+                <app-icon
+                  name="info"
+                  iconClass="h-4 w-4"
+                  class="text-gray-200"
+                />
               </button>
             }
           </div>
@@ -312,7 +315,11 @@
                   (focus)="showTooltip($event, parameter.schema.description)"
                   (blur)="hideTooltip()"
                 >
-                  <svg lucideInfo class="h-4 w-4 text-gray-200"></svg>
+                  <app-icon
+                    name="info"
+                    iconClass="h-4 w-4"
+                    class="text-gray-200"
+                  />
                 </button>
               }
             </div>
@@ -400,12 +407,13 @@
                     (benchmarkFilterOptionLabel(enum) | benchmarkIcon: "") !==
                     ""
                   ) {
-                    <svg
-                      [lucideIcon]="
+                    <app-icon
+                      [name]="
                         benchmarkFilterOptionLabel(enum) | benchmarkIcon: ''
                       "
-                      class="h-4 w-4 text-emerald-400"
-                    ></svg>
+                      iconClass="h-4 w-4"
+                      class="text-emerald-400"
+                    />
                   }
                   <div class="text-emerald-400 text-sm font-bold">
                     {{ benchmarkFilterOptionLabel(enum) }}
@@ -657,11 +665,11 @@
                       {{ continent.continent }}
                     </div>
                   </div>
-                  <svg
-                    lucideChevronDown
-                    class="h-4 w-4 text-white cursor-pointer"
-                    (click)="collapseItem(continent)"
-                  ></svg>
+                  <app-icon
+                    name="chevron-down"
+                    iconClass="h-4 w-4"
+                    class="text-white cursor-pointer"
+                  />
                 </div>
                 @if (!continent.collapsed) {
                   <div class="flex flex-col gap-3 ml-4">
@@ -731,11 +739,11 @@
                       {{ getVendorDisplayNameById(vendorId) }}
                     </div>
                   </div>
-                  <svg
-                    lucideChevronDown
-                    class="h-4 w-4 text-white cursor-pointer"
-                    (click)="toggleVendorRegionCollapse(vendorId)"
-                  ></svg>
+                  <app-icon
+                    name="chevron-down"
+                    iconClass="h-4 w-4"
+                    class="text-white cursor-pointer"
+                  />
                 </div>
                 @if (!isVendorRegionCollapsed(vendorId)) {
                   <div class="flex flex-col gap-3 ml-4">
@@ -772,10 +780,11 @@
                           {{ getVendorRegionDisplayName(vendorRegion) }}
                         </div>
                         @if (isVendorRegionGreenEnergy(vendorRegion)) {
-                          <svg
-                            lucideLeaf
-                            class="h-4 w-4 text-emerald-400"
-                          ></svg>
+                          <app-icon
+                            name="leaf"
+                            iconClass="h-4 w-4"
+                            class="text-emerald-400"
+                          />
                         }
                       </div>
                     }
@@ -804,11 +813,19 @@
             (keydown.space)="toggleCategory(filter); $event.preventDefault()"
           >
             <div class="text-white flex gap-2 items-center">
-              <svg [lucideIcon]="filter.icon" class="h-4 w-4 text-white"></svg>
+              <app-icon
+                [name]="filter.icon"
+                iconClass="h-4 w-4"
+                class="text-white"
+              />
               <div class="text-sm">{{ filter.name }}</div>
             </div>
             <div>
-              <svg lucideChevronDown class="h-4 w-4 text-white"></svg>
+              <app-icon
+                name="chevron-down"
+                iconClass="h-4 w-4"
+                class="text-white"
+              />
             </div>
           </div>
         }
@@ -852,7 +869,11 @@
                         (focus)="showTooltip($event, control.description)"
                         (blur)="hideTooltip()"
                       >
-                        <svg lucideInfo class="h-4 w-4 text-gray-200"></svg>
+                        <app-icon
+                          name="info"
+                          iconClass="h-4 w-4"
+                          class="text-gray-200"
+                        />
                       </button>
                     }
                   </div>
@@ -903,7 +924,11 @@
                             (focus)="showTooltip($event, control.description)"
                             (blur)="hideTooltip()"
                           >
-                            <svg lucideInfo class="h-4 w-4 text-gray-200"></svg>
+                            <app-icon
+                              name="info"
+                              iconClass="h-4 w-4"
+                              class="text-gray-200"
+                            />
                           </button>
                         }
                       </div>
@@ -978,7 +1003,7 @@
                           (click)="clearServerAutocompleteSelection(control)"
                           aria-label="Clear baseline server selection"
                         >
-                          <svg lucideX class="h-4 w-4"></svg>
+                          <app-icon name="x" iconClass="h-4 w-4" />
                         </button>
                       }
                     </div>
@@ -1061,7 +1086,7 @@
                           "
                           aria-label="Clear workload selection"
                         >
-                          <svg lucideX class="h-4 w-4"></svg>
+                          <app-icon name="x" iconClass="h-4 w-4" />
                         </button>
                       }
                     </div>
@@ -1099,8 +1124,8 @@
                                 "
                               >
                                 <span>{{ group.name }}</span>
-                                <svg
-                                  [lucideIcon]="
+                                <app-icon
+                                  [name]="
                                     isBenchmarkGroupExpanded(
                                       control,
                                       group.name
@@ -1108,8 +1133,8 @@
                                       ? 'chevron-up'
                                       : 'chevron-down'
                                   "
-                                  class="h-4 w-4"
-                                ></svg>
+                                  iconClass="h-4 w-4"
+                                />
                               </button>
 
                               @if (
@@ -1186,14 +1211,15 @@
                         (click)="toggleSingleSelectDropdown(control)"
                       >
                         <span>{{ getCustomSingleSelectLabel(control) }}</span>
-                        <svg
-                          [lucideIcon]="
+                        <app-icon
+                          [name]="
                             isSingleSelectDropdownOpen(control)
                               ? 'chevron-up'
                               : 'chevron-down'
                           "
-                          class="custom-autocomplete__toggle-icon h-4 w-4"
-                        ></svg>
+                          iconClass="h-4 w-4"
+                          class="custom-autocomplete__toggle-icon"
+                        />
                       </button>
                     </div>
 
@@ -1271,7 +1297,7 @@
                       (click)="decrementPowerOfTwoValue(control)"
                       aria-label="Decrease value"
                     >
-                      <svg lucideMinus class="h-4 w-4"></svg>
+                      <app-icon name="minus" iconClass="h-4 w-4" />
                     </button>
 
                     <div class="custom-stepper__field">
@@ -1313,7 +1339,7 @@
                       (click)="incrementPowerOfTwoValue(control)"
                       aria-label="Increase value"
                     >
-                      <svg lucidePlus class="h-4 w-4"></svg>
+                      <app-icon name="plus" iconClass="h-4 w-4" />
                     </button>
                   </div>
                 }

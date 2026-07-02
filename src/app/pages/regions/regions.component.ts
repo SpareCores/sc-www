@@ -19,12 +19,9 @@ import {
 import { CountryIdtoNamePipe } from "../../pipes/country-idto-name.pipe";
 import { FormsModule } from "@angular/forms";
 import { CommonModule, isPlatformBrowser } from "@angular/common";
-import {
-  LucideDynamicIcon,
-  LucideChevronRight,
-  LucideLeaf,
-} from "@lucide/angular";
+
 import { Router, RouterModule } from "@angular/router";
+import { Icon } from "../../components/icon/icon.js";
 
 declare let Datamap: any;
 
@@ -55,9 +52,7 @@ const colors = [
     FormsModule,
     CommonModule,
     RouterModule,
-    LucideDynamicIcon,
-    LucideChevronRight,
-    LucideLeaf,
+    Icon,
   ],
   templateUrl: "./regions.component.html",
   styleUrl: "./regions.component.scss",

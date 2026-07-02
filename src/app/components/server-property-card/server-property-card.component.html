@@ -27,24 +27,22 @@
                 <div class="flex gap-2 items-center">
                   <b>{{ property.name }}</b>
                   @for (tooltip of property.tooltips || []; track tooltip.key) {
-                    <svg
-                      lucideInfo
-                      class="h-4 w-4 text-gray-200 property_info_icon"
-                      (mouseenter)="showTooltip($event, tooltip.content)"
-                      (mouseleave)="hideTooltip()"
-                    ></svg>
+                    <app-icon
+                      name="info"
+                      iconClass="h-4 w-4"
+                      class="text-gray-200 property_info_icon"
+                    />
                   }
                 </div>
               </td>
               <td>
                 @if (property.value === "check" || property.value === "x") {
                   <div class="property_value">
-                    <svg
-                      [lucideIcon]="property.value"
-                      class="h-4 w-4 shrink-0"
-                      [class.text-emerald-400]="property.value === 'check'"
-                      [class.text-white]="property.value === 'x'"
-                    ></svg>
+                    <app-icon
+                      [name]="property.value"
+                      iconClass="h-4 w-4"
+                      class="shrink-0"
+                    />
                   </div>
                 } @else {
                   <div

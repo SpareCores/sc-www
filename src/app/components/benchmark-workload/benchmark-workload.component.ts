@@ -11,9 +11,10 @@ import {
 import { DecimalPipe, isPlatformBrowser } from "@angular/common";
 import { ChartConfiguration, ChartData } from "chart.js";
 import { BaseChartDirective } from "ng2-charts";
-import { LucideCircleArrowDown, LucideCircleArrowUp } from "@lucide/angular";
+
 import { Status } from "../../../../sdk/data-contracts";
 import { UiTooltipService } from "../../services/ui-tooltip.service";
+import { Icon } from "../icon/icon.js";
 import {
   BenchmarkWorkloadExample,
   BenchmarkWorkloadItem,
@@ -33,12 +34,7 @@ interface HistogramBin {
 
 @Component({
   selector: "app-benchmark-workload",
-  imports: [
-    LucideCircleArrowDown,
-    LucideCircleArrowUp,
-    BaseChartDirective,
-    DecimalPipe,
-  ],
+  imports: [BaseChartDirective, DecimalPipe, Icon],
   templateUrl: "./benchmark-workload.component.html",
   styleUrl: "./benchmark-workload.component.scss",
 })

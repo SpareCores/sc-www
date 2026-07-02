@@ -11,7 +11,7 @@ import {
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
-import { LucideDynamicIcon, LucideInfo } from "@lucide/angular";
+
 import { Benchmark } from "../../../../sdk/data-contracts";
 import {
   staticWebChartTemplate,
@@ -35,12 +35,11 @@ import { BenchmarkMultiBarChartItem } from "../charts/multi-bar/benchmark-multi-
 import { ChartTooltipService } from "../charts/shared/chart-tooltip.service";
 import { WorkloadProfilePanelComponent } from "../charts/workload-profile/workload-profile-panel.component";
 import { filterWorkloadProfileBenchmarks } from "../charts/workload-profile/workload-profile.utils";
+import { Icon } from "../icon/icon.js";
 
 @Component({
   selector: "app-server-charts",
   imports: [
-    LucideDynamicIcon,
-    LucideInfo,
     FormsModule,
     RouterModule,
     BenchmarkIconPipe,
@@ -51,6 +50,7 @@ import { filterWorkloadProfileBenchmarks } from "../charts/workload-profile/work
     ServerMemoryChartComponent,
     BenchmarkMultiBarChartComponent,
     WorkloadProfilePanelComponent,
+    Icon,
   ],
   templateUrl: "./server-charts.component.html",
   styleUrl: "./server-charts.component.scss",

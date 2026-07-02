@@ -10,20 +10,7 @@ import {
   BreadcrumbSegment,
   BreadcrumbsComponent,
 } from "../../components/breadcrumbs/breadcrumbs.component";
-import {
-  LucideActivity,
-  LucideCheck,
-  LucideChevronDown,
-  LucideChevronLeft,
-  LucideChevronRight,
-  LucideCircleAlert,
-  LucideCircleCheckBig,
-  LucideCircleX,
-  LucideClock,
-  LucideFunnelX,
-  LucideLink,
-  LucideX,
-} from "@lucide/angular";
+
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
@@ -44,6 +31,7 @@ import {
   SearchQuery,
   ServerStatusFilter,
 } from "./benchmark-coverage.types";
+import { Icon } from "../../components/icon/icon.js";
 import {
   getAssessment,
   normalizeBenchmarkFamilyFilters,
@@ -56,22 +44,11 @@ import {
   selector: "app-benchmark-coverage",
   imports: [
     BreadcrumbsComponent,
-    LucideActivity,
-    LucideCheck,
-    LucideChevronDown,
-    LucideChevronLeft,
-    LucideChevronRight,
-    LucideCircleAlert,
-    LucideCircleCheckBig,
-    LucideCircleX,
-    LucideClock,
-    LucideFunnelX,
-    LucideLink,
-    LucideX,
     RouterModule,
     PercentPipe,
     PageLimitPipe,
     SearchBarComponent,
+    Icon,
   ],
   templateUrl: "./benchmark-coverage.component.html",
   styleUrls: ["./benchmark-coverage.component.scss"],

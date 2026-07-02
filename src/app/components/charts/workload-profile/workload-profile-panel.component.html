@@ -11,23 +11,17 @@
     @if (showHeader()) {
       <div class="flex justify-between items-center mb-4">
         <h3 class="text-2xl flex items-center gap-2">
-          <svg
-            [lucideIcon]="'workload_profile' | benchmarkIcon"
-            class="h-6 w-6"
-          ></svg>
+          <app-icon
+            [name]="'workload_profile' | benchmarkIcon"
+            iconClass="h-6 w-6"
+          />
           Workload Profiles
-          <svg
-            lucideCircleArrowUp
-            class="h-4 w-4 text-gray-200"
-            (mouseenter)="showTooltip($event, 'Higher is better.')"
-            (mouseleave)="hideTooltip()"
-          ></svg>
-          <svg
-            lucideInfo
-            class="h-4 w-4 text-gray-200"
-            (mouseenter)="showTooltip($event, workloadProfileInfoTooltip)"
-            (mouseleave)="hideTooltip()"
-          ></svg>
+          <app-icon
+            name="circle-arrow-up"
+            iconClass="h-4 w-4"
+            class="text-gray-200"
+          />
+          <app-icon name="info" iconClass="h-4 w-4" class="text-gray-200" />
         </h3>
       </div>
     }

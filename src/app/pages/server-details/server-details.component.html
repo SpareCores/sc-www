@@ -49,7 +49,7 @@
                 (click)="openSummarizeModal()"
               >
                 <span>Summarize</span>
-                <svg lucideSparkles class="h-6 w-6"></svg>
+                <app-icon name="sparkles" iconClass="h-6 w-6" />
               </button>
               <button
                 class="btn-primary py-3 px-5 flex gap-2"
@@ -57,7 +57,7 @@
                 (click)="addToCompare()"
               >
                 <span> {{ compareText() }} </span>
-                <svg lucideScale class="h-6 w-6"></svg>
+                <app-icon name="scale" iconClass="h-6 w-6" />
               </button>
             </div>
           </div>
@@ -73,7 +73,7 @@
                 }
                 <div class="flex gap-2 text-xl items-center text-gray-200">
                   <div class="px-1 py-1 rounded-full bg-teal-500 h-6 w-6">
-                    <svg lucideCheck class="h-4 w-4"></svg>
+                    <app-icon name="check" iconClass="h-4 w-4" />
                   </div>
                   <b> {{ feature.value }} </b>
                   <span> {{ feature.name }} </span>
@@ -112,7 +112,7 @@
         class="mx-2 xl:mx-0 mt-8 bg-yellow-500 text-sm text-gray-900 rounded-lg p-4 flex gap-3 items-center"
         role="alert"
       >
-        <svg lucideTriangleAlert class="h-6 w-6 bounce-3"></svg>
+        <app-icon name="triangle-alert" iconClass="h-6 w-6" class="bounce-3" />
         <div>
           <span class="font-bold"
             >Benchmark data is currently unavailable for this server.
@@ -291,7 +291,7 @@
                 aria-label="Open full summary"
               >
                 <span>More details</span>
-                <svg lucideMaximize2 class="h-5 w-5"></svg>
+                <app-icon name="maximize-2" iconClass="h-5 w-5" />
               </button>
             </div>
             @if (serverDescription.tagline) {
@@ -353,10 +353,11 @@
                 <div
                   class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
                 >
-                  <svg
-                    lucideChevronDown
-                    class="h-6 w-6 shrink-0 text-emerald-400"
-                  ></svg>
+                  <app-icon
+                    name="chevron-down"
+                    iconClass="h-6 w-6"
+                    class="shrink-0 text-emerald-400"
+                  />
                 </div>
               </button>
             </div>
@@ -401,7 +402,7 @@
               (click)="openModal()"
             >
               <span> Embed chart </span>
-              <svg lucideCopy class="h-6 w-6"></svg>
+              <app-icon name="copy" iconClass="h-6 w-6" />
             </button>
           </div>
         }
@@ -471,10 +472,11 @@
                 <div
                   class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
                 >
-                  <svg
-                    lucideChevronDown
-                    class="h-6 w-6 shrink-0 text-emerald-400"
-                  ></svg>
+                  <app-icon
+                    name="chevron-down"
+                    iconClass="h-6 w-6"
+                    class="shrink-0 text-emerald-400"
+                  />
                 </div>
               </button>
             </div>
@@ -671,7 +673,7 @@
     (click)="openSummarizeModal()"
     aria-label="Summarize server"
   >
-    <svg lucideSparkles class="h-6 w-6"></svg>
+    <app-icon name="sparkles" iconClass="h-6 w-6" />
   </button>
 }
 

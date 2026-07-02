@@ -110,13 +110,15 @@
           <td>
             <div class="flex gap-1 items-center">
               $Core
-              <svg
-                lucideInfo
-                class="h-4 w-4 shrink-0 text-gray-200"
+              <app-icon name="info" iconClass="h-4 w-4" class="text-gray-200" />
+              <app-icon
+                name="info"
+                iconClass="h-4 w-4"
+                class="text-gray-200 shrink-0"
                 data-cy="compare-score-tooltip-trigger"
                 (mouseenter)="showTooltip($event, SSCoreTooltip)"
                 (mouseleave)="hideTooltip()"
-              ></svg>
+              />
             </div>
           </td>
           @for (
@@ -320,12 +322,18 @@
                   <div class="flex gap-2 items-center">
                     {{ category.name }}
                     @if (category.description) {
-                      <svg
-                        lucideInfo
-                        class="h-4 w-4 shrink-0 text-gray-200"
+                      <app-icon
+                        name="info"
+                        iconClass="h-4 w-4"
+                        class="text-gray-200 shrink-0"
+                      />
+                      <app-icon
+                        name="info"
+                        iconClass="h-4 w-4"
+                        class="text-gray-200 shrink-0"
                         (mouseenter)="showTooltip($event, category.description)"
                         (mouseleave)="hideTooltip()"
-                      ></svg>
+                      />
                     }
                   </div>
                 </td>
@@ -337,12 +345,11 @@
                     @let propertyValue = getProperty(category, server);
                     <div [style]="getBestCellStyle(category.id, server)">
                       @if (propertyValue === "check" || propertyValue === "x") {
-                        <svg
-                          [lucideIcon]="propertyValue"
-                          class="h-4 w-4 shrink-0 justify-self-end"
-                          [class.text-emerald-400]="propertyValue === 'check'"
-                          [class.text-white]="propertyValue === 'x'"
-                        ></svg>
+                        <app-icon
+                          [name]="propertyValue"
+                          iconClass="h-4 w-4"
+                          class="shrink-0 justify-self-end"
+                        />
                       } @else {
                         <span [textContent]="propertyValue"></span>
                       }
@@ -364,28 +371,31 @@
             <div class="compare-section-header-row">
               <h3 class="text-xl font-semibold m-0 flex items-center">
                 <span class="compare-section-header-title">
-                  <svg
-                    [lucideIcon]="'workload_profile' | benchmarkIcon"
-                    class="h-6 w-6 shrink-0"
-                  ></svg>
+                  <app-icon
+                    [name]="'workload_profile' | benchmarkIcon"
+                    iconClass="h-6 w-6"
+                    class="shrink-0"
+                  />
                   <span class="compare-section-header-title__text">
                     Workload Profiles
                   </span>
                   <span class="compare-section-header-title__icons">
-                    <svg
-                      lucideCircleArrowUp
-                      class="h-4 w-4 text-gray-200 shrink-0"
+                    <app-icon
+                      name="circle-arrow-up"
+                      iconClass="h-4 w-4"
+                      class="text-gray-200 shrink-0"
                       (mouseenter)="showTooltip($event, 'Higher is better.')"
                       (mouseleave)="hideTooltip()"
-                    ></svg>
-                    <svg
-                      lucideInfo
-                      class="h-4 w-4 text-gray-200 shrink-0"
+                    />
+                    <app-icon
+                      name="info"
+                      iconClass="h-4 w-4"
+                      class="text-gray-200 shrink-0"
                       (mouseenter)="
                         showTooltip($event, workloadProfileInfoTooltip)
                       "
                       (mouseleave)="hideTooltip()"
-                    ></svg>
+                    />
                   </span>
                 </span>
               </h3>
@@ -398,11 +408,11 @@
                     clipboardURL($event, 'benchmark_line_workload_profile')
                   "
                 >
-                  <svg
-                    [lucideIcon]="clipboardIcon"
-                    size="16"
+                  <app-icon
+                    [name]="clipboardIcon"
+                    iconClass="h-4 w-4"
                     aria-hidden="true"
-                  ></svg>
+                  />
                 </button>
               }
             </div>
@@ -422,11 +432,11 @@
                       clipboardURL($event, 'benchmark_line_workload_profile')
                     "
                   >
-                    <svg
-                      [lucideIcon]="clipboardIcon"
-                      size="16"
+                    <app-icon
+                      [name]="clipboardIcon"
+                      iconClass="h-4 w-4"
                       aria-hidden="true"
-                    ></svg>
+                    />
                   </button>
                 </div>
               }
@@ -473,14 +483,15 @@
                       formatWorkloadProfileLabel(benchmark.name)
                     }}</span>
                     @if (benchmark.description) {
-                      <svg
-                        lucideInfo
-                        class="inline-block h-4 w-4 text-gray-200 ml-1"
+                      <app-icon
+                        name="info"
+                        iconClass="h-4 w-4"
+                        class="inline-block text-gray-200 ml-1"
                         (mouseenter)="
                           showTooltip($event, benchmark.description)
                         "
                         (mouseleave)="hideTooltip()"
-                      ></svg>
+                      />
                     }
                   </div>
                 </div>
@@ -527,93 +538,68 @@
               <div class="compare-section-header-row">
                 <h3 class="text-xl font-semibold m-0 flex items-center">
                   <span class="compare-section-header-title">
-                    <svg
-                      [lucideIcon]="benchmarkCategory.name | benchmarkIcon"
-                      class="h-6 w-6 shrink-0"
-                    ></svg>
+                    <app-icon
+                      [name]="benchmarkCategory.name | benchmarkIcon"
+                      iconClass="h-6 w-6"
+                      class="shrink-0"
+                    />
                     <span class="compare-section-header-title__text">
                       {{ benchmarkCategory.name }}
                     </span>
                     <span class="compare-section-header-title__icons">
-                      <svg
-                        lucideCircleArrowUp
-                        class="h-4 w-4 text-gray-200 shrink-0"
-                        (mouseenter)="showTooltip($event, 'Higher is better.')"
-                        (mouseleave)="hideTooltip()"
-                      ></svg>
+                      <app-icon
+                        name="circle-arrow-up"
+                        iconClass="h-4 w-4"
+                        class="text-gray-200 shrink-0"
+                      />
                       @if (
                         benchmarkCategory.id === "bw_mem" ||
                         benchmarkCategory.id === "openssl"
                       ) {
-                        <svg
-                          lucideInfo
-                          class="h-4 w-4 text-gray-200 shrink-0"
-                          (mouseenter)="
-                            showTooltipChart($event, benchmarkCategory.id)
-                          "
-                          (mouseleave)="hideTooltip()"
-                        ></svg>
+                        <app-icon
+                          name="info"
+                          iconClass="h-4 w-4"
+                          class="text-gray-200 shrink-0"
+                        />
                       }
                       @if (benchmarkCategory.id === "stress_ng") {
-                        <svg
-                          lucideInfo
-                          class="h-4 w-4 text-gray-200 shrink-0"
-                          (mouseenter)="
-                            showTooltipChart($event, 'stress_ng:div16')
-                          "
-                          (mouseleave)="hideTooltip()"
-                        ></svg>
+                        <app-icon
+                          name="info"
+                          iconClass="h-4 w-4"
+                          class="text-gray-200 shrink-0"
+                        />
                       }
                       @if (benchmarkCategory.id === "stress_ng_pct") {
-                        <svg
-                          lucideInfo
-                          class="h-4 w-4 text-gray-200 shrink-0"
-                          (mouseenter)="
-                            showTooltip(
-                              $event,
-                              'The relative performance is a percentage showing the multi-core SCore\'s normalized value (multi-core SCore/vCPUs)  compared to the single-core SCore. This metric shows how well a server can scale to multiple vCPUs, and e.g. the effect of Hyper-Threading.'
-                            )
-                          "
-                          (mouseleave)="hideTooltip()"
-                        ></svg>
+                        <app-icon
+                          name="info"
+                          iconClass="h-4 w-4"
+                          class="text-gray-200 shrink-0"
+                        />
                       }
                       @if (benchmarkCategory.id === "compress") {
-                        <svg
-                          lucideInfo
-                          class="h-4 w-4 text-gray-200 shrink-0"
-                          (mouseenter)="
-                            showTooltip(
-                              $event,
-                              'Measuring the compression ratio and speed while compressing and decompressing the dickens.txt of the Silesia corpus (10 MB uncompressed) using various algorithms, compressions levels and other extra arguments.'
-                            )
-                          "
-                          (mouseleave)="hideTooltip()"
-                        ></svg>
+                        <app-icon
+                          name="info"
+                          iconClass="h-4 w-4"
+                          class="text-gray-200 shrink-0"
+                        />
                       }
                       @if (
                         benchmarkCategory.id === "geekbench" ||
                         benchmarkCategory.id === "geekbench_single" ||
                         benchmarkCategory.id === "geekbench_multi"
                       ) {
-                        <svg
-                          lucideInfo
-                          class="h-4 w-4 text-gray-200 shrink-0"
-                          (mouseenter)="showGeekbenchInfoTooltip($event)"
-                          (mouseleave)="hideTooltip()"
-                        ></svg>
+                        <app-icon
+                          name="info"
+                          iconClass="h-4 w-4"
+                          class="text-gray-200 shrink-0"
+                        />
                       }
                       @if (benchmarkCategory.id === "llm_inference") {
-                        <svg
-                          lucideInfo
-                          class="h-4 w-4 text-gray-200 shrink-0"
-                          (mouseenter)="
-                            showTooltip(
-                              $event,
-                              'Running llama-bench from llama.cpp using various quantized model files to measure the speed of processing 16 to 16k tokens (prompt processing) and generating 16 to 4k tokens (text generation).'
-                            )
-                          "
-                          (mouseleave)="hideTooltip()"
-                        ></svg>
+                        <app-icon
+                          name="info"
+                          iconClass="h-4 w-4"
+                          class="text-gray-200 shrink-0"
+                        />
                       }
                     </span>
                   </span>
@@ -630,11 +616,11 @@
                       )
                     "
                   >
-                    <svg
-                      [lucideIcon]="clipboardIcon"
-                      size="16"
+                    <app-icon
+                      [name]="clipboardIcon"
+                      iconClass="h-4 w-4"
                       aria-hidden="true"
-                    ></svg>
+                    />
                   </button>
                 }
               </div>
@@ -657,11 +643,11 @@
                         )
                       "
                     >
-                      <svg
-                        [lucideIcon]="clipboardIcon"
-                        size="16"
+                      <app-icon
+                        [name]="clipboardIcon"
+                        iconClass="h-4 w-4"
                         aria-hidden="true"
-                      ></svg>
+                      />
                     </button>
                   </div>
                 }
@@ -802,14 +788,11 @@
                     <div class="inline-block gap-2 items-center bg-primary">
                       <span class="inline">{{ benchmarkData.name }}</span>
                       @if (benchmarkData.description) {
-                        <svg
-                          lucideInfo
-                          class="inline-block h-4 w-4 text-gray-200 ml-1"
-                          (mouseenter)="
-                            showTooltip($event, benchmarkData.description)
-                          "
-                          (mouseleave)="hideTooltip()"
-                        ></svg>
+                        <app-icon
+                          name="info"
+                          iconClass="h-4 w-4"
+                          class="inline-block text-gray-200 ml-1"
+                        />
                       }
                     </div>
                   </div>
@@ -858,14 +841,11 @@
                       <div class="flex gap-2 items-center min-w-0">
                         {{ benchmarkData.name }}
                         @if (benchmarkData.description) {
-                          <svg
-                            lucideInfo
-                            class="h-4 w-4 text-gray-200"
-                            (mouseenter)="
-                              showTooltip($event, benchmarkData.description)
-                            "
-                            (mouseleave)="hideTooltip()"
-                          ></svg>
+                          <app-icon
+                            name="info"
+                            iconClass="h-4 w-4"
+                            class="text-gray-200"
+                          />
                         }
                       </div>
                     </div>
@@ -884,11 +864,12 @@
                         "
                         (click)="toggleBenchmark(benchmarkData)"
                       >
-                        <svg
-                          [lucideIcon]="benchmarkIcon(benchmarkData)"
-                          class="h-6 w-6 text-emerald-400"
+                        <app-icon
+                          [name]="benchmarkIcon(benchmarkData)"
+                          iconClass="h-6 w-6"
+                          class="text-emerald-400"
                           aria-hidden="true"
-                        ></svg>
+                        />
                       </button>
                     }
                   </td>
@@ -943,42 +924,29 @@
               <h3
                 class="text-xl font-semibold flex flex-nowrap gap-2 items-center min-w-0"
               >
-                <svg
-                  [lucideIcon]="chartItem.chart.name | benchmarkIcon"
-                  class="h-6 w-6 shrink-0"
-                ></svg>
+                <app-icon
+                  [name]="chartItem.chart.name | benchmarkIcon"
+                  iconClass="h-6 w-6"
+                  class="shrink-0"
+                />
                 <span class="truncate">{{ chartItem.chart.name }}</span>
                 @if (
                   chartItem.chart.options[chartItem.chart.selectedOption].icon
                 ) {
-                  <svg
-                    [lucideIcon]="
+                  <app-icon
+                    [name]="
                       chartItem.chart.options[chartItem.chart.selectedOption]
                         .icon || ''
                     "
-                    class="h-4 w-4 text-gray-200 shrink-0"
-                    (mouseenter)="
-                      showTooltip(
-                        $event,
-                        chartItem.chart.options[chartItem.chart.selectedOption]
-                          .tooltip
-                      )
-                    "
-                    (mouseleave)="hideTooltip()"
-                  ></svg>
+                    iconClass="h-4 w-4"
+                    class="text-gray-200 shrink-0"
+                  />
                 }
-                <svg
-                  lucideInfo
-                  class="h-4 w-4 text-gray-200 shrink-0"
-                  (mouseenter)="
-                    showTooltipChart(
-                      $event,
-                      chartItem.chart.options[chartItem.chart.selectedOption]
-                        .benchmark_id
-                    )
-                  "
-                  (mouseleave)="hideTooltip()"
-                ></svg>
+                <app-icon
+                  name="info"
+                  iconClass="h-4 w-4"
+                  class="text-gray-200 shrink-0"
+                />
               </h3>
             </td>
             @if (getCompareFixedWideActionSpacerColSpan()) {
@@ -1022,14 +990,11 @@
                       <div class="flex gap-2 items-center min-w-0">
                         {{ chartData.name }}
                         @if (chartData.description) {
-                          <svg
-                            lucideInfo
-                            class="h-4 w-4 text-gray-200 shrink-0"
-                            (mouseenter)="
-                              showTooltip($event, chartData.description)
-                            "
-                            (mouseleave)="hideTooltip()"
-                          ></svg>
+                          <app-icon
+                            name="info"
+                            iconClass="h-4 w-4"
+                            class="text-gray-200 shrink-0"
+                          />
                         }
                       </div>
                     </div>
@@ -1048,11 +1013,12 @@
                         "
                         (click)="toggleBenchmark(chartData)"
                       >
-                        <svg
-                          [lucideIcon]="benchmarkIcon(chartData)"
-                          class="h-6 w-6 text-emerald-400"
+                        <app-icon
+                          [name]="benchmarkIcon(chartData)"
+                          iconClass="h-6 w-6"
+                          class="text-emerald-400"
                           aria-hidden="true"
-                        ></svg>
+                        />
                       </button>
                     }
                   </td>
@@ -1110,22 +1076,20 @@
             <td [colSpan]="1" class="compare-fixed-header-label-cell">
               <div class="pl-4">
                 <div class="flex flex-nowrap gap-2 items-center min-w-0">
-                  <svg
-                    [lucideIcon]="benchmarkCategory.name | benchmarkIcon"
-                    class="h-6 w-6 shrink-0"
-                  ></svg>
+                  <app-icon
+                    [name]="benchmarkCategory.name | benchmarkIcon"
+                    iconClass="h-6 w-6"
+                    class="shrink-0"
+                  />
                   <span class="whitespace-nowrap">{{
                     benchmarkCategory.name
                   }}</span>
                   @if (benchmarkCategory.description) {
-                    <svg
-                      lucideInfo
-                      class="h-4 w-4 text-gray-200 shrink-0"
-                      (mouseenter)="
-                        showTooltip($event, benchmarkCategory.description)
-                      "
-                      (mouseleave)="hideTooltip()"
-                    ></svg>
+                    <app-icon
+                      name="info"
+                      iconClass="h-4 w-4"
+                      class="text-gray-200 shrink-0"
+                    />
                   }
                 </div>
               </div>
@@ -1145,11 +1109,12 @@
                   "
                   (click)="toggleBenchmark(benchmarkCategory)"
                 >
-                  <svg
-                    [lucideIcon]="benchmarkIcon(benchmarkCategory)"
-                    class="h-6 w-6 text-emerald-400 shrink-0"
+                  <app-icon
+                    [name]="benchmarkIcon(benchmarkCategory)"
+                    iconClass="h-6 w-6"
+                    class="text-emerald-400 shrink-0"
                     aria-hidden="true"
-                  ></svg>
+                  />
                 </button>
               }
             </td>

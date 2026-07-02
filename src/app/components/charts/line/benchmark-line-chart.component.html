@@ -4,27 +4,21 @@
       <div class="flex justify-between items-center">
         <h3 class="text-2xl flex items-center gap-2">
           @if (benchmarkKey()) {
-            <svg
-              [lucideIcon]="benchmarkKey() | benchmarkIcon"
-              class="h-6 w-6"
-            ></svg>
+            <app-icon
+              [name]="benchmarkKey() | benchmarkIcon"
+              iconClass="h-6 w-6"
+            />
           }
           {{ title() }}
           @if (orderTooltip()) {
-            <svg
-              lucideCircleArrowUp
-              class="h-4 w-4 text-gray-200"
-              (mouseenter)="showTooltip($event, orderTooltip())"
-              (mouseleave)="hideTooltip()"
-            ></svg>
+            <app-icon
+              name="circle-arrow-up"
+              iconClass="h-4 w-4"
+              class="text-gray-200"
+            />
           }
           @if (infoTooltip()) {
-            <svg
-              lucideInfo
-              class="h-4 w-4 text-gray-200"
-              (mouseenter)="showTooltip($event, infoTooltip())"
-              (mouseleave)="hideTooltip()"
-            ></svg>
+            <app-icon name="info" iconClass="h-4 w-4" class="text-gray-200" />
           }
         </h3>
         @if (hasSelector()) {
@@ -40,10 +34,11 @@
               {{ resolvedSelectedOptionName() }}
             </div>
             <div class="chart-selector-button__icon">
-              <svg
-                lucideChevronDown
-                class="h-6 w-6 shrink-0 text-emerald-400"
-              ></svg>
+              <app-icon
+                name="chevron-down"
+                iconClass="h-6 w-6"
+                class="shrink-0 text-emerald-400"
+              />
             </div>
           </button>
         }
@@ -90,10 +85,11 @@
               {{ resolvedSelectedOptionName() }}
             </div>
             <div class="chart-selector-button__icon">
-              <svg
-                lucideChevronDown
-                class="h-6 w-6 shrink-0 text-emerald-400"
-              ></svg>
+              <app-icon
+                name="chevron-down"
+                iconClass="h-6 w-6"
+                class="shrink-0 text-emerald-400"
+              />
             </div>
           </button>
         </div>

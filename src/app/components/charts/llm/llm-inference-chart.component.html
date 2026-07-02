@@ -5,23 +5,17 @@
         <div class="block_half" id="llm_prompt_chart">
           <div class="flex justify-between items-center">
             <h3 class="text-2xl flex items-center gap-2">
-              <svg
-                [lucideIcon]="'llm_speed' | benchmarkIcon"
-                class="h-6 w-6"
-              ></svg>
+              <app-icon
+                [name]="'llm_speed' | benchmarkIcon"
+                iconClass="h-6 w-6"
+              />
               LLM Inference Speed for Prompt Processing
-              <svg
-                lucideCircleArrowUp
-                class="h-4 w-4 text-gray-200"
-                (mouseenter)="showTooltip($event, orderTooltip)"
-                (mouseleave)="hideTooltip()"
-              ></svg>
-              <svg
-                lucideInfo
-                class="h-4 w-4 text-gray-200"
-                (mouseenter)="showTooltip($event, promptInfoTooltip())"
-                (mouseleave)="hideTooltip()"
-              ></svg>
+              <app-icon
+                name="circle-arrow-up"
+                iconClass="h-4 w-4"
+                class="text-gray-200"
+              />
+              <app-icon name="info" iconClass="h-4 w-4" class="text-gray-200" />
             </h3>
           </div>
           @if (isBrowser) {
@@ -45,23 +39,17 @@
         <div class="block_half" id="llm_generation_chart">
           <div class="flex justify-between items-center">
             <h3 class="text-2xl flex items-center gap-2">
-              <svg
-                [lucideIcon]="'llm_speed' | benchmarkIcon"
-                class="h-6 w-6"
-              ></svg>
+              <app-icon
+                [name]="'llm_speed' | benchmarkIcon"
+                iconClass="h-6 w-6"
+              />
               LLM Inference Speed for Text Generation
-              <svg
-                lucideCircleArrowUp
-                class="h-4 w-4 text-gray-200"
-                (mouseenter)="showTooltip($event, orderTooltip)"
-                (mouseleave)="hideTooltip()"
-              ></svg>
-              <svg
-                lucideInfo
-                class="h-4 w-4 text-gray-200"
-                (mouseenter)="showTooltip($event, generationInfoTooltip())"
-                (mouseleave)="hideTooltip()"
-              ></svg>
+              <app-icon
+                name="circle-arrow-up"
+                iconClass="h-4 w-4"
+                class="text-gray-200"
+              />
+              <app-icon name="info" iconClass="h-4 w-4" class="text-gray-200" />
             </h3>
           </div>
           @if (isBrowser) {
@@ -99,10 +87,11 @@
               {{ currentModelName() }}
             </div>
             <div class="chart-selector-button__icon">
-              <svg
-                lucideChevronDown
-                class="h-6 w-6 shrink-0 text-emerald-400"
-              ></svg>
+              <app-icon
+                name="chevron-down"
+                iconClass="h-6 w-6"
+                class="shrink-0 text-emerald-400"
+              />
             </div>
           </button>
         </div>

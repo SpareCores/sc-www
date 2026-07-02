@@ -9,13 +9,7 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { RouterModule, ActivatedRoute, Params, Router } from "@angular/router";
-import {
-  LucideDynamicIcon,
-  LucideChevronDown,
-  LucideChevronLeft,
-  LucideDollarSign,
-  LucideInfo,
-} from "@lucide/angular";
+
 import { OrderDir } from "../../../../sdk/data-contracts";
 import {
   BreadcrumbsComponent,
@@ -34,6 +28,7 @@ import {
 import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
 import { Subscription } from "rxjs";
 import openApiSpec from "../../../../sdk/openapi.json";
+import { Icon } from "../../components/icon/icon.js";
 
 @Component({
   selector: "app-traffic-prices",
@@ -41,16 +36,12 @@ import openApiSpec from "../../../../sdk/openapi.json";
     CommonModule,
     FormsModule,
     BreadcrumbsComponent,
-    LucideDynamicIcon,
-    LucideChevronDown,
-    LucideChevronLeft,
-    LucideDollarSign,
-    LucideInfo,
     RouterModule,
     SearchBarComponent,
     PaginationComponent,
     LoadingSpinnerComponent,
     FlowbiteDropdownDirective,
+    Icon,
   ],
   templateUrl: "./traffic-prices.component.html",
   styleUrl: "./traffic-prices.component.scss",

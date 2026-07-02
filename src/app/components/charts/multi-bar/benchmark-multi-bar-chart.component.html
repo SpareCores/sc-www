@@ -3,22 +3,16 @@
     <div class="block_half" id="{{ chart().id }}_chart">
       <div class="flex justify-between items-center">
         <h3 class="text-2xl flex items-center gap-2">
-          <svg [lucideIcon]="chart().id | benchmarkIcon" class="h-6 w-6"></svg>
+          <app-icon [name]="chart().id | benchmarkIcon" iconClass="h-6 w-6" />
           <span class="whitespace-nowrap">{{ chart().name }}</span>
           @if (currentOption().icon) {
-            <svg
-              [lucideIcon]="currentOption().icon || 'circle-arrow-up'"
-              class="benchmark-direction-icon h-4 w-4 text-gray-200"
-              (mouseenter)="showTooltip($event, currentOption().tooltip)"
-              (mouseleave)="hideTooltip()"
-            ></svg>
+            <app-icon
+              [name]="currentOption().icon || 'circle-arrow-up'"
+              iconClass="h-4 w-4"
+              class="benchmark-direction-icon text-gray-200"
+            />
           }
-          <svg
-            lucideInfo
-            class="h-4 w-4 text-gray-200"
-            (mouseenter)="showTooltip($event, currentBenchmarkDescription())"
-            (mouseleave)="hideTooltip()"
-          ></svg>
+          <app-icon name="info" iconClass="h-4 w-4" class="text-gray-200" />
         </h3>
         <button
           #primaryDropdown="appFlowbiteDropdown"
@@ -35,10 +29,11 @@
             {{ currentOption().name }}
           </div>
           <div class="chart-selector-button__icon">
-            <svg
-              lucideChevronDown
-              class="h-6 w-6 shrink-0 text-emerald-400"
-            ></svg>
+            <app-icon
+              name="chevron-down"
+              iconClass="h-6 w-6"
+              class="shrink-0 text-emerald-400"
+            />
           </div>
         </button>
       </div>
@@ -78,10 +73,11 @@
               {{ currentSecondaryOption()?.name }}
             </div>
             <div class="chart-selector-button__icon">
-              <svg
-                lucideChevronDown
-                class="h-6 w-6 shrink-0 text-emerald-400"
-              ></svg>
+              <app-icon
+                name="chevron-down"
+                iconClass="h-6 w-6"
+                class="shrink-0 text-emerald-400"
+              />
             </div>
           </button>
         }
@@ -100,10 +96,11 @@
             {{ currentOption().name }}
           </div>
           <div class="chart-selector-button__icon">
-            <svg
-              lucideChevronDown
-              class="h-6 w-6 shrink-0 text-emerald-400"
-            ></svg>
+            <app-icon
+              name="chevron-down"
+              iconClass="h-6 w-6"
+              class="shrink-0 text-emerald-400"
+            />
           </div>
         </button>
       </div>

@@ -10,7 +10,7 @@
     <div class="flex flex-col gap-4 my-8 mx-2 xl:mx-0">
       <div class="advisor-hero-header">
         <h1 class="text-white font-bold text-3xl flex items-center">
-          <svg lucideBot class="h-8 w-8 mr-2"></svg>
+          <app-icon name="bot" iconClass="h-8 w-8" class="mr-2" />
           {{ title }}
         </h1>
         <div class="advisor-hero-actions">
@@ -20,7 +20,7 @@
             [queryParams]="advisorExampleQueryParams"
             class="advisor-header-action btn-primary-outline"
           >
-            <svg lucideDices class="h-4 w-4"></svg>
+            <app-icon name="dices" iconClass="h-4 w-4" />
             Example
           </a>
           <button
@@ -29,7 +29,7 @@
             class="advisor-header-action btn-primary-outline"
             (click)="openIntroductionModal()"
           >
-            <svg lucideTvMinimalPlay class="h-4 w-4"></svg>
+            <app-icon name="tv-minimal-play" iconClass="h-4 w-4" />
             Introduction
           </button>
           <button
@@ -40,9 +40,9 @@
           >
             Share
             @if (clipboardIcon() === "check") {
-              <svg lucideCheck class="h-4 w-4"></svg>
+              <app-icon name="check" iconClass="h-4 w-4" />
             } @else {
-              <svg lucideClipboard class="h-4 w-4"></svg>
+              <app-icon name="clipboard" iconClass="h-4 w-4" />
             }
           </button>
         </div>
@@ -132,15 +132,17 @@
           (keydown.space)="toggleCollapse(); $event.preventDefault()"
         >
           @if (isCollapsed()) {
-            <svg
-              lucideChevronRight
-              class="advisor-filter-bar-collapser-icon h-6 w-6 text-emerald-400"
-            ></svg>
+            <app-icon
+              name="chevron-right"
+              iconClass="h-6 w-6"
+              class="advisor-filter-bar-collapser-icon text-emerald-400"
+            />
           } @else {
-            <svg
-              lucideChevronLeft
-              class="advisor-filter-bar-collapser-icon h-6 w-6 text-emerald-400"
-            ></svg>
+            <app-icon
+              name="chevron-left"
+              iconClass="h-6 w-6"
+              class="advisor-filter-bar-collapser-icon text-emerald-400"
+            />
           }
         </div>
 
@@ -166,7 +168,7 @@
                 class="text-white bg-emerald-400 hover:bg-emerald-500 rounded-lg px-3 py-2 relative flex gap-2 items-center justify-center"
                 (click)="clearFilters()"
               >
-                <svg lucideFunnelX class="h-4 w-4"></svg>
+                <app-icon name="funnel-x" iconClass="h-4 w-4" />
                 Clear filters
               </button>
             </div>
@@ -205,7 +207,7 @@
             [disabled]="!selectedBaselineServer()"
             (click)="toggleBaselineCompare()"
           >
-            <svg lucideScale class="h-4 w-4"></svg>
+            <app-icon name="scale" iconClass="h-4 w-4" />
             {{ baselineCompareButtonLabel() }}
           </button>
 
@@ -224,10 +226,11 @@
                 <div
                   class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
                 >
-                  <svg
-                    lucideCreditCard
-                    class="h-6 w-6 shrink-0 text-emerald-400"
-                  ></svg>
+                  <app-icon
+                    name="credit-card"
+                    iconClass="h-6 w-6"
+                    class="shrink-0 text-emerald-400"
+                  />
                 </div>
               </button>
             </div>
@@ -243,10 +246,11 @@
                 <div
                   class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
                 >
-                  <svg
-                    lucideColumns3Cog
-                    class="h-6 w-6 shrink-0 text-emerald-400"
-                  ></svg>
+                  <app-icon
+                    name="columns-3-cog"
+                    iconClass="h-6 w-6"
+                    class="shrink-0 text-emerald-400"
+                  />
                 </div>
               </button>
             </div>
@@ -273,7 +277,7 @@
                 <tr>
                   <th class="advisor-checkbox-column">
                     <div class="text-white">
-                      <svg lucideScale class="h-4 w-4"></svg>
+                      <app-icon name="scale" iconClass="h-4 w-4" />
                     </div>
                   </th>
                   @for (column of tableColumns(); track column.name) {
@@ -284,24 +288,25 @@
                       <div class="flex gap-1 whitespace-nowrap">
                         {{ column.name }}
                         @if (column.info) {
-                          <svg
-                            lucideInfo
-                            (mouseenter)="showTooltip($event, column.info)"
-                            (mouseleave)="hideTooltip()"
-                            class="h-4 w-4 text-gray-200"
-                          ></svg>
+                          <app-icon
+                            name="info"
+                            iconClass="h-4 w-4"
+                            class="text-gray-200"
+                          />
                         }
                         @if (getOrderingIcon(column); as orderingIcon) {
                           @if (orderingIcon === "arrow-down-wide-narrow") {
-                            <svg
-                              lucideArrowDownWideNarrow
-                              class="h-4 w-4 text-white"
-                            ></svg>
+                            <app-icon
+                              name="arrow-down-wide-narrow"
+                              iconClass="h-4 w-4"
+                              class="text-white"
+                            />
                           } @else {
-                            <svg
-                              lucideArrowDownNarrowWide
-                              class="h-4 w-4 text-white"
-                            ></svg>
+                            <app-icon
+                              name="arrow-down-narrow-wide"
+                              iconClass="h-4 w-4"
+                              class="text-white"
+                            />
                           }
                         }
                       </div>
@@ -1297,10 +1302,11 @@
                             recommendation.api_reference,
                           ]"
                         >
-                          <svg
-                            lucideChevronRight
-                            class="h-6 w-6 text-emerald-400"
-                          ></svg>
+                          <app-icon
+                            name="chevron-right"
+                            iconClass="h-6 w-6"
+                            class="text-emerald-400"
+                          />
                         </a>
                       </div>
                     </td>
@@ -1372,10 +1378,11 @@
                 <div
                   class="px-2 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
                 >
-                  <svg
-                    lucideChevronDown
-                    class="h-6 w-6 shrink-0 text-emerald-400"
-                  ></svg>
+                  <app-icon
+                    name="chevron-down"
+                    iconClass="h-6 w-6"
+                    class="shrink-0 text-emerald-400"
+                  />
                 </div>
               </button>
               <span class="text-white"> items per page</span>

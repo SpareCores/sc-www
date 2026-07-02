@@ -10,11 +10,6 @@ import {
   viewChild,
   output,
 } from "@angular/core";
-import {
-  LucideDynamicIcon,
-  LucideCircleArrowUp,
-  LucideInfo,
-} from "@lucide/angular";
 import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon.pipe";
 import { AccordionComponent } from "../../accordion/accordion.component";
 import { ChartTooltipService } from "../shared/chart-tooltip.service";
@@ -28,18 +23,17 @@ import {
   WORKLOAD_PROFILE_INFO_TOOLTIP,
   filterWorkloadProfileBenchmarks,
 } from "./workload-profile.utils";
+import { Icon } from "../../icon/icon";
 
 @Component({
   selector: "app-workload-profile-panel",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    LucideDynamicIcon,
-    LucideCircleArrowUp,
-    LucideInfo,
     BenchmarkIconPipe,
     AccordionComponent,
     WorkloadProfileRadarChartComponent,
+    Icon,
   ],
   templateUrl: "./workload-profile-panel.component.html",
   styleUrls: ["./workload-profile-panel.component.scss"],

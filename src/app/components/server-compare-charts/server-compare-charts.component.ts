@@ -11,11 +11,7 @@ import {
   inject,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
-import {
-  LucideDynamicIcon,
-  LucideCircleArrowUp,
-  LucideInfo,
-} from "@lucide/angular";
+
 import { ExtendedServerDetails } from "../../pages/server-details/server-details.component";
 import { Allocation } from "../../../../sdk/data-contracts";
 import {
@@ -69,6 +65,7 @@ import {
   WorkloadProfileCompareBenchmark,
   WorkloadProfileCompareServer,
 } from "../charts/workload-profile/workload-profile-radar-chart.types";
+import { Icon } from "../icon/icon.js";
 import {
   formatNumberWithCommas,
   getBestBenchmarkCellStyle,
@@ -81,9 +78,6 @@ import {
   selector: "app-server-compare-charts",
   imports: [
     CommonModule,
-    LucideDynamicIcon,
-    LucideCircleArrowUp,
-    LucideInfo,
     RouterModule,
     CompactNumberPipe,
     BenchmarkIconPipe,
@@ -94,6 +88,7 @@ import {
     ServerCompareMemoryChartComponent,
     BenchmarkMultiBarChartComponent,
     WorkloadProfilePanelComponent,
+    Icon,
   ],
   templateUrl: "./server-compare-charts.component.html",
   styleUrl: "./server-compare-charts.component.scss",

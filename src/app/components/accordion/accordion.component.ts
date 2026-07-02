@@ -1,6 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { Component, input, output } from "@angular/core";
-import { LucideChevronDown, LucideChevronUp } from "@lucide/angular";
+import { Icon } from "../icon/icon";
 
 export type AccordionItem = {
   title: string;
@@ -11,7 +11,7 @@ export type AccordionItem = {
 
 @Component({
   selector: "app-accordion",
-  imports: [CommonModule, LucideChevronDown, LucideChevronUp],
+  imports: [CommonModule, Icon],
   templateUrl: "./accordion.component.html",
 })
 export class AccordionComponent {

@@ -23,12 +23,7 @@ import {
   BreadcrumbSegment,
   BreadcrumbsComponent,
 } from "../../components/breadcrumbs/breadcrumbs.component";
-import {
-  LucideDynamicIcon,
-  LucideChevronDown,
-  LucideCopy,
-  LucideScale,
-} from "@lucide/angular";
+
 import { CommonModule, isPlatformBrowser } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { SeoHandlerService } from "../../services/seo-handler.service";
@@ -58,6 +53,7 @@ import {
   getCompareMemoryChartOption,
   type CompareMemoryChartOption,
 } from "../../components/charts/shared/memory-chart.types";
+import { Icon } from "../../components/icon/icon.js";
 import {
   type MemoryBenchmarkConfig,
   type MemoryBenchmarkMeta,
@@ -93,10 +89,6 @@ type CompareTableBenchmarkMeta = Omit<
   selector: "app-server-compare",
   imports: [
     BreadcrumbsComponent,
-    LucideDynamicIcon,
-    LucideChevronDown,
-    LucideCopy,
-    LucideScale,
     CommonModule,
     FormsModule,
     RouterModule,
@@ -104,6 +96,7 @@ type CompareTableBenchmarkMeta = Omit<
     EmbedComparePreviewComponent,
     LoadingSpinnerComponent,
     FlowbiteDropdownDirective,
+    Icon,
   ],
   templateUrl: "./server-compare.component.html",
   styleUrl: "./server-compare.component.scss",

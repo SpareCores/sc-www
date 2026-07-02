@@ -9,15 +9,12 @@ import {
   input,
   viewChild,
 } from "@angular/core";
-import {
-  LucideDynamicIcon,
-  LucideCircleArrowUp,
-  LucideInfo,
-} from "@lucide/angular";
+
 import { BaseChartDirective } from "ng2-charts";
 import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon.pipe";
 import { ChartTooltipService } from "../shared/chart-tooltip.service";
 import { GeekbenchRadarChartBuilderService } from "./geekbench-radar-chart-builder.service";
+import { Icon } from "../../icon/icon.js";
 import {
   GeekbenchBenchmarkGroup,
   GeekbenchBenchmarkMeta,
@@ -30,14 +27,7 @@ import {
 @Component({
   selector: "app-geekbench-radar-chart",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    CommonModule,
-    LucideDynamicIcon,
-    LucideCircleArrowUp,
-    LucideInfo,
-    BaseChartDirective,
-    BenchmarkIconPipe,
-  ],
+  imports: [CommonModule, BaseChartDirective, BenchmarkIconPipe, Icon],
   templateUrl: "./geekbench-radar-chart.component.html",
   styles: [
     `
