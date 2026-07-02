@@ -20,12 +20,12 @@
       [attr.aria-label]="bannerMessage.ariaLabel"
     >
       {{ bannerMessage.ctaLabel }}
-      <svg lucideChevronRight class="h-4 w-4"></svg>
+      <app-icon name="chevron-right" iconClass="h-4 w-4" />
     </a>
     } @else if (bannerMessage.ctaLabel && bannerMessage.ctaId) {
     <button [id]="bannerMessage.ctaId" type="button" class="promo-banner__cta">
       {{ bannerMessage.ctaLabel }}
-      <svg lucideChevronRight class="h-4 w-4"></svg>
+      <app-icon name="chevron-right" iconClass="h-4 w-4" />
     </button>
     } @if (dismissible()) {
     <button
@@ -34,7 +34,7 @@
       aria-label="Dismiss promo banner"
       (click)="dismiss($event)"
     >
-      <svg lucideX class="h-4 w-4"></svg>
+      <app-icon name="x" iconClass="h-4 w-4" />
     </button>
     }
   </div>
