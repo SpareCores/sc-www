@@ -53,6 +53,18 @@ import {
   MultiBarServer,
 } from "../charts/multi-bar/benchmark-multi-bar-chart.types";
 import { ChartTooltipService } from "../charts/shared/chart-tooltip.service";
+import {
+  WORKLOAD_PROFILE_INFO_TOOLTIP,
+  formatWorkloadProfileLabel,
+  isWorkloadProfileBenchmark,
+  filterWorkloadProfileBenchmarks,
+} from "../charts/workload-profile/workload-profile.utils";
+import { WorkloadProfilePanelComponent } from "../charts/workload-profile/workload-profile-panel.component";
+import {
+  WorkloadProfileBenchmarkMeta,
+  WorkloadProfileCompareBenchmark,
+  WorkloadProfileCompareServer,
+} from "../charts/workload-profile/workload-profile-radar-chart.types";
 import { Icon } from "../icon/icon.js";
 import {
   formatNumberWithCommas,
@@ -75,6 +87,7 @@ import {
     LlmInferenceChartComponent,
     ServerCompareMemoryChartComponent,
     BenchmarkMultiBarChartComponent,
+    WorkloadProfilePanelComponent,
     Icon,
   ],
   templateUrl: "./server-compare-charts.component.html",
@@ -126,6 +139,7 @@ export class ServerCompareChartsComponent implements OnChanges {
   ];
 
   clipboardIcon = "clipboard";
+  workloadProfileShowMore = false;
 
   ngOnChanges() {
     this.setup();
@@ -415,6 +429,9 @@ export class ServerCompareChartsComponent implements OnChanges {
     return formatNumberWithCommas(x);
   }
 
+  readonly workloadProfileInfoTooltip = WORKLOAD_PROFILE_INFO_TOOLTIP;
+  readonly formatWorkloadProfileLabel = formatWorkloadProfileLabel;
+
   showTooltip(el: MouseEvent, content?: string, autoHide = false) {
     this.tooltipHtml = "";
     const didShow = this.tooltipService.showIfPresent({
@@ -552,6 +569,42 @@ export class ServerCompareChartsComponent implements OnChanges {
     return this.servers as unknown as LlmChartServer[];
   }
 
+  getWorkloadProfileBenchmarks(): WorkloadProfileCompareBenchmark[] {
+    return filterWorkloadProfileBenchmarks(
+      (this.benchmarkMeta ?? []) as WorkloadProfileCompareBenchmark[],
+    );
+  }
+
+  getVisibleInstanceProperties(propertyCategory: {
+    category: string;
+    properties: Array<{
+      id: string;
+      name: string;
+      description?: string;
+    }>;
+  }) {
+    return propertyCategory.properties.filter(
+      (property) =>
+        !isCompareMetadataPropertyHidden(
+          propertyCategory.category,
+          property.id,
+        ),
+    );
+  }
+
+  get workloadProfileCompareServers(): WorkloadProfileCompareServer[] {
+    return this.servers as unknown as WorkloadProfileCompareServer[];
+  }
+
+  get workloadProfileBenchmarkMeta(): WorkloadProfileBenchmarkMeta[] {
+    return this.benchmarkMeta as unknown as WorkloadProfileBenchmarkMeta[];
+  }
+
+  toggleWorkloadProfileDetails(): void {
+    this.workloadProfileShowMore = !this.workloadProfileShowMore;
+    this.layoutChanged.emit();
+  }
+
   getUncategorizedBenchmarksCategories() {
     return this.benchmarkMeta?.filter((b: any) =>
       this.isUncagorizedBenchmark(b),
@@ -567,6 +620,7 @@ export class ServerCompareChartsComponent implements OnChanges {
       found = found || benchmarks.includes(benchmark.benchmark_id);
     });
     return (
+      !isWorkloadProfileBenchmark(benchmark) &&
       !found &&
       !this.benchmarkCategories.some((c: any) =>
         c.benchmarks.includes(benchmark.benchmark_id),

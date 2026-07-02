@@ -38,6 +38,9 @@ export class BenchmarkIconPipe implements PipeTransform {
         return "image-up";
       case lowerCase.includes("stress_ng"):
         return "cpu";
+      case lowerCase.includes("workload_profile"):
+      case lowerCase.includes("workload"):
+        return "activity";
       default:
         return fallback;
     }

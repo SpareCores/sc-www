@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { ServerCompareChartsComponent } from "./server-compare-charts.component";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
+import { Status } from "../../../../sdk/data-contracts";
 
 describe("ServerCompareChartsComponent", () => {
   let component: ServerCompareChartsComponent;
@@ -79,6 +80,7 @@ describe("ServerCompareChartsComponent", () => {
         description: "OpenSSL benchmark",
         collapsed: true,
         configs: [],
+        status: Status.Active,
       },
     ];
     component.benchmarkCategories = [
@@ -154,6 +156,7 @@ describe("ServerCompareChartsComponent", () => {
         description: "OpenSSL benchmark",
         collapsed: true,
         configs: [],
+        status: Status.Active,
       },
     ];
     component.benchmarkCategories = [
@@ -249,6 +252,7 @@ describe("ServerCompareChartsComponent", () => {
         description: "OpenSSL benchmark",
         collapsed: true,
         configs: [],
+        status: Status.Active,
       },
     ];
     component.benchmarkCategories = [
@@ -296,6 +300,7 @@ describe("ServerCompareChartsComponent", () => {
         description: "LLM inference benchmark",
         collapsed: true,
         configs: [],
+        status: Status.Active,
       },
     ];
     component.benchmarkCategories = [
@@ -387,6 +392,7 @@ describe("ServerCompareChartsComponent", () => {
         description: "Latency benchmark",
         collapsed: true,
         configs: [{ config: { size_kb: 16 }, values: [1, 2, 3] }],
+        status: Status.Active,
       },
       {
         benchmark_id: "sc-membench:write",
@@ -395,6 +401,7 @@ describe("ServerCompareChartsComponent", () => {
         description: "Write benchmark",
         collapsed: true,
         configs: [{ config: { size_kb: 16 }, values: [4, 5, 6] }],
+        status: Status.Active,
       },
     ];
     component.benchmarkCategories = [
@@ -410,6 +417,7 @@ describe("ServerCompareChartsComponent", () => {
             description: "Latency benchmark",
             collapsed: true,
             configs: [{ config: { size_kb: 16 }, values: [1, 2, 3] }],
+            status: Status.Active,
           },
           {
             benchmark_id: "sc-membench:write",
@@ -418,6 +426,7 @@ describe("ServerCompareChartsComponent", () => {
             description: "Write benchmark",
             collapsed: true,
             configs: [{ config: { size_kb: 16 }, values: [4, 5, 6] }],
+            status: Status.Active,
           },
         ],
         show_more: true,
@@ -450,7 +459,7 @@ describe("ServerCompareChartsComponent", () => {
     expect(cells?.[2].querySelector("svg")).toBeTruthy();
   });
 
-  it("renders Further Benchmarks labels in a standalone sticky label cell", () => {
+  it("renders workload profiles in a dedicated section above benchmark categories", () => {
     component.servers = [
       {
         vendor_id: "aws",
@@ -478,35 +487,24 @@ describe("ServerCompareChartsComponent", () => {
         configs: [
           {
             config: { profile: "web" },
-            values: [10, 20],
+            values: [10, 20, 30],
           },
         ],
+        status: Status.Active,
       },
     ];
 
     fixture.detectChanges();
 
-    const tableRows = Array.from(
-      (fixture.nativeElement as HTMLElement).querySelectorAll("tbody tr"),
-    ) as HTMLTableRowElement[];
+    const root = fixture.nativeElement as HTMLElement;
 
-    const benchmarkRow = tableRows.find((row) =>
-      row.textContent?.includes("Workload profile: Web server"),
-    );
-
-    expect(benchmarkRow).toBeDefined();
-
-    const cells = benchmarkRow?.querySelectorAll("td");
-
-    expect(cells?.length).toBe(3);
-    expect(cells?.[0].getAttribute("colspan")).toBe("1");
-    expect(cells?.[0].textContent).toContain("Workload profile: Web server");
-    expect(cells?.[1].getAttribute("colspan")).toBe("2");
-    expect(cells?.[2].getAttribute("colspan")).toBe("1");
-    expect(cells?.[2].querySelector("svg")).toBeTruthy();
+    expect(root.querySelector("#benchmark_line_workload_profile")).toBeTruthy();
+    expect(root.querySelector("app-workload-profile-panel")).toBeTruthy();
+    expect(root.textContent).toContain("Web server");
+    expect(root.textContent).not.toContain("Further Benchmarks");
   });
 
-  it("keeps the narrow sticky label spacer to one server column for two compared servers", () => {
+  it("renders flat workload profile detail rows for compared servers", () => {
     component.servers = [
       {
         vendor_id: "aws",
@@ -532,26 +530,45 @@ describe("ServerCompareChartsComponent", () => {
             values: [10, 20],
           },
         ],
+        status: Status.Active,
       },
     ];
 
+    fixture.detectChanges();
+
+    component.toggleWorkloadProfileDetails();
     fixture.detectChanges();
 
     const tableRows = Array.from(
       (fixture.nativeElement as HTMLElement).querySelectorAll("tbody tr"),
     ) as HTMLTableRowElement[];
 
-    const benchmarkRow = tableRows.find((row) =>
-      row.textContent?.includes("Workload profile: Web server"),
-    );
+    const benchmarkRow = tableRows.find((row) => {
+      const cells = row.querySelectorAll(":scope > td");
+      return (
+        cells.length === 3 &&
+        cells[0].textContent?.includes("Web server") &&
+        !cells[0].textContent?.includes("Workload profile:")
+      );
+    });
 
     expect(benchmarkRow).toBeDefined();
+    expect(
+      benchmarkRow?.classList.contains("compare-fixed-header-row"),
+    ).toBeFalse();
 
     const cells = benchmarkRow?.querySelectorAll(":scope > td");
 
     expect(cells?.length).toBe(3);
-    expect(cells?.[0].getAttribute("colspan")).toBe("1");
-    expect(cells?.[1].getAttribute("colspan")).toBe("1");
-    expect(cells?.[2].getAttribute("colspan")).toBe("1");
+    expect(cells?.[0].textContent).toContain("Web server");
+    expect(cells?.[1].classList.contains("compact-number")).toBeTrue();
+    expect(cells?.[1].textContent?.trim()).toBe("10.00");
+    expect(cells?.[2].classList.contains("compact-number")).toBeTrue();
+    expect(cells?.[2].textContent?.trim()).toBe("20.00");
+    expect(
+      benchmarkRow?.querySelector(
+        'button[aria-label="Expand benchmark details"]',
+      ),
+    ).toBeNull();
   });
 });

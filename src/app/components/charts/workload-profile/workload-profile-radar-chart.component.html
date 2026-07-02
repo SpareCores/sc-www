@@ -1,0 +1,22 @@
+@if (hasChart()) {
+  @if (isBrowser) {
+    <div
+      class="chart_div workload-profile-radar-chart__canvas"
+      [class.workload-profile-radar-chart__canvas--compare]="
+        layout() === 'compare'
+      "
+      [class.workload-profile-radar-chart__canvas--details]="
+        layout() === 'details'
+      "
+    >
+      <canvas
+        class="workload-profile-radar-chart__canvas-element"
+        baseChart
+        [data]="resolvedChartData()"
+        [options]="resolvedChartOptions()"
+        [type]="chartType()"
+      >
+      </canvas>
+    </div>
+  }
+}

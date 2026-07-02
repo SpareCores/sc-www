@@ -1,0 +1,78 @@
+@if (hasWorkloadProfiles()) {
+  <div
+    class="w-full h-auto overflow-visible relative flex flex-col gap-4"
+    [ngClass]="{
+      'px-4 py-4 bg-transparent min-h-[500px] h-auto max-lg:min-h-[520px]':
+        layout() === 'compare',
+      'px-6 py-6 bg-secondary border border-solid border-emerald-400 rounded-lg min-h-[560px]':
+        layout() === 'details',
+    }"
+  >
+    @if (showHeader()) {
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-2xl flex items-center gap-2">
+          <svg
+            [lucideIcon]="'workload_profile' | benchmarkIcon"
+            class="h-6 w-6"
+          ></svg>
+          Workload Profiles
+          <svg
+            lucideCircleArrowUp
+            class="h-4 w-4 text-gray-200"
+            (mouseenter)="showTooltip($event, 'Higher is better.')"
+            (mouseleave)="hideTooltip()"
+          ></svg>
+          <svg
+            lucideInfo
+            class="h-4 w-4 text-gray-200"
+            (mouseenter)="showTooltip($event, workloadProfileInfoTooltip)"
+            (mouseleave)="hideTooltip()"
+          ></svg>
+        </h3>
+      </div>
+    }
+    <div
+      class="workload-profile-panel-grid grid min-w-0 grid-cols-1 lg:grid-cols-2 gap-8 items-start"
+    >
+      <div
+        class="workload-profile-radar-chart"
+        [class.workload-profile-radar-chart--compare]="layout() === 'compare'"
+        [class.workload-profile-radar-chart--details]="layout() === 'details'"
+      >
+        <app-workload-profile-radar-chart
+          [layout]="layout()"
+          [benchmarkMeta]="benchmarkMeta()"
+          [servers]="servers()"
+          [serverDetails]="serverDetails()"
+        ></app-workload-profile-radar-chart>
+      </div>
+      @if (accordionItems().length) {
+        <div
+          class="workload-profile-accordion-column w-full min-w-0 text-base"
+          [ngClass]="{
+            'pr-4 lg:min-h-[460px] lg:pt-[4.5rem]': layout() === 'compare',
+            'pr-8 lg:min-h-[420px] lg:pt-2': layout() === 'details',
+          }"
+        >
+          <app-accordion
+            class="workload-profile-accordion"
+            [useFaqSchema]="false"
+            [showHeading]="false"
+            [items]="accordionItems()"
+            [activeIndex]="activeAccordionIndex()"
+            (activeIndexChange)="onAccordionChanged($event)"
+          ></app-accordion>
+        </div>
+      }
+    </div>
+  </div>
+}
+
+@if (showHeader()) {
+  <div
+    #tooltipDefault
+    class="tooltip-panel fixed z-100 pointer-events-none opacity-0 hidden"
+  >
+    {{ tooltipContent }}
+  </div>
+}

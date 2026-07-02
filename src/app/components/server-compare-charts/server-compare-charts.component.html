@@ -75,7 +75,11 @@
     }
     <tbody>
       @if (isChartShown("generic")) {
-        <tr>
+        <tr class="compare-instance-section-gap" aria-hidden="true">
+          <td></td>
+          <td [colSpan]="servers.length"></td>
+        </tr>
+        <tr class="compare-instance-section-first-row">
           <td>Vendor</td>
           @for (
             server of servers;
@@ -107,6 +111,13 @@
             <div class="flex gap-1 items-center">
               $Core
               <app-icon name="info" iconClass="h-4 w-4" class="text-gray-200" />
+              <svg
+                lucideInfo
+                class="h-4 w-4 shrink-0 text-gray-200"
+                data-cy="compare-score-tooltip-trigger"
+                (mouseenter)="showTooltip($event, SSCoreTooltip)"
+                (mouseleave)="hideTooltip()"
+              ></svg>
             </div>
           </td>
           @for (
@@ -203,7 +214,7 @@
         </tr>
       }
       @if (isChartShown("generic")) {
-        <tr class="rows-to-hide-for-test">
+        <tr class="compare-instance-section-last-row rows-to-hide-for-test">
           <td>Best ondemand price</td>
           @for (
             server of servers;
@@ -220,6 +231,10 @@
               </div>
             </td>
           }
+        </tr>
+        <tr class="compare-instance-section-gap" aria-hidden="true">
+          <td></td>
+          <td [colSpan]="servers.length"></td>
         </tr>
       }
       @if (isChartShown("generic") && showZone) {
@@ -277,24 +292,31 @@
           propertyCategory of instancePropertyCategories;
           track propertyCategory.name
         ) {
-          <tr class="section_header">
-            <td>
-              <h2 class="text-xl font-semibold">{{ propertyCategory.name }}</h2>
-            </td>
-            <td [colSpan]="servers.length"></td>
-          </tr>
-          @for (
-            category of propertyCategory.properties;
-            track category.id;
-            let i = $index
-          ) {
-            @if (
-              !isCompareMetadataPropertyHidden(
-                propertyCategory.category,
-                category.id
-              )
+          @let visibleProperties =
+            getVisibleInstanceProperties(propertyCategory);
+          @if (visibleProperties.length) {
+            <tr class="section_header">
+              <td>
+                <h2 class="text-xl font-semibold">
+                  {{ propertyCategory.name }}
+                </h2>
+              </td>
+              <td [colSpan]="servers.length"></td>
+            </tr>
+            <tr class="compare-instance-section-gap" aria-hidden="true">
+              <td></td>
+              <td [colSpan]="servers.length"></td>
+            </tr>
+            @for (
+              category of visibleProperties;
+              track category.id;
+              let first = $first;
+              let last = $last
             ) {
-              <tr>
+              <tr
+                [class.compare-instance-section-first-row]="first"
+                [class.compare-instance-section-last-row]="last"
+              >
                 <td class="whitespace-nowrap">
                   <div class="flex gap-2 items-center">
                     {{ category.name }}
@@ -304,6 +326,12 @@
                         iconClass="h-4 w-4"
                         class="text-gray-200 shrink-0"
                       />
+                      <svg
+                        lucideInfo
+                        class="h-4 w-4 shrink-0 text-gray-200"
+                        (mouseenter)="showTooltip($event, category.description)"
+                        (mouseleave)="hideTooltip()"
+                      ></svg>
                     }
                   </div>
                 </td>
@@ -321,14 +349,173 @@
                           class="shrink-0 justify-self-end"
                         />
                       } @else {
-                        <span [innerHTML]="propertyValue"></span>
+                        <span [textContent]="propertyValue"></span>
                       }
                     </div>
                   </td>
                 }
               </tr>
             }
+            <tr class="compare-instance-section-gap" aria-hidden="true">
+              <td></td>
+              <td [colSpan]="servers.length"></td>
+            </tr>
           }
+        }
+      }
+      @if (getWorkloadProfileBenchmarks().length && !isEmbedded) {
+        <tr class="section_header" id="benchmark_line_workload_profile">
+          <td [colSpan]="getCompareFixedWideContentColSpan()">
+            <div class="compare-section-header-row">
+              <h3 class="text-xl font-semibold m-0 flex items-center">
+                <span class="compare-section-header-title">
+                  <svg
+                    [lucideIcon]="'workload_profile' | benchmarkIcon"
+                    class="h-6 w-6 shrink-0"
+                  ></svg>
+                  <span class="compare-section-header-title__text">
+                    Workload Profiles
+                  </span>
+                  <span class="compare-section-header-title__icons">
+                    <svg
+                      lucideCircleArrowUp
+                      class="h-4 w-4 text-gray-200 shrink-0"
+                      (mouseenter)="showTooltip($event, 'Higher is better.')"
+                      (mouseleave)="hideTooltip()"
+                    ></svg>
+                    <svg
+                      lucideInfo
+                      class="h-4 w-4 text-gray-200 shrink-0"
+                      (mouseenter)="
+                        showTooltip($event, workloadProfileInfoTooltip)
+                      "
+                      (mouseleave)="hideTooltip()"
+                    ></svg>
+                  </span>
+                </span>
+              </h3>
+              @if (!isEmbedded && !getCompareFixedWideTrailingColSpan()) {
+                <button
+                  type="button"
+                  aria-label="Copy benchmark section link"
+                  class="btn-primary py-2 px-3 flex gap-1 items-center shrink-0"
+                  (click)="
+                    clipboardURL($event, 'benchmark_line_workload_profile')
+                  "
+                >
+                  <svg
+                    [lucideIcon]="clipboardIcon"
+                    size="16"
+                    aria-hidden="true"
+                  ></svg>
+                </button>
+              }
+            </div>
+          </td>
+          @if (getCompareFixedWideActionSpacerColSpan()) {
+            <td [colSpan]="getCompareFixedWideActionSpacerColSpan()"></td>
+          }
+          @if (getCompareFixedWideTrailingColSpan()) {
+            <td [colSpan]="1" class="compare-section-header-action-cell">
+              @if (!isEmbedded) {
+                <div class="flex justify-end">
+                  <button
+                    type="button"
+                    aria-label="Copy benchmark section link"
+                    class="btn-primary py-2 px-3 flex gap-1 items-center shrink-0"
+                    (click)="
+                      clipboardURL($event, 'benchmark_line_workload_profile')
+                    "
+                  >
+                    <svg
+                      [lucideIcon]="clipboardIcon"
+                      size="16"
+                      aria-hidden="true"
+                    ></svg>
+                  </button>
+                </div>
+              }
+            </td>
+          }
+        </tr>
+        <tr class="compare-fixed-chart-row">
+          <td [colSpan]="getCompareFixedWideContentColSpan()">
+            <div
+              class="compare-chart-content"
+              [style]="getCompareChartContentStyle()"
+            >
+              <app-workload-profile-panel
+                layout="compare"
+                [showHeader]="false"
+                [servers]="workloadProfileCompareServers"
+                [benchmarkMeta]="workloadProfileBenchmarkMeta"
+                (layoutChanged)="layoutChanged.emit()"
+              ></app-workload-profile-panel>
+              <div class="mt-4 mb-8 flex justify-center">
+                <button
+                  class="btn-primary py-2 px-3"
+                  (click)="toggleWorkloadProfileDetails()"
+                >
+                  {{ workloadProfileShowMore ? "Hide" : "Show" }} Details
+                </button>
+              </div>
+            </div>
+          </td>
+          @if (getCompareFixedWideTrailingColSpan()) {
+            <td [colSpan]="getCompareFixedWideTrailingColSpan()"></td>
+          }
+        </tr>
+        @if (workloadProfileShowMore) {
+          @for (
+            benchmark of getWorkloadProfileBenchmarks();
+            track benchmark.benchmark_key ?? benchmark.benchmark_id
+          ) {
+            <tr class="compare-workload-profile-detail-row">
+              <td>
+                <div class="ml-4 flex justify-between">
+                  <div class="inline-block gap-2 items-center bg-primary">
+                    <span class="inline">{{
+                      formatWorkloadProfileLabel(benchmark.name)
+                    }}</span>
+                    @if (benchmark.description) {
+                      <svg
+                        lucideInfo
+                        class="inline-block h-4 w-4 text-gray-200 ml-1"
+                        (mouseenter)="
+                          showTooltip($event, benchmark.description)
+                        "
+                        (mouseleave)="hideTooltip()"
+                      ></svg>
+                    }
+                  </div>
+                </div>
+              </td>
+              @let primaryConfig = benchmark.configs?.[0];
+              @if (primaryConfig) {
+                @for (value of primaryConfig.values; track $index) {
+                  <td
+                    class="compact-number"
+                    [style]="
+                      isBestStyle(value, primaryConfig.values, benchmark)
+                    "
+                  >
+                    <span
+                      (mouseenter)="
+                        value !== null && showTooltip($event, value.toString())
+                      "
+                      (mouseleave)="hideTooltip()"
+                      >{{
+                        value === null ? "-" : (value | compactNumber)
+                      }}</span
+                    >
+                  </td>
+                }
+              }
+            </tr>
+          }
+          <tr class="h-[1rem]">
+            <!-- spacer -->
+          </tr>
         }
       }
       @for (
@@ -343,7 +530,7 @@
           >
             <td [colSpan]="getCompareFixedWideContentColSpan()">
               <div class="compare-section-header-row">
-                <h3 class="text-xl font-semibold">
+                <h3 class="text-xl font-semibold m-0 flex items-center">
                   <span class="compare-section-header-title">
                     <app-icon
                       [name]="benchmarkCategory.name | benchmarkIcon"
@@ -592,7 +779,7 @@
               <tr>
                 <td>
                   <div class="ml-4 flex justify-between">
-                    <div class="inline-block gap-2 items-center">
+                    <div class="inline-block gap-2 items-center bg-primary">
                       <span class="inline">{{ benchmarkData.name }}</span>
                       @if (benchmarkData.description) {
                         <app-icon

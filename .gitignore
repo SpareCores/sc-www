@@ -96,4 +96,4 @@ src/assets/articles/drafts/
 
 # cursor files
 .cursor/
-AGENTS.md
+.cursorignore
