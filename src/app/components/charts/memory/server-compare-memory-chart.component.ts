@@ -10,22 +10,18 @@ import {
   signal,
   viewChild,
 } from "@angular/core";
-import { LucideChevronDown } from "@lucide/angular";
+
 import { BaseChartDirective } from "ng2-charts";
 import { CompareMemoryChartOption } from "../shared/memory-chart.types";
 import { MemoryChartBuilderService } from "./memory-chart-builder.service";
 import { FlowbiteDropdownDirective } from "../../../directives/flowbite-dropdown.directive";
 import { MemoryBenchmarkMeta, MemoryChartServer } from "./memory-chart.types";
+import { Icon } from "../../icon/icon.js";
 
 @Component({
   selector: "app-server-compare-memory-chart",
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    CommonModule,
-    LucideChevronDown,
-    BaseChartDirective,
-    FlowbiteDropdownDirective,
-  ],
+  imports: [CommonModule, BaseChartDirective, FlowbiteDropdownDirective, Icon],
   templateUrl: "./server-compare-memory-chart.component.html",
   styles: [
     `
