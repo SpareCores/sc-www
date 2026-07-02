@@ -9,18 +9,14 @@ import {
   OrderDir,
   TableRegionTableRegionGetData,
 } from "../../../../sdk/data-contracts";
-import { LucideChevronRight } from "@lucide/angular";
+
 import { CountryIdtoNamePipe } from "../../pipes/country-idto-name.pipe";
 import { Router, RouterModule } from "@angular/router";
+import { Icon } from "../../components/icon/icon.js";
 
 @Component({
   selector: "app-vendors",
-  imports: [
-    BreadcrumbsComponent,
-    LucideChevronRight,
-    CountryIdtoNamePipe,
-    RouterModule,
-  ],
+  imports: [BreadcrumbsComponent, CountryIdtoNamePipe, RouterModule, Icon],
   templateUrl: "./vendors.component.html",
   styleUrl: "./vendors.component.scss",
 })
