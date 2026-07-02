@@ -18,7 +18,7 @@
           [attr.aria-expanded]="activeFAQ === i"
         >
           <h4 itemprop="name">{{ question.question }}</h4>
-          <svg [lucideIcon]="FAQIcon(i)"></svg>
+          <app-icon [name]="FAQIcon(i)" />
         </button>
         <p
           itemscope=""

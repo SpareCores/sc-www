@@ -1,6 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { Component, EventEmitter, Input, Output } from "@angular/core";
-import { LucideDynamicIcon } from "@lucide/angular";
+import { Icon } from "../icon/icon.js";
 
 export type FAQQuestion = {
   question: string;
@@ -9,7 +9,7 @@ export type FAQQuestion = {
 
 @Component({
   selector: "app-faq",
-  imports: [CommonModule, LucideDynamicIcon],
+  imports: [CommonModule, Icon],
   templateUrl: "./faq.component.html",
   styleUrl: "./faq.component.scss",
 })
