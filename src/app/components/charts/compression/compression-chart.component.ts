@@ -11,11 +11,7 @@ import {
   signal,
   viewChild,
 } from "@angular/core";
-import {
-  LucideDynamicIcon,
-  LucideChevronDown,
-  LucideInfo,
-} from "@lucide/angular";
+
 import { BaseChartDirective } from "ng2-charts";
 import { ChartData, ChartOptions } from "chart.js";
 import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon.pipe";
@@ -36,18 +32,17 @@ import {
 } from "../../../pages/server-details/chartOptions";
 import { ChartTooltipService } from "../shared/chart-tooltip.service";
 import { FlowbiteDropdownDirective } from "../../../directives/flowbite-dropdown.directive";
+import { Icon } from "../../icon/icon.js";
 
 @Component({
   selector: "app-compression-chart",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
-    LucideDynamicIcon,
-    LucideChevronDown,
-    LucideInfo,
     BaseChartDirective,
     FlowbiteDropdownDirective,
     BenchmarkIconPipe,
+    Icon,
   ],
   templateUrl: "./compression-chart.component.html",
   styles: [
