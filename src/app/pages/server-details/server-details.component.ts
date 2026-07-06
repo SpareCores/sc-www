@@ -90,6 +90,7 @@ export interface ExtendedServerDetails extends ServerPKs {
   bestSpotPrice?: ExtendedServerPrice;
   additionalOndemandPrices?: ExtendedServerPrice[];
   additionalSpotPrices?: ExtendedServerPrice[];
+  vendor_name?: string;
 }
 
 interface PropertyCategoryDefinition {
