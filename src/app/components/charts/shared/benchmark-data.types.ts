@@ -63,15 +63,22 @@ export type BenchmarkMetaWithConfigs<
     configs?: Array<BenchmarkMetaConfig<TConfig, TValue>>;
   };
 
-export type BenchmarkChartServer<TScore> = {
+export type BenchmarkChartServerIdentity = {
+  vendor_id?: string;
+  vendor_name?: string;
+  api_reference?: string;
+};
+
+export type BenchmarkChartServer<TScore> = BenchmarkChartServerIdentity & {
   display_name: string;
   benchmark_scores: TScore[];
 };
 
-export type OptionalBenchmarkChartServer<TScore> = {
-  display_name: string;
-  benchmark_scores?: TScore[];
-};
+export type OptionalBenchmarkChartServer<TScore> =
+  BenchmarkChartServerIdentity & {
+    display_name: string;
+    benchmark_scores?: TScore[];
+  };
 
 export type ChartOptionsFor<TType extends keyof ChartTypeRegistry> =
   ChartConfiguration<TType>["options"];
