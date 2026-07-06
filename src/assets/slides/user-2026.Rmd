@@ -583,17 +583,256 @@ List of 41
 and SDKs as well, e.g. querying the details of this instance type: SCROLL through!
 :::
 
-# > bug.report(package="sparecores") {#components transition="convex-in convex-out"}
+# > bug.report(package="navigator") {#components transition="convex-in convex-out"}
 
 <img style="margin-top:30px; width: 100%;" src="images/sc-components-2026.png" />
 
 ::: {.notes}
-As mentioned previously, this is made available via multiple components that
-you can find on GitHub. We don't have time to go through all of them, but
-I'd be happy to answer any related questions on Slack, or ping me on LinkedIn :)
-
-WE will focus on the inspector now!
 :::
+
+# > library(resource.tracker) {transition="convex-in slide-out"}
+
+<ul>
+<li class="fragment" data-fragment-index=1>Lightweight (zero-dependency*) Python package</li>
+<li class="fragment" data-fragment-index=3>Alternative Linux-only implementation in Rust</li>
+<li class="fragment" data-fragment-index=4>Monitors host and process-level resource usage</li>
+<li class="fragment" data-fragment-index=5>Tracks CPU, memory, GPU, network, storage & more</li>
+<li class="fragment" data-fragment-index=6>Ease of use, minimal setup</li>
+<li class="fragment" data-fragment-index=7>Runs in the background, non-blocking</li>
+<li class="fragment" data-fragment-index=8>Framework extensions (e.g. Metaflow)</li>
+
+<div class="fragment" style="margin-top: 40px;" data-fragment-index=2>\* No dependencies on Linux; `psutil` on other OS.</div>
+
+::: {.notes}
+And here comes the resource tracker to the rescue!
+
+If you are running Linux, and most production servers are Linux ... it can use the proc filesystem without any further dependencies -- other than a modern Linux kernel. On other operating systems, it uses `psutil` to get the same information.
+
+It supports recent Python versions, going back to the latest officially supported Python version,
+so that you can run it anywhere.
+
+It can monitor the resource usage of the whole system, like logging the overall CPU and memory usage etc
+But can also track a single process and optionally its children as well -- independent from the whole system.
+
+It can track the CPU usage, memory usage, disk I/O, network usage, GPU usage, and more.
+
+It's easy to use, and it's non-blocking, so you can run it in the background while your code is running.
+
+By default, it's framework agnostic .. but comes with a few extensions, e.g. for Metaflow.
+:::
+
+## > install.packages("resource.tracker")
+
+Requires Python 3.9+ and <img style="height: 36px; vertical-align: middle;" src="https://img.shields.io/pypi/v/resource-tracker?color=%2332C955&label=pypi%3Aresource-tracker">:
+
+```r {style="margin-top: 20px !important;" }
+reticulate::py_install('resource-tracker')
+```
+
+Then install the R package bindings from GitHub:
+
+```r {style="margin-top: 20px !important;" }
+remotes::install_github('SpareCores/resource-tracker', subdir = 'R')
+```
+
+## > demo(package=resource.tracker)
+
+
+```r {code-line-numbers="1-2|4-8|10-34|36-41|43-67" style="margin-top: 20px !important; height: 640px;" }
+> library(resource.tracker)
+> tracker <- ResourceTracker$new()
+
+> numbers <- 1:1e6
+> window <- 3
+> rollavg <- sapply(
++   seq_len(length(numbers) - window + 1),
++   function(i) mean(numbers[i:(i + window - 1)]))
+
+> tracker$stats()
+List of 9
+ $ process_cpu_usage        :List of 2
+  ..$ mean: num 1.12
+  ..$ max : num 1.14
+ $ process_memory           :List of 2
+  ..$ mean: num 728783
+  ..$ max : num 798130
+ $ process_gpu_usage        :List of 2
+  ..$ mean: num 0
+  ..$ max : num 0
+ $ process_gpu_vram         :List of 2
+  ..$ mean: num 0
+  ..$ max : num 0
+ $ process_gpu_utilized     :List of 2
+  ..$ mean: num 0
+  ..$ max : num 0
+ $ system_disk_space_used_gb:List of 1
+  ..$ max: num 2560
+ $ system_net_recv_bytes    :List of 1
+  ..$ sum: num 1840217
+ $ system_net_sent_bytes    :List of 1
+  ..$ sum: num 1843725
+ $ timestamp                :List of 1
+  ..$ duration: num 7
+
+> tracker$recommend_resources()
+List of 4
+ $ cpu   : int 1
+ $ memory: int 1024
+ $ gpu   : int 0
+ $ vram  : int 0
+
+> tracker$recommend_server()
+List of 50
+ $ vendor_id            : chr "upcloud"
+ $ server_id            : chr "DEV-1xCPU-1GB-10GB"
+ $ description          : chr "Developer 1 vCPUs, 1 GB RAM"
+ $ family               : chr "Developer"
+ $ vcpus                : int 1
+ $ hypervisor           : chr "KVM"
+ $ cpu_allocation       : chr "Shared"
+ $ cpu_cores            : int 1
+ $ cpu_architecture     : chr "x86_64"
+ $ cpu_manufacturer     : chr "AMD"
+ $ cpu_family           : chr "EPYC"
+ $ cpu_model            : chr "7542"
+ $ cpu_l1_cache         : int 131072
+ $ cpu_l2_cache         : int 524288
+ $ cpu_l3_cache         : int 16777216
+ $ cpu_flags            : chr [1:88] "fpu" "vme" "de" "pse" ...
+ $ memory_amount        : int 1024
+ $ storage_size         : int 10
+ $ inbound_traffic      : num 0
+ $ outbound_traffic     : num 1024
+ $ ipv4                 : int 1
+ $ price                : num 0.0052
+ ...
+```
+
+::: {.notes}
+inefficient rolling mean implementation
+:::
+
+## > ?tracker$recommend_resources
+
+```python {code-line-numbers="1-1|12-13" style="margin-top: 30px !important; margin-bottom: 30px !important; font-size: 32px"}
+>>> print(ResourceTracker.recommend_resources.__doc__)
+Recommend optimal resource allocation based on the measured resource tracker data.
+
+The recommended resources are based on the following rules:
+
+- target average CPU usage of the process(es)
+- target maximum memory usage of the process(es) with a 20% buffer
+- target maximum number of GPUs used by the process(es)
+- target maximum VRAM usage of the process(es) with a 20% buffer
+
+Args:
+    historical_stats: Optional list of historical statistics (as returned by [resource_tracker.ResourceTracker.stats][])
+                      to consider when making recommendations. These will be combined with the current stats.
+
+Returns:
+    A dictionary containing the recommended resources (cpu, memory, gpu, vram).
+```
+
+. . .
+
+To make this more convenient (automatic),<br />check out e.g. the Metaflow extension!
+
+
+## > setDT(tracker$data)
+
+```r {code-line-numbers="1-23|25-39|41-74" style="margin-top: 20px !important; height: 640px;" }
+> tracker$system_metrics
+'data.frame':   6 obs. of  21 variables:
+ $ timestamp          : POSIXct, format: "2026-07-06 23:54:36" "2026-07-06 23:54:37" ...
+ $ processes          : int  678 678 681 678 677 677
+ $ utime              : num  0.63 1.21 1.23 1.26 1.17 1.16
+ $ stime              : num  0.54 0.26 0.43 0.32 0.21 0.28
+ $ cpu_usage          : num  1.17 1.47 1.66 1.58 1.38 ...
+ $ memory_free_mib    : num  38394 38388 38398 38392 38344 ...
+ $ memory_used_mib    : num  23607 23613 23603 23609 23657 ...
+ $ memory_buffers_mib : num  5.25 5.25 5.25 5.25 5.25 ...
+ $ memory_cached_mib  : num  41214 41214 41214 41214 41214 ...
+ $ memory_active_mib  : num  27286 27295 27305 27308 27379 ...
+ $ memory_inactive_mib: num  24520 24520 24520 24520 24520 ...
+ $ disk_read_bytes    : int  32768 0 0 0 0 0
+ $ disk_write_bytes   : int  0 671744 48578560 598016 0 663552
+ $ disk_space_total_gb: num  6142 6142 6142 6142 6142 ...
+ $ disk_space_used_gb : num  1563 1563 1563 1563 1563 ...
+ $ disk_space_free_gb : num  4575 4575 4575 4575 4575 ...
+ $ net_recv_bytes     : int  732 1902 1236 21488 16070 14904
+ $ net_sent_bytes     : int  978 3572 2270 9361 50019 29286
+ $ gpu_usage          : num  0.01 0.05 0.05 0.06 0.04 0.04
+ $ gpu_vram_mib       : num  1651 1661 1661 1656 1646 ...
+ $ gpu_utilized       : int  1 1 1 1 1 1
+
+> tracker$process_metrics
+'data.frame':   7 obs. of  12 variables:
+ 'data.frame':   6 obs. of  12 variables:
+ $ timestamp       : POSIXct, format: "2026-07-06 23:54:36" "2026-07-06 23:54:37" ...
+ $ pid             : int  321426 321426 321426 321426 321426 321426
+ $ children        : int  5 5 5 5 5 5
+ $ utime           : num  0.46 1.05 1.01 1.03 1 1
+ $ stime           : num  0.19 0.09 0.09 0.06 0.1 0.09
+ $ cpu_usage       : num  0.65 1.14 1.1 1.09 1.1 ...
+ $ memory_mib      : num  322 329 338 341 411 ...
+ $ disk_read_bytes : int  16384 0 0 0 0 0
+ $ disk_write_bytes: int  0 0 0 0 0 0
+ $ gpu_usage       : int  0 0 0 0 0 0
+ $ gpu_vram_mib    : int  0 0 0 0 0 0
+ $ gpu_utilized    : int  0 0 0 0 0 0
+
+> str(tracker$get_combined_metrics(human_names = TRUE))
+'data.frame':   6 obs. of  32 variables:
+ $ Timestamp                      : num  1.78e+09 1.78e+09 1.78e+09 1.78e+09 1.78e+09 ...
+ $ System processes               : int  678 678 681 678 677 677
+ $ System CPU time (user)         : num  0.63 1.21 1.23 1.26 1.17 1.16
+ $ System CPU time (system)       : num  0.54 0.26 0.43 0.32 0.21 0.28
+ $ System CPU usage               : num  1.17 1.47 1.66 1.58 1.38 ...
+ $ System free memory             : num  38394 38388 38398 38392 38344 ...
+ $ System used memory             : num  23607 23613 23603 23609 23657 ...
+ $ System memory buffers          : num  5.25 5.25 5.25 5.25 5.25 ...
+ $ System memory page/file cached : num  41214 41214 41214 41214 41214 ...
+ $ System active memory           : num  27286 27295 27305 27308 27379 ...
+ $ System inactive memory         : num  24520 24520 24520 24520 24520 ...
+ $ System disk read               : int  32768 0 0 0 0 0
+ $ System disk write              : int  0 671744 48578560 598016 0 663552
+ $ System disk space total        : num  6142 6142 6142 6142 6142 ...
+ $ System disk space used         : num  1563 1563 1563 1563 1563 ...
+ $ System disk space free         : num  4575 4575 4575 4575 4575 ...
+ $ System inbound network traffic : int  732 1902 1236 21488 16070 14904
+ $ System outbound network traffic: int  978 3572 2270 9361 50019 29286
+ $ System GPU usage               : num  0.01 0.05 0.05 0.06 0.04 0.04
+ $ System VRAM used               : num  1651 1661 1661 1656 1646 ...
+ $ System GPUs in use             : int  1 1 1 1 1 1
+ $ Process PID                    : int  321426 321426 321426 321426 321426 321426
+ $ Process children               : int  5 5 5 5 5 5
+ $ Process CPU time (user)        : num  0.46 1.05 1.01 1.03 1 1
+ $ Process CPU time (system)      : num  0.19 0.09 0.09 0.06 0.1 0.09
+ $ Process CPU usage              : num  0.65 1.14 1.1 1.09 1.1 ...
+ $ Process memory usage           : num  322 329 338 341 411 ...
+ $ Process disk read              : int  16384 0 0 0 0 0
+ $ Process disk write             : int  0 0 0 0 0 0
+ $ Process GPU usage              : int  0 0 0 0 0 0
+ $ Process VRAM used              : int  0 0 0 0 0 0
+ $ Process GPUs in use            : int  0 0 0 0 0 0
+```
+
+## > tracker\$report()\$browse()
+
+::: {.centered}
+<a href="https://sparecores.com/assets/slides/example-resource-tracker-report-in-metaflow.html" target="_blank">
+  <img src="https://sparecores.github.io/resource-tracker/track_resources-card-example.png" width="92%" >
+</a>
+:::
+
+
+## > ?ResourceTracker
+
+<a href="https://sparecores.github.io/resource-tracker/reference/resource_tracker/tracker/#resource_tracker.tracker.ResourceTracker" target="_blank">
+   <img src="images/resource-tracker-docs.png" width="80%" style="margin-top: -40px !important;" />
+</a>
+
+
 
 # > TODO {transition="convex-in slide-out"}
 
