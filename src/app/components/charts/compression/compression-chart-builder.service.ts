@@ -4,6 +4,11 @@ import { formatBytes } from "../../../pipes/pipe-utils";
 import { radarDatasetColors } from "../shared/chart-colors.constants";
 import { cloneChartOptions } from "../shared/chart-options.utils";
 import {
+  buildCompareTooltipTitle,
+  getDatasetTooltipIdentity,
+  withServerTooltipIdentity,
+} from "../shared/chart-tooltip.utils";
+import {
   COMPRESSION_LEVEL_NOT_AVAILABLE_LABEL,
   DETAILS_SERIES_IGNORED_KEYS,
   DetailsCompressionMode,
@@ -269,15 +274,20 @@ export class CompressionChartBuilderService {
 
     const chartData: CompressionCompareChartData = {
       labels: [...labels],
-      datasets: params.servers.map((server, index) => ({
-        data: [],
-        label: server.display_name,
-        spanGaps: true,
-        borderColor:
-          radarDatasetColors[index % radarDatasetColors.length].borderColor,
-        backgroundColor:
-          radarDatasetColors[index % radarDatasetColors.length].borderColor,
-      })),
+      datasets: params.servers.map((server, index) =>
+        withServerTooltipIdentity(
+          {
+            data: [],
+            label: server.display_name,
+            spanGaps: true,
+            borderColor:
+              radarDatasetColors[index % radarDatasetColors.length].borderColor,
+            backgroundColor:
+              radarDatasetColors[index % radarDatasetColors.length].borderColor,
+          },
+          server,
+        ),
+      ),
     };
 
     params.servers.forEach((server, i) => {
@@ -701,16 +711,16 @@ export class CompressionChartBuilderService {
       this: TooltipModel<"line" | "bar">,
       tooltipItems: TooltipItem<"line" | "bar">[],
     ) {
-      if (hasCompressionLevel) {
-        return (
-          "Compression level: " +
+      const identity = getDatasetTooltipIdentity(tooltipItems[0]?.dataset);
+      const context = hasCompressionLevel
+        ? "Compression level: " +
           tooltipItems[0].label +
           " (" +
           selectedName +
           ")"
-        );
-      }
-      return selectedName;
+        : selectedName;
+
+      return buildCompareTooltipTitle(identity, context);
     };
   }
 }
