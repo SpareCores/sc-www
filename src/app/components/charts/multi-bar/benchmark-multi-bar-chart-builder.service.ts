@@ -5,6 +5,10 @@ import {
 } from "../../../pages/server-details/chartFromBenchmarks";
 import { radarDatasetColors } from "../shared/chart-colors.constants";
 import {
+  withServerTooltipIdentity,
+  formatStaticWebFileSizeLabel,
+} from "../shared/chart-tooltip.utils";
+import {
   MultiBarBenchmarkGroup,
   MultiBarBenchmarkMeta,
   MultiBarChartData,
@@ -171,7 +175,10 @@ export class BenchmarkMultiBarChartBuilderService {
             note: item.note,
           };
         }),
-        label: String(label),
+        label:
+          chartTemplate.id === "static_web" && labelsField === "size"
+            ? formatStaticWebFileSizeLabel(label)
+            : String(label),
         borderColor:
           radarDatasetColors[index % radarDatasetColors.length].borderColor,
         backgroundColor:
@@ -232,31 +239,34 @@ export class BenchmarkMultiBarChartBuilderService {
       datasets: availableServers.map((server, index: number) => {
         const benchmarkScores = server.benchmark_scores ?? [];
 
-        return {
-          data: scales.map((size) => {
-            const item = benchmarkScores.find(
-              (b) =>
-                b.benchmark_id === option.benchmark_id &&
-                b.config[option.labelsField] === secondaryOption.value &&
-                b.config[option.scaleField] === size,
-            );
-            if (!item) {
-              return null;
-            }
-            return {
-              data: item.score,
-              label: size,
-              unit: option.YLabel,
-              note: item.note,
-            };
-          }),
-          label: server.display_name,
-          spanGaps: true,
-          borderColor:
-            radarDatasetColors[index % radarDatasetColors.length].borderColor,
-          backgroundColor:
-            radarDatasetColors[index % radarDatasetColors.length].borderColor,
-        };
+        return withServerTooltipIdentity(
+          {
+            data: scales.map((size) => {
+              const item = benchmarkScores.find(
+                (b) =>
+                  b.benchmark_id === option.benchmark_id &&
+                  b.config[option.labelsField] === secondaryOption.value &&
+                  b.config[option.scaleField] === size,
+              );
+              if (!item) {
+                return null;
+              }
+              return {
+                data: item.score,
+                label: size,
+                unit: option.YLabel,
+                note: item.note,
+              };
+            }),
+            label: server.display_name,
+            spanGaps: true,
+            borderColor:
+              radarDatasetColors[index % radarDatasetColors.length].borderColor,
+            backgroundColor:
+              radarDatasetColors[index % radarDatasetColors.length].borderColor,
+          },
+          server,
+        );
       }),
     };
   }
@@ -271,6 +281,35 @@ export class BenchmarkMultiBarChartBuilderService {
     chartTemplate.chartOptions.scales.y.title.text = selectedOption.YLabel;
     chartTemplate.chartOptions.scales.x.title.text = selectedOption.XLabel;
     chartTemplate.chartOptions.plugins.title.text = selectedOption.title;
+    this.applyStaticWebSizeAxisLabels(chartTemplate, selectedOption);
+  }
+
+  private applyStaticWebSizeAxisLabels(
+    chartTemplate: ChartFromBenchmarkTemplate,
+    selectedOption: ChartFromBenchmarkTemplateOptions,
+  ): void {
+    if (
+      chartTemplate.id !== "static_web" ||
+      selectedOption.scaleField !== "size"
+    ) {
+      return;
+    }
+
+    const xTicks = chartTemplate.chartOptions.scales?.x?.ticks;
+
+    if (!xTicks) {
+      return;
+    }
+
+    xTicks.callback = function (
+      this: { chart?: { data?: { labels?: unknown[] } } },
+      value: string | number,
+      index: number,
+    ) {
+      const rawLabel = this.chart?.data?.labels?.[index] ?? value;
+
+      return formatStaticWebFileSizeLabel(rawLabel as string | number);
+    };
   }
 
   private sortScaleValues(values: MultiBarScaleValue[]): void {
