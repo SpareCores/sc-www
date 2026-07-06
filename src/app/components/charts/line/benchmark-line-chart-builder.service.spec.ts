@@ -73,6 +73,73 @@ describe("BenchmarkLineChartBuilderService", () => {
 
     expect(result?.data.labels).toEqual([1, 2]);
     expect(annotations?.line1?.xMin).toBe(1);
+    expect(result?.rawOptions.plugins?.legend?.display).toBeFalse();
+  });
+
+  it("builds compare stress-ng charts with legends and server identity tooltips", () => {
+    const servers: LineChartServer[] = [
+      {
+        display_name: "Server A",
+        vendor_id: "aws",
+        api_reference: "m7g.large",
+        benchmark_scores: [
+          createLineBenchmarkScore({
+            benchmarkId: "stress_ng:div16",
+            config: { cores: 1 },
+            score: 10,
+          }),
+          createLineBenchmarkScore({
+            benchmarkId: "stress_ng:div16",
+            config: { cores: 2 },
+            score: 18,
+          }),
+        ],
+      },
+    ];
+    const benchmarkMeta: LineBenchmarkMeta[] = [
+      {
+        benchmark_id: "stress_ng:div16",
+        configs: [{ config: { cores: 1 } }, { config: { cores: 2 } }],
+      },
+    ];
+    const rawOptionsBase: MutableLineChartOptions = {
+      plugins: { legend: {} },
+    };
+    const percentOptionsBase: MutableLineChartOptions = {
+      plugins: { legend: {} },
+    };
+
+    const result = service.buildCompareStressNgChart({
+      servers,
+      benchmarkMeta,
+      rawOptionsBase,
+      percentOptionsBase,
+    });
+
+    const title = result?.rawOptions.plugins?.tooltip?.callbacks?.title as
+      | ((
+          items: Array<{
+            label: string;
+            dataset: { serverTooltipIdentity?: string };
+          }>,
+        ) => string | string[])
+      | undefined;
+
+    expect(result?.rawOptions.plugins?.legend?.display).toBeTrue();
+    expect(result?.percentOptions.plugins?.legend?.display).toBeTrue();
+    expect(result?.data.datasets[0].label).toBe("Server A");
+    expect(
+      (result?.data.datasets[0] as { serverTooltipIdentity?: string })
+        .serverTooltipIdentity,
+    ).toBe("m7g.large by aws");
+    expect(
+      title?.([
+        {
+          label: "2",
+          dataset: { serverTooltipIdentity: "m7g.large by aws" },
+        },
+      ]),
+    ).toEqual(["m7g.large by aws", "2 vCPUs"]);
   });
 
   it("builds compare ssl charts for a selected algorithm", () => {
