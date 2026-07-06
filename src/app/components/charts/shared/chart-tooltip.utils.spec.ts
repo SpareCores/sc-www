@@ -1,6 +1,12 @@
 import {
   wrapTextAtWordBoundaries,
   CHART_TOOLTIP_MAX_LINE_LENGTH,
+  buildCompareTooltipTitle,
+  formatServerTooltipIdentity,
+  formatStaticWebFileSizeLabel,
+  formatStaticWebFileSizeTooltipContext,
+  getDatasetTooltipIdentity,
+  withServerTooltipIdentity,
 } from "./chart-tooltip.utils";
 
 describe("wrapTextAtWordBoundaries", () => {
@@ -32,5 +38,79 @@ describe("wrapTextAtWordBoundaries", () => {
       longWord,
       "after",
     ]);
+  });
+});
+
+describe("formatServerTooltipIdentity", () => {
+  it("prefers vendor_name over vendor_id with api_reference", () => {
+    expect(
+      formatServerTooltipIdentity({
+        vendor_name: "Amazon Web Services",
+        vendor_id: "aws",
+        api_reference: "m7g.large",
+      }),
+    ).toBe("m7g.large by Amazon Web Services");
+  });
+
+  it("falls back to vendor_id when vendor_name is missing", () => {
+    expect(
+      formatServerTooltipIdentity({
+        vendor_id: "aws",
+        api_reference: "m7g.large",
+      }),
+    ).toBe("m7g.large by aws");
+  });
+
+  it("falls back to display_name when vendor and api_reference are missing", () => {
+    expect(
+      formatServerTooltipIdentity({
+        display_name: "Server A",
+      }),
+    ).toBe("Server A");
+  });
+});
+
+describe("buildCompareTooltipTitle", () => {
+  it("returns a multi-line title when identity and context are present", () => {
+    expect(buildCompareTooltipTitle("m7g.large by aws", "4 vCPUs")).toEqual([
+      "m7g.large by aws",
+      "4 vCPUs",
+    ]);
+  });
+});
+
+describe("formatStaticWebFileSizeLabel", () => {
+  it("formats k-suffixed benchmark sizes as KiB", () => {
+    expect(formatStaticWebFileSizeLabel("16k")).toBe("16 KiB");
+    expect(formatStaticWebFileSizeLabel("1k")).toBe("1 KiB");
+  });
+
+  it("formats numeric sizes as KiB", () => {
+    expect(formatStaticWebFileSizeLabel(64)).toBe("64 KiB");
+  });
+});
+
+describe("formatStaticWebFileSizeTooltipContext", () => {
+  it("builds tooltip context without duplicating units", () => {
+    expect(formatStaticWebFileSizeTooltipContext("16k")).toBe(
+      "16 KiB file size",
+    );
+  });
+});
+
+describe("withServerTooltipIdentity", () => {
+  it("attaches formatted identity to datasets", () => {
+    const dataset = withServerTooltipIdentity(
+      { label: "Display Name" },
+      {
+        display_name: "Display Name",
+        vendor_id: "aws",
+        api_reference: "m7g.large",
+      },
+    );
+
+    expect(dataset.label).toBe("Display Name");
+    expect(dataset.serverTooltipIdentity).toBe("m7g.large by aws");
+    expect(getDatasetTooltipIdentity(dataset)).toBe("m7g.large by aws");
   });
 });
