@@ -4,6 +4,7 @@ import {
   TooltipItem,
   TooltipModel,
 } from "chart.js";
+import { formatStaticWebFileSizeTooltipContext } from "../../components/charts/shared/chart-tooltip.utils";
 
 export const barChartOptions: ChartConfiguration<"bar">["options"] = {
   scales: {
@@ -98,7 +99,7 @@ export const barChartOptionsStaticWeb: ChartConfiguration<"bar">["options"] = {
     ...barChartOptions.plugins,
     title: {
       display: true,
-      text: "File size (KBs)",
+      text: "File size (KiB)",
       color: "#FFF",
     },
     tooltip: {
@@ -113,7 +114,7 @@ export const barChartOptionsStaticWeb: ChartConfiguration<"bar">["options"] = {
           this: TooltipModel<"bar">,
           tooltipItems: TooltipItem<"bar">[],
         ) {
-          return tooltipItems[0].label + "Kb file size";
+          return formatStaticWebFileSizeTooltipContext(tooltipItems[0].label);
         },
       },
     },
