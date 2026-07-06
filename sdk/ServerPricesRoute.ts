@@ -762,7 +762,8 @@ export namespace ServerPrices {
         | "V100S"
         | "V520"
         | "V620"
-        | "V710";
+        | "V710"
+        | "nvidia-gb300";
       /**
        * Limit
        * Maximum number of results.

@@ -974,7 +974,8 @@ export namespace Servers {
         | "V100S"
         | "V520"
         | "V620"
-        | "V710";
+        | "V710"
+        | "nvidia-gb300";
       /**
        * Currency
        * Currency used for prices.
