@@ -4,7 +4,10 @@ import {
   buildCompareTooltipTitle,
   formatStaticWebFileSizeTooltipContext,
 } from "../../components/charts/shared/chart-tooltip.utils";
-import { barChartOptionsTemplate } from "./chartOptions";
+import {
+  barChartOptionsStaticWeb,
+  barChartOptionsTemplate,
+} from "./chartOptions";
 
 export type ChartFromBenchmarkTemplateOptions = {
   benchmark_id: string;
@@ -164,7 +167,7 @@ export const staticWebChartTemplate: ChartFromBenchmarkTemplate = {
   secondaryOptions: staticWebSecondaryOptions,
   selectedOption: 0,
   selectedSecondaryOption: 0,
-  chartOptions: barChartOptionsTemplate,
+  chartOptions: barChartOptionsStaticWeb,
   chartType: "bar",
 };
 

@@ -19,6 +19,14 @@
             (mouseenter)="showTooltip($event, currentBenchmarkDescription())"
             (mouseleave)="hideTooltip()"
           ></svg>
+          @if (currentBenchmarkNote()) {
+            <svg
+              lucideTriangleAlert
+              class="benchmark-note-icon"
+              (mouseenter)="showWarningTooltip($event, currentBenchmarkNote())"
+              (mouseleave)="hideTooltip()"
+            ></svg>
+          }
         </h3>
         <button
           #primaryDropdown="appFlowbiteDropdown"

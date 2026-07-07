@@ -2,6 +2,8 @@ import { Injectable } from "@angular/core";
 import {
   ChartFromBenchmarkTemplate,
   ChartFromBenchmarkTemplateOptions,
+  redisChartTemplateCallbacks,
+  staticWebChartTemplateCallbacks,
 } from "../../../pages/server-details/chartFromBenchmarks";
 import { radarDatasetColors } from "../shared/chart-colors.constants";
 import {
@@ -276,12 +278,32 @@ export class BenchmarkMultiBarChartBuilderService {
     chartData: MultiBarChartData | undefined,
   ): void {
     chartTemplate.chartData = chartData;
+    this.applyTooltipCallbacks(chartTemplate);
 
     const selectedOption = chartTemplate.options[chartTemplate.selectedOption];
     chartTemplate.chartOptions.scales.y.title.text = selectedOption.YLabel;
     chartTemplate.chartOptions.scales.x.title.text = selectedOption.XLabel;
     chartTemplate.chartOptions.plugins.title.text = selectedOption.title;
     this.applyStaticWebSizeAxisLabels(chartTemplate, selectedOption);
+  }
+
+  private applyTooltipCallbacks(
+    chartTemplate: ChartFromBenchmarkTemplate,
+  ): void {
+    const callbacks =
+      chartTemplate.id === "static_web"
+        ? staticWebChartTemplateCallbacks
+        : chartTemplate.id === "redis"
+          ? redisChartTemplateCallbacks
+          : undefined;
+
+    if (!callbacks) {
+      return;
+    }
+
+    chartTemplate.chartOptions.plugins ??= {};
+    chartTemplate.chartOptions.plugins.tooltip ??= {};
+    chartTemplate.chartOptions.plugins.tooltip.callbacks = callbacks;
   }
 
   private applyStaticWebSizeAxisLabels(

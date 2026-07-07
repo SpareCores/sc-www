@@ -16,6 +16,7 @@ import {
   LucideDynamicIcon,
   LucideChevronDown,
   LucideInfo,
+  LucideTriangleAlert,
 } from "@lucide/angular";
 import { BaseChartDirective } from "ng2-charts";
 import {
@@ -26,6 +27,7 @@ import {
 import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon.pipe";
 import { cloneChartOptions } from "../shared/chart-options.utils";
 import { ChartTooltipService } from "../shared/chart-tooltip.service";
+import { getBenchmarkMetaNote } from "../shared/chart-tooltip.utils";
 import { FlowbiteDropdownDirective } from "../../../directives/flowbite-dropdown.directive";
 import { BenchmarkMultiBarChartBuilderService } from "./benchmark-multi-bar-chart-builder.service";
 import {
@@ -43,6 +45,7 @@ import {
     LucideDynamicIcon,
     LucideChevronDown,
     LucideInfo,
+    LucideTriangleAlert,
     BaseChartDirective,
     FlowbiteDropdownDirective,
     BenchmarkIconPipe,
@@ -112,6 +115,12 @@ export class BenchmarkMultiBarChartComponent {
         (benchmark) =>
           benchmark.benchmark_id === this.currentOption()?.benchmark_id,
       )?.description || "",
+  );
+  readonly currentBenchmarkNote = computed(() =>
+    getBenchmarkMetaNote(
+      this.benchmarkMeta(),
+      this.currentOption()?.benchmark_id ?? "",
+    ),
   );
   readonly hasSecondaryOptions = computed(
     () => (this.chart().secondaryOptions?.length || 0) > 1,
@@ -209,6 +218,18 @@ export class BenchmarkMultiBarChartComponent {
       tooltipElement: this.tooltip()?.nativeElement,
       event: el,
       content,
+      onShow: (tooltipContent) => {
+        this.tooltipContent.set(tooltipContent);
+      },
+    });
+  }
+
+  showWarningTooltip(el: MouseEvent, content?: string): void {
+    this.tooltipService.showIfPresent({
+      tooltipElement: this.tooltip()?.nativeElement,
+      event: el,
+      content,
+      variant: "warning-wide",
       onShow: (tooltipContent) => {
         this.tooltipContent.set(tooltipContent);
       },

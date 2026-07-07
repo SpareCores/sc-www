@@ -22,6 +22,14 @@
             (mouseenter)="showTooltip($event, infoTooltip)"
             (mouseleave)="hideTooltip()"
           ></svg>
+          @if (compressionMetaNote()) {
+            <svg
+              lucideTriangleAlert
+              class="benchmark-note-icon"
+              (mouseenter)="showWarningTooltip($event, compressionMetaNote())"
+              (mouseleave)="hideTooltip()"
+            ></svg>
+          }
         </h3>
         <div class="flex min-w-0 gap-4">
           @if (hasCoresSelector()) {

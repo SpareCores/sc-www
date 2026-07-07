@@ -26,6 +26,14 @@
               (mouseleave)="hideTooltip()"
             ></svg>
           }
+          @if (noteTooltip()) {
+            <svg
+              lucideTriangleAlert
+              class="benchmark-note-icon"
+              (mouseenter)="showWarningTooltip($event, noteTooltip())"
+              (mouseleave)="hideTooltip()"
+            ></svg>
+          }
         </h3>
         @if (hasSelector()) {
           <button

@@ -571,4 +571,19 @@ describe("ServerCompareChartsComponent", () => {
       ),
     ).toBeNull();
   });
+
+  it("resolves benchmark metadata notes for compare warning icons", () => {
+    component.benchmarkMeta = [
+      {
+        benchmark_id: "stress_ng:div16",
+        name: "Stress-ng: Div16",
+        note: "Scores may plateau above 32 vCPUs.",
+      },
+    ];
+
+    expect(component.getBenchmarkNote("stress_ng:div16")).toBe(
+      "- Div16: Scores may plateau above 32 vCPUs.",
+    );
+    expect(component.getBenchmarkNote("missing")).toBe("");
+  });
 });

@@ -48,4 +48,21 @@ describe("WorkloadProfilePanelComponent", () => {
       "Partial coverage: missing component benchmark(s)",
     );
   });
+
+  it("exposes benchmark metadata notes for the workload profile header", () => {
+    fixture.componentRef.setInput("benchmarkMeta", [
+      {
+        benchmark_id: "workload_profile:web",
+        name: "Workload profile: Web server",
+        description: "Web server workload profile",
+        note: "Partial coverage on some instance types.",
+        status: Status.Active,
+      },
+    ]);
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.workloadProfileMetaNote()).toBe(
+      "- Web server: Partial coverage on some instance types.",
+    );
+  });
 });

@@ -17,6 +17,7 @@ import {
   LucideChevronDown,
   LucideCircleArrowUp,
   LucideInfo,
+  LucideTriangleAlert,
 } from "@lucide/angular";
 import { BaseChartDirective } from "ng2-charts";
 import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon.pipe";
@@ -56,6 +57,7 @@ import {
     LucideChevronDown,
     LucideCircleArrowUp,
     LucideInfo,
+    LucideTriangleAlert,
     BaseChartDirective,
     FlowbiteDropdownDirective,
     BenchmarkIconPipe,
@@ -89,6 +91,7 @@ export class BenchmarkLineChartComponent {
   title = input("");
   orderTooltip = input("");
   infoTooltip = input("");
+  noteTooltip = input("");
   blockClass = input("block_half");
   elementId = input("");
   canvasId = input("");
@@ -310,6 +313,16 @@ export class BenchmarkLineChartComponent {
       tooltipElement: this.tooltip()?.nativeElement,
       event: el,
       content,
+      onShow: (tooltipContent) => this.tooltipContent.set(tooltipContent),
+    });
+  }
+
+  showWarningTooltip(el: MouseEvent, content?: string): void {
+    this.tooltipService.showIfPresent({
+      tooltipElement: this.tooltip()?.nativeElement,
+      event: el,
+      content,
+      variant: "warning-wide",
       onShow: (tooltipContent) => this.tooltipContent.set(tooltipContent),
     });
   }

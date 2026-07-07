@@ -28,6 +28,16 @@
             (mouseenter)="showTooltip($event, workloadProfileInfoTooltip)"
             (mouseleave)="hideTooltip()"
           ></svg>
+          @if (workloadProfileMetaNote()) {
+            <svg
+              lucideTriangleAlert
+              class="benchmark-note-icon"
+              (mouseenter)="
+                showWarningTooltip($event, workloadProfileMetaNote())
+              "
+              (mouseleave)="hideTooltip()"
+            ></svg>
+          }
         </h3>
       </div>
     }

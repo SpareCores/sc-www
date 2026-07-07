@@ -11,13 +11,15 @@ import {
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
-import { LucideDynamicIcon, LucideInfo } from "@lucide/angular";
+import {
+  LucideDynamicIcon,
+  LucideInfo,
+  LucideTriangleAlert,
+} from "@lucide/angular";
 import { Benchmark } from "../../../../sdk/data-contracts";
 import {
   staticWebChartTemplate,
-  staticWebChartTemplateCallbacks,
   redisChartTemplate,
-  redisChartTemplateCallbacks,
 } from "../../pages/server-details/chartFromBenchmarks";
 import { BenchmarkLineChartComponent } from "../charts/line/benchmark-line-chart.component";
 import { CompressionChartComponent } from "../charts/compression/compression-chart.component";
@@ -33,6 +35,7 @@ import {
 import { BenchmarkMultiBarChartComponent } from "../charts/multi-bar/benchmark-multi-bar-chart.component";
 import { BenchmarkMultiBarChartItem } from "../charts/multi-bar/benchmark-multi-bar-chart.types";
 import { ChartTooltipService } from "../charts/shared/chart-tooltip.service";
+import { getBenchmarkMetaNote } from "../charts/shared/chart-tooltip.utils";
 import { WorkloadProfilePanelComponent } from "../charts/workload-profile/workload-profile-panel.component";
 import { filterWorkloadProfileBenchmarks } from "../charts/workload-profile/workload-profile.utils";
 
@@ -41,6 +44,7 @@ import { filterWorkloadProfileBenchmarks } from "../charts/workload-profile/work
   imports: [
     LucideDynamicIcon,
     LucideInfo,
+    LucideTriangleAlert,
     FormsModule,
     RouterModule,
     BenchmarkIconPipe,
@@ -67,14 +71,12 @@ export class ServerChartsComponent implements OnChanges {
   @Input() showChart: string = "all";
   @Input() isEmbedded: boolean = false;
 
-  multiBarCharts: Array<BenchmarkMultiBarChartItem & { callbacks: unknown }> = [
+  multiBarCharts: BenchmarkMultiBarChartItem[] = [
     {
       chart: JSON.parse(JSON.stringify(staticWebChartTemplate)),
-      callbacks: staticWebChartTemplateCallbacks,
     },
     {
       chart: JSON.parse(JSON.stringify(redisChartTemplate)),
-      callbacks: redisChartTemplateCallbacks,
     },
   ];
 
@@ -85,10 +87,6 @@ export class ServerChartsComponent implements OnChanges {
 
   ngOnChanges() {
     if (this.serverDetails && this.benchmarksByCategory) {
-      if (this.isBrowser()) {
-        this.initializeBenchmarkCharts();
-      }
-
       this.passmarkCPUData = this.getBenchmarkCategory("passmark:cpu");
       this.passmarkOTHERData = this.getBenchmarkCategory("passmark:other");
     }
@@ -103,13 +101,6 @@ export class ServerChartsComponent implements OnChanges {
 
   hasWorkloadProfileBenchmarks(): boolean {
     return filterWorkloadProfileBenchmarks(this.benchmarkMeta ?? []).length > 0;
-  }
-
-  initializeBenchmarkCharts() {
-    this.multiBarCharts.forEach((chartItem) => {
-      chartItem.chart.chartOptions.plugins.tooltip.callbacks =
-        chartItem.callbacks;
-    });
   }
 
   getBenchmarkCategory(category: string) {
@@ -138,6 +129,18 @@ export class ServerChartsComponent implements OnChanges {
       tooltipElement: this.tooltip?.nativeElement,
       event: el,
       content,
+      onShow: (tooltipContent) => {
+        this.tooltipContent = tooltipContent;
+      },
+    });
+  }
+
+  showWarningTooltip(el: MouseEvent, content: string | undefined) {
+    this.tooltipService.showIfPresent({
+      tooltipElement: this.tooltip?.nativeElement,
+      event: el,
+      content,
+      variant: "warning",
       onShow: (tooltipContent) => {
         this.tooltipContent = tooltipContent;
       },
@@ -185,6 +188,18 @@ export class ServerChartsComponent implements OnChanges {
         (benchmark) => benchmark.benchmark_id === benchmarkId,
       )?.description || ""
     );
+  }
+
+  benchmarkNote(benchmarkId: string, includeBenchmarkName = true): string {
+    return (
+      getBenchmarkMetaNote(this.benchmarkMeta, benchmarkId, {
+        includeBenchmarkName,
+      }) || ""
+    );
+  }
+
+  benchmarkRowNote(benchmarkId: string): string {
+    return this.benchmarkNote(benchmarkId, false);
   }
 
   isBrowser() {

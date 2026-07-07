@@ -14,10 +14,12 @@ import {
   LucideDynamicIcon,
   LucideCircleArrowUp,
   LucideInfo,
+  LucideTriangleAlert,
 } from "@lucide/angular";
 import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon.pipe";
 import { AccordionComponent } from "../../accordion/accordion.component";
 import { ChartTooltipService } from "../shared/chart-tooltip.service";
+import { getBenchmarkMetaNotes } from "../shared/chart-tooltip.utils";
 import { WorkloadProfileRadarChartComponent } from "./workload-profile-radar-chart.component";
 import {
   WorkloadProfileBenchmarkMeta,
@@ -37,6 +39,7 @@ import {
     LucideDynamicIcon,
     LucideCircleArrowUp,
     LucideInfo,
+    LucideTriangleAlert,
     BenchmarkIconPipe,
     AccordionComponent,
     WorkloadProfileRadarChartComponent,
@@ -78,6 +81,15 @@ export class WorkloadProfilePanelComponent {
 
   readonly workloadProfileInfoTooltip = WORKLOAD_PROFILE_INFO_TOOLTIP;
 
+  readonly workloadProfileMetaNote = computed(() =>
+    getBenchmarkMetaNotes(
+      this.benchmarkMeta(),
+      this.workloadProfileBenchmarks().map(
+        (benchmark) => benchmark.benchmark_id,
+      ),
+    ),
+  );
+
   tooltipContent = "";
 
   showTooltip(el: MouseEvent, content?: string): void {
@@ -85,6 +97,18 @@ export class WorkloadProfilePanelComponent {
       tooltipElement: this.tooltip()?.nativeElement,
       event: el,
       content,
+      onShow: (text) => {
+        this.tooltipContent = text;
+      },
+    });
+  }
+
+  showWarningTooltip(el: MouseEvent, content?: string): void {
+    this.tooltipService.showIfPresent({
+      tooltipElement: this.tooltip()?.nativeElement,
+      event: el,
+      content,
+      variant: "warning-wide",
       onShow: (text) => {
         this.tooltipContent = text;
       },

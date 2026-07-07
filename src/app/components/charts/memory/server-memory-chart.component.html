@@ -18,6 +18,14 @@
           (mouseenter)="showTooltip($event, currentMemoryChartInfo())"
           (mouseleave)="hideTooltip()"
         ></svg>
+        @if (currentMemoryChartNote()) {
+          <svg
+            lucideTriangleAlert
+            class="benchmark-note-icon"
+            (mouseenter)="showWarningTooltip($event, currentMemoryChartNote())"
+            (mouseleave)="hideTooltip()"
+          ></svg>
+        }
       </h3>
       <button
         #memoryDropdown="appFlowbiteDropdown"

@@ -15,14 +15,13 @@ import {
   LucideDynamicIcon,
   LucideCircleArrowUp,
   LucideInfo,
+  LucideTriangleAlert,
 } from "@lucide/angular";
 import { ExtendedServerDetails } from "../../pages/server-details/server-details.component";
 import { Allocation } from "../../../../sdk/data-contracts";
 import {
   redisChartTemplate,
-  redisChartTemplateCallbacks,
   staticWebChartCompareTemplate,
-  staticWebChartTemplateCallbacks,
 } from "../../pages/server-details/chartFromBenchmarks";
 import { ToastService } from "../../services/toast.service";
 import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
@@ -58,6 +57,10 @@ import {
 } from "../charts/multi-bar/benchmark-multi-bar-chart.types";
 import { ChartTooltipService } from "../charts/shared/chart-tooltip.service";
 import {
+  getBenchmarkMetaNote,
+  getBenchmarkMetaNotes,
+} from "../charts/shared/chart-tooltip.utils";
+import {
   WORKLOAD_PROFILE_INFO_TOOLTIP,
   formatWorkloadProfileLabel,
   isWorkloadProfileBenchmark,
@@ -84,6 +87,7 @@ import {
     LucideDynamicIcon,
     LucideCircleArrowUp,
     LucideInfo,
+    LucideTriangleAlert,
     RouterModule,
     CompactNumberPipe,
     BenchmarkIconPipe,
@@ -126,17 +130,15 @@ export class ServerCompareChartsComponent implements OnChanges {
   SSCoreTooltip =
     "Performance benchmark score using stress-ng's div16 method (doing 16 bit unsigned integer divisions for 20 seconds): simulating CPU heavy workload that scales well on any number of (v)CPUs. The score/price value shows the div16 performance measured for 1 USD/hour -- when otherwise not noted, using the best (usually spot) price of all zones.";
 
-  multiBarCharts: Array<BenchmarkMultiBarChartItem & { callbacks: unknown }> = [
+  multiBarCharts: BenchmarkMultiBarChartItem[] = [
     {
       chart: JSON.parse(JSON.stringify(staticWebChartCompareTemplate)),
-      callbacks: staticWebChartTemplateCallbacks,
       data: [],
       show_more: false,
       hidden: false,
     },
     {
       chart: JSON.parse(JSON.stringify(redisChartTemplate)),
-      callbacks: redisChartTemplateCallbacks,
       data: [],
       show_more: false,
       hidden: false,
@@ -175,10 +177,6 @@ export class ServerCompareChartsComponent implements OnChanges {
         chartTemplate.chart.id === this.showChart || this.showChart === "all"
       );
     });
-
-    if (isPlatformBrowser(this.platformId)) {
-      this.initializeBenchmarkCharts();
-    }
   }
 
   isChartShown(id: string): boolean {
@@ -455,6 +453,32 @@ export class ServerCompareChartsComponent implements OnChanges {
     }
   }
 
+  showWarningTooltip(el: MouseEvent, content?: string) {
+    this.tooltipHtml = "";
+    this.tooltipService.showIfPresent({
+      tooltipElement: this.tooltip?.nativeElement,
+      event: el,
+      content,
+      variant: "warning",
+      onShow: (tooltipContent) => {
+        this.tooltipContent = tooltipContent;
+      },
+    });
+  }
+
+  showWarningSectionTooltip(el: MouseEvent, content?: string) {
+    this.tooltipHtml = "";
+    this.tooltipService.showIfPresent({
+      tooltipElement: this.tooltip?.nativeElement,
+      event: el,
+      content,
+      variant: "warning-wide",
+      onShow: (tooltipContent) => {
+        this.tooltipContent = tooltipContent;
+      },
+    });
+  }
+
   showTooltipChart(el: MouseEvent, type: string) {
     this.tooltipHtml = "";
     const content = this.benchmarkMeta.find(
@@ -489,18 +513,50 @@ export class ServerCompareChartsComponent implements OnChanges {
     this.tooltipHtml = "";
   }
 
+  getBenchmarkNote(benchmarkId: string, includeBenchmarkName = true): string {
+    return (
+      getBenchmarkMetaNote(this.benchmarkMeta, benchmarkId, {
+        includeBenchmarkName,
+      }) || ""
+    );
+  }
+
+  getBenchmarkRowNote(benchmarkId: string): string {
+    return this.getBenchmarkNote(benchmarkId, false);
+  }
+
+  getGeekbenchMetaNote(): string {
+    return getBenchmarkMetaNotes(
+      this.benchmarkMeta,
+      (this.benchmarkMeta ?? [])
+        .filter((benchmark: { benchmark_id?: string }) =>
+          benchmark.benchmark_id?.includes("geekbench"),
+        )
+        .map((benchmark: { benchmark_id?: string }) => benchmark.benchmark_id),
+    );
+  }
+
+  getLlmMetaNote(): string {
+    return getBenchmarkMetaNotes(this.benchmarkMeta, [
+      "llm_speed:prompt_processing",
+      "llm_speed:text_generation",
+    ]);
+  }
+
+  getWorkloadProfileMetaNote(): string {
+    return getBenchmarkMetaNotes(
+      this.benchmarkMeta,
+      this.getWorkloadProfileBenchmarks().map(
+        (benchmark) => benchmark.benchmark_key ?? benchmark.benchmark_id,
+      ),
+    );
+  }
+
   getProperty(
     column: { id: string; unit?: string | null },
     server: ExtendedServerDetails,
   ) {
     return getServerPropertyValue(column, server);
-  }
-
-  initializeBenchmarkCharts() {
-    this.multiBarCharts.forEach((chartItem) => {
-      chartItem.chart.chartOptions.plugins.tooltip.callbacks =
-        chartItem.callbacks;
-    });
   }
 
   setBenchmarkCategoryHidden(category: { hidden?: boolean }, hidden: boolean) {

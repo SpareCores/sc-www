@@ -394,6 +394,19 @@
                       "
                       (mouseleave)="hideTooltip()"
                     ></svg>
+                    @if (getWorkloadProfileMetaNote()) {
+                      <svg
+                        lucideTriangleAlert
+                        class="benchmark-note-icon"
+                        (mouseenter)="
+                          showWarningSectionTooltip(
+                            $event,
+                            getWorkloadProfileMetaNote()
+                          )
+                        "
+                        (mouseleave)="hideTooltip()"
+                      ></svg>
+                    }
                   </span>
                 </span>
               </h3>
@@ -490,6 +503,25 @@
                         (mouseleave)="hideTooltip()"
                       ></svg>
                     }
+                    @if (
+                      getBenchmarkRowNote(
+                        benchmark.benchmark_key ?? benchmark.benchmark_id
+                      )
+                    ) {
+                      <svg
+                        lucideTriangleAlert
+                        class="benchmark-note-icon inline-block ml-1"
+                        (mouseenter)="
+                          showWarningTooltip(
+                            $event,
+                            getBenchmarkRowNote(
+                              benchmark.benchmark_key ?? benchmark.benchmark_id
+                            )
+                          )
+                        "
+                        (mouseleave)="hideTooltip()"
+                      ></svg>
+                    }
                   </div>
                 </div>
               </td>
@@ -561,6 +593,19 @@
                           "
                           (mouseleave)="hideTooltip()"
                         ></svg>
+                        @if (getBenchmarkNote(benchmarkCategory.id)) {
+                          <svg
+                            lucideTriangleAlert
+                            class="benchmark-note-icon"
+                            (mouseenter)="
+                              showWarningSectionTooltip(
+                                $event,
+                                getBenchmarkNote(benchmarkCategory.id)
+                              )
+                            "
+                            (mouseleave)="hideTooltip()"
+                          ></svg>
+                        }
                       }
                       @if (benchmarkCategory.id === "stress_ng") {
                         <svg
@@ -571,6 +616,19 @@
                           "
                           (mouseleave)="hideTooltip()"
                         ></svg>
+                        @if (getBenchmarkNote("stress_ng:div16")) {
+                          <svg
+                            lucideTriangleAlert
+                            class="benchmark-note-icon"
+                            (mouseenter)="
+                              showWarningSectionTooltip(
+                                $event,
+                                getBenchmarkNote('stress_ng:div16')
+                              )
+                            "
+                            (mouseleave)="hideTooltip()"
+                          ></svg>
+                        }
                       }
                       @if (benchmarkCategory.id === "stress_ng_pct") {
                         <svg
@@ -597,6 +655,19 @@
                           "
                           (mouseleave)="hideTooltip()"
                         ></svg>
+                        @if (getBenchmarkNote("compression_text:ratio")) {
+                          <svg
+                            lucideTriangleAlert
+                            class="benchmark-note-icon"
+                            (mouseenter)="
+                              showWarningSectionTooltip(
+                                $event,
+                                getBenchmarkNote('compression_text:ratio')
+                              )
+                            "
+                            (mouseleave)="hideTooltip()"
+                          ></svg>
+                        }
                       }
                       @if (
                         benchmarkCategory.id === "geekbench" ||
@@ -609,6 +680,19 @@
                           (mouseenter)="showGeekbenchInfoTooltip($event)"
                           (mouseleave)="hideTooltip()"
                         ></svg>
+                        @if (getGeekbenchMetaNote()) {
+                          <svg
+                            lucideTriangleAlert
+                            class="benchmark-note-icon"
+                            (mouseenter)="
+                              showWarningSectionTooltip(
+                                $event,
+                                getGeekbenchMetaNote()
+                              )
+                            "
+                            (mouseleave)="hideTooltip()"
+                          ></svg>
+                        }
                       }
                       @if (benchmarkCategory.id === "llm_inference") {
                         <svg
@@ -622,6 +706,19 @@
                           "
                           (mouseleave)="hideTooltip()"
                         ></svg>
+                        @if (getLlmMetaNote()) {
+                          <svg
+                            lucideTriangleAlert
+                            class="benchmark-note-icon"
+                            (mouseenter)="
+                              showWarningSectionTooltip(
+                                $event,
+                                getLlmMetaNote()
+                              )
+                            "
+                            (mouseleave)="hideTooltip()"
+                          ></svg>
+                        }
                       }
                     </span>
                   </span>
@@ -819,6 +916,27 @@
                           (mouseleave)="hideTooltip()"
                         ></svg>
                       }
+                      @if (
+                        getBenchmarkRowNote(
+                          benchmarkData.benchmark_key ??
+                            benchmarkData.benchmark_id
+                        )
+                      ) {
+                        <svg
+                          lucideTriangleAlert
+                          class="benchmark-note-icon inline-block ml-1"
+                          (mouseenter)="
+                            showWarningTooltip(
+                              $event,
+                              getBenchmarkRowNote(
+                                benchmarkData.benchmark_key ??
+                                  benchmarkData.benchmark_id
+                              )
+                            )
+                          "
+                          (mouseleave)="hideTooltip()"
+                        ></svg>
+                      }
                     </div>
                   </div>
                 </td>
@@ -871,6 +989,27 @@
                             class="h-4 w-4 text-gray-200"
                             (mouseenter)="
                               showTooltip($event, benchmarkData.description)
+                            "
+                            (mouseleave)="hideTooltip()"
+                          ></svg>
+                        }
+                        @if (
+                          getBenchmarkRowNote(
+                            benchmarkData.benchmark_key ??
+                              benchmarkData.benchmark_id
+                          )
+                        ) {
+                          <svg
+                            lucideTriangleAlert
+                            class="benchmark-note-icon"
+                            (mouseenter)="
+                              showWarningTooltip(
+                                $event,
+                                getBenchmarkRowNote(
+                                  benchmarkData.benchmark_key ??
+                                    benchmarkData.benchmark_id
+                                )
+                              )
                             "
                             (mouseleave)="hideTooltip()"
                           ></svg>
@@ -987,6 +1126,28 @@
                   "
                   (mouseleave)="hideTooltip()"
                 ></svg>
+                @if (
+                  getBenchmarkNote(
+                    chartItem.chart.options[chartItem.chart.selectedOption]
+                      .benchmark_id
+                  )
+                ) {
+                  <svg
+                    lucideTriangleAlert
+                    class="benchmark-note-icon"
+                    (mouseenter)="
+                      showWarningSectionTooltip(
+                        $event,
+                        getBenchmarkNote(
+                          chartItem.chart.options[
+                            chartItem.chart.selectedOption
+                          ].benchmark_id
+                        )
+                      )
+                    "
+                    (mouseleave)="hideTooltip()"
+                  ></svg>
+                }
               </h3>
             </td>
             @if (getCompareFixedWideActionSpacerColSpan()) {
@@ -1035,6 +1196,19 @@
                             class="h-4 w-4 text-gray-200 shrink-0"
                             (mouseenter)="
                               showTooltip($event, chartData.description)
+                            "
+                            (mouseleave)="hideTooltip()"
+                          ></svg>
+                        }
+                        @if (getBenchmarkRowNote(chartData.benchmark_id)) {
+                          <svg
+                            lucideTriangleAlert
+                            class="benchmark-note-icon"
+                            (mouseenter)="
+                              showWarningTooltip(
+                                $event,
+                                getBenchmarkRowNote(chartData.benchmark_id)
+                              )
                             "
                             (mouseleave)="hideTooltip()"
                           ></svg>
@@ -1131,6 +1305,19 @@
                       class="h-4 w-4 text-gray-200 shrink-0"
                       (mouseenter)="
                         showTooltip($event, benchmarkCategory.description)
+                      "
+                      (mouseleave)="hideTooltip()"
+                    ></svg>
+                  }
+                  @if (getBenchmarkRowNote(benchmarkCategory.benchmark_id)) {
+                    <svg
+                      lucideTriangleAlert
+                      class="benchmark-note-icon"
+                      (mouseenter)="
+                        showWarningTooltip(
+                          $event,
+                          getBenchmarkRowNote(benchmarkCategory.benchmark_id)
+                        )
                       "
                       (mouseleave)="hideTooltip()"
                     ></svg>
