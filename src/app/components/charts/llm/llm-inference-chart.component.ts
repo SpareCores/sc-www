@@ -192,10 +192,14 @@ export class LlmInferenceChartComponent {
       )?.description || "",
   );
   readonly promptMetaNote = computed(() =>
-    getBenchmarkMetaNote(this.benchmarkMeta(), "llm_speed:prompt_processing"),
+    getBenchmarkMetaNote(this.benchmarkMeta(), "llm_speed:prompt_processing", {
+      includeBenchmarkName: false,
+    }),
   );
   readonly generationMetaNote = computed(() =>
-    getBenchmarkMetaNote(this.benchmarkMeta(), "llm_speed:text_generation"),
+    getBenchmarkMetaNote(this.benchmarkMeta(), "llm_speed:text_generation", {
+      includeBenchmarkName: false,
+    }),
   );
   readonly orderTooltip = "Higher is better.";
 
