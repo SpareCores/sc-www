@@ -114,13 +114,13 @@ export class BenchmarkWorkloadsComponent implements OnInit {
 
   readonly benchmarksResource = resource({
     loader: async () => {
-      const [workloadsResponse, benchmarkMetaResponse] = await Promise.all([
-        this.keeperAPI.getBenchmarkWorkloads(),
-        this.keeperAPI.getServerBenchmarkMeta(),
-      ]);
+      const workloadsResponse = await this.keeperAPI.getBenchmarkWorkloads();
+      const benchmarkMetaResponse = await this.keeperAPI
+        .getServerBenchmarkMeta()
+        .catch(() => null);
       const rawData: BenchmarkScoreStatsItem[] = workloadsResponse.body ?? [];
       const noteByBenchmarkId = this.buildBenchmarkNoteMap(
-        benchmarkMetaResponse.body ?? [],
+        benchmarkMetaResponse?.body ?? [],
       );
       const data = rawData.map((workload) =>
         this.normalizeWorkload(workload, noteByBenchmarkId),
