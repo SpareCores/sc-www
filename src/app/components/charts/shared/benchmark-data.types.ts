@@ -37,6 +37,7 @@ export type BenchmarkMetaBase = Pick<Benchmark, "benchmark_id"> &
       Benchmark,
       | "name"
       | "description"
+      | "note"
       | "framework"
       | "config_fields"
       | "measurement"

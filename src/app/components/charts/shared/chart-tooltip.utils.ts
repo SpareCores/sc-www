@@ -47,6 +47,10 @@ export function formatStaticWebFileSizeLabel(
   }
 
   const text = String(size).trim();
+  if (!text) {
+    return "";
+  }
+
   const kibibyteSuffixMatch = text.match(/^(\d+)k$/i);
 
   if (kibibyteSuffixMatch) {
@@ -77,6 +81,82 @@ export function withServerTooltipIdentity<T extends object>(
     ...dataset,
     serverTooltipIdentity: formatServerTooltipIdentity(server),
   };
+}
+
+type BenchmarkMetaNoteSource = {
+  benchmark_id: string;
+  name?: string | null;
+  note?: string | null;
+};
+
+type BenchmarkMetaNoteOptions = {
+  includeBenchmarkName?: boolean;
+};
+
+function formatBenchmarkShortName(name: string): string {
+  const trimmed = name.trim();
+  const colonIndex = trimmed.indexOf(": ");
+
+  return colonIndex === -1 ? trimmed : trimmed.slice(colonIndex + 2).trim();
+}
+
+export function formatBenchmarkNoteTooltip(
+  name: string | null | undefined,
+  note: string,
+  options?: BenchmarkMetaNoteOptions,
+): string {
+  const trimmedNote = note.trim();
+  const includeBenchmarkName = options?.includeBenchmarkName ?? true;
+
+  if (!includeBenchmarkName) {
+    return trimmedNote;
+  }
+
+  const shortName = name?.trim() ? formatBenchmarkShortName(name) : "";
+
+  if (!shortName) {
+    return `- ${trimmedNote}`;
+  }
+
+  return `- ${shortName}: ${trimmedNote}`;
+}
+
+export function getBenchmarkMetaNote(
+  benchmarkMeta: BenchmarkMetaNoteSource[] | undefined,
+  benchmarkId: string,
+  options?: BenchmarkMetaNoteOptions,
+): string | undefined {
+  const benchmark = benchmarkMeta?.find(
+    (item) => item.benchmark_id === benchmarkId,
+  );
+  const note = benchmark?.note?.trim();
+
+  if (!note) {
+    return undefined;
+  }
+
+  return formatBenchmarkNoteTooltip(benchmark?.name, note, options);
+}
+
+export function getBenchmarkMetaNotes(
+  benchmarkMeta: BenchmarkMetaNoteSource[] | undefined,
+  benchmarkIds: ReadonlyArray<string | null | undefined>,
+  options?: BenchmarkMetaNoteOptions,
+): string {
+  const notes = new Set<string>();
+
+  for (const benchmarkId of benchmarkIds) {
+    if (!benchmarkId) {
+      continue;
+    }
+
+    const note = getBenchmarkMetaNote(benchmarkMeta, benchmarkId, options);
+    if (note) {
+      notes.add(note);
+    }
+  }
+
+  return [...notes].join("\n");
 }
 
 export function wrapTextAtWordBoundaries(
