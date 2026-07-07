@@ -18,6 +18,7 @@ export interface BenchmarkWorkloadItem extends Omit<
 > {
   configs?: BenchmarkWorkloadConfigs;
   status: Status;
+  note?: string | null;
 }
 
 export interface BenchmarkFamily {

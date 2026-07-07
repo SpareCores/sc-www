@@ -30,6 +30,7 @@ import {
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import {
+  Benchmark,
   BenchmarkScoreStatsItem,
   Status,
 } from "../../../../sdk/data-contracts";
@@ -113,9 +114,17 @@ export class BenchmarkWorkloadsComponent implements OnInit {
 
   readonly benchmarksResource = resource({
     loader: async () => {
-      const response = await this.keeperAPI.getBenchmarkWorkloads();
-      const rawData: BenchmarkScoreStatsItem[] = response.body ?? [];
-      const data = rawData.map((workload) => this.normalizeWorkload(workload));
+      const [workloadsResponse, benchmarkMetaResponse] = await Promise.all([
+        this.keeperAPI.getBenchmarkWorkloads(),
+        this.keeperAPI.getServerBenchmarkMeta(),
+      ]);
+      const rawData: BenchmarkScoreStatsItem[] = workloadsResponse.body ?? [];
+      const noteByBenchmarkId = this.buildBenchmarkNoteMap(
+        benchmarkMetaResponse.body ?? [],
+      );
+      const data = rawData.map((workload) =>
+        this.normalizeWorkload(workload, noteByBenchmarkId),
+      );
       const grouped = this.groupByFramework(data);
 
       if (data.length > 0 && !this.activeBenchmarkId()) {
@@ -169,13 +178,32 @@ export class BenchmarkWorkloadsComponent implements OnInit {
     this.syncSidebarStateForViewport();
   }
 
+  private buildBenchmarkNoteMap(
+    benchmarkMeta: Benchmark[],
+  ): Map<string, string> {
+    const notes = new Map<string, string>();
+
+    for (const benchmark of benchmarkMeta) {
+      const note = benchmark.note?.trim();
+      if (note) {
+        notes.set(benchmark.benchmark_id, note);
+      }
+    }
+
+    return notes;
+  }
+
   private normalizeWorkload(
     workload: BenchmarkScoreStatsItem,
+    noteByBenchmarkId: Map<string, string>,
   ): BenchmarkWorkloadItem {
+    const note = noteByBenchmarkId.get(workload.benchmark_id);
+
     return {
       ...workload,
       configs: this.normalizeConfigs(workload.configs),
       status: this.normalizeStatus(workload.status),
+      note: note ?? null,
     };
   }
 
