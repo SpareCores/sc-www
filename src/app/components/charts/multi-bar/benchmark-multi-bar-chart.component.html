@@ -2,7 +2,7 @@
   @if (layout() === "details") {
     <div class="block_half" id="{{ chart().id }}_chart">
       <div class="flex justify-between items-center">
-        <h3 class="text-2xl flex items-center gap-2">
+        <h3 class="text-2xl flex items-center gap-2 pr-2">
           <svg [lucideIcon]="chart().id | benchmarkIcon" class="h-6 w-6"></svg>
           <span class="whitespace-nowrap">{{ chart().name }}</span>
           @if (currentOption().icon) {
