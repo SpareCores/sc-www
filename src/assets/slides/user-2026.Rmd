@@ -53,7 +53,7 @@ format:
 ```R {code-line-numbers="1-3|1|2|3" style="font-size:1.75em; margin-top: 320px !important;"}
 > cloud::servers[workload == R][
 +   order(cost_efficiency)][
-+   1, eval(task)]
++   1, eval(task)]    # v7a01b28
 ```
 
 <style>
@@ -295,11 +295,31 @@ first of all, just to build some credibility for the project:
 we are committed to be vendor-agnostic, open-source, and transparent about our data
 :::
 
-# > ??`Spare Cores` {#intro transition="convex-in convex-out"}
+# > ??`Spare Cores` {#intro transition="convex-in none-out"}
 
 <ul style="font-size: 0.9em;">
   <li class="fragment">Open-source tools, database schemas and documentation to inspect and inventory cloud vendors and their offerings, including pricing and measured performance.</li>
-  <li class="fragment">Managed infrastructure, databases, APIs, SDKs, and web applications to make this data publicly accessible.</li>
+</ul>
+
+::: {.centered .fragment}
+<img src="images/dontryathome1.png" style="width: 50%; margin-top: 0px;" />
+:::
+
+## > ??`Spare Cores` {#intro transition="none-in none-out"}
+
+<ul style="font-size: 0.9em;">
+  <li>Open-source tools, database schemas and documentation to inspect and inventory cloud vendors and their offerings, including pricing and measured performance.</li>
+</ul>
+
+::: {.centered}
+<img src="images/dontryathome2.png" style="width: 50%; margin-top: 0px;" />
+:::
+
+## > ??`Spare Cores` {#intro transition="none-in convex-out"}
+
+<ul style="font-size: 0.9em;">
+  <li>Open-source tools, database schemas and documentation to inspect and inventory cloud vendors and their offerings, including pricing and measured performance.</li>
+  <li>Managed infrastructure, databases, APIs, SDKs, and web applications to make this data publicly accessible.</li>
   <li class="fragment">Open-source helpers to select, start and manage instances in your own environment.</li>
   <li class="fragment">Open-source Python/R packages and workflow orchestration extensions (e.g. Metaflow) to track resource usage and cost of DS/ML/AI jobs. Open-source tooling to right-size instances.</li>
   <li class="fragment">Add-on services to scale data science workflows.</li>
@@ -311,6 +331,8 @@ we are committed to be vendor-agnostic, open-source, and transparent about our d
 - unified CLI to start machines
 - and working on an an optional SaaS offering built on the top of the open-source tooling for folks who would rather avoid registering with all cloud providers etc: give us a Docker image, a command to run, and you credit card .. all set, we will run it wherever it's cheapest.
 :::
+
+
 
 # > sparecores::navigator {transition="convex-in slide-out"}
 
@@ -504,7 +526,7 @@ for computers, we provide APIs ...
 
 ## > sparecores::navigator[i, j, by = ...]
 
-```r {code-line-numbers="1-4|6-10|12|13-72" style="margin-top: 20px !important; height: 640px;"}
+```r {code-line-numbers="1-4|6-10|12|13-72|43-60" style="margin-top: 20px !important; height: 640px;"}
 > library(reticulate)
 
 > sc_data <- reticulate::import("sc_data")
@@ -714,7 +736,7 @@ inefficient rolling mean implementation
 
 ## > ?tracker$recommend_resources
 
-```python {code-line-numbers="1-1|12-13" style="margin-top: 30px !important; margin-bottom: 30px !important; font-size: 32px"}
+```python {code-line-numbers="1-1|6-9|12-13" style="margin-top: 30px !important; margin-bottom: 30px !important; font-size: 32px"}
 >>> print(ResourceTracker.recommend_resources.__doc__)
 Recommend optimal resource allocation based on the measured resource tracker data.
 
@@ -832,19 +854,7 @@ To make this more convenient (automatic),<br />check out e.g. the Metaflow exten
    <img src="images/resource-tracker-docs.png" width="80%" style="margin-top: -40px !important;" />
 </a>
 
-
-
-# > TODO {transition="convex-in slide-out"}
-
-
-
-# > browseURL("meet.sparecores.com") { data-transition="convex-in convex-out"}
-
-::: {.centered}
-<img src="https://sparecores.com/assets/images/blog/event-photos/_A747039.webp" style="width: 75%; margin-top: -10px;" />
-:::
-
-# {#bye transition="convex-in none-out"}
+# {#bye data-transition="convex-in convex-out"}
 
 <!-- https://carbon.now.sh/?bg=rgba%288%2C47%2C73%2C1%29&t=theme%3A0bcewbfyk9yl&wt=none&l=python&width=680&ds=false&dsyoff=20px&dsblur=68px&wc=true&wa=true&pv=5px&ph=5px&ln=false&fl=1&fm=Hack&fs=18px&lh=161%25&si=false&es=2x&wm=false&code=%253E%253E%253E%2520import%2520os%250A%253E%253E%253E%2520import%2520signal%250A%253E%253E%253E%2520os.kill%28os.getpid%28%29%252C%2520signal.SIGKILL%29%2520%2520%250A%250A%253E%253E%253E%2520visit%28%27https%253A%252F%252Fsparecores.com%27%29%250A%253E%253E%253E%2520email%28%27daroczig%2540sparecores.com%27%29%250A%253E%253E%253E%2520follow%28%27%2540SpareCores%27%29%250A%250A%253E%253E%253E%2520os._exit%28status%253D0%29%250AProcess%2520finished%2520at%2520Jan%252029%25207%253A30%2520PM%25202026%2520%2520%2520 -->
 
@@ -852,13 +862,13 @@ To make this more convenient (automatic),<br />check out e.g. the Metaflow exten
 <img src="images/bye-r-1.png" style="background: none; margin-top: 15px !important;" class="w-80" />
 :::
 
-## {#bye-bye transition="none"}
+## > browseURL("meet.sparecores.com") {#meet data-transition="convex-in concave-out"}
 
 ::: {.centered}
-<img src="images/bye-r-2.png" style="background: none; margin-top: 15px !important;" class="w-80" />
+<img src="https://sparecores.com/assets/images/blog/event-photos/_A747039.webp" style="width: 75%; margin-top: -10px;" />
 :::
 
-## {#bye-bye-bye transition="none"}
+## {#bye-bye data-transition="concave-in"}
 
 ::: {.centered}
 <img src="images/bye-user-2026-3.png" style="background: none; margin-top: 15px !important;" class="w-80" />
