@@ -937,11 +937,10 @@ FTR this dataset was generated, collected, standardized, and published in public
       }</style></aside>
 </section></section>
 <section id="components" class="title-slide slide level1" data-transition="convex-in convex-out">
-<h1>&gt; bug.report(package=“sparecores”)</h1>
+<h1>&gt; bug.report(package=“navigator”)</h1>
 
 <img style="margin-top:30px; width: 100%;" src="images/sc-components-2026.png" class="r-stretch"><aside class="notes">
-<p>As mentioned previously, this is made available via multiple components that you can find on GitHub. We don’t have time to go through all of them, but I’d be happy to answer any related questions on Slack, or ping me on LinkedIn :)</p>
-<p>WE will focus on the inspector now!</p>
+
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -955,6 +954,253 @@ FTR this dataset was generated, collected, standardized, and published in public
       }</style></aside>
 </section>
 
+<section>
+<section id="libraryresource.tracker" class="title-slide slide level1" data-transition="convex-in slide-out">
+<h1>&gt; library(resource.tracker)</h1>
+<ul>
+<li class="fragment" data-fragment-index="1">
+Lightweight (zero-dependency*) Python package
+</li>
+<li class="fragment" data-fragment-index="3">
+Alternative Linux-only implementation in Rust
+</li>
+<li class="fragment" data-fragment-index="4">
+Monitors host and process-level resource usage
+</li>
+<li class="fragment" data-fragment-index="5">
+Tracks CPU, memory, GPU, network, storage &amp; more
+</li>
+<li class="fragment" data-fragment-index="6">
+Ease of use, minimal setup
+</li>
+<li class="fragment" data-fragment-index="7">
+Runs in the background, non-blocking
+</li>
+<li class="fragment" data-fragment-index="8">
+Framework extensions (e.g.&nbsp;Metaflow)
+</li>
+<div class="fragment" style="margin-top: 40px;" data-fragment-index="2">
+* No dependencies on Linux; <code>psutil</code> on other OS.
+</div>
+<aside class="notes">
+<p>And here comes the resource tracker to the rescue!</p>
+<p>If you are running Linux, and most production servers are Linux … it can use the proc filesystem without any further dependencies – other than a modern Linux kernel. On other operating systems, it uses <code>psutil</code> to get the same information.</p>
+<p>It supports recent Python versions, going back to the latest officially supported Python version, so that you can run it anywhere.</p>
+<p>It can monitor the resource usage of the whole system, like logging the overall CPU and memory usage etc But can also track a single process and optionally its children as well – independent from the whole system.</p>
+<p>It can track the CPU usage, memory usage, disk I/O, network usage, GPU usage, and more.</p>
+<p>It’s easy to use, and it’s non-blocking, so you can run it in the background while your code is running.</p>
+<p>By default, it’s framework agnostic .. but comes with a few extensions, e.g.&nbsp;for Metaflow.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</ul></section>
+<section id="install.packagesresource.tracker" class="slide level2">
+<h2>&gt; install.packages(“resource.tracker”)</h2>
+<p>Requires Python 3.9+ and <img style="height: 36px; vertical-align: middle;" src="https://img.shields.io/pypi/v/resource-tracker?color=%2332C955&amp;label=pypi%3Aresource-tracker">:</p>
+<div class="sourceCode" id="cb4" style="margin-top: 20px !important;"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="" aria-hidden="true" tabindex="-1"></a>reticulate<span class="sc">::</span><span class="fu">py_install</span>(<span class="st">'resource-tracker'</span>)</span></code></pre></div>
+<p>Then install the R package bindings from GitHub:</p>
+<div class="sourceCode" id="cb5" style="margin-top: 20px !important;"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="" aria-hidden="true" tabindex="-1"></a>remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">'SpareCores/resource-tracker'</span>, <span class="at">subdir =</span> <span class="st">'R'</span>)</span></code></pre></div>
+</section>
+<section id="demopackageresource.tracker" class="slide level2">
+<h2>&gt; demo(package=resource.tracker)</h2>
+<div class="sourceCode" id="cb6" style="margin-top: 20px !important; height: 640px;" data-code-line-numbers="1-2|4-8|10-34|36-41|43-67"><pre class="sourceCode numberSource r number-lines"><code class="sourceCode r"><span id="cb6-1"><a href=""></a><span class="sc">&gt;</span> <span class="fu">library</span>(resource.tracker)</span>
+<span id="cb6-2"><a href=""></a><span class="sc">&gt;</span> tracker <span class="ot">&lt;-</span> ResourceTracker<span class="sc">$</span><span class="fu">new</span>()</span>
+<span id="cb6-3"><a href=""></a></span>
+<span id="cb6-4"><a href=""></a><span class="sc">&gt;</span> numbers <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="fl">1e6</span></span>
+<span id="cb6-5"><a href=""></a><span class="sc">&gt;</span> window <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb6-6"><a href=""></a><span class="sc">&gt;</span> rollavg <span class="ot">&lt;-</span> <span class="fu">sapply</span>(</span>
+<span id="cb6-7"><a href=""></a><span class="sc">+</span>   <span class="fu">seq_len</span>(<span class="fu">length</span>(numbers) <span class="sc">-</span> window <span class="sc">+</span> <span class="dv">1</span>),</span>
+<span id="cb6-8"><a href=""></a><span class="sc">+</span>   <span class="cf">function</span>(i) <span class="fu">mean</span>(numbers[i<span class="sc">:</span>(i <span class="sc">+</span> window <span class="sc">-</span> <span class="dv">1</span>)]))</span>
+<span id="cb6-9"><a href=""></a></span>
+<span id="cb6-10"><a href=""></a><span class="sc">&gt;</span> tracker<span class="sc">$</span><span class="fu">stats</span>()</span>
+<span id="cb6-11"><a href=""></a>List of <span class="dv">9</span></span>
+<span id="cb6-12"><a href=""></a> <span class="sc">$</span> process_cpu_usage        <span class="sc">:</span>List of <span class="dv">2</span></span>
+<span id="cb6-13"><a href=""></a>  ..<span class="sc">$</span> mean<span class="sc">:</span> num <span class="fl">1.12</span></span>
+<span id="cb6-14"><a href=""></a>  ..<span class="sc">$</span> max <span class="sc">:</span> num <span class="fl">1.14</span></span>
+<span id="cb6-15"><a href=""></a> <span class="sc">$</span> process_memory           <span class="sc">:</span>List of <span class="dv">2</span></span>
+<span id="cb6-16"><a href=""></a>  ..<span class="sc">$</span> mean<span class="sc">:</span> num <span class="dv">728783</span></span>
+<span id="cb6-17"><a href=""></a>  ..<span class="sc">$</span> max <span class="sc">:</span> num <span class="dv">798130</span></span>
+<span id="cb6-18"><a href=""></a> <span class="sc">$</span> process_gpu_usage        <span class="sc">:</span>List of <span class="dv">2</span></span>
+<span id="cb6-19"><a href=""></a>  ..<span class="sc">$</span> mean<span class="sc">:</span> num <span class="dv">0</span></span>
+<span id="cb6-20"><a href=""></a>  ..<span class="sc">$</span> max <span class="sc">:</span> num <span class="dv">0</span></span>
+<span id="cb6-21"><a href=""></a> <span class="sc">$</span> process_gpu_vram         <span class="sc">:</span>List of <span class="dv">2</span></span>
+<span id="cb6-22"><a href=""></a>  ..<span class="sc">$</span> mean<span class="sc">:</span> num <span class="dv">0</span></span>
+<span id="cb6-23"><a href=""></a>  ..<span class="sc">$</span> max <span class="sc">:</span> num <span class="dv">0</span></span>
+<span id="cb6-24"><a href=""></a> <span class="sc">$</span> process_gpu_utilized     <span class="sc">:</span>List of <span class="dv">2</span></span>
+<span id="cb6-25"><a href=""></a>  ..<span class="sc">$</span> mean<span class="sc">:</span> num <span class="dv">0</span></span>
+<span id="cb6-26"><a href=""></a>  ..<span class="sc">$</span> max <span class="sc">:</span> num <span class="dv">0</span></span>
+<span id="cb6-27"><a href=""></a> <span class="sc">$</span> system_disk_space_used_gb<span class="sc">:</span>List of <span class="dv">1</span></span>
+<span id="cb6-28"><a href=""></a>  ..<span class="sc">$</span> max<span class="sc">:</span> num <span class="dv">2560</span></span>
+<span id="cb6-29"><a href=""></a> <span class="sc">$</span> system_net_recv_bytes    <span class="sc">:</span>List of <span class="dv">1</span></span>
+<span id="cb6-30"><a href=""></a>  ..<span class="sc">$</span> sum<span class="sc">:</span> num <span class="dv">1840217</span></span>
+<span id="cb6-31"><a href=""></a> <span class="sc">$</span> system_net_sent_bytes    <span class="sc">:</span>List of <span class="dv">1</span></span>
+<span id="cb6-32"><a href=""></a>  ..<span class="sc">$</span> sum<span class="sc">:</span> num <span class="dv">1843725</span></span>
+<span id="cb6-33"><a href=""></a> <span class="sc">$</span> timestamp                <span class="sc">:</span>List of <span class="dv">1</span></span>
+<span id="cb6-34"><a href=""></a>  ..<span class="sc">$</span> duration<span class="sc">:</span> num <span class="dv">7</span></span>
+<span id="cb6-35"><a href=""></a></span>
+<span id="cb6-36"><a href=""></a><span class="sc">&gt;</span> tracker<span class="sc">$</span><span class="fu">recommend_resources</span>()</span>
+<span id="cb6-37"><a href=""></a>List of <span class="dv">4</span></span>
+<span id="cb6-38"><a href=""></a> <span class="sc">$</span> cpu   <span class="sc">:</span> int <span class="dv">1</span></span>
+<span id="cb6-39"><a href=""></a> <span class="sc">$</span> memory<span class="sc">:</span> int <span class="dv">1024</span></span>
+<span id="cb6-40"><a href=""></a> <span class="sc">$</span> gpu   <span class="sc">:</span> int <span class="dv">0</span></span>
+<span id="cb6-41"><a href=""></a> <span class="sc">$</span> vram  <span class="sc">:</span> int <span class="dv">0</span></span>
+<span id="cb6-42"><a href=""></a></span>
+<span id="cb6-43"><a href=""></a><span class="sc">&gt;</span> tracker<span class="sc">$</span><span class="fu">recommend_server</span>()</span>
+<span id="cb6-44"><a href=""></a>List of <span class="dv">50</span></span>
+<span id="cb6-45"><a href=""></a> <span class="sc">$</span> vendor_id            <span class="sc">:</span> chr <span class="st">"upcloud"</span></span>
+<span id="cb6-46"><a href=""></a> <span class="sc">$</span> server_id            <span class="sc">:</span> chr <span class="st">"DEV-1xCPU-1GB-10GB"</span></span>
+<span id="cb6-47"><a href=""></a> <span class="sc">$</span> description          <span class="sc">:</span> chr <span class="st">"Developer 1 vCPUs, 1 GB RAM"</span></span>
+<span id="cb6-48"><a href=""></a> <span class="sc">$</span> family               <span class="sc">:</span> chr <span class="st">"Developer"</span></span>
+<span id="cb6-49"><a href=""></a> <span class="sc">$</span> vcpus                <span class="sc">:</span> int <span class="dv">1</span></span>
+<span id="cb6-50"><a href=""></a> <span class="sc">$</span> hypervisor           <span class="sc">:</span> chr <span class="st">"KVM"</span></span>
+<span id="cb6-51"><a href=""></a> <span class="sc">$</span> cpu_allocation       <span class="sc">:</span> chr <span class="st">"Shared"</span></span>
+<span id="cb6-52"><a href=""></a> <span class="sc">$</span> cpu_cores            <span class="sc">:</span> int <span class="dv">1</span></span>
+<span id="cb6-53"><a href=""></a> <span class="sc">$</span> cpu_architecture     <span class="sc">:</span> chr <span class="st">"x86_64"</span></span>
+<span id="cb6-54"><a href=""></a> <span class="sc">$</span> cpu_manufacturer     <span class="sc">:</span> chr <span class="st">"AMD"</span></span>
+<span id="cb6-55"><a href=""></a> <span class="sc">$</span> cpu_family           <span class="sc">:</span> chr <span class="st">"EPYC"</span></span>
+<span id="cb6-56"><a href=""></a> <span class="sc">$</span> cpu_model            <span class="sc">:</span> chr <span class="st">"7542"</span></span>
+<span id="cb6-57"><a href=""></a> <span class="sc">$</span> cpu_l1_cache         <span class="sc">:</span> int <span class="dv">131072</span></span>
+<span id="cb6-58"><a href=""></a> <span class="sc">$</span> cpu_l2_cache         <span class="sc">:</span> int <span class="dv">524288</span></span>
+<span id="cb6-59"><a href=""></a> <span class="sc">$</span> cpu_l3_cache         <span class="sc">:</span> int <span class="dv">16777216</span></span>
+<span id="cb6-60"><a href=""></a> <span class="sc">$</span> cpu_flags            <span class="sc">:</span> chr [<span class="dv">1</span><span class="sc">:</span><span class="dv">88</span>] <span class="st">"fpu"</span> <span class="st">"vme"</span> <span class="st">"de"</span> <span class="st">"pse"</span> ...</span>
+<span id="cb6-61"><a href=""></a> <span class="sc">$</span> memory_amount        <span class="sc">:</span> int <span class="dv">1024</span></span>
+<span id="cb6-62"><a href=""></a> <span class="sc">$</span> storage_size         <span class="sc">:</span> int <span class="dv">10</span></span>
+<span id="cb6-63"><a href=""></a> <span class="sc">$</span> inbound_traffic      <span class="sc">:</span> num <span class="dv">0</span></span>
+<span id="cb6-64"><a href=""></a> <span class="sc">$</span> outbound_traffic     <span class="sc">:</span> num <span class="dv">1024</span></span>
+<span id="cb6-65"><a href=""></a> <span class="sc">$</span> ipv4                 <span class="sc">:</span> int <span class="dv">1</span></span>
+<span id="cb6-66"><a href=""></a> <span class="sc">$</span> price                <span class="sc">:</span> num <span class="fl">0.0052</span></span>
+<span id="cb6-67"><a href=""></a> ...</span></code></pre></div>
+<aside class="notes">
+<p>inefficient rolling mean implementation</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="trackerrecommend_resources" class="slide level2">
+<h2>&gt; ?tracker$recommend_resources</h2>
+<div class="sourceCode" id="cb7" style="margin-top: 30px !important; margin-bottom: 30px !important; font-size: 32px" data-code-line-numbers="1-1|12-13"><pre class="sourceCode numberSource python number-lines"><code class="sourceCode python"><span id="cb7-1"><a href=""></a><span class="op">&gt;&gt;&gt;</span> <span class="bu">print</span>(ResourceTracker.recommend_resources.__doc__)</span>
+<span id="cb7-2"><a href=""></a>Recommend optimal resource allocation based on the measured resource tracker data.</span>
+<span id="cb7-3"><a href=""></a></span>
+<span id="cb7-4"><a href=""></a>The recommended resources are based on the following rules:</span>
+<span id="cb7-5"><a href=""></a></span>
+<span id="cb7-6"><a href=""></a><span class="op">-</span> target average CPU usage of the process(es)</span>
+<span id="cb7-7"><a href=""></a><span class="op">-</span> target maximum memory usage of the process(es) <span class="cf">with</span> a <span class="dv">20</span><span class="op">%</span> <span class="bu">buffer</span></span>
+<span id="cb7-8"><a href=""></a><span class="op">-</span> target maximum number of GPUs used by the process(es)</span>
+<span id="cb7-9"><a href=""></a><span class="op">-</span> target maximum VRAM usage of the process(es) <span class="cf">with</span> a <span class="dv">20</span><span class="op">%</span> <span class="bu">buffer</span></span>
+<span id="cb7-10"><a href=""></a></span>
+<span id="cb7-11"><a href=""></a>Args:</span>
+<span id="cb7-12"><a href=""></a>    historical_stats: Optional <span class="bu">list</span> of historical statistics (<span class="im">as</span> returned by [resource_tracker.ResourceTracker.stats][])</span>
+<span id="cb7-13"><a href=""></a>                      to consider when making recommendations. These will be combined <span class="cf">with</span> the current stats.</span>
+<span id="cb7-14"><a href=""></a></span>
+<span id="cb7-15"><a href=""></a>Returns:</span>
+<span id="cb7-16"><a href=""></a>    A dictionary containing the recommended resources (cpu, memory, gpu, vram).</span></code></pre></div>
+<div class="fragment">
+<p>To make this more convenient (automatic),<br>check out e.g.&nbsp;the Metaflow extension!</p>
+</div>
+</section>
+<section id="setdttrackerdata" class="slide level2">
+<h2>&gt; setDT(tracker$data)</h2>
+<div class="sourceCode" id="cb8" style="margin-top: 20px !important; height: 640px;" data-code-line-numbers="1-23|25-39|41-74"><pre class="sourceCode numberSource r number-lines"><code class="sourceCode r"><span id="cb8-1"><a href=""></a><span class="sc">&gt;</span> tracker<span class="sc">$</span>system_metrics</span>
+<span id="cb8-2"><a href=""></a><span class="st">'data.frame'</span><span class="sc">:</span>   <span class="dv">6</span> obs. of  <span class="dv">21</span> variables<span class="sc">:</span></span>
+<span id="cb8-3"><a href=""></a> <span class="er">$</span> timestamp          <span class="sc">:</span> POSIXct, format<span class="sc">:</span> <span class="st">"2026-07-06 23:54:36"</span> <span class="st">"2026-07-06 23:54:37"</span> ...</span>
+<span id="cb8-4"><a href=""></a> <span class="sc">$</span> processes          <span class="sc">:</span> int  <span class="dv">678</span> <span class="dv">678</span> <span class="dv">681</span> <span class="dv">678</span> <span class="dv">677</span> <span class="dv">677</span></span>
+<span id="cb8-5"><a href=""></a> <span class="sc">$</span> utime              <span class="sc">:</span> num  <span class="fl">0.63</span> <span class="fl">1.21</span> <span class="fl">1.23</span> <span class="fl">1.26</span> <span class="fl">1.17</span> <span class="fl">1.16</span></span>
+<span id="cb8-6"><a href=""></a> <span class="sc">$</span> stime              <span class="sc">:</span> num  <span class="fl">0.54</span> <span class="fl">0.26</span> <span class="fl">0.43</span> <span class="fl">0.32</span> <span class="fl">0.21</span> <span class="fl">0.28</span></span>
+<span id="cb8-7"><a href=""></a> <span class="sc">$</span> cpu_usage          <span class="sc">:</span> num  <span class="fl">1.17</span> <span class="fl">1.47</span> <span class="fl">1.66</span> <span class="fl">1.58</span> <span class="fl">1.38</span> ...</span>
+<span id="cb8-8"><a href=""></a> <span class="sc">$</span> memory_free_mib    <span class="sc">:</span> num  <span class="dv">38394</span> <span class="dv">38388</span> <span class="dv">38398</span> <span class="dv">38392</span> <span class="dv">38344</span> ...</span>
+<span id="cb8-9"><a href=""></a> <span class="sc">$</span> memory_used_mib    <span class="sc">:</span> num  <span class="dv">23607</span> <span class="dv">23613</span> <span class="dv">23603</span> <span class="dv">23609</span> <span class="dv">23657</span> ...</span>
+<span id="cb8-10"><a href=""></a> <span class="sc">$</span> memory_buffers_mib <span class="sc">:</span> num  <span class="fl">5.25</span> <span class="fl">5.25</span> <span class="fl">5.25</span> <span class="fl">5.25</span> <span class="fl">5.25</span> ...</span>
+<span id="cb8-11"><a href=""></a> <span class="sc">$</span> memory_cached_mib  <span class="sc">:</span> num  <span class="dv">41214</span> <span class="dv">41214</span> <span class="dv">41214</span> <span class="dv">41214</span> <span class="dv">41214</span> ...</span>
+<span id="cb8-12"><a href=""></a> <span class="sc">$</span> memory_active_mib  <span class="sc">:</span> num  <span class="dv">27286</span> <span class="dv">27295</span> <span class="dv">27305</span> <span class="dv">27308</span> <span class="dv">27379</span> ...</span>
+<span id="cb8-13"><a href=""></a> <span class="sc">$</span> memory_inactive_mib<span class="sc">:</span> num  <span class="dv">24520</span> <span class="dv">24520</span> <span class="dv">24520</span> <span class="dv">24520</span> <span class="dv">24520</span> ...</span>
+<span id="cb8-14"><a href=""></a> <span class="sc">$</span> disk_read_bytes    <span class="sc">:</span> int  <span class="dv">32768</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span></span>
+<span id="cb8-15"><a href=""></a> <span class="sc">$</span> disk_write_bytes   <span class="sc">:</span> int  <span class="dv">0</span> <span class="dv">671744</span> <span class="dv">48578560</span> <span class="dv">598016</span> <span class="dv">0</span> <span class="dv">663552</span></span>
+<span id="cb8-16"><a href=""></a> <span class="sc">$</span> disk_space_total_gb<span class="sc">:</span> num  <span class="dv">6142</span> <span class="dv">6142</span> <span class="dv">6142</span> <span class="dv">6142</span> <span class="dv">6142</span> ...</span>
+<span id="cb8-17"><a href=""></a> <span class="sc">$</span> disk_space_used_gb <span class="sc">:</span> num  <span class="dv">1563</span> <span class="dv">1563</span> <span class="dv">1563</span> <span class="dv">1563</span> <span class="dv">1563</span> ...</span>
+<span id="cb8-18"><a href=""></a> <span class="sc">$</span> disk_space_free_gb <span class="sc">:</span> num  <span class="dv">4575</span> <span class="dv">4575</span> <span class="dv">4575</span> <span class="dv">4575</span> <span class="dv">4575</span> ...</span>
+<span id="cb8-19"><a href=""></a> <span class="sc">$</span> net_recv_bytes     <span class="sc">:</span> int  <span class="dv">732</span> <span class="dv">1902</span> <span class="dv">1236</span> <span class="dv">21488</span> <span class="dv">16070</span> <span class="dv">14904</span></span>
+<span id="cb8-20"><a href=""></a> <span class="sc">$</span> net_sent_bytes     <span class="sc">:</span> int  <span class="dv">978</span> <span class="dv">3572</span> <span class="dv">2270</span> <span class="dv">9361</span> <span class="dv">50019</span> <span class="dv">29286</span></span>
+<span id="cb8-21"><a href=""></a> <span class="sc">$</span> gpu_usage          <span class="sc">:</span> num  <span class="fl">0.01</span> <span class="fl">0.05</span> <span class="fl">0.05</span> <span class="fl">0.06</span> <span class="fl">0.04</span> <span class="fl">0.04</span></span>
+<span id="cb8-22"><a href=""></a> <span class="sc">$</span> gpu_vram_mib       <span class="sc">:</span> num  <span class="dv">1651</span> <span class="dv">1661</span> <span class="dv">1661</span> <span class="dv">1656</span> <span class="dv">1646</span> ...</span>
+<span id="cb8-23"><a href=""></a> <span class="sc">$</span> gpu_utilized       <span class="sc">:</span> int  <span class="dv">1</span> <span class="dv">1</span> <span class="dv">1</span> <span class="dv">1</span> <span class="dv">1</span> <span class="dv">1</span></span>
+<span id="cb8-24"><a href=""></a></span>
+<span id="cb8-25"><a href=""></a><span class="sc">&gt;</span> tracker<span class="sc">$</span>process_metrics</span>
+<span id="cb8-26"><a href=""></a><span class="st">'data.frame'</span><span class="sc">:</span>   <span class="dv">7</span> obs. of  <span class="dv">12</span> variables<span class="sc">:</span></span>
+<span id="cb8-27"><a href=""></a> <span class="st">'data.frame'</span><span class="sc">:</span>   <span class="dv">6</span> obs. of  <span class="dv">12</span> variables<span class="sc">:</span></span>
+<span id="cb8-28"><a href=""></a> <span class="er">$</span> timestamp       <span class="sc">:</span> POSIXct, format<span class="sc">:</span> <span class="st">"2026-07-06 23:54:36"</span> <span class="st">"2026-07-06 23:54:37"</span> ...</span>
+<span id="cb8-29"><a href=""></a> <span class="sc">$</span> pid             <span class="sc">:</span> int  <span class="dv">321426</span> <span class="dv">321426</span> <span class="dv">321426</span> <span class="dv">321426</span> <span class="dv">321426</span> <span class="dv">321426</span></span>
+<span id="cb8-30"><a href=""></a> <span class="sc">$</span> children        <span class="sc">:</span> int  <span class="dv">5</span> <span class="dv">5</span> <span class="dv">5</span> <span class="dv">5</span> <span class="dv">5</span> <span class="dv">5</span></span>
+<span id="cb8-31"><a href=""></a> <span class="sc">$</span> utime           <span class="sc">:</span> num  <span class="fl">0.46</span> <span class="fl">1.05</span> <span class="fl">1.01</span> <span class="fl">1.03</span> <span class="dv">1</span> <span class="dv">1</span></span>
+<span id="cb8-32"><a href=""></a> <span class="sc">$</span> stime           <span class="sc">:</span> num  <span class="fl">0.19</span> <span class="fl">0.09</span> <span class="fl">0.09</span> <span class="fl">0.06</span> <span class="fl">0.1</span> <span class="fl">0.09</span></span>
+<span id="cb8-33"><a href=""></a> <span class="sc">$</span> cpu_usage       <span class="sc">:</span> num  <span class="fl">0.65</span> <span class="fl">1.14</span> <span class="fl">1.1</span> <span class="fl">1.09</span> <span class="fl">1.1</span> ...</span>
+<span id="cb8-34"><a href=""></a> <span class="sc">$</span> memory_mib      <span class="sc">:</span> num  <span class="dv">322</span> <span class="dv">329</span> <span class="dv">338</span> <span class="dv">341</span> <span class="dv">411</span> ...</span>
+<span id="cb8-35"><a href=""></a> <span class="sc">$</span> disk_read_bytes <span class="sc">:</span> int  <span class="dv">16384</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span></span>
+<span id="cb8-36"><a href=""></a> <span class="sc">$</span> disk_write_bytes<span class="sc">:</span> int  <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span></span>
+<span id="cb8-37"><a href=""></a> <span class="sc">$</span> gpu_usage       <span class="sc">:</span> int  <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span></span>
+<span id="cb8-38"><a href=""></a> <span class="sc">$</span> gpu_vram_mib    <span class="sc">:</span> int  <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span></span>
+<span id="cb8-39"><a href=""></a> <span class="sc">$</span> gpu_utilized    <span class="sc">:</span> int  <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span></span>
+<span id="cb8-40"><a href=""></a></span>
+<span id="cb8-41"><a href=""></a><span class="sc">&gt;</span> <span class="fu">str</span>(tracker<span class="sc">$</span><span class="fu">get_combined_metrics</span>(<span class="at">human_names =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb8-42"><a href=""></a><span class="st">'data.frame'</span><span class="sc">:</span>   <span class="dv">6</span> obs. of  <span class="dv">32</span> variables<span class="sc">:</span></span>
+<span id="cb8-43"><a href=""></a> <span class="er">$</span> Timestamp                      <span class="sc">:</span> num  <span class="fl">1.78e+09</span> <span class="fl">1.78e+09</span> <span class="fl">1.78e+09</span> <span class="fl">1.78e+09</span> <span class="fl">1.78e+09</span> ...</span>
+<span id="cb8-44"><a href=""></a> <span class="sc">$</span> System processes               <span class="sc">:</span> int  <span class="dv">678</span> <span class="dv">678</span> <span class="dv">681</span> <span class="dv">678</span> <span class="dv">677</span> <span class="dv">677</span></span>
+<span id="cb8-45"><a href=""></a> <span class="sc">$</span> System CPU <span class="fu">time</span> (user)         <span class="sc">:</span> num  <span class="fl">0.63</span> <span class="fl">1.21</span> <span class="fl">1.23</span> <span class="fl">1.26</span> <span class="fl">1.17</span> <span class="fl">1.16</span></span>
+<span id="cb8-46"><a href=""></a> <span class="sc">$</span> System CPU <span class="fu">time</span> (system)       <span class="sc">:</span> num  <span class="fl">0.54</span> <span class="fl">0.26</span> <span class="fl">0.43</span> <span class="fl">0.32</span> <span class="fl">0.21</span> <span class="fl">0.28</span></span>
+<span id="cb8-47"><a href=""></a> <span class="sc">$</span> System CPU usage               <span class="sc">:</span> num  <span class="fl">1.17</span> <span class="fl">1.47</span> <span class="fl">1.66</span> <span class="fl">1.58</span> <span class="fl">1.38</span> ...</span>
+<span id="cb8-48"><a href=""></a> <span class="sc">$</span> System free memory             <span class="sc">:</span> num  <span class="dv">38394</span> <span class="dv">38388</span> <span class="dv">38398</span> <span class="dv">38392</span> <span class="dv">38344</span> ...</span>
+<span id="cb8-49"><a href=""></a> <span class="sc">$</span> System used memory             <span class="sc">:</span> num  <span class="dv">23607</span> <span class="dv">23613</span> <span class="dv">23603</span> <span class="dv">23609</span> <span class="dv">23657</span> ...</span>
+<span id="cb8-50"><a href=""></a> <span class="sc">$</span> System memory buffers          <span class="sc">:</span> num  <span class="fl">5.25</span> <span class="fl">5.25</span> <span class="fl">5.25</span> <span class="fl">5.25</span> <span class="fl">5.25</span> ...</span>
+<span id="cb8-51"><a href=""></a> <span class="sc">$</span> System memory page<span class="sc">/</span>file cached <span class="sc">:</span> num  <span class="dv">41214</span> <span class="dv">41214</span> <span class="dv">41214</span> <span class="dv">41214</span> <span class="dv">41214</span> ...</span>
+<span id="cb8-52"><a href=""></a> <span class="sc">$</span> System active memory           <span class="sc">:</span> num  <span class="dv">27286</span> <span class="dv">27295</span> <span class="dv">27305</span> <span class="dv">27308</span> <span class="dv">27379</span> ...</span>
+<span id="cb8-53"><a href=""></a> <span class="sc">$</span> System inactive memory         <span class="sc">:</span> num  <span class="dv">24520</span> <span class="dv">24520</span> <span class="dv">24520</span> <span class="dv">24520</span> <span class="dv">24520</span> ...</span>
+<span id="cb8-54"><a href=""></a> <span class="sc">$</span> System disk read               <span class="sc">:</span> int  <span class="dv">32768</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span></span>
+<span id="cb8-55"><a href=""></a> <span class="sc">$</span> System disk write              <span class="sc">:</span> int  <span class="dv">0</span> <span class="dv">671744</span> <span class="dv">48578560</span> <span class="dv">598016</span> <span class="dv">0</span> <span class="dv">663552</span></span>
+<span id="cb8-56"><a href=""></a> <span class="sc">$</span> System disk space total        <span class="sc">:</span> num  <span class="dv">6142</span> <span class="dv">6142</span> <span class="dv">6142</span> <span class="dv">6142</span> <span class="dv">6142</span> ...</span>
+<span id="cb8-57"><a href=""></a> <span class="sc">$</span> System disk space used         <span class="sc">:</span> num  <span class="dv">1563</span> <span class="dv">1563</span> <span class="dv">1563</span> <span class="dv">1563</span> <span class="dv">1563</span> ...</span>
+<span id="cb8-58"><a href=""></a> <span class="sc">$</span> System disk space free         <span class="sc">:</span> num  <span class="dv">4575</span> <span class="dv">4575</span> <span class="dv">4575</span> <span class="dv">4575</span> <span class="dv">4575</span> ...</span>
+<span id="cb8-59"><a href=""></a> <span class="sc">$</span> System inbound network traffic <span class="sc">:</span> int  <span class="dv">732</span> <span class="dv">1902</span> <span class="dv">1236</span> <span class="dv">21488</span> <span class="dv">16070</span> <span class="dv">14904</span></span>
+<span id="cb8-60"><a href=""></a> <span class="sc">$</span> System outbound network traffic<span class="sc">:</span> int  <span class="dv">978</span> <span class="dv">3572</span> <span class="dv">2270</span> <span class="dv">9361</span> <span class="dv">50019</span> <span class="dv">29286</span></span>
+<span id="cb8-61"><a href=""></a> <span class="sc">$</span> System GPU usage               <span class="sc">:</span> num  <span class="fl">0.01</span> <span class="fl">0.05</span> <span class="fl">0.05</span> <span class="fl">0.06</span> <span class="fl">0.04</span> <span class="fl">0.04</span></span>
+<span id="cb8-62"><a href=""></a> <span class="sc">$</span> System VRAM used               <span class="sc">:</span> num  <span class="dv">1651</span> <span class="dv">1661</span> <span class="dv">1661</span> <span class="dv">1656</span> <span class="dv">1646</span> ...</span>
+<span id="cb8-63"><a href=""></a> <span class="sc">$</span> System GPUs <span class="cf">in</span> use             <span class="sc">:</span> int  <span class="dv">1</span> <span class="dv">1</span> <span class="dv">1</span> <span class="dv">1</span> <span class="dv">1</span> <span class="dv">1</span></span>
+<span id="cb8-64"><a href=""></a> <span class="sc">$</span> Process PID                    <span class="sc">:</span> int  <span class="dv">321426</span> <span class="dv">321426</span> <span class="dv">321426</span> <span class="dv">321426</span> <span class="dv">321426</span> <span class="dv">321426</span></span>
+<span id="cb8-65"><a href=""></a> <span class="sc">$</span> Process children               <span class="sc">:</span> int  <span class="dv">5</span> <span class="dv">5</span> <span class="dv">5</span> <span class="dv">5</span> <span class="dv">5</span> <span class="dv">5</span></span>
+<span id="cb8-66"><a href=""></a> <span class="sc">$</span> Process CPU <span class="fu">time</span> (user)        <span class="sc">:</span> num  <span class="fl">0.46</span> <span class="fl">1.05</span> <span class="fl">1.01</span> <span class="fl">1.03</span> <span class="dv">1</span> <span class="dv">1</span></span>
+<span id="cb8-67"><a href=""></a> <span class="sc">$</span> Process CPU <span class="fu">time</span> (system)      <span class="sc">:</span> num  <span class="fl">0.19</span> <span class="fl">0.09</span> <span class="fl">0.09</span> <span class="fl">0.06</span> <span class="fl">0.1</span> <span class="fl">0.09</span></span>
+<span id="cb8-68"><a href=""></a> <span class="sc">$</span> Process CPU usage              <span class="sc">:</span> num  <span class="fl">0.65</span> <span class="fl">1.14</span> <span class="fl">1.1</span> <span class="fl">1.09</span> <span class="fl">1.1</span> ...</span>
+<span id="cb8-69"><a href=""></a> <span class="sc">$</span> Process memory usage           <span class="sc">:</span> num  <span class="dv">322</span> <span class="dv">329</span> <span class="dv">338</span> <span class="dv">341</span> <span class="dv">411</span> ...</span>
+<span id="cb8-70"><a href=""></a> <span class="sc">$</span> Process disk read              <span class="sc">:</span> int  <span class="dv">16384</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span></span>
+<span id="cb8-71"><a href=""></a> <span class="sc">$</span> Process disk write             <span class="sc">:</span> int  <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span></span>
+<span id="cb8-72"><a href=""></a> <span class="sc">$</span> Process GPU usage              <span class="sc">:</span> int  <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span></span>
+<span id="cb8-73"><a href=""></a> <span class="sc">$</span> Process VRAM used              <span class="sc">:</span> int  <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span></span>
+<span id="cb8-74"><a href=""></a> <span class="sc">$</span> Process GPUs <span class="cf">in</span> use            <span class="sc">:</span> int  <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span> <span class="dv">0</span></span></code></pre></div>
+</section>
+<section id="trackerreportbrowse" class="slide level2">
+<h2>&gt; tracker$report()$browse()</h2>
+<div class="centered">
+<p><a href="https://sparecores.com/assets/slides/example-resource-tracker-report-in-metaflow.html" target="_blank"> <img src="https://sparecores.github.io/resource-tracker/track_resources-card-example.png" width="92%"> </a></p>
+</div>
+</section>
+<section id="resourcetracker" class="slide level2">
+<h2>&gt; ?ResourceTracker</h2>
+<p><a href="https://sparecores.github.io/resource-tracker/reference/resource_tracker/tracker/#resource_tracker.tracker.ResourceTracker" target="_blank"> <img src="images/resource-tracker-docs.png" width="80%" style="margin-top: -40px !important;"> </a></p>
+</section></section>
 <section id="todo" class="title-slide slide level1" data-transition="convex-in slide-out">
 <h1>&gt; TODO</h1>
 
