@@ -21,83 +21,85 @@
           </thead>
           <tbody>
             @for (talk of talks; track talk.title + "_" + talk.date) {
-              <tr>
-                <td>{{ talk.date | timeToShortDate }}</td>
-                <td>
-                  <div class="flex flex-col">
-                    @if (talk.conference_url) {
-                      <a
-                        [href]="talk.conference_url"
-                        target="_blank"
-                        rel="noopener"
-                        >{{ talk.conference }}</a
-                      >
-                    }
-                    @if (!talk.conference_url) {
-                      <span>{{ talk.conference }}</span>
-                    }
-                    <div class="text-sm text-gray-200">{{ talk.location }}</div>
-                  </div>
-                </td>
-                <td class="hidden lg:table-cell">
-                  <div class="flex gap-2 items-center">
-                    <div>
-                      <img
-                        src="assets/images/team/{{ talk.author }}.webp"
-                        class="w-8 max-h-8 rounded-full"
-                        alt="{{ talk.author }} profile picture"
-                      />
+              @if (talk.featured) {
+                <tr>
+                  <td>{{ talk.date | timeToShortDate }}</td>
+                  <td>
+                    <div class="flex flex-col">
+                      @if (talk.conference_url) {
+                        <a
+                          [href]="talk.conference_url"
+                          target="_blank"
+                          rel="noopener"
+                          >{{ talk.conference }}</a
+                        >
+                      }
+                      @if (!talk.conference_url) {
+                        <span>{{ talk.conference }}</span>
+                      }
+                      <div class="text-sm text-gray-200">{{ talk.location }}</div>
                     </div>
-                    <div>{{ talk.author }}</div>
-                  </div>
-                </td>
-                <td>
-                  @if (talk.conference_talk_url) {
-                    <a
-                      [href]="talk.conference_talk_url"
-                      target="_blank"
-                      rel="noopener"
-                      >{{ talk.title }}</a
-                    >
-                  }
-                  @if (!talk.conference_talk_url) {
-                    <span>{{ talk.title }}</span>
-                  }
-                </td>
-                <td>
-                  <div class="flex gap-2">
-                    @if (talk.conference_talk_slides) {
+                  </td>
+                  <td class="hidden lg:table-cell">
+                    <div class="flex gap-2 items-center">
+                      <div>
+                        <img
+                          src="assets/images/team/{{ talk.author }}.webp"
+                          class="w-8 max-h-8 rounded-full"
+                          alt="{{ talk.author }} profile picture"
+                        />
+                      </div>
+                      <div>{{ talk.author }}</div>
+                    </div>
+                  </td>
+                  <td>
+                    @if (talk.conference_talk_url) {
                       <a
-                        title="Slides"
-                        [href]="talk.conference_talk_slides"
+                        [href]="talk.conference_talk_url"
                         target="_blank"
                         rel="noopener"
+                        >{{ talk.title }}</a
                       >
-                        <svg lucideScrollText></svg>
-                      </a>
                     }
-                    @if (talk.conference_talk_video) {
-                      <a
-                        title="Video recording"
-                        [href]="talk.conference_talk_video"
-                        target="_blank"
-                        rel="noopener"
-                      >
-                        <svg lucideIcon="youtube"></svg>
-                      </a>
+                    @if (!talk.conference_talk_url) {
+                      <span>{{ talk.title }}</span>
                     }
-                    @if (
-                      !talk.conference_talk_slides &&
-                      !talk.conference_talk_video
-                    ) {
-                      <span class="flex items-center gap-2">
-                        <svg lucideHourglass></svg>
-                        <span class="text-sm">TBA</span>
-                      </span>
-                    }
-                  </div>
-                </td>
-              </tr>
+                  </td>
+                  <td>
+                    <div class="flex gap-2">
+                      @if (talk.conference_talk_slides) {
+                        <a
+                          title="Slides"
+                          [href]="talk.conference_talk_slides"
+                          target="_blank"
+                          rel="noopener"
+                        >
+                          <svg lucideScrollText></svg>
+                        </a>
+                      }
+                      @if (talk.conference_talk_video) {
+                        <a
+                          title="Video recording"
+                          [href]="talk.conference_talk_video"
+                          target="_blank"
+                          rel="noopener"
+                        >
+                          <svg lucideIcon="youtube"></svg>
+                        </a>
+                      }
+                      @if (
+                        !talk.conference_talk_slides &&
+                        !talk.conference_talk_video
+                      ) {
+                        <span class="flex items-center gap-2">
+                          <svg lucideHourglass></svg>
+                          <span class="text-sm">TBA</span>
+                        </span>
+                      }
+                    </div>
+                  </td>
+                </tr>
+              }
             }
           </tbody>
         </table>

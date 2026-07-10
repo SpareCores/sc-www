@@ -50,6 +50,8 @@ data = files
     const { data } = matter(content);
     return {
       ...data,
+      // default to show the slides in the main index if not explicitly set
+      featured: data.featured ?? true,
       filename: path.parse(file).name,
     };
   });

@@ -12,6 +12,9 @@ format:
     theme: [black, css/custom-4.2.1.css]
     controls: true
     navigation-mode: vertical
+    # for presenter remotes that doesn't come with up/down arrows
+    # note that this moves the slide number element, so that needs adjustment in CSS
+    # navigation-mode: linear
     controls-layout: bottom-right
     controls-tutorial: true
     menu: false
