@@ -21,7 +21,7 @@ export class Debug<SecurityDataType = unknown> {
   }
 
   /**
-   * @description Return debug information about the availability of benchmark scores for servers. Returns vendor-level statistics, per-server details, and a list of all benchmark families.
+   * @description Return debug information about the availability of benchmark scores for servers. Returns vendor-level statistics (active priced servers split into evaluated vs missing), per-server details, and a list of all benchmark families.
    *
    * @tags Administrative endpoints
    * @name GetDebugInfoDebugGet
