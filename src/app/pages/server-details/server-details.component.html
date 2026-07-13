@@ -404,6 +404,20 @@
               <svg lucideCopy class="h-6 w-6"></svg>
             </button>
           </div>
+          @if (serverDetails.cpu_allocation === "Burstable") {
+            <div
+              class="mx-2 xl:mx-0 mb-4 bg-yellow-500 text-sm text-gray-900 rounded-lg p-4 flex gap-3 items-center w-[100%]"
+              role="alert"
+            >
+              <svg lucideTriangleAlert class="h-6 w-6 bounce-3"></svg>
+              <div>
+                <span class="font-bold">{{
+                  burstableInstanceWarningTitle
+                }}</span>
+                {{ burstableInstanceWarningBody }}
+              </div>
+            </div>
+          }
         }
         <app-server-charts
           class="w-full flex flex-wrap gap-8"
