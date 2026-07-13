@@ -23,6 +23,7 @@ export type SlidesMeta = {
   conference_talk_video?: string;
   conference_talk_slides?: string;
   location: string;
+  featured: boolean;
 
   filename: string;
 };
