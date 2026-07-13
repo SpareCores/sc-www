@@ -58,6 +58,8 @@ describe("Visual regression tests", () => {
     // Hide comments section for screenshot consistency
     E2EEvent.hideCommentsForScreenshot();
 
+    E2EEvent.hideWorkloadProfileChartsForScreenshot();
+
     cy.compareSnapshot("server-details-gcp-t2d-standard-1");
   });
 
@@ -109,6 +111,9 @@ describe("Visual regression tests", () => {
 
     // Hide price rows for screenshot consistency
     cy.get(".rows-to-hide-for-test").invoke("css", "display", "none");
+
+    E2EEvent.hideWorkloadProfileChartsForScreenshot();
+
     cy.compareSnapshot("server-comparison-aws-a1-medium-c6gd-medium");
   });
 

@@ -275,6 +275,14 @@ export abstract class E2EEvent {
     );
   }
 
+  public static hideWorkloadProfileChartsForScreenshot() {
+    cy.get(".workload-profile-charts-to-hide-for-test").invoke(
+      "css",
+      "display",
+      "none",
+    );
+  }
+
   // Hide "Observed at" row in Server Metadata for screenshot consistency
   public static hideObservedAtForScreenshot() {
     cy.get("#details .property_value")
