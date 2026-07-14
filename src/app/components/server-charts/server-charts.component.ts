@@ -37,7 +37,7 @@ import { BenchmarkMultiBarChartItem } from "../charts/multi-bar/benchmark-multi-
 import { ChartTooltipService } from "../charts/shared/chart-tooltip.service";
 import { getBenchmarkMetaNote } from "../charts/shared/chart-tooltip.utils";
 import { WorkloadProfilePanelComponent } from "../charts/workload-profile/workload-profile-panel.component";
-import { filterWorkloadProfileBenchmarks } from "../charts/workload-profile/workload-profile.utils";
+import { hasWorkloadProfileChartData } from "../charts/workload-profile/workload-profile.utils";
 
 @Component({
   selector: "app-server-charts",
@@ -100,7 +100,10 @@ export class ServerChartsComponent implements OnChanges {
   }
 
   hasWorkloadProfileBenchmarks(): boolean {
-    return filterWorkloadProfileBenchmarks(this.benchmarkMeta ?? []).length > 0;
+    return hasWorkloadProfileChartData({
+      benchmarkMeta: this.benchmarkMeta ?? [],
+      benchmarkScores: this.serverDetails?.benchmark_scores,
+    });
   }
 
   getBenchmarkCategory(category: string) {
