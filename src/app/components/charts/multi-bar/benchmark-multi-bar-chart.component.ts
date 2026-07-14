@@ -120,6 +120,7 @@ export class BenchmarkMultiBarChartComponent {
     getBenchmarkMetaNote(
       this.benchmarkMeta(),
       this.currentOption()?.benchmark_id ?? "",
+      { includeBenchmarkName: false },
     ),
   );
   readonly hasSecondaryOptions = computed(

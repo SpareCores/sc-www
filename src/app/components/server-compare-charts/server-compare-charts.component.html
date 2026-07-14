@@ -1129,7 +1129,8 @@
                 @if (
                   getBenchmarkNote(
                     chartItem.chart.options[chartItem.chart.selectedOption]
-                      .benchmark_id
+                      .benchmark_id,
+                    false
                   )
                 ) {
                   <svg
@@ -1141,7 +1142,8 @@
                         getBenchmarkNote(
                           chartItem.chart.options[
                             chartItem.chart.selectedOption
-                          ].benchmark_id
+                          ].benchmark_id,
+                          false
                         )
                       )
                     "
