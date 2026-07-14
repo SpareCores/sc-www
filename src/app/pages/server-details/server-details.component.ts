@@ -44,6 +44,10 @@ import {
   AccordionItem,
 } from "../../components/accordion/accordion.component";
 import { buildServerFaqs } from "./server-details-faqs";
+import {
+  BURSTABLE_INSTANCE_WARNING_BODY,
+  BURSTABLE_INSTANCE_WARNING_TITLE,
+} from "./server-details.constants";
 import { Location } from "@angular/common";
 import { ServerChartsComponent } from "../../components/server-charts/server-charts.component";
 import { ServerLstopoComponent } from "../../components/server-lstopo/server-lstopo.component";
@@ -136,6 +140,9 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   private renderer = inject(Renderer2);
   private location = inject(Location);
   similarDropdown = viewChild<FlowbiteDropdownDirective>("similarDropdown");
+
+  readonly burstableInstanceWarningTitle = BURSTABLE_INSTANCE_WARNING_TITLE;
+  readonly burstableInstanceWarningBody = BURSTABLE_INSTANCE_WARNING_BODY;
 
   serverDetails!: ExtendedServerDetails;
   lstopoSvgExists: boolean | null = null;
