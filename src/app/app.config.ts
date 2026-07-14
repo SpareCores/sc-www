@@ -22,9 +22,8 @@ import {
 import { provideLucideIcons } from "@lucide/angular";
 import { lucideIcons } from "./lucide-icons";
 import { MarkdownModule } from "ngx-markdown";
-import annotationPlugin from "chartjs-plugin-annotation";
-import { provideCharts, withDefaultRegisterables } from "ng2-charts";
 import * as Sentry from "@sentry/angular";
+import { provideAppCharts } from "./components/charts/shared/chart-providers";
 
 function httpFilter(req: HttpRequest<any>): boolean {
   return req.method === "GET";
@@ -68,7 +67,7 @@ export const appConfig: ApplicationConfig = {
       withEventReplay(),
     ),
     provideHttpClient(withFetch()),
-    provideCharts(withDefaultRegisterables(annotationPlugin)),
+    provideAppCharts(),
     provideLucideIcons(...lucideIcons),
     importProvidersFrom(MarkdownModule.forRoot()),
     {

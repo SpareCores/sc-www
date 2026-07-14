@@ -2,6 +2,8 @@ import {
   wrapTextAtWordBoundaries,
   CHART_TOOLTIP_MAX_LINE_LENGTH,
   buildCompareTooltipTitle,
+  chartTooltipDefaults,
+  chartTooltipLabelColor,
   formatBenchmarkNoteTooltip,
   formatServerTooltipIdentity,
   formatStaticWebFileSizeLabel,
@@ -206,5 +208,80 @@ describe("withServerTooltipIdentity", () => {
     expect(dataset.label).toBe("Display Name");
     expect(dataset.serverTooltipIdentity).toBe("m7g.large by aws");
     expect(getDatasetTooltipIdentity(dataset)).toBe("m7g.large by aws");
+  });
+});
+
+describe("chartTooltipLabelColor", () => {
+  function createTooltipItem(options: {
+    borderColor?: string;
+    styleBorderColor: string;
+    styleBackgroundColor: string;
+    multiKeyBackground?: string;
+  }) {
+    const tooltipOptions = {
+      multiKeyBackground: options.multiKeyBackground ?? "transparent",
+    };
+
+    return {
+      datasetIndex: 0,
+      dataIndex: 0,
+      dataset: { borderColor: options.borderColor },
+      chart: {
+        getDatasetMeta: () => ({
+          controller: {
+            getStyle: () => ({
+              borderColor: options.styleBorderColor,
+              backgroundColor: options.styleBackgroundColor,
+            }),
+          },
+        }),
+        tooltip: {
+          options: tooltipOptions,
+        },
+      },
+    } as any;
+  }
+
+  it("returns a solid server-color box when the dataset has a border color", () => {
+    const tooltipItem = createTooltipItem({
+      borderColor: "#34D399",
+      styleBorderColor: "#34D399",
+      styleBackgroundColor: "#34D39933",
+    });
+
+    expect(chartTooltipLabelColor(tooltipItem)).toEqual({
+      backgroundColor: "#34D399",
+      borderColor: "#34D399",
+      borderWidth: 0,
+      borderRadius: 0,
+    });
+    expect(tooltipItem.chart.tooltip.options.multiKeyBackground).toBe(
+      "#34D399",
+    );
+  });
+
+  it("uses the dataset background color when no border color is set", () => {
+    const tooltipItem = createTooltipItem({
+      styleBorderColor: "#38BDF8",
+      styleBackgroundColor: "#38BDF8",
+    });
+
+    expect(chartTooltipLabelColor(tooltipItem)).toEqual({
+      backgroundColor: "#38BDF8",
+      borderColor: "#38BDF8",
+      borderWidth: 0,
+      borderRadius: 0,
+    });
+  });
+});
+
+describe("chartTooltipDefaults", () => {
+  it("wires the shared tooltip label color callback", () => {
+    expect(chartTooltipDefaults.plugins.tooltip.multiKeyBackground).toBe(
+      "transparent",
+    );
+    expect(chartTooltipDefaults.plugins.tooltip.callbacks.labelColor).toBe(
+      chartTooltipLabelColor,
+    );
   });
 });

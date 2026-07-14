@@ -1,3 +1,4 @@
+import type { ChartType, TooltipItem } from "chart.js";
 import { BenchmarkChartServerIdentity } from "./benchmark-data.types";
 
 export const CHART_TOOLTIP_MAX_LINE_LENGTH = 64;
@@ -198,3 +199,35 @@ export function wrapTextAtWordBoundaries(
 
   return lines;
 }
+
+export function chartTooltipLabelColor(tooltipItem: TooltipItem<ChartType>) {
+  const style = tooltipItem.chart
+    .getDatasetMeta(tooltipItem.datasetIndex)
+    .controller.getStyle(tooltipItem.dataIndex, false);
+  const color = tooltipItem.dataset.borderColor
+    ? style.borderColor
+    : style.backgroundColor;
+
+  const tooltip = tooltipItem.chart.tooltip;
+  if (tooltip) {
+    tooltip.options.multiKeyBackground = color;
+  }
+
+  return {
+    backgroundColor: color,
+    borderColor: color,
+    borderWidth: 0,
+    borderRadius: 0,
+  };
+}
+
+export const chartTooltipDefaults = {
+  plugins: {
+    tooltip: {
+      multiKeyBackground: "transparent",
+      callbacks: {
+        labelColor: chartTooltipLabelColor,
+      },
+    },
+  },
+};
