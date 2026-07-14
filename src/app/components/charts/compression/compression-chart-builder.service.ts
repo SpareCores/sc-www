@@ -274,20 +274,22 @@ export class CompressionChartBuilderService {
 
     const chartData: CompressionCompareChartData = {
       labels: [...labels],
-      datasets: params.servers.map((server, index) =>
-        withServerTooltipIdentity(
+      datasets: params.servers.map((server, index) => {
+        const colors = radarDatasetColors[index % radarDatasetColors.length];
+
+        return withServerTooltipIdentity(
           {
             data: [],
             label: server.display_name,
             spanGaps: true,
-            borderColor:
-              radarDatasetColors[index % radarDatasetColors.length].borderColor,
-            backgroundColor:
-              radarDatasetColors[index % radarDatasetColors.length].borderColor,
+            borderColor: colors.borderColor,
+            backgroundColor: hasCompressionLevel
+              ? colors.backgroundColor
+              : colors.borderColor,
           },
           server,
-        ),
-      ),
+        );
+      }),
     };
 
     params.servers.forEach((server, i) => {

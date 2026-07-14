@@ -314,5 +314,12 @@ describe("CompressionChartBuilderService", () => {
 
     expect(result?.compressData.datasets.length).toBe(1);
     expect(result?.decompressData.datasets.length).toBe(1);
+    expect(result?.chartType).toBe("line");
+    expect(result?.compressData.datasets[0]?.backgroundColor).toBe(
+      radarDatasetColors[0].backgroundColor,
+    );
+    expect(result?.compressData.datasets[0]?.borderColor).toBe(
+      radarDatasetColors[0].borderColor,
+    );
   });
 });
