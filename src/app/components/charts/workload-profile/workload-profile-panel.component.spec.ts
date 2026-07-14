@@ -26,9 +26,39 @@ describe("WorkloadProfilePanelComponent", () => {
   });
 
   it("renders the workload profile panel", () => {
+    fixture.componentRef.setInput("layout", "details");
+    fixture.componentRef.setInput("serverDetails", {
+      benchmark_scores: [
+        {
+          benchmark_id: "workload_profile:web",
+          score: 120,
+        },
+      ],
+    });
+    fixture.detectChanges();
+
     expect((fixture.nativeElement as HTMLElement).textContent).toContain(
       "Web server",
     );
+  });
+
+  it("hides the workload profile panel when its score is null", () => {
+    fixture.componentRef.setInput("layout", "details");
+    fixture.componentRef.setInput("serverDetails", {
+      benchmark_scores: [
+        {
+          benchmark_id: "workload_profile:web",
+          score: null,
+        },
+      ],
+    });
+    fixture.detectChanges();
+
+    expect(
+      (fixture.nativeElement as HTMLElement).querySelector(
+        ".workload-profile-charts-to-hide-for-test",
+      ),
+    ).toBeNull();
   });
 
   it("includes benchmark score notes in accordion items", () => {

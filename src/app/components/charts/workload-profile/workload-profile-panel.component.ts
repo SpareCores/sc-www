@@ -29,6 +29,7 @@ import {
 import {
   WORKLOAD_PROFILE_INFO_TOOLTIP,
   filterWorkloadProfileBenchmarks,
+  hasWorkloadProfileChartData,
 } from "./workload-profile.utils";
 
 @Component({
@@ -65,9 +66,19 @@ export class WorkloadProfilePanelComponent {
     filterWorkloadProfileBenchmarks(this.benchmarkMeta()),
   );
 
-  readonly hasWorkloadProfiles = computed(
-    () => this.workloadProfileBenchmarks().length > 0,
-  );
+  readonly hasWorkloadProfiles = computed(() => {
+    if (this.layout() === "details") {
+      return hasWorkloadProfileChartData({
+        benchmarkMeta: this.benchmarkMeta(),
+        benchmarkScores: this.serverDetails()?.benchmark_scores,
+      });
+    }
+
+    return hasWorkloadProfileChartData({
+      benchmarkMeta: this.benchmarkMeta(),
+      servers: this.servers(),
+    });
+  });
 
   readonly accordionItems = computed(() =>
     this.workloadProfileBenchmarks()
