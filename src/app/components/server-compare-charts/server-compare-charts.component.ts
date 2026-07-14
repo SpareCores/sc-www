@@ -65,6 +65,7 @@ import {
   formatWorkloadProfileLabel,
   isWorkloadProfileBenchmark,
   filterWorkloadProfileBenchmarks,
+  hasWorkloadProfileChartData,
 } from "../charts/workload-profile/workload-profile.utils";
 import { WorkloadProfilePanelComponent } from "../charts/workload-profile/workload-profile-panel.component";
 import {
@@ -634,6 +635,13 @@ export class ServerCompareChartsComponent implements OnChanges {
     return filterWorkloadProfileBenchmarks(
       (this.benchmarkMeta ?? []) as WorkloadProfileCompareBenchmark[],
     );
+  }
+
+  hasVisibleWorkloadProfileChart(): boolean {
+    return hasWorkloadProfileChartData({
+      benchmarkMeta: this.benchmarkMeta ?? [],
+      servers: this.workloadProfileCompareServers,
+    });
   }
 
   getVisibleInstanceProperties(propertyCategory: {

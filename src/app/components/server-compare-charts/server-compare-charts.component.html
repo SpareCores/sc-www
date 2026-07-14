@@ -366,7 +366,7 @@
           }
         }
       }
-      @if (getWorkloadProfileBenchmarks().length && !isEmbedded) {
+      @if (hasVisibleWorkloadProfileChart() && !isEmbedded) {
         <tr class="section_header" id="benchmark_line_workload_profile">
           <td [colSpan]="getCompareFixedWideContentColSpan()">
             <div class="compare-section-header-row">
