@@ -574,4 +574,74 @@ describe("ServerCompareChartsComponent", () => {
       ),
     ).toBeNull();
   });
+
+  it("marks the baseline server column in the compare header", () => {
+    component.showChart = "generic";
+    component.servers = [
+      {
+        vendor_id: "aws",
+        server_id: "server-a",
+        display_name: "Server A",
+        vendor: { name: "AWS", logo: null },
+        prices: [],
+      },
+      {
+        vendor_id: "gcp",
+        server_id: "server-b",
+        display_name: "Server B",
+        vendor: { name: "GCP", logo: null },
+        prices: [],
+      },
+    ] as unknown as typeof component.servers;
+    component.baselineServer = component.servers[0];
+
+    fixture.detectChanges();
+
+    const baselineHeaders = (
+      fixture.nativeElement as HTMLElement
+    ).querySelectorAll(".compare-table-header-baseline-marker");
+
+    expect(baselineHeaders.length).toBe(1);
+  });
+
+  it("shows property deltas under instance property values when baseline is set", () => {
+    component.showChart = "generic";
+    component.baselineServer = {
+      vendor_id: "aws",
+      server_id: "server-a",
+      display_name: "Server A",
+      memory_amount: 1024,
+      prices: [],
+      vendor: { name: "AWS", logo: null },
+    } as unknown as (typeof component.servers)[0];
+    component.servers = [
+      component.baselineServer,
+      {
+        vendor_id: "gcp",
+        server_id: "server-b",
+        display_name: "Server B",
+        memory_amount: 2048,
+        prices: [],
+        vendor: { name: "GCP", logo: null },
+      },
+    ] as unknown as typeof component.servers;
+    component.instancePropertyCategories = [
+      {
+        name: "Memory",
+        category: "memory",
+        properties: [{ id: "memory_amount", name: "Memory Amount" }],
+      },
+    ];
+
+    fixture.detectChanges();
+
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain(
+      "+100%",
+    );
+    expect(
+      (fixture.nativeElement as HTMLElement).querySelector(
+        ".compare-table-delta--positive",
+      ),
+    ).toBeTruthy();
+  });
 });

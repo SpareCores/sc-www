@@ -18,7 +18,7 @@
             track server.vendor_id + "_" + server.server_id
           ) {
             <th
-              class="align-baseline compact-number-header-cell"
+              class="align-baseline compact-number-header-cell compare-table-header-cell"
               [style.width]="getServerColumnWidth(server)"
               [style.minWidth]="getServerColumnWidth(server)"
               [id]="
@@ -68,6 +68,12 @@
                   }
                 </div>
               </div>
+              @if (isBaselineServer(server, baselineServer)) {
+                <div
+                  class="compare-table-header-baseline-marker"
+                  aria-hidden="true"
+                ></div>
+              }
             </th>
           }
         </tr>
@@ -199,11 +205,31 @@
             server of servers;
             track server.vendor_id + "_" + server.server_id
           ) {
-            <td>
-              <div class="flex flex-col">
+            <td class="align-baseline">
+              <div class="compare-table-metric-cell">
                 <div [style]="getBestPriceStyle(server, 'spot')">
                   {{ getBestPrice(server, "spot") }}
                 </div>
+                @if (getBestPriceDelta(server, "spot"); as priceDelta) {
+                  @if (getBestPriceDeltaLabel(priceDelta); as priceDeltaLabel) {
+                    <div class="compare-table-delta-row">
+                      <span
+                        class="compare-table-delta"
+                        [class.compare-table-delta--positive]="
+                          priceDelta.tone === 'positive'
+                        "
+                        [class.compare-table-delta--negative]="
+                          priceDelta.tone === 'negative'
+                        "
+                        [class.compare-table-delta--neutral]="
+                          priceDelta.tone === 'neutral'
+                        "
+                      >
+                        {{ priceDeltaLabel }}
+                      </span>
+                    </div>
+                  }
+                }
                 <div class="text-xs">
                   {{ getBestZone(server, "spot") }}
                 </div>
@@ -220,10 +246,30 @@
             track server.vendor_id + "_" + server.server_id
           ) {
             <td>
-              <div class="flex flex-col">
+              <div class="compare-table-metric-cell">
                 <div [style]="getBestPriceStyle(server)">
                   {{ getBestPrice(server) }}
                 </div>
+                @if (getBestPriceDelta(server); as priceDelta) {
+                  @if (getBestPriceDeltaLabel(priceDelta); as priceDeltaLabel) {
+                    <div class="compare-table-delta-row">
+                      <span
+                        class="compare-table-delta"
+                        [class.compare-table-delta--positive]="
+                          priceDelta.tone === 'positive'
+                        "
+                        [class.compare-table-delta--negative]="
+                          priceDelta.tone === 'negative'
+                        "
+                        [class.compare-table-delta--neutral]="
+                          priceDelta.tone === 'neutral'
+                        "
+                      >
+                        {{ priceDeltaLabel }}
+                      </span>
+                    </div>
+                  }
+                }
                 <div class="text-xs">
                   {{ getBestZone(server) }}
                 </div>
@@ -343,16 +389,46 @@
                 ) {
                   <td>
                     @let propertyValue = getProperty(category, server);
-                    <div [style]="getBestCellStyle(category.id, server)">
-                      @if (propertyValue === "check" || propertyValue === "x") {
-                        <svg
-                          [lucideIcon]="propertyValue"
-                          class="h-4 w-4 shrink-0 justify-self-end"
-                          [class.text-emerald-400]="propertyValue === 'check'"
-                          [class.text-white]="propertyValue === 'x'"
-                        ></svg>
-                      } @else {
-                        <span [textContent]="propertyValue"></span>
+                    <div class="compare-table-metric-cell">
+                      <div [style]="getBestCellStyle(category.id, server)">
+                        @if (
+                          propertyValue === "check" || propertyValue === "x"
+                        ) {
+                          <svg
+                            [lucideIcon]="propertyValue"
+                            class="h-4 w-4 shrink-0 justify-self-end"
+                            [class.text-emerald-400]="propertyValue === 'check'"
+                            [class.text-white]="propertyValue === 'x'"
+                          ></svg>
+                        } @else {
+                          <span [textContent]="propertyValue"></span>
+                        }
+                      </div>
+                      @if (
+                        getPropertyDelta(category.id, server);
+                        as propertyDelta
+                      ) {
+                        @if (
+                          getPropertyDeltaLabel(category.id, propertyDelta);
+                          as propertyDeltaLabel
+                        ) {
+                          <div class="compare-table-delta-row">
+                            <span
+                              class="compare-table-delta"
+                              [class.compare-table-delta--positive]="
+                                propertyDelta.tone === 'positive'
+                              "
+                              [class.compare-table-delta--negative]="
+                                propertyDelta.tone === 'negative'
+                              "
+                              [class.compare-table-delta--neutral]="
+                                propertyDelta.tone === 'neutral'
+                              "
+                            >
+                              {{ propertyDeltaLabel }}
+                            </span>
+                          </div>
+                        }
                       }
                     </div>
                   </td>

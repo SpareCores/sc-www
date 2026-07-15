@@ -26,6 +26,7 @@ import {
 } from "../../pages/server-details/chartFromBenchmarks";
 import { ToastService } from "../../services/toast.service";
 import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
+import { AdvisorUiService } from "../../pages/advisor/advisor-ui.service";
 import { BenchmarkLineChartComponent } from "../charts/line/benchmark-line-chart.component";
 import { CompressionChartComponent } from "../charts/compression/compression-chart.component";
 import {
@@ -71,10 +72,19 @@ import {
 } from "../charts/workload-profile/workload-profile-radar-chart.types";
 import {
   formatNumberWithCommas,
+  formatCompareDeltaDisplayLabel,
+  formatCompareDeltaLabel,
+  formatCompareSignedPercentageDeltaLabel,
   getBestBenchmarkCellStyle,
   getBestPropertyCellStyle,
+  getCompareRawNumericPropertyValue,
   getServerPropertyValue,
+  invertCompareDeltaTone,
+  isCompareBaselineServer,
+  isCompareLowerIsBetterProperty,
   isCompareMetadataPropertyHidden,
+  isComparePropertyDeltaEligible,
+  type CompareMetricDelta,
 } from "../charts/shared/server-compare-table.utils";
 
 @Component({
@@ -104,8 +114,10 @@ export class ServerCompareChartsComponent implements OnChanges {
   private tooltipService = inject(ChartTooltipService);
   private geekbenchBuilder = inject(GeekbenchRadarChartBuilderService);
   private multiBarBuilder = inject(BenchmarkMultiBarChartBuilderService);
+  private advisorUi = inject(AdvisorUiService);
 
   @Input() servers: ExtendedServerDetails[] = [];
+  @Input() baselineServer: ExtendedServerDetails | null = null;
   @Input() instanceProperties: any[] = [];
   @Input() benchmarkMeta: any;
   @Input() benchmarkCategories: any[] = [];
@@ -116,6 +128,7 @@ export class ServerCompareChartsComponent implements OnChanges {
 
   readonly layoutChanged = output<void>();
   readonly isCompareMetadataPropertyHidden = isCompareMetadataPropertyHidden;
+  readonly isBaselineServer = isCompareBaselineServer;
 
   @ViewChild("tooltipcompareDefault") tooltip!: ElementRef<HTMLElement>;
 
@@ -494,6 +507,74 @@ export class ServerCompareChartsComponent implements OnChanges {
     server: ExtendedServerDetails,
   ) {
     return getServerPropertyValue(column, server);
+  }
+
+  getPropertyDelta(
+    propertyId: string,
+    server: ExtendedServerDetails,
+  ): CompareMetricDelta | null {
+    if (
+      !this.baselineServer ||
+      isCompareBaselineServer(server, this.baselineServer) ||
+      !isComparePropertyDeltaEligible(propertyId, server)
+    ) {
+      return null;
+    }
+
+    const delta = this.advisorUi.buildComparableResourceDelta(
+      getCompareRawNumericPropertyValue(server, propertyId),
+      getCompareRawNumericPropertyValue(this.baselineServer, propertyId),
+    );
+
+    if (!isCompareLowerIsBetterProperty(propertyId)) {
+      return delta;
+    }
+
+    return {
+      ...delta,
+      tone: invertCompareDeltaTone(delta.tone),
+    };
+  }
+
+  getPropertyDeltaLabel(
+    propertyId: string,
+    delta: CompareMetricDelta,
+  ): string | null {
+    const formatter = isCompareLowerIsBetterProperty(propertyId)
+      ? formatCompareSignedPercentageDeltaLabel
+      : formatCompareDeltaLabel;
+
+    return formatCompareDeltaDisplayLabel(delta, formatter);
+  }
+
+  getBestPriceDelta(
+    server: ExtendedServerDetails,
+    allocation: Allocation | string = Allocation.Ondemand,
+  ): CompareMetricDelta | null {
+    if (
+      !this.baselineServer ||
+      isCompareBaselineServer(server, this.baselineServer)
+    ) {
+      return null;
+    }
+
+    const candidatePrice =
+      allocation === Allocation.Spot
+        ? server.bestSpotPrice?.price
+        : server.bestOndemandPrice?.price;
+    const baselinePrice =
+      allocation === Allocation.Spot
+        ? this.baselineServer.bestSpotPrice?.price
+        : this.baselineServer.bestOndemandPrice?.price;
+
+    return this.advisorUi.buildPriceDelta(candidatePrice, baselinePrice);
+  }
+
+  getBestPriceDeltaLabel(delta: CompareMetricDelta): string | null {
+    return formatCompareDeltaDisplayLabel(
+      delta,
+      formatCompareSignedPercentageDeltaLabel,
+    );
   }
 
   initializeBenchmarkCharts() {
