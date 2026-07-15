@@ -170,6 +170,9 @@
                       }
                     </span>
                   </th>
+                  @if (breakdown.hasNotes) {
+                    <th rowspan="2">Note</th>
+                  }
                 </tr>
                 <tr>
                   <th
@@ -218,12 +221,12 @@
                             (mouseleave)="hideTooltip()"
                           ></svg>
                         }
-                        @if (row.note?.trim(); as note) {
+                        @if (row.benchmarkNote) {
                           <svg
                             lucideTriangleAlert
                             class="benchmark-note-icon"
                             (mouseenter)="
-                              showTooltip($event, note, 'warning-wide')
+                              showWarningTooltip($event, row.benchmarkNote)
                             "
                             (mouseleave)="hideTooltip()"
                           ></svg>
@@ -271,6 +274,9 @@
                     >
                       {{ formatImpactPercent(row.impact) }}
                     </td>
+                    @if (breakdown.hasNotes) {
+                      <td>{{ row.note?.trim() || "" }}</td>
+                    }
                   </tr>
                 }
               </tbody>

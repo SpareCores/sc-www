@@ -8,10 +8,12 @@ import {
 export type WorkloadProfileBreakdownRow = ScoreComponent & {
   componentDescription?: string;
   unit?: string | null;
+  benchmarkNote?: string;
 };
 
 export type WorkloadProfileBreakdownTable = {
   impactFormula?: string | null;
+  hasNotes: boolean;
   rows: WorkloadProfileBreakdownRow[];
 };
 
@@ -25,7 +27,7 @@ export function buildWorkloadProfileBreakdownTable(params: {
   profile: Pick<Benchmark, "source">;
   benchmarkMeta: Array<
     Pick<Benchmark, "benchmark_id" | "unit"> &
-      Partial<Pick<Benchmark, "description">>
+      Partial<Pick<Benchmark, "description" | "note">>
   >;
   scoreBreakdown?: WorkloadScoreBreakdown | null;
 }): WorkloadProfileBreakdownTable | undefined {
@@ -56,12 +58,14 @@ export function buildWorkloadProfileBreakdownTable(params: {
         ...component,
         componentDescription: componentMeta?.description ?? undefined,
         unit: componentMeta?.unit ?? undefined,
+        benchmarkNote: componentMeta?.note?.trim() || undefined,
       };
     },
   );
 
   return {
     impactFormula: compound?.impact_formula,
+    hasNotes: rows.some((row) => !!row.note?.trim()),
     rows,
   };
 }

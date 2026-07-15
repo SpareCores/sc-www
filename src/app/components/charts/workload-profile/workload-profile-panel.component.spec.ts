@@ -85,6 +85,7 @@ describe("WorkloadProfilePanelComponent", () => {
         name: "LLM inference speed for text generation",
         description: "LLM generation description",
         unit: "tokens/second (t/s)",
+        note: "Limited scaling above 32 vCPUs.",
         status: Status.Active,
       },
     ]);
@@ -269,7 +270,12 @@ describe("WorkloadProfilePanelComponent", () => {
     expect(root.textContent).toContain("rps");
     expect(root.textContent).not.toContain("Requests per second (rps)");
     expect(root.textContent).not.toContain("(rps)");
-    expect(root.querySelectorAll("th").length).toBe(9);
+    expect(
+      Array.from(root.querySelectorAll("th")).some(
+        (header) => header.textContent?.trim() === "Note",
+      ),
+    ).toBeTrue();
+    expect(root.textContent).toContain("penalized: no usable measurement");
     const warningIcon = fixture.debugElement.query(
       By.css("td .benchmark-note-icon"),
     );
@@ -277,7 +283,7 @@ describe("WorkloadProfilePanelComponent", () => {
     warningIcon.triggerEventHandler("mouseenter", new MouseEvent("mouseenter"));
     fixture.detectChanges();
     expect(fixture.componentInstance.tooltipContent).toBe(
-      "penalized: no usable measurement",
+      "Limited scaling above 32 vCPUs.",
     );
     expect(
       root.querySelector(

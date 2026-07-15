@@ -163,7 +163,6 @@ function buildScoreGaugeChart(score: number | null | undefined): {
     LucideChevronDown,
     LucideInfo,
     LucideTriangleAlert,
-    LucideTriangleAlert,
     BenchmarkIconPipe,
     AccordionComponent,
     WorkloadProfileRadarChartComponent,
@@ -335,16 +334,11 @@ export class WorkloadProfilePanelComponent {
     }
   }
 
-  showTooltip(
-    el: MouseEvent,
-    content?: string,
-    variant?: "warning-wide",
-  ): void {
+  showTooltip(el: MouseEvent, content?: string): void {
     this.tooltipService.showIfPresent({
       tooltipElement: this.tooltip()?.nativeElement,
       event: el,
       content,
-      variant,
       onShow: (text) => {
         this.tooltipContent = text;
       },
