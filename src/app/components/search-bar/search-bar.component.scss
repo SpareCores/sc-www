@@ -240,6 +240,15 @@
   .custom-slider__input {
     width: 100%;
     accent-color: #34d399;
+    cursor: pointer;
+
+    &::-webkit-slider-thumb {
+      cursor: pointer;
+    }
+
+    &::-moz-range-thumb {
+      cursor: pointer;
+    }
   }
 
   .custom-slider__input--unset::-webkit-slider-thumb {
