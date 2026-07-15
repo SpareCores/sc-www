@@ -30,7 +30,8 @@ describe("workload-profile-breakdown.utils", () => {
       profile: {
         source: {
           kind: "compound",
-          aggregation: BenchmarkComponentAggregationMethod.WeightedGeometricMean,
+          aggregation:
+            BenchmarkComponentAggregationMethod.WeightedGeometricMean,
           normalization: BenchmarkComponentNormalizationMethod.MedianRatio,
           impact_formula: "Impact formula text",
           components: [
@@ -101,5 +102,4 @@ describe("workload-profile-breakdown.utils", () => {
     expect(getImpactColorClass(-3.11)).toBe("text-red-400");
     expect(getImpactColorClass(0)).toBe("");
   });
-
 });

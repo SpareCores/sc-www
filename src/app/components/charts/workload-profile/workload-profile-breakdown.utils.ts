@@ -107,9 +107,7 @@ export function formatImpactPercent(value: number | null | undefined): string {
   return `${prefix}${value.toFixed(2)}%`;
 }
 
-export function getImpactColorClass(
-  value: number | null | undefined,
-): string {
+export function getImpactColorClass(value: number | null | undefined): string {
   if (value == null || !Number.isFinite(value) || value === 0) {
     return "";
   }
