@@ -868,13 +868,6 @@ export class ServerCompareChartsComponent implements OnChanges {
     );
   }
 
-  private formatNumber(value: number): string {
-    if (value === undefined || value === null) {
-      return "-";
-    }
-    return value.toLocaleString("en-US");
-  }
-
   sortLLMConfigs(configs: any[]): any[] {
     if (!configs) return [];
 

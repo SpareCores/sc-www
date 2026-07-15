@@ -471,7 +471,6 @@ describe("ServerCompareChartsComponent", () => {
             score: 10,
           },
         ],
-        benchmark_scores: [{ benchmark_id: "workload:web-server", score: 0.8 }],
       },
       {
         vendor_id: "gcp",
@@ -483,7 +482,6 @@ describe("ServerCompareChartsComponent", () => {
             score: 20,
           },
         ],
-        benchmark_scores: [{ benchmark_id: "workload:web-server", score: 0.9 }],
       },
       {
         vendor_id: "hcloud",
@@ -495,7 +493,6 @@ describe("ServerCompareChartsComponent", () => {
             score: 30,
           },
         ],
-        benchmark_scores: [{ benchmark_id: "workload:web-server", score: 0.7 }],
       },
     ] as unknown as typeof component.servers;
     component.benchmarkMeta = [
