@@ -226,7 +226,7 @@
                       {{ formatBreakdownNumericValue(row.raw) }}
                     </td>
                     <td class="workload-profile-breakdown-table__score-unit">
-                      @if (row.raw != null && compactUnit) {
+                      @if (row.raw !== null && compactUnit) {
                         {{ compactUnit }}
                       }
                     </td>
@@ -236,7 +236,7 @@
                       {{ formatBreakdownNumericValue(row.reference) }}
                     </td>
                     <td class="workload-profile-breakdown-table__score-unit">
-                      @if (row.reference != null && compactUnit) {
+                      @if (row.reference !== null && compactUnit) {
                         {{ compactUnit }}
                       }
                     </td>
