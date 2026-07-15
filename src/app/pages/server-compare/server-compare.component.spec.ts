@@ -238,4 +238,65 @@ describe("ServerCompareComponent", () => {
     expect(clearTimeout).toHaveBeenCalledWith(12);
     expect(cancelAnimationFrame).toHaveBeenCalledWith(34);
   });
+
+  it("restores baseline server from URL query params", () => {
+    routeSnapshot.queryParams = {
+      baseline_vendor: "aws",
+      baseline_server: "t3.medium",
+    };
+    component.servers = [
+      {
+        vendor_id: "aws",
+        api_reference: "t3.medium",
+        display_name: "T3 Medium",
+      },
+    ] as typeof component.servers;
+
+    component["restoreBaselineFromUrl"]();
+
+    expect(component.selectedBaselineServer?.api_reference).toBe("t3.medium");
+  });
+
+  it("selectBaselineServer updates URL with baseline query params", () => {
+    component.instancesRaw = "encoded-instances";
+    component.servers = [
+      {
+        vendor_id: "aws",
+        api_reference: "t3.medium",
+        display_name: "T3 Medium",
+      },
+    ] as typeof component.servers;
+    const pushState = spyOn(window.history, "pushState");
+
+    component.selectBaselineServer(component.servers[0]);
+
+    expect(component.selectedBaselineServer).toBe(component.servers[0]);
+    expect(pushState).toHaveBeenCalledWith(
+      {},
+      "",
+      jasmine.stringMatching(/baseline_vendor=aws&baseline_server=t3\.medium/),
+    );
+  });
+
+  it("clearing baseline removes baseline params from URL", () => {
+    component.instancesRaw = "encoded-instances";
+    component.servers = [
+      {
+        vendor_id: "aws",
+        api_reference: "t3.medium",
+        display_name: "T3 Medium",
+      },
+    ] as typeof component.servers;
+    component.selectedBaselineServer = component.servers[0];
+    component["lastEncodedCompareQuery"] =
+      "baseline_vendor=aws&baseline_server=t3.medium";
+    const pushState = spyOn(window.history, "pushState");
+
+    component.selectBaselineServer(null);
+
+    expect(component.selectedBaselineServer).toBeNull();
+    const pushedUrl = pushState.calls.mostRecent().args[2] as string;
+    expect(pushedUrl).toContain("instances=encoded-instances");
+    expect(pushedUrl).not.toContain("baseline_vendor");
+  });
 });

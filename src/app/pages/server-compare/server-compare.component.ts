@@ -54,6 +54,8 @@ import {
   decodeBase64JsonUrlState,
   isServerCompareUrlState,
 } from "../../tools/encoded-url-state";
+import { encodeQueryParams } from "../../tools/queryParamFunctions";
+import { isCompareBaselineServer } from "../../components/charts/shared/server-compare-table.utils";
 import {
   getCompareMemoryChartOption,
   type CompareMemoryChartOption,
@@ -118,6 +120,7 @@ export class ServerCompareComponent
   private seoHandler = inject(SeoHandlerService);
   private serverCompare = inject(ServerCompareService);
   currencyDropdown = viewChild<FlowbiteDropdownDirective>("currencyDropdown");
+  baselineDropdown = viewChild<FlowbiteDropdownDirective>("baselineDropdown");
   private analytics = inject(AnalyticsService);
   private route = inject(ActivatedRoute);
   private toastService = inject(ToastService);
@@ -169,6 +172,9 @@ export class ServerCompareComponent
 
   availableCurrencies: CurrencyOption[] = availableCurrencies;
   selectedCurrency = this.availableCurrencies[0];
+  selectedBaselineServer: ExtendedServerDetails | null = null;
+
+  private lastEncodedCompareQuery: string | null = null;
 
   benchmarkCategories: any[] = [
     {
@@ -753,6 +759,7 @@ export class ServerCompareComponent
         })
         .finally(() => {
           this.isLoading = false;
+          this.restoreBaselineFromUrl();
           if (isPlatformBrowser(this.platformId)) {
             if (this.mirrorLayoutTimeoutId !== null) {
               clearTimeout(this.mirrorLayoutTimeoutId);
@@ -992,6 +999,77 @@ export class ServerCompareComponent
     });
 
     this.currencyDropdown()?.hide();
+  }
+
+  getBaselineServerLabel(): string {
+    return this.selectedBaselineServer?.display_name || "Baseline server";
+  }
+
+  isBaselineServer(server: ExtendedServerDetails): boolean {
+    return isCompareBaselineServer(server, this.selectedBaselineServer);
+  }
+
+  selectBaselineServer(server: ExtendedServerDetails | null): void {
+    this.selectedBaselineServer = server;
+    this.syncCompareUrlState();
+    this.baselineDropdown()?.hide();
+  }
+
+  getCompareUrlQueryParams(): Record<string, string> {
+    const params: Record<string, string> = {};
+
+    if (this.instancesRaw) {
+      params.instances = this.instancesRaw;
+    }
+
+    if (this.selectedBaselineServer) {
+      params.baseline_vendor = this.selectedBaselineServer.vendor_id;
+      params.baseline_server = this.selectedBaselineServer.api_reference;
+    }
+
+    return params;
+  }
+
+  private restoreBaselineFromUrl(): void {
+    const baselineVendor = this.route.snapshot.queryParams["baseline_vendor"];
+    const baselineServerRef =
+      this.route.snapshot.queryParams["baseline_server"];
+
+    if (baselineVendor && baselineServerRef && this.servers.length) {
+      this.selectedBaselineServer =
+        this.servers.find(
+          (server) =>
+            server.vendor_id === baselineVendor &&
+            server.api_reference === baselineServerRef,
+        ) || null;
+    } else {
+      this.selectedBaselineServer = null;
+    }
+
+    this.lastEncodedCompareQuery = encodeQueryParams(
+      this.getCompareUrlQueryParams(),
+    );
+  }
+
+  private syncCompareUrlState(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
+    const encodedQuery = encodeQueryParams(this.getCompareUrlQueryParams());
+
+    if (encodedQuery === this.lastEncodedCompareQuery) {
+      return;
+    }
+
+    this.lastEncodedCompareQuery = encodedQuery;
+    const path = window.location.pathname;
+
+    if (encodedQuery?.length) {
+      window.history.pushState({}, "", `${path}?${encodedQuery}`);
+    } else {
+      window.history.pushState({}, "", path);
+    }
   }
 
   getStyle(index: number) {
