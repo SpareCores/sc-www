@@ -465,16 +465,19 @@ describe("ServerCompareChartsComponent", () => {
         vendor_id: "aws",
         server_id: "server-a",
         display_name: "Server A",
+        benchmark_scores: [{ benchmark_id: "workload:web-server", score: 0.8 }],
       },
       {
         vendor_id: "gcp",
         server_id: "server-b",
         display_name: "Server B",
+        benchmark_scores: [{ benchmark_id: "workload:web-server", score: 0.9 }],
       },
       {
         vendor_id: "hcloud",
         server_id: "server-c",
         display_name: "Server C",
+        benchmark_scores: [{ benchmark_id: "workload:web-server", score: 0.7 }],
       },
     ] as unknown as typeof component.servers;
     component.benchmarkMeta = [
