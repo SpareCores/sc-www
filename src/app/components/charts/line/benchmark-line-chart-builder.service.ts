@@ -3,6 +3,11 @@ import { ChartConfiguration, TooltipItem, TooltipModel } from "chart.js";
 import { radarDatasetColors } from "../shared/chart-colors.constants";
 import { cloneChartOptions } from "../shared/chart-options.utils";
 import {
+  buildCompareTooltipTitle,
+  getDatasetTooltipIdentity,
+  withServerTooltipIdentity,
+} from "../shared/chart-tooltip.utils";
+import {
   AnnotationLine,
   CompareSslOption,
   DEFAULT_COMPARE_SSL_OPTIONS,
@@ -142,30 +147,33 @@ export class BenchmarkLineChartBuilderService {
               score.config.cores === 1,
           )?.score || 1;
 
-        return {
-          data: scales.map((size) => {
-            const item = server.benchmark_scores.find(
-              (score) =>
-                score.benchmark_id === "stress_ng:div16" &&
-                score.config.cores === size,
-            );
+        return withServerTooltipIdentity(
+          {
+            data: scales.map((size) => {
+              const item = server.benchmark_scores.find(
+                (score) =>
+                  score.benchmark_id === "stress_ng:div16" &&
+                  score.config.cores === size,
+              );
 
-            return item
-              ? {
-                  cores: size,
-                  score: item.score,
-                  percent: (item.score / (size * score1)) * 100,
-                }
-              : null;
-          }),
-          label: server.display_name,
-          spanGaps: true,
-          borderColor:
-            radarDatasetColors[index % radarDatasetColors.length].borderColor,
-          backgroundColor:
-            radarDatasetColors[index % radarDatasetColors.length]
-              .backgroundColor,
-        };
+              return item
+                ? {
+                    cores: size,
+                    score: item.score,
+                    percent: (item.score / (size * score1)) * 100,
+                  }
+                : null;
+            }),
+            label: server.display_name,
+            spanGaps: true,
+            borderColor:
+              radarDatasetColors[index % radarDatasetColors.length].borderColor,
+            backgroundColor:
+              radarDatasetColors[index % radarDatasetColors.length]
+                .backgroundColor,
+          },
+          server,
+        );
       }),
     };
 
@@ -175,7 +183,7 @@ export class BenchmarkLineChartBuilderService {
     const percentOptions = cloneChartOptions(
       percentOptionsBase ?? {},
     ) as MutableLineChartOptions;
-    this.configureStressNgOptions(rawOptions, percentOptions);
+    this.configureStressNgOptions(rawOptions, percentOptions, true);
 
     return { data, rawOptions, percentOptions };
   }
@@ -246,23 +254,28 @@ export class BenchmarkLineChartBuilderService {
 
     const data: ChartConfiguration<"bar">["data"] = {
       labels: scales,
-      datasets: servers.map((server, index) => ({
-        data: scales.map((size) => {
-          const item = server.benchmark_scores.find(
-            (score) =>
-              score.benchmark_id === "openssl" &&
-              score.config.algo === selectedAlgo.value &&
-              score.config.block_size === size,
-          );
-          return item?.score ?? null;
-        }),
-        label: server.display_name,
-        spanGaps: true,
-        borderColor:
-          radarDatasetColors[index % radarDatasetColors.length].borderColor,
-        backgroundColor:
-          radarDatasetColors[index % radarDatasetColors.length].borderColor,
-      })),
+      datasets: servers.map((server, index) =>
+        withServerTooltipIdentity(
+          {
+            data: scales.map((size) => {
+              const item = server.benchmark_scores.find(
+                (score) =>
+                  score.benchmark_id === "openssl" &&
+                  score.config.algo === selectedAlgo.value &&
+                  score.config.block_size === size,
+              );
+              return item?.score ?? null;
+            }),
+            label: server.display_name,
+            spanGaps: true,
+            borderColor:
+              radarDatasetColors[index % radarDatasetColors.length].borderColor,
+            backgroundColor:
+              radarDatasetColors[index % radarDatasetColors.length].borderColor,
+          },
+          server,
+        ),
+      ),
     };
 
     const options = cloneChartOptions(
@@ -278,12 +291,22 @@ export class BenchmarkLineChartBuilderService {
             this: TooltipModel<"bar">,
             tooltipItems: TooltipItem<"bar">[],
           ) {
-            return (
+            const identity = getDatasetTooltipIdentity(
+              tooltipItems[0]?.dataset,
+            );
+            const context =
               selectedAlgo.name +
               " with " +
               tooltipItems[0].label +
-              "-byte block size"
-            );
+              "-byte block size";
+
+            return buildCompareTooltipTitle(identity, context);
+          },
+          label: function (
+            this: TooltipModel<"bar">,
+            tooltipItem: TooltipItem<"bar">,
+          ) {
+            return `${tooltipItem.formattedValue} byte/s`;
           },
         },
       },
@@ -295,12 +318,21 @@ export class BenchmarkLineChartBuilderService {
   private configureStressNgOptions(
     rawOptions: MutableLineChartOptions,
     percentOptions: MutableLineChartOptions,
+    showLegend = false,
   ): void {
+    const buildTitle = (tooltipItems: TooltipItem<"line">[]) => {
+      const context = `${tooltipItems[0].label} vCPUs`;
+      const identity = showLegend
+        ? getDatasetTooltipIdentity(tooltipItems[0]?.dataset)
+        : "";
+      return buildCompareTooltipTitle(identity, context);
+    };
+
     rawOptions.plugins = {
       ...rawOptions.plugins,
       legend: {
         ...rawOptions.plugins?.legend,
-        display: false,
+        display: showLegend,
       },
       tooltip: {
         ...rawOptions.plugins?.tooltip,
@@ -310,13 +342,13 @@ export class BenchmarkLineChartBuilderService {
             this: TooltipModel<"line">,
             tooltipItem: TooltipItem<"line">,
           ) {
-            return `Performance: ${tooltipItem.formattedValue} (${tooltipItem.dataset.label})`;
+            return `Performance: ${tooltipItem.formattedValue}`;
           },
           title: function (
             this: TooltipModel<"line">,
             tooltipItems: TooltipItem<"line">[],
           ) {
-            return `${tooltipItems[0].label} vCPUs`;
+            return buildTitle(tooltipItems);
           },
         },
       },
@@ -326,7 +358,7 @@ export class BenchmarkLineChartBuilderService {
       ...percentOptions.plugins,
       legend: {
         ...percentOptions.plugins?.legend,
-        display: false,
+        display: showLegend,
       },
       tooltip: {
         ...percentOptions.plugins?.tooltip,
@@ -336,13 +368,13 @@ export class BenchmarkLineChartBuilderService {
             this: TooltipModel<"line">,
             tooltipItem: TooltipItem<"line">,
           ) {
-            return `Performance: ${tooltipItem.formattedValue}% (${tooltipItem.dataset.label})`;
+            return `Performance: ${tooltipItem.formattedValue}%`;
           },
           title: function (
             this: TooltipModel<"line">,
             tooltipItems: TooltipItem<"line">[],
           ) {
-            return `${tooltipItems[0].label} vCPUs`;
+            return buildTitle(tooltipItems);
           },
         },
       },

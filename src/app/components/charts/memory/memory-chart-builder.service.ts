@@ -8,6 +8,11 @@ import {
 import { radarDatasetColors } from "../shared/chart-colors.constants";
 import { cloneChartOptions } from "../shared/chart-options.utils";
 import {
+  buildCompareTooltipTitle,
+  getDatasetTooltipIdentity,
+  withServerTooltipIdentity,
+} from "../shared/chart-tooltip.utils";
+import {
   CompareMemoryChartOption,
   MemoryChartOption,
   ServerDetailsMemoryChartOption,
@@ -186,19 +191,22 @@ export class MemoryChartBuilderService {
           return benchmark?.score ?? null;
         });
 
-        return {
-          data: datasetData,
-          hidden: datasetData.every(
-            (value) => value === null || value === undefined,
-          ),
-          label: server.display_name,
-          spanGaps: true,
-          borderColor:
-            radarDatasetColors[index % radarDatasetColors.length].borderColor,
-          backgroundColor:
-            radarDatasetColors[index % radarDatasetColors.length]
-              .backgroundColor,
-        };
+        return withServerTooltipIdentity(
+          {
+            data: datasetData,
+            hidden: datasetData.every(
+              (value) => value === null || value === undefined,
+            ),
+            label: server.display_name,
+            spanGaps: true,
+            borderColor:
+              radarDatasetColors[index % radarDatasetColors.length].borderColor,
+            backgroundColor:
+              radarDatasetColors[index % radarDatasetColors.length]
+                .backgroundColor,
+          },
+          server,
+        );
       }),
     };
 
@@ -428,6 +436,7 @@ export class MemoryChartBuilderService {
       optionView,
       (blockSizeLabel) => `${option.name} with ${blockSizeLabel} block size`,
       bwMemScale,
+      true,
     );
 
     optionView.plugins.tooltip.callbacks.label = function (
@@ -700,6 +709,7 @@ export class MemoryChartBuilderService {
     optionView: MemoryLineChartOptionsView,
     getTitle: (blockSizeLabel: string) => string,
     bwMemScale = false,
+    includeServerIdentity = false,
   ) {
     optionView.plugins.tooltip.callbacks.title = (
       tooltipItems: TooltipItem<"line">[],
@@ -709,7 +719,11 @@ export class MemoryChartBuilderService {
         false,
         bwMemScale,
       );
-      return getTitle(blockSizeLabel);
+      const identity = includeServerIdentity
+        ? getDatasetTooltipIdentity(tooltipItems[0]?.dataset)
+        : "";
+
+      return buildCompareTooltipTitle(identity, getTitle(blockSizeLabel));
     };
   }
 
@@ -936,7 +950,7 @@ type MemoryLineChartOptionsView = {
         title?: (
           this: TooltipModel<"line">,
           tooltipItems: TooltipItem<"line">[],
-        ) => string;
+        ) => string | string[];
         label?: (
           this: TooltipModel<"line">,
           tooltipItem: TooltipItem<"line">,

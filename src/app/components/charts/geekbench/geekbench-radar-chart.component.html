@@ -17,6 +17,14 @@
             (mouseenter)="showHtmlTooltip($event, resolvedInfoTooltipHtml())"
             (mouseleave)="hideTooltip()"
           ></svg>
+          @if (geekbenchMetaNote()) {
+            <svg
+              lucideTriangleAlert
+              class="benchmark-note-icon"
+              (mouseenter)="showWarningTextTooltip($event, geekbenchMetaNote())"
+              (mouseleave)="hideTooltip()"
+            ></svg>
+          }
         </h3>
         <div
           class="py-2 px-2 border-emerald-400 border-solid rounded-lg border"

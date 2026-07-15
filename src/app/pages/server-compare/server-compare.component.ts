@@ -559,6 +559,7 @@ export class ServerCompareComponent
             server.vendor = vendors.find(
               (v: any) => v.vendor_id === server.vendor_id,
             );
+            server.vendor_name = server.vendor?.name;
 
             if (server.prices?.length > 0) {
               server.prices.forEach((price: any) => {

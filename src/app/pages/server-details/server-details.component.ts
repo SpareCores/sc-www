@@ -94,6 +94,7 @@ export interface ExtendedServerDetails extends ServerPKs {
   bestSpotPrice?: ExtendedServerPrice;
   additionalOndemandPrices?: ExtendedServerPrice[];
   additionalSpotPrices?: ExtendedServerPrice[];
+  vendor_name?: string;
 }
 
 interface PropertyCategoryDefinition {
@@ -159,6 +160,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
   features: any[] = [];
 
   description = "";
+  cardPriceDescription = "";
   title = "";
   seoKeywords = "";
 
@@ -479,16 +481,20 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
               }
               this.description += `, ${this.getMemory()} of memory and ${formatStorageSize(this.serverDetails.storage_size ?? 0)} of storage.`;
 
+              this.cardPriceDescription = "";
               if (this.serverDetails.prices[0]) {
                 const roundedPrice =
                   Math.round(this.serverDetails.prices[0].price * 1000000) /
                   1000000;
-                this.description += ` The pricing starts at ${roundedPrice} ${this.serverDetails.prices[0].currency} per hour.`;
+                this.cardPriceDescription = ` The pricing starts at ${roundedPrice} ${this.serverDetails.prices[0].currency} per hour.`;
               }
+
+              const fullDescription =
+                this.description + this.cardPriceDescription;
 
               this.faqs = buildServerFaqs({
                 serverDetails: this.serverDetails,
-                description: this.description,
+                description: fullDescription,
                 formattedMemory: this.getMemory(),
                 countryName: countryIdtoNamePipe.transform(
                   this.serverDetails.vendor.country_id,
@@ -508,7 +514,7 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
 
               this.SEOHandler.updateTitleAndMetaTags(
                 this.title,
-                this.description,
+                fullDescription,
                 keywords,
               );
               this.SEOHandler.updateThumbnail(

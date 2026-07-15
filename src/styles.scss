@@ -23,6 +23,18 @@ $content-max-width: 1400px;
     max-width: min(72rem, calc(100vw - 2rem));
   }
 
+  .tooltip-panel--warning {
+    @apply border-yellow-500 whitespace-pre-line;
+  }
+
+  .tooltip-panel--warning-wide {
+    max-width: min(54rem, calc(100vw - 2rem));
+  }
+
+  .benchmark-note-icon {
+    @apply h-4 w-auto shrink-0 cursor-help text-[#EAB308];
+  }
+
   .tooltip-panel--warning-wide {
     @apply border-yellow-500 whitespace-pre-line;
 

@@ -222,6 +222,16 @@
       </div>
     }
   </div>
+
+  @if (note()) {
+    <div
+      class="bg-yellow-500 text-sm text-gray-900 rounded-lg p-4 flex gap-3 items-center"
+      role="alert"
+    >
+      <svg lucideTriangleAlert class="h-6 w-6 shrink-0"></svg>
+      <div>{{ note() }}</div>
+    </div>
+  }
 </div>
 
 <!-- Floating tooltip -->

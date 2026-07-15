@@ -26,6 +26,7 @@ import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon.pipe";
 import { AccordionComponent } from "../../accordion/accordion.component";
 import { FlowbiteDropdownDirective } from "../../../directives/flowbite-dropdown.directive";
 import { ChartTooltipService } from "../shared/chart-tooltip.service";
+import { getBenchmarkMetaNotes } from "../shared/chart-tooltip.utils";
 import { WorkloadProfileRadarChartComponent } from "./workload-profile-radar-chart.component";
 import {
   WorkloadProfileBenchmarkMeta,
@@ -45,6 +46,7 @@ import {
   formatWorkloadProfileLabel,
   hasWorkloadProfileScore,
   resolveWorkloadProfileBenchmarksWithData,
+  hasWorkloadProfileChartData,
 } from "./workload-profile.utils";
 
 const SCORE_GAUGE_MAX = 2;
@@ -161,6 +163,7 @@ function buildScoreGaugeChart(score: number | null | undefined): {
     LucideChevronDown,
     LucideInfo,
     LucideTriangleAlert,
+    LucideTriangleAlert,
     BenchmarkIconPipe,
     AccordionComponent,
     WorkloadProfileRadarChartComponent,
@@ -204,9 +207,19 @@ export class WorkloadProfilePanelComponent {
       servers: this.servers(),
     }),
   );
-  readonly hasWorkloadProfiles = computed(
-    () => this.workloadProfileBenchmarks().length > 0,
-  );
+  readonly hasWorkloadProfiles = computed(() => {
+    if (this.layout() === "details") {
+      return hasWorkloadProfileChartData({
+        benchmarkMeta: this.benchmarkMeta(),
+        benchmarkScores: this.serverDetails()?.benchmark_scores,
+      });
+    }
+
+    return hasWorkloadProfileChartData({
+      benchmarkMeta: this.benchmarkMeta(),
+      servers: this.servers(),
+    });
+  });
   readonly profileDropdownItems = computed(() =>
     this.workloadProfileBenchmarks().map((benchmark) => ({
       id: benchmark.benchmark_id,
@@ -278,6 +291,15 @@ export class WorkloadProfilePanelComponent {
   );
 
   readonly workloadProfileInfoTooltip = WORKLOAD_PROFILE_INFO_TOOLTIP;
+
+  readonly workloadProfileMetaNote = computed(() =>
+    getBenchmarkMetaNotes(
+      this.benchmarkMeta(),
+      this.workloadProfileBenchmarks().map(
+        (benchmark) => benchmark.benchmark_id,
+      ),
+    ),
+  );
   readonly formatBreakdownNumericValue = formatBreakdownNumericValue;
   readonly compactBreakdownUnit = compactBreakdownUnit;
   readonly formatBreakdownPercent = formatBreakdownPercent;
@@ -323,6 +345,18 @@ export class WorkloadProfilePanelComponent {
       event: el,
       content,
       variant,
+      onShow: (text) => {
+        this.tooltipContent = text;
+      },
+    });
+  }
+
+  showWarningTooltip(el: MouseEvent, content?: string): void {
+    this.tooltipService.showIfPresent({
+      tooltipElement: this.tooltip()?.nativeElement,
+      event: el,
+      content,
+      variant: "warning-wide",
       onShow: (text) => {
         this.tooltipContent = text;
       },

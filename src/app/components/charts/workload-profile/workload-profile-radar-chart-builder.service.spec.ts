@@ -123,9 +123,25 @@ describe("WorkloadProfileRadarChartBuilderService", () => {
 
     expect(charts?.chartData.datasets).toHaveSize(2);
     expect(charts?.chartData.datasets[0]?.label).toBe("Server A");
+    expect(
+      (charts?.chartData.datasets[0] as { serverTooltipIdentity?: string })
+        .serverTooltipIdentity,
+    ).toBe("Server A");
     expect(charts?.chartData.datasets[1]?.data[0]).toEqual({
       value: 200,
       tooltip: undefined,
     });
+
+    const title = charts?.options?.plugins?.tooltip?.callbacks?.title;
+    const tooltipContext = {} as TooltipModel<"radar">;
+    expect(
+      title?.call(tooltipContext, [
+        {
+          dataIndex: 0,
+          label: "Web server",
+          dataset: { serverTooltipIdentity: "m7g.large by aws" },
+        } as unknown as TooltipItem<"radar">,
+      ]),
+    ).toEqual(["m7g.large by aws", "Workload profile: Web server"]);
   });
 });
