@@ -40,6 +40,64 @@ export function filterWorkloadProfileBenchmarks<
     .sort((left, right) => (left.name ?? "").localeCompare(right.name ?? ""));
 }
 
+export function hasWorkloadProfileScore(
+  score: number | null | undefined,
+): score is number {
+  return score != null && Number.isFinite(score);
+}
+
+type WorkloadProfileScoreRef = {
+  benchmark_id?: string;
+  score?: number | null;
+};
+
+export function resolveWorkloadProfileBenchmarksWithData<
+  T extends WorkloadProfileBenchmarkRef,
+>(params: {
+  benchmarkMeta: T[];
+  layout: "details" | "compare";
+  serverDetails?: { benchmark_scores?: WorkloadProfileScoreRef[] };
+  servers?: Array<{ benchmark_scores?: WorkloadProfileScoreRef[] }>;
+}): T[] {
+  const benchmarks = filterWorkloadProfileBenchmarks(params.benchmarkMeta);
+
+  if (params.layout === "details") {
+    const scores = params.serverDetails?.benchmark_scores ?? [];
+
+    return benchmarks.filter((benchmark) => {
+      const benchmarkId = benchmark.benchmark_id;
+
+      if (!benchmarkId) {
+        return false;
+      }
+
+      const score = scores.find(
+        (item) => item.benchmark_id === benchmarkId,
+      )?.score;
+
+      return hasWorkloadProfileScore(score);
+    });
+  }
+
+  const servers = params.servers ?? [];
+
+  return benchmarks.filter((benchmark) => {
+    const benchmarkId = benchmark.benchmark_id;
+
+    if (!benchmarkId) {
+      return false;
+    }
+
+    return servers.some((server) => {
+      const score = server.benchmark_scores?.find(
+        (item) => item.benchmark_id === benchmarkId,
+      )?.score;
+
+      return hasWorkloadProfileScore(score);
+    });
+  });
+}
+
 export function formatWorkloadProfileLabel(name: string): string {
   return name.replace(/^Workload profile:\s*/i, "").trim();
 }

@@ -1,4 +1,7 @@
-import { Status } from "./../../../../../sdk/data-contracts";
+import type {
+  Benchmark,
+  BenchmarkScore,
+} from "./../../../../../sdk/data-contracts";
 import { ChartConfiguration, ChartData } from "chart.js";
 
 export type WorkloadProfileRadarPoint = {
@@ -15,19 +18,16 @@ export type WorkloadProfileRadarChartData = ChartData<
 export type WorkloadProfileRadarChartOptions =
   ChartConfiguration<"radar">["options"];
 
-export type WorkloadProfileBenchmarkScore = {
-  benchmark_id: string;
-  score: number;
-  note?: string | null;
-  config?: Record<string, unknown>;
-};
+export type WorkloadProfileBenchmarkScore = Pick<
+  BenchmarkScore,
+  "benchmark_id" | "score" | "note" | "config" | "score_breakdown"
+>;
 
-export type WorkloadProfileBenchmarkMeta = {
-  benchmark_id: string;
-  name: string;
-  description?: string | null;
-  status?: Status;
-};
+export type WorkloadProfileBenchmarkMeta = Pick<
+  Benchmark,
+  "benchmark_id" | "name" | "status" | "source" | "unit"
+> &
+  Partial<Pick<Benchmark, "description">>;
 
 export type WorkloadProfileCompareBenchmark = WorkloadProfileBenchmarkMeta & {
   benchmark_key?: string;
@@ -49,6 +49,7 @@ export type WorkloadProfileCompareServer = {
 };
 
 export type WorkloadProfileChartsResult = {
+  benchmarkIds: string[];
   chartData: WorkloadProfileRadarChartData;
   options: WorkloadProfileRadarChartOptions;
 };
