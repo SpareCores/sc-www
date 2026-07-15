@@ -213,12 +213,12 @@
   z-index: 50;
 }
 
-:host ::ng-deep .compare-table-header-cell {
+.compare-table-header-cell {
   position: relative;
   vertical-align: top;
 }
 
-:host ::ng-deep .compare-table-header-baseline-marker {
+.compare-table-header-baseline-marker {
   position: absolute;
   left: 0;
   right: 0;
