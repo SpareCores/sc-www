@@ -276,11 +276,14 @@ describe("WorkloadProfilePanelComponent", () => {
       ),
     ).toBeTrue();
     expect(root.textContent).toContain("penalized: no usable measurement");
-    const warningIcon = fixture.debugElement.query(
-      By.css("td .benchmark-note-icon"),
+    const warningButton = fixture.debugElement.query(
+      By.css("td button[aria-label='Show benchmark note']"),
     );
-    expect(warningIcon).toBeTruthy();
-    warningIcon.triggerEventHandler("mouseenter", new MouseEvent("mouseenter"));
+    expect(warningButton).toBeTruthy();
+    warningButton.triggerEventHandler(
+      "mouseenter",
+      new MouseEvent("mouseenter"),
+    );
     fixture.detectChanges();
     expect(fixture.componentInstance.tooltipContent).toBe(
       "Limited scaling above 32 vCPUs.",

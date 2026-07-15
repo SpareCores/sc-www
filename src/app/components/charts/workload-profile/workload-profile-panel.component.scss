@@ -115,8 +115,13 @@
   @apply h-4 w-auto shrink-0 cursor-help text-[#EAB308];
 }
 
+.workload-profile-tooltip-trigger {
+  @apply inline-flex items-center border-0 bg-transparent p-0 cursor-help;
+}
+
 .workload-profile-breakdown-table {
   @apply w-full text-white;
+
   border-collapse: collapse;
 
   thead {
@@ -124,6 +129,7 @@
 
     th {
       @apply px-3 py-2 text-left text-xs font-normal uppercase text-white;
+
       vertical-align: bottom;
     }
 

@@ -334,7 +334,7 @@ export class WorkloadProfilePanelComponent {
     }
   }
 
-  showTooltip(el: MouseEvent, content?: string): void {
+  showTooltip(el: Event, content?: string): void {
     this.tooltipService.showIfPresent({
       tooltipElement: this.tooltip()?.nativeElement,
       event: el,
@@ -345,7 +345,7 @@ export class WorkloadProfilePanelComponent {
     });
   }
 
-  showWarningTooltip(el: MouseEvent, content?: string): void {
+  showWarningTooltip(el: Event, content?: string): void {
     this.tooltipService.showIfPresent({
       tooltipElement: this.tooltip()?.nativeElement,
       event: el,
