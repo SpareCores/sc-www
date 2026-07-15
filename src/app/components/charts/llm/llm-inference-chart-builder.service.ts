@@ -2,6 +2,11 @@ import { Injectable } from "@angular/core";
 import { TooltipItem, TooltipModel } from "chart.js";
 import { radarDatasetColors } from "../shared/chart-colors.constants";
 import { cloneChartOptions } from "../shared/chart-options.utils";
+import {
+  buildCompareTooltipTitle,
+  getDatasetTooltipIdentity,
+  withServerTooltipIdentity,
+} from "../shared/chart-tooltip.utils";
 import { llmModelOrder } from "../shared/llm-model-order.constants";
 import {
   LlmBarChartData,
@@ -225,22 +230,25 @@ export class LlmInferenceChartBuilderService {
       datasets: availableServers.map((server, index) => {
         const benchmarkScores = server.benchmark_scores ?? [];
 
-        return {
-          data: scales.map((tokenCount) => {
-            const item = benchmarkScores.find(
-              (score) =>
-                score.benchmark_id === benchmarkId &&
-                score.config?.model === selectedModelValue &&
-                score.config?.[scaleField] === tokenCount,
-            );
-            return item ? item.score : null;
-          }),
-          label: server.display_name,
-          borderColor:
-            radarDatasetColors[index % radarDatasetColors.length].borderColor,
-          backgroundColor:
-            radarDatasetColors[index % radarDatasetColors.length].borderColor,
-        };
+        return withServerTooltipIdentity(
+          {
+            data: scales.map((tokenCount) => {
+              const item = benchmarkScores.find(
+                (score) =>
+                  score.benchmark_id === benchmarkId &&
+                  score.config?.model === selectedModelValue &&
+                  score.config?.[scaleField] === tokenCount,
+              );
+              return item ? item.score : null;
+            }),
+            label: server.display_name,
+            borderColor:
+              radarDatasetColors[index % radarDatasetColors.length].borderColor,
+            backgroundColor:
+              radarDatasetColors[index % radarDatasetColors.length].borderColor,
+          },
+          server,
+        );
       }),
     };
   }
@@ -264,7 +272,12 @@ export class LlmInferenceChartBuilderService {
             this: TooltipModel<"bar">,
             tooltipItems: TooltipItem<"bar">[],
           ) {
-            return `${tooltipItems[0].label} Tokens (${tooltipItems[0].dataset.label})`;
+            const identity = getDatasetTooltipIdentity(
+              tooltipItems[0]?.dataset,
+            );
+            const context = `${tooltipItems[0].label} Tokens`;
+
+            return buildCompareTooltipTitle(identity, context);
           },
           label: function (
             this: TooltipModel<"bar">,

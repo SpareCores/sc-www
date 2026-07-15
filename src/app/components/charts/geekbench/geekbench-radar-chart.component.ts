@@ -13,10 +13,12 @@ import {
   LucideDynamicIcon,
   LucideCircleArrowUp,
   LucideInfo,
+  LucideTriangleAlert,
 } from "@lucide/angular";
 import { BaseChartDirective } from "ng2-charts";
 import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon.pipe";
 import { ChartTooltipService } from "../shared/chart-tooltip.service";
+import { getBenchmarkMetaNotes } from "../shared/chart-tooltip.utils";
 import { GeekbenchRadarChartBuilderService } from "./geekbench-radar-chart-builder.service";
 import {
   GeekbenchBenchmarkGroup,
@@ -35,6 +37,7 @@ import {
     LucideDynamicIcon,
     LucideCircleArrowUp,
     LucideInfo,
+    LucideTriangleAlert,
     BaseChartDirective,
     BenchmarkIconPipe,
   ],
@@ -123,6 +126,16 @@ export class GeekbenchRadarChartComponent {
         ? this.compareCharts()?.infoTooltipHtml
         : this.detailsCharts()?.infoTooltipHtml),
   );
+  readonly geekbenchMetaNote = computed(() => {
+    const benchmarkMeta = this.benchmarkMeta();
+
+    return getBenchmarkMetaNotes(
+      benchmarkMeta,
+      benchmarkMeta
+        .filter((benchmark) => benchmark.benchmark_id?.includes("geekbench"))
+        .map((benchmark) => benchmark.benchmark_id),
+    );
+  });
   readonly resolvedSingleChartData = computed(
     () => this.singleChartData() ?? this.compareCharts()?.singleData,
   );
@@ -148,6 +161,19 @@ export class GeekbenchRadarChartComponent {
       tooltipElement: this.tooltip()?.nativeElement,
       event: el,
       content,
+      onShow: (text) => {
+        this.tooltipContent = text;
+        this.tooltipHtml = null;
+      },
+    });
+  }
+
+  showWarningTextTooltip(el: MouseEvent, content?: string): void {
+    this.tooltipService.showIfPresent({
+      tooltipElement: this.tooltip()?.nativeElement,
+      event: el,
+      content,
+      variant: "warning-wide",
       onShow: (text) => {
         this.tooltipContent = text;
         this.tooltipHtml = null;

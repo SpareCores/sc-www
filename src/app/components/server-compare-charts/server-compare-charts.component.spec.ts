@@ -465,19 +465,34 @@ describe("ServerCompareChartsComponent", () => {
         vendor_id: "aws",
         server_id: "server-a",
         display_name: "Server A",
-        benchmark_scores: [{ benchmark_id: "workload:web-server", score: 0.8 }],
+        benchmark_scores: [
+          {
+            benchmark_id: "workload:web-server",
+            score: 10,
+          },
+        ],
       },
       {
         vendor_id: "gcp",
         server_id: "server-b",
         display_name: "Server B",
-        benchmark_scores: [{ benchmark_id: "workload:web-server", score: 0.9 }],
+        benchmark_scores: [
+          {
+            benchmark_id: "workload:web-server",
+            score: 20,
+          },
+        ],
       },
       {
         vendor_id: "hcloud",
         server_id: "server-c",
         display_name: "Server C",
-        benchmark_scores: [{ benchmark_id: "workload:web-server", score: 0.7 }],
+        benchmark_scores: [
+          {
+            benchmark_id: "workload:web-server",
+            score: 30,
+          },
+        ],
       },
     ] as unknown as typeof component.servers;
     component.benchmarkMeta = [
@@ -507,17 +522,48 @@ describe("ServerCompareChartsComponent", () => {
     expect(root.textContent).not.toContain("Further Benchmarks");
   });
 
+  it("hides workload profiles when no scores exist", () => {
+    component.servers = buildServers(2) as unknown as typeof component.servers;
+    component.benchmarkMeta = [
+      {
+        benchmark_id: "workload:web-server",
+        name: "Workload profile: Web server",
+        status: Status.Active,
+      },
+    ];
+
+    fixture.detectChanges();
+
+    expect(
+      (fixture.nativeElement as HTMLElement).querySelector(
+        "#benchmark_line_workload_profile",
+      ),
+    ).toBeNull();
+  });
+
   it("renders flat workload profile detail rows for compared servers", () => {
     component.servers = [
       {
         vendor_id: "aws",
         server_id: "server-a",
         display_name: "Server A",
+        benchmark_scores: [
+          {
+            benchmark_id: "workload:web-server",
+            score: 10,
+          },
+        ],
       },
       {
         vendor_id: "gcp",
         server_id: "server-b",
         display_name: "Server B",
+        benchmark_scores: [
+          {
+            benchmark_id: "workload:web-server",
+            score: 20,
+          },
+        ],
       },
     ] as unknown as typeof component.servers;
     component.benchmarkMeta = [
@@ -573,5 +619,20 @@ describe("ServerCompareChartsComponent", () => {
         'button[aria-label="Expand benchmark details"]',
       ),
     ).toBeNull();
+  });
+
+  it("resolves benchmark metadata notes for compare warning icons", () => {
+    component.benchmarkMeta = [
+      {
+        benchmark_id: "stress_ng:div16",
+        name: "Stress-ng: Div16",
+        note: "Scores may plateau above 32 vCPUs.",
+      },
+    ];
+
+    expect(component.getBenchmarkNote("stress_ng:div16")).toBe(
+      "- Div16: Scores may plateau above 32 vCPUs.",
+    );
+    expect(component.getBenchmarkNote("missing")).toBe("");
   });
 });

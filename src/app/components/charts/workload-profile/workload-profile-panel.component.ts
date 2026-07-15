@@ -26,6 +26,7 @@ import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon.pipe";
 import { AccordionComponent } from "../../accordion/accordion.component";
 import { FlowbiteDropdownDirective } from "../../../directives/flowbite-dropdown.directive";
 import { ChartTooltipService } from "../shared/chart-tooltip.service";
+import { getBenchmarkMetaNotes } from "../shared/chart-tooltip.utils";
 import { WorkloadProfileRadarChartComponent } from "./workload-profile-radar-chart.component";
 import {
   WorkloadProfileBenchmarkMeta,
@@ -285,6 +286,15 @@ export class WorkloadProfilePanelComponent {
   readonly getImpactColorClass = getImpactColorClass;
   readonly scoreGaugePlugins = [scoreGaugeTickPlugin];
 
+  readonly workloadProfileMetaNote = computed(() =>
+    getBenchmarkMetaNotes(
+      this.benchmarkMeta(),
+      this.workloadProfileBenchmarks().map(
+        (benchmark) => benchmark.benchmark_id,
+      ),
+    ),
+  );
+
   tooltipContent = "";
 
   constructor() {
@@ -323,6 +333,18 @@ export class WorkloadProfilePanelComponent {
       event: el,
       content,
       variant,
+      onShow: (text) => {
+        this.tooltipContent = text;
+      },
+    });
+  }
+
+  showWarningTooltip(el: MouseEvent, content?: string): void {
+    this.tooltipService.showIfPresent({
+      tooltipElement: this.tooltip()?.nativeElement,
+      event: el,
+      content,
+      variant: "warning-wide",
       onShow: (text) => {
         this.tooltipContent = text;
       },

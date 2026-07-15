@@ -15,8 +15,9 @@ export class ChartTooltipService {
     tooltipElement: HTMLElement,
     event: MouseEvent,
     placement?: TooltipPlacement,
+    variant?: TooltipVariant,
   ) {
-    this.uiTooltip.show(tooltipElement, event, placement);
+    this.uiTooltip.show(tooltipElement, event, placement, variant);
   }
 
   showIfPresent<T>(params: {

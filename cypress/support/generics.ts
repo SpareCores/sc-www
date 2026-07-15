@@ -267,6 +267,22 @@ export abstract class E2EEvent {
     cy.get(".giscus").invoke("css", "display", "none");
   }
 
+  public static hideServerCardPriceForScreenshot() {
+    cy.get(".server-card-price-to-hide-for-test").invoke(
+      "css",
+      "display",
+      "none",
+    );
+  }
+
+  public static hideWorkloadProfileChartsForScreenshot() {
+    cy.get(".workload-profile-charts-to-hide-for-test").invoke(
+      "css",
+      "display",
+      "none",
+    );
+  }
+
   // Hide "Observed at" row in Server Metadata for screenshot consistency
   public static hideObservedAtForScreenshot() {
     cy.get("#details .property_value")

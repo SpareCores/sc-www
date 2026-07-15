@@ -35,7 +35,12 @@
               }}</span>
               by {{ serverDetails.vendor.name }}
             </h1>
-            <div>{{ description }}</div>
+            <div>
+              {{ description
+              }}<span class="server-card-price-to-hide-for-test">{{
+                cardPriceDescription
+              }}</span>
+            </div>
             <div class="flex gap-4 flex-wrap">
               <button
                 class="btn-primary py-3 px-5 flex gap-2 disabled:bg-gray-500 disabled:cursor-not-allowed disabled:hover:bg-gray-500"

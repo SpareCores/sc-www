@@ -4,8 +4,11 @@ import { radarChartOptions } from "../../../pages/server-details/chartOptions";
 import { radarDatasetColors } from "../shared/chart-colors.constants";
 import { cloneChartOptions } from "../shared/chart-options.utils";
 import {
+  buildCompareTooltipTitle,
+  getDatasetTooltipIdentity,
   wrapTextAtWordBoundaries,
   CHART_TOOLTIP_MAX_LINE_LENGTH,
+  withServerTooltipIdentity,
 } from "../shared/chart-tooltip.utils";
 import {
   formatWorkloadProfileLabel,
@@ -154,8 +157,10 @@ export class WorkloadProfileRadarChartBuilderService {
             title: (items: TooltipItem<"radar">[]) => {
               const index = items[0]?.dataIndex;
               const benchmark = index == null ? undefined : workloadMeta[index];
+              const identity = getDatasetTooltipIdentity(items[0]?.dataset);
+              const context = benchmark?.name ?? items[0]?.label ?? "";
 
-              return benchmark?.name ?? items[0]?.label ?? "";
+              return buildCompareTooltipTitle(identity, context);
             },
             label: (tooltipItem: TooltipItem<"radar">) =>
               this.formatRadarTooltipLabel(
@@ -221,23 +226,29 @@ export class WorkloadProfileRadarChartBuilderService {
   ): WorkloadProfileRadarChartData {
     return {
       labels,
-      datasets: servers.map((server, index) => ({
-        data: benchmarkIds.map((benchmarkId) => {
-          const score = server.benchmark_scores?.find(
-            (item) => item.benchmark_id === benchmarkId,
-          );
+      datasets: servers.map((server, index) =>
+        withServerTooltipIdentity(
+          {
+            data: benchmarkIds.map((benchmarkId) => {
+              const score = server.benchmark_scores?.find(
+                (item) => item.benchmark_id === benchmarkId,
+              );
 
-          return {
-            value: score?.score ?? null,
-            tooltip: score?.note || undefined,
-          };
-        }),
-        label: server.display_name,
-        borderColor:
-          radarDatasetColors[index % radarDatasetColors.length].borderColor,
-        backgroundColor:
-          radarDatasetColors[index % radarDatasetColors.length].backgroundColor,
-      })),
+              return {
+                value: score?.score ?? null,
+                tooltip: score?.note || undefined,
+              };
+            }),
+            label: server.display_name,
+            borderColor:
+              radarDatasetColors[index % radarDatasetColors.length].borderColor,
+            backgroundColor:
+              radarDatasetColors[index % radarDatasetColors.length]
+                .backgroundColor,
+          },
+          server,
+        ),
+      ),
     };
   }
 

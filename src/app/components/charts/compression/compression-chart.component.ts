@@ -15,6 +15,7 @@ import {
   LucideDynamicIcon,
   LucideChevronDown,
   LucideInfo,
+  LucideTriangleAlert,
 } from "@lucide/angular";
 import { BaseChartDirective } from "ng2-charts";
 import { ChartData, ChartOptions } from "chart.js";
@@ -35,6 +36,7 @@ import {
   lineChartOptionsCompareDecompress,
 } from "../../../pages/server-details/chartOptions";
 import { ChartTooltipService } from "../shared/chart-tooltip.service";
+import { getBenchmarkMetaNote } from "../shared/chart-tooltip.utils";
 import { FlowbiteDropdownDirective } from "../../../directives/flowbite-dropdown.directive";
 
 @Component({
@@ -45,6 +47,7 @@ import { FlowbiteDropdownDirective } from "../../../directives/flowbite-dropdown
     LucideDynamicIcon,
     LucideChevronDown,
     LucideInfo,
+    LucideTriangleAlert,
     BaseChartDirective,
     FlowbiteDropdownDirective,
     BenchmarkIconPipe,
@@ -84,6 +87,9 @@ export class CompressionChartComponent {
 
   tooltipContent = signal("");
   readonly infoTooltip = this.builder.infoTooltip;
+  readonly compressionMetaNote = computed(() =>
+    getBenchmarkMetaNote(this.benchmarkMeta(), "compression_text:ratio"),
+  );
   readonly detailsModes = this.builder.getDetailsModes();
   selectedDetailsModeId = signal(this.detailsModes[0]?.key || "compress");
   selectedCompareIndex = signal(0);
@@ -254,6 +260,18 @@ export class CompressionChartComponent {
       tooltipElement: this.tooltip()?.nativeElement,
       event: el,
       content,
+      onShow: (tooltipContent) => {
+        this.tooltipContent.set(tooltipContent);
+      },
+    });
+  }
+
+  showWarningTooltip(el: MouseEvent, content?: string): void {
+    this.tooltipService.showIfPresent({
+      tooltipElement: this.tooltip()?.nativeElement,
+      event: el,
+      content,
+      variant: "warning-wide",
       onShow: (tooltipContent) => {
         this.tooltipContent.set(tooltipContent);
       },

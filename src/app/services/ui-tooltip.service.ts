@@ -5,7 +5,7 @@ export type TooltipPlacement = {
   top: "anchor-above" | "anchor-below";
 };
 
-export type TooltipVariant = "default" | "warning-wide";
+export type TooltipVariant = "default" | "warning" | "warning-wide";
 
 @Injectable({
   providedIn: "root",
@@ -83,7 +83,7 @@ export class UiTooltipService {
     }
 
     onShow(content);
-    this.show(tooltipElement, event, placement, variant);
+    this.show(tooltipElement, event, placement, variant ?? "default");
     return true;
   }
 
@@ -107,6 +107,10 @@ export class UiTooltipService {
     tooltipElement: HTMLElement,
     variant: TooltipVariant,
   ): void {
+    tooltipElement.classList.toggle(
+      "tooltip-panel--warning",
+      variant === "warning" || variant === "warning-wide",
+    );
     tooltipElement.classList.toggle(
       "tooltip-panel--warning-wide",
       variant === "warning-wide",

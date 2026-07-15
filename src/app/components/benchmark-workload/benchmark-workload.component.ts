@@ -11,7 +11,11 @@ import {
 import { DecimalPipe, isPlatformBrowser } from "@angular/common";
 import { ChartConfiguration, ChartData } from "chart.js";
 import { BaseChartDirective } from "ng2-charts";
-import { LucideCircleArrowDown, LucideCircleArrowUp } from "@lucide/angular";
+import {
+  LucideCircleArrowDown,
+  LucideCircleArrowUp,
+  LucideTriangleAlert,
+} from "@lucide/angular";
 import { Status } from "../../../../sdk/data-contracts";
 import { UiTooltipService } from "../../services/ui-tooltip.service";
 import {
@@ -36,6 +40,7 @@ interface HistogramBin {
   imports: [
     LucideCircleArrowDown,
     LucideCircleArrowUp,
+    LucideTriangleAlert,
     BaseChartDirective,
     DecimalPipe,
   ],
@@ -54,6 +59,8 @@ export class BenchmarkWorkloadComponent {
   );
 
   readonly unit = computed(() => this.workload().unit ?? "");
+
+  readonly note = computed(() => this.workload().note?.trim() || "");
 
   readonly hasConfigs = computed(() => this.configEntries().length > 0);
 

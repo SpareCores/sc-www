@@ -22,6 +22,14 @@
                 (mouseenter)="showTooltip($event, promptInfoTooltip())"
                 (mouseleave)="hideTooltip()"
               ></svg>
+              @if (promptMetaNote()) {
+                <svg
+                  lucideTriangleAlert
+                  class="benchmark-note-icon"
+                  (mouseenter)="showWarningTooltip($event, promptMetaNote())"
+                  (mouseleave)="hideTooltip()"
+                ></svg>
+              }
             </h3>
           </div>
           @if (isBrowser) {
@@ -62,6 +70,16 @@
                 (mouseenter)="showTooltip($event, generationInfoTooltip())"
                 (mouseleave)="hideTooltip()"
               ></svg>
+              @if (generationMetaNote()) {
+                <svg
+                  lucideTriangleAlert
+                  class="benchmark-note-icon"
+                  (mouseenter)="
+                    showWarningTooltip($event, generationMetaNote())
+                  "
+                  (mouseleave)="hideTooltip()"
+                ></svg>
+              }
             </h3>
           </div>
           @if (isBrowser) {

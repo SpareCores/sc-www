@@ -157,6 +157,31 @@ describe("LlmInferenceChartComponent", () => {
     expect(dropdownDirective?.hide).toHaveBeenCalled();
   });
 
+  it("shows LLM benchmark notes without row-level prefixes", () => {
+    fixture.componentRef.setInput("benchmarkMeta", [
+      {
+        benchmark_id: "llm_speed:prompt_processing",
+        name: "LLM: Prompt Processing",
+        description: null,
+        framework: "llama.cpp",
+        note: "Prompt processing note.",
+        configs: [],
+      },
+      {
+        benchmark_id: "llm_speed:text_generation",
+        name: "LLM: Text Generation",
+        description: null,
+        framework: "llama.cpp",
+        note: "Text generation note.",
+        configs: [],
+      },
+    ] as LlmBenchmarkMeta[]);
+    fixture.detectChanges();
+
+    expect(component.promptMetaNote()).toBe("Prompt processing note.");
+    expect(component.generationMetaNote()).toBe("Text generation note.");
+  });
+
   it("keeps details tooltips empty while metadata is temporarily unavailable", () => {
     fixture.componentRef.setInput("promptData", undefined);
     fixture.componentRef.setInput("promptOptions", undefined);
