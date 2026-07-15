@@ -242,6 +242,14 @@
     accent-color: #34d399;
   }
 
+  .custom-slider__input--unset::-webkit-slider-thumb {
+    opacity: 0;
+  }
+
+  .custom-slider__input--unset::-moz-range-thumb {
+    opacity: 0;
+  }
+
   .custom-slider__ticks {
     display: flex;
     justify-content: space-between;
