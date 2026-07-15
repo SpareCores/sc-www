@@ -1,8 +1,10 @@
 import {
+  formatCompareSignedPercentageDeltaLabel,
   formatNumberWithCommas,
   getBestBenchmarkCellStyle,
   getBestPropertyCellStyle,
   getServerPropertyValue,
+  invertCompareDeltaTone,
 } from "./server-compare-table.utils";
 
 type PropertyValueServer = Parameters<typeof getServerPropertyValue>[1];
@@ -230,5 +232,17 @@ describe("server compare table utils", () => {
         "best",
       ),
     ).toBe("best");
+  });
+
+  it("uses raw percentage sign for lower-is-better metrics", () => {
+    const delta = {
+      baselineValue: 17,
+      candidateValue: 14,
+      percentageDelta: ((14 - 17) / 17) * 100,
+      tone: invertCompareDeltaTone("negative"),
+    };
+
+    expect(formatCompareSignedPercentageDeltaLabel(delta)).toBe("-18%");
+    expect(delta.tone).toBe("positive");
   });
 });
