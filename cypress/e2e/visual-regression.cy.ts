@@ -53,6 +53,13 @@ describe("Visual regression tests", () => {
     // Hide similar servers section for screenshot consistency
     cy.get("#similar_servers").invoke("css", "display", "none");
 
+    // Hide workload profile spider chart for screenshot consistency
+    cy.get(".workload-profile-radar-chart-to-hide-for-test").invoke(
+      "css",
+      "display",
+      "none",
+    );
+
     // Hide comments section for screenshot consistency
     E2EEvent.hideCommentsForScreenshot();
 
