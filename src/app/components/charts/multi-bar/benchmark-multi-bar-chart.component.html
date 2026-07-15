@@ -121,16 +121,6 @@
         </div>
       }
     </div>
-    @if (!isEmbedded()) {
-      <div
-        class="mt-4 flex justify-center"
-        [ngClass]="{ 'mb-8': !chartItem().show_more }"
-      >
-        <button class="btn-primary py-2 px-3" (click)="toggleDetails()">
-          {{ chartItem().show_more ? "Hide" : "Show" }} Details
-        </button>
-      </div>
-    }
   }
 
   <div

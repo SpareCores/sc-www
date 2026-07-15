@@ -140,6 +140,10 @@
   }
 }
 
+.compare-details-toggle {
+  @apply flex items-center gap-1 px-3 py-2 focus:ring-0 focus-visible:ring focus-visible:ring-emerald-400 focus-visible:ring-opacity-75;
+}
+
 .compare-section-header-title {
   @apply inline-flex max-w-none flex-nowrap items-center gap-2 whitespace-nowrap;
 }

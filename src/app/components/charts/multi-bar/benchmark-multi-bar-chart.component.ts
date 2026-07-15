@@ -77,8 +77,6 @@ export class BenchmarkMultiBarChartComponent {
 
   optionSelected = output<number>();
   secondaryOptionSelected = output<number>();
-  detailsToggled = output<void>();
-
   tooltipContent = signal("");
   private readonly selectedOptionIndex = signal(0);
   private readonly selectedSecondaryOptionIndex = signal<number | undefined>(
@@ -199,11 +197,6 @@ export class BenchmarkMultiBarChartComponent {
     this.secondaryOptionSelected.emit(index);
     this.secondaryDropdown()?.hide();
   }
-
-  toggleDetails(): void {
-    this.detailsToggled.emit();
-  }
-
   showTooltip(el: MouseEvent, content?: string): void {
     this.tooltipService.showIfPresent({
       tooltipElement: this.tooltip()?.nativeElement,

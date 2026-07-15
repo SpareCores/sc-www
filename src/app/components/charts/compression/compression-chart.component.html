@@ -12,13 +12,13 @@
           Compression
           <svg
             [lucideIcon]="currentDetailsMode().icon"
-            class="h-4 w-4 text-gray-200"
+            class="h-4 w-4 shrink-0 text-gray-200"
             (mouseenter)="showTooltip($event, currentDetailsMode().order)"
             (mouseleave)="hideTooltip()"
           ></svg>
           <svg
             lucideInfo
-            class="h-4 w-4 text-gray-200"
+            class="h-4 w-4 shrink-0 text-gray-200"
             (mouseenter)="showTooltip($event, infoTooltip)"
             (mouseleave)="hideTooltip()"
           ></svg>
