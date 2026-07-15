@@ -34,6 +34,7 @@ export type GeekbenchBenchmarkMeta = {
   benchmark_id: string;
   name: string;
   description?: string | null;
+  note?: string | null;
 };
 
 export type GeekbenchCompareServer = {

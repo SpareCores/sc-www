@@ -1,5 +1,13 @@
 import { TooltipItem, TooltipModel } from "chart.js";
-import { barChartOptionsTemplate } from "./chartOptions";
+import {
+  getDatasetTooltipIdentity,
+  buildCompareTooltipTitle,
+  formatStaticWebFileSizeTooltipContext,
+} from "../../components/charts/shared/chart-tooltip.utils";
+import {
+  barChartOptionsStaticWeb,
+  barChartOptionsTemplate,
+} from "./chartOptions";
 
 export type ChartFromBenchmarkTemplateOptions = {
   benchmark_id: string;
@@ -77,7 +85,10 @@ export const redisChartTemplateCallbacks = {
     this: TooltipModel<"bar">,
     tooltipItems: TooltipItem<"bar">[],
   ) {
-    return tooltipItems[0].label + " concurrent pipelined requests";
+    const identity = getDatasetTooltipIdentity(tooltipItems[0]?.dataset);
+    const context = tooltipItems[0].label + " concurrent pipelined requests";
+
+    return buildCompareTooltipTitle(identity, context);
   },
 };
 
@@ -156,7 +167,7 @@ export const staticWebChartTemplate: ChartFromBenchmarkTemplate = {
   secondaryOptions: staticWebSecondaryOptions,
   selectedOption: 0,
   selectedSecondaryOption: 0,
-  chartOptions: barChartOptionsTemplate,
+  chartOptions: barChartOptionsStaticWeb,
   chartType: "bar",
 };
 
@@ -179,6 +190,11 @@ export const staticWebChartTemplateCallbacks = {
     this: TooltipModel<"bar">,
     tooltipItems: TooltipItem<"bar">[],
   ) {
-    return tooltipItems[0].label + "Kb file size";
+    const identity = getDatasetTooltipIdentity(tooltipItems[0]?.dataset);
+    const context = formatStaticWebFileSizeTooltipContext(
+      tooltipItems[0].label,
+    );
+
+    return buildCompareTooltipTitle(identity, context);
   },
 };

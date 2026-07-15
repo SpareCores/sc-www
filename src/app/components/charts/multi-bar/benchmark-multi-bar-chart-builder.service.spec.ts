@@ -1,5 +1,13 @@
 import { TestBed } from "@angular/core/testing";
-import { redisChartTemplate } from "../../../pages/server-details/chartFromBenchmarks";
+import {
+  redisChartTemplate,
+  staticWebChartCompareTemplate,
+} from "../../../pages/server-details/chartFromBenchmarks";
+import { barChartOptionsTemplate } from "../../../pages/server-details/chartOptions";
+import {
+  buildCompareTooltipTitle,
+  getDatasetTooltipIdentity,
+} from "../shared/chart-tooltip.utils";
 import { BenchmarkMultiBarChartBuilderService } from "./benchmark-multi-bar-chart-builder.service";
 import {
   MultiBarBenchmarkMeta,
@@ -107,5 +115,56 @@ describe("BenchmarkMultiBarChartBuilderService", () => {
     expect(chartTemplate.chartOptions.scales.x.title.text).toBe("Pipeline");
     expect(chartTemplate.chartOptions.scales.y.title.text).toBe("ops/sec");
     expect(chartTemplate.chartOptions.plugins.title.text).toBe("Operation");
+  });
+
+  it("applies compare tooltip callbacks with server identity in the title", () => {
+    const chartTemplate = JSON.parse(JSON.stringify(redisChartTemplate));
+    chartTemplate.selectedOption = 0;
+    chartTemplate.selectedSecondaryOption = 0;
+
+    service.syncCompareChart(
+      chartTemplate,
+      [
+        {
+          benchmark_id: "redis:rps",
+          configs: [{ config: { operation: "SET", pipeline: 1 } }],
+        },
+      ],
+      [
+        {
+          display_name: "Server A",
+          vendor_id: "aws",
+          api_reference: "m7g.large",
+          benchmark_scores: [
+            {
+              benchmark_id: "redis:rps",
+              config: { operation: "SET", pipeline: 1 },
+              score: 100,
+            },
+          ],
+        },
+      ],
+    );
+
+    const dataset = chartTemplate.chartData?.datasets[0];
+    const titleCallback = chartTemplate.chartOptions.plugins.tooltip.callbacks
+      .title as (
+      tooltipItems: Array<{ label: string; dataset: unknown }>,
+    ) => string | string[];
+    const title = titleCallback([{ label: "1", dataset }]);
+
+    expect(getDatasetTooltipIdentity(dataset)).toBe("m7g.large by aws");
+    expect(title).toEqual(
+      buildCompareTooltipTitle(
+        "m7g.large by aws",
+        "1 concurrent pipelined requests",
+      ),
+    );
+  });
+
+  it("uses template chart options for static web compare charts", () => {
+    expect(staticWebChartCompareTemplate.chartOptions).toBe(
+      barChartOptionsTemplate,
+    );
   });
 });

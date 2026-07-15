@@ -79,4 +79,17 @@ describe("BenchmarkWorkloadComponent", () => {
       component.tooltipEl()?.nativeElement,
     );
   });
+
+  it("renders a warning alert when benchmark metadata includes a note", () => {
+    fixture.componentRef.setInput("workload", {
+      ...fixture.componentInstance.workload(),
+      note: "Limited scaling above 32 vCPUs.",
+    });
+    fixture.detectChanges();
+
+    const root = fixture.nativeElement as HTMLElement;
+
+    expect(root.querySelector('[role="alert"]')).toBeTruthy();
+    expect(root.textContent).toContain("Limited scaling above 32 vCPUs.");
+  });
 });

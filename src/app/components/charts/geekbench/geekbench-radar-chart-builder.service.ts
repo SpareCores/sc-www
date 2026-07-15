@@ -1,7 +1,13 @@
 import { Injectable } from "@angular/core";
+import { TooltipItem } from "chart.js";
 import { radarChartOptions } from "../../../pages/server-details/chartOptions";
 import { radarDatasetColors } from "../shared/chart-colors.constants";
 import { cloneChartOptions } from "../shared/chart-options.utils";
+import {
+  buildCompareTooltipTitle,
+  getDatasetTooltipIdentity,
+  withServerTooltipIdentity,
+} from "../shared/chart-tooltip.utils";
 import { formatNumberWithCommas } from "../shared/server-compare-table.utils";
 import {
   GeekbenchBenchmarkGroup,
@@ -147,6 +153,15 @@ export class GeekbenchRadarChartBuilderService {
 
   private createCompareOptions(title: string): GeekbenchRadarChartOptions {
     const baseOptions = cloneChartOptions(radarChartOptions ?? {});
+    const tooltipOptions =
+      typeof baseOptions.plugins?.tooltip === "object" &&
+      baseOptions.plugins.tooltip !== null
+        ? baseOptions.plugins.tooltip
+        : undefined;
+    const tooltipCallbacks =
+      typeof tooltipOptions?.callbacks === "object"
+        ? tooltipOptions.callbacks
+        : {};
 
     return {
       ...baseOptions,
@@ -157,6 +172,18 @@ export class GeekbenchRadarChartBuilderService {
             ? baseOptions.plugins.legend
             : {}),
           display: true,
+        },
+        tooltip: {
+          ...tooltipOptions,
+          callbacks: {
+            ...tooltipCallbacks,
+            title: (items: TooltipItem<"radar">[]) => {
+              const identity = getDatasetTooltipIdentity(items[0]?.dataset);
+              const context = items[0]?.label ?? "";
+
+              return buildCompareTooltipTitle(identity, context);
+            },
+          },
         },
         title: {
           ...(typeof baseOptions.plugins?.title === "object"
@@ -246,25 +273,31 @@ export class GeekbenchRadarChartBuilderService {
   ): GeekbenchRadarChartData {
     return {
       labels,
-      datasets: servers.map((server, index) => ({
-        data: benchmarkIds.map((benchmarkId) => {
-          const score = server.benchmark_scores.find(
-            (item) =>
-              item.benchmark_id === benchmarkId &&
-              (item.config.cores || "").toLowerCase().includes(coreKind),
-          );
+      datasets: servers.map((server, index) =>
+        withServerTooltipIdentity(
+          {
+            data: benchmarkIds.map((benchmarkId) => {
+              const score = server.benchmark_scores.find(
+                (item) =>
+                  item.benchmark_id === benchmarkId &&
+                  (item.config.cores || "").toLowerCase().includes(coreKind),
+              );
 
-          return {
-            value: score?.score ?? null,
-            tooltip: score?.note || "",
-          };
-        }),
-        label: server.display_name,
-        borderColor:
-          radarDatasetColors[index % radarDatasetColors.length].borderColor,
-        backgroundColor:
-          radarDatasetColors[index % radarDatasetColors.length].backgroundColor,
-      })),
+              return {
+                value: score?.score ?? null,
+                tooltip: score?.note || "",
+              };
+            }),
+            label: server.display_name,
+            borderColor:
+              radarDatasetColors[index % radarDatasetColors.length].borderColor,
+            backgroundColor:
+              radarDatasetColors[index % radarDatasetColors.length]
+                .backgroundColor,
+          },
+          server,
+        ),
+      ),
     };
   }
 

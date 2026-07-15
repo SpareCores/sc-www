@@ -30,6 +30,7 @@
     [benchmarksByCategory]="lineBenchmarkGroups"
     orderTooltip="Higher is better."
     [infoTooltip]="benchmarkDescription('openssl')"
+    [noteTooltip]="benchmarkNote('openssl')"
   ></app-benchmark-line-chart>
 }
 
@@ -87,6 +88,19 @@
                   "
                   (mouseleave)="hideTooltip()"
                 ></svg>
+                @if (benchmarkRowNote(cpuBenchmark.benchmark_id)) {
+                  <svg
+                    lucideTriangleAlert
+                    class="benchmark-note-icon"
+                    (mouseenter)="
+                      showWarningTooltip(
+                        $event,
+                        benchmarkRowNote(cpuBenchmark.benchmark_id)
+                      )
+                    "
+                    (mouseleave)="hideTooltip()"
+                  ></svg>
+                }
               </div>
             </td>
             <td>
@@ -162,6 +176,19 @@
                   "
                   (mouseleave)="hideTooltip()"
                 ></svg>
+                @if (benchmarkRowNote(otherBenchmark.benchmark_id)) {
+                  <svg
+                    lucideTriangleAlert
+                    class="benchmark-note-icon"
+                    (mouseenter)="
+                      showWarningTooltip(
+                        $event,
+                        benchmarkRowNote(otherBenchmark.benchmark_id)
+                      )
+                    "
+                    (mouseleave)="hideTooltip()"
+                  ></svg>
+                }
               </div>
             </td>
             <td>
@@ -187,6 +214,7 @@
     [benchmarksByCategory]="lineBenchmarkGroups"
     orderTooltip="Higher is better."
     [infoTooltip]="benchmarkDescription('stress_ng:div16')"
+    [noteTooltip]="benchmarkNote('stress_ng:div16')"
   ></app-benchmark-line-chart>
 }
 

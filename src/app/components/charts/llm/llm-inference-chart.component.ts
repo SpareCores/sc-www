@@ -16,6 +16,7 @@ import {
   LucideChevronDown,
   LucideCircleArrowUp,
   LucideInfo,
+  LucideTriangleAlert,
 } from "@lucide/angular";
 import { BaseChartDirective } from "ng2-charts";
 import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon.pipe";
@@ -34,6 +35,7 @@ import {
   LlmCompareChartsResult,
 } from "./llm-inference-chart.types";
 import { ChartTooltipService } from "../shared/chart-tooltip.service";
+import { getBenchmarkMetaNote } from "../shared/chart-tooltip.utils";
 
 @Component({
   selector: "app-llm-inference-chart",
@@ -44,6 +46,7 @@ import { ChartTooltipService } from "../shared/chart-tooltip.service";
     LucideChevronDown,
     LucideCircleArrowUp,
     LucideInfo,
+    LucideTriangleAlert,
     BaseChartDirective,
     FlowbiteDropdownDirective,
     BenchmarkIconPipe,
@@ -188,6 +191,16 @@ export class LlmInferenceChartComponent {
         (benchmark) => benchmark.benchmark_id === "llm_speed:text_generation",
       )?.description || "",
   );
+  readonly promptMetaNote = computed(() =>
+    getBenchmarkMetaNote(this.benchmarkMeta(), "llm_speed:prompt_processing", {
+      includeBenchmarkName: false,
+    }),
+  );
+  readonly generationMetaNote = computed(() =>
+    getBenchmarkMetaNote(this.benchmarkMeta(), "llm_speed:text_generation", {
+      includeBenchmarkName: false,
+    }),
+  );
   readonly orderTooltip = "Higher is better.";
 
   tooltipContent = signal("");
@@ -224,6 +237,18 @@ export class LlmInferenceChartComponent {
       tooltipElement: this.tooltip()?.nativeElement,
       event: el,
       content,
+      onShow: (tooltipContent) => {
+        this.tooltipContent.set(tooltipContent);
+      },
+    });
+  }
+
+  showWarningTooltip(el: MouseEvent, content?: string): void {
+    this.tooltipService.showIfPresent({
+      tooltipElement: this.tooltip()?.nativeElement,
+      event: el,
+      content,
+      variant: "warning-wide",
       onShow: (tooltipContent) => {
         this.tooltipContent.set(tooltipContent);
       },

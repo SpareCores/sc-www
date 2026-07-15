@@ -671,6 +671,7 @@ export enum GpuModels {
   V520 = "V520",
   V620 = "V620",
   V710 = "V710",
+  NvidiaGb300 = "nvidia-gb300",
 }
 
 /** GpuManufacturers */
@@ -827,6 +828,32 @@ export enum BestPriceAllocation {
 }
 
 /**
+ * BenchmarkComponentNormalizationMethod
+ * How each raw benchmark value is scaled to be comparable across benchmarks.
+ */
+export enum BenchmarkComponentNormalizationMethod {
+  MedianRatio = "median_ratio",
+}
+
+/**
+ * BenchmarkComponentMissingPolicy
+ * What to do when a component has no usable measurement for a server.
+ */
+export enum BenchmarkComponentMissingPolicy {
+  Ignore = "ignore",
+  Penalize = "penalize",
+  Require = "require",
+}
+
+/**
+ * BenchmarkComponentAggregationMethod
+ * How component benchmark scores are combined into one composite score.
+ */
+export enum BenchmarkComponentAggregationMethod {
+  WeightedGeometricMean = "weighted_geometric_mean",
+}
+
+/**
  * Allocation
  * Server allocation options.
  */
@@ -843,8 +870,10 @@ export enum Allocation {
  * Attributes:
  *     benchmark_id (str): Unique identifier of a specific Benchmark.
  *     category (typing.Optional[str]): Category of the resource.
+ *     source (typing.Union[sc_crawler.workload_profiles.MeasuredSource, sc_crawler.workload_profiles.ExtrapolatedSource, sc_crawler.workload_profiles.CompoundSource]): How the benchmark score is produced. A discriminated object keyed by 'kind': 'measured' (directly observed), 'extrapolated' (derived from this server's own measurements; carries 'derived_from' + 'note'), or 'compound' (aggregated across component benchmarks; carries 'aggregation', 'normalization', and the 'components' recipe).
  *     name (str): Human-friendly name.
  *     description (typing.Optional[str]): Short description.
+ *     note (typing.Optional[str]): Optional caveat/comment on how to interpret the metric, surfaced as a warning/info badge (e.g. limited scaling on high vCPU counts, or independence from vCPU count). Null when there is nothing to flag.
  *     framework (str): The name of the benchmark framework/software/tool used.
  *     config_fields (dict): A dictionary of descriptions on the framework-specific config options, e.g. {"bandwidth": "Memory amount to use for compression in MB."}.
  *     measurement (typing.Optional[str]): The name of measurement recorded in the benchmark.
@@ -865,6 +894,11 @@ export interface Benchmark {
    */
   category: string | null;
   /**
+   * Source
+   * How the benchmark score is produced. A discriminated object keyed by 'kind': 'measured' (directly observed), 'extrapolated' (derived from this server's own measurements; carries 'derived_from' + 'note'), or 'compound' (aggregated across component benchmarks; carries 'aggregation', 'normalization', and the 'components' recipe).
+   */
+  source?: MeasuredSource | ExtrapolatedSource | CompoundSource;
+  /**
    * Name
    * Human-friendly name.
    */
@@ -874,6 +908,11 @@ export interface Benchmark {
    * Short description.
    */
   description: string | null;
+  /**
+   * Note
+   * Optional caveat/comment on how to interpret the metric, surfaced as a warning/info badge (e.g. limited scaling on high vCPU counts, or independence from vCPU count). Null when there is nothing to flag.
+   */
+  note?: string | null;
   /**
    * Framework
    * The name of the benchmark framework/software/tool used.
@@ -925,6 +964,28 @@ export interface BenchmarkConfig {
 }
 
 /**
+ * BenchmarkEntry
+ * A single benchmark component contributing to a workload profile score.
+ */
+export interface BenchmarkEntry {
+  /** Benchmark Id */
+  benchmark_id: string;
+  /** Weight */
+  weight: number;
+  /** Label */
+  label: string;
+  /** Config Filter */
+  config_filter?: Record<string, any> | null;
+  /**
+   * What to do when a component has no usable measurement for a server.
+   * @default "ignore"
+   */
+  on_missing?: BenchmarkComponentMissingPolicy;
+  /** Penalty */
+  penalty?: number | null;
+}
+
+/**
  * BenchmarkHistogram
  * Histogram data for a benchmark score distribution.
  */
@@ -953,6 +1014,7 @@ export interface BenchmarkHistogram {
  *     framework_version (typing.Optional[str]): The version of the benchmark tool used.
  *     kernel_version (typing.Optional[str]): The kernel version of the server when the benchmark was run.
  *     score (float): The resulting score of the benchmark.
+ *     score_breakdown (typing.Optional[sc_crawler.table_fields.WorkloadScoreBreakdown]): Structured derivation of composite scores (e.g. workload profiles): per-component raw values, references, normalized values, weights, and coverage. Null for simple benchmark scores.
  *     note (typing.Optional[str]): Optional note, comment or context on the benchmark score.
  *     status (Status): Status of the resource (active or inactive).
  *     observed_at (datetime): Timestamp of the last observation.
@@ -994,6 +1056,8 @@ export interface BenchmarkScore {
    * The resulting score of the benchmark.
    */
   score: number;
+  /** Structured derivation of composite scores (e.g. workload profiles): per-component raw values, references, normalized values, weights, and coverage. Null for simple benchmark scores. */
+  score_breakdown?: WorkloadScoreBreakdown | null;
   /**
    * Note
    * Optional note, comment or context on the benchmark score.
@@ -1134,6 +1198,23 @@ export interface ComplianceFramework {
   observed_at?: string;
 }
 
+/** CompoundSource */
+export interface CompoundSource {
+  /**
+   * Kind
+   * @default "compound"
+   */
+  kind?: "compound";
+  /** How component benchmark scores are combined into one composite score. */
+  aggregation: BenchmarkComponentAggregationMethod;
+  /** How each raw benchmark value is scaled to be comparable across benchmarks. */
+  normalization: BenchmarkComponentNormalizationMethod;
+  /** Components */
+  components: BenchmarkEntry[];
+  /** Impact Formula */
+  impact_formula?: string | null;
+}
+
 /**
  * Country
  * Country and continent mapping.
@@ -1268,6 +1349,19 @@ export interface Disk {
   description?: string | null;
 }
 
+/** ExtrapolatedSource */
+export interface ExtrapolatedSource {
+  /**
+   * Kind
+   * @default "extrapolated"
+   */
+  kind?: "extrapolated";
+  /** Derived From */
+  derived_from: string[];
+  /** Note */
+  note?: string | null;
+}
+
 /**
  * Gpu
  * GPU accelerator details.
@@ -1325,6 +1419,15 @@ export interface IdNameAndDescriptionAndCategory {
   category: string;
   /** Unit */
   unit: string | null;
+}
+
+/** MeasuredSource */
+export interface MeasuredSource {
+  /**
+   * Kind
+   * @default "measured"
+   */
+  kind?: "measured";
 }
 
 /** NameAndDescription */
@@ -1680,6 +1783,34 @@ export interface RegionPKs {
 }
 
 /**
+ * ScoreComponent
+ * One component's contribution to a composite workload profile score.
+ */
+export interface ScoreComponent {
+  /** Label */
+  label: string;
+  /** Weight */
+  weight: number;
+  /** Weight Share */
+  weight_share: number;
+  /** Raw */
+  raw?: number | null;
+  /** Reference */
+  reference?: number | null;
+  /** Normalized */
+  normalized?: number | null;
+  /**
+   * Higher Is Better
+   * @default true
+   */
+  higher_is_better?: boolean;
+  /** Note */
+  note?: string | null;
+  /** Impact */
+  impact?: number | null;
+}
+
+/**
  * Server
  * Server types.
  *
@@ -1689,7 +1820,7 @@ export interface RegionPKs {
  *     name (str): Human-friendly name.
  *     api_reference (str): How this resource is referenced in the vendor API calls. This is usually either the id or name of the resource, depending on the vendor and actual API endpoint.
  *     display_name (str): Human-friendly reference (usually the id or name) of the resource.
- *     description (typing.Optional[str]): Short description.
+ *     description (str): Short description.
  *     family (typing.Optional[str]): Server family, e.g. General-purpose machine (GCP), or M5g (AWS).
  *     vcpus (int): Default number of virtual CPUs (vCPU) of the server.
  *     hypervisor (typing.Optional[str]): Hypervisor of the virtual server, e.g. Xen, KVM, Nitro or Dedicated.
@@ -1769,7 +1900,7 @@ export interface Server {
    * Description
    * Short description.
    */
-  description: string | null;
+  description: string;
   /**
    * Family
    * Server family, e.g. General-purpose machine (GCP), or M5g (AWS).
@@ -2041,7 +2172,7 @@ export interface ServerBase {
    * Description
    * Short description.
    */
-  description: string | null;
+  description: string;
   /**
    * Family
    * Server family, e.g. General-purpose machine (GCP), or M5g (AWS).
@@ -2436,7 +2567,7 @@ export interface ServerPKs {
    * Description
    * Short description.
    */
-  description: string | null;
+  description: string;
   /**
    * Family
    * Server family, e.g. General-purpose machine (GCP), or M5g (AWS).
@@ -2900,7 +3031,7 @@ export interface ServerWithScore {
    * Description
    * Short description.
    */
-  description: string | null;
+  description: string;
   /**
    * Family
    * Server family, e.g. General-purpose machine (GCP), or M5g (AWS).
@@ -3644,7 +3775,11 @@ export interface VendorBase {
 
 /**
  * VendorDebugInfo
- * Statistics about benchmark coverage for a specific vendor.
+ * Per-vendor benchmark coverage statistics.
+ *
+ * Servers are bucketed into ``active`` (``evaluated`` or ``missing`` with
+ * pricing data) and ``inactive`` (without pricing data or explicitly marked as
+ * inactive by the vendor).
  */
 export interface VendorDebugInfo {
   /**
@@ -3659,12 +3794,12 @@ export interface VendorDebugInfo {
   all: number;
   /**
    * Active
-   * Number of active server types
+   * Number of active server types with pricing data
    */
   active: number;
   /**
    * Evaluated
-   * Number of servers with at least one benchmark score
+   * Number of active, priced servers with at least one benchmark score
    */
   evaluated: number;
   /**
@@ -3677,6 +3812,21 @@ export interface VendorDebugInfo {
    * Number of servers without prices or with inactive status
    */
   inactive: number;
+}
+
+/**
+ * WorkloadScoreBreakdown
+ * Per-server realized calculation of a composite workload profile score.
+ */
+export interface WorkloadScoreBreakdown {
+  /** How component benchmark scores are combined into one composite score. */
+  aggregation: BenchmarkComponentAggregationMethod;
+  /** How each raw benchmark value is scaled to be comparable across benchmarks. */
+  normalization: BenchmarkComponentNormalizationMethod;
+  /** Coverage */
+  coverage: number;
+  /** Components */
+  components: ScoreComponent[];
 }
 
 /**
@@ -6458,7 +6608,8 @@ export interface SearchServersServersGetParams {
     | "V100S"
     | "V520"
     | "V620"
-    | "V710";
+    | "V710"
+    | "nvidia-gb300";
   /**
    * Currency
    * Currency used for prices.
@@ -7241,7 +7392,8 @@ export interface SearchServerPricesServerPricesGetParams {
     | "V100S"
     | "V520"
     | "V620"
-    | "V710";
+    | "V710"
+    | "nvidia-gb300";
   /**
    * Limit
    * Maximum number of results.

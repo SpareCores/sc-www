@@ -63,6 +63,8 @@ describe("Visual regression tests (small screen - 800px)", () => {
     // Hide availability section for screenshot consistency
     cy.get("#availability").invoke("css", "display", "none");
 
+    E2EEvent.hideServerCardPriceForScreenshot();
+
     // Hide price related sections for screenshot consistency
     cy.get(".price-sections-to-hide-for-test").invoke("css", "display", "none");
     cy.get(".summarize-fab-to-hide-for-test").invoke("css", "display", "none");
@@ -72,6 +74,8 @@ describe("Visual regression tests (small screen - 800px)", () => {
 
     // Hide comments section for screenshot consistency
     E2EEvent.hideCommentsForScreenshot();
+
+    E2EEvent.hideWorkloadProfileChartsForScreenshot();
 
     cy.compareSnapshot("server-details-gcp-t2d-standard-1-small");
   });
@@ -124,6 +128,9 @@ describe("Visual regression tests (small screen - 800px)", () => {
 
     // Hide price rows for screenshot consistency
     cy.get(".rows-to-hide-for-test").invoke("css", "display", "none");
+
+    E2EEvent.hideWorkloadProfileChartsForScreenshot();
+
     cy.compareSnapshot("server-comparison-aws-a1-medium-c6gd-medium-small");
   });
 

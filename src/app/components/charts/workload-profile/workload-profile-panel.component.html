@@ -1,6 +1,6 @@
 @if (hasWorkloadProfiles()) {
   <div
-    class="w-full h-auto overflow-visible relative flex flex-col gap-4"
+    class="w-full h-auto overflow-visible relative flex flex-col gap-4 workload-profile-charts-to-hide-for-test"
     [ngClass]="{
       'px-4 py-4 bg-transparent min-h-[500px] h-auto max-lg:min-h-[520px]':
         layout() === 'compare',
@@ -28,6 +28,16 @@
             (mouseenter)="showTooltip($event, workloadProfileInfoTooltip)"
             (mouseleave)="hideTooltip()"
           ></svg>
+          @if (workloadProfileMetaNote()) {
+            <svg
+              lucideTriangleAlert
+              class="benchmark-note-icon"
+              (mouseenter)="
+                showWarningTooltip($event, workloadProfileMetaNote())
+              "
+              (mouseleave)="hideTooltip()"
+            ></svg>
+          }
         </h3>
       </div>
     }

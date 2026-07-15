@@ -9,6 +9,7 @@ describe("BenchmarkWorkloadsComponent", () => {
   const originalInnerWidth = window.innerWidth;
   const keeperApiService = {
     getBenchmarkWorkloads: jasmine.createSpy("getBenchmarkWorkloads"),
+    getServerBenchmarkMeta: jasmine.createSpy("getServerBenchmarkMeta"),
   };
 
   let component: BenchmarkWorkloadsComponent;
@@ -47,6 +48,14 @@ describe("BenchmarkWorkloadsComponent", () => {
         },
       ],
     });
+    keeperApiService.getServerBenchmarkMeta.and.resolveTo({
+      body: [
+        {
+          benchmark_id: "membench:bandwidth_copy",
+          note: "Limited scaling above 32 vCPUs.",
+        },
+      ],
+    });
 
     await TestBed.configureTestingModule({
       imports: [BenchmarkWorkloadsComponent],
@@ -80,9 +89,13 @@ describe("BenchmarkWorkloadsComponent", () => {
 
   it("should load and normalize benchmark workload data", () => {
     expect(keeperApiService.getBenchmarkWorkloads).toHaveBeenCalled();
+    expect(keeperApiService.getServerBenchmarkMeta).toHaveBeenCalled();
     expect(component.benchmarkFamilies().length).toBe(1);
     expect(component.benchmarkFamilies()[0].benchmarks[0].status).toBe(
       Status.Active,
+    );
+    expect(component.benchmarkFamilies()[0].benchmarks[0].note).toBe(
+      "Limited scaling above 32 vCPUs.",
     );
   });
 

@@ -6,6 +6,15 @@ export type WorkloadProfileBenchmarkRef = {
   status?: Status;
 };
 
+type WorkloadProfileBenchmarkScoreRef = {
+  benchmark_id?: string;
+  score?: number | null;
+};
+
+type WorkloadProfileChartServerRef = {
+  benchmark_scores?: WorkloadProfileBenchmarkScoreRef[];
+};
+
 const WORKLOAD_PROFILE_NAME_PREFIX = "workload profile";
 
 export const WORKLOAD_PROFILE_INFO_TOOLTIP =
@@ -38,6 +47,27 @@ export function filterWorkloadProfileBenchmarks<
         benchmark.status === Status.Active,
     )
     .sort((left, right) => (left.name ?? "").localeCompare(right.name ?? ""));
+}
+
+export function hasWorkloadProfileChartData(params: {
+  benchmarkMeta: WorkloadProfileBenchmarkRef[];
+  benchmarkScores?: WorkloadProfileBenchmarkScoreRef[];
+  servers?: WorkloadProfileChartServerRef[];
+}): boolean {
+  const benchmarkIds = new Set(
+    filterWorkloadProfileBenchmarks(params.benchmarkMeta)
+      .map((benchmark) => benchmark.benchmark_id)
+      .filter((benchmarkId): benchmarkId is string => !!benchmarkId),
+  );
+  const benchmarkScores =
+    params.servers?.flatMap((server) => server.benchmark_scores ?? []) ??
+    params.benchmarkScores ??
+    [];
+
+  return benchmarkScores.some(
+    (score) =>
+      benchmarkIds.has(score.benchmark_id ?? "") && score.score != null,
+  );
 }
 
 export function formatWorkloadProfileLabel(name: string): string {

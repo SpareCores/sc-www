@@ -63,4 +63,31 @@ describe("ServerChartsComponent", () => {
       ),
     ).toBeNull();
   });
+
+  it("hides the workload profile panel when only unrelated scores exist", () => {
+    fixture.componentRef.setInput("showChart", "workload_profile");
+    fixture.componentRef.setInput("benchmarkMeta", [
+      {
+        benchmark_id: "workload_profile:web",
+        name: "Workload profile: Web server",
+        description: "Web server workload profile",
+        status: Status.Active,
+      },
+    ]);
+    fixture.componentRef.setInput("serverDetails", {
+      benchmark_scores: [
+        {
+          benchmark_id: "stress_ng:div16",
+          score: 100,
+        },
+      ],
+    });
+    fixture.detectChanges();
+
+    expect(
+      (fixture.nativeElement as HTMLElement).querySelector(
+        "app-workload-profile-panel",
+      ),
+    ).toBeNull();
+  });
 });
