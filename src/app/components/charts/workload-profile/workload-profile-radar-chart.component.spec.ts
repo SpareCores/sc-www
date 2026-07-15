@@ -94,7 +94,7 @@ describe("WorkloadProfileRadarChartComponent", () => {
 
     component
       .resolvedChartOptions()
-      ?.onClick?.({} as never, [{ index: 1 } as never]);
+      ?.onClick?.({} as never, [{ index: 0 } as never], {} as never);
 
     expect(selectedIds).toEqual(["workload_profile:cache"]);
   });
