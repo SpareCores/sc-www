@@ -232,12 +232,16 @@ describe("WorkloadProfilePanelComponent", () => {
     expect(fixture.componentInstance.tooltipContent).toBe(
       "penalized: no usable measurement",
     );
-    expect(root.querySelector(".text-emerald-400")?.textContent).toContain(
-      "+1.18%",
-    );
-    expect(root.querySelector(".text-red-400")?.textContent).toContain(
-      "-49.90%",
-    );
+    expect(
+      root.querySelector(
+        ".workload-profile-breakdown-table__impact-value.text-emerald-400",
+      )?.textContent,
+    ).toContain("+1.18%");
+    expect(
+      root.querySelector(
+        ".workload-profile-breakdown-table__impact-value.text-red-400",
+      )?.textContent,
+    ).toContain("-49.90%");
   });
 
   it("hides workload profiles without score data from the dropdown", () => {
