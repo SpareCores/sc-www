@@ -1,6 +1,7 @@
 import { Injectable, inject } from "@angular/core";
 import {
   TooltipPlacement,
+  TooltipVariant,
   UiTooltipService,
 } from "../../../services/ui-tooltip.service";
 
@@ -24,6 +25,7 @@ export class ChartTooltipService {
     content: T | null | undefined | false | "";
     onShow: (content: T) => void;
     placement?: TooltipPlacement;
+    variant?: TooltipVariant;
   }) {
     return this.uiTooltip.showIfPresent(params);
   }

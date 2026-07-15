@@ -5,6 +5,8 @@ export type TooltipPlacement = {
   top: "anchor-above" | "anchor-below";
 };
 
+export type TooltipVariant = "default" | "warning-wide";
+
 @Injectable({
   providedIn: "root",
 })
@@ -33,6 +35,7 @@ export class UiTooltipService {
     tooltipElement: HTMLElement,
     event: Event,
     placement: TooltipPlacement = this.defaultPlacement,
+    variant: TooltipVariant = "default",
   ) {
     const anchorElement = this.resolveAnchorElement(event);
     if (!anchorElement) {
@@ -45,6 +48,7 @@ export class UiTooltipService {
     this.activeAnchorElement = anchorElement;
     this.registerDismissListeners();
 
+    this.applyVariant(tooltipElement, variant);
     this.prepareTooltipForPositioning(tooltipElement);
 
     this.animationFrameId = window.requestAnimationFrame(() => {
@@ -69,15 +73,17 @@ export class UiTooltipService {
     content: T | null | undefined | false | "";
     onShow: (content: T) => void;
     placement?: TooltipPlacement;
+    variant?: TooltipVariant;
   }) {
-    const { tooltipElement, event, content, onShow, placement } = params;
+    const { tooltipElement, event, content, onShow, placement, variant } =
+      params;
 
     if (!content || !tooltipElement) {
       return false;
     }
 
     onShow(content);
-    this.show(tooltipElement, event, placement);
+    this.show(tooltipElement, event, placement, variant);
     return true;
   }
 
@@ -94,6 +100,17 @@ export class UiTooltipService {
     }
 
     this.resetTooltipStyles(tooltipElement);
+    this.applyVariant(tooltipElement, "default");
+  }
+
+  private applyVariant(
+    tooltipElement: HTMLElement,
+    variant: TooltipVariant,
+  ): void {
+    tooltipElement.classList.toggle(
+      "tooltip-panel--warning-wide",
+      variant === "warning-wide",
+    );
   }
 
   private positionTooltip(
