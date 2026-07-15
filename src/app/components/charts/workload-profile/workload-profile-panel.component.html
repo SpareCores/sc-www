@@ -9,7 +9,7 @@
     }"
   >
     @if (showHeader()) {
-      <div class="flex justify-between items-center mb-4">
+      <div class="flex justify-between items-center mb-4 gap-4">
         <h3 class="text-2xl flex items-center gap-2">
           <svg
             [lucideIcon]="'workload_profile' | benchmarkIcon"
@@ -29,42 +29,298 @@
             (mouseleave)="hideTooltip()"
           ></svg>
         </h3>
+        @if (layout() === "details" && profileDropdownItems().length) {
+          <button
+            #profileDropdown="appFlowbiteDropdown"
+            [id]="profileButtonId"
+            class="dropdown_button chart-selector-button max-w-full shrink-0"
+            type="button"
+            [appFlowbiteDropdown]="profileOptionsId"
+            [dropdownEnabled]="isBrowser"
+          >
+            <div
+              class="chart-selector-button__label"
+              [title]="selectedProfileItem()?.title"
+            >
+              {{ selectedProfileItem()?.title }}
+            </div>
+            <div class="chart-selector-button__icon">
+              <svg
+                lucideChevronDown
+                class="h-6 w-6 shrink-0 text-emerald-400"
+              ></svg>
+            </div>
+          </button>
+        }
       </div>
     }
-    <div
-      class="workload-profile-panel-grid grid min-w-0 grid-cols-1 lg:grid-cols-2 gap-8 items-start"
-    >
-      <div
-        class="workload-profile-radar-chart"
-        [class.workload-profile-radar-chart--compare]="layout() === 'compare'"
-        [class.workload-profile-radar-chart--details]="layout() === 'details'"
-      >
-        <app-workload-profile-radar-chart
-          [layout]="layout()"
-          [benchmarkMeta]="benchmarkMeta()"
-          [servers]="servers()"
-          [serverDetails]="serverDetails()"
-        ></app-workload-profile-radar-chart>
-      </div>
-      @if (accordionItems().length) {
+    @if (layout() === "details" && selectedProfileItem(); as selectedItem) {
+      <div class="workload-profile-details-layout min-w-0">
         <div
-          class="workload-profile-accordion-column w-full min-w-0 text-base"
-          [ngClass]="{
-            'pr-4 lg:min-h-[460px] lg:pt-[4.5rem]': layout() === 'compare',
-            'pr-8 lg:min-h-[420px] lg:pt-2': layout() === 'details',
-          }"
+          class="workload-profile-panel-grid grid min-w-0 grid-cols-1 gap-8 items-stretch lg:grid-cols-2"
         >
-          <app-accordion
-            class="workload-profile-accordion"
-            [useFaqSchema]="false"
-            [showHeading]="false"
-            [items]="accordionItems()"
-            [activeIndex]="activeAccordionIndex()"
-            (activeIndexChange)="onAccordionChanged($event)"
-          ></app-accordion>
+          <div
+            class="workload-profile-radar-chart workload-profile-radar-chart--details lg:col-start-1 lg:row-start-1 mb-8"
+          >
+            <app-workload-profile-radar-chart
+              [layout]="layout()"
+              [benchmarkMeta]="benchmarkMeta()"
+              [servers]="servers()"
+              [serverDetails]="serverDetails()"
+              (profileSelected)="onProfileSelected($event)"
+            ></app-workload-profile-radar-chart>
+          </div>
+          <div
+            class="workload-profile-details-panel min-w-0 lg:col-start-2 lg:row-start-1"
+            [class.workload-profile-details-panel--with-table]="
+              !!selectedBreakdownTable()
+            "
+          >
+            <div class="workload-profile-details-panel__header">
+              @let gaugeChart = scoreGaugeChart();
+              <div class="workload-profile-score-gauge">
+                @if (isBrowser) {
+                  <div class="workload-profile-score-gauge__canvas">
+                    <canvas
+                      #scoreGauge
+                      baseChart
+                      [data]="gaugeChart.data"
+                      [options]="gaugeChart.options"
+                      [plugins]="scoreGaugePlugins"
+                      type="doughnut"
+                    ></canvas>
+                    <div class="workload-profile-score-gauge__value">
+                      <span class="workload-profile-score-gauge__number">{{
+                        gaugeChart.displayValue
+                      }}</span>
+                      <span class="workload-profile-score-gauge__label"
+                        >Score</span
+                      >
+                    </div>
+                  </div>
+                } @else {
+                  <div class="workload-profile-score-gauge__fallback">
+                    <span class="workload-profile-score-gauge__number">{{
+                      gaugeChart.displayValue
+                    }}</span>
+                    <span class="workload-profile-score-gauge__label"
+                      >Score</span
+                    >
+                  </div>
+                }
+              </div>
+              <div class="workload-profile-details-panel__description min-w-0">
+                <div class="min-w-0 text-wrap break-words font-light">
+                  <span>{{ selectedItem.content }}</span>
+                  @if (selectedItem.note) {
+                    <span class="block mt-2 text-[#EAB308]">{{
+                      selectedItem.note
+                    }}</span>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        @if (selectedBreakdownTable(); as breakdown) {
+          <div
+            class="workload-profile-details-panel__table overflow-x-auto min-w-0"
+          >
+            <table class="workload-profile-breakdown-table">
+              <thead>
+                <tr>
+                  <th rowspan="2">Component</th>
+                  <th
+                    colspan="5"
+                    class="workload-profile-breakdown-table__group-header workload-profile-breakdown-table__score-group"
+                  >
+                    Score
+                  </th>
+                  <th
+                    colspan="2"
+                    class="workload-profile-breakdown-table__group-header workload-profile-breakdown-table__weight-group"
+                  >
+                    Weight
+                  </th>
+                  <th
+                    rowspan="2"
+                    class="workload-profile-breakdown-table__impact-col-header"
+                  >
+                    <span class="inline-flex items-center justify-center gap-1">
+                      Impact
+                      @if (breakdown.impactFormula) {
+                        <svg
+                          lucideInfo
+                          class="inline-block h-4 w-4 text-gray-200"
+                          (mouseenter)="
+                            showTooltip($event, breakdown.impactFormula)
+                          "
+                          (mouseleave)="hideTooltip()"
+                        ></svg>
+                      }
+                    </span>
+                  </th>
+                </tr>
+                <tr>
+                  <th
+                    colspan="2"
+                    class="workload-profile-breakdown-table__score-col-header workload-profile-breakdown-table__score-col"
+                  >
+                    Raw
+                  </th>
+                  <th
+                    colspan="2"
+                    class="workload-profile-breakdown-table__score-col-header workload-profile-breakdown-table__score-col"
+                  >
+                    Reference
+                  </th>
+                  <th
+                    class="workload-profile-breakdown-table__score-col-header workload-profile-breakdown-table__score-col workload-profile-breakdown-table__score-col--last"
+                  >
+                    Normalized
+                  </th>
+                  <th
+                    class="workload-profile-breakdown-table__weight-col-header workload-profile-breakdown-table__weight-col"
+                  >
+                    Target
+                  </th>
+                  <th
+                    class="workload-profile-breakdown-table__weight-col-header workload-profile-breakdown-table__weight-col workload-profile-breakdown-table__weight-col--last"
+                  >
+                    Actual
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (row of breakdown.rows; track row.label) {
+                  @let compactUnit = compactBreakdownUnit(row.unit);
+                  <tr>
+                    <td>
+                      <span class="inline-flex items-center gap-1">
+                        <span>{{ row.label }}</span>
+                        @if (row.componentDescription) {
+                          <svg
+                            lucideInfo
+                            class="inline-block h-4 w-4 shrink-0 text-gray-200"
+                            (mouseenter)="
+                              showTooltip($event, row.componentDescription)
+                            "
+                            (mouseleave)="hideTooltip()"
+                          ></svg>
+                        }
+                        @if (row.note?.trim(); as note) {
+                          <svg
+                            lucideTriangleAlert
+                            class="benchmark-note-icon"
+                            (mouseenter)="
+                              showTooltip($event, note, 'warning-wide')
+                            "
+                            (mouseleave)="hideTooltip()"
+                          ></svg>
+                        }
+                      </span>
+                    </td>
+                    <td
+                      class="compact-number workload-profile-breakdown-table__score-col workload-profile-breakdown-table__score-value"
+                    >
+                      {{ formatBreakdownNumericValue(row.raw) }}
+                    </td>
+                    <td class="workload-profile-breakdown-table__score-unit">
+                      @if (row.raw != null && compactUnit) {
+                        {{ compactUnit }}
+                      }
+                    </td>
+                    <td
+                      class="compact-number workload-profile-breakdown-table__score-col workload-profile-breakdown-table__score-value"
+                    >
+                      {{ formatBreakdownNumericValue(row.reference) }}
+                    </td>
+                    <td class="workload-profile-breakdown-table__score-unit">
+                      @if (row.reference != null && compactUnit) {
+                        {{ compactUnit }}
+                      }
+                    </td>
+                    <td
+                      class="compact-number workload-profile-breakdown-table__score-col workload-profile-breakdown-table__score-normalized workload-profile-breakdown-table__score-col--last"
+                    >
+                      {{ formatBreakdownNumericValue(row.normalized) }}
+                    </td>
+                    <td
+                      class="compact-number workload-profile-breakdown-table__weight-col workload-profile-breakdown-table__weight-value"
+                    >
+                      {{ formatBreakdownPercent(row.weight) }}
+                    </td>
+                    <td
+                      class="compact-number workload-profile-breakdown-table__weight-col workload-profile-breakdown-table__weight-value workload-profile-breakdown-table__weight-col--last"
+                    >
+                      {{ formatBreakdownPercent(row.weight_share) }}
+                    </td>
+                    <td
+                      class="compact-number workload-profile-breakdown-table__impact-value"
+                      [ngClass]="getImpactColorClass(row.impact)"
+                    >
+                      {{ formatImpactPercent(row.impact) }}
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </div>
+      @if (profileDropdownItems().length) {
+        <div
+          [id]="profileOptionsId"
+          class="z-100 hidden w-max min-w-64 max-w-[calc(100vw-2rem)] bg-secondary rounded-lg border border-emerald-400 border-solid shadow"
+        >
+          <ul
+            class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
+            [attr.aria-labelledby]="profileButtonId"
+          >
+            @for (item of profileDropdownItems(); track item.id) {
+              <li>
+                <button
+                  type="button"
+                  class="flex w-full items-center gap-2 rounded-sm border-0 bg-transparent px-2 py-1 text-left hover:bg-emerald-500"
+                  (click)="selectProfile(item.id)"
+                >
+                  <div class="text-white text-sm">{{ item.title }}</div>
+                </button>
+              </li>
+            }
+          </ul>
         </div>
       }
-    </div>
+    } @else if (layout() === "compare") {
+      <div
+        class="workload-profile-panel-grid grid min-w-0 grid-cols-1 gap-8 items-start lg:grid-cols-2"
+      >
+        <div
+          class="workload-profile-radar-chart lg:row-start-1 lg:col-start-1 workload-profile-radar-chart--compare"
+        >
+          <app-workload-profile-radar-chart
+            [layout]="layout()"
+            [benchmarkMeta]="benchmarkMeta()"
+            [servers]="servers()"
+            [serverDetails]="serverDetails()"
+          ></app-workload-profile-radar-chart>
+        </div>
+        @if (accordionItems().length) {
+          <div
+            class="w-full min-w-0 text-base pr-4 lg:min-h-[460px] lg:pt-[4.5rem] lg:col-start-2 lg:row-start-1"
+          >
+            <app-accordion
+              class="workload-profile-accordion"
+              [useFaqSchema]="false"
+              [showHeading]="false"
+              [items]="accordionItems()"
+              [activeIndex]="activeAccordionIndex()"
+              (activeIndexChange)="onAccordionChanged($event)"
+            ></app-accordion>
+          </div>
+        }
+      </div>
+    }
   </div>
 }
 

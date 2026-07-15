@@ -9,13 +9,214 @@
   min-width: 0;
 }
 
-.workload-profile-accordion-column {
-  min-width: 0;
-}
-
 .workload-profile-radar-chart--details {
   display: flex;
   height: 420px;
   min-height: 420px;
   min-width: 0;
+}
+
+.workload-profile-details-layout {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.workload-profile-details-panel {
+  background-color: #082f49;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  min-width: 0;
+  min-height: 100%;
+}
+
+.workload-profile-details-panel--with-table {
+  border-radius: 0.5rem 0.5rem 0 0;
+}
+
+.workload-profile-details-panel__table {
+  background-color: #082f49;
+  border-radius: 0.5rem 0 0.5rem 0.5rem;
+  padding: 1.5rem;
+  min-width: 0;
+}
+
+.workload-profile-details-panel__header {
+  min-width: 0;
+  min-height: 100%;
+
+  &::after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}
+
+.workload-profile-details-panel__description {
+  min-width: 0;
+}
+
+.workload-profile-score-gauge {
+  width: 100%;
+  max-width: 240px;
+  margin-inline: auto;
+  margin-bottom: 1rem;
+
+  @media (min-width: 1024px) {
+    float: right;
+    width: 30%;
+    max-width: none;
+    margin-inline: 0 0;
+    margin-left: 1rem;
+    margin-bottom: 0.5rem;
+  }
+}
+
+.workload-profile-score-gauge__canvas {
+  position: relative;
+  width: 100%;
+  height: 150px;
+}
+
+.workload-profile-score-gauge__fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  min-height: 150px;
+  padding-bottom: 0.25rem;
+}
+
+.workload-profile-score-gauge__value {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding-bottom: 0.25rem;
+  pointer-events: none;
+}
+
+.workload-profile-score-gauge__number {
+  color: #34d399;
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.workload-profile-score-gauge__label {
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 400;
+}
+
+.benchmark-note-icon {
+  @apply h-4 w-auto shrink-0 cursor-help text-[#EAB308];
+}
+
+.workload-profile-breakdown-table {
+  @apply w-full text-white;
+  border-collapse: collapse;
+
+  thead {
+    @apply border-b border-gray-200 border-solid bg-secondary;
+
+    th {
+      @apply px-3 py-2 text-left text-xs font-normal uppercase text-white;
+      vertical-align: bottom;
+    }
+
+    th.workload-profile-breakdown-table__group-header {
+      text-align: center;
+    }
+
+    th.workload-profile-breakdown-table__score-col-header,
+    th.workload-profile-breakdown-table__weight-col-header,
+    th.workload-profile-breakdown-table__impact-col-header {
+      text-align: center;
+    }
+
+    th.workload-profile-breakdown-table__score-group,
+    th.workload-profile-breakdown-table__weight-group {
+      @apply border-b border-solid border-gray-600;
+    }
+
+    th.workload-profile-breakdown-table__score-group,
+    th.workload-profile-breakdown-table__score-col,
+    td.workload-profile-breakdown-table__score-col {
+      @apply border-l border-solid border-gray-600;
+    }
+
+    th.workload-profile-breakdown-table__weight-group,
+    th.workload-profile-breakdown-table__weight-col,
+    td.workload-profile-breakdown-table__weight-col {
+      @apply border-l border-solid border-gray-600;
+    }
+
+    th.workload-profile-breakdown-table__score-col--last,
+    td.workload-profile-breakdown-table__score-col--last {
+      @apply border-r border-solid border-gray-600;
+    }
+
+    th.workload-profile-breakdown-table__weight-group,
+    th.workload-profile-breakdown-table__weight-col--last,
+    td.workload-profile-breakdown-table__weight-col--last {
+      @apply border-r border-solid border-gray-600;
+    }
+
+    tr:first-child th:first-child {
+      white-space: nowrap;
+    }
+  }
+
+  tbody {
+    tr:nth-child(2n + 1) {
+      @apply bg-primary;
+    }
+
+    tr:nth-child(2n) {
+      @apply bg-secondary;
+    }
+
+    tr {
+      @apply hover:outline hover:outline-1 hover:-outline-offset-1 hover:outline-emerald-400;
+
+      td {
+        @apply px-3 py-2 text-left text-sm align-middle;
+      }
+
+      td:first-child {
+        white-space: nowrap;
+      }
+
+      td.workload-profile-breakdown-table__score-col,
+      td.workload-profile-breakdown-table__weight-col {
+        @apply border-l border-solid border-gray-600;
+      }
+
+      td.workload-profile-breakdown-table__score-col--last,
+      td.workload-profile-breakdown-table__weight-col--last {
+        @apply border-r border-solid border-gray-600;
+      }
+
+      td.workload-profile-breakdown-table__score-value,
+      td.workload-profile-breakdown-table__score-normalized,
+      td.workload-profile-breakdown-table__weight-value,
+      td.workload-profile-breakdown-table__impact-value {
+        text-align: right;
+      }
+
+      td.workload-profile-breakdown-table__score-value {
+        padding-right: 0.25rem;
+      }
+
+      td.workload-profile-breakdown-table__score-unit {
+        padding-left: 0.25rem;
+        padding-right: 0.75rem;
+        text-align: left;
+        white-space: nowrap;
+      }
+    }
+  }
 }
