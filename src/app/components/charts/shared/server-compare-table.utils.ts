@@ -296,10 +296,6 @@ export function getCompareRawNumericPropertyValue(
     return prop;
   }
 
-  if (propertyId === "storage_size") {
-    return 0;
-  }
-
   return null;
 }
 

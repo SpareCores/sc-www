@@ -1,6 +1,7 @@
 import {
   formatCompareSignedPercentageDeltaLabel,
   formatNumberWithCommas,
+  getCompareRawNumericPropertyValue,
   getBestBenchmarkCellStyle,
   getBestPropertyCellStyle,
   getServerPropertyValue,
@@ -232,6 +233,13 @@ describe("server compare table utils", () => {
         "best",
       ),
     ).toBe("best");
+  });
+
+  it("excludes missing storage from baseline deltas", () => {
+    expect(getCompareRawNumericPropertyValue({}, "storage_size")).toBeNull();
+    expect(
+      getCompareRawNumericPropertyValue({ storage_size: 0 }, "storage_size"),
+    ).toBe(0);
   });
 
   it("uses raw percentage sign for lower-is-better metrics", () => {
