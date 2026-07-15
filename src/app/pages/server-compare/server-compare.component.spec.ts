@@ -299,4 +299,45 @@ describe("ServerCompareComponent", () => {
     expect(pushedUrl).toContain("instances=encoded-instances");
     expect(pushedUrl).not.toContain("baseline_vendor");
   });
+
+  it("selectBaselineServer preserves URL hash when updating query params", () => {
+    component.instancesRaw = "encoded-instances";
+    component.servers = [
+      {
+        vendor_id: "aws",
+        api_reference: "t3.medium",
+        display_name: "T3 Medium",
+      },
+    ] as typeof component.servers;
+    window.history.replaceState(
+      null,
+      "",
+      "/compare?instances=encoded-instances#benchmark_line_cpu",
+    );
+    component["lastEncodedCompareQuery"] = "";
+    const pushState = spyOn(window.history, "pushState");
+
+    component.selectBaselineServer(component.servers[0]);
+
+    const pushedUrl = pushState.calls.mostRecent().args[2] as string;
+    expect(pushedUrl).toContain("#benchmark_line_cpu");
+    expect(pushedUrl).toContain("baseline_vendor=aws");
+  });
+
+  it("selectBaselineServer URL-encodes Base64 instances query values", () => {
+    component.instancesRaw = "abc+def=ghi";
+    component.servers = [
+      {
+        vendor_id: "aws",
+        api_reference: "t3.medium",
+        display_name: "T3 Medium",
+      },
+    ] as typeof component.servers;
+    const pushState = spyOn(window.history, "pushState");
+
+    component.selectBaselineServer(component.servers[0]);
+
+    const pushedUrl = pushState.calls.mostRecent().args[2] as string;
+    expect(pushedUrl).toContain("instances=abc%2Bdef%3Dghi");
+  });
 });

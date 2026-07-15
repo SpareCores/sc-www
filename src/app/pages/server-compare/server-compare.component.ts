@@ -1065,11 +1065,12 @@ export class ServerCompareComponent
 
     this.lastEncodedCompareQuery = encodedQuery;
     const path = window.location.pathname;
+    const hash = window.location.hash;
 
     if (encodedQuery?.length) {
-      window.history.pushState({}, "", `${path}?${encodedQuery}`);
+      window.history.pushState({}, "", `${path}?${encodedQuery}${hash}`);
     } else {
-      window.history.pushState({}, "", path);
+      window.history.pushState({}, "", `${path}${hash}`);
     }
   }
 
