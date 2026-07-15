@@ -97,7 +97,7 @@ describe("workload-profile-breakdown.utils", () => {
       benchmarkMeta: [
         {
           benchmark_id: "llm_speed:text_generation",
-          name: "LLM inference speed for text generation",
+          description: "LLM inference speed for text generation",
           note: "Limited scaling above 32 vCPUs.",
           unit: "tokens/second (t/s)",
         },
