@@ -25,6 +25,7 @@ $content-max-width: 1400px;
 
   .tooltip-panel--warning-wide {
     @apply border-yellow-500 whitespace-pre-line;
+
     max-width: min(54rem, calc(100vw - 2rem));
   }
 
