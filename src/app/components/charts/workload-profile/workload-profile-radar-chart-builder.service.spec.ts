@@ -62,6 +62,34 @@ describe("WorkloadProfileRadarChartBuilderService", () => {
     ).toBe("Workload profile: Web server");
   });
 
+  it("excludes workload profiles without score data from details charts", () => {
+    const charts = service.buildDetailsCharts({
+      serverDetails: {
+        benchmark_scores: [
+          {
+            benchmark_id: "workload_profile:web",
+            score: 120,
+          },
+        ],
+      },
+      benchmarkMeta: [
+        {
+          benchmark_id: "workload_profile:web",
+          name: "Workload profile: Web server",
+          status: Status.Active,
+        },
+        {
+          benchmark_id: "workload_profile:llm",
+          name: "Workload profile: LLM Inference",
+          status: Status.Active,
+        },
+      ],
+    });
+
+    expect(charts?.chartData.labels).toEqual(["Web server"]);
+    expect(charts?.chartData.datasets[0]?.data).toHaveSize(1);
+  });
+
   it("builds a compare radar chart with one dataset per server", () => {
     const charts = service.buildCompareCharts({
       servers: [

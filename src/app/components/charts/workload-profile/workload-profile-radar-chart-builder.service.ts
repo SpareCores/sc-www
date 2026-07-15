@@ -9,7 +9,7 @@ import {
 } from "../shared/chart-tooltip.utils";
 import {
   formatWorkloadProfileLabel,
-  filterWorkloadProfileBenchmarks,
+  resolveWorkloadProfileBenchmarksWithData,
 } from "./workload-profile.utils";
 import {
   WorkloadProfileBenchmarkMeta,
@@ -29,7 +29,11 @@ export class WorkloadProfileRadarChartBuilderService {
     serverDetails: WorkloadProfileDetailsServer;
     benchmarkMeta: WorkloadProfileBenchmarkMeta[];
   }): WorkloadProfileChartsResult | undefined {
-    const workloadMeta = filterWorkloadProfileBenchmarks(params.benchmarkMeta);
+    const workloadMeta = resolveWorkloadProfileBenchmarksWithData({
+      benchmarkMeta: params.benchmarkMeta,
+      layout: "details",
+      serverDetails: params.serverDetails,
+    });
 
     if (!workloadMeta.length) {
       return undefined;
@@ -38,9 +42,10 @@ export class WorkloadProfileRadarChartBuilderService {
     const benchmarkIds = workloadMeta.map(
       (benchmark) => benchmark.benchmark_id,
     );
-    const labels = this.createChartLabels(benchmarkIds, workloadMeta);
+    const labels = this.createChartLabels(workloadMeta);
 
     return {
+      benchmarkIds,
       chartData: this.createDetailsData(
         params.serverDetails,
         benchmarkIds,
@@ -54,7 +59,11 @@ export class WorkloadProfileRadarChartBuilderService {
     servers: WorkloadProfileCompareServer[];
     benchmarkMeta: WorkloadProfileBenchmarkMeta[];
   }): WorkloadProfileChartsResult | undefined {
-    const workloadMeta = filterWorkloadProfileBenchmarks(params.benchmarkMeta);
+    const workloadMeta = resolveWorkloadProfileBenchmarksWithData({
+      benchmarkMeta: params.benchmarkMeta,
+      layout: "compare",
+      servers: params.servers,
+    });
 
     if (!workloadMeta.length) {
       return undefined;
@@ -63,9 +72,10 @@ export class WorkloadProfileRadarChartBuilderService {
     const benchmarkIds = workloadMeta.map(
       (benchmark) => benchmark.benchmark_id,
     );
-    const labels = this.createChartLabels(benchmarkIds, workloadMeta);
+    const labels = this.createChartLabels(workloadMeta);
 
     return {
+      benchmarkIds,
       chartData: this.createCompareData(params.servers, benchmarkIds, labels),
       options: this.createCompareOptions(workloadMeta),
     };
@@ -232,15 +242,10 @@ export class WorkloadProfileRadarChartBuilderService {
   }
 
   private createChartLabels(
-    benchmarkIds: string[],
     benchmarkMeta: WorkloadProfileBenchmarkMeta[],
   ): string[] {
-    return benchmarkIds.map((benchmarkId) =>
-      formatWorkloadProfileLabel(
-        benchmarkMeta.find(
-          (benchmark) => benchmark.benchmark_id === benchmarkId,
-        )?.name || benchmarkId,
-      ),
+    return benchmarkMeta.map((benchmark) =>
+      formatWorkloadProfileLabel(benchmark.name || benchmark.benchmark_id),
     );
   }
 }
