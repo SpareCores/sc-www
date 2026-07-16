@@ -34,6 +34,7 @@ import {
   WorkloadProfileDetailsServer,
 } from "./workload-profile-radar-chart.types";
 import {
+  breakdownTableHasNotes,
   buildWorkloadProfileBreakdownTable,
   compactBreakdownUnit,
   formatBreakdownNumericValue,
@@ -274,6 +275,11 @@ export class WorkloadProfilePanelComponent {
       scoreBreakdown: this.selectedBenchmarkScore()?.score_breakdown,
     });
   });
+  readonly hasBreakdownNotes = computed(() => {
+    const table = this.selectedBreakdownTable();
+
+    return table ? breakdownTableHasNotes(table) : false;
+  });
   readonly scoreGaugeChart = computed(() =>
     buildScoreGaugeChart(this.selectedBenchmarkScore()?.score),
   );
@@ -340,15 +346,7 @@ export class WorkloadProfilePanelComponent {
   }
 
   showWarningTooltip(el: MouseEvent, content?: string): void {
-    this.tooltipService.showIfPresent({
-      tooltipElement: this.tooltip()?.nativeElement,
-      event: el,
-      content,
-      variant: "warning-wide",
-      onShow: (text) => {
-        this.tooltipContent = text;
-      },
-    });
+    this.showTooltip(el, content, "warning-wide");
   }
 
   hideTooltip(): void {
