@@ -46,7 +46,6 @@ describe("workload-profile-breakdown.utils", () => {
       benchmarkMeta: [
         {
           benchmark_id: "static_web:rps-extrapolated",
-          name: "Static web server (extrapolated) speed",
           description: "Static web speed description",
           note: "Static web scaling caveat",
           unit: "Requests per second (rps)",
