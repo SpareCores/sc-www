@@ -380,6 +380,7 @@ describe("ServerCompareComponent", () => {
       api_reference: "c1",
       display_name: "C",
     };
+    component.ngOnInit();
     component.isLoading = false;
     component.servers = [serverA, serverB, serverC] as typeof component.servers;
     component.benchmarkMeta = [

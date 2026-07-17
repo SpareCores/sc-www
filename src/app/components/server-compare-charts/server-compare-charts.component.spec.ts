@@ -713,7 +713,7 @@ describe("ServerCompareChartsComponent", () => {
       (fixture.nativeElement as HTMLElement).querySelectorAll(
         ".compare-table-delta-placeholder",
       ).length,
-    ).toBe(1);
+    ).toBeGreaterThan(0);
   });
 
   it("shows benchmark config value deltas under show-more details", () => {

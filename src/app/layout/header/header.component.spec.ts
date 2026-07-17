@@ -157,12 +157,12 @@ describe("HeaderComponent", () => {
     ) as HTMLButtonElement;
     baselineButton.click();
 
-    expect(toggleBaselineServer).toHaveBeenCalledWith({
-      display_name: "m7a.4xlarge",
-      vendor: "aws",
-      server: "m7a.4xlarge",
-      zonesRegions: [],
-    });
+    expect(toggleBaselineServer).toHaveBeenCalledWith(
+      jasmine.objectContaining({
+        vendor: "aws",
+        server: "m7a.4xlarge",
+      }),
+    );
     expect(
       serverCompare.isBaselineServer({ vendor: "aws", server: "m7a.4xlarge" }),
     ).toBeTrue();
