@@ -1397,30 +1397,6 @@
                       }
                     </span>
                   </span>
-                  @if (
-                    getBenchmarkNote(
-                      chartItem.chart.options[chartItem.chart.selectedOption]
-                        .benchmark_id,
-                      false
-                    )
-                  ) {
-                    <svg
-                      lucideTriangleAlert
-                      class="benchmark-note-icon"
-                      (mouseenter)="
-                        showWarningSectionTooltip(
-                          $event,
-                          getBenchmarkNote(
-                            chartItem.chart.options[
-                              chartItem.chart.selectedOption
-                            ].benchmark_id,
-                            false
-                          )
-                        )
-                      "
-                      (mouseleave)="hideTooltip()"
-                    ></svg>
-                  }
                 </h3>
                 @if (!isEmbedded && !getCompareFixedWideTrailingColSpan()) {
                   <div class="flex items-stretch gap-4 shrink-0">
