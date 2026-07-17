@@ -1,4 +1,5 @@
 import { TestBed } from "@angular/core/testing";
+import { Router } from "@angular/router";
 
 import { ServerCompare, ServerCompareService } from "./server-compare.service";
 
@@ -54,5 +55,65 @@ describe("ServerCompareService", () => {
     service.toggleCompare(false, serverB);
 
     expect(service.selectedForCompare).toEqual([serverA, serverC]);
+  });
+
+  it("tracks the selected baseline server", () => {
+    service.setBaselineServer({ vendor: "aws", server: "a1" });
+
+    expect(service.isBaselineServer(serverA)).toBeTrue();
+    expect(service.isBaselineServer(serverB)).toBeFalse();
+  });
+
+  it("toggles baseline selection and clears on second click", () => {
+    service.toggleBaselineServer(serverA);
+
+    expect(service.isBaselineServer(serverA)).toBeTrue();
+
+    service.toggleBaselineServer(serverA);
+
+    expect(service.baselineServer).toBeNull();
+  });
+
+  it("clears baseline when the baseline server is removed", () => {
+    service.setBaselineServer({ vendor: "aws", server: "a1" });
+
+    service.toggleCompare(false, serverA);
+
+    expect(service.baselineServer).toBeNull();
+  });
+
+  it("clears baseline when clearing compare selection", () => {
+    service.setBaselineServer({ vendor: "gcp", server: "b1" });
+
+    service.clearCompare();
+
+    expect(service.baselineServer).toBeNull();
+  });
+
+  it("syncs the compare route after selection changes while on compare", () => {
+    const router = TestBed.inject(Router);
+    spyOnProperty(router, "url", "get").and.returnValue(
+      "/compare?instances=old",
+    );
+    const navigateByUrl = spyOn(router, "navigateByUrl");
+    service.setBaselineServer({ vendor: "aws", server: "a1" });
+
+    service.syncCompareRoute();
+
+    expect(navigateByUrl).toHaveBeenCalledWith(
+      jasmine.stringMatching(
+        /^\/compare\?instances=.+&baseline_vendor=aws&baseline_server=a1$/,
+      ),
+    );
+  });
+
+  it("does not sync the compare route when not on compare", () => {
+    const router = TestBed.inject(Router);
+    spyOnProperty(router, "url", "get").and.returnValue("/servers");
+    const navigateByUrl = spyOn(router, "navigateByUrl");
+
+    service.syncCompareRoute();
+
+    expect(navigateByUrl).not.toHaveBeenCalled();
   });
 });
