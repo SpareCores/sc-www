@@ -76,7 +76,6 @@ import {
 } from "../charts/workload-profile/workload-profile-radar-chart.types";
 import {
   formatNumberWithCommas,
-  formatCompareDeltaDisplayLabel,
   formatCompareDeltaLabel,
   formatCompareSignedPercentageDeltaLabel,
   getBestBenchmarkCellStyle,
@@ -88,7 +87,8 @@ import {
   isCompareLowerIsBetterProperty,
   isCompareMetadataPropertyHidden,
   isComparePropertyDeltaEligible,
-  type CompareMetricDelta,
+  toCompareDeltaView,
+  type CompareDeltaView,
 } from "../charts/shared/server-compare-table.utils";
 
 @Component({
@@ -576,7 +576,7 @@ export class ServerCompareChartsComponent implements OnChanges {
   getPropertyDelta(
     propertyId: string,
     server: ExtendedServerDetails,
-  ): CompareMetricDelta | null {
+  ): CompareDeltaView | null {
     if (
       !this.baselineServer ||
       isCompareBaselineServer(server, this.baselineServer) ||
@@ -589,32 +589,22 @@ export class ServerCompareChartsComponent implements OnChanges {
       getCompareRawNumericPropertyValue(server, propertyId),
       getCompareRawNumericPropertyValue(this.baselineServer, propertyId),
     );
+    const lowerIsBetter = isCompareLowerIsBetterProperty(propertyId);
 
-    if (!isCompareLowerIsBetterProperty(propertyId)) {
-      return delta;
-    }
-
-    return {
-      ...delta,
-      tone: invertCompareDeltaTone(delta.tone),
-    };
-  }
-
-  getPropertyDeltaLabel(
-    propertyId: string,
-    delta: CompareMetricDelta,
-  ): string | null {
-    const formatter = isCompareLowerIsBetterProperty(propertyId)
-      ? formatCompareSignedPercentageDeltaLabel
-      : formatCompareDeltaLabel;
-
-    return formatCompareDeltaDisplayLabel(delta, formatter);
+    return toCompareDeltaView(
+      lowerIsBetter
+        ? { ...delta, tone: invertCompareDeltaTone(delta.tone) }
+        : delta,
+      lowerIsBetter
+        ? formatCompareSignedPercentageDeltaLabel
+        : formatCompareDeltaLabel,
+    );
   }
 
   getBestPriceDelta(
     server: ExtendedServerDetails,
     allocation: Allocation | string = Allocation.Ondemand,
-  ): CompareMetricDelta | null {
+  ): CompareDeltaView | null {
     if (
       !this.baselineServer ||
       isCompareBaselineServer(server, this.baselineServer)
@@ -631,13 +621,73 @@ export class ServerCompareChartsComponent implements OnChanges {
         ? this.baselineServer.bestSpotPrice?.price
         : this.baselineServer.bestOndemandPrice?.price;
 
-    return this.advisorUi.buildPriceDelta(candidatePrice, baselinePrice);
+    return toCompareDeltaView(
+      this.advisorUi.buildPriceDelta(candidatePrice, baselinePrice),
+      formatCompareSignedPercentageDeltaLabel,
+    );
   }
 
-  getBestPriceDeltaLabel(delta: CompareMetricDelta): string | null {
-    return formatCompareDeltaDisplayLabel(
-      delta,
-      formatCompareSignedPercentageDeltaLabel,
+  getBenchmarkValueDelta(
+    value: number | string | null | undefined,
+    values: Array<number | string | null | undefined>,
+    serverIndex: number,
+    benchmark: { higher_is_better?: boolean | null } | null | undefined,
+  ): CompareDeltaView | null {
+    if (!this.baselineServer || !this.servers.length) {
+      return null;
+    }
+
+    const baselineIndex = this.servers.findIndex((server) =>
+      isCompareBaselineServer(server, this.baselineServer),
+    );
+
+    if (baselineIndex < 0 || serverIndex === baselineIndex) {
+      return null;
+    }
+
+    const candidateValue = this.toNumericBenchmarkValue(value);
+    const baselineValue = this.toNumericBenchmarkValue(values[baselineIndex]);
+
+    if (candidateValue === null || baselineValue === null) {
+      return null;
+    }
+
+    const delta = this.advisorUi.buildComparableResourceDelta(
+      candidateValue,
+      baselineValue,
+    );
+
+    return toCompareDeltaView(
+      benchmark?.higher_is_better === false
+        ? { ...delta, tone: invertCompareDeltaTone(delta.tone) }
+        : delta,
+    );
+  }
+
+  private toNumericBenchmarkValue(
+    value: number | string | null | undefined,
+  ): number | null {
+    if (typeof value === "number" && Number.isFinite(value)) {
+      return value;
+    }
+
+    if (typeof value === "string" && value !== "-" && value.trim() !== "") {
+      const parsed = Number(value);
+      return Number.isFinite(parsed) ? parsed : null;
+    }
+
+    return null;
+  }
+
+  shouldShowPropertyDeltaRow(propertyId: string): boolean {
+    if (!this.baselineServer) {
+      return false;
+    }
+
+    return this.servers.some(
+      (server) =>
+        !isCompareBaselineServer(server, this.baselineServer) &&
+        isComparePropertyDeltaEligible(propertyId, server),
     );
   }
 

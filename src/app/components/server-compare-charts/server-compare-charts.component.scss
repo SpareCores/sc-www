@@ -223,6 +223,10 @@
   @apply whitespace-nowrap font-medium;
 }
 
+.compare-table-delta-placeholder {
+  @apply inline-block whitespace-nowrap;
+}
+
 .compare-table-delta--positive {
   color: #34d399;
 }

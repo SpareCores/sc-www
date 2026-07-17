@@ -566,6 +566,7 @@ describe("ServerCompareChartsComponent", () => {
         ],
       },
     ] as unknown as typeof component.servers;
+    component.baselineServer = component.servers[0];
     component.benchmarkMeta = [
       {
         benchmark_id: "workload:web-server",
@@ -611,9 +612,13 @@ describe("ServerCompareChartsComponent", () => {
     expect(cells?.length).toBe(3);
     expect(cells?.[0].textContent).toContain("Web server");
     expect(cells?.[1].classList.contains("compact-number")).toBeTrue();
-    expect(cells?.[1].textContent?.trim()).toBe("10.00");
+    expect(cells?.[1].textContent).toContain("10.00");
     expect(cells?.[2].classList.contains("compact-number")).toBeTrue();
-    expect(cells?.[2].textContent?.trim()).toBe("20.00");
+    expect(cells?.[2].textContent).toContain("20.00");
+    expect(cells?.[2].textContent).toContain("+100%");
+    expect(
+      benchmarkRow?.querySelector(".compare-table-delta--positive"),
+    ).toBeTruthy();
     expect(
       benchmarkRow?.querySelector(
         'button[aria-label="Expand benchmark details"]',
@@ -704,5 +709,69 @@ describe("ServerCompareChartsComponent", () => {
         ".compare-table-delta--positive",
       ),
     ).toBeTruthy();
+    expect(
+      (fixture.nativeElement as HTMLElement).querySelectorAll(
+        ".compare-table-delta-placeholder",
+      ).length,
+    ).toBe(1);
+  });
+
+  it("shows benchmark config value deltas under show-more details", () => {
+    component.showChart = "all";
+    component.baselineServer = {
+      vendor_id: "aws",
+      server_id: "server-a",
+      display_name: "Server A",
+      prices: [],
+      vendor: { name: "AWS", logo: null },
+    } as unknown as (typeof component.servers)[0];
+    component.servers = [
+      component.baselineServer,
+      {
+        vendor_id: "gcp",
+        server_id: "server-b",
+        display_name: "Server B",
+        prices: [],
+        vendor: { name: "GCP", logo: null },
+      },
+    ] as unknown as typeof component.servers;
+    component.benchmarkCategories = [
+      {
+        name: "Custom",
+        id: "custom_bench",
+        benchmarks: ["custom_bench"],
+        show_more: true,
+        data: [
+          {
+            benchmark_id: "custom_bench",
+            name: "Custom Bench",
+            higher_is_better: true,
+            collapsed: false,
+            configs: [
+              {
+                config: { cores: "single" },
+                values: [100, 150],
+              },
+            ],
+          },
+        ],
+      },
+    ];
+
+    fixture.detectChanges();
+
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain(
+      "+50%",
+    );
+    expect(
+      (fixture.nativeElement as HTMLElement).querySelector(
+        ".compare-table-delta--positive",
+      ),
+    ).toBeTruthy();
+    expect(
+      (fixture.nativeElement as HTMLElement).querySelectorAll(
+        ".compare-table-delta-placeholder",
+      ).length,
+    ).toBeGreaterThan(0);
   });
 });
