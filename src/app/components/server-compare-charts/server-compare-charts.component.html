@@ -410,35 +410,24 @@
                   </span>
                 </span>
               </h3>
-              @if (!isEmbedded && !getCompareFixedWideTrailingColSpan()) {
-                <button
-                  type="button"
-                  aria-label="Copy benchmark section link"
-                  class="btn-primary py-2 px-3 flex gap-1 items-center shrink-0"
-                  (click)="
-                    clipboardURL($event, 'benchmark_line_workload_profile')
-                  "
-                >
-                  <svg
-                    [lucideIcon]="clipboardIcon"
-                    size="16"
-                    aria-hidden="true"
-                  ></svg>
-                </button>
-              }
-            </div>
-          </td>
-          @if (getCompareFixedWideActionSpacerColSpan()) {
-            <td [colSpan]="getCompareFixedWideActionSpacerColSpan()"></td>
-          }
-          @if (getCompareFixedWideTrailingColSpan()) {
-            <td [colSpan]="1" class="compare-section-header-action-cell">
-              @if (!isEmbedded) {
-                <div class="flex justify-end">
+              @if (!getCompareFixedWideTrailingColSpan()) {
+                <div class="flex items-stretch gap-4 shrink-0">
+                  <button
+                    type="button"
+                    class="btn-primary compare-details-toggle"
+                    (click)="toggleWorkloadProfileDetails()"
+                  >
+                    <svg
+                      [lucideIcon]="workloadProfileShowMore ? 'eye-off' : 'eye'"
+                      size="16"
+                      aria-hidden="true"
+                    ></svg>
+                    {{ workloadProfileShowMore ? "Hide" : "Show" }} Details
+                  </button>
                   <button
                     type="button"
                     aria-label="Copy benchmark section link"
-                    class="btn-primary py-2 px-3 flex gap-1 items-center shrink-0"
+                    class="btn-primary py-2 px-3 flex items-center justify-center shrink-0"
                     (click)="
                       clipboardURL($event, 'benchmark_line_workload_profile')
                     "
@@ -451,6 +440,41 @@
                   </button>
                 </div>
               }
+            </div>
+          </td>
+          @if (getCompareFixedWideActionSpacerColSpan()) {
+            <td [colSpan]="getCompareFixedWideActionSpacerColSpan()"></td>
+          }
+          @if (getCompareFixedWideTrailingColSpan()) {
+            <td [colSpan]="1" class="compare-section-header-action-cell">
+              <div class="flex justify-end items-stretch gap-4">
+                <button
+                  type="button"
+                  class="btn-primary compare-details-toggle"
+                  (click)="toggleWorkloadProfileDetails()"
+                >
+                  <svg
+                    [lucideIcon]="workloadProfileShowMore ? 'eye-off' : 'eye'"
+                    size="16"
+                    aria-hidden="true"
+                  ></svg>
+                  {{ workloadProfileShowMore ? "Hide" : "Show" }} Details
+                </button>
+                <button
+                  type="button"
+                  aria-label="Copy benchmark section link"
+                  class="btn-primary py-2 px-3 flex items-center justify-center shrink-0"
+                  (click)="
+                    clipboardURL($event, 'benchmark_line_workload_profile')
+                  "
+                >
+                  <svg
+                    [lucideIcon]="clipboardIcon"
+                    size="16"
+                    aria-hidden="true"
+                  ></svg>
+                </button>
+              </div>
             </td>
           }
         </tr>
@@ -467,14 +491,6 @@
                 [benchmarkMeta]="workloadProfileBenchmarkMeta"
                 (layoutChanged)="layoutChanged.emit()"
               ></app-workload-profile-panel>
-              <div class="mt-4 mb-8 flex justify-center">
-                <button
-                  class="btn-primary py-2 px-3"
-                  (click)="toggleWorkloadProfileDetails()"
-                >
-                  {{ workloadProfileShowMore ? "Hide" : "Show" }} Details
-                </button>
-              </div>
             </div>
           </td>
           @if (getCompareFixedWideTrailingColSpan()) {
@@ -496,7 +512,7 @@
                     @if (benchmark.description) {
                       <svg
                         lucideInfo
-                        class="inline-block h-4 w-4 text-gray-200 ml-1"
+                        class="inline-block h-4 w-4 shrink-0 text-gray-200 ml-1"
                         (mouseenter)="
                           showTooltip($event, benchmark.description)
                         "
@@ -558,6 +574,9 @@
         track benchmarkCategory.id
       ) {
         @if (benchmarkCategory.data.length && !benchmarkCategory.hidden) {
+          @let canToggleDetails =
+            benchmarkCategory.id !== "passmark_cpu" &&
+            benchmarkCategory.id !== "passmark_other";
           <tr
             class="section_header"
             id="benchmark_line_{{ benchmarkCategory.id }}"
@@ -724,23 +743,42 @@
                   </span>
                 </h3>
                 @if (!isEmbedded && !getCompareFixedWideTrailingColSpan()) {
-                  <button
-                    type="button"
-                    aria-label="Copy benchmark section link"
-                    class="btn-primary py-2 px-3 flex gap-1 items-center shrink-0"
-                    (click)="
-                      clipboardURL(
-                        $event,
-                        'benchmark_line_' + benchmarkCategory.id
-                      )
-                    "
-                  >
-                    <svg
-                      [lucideIcon]="clipboardIcon"
-                      size="16"
-                      aria-hidden="true"
-                    ></svg>
-                  </button>
+                  <div class="flex items-stretch gap-4 shrink-0">
+                    @if (canToggleDetails) {
+                      <button
+                        type="button"
+                        class="btn-primary compare-details-toggle"
+                        (click)="toggleBenchmarkCategory(benchmarkCategory)"
+                      >
+                        <svg
+                          [lucideIcon]="
+                            benchmarkCategory.show_more ? 'eye-off' : 'eye'
+                          "
+                          size="16"
+                          aria-hidden="true"
+                        ></svg>
+                        {{ benchmarkCategory.show_more ? "Hide" : "Show" }}
+                        Details
+                      </button>
+                    }
+                    <button
+                      type="button"
+                      aria-label="Copy benchmark section link"
+                      class="btn-primary py-2 px-3 flex items-center justify-center shrink-0"
+                      (click)="
+                        clipboardURL(
+                          $event,
+                          'benchmark_line_' + benchmarkCategory.id
+                        )
+                      "
+                    >
+                      <svg
+                        [lucideIcon]="clipboardIcon"
+                        size="16"
+                        aria-hidden="true"
+                      ></svg>
+                    </button>
+                  </div>
                 }
               </div>
             </td>
@@ -750,11 +788,28 @@
             @if (getCompareFixedWideTrailingColSpan()) {
               <td [colSpan]="1" class="compare-section-header-action-cell">
                 @if (!isEmbedded) {
-                  <div class="flex justify-end">
+                  <div class="flex justify-end items-stretch gap-4">
+                    @if (canToggleDetails) {
+                      <button
+                        type="button"
+                        class="btn-primary compare-details-toggle"
+                        (click)="toggleBenchmarkCategory(benchmarkCategory)"
+                      >
+                        <svg
+                          [lucideIcon]="
+                            benchmarkCategory.show_more ? 'eye-off' : 'eye'
+                          "
+                          size="16"
+                          aria-hidden="true"
+                        ></svg>
+                        {{ benchmarkCategory.show_more ? "Hide" : "Show" }}
+                        Details
+                      </button>
+                    }
                     <button
                       type="button"
                       aria-label="Copy benchmark section link"
-                      class="btn-primary py-2 px-3 flex gap-1 items-center shrink-0"
+                      class="btn-primary py-2 px-3 flex items-center justify-center shrink-0"
                       (click)="
                         clipboardURL(
                           $event,
@@ -867,26 +922,6 @@
                     ></app-llm-inference-chart>
                   </div>
                 }
-                @if (
-                  !isEmbedded &&
-                  benchmarkCategory.id !== "passmark_cpu" &&
-                  benchmarkCategory.id !== "passmark_other"
-                ) {
-                  <div
-                    class="mt-4 mb-8 flex justify-center"
-                    [ngClass]="{
-                      'mb-8': !benchmarkCategory.show_more,
-                    }"
-                  >
-                    <button
-                      class="btn-primary py-2 px-3"
-                      (click)="toggleBenchmarkCategory(benchmarkCategory)"
-                    >
-                      {{ benchmarkCategory.show_more ? "Hide" : "Show" }}
-                      Details
-                    </button>
-                  </div>
-                }
               </div>
             </td>
             @if (getCompareFixedWideTrailingColSpan()) {
@@ -909,7 +944,7 @@
                       @if (benchmarkData.description) {
                         <svg
                           lucideInfo
-                          class="inline-block h-4 w-4 text-gray-200 ml-1"
+                          class="inline-block h-4 w-4 shrink-0 text-gray-200 ml-1"
                           (mouseenter)="
                             showTooltip($event, benchmarkData.description)
                           "
@@ -986,7 +1021,7 @@
                         @if (benchmarkData.description) {
                           <svg
                             lucideInfo
-                            class="h-4 w-4 text-gray-200"
+                            class="h-4 w-4 shrink-0 text-gray-200"
                             (mouseenter)="
                               showTooltip($event, benchmarkData.description)
                             "
@@ -1087,76 +1122,155 @@
             [id]="'benchmark_line_' + chartItem.chart.id"
           >
             <td [colSpan]="getCompareFixedWideContentColSpan()">
-              <h3
-                class="text-xl font-semibold flex flex-nowrap gap-2 items-center min-w-0"
-              >
-                <svg
-                  [lucideIcon]="chartItem.chart.name | benchmarkIcon"
-                  class="h-6 w-6 shrink-0"
-                ></svg>
-                <span class="truncate">{{ chartItem.chart.name }}</span>
-                @if (
-                  chartItem.chart.options[chartItem.chart.selectedOption].icon
-                ) {
-                  <svg
-                    [lucideIcon]="
-                      chartItem.chart.options[chartItem.chart.selectedOption]
-                        .icon || ''
-                    "
-                    class="h-4 w-4 text-gray-200 shrink-0"
-                    (mouseenter)="
-                      showTooltip(
-                        $event,
+              <div class="compare-section-header-row">
+                <h3 class="text-xl font-semibold m-0 flex items-center min-w-0">
+                  <span class="compare-section-header-title">
+                    <svg
+                      [lucideIcon]="chartItem.chart.name | benchmarkIcon"
+                      class="h-6 w-6 shrink-0"
+                    ></svg>
+                    <span
+                      class="compare-section-header-title__text min-w-0 truncate"
+                      >{{ chartItem.chart.name }}</span
+                    >
+                    <span class="compare-section-header-title__icons">
+                      @if (
                         chartItem.chart.options[chartItem.chart.selectedOption]
-                          .tooltip
-                      )
-                    "
-                    (mouseleave)="hideTooltip()"
-                  ></svg>
-                }
-                <svg
-                  lucideInfo
-                  class="h-4 w-4 text-gray-200 shrink-0"
-                  (mouseenter)="
-                    showTooltipChart(
-                      $event,
-                      chartItem.chart.options[chartItem.chart.selectedOption]
-                        .benchmark_id
-                    )
-                  "
-                  (mouseleave)="hideTooltip()"
-                ></svg>
-                @if (
-                  getBenchmarkNote(
-                    chartItem.chart.options[chartItem.chart.selectedOption]
-                      .benchmark_id,
-                    false
-                  )
-                ) {
-                  <svg
-                    lucideTriangleAlert
-                    class="benchmark-note-icon"
-                    (mouseenter)="
-                      showWarningSectionTooltip(
-                        $event,
+                          .icon
+                      ) {
+                        <svg
+                          [lucideIcon]="
+                            chartItem.chart.options[
+                              chartItem.chart.selectedOption
+                            ].icon || ''
+                          "
+                          class="h-4 w-4 text-gray-200 shrink-0"
+                          (mouseenter)="
+                            showTooltip(
+                              $event,
+                              chartItem.chart.options[
+                                chartItem.chart.selectedOption
+                              ].tooltip
+                            )
+                          "
+                          (mouseleave)="hideTooltip()"
+                        ></svg>
+                      }
+                      <svg
+                        lucideInfo
+                        class="h-4 w-4 text-gray-200 shrink-0"
+                        (mouseenter)="
+                          showTooltipChart(
+                            $event,
+                            chartItem.chart.options[
+                              chartItem.chart.selectedOption
+                            ].benchmark_id
+                          )
+                        "
+                        (mouseleave)="hideTooltip()"
+                      ></svg>
+                      @if (
                         getBenchmarkNote(
                           chartItem.chart.options[
                             chartItem.chart.selectedOption
                           ].benchmark_id,
                           false
                         )
-                      )
-                    "
-                    (mouseleave)="hideTooltip()"
-                  ></svg>
+                      ) {
+                        <svg
+                          lucideTriangleAlert
+                          class="benchmark-note-icon"
+                          (mouseenter)="
+                            showWarningSectionTooltip(
+                              $event,
+                              getBenchmarkNote(
+                                chartItem.chart.options[
+                                  chartItem.chart.selectedOption
+                                ].benchmark_id,
+                                false
+                              )
+                            )
+                          "
+                          (mouseleave)="hideTooltip()"
+                        ></svg>
+                      }
+                    </span>
+                  </span>
+                </h3>
+                @if (!isEmbedded && !getCompareFixedWideTrailingColSpan()) {
+                  <div class="flex items-stretch gap-4 shrink-0">
+                    <button
+                      type="button"
+                      class="btn-primary compare-details-toggle"
+                      (click)="toggleBenchmarkCategory(chartItem)"
+                    >
+                      <svg
+                        [lucideIcon]="chartItem.show_more ? 'eye-off' : 'eye'"
+                        size="16"
+                        aria-hidden="true"
+                      ></svg>
+                      {{ chartItem.show_more ? "Hide" : "Show" }} Details
+                    </button>
+                    <button
+                      type="button"
+                      aria-label="Copy benchmark section link"
+                      class="btn-primary py-2 px-3 flex items-center justify-center shrink-0"
+                      (click)="
+                        clipboardURL(
+                          $event,
+                          'benchmark_line_' + chartItem.chart.id
+                        )
+                      "
+                    >
+                      <svg
+                        [lucideIcon]="clipboardIcon"
+                        size="16"
+                        aria-hidden="true"
+                      ></svg>
+                    </button>
+                  </div>
                 }
-              </h3>
+              </div>
             </td>
             @if (getCompareFixedWideActionSpacerColSpan()) {
               <td [colSpan]="getCompareFixedWideActionSpacerColSpan()"></td>
             }
             @if (getCompareFixedWideTrailingColSpan()) {
-              <td [colSpan]="1" class="compare-section-header-action-cell"></td>
+              <td [colSpan]="1" class="compare-section-header-action-cell">
+                @if (!isEmbedded) {
+                  <div class="flex justify-end items-stretch gap-4">
+                    <button
+                      type="button"
+                      class="btn-primary compare-details-toggle"
+                      (click)="toggleBenchmarkCategory(chartItem)"
+                    >
+                      <svg
+                        [lucideIcon]="chartItem.show_more ? 'eye-off' : 'eye'"
+                        size="16"
+                        aria-hidden="true"
+                      ></svg>
+                      {{ chartItem.show_more ? "Hide" : "Show" }} Details
+                    </button>
+                    <button
+                      type="button"
+                      aria-label="Copy benchmark section link"
+                      class="btn-primary py-2 px-3 flex items-center justify-center shrink-0"
+                      (click)="
+                        clipboardURL(
+                          $event,
+                          'benchmark_line_' + chartItem.chart.id
+                        )
+                      "
+                    >
+                      <svg
+                        [lucideIcon]="clipboardIcon"
+                        size="16"
+                        aria-hidden="true"
+                      ></svg>
+                    </button>
+                  </div>
+                }
+              </td>
             }
           </tr>
           <tr class="compare-fixed-chart-row">
@@ -1176,7 +1290,6 @@
                   (secondaryOptionSelected)="
                     syncMultiBarHeaderSecondaryOption(chartItem, $event)
                   "
-                  (detailsToggled)="toggleBenchmarkCategory(chartItem)"
                 ></app-benchmark-multi-bar-chart>
               </div>
             </td>

@@ -767,4 +767,50 @@ describe("SearchBarComponent", () => {
       "30% of 100; target score: 30",
     );
   });
+
+  it("hides the range slider thumb while its numeric value is unset", () => {
+    component.filterCategories = [
+      {
+        category_id: "advisor",
+        name: "Advisor",
+        icon: "bot",
+        collapsed: false,
+      },
+    ];
+    component.customControls = [
+      {
+        name: "average_cpu_utilization",
+        category_id: "advisor",
+        type: "rangeSlider",
+        title: "Average utilization",
+        numericValue: null,
+        min: 0,
+        max: 100,
+        step: 10,
+        unit: "%",
+      },
+    ];
+
+    fixture.detectChanges();
+
+    const unsetSlider = fixture.nativeElement.querySelector(
+      ".custom-slider__input",
+    ) as HTMLInputElement;
+
+    expect(unsetSlider.classList).toContain("custom-slider__input--unset");
+
+    component.customControls = [
+      {
+        ...component.customControls[0],
+        numericValue: 40,
+      },
+    ];
+    fixture.detectChanges();
+
+    const setSlider = fixture.nativeElement.querySelector(
+      ".custom-slider__input",
+    ) as HTMLInputElement;
+
+    expect(setSlider.classList).not.toContain("custom-slider__input--unset");
+  });
 });

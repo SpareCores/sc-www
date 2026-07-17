@@ -1234,6 +1234,10 @@
                     <input
                       type="range"
                       class="custom-slider__input"
+                      [class.custom-slider__input--unset]="
+                        control.numericValue === null ||
+                        control.numericValue === undefined
+                      "
                       [min]="control.min ?? 0"
                       [max]="control.max ?? 100"
                       [step]="control.step ?? 1"

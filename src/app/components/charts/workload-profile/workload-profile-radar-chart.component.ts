@@ -7,9 +7,11 @@ import {
   computed,
   inject,
   input,
+  output,
   viewChild,
 } from "@angular/core";
 import { BaseChartDirective } from "ng2-charts";
+import { ActiveElement, ChartEvent } from "chart.js";
 import { WorkloadProfileRadarChartBuilderService } from "./workload-profile-radar-chart-builder.service";
 import {
   WorkloadProfileBenchmarkMeta,
@@ -40,6 +42,8 @@ export class WorkloadProfileRadarChartComponent {
   serverDetails = input<WorkloadProfileDetailsServer | undefined>(undefined);
   chartData = input<WorkloadProfileRadarChartData | undefined>(undefined);
   chartOptions = input<WorkloadProfileRadarChartOptions>(undefined);
+
+  readonly profileSelected = output<string>();
 
   readonly isBrowser = isPlatformBrowser(this.platformId);
 
@@ -79,13 +83,37 @@ export class WorkloadProfileRadarChartComponent {
         : this.compareCharts()?.chartData),
   );
 
-  readonly resolvedChartOptions = computed(
-    () =>
+  readonly resolvedChartOptions = computed(() => {
+    const options =
       this.chartOptions() ??
       (this.layout() === "details"
         ? this.detailsCharts()?.options
-        : this.compareCharts()?.options),
-  );
+        : this.compareCharts()?.options);
+
+    if (this.layout() !== "details" || !options) {
+      return options;
+    }
+
+    return {
+      ...options,
+      onHover: (_event: ChartEvent, elements: ActiveElement[], chart) => {
+        chart.canvas.style.cursor = elements.length > 0 ? "pointer" : "default";
+      },
+      onClick: (_event: ChartEvent, elements: ActiveElement[]) => {
+        const index = elements[0]?.index;
+
+        if (index == null) {
+          return;
+        }
+
+        const benchmarkId = this.detailsCharts()?.benchmarkIds[index];
+
+        if (benchmarkId) {
+          this.profileSelected.emit(benchmarkId);
+        }
+      },
+    };
+  });
 
   readonly hasChart = computed(() => !!this.resolvedChartData());
 
