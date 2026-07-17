@@ -47,6 +47,7 @@ describe("workload-profile-breakdown.utils", () => {
         {
           benchmark_id: "static_web:rps-extrapolated",
           description: "Static web speed description",
+          note: "Static web scaling caveat",
           unit: "Requests per second (rps)",
         },
       ],
@@ -75,6 +76,7 @@ describe("workload-profile-breakdown.utils", () => {
       "Static web speed description",
     );
     expect(table?.rows[0]?.unit).toBe("Requests per second (rps)");
+    expect(table?.rows[0]?.benchmarkNote).toBe("Static web scaling caveat");
   });
 
   it("flags note rows and resolves benchmark note tooltips", () => {

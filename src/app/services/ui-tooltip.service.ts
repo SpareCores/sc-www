@@ -100,8 +100,7 @@ export class UiTooltipService {
     }
 
     this.resetTooltipStyles(tooltipElement);
-    tooltipElement.classList.remove("tooltip-panel--warning");
-    tooltipElement.classList.remove("tooltip-panel--warning-wide");
+    this.applyVariant(tooltipElement, "default");
   }
 
   private applyVariant(

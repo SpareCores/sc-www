@@ -1198,9 +1198,9 @@ export class ServerDetailsComponent implements OnInit, OnDestroy {
       matchingIdentityProperties.length > 0;
     const nameTooltips = shouldAggregateIdentityTooltips
       ? this.uniqueTooltips(
-          properties
-            .filter((property) => identityPropertyIds.includes(property.id))
-            .flatMap((property) => property.tooltips || []),
+          [nameProperty, ...matchingIdentityProperties].flatMap(
+            (property) => property.tooltips || [],
+          ),
         )
       : nameProperty.tooltips || [];
 

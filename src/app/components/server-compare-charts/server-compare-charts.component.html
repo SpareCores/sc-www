@@ -1206,9 +1206,10 @@
                       [lucideIcon]="chartItem.chart.name | benchmarkIcon"
                       class="h-6 w-6 shrink-0"
                     ></svg>
-                    <span class="compare-section-header-title__text truncate">{{
-                      chartItem.chart.name
-                    }}</span>
+                    <span
+                      class="compare-section-header-title__text min-w-0 truncate"
+                      >{{ chartItem.chart.name }}</span
+                    >
                     <span class="compare-section-header-title__icons">
                       @if (
                         chartItem.chart.options[chartItem.chart.selectedOption]
@@ -1245,6 +1246,31 @@
                         "
                         (mouseleave)="hideTooltip()"
                       ></svg>
+                      @if (
+                        getBenchmarkNote(
+                          chartItem.chart.options[
+                            chartItem.chart.selectedOption
+                          ].benchmark_id,
+                          false
+                        )
+                      ) {
+                        <svg
+                          lucideTriangleAlert
+                          class="benchmark-note-icon"
+                          (mouseenter)="
+                            showWarningSectionTooltip(
+                              $event,
+                              getBenchmarkNote(
+                                chartItem.chart.options[
+                                  chartItem.chart.selectedOption
+                                ].benchmark_id,
+                                false
+                              )
+                            )
+                          "
+                          (mouseleave)="hideTooltip()"
+                        ></svg>
+                      }
                     </span>
                   </span>
                   @if (
