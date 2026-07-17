@@ -1173,6 +1173,10 @@ export class ServerCompareComponent
       return;
     }
 
+    if (this.route.snapshot.paramMap.get("id")) {
+      this.serverCompare.syncCompareRoute();
+    }
+
     this.remapBenchmarkConfigValues(indexMap);
     this.servers = nextServers;
     this.instances = selection.map((item) => ({

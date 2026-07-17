@@ -656,11 +656,15 @@ export class ServerCompareChartsComponent implements OnChanges {
       candidateValue,
       baselineValue,
     );
+    const lowerIsBetter = benchmark?.higher_is_better === false;
 
     return toCompareDeltaView(
-      benchmark?.higher_is_better === false
+      lowerIsBetter
         ? { ...delta, tone: invertCompareDeltaTone(delta.tone) }
         : delta,
+      lowerIsBetter
+        ? formatCompareSignedPercentageDeltaLabel
+        : formatCompareDeltaLabel,
     );
   }
 

@@ -96,15 +96,27 @@ describe("ServerCompareService", () => {
       "/compare?instances=old",
     );
     const navigateByUrl = spyOn(router, "navigateByUrl");
+    service.selectedForCompare = [
+      {
+        display_name: "A+B/C=",
+        vendor: "aws",
+        server: "a1",
+        zonesRegions: [{ zone: "zone+1", region: "us-east/1" }],
+      },
+      serverB,
+    ];
+    const expectedInstances = btoa(JSON.stringify(service.selectedForCompare));
     service.setBaselineServer({ vendor: "aws", server: "a1" });
 
     service.syncCompareRoute();
 
-    expect(navigateByUrl).toHaveBeenCalledWith(
-      jasmine.stringMatching(
-        /^\/compare\?instances=.+&baseline_vendor=aws&baseline_server=a1$/,
-      ),
-    );
+    const navigatedUrl = navigateByUrl.calls.mostRecent().args[0] as string;
+    const queryParams = new URL(navigatedUrl, "http://localhost").searchParams;
+
+    expect(queryParams.get("instances")).toBe(expectedInstances);
+    expect(queryParams.get("baseline_vendor")).toBe("aws");
+    expect(queryParams.get("baseline_server")).toBe("a1");
+    expect(navigatedUrl).toContain(encodeURIComponent(expectedInstances));
   });
 
   it("does not sync the compare route when not on compare", () => {

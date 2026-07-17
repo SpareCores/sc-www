@@ -774,4 +774,29 @@ describe("ServerCompareChartsComponent", () => {
       ).length,
     ).toBeGreaterThan(0);
   });
+
+  it("keeps the raw percentage sign for lower-is-better benchmark deltas", () => {
+    component.baselineServer = {
+      vendor_id: "aws",
+      server_id: "server-a",
+      display_name: "Server A",
+    } as unknown as (typeof component.servers)[0];
+    component.servers = [
+      component.baselineServer,
+      {
+        vendor_id: "gcp",
+        server_id: "server-b",
+        display_name: "Server B",
+      },
+    ] as unknown as typeof component.servers;
+
+    expect(
+      component.getBenchmarkValueDelta(150, [100, 150], 1, {
+        higher_is_better: false,
+      }),
+    ).toEqual({
+      label: "+50%",
+      tone: "negative",
+    });
+  });
 });

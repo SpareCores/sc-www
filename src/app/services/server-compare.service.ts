@@ -189,7 +189,7 @@ export class ServerCompareService implements OnDestroy {
     }
 
     const encoded = btoa(JSON.stringify(this.selectedForCompare));
-    let url = "/compare?instances=" + encoded;
+    let url = "/compare?instances=" + encodeURIComponent(encoded);
 
     if (this.baselineServer) {
       url +=

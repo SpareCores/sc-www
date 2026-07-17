@@ -422,4 +422,57 @@ describe("ServerCompareComponent", () => {
     expect(syncCompareRoute).not.toHaveBeenCalled();
     expect(pushState).toHaveBeenCalled();
   });
+
+  it("canonicalizes preset compare routes before applying selection changes", () => {
+    routeSnapshot.paramMap = convertToParamMap({ id: "popular" });
+    const serverA = {
+      vendor_id: "aws",
+      api_reference: "a1",
+      display_name: "A",
+    };
+    const serverB = {
+      vendor_id: "gcp",
+      api_reference: "b1",
+      display_name: "B",
+    };
+    component.ngOnInit();
+    component.isLoading = false;
+    component.servers = [serverA, serverB] as typeof component.servers;
+    component.benchmarkMeta = [
+      {
+        benchmark_id: "bw_mem",
+        configs: [{ config: {}, values: [1, 2] }],
+      },
+    ];
+    component.benchmarkCategories = [
+      {
+        id: "memory",
+        data: component.benchmarkMeta,
+      },
+    ];
+    getServerMeta.calls.reset();
+
+    selectionChanged.next([
+      {
+        display_name: "B",
+        vendor: "gcp",
+        server: "b1",
+        zonesRegions: [],
+      },
+      {
+        display_name: "A",
+        vendor: "aws",
+        server: "a1",
+        zonesRegions: [],
+      },
+    ]);
+
+    expect(syncCompareRoute).toHaveBeenCalled();
+    expect(component.servers).toEqual([
+      serverB,
+      serverA,
+    ] as typeof component.servers);
+    expect(component.benchmarkMeta[0].configs[0].values).toEqual([2, 1]);
+    expect(getServerMeta).not.toHaveBeenCalled();
+  });
 });
