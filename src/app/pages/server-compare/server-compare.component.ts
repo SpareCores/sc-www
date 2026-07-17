@@ -33,6 +33,7 @@ import { CommonModule, isPlatformBrowser } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import {
+  ServerCompare,
   ServerCompareService,
   ZoneAndRegion,
 } from "../../services/server-compare.service";
@@ -175,6 +176,7 @@ export class ServerCompareComponent
   selectedBaselineServer: ExtendedServerDetails | null = null;
 
   private lastEncodedCompareQuery: string | null = null;
+  private compareLoadId = 0;
 
   benchmarkCategories: any[] = [
     {
@@ -395,6 +397,18 @@ export class ServerCompareComponent
         this.setup();
       }),
     );
+
+    this.subscription.add(
+      this.serverCompare.baselineChanged.subscribe((baseline) => {
+        this.applyBaselineFromCompareService(baseline);
+      }),
+    );
+
+    this.subscription.add(
+      this.serverCompare.selectionChanged.subscribe((selection) => {
+        this.applyCompareSelectionFromService(selection);
+      }),
+    );
   }
 
   ngOnDestroy() {
@@ -425,6 +439,7 @@ export class ServerCompareComponent
   }
 
   setup() {
+    const loadId = ++this.compareLoadId;
     const id = this.route.snapshot.paramMap.get("id");
     const param = this.route.snapshot.queryParams["instances"];
 
@@ -469,6 +484,7 @@ export class ServerCompareComponent
             id: INVALID_COMPARE_URL_TOAST_ID,
           });
         }
+        this.isLoading = false;
         return;
       }
 
@@ -500,7 +516,8 @@ export class ServerCompareComponent
     if (this.instances?.length > 0) {
       this.isLoading = true;
 
-      let serverCount = this.instances?.length || 0;
+      const loadInstances = this.instances.slice();
+      const serverCount = loadInstances.length;
 
       let promises: Promise<any>[] = [
         this.keeperAPI.getServerMeta(),
@@ -509,7 +526,7 @@ export class ServerCompareComponent
         this.keeperAPI.getRegions(),
         this.keeperAPI.getZones(),
       ];
-      this.instances?.forEach((instance: any) => {
+      loadInstances.forEach((instance: any) => {
         promises.push(
           this.keeperAPI.getServerV2(instance.vendor, instance.server),
         );
@@ -526,6 +543,10 @@ export class ServerCompareComponent
       });
       Promise.all(promises)
         .then((data) => {
+          if (loadId !== this.compareLoadId) {
+            return;
+          }
+
           const promiseAllData = data.map((x: any) => x.body);
           const [meta, benchmarkMeta, vendors, regions, zones, ...servers] =
             promiseAllData;
@@ -545,7 +566,7 @@ export class ServerCompareComponent
           for (let i = 0; i < serverCount; i++) {
             let server: ExtendedServerDetails = servers[i * 3];
             const selectedZones: ZoneAndRegion[] =
-              this.instances[i].zonesRegions || [];
+              loadInstances[i].zonesRegions || [];
 
             if (selectedZones.length) {
               this.showZoneIds = true;
@@ -753,12 +774,20 @@ export class ServerCompareComponent
           }
         })
         .catch((err) => {
+          if (loadId !== this.compareLoadId) {
+            return;
+          }
+
           this.analytics.SentryException(err, {
             tags: { location: this.constructor.name, function: "compareInit" },
           });
           console.error(err);
         })
         .finally(() => {
+          if (loadId !== this.compareLoadId) {
+            return;
+          }
+
           this.isLoading = false;
           this.restoreBaselineFromUrl();
           if (isPlatformBrowser(this.platformId)) {
@@ -772,6 +801,8 @@ export class ServerCompareComponent
             }, 150);
           }
         });
+    } else {
+      this.isLoading = false;
     }
 
     if (isPlatformBrowser(this.platformId)) {
@@ -1012,6 +1043,7 @@ export class ServerCompareComponent
 
   selectBaselineServer(server: ExtendedServerDetails | null): void {
     this.selectedBaselineServer = server;
+    this.syncBaselineToCompareService();
     this.syncCompareUrlState();
     this.baselineDropdown()?.hide();
   }
@@ -1047,9 +1079,158 @@ export class ServerCompareComponent
       this.selectedBaselineServer = null;
     }
 
+    this.syncBaselineToCompareService();
     this.lastEncodedCompareQuery = encodeQueryParams(
       this.getCompareUrlQueryParams(),
     );
+  }
+
+  private syncBaselineToCompareService(): void {
+    if (!this.selectedBaselineServer) {
+      this.serverCompare.setBaselineServer(null);
+      return;
+    }
+
+    this.serverCompare.setBaselineServer({
+      vendor: this.selectedBaselineServer.vendor_id,
+      server: this.selectedBaselineServer.api_reference,
+    });
+  }
+
+  private applyBaselineFromCompareService(
+    baseline: { vendor: string; server: string } | null,
+  ): void {
+    const nextBaseline = baseline
+      ? (this.servers.find(
+          (server) =>
+            server.vendor_id === baseline.vendor &&
+            server.api_reference === baseline.server,
+        ) ?? null)
+      : null;
+
+    const unchanged =
+      (!nextBaseline && !this.selectedBaselineServer) ||
+      (!!nextBaseline &&
+        isCompareBaselineServer(nextBaseline, this.selectedBaselineServer));
+
+    if (unchanged) {
+      return;
+    }
+
+    this.selectedBaselineServer = nextBaseline;
+    if (this.servers.length) {
+      this.syncCompareUrlState();
+    }
+  }
+
+  private applyCompareSelectionFromService(selection: ServerCompare[]): void {
+    if (this.isLoading) {
+      return;
+    }
+
+    if (!selection.length) {
+      if (!this.servers.length && !this.instances.length) {
+        return;
+      }
+
+      this.servers = [];
+      this.instances = [];
+      this.instancesRaw = "";
+      this.benchmarkMeta = [];
+      this.benchmarkCategories.forEach((category) => {
+        category.data = [];
+      });
+      this.selectedBaselineServer = null;
+      this.updateCompareBreadcrumb(0);
+      this.syncCompareUrlState();
+      return;
+    }
+
+    const nextServers: ExtendedServerDetails[] = [];
+    const indexMap: number[] = [];
+
+    for (const item of selection) {
+      const oldIndex = this.servers.findIndex(
+        (server) =>
+          server.vendor_id === item.vendor &&
+          server.api_reference === item.server,
+      );
+
+      if (oldIndex === -1) {
+        this.serverCompare.syncCompareRoute();
+        return;
+      }
+
+      indexMap.push(oldIndex);
+      nextServers.push(this.servers[oldIndex]);
+    }
+
+    const orderUnchanged =
+      indexMap.length === this.servers.length &&
+      indexMap.every((oldIndex, index) => oldIndex === index);
+
+    if (orderUnchanged) {
+      return;
+    }
+
+    this.remapBenchmarkConfigValues(indexMap);
+    this.servers = nextServers;
+    this.instances = selection.map((item) => ({
+      display_name: item.display_name,
+      vendor: item.vendor,
+      server: item.server,
+      zonesRegions: item.zonesRegions ? [...item.zonesRegions] : [],
+    }));
+    this.instancesRaw = btoa(JSON.stringify(this.instances));
+    this.updateCompareBreadcrumb(this.servers.length);
+
+    if (
+      this.selectedBaselineServer &&
+      !this.servers.some((server) =>
+        isCompareBaselineServer(server, this.selectedBaselineServer),
+      )
+    ) {
+      this.selectedBaselineServer = null;
+    }
+
+    this.syncCompareUrlState();
+    this.onCompareTableLayoutChange();
+  }
+
+  private remapBenchmarkConfigValues(indexMap: number[]): void {
+    this.benchmarkMeta?.forEach((benchmark: any) => {
+      benchmark.configs?.forEach((config: { values?: unknown[] }) => {
+        if (!Array.isArray(config.values) || !config.values.length) {
+          return;
+        }
+
+        config.values = indexMap.map((oldIndex) => config.values?.[oldIndex]);
+      });
+    });
+  }
+
+  private updateCompareBreadcrumb(serverCount: number): void {
+    if (serverCount > 0) {
+      const breadcrumb = {
+        name: `Compare (${serverCount})`,
+        url: `/compare`,
+        queryParams: this.instancesRaw
+          ? { instances: this.instancesRaw }
+          : undefined,
+      };
+
+      if (this.breadcrumbs.length < 3) {
+        this.breadcrumbs.push(breadcrumb);
+      } else {
+        this.breadcrumbs[2] = breadcrumb;
+      }
+
+      return;
+    }
+
+    if (this.breadcrumbs.length > 2) {
+      this.breadcrumbs.pop();
+    }
   }
 
   private syncCompareUrlState(): void {
