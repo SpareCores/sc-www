@@ -362,3 +362,22 @@ export function formatCompareDeltaDisplayLabel(
   const label = formatter(delta);
   return label === "0%" ? null : label;
 }
+
+export type CompareDeltaView = {
+  label: string;
+  tone: CompareMetricDeltaTone;
+};
+
+export function toCompareDeltaView(
+  delta: CompareMetricDelta | null | undefined,
+  formatter: (
+    delta: CompareMetricDelta,
+  ) => string | null = formatCompareDeltaLabel,
+): CompareDeltaView | null {
+  if (!delta) {
+    return null;
+  }
+
+  const label = formatCompareDeltaDisplayLabel(delta, formatter);
+  return label ? { label, tone: delta.tone } : null;
+}
