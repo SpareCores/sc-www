@@ -29,6 +29,7 @@ import {
   LucideScale,
   LucideShieldCog,
   LucideShipWheel,
+  LucideTarget,
   LucideTrash,
 } from "@lucide/angular";
 import { ServerCompareService } from "../../services/server-compare.service";
@@ -58,6 +59,7 @@ import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.di
     LucideScale,
     LucideShieldCog,
     LucideShipWheel,
+    LucideTarget,
     LucideTrash,
     RouterLink,
     CommonModule,
@@ -97,12 +99,16 @@ export class HeaderComponent {
     return this.serverCompare.compareCount();
   }
 
-  compareServers() {
-    this.serverCompare.openCompare();
-  }
-
   getServersForCompare() {
     return this.serverCompare.selectedForCompare;
+  }
+
+  isBaselineServer(server: { vendor: string; server: string }): boolean {
+    return this.serverCompare.isBaselineServer(server);
+  }
+
+  toggleBaselineServer(server: { vendor: string; server: string }): void {
+    this.serverCompare.toggleBaselineServer(server);
   }
 
   removeFromCompare(server: any) {

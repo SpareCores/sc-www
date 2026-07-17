@@ -86,4 +86,85 @@ describe("HeaderComponent", () => {
 
     expect(reorderSelectedForCompare).toHaveBeenCalledWith(0, 2);
   });
+
+  it("removes a server from the compare selection", () => {
+    const serverCompare = TestBed.inject(ServerCompareService);
+    const toggleCompare = spyOn(serverCompare, "toggleCompare");
+    const server = {
+      display_name: "m7a.4xlarge",
+      vendor: "aws",
+      server: "m7a.4xlarge",
+      zonesRegions: [],
+    };
+
+    component.removeFromCompare(server);
+
+    expect(toggleCompare).toHaveBeenCalledWith(false, server);
+  });
+
+  it("shows the target icon next to the baseline server", () => {
+    const serverCompare = TestBed.inject(ServerCompareService);
+    serverCompare.selectedForCompare = [
+      {
+        display_name: "m7a.4xlarge",
+        vendor: "aws",
+        server: "m7a.4xlarge",
+        zonesRegions: [],
+      },
+      {
+        display_name: "t2d-standard-16",
+        vendor: "gcp",
+        server: "t2d-standard-16",
+        zonesRegions: [],
+      },
+    ];
+    serverCompare.setBaselineServer({
+      vendor: "aws",
+      server: "m7a.4xlarge",
+    });
+    fixture.detectChanges();
+
+    const rows = (fixture.nativeElement as HTMLElement).querySelectorAll(
+      "#compare_options .compare_dropdown_row",
+    );
+    expect(rows.length).toBe(2);
+    expect(
+      rows[0].querySelector('[aria-label="Clear baseline server"]'),
+    ).not.toBeNull();
+    expect(
+      rows[1].querySelector('[aria-label="Set baseline server"]'),
+    ).not.toBeNull();
+  });
+
+  it("toggles baseline selection from the compare menu", () => {
+    const serverCompare = TestBed.inject(ServerCompareService);
+    const toggleBaselineServer = spyOn(
+      serverCompare,
+      "toggleBaselineServer",
+    ).and.callThrough();
+    serverCompare.selectedForCompare = [
+      {
+        display_name: "m7a.4xlarge",
+        vendor: "aws",
+        server: "m7a.4xlarge",
+        zonesRegions: [],
+      },
+    ];
+    fixture.detectChanges();
+
+    const baselineButton = (fixture.nativeElement as HTMLElement).querySelector(
+      '#compare_options [aria-label="Set baseline server"]',
+    ) as HTMLButtonElement;
+    baselineButton.click();
+
+    expect(toggleBaselineServer).toHaveBeenCalledWith({
+      display_name: "m7a.4xlarge",
+      vendor: "aws",
+      server: "m7a.4xlarge",
+      zonesRegions: [],
+    });
+    expect(
+      serverCompare.isBaselineServer({ vendor: "aws", server: "m7a.4xlarge" }),
+    ).toBeTrue();
+  });
 });
