@@ -496,12 +496,8 @@
           class="compare_dropdown_baseline"
           [class.text-gray-400]="!isBaselineServer(server)"
           [class.text-emerald-400]="isBaselineServer(server)"
-          [attr.aria-label]="
-            isBaselineServer(server)
-              ? 'Clear baseline server'
-              : 'Set baseline server'
-          "
-          [attr.aria-pressed]="isBaselineServer(server)"
+          aria-label="Toggle baseline server"
+          [attr.aria-pressed]="isBaselineServer(server) ? 'true' : 'false'"
           (click)="toggleBaselineServer(server); $event.stopPropagation()"
         >
           <span class="navbar_icon">
