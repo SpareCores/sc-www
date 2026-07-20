@@ -129,10 +129,14 @@ describe("HeaderComponent", () => {
     );
     expect(rows.length).toBe(2);
     expect(
-      rows[0].querySelector('[aria-label="Clear baseline server"]'),
+      rows[0].querySelector(
+        '[aria-label="Toggle baseline server"][aria-pressed="true"]',
+      ),
     ).not.toBeNull();
     expect(
-      rows[1].querySelector('[aria-label="Set baseline server"]'),
+      rows[1].querySelector(
+        '[aria-label="Toggle baseline server"][aria-pressed="false"]',
+      ),
     ).not.toBeNull();
   });
 
@@ -153,7 +157,7 @@ describe("HeaderComponent", () => {
     fixture.detectChanges();
 
     const baselineButton = (fixture.nativeElement as HTMLElement).querySelector(
-      '#compare_options [aria-label="Set baseline server"]',
+      '#compare_options [aria-label="Toggle baseline server"][aria-pressed="false"]',
     ) as HTMLButtonElement;
     baselineButton.click();
 
