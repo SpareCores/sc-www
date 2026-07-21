@@ -68,7 +68,7 @@
       <thead>
         <tr>
           <th>BENCHMARK</th>
-          <th>SCORE</th>
+          <th class="passmark-score-col">SCORE</th>
         </tr>
       </thead>
       <tbody>
@@ -78,11 +78,11 @@
         ) {
           <tr class="similar_family_line">
             <td>
-              <div class="flex gap-1 items-center">
-                {{ cpuBenchmark.name }}
+              <div class="flex flex-nowrap gap-1 items-center">
+                <span class="whitespace-nowrap">{{ cpuBenchmark.name }}</span>
                 <svg
                   lucideInfo
-                  class="h-4 w-4 text-gray-200"
+                  class="h-4 w-4 shrink-0 text-gray-200"
                   (mouseenter)="
                     showTooltipChart($event, cpuBenchmark.benchmark_id)
                   "
@@ -103,7 +103,7 @@
                 }
               </div>
             </td>
-            <td>
+            <td class="passmark-score-col">
               {{ cpuBenchmark.score }}
             </td>
           </tr>
@@ -156,7 +156,7 @@
       <thead>
         <tr>
           <th>BENCHMARK</th>
-          <th>SCORE</th>
+          <th class="passmark-score-col">SCORE</th>
         </tr>
       </thead>
       <tbody>
@@ -191,7 +191,7 @@
                 }
               </div>
             </td>
-            <td>
+            <td class="passmark-score-col">
               {{ otherBenchmark.score }}
             </td>
           </tr>
