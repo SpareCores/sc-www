@@ -55,18 +55,13 @@ export function hasWorkloadProfileScore(
   return score != null && Number.isFinite(score);
 }
 
-type WorkloadProfileScoreRef = {
-  benchmark_id?: string;
-  score?: number | null;
-};
-
 export function resolveWorkloadProfileBenchmarksWithData<
   T extends WorkloadProfileBenchmarkRef,
 >(params: {
   benchmarkMeta: T[];
   layout: "details" | "compare";
-  serverDetails?: { benchmark_scores?: WorkloadProfileScoreRef[] };
-  servers?: Array<{ benchmark_scores?: WorkloadProfileScoreRef[] }>;
+  serverDetails?: { benchmark_scores?: WorkloadProfileBenchmarkScoreRef[] };
+  servers?: WorkloadProfileChartServerRef[];
 }): T[] {
   const benchmarks = filterWorkloadProfileBenchmarks(params.benchmarkMeta);
 
@@ -124,7 +119,8 @@ export function hasWorkloadProfileChartData(params: {
 
   return benchmarkScores.some(
     (score) =>
-      benchmarkIds.has(score.benchmark_id ?? "") && score.score != null,
+      benchmarkIds.has(score.benchmark_id ?? "") &&
+      hasWorkloadProfileScore(score.score),
   );
 }
 
