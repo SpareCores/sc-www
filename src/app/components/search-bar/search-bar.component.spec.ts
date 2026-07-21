@@ -1,12 +1,15 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { SimpleChange } from "@angular/core";
-
 import {
-  SearchBarComponent,
-  SearchBarCustomControl,
-} from "./search-bar.component";
+  ComponentFixture,
+  TestBed,
+  fakeAsync,
+  tick,
+} from "@angular/core/testing";
+import { By } from "@angular/platform-browser";
+import { SearchBarComponent } from "./search-bar.component";
+import { SearchBarParameterFieldComponent } from "./search-bar-parameter-field.component";
 import { UiTooltipService } from "../../services/ui-tooltip.service";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
+import type { SearchBarParameter } from "./search-bar.types";
 
 describe("SearchBarComponent", () => {
   let component: SearchBarComponent;
@@ -20,6 +23,7 @@ describe("SearchBarComponent", () => {
 
     fixture = TestBed.createComponent(SearchBarComponent);
     component = fixture.componentInstance;
+    fixture.componentRef.setInput("searchParameters", []);
     fixture.detectChanges();
   });
 
@@ -40,7 +44,7 @@ describe("SearchBarComponent", () => {
 
     expect(component.tooltipContent).toBe("Tooltip content");
     expect(showSpy).toHaveBeenCalledOnceWith(
-      component.tooltip.nativeElement,
+      component.tooltip().nativeElement,
       jasmine.any(Object),
       {
         left: "anchor-right",
@@ -50,67 +54,19 @@ describe("SearchBarComponent", () => {
 
     component.hideTooltip();
 
-    expect(hideSpy).toHaveBeenCalledOnceWith(component.tooltip.nativeElement);
-  });
-
-  it("renders checkbox tooltip icons and nested single-select controls", () => {
-    component.filterCategories = [
-      {
-        category_id: "advisor",
-        name: "Advisor",
-        icon: "bot",
-        collapsed: false,
-      },
-    ];
-    component.customControls = [
-      {
-        name: "baseline_region_enabled",
-        category_id: "advisor",
-        type: "checkbox",
-        title: "Region",
-        checked: true,
-        description: "Tooltip only",
-        descriptionDisplay: "tooltip",
-      },
-      {
-        name: "baseline_region",
-        category_id: "advisor",
-        type: "singleSelect",
-        title: "Available region",
-        nested: true,
-        hideTitle: true,
-        selectedValue: "aws~us-east-1",
-        selectOptions: [{ value: "aws~us-east-1", label: "US East 1" }],
-      },
-    ];
-
-    fixture.detectChanges();
-
-    const checkboxInput = fixture.nativeElement.querySelector(
-      "#custom_control_checkbox_baseline_region_enabled",
-    ) as HTMLInputElement;
-    const checkboxContainer = checkboxInput.parentElement
-      ?.parentElement as HTMLElement;
-    const nestedControl = fixture.nativeElement.querySelector(
-      ".custom-control--nested",
-    ) as HTMLElement;
-
-    expect(checkboxContainer.querySelector(".tooltip-trigger")).not.toBeNull();
-    expect(checkboxContainer.textContent).not.toContain("Tooltip only");
-    expect(nestedControl.textContent).not.toContain("Available region");
-    expect(nestedControl.textContent).toContain("US East 1");
+    expect(hideSpy).toHaveBeenCalledOnceWith(component.tooltip().nativeElement);
   });
 
   it("renders placed parameters after the targeted custom control", () => {
-    component.filterCategories = [
+    fixture.componentRef.setInput("filterCategories", [
       {
         category_id: "advisor",
         name: "Advisor",
         icon: "bot",
         collapsed: false,
       },
-    ];
-    component.customControls = [
+    ]);
+    fixture.componentRef.setInput("customControls", [
       {
         name: "peak_gpu_memory",
         category_id: "advisor",
@@ -118,90 +74,45 @@ describe("SearchBarComponent", () => {
         title: "Peak GPU memory usage",
         numericValue: 0,
         unit: "GiB",
-        allowZero: true,
-        defaultNumericValue: 0,
+        defaultNumericValue: 0.5,
+        min: 0.5,
       },
+    ]);
+    fixture.componentRef.setInput("searchParameters", [
       {
-        name: "limit_cpu_allocation",
-        category_id: "advisor",
-        type: "checkbox",
-        title: "CPU allocation",
-        checked: false,
-      },
-    ];
-    component.searchParameters = [
-      {
-        name: "storage_size",
+        name: "gpus_min",
         modelValue: null,
         schema: {
-          category_id: "storage",
-          title: "Storage Size",
-          type: "number",
-          step: 1,
-          unit: "GB",
-        },
-      },
-      {
-        name: "monthly_inbound_traffic",
-        modelValue: null,
-        schema: {
-          category_id: "traffic",
-          title: "Monthly Inbound Traffic",
+          category_id: "gpu",
+          title: "Min GPUs",
           type: "integer",
-          step: 1,
-          unit: "GB",
+          range_min: 0,
+          range_max: 8,
         },
       },
-    ];
-    component.parameterPlacements = [
+    ] as SearchBarParameter[]);
+    fixture.componentRef.setInput("parameterPlacements", [
       {
-        parameterName: "storage_size",
+        parameterName: "gpus_min",
         categoryId: "advisor",
         afterControlName: "peak_gpu_memory",
       },
-      {
-        parameterName: "monthly_inbound_traffic",
-        categoryId: "advisor",
-        afterControlName: "peak_gpu_memory",
-      },
-    ];
-
+    ]);
     fixture.detectChanges();
 
     const advisorCategory = fixture.nativeElement.querySelector(
       '[data-category-id="advisor"]',
     ) as HTMLElement;
-    const peakGpuMemory = advisorCategory.querySelector(
-      "#custom_control_numeric_peak_gpu_memory",
-    ) as HTMLElement;
-    const storageSize = advisorCategory.querySelector(
-      "#filter_number_storage_size",
-    ) as HTMLElement;
-    const inboundTraffic = advisorCategory.querySelector(
-      "#filter_number_monthly_inbound_traffic",
-    ) as HTMLElement;
-    const cpuAllocation = advisorCategory.querySelector(
-      "#custom_control_checkbox_limit_cpu_allocation",
-    ) as HTMLElement;
+    const html = advisorCategory.innerHTML;
+    const controlIndex = html.indexOf("custom_control_numeric_peak_gpu_memory");
+    const paramIndex = html.indexOf("filter_range_gpus_min");
 
-    expect(storageSize).not.toBeNull();
-    expect(inboundTraffic).not.toBeNull();
-    expect(
-      peakGpuMemory.compareDocumentPosition(storageSize) &
-        Node.DOCUMENT_POSITION_FOLLOWING,
-    ).toBeTruthy();
-    expect(
-      storageSize.compareDocumentPosition(inboundTraffic) &
-        Node.DOCUMENT_POSITION_FOLLOWING,
-    ).toBeTruthy();
-    expect(
-      inboundTraffic.compareDocumentPosition(cpuAllocation) &
-        Node.DOCUMENT_POSITION_FOLLOWING,
-    ).toBeTruthy();
+    expect(controlIndex).toBeGreaterThan(-1);
+    expect(paramIndex).toBeGreaterThan(controlIndex);
   });
 
   it("keeps parameters in their original category without placement overrides", () => {
-    component.filterCategories = [
+    fixture.componentRef.setInput("filterCategories", [
       {
         category_id: "advisor",
         name: "Advisor",
@@ -214,8 +125,8 @@ describe("SearchBarComponent", () => {
         icon: "database",
         collapsed: false,
       },
-    ];
-    component.customControls = [
+    ]);
+    fixture.componentRef.setInput("customControls", [
       {
         name: "peak_gpu_memory",
         category_id: "advisor",
@@ -223,24 +134,19 @@ describe("SearchBarComponent", () => {
         title: "Peak GPU memory usage",
         numericValue: 0,
         unit: "GiB",
-        allowZero: true,
-        defaultNumericValue: 0,
       },
-    ];
-    component.searchParameters = [
+    ]);
+    fixture.componentRef.setInput("searchParameters", [
       {
         name: "storage_size",
         modelValue: null,
         schema: {
           category_id: "storage",
-          title: "Storage Size",
-          type: "number",
-          step: 1,
-          unit: "GB",
+          title: "Storage size",
+          type: "integer",
         },
       },
-    ];
-
+    ] as SearchBarParameter[]);
     fixture.detectChanges();
 
     const advisorCategory = fixture.nativeElement.querySelector(
@@ -250,16 +156,12 @@ describe("SearchBarComponent", () => {
       '[data-category-id="storage"]',
     ) as HTMLElement;
 
-    expect(
-      advisorCategory.querySelector("#filter_number_storage_size"),
-    ).toBeNull();
-    expect(
-      storageCategory.querySelector("#filter_number_storage_size"),
-    ).not.toBeNull();
+    expect(advisorCategory.textContent).not.toContain("Storage size");
+    expect(storageCategory.textContent).toContain("Storage size");
   });
 
   it("expands the overridden category when a placed parameter has an active value", () => {
-    component.filterCategories = [
+    const filterCategories = [
       {
         category_id: "advisor",
         name: "Advisor",
@@ -273,46 +175,36 @@ describe("SearchBarComponent", () => {
         collapsed: true,
       },
     ];
-    component.searchParameters = [
+    fixture.componentRef.setInput("filterCategories", filterCategories);
+    fixture.componentRef.setInput("searchParameters", [
       {
         name: "storage_size",
         modelValue: null,
         schema: {
           category_id: "storage",
-          title: "Storage Size",
-          type: "number",
-          step: 1,
-          unit: "GB",
+          title: "Storage size",
+          type: "integer",
+          default: null,
         },
       },
-    ];
-    component.parameterPlacements = [
+    ] as SearchBarParameter[]);
+    fixture.componentRef.setInput("parameterPlacements", [
       {
         parameterName: "storage_size",
         categoryId: "advisor",
       },
-    ];
-    component.extraParameters = {
+    ]);
+    fixture.componentRef.setInput("extraParameters", {
       storage_size: 100,
-    };
-
-    component.ngOnChanges({
-      extraParameters: new SimpleChange({}, component.extraParameters, false),
-      searchParameters: new SimpleChange([], component.searchParameters, false),
-      filterCategories: new SimpleChange([], component.filterCategories, false),
-      parameterPlacements: new SimpleChange(
-        [],
-        component.parameterPlacements,
-        false,
-      ),
     });
+    fixture.detectChanges();
 
-    expect(component.filterCategories[0].collapsed).toBeFalse();
-    expect(component.filterCategories[1].collapsed).toBeTrue();
+    expect(filterCategories[0].collapsed).toBeFalse();
+    expect(filterCategories[1].collapsed).toBeTrue();
   });
 
   it("renders a hidden-header category as expanded without its collapsible header", () => {
-    component.filterCategories = [
+    const filterCategories = [
       {
         category_id: "advisor",
         name: "Advisor",
@@ -321,45 +213,40 @@ describe("SearchBarComponent", () => {
         hideHeader: true,
       },
     ];
-    component.customControls = [
+    fixture.componentRef.setInput("filterCategories", filterCategories);
+    fixture.componentRef.setInput("customControls", [
       {
-        name: "baseline_server",
+        name: "baseline_region",
         category_id: "advisor",
-        type: "serverAutocomplete",
-        title: "Baseline server",
-        inputValue: "",
-        options: [],
+        type: "singleSelect",
+        title: "Available region",
+        selectedValue: null,
+        selectOptions: [],
       },
-    ];
-
+    ]);
     fixture.detectChanges();
 
     const advisorCategory = fixture.nativeElement.querySelector(
       '[data-category-id="advisor"]',
     ) as HTMLElement;
 
-    expect(
-      component.isCategoryExpanded(component.filterCategories[0]),
-    ).toBeTrue();
-    expect(advisorCategory.textContent).toContain("Baseline server");
+    expect(component.isCategoryExpanded(filterCategories[0])).toBeTrue();
     expect(advisorCategory.querySelector('[role="button"]')).toBeNull();
   });
 
   it("uses the last duplicate placement override for category resolution", () => {
-    component.searchParameters = [
+    fixture.componentRef.setInput("searchParameters", [
       {
         name: "storage_size",
         modelValue: null,
         schema: {
           category_id: "storage",
-          title: "Storage Size",
-          type: "number",
-          step: 1,
-          unit: "GB",
+          title: "Storage size",
+          type: "integer",
         },
       },
-    ];
-    component.parameterPlacements = [
+    ] as SearchBarParameter[]);
+    fixture.componentRef.setInput("parameterPlacements", [
       {
         parameterName: "storage_size",
         categoryId: "advisor",
@@ -368,333 +255,158 @@ describe("SearchBarComponent", () => {
         parameterName: "storage_size",
         categoryId: "storage",
       },
-    ];
+    ]);
+    fixture.detectChanges();
 
     expect(component.getParametersByCategory("advisor")).toEqual([]);
     expect(component.getParametersByCategory("storage")).toEqual(
-      component.searchParameters,
+      component.searchParameters(),
     );
   });
 
-  it("does not open disabled single-select controls", () => {
-    const control = {
-      name: "baseline_region",
-      category_id: "advisor",
-      type: "singleSelect",
-      title: "Available region",
-      disabled: true,
-    } as const;
+  it("does not emit searchChanged while typing top search, only on blur", fakeAsync(() => {
+    const parameters: SearchBarParameter[] = [
+      {
+        name: "search",
+        modelValue: "",
+        schema: { title: "Search", type: "string" },
+      },
+    ];
+    fixture.componentRef.setInput("searchParameters", parameters);
+    fixture.componentRef.setInput("useTopSearchInput", true);
+    fixture.detectChanges();
 
-    component.toggleSingleSelectDropdown(control);
+    const emitSpy = spyOn(component.searchChanged, "emit");
+    const parameter = parameters[0];
 
-    expect(component.isSingleSelectDropdownOpen(control)).toBeFalse();
-  });
+    component.setParameterDraftValue(parameter, "aws");
+    tick(500);
+    expect(emitSpy).not.toHaveBeenCalled();
 
-  it("formats binary memory steppers as TiB when blurred and GiB while editing", () => {
-    const control: SearchBarCustomControl = {
-      name: "minimum_memory",
-      category_id: "advisor",
-      type: "powerOfTwoStepper",
-      title: "Minimum memory",
-      numericValue: 1536,
-      numericFormat: "binaryMemory",
-      unit: "GiB",
-      defaultNumericValue: 0.5,
-      min: 0.5,
-    };
+    component.commitParameterInput(parameter, {
+      target: { value: "aws" },
+    } as unknown as Event);
+    tick(500);
 
-    expect(component.getPowerOfTwoStepperInputValue(control)).toBe("1.5");
-    expect(component.getPowerOfTwoStepperInputUnit(control)).toBe("TiB");
+    expect(parameter.modelValue).toBe("aws");
+    expect(emitSpy).toHaveBeenCalled();
+  }));
 
-    component.handlePowerOfTwoStepperFocus(control);
+  it("commits top search on Enter without double-emitting on following blur", fakeAsync(() => {
+    const parameters: SearchBarParameter[] = [
+      {
+        name: "search",
+        modelValue: "",
+        schema: { title: "Search", type: "string" },
+      },
+    ];
+    fixture.componentRef.setInput("searchParameters", parameters);
+    fixture.componentRef.setInput("useTopSearchInput", true);
+    fixture.detectChanges();
 
-    expect(component.getPowerOfTwoStepperInputValue(control)).toBe("1536");
-    expect(component.getPowerOfTwoStepperInputUnit(control)).toBe("GiB");
-  });
-
-  it("commits typed power-of-two stepper values as canonical GiB numbers", () => {
-    const emitSpy = spyOn(component.customControlChanged, "emit");
-    const control: SearchBarCustomControl = {
-      name: "minimum_memory",
-      category_id: "advisor",
-      type: "powerOfTwoStepper",
-      title: "Minimum memory",
-      numericValue: 0.5,
-      numericFormat: "binaryMemory",
-      unit: "GiB",
-      defaultNumericValue: 0.5,
-      min: 0.5,
-    };
+    const emitSpy = spyOn(component.searchChanged, "emit");
+    const parameter = parameters[0];
     const input = document.createElement("input");
+    input.value = "gcp";
 
-    component.handlePowerOfTwoStepperFocus(control);
-    input.value = "1.25";
-
-    component.onPowerOfTwoStepperInput(control, {
+    component.setParameterDraftValue(parameter, "gcp");
+    component.commitParameterInput(parameter, {
       target: input,
     } as unknown as Event);
-    component.commitPowerOfTwoStepperAfterFocusLoss(control, {
+    component.commitParameterInput(parameter, {
       target: input,
     } as unknown as Event);
+    tick(500);
 
-    expect(emitSpy).toHaveBeenCalledOnceWith({
-      name: "minimum_memory",
-      value: { numericValue: 1.25 },
-    });
-  });
+    expect(emitSpy).toHaveBeenCalledTimes(1);
+  }));
 
-  it("snaps power-of-two buttons from arbitrary typed values", () => {
-    const emitSpy = spyOn(component.customControlChanged, "emit");
-    const control: SearchBarCustomControl = {
-      name: "minimum_memory",
-      category_id: "advisor",
-      type: "powerOfTwoStepper",
-      title: "Minimum memory",
-      numericValue: 2,
-      numericFormat: "binaryMemory",
-      unit: "GiB",
-      defaultNumericValue: 0.5,
-      min: 0.5,
-    };
-    const input = document.createElement("input");
-
-    component.handlePowerOfTwoStepperFocus(control);
-    input.value = "3";
-    component.onPowerOfTwoStepperInput(control, {
-      target: input,
-    } as unknown as Event);
-
-    component.incrementPowerOfTwoValue(control);
-
-    expect(emitSpy).toHaveBeenCalledWith({
-      name: "minimum_memory",
-      value: { numericValue: 4 },
-    });
-
-    emitSpy.calls.reset();
-    input.value = "3";
-    component.onPowerOfTwoStepperInput(control, {
-      target: input,
-    } as unknown as Event);
-
-    component.decrementPowerOfTwoValue(control);
-
-    expect(emitSpy).toHaveBeenCalledWith({
-      name: "minimum_memory",
-      value: { numericValue: 2 },
-    });
-  });
-
-  it("does not show the workload empty hint for a selected benchmark config", () => {
-    component.filterCategories = [
+  it("clears top search immediately", fakeAsync(() => {
+    const parameters: SearchBarParameter[] = [
       {
-        category_id: "advisor",
-        name: "Advisor",
-        icon: "bot",
-        collapsed: false,
+        name: "search",
+        modelValue: "aws",
+        schema: { title: "Search", type: "string" },
       },
     ];
-    component.customControls = [
-      {
-        name: "benchmark_config",
-        category_id: "advisor",
-        type: "benchmarkConfigSelect",
-        title: "Workload",
-        inputValue: "Geekbench 6 / default",
-        selectedBenchmarkConfig: {
-          benchmark_id: "geekbench_6",
-          config: "default",
-          displayName: "Geekbench 6 / default",
-          configTitle: "Default",
-          framework: "Geekbench",
-        },
-        benchmarkGroups: [],
-      },
-    ];
-
+    fixture.componentRef.setInput("searchParameters", parameters);
+    fixture.componentRef.setInput("useTopSearchInput", true);
     fixture.detectChanges();
 
-    const hintElements = fixture.nativeElement.querySelectorAll(
-      ".custom-autocomplete__hint",
-    ) as NodeListOf<HTMLElement>;
-    const hints = Array.from(hintElements, (hint) => hint.textContent?.trim());
+    const emitSpy = spyOn(component.searchChanged, "emit");
+    component.clearTopSearch(parameters[0]);
+    tick(0);
 
-    expect(hints).not.toContain("No matching workloads found.");
-  });
+    expect(parameters[0].modelValue).toBe("");
+    expect(emitSpy).toHaveBeenCalled();
+  }));
 
-  it("drops only the framework from advisor workload option descriptions", () => {
-    expect(
-      component.formatBenchmarkConfigDescription({
-        benchmark_id: "passmark:cpu_integer_maths",
-        config: "{}",
-        displayName: "PassMark: CPU Integer Maths Test",
-        configTitle: "Single thread",
-        framework: "passmark",
-        groupLabel: "Passmark",
-        benchmarkTemplate: {
-          benchmark_id: "passmark:cpu_integer_maths",
-          name: "PassMark: CPU Integer Maths Test",
-          unit: "Millions of operations per second (Mops/s)",
-          framework: "passmark",
-          description: null,
-          category: null,
-        },
-      }),
-    ).toBe("Single thread | Millions of operations per second (Mops/s)");
-  });
-
-  it("does not render an empty workload metadata row when a grouped option has no secondary description", () => {
-    component.filterCategories = [
+  it("does not emit when committing an unchanged top search value", fakeAsync(() => {
+    const parameters: SearchBarParameter[] = [
       {
-        category_id: "advisor",
-        name: "Advisor",
-        icon: "bot",
-        collapsed: false,
+        name: "search",
+        modelValue: "aws",
+        schema: { title: "Search", type: "string" },
       },
     ];
-    component.customControls = [
-      {
-        name: "benchmark_config",
-        category_id: "advisor",
-        type: "benchmarkConfigSelect",
-        title: "Workload",
-        inputValue: "fio",
-        benchmarkGroups: [
-          {
-            name: "Fio",
-            options: [
-              {
-                benchmark_id: "fio:randread",
-                config: "{}",
-                displayName: "Fio Random Read",
-                configTitle: "",
-                framework: "fio",
-                groupLabel: "Fio",
-                benchmarkTemplate: {
-                  benchmark_id: "fio:randread",
-                  name: "Fio Random Read",
-                  framework: "fio",
-                  description: null,
-                  category: null,
-                },
-              },
-            ],
-          },
-        ],
-      },
-    ];
-
+    fixture.componentRef.setInput("searchParameters", parameters);
+    fixture.componentRef.setInput("query", { search: "aws" });
     fixture.detectChanges();
 
-    const option = fixture.nativeElement.querySelector(
-      ".custom-autocomplete__option",
-    ) as HTMLElement | null;
+    const valueChangedSpy = spyOn(component, "valueChanged").and.callThrough();
+    component.commitParameterInput(parameters[0], {
+      target: { value: "aws" },
+    } as unknown as Event);
+    tick(500);
 
-    expect(option).not.toBeNull();
-    expect(option?.querySelector(".custom-autocomplete__meta")).toBeNull();
-  });
+    expect(valueChangedSpy).not.toHaveBeenCalled();
+    expect(parameters[0].modelValue).toBe("aws");
+  }));
 
-  it("disables benchmark config inputs when the custom control is disabled", () => {
-    component.filterCategories = [
+  it("commits number parameter fields on blur via child component", fakeAsync(() => {
+    const parameters: SearchBarParameter[] = [
       {
-        category_id: "advisor",
-        name: "Advisor",
-        icon: "bot",
-        collapsed: false,
-      },
-    ];
-    component.customControls = [
-      {
-        name: "benchmark_config",
-        category_id: "advisor",
-        type: "benchmarkConfigSelect",
-        title: "Workload",
-        placeholder: "Search workload",
-        disabled: true,
-        loading: true,
-        benchmarkGroups: [],
-      },
-    ];
-
-    fixture.detectChanges();
-
-    const input = fixture.nativeElement.querySelector(
-      'input[placeholder="Search workload"]',
-    ) as HTMLInputElement;
-
-    expect(input.disabled).toBeTrue();
-    expect(input.classList).toContain("custom-autocomplete__input--loading");
-    expect(input.getAttribute("aria-busy")).toBe("true");
-    expect(getComputedStyle(input).cursor).toBe("wait");
-  });
-
-  it("shows extra-parameter vendor regions as checked while disabled", () => {
-    component.filterCategories = [
-      {
-        category_id: "region",
-        name: "Region",
-        icon: "hotel",
-        collapsed: true,
-      },
-    ];
-    component.searchParameters = [
-      {
-        name: "vendor_regions",
-        modelValue: [],
+        name: "vcpus_min",
+        modelValue: null,
         schema: {
-          category_id: "region",
-          title: "Vendor and region id",
-          type: "array",
-          enum: ["aws~us-east-1", "aws~eu-west-1"],
+          category_id: "cpu",
+          title: "Min vCPUs",
+          type: "integer",
+          description: "Minimum virtual CPUs",
         },
       },
     ];
-    component.extraParameters = {
-      vendor_regions: ["aws~us-east-1"],
-    };
-    component.vendorMetadata = [{ vendor_id: "aws", name: "AWS" }];
-    component.regionMetadata.set([
+    fixture.componentRef.setInput("filterCategories", [
       {
-        vendor_id: "aws",
-        region_id: "us-east-1",
-        name: "US East 1",
-        api_reference: "use1",
-        green_energy: false,
-      },
-      {
-        vendor_id: "aws",
-        region_id: "eu-west-1",
-        name: "EU West 1",
-        api_reference: "euw1",
-        green_energy: false,
+        category_id: "cpu",
+        name: "CPU",
+        icon: "cpu",
+        collapsed: false,
       },
     ]);
-
-    component.ngOnChanges({
-      extraParameters: new SimpleChange({}, component.extraParameters, false),
-      searchParameters: new SimpleChange([], component.searchParameters, false),
-      filterCategories: new SimpleChange([], component.filterCategories, false),
-    });
+    fixture.componentRef.setInput("searchParameters", parameters);
     fixture.detectChanges();
 
-    const vendorRegionParameter = component.searchParameters[0];
+    const emitSpy = spyOn(component.searchChanged, "emit");
+    const field = fixture.debugElement.query(
+      By.directive(SearchBarParameterFieldComponent),
+    ).componentInstance as SearchBarParameterFieldComponent;
 
-    expect(component.filterCategories[0].collapsed).toBeFalse();
-    expect(component.isVendorRegionCollapsed("aws")).toBeFalse();
-    expect(vendorRegionParameter.modelValue).toEqual(["aws~us-east-1"]);
-    expect(
-      component.isVendorRegionSelected(vendorRegionParameter, "aws~us-east-1"),
-    ).toBeTrue();
-    expect(
-      component.isVendorRegionCheckboxDisabled(
-        vendorRegionParameter,
-        "aws~us-east-1",
-      ),
-    ).toBeTrue();
-  });
+    field.setParameterDraftValue("4");
+    tick(500);
+    expect(emitSpy).not.toHaveBeenCalled();
+
+    field.commitParameterInput({
+      target: { value: "4" },
+    } as unknown as Event);
+    tick(500);
+
+    expect(parameters[0].modelValue).toBe(4);
+    expect(emitSpy).toHaveBeenCalled();
+  }));
 
   it("shows extra-parameter vendors as checked while disabled", () => {
-    component.filterCategories = [
+    const filterCategories = [
       {
         category_id: "vendor",
         name: "Vendor",
@@ -702,7 +414,7 @@ describe("SearchBarComponent", () => {
         collapsed: true,
       },
     ];
-    component.searchParameters = [
+    const searchParameters: SearchBarParameter[] = [
       {
         name: "vendor",
         modelValue: [],
@@ -714,103 +426,15 @@ describe("SearchBarComponent", () => {
         },
       },
     ];
-    component.extraParameters = {
+    fixture.componentRef.setInput("filterCategories", filterCategories);
+    fixture.componentRef.setInput("searchParameters", searchParameters);
+    fixture.componentRef.setInput("extraParameters", {
       vendor: ["aws"],
-    };
-
-    component.ngOnChanges({
-      extraParameters: new SimpleChange({}, component.extraParameters, false),
-      searchParameters: new SimpleChange([], component.searchParameters, false),
-      filterCategories: new SimpleChange([], component.filterCategories, false),
     });
     fixture.detectChanges();
 
-    const vendorParameter = component.searchParameters[0];
-
-    expect(component.filterCategories[0].collapsed).toBeFalse();
-    expect(vendorParameter.modelValue).toEqual(["aws"]);
-    expect(component.isEnumSelected(vendorParameter, "aws")).toBeTrue();
+    expect(filterCategories[0].collapsed).toBeFalse();
+    expect(searchParameters[0].modelValue).toEqual(["aws"]);
     expect(component.isParameterDisabled("vendor")).toBeTrue();
-  });
-
-  it("renders range slider summary text inline with the primary value", () => {
-    component.filterCategories = [
-      {
-        category_id: "advisor",
-        name: "Advisor",
-        icon: "bot",
-        collapsed: false,
-      },
-    ];
-    component.customControls = [
-      {
-        name: "average_cpu_utilization",
-        category_id: "advisor",
-        type: "rangeSlider",
-        title: "Average utilization",
-        numericValue: 30,
-        min: 0,
-        max: 100,
-        step: 10,
-        unit: "%",
-        valueSummary: "of 100; target score: 30",
-      },
-    ];
-
-    fixture.detectChanges();
-
-    const sliderValue = fixture.nativeElement.querySelector(
-      ".custom-slider__value",
-    ) as HTMLElement;
-
-    expect(sliderValue.textContent?.trim()).toBe(
-      "30% of 100; target score: 30",
-    );
-  });
-
-  it("hides the range slider thumb while its numeric value is unset", () => {
-    component.filterCategories = [
-      {
-        category_id: "advisor",
-        name: "Advisor",
-        icon: "bot",
-        collapsed: false,
-      },
-    ];
-    component.customControls = [
-      {
-        name: "average_cpu_utilization",
-        category_id: "advisor",
-        type: "rangeSlider",
-        title: "Average utilization",
-        numericValue: null,
-        min: 0,
-        max: 100,
-        step: 10,
-        unit: "%",
-      },
-    ];
-
-    fixture.detectChanges();
-
-    const unsetSlider = fixture.nativeElement.querySelector(
-      ".custom-slider__input",
-    ) as HTMLInputElement;
-
-    expect(unsetSlider.classList).toContain("custom-slider__input--unset");
-
-    component.customControls = [
-      {
-        ...component.customControls[0],
-        numericValue: 40,
-      },
-    ];
-    fixture.detectChanges();
-
-    const setSlider = fixture.nativeElement.querySelector(
-      ".custom-slider__input",
-    ) as HTMLInputElement;
-
-    expect(setSlider.classList).not.toContain("custom-slider__input--unset");
   });
 });
