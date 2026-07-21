@@ -9,7 +9,11 @@ import {
 import { FormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
 import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
-import { LucideDynamicIcon, LucideInfo } from "@lucide/angular";
+import {
+  LucideDynamicIcon,
+  LucideInfo,
+  LucideTriangleAlert,
+} from "@lucide/angular";
 import { Benchmark } from "../../../../sdk/data-contracts";
 import {
   staticWebChartTemplate,
@@ -38,6 +42,7 @@ import { hasWorkloadProfileChartData } from "../charts/workload-profile/workload
   imports: [
     LucideDynamicIcon,
     LucideInfo,
+    LucideTriangleAlert,
     FormsModule,
     RouterModule,
     BenchmarkIconPipe,

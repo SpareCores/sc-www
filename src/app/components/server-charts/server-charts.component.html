@@ -166,11 +166,11 @@
         ) {
           <tr class="similar_family_line">
             <td>
-              <div class="flex gap-1 items-center">
-                {{ otherBenchmark.name }}
+              <div class="flex flex-nowrap gap-1 items-center">
+                <span class="whitespace-nowrap">{{ otherBenchmark.name }}</span>
                 <svg
                   lucideInfo
-                  class="h-4 w-4 text-gray-200"
+                  class="h-4 w-4 shrink-0 text-gray-200"
                   (mouseenter)="
                     showTooltipChart($event, otherBenchmark.benchmark_id)
                   "
