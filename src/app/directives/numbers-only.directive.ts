@@ -8,23 +8,39 @@ const INTEGER_PATTERN = /^\d*$/;
 })
 export class NumbersOnlyDirective {
   allowDecimal = input(true);
+  private lastValidValue = "";
 
-  @HostListener("keydown", ["$event"])
-  onKeyDown(event: KeyboardEvent): void {
-    if (event.ctrlKey || event.metaKey || event.altKey) {
-      return;
-    }
-
-    const key = event.key;
-    if (key.length !== 1) {
-      return;
-    }
-
+  @HostListener("beforeinput", ["$event"])
+  onBeforeInput(event: InputEvent): void {
     const input = event.target as HTMLInputElement;
-    const nextValue = this.previewValue(input, key);
+    this.syncLastValidValue(input);
+
+    if (event.inputType.startsWith("delete")) {
+      return;
+    }
+
+    const insertion = event.data;
+    if (insertion === null) {
+      return;
+    }
+
+    const nextValue = this.previewValue(input, insertion);
     if (!this.isAllowedValue(nextValue)) {
       event.preventDefault();
     }
+  }
+
+  @HostListener("input", ["$event"])
+  onInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (this.isAllowedValue(input.value)) {
+      this.lastValidValue = input.value;
+      return;
+    }
+
+    input.value = this.lastValidValue;
+    const caretPosition = this.lastValidValue.length;
+    input.setSelectionRange(caretPosition, caretPosition);
   }
 
   @HostListener("paste", ["$event"])
@@ -57,5 +73,11 @@ export class NumbersOnlyDirective {
     const start = input.selectionStart ?? value.length;
     const end = input.selectionEnd ?? value.length;
     return value.slice(0, start) + insertion + value.slice(end);
+  }
+
+  private syncLastValidValue(input: HTMLInputElement): void {
+    if (this.isAllowedValue(input.value)) {
+      this.lastValidValue = input.value;
+    }
   }
 }

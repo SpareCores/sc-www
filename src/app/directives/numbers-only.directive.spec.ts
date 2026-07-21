@@ -27,9 +27,14 @@ describe("NumbersOnlyDirective", () => {
     integerInput = fixture.nativeElement.querySelector("#integer");
   });
 
-  function dispatchKey(input: HTMLInputElement, key: string): KeyboardEvent {
-    const event = new KeyboardEvent("keydown", {
-      key,
+  function dispatchBeforeInput(
+    input: HTMLInputElement,
+    data: string | null,
+    inputType = "insertText",
+  ): InputEvent {
+    const event = new InputEvent("beforeinput", {
+      data,
+      inputType,
       bubbles: true,
       cancelable: true,
     });
@@ -37,37 +42,55 @@ describe("NumbersOnlyDirective", () => {
     return event;
   }
 
+  function dispatchInput(input: HTMLInputElement): Event {
+    const event = new Event("input", {
+      bubbles: true,
+    });
+    input.dispatchEvent(event);
+    return event;
+  }
+
   it("allows digits", () => {
-    const event = dispatchKey(decimalInput, "5");
+    const event = dispatchBeforeInput(decimalInput, "5");
     expect(event.defaultPrevented).toBeFalse();
   });
 
   it("allows one decimal point when decimals are enabled", () => {
     decimalInput.value = "12";
     decimalInput.setSelectionRange(2, 2);
-    const event = dispatchKey(decimalInput, ".");
+    const event = dispatchBeforeInput(decimalInput, ".");
     expect(event.defaultPrevented).toBeFalse();
   });
 
   it("rejects a second decimal point", () => {
     decimalInput.value = "12.3";
     decimalInput.setSelectionRange(4, 4);
-    const event = dispatchKey(decimalInput, ".");
+    const event = dispatchBeforeInput(decimalInput, ".");
     expect(event.defaultPrevented).toBeTrue();
   });
 
   it("rejects exponential and alphabetical characters", () => {
-    expect(dispatchKey(decimalInput, "e").defaultPrevented).toBeTrue();
-    expect(dispatchKey(decimalInput, "E").defaultPrevented).toBeTrue();
-    expect(dispatchKey(decimalInput, "a").defaultPrevented).toBeTrue();
-    expect(dispatchKey(decimalInput, "+").defaultPrevented).toBeTrue();
-    expect(dispatchKey(decimalInput, "-").defaultPrevented).toBeTrue();
+    expect(dispatchBeforeInput(decimalInput, "e").defaultPrevented).toBeTrue();
+    expect(dispatchBeforeInput(decimalInput, "E").defaultPrevented).toBeTrue();
+    expect(dispatchBeforeInput(decimalInput, "a").defaultPrevented).toBeTrue();
+    expect(dispatchBeforeInput(decimalInput, "+").defaultPrevented).toBeTrue();
+    expect(dispatchBeforeInput(decimalInput, "-").defaultPrevented).toBeTrue();
   });
 
   it("rejects decimal points when decimals are disabled", () => {
     integerInput.value = "12";
     integerInput.setSelectionRange(2, 2);
-    expect(dispatchKey(integerInput, ".").defaultPrevented).toBeTrue();
+    expect(dispatchBeforeInput(integerInput, ".").defaultPrevented).toBeTrue();
+  });
+
+  it("restores the last valid value after an invalid input change", () => {
+    decimalInput.value = "12";
+    dispatchInput(decimalInput);
+
+    decimalInput.value = "12e";
+    dispatchInput(decimalInput);
+
+    expect(decimalInput.value).toBe("12");
   });
 
   it("blocks invalid paste content", () => {
