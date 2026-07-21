@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { sharedTestingProviders } from "../../../testing/testbed.providers";
 import { SearchBarCustomControlsComponent } from "./search-bar-custom-controls.component";
 import type {
   SearchBarCustomControl,
@@ -13,6 +14,7 @@ describe("SearchBarCustomControlsComponent", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [SearchBarCustomControlsComponent],
+      providers: [...sharedTestingProviders],
     }).compileComponents();
 
     fixture = TestBed.createComponent(SearchBarCustomControlsComponent);
