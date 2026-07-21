@@ -218,8 +218,7 @@ export class SearchBarGeoFiltersComponent {
 
     return (
       !this.isVendorRegionSelected(parameter, vendorRegion) &&
-      this.getSelectedVendorRegions(parameter).length >=
-        this.maxVendorRegions()
+      this.getSelectedVendorRegions(parameter).length >= this.maxVendorRegions()
     );
   }
 
@@ -240,8 +239,7 @@ export class SearchBarGeoFiltersComponent {
     }
 
     return (
-      this.getSelectedVendorRegions(parameter).length >=
-      this.maxVendorRegions()
+      this.getSelectedVendorRegions(parameter).length >= this.maxVendorRegions()
     );
   }
 
@@ -282,10 +280,7 @@ export class SearchBarGeoFiltersComponent {
         ? newValues
         : newValues.slice(
             0,
-            Math.max(
-              0,
-              this.maxVendorRegions() - selectedValues.length,
-            ),
+            Math.max(0, this.maxVendorRegions() - selectedValues.length),
           );
       parameter.modelValue = [...selectedValues, ...remaining];
     }
@@ -303,8 +298,7 @@ export class SearchBarGeoFiltersComponent {
     const vendorId = vendorRegion.substring(0, tilde);
     const regionId = vendorRegion.substring(tilde + 1);
     const region = this.regionMetadata().find(
-      (item) =>
-        item.vendor_id === vendorId && item.region_id === regionId,
+      (item) => item.vendor_id === vendorId && item.region_id === regionId,
     );
 
     return region?.name || regionId;
@@ -370,9 +364,7 @@ export class SearchBarGeoFiltersComponent {
         return {
           ...continent,
           selected: countriesInContinent.every((country) => country.selected),
-          collapsed: countriesInContinent.every(
-            (country) => !country.selected,
-          ),
+          collapsed: countriesInContinent.every((country) => !country.selected),
         };
       }),
     );

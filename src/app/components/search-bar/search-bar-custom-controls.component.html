@@ -58,8 +58,7 @@
               {{ control.title }}
             </div>
             @if (
-              control.description &&
-              control.descriptionDisplay === "tooltip"
+              control.description && control.descriptionDisplay === "tooltip"
             ) {
               <button
                 type="button"
@@ -75,8 +74,7 @@
             }
           </div>
           @if (
-            control.description &&
-            control.descriptionDisplay !== "tooltip"
+            control.description && control.descriptionDisplay !== "tooltip"
           ) {
             <div class="text-xs text-gray-400">
               {{ control.description }}
@@ -137,14 +135,16 @@
 
         @if (!customControlHasEnoughInput(control)) {
           <div class="custom-autocomplete__hint">
-            Enter at least {{ getCustomControlMinCharacters(control) }} characters
-            to search.
+            Enter at least
+            {{ getCustomControlMinCharacters(control) }} characters to search.
           </div>
         } @else if ((control.options || []).length > 0) {
           <div class="custom-autocomplete__panel custom-scrollbar">
             @for (
               server of control.options || [];
-              track server.vendor_id + "_" + (server.server_id || server.api_reference)
+              track server.vendor_id +
+                "_" +
+                (server.server_id || server.api_reference)
             ) {
               <button
                 type="button"
@@ -207,8 +207,8 @@
           (control.inputValue || "").trim().length > 0
         ) {
           <div class="custom-autocomplete__hint">
-            Enter at least {{ getCustomControlMinCharacters(control) }} characters
-            to search.
+            Enter at least
+            {{ getCustomControlMinCharacters(control) }} characters to search.
           </div>
         }
 
@@ -239,7 +239,9 @@
                   @if (isBenchmarkGroupExpanded(control, group.name)) {
                     @for (
                       benchmarkOption of group.options;
-                      track benchmarkOption.benchmark_id + "_" + benchmarkOption.config
+                      track benchmarkOption.benchmark_id +
+                        "_" +
+                        benchmarkOption.config
                     ) {
                       <button
                         type="button"

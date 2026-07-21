@@ -247,10 +247,7 @@ export class SearchBarCustomControlsComponent {
       return;
     }
 
-    const nextValue = getPreviousPowerOfTwoStepperValue(
-      control,
-      currentValue,
-    );
+    const nextValue = getPreviousPowerOfTwoStepperValue(control, currentValue);
 
     if (nextValue === currentValue) {
       return;

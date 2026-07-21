@@ -1,5 +1,12 @@
 import { CommonModule } from "@angular/common";
-import { Component, DoCheck, OnDestroy, inject, input, output } from "@angular/core";
+import {
+  Component,
+  DoCheck,
+  OnDestroy,
+  inject,
+  input,
+  output,
+} from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { LucideDynamicIcon, LucideInfo } from "@lucide/angular";
 import { NumbersOnlyDirective } from "../../directives/numbers-only.directive";
@@ -350,9 +357,7 @@ export class SearchBarParameterFieldComponent implements DoCheck, OnDestroy {
           )?.abbreviation || id
         );
       case "vendor":
-        return (
-          this.vendors().find((item) => item.vendor_id === id)?.name || id
-        );
+        return this.vendors().find((item) => item.vendor_id === id)?.name || id;
       case "storage_id":
         return (
           this.storageIds().find((item) => item.storage_id === id)?.name || id

@@ -58,7 +58,9 @@ describe("SearchBarParameterFieldComponent", () => {
     fixture.componentRef.setInput("filterCategoryId", "price");
     fixture.detectChanges();
 
-    const input = fixture.debugElement.query(By.directive(NumbersOnlyDirective));
+    const input = fixture.debugElement.query(
+      By.directive(NumbersOnlyDirective),
+    );
 
     expect(input).not.toBeNull();
     expect(input.nativeElement.id).toBe("filter_price_price_max");
