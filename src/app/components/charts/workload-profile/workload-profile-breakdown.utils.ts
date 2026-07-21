@@ -8,6 +8,7 @@ import {
 export type WorkloadProfileBreakdownRow = ScoreComponent & {
   componentDescription?: string;
   unit?: string | null;
+  metaNote?: string;
 };
 
 export type WorkloadProfileBreakdownTable = {
@@ -25,7 +26,7 @@ export function buildWorkloadProfileBreakdownTable(params: {
   profile: Pick<Benchmark, "source">;
   benchmarkMeta: Array<
     Pick<Benchmark, "benchmark_id" | "unit"> &
-      Partial<Pick<Benchmark, "description">>
+      Partial<Pick<Benchmark, "description" | "note">>
   >;
   scoreBreakdown?: WorkloadScoreBreakdown | null;
 }): WorkloadProfileBreakdownTable | undefined {
@@ -51,11 +52,13 @@ export function buildWorkloadProfileBreakdownTable(params: {
       const componentMeta = entry
         ? metaById.get(entry.benchmark_id)
         : undefined;
+      const metaNote = componentMeta?.note?.trim() || undefined;
 
       return {
         ...component,
         componentDescription: componentMeta?.description ?? undefined,
         unit: componentMeta?.unit ?? undefined,
+        metaNote,
       };
     },
   );
@@ -86,6 +89,12 @@ export function formatBreakdownNumericValue(
   }
 
   return formatBreakdownNumber(value);
+}
+
+export function breakdownTableHasNotes(
+  table: WorkloadProfileBreakdownTable,
+): boolean {
+  return table.rows.some((row) => !!row.note?.trim());
 }
 
 export function formatBreakdownPercent(

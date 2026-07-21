@@ -27,7 +27,7 @@ export type WorkloadProfileBenchmarkMeta = Pick<
   Benchmark,
   "benchmark_id" | "name" | "status" | "source" | "unit"
 > &
-  Partial<Pick<Benchmark, "description">>;
+  Partial<Pick<Benchmark, "description" | "note">>;
 
 export type WorkloadProfileCompareBenchmark = WorkloadProfileBenchmarkMeta & {
   benchmark_key?: string;

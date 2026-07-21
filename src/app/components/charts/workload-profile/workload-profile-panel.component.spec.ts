@@ -84,6 +84,7 @@ describe("WorkloadProfilePanelComponent", () => {
         benchmark_id: "llm_speed:text_generation",
         name: "LLM inference speed for text generation",
         description: "LLM generation description",
+        note: "May underperform on low-memory servers",
         unit: "tokens/second (t/s)",
         status: Status.Active,
       },
@@ -252,7 +253,8 @@ describe("WorkloadProfilePanelComponent", () => {
     expect(root.textContent).toContain("rps");
     expect(root.textContent).not.toContain("Requests per second (rps)");
     expect(root.textContent).not.toContain("(rps)");
-    expect(root.querySelectorAll("th").length).toBe(9);
+    expect(root.querySelectorAll("th").length).toBe(10);
+    expect(root.textContent).toContain("penalized: no usable measurement");
     const warningIcon = fixture.debugElement.query(
       By.css("td .benchmark-note-icon"),
     );
@@ -260,7 +262,7 @@ describe("WorkloadProfilePanelComponent", () => {
     warningIcon.triggerEventHandler("mouseenter", new MouseEvent("mouseenter"));
     fixture.detectChanges();
     expect(fixture.componentInstance.tooltipContent).toBe(
-      "penalized: no usable measurement",
+      "May underperform on low-memory servers",
     );
     expect(
       root.querySelector(
