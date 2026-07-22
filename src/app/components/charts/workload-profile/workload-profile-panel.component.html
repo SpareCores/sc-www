@@ -70,7 +70,7 @@
           class="workload-profile-panel-grid grid min-w-0 grid-cols-1 gap-8 items-stretch lg:grid-cols-2"
         >
           <div
-            class="workload-profile-radar-chart workload-profile-radar-chart--details lg:col-start-1 lg:row-start-1 mb-8"
+            class="workload-profile-radar-chart workload-profile-radar-chart--details workload-profile-radar-chart-to-hide-for-test lg:col-start-1 lg:row-start-1 mb-8"
           >
             <app-workload-profile-radar-chart
               [layout]="layout()"
@@ -159,18 +159,28 @@
                     <span class="inline-flex items-center justify-center gap-1">
                       Impact
                       @if (breakdown.impactFormula) {
-                        <svg
-                          lucideInfo
-                          class="inline-block h-4 w-4 text-gray-200"
+                        <button
+                          type="button"
+                          class="workload-profile-tooltip-trigger"
+                          aria-label="Show impact formula"
                           (mouseenter)="
                             showTooltip($event, breakdown.impactFormula)
                           "
                           (mouseleave)="hideTooltip()"
-                        ></svg>
+                          (focus)="showTooltip($event, breakdown.impactFormula)"
+                          (blur)="hideTooltip()"
+                          (click)="showTooltip($event, breakdown.impactFormula)"
+                        >
+                          <svg
+                            lucideInfo
+                            class="inline-block h-4 w-4 text-gray-200"
+                            aria-hidden="true"
+                          ></svg>
+                        </button>
                       }
                     </span>
                   </th>
-                  @if (hasBreakdownNotes()) {
+                  @if (breakdown.hasNotes) {
                     <th rowspan="2">Note</th>
                   }
                 </tr>
@@ -212,24 +222,52 @@
                       <span class="inline-flex items-center gap-1">
                         <span>{{ row.label }}</span>
                         @if (row.componentDescription) {
-                          <svg
-                            lucideInfo
-                            class="inline-block h-4 w-4 shrink-0 text-gray-200"
+                          <button
+                            type="button"
+                            class="workload-profile-tooltip-trigger"
+                            aria-label="Show component description"
                             (mouseenter)="
                               showTooltip($event, row.componentDescription)
                             "
                             (mouseleave)="hideTooltip()"
-                          ></svg>
+                            (focus)="
+                              showTooltip($event, row.componentDescription)
+                            "
+                            (blur)="hideTooltip()"
+                            (click)="
+                              showTooltip($event, row.componentDescription)
+                            "
+                          >
+                            <svg
+                              lucideInfo
+                              class="inline-block h-4 w-4 shrink-0 text-gray-200"
+                              aria-hidden="true"
+                            ></svg>
+                          </button>
                         }
-                        @if (row.metaNote) {
-                          <svg
-                            lucideTriangleAlert
-                            class="benchmark-note-icon"
+                        @if (row.benchmarkNote) {
+                          <button
+                            type="button"
+                            class="workload-profile-tooltip-trigger"
+                            aria-label="Show benchmark note"
                             (mouseenter)="
-                              showWarningTooltip($event, row.metaNote)
+                              showWarningTooltip($event, row.benchmarkNote)
                             "
                             (mouseleave)="hideTooltip()"
-                          ></svg>
+                            (focus)="
+                              showWarningTooltip($event, row.benchmarkNote)
+                            "
+                            (blur)="hideTooltip()"
+                            (click)="
+                              showWarningTooltip($event, row.benchmarkNote)
+                            "
+                          >
+                            <svg
+                              lucideTriangleAlert
+                              class="benchmark-note-icon"
+                              aria-hidden="true"
+                            ></svg>
+                          </button>
                         }
                       </span>
                     </td>
@@ -274,8 +312,8 @@
                     >
                       {{ formatImpactPercent(row.impact) }}
                     </td>
-                    @if (hasBreakdownNotes()) {
-                      <td>{{ row.note ?? "" }}</td>
+                    @if (breakdown.hasNotes) {
+                      <td>{{ row.note?.trim() || "" }}</td>
                     }
                   </tr>
                 }

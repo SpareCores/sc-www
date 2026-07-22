@@ -13,7 +13,7 @@ export class ChartTooltipService {
 
   show(
     tooltipElement: HTMLElement,
-    event: MouseEvent,
+    event: Event,
     placement?: TooltipPlacement,
     variant?: TooltipVariant,
   ) {
@@ -22,7 +22,7 @@ export class ChartTooltipService {
 
   showIfPresent<T>(params: {
     tooltipElement: HTMLElement | undefined;
-    event: MouseEvent;
+    event: Event;
     content: T | null | undefined | false | "";
     onShow: (content: T) => void;
     placement?: TooltipPlacement;

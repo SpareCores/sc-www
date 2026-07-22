@@ -98,4 +98,34 @@ describe("WorkloadProfileRadarChartComponent", () => {
 
     expect(selectedIds).toEqual(["workload_profile:cache"]);
   });
+
+  it("invokes custom chart callbacks before details layout handlers", () => {
+    const onHover = jasmine.createSpy("onHover");
+    const onClick = jasmine.createSpy("onClick");
+    const chart = { canvas: { style: { cursor: "" } } };
+
+    fixture.componentRef.setInput("layout", "details");
+    fixture.componentRef.setInput("chartData", undefined);
+    fixture.componentRef.setInput("chartOptions", { onHover, onClick });
+    fixture.componentRef.setInput("benchmarkMeta", [
+      {
+        benchmark_id: "workload_profile:web",
+        name: "Workload profile: Web server",
+        status: Status.Active,
+      },
+    ]);
+    fixture.componentRef.setInput("serverDetails", {
+      benchmark_scores: [{ benchmark_id: "workload_profile:web", score: 0.8 }],
+    });
+    fixture.detectChanges();
+
+    const options = component.resolvedChartOptions();
+
+    options?.onHover?.({} as never, [{ index: 0 } as never], chart as never);
+    options?.onClick?.({} as never, [{ index: 0 } as never], chart as never);
+
+    expect(onHover).toHaveBeenCalled();
+    expect(onClick).toHaveBeenCalled();
+    expect(chart.canvas.style.cursor).toBe("pointer");
+  });
 });
