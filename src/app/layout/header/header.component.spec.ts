@@ -171,4 +171,44 @@ describe("HeaderComponent", () => {
       serverCompare.isBaselineServer({ vendor: "aws", server: "m7a.4xlarge" }),
     ).toBeTrue();
   });
+
+  it("shows the Compare button off the compare page", () => {
+    const serverCompare = TestBed.inject(ServerCompareService);
+    serverCompare.selectedForCompare = [
+      {
+        display_name: "m7a.4xlarge",
+        vendor: "aws",
+        server: "m7a.4xlarge",
+        zonesRegions: [],
+      },
+    ];
+    spyOn(component, "isOnComparePage").and.returnValue(false);
+    fixture.detectChanges();
+
+    const compareButton = (fixture.nativeElement as HTMLElement).querySelector(
+      "#compare_options button.bg-emerald-400",
+    );
+
+    expect(compareButton?.textContent?.trim()).toBe("Compare");
+  });
+
+  it("hides the Compare button on the compare page", () => {
+    const serverCompare = TestBed.inject(ServerCompareService);
+    serverCompare.selectedForCompare = [
+      {
+        display_name: "m7a.4xlarge",
+        vendor: "aws",
+        server: "m7a.4xlarge",
+        zonesRegions: [],
+      },
+    ];
+    spyOn(component, "isOnComparePage").and.returnValue(true);
+    fixture.detectChanges();
+
+    const compareButton = (fixture.nativeElement as HTMLElement).querySelector(
+      "#compare_options button.bg-emerald-400",
+    );
+
+    expect(compareButton).toBeNull();
+  });
 });

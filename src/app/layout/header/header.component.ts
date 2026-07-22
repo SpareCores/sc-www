@@ -6,7 +6,7 @@ import {
 } from "@angular/cdk/drag-drop";
 import { CommonModule } from "@angular/common";
 import { Component, inject, viewChild } from "@angular/core";
-import { RouterLink } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
 import {
   LucideActivity,
   LucideArrowUpDown,
@@ -72,6 +72,7 @@ import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.di
   styleUrl: "./header.component.scss",
 })
 export class HeaderComponent {
+  private router = inject(Router);
   private serverCompare = inject(ServerCompareService);
 
   menuDropdown = viewChild<FlowbiteDropdownDirective>("menuDropdown");
@@ -97,6 +98,15 @@ export class HeaderComponent {
 
   compareCount(): number {
     return this.serverCompare.compareCount();
+  }
+
+  isOnComparePage(): boolean {
+    const path = this.router.url.split("?")[0].split("#")[0];
+    return path.startsWith("/compare");
+  }
+
+  compareServers() {
+    this.serverCompare.openCompare();
   }
 
   getServersForCompare() {
