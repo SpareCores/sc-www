@@ -111,6 +111,10 @@
   font-weight: 400;
 }
 
+.workload-profile-tooltip-trigger {
+  @apply inline-flex items-center border-0 bg-transparent p-0 cursor-help;
+}
+
 .workload-profile-breakdown-table {
   @apply w-full text-white;
 

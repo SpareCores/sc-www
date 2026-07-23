@@ -49,6 +49,27 @@ export function filterWorkloadProfileBenchmarks<
     .sort((left, right) => (left.name ?? "").localeCompare(right.name ?? ""));
 }
 
+export function hasWorkloadProfileChartData(params: {
+  benchmarkMeta: WorkloadProfileBenchmarkRef[];
+  benchmarkScores?: WorkloadProfileBenchmarkScoreRef[];
+  servers?: WorkloadProfileChartServerRef[];
+}): boolean {
+  const benchmarkIds = new Set(
+    filterWorkloadProfileBenchmarks(params.benchmarkMeta)
+      .map((benchmark) => benchmark.benchmark_id)
+      .filter((benchmarkId): benchmarkId is string => !!benchmarkId),
+  );
+  const benchmarkScores =
+    params.servers?.flatMap((server) => server.benchmark_scores ?? []) ??
+    params.benchmarkScores ??
+    [];
+
+  return benchmarkScores.some(
+    (score) =>
+      benchmarkIds.has(score.benchmark_id ?? "") && score.score != null,
+  );
+}
+
 export function hasWorkloadProfileScore(
   score: number | null | undefined,
 ): score is number {
@@ -100,28 +121,6 @@ export function resolveWorkloadProfileBenchmarksWithData<
       return hasWorkloadProfileScore(score);
     });
   });
-}
-
-export function hasWorkloadProfileChartData(params: {
-  benchmarkMeta: WorkloadProfileBenchmarkRef[];
-  benchmarkScores?: WorkloadProfileBenchmarkScoreRef[];
-  servers?: WorkloadProfileChartServerRef[];
-}): boolean {
-  const benchmarkIds = new Set(
-    filterWorkloadProfileBenchmarks(params.benchmarkMeta)
-      .map((benchmark) => benchmark.benchmark_id)
-      .filter((benchmarkId): benchmarkId is string => !!benchmarkId),
-  );
-  const benchmarkScores =
-    params.servers?.flatMap((server) => server.benchmark_scores ?? []) ??
-    params.benchmarkScores ??
-    [];
-
-  return benchmarkScores.some(
-    (score) =>
-      benchmarkIds.has(score.benchmark_id ?? "") &&
-      hasWorkloadProfileScore(score.score),
-  );
 }
 
 export function formatWorkloadProfileLabel(name: string): string {

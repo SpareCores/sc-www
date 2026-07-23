@@ -87,6 +87,7 @@ import {
   LucideTvMinimalPlay,
   LucideEye,
   LucideEyeOff,
+  LucideTarget,
 } from "@lucide/angular";
 import type { LucideIconData } from "@lucide/angular";
 
@@ -201,6 +202,7 @@ export const lucideIcons = [
   LucideServer,
   LucideSparkles,
   LucideSquareKanban,
+  LucideTarget,
   LucideTwitter,
   LucideUser,
   LucideBuilding2,

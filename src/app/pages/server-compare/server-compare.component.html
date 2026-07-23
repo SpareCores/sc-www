@@ -11,25 +11,6 @@
         @if (instances.length) {
           <div class="flex gap-4">
             <button
-              id="currency_button"
-              [appFlowbiteDropdown]="'currency_options'"
-              #currencyDropdown="appFlowbiteDropdown"
-              class="dropdown_button"
-              type="button"
-            >
-              <div class="px-4 py-3">
-                {{ selectedCurrency.slug }}
-              </div>
-              <div
-                class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
-              >
-                <svg
-                  lucideChevronDown
-                  class="h-6 w-6 shrink-0 text-emerald-400"
-                ></svg>
-              </div>
-            </button>
-            <button
               class="btn-primary py-2 px-3 flex gap-1 items-center"
               (click)="clipboardURL($event)"
             >
@@ -48,6 +29,46 @@
       </div>
       @if (instances.length) {
         <div class="text-white text-xl pr-16" [innerHTML]="description"></div>
+        <div class="flex flex-wrap gap-4 items-center justify-end w-full">
+          <button
+            id="baseline_server_button"
+            [appFlowbiteDropdown]="'baseline_server_options'"
+            #baselineDropdown="appFlowbiteDropdown"
+            class="dropdown_button"
+            type="button"
+          >
+            <div class="px-4 py-3">
+              {{ getBaselineServerLabel() }}
+            </div>
+            <div
+              class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
+            >
+              <svg
+                [lucideIcon]="'target'"
+                class="h-6 w-6 shrink-0 text-emerald-400"
+              ></svg>
+            </div>
+          </button>
+          <button
+            id="currency_button"
+            [appFlowbiteDropdown]="'currency_options'"
+            #currencyDropdown="appFlowbiteDropdown"
+            class="dropdown_button"
+            type="button"
+          >
+            <div class="px-4 py-3">
+              {{ selectedCurrency.slug }}
+            </div>
+            <div
+              class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
+            >
+              <svg
+                lucideChevronDown
+                class="h-6 w-6 shrink-0 text-emerald-400"
+              ></svg>
+            </div>
+          </button>
+        </div>
       }
     </div>
 
@@ -221,9 +242,12 @@
                   ) {
                     <th
                       [style]="getStyle(i)"
-                      class="compact-number-header-cell"
+                      class="compact-number-header-cell compare-table-header-cell"
                     >
-                      <div class="ml-auto" style="width: fit-content">
+                      <div
+                        class="ml-auto flex flex-col items-end gap-1"
+                        style="width: fit-content"
+                      >
                         <a
                           class="underline decoration-dotted whitespace-nowrap"
                           [href]="
@@ -237,6 +261,12 @@
                           {{ server.display_name | uppercase }}
                         </a>
                       </div>
+                      @if (isBaselineServer(server)) {
+                        <div
+                          class="compare-table-header-baseline-marker"
+                          aria-hidden="true"
+                        ></div>
+                      }
                     </th>
                   }
                 </tr>
@@ -247,6 +277,7 @@
         <div>
           <app-server-compare-charts
             [servers]="servers"
+            [baselineServer]="selectedBaselineServer"
             [instanceProperties]="instanceProperties"
             [benchmarkMeta]="benchmarkMeta"
             [benchmarkCategories]="benchmarkCategories"
@@ -290,8 +321,35 @@
 </div>
 
 <div
+  id="baseline_server_options"
+  class="compare-dropdown-menu hidden bg-secondary rounded-lg shadow w-64 border border-emerald-400 border-solid"
+>
+  <ul
+    class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
+    aria-labelledby="baseline_server_button"
+  >
+    <li
+      class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+      (click)="selectBaselineServer(null)"
+    >
+      <div class="text-white text-sm">No baseline</div>
+    </li>
+    @for (server of servers; track server.vendor_id + "_" + server.server_id) {
+      <li
+        class="flex py-1 px-2 gap-2 items-center cursor-pointer hover:bg-emerald-500 rounded-sm"
+        (click)="selectBaselineServer(server)"
+      >
+        <div class="text-white text-sm">
+          {{ server.display_name }} ({{ server.vendor_id }})
+        </div>
+      </li>
+    }
+  </ul>
+</div>
+
+<div
   id="currency_options"
-  class="z-10 hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid"
+  class="compare-dropdown-menu hidden bg-secondary rounded-lg shadow w-52 border border-emerald-400 border-solid"
 >
   <ul
     class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"

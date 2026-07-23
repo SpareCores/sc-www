@@ -34,7 +34,6 @@ import {
   WorkloadProfileDetailsServer,
 } from "./workload-profile-radar-chart.types";
 import {
-  breakdownTableHasNotes,
   buildWorkloadProfileBreakdownTable,
   compactBreakdownUnit,
   formatBreakdownNumericValue,
@@ -47,6 +46,7 @@ import {
   formatWorkloadProfileLabel,
   hasWorkloadProfileScore,
   resolveWorkloadProfileBenchmarksWithData,
+  hasWorkloadProfileChartData,
 } from "./workload-profile.utils";
 
 const SCORE_GAUGE_MAX = 2;
@@ -206,9 +206,19 @@ export class WorkloadProfilePanelComponent {
       servers: this.servers(),
     }),
   );
-  readonly hasWorkloadProfiles = computed(
-    () => this.workloadProfileBenchmarks().length > 0,
-  );
+  readonly hasWorkloadProfiles = computed(() => {
+    if (this.layout() === "details") {
+      return hasWorkloadProfileChartData({
+        benchmarkMeta: this.benchmarkMeta(),
+        benchmarkScores: this.serverDetails()?.benchmark_scores,
+      });
+    }
+
+    return hasWorkloadProfileChartData({
+      benchmarkMeta: this.benchmarkMeta(),
+      servers: this.servers(),
+    });
+  });
   readonly profileDropdownItems = computed(() =>
     this.workloadProfileBenchmarks().map((benchmark) => ({
       id: benchmark.benchmark_id,
@@ -275,22 +285,11 @@ export class WorkloadProfilePanelComponent {
       scoreBreakdown: this.selectedBenchmarkScore()?.score_breakdown,
     });
   });
-  readonly hasBreakdownNotes = computed(() => {
-    const table = this.selectedBreakdownTable();
-
-    return table ? breakdownTableHasNotes(table) : false;
-  });
   readonly scoreGaugeChart = computed(() =>
     buildScoreGaugeChart(this.selectedBenchmarkScore()?.score),
   );
 
   readonly workloadProfileInfoTooltip = WORKLOAD_PROFILE_INFO_TOOLTIP;
-  readonly formatBreakdownNumericValue = formatBreakdownNumericValue;
-  readonly compactBreakdownUnit = compactBreakdownUnit;
-  readonly formatBreakdownPercent = formatBreakdownPercent;
-  readonly formatImpactPercent = formatImpactPercent;
-  readonly getImpactColorClass = getImpactColorClass;
-  readonly scoreGaugePlugins = [scoreGaugeTickPlugin];
 
   readonly workloadProfileMetaNote = computed(() =>
     getBenchmarkMetaNotes(
@@ -300,6 +299,12 @@ export class WorkloadProfilePanelComponent {
       ),
     ),
   );
+  readonly formatBreakdownNumericValue = formatBreakdownNumericValue;
+  readonly compactBreakdownUnit = compactBreakdownUnit;
+  readonly formatBreakdownPercent = formatBreakdownPercent;
+  readonly formatImpactPercent = formatImpactPercent;
+  readonly getImpactColorClass = getImpactColorClass;
+  readonly scoreGaugePlugins = [scoreGaugeTickPlugin];
 
   tooltipContent = "";
 
@@ -329,24 +334,27 @@ export class WorkloadProfilePanelComponent {
     }
   }
 
-  showTooltip(
-    el: MouseEvent,
-    content?: string,
-    variant?: "warning-wide",
-  ): void {
+  showTooltip(el: Event, content?: string): void {
     this.tooltipService.showIfPresent({
       tooltipElement: this.tooltip()?.nativeElement,
       event: el,
       content,
-      variant,
       onShow: (text) => {
         this.tooltipContent = text;
       },
     });
   }
 
-  showWarningTooltip(el: MouseEvent, content?: string): void {
-    this.showTooltip(el, content, "warning-wide");
+  showWarningTooltip(el: Event, content?: string): void {
+    this.tooltipService.showIfPresent({
+      tooltipElement: this.tooltip()?.nativeElement,
+      event: el,
+      content,
+      variant: "warning-wide",
+      onShow: (text) => {
+        this.tooltipContent = text;
+      },
+    });
   }
 
   hideTooltip(): void {

@@ -18,7 +18,7 @@
             track server.vendor_id + "_" + server.server_id
           ) {
             <th
-              class="align-baseline compact-number-header-cell"
+              class="align-baseline compact-number-header-cell compare-table-header-cell"
               [style.width]="getServerColumnWidth(server)"
               [style.minWidth]="getServerColumnWidth(server)"
               [id]="
@@ -68,6 +68,13 @@
                   }
                 </div>
               </div>
+              @if (isBaselineServer(server, baselineServer)) {
+                <span class="sr-only">Baseline server</span>
+                <div
+                  class="compare-table-header-baseline-marker"
+                  aria-hidden="true"
+                ></div>
+              }
             </th>
           }
         </tr>
@@ -199,11 +206,37 @@
             server of servers;
             track server.vendor_id + "_" + server.server_id
           ) {
-            <td>
-              <div class="flex flex-col">
+            <td class="align-baseline">
+              <div class="compare-table-metric-cell">
                 <div [style]="getBestPriceStyle(server, 'spot')">
                   {{ getBestPrice(server, "spot") }}
                 </div>
+                @if (baselineServer) {
+                  <div class="compare-table-delta-row">
+                    @if (getBestPriceDelta(server, "spot"); as priceDelta) {
+                      <span
+                        class="compare-table-delta"
+                        [class.compare-table-delta--positive]="
+                          priceDelta.tone === 'positive'
+                        "
+                        [class.compare-table-delta--negative]="
+                          priceDelta.tone === 'negative'
+                        "
+                        [class.compare-table-delta--neutral]="
+                          priceDelta.tone === 'neutral'
+                        "
+                      >
+                        {{ priceDelta.label }}
+                      </span>
+                    } @else {
+                      <span
+                        class="compare-table-delta-placeholder"
+                        aria-hidden="true"
+                        >&nbsp;</span
+                      >
+                    }
+                  </div>
+                }
                 <div class="text-xs">
                   {{ getBestZone(server, "spot") }}
                 </div>
@@ -220,10 +253,36 @@
             track server.vendor_id + "_" + server.server_id
           ) {
             <td>
-              <div class="flex flex-col">
+              <div class="compare-table-metric-cell">
                 <div [style]="getBestPriceStyle(server)">
                   {{ getBestPrice(server) }}
                 </div>
+                @if (baselineServer) {
+                  <div class="compare-table-delta-row">
+                    @if (getBestPriceDelta(server); as priceDelta) {
+                      <span
+                        class="compare-table-delta"
+                        [class.compare-table-delta--positive]="
+                          priceDelta.tone === 'positive'
+                        "
+                        [class.compare-table-delta--negative]="
+                          priceDelta.tone === 'negative'
+                        "
+                        [class.compare-table-delta--neutral]="
+                          priceDelta.tone === 'neutral'
+                        "
+                      >
+                        {{ priceDelta.label }}
+                      </span>
+                    } @else {
+                      <span
+                        class="compare-table-delta-placeholder"
+                        aria-hidden="true"
+                        >&nbsp;</span
+                      >
+                    }
+                  </div>
+                }
                 <div class="text-xs">
                   {{ getBestZone(server) }}
                 </div>
@@ -343,16 +402,49 @@
                 ) {
                   <td>
                     @let propertyValue = getProperty(category, server);
-                    <div [style]="getBestCellStyle(category.id, server)">
-                      @if (propertyValue === "check" || propertyValue === "x") {
-                        <svg
-                          [lucideIcon]="propertyValue"
-                          class="h-4 w-4 shrink-0 justify-self-end"
-                          [class.text-emerald-400]="propertyValue === 'check'"
-                          [class.text-white]="propertyValue === 'x'"
-                        ></svg>
-                      } @else {
-                        <span [textContent]="propertyValue"></span>
+                    <div class="compare-table-metric-cell">
+                      <div [style]="getBestCellStyle(category.id, server)">
+                        @if (
+                          propertyValue === "check" || propertyValue === "x"
+                        ) {
+                          <svg
+                            [lucideIcon]="propertyValue"
+                            class="h-4 w-4 shrink-0 justify-self-end"
+                            [class.text-emerald-400]="propertyValue === 'check'"
+                            [class.text-white]="propertyValue === 'x'"
+                          ></svg>
+                        } @else {
+                          <span [textContent]="propertyValue"></span>
+                        }
+                      </div>
+                      @if (shouldShowPropertyDeltaRow(category.id)) {
+                        <div class="compare-table-delta-row">
+                          @if (
+                            getPropertyDelta(category.id, server);
+                            as propertyDelta
+                          ) {
+                            <span
+                              class="compare-table-delta"
+                              [class.compare-table-delta--positive]="
+                                propertyDelta.tone === 'positive'
+                              "
+                              [class.compare-table-delta--negative]="
+                                propertyDelta.tone === 'negative'
+                              "
+                              [class.compare-table-delta--neutral]="
+                                propertyDelta.tone === 'neutral'
+                              "
+                            >
+                              {{ propertyDelta.label }}
+                            </span>
+                          } @else {
+                            <span
+                              class="compare-table-delta-placeholder"
+                              aria-hidden="true"
+                              >&nbsp;</span
+                            >
+                          }
+                        </div>
                       }
                     </div>
                   </td>
@@ -550,15 +642,52 @@
                       isBestStyle(value, primaryConfig.values, benchmark)
                     "
                   >
-                    <span
-                      (mouseenter)="
-                        value !== null && showTooltip($event, value.toString())
-                      "
-                      (mouseleave)="hideTooltip()"
-                      >{{
-                        value === null ? "-" : (value | compactNumber)
-                      }}</span
-                    >
+                    <div class="compare-table-metric-cell">
+                      <span
+                        (mouseenter)="
+                          value !== null &&
+                            showTooltip($event, value.toString())
+                        "
+                        (mouseleave)="hideTooltip()"
+                        >{{
+                          value === null ? "-" : (value | compactNumber)
+                        }}</span
+                      >
+                      @if (baselineServer) {
+                        <div class="compare-table-delta-row">
+                          @if (
+                            getBenchmarkValueDelta(
+                              value,
+                              primaryConfig.values,
+                              $index,
+                              benchmark
+                            );
+                            as valueDelta
+                          ) {
+                            <span
+                              class="compare-table-delta"
+                              [class.compare-table-delta--positive]="
+                                valueDelta.tone === 'positive'
+                              "
+                              [class.compare-table-delta--negative]="
+                                valueDelta.tone === 'negative'
+                              "
+                              [class.compare-table-delta--neutral]="
+                                valueDelta.tone === 'neutral'
+                              "
+                            >
+                              {{ valueDelta.label }}
+                            </span>
+                          } @else {
+                            <span
+                              class="compare-table-delta-placeholder"
+                              aria-hidden="true"
+                              >&nbsp;</span
+                            >
+                          }
+                        </div>
+                      }
+                    </div>
                   </td>
                 }
               }
@@ -990,14 +1119,50 @@
                         )
                       "
                     >
-                      <span
-                        (mouseenter)="
-                          value !== null &&
-                            showTooltip($event, value.toString())
-                        "
-                        (mouseleave)="hideTooltip()"
-                        >{{ value | compactNumber }}</span
-                      >
+                      <div class="compare-table-metric-cell">
+                        <span
+                          (mouseenter)="
+                            value !== null &&
+                              showTooltip($event, value.toString())
+                          "
+                          (mouseleave)="hideTooltip()"
+                          >{{ value | compactNumber }}</span
+                        >
+                        @if (baselineServer) {
+                          <div class="compare-table-delta-row">
+                            @if (
+                              getBenchmarkValueDelta(
+                                value,
+                                benchmarkData.configs[0].values,
+                                $index,
+                                benchmarkData
+                              );
+                              as valueDelta
+                            ) {
+                              <span
+                                class="compare-table-delta"
+                                [class.compare-table-delta--positive]="
+                                  valueDelta.tone === 'positive'
+                                "
+                                [class.compare-table-delta--negative]="
+                                  valueDelta.tone === 'negative'
+                                "
+                                [class.compare-table-delta--neutral]="
+                                  valueDelta.tone === 'neutral'
+                                "
+                              >
+                                {{ valueDelta.label }}
+                              </span>
+                            } @else {
+                              <span
+                                class="compare-table-delta-placeholder"
+                                aria-hidden="true"
+                                >&nbsp;</span
+                              >
+                            }
+                          </div>
+                        }
+                      </div>
                     </td>
                   }
                 }
@@ -1098,14 +1263,50 @@
                           isBestStyle(value, config.values, benchmarkData)
                         "
                       >
-                        <span
-                          (mouseenter)="
-                            value !== null &&
-                              showTooltip($event, value.toString())
-                          "
-                          (mouseleave)="hideTooltip()"
-                          >{{ value | compactNumber }}</span
-                        >
+                        <div class="compare-table-metric-cell">
+                          <span
+                            (mouseenter)="
+                              value !== null &&
+                                showTooltip($event, value.toString())
+                            "
+                            (mouseleave)="hideTooltip()"
+                            >{{ value | compactNumber }}</span
+                          >
+                          @if (baselineServer) {
+                            <div class="compare-table-delta-row">
+                              @if (
+                                getBenchmarkValueDelta(
+                                  value,
+                                  config.values,
+                                  $index,
+                                  benchmarkData
+                                );
+                                as valueDelta
+                              ) {
+                                <span
+                                  class="compare-table-delta"
+                                  [class.compare-table-delta--positive]="
+                                    valueDelta.tone === 'positive'
+                                  "
+                                  [class.compare-table-delta--negative]="
+                                    valueDelta.tone === 'negative'
+                                  "
+                                  [class.compare-table-delta--neutral]="
+                                    valueDelta.tone === 'neutral'
+                                  "
+                                >
+                                  {{ valueDelta.label }}
+                                </span>
+                              } @else {
+                                <span
+                                  class="compare-table-delta-placeholder"
+                                  aria-hidden="true"
+                                  >&nbsp;</span
+                                >
+                              }
+                            </div>
+                          }
+                        </div>
                       </td>
                     }
                   </tr>
@@ -1371,16 +1572,52 @@
                           isBestStyle(value, config.values ?? [], chartData)
                         "
                       >
-                        <span
-                          (mouseenter)="
-                            value !== null &&
-                              showTooltip($event, value.toString())
-                          "
-                          (mouseleave)="hideTooltip()"
-                          >{{
-                            value === null ? "-" : (value | compactNumber)
-                          }}</span
-                        >
+                        <div class="compare-table-metric-cell">
+                          <span
+                            (mouseenter)="
+                              value !== null &&
+                                showTooltip($event, value.toString())
+                            "
+                            (mouseleave)="hideTooltip()"
+                            >{{
+                              value === null ? "-" : (value | compactNumber)
+                            }}</span
+                          >
+                          @if (baselineServer) {
+                            <div class="compare-table-delta-row">
+                              @if (
+                                getBenchmarkValueDelta(
+                                  value,
+                                  config.values ?? [],
+                                  $index,
+                                  chartData
+                                );
+                                as valueDelta
+                              ) {
+                                <span
+                                  class="compare-table-delta"
+                                  [class.compare-table-delta--positive]="
+                                    valueDelta.tone === 'positive'
+                                  "
+                                  [class.compare-table-delta--negative]="
+                                    valueDelta.tone === 'negative'
+                                  "
+                                  [class.compare-table-delta--neutral]="
+                                    valueDelta.tone === 'neutral'
+                                  "
+                                >
+                                  {{ valueDelta.label }}
+                                </span>
+                              } @else {
+                                <span
+                                  class="compare-table-delta-placeholder"
+                                  aria-hidden="true"
+                                  >&nbsp;</span
+                                >
+                              }
+                            </div>
+                          }
+                        </div>
                       </td>
                     }
                   </tr>
@@ -1480,13 +1717,50 @@
                       isBestStyle(value, config.values, benchmarkCategory)
                     "
                   >
-                    <span
-                      (mouseenter)="
-                        value !== null && showTooltip($event, value.toString())
-                      "
-                      (mouseleave)="hideTooltip()"
-                      >{{ value | compactNumber }}</span
-                    >
+                    <div class="compare-table-metric-cell">
+                      <span
+                        (mouseenter)="
+                          value !== null &&
+                            showTooltip($event, value.toString())
+                        "
+                        (mouseleave)="hideTooltip()"
+                        >{{ value | compactNumber }}</span
+                      >
+                      @if (baselineServer) {
+                        <div class="compare-table-delta-row">
+                          @if (
+                            getBenchmarkValueDelta(
+                              value,
+                              config.values,
+                              $index,
+                              benchmarkCategory
+                            );
+                            as valueDelta
+                          ) {
+                            <span
+                              class="compare-table-delta"
+                              [class.compare-table-delta--positive]="
+                                valueDelta.tone === 'positive'
+                              "
+                              [class.compare-table-delta--negative]="
+                                valueDelta.tone === 'negative'
+                              "
+                              [class.compare-table-delta--neutral]="
+                                valueDelta.tone === 'neutral'
+                              "
+                            >
+                              {{ valueDelta.label }}
+                            </span>
+                          } @else {
+                            <span
+                              class="compare-table-delta-placeholder"
+                              aria-hidden="true"
+                              >&nbsp;</span
+                            >
+                          }
+                        </div>
+                      }
+                    </div>
                   </td>
                 }
               </tr>
