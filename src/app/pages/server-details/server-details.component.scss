@@ -96,7 +96,7 @@
 }
 
 .summarize-modal-paragraph {
-  @apply text-gray-200 leading-relaxed mb-4 last:mb-0;
+  @apply text-gray-200 leading-relaxed mb-4 last:-mb-3;
 }
 
 .summarize-modal-highlights {
