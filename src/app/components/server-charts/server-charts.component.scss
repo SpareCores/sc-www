@@ -1,10 +1,18 @@
 .items_table_passmark {
   @apply w-full text-white;
+  table-layout: fixed;
+  border-collapse: collapse;
 
   thead {
     th {
       @apply bg-secondary border-b border-gray-200 border-solid text-left px-5 py-3 font-normal;
     }
+  }
+
+  .passmark-score-col {
+    text-align: right;
+    white-space: nowrap;
+    width: 5rem;
   }
 
   tbody {
@@ -16,6 +24,11 @@
       td {
         @apply px-5 py-3 text-left text-sm;
       }
+
+      td:first-child {
+        white-space: nowrap;
+      }
+
       td.fixed_width {
         width: 250px;
       }

@@ -466,7 +466,6 @@
   class="compare_dropdown_panel z-10 hidden bg-secondary rounded-lg shadow border border-emerald-400 border-solid"
 >
   <ul
-    class="py-2 px-1 text-sm text-gray-700 dark:text-gray-200"
     aria-labelledby="dropdownDefaultButton"
     cdkDropList
     (cdkDropListDropped)="dropComparedServer($event)"
@@ -476,50 +475,64 @@
       track server.server + "_" + server.vendor
     ) {
       <li
-        class="compare_dropdown_row py-2 flex w-full items-center gap-1"
+        class="compare_dropdown_row"
         cdkDrag
         (cdkDragStarted)="setCompareDragCursor(true)"
         (cdkDragEnded)="setCompareDragCursor(false)"
       >
-        <div
-          class="compare_dropdown_actions ml-auto flex items-center gap-1"
+        <button
+          type="button"
+          class="compare_dropdown_handle"
+          cdkDragHandle
+          aria-label="Reorder"
           (click)="$event.stopPropagation()"
         >
-          <button
-            type="button"
-            class="compare_dropdown_handle shrink-0 px-1 py-2 text-gray-400 hover:text-emerald-400"
-            cdkDragHandle
-            aria-label="Reorder"
-          >
-            <span class="navbar_icon">
-              <svg lucideArrowUpDown class="h-4 w-4"></svg>
-            </span>
-          </button>
-          <a
-            class="navbar_link"
-            routerLink="/server/{{ server.vendor }}/{{ server.server }}"
-            (click)="closeCompare()"
-          >
-            <span>{{ server.vendor }}: {{ server.display_name }}</span>
-          </a>
-          <button
-            class="text-red-500 px-2 py-2 shrink-0"
-            (click)="removeFromCompare(server)"
-          >
-            <span class="navbar_icon">
-              <svg lucideTrash class="h-4 w-4"></svg>
-            </span>
-          </button>
-        </div>
+          <span class="navbar_icon">
+            <svg lucideArrowUpDown class="h-4 w-4"></svg>
+          </span>
+        </button>
+        <button
+          type="button"
+          class="compare_dropdown_baseline"
+          [class.text-gray-400]="!isBaselineServer(server)"
+          [class.text-emerald-400]="isBaselineServer(server)"
+          aria-label="Toggle baseline server"
+          [attr.aria-pressed]="isBaselineServer(server) ? 'true' : 'false'"
+          (click)="toggleBaselineServer(server); $event.stopPropagation()"
+        >
+          <span class="navbar_icon">
+            <svg lucideTarget class="h-4 w-4"></svg>
+          </span>
+        </button>
+        <a
+          class="navbar_link min-w-0 flex-1 truncate"
+          routerLink="/server/{{ server.vendor }}/{{ server.server }}"
+          (click)="closeCompare()"
+        >
+          {{ server.vendor }}: {{ server.display_name }}
+        </a>
+        <button
+          type="button"
+          class="compare_dropdown_delete"
+          aria-label="Remove from compare"
+          (click)="removeFromCompare(server); $event.stopPropagation()"
+        >
+          <span class="navbar_icon">
+            <svg lucideTrash class="h-4 w-4"></svg>
+          </span>
+        </button>
       </li>
     }
-    <li class="py-2">
-      <button
-        class="w-full font-bold text-white bg-emerald-400 hover:bg-emerald-500 rounded-sm py-2"
-        (click)="compareServers(); closeCompare()"
-      >
-        Compare
-      </button>
-    </li>
+    @if (!isOnComparePage()) {
+      <li class="py-2">
+        <button
+          type="button"
+          class="w-full font-bold text-white bg-emerald-400 hover:bg-emerald-500 rounded-md py-2"
+          (click)="compareServers(); closeCompare()"
+        >
+          Compare
+        </button>
+      </li>
+    }
   </ul>
 </div>

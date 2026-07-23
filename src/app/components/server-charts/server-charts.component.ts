@@ -1,10 +1,8 @@
-import { isPlatformBrowser } from "@angular/common";
 import {
   Component,
   ElementRef,
   Input,
   OnChanges,
-  PLATFORM_ID,
   ViewChild,
   inject,
 } from "@angular/core";
@@ -60,7 +58,6 @@ import { hasWorkloadProfileChartData } from "../charts/workload-profile/workload
   styleUrl: "./server-charts.component.scss",
 })
 export class ServerChartsComponent implements OnChanges {
-  private platformId = inject(PLATFORM_ID);
   private tooltipService = inject(ChartTooltipService);
 
   @ViewChild("tooltipDefault") tooltip!: ElementRef<HTMLElement>;
@@ -151,18 +148,7 @@ export class ServerChartsComponent implements OnChanges {
   }
 
   showTooltipChart(el: MouseEvent, type: string) {
-    const content = this.benchmarkMeta.find(
-      (b: any) => b.benchmark_id === type,
-    )?.description;
-
-    this.tooltipService.showIfPresent({
-      tooltipElement: this.tooltip?.nativeElement,
-      event: el,
-      content,
-      onShow: (tooltipContent) => {
-        this.tooltipContent = tooltipContent;
-      },
-    });
+    this.showTooltip(el, this.benchmarkDescription(type) || undefined);
   }
 
   hideTooltip() {
@@ -203,10 +189,6 @@ export class ServerChartsComponent implements OnChanges {
 
   benchmarkRowNote(benchmarkId: string): string {
     return this.benchmarkNote(benchmarkId, false);
-  }
-
-  isBrowser() {
-    return isPlatformBrowser(this.platformId);
   }
 
   openBox(boxId: string) {

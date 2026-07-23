@@ -18,7 +18,9 @@ export function encodeQueryParams(params: any): string | null {
   // filter out empty arrays
   const query = Object.keys(params)
     .filter((item) => !Array.isArray(params[item]) || params[item].length > 0)
-    .map((key) => key + "=" + params[key])
+    .map(
+      (key) => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`,
+    )
     .join("&");
 
   return query;
