@@ -369,7 +369,12 @@
           <svg lucideMinus class="h-4 w-4"></svg>
         </button>
 
-        <div class="custom-stepper__field">
+        <div
+          class="custom-stepper__field"
+          [class.filter-draft-input--dirty]="
+            isPowerOfTwoStepperDraftDirty(control)
+          "
+        >
           <input
             id="custom_control_numeric_{{ control.name }}"
             type="text"
@@ -402,6 +407,11 @@
           <svg lucidePlus class="h-4 w-4"></svg>
         </button>
       </div>
+      @if (isPowerOfTwoStepperDraftDirty(control)) {
+        <div class="filter-draft-pending-hint">
+          Press Enter or click away to apply filter.
+        </div>
+      }
     }
   </div>
 

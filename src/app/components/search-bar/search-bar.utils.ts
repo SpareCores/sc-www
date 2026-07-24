@@ -440,6 +440,25 @@ export function draftValueFromUnknown(rawValue: unknown): string {
   return rawValue === null || rawValue === undefined ? "" : String(rawValue);
 }
 
+export function isDraftValueDirty(
+  draftValue: string | undefined,
+  committedValue: unknown,
+): boolean {
+  if (draftValue === undefined) {
+    return false;
+  }
+
+  if (
+    committedValue === null ||
+    committedValue === undefined ||
+    committedValue === ""
+  ) {
+    return draftValue !== "";
+  }
+
+  return draftValue !== String(committedValue);
+}
+
 export function parseNumericDraftValue(rawValue: unknown): number | null {
   if (rawValue === null || rawValue === undefined || rawValue === "") {
     return null;

@@ -26,6 +26,7 @@ import { SearchBarParameterFieldComponent } from "./search-bar-parameter-field.c
 import {
   draftValueFromUnknown,
   getParameterType as getSearchBarParameterType,
+  isDraftValueDirty,
   normalizeBenchmarkTriStateValue,
   normalizeCommittedCpuCacheRangeValue,
   parseNumericDraftValue,
@@ -650,6 +651,13 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
   setParameterDraftValue(parameter: SearchBarParameter, rawValue: unknown) {
     this.parameterDraftValues[parameter.name] = draftValueFromUnknown(rawValue);
+  }
+
+  isParameterDraftDirty(parameter: SearchBarParameter): boolean {
+    return isDraftValueDirty(
+      this.parameterDraftValues[parameter.name],
+      parameter.modelValue,
+    );
   }
 
   commitParameterInput(parameter: SearchBarParameter, event: Event) {

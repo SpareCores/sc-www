@@ -35,6 +35,7 @@ import {
   getCpuCacheRangeStops,
   getInputElementFromEvent,
   getParameterType,
+  isDraftValueDirty,
   normalizeBenchmarkTriStateValue,
   normalizeCommittedCpuCacheRangeValue,
   normalizeOptionId,
@@ -137,6 +138,17 @@ export class SearchBarParameterFieldComponent implements DoCheck, OnDestroy {
 
   setParameterDraftValue(rawValue: unknown) {
     this.parameterDraftValue = draftValueFromUnknown(rawValue);
+  }
+
+  isParameterDraftDirty(parameter: SearchBarParameter): boolean {
+    return isDraftValueDirty(this.parameterDraftValue, parameter.modelValue);
+  }
+
+  isCpuCacheRangeDraftDirty(parameter: SearchBarParameter): boolean {
+    return isDraftValueDirty(
+      this.cpuCacheRangeDraftValue,
+      parameter.modelValue,
+    );
   }
 
   onRangeSliderChanged() {

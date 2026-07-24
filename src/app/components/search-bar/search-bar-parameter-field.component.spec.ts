@@ -35,6 +35,7 @@ describe("SearchBarParameterFieldComponent", () => {
 
     component.setParameterDraftValue("1.5");
     expect(emitSpy).not.toHaveBeenCalled();
+    expect(component.isParameterDraftDirty(parameter)).toBeTrue();
 
     component.commitParameterInput({
       target: { value: "1.5" },
@@ -42,6 +43,41 @@ describe("SearchBarParameterFieldComponent", () => {
 
     expect(parameter.modelValue).toBe(1.5);
     expect(emitSpy).toHaveBeenCalledTimes(1);
+    expect(component.isParameterDraftDirty(parameter)).toBeFalse();
+  });
+
+  it("shows pending hint markup while number draft is dirty", () => {
+    const parameter: SearchBarParameter = {
+      name: "price_max",
+      modelValue: null,
+      schema: {
+        category_id: "price",
+        title: "Max price",
+        type: "number",
+      },
+    };
+    fixture.componentRef.setInput("parameter", parameter);
+    fixture.componentRef.setInput("filterCategoryId", "price");
+    fixture.detectChanges();
+
+    expect(
+      fixture.nativeElement.querySelector(".filter-draft-pending-hint"),
+    ).toBeNull();
+
+    component.setParameterDraftValue("2");
+    fixture.detectChanges();
+
+    const hint = fixture.nativeElement.querySelector(
+      ".filter-draft-pending-hint",
+    ) as HTMLElement;
+    const input = fixture.nativeElement.querySelector(
+      "#filter_number_price_max",
+    ) as HTMLInputElement;
+
+    expect(hint.textContent).toContain(
+      "Press Enter or click away to apply filter.",
+    );
+    expect(input.classList.contains("filter-draft-input--dirty")).toBeTrue();
   });
 
   it("attaches appNumbersOnly to numeric inputs", () => {
