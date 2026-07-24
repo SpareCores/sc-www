@@ -71,9 +71,11 @@ describe("SearchBarParameterFieldComponent", () => {
       ".filter-draft-pending-hint",
     ) as HTMLElement;
     const input = fixture.nativeElement.querySelector(
-      "#filter_number_price_max",
+      "#filter_price_price_max",
     ) as HTMLInputElement;
 
+    expect(hint).not.toBeNull();
+    expect(input).not.toBeNull();
     expect(hint.textContent).toContain(
       "Press Enter or click away to apply filter.",
     );
