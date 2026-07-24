@@ -1,0 +1,130 @@
+import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { By } from "@angular/platform-browser";
+import { NumbersOnlyDirective } from "../../directives/numbers-only.directive";
+import { SearchBarParameterFieldComponent } from "./search-bar-parameter-field.component";
+import type { SearchBarParameter } from "./search-bar.types";
+
+describe("SearchBarParameterFieldComponent", () => {
+  let component: SearchBarParameterFieldComponent;
+  let fixture: ComponentFixture<SearchBarParameterFieldComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [SearchBarParameterFieldComponent],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(SearchBarParameterFieldComponent);
+    component = fixture.componentInstance;
+  });
+
+  it("does not emit filterServers while drafting a number, only on blur", () => {
+    const parameter: SearchBarParameter = {
+      name: "price_max",
+      modelValue: null,
+      schema: {
+        category_id: "price",
+        title: "Max price",
+        type: "number",
+      },
+    };
+    fixture.componentRef.setInput("parameter", parameter);
+    fixture.componentRef.setInput("filterCategoryId", "price");
+    fixture.detectChanges();
+
+    const emitSpy = spyOn(component.filterServers, "emit");
+
+    component.setParameterDraftValue("1.5");
+    expect(emitSpy).not.toHaveBeenCalled();
+    expect(component.isParameterDraftDirty(parameter)).toBeTrue();
+
+    component.commitParameterInput({
+      target: { value: "1.5" },
+    } as unknown as Event);
+
+    expect(parameter.modelValue).toBe(1.5);
+    expect(emitSpy).toHaveBeenCalledTimes(1);
+    expect(component.isParameterDraftDirty(parameter)).toBeFalse();
+  });
+
+  it("shows pending hint markup while number draft is dirty", () => {
+    const parameter: SearchBarParameter = {
+      name: "price_max",
+      modelValue: null,
+      schema: {
+        category_id: "price",
+        title: "Max price",
+        type: "number",
+      },
+    };
+    fixture.componentRef.setInput("parameter", parameter);
+    fixture.componentRef.setInput("filterCategoryId", "price");
+    fixture.detectChanges();
+
+    expect(
+      fixture.nativeElement.querySelector(".filter-draft-pending-hint"),
+    ).toBeNull();
+
+    component.setParameterDraftValue("2");
+    fixture.detectChanges();
+
+    const hint = fixture.nativeElement.querySelector(
+      ".filter-draft-pending-hint",
+    ) as HTMLElement;
+    const input = fixture.nativeElement.querySelector(
+      "#filter_price_price_max",
+    ) as HTMLInputElement;
+
+    expect(hint).not.toBeNull();
+    expect(input).not.toBeNull();
+    expect(hint.textContent).toContain(
+      "Press Enter or click away to apply filter.",
+    );
+    expect(input.classList.contains("filter-draft-input--dirty")).toBeTrue();
+  });
+
+  it("attaches appNumbersOnly to numeric inputs", () => {
+    const parameter: SearchBarParameter = {
+      name: "price_max",
+      modelValue: null,
+      schema: {
+        category_id: "price",
+        title: "Max price",
+        type: "number",
+      },
+    };
+    fixture.componentRef.setInput("parameter", parameter);
+    fixture.componentRef.setInput("filterCategoryId", "price");
+    fixture.detectChanges();
+
+    const input = fixture.debugElement.query(
+      By.directive(NumbersOnlyDirective),
+    );
+
+    expect(input).not.toBeNull();
+    expect(input.nativeElement.id).toBe("filter_price_price_max");
+  });
+
+  it("wraps title and tooltip trigger in inline-flex w-fit", () => {
+    const parameter: SearchBarParameter = {
+      name: "price_max",
+      modelValue: null,
+      schema: {
+        category_id: "price",
+        title: "Max price",
+        type: "number",
+        description: "Help text",
+      },
+    };
+    fixture.componentRef.setInput("parameter", parameter);
+    fixture.componentRef.setInput("filterCategoryId", "price");
+    fixture.detectChanges();
+
+    const title = fixture.nativeElement.querySelector(
+      "#filter_title_price_max",
+    ) as HTMLElement;
+
+    expect(title).not.toBeNull();
+    expect(title.querySelector(".tooltip-trigger")).not.toBeNull();
+    expect(title.textContent).toContain("Max price");
+  });
+});

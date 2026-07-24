@@ -45,6 +45,9 @@
     padding-right: 2.5rem;
     height: 40px;
   }
+  .top_search_input.filter-draft-input--dirty {
+    @apply border-yellow-500 bg-yellow-100 focus:ring-yellow-500;
+  }
   .top_search_input::placeholder {
     @apply text-sky-800/70;
   }
@@ -79,6 +82,20 @@
     right: 0.5rem;
     top: 2.25rem;
     transform: translateY(-2rem);
+  }
+
+  .filter-draft-input--compact.filter-draft-input--dirty {
+    @apply border-solid border-yellow-500;
+
+    background-color: rgb(234 179 8 / 0.15);
+  }
+
+  .filter-draft-input--field.filter-draft-input--dirty {
+    @apply border-solid border-yellow-500 bg-yellow-100;
+  }
+
+  .filter-draft-pending-hint {
+    @apply text-yellow-500 text-xs mt-1;
   }
 
   .checkbox {
@@ -282,11 +299,22 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: box-shadow 150ms ease;
+    transition:
+      box-shadow 150ms ease,
+      border-color 150ms ease,
+      background-color 150ms ease;
+  }
+
+  .custom-stepper__field.filter-draft-input--dirty {
+    @apply border-yellow-500 bg-yellow-100;
   }
 
   .custom-stepper__field:focus-within {
     box-shadow: 0 0 0 2px rgb(52 211 153);
+  }
+
+  .custom-stepper__field.filter-draft-input--dirty:focus-within {
+    box-shadow: 0 0 0 2px rgb(234 179 8);
   }
 
   .custom-stepper__button {
