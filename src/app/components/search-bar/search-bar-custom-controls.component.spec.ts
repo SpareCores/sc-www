@@ -239,7 +239,7 @@ describe("SearchBarCustomControlsComponent", () => {
     ) as HTMLInputElement;
     const titleGroup = checkboxInput
       .closest("label, div")
-      ?.querySelector(".inline-flex.w-fit") as HTMLElement;
+      ?.querySelector(".text-white.text-sm.leading-tight") as HTMLElement;
     const nestedControl = fixture.nativeElement.querySelector(
       ".custom-control--nested",
     ) as HTMLElement;

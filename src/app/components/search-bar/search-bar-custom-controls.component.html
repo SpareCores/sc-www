@@ -11,17 +11,15 @@
       control.type !== "checkboxGroup" &&
       !control.hideTitle
     ) {
-      <div class="inline-flex items-center gap-1 w-fit">
-        <div class="font-bold text-emerald-400 text-sm">
-          {{ control.title }}
-          @if (control.required) {
-            <span class="text-red-300">*</span>
-          }
-        </div>
+      <div class="font-bold text-emerald-400 text-sm">
+        {{ control.title }}
+        @if (control.required) {
+          <span class="text-red-300">*</span>
+        }
         @if (control.description) {
           <button
             type="button"
-            class="tooltip-trigger"
+            class="tooltip-trigger ml-1 align-middle"
             aria-label="Show filter description"
             (mouseenter)="emitTooltip($event, control.description)"
             (mouseleave)="hideTooltip.emit()"
@@ -53,16 +51,14 @@
           class="checkbox"
         />
         <div class="flex flex-col gap-1">
-          <div class="inline-flex items-center gap-1 w-fit">
-            <div class="text-white text-sm leading-tight">
-              {{ control.title }}
-            </div>
+          <div class="text-white text-sm leading-tight">
+            {{ control.title }}
             @if (
               control.description && control.descriptionDisplay === "tooltip"
             ) {
               <button
                 type="button"
-                class="tooltip-trigger"
+                class="tooltip-trigger ml-1 align-middle"
                 aria-label="Show filter description"
                 (mouseenter)="emitTooltip($event, control.description)"
                 (mouseleave)="hideTooltip.emit()"

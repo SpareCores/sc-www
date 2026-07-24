@@ -81,12 +81,12 @@ describe("SearchBarParameterFieldComponent", () => {
     fixture.componentRef.setInput("filterCategoryId", "price");
     fixture.detectChanges();
 
-    const group = fixture.nativeElement.querySelector(
-      ".inline-flex.w-fit",
+    const title = fixture.nativeElement.querySelector(
+      "#filter_title_price_max",
     ) as HTMLElement;
 
-    expect(group).not.toBeNull();
-    expect(group.querySelector(".tooltip-trigger")).not.toBeNull();
-    expect(group.textContent).toContain("Max price");
+    expect(title).not.toBeNull();
+    expect(title.querySelector(".tooltip-trigger")).not.toBeNull();
+    expect(title.textContent).toContain("Max price");
   });
 });

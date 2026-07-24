@@ -12,17 +12,15 @@
             class="h-4 w-4 text-emerald-400"
           ></svg>
         }
-        <div class="inline-flex items-center gap-1 w-fit">
-          <div
-            class="font-bold text-emerald-400 text-sm"
-            id="filter_title_{{ parameter.name }}"
-          >
-            {{ parameter.schema.title }}
-          </div>
+        <div
+          class="font-bold text-emerald-400 text-sm"
+          id="filter_title_{{ parameter.name }}"
+        >
+          {{ parameter.schema.title }}
           @if (parameter.schema.description) {
             <button
               type="button"
-              class="tooltip-trigger"
+              class="tooltip-trigger ml-1 align-middle"
               aria-label="Show filter description"
               (mouseenter)="emitTooltip($event, parameter.schema.description)"
               (mouseleave)="hideTooltip.emit()"
@@ -250,14 +248,12 @@
           [disabled]="disabled()"
           class="checkbox"
         />
-        <div class="inline-flex items-center gap-1 w-fit">
-          <div class="text-white text-sm leading-tight">
-            {{ parameter.schema.title }}
-          </div>
+        <div class="text-white text-sm leading-tight">
+          {{ parameter.schema.title }}
           @if (parameter.schema.description) {
             <button
               type="button"
-              class="tooltip-trigger"
+              class="tooltip-trigger ml-1 align-middle"
               aria-label="Show filter description"
               (mouseenter)="emitTooltip($event, parameter.schema.description)"
               (mouseleave)="hideTooltip.emit()"
