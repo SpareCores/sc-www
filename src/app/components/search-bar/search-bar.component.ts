@@ -346,7 +346,9 @@ export class SearchBarComponent implements OnInit, OnDestroy {
         vendorRegionValues.map((vr) => vr.split("~")[0]).filter(Boolean),
       ),
     ].forEach((vendorId) => {
-      this.vendorRegionCollapsedVendors[vendorId] = false;
+      if (this.vendorRegionCollapsedVendors[vendorId] === undefined) {
+        this.vendorRegionCollapsedVendors[vendorId] = false;
+      }
     });
 
     const regionCategory = this.filterCategories().find(
@@ -772,16 +774,27 @@ export class SearchBarComponent implements OnInit, OnDestroy {
             ),
         );
 
+        const previousContinents = new Map(
+          this.continentMetadata.map((continent) => [
+            continent.continent,
+            continent,
+          ]),
+        );
+
         this.continentMetadata = [];
         this.countryMetadata().forEach((country) => {
           const continent = this.continentMetadata.find(
             (item) => item.continent === country.continent,
           );
           if (!continent) {
+            const previous = previousContinents.get(country.continent);
+            const hasSelectedCountry = this.countryMetadata().some(
+              (item) => item.continent === country.continent && item.selected,
+            );
             this.continentMetadata.push({
               continent: country.continent,
               selected: false,
-              collapsed: true,
+              collapsed: previous ? previous.collapsed : !hasSelectedCountry,
             });
           }
         });
@@ -795,11 +808,6 @@ export class SearchBarComponent implements OnInit, OnDestroy {
             this.countryMetadata().find(
               (country) =>
                 country.continent === continent.continent && !country.selected,
-            ) === undefined;
-          continent.collapsed =
-            this.countryMetadata().find(
-              (country) =>
-                country.continent === continent.continent && country.selected,
             ) === undefined;
         });
       });

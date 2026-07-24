@@ -363,7 +363,6 @@ export class SearchBarGeoFiltersComponent {
         return {
           ...continent,
           selected: countriesInContinent.every((country) => country.selected),
-          collapsed: countriesInContinent.every((country) => !country.selected),
         };
       }),
     );
