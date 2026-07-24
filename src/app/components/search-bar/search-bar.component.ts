@@ -180,49 +180,6 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
     this.subscription.add(
       this.valueChangeDebouncer.pipe(debounceTime(500)).subscribe(() => {
-        const vcpu_max = this.searchParameters().find(
-          (param) => param.name === "vcpus_max",
-        );
-        const vcpu_min = this.searchParameters().find(
-          (param) => param.name === "vcpus_min",
-        );
-        const vcpuMaxValue = Number(vcpu_max?.modelValue);
-        const vcpuMinValue = Number(vcpu_min?.modelValue);
-        if (
-          Number.isFinite(vcpuMinValue) &&
-          Number.isFinite(vcpuMaxValue) &&
-          vcpuMinValue > 0 &&
-          vcpuMaxValue > 0 &&
-          vcpuMinValue > vcpuMaxValue &&
-          vcpu_max
-        ) {
-          vcpu_max.modelValue = vcpuMinValue;
-        }
-
-        this.searchParameters().forEach((param) => {
-          const rawModelValue = param.modelValue;
-          const modelValue = Number(rawModelValue);
-          const rangeMin = param.schema.range_min;
-          const rangeMax = param.schema.range_max;
-
-          if (
-            rawModelValue !== null &&
-            rawModelValue !== undefined &&
-            rawModelValue !== "" &&
-            Number.isFinite(modelValue) &&
-            rangeMin !== undefined &&
-            rangeMax !== undefined
-          ) {
-            if (modelValue < rangeMin) {
-              param.modelValue = rangeMin;
-            }
-
-            if (modelValue > rangeMax) {
-              param.modelValue = rangeMax;
-            }
-          }
-        });
-
         this.filterServers();
       }),
     );
@@ -427,6 +384,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   filterServers() {
+    this.normalizeSearchParameterValues();
+
     const queryObject = this.getQueryObject();
     const selectedCountryIds = this.countryMetadata()
       .filter((country) => country.selected)
@@ -439,6 +398,51 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     }
 
     this.searchChanged.emit(queryObject);
+  }
+
+  private normalizeSearchParameterValues() {
+    const vcpu_max = this.searchParameters().find(
+      (param) => param.name === "vcpus_max",
+    );
+    const vcpu_min = this.searchParameters().find(
+      (param) => param.name === "vcpus_min",
+    );
+    const vcpuMaxValue = Number(vcpu_max?.modelValue);
+    const vcpuMinValue = Number(vcpu_min?.modelValue);
+    if (
+      Number.isFinite(vcpuMinValue) &&
+      Number.isFinite(vcpuMaxValue) &&
+      vcpuMinValue > 0 &&
+      vcpuMaxValue > 0 &&
+      vcpuMinValue > vcpuMaxValue &&
+      vcpu_max
+    ) {
+      vcpu_max.modelValue = vcpuMinValue;
+    }
+
+    this.searchParameters().forEach((param) => {
+      const rawModelValue = param.modelValue;
+      const modelValue = Number(rawModelValue);
+      const rangeMin = param.schema.range_min;
+      const rangeMax = param.schema.range_max;
+
+      if (
+        rawModelValue !== null &&
+        rawModelValue !== undefined &&
+        rawModelValue !== "" &&
+        Number.isFinite(modelValue) &&
+        rangeMin !== undefined &&
+        rangeMax !== undefined
+      ) {
+        if (modelValue < rangeMin) {
+          param.modelValue = rangeMin;
+        }
+
+        if (modelValue > rangeMax) {
+          param.modelValue = rangeMax;
+        }
+      }
+    });
   }
 
   getQueryObject(): SearchBarQuery {
@@ -681,7 +685,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.valueChanged();
+    this.filterServers();
   }
 
   syncParameterDraftValue(parameter: SearchBarParameter) {

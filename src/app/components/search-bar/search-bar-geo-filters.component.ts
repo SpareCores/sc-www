@@ -48,7 +48,6 @@ export class SearchBarGeoFiltersComponent {
   countryMetadataChanged = output<CountryMetadata[]>();
   continentMetadataChanged = output<ContinentMetadata[]>();
   vendorRegionCollapsedVendorsChanged = output<Record<string, boolean>>();
-  valueChanged = output<void>();
   filterServers = output<void>();
   showTooltip = output<SearchBarTooltipEvent>();
   hideTooltip = output<void>();
@@ -117,7 +116,7 @@ export class SearchBarGeoFiltersComponent {
     }
 
     this.emitCountryState(nextCountries);
-    this.valueChanged.emit();
+    this.filterServers.emit();
   }
 
   toggleCountry(country: CountryMetadata) {
@@ -261,7 +260,7 @@ export class SearchBarGeoFiltersComponent {
       parameter.modelValue = [...selectedValues, vendorRegion];
     }
 
-    this.valueChanged.emit();
+    this.filterServers.emit();
   }
 
   toggleAllVendorRegions(parameter: SearchBarParameter, vendorId: string) {
@@ -285,7 +284,7 @@ export class SearchBarGeoFiltersComponent {
       parameter.modelValue = [...selectedValues, ...remaining];
     }
 
-    this.valueChanged.emit();
+    this.filterServers.emit();
   }
 
   getVendorRegionDisplayName(vendorRegion: string): string {

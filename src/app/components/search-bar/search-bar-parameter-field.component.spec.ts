@@ -17,7 +17,7 @@ describe("SearchBarParameterFieldComponent", () => {
     component = fixture.componentInstance;
   });
 
-  it("does not emit valueChanged while drafting a number, only on blur", () => {
+  it("does not emit filterServers while drafting a number, only on blur", () => {
     const parameter: SearchBarParameter = {
       name: "price_max",
       modelValue: null,
@@ -31,7 +31,7 @@ describe("SearchBarParameterFieldComponent", () => {
     fixture.componentRef.setInput("filterCategoryId", "price");
     fixture.detectChanges();
 
-    const emitSpy = spyOn(component.valueChanged, "emit");
+    const emitSpy = spyOn(component.filterServers, "emit");
 
     component.setParameterDraftValue("1.5");
     expect(emitSpy).not.toHaveBeenCalled();

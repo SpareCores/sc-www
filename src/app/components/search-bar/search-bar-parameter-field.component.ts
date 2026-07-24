@@ -327,7 +327,7 @@ export class SearchBarParameterFieldComponent implements DoCheck, OnDestroy {
         ? selectedValues.filter((_, selectedIndex) => selectedIndex !== index)
         : [...selectedValues, value];
     this.lastModelValue = parameter.modelValue;
-    this.valueChanged.emit();
+    this.filterServers.emit();
   }
 
   selectSingleRadioOption(valueOrObj: BenchmarkFilterOption) {
@@ -406,7 +406,7 @@ export class SearchBarParameterFieldComponent implements DoCheck, OnDestroy {
     this.syncParameterDraftValue(parameter);
 
     if (previousValue !== parameter.modelValue) {
-      this.valueChanged.emit();
+      this.filterServers.emit();
     }
   }
 
@@ -482,7 +482,7 @@ export class SearchBarParameterFieldComponent implements DoCheck, OnDestroy {
     this.toastService.removeToast(this.cpuCacheRangeErrorToastId);
 
     if (previousValue !== parameter.modelValue) {
-      this.valueChanged.emit();
+      this.filterServers.emit();
     }
   }
 
