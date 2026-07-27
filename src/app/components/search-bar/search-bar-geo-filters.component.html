@@ -2,35 +2,33 @@
   @let parameterType = getParameterType(parameter);
   <div>
     @if (showParameterTitles() && parameterType !== "checkbox") {
-      <div class="flex gap-2 items-center">
-        @if (
-          filterCategoryId() === "benchmark" &&
-          (parameter.name | benchmarkIcon: "") !== ""
-        ) {
-          <svg
-            [lucideIcon]="parameter.name | benchmarkIcon: ''"
-            class="h-4 w-4 text-emerald-400"
-          ></svg>
+      @if (
+        filterCategoryId() === "benchmark" &&
+        (parameter.name | benchmarkIcon: "") !== ""
+      ) {
+        <svg
+          [lucideIcon]="parameter.name | benchmarkIcon: ''"
+          class="h-4 w-4 text-emerald-400"
+        ></svg>
+      }
+      <div
+        class="font-bold text-emerald-400 text-sm"
+        id="filter_title_{{ parameter.name }}"
+      >
+        {{ parameter.schema.title }}
+        @if (parameter.schema.description) {
+          <button
+            type="button"
+            class="tooltip-trigger ml-1"
+            aria-label="Show filter description"
+            (mouseenter)="emitTooltip($event, parameter.schema.description)"
+            (mouseleave)="hideTooltip.emit()"
+            (focus)="emitTooltip($event, parameter.schema.description)"
+            (blur)="hideTooltip.emit()"
+          >
+            <svg lucideInfo class="h-4 w-4 text-gray-200"></svg>
+          </button>
         }
-        <div
-          class="font-bold text-emerald-400 text-sm"
-          id="filter_title_{{ parameter.name }}"
-        >
-          {{ parameter.schema.title }}
-          @if (parameter.schema.description) {
-            <button
-              type="button"
-              class="tooltip-trigger ml-1 align-middle"
-              aria-label="Show filter description"
-              (mouseenter)="emitTooltip($event, parameter.schema.description)"
-              (mouseleave)="hideTooltip.emit()"
-              (focus)="emitTooltip($event, parameter.schema.description)"
-              (blur)="hideTooltip.emit()"
-            >
-              <svg lucideInfo class="h-4 w-4 text-gray-200"></svg>
-            </button>
-          }
-        </div>
       </div>
     }
 

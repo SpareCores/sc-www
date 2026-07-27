@@ -12,14 +12,15 @@
       !control.hideTitle
     ) {
       <div class="font-bold text-emerald-400 text-sm">
-        {{ control.title }}
-        @if (control.required) {
-          <span class="text-red-300">*</span>
-        }
+        <span
+          class="data-[required]:after:content-['*'] data-[required]:after:text-red-300"
+          [textContent]="control.title"
+          [attr.data-required]="control.required ? '' : null"
+        ></span>
         @if (control.description) {
           <button
             type="button"
-            class="tooltip-trigger ml-1 align-middle"
+            class="tooltip-trigger ml-1"
             aria-label="Show filter description"
             (mouseenter)="emitTooltip($event, control.description)"
             (mouseleave)="hideTooltip.emit()"
@@ -51,14 +52,14 @@
           class="checkbox"
         />
         <div class="flex flex-col gap-1">
-          <div class="text-white text-sm leading-tight">
+          <div class="flex gap-1 items-center text-white text-sm leading-tight">
             {{ control.title }}
             @if (
               control.description && control.descriptionDisplay === "tooltip"
             ) {
               <button
                 type="button"
-                class="tooltip-trigger ml-1 align-middle"
+                class="tooltip-trigger"
                 aria-label="Show filter description"
                 (mouseenter)="emitTooltip($event, control.description)"
                 (mouseleave)="hideTooltip.emit()"
