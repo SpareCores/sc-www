@@ -12,17 +12,6 @@
       >
         @if (instances.length) {
           <sc-button
-            id="currency_button"
-            [scFlowbiteDropdown]="'currency_options'"
-            #currencyDropdown="scFlowbiteDropdown"
-            [label]="selectedCurrency.slug"
-            icon="credit-card"
-            variant="dropdown"
-            size="large"
-            textSize="large"
-            fontWeight="normal"
-          ></sc-button>
-          <sc-button
             label="Embed chart"
             icon="copy"
             iconPosition="end"
@@ -39,8 +28,8 @@
         <div class="flex flex-wrap gap-4 items-center justify-end w-full">
           <button
             id="baseline_server_button"
-            [appFlowbiteDropdown]="'baseline_server_options'"
-            #baselineDropdown="appFlowbiteDropdown"
+            [scFlowbiteDropdown]="'baseline_server_options'"
+            #baselineDropdown="scFlowbiteDropdown"
             class="dropdown_button"
             type="button"
           >
@@ -56,25 +45,17 @@
               ></svg>
             </div>
           </button>
-          <button
+          <sc-button
             id="currency_button"
-            [appFlowbiteDropdown]="'currency_options'"
-            #currencyDropdown="appFlowbiteDropdown"
-            class="dropdown_button"
-            type="button"
-          >
-            <div class="px-4 py-3">
-              {{ selectedCurrency.slug }}
-            </div>
-            <div
-              class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
-            >
-              <svg
-                lucideChevronDown
-                class="h-6 w-6 shrink-0 text-emerald-400"
-              ></svg>
-            </div>
-          </button>
+            [scFlowbiteDropdown]="'currency_options'"
+            #currencyDropdown="scFlowbiteDropdown"
+            [label]="selectedCurrency.slug"
+            icon="credit-card"
+            variant="dropdown"
+            size="large"
+            textSize="large"
+            fontWeight="normal"
+          ></sc-button>
         </div>
       }
     </div>

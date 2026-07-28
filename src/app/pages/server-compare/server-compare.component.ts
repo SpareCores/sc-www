@@ -61,6 +61,7 @@ import {
   type MemoryBenchmarkConfig,
   type MemoryBenchmarkMeta,
 } from "../../components/charts/memory/memory-chart.types";
+import { LucideDynamicIcon } from "@lucide/angular";
 
 const optionsModal: ModalOptions = {
   backdropClasses: "bg-gray-900/50 fixed inset-0 z-40",
@@ -101,6 +102,7 @@ type CompareTableBenchmarkMeta = Omit<
     EmbedComparePreviewComponent,
     LoadingSpinnerComponent,
     FlowbiteDropdownDirective,
+    LucideDynamicIcon,
   ],
   templateUrl: "./server-compare.component.html",
   styleUrl: "./server-compare.component.scss",
