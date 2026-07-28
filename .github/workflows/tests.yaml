@@ -69,3 +69,21 @@ jobs:
             cypress-image-diff-html-report
           retention-days: 7
           if-no-files-found: ignore
+      - name: Diff visual regression tests against main baselines
+        if: always() && github.ref != 'refs/heads/main'
+        run: |
+          git fetch --depth=1 origin main
+          mkdir -p .visual-diff-vs-main/baseline
+          git archive FETCH_HEAD cypress-image-diff-screenshots/baseline \
+            | tar -x --strip-components=2 -C .visual-diff-vs-main/baseline
+          node visual-diff-vs-baseline.js \
+            .visual-diff-vs-main/baseline \
+            cypress-image-diff-screenshots/comparison \
+            .visual-diff-vs-main/diff
+      - uses: actions/upload-artifact@v7.0.1
+        if: always() && github.ref != 'refs/heads/main'
+        with:
+          name: visual-regression-vs-main
+          path: .visual-diff-vs-main/diff
+          retention-days: 7
+          if-no-files-found: ignore
