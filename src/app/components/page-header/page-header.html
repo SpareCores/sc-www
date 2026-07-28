@@ -6,16 +6,16 @@
   <div class="page-header__actions">
     <ng-content></ng-content>
     @if (showShare()) {
-      <sc-button
-        [attr.id]="shareButtonId()"
-        label="Share"
-        [icon]="shareIcon()"
-        [variant]="shareVariant()"
-        size="large"
-        textSize="large"
-        fontWeight="bold"
-        (buttonClick)="shareClick.emit($event)"
-      ></sc-button>
+    <sc-button
+      [attr.id]="shareButtonId()"
+      label="Share"
+      [icon]="shareIcon()"
+      [variant]="shareVariant()"
+      size="large"
+      textSize="large"
+      fontWeight="bold"
+      (buttonClick)="shareClick.emit($event)"
+    ></sc-button>
     }
   </div>
 </div>

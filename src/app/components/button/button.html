@@ -1,114 +1,96 @@
 ﻿<ng-template #buttonContent>
   @if (hasBadge()) {
-    <span class="sc-button__badge-wrap">
-      @if (badgePing()) {
-        <span
-          class="sc-button__badge-ping animate-ping"
-          aria-hidden="true"
-        ></span>
-      }
-      <span class="sc-button__badge">{{ badge() }}</span>
-    </span>
-  }
-  @if (variant() === "dropdown") {
-    <div class="chart-selector-button__label">{{ label() }}</div>
-    @if (showDropdownIcon()) {
-      <div class="chart-selector-button__icon">
-        <svg
-          [lucideIcon]="icon()!"
-          class="h-6 w-6 shrink-0 text-emerald-400"
-          aria-hidden="true"
-        ></svg>
-      </div>
+  <span class="sc-button__badge-wrap">
+    @if (badgePing()) {
+    <span class="sc-button__badge-ping animate-ping" aria-hidden="true"></span>
     }
-  } @else if (variant() === "benchmark") {
-    <div class="sc-button__benchmark-labels">
-      <span class="sc-button__benchmark-label">{{ label() }}</span>
-      @if (sublabel()) {
-        <span class="sc-button__benchmark-sublabel">{{ sublabel() }}</span>
-      }
-    </div>
-    <div class="sc-button__square sc-button__square--end">
-      <svg
-        [lucideIcon]="icon() || 'gauge'"
-        class="sc-button__square-icon"
-        aria-hidden="true"
-      ></svg>
-    </div>
-  } @else {
-    @if (showSwatch()) {
-      <span
-        class="sc-button__swatch"
-        [style.background-color]="swatchColor()!"
-        aria-hidden="true"
-      ></span>
+    <span class="sc-button__badge">{{ badge() }}</span>
+  </span>
+  } @if (variant() === "dropdown") {
+  <div class="chart-selector-button__label">{{ label() }}</div>
+  @if (showDropdownIcon()) {
+  <div class="chart-selector-button__icon">
+    <svg
+      [lucideIcon]="icon()!"
+      class="h-6 w-6 shrink-0 text-emerald-400"
+      aria-hidden="true"
+    ></svg>
+  </div>
+  } } @else if (variant() === "benchmark") {
+  <div class="sc-button__benchmark-labels">
+    <span class="sc-button__benchmark-label">{{ label() }}</span>
+    @if (sublabel()) {
+    <span class="sc-button__benchmark-sublabel">{{ sublabel() }}</span>
     }
-    @if (showStartIcon()) {
-      <svg
-        [lucideIcon]="icon()!"
-        class="sc-button__icon"
-        aria-hidden="true"
-      ></svg>
-    }
-    @if (label()) {
-      <span class="sc-button__label">{{ label() }}</span>
-    }
-    @if (showEndIcon()) {
-      <svg
-        [lucideIcon]="icon()!"
-        class="sc-button__icon"
-        aria-hidden="true"
-      ></svg>
-    }
-  }
+  </div>
+  <div class="sc-button__square sc-button__square--end">
+    <svg
+      [lucideIcon]="icon() || 'gauge'"
+      class="sc-button__square-icon"
+      aria-hidden="true"
+    ></svg>
+  </div>
+  } @else { @if (showSwatch()) {
+  <span
+    class="sc-button__swatch"
+    [style.background-color]="swatchColor()!"
+    aria-hidden="true"
+  ></span>
+  } @if (showStartIcon()) {
+  <svg [lucideIcon]="icon()!" class="sc-button__icon" aria-hidden="true"></svg>
+  } @if (label()) {
+  <span class="sc-button__label">{{ label() }}</span>
+  } @if (showEndIcon()) {
+  <svg [lucideIcon]="icon()!" class="sc-button__icon" aria-hidden="true"></svg>
+  } }
 </ng-template>
 
 @if (routerLink() !== null) {
-  <a
-    [routerLink]="routerLink()!"
-    [queryParams]="queryParams() || undefined"
-    [attr.target]="target()"
-    [attr.rel]="rel()"
-    [attr.aria-label]="ariaLabel()"
-    [attr.aria-expanded]="ariaExpanded()"
-    [attr.aria-controls]="ariaControls()"
-    [attr.title]="title()"
-    [class]="buttonClasses()"
-    [class.sc-button--disabled]="disabled()"
-    [attr.tabindex]="disabled() ? -1 : null"
-    [attr.aria-disabled]="disabled() ? true : null"
-    (click)="onClick($event)"
-  >
-    <ng-container *ngTemplateOutlet="buttonContent"></ng-container>
-  </a>
+<a
+  [routerLink]="routerLink()!"
+  [queryParams]="queryParams() || undefined"
+  [attr.target]="target()"
+  [attr.rel]="rel()"
+  [attr.aria-label]="ariaLabel()"
+  [attr.aria-expanded]="ariaExpanded()"
+  [attr.aria-controls]="ariaControls()"
+  [attr.title]="title()"
+  [class]="buttonClasses()"
+  [class.sc-button--disabled]="disabled()"
+  [attr.tabindex]="disabled() ? -1 : null"
+  [attr.aria-disabled]="disabled() ? true : null"
+  (click)="onClick($event)"
+>
+  <ng-container *ngTemplateOutlet="buttonContent"></ng-container>
+</a>
 } @else if (href()) {
-  <a
-    [href]="href()!"
-    [attr.target]="target()"
-    [attr.rel]="rel()"
-    [attr.aria-label]="ariaLabel()"
-    [attr.aria-expanded]="ariaExpanded()"
-    [attr.aria-controls]="ariaControls()"
-    [attr.title]="title()"
-    [class]="buttonClasses()"
-    [class.sc-button--disabled]="disabled()"
-    [attr.tabindex]="disabled() ? -1 : null"
-    [attr.aria-disabled]="disabled() ? true : null"
-    (click)="onClick($event)"
-  >
-    <ng-container *ngTemplateOutlet="buttonContent"></ng-container>
-  </a>
+<a
+  [href]="href()!"
+  [attr.target]="target()"
+  [attr.rel]="rel()"
+  [attr.aria-label]="ariaLabel()"
+  [attr.aria-expanded]="ariaExpanded()"
+  [attr.aria-controls]="ariaControls()"
+  [attr.title]="title()"
+  [class]="buttonClasses()"
+  [class.sc-button--disabled]="disabled()"
+  [attr.tabindex]="disabled() ? -1 : null"
+  [attr.aria-disabled]="disabled() ? true : null"
+  (click)="onClick($event)"
+>
+  <ng-container *ngTemplateOutlet="buttonContent"></ng-container>
+</a>
 } @else {
-  <button
-    [type]="type()"
-    [disabled]="disabled()"
-    [attr.aria-label]="ariaLabel()"
-    [attr.aria-expanded]="ariaExpanded()"
-    [attr.aria-controls]="ariaControls()"
-    [attr.title]="title()"
-    [class]="buttonClasses()"
-    (click)="onClick($event)"
-  >
-    <ng-container *ngTemplateOutlet="buttonContent"></ng-container>
-  </button>
+<button
+  [type]="type()"
+  [disabled]="disabled()"
+  [attr.aria-label]="ariaLabel()"
+  [attr.aria-expanded]="ariaExpanded()"
+  [attr.aria-controls]="ariaControls()"
+  [attr.title]="title()"
+  [class]="buttonClasses()"
+  (click)="onClick($event)"
+>
+  <ng-container *ngTemplateOutlet="buttonContent"></ng-container>
+</button>
 }
