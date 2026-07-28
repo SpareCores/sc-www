@@ -29,22 +29,17 @@ import { SeoHandlerService } from "../../services/seo-handler.service";
 import { FormsModule } from "@angular/forms";
 import {
   LucideDynamicIcon,
-  LucideCalendarSearch,
   LucideCheck,
-  LucideChevronDown,
   LucideChevronLeft,
   LucideChevronRight,
-  LucideColumns3Cog,
-  LucideCreditCard,
-  LucideGauge,
   LucideInfo,
   LucideScale,
   LucideSearch,
-  LucideClipboard,
-  LucideShipWheel,
-  LucideTvMinimalPlay,
   LucideX,
 } from "@lucide/angular";
+import { Button } from "../../components/button/button";
+import { PageHeader } from "../../components/page-header/page-header";
+import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
 import { SearchBarComponent } from "../../components/search-bar/search-bar.component";
 import type { SearchBarParameter } from "../../components/search-bar/search-bar.types";
 import { PaginationComponent } from "../../components/pagination/pagination.component";
@@ -94,28 +89,23 @@ const INVALID_BENCHMARK_URL_TOAST_BODY =
   "Visit the Server Navigator page to select a benchmark.";
 
 @Component({
-  selector: "app-server-listing",
+  selector: "sc-server-listing",
   imports: [
     CommonModule,
     FormsModule,
     BreadcrumbsComponent,
     LucideDynamicIcon,
     LucideCheck,
-    LucideCalendarSearch,
-    LucideChevronDown,
     LucideChevronLeft,
     LucideChevronRight,
-    LucideColumns3Cog,
-    LucideCreditCard,
-    LucideGauge,
     LucideInfo,
     LucideScale,
     LucideSearch,
-    LucideClipboard,
-    LucideShipWheel,
-    LucideTvMinimalPlay,
     LucideX,
     RouterModule,
+    Button,
+    PageHeader,
+    BenchmarkIconPipe,
     SearchBarComponent,
     PaginationComponent,
     LoadingSpinnerComponent,

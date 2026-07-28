@@ -44,7 +44,7 @@ describe("SearchBarParameterFieldComponent", () => {
     expect(emitSpy).toHaveBeenCalledTimes(1);
   });
 
-  it("attaches appNumbersOnly to numeric inputs", () => {
+  it("attaches scNumbersOnly to numeric inputs", () => {
     const parameter: SearchBarParameter = {
       name: "price_max",
       modelValue: null,

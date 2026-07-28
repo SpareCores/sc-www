@@ -48,7 +48,7 @@ type CpuCacheRangeFocusLossSkip = {
 };
 
 @Component({
-  selector: "app-search-bar-parameter-field",
+  selector: "sc-search-bar-parameter-field",
   imports: [
     CommonModule,
     FormsModule,

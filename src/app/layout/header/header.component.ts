@@ -7,12 +7,12 @@ import {
 import { CommonModule } from "@angular/common";
 import { Component, inject, viewChild } from "@angular/core";
 import { RouterLink } from "@angular/router";
+import { Button } from "../../components/button/button";
 import {
   LucideActivity,
   LucideArrowUpDown,
   LucideBookText,
   LucideBot,
-  LucideCalendarDays,
   LucideDatabase,
   LucideDollarSign,
   LucideGauge,
@@ -35,13 +35,13 @@ import { ServerCompareService } from "../../services/server-compare.service";
 import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
 
 @Component({
-  selector: "app-header",
+  selector: "sc-header",
   imports: [
+    Button,
     LucideActivity,
     LucideArrowUpDown,
     LucideBookText,
     LucideBot,
-    LucideCalendarDays,
     LucideDatabase,
     LucideDollarSign,
     LucideGauge,

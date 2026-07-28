@@ -2,18 +2,18 @@
   @if (showHeader) {
     <div class="app-shell-chrome">
       <header>
-        <app-header></app-header>
+        <sc-header></sc-header>
       </header>
     </div>
   }
   @if (promoBannerMessage; as bannerMessage) {
     <div class="app-shell-banner">
       <div class="content">
-        <app-promo-banner
+        <sc-promo-banner
           [message]="bannerMessage"
           [dismissible]="true"
           (dismissed)="dismissPromoBanner()"
-        ></app-promo-banner>
+        ></sc-promo-banner>
       </div>
     </div>
   }
@@ -22,7 +22,7 @@
   </main>
   @if (showFooter) {
     <footer>
-      <app-footer></app-footer>
+      <sc-footer></sc-footer>
     </footer>
   }
 </div>

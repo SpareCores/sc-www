@@ -1,18 +1,18 @@
 <div class="content py-16 px-4 sm:px-6 lg:px-8">
   <div class="w-full md:w-2/3 mx-auto mb-10">
-    <app-theme-text
+    <sc-theme-text
       text="design"
       classes="text-6xl justify-center font-bold pb-12"
-    ></app-theme-text>
-    <app-theme-text
+    ></sc-theme-text>
+    <sc-theme-text
       text="resources"
       classes="text-4xl justify-center font-light"
-    ></app-theme-text>
+    ></sc-theme-text>
   </div>
 
   <div class="design-grid">
     <div class="dual-card-row">
-      <app-design-page-card
+      <sc-design-page-card
         title="Preline UI"
         description="Open-source Tailwind CSS components library."
         headerBgClass="bg-blue-600 p-6"
@@ -23,18 +23,19 @@
           alt="Preline UI logo"
           class="h-10 w-auto filter brightness-0 invert"
         />
-        <a
+        <sc-button
           action
-          class="design-button"
+          label="Visit site"
+          icon="square-arrow-up-right"
+          iconPosition="start"
+          size="normal"
           href="https://preline.co/"
           target="_blank"
           rel="noopener noreferrer"
-        >
-          Visit site
-        </a>
-      </app-design-page-card>
+        ></sc-button>
+      </sc-design-page-card>
 
-      <app-design-page-card
+      <sc-design-page-card
         title="Lucide Icons"
         description="Icon set covering product needs with consistent line art."
         headerBgClass="bg-neutral-900 p-6"
@@ -45,150 +46,152 @@
           alt="Lucide logo"
           class="h-10 w-auto"
         />
-        <a
+        <sc-button
           action
-          class="design-button"
+          label="Visit site"
+          icon="square-arrow-up-right"
+          iconPosition="start"
+          size="normal"
           href="https://lucide.dev/icons/"
           target="_blank"
           rel="noopener noreferrer"
-        >
-          Visit site
-        </a>
-      </app-design-page-card>
+        ></sc-button>
+      </sc-design-page-card>
     </div>
   </div>
 
   <div class="section-title-container">
-    <app-theme-text
+    <sc-theme-text
       text="colors"
       classes="text-4xl justify-center font-light"
-    ></app-theme-text>
+    ></sc-theme-text>
   </div>
 
   <div class="design-grid">
-    <app-design-page-card
+    <sc-design-page-card
       title="Emerald 400"
       description="Brand accent swatch using Tailwind emerald-400."
       headerBgClass="bg-emerald-400 text-white font-semibold"
     >
       <div header>#34D399</div>
-      <button
+      <sc-button
         action
-        class="design-button"
-        type="button"
+        label="Copy"
+        icon="clipboard"
+        iconPosition="start"
+        size="normal"
         (click)="copyColor('#34D399')"
-      >
-        Copy
-      </button>
-    </app-design-page-card>
+      ></sc-button>
+    </sc-design-page-card>
 
-    <app-design-page-card
+    <sc-design-page-card
       title="Teal 500"
       description="Brand accent swatch using Tailwind teal-500."
       headerBgClass="bg-teal-500 text-white font-semibold"
     >
       <div header>#14B8A6</div>
-      <button
+      <sc-button
         action
-        class="design-button"
-        type="button"
+        label="Copy"
+        icon="clipboard"
+        iconPosition="start"
+        size="normal"
         (click)="copyColor('#14B8A6')"
-      >
-        Copy
-      </button>
-    </app-design-page-card>
+      ></sc-button>
+    </sc-design-page-card>
 
-    <app-design-page-card
+    <sc-design-page-card
       title="Sky 900"
       description="Deep brand swatch using Tailwind sky-900."
       headerBgClass="bg-sky-900 text-white font-semibold"
     >
       <div header>#0C4A6E</div>
-      <button
+      <sc-button
         action
-        class="design-button"
-        type="button"
+        label="Copy"
+        icon="clipboard"
+        iconPosition="start"
+        size="normal"
         (click)="copyColor('#0C4A6E')"
-      >
-        Copy
-      </button>
-    </app-design-page-card>
+      ></sc-button>
+    </sc-design-page-card>
 
-    <app-design-page-card
+    <sc-design-page-card
       title="Sky 950"
       description="Deep brand swatch using Tailwind sky-950."
       headerBgClass="bg-sky-950 text-white font-semibold"
     >
       <div header>#082F49</div>
-      <button
+      <sc-button
         action
-        class="design-button"
-        type="button"
+        label="Copy"
+        icon="clipboard"
+        iconPosition="start"
+        size="normal"
         (click)="copyColor('#082F49')"
-      >
-        Copy
-      </button>
-    </app-design-page-card>
+      ></sc-button>
+    </sc-design-page-card>
 
-    <app-design-page-card
+    <sc-design-page-card
       title="Yellow 500"
       description="Warning color using Tailwind yellow-500."
       headerBgClass="bg-yellow-500 text-white font-semibold"
     >
       <div header>#EAB308</div>
-      <button
+      <sc-button
         action
-        class="design-button"
-        type="button"
+        label="Copy"
+        icon="clipboard"
+        iconPosition="start"
+        size="normal"
         (click)="copyColor('#EAB308')"
-      >
-        Copy
-      </button>
-    </app-design-page-card>
-    <app-design-page-card
+      ></sc-button>
+    </sc-design-page-card>
+    <sc-design-page-card
       title="Red 500"
       description="Error color using Tailwind red-500."
       headerBgClass="bg-red-500 text-white font-semibold"
     >
       <div header>#EF4444</div>
-      <button
+      <sc-button
         action
-        class="design-button"
-        type="button"
+        label="Copy"
+        icon="clipboard"
+        iconPosition="start"
+        size="normal"
         (click)="copyColor('#EF4444')"
-      >
-        Copy
-      </button>
-    </app-design-page-card>
+      ></sc-button>
+    </sc-design-page-card>
   </div>
 
   <div class="section-title-container">
-    <app-theme-text
+    <sc-theme-text
       text="typography"
       classes="text-4xl justify-center font-light"
-    ></app-theme-text>
+    ></sc-theme-text>
   </div>
 
   <div class="design-grid-wide">
     <div class="dual-card-row">
-      <app-design-page-card
+      <sc-design-page-card
         title="Inter"
         description="Primary UI font for body and headings on the site."
         headerBgClass="design-gradient-fill-with-brand-colors"
       >
         <div header [style.font-family]="'Inter, sans-serif'">Inter</div>
-        <a
+        <sc-button
           action
-          class="design-button"
+          label="View font"
+          icon="square-arrow-up-right"
+          iconPosition="start"
+          size="normal"
           href="https://fonts.google.com/specimen/Inter"
           target="_blank"
           rel="noopener noreferrer"
-        >
-          View font
-        </a>
-      </app-design-page-card>
+        ></sc-button>
+      </sc-design-page-card>
 
-      <app-design-page-card
+      <sc-design-page-card
         title="Roboto Mono"
         description="Used for verbatim and code snippets to improve readability."
         headerBgClass="design-gradient-fill-with-brand-colors"
@@ -196,24 +199,25 @@
         <div header [style.font-family]="'Roboto Mono, monospace'">
           Roboto Mono
         </div>
-        <a
+        <sc-button
           action
-          class="design-button"
+          label="View font"
+          icon="square-arrow-up-right"
+          iconPosition="start"
+          size="normal"
           href="https://fonts.google.com/specimen/Roboto+Mono"
           target="_blank"
           rel="noopener noreferrer"
-        >
-          View font
-        </a>
-      </app-design-page-card>
+        ></sc-button>
+      </sc-design-page-card>
     </div>
   </div>
 
   <div class="section-title-container">
-    <app-theme-text
+    <sc-theme-text
       text="logos"
       classes="text-4xl justify-center font-light"
-    ></app-theme-text>
+    ></sc-theme-text>
   </div>
 
   <div class="design-grid">
@@ -221,11 +225,11 @@
       logoDownloadItem of logoDownloadItems;
       track trackByFolder($index, logoDownloadItem)
     ) {
-      <app-downloadable-logo-collection
+      <sc-downloadable-logo-collection
         [folderName]="logoDownloadItem.folderName"
         [fileNames]="logoDownloadItem.fileNames"
         [basePath]="logoDownloadsBasePath"
-      ></app-downloadable-logo-collection>
+      ></sc-downloadable-logo-collection>
     }
   </div>
 </div>

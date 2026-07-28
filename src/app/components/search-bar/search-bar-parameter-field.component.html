@@ -49,7 +49,7 @@
             <input
               type="text"
               inputmode="decimal"
-              appNumbersOnly
+              scNumbersOnly
               id="filter_range_value_{{ parameter.name }}"
               class="bg-primary px-2 py-0 border-emerald-400 border-dotted outline-none text-white rounded-sm h-5 text-center"
               [ngModel]="getParameterDraftValue(parameter)"
@@ -99,7 +99,7 @@
           <input
             type="text"
             inputmode="numeric"
-            appNumbersOnly
+            scNumbersOnly
             [allowDecimal]="false"
             id="filter_discrete_range_value_{{ parameter.name }}"
             class="bg-primary px-2 py-0 border-emerald-400 border-dotted outline-none text-white rounded-sm h-5 text-center"
@@ -159,7 +159,7 @@
         <input
           type="text"
           inputmode="decimal"
-          appNumbersOnly
+          scNumbersOnly
           id="filter_number_{{ parameter.name }}"
           data-ph-capture-attribute-sc-event="server listing filter"
           data-ph-capture-attribute-server-listing-filter-type="number"
@@ -187,7 +187,7 @@
         <input
           type="text"
           inputmode="decimal"
-          appNumbersOnly
+          scNumbersOnly
           id="filter_price_{{ parameter.name }}"
           data-ph-capture-attribute-sc-event="server listing filter"
           data-ph-capture-attribute-server-listing-filter-type="number"

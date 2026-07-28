@@ -185,7 +185,7 @@ describe("ServerCompareChartsComponent", () => {
 
     expect(cells?.length).toBe(1);
     expect(cells?.[0].getAttribute("colspan")).toBe("4");
-    expect(cells?.[0].querySelector("app-benchmark-line-chart")).toBeTruthy();
+    expect(cells?.[0].querySelector("sc-benchmark-line-chart")).toBeTruthy();
     expect(chartContent?.style.width).toBe("100%");
     expect(chartContent?.style.maxWidth).toBe("100%");
   });
@@ -234,7 +234,7 @@ describe("ServerCompareChartsComponent", () => {
     expect(chartCells?.length).toBe(1);
     expect(chartCells?.[0].getAttribute("colspan")).toBe("4");
     expect(
-      chartCells?.[0].querySelector("app-benchmark-multi-bar-chart"),
+      chartCells?.[0].querySelector("sc-benchmark-multi-bar-chart"),
     ).toBeTruthy();
     expect(chartContent?.style.width).toBe("100%");
     expect(chartContent?.style.maxWidth).toBe("100%");
@@ -333,7 +333,7 @@ describe("ServerCompareChartsComponent", () => {
     expect(chartCells?.length).toBe(1);
     expect(chartCells?.[0].getAttribute("colspan")).toBe("6");
     expect(
-      chartCells?.[0].querySelector("app-llm-inference-chart"),
+      chartCells?.[0].querySelector("sc-llm-inference-chart"),
     ).toBeTruthy();
   });
 
@@ -517,7 +517,7 @@ describe("ServerCompareChartsComponent", () => {
     const root = fixture.nativeElement as HTMLElement;
 
     expect(root.querySelector("#benchmark_line_workload_profile")).toBeTruthy();
-    expect(root.querySelector("app-workload-profile-panel")).toBeTruthy();
+    expect(root.querySelector("sc-workload-profile-panel")).toBeTruthy();
     expect(root.textContent).toContain("Web server");
     expect(root.textContent).not.toContain("Further Benchmarks");
   });

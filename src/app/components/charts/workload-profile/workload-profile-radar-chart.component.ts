@@ -22,7 +22,7 @@ import {
 } from "./workload-profile-radar-chart.types";
 
 @Component({
-  selector: "app-workload-profile-radar-chart",
+  selector: "sc-workload-profile-radar-chart",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, BaseChartDirective],
   templateUrl: "./workload-profile-radar-chart.component.html",

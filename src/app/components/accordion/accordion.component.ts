@@ -10,7 +10,7 @@ export type AccordionItem = {
 };
 
 @Component({
-  selector: "app-accordion",
+  selector: "sc-accordion",
   imports: [CommonModule, LucideChevronDown, LucideChevronUp],
   templateUrl: "./accordion.component.html",
 })

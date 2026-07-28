@@ -64,6 +64,24 @@ describe("HeaderComponent", () => {
   });
 
   it("configures the compare dropdown to stay within the viewport", () => {
+    const serverCompare = TestBed.inject(ServerCompareService);
+    serverCompare.selectedForCompare = [
+      {
+        display_name: "a",
+        vendor: "aws",
+        server: "a",
+        zonesRegions: [],
+      },
+      {
+        display_name: "b",
+        vendor: "aws",
+        server: "b",
+        zonesRegions: [],
+      },
+    ];
+    serverCompare.selectionChanged.next(serverCompare.selectedForCompare);
+    fixture.detectChanges();
+
     const compareDropdown = fixture.debugElement
       .query(By.css("#compare_button"))
       .injector.get(FlowbiteDropdownDirective);

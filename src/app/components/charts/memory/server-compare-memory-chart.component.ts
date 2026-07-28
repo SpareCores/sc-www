@@ -18,7 +18,7 @@ import { FlowbiteDropdownDirective } from "../../../directives/flowbite-dropdown
 import { MemoryBenchmarkMeta, MemoryChartServer } from "./memory-chart.types";
 
 @Component({
-  selector: "app-server-compare-memory-chart",
+  selector: "sc-server-compare-memory-chart",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,

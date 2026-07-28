@@ -40,7 +40,7 @@ import { getBenchmarkMetaNote } from "../shared/chart-tooltip.utils";
 import { FlowbiteDropdownDirective } from "../../../directives/flowbite-dropdown.directive";
 
 @Component({
-  selector: "app-compression-chart",
+  selector: "sc-compression-chart",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,

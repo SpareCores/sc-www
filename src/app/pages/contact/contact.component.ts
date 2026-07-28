@@ -14,7 +14,7 @@ import { LoadingSpinnerComponent } from "../../components/loading-spinner/loadin
 import { ToastService } from "../../services/toast.service";
 
 @Component({
-  selector: "app-contact",
+  selector: "sc-contact",
   imports: [ReactiveFormsModule, BreadcrumbsComponent, LoadingSpinnerComponent],
   templateUrl: "./contact.component.html",
   styleUrls: ["./contact.component.scss"],

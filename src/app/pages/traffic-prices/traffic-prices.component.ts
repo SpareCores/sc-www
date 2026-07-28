@@ -1,52 +1,52 @@
 import { CommonModule } from "@angular/common";
 import {
   Component,
+  inject,
+  OnDestroy,
   OnInit,
   PLATFORM_ID,
-  OnDestroy,
   viewChild,
-  inject,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
-import { RouterModule, ActivatedRoute, Params, Router } from "@angular/router";
+import { ActivatedRoute, Params, Router, RouterModule } from "@angular/router";
 import {
-  LucideDynamicIcon,
-  LucideChevronDown,
   LucideChevronLeft,
   LucideDollarSign,
+  LucideDynamicIcon,
   LucideInfo,
 } from "@lucide/angular";
+import { Subscription } from "rxjs";
 import { OrderDir } from "../../../../sdk/data-contracts";
+import openApiSpec from "../../../../sdk/openapi.json";
 import {
   BreadcrumbsComponent,
   BreadcrumbSegment,
 } from "../../components/breadcrumbs/breadcrumbs.component";
+import { Button } from "../../components/button/button";
+import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
 import { PaginationComponent } from "../../components/pagination/pagination.component";
 import { SearchBarComponent } from "../../components/search-bar/search-bar.component";
 import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
-import { CurrencyOption, availableCurrencies } from "../../tools/shared_data";
+import { availableCurrencies, CurrencyOption } from "../../tools/shared_data";
 import {
   buildTrafficPricesColumns,
   TableColumn,
 } from "../../tools/table-columns";
-import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
-import { Subscription } from "rxjs";
-import openApiSpec from "../../../../sdk/openapi.json";
 
 @Component({
-  selector: "app-traffic-prices",
+  selector: "sc-traffic-prices",
   imports: [
     CommonModule,
     FormsModule,
     BreadcrumbsComponent,
     LucideDynamicIcon,
-    LucideChevronDown,
     LucideChevronLeft,
     LucideDollarSign,
     LucideInfo,
     RouterModule,
+    Button,
     SearchBarComponent,
     PaginationComponent,
     LoadingSpinnerComponent,

@@ -9,7 +9,7 @@ import {
 import { isPlatformBrowser, DOCUMENT } from "@angular/common";
 
 @Directive({
-  selector: "[appDragToPan]",
+  selector: "[scDragToPan]",
   standalone: true,
   host: {
     "[class.cursor-grab]": "!isDragging",

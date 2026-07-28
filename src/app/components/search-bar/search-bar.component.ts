@@ -15,14 +15,31 @@ import {
   viewChildren,
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
+import { LucideChevronDown, LucideDynamicIcon } from "@lucide/angular";
 import { Modal, ModalOptions } from "flowbite";
-import { LucideDynamicIcon, LucideChevronDown } from "@lucide/angular";
+import { Subject, Subscription, debounceTime } from "rxjs";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { UiTooltipService } from "../../services/ui-tooltip.service";
-import { Subject, Subscription, debounceTime } from "rxjs";
+import { Button } from "../button/button";
 import { SearchBarCustomControlsComponent } from "./search-bar-custom-controls.component";
 import { SearchBarGeoFiltersComponent } from "./search-bar-geo-filters.component";
 import { SearchBarParameterFieldComponent } from "./search-bar-parameter-field.component";
+import type {
+  ComplianceFrameworkMetadata,
+  ContinentMetadata,
+  CountryMetadata,
+  RegionMetadata,
+  SearchBarCurrency,
+  SearchBarCustomControl,
+  SearchBarCustomControlChange,
+  SearchBarFilterCategory,
+  SearchBarParameter,
+  SearchBarParameterPlacement,
+  SearchBarParameterType,
+  SearchBarQuery,
+  StorageMetadata,
+  VendorMetadata,
+} from "./search-bar.types";
 import {
   draftValueFromUnknown,
   getParameterType as getSearchBarParameterType,
@@ -31,22 +48,6 @@ import {
   parseNumericDraftValue,
   parseTextDraftValue,
 } from "./search-bar.utils";
-import type {
-  ComplianceFrameworkMetadata,
-  ContinentMetadata,
-  CountryMetadata,
-  RegionMetadata,
-  SearchBarCustomControl,
-  SearchBarCustomControlChange,
-  SearchBarFilterCategory,
-  SearchBarCurrency,
-  SearchBarParameter,
-  SearchBarParameterPlacement,
-  SearchBarParameterType,
-  SearchBarQuery,
-  StorageMetadata,
-  VendorMetadata,
-} from "./search-bar.types";
 
 export type {
   BenchmarkFilterOption,
@@ -79,10 +80,11 @@ type ApiResponse<T> = {
 };
 
 @Component({
-  selector: "app-search-bar",
+  selector: "sc-search-bar",
   imports: [
     CommonModule,
     FormsModule,
+    Button,
     LucideDynamicIcon,
     LucideChevronDown,
     SearchBarCustomControlsComponent,

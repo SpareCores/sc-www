@@ -4,7 +4,7 @@ const DECIMAL_PATTERN = /^\d*\.?\d*$/;
 const INTEGER_PATTERN = /^\d*$/;
 
 @Directive({
-  selector: "[appNumbersOnly]",
+  selector: "[scNumbersOnly]",
 })
 export class NumbersOnlyDirective {
   allowDecimal = input(true);

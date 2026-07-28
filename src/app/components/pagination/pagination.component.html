@@ -1,73 +1,73 @@
-<div class="flex justify-end gap-4">
+<div class="flex justify-end gap-2 items-center">
   @if (currentPage > 1) {
-    <a
+    <sc-button
+      id="pagination_prev_arrow"
+      icon="chevron-left"
+      ariaLabel="Previous page"
+      textSize="large"
+      variant="transparent"
+      buttonClass="pagination-button pagination-button--nav"
       [routerLink]="baseURL"
       [queryParams]="getQueryObjectForPage(this.currentPage - 1)"
-      id="pagination_prev_arrow"
-      aria-label="Previous page"
-      class="flex h-10 w-10 items-center justify-center rounded-lg bg-transparent text-white font-bold hover:bg-emerald-400"
       data-ph-capture-attribute-sc-event="server listing paginate"
       data-ph-capture-attribute-pagination-target="prev"
-    >
-      <svg lucideChevronLeft class="h-6 w-6 shrink-0" aria-hidden="true"></svg>
-    </a>
+    ></sc-button>
   }
   @if (currentPage > 2) {
-    <a
+    <sc-button
+      label="1"
+      textSize="large"
+      fontWeight="bold"
+      variant="transparent"
+      buttonClass="pagination-button"
       [routerLink]="baseURL"
       [queryParams]="getQueryObjectForPage(1)"
-      class="text-white py-2 px-4 rounded-lg font-bold hover:bg-emerald-400"
       data-ph-capture-attribute-sc-event="server listing paginate"
       data-ph-capture-attribute-pagination-target="first"
-    >
-      1
-    </a>
+    ></sc-button>
     @if (currentPage > 3) {
-      <span class="text-white py-2 px-4 rounded-lg font-bold" aria-hidden="true"
-        >...</span
-      >
+      <span class="text-white font-bold text-base" aria-hidden="true">...</span>
     }
   }
   @for (page of possiblePages(); track page; let i = $index) {
-    <a
-      class="text-white py-2 px-4 rounded-lg font-bold hover:bg-emerald-400"
-      [ngClass]="{
-        'bg-emerald-400': page === this.currentPage,
-        'bg-transparent': page !== this.currentPage,
-      }"
-      data-ph-capture-attribute-sc-event="server listing paginate"
-      [attr.data-ph-capture-attribute-pagination-target]="i"
+    <sc-button
+      [label]="'' + page"
+      textSize="large"
+      fontWeight="bold"
+      [variant]="page === this.currentPage ? 'primary' : 'transparent'"
+      buttonClass="pagination-button"
       [routerLink]="baseURL"
       [queryParams]="getQueryObjectForPage(page)"
-    >
-      {{ page }}
-    </a>
+      data-ph-capture-attribute-sc-event="server listing paginate"
+      [attr.data-ph-capture-attribute-pagination-target]="i"
+    ></sc-button>
   }
   @if (totalPages > currentPage + 3) {
-    <span class="text-white py-2 px-4 rounded-lg font-bold" aria-hidden="true"
-      >...</span
-    >
-    <a
+    <span class="text-white font-bold text-base" aria-hidden="true">...</span>
+    <sc-button
+      [label]="'' + totalPages"
+      textSize="large"
+      fontWeight="bold"
+      variant="transparent"
+      buttonClass="pagination-button"
       [routerLink]="baseURL"
       [queryParams]="getQueryObjectForPage(totalPages)"
-      class="text-white py-2 px-4 rounded-lg font-bold hover:bg-emerald-400"
       data-ph-capture-attribute-sc-event="server listing paginate"
       data-ph-capture-attribute-pagination-target="last"
-    >
-      {{ totalPages }}
-    </a>
+    ></sc-button>
   }
   @if (currentPage < totalPages) {
-    <a
+    <sc-button
+      id="pagination_next_arrow"
+      icon="chevron-right"
+      ariaLabel="Next page"
+      textSize="large"
+      variant="transparent"
+      buttonClass="pagination-button pagination-button--nav"
       [routerLink]="baseURL"
       [queryParams]="getQueryObjectForPage(this.currentPage + 1)"
-      id="pagination_next_arrow"
-      aria-label="Next page"
-      class="flex h-10 w-10 items-center justify-center rounded-lg bg-transparent text-white font-bold hover:bg-emerald-400"
       data-ph-capture-attribute-sc-event="server listing paginate"
       data-ph-capture-attribute-pagination-target="next"
-    >
-      <svg lucideChevronRight class="h-6 w-6 shrink-0" aria-hidden="true"></svg>
-    </a>
+    ></sc-button>
   }
 </div>

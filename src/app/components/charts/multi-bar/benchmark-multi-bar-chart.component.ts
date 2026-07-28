@@ -38,7 +38,7 @@ import {
 } from "./benchmark-multi-bar-chart.types";
 
 @Component({
-  selector: "app-benchmark-multi-bar-chart",
+  selector: "sc-benchmark-multi-bar-chart",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,

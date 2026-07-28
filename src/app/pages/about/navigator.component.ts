@@ -43,7 +43,7 @@ interface Quote {
 }
 
 @Component({
-  selector: "app-about-navigator",
+  selector: "sc-about-navigator",
   imports: [
     BreadcrumbsComponent,
     LucideBookText,

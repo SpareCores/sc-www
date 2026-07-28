@@ -28,11 +28,11 @@
         }
       </h3>
       <button
-        #memoryDropdown="appFlowbiteDropdown"
+        #memoryDropdown="scFlowbiteDropdown"
         [id]="buttonId"
         class="dropdown_button chart-selector-button chart-selector-button--responsive"
         type="button"
-        [appFlowbiteDropdown]="optionsId"
+        [scFlowbiteDropdown]="optionsId"
         [dropdownEnabled]="
           isBrowser && availableMemoryChartOptions().length > 0
         "

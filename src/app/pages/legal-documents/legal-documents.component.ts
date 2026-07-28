@@ -9,7 +9,7 @@ import { SeoHandlerService } from "../../services/seo-handler.service";
 import { TimeToShortDatePipe } from "../../pipes/time-to-short-date.pipe";
 
 @Component({
-  selector: "app-legal-documents",
+  selector: "sc-legal-documents",
   imports: [BreadcrumbsComponent, RouterModule, TimeToShortDatePipe],
   templateUrl: "./legal-documents.component.html",
   styleUrl: "./legal-documents.component.scss",

@@ -2,7 +2,7 @@ import { CommonModule } from "@angular/common";
 import { Component, Input, ChangeDetectionStrategy } from "@angular/core";
 
 @Component({
-  selector: "app-design-page-card",
+  selector: "sc-design-page-card",
   imports: [CommonModule],
   templateUrl: "./design-page-card.component.html",
   changeDetection: ChangeDetectionStrategy.OnPush,

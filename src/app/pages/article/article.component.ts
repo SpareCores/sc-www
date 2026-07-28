@@ -28,7 +28,7 @@ import { PrismService } from "../../services/prism.service";
 import { Subscription } from "rxjs";
 
 @Component({
-  selector: "app-article",
+  selector: "sc-article",
   imports: [
     BreadcrumbsComponent,
     RouterLink,

@@ -154,7 +154,7 @@ function buildScoreGaugeChart(score: number | null | undefined): {
 }
 
 @Component({
-  selector: "app-workload-profile-panel",
+  selector: "sc-workload-profile-panel",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,

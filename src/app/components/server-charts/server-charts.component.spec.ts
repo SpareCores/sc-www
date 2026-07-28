@@ -49,7 +49,7 @@ describe("ServerChartsComponent", () => {
 
     const root = fixture.nativeElement as HTMLElement;
 
-    expect(root.querySelector("app-workload-profile-panel")).toBeTruthy();
+    expect(root.querySelector("sc-workload-profile-panel")).toBeTruthy();
     expect(root.textContent).toContain("Web server");
   });
 
@@ -59,7 +59,7 @@ describe("ServerChartsComponent", () => {
 
     expect(
       (fixture.nativeElement as HTMLElement).querySelector(
-        "app-workload-profile-panel",
+        "sc-workload-profile-panel",
       ),
     ).toBeNull();
   });
@@ -86,7 +86,7 @@ describe("ServerChartsComponent", () => {
 
     expect(
       (fixture.nativeElement as HTMLElement).querySelector(
-        "app-workload-profile-panel",
+        "sc-workload-profile-panel",
       ),
     ).toBeNull();
   });

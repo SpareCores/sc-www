@@ -29,11 +29,11 @@
           }
         </h3>
         <button
-          #primaryDropdown="appFlowbiteDropdown"
+          #primaryDropdown="scFlowbiteDropdown"
           [id]="buttonId"
           class="dropdown_button chart-selector-button"
           type="button"
-          [appFlowbiteDropdown]="optionsId"
+          [scFlowbiteDropdown]="optionsId"
           [dropdownEnabled]="isBrowserEnvironment() && !!chartData()"
         >
           <div
@@ -70,11 +70,11 @@
       <div class="flex min-w-0 flex-nowrap items-center justify-end gap-4">
         @if (hasSecondaryOptions()) {
           <button
-            #secondaryDropdown="appFlowbiteDropdown"
+            #secondaryDropdown="scFlowbiteDropdown"
             [id]="secondaryButtonId"
             class="dropdown_button chart-selector-button max-w-full"
             type="button"
-            [appFlowbiteDropdown]="secondaryOptionsId"
+            [scFlowbiteDropdown]="secondaryOptionsId"
             [dropdownEnabled]="
               isBrowserEnvironment() && !!chartData() && hasSecondaryOptions()
             "
@@ -94,11 +94,11 @@
           </button>
         }
         <button
-          #primaryDropdown="appFlowbiteDropdown"
+          #primaryDropdown="scFlowbiteDropdown"
           [id]="buttonId"
           class="dropdown_button chart-selector-button max-w-full"
           type="button"
-          [appFlowbiteDropdown]="optionsId"
+          [scFlowbiteDropdown]="optionsId"
           [dropdownEnabled]="isBrowserEnvironment() && !!chartData()"
         >
           <div

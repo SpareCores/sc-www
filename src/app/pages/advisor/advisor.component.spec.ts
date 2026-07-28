@@ -1419,6 +1419,8 @@ describe("AdvisorComponent", () => {
     const results = host.querySelector(
       ".advisor-results",
     ) as HTMLElement | null;
+    const baselineServer = component.serverTableRows()[0];
+    component.selectedBaselineServer.set(baselineServer);
 
     compareService.selectedForCompare = [
       {
@@ -1454,12 +1456,11 @@ describe("AdvisorComponent", () => {
     fixture.detectChanges();
 
     const compareBar = host.querySelector(".advisor-compare-bar");
-    const compareButton = host.querySelector(
-      ".advisor-compare-bar-button-primary",
-    ) as HTMLButtonElement | null;
-    const clearButton = host.querySelector(
-      ".advisor-compare-bar-button-secondary",
-    ) as HTMLButtonElement | null;
+    const compareBarButtons = host.querySelectorAll(
+      ".advisor-compare-bar-button",
+    );
+    const clearButton = compareBarButtons[0] as HTMLElement | null;
+    const compareButton = compareBarButtons[1] as HTMLElement | null;
 
     expect(compareBar).not.toBeNull();
     expect(

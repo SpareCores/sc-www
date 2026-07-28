@@ -94,20 +94,11 @@
   @apply px-2 py-2 text-sm rounded-md border border-emerald-400 bg-transparent text-emerald-400;
 }
 
-.dropdown_button {
-  @apply text-white bg-emerald-400 hover:bg-emerald-500 focus:outline-none font-medium rounded-lg text-sm text-center inline-flex items-center border-emerald-400 border-solid border transition-colors duration-150 ease-in;
-}
-
 .filter_chip_active {
   @apply bg-emerald-400 text-white;
 }
 
-.clear_filters_button {
-  @apply px-3 py-2 text-sm rounded-md border border-emerald-400 bg-transparent text-emerald-400;
-}
-
-.dropdown_group_button:hover,
-.clear_filters_button:hover {
+.dropdown_group_button:hover {
   @apply bg-emerald-400 text-white;
 }
 

@@ -49,7 +49,7 @@ import {
 } from "./benchmark-line-chart.types";
 
 @Component({
-  selector: "app-benchmark-line-chart",
+  selector: "sc-benchmark-line-chart",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,

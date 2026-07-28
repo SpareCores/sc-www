@@ -1,11 +1,9 @@
-import { CommonModule } from "@angular/common";
 import { Component, Input } from "@angular/core";
-import { RouterModule } from "@angular/router";
-import { LucideChevronLeft, LucideChevronRight } from "@lucide/angular";
+import { Button } from "../button/button";
 
 @Component({
-  selector: "app-pagination",
-  imports: [CommonModule, RouterModule, LucideChevronLeft, LucideChevronRight],
+  selector: "sc-pagination",
+  imports: [Button],
   templateUrl: "./pagination.component.html",
   styleUrl: "./pagination.component.scss",
 })

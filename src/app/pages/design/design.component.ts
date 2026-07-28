@@ -2,6 +2,7 @@ import { isPlatformBrowser } from "@angular/common";
 import { HttpClient } from "@angular/common/http";
 import { Component, OnInit, PLATFORM_ID, inject } from "@angular/core";
 import { firstValueFrom } from "rxjs";
+import { Button } from "../../components/button/button";
 import { ThemeTextComponent } from "../../components/theme-text/theme-text.component";
 import { DesignPageCardComponent } from "../../components/design-page-card/design-page-card.component";
 import { DownloadableLogoCollectionComponent } from "../../components/downloadable-logo-collection/downloadable-logo-collection.component";
@@ -24,8 +25,9 @@ type LogoDownloadManifest = {
 };
 
 @Component({
-  selector: "app-design",
+  selector: "sc-design",
   imports: [
+    Button,
     ThemeTextComponent,
     DesignPageCardComponent,
     DownloadableLogoCollectionComponent,

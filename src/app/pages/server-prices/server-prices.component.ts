@@ -12,6 +12,7 @@ import {
   BreadcrumbSegment,
   BreadcrumbsComponent,
 } from "../../components/breadcrumbs/breadcrumbs.component";
+import { Button } from "../../components/button/button";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { OrderDir, ServerPriceWithPKs } from "../../../../sdk/data-contracts";
 import { ActivatedRoute, Params, Router, RouterModule } from "@angular/router";
@@ -20,16 +21,15 @@ import { SeoHandlerService } from "../../services/seo-handler.service";
 import { FormsModule } from "@angular/forms";
 import {
   LucideDynamicIcon,
-  LucideChevronDown,
   LucideChevronLeft,
   LucideChevronRight,
-  LucideDollarSign,
   LucideInfo,
   LucideScale,
   LucideCheck,
   LucideX,
 } from "@lucide/angular";
 import { CountryIdtoNamePipe } from "../../pipes/country-idto-name.pipe";
+import { PageHeader } from "../../components/page-header/page-header";
 import { GpuCountPipe } from "../../pipes/gpu-count.pipe";
 import { StoragePipe } from "../../pipes/storage.pipe";
 import { GpuMemoryPipe } from "../../pipes/gpu-memory.pipe";
@@ -88,16 +88,14 @@ export type RegionVendorMetadata = {
 };
 
 @Component({
-  selector: "app-server-prices",
+  selector: "sc-server-prices",
   imports: [
     CommonModule,
     FormsModule,
     BreadcrumbsComponent,
     LucideDynamicIcon,
-    LucideChevronDown,
     LucideChevronLeft,
     LucideChevronRight,
-    LucideDollarSign,
     LucideInfo,
     LucideScale,
     CountryIdtoNamePipe,
@@ -107,6 +105,8 @@ export type RegionVendorMetadata = {
     LucideCheck,
     LucideX,
     RouterModule,
+    Button,
+    PageHeader,
     SearchBarComponent,
     PaginationComponent,
     LoadingSpinnerComponent,

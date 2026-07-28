@@ -45,25 +45,6 @@
   flex-shrink: 0;
 }
 
-.promo-banner__cta {
-  display: inline-flex;
-  min-height: 2.75rem;
-  align-items: center;
-  justify-content: center;
-  gap: 0.25rem;
-  padding-inline: 1rem;
-  border: 0;
-  border-radius: 0.75rem;
-  background: #1f2937;
-  color: #ffffff;
-  cursor: pointer;
-  font-size: 0.95rem;
-  font-weight: 600;
-  text-decoration: none;
-  white-space: nowrap;
-  transition: background-color 0.2s ease;
-}
-
 .promo-banner__close {
   display: inline-flex;
   align-items: center;
@@ -77,16 +58,11 @@
   transition: color 0.2s ease;
 }
 
-.promo-banner__cta:hover {
-  background: #111827;
-}
-
 .promo-banner__close:hover {
   color: #ffffff;
 }
 
-.promo-banner__close:focus-visible,
-.promo-banner__cta:focus-visible {
+.promo-banner__close:focus-visible {
   outline: 2px solid #111827;
   outline-offset: 2px;
 }

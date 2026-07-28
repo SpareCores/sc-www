@@ -5,11 +5,11 @@
   >
     <div class="flex justify-end items-center">
       <button
-        #memoryCompareDropdown="appFlowbiteDropdown"
+        #memoryCompareDropdown="scFlowbiteDropdown"
         [id]="buttonId"
         class="dropdown_button chart-selector-button chart-selector-button--comfortable"
         type="button"
-        [appFlowbiteDropdown]="optionsId"
+        [scFlowbiteDropdown]="optionsId"
         [dropdownEnabled]="isBrowser && availableOptions().length > 0"
       >
         <div class="chart-selector-button__label">

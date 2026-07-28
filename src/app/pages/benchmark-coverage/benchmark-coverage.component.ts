@@ -10,20 +10,19 @@ import {
   BreadcrumbSegment,
   BreadcrumbsComponent,
 } from "../../components/breadcrumbs/breadcrumbs.component";
+import { Button } from "../../components/button/button";
 import {
-  LucideActivity,
   LucideCheck,
-  LucideChevronDown,
   LucideChevronLeft,
   LucideChevronRight,
   LucideCircleAlert,
   LucideCircleCheckBig,
   LucideCircleX,
   LucideClock,
-  LucideFunnelX,
   LucideLink,
   LucideX,
 } from "@lucide/angular";
+import { PageHeader } from "../../components/page-header/page-header";
 import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
@@ -53,19 +52,18 @@ import {
 } from "./benchmark-coverage.utils";
 
 @Component({
-  selector: "app-benchmark-coverage",
+  selector: "sc-benchmark-coverage",
   imports: [
+    Button,
     BreadcrumbsComponent,
-    LucideActivity,
+    PageHeader,
     LucideCheck,
-    LucideChevronDown,
     LucideChevronLeft,
     LucideChevronRight,
     LucideCircleAlert,
     LucideCircleCheckBig,
     LucideCircleX,
     LucideClock,
-    LucideFunnelX,
     LucideLink,
     LucideX,
     RouterModule,

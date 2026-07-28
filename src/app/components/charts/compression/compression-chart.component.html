@@ -34,11 +34,11 @@
         <div class="flex min-w-0 gap-4">
           @if (hasCoresSelector()) {
             <button
-              #coresDropdown="appFlowbiteDropdown"
+              #coresDropdown="scFlowbiteDropdown"
               [id]="coresButtonId"
               class="dropdown_button chart-selector-button"
               type="button"
-              [appFlowbiteDropdown]="coresOptionsId"
+              [scFlowbiteDropdown]="coresOptionsId"
               [dropdownEnabled]="isBrowser"
             >
               <div class="chart-selector-button__label">
@@ -53,11 +53,11 @@
             </button>
           }
           <button
-            #selectorDropdown="appFlowbiteDropdown"
+            #selectorDropdown="scFlowbiteDropdown"
             [id]="buttonId"
             class="dropdown_button chart-selector-button"
             type="button"
-            [appFlowbiteDropdown]="optionsId"
+            [scFlowbiteDropdown]="optionsId"
             [dropdownEnabled]="isBrowser && hasOptions()"
           >
             <div class="chart-selector-button__label">
@@ -95,11 +95,11 @@
         <div class="flex justify-end items-center">
           <div class="flex gap-4">
             <button
-              #selectorDropdown="appFlowbiteDropdown"
+              #selectorDropdown="scFlowbiteDropdown"
               [id]="buttonId"
               class="dropdown_button chart-selector-button chart-selector-button--responsive"
               type="button"
-              [appFlowbiteDropdown]="optionsId"
+              [scFlowbiteDropdown]="optionsId"
               [dropdownEnabled]="isBrowser && hasOptions()"
             >
               <div class="chart-selector-button__label">

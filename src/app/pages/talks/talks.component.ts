@@ -14,7 +14,7 @@ import {
 } from "@lucide/angular";
 
 @Component({
-  selector: "app-talks",
+  selector: "sc-talks",
   imports: [
     BreadcrumbsComponent,
     RouterModule,

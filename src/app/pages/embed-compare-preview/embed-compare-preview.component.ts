@@ -21,7 +21,7 @@ interface ChartOption {
 }
 
 @Component({
-  selector: "app-embed-compare-preview",
+  selector: "sc-embed-compare-preview",
   imports: [FormsModule],
   templateUrl: "./embed-compare-preview.component.html",
   styleUrl: "./embed-compare-preview.component.scss",

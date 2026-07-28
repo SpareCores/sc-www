@@ -1,13 +1,13 @@
 <div class="w-full bg-primary">
   <div class="content pt-16 pb-16 text-white">
-    <app-breadcrumbs [segments]="breadcrumbs"></app-breadcrumbs>
+    <sc-breadcrumbs [segments]="breadcrumbs"></sc-breadcrumbs>
 
     @if (isLoading) {
       <div class="flex justify-center items-center mt-12">
-        <app-loading-spinner
+        <sc-loading-spinner
           size="md"
           text="Loading server data..."
-        ></app-loading-spinner>
+        ></sc-loading-spinner>
       </div>
     }
 
@@ -42,8 +42,11 @@
               }}</span>
             </div>
             <div class="flex gap-4 flex-wrap">
-              <button
-                class="btn-primary py-3 px-5 flex gap-2 disabled:bg-gray-500 disabled:cursor-not-allowed disabled:hover:bg-gray-500"
+              <sc-button
+                label="Summarize"
+                icon="sparkles"
+                iconPosition="end"
+                size="large"
                 [disabled]="!descriptionsAvailable"
                 [title]="
                   descriptionsAvailable
@@ -52,18 +55,15 @@
                 "
                 data-ph-capture-attribute-sc-event="server details summarize open"
                 (click)="openSummarizeModal()"
-              >
-                <span>Summarize</span>
-                <svg lucideSparkles class="h-6 w-6"></svg>
-              </button>
-              <button
-                class="btn-primary py-3 px-5 flex gap-2"
+              ></sc-button>
+              <sc-button
+                [label]="compareText()"
+                icon="scale"
+                iconPosition="end"
+                size="large"
                 data-ph-capture-attribute-sc-event="server details compare"
                 (click)="addToCompare()"
-              >
-                <span> {{ compareText() }} </span>
-                <svg lucideScale class="h-6 w-6"></svg>
-              </button>
+              ></sc-button>
             </div>
           </div>
         </div>
@@ -148,14 +148,14 @@
         <div class="my-2 w-full">
           <h2 class="text-3xl font-bold">Specifications</h2>
         </div>
-        <app-server-property-card
+        <sc-server-property-card
           cardTitle="Server Metadata"
           cardId="details"
           [sections]="metadataSections"
           [showSectionHeaders]="false"
           [isOpen]="expandedCards.details"
           (toggleRequested)="toggleCard('details')"
-        ></app-server-property-card>
+        ></sc-server-property-card>
         <div
           class="block_half"
           id="availability"
@@ -220,39 +220,37 @@
                 );
               "
             >
-              <button
-                class="btn-primary py-2 px-3"
-                (click)="toggleCard('availability', false)"
+              <sc-button
+                label="Show more"
+                size="normal"
                 id="availability_more_button"
-                aria-expanded="false"
+                [ariaExpanded]="false"
                 data-ph-capture-attribute-sc-event="server details show more availability"
-              >
-                Show more
-              </button>
+                (click)="toggleCard('availability', false)"
+              ></sc-button>
             </div>
           }
           @if (availabilityRegions.length > 7 && expandedCards.availability) {
             <div class="w-full pt-3 flex justify-center" id="availability_less">
-              <button
-                class="btn-primary py-2 px-3"
-                (click)="toggleCard('availability', false)"
-                aria-expanded="true"
+              <sc-button
+                label="Show less"
+                size="normal"
+                [ariaExpanded]="true"
                 data-ph-capture-attribute-sc-event="server details show less availability"
-              >
-                Show less
-              </button>
+                (click)="toggleCard('availability', false)"
+              ></sc-button>
             </div>
           }
         </div>
-        <app-server-property-card
+        <sc-server-property-card
           cardTitle="Processor"
           cardId="processor"
           [sections]="processorSections"
           [showSectionHeaders]="false"
           [isOpen]="expandedCards.processor"
           (toggleRequested)="toggleCard('processor', false)"
-        ></app-server-property-card>
-        <app-server-property-card
+        ></sc-server-property-card>
+        <sc-server-property-card
           cardTitle="System Resources and Accelerators"
           cardId="system_resources"
           [sections]="resourceSections"
@@ -260,7 +258,7 @@
           sectionHeaderVariant="availability"
           [isOpen]="expandedCards.system_resources"
           (toggleRequested)="toggleCard('system_resources', false)"
-        ></app-server-property-card>
+        ></sc-server-property-card>
         @if (lstopoSvgExists !== false) {
           <div
             class="block_full"
@@ -271,13 +269,13 @@
                 : '100%'
             "
           >
-            <app-server-lstopo
+            <sc-server-lstopo
               ngSkipHydration
               [vendorId]="serverDetails.vendor_id"
               [apiReference]="serverDetails.api_reference"
               (svgExists)="lstopoSvgExists = $event"
               (svgWidth)="lstopoSvgWidth = $event"
-            ></app-server-lstopo>
+            ></sc-server-lstopo>
           </div>
         }
         @if (descriptionsAvailable && serverDescription) {
@@ -288,16 +286,15 @@
           >
             <div class="flex justify-between items-center gap-4">
               <h3 class="text-2xl">Server Description</h3>
-              <button
-                type="button"
-                class="btn-primary py-2 px-3 flex gap-2 h-[42px]"
+              <sc-button
+                label="More details"
+                icon="maximize-2"
+                iconPosition="end"
+                size="normal"
+                ariaLabel="Open full summary"
                 data-ph-capture-attribute-sc-event="server details summarize open"
                 (click)="openSummarizeModal()"
-                aria-label="Open full summary"
-              >
-                <span>More details</span>
-                <svg lucideMaximize2 class="h-5 w-5"></svg>
-              </button>
+              ></sc-button>
             </div>
             @if (serverDescription.tagline) {
               <p class="server-description-tagline">
@@ -347,23 +344,15 @@
           <div class="flex justify-between items-center">
             <h3 class="text-2xl">Prices per Zone</h3>
             <div class="flex gap-4">
-              <button
+              <sc-button
                 id="region_button"
                 data-ph-capture-attribute-sc-event="server details regions select"
-                [appFlowbiteDropdown]="'region_options'"
-                class="dropdown_button"
-                type="button"
-              >
-                <div class="px-3 py-2">Regions</div>
-                <div
-                  class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
-                >
-                  <svg
-                    lucideChevronDown
-                    class="h-6 w-6 shrink-0 text-emerald-400"
-                  ></svg>
-                </div>
-              </button>
+                [scFlowbiteDropdown]="'region_options'"
+                label="Regions"
+                icon="chevron-down"
+                variant="dropdown"
+                size="normal"
+              ></sc-button>
             </div>
           </div>
           @if (isBrowser()) {
@@ -401,13 +390,13 @@
         @if (serverDetails.benchmark_scores.length) {
           <div class="my-2 w-full flex justify-between items-center">
             <h2 class="text-3xl font-bold">Performance</h2>
-            <button
-              class="btn-primary py-3 px-5 flex gap-2"
+            <sc-button
+              label="Embed chart"
+              icon="copy"
+              iconPosition="end"
+              size="large"
               (click)="openModal()"
-            >
-              <span> Embed chart </span>
-              <svg lucideCopy class="h-6 w-6"></svg>
-            </button>
+            ></sc-button>
           </div>
           @if (serverDetails.cpu_allocation === "Burstable") {
             <div
@@ -424,12 +413,12 @@
             </div>
           }
         }
-        <app-server-charts
+        <sc-server-charts
           class="w-full flex flex-wrap gap-8"
           [serverDetails]="serverDetails"
           [benchmarksByCategory]="benchmarksByCategory"
           [benchmarkMeta]="benchmarkMeta"
-        ></app-server-charts>
+        ></sc-server-charts>
         <div class="my-2 w-full">
           <h2 class="text-3xl font-bold">Alternatives</h2>
         </div>
@@ -476,26 +465,16 @@
           <div class="flex justify-between items-center">
             <h3 class="text-2xl">Similar Servers</h3>
             <div class="flex gap-4">
-              <button
+              <sc-button
                 id="similar_type_button"
                 data-ph-capture-attribute-sc-event="server similar options select"
-                [appFlowbiteDropdown]="'similar_server_options'"
-                #similarDropdown="appFlowbiteDropdown"
-                class="dropdown_button"
-                type="button"
-              >
-                <div class="px-3 py-2">
-                  {{ selectedSimilarOption.name }}
-                </div>
-                <div
-                  class="px-3 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
-                >
-                  <svg
-                    lucideChevronDown
-                    class="h-6 w-6 shrink-0 text-emerald-400"
-                  ></svg>
-                </div>
-              </button>
+                [scFlowbiteDropdown]="'similar_server_options'"
+                #similarDropdown="scFlowbiteDropdown"
+                [label]="selectedSimilarOption.name"
+                icon="chevron-down"
+                variant="dropdown"
+                size="normal"
+              ></sc-button>
             </div>
           </div>
           <table class="items_table_similar" id="similar_table">
@@ -562,14 +541,14 @@
 
     @if (serverDetails) {
       <div #giscusParent class="my-8 w-1/2 m-auto">
-        <app-accordion
+        <sc-accordion
           [useFaqSchema]="true"
           [showHeading]="true"
           [heading]="serverDetails.display_name"
           [items]="faqs"
           [activeIndex]="activeFAQ"
           (activeIndexChange)="activeFAQChanged($event)"
-        ></app-accordion>
+        ></sc-accordion>
         <div class="giscus"></div>
       </div>
     }
@@ -663,13 +642,13 @@
       </div>
       <div class="space-y-4 flex flex-col">
         @if (serverDetails && isModalOpen) {
-          <app-embed-debug
+          <sc-embed-debug
             [id]="serverDetails.server_id"
             [vendor]="serverDetails.vendor_id"
             [isModal]="true"
             [charts]="embeddableCharts"
           >
-          </app-embed-debug>
+          </sc-embed-debug>
         }
       </div>
     </div>

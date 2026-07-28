@@ -8,7 +8,7 @@ import { ServerDescription } from "../../../../sdk/data-contracts";
 import { Subscription } from "rxjs";
 
 @Component({
-  selector: "app-server-og",
+  selector: "sc-server-og",
   imports: [],
   templateUrl: "./server-og.component.html",
   styleUrl: "./server-og.component.scss",

@@ -16,7 +16,7 @@ import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
 import { UiTooltipService } from "../../services/ui-tooltip.service";
 
 @Component({
-  selector: "app-benchmark-workloads-sidebar",
+  selector: "sc-benchmark-workloads-sidebar",
   imports: [CommonModule, LucideDynamicIcon, BenchmarkIconPipe],
   templateUrl: "./benchmark-workloads-sidebar.component.html",
   styleUrl: "./benchmark-workloads-sidebar.component.scss",

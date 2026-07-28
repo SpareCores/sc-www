@@ -37,11 +37,11 @@
         </h3>
         @if (hasSelector()) {
           <button
-            #selectorDropdown="appFlowbiteDropdown"
+            #selectorDropdown="scFlowbiteDropdown"
             [id]="buttonId"
             class="dropdown_button chart-selector-button"
             type="button"
-            [appFlowbiteDropdown]="optionsId"
+            [scFlowbiteDropdown]="optionsId"
             [dropdownEnabled]="isBrowser && hasSelector()"
           >
             <div class="chart-selector-button__label">
@@ -87,11 +87,11 @@
       @if (hasSelector()) {
         <div class="flex justify-end items-center">
           <button
-            #selectorDropdown="appFlowbiteDropdown"
+            #selectorDropdown="scFlowbiteDropdown"
             [id]="buttonId"
             class="dropdown_button chart-selector-button chart-selector-button--comfortable"
             type="button"
-            [appFlowbiteDropdown]="optionsId"
+            [scFlowbiteDropdown]="optionsId"
             [dropdownEnabled]="isBrowser && hasSelector()"
           >
             <div class="chart-selector-button__label">

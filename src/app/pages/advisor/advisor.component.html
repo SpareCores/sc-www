@@ -1,52 +1,45 @@
-﻿<div
+<div
   class="advisor-page w-full bg-primary"
   [class.advisor-page--loading-baseline-workloads]="
     isLoadingBaselineBenchmarkScores()
   "
 >
   <div class="content pt-16 pb-16">
-    <app-breadcrumbs [segments]="breadcrumbs()"></app-breadcrumbs>
+    <sc-breadcrumbs [segments]="breadcrumbs()"></sc-breadcrumbs>
 
     <div class="flex flex-col gap-4 my-8 mx-2 xl:mx-0">
-      <div class="advisor-hero-header">
-        <h1 class="text-white font-bold text-3xl flex items-center">
-          <svg lucideBot class="h-8 w-8 mr-2"></svg>
-          {{ title }}
-        </h1>
-        <div class="advisor-hero-actions">
-          <a
-            id="advisor_example_button"
-            [routerLink]="['/advisor']"
-            [queryParams]="advisorExampleQueryParams"
-            class="advisor-header-action btn-primary-outline"
-          >
-            <svg lucideDices class="h-4 w-4"></svg>
-            Example
-          </a>
-          <button
-            id="advisor_introduction_button"
-            type="button"
-            class="advisor-header-action btn-primary-outline"
-            (click)="openIntroductionModal()"
-          >
-            <svg lucideTvMinimalPlay class="h-4 w-4"></svg>
-            Introduction
-          </button>
-          <button
-            id="advisor_share_button"
-            type="button"
-            class="advisor-header-action btn-primary-outline"
-            (click)="clipboardURL()"
-          >
-            Share
-            @if (clipboardIcon() === "check") {
-              <svg lucideCheck class="h-4 w-4"></svg>
-            } @else {
-              <svg lucideClipboard class="h-4 w-4"></svg>
-            }
-          </button>
-        </div>
-      </div>
+      <sc-page-header
+        icon="bot"
+        [title]="title"
+        [showShare]="true"
+        [shareIcon]="clipboardIcon()"
+        shareButtonId="advisor_share_button"
+        (shareClick)="clipboardURL()"
+      >
+        <sc-button
+          id="advisor_example_button"
+          label="Example"
+          icon="dices"
+          iconPosition="start"
+          variant="outline"
+          size="large"
+          textSize="large"
+          fontWeight="bold"
+          [routerLink]="['/advisor']"
+          [queryParams]="advisorExampleQueryParams"
+        ></sc-button>
+        <sc-button
+          id="advisor_introduction_button"
+          label="Introduction"
+          icon="tv-minimal-play"
+          iconPosition="start"
+          variant="outline"
+          size="large"
+          textSize="large"
+          fontWeight="bold"
+          (click)="openIntroductionModal()"
+        ></sc-button>
+      </sc-page-header>
       <div class="text-white text-xl lg:pr-16">
         {{ description }}
       </div>
@@ -145,7 +138,7 @@
         </div>
 
         <div class="advisor-filter-bar-filters overflow-hidden bg-secondary">
-          <app-search-bar
+          <sc-search-bar
             [query]="query()"
             [extraParameters]="advisorSearchBarExtraParameters()"
             [filterCategories]="advisorFilterCategories"
@@ -157,18 +150,19 @@
             (searchChanged)="onSearchChanged($event)"
             (customControlChanged)="onCustomControlChanged($event)"
           >
-          </app-search-bar>
+          </sc-search-bar>
 
           @if (!isCollapsed()) {
             <div class="px-4 pb-4 bg-secondary flex flex-col gap-3">
-              <button
-                type="button"
-                class="text-white bg-emerald-400 hover:bg-emerald-500 rounded-lg px-3 py-2 relative flex gap-2 items-center justify-center"
+              <sc-button
+                label="Clear filters"
+                icon="funnel-x"
+                iconPosition="start"
+                size="large"
+                textSize="large"
+                class="w-full"
                 (click)="clearFilters()"
-              >
-                <svg lucideFunnelX class="h-4 w-4"></svg>
-                Clear filters
-              </button>
+              ></sc-button>
             </div>
           }
         </div>
@@ -176,7 +170,9 @@
 
       <div
         class="advisor-results flex flex-col gap-4"
-        [class.advisor-results--compare-active]="compareCount() >= 2"
+        [class.advisor-results--compare-active]="
+          compareCount() >= 2 && selectedBaselineServer()
+        "
       >
         <div class="advisor-toolbar">
           @if (recommendationSummary(); as summary) {
@@ -196,59 +192,45 @@
             </div>
           }
 
-          <button
+          <sc-button
             id="advisor_compare_baseline_button"
-            type="button"
-            class="advisor-top-action py-2 px-3 flex gap-1 items-center"
-            [class.btn-primary]="isBaselineSelectedForCompare()"
-            [class.btn-primary-outline]="!isBaselineSelectedForCompare()"
+            [label]="baselineCompareButtonLabel()"
+            icon="scale"
+            iconPosition="start"
+            [variant]="isBaselineSelectedForCompare() ? 'primary' : 'outline'"
+            size="large"
+            textSize="large"
+            fontWeight="bold"
             [disabled]="!selectedBaselineServer()"
             (click)="toggleBaselineCompare()"
-          >
-            <svg lucideScale class="h-4 w-4"></svg>
-            {{ baselineCompareButtonLabel() }}
-          </button>
+          ></sc-button>
 
           <div class="advisor-top-controls">
             <div>
-              <button
+              <sc-button
                 id="advisor_currency_button"
-                [appFlowbiteDropdown]="'advisor_currency_options'"
-                #currencyDropdown="appFlowbiteDropdown"
-                class="advisor-dropdown-button"
-                type="button"
-              >
-                <div class="px-4 py-3">
-                  {{ selectedCurrency().slug }}
-                </div>
-                <div
-                  class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
-                >
-                  <svg
-                    lucideCreditCard
-                    class="h-6 w-6 shrink-0 text-emerald-400"
-                  ></svg>
-                </div>
-              </button>
+                [scFlowbiteDropdown]="'advisor_currency_options'"
+                #currencyDropdown="scFlowbiteDropdown"
+                [label]="selectedCurrency().slug"
+                icon="credit-card"
+                variant="dropdown"
+                size="large"
+                textSize="large"
+                fontWeight="normal"
+              ></sc-button>
             </div>
 
             <div>
-              <button
+              <sc-button
                 id="advisor_column_button"
-                [appFlowbiteDropdown]="'advisor_column_options'"
-                class="advisor-dropdown-button"
-                type="button"
-              >
-                <div class="px-4 py-3">Columns</div>
-                <div
-                  class="px-4 py-3 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
-                >
-                  <svg
-                    lucideColumns3Cog
-                    class="h-6 w-6 shrink-0 text-emerald-400"
-                  ></svg>
-                </div>
-              </button>
+                [scFlowbiteDropdown]="'advisor_column_options'"
+                label="Columns"
+                icon="columns-3-cog"
+                variant="dropdown"
+                size="large"
+                textSize="large"
+                fontWeight="normal"
+              ></sc-button>
             </div>
           </div>
         </div>
@@ -263,7 +245,7 @@
             @if (isLoadingRecommendations()) {
               <div class="advisor-table-loading-overlay">
                 <div class="flex justify-center mt-16 opacity-100">
-                  <app-loading-spinner size="lg"></app-loading-spinner>
+                  <sc-loading-spinner size="lg"></sc-loading-spinner>
                 </div>
               </div>
             }
@@ -1356,39 +1338,29 @@
           </div>
 
           <div class="flex justify-between mt-4 flex-wrap gap-4">
-            <div>
-              <button
+            <div class="flex items-center gap-2">
+              <sc-button
                 id="advisor_pagesize_button"
-                [appFlowbiteDropdown]="'advisor_pagesize_options'"
+                [scFlowbiteDropdown]="'advisor_pagesize_options'"
                 [dropdownFlip]="true"
                 [dropdownPlacement]="'bottom-start'"
-                #pageDropdown="appFlowbiteDropdown"
-                class="advisor-dropdown-button"
-                type="button"
-              >
-                <div class="px-4 py-2">
-                  {{ limit() }}
-                </div>
-                <div
-                  class="px-2 py-2 w-12 h-full bg-primary justify-center items-center flex rounded-r-lg"
-                >
-                  <svg
-                    lucideChevronDown
-                    class="h-6 w-6 shrink-0 text-emerald-400"
-                  ></svg>
-                </div>
-              </button>
-              <span class="text-white"> items per page</span>
+                #pageDropdown="scFlowbiteDropdown"
+                [label]="'' + limit()"
+                icon="chevron-down"
+                variant="dropdown"
+                size="normal"
+              ></sc-button>
+              <span class="text-white">items per page</span>
             </div>
 
             <div>
-              <app-pagination
+              <sc-pagination
                 baseURL="/advisor"
                 [currentPage]="page()"
                 [totalPages]="totalPages()"
                 [baseQueryParams]="getUrlStateQueryParams()"
               >
-              </app-pagination>
+              </sc-pagination>
             </div>
           </div>
         </div>
@@ -1462,23 +1434,28 @@
   </ul>
 </div>
 
-@if (compareCount() >= 2) {
+@if (compareCount() >= 2 && selectedBaselineServer()) {
   <div class="advisor-compare-bar">
     <div class="advisor-compare-bar-actions">
-      <button
-        type="button"
-        class="advisor-compare-bar-button advisor-compare-bar-button-secondary"
+      <sc-button
+        label="Clear"
+        icon="circle-x"
+        iconPosition="start"
+        variant="danger"
+        textSize="large"
+        fontWeight="bold"
+        class="advisor-compare-bar-button"
         (click)="clearCompareSelection()"
-      >
-        Clear
-      </button>
-      <button
-        type="button"
-        class="advisor-compare-bar-button advisor-compare-bar-button-primary"
+      ></sc-button>
+      <sc-button
+        [label]="'Compare (' + compareCount() + ')'"
+        icon="scale"
+        iconPosition="start"
+        textSize="large"
+        fontWeight="bold"
+        class="advisor-compare-bar-button"
         (click)="openCompare()"
-      >
-        Compare ({{ compareCount() }})
-      </button>
+      ></sc-button>
     </div>
   </div>
 }

@@ -1,3 +1,4 @@
+import { Location, isPlatformBrowser } from "@angular/common";
 import {
   Component,
   DOCUMENT,
@@ -15,10 +16,6 @@ import { FormsModule } from "@angular/forms";
 import { ActivatedRoute, RouterModule } from "@angular/router";
 import {
   LucideCheck,
-  LucideChevronDown,
-  LucideCopy,
-  LucideMaximize2,
-  LucideScale,
   LucideSparkles,
   LucideTriangleAlert,
 } from "@lucide/angular";
@@ -35,20 +32,16 @@ import {
   ServerPrice,
 } from "../../../../sdk/data-contracts";
 import {
-  BreadcrumbSegment,
-  BreadcrumbsComponent,
-} from "../../components/breadcrumbs/breadcrumbs.component";
-import { isPlatformBrowser } from "@angular/common";
-import {
   AccordionComponent,
   AccordionItem,
 } from "../../components/accordion/accordion.component";
-import { buildServerFaqs } from "./server-details-faqs";
 import {
-  BURSTABLE_INSTANCE_WARNING_BODY,
-  BURSTABLE_INSTANCE_WARNING_TITLE,
-} from "./server-details.constants";
-import { Location } from "@angular/common";
+  BreadcrumbSegment,
+  BreadcrumbsComponent,
+} from "../../components/breadcrumbs/breadcrumbs.component";
+import { Button } from "../../components/button/button";
+import { formatBooleanIconHtml } from "../../components/charts/shared/server-compare-table.utils";
+import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
 import { ServerChartsComponent } from "../../components/server-charts/server-charts.component";
 import { ServerLstopoComponent } from "../../components/server-lstopo/server-lstopo.component";
 import {
@@ -69,8 +62,11 @@ import { ServerCompareService } from "../../services/server-compare.service";
 import { initGiscus } from "../../tools/initGiscus";
 import { EmbedDebugComponent } from "../embed-debug/embed-debug.component";
 import { barChartDataEmpty, barChartOptions } from "./chartOptions";
-import { formatBooleanIconHtml } from "../../components/charts/shared/server-compare-table.utils";
-import { LoadingSpinnerComponent } from "../../components/loading-spinner/loading-spinner.component";
+import { buildServerFaqs } from "./server-details-faqs";
+import {
+  BURSTABLE_INSTANCE_WARNING_BODY,
+  BURSTABLE_INSTANCE_WARNING_TITLE,
+} from "./server-details.constants";
 
 const optionsModal: ModalOptions = {
   backdropClasses: "bg-gray-900/50 fixed inset-0 z-40",
@@ -103,14 +99,11 @@ interface PropertyCategoryDefinition {
 }
 
 @Component({
-  selector: "app-server-details",
+  selector: "sc-server-details",
   imports: [
+    Button,
     BreadcrumbsComponent,
     LucideCheck,
-    LucideChevronDown,
-    LucideCopy,
-    LucideMaximize2,
-    LucideScale,
     LucideSparkles,
     LucideTriangleAlert,
     AccordionComponent,

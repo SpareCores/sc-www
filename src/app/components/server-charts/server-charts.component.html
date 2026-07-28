@@ -1,25 +1,25 @@
 @if (isChartShown("workload_profile") && hasWorkloadProfileBenchmarks()) {
-  <app-workload-profile-panel
+  <sc-workload-profile-panel
     layout="details"
     [serverDetails]="serverDetails"
     [benchmarkMeta]="benchmarkMeta"
-  ></app-workload-profile-panel>
+  ></sc-workload-profile-panel>
 }
 @if (isChartShown("bw_mem")) {
-  <app-server-memory-chart
+  <sc-server-memory-chart
     [serverDetails]="serverDetails"
     [benchmarksByCategory]="benchmarksByCategory"
     [benchmarkMeta]="memoryBenchmarkMeta"
-  ></app-server-memory-chart>
+  ></sc-server-memory-chart>
 }
 @if (isChartShown("compress")) {
-  <app-compression-chart
+  <sc-compression-chart
     [benchmarksByCategory]="benchmarksByCategory"
-  ></app-compression-chart>
+  ></sc-compression-chart>
 }
 
 @if (isChartShown("ssl")) {
-  <app-benchmark-line-chart
+  <sc-benchmark-line-chart
     benchmarkKey="openssl"
     chartSource="details-ssl"
     title="OpenSSL"
@@ -31,29 +31,29 @@
     orderTooltip="Higher is better."
     [infoTooltip]="benchmarkDescription('openssl')"
     [noteTooltip]="benchmarkNote('openssl')"
-  ></app-benchmark-line-chart>
+  ></sc-benchmark-line-chart>
 }
 
 @if (isChartShown("geek_single")) {
-  <app-geekbench-radar-chart
+  <sc-geekbench-radar-chart
     [title]="'Geekbench Single-Core'"
     detailsChartMode="single"
     [benchmarksByCategory]="benchmarksByCategory"
     [benchmarkMeta]="geekbenchBenchmarkMeta"
     [elementId]="'geekbench_chart'"
     [canvasId]="'geekbench_single_canvas'"
-  ></app-geekbench-radar-chart>
+  ></sc-geekbench-radar-chart>
 }
 
 @if (isChartShown("geek_multi")) {
-  <app-geekbench-radar-chart
+  <sc-geekbench-radar-chart
     [title]="'Geekbench Multi-Core'"
     detailsChartMode="multi"
     [benchmarksByCategory]="benchmarksByCategory"
     [benchmarkMeta]="geekbenchBenchmarkMeta"
     [elementId]="'geekbench_multi_chart'"
     [canvasId]="'geekbench_multi_canvas'"
-  ></app-geekbench-radar-chart>
+  ></sc-geekbench-radar-chart>
 }
 
 @if (isChartShown("passmark:cpu") && passmarkCPUData?.length) {
@@ -122,24 +122,22 @@
           );
         "
       >
-        <button
-          class="btn-primary py-2 px-3"
-          (click)="openBox('passmark_cpu')"
+        <sc-button
+          label="Show more"
+          size="normal"
           id="passmark_cpu_more_button"
           data-ph-capture-attribute-sc-event="passmark_cpu show more"
-        >
-          Show more
-        </button>
+          (click)="openBox('passmark_cpu')"
+        ></sc-button>
       </div>
     }
     <div class="w-full pt-3 flex justify-center hidden" id="passmark_cpu_less">
-      <button
-        class="btn-primary py-2 px-3"
-        (click)="openBox('passmark_cpu')"
+      <sc-button
+        label="Show less"
+        size="normal"
         data-ph-capture-attribute-sc-event="passmark_cpu show less"
-      >
-        Show less
-      </button>
+        (click)="openBox('passmark_cpu')"
+      ></sc-button>
     </div>
   </div>
 }
@@ -202,7 +200,7 @@
 }
 
 @if (isChartShown("stress_ng_div16")) {
-  <app-benchmark-line-chart
+  <sc-benchmark-line-chart
     benchmarkKey="stress_ng"
     chartSource="details-stress-raw"
     title="Stress-ng Raw Scores"
@@ -215,11 +213,11 @@
     orderTooltip="Higher is better."
     [infoTooltip]="benchmarkDescription('stress_ng:div16')"
     [noteTooltip]="benchmarkNote('stress_ng:div16')"
-  ></app-benchmark-line-chart>
+  ></sc-benchmark-line-chart>
 }
 
 @if (isChartShown("stress_ng_relative")) {
-  <app-benchmark-line-chart
+  <sc-benchmark-line-chart
     benchmarkKey="stress_ng"
     chartSource="details-stress-percent"
     title="Stress-ng Relative Multicore Performance"
@@ -231,16 +229,16 @@
     [benchmarksByCategory]="lineBenchmarkGroups"
     orderTooltip="Higher is better."
     infoTooltip="The relative performance is a percentage showing the multi-core SCore's normalized value (multi-core SCore/vCPUs) compared to the single-core SCore. This metric shows how well a server can scale to multiple vCPUs, and e.g. the effect of Hyper-Threading."
-  ></app-benchmark-line-chart>
+  ></sc-benchmark-line-chart>
 }
 
 @if (isChartShown("llm_prompt") || isChartShown("llm_generation")) {
-  <app-llm-inference-chart
+  <sc-llm-inference-chart
     [benchmarksByCategory]="benchmarksByCategory"
     [benchmarkMeta]="benchmarkMeta"
     [showPrompt]="isChartShown('llm_prompt')"
     [showGeneration]="isChartShown('llm_generation')"
-  ></app-llm-inference-chart>
+  ></sc-llm-inference-chart>
 }
 
 @for (
@@ -248,11 +246,11 @@
   track chartItem.chart.name + "_" + chartItem.chart.id
 ) {
   @if (isChartShown(chartItem.chart.id)) {
-    <app-benchmark-multi-bar-chart
+    <sc-benchmark-multi-bar-chart
       [chartItem]="chartItem"
       [benchmarkMeta]="benchmarkMeta"
       [detailsBenchmarks]="benchmarksByCategory"
-    ></app-benchmark-multi-bar-chart>
+    ></sc-benchmark-multi-bar-chart>
   }
 }
 

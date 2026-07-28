@@ -1,55 +1,56 @@
 import { CommonModule, isPlatformBrowser } from "@angular/common";
-import { CompactNumberPipe } from "../../pipes/compact-number.pipe";
 import {
   Component,
   ElementRef,
   Input,
-  output,
+  OnChanges,
   PLATFORM_ID,
   ViewChild,
-  OnChanges,
   inject,
+  output,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import {
-  LucideDynamicIcon,
   LucideCircleArrowUp,
+  LucideDynamicIcon,
   LucideInfo,
   LucideTriangleAlert,
 } from "@lucide/angular";
-import { ExtendedServerDetails } from "../../pages/server-details/server-details.component";
 import { Allocation } from "../../../../sdk/data-contracts";
 import {
   redisChartTemplate,
   staticWebChartCompareTemplate,
 } from "../../pages/server-details/chartFromBenchmarks";
-import { ToastService } from "../../services/toast.service";
+import { ExtendedServerDetails } from "../../pages/server-details/server-details.component";
 import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
-import { BenchmarkLineChartComponent } from "../charts/line/benchmark-line-chart.component";
+import { CompactNumberPipe } from "../../pipes/compact-number.pipe";
+import { ToastService } from "../../services/toast.service";
+import { Button } from "../button/button";
 import { CompressionChartComponent } from "../charts/compression/compression-chart.component";
 import {
   CompressionBenchmarkMeta,
   CompressionServer,
 } from "../charts/compression/compression-chart.types";
-import { GeekbenchRadarChartComponent } from "../charts/geekbench/geekbench-radar-chart.component";
 import { GeekbenchRadarChartBuilderService } from "../charts/geekbench/geekbench-radar-chart-builder.service";
-import { LlmInferenceChartComponent } from "../charts/llm/llm-inference-chart.component";
+import { GeekbenchRadarChartComponent } from "../charts/geekbench/geekbench-radar-chart.component";
 import {
   GeekbenchBenchmarkMeta,
   GeekbenchCompareServer,
 } from "../charts/geekbench/geekbench-radar-chart.types";
-import { LlmChartServer } from "../charts/llm/llm-inference-chart.types";
-import { ServerCompareMemoryChartComponent } from "../charts/memory/server-compare-memory-chart.component";
-import {
-  MemoryBenchmarkMeta,
-  MemoryChartServer,
-} from "../charts/memory/memory-chart.types";
+import { BenchmarkLineChartComponent } from "../charts/line/benchmark-line-chart.component";
 import {
   LineBenchmarkMeta,
   LineChartServer,
 } from "../charts/line/benchmark-line-chart.types";
-import { BenchmarkMultiBarChartComponent } from "../charts/multi-bar/benchmark-multi-bar-chart.component";
+import { LlmInferenceChartComponent } from "../charts/llm/llm-inference-chart.component";
+import { LlmChartServer } from "../charts/llm/llm-inference-chart.types";
+import {
+  MemoryBenchmarkMeta,
+  MemoryChartServer,
+} from "../charts/memory/memory-chart.types";
+import { ServerCompareMemoryChartComponent } from "../charts/memory/server-compare-memory-chart.component";
 import { BenchmarkMultiBarChartBuilderService } from "../charts/multi-bar/benchmark-multi-bar-chart-builder.service";
+import { BenchmarkMultiBarChartComponent } from "../charts/multi-bar/benchmark-multi-bar-chart.component";
 import {
   BenchmarkMultiBarChartItem,
   MultiBarBenchmarkMeta,
@@ -61,12 +62,12 @@ import {
   getBenchmarkMetaNotes,
 } from "../charts/shared/chart-tooltip.utils";
 import {
-  WORKLOAD_PROFILE_INFO_TOOLTIP,
-  formatWorkloadProfileLabel,
-  isWorkloadProfileBenchmark,
-  filterWorkloadProfileBenchmarks,
-  hasWorkloadProfileChartData,
-} from "../charts/workload-profile/workload-profile.utils";
+  formatNumberWithCommas,
+  getBestBenchmarkCellStyle,
+  getBestPropertyCellStyle,
+  getServerPropertyValue,
+  isCompareMetadataPropertyHidden,
+} from "../charts/shared/server-compare-table.utils";
 import { WorkloadProfilePanelComponent } from "../charts/workload-profile/workload-profile-panel.component";
 import {
   WorkloadProfileBenchmarkMeta,
@@ -74,15 +75,15 @@ import {
   WorkloadProfileCompareServer,
 } from "../charts/workload-profile/workload-profile-radar-chart.types";
 import {
-  formatNumberWithCommas,
-  getBestBenchmarkCellStyle,
-  getBestPropertyCellStyle,
-  getServerPropertyValue,
-  isCompareMetadataPropertyHidden,
-} from "../charts/shared/server-compare-table.utils";
+  WORKLOAD_PROFILE_INFO_TOOLTIP,
+  filterWorkloadProfileBenchmarks,
+  formatWorkloadProfileLabel,
+  hasWorkloadProfileChartData,
+  isWorkloadProfileBenchmark,
+} from "../charts/workload-profile/workload-profile.utils";
 
 @Component({
-  selector: "app-server-compare-charts",
+  selector: "sc-server-compare-charts",
   imports: [
     CommonModule,
     LucideDynamicIcon,
@@ -99,6 +100,7 @@ import {
     ServerCompareMemoryChartComponent,
     BenchmarkMultiBarChartComponent,
     WorkloadProfilePanelComponent,
+    Button,
   ],
   templateUrl: "./server-compare-charts.component.html",
   styleUrl: "./server-compare-charts.component.scss",

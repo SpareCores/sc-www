@@ -31,7 +31,7 @@ import {
 } from "./memory-chart.types";
 
 @Component({
-  selector: "app-server-memory-chart",
+  selector: "sc-server-memory-chart",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,

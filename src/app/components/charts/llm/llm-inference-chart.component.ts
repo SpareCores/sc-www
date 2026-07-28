@@ -38,7 +38,7 @@ import { ChartTooltipService } from "../shared/chart-tooltip.service";
 import { getBenchmarkMetaNote } from "../shared/chart-tooltip.utils";
 
 @Component({
-  selector: "app-llm-inference-chart",
+  selector: "sc-llm-inference-chart",
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,

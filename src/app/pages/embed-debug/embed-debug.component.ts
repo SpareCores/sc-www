@@ -17,7 +17,7 @@ import { ActivatedRoute } from "@angular/router";
 import { SeoHandlerService } from "../../services/seo-handler.service";
 import { PrismService } from "../../services/prism.service";
 @Component({
-  selector: "app-embed-debug",
+  selector: "sc-embed-debug",
   imports: [FormsModule],
   templateUrl: "./embed-debug.component.html",
   styleUrl: "./embed-debug.component.scss",

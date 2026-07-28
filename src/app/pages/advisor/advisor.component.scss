@@ -83,20 +83,6 @@
   align-self: flex-start;
 }
 
-.advisor-hero-header {
-  @apply flex gap-4 justify-between items-center;
-}
-
-.advisor-hero-actions {
-  @apply flex flex-wrap items-center gap-3 lg:justify-end;
-}
-
-.advisor-header-action {
-  @apply inline-flex items-center gap-2 px-3 py-2;
-  min-height: 50px;
-  white-space: nowrap;
-}
-
 .advisor-video-frame {
   border: 2px solid #34d399;
   border-radius: 0.5rem;
@@ -134,20 +120,6 @@
   flex-wrap: nowrap;
 }
 
-.advisor-top-action {
-  height: 50px;
-  white-space: nowrap;
-  justify-content: center;
-}
-
-.advisor-toolbar .advisor-dropdown-button {
-  height: 50px;
-}
-
-.advisor-top-action:disabled {
-  @apply cursor-not-allowed opacity-50;
-}
-
 .advisor-summary-alert {
   @apply rounded-lg border px-3;
   width: fit-content;
@@ -168,7 +140,7 @@
 }
 
 .advisor-summary-alert-title {
-  @apply text-sm font-normal;
+  @apply text-base font-normal;
   line-height: 1rem;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -287,13 +259,6 @@
   }
 }
 
-.advisor-dropdown-button {
-  @apply text-white bg-emerald-400 hover:bg-emerald-500 focus:outline-none font-medium rounded-lg text-sm text-center inline-flex items-center border-emerald-400 border-solid border;
-  transition-duration: 0.15s;
-  transition-property: background-color, border-color, box-shadow, color;
-  transition-timing-function: ease-in;
-}
-
 .advisor-dropdown-menu {
   @apply z-10 rounded-lg border border-solid border-emerald-400 bg-secondary shadow;
 }
@@ -368,17 +333,8 @@
 }
 
 .advisor-compare-bar-button {
-  @apply rounded-lg px-4 py-2 font-bold text-white;
   min-width: 9rem;
   flex: 1 1 9rem;
-}
-
-.advisor-compare-bar-button-primary {
-  @apply bg-emerald-400 hover:bg-emerald-500;
-}
-
-.advisor-compare-bar-button-secondary {
-  @apply bg-red-400 hover:bg-red-500;
 }
 
 @media (max-width: 1024px) {
@@ -453,10 +409,6 @@
     height: auto;
   }
 
-  .advisor-top-action {
-    width: 100%;
-  }
-
   .advisor-top-controls {
     width: 100%;
     gap: 0.75rem;
@@ -468,9 +420,8 @@
     min-width: 0;
   }
 
-  .advisor-toolbar .advisor-dropdown-button {
+  .advisor-top-controls > div > sc-button {
     width: 100%;
-    justify-content: space-between;
   }
 
   .advisor-compare-bar {

@@ -41,11 +41,11 @@
         </h3>
         @if (layout() === "details" && profileDropdownItems().length) {
           <button
-            #profileDropdown="appFlowbiteDropdown"
+            #profileDropdown="scFlowbiteDropdown"
             [id]="profileButtonId"
             class="dropdown_button chart-selector-button max-w-full shrink-0"
             type="button"
-            [appFlowbiteDropdown]="profileOptionsId"
+            [scFlowbiteDropdown]="profileOptionsId"
             [dropdownEnabled]="isBrowser"
           >
             <div
@@ -72,13 +72,13 @@
           <div
             class="workload-profile-radar-chart workload-profile-radar-chart--details lg:col-start-1 lg:row-start-1 mb-8"
           >
-            <app-workload-profile-radar-chart
+            <sc-workload-profile-radar-chart
               [layout]="layout()"
               [benchmarkMeta]="benchmarkMeta()"
               [servers]="servers()"
               [serverDetails]="serverDetails()"
               (profileSelected)="onProfileSelected($event)"
-            ></app-workload-profile-radar-chart>
+            ></sc-workload-profile-radar-chart>
           </div>
           <div
             class="workload-profile-details-panel min-w-0 lg:col-start-2 lg:row-start-1"
@@ -314,25 +314,25 @@
         <div
           class="workload-profile-radar-chart lg:row-start-1 lg:col-start-1 workload-profile-radar-chart--compare"
         >
-          <app-workload-profile-radar-chart
+          <sc-workload-profile-radar-chart
             [layout]="layout()"
             [benchmarkMeta]="benchmarkMeta()"
             [servers]="servers()"
             [serverDetails]="serverDetails()"
-          ></app-workload-profile-radar-chart>
+          ></sc-workload-profile-radar-chart>
         </div>
         @if (accordionItems().length) {
           <div
             class="w-full min-w-0 text-base pr-4 lg:min-h-[460px] lg:pt-[4.5rem] lg:col-start-2 lg:row-start-1"
           >
-            <app-accordion
+            <sc-accordion
               class="workload-profile-accordion"
               [useFaqSchema]="false"
               [showHeading]="false"
               [items]="accordionItems()"
               [activeIndex]="activeAccordionIndex()"
               (activeIndexChange)="onAccordionChanged($event)"
-            ></app-accordion>
+            ></sc-accordion>
           </div>
         }
       </div>

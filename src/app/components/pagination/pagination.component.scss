@@ -1,0 +1,12 @@
+:host ::ng-deep {
+  .pagination-button {
+    min-width: 42px;
+    width: auto;
+  }
+
+  .pagination-button--nav {
+    width: 42px;
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
