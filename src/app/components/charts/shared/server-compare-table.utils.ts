@@ -259,3 +259,125 @@ function formatBytesToSize(bytes: number) {
 export function formatBooleanIconHtml(value: boolean): string {
   return value ? "check" : "x";
 }
+
+export type CompareMetricDeltaTone = "positive" | "negative" | "neutral";
+
+export type CompareMetricDelta = {
+  baselineValue: number | null;
+  candidateValue: number | null;
+  percentageDelta: number | null;
+  tone: CompareMetricDeltaTone;
+};
+
+export function isCompareBaselineServer<
+  T extends { vendor_id: string; api_reference: string },
+>(server: T, baseline: T | null | undefined): boolean {
+  if (!baseline) {
+    return false;
+  }
+
+  return (
+    server.vendor_id === baseline.vendor_id &&
+    server.api_reference === baseline.api_reference
+  );
+}
+
+export function isCompareLowerIsBetterProperty(propertyId: string): boolean {
+  return LOWER_IS_BETTER_PROPERTY_IDS.has(propertyId);
+}
+
+export function getCompareRawNumericPropertyValue(
+  server: TableServerLike,
+  propertyId: string,
+): number | null {
+  const prop = getServerFieldValue(server, propertyId);
+
+  if (typeof prop === "number" && Number.isFinite(prop)) {
+    return prop;
+  }
+
+  return null;
+}
+
+export function isComparePropertyDeltaEligible(
+  propertyId: string,
+  server: TableServerLike,
+): boolean {
+  return getCompareRawNumericPropertyValue(server, propertyId) !== null;
+}
+
+export function invertCompareDeltaTone(
+  tone: CompareMetricDeltaTone,
+): CompareMetricDeltaTone {
+  if (tone === "positive") {
+    return "negative";
+  }
+
+  if (tone === "negative") {
+    return "positive";
+  }
+
+  return "neutral";
+}
+
+function formatComparePercentageDelta(
+  delta: CompareMetricDelta,
+  isNegative: boolean,
+): string | null {
+  if (delta.candidateValue === null) {
+    return null;
+  }
+
+  if (delta.percentageDelta === null) {
+    return "";
+  }
+
+  const roundedPercentage = Math.round(Math.abs(delta.percentageDelta));
+
+  if (roundedPercentage === 0) {
+    return "0%";
+  }
+
+  return isNegative ? `-${roundedPercentage}%` : `+${roundedPercentage}%`;
+}
+
+export function formatCompareDeltaLabel(
+  delta: CompareMetricDelta,
+): string | null {
+  return formatComparePercentageDelta(delta, delta.tone === "negative");
+}
+
+export function formatCompareSignedPercentageDeltaLabel(
+  delta: CompareMetricDelta,
+): string | null {
+  return formatComparePercentageDelta(delta, (delta.percentageDelta ?? 0) < 0);
+}
+
+export function formatCompareDeltaDisplayLabel(
+  delta: CompareMetricDelta,
+  formatter: (
+    delta: CompareMetricDelta,
+  ) => string | null = formatCompareDeltaLabel,
+): string | null {
+  const label = formatter(delta);
+  return label === "0%" ? null : label;
+}
+
+export type CompareDeltaView = {
+  label: string;
+  tone: CompareMetricDeltaTone;
+};
+
+export function toCompareDeltaView(
+  delta: CompareMetricDelta | null | undefined,
+  formatter: (
+    delta: CompareMetricDelta,
+  ) => string | null = formatCompareDeltaLabel,
+): CompareDeltaView | null {
+  if (!delta) {
+    return null;
+  }
+
+  const label = formatCompareDeltaDisplayLabel(delta, formatter);
+  return label ? { label, tone: delta.tone } : null;
+}

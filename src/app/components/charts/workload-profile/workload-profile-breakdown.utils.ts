@@ -8,11 +8,12 @@ import {
 export type WorkloadProfileBreakdownRow = ScoreComponent & {
   componentDescription?: string;
   unit?: string | null;
-  metaNote?: string;
+  benchmarkNote?: string;
 };
 
 export type WorkloadProfileBreakdownTable = {
   impactFormula?: string | null;
+  hasNotes: boolean;
   rows: WorkloadProfileBreakdownRow[];
 };
 
@@ -52,19 +53,19 @@ export function buildWorkloadProfileBreakdownTable(params: {
       const componentMeta = entry
         ? metaById.get(entry.benchmark_id)
         : undefined;
-      const metaNote = componentMeta?.note?.trim() || undefined;
 
       return {
         ...component,
         componentDescription: componentMeta?.description ?? undefined,
         unit: componentMeta?.unit ?? undefined,
-        metaNote,
+        benchmarkNote: componentMeta?.note?.trim() || undefined,
       };
     },
   );
 
   return {
     impactFormula: compound?.impact_formula,
+    hasNotes: rows.some((row) => !!row.note?.trim()),
     rows,
   };
 }
@@ -89,12 +90,6 @@ export function formatBreakdownNumericValue(
   }
 
   return formatBreakdownNumber(value);
-}
-
-export function breakdownTableHasNotes(
-  table: WorkloadProfileBreakdownTable,
-): boolean {
-  return table.rows.some((row) => !!row.note?.trim());
 }
 
 export function formatBreakdownPercent(

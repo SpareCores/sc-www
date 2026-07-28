@@ -1,56 +1,57 @@
 import { CommonModule, isPlatformBrowser } from "@angular/common";
+import { CompactNumberPipe } from "../../pipes/compact-number.pipe";
 import {
   Component,
   ElementRef,
   Input,
-  OnChanges,
+  output,
   PLATFORM_ID,
   ViewChild,
+  OnChanges,
   inject,
-  output,
 } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import {
-  LucideCircleArrowUp,
   LucideDynamicIcon,
+  LucideCircleArrowUp,
   LucideInfo,
   LucideTriangleAlert,
 } from "@lucide/angular";
+import { ExtendedServerDetails } from "../../pages/server-details/server-details.component";
 import { Allocation } from "../../../../sdk/data-contracts";
 import {
   redisChartTemplate,
   staticWebChartCompareTemplate,
 } from "../../pages/server-details/chartFromBenchmarks";
-import { ExtendedServerDetails } from "../../pages/server-details/server-details.component";
-import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
-import { CompactNumberPipe } from "../../pipes/compact-number.pipe";
 import { ToastService } from "../../services/toast.service";
+import { BenchmarkIconPipe } from "../../pipes/benchmark-icon.pipe";
+import { AdvisorUiService } from "../../pages/advisor/advisor-ui.service";
 import { Button } from "../button/button";
+import { BenchmarkLineChartComponent } from "../charts/line/benchmark-line-chart.component";
 import { CompressionChartComponent } from "../charts/compression/compression-chart.component";
 import {
   CompressionBenchmarkMeta,
   CompressionServer,
 } from "../charts/compression/compression-chart.types";
-import { GeekbenchRadarChartBuilderService } from "../charts/geekbench/geekbench-radar-chart-builder.service";
 import { GeekbenchRadarChartComponent } from "../charts/geekbench/geekbench-radar-chart.component";
+import { GeekbenchRadarChartBuilderService } from "../charts/geekbench/geekbench-radar-chart-builder.service";
+import { LlmInferenceChartComponent } from "../charts/llm/llm-inference-chart.component";
 import {
   GeekbenchBenchmarkMeta,
   GeekbenchCompareServer,
 } from "../charts/geekbench/geekbench-radar-chart.types";
-import { BenchmarkLineChartComponent } from "../charts/line/benchmark-line-chart.component";
-import {
-  LineBenchmarkMeta,
-  LineChartServer,
-} from "../charts/line/benchmark-line-chart.types";
-import { LlmInferenceChartComponent } from "../charts/llm/llm-inference-chart.component";
 import { LlmChartServer } from "../charts/llm/llm-inference-chart.types";
+import { ServerCompareMemoryChartComponent } from "../charts/memory/server-compare-memory-chart.component";
 import {
   MemoryBenchmarkMeta,
   MemoryChartServer,
 } from "../charts/memory/memory-chart.types";
-import { ServerCompareMemoryChartComponent } from "../charts/memory/server-compare-memory-chart.component";
-import { BenchmarkMultiBarChartBuilderService } from "../charts/multi-bar/benchmark-multi-bar-chart-builder.service";
+import {
+  LineBenchmarkMeta,
+  LineChartServer,
+} from "../charts/line/benchmark-line-chart.types";
 import { BenchmarkMultiBarChartComponent } from "../charts/multi-bar/benchmark-multi-bar-chart.component";
+import { BenchmarkMultiBarChartBuilderService } from "../charts/multi-bar/benchmark-multi-bar-chart-builder.service";
 import {
   BenchmarkMultiBarChartItem,
   MultiBarBenchmarkMeta,
@@ -62,12 +63,12 @@ import {
   getBenchmarkMetaNotes,
 } from "../charts/shared/chart-tooltip.utils";
 import {
-  formatNumberWithCommas,
-  getBestBenchmarkCellStyle,
-  getBestPropertyCellStyle,
-  getServerPropertyValue,
-  isCompareMetadataPropertyHidden,
-} from "../charts/shared/server-compare-table.utils";
+  WORKLOAD_PROFILE_INFO_TOOLTIP,
+  formatWorkloadProfileLabel,
+  isWorkloadProfileBenchmark,
+  filterWorkloadProfileBenchmarks,
+  hasWorkloadProfileChartData,
+} from "../charts/workload-profile/workload-profile.utils";
 import { WorkloadProfilePanelComponent } from "../charts/workload-profile/workload-profile-panel.component";
 import {
   WorkloadProfileBenchmarkMeta,
@@ -75,12 +76,21 @@ import {
   WorkloadProfileCompareServer,
 } from "../charts/workload-profile/workload-profile-radar-chart.types";
 import {
-  WORKLOAD_PROFILE_INFO_TOOLTIP,
-  filterWorkloadProfileBenchmarks,
-  formatWorkloadProfileLabel,
-  hasWorkloadProfileChartData,
-  isWorkloadProfileBenchmark,
-} from "../charts/workload-profile/workload-profile.utils";
+  formatNumberWithCommas,
+  formatCompareDeltaLabel,
+  formatCompareSignedPercentageDeltaLabel,
+  getBestBenchmarkCellStyle,
+  getBestPropertyCellStyle,
+  getCompareRawNumericPropertyValue,
+  getServerPropertyValue,
+  invertCompareDeltaTone,
+  isCompareBaselineServer,
+  isCompareLowerIsBetterProperty,
+  isCompareMetadataPropertyHidden,
+  isComparePropertyDeltaEligible,
+  toCompareDeltaView,
+  type CompareDeltaView,
+} from "../charts/shared/server-compare-table.utils";
 
 @Component({
   selector: "sc-server-compare-charts",
@@ -111,8 +121,10 @@ export class ServerCompareChartsComponent implements OnChanges {
   private tooltipService = inject(ChartTooltipService);
   private geekbenchBuilder = inject(GeekbenchRadarChartBuilderService);
   private multiBarBuilder = inject(BenchmarkMultiBarChartBuilderService);
+  private advisorUi = inject(AdvisorUiService);
 
   @Input() servers: ExtendedServerDetails[] = [];
+  @Input() baselineServer: ExtendedServerDetails | null = null;
   @Input() instanceProperties: any[] = [];
   @Input() benchmarkMeta: any;
   @Input() benchmarkCategories: any[] = [];
@@ -123,6 +135,7 @@ export class ServerCompareChartsComponent implements OnChanges {
 
   readonly layoutChanged = output<void>();
   readonly isCompareMetadataPropertyHidden = isCompareMetadataPropertyHidden;
+  readonly isBaselineServer = isCompareBaselineServer;
 
   @ViewChild("tooltipcompareDefault") tooltip!: ElementRef<HTMLElement>;
 
@@ -562,6 +575,128 @@ export class ServerCompareChartsComponent implements OnChanges {
     return getServerPropertyValue(column, server);
   }
 
+  getPropertyDelta(
+    propertyId: string,
+    server: ExtendedServerDetails,
+  ): CompareDeltaView | null {
+    if (
+      !this.baselineServer ||
+      isCompareBaselineServer(server, this.baselineServer) ||
+      !isComparePropertyDeltaEligible(propertyId, server)
+    ) {
+      return null;
+    }
+
+    const delta = this.advisorUi.buildComparableResourceDelta(
+      getCompareRawNumericPropertyValue(server, propertyId),
+      getCompareRawNumericPropertyValue(this.baselineServer, propertyId),
+    );
+    const lowerIsBetter = isCompareLowerIsBetterProperty(propertyId);
+
+    return toCompareDeltaView(
+      lowerIsBetter
+        ? { ...delta, tone: invertCompareDeltaTone(delta.tone) }
+        : delta,
+      lowerIsBetter
+        ? formatCompareSignedPercentageDeltaLabel
+        : formatCompareDeltaLabel,
+    );
+  }
+
+  getBestPriceDelta(
+    server: ExtendedServerDetails,
+    allocation: Allocation | string = Allocation.Ondemand,
+  ): CompareDeltaView | null {
+    if (
+      !this.baselineServer ||
+      isCompareBaselineServer(server, this.baselineServer)
+    ) {
+      return null;
+    }
+
+    const candidatePrice =
+      allocation === Allocation.Spot
+        ? server.bestSpotPrice?.price
+        : server.bestOndemandPrice?.price;
+    const baselinePrice =
+      allocation === Allocation.Spot
+        ? this.baselineServer.bestSpotPrice?.price
+        : this.baselineServer.bestOndemandPrice?.price;
+
+    return toCompareDeltaView(
+      this.advisorUi.buildPriceDelta(candidatePrice, baselinePrice),
+      formatCompareSignedPercentageDeltaLabel,
+    );
+  }
+
+  getBenchmarkValueDelta(
+    value: number | string | null | undefined,
+    values: Array<number | string | null | undefined>,
+    serverIndex: number,
+    benchmark: { higher_is_better?: boolean | null } | null | undefined,
+  ): CompareDeltaView | null {
+    if (!this.baselineServer || !this.servers.length) {
+      return null;
+    }
+
+    const baselineIndex = this.servers.findIndex((server) =>
+      isCompareBaselineServer(server, this.baselineServer),
+    );
+
+    if (baselineIndex < 0 || serverIndex === baselineIndex) {
+      return null;
+    }
+
+    const candidateValue = this.toNumericBenchmarkValue(value);
+    const baselineValue = this.toNumericBenchmarkValue(values[baselineIndex]);
+
+    if (candidateValue === null || baselineValue === null) {
+      return null;
+    }
+
+    const delta = this.advisorUi.buildComparableResourceDelta(
+      candidateValue,
+      baselineValue,
+    );
+    const lowerIsBetter = benchmark?.higher_is_better === false;
+
+    return toCompareDeltaView(
+      lowerIsBetter
+        ? { ...delta, tone: invertCompareDeltaTone(delta.tone) }
+        : delta,
+      lowerIsBetter
+        ? formatCompareSignedPercentageDeltaLabel
+        : formatCompareDeltaLabel,
+    );
+  }
+
+  private toNumericBenchmarkValue(
+    value: number | string | null | undefined,
+  ): number | null {
+    if (typeof value === "number" && Number.isFinite(value)) {
+      return value;
+    }
+
+    if (typeof value === "string" && value !== "-" && value.trim() !== "") {
+      const parsed = Number(value);
+      return Number.isFinite(parsed) ? parsed : null;
+    }
+
+    return null;
+  }
+
+  shouldShowPropertyDeltaRow(propertyId: string): boolean {
+    if (!this.baselineServer) {
+      return false;
+    }
+
+    return this.servers.some(
+      (server) =>
+        !isCompareBaselineServer(server, this.baselineServer) &&
+        isComparePropertyDeltaEligible(propertyId, server),
+    );
+  }
+
   setBenchmarkCategoryHidden(category: { hidden?: boolean }, hidden: boolean) {
     category.hidden = hidden;
     this.layoutChanged.emit();
@@ -787,13 +922,6 @@ export class ServerCompareChartsComponent implements OnChanges {
       `/server/${server.vendor_id}/${server.api_reference}`,
       "_blank",
     );
-  }
-
-  private formatNumber(value: number): string {
-    if (value === undefined || value === null) {
-      return "-";
-    }
-    return value.toLocaleString("en-US");
   }
 
   sortLLMConfigs(configs: any[]): any[] {

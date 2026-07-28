@@ -71,11 +71,63 @@ describe("workload-profile-breakdown.utils", () => {
     });
 
     expect(table?.impactFormula).toBe("Impact formula text");
+    expect(table?.hasNotes).toBeFalse();
     expect(table?.rows[0]?.componentDescription).toBe(
       "Static web speed description",
     );
     expect(table?.rows[0]?.unit).toBe("Requests per second (rps)");
-    expect(table?.rows[0]?.metaNote).toBe("Static web scaling caveat");
+    expect(table?.rows[0]?.benchmarkNote).toBe("Static web scaling caveat");
+  });
+
+  it("flags note rows and resolves benchmark note tooltips", () => {
+    const table = buildWorkloadProfileBreakdownTable({
+      profile: {
+        source: {
+          kind: "compound",
+          aggregation:
+            BenchmarkComponentAggregationMethod.WeightedGeometricMean,
+          normalization: BenchmarkComponentNormalizationMethod.MedianRatio,
+          components: [
+            {
+              benchmark_id: "llm_speed:text_generation",
+              label: "LLM text generation (Llama-3.3 70B, 128 tok)",
+              weight: 0.15,
+            },
+          ],
+        },
+      },
+      benchmarkMeta: [
+        {
+          benchmark_id: "llm_speed:text_generation",
+          description: "LLM inference speed for text generation",
+          note: "Limited scaling above 32 vCPUs.",
+          unit: "tokens/second (t/s)",
+        },
+      ],
+      scoreBreakdown: {
+        aggregation: BenchmarkComponentAggregationMethod.WeightedGeometricMean,
+        normalization: BenchmarkComponentNormalizationMethod.MedianRatio,
+        coverage: 1,
+        components: [
+          {
+            label: "LLM text generation (Llama-3.3 70B, 128 tok)",
+            weight: 0.15,
+            weight_share: 0.15,
+            raw: null,
+            reference: 3.624374,
+            normalized: 0.01,
+            impact: -49.9,
+            note: "penalized: no usable measurement",
+          },
+        ],
+      },
+    });
+
+    expect(table?.hasNotes).toBeTrue();
+    expect(table?.rows[0]?.note).toBe("penalized: no usable measurement");
+    expect(table?.rows[0]?.benchmarkNote).toBe(
+      "Limited scaling above 32 vCPUs.",
+    );
   });
 
   it("returns undefined when breakdown components are missing", () => {

@@ -208,3 +208,21 @@
 .align-baseline {
   vertical-align: baseline;
 }
+
+.compare-dropdown-menu {
+  z-index: 50;
+}
+
+.compare-table-header-cell {
+  position: relative;
+  vertical-align: top;
+}
+
+.compare-table-header-baseline-marker {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 0.3rem;
+  background-color: #34d399;
+}

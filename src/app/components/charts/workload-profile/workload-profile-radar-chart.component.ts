@@ -94,12 +94,18 @@ export class WorkloadProfileRadarChartComponent {
       return options;
     }
 
+    const baseOnHover = options.onHover;
+    const baseOnClick = options.onClick;
+
     return {
       ...options,
-      onHover: (_event: ChartEvent, elements: ActiveElement[], chart) => {
+      onHover: (event: ChartEvent, elements: ActiveElement[], chart) => {
+        baseOnHover?.(event, elements, chart);
         chart.canvas.style.cursor = elements.length > 0 ? "pointer" : "default";
       },
-      onClick: (_event: ChartEvent, elements: ActiveElement[]) => {
+      onClick: (event: ChartEvent, elements: ActiveElement[], chart) => {
+        baseOnClick?.(event, elements, chart);
+
         const index = elements[0]?.index;
 
         if (index == null) {

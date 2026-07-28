@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { ActivatedRoute, convertToParamMap } from "@angular/router";
-import { EMPTY } from "rxjs";
+import { EMPTY, Subject } from "rxjs";
 
 import { ServerCompareComponent } from "./server-compare.component";
 import { AnalyticsService } from "../../services/analytics.service";
@@ -8,7 +8,11 @@ import { ChartTooltipService } from "../../components/charts/shared/chart-toolti
 import { KeeperAPIService } from "../../services/keeper-api.service";
 import { PrismService } from "../../services/prism.service";
 import { SeoHandlerService } from "../../services/seo-handler.service";
-import { ServerCompareService } from "../../services/server-compare.service";
+import {
+  ServerCompare,
+  ServerCompareBaseline,
+  ServerCompareService,
+} from "../../services/server-compare.service";
 import { ToastService } from "../../services/toast.service";
 import { sharedTestingProviders } from "../../../testing/testbed.providers";
 
@@ -25,6 +29,10 @@ describe("ServerCompareComponent", () => {
   const hideTooltip = jasmine.createSpy("hide");
   const clearCompare = jasmine.createSpy("clearCompare");
   const toggleCompare = jasmine.createSpy("toggleCompare");
+  const setBaselineServer = jasmine.createSpy("setBaselineServer");
+  const syncCompareRoute = jasmine.createSpy("syncCompareRoute");
+  const baselineChanged = new Subject<ServerCompareBaseline | null>();
+  const selectionChanged = new Subject<ServerCompare[]>();
   const sentryException = jasmine.createSpy("SentryException");
   const getServerMeta = jasmine.createSpy("getServerMeta");
   const getServerBenchmarkMeta = jasmine.createSpy("getServerBenchmarkMeta");
@@ -49,6 +57,8 @@ describe("ServerCompareComponent", () => {
     hideTooltip.calls.reset();
     clearCompare.calls.reset();
     toggleCompare.calls.reset();
+    setBaselineServer.calls.reset();
+    syncCompareRoute.calls.reset();
     sentryException.calls.reset();
     getServerMeta.calls.reset();
     getServerBenchmarkMeta.calls.reset();
@@ -95,6 +105,10 @@ describe("ServerCompareComponent", () => {
           useValue: {
             clearCompare,
             toggleCompare,
+            setBaselineServer,
+            syncCompareRoute,
+            baselineChanged,
+            selectionChanged,
           },
         },
         {
@@ -237,5 +251,228 @@ describe("ServerCompareComponent", () => {
 
     expect(clearTimeout).toHaveBeenCalledWith(12);
     expect(cancelAnimationFrame).toHaveBeenCalledWith(34);
+  });
+
+  it("restores baseline server from URL query params", () => {
+    routeSnapshot.queryParams = {
+      baseline_vendor: "aws",
+      baseline_server: "t3.medium",
+    };
+    component.servers = [
+      {
+        vendor_id: "aws",
+        api_reference: "t3.medium",
+        display_name: "T3 Medium",
+      },
+    ] as typeof component.servers;
+
+    component["restoreBaselineFromUrl"]();
+
+    expect(component.selectedBaselineServer?.api_reference).toBe("t3.medium");
+    expect(setBaselineServer).toHaveBeenCalledWith({
+      vendor: "aws",
+      server: "t3.medium",
+    });
+  });
+
+  it("selectBaselineServer updates URL with baseline query params", () => {
+    component.instancesRaw = "encoded-instances";
+    component.servers = [
+      {
+        vendor_id: "aws",
+        api_reference: "t3.medium",
+        display_name: "T3 Medium",
+      },
+    ] as typeof component.servers;
+    const pushState = spyOn(window.history, "pushState");
+
+    component.selectBaselineServer(component.servers[0]);
+
+    expect(component.selectedBaselineServer).toBe(component.servers[0]);
+    expect(setBaselineServer).toHaveBeenCalledWith({
+      vendor: "aws",
+      server: "t3.medium",
+    });
+    expect(pushState).toHaveBeenCalledWith(
+      {},
+      "",
+      jasmine.stringMatching(/baseline_vendor=aws&baseline_server=t3\.medium/),
+    );
+  });
+
+  it("clearing baseline removes baseline params from URL", () => {
+    component.instancesRaw = "encoded-instances";
+    component.servers = [
+      {
+        vendor_id: "aws",
+        api_reference: "t3.medium",
+        display_name: "T3 Medium",
+      },
+    ] as typeof component.servers;
+    component.selectedBaselineServer = component.servers[0];
+    component["lastEncodedCompareQuery"] =
+      "baseline_vendor=aws&baseline_server=t3.medium";
+    const pushState = spyOn(window.history, "pushState");
+
+    component.selectBaselineServer(null);
+
+    expect(component.selectedBaselineServer).toBeNull();
+    expect(setBaselineServer).toHaveBeenCalledWith(null);
+    const pushedUrl = pushState.calls.mostRecent().args[2] as string;
+    expect(pushedUrl).toContain("instances=encoded-instances");
+    expect(pushedUrl).not.toContain("baseline_vendor");
+  });
+
+  it("selectBaselineServer preserves URL hash when updating query params", () => {
+    component.instancesRaw = "encoded-instances";
+    component.servers = [
+      {
+        vendor_id: "aws",
+        api_reference: "t3.medium",
+        display_name: "T3 Medium",
+      },
+    ] as typeof component.servers;
+    window.history.replaceState(
+      null,
+      "",
+      "/compare?instances=encoded-instances#benchmark_line_cpu",
+    );
+    component["lastEncodedCompareQuery"] = "";
+    const pushState = spyOn(window.history, "pushState");
+
+    component.selectBaselineServer(component.servers[0]);
+
+    const pushedUrl = pushState.calls.mostRecent().args[2] as string;
+    expect(pushedUrl).toContain("#benchmark_line_cpu");
+    expect(pushedUrl).toContain("baseline_vendor=aws");
+  });
+
+  it("selectBaselineServer URL-encodes Base64 instances query values", () => {
+    component.instancesRaw = "abc+def=ghi";
+    component.servers = [
+      {
+        vendor_id: "aws",
+        api_reference: "t3.medium",
+        display_name: "T3 Medium",
+      },
+    ] as typeof component.servers;
+    const pushState = spyOn(window.history, "pushState");
+
+    component.selectBaselineServer(component.servers[0]);
+
+    const pushedUrl = pushState.calls.mostRecent().args[2] as string;
+    expect(pushedUrl).toContain("instances=abc%2Bdef%3Dghi");
+  });
+
+  it("reorders and deletes compare servers without refetching", () => {
+    const serverA = {
+      vendor_id: "aws",
+      api_reference: "a1",
+      display_name: "A",
+    };
+    const serverB = {
+      vendor_id: "gcp",
+      api_reference: "b1",
+      display_name: "B",
+    };
+    const serverC = {
+      vendor_id: "azure",
+      api_reference: "c1",
+      display_name: "C",
+    };
+    component.ngOnInit();
+    component.isLoading = false;
+    component.servers = [serverA, serverB, serverC] as typeof component.servers;
+    component.benchmarkMeta = [
+      {
+        benchmark_id: "bw_mem",
+        configs: [{ config: {}, values: [1, 2, 3] }],
+      },
+    ];
+    component.benchmarkCategories = [
+      {
+        id: "memory",
+        data: component.benchmarkMeta,
+      },
+    ];
+    const pushState = spyOn(window.history, "pushState");
+    getServerMeta.calls.reset();
+
+    selectionChanged.next([
+      {
+        display_name: "B",
+        vendor: "gcp",
+        server: "b1",
+        zonesRegions: [],
+      },
+      {
+        display_name: "A",
+        vendor: "aws",
+        server: "a1",
+        zonesRegions: [],
+      },
+    ]);
+
+    expect(component.servers).toEqual([
+      serverB,
+      serverA,
+    ] as typeof component.servers);
+    expect(component.benchmarkMeta[0].configs[0].values).toEqual([2, 1]);
+    expect(getServerMeta).not.toHaveBeenCalled();
+    expect(syncCompareRoute).not.toHaveBeenCalled();
+    expect(pushState).toHaveBeenCalled();
+  });
+
+  it("canonicalizes preset compare routes before applying selection changes", () => {
+    routeSnapshot.paramMap = convertToParamMap({ id: "popular" });
+    const serverA = {
+      vendor_id: "aws",
+      api_reference: "a1",
+      display_name: "A",
+    };
+    const serverB = {
+      vendor_id: "gcp",
+      api_reference: "b1",
+      display_name: "B",
+    };
+    component.ngOnInit();
+    component.isLoading = false;
+    component.servers = [serverA, serverB] as typeof component.servers;
+    component.benchmarkMeta = [
+      {
+        benchmark_id: "bw_mem",
+        configs: [{ config: {}, values: [1, 2] }],
+      },
+    ];
+    component.benchmarkCategories = [
+      {
+        id: "memory",
+        data: component.benchmarkMeta,
+      },
+    ];
+    getServerMeta.calls.reset();
+
+    selectionChanged.next([
+      {
+        display_name: "B",
+        vendor: "gcp",
+        server: "b1",
+        zonesRegions: [],
+      },
+      {
+        display_name: "A",
+        vendor: "aws",
+        server: "a1",
+        zonesRegions: [],
+      },
+    ]);
+
+    expect(syncCompareRoute).toHaveBeenCalled();
+    expect(component.servers).toEqual([
+      serverB,
+      serverA,
+    ] as typeof component.servers);
+    expect(component.benchmarkMeta[0].configs[0].values).toEqual([2, 1]);
+    expect(getServerMeta).not.toHaveBeenCalled();
   });
 });

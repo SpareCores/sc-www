@@ -84,8 +84,8 @@ describe("WorkloadProfilePanelComponent", () => {
         benchmark_id: "llm_speed:text_generation",
         name: "LLM inference speed for text generation",
         description: "LLM generation description",
-        note: "May underperform on low-memory servers",
         unit: "tokens/second (t/s)",
+        note: "Limited scaling above 32 vCPUs.",
         status: Status.Active,
       },
     ]);
@@ -154,6 +154,23 @@ describe("WorkloadProfilePanelComponent", () => {
 
     expect(fixture.componentInstance.selectedProfileItem()?.note).toBe(
       "Partial coverage: missing component benchmark(s)",
+    );
+  });
+
+  it("exposes benchmark metadata notes for the workload profile header", () => {
+    fixture.componentRef.setInput("benchmarkMeta", [
+      {
+        benchmark_id: "workload_profile:web",
+        name: "Workload profile: Web server",
+        description: "Web server workload profile",
+        note: "Partial coverage on some instance types.",
+        status: Status.Active,
+      },
+    ]);
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.workloadProfileMetaNote()).toBe(
+      "- Web server: Partial coverage on some instance types.",
     );
   });
 
@@ -253,16 +270,23 @@ describe("WorkloadProfilePanelComponent", () => {
     expect(root.textContent).toContain("rps");
     expect(root.textContent).not.toContain("Requests per second (rps)");
     expect(root.textContent).not.toContain("(rps)");
-    expect(root.querySelectorAll("th").length).toBe(10);
+    expect(
+      Array.from(root.querySelectorAll("th")).some(
+        (header) => header.textContent?.trim() === "Note",
+      ),
+    ).toBeTrue();
     expect(root.textContent).toContain("penalized: no usable measurement");
-    const warningIcon = fixture.debugElement.query(
-      By.css("td .benchmark-note-icon"),
+    const warningButton = fixture.debugElement.query(
+      By.css("td button[aria-label='Show benchmark note']"),
     );
-    expect(warningIcon).toBeTruthy();
-    warningIcon.triggerEventHandler("mouseenter", new MouseEvent("mouseenter"));
+    expect(warningButton).toBeTruthy();
+    warningButton.triggerEventHandler(
+      "mouseenter",
+      new MouseEvent("mouseenter"),
+    );
     fixture.detectChanges();
     expect(fixture.componentInstance.tooltipContent).toBe(
-      "May underperform on low-memory servers",
+      "Limited scaling above 32 vCPUs.",
     );
     expect(
       root.querySelector(
@@ -342,22 +366,5 @@ describe("WorkloadProfilePanelComponent", () => {
 
     expect(gauge.displayValue).toBe("18.677");
     expect(gauge.data.datasets[0]?.data).toEqual([2, 0]);
-  });
-
-  it("exposes benchmark metadata notes for the workload profile header", () => {
-    fixture.componentRef.setInput("benchmarkMeta", [
-      {
-        benchmark_id: "workload_profile:web",
-        name: "Workload profile: Web server",
-        description: "Web server workload profile",
-        note: "Partial coverage on some instance types.",
-        status: Status.Active,
-      },
-    ]);
-    fixture.detectChanges();
-
-    expect(fixture.componentInstance.workloadProfileMetaNote()).toBe(
-      "- Web server: Partial coverage on some instance types.",
-    );
   });
 });
