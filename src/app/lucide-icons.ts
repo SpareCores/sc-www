@@ -87,6 +87,7 @@ import {
   LucideTvMinimalPlay,
   LucideEye,
   LucideEyeOff,
+  LucideSend,
 } from "@lucide/angular";
 import type { LucideIconData } from "@lucide/angular";
 
@@ -264,4 +265,5 @@ export const lucideIcons = [
   LucideTvMinimalPlay,
   LucideEye,
   LucideEyeOff,
+  LucideSend,
 ] as const;
