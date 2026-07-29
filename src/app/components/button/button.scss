@@ -61,7 +61,11 @@
 }
 
 .sc-button--dropdown {
-  @apply font-medium gap-0 justify-between overflow-hidden p-0;
+  @apply font-medium gap-0 items-stretch justify-between overflow-hidden p-0;
+}
+
+.sc-button--dropdown .chart-selector-button__label {
+  @apply flex items-center;
 }
 
 .sc-button--danger-fill {
@@ -165,7 +169,13 @@
 }
 
 .sc-button__square {
-  @apply flex h-full w-12 shrink-0 items-center justify-center bg-primary;
+  @apply flex shrink-0 items-center justify-center bg-primary;
+  width: 42px;
+  align-self: stretch;
+}
+
+.sc-button--large .sc-button__square {
+  width: 50px;
 }
 
 .sc-button__square--end {

@@ -9,10 +9,10 @@
   } @if (variant() === "dropdown") {
   <div class="chart-selector-button__label">{{ label() }}</div>
   @if (showDropdownIcon()) {
-  <div class="chart-selector-button__icon">
+  <div class="sc-button__square sc-button__square--end">
     <svg
       [lucideIcon]="icon()!"
-      class="h-6 w-6 shrink-0 text-emerald-400"
+      class="sc-button__square-icon"
       aria-hidden="true"
     ></svg>
   </div>
