@@ -4,24 +4,16 @@
     [class.memory-compare-chart--cache-markers]="hasCacheAnnotations()"
   >
     <div class="flex justify-end items-center">
-      <button
+      <sc-button
         #memoryCompareDropdown="scFlowbiteDropdown"
         [id]="buttonId"
-        class="dropdown_button chart-selector-button chart-selector-button--comfortable"
-        type="button"
         [scFlowbiteDropdown]="optionsId"
         [dropdownEnabled]="isBrowser && availableOptions().length > 0"
-      >
-        <div class="chart-selector-button__label">
-          {{ currentOptionName() }}
-        </div>
-        <div class="chart-selector-button__icon">
-          <svg
-            lucideChevronDown
-            class="h-6 w-6 shrink-0 text-emerald-400"
-          ></svg>
-        </div>
-      </button>
+        [label]="currentOptionName()"
+        icon="chevron-down"
+        variant="dropdown"
+        size="normal"
+      ></sc-button>
     </div>
     @if (isBrowser) {
       <div class="h-full">

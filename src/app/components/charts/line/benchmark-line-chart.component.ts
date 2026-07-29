@@ -14,12 +14,12 @@ import {
 } from "@angular/core";
 import {
   LucideDynamicIcon,
-  LucideChevronDown,
   LucideCircleArrowUp,
   LucideInfo,
   LucideTriangleAlert,
 } from "@lucide/angular";
 import { BaseChartDirective } from "ng2-charts";
+import { Button } from "../../../components/button/button";
 import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon.pipe";
 import {
   barChartOptionsSSL,
@@ -53,8 +53,8 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
+    Button,
     LucideDynamicIcon,
-    LucideChevronDown,
     LucideCircleArrowUp,
     LucideInfo,
     LucideTriangleAlert,

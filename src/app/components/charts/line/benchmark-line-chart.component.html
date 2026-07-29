@@ -36,24 +36,16 @@
           }
         </h3>
         @if (hasSelector()) {
-          <button
+          <sc-button
             #selectorDropdown="scFlowbiteDropdown"
             [id]="buttonId"
-            class="dropdown_button chart-selector-button"
-            type="button"
             [scFlowbiteDropdown]="optionsId"
             [dropdownEnabled]="isBrowser && hasSelector()"
-          >
-            <div class="chart-selector-button__label">
-              {{ resolvedSelectedOptionName() }}
-            </div>
-            <div class="chart-selector-button__icon">
-              <svg
-                lucideChevronDown
-                class="h-6 w-6 shrink-0 text-emerald-400"
-              ></svg>
-            </div>
-          </button>
+            [label]="resolvedSelectedOptionName()"
+            icon="chevron-down"
+            variant="dropdown"
+            size="normal"
+          ></sc-button>
         }
       </div>
       @if (isBrowser) {
@@ -86,24 +78,16 @@
     <div [class]="blockClass()">
       @if (hasSelector()) {
         <div class="flex justify-end items-center">
-          <button
+          <sc-button
             #selectorDropdown="scFlowbiteDropdown"
             [id]="buttonId"
-            class="dropdown_button chart-selector-button chart-selector-button--comfortable"
-            type="button"
             [scFlowbiteDropdown]="optionsId"
             [dropdownEnabled]="isBrowser && hasSelector()"
-          >
-            <div class="chart-selector-button__label">
-              {{ resolvedSelectedOptionName() }}
-            </div>
-            <div class="chart-selector-button__icon">
-              <svg
-                lucideChevronDown
-                class="h-6 w-6 shrink-0 text-emerald-400"
-              ></svg>
-            </div>
-          </button>
+            [label]="resolvedSelectedOptionName()"
+            icon="chevron-down"
+            variant="dropdown"
+            size="normal"
+          ></sc-button>
         </div>
       }
       @if (isBrowser) {

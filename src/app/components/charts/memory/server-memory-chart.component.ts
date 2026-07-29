@@ -13,11 +13,11 @@ import {
 } from "@angular/core";
 import {
   LucideDynamicIcon,
-  LucideChevronDown,
   LucideInfo,
   LucideTriangleAlert,
 } from "@lucide/angular";
 import { BaseChartDirective } from "ng2-charts";
+import { Button } from "../../../components/button/button";
 import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon.pipe";
 import { ChartTooltipService } from "../shared/chart-tooltip.service";
 import { getBenchmarkMetaNote } from "../shared/chart-tooltip.utils";
@@ -35,8 +35,8 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
+    Button,
     LucideDynamicIcon,
-    LucideChevronDown,
     LucideInfo,
     LucideTriangleAlert,
     BaseChartDirective,

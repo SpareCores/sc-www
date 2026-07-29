@@ -40,27 +40,17 @@
           }
         </h3>
         @if (layout() === "details" && profileDropdownItems().length) {
-          <button
+          <sc-button
             #profileDropdown="scFlowbiteDropdown"
             [id]="profileButtonId"
-            class="dropdown_button chart-selector-button max-w-full shrink-0"
-            type="button"
             [scFlowbiteDropdown]="profileOptionsId"
             [dropdownEnabled]="isBrowser"
-          >
-            <div
-              class="chart-selector-button__label"
-              [title]="selectedProfileItem()?.title"
-            >
-              {{ selectedProfileItem()?.title }}
-            </div>
-            <div class="chart-selector-button__icon">
-              <svg
-                lucideChevronDown
-                class="h-6 w-6 shrink-0 text-emerald-400"
-              ></svg>
-            </div>
-          </button>
+            [label]="selectedProfileItem()?.title || ''"
+            [title]="selectedProfileItem()?.title || null"
+            icon="chevron-down"
+            variant="dropdown"
+            size="normal"
+          ></sc-button>
         }
       </div>
     }

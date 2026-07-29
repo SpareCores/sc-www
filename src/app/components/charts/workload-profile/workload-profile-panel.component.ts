@@ -16,12 +16,12 @@ import {
 import {
   LucideDynamicIcon,
   LucideCircleArrowUp,
-  LucideChevronDown,
   LucideInfo,
   LucideTriangleAlert,
 } from "@lucide/angular";
 import { BaseChartDirective } from "ng2-charts";
 import { ChartConfiguration, Plugin, ArcElement } from "chart.js";
+import { Button } from "../../../components/button/button";
 import { BenchmarkIconPipe } from "../../../pipes/benchmark-icon.pipe";
 import { AccordionComponent } from "../../accordion/accordion.component";
 import { FlowbiteDropdownDirective } from "../../../directives/flowbite-dropdown.directive";
@@ -158,9 +158,9 @@ function buildScoreGaugeChart(score: number | null | undefined): {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
+    Button,
     LucideDynamicIcon,
     LucideCircleArrowUp,
-    LucideChevronDown,
     LucideInfo,
     LucideTriangleAlert,
     BenchmarkIconPipe,

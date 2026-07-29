@@ -14,11 +14,11 @@ import {
 } from "@angular/core";
 import {
   LucideDynamicIcon,
-  LucideChevronDown,
   LucideInfo,
   LucideTriangleAlert,
 } from "@lucide/angular";
 import { BaseChartDirective } from "ng2-charts";
+import { Button } from "../../../components/button/button";
 import {
   ChartFromBenchmarkSecondaryOptions,
   ChartFromBenchmarkTemplate,
@@ -42,8 +42,8 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
+    Button,
     LucideDynamicIcon,
-    LucideChevronDown,
     LucideInfo,
     LucideTriangleAlert,
     BaseChartDirective,
