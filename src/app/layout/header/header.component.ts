@@ -5,7 +5,7 @@ import {
   CdkDropList,
 } from "@angular/cdk/drag-drop";
 import { CommonModule } from "@angular/common";
-import { Component, inject, viewChild } from "@angular/core";
+import { Component, inject, signal, viewChild } from "@angular/core";
 import { Router, RouterLink } from "@angular/router";
 import { Button } from "../../components/button/button";
 import {
@@ -34,6 +34,7 @@ import {
 } from "@lucide/angular";
 import { ServerCompareService } from "../../services/server-compare.service";
 import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.directive";
+import { Auth } from "../../services/auth/auth";
 
 @Component({
   selector: "sc-header",
@@ -74,6 +75,8 @@ import { FlowbiteDropdownDirective } from "../../directives/flowbite-dropdown.di
 export class HeaderComponent {
   private router = inject(Router);
   private serverCompare = inject(ServerCompareService);
+  protected readonly auth = inject(Auth);
+  protected readonly authDropdownOpen = signal(false);
 
   menuDropdown = viewChild<FlowbiteDropdownDirective>("menuDropdown");
   aboutDropdown = viewChild<FlowbiteDropdownDirective>("aboutDropdown");
@@ -94,6 +97,36 @@ export class HeaderComponent {
 
   closeAbout() {
     this.aboutDropdown()?.hide();
+  }
+
+  toggleAuthDropdown(): void {
+    this.authDropdownOpen.update((open) => !open);
+  }
+
+  closeAuthDropdown(): void {
+    this.authDropdownOpen.set(false);
+  }
+
+  signIn(): void {
+    this.closeMenu();
+    this.auth.signIn();
+  }
+
+  signUp(): void {
+    this.closeMenu();
+    this.auth.signUp();
+  }
+
+  async signOut(): Promise<void> {
+    this.closeAuthDropdown();
+    this.closeMenu();
+    await this.auth.signOut();
+    await this.router.navigate(["/"]);
+  }
+
+  openProfile(): void {
+    this.auth.openUserProfile();
+    this.closeAuthDropdown();
   }
 
   compareCount(): number {
