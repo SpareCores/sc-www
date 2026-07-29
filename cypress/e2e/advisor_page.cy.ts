@@ -65,7 +65,7 @@ describe("Advisor page", () => {
     E2EEvent.visitURL("/advisor", 4000);
     E2EEvent.hideBaselineServerCaretForScreenshot();
 
-    cy.get('[id="advisor_example_button"]')
+    cy.get('[id="advisor_example_button"] a')
       .should("be.visible")
       .and("have.attr", "href")
       .and("contain", "baseline_vendor=aws")
