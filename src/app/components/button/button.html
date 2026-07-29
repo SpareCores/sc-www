@@ -36,10 +36,21 @@
     [style.background-color]="swatchColor()!"
     aria-hidden="true"
   ></span>
-  } @if (showStartIcon()) {
+  } @if (showAvatar()) { @if (hasAvatarImage()) {
+  <img class="sc-button__avatar" [src]="avatarSrc()!" [alt]="avatarAltText()" />
+  } @else {
+  <span
+    class="sc-button__avatar sc-button__avatar--placeholder"
+    aria-hidden="true"
+  >
+    <svg [lucideIcon]="'user'" class="sc-button__avatar-icon"></svg>
+  </span>
+  } } @if (showStartIcon()) {
   <svg [lucideIcon]="icon()!" class="sc-button__icon" aria-hidden="true"></svg>
   } @if (label()) {
-  <span class="sc-button__label">{{ label() }}</span>
+  <span [class]="'sc-button__label' + (labelClass() ? ' ' + labelClass() : '')"
+    >{{ label() }}</span
+  >
   } @if (showEndIcon()) {
   <svg [lucideIcon]="icon()!" class="sc-button__icon" aria-hidden="true"></svg>
   } }

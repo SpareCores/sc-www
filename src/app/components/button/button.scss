@@ -138,6 +138,18 @@
   flex-shrink: 0;
 }
 
+.sc-button__avatar {
+  @apply inline-block size-7 shrink-0 rounded-full border border-gray-600;
+}
+
+.sc-button__avatar--placeholder {
+  @apply inline-flex items-center justify-center bg-gray-600 text-white;
+}
+
+.sc-button__avatar-icon {
+  @apply size-4;
+}
+
 .sc-button--swatch-inactive {
   @apply line-through opacity-60;
 }

@@ -47,15 +47,25 @@ export class Button {
   badge = input<string | number | null>(null);
   badgePing = input(false);
   swatchColor = input<string | null>(null);
+  avatarSrc = input<string | null | undefined>(undefined);
+  avatarAlt = input<string | null>(null);
+  labelClass = input<string>("");
 
   buttonClick = output<MouseEvent>();
 
   showSwatch = computed(() => !!this.swatchColor());
 
+  showAvatar = computed(() => this.avatarSrc() !== undefined);
+
+  hasAvatarImage = computed(() => !!this.avatarSrc());
+
+  avatarAltText = computed(() => this.avatarAlt() || this.label() || "Avatar");
+
   showStartIcon = computed(
     () =>
       !!this.icon() &&
       this.iconPosition() === "start" &&
+      !this.showAvatar() &&
       this.variant() !== "dropdown" &&
       this.variant() !== "benchmark",
   );
@@ -113,6 +123,7 @@ export class Button {
     if (
       this.icon() &&
       !this.label() &&
+      !this.showAvatar() &&
       this.variant() !== "dropdown" &&
       this.variant() !== "benchmark"
     ) {
