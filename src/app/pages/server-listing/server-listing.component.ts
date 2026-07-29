@@ -45,10 +45,8 @@ import {
   LucideTvMinimalPlay,
   LucideX,
 } from "@lucide/angular";
-import {
-  SearchBarComponent,
-  SearchBarParameter,
-} from "../../components/search-bar/search-bar.component";
+import { SearchBarComponent } from "../../components/search-bar/search-bar.component";
+import type { SearchBarParameter } from "../../components/search-bar/search-bar.types";
 import { PaginationComponent } from "../../components/pagination/pagination.component";
 import {
   ServerCompare,
@@ -80,26 +78,6 @@ import {
   buildServerListingColumns,
   TableColumn,
 } from "../../tools/table-columns";
-
-export type CountryMetadata = {
-  continent: string;
-  country_id: string;
-  selected?: boolean;
-};
-
-export type ContinentMetadata = {
-  continent: string;
-  selected?: boolean;
-  collapsed?: boolean;
-};
-
-export type RegionMetadata = {
-  region_id: string;
-  vendor_id: string;
-  name: string;
-  api_reference: string;
-  green_energy: boolean;
-};
 
 const optionsModal: ModalOptions = {
   backdropClasses: "bg-gray-900/50 fixed inset-0 z-40",
