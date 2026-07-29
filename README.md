@@ -11,6 +11,7 @@ To compile the project, you need to set up the below environment variables at bu
   endpoint to be used on the client-side
 - NG_APP_BACKEND_BASE_URI_SSR: [Keeper API](https://github.com/SpareCores/sc-keeper)
   endpoint to be used on the server-side
+- NG_APP_CLERK_PUBLISHABLE_KEY: [Clerk](https://clerk.com/) publishable key for authentication
 
 This can also be done via defining an `.env` file based on the provided `.env.example` template file.
 
