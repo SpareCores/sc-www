@@ -60,7 +60,7 @@
   background: #34d399;
 }
 
-.advisor-filter-bar app-search-bar {
+.advisor-filter-bar sc-search-bar {
   display: block;
   flex: 1;
   min-height: 0;
@@ -70,7 +70,7 @@
   ::ng-deep
   .advisor-filter-bar
   .advisor-filter-bar-filters
-  app-search-bar
+  sc-search-bar
   .search_bar_content
   .filters {
   border-right: 0;

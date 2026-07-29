@@ -1,13 +1,13 @@
-<div class="app-shell">
+<div class="sc-shell">
   @if (showHeader) {
-    <div class="app-shell-chrome">
+    <div class="sc-shell-chrome">
       <header>
         <sc-header></sc-header>
       </header>
     </div>
   }
   @if (promoBannerMessage; as bannerMessage) {
-    <div class="app-shell-banner">
+    <div class="sc-shell-banner">
       <div class="content">
         <sc-promo-banner
           [message]="bannerMessage"
@@ -17,7 +17,7 @@
       </div>
     </div>
   }
-  <main class="app-main">
+  <main class="sc-main">
     <router-outlet></router-outlet>
   </main>
   @if (showFooter) {
