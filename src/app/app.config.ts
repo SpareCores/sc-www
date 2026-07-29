@@ -24,6 +24,7 @@ import { lucideIcons } from "./lucide-icons";
 import { MarkdownModule } from "ngx-markdown";
 import * as Sentry from "@sentry/angular";
 import { provideAppCharts } from "./components/charts/shared/chart-providers";
+import { Auth } from "./services/auth/auth";
 
 function httpFilter(req: HttpRequest<any>): boolean {
   return req.method === "GET";
@@ -76,6 +77,13 @@ export const appConfig: ApplicationConfig = {
     },
     provideAppInitializer(() => {
       inject(Sentry.TraceService);
+    }),
+    provideAppInitializer(() => {
+      void inject(Auth)
+        .init()
+        .catch((error) => {
+          console.error("Clerk initialization failed:", error);
+        });
     }),
     {
       provide: ErrorHandler,
