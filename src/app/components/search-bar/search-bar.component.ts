@@ -43,6 +43,7 @@ import type {
 import {
   draftValueFromUnknown,
   getParameterType as getSearchBarParameterType,
+  isDraftValueDirty,
   normalizeBenchmarkTriStateValue,
   normalizeCommittedCpuCacheRangeValue,
   parseNumericDraftValue,
@@ -182,49 +183,6 @@ export class SearchBarComponent implements OnInit, OnDestroy {
 
     this.subscription.add(
       this.valueChangeDebouncer.pipe(debounceTime(500)).subscribe(() => {
-        const vcpu_max = this.searchParameters().find(
-          (param) => param.name === "vcpus_max",
-        );
-        const vcpu_min = this.searchParameters().find(
-          (param) => param.name === "vcpus_min",
-        );
-        const vcpuMaxValue = Number(vcpu_max?.modelValue);
-        const vcpuMinValue = Number(vcpu_min?.modelValue);
-        if (
-          Number.isFinite(vcpuMinValue) &&
-          Number.isFinite(vcpuMaxValue) &&
-          vcpuMinValue > 0 &&
-          vcpuMaxValue > 0 &&
-          vcpuMinValue > vcpuMaxValue &&
-          vcpu_max
-        ) {
-          vcpu_max.modelValue = vcpuMinValue;
-        }
-
-        this.searchParameters().forEach((param) => {
-          const rawModelValue = param.modelValue;
-          const modelValue = Number(rawModelValue);
-          const rangeMin = param.schema.range_min;
-          const rangeMax = param.schema.range_max;
-
-          if (
-            rawModelValue !== null &&
-            rawModelValue !== undefined &&
-            rawModelValue !== "" &&
-            Number.isFinite(modelValue) &&
-            rangeMin !== undefined &&
-            rangeMax !== undefined
-          ) {
-            if (modelValue < rangeMin) {
-              param.modelValue = rangeMin;
-            }
-
-            if (modelValue > rangeMax) {
-              param.modelValue = rangeMax;
-            }
-          }
-        });
-
         this.filterServers();
       }),
     );
@@ -391,7 +349,9 @@ export class SearchBarComponent implements OnInit, OnDestroy {
         vendorRegionValues.map((vr) => vr.split("~")[0]).filter(Boolean),
       ),
     ].forEach((vendorId) => {
-      this.vendorRegionCollapsedVendors[vendorId] = false;
+      if (this.vendorRegionCollapsedVendors[vendorId] === undefined) {
+        this.vendorRegionCollapsedVendors[vendorId] = false;
+      }
     });
 
     const regionCategory = this.filterCategories().find(
@@ -429,6 +389,8 @@ export class SearchBarComponent implements OnInit, OnDestroy {
   }
 
   filterServers() {
+    this.normalizeSearchParameterValues();
+
     const queryObject = this.getQueryObject();
     const selectedCountryIds = this.countryMetadata()
       .filter((country) => country.selected)
@@ -441,6 +403,51 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     }
 
     this.searchChanged.emit(queryObject);
+  }
+
+  private normalizeSearchParameterValues() {
+    const vcpu_max = this.searchParameters().find(
+      (param) => param.name === "vcpus_max",
+    );
+    const vcpu_min = this.searchParameters().find(
+      (param) => param.name === "vcpus_min",
+    );
+    const vcpuMaxValue = Number(vcpu_max?.modelValue);
+    const vcpuMinValue = Number(vcpu_min?.modelValue);
+    if (
+      Number.isFinite(vcpuMinValue) &&
+      Number.isFinite(vcpuMaxValue) &&
+      vcpuMinValue > 0 &&
+      vcpuMaxValue > 0 &&
+      vcpuMinValue > vcpuMaxValue &&
+      vcpu_max
+    ) {
+      vcpu_max.modelValue = vcpuMinValue;
+    }
+
+    this.searchParameters().forEach((param) => {
+      const rawModelValue = param.modelValue;
+      const modelValue = Number(rawModelValue);
+      const rangeMin = param.schema.range_min;
+      const rangeMax = param.schema.range_max;
+
+      if (
+        rawModelValue !== null &&
+        rawModelValue !== undefined &&
+        rawModelValue !== "" &&
+        Number.isFinite(modelValue) &&
+        rangeMin !== undefined &&
+        rangeMax !== undefined
+      ) {
+        if (modelValue < rangeMin) {
+          param.modelValue = rangeMin;
+        }
+
+        if (modelValue > rangeMax) {
+          param.modelValue = rangeMax;
+        }
+      }
+    });
   }
 
   getQueryObject(): SearchBarQuery {
@@ -648,6 +655,13 @@ export class SearchBarComponent implements OnInit, OnDestroy {
     this.parameterDraftValues[parameter.name] = draftValueFromUnknown(rawValue);
   }
 
+  isParameterDraftDirty(parameter: SearchBarParameter): boolean {
+    return isDraftValueDirty(
+      this.parameterDraftValues[parameter.name],
+      parameter.modelValue,
+    );
+  }
+
   commitParameterInput(parameter: SearchBarParameter, event: Event) {
     this.commitParameterValue(
       parameter,
@@ -683,7 +697,7 @@ export class SearchBarComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.valueChanged();
+    this.filterServers();
   }
 
   syncParameterDraftValue(parameter: SearchBarParameter) {
@@ -770,16 +784,27 @@ export class SearchBarComponent implements OnInit, OnDestroy {
             ),
         );
 
+        const previousContinents = new Map(
+          this.continentMetadata.map((continent) => [
+            continent.continent,
+            continent,
+          ]),
+        );
+
         this.continentMetadata = [];
         this.countryMetadata().forEach((country) => {
           const continent = this.continentMetadata.find(
             (item) => item.continent === country.continent,
           );
           if (!continent) {
+            const previous = previousContinents.get(country.continent);
+            const hasSelectedCountry = this.countryMetadata().some(
+              (item) => item.continent === country.continent && item.selected,
+            );
             this.continentMetadata.push({
               continent: country.continent,
               selected: false,
-              collapsed: true,
+              collapsed: previous ? previous.collapsed : !hasSelectedCountry,
             });
           }
         });
@@ -793,11 +818,6 @@ export class SearchBarComponent implements OnInit, OnDestroy {
             this.countryMetadata().find(
               (country) =>
                 country.continent === continent.continent && !country.selected,
-            ) === undefined;
-          continent.collapsed =
-            this.countryMetadata().find(
-              (country) =>
-                country.continent === continent.continent && country.selected,
             ) === undefined;
         });
       });

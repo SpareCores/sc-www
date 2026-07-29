@@ -11,17 +11,16 @@
       control.type !== "checkboxGroup" &&
       !control.hideTitle
     ) {
-      <div class="inline-flex items-center gap-1 w-fit">
-        <div class="font-bold text-emerald-400 text-sm">
-          {{ control.title }}
-          @if (control.required) {
-            <span class="text-red-300">*</span>
-          }
-        </div>
+      <div class="font-bold text-emerald-400 text-sm">
+        <span
+          class="data-[required]:after:content-['*'] data-[required]:after:text-red-300"
+          [textContent]="control.title"
+          [attr.data-required]="control.required ? '' : null"
+        ></span>
         @if (control.description) {
           <button
             type="button"
-            class="tooltip-trigger"
+            class="tooltip-trigger ml-1"
             aria-label="Show filter description"
             (mouseenter)="emitTooltip($event, control.description)"
             (mouseleave)="hideTooltip.emit()"
@@ -53,10 +52,8 @@
           class="checkbox"
         />
         <div class="flex flex-col gap-1">
-          <div class="inline-flex items-center gap-1 w-fit">
-            <div class="text-white text-sm leading-tight">
-              {{ control.title }}
-            </div>
+          <div class="flex gap-1 items-center text-white text-sm leading-tight">
+            {{ control.title }}
             @if (
               control.description && control.descriptionDisplay === "tooltip"
             ) {
@@ -373,7 +370,12 @@
           <svg lucideMinus class="h-4 w-4"></svg>
         </button>
 
-        <div class="custom-stepper__field">
+        <div
+          class="custom-stepper__field"
+          [class.filter-draft-input--dirty]="
+            isPowerOfTwoStepperDraftDirty(control)
+          "
+        >
           <input
             id="custom_control_numeric_{{ control.name }}"
             type="text"
@@ -406,6 +408,11 @@
           <svg lucidePlus class="h-4 w-4"></svg>
         </button>
       </div>
+      @if (isPowerOfTwoStepperDraftDirty(control)) {
+        <div class="filter-draft-pending-hint">
+          Press Enter or click away to apply filter.
+        </div>
+      }
     }
   </div>
 

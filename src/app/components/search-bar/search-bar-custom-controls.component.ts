@@ -28,6 +28,7 @@ import {
   getPowerOfTwoStepperEditableValue,
   getPowerOfTwoStepperMinimum,
   getPreviousPowerOfTwoStepperValue,
+  isDraftValueDirty,
   normalizeCommittedPowerOfTwoStepperValue,
   parsePowerOfTwoStepperNumericValue,
 } from "./search-bar.utils";
@@ -151,6 +152,19 @@ export class SearchBarCustomControlsComponent {
 
     this.powerOfTwoStepperDraftValues[control.name] = nextValue;
     input.value = nextValue;
+  }
+
+  isPowerOfTwoStepperDraftDirty(control: SearchBarCustomControl): boolean {
+    const draftValue = this.powerOfTwoStepperDraftValues[control.name];
+
+    if (draftValue === undefined) {
+      return false;
+    }
+
+    return isDraftValueDirty(
+      draftValue,
+      getPowerOfTwoStepperEditableValue(control),
+    );
   }
 
   commitPowerOfTwoStepperFromEnter(event: Event) {

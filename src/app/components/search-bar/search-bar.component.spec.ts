@@ -1,9 +1,4 @@
-import {
-  ComponentFixture,
-  TestBed,
-  fakeAsync,
-  tick,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { By } from "@angular/platform-browser";
 import { SearchBarComponent } from "./search-bar.component";
 import { SearchBarParameterFieldComponent } from "./search-bar-parameter-field.component";
@@ -264,7 +259,7 @@ describe("SearchBarComponent", () => {
     );
   });
 
-  it("does not emit searchChanged while typing top search, only on blur", fakeAsync(() => {
+  it("does not emit searchChanged while typing top search, only on blur", () => {
     const parameters: SearchBarParameter[] = [
       {
         name: "search",
@@ -280,19 +275,17 @@ describe("SearchBarComponent", () => {
     const parameter = parameters[0];
 
     component.setParameterDraftValue(parameter, "aws");
-    tick(500);
     expect(emitSpy).not.toHaveBeenCalled();
 
     component.commitParameterInput(parameter, {
       target: { value: "aws" },
     } as unknown as Event);
-    tick(500);
 
     expect(parameter.modelValue).toBe("aws");
     expect(emitSpy).toHaveBeenCalled();
-  }));
+  });
 
-  it("commits top search on Enter without double-emitting on following blur", fakeAsync(() => {
+  it("commits top search on Enter without double-emitting on following blur", () => {
     const parameters: SearchBarParameter[] = [
       {
         name: "search",
@@ -316,12 +309,11 @@ describe("SearchBarComponent", () => {
     component.commitParameterInput(parameter, {
       target: input,
     } as unknown as Event);
-    tick(500);
 
     expect(emitSpy).toHaveBeenCalledTimes(1);
-  }));
+  });
 
-  it("clears top search immediately", fakeAsync(() => {
+  it("clears top search immediately", () => {
     const parameters: SearchBarParameter[] = [
       {
         name: "search",
@@ -335,13 +327,12 @@ describe("SearchBarComponent", () => {
 
     const emitSpy = spyOn(component.searchChanged, "emit");
     component.clearTopSearch(parameters[0]);
-    tick(0);
 
     expect(parameters[0].modelValue).toBe("");
     expect(emitSpy).toHaveBeenCalled();
-  }));
+  });
 
-  it("does not emit when committing an unchanged top search value", fakeAsync(() => {
+  it("does not emit when committing an unchanged top search value", () => {
     const parameters: SearchBarParameter[] = [
       {
         name: "search",
@@ -353,17 +344,19 @@ describe("SearchBarComponent", () => {
     fixture.componentRef.setInput("query", { search: "aws" });
     fixture.detectChanges();
 
-    const valueChangedSpy = spyOn(component, "valueChanged").and.callThrough();
+    const filterServersSpy = spyOn(
+      component,
+      "filterServers",
+    ).and.callThrough();
     component.commitParameterInput(parameters[0], {
       target: { value: "aws" },
     } as unknown as Event);
-    tick(500);
 
-    expect(valueChangedSpy).not.toHaveBeenCalled();
+    expect(filterServersSpy).not.toHaveBeenCalled();
     expect(parameters[0].modelValue).toBe("aws");
-  }));
+  });
 
-  it("commits number parameter fields on blur via child component", fakeAsync(() => {
+  it("commits number parameter fields on blur via child component", () => {
     const parameters: SearchBarParameter[] = [
       {
         name: "vcpus_min",
@@ -393,17 +386,15 @@ describe("SearchBarComponent", () => {
     ).componentInstance as SearchBarParameterFieldComponent;
 
     field.setParameterDraftValue("4");
-    tick(500);
     expect(emitSpy).not.toHaveBeenCalled();
 
     field.commitParameterInput({
       target: { value: "4" },
     } as unknown as Event);
-    tick(500);
 
     expect(parameters[0].modelValue).toBe(4);
     expect(emitSpy).toHaveBeenCalled();
-  }));
+  });
 
   it("shows extra-parameter vendors as checked while disabled", () => {
     const filterCategories = [
