@@ -17,7 +17,7 @@ describe("SearchBarParameterFieldComponent", () => {
     component = fixture.componentInstance;
   });
 
-  it("does not emit valueChanged while drafting a number, only on blur", () => {
+  it("does not emit filterServers while drafting a number, only on blur", () => {
     const parameter: SearchBarParameter = {
       name: "price_max",
       modelValue: null,
@@ -31,10 +31,11 @@ describe("SearchBarParameterFieldComponent", () => {
     fixture.componentRef.setInput("filterCategoryId", "price");
     fixture.detectChanges();
 
-    const emitSpy = spyOn(component.valueChanged, "emit");
+    const emitSpy = spyOn(component.filterServers, "emit");
 
     component.setParameterDraftValue("1.5");
     expect(emitSpy).not.toHaveBeenCalled();
+    expect(component.isParameterDraftDirty(parameter)).toBeTrue();
 
     component.commitParameterInput({
       target: { value: "1.5" },
@@ -42,6 +43,43 @@ describe("SearchBarParameterFieldComponent", () => {
 
     expect(parameter.modelValue).toBe(1.5);
     expect(emitSpy).toHaveBeenCalledTimes(1);
+    expect(component.isParameterDraftDirty(parameter)).toBeFalse();
+  });
+
+  it("shows pending hint markup while number draft is dirty", () => {
+    const parameter: SearchBarParameter = {
+      name: "price_max",
+      modelValue: null,
+      schema: {
+        category_id: "price",
+        title: "Max price",
+        type: "number",
+      },
+    };
+    fixture.componentRef.setInput("parameter", parameter);
+    fixture.componentRef.setInput("filterCategoryId", "price");
+    fixture.detectChanges();
+
+    expect(
+      fixture.nativeElement.querySelector(".filter-draft-pending-hint"),
+    ).toBeNull();
+
+    component.setParameterDraftValue("2");
+    fixture.detectChanges();
+
+    const hint = fixture.nativeElement.querySelector(
+      ".filter-draft-pending-hint",
+    ) as HTMLElement;
+    const input = fixture.nativeElement.querySelector(
+      "#filter_price_price_max",
+    ) as HTMLInputElement;
+
+    expect(hint).not.toBeNull();
+    expect(input).not.toBeNull();
+    expect(hint.textContent).toContain(
+      "Press Enter or click away to apply filter.",
+    );
+    expect(input.classList.contains("filter-draft-input--dirty")).toBeTrue();
   });
 
   it("attaches appNumbersOnly to numeric inputs", () => {
@@ -81,12 +119,12 @@ describe("SearchBarParameterFieldComponent", () => {
     fixture.componentRef.setInput("filterCategoryId", "price");
     fixture.detectChanges();
 
-    const group = fixture.nativeElement.querySelector(
-      ".inline-flex.w-fit",
+    const title = fixture.nativeElement.querySelector(
+      "#filter_title_price_max",
     ) as HTMLElement;
 
-    expect(group).not.toBeNull();
-    expect(group.querySelector(".tooltip-trigger")).not.toBeNull();
-    expect(group.textContent).toContain("Max price");
+    expect(title).not.toBeNull();
+    expect(title.querySelector(".tooltip-trigger")).not.toBeNull();
+    expect(title.textContent).toContain("Max price");
   });
 });

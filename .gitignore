@@ -81,6 +81,7 @@ cypress-image-diff-html-report
 cypress-image-diff-screenshots/comparison
 cypress-image-diff-screenshots/diff
 cypress/screenshots
+.visual-diff-vs-main
 
 # Unit test coverage output
 coverage/

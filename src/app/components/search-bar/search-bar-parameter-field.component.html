@@ -2,37 +2,33 @@
   @let parameterType = getParameterType(parameter);
   <div>
     @if (showParameterTitles() && parameterType !== "checkbox") {
-      <div class="flex gap-2 items-center">
-        @if (
-          filterCategoryId() === "benchmark" &&
-          (parameter.name | benchmarkIcon: "") !== ""
-        ) {
-          <svg
-            [lucideIcon]="parameter.name | benchmarkIcon: ''"
-            class="h-4 w-4 text-emerald-400"
-          ></svg>
-        }
-        <div class="inline-flex items-center gap-1 w-fit">
-          <div
-            class="font-bold text-emerald-400 text-sm"
-            id="filter_title_{{ parameter.name }}"
+      @if (
+        filterCategoryId() === "benchmark" &&
+        (parameter.name | benchmarkIcon: "") !== ""
+      ) {
+        <svg
+          [lucideIcon]="parameter.name | benchmarkIcon: ''"
+          class="h-4 w-4 text-emerald-400"
+        ></svg>
+      }
+      <div
+        class="font-bold text-emerald-400 text-sm"
+        id="filter_title_{{ parameter.name }}"
+      >
+        {{ parameter.schema.title }}
+        @if (parameter.schema.description) {
+          <button
+            type="button"
+            class="tooltip-trigger ml-1"
+            aria-label="Show filter description"
+            (mouseenter)="emitTooltip($event, parameter.schema.description)"
+            (mouseleave)="hideTooltip.emit()"
+            (focus)="emitTooltip($event, parameter.schema.description)"
+            (blur)="hideTooltip.emit()"
           >
-            {{ parameter.schema.title }}
-          </div>
-          @if (parameter.schema.description) {
-            <button
-              type="button"
-              class="tooltip-trigger"
-              aria-label="Show filter description"
-              (mouseenter)="emitTooltip($event, parameter.schema.description)"
-              (mouseleave)="hideTooltip.emit()"
-              (focus)="emitTooltip($event, parameter.schema.description)"
-              (blur)="hideTooltip.emit()"
-            >
-              <svg lucideInfo class="h-4 w-4 text-gray-200"></svg>
-            </button>
-          }
-        </div>
+            <svg lucideInfo class="h-4 w-4 text-gray-200"></svg>
+          </button>
+        }
       </div>
     }
 
@@ -51,7 +47,10 @@
               inputmode="decimal"
               appNumbersOnly
               id="filter_range_value_{{ parameter.name }}"
-              class="bg-primary px-2 py-0 border-emerald-400 border-dotted outline-none text-white rounded-sm h-5 text-center"
+              class="filter-draft-input filter-draft-input--compact bg-primary px-2 py-0 border-emerald-400 border-dotted outline-none text-white rounded-sm h-5 text-center"
+              [class.filter-draft-input--dirty]="
+                isParameterDraftDirty(parameter)
+              "
               [ngModel]="getParameterDraftValue(parameter)"
               [ngStyle]="getInputStyle(parameter)"
               (ngModelChange)="setParameterDraftValue($event)"
@@ -60,6 +59,11 @@
             />
             {{ parameter.schema.unit }}
           </div>
+          @if (isParameterDraftDirty(parameter)) {
+            <div class="filter-draft-pending-hint">
+              Press Enter or click away to apply filter.
+            </div>
+          }
         }
         @if (
           parameter.modelValue === parameter.schema.range_max &&
@@ -102,7 +106,10 @@
             appNumbersOnly
             [allowDecimal]="false"
             id="filter_discrete_range_value_{{ parameter.name }}"
-            class="bg-primary px-2 py-0 border-emerald-400 border-dotted outline-none text-white rounded-sm h-5 text-center"
+            class="filter-draft-input filter-draft-input--compact bg-primary px-2 py-0 border-emerald-400 border-dotted outline-none text-white rounded-sm h-5 text-center"
+            [class.filter-draft-input--dirty]="
+              isCpuCacheRangeDraftDirty(parameter)
+            "
             [ngModel]="getCpuCacheRangeInputValue()"
             [ngStyle]="getCpuCacheRangeInputStyle()"
             (ngModelChange)="setCpuCacheRangeDraftValue($event)"
@@ -112,6 +119,11 @@
           />
           {{ parameter.schema.unit }}
         </div>
+        @if (isCpuCacheRangeDraftDirty(parameter)) {
+          <div class="filter-draft-pending-hint mb-2">
+            Press Enter or click away to apply filter.
+          </div>
+        }
         <div class="cpu-cache-slider">
           <input
             id="filter_discrete_range_{{ parameter.name }}"
@@ -174,10 +186,16 @@
           (keyup.enter)="commitParameterInput($event)"
           (blur)="commitParameterInput($event)"
           [disabled]="disabled()"
-          class="w-full h-8 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm pr-8 disabled:bg-gray-400"
+          class="filter-draft-input filter-draft-input--field w-full h-8 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm pr-8 border border-transparent disabled:bg-gray-400"
+          [class.filter-draft-input--dirty]="isParameterDraftDirty(parameter)"
         />
         @if (parameter.schema.unit) {
           <span class="unit text-gray-600">{{ parameter.schema.unit }}</span>
+        }
+        @if (isParameterDraftDirty(parameter)) {
+          <div class="filter-draft-pending-hint">
+            Press Enter or click away to apply filter.
+          </div>
         }
       </div>
     }
@@ -201,10 +219,16 @@
           (ngModelChange)="setParameterDraftValue($event)"
           (keyup.enter)="commitParameterInput($event)"
           (blur)="commitParameterInput($event)"
-          class="w-full h-8 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm pr-8"
+          class="filter-draft-input filter-draft-input--field w-full h-8 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm pr-8 border border-transparent"
+          [class.filter-draft-input--dirty]="isParameterDraftDirty(parameter)"
         />
         @if (selectedCurrency()?.slug) {
           <span class="unit text-gray-600">{{ selectedCurrency()?.slug }}</span>
+        }
+        @if (isParameterDraftDirty(parameter)) {
+          <div class="filter-draft-pending-hint">
+            Press Enter or click away to apply filter.
+          </div>
         }
       </div>
     }
@@ -227,13 +251,19 @@
           (keyup.enter)="commitParameterInput($event)"
           (blur)="commitParameterInput($event)"
           [disabled]="disabled()"
-          class="w-full h-8 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm disabled:bg-gray-400"
+          class="filter-draft-input filter-draft-input--field w-full h-8 accent-emerald-400 bg-gray-200 rounded-lg cursor-pointer range-sm border border-transparent disabled:bg-gray-400"
+          [class.filter-draft-input--dirty]="isParameterDraftDirty(parameter)"
         />
+        @if (isParameterDraftDirty(parameter)) {
+          <div class="filter-draft-pending-hint">
+            Press Enter or click away to apply filter.
+          </div>
+        }
       </div>
     }
 
     @if (parameterType === "checkbox") {
-      <div class="flex items-center gap-1 mb-2">
+      <div class="flex gap-2 items-center mb-2">
         <input
           type="checkbox"
           id="filter_checkbox_{{ parameter.name }}"
@@ -250,10 +280,8 @@
           [disabled]="disabled()"
           class="checkbox"
         />
-        <div class="inline-flex items-center gap-1 w-fit">
-          <div class="text-white text-sm leading-tight">
-            {{ parameter.schema.title }}
-          </div>
+        <div class="flex gap-1 items-center text-white text-sm leading-tight">
+          {{ parameter.schema.title }}
           @if (parameter.schema.description) {
             <button
               type="button"
@@ -283,7 +311,7 @@
           track benchmarkFilterOptionKey(enum) ||
             benchmarkFilterOptionLabel(enum)
         ) {
-          <div class="flex items-center gap-1">
+          <div class="flex items-center gap-2">
             <input
               type="checkbox"
               id="filter_enum_{{ parameter.name }}_{{

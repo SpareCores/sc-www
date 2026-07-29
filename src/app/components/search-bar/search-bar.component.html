@@ -13,6 +13,14 @@
           <input
             type="text"
             class="top_search_input"
+            [class.filter-draft-input--dirty]="
+              isParameterDraftDirty(topSearchParameter)
+            "
+            [attr.title]="
+              isParameterDraftDirty(topSearchParameter)
+                ? 'Press Enter or click away to apply filter.'
+                : null
+            "
             [placeholder]="topSearchPlaceholder()"
             [ngModel]="getParameterDraftValue(topSearchParameter)"
             (ngModelChange)="setParameterDraftValue(topSearchParameter, $event)"
@@ -77,7 +85,6 @@
           (vendorRegionCollapsedVendorsChanged)="
             setVendorRegionCollapsedVendors($event)
           "
-          (valueChanged)="valueChanged()"
           (filterServers)="filterServers()"
           (showTooltip)="showTooltip($event.event, $event.content)"
           (hideTooltip)="hideTooltip()"
