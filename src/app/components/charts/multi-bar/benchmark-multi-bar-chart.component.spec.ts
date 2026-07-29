@@ -285,9 +285,6 @@ describe("BenchmarkMultiBarChartComponent", () => {
     const primaryButton = hostElement.querySelector(
       `#${component.buttonId}`,
     ) as HTMLElement | null;
-    const secondaryButton = hostElement.querySelector(
-      `#${component.secondaryButtonId}`,
-    ) as HTMLElement | null;
     const compareSelectorRow = primaryButton?.parentElement;
 
     expect(compareSelectorRow?.classList.contains("flex-nowrap")).toBeTrue();
