@@ -45,8 +45,10 @@
               <sc-button
                 label="Summarize"
                 icon="sparkles"
-                iconPosition="end"
+                iconPosition="start"
                 size="large"
+                textSize="large"
+                fontWeight="bold"
                 [disabled]="!descriptionsAvailable"
                 [title]="
                   descriptionsAvailable
@@ -59,8 +61,10 @@
               <sc-button
                 [label]="compareText()"
                 icon="scale"
-                iconPosition="end"
+                iconPosition="start"
                 size="large"
+                textSize="large"
+                fontWeight="bold"
                 data-ph-capture-attribute-sc-event="server details compare"
                 (click)="addToCompare()"
               ></sc-button>
@@ -223,6 +227,8 @@
               <sc-button
                 label="Show more"
                 size="normal"
+                textSize="large"
+                fontWeight="bold"
                 id="availability_more_button"
                 [ariaExpanded]="false"
                 data-ph-capture-attribute-sc-event="server details show more availability"
@@ -235,6 +241,8 @@
               <sc-button
                 label="Show less"
                 size="normal"
+                textSize="large"
+                fontWeight="bold"
                 [ariaExpanded]="true"
                 data-ph-capture-attribute-sc-event="server details show less availability"
                 (click)="toggleCard('availability', false)"
@@ -289,8 +297,10 @@
               <sc-button
                 label="More details"
                 icon="maximize-2"
-                iconPosition="end"
+                iconPosition="start"
                 size="normal"
+                textSize="large"
+                fontWeight="bold"
                 ariaLabel="Open full summary"
                 data-ph-capture-attribute-sc-event="server details summarize open"
                 (click)="openSummarizeModal()"
@@ -348,6 +358,8 @@
                 id="region_button"
                 data-ph-capture-attribute-sc-event="server details regions select"
                 [scFlowbiteDropdown]="'region_options'"
+                #regionDropdown="scFlowbiteDropdown"
+                [dropdownEnabled]="true"
                 label="Regions"
                 icon="chevron-down"
                 variant="dropdown"
@@ -394,7 +406,10 @@
               label="Embed chart"
               icon="copy"
               iconPosition="end"
+              variant="outline"
               size="large"
+              textSize="large"
+              fontWeight="bold"
               (click)="openModal()"
             ></sc-button>
           </div>
@@ -470,6 +485,7 @@
                 data-ph-capture-attribute-sc-event="server similar options select"
                 [scFlowbiteDropdown]="'similar_server_options'"
                 #similarDropdown="scFlowbiteDropdown"
+                [dropdownEnabled]="true"
                 [label]="selectedSimilarOption.name"
                 icon="chevron-down"
                 variant="dropdown"
