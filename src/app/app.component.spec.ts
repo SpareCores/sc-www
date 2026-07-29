@@ -67,14 +67,14 @@ describe("AppComponent", () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector(".app-shell")).not.toBeNull();
+    expect(compiled.querySelector(".sc-shell")).not.toBeNull();
   });
 
   it("should render the site promo banner below the navbar", () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    const chrome = compiled.querySelector(".app-shell-chrome");
+    const chrome = compiled.querySelector(".sc-shell-chrome");
     const bannerHost = compiled.querySelector("sc-promo-banner");
     const ctaLink = bannerHost?.querySelector("a") as HTMLAnchorElement | null;
 
@@ -86,7 +86,7 @@ describe("AppComponent", () => {
     expect(chrome?.firstElementChild?.tagName).toBe("HEADER");
     expect(
       compiled.querySelector(
-        ".app-shell-chrome + .app-shell-banner sc-promo-banner",
+        ".sc-shell-chrome + .sc-shell-banner sc-promo-banner",
       ),
     ).toBe(bannerHost);
   });

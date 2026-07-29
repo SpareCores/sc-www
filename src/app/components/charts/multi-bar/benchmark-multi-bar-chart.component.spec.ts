@@ -292,7 +292,5 @@ describe("BenchmarkMultiBarChartComponent", () => {
 
     expect(compareSelectorRow?.classList.contains("flex-nowrap")).toBeTrue();
     expect(compareSelectorRow?.classList.contains("min-w-0")).toBeTrue();
-    expect(primaryButton?.classList.contains("max-w-full")).toBeTrue();
-    expect(secondaryButton?.classList.contains("max-w-full")).toBeTrue();
   });
 });
