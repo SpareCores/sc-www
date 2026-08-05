@@ -80,26 +80,26 @@ export class AboutNavigatorComponent implements OnInit, AfterViewInit {
     "✅ UpCloud (Done)",
     "✅ OVH Cloud (Done)",
     "✅ Alibaba Cloud (Done)",
-    "⚙️ Vultr (In Progress)",
+    "✅ Vultr (In Progress)",
     "🗓️ Oracle Cloud Infrastructure (Planned)",
     "🗓️ Scaleway (Planned)",
   ];
 
   features: any[] = [
     {
-      count: "540",
+      count: "580",
       text: "availability zones",
     },
     {
-      count: "5,550",
+      count: "5,950",
       text: "server types",
     },
     {
-      count: "2,250,285",
+      count: "2,629,812",
       text: "benchmark scores",
     },
     {
-      count: "542,771",
+      count: "592,330",
       text: "live price records",
     },
     {
