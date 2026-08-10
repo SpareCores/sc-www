@@ -23,30 +23,22 @@
             >
               <sc-button
                 [label]="'Compare cloud servers\nfor free'"
-                size="xxx-large"
-                textSize="large"
-                fontWeight="bold"
+                size="large"
                 [routerLink]="'/servers'"
                 class="row-span-2 w-full self-center"
                 buttonClass="!whitespace-pre-line text-center leading-snug"
               ></sc-button>
               <sc-button
                 label="Measure AI/ML jobs >"
-                size="normal"
-                variant="transparent"
-                color="emerald"
-                textSize="large"
-                fontWeight="bold"
+                variant="link"
+                size="small"
                 buttonClass="!justify-start pl-4"
                 (click)="scrollTo('resource-tracker')"
               ></sc-button>
               <sc-button
                 label="Explore Sentinel >"
-                size="normal"
-                variant="transparent"
-                color="emerald"
-                textSize="large"
-                fontWeight="bold"
+                variant="link"
+                size="small"
                 buttonClass="!justify-start pl-4"
                 (click)="scrollTo('sentinel')"
               ></sc-button>
@@ -1112,18 +1104,13 @@
           label="Read more articles"
           icon="notebook-text"
           iconPosition="start"
-          size="x-large"
-          textSize="large"
-          fontWeight="bold"
+          size="large"
           [routerLink]="'/articles'"
         ></sc-button>
         <sc-button
           label="Or check out our conference talks >"
-          size="x-large"
-          textSize="large"
-          fontWeight="bold"
-          variant="transparent"
-          color="emerald"
+          size="large"
+          variant="link"
           [routerLink]="'/talks'"
         ></sc-button>
       </div>

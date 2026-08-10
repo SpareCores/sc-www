@@ -47,8 +47,6 @@
                 icon="sparkles"
                 iconPosition="start"
                 size="large"
-                textSize="large"
-                fontWeight="bold"
                 [disabled]="!descriptionsAvailable"
                 [title]="
                   descriptionsAvailable
@@ -63,8 +61,6 @@
                 icon="scale"
                 iconPosition="start"
                 size="large"
-                textSize="large"
-                fontWeight="bold"
                 data-ph-capture-attribute-sc-event="server details compare"
                 (click)="addToCompare()"
               ></sc-button>
@@ -226,9 +222,6 @@
             >
               <sc-button
                 label="Show more"
-                size="normal"
-                textSize="large"
-                fontWeight="bold"
                 id="availability_more_button"
                 [ariaExpanded]="false"
                 data-ph-capture-attribute-sc-event="server details show more availability"
@@ -240,9 +233,6 @@
             <div class="w-full pt-3 flex justify-center" id="availability_less">
               <sc-button
                 label="Show less"
-                size="normal"
-                textSize="large"
-                fontWeight="bold"
                 [ariaExpanded]="true"
                 data-ph-capture-attribute-sc-event="server details show less availability"
                 (click)="toggleCard('availability', false)"
@@ -298,9 +288,6 @@
                 label="More details"
                 icon="maximize-2"
                 iconPosition="start"
-                size="normal"
-                textSize="large"
-                fontWeight="bold"
                 ariaLabel="Open full summary"
                 data-ph-capture-attribute-sc-event="server details summarize open"
                 (click)="openSummarizeModal()"
@@ -363,7 +350,6 @@
                 label="Regions"
                 icon="chevron-down"
                 variant="dropdown"
-                size="normal"
               ></sc-button>
             </div>
           </div>
@@ -407,9 +393,6 @@
               icon="copy"
               iconPosition="end"
               variant="outline"
-              size="large"
-              textSize="large"
-              fontWeight="bold"
               (click)="openModal()"
             ></sc-button>
           </div>
@@ -489,7 +472,6 @@
                 [label]="selectedSimilarOption.name"
                 icon="chevron-down"
                 variant="dropdown"
-                size="normal"
               ></sc-button>
             </div>
           </div>

@@ -510,13 +510,13 @@
                     "
                     [icon]="workloadProfileShowMore ? 'eye-off' : 'eye'"
                     iconPosition="start"
-                    size="normal"
+                    size="small"
                     (click)="toggleWorkloadProfileDetails()"
                   ></sc-button>
                   <sc-button
                     [icon]="clipboardIcon"
                     ariaLabel="Copy benchmark section link"
-                    size="normal"
+                    size="small"
                     buttonClass="shrink-0"
                     (click)="
                       clipboardURL($event, 'benchmark_line_workload_profile')
@@ -538,13 +538,13 @@
                   "
                   [icon]="workloadProfileShowMore ? 'eye-off' : 'eye'"
                   iconPosition="start"
-                  size="normal"
+                  size="small"
                   (click)="toggleWorkloadProfileDetails()"
                 ></sc-button>
                 <sc-button
                   [icon]="clipboardIcon"
                   ariaLabel="Copy benchmark section link"
-                  size="normal"
+                  size="small"
                   buttonClass="shrink-0"
                   (click)="
                     clipboardURL($event, 'benchmark_line_workload_profile')
@@ -865,14 +865,14 @@
                         "
                         [icon]="benchmarkCategory.show_more ? 'eye-off' : 'eye'"
                         iconPosition="start"
-                        size="normal"
+                        size="small"
                         (click)="toggleBenchmarkCategory(benchmarkCategory)"
                       ></sc-button>
                     }
                     <sc-button
                       [icon]="clipboardIcon"
                       ariaLabel="Copy benchmark section link"
-                      size="normal"
+                      size="small"
                       buttonClass="shrink-0"
                       (click)="
                         clipboardURL(
@@ -900,14 +900,14 @@
                         "
                         [icon]="benchmarkCategory.show_more ? 'eye-off' : 'eye'"
                         iconPosition="start"
-                        size="normal"
+                        size="small"
                         (click)="toggleBenchmarkCategory(benchmarkCategory)"
                       ></sc-button>
                     }
                     <sc-button
                       [icon]="clipboardIcon"
                       ariaLabel="Copy benchmark section link"
-                      size="normal"
+                      size="small"
                       buttonClass="shrink-0"
                       (click)="
                         clipboardURL(
@@ -1370,13 +1370,13 @@
                       "
                       [icon]="chartItem.show_more ? 'eye-off' : 'eye'"
                       iconPosition="start"
-                      size="normal"
+                      size="small"
                       (click)="toggleBenchmarkCategory(chartItem)"
                     ></sc-button>
                     <sc-button
                       [icon]="clipboardIcon"
                       ariaLabel="Copy benchmark section link"
-                      size="normal"
+                      size="small"
                       buttonClass="shrink-0"
                       (click)="
                         clipboardURL(
@@ -1402,13 +1402,13 @@
                       "
                       [icon]="chartItem.show_more ? 'eye-off' : 'eye'"
                       iconPosition="start"
-                      size="normal"
+                      size="small"
                       (click)="toggleBenchmarkCategory(chartItem)"
                     ></sc-button>
                     <sc-button
                       [icon]="clipboardIcon"
                       ariaLabel="Copy benchmark section link"
-                      size="normal"
+                      size="small"
                       buttonClass="shrink-0"
                       (click)="
                         clipboardURL(
@@ -1726,7 +1726,7 @@
             <td>
               <sc-button
                 [label]="server.display_name"
-                size="normal"
+                size="small"
                 buttonClass="w-full whitespace-nowrap overflow-hidden text-ellipsis"
                 (click)="viewServer(server)"
               ></sc-button>

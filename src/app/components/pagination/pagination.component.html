@@ -4,8 +4,8 @@
       id="pagination_prev_arrow"
       icon="chevron-left"
       ariaLabel="Previous page"
-      textSize="large"
-      variant="transparent"
+      variant="ghost"
+      color="inverse"
       buttonClass="pagination-button pagination-button--nav"
       [routerLink]="baseURL"
       [queryParams]="getQueryObjectForPage(this.currentPage - 1)"
@@ -16,9 +16,8 @@
   @if (currentPage > 2) {
     <sc-button
       label="1"
-      textSize="large"
-      fontWeight="bold"
-      variant="transparent"
+      variant="ghost"
+      color="inverse"
       buttonClass="pagination-button"
       [routerLink]="baseURL"
       [queryParams]="getQueryObjectForPage(1)"
@@ -32,9 +31,8 @@
   @for (page of possiblePages(); track page; let i = $index) {
     <sc-button
       [label]="'' + page"
-      textSize="large"
-      fontWeight="bold"
-      [variant]="page === this.currentPage ? 'primary' : 'transparent'"
+      [variant]="page === this.currentPage ? 'solid' : 'ghost'"
+      [color]="page === this.currentPage ? 'brand' : 'inverse'"
       buttonClass="pagination-button"
       [routerLink]="baseURL"
       [queryParams]="getQueryObjectForPage(page)"
@@ -46,9 +44,8 @@
     <span class="text-white font-bold text-base" aria-hidden="true">...</span>
     <sc-button
       [label]="'' + totalPages"
-      textSize="large"
-      fontWeight="bold"
-      variant="transparent"
+      variant="ghost"
+      color="inverse"
       buttonClass="pagination-button"
       [routerLink]="baseURL"
       [queryParams]="getQueryObjectForPage(totalPages)"
@@ -61,8 +58,8 @@
       id="pagination_next_arrow"
       icon="chevron-right"
       ariaLabel="Next page"
-      textSize="large"
-      variant="transparent"
+      variant="ghost"
+      color="inverse"
       buttonClass="pagination-button pagination-button--nav"
       [routerLink]="baseURL"
       [queryParams]="getQueryObjectForPage(this.currentPage + 1)"

@@ -222,8 +222,7 @@
               label="Clear filters"
               icon="funnel-x"
               iconPosition="start"
-              size="large"
-              textSize="large"
+              size="small"
               class="w-full"
               (click)="clearFilters()"
             ></sc-button>
@@ -442,7 +441,6 @@
               [label]="limit() | pageLimitLabel"
               icon="chevron-down"
               variant="dropdown"
-              size="normal"
               (click)="togglePageSizeOptions()"
             ></sc-button>
             <span class="text-white hidden md:inline">items per page</span>
