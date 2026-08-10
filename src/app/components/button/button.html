@@ -7,8 +7,8 @@
     <span class="sc-button__badge">{{ badge() }}</span>
   </span>
   } @if (variant() === "dropdown") {
-  <div class="chart-selector-button__label">{{ label() }}</div>
-  @if (showDropdownIcon()) {
+  <div class="sc-button__extension-label">{{ label() }}</div>
+  @if (icon()) {
   <div class="sc-button__square sc-button__square--end">
     <svg
       [lucideIcon]="icon()!"
@@ -30,17 +30,17 @@
       aria-hidden="true"
     ></svg>
   </div>
-  } @else { @if (showSwatch()) {
+  } @else { @if (swatchColor()) {
   <span
     class="sc-button__swatch"
     [style.background-color]="swatchColor()!"
     aria-hidden="true"
   ></span>
-  } @if (showStartIcon()) {
+  } @if (icon() && iconPosition() === "start") {
   <svg [lucideIcon]="icon()!" class="sc-button__icon" aria-hidden="true"></svg>
   } @if (label()) {
   <span class="sc-button__label">{{ label() }}</span>
-  } @if (showEndIcon()) {
+  } @if (icon() && iconPosition() === "end") {
   <svg [lucideIcon]="icon()!" class="sc-button__icon" aria-hidden="true"></svg>
   } }
 </ng-template>
@@ -55,10 +55,11 @@
   [attr.aria-expanded]="ariaExpanded()"
   [attr.aria-controls]="ariaControls()"
   [attr.title]="title()"
-  [class]="buttonClasses()"
-  [class.sc-button--disabled]="disabled()"
   [attr.tabindex]="disabled() ? -1 : null"
   [attr.aria-disabled]="disabled() ? true : null"
+  class="sc-button sc-button--{{ size() }} sc-button--{{ variant() }} sc-button--{{ color() }} {{ buttonClass() }}"
+  [class.sc-button--icon-only]="isIconOnly()"
+  [class.sc-button--disabled]="disabled()"
   (click)="onClick($event)"
 >
   <ng-container *ngTemplateOutlet="buttonContent"></ng-container>
@@ -72,10 +73,11 @@
   [attr.aria-expanded]="ariaExpanded()"
   [attr.aria-controls]="ariaControls()"
   [attr.title]="title()"
-  [class]="buttonClasses()"
-  [class.sc-button--disabled]="disabled()"
   [attr.tabindex]="disabled() ? -1 : null"
   [attr.aria-disabled]="disabled() ? true : null"
+  class="sc-button sc-button--{{ size() }} sc-button--{{ variant() }} sc-button--{{ color() }} {{ buttonClass() }}"
+  [class.sc-button--icon-only]="isIconOnly()"
+  [class.sc-button--disabled]="disabled()"
   (click)="onClick($event)"
 >
   <ng-container *ngTemplateOutlet="buttonContent"></ng-container>
@@ -88,7 +90,8 @@
   [attr.aria-expanded]="ariaExpanded()"
   [attr.aria-controls]="ariaControls()"
   [attr.title]="title()"
-  [class]="buttonClasses()"
+  class="sc-button sc-button--{{ size() }} sc-button--{{ variant() }} sc-button--{{ color() }} {{ buttonClass() }}"
+  [class.sc-button--icon-only]="isIconOnly()"
   (click)="onClick($event)"
 >
   <ng-container *ngTemplateOutlet="buttonContent"></ng-container>

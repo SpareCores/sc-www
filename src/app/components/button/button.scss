@@ -17,165 +17,259 @@
 }
 
 .sc-button {
-  @apply inline-flex items-center justify-center gap-1 rounded-lg;
-  width: 100%;
-  box-sizing: border-box;
-  white-space: nowrap;
-  position: relative;
+  @apply relative inline-flex w-full box-border items-center justify-center gap-x-2 whitespace-nowrap rounded-lg text-sm font-medium focus:outline-none;
 }
 
-.sc-button--normal {
-  height: 42px;
-  @apply px-3;
-}
-
-.sc-button--large {
-  height: 50px;
-  @apply px-3;
-}
-
-.sc-button--x-large {
-  height: 64px;
-  @apply px-4;
-}
-
-.sc-button--xxx-large {
-  height: 92px;
-  @apply px-5;
-}
-
-.sc-button--text-normal {
-  font-size: 14px;
-}
-
-.sc-button--text-large {
-  font-size: 16px;
-}
-
-.sc-button--weight-normal {
-  font-weight: 500;
-}
-
-.sc-button--weight-bold {
-  font-weight: 700;
-}
-
-.sc-button--dropdown {
-  @apply font-medium gap-0 items-stretch justify-between overflow-hidden p-0;
-}
-
-.sc-button--dropdown .chart-selector-button__label {
-  @apply flex items-center;
-}
-
-.sc-button--danger-fill {
-  @apply bg-red-400 text-white rounded-lg font-bold hover:bg-red-500 focus:outline-none focus:ring focus:ring-red-400 focus:ring-opacity-75;
-  transition-duration: 0.15s;
-  transition-property: background-color, border-color, box-shadow, color;
-  transition-timing-function: ease-in;
-}
-
-.sc-button--transparent-fill {
-  @apply border-0 bg-transparent text-white shadow-none;
-  width: auto;
-}
-
-.sc-button--transparent-fill:has(.sc-button__swatch) {
-  @apply px-0;
-}
-
-.sc-button--transparent-fill:hover {
-  @apply text-emerald-400;
-}
-
-.sc-button--transparent-fill.sc-button--color-emerald {
-  @apply text-teal-500;
-}
-
-.sc-button--transparent-fill.sc-button--color-emerald:hover {
-  @apply text-teal-600;
-}
-
-.sc-button--transparent-fill:focus-visible {
-  outline: none;
-  box-shadow: none;
-}
-
-.sc-button--color-dark-grey {
-  background: #1f2937;
-  border-color: #1f2937;
-  color: #ffffff;
-}
-
-.sc-button--color-dark-grey:hover {
-  background: #111827;
-  border-color: #111827;
-}
-
-.sc-button--color-dark-grey:focus-visible {
-  outline: 2px solid #111827;
-  outline-offset: 2px;
+.sc-button--icon-only,
+.sc-button--ghost,
+.sc-button--link {
+  @apply w-auto;
 }
 
 .sc-button:disabled,
 .sc-button--disabled {
-  @apply pointer-events-none opacity-50 cursor-not-allowed;
+  @apply pointer-events-none cursor-not-allowed opacity-50;
 }
 
-.btn-primary.sc-button:disabled,
-.btn-primary.sc-button--disabled {
-  @apply bg-gray-500 opacity-100;
+.sc-button--small {
+  @apply px-3 py-2;
+}
+
+.sc-button--default {
+  @apply px-4 py-3;
+}
+
+.sc-button--large {
+  @apply p-4 sm:p-5;
+}
+
+.sc-button--icon-only.sc-button--small {
+  @apply size-[38px] justify-center p-0;
+}
+
+.sc-button--icon-only.sc-button--default {
+  @apply size-11 justify-center p-0;
+}
+
+.sc-button--icon-only.sc-button--large {
+  @apply size-[62px] justify-center p-0;
+}
+
+.sc-button--icon-only.sc-button--small .sc-button__icon {
+  @apply size-3;
+}
+
+.sc-button--icon-only.sc-button--large .sc-button__icon {
+  @apply size-5;
+}
+
+.sc-button--ghost:has(.sc-button__swatch) {
+  @apply px-0;
+}
+
+.sc-button--solid,
+.sc-button--dropdown,
+.sc-button--benchmark {
+  @apply border text-white;
+}
+
+.sc-button--outline {
+  @apply border;
+}
+
+.sc-button--ghost,
+.sc-button--soft,
+.sc-button--link {
+  @apply border border-transparent;
+}
+
+.sc-button--link {
+  @apply bg-transparent hover:bg-transparent focus:bg-transparent;
+}
+
+.sc-button--link.sc-button--brand {
+  @apply text-emerald-400 hover:text-emerald-500 focus:text-emerald-500;
+}
+
+.sc-button--link.sc-button--neutral {
+  @apply text-gray-500 hover:text-emerald-400 focus:text-emerald-400;
+}
+
+.sc-button--link.sc-button--danger {
+  @apply text-red-500 hover:text-red-400 focus:text-red-400;
+}
+
+.sc-button--link.sc-button--inverse {
+  @apply text-white hover:text-emerald-400 focus:text-emerald-400;
+}
+
+.sc-button--white {
+  @apply border border-gray-200 bg-white shadow-sm hover:bg-gray-50 focus:bg-gray-50;
+}
+
+:is(
+  .sc-button--solid,
+  .sc-button--dropdown,
+  .sc-button--benchmark
+).sc-button--brand {
+  @apply border-emerald-400 bg-emerald-400 hover:bg-emerald-500 focus:bg-emerald-500;
+}
+
+:is(
+  .sc-button--solid,
+  .sc-button--dropdown,
+  .sc-button--benchmark
+).sc-button--neutral {
+  @apply border-gray-800 bg-gray-800 hover:bg-gray-900 focus:bg-gray-900;
+}
+
+:is(
+  .sc-button--solid,
+  .sc-button--dropdown,
+  .sc-button--benchmark
+).sc-button--danger {
+  @apply border-transparent bg-red-500 hover:bg-red-600 focus:bg-red-600;
+}
+
+:is(
+  .sc-button--solid,
+  .sc-button--dropdown,
+  .sc-button--benchmark
+).sc-button--inverse {
+  @apply border-transparent bg-white text-gray-800 hover:bg-white/90 focus:bg-white/90;
+}
+
+.sc-button--outline.sc-button--brand {
+  @apply border-emerald-400 text-emerald-400 hover:bg-emerald-400/10 focus:bg-emerald-400/10;
+}
+
+.sc-button--outline.sc-button--neutral {
+  @apply border-gray-200 text-gray-500 hover:border-gray-800 hover:text-gray-800 focus:border-gray-800 focus:text-gray-800;
+}
+
+.sc-button--outline.sc-button--danger {
+  @apply border-red-500 text-red-500 hover:border-red-400 hover:text-red-400 focus:border-red-400 focus:text-red-400;
+}
+
+.sc-button--outline.sc-button--inverse {
+  @apply border-white text-white hover:border-white/70 hover:text-white/70 focus:border-white/70 focus:text-white/70;
+}
+
+.sc-button--ghost.sc-button--brand {
+  @apply text-emerald-600 hover:bg-emerald-100 hover:text-emerald-800 focus:bg-emerald-100 focus:text-emerald-800 dark:text-emerald-500 dark:hover:bg-emerald-500/20 dark:hover:text-emerald-400 dark:focus:bg-emerald-800/30 dark:focus:text-emerald-400;
+}
+
+.sc-button--ghost.sc-button--neutral {
+  @apply text-gray-500 hover:bg-gray-100 focus:bg-gray-100;
+}
+
+.sc-button--ghost.sc-button--danger {
+  @apply text-red-500 hover:bg-red-100 hover:text-red-800 focus:bg-red-100 dark:hover:bg-red-500/20 dark:hover:text-red-400 dark:focus:bg-red-500/20 dark:focus:text-red-400;
+}
+
+.sc-button--ghost.sc-button--inverse {
+  @apply text-white hover:bg-white/10 focus:bg-white/10;
+}
+
+.sc-button--soft.sc-button--brand {
+  @apply bg-emerald-100 text-emerald-800 hover:bg-emerald-200 focus:bg-emerald-200 dark:bg-emerald-500/20 dark:text-emerald-400 dark:hover:bg-emerald-500/30 dark:focus:bg-emerald-500/30;
+}
+
+.sc-button--soft.sc-button--neutral {
+  @apply bg-gray-100 text-gray-800 hover:bg-gray-200 focus:bg-gray-200;
+}
+
+.sc-button--soft.sc-button--danger {
+  @apply bg-red-100 text-red-800 hover:bg-red-200 focus:bg-red-200 dark:bg-red-800/30 dark:text-red-500 dark:hover:bg-red-500/20 dark:focus:bg-red-500/20;
+}
+
+.sc-button--soft.sc-button--inverse {
+  @apply bg-white/10 text-white hover:bg-white/20 focus:bg-white/20;
+}
+
+.sc-button--white.sc-button--brand {
+  @apply text-emerald-400;
+}
+
+.sc-button--white.sc-button--neutral {
+  @apply text-gray-800;
+}
+
+.sc-button--white.sc-button--danger {
+  @apply text-red-500;
+}
+
+.sc-button--white.sc-button--inverse {
+  @apply text-gray-500;
 }
 
 .sc-button__icon {
-  @apply h-4 w-4 shrink-0;
+  @apply size-4 shrink-0;
 }
 
 .sc-button__swatch {
-  width: 10px;
-  height: 10px;
-  border-radius: 9999px;
-  flex-shrink: 0;
+  @apply size-2.5 shrink-0 rounded-full;
 }
 
 .sc-button--swatch-inactive {
   @apply line-through opacity-60;
 }
 
-.sc-button--text-large .sc-button__icon {
-  @apply h-5 w-5;
-}
-
-.sc-button--x-large .sc-button__icon,
-.sc-button--xxx-large .sc-button__icon {
-  @apply h-6 w-6;
-}
-
+.sc-button--dropdown,
 .sc-button--benchmark {
-  @apply min-w-0 gap-0 overflow-hidden p-0 justify-between;
-  width: 100%;
+  @apply items-stretch justify-between gap-0 overflow-hidden p-0;
 }
 
-.sc-button--benchmark .sc-button__benchmark-labels {
-  @apply flex min-w-0 flex-1 flex-col items-center justify-center px-3 text-center;
+.sc-button__extension-label {
+  @apply flex min-w-0 flex-1 items-center truncate whitespace-nowrap text-left;
 }
 
-.sc-button--benchmark .sc-button__benchmark-label {
-  @apply w-full truncate text-center;
+.sc-button__benchmark-labels {
+  @apply flex h-full min-w-0 flex-1 flex-col items-center justify-center px-2 py-0 text-center;
 }
 
-.sc-button--benchmark .sc-button__benchmark-sublabel {
-  @apply w-full truncate text-center text-xs font-medium;
+.sc-button--small .sc-button__extension-label {
+  @apply px-3 py-2;
+}
+
+.sc-button--default .sc-button__extension-label {
+  @apply px-4 py-3;
+}
+
+.sc-button--large .sc-button__extension-label {
+  @apply p-4 sm:p-5;
+}
+
+.sc-button--small.sc-button--benchmark {
+  @apply h-[38px];
+}
+
+.sc-button--default.sc-button--benchmark {
+  @apply h-[46px];
+}
+
+.sc-button--large.sc-button--benchmark {
+  @apply h-[54px] sm:h-[62px];
+}
+
+.sc-button__benchmark-label {
+  @apply w-full truncate text-center text-sm leading-4;
+}
+
+.sc-button__benchmark-sublabel {
+  @apply w-full truncate text-center text-xs font-medium leading-3;
 }
 
 .sc-button__square {
-  @apply flex shrink-0 items-center justify-center bg-primary;
-  width: 42px;
-  align-self: stretch;
+  @apply flex w-11 shrink-0 items-center justify-center self-stretch bg-sky-950;
+}
+
+.sc-button--small .sc-button__square {
+  @apply w-[38px];
 }
 
 .sc-button--large .sc-button__square {
-  width: 50px;
+  @apply w-[62px];
 }
 
 .sc-button__square--end {
@@ -183,50 +277,34 @@
 }
 
 .sc-button__square-icon {
-  @apply h-6 w-6 shrink-0 text-emerald-400;
+  @apply shrink-0 text-emerald-400;
+}
+
+.sc-button--small .sc-button__square-icon {
+  @apply size-3;
+}
+
+.sc-button--default .sc-button__square-icon {
+  @apply size-4;
+}
+
+.sc-button--large .sc-button__square-icon {
+  @apply size-5;
 }
 
 .sc-button__badge-wrap {
-  position: absolute;
-  right: 0;
-  top: 0;
-  display: flex;
-  z-index: 10;
-  margin-top: -0.5rem;
-  margin-right: -0.5rem;
+  @apply absolute right-0 top-0 z-10 -mr-2 -mt-2 flex;
 }
 
 .sc-button__badge,
 .sc-button__badge-ping {
-  border-radius: 9999px;
+  @apply rounded-full;
 }
 
 .sc-button__badge {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 1rem;
-  height: 1rem;
-  background: #ef4444;
-  color: #ffffff;
-  font-size: 0.625rem;
-  line-height: 1;
+  @apply relative flex size-4 items-center justify-center bg-red-500 text-[0.625rem] leading-none text-white;
 }
 
 .sc-button__badge-ping {
-  position: absolute;
-  inset: 0;
-  background: #ef4444;
-  opacity: 0.75;
-}
-
-.sc-button--icon-only {
-  @apply px-3;
-  width: auto;
-  min-width: 42px;
-}
-
-.sc-button--icon-only.sc-button--large {
-  min-width: 50px;
+  @apply absolute inset-0 bg-red-500 opacity-75;
 }

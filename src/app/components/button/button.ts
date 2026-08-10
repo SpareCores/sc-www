@@ -3,18 +3,18 @@ import { Component, computed, input, output } from "@angular/core";
 import { RouterLink } from "@angular/router";
 import { LucideDynamicIcon } from "@lucide/angular";
 
-export type ScButtonSize = "normal" | "large" | "x-large" | "xxx-large";
+export type ScButtonSize = "small" | "default" | "large";
 export type ScButtonVariant =
-  | "primary"
+  | "solid"
   | "outline"
+  | "ghost"
+  | "soft"
+  | "white"
+  | "link"
   | "dropdown"
-  | "benchmark"
-  | "danger"
-  | "transparent";
+  | "benchmark";
 export type ScButtonIconPosition = "start" | "end";
-export type ScButtonColor = "brand" | "dark-grey" | "emerald";
-export type ScButtonTextSize = "normal" | "large";
-export type ScButtonFontWeight = "normal" | "bold";
+export type ScButtonColor = "brand" | "neutral" | "danger" | "inverse";
 
 @Component({
   selector: "sc-button",
@@ -23,11 +23,9 @@ export type ScButtonFontWeight = "normal" | "bold";
   styleUrl: "./button.scss",
 })
 export class Button {
-  size = input<ScButtonSize>("normal");
-  variant = input<ScButtonVariant>("primary");
+  size = input<ScButtonSize>("default");
+  variant = input<ScButtonVariant>("solid");
   color = input<ScButtonColor>("brand");
-  textSize = input<ScButtonTextSize>("normal");
-  fontWeight = input<ScButtonFontWeight>("normal");
   label = input<string>("");
   sublabel = input<string | null>(null);
   icon = input<string | null>(null);
@@ -50,26 +48,12 @@ export class Button {
 
   buttonClick = output<MouseEvent>();
 
-  showSwatch = computed(() => !!this.swatchColor());
-
-  showStartIcon = computed(
+  isIconOnly = computed(
     () =>
       !!this.icon() &&
-      this.iconPosition() === "start" &&
+      !this.label() &&
       this.variant() !== "dropdown" &&
       this.variant() !== "benchmark",
-  );
-
-  showEndIcon = computed(
-    () =>
-      !!this.icon() &&
-      this.iconPosition() === "end" &&
-      this.variant() !== "dropdown" &&
-      this.variant() !== "benchmark",
-  );
-
-  showDropdownIcon = computed(
-    () => this.variant() === "dropdown" && !!this.icon(),
   );
 
   hasBadge = computed(
@@ -78,49 +62,6 @@ export class Button {
       this.badge() !== undefined &&
       this.badge() !== "",
   );
-
-  buttonClasses = computed(() => {
-    const classes = [
-      "sc-button",
-      `sc-button--${this.size()}`,
-      `sc-button--${this.variant()}`,
-      `sc-button--color-${this.color()}`,
-      `sc-button--text-${this.textSize()}`,
-      `sc-button--weight-${this.fontWeight()}`,
-    ];
-
-    if (this.variant() === "primary") {
-      classes.push("btn-primary");
-    } else if (this.variant() === "outline") {
-      classes.push("btn-primary-outline");
-    } else if (this.variant() === "dropdown") {
-      classes.push("dropdown_button", "chart-selector-button");
-      if (this.size() === "large") {
-        classes.push("chart-selector-button--comfortable");
-      }
-    } else if (this.variant() === "benchmark") {
-      classes.push("dropdown_button");
-    } else if (this.variant() === "danger") {
-      classes.push("sc-button--danger-fill");
-    } else if (this.variant() === "transparent") {
-      classes.push("sc-button--transparent-fill");
-    }
-
-    if (this.buttonClass()) {
-      classes.push(this.buttonClass());
-    }
-
-    if (
-      this.icon() &&
-      !this.label() &&
-      this.variant() !== "dropdown" &&
-      this.variant() !== "benchmark"
-    ) {
-      classes.push("sc-button--icon-only");
-    }
-
-    return classes.join(" ");
-  });
 
   onClick(event: MouseEvent) {
     if (this.disabled()) {
