@@ -45,8 +45,6 @@
               <sc-button
                 label="Summarize"
                 icon="sparkles"
-                iconPosition="start"
-                size="large"
                 [disabled]="!descriptionsAvailable"
                 [title]="
                   descriptionsAvailable
@@ -59,8 +57,6 @@
               <sc-button
                 [label]="compareText()"
                 icon="scale"
-                iconPosition="start"
-                size="large"
                 data-ph-capture-attribute-sc-event="server details compare"
                 (click)="addToCompare()"
               ></sc-button>
@@ -222,6 +218,7 @@
             >
               <sc-button
                 label="Show more"
+                size="small"
                 id="availability_more_button"
                 [ariaExpanded]="false"
                 data-ph-capture-attribute-sc-event="server details show more availability"
@@ -233,6 +230,7 @@
             <div class="w-full pt-3 flex justify-center" id="availability_less">
               <sc-button
                 label="Show less"
+                size="small"
                 [ariaExpanded]="true"
                 data-ph-capture-attribute-sc-event="server details show less availability"
                 (click)="toggleCard('availability', false)"
@@ -286,6 +284,7 @@
               <h3 class="text-2xl">Server Description</h3>
               <sc-button
                 label="More details"
+                size="small"
                 icon="maximize-2"
                 iconPosition="start"
                 ariaLabel="Open full summary"
@@ -350,6 +349,7 @@
                 label="Regions"
                 icon="chevron-down"
                 variant="dropdown"
+                size="small"
               ></sc-button>
             </div>
           </div>
@@ -472,6 +472,7 @@
                 [label]="selectedSimilarOption.name"
                 icon="chevron-down"
                 variant="dropdown"
+                size="small"
               ></sc-button>
             </div>
           </div>
