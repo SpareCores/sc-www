@@ -57,7 +57,9 @@
     </div>
   } @else {
     <div class="block_full_inline">
-      <div class="flex min-w-0 flex-nowrap items-center justify-end gap-4">
+      <div
+        class="flex shrink-0 min-w-0 flex-nowrap items-center justify-end gap-4"
+      >
         @if (hasSecondaryOptions()) {
           <sc-button
             #secondaryDropdown="scFlowbiteDropdown"
@@ -86,7 +88,7 @@
         ></sc-button>
       </div>
       @if (isBrowserEnvironment()) {
-        <div class="h-full">
+        <div class="min-h-0 flex-1">
           <div class="chart_div" chartType="bar">
             <canvas
               baseChart

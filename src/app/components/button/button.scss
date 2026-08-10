@@ -207,6 +207,10 @@
   @apply size-4 shrink-0;
 }
 
+.sc-button__label {
+  @apply min-w-0 truncate;
+}
+
 .sc-button__swatch {
   @apply size-2.5 shrink-0 rounded-full;
 }

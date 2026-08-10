@@ -1725,9 +1725,11 @@
           ) {
             <td>
               <sc-button
+                class="w-full min-w-0 max-w-full"
                 [label]="server.display_name"
+                [title]="server.display_name"
                 size="small"
-                buttonClass="w-full whitespace-nowrap overflow-hidden text-ellipsis"
+                buttonClass="min-w-0 overflow-hidden"
                 (click)="viewServer(server)"
               ></sc-button>
             </td>
