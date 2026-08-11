@@ -7,7 +7,9 @@
     <span class="sc-button__badge">{{ badge() }}</span>
   </span>
   } @if (variant() === "dropdown") {
-  <div class="sc-button__extension-label">{{ label() }}</div>
+  <div class="sc-button__extension-label">
+    <span class="sc-button__extension-label-text">{{ label() }}</span>
+  </div>
   @if (icon()) {
   <div class="sc-button__square sc-button__square--end">
     <svg
@@ -39,7 +41,11 @@
   } @if (icon() && iconPosition() === "start") {
   <svg [lucideIcon]="icon()!" class="sc-button__icon" aria-hidden="true"></svg>
   } @if (label()) {
-  <span class="sc-button__label">{{ label() }}</span>
+  <span
+    class="sc-button__label"
+    [class.sc-button__label--multiline]="isMultilineLabel()"
+    >{{ label() }}</span
+  >
   } @if (icon() && iconPosition() === "end") {
   <svg [lucideIcon]="icon()!" class="sc-button__icon" aria-hidden="true"></svg>
   } }
@@ -59,6 +65,7 @@
   [attr.aria-disabled]="disabled() ? true : null"
   class="sc-button sc-button--{{ size() }} sc-button--{{ variant() }} sc-button--{{ color() }} {{ buttonClass() }}"
   [class.sc-button--icon-only]="isIconOnly()"
+  [class.sc-button--multiline]="isMultilineLabel()"
   [class.sc-button--disabled]="disabled()"
   (click)="onClick($event)"
 >
@@ -77,6 +84,7 @@
   [attr.aria-disabled]="disabled() ? true : null"
   class="sc-button sc-button--{{ size() }} sc-button--{{ variant() }} sc-button--{{ color() }} {{ buttonClass() }}"
   [class.sc-button--icon-only]="isIconOnly()"
+  [class.sc-button--multiline]="isMultilineLabel()"
   [class.sc-button--disabled]="disabled()"
   (click)="onClick($event)"
 >
@@ -92,6 +100,7 @@
   [attr.title]="title()"
   class="sc-button sc-button--{{ size() }} sc-button--{{ variant() }} sc-button--{{ color() }} {{ buttonClass() }}"
   [class.sc-button--icon-only]="isIconOnly()"
+  [class.sc-button--multiline]="isMultilineLabel()"
   (click)="onClick($event)"
 >
   <ng-container *ngTemplateOutlet="buttonContent"></ng-container>

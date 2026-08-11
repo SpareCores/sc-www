@@ -56,6 +56,8 @@ export class Button {
       this.variant() !== "benchmark",
   );
 
+  isMultilineLabel = computed(() => this.label().includes("\n"));
+
   hasBadge = computed(
     () =>
       this.badge() !== null &&

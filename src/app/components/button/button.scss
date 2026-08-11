@@ -28,7 +28,11 @@
 
 .sc-button:disabled,
 .sc-button--disabled {
-  @apply pointer-events-none cursor-not-allowed opacity-100 bg-gray-400 border-gray-400 text-white;
+  @apply pointer-events-none opacity-50;
+}
+
+.sc-button--multiline {
+  @apply whitespace-normal;
 }
 
 .sc-button--small {
@@ -211,6 +215,10 @@
   @apply min-w-0 truncate;
 }
 
+.sc-button__label--multiline {
+  @apply whitespace-pre-line overflow-visible text-clip;
+}
+
 .sc-button__swatch {
   @apply size-2.5 shrink-0 rounded-full;
 }
@@ -225,7 +233,11 @@
 }
 
 .sc-button__extension-label {
-  @apply flex min-w-0 flex-1 items-center truncate whitespace-nowrap text-left;
+  @apply flex min-w-0 flex-1 items-center overflow-hidden text-left;
+}
+
+.sc-button__extension-label-text {
+  @apply block w-full min-w-0 truncate;
 }
 
 .sc-button__benchmark-labels {
