@@ -28,7 +28,7 @@
 
 .sc-button:disabled,
 .sc-button--disabled {
-  @apply pointer-events-none cursor-not-allowed opacity-50;
+  @apply pointer-events-none cursor-not-allowed opacity-100 bg-gray-400 border-gray-400 text-white;
 }
 
 .sc-button--small {
