@@ -155,7 +155,7 @@
   }
 
   .button_list_item {
-    @apply w-full py-2 text-left text-white border border-transparent hover:border-emerald-400 hover:border-solid cursor-pointer;
+    @apply w-full py-2 text-center text-white border border-transparent hover:border-emerald-400 hover:border-solid cursor-pointer;
   }
 
   .button_list_item.active {
