@@ -15,6 +15,10 @@
 }
 
 .promo-banner__body {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem;
   min-width: 0;
   flex: 1 1 18rem;
 }
@@ -24,10 +28,7 @@
   font-size: 0.95rem;
   font-weight: 600;
   line-height: 1.5rem;
-}
-
-.promo-banner__lead::after {
-  content: "\00a0";
+  flex: 0 0 auto;
 }
 
 .promo-banner__copy {
@@ -36,6 +37,8 @@
   line-height: 1.5rem;
   text-decoration-thickness: 1px;
   text-underline-offset: 0.2em;
+  flex: 0 0 auto;
+  max-width: 100%;
 }
 
 .promo-banner__actions {
