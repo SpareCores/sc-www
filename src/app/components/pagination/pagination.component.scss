@@ -3,8 +3,8 @@
     @apply size-11 shrink-0 justify-center border-0 p-0;
   }
 
-  .pagination-button:is(.sc-button--ghost, .sc-button--solid):hover,
-  .pagination-button:is(.sc-button--ghost, .sc-button--solid):focus {
+  .pagination-button.sc-button:hover,
+  .pagination-button.sc-button:focus {
     @apply border-0 bg-emerald-400 text-white;
   }
 
