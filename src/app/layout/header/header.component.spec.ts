@@ -204,7 +204,7 @@ describe("HeaderComponent", () => {
     fixture.detectChanges();
 
     const compareButton = (fixture.nativeElement as HTMLElement).querySelector(
-      "#compare_options button.bg-emerald-400",
+      "#compare_options sc-button[label='Compare'] button",
     );
 
     expect(compareButton?.textContent?.trim()).toBe("Compare");
@@ -224,7 +224,7 @@ describe("HeaderComponent", () => {
     fixture.detectChanges();
 
     const compareButton = (fixture.nativeElement as HTMLElement).querySelector(
-      "#compare_options button.bg-emerald-400",
+      "#compare_options sc-button[label='Compare'] button",
     );
 
     expect(compareButton).toBeNull();
